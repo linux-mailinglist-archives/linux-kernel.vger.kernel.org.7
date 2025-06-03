@@ -1,51 +1,57 @@
-Return-Path: <linux-kernel+bounces-671623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEC0ACC3DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:00:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C905ACC3E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74298166A00
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92893A3869
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ACA1684A4;
-	Tue,  3 Jun 2025 10:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DEE210184;
+	Tue,  3 Jun 2025 10:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="om/o3BDj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="QP31pX6E"
+Received: from mail-24421.protonmail.ch (mail-24421.protonmail.ch [109.224.244.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD70DDAB
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB4D2040B6
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748944820; cv=none; b=hVxXZ6vA9mG1e7WAQE2Z0w1JhpFubY+RbdxSyobOlSjaIp1VzWFQW+olGv+PqrG69exmhbaRRJ34WYKHVSJmrNGZWU6ksTbcMmTF2r2vDEiztO0vivfmecGWHAOSE6zKY9pR5zlvmVu2i98o18KH0U+WgabftXrkmWug6WC0s80=
+	t=1748944904; cv=none; b=blgPPm6Zwp/CSz5CPght7xpp9a/XOJsU46dllk1V0IeyGQ1UG91gV6V3pNSU5kZr+Ieuxq30rfuz6l2VbXApAQDz/0mSJ2QOS5uhte7T9CpF884Ne4s3OWB0HZHKm8mUjAAkbQ5DaNGFgyci6tQ1hLABXuutv8KyL3s5GzMyQIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748944820; c=relaxed/simple;
-	bh=z8i1+obZcDr+5n5xKhnYxOKZLgfrGH7QlWp+potiZoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H/An4GqgndGXx16elNesG6YZSInqQ7V2s8R7DR6OP+brR41dHI9lklNHgnq4ZNfltNXF95sOlVuniPdWmmU+QN+BvXJY1Azf+u2AeTmCv3MNPXdA16ksed2plJSjMXmxzal9jSQEju26Q4TBIuauW26KjcXnbhttDY2hkqpYhqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=om/o3BDj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23648C4CEED;
-	Tue,  3 Jun 2025 10:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748944818;
-	bh=z8i1+obZcDr+5n5xKhnYxOKZLgfrGH7QlWp+potiZoI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=om/o3BDjIVFqa4YDK3J5+9sj1zvz2hdFpk7mkyNGYws6JsYeVkDlrYmIVpsG5MRus
-	 Kaz0q70Adm0UXGkkM20btTE4aq1STsQHE2vqwOwWEDPF6gOuKJwQ8Q7d3CYn9igHic
-	 +xOXvJ3mgJXR8mMFEvNqmGxAvYWyX7+tqVAuutZXhjK6dceb3fgfVjYpLXCMsnlyGh
-	 UnmwzQ2dfzHU8OA+SaHBoihy6u8H0d3aPsn8+QWn7mJpoPl28pC7jPgX7GhKOe95aZ
-	 g94i7upSOVRaYSK4wtF2htlRuhIwN2Pa7+V4pOxOiQYXSs4UYPNYFPlxORzBKjaKkQ
-	 Vlfq00dOgGKwA==
-Date: Tue, 3 Jun 2025 11:00:15 +0100
-From: Lee Jones <lee@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] MFD for v6.16
-Message-ID: <20250603100015.GC7758@google.com>
+	s=arc-20240116; t=1748944904; c=relaxed/simple;
+	bh=nCeqPXWEeQGgg8PQ5vWOHsYXK+FLWcyCgzaPhfe2CpU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z0l7SrAXSpM6o+rdbSOqKOxT6zPyEnJR8Iuz0ie6j7+WRXgohd7e8Js4xiY/YxhK1v+wkUrxdOD9/5UE83L5+tx7CO4SIBHWMpi7Qa8rQx6vtpyuoyChf4/LsIsqLUlZsh3PIcgy0RvbP9UBq1I0QytYozq7uZYK2M8/K+Ee5lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=QP31pX6E; arc=none smtp.client-ip=109.224.244.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
+	s=protonmail2; t=1748944897; x=1749204097;
+	bh=CBAH/23nxlGM/ZU/D/m7DXgdjxhIQMXn6Xg7PJlyxmc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=QP31pX6EMqJiIyY6ciLORrW5ZjTg7jPcfvbJkb4CcNDLoe9Gy5vFCz4FN/7tnYwBf
+	 PDUCksJjO6qiXzm5rhpddUMmG/j0+jOUXeaGODxQeQb7d0gquC9GSVLdum3If8pO1c
+	 Jvt2BoRAhrxeRJ6kwuZU86YSzol/XGB5a3ZP9p9/KOie5e/1eCwqRkuewvJZrKn//L
+	 dqCl0OMT0lhZn0p3uj9hSbf7FgC4llqfttzFFsGQf1C4Eptg4D+SxAMFv5O9ggQeFu
+	 JBKhl7EOk0AXTgOVrydcEA8wHVSrkUFvKwsqXXZr+T8f3rpcnmRNT8/zvWtvLFCPoK
+	 QrTBxMJ44gScQ==
+Date: Tue, 03 Jun 2025 10:01:31 +0000
+To: Gabor Juhos <j4g8y7@gmail.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Georgi Djakov <djakov@kernel.org>, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+From: Bryan O'Donoghue <bod.linux@nxsw.ie>
+Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] interconnect: avoid memory allocation when 'icc_bw_lock' is held
+Message-ID: <04ab699e-b344-4ba1-9ca1-04b6e50beefe@nxsw.ie>
+In-Reply-To: <75a46897-040f-4608-88f5-22c99c8bed97@gmail.com>
+References: <TIkPOGVjPeCjPzjVtlSb6V5CIcpaXf2-6WG6HjAyaOW59Hj01-9VK7Z8DKadakOKr6fJeQICi6h0Z8mft9DQyg==@protonmail.internalid> <20250529-icc-bw-lockdep-v1-1-3d714b6a9374@gmail.com> <ca9f7308-4b92-4d23-bfe7-f8d18d20de10@linaro.org> <75a46897-040f-4608-88f5-22c99c8bed97@gmail.com>
+Feedback-ID: 136405006:user:proton
+X-Pm-Message-ID: 6c201d29837aedc835aef573575e37b6eb34dd3b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,367 +59,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-Good morning Linus,
+On 03/06/2025 10:15, Gabor Juhos wrote:
+> Hello Bryan,
+>=20
+> Sorry for the late reply, I missed your mail.
+>=20
+> 2025. 05. 30. 11:16 keltez=C3=A9ssel, Bryan O'Donoghue =C3=ADrta:
+>> On 29/05/2025 15:46, Gabor Juhos wrote:
+>>> The 'icc_bw_lock' mutex is introduced in commit af42269c3523
+>>> ("interconnect: Fix locking for runpm vs reclaim") in order
+>>> to decouple serialization of bw aggregation from codepaths
+>>> that require memory allocation.
+>>>
+>>> However commit d30f83d278a9 ("interconnect: core: Add dynamic
+>>> id allocation support") added a devm_kasprintf() call into a
+>>> path protected by the 'icc_bw_lock' which causes this lockdep
+>>> warning (at least on the IPQ9574 platform):
+>>
+>> Missing a Fixes tag.
+>=20
+> Erm, it is before my s-o-b tag.
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+Great thank you I see that.
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+> ...
+>=20
+>>> Move the memory allocation part of the code outside of the protected
+>>> path to eliminate the warning. Also add a note about why it is moved
+>>> to there,
+>>>
+>>> Fixes: d30f83d278a9 ("interconnect: core: Add dynamic id allocation sup=
+port")
+>>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+>>> ---
+>>>  =C2=A0 drivers/interconnect/core.c | 14 ++++++++++----
+>>>  =C2=A0 1 file changed, 10 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+>>> index
+>>> 1a41e59c77f85a811f78986e98401625f4cadfa3..acdb3b8f1e54942dbb1b71ec2b170=
+b08ad709e6b 100644
+>>> --- a/drivers/interconnect/core.c
+>>> +++ b/drivers/interconnect/core.c
+>>> @@ -1023,6 +1023,16 @@ void icc_node_add(struct icc_node *node, struct
+>>> icc_provider *provider)
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>>>
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_lock(&icc_lock);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (node->id >=3D ICC_DYN_ID_START) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Memory allocation m=
+ust be done outside of codepaths
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * protected by icc_bw=
+_lock.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->name =3D devm_kasprin=
+tf(provider->dev, GFP_KERNEL, "%s@%s",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 no=
+de->name, dev_name(provider->dev));
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_lock(&icc_bw_lock);
+>>>
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->provider =3D provider;
+>>> @@ -1038,10 +1048,6 @@ void icc_node_add(struct icc_node *node, struct
+>>> icc_provider *provider)
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->avg_bw =3D node->init_avg;
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->peak_bw =3D node->init_peak;
+>>>
+>>> -=C2=A0=C2=A0=C2=A0 if (node->id >=3D ICC_DYN_ID_START)
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->name =3D devm_kasprin=
+tf(provider->dev, GFP_KERNEL, "%s@%s",
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 no=
+de->name, dev_name(provider->dev));
+>>> -
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (node->avg_bw || node->peak_bw) {
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (provider->p=
+re_aggregate)
+>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 provider->pre_aggregate(node);
+>>>
+>>> ---
+>>> base-commit: 5fed7fe33c2cd7104fc87b7bc699a7be892befa2
+>>> change-id: 20250529-icc-bw-lockdep-ed030d892a19
+>>>
+>>> Best regards,
+>>> --
+>>> Gabor Juhos <j4g8y7@gmail.com>
+>>>
+>>>
+>>
+>> The locking in this code is a mess.
+>>
+>> Which data-structures does icc_lock protect node* pointers I think and w=
+hich
+>> data-structures does icc_bw_lock protect - "bw" data structures ?
+>>
+>> Hmm.
+>>
+>> Looking at this code I'm not sure at all what icc_lock was introduced to=
+ do.
+>=20
+> Initially, only the 'icc_lock' mutex was here, and that protected 'everyt=
+hing'.
+> The 'icc_bw_lock' has been introduced later by commit af42269c3523
+> ("interconnect: Fix locking for runpm vs reclaim") as part of the
+> "drm/msm+PM+icc: Make job_run() reclaim-safe" series [1].
+>=20
+> Here is the reason copied from the original commit message:
+>=20
+>      "For cases where icc_bw_set() can be called in callbaths that could
+>      deadlock against shrinker/reclaim, such as runpm resume, we need to
+>      decouple the icc locking.  Introduce a new icc_bw_lock for cases whe=
+re
+>      we need to serialize bw aggregation and update to decouple that from
+>      paths that require memory allocation such as node/link creation/
+>      destruction."
 
-are available in the Git repository at:
+Right but reading this code.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-next-6.16
+icc_set_bw();
+icc_lock_bw - protects struct icc_node *
 
-for you to fetch changes up to ffb006aa433e8109ec79320c344fb69947997ba1:
+icc_put();
+icc_lock - locks
+icc_lock_bw -locks directly after protects struct icc_node *
 
-  mfd: maxim: Correct Samsung "Electronics" spelling in copyright headers (2025-06-03 09:46:41 +0100)
+icc_node_add current:
+icc_lock - locks
+icc_lock_bw - locks
+     node->name =3D devm_kasprintf();
 
-----------------------------------------------------------------
-MFD for v6.16
+After your change
 
-  * Samsung Exynos ACPM:
-    * Populate child platform devices from device tree data
-    * Introduce a new API, `devm_acpm_get_by_node()`, for child devices to get the ACPM handle
-  * ROHM PMICs:
-    * Add support for the ROHM BD96802 scalable companion PMIC to the BD96801 core driver
-    * Add support for controlling the BD96802 using the BD96801 regulator driver
-    * Add support to the BD96805, which is almost identical to the BD96801
-    * Add support to the BD96806, which is similar to the BD96802
-  * Maxim MAX77759:
-    * Add a core driver for the MAX77759 companion PMIC
-    * Add a GPIO driver for the expander functions on the MAX77759
-    * Add an NVMEM driver to expose the non-volatile memory on the MAX77759
-  * STMicroelectronics STM32MP25:
-    * Add support for the STM32MP25 SoC to the stm32-lptimer
-    * Add support for the STM32MP25 to the clocksource driver, handling new register access requirements
-    * Add support for the STM32MP25 to the PWM driver, enabling up to two PWM outputs
-  * Broadcom BCM590xx:
-    * Add support for the BCM59054 PMU
-    * Parse the PMU ID and revision to support behavioral differences between chip revisions
-    * Add regulator support for the BCM59054
-  * Samsung S2MPG10:
-    * Add support for the S2MPG10 PMIC, which communicates via the Samsung ACPM firmware instead of I2C
+icc_node_add current:
+icc_lock - locks
+     node->name =3D devm_kasprintf();
+icc_lock_bw - locks
+     owns node->provider - or whatever
 
-  * Exynos ACPM:
-    * Improve timeout detection reliability by using ktime APIs instead of a loop counter assumption
-    * Allow PMIC access during late system shutdown by switching to `udelay()` instead of a sleeping function
-    * Fix an issue where reading command results longer than 8 bytes would fail
-    * Silence non-error `-EPROBE_DEFER` messages during boot to clean up logs
-  * Exynos LPASS:
-    * Fix an error handling path by switching to `devm_regmap_init_mmio()` to prevent resource leaks
-    * Fix a bug where `exynos_lpass_disable()` was called twice in the remove function
-    * Fix another resource leak in the probe's error path by using `devm_add_action_or_reset()`
-  * Samsung SEC:
-    * Handle the s2dos05, which does not have IRQ support, explicitly to prevent warnings
-    * Fix the core driver to correctly handle errors from `sec_irq_init()` instead of ignoring them
-  * STMPE-SPI:
-    * Correct an undeclared identifier in the `MODULE_DEVICE_TABLE` macro
-  * MAINTAINERS:
-    * Adjust a file path for the Siemens IPC LED drivers entry to fix a broken reference
-  * Maxim Drivers:
-    * Correct the spelling of "Electronics" in Samsung copyright headers across multiple files
-  * General:
-    * Fix wakeup source memory leaks on device unbind for 88pm886, as3722, max14577, max77541, max77705,
-      max8925, rt5033, and sprd-sc27xx drivers
+And this is what is prompting my question. Which locks own which data here =
+?
 
-  * Samsung SEC Drivers:
-    * Split the driver into a transport-agnostic core (`sec-core`) and transport-specific (`sec-i2c`,
-      `sec-acpm`) modules to support non-I2C devices
-    * Merge the `sec-core` and `sec-irq` modules to reduce memory consumption
-    * Move internal APIs to a private header to clean up the public API
-    * Improve code style by sorting includes, cleaning up headers, sorting device tables, and using helper
-      macros like `dev_err_probe()`, `MFD_CELL`, and `REGMAP_IRQ_REG`
-    * Make regmap configuration for s2dos05/s2mpu05 explicit to improve clarity
-    * Rework platform data and regmap instantiation to use OF match data instead of a large switch statement
-  * ROHM BD96801/2:
-    * Prepare the driver for new models by separating chip-specific data into its own structure
-    * Drop IC name prefix from IRQ resource names in both the MFD and regulator drivers for simplification
-  * Broadcom BCM590xx:
-    * Refactor the regulator driver to store descriptions in a table to ease support for new chips
-    * Rename BCM59056-specific data to prepare for the addition of other regulators
-    * Use `dev_err_probe()` for cleaner error handling
-  * Exynos ACPM:
-    * Correct kerneldoc warnings and use the conventional 'np' argument name
-  * General MFD:
-    * Convert `aat2870` and `tps65010` to use the per-client debugfs directory provided by the I2C core
-    * Convert `sm501`, `tps65010` and `ucb1x00` to use the new GPIO line value setter callbacks
-    * Constify `regmap_irq_chip` and other structures in `88pm886` to move data to read-only sections
+I think we should sort that out, either by removing one of the locks or=20
+by at the very least documenting beside the mutex declarations which=20
+locks protect what.
 
-  * BCM590xx:
-    * Drop the unused "id" member from the `bcm590xx` struct in preparation for a replacement
-  * Samsung SEC Core:
-    * Remove forward declarations for functions that no longer exist
-  * SM501:
-    * Remove the unused `sm501_find_clock()` function
+---
+bod
 
-  * New Compatibles:
-    * Google: Add a PMIC child node to the `google,gs101-acpm-ipc` binding
-    * ROHM: Add new bindings for `rohm,bd96802-regulator` and `rohm,bd96802-pmic`, and add compatibles
-      for BD96805 and BD96806
-    * Maxim: Add new bindings for `maxim,max77759-gpio`, `maxim,max77759-nvmem`, and the top-level
-      `maxim,max77759`
-    * STM: Add `stm32mp25` compatible to the `stm32-lptimer` binding
-    * Broadcom: Add `bcm59054` compatible
-    * Atmel/Microchip: Add `microchip,sama7d65-gpbr` and `microchip,sama7d65-secumod` compatibles
-    * Samsung: Add `s2mpg10` compatible to the `samsung,s2mps11` MFD binding
-    * MediaTek: Add compatibles for `mt6893` (scpsys), `mt7988-topmisc`, and `mt8365-infracfg-nao`
-    * Qualcomm: Add `qcom,apq8064-mmss-sfpb` and `qcom,apq8064-sps-sic` syscon compatibles
-  * Refactoring & Cleanup:
-    * Convert Broadcom BCM59056 devicetree bindings to YAML and split them into MFD and regulator parts
-    * Convert the Microchip AT91 secumod binding to YAML
-    * Drop unrelated consumer nodes from binding examples to reduce bloat
-    * Correct indentation and style in various DTS examples
 
-----------------------------------------------------------------
-Alexey Gladkov (1):
-      mfd: stmpe-spi: Correct the name used in MODULE_DEVICE_TABLE
 
-André Draszik (34):
-      firmware: exynos-acpm: use ktime APIs for timeout detection
-      firmware: exynos-acpm: allow use during system shutdown
-      dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
-      firmware: exynos-acpm: fix reading longer results
-      firmware: exynos-acpm: silence EPROBE_DEFER error on boot
-      firmware: exynos-acpm: introduce devm_acpm_get_by_node()
-      dt-bindings: gpio: Add max77759 binding
-      dt-bindings: nvmem: Add max77759 binding
-      dt-bindings: mfd: Add max77759 binding
-      mfd: max77759: Add Maxim MAX77759 core driver
-      gpio: max77759: Add Maxim MAX77759 gpio driver
-      nvmem: max77759: Add Maxim MAX77759 NVMEM driver
-      dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-      mfd: sec-core: Drop non-existing forward declarations
-      mfd: sec: Sort includes alphabetically
-      mfd: sec: Update includes to add missing and remove superfluous ones
-      mfd: sec: Move private internal API to internal header
-      mfd: sec: Split into core and transport (i2c) drivers
-      mfd: sec: Add support for S2MPG10 PMIC
-      mfd: sec: Merge separate core and irq modules
-      mfd: sec-common: Fix multiple trivial whitespace issues
-      mfd: sec-i2c: Sort struct of_device_id entries and the device type switch
-      mfd: sec: Use dev_err_probe() where appropriate
-      mfd: sec-i2c: s2dos05/s2mpu05: Use explicit regmap config and drop default
-      mfd: sec-irq: s2dos05 doesn't support interrupts
-      mfd: sec-common: Don't ignore errors from sec_irq_init()
-      mfd: sec-i2c: Rework platform data and regmap instantiating
-      mfd: sec: Change device_type to int
-      mfd: sec: Don't compare against NULL / 0 for errors, use !
-      mfd: sec-common: Use sizeof(*var), not sizeof(struct type_of_var)
-      mfd: sec-common: Convert to using MFD_CELL macros
-      mfd: sec-irq: Convert to using REGMAP_IRQ_REG() macros
-      mfd: sec: Add myself as module author
-      MAINTAINERS: add myself as reviewer for Samsung S2M MFD
+>> Can we not just drop it entirely ?
+>=20
+> I'm not an expert in locking, but I doubt that we can easily drop any of =
+the two
+> mutexes without reintroducing the problem fixed by the change mentioned a=
+bove.
+>=20
+> [1] https://lore.kernel.org/all/20230807171148.210181-1-robdclark@gmail.c=
+om/
+>=20
+> Regards,
+> Gabor
+>=20
+>=20
 
-AngeloGioacchino Del Regno (1):
-      dt-bindings: mfd: mediatek,mt8195-scpsys: Add support for MT6893
+Right - if this were a struct we would declare what these individual=20
+mutexes lock.
 
-Artur Weber (9):
-      dt-bindings: mfd: brcm,bcm59056: Convert to YAML
-      dt-bindings: mfd: brcm,bcm59056: Add compatible for BCM59054
-      mfd: bcm590xx: Add support for multiple device types + BCM59054 compatible
-      mfd: bcm590xx: Add PMU ID/revision parsing function
-      regulator: bcm590xx: Use dev_err_probe for regulator register error
-      regulator: bcm590xx: Store regulator descriptions in table
-      regulator: bcm590xx: Rename BCM59056-specific data as such
-      regulator: bcm590xx: Add support for BCM59054 regulators
-      mfd: bcm590xx: Drop unused "id" member of bcm590xx struct
+That's my question here, as I review this code, which mutex protects what ?
 
-Bartosz Golaszewski (3):
-      mfd: sm501: Use new GPIO line value setter callbacks
-      mfd: tps65010: Use new GPIO line value setter callbacks
-      mfd: ucb1x00: Use new GPIO line value setter callbacks
+I don't think that is particularly clear.
 
-Christophe JAILLET (4):
-      mfd: exynos-lpass: Fix an error handling path in exynos_lpass_probe()
-      mfd: exynos-lpass: Avoid calling exynos_lpass_disable() twice in exynos_lpass_remove()
-      mfd: exynos-lpass: Fix another error handling path in exynos_lpass_probe()
-      mfd: 88pm886: Constify struct regmap_irq_chip and some other structures
-
-Dmitry Baryshkov (2):
-      dt-bindings: mfd: syscon: Add qcom,apq8064-mmss-sfpb
-      dt-bindings: mfd: syscon: Add qcom,apq8064-sps-sic
-
-Dr. David Alan Gilbert (1):
-      mfd: sm501: Remove unused sm501_find_clock
-
-Fabrice Gasnier (4):
-      dt-bindings: mfd: stm32-lptimer: Add support for stm32mp25
-      mfd: stm32-lptimer: Add support for stm32mp25
-      clocksource/drivers/stm32-lptimer: Add support for stm32mp25
-      pwm: stm32-lp: Add support for stm32mp25
-
-Frank Wunderlich (1):
-      dt-bindings: mfd: syscon: Add mt7988-topmisc
-
-Krzysztof Kozlowski (11):
-      firmware: exynos-acpm: Correct kerneldoc and use typical np argument name
-      dt-bindings: mfd: Drop unrelated nodes from DTS example
-      dt-bindings: mfd: Correct indentation and style in DTS example
-      mfd: 88pm886: Fix wakeup source leaks on device unbind
-      mfd: as3722: Fix wakeup source leaks on device unbind
-      mfd: max14577: Fix wakeup source leaks on device unbind
-      mfd: max77541: Fix wakeup source leaks on device unbind
-      mfd: max77705: Fix wakeup source leaks on device unbind
-      mfd: max8925: Fix wakeup source leaks on device unbind
-      mfd: rt5033: Fix wakeup source leaks on device unbind
-      mfd: sprd-sc27xx: Fix wakeup source leaks on device unbind
-
-Lee Jones (2):
-      Merge tag 'samsung-drivers-6.16' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/krzk/linux into ib-firmware-mfd-6.16
-      Merge branches 'ib-firmware-mfd-6.16', 'ib-mfd-clocksource-pwm-6.16', 'ib-mfd-gpio-nvmem-6.16', 'ib-mfd-regulator-6.16' and 'ib-mfd-regulator-6.16-1' into ibs-for-mfd-merged
-
-Lukas Bulwahn (1):
-      MAINTAINERS: Adjust the file entry in SIEMENS IPC LED DRIVERS
-
-Matti Vaittinen (14):
-      dt-bindings: regulator: Add ROHM BD96802 PMIC
-      dt-bindings: mfd: Add ROHM BD96802 PMIC
-      dt-bindings: mfd: bd96801: Add ROHM BD96805
-      dt-bindings: mfd: bd96802: Add ROHM BD96806
-      mfd: rohm-bd96801: Add chip info
-      mfd: bd96801: Drop IC name from the regulator IRQ resources
-      regulator: bd96801: Drop IC name from the IRQ resources
-      mfd: rohm-bd96801: Support ROHM BD96802
-      regulator: bd96801: Support ROHM BD96802
-      mfd: bd96801: Support ROHM BD96805
-      regulator: bd96801: Support ROHM BD96805 PMIC
-      mfd: bd96801: Support ROHM BD96806
-      regulator: bd96801: Support ROHM BD96806 PMIC
-      MAINTAINERS: Add BD96802 specific header
-
-Nícolas F. R. A. Prado (1):
-      dt-bindings: mfd: syscon: Add mediatek,mt8365-infracfg-nao
-
-Ryan Wanner (3):
-      dt-bindings: mfd: atmel: Add microchip,sama7d65-gpbr
-      dt-bindings: mfd: syscon: atmel,sama5d2-secumod: Convert to yaml
-      dt-bindings: mfd: syscon: Add microchip,sama7d65-secumod
-
-Sumanth Gavini (2):
-      mfd: maxim: Correct Samsung "Electronics" spelling in headers
-      mfd: maxim: Correct Samsung "Electronics" spelling in copyright headers
-
-Tudor Ambarus (1):
-      firmware: exynos-acpm: populate devices from device tree data
-
-Wolfram Sang (2):
-      mfd: aat2870: Use per-client debugfs directory
-      mfd: tps65010: Use per-client debugfs directory
-
- .../bindings/arm/atmel,sama5d2-secumod.yaml        |   49 +
- .../devicetree/bindings/arm/atmel-sysregs.txt      |   25 -
- .../bindings/firmware/google,gs101-acpm-ipc.yaml   |   35 +
- .../bindings/gpio/maxim,max77759-gpio.yaml         |   44 +
- .../bindings/mfd/atmel,at91sam9260-gpbr.yaml       |    1 +
- .../devicetree/bindings/mfd/brcm,bcm59056.txt      |   39 -
- .../devicetree/bindings/mfd/brcm,bcm59056.yaml     |   76 ++
- Documentation/devicetree/bindings/mfd/iqs62x.yaml  |  177 ++-
- .../devicetree/bindings/mfd/maxim,max77759.yaml    |   99 ++
- .../bindings/mfd/mediatek,mt8195-scpsys.yaml       |    1 +
- .../devicetree/bindings/mfd/mscc,ocelot.yaml       |    6 -
- .../devicetree/bindings/mfd/netronix,ntxec.yaml    |   39 +-
- .../devicetree/bindings/mfd/rohm,bd9571mwv.yaml    |   50 +-
- .../devicetree/bindings/mfd/rohm,bd96801-pmic.yaml |   10 +-
- .../devicetree/bindings/mfd/rohm,bd96802-pmic.yaml |  101 ++
- .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |   26 +-
- .../devicetree/bindings/mfd/st,stm32-lptimer.yaml  |   40 +-
- Documentation/devicetree/bindings/mfd/syscon.yaml  |    7 +
- .../devicetree/bindings/mfd/x-powers,axp152.yaml   |  202 +--
- .../bindings/nvmem/maxim,max77759-nvmem.yaml       |   32 +
- .../bindings/regulator/brcm,bcm59054.yaml          |   56 +
- .../bindings/regulator/brcm,bcm59056.yaml          |   51 +
- .../bindings/regulator/rohm,bd96802-regulator.yaml |   44 +
- MAINTAINERS                                        |   16 +-
- arch/arm/configs/exynos_defconfig                  |    2 +-
- arch/arm/configs/multi_v7_defconfig                |    2 +-
- arch/arm/configs/pxa_defconfig                     |    2 +-
- arch/arm64/configs/defconfig                       |    2 +-
- drivers/clocksource/timer-stm32-lp.c               |   61 +-
- drivers/firmware/samsung/exynos-acpm-pmic.c        |   16 +-
- drivers/firmware/samsung/exynos-acpm.c             |   58 +-
- drivers/gpio/Kconfig                               |   13 +
- drivers/gpio/Makefile                              |    1 +
- drivers/gpio/gpio-max77759.c                       |  530 ++++++++
- drivers/mfd/88pm886.c                              |   14 +-
- drivers/mfd/Kconfig                                |   55 +-
- drivers/mfd/Makefile                               |    6 +-
- drivers/mfd/aat2870-core.c                         |    4 +-
- drivers/mfd/as3722.c                               |    4 +-
- drivers/mfd/bcm590xx.c                             |   66 +-
- drivers/mfd/exynos-lpass.c                         |   31 +-
- drivers/mfd/max14577.c                             |    1 +
- drivers/mfd/max77541.c                             |    2 +-
- drivers/mfd/max77705.c                             |    4 +-
- drivers/mfd/max77759.c                             |  690 +++++++++++
- drivers/mfd/max8925-i2c.c                          |    1 +
- drivers/mfd/rohm-bd96801.c                         |  565 +++++++--
- drivers/mfd/rt5033.c                               |    6 +-
- drivers/mfd/sec-acpm.c                             |  442 +++++++
- drivers/mfd/sec-common.c                           |  301 +++++
- drivers/mfd/sec-core.c                             |  481 --------
- drivers/mfd/sec-core.h                             |   23 +
- drivers/mfd/sec-i2c.c                              |  239 ++++
- drivers/mfd/sec-irq.c                              |  460 +++----
- drivers/mfd/sm501.c                                |   50 +-
- drivers/mfd/sprd-sc27xx-spi.c                      |    5 +-
- drivers/mfd/stm32-lptimer.c                        |   33 +-
- drivers/mfd/stmpe-spi.c                            |    2 +-
- drivers/mfd/tps65010.c                             |    9 +-
- drivers/mfd/ucb1x00-core.c                         |    7 +-
- drivers/nvmem/Kconfig                              |   12 +
- drivers/nvmem/Makefile                             |    2 +
- drivers/nvmem/max77759-nvmem.c                     |  145 +++
- drivers/pwm/pwm-stm32-lp.c                         |  219 +++-
- drivers/regulator/bcm590xx-regulator.c             | 1289 ++++++++++++++++----
- drivers/regulator/bd96801-regulator.c              |  455 ++++++-
- .../linux/firmware/samsung/exynos-acpm-protocol.h  |    6 +-
- include/linux/mfd/aat2870.h                        |    3 -
- include/linux/mfd/bcm590xx.h                       |   28 +-
- include/linux/mfd/max14577-private.h               |    2 +-
- include/linux/mfd/max14577.h                       |    2 +-
- include/linux/mfd/max77686-private.h               |    2 +-
- include/linux/mfd/max77686.h                       |    2 +-
- include/linux/mfd/max77693-private.h               |    2 +-
- include/linux/mfd/max77693.h                       |    2 +-
- include/linux/mfd/max77759.h                       |  165 +++
- include/linux/mfd/max8997-private.h                |    2 +-
- include/linux/mfd/max8997.h                        |    2 +-
- include/linux/mfd/max8998-private.h                |    2 +-
- include/linux/mfd/max8998.h                        |    2 +-
- include/linux/mfd/rohm-bd96801.h                   |    2 +
- include/linux/mfd/rohm-bd96802.h                   |   74 ++
- include/linux/mfd/rohm-generic.h                   |    3 +
- include/linux/mfd/samsung/core.h                   |    7 +-
- include/linux/mfd/samsung/irq.h                    |  103 ++
- include/linux/mfd/samsung/rtc.h                    |   37 +
- include/linux/mfd/samsung/s2mpg10.h                |  454 +++++++
- include/linux/mfd/stm32-lptimer.h                  |   37 +-
- include/linux/sm501.h                              |    3 -
- 89 files changed, 6765 insertions(+), 1713 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/atmel,sama5d2-secumod.yaml
- create mode 100644 Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/brcm,bcm59056.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/brcm,bcm59056.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
- create mode 100644 Documentation/devicetree/bindings/nvmem/maxim,max77759-nvmem.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/brcm,bcm59054.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/brcm,bcm59056.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd96802-regulator.yaml
- create mode 100644 drivers/gpio/gpio-max77759.c
- create mode 100644 drivers/mfd/max77759.c
- create mode 100644 drivers/mfd/sec-acpm.c
- create mode 100644 drivers/mfd/sec-common.c
- delete mode 100644 drivers/mfd/sec-core.c
- create mode 100644 drivers/mfd/sec-core.h
- create mode 100644 drivers/mfd/sec-i2c.c
- create mode 100644 drivers/nvmem/max77759-nvmem.c
- create mode 100644 include/linux/mfd/max77759.h
- create mode 100644 include/linux/mfd/rohm-bd96802.h
- create mode 100644 include/linux/mfd/samsung/s2mpg10.h
-
--- 
-Lee Jones [李琼斯]
 
