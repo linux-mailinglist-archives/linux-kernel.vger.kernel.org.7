@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-672479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1E5ACD00A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:50:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8EBACD00C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56CFC7A55CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:49:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB4417645D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AF2253F2B;
-	Tue,  3 Jun 2025 22:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C70D253346;
+	Tue,  3 Jun 2025 22:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mrVR7gin"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="q/sDGbU0"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F402C3253;
-	Tue,  3 Jun 2025 22:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E822688C;
+	Tue,  3 Jun 2025 22:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748991041; cv=none; b=O9Z7VHP/A6oQ9ddg2RllgEl3rytkc36HYK/bwjruuyyClirjHks4Xy3YFeJQuixLRhJMogz1iNhorqWLoXQgohJ1BGIztzjSd30gmlrw8noxsjUo9+PlTXSKCRr8vHkTfuR9wj3Srn/YK9BhXOg/A+7IxmXjsgRoZObeMhubsXw=
+	t=1748991087; cv=none; b=WEtoqdxTG4Lx6f9lt8ioKx173ZvwYjNdYgupaDKjzFNsoFGPoDzcx5xzrS+JJogVzgvrWAXJghFdzfzhsY62ozuUUOZ29A0/Bk87uqNCtGvzkQc9RUevADsQRY0p+eRZ1vVxHuUTg2FjkA9fcltO/PG37w7eZUrtd+iwF059hSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748991041; c=relaxed/simple;
-	bh=JrGe4uBJahLz5YeQ0/N5/IVdiMkVsz+GX9RKuQgN51U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaTYJaoatbb6ZgdU96nfAAeJzoIl3kPbiY6gDT5ssgxEisNRh40C6jfI1VBBLWLpVsMBmge9UPucPGPWNhjGtCc43CispZ7q+FOBxONhq/ZZ0yghP0xt5TDr9A3Pvo2Hq66rCdE6YCeJY6jeoWS9aGBqrWyKFnFu3QncB01f7DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mrVR7gin; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=CZKj2AIR+080trTPaitatfhGvrcRO8PhQFCCLir9byA=; b=mrVR7ginH1lcP1LaUS+6BdevXX
-	q1KhEnPSOMWVxU7QeIQZqxtpYFEflkQKmz+yQII5RFIpsoS6GXe8g9PF0xdt/f7ZC9CLqNjdeMrwX
-	IZ6/Yy41LI3IfCmeeaYJiP8SHGsRtb8Td2X+QrHh8t9DbRsMNdPAeWMwmL9RJ+aVLPVYUpUmqgMEP
-	qyHZ7H3aj/iz+V6ciQLfJUo2Vehvn+uBJmd4iCQEV7ulfbCizVkw2HcZb+ezs6FvfavM6k89MK2br
-	HMhk+QXyPmr8DDhdij+uLFuZf5Ccz3v/RN21Fr9EvdiHcxbsz8jYEnlNdTRWp5RZb74yYxokJBLC6
-	M9AiKREQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMaSm-00000002VyY-2lMY;
-	Tue, 03 Jun 2025 22:50:33 +0000
-Message-ID: <0993ec4e-c0cd-4e63-a0b3-3b9db0082279@infradead.org>
-Date: Tue, 3 Jun 2025 15:50:28 -0700
+	s=arc-20240116; t=1748991087; c=relaxed/simple;
+	bh=U2fAHShTsPt3xM9RI+E0kyll2X7at0kvzSSVpwpOxt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yv3UZOGPgYV6wxfCRRUqqo0P1eyrLmcgCSYyDd8r3WVAe9UOXk0bTultvbF0VBVJTMvNBAPSUeLvowG0GiLDeAti/+2AzSs1MoTyAWFQmzMhYkX0MQHbT6BlK2Xsydupi3LpYbTyT/u7qY8duHS1xeob0j0keUwuTxcN7N8n+oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=q/sDGbU0; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=FQ3DHoKvMraMJ0d27hoH4C3fLV1yEdec7+t3t0+1/Ak=; b=q/sDGbU07pJFA1RX
+	krmkJGueYxlIFGXPG0vz24InA5FimusUCXjcHZ0jsW2sQkHHuuQlYHx2/e20cxiTiOHTjK3iqp4yJ
+	0PxxIrhN0J9LoI0k+NJ2mrpvynxW8kYg10940zdQNFp5UKlO6pWvLrZxGW/sk6glfDHDxEeC516/R
+	Wr6/XzPdtGFABONvoTth8cxoC5svjashhiT7wJiqApNVDP2gYQrJNUmO+YHI0b2VgJMb7DBcZcp2u
+	0TQxjTEg8KmvtBWE3Ws1zUpVN4OlNBRMwU7QjlhOhTUeYzq6q0EFY3mNTynoM2mVKd2gMPE0EdcpP
+	4vpo6OPtAMHfbGZH5w==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uMaTa-007UXY-1I;
+	Tue, 03 Jun 2025 22:51:22 +0000
+From: linux@treblig.org
+To: mchehab@kernel.org,
+	linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: v4l2-tpg: Remove unused tpg_fillbuffer
+Date: Tue,  3 Jun 2025 23:51:21 +0100
+Message-ID: <20250603225121.308402-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] i2c: designware: Initialize adapter name only when
- not set
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- mario.limonciello@amd.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.chan@amd.com, bin.du@amd.com,
- gjorgji.rosikopulos@amd.com, king.li@amd.com, dantony@amd.com
-References: <20250603214611.3039787-1-pratap.nirujogi@amd.com>
- <20250603214611.3039787-2-pratap.nirujogi@amd.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250603214611.3039787-2-pratap.nirujogi@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
+The last use of tpg_fillbuffer() was removed in 2015 by
+commit ddcaee9dd4c0 ("[media] vivid: add support for single buffer planar
+formats")
 
-On 6/3/25 2:40 PM, Pratap Nirujogi wrote:
-> Check if the adapter name is already set in the driver prior
-> to initializing with generic name in i2c_dw_probe_master().
+Remove it.
 
-That explains what but not why. Commits should also explain
-why they are doing something.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/media/common/v4l2-tpg/v4l2-tpg-core.c | 17 -----------------
+ include/media/tpg/v4l2-tpg.h                  |  2 --
+ 2 files changed, 19 deletions(-)
 
-> 
-> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
-
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-
-> ---
->  drivers/i2c/busses/i2c-designware-master.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-> index c5394229b77f..9d7d9e47564a 100644
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -1042,8 +1042,9 @@ int i2c_dw_probe_master(struct dw_i2c_dev *dev)
->  	if (ret)
->  		return ret;
->  
-> -	snprintf(adap->name, sizeof(adap->name),
-> -		 "Synopsys DesignWare I2C adapter");
-> +	if (!adap->name[0])
-> +		scnprintf(adap->name, sizeof(adap->name),
-> +			  "Synopsys DesignWare I2C adapter");
->  	adap->retries = 3;
->  	adap->algo = &i2c_dw_algo;
->  	adap->quirks = &i2c_dw_quirks;
-
+diff --git a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
+index 931e5dc453b9..d51d8ba99dcb 100644
+--- a/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
++++ b/drivers/media/common/v4l2-tpg/v4l2-tpg-core.c
+@@ -2710,23 +2710,6 @@ void tpg_fill_plane_buffer(struct tpg_data *tpg, v4l2_std_id std,
+ }
+ EXPORT_SYMBOL_GPL(tpg_fill_plane_buffer);
+ 
+-void tpg_fillbuffer(struct tpg_data *tpg, v4l2_std_id std, unsigned p, u8 *vbuf)
+-{
+-	unsigned offset = 0;
+-	unsigned i;
+-
+-	if (tpg->buffers > 1) {
+-		tpg_fill_plane_buffer(tpg, std, p, vbuf);
+-		return;
+-	}
+-
+-	for (i = 0; i < tpg_g_planes(tpg); i++) {
+-		tpg_fill_plane_buffer(tpg, std, i, vbuf + offset);
+-		offset += tpg_calc_plane_size(tpg, i);
+-	}
+-}
+-EXPORT_SYMBOL_GPL(tpg_fillbuffer);
+-
+ MODULE_DESCRIPTION("V4L2 Test Pattern Generator");
+ MODULE_AUTHOR("Hans Verkuil");
+ MODULE_LICENSE("GPL");
+diff --git a/include/media/tpg/v4l2-tpg.h b/include/media/tpg/v4l2-tpg.h
+index a55088921d1d..3e3bd0889b6d 100644
+--- a/include/media/tpg/v4l2-tpg.h
++++ b/include/media/tpg/v4l2-tpg.h
+@@ -248,8 +248,6 @@ void tpg_calc_text_basep(struct tpg_data *tpg,
+ unsigned tpg_g_interleaved_plane(const struct tpg_data *tpg, unsigned buf_line);
+ void tpg_fill_plane_buffer(struct tpg_data *tpg, v4l2_std_id std,
+ 			   unsigned p, u8 *vbuf);
+-void tpg_fillbuffer(struct tpg_data *tpg, v4l2_std_id std,
+-		    unsigned p, u8 *vbuf);
+ bool tpg_s_fourcc(struct tpg_data *tpg, u32 fourcc);
+ void tpg_s_crop_compose(struct tpg_data *tpg, const struct v4l2_rect *crop,
+ 		const struct v4l2_rect *compose);
 -- 
-~Randy
+2.49.0
+
 
