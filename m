@@ -1,281 +1,257 @@
-Return-Path: <linux-kernel+bounces-671705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88FDACC510
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:12:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C3CACC51A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2953A5D9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05E5916F57C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DDD22A804;
-	Tue,  3 Jun 2025 11:10:37 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EF82309BD;
+	Tue,  3 Jun 2025 11:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="D1OewySG";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="D1OewySG"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013070.outbound.protection.outlook.com [52.101.72.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89DC22D9ED
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748949036; cv=none; b=s/aNWhBVsZkdzYWy37UEuLK29myrBA+5RZ5uCU4uyskLPOwGfD5+qSR8Qv7bT94CSrQya3KS0LE2vE0cN3M4Fj997bBXr3eYBRa/7Bm8qsmANrKp1it3nkA+QaZqvVc6+ZC/im3UjY8i3SvWwDlAeqkLWXH7i0AADP9OyWRTiOg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748949036; c=relaxed/simple;
-	bh=mgiMHmMVSx4YI2/cVRl4rA/QLk0mk2nOQptEL28xCKQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZiDEYYbUceZgmJeham6RXsVPlL7Cg80djeHSQ4s/eA4h1ctfpwJ4Z5Lbq8nU0f6/tJVYphinDEqnLTWONEnpGgn/mcJL3EneRAsIInHEtFNTJ1npkIIHstF8GRf6cz3SnwDGUl1WCJJpFT3bEsKpsOmYTRl5+vnadjqVOME0G9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-86463467dddso448285139f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 04:10:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748949034; x=1749553834;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iHSwC7m4nRzFrvsQsgTSl5en2HgnN91L34YQY/Nko8M=;
-        b=otn5AT2BgnjDbr+sLhUkOXpxhFdosl7W4QRP/lAGF1qqaunOFV0Xg70+UrhwJxtZjC
-         EL+tqYzDWvNqLuTWO7OJUWNryQuoT/+HC8oztqXkvnLUG2lV+/m/lNOU9VHENuu7ks84
-         eognjt8YuYmviNW81saf63L43Ec30smyl3ryQCf7uhignJ/vOGXCwTDbGNjiONS6LQAT
-         6EZ9KAlGFUL/l7Avi4O4USofTgQQZNqOCrbKfI/g8kkTmaO8Ops0l2TY8oOrKoydAU0+
-         YjHBio0DTulDh8VYqAHTU3tG3FSTCes95W5l3ijI1DgLHocKqmg5m4pjcsBSGuFKgeep
-         csJw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3teI3ywgQjEwknUppPkVnurF0vx7htpNTTjd+6qDWzqQbg73DmCE+BeMWIP2JylgBym0fAVNbVdbpy68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC0clrRYdXZZSce2Cyb4uVdH6/zOMPgdwIbPoCDSOsG4/HRDK6
-	51nhsLEgI/COVmZrVOIJtspli1WJwmou7XKuGirlIrUKRjeq/Jxy+zcuXvMIHhM13wE1PRVLk7I
-	KUqChAQmbAH7UJgTlqp9Yxrhgpl08LDbS9BXXODOptVxS+I0z+TIXKHiTxZ4=
-X-Google-Smtp-Source: AGHT+IG3zZSeTt3lVZ4LP+nGN0lRFlIna89aRSwhpSjMkK/9y+PWfW2cU+9TDXG+YkN65da7QOZ/dO8Zj7Lxgc4SEXpwR79q8IGg
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CF0230981
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.70
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748949103; cv=fail; b=kV+NXyoa46HUDJHDmSJ2Mg9f2X5XfITeYqUWprErxE7MApOZ24U+YvtN+hq5v8n4ZeB1LSxmwY982qd3bdYJng5Pn27EnzoTEfBiqxDCt6AbNBX+A2QMpnht8fpSHeFunNZSMDmkWu4a9dBCYVVDOMfWK5sfmaHu/pseq78sJhA=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748949103; c=relaxed/simple;
+	bh=13cfSg7Xcxhd6zfNe6hTesq0l1fOIJ9VCyc8gn1RDMg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lb1xOkYMEpASlqDY/tLclM3c9g3yOmnqLhySe8TtQqoLN/j9FFywbKfiBBh0vCejUff3ca4hvQ9t4xddqW9epOLkQ/SL6bVu2RTxhMF4C6ZtG82hIge4Q+a160BapnSrSsLntz0eBb4ISFStN96SwCmxUNwW5oKsug+YvuM/HCQ=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=D1OewySG; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=D1OewySG; arc=fail smtp.client-ip=52.101.72.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=JL0ClpmI2kmZCWj8IvnulXLmV2q9fMCtBV6FCDxoS8lkJPH3aaNlr+Q1DpmEjE738E/Crl+/FOGZmUwnCWKoEVdNPpE0CZdw9rZCijsqMRGV3l5UCsHAvcalD6EP0xnd9EYujfkyD6LyZqgoXA1f/KQR5/5U8hhaPCSigNwl3U094/MzHh/JRVsBrJcmiycgKEdBYiFcsnDz2G0GMX+A9EGMNTCviJeqfwTqmlQVGepPa4cFh+u7NEn/e+ubIXlpVfyzMuquCLMl76ERYHqHw4SnyQsvOMertyNsCLUvf8OffF1jYxcyspKsO5z1FQ//lenUWyBiPbEfmhnoIXaF8g==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=13cfSg7Xcxhd6zfNe6hTesq0l1fOIJ9VCyc8gn1RDMg=;
+ b=Q3eUPIL7I+F1QOs9lhwKSEoYwpCZ9++NGEzysk7P/mkHQyUkMg61pNZQbTUbjdzBlX7YB2is7uimcmCv41lKXU7GMYjDDOXB/yS0fZK2jYXghQK/CRkGgyAlUodmCesgnOmxqqbzVzp3SQ5PAEqloO+hgqD5ykmDD6qaPNGnnrfT1HZeUdnGXW5/rgLTrmY180W5ZCSJhxjKU6+zRmpcBUxPkoPKLrkS9VgFub5CqXenBcewpjR0PnDa/JdwRsc+AVkHKW3B0E55o1C8DZd55PFXxg9uLiyNczlXfhIYFRcSdW8O//A8lKzpGaEcDca2La+4Sl23eZV/AX2aO2q8Lw==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=linaro.org smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=13cfSg7Xcxhd6zfNe6hTesq0l1fOIJ9VCyc8gn1RDMg=;
+ b=D1OewySGXpA3F8PpSv3jMb1E/6Nki80hzjeyDIXfxz753R8F2yYZHUytVCsGo4Oc9JNXbyoNNc0n4I8BaxsWv1hdrD1+Da+LxGeIXqc/DmoRnZ//BlWMcm39dnu9GO4pwKrgNTooz/wjzQA2afEfa/Qr5K+vj1phL21uV1q5rAA=
+Received: from AS4P191CA0040.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:657::9)
+ by DU5PR08MB10824.eurprd08.prod.outlook.com (2603:10a6:10:526::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.30; Tue, 3 Jun
+ 2025 11:11:36 +0000
+Received: from AMS0EPF000001B2.eurprd05.prod.outlook.com
+ (2603:10a6:20b:657:cafe::2d) by AS4P191CA0040.outlook.office365.com
+ (2603:10a6:20b:657::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.31 via Frontend Transport; Tue,
+ 3 Jun 2025 11:11:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AMS0EPF000001B2.mail.protection.outlook.com (10.167.16.166) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
+ via Frontend Transport; Tue, 3 Jun 2025 11:11:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RBudTaSrfA3sUppCLzlYv1DaWCbvrMRod9gHzuxqnH5tTeAW0DuE5xARWWH3ZLDIscMHYT9+pV8eNda9ARlmL3HW246tDY2f8lWneqekdq5g3WDEOkbtUVXfbMHX14iy9JhAdZMCShuRXxThyILVHCb0Fsq1yYU/b+BglW0jWgrNeQ6sHFZV+NUPys3lWH1fBkCU9P71iYt6l4MnrRvtWL7dA//T0ztRKIIN3ku2TTezyXoDWvj32kmkP+LRlF+lFz4r9CyCOvtUlW2j3Hu/G0S6uzlo9GHS6OGYIkwQzqSJB3y4CPz6lNDCuD8j+qkv90nw4vuMnLlH22WKdB4ppw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=13cfSg7Xcxhd6zfNe6hTesq0l1fOIJ9VCyc8gn1RDMg=;
+ b=KDtuirW2OY4RBMN/nj/SBV76mpWs2pnKe+d5qkBXWQ8rNaW+BmAPwfLILQWKskMcOFZb4w8pB/hLNXkFzgrL8bkSu/wIzy1kKBGa7FWvlr7U8vVc3GNo34IwJTZQgUzIHYNPuya0igBa8hx0aculsauES8TkfGBc7Db55L6NRmnMo7HPaTFkQ7HaTsuiXzXO4POQgmFyq1h17JkKcl5I+bOFSUjyEHSSzZ8v6z2ygp/Bcy3uPXhjQC8DtOkYcfP+wu3btSU42k1Bduiax5f5xGZeNACkdU4q/pHDduyYFjnn7hhQCvtNsOeb+sPoOnc5vDAQWMrQEiHsI0yjSK05Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=13cfSg7Xcxhd6zfNe6hTesq0l1fOIJ9VCyc8gn1RDMg=;
+ b=D1OewySGXpA3F8PpSv3jMb1E/6Nki80hzjeyDIXfxz753R8F2yYZHUytVCsGo4Oc9JNXbyoNNc0n4I8BaxsWv1hdrD1+Da+LxGeIXqc/DmoRnZ//BlWMcm39dnu9GO4pwKrgNTooz/wjzQA2afEfa/Qr5K+vj1phL21uV1q5rAA=
+Received: from DB9PR08MB6588.eurprd08.prod.outlook.com (2603:10a6:10:25a::24)
+ by PAXPR08MB7492.eurprd08.prod.outlook.com (2603:10a6:102:2b5::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Tue, 3 Jun
+ 2025 11:11:02 +0000
+Received: from DB9PR08MB6588.eurprd08.prod.outlook.com
+ ([fe80::a8fc:ea0d:baf1:23a]) by DB9PR08MB6588.eurprd08.prod.outlook.com
+ ([fe80::a8fc:ea0d:baf1:23a%4]) with mapi id 15.20.8792.033; Tue, 3 Jun 2025
+ 11:11:02 +0000
+From: Bertrand Marquis <Bertrand.Marquis@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+CC: Sudeep Holla <Sudeep.Holla@arm.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, =?iso-8859-1?Q?Alex_Benn=E9e?=
+	<alex.bennee@linaro.org>, "Bill Mills (bill.mills@linaro.org)"
+	<bill.mills@linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [Virtio-msg] [PATCH] firmware: arm_ffa: Fix struct
+ ffa_indirect_msg_hdr
+Thread-Topic: [Virtio-msg] [PATCH] firmware: arm_ffa: Fix struct
+ ffa_indirect_msg_hdr
+Thread-Index: AQHb1Hfs/wpd7UJ6x0SGIBPGNCDEBrPxR2YA
+Date: Tue, 3 Jun 2025 11:11:02 +0000
+Message-ID: <08C89D57-DEEB-4B9E-9089-9FE958BC7747@arm.com>
+References:
+ <28a624fbf416975de4fbe08cfbf7c2db89cb630e.1748948911.git.viresh.kumar@linaro.org>
+In-Reply-To:
+ <28a624fbf416975de4fbe08cfbf7c2db89cb630e.1748948911.git.viresh.kumar@linaro.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3826.600.51.1.1)
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+x-ms-traffictypediagnostic:
+	DB9PR08MB6588:EE_|PAXPR08MB7492:EE_|AMS0EPF000001B2:EE_|DU5PR08MB10824:EE_
+X-MS-Office365-Filtering-Correlation-Id: f73efc06-afc6-4e19-9c27-08dda28f6809
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+nodisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|4022899009|1800799024|376014|38070700018;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?iso-8859-1?Q?RtXeRO1w8It67rWz17VUabjp7BncYKuUQZbY/HaWjnPLt2Opu//gsvRAWX?=
+ =?iso-8859-1?Q?VBPAC7/iVhueGS6yFgmK9iPajMwf60MnOcg7N0kV6Jl9h7nnBiJhFK62Fl?=
+ =?iso-8859-1?Q?Dl4d9n9i5x74B14LXbpc2F3VIp94YZCcOik+RQ3YR9G9Ocv07UJIYfMFrE?=
+ =?iso-8859-1?Q?0x3fTcvKyNvtjkzH/4Vn941dVc3H7EmTmipXurMFRmwQ0nSRUjF/RsFSno?=
+ =?iso-8859-1?Q?v6hTl+/jZyODq7acctotquH+EWV9CqTLpA9UWuTkklwoEc/OQxff4P7/F1?=
+ =?iso-8859-1?Q?xrTDdWR4yAo3LFlCQF1c3Q+2iihxnmvkmFbn747z4qckyva3Sa6zgO4zhS?=
+ =?iso-8859-1?Q?bOwkzn6jDMWTXiXD/mxFpPJlR64EzV4H5pgivd9Uo6AMVYaM2Lw1lr2+VL?=
+ =?iso-8859-1?Q?sXn7nGFTdqmZsD6TqQW2u48+aFVXLWF3OwUSVGhRz45m2+GehAWYGKfNv3?=
+ =?iso-8859-1?Q?udOddnS2U0umT4jGGMbtN5TCuZ5pO6wzHgh0LHTJDAcf4EPX9VIfbLGC8d?=
+ =?iso-8859-1?Q?KEl49KAYGRVYrAlYBmwRlCZEKRL7u24kWnGk0ILrDXVIxBCGCQnjtKdHnR?=
+ =?iso-8859-1?Q?L6G0PgttwOTWtLVhYJpf75kzD6LFUKRT8RcWx0XD5fxOPEQr7gXc6LmEIr?=
+ =?iso-8859-1?Q?OMHfx02MGo6wDFbr9e7ETraZXdL6ehHuCRbH4EH4tdqnsT9LboCY2Pf4Bf?=
+ =?iso-8859-1?Q?/7L7n22SDGAhJtI1TeO0M6XUaD5uUHpo5oJrojnwDQG814CQ/e3o+xK1US?=
+ =?iso-8859-1?Q?/66/eTbt5WI0JCCw8fBphEupM92YZhn8Jsl3qx96a/0t9mJsasz9C8HcFW?=
+ =?iso-8859-1?Q?VXoSONEpwl7o51p95efM0EZh/CxW+BDYv43jBaMwbq49PW+N2mNvw/8mtB?=
+ =?iso-8859-1?Q?DH5Mn36agM7focHWvLM+I4GdiiviPJ2WmhGq/eqwZ6/jHdIayjp+KeRXR8?=
+ =?iso-8859-1?Q?eTzKsMBss+zwMhnhKna36ezQE3VJ+wgvw4FMGrYvpjTjR147W/tID+T1q0?=
+ =?iso-8859-1?Q?oMYihh7viZPreKBb0biJrwFytvrkSIOUehZzUtXwr30wSS5g4S+3K4BLi5?=
+ =?iso-8859-1?Q?rKNtl4ghE+0PS0jUIlXS7x9rGVCimlMCf1jp9GKEaC1Jx6QzCUYuUvl/z0?=
+ =?iso-8859-1?Q?cvy6xJhELqKPEKAlgSU37kt9Fxbls4iAKArtWy3f9yWVLhuKdOUZ1SPPnE?=
+ =?iso-8859-1?Q?WgZNAJzcKFvisE+QBW1srr8sciu9pKV7pp458CdffPwHisS1wGXKJp0lTy?=
+ =?iso-8859-1?Q?gRfRKHHhGXpDIuddA6c5OrRthvuDxQkGV3+II/Lhxe6bj8zWxoiXqYOq75?=
+ =?iso-8859-1?Q?WIZrqO4AHwaU+DUY8mweGGy5qDR0R8oTtF3vi3yS1bHH1s4TjAnrLQAMnp?=
+ =?iso-8859-1?Q?DLKJwvAxY4thYHm3lTCoUmp1lkDmaod2c1FctvUebYoSWS/t5y0gLtpdJ8?=
+ =?iso-8859-1?Q?/SJalS/UBKgyHi4/qxRnOmsTiomSULZDzQRocNGyk2n6FNc9rhyx49LvDS?=
+ =?iso-8859-1?Q?V3soXrpO+OXmgl/S4Sk04H1sa6PNEQLvi9ty1MRlm3BCB1BSF3Y+XDervt?=
+ =?iso-8859-1?Q?3nDZpAs=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR08MB6588.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(4022899009)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <9FDA1F9AB6C4384D999DC349C0896BD3@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4404:10b0:3dd:a619:b894 with SMTP id
- e9e14a558f8ab-3dda619b8b4mr83393395ab.12.1748949034132; Tue, 03 Jun 2025
- 04:10:34 -0700 (PDT)
-Date: Tue, 03 Jun 2025 04:10:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683ed82a.a00a0220.d8eae.006d.GAE@google.com>
-Subject: [syzbot] [kernfs?] KASAN: slab-use-after-free Read in kernfs_root
-From: syzbot <syzbot+ce1e5a1b4e086b43e56d@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB7492
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF000001B2.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	c14e66eb-b287-4acd-786e-08dda28f53c5
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|4022899009|14060799003|82310400026|1800799024|36860700013|35042699022|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?mR92z2QKz/cw2X2eqd58nuq3wYSoOjNaWLbHS5Uj/nVRkQsud7pn9DTQEe?=
+ =?iso-8859-1?Q?+N87cFczyIJh4zyPjgRk0lZSUowJEQzcDN8JKXaMI+RSEYdF2yF81XUxys?=
+ =?iso-8859-1?Q?cQw/RiGbuuN5QSuSRqY0PyHzlLOcGx+Z/7G92LP/0TWjPGwV8R8srLAd9A?=
+ =?iso-8859-1?Q?Sb3WDsTgZSjJaZQ7tk8sK5BclzOsAUT95nbfpyH+YFJzcCf1MnH3Q4Fmw+?=
+ =?iso-8859-1?Q?toWVh2kV0UzfcdSJ62aOimGceqK4NMHL+IpmubBmKhmpamRcju1O5AKeOo?=
+ =?iso-8859-1?Q?j2U9hJ5QuOQn1X8x6mIuX0S86Ar2waUANuPhATan1rnjOxjqZ3WVnUG/dh?=
+ =?iso-8859-1?Q?WS3ttVmhtw9TAQe8JUK5qq+qoEISnJVUSwgBM+CQZfbgneP1IJaHjs1fxK?=
+ =?iso-8859-1?Q?yP6KVA8gFGLyBFj0y6HxjK7P+zqEcZMTDQWCwiE9m7mp9/pUVb/9hcNJfR?=
+ =?iso-8859-1?Q?NtusEhoNf8eQlOuKv9vWMzH4krHZygyLFALZj8Dtk5H5X9bONK7xeqzayH?=
+ =?iso-8859-1?Q?zTQRbZKM5Drk3rABYuEjPtyhmaJALtlxkBqXCSnnxqkshQUL0p35AOEiwp?=
+ =?iso-8859-1?Q?s1San/z28IsijYBKiPd/5Y/o2brbtNs3ocSwzdmbbrf+ZhlCe5zPr2izJ6?=
+ =?iso-8859-1?Q?RGVpL2iwge8j5forfe1VGtXIWjHpg9wmQcU909EJb3JMYtLitjAu1ucxAU?=
+ =?iso-8859-1?Q?mca4waQaIP8Z7JnpQHn4OYuVHVwLMH7bbMvEFQrBz+kLTZeVM5SJ3V5wdD?=
+ =?iso-8859-1?Q?/ilwLRJUFuoTOfIet8vBKS2+QCpkLcMIWX8H2Yl45R1KKsywQmZpfkJPYk?=
+ =?iso-8859-1?Q?eJ0FAURBX1blJ/wb1iXrXVMNGxxRHS7ADUV3Z8OpAe1AvfdIQxxwHiVpsa?=
+ =?iso-8859-1?Q?Os7kH8NSU4ZWAf7H4IVaeWURN7WxwMW2mFmsebp4xdZYKftZhk/bjGXfQD?=
+ =?iso-8859-1?Q?AcA9fxOPnUYhtv5Lvlual8Mhg7QMwLlvNpfVIq9AE1rIy6ZFwqAD9v/NNo?=
+ =?iso-8859-1?Q?i5NZXiBZn9MTt3BtN3K4jtUuh6Ez2njjeOd/iGjCgX6uWj4qvxWn7gVOKO?=
+ =?iso-8859-1?Q?dwbAWFwMfOxgjkgaWHFua2V93j31K70ApZOztUWXBlXxyMaQNU9z4X5JmU?=
+ =?iso-8859-1?Q?MwcEJ6VeWzuHP8kjbp/XWKWIjnid3VXG1D6BFnpTBnaSjH8YikAKWg4fQo?=
+ =?iso-8859-1?Q?iAqBcT/Zj/IylWLzK2cN2vYBnJRoruZsevQYaYOtJT+C81FoUE6wdXCDCP?=
+ =?iso-8859-1?Q?ZlXiYs2Bs3fj6+SwhrE3wEZkjzIWgIwahCKqMObHJUCc6DQEizY+w5A0uu?=
+ =?iso-8859-1?Q?KqrNwiuLHxBYdzz2QiKls33Zum5MutNSg0klX3V19bNsIJUoBhY041F17p?=
+ =?iso-8859-1?Q?rb53RQFLToZIPkae4iNVRVs6RlsLn2XZRYV4itGieWun+sfPCK3LVAdHTi?=
+ =?iso-8859-1?Q?D1m9BSxA6/yc+c002ts8r52Z5b7xLUFJ0nk9kzzAiwftd+MOEXpext9KKa?=
+ =?iso-8859-1?Q?1ZbhdpE8FovzylKT66GZpD4qWQTEvRXojfPui+Ajidu9w75xKqr3zTPrra?=
+ =?iso-8859-1?Q?v+iA+u958ehsp40qWR0ut1rwOWUQ?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(4022899009)(14060799003)(82310400026)(1800799024)(36860700013)(35042699022)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 11:11:36.5153
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f73efc06-afc6-4e19-9c27-08dda28f6809
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001B2.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR08MB10824
 
-Hello,
+Hi Viresh,
 
-syzbot found the following issue on:
+Thanks for spotting this.
 
-HEAD commit:    90b83efa6701 Merge tag 'bpf-next-6.16' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c0c970580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=262b2977ef00756b
-dashboard link: https://syzkaller.appspot.com/bug?extid=ce1e5a1b4e086b43e56d
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> On 3 Jun 2025, at 13:08, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>=20
+> As per the spec, one 32 bit reserved entry is missing here, add it.
+>=20
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Bertrand Marquis <bertrand.marquis@arm.com>
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Cheers
+Bertrand
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d6f547d1801/disk-90b83efa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/133ea45f5dd5/vmlinux-90b83efa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/649e453718b7/bzImage-90b83efa.xz
+> ---
+> include/linux/arm_ffa.h | 1 +
+> 1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
+> index 5bded24dc24f..e1634897e159 100644
+> --- a/include/linux/arm_ffa.h
+> +++ b/include/linux/arm_ffa.h
+> @@ -283,6 +283,7 @@ struct ffa_indirect_msg_hdr {
+> u32 offset;
+> u32 send_recv_id;
+> u32 size;
+> + u32 res1;
+> uuid_t uuid;
+> };
+>=20
+> --=20
+> 2.31.1.272.g89b43f80a514
+>=20
+> _______________________________________________
+> Virtio-msg mailing list -- virtio-msg@lists.linaro.org
+> To unsubscribe send an email to virtio-msg-leave@lists.linaro.org
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ce1e5a1b4e086b43e56d@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in kernfs_root+0xda/0x230 fs/kernfs/kernfs-internal.h:74
-Read of size 8 at addr ffff88805de64210 by task kworker/0:0/12113
-
-CPU: 0 UID: 0 PID: 12113 Comm: kworker/0:0 Not tainted 6.15.0-syzkaller-07774-g90b83efa6701 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: events request_firmware_work_func
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xd2/0x2b0 mm/kasan/report.c:521
- kasan_report+0x118/0x150 mm/kasan/report.c:634
- kernfs_root+0xda/0x230 fs/kernfs/kernfs-internal.h:74
- kernfs_next_descendant_post fs/kernfs/dir.c:1371 [inline]
- kernfs_activate fs/kernfs/dir.c:1426 [inline]
- kernfs_add_one+0x2f5/0x520 fs/kernfs/dir.c:834
- kernfs_create_link+0x161/0x200 fs/kernfs/symlink.c:48
- sysfs_do_create_link_sd+0x83/0x110 fs/sysfs/symlink.c:44
- device_add_class_symlinks+0x133/0x240 drivers/base/core.c:3444
- device_add+0x475/0xb50 drivers/base/core.c:3643
- fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
- fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
- firmware_fallback_sysfs+0x2e4/0x9b0 drivers/base/firmware_loader/fallback.c:238
- _request_firmware+0xf83/0x15b0 drivers/base/firmware_loader/main.c:941
- request_firmware_work_func+0xaf/0x1c0 drivers/base/firmware_loader/main.c:1194
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 12113:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4147 [inline]
- slab_alloc_node mm/slub.c:4196 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4203
- __kernfs_new_node+0xd7/0x7f0 fs/kernfs/dir.c:637
- kernfs_new_node+0x102/0x210 fs/kernfs/dir.c:713
- kernfs_create_link+0xa7/0x200 fs/kernfs/symlink.c:39
- sysfs_do_create_link_sd+0x83/0x110 fs/sysfs/symlink.c:44
- device_add_class_symlinks+0x133/0x240 drivers/base/core.c:3444
- device_add+0x475/0xb50 drivers/base/core.c:3643
- fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
- fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
- firmware_fallback_sysfs+0x2e4/0x9b0 drivers/base/firmware_loader/fallback.c:238
- _request_firmware+0xf83/0x15b0 drivers/base/firmware_loader/main.c:941
- request_firmware_work_func+0xaf/0x1c0 drivers/base/firmware_loader/main.c:1194
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Freed by task 15:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2380 [inline]
- slab_free mm/slub.c:4642 [inline]
- kmem_cache_free+0x18f/0x400 mm/slub.c:4744
- rcu_do_batch kernel/rcu/tree.c:2576 [inline]
- rcu_core+0xca8/0x1710 kernel/rcu/tree.c:2832
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
- smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:164
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Last potentially related work creation:
- kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
- __call_rcu_common kernel/rcu/tree.c:3090 [inline]
- call_rcu+0x142/0x990 kernel/rcu/tree.c:3210
- kernfs_put+0x186/0x450 fs/kernfs/dir.c:591
- __kernfs_remove+0x3f6/0x570 fs/kernfs/dir.c:1528
- kernfs_remove+0x38/0x60 fs/kernfs/dir.c:1548
- __kobject_del+0xe1/0x300 lib/kobject.c:604
- kobject_del+0x45/0x60 lib/kobject.c:627
- device_del+0x75f/0x8e0 drivers/base/core.c:3901
- usb_disconnect+0x5d9/0x910 drivers/usb/core/hub.c:2344
- hub_port_connect drivers/usb/core/hub.c:5371 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5671 [inline]
- port_event drivers/usb/core/hub.c:5831 [inline]
- hub_event+0x1cdb/0x4a00 drivers/usb/core/hub.c:5913
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff88805de641e0
- which belongs to the cache kernfs_node_cache of size 176
-The buggy address is located 48 bytes inside of
- freed 176-byte region [ffff88805de641e0, ffff88805de64290)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5de64
-anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801ba95dc0 ffffea000174f5c0 dead000000000005
-raw: 0000000000000000 0000000000110011 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 2151, tgid 2151 (kworker/1:2), ts 423541252674, free_ts 422989661618
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1710
- prep_new_page mm/page_alloc.c:1718 [inline]
- get_page_from_freelist+0x21e0/0x22c0 mm/page_alloc.c:3680
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4970
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2301
- alloc_slab_page mm/slub.c:2450 [inline]
- allocate_slab+0x8a/0x3b0 mm/slub.c:2618
- new_slab mm/slub.c:2672 [inline]
- ___slab_alloc+0xbfc/0x1480 mm/slub.c:3858
- __slab_alloc mm/slub.c:3948 [inline]
- __slab_alloc_node mm/slub.c:4023 [inline]
- slab_alloc_node mm/slub.c:4184 [inline]
- kmem_cache_alloc_noprof+0x283/0x3c0 mm/slub.c:4203
- __kernfs_new_node+0xd7/0x7f0 fs/kernfs/dir.c:637
- kernfs_new_node+0x102/0x210 fs/kernfs/dir.c:713
- __kernfs_create_file+0x4b/0x2e0 fs/kernfs/file.c:1038
- sysfs_add_file_mode_ns+0x238/0x300 fs/sysfs/file.c:319
- create_files fs/sysfs/group.c:76 [inline]
- internal_create_group+0x66d/0x1110 fs/sysfs/group.c:183
- internal_create_groups fs/sysfs/group.c:223 [inline]
- sysfs_create_groups+0x59/0x120 fs/sysfs/group.c:249
- device_add_groups drivers/base/core.c:2839 [inline]
- device_add_attrs+0x1c4/0x5a0 drivers/base/core.c:2914
- device_add+0x496/0xb50 drivers/base/core.c:3646
- usb_create_ep_devs+0x12c/0x230 drivers/usb/core/endpoint.c:170
-page last free pid 9826 tgid 9824 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1254 [inline]
- __free_frozen_pages+0xc6e/0xe50 mm/page_alloc.c:2717
- pagetable_free include/linux/mm.h:3019 [inline]
- pagetable_dtor_free include/linux/mm.h:3117 [inline]
- __tlb_remove_table+0x2d2/0x3b0 include/asm-generic/tlb.h:215
- __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
- tlb_remove_table_rcu+0x85/0x100 mm/mmu_gather.c:290
- rcu_do_batch kernel/rcu/tree.c:2576 [inline]
- rcu_core+0xca8/0x1710 kernel/rcu/tree.c:2832
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-Memory state around the buggy address:
- ffff88805de64100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88805de64180: 00 00 00 00 fc fc fc fc fc fc fc fc fa fb fb fb
->ffff88805de64200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                         ^
- ffff88805de64280: fb fb fc fc fc fc fc fc fc fc 00 00 00 00 00 00
- ffff88805de64300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
