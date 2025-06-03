@@ -1,184 +1,221 @@
-Return-Path: <linux-kernel+bounces-671939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890D6ACC8A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CDAACC8A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584FF16280D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:03:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 599D27A24E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888791DB366;
-	Tue,  3 Jun 2025 14:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8E239570;
+	Tue,  3 Jun 2025 14:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiLDe3ke"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qQF5T6xw"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2048.outbound.protection.outlook.com [40.107.100.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20C1221D94
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748959411; cv=none; b=uLSRPvQE5+l9slYErkdw73prjs+QIfJM9xFQfRe6+oAXul3Icpz1in4Nlda2edtfl0YG6MnaZS7RTDyRh8Vgc1xNHYzZHS2uMahNAsjtl7ddBS5+8/qSf5j7ZTey+FXATRdxQ6fagx+m48zOVF9yufynKSOo2ae4gc43McbsKm0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748959411; c=relaxed/simple;
-	bh=+k1KcLiR74h+DHCJUtU49fGLLq6L6csb6kt4etWsGGI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RWiPKqKkOqav+WBHxbVKZs7ENfmgo8qjWuPvZ3gmIH1ArqpjxNO4Admu3xmqh//zvwp2LqFinJOP6gsuwVQEZFYkXDSsOhHx1U4scOCANh4v3vvwjyk7l1RFYh78TrG2K1o02PHuGW9uv+pZuMgyql+A7AWov7HiRIdL9zYgexY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiLDe3ke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A66C4CEED;
-	Tue,  3 Jun 2025 14:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748959410;
-	bh=+k1KcLiR74h+DHCJUtU49fGLLq6L6csb6kt4etWsGGI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UiLDe3keWK8+XX8y4Hm1BolFib/py85LKE4DwKZ5s9cOj2U0+EbHmny5Qp1g69zix
-	 XSepvpSfC2u9L6JA5sT5kWFTzdntV37shF+QrDYe4Oln4Ot31pfI0bo3Qb+lcg7yMu
-	 rNg/QBR2hESihmbUuKkCISH48eEK2eAbv6d9Qr8AyZxPsUON3MYjZcKIxSBJOflMi9
-	 YX0sLC5qbffW5aAAzeuEpZDuYcXcB/zhBBqF1vpufGln7cocjErrJIU9kYF23SZWXr
-	 E+FbOS16LFDb2faBS6PYhHx/ZRnRS2ree/zdXwWtFZj/5jsoml9uVuL0rpEKpS7kB4
-	 HA94D1sa1GUVw==
-Received: from [149.88.19.236] (helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uMSEh-002r8p-Sw;
-	Tue, 03 Jun 2025 15:03:28 +0100
-Date: Tue, 03 Jun 2025 15:03:26 +0100
-Message-ID: <87h60wexch.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Zenghui Yu <yuzenghui@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>
-Subject: Re: [PATCH v2 3/5] genirq/msi: Move prepare() call to per-device allocation
-In-Reply-To: <aD741hI7MfTmi7Rl@lpieralisi>
-References: <20250513163144.2215824-1-maz@kernel.org>
-	<20250513163144.2215824-4-maz@kernel.org>
-	<0b1d7aec-1eac-a9cd-502a-339e216e08a1@huawei.com>
-	<87ldq9dm54.wl-maz@kernel.org>
-	<aD741hI7MfTmi7Rl@lpieralisi>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEFA238D2B;
+	Tue,  3 Jun 2025 14:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748959443; cv=fail; b=aP6xS+O1myWBCEr3NcGR1ZXKEIXNj5GdXoKtpxZjAGNo82aDFWxSJmxinhAPfLdWDBrTcpZKPO/Q8Hh3ADfCvKlicPnTCUj4WA5w+mIziQoEgQi8XLoqGbhwDTVnWtEpnUqh3GUoZzvndqmSgr9yOTXTCfwcwUNSAR7+4aC4+2o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748959443; c=relaxed/simple;
+	bh=9TvR8XqR0yO77hbxk5PiWYsrwnozVdpvbBZNqjKr0fw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GLkY5U/hOtlizVV9GGttmoEBowFdKikZ52Md82FrtEA18wsK8Fm1WLBtVcuoJX81XCmdzbCoL9Zs4s8lZ48wSEGyg9r83YvN1P6SOVSyf95C8PurIrvFQw2vOgNWjZA7eHT1x/gikC6iXRUhxyNLyQmlTGC6res0pCb4qGzd0ig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qQF5T6xw; arc=fail smtp.client-ip=40.107.100.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q1SoQcHGoW31hFfNVcrJUT4rM5fR+dqjwOjMdrSGJ/MmFl80dC/w6yCq3u4PNxBhJwU8TZaUOX5ucEr854l3gd/gLQo/nGp1lHpdpnAS/jXsPje2C4XuqjEtCV1ch6gJu9RZNxGfsnm7BMWpy9dyM3oQUw/bHaS6uJjsO5DBAFH5AqmnZA/l0h4Ym5P4/SbUaOrWkIbIw5dvBD67dxPjbKZBdXJqbvHI91TF85eunxasVBE+XlrFBoFeI0JJtZgmXeESTdB4ACy0iTf7+6toebQpFUcNv1mjlGUMn0ErNbsOAp1M0RBep6r+fg3i34wUlT3A3+G5JSFTPKgR7BAi/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/zQ5TIsZ9GPwWcvnKzv9P/KVJpsbEN/DYokEKL1JyTo=;
+ b=f6xp10SykhglL3O5TQLBIVC3uMDUbAz2Y4rZTy34obSH4558qHgXPHsH9tRz3Eg1l4JUUI7zaKCsrkLi9vfrVVSBiKTQ1gs6ahNb/uzzOonWIdiWdVKeEfdT4gWVhsmDU3bTHyhI2zu2ziwYrefBKZWx2JwdJSd2mzcr+hHTHHYLDn4vb4NxHmI+o21QIpyazZDOV08r3Mz+tgkmPjNz6sFEh4C4Um3vm2kb58x4EFBTzAsOsd6NFpg1Bsm56Jg5DdJ/E+NaLykfgPPK0Te/VETkoseL6L6mwyeUPLQLPTKHMIkK8+LBdkH96wuHAD/e7NtKR0J5jXKlAvrxWCZe7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/zQ5TIsZ9GPwWcvnKzv9P/KVJpsbEN/DYokEKL1JyTo=;
+ b=qQF5T6xwkN7L7rsFBVlQOnfhTc1iB5ZcKHkT4wuamtw8Hfg+uy+lN/PKK6iPqddl/6/tcUiDUIAdLmR+vz6uEl3yUFuSc9GqTZhrgw6JvBEKKkgC4LlReSfGXfeDoNeAKYU6nOB1N4mFKmCUBZe43epMlyYUFe3QisjSQh7GfaY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by BY5PR12MB4179.namprd12.prod.outlook.com (2603:10b6:a03:211::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Tue, 3 Jun
+ 2025 14:03:58 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8792.034; Tue, 3 Jun 2025
+ 14:03:58 +0000
+Message-ID: <a058d191-6fd7-bdf6-4cfe-2988521a8e6a@amd.com>
+Date: Tue, 3 Jun 2025 09:03:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 1/5] crypto: ccp: New bit-field definitions for
+ SNP_PLATFORM_STATUS command
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au
+Cc: x86@kernel.org, john.allen@amd.com, davem@davemloft.net,
+ michael.roth@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+References: <cover.1747696092.git.ashish.kalra@amd.com>
+ <5f4bb8f321c57cddd06f4205ee3cbf6bde0b3915.1747696092.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <5f4bb8f321c57cddd06f4205ee3cbf6bde0b3915.1747696092.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR06CA0004.namprd06.prod.outlook.com
+ (2603:10b6:208:23d::9) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 149.88.19.236
-X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, sascha.bischoff@arm.com, timothy.hayes@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BY5PR12MB4179:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b82134b-d657-48b3-d7b8-08dda2a77c24
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ODUyZ1dRN2JKS3RVVmhGcmNpeUN3dk1pYmZpRTJITE5zWVJBTXhUWnVrNk1E?=
+ =?utf-8?B?VVJUYW5MZ0QySjY3ekpDc1pSNUp4NDM3V05jS1poejJ4VzRETXlsZytRWWVo?=
+ =?utf-8?B?Y01mVUc3MVo2c2k4RWttWnNtS25heVBwNkVEWnZDeU5wYmhkQjI3aUlWa0pT?=
+ =?utf-8?B?T3pYTS9MMTA2WkhmTm9lZlRLUmNHK0dnUG5QM3BTYkFuWGkrQi9iQ1F0bCtR?=
+ =?utf-8?B?dUp4L1QvS3ZKWG1YMEQ2ZWsxaDVJdURibmFPdERUdXIzektSM2ZudmFPSUor?=
+ =?utf-8?B?QUNsYzZaejNUK1Z3SUk5eXlPc1UrRnBxendwN2dwMWpNaEJvYmNFZXd4bUNs?=
+ =?utf-8?B?S2N1Q0J5clcyNmZZSVdZZzVCdlUrWno1U0kwTCs5cUJEVkE5S1JwTUZYSi82?=
+ =?utf-8?B?dUJkbytsVG4waHltR25XdGIydnB2VXByQUtKTys2UFFFZ3RLZytxRXYzWWov?=
+ =?utf-8?B?MlNhcUJmNCtnMW5CNGZDbXdKcnhpV212MVMzL1N6YmtjTFJMQ2N3QVRKNXZQ?=
+ =?utf-8?B?YWExaGNyaUdwUXNCWmlWRkVSUElUejJEVFR3Z2RaeXlNS1NGcldTZFdTTDBz?=
+ =?utf-8?B?bTVraHZVaGk1a1MyN2V2M0QweGNuSWd5M0p6MlRPR2M1RXdOUzNvWEIrblFU?=
+ =?utf-8?B?cXZvV1gxYXI3bjVQTC8wendLZHA5d1dCUjRDbU5vWnowNzUxTVJwT1VYclp3?=
+ =?utf-8?B?dCtpM1dnNzl3eU9ldldHSGJNTjJFVVBMUGl5UklGZFFJUFVKOXBHa0ZJaDcw?=
+ =?utf-8?B?ZUIxMG55RUwrcy92LzVZV2JBcm1JNWg2ekVjK0F5OWc5bzI4RDl4dkQ5TWt1?=
+ =?utf-8?B?OFhsU2RKUDZBbzRhZ2tSdlY4SThLUnprRkhqc2tWNWZvcDUza09vdXV5c2ph?=
+ =?utf-8?B?Zmp4M1lLOUVVNkxIeDg3VUpuNGgzZCs5cUZiWE1FSUJaUlZpeFB3VHByTVFz?=
+ =?utf-8?B?VlBnRGw2OW9aYnVaQXRmMi9qbHRkd2I1NTZCb2lOQlpGM0J3T0Y1RGZUQ295?=
+ =?utf-8?B?RVRGTEMzcFNOaklVWGNwTjVDQ1NnYzFqTTJHL1g0YUI2ckxtYmw3cDhpVnhr?=
+ =?utf-8?B?YlN4RFZZdm82UWFMOXcwWU56SUFydTNGSW1rTkpMN2FaaWM5aUp2RVJqYkhJ?=
+ =?utf-8?B?Z3c5SFFJdXh2K0MzdkNPOHd1SUoxckhWVnp4VnZDRllaT0VFcnpibWdFcDFB?=
+ =?utf-8?B?QWlDMSt6dFE0YnhPUERrR0pmUjZxMnRtVWtmUXcrRHNrZnAxWnQ3QXNOZnZz?=
+ =?utf-8?B?dTF5RHM1bEJGdjJiQ0ErYWpuemc2ekdzOWRDNGF6UEhUMmYzdVI3U2tiakdQ?=
+ =?utf-8?B?QytrUllNcnVoSXgxRGtpY2RVbmRxc1hIS3B6dGNua2lCbFI3NDZVNC9uVWRF?=
+ =?utf-8?B?a1RqKzRDUlQwZ2ZtRjBVRjJqM2xoeldMNzI4OXY0aUUyRWVMbFk2NGxXM0xm?=
+ =?utf-8?B?VEwwMlFDOHdjbEFoWWlLT0NVZkpZTHVQTmJ5UG1zR1NoUVpEcm5jeW1lOVhX?=
+ =?utf-8?B?cVRBVzFCbHNxc2pBOGpoVzZXdzVWUFloWHpsMndmOVF6NEx2N0xxNSt2K1VU?=
+ =?utf-8?B?MnhvdktqdkRUUUcyVzJCZ0NxSDdROHBlUlR0ZVJVaU11L0NmMEtpOHBaNmlP?=
+ =?utf-8?B?U2M5aGticXZVYzFTb1JKcllDVHNqRXdpMGNRMVdoMkwwbEo0YXN5b1AzeVMz?=
+ =?utf-8?B?dXc5SFdrRlRETis0Qm00ZGQ1YTRHS2FxVmZxaVVkVThjd0RkUy9JbHExV1pH?=
+ =?utf-8?B?aWZkMnZ1Tm04QkZjOFJZT1ZURVFrU29BZGpId01LUWNraGhNWUVPV1JvaUpV?=
+ =?utf-8?B?THEwSi9FMFNhK3QyMDZXZ043dlNxaE44NUVkNXplSnlqdkF5V0wyRG9Pek5Z?=
+ =?utf-8?B?bnNqNXJRVnhOTGZybHVJNGVvVnlRQVU4QnY3bGhmRHRLdHhEaCtIYWljZy92?=
+ =?utf-8?Q?pKtgain7+4w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L2c1STZ2OWY2TDB4MmVobE1YSE4zc3JZaWVxZVNFOGc3UlRuVHFnaWluMkM0?=
+ =?utf-8?B?Z252cFN3YmlDVHd1T1Q0YlZuakp3QS8zQ0czbFEwLzdnTm5wejJTT3dZNXZz?=
+ =?utf-8?B?cjYveDFPNnU0YWtRc3IzdkJxZzBPRXNlRGtVVkZHQXhnSDN2ZC9GdDRKcDlN?=
+ =?utf-8?B?SDlmNktuemVURXFKZlE2ZnRialhzK2JxMFVXL2xsRXRXaDh4WTNjY2FZL3Rj?=
+ =?utf-8?B?TnVnaXY2bUNGMW5QNkQzRHl6Z05YK3NVWWZOZ3pTeTJESFZkMmIzVm9mekFv?=
+ =?utf-8?B?bG5QTW5aZkwyMDVkTzk1c0FtR29XN3N0c2dYWWZFWnFRVlJtaXFKNlV2dm1Y?=
+ =?utf-8?B?VmFtNzVkZDBWZERiU0ZUc1phSy9jNjZlVjBiVmk5cjYrb29qMDlYUjBHck5j?=
+ =?utf-8?B?bHNsWDBRakZvenJIR3NDVTlCeXdKaXZSWUhkNTQzejVjVkNsZVJheXJnZlNS?=
+ =?utf-8?B?aEpHYzhuWEZLK0ROcm9mRUtNODM2YVVrUVNGZjliUmhwWkNnc0F6S1ZBMml6?=
+ =?utf-8?B?RFRyY1RrMUMrVFNkM05ZMkpFaTVsZHVjS3NpU0VjNGx6bURocitMRmNIcDdD?=
+ =?utf-8?B?NGVZNmNXUmtQVnhGM2VuSFJRRVVOTEg2R2pjZ2dUN3ZuSDdSMWRDZTkxYjRT?=
+ =?utf-8?B?Um12Y2JaZG9GWVFhZTRqM2FkY1UyS3MrRm9CbW45NmFZVFkxV0VpeDc3S2RS?=
+ =?utf-8?B?U3A2enBRY3VMcUVuV3JrNWhPT0M1YTBxOTZJbTQ3bHpxc3dGL29mKzhkSXh6?=
+ =?utf-8?B?R2RJc3VTc1dPNFlsS3EzSzhXU3JUZWNVQ0NiQTRuRTRFZk9zYTRUQ2ZhS1ow?=
+ =?utf-8?B?Y1JLa2R1T1NyRWtHTXlLLzNaZTJjMDc2Nzlqa0xsT3FXZnlsS3BseXV4dEFk?=
+ =?utf-8?B?MC9xY0w4NHBDc3FYSUUzd2ZCdG8wQXpXaG9KZ3VpTnp5VE5IbkdJdlVCeC81?=
+ =?utf-8?B?anVQT0JzTWk1RGhHYWt1THhYSkZrVm9sQ3p2amN0Ti9xT05jUFVYRkxURHBT?=
+ =?utf-8?B?Ym5QMVd2QldFc2NrNW5DQ1FFM3pyVmsyY2VETjFVbmI5dHd1WmJ5b3NOcEhh?=
+ =?utf-8?B?Q3VqVnNYdWhjVkpXRkJrVlZNTDVWMHowbThQdjd2Q01Ea2FzeDNwTDNxVmF4?=
+ =?utf-8?B?OXV3U3ZkY010UEpRRVZYUUdRMmtieXcvSVgrTE9nMnlBbU11SzhsZHV6OStl?=
+ =?utf-8?B?RTNoVGg1bkM1bGtTSVcxZ0U2SlJvcDVnOTVhZUJ5Z1hSMmtDK3pDUFdJcEpa?=
+ =?utf-8?B?MXlvbjJJM1JJbmxQVXVmbmZ0OW5kdHpQV1pmWlRkd0JsSWozRjA2WkF1YlBI?=
+ =?utf-8?B?Tys4UWJFL0RjdG5QWnQyZFVrMmJrQzNpeHZtTzJWMEF6UmVuMVp6TWhyVGZJ?=
+ =?utf-8?B?Z0Vqc0VhSi9xRnlZT1A5MFJSWjc2YlN6ZjB2MllnL1U4SHB0RjE3cWdJYVJ1?=
+ =?utf-8?B?RlpzNFpOVnpGaVNIcUJROUhDY1pPeEdhbTNwOXRHTjhpV2tPTEgzWXdYdGU3?=
+ =?utf-8?B?VWpSRGxTVnpZUm4yRDZLR3h6ZCsvaTJDWGFuK0RzSEdmU2E4SjJGbk10YmZi?=
+ =?utf-8?B?MDRSRGxvd1Z0bGZ0YWhydXVkWkRQcXpWK294VHRYV0ZPdmhCTlNJSEowRVo2?=
+ =?utf-8?B?K3plYm9reDZ0WDIyREdpclYxSjRiRlkzakM0OXVpaFJpQ1NvelUyUUJXZ3ZK?=
+ =?utf-8?B?aDdUVDJmQ1k0YllrZjVaNG4zaUh1OVhMQUFHdi94MHA2Z2d0Z1F5VjBwVGVN?=
+ =?utf-8?B?V1JwSTBnUUN0Rll0L2dZdEVRblR6MUUzZVFwU01rR3pXbEtBa2kxc2dROEZk?=
+ =?utf-8?B?OGpXQ0tBbUs1UlVuRUd5OUc1MW91cWhFTE9hQmpvUDdZQjFEN0xuOGxpWkNx?=
+ =?utf-8?B?RVVEUEpCaGEyNUgvM0lWMmI5Rm5GRzIwWWd5dEpOR1BON1FSUzRjZ0hFNmRo?=
+ =?utf-8?B?QzA2Wm5NWWxncGVKZTQzRW11ekxWcmxvTDEyUWM2OUErQUZtV1M4c0RsM1ZK?=
+ =?utf-8?B?U1FuQzNSZkw1MUl0bzBxWEJJaitMTEdGUGQrM3RLY2hPYXlYOU5ub29wY3lU?=
+ =?utf-8?B?OC9LcDBWUlY1TSthNjd1M1NIckZJbE8weTByMm01NHZBZnRUQ0U5NlYzalI1?=
+ =?utf-8?Q?bUy9xd56O3ckwwgtsdJQyFKXb?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b82134b-d657-48b3-d7b8-08dda2a77c24
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 14:03:58.3753
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uyjQvXlXQdEejn15I/qM1wV+99sV/FfZke7cBlRCdsTEx8koQPPoqz/mT3s2SG5RrlrGZlAa9eNUAJ9WpWvMkg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4179
 
-On Tue, 03 Jun 2025 14:29:58 +0100,
-Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+On 5/19/25 18:56, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> On Tue, Jun 03, 2025 at 01:50:47PM +0100, Marc Zyngier wrote:
-> > Hi Zenghui,
-> > 
-> > On Tue, 03 Jun 2025 09:22:47 +0100,
-> > Zenghui Yu <yuzenghui@huawei.com> wrote:
-> > > 
-> > > > +	domain->dev = dev;
-> > > > +	dev->msi.data->__domains[domid].domain = domain;
-> > > > +
-> > > > +	if (msi_domain_prepare_irqs(domain, dev, hwsize, &bundle->alloc_info)) {
-> > > 
-> > > Does it work for MSI? hwsize is 1 in the MSI case, without taking
-> > > pci_msi_vec_count() into account.
-> > >
-> > > bool pci_setup_msi_device_domain(struct pci_dev *pdev)
-> > > {
-> > > 	[...]
-> > > 
-> > > 	return pci_create_device_domain(pdev, &pci_msi_template, 1);
-> > 
-> > Well spotted.
-> > 
-> > This looks like a PCI bug ignoring Multi-MSI. Can you give the
-> > following a go and let people know whether that fixes your issue?
-> > 
-> > Thanks,
-> > 
-> > 	M.
-> > 
-> > diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-> > index d7ba8795d60f..89677a21d525 100644
-> > --- a/drivers/pci/msi/irqdomain.c
-> > +++ b/drivers/pci/msi/irqdomain.c
-> > @@ -287,7 +287,7 @@ static bool pci_create_device_domain(struct pci_dev *pdev, const struct msi_doma
-> >   *	- The device is removed
-> >   *	- MSI is disabled and a MSI-X domain is created
-> >   */
-> > -bool pci_setup_msi_device_domain(struct pci_dev *pdev)
-> > +bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize)
-> >  {
-> >  	if (WARN_ON_ONCE(pdev->msix_enabled))
-> >  		return false;
-> > @@ -297,7 +297,7 @@ bool pci_setup_msi_device_domain(struct pci_dev *pdev)
-> >  	if (pci_match_device_domain(pdev, DOMAIN_BUS_PCI_DEVICE_MSIX))
-> >  		msi_remove_device_irq_domain(&pdev->dev, MSI_DEFAULT_DOMAIN);
-> >  
-> > -	return pci_create_device_domain(pdev, &pci_msi_template, 1);
-> > +	return pci_create_device_domain(pdev, &pci_msi_template, hwsize);
-> >  }
-> >  
-> >  /**
-> > diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-> > index 8b8848788618..81891701840a 100644
-> > --- a/drivers/pci/msi/msi.c
-> > +++ b/drivers/pci/msi/msi.c
-> > @@ -449,7 +449,7 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
-> >  	if (rc)
-> >  		return rc;
-> >  
-> > -	if (!pci_setup_msi_device_domain(dev))
-> > +	if (!pci_setup_msi_device_domain(dev, nvec))
+> Define new bit-field definitions returned by SNP_PLATFORM_STATUS command
+> such as new capabilities like SNP_FEATURE_INFO command availability,
+> ciphertext hiding enabled and capability.
 > 
-> If pci_msi_vec_count(dev) > maxvec we would cap nvec and size the
-> domain with the capped value.
-> 
-> In __pci_enable_msix_range() we are sizing the device according to
-> pci_msix_vec_count(dev) regardless of maxvec, if I read the code correctly.
-> 
-> While fixing it it would be good to make them consistent unless there is
-> a reason why they should not.
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 
-This is indeed odd, but that'd be a separate fix. Something like:
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index 2090eef64b14..6ede55a7c5e6 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -439,9 +439,6 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (nvec < minvec)
- 		return -ENOSPC;
- 
--	if (nvec > maxvec)
--		nvec = maxvec;
--
- 	rc = pci_setup_msi_context(dev);
- 	if (rc)
- 		return rc;
-@@ -449,6 +446,9 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (!pci_setup_msi_device_domain(dev, nvec))
- 		return -ENODEV;
- 
-+	if (nvec > maxvec)
-+		nvec = maxvec;
-+
- 	for (;;) {
- 		if (affd) {
- 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
-
--- 
-Jazz isn't dead. It just smells funny.
+> ---
+>  include/uapi/linux/psp-sev.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+> index eeb20dfb1fda..c2fd324623c4 100644
+> --- a/include/uapi/linux/psp-sev.h
+> +++ b/include/uapi/linux/psp-sev.h
+> @@ -185,6 +185,10 @@ struct sev_user_data_get_id2 {
+>   * @mask_chip_id: whether chip id is present in attestation reports or not
+>   * @mask_chip_key: whether attestation reports are signed or not
+>   * @vlek_en: VLEK (Version Loaded Endorsement Key) hashstick is loaded
+> + * @feature_info: whether SNP_FEATURE_INFO command is available
+> + * @rapl_dis: whether RAPL is disabled
+> + * @ciphertext_hiding_cap: whether platform has ciphertext hiding capability
+> + * @ciphertext_hiding_en: whether ciphertext hiding is enabled
+>   * @rsvd1: reserved
+>   * @guest_count: the number of guest currently managed by the firmware
+>   * @current_tcb_version: current TCB version
+> @@ -200,7 +204,11 @@ struct sev_user_data_snp_status {
+>  	__u32 mask_chip_id:1;		/* Out */
+>  	__u32 mask_chip_key:1;		/* Out */
+>  	__u32 vlek_en:1;		/* Out */
+> -	__u32 rsvd1:29;
+> +	__u32 feature_info:1;		/* Out */
+> +	__u32 rapl_dis:1;		/* Out */
+> +	__u32 ciphertext_hiding_cap:1;	/* Out */
+> +	__u32 ciphertext_hiding_en:1;	/* Out */
+> +	__u32 rsvd1:25;
+>  	__u32 guest_count;		/* Out */
+>  	__u64 current_tcb_version;	/* Out */
+>  	__u64 reported_tcb_version;	/* Out */
 
