@@ -1,53 +1,44 @@
-Return-Path: <linux-kernel+bounces-672078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF99ACCA91
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9151EACCA57
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42321188FB7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33756188F507
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585BC23D2B4;
-	Tue,  3 Jun 2025 15:50:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1C623371F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 15:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C609623C515;
+	Tue,  3 Jun 2025 15:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ee+c2usy"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314D4140E34;
+	Tue,  3 Jun 2025 15:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748965838; cv=none; b=Ogh7tu/qSsArSBiCmhak23BiM93paipg7Jp5Tt8YHz29Ab7NA3+3qSFi79iGoisMiOYfhJrBuxM/tyE05sA5iy2Mh4WpjII6oXi/mHhT4AOrlLyisI4D+V5fZ+WiyLXtEBsHM/w7E+Bzkn+gtU7hTujMe+tNia7Imjp5Nb6oFuo=
+	t=1748965286; cv=none; b=DTpTIeeEc7kGa0CLtFEyIDsblWXDoQpntj5kDZEaT22fQyuAFpmKstkd3q0oD9VY8ygJOwWI3c/dXgIiAcXgJuT1vfIXLYLqbHoIc2uf0jXPJnXFVJUEk0okfisOrKe/LrfQ8F5fj1//dOnQgf3QxUuUx4nQhDCu3YlBZ0vTSS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748965838; c=relaxed/simple;
-	bh=qiG+VozOOI6wPT+ROdYw/xlw72Su6sc3Ss8/AnXjA/4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NQsKIO3vwt0oeZEJ6kEheFIAf75iKCfuhKjPMqqPDzNbfOyg/fzSFHIhXj9OuuYVDhhIY2f8vIkrkoEeCQKDHpAaxEWuNyVcFdJw1N3CfK5rjk43yLRPYsWIzUCoZ+btG7pU/hb3BPvuVQtKbTj3ER/Ah5UEhRMXwDNAF4Gz+is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bBZfc6crxz9vY0;
-	Tue,  3 Jun 2025 17:40:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id pu_TPIGHgN7w; Tue,  3 Jun 2025 17:40:24 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bBZfc5sbgz9sd1;
-	Tue,  3 Jun 2025 17:40:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C4A9E8B767;
-	Tue,  3 Jun 2025 17:40:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Tgixx4hrf_Oi; Tue,  3 Jun 2025 17:40:24 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5F3318B763;
-	Tue,  3 Jun 2025 17:40:24 +0200 (CEST)
-Message-ID: <f3602ce2-c5b4-4ed2-a4e9-c89534452ac8@csgroup.eu>
-Date: Tue, 3 Jun 2025 17:40:24 +0200
+	s=arc-20240116; t=1748965286; c=relaxed/simple;
+	bh=pXZeYSGxUIzQB00Kk+nSuewsBJ1+A8jLycmkwTd//ss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lu0ULC3iixsmvsu5k+iMKjI9NARWLQzFPboFCmnd0UwCGKTPJS67eIqmJiEyITX04GQ4JydMFA430TCnPGlugLKH84Znk2qg/kadTPSKpnn5ca/kh484DV+GrywK9ak+jv9s0nkxCXjX8AUUk+R6Y5JrSp5LZWcFquS9RPzsuCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ee+c2usy; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=g4OPY/PyEn6wqrGBcT5BIWfztE8z18k+cpHeuPX1le0=;
+	b=Ee+c2usySGMRt1p955PtpgLHyg+0jh4Lq+ZZPpMocbnPenOGgbahrcqslXnnMH
+	aRYESCqj2EYhqVE9CN/DFhtEVV3JcOk4hXKa6jJ8BPTgZS5sy1baSY3xWWHlM4oX
+	j9uii3HjqdbWQpQR6wEpA0NVCHJiSJ4NWZPt5uCmTELI8=
+Received: from [192.168.71.94] (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDnX957Fz9oEfqnFw--.7670S2;
+	Tue, 03 Jun 2025 23:40:43 +0800 (CST)
+Message-ID: <016e1a37-ca63-4ecb-9e55-eb701f789e9d@163.com>
+Date: Tue, 3 Jun 2025 23:40:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,125 +46,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH] Remove unaligned/packed_struct.h header
-To: Julian Vetter <julian@outer-limits.org>, Arnd Bergmann <arnd@arndb.de>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org
-References: <20250603132414.3676142-1-julian@outer-limits.org>
-Content-Language: fr-FR
-In-Reply-To: <20250603132414.3676142-1-julian@outer-limits.org>
+Subject: Re: [PATCH v12 1/6] PCI: Introduce generic bus config read helper
+ function
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com,
+ manivannan.sadhasivam@linaro.org, kw@linux.com, cassel@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250514161258.93844-1-18255117159@163.com>
+ <20250514161258.93844-2-18255117159@163.com>
+ <d6eeb0b5-53b3-5c40-00df-f79aa2619711@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <d6eeb0b5-53b3-5c40-00df-f79aa2619711@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnX957Fz9oEfqnFw--.7670S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFyxCw1rGw43Cr4xWrWDXFb_yoW5Wr4xpF
+	WUAF13Cr48JFy7CFsYvay8WFyYgFs7tFyUGrWfJ3sxZF13CF95CFy3K345ury2gr4DZr10
+	vw4rWa4DC3Z8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UIiihUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxFho2g-Ev5r3AABsF
 
 
 
-Le 03/06/2025 à 15:24, Julian Vetter a écrit :
-> The functions in this header are deprecated and are not used anymore.
-> So, remove the header entirely.
-
-Your patch seems uncomplete.
-
-$ git grep get_unaligned_cpu linus/master
-linus/master:include/linux/jhash.h:             a += 
-__get_unaligned_cpu32(k);
-linus/master:include/linux/jhash.h:             b += 
-__get_unaligned_cpu32(k + 4);
-linus/master:include/linux/jhash.h:             c += 
-__get_unaligned_cpu32(k + 8);
-linus/master:include/linux/unaligned/packed_struct.h:static inline u16 
-__get_unaligned_cpu16(const void *p)
-linus/master:include/linux/unaligned/packed_struct.h:static inline u32 
-__get_unaligned_cpu32(const void *p)
-linus/master:include/linux/unaligned/packed_struct.h:static inline u64 
-__get_unaligned_cpu64(const void *p)
-linus/master:tools/include/linux/jhash.h:               a += 
-__get_unaligned_cpu32(k);
-linus/master:tools/include/linux/jhash.h:               b += 
-__get_unaligned_cpu32(k + 4);
-linus/master:tools/include/linux/jhash.h:               c += 
-__get_unaligned_cpu32(k + 8);
-linus/master:tools/include/linux/unaligned/packed_struct.h:static inline 
-u16 __get_unaligned_cpu16(const void *p)
-linus/master:tools/include/linux/unaligned/packed_struct.h:static inline 
-u32 __get_unaligned_cpu32(const void *p)
-linus/master:tools/include/linux/unaligned/packed_struct.h:static inline 
-u64 __get_unaligned_cpu64(const void *p)
-
-Christophe
-
-
+On 2025/6/3 17:18, Ilpo Järvinen wrote:
+> On Thu, 15 May 2025, Hans Zhang wrote:
 > 
-> Signed-off-by: Julian Vetter <julian@outer-limits.org>
-> ---
->   include/linux/unaligned.h               |  1 -
->   include/linux/unaligned/packed_struct.h | 46 -------------------------
->   2 files changed, 47 deletions(-)
->   delete mode 100644 include/linux/unaligned/packed_struct.h
+>> The primary PCI config space accessors are tied to the size of the read
+>> (byte/word/dword). Upcoming refactoring of PCI capability discovery logic
+>> requires passing a config accessor function that must be able to perform
+>> read with different sizes.
+>>
+>> Add any size config space read accessor pci_bus_read_config() to allow
+>> giving it as the config space accessor to the upcoming PCI capability
+>> discovery macro.
+>>
+>> Reconstructs the PCI function discovery logic to prepare for unified
+>> configuration of access modes. No function changes are intended.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>> Changes since v9 ~ v11:
+>> - None
+>>
+>> Changes since v8:
+>> - The new split is patch 1/6.
+>> - The patch commit message were modified.
+>> ---
+>>   drivers/pci/access.c | 17 +++++++++++++++++
+>>   drivers/pci/pci.h    |  2 ++
+>>   2 files changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+>> index b123da16b63b..603332658ab3 100644
+>> --- a/drivers/pci/access.c
+>> +++ b/drivers/pci/access.c
+>> @@ -85,6 +85,23 @@ EXPORT_SYMBOL(pci_bus_write_config_byte);
+>>   EXPORT_SYMBOL(pci_bus_write_config_word);
+>>   EXPORT_SYMBOL(pci_bus_write_config_dword);
+>>   
+>> +int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>> +			u32 *val)
+>> +{
+>> +	struct pci_bus *bus = priv;
+>> +	int ret;
+>> +
+>> +	if (size == 1)
+>> +		ret = pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+>> +	else if (size == 2)
+>> +		ret = pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+>> +	else
+>> +		ret = pci_bus_read_config_dword(bus, devfn, where, val);
 > 
-> diff --git a/include/linux/unaligned.h b/include/linux/unaligned.h
-> index 4a9651017e3c..18c4b0c00e2a 100644
-> --- a/include/linux/unaligned.h
-> +++ b/include/linux/unaligned.h
-> @@ -6,7 +6,6 @@
->    * This is the most generic implementation of unaligned accesses
->    * and should work almost anywhere.
->    */
-> -#include <linux/unaligned/packed_struct.h>
->   #include <asm/byteorder.h>
->   #include <vdso/unaligned.h>
->   
-> diff --git a/include/linux/unaligned/packed_struct.h b/include/linux/unaligned/packed_struct.h
-> deleted file mode 100644
-> index f4c8eaf4d012..000000000000
-> --- a/include/linux/unaligned/packed_struct.h
-> +++ /dev/null
-> @@ -1,46 +0,0 @@
-> -#ifndef _LINUX_UNALIGNED_PACKED_STRUCT_H
-> -#define _LINUX_UNALIGNED_PACKED_STRUCT_H
-> -
-> -#include <linux/types.h>
-> -
-> -struct __una_u16 { u16 x; } __packed;
-> -struct __una_u32 { u32 x; } __packed;
-> -struct __una_u64 { u64 x; } __packed;
-> -
-> -static inline u16 __get_unaligned_cpu16(const void *p)
-> -{
-> -	const struct __una_u16 *ptr = (const struct __una_u16 *)p;
-> -	return ptr->x;
-> -}
-> -
-> -static inline u32 __get_unaligned_cpu32(const void *p)
-> -{
-> -	const struct __una_u32 *ptr = (const struct __una_u32 *)p;
-> -	return ptr->x;
-> -}
-> -
-> -static inline u64 __get_unaligned_cpu64(const void *p)
-> -{
-> -	const struct __una_u64 *ptr = (const struct __una_u64 *)p;
-> -	return ptr->x;
-> -}
-> -
-> -static inline void __put_unaligned_cpu16(u16 val, void *p)
-> -{
-> -	struct __una_u16 *ptr = (struct __una_u16 *)p;
-> -	ptr->x = val;
-> -}
-> -
-> -static inline void __put_unaligned_cpu32(u32 val, void *p)
-> -{
-> -	struct __una_u32 *ptr = (struct __una_u32 *)p;
-> -	ptr->x = val;
-> -}
-> -
-> -static inline void __put_unaligned_cpu64(u64 val, void *p)
-> -{
-> -	struct __una_u64 *ptr = (struct __una_u64 *)p;
-> -	ptr->x = val;
-> -}
-> -
-> -#endif /* _LINUX_UNALIGNED_PACKED_STRUCT_H */
+> Perhaps this should check also size == 4 and return
+> PCIBIOS_BAD_REGISTER_NUMBER in case size is wrong.
+> 
+
+Dear Ilpo,
+
+Thank you very much for your reply. Will change.
+
+I will send the next version after v6.16.
+
+Best regards,
+Hans
+
+>> +
+>> +	return ret;
+> 
+> 
+>> +}
+>> +EXPORT_SYMBOL_GPL(pci_bus_read_config);
+> 
+> Does this even need to be exported? Isn't the capability search always
+> built in?
+> 
+>>   int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+>>   			    int where, int size, u32 *val)
+>>   {
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index b81e99cd4b62..5e1477d6e254 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -88,6 +88,8 @@ extern bool pci_early_dump;
+>>   bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
+>>   bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
+>>   bool pcie_cap_has_rtctl(const struct pci_dev *dev);
+>> +int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>> +			u32 *val);
+>>   
+>>   /* Functions internal to the PCI core code */
+>>   
+>>
+> 
 
 
