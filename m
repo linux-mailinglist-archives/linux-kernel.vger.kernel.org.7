@@ -1,220 +1,299 @@
-Return-Path: <linux-kernel+bounces-671839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988A0ACC70F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:54:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86CDACC717
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EAEE3A2B74
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7F01892822
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B4522B8AA;
-	Tue,  3 Jun 2025 12:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC52922E402;
+	Tue,  3 Jun 2025 12:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xOT/x5ku";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iX3kyVY6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xOT/x5ku";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iX3kyVY6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="UMn3cCcI"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503301E519
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748955264; cv=none; b=SV5yyEgx840JbSop8Q1lyBd45UuSfo+QRCxpPAICpfUNCQE+61Ljowfbx5QOyAZApeJVHSmeQwhu3GWxnguyn7+cV9AFww9iBxAqaU5B6+58XHr2+nJSrDWiTbmQUi0hW9S3eTNiszg7hmUJR1Owgzo17I/5ydcitl5Is/8DKoY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748955264; c=relaxed/simple;
-	bh=v0qA3KoNuHo1XBKa/7kN16ADhrzUgpMMd0eeO6A0IhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VyaqLoMchtr0TLhdEVhS7RSitRxUfMzPfmAepk7psYE7QnbESK0vRtWxfM16dlX+eemlcJtUCr303/h20lY3UQipN9ISxEA3bbiErCng81ksLhhLiNu3jUjLe5BK+iD8cwKaF5Siss5VreYNGuXKkEqt9olHLyKI6hvHBxulcX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xOT/x5ku; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iX3kyVY6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xOT/x5ku; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iX3kyVY6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B9711FCF8;
-	Tue,  3 Jun 2025 12:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748955260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckf9sIkE9tH+E6YfGJjisVjPch/5zybKqzur0sl7SyY=;
-	b=xOT/x5ku3OxHcYCLRzQVjjEzpERMu7slZfZH/3V0f2keDYS9WYuGTvCrUcjuiMQ9VpN2Di
-	VjSc4FgR/4ydGrY1rGlH7bm8kIrstqXmhcPaHSaIDkLmytUPZGMC2Cv62qMtkm34reL2uA
-	0kipqK96cKpKjUd3S7/bPT1SF8CItCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748955260;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckf9sIkE9tH+E6YfGJjisVjPch/5zybKqzur0sl7SyY=;
-	b=iX3kyVY6j93XOOgssDD57lmE18uPE3180QhbaD23ReL0v4CwpndYe7iEv44/fxyDJLcHCM
-	XQ44rFTgFJs1q1Cw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748955260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckf9sIkE9tH+E6YfGJjisVjPch/5zybKqzur0sl7SyY=;
-	b=xOT/x5ku3OxHcYCLRzQVjjEzpERMu7slZfZH/3V0f2keDYS9WYuGTvCrUcjuiMQ9VpN2Di
-	VjSc4FgR/4ydGrY1rGlH7bm8kIrstqXmhcPaHSaIDkLmytUPZGMC2Cv62qMtkm34reL2uA
-	0kipqK96cKpKjUd3S7/bPT1SF8CItCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748955260;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckf9sIkE9tH+E6YfGJjisVjPch/5zybKqzur0sl7SyY=;
-	b=iX3kyVY6j93XOOgssDD57lmE18uPE3180QhbaD23ReL0v4CwpndYe7iEv44/fxyDJLcHCM
-	XQ44rFTgFJs1q1Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F0FA113A1D;
-	Tue,  3 Jun 2025 12:54:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xW0ZOnvwPmi2AgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 03 Jun 2025 12:54:19 +0000
-Message-ID: <67a02051-f736-4fbb-8c70-208364264542@suse.cz>
-Date: Tue, 3 Jun 2025 14:55:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232421E519
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748955410; cv=pass; b=HsZnG9R4XyKeqP3xJ2rVxKNHvi9Yz600S5nlxkcKVqwuGrW2dmy3jtud2vfFiLtMQyFozJpq+jBUeBUugBgFzO8TKccW1+TZy1hLPeS2p75lwkdWm9Ub5LRXYXsSfaueEasjGJj3OQK2z3q6ApAexBJmIHt68RRtD1ZObvPF4mA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748955410; c=relaxed/simple;
+	bh=IO9KyOw3+DX5pVe/A25OU4742Ss9DE3nlol/QI8cPos=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UYwNvEESNARP1eU7jU3pSBQ3nQ4JrEfz11SIkDznnSAtA6viDfc4o8iCKkRLyzxdxFg0QQ8yFyUqD40v5FAWiHCrt5xE3eD+XyW2OFi9Z25J0bETR9wg8oZc+7Y8gFBqZoJvE/PngP8lg+ehhgg3EGIKTvu1fTe4utNfM9O9WSg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=UMn3cCcI; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1748955349; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RXagZj1fGH6Nojxfk1Rz6J0iOD1MKY34Dj0aWtcpj3YuIqbdJTDuoajVO6MLRPo6aS3OO3Z7pGgpZrtuv5Dmnjfq0GZLVHAFMjWDyfTKrnWyuU52cMOMVVyMPzQTYSDpnxlH8Sv5fdL42vtOchRsMwiiPjnwZlrSrhRtSwshkfI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1748955349; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OKOarRGHsL2ajSiin4VcPu5AlkGxReA7dzEybyUZJ50=; 
+	b=knWRds/IAEI0iYCI1k4z6jjKzQ6AAhToejvBwUkYsrO70K3vfTjqDgUkqQ9I8vdw+INa0viJssxhmJJ/xwTvGYKyQ3boPQ+yfxc/5mpzg+wIbYqKKjMczvFS+gsfb9J9dg/x06FYOKxQhojRvC82tmJ7tVKSJURvXzdrXk+hW6M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1748955349;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=OKOarRGHsL2ajSiin4VcPu5AlkGxReA7dzEybyUZJ50=;
+	b=UMn3cCcI0tYg01nC1fITQksGt/2f+wTumyUR6A1pTxQ4ypnWz/CADTD32YOuXmk1
+	UjOmUbniXZ/AXnrN4WsuCwct2AsQ6qslqHwW9dW08++dxUgmXlWMmC2ECMC6DjeE4a3
+	FApldWwyKi0b18EYN+cUUBZkq/XZ2WpgrGhUSyV8=
+Received: by mx.zohomail.com with SMTPS id 1748955347750347.95572855171406;
+	Tue, 3 Jun 2025 05:55:47 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>,
+ William Breathitt Gray <wbg@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Leon Romanovsky <leon@kernel.org>, Lee Jones <lee@kernel.org>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-iio@vger.kernel.org, kernel@collabora.com,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Subject: Re: [PATCH v2 3/7] bitfield: introduce HI16_WE bitfield prep macros
+Date: Tue, 03 Jun 2025 14:55:40 +0200
+Message-ID: <2525788.jE0xQCEvom@workhorse>
+In-Reply-To: <aD4DSz3vs41yMQSv@yury>
+References:
+ <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
+ <20250602-rk3576-pwm-v2-3-a6434b0ce60c@collabora.com> <aD4DSz3vs41yMQSv@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] hardening fixes for v6.16-rc1
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
- Ingo Saitz <ingo@hannover.ccc.de>, kernel test robot
- <oliver.sang@intel.com>, Marco Elver <elver@google.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
- Christian Brauner <brauner@kernel.org>
-References: <202505310759.3A40AD051@keescook>
- <CAHk-=wj4a_CvL6-=8gobwScstu-gJpX4XbX__hvcE=e9zaQ_9A@mail.gmail.com>
- <156567EE-E5BB-43C4-B5A6-439D83FF387D@kernel.org>
- <CAHk-=wjktqa94u_=++YX7XxUr57iLAs1GqtHPOY-o-N0z7wyeA@mail.gmail.com>
- <202505312300.95D7D917@keescook>
- <20250601-pony-of-imaginary-chaos-eaa59e@lemur>
- <202506010833.A33888CC@keescook>
- <20250601-electric-olivine-wren-d8c5ca@lemur>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250601-electric-olivine-wren-d8c5ca@lemur>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:mid,linux.dev:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On 6/1/25 7:58 PM, Konstantin Ryabitsev wrote:
-> On Sun, Jun 01, 2025 at 08:38:10AM -0700, Kees Cook wrote:
->>> I don't yet know why it wants to rewrite 39 commits when we're updating a
->>> commit that's only 3 away from the tip. If you manage to rerun this with b4 -d
->>> and send me the output, I will be glad to look at it. Alternatively, if you
->>> can let me know the steps to get my tree in the same state as yours, I can run
->>> it locally.
->>
->> This shows the same problem (using Linus's tree and linux-next):
->>
->> $ git checkout 9d230d500b0e -b test/repro/before
->> $ git cherry-pick 368556dd234d
->> $ git cherry-pick eef1355c269b
->> $ b4 trailers -u https://lore.kernel.org/all/CANpmjNPpyJn++DVZmO89ms_HkJ0OvQzkps0GjCFbWkk0F+_8Xg@mail.gmail.com
+On Monday, 2 June 2025 22:02:19 Central European Summer Time Yury Norov wrote:
+> On Mon, Jun 02, 2025 at 06:19:14PM +0200, Nicolas Frattaroli wrote:
+> > Hardware of various vendors, but very notably Rockchip, often uses
+> > 32-bit registers where the upper 16-bit half of the register is a
+> > write-enable mask for the lower half.
 > 
-> Thanks, I was able to recreate it and will use it as my test case. I suggest
-> that until I have a fix in place, that you always use `br trailers -u` with a
-> `--since-commit` flag, to restrict the range we're looking at. The solution
+> Can you list them all explicitly please? I grepped myself for the
+> 'HIGHWORD_UPDATE' and 'FIELD_PREP_HIGWORD', and found just 4 or 5 in
+> addition to the rockchip.
 
-I think even with --since-commit it behaves somewhat unexpectedly.
-I've tried recreating an issue I had last year, that Christian just
-mentioned in this thread as I was writing this up.
+Most of the ones Heiko brought up[1] just appear to be the clock stuff,
+I'm only aware of the drivers/mmc/host/sdhci-of-arasan.c one outside of
+Rockchip. For a complete listing I'd have to do a semantic search with
+e.g. Coccinelle, which I've never used before and would need to wrap
+my head around first. grep is a bad fit for catching them all as some
+macros are split across lines, or reverse the operators of the OR.
+Weggli[2] is another possibility but it's abandoned and undocumented, and
+I've ran into its limitations before fairly quickly.
 
-> git fetch git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git b4-reproducer
-From git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux
- * branch                      b4-reproducer -> FETCH_HEAD
+>  
+> > This type of hardware setup allows for more granular concurrent register
+> > write access.
+> > 
+> > Over the years, many drivers have hand-rolled their own version of this
+> > macro, usually without any checks, often called something like
+> > HIWORD_UPDATE or FIELD_PREP_HIWORD, commonly with slightly different
+> > semantics between them.
+> > 
+> > Clearly there is a demand for such a macro, and thus the demand should
+> > be satisfied in a common header file.
+> 
+> I agree. Nice catch.
+> 
+> > Add two macros: FIELD_PREP_HI16_WE, and FIELD_PREP_HI16_WE_CONST. The
+> > latter is a version that can be used in initializers, like
+> > FIELD_PREP_CONST.
+> 
+> I'm not sure that the name you've chosen reflects the intention. If
+> you just give me the name without any background, I'd bet it updates
+> the HI16 part of presumably 32-bit field. The 'WE' part here is most
+> likely excessive because at this level of abstraction you can't
+> guarantee that 'write-enable mask' is the only purpose for the macro.
+> 
+> > The macro names are chosen to explicitly reference the
+> > assumed half-register width, and its function, while not clashing with
+> > any potential other macros that drivers may already have implemented
+> > themselves.
+> >
+> > Future drivers should use these macros instead of handrolling their own,
+> > and old drivers can be ported to the new macros as time and opportunity
+> > allows.
+> 
+> This is a wrong way to go. Once you introduce a macro that replaces
+> functionality of few other arch or driver macros, you should consolidate
+> them all in the same series. Otherwise, it will be just another flavor
+> of the same, but now living in a core header. 
+> 
+> Can you please prepare a series that introduces the new macro and
+> wires all arch duplications to it?
 
-> git checkout FETCH_HEAD
-HEAD is now at 8a01634625a9 io_uring: port to struct kmem_cache_args
+Okay, I will do that after I learn Coccinelle. Though I suspect the reason
+why I'm the first person to address this is because it's much easier to
+hide duplicated macros away in drivers than go the long route of fixing up
+every single other user. I'm not too miffed about it though, it's cleanup
+of technical debt that's long overdue.
 
-> git show HEAD~17 --show-signature --pretty=fuller 
-commit f65b0043b92284cf7c8e986a476a9b169a132de1
-gpg: Signature made Thu 05 Sep 2024 11:31:55 AM CEST
-gpg:                using RSA key 7BBBC8411599234896484DF1BBE0B075D245889A
-gpg:                issuer "vbabka@suse.cz"
-gpg: Good signature from "Vlastimil Babka <vbabka@suse.com>" [ultimate]
-gpg:                 aka "Vlastimil Babka <vbabka@suse.cz>" [ultimate]
-Merge: 5be63fc19fca 6e016babce7c
-Author:     Vlastimil Babka <vbabka@suse.cz>
-AuthorDate: Thu Sep 5 11:31:32 2024 +0200
-Commit:     Vlastimil Babka <vbabka@suse.cz>
-CommitDate: Thu Sep 5 11:31:32 2024 +0200
-...
+>  
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+> >  include/linux/bitfield.h | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 47 insertions(+)
+> > 
+> > diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> > index 6d9a53db54b66c0833973c880444bd289d9667b1..2b3e7cb90ccb5d48f510104f61443b06748bb7eb 100644
+> > --- a/include/linux/bitfield.h
+> > +++ b/include/linux/bitfield.h
+> > @@ -8,6 +8,7 @@
+> >  #define _LINUX_BITFIELD_H
+> >  
+> >  #include <linux/build_bug.h>
+> > +#include <linux/limits.h>
+> >  #include <linux/typecheck.h>
+> >  #include <asm/byteorder.h>
+> >  
+> > @@ -142,6 +143,52 @@
+> >  		(((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))	\
+> >  	)
+> >  
+> > +/**
+> > + * FIELD_PREP_HI16_WE() - prepare a bitfield element with a write-enable mask
+> > + * @_mask: shifted mask defining the field's length and position
+> > + * @_val:  value to put in the field
+> > + *
+> > + * FIELD_PREP_HI16_WE() masks and shifts up the value, as well as bitwise ORs
+> > + * the result with the mask shifted up by 16.
+> > + *
+> > + * This is useful for a common design of hardware registers where the upper
+> > + * 16-bit half of a 32-bit register is used as a write-enable mask. In such a
+> > + * register, a bit in the lower half is only updated if the corresponding bit
+> > + * in the upper half is high.
+> > + */
+> > +#define FIELD_PREP_HI16_WE(_mask, _val)					\
+> > +	({								\
+> > +		__BF_FIELD_CHECK(_mask, ((u16) 0U), _val,		\
+> > +				 "FIELD_PREP_HI16_WE: ");		\
+> > +		((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask) |	\
+> > +		((_mask) << 16);					\
+> > +	})
+> 
+> This pretty much is a duplication of the FIELD_PREP(), isn't? Why don't
+> you borrow the approach from drivers/clk/clk-sp7021.c:
+> 
+> 	/* HIWORD_MASK FIELD_PREP */
+> 	#define HWM_FIELD_PREP(mask, value)             \
+> 	({                                              \
+> 	        u64 _m = mask;                          \
+> 	        (_m << 16) | FIELD_PREP(_m, value);     \
+> 	})
+> 
+> If you do so, the existing FIELD_PREP() will do all the work without
+> copy-pasting.
 
-> b4 trailers -u --since-commit HEAD~17
-Finding code-review trailers for 17 commits...
-Analyzing 124 code-review messages
----
-  + Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-    https://lore.kernel.org/all/ZtpI27swD1GIC0YR@google.com
----
-Press Enter to apply these trailers or Ctrl-C to abort
-...
----
-Invoking git-filter-repo to update trailers.
-New history written in 0.17 seconds...
+Because then the __BF_FIELD_CHECK macro will be invoked twice, once without
+the proper prefix. Factoring the actual prep-no-check operation out into a
+separate macro is macro definition + 1-line invocation * 2, whereas copy-
+pasting the implementation that will never change is 1-line invocation*2.
 
-> git show HEAD~17 --show-signature --pretty=fuller 
-commit 01cc2238ba4ad3c940db76f134f56b2e0f082243
-Merge: 5be63fc19fca 0f389adb4b80
-Author:     Vlastimil Babka <vbabka@suse.cz>
-AuthorDate: Thu Sep 5 11:31:32 2024 +0200
-Commit:     Vlastimil Babka <vbabka@suse.cz>
-CommitDate: Thu Sep 5 11:31:32 2024 +0200
+> The only questionI have  to the above macro is why '_m'
+> is u64? Seemingly, it should be u32?
 
-See how it changed not only the merge commit itself but the right
-side of the merge, which was at the time from the vfs tree.
+I didn't write the HWM_FIELD_PREP macro in clk-sp7021.c, nor am I familiar
+with the hardware. It's possible they were trying to prevent an overflow
+wraparound here though, but they're not checking if the result ends up
+greater than 32 bits so that seems suspect.
 
-Passing --since-commit HEAD~16 doesn't have this result, so perhaps 
-is it intentional that "since" is inclusive? I think that would differ
-from the usual interpretation in git/b4 so unexpected. Even then such 
-off-by-one error (misunderstanding) would still not explain rewriting
-one side on the merge further in the history.
+> Regarding the name... I can't invent a good one as well, so the best
+> thing I can suggest is not to invent something that can mislead. The
+> HWM_FIELD_PREP() is not bad because it tells almost nothing and
+> encourages one to refer to the documentation. If you want something
+> self-explaining, maybe MASK_HI_FIELD_LO_PREP_U16(), or something?
 
-Vlastimil
+This seems a bit unwieldy, at 25 characters. "FIELD32_HIMASK_LOPREP"
+(or FIELD16, depending on which end of the cornet to eat) would be 21
+characters but I'm also not in love with it.
+
+I think the name should include the following parts:
+1. it's a field
+2. the field is halved into two halves of 16 bits
+3. the mask is copied into the upper 16 bits
+
+Since we're on the subject of bit widths, I have a somewhat sacrilegious
+point to raise: should this be a function-like macro at all, as opposed
+to a static __pure inline function? It's not generic with regards to the
+data types, as we're always assuming a u16 value and mask input and a
+u32 output. The __pure inline definition should let the compiler treat it
+essentially similar to what the pre-processor expanded macro does, which
+is as not a function call at all but a bunch of code to constant fold away
+if possible. What we get in return is type checking and less awful syntax.
+Then we could call it something like `himask_field_prep_u32`, which is
+also 21 characters but the ambiguity of whether the u32 refers to the mask
+or the whole register width is cleared up by the types of the function
+arguments.
+
+The const version of the macro may still need to remain though because I'm
+not sure C11 can do that for us. With C23 maybe there's a way with
+constexpr but I've never used it before.
+
+> 
+> Thanks,
+> Yury
+> 
+
+Kind Regards,
+Nicolas Frattaroli
+
+Link: https://lore.kernel.org/linux-rockchip/1895349.atdPhlSkOF@diego/ [1]
+Link: https://github.com/weggli-rs/weggli [2]
+
+> > +
+> > +/**
+> > + * FIELD_PREP_HI16_WE_CONST() - prepare a constant bitfield element with a
+> > + *                              write-enable mask
+> > + * @_mask: shifted mask defining the field's length and position
+> > + * @_val:  value to put in the field
+> > + *
+> > + * FIELD_PREP_HI16_WE_CONST() masks and shifts up the value, as well as bitwise
+> > + * ORs the result with the mask shifted up by 16.
+> > + *
+> > + * This is useful for a common design of hardware registers where the upper
+> > + * 16-bit half of a 32-bit register is used as a write-enable mask. In such a
+> > + * register, a bit in the lower half is only updated if the corresponding bit
+> > + * in the upper half is high.
+> > + *
+> > + * Unlike FIELD_PREP_HI16_WE(), this is a constant expression and can therefore
+> > + * be used in initializers. Error checking is less comfortable for this
+> > + * version, and non-constant masks cannot be used.
+> > + */
+> > +#define FIELD_PREP_HI16_WE_CONST(_mask, _val)				 \
+> > +	(								 \
+> > +		FIELD_PREP_CONST(_mask, _val) |				 \
+> > +		(BUILD_BUG_ON_ZERO(const_true((u64) (_mask) > U16_MAX)) + \
+> > +		 ((_mask) << 16))					 \
+> > +	)
+> > +
+> >  /**
+> >   * FIELD_GET() - extract a bitfield element
+> >   * @_mask: shifted mask defining the field's length and position
+> > 
+> 
+
+
 
