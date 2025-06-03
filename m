@@ -1,267 +1,265 @@
-Return-Path: <linux-kernel+bounces-671756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AA1ACC5C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:47:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7F8ACC5B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C7E3A5454
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:46:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADF01890850
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7CA22DA17;
-	Tue,  3 Jun 2025 11:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23214AD5E;
+	Tue,  3 Jun 2025 11:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYoRmVvk"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b="HAHggRZ7"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B5C22FDFF;
-	Tue,  3 Jun 2025 11:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D104C3597C
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748951186; cv=none; b=F9GnbtQPoNVDMC7XmdG5ygCKKyOUu0mIwYK3NHUaZoi8k2EcGEHWx/fQuE8qfiQatSX8Pu+OAAo3UVv/DgJ7CHs84068n9j10VfjFovS1VCwMObAMrARhSXx1s1e3rQaBQv/d1S4aqufu7wCYoqHgkorKV+htzNnCRrearci/8A=
+	t=1748951147; cv=none; b=evPuQNhofgFAdJw9tGmbyo1dfCQfAwkv30ga/x9Rs8aGAcm8g+8gxGDdxQQj2TRLyz5/CuvtrnPZK/GsP4BlXx6cQ+ZG72pHZSQIEKeB/i04eAIdUGpJDkAFo/aOJYzaz+pTpHUUQlu5SvYR71MS0d7iSqvYHfXfX3M5rwNq0W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748951186; c=relaxed/simple;
-	bh=46z+CHp5FplvdxQZLMRvZ4Je4WlVrniIZ170jmL7wlU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nzlImnXZpTVPQdvvskicvEe1MpH4onUdGJ4iteDKEAyK22uu8/hGzm866h1b2rPtRa8+tZW0QyPLMz2YdUx8zUVUN5eMjQlHuOdKkZze1MZsVNRqfJcsDYWg9x9CKjMzALzLEWkoLU1FcadtsPNvQWEyn19Lj41hwNovBefNk0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYoRmVvk; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-747fc77bb2aso640352b3a.3;
-        Tue, 03 Jun 2025 04:46:24 -0700 (PDT)
+	s=arc-20240116; t=1748951147; c=relaxed/simple;
+	bh=Wtk6AFHWfq6XPA5wRUyQI9qTTYvmaR7EWEbBvQSTd4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FWIXTXF2PtMbP0IWUN+3Ufl+8MFbliWI20rGdEU7Q1Fn7cltcfqN/xgmgKp1JNxEZJ8+iFf29P8FPNMVocsE3b8XCiqtKlkvE+z3MArnwJNfnDwd85koM6pcyoGlhCiXeKnqB4l2FMy3tpSy1pweU8uMUvEN7spRgIHd5zuOJPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com; spf=pass smtp.mailfrom=vayavyalabs.com; dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b=HAHggRZ7; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vayavyalabs.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7db5c13088so4771841276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 04:45:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748951184; x=1749555984; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aNqV/c3DG1fBhuN3qww4p36YlFduC0lkwktHJcC6OkA=;
-        b=WYoRmVvkFZgYFGbO8EEApTHd4FtemtPX9IvEeO8OPtewuUisAPF7EbQtsYnitxM4kE
-         vk2f0GYXT3HNw3PLjiDoiuug0Bl29YwZeZU9RJF/76WBP4HStwqvS8HFXAvvv0WeXAVB
-         v4JC+N2OPejNgKAbSzbB32bmZa3OkhkQ+hTGVV7EPSjb3EjQ/Sm/D3fQzLvFUr9Gktet
-         RzJ/lZnQXRPc0D3lof5eN2+67LNSXG4LX7bIxF9gqPYa01Uq2uQ0RpoDxsDb/wX/+Zz2
-         u23XrINb4xRx1l+iwVV8WKiorGplEfF0NCyuPOV/boBTHY5UiSSPrhAvNefxLxyeHPoE
-         Z0DQ==
+        d=vayavyalabs.com; s=google; t=1748951143; x=1749555943; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WU2jL29VSYgtyt74swmZUn3uXnZniaAi4pgLdOtSj3A=;
+        b=HAHggRZ7FlxI9loqStLqrmv+eEe0P0pHJ+oXG//ZhWVZ1Hl2NnLBGHR8jMsMoTUNYY
+         WXCwLNhmOSNPPuFmRGHV+wUaqdQUS11ybAzvQCQqW5h0ou75kRQh6ADOBUD3jwShKqUu
+         MyHu87I1ERWHZYnIM9mRYrquW31KKH6+HAGsQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748951184; x=1749555984;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1748951143; x=1749555943;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aNqV/c3DG1fBhuN3qww4p36YlFduC0lkwktHJcC6OkA=;
-        b=oF0c8NYlavqVcGNKwWavXXJcYYC69cN+2L11utLD/9Wpv5Yd0roP3MQYhGw+J+a1mN
-         bw9VPDduIA5AN8uiVvXaJ9/4tjemWVZg1qp2CqPJTCPQfdrnaYba4pfzTekU5/cgPLg5
-         ciSh8rQgPHvEq1kkYEG+XlDIjWGYq8wCB56fLdnkLKyEUlNFlqcbwzeipfh1qFTvefvk
-         KinSP6/nlrZclyttOOiSuwI+AqrostoQZHOwVleLJPPM6sGip12FuUhBbl3HoUqG8/rn
-         7HBglwJLxyX7K1Cums8pGTlfVf4hCyJSGtZtSE+MZGpado7fYZeV0EVfaTioblWVnzvu
-         RDGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7DS7Lk9XaTkFI7jJsvdCH6qqE+DDLyH52V9X34LCdv8FoPP2odp2gAFcixYpb4WaiiQA07I4OYhzE@vger.kernel.org, AJvYcCVNcZSzvi1evWdFpgU2hJVkXlAaP6t4URt1xkPjrEn/+5hdiwVo0YZdhaNri0yedTJH4wcrK+vVZVFEP3/u@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZnE7MEpbY8KDg+w7Rs6pfxVBNvg6h99cLhbg++8UWu92Bbn0W
-	xr/MZDC6TE9iTxxaSatkvg1WEeqv7IvTkCySoBK4WgYjx9QyVfVQxKCp
-X-Gm-Gg: ASbGnct5PNbcz/bYxafXnTnmosv8zsm8vmVCL8kWqHq8ouSGIYO55P+68De0jMk0tjJ
-	TLdQiHiwQh2xDIFF0rnuVa7vqCyj/H/C7e13JvsNvHN2FzfTAUb5yP9ePme/97XRWSymyTXvJTK
-	URBlMCwjV8FQ1zJzjviJqCCPlonj21OsDLgl+/DNbe4eh9uelqhSh8ONDzWYmDGjTMq79Nw6YGd
-	nradPI5uD08R7DsUScdqsVXuxr4ZI5mJI80uUjEZnclDCoHal0H/KxQdF/+tSDDVtGBx0uPZWDR
-	Wc+xofubYR8w4K9yA0/X7vvyVX5KnMC1xtr5TXLpJXpKgkycU9sShVrtQb3qJLeKVZhr5xrTFp6
-	THHVWy0SWAgRUr2w36h6g
-X-Google-Smtp-Source: AGHT+IGgSnNZEK3IDe5Uoa0aO9rllMo7czQcZuW+XjqLX+PNb4Ok39zD+MBqKXA2h5FXnbvZ+n5sEg==
-X-Received: by 2002:a05:6a00:178b:b0:742:a111:ee6f with SMTP id d2e1a72fcca58-747c1a8610fmr20422329b3a.10.1748951184114;
-        Tue, 03 Jun 2025 04:46:24 -0700 (PDT)
-Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeadbb8sm9446459b3a.66.2025.06.03.04.46.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 04:46:23 -0700 (PDT)
-From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
-Date: Tue, 03 Jun 2025 08:44:56 -0300
-Subject: [PATCH v2 3/3] hwmon: (amc6821) Add cooling device support
+        bh=WU2jL29VSYgtyt74swmZUn3uXnZniaAi4pgLdOtSj3A=;
+        b=ihA6HNxOctpKG+Ew7ZBJNcpNU8gqmswNDylS2m+o6rR/Sr37usXvkGvCkQ0Fg8qzhk
+         oPbfcbqrup6LKEElmK6Ftzf6E34olOcto8oDiNZoi0813qH9fYkP24niKpCbUMn83t3x
+         /VZw/z/h1cX8bGz7C5fhLe+EYzB0JANKf9r9rFLuDTREVXx8S79l9t1LfNGF31Vh4RZC
+         koY44haJc598JH436BBURpq3Gg+RDLzg3sUHEjEE2UwZJhuxwMfckzwyHWLpstUPp79y
+         rPgoyen5ze8dUb08SSAnU9kKO3APXThcE1nNG2CJpfIXMJBoP5Q4yzAMOBhA1OjR/Og/
+         uggw==
+X-Forwarded-Encrypted: i=1; AJvYcCWU4K17auaw1ZJKl2iWt3Uif2GSsC3YVxNHYs3A1giFGWL1T0D3HyC1A3E1fMMNAmaFeCD1eGYEovhCvsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxKzalKywOPFQhRCI8uClbyvQdijxM4NvrDp7ro9bhjrwwpeCf
+	WVM9aEWT3lPLJi6vm+ruxwnBPrWPDFeSVgE0KksNZvDU/YTgQPcM+/Z3UFFfVEivOgqNAKbKoJT
+	lOiaaGNtPT4/5ykgN5bMDKf2LvoizS0HkmbspWA0Z+A==
+X-Gm-Gg: ASbGncuHQohAMGAqzRtdZS3mu30gHrGHWa1gc38a3i0tkqs1GJSUE6Fnbfiea7bVxtG
+	whJucmGOF3wNDN0n2ldRlF4xgTuVZ2otmz/Plxmc2gfZ9qXCWQpkHd/o1TJ0/RavOPN0eEzKUjA
+	WjTG7Ciii9aF/b4Ywtk8Y6LN5GlB0dggCFow==
+X-Google-Smtp-Source: AGHT+IFZFuVWzeSCYr5E7m41i/9aDNVpyn69bOnsaB/aNiCiM41tO005L0j039m41q399lOdfjixO5eaHFaDG/FfEfo=
+X-Received: by 2002:a05:6902:4911:b0:e7d:c9e1:170d with SMTP id
+ 3f1490d57ef6-e8161e52682mr2384135276.11.1748951142488; Tue, 03 Jun 2025
+ 04:45:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250603-b4-amc6821-cooling-device-support-v2-3-74943c889a2d@toradex.com>
-References: <20250603-b4-amc6821-cooling-device-support-v2-0-74943c889a2d@toradex.com>
-In-Reply-To: <20250603-b4-amc6821-cooling-device-support-v2-0-74943c889a2d@toradex.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Farouk Bouabid <farouk.bouabid@cherry.de>, 
- Quentin Schulz <quentin.schulz@cherry.de>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
-X-Mailer: b4 0.14.2
+References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
+ <20250602053231.403143-2-pavitrakumarm@vayavyalabs.com> <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
+In-Reply-To: <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
+From: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Date: Tue, 3 Jun 2025 17:15:31 +0530
+X-Gm-Features: AX0GCFsi1_WhsXRy4U7lWQV3XKiZq8jOsIJ1nSTGBjFSBrQaz8ZfGBHLoV3EgL4
+Message-ID: <CALxtO0mpQtqPB0h_Wff2dLGo=Mxk02JJQkK4rn+=TuScNdSfxQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: crypto: Document support for SPAcc
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com, 
+	manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com, 
+	Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+Hi Krzysztof,
+  Thanks for the inputs, my comments are embedded below.
 
-Add support for using the AMC6821 as a cooling device. The AMC6821
-registers with the thermal framework only if the `cooling-levels`
-property is present in the fan device tree child node. Existing behavior
-is unchanged, so the AMC6821 can still be used without the thermal
-framework (hwmon only).
+Warm regards,
+PK
 
-Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
----
-v2: Unchanged
-v1: https://lore.kernel.org/lkml/20250530-b4-v1-amc6821-cooling-device-support-b4-v1-0-7bb98496c969@toradex.com/
----
- drivers/hwmon/amc6821.c | 97 ++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 92 insertions(+), 5 deletions(-)
+On Mon, Jun 2, 2025 at 11:28=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 02/06/2025 07:32, Pavitrakumar Managutte wrote:
+> > Add DT bindings related to the SPAcc driver for Documentation.
+> > DWC Synopsys Security Protocol Accelerator(SPAcc) Hardware Crypto
+> > Engine is a crypto IP designed by Synopsys.
+> >
+> > Co-developed-by: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+> > Signed-off-by: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+> > Signed-off-by: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+> > Acked-by: Ruud Derwig <Ruud.Derwig@synopsys.com>
+>
+> Where was this Ack given? It's not on the lists, it's not public, so it
+> cannot be after your SoB.
 
-diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-index 850a42510649279fba23ed504826384e1d8e335c..218efa0d405b87e838874c273cff7f2872a02448 100644
---- a/drivers/hwmon/amc6821.c
-+++ b/drivers/hwmon/amc6821.c
-@@ -26,6 +26,7 @@
- #include <linux/pwm.h>
- #include <linux/regmap.h>
- #include <linux/slab.h>
-+#include <linux/thermal.h>
- 
- #include <dt-bindings/pwm/pwm.h>
- 
-@@ -126,6 +127,9 @@ module_param(init, int, 0444);
- struct amc6821_data {
- 	struct regmap *regmap;
- 	struct mutex update_lock;
-+	unsigned long fan_state;
-+	unsigned long fan_max_state;
-+	unsigned int *fan_cooling_levels;
- 	enum pwm_polarity pwm_polarity;
- };
- 
-@@ -805,6 +809,56 @@ static const struct hwmon_chip_info amc6821_chip_info = {
- 	.info = amc6821_info,
- };
- 
-+static int amc6821_get_max_state(struct thermal_cooling_device *cdev, unsigned long *state)
-+{
-+	struct amc6821_data *data = cdev->devdata;
-+
-+	if (!data)
-+		return -EINVAL;
-+
-+	*state = data->fan_max_state;
-+
-+	return 0;
-+}
-+
-+static int amc6821_get_cur_state(struct thermal_cooling_device *cdev, unsigned long *state)
-+{
-+	struct amc6821_data *data = cdev->devdata;
-+
-+	if (!data)
-+		return -EINVAL;
-+
-+	*state = data->fan_state;
-+
-+	return 0;
-+}
-+
-+static int amc6821_set_cur_state(struct thermal_cooling_device *cdev, unsigned long state)
-+{
-+	struct amc6821_data *data = cdev->devdata;
-+	int ret;
-+
-+	if (!data || state > data->fan_max_state)
-+		return -EINVAL;
-+
-+	ret = regmap_write(data->regmap, AMC6821_REG_DCY,
-+			   data->fan_cooling_levels[state]);
-+	if (ret)
-+		return ret;
-+
-+	data->fan_state = state;
-+
-+	/* Change to manual mode (software DCY) */
-+	return regmap_update_bits(data->regmap, AMC6821_REG_CONF1,
-+				  AMC6821_CONF1_FDRC0 | AMC6821_CONF1_FDRC1, 0);
-+}
-+
-+static const struct thermal_cooling_device_ops amc6821_cooling_ops = {
-+	.get_max_state = amc6821_get_max_state,
-+	.get_cur_state = amc6821_get_cur_state,
-+	.set_cur_state = amc6821_set_cur_state,
-+};
-+
- /* Return 0 if detection is successful, -ENODEV otherwise */
- static int amc6821_detect(struct i2c_client *client, struct i2c_board_info *info)
- {
-@@ -877,11 +931,29 @@ static enum pwm_polarity amc6821_pwm_polarity(struct i2c_client *client,
- 	return polarity;
- }
- 
--static void amc6821_of_fan_read_data(struct i2c_client *client,
--				     struct amc6821_data *data,
--				     struct device_node *fan_np)
-+static int amc6821_of_fan_read_data(struct i2c_client *client,
-+				    struct amc6821_data *data,
-+				    struct device_node *fan_np)
- {
-+	int num;
-+
- 	data->pwm_polarity = amc6821_pwm_polarity(client, fan_np);
-+
-+	num = of_property_count_u32_elems(fan_np, "cooling-levels");
-+	if (num <= 0)
-+		return 0;
-+
-+	data->fan_max_state = num - 1;
-+
-+	data->fan_cooling_levels = devm_kcalloc(&client->dev, num,
-+						sizeof(u32),
-+						GFP_KERNEL);
-+
-+	if (!data->fan_cooling_levels)
-+		return -ENOMEM;
-+
-+	return of_property_read_u32_array(fan_np, "cooling-levels",
-+					  data->fan_cooling_levels, num);
- }
- 
- static int amc6821_init_client(struct i2c_client *client, struct amc6821_data *data)
-@@ -962,10 +1034,14 @@ static int amc6821_probe(struct i2c_client *client)
- 
- 	fan_np = of_get_child_by_name(dev->of_node, "fan");
- 	if (fan_np) {
--		amc6821_of_fan_read_data(client, data, fan_np);
-+		err = amc6821_of_fan_read_data(client, data, fan_np);
- 		of_node_put(fan_np);
- 	}
- 
-+	if (err)
-+		return dev_err_probe(dev, err,
-+				     "Failed to read fan device tree data\n");
-+
- 	err = amc6821_init_client(client, data);
- 	if (err)
- 		return err;
-@@ -980,7 +1056,18 @@ static int amc6821_probe(struct i2c_client *client)
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name,
- 							 data, &amc6821_chip_info,
- 							 amc6821_groups);
--	return PTR_ERR_OR_ZERO(hwmon_dev);
-+	if (IS_ERR(hwmon_dev))
-+		return dev_err_probe(dev, PTR_ERR(hwmon_dev),
-+				     "Failed to initialize hwmon\n");
-+
-+	if (IS_ENABLED(CONFIG_THERMAL) && fan_np && data->fan_cooling_levels)
-+		return PTR_ERR_OR_ZERO(devm_thermal_of_cooling_device_register(dev,
-+									       fan_np,
-+									       client->name,
-+									       data,
-+									       &amc6821_cooling_ops));
-+
-+	return 0;
- }
- 
- static const struct i2c_device_id amc6821_id[] = {
+PK: Yes, its not on the mailing list. I will remove that.
 
--- 
-2.43.0
+>
+> > ---
+> >  .../bindings/crypto/snps,dwc-spacc.yaml       | 77 +++++++++++++++++++
+> >  1 file changed, 77 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/crypto/snps,dwc-s=
+pacc.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/crypto/snps,dwc-spacc.ya=
+ml b/Documentation/devicetree/bindings/crypto/snps,dwc-spacc.yaml
+> > new file mode 100644
+> > index 000000000000..2780b3db2182
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/crypto/snps,dwc-spacc.yaml
+> > @@ -0,0 +1,77 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/crypto/snps,dwc-spacc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Synopsys DesignWare Security Protocol Accelerator(SPAcc) Crypto=
+ Engine
+> > +
+> > +maintainers:
+> > +  - Ruud Derwig <Ruud.Derwig@synopsys.com>
+> > +
+> > +description: |
+> > +  This binding describes the Synopsys DWC Security Protocol Accelerato=
+r (SPAcc),
+>
+> Don't say that binding describes a binding.  Describe here hardware.
 
+PK: Sure, I will fix that.
+
+>
+> > +  which is a hardware IP designed to accelerate cryptographic operatio=
+ns, such
+> > +  as encryption, decryption, and hashing.
+> > +
+> > +  The SPAcc supports virtualization where a single physical SPAcc can =
+be
+> > +  accessed as multiple virtual SPAcc instances, each with its own regi=
+ster set.
+> > +  These virtual instances can be assigned different priorities.
+> > +
+> > +  In this configuration, the SPAcc IP is instantiated within the Synop=
+sys
+> > +  NSIMOSCI virtual SoC platform, a SystemC simulation environment used=
+ for
+> > +  software development and testing. The device is accessed as a memory=
+-mapped
+> > +  peripheral and generates interrupts to the ARC interrupt controller.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: snps,nsimosci-hs-spacc
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  snps,vspacc-id:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: |
+> > +      Virtual SPAcc instance identifier.
+> > +      The SPAcc hardware supports multiple virtual instances (determin=
+ed by
+> > +      ELP_SPACC_CONFIG_VSPACC_CNT parameter), and this ID is used to i=
+dentify
+> > +      which virtual instance this node represents.
+>
+> No, IDs are not accepted.
+
+PK: This represents the specific virtual SPAcc that is being used in
+the current configuration. It is used to index into the register banks
+and the context memories of the virtual SPAcc that is being used. The
+SPAcc IP can be configured as dedicated virtual SPAccs in
+heterogeneous environments.
+
+This was also discssed with Rob Herring and updated from
+"vpsacc-index" to "vspacc-id" based on Rob's inputs
+https://lore.kernel.org/linux-crypto/CALxtO0mkmyaDYta0tfx9Q1qi_GY0OwUoFDDVm=
+cL15UH_fEZ25w@mail.gmail.com/
+
+>
+> > +    minimum: 0
+> > +    maximum: 7
+> > +
+> > +  snps,spacc-internal-counter:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: |
+> > +      Hardware counter that generates an interrupt based on a count va=
+lue.
+> > +      This counter starts ticking when there is a completed job sittin=
+g on
+> > +      the status fifo to be serviced. This makes sure that no jobs are
+> > +      starved of processing.
+>
+> Not a DT property.
+
+PK: This is a hardware counter which starts ticking when a processed
+job is sitting on the STAT FIFO. This makes sure a JOB does not stay
+in STATUS FIFO unprocessed.
+
+This was called watchdog timer - wdtimer, which we renamed to
+"spacc-internal-counter" based on your inputs.
+https://lore.kernel.org/linux-crypto/CALxtO0k4RkopERap_ykrMTZ4Qtdzm8hEPJGLC=
+Q2pknQGjfQ4Eg@mail.gmail.com/
+
+If you think this "does not qualify" as a DT property, I will make
+this into a Kconfig input for the driver.
+
+>
+> > +    minimum: 0x19000
+> > +    maximum: 0xFFFFF
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +
+>
+> Drop blank line.
+
+PK: I will fix that
+
+>
+> > +    crypto@40000000 {
+> > +        compatible =3D "snps,nsimosci-hs-spacc";
+> > +        reg =3D <0x40000000 0x3FFFF>;
+>
+> Lowercase hex only.
+
+PK: I will fix that
+
+>
+>
+>
+> Best regards,
+> Krzysztof
 
