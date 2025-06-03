@@ -1,144 +1,175 @@
-Return-Path: <linux-kernel+bounces-672060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5A1ACCA5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E21ACCA61
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48E21891085
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABED03A4C2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA15E23D28C;
-	Tue,  3 Jun 2025 15:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2920D23C8A0;
+	Tue,  3 Jun 2025 15:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JXngNVYy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D95123D283;
-	Tue,  3 Jun 2025 15:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OYL3r/5n"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D89B140E34;
+	Tue,  3 Jun 2025 15:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748965337; cv=none; b=lRQJFaXLLCabtdz29YFAGTRsLlqaROBZ3tjdtouqAg3Jf1NugJScyCMw1MkERgetP2NwC6/dWmB1cKYofOcEljSjPg2Q4E5sJMU9pIAn6+kJ7pIW3sy0wjdG1WWZpL2UP35KQ09Vs6LGS32pAyOpJBY6oFEJ7MVASFxfQ7SQBoQ=
+	t=1748965371; cv=none; b=N+bAztdhWfwrheQaC6ifwOB4zMP5TcFSIbpWEVFR4GfP4WukuLXEed1R/joA9Rokn8Ffc1w3TQPcvPOXQrC0Rw2peO6AaCwNg6k/p2giuS7CJR5GNZkPRRyOKXZSkZso/xKiy5TlurYdSyDyoAxObDIuiZ7nJ3Qvr3Jqkpj0NPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748965337; c=relaxed/simple;
-	bh=V/ETxo4tr2kN734Uv8ZtBcuFNrpUwyBX6joGngLGDPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJ6teuHNRC8umFEtrNrv6WRHMHNzWs/I9VoTbEdXqXZYzICM1doM0B0NWptrwkx+AWfuZSK1r1MbO29AaJOFtCBJZkdwt4aaRotXOdqFE/6+ay4db7aVYsi8FvMITpOpCJyECMJeZuqB06pjvS3RkwoeQtWcF8CJFAgQzvITLYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JXngNVYy; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748965336; x=1780501336;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V/ETxo4tr2kN734Uv8ZtBcuFNrpUwyBX6joGngLGDPo=;
-  b=JXngNVYyQJ1ICekfR66xGoOsWppFPjszmWxHJpiXRddmjxbfyOyzswSA
-   kVm6uyqcRzGy0u1cDkszKPsm8uKLxMeZMI8ym0VLshnN5WiwC1CUqHa2H
-   ZvDO/4CGqA8j8ExZpKrwdtE7QemyiY/e2yibcbEwdvIBjzd51CUKw8VY9
-   qtMDhB9jhvibTNNMN98IB47iFuiriBFE60ORzcjfm9m6RShFROhYvJD+3
-   9NGjEwY7xY7bzd+yKJsQFCqN6ufZXAa1xNt0QIRyBuJGgz8Km2Bs4Ua6I
-   mcO10907HpQL3Kba1GdO1iH+U4izuWr+ikUx6RAHGqsNL+5QPXd2Dy1Ui
-   A==;
-X-CSE-ConnectionGUID: Nm0Eecw3TGaTbMiSMtW31w==
-X-CSE-MsgGUID: MFyiDQvjRzKoBLos+v+MhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="62403933"
-X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
-   d="scan'208";a="62403933"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 08:42:15 -0700
-X-CSE-ConnectionGUID: DlvhbR8QRleM29WDZWI4Rw==
-X-CSE-MsgGUID: pUrUo3bLTWmyAV0CbXJX8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,206,1744095600"; 
-   d="scan'208";a="149779939"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 08:42:14 -0700
-Date: Tue, 3 Jun 2025 08:42:13 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Zaid Alali <zaidal@os.amperecomputing.com>, rafael@kernel.org,
-	lenb@kernel.org, james.morse@arm.com, robert.moore@intel.com,
-	Jonathan.Cameron@huawei.com, ira.weiny@intel.com,
-	Benjamin.Cheatham@amd.com, dan.j.williams@intel.com, arnd@arndb.de,
-	Avadhut.Naik@amd.com, john.allen@amd.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: Re: [PATCH v7 9/9] ACPI: APEI: EINJ: Update the documentation for
- EINJv2 support
-Message-ID: <aD8X1cNBesu71yy3@agluck-desk3>
-References: <20250506213814.2365788-1-zaidal@os.amperecomputing.com>
- <20250506213814.2365788-10-zaidal@os.amperecomputing.com>
- <20250530102711.GAaDmH_1O7lc6kuveY@fat_crate.local>
- <aDoal24J-BMTIBCq@agluck-desk3>
- <20250531092050.GBaDrJ8iw7cNcpOKeA@fat_crate.local>
- <aDuBjopy_nE9A-ph@agluck-desk3>
- <20250601102554.GAaDwqsgCODzEne7Ow@fat_crate.local>
- <aD3ZFyBW4SCyaGI9@agluck-desk3>
- <20250603083157.GAaD6y_fec2X_hTnav@fat_crate.local>
+	s=arc-20240116; t=1748965371; c=relaxed/simple;
+	bh=hB2MxKwPMC076JO0hAISW1ZoTMbJR5Sgkfl2WQ0MtT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hxeaabTJC7xCtk+ekhV6HxEQK6p1k8pF4SNa8spq/JxPHet1AvlE4SYWtZsznh1dxe4gcEX/sTRi9lSiEnVGAQRpB67Ri0Wa0dlYSKdFABsTfrA3MxlLnL55MLi1bUSyElGmG0xQzZ1hTt4NKAuWOuT0vvqhsMDacKdC8ahJDgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OYL3r/5n; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=zQkvIuzbpkgJBUTC9lp/MUGV2IMSjKUSaK9yLyoEtoY=;
+	b=OYL3r/5n2J3JAxmZgSRSmPeYfISQF2dh7KkHVmlx+z0z7hr5sQwKBunocLxVFp
+	I8Dm1OkKnkBedcDSWR1MFLDeItyzFGhGNg2bTnbib12y6x4Y/Wi9NBynJwPf9HP2
+	0PQweRZpd3TUOEXbFhQl8OGWSvKGw8VnPgX2QELop2tSE=
+Received: from [192.168.71.94] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wBH59fYFz9oh8TjFg--.7625S2;
+	Tue, 03 Jun 2025 23:42:17 +0800 (CST)
+Message-ID: <5ce7f320-7a50-475a-9406-ace4af47192b@163.com>
+Date: Tue, 3 Jun 2025 23:42:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250603083157.GAaD6y_fec2X_hTnav@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/6] PCI: Clean up __pci_find_next_cap_ttl()
+ readability
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com,
+ manivannan.sadhasivam@linaro.org, kw@linux.com, cassel@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250514161258.93844-1-18255117159@163.com>
+ <20250514161258.93844-3-18255117159@163.com>
+ <987609ec-7a1b-057c-1e3b-8bf564965036@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <987609ec-7a1b-057c-1e3b-8bf564965036@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBH59fYFz9oh8TjFg--.7625S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFWrKw18tw1xCw4fXrWfuFg_yoW5XF1fpr
+	98C3ZFyF48JFWjka1v93ZxJF12q3WDtrW8GryYg3s8XFy2yF18KFs2kryYvFnrZrZ7uF1F
+	qFWqv3s5uF90yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRgtxDUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhBho2g-EXSmOAABsF
 
-On Tue, Jun 03, 2025 at 10:31:57AM +0200, Borislav Petkov wrote:
-> On Mon, Jun 02, 2025 at 10:02:15AM -0700, Luck, Tony wrote:
-> > This is just an improvement on my "option 1" (improved because all-ones
-> > for the component ID is going to be invalid for sure, while all zeroes
-> > could be a valid component).
+
+
+On 2025/6/3 17:30, Ilpo Järvinen wrote:
+> On Thu, 15 May 2025, Hans Zhang wrote:
 > 
-> Right, you need to know at injection time which of the components are valid
-> and which are not.
+>> Refactor the __pci_find_next_cap_ttl() to improve code clarity:
+>> - Replace magic number 0x40 with PCI_STD_HEADER_SIZEOF.
+>> - Use ALIGN_DOWN() for position alignment instead of manual bitmask.
+>> - Extract PCI capability fields via FIELD_GET() with standardized masks.
+>> - Add necessary headers (linux/align.h).
+>>
+>> The changes are purely non-functional cleanups, ensuring behavior remains
+>> identical to the original implementation.
 > 
-> > Or just stop collecting on the first invalid one.
+> If you want a simpler wording for this, this is often used:
 > 
-> That would mean that you punish the user at the first typo. :-P
+> No functional changes intended.
+
+Dear Ilpo,
+
+Will change.
+
 > 
-> Considering how complex those interfaces become perhaps not such a good
-> idea...
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>> Changes since v11:
+>> - None
+>>
+>> Changes since v10:
+>> - Remove #include <uapi/linux/pci_regs.h> and add macro definition comments.
+>>
+>> Changes since v9:
+>> - None
+>>
+>> Changes since v8:
+>> - Split into patch 1/6, patch 2/6.
+>> - The
+>> ---
+>>   drivers/pci/pci.c             | 9 +++++----
+>>   include/uapi/linux/pci_regs.h | 2 ++
+>>   2 files changed, 7 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index e77d5b53c0ce..27d2adb18a30 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -9,6 +9,7 @@
+>>    */
+>>   
+>>   #include <linux/acpi.h>
+>> +#include <linux/align.h>
+>>   #include <linux/kernel.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/dmi.h>
+>> @@ -432,17 +433,17 @@ static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+>>   	pci_bus_read_config_byte(bus, devfn, pos, &pos);
+>>   
+>>   	while ((*ttl)--) {
+>> -		if (pos < 0x40)
+>> +		if (pos < PCI_STD_HEADER_SIZEOF)
+>>   			break;
+>> -		pos &= ~3;
+>> +		pos = ALIGN_DOWN(pos, 4);
+>>   		pci_bus_read_config_word(bus, devfn, pos, &ent);
+>>   
+>> -		id = ent & 0xff;
+>> +		id = FIELD_GET(PCI_CAP_ID_MASK, ent);
+>>   		if (id == 0xff)
+>>   			break;
+>>   		if (id == cap)
+>>   			return pos;
+>> -		pos = (ent >> 8);
+>> +		pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, ent);
+>>   	}
+>>   	return 0;
+>>   }
+>> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+>> index ba326710f9c8..35051f9ac16a 100644
+>> --- a/include/uapi/linux/pci_regs.h
+>> +++ b/include/uapi/linux/pci_regs.h
+>> @@ -206,6 +206,8 @@
+>>   /* 0x48-0x7f reserved */
+>>   
+>>   /* Capability lists */
+>> +#define PCI_CAP_ID_MASK		0x00ff	/* Capability ID mask */
+>> +#define PCI_CAP_LIST_NEXT_MASK	0xff00	/* Next Capability Pointer mask */
+>>   
+>>   #define PCI_CAP_LIST_ID		0	/* Capability ID */
+> 
+> I'd add those here with the extra space before name and add empty line in
+> between them and the capability id list.
+> 
 
-Here's what EINJ V2 injection looks like to a user (to be included in
-Documentation/firmware-guide/acpi/apei/einj.rst):
+Will change.
 
-An EINJv2 error injection example::
 
-  # cd /sys/kernel/debug/apei/einj
-  # cat available_error_type                    # See which errors can be injected
-  0x00000002    Processor Uncorrectable non-fatal
-  0x00000008    Memory Correctable
-  0x00000010    Memory Uncorrectable non-fatal
-  V2_0x00000001 EINJV2 Processor Error
-  V2_0x00000002 EINJV2 Memory Error
+Best regards,
+Hans
 
-  # echo 0x12345000 > param1                    # Set memory address for injection
-  # echo 0xfffffffffffff000 > param2            # Range - anywhere in this page
-  # echo 0x1 > component_id0                    # First device ID
-  # echo 0x4 > component_syndrome0              # First error syndrome
-  # echo 0x2 > component_id1                    # Second device ID
-  # echo 0x4 > component_syndrome1              # Second error syndrome
-  # echo '' > component_id2                     # Mark id2 invalid to terminate list
-  # echo V2_0x2 > error_type                    # Choose EINJv2 memory error
-  # echo 0xa > flags                            # set flags to indicate EINJv2
-  # echo 1 > error_inject                       # Inject now
+>>   #define  PCI_CAP_ID_PM		0x01	/* Power Management */
+>>
+> 
 
-Note the shorthand to write all-ones using an empty line because
-typing:
-
-  # echo fffffffffffffffffffffffffffffff > component_id2
-
-would:
-1) give carpal tunnel syndrome
-2) wear out the "f" key on my keyboard
-3) run the risk of miscounting the number of 'f' characters
-   (above is wrong because there are only 31, but hard to spot that).
-
--Tony
 
