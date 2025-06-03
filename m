@@ -1,134 +1,315 @@
-Return-Path: <linux-kernel+bounces-672397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70343ACCEBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A06FAACCEBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E0F16F37C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 21:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA9C170740
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 21:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484A3226D16;
-	Tue,  3 Jun 2025 21:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1A8226CF8;
+	Tue,  3 Jun 2025 21:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="azw+oXlD"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="u72N0HKY"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AB7224B05;
-	Tue,  3 Jun 2025 21:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287882248A6;
+	Tue,  3 Jun 2025 21:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748985210; cv=none; b=tcGHAES+HTQePnOp0ahxqcBEYSDoISs0WI4R/wiXyuimUYJPjHt+b771v1kp4EgDXRk9PUczHFpo2DKQg+wT17+KB0kKL44P5hKGPLXmb33DtY3v3fSEgpsA8rJm6G5gVs9D7wOZ0eNKrJij44c3AFnLbRSCPmbOq44M/8iIfaw=
+	t=1748985230; cv=none; b=V/QuFffWRo8vo0ThGVSuBAJ2jCHfmdnJJhMYhJApfGDwJWZBuDx9XV6NL867wrD2Z5pVltJny4Q5lwsK1Kk0ncjknU5BQEogjX/EpuhsgedrDN0V+Lu47Ltkt3KIsESSMqcqDJsGXLLe+hR/Ok2H/nTKHxHgwKXZcidm31wnoXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748985210; c=relaxed/simple;
-	bh=1BcdnyMHgieTxm8ahEYkMYtEjs8zmaa3HiTW1iXKbeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgw/gbXtkf61pZK3dmIHSEhIgXIU6mykyYwi5+IzdFXqTaQulaAWQAIiTHoKC6wRAkJryKBQ/EZjSKv4vflDVYMgFvVbnlbYmjqpXdl5R54h6JaU6nHBNxezM2Fv6c+Ap9NgNqy676+PX0EsxBT150V95kfiuAhwL41RcbNzb6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=azw+oXlD; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bmhcf/j9uEBvFmWrno3AXxDLOTU31ZRPLYTptLNTT4I=; b=azw+oXlDU8KhpqtJ+QZTyDEzek
-	az9+bvyrejgDDwDnTYRrsNnwEs/tNrrUkkuW2q6FVstjBRCXHKJ1Rha0xADMT/ZaRsPfeXYTGioDW
-	JhA2xTwSl+wqPb6q+4y9wIrCuWJ3WVuT0C9jEYplZAxw5Qr0XmCD5li7WJfsRwvQllyqBmqsL8B9u
-	dGu/JNl4QIglQ4Qg++Vrr0UtAJDvnvBEWpXisPFirXaG0fki932y5iiP/TqxRAd46JQRK7X9ONHUO
-	rQ77av6uBKHAbqLIpPT7t4sLG58DhRvsc9R1OXyp4vFkr/B7V3a6LcCsBdptVtFcczQOMAhX5enZS
-	VxB5v87A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35734)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uMYwY-0006Qr-1W;
-	Tue, 03 Jun 2025 22:13:10 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uMYwP-0000Ug-2N;
-	Tue, 03 Jun 2025 22:13:01 +0100
-Date: Tue, 3 Jun 2025 22:13:01 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Wei Fang <wei.fang@nxp.com>,
-	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	xiaolei.wang@windriver.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v2 net] net: phy: clear phydev->devlink when the link is
- deleted
-Message-ID: <aD9lXa1JVRyJKuP_@shell.armlinux.org.uk>
-References: <20250523083759.3741168-1-wei.fang@nxp.com>
- <8b947cec-f559-40b4-a0e0-7a506fd89341@gmail.com>
- <d696a426-40bb-4c1a-b42d-990fb690de5e@quicinc.com>
+	s=arc-20240116; t=1748985230; c=relaxed/simple;
+	bh=aMDRsr8BgEnv2VC/stL9/Fn9Dhd4Wg8D2PKZI6RbKyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nQl/YXSpq5uJos2N6ZWQK4WFnXFJjNbpkyHRS9VVKgVySKwih+KYp1WyaP0BdhYdyMah2hspmnGzhlUC0uBF4AiJbDyYsxaayxexPPa7rCDj5a+cCWXinW1a1JyhlqJTcNi0QLHut38FqQzT8OFo/jhlKMGgcTZk7KuBFwxYInw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=u72N0HKY; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1748985226; bh=uCHDWZ/YSKO/QVzz8XQFkdmZfL60SSwm4+MhipptReg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
+	 Subject;
+	b=u72N0HKYOGr0NvUlYLTRCuXIZlktKw1V8ooPxftf94M73oCqM7EFWG8D71veK0RBc
+	 BnK4N3BnOc6MEFioZ3WfRSijkhcJs3qdTIJrTZ721vBmR3QOhkq8Xp4UtAh+H6FHdj
+	 ntbm6Wvpvrbj2YdD8IqQMcWnvsEunG5HwKGJAKtPzLJkaJai9LXqhmIqDelZJqOfZx
+	 e6OmxJ332JUfiIKne1407EBQNEPCBe/K9gx7ylUo8xNhWaiJ09HIPCBIqC30uqgh0d
+	 CT1HUrQd7PR8ZCBswl4GUdD3vrfrJljMRctiERzpi4I6UJgrzR3cLlA5Rk11SM/BCJ
+	 q0l3P7c7WzCzw==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bBk3F6FY9z8sbt;
+	Tue,  3 Jun 2025 23:13:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3639:fe00:a21f:4ce4:8495:5578
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3639:fe00:a21f:4ce4:8495:5578])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1+u239X7Kf1MUWjocRBQ3Jv/Tc/rDSzZ4g=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bBk396YP9z8sgj;
+	Tue,  3 Jun 2025 23:13:41 +0200 (CEST)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Luis Gerhorst <luis.gerhorst@fau.de>,
+	Henriette Herzog <henriette.herzog@rub.de>,
+	Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+	Cupertino Miranda <cupertino.miranda@oracle.com>,
+	Jiayuan Chen <mrpre@163.com>,
+	Matan Shachnai <m.shachnai@gmail.com>,
+	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org
+Cc: Maximilian Ott <ott@cs.fau.de>,
+	Milan Stephan <milan.stephan@fau.de>
+Subject: [PATCH bpf-next v4 4/9] bpf, arm64, powerpc: Add bpf_jit_bypass_spec_v1/v4()
+Date: Tue,  3 Jun 2025 23:13:18 +0200
+Message-ID: <20250603211318.337474-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250603205800.334980-1-luis.gerhorst@fau.de>
+References: <20250603205800.334980-1-luis.gerhorst@fau.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d696a426-40bb-4c1a-b42d-990fb690de5e@quicinc.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Jun 03, 2025 at 01:39:47PM -0700, Abhishek Chauhan (ABC) wrote:
-> 
-> 
-> On 5/23/2025 8:19 AM, Florian Fainelli wrote:
-> > 
-> > 
-> > On 5/23/2025 1:37 AM, Wei Fang wrote:
-> >> There is a potential crash issue when disabling and re-enabling the
-> >> network port. When disabling the network port, phy_detach() calls
-> >> device_link_del() to remove the device link, but it does not clear
-> >> phydev->devlink, so phydev->devlink is not a NULL pointer. Then the
-> >> network port is re-enabled, but if phy_attach_direct() fails before
-> >> calling device_link_add(), the code jumps to the "error" label and
-> >> calls phy_detach(). Since phydev->devlink retains the old value from
-> >> the previous attach/detach cycle, device_link_del() uses the old value,
-> >> which accesses a NULL pointer and causes a crash. The simplified crash
-> >> log is as follows.
-> >>
-> >> [   24.702421] Call trace:
-> >> [   24.704856]  device_link_put_kref+0x20/0x120
-> >> [   24.709124]  device_link_del+0x30/0x48
-> >> [   24.712864]  phy_detach+0x24/0x168
-> >> [   24.716261]  phy_attach_direct+0x168/0x3a4
-> >> [   24.720352]  phylink_fwnode_phy_connect+0xc8/0x14c
-> >> [   24.725140]  phylink_of_phy_connect+0x1c/0x34
-> >>
-> >> Therefore, phydev->devlink needs to be cleared when the device link is
-> >> deleted.
-> >>
-> >> Fixes: bc66fa87d4fd ("net: phy: Add link between phy dev and mac dev")
-> >> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> > 
-> @Wei 
-> What happens in case of shared mdio ? 
-> 
-> 1. Device 23040000 has the mdio node of both the ethernet phy and device 23000000 references the phy-handle present in the Device 23040000
-> 2. When rmmod of the driver happens 
-> 3. the parent devlink is already deleted. 
-> 4. This cause the child mdio to access an entry causing a corruption. 
-> 5. Thought this fix would help but i see that its not helping the case. 
-> 
-> Wondering if this is a legacy issue with shared mdio framework. 
+JITs can set bpf_jit_bypass_spec_v1/v4() if they want the verifier to
+skip analysis/patching for the respective vulnerability. For v4, this
+will reduce the number of barriers the verifier inserts. For v1, it
+allows more programs to be accepted.
 
-The device link does nothing for this as it has DL_FLAG_STATELESS set,
-which only affects suspend/resume/shutdown ordering, and with
-DL_FLAG_PM_RUNTIME also set, runtime PM.
+The primary motivation for this is to not regress unpriv BPF's
+performance on ARM64 in a future commit where BPF_NOSPEC is also used
+against Spectre v1.
 
-The device probe/removal ordering is unaffected. Maybe that's a
-problem, but it needs careful consideration to change.
+This has the user-visible change that v1-induced rejections on
+non-vulnerable PowerPC CPUs are avoided.
 
+For now, this does not change the semantics of BPF_NOSPEC. It is still a
+v4-only barrier and must not be implemented if bypass_spec_v4 is always
+true for the arch. Changing it to a v1 AND v4-barrier is done in a
+future commit.
+
+As an alternative to bypass_spec_v1/v4, one could introduce NOSPEC_V1
+AND NOSPEC_V4 instructions and allow backends to skip their lowering as
+suggested by commit f5e81d111750 ("bpf: Introduce BPF nospec instruction
+for mitigating Spectre v4"). Adding bpf_jit_bypass_spec_v1/v4() was
+found to be preferable for the following reason:
+
+* bypass_spec_v1/v4 benefits non-vulnerable CPUs: Always performing the
+  same analysis (not taking into account whether the current CPU is
+  vulnerable), needlessly restricts users of CPUs that are not
+  vulnerable. The only use case for this would be portability-testing,
+  but this can later be added easily when needed by allowing users to
+  force bypass_spec_v1/v4 to false.
+
+* Portability is still acceptable: Directly disabling the analysis
+  instead of skipping the lowering of BPF_NOSPEC(_V1/V4) might allow
+  programs on non-vulnerable CPUs to be accepted while the program will
+  be rejected on vulnerable CPUs. With the fallback to speculation
+  barriers for Spectre v1 implemented in a future commit, this will only
+  affect programs that do variable stack-accesses or are very complex.
+
+For PowerPC, the SEC_FTR checking in bpf_jit_bypass_spec_v4() is based
+on the check that was previously located in the BPF_NOSPEC case.
+
+For LoongArch, it would likely be safe to set both
+bpf_jit_bypass_spec_v1() and _v4() according to
+commitÂ a6f6a95f2580 ("LoongArch, bpf: Fix jit to skip speculation
+barrier opcode"). This is omitted here as I am unable to do any testing
+for LoongArch.
+
+Hari's ack concerns the PowerPC part only.
+
+Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+Acked-by: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Henriette Herzog <henriette.herzog@rub.de>
+Cc: Maximilian Ott <ott@cs.fau.de>
+Cc: Milan Stephan <milan.stephan@fau.de>
+---
+ arch/arm64/net/bpf_jit_comp.c     | 21 ++++++++++++---------
+ arch/powerpc/net/bpf_jit_comp64.c | 21 +++++++++++++++++----
+ include/linux/bpf.h               | 11 +++++++++--
+ kernel/bpf/core.c                 | 15 +++++++++++++++
+ 4 files changed, 53 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index da8b89dd2910..2cab9063f563 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -1632,15 +1632,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
+ 
+ 	/* speculation barrier */
+ 	case BPF_ST | BPF_NOSPEC:
+-		/*
+-		 * Nothing required here.
+-		 *
+-		 * In case of arm64, we rely on the firmware mitigation of
+-		 * Speculative Store Bypass as controlled via the ssbd kernel
+-		 * parameter. Whenever the mitigation is enabled, it works
+-		 * for all of the kernel code with no need to provide any
+-		 * additional instructions.
+-		 */
++		/* See bpf_jit_bypass_spec_v4() */
+ 		break;
+ 
+ 	/* ST: *(size *)(dst + off) = imm */
+@@ -2911,6 +2903,17 @@ bool bpf_jit_supports_percpu_insn(void)
+ 	return true;
+ }
+ 
++bool bpf_jit_bypass_spec_v4(void)
++{
++	/* In case of arm64, we rely on the firmware mitigation of Speculative
++	 * Store Bypass as controlled via the ssbd kernel parameter. Whenever
++	 * the mitigation is enabled, it works for all of the kernel code with
++	 * no need to provide any additional instructions. Therefore, skip
++	 * inserting nospec insns against Spectre v4.
++	 */
++	return true;
++}
++
+ bool bpf_jit_inlines_helper_call(s32 imm)
+ {
+ 	switch (imm) {
+diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+index 5daa77aee7f7..a4335761b7f9 100644
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -370,6 +370,23 @@ static int bpf_jit_emit_tail_call(u32 *image, struct codegen_context *ctx, u32 o
+ 	return 0;
+ }
+ 
++bool bpf_jit_bypass_spec_v1(void)
++{
++#if defined(CONFIG_PPC_E500) || defined(CONFIG_PPC_BOOK3S_64)
++	return !(security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) &&
++		 security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR));
++#else
++	return true;
++#endif
++}
++
++bool bpf_jit_bypass_spec_v4(void)
++{
++	return !(security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) &&
++		 security_ftr_enabled(SEC_FTR_STF_BARRIER) &&
++		 stf_barrier_type_get() != STF_BARRIER_NONE);
++}
++
+ /*
+  * We spill into the redzone always, even if the bpf program has its own stackframe.
+  * Offsets hardcoded based on BPF_PPC_STACK_SAVE -- see bpf_jit_stack_local()
+@@ -791,10 +808,6 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 		 * BPF_ST NOSPEC (speculation barrier)
+ 		 */
+ 		case BPF_ST | BPF_NOSPEC:
+-			if (!security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) ||
+-					!security_ftr_enabled(SEC_FTR_STF_BARRIER))
+-				break;
+-
+ 			switch (stf_barrier) {
+ 			case STF_BARRIER_EIEIO:
+ 				EMIT(PPC_RAW_EIEIO() | 0x02000000);
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 5b25d278409b..5dd556e89cce 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2288,6 +2288,9 @@ bpf_prog_run_array_uprobe(const struct bpf_prog_array *array,
+ 	return ret;
+ }
+ 
++bool bpf_jit_bypass_spec_v1(void);
++bool bpf_jit_bypass_spec_v4(void);
++
+ #ifdef CONFIG_BPF_SYSCALL
+ DECLARE_PER_CPU(int, bpf_prog_active);
+ extern struct mutex bpf_stats_enabled_mutex;
+@@ -2475,12 +2478,16 @@ static inline bool bpf_allow_uninit_stack(const struct bpf_token *token)
+ 
+ static inline bool bpf_bypass_spec_v1(const struct bpf_token *token)
+ {
+-	return cpu_mitigations_off() || bpf_token_capable(token, CAP_PERFMON);
++	return bpf_jit_bypass_spec_v1() ||
++		cpu_mitigations_off() ||
++		bpf_token_capable(token, CAP_PERFMON);
+ }
+ 
+ static inline bool bpf_bypass_spec_v4(const struct bpf_token *token)
+ {
+-	return cpu_mitigations_off() || bpf_token_capable(token, CAP_PERFMON);
++	return bpf_jit_bypass_spec_v4() ||
++		cpu_mitigations_off() ||
++		bpf_token_capable(token, CAP_PERFMON);
+ }
+ 
+ int bpf_map_new_fd(struct bpf_map *map, int flags);
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index c20babbf998f..f9bd9625438b 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -3034,6 +3034,21 @@ bool __weak bpf_jit_needs_zext(void)
+ 	return false;
+ }
+ 
++/* By default, enable the verifier's mitigations against Spectre v1 and v4 for
++ * all archs. The value returned must not change at runtime as there is
++ * currently no support for reloading programs that were loaded without
++ * mitigations.
++ */
++bool __weak bpf_jit_bypass_spec_v1(void)
++{
++	return false;
++}
++
++bool __weak bpf_jit_bypass_spec_v4(void)
++{
++	return false;
++}
++
+ /* Return true if the JIT inlines the call to the helper corresponding to
+  * the imm.
+  *
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.49.0
+
 
