@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-671678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F807ACC4A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F27B4ACC4A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF1616B16B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24A316B38F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D4A22A1D5;
-	Tue,  3 Jun 2025 10:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F13322DF86;
+	Tue,  3 Jun 2025 10:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BQ6o68R2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WfMDLrC9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06D9229B0F
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C876122D7B0
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748947849; cv=none; b=ZE7fDoTMEI6+LaOT6qc/bWfKV78uacaqTVwXQWkUMHDUVJep8Kt27KxHgLUsBDfsnZc2LOzJm+nC8djC43loVEEROyqD4UvyVK/3bvbvCCIHp8BbBxMkpQi7z62Sdet0HFohYHoaOgS2fXiSrnyKAlU23jd1eDnoeMpTVhNwPhI=
+	t=1748947855; cv=none; b=e38uv0+LdqXdy+SffhnRUMxOhoplv8yCCidEMAEOELRBVqBEiNr1KyGCJ9wsjWtOjtZLo9fwgelAxv3pNNcXTtsmz3wk6CTS+OYs9pSPMYGD59+t0mf04NRAPV4UK/1bL2NtSIrtDjzmwPm7jYFIg0lPsEhoFUH1+Jd6F9TgxhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748947849; c=relaxed/simple;
-	bh=RzXQoeY8OBWNIwxdR6qtplFIQ/IFmhyVe8iUNlNmbNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYcp/pxUQAv741OMeiMxJH4O1Z4rTRnwXrBggMAh6QkkQ/WEdt7qHkf2NLCeftjbDBWuu3SDQgUYeaGx1sHi6oH58rMXWsK8A9KVtg+sDK2FNTl9OEnst7GCL1nOG/5lzvt8og2KSLQLDzYz/KNsNr/8k5xlzcoFsfa4vyLfj4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BQ6o68R2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5539JIbV028422
-	for <linux-kernel@vger.kernel.org>; Tue, 3 Jun 2025 10:50:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Vm4mnfktEosvn9wSbQ9LX58d
-	m00u7H1ye4NwgmSgVjI=; b=BQ6o68R2EVlEg4rFOgwuwxSoiRjVBsRq27wya4JW
-	YKU9gIg4ALQHg+OKo7go6U2oh3N6+7vwwOWR3XVI9pQxFp/RE4wUPleaq4u/ycYD
-	czm/qWHttrhfiFbssW1TBhHUEWuJVkfSSd0w4CCyJ6UpSg/JDFjmdPT39WNRU/aF
-	o45ZM3QGESGbAmUN6W9s84k5OHyh0Fw7SnDc2TUOaLyVEzhHPvgWrer9dUEjHZ/p
-	/1S0U5fD0xiQ5mtSCFzNhdg4iAUfCOrgkdYCY8yFY/j9eYTECDz26vg1/Nkes8KN
-	eivAkNnVG9TBxK5z6xtW5srrzIgjmBAJKOhcOiWkRtl6SA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8tta19-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 10:50:46 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5d608e6f5so1437098985a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 03:50:46 -0700 (PDT)
+	s=arc-20240116; t=1748947855; c=relaxed/simple;
+	bh=pP732qkBtLWc1YarRschcEvEOBGT5QCpzr6OZsyMpXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XlQT3SIvtW2cyKeaOp7u8bkYz8xXROtrBlBZPc0LDSWf78jDeSMDWeOzDsO8ciswPyd1T/puwEmHwlqYrAlyhPYEc2Yk3ZG/MijG9aSxnEpi3NySyw2KlFU+u6DfXYuzIOo9sK2sj8ym4jEUtHm6vsRrZZN8KZVDiw1i+Usp5OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WfMDLrC9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748947852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n0+40Yg0Yos7RVqiMwJQqOocRWrul7ar29oZFeXB2SU=;
+	b=WfMDLrC9Qs6S04He4s/U50A7bOnHn75xMNjWAWOS0YJrpR8ENd8IlKGlUvJLCA93pYRD5F
+	sVLQnGA5gdm/YZOKfKAZjprvDJgv7BeIL+2mP8sLIBzEoeg5Tk6RC8tJvCNMdphKVhc17/
+	IubJ6atTGqUwQpwBoQfoaCl6FDs2imI=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-211-7jtv0d05PqesevrDoOldlQ-1; Tue, 03 Jun 2025 06:50:51 -0400
+X-MC-Unique: 7jtv0d05PqesevrDoOldlQ-1
+X-Mimecast-MFC-AGG-ID: 7jtv0d05PqesevrDoOldlQ_1748947850
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451e24dfe1dso9089135e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 03:50:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748947845; x=1749552645;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vm4mnfktEosvn9wSbQ9LX58dm00u7H1ye4NwgmSgVjI=;
-        b=OQCYCJInEkytCGQ4vEq8D3NGNvuLP8T+Vj5MDwoOn0pDfQozGBJiW/ttj3YClCtRvu
-         Sd5BzUUnVFx1JFbkjhAxrMKfoZLbprKdoAtsPwzhHYmHWzig418+hupxSHu0Z07TlwG7
-         fpIQ5oTW2FAwxRuVdcyzOqxJo5PNWMDywUt+nDfm7StcffBfUytS5EaBTxnzjt2Eh+xF
-         jYgXXedn0ABkXqvr69OXizwqPIAu+9fVboZTiZrznY734IY44JjmMQdPEAdrRgEPEci6
-         OTMdXQQUzieiZMLX7SREwj417HKjFwzKP/rb1ozwGhnc66N2BkU90bT+L/Py6XY+4E6x
-         Y6jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyfhZpudGpblgJZVwTfUez+d3M+qzKjeqHnxQ3i9oItOJ99yeKEYx7JodcEnUcRr5w8tC4YrfyTkTSCuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBp5H8umNdJ3rdaxLa7upoMwNMVvXF9PCIDTlJPqwHLhYWFqlv
-	svm1vRozFOyExhhu+gCsHz6hTY+48ngNiIAEDyPD7HSWveT7QXgCRFe7Evuy+/nvFQh3IU/J/j/
-	IaXVyA0NZCVzp7F8wURIuBg5Q5oNhVUEJJFTK7mUzjU0tSLXlWOs80MyYbdR+zBH/Ito=
-X-Gm-Gg: ASbGncsSMBQjFGI0qKigXYZ3265qOeGP1yhVai96Vf36x19qvFYrcdCF2M5Wmh+ZF5F
-	5qV/QiFFPjM5RPN6+wwa2Jm2xfQsyF/knX65a+e6L17wVBt6Zm+akYmF0HilTeOuL6c4V2Ad0/M
-	/NHFOdecpIDUTG6TT45KFLTNZIMWsINPUviCgxAZbIzov/TyL46CyhTxfxi1ypYh6YXtKWMS2Fz
-	1LDh6EjBLqWl6cpg8Hmpj8tC3bqGa12ea9+ATNvI6CEmd0OBi7xyqI2mt9onwNuul0wW3uBYr9a
-	JjSiSWua3hjtEZk796U5NN5spQiacQncXNNqnmelvvQjyttJKdgfI8oDPVONx3ktaND7Bzzh8Zr
-	5YjVth40ifw==
-X-Received: by 2002:a05:620a:1a83:b0:7c7:b60f:ebd8 with SMTP id af79cd13be357-7d0a4af321emr2309211185a.24.1748947845575;
-        Tue, 03 Jun 2025 03:50:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6/Ai8VNOZ5j/lNeuLKY2LQit0DXGz1yVy635bM9pzD1rNIoOXopJpQt0KqrADunHS/Py7IQ==
-X-Received: by 2002:a05:620a:1a83:b0:7c7:b60f:ebd8 with SMTP id af79cd13be357-7d0a4af321emr2309207385a.24.1748947845077;
-        Tue, 03 Jun 2025 03:50:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32a85a30c9esm18242121fa.0.2025.06.03.03.50.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 03:50:44 -0700 (PDT)
-Date: Tue, 3 Jun 2025 13:50:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, amitk@kernel.org,
-        thara.gopinath@gmail.com, rafael@kernel.org, daniel.lezcano@linaro.org,
-        rui.zhang@intel.com, lukasz.luba@arm.com,
-        david.collins@oss.qualcomm.com, srinivas.kandagatla@linaro.org,
-        stefan.schmidt@linaro.org, quic_tsoni@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] thermal: qcom-spmi-temp-alarm: enable stage 2
- shutdown when required
-Message-ID: <i6xy6b2seaxkrpktpyh32fqyxctcvvpk2u6ptpjs727n5fnlak@jcvlqg3ooaxg>
-References: <20250528235026.4171109-1-anjelique.melendez@oss.qualcomm.com>
- <0nJRx6-RgYybx3jhgUDcxC9hIxr02feRJuYYgLa6lpO3DOSuQidQkRKKoqvQoV0x26UVeiV6G5XN8cMTZ9Ol5g==@protonmail.internalid>
- <20250528235026.4171109-2-anjelique.melendez@oss.qualcomm.com>
- <895a0004-04df-4b7e-9855-bc0033ca650b@linaro.org>
+        d=1e100.net; s=20230601; t=1748947850; x=1749552650;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n0+40Yg0Yos7RVqiMwJQqOocRWrul7ar29oZFeXB2SU=;
+        b=NfNeE1vb3TqPRUfif6v+uR3TNxS9DZkNxM+Nswc03kPsQ/W6lEg7OF9WzaMO/04beC
+         ypdNy/B3rGBVlxcAN+alceuUoQCz7y8rdNZPR7nLHQYs4I03ukmjUDXi2Nsv1hr95qhj
+         YKCVFa82prIH6itm5uA6gyByGYzQV2IwEGoHe38JyVe9ZGKdvJXMdpQ/e5tgvntLa5xQ
+         lQ1EjFbale4VrI+xwtejQ3TKv5uxAV41Q8uJm6NBPVBTyni7wmMAW/deTbZe4zwr/bte
+         fhaksaF6RI8qxN2fABXBnLQirwsk22QGIfjb0hq0WD48GqMqyz1akE3T7uWkt0z26Kb7
+         Ha2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWsS099cHF/8CzVU9gnpHwjQqDu9BdQK21r+gRXQKRaspDpZ+MUDKkOGpumGHvAVv+lWmDgggBCUKJi7XQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1lPxo8VhxFBacPquO8l86mxMb9Ttu1APu4KHIMtTrs6Ia6Xjd
+	JvXr9wZbfShV/GCLUpKTNTXv6OuYWPrpU0xqrfcF4m0qPd4Y+su2RMgTl4meikwhRji0GhfHNtD
+	+xvdpqYlcTqEMtkBB8cOvyUAqbBwOox6KgeMqRQ3mGtBO0a4+AOCOvjKA19HA0LyFSg==
+X-Gm-Gg: ASbGncvlBr+dMZRsdwBFUnEblkztTedT/3c7K1RLSKArew7h/fdvLN9jZIVZA8Ac2JK
+	orwuXWpLOULwse6cfJ+s3mLJ066Rlr+ALe6/41C90o5jeW4r5fTSy6nZno9DbWPvHt9gmcykTrF
+	YrJ+rYdTb+Yh2ptn6LFb08SqFMFcuKHgHsC0KREL3UfEQ56hihkckS+JgqhQcHIdOXrUuiKT322
+	Js7OGJsUTpCtIY17U/Vcg+pPMRoT/XSN7+AQvUZU/NOBrZ4FguKxrKKl4abIQ701tQY9bBmjR2/
+	Dd8iVDCQU/FaRxGNMnqfzJafIqJipqZkYM72gUX2bE+XNFrdeQvESyLj
+X-Received: by 2002:a05:600c:3b10:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-450d885e485mr167351785e9.17.1748947850294;
+        Tue, 03 Jun 2025 03:50:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtGECdKa1RWIrVSs41cY4rfCiCynHGO3J9EwYlEtBcnGInHb9ONotRvfoR7OrR5T/NIAl9cQ==
+X-Received: by 2002:a05:600c:3b10:b0:44a:b478:1387 with SMTP id 5b1f17b1804b1-450d885e485mr167351265e9.17.1748947849868;
+        Tue, 03 Jun 2025 03:50:49 -0700 (PDT)
+Received: from ?IPV6:2a0d:3341:cc2d:3210:4b21:7487:446:42ea? ([2a0d:3341:cc2d:3210:4b21:7487:446:42ea])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d80065e0sm163577265e9.29.2025.06.03.03.50.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 03:50:49 -0700 (PDT)
+Message-ID: <b8d181e9-d818-4cf4-b470-a54b6df763a4@redhat.com>
+Date: Tue, 3 Jun 2025 12:50:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <895a0004-04df-4b7e-9855-bc0033ca650b@linaro.org>
-X-Proofpoint-GUID: D-qy5n23K2sv6H-bwvrJVLU2Vi3holz4
-X-Authority-Analysis: v=2.4 cv=Qspe3Uyd c=1 sm=1 tr=0 ts=683ed386 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=7P3EZGi6tQuJdicK0tQA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDA5NSBTYWx0ZWRfX6/Q7b9gU3IKr
- hdkYCD30dclIuJVAeYQk2FXGAo38g3RbnWllCPaRMaHfqe46UOX8ZFXnwdoA2zWEl+hKVIeDZtB
- qsknR48uci6Jmrjm2PpLH4dcw3pzG6lYdfs2T7tj6RyDqQY+BchWu3r7aj8lDU1e7LF7n1f+xXO
- 77PPVsWuezD11oJ8lG3qILfBdmetc82Ass1oxDq/J2Um9933yFSaSudJWtmgYBSoWKb4c+aUWQp
- J67S72Kb3FQAper2owKmiYbr2VortPxW+GUgSzigcJt+fpjVHBCo4rKutXsApQM8g2WKR2MohSL
- k6aqHlgNzKT5zQZJLyuWaqJ1cZhCEfFq5/yIjMM9KyGtn8RlaoF5oXT1zemEioRcplXGZSkjjxs
- pyD6a4pakyL7mDWr4KMLbXgYgDG5xxEjKmKXkcenbT42s9uviZIA/rQnLRd65Gv/bvvDbi2W
-X-Proofpoint-ORIG-GUID: D-qy5n23K2sv6H-bwvrJVLU2Vi3holz4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 mlxscore=0 spamscore=0 priorityscore=1501 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 impostorscore=0 malwarescore=0
- clxscore=1015 adultscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506030095
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gve: add missing NULL check for
+ gve_alloc_pending_packet() in TX DQO
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>, Bailey Forrest <bcf@google.com>,
+ Eric Dumazet <edumazet@google.com>
+Cc: Mina Almasry <almasrymina@google.com>, joshwash@google.com,
+ willemb@google.com, pkaligineedi@google.com, kuba@kernel.org,
+ jeroendb@google.com, hramamurthy@google.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ darren.kenny@oracle.com
+References: <20250601193428.3388418-1-alok.a.tiwari@oracle.com>
+ <CAHS8izOqWWdsEheAFSwOtzPM98ZudP7gKZMECWUhcU1NCLnwHA@mail.gmail.com>
+ <cc05cbf5-0b59-4442-9585-9658d67f9059@oracle.com>
+ <bf4f1e06-f692-43bf-9261-30585a1427d7@oracle.com>
+ <CANn89iJS9UNvotxXx7f920-OnxLnJ2CjWSUtvaioOMqGKNJdRg@mail.gmail.com>
+ <CANH7hM5O7aq=bMybUqgMf5MxgAZm29RvCTO_oSOfAn1efZnKhg@mail.gmail.com>
+ <abb065ab-1923-4154-8b79-f47a86a3d30e@oracle.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <abb065ab-1923-4154-8b79-f47a86a3d30e@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 29, 2025 at 11:34:27AM +0100, Bryan O'Donoghue wrote:
-> On 29/05/2025 00:50, Anjelique Melendez wrote:
-> > From: David Collins <david.collins@oss.qualcomm.com>
-> > 
-> > Certain TEMP_ALARM GEN2 PMIC peripherals need over-temperature
-> > stage 2 automatic PMIC partial shutdown to be enabled in order to
+On 6/3/25 11:03 AM, ALOK TIWARI wrote:
+> On 03-06-2025 00:54, Bailey Forrest wrote:
+>> I think this patch isn't needed. gve_tx_add_skb_dqo() is only called
+>> after checking gve_maybe_stop_tx_dqo(), which checks that
+>> gve_alloc_pending_packet() will not return NULL.
 > 
-> stage 2 should be hyphenated to stage-2
+> Thank you for the clarification,
 > 
-> > avoid repeated faults in the event of reaching over-temperature
-> > stage 3.  Modify the stage 2 shutdown control logic to ensure that
-> > stage 2 shutdown is enabled on all affected PMICs.  Read the
-> > digital major and minor revision registers to identify these
-> > PMICs.
-> > 
-> > Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
-> > Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-> > ---
-> >   drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 32 +++++++++++++++++++--
-> >   1 file changed, 29 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> > index a81e7d6e865f..47248a843591 100644
-> > --- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> > +++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> > @@ -1,6 +1,7 @@
-> >   // SPDX-License-Identifier: GPL-2.0-only
-> >   /*
-> >    * Copyright (c) 2011-2015, 2017, 2020, The Linux Foundation. All rights reserved.
-> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> 
-> Should have the year in it.
+> Even so, I felt it could be a bit misleading for developers and tools. 
+> But if you believe the patch isn't required,I completely understand.
+> In that case, I kindly request you to provide your NACK on the [PATCH 
+> net v2] mail thread for formal tracking,
+> so that other developers can also be aware of the reasoning and 
+> understand the context.
 
-Not per the new policy...
+IMHO it's indeed confusing that the same condition is checked in
+gve_alloc_pending_packet() and ignored by gve_tx_add_skb_dqo().
 
-> 
-> grep -r Copyright * | grep Qualcomm
-> 
-> >    */
-> > 
-> >   #include <linux/bitops.h>
+Even gve_alloc_pending_packet() is only called after the
+gve_maybe_stop_tx_dqo().
 
--- 
-With best wishes
-Dmitry
+Either always ignore the NULL condition it in both places (possibly with
+a comment) or always check it.
+
+/P
+
 
