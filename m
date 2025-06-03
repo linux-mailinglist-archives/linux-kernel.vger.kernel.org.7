@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-672051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B5EACCA3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:32:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6951AACCA3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13116169168
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380A118930C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EA723F295;
-	Tue,  3 Jun 2025 15:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="rQWhBu8I"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D22D23D2B2;
+	Tue,  3 Jun 2025 15:31:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0061123D2B5;
-	Tue,  3 Jun 2025 15:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B6A23C50D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748964696; cv=none; b=tjLtKF6DrmN6fuGXX7jqt67UWj8Ech66i7RoWXNj9PHJy14See7jOXsT7XjwdUwrF6MBlT712pl8JKh7zDseL45OEU2rPKRWMPx7tFDoacDBywdgLOBJj/K05RKPEheeii+JkaAvmDL8HuJ9nwL9shGdOzF81L49AYyelIEhUlY=
+	t=1748964691; cv=none; b=bvs3wiLSdixF//3hHgtJV9qfwbpXEVMZv1zsYbk4NtDrARYzkJ//i93gtt999tOBg3uiivTQm0xqPapBugcRVSD7YhVUrGvSEiKbzUTGNU5AhaOZJzRCjWDARr3J5FEBc2tirPrXG96HFr9ur+R3PicFTPACfPSxuLehbib5mRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748964696; c=relaxed/simple;
-	bh=d08uzOt1VGoqfeJIgallA9cokl1Sjskad74nVOQBGWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ONbIgBa3pkA3RnNKSoz9GxndIrIRTmwWMbvJdBB87f/46tSevebx68W1+6qbOJsz3+34spQ3ZEnPE+PfkHT5qmOlivldMEmfkJe10Nb9IIMGrZ1Vd8CDUsoXJq0TkA0RmKqi7Qe2Axh0rfVN1eLP7m60RAXXR7s1Rmfx7Ezy4Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=rQWhBu8I; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.12])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 5AE62552F539;
-	Tue,  3 Jun 2025 15:31:31 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 5AE62552F539
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1748964691;
-	bh=HOMZ46XwuOVuNK3GluB5hiNrhNDhEtpIHBQJiSl126w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rQWhBu8IbNp2aEw1yGkHmkH/fABhcDcPqyjQzsnUgL1E3uonSTiGzjxrSSxsV3+sI
-	 Zj+p9GVtiv8zpkx3ZqxXvXZOGMASXL7ZkNaHmfpfRcwM17aW7/ng3mJo/pu6QjC1LO
-	 XGe4Scb5H7aIjWf85dMse5cii36+YONMTAfOBEQs=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH rtw-next] wifi: rtw89: fix spelling mistake of RTW89_FLAG_FORBIDDEN_TRACK_WORK
-Date: Tue,  3 Jun 2025 18:31:23 +0300
-Message-ID: <20250603153124.188755-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1748964691; c=relaxed/simple;
+	bh=PFXJYGFLtLX7vFLrt0z8PSAtWdECtHV3t2TAjCiIyF0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B32vRlFR8hCf9Y3aTC0VH7x0vGLjBM1JGXlkToD7O78bFli1IKsuaIluFgCsFfLq8ncJL3N/CxEVBHF+uJYyH65Tua09VzbcWK5kdIWVXNy0uJmFOqiQZhY1hdMm027CbK3+F7XM/fmvCWpSc51tqNaEgUhLpZ1y2I0rXA9B0OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3dda45216f6so32284305ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 08:31:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748964689; x=1749569489;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GAVSA8Z20LfJYI8icc/3dunATI/t7i9/bRad+C4O4Xc=;
+        b=ihzGa454F1HE2/HFcFkRbUE59nix4Ctq9iE/AtO31OwqIsVNl8RDvTv9OV8H3axWbQ
+         IcJAVY450kAdUhlTtesveFu/663iLL3BGhd21VsGVYpgpbLygfMOJhQfGBUwzKpdCXlj
+         y4pBZ+xFywaV4tf9BqF0lmBuJXMJMvuIGXLzmfl/guMlXegacNEIqdhVwnR+w+bWr3RW
+         hWpVKaPs7ddXeAd0X3lL+7Z15hrmeiIGC1fRoz2VzCcTTKcCgPtnp5Kz2sfhzRyk5DMY
+         e4RK5ULuiVTD6dF0PMVYjUV7NTbu7keaKeU+ydOVkb4kr5xk194SwwtiiBDiC/+EXTIh
+         i0Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeOoUQjJbZxAKgHtK7gXiO3ce4J/8J4C6AoN//1ETH/mQRWHnOWIf2J6eVT6W3t2qNDJh1reobz/mMjqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe5TlfDGn2iBs2W6t2rpvbiBSE2tHHl/uj40pjIyfQxCKZqyb9
+	0WRPhEaggVuxtasAZzO7KZCkwRaIJQJcuL3ZU23AJYBc/eLSZxLs0Z1jBPzesurS29LSs+fwe9f
+	yrZV8XfQ8/xVHijGndwAmCEmP0CwxaBZGZ8/Ia5k9OiW83Ks/k0oNcO5gdnU=
+X-Google-Smtp-Source: AGHT+IGKu2HbwU02zkRnkBN+6fEeYWhnjL9Z+Yug9QKyorhWRczyHHu96xE+PHUz0q0+ck5gsb/d2JLCI2sC7S6zjMkhJmUNG6lx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:16c5:b0:3dd:b4f4:2bba with SMTP id
+ e9e14a558f8ab-3ddb4f42c4fmr68966565ab.22.1748964689170; Tue, 03 Jun 2025
+ 08:31:29 -0700 (PDT)
+Date: Tue, 03 Jun 2025 08:31:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <683f1551.050a0220.55ceb.0016.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in ipmr_rules_exit (2)
+From: syzbot <syzbot+a25af2d6c990a65eca95@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Rename RTW89_FLAG_FORBIDDEN_TRACK_WROK -> RTW89_FLAG_FORBIDDEN_TRACK_WORK.
+Hello,
 
-Found by Linux Verification Center (linuxtesting.org).
+syzbot found the following issue on:
 
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+HEAD commit:    342e4955a1f1 usb: usbtmc: Fix timeout value in get_stb
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=135a19f4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc73a376913a3005
+dashboard link: https://syzkaller.appspot.com/bug?extid=a25af2d6c990a65eca95
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3d4486b9330e/disk-342e4955.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b0b416348409/vmlinux-342e4955.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/053a330bcf59/bzImage-342e4955.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a25af2d6c990a65eca95@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 13600 at net/ipv4/ipmr.c:440 ipmr_free_table net/ipv4/ipmr.c:440 [inline]
+WARNING: CPU: 0 PID: 13600 at net/ipv4/ipmr.c:440 ipmr_rules_exit+0x13a/0x1c0 net/ipv4/ipmr.c:361
+Modules linked in:
+
+CPU: 0 UID: 0 PID: 13600 Comm: syz-executor Not tainted 6.15.0-rc6-syzkaller-00166-g342e4955a1f1 #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:ipmr_free_table net/ipv4/ipmr.c:440 [inline]
+RIP: 0010:ipmr_rules_exit+0x13a/0x1c0 net/ipv4/ipmr.c:361
+Code: ff df 48 c1 ea 03 80 3c 02 00 75 7c 48 c7 85 58 09 00 00 00 00 00 00 5b 5d 41 5c 41 5d 41 5e c3 cc cc cc cc e8 d7 79 16 fb 90 <0f> 0b 90 eb 93 e8 cc 79 16 fb 0f b6 1d 73 37 05 04 31 ff 89 de e8
+RSP: 0018:ffffc90014e2fc10 EFLAGS: 00010293
+
+RAX: 0000000000000000 RBX: ffff88812c1dc000 RCX: ffffffff8665f0fd
+RDX: ffff8881222c9d40 RSI: ffffffff8665f169 RDI: 0000000000000005
+RBP: ffff88812ea70000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000001
+R13: ffff88812ea70958 R14: ffff88812ea70000 R15: fffffbfff148e04c
+FS:  000055558afcb500(0000) GS:ffff8882691c2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc07c1d33d0 CR3: 000000014620e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ipmr_net_exit_batch+0x53/0xa0 net/ipv4/ipmr.c:3160
+ ops_exit_list+0x128/0x180 net/core/net_namespace.c:177
+ setup_net+0x4e8/0x850 net/core/net_namespace.c:396
+ copy_net_ns+0x2a6/0x5f0 net/core/net_namespace.c:518
+ create_new_namespaces+0x3ea/0xad0 kernel/nsproxy.c:110
+ unshare_nsproxy_namespaces+0xc0/0x1f0 kernel/nsproxy.c:228
+ ksys_unshare+0x45b/0xa40 kernel/fork.c:3375
+ __do_sys_unshare kernel/fork.c:3446 [inline]
+ __se_sys_unshare kernel/fork.c:3444 [inline]
+ __x64_sys_unshare+0x31/0x40 kernel/fork.c:3444
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f31d7a50167
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 10 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe9bbc8f18 EFLAGS: 00000206
+ ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007f31d7c75f40 RCX: 00007f31d7a50167
+RDX: 0000000000000005 RSI: 00007ffe9bbc8de0 RDI: 0000000040000000
+RBP: 00007f31d7c76738 R08: 00007f31d87a7d60 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000008
+R13: 0000000000000003 R14: 0000000000000009 R15: 0000000000000000
+ </TASK>
+
+
 ---
- drivers/net/wireless/realtek/rtw89/core.c     | 2 +-
- drivers/net/wireless/realtek/rtw89/core.h     | 2 +-
- drivers/net/wireless/realtek/rtw89/mac80211.c | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 49447668cbf3..e54f3dc97e7e 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -3742,7 +3742,7 @@ static void rtw89_track_work(struct wiphy *wiphy, struct wiphy_work *work)
- 
- 	lockdep_assert_wiphy(wiphy);
- 
--	if (test_bit(RTW89_FLAG_FORBIDDEN_TRACK_WROK, rtwdev->flags))
-+	if (test_bit(RTW89_FLAG_FORBIDDEN_TRACK_WORK, rtwdev->flags))
- 		return;
- 
- 	if (!test_bit(RTW89_FLAG_RUNNING, rtwdev->flags))
-diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wireless/realtek/rtw89/core.h
-index 1c8f3b9b7c4c..a081fce1466f 100644
---- a/drivers/net/wireless/realtek/rtw89/core.h
-+++ b/drivers/net/wireless/realtek/rtw89/core.h
-@@ -4912,7 +4912,7 @@ enum rtw89_flags {
- 	RTW89_FLAG_CRASH_SIMULATING,
- 	RTW89_FLAG_SER_HANDLING,
- 	RTW89_FLAG_WOWLAN,
--	RTW89_FLAG_FORBIDDEN_TRACK_WROK,
-+	RTW89_FLAG_FORBIDDEN_TRACK_WORK,
- 	RTW89_FLAG_CHANGING_INTERFACE,
- 	RTW89_FLAG_HW_RFKILL_STATE,
- 
-diff --git a/drivers/net/wireless/realtek/rtw89/mac80211.c b/drivers/net/wireless/realtek/rtw89/mac80211.c
-index a47971003bd4..a8e8b098cc9c 100644
---- a/drivers/net/wireless/realtek/rtw89/mac80211.c
-+++ b/drivers/net/wireless/realtek/rtw89/mac80211.c
-@@ -1698,13 +1698,13 @@ static int rtw89_ops_suspend(struct ieee80211_hw *hw,
- 
- 	lockdep_assert_wiphy(hw->wiphy);
- 
--	set_bit(RTW89_FLAG_FORBIDDEN_TRACK_WROK, rtwdev->flags);
-+	set_bit(RTW89_FLAG_FORBIDDEN_TRACK_WORK, rtwdev->flags);
- 	wiphy_delayed_work_cancel(hw->wiphy, &rtwdev->track_work);
- 
- 	ret = rtw89_wow_suspend(rtwdev, wowlan);
- 	if (ret) {
- 		rtw89_warn(rtwdev, "failed to suspend for wow %d\n", ret);
--		clear_bit(RTW89_FLAG_FORBIDDEN_TRACK_WROK, rtwdev->flags);
-+		clear_bit(RTW89_FLAG_FORBIDDEN_TRACK_WORK, rtwdev->flags);
- 		return 1;
- 	}
- 
-@@ -1722,7 +1722,7 @@ static int rtw89_ops_resume(struct ieee80211_hw *hw)
- 	if (ret)
- 		rtw89_warn(rtwdev, "failed to resume for wow %d\n", ret);
- 
--	clear_bit(RTW89_FLAG_FORBIDDEN_TRACK_WROK, rtwdev->flags);
-+	clear_bit(RTW89_FLAG_FORBIDDEN_TRACK_WORK, rtwdev->flags);
- 	wiphy_delayed_work_queue(hw->wiphy, &rtwdev->track_work,
- 				 RTW89_TRACK_WORK_PERIOD);
- 
--- 
-2.49.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
