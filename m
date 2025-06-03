@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-671626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89038ACC3E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8F1ACC441
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9F31885E77
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:02:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2122B3A3DB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6781A0BC9;
-	Tue,  3 Jun 2025 10:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10A1DE4C2;
+	Tue,  3 Jun 2025 10:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVNr+7Z6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="bqzhCygI"
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A9977111
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF871A9B39
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748944959; cv=none; b=DgqLq53/sTUFaxBC1QX+BHQJxOzT92JU+7uhpVfHJQRQysco/uT6yolvrTLOeWyKQH1xiRdu5uj9/Z97E/AR8zEsaJQyIamWwNxd1SJ7VSjmrrWLfyHbnIkdklspNf6EqKEjYCwrQFsJU7HphaOwwx0LLeaFAu2JkS3fSo0vLjU=
+	t=1748946242; cv=none; b=tVzKByaijt+dmu9nHUoXHNou5iGcV3z9fGCvLdvaKjaDzUnIPxLttSP9R4iA59qMnMUTPWkp5SOMLe4oSRpeNvLg5hj1ax03bmn/1jcwNuWUMzba1XS4VbjI6vq95pY2c2qHJZ5NhtMe3539uKLojxgz0XKal04yK7QKqAu7H2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748944959; c=relaxed/simple;
-	bh=5PKIFHRzec6lAxHM2SRU66PHIbwaH9IVizeIwvP3LEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=icTgKKMNqjOkclwhMP3qA1UwPfWeDSTEWa+UkZJHcDJYSazw4SnJTtRz4/mpho7HwXgjSx9Zdhpyf+Wco5Puk4K5UsgVSOP2C75qOmSWORxL9iOG4arAiLqmIo+DOvE2QahkU28Ax3SnozV9nSDOtGWj72Jv2mwrKa9IS4FMd28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVNr+7Z6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CBAC4CEED;
-	Tue,  3 Jun 2025 10:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748944958;
-	bh=5PKIFHRzec6lAxHM2SRU66PHIbwaH9IVizeIwvP3LEw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TVNr+7Z6p8Afj5ExGqD/UB98gcKR8o/mwWIUItN5T7ARLx/nVrg0x0sigr9fblYIU
-	 VVWiD68wvyIGB1BRRoQmeNu3F9ECL9HgzrngU7uFJ39l7/WcYO4vH3Pl5npIcKDLyb
-	 3Uvl9GNJ3wq0ostpJKVRQYWJqthRsUt4tOngOKSXGMd4NZfKt64uiDxOSIjsL0ga7p
-	 oi2uDpu7RUUmhy+OeRQaacxDCrYlzU9a6sFrKy12aQEIruKQ3IKONWACvBi7DMXWLi
-	 8ppvLgaGoBF0zzAPPCjCdV0nN3tg/J9SKUA4wmke2O9amD0u2lfBrNrAzj1FsJ4wd/
-	 yYcY/kWaY0Mnw==
-Date: Tue, 3 Jun 2025 11:02:34 +0100
-From: Lee Jones <lee@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Daniel Thompson <danielt@kernel.org>
-Subject: [GIT PULL] Backlight for v6.16
-Message-ID: <20250603100234.GE7758@google.com>
+	s=arc-20240116; t=1748946242; c=relaxed/simple;
+	bh=0R4MkUmFKrDH2antCfLvZrX66TftMrWH9M8K8rA6o5Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=grgHozHd5hf40uu5iq0O9kExEdH555ZCdOvr2O9YuIyTJ9KNamWilioQc0ObUTgLl6zP4tGl2Q6ygftzD4DdZf6/an9SHWV3AQiIBFs516Z6Y02NkkCZfmZFK6KeGk1ej3YeUlNS373tPriDrqjOewmjpMO+02L8Mlq1Bp0Bmgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=bqzhCygI; arc=none smtp.client-ip=185.136.64.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20250603094330d88e7bfeaf71d96e71
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 03 Jun 2025 11:43:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=0R4MkUmFKrDH2antCfLvZrX66TftMrWH9M8K8rA6o5Y=;
+ b=bqzhCygI4qgp8DoC+myJcuL101rc5DuOgJoq6iFW2q8vvI7jK2Ygxpgu8ZAt9Gm/8cIMFq
+ OIEmUIl0R3WP2mY0tFwPC0ycMmM8GB572XckOzHTT6IZjHTBH+pGqoDqNUhMx9uFh7fZoQK1
+ GCssimINyG9j2p61Ke/pp3ZEmrP8NAvIZYf2TVRGmpII9ICnNg1g7wJ/4WZ0cc13CtfOhiaZ
+ Ptu+6z0/QxQ1ZTMBUrT5Ja0AjHTH3S4O+lBU7IITpwHqViTdwX4g6TuOPyNQJdsz57jhJWZA
+ d5Cyu72qni3qqonWl4yz1+cg/mviDGLM7w4puymIhwIo2509ge4rK5cg==;
+From: Diogo Ivo <diogo.ivo@siemens.com>
+To: andy.shevchenko@gmail.com
+Cc: benedikt.niedermayr@siemens.com,
+	diogo.ivo@siemens.com,
+	jan.kiszka@siemens.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux@roeck-us.net,
+	mika.westerberg@linux.intel.com,
+	rafael@kernel.org,
+	wim@linux-watchdog.org
+Subject: Re: Re: [PATCH v3 0/2] Add driver for Intel Over-Clocking Watchdog
+Date: Tue,  3 Jun 2025 10:43:29 +0100
+Message-ID: <20250603094329.125537-1-diogo.ivo@siemens.com>
+In-Reply-To: <aDy09SFPkzr2AJnr@surfacebook.localdomain>
+References: <aDy09SFPkzr2AJnr@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-Good morning Linus,
+Hi Andy,
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+> This doesn't describe why we need the driver. We have established ACPI WDAT
+> table. Can't you utilise it by providing in the firmware?
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+You are right, I did not make that clear.
 
-are available in the Git repository at:
+When you say we have established WDAT table do you mean that this should be the
+mechanism that we use going forward to control watchdogs in ACPI platforms
+generally or that you know that the WDAT for this specific watchdog is present
+in the firmware?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git backlight-next-6.16
+I wrote the driver because on the two platforms I have access to (a fairly
+recent LG Gram with an i7 1260p and a Siemens BX51A) by delving into the
+BIOS options I was not able to find a toggle for them to provide a WDAT table
+for this watchdog. In fact, on the LG Gram by searching we can get it to pass
+us a WDAT table but for the iTCO watchdog (at least that is what I gathered
+from my testing).
 
-for you to fetch changes up to e12d3e1624a02706cdd3628bbf5668827214fa33:
+This means that to the best of my knowledge there are platforms that do not
+provide a WDAT table for the Over-Clocking Watchdog which then makes this
+driver necessary.
 
-  backlight: pm8941: Add NULL check in wled_configure() (2025-04-15 18:27:38 +0100)
+However I am not an expert on this topic so if there are things that I am
+missing I would be happy to work on a better approach.
 
-----------------------------------------------------------------
-Backlight for v6.16
-
-  * Framebuffer Subsystem (fbdev):
-    * The display's blanking status is now tracked in `struct fb_info`
-    * `framebuffer_alloc()` initializes the blank state to `FB_BLANK_UNBLANK`
-    * `register_framebuffer()` sets the state to `FB_BLANK_POWERDOWN` if an `fb_blank`
-      callback exists, ensuring `FB_EVENT_BLANK` listeners correctly see the display
-      being turned on during the first modeset
-    * The `FB_EVENT_BLANK` event data now includes both the new and the old blank states
-  * Qualcomm WLED Backlight:
-    * Added a NULL check after `devm_kasprintf()` in `wled_configure()` to prevent a
-      potential NULL pointer dereference if memory allocation fails
-
-  * Framebuffer Subsystem (fbdev):
-    * `fb_blank()` has been reworked to return early on errors, without functional
-      changes, in preparation for further state tracking improvements
-    * Fbdev now calls dedicated functions in the backlight subsystems to notify them
-      of blank state changes, instead of relying on fbdev event notifiers
-    * For LCDs, fbdev also calls a dedicated function to notify of mode changes
-  * Backlight Subsystem:
-    * Implemented fbdev blank state tracking using the (newly enhanced) blank state
-      information provided directly by `FB_EVENT_BLANK`
-    * Removed internal blank state tracking fields (`fb_bl_on`) from
-      `struct backlight_device`
-    * Moved the handling of blank-state updates into a separate internal helper
-      function, `backlight_notify_blank()`
-    * Removed support for fbdev events and replaced it with a dedicated function call
-      interface (`backlight_notify_blank()` and `backlight_notify_blank_all()`) for
-      display drivers to update backlight status
-  * LCD Subsystem:
-    * Moved the handling of display updates (blank events and mode changes) from
-      fbdev event notifiers to separate internal helper functions (`lcd_notify_blank`,
-      `lcd_notify_mode_change`)
-    * Removed support for fbdev events and replaced it with dedicated function call
-      interfaces (`lcd_notify_blank_all()`, `lcd_notify_mode_change_all()`)
-    * The LCD subsystem now maintains its own internal list of LCD devices instead of
-      relying on fbdev notifiers
-  * LED Backlight Trigger:
-    * Moved the handling of blank-state updates into a separate internal helper,
-      `ledtrig_backlight_notify_blank()`
-    * Removed support for fbdev events and replaced it with a dedicated function call,
-      `ledtrig_backlight_blank()`, for fbdev to notify trigger of blank state changes
-    * The LED backlight trigger now maintains its own internal list of triggers
-      instead of relying on fbdev notifiers
-
-  * Framebuffer Subsystem (fbdev):
-    * Removed the definitions for the unused fbdev event constants
-      `FB_EVENT_MODE_CHANGE` and `FB_EVENT_BLANK` from the header file
-
-----------------------------------------------------------------
-Henry Martin (1):
-      backlight: pm8941: Add NULL check in wled_configure()
-
-Thomas Zimmermann (11):
-      fbdev: Rework fb_blank()
-      fbdev: Track display blanking state
-      fbdev: Send old blank state in FB_EVENT_BLANK
-      backlight: Implement fbdev tracking with blank state from event
-      backlight: Move blank-state handling into helper
-      backlight: Replace fb events with a dedicated function call
-      backlight: lcd: Move event handling into helpers
-      backlight: lcd: Replace fb events with a dedicated function call
-      leds: backlight trigger: Move blank-state handling into helper
-      leds: backlight trigger: Replace fb events with a dedicated function call
-      fbdev: Remove constants of unused events
-
- drivers/leds/trigger/ledtrig-backlight.c |  48 +++++++-------
- drivers/video/backlight/backlight.c      |  93 ++++++--------------------
- drivers/video/backlight/lcd.c            | 108 ++++++++++++-------------------
- drivers/video/backlight/qcom-wled.c      |   6 +-
- drivers/video/fbdev/core/fb_backlight.c  |  12 ++++
- drivers/video/fbdev/core/fb_info.c       |   1 +
- drivers/video/fbdev/core/fbmem.c         |  82 +++++++++++++++++++----
- drivers/video/fbdev/core/fbsysfs.c       |   8 +--
- include/linux/backlight.h                |  32 ++++-----
- include/linux/fb.h                       |  12 ++--
- include/linux/lcd.h                      |  21 +++++-
- include/linux/leds.h                     |   6 ++
- 12 files changed, 219 insertions(+), 210 deletions(-)
-
--- 
-Lee Jones [李琼斯]
+Thanks,
+Diogo
 
