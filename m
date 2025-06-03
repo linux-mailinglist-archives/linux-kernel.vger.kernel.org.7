@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-672254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA8DACCCDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:25:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E181BACCCBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E7617389D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:25:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3808F188AD03
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35320288C86;
-	Tue,  3 Jun 2025 18:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D0B288C12;
+	Tue,  3 Jun 2025 18:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="lfjC88AQ"
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzeV70Dx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312D65FB95;
-	Tue,  3 Jun 2025 18:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E65024BD03
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 18:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748975124; cv=none; b=mKB/BxUpa6iwco3WenfygI0JJHqMQ2upFfUJuuy3oHr09hCBVtat2VwLMvDvbYgu3e59iuAqLt0dHXJ3sVf50xa4fhH8EyJL9ZNcRxSKl6n9f4FEPBLv7gm3Ym7LYt5xFSJLdZbrKd0UKoZAIIaREJG67RYlAeDb0xtcSCz+RVc=
+	t=1748974729; cv=none; b=sOJkBb7S1R9c5bSgZAyEQpykr+zW1tkphWoQ2gBuPgAWRzZ1KoZBeLiZP0tsVpSseDhBDqfbBy3ObAedgDTIRrgEOSgjBu/OH0ousRPPbTN57IfhL/8EHw7TOE42oqaXulY6dfyn+9MINVPGH7ioCNC0dPacGspF7FhQZYiKX4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748975124; c=relaxed/simple;
-	bh=tBzj3CA4+7TehMQW8dgTuM4sRw0JZHsMeayjCn7V8XI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RDXibchTcUWvkN0bvvGGis7yvu2kt1UeniZzkETqITdejQHoUmKFgrdb49UUkQ+IYFwAGILJKntdyah+VP9E0HXPtc8F2HqLoYKIYBoKkEO4h47rIxJCeqBprP503zl6gf+5iQAkvfQjYmoSXe5vD2YF3keVfLqw6Hus2+UNYX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=lfjC88AQ; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:842f:0:640:b96f:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id EBB8760C59;
-	Tue,  3 Jun 2025 21:17:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id LHgCkEULiKo0-pLzcZTYY;
-	Tue, 03 Jun 2025 21:17:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1748974644; bh=pOpYljZuYO3T7PKQuPSq6hSLphxMmYBM9c7hIldkB8Q=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=lfjC88AQLYLUsUJy3b7nRVzevTZKollL8zItXcXC4rgjno4MWLGx6K+HDJLEJW5Rh
-	 YYsmCJsPg7cOuXLi+Dm6HNyLtLYQKa+LofdjRX7bQxnh6dlTW3AwOjaGjOb6PbLec6
-	 iyRtRNFb5eGkXo7L0wJ2J1pBv0BJdWAL954cjgbw=
-Authentication-Results: mail-nwsmtp-smtp-production-main-63.klg.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-Message-ID: <40ac27ab-00f7-4fc4-97ca-f3b519167f5c@0upti.me>
-Date: Tue, 3 Jun 2025 21:17:21 +0300
+	s=arc-20240116; t=1748974729; c=relaxed/simple;
+	bh=HoBD+u4JPdi3tM3u+f0z1VJQQMiz5I/9d7zy3LyDCCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FysiedqREtrH+ZX/iXn/+7g6+Hflc9L5QW26pImX1/QQDLDcT6ygi6XgfvljRIAXSEH6Ad01FqkiBlBa7lJPe0KbWVxSpA1nIOV4Z0kkdkRijLZoEMl11Ob7BhhSgVAvvwraCh2aQB78OLWKXi/CN4MJpvJTiJGUET9TUTdlGwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzeV70Dx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40FFC4CEEE;
+	Tue,  3 Jun 2025 18:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748974728;
+	bh=HoBD+u4JPdi3tM3u+f0z1VJQQMiz5I/9d7zy3LyDCCk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tzeV70DxOn87rdYHjmaG6oMQ0QYPL+HvMXtrJhLiieL/XLFmlsNYeXErMhF1D7Qgw
+	 cOGmlnRz9uogBr0Co0UsPvQ11FODwr53u2R95D0kPSseRj9+DF0U6JXNoH+hmuTL1g
+	 r6RR3iRPbwgbMBN3xMgk6Z07gBkmqlKuAvtTPTOhV7/VogWCBJ/axuWPqczhWwdlSN
+	 v8AoXbUsoUs9NSHSNjt7lVt2BdzsdsbDCO6JOlcQOJfeojedDs0YXoAnAgMfwA3Ubp
+	 zs0QRQSuS1/cSRc5042I99uZi6rr43hLeLSzOriyCNcOlc21OFl0fOJP1DRsmjqe7O
+	 BMvBIyUA7AuUQ==
+Date: Tue, 3 Jun 2025 08:18:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Subject: Re: [PATCH v2 01/10] sched: Add support to pick functions to take rf
+Message-ID: <aD88h1kvJguRN0mC@slm.duckdns.org>
+References: <20250602180110.816225-1-joelagnelf@nvidia.com>
+ <20250602180110.816225-2-joelagnelf@nvidia.com>
+ <aD48Zq2FdYlBJAk2@slm.duckdns.org>
+ <63fed4b9-1c04-49ac-b4c9-f1e5359d8550@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC net-next] net: phylink: always config mac for
- (delayed) phy
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Eric Woudstra <ericwouds@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, bridge@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250107123615.161095-1-ericwouds@gmail.com>
- <Z30iUj6DE9-fRp0n@shell.armlinux.org.uk>
- <4b9b2a9a-061b-43ad-b402-a49aee317f41@gmail.com>
- <Z31CJS1YUvPGiEXs@shell.armlinux.org.uk>
- <98234080-946e-4b36-832f-113b185e7bca@gmail.com>
- <Z3-Tz5WdLCat91vm@shell.armlinux.org.uk>
- <9cc913d7-7e5b-4b6c-886c-ca9778c3f970@0upti.me>
- <aD1lRha-enQ9Pw0g@shell.armlinux.org.uk>
- <2894a781-4d4b-4e3c-9f4e-7c1f04122f8a@0upti.me>
- <aD3Cc7gmB2Tev_ul@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Ilya K <me@0upti.me>
-In-Reply-To: <aD3Cc7gmB2Tev_ul@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <63fed4b9-1c04-49ac-b4c9-f1e5359d8550@nvidia.com>
 
-On 2025-06-02 18:25, Russell King (Oracle) wrote:
-> On Mon, Jun 02, 2025 at 04:00:14PM +0300, Ilya K wrote:
->> That's weird, because I do have all the patches applied. I think this may have been broken by the pcs_inband_caps changes, because without the patch I'm just getting "autoneg setting not compatible with PCS", after which it bails, when it should really reconfigure the MAC instead.
+On Tue, Jun 03, 2025 at 09:38:35AM -0400, Joel Fernandes wrote:
+> On 6/2/2025 8:05 PM, Tejun Heo wrote:
+> > Hello,
+> > 
+> > On Mon, Jun 02, 2025 at 02:00:57PM -0400, Joel Fernandes wrote:
+> >> Some pick functions like the internal pick_next_task_fair() already take
+> >> rf but some others dont. We need this for scx's server pick function.
+> >> Prepare for this by having pick functions accept it.
+> > 
+> > Hmm.. after the whole patch series is applied, pick_task_scx() still doesn't
+> > seem to use @rf. What am I missing?
+> I need it for scx *server*'s pick_task, i.e. ext_server_pick_task().
 > 
-> Please enable phylink and sfp debug (adding #define DEBUG to the top of
-> phylink.c and sfp.c, and then send the kernel messages after reproducing
-> the issue.
-> 
-> Thanks.
-> 
+> Sure we're not using it in pick_task_scx(), but I added it there for consistency
+> since pick_task_dl() needs it, due to ext_server_pick_task() needing it.
 
-OK, somehow it just works normally now, even with the patch reverted. I think I grew a few gray hairs over the last few days. Sorry for the trouble, everyone, I'm off to not touch this thing ever again.
+Ah, yeah, I just missed the usage on the server side. Thanks for the
+explanation.
+
+-- 
+tejun
 
