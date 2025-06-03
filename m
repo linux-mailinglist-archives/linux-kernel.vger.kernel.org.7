@@ -1,225 +1,112 @@
-Return-Path: <linux-kernel+bounces-672243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471CFACCCBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C62ACCCB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831133A7384
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66711894078
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EF0289352;
-	Tue,  3 Jun 2025 18:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BA2288C87;
+	Tue,  3 Jun 2025 18:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FtvKk2i7"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="WgeGMCfW"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B28288CB3
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 18:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294FE2853E0;
+	Tue,  3 Jun 2025 18:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748974614; cv=none; b=G+7pZiXtlZiLVIcB4FxFSZdwU2gOwTXhECzRaBVg9+hc2oJYFYOaT7Br75bSHzbTzRbtFetXdHaQC/iLCgdLaj+B+z/86kuT+T01V7CFCV9fUK/UClILoDToaVnmV7awWpTTWEy7tl1WTlKxyE0qk4scbAXXDJ0uLwqAQJrq2l0=
+	t=1748974608; cv=none; b=V+7AtKE2RInpMxGJClQidwzkgUTGUuxkCztiu2pzqHiXcg0/wwCJhP+QrgqERU+We2lwhCEfiXZ/BW8ULsN+AS6YsBiRHCQ54I4T3zJEgG8uwJu8cFqEpaoaVGvGIanNVXY253vG0UBSwgvLrPeYjCGzMiVBp4FOEvXKcFUVTiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748974614; c=relaxed/simple;
-	bh=wBMwFZ65rrg8ho4R1itK1EGQahIG96i90ewd1ea9HYg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=icjbYkiUqbKBU5b5zR9BRY8QqIM9FOeWLjuKXxetXn4+ZVCuPreSk9MnDMylv/+Ogfd3zCli4g1Y/QshKYE231XCjKxc/aGBQvBDs260HWLLG3VlsBmBzIqCLTyEGiDPgZETDin7akNmNtSWjATgpOYvKMGBuNyDDp7jcj5YOL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FtvKk2i7; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7394772635dso3940184b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 11:16:52 -0700 (PDT)
+	s=arc-20240116; t=1748974608; c=relaxed/simple;
+	bh=p1oikR6A7CSugoR4HjSUuEWBgK7rKrZS/huPT73PKfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M+ws9QJ/5A6SldDYUUs//LnnT8L1nsNitNDAhU1arqQb7lqqB/iMs/9HV5GkuRF3uFc6OvYxTQjDI2p7ZDKklbFrErG41i+4oJVG4muncq9YXo2nm2d5lchTwxiswJhh6+dwn6ym27MvekCyr5b6856zWl12tq3f2bZiv9tGeW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=WgeGMCfW; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2351ffb669cso48200625ad.2;
+        Tue, 03 Jun 2025 11:16:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748974612; x=1749579412; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XvHfZvteDDVqcCnEge2jWEzX4DjmZnrKZWBqnzvh3sM=;
-        b=FtvKk2i7DM7s4ZJvbtTccyj9kDRt5eJoEBNDFXUWW9GEP8doLWIVIgvoFmIJPpCEEV
-         xe/hSdd2qZhh+FK3/8zj9JddLw8fEqaDwawppFcwrb4ZIMkEH1WtNGJSuKfg/hnEiSy1
-         zOk0/zVEBjmCzJCyjRiv/6JIsaFxIwSlugA2WqEgjqAXD2IKZlFrbWqvJyoFC+J03O/W
-         hkADPPrM6q4leOkfUcx4/ETS0Kr94eXQi1vuHehWvdl0xDwRJtfXVfxvhcW/MMCfDBpJ
-         Ohj3RCV/0pl1VKycUaolJIi5Z9Oi+azEYLwrjydQsmOO1/7AAzWCbGCXElI7a+EvqYw9
-         Jrpw==
+        d=googlemail.com; s=20230601; t=1748974606; x=1749579406; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=muedraecWG3k6sC4BkfWIIfP1Qhn6jm5riTVBMIqDbo=;
+        b=WgeGMCfWNsQgQbH6s3AziOcGfKJSpfd7SrXjfU9HrVE7iu887hNpQ71Okfzf2Ng83S
+         OZsfmOR/4oLCF6/m2yjhZGpGxhrq/ensB3Fj6drWUtD4BsnDw3B3nOH8k7oiGqXFmQST
+         zY1RJLky5G6t2/01It32qE3VgwpM24EFKyH5K7+vHiPJ/9Sq0HNLO+kB2CKSACaA3XCl
+         BJIGuIKQZsERRU41RlxRtINrhU6WGGL3Z4JEkRRKnDqVltmTVhecqfU3s2QWcAOoKHvJ
+         XuoMj4YmnVMQEItztLayKDU7k+HZeClyBZwXCQV0O676aXbUPGinfHUP5kKVRYVqgvbq
+         MRQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748974612; x=1749579412;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XvHfZvteDDVqcCnEge2jWEzX4DjmZnrKZWBqnzvh3sM=;
-        b=tmqWkr2dRMtwgZh5wAhM5q+JXnRxQOXzrCwZgL91bK9gd8YywTw3vu0oXRQlAdY3tL
-         zG1BeVWmrYZTR8Ym/nPGla25tQ2CBa4iBN6UxbPvekSiNtnZno/fjk592A1muZOp9q4f
-         jxiD2j2+LldugFDf6XfNc8iMmok+LT6gZMSopzj0hyfnzBQKXwecGrw1yUo6F9DO4Cy9
-         OLQT7DWegJGsC5vzCzHL1dQE7DKA1UF9iUBYEM8/N91x0shL1LAHF5+PdIJGPlo+r8Gj
-         eiJrxLCVdz6v0CdOj/5Ud2wB3d2vEOihN3or7FemCJGz7apJ59AStG2dep1cDO//Zyaa
-         FTgg==
-X-Gm-Message-State: AOJu0YyX7nQNYZIpT6bBbyVtytZHE9TjoN+c7mb0Ml418F0j9tiLUMSS
-	/TVk2h55Gf7uUrTD0aWouMazKX5c7hLe3rGFFUz2TU/z+e/fuQ3zNgKn4GsxIGIOmkBwJI+NJWJ
-	XA4rhIaP5/MjSLqMB4/BY519LGMStYKh8jyAhVUlzDmCwlSSu/0ZQMtFYYPANvHqLC00atSYCqM
-	2lgE3w1M+rR63CQaYevZm/lcHRgm0EyCNwpT/EWXsk6oZa
-X-Google-Smtp-Source: AGHT+IEuYjk9n2uExO2tYukINHmxBE9zmSFBuDwroUnzVDGF4KT2eakPJ9ADydhQfQMyjArCbTyiOhGBzlU=
-X-Received: from pgbdh4.prod.google.com ([2002:a05:6a02:b84:b0:b2e:ce0c:b3fb])
- (user=ctshao job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3944:b0:1f5:8622:5ecb
- with SMTP id adf61e73a8af0-21ae00c7013mr33177374637.34.1748974612100; Tue, 03
- Jun 2025 11:16:52 -0700 (PDT)
-Date: Tue,  3 Jun 2025 11:15:54 -0700
-In-Reply-To: <20250603181634.1362626-1-ctshao@google.com>
+        d=1e100.net; s=20230601; t=1748974606; x=1749579406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=muedraecWG3k6sC4BkfWIIfP1Qhn6jm5riTVBMIqDbo=;
+        b=QL6kxppAW0DxhVlkEr8XexzWe0jGsUijNBgITYEoim7JMHH8gHJNuLyLqJ0mkKo3jG
+         0CVwrfqgvrLie6pG8Zuy12ZHAV3LPOXRzH77KKsoRfR/VglgpksGg0lkzd3wFOkvR9br
+         dmJTymRt7tGwr/qEVJXGX+Hm8ycxixRBTJtUNAhXo2ZTNCMq5Ia/tKcEAxTbrg31qpL3
+         PL4f7UE07h4RECHSpgnsJAd1a67mI0PtL7OEVra0Ko7EEU/N5T4bSfWk3uf082vF0Zjv
+         ZGzYWHfIOs1iYBTBPcxYVTAcCPw57nbEyAk18BCsfp8CsPxZSS/Id19dOUTvjWmwKvp9
+         rjuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ1HnrAe+yF7J0jXH/3e3vFa9pn7TPaotvRPyZGZcPs0NYl+jWLViOECwru0C7ZWtmDzNOMJthPq02YB38@vger.kernel.org, AJvYcCUSqScBygIcSlUQJaXb/2jUp//Py4DPrwjLhV8EGDJXe30yTkH5GXDEUsQ1S/nNzcR2jM9hChp0bXUu/iuJEA==@vger.kernel.org, AJvYcCV5sY+XrZyCnsZWHPopkpqFG8XFf1rVHEiCKwgQ6zIK/sI70AQmcK1EYvOviwjOAjHSc1UbJAB803uj2b4=@vger.kernel.org, AJvYcCVynmWObn4HlH5ry5nwFSoPcgQ39yoCzRZL9Bp3b36yx6pJdnYlO5kb35gmTMGmWyyNzX39Ehdt3Ld6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdGwBDVxyIdxR5Ar1nbzvolwvndizW5qZ7luO4IAkKb3rBRlbC
+	MbuxZk9LtY+Ek365LFnMFoG+9qyjmnnb6yoeQB5louzbks/WMaH/yDK5kSvLd4YfMWPf8paMpte
+	AXodhOONcpAPpaD1sEpuUJg15dG/1/Po=
+X-Gm-Gg: ASbGncvpIOrOLjWhirG6S1vJC4E1M45eClxemcgKACHYj5DCuBeF2nb0sGTUgRbeP5b
+	VrVPpIuCBrJGQizTuZJzhw4a9QEmesKJAWEibhR0nZx6C2y+AEcd67EWYe6O9LZaJhZBXDLrAPa
+	ycPedmxyamyQp/KGiwJ/sxQ++MdWFyLTcspZ820ILFSdq9MGv0pcZ9v6YtRnrYp6tkL0pvYppJB
+	oKX
+X-Google-Smtp-Source: AGHT+IHr9J8+h+AZ8STPC1y2/qEM2ZZcXzahpAeXjwcKczY154NqfHQ6m3ty2wKy8w/H9uZv/VxmB7VQvs3K1RzoMLk=
+X-Received: by 2002:a17:903:234c:b0:235:779:edfd with SMTP id
+ d9443c01a7336-2355f76c215mr179533115ad.39.1748974606365; Tue, 03 Jun 2025
+ 11:16:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250603181634.1362626-1-ctshao@google.com>
-X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
-Message-ID: <20250603181634.1362626-2-ctshao@google.com>
-Subject: [PATCH v4 2/2] perf evsel: Find process with busy PMUs for EBUSY
-From: Chun-Tse Shao <ctshao@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Chun-Tse Shao <ctshao@google.com>, Ian Rogers <irogers@google.com>, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, james.clark@linaro.org, howardchu95@gmail.com, 
-	weilin.wang@intel.com, linux-perf-users@vger.kernel.org
+MIME-Version: 1.0
+References: <20250603-dt-bindings-mailbox-cleanup-v1-0-724407563997@linaro.org>
+ <20250603-dt-bindings-mailbox-cleanup-v1-1-724407563997@linaro.org>
+In-Reply-To: <20250603-dt-bindings-mailbox-cleanup-v1-1-724407563997@linaro.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 3 Jun 2025 20:16:35 +0200
+X-Gm-Features: AX0GCFsq34ioWPbcIqxTayHSRdJ5z4uSRbOfAewoz0GwtzdI-PxfH0Fpo31M6tA
+Message-ID: <CAFBinCBSyniWtR5T3XdgohG+n0Ae=6tgmdASSxsnsmoQV4yhQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: mailbox: amlogic,meson-gxbb-mhu: Add
+ missing interrupts maxItems
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Nishanth Menon <nm@ti.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, asahi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It parses fdinfo with PMU type, comparing with the event which failed to
-open, and report the processes causing EBUSY error.
-
-Testing cycles and intel_pt//
-
-  $ ./perf stat -e cycles &
-  [1] 55569
-  $ ./perf stat -e intel_pt// &
-  [2] 55683
-  $ ./perf stat -e intel_pt//
-  Error:
-  The PMU intel_pt counters are busy and in use by another process.
-  Possible processes:
-  55683 ./perf stat -e intel_pt//
-
-Only perf with intel_pt was reported.
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Chun-Tse Shao <ctshao@google.com>
----
-v4:
-  Removed the first patch in v3 since it is merged.
-  Retested to make sure the patch still work.
-
-v3: lore.kernel.org/20241106003007.2112584-3-ctshao@google.com/
- tools/perf/util/evsel.c | 79 +++++++++++++++++++++++++++++------------
- 1 file changed, 57 insertions(+), 22 deletions(-)
-
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index d55482f094bf..fa281ea15a25 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -3619,7 +3619,8 @@ static bool find_process(const char *name)
- 	return ret ? false : true;
- }
-
--static int dump_perf_event_processes(char *msg, size_t size)
-+static int dump_perf_event_processes(const struct perf_event_attr *failed_attr,
-+				     char *msg, size_t size)
- {
- 	DIR *proc_dir;
- 	struct dirent *proc_entry;
-@@ -3660,29 +3661,61 @@ static int dump_perf_event_processes(char *msg, size_t size)
- 				continue;
- 			/* Take care as readlink doesn't null terminate the string. */
- 			if (!strncmp(buf, "anon_inode:[perf_event]", link_size)) {
--				int cmdline_fd;
--				ssize_t cmdline_size;
--
--				scnprintf(buf, sizeof(buf), "%s/cmdline", proc_entry->d_name);
--				cmdline_fd = openat(dirfd(proc_dir), buf, O_RDONLY);
--				if (cmdline_fd == -1)
--					continue;
--				cmdline_size = read(cmdline_fd, buf, sizeof(buf) - 1);
--				close(cmdline_fd);
--				if (cmdline_size < 0)
-+				int fdinfo_fd;
-+				ssize_t fdinfo_size;
-+				char *line;
-+				u32 perf_event_type = UINT32_MAX;
-+
-+				/* Let's check the PMU type reserved by this process */
-+				scnprintf(buf, sizeof(buf), "%s/fdinfo/%s",
-+					  proc_entry->d_name, fd_entry->d_name);
-+				fdinfo_fd = openat(dirfd(proc_dir), buf, O_RDONLY);
-+				fdinfo_size = read(fdinfo_fd, buf, sizeof(buf) - 1);
-+				if (fdinfo_size < 0)
- 					continue;
--				buf[cmdline_size] = '\0';
--				for (ssize_t i = 0; i < cmdline_size; i++) {
--					if (buf[i] == '\0')
--						buf[i] = ' ';
-+				buf[fdinfo_size] = '\0';
-+
-+				line = strtok(buf, "\n");
-+				while (line != NULL) {
-+					if (sscanf(line,
-+						   "perf_event_attr.type:\t%u",
-+						   &perf_event_type) == 1)
-+						break;
-+					line = strtok(NULL, "\n");
- 				}
-
--				if (printed == 0)
--					printed += scnprintf(msg, size, "Possible processes:\n");
--
--				printed += scnprintf(msg + printed, size - printed,
--						"%s %s\n", proc_entry->d_name, buf);
--				break;
-+				/* Report the process which reserves the conflicted PMU. */
-+				/* If fdinfo does not contain PMU type, report it too. */
-+				if (perf_event_type == failed_attr->type ||
-+				    perf_event_type == UINT32_MAX) {
-+					int cmdline_fd;
-+					ssize_t cmdline_size;
-+
-+					scnprintf(buf, sizeof(buf),
-+						  "%s/cmdline",
-+						  proc_entry->d_name);
-+					cmdline_fd = openat(dirfd(proc_dir), buf, O_RDONLY);
-+					if (cmdline_fd == -1)
-+						continue;
-+					cmdline_size = read(cmdline_fd, buf, sizeof(buf) - 1);
-+					close(cmdline_fd);
-+					if (cmdline_size < 0)
-+						continue;
-+					buf[cmdline_size] = '\0';
-+					for (ssize_t i = 0; i < cmdline_size; i++) {
-+						if (buf[i] == '\0')
-+							buf[i] = ' ';
-+					}
-+
-+					if (printed == 0)
-+						printed += scnprintf(
-+							msg, size,
-+							"Possible processes:\n");
-+
-+					printed += scnprintf(msg + printed, size - printed,
-+							"%s %s\n", proc_entry->d_name, buf);
-+					break;
-+				}
- 			}
- 		}
- 		closedir(fd_dir);
-@@ -3799,7 +3832,9 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
- 			msg, size,
- 			"The PMU %s counters are busy and in use by another process.\n",
- 			evsel->pmu ? evsel->pmu->name : "");
--		return printed + dump_perf_event_processes(msg + printed, size - printed);
-+		return printed + dump_perf_event_processes(&evsel->core.attr,
-+							   msg + printed,
-+							   size - printed);
- 		break;
- 	case EINVAL:
- 		if (evsel->core.attr.sample_type & PERF_SAMPLE_CODE_PAGE_SIZE && perf_missing_features.code_page_size)
---
-2.49.0.1204.g71687c7c1d-goog
-
+On Tue, Jun 3, 2025 at 1:57=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Lists should have fixed constraint, so add missing maxItems to the
+> "interrupts" property.  Since minItems=3DmaxItems, the minItems is implie=
+d
+> by dtschema so can be dropped.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
