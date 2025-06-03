@@ -1,159 +1,146 @@
-Return-Path: <linux-kernel+bounces-671346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED21ACC018
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:17:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD550ACC101
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7F2188FA67
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0080B3A5597
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC151F7060;
-	Tue,  3 Jun 2025 06:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fiSUL1+e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E1F26B093;
+	Tue,  3 Jun 2025 07:11:38 +0000 (UTC)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF5E26AD9;
-	Tue,  3 Jun 2025 06:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3C22690D9
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 07:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748931457; cv=none; b=bg0dBedv4sOYQ7tXn1qj/Lyd3GYhmJ3jRrxqlUDpuqAWr6DkwF/y7kW8mW8G0jG8w4lv02j4uZsyOg8SKnAt11z7s31uAHpZxXD4IhaxVPP5Ukdk1H2/jPsivMWcLkIObqkWLdKEMDvQtDAraopeHMfbTc91B4/9FSJ/EkiwPeg=
+	t=1748934698; cv=none; b=YxQM3sRCLL6ottoh6YUtTFfO8GLmW+vgYr+wx/bqu5EYYlWpwOvviZ59lSrkJwJgeOj8c0pdB9ShCAuJLSST0/TcS6lf7Wu7ksI3TXa3IQYp1HF67hz2r93PEu5BGfrdLSVBMu0wslUAq2Y0CRqgpUXaOh/LzsndgqloGSHpX3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748931457; c=relaxed/simple;
-	bh=ktVyNmKC36IoJfDT1n47jZdc8uH8RN0+HUXL0beA/Us=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KYoA4R2VCsjylzZQ3xL3Y4V4KJGMUCIXyGrAi4Pp7yFvS4rclFX9amFP0pSXvKR9yrikQmNitLFHLZ/B/uzZz3pE4AdWt2ccrCa7qAZjXW8apD/JBl5t/4d3oP89AIaqtPOjLrvvN7FttAlkogUyZ/UxCsFd4VFc6WciU6enE1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fiSUL1+e; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748931456; x=1780467456;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ktVyNmKC36IoJfDT1n47jZdc8uH8RN0+HUXL0beA/Us=;
-  b=fiSUL1+eH4qWlwroz1lYFuMC4xaX2QPXyKfeAHbJVQfA7/Xk3SUdbbi1
-   QPJCSb8J/Ihh/JVjy/JdhiebN0nxwM86+QlIUXVgiL+ZKNMW8bBktjD5a
-   QGLJRas6XaNKTlgpPmzFrBIk5vBZZBMcEtACVCcDRcQKecjfnMY6ijdSA
-   jzJzUbD/g5dS+HlAQpaJEMVz5+6qVr7ujRkoUpvz9xtDT537iAiFGGM9F
-   Lt7u/kTV8D9v/iRyxuCkqq24z3cbd0/gHPEWaut6JuhUPulLZLKtxNXgc
-   KOLGYa0gGURE3BE5cWwqOKMZ6hR8hz83bEYmr15mwmo8O7pIRtKTNkRkD
-   A==;
-X-CSE-ConnectionGUID: C39ryNPkSTm1DjihhwnoXg==
-X-CSE-MsgGUID: cq0GflALQNq2Gcrm8zkF7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="51101230"
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="51101230"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 23:17:36 -0700
-X-CSE-ConnectionGUID: iqjzXgopRDis4cHMswXQlQ==
-X-CSE-MsgGUID: HmtBv1OfR6eADbm4x8woXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="144638834"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by fmviesa006.fm.intel.com with ESMTP; 02 Jun 2025 23:17:31 -0700
-From: Tianyou Li <tianyou.li@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	tianyou.li@intel.com,
-	wangyang.guo@intel.com,
-	pan.deng@intel.com,
-	zhiguo.zhou@intel.com,
-	tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Minor improvements for perf script flamegraph
-Date: Tue,  3 Jun 2025 15:10:48 +0800
-Message-ID: <20250603071048.180674-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1748934698; c=relaxed/simple;
+	bh=mL+MB9sT5jktnVzl73SbKdG0xZoa7DasqXdQr1/ZCr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oqu0Plp+AEg7ia3gGU/eOwyMSw3p1ZhCI0uJZ3nTodpAoWk6HkQgJdba/x11lFvbPiiTcbly438ab2Wd2Xf4k///0O8cXMs+rJPnYVZtXBqYC3kACrB5e/CLjn0DVyNoQq4yCfD9GFSVSk3Iq6SLuemtUp0Zob8H8uI9JNSfrM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c5b2472969so462340985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 00:11:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748934695; x=1749539495;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nLb8HhO98/51A3Sg1akRHkfjqC4wsBeHTx0qur+bJ6w=;
+        b=ZJltEYDeyxheZz/G+0hNr7Q33mAaMjB9vQ7y4+PdUBmEUs90TbZpAcsjezqH5/hIMp
+         OUDnjG02440zBHxb+5M9w9HuuY6Z05znZVGsvP3sdMTj0AdWvzdNsaDGPgSEN4OvUBQj
+         IskU7IQEEYhMegHmCDqQK/IbZLaCju1YbgIlnChUrHhWcgGF3VRow7gMY9WyGKBVBuPT
+         E2+MIz7tMpOBZSnrQESIkXTOTh97mhJUeDQp2Pg5Kkavheaj5VPFwHsJnm5ML6ghCi+8
+         JwP2knWRxEraL4NiuJGHcvqlasWRCaU0DLjFd1alaaF3Fyp3rXG5UQDZTOKdjp2GbKZ8
+         UiMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDIzZg4VhJ6dw4Dpu96JvTaQwtOQ1mIetvLRFqpRy0hCEzVpNvDdK0vvLMoQqZF79ngcjN5+cKwxjvvac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVKhOOjJ4Z695W5A4MPOp0tf430AYm9Px8gHbfyv1faZXceKWU
+	Qmy9B2hXAinkpF78Z1JAAKuDa2/Wv1iKaiZ7d6baCN1QmGJvyMLEGIZTs3giDwqJ
+X-Gm-Gg: ASbGncuDr1qOyeiENSO1dUZysOoIfJ5rt/t5AxetWGplxO7/sNHuRQHe/Odn46j5gpV
+	VcHuQCkxRr4MHAtB6uQGNcUlF024T4blk3VdWxXlrSbtYmvcSsSHs4iUTlSUnzTd0cDDVV51WRZ
+	hcyu5YeC5efqezrey/AzLv41s7qStKVyOow7RIa4aheFgJPuFtROjIBVkc4HbaoknImWrAlPIMi
+	pgpH8cdOdZTZ0elZYVNmaJBbntiJPr+u9805yGsCAs7q+EuL+wmuxow2tb+h/6Xdt8XcN/5ILLB
+	cZ4zC++AHgY6RpWhQroWMD75vu5D6hFZO5UiY1KMRRRFtNXF7TulXOPhC/88IeEyf++iMxFfpyq
+	XmRF12NdKCYoGRvtdQqzau9js
+X-Google-Smtp-Source: AGHT+IGahx/mMNIGz+y0cXDORhNZqGlPcsUxvWkT1LcqYkc9cP7T9L4ZcBE2nfGHlsHxSoBRKgJWzA==
+X-Received: by 2002:a05:6102:292c:b0:4e5:9380:9c20 with SMTP id ada2fe7eead31-4e6e40d92b3mr14691075137.2.1748934684154;
+        Tue, 03 Jun 2025 00:11:24 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87e2a2a2f46sm7115880241.12.2025.06.03.00.11.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 00:11:23 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-87de47585acso3824982241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 00:11:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW55I7fL+Wj3ni/jtuUYYwTV93j903vC+AoXzzxUQLMG1RpyiU6qbK3Gqy1JxySP9es/SiQS5+Y9xKL4Es=@vger.kernel.org
+X-Received: by 2002:a05:6102:3751:b0:4dd:b192:960f with SMTP id
+ ada2fe7eead31-4e6e410d39amr14204348137.13.1748934671280; Tue, 03 Jun 2025
+ 00:11:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250529-b4-drm_panel_mass_driver_convert_part3-v2-0-5d75a3711e40@redhat.com>
+ <20250529-b4-drm_panel_mass_driver_convert_part3-v2-1-5d75a3711e40@redhat.com>
+In-Reply-To: <20250529-b4-drm_panel_mass_driver_convert_part3-v2-1-5d75a3711e40@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 3 Jun 2025 09:10:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWsGVNsm_WdiZ2hNuErrUUaj49SN_ROr-_KfEWW63omTw@mail.gmail.com>
+X-Gm-Features: AX0GCFtcVOHqZD8BcFzZWMq6QGLbY93W1tbb2YLDvTYE6IWQhmuycmj54r1gmT0
+Message-ID: <CAMuHMdWsGVNsm_WdiZ2hNuErrUUaj49SN_ROr-_KfEWW63omTw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/46] panel/orisetech-otm8009a: Use refcounted
+ allocation in place of devm_kzalloc()
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Robert Chiras <robert.chiras@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Markuss Broks <markuss.broks@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	Dzmitry Sankouski <dsankouski@gmail.com>, Jagan Teki <jagan@amarulasolutions.com>, 
+	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+	Janne Grunau <j@jannau.net>, Michael Trimarchi <michael@amarulasolutions.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-When processing the perf data file generated with multiple events,
-the flamegraph script will count all the events regardless of
-different event names. If specify the perf data file with -i option,
-the script will try to read the header information regardless of
-the file name specified, instead it will try to access the perf.data.
+Hi Anusha,
 
-This patch tries to add a -e option to specify the event name that
-the flamegraph will be generated accordingly. If the -e option omitted,
-the behavior remains unchanged. If the -i option specified, the header
-information will be read from that file.
+On Fri, 30 May 2025 at 20:28, Anusha Srivatsa <asrivats@redhat.com> wrote:
+> Move to using the new API devm_drm_panel_alloc() to allocate the
+> panel.
+>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Pan Deng <pan.deng@intel.com>
-Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
-Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- tools/perf/scripts/python/flamegraph.py | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+Thanks for your patch!
 
-diff --git a/tools/perf/scripts/python/flamegraph.py b/tools/perf/scripts/python/flamegraph.py
-index cf7ce8229a..eb78b93925 100755
---- a/tools/perf/scripts/python/flamegraph.py
-+++ b/tools/perf/scripts/python/flamegraph.py
-@@ -94,6 +94,11 @@ class FlameGraphCLI:
-         return child
- 
-     def process_event(self, event):
-+        # ignore events where the event name does not match
-+        # the one specified by the user
-+        if self.args.event_name and event.get("ev_name") != self.args.event_name:
-+            return
-+
-         pid = event.get("sample", {}).get("pid", 0)
-         # event["dso"] sometimes contains /usr/lib/debug/lib/modules/*/vmlinux
-         # for user-space processes; let's use pid for kernel or user-space distinction
-@@ -123,8 +128,15 @@ class FlameGraphCLI:
-             return ""
- 
-         try:
--            output = subprocess.check_output(["perf", "report", "--header-only"])
--            return output.decode("utf-8")
-+            if self.args.input:
-+                output = subprocess.check_output(["perf", "script", "--header-only", "-i", self.args.input])
-+            else:
-+                output = subprocess.check_output(["perf", "report", "--header-only"])
-+
-+            result = output.decode("utf-8")
-+            if self.args.event_name:
-+                result += "\nFocused event: " + self.args.event_name
-+            return result
-         except Exception as err:  # pylint: disable=broad-except
-             print("Error reading report header: {}".format(err), file=sys.stderr)
-             return ""
-@@ -235,6 +247,11 @@ if __name__ == "__main__":
-                         default=False,
-                         action="store_true",
-                         help="allow unprompted downloading of HTML template")
-+    parser.add_argument("-e", "--event",
-+                        default="",
-+                        dest="event_name",
-+                        type=str,
-+                        help="specify the event to generate flamegraph for")
- 
-     cli_args = parser.parse_args()
-     cli = FlameGraphCLI(cli_args)
--- 
-2.43.5
+I have a generic comment that applies to all patches in the series.
 
+> --- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+> +++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+> @@ -424,9 +424,11 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+>         struct otm8009a *ctx;
+>         int ret;
+>
+> -       ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+
+The old code used sizeof(*ctx) instead of an explicit type, for
+increased type-safety.
+
+> -       if (!ctx)
+> -               return -ENOMEM;
+> +       ctx = devm_drm_panel_alloc(dev, struct otm8009a, panel,
+
+Can't you use __typeof(*ctx) instead of the explicit type here, too?
+
+> +                                  &otm8009a_drm_funcs,
+> +                                  DRM_MODE_CONNECTOR_DSI);
+> +       if (IS_ERR(ctx))
+> +               return PTR_ERR(ctx);
+>
+>         ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+>         if (IS_ERR(ctx->reset_gpio)) {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
