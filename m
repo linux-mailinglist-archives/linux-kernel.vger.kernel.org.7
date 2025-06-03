@@ -1,152 +1,160 @@
-Return-Path: <linux-kernel+bounces-671844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360CAACC71C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:57:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18483ACC705
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E36C1173601
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D89918848D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F610E555;
-	Tue,  3 Jun 2025 12:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336251F3FE8;
+	Tue,  3 Jun 2025 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="GhiFs+Oa"
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DBCZ7hII"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5503C1E519
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F9F1CAB3
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748955439; cv=none; b=j8n9Wn4WwTCSWtxAvbEcsa9oo0yKLiPt036DQP+Tl9rml54PD2XmZVRVPBQkEakORUriLQUf2nvCVInTgKYydRdcbGQxqSy+NAF3Q0Jt7Lj66uXvEanzxXY+xacV1OYAgLM8Q740kcvUlXI8WAWtBACyRXpFIAhibcXZdu+o9OA=
+	t=1748955052; cv=none; b=aBLzO/3T+WoXL6oZCZkh8y7PPkwBSHoa2j4kLGtEhHBAdfPXlFoE7flr3rIWPb9179+xgABYwC1swB2RI71YsaSFY5N0Z/GSf/0j/5TYewvCoJikIgozOXosMuiOmerzWxte6HJXl3Y+sufZY8kAWBi/3R//owYMLhllnKEojOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748955439; c=relaxed/simple;
-	bh=YpSUlje0QFo8fAg0UbMHlFaUYLWtmOn9kosehVUWl2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQQ38HhqTiPvisiNMs0Nq2kAxitxUWaDXzUA4lLHx920+cBbCznpLgJg5RGDRUF3y6+mX4QScewbqIOS/W1tyaA667ukEGwLsyGIy0X2bHIbcRBOoorT5/PXqtzmUViRd68zutxAZi3nwCqxh7CmVJp5FmIRYLAcCBQKaPa+kRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=GhiFs+Oa; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bBVs24Wlqz19Nm;
-	Tue,  3 Jun 2025 14:49:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748954950;
-	bh=f3sEmdCXf265fZdW3agrYCmOKfWp1F1brT5D1vfWqXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GhiFs+OagmKnjzrO37+j/bRCJRvL9X3nchSdSAL8QZU93u7utA+y7M8Amp3tayn7Y
-	 IO9csEQOJKBi0mYDUlEtitpv2pCrsfPbqVoQ3xYe9TAcL3iY//3waB8c/VPB78CrOt
-	 4joM5dCTU2faTdJvacgFSKLJK8cYRtNhLvtQiqA4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bBVs15hNzzDkc;
-	Tue,  3 Jun 2025 14:49:09 +0200 (CEST)
-Date: Tue, 3 Jun 2025 14:49:09 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jan Kara <jack@suse.cz>
-Cc: Song Liu <song@kernel.org>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Christian Brauner <brauner@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250603.be1ahteePh8z@digikod.net>
-References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV>
- <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <CAADnVQ+UGsvfAM8-E8Ft3neFkz4+TjE=rPbP1sw1m5_4H9BPNg@mail.gmail.com>
- <CAPhsuW78L8WUkKz8iJ1whrZ2gLJR+7Kh59eFrSXvrxP0DwMGig@mail.gmail.com>
- <20250530.oh5pahH9Nui9@digikod.net>
- <vumjuw5ha6jtxtadsr5vwjtuneeqfg3vpydciczsn75qdg2ekv@464a4dxtxx27>
+	s=arc-20240116; t=1748955052; c=relaxed/simple;
+	bh=obmWgo5IbP5r+MBsvL6ZnYbtDpu9BYwK9noBJQMsAFA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qz4FpkYHzj/CAxu99qUQ9624mbvU/pEqrsWznIG1te+tStiuRMi30am80Tw0vU0mq4FPgp2epUOwpYYmqp4ON+VAJ0RFLTyhDXeEES3BAFvtiCLWVUc2KiZpBvqgDoUb76gwY3ZLrspAyiUdglCw+Vl7Hk/IoC5MCOg7NBtQ0S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DBCZ7hII; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A51FC4CEED;
+	Tue,  3 Jun 2025 12:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748955052;
+	bh=obmWgo5IbP5r+MBsvL6ZnYbtDpu9BYwK9noBJQMsAFA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DBCZ7hII0FYbzBURCHDIlDFLdjaGqNLLb1P1OkPY3u1nj5Ur1LG+qPHOYtFxMq8Xu
+	 6iwtsVdRJdKzjqMfFeOW0tb8UMAjA8fwlAziFmMu38eiN1b4ht9Cn7Bej5yvIIbUIl
+	 SwlYT86MRqJP21sbEYanrY2i0i9iphayDE7nWxFeka1nkovGOeP4WfsP9hnog7fCNU
+	 A9adNbPphh58Z97tV7f9geyRK6hjbPjJlQXQAEK6JHHgArX5EqIGQF7YPvwVn5lzPW
+	 qtSA/lASvNT5na7ZljNv3gWNiof8sPXe7c6MFvk/JJ9p7t4yw9zipj/DVS0z7apmLX
+	 eh5VwnH57Rrqg==
+Received: from [149.88.19.236] (helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uMR6P-002pft-JI;
+	Tue, 03 Jun 2025 13:50:49 +0100
+Date: Tue, 03 Jun 2025 13:50:47 +0100
+Message-ID: <87ldq9dm54.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zenghui Yu <yuzenghui@huawei.com>
+Cc: <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy
+ Hayes <timothy.hayes@arm.com>
+Subject: Re: [PATCH v2 3/5] genirq/msi: Move prepare() call to per-device allocation
+In-Reply-To: <0b1d7aec-1eac-a9cd-502a-339e216e08a1@huawei.com>
+References: <20250513163144.2215824-1-maz@kernel.org>
+	<20250513163144.2215824-4-maz@kernel.org>
+	<0b1d7aec-1eac-a9cd-502a-339e216e08a1@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <vumjuw5ha6jtxtadsr5vwjtuneeqfg3vpydciczsn75qdg2ekv@464a4dxtxx27>
-X-Infomaniak-Routing: alpha
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 149.88.19.236
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, lpieralisi@kernel.org, sascha.bischoff@arm.com, timothy.hayes@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jun 03, 2025 at 11:46:22AM +0200, Jan Kara wrote:
-> On Fri 30-05-25 16:20:39, Mickaël Salaün wrote:
-> > On Thu, May 29, 2025 at 10:05:59AM -0700, Song Liu wrote:
-> > > On Thu, May 29, 2025 at 9:57 AM Alexei Starovoitov
-> > > <alexei.starovoitov@gmail.com> wrote:
-> > > [...]
-> > > > >
-> > > > > How about we describe this as:
-> > > > >
-> > > > > Introduce a path iterator, which safely (no crash) walks a struct path.
-> > > > > Without malicious parallel modifications, the walk is guaranteed to
-> > > > > terminate. The sequence of dentries maybe surprising in presence
-> > > > > of parallel directory or mount tree modifications and the iteration may
-> > > > > not ever finish in face of parallel malicious directory tree manipulations.
-> > > >
-> > > > Hold on. If it's really the case then is the landlock susceptible
-> > > > to this type of attack already ?
-> > > > landlock may infinitely loop in the kernel ?
-> > > 
-> > > I think this only happens if the attacker can modify the mount or
-> > > directory tree as fast as the walk, which is probably impossible
-> > > in reality.
-> > 
-> > Yes, so this is not an infinite loop but an infinite race between the
-> > kernel and a very fast malicious user space process with an infinite
-> > number of available nested writable directories, that would also require
-> > a filesystem (and a kernel) supporting infinite pathname length.
-> 
-> Well, you definitely don't need infinite pathname length. Example:
-> 
-> Have a dir hierarchy like:
-> 
->   A
->  / \
-> B   C
-> |
-> D
-> 
-> Start iterating from A/B/D, you climb up to A/B. In parallel atacker does:
-> 
-> mv A/B/ A/C/; mkdir A/B
-> 
-> Now by following parent you get to A/C. In parallel attaker does:
-> 
-> mv A/C/ A/B/; mkdir A/C
-> 
-> And now you are essentially where you've started so this can repeat
-> forever.
+Hi Zenghui,
 
-Yes, this is the scenario I had in mind talking about "infinite race"
-(instead of infinite loop).  For this to work it will require the
-filesystem to support an infinite number of nested directories, but I'm
-not sure which FS could be eligible.
-
-Anyway, what would would be the threat model for this infinite race?
-
+On Tue, 03 Jun 2025 09:22:47 +0100,
+Zenghui Yu <yuzenghui@huawei.com> wrote:
 > 
-> As others wrote this particular timing might be hard enough to hit for it
-> to not be a practical attack but I would not bet much on somebody not being
-> able to invent some variant that works, in particular with BPF iterator.
-
-There might exist corner cases that could be an issue but would the
-impact be different than with other kinds of path walk?
-
-What could we do to avoid or limit such issue?
-
+> > +	domain->dev = dev;
+> > +	dev->msi.data->__domains[domid].domain = domain;
+> > +
+> > +	if (msi_domain_prepare_irqs(domain, dev, hwsize, &bundle->alloc_info)) {
 > 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> Does it work for MSI? hwsize is 1 in the MSI case, without taking
+> pci_msi_vec_count() into account.
+>
+> bool pci_setup_msi_device_domain(struct pci_dev *pdev)
+> {
+> 	[...]
+> 
+> 	return pci_create_device_domain(pdev, &pci_msi_template, 1);
+
+Well spotted.
+
+This looks like a PCI bug ignoring Multi-MSI. Can you give the
+following a go and let people know whether that fixes your issue?
+
+Thanks,
+
+	M.
+
+diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+index d7ba8795d60f..89677a21d525 100644
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -287,7 +287,7 @@ static bool pci_create_device_domain(struct pci_dev *pdev, const struct msi_doma
+  *	- The device is removed
+  *	- MSI is disabled and a MSI-X domain is created
+  */
+-bool pci_setup_msi_device_domain(struct pci_dev *pdev)
++bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize)
+ {
+ 	if (WARN_ON_ONCE(pdev->msix_enabled))
+ 		return false;
+@@ -297,7 +297,7 @@ bool pci_setup_msi_device_domain(struct pci_dev *pdev)
+ 	if (pci_match_device_domain(pdev, DOMAIN_BUS_PCI_DEVICE_MSIX))
+ 		msi_remove_device_irq_domain(&pdev->dev, MSI_DEFAULT_DOMAIN);
+ 
+-	return pci_create_device_domain(pdev, &pci_msi_template, 1);
++	return pci_create_device_domain(pdev, &pci_msi_template, hwsize);
+ }
+ 
+ /**
+diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
+index 8b8848788618..81891701840a 100644
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -449,7 +449,7 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+ 	if (rc)
+ 		return rc;
+ 
+-	if (!pci_setup_msi_device_domain(dev))
++	if (!pci_setup_msi_device_domain(dev, nvec))
+ 		return -ENODEV;
+ 
+ 	for (;;) {
+diff --git a/drivers/pci/msi/msi.h b/drivers/pci/msi/msi.h
+index ee53cf079f4e..3ab898af88a7 100644
+--- a/drivers/pci/msi/msi.h
++++ b/drivers/pci/msi/msi.h
+@@ -107,7 +107,7 @@ enum support_mode {
+ };
+ 
+ bool pci_msi_domain_supports(struct pci_dev *dev, unsigned int feature_mask, enum support_mode mode);
+-bool pci_setup_msi_device_domain(struct pci_dev *pdev);
++bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize);
+ bool pci_setup_msix_device_domain(struct pci_dev *pdev, unsigned int hwsize);
+ 
+ /* Legacy (!IRQDOMAIN) fallbacks */
+
+-- 
+Jazz isn't dead. It just smells funny.
 
