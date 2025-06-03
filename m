@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-672050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4909ACCA3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 663D8ACCA3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEBDC7A2559
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48D2C7A2148
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7850123E25A;
-	Tue,  3 Jun 2025 15:31:32 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B43223D28A
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 15:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997CE23C8CD;
+	Tue,  3 Jun 2025 15:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YTiSAETJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AF81537DA;
+	Tue,  3 Jun 2025 15:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748964691; cv=none; b=BkVaxl+dO3RSYhWQn4PLBUeaHe/ZRPyTj5ztsolCyQCyB3m1cVJp85KIJty6jV9lf+8G3BpU6Zo0m1dWOA22Gf+QUz9EeVOLU1zFuusjCKwjTyMkPQ5N3yCKpYp8uqg/g4qB2MMdL4ETLjFSfogqOAuFHB585OZ4UzX0+ElFHQE=
+	t=1748964744; cv=none; b=Mgppa724eIALZFrxw3TP6Cdc/u+JIYnyQGiI4gPWa8qauPX8BO7ml27jrm9OeDbA/JfeWkhgydfqwT3Wbrseeuh8ILGovmvf5LLq4EQo/MFgSPxPLqYrzhoVtGmVQYFzFXFsl38c96L+gNBGXDzEwNBzM8ZDsNf2/NWedffvgMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748964691; c=relaxed/simple;
-	bh=wbgYYmgY+K8XWG9aKYtXkj9/28mp6qfTeWp+2lGAXFM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rhCzgEu1WwnMvXJyCZiUXOQ5VmLCehIKQQmiL6Nm5wT4+mGs39qOmqBPmCFboWi6PKZEgBfFtC4nkIvTZ4dGicrngHJsvzmkHY34ZK7hyMp6eYotZ8m9r4adymPUnBCb0WtFcyUHa9rLbJD6YfOx4RSpleya6vEc8SUTrTL2lsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3dcd10297d5so88738625ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 08:31:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748964689; x=1749569489;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V6+WFHc8Xd2Rs5cqfXrWuYOJWj2GC9zBKyolOD6WGw0=;
-        b=kU0rZRB91BR+r5G667GvjqX4Z4QC3XFXyeKGP6+Q58TOoJh76fCCUsV/35r96bDB9A
-         Wpc7pHCwSAZt0Vaurk/Yrhnztj153YoX/JpRyO/AzKRfjy0Ob3Nsyls3kCZbb2BvlKNx
-         E0r5gtQoIXXlpdShi9BmSDD8gGzMjNvW0AmIbq5zjK1rhHs+o4qoVirxX0nF/FAtEijF
-         TetDgtcEDdLBOrtoyD+5aUbWnr22KcBYO85h8ydCkmpg7SBx+iY764rFUle8Sy/yYyiR
-         +xA6Ij84cYjw5ojjKcnuBLdR45Mg3VF9hh1HpZdQI6T+zPjOGTg1ufAX6g24poBXpZxQ
-         HTOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrmeeOcr7bdh1f5DdyaPg3jB/V6gDEwuZ2UVWkz7ci1JCIZCjqIgz/T8eLi7YqdtxKm/UyggdXMvvq0yY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGBUMWVNCy7OgA+pTgUMpw5NzbP/hjZYWla1GrL6fiG3Fs2mUH
-	q5p67mnOUNKTy6iGm8oLOKqa0+rSGBQQXZBULpQi9DB4ytueMzqXzq59divAnjyWosSBgY4nyNA
-	2ZbqK3gE/zuWK5k8q6C9PbQZEfJ646fzzWL3/3evxNaBVc4RQN+DqX7jFwRc=
-X-Google-Smtp-Source: AGHT+IEOdHxSXjVumgLl07nzksYwLrQcaFcK7H9ZWivPHOAaD4reLIzh0tBf4A8wo8kmauv+injTXdG4v/Dyy4BhhMysgdIJ/L/f
+	s=arc-20240116; t=1748964744; c=relaxed/simple;
+	bh=n2G3L/1cppZUNXCPoJuyAcelWsbwiVmnTyGSvW/NvHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aTss5P3dMJAJj39BfUpaodSvSeqAssIJ9U/uFR18fCq9ZnaAYuzxxyjzPJOdGoN5KjUsTBYQHG+/hWE3b7lo4pY4+beLjm7l8rY3ov8gxupXXXShsW0x8LE1TJQcLu2No5I3KKoXlqX5ay5tHeFs3eudeFDVPU1Zo+cJ8ibnV1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YTiSAETJ; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=hURbiKG9dQjvo1z7louEbs80FaEACCtaK1pYxGcQybk=;
+	b=YTiSAETJcwDb5JB6n2x1gSB0GLykGqtbhOEyae8cLdqkA3sCPvL7QaXjpuDEQl
+	kpk3oeA4NJkUluZLUKGArxRxtpMoUiMWb4YIYi1zPGu8U7MTbhqGjZg1ul3RbmQG
+	Ghgxpc/Z8EaMQkPiblSJH+EYw4RcCkz8ufRo3XpWcQRCE=
+Received: from [192.168.71.94] (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgBnxyxTFT9oBzsNBw--.483S2;
+	Tue, 03 Jun 2025 23:31:32 +0800 (CST)
+Message-ID: <7191e865-4aa1-4de3-aa50-f32ea2786b5f@163.com>
+Date: Tue, 3 Jun 2025 23:31:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e02:b0:3d4:3db1:77ae with SMTP id
- e9e14a558f8ab-3dd99c28958mr217938205ab.18.1748964689425; Tue, 03 Jun 2025
- 08:31:29 -0700 (PDT)
-Date: Tue, 03 Jun 2025 08:31:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683f1551.050a0220.55ceb.0017.GAE@google.com>
-Subject: [syzbot] [mm?] kernel BUG in sanity_check_pinned_pages
-From: syzbot <syzbot+1d335893772467199ab6@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, david@redhat.com, jgg@ziepe.ca, 
-	jhubbard@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	peterx@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    d7fa1af5b33e Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1457d80c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=89c13de706fbf07a
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d335893772467199ab6
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/da97ad659b2c/disk-d7fa1af5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/659e123552a8/vmlinux-d7fa1af5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6ec5dbf4643e/Image-d7fa1af5.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1d335893772467199ab6@syzkaller.appspotmail.com
-
-head: ffffffff000001fe 0000000000000028 0000000000000000 0000000000000200
-page dumped because: VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page) && !PageAnonExclusive(page))
-------------[ cut here ]------------
-kernel BUG at mm/gup.c:70!
-Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-Modules linked in:
-
-CPU: 1 UID: 0 PID: 115 Comm: kworker/u8:4 Not tainted 6.15.0-rc7-syzkaller-gd7fa1af5b33e #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: iou_exit io_ring_exit_work
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : sanity_check_pinned_pages+0x7cc/0x7d0 mm/gup.c:69
-lr : sanity_check_pinned_pages+0x7cc/0x7d0 mm/gup.c:69
-sp : ffff800097f17640
-x29: ffff800097f17660 x28: dfff800000000000 x27: 1fffffbff87da000
-x26: 05ffc0000002107c x25: 05ffc0000002107c x24: fffffdffc3ed0000
-x23: fffffdffc3ed0000 x22: ffff800097f176e0 x21: 05ffc0000002107c
-x20: 0000000000000000 x19: ffff800097f176e0 x18: 1fffe0003386f276
-x17: 703e2d6f696c6f66 x16: ffff80008adbe9e4 x15: 0000000000000001
-x14: 1fffe0003386f2e2 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60003386f2e3 x10: 0000000000ff0100 x9 : c8ccd30be98f3f00
-x8 : c8ccd30be98f3f00 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff800097f16d58 x4 : ffff80008f415ba0 x3 : ffff8000807b4b68
-x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000061
-Call trace:
- sanity_check_pinned_pages+0x7cc/0x7d0 mm/gup.c:69 (P)
- unpin_user_page+0x80/0x10c mm/gup.c:191
- io_release_ubuf+0x84/0xf8 io_uring/rsrc.c:113
- io_buffer_unmap io_uring/rsrc.c:140 [inline]
- io_free_rsrc_node+0x250/0x57c io_uring/rsrc.c:513
- io_put_rsrc_node io_uring/rsrc.h:103 [inline]
- io_rsrc_data_free+0x148/0x298 io_uring/rsrc.c:197
- io_sqe_buffers_unregister+0x84/0xa0 io_uring/rsrc.c:607
- io_ring_ctx_free+0x48/0x430 io_uring/io_uring.c:2723
- io_ring_exit_work+0x6c4/0x73c io_uring/io_uring.c:2962
- process_one_work+0x7e8/0x156c kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x958/0xed8 kernel/workqueue.c:3400
- kthread+0x5fc/0x75c kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-Code: 900523a1 910e0021 aa1703e0 97fff8a9 (d4210000) 
----[ end trace 0000000000000000 ]---
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] PCI: Add PCIE_SPEED2LNKCTL2_TLS_ENC conversion macro
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ krzk+dt@kernel.org, manivannan.sadhasivam@linaro.org, jingoohan1@gmail.com,
+ robh@kernel.org, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250519163156.217567-1-18255117159@163.com>
+ <20250519163156.217567-2-18255117159@163.com>
+ <9bc475b4-4924-1b0f-af3e-ec4fa8140765@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <9bc475b4-4924-1b0f-af3e-ec4fa8140765@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgBnxyxTFT9oBzsNBw--.483S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFyfuF1rGFWfCF1UAr4rAFb_yoW8CrW3pa
+	43CFy5AFW8Ww13Cas0gas2qa4FqFs3WF4UuF47Wr98XFyft3Z5Gr12yFWUKr9rZr4vkrW0
+	va17trWUCF12kFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRAsqXUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwRho2g-AT4TzgABs9
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2025/6/3 17:08, Ilpo Järvinen wrote:
+> On Tue, 20 May 2025, Hans Zhang wrote:
+> 
+>> Introduce PCIE_SPEED2LNKCTL2_TLS_ENC macro to standardize the conversion
+> 
+> Use () parenthesis like you'd use them in C so functions and macros in
+> changelog should have them appended.
+> 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Dear Ilpo,
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Thank you very much for your reply and reminder. Will change.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+>> between PCIe speed enumerations and LNKCTL2_TLS register values. This
+>> centralizes speed-to-register mapping logic, eliminating duplicated
+>> conversion code across multiple drivers.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>>   drivers/pci/pci.h | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index f92928dadc6a..b7e2d08825c6 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -415,6 +415,15 @@ void pci_bus_put(struct pci_bus *bus);
+>>   	 (lnkctl2) == PCI_EXP_LNKCTL2_TLS_2_5GT ? PCIE_SPEED_2_5GT : \
+>>   	 PCI_SPEED_UNKNOWN)
+>>   
+>> +#define PCIE_SPEED2LNKCTL2_TLS_ENC(speed) \
+> 
+> I'm not a big fan of including that _ENC there, it just makes the long
+> name even longer and doesn't really provide added value, IMO.
+> 
 
-If you want to undo deduplication, reply with:
-#syz undup
+Will delete _ENC.
+
+Best regards,
+Hans
+
+> Other than those, this change logs fine.
+> 
+>> +	((speed) == PCIE_SPEED_2_5GT ? PCI_EXP_LNKCTL2_TLS_2_5GT : \
+>> +	 (speed) == PCIE_SPEED_5_0GT ? PCI_EXP_LNKCTL2_TLS_5_0GT : \
+>> +	 (speed) == PCIE_SPEED_8_0GT ? PCI_EXP_LNKCTL2_TLS_8_0GT : \
+>> +	 (speed) == PCIE_SPEED_16_0GT ? PCI_EXP_LNKCTL2_TLS_16_0GT : \
+>> +	 (speed) == PCIE_SPEED_32_0GT ? PCI_EXP_LNKCTL2_TLS_32_0GT : \
+>> +	 (speed) == PCIE_SPEED_64_0GT ? PCI_EXP_LNKCTL2_TLS_64_0GT : \
+>> +	 0)
+>> +
+>>   /* PCIe speed to Mb/s reduced by encoding overhead */
+>>   #define PCIE_SPEED2MBS_ENC(speed) \
+>>   	((speed) == PCIE_SPEED_64_0GT ? 64000*1/1 : \
+>>
+> 
+
 
