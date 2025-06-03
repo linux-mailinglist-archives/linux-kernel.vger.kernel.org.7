@@ -1,149 +1,129 @@
-Return-Path: <linux-kernel+bounces-671751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B418ACC5AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3CBACC5B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01177188ADB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:44:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED001893D2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2C722D9F3;
-	Tue,  3 Jun 2025 11:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE69222B8D5;
+	Tue,  3 Jun 2025 11:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x9tbXX+X"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrGQEQ6a"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816DF1C5D72
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B393597C;
+	Tue,  3 Jun 2025 11:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748951024; cv=none; b=nCsh1PkPY31iHjOnFO+hVF3kE7tVHkPGD9DI8OPIMmEZMCN3n8J+uRIuUp7xjInVqGl3vcF2UAjMbgnRnLKQ4Ve0biEccfSujHS2ZNKR/cQL8amM+CQ+43EbSplWC8Wj1yU0M9KdpZs2Hzw82/DSZqwA+u1WatDs4/6zpbqxFVY=
+	t=1748951179; cv=none; b=bOwFQGgL3XTfZQMKUwH8jOa3XBi6XEIXetSGKuKKQhzn5C6XbBV+FdS5pyxKDw+xrrp9Oah4QcJVmPxUgMSbk9IVDyYLCtWzFK8NMLFq7brebXINAQJuDmp+RqSIMszC8XLK8mLhAQTqWDWPh1EDdFqJwODc/PcM7OaMwY9k7CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748951024; c=relaxed/simple;
-	bh=PNBCbtHacciRjGJIUshcSY6wyXemX0p2lmL+yLw6v1g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=i8GvPUL7x03EgRQxye2yZUMCN5osR0VCCXwM6EO5nLkZlZR9L3GN9S8Obr9BVhgL5hMt7czGaexpKoZBk0CJyeBvrd50WEqruMhfo9s+XrVju5/3Gycw9Zs8OYCz1HA/uBFkvbUg7YcWy8R8xrbTJFqHZfJ2y6mY6agyUVo3qIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x9tbXX+X; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60477f1a044so9351424a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 04:43:42 -0700 (PDT)
+	s=arc-20240116; t=1748951179; c=relaxed/simple;
+	bh=ifKsQ2uocZtDqykYVoV2XkbRJ741T0KpmsTEF6FlxAo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IrQZW+h6SIwPSXx4x5016a4bZROu/ZRnSirU7TkpOuOtDXptj0NPXs8zFZDalzXuhSPpFRnALUtO26Wm/lu2wK/65cj73DCDqIL2uPRkK03Kfvu5X5251sU6DNzR6AH4KUkdrr6enAs50dc9/cDEeahUx+LPgAj+Qwf/8hSwfiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrGQEQ6a; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso4100457b3a.2;
+        Tue, 03 Jun 2025 04:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748951021; x=1749555821; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ubw5qr1vqTEQqkyLWzcVCvsavrNjo50AY7n8fFMjQxc=;
-        b=x9tbXX+XfH2nSEw133b2razXgHKNwcxaEeOyTFB8/3XIHosEkXOE7Xje2VQLhzDNUA
-         ufU38/ry8olVOggfEyz3l0e7p6sJgxWQrQRXB+Vp50KWW1hbhX1A5jjgo1BECMCQxzUI
-         DJ2wcnsQRlJdgxSBtooNDa0DGCK8teCuLUGyKfdXFhWM6Wkm10qAA6So9FPDTlAOfaYG
-         R9702pF2pgieQzn4yDAf0rDkO2r21caXxeJvMV5li0HjE6WtmAgFHKFCygzSGgSQbQSr
-         bVg3QmG2HW6qZAISH/fa6ziun7kvfnRLMaJDAuS9oC3icjh7NUZxqpQF0aELbNlrXd3n
-         ALlw==
+        d=gmail.com; s=20230601; t=1748951175; x=1749555975; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2/X3xPBsMNy2pCcmhvB5NbHHd/N5CiCRmq2yAjEjIc=;
+        b=QrGQEQ6aHT2SXeAUiomLRK7NK7GGy9dby0dJi9IxpWBDKMv4nUSnLZqAGtJooYRwGo
+         3KApJaHllltGyfe6bIs7Z3Ffr57RbXyZZI48pmmCBYNznj9N3C57vhy3eBCmb4TgbWjN
+         uBYz94nxt2kScHTYVe2UlKzb1vqBHzZcuB2SGfrW7HSWuORKm93fo9HkLLRv8aqmc2Dn
+         tPoLd/6ErRpRKo1NPBF2KTAmKs/KnX3/Gm35ddM4E9QLTIs9rPitUtzCFGNnm7H/Qhil
+         ijrkVBi5sONeRo6kZ2pmFBzTiy1nf3C4drJ2jpG7U1U6tVf4WDTEiEonsiUriP0J6bsb
+         RYUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748951021; x=1749555821;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ubw5qr1vqTEQqkyLWzcVCvsavrNjo50AY7n8fFMjQxc=;
-        b=HZduZ6xNuA3k7MnTGt/AKdJDI8b+5JmQ3p+Xrj4YwcHR/tAehKVtyG9TqrSeznkyzn
-         sGxx9lqDEMAP6oElyuFsy3+Rr9/TWJqvT/TSAFed1XGF8e+ELLacM96tz5/dzIIehvDj
-         myzBHOhkWICZ2BP+fDnuZot/VpPowUWIRXcUp7/XMr3vzz2GbZf5jmBUGLf8L1CZiWzw
-         J6A4b+hEtL5bBjsrxvNXYNxoiSELd9VsFN1KjrtK5aHDsftgCa+z3fJROC3I9BpKrHaV
-         H1CJqk8hKF7bI1n3rnoRk7rJpgg0outwcu49CFQwAfBelDyp2j+8f0TUpDNxvkLLA/qp
-         98Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCWO+IbglL1aAK3+GbU0qP9JHjP8ZpKpCJOTD1p0VSg9eqBbEvDsv4sMai7Apj5SbaRBRIovQ5vxilOkwco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjRzESg7QeNw94dUSWd56pq1BI3Nvna/kg5+ZvxXcgvtkS1syp
-	trJUwhikOgP26NVS+BOStKoQKw3itQzL9wJTndZGSsaivjcm3rwZFFmkONBJ63j4qMA=
-X-Gm-Gg: ASbGncsNXbwrbXuMRt+fVxmz4wldGhF+pi6Sl0kBrbUMFyH4hDia+ddApvWuGPZD7ef
-	Kg2jBAN+z6wzm9C4vLXRGDIsJEiujN23SAMmmy4/FHhER1Lg3I8skwAkC2HviUclOUnmAbzZyNs
-	zCi2cpiu3QXHUp9vgBo19qgiVcWt/AstWh69QBY40FANZca5uwAAC5vZTozRM8E5Nbk3pARHrBK
-	XXydTvvePQnCNeSiGXL6zYDS7AStiijDgOgyICnsNqyO+8+hePxEVFWcTA4FV+Uj/kAqfwg7oNV
-	bgo0EZYM+71yTmoXbV6mm+KrMmG75qdy5fsj9fwpUWnA+MRfFExbs4q0pght
-X-Google-Smtp-Source: AGHT+IGnG6VIuLl9nqDMaZzRwmhoM9nz6ogi2ZgDE95nbti3Gup7V8oVPqG3h7hrx+FWDi59W2Bv6g==
-X-Received: by 2002:a05:6402:5106:b0:604:e33f:e5c0 with SMTP id 4fb4d7f45d1cf-605b7b6b7ccmr12087155a12.30.1748951020735;
-        Tue, 03 Jun 2025 04:43:40 -0700 (PDT)
-Received: from [192.168.0.14] ([79.115.63.247])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60567169810sm7354284a12.78.2025.06.03.04.43.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 04:43:40 -0700 (PDT)
-Message-ID: <a4a5855c-6d58-4fc5-85d7-4727d27efbe0@linaro.org>
-Date: Tue, 3 Jun 2025 12:43:38 +0100
+        d=1e100.net; s=20230601; t=1748951175; x=1749555975;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n2/X3xPBsMNy2pCcmhvB5NbHHd/N5CiCRmq2yAjEjIc=;
+        b=bXQK+2wmciaoq7jSdTI5gwQrvlrbe8F+d3XNkmKRPRSKwobXl6GBvy6MQIWuzZJJ/R
+         3O/WSREb4CrrxYJYyn3xVSEJ5emXSL/Ki5NijMR161SNr19Gd9YUZvKAWe0SMrKXUTDM
+         jBbKc5yzV7TlIoiocdKr8v2tDXy99iSH9Muo6dOeIRrg48nKS6Z8VjYRm8Iec5CDm9Ni
+         Rgyuzta2V03mHjv506moJnmVuA7352g0UgROSNCqYj4F3ynydgab6ZRMvIw5sqoQ85+U
+         Z0vRFi/a1UXwD72gwemnUBE4GKh7Qg+dpHy5pFX/j0pNwbFV9Lo4JFmJWKe9PINW19ZI
+         olwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NUGoocORo0g3K4Ax/eYk1sdzgsWTL7eDp6U5WGi/pPy897VCtnUdQaa69CKTtDeVohw/74bKGQQOMp23@vger.kernel.org, AJvYcCW+GTioxJ2AZY/4/Q0Y2zLOE0MrP/4z8I7b/9PZOXH05vFdfPw/rEW3stFnnjXFT5Fj4941qzyzPymT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSdfzutPAiFYzKughQSfrue88tY/Y5GD892OXcDxWh2BA7kEao
+	z8/v5FKS9DcNKSgh3I4a4iBZ4ajaS3qq4N/F8kXyUaC3kbWhkRilpNzl
+X-Gm-Gg: ASbGnctDDqQsTBhroRp29z1VGLvKkYxMgD4UoL0YyFxMwm+r41PehAV9f0Io5BjhwTy
+	h8hnLtBES4pBCn68Q/d4fbbqa3DipLWIva3+hZQ5bKXPArO2luT0mCyNw+xPDSLkHfq8gdw1WYp
+	mUlsgQTflWncLYwecEPuZEgkRPqJorQSM7O845rS7n/h4ict/cEIEc2wOBMxpLtoelDwEpzS5eK
+	RATY7rrNvazyZUxTz8sXZPiFuzMiLyieVOo3fkU0S6BVGxudQaCvru/ukX0xHDzXCBLYjnC/Kio
+	6255wxnvN/9hFB0/GQTgptQcFx97GM2A/y07sXGv2vEJJgpqrdAKERVotggXswfpIgHqt35WEb5
+	QkQb3HGFzLhLniYBsf/zn
+X-Google-Smtp-Source: AGHT+IFuqgYDw4qpLD7iMBYCaosHLzaBzYy1x871vGKtSqREWNk6OZjBkmNzVB1dmfydYu89nGvlWA==
+X-Received: by 2002:a05:6a00:7491:b0:740:6615:33c7 with SMTP id d2e1a72fcca58-747c1c83852mr16387325b3a.23.1748951174960;
+        Tue, 03 Jun 2025 04:46:14 -0700 (PDT)
+Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeadbb8sm9446459b3a.66.2025.06.03.04.46.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 04:46:14 -0700 (PDT)
+From: =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+Subject: [PATCH v2 0/3] hwmon: (amc6821) Add Cooling device support
+Date: Tue, 03 Jun 2025 08:44:53 -0300
+Message-Id: <20250603-b4-amc6821-cooling-device-support-v2-0-74943c889a2d@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 24/25] PCI: Perform reset_resource() and build fail list
- in sync
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
- Igor Mammedov <imammedo@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- William McVicker <willmcvicker@google.com>
-References: <20241216175632.4175-1-ilpo.jarvinen@linux.intel.com>
- <20241216175632.4175-25-ilpo.jarvinen@linux.intel.com>
- <5f103643-5e1c-43c6-b8fe-9617d3b5447c@linaro.org>
- <8f281667-b4ef-9385-868f-93893b9d6611@linux.intel.com>
- <3a47fc82-dc21-46c3-873d-68e713304af3@linaro.org>
- <f6ee05f7-174b-76d4-3dbe-12473f676e4d@linux.intel.com>
- <867e47dc-9454-c00f-6d80-9718e5705480@linux.intel.com>
- <a56284a4-755d-4eb4-ba77-9ea30e18d08f@linaro.org>
- <7e882cfb-a35a-bab0-c333-76a4e79243b6@linux.intel.com>
- <f2d149c6-41a4-4a9a-9739-1ea1c4b06f4b@linaro.org>
- <19ccc09c-1d6b-930e-6ed6-398b34020ca1@linux.intel.com>
- <c1c0bacd-7842-4e9e-aec4-66eb481aa43f@linaro.org>
- <f8f15489-8b31-4672-9fb9-161c7c4599dc@linaro.org>
-Content-Language: en-US
-In-Reply-To: <f8f15489-8b31-4672-9fb9-161c7c4599dc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADbgPmgC/x2NQQ6CMBAAv0L27CbrIgh+hXgoy4qbaNu0YEwIf
+ 6fhOIeZ2SBrMs3wqDZI+rNswRfgSwXydn5WtKkwMHFDLTGON3RfaTu+ooTwMT/jVDxRzGuMIS0
+ oVI/kur6vmzuUTkz6sv/5GJ77fgBaqO6acwAAAA==
+X-Change-ID: 20250602-b4-amc6821-cooling-device-support-c03b0a899357
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Farouk Bouabid <farouk.bouabid@cherry.de>, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>
+X-Mailer: b4 0.14.2
 
+Add support for using the AMC6821 as a cooling device. The AMC6821
+registers with the thermal framework only if the `cooling-levels`
+property is present in the fan device tree child node. Existing behavior
+is unchanged, so the AMC6821 can still be used without the thermal
+framework (hwmon only).
 
+v2:
+- Remove devm_action on release and call of_node_put() manually
+- Change of_pwm_polarity to store resulting pwm polarity on driver private data
+v1:
+- https://lore.kernel.org/lkml/20250530-b4-v1-amc6821-cooling-device-support-b4-v1-0-7bb98496c969@toradex.com/
 
-On 6/3/25 11:48 AM, Tudor Ambarus wrote:
-> 
-> 
-> On 6/3/25 11:36 AM, Tudor Ambarus wrote:
->>
->>
->> On 6/3/25 9:13 AM, Ilpo Järvinen wrote:
->>> So please test if this patch solves your problem:
->>
->> It fails in a different way, the bridge window resource never gets
->> assigned with the proposed patch.
->>
->> With the patch applied: https://termbin.com/h3w0
-> 
-> above is no revert and with the proposed fix. It also contains the
-> prints https://termbin.com/g4zn
-> 
-> It seems the prints in pbus_size_mem are not longer hit, likely because
-> of the new condition added: ``!pdev_resources_assignable(dev) ||``,
-> pci_dev_for_each_resource() finishes without doing anything.
-> 
->> With the blamed commit reverted: https://termbin.com/3rh6
-> 
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+---
+João Paulo Gonçalves (3):
+      dt-bindings: hwmon: amc6821: Add cooling levels
+      hwmon: (amc6821) Move reading fan data from OF to a function
+      hwmon: (amc6821) Add cooling device support
 
-I think I found the inconsistency.
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml      |   6 ++
+ drivers/hwmon/amc6821.c                            | 115 +++++++++++++++++++--
+ 2 files changed, 112 insertions(+), 9 deletions(-)
+---
+base-commit: 7e801aa73daa456c4404fde177d3fc397661abf0
+change-id: 20250602-b4-amc6821-cooling-device-support-c03b0a899357
 
-__pci_bus_assign_resources()
-	pbus_assign_resources_sorted()
-		pdev_sort_resources(dev, &head);
-
-But pdev_sort_resources() is called with a newly LIST_HEAD(head), not
-with realloc_head, thus the resources never get sorted.
-
-pdev_sort_resources() exits early at
-	``if (!pdev_resources_assignable(dev))``
-
+Best regards,
+-- 
+João Paulo Gonçalves <joao.goncalves@toradex.com>
 
 
