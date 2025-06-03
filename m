@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-671654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8F1ACC441
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:24:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F43CACC3EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2122B3A3DB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F7E164E31
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10A1DE4C2;
-	Tue,  3 Jun 2025 10:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEDF1CAA96;
+	Tue,  3 Jun 2025 10:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="bqzhCygI"
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="QU+CHtdQ"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF871A9B39
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 10:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8281474DA;
+	Tue,  3 Jun 2025 10:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748946242; cv=none; b=tVzKByaijt+dmu9nHUoXHNou5iGcV3z9fGCvLdvaKjaDzUnIPxLttSP9R4iA59qMnMUTPWkp5SOMLe4oSRpeNvLg5hj1ax03bmn/1jcwNuWUMzba1XS4VbjI6vq95pY2c2qHJZ5NhtMe3539uKLojxgz0XKal04yK7QKqAu7H2w=
+	t=1748945124; cv=none; b=VIhDVX9s4a9OdJ0C9EL0mcEEutgKqGMSNUy0+5JD7J6B/Rl5hloc2f2i7QZFpjp40dL/fE5E00JbXh9HS1Tt4B0jkjW5rbbaqDx4Nzt4qKT+qL2Z0aVe9Gw/RMkGMa7jF5kRzD/mc4ZGN22OiTR9RqjyqsI3Ig1ayZVoNTguJ/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748946242; c=relaxed/simple;
-	bh=0R4MkUmFKrDH2antCfLvZrX66TftMrWH9M8K8rA6o5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=grgHozHd5hf40uu5iq0O9kExEdH555ZCdOvr2O9YuIyTJ9KNamWilioQc0ObUTgLl6zP4tGl2Q6ygftzD4DdZf6/an9SHWV3AQiIBFs516Z6Y02NkkCZfmZFK6KeGk1ej3YeUlNS373tPriDrqjOewmjpMO+02L8Mlq1Bp0Bmgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=bqzhCygI; arc=none smtp.client-ip=185.136.64.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20250603094330d88e7bfeaf71d96e71
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 03 Jun 2025 11:43:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=diogo.ivo@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=0R4MkUmFKrDH2antCfLvZrX66TftMrWH9M8K8rA6o5Y=;
- b=bqzhCygI4qgp8DoC+myJcuL101rc5DuOgJoq6iFW2q8vvI7jK2Ygxpgu8ZAt9Gm/8cIMFq
- OIEmUIl0R3WP2mY0tFwPC0ycMmM8GB572XckOzHTT6IZjHTBH+pGqoDqNUhMx9uFh7fZoQK1
- GCssimINyG9j2p61Ke/pp3ZEmrP8NAvIZYf2TVRGmpII9ICnNg1g7wJ/4WZ0cc13CtfOhiaZ
- Ptu+6z0/QxQ1ZTMBUrT5Ja0AjHTH3S4O+lBU7IITpwHqViTdwX4g6TuOPyNQJdsz57jhJWZA
- d5Cyu72qni3qqonWl4yz1+cg/mviDGLM7w4puymIhwIo2509ge4rK5cg==;
-From: Diogo Ivo <diogo.ivo@siemens.com>
-To: andy.shevchenko@gmail.com
-Cc: benedikt.niedermayr@siemens.com,
-	diogo.ivo@siemens.com,
-	jan.kiszka@siemens.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux@roeck-us.net,
-	mika.westerberg@linux.intel.com,
-	rafael@kernel.org,
-	wim@linux-watchdog.org
-Subject: Re: Re: [PATCH v3 0/2] Add driver for Intel Over-Clocking Watchdog
-Date: Tue,  3 Jun 2025 10:43:29 +0100
-Message-ID: <20250603094329.125537-1-diogo.ivo@siemens.com>
-In-Reply-To: <aDy09SFPkzr2AJnr@surfacebook.localdomain>
-References: <aDy09SFPkzr2AJnr@surfacebook.localdomain>
+	s=arc-20240116; t=1748945124; c=relaxed/simple;
+	bh=aKoy2voj3JHmEctto6vb4+o785Xz/xT57sWgjO2fDRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d0uIjC4TRR7KpSuLQvzNBRGI35palYJYcfAEoyKcK+LgylYDcKoGthv2O3jgMU/Vg36l4n9Ngiow2SWQT74VnR32Yv1+f8WT8nu1cvEJV1CTJ363GNquyaGo1dZ9Be7BDeUQ8/wsVlZ88p0ANVf+V88lcTgCdWycuv7OTMh6zrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=QU+CHtdQ; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C8CEC23F5A5;
+	Tue,  3 Jun 2025 12:05:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1748945120; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=OozP1XsCyy8/ehPNzN7eul+LCLA7VroK5+qN//FqHpk=;
+	b=QU+CHtdQKDKbIAfKd+VWlKI/QgUo3zNgG1ax/arBms7uOUDqKF+rdBl0OVMo3Q7wPAJ5ga
+	4A0BomfmYsDHgSApvBHyQW6Yo0AUVEbk1C/WiBobYWTyRgAWc2rFDS386XbYw/rJsN6Mz6
+	NBvOlKMT8KunmmW8gXt4XvoT8DR2fb0bd6HzPe4xKNP/CrMm/XMRuTK1e24HQ7/VY2di9L
+	3C3A1UkdhkdYMMBi9rOv69D5doPAZOZIsq9G2DflT1dbXk8NuS9vEvm8lCSSMxx7c1mddt
+	4uc6esSRvnIDDw980N61jqpvIxA+YXaIY0s5R2Msv54VdOLYBK8YAI7gH5d72Q==
+Message-ID: <c40fd836-ac63-48d0-93aa-8dd5f3dbcf79@cjdns.fr>
+Date: Tue, 3 Jun 2025 12:05:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328357:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] clocksource/timer-econet-en751221: Convert comma to
+ semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, daniel.lezcano@linaro.org,
+ tglx@linutronix.de
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250603060450.1310204-1-nichen@iscas.ac.cn>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <20250603060450.1310204-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Andy,
 
-> This doesn't describe why we need the driver. We have established ACPI WDAT
-> table. Can't you utilise it by providing in the firmware?
+On 03/06/2025 08:04, Chen Ni wrote:
+> Replace comma between expressions with semicolons.
+>
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
+>
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
+>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-You are right, I did not make that clear.
+Tested-by: Caleb James DeLisle <cjd@cjdns.fr>
 
-When you say we have established WDAT table do you mean that this should be the
-mechanism that we use going forward to control watchdogs in ACPI platforms
-generally or that you know that the WDAT for this specific watchdog is present
-in the firmware?
 
-I wrote the driver because on the two platforms I have access to (a fairly
-recent LG Gram with an i7 1260p and a Siemens BX51A) by delving into the
-BIOS options I was not able to find a toggle for them to provide a WDAT table
-for this watchdog. In fact, on the LG Gram by searching we can get it to pass
-us a WDAT table but for the iTCO watchdog (at least that is what I gathered
-from my testing).
+The comma was indeed unintended, thank you.
 
-This means that to the best of my knowledge there are platforms that do not
-provide a WDAT table for the Over-Clocking Watchdog which then makes this
-driver necessary.
+Caleb
 
-However I am not an expert on this topic so if there are things that I am
-missing I would be happy to work on a better approach.
-
-Thanks,
-Diogo
+> ---
+>   drivers/clocksource/timer-econet-en751221.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clocksource/timer-econet-en751221.c b/drivers/clocksource/timer-econet-en751221.c
+> index 3b449fdaafee..4008076b1a21 100644
+> --- a/drivers/clocksource/timer-econet-en751221.c
+> +++ b/drivers/clocksource/timer-econet-en751221.c
+> @@ -146,7 +146,7 @@ static int __init cevt_init(struct device_node *np)
+>   	for_each_possible_cpu(i) {
+>   		struct clock_event_device *cd = &per_cpu(econet_timer_pcpu, i);
+>   
+> -		cd->rating		= 310,
+> +		cd->rating		= 310;
+>   		cd->features		= CLOCK_EVT_FEAT_ONESHOT |
+>   					  CLOCK_EVT_FEAT_C3STOP |
+>   					  CLOCK_EVT_FEAT_PERCPU;
 
