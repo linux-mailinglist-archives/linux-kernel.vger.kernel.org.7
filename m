@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-671511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB739ACC284
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:00:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A333ACC2A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB401891881
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D83017275D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534A2281356;
-	Tue,  3 Jun 2025 08:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847A6283FD8;
+	Tue,  3 Jun 2025 09:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5ewOc1I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ThDKtrxy"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6024F5E0;
-	Tue,  3 Jun 2025 08:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08ABC28152A;
+	Tue,  3 Jun 2025 09:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748941195; cv=none; b=G/vYZ6XH9Lp6PtLG7dJNTQM/y4ulLYS0gZJALFL+jDoTZsEUppqfzVXGPuS2yVzGp9ksI7jz0dh1GpvK8unyq49hKubi1A62xw4+39DlWf7rALWeahd3vFSBWBoNpsa9KstMq/Qb7n6NBDKzV9YmpwTyRaK3QgVDFogiTLCAxVc=
+	t=1748941499; cv=none; b=jgwSl97CXU2JQiCGlALFs5+16LhC4kPJ1qyixQS59S2nYHHNhuu2ClUyUYCEOQTPL290iraMA/NMlg0BZnbKg9+kO8ZrfONFZ0ae+T27rjXdDDS0CNQKkTP2QLiM/1VnOMthmCP13Y39DISLth1bc2rDm35KA3VHsICGuAnT1+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748941195; c=relaxed/simple;
-	bh=R50WQrCRCTILDFY9a5xYZZIKpDYGrHm9HaM9VrFd8qo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UmoGLTcRhxGwHn2HO9RLR9RwOmFIrdWTQUna0UvQppDZvIA35GgNf6tt84+Hit/be5D1mJ81WOxpaDc+tNeGn0BgZYlnqkc5CbokLdrM0qe2ZrYNo6uWh4VfJnIiISYgMRd5E9PXRKFwiFPbxKOPNgGmSRc6n/QImW+XDsFiKv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5ewOc1I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F96C4CEED;
-	Tue,  3 Jun 2025 08:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748941195;
-	bh=R50WQrCRCTILDFY9a5xYZZIKpDYGrHm9HaM9VrFd8qo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=s5ewOc1IzJzHNkzRDAsQZ2xHPKpi2YS6kSkA/5HltTiaLiQYKfkEyIeNuN/jxhCsW
-	 s4B7+6SJeKjhbyKxZS5GYQuz62AkgQyCNTaU6bT8yUFr7Eci3zlYKpgUiUkqpmlqqK
-	 fh2u+coWSQxSjBhqF+dhVz6oYRfaF+KrxvCQCPcxL2phWj++C2qSMpAY/HYENGXQ1L
-	 9Vcgg7HDzZvCkwOi+/YrcJl5mfmS0JOi4jh4zN0ufHStOdEUZfcKDN6yBLPd7ZTsd0
-	 whGJBEPoXFGu/LvWJpVXuukKUKoiKXI3jO/HNH6ekNyxoxzJ9iSQ4jwwOreAinckRm
-	 cFzWJAyDlbW+w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BE8380DBEC;
-	Tue,  3 Jun 2025 09:00:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1748941499; c=relaxed/simple;
+	bh=oLamSk+rgK83ij/j0OMTDCK03G7O/CTlwPqfm4fU7fw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=jZ1GblQzX53dwsce++V19N/yK2EmKJpHY8NOjCpnMfGNqXSEpOqv1bpdH+oVdIF+T6ZGZhqCqcM9sDDbVTzLeRnTRVwyrsFpzR+Z6R/YKzZy7geS6ccJysog/20UMyttYfWTpsCwPeKOdZTOQkXYqlDjaq7NPHf0BnVxADPyKwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ThDKtrxy; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5538E90X006202;
+	Tue, 3 Jun 2025 11:04:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=gSqlkIscU9UECxCqO78pkp
+	9mEBkzMbraZvF9QyX2Jpo=; b=ThDKtrxysbVp91fh7r33bOjfUH9bYyA8VxbX9l
+	JWfdnsmeKNgsFISaQDSEFgoA1ORVzNoLrwWODwPqb3mQayp7EDxmwayq2HAXauQo
+	D03yXs8jLL7423a22It4jBnndNwShoAieoXWijt7nDP0IoYTsx6vk5qMM/lFBhpm
+	1/QE40YdnlrYwVGSJc9HAgbO70QyzJttxYQacgCFPFICd4x8pQZXYZNGE6PasAcX
+	TtlunUt+PkiuCfheaKBalQVvNwcxhzIGbavOdlUllySRJq8pPa5jm2LxmRIHQKCM
+	f4zWwBiKqgJhytfmKRTyCxlYParsjg5QRQrquZiHCluHDyIQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 471g93aym9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Jun 2025 11:04:42 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4E77F4005D;
+	Tue,  3 Jun 2025 11:03:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 605D76CF2C0;
+	Tue,  3 Jun 2025 11:02:31 +0200 (CEST)
+Received: from localhost (10.48.87.237) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Jun
+ 2025 11:02:31 +0200
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Subject: [PATCH v2 0/7] Introduce STM32MP157F-DK2 board
+Date: Tue, 3 Jun 2025 11:02:06 +0200
+Message-ID: <20250603-stm32mp157f-dk2-v2-0-5be0854a9299@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net v3] net: wwan: t7xx: Fix napi rx poll issue
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174894122801.1429658.207799656496074697.git-patchwork-notify@kernel.org>
-Date: Tue, 03 Jun 2025 09:00:28 +0000
-References: <20250530031648.5592-1-jinjian.song@fibocom.com>
-In-Reply-To: <20250530031648.5592-1-jinjian.song@fibocom.com>
-To: Jinjian Song <jinjian.song@fibocom.com>
-Cc: chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
- haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
- ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
- ryazanov.s.a@gmail.com, johannes@sipsolutions.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, angelogioacchino.delregno@collabora.com,
- linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com, corbet@lwn.net,
- linux-mediatek@lists.infradead.org, helgaas@kernel.org,
- danielwinkler@google.com, andrew+netdev@lunn.ch, horms@kernel.org,
- sreehari.kancharla@linux.intel.com, ilpo.jarvinen@linux.intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA66PmgC/x3MQQqAIBBA0avIrBN0TKyuEi2kphpCC40IorsnL
+ d/i/wcyJaYMnXgg0cWZ91iAlYBx9XEhyVMxoEKrLDqZz2AwHNq6WU4bSvR1U3ulW2c8lOpINPP
+ 9H/vhfT9M3JYNYQAAAA==
+X-Change-ID: 20250527-stm32mp157f-dk2-2a484a01973a
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Himanshu Bhavani
+	<himanshu.bhavani@siliconsignals.io>,
+        Etienne Carriere
+	<etienne.carriere@foss.st.com>,
+        Pascal Paillet <p.paillet@foss.st.com>,
+        Conor
+ Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
 
-Hello:
+The main hardware difference with STM32MP157C-DK2 board is the SoC: 'F'
+variant embeds a STM32MP157F SoC, which has the same level of features
+than a STM32MP157C SoC but A7 clock frequency can reach 800Mhz (instead
+of fixed 650Mhz for 'C' variant).
+stm32mp157f-dk2 device tree reuses the existing sketeton for STM32MP15
+DKx boards, but it is SCMI-based with I2C4 & PMIC managed by OP-TEE,
+like other STM32 MPU boards (STM32MP135F-DK, STM32MP257F-DK/EV1, ...).
+Himanshu's bindings patch [1] has been rerolled to introduce
+st,stm32mp157f-dk2 compatible.
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Link: https://lore.kernel.org/linux-arm-kernel/20250524100319.22521-3-himanshu.bhavani@siliconsignals.io/ [1]
+Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Cc: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
 
-On Fri, 30 May 2025 11:16:48 +0800 you wrote:
-> When driver handles the napi rx polling requests, the netdev might
-> have been released by the dellink logic triggered by the disconnect
-> operation on user plane. However, in the logic of processing skb in
-> polling, an invalid netdev is still being used, which causes a panic.
-> 
-> BUG: kernel NULL pointer dereference, address: 00000000000000f1
-> Oops: 0000 [#1] PREEMPT SMP NOPTI
-> RIP: 0010:dev_gro_receive+0x3a/0x620
-> [...]
-> Call Trace:
->  <IRQ>
->  ? __die_body+0x68/0xb0
->  ? page_fault_oops+0x379/0x3e0
->  ? exc_page_fault+0x4f/0xa0
->  ? asm_exc_page_fault+0x22/0x30
->  ? __pfx_t7xx_ccmni_recv_skb+0x10/0x10 [mtk_t7xx (HASH:1400 7)]
->  ? dev_gro_receive+0x3a/0x620
->  napi_gro_receive+0xad/0x170
->  t7xx_ccmni_recv_skb+0x48/0x70 [mtk_t7xx (HASH:1400 7)]
->  t7xx_dpmaif_napi_rx_poll+0x590/0x800 [mtk_t7xx (HASH:1400 7)]
->  net_rx_action+0x103/0x470
->  irq_exit_rcu+0x13a/0x310
->  sysvec_apic_timer_interrupt+0x56/0x90
->  </IRQ>
-> 
-> [...]
+Changes in v2:
+- Drop empty stm32mp15xa.dtsi and stm32mp15xd.dtsi files.
+- Fulfill SCMI regulator defines and add Pascal's SoB
+- Add patch [4/7] to use SCMI regulator defines
+- Add patch [5/7] for OP-TEE async notif
+- Link to v1: https://lore.kernel.org/r/20250527-stm32mp157f-dk2-v1-0-8aef885a4928@foss.st.com
 
-Here is the summary with links:
-  - [net,v3] net: wwan: t7xx: Fix napi rx poll issue
-    https://git.kernel.org/netdev/net/c/905fe0845bb2
+---
+Alexandre Torgue (1):
+      ARM: dts: stm32: fullfill diversity with OPP for STM32M15xF SOCs
 
-You are awesome, thank you!
+Amelie Delaunay (3):
+      ARM: dts: stm32: use 'typec' generic name for stusb1600 on stm32mp15xx-dkx
+      ARM: dts: stm32: use internal regulators bindings for MP15 scmi variants
+      ARM: dts: stm32: add stm32mp157f-dk2 board support
+
+Etienne Carriere (2):
+      dt-bindings: regulator: Add STM32MP15 SCMI regulator identifiers
+      ARM: dts: stm32: optee async notif interrupt for MP15 scmi variants
+
+Himanshu Bhavani (1):
+      dt-bindings: arm: stm32: add STM32MP157F-DK2 board compatible
+
+ .../devicetree/bindings/arm/stm32/stm32.yaml       |   1 +
+ arch/arm/boot/dts/st/Makefile                      |   3 +-
+ arch/arm/boot/dts/st/stm32mp15-scmi.dtsi           |  10 +-
+ arch/arm/boot/dts/st/stm32mp157f-dk2-scmi.dtsi     | 196 +++++++++++++++++++++
+ arch/arm/boot/dts/st/stm32mp157f-dk2.dts           | 179 +++++++++++++++++++
+ arch/arm/boot/dts/st/stm32mp15xf.dtsi              |  17 ++
+ arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi          |   2 +-
+ .../dt-bindings/regulator/st,stm32mp15-regulator.h |  40 +++++
+ 8 files changed, 443 insertions(+), 5 deletions(-)
+---
+base-commit: dc392342b7bb14b12f2de96201937cb02be7802f
+change-id: 20250527-stm32mp157f-dk2-2a484a01973a
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Amelie Delaunay <amelie.delaunay@foss.st.com>
 
 
