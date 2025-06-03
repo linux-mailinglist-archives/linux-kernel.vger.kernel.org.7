@@ -1,165 +1,178 @@
-Return-Path: <linux-kernel+bounces-671781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923C5ACC615
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:01:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF17ACC61B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB5E3A3217
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B1883A3019
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A462022E00E;
-	Tue,  3 Jun 2025 12:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wi9pdO/v"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6D422E00E;
+	Tue,  3 Jun 2025 12:03:42 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8230446B8;
-	Tue,  3 Jun 2025 12:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B067246B8;
+	Tue,  3 Jun 2025 12:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748952094; cv=none; b=o8dVoTsNOdChcmxe3jlFBX8d5zBBH9Gvp5leT/WXkgIZDfES7nwbO/8FJLQ233gWErVxaG8XfMMzM1/mGqYmyrAg4reK1OJdf7FAr56rLpVnB+Ojzq0/Ukf4BIIciv3k1VXYqtPHFZEodGteXwAlaxP8UFAzRTufIMVEhPJ9H4w=
+	t=1748952222; cv=none; b=nhUvMkN4PeFh8z9rQ8BWhR3Q4/Bj/FIesUHPXMQDb838lzbhhrcB1Wisr2QSAg1Syg1eB82mCmCE4hp7JTX/hOHiKEVAR5EAwbvDSv/Q1+nB89JsctLioiryYImb6k/CovMErfZlyMIdHl7gF293neismOEtMEcH1KAjanG1O4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748952094; c=relaxed/simple;
-	bh=h92UUlXMO/KLL58P3PSjFD/SbuRQD19YhC6UgkrFuhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNAK3qMdUcN/NgGTjbbAZlAlBKd4CaP1jiEg6K8SZs2FxQ7GjL/dJ55E4bnutiuzQUmU+WX6SNOE/DnB3806+QDvXikNrhwPZEeFGfeLyLrIE9CbMA9GWJ47Hfl5vGGCdP1EsBnLgOTRy1SmIQrxXOUM4hbeJNk1XOEkUWQhBiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wi9pdO/v; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a56cc0def0so44893551cf.3;
-        Tue, 03 Jun 2025 05:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748952091; x=1749556891; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y5gk2lwOOOLeohREzJWg+/TaGpOi69oLrNHUYeAZNaU=;
-        b=Wi9pdO/vzywpOzQrpkzHt0NbVVukb8zemqSMNuT2YhAPRYBvLxVA07wa9BzxOzory3
-         yXFRmJEtb+KlHwx0Brvelt3bO5mIu/aJphk+lc1J98wKmyJYYqFPoCsCc76ELX/eTq6T
-         UpBds4Q9BPvSsIazN8T5ss1+yphLzRoYf0GLNavvGl+VBfkknK0jAlY0f4owi7thQML/
-         gyK/sfBkl5qsiJNwMxZyywTMcjWclX5PNH7D/eAd5oAgAMRdIijGHQJqTIJldhQWyXjn
-         x/03LBWDzPWuNRvtn7/JLJUdTziHE/R1z+uqj8w4sxTF5f52QbvG3kIRD/MD9ZfSchYh
-         Vypg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748952091; x=1749556891;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y5gk2lwOOOLeohREzJWg+/TaGpOi69oLrNHUYeAZNaU=;
-        b=Z5756HJjI32ZL7qU1cy52JuJn6m30LKMSbhdO9Kumze9VjlF89DDm3YUv4iwAJZ/Gl
-         omFFNu7Qy/LKvXEgqXSY3O7eZISPQS+ynbvjcVRqtv/+a79GjDJO46315YT6ZCeBQk9y
-         BpbOyevjqfdF9YmEFC39I7PcxP0CL05T+GyXWUeu/o/YIESRvzvBvkjo8oXB1TrHuv5v
-         W4dhRihvesqtp4QL+Oz1TgzSVrXA1hCN3TVj69VdKAXjC3Dk+Pb9zMvTZd5w/tXwlw43
-         ONYv1UVEYjm19al6yLZct9oA0AubarU1ylGEJlE3AnzIe52f1MlZ/T+NIwfSjH1clrao
-         BUmw==
-X-Forwarded-Encrypted: i=1; AJvYcCU89QKfa15J57Wk6VdmS5DoiGqn0EfYvpVdYB7EM+asO4CPsETc8UMr8vjUw26s92lmUdP/V2x2/Fap@vger.kernel.org, AJvYcCVkCl9xsh0nE7HoNvHit4sIewvJ2fKLoWCDYlWE/7fJnNcF11PhDCh9021KfNDrlI9IjSk61b8rocQu@vger.kernel.org, AJvYcCW1D+h5d25nx+iDCUCym2SgvqOVDZH/XLwhXB/OX+qhPRxpzq7AaR9THJnjYVW8sYHBUiGiPgz8hhX7QfQX@vger.kernel.org, AJvYcCWY9LZTbK6pirrxJuh9Cv0Fvnirvhd6ZV/+vZQIV/7/u9rGfbqqkw8aJ9sXvAj9a4DNIYfKQQN6hSvuQw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2A7xJ8kpMH1JFKK/d82eZYPbm4AvLsp4sjGQMqPmzYCCeKtkj
-	iGJM8r3X+RH9wDS+LvMNg6im4njjfSQB7W7oZW884/BQQk8v+p0+PqrbKbOKLoceUOk=
-X-Gm-Gg: ASbGnct8lx0KKUGtdCYaND6I4/M0OooaWsW+C6BrhpGJZ8wlTPSJVW0rGj7qXXa6u0X
-	Ke6X0e3VZz9MV5RARh9BxcNXUPk+nE3smnoYX8FFGIrQnJ7UVWQ84GqV5Z5TzjlCodouC9A+5xl
-	BCbJhJinpdJfB4H4ktozozbiysfVkN1fv+7cbLcA/WTt5j36cqlx9tJYgMtmLZH90ff0jRTGlg0
-	StwxoQhLTWZrLvdMJFqk5CV2+TZMZjTAwn2R+pDL7JtSd0TBs9oS8EB5Am82bksQhrB1CWCOTag
-	eO/Tf4ByY49o12Am2pyhriuvDC+JOK9yDdITqurGY3bMqBlzOl7hsFHf+9vUU12riyAejQ==
-X-Google-Smtp-Source: AGHT+IHkd3xP0AuVWx7aZOobspQQuluiMGh3RGmXtKIFGOpQiJHf47IF+VP77KmJCWKRTBLn9KS7lA==
-X-Received: by 2002:a05:6102:949:b0:4e6:f7e9:c4a5 with SMTP id ada2fe7eead31-4e701ccd25emr8903178137.22.1748952080349;
-        Tue, 03 Jun 2025 05:01:20 -0700 (PDT)
-Received: from localhost ([2804:30c:406b:9100:2a26:16f5:c81:e61f])
-        by smtp.gmail.com with UTF8SMTPSA id ada2fe7eead31-4e64e9f7ff2sm8433407137.27.2025.06.03.05.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 05:01:19 -0700 (PDT)
-Date: Tue, 3 Jun 2025 09:02:56 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ana-Maria Cusco <ana-maria.cusco@analog.com>, jic23@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com,
-	dlechner@baylibre.com, nuno.sa@analog.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Subject: Re: [PATCH v4 02/11] iio: adc: Add basic support for AD4170
-Message-ID: <aD7kcFupREh4lW0s@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1748829860.git.marcelo.schmitt@analog.com>
- <e79f9a126672b33b8a7c01f650fee43a68c74029.1748829860.git.marcelo.schmitt@analog.com>
- <aD27cobHWeBX8o30@smile.fi.intel.com>
- <aD3XQfUfxIiz62ZU@debian-BULLSEYE-live-builder-AMD64>
- <aD6x2caTMd1eBInM@smile.fi.intel.com>
+	s=arc-20240116; t=1748952222; c=relaxed/simple;
+	bh=giLjSiS06S2p3iW3XtomXSbobX9IDJkEJ8D7v5SJ0Mw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UW9RYJSlgze0/b80kWqJQmyhpvucpcCvV8GUXXMjmW/KeaxdZXSsJFREDipHG0RUCVNqWwqpZE/9CI89cA4xl3gcgD0dcm9G/TId0REJX+NXQE+P55FAbacV1XQv3KduGNXbTIjr0Rn1m1u5aOq3u86gKDqJJS6loU852t1Cnzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bBTsQ6gKDz27hfy;
+	Tue,  3 Jun 2025 20:04:26 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D06C0180043;
+	Tue,  3 Jun 2025 20:03:35 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 3 Jun 2025 20:03:35 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
+ 2025 20:03:34 +0800
+Message-ID: <c2034f07-5422-4ab1-952e-f7d74d0675a7@huawei.com>
+Date: Tue, 3 Jun 2025 20:03:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aD6x2caTMd1eBInM@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v20 1/1] mctp pcc: Implement MCTP over PCC
+ Transport
+To: Adam Young <admiyo@amperemail.onmicrosoft.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sudeep Holla
+	<sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	<admiyo@os.amperecomputing.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Jeremy Kerr <jk@codeconstruct.com.au>,
+	"Eric Dumazet" <edumazet@google.com>, Matt Johnston
+	<matt@codeconstruct.com.au>, Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
+	<kuba@kernel.org>
+References: <20250423220142.635223-1-admiyo@os.amperecomputing.com>
+ <20250423220142.635223-2-admiyo@os.amperecomputing.com>
+ <497a60df-c97e-48b7-bf0f-decbee6ed732@huawei.com>
+ <a9f67a55-3471-46b3-bd02-757b0796658a@amperemail.onmicrosoft.com>
+ <807e5ea9-ed04-4203-b4a6-bf90952e7934@huawei.com>
+ <9e3e0739-b859-4a62-954e-2b13f7d5dd85@amperemail.onmicrosoft.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <9e3e0739-b859-4a62-954e-2b13f7d5dd85@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On 06/03, Andy Shevchenko wrote:
-> On Mon, Jun 02, 2025 at 01:54:25PM -0300, Marcelo Schmitt wrote:
-> 
-> ...
-> 
-> > > > +static bool ad4170_setup_eq(struct ad4170_setup *a, struct ad4170_setup *b)
-> > > > +{
-> > > > +	/*
-> > > > +	 * The use of static_assert() here is to make sure that the comparison
-> > > > +	 * is adapted whenever struct ad4170_setup is changed.
-> > > > +	 */
-Does the reason given in the comment justify the use of static_assert?
 
-> > > > +	static_assert(sizeof(*a) ==
-> > > > +		      sizeof(struct {
-> > > > +				     u16 misc;
-> > > > +				     u16 afe;
-> > > > +				     u16 filter;
-> > > > +				     u16 filter_fs;
-> > > > +				     u32 offset;
-> > > > +				     u32 gain;
-> > > > +			     }));
-> > > 
-> > > I think it doesn't make much sense unless one uses memcpy().
-> > 
-> > memcpy() is used to update the setups after reg write succeeds.
-> > Also, previously, memcmp() was used to compare setups.
-> > Since struct ad4170_setup has only unsigned integers (no floating point fields
-> > like ad7124 had [1]), ad4170 works properly when comparing setups with memcmp().
-> > Though, it was asked to do explicit field matching on previous reviews [2] so
-> > that's how it had been since then. Well, both ways work for ad4170. We can
-> > compare setup with memcmp(), or do the comparison field by field. I don't mind
-> > changing it again if requested. I guess we only need to reach an agreement about
-> > what to go with.
-> 
-> The question was "why do you need the static_assert() now?"
-
-To ensure that the comparison function gets updated if struct ad4170_setup is
-ever modified? This intends to be similar to what was implemented in ad7124
-driver as the chips have similar channel configuration mechanisms. We also
-have ad7173 and ad4130 using static_assert for analogous purpose. There was
-also a comment about static_assert above.
-
-Best regards,
-Marcelo
-
-> 
-> > [1]: https://lore.kernel.org/all/20250303114659.1672695-13-u.kleine-koenig@baylibre.com/
-> > [2]: https://lore.kernel.org/linux-iio/20250504192117.5e19f44b@jic23-huawei/
-> > 
-> > > > +	if (a->misc != b->misc ||
-> > > > +	    a->afe != b->afe ||
-> > > > +	    a->filter != b->filter ||
-> > > > +	    a->filter_fs != b->filter_fs ||
-> > > > +	    a->offset != b->offset ||
-> > > > +	    a->gain != b->gain)
-> > > > +		return false;
-> > > > +
-> > > > +	return true;
-> > > > +}
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+在 2025/6/3 4:51, Adam Young 写道:
+>
+> On 5/30/25 02:19, lihuisong (C) wrote:
+>>
+>> 在 2025/4/29 2:48, Adam Young 写道:
+>>>
+>>> On 4/24/25 09:03, lihuisong (C) wrote:
+>>>>> +    rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->inbox,
+>>>>> +                     context.inbox_index);
+>>>>> +    if (rc)
+>>>>> +        goto free_netdev;
+>>>>> +    mctp_pcc_ndev->inbox.client.rx_callback = 
+>>>>> mctp_pcc_client_rx_callback;
+>>>> It is good to move the assignemnt of  rx_callback pointer to 
+>>>> initialize inbox mailbox.
+>>>
+>>>
+>>> The other changes are fine, but this one I do not agree with.
+>>>
+>>> The rx callback only makes sense for one of the two mailboxes, and 
+>>> thus is not appropriate for a generic function.
+>>>
+>>> Either  initialize_mailbox needs more complex logic, or would 
+>>> blindly assign the callback to both mailboxes, neither of which 
+>>> simplifies or streamlines the code.  That function emerged as a way 
+>>> to reduce duplication.  Lets keep it that way.
+>>>
+>> It depends on you. But please reply my below comment. I didn't see 
+>> any change about it in next version.
+>>
+>> -->
+>>
+>>> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct 
+>>> net_device *ndev)
+>>> +{
+>>> +    struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
+>>> +    struct mctp_pcc_hdr *mctp_pcc_header;
+>>> +    void __iomem *buffer;
+>>> +    unsigned long flags;
+>>> +    int len = skb->len;
+>>> +    int rc;
+>>> +
+>>> +    rc = skb_cow_head(skb, sizeof(struct mctp_pcc_hdr));
+>>> +    if (rc)
+>>> +        goto err_drop;
+>>> +
+>>> +    mctp_pcc_header = skb_push(skb, sizeof(struct mctp_pcc_hdr));
+>>> +    mctp_pcc_header->signature = cpu_to_le32(PCC_MAGIC | 
+>>> mpnd->outbox.index);
+>>> +    mctp_pcc_header->flags = cpu_to_le32(PCC_HEADER_FLAGS);
+>>> +    memcpy(mctp_pcc_header->mctp_signature, MCTP_SIGNATURE,
+>>> +           MCTP_SIGNATURE_LENGTH);
+>>> +    mctp_pcc_header->length = cpu_to_le32(len + 
+>>> MCTP_SIGNATURE_LENGTH);
+>>> +
+>>> +    spin_lock_irqsave(&mpnd->lock, flags);
+>>> +    buffer = mpnd->outbox.chan->shmem;
+>>> +    memcpy_toio(buffer, skb->data, skb->len);
+>>> + 
+>>> mpnd->outbox.chan->mchan->mbox->ops->send_data(mpnd->outbox.chan->mchan,
+>>> +                            NULL);
+>>> +    spin_unlock_irqrestore(&mpnd->lock, flags);
+>>> +
+>> Why does it not need to know if the packet is sent successfully?
+>> It's possible for the platform not to finish to send the packet after 
+>> executing this unlock.
+>> In this moment, the previous packet may be modified by the new packet 
+>> to be sent.
+>
+> I think you missed version  21.
+>
+> Version 21 of this function ends with:
+>         memcpy_toio(buffer, skb->data, skb->len);
+>         rc = mpnd->outbox.chan->mchan->mbox->ops->send_data
+>                 (mpnd->outbox.chan->mchan, NULL);
+>         spin_unlock_irqrestore(&mpnd->lock, flags);
+>         if ACPI_FAILURE(rc)
+>                 goto err_drop;
+>         dev_dstats_tx_add(ndev, len);
+>         dev_consume_skb_any(skb);
+>         return NETDEV_TX_OK;
+> err_drop:
+>         dev_dstats_tx_dropped(ndev);
+>         kfree_skb(skb);
+>         return NETDEV_TX_OK;
+>
+>
+> Once the memcpy_toio completes, the driver will not look at the packet 
+> again.  if the Kernel did change it at this point, it would not affect 
+> the flow.  The send of the packet is checked vi rc returned from 
+> send_data, and it tags the packet as dropped.  Is this not sufficient?
+>
+Yes, it is not enough.
+Once send_data() return success, platform can receive an interrupt，but 
+the processing of the platform has not ended.
+This processing includes handling data and then triggering an interrupt 
+to notify OS.
+>
+>
+>
 
