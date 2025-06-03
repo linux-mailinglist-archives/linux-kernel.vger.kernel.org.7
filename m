@@ -1,121 +1,282 @@
-Return-Path: <linux-kernel+bounces-671822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8462ACC6D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:42:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28FCACC6E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7800917246A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 079AD1881F8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C32C22F14D;
-	Tue,  3 Jun 2025 12:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F98231C9C;
+	Tue,  3 Jun 2025 12:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6mm+Goj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4+ur3P2"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892F51E50E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 12:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A129D22FF2D;
+	Tue,  3 Jun 2025 12:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748954549; cv=none; b=JbW+HCwrfohO68Frle9QQKuwrPLBMV230y7rPZ0h69QWYAZSLN0QTcqjrSTOdyBmLqzDJ0Nq17NQytyjvubMAOTz8a5tIZ9+bPUFF1ikRmcxv5Eu6DI+rpZw9gxQ+cXgAjIUC4DsvqyI+nXAyQii+V9YDpOhheDrRcB4pi+nFS4=
+	t=1748954601; cv=none; b=AtVZOBdzcv3TlVP//QMfXNvlSvoeS5uQa/MUeRrEWdozPPa21+ozBN01/6zpbaYKNEQbq1HSrfmMpOteJcW253ZeX//G4HyyMPOstCsaytBLuP94XiILYPxoZjmHK6F5XbTeyl/eymxYNdUwjsgrMR6/qzUCc5WwcC8fqkSdBkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748954549; c=relaxed/simple;
-	bh=Wi0bQXD9iEyqKKdWx4k+lzCN8Qu5VXnygUi6A9NfCqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NEuRbXQXbL98NDaW2G8kncdcxhSylz2n/PiSibDCqrNKl0SVkNlCQ+Jl7CMx0YNtc7y52IT88PwhoTptfteMyH6NihKtmSn271THMie2BhVarfyd+ZsbLX0CNKkIjrBRx4/bkvfDuVhCKEY37OJbbDZDZbXFTJCfC5J2pQj69+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6mm+Goj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80DDBC4CEED;
-	Tue,  3 Jun 2025 12:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748954549;
-	bh=Wi0bQXD9iEyqKKdWx4k+lzCN8Qu5VXnygUi6A9NfCqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E6mm+GojNvd/FE0Z95zzcva8wD32vwj1c7GEQ/C/2pgj0mKgHjaHxFknvgFG/RCF3
-	 cPtSy9nohvVBBkTW3UV/1IUP92VUGByozS3RS0ErlPDHVcFiFnAwkzZfycHWzcoIUn
-	 4lZg/b/bqBABcFH77wFsKSquRQyiGG3kwLyIulOdDzOrDETCJ70JniO4sDCw8XMpTF
-	 RVDU1W1kibyLVC1krN3y1oZEQIWLdpxwcWtl59WJME+4aam7Pb0ktYc5dK4qm1SVbV
-	 yG/HGvbcOv/nvRAJpGOOZd0KXXnGHwNf8oWKxWEVUsapyCeSKXzRq8Gf0sl5lv85xI
-	 kzBrx0XvwzcJA==
-Date: Tue, 3 Jun 2025 14:42:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Eric Biggers <ebiggers@kernel.org>, Ingo Saitz <ingo@hannover.ccc.de>, 
-	kernel test robot <oliver.sang@intel.com>, Marco Elver <elver@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Subject: Re: [GIT PULL] hardening fixes for v6.16-rc1
-Message-ID: <20250603-einnahmen-redefreiheit-df3db181d8b6@brauner>
-References: <202505310759.3A40AD051@keescook>
- <CAHk-=wj4a_CvL6-=8gobwScstu-gJpX4XbX__hvcE=e9zaQ_9A@mail.gmail.com>
- <156567EE-E5BB-43C4-B5A6-439D83FF387D@kernel.org>
- <CAHk-=wjktqa94u_=++YX7XxUr57iLAs1GqtHPOY-o-N0z7wyeA@mail.gmail.com>
- <202505312300.95D7D917@keescook>
- <20250601-pony-of-imaginary-chaos-eaa59e@lemur>
- <CAHk-=wgcQdD0UzMJrNhQuYAC2wgGtfrCry_iokswaEE5j7W9YA@mail.gmail.com>
+	s=arc-20240116; t=1748954601; c=relaxed/simple;
+	bh=HfxTCbwpuSHFH8GWpH/5AMQvU8Qg7uvowZzWyjaAOcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GFrSdSz+KqgG64NfgOg5au66y0dw9PTNJoFifMlfTZAQsAxvrkTs8EsUQKZ6i1ckOcIS+13NklFShPfVluV/efr8JPcfovcVtZWM5WhEVKrR/XdlTRGPDHaqK8opbc1xiyanPF1V7l0CBqPu/Ws5lqBZ6YNZQszXLoFmj+ndrDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4+ur3P2; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad88d77314bso998841966b.1;
+        Tue, 03 Jun 2025 05:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748954595; x=1749559395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6sJx8mcfGnFO4aX8W0GB5TfU4SPvOLM9fzBj8cbSzfg=;
+        b=k4+ur3P2QoeUdy7w58KiKJG5NrGvm0OYAcu+4dhvLBnOPgCbPWBBBfr/2Q7QrmRFba
+         EUrxlCEbnAuTPl7hrP1SOUNSQhwLJjCxgwHCWpt72URHHd3vfoI5gr1AduP6mkFJcSx7
+         Pm9fVXYXOnnPzjYVmEnk1IF1xclyyKLjHI166ugQOEALK5RNgPDxHuPHqPIDDFhmIF8r
+         zfWK4MwDy9iJ+ietqWJMD4PDS6RPtDosAeyKJhAITPXN6xpryk8MaUTCV0tHyPe2TNr6
+         oNCXORwZ9Bg+TW1zPXC2k5YIXtVC1QDgih1mlF3IwT3G0er1+iol+QdWOU5aryW7KdZs
+         yXCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748954595; x=1749559395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6sJx8mcfGnFO4aX8W0GB5TfU4SPvOLM9fzBj8cbSzfg=;
+        b=GqlXCiVey6Ra47qlNvH5rE7jo6vLow57O/kLMxIdatrLDpjCcxZsyIHrOx8Q2IrR4p
+         69IoDdhkAgRi+GVnjxjLVgXBqTZAsAiA732a6W3Gi4YXoqXwhU2BjqGNSc2QwstZ14aR
+         1xgeNpIHNtc7SX9rxWoitKIY2/hj4jRkA34egTBhk4Dwd6x7LDlx5wC6TI+H0z9eVqqP
+         aTkwt1BOCQhrVcQIm2QBLxZNwOPDgXpgR14eE1T0aRuZw5tzG8SqaxkM/XD9WzGNhKmJ
+         gV/Q6zNzGmOmx5lCvTRmCs+dKIwMaPpm3xOT8fw5HOfq/sud7O60hj6MTgNMEyY5iLrP
+         qr3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXPzV1bPZgBIIKO/DuEwOtV2dIDSK/3pgOoiBJVsmy/oAY4tQ1dSj0eWjrG/W8enddmfh/zGIyEUMxnDLe@vger.kernel.org, AJvYcCVB4WqJF4AcoCAN/Heaxg+Gq2+LwzmHNUtaGRQOpDH5jnfNxO0KX3IXhzgV8EsYumi4h+IGMwTiIW75XTpk@vger.kernel.org, AJvYcCVCRRa3nDVKrJvPq7F98ky9M29AYX6NL8Q5/Uqo5htzATd5tUMgNDErLtRUwOUQvggMnpxRjXJaSajfNVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHJaXMTDVpi1CsKyhzOj6Ztg53eyshmag5qsad8r1DFdKC+lpK
+	cPeTF4y/XwO4jOhDQKbSqereM8CtW1QS8oSUS4M83CdF796GI/Ev4WwihocKaNTplYaRdMW7Alv
+	jwgfJpeFxaNpLUihlydIaVRIGQ8KSxa0=
+X-Gm-Gg: ASbGnctkN7HNeG65K1RW0GukoUUNYZ2ceBmwdQx4OHBkRiFgODiU5Ktakn5ZMriNEsT
+	SqwMwwS9mKZ8dYUaX93nYZyUoVVkrBEYQMijCV/whF3HwKxVoPjKoHD0xktpiqV/Z8WVIVnrqwL
+	Vi77CcY0DEvaicioh3av3KIWFHhWQYgEy/
+X-Google-Smtp-Source: AGHT+IF0Y8eVa/wSpXz4raSNLDvjA9m62FPSA+BLGsYc090YPQ60EU4GYYJzLpKbTnA9JxXmd1DxAASt8NsK3GIUg8M=
+X-Received: by 2002:a17:906:85a:b0:adb:413a:a981 with SMTP id
+ a640c23a62f3a-adb413aaac4mr1029791066b.14.1748954594439; Tue, 03 Jun 2025
+ 05:43:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgcQdD0UzMJrNhQuYAC2wgGtfrCry_iokswaEE5j7W9YA@mail.gmail.com>
+References: <20250603095245.17478-1-tao.wangtao@honor.com> <20250603095245.17478-2-tao.wangtao@honor.com>
+ <CAOQ4uxgYmSLY25WtQjHxvViG0eNSSsswF77djBJZsSJCq1OyLA@mail.gmail.com> <0cb2501aea054796906e2f6a23a86390@honor.com>
+In-Reply-To: <0cb2501aea054796906e2f6a23a86390@honor.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 3 Jun 2025 14:43:02 +0200
+X-Gm-Features: AX0GCFuHzQzF8AX68GwDBFhePF7quh1p9www-VHHK49I3nQ44uIdAWZ_lLdxIa4
+Message-ID: <CAOQ4uxi5eyXocmFaDdT_1Jvo0ZiEf66bC9u5qn6B2Rdd_Fuqyw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] fs: allow cross-FS copy_file_range for memory file
+ with direct I/O
+To: wangtao <tao.wangtao@honor.com>
+Cc: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "kraxel@redhat.com" <kraxel@redhat.com>, 
+	"vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"hughd@google.com" <hughd@google.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>, 
+	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>, 
+	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, 
+	liulu 00013167 <liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 01, 2025 at 10:12:02AM -0700, Linus Torvalds wrote:
-> On Sun, 1 Jun 2025 at 07:40, Konstantin Ryabitsev
-> <konstantin@linuxfoundation.org> wrote:
+On Tue, Jun 3, 2025 at 2:38=E2=80=AFPM wangtao <tao.wangtao@honor.com> wrot=
+e:
+>
+>
+>
+> > -----Original Message-----
+> > From: Amir Goldstein <amir73il@gmail.com>
+> > Sent: Tuesday, June 3, 2025 6:57 PM
+> > To: wangtao <tao.wangtao@honor.com>
+> > Cc: sumit.semwal@linaro.org; christian.koenig@amd.com;
+> > kraxel@redhat.com; vivek.kasireddy@intel.com; viro@zeniv.linux.org.uk;
+> > brauner@kernel.org; hughd@google.com; akpm@linux-foundation.org;
+> > benjamin.gaignard@collabora.com; Brian.Starkey@arm.com;
+> > jstultz@google.com; tjmercier@google.com; jack@suse.cz;
+> > baolin.wang@linux.alibaba.com; linux-media@vger.kernel.org; dri-
+> > devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
+> > kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
+> > mm@kvack.org; wangbintian(BintianWang) <bintian.wang@honor.com>;
+> > yipengxiang <yipengxiang@honor.com>; liulu 00013167
+> > <liulu.liu@honor.com>; hanfeng 00012985 <feng.han@honor.com>
+> > Subject: Re: [PATCH v4 1/4] fs: allow cross-FS copy_file_range for memo=
+ry
+> > file with direct I/O
 > >
-> > On Sun, Jun 01, 2025 at 12:42:14AM -0700, Kees Cook wrote:
-> > > Okay, reproducing the "b4 trailers" steps:
-> > > ...
-> > > ### Try to update 8c2bb7d12601 with the Acked-by from the list...
-> > > $ b4 trailers -u https://lore.kernel.org/all/CANpmjNPpyJn++DVZmO89ms_HkJ0OvQzkps0GjCFbWkk0F+_8Xg@mail.gmail.com
-> > > Finding code-review trailers for 39 commits...
+> > On Tue, Jun 3, 2025 at 11:53=E2=80=AFAM wangtao <tao.wangtao@honor.com>=
+ wrote:
+> > >
+> > > Memory files can optimize copy performance via copy_file_range callba=
+cks:
+> > > -Compared to mmap&read: reduces GUP (get_user_pages) overhead
+> > > -Compared to sendfile/splice: eliminates one memory copy -Supports
+> > > dma-buf direct I/O zero-copy implementation
+> > >
+> > > Suggested by: Christian K=C3=B6nig <christian.koenig@amd.com> Suggest=
+ed by:
+> > > Amir Goldstein <amir73il@gmail.com>
+> > > Signed-off-by: wangtao <tao.wangtao@honor.com>
+> > > ---
+> > >  fs/read_write.c    | 64 +++++++++++++++++++++++++++++++++++++-----
+> > ----
+> > >  include/linux/fs.h |  2 ++
+> > >  2 files changed, 54 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/fs/read_write.c b/fs/read_write.c index
+> > > bb0ed26a0b3a..ecb4f753c632 100644
+> > > --- a/fs/read_write.c
+> > > +++ b/fs/read_write.c
+> > > @@ -1469,6 +1469,31 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int,
+> > out_fd,
+> > > int, in_fd,  }  #endif
+> > >
+> > > +static const struct file_operations *memory_copy_file_ops(
+> > > +                       struct file *file_in, struct file *file_out) =
+{
+> > > +       if ((file_in->f_op->fop_flags & FOP_MEMORY_FILE) &&
+> > > +           (file_in->f_mode & FMODE_CAN_ODIRECT) &&
+> > > +           file_in->f_op->copy_file_range && file_out->f_op->write_i=
+ter)
+> > > +               return file_in->f_op;
+> > > +       else if ((file_out->f_op->fop_flags & FOP_MEMORY_FILE) &&
+> > > +                (file_out->f_mode & FMODE_CAN_ODIRECT) &&
+> > > +                file_in->f_op->read_iter && file_out->f_op->copy_fil=
+e_range)
+> > > +               return file_out->f_op;
+> > > +       else
+> > > +               return NULL;
+> > > +}
+> > > +
+> > > +static int essential_file_rw_checks(struct file *file_in, struct fil=
+e
+> > > +*file_out) {
+> > > +       if (!(file_in->f_mode & FMODE_READ) ||
+> > > +           !(file_out->f_mode & FMODE_WRITE) ||
+> > > +           (file_out->f_flags & O_APPEND))
+> > > +               return -EBADF;
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > >  /*
+> > >   * Performs necessary checks before doing a file copy
+> > >   *
+> > > @@ -1484,9 +1509,16 @@ static int generic_copy_file_checks(struct fil=
+e
+> > *file_in, loff_t pos_in,
+> > >         struct inode *inode_out =3D file_inode(file_out);
+> > >         uint64_t count =3D *req_count;
+> > >         loff_t size_in;
+> > > +       bool splice =3D flags & COPY_FILE_SPLICE;
+> > > +       const struct file_operations *mem_fops;
+> > >         int ret;
+> > >
+> > > -       ret =3D generic_file_rw_checks(file_in, file_out);
+> > > +       /* The dma-buf file is not a regular file. */
+> > > +       mem_fops =3D memory_copy_file_ops(file_in, file_out);
+> > > +       if (splice || mem_fops =3D=3D NULL)
 > >
-> > Yeah, this is danger territory, because you're asking to update a random
-> > commit in the tree history.
-> 
-> So the *real* danger territory is lying about committer information.
-> That's the thing that *no* standard too should ever do, and what made
-> me so upset.
-> 
-> Konstantin, can you please fix b4 to never *ever* rewrite a commit
-> that has different committer information than the current user?
-> 
-> I don't think this is about "39 commits down". This is apparently b4
-> just doing plain bad things, adn it would be bad even if it was only
-> rewriting the top-most commit.
-> 
-> Setting authorship to somebody else is normal and expected: "author"
-> is about giving credit.
-> 
-> But setting *committer* information to somebody else is not about
-> giving credit, it's about lying. Tools that do that are broken tools.
-> 
-> I'm also not clear on why apparently the script tries to retain
-> committer dates. That's also just plain lying.
+> > nit: use !mem_fops please
+> >
+> > Considering that the flag COPY_FILE_SPLICE is not allowed from userspac=
+e
+> > and is only called by nfsd and ksmbd I think we should assert and deny =
+the
+> > combination of mem_fops && splice because it is very much unexpected.
+> >
+> > After asserting this, it would be nicer to write as:
+> >         if (mem_fops)
+> >                ret =3D essential_file_rw_checks(file_in, file_out);
+> >         else
+> >                ret =3D generic_file_rw_checks(file_in, file_out);
+> >
+> Got it. Thanks.
+> > > +       else
+> > > +               ret =3D essential_file_rw_checks(file_in, file_out);
+> > >         if (ret)
+> > >                 return ret;
+> > >
+> > > @@ -1500,8 +1532,10 @@ static int generic_copy_file_checks(struct fil=
+e
+> > *file_in, loff_t pos_in,
+> > >          * and several different sets of file_operations, but they al=
+l end up
+> > >          * using the same ->copy_file_range() function pointer.
+> > >          */
+> > > -       if (flags & COPY_FILE_SPLICE) {
+> > > +       if (splice) {
+> > >                 /* cross sb splice is allowed */
+> > > +       } else if (mem_fops !=3D NULL) {
+> >
+> > With the assertion that splice && mem_fops is not allowed if (splice ||
+> > mem_fops) {
+> >
+> > would go well together because they both allow cross-fs copy not only c=
+ross
+> > sb.
+> >
+> Git it.
+>
+> > > +               /* cross-fs copy is allowed for memory file. */
+> > >         } else if (file_out->f_op->copy_file_range) {
+> > >                 if (file_in->f_op->copy_file_range !=3D
+> > >                     file_out->f_op->copy_file_range) @@ -1554,6
+> > > +1588,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t p=
+os_in,
+> > >         ssize_t ret;
+> > >         bool splice =3D flags & COPY_FILE_SPLICE;
+> > >         bool samesb =3D file_inode(file_in)->i_sb =3D=3D
+> > > file_inode(file_out)->i_sb;
+> > > +       const struct file_operations *mem_fops;
+> > >
+> > >         if (flags & ~COPY_FILE_SPLICE)
+> > >                 return -EINVAL;
+> > > @@ -1574,18 +1609,27 @@ ssize_t vfs_copy_file_range(struct file *file=
+_in,
+> > loff_t pos_in,
+> > >         if (len =3D=3D 0)
+> > >                 return 0;
+> > >
+> > > +       if (splice)
+> > > +               goto do_splice;
+> > > +
+> > >         file_start_write(file_out);
+> > >
+> >
+> > goto do_splice needs to be after file_start_write
+> >
+> > Please wait for feedback from vfs maintainers before posting another
+> > version addressing my review comments.
+> >
+> Are you asking whether both the goto do_splice and the do_splice label sh=
+ould
+> be enclosed between file_start_write and file_end_write?
 
-Fwiw, this has happened to me with b4 multiple times before so I've
-stopped using b4 trailers -u. Whenever I do end up using it I look at
-the base that I was using to make sure that only things got rewritten
-that I expected to be rewritten (b4 is excellent though).
+No I was just wrong please ignore this comment.
 
-The last time this happened was when I did the struct kmem_cache_args
-rework a few months back. Vlastimil and I ended up sharing a common base
-and then he complained that something was off with our shared trees. He
-later emailed me and we figured out that it was the b4 trailers thing
-again iirc.
-
-I do test-merges before I send stuff out and that's usually how I catch
-stuff like that.
-
-But for a while I was really confused how trees I had somehow ended up
-being rewritten and it took a little to figure out that it was the
-trailer auto updating which caused it.
+Thanks,
+Amir.
 
