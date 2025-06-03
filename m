@@ -1,236 +1,133 @@
-Return-Path: <linux-kernel+bounces-672112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4739ACCB21
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:21:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B436ACCB2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BF2176D8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37C43A8965
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4148D23E330;
-	Tue,  3 Jun 2025 16:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE90223BF9F;
+	Tue,  3 Jun 2025 16:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipuklz+i"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="hU0+rwnH"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37F7227E80;
-	Tue,  3 Jun 2025 16:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9A423C51B;
+	Tue,  3 Jun 2025 16:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748967692; cv=none; b=mA7F6OLEYESlAzQXWMJsXhS7QA2H41SKXbIf+H8fEMP/suJpWuWq9nXO6f3kkeTTnr+X49MGibCUn9Gc0rbRtsP1oyVvtkXabneeabFi//ykhfsuXCkbPjB4Z3UsX1jkIeaV2slX/DgCERlJh44op/bqUSLVXRDLYsdp8xEoa7c=
+	t=1748967744; cv=none; b=RykfhM6Ccze959QrEJco72XthLuGBsrQcHIz+mc+2MVe5kQ/1U+7Q0tfME/TKYJLtbFuusbazqTsp/lcT3iyqyxy4xhmfEmWL9sIG9bP5aKoqWFQHQtPLicyys8K+ClujisbiLzL3Vm1hqN+dofdNTvsPh+fVMHrpmibbs46D8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748967692; c=relaxed/simple;
-	bh=Fzge4z9mpLiTPnWpZY1S7wfWo2iY5QTX5em6d3V24+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDBBtFqJDkjbHz4I9VopCCQmhS7B6xIkOUBJ91Etdu6E3NR3w1qJqTyPjES9JFKYNGSFBghEpVEvlsFzeT1nEPLRn2nK1u7UCwGhqBgVZdDT0c/5NpUigOlo7+QUcGfHvyDRwxJwI1nea0sIi8/wEad090B4mMzfaDzj51zBP20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipuklz+i; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2301ac32320so54608855ad.1;
-        Tue, 03 Jun 2025 09:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748967690; x=1749572490; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TyM97ZqplBFeYxTzqGSXBQxiPc6c/u7cZVlPywBv4fY=;
-        b=ipuklz+irOElCFfrOSiEokVthMvpZZt0FN84il3erzQpzHug3jMULUFWG467V804NW
-         Y3q2OY5TR5Eu21957iuuv8UebvleI3gwpQqZ8ekFRX9Cx7go8qwI9CHLXHV1c6jf9T+N
-         2l5y150uKklByu+czFfkJaC7SFB/3F2slUQL57dsA8jAmZydj2mGJgUutJeK9W3SejXR
-         Zpo6KVGCatL4ece6ZK4ZJXvo3MMsI1LHB+17+ilmuXbC3RoLQT4Dz2dblIS0J94YMSc/
-         WM1PPi/xPVXjRCRxnfFs0YSPieNp5XDgLwyCx33uEjf7GBJ8y8s4vj1qQJSt3s5Rl7iu
-         2Uyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748967690; x=1749572490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TyM97ZqplBFeYxTzqGSXBQxiPc6c/u7cZVlPywBv4fY=;
-        b=c3oJi6imU6luvIXzVmCYr3EU7R4FuvGrf20PRrk6Jjmi+3swEvM22c5tdVRP5MwzYp
-         x838R0F25D8CE1avuC0SvAfNrlZQJDM0voqEYWjz2ScRVz7hmmNB8tU+CU69t4ZkG6T7
-         QIQJinMYdp8MkCrRPnHFaoMV6wg/H6FmezRt2DkIZSilRJWaV8RiU7ULkdO9TrB/UTrQ
-         YDQCdt4hHF1DaW/vEzdLQuSwFQRE4spv5sSrIYvWtF/srdYFLvjHy7xtU/rhI4EOtTW4
-         kk4NdzJpVHIoa6xrIQToE7fWCLDePWqM+WHYJao8KeTEQXiPcvZcJXV0RH1ccfFevVKh
-         wTjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7hojAYy1+Az4LJT2E4aa3nRcTUvaeRBfD/C2K49D4QDj9Qu0hyQ3wXLMVsT/NEPorqIr5Fkn1mtwJnQ==@vger.kernel.org, AJvYcCVRy4PNjy2eyxh72oze/S7JpUeSjzgpTUQocryj0r7hQNfII26pFXvzB0BUdo7R0901EEtQIQNFicP7@vger.kernel.org, AJvYcCVq6e0B/FjT4MeFiA/fngWmBV5dTGbwlQga6QpUuAkTYOZb6n0ROHke37iPmv3ayCjRKXNMkRszJXI/@vger.kernel.org, AJvYcCWt+WlsexkJ/XmLLqaovzOPJcwnLhrySNjBtt7xRUBYGRFiKkU9lYPjMR+j3u3nQuInWFmRIxxUrG43@vger.kernel.org, AJvYcCXk4gYk5S0NtAIAbmvSfk5+bnNvtnNnoSwqVomAXzGJt1kvT8EYuk9S7drTAtjhitXJVRcZQWhE21ukq2PA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOeycLmDT6G8M+JyZeFodal71lm5SsZO/jIjN5o/m8N1cXJI1s
-	ZSuOKLX1CR+Xj++M+OSCTxU/MucMViwvQUC6UflFl3sHkzrUn+5UjTq+
-X-Gm-Gg: ASbGnctyQchtM1ZgZrRskHXwIJFHLGnfxyREeOY+HeuK2FxA6qMphxDLrBX/oEjeBov
-	5XL1amKmrVITOGCv0QwVt3navtauqMvsNUJhSe37Fqa3YiKK2wXXptYOgIQDtWsqbQ1doJcY+Pu
-	PwUXqnnqMqo4U/B6/fkB1LFj06MsO8/DftEY9XgdCDDVzcHtj66qmxGADdY415Xry0r08ZJOizv
-	g+UeRg3Tl/rFG3adEQJD1NAwBi0wHuLrmvccWFziIK6MaC4CxhqZifMS1zvj3KsQFEPJAvyId2E
-	IRWuUNGB1oIdB9Xe61wnRkrZRuuDbQvsIcGinyo1iLxUno7TKvw=
-X-Google-Smtp-Source: AGHT+IHL/yQEZQ8M/N4GhQRHikLMeXiY0d5QIcz0Hymi30PtwkzByDtwLbrV2LTGw1hKZHdR4DW3Cg==
-X-Received: by 2002:a17:902:ec84:b0:234:9fed:ccb7 with SMTP id d9443c01a7336-23529904f37mr258003925ad.33.1748967689830;
-        Tue, 03 Jun 2025 09:21:29 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cd3513sm90018585ad.108.2025.06.03.09.21.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 09:21:29 -0700 (PDT)
-Date: Tue, 3 Jun 2025 12:21:27 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Lee Jones <lee@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
-	kernel@collabora.com, Jonas Karlman <jonas@kwiboo.se>,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH v2 3/7] bitfield: introduce HI16_WE bitfield prep macros
-Message-ID: <aD8hB-qJ4Qm6IFuS@yury>
-References: <20250602-rk3576-pwm-v2-0-a6434b0ce60c@collabora.com>
- <20250602-rk3576-pwm-v2-3-a6434b0ce60c@collabora.com>
- <aD4DSz3vs41yMQSv@yury>
- <2525788.jE0xQCEvom@workhorse>
+	s=arc-20240116; t=1748967744; c=relaxed/simple;
+	bh=Fdok7Br/KDs6NeJ/Y7SQFQQ/Cag227mQAiEgw2APNW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FhB5ILsM1zkjQ3gl4BUlSaGf1cHAZWVNmrDj0UBAouVX+hc21DdWlptqFDwpTZxFAjrjglyVAo06fOLH+zMOFn5zvJnMvMDi8YHZk1uPA4ZOKXirXvcg8HU3XeaAMHwVDxNu5lX+LC0mRSCjUI0fbeymzqKdfUC3hrWu0dioOsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=hU0+rwnH; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A438D66BCC9;
+	Tue,  3 Jun 2025 18:22:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1748967734;
+	bh=Fdok7Br/KDs6NeJ/Y7SQFQQ/Cag227mQAiEgw2APNW0=;
+	h=From:Subject:Date;
+	b=hU0+rwnHak3id2gyt6DWN/090L6zwPKbz4PbpEes8sM5DBlaxxDB2ZFJHW6CHOWjY
+	 ed892S0Ou02xoDPJdhnpi06wQHkiDF9gLiT7DWJO675ufGcWBwatZcJ2nX4vvvBefR
+	 J2HsFYN+YVHKmZOS6clU6xoIv3NtN9nDMak38Y7sr3oJ7LhyvHBfT20gl0WP0E2sgR
+	 tvQCYQmNmNLbHlnj8wDuyrfML5KOx1btby3G5hErJRsrxSw8Esd8QXXcyGn+LBsZSs
+	 9E+kqPiBjiDJ1xGgM787Ybj9Cp6YGo9pKdmNzWHDVTCs9WV1QqldcqIe7JLBECMbrV
+	 gt29yz3wmFbwg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Chris Bainbridge <chris.bainbridge@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Saravana Kannan <saravanak@google.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v1 3/3] PM: sleep: Add locking to dpm_async_resume_children()
+Date: Tue, 03 Jun 2025 18:21:57 +0200
+Message-ID: <13779172.uLZWGnKmhe@rjwysocki.net>
+In-Reply-To: <6166108.lOV4Wx5bFT@rjwysocki.net>
+References: <6166108.lOV4Wx5bFT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2525788.jE0xQCEvom@workhorse>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTEfh61c7A06WGUkHT7vFJj3USfNCX9d7R2R4WDorhZXrTp+60oyaNLi8kxofXKZvVyiSPeh1eRKP6GGLnApa9zR/OniJAvvEMQ1432r7ddp+szjuOZLmmEDeQ462kYyym/es++QedRbmJpAqZk4JpzfKTE9dwUKY/LAM+xuYz1xsKm5lY/u1Ps2tx+OrHuE44Y42UBvmONU1b9DBIFv9Kn4cWCY2VY9PFdAK+mdu+es0kVGbUtXVZPu2aniTr+6zPi4tYOzPR9rWA2/vfEf7ZgVIBisrWHBBrP1xK9dTKvY8hqHr3gwpkh++zOsshp9kf81spISYgx0MUNxjbhqnYnPsznmf6PtqvqTsuFMbwCXEoxV82wakrZzC8W15DTOfP5sINw+MlDfGvHswhAbP2BiV0iMoEc3ugoVygxh9qxLx1Zuz84+63WhbWqLO5g5wrzRXAkIjQXznjv0MsVepaz1b1yzdBZggSARr5dtZsM85w/TFLW5cbX0fGuNWgnCagYZaXThE7lQjXO/gc6M06VFa8s+Q4x6UVb0U1/wfO1OoTg0/54MVikzjyXL3krJX2y7ITsWwC8GCyppcsa9FUd+QX6dHLMO8ERb9zsW+qvJFoCIMC/5OXDzOWzXEAl7qx1nNe9ttxdP6OAz2rPKwcNs6zVfC/PRvdKt5Ve8NBwkDA
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Tue, Jun 03, 2025 at 02:55:40PM +0200, Nicolas Frattaroli wrote:
-> On Monday, 2 June 2025 22:02:19 Central European Summer Time Yury Norov wrote:
-> > On Mon, Jun 02, 2025 at 06:19:14PM +0200, Nicolas Frattaroli wrote:
-> > > Hardware of various vendors, but very notably Rockchip, often uses
-> > > 32-bit registers where the upper 16-bit half of the register is a
-> > > write-enable mask for the lower half.
-> > 
-> > Can you list them all explicitly please? I grepped myself for the
-> > 'HIGHWORD_UPDATE' and 'FIELD_PREP_HIGWORD', and found just 4 or 5 in
-> > addition to the rockchip.
-> 
-> Most of the ones Heiko brought up[1] just appear to be the clock stuff,
-> I'm only aware of the drivers/mmc/host/sdhci-of-arasan.c one outside of
-> Rockchip. For a complete listing I'd have to do a semantic search with
-> e.g. Coccinelle, which I've never used before and would need to wrap
-> my head around first. grep is a bad fit for catching them all as some
-> macros are split across lines, or reverse the operators of the OR.
-> Weggli[2] is another possibility but it's abandoned and undocumented, and
-> I've ran into its limitations before fairly quickly.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Going Coccinelle way is fine, but I think it's an endless route. :)
+Commit 0cbef962ce1f ("PM: sleep: Resume children after resuming the
+parent") introduced a subtle concurrency issue that may lead to a kernel
+crash if system suspend is aborted and may also slow down asynchronous
+device resume otherwise.
 
-What I meant is: you caught this HIWORD_UPDATE() duplication, and it's
-great. When people copy-paste a macro implementation and even a name,
-their intention is clear: they need this functionality, but the core
-headers lack it, so: I'll make another small copy in my small driver,
-and nobody cares.
+Namely, the initial list walks in dpm_noirq_resume_devices(),
+dpm_resume_early(), and dpm_resume() call dpm_clear_async_state() for
+every device and attepmt to asynchronously resume it if it has no
+children (so it is a "root" device).  The asynchronous resume of a
+root device triggers an attempt to asynchronously resume its children
+which may take place before calling dpm_clear_async_state() for them
+due to the lack of synchronization between dpm_async_resume_children()
+and the code calling dpm_clear_async_state().  If this happens, the
+dpm_clear_async_state() that comes in late, will clear
+power.work_in_progress for the given device after it has been set by
+__dpm_async(), so the suspend callback will be allowed to run once
+again for the same device during the same transition.  This leads to
+a whole range of interesting breakage.
 
-I think your consolidation should at first target the above users.
+Fortunately, if the suspend transition is not aborted, power.work_in_progress
+is set by it for all devices, so dpm_async_resume_children() will not
+schedule asynchronous resume for them until dpm_clear_async_state()
+clears that flag, but this means missing an opportunity to start the
+resume of those devices earlier.
 
-Those having different names or substantially different implementation,
-may also be a target. But they are:
- 1. Obviously a minority in terms of LOCs, and
- 2. More likely have their reasons to have custom flavors of the same.
+Address the above issue by adding dpm_list_mtx locking to
+dpm_async_resume_children(), so it will wait for the entire initial
+list walk and the invocation of dpm_clear_async_state() for all devices
+to be completed before scheduling any new asynchronous resume callbacks.
 
-...
+Fixes: 0cbef962ce1f ("PM: sleep: Resume children after resuming the parent")
+Reported-and-tested-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/base/power/main.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> > Can you please prepare a series that introduces the new macro and
-> > wires all arch duplications to it?
-> 
-> Okay, I will do that after I learn Coccinelle. Though I suspect the reason
-> why I'm the first person to address this is because it's much easier to
-> hide duplicated macros away in drivers than go the long route of fixing up
-> every single other user. I'm not too miffed about it though, it's cleanup
-> of technical debt that's long overdue.
- 
-I just fired 
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -638,6 +638,13 @@
+ static void dpm_async_resume_children(struct device *dev, async_func_t func)
+ {
+ 	/*
++	 * Prevent racing with dpm_clear_async_state() during initial list
++	 * walks in dpm_noirq_resume_devices(), dpm_resume_early(), and
++	 * dpm_resume().
++	 */
++	guard(mutex)(&dpm_list_mtx);
++
++	/*
+ 	 * Start processing "async" children of the device unless it's been
+ 	 * started already for them.
+ 	 *
 
-        $ git grep "define HIWORD"
 
-and found 27 matches. The relevant 'hiwords' have the following
-semantics:
 
- - HIWORD_UPDATE(val, mask, shift)
- - HIWORD_UPDATE(val, mask)
- - HIWORD_UPDATE(mask, val)
- - HIWORD_UPDATE(v, h, l)
- - HIWORD_UPDATE_BIT(val)
- - HIWORD_DISABLE_BIT(val)
-
-Most of them don't bother doing any static checks at all.
-
-If you will just consolidate the above, and wire those drivers
-to generic version with all that checks - it would be a decent
-consolidation by any measure.
-
-Something like this:
-
-diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-index 0470d7c175f4..d5e74d555a3d 100644
---- a/drivers/devfreq/event/rockchip-dfi.c
-+++ b/drivers/devfreq/event/rockchip-dfi.c
-@@ -30,7 +30,7 @@
-
- #define DMC_MAX_CHANNELS       4
-
--#define HIWORD_UPDATE(val, mask)       ((val) | (mask) << 16)
-+#define HIWORD_UPDATE(val, mask)       HWORD_UPDATE(mask, val)
-
- /* DDRMON_CTRL */
- #define DDRMON_CTRL    0x04
-
-...
-
-> > Regarding the name... I can't invent a good one as well, so the best
-> > thing I can suggest is not to invent something that can mislead. The
-> > HWM_FIELD_PREP() is not bad because it tells almost nothing and
-> > encourages one to refer to the documentation. If you want something
-> > self-explaining, maybe MASK_HI_FIELD_LO_PREP_U16(), or something?
-> 
-> This seems a bit unwieldy, at 25 characters. "FIELD32_HIMASK_LOPREP"
-> (or FIELD16, depending on which end of the cornet to eat) would be 21
-> characters but I'm also not in love with it.
-> 
-> I think the name should include the following parts:
-> 1. it's a field
-> 2. the field is halved into two halves of 16 bits
-> 3. the mask is copied into the upper 16 bits
-
-Or just keep the HIWORD_UPDATE name as it already has over 300 users.
-If it's commented well, and has an implementation based on FIELD_PREP,
-I don't think users will struggle to understand what is actually
-happening there.
- 
-> Since we're on the subject of bit widths, I have a somewhat sacrilegious
-> point to raise: should this be a function-like macro at all, as opposed
-> to a static __pure inline function? It's not generic with regards to the
-> data types, as we're always assuming a u16 value and mask input and a
-> u32 output. The __pure inline definition should let the compiler treat it
-> essentially similar to what the pre-processor expanded macro does, which
-> is as not a function call at all but a bunch of code to constant fold away
-> if possible. What we get in return is type checking and less awful syntax.
-> Then we could call it something like `himask_field_prep_u32`, which is
-> also 21 characters but the ambiguity of whether the u32 refers to the mask
-> or the whole register width is cleared up by the types of the function
-> arguments.
-> 
-> The const version of the macro may still need to remain though because I'm
-> not sure C11 can do that for us. With C23 maybe there's a way with
-> constexpr but I've never used it before.
-
-Inline function will disable parameters compile checks, and will be
-too diverged from _CONST counterpart.
-
-Thanks,
-Yury
 
