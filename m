@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-672114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E864ACCB27
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:22:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88223ACCB32
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A43F188F2D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49037163296
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620F223E330;
-	Tue,  3 Jun 2025 16:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48ED123C51B;
+	Tue,  3 Jun 2025 16:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CPuwUjnQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Frdbpzwg"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916F623C511
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 16:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7001023C511
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 16:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748967734; cv=none; b=H888VgpunmUbKBvQP6H69CS+fEPAXo7Yai4yNPcfKjXghDQDKtAwANsfBflQ6GFjyVODTH42tPLH+J4y0mbBmEM8o87szgTY6NSfwgtVHHGqqU1Z/wiQu328wx7RLh6xCblvBX1p09AMr+Afwtp/OWAEv1sxseUA7zvxq61OAXo=
+	t=1748967856; cv=none; b=WBKuEpf5SuiU3PlQk3GkBnD+LpYi+xOyqq4nB8nAMv47+F/W9J5TBIPn4V+iRe9A1nndnopQS0D0ZKGIvDI91QfGETwNSzI8q6FCuw5E+JO+geGF0sdsPB0HmN88Nfe5FWCOExudv+wEUbeK/XcK79smSFdFuz7lc/3xAJQpHj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748967734; c=relaxed/simple;
-	bh=4e0Cm69GA38xo92EcwK2d9SDxsopoUm1VI/PMxa8p/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SahJboTqXWkFyIvOeoNG+X100JDk/fX0V00cimMuAHw8aZ5Z9k7MGidltE6W7A+bLqnjiwHOaRQQSHsgjnq6Yp2GLXEcEIiqw2Ei4ZJt2yyKO61DpQCFufGvKTVp2Veh4DCW3EXPcQPzN/zXx10R2OVlpKdSMyBqj6QdbbYDgP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CPuwUjnQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748967729;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BrleRcLthk+vqQtTLl9hYMZxGcFn+l+lAWXaPm6jRpc=;
-	b=CPuwUjnQ4I1JoFk/9eesmZTgLkylRW0eN3QIafvxRl+KqIm+wGscjCVmRpwxmE1tV4uhMG
-	iguzlVvu/6B7FOvp/fmJDWv0a0avR+3d1F0crsPC/zLoQOTD0zvNC9hemSCK3S2NTv9cWK
-	Eh/+E3lSapwNbRoDZMLDC0qufEgrq8Y=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-TqmVXmtuM7yIf6i_Oan5Ng-1; Tue, 03 Jun 2025 12:22:08 -0400
-X-MC-Unique: TqmVXmtuM7yIf6i_Oan5Ng-1
-X-Mimecast-MFC-AGG-ID: TqmVXmtuM7yIf6i_Oan5Ng_1748967727
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-450787c8626so33636775e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 09:22:07 -0700 (PDT)
+	s=arc-20240116; t=1748967856; c=relaxed/simple;
+	bh=N7BCQ3oqAnCjFSJnJmZX5Dctlb/sTvgV4iyi3FNvIgM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V7MJpuBnQe+jrMw+o/VAG2+lh4nA6vzM/kJlAyMIYRNczbePDJxEJfDsrLEzgt2IW+tVrGFdnGgtImLom+G/mSrTS1vXaVmBJVrXXqrpk9urhoQyZYgmfXUOJKOeD11womXO3n5GA8GLrLYkJOTTyydf0qP7qgfNpAuYvV5/tvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Frdbpzwg; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso6780437b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 09:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1748967854; x=1749572654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsTtB+z1bvDl4NGrrXN+rO6t/978g31yCeEcylF7R2E=;
+        b=FrdbpzwgDBWEn3irvUPXUHH7YYdy2zc+s2m8OhB1WvvOHxTCHZfwFWFdfOnQJC4cQg
+         /K3GdgLZ/cpFusd6EAivhwfGnGPCDoNT3YCBE+cqM7LEBDhfuSsseBxueequc675nkGz
+         VyePX0v5s1y1jAYZJnhqnlAZ72Dce/EqrHdwE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748967727; x=1749572527;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BrleRcLthk+vqQtTLl9hYMZxGcFn+l+lAWXaPm6jRpc=;
-        b=PvSCxOPqwYhue5PPPkMK6IVa33zjbKf6VcfYP4U2s6v4MU/3guXOAmerrOwvBef5I6
-         lVs8Gzb9VIdJs2qukakYy0H+B+7c3uxdLg79jgWDyYSiMTSp6VYdlrzTV4LYbE7BEaUD
-         GR1MfWOm4HwjNrjkJkJBhETD32pFnVTkEwazdy+0riKs6KKxZFS0iO1kesYwQL75v0Dl
-         cg3n1jMCZ/6APKyIoSrZ6FZCn0dyCNgKKaY42Vtax2wVCJWVWbbN4z7X3zszXuPDlzt9
-         mC/B3rLWZt3xpoSWETpxwKLKSU0LxwRaHJFcmKuLCMgzjpxJ+Yg7Wsao1fshRYTtTPt3
-         MDsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXizlG/6FfjOrkedxg5SZHbiseK6zlPdQ5q4nFGlnxVCnXRtTAEGI2hYuvKtit6nD6iSUDgHVH39Qo5vYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj8WvNDKCL9FjdBv3ijvYrvazm+ck0bng1+Yl/Vmv4cAUX5euU
-	wsVEXPXiCPRM2R5uFdyB2Zo3uVgN/5I4aK1/nW+oVuaf1RJmYQiaH6XTSnvYrpLs918BY+dij8Z
-	4C8yHdVBCd9OipwRNS8OmBHCp7i/9x898/d/gF0Hgz1+D/RXpI5XqSOjQN7AyB9xOBA==
-X-Gm-Gg: ASbGnctSOr6pTYIi5BryEhPuHClmBcjcaTmKdrQOP4PX4dMJdByCX6/tVE+SBDq69M+
-	w4gkf6ghL9V4Ug7eRn4iyRlFWyrFSrM/cgqsCEZ4CYa0wBal6D+2p7xiJAKu1O25ih/XkE7LWV6
-	2xnsnaqBZYjM7lCyLgVPn8dGT0IqPjmF4TNnKird6wJ0gMFNS36w+rWQYd+OnmpAcI2JLcpUmGN
-	9q9GF0p/BWwaP3M4ip+1OzYX2eolNJk3H6hJYk2U5mgc2iL+QxUOULk61UZPk0XS9kp07zvMgVK
-	OW0VFWX6aMCQwZr7G/drUWzN036Z5u8o58iXZpijNrmUVlqeLJzER7MHnp9To4Opx0wcu6kz1nu
-	PYln0w3aKIyZ6iTbTGu4U7dtCjad6/OUwvRpHFNmZIJGtb8rVJw==
-X-Received: by 2002:a05:600c:1986:b0:44a:775d:b5e8 with SMTP id 5b1f17b1804b1-451191fd3b0mr102446715e9.1.1748967726689;
-        Tue, 03 Jun 2025 09:22:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4//ihqdyhFgux60kz8t0eRcykOdSfO9pmj4sCVJ5PkN+hd6MEOg5s8zDHISx0R+dQbdTJUQ==
-X-Received: by 2002:a05:600c:1986:b0:44a:775d:b5e8 with SMTP id 5b1f17b1804b1-451191fd3b0mr102446275e9.1.1748967726086;
-        Tue, 03 Jun 2025 09:22:06 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0d:f000:eec9:2b8d:4913:f32a? (p200300d82f0df000eec92b8d4913f32a.dip0.t-ipconnect.de. [2003:d8:2f0d:f000:eec9:2b8d:4913:f32a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00972f3sm19064300f8f.69.2025.06.03.09.22.05
+        d=1e100.net; s=20230601; t=1748967854; x=1749572654;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PsTtB+z1bvDl4NGrrXN+rO6t/978g31yCeEcylF7R2E=;
+        b=tYptjmuissO1Vvo+DUJ50/7q9i1oUl5OPcZL+CckAnEPRTh1kMWTh/UA+IcTAyrp3G
+         +wXF7DkvMDpbxA+KGUtk/9nBL2mLJfiPRo7p/lu3OJ/IaEKMO2bcSd4KH/4Z1hifzAcC
+         847L+7AwkIMzI9AKeW7ck0fW6Fzmat0pU/rVU5PxKuCRXpFnotjgbsHDssZgJa1rX17f
+         OFLowdBKlttf9fblLvFGuC4Q/FkvWekC3HCup3Ed/4Q11AnYBNYEn1sA346jg7pLznUP
+         65xcsaAKVR+nrsjqtDbVwR/jvwozhgYP7DswXUOSwuxKcSJCQ0sg02SaWI1LGHMezzOC
+         fnVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoHFX9WDAezWw0eIH/7rzYoyNn7Q+jZLJB16tAt8XaigSiX0bVVNdxOcqbYfu4cnPZmPImxQRUGvsIkFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcZ+yomkF+KA1xgdZo++iu8hPK7yQ6Uk9pO4S6Q35OKDnp/DPN
+	V9j4Lj9oKXvLkfWLTK+rzmmeFVTC3izJShHCkueB7Gn6uhWojmZmNy+qRShZ+Dh00Q==
+X-Gm-Gg: ASbGncvXlSpfILAHGKJ/r/FC9fv2Dw8fviHAgnuThbdmscnYx3II8BP1jTplxjej9pX
+	2StTKpOqboSmLoOPRQjGNnkxFTtV0EP90098HH1W9py6WJ6TpeWsRN87AcC2WMWwKiZUFrkHZuG
+	iD1mEIXUb2EZ5d6pckUvk65FOphlMHWv4JV0U1wyajrBiwGWnDnEBx8cYTjBTKz2Gzg2bCTd/eV
+	o41PyuK1FNqx/2xcauHZNlAO7cNEO6X08OvprchycNYd4JSpsylQ4eqXAG/HDy+18cwckVYxcdn
+	lbYBHTWKT8IzPCZXkhnnKezPj/mhNtVJ0uGV/vDnh8b9a+HI+MI2/DH81a1q4oEEK3MpNDdVniq
+	lfI8XpyewlYpneOM=
+X-Google-Smtp-Source: AGHT+IFKXHZ6CeWKl/ulfOEKEnune82cj+P2dFCkcmW9aLp6lK2qD/Lt2Jxz06XEpxzVljkgg6VJ0A==
+X-Received: by 2002:a05:6a00:b49:b0:736:6043:69f9 with SMTP id d2e1a72fcca58-747bd9e6d31mr25070378b3a.19.1748967854532;
+        Tue, 03 Jun 2025 09:24:14 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afeadda3sm9579151b3a.71.2025.06.03.09.24.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 09:22:05 -0700 (PDT)
-Message-ID: <d072f05e-576e-466d-89df-d69103074bb1@redhat.com>
-Date: Tue, 3 Jun 2025 18:22:04 +0200
+        Tue, 03 Jun 2025 09:24:13 -0700 (PDT)
+Message-ID: <2f79ae4e-6349-472c-b0cc-ea774b8ac7cf@broadcom.com>
+Date: Tue, 3 Jun 2025 09:24:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,179 +79,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] kernel BUG in sanity_check_pinned_pages
-To: syzbot <syzbot+1d335893772467199ab6@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, jgg@ziepe.ca, jhubbard@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, peterx@redhat.com,
- syzkaller-bugs@googlegroups.com, Jens Axboe <axboe@kernel.dk>
-References: <683f1551.050a0220.55ceb.0017.GAE@google.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: brcm,stb-pcie: Add num-lanes
+ property
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250530224035.41886-1-james.quinlan@broadcom.com>
+ <20250530224035.41886-2-james.quinlan@broadcom.com>
+ <6c3ec1c3-8f62-4d76-86d3-c1bbe3e1418f@broadcom.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <683f1551.050a0220.55ceb.0017.GAE@google.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <6c3ec1c3-8f62-4d76-86d3-c1bbe3e1418f@broadcom.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 03.06.25 17:31, syzbot wrote:
-> Hello,
+On 5/30/25 16:32, Florian Fainelli wrote:
+> On 5/30/25 15:40, Jim Quinlan wrote:
+>> Add optional num-lanes property Broadcom STB PCIe host controllers.
+>>
+>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    d7fa1af5b33e Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1457d80c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=89c13de706fbf07a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1d335893772467199ab6
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> userspace arch: arm64
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/da97ad659b2c/disk-d7fa1af5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/659e123552a8/vmlinux-d7fa1af5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6ec5dbf4643e/Image-d7fa1af5.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+1d335893772467199ab6@syzkaller.appspotmail.com
-> 
-> head: ffffffff000001fe 0000000000000028 0000000000000000 0000000000000200
-> page dumped because: VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page) && !PageAnonExclusive(page))
-> ------------[ cut here ]------------
-> kernel BUG at mm/gup.c:70!
-> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-> Modules linked in:
-> 
-> CPU: 1 UID: 0 PID: 115 Comm: kworker/u8:4 Not tainted 6.15.0-rc7-syzkaller-gd7fa1af5b33e #0 PREEMPT
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> Workqueue: iou_exit io_ring_exit_work
-> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : sanity_check_pinned_pages+0x7cc/0x7d0 mm/gup.c:69
-> lr : sanity_check_pinned_pages+0x7cc/0x7d0 mm/gup.c:69
-> sp : ffff800097f17640
-> x29: ffff800097f17660 x28: dfff800000000000 x27: 1fffffbff87da000
-> x26: 05ffc0000002107c x25: 05ffc0000002107c x24: fffffdffc3ed0000
-> x23: fffffdffc3ed0000 x22: ffff800097f176e0 x21: 05ffc0000002107c
-> x20: 0000000000000000 x19: ffff800097f176e0 x18: 1fffe0003386f276
-> x17: 703e2d6f696c6f66 x16: ffff80008adbe9e4 x15: 0000000000000001
-> x14: 1fffe0003386f2e2 x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff60003386f2e3 x10: 0000000000ff0100 x9 : c8ccd30be98f3f00
-> x8 : c8ccd30be98f3f00 x7 : 0000000000000001 x6 : 0000000000000001
-> x5 : ffff800097f16d58 x4 : ffff80008f415ba0 x3 : ffff8000807b4b68
-> x2 : 0000000000000001 x1 : 0000000100000000 x0 : 0000000000000061
-> Call trace:
->   sanity_check_pinned_pages+0x7cc/0x7d0 mm/gup.c:69 (P)
->   unpin_user_page+0x80/0x10c mm/gup.c:191
->   io_release_ubuf+0x84/0xf8 io_uring/rsrc.c:113
->   io_buffer_unmap io_uring/rsrc.c:140 [inline]
->   io_free_rsrc_node+0x250/0x57c io_uring/rsrc.c:513
->   io_put_rsrc_node io_uring/rsrc.h:103 [inline]
->   io_rsrc_data_free+0x148/0x298 io_uring/rsrc.c:197
->   io_sqe_buffers_unregister+0x84/0xa0 io_uring/rsrc.c:607
->   io_ring_ctx_free+0x48/0x430 io_uring/io_uring.c:2723
->   io_ring_exit_work+0x6c4/0x73c io_uring/io_uring.c:2962
->   process_one_work+0x7e8/0x156c kernel/workqueue.c:3238
->   process_scheduled_works kernel/workqueue.c:3319 [inline]
->   worker_thread+0x958/0xed8 kernel/workqueue.c:3400
->   kthread+0x5fc/0x75c kernel/kthread.c:464
->   ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:847
-> Code: 900523a1 910e0021 aa1703e0 97fff8a9 (d4210000)
-> ---[ end trace 0000000000000000 ]---
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
-So we lost a PAE bit for a pinned folio.
+Sorry I take that back, I think this should be:
 
-[   97.640225][  T115] page: refcount:512 mapcount:0 mapping:0000000000000000 index:0x20000 pfn:0x13b400
-[   97.640378][  T115] head: order:9 mapcount:511 entire_mapcount:0 nr_pages_mapped:511 pincount:1
+num-lanes:
+   enum: [ 1, 2, 4 ]
 
-The folio is indeed pinned, and it is PTE-mapped (511 PTEs are mapped).
-
-The page we are using for unpinning is not mapped (mapcount:0).
-
-pfn:0x13b400 indicates that the page we are provided is actually the head page (folio->page).
-
-
-[   97.640414][  T115] memcg:ffff0000f36b6000
-[   97.640435][  T115] anon flags: 0x5ffc0000002107c(referenced|uptodate|dirty|lru|arch_1|head|swapbacked|node=0|zone=2|lastcpupid=0x7ff)
-[   97.640468][  T115] raw: 05ffc0000002107c fffffdffc37be1c8 fffffdffc3d75f08 ffff0000d50c0ee1
-[   97.640490][  T115] raw: 0000000000020000 0000000000000000 00000200ffffffff ffff0000f36b6000
-[   97.640514][  T115] head: 05ffc0000002107c fffffdffc37be1c8 fffffdffc3d75f08 ffff0000d50c0ee1
-[   97.640536][  T115] head: 0000000000020000 0000000000000000 00000200ffffffff ffff0000f36b6000
-[   97.640559][  T115] head: 05ffc00000010a09 fffffdffc3ed0001 000001ff000001fe 00000001ffffffff
-[   97.640581][  T115] head: ffffffff000001fe 0000000000000028 0000000000000000 0000000000000200
-[   97.640600][  T115] page dumped because: VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page) && !PageAnonExclusive(page))
-
-So we effectively only test the head page. Here we don't have the bit set for that page.
-
-
-In gup_fast() we perform a similar sanity check, which didn't trigger at the time we pinned the folio.
-io_uring ends up calling io_pin_pages() where we call pin_user_pages_fast(), so GUP-fast might indeed
-trigger.
-
-
-What could trigger this (in weird scenarios, though) is if we used pin_user_page() to obtain a
-page, then did folio = page_folio(page) and called unpin_user_page(&folio->page) instead of
-using unpin_folio(). Or using any other page that we didn't pin. It would be a corner case, though.
-
-Staring at io_release_ubuf(), that's also not immediately what's happening.
-
-There is this coalescing code in io_sqe_buffer_register()->io_check_coalesce_buffer(),
-maybe ... something is going wrong there?
-
-
-
-Otherwise, I could only envision (a) some random memory overwrite clearing the bit or (b) some
-weird race between GUP-fast and PAE clearing that we didn't run into so far. But these sanity
-checks have been around for a loooong time at this point.
-
-Unfortunately, no reproducer :(
-
+We are basically documenting the allowed values, not specifying that we 
+can repeat the num-lames property between 1 and 4 times.
 -- 
-Cheers,
-
-David / dhildenb
-
+Florian
 
