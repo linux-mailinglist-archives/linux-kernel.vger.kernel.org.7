@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-671860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76668ACC752
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:06:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B093CACC710
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C10AC16B831
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523981891E34
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE63D230D14;
-	Tue,  3 Jun 2025 13:05:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CDF22F16E;
+	Tue,  3 Jun 2025 12:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlOKoDoy"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A39922F740;
-	Tue,  3 Jun 2025 13:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935C81E519;
+	Tue,  3 Jun 2025 12:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748955936; cv=none; b=Nf5WsoMwkQF15XJwAmyk6PqEnuLGFO7faLCqm7okCtlnw8FnF1VfOG3yUooyJJKXW+V48YykuGUlxq43tEE0rDhNuhRBG414WiHGKEpwASNtdEtDSGIAaYp5DFLXL/Fug6Q2+GddJ1x1zq9HOKY94gbcip4qKiq1k/SJN2YVpQw=
+	t=1748955292; cv=none; b=WXcb9FNvHJeafa+zV0ICMnTInlNu/ZETAYFS23z8UVu7pnl72p+gDW6AT0yJhRwmksQVj9EMCcViDzo1tg9TO/NbY+O/5zSzXJyrbsVA0M5zSiosfyt5VSwO+XoEZB0SYnMsY5LZNMm+vwepsfvalEfPzn6ZaD80HEi3IWtfu3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748955936; c=relaxed/simple;
-	bh=Zknqswh8USYRXH9E7sikPWaoUxkbdqaBWulo21WEy5M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dm5HpTrgvQT/CTo3TVEHWAX3H4aSsYIUR6pbj+qH970gMyjU5bPLrmeMlPERlqjbezAXW6rId5lCwgIGlDeLowph7DYCXRQOVMA/qWMcADC0s9T/6mIEM58lmkLc5etfygpvUjifbIaoTsbJbQcLBOcc4x1ynE0GZRwMyOyjTPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bBWCv6b7tzKHNFR;
-	Tue,  3 Jun 2025 21:05:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 4E9D81A17C1;
-	Tue,  3 Jun 2025 21:05:30 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgCn+MIQ8z5osdqmOA--.37720S2;
-	Tue, 03 Jun 2025 21:05:30 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	ardb@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH stable 6.6.y] arm64: kaslr: fix nokaslr cmdline parsing
-Date: Tue,  3 Jun 2025 12:52:33 +0000
-Message-Id: <20250603125233.2707474-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1748955292; c=relaxed/simple;
+	bh=0zZTn88nHJTp3sqZm1uVAtQ8D7IKSdaaPX/1s7Jv4LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=okwcdlqI2k4HGLstilS2gmeUh05r0kOtwR7uB6OVeycSdpj3hevi34Y+zIE2uOeqYfvjhHEoKR6NSYKPEfUUg8ekO+1ZG4BiWIuNOQlqB9Uk2z3Fjz9JL+ypNwAxzTxH20RY/die4qVBkYm62MB1e1GmULHiiMXWi6Oyp5Ts7mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XlOKoDoy; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gscpRI9+8A+XFtOn6r3eBXEQkaguajPtulDYPqJTeZQ=; b=XlOKoDoy4rxmsVQ5M6pIDDA1lm
+	E9+ci176+hoWKgTz95R8pfYymvCrb/2F2yuueTlrfFOqB89VhKr/G3semOngiK54N3h5KPxw5pz+z
+	Yv7uLHRyxQRIt1mgBLGQdj5QV3gm2Tavit5Z5LPyTy6oOVWujTQd7OSvFSs0+rJjONCrcEllMJxJ1
+	tMlsz2S/jrsKFZIY+qJCG/UFMkNW46kV7rU9umwVb6ZbX0z5BS00B2wzuzDCCqyc7Wqkt8om+6/1f
+	Y2hlfZ+ly0PhW9Bb1OydTjXT05Qn1qDycsbxNqmm5axzy121RapW5yRHgZHaFwGcwd49++HWEQFFK
+	/+0/qVpQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMRA9-00000000l1q-2jXA;
+	Tue, 03 Jun 2025 12:54:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5C728300781; Tue,  3 Jun 2025 14:54:40 +0200 (CEST)
+Date: Tue, 3 Jun 2025 14:54:40 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: David Wang <00107082@163.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mingo@kernel.org, yeoreum.yun@arm.com, leo.yan@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf/core: restore __perf_remove_from_context when
+ DETACH_EXIT not set
+Message-ID: <20250603125440.GA35970@noisy.programming.kicks-ass.net>
+References: <20250603032651.3988-1-00107082@163.com>
+ <20250603083304.34132-1-00107082@163.com>
+ <20250603091352.GJ21197@noisy.programming.kicks-ass.net>
+ <2633d43d.ae30.1973564f5e5.Coremail.00107082@163.com>
+ <20250603125056.GI39944@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCn+MIQ8z5osdqmOA--.37720S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WrWUXr43Ar15tF13AFykGrg_yoW8WrW3pw
-	s8Ww1ayrs5uF1UAa4DX3W5uFW5u393t3sIya4UK34fJay5AryUKFWFqasI9F4UtFyUu3W2
-	yrZI9ryktayUAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUFBT5DUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603125056.GI39944@noisy.programming.kicks-ass.net>
 
-From: Chen Ridong <chenridong@huawei.com>
+On Tue, Jun 03, 2025 at 02:50:56PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 03, 2025 at 06:44:58PM +0800, David Wang wrote:
+> 
+> 
+> > (As yeoreum.yun@arm.com pointed out,  the change in perf_remove_from_context() made
+> > perf_event_set_state() happened before list_del_event(), resulting in perf_cgroup_event_disable()
+> > not called.)
+> 
+> Aah, d'0h. Let me see what we should do there.
 
-Currently, when the command line contains "nokaslrxxx", it was incorrectly
-treated as a request to disable KASLR virtual memory. However, the behavior
-is different from physical address handling.
+Does this help? This way event_sched_out() will call
+perf_cgroup_event_disable().
 
-This issue exists before the commit af73b9a2dd39 ("arm64: kaslr: Use
-feature override instead of parsing the cmdline again"). This patch fixes
-the parsing logic for the 'nokaslr' command line argument. Only the exact
-strings, 'nokaslr', will disable KASLR. Other inputs such as 'xxnokaslr',
-'xxnokaslrxx', or 'xxnokaslr=xx' will not disable KASLR.
 
-Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
-Cc: stable@vger.kernel.org # <= v6.6
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- arch/arm64/kernel/pi/kaslr_early.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/kernel/pi/kaslr_early.c b/arch/arm64/kernel/pi/kaslr_early.c
-index 17bff6e399e4..731d0a3f1a89 100644
---- a/arch/arm64/kernel/pi/kaslr_early.c
-+++ b/arch/arm64/kernel/pi/kaslr_early.c
-@@ -35,9 +35,14 @@ static char *__strstr(const char *s1, const char *s2)
- static bool cmdline_contains_nokaslr(const u8 *cmdline)
- {
- 	const u8 *str;
-+	size_t len = strlen("nokaslr");
-+	const char *after = cmdline + len;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f34c99f8ce8f..adbb0372825f 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2494,9 +2494,9 @@ __perf_remove_from_context(struct perf_event *event,
+ 	if (flags & DETACH_REVOKE)
+ 		state = PERF_EVENT_STATE_REVOKED;
+ 	if (flags & DETACH_DEAD) {
+-		event->pending_disable = 1;
+ 		state = PERF_EVENT_STATE_DEAD;
+ 	}
++	event->pending_disable = 1;
+ 	event_sched_out(event, ctx);
+ 	perf_event_set_state(event, min(event->state, state));
  
- 	str = __strstr(cmdline, "nokaslr");
--	return str == cmdline || (str > cmdline && *(str - 1) == ' ');
-+	if ((str == cmdline || (str > cmdline && *(str - 1) == ' ')) &&
-+	    (*after == ' ' || *after == '\0'))
-+		return true;
-+	return false;
- }
- 
- static bool is_kaslr_disabled_cmdline(void *fdt)
--- 
-2.34.1
-
 
