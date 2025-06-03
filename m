@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-671547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7599ACC2E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:23:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02B2ACC2F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE90F3A3C1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F518163126
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502A628150A;
-	Tue,  3 Jun 2025 09:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJIjiZSu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996AD271461;
-	Tue,  3 Jun 2025 09:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29EE28150A;
+	Tue,  3 Jun 2025 09:26:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60752C327E;
+	Tue,  3 Jun 2025 09:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748942591; cv=none; b=kC0GxcNyTXqOek38AfUDBvvHyucfvJ4IVyQSXlyCGXbJ51K2FQBfGqmR2aZ6fqa2WqeGSbaYYuHtx9qTDC+C/cWvJgiYENb/Cp6Ppaa8cec2nYWP14xjhCs1Fp6EzVOZrH5vihi/KRgxek6sJHkxyblRIoCHLOdcfwjxzrZR9Fs=
+	t=1748942761; cv=none; b=hwSv10tf12GZPjhN7sR0XusrwxNPOryF0tpuDkxOD09iJP/1UY3tLvoEEebxfXaSN8wETzVzZUZaucr9tVdaG+92gHaeRYHb9980vdBJsuhIGKoiXtXsm1uIwg0N2SwFxpNojTZypJ4hEaIR51mLJTAc6X5yv8J4+GqVzfIL1aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748942591; c=relaxed/simple;
-	bh=IGxkwBHaTsBUHdsGu2r4HU2W/z03tesVyjqacAklwc4=;
+	s=arc-20240116; t=1748942761; c=relaxed/simple;
+	bh=qWj39+I9XXyWVm6CoZwrmm4PfT/JNek01AT/iArpaVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2ab11Ub5uVU85B0sa8avTbxU77SHbG/GLAU6Fyk/JCk7jg/w9DmRoj0Aq9N0nbEklSt7MVfJRzVKTPA3RQwUGvwphrW5OdWVqXeHUwszD0194GZBbb30u7K34I1Pswmcv29ZNR/hy7ooWM4MdOF50XACBfOPHypKNwZZYBOLA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJIjiZSu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA9E6C4CEED;
-	Tue,  3 Jun 2025 09:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748942591;
-	bh=IGxkwBHaTsBUHdsGu2r4HU2W/z03tesVyjqacAklwc4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TJIjiZSu5Mmd4zBgad4lFUUywDnQ8aqALWcWOcN9xypQlWDrglDSbXRr6yWioumlP
-	 y/gjMAZ6/m/y7erZl7pfc+Gbnf6NPaAVZjmCeUvFEjwuOSKCpsxsEFnxdhR+L3A7SI
-	 qh6E/J1sg4lR4SHPICRoAhbVvfVbVcEuvKie7GXo8NtAMnN5ok/w0x1rGcIXA/ftU/
-	 F0Zf3ej0zvbQ1gN26Vlg7n+pTZNUYQrIVhm0x7mgXo8UKlA4hk37qyscNZkLJKZ8Xh
-	 4lrrUROyudaXnoobHgHz8CGcbGhljCWRZs71zgfv5I2xJsnysBh5eL/ao8d9O/sHuQ
-	 zDYSGt5pn861w==
-Date: Tue, 3 Jun 2025 10:23:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.15 00/49] 6.15.1-rc1 review
-Message-ID: <da42848e-4ee7-42c1-b291-8bf3c1c80c31@sirena.org.uk>
-References: <20250602134237.940995114@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lLgYwJuh7ntl2egy7DUNnCxnvDbuazgFSFFP9FuV3aruk0Uoj6OHNg5lVQfkbPV7IAyAxzNER+uREhHZWTBktSK5OE5x9K71BRtstGXUAiAUWEoB8sF43shLOXZ9bYH/SVncUEG6TA5bytjxu3pl4ddsu+vEypr+LVXhvIi+ixM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00B6812FC;
+	Tue,  3 Jun 2025 02:25:42 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E2D23F5A1;
+	Tue,  3 Jun 2025 02:25:56 -0700 (PDT)
+Date: Tue, 3 Jun 2025 10:25:54 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	rafael.j.wysocki@intel.com, jonathanh@nvidia.com,
+	ulf.hansson@linaro.org
+Subject: Re: Kernel crash on boot, arm64 VM
+Message-ID: <20250603-athletic-catfish-of-reading-65ef17@sudeepholla>
+References: <17fc594b-b80b-4918-8945-4aef35dc9c94@suse.com>
+ <20250602103521.GA1134@willie-the-truck>
+ <20250602-solid-coot-of-karma-cfea5e@sudeepholla>
+ <d7383d29-516d-4643-aaac-dfd930ec896e@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pPvxfX2beJbnEfrA"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250602134237.940995114@linuxfoundation.org>
-X-Cookie: Avec!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d7383d29-516d-4643-aaac-dfd930ec896e@suse.com>
 
+On Tue, Jun 03, 2025 at 08:40:25AM +0930, Qu Wenruo wrote:
+> 
+> 在 2025/6/2 21:42, Sudeep Holla 写道:
+> > On Mon, Jun 02, 2025 at 11:35:22AM +0100, Will Deacon wrote:
+> > > [+Sudeep]
+> > > 
 
---pPvxfX2beJbnEfrA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[...]
 
-On Mon, Jun 02, 2025 at 03:46:52PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.1 release.
-> There are 49 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> > > I've kept the crash log below, but I suspect this is due to the __free()
+> > > cleanup path in dt_idle_state_present(), introduced recently by
+> > > 5836ebeb4a2b ("cpuidle: psci: Avoid initializing faux device if no DT
+> > > idle states are present").
+> 
+> Reverting works, thanks a lot!
+> 
+> > Do you also have this commit ?
+> > 
+> > 39cdf87a97fd ("cpuidle: psci: Fix uninitialized variable in dt_idle_state_present()")
+> 
+> Not yet, the branch I'm using is from btrfs' development branch, which is
+> slightly older than the upstream.
+> (The base commit is a56baa225308 ("Merge tag 'for-6.16-tag' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux"))
+> 
+> Just tried upstream, which also fixed the problem.
+> 
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Glad that helped. Thanks for the clarification.
 
---pPvxfX2beJbnEfrA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg+vvgACgkQJNaLcl1U
-h9BYuwf8CwrLq+WhMB2xH0Otrum69fwpXeZGNK6BiOSMjfaSUOr7mUUA1Phte+pJ
-gVvblK3vEitA0zCR/s2RtCoLC0qj2C93gP5RVzbqbe2mBANDm13Ifyfyg3cR7YbK
-kkTXIfj3l8VreVQSHPZQr9T5BWlzrpk0PDAqDFwEvyStTfjW3Zg2C18WTBBeZOzY
-OXziGvH8hbQ9+4h0IGgRYO8xAWaGcvduR5dOSGfulsPL8KHEQRVldjYgC3yEdjSD
-tBqKt6fKimoj0Qwta9sELIP30ImbcKJc0/gBVJFpUWB9VczxLpnXtA9Jn/5b8Y05
-paAnSD9pZmfsa4Y6VIhyyXBRiULJrw==
-=lDDW
------END PGP SIGNATURE-----
-
---pPvxfX2beJbnEfrA--
+-- 
+Regards,
+Sudeep
 
