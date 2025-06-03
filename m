@@ -1,88 +1,152 @@
-Return-Path: <linux-kernel+bounces-671923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B5EACC859
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:50:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904A8ACC872
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DB097A93F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA5523A6209
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA051238C27;
-	Tue,  3 Jun 2025 13:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7DB239E61;
+	Tue,  3 Jun 2025 13:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boN5joj4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kNIl6V3J"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEB0238176;
-	Tue,  3 Jun 2025 13:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BB6238D49
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748958599; cv=none; b=A086o1INSP9kqTSNEcchBU3jREsDrvzfnyEOGjrU/BjgiQ3TDmWIVVWM+KlhmmEw5eaJMchzYOh0Rzao7d1C9hac1D2du2licwFGF3/tN+jo8c7CoZ4RdZR7xozfcaaWznBGVSORVrgwsTHzkJ8Yww+dPvACbZ3zzMZCqMuglnc=
+	t=1748958623; cv=none; b=Hpfr/66JM49gqOLSO2CGX6lKs0CuGMPdDDDREumEPBCSlExF1CgH1iY3BkVXP8QY75Hxd2/TEKww1U0qIu5YlbS/ZSX3bc0TvJ2HdPW/Oz/FM83WLFsI1WP0QxWQcN87uR7v1oif8YhWNjIl4hL+cEYQ6SGnemLN4JICBoJrJxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748958599; c=relaxed/simple;
-	bh=U6g39ClQB+hk5GPvCuPP+9un1adxAxTlTy6EwW+tjrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uAGLn8IVoWsnG2yrKYB3jGyx6IillEMnUiU2kFvlY2mzeZdnk+rdQ3qXSpKIBsS+VrkCZ5KZc0Tmy5YeopbSA7xEoGcoYPKEMk/oX9S9uJufCGC5SbT8gIxCKVjCxPJsT2duz0qqN1VbPodmTxx9go7efY8dEOUivv4K8wXQVx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boN5joj4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 170BBC4CEEF;
-	Tue,  3 Jun 2025 13:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748958598;
-	bh=U6g39ClQB+hk5GPvCuPP+9un1adxAxTlTy6EwW+tjrA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=boN5joj49PYGWo0gzBJX9Z4fLk/NDlwvoC+0Td17+T9qgc+Il0E7LuvK9sMl/G4+X
-	 94m9luK4AsFPfQHk/DPxNsvCT1YFSHR9HtPgNjCZ4uFukxc338IUpe+Z0mwKMuHqOv
-	 JRnyefbAM8+5ub9OsVv2TerLN2K4kOJ9xBE0tNAewRta3zM3tDifEmeaHnmJq2R/ee
-	 37TahppRi/kTwKRoQa0tqoCka33buLW51YU0wwdmxK/VT9SBr4DpZcViPvWKocCkw3
-	 tE8esBfYyrNZ8zcPAUn+VHY/k9MsDfdI1d5L7uQ7ZLOkhh2NV0J4QRmoLOSAdu2/UB
-	 dVjgLMUI7ULdw==
-Message-ID: <11ff2b73-c77b-4142-a492-1e525d530aeb@kernel.org>
-Date: Tue, 3 Jun 2025 15:49:52 +0200
+	s=arc-20240116; t=1748958623; c=relaxed/simple;
+	bh=1doqpPZBZdBJM8o+kHQlB7CeX2bycDJ6ijoRgFE2Vjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWUmAEh9fL/ovtfzIDBotjtbLJ+SIgkVW8ZeWHqEB1Itrcn7JyVySrgdgVzQANApqN9fcFEMcPWj5VCBccsNwvaooFz8jSg7QXQNoDUx/reiK/0KnWHB2Yq6hNomuaMJkJL1FN0q5MNMYoHoCRWA0oA9OwSBwfiWEnVzOHOOPJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kNIl6V3J; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a43afb04a7so29710211cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 06:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1748958619; x=1749563419; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YkymsPnXdQBda6JrJEhL1GWpprQuWSyxObGqKIJXWus=;
+        b=kNIl6V3JpKp6i8E1J3rartq8Eb1PZ0J+L6CKvgEXKdMxoKIiAfmyApPk6Y4TMiZb1x
+         It/fmYK+k1cXfB8qG9pGwNRJjb4gPaxbUch+Mm8CIWuz7JVInJmWeoYZE3nZDBxao0md
+         udDjoJz8SeH9bHFbetsiOzOJhUqdkwNzpkDkG1GV1/K0iEliFCR7/7nYpNCdgUlejOPG
+         4xxdlClipsKftsjPceD+0xfW+xGFK49r1r5C25TYjU4CIh4b+FvbGPnpBsK8Q0mYwzCX
+         xhN9Jb3u/lp1E5JmRLMQUZ5KmpVwImFt3N02p34b/K1tafFpvi/pGJeK3f9QTwtxu0N4
+         YlnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748958619; x=1749563419;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YkymsPnXdQBda6JrJEhL1GWpprQuWSyxObGqKIJXWus=;
+        b=hNZDCcReX7w4Z6ZZtmy872/DF+scz66vmWn8wUuqO3VMayMx9qj4IQMH1PsInZRwZg
+         0wUS3DRDI1OACJ1fJafcHphPgrTzL039kvZZbkYjob1pB5xedR89Zd1bqPN4sY97JZEq
+         5wdtmkThR/xH3r/l+ofqVV0+b54UZZ9f7F542OsOwci9INV43+CbnrefIB8+J7GPejpa
+         Z9+WEBvM1DeUQOEb5/810y+0QDS5eiJv3O3xRV0cKfJfQZHsFZsIBzpr6ct2+NNXqNLQ
+         1jx9fkk2KAtIseBrNGEiuw/VDW8MNWrSIA6h0b73j90j8/8Mt9XRK3WJJqDCwzljVzHE
+         JCmg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Tn7E4lAgX+oSW+t6CsR7LkKnzgmbqLaP/yA6WRizgPLzPXqHVv9footZXKtLgR+BS68oIRo7OMalQu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0XihKPI8uzzZWcQcQOwulhpHcGDfOfde3bel2gy3IIGaKRvZV
+	CIqhreJaXFZzGvWe0xqKXFhnVniD4imDndYAfOvIzbVZ6KiBl8n/ZUXY/0700CJR1QdgHCWLNcV
+	mRABt
+X-Gm-Gg: ASbGncvYveI86VPfcWL50kRJK+SO7d96f0dAX60cyDLAAQe6gtWBleo9YcHOGPoMQhf
+	r4DLSDb7XdJGrwWzYmyNMPv+iMspvIMynQf61qtBOdXvH8sNM5dT0ww0W3ZQpC8pNbWTF4opi0J
+	H6fiV5L6sZI4EW94B6k+OifOXiUJWBRrP4giu4I0YKD8JhUmXUpNyplYPvgQXTYUqqf5ynVAOvT
+	WcfnmMNlq6t0GHtRQcfBDDSV576CfJG1mKOkP0ayK0oQpgPTpCSz4aYH0+xdjglIMyehWrN8f20
+	D/jLA+ZFbiV4hkYpUCa78IVTO5bHw3OreLGkQg51gIU0wXSDs0g66AWYaAFuxIUHPo3cD9bTrJO
+	TSq/pPDfSrdHQ94qqw6vZeduuwwQ=
+X-Google-Smtp-Source: AGHT+IFrQ3mNOrW6/ZBr5BKf2weoO3iOKbQMChhnKb6iKzSLwy4jyxYkXr8u6rUugOKC/0R4gbcrnw==
+X-Received: by 2002:a05:622a:4d96:b0:4a4:3171:b942 with SMTP id d75a77b69052e-4a4aed86ba3mr229299171cf.39.1748958619327;
+        Tue, 03 Jun 2025 06:50:19 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a4358eef6csm75933171cf.48.2025.06.03.06.50.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 06:50:18 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uMS1y-00000001hCj-1MTz;
+	Tue, 03 Jun 2025 10:50:18 -0300
+Date: Tue, 3 Jun 2025 10:50:18 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
+	dan.j.williams@intel.com, willy@infradead.org, david@redhat.com,
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+	balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	John@groves.net, Will Deacon <will@kernel.org>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
+Subject: Re: [PATCH 10/12] mm: Remove devmap related functions and page table
+ bits
+Message-ID: <20250603135018.GK386142@ziepe.ca>
+References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
+ <32209333cfdddffc76f18981f41a989b14780956.1748500293.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 16/20] nova-core: Add support for VBIOS ucode
- extraction for boot
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
- Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- Shirish Baskaran <sbaskaran@nvidia.com>
-References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
- <20250521-nova-frts-v4-16-05dfd4f39479@nvidia.com> <aD2oROKpaU8Bmyj-@pollux>
- <20250602151506.GA779285@joelnvbox> <DACQW908WCLA.2JHRLQ3V18FPD@nvidia.com>
- <2f03e11d-3621-4314-a232-611a5fd9ffcb@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <2f03e11d-3621-4314-a232-611a5fd9ffcb@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <32209333cfdddffc76f18981f41a989b14780956.1748500293.git-series.apopple@nvidia.com>
 
-On 6/3/25 3:47 PM, Joel Fernandes wrote:
-> On 6/3/2025 4:12 AM, Alexandre Courbot wrote:
->> Would it then make sense to make `FwSecBiosImage` public, add an `fn
->> fwsec_image(&self) -> &FwSecBiosImage` method and have the caller call
->> its methods directly (maybe renamed to `header`, `ucode` and `sigs`)?
+On Thu, May 29, 2025 at 04:32:11PM +1000, Alistair Popple wrote:
+> Now that DAX and all other reference counts to ZONE_DEVICE pages are
+> managed normally there is no need for the special devmap PTE/PMD/PUD
+> page table bits. So drop all references to these, freeing up a
+> software defined page table bit on architectures supporting it.
 > 
-> Yeah, that seems better. Danilo, you're good with that idea too?
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> Acked-by: Will Deacon <will@kernel.org> # arm64
+> Suggested-by: Chunyan Zhang <zhang.lyra@gmail.com>
+> Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
+> ---
+>  Documentation/mm/arch_pgtable_helpers.rst     |  6 +--
+>  arch/arm64/Kconfig                            |  1 +-
+>  arch/arm64/include/asm/pgtable-prot.h         |  1 +-
+>  arch/arm64/include/asm/pgtable.h              | 24 +--------
+>  arch/loongarch/Kconfig                        |  1 +-
+>  arch/loongarch/include/asm/pgtable-bits.h     |  6 +--
+>  arch/loongarch/include/asm/pgtable.h          | 19 +------
+>  arch/powerpc/Kconfig                          |  1 +-
+>  arch/powerpc/include/asm/book3s/64/hash-4k.h  |  6 +--
+>  arch/powerpc/include/asm/book3s/64/hash-64k.h |  7 +--
+>  arch/powerpc/include/asm/book3s/64/pgtable.h  | 53 +------------------
+>  arch/powerpc/include/asm/book3s/64/radix.h    | 14 +-----
+>  arch/riscv/Kconfig                            |  1 +-
+>  arch/riscv/include/asm/pgtable-64.h           | 20 +-------
+>  arch/riscv/include/asm/pgtable-bits.h         |  1 +-
+>  arch/riscv/include/asm/pgtable.h              | 17 +------
+>  arch/x86/Kconfig                              |  1 +-
+>  arch/x86/include/asm/pgtable.h                | 51 +-----------------
+>  arch/x86/include/asm/pgtable_types.h          |  5 +--
+>  include/linux/mm.h                            |  7 +--
+>  include/linux/pgtable.h                       | 19 +------
+>  mm/Kconfig                                    |  4 +-
+>  mm/debug_vm_pgtable.c                         | 59 +--------------------
+>  mm/hmm.c                                      |  3 +-
+>  mm/madvise.c                                  |  8 +--
+>  25 files changed, 17 insertions(+), 318 deletions(-)
 
-Thanks, that sounds good to me!
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
