@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-671709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF11ACC516
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:12:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438BEACC51B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 106E03A6018
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:11:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1468B173CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D3922E402;
-	Tue,  3 Jun 2025 11:11:25 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A7422D7B0;
+	Tue,  3 Jun 2025 11:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="X5BQGNtz"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAE322DA02
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219DC22D795
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748949085; cv=none; b=iqVIcj3IGLScDm+5p7rxVK52kM/xs+GrtHbuo2sIGDWwl9iDxsSs5snm/VDvBKa8AMotAUYpbTwSDteDOx/utzhqJBmLel6aks3WaMmRPMVfscuiSsnUjB1Mkk8b1mNcnJ+MiODpMP6pZwQLhmys1hn4Z5f5RVIfQd7G7OufTvk=
+	t=1748949141; cv=none; b=rH41MaK1NNNYRdqhDBR4gJBSPuyOYCCAnAcJ5GC63gvHQ21tXtgKWRhmUm3Cg/zOpggTVtDD+1JJ9FgKf1r4VPSQ+ayZF1VsQhnhnk5NEQVBHABP3k7vifAIZuSx5oP+yNi+m2LQZbPvv6PhKWCAj6fu0c97ApRt/Bie9p6V2T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748949085; c=relaxed/simple;
-	bh=39mXXvyyfIMkXS9zXUd6AfYEqN7yOJb7H4QluG04Es8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LMZ/W9ioiYArIP7pFnkV+q8POcu3BlvTgSsjSOmcdYhKJ5rJJv4wnF2bG0rFaPBCwAB35DjEw/5WhRSefYccjHZBUQODWEotkaKV1b6SKxdDWSF3ov1ct/rnhBOtasMc8FF0lHvuodl08V94J6zWlY0qgV2MeUeWGrNIf9fdiIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so41563385ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 04:11:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748949083; x=1749553883;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Tpl8XxbiMV1cRiVkI/cGvUd7CgFxBQkoXApbA76gKdc=;
-        b=ayfFTq58s6ZOBXa1vJRbmwn1oqsUCKtd3DyhnHskcNrI83NY5ajOMAJBFQ8ZtPVGRI
-         YtdcFZMEnx08BSILfq3/H35UiosKkBPdniIMwdQXPASIQaxF34Z7NxzuaN4Jit7f6UqE
-         JUZU8z++nExDxGxmldXOxN+9b9OLg1BnJImPHK+yk8eHJeNvRqhVqrcaiJCgm4ihO6cy
-         VkpCUILDCS1Z+S1peimcVOdMgcsIw/MEoq5KMJh6nemTD0STkIXZiNaviaT7oanTdfeh
-         zhvi9HJ3QTcIjIus8BB9PJB7b+MR9Q1Ow5m/1kVGEXtYpOzDEbsbWPDCflo53ofE21kW
-         fumQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVqYpeVCv+o4nCZ3ZFkAVowsGsvP4ym5RkQ1b9STrQnCWYq5OocUQN+cGNQDDmI5AUcjZCUkES7ivI3bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF8KtghmaoYvk4L7vU0o5gt9w6pqlzCbQLy5mo9z+WxJmTPehh
-	LdN2plsnj0CH2MCcZqwtBSbv4bDFW9B/dD5RYCpo0L/dxTnoT3Zgq+tcWxeNQWNGwXOlvn4wQnd
-	A+i8OrxQ+rgmpx6LwIV61dqes4uZ3tQ2bTFvSz3L6IQ5AJ2mEhpMjVKUCugY=
-X-Google-Smtp-Source: AGHT+IHHXp+bRWodpMAlloxTc6DFDLShox9JCRW71P7EMP6IAmp/Bl/hvklldZ2HMNI74y370h5TRku0JNjrBTnyj2ApY5MTx1LQ
+	s=arc-20240116; t=1748949141; c=relaxed/simple;
+	bh=qdh9/dDTAHJ1D1UfBX8nbhQ6ExAns2R+yt6F9EWW8Jc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OAaI9Sy8ABy5+lKIi/KeSxKNh7AA9minoFH1KEepvG/wk4h8GqIsWMjPpAqsBLWHb0JgrJ6lAthGUhqo/zBmnK9XjyTDXglFosBYAy9zfJsox6leopuqmk0t39seuC0wzmRBBMhWEtqUftcSJfIxlnDJUdUk2GrwW3nLLybD4lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=X5BQGNtz; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 1BDFF240029
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:12:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1748949136; bh=qdh9/dDTAHJ1D1UfBX8nbhQ6ExAns2R+yt6F9EWW8Jc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=X5BQGNtzvlgXjSdalWTL3W6/XIIwefWOzV/Q1BJEcd2xQIFRDItGxZjD0LNIl0Uzr
+	 fIk52n2jdy45XlCvxSU4Jsg1EkX6BLCwnsAGzSH2xbYPKfK9MfY3+o+1DNSNHafete
+	 7LFKKFgGB7CjXtQSx//ECrr7nCHsCKxNXaj62Fcs7ZHWNSnzjrkcTWApS5+wqtU9DH
+	 jzz4NIERMbu2DgBvesG9+Enm57j9YhNSIsbu2f5qor+kUD+Sv3dhEuzSViJ29IPvRa
+	 FPFBEpOZO5Die9CnOwwSkv5qWvjM8ZNMLwrdCrR4jDV11XmAn0J9vh0egviR6b6V0M
+	 PBs2q9Halu/Nw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4bBSjC1K4Dz9rxB;
+	Tue,  3 Jun 2025 13:12:15 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Bastien Nocera <hadess@hadess.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Alan Stern
+ <stern@rowland.harvard.edu>,  linux-usb@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: misc: apple-mfi-fastcharge: Make power supply
+ names unique
+In-Reply-To: <5a610d364c8a8148e48d5bf7a95e73fc81650e5a.camel@hadess.net>
+References: <20250602-apple-mfi-fastcharge-duplicate-sysfs-v1-1-5d84de34fac6@posteo.net>
+	<5a610d364c8a8148e48d5bf7a95e73fc81650e5a.camel@hadess.net>
+Date: Tue, 03 Jun 2025 11:12:04 +0000
+Message-ID: <87r001uliz.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174c:b0:3dc:7660:9ed9 with SMTP id
- e9e14a558f8ab-3dd9c7135ebmr160327415ab.0.1748949082930; Tue, 03 Jun 2025
- 04:11:22 -0700 (PDT)
-Date: Tue, 03 Jun 2025 04:11:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683ed85a.050a0220.55ceb.000e.GAE@google.com>
-Subject: [syzbot] Monthly ocfs2 report (May 2025)
-From: syzbot <syzbot+listcfb743ead64ed2872d1a@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello ocfs2 maintainers/developers,
+Bastien Nocera <hadess@hadess.net> writes:
 
-This is a 31-day syzbot report for the ocfs2 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ocfs2
+> On Mon, 2025-06-02 at 18:26 +0000, Charalampos Mitrodimas wrote:
+>> When multiple Apple devices are connected concurrently, the
+>> apple-mfi-fastcharge driver fails to probe the subsequent devices
+>> with
+>> the following error:
+>>=20
+>> =C2=A0=C2=A0=C2=A0 sysfs: cannot create duplicate filename
+>> '/class/power_supply/apple_mfi_fastcharge'
+>> =C2=A0=C2=A0=C2=A0 apple-mfi-fastcharge 5-2.4.3.3: probe of 5-2.4.3.3 fa=
+iled with
+>> error -17
+>>=20
+>> This happens because the driver uses a fixed power supply name
+>> ("apple_mfi_fastcharge") for all devices, causing a sysfs name
+>> conflict when a second device is connected.
+>>=20
+>> Fix this by generating unique names using the USB bus and device
+>> number (e.g., "apple_mfi_fastcharge_5-12"). This ensures each
+>> connected device gets a unique power supply entry in sysfs.
+>>=20
+>> The change requires storing a copy of the power_supply_desc structure
+>> in the per-device mfi_device struct, since the name pointer needs to
+>> remain valid for the lifetime of the power supply registration.
+>>=20
+>> Fixes: 249fa8217b84 ("USB: Add driver to control USB fast charge for
+>> iOS devices")
+>> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+>> ---
+>> =C2=A0drivers/usb/misc/apple-mfi-fastcharge.c | 24 +++++++++++++++++++++=
+--
+>> -
+>> =C2=A01 file changed, 21 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/drivers/usb/misc/apple-mfi-fastcharge.c
+>> b/drivers/usb/misc/apple-mfi-fastcharge.c
+>> index
+>> ac8695195c13c8752076e4391ac81a9da3780c44..8e852f4b8262e6e8fcd33883be8
+>> c5696f19b9ee9 100644
+>> --- a/drivers/usb/misc/apple-mfi-fastcharge.c
+>> +++ b/drivers/usb/misc/apple-mfi-fastcharge.c
+>> @@ -44,6 +44,7 @@ MODULE_DEVICE_TABLE(usb, mfi_fc_id_table);
+>> =C2=A0struct mfi_device {
+>> =C2=A0	struct usb_device *udev;
+>> =C2=A0	struct power_supply *battery;
+>> +	struct power_supply_desc battery_desc;
+>> =C2=A0	int charge_type;
+>> =C2=A0};
+>> =C2=A0
+>> @@ -178,6 +179,7 @@ static int mfi_fc_probe(struct usb_device *udev)
+>> =C2=A0{
+>> =C2=A0	struct power_supply_config battery_cfg =3D {};
+>> =C2=A0	struct mfi_device *mfi =3D NULL;
+>> +	char *battery_name;
+>> =C2=A0	int err;
+>> =C2=A0
+>> =C2=A0	if (!mfi_fc_match(udev))
+>> @@ -187,23 +189,38 @@ static int mfi_fc_probe(struct usb_device
+>> *udev)
+>> =C2=A0	if (!mfi)
+>> =C2=A0		return -ENOMEM;
+>> =C2=A0
+>> +	battery_name =3D kasprintf(GFP_KERNEL,
+>> "apple_mfi_fastcharge_%d-%d",
+>> +				 udev->bus->busnum, udev->devnum);
+>
+> Looks fine to me although I don't know how common this construct is.
+>
+> If others think this won't work, you can use the ever increasing id as
+> used in drivers/hid/hid-steelseries.c
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 69 issues are still open and 16 have already been fixed.
+Hi Bastien,
 
-Some of the still happening issues:
+Thanks for the review!
 
-Ref  Crashes Repro Title
-<1>  195056  Yes   possible deadlock in ocfs2_try_remove_refcount_tree
-                   https://syzkaller.appspot.com/bug?extid=1fed2de07d8e11a3ec1b
-<2>  58588   Yes   possible deadlock in dqget
-                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-<3>  42999   Yes   possible deadlock in ocfs2_acquire_dquot
-                   https://syzkaller.appspot.com/bug?extid=51244a05705883616c95
-<4>  19736   Yes   possible deadlock in ocfs2_reserve_suballoc_bits
-                   https://syzkaller.appspot.com/bug?extid=5d516fba7bc3c966c9a9
-<5>  13063   Yes   possible deadlock in ocfs2_reserve_local_alloc_bits
-                   https://syzkaller.appspot.com/bug?extid=843fa26882088a9ee7e3
-<6>  12679   Yes   possible deadlock in ocfs2_init_acl
-                   https://syzkaller.appspot.com/bug?extid=4007ab5229e732466d9f
-<7>  7371    Yes   possible deadlock in ocfs2_setattr
-                   https://syzkaller.appspot.com/bug?extid=d78497256d53041ee229
-<8>  2696    No    possible deadlock in ocfs2_xattr_set
-                   https://syzkaller.appspot.com/bug?extid=ba9a789bd1f4d21fcefe
-<9>  2409    No    possible deadlock in ocfs2_lock_global_qf
-                   https://syzkaller.appspot.com/bug?extid=b53d753ae8fb473e2397
-<10> 1359    Yes   possible deadlock in __ocfs2_flush_truncate_log
-                   https://syzkaller.appspot.com/bug?extid=6bf948e47f9bac7aacfa
+FWIW, this has been tested in QEMU via,
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+      -device usb-host,bus=3Dehci.0,vendorid=3D0x05ac,productid=3D0x12a8
+      -device usb-host,bus=3Dehci.0,vendorid=3D0x05ac,productid=3D0x12ab
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+And works as expected,
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+$ ls /sys/class/power_supply
+apple_mfi_fastcharge_2_2  apple_mfi_fastcharge_2_3
 
-You may send multiple commands in a single email message.
+C. Mitrodimas
+
+>
+> Cheers
+>
+>> +	if (!battery_name) {
+>> +		err =3D -ENOMEM;
+>> +		goto err_free_mfi;
+>> +	}
+>> +
+>> +	mfi->battery_desc =3D apple_mfi_fc_desc;
+>> +	mfi->battery_desc.name =3D battery_name;
+>> +
+>> =C2=A0	battery_cfg.drv_data =3D mfi;
+>> =C2=A0
+>> =C2=A0	mfi->charge_type =3D POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
+>> =C2=A0	mfi->battery =3D power_supply_register(&udev->dev,
+>> -						&apple_mfi_fc_desc,
+>> +						&mfi->battery_desc,
+>> =C2=A0						&battery_cfg);
+>> =C2=A0	if (IS_ERR(mfi->battery)) {
+>> =C2=A0		dev_err(&udev->dev, "Can't register battery\n");
+>> =C2=A0		err =3D PTR_ERR(mfi->battery);
+>> -		kfree(mfi);
+>> -		return err;
+>> +		goto err_free_name;
+>> =C2=A0	}
+>> =C2=A0
+>> =C2=A0	mfi->udev =3D usb_get_dev(udev);
+>> =C2=A0	dev_set_drvdata(&udev->dev, mfi);
+>> =C2=A0
+>> =C2=A0	return 0;
+>> +
+>> +err_free_name:
+>> +	kfree(battery_name);
+>> +err_free_mfi:
+>> +	kfree(mfi);
+>> +	return err;
+>> =C2=A0}
+>> =C2=A0
+>> =C2=A0static void mfi_fc_disconnect(struct usb_device *udev)
+>> @@ -213,6 +230,7 @@ static void mfi_fc_disconnect(struct usb_device
+>> *udev)
+>> =C2=A0	mfi =3D dev_get_drvdata(&udev->dev);
+>> =C2=A0	if (mfi->battery)
+>> =C2=A0		power_supply_unregister(mfi->battery);
+>> +	kfree(mfi->battery_desc.name);
+>> =C2=A0	dev_set_drvdata(&udev->dev, NULL);
+>> =C2=A0	usb_put_dev(mfi->udev);
+>> =C2=A0	kfree(mfi);
+>>=20
+>> ---
+>> base-commit: cd2e103d57e5615f9bb027d772f93b9efd567224
+>> change-id: 20250602-apple-mfi-fastcharge-duplicate-sysfs-0ef3864b21f8
+>>=20
+>> Best regards,
 
