@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-672006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43097ACC9C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF06ACC9DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF19316DB0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:05:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044F916B920
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F691239E7C;
-	Tue,  3 Jun 2025 15:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0337723C4F8;
+	Tue,  3 Jun 2025 15:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Lu7WMOiH"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbTk7AFu"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4151DA23;
-	Tue,  3 Jun 2025 15:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D594123BCF7;
+	Tue,  3 Jun 2025 15:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748963137; cv=none; b=hFf2d2zmDvP4FTsuKttw+p5BT1vt2L3RYsd9K1EspAtaBl7lHpm9DD+ua7R7yW/iTCydDP0JPdBYGPvMTVKPggto5koGQZWJ/CM/jRrPFwCtfyMQFpPV4DF2pss1rwDI6ijmFYE8vBkUacCQECsceBZU55zTfqW52o8CsjCKGgs=
+	t=1748963233; cv=none; b=h7YloyBZJ99KDTdSMvVWHehCCQtkrsLXB2VQ1lwhbX8ETPcNO97keHfmEV9e4W4IPOxP2ry2tsuRk1F8O1mRnRTZBEIlvRGyJkOuyx9um0GRChTqKct5UGryMPmORF0hyKTSYJ3lO53EsyhCHirRb3JajETsDhB/DZ93g+89XgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748963137; c=relaxed/simple;
-	bh=FxnkA/aVDrvUgAFOoBDT+AXrYzOamGDJS6lZtY1GVK0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=e1Bn962N7Ud26qAEb/6eJ+sA6bKgep4oqo9fKDSS8oPeRspDvI+8wH4F2eSdSeA/eWdSZt/PZ3NEj+wn5/srry+pTc/0kcnZjTjkKrb+goeJQC2RsfaHLwfAdSU47sKIzsv9yTuUKBErjhAnm5xhBpj2QmbuhVdBbJjRm6f5aS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Lu7WMOiH; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 722A641ED0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1748963133; bh=u75W7CrJry5PSsWILVQUlbbLDjglIU1VsldGoh1HdL0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Lu7WMOiHQ70LdZl5nv3BhlYL1rAbVKibnwb/foSODhZW3F2E5RHWrPy/VfE2mYyXh
-	 IGAd9y5ZMnwUjIysaIgE3YpLlJY87aagUYrBYC9U3UjcpKsYxUIysV06lKORiKXzLg
-	 fBCU1IvBKX2CScnaFejNKg5YPRjZvilgYM4e1+Nnp1zcaz1+wq6Y0UnZoxhZnUNdEV
-	 i4wxN0fJ/gjEqugyryjhusx6MiwVQsSSez2nZcqCf5RjfxDM2aFXhrKKggUYo00saJ
-	 1P/BvUuYOOz+Ccs0VjOzH9+rmJdFHkKMttTdFA5R6FniC0p0inKL8C0ItnDGRTggfL
-	 aRchLLoGELZaw==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 722A641ED0;
-	Tue,  3 Jun 2025 15:05:33 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan
- <surenb@google.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jann Horn <jannh@google.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs/mm: expand vma doc to highlight pte freeing,
- non-vma traversal
-In-Reply-To: <1b340b71-6664-48ff-b783-aa89fa5b0b16@lucifer.local>
-References: <20250602210710.106159-1-lorenzo.stoakes@oracle.com>
- <87bjr59634.fsf@trenco.lwn.net>
- <9fc9ac50-abce-48bd-979f-2e00b26917b5@lucifer.local>
- <8734cg9auh.fsf@trenco.lwn.net>
- <ea8c2be9-0af0-445b-b7fe-fd9e80bd6a65@lucifer.local>
- <87tt4w7uxo.fsf@trenco.lwn.net>
- <1b340b71-6664-48ff-b783-aa89fa5b0b16@lucifer.local>
-Date: Tue, 03 Jun 2025 09:05:32 -0600
-Message-ID: <87ldq87tmr.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1748963233; c=relaxed/simple;
+	bh=8V2kmbUZiu9hSlXFWJGJ4smleoQNWTcBNXYPPBlHjmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JNm1UerunCfxN/9Fe2PeRI2meKn1gikJzTZB/FmYgZZEV8/SNHZ5tPQP0omML/DFZR1qyHFDzEPVPDGZtyrMmoENFb8ip2Vq5ceHGq0GF5ms5iQ6XWmpFpEqlxWrQrIjGSvEBIEo1KBJKgzG1J/oQ7mGXhkxofvyjtY5HvXMmGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbTk7AFu; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-747fba9f962so951584b3a.0;
+        Tue, 03 Jun 2025 08:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748963229; x=1749568029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rHRcx0Q2kd7s5w9xmY/qLmUUkyxdFzsoRB5ggIvT+6M=;
+        b=YbTk7AFu9Ekm9Aod/0bD39/25yQrjNj68yTj5shjJBHZee2LDeefp53mdyKrc04DT1
+         LUwEhkS054F2vXJY0zPyyiPGvKoAc8PQ7ubhRcTdWHnyAEEnul/ouLt2/cOmtLB3oSZq
+         VI8tQZDoTUqlP0MBjhL4tQoZXIkEM2MQRATBX7wfs81UlMylf3PAs2wcRJeYX16qZIhV
+         DGpy+kBhcOJu06+mcveYTSS/k8W7pUtKrVVa3McyCo0v7jGsKrNhyN6dJZ9SicqrVf8H
+         6jvcvs7gmd4QKZpvptxsX5PjT2AB+zEHQMuxbVi5tBk8SDFy40Zosx8tx3URVy3uz0Ik
+         L81A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748963229; x=1749568029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rHRcx0Q2kd7s5w9xmY/qLmUUkyxdFzsoRB5ggIvT+6M=;
+        b=isi4MSGk0JHX7M+Aslx3t2I4eBkP2Imv7SpG/V2Omwh5i6jNoAeAGKCZiROPLjgOZy
+         F1CvDKGiqjg/knc8RC5Naof4VdceaV7UnHXpDlq6yaAGSkQ9pW/oENr1Y5uXpnX/MUwt
+         eyfgv7iWSY3jt93hNp+kh+pO41HP7RpsMLlQWKhLTglqHdZbQOyPjR/jJYbbOoqPiYE9
+         /qBX0/59kEnv09rrQzN4yzMsB8zXGJiwy0ursl9xJrrA2Vlz6BsEQnT9oImnLIT2eWri
+         eQyBT26eZ6nI3wx71dgp/Fg9yvunDuU1lPc3oDLOa1B4ql1dzfsX7IplLWxa8dYR0R2j
+         rUxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+LIeY78Y/3ALe9UodHe0gy5AZiVW1sOB/XQd3q4Fz5Y1OnpmOgsxZbxn5dhUBGZHFsmGVmr0jaTNTcnbg@vger.kernel.org, AJvYcCUEl/SkggVTTSGFtlyyGnrgLiFdB6xIbGuZGr2YfRhqwuhBH8/W7b9i0DI8c07Xi189dyI=@vger.kernel.org, AJvYcCUVUnlgmdAJneRoUcTK314lgNe7RDxrEUg3PEkV4i7LqA5/HC7BfdWJjfBa9aG9QeD7aLoF+g32@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7XBTiXBv4zz5GyBVAa0b3QnMrTg/5LCp6H+jubgIhd64JUozK
+	tnuZhZGjy7k+wFXuOj0hL/C4HPqLKqtcYFpN9LJS94LSSwBZUpltTwMhaCLjSg==
+X-Gm-Gg: ASbGncvXo/7RXftK2Q+vNEPJrsZYfZkahLIZJ71bhSTkSQMBLR0Yps+kbGHQKQWC4On
+	Ry0PYyzxwcPgD1j6DL3E6kjddnfPgmoGM9gUCwY4RQvWsVI0baNmqzfDQL5PlyN60RsjRIObVlp
+	bPpM6czUE3jyxEyyAlxRwf1cRj+bvyHnn1EIqYJo+tTGc3UIkYb6qlt5hdhjvUqBkq4rmZMHWj0
+	Pf6bM/Z10uq1qh5AxxpISDOyGGlT4/F4rT4Vt7kFngAa2Y/t7gIq70TT2EnuDHGGFKWE78EShDD
+	qGA+cT+LGVIofN9naxjJB6w1NeXdQKAHAxzTuP5iF93zT5iG9htyHx1mjyE8imTa0anQeB41A1R
+	rTw==
+X-Google-Smtp-Source: AGHT+IF0pZpF9yVqhFdo6KrG71N2ZNsh9D4aeXFDJnmId/+aHoYpiDUuxam3stwW5F7pvrA6H0vAzA==
+X-Received: by 2002:a05:6a00:194a:b0:746:2ae9:fc49 with SMTP id d2e1a72fcca58-747fe29e165mr3581505b3a.9.1748963229373;
+        Tue, 03 Jun 2025 08:07:09 -0700 (PDT)
+Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:c672:ef11:a97b:5717])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-747afeab0d0sm9461782b3a.44.2025.06.03.08.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 08:07:08 -0700 (PDT)
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Bui Quang Minh <minhquangbui99@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH net] virtio-net: drop the multi-buffer XDP packet in zerocopy
+Date: Tue,  3 Jun 2025 22:06:13 +0700
+Message-ID: <20250603150613.83802-1-minhquangbui99@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> writes:
+In virtio-net, we have not yet supported multi-buffer XDP packet in
+zerocopy mode when there is a binding XDP program. However, in that
+case, when receiving multi-buffer XDP packet, we skip the XDP program
+and return XDP_PASS. As a result, the packet is passed to normal network
+stack which is an incorrect behavior. This commit instead returns
+XDP_DROP in that case.
 
-> Thanks, I appreciate that. So I want to address your concerns as well as I
-> can. I think I have misunderstood you a little bit here too (text is a poor
-> medium, yada yada) so let me try to nail down what I feel is the sensible
-> way forward:
->
-> 1. Once I am confident I have correctly addressed Jann's feedback I'll
->    respin a v2 with the various 'sins' in place for the time being.
->
-> 2. I will also drop the 'since v6.14' stuff you rightly raised in this
-> respin.
+Fixes: 99c861b44eb1 ("virtio_net: xsk: rx: support recv merge mode")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+---
+ drivers/net/virtio_net.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-So far so good
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index e53ba600605a..4c35324d6e5b 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1309,9 +1309,14 @@ static struct sk_buff *virtnet_receive_xsk_merge(struct net_device *dev, struct
+ 	ret = XDP_PASS;
+ 	rcu_read_lock();
+ 	prog = rcu_dereference(rq->xdp_prog);
+-	/* TODO: support multi buffer. */
+-	if (prog && num_buf == 1)
+-		ret = virtnet_xdp_handler(prog, xdp, dev, xdp_xmit, stats);
++	if (prog) {
++		/* TODO: support multi buffer. */
++		if (num_buf == 1)
++			ret = virtnet_xdp_handler(prog, xdp, dev, xdp_xmit,
++						  stats);
++		else
++			ret = XDP_DROP;
++	}
+ 	rcu_read_unlock();
+ 
+ 	switch (ret) {
+-- 
+2.43.0
 
-> 3. I will create a follow-up series to address these issues in this file
-> -in general-:
->
-> - Drop '!' from every reference so we get automated cross-referencing - I
->   think now I understand the point (hopefully!) that Sphinx with
->   automagically link every unique reference to a function/struct/etc. to
->   one another.
-
-If you just drop the "!" you'll run into the "struct" problem you
-mentioned before.  You'll need to take out "struct" as well if you go
-this route...
-
-> - Perhaps hack in a **struct ** prefix so we get the 'best of both worlds'
->   on this for types...?
-
-...so yes you'd need to do that.
-
-> I think my misapprehension about defining functions was not realising that
-> by doing :c:func:etc without the ! would automatically provide that
-> definition upon first reference to that function/struct/etc.?
->
-> Is that correct/sensible?
->
-> Would you want me to only use the :c:func: stuff in the _first_ mention of
-> a function and then to not use it from then on?
->
-> I wonder if the _appropriate_ use of :c:func:...: is in the actual
-> definition, but since it's not really practical to do that right now* is
-> simply doing it upon first mention a sensible 'least worst' approach here?
-
-Here, I think, we've gone a bit off track again.  The goal of the
-automarkup code was to *never* need to use the :c:func: markup.  Let's
-just say that ... certain members of our community ... found that markup
-entirely intolerable - and, in truth, it is ugly.  So I wrote the
-initial automarkup extension; now, any time that the docs build sees
-function(), it looks for documentation for that function and creates a
-cross-reference if that documentation is found.
-
-The goal is that you should never need the :c:gunk: ever.
-
-Thanks,
-
-jon
 
