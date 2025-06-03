@@ -1,149 +1,178 @@
-Return-Path: <linux-kernel+bounces-671879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3060EACC7A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BFAACC7CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7343A51C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:22:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086011643D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7D813C8E8;
-	Tue,  3 Jun 2025 13:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BB1231826;
+	Tue,  3 Jun 2025 13:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gh56Cndt"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="hvdmvmCC"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47BB5CDF1
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B70230D35;
+	Tue,  3 Jun 2025 13:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748956973; cv=none; b=SHC4iGip5hTOhcpKHeUMnWUewlcrTLL0fqOHNYONkB/kuQZckFatF9DDH3sbWNaZ8fILSM0XzjupEiF1XQdVlHQxoi4UOlrIO3cTkINX+JXZkI7qEjkWt47jtHz2e8kMAptYGExBcvoIH15yxVRHnRHNNDNhcoBuCqMmop1HXZQ=
+	t=1748957361; cv=none; b=lAI186tBv9w8JrC0dFgSoKww0CGhWjt3piofenhAHnI6FnIEOCy2a94wYBtWF+EMBkhjnrfmT4bZ5dViYtAR8Kdd3iiIf3H4PYbLLozsTXg4ej+KmzPnxUlYtvgPe5+tn9TMoZ7675QkJejVfGEhU5/cUDbpaJn3mbO7LeYjI4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748956973; c=relaxed/simple;
-	bh=S1oHPZ7gws5NN0CNhqDkGo3WqwE8z+Icusut02QCQqU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fDq8YtIxBAe83VcfDJi7xxWrlqSWRPv8RaADpC3Tpn2lHpSam3qawEApvxpFVqFvHhYu1J+oD9f85bNBRD6X7pkDjYE7k+aFQnPKrORAyfLw6XBENsOK4mujZjTkpQ5B+UGLA9jY/zXzZWZzvLHO2gBiWdqtdbkfH4uvFNFcKYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gh56Cndt; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a3798794d3so4749797f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 06:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748956970; x=1749561770; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9o1OG5gJMnbyvyc0DC5kIEpva13qObOrgWmt6a2YYaM=;
-        b=gh56CndtNQsmHG1BEDh91744ajyWIp8Hp8wMgFYBr0Lyot6UWJXpdg2X8nQwuSzuQs
-         x8159Y/PT68fX6O7pol5TE5VT5UQiinJ3vbVMjSu3N6P9hdJ47TxtGz81agxBGWg6t/5
-         Smoy81te9PW7r5i+/9xTS4QkEZUxmaRDBoSHOvOQgVgHepWkhuNoNnDAP4wvTWCKAX4L
-         THN9ZSU5hRfBQ0YEvEmIvhcDL2ZLoav1xyxw6Je+p7eoMqfDnPIG+h0HYhDeZi5LrJ3c
-         vOSt+S7geHgn7Nc3n+qH6fIXIh/IUfL/5I0eakQ3eaWIkDQD6fjLJgqalQOmXKA4Btbb
-         nQHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748956970; x=1749561770;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9o1OG5gJMnbyvyc0DC5kIEpva13qObOrgWmt6a2YYaM=;
-        b=r4aToE7+lKNd430v0axx93C6ZUlumBzVugQyh9y4UIaGA14u5UQUDzkIHa7PTprW62
-         lcMzZFy7aJ/hUPLQO9V2cDVRRHuVjUjEAtmGODmpgehn/VATqIPXI8YvTIqvyh475d9E
-         /qXbyA+Xc0HO1N/9XI4+SDdozebvgAkSLkGswCxJcr12hkanilLwcmun2YL69znF3Gr0
-         LMpvn+EhsxL+owoI/0Z6oi+VtEbic8585jaT6BS8xlFlJ8vXRa4v2ckiaQPlxbHiSwz8
-         8/iHf2dQUhwizQhqjaj/vFnPgtKNb9cGMx+F7KzcUkiLMUB35EEThdD/G+6FVsQIjo9N
-         14Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVskAWgcFMCFWJkV0stfF2V+xME6Omf/gN+cIZjhiuSHMUwNtZVONhMysT5aieDMKLLCqhgUGRL4VwpSXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/iuRvFv2XG4Ut0sE8FHtU8Lo6Fjh045F/68AE7eXjISZJgLGX
-	rQ8xbA/m6+tIZklvvyjc4BknpkxOkmGM2T/h9QxWkuqLSi7qXMP0gNRx94l9JLTEIgA=
-X-Gm-Gg: ASbGncugWm5KE8Cy3ubQczCPBdO6JD0teCRVbfQxc3YD3QBAKQVGal5F+vVO1HNt+vj
-	uz+X/wA8x0Ql4sIutkDMpgUaTWOJBKWEJwOwNZ7NStYBR8HrAL7Ptvobm6VEIW6b6hm0rjNbbm6
-	g9ZLOWnwjYv7Jqm8qA2qjguHmpBUhu+zfVp9ogizyzabUpThng5y4k9B/JnZZfPlj9pNXSFNl9I
-	LQpPZPZij5sQbAUHujB50ow+8Vdr+DlpZ+GVt+6YsPqo3ueYMtmBd68XjpFluBnBeeSqWbQpwNL
-	Lhp9BHXMd4pzf5yyhXcXJovZ532lQIdPci8aIL5SZ5uL9clT8T0jgEnl/p1fQyS6Y+3b7WrqbtM
-	vmGNdKfE2C36UsWQPC90TzP0pR/YuHQBT9Y70
-X-Google-Smtp-Source: AGHT+IGwM1OzgbnP1nAlLY2AaZkYQUoZH8oN0rymNrDg+49LiXGRY5PKTqcJSZ1tfnP2AMJFUo1T8Q==
-X-Received: by 2002:a05:6000:230d:b0:3a4:f8e9:cef2 with SMTP id ffacd0b85a97d-3a4fe39363cmr9636222f8f.36.1748956969885;
-        Tue, 03 Jun 2025 06:22:49 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:563:3654:17de:c930? ([2a01:e0a:3d9:2080:563:3654:17de:c930])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00972f3sm18588651f8f.69.2025.06.03.06.22.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 06:22:49 -0700 (PDT)
-Message-ID: <d950d77a-2bc0-4f8d-88c0-3d4da9cc772e@linaro.org>
-Date: Tue, 3 Jun 2025 15:22:48 +0200
+	s=arc-20240116; t=1748957361; c=relaxed/simple;
+	bh=9rC9wfImtJeRRZMvS7a471KH44YhZ50t9581jq7fj9c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D4HcpFp7XhL11fz2myG4YQoxrVNSRJjuqf2U3Ll9TO7f/ig0WOWEVFyJdPe6pM1Viifn1a5GpnCN77w18RWbP3ofvR1SNRr4OFi6oAfAyWI/o6VbHnbUYK+we6Lu6DIY49qhtESO+USdomsspvdv5dlhZf+1qiXDS5KP6Nc6V90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=hvdmvmCC; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bBWcs5tVRz9tKm;
+	Tue,  3 Jun 2025 15:23:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1748957021; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9rC9wfImtJeRRZMvS7a471KH44YhZ50t9581jq7fj9c=;
+	b=hvdmvmCCcNvGJiQxq49aEEttREH4Kcrp00Q7oSW5mNn41hphEgaWVBESxXsuO5aLcOxeI4
+	kBM4mKnPCkCpILWBTpCb6PSo3UGOA+WYMyTD//w0wKhPFbYt1rm2rqPCM7fePX1e77+jeK
+	kv5IJ7Ownc7Dgpvx8uJo+/FcwWZmxQxZ+QK9mNCUhxYGb7VbR2kDeUM77ay0lrytJaqx4R
+	4SCb4ZpTWKItU4FjMCurdR/mZNHHzUKq2NzhZwWbMNcyepX4SgeUKnkMq9GlypG6hp6kIo
+	B9BjVXFnlWUpYZE2CKHcoYfQpuLKVrbvXTmLo6RyC2AdjTwFneDRnaIzGGX+Ug==
+Message-ID: <8256799772c200103124c0c10490a9c1db04e355.camel@mailbox.org>
+Subject: Re: [RFC PATCH 0/6] drm/sched: Avoid memory leaks by canceling
+ job-by-job
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Philipp Stanner
+ <phasta@kernel.org>, Lyude Paul <lyude@redhat.com>, Danilo Krummrich
+ <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Pierre-Eric Pelloux-Prayer
+ <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Date: Tue, 03 Jun 2025 15:23:36 +0200
+In-Reply-To: <fae980fa-e173-4921-90e2-6a4f6b8833a8@igalia.com>
+References: <20250603093130.100159-2-phasta@kernel.org>
+	 <fae980fa-e173-4921-90e2-6a4f6b8833a8@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] arm64: dts: amlogic: meson-gxm-rbox-pro: fix wifi node
- name
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250603-topic-amlogic-upstream-bindings-fixes-dts-round-3-v1-1-2d54a476757d@linaro.org>
- <366cdccf-571c-4f7f-ae26-2e529de5d5ec@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <366cdccf-571c-4f7f-ae26-2e529de5d5ec@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: cdf397ce994b2e274e3
+X-MBO-RS-META: oepr7uqp6e6ppxxyqmaoqq5ms8qeqiiz
 
-On 03/06/2025 11:50, Krzysztof Kozlowski wrote:
-> On 03/06/2025 09:47, Neil Armstrong wrote:
->> This fixes the following error:
->> meson-gxm-rbox-pro.dtb: brcmf@1: $nodename:0: 'brcmf@1' does not match '^wifi(@.*)?$'
->> 	from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
->>
-> 
-> I already sent it:
-> https://lore.kernel.org/linux-arm-kernel/3c3c3652-be5f-4f54-a0b8-4829f9549116@linaro.org/
-> 
-> Can you pick that one instead?
+On Tue, 2025-06-03 at 13:27 +0100, Tvrtko Ursulin wrote:
+>=20
+> On 03/06/2025 10:31, Philipp Stanner wrote:
+> > An alternative version to [1], based on Tvrtko's suggestion from
+> > [2].
+> >=20
+> > I tested this for Nouveau. Works.
+> >=20
+> > I'm having, however, bigger problems properly porting the unit
+> > tests and
+> > have seen various explosions. In the process I noticed that some
+> > things
+> > in the unit tests aren't right and a bit of a larger rework will be
+> > necessary (for example, the timedout job callback must signal the
+> > timedout fence, remove it from the list and so on).
+>=20
+> General approach I follow when implementing any mock component is to=20
+> implement only as much is needed for a test to pass. Only add more
+> and=20
+> rework when a test/functionality is added which requires it.
+>=20
+> Specifically for timedout callback signaling I see that I had exactly
+> that added in the patch you linked as [2].
+> =C2=A0 > Anyways. Please comment on the general idea.
+>=20
+> I am obviously okay with it. :) Especially now that you verified it=20
+> works well for nouveau.
+>=20
+> What I am not that ecstatic about is only getting the Suggested-by=20
+> credit in 1/6. Given it is basically my patch with some cosmetic
+> changes=20
+> like the kernel doc and the cancel loop extracted to a helper.
 
-Sorry I forgot, of course I'll pick yours.
+Sign the patch off and I give you the authorship if you want.
 
-Neil
-
-> 
-> Best regards,
-> Krzysztof
+>=20
+> > @Tvrtko: As briefly brainstormed about on IRC, if you'd be willing
+> > to
+> > take care of the unit tests patch, I could remove that one (and,
+> > maaaaybe, the warning print patch) from the series and we could
+> > merge
+> > this RFC's successor version %N once it's ready. What do you think?
+>=20
+> Okay in principle but the first thing I would suggest you could try
+> is=20
+> to take my unit tests adaptations from [2] verbatim. Benefit of
+> keeping=20
+> everything in one series is more confidence we are merging a solid=20
+> thing. But I can take it on myself as a follow up too if you want.
+>=20
+> Regards,
+>=20
+> Tvrtko
+>=20
+> >=20
+> > P.
+> >=20
+> > [1]
+> > https://lore.kernel.org/dri-devel/20250522082742.148191-2-phasta@kernel=
+.org/
+> > [2]
+> > https://lore.kernel.org/dri-devel/20250418113211.69956-1-tvrtko.ursulin=
+@igalia.com/
+> >=20
+> > Philipp Stanner (6):
+> > =C2=A0=C2=A0 drm/sched: Avoid memory leaks with cancel_job() callback
+> > =C2=A0=C2=A0 drm/sched/tests: Implement cancel_job()
+> > =C2=A0=C2=A0 drm/sched: Warn if pending list is not empty
+> > =C2=A0=C2=A0 drm/nouveau: Make fence container helper usable driver-wid=
+e
+> > =C2=A0=C2=A0 drm/nouveau: Add new callback for scheduler teardown
+> > =C2=A0=C2=A0 drm/nouveau: Remove waitque for sched teardown
+> >=20
+> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_fence.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 35 +++++----
+> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_fence.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 7 ++
+> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_sched.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 35 +++++----
+> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_sched.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 9 +--
+> > =C2=A0 drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 8 +--
+> > =C2=A0 drivers/gpu/drm/scheduler/sched_main.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 37 ++++++----
+> > =C2=A0 .../gpu/drm/scheduler/tests/mock_scheduler.c=C2=A0 | 71 +++++++-=
+------
+> > -----
+> > =C2=A0 drivers/gpu/drm/scheduler/tests/sched_tests.h |=C2=A0 4 +-
+> > =C2=A0 include/drm/gpu_scheduler.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 9 +++
+> > =C2=A0 9 files changed, 115 insertions(+), 100 deletions(-)
+> >=20
+>=20
 
 
