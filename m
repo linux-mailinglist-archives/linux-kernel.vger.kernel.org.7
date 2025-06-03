@@ -1,168 +1,165 @@
-Return-Path: <linux-kernel+bounces-671924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F16ACC867
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:51:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5D7ACC856
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5183A5C1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:49:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D5BB7A8795
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A532223371F;
-	Tue,  3 Jun 2025 13:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAFF238C29;
+	Tue,  3 Jun 2025 13:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="CZ3pwL5t"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0057C26290;
-	Tue,  3 Jun 2025 13:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qaEYbHIj"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC7123371F;
+	Tue,  3 Jun 2025 13:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748958599; cv=none; b=AldPn/G4kEFGI+TaT/Os3kAKMv/T9NTX0GlWaRUMiEdxmJ+yunFAu+3IbgPUsLeZqCVqh8EZahZ/Ws1orvorV9v8vmaowzDVBfy4P3nq9HnqrV1EnZuJ3+/4hrkHIrhLihFNJyxp3TeJVXsNzT2+dcNs3ES3kbjgbZS3duDiN5Q=
+	t=1748958587; cv=none; b=mAbEMJYi9femRAx67PktYuPry8kih14CFRUhXduD0COX2+v1cyWaVik0qXym7cYR1rJB5aYM4aKRSyKjWq4eYvqgLIyA0G6p0fx7iDXnM99oSNmSlPYxgZkMw+GtmexMVdG9qlGIBLrSuYrAh1kKkAfk4w1pwk68M4WPtcH0I5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748958599; c=relaxed/simple;
-	bh=0qft8roO3BhMkBJROqNCAOJFha8+AZ4A+sT37xulpWM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=rZAEbKiYNgU1osYyK+bqfP8A66g2oyfOE/rCtskMLZPWyUoKYR1gpebuaZVgnh/I7Ek9tELjZMlZ7pEUDSAwVYog1RRz3lq9MhEQTn0117bFpPxEFnfl3eDRtUKjMBjx1nXgzHPbyllB9eJBdQXklM6mZ7HS8pbu327OgqSNhRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=CZ3pwL5t reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=aLh7SmPBkBQLWmbv7psrQymqaKUMU+aDUy+SYzEszUw=; b=C
-	Z3pwL5t9BTQIbkSmh2gZz3TQtF/iohvi7EMQ4X8Ygk4rzgNZyTiF/FpAX5qfqlTe
-	ECSArZv0kWN/XSW1uCqFkALp1anIPWy9IqSWGSVg7rKs5SROyvcUVJcuYjJei/e7
-	PZXyzKvOtH+GDdShCWh3bi9DJBoVKX4vSzJRe87nq0=
-Received: from 00107082$163.com ( [111.35.189.95] ) by
- ajax-webmail-wmsvr-40-103 (Coremail) ; Tue, 3 Jun 2025 21:49:17 +0800 (CST)
-Date: Tue, 3 Jun 2025 21:49:17 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Peter Zijlstra" <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mingo@kernel.org,
-	yeoreum.yun@arm.com, leo.yan@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf/core: restore __perf_remove_from_context when
- DETACH_EXIT not set
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <6487969b.b907.19735e42e05.Coremail.00107082@163.com>
-References: <20250603032651.3988-1-00107082@163.com>
- <20250603083304.34132-1-00107082@163.com>
- <20250603091352.GJ21197@noisy.programming.kicks-ass.net>
- <2633d43d.ae30.1973564f5e5.Coremail.00107082@163.com>
- <20250603125056.GI39944@noisy.programming.kicks-ass.net>
- <20250603125440.GA35970@noisy.programming.kicks-ass.net>
- <6487969b.b907.19735e42e05.Coremail.00107082@163.com>
-X-NTES-SC: AL_Qu2fCvWet00u4SGdY+kXn0oTju85XMCzuv8j3YJeN500tSTX4wA4cW9GFHDV986uDAqhoAiVSRNw8OpieZNiVY4BISCOyU0xATAzW53hFcm6
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1748958587; c=relaxed/simple;
+	bh=oOflVTrjIKfKjHI3/rAtRo6kTL1xuh9s0r9Kr/eceso=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AA/f7I0wZJDZzqnv9qD6K3713qMmYrzlM88zPbijQrNfATTQcUDtv4SlzgqHtcsWbraBlh6VroSbr0RE+mWihYzIAQYeE1zL+hU5zVXOLCpjoBiF8Y4EG3IEQDdztsLzM2ABjwoE6dBBw2gOOLMtbMdqW/HCS0NnLL2Nz8ladeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qaEYbHIj; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55373DDQ031542;
+	Tue, 3 Jun 2025 13:49:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=V/5GvlFUG4VzYX1Xrnq2YgcwHiE0tNl19SS43t8b2
+	7Y=; b=qaEYbHIjCVvn4EFZ2vdySqKPQtCRsTmarO6imYu1JHHh6UuGWrJlMLsyT
+	V2JwSE9MPyFc5O7nwjspgrwMW+WmTpe7PxgkKuBMEPTY7Twb3HipwI9aTqJjdGIG
+	5+gEhjKpvWBJll+qt1tDQYJQO2PQccHWqT2Ni3so5nDqVK+FsnhV1UJhXOzytKl1
+	hRCFl+Rr5cuDFG0dcf7dCXGKxGKC/TFzd/8WIqlcJjyfEibdTAMt5IsvyO2yTwwH
+	0+rJY14G+jwGNWkzR0gCcOa7ObVYCqYkHGjQ+DeR6BT/nfeetFM4wPesLZiKP/MR
+	vXARSSPRH9NtwaayzDk8MiPQQM/OA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471gf04ruu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Jun 2025 13:49:41 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 553A0pOT031636;
+	Tue, 3 Jun 2025 13:49:40 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 470cfyu71q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Jun 2025 13:49:40 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 553DnaSh25821796
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 3 Jun 2025 13:49:36 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C01E20040;
+	Tue,  3 Jun 2025 13:49:36 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B3A920043;
+	Tue,  3 Jun 2025 13:49:36 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  3 Jun 2025 13:49:36 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] s390/mm: Fix in_atomic() handling in do_secure_storage_access()
+Date: Tue,  3 Jun 2025 15:49:36 +0200
+Message-ID: <20250603134936.1314139-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <b3624f4.bde4.197360db3ea.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZygvCgD3H+Je_T5o+yETAA--.13827W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbBkAZhqmg+9NnRwgADs2
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: cwz5uSt7-0ETBNBBpzgK1cdANnsHMkw0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjAzMDExNyBTYWx0ZWRfX/sMPPzX7+zzj TFgkl/7brEY/cX+ZTbbbdjNzguz+J9cIcpMxvieb8odjB+nifndZnTeRwdwppfmQ8HkSAaQJ2Pd Qs/aQt8N6N4XdOxYepl77MqA/Lei5693pqXo50fy8azBrz0GdpW4I2omFF5ZQENPgZi46ombGsw
+ S89RWqU9twHLPhmswIVjbMo1C9Prdtib1U/z2jpgiJNwl30d8UxnoLG/yGYZQjZTDe5oSPko1VN k9ekvT3PacGokAYWOf0eet/SzhoZuTdYiM/BQVbJp4EksjuxOLzvjI/QQ5EKZR1irlKeAs+vscl P7Tk5sp5Q7w5K3FaPqp/Sqc51l4/XIN21AZGt9zIq6DB/iI1Y2APQtidZwx2KAqx2At5gqSzn4N
+ pCgNNR4K9SRjXUYZT5nI9VHPfKoYUPhliuPE3pYwqowMjs6+M8Iejgl+orZdGEl8pmQ6JOCi
+X-Proofpoint-ORIG-GUID: cwz5uSt7-0ETBNBBpzgK1cdANnsHMkw0
+X-Authority-Analysis: v=2.4 cv=c+WrQQ9l c=1 sm=1 tr=0 ts=683efd75 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=3nF8smJztN8JD-OeeQ8A:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-03_01,2025-06-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ priorityscore=1501 mlxlogscore=825 phishscore=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506030117
 
-CgoKQXQgMjAyNS0wNi0wMyAyMTowMzo1NSwgIkRhdmlkIFdhbmciIDwwMDEwNzA4MkAxNjMuY29t
-PiB3cm90ZToKPgo+QXQgMjAyNS0wNi0wMyAyMDo1NDo0MCwgIlBldGVyIFppamxzdHJhIiA8cGV0
-ZXJ6QGluZnJhZGVhZC5vcmc+IHdyb3RlOgo+Pk9uIFR1ZSwgSnVuIDAzLCAyMDI1IGF0IDAyOjUw
-OjU2UE0gKzAyMDAsIFBldGVyIFppamxzdHJhIHdyb3RlOgo+Pj4gT24gVHVlLCBKdW4gMDMsIDIw
-MjUgYXQgMDY6NDQ6NThQTSArMDgwMCwgRGF2aWQgV2FuZyB3cm90ZToKPj4+IAo+Pj4gCj4+PiA+
-IChBcyB5ZW9yZXVtLnl1bkBhcm0uY29tIHBvaW50ZWQgb3V0LCAgdGhlIGNoYW5nZSBpbiBwZXJm
-X3JlbW92ZV9mcm9tX2NvbnRleHQoKSBtYWRlCj4+PiA+IHBlcmZfZXZlbnRfc2V0X3N0YXRlKCkg
-aGFwcGVuZWQgYmVmb3JlIGxpc3RfZGVsX2V2ZW50KCksIHJlc3VsdGluZyBpbiBwZXJmX2Nncm91
-cF9ldmVudF9kaXNhYmxlKCkKPj4+ID4gbm90IGNhbGxlZC4pCj4+PiAKPj4+IEFhaCwgZCcwaC4g
-TGV0IG1lIHNlZSB3aGF0IHdlIHNob3VsZCBkbyB0aGVyZS4KPj4KPj5Eb2VzIHRoaXMgaGVscD8g
-VGhpcyB3YXkgZXZlbnRfc2NoZWRfb3V0KCkgd2lsbCBjYWxsCj4+cGVyZl9jZ3JvdXBfZXZlbnRf
-ZGlzYWJsZSgpLgo+Pgo+Pgo+PmRpZmYgLS1naXQgYS9rZXJuZWwvZXZlbnRzL2NvcmUuYyBiL2tl
-cm5lbC9ldmVudHMvY29yZS5jCj4+aW5kZXggZjM0Yzk5ZjhjZThmLi5hZGJiMDM3MjgyNWYgMTAw
-NjQ0Cj4+LS0tIGEva2VybmVsL2V2ZW50cy9jb3JlLmMKPj4rKysgYi9rZXJuZWwvZXZlbnRzL2Nv
-cmUuYwo+PkBAIC0yNDk0LDkgKzI0OTQsOSBAQCBfX3BlcmZfcmVtb3ZlX2Zyb21fY29udGV4dChz
-dHJ1Y3QgcGVyZl9ldmVudCAqZXZlbnQsCj4+IAlpZiAoZmxhZ3MgJiBERVRBQ0hfUkVWT0tFKQo+
-PiAJCXN0YXRlID0gUEVSRl9FVkVOVF9TVEFURV9SRVZPS0VEOwo+PiAJaWYgKGZsYWdzICYgREVU
-QUNIX0RFQUQpIHsKPj4tCQlldmVudC0+cGVuZGluZ19kaXNhYmxlID0gMTsKPj4gCQlzdGF0ZSA9
-IFBFUkZfRVZFTlRfU1RBVEVfREVBRDsKPj4gCX0KPj4rCWV2ZW50LT5wZW5kaW5nX2Rpc2FibGUg
-PSAxOwo+PiAJZXZlbnRfc2NoZWRfb3V0KGV2ZW50LCBjdHgpOwo+PiAJcGVyZl9ldmVudF9zZXRf
-c3RhdGUoZXZlbnQsIG1pbihldmVudC0+c3RhdGUsIHN0YXRlKSk7Cj4+IAo+Cj5PaywgSSB3aWxs
-IGdpdmUgaXQgYSB0cnkgYW5kIHVwZGF0ZSBsYXRlci4KClNhZGx5IG5vLCBjYXVnaHQgYSBrZXJu
-ZWwgcGFuaWMgYXQgdGhlIGZpcnN0IHJvdW5kLi4uLgoKSSB0cmllZCB0byB1c2UgcGVyZiB0byBy
-ZXByb2R1Y2UgdGhpcywgYnV0IG5vIGx1Y2sgc28gZmFyLiBGb2xsb3dpbmcgaXMgdGhlIGNvZGUg
-SSB1c2VkIHRvIHJlcHJvZHVjZS4KCihUaGUgY29kZSBpcyBzaWxseSwgYnV0IHZhbGlkIEkgdGhp
-bmsuLi4uKQpUbyByZXByb2R1Y2UsIEkgdXNlIGZvbGxvd2luZyBzdGVwczoKT3BlbiB0d28gdGVy
-bWluYWxzOgoxLiBJbiB0ZXJtaW5hbCBBCm1rZGlyIC9zeXMvZnMvY2dyb3VwL215dGVzdAplY2hv
-ICQkID4gL3N5cy9mcy9jZ3JvdXAvbXl0ZXN0L2Nncm91cC5wcm9jcwoyLiBJbiB0ZXJtaW5hbCBC
-CltnKysgZm9sbG93aW5nIGNvZGUgaWYgbm90IGRvbmUgeWV0IGcrKyAtbyBwcm9maWxlciB4eC5j
-cHBdCi4vcHJvZmlsZXIgbXl0ZXN0CjMuIERvIHNvbWV0aGluZyBpbiB0ZXJtaW5hbCBBLCB1c3Vh
-bGx5IEkgd291bGQgcnVuIGZvbGxvd2luZyBjb21tYW5kIHVuZGVyIGtlcm5lbCBzb3VyY2UgdHJl
-ZQpmb3IgaSBpbiB7MS4uMjAwfTsgZG8gZmluZCAuLyAtbmFtZSBub3R0b2JlZm91bmQgPiAvZGV2
-L251bGw7IGRvbmUKNC4gd2FpdCBmb3IgNX4xMG1pbnRlcwo1LiBJbiB0ZXJtaW5hbCBCLCBjdHJs
-LUMgc3RvcCB0aGUgcHJvZmlsZXIKNi4gcmVib290CihPbiBteSBzeXN0ZW0sIHdpdGggNi4xNSBh
-dCBtb3N0IDQgcm91bmRzIG9mIHRlc3Qgd291bGQgY2F0Y2ggYSBrZXJuZWwgcGFuaWMuKQoKSSBj
-b3VsZCBub3QgcmVwcm9kdWNlIGl0IHdpdGggbXkgS1ZNLCBtYXliZSBJIG5lZWQgbW9yZSB0cmlh
-bHMuCk5vdCBzdXJlIHdoZXRoZXIgYW55b25lIGVsc2UgY291bGQgcmVwcm9kdWNlIHRoaXMuIAoK
-Ci0tLQojaW5jbHVkZSA8c3RkbGliLmg+CiNpbmNsdWRlIDxzdGRpby5oPgojaW5jbHVkZSA8dW5p
-c3RkLmg+CiNpbmNsdWRlIDxzdHJpbmcuaD4KI2luY2x1ZGUgPHN5cy9pb2N0bC5oPgojaW5jbHVk
-ZSA8bGludXgvcGVyZl9ldmVudC5oPgojaW5jbHVkZSA8YXNtL3VuaXN0ZC5oPgojaW5jbHVkZSA8
-c3lzL21tYW4uaD4KI2luY2x1ZGUgPHN5cy9zdGF0Lmg+CiNpbmNsdWRlIDxwb2xsLmg+CiNpbmNs
-dWRlIDxzaWduYWwuaD4KI2luY2x1ZGUgPGZjbnRsLmg+CiNpbmNsdWRlIDxlbGYuaD4KI2luY2x1
-ZGUgPHN0cmluZy5oPgoKI2luY2x1ZGUgPHZlY3Rvcj4KI2luY2x1ZGUgPHN0cmluZz4KI2luY2x1
-ZGUgPG1hcD4KI2luY2x1ZGUgPHVub3JkZXJlZF9tYXA+CiNpbmNsdWRlIDx1bm9yZGVyZWRfc2V0
-PgojaW5jbHVkZSA8YWxnb3JpdGhtPgp1c2luZyBuYW1lc3BhY2Ugc3RkOwoKCiNkZWZpbmUgTUFY
-TiAgNTEyCiNkZWZpbmUgTUFYQ1BVIDEyOAojZGVmaW5lIGVycm9yKG1zZykgZG8geyBwZXJyb3Io
-bXNnKTsgZXhpdCgxKTsgfSB3aGlsZSgwKQoKc3RhdGljIGxvbmcgcGVyZl9ldmVudF9vcGVuKHN0
-cnVjdCBwZXJmX2V2ZW50X2F0dHIgKnBlcmZfZXZlbnQsCgkJcGlkX3QgcGlkLCBpbnQgY3B1LCBp
-bnQgZ3JvdXBfZmQsIHVuc2lnbmVkIGxvbmcgZmxhZ3MpIHsKICAgIHJldHVybiBzeXNjYWxsKF9f
-TlJfcGVyZl9ldmVudF9vcGVuLCBwZXJmX2V2ZW50LAoJCSAgICBwaWQsIGNwdSwgZ3JvdXBfZmQs
-IGZsYWdzKTsKfQoKc3RydWN0IHBvbGxmZCBwb2xsc1tNQVhDUFVdOwovLyByZXMgZm9yIGNsZWFu
-dXAKc3RhdGljIGxvbmcgbG9uZyBwc2l6ZTsKbWFwPGludCwgcGFpcjx2b2lkKiwgbG9uZyBsb25n
-Pj4gcmVzOwpzdGF0aWMgbG9uZyBsb25nIGV2ZW50YyA9IDA7Cgp2b2lkIGludF9leGl0KGludCBf
-KSB7CiAgICBmb3IgKGF1dG8geDogcmVzKSB7CiAgICAgICAgYXV0byB5ID0geC5zZWNvbmQ7CiAg
-ICAgICAgdm9pZCogYWRkciA9IHkuZmlyc3Q7CiAgICAgICAgbXVubWFwKGFkZHIsICgxK01BWE4p
-KnBzaXplKTsKICAgICAgICBjbG9zZSh4LmZpcnN0KTsKICAgIH0KICAgIHJlcy5jbGVhcigpOwog
-ICAgcHJpbnRmKCJ0b3RhbCAlbGxkIGV2ZW50cyBjb2xsZWN0XG4iLCBldmVudGMpOwogICAgZXhp
-dCgwKTsKfQppbnQgcHJvY2Vzc19ldmVudChjaGFyICpiYXNlLCB1bnNpZ25lZCBsb25nIGxvbmcg
-c2l6ZSwgdW5zaWduZWQgbG9uZyBsb25nIG9mZnNldCkgewoJc3RydWN0IHBlcmZfZXZlbnRfaGVh
-ZGVyKiBwID0gTlVMTDsKCW9mZnNldCU9c2l6ZTsKCXAgPSAoc3RydWN0IHBlcmZfZXZlbnRfaGVh
-ZGVyKikgKGJhc2Urb2Zmc2V0KTsKCWV2ZW50YysrOwoJcmV0dXJuIHAtPnNpemU7Cn0KCmludCBt
-YWluKGludCBhcmdjLCBjaGFyICphcmd2W10pIHsKCWlmIChhcmdjPDIpIHsgcHJpbnRmKCJOZWVk
-IGNncm91cCBuYW1lXG4iKTsgcmV0dXJuIDE7IH0KCWNoYXIgeGJbMjU2XTsKCXNucHJpbnRmKHhi
-LCBzaXplb2YoeGIpLCAiL3N5cy9mcy9jZ3JvdXAvJXMiLCBhcmd2WzFdKTsKCWludCBjZ3JvdXBf
-aWQgPSBvcGVuKHhiLCBPX0NMT0VYRUMpOwoJaWYgKGNncm91cF9pZCA8PSAwKSBlcnJvcigiZXJy
-b3Igb3BlbiBjZ3JvdXAgZGlyIik7CglpbnQgY3B1X251bSA9IHN5c2NvbmYoX1NDX05QUk9DRVNT
-T1JTX09OTE4pOwoJcHNpemUgPSBzeXNjb25mKF9TQ19QQUdFX1NJWkUpOyAvLyBnZXRwYWdlc2l6
-ZSgpOwoJc3RydWN0IHBlcmZfZXZlbnRfYXR0ciBhdHRyOwoJbWVtc2V0KCZhdHRyLCAwLCBzaXpl
-b2YoYXR0cikpOwoJYXR0ci50eXBlID0gUEVSRl9UWVBFX1NPRlRXQVJFOwoJYXR0ci5zaXplID0g
-c2l6ZW9mKGF0dHIpOwoJYXR0ci5jb25maWcgPSBQRVJGX0NPVU5UX1NXX0NQVV9DTE9DSzsKCWF0
-dHIuc2FtcGxlX2ZyZXEgPSA5OTk5Oy8vNzc3OyAvLyBhZGp1c3QgaXQKCWF0dHIuZnJlcSA9IDE7
-CglhdHRyLndha2V1cF9ldmVudHMgPSAxNjsKCWF0dHIuc2FtcGxlX3R5cGUgPSBQRVJGX1NBTVBM
-RV9DQUxMQ0hBSU47CglhdHRyLnNhbXBsZV9tYXhfc3RhY2sgPSAzMjsKCWF0dHIuZXhjbHVkZV9j
-YWxsY2hhaW5fdXNlciA9IDE7CgkvLyBzdGFydCBwZXJmIGV2ZW50CglpbnQgaSwgaywgZmQ7Cgl2
-b2lkKiBhZGRyOwoJZm9yIChpPTAsIGs9MDsgaTxjcHVfbnVtJiZpPE1BWENQVTsgaSsrKSB7CgkJ
-cHJpbnRmKCJhdHRhY2hpbmcgY3B1ICVkXG4iLCBpKTsKCQlmZCA9IHBlcmZfZXZlbnRfb3Blbigm
-YXR0ciwgY2dyb3VwX2lkLCBpLCAtMSwgUEVSRl9GTEFHX0ZEX0NMT0VYRUN8UEVSRl9GTEFHX1BJ
-RF9DR1JPVVApOwoJCWlmIChmZDwwKSBlcnJvcigiZmFpbCB0byBvcGVuIHBlcmYgZXZlbnQiKTsK
-CQlhZGRyID0gbW1hcChOVUxMLCAoMStNQVhOKSpwc2l6ZSwgUFJPVF9SRUFELCBNQVBfU0hBUkVE
-LCBmZCwgMCk7CgkJaWYgKGFkZHIgPT0gTUFQX0ZBSUxFRCkgZXJyb3IoIm1tYXAgZmFpbGVkIik7
-CgkJcmVzW2ZkXSA9IHthZGRyLCAwfTsKCQlwb2xsc1trXS5mZCA9IGZkOwoJCXBvbGxzW2tdLmV2
-ZW50cyA9IFBPTExJTjsKCQlwb2xsc1trXS5yZXZlbnRzID0gMDsKCQlrKys7Cgl9CglzaWduYWwo
-U0lHSU5ULCBpbnRfZXhpdCk7CglzaWduYWwoU0lHVEVSTSwgaW50X2V4aXQpOwoKCXVuc2lnbmVk
-IGxvbmcgbG9uZyBoZWFkOwoJaW50IGV2ZW50X3NpemU7CglzdHJ1Y3QgcGVyZl9ldmVudF9tbWFw
-X3BhZ2UgKm1wOwoJd2hpbGUgKHBvbGwocG9sbHMsIGssIC0xKT4wKSB7CgkJZm9yIChpPTA7IGk8
-azsgaSsrKSB7CgkJCWlmICgocG9sbHNbaV0ucmV2ZW50cyZQT0xMSU4pPT0wKSBjb250aW51ZTsK
-CQkJZmQgPSBwb2xsc1tpXS5mZDsKCQkJYWRkciA9IHJlc1tmZF0uZmlyc3Q7CgkJCW1wID0gKHN0
-cnVjdCBwZXJmX2V2ZW50X21tYXBfcGFnZSAqKWFkZHI7CgkJCWhlYWQgPSByZXNbZmRdLnNlY29u
-ZDsKCQkJaW9jdGwoZmQsIFBFUkZfRVZFTlRfSU9DX1BBVVNFX09VVFBVVCwgMSk7CgkJCWlmICho
-ZWFkPm1wLT5kYXRhX2hlYWQpIGhlYWQ9bXAtPmRhdGFfaGVhZDsKCQkJaGVhZCA9IG1wLT5kYXRh
-X2hlYWQtKChtcC0+ZGF0YV9oZWFkLWhlYWQpJW1wLT5kYXRhX3NpemUpOwoJCQl3aGlsZShoZWFk
-PG1wLT5kYXRhX2hlYWQpIHsKCQkJCWhlYWQgKz0gcHJvY2Vzc19ldmVudCgoY2hhciopYWRkcitt
-cC0+ZGF0YV9vZmZzZXQsIG1wLT5kYXRhX3NpemUsIGhlYWQpOwoJCQl9CgkJCXJlc1tmZF0uc2Vj
-b25kID0gbXAtPmRhdGFfaGVhZDsKCQkJaW9jdGwoZmQsIFBFUkZfRVZFTlRfSU9DX1BBVVNFX09V
-VFBVVCwgMCk7CgkJfQoJfQoJaW50X2V4aXQoMCk7CglyZXR1cm4gMDsKfQo=
+Kernel user spaces accesses to not exported pages in atomic context
+incorrectly try to resolve the page fault.
+With debug options enabled call traces like this can be seen:
+
+BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1523
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 419074, name: qemu-system-s39
+preempt_count: 1, expected: 0
+RCU nest depth: 0, expected: 0
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<00000383ea47cfa2>] copy_page_from_iter_atomic+0xa2/0x8a0
+CPU: 12 UID: 0 PID: 419074 Comm: qemu-system-s39
+Tainted: G        W           6.16.0-20250531.rc0.git0.69b3a602feac.63.fc42.s390x+debug #1 PREEMPT
+Tainted: [W]=WARN
+Hardware name: IBM 3931 A01 703 (LPAR)
+Call Trace:
+ [<00000383e990d282>] dump_stack_lvl+0xa2/0xe8
+ [<00000383e99bf152>] __might_resched+0x292/0x2d0
+ [<00000383eaa7c374>] down_read+0x34/0x2d0
+ [<00000383e99432f8>] do_secure_storage_access+0x108/0x360
+ [<00000383eaa724b0>] __do_pgm_check+0x130/0x220
+ [<00000383eaa842e4>] pgm_check_handler+0x114/0x160
+ [<00000383ea47d028>] copy_page_from_iter_atomic+0x128/0x8a0
+([<00000383ea47d016>] copy_page_from_iter_atomic+0x116/0x8a0)
+ [<00000383e9c45eae>] generic_perform_write+0x16e/0x310
+ [<00000383e9eb87f4>] ext4_buffered_write_iter+0x84/0x160
+ [<00000383e9da0de4>] vfs_write+0x1c4/0x460
+ [<00000383e9da123c>] ksys_write+0x7c/0x100
+ [<00000383eaa7284e>] __do_syscall+0x15e/0x280
+ [<00000383eaa8417e>] system_call+0x6e/0x90
+INFO: lockdep is turned off.
+
+It is not allowed to take the mmap_lock while in atomic context. Therefore
+handle such a secure storage access fault as if the accessed page is not
+mapped: the uaccess function will return -EFAULT, and the caller has to
+deal with this. Usually this means that the access is retried in process
+context, which allows to resolve the page fault (or in this case export the
+page).
+
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+---
+ arch/s390/mm/fault.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+index 3829521450dd..e1ad05bfd28a 100644
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -441,6 +441,8 @@ void do_secure_storage_access(struct pt_regs *regs)
+ 		if (rc)
+ 			BUG();
+ 	} else {
++		if (faulthandler_disabled())
++			return handle_fault_error_nolock(regs, 0);
+ 		mm = current->mm;
+ 		mmap_read_lock(mm);
+ 		vma = find_vma(mm, addr);
+-- 
+2.45.2
+
 
