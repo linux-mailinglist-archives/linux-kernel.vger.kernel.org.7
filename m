@@ -1,252 +1,242 @@
-Return-Path: <linux-kernel+bounces-672360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0EDACCE54
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:45:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801F3ACCE83
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68D1189499B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FEA176560
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D5A224AE8;
-	Tue,  3 Jun 2025 20:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34132223DCF;
+	Tue,  3 Jun 2025 20:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ioyIMqAD"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013066.outbound.protection.outlook.com [52.101.72.66])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="xig0onIz"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2EF2236E3;
-	Tue,  3 Jun 2025 20:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748983514; cv=fail; b=lVXuWyushap/2LGWDUguKIM1UDzp+/owD0SSztHM5ZpO1bCH5N2oErIpVcG4EuHx9K71EJkP8c5Xke3x0wWPi8k376a1pzZOC2bvMIWD4rOP0IKGqy169NFeekGS1Ez4BMJG593BAByZnrQBzli7Hnm0s5CqSAVT+RzvVC71H1U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748983514; c=relaxed/simple;
-	bh=xSHQYPNvzrCl45Wl70QRWuP2Drl7d8Rf4WhbL+C7mAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Zag2dZ1EmeNr4HdLaxLbQbk/UQvOEY0l1xElLTV/V+TclB1Gpz20iR4GzDNEq9hp5zYg2+swetGuCPk+0EcM3roMtTLMmJshmZ8FTDYhxQHaAN62iuIpjI0G9tOpVXWy9OYKvJ23om2TcqxXxGvQQiAElP2Wz+7OGjmfJjbZxo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ioyIMqAD; arc=fail smtp.client-ip=52.101.72.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IP8DcUgPI6XqWh8WKhYCOzmx1uO0ky2r/GF7E62lySZxD4hUWkKiTN81tHFXIRwnRmglbE2NsYBfoKtpzsN1Ad3mgpsQ4GOMelhQ5UvVxF6IRlAeM7T+vg+1yFLU0uXWGPO+PDrAqa0/efaicUcNf0wHFYlDReCDI/c8MLvBx0YiGSZqQLGaSQTWX3ts8jwkwxuuO8p91r6M5L9E2lwBrjXdKb5uuvh6MCHhrlB9hwaLe7SMPJOpi+rxgSL4EmDYhiTv50ZyZBgjwZ41zteCjSy9ShqQDdrsV9twK1F54usItySu4DEPWRx+qkV7WKlJ2sN5a73nIdlWdvDQJejamg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z9I07JanY+77tr0/+AOfmSncqNd8TSDl5vePmwqhwkU=;
- b=zFGpZRDQF4v0F9dQCsAK55Irq+Kc1ZXY608qD+97xhTkG7kmBoUwetRln6hT0AaxK03P3AUO5h4Vlkq2MMljQgv2rMYeuv/hx6n2Xs+i0xpJFYKic5dpGsACTjwKDYMPuP8D8Uy9kBFYR26FuqE5kPNqKdUGoHU6qUtmPdeXuxUcxtIC36rQD0TvRORmH8Z0euUb6cxtMvBmmHAQJJwJjaS63i+4Xl1GGti88Mea9K06RHCVFPCW36rzSYY6UH8ZwMwpKRF9OhRlSXWwNxv1BoDqwoXDCqOodQXtlRLz+P42m6TBjb11fJJSwoeeelOElCl7Dnt47yi5W0/NeI1VVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z9I07JanY+77tr0/+AOfmSncqNd8TSDl5vePmwqhwkU=;
- b=ioyIMqADx61rMJhVeP+o6U9cQ5upf0YUkt5zFyXjiGQbbJlc2714LBspGFGv8oh4Ct5pJHPgYfFNGlRuT8n9F4JREwxae6ARPpWulAPt1FgXRlbDe7fpdW+a5yWcTH05U+CuiXq5Umj+CSU5XwTA3dCfEr3/KhoZOXHv0F4QdEcULLOrMCw8U/jLzjx1i5cPv213r5u42XZBp9gW+BZYen63V6JzLtS8e47DNgZ35dbWEeKg4O8jI+YXi742pVTj9HMvUMktoVTm3yC9NGusmn04aJJp6tzLknabtbP6PjpDUwxdb37TxO+WxiOZTWZwCdBxF8I/a58AsdT4CHNFAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PA4PR04MB7566.eurprd04.prod.outlook.com (2603:10a6:102:f0::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.36; Tue, 3 Jun
- 2025 20:45:05 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8792.034; Tue, 3 Jun 2025
- 20:45:04 +0000
-Date: Tue, 3 Jun 2025 23:45:01 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, arnd@kernel.org
-Subject: Re: [PATCH net] net: enetc: fix the netc-lib driver build dependency
-Message-ID: <20250603204501.2lcszfoiy5svbw6s@skbuf>
-References: <20250603105056.4052084-1-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250603105056.4052084-1-wei.fang@nxp.com>
-X-ClientProxiedBy: VI1PR09CA0174.eurprd09.prod.outlook.com
- (2603:10a6:800:120::28) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15BC2153EA;
+	Tue,  3 Jun 2025 20:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748984035; cv=none; b=ELFy+YGdY5DLhbgylEzEMR1STELxv61DVjwdibOVkQv1fyNKNJxkVav6Yr9/y/+Ou1MzD+g62Cn+A3mPHlNx4HLijZng5WzK2e+gQ4c8W96VoY121eg+j/5t3cSTQofGA5isw4abhm9DcvXT9ou3pu52ZS9eqfSNCapWcPu/0ho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748984035; c=relaxed/simple;
+	bh=0BP/5dGCz0PCIngKdcnEAonCQdD6pNDUv6FrHnLlfWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ikXte/1XXfEhmtO24ZYpcoHu8jQB7XFcPO/IaveQnZ76cg5X/CZqcxNcn/qutnvMySOZ3gcvJ0OvvmTVAwgmLCDqIeiTgfT06qCO50Bl5lGtRwBO2wbgNqSJPZge4RS35I6vMC/1Woz5Jp6SLyjhL0WcLgHPEa9y8trr1sKqPl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=xig0onIz; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1748983580; bh=7DaMB/8Bf1cVB5O1oatwGQNMO20xEogCqa42wONtoKI=;
+	h=From:To:Cc:Subject:Date:From:To:CC:Subject;
+	b=xig0onIzdeIMdm9UlibZ5uNfmNCxzj8tUsn97tYmL+98HujpF/us/mKxckBX/7x9a
+	 Q7I/cTXye7qPrHTRnqSUV9Fi64TesJKHGUANHo8J/wwjU6N30w38J8ob17Vwg48/dZ
+	 798N9vgx6VBIJMO+XzkZHemqEWzS+5qs0pGXhBdbsL/wG7t1Wcd/pz16NMFOM6+O9w
+	 iFUVgTCDAZvjBU4e7fPYO//yvseQfAGsvNZpSPqGr8caeSXiA7GPYelE7BtdUBo9iS
+	 IJGc3m2aE3I76j67yaXs/Qrdrb577tn/a9Q7pzv+2qEWrHktk95loLIVjXQ/6G/Esa
+	 yp9YFF+2ky/Ig==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bBjRc2yJlz8slT;
+	Tue,  3 Jun 2025 22:46:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3639:fe00:a21f:4ce4:8495:5578
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3639:fe00:a21f:4ce4:8495:5578])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1/QoQQ0EeRSuWsH6+0EAiEPD2l8zEg0hjM=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bBjRY1kNcz8st8;
+	Tue,  3 Jun 2025 22:46:17 +0200 (CEST)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luis Gerhorst <luis.gerhorst@fau.de>
+Subject: [PATCH bpf-next] bpf: Clarify sanitize_check_bounds()
+Date: Tue,  3 Jun 2025 22:45:57 +0200
+Message-ID: <20250603204557.332447-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA4PR04MB7566:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c2bd9c9-02e7-4505-f430-08dda2df847b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LwnVHqRYSZ4Q1+2EKpKP2dXRNpGwqHn+Tg5Fr5yY7QTmQuoY9Wv4gSHW7hDY?=
- =?us-ascii?Q?jmGcXI4SAz2T0I1uGOD5jPuGBRGeAzCEEICJW2Q7gylSr7Whh8bc2uhk+0mC?=
- =?us-ascii?Q?XVVA+tMelh7afkKmyGBvl6Niqefw57Q0zHaKb/PD4HkC82gNBxLDbPRFT36w?=
- =?us-ascii?Q?6FmIWA2DKqC0k0jR3bUSkC+eNpbo4PglwwnPJJuuByg8BXp3eAkqTA8seSpI?=
- =?us-ascii?Q?ITxz2g2JiUIJxoncIgQWntzlwDmUKS+gosVjqLp5BxQva02ScYgTUgOni4Gj?=
- =?us-ascii?Q?msZaRr82TGbI8dZwQe1lht2rCBBFym1ORhTuHIgEL4oGkDeov4/jzc3ffGfx?=
- =?us-ascii?Q?movbXhhH9t2Uyv/3SqFzFjGNTTnR4XSIuA11b0AaMDYXvCHOq782TrAvgQA6?=
- =?us-ascii?Q?T3uCqfRMLI+IVjQsJtY//E8RnM4RsEaj9orbSdZFR0j4A1ZnXtO4T4gwFV15?=
- =?us-ascii?Q?PJa+GhUe6xTiV+oX4sIQ10kblyymrUnBFYWhvnmGg0gegziPr4ykGNLCSNXH?=
- =?us-ascii?Q?ybSSrrV0n6GR9Su4oyYr71OAcwZ+5y4dr1+0VF85zp3wz48cNAxvR53pPe7g?=
- =?us-ascii?Q?We/L1V3kEFy5zrrZ8/LMjhpYq3VMeFbAecsbR5T+DKJKnyQXV4+LssYOGppc?=
- =?us-ascii?Q?Vm4rMzdROszMiw+GxJyZFxAHGRdzqZEg5l2fojYigHOiuPH+3V3rWHJQmfWQ?=
- =?us-ascii?Q?2VwZxrkZ5IuvKSfa2JGt4PVc6lm5DSCmfI9Ir3Hpk2uJBSASDvrE1RasPqm5?=
- =?us-ascii?Q?56SLGhwKWimESemLE8cdPvGxUWP9vtsHYIvsZWwwDTKikkxfDt0tUabMVozQ?=
- =?us-ascii?Q?wXYm3vyb5B9fjLWmPjDuVM+qeESRXutJr4YU+hWx8QZ/IemNuri1E7Etraiz?=
- =?us-ascii?Q?7JC+LhnQo+7FRDrW72Wg6RXoRCcs0CMx4n9m61ZCLrDzVNIy4VHzgiR6TejN?=
- =?us-ascii?Q?LgbWpJfy7bFDzck5+gQKGfrZ5D6m6n4jTU4PXJVK8uskdaDZ/F/nDLRoCMo7?=
- =?us-ascii?Q?kj8vepa8aX3LIZ3kvNXzAHZmReYD44lhiXmnRdyPXGsjWCFsUX33zWB6/PCv?=
- =?us-ascii?Q?FvtTiXbuKvju9IpaGfLJWc5e253k0VSpLJS1/9ecam1ALQNoQJu9IxV1uQn7?=
- =?us-ascii?Q?w3/EnK0VLH8CHMrZzYXKqtrsDmHy5kAxEVS7Eme7eJ8gn+KddL0EhdN0Tpjs?=
- =?us-ascii?Q?ThAUHAC6W7YuKDALJOcroaRte6efm86D2iuSp1nbp4u2b1go0tk3dPpfN3kk?=
- =?us-ascii?Q?+s4YggCFS6Xi2CSthynPxHFKu/P0n+j2XXWn58seAaDDIY25enRWuvY313TE?=
- =?us-ascii?Q?fcQ/xRrrqDRlGpw8c8ullQrT5pQu2844NoUzMN9VQDd69eEIUuHEWCJ2f5YJ?=
- =?us-ascii?Q?CkOVtnaZp7UlBV4OPTQh1KU5C7hMgs/Ag6Ijb5UGq4Uoe0PCXMJWutd2uVxr?=
- =?us-ascii?Q?oFgpkvoiLy0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+rxeGfB2ZKGsOaKjf89eacFZ4sTLkCWdqYEIpjkThdUQMWgVH1KIdzE9AtE5?=
- =?us-ascii?Q?r93VmojMDg8jt5GQmORIJ0saQdVg+8Xf9wLPxFAzG/e5Vf/YzGyLySjexp81?=
- =?us-ascii?Q?SngdnwijLOmM0uc+psGQYeoEEKbnZvF+QRLucNamOk/Qurdby2ixFQs/GRQX?=
- =?us-ascii?Q?0n3Lp/5Y8177uBRDlx8xfwHIAVQuXO5MvaMEr3fDf2w8QK4Sez4r750ilfeZ?=
- =?us-ascii?Q?sQVJAi1rbkdp1ppDBfjcIMJGVagRxs0MDjaXASIFP4qkp1AXEdhrcx/zREHB?=
- =?us-ascii?Q?Hzz/un5UqK/Dxzbqtw8BlQNrt9cr1cVpC5UQb9+F1H3+6OoyILHCfVxAyD6O?=
- =?us-ascii?Q?tjJnhuUVSb+/xFb2SAKe74DRRNHPqnh3E6quu5d/gbMMUWHIlPr677h7TKXW?=
- =?us-ascii?Q?xz6y8K/NqKwP4rHcL+PpZvI/cS4d/5QG2Q/iuWUAkh8lsYUm46bNeRpb6+1J?=
- =?us-ascii?Q?/bSKyt/rEy6QGkZkXnkI/zS95Ve35iV7lGERhMP2IHyjAnlOskl2ljme2D0k?=
- =?us-ascii?Q?Hxv5PwTXXSqPkzrU8S98Wa+yYixpJOHWLPnv2pAg/xjcMsqqhGh994HDubFQ?=
- =?us-ascii?Q?cX0s11Jyf6ZKSxz3ZeRLR8RIMWFaOoLMVNe9CG8noy17la1/fi4ek9YDZV7D?=
- =?us-ascii?Q?HBdsqvJJAyTM/1WQyYuB11kqfEXv4HWpbcjnkt9pX1P18cFeBMLAJoibRdT9?=
- =?us-ascii?Q?s1OgeVzfylG6pQrxb0iMimEWuYe9WLKW7sC8XdwoyOFuL6olGxQSlQJRiD2p?=
- =?us-ascii?Q?QZm5dC4PA8W4xLOwqaqRqSt8jzrG8muiGXyk+fnJEFw3pFAaZfPYBr2069Bk?=
- =?us-ascii?Q?mr6QH4oEkCm4w3FInzpPEfANU/lw8LFl6OGGUgVDaDTDIKmzYwdqLIry6BmX?=
- =?us-ascii?Q?ZOIKlSuh/LIly6P2zkpgIKtLlL63v+v7ImLNGyA6bDfSksKx7JLxuqDZ/WnN?=
- =?us-ascii?Q?mNqR/WLbMXMQ308ObnNlSYgBASPXahy35GofFsH2SMGOWyENWpeUmCOlSR10?=
- =?us-ascii?Q?x5mHkfXrOCw1+y+oHvs9aPBxDmptoB1mM1uWypBdQxWn5B9JXv19/0PWJvC/?=
- =?us-ascii?Q?h/aAfHQ9VWnq25XKakj3Y3tk9oQfNfAKq6TSqX37ShESrV0q+BqvpSTyzmHJ?=
- =?us-ascii?Q?NRCAcLpSloUbPRWz5iquCJTtH4MbrINUpv8m25Kk7j6f9s4RKFHy6WYD29L5?=
- =?us-ascii?Q?g1NGJbSTkGKlNwByemfldO5qygCA1S0On7z1zF1FCQke4T9jhEL8KfAIx9pa?=
- =?us-ascii?Q?6NQ3DrN1T2ozJ7XUAxfBOD1ujrlc8X7xcMgJOLHcmRG3GThkmqoc0tvCQiK8?=
- =?us-ascii?Q?AhF3ttfMRObf9XA3lQOsWayRB+vggRxWVWj7Zy5QFbS0TtrEagmCdAQNjvfU?=
- =?us-ascii?Q?MimnewIYUN7FUmjcSaU+H/lbbugmO9a1FTLo9gwWMxBYPoI1+FpsTltyjrlj?=
- =?us-ascii?Q?qHYoLxYOVITuWGBm5XTUcWIPOhhepL+b5ctoJrQV2ZGdXqEpTwY06i0+6aGL?=
- =?us-ascii?Q?xAjVvVS/iTEsC13U7HnKiFQh4RYimEmx7bRtATX7jPG/rRMz+kP/aOPVV2pl?=
- =?us-ascii?Q?FCbP/jtRTSELbOrJs0MVSERd0YbjglDEB/boR0DJChVvzhHHntc4HQk4wakx?=
- =?us-ascii?Q?eA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c2bd9c9-02e7-4505-f430-08dda2df847b
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 20:45:04.8415
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fy6IfXHsZ+S1s03gIhkwKa0iP7g8OC1B1+vm8R5eg1fZ4UIgDIsNNb0Lif2hT5JX2RvLTukSVomi47h+I+5rOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7566
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 03, 2025 at 06:50:56PM +0800, Wei Fang wrote:
-> The kernel robot reported the following errors when the netc-lib driver
-> was compiled as a loadable module and the enetc-core driver was built-in.
-> 
-> ld.lld: error: undefined symbol: ntmp_init_cbdr
-> referenced by enetc_cbdr.c:88 (drivers/net/ethernet/freescale/enetc/enetc_cbdr.c:88)
-> ld.lld: error: undefined symbol: ntmp_free_cbdr
-> referenced by enetc_cbdr.c:96 (drivers/net/ethernet/freescale/enetc/enetc_cbdr.c:96)
-> 
-> Simply changing "tristate" to "bool" can fix this issue, but take into
-> account that the netc-lib driver needs to support being compiled as a
-> loadable module. So we can solve this issue and support "tristate" by
-> setting the default value.
-> 
-> Reported-by: Arnd Bergmann <arnd@kernel.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202505220734.x6TF6oHR-lkp@intel.com/
-> Fixes: 4701073c3deb ("net: enetc: add initial netc-lib driver to support NTMP")
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
-> Arnd Bergmann has posted a similar patch [1], but it has not been updated
-> since the first version, perhaps he is busy with more important things.
-> In order to fix the issue ASAP, I made this patch. And I added the
-> Reported-by tag to give credit to Arnd Bergmann.
-> [1] https://lore.kernel.org/imx/20250520161218.3581272-1-arnd@kernel.org/
-> ---
+As is, it appears as if pointer arithmetic is allowed for everything
+except PTR_TO_{STACK,MAP_VALUE} if one only looks at
+sanitize_check_bounds(). However, this is misleading as the function
+only works together with retrieve_ptr_limit() and the two must be kept
+in sync. This patch documents the interdependency and adds a check to
+ensure they stay in sync.
 
-Ok, so to summarize, you want nxp-netc-lib.ko to be separate from
-fsl-enetc-core.ko, because when you upstream the switch driver (also a
-consumer of ntmp.o), you want it to depend just on nxp-netc-lib.ko but
-not on the full fsl-enetc-core.ko.
+adjust_ptr_min_max_vals(): Because the preceding switch returns -EACCES
+for every opcode except for ADD/SUB, the sanitize_needed() following the
+sanitize_check_bounds() call is always true if reached. This means,
+unless sanitize_check_bounds() detected that the pointer goes OOB
+because of the ADD/SUB and returns -EACCES, sanitize_ptr_alu() always
+executes after sanitize_check_bounds().
 
-Does it practically matter, given the fact that the yet-to-be-upstreamed
-switch is DSA, and needs the conduit interface driver to load anyway?
+The following shows that this also implies that retrieve_ptr_limit()
+runs in all relevant cases.
 
->  drivers/net/ethernet/freescale/enetc/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
-> index e917132d3714..06759bedb193 100644
-> --- a/drivers/net/ethernet/freescale/enetc/Kconfig
-> +++ b/drivers/net/ethernet/freescale/enetc/Kconfig
-> @@ -17,6 +17,7 @@ config NXP_ENETC_PF_COMMON
->  
->  config NXP_NETC_LIB
->  	tristate
-> +	default y if FSL_ENETC_CORE=y && NXP_ENETC4=m
+Note that there are two calls to sanitize_ptr_alu(), these are simply
+needed to easily calculate the correct alu_limit as explained in
+commit 7fedb63a8307 ("bpf: Tighten speculative pointer arithmetic
+mask"). The truncation-simulation is already performed on the first
+call.
 
-So your logic here is: NXP_NETC_LIB has only one select/reverse dependency (NXP_ENETC4)
-and FSL_ENETC_CORE has 3 (FSL_ENETC, NXP_ENETC4, FSL_ENETC_VF).
+In the second sanitize_ptr_alu(commit_window = true), we always run
+retrieve_ptr_limit(), unless:
 
-If the only reverse dependency of NXP_NETC_LIB, NXP_ENETC4, becomes m,
-then NXP_NETC_LIB also becomes m, but in reality, FSL_ENETC_CORE, via
-cbdr.o, still depends on symbols from NXP_NETC_LIB.
+* can_skip_alu_sanititation() is true, notably `BPF_SRC(insn->code) ==
+  BPF_K`. BPF_K is fine because it means that there is no scalar
+  register (which could be subject to speculative scalar confusion due
+  to Spectre v4) that goes into the ALU operation. The pointer register
+  can not be subject to v4-based value confusion due to the nospec
+  added. Thus, in this case it would have been fine to also skip
+  sanitize_check_bounds().
 
-So you influence NXP_NETC_LIB to not become m when its only selecter is m,
-instead stay y.
+* If we are on a speculative path (`vstate->speculative`) and in the
+  second "commit" phase, sanitize_ptr_alu() always just returns 0. This
+  makes sense because there are no ALU sanitization limits to be learned
+  from speculative paths. Furthermore, because the sanitization will
+  ensure that pointer arithmetic stays in (architectural) bounds, the
+  sanitize_check_bounds() on the speculative path could also be skipped.
 
-Won't this need to change, and become even more complicated when
-NXP_NETC_LIB gains another selecter, the switch driver?
+The second case needs more attention: Assume we have some ALU operation
+that is used with scalars architecturally, but with a
+non-PTR_TO_{STACK,MAP_VALUE} pointer (e.g., PTR_TO_PACKET)
+speculatively. It might appear as if this would allow an unsanitized
+pointer ALU operations, but this can not happen because one of the
+following two always holds:
 
->  	help
->  	  This module provides common functionalities for both ENETC and NETC
->  	  Switch, such as NETC Table Management Protocol (NTMP) 2.0, common tc
-> -- 
-> 2.34.1
->
+* The type mismatch stems from Spectre v4, then it is prevented by a
+  nospec after the possibly-bypassed store involving the pointer. There
+  is no speculative path simulated for this case thus it never happens.
 
-What about this interpretation? cbdr.o uses symbols from NXP_NETC_LIB,
-so the Kconfig option controlling cbdr.o, aka FSL_ENETC_CORE, should
-select NXP_NETC_LIB. This solves the problem in a way which is more
-logical to me, and doesn't need to change when the switch is later added.
+* The type mismatch stems from a Spectre v1 gadget like the following:
 
-Then you can drop "select NXP_NETC_LIB" from NXP_ENETC4, because the
-dependency will transfer transitively via FSL_ENETC_CORE.
+    r1 = slow(0)
+    r4 = fast(0)
+    r3 = SCALAR // Spectre v4 scalar confusion
+    if (r1) {
+      r2 = PTR_TO_PACKET
+    } else {
+      r2 = 42
+    }
+    if (r4) {
+      r2 += r3
+      *r2
+    }
 
-diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
-index 616ea22ceabc..ef31eea0fc50 100644
---- a/drivers/net/ethernet/freescale/enetc/Kconfig
-+++ b/drivers/net/ethernet/freescale/enetc/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config FSL_ENETC_CORE
- 	tristate
-+	select NXP_NETC_LIB
- 	help
- 	  This module supports common functionality between the PF and VF
- 	  drivers for the NXP ENETC controller.
-@@ -47,7 +48,6 @@ config NXP_ENETC4
- 	select FSL_ENETC_CORE
- 	select FSL_ENETC_MDIO
- 	select NXP_ENETC_PF_COMMON
--	select NXP_NETC_LIB
- 	select PHYLINK
- 	select DIMLIB
- 	help
+  If `r2 = PTR_TO_PACKET` is indeed dead code, it will be sanitized to
+  `goto -1` (as is the case for the r4-if block). If it is not (e.g., if
+  `r1 = r4 = 1` is possible), it will also be explored on an
+  architectural path and retrieve_ptr_limit() will reject it.
+
+To summarize, the exception for `vstate->speculative` is safe.
+
+Back to retrieve_ptr_limit(): It only allows the ALU operation if the
+involved pointer register (can be either source or destination for ADD)
+is PTR_TO_STACK or PTR_TO_MAP_VALUE. Otherwise, it returns -EOPNOTSUPP.
+
+Therefore, sanitize_check_bounds() returning 0 for
+non-PTR_TO_{STACK,MAP_VALUE} is fine because retrieve_ptr_limit() also
+runs for all relevant cases and prevents unsafe operations.
+
+To summarize, we allow unsanitized pointer arithmetic with 64-bit
+ADD/SUB for the following instructions if the requirements from
+retrieve_ptr_limit() AND sanitize_check_bounds() hold:
+
+* ptr -=/+= imm32 (i.e. `BPF_SRC(insn->code) == BPF_K`)
+
+* PTR_TO_{STACK,MAP_VALUE} -= scalar
+
+* PTR_TO_{STACK,MAP_VALUE} += scalar
+
+* scalar += PTR_TO_{STACK,MAP_VALUE}
+
+To document the interdependency between sanitize_check_bounds() and
+retrieve_ptr_limit(), add a verifier_bug_if() to make sure they stay in
+sync.
+
+Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+Reported-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Link: https://lore.kernel.org/bpf/CAP01T76HZ+s5h+_REqRFkRjjoKwnZZn9YswpSVinGicah1pGJw@mail.gmail.com/
+Link: https://lore.kernel.org/bpf/CAP01T75oU0zfZCiymEcH3r-GQ5A6GOc6GmYzJEnMa3=53XuUQQ@mail.gmail.com/
+---
+ kernel/bpf/verifier.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index a7d6e0c5928b..e31f6b0ccb30 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -14284,7 +14284,7 @@ static int sanitize_check_bounds(struct bpf_verifier_env *env,
+ 		}
+ 		break;
+ 	default:
+-		break;
++		return -EOPNOTSUPP;
+ 	}
+ 
+ 	return 0;
+@@ -14311,7 +14311,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	struct bpf_sanitize_info info = {};
+ 	u8 opcode = BPF_OP(insn->code);
+ 	u32 dst = insn->dst_reg;
+-	int ret;
++	int ret, bounds_ret;
+ 
+ 	dst_reg = &regs[dst];
+ 
+@@ -14511,11 +14511,19 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	if (!check_reg_sane_offset(env, dst_reg, ptr_reg->type))
+ 		return -EINVAL;
+ 	reg_bounds_sync(dst_reg);
+-	if (sanitize_check_bounds(env, insn, dst_reg) < 0)
+-		return -EACCES;
++	bounds_ret = sanitize_check_bounds(env, insn, dst_reg);
++	if (bounds_ret == -EACCES)
++		return bounds_ret;
+ 	if (sanitize_needed(opcode)) {
+ 		ret = sanitize_ptr_alu(env, insn, dst_reg, off_reg, dst_reg,
+ 				       &info, true);
++		if (verifier_bug_if(!can_skip_alu_sanitation(env, insn)
++				    && !env->cur_state->speculative
++				    && bounds_ret
++				    && !ret,
++				    env, "Pointer type unsupported by sanitize_check_bounds() not rejected by retrieve_ptr_limit() as required")) {
++			return -EFAULT;
++		}
+ 		if (ret < 0)
+ 			return sanitize_err(env, insn, ret, off_reg, dst_reg);
+ 	}
+
+base-commit: cd2e103d57e5615f9bb027d772f93b9efd567224
+-- 
+2.49.0
+
 
