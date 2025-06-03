@@ -1,157 +1,128 @@
-Return-Path: <linux-kernel+bounces-671888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24072ACC7CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:29:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D459ACC7D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D3267A3E10
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:27:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072C41690E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9BD231A32;
-	Tue,  3 Jun 2025 13:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1016231C9F;
+	Tue,  3 Jun 2025 13:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pK/iBtt2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Cw6jC+X9"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD8A937;
-	Tue,  3 Jun 2025 13:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9FD231830
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 13:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748957342; cv=none; b=jB01zEBSAs2SwMs7PHCnMG+bPAEcQYuge4oBoVy7SgsAcjqrpVkX7kFCdrArMiCd43+0104NQ+R7nl12i7P7SvyrwF7crXyWX5vF2dn6DaX8x0sUZZ1DC2fIk8copJJirU8n2ar2FyBdkHK8VD/GWB+gdHMRvFdnhaN3/XAoh30=
+	t=1748957396; cv=none; b=VsJfsv6TLRvsrFTGLqTBc6odlk0UXKWs121fQ2ekILbmpL1yePuUNd5iSf3yCybLQBGQViOOJkm0G9TNez875sBtd5kna1epMwyzKm7EeXoVPRl76pz/ZReKkdnFsdfcB/XThKOLLXfp2YJJvo6reH78WE5z9najWt9YJYyfsrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748957342; c=relaxed/simple;
-	bh=F0kJRudsurFWvAfw/NQZAGVoSklCQBdR6GXq+HvgSFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2UPHcVURP2srPOFDQssY/UtLGxkmrI+uXQHpaxnz0ok3mhlcCLfRxfhC7ChBnEmlhpY1jP5LGfQTarQq9uYss9XPyQXdwwCzO2tXOB7zQ/2ZeJe4/HSOa22y/eILIFTFjnoqeCLyDndLnQJTN3vSzQu+xJG5ngeGvJNheLnYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pK/iBtt2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E95C4CEED;
-	Tue,  3 Jun 2025 13:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748957341;
-	bh=F0kJRudsurFWvAfw/NQZAGVoSklCQBdR6GXq+HvgSFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pK/iBtt299lLbE8VT7t/nTvPQLQVpuxt5Mgy8NKyug+Kt5+dx9+NGP4u5u+xdIGw7
-	 ErxkyqUEmTwVK8pfVCa230zvl0NCQzrf3gs4jun/ohCWBw8rFBIXlVwzYLwRcsS1Ic
-	 CHh7aoQw4ekcNVsGJPzkCevQ0PH3UFCJowUBmOKXOQmELF49W2lmENetlz4Nvsjhjr
-	 +4fHeeAQTOEU3759B95m8c1QxZZ4T+J1XLEn35Nsvskz2ObDUBGPhFQe2K8vdWYnC2
-	 Yt7RU+p+f31JlTY9kylbg1nKXUV3Gz5ipo+T4Avup6q0JOG9Odz6Rq3rF3E2B8yXf6
-	 5V9tpkm6HY6hQ==
-Date: Tue, 3 Jun 2025 15:28:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 3/8] drm/imagination: Use pwrseq for TH1520 GPU power
- management
-Message-ID: <20250603-whispering-jaybird-of-thunder-f87867@kuoka>
-References: <20250530-apr_14_for_sending-v3-0-83d5744d997c@samsung.com>
- <CGME20250529222405eucas1p18ed1254bf1b2d78468734656fec537e1@eucas1p1.samsung.com>
- <20250530-apr_14_for_sending-v3-3-83d5744d997c@samsung.com>
+	s=arc-20240116; t=1748957396; c=relaxed/simple;
+	bh=cALEzadqM287uTeXN80M2rgaHzMsWBb39Fvo+oH+CF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YLL1EIG6/EzEEmUY12cCstZcGttrSU3wBNsFbzhNbNVmMkdHOGCn9G67hq4AcRSL9R/f0t3EWQ7TuEg74584EN2HxAIZc0/u2UQIPGmom2Fcm5S+ZbGeOWAkrEql1SfsxnODV0Ze7cWa2JMn4zga4i7zewywGr8oaQIG8FiCY+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Cw6jC+X9; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-735ae79a44bso4561359a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 06:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1748957393; x=1749562193; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B4074lnBbCE6o69YYHhmehNVryk0Fo/i6I6lU14MnK0=;
+        b=Cw6jC+X92BlLi/wmBuOnLuUP/AdKqtDDP0eHpAV34V75HpR2Rine2TqLhJWOIkikGT
+         h3JyVF9uH21kDWmI7aJPeuEpOxWzQY8VrsoUasyxU4TNI9iW93d47z++cqZLgb1x1Zxy
+         2yyJFYgjIx4XMQlg8BCPa2wYywnp6CLvNw6mp9JBWzl6YQBE2OZoF8yXycqPvl3ZVohw
+         zRPmNRIDeYhGPlVxXRJKmiQTVTWeJ9yLf4xAM5cIhGXFijdFnSG2nB/RuqoSSdVR8RLJ
+         JCj7mCDrXKiv1FXQJHOfV2Dqk2PT2ckCkluMYs4VeGeoE+s7yA3NUBT6ttQI6iw3hgB5
+         9pdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748957393; x=1749562193;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B4074lnBbCE6o69YYHhmehNVryk0Fo/i6I6lU14MnK0=;
+        b=KCKA/V7zm5Lef7WQy84QyOx+9uPUX8tnfanHfVrWGyz1dYDNW2zgUe6C/CSUJJiNRn
+         czGe6Ff5SMh3AhJ7j393tJARkAZMEQxChkcjvVM0WYxoyGm5HZbGSrMI2ExDudI8ad6K
+         NcnCRDViI/NqnBUWxOVH6pKTecFjV4ThQF5E7gtN5tXqSHn7SECtNObV5tWyzC/JOhgM
+         M5UHQo/CbI3NWSR2CBqoEG2ZoXmV6WCy703Zpjg+6hGowo3izedyhlOyINFPqFtfHJrw
+         9UqaQ9ZVvRt7uPTyq8rTuHKYiAFujscmCPu0YvIi3ihayOVvczGKGPgwgBJiR7S4MAdK
+         pkfg==
+X-Forwarded-Encrypted: i=1; AJvYcCURJ7FAIjtAepRRs7n3n99jpEKJSmhHGNwVqADwcEL6GBO/xpVyKCYI+7kX5aOejvkhlf8MzDrJlkQTtow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWaulP9HvqhMu3/u10wf0ojGCKG4mI93DddvCIXuEmom69+FW7
+	ei0rYCBnrVdELEFxAF8+O7/dynyX68v2zaFX41bXOA1i0tChX2U77W90xvznK4k4f4s=
+X-Gm-Gg: ASbGnctYlWp9GzYbRI2I/BDQPHeeSDUnUdgM8LCfOxSDZSa2Br3LahgimEjl5TjIxgU
+	59wPFfIf0vDEoVNZ3nbxNOmcJHylvlufSk3//fwU9FZAmUAsgb1W6dQOwRNDuQlNBQGNSnC30oV
+	APRjoN+y97a0jzwOod7K3cik3JOa1Tbv+K/yLk2A5qExtnHzqRDQoM5/nIVr96FhbZbQnLYxVqb
+	IT/UrVc9sq/q4KC7mu15syFRX/pL/E8DPOiKiIsDmlxsnuzXPsHR/4N7hjlYnOyKmcQIjrTfHVL
+	jISYQSfDz3YLOW4py0JyiUXYWBbhKWbG6+gCz1cPMjpQ0FGMVNPp02snPZ+TKHEO60vSyzUlfcm
+	7RboqvWpyqkSHbzjUw1ES8lNdcX9ztSydY1Iy
+X-Google-Smtp-Source: AGHT+IF8kMDOg8rwg3c36JfYuMIR4bv1Il8ofYqW9P5T2sZ5z3aDyr/IKbsJ1zcRJnmWjOwA0bGxPg==
+X-Received: by 2002:a05:6830:370b:b0:735:b40e:2b47 with SMTP id 46e09a7af769-73758c0ad87mr9227072a34.5.1748957392742;
+        Tue, 03 Jun 2025 06:29:52 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:e835:af77:41c:3a1f? ([2600:8803:e7e4:1d00:e835:af77:41c:3a1f])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-735af879fe2sm1962952a34.40.2025.06.03.06.29.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 06:29:52 -0700 (PDT)
+Message-ID: <b1f0dbee-13bd-4e5c-90b9-c6d88cb15971@baylibre.com>
+Date: Tue, 3 Jun 2025 08:29:51 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250530-apr_14_for_sending-v3-3-83d5744d997c@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iio: accel: fxls8962af: Fix use after free in
+ fxls8962af_fifo_flush
+To: Sean Nyekjaer <sean@geanix.com>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250603-fxlsrace-v2-1-5381b36ba1db@geanix.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250603-fxlsrace-v2-1-5381b36ba1db@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 30, 2025 at 12:23:50AM GMT, Michal Wilczynski wrote:
-> Update the Imagination PVR DRM driver to leverage the pwrseq framework
-> for managing the power sequence of the GPU on the T-HEAD TH1520 SoC.
+On 6/3/25 7:25 AM, Sean Nyekjaer wrote:
+> fxls8962af_fifo_flush() uses indio_dev->active_scan_mask (with
+> iio_for_each_active_channel()) without making sure the indio_dev
+> stays in buffer mode.
+> There is a race if indio_dev exits buffer mode in the middle of the
+> interrupt that flushes the fifo. Fix this by calling
+> synchronize_irq() to ensure that no interrupt is currently running when
+> disabling buffer mode.
 > 
-> In pvr_device_init(), the driver now attempts to get a handle to the
-> "gpu-power" sequencer target using devm_pwrseq_get(). If successful,
-> the responsibility for powering on and off the GPU's core clocks and
-> resets is delegated to the power sequencer. Consequently, the GPU
-> driver conditionally skips acquiring the GPU reset line if the pwrseq
-> handle is obtained, as the sequencer's match function will acquire it.
-> Clock handles are still acquired by the GPU driver for other purposes
-> like devfreq.
+> Unable to handle kernel NULL pointer dereference at virtual address 00000000 when read
+> [...]
+> _find_first_bit_le from fxls8962af_fifo_flush+0x17c/0x290
+> fxls8962af_fifo_flush from fxls8962af_interrupt+0x80/0x178
+> fxls8962af_interrupt from irq_thread_fn+0x1c/0x7c
+> irq_thread_fn from irq_thread+0x110/0x1f4
+> irq_thread from kthread+0xe0/0xfc
+> kthread from ret_from_fork+0x14/0x2c
 > 
-> The runtime PM callbacks, pvr_power_device_resume() and
-> pvr_power_device_suspend(), are modified to call pwrseq_power_on() and
-> pwrseq_power_off() respectively when the sequencer is present.  If no
-> sequencer is found, the driver falls back to its existing manual clock
-> and reset management. A helper function,
-> pvr_power_off_sequence_manual(), is introduced to encapsulate the manual
-> power-down logic.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> Fixes: 79e3a5bdd9ef ("iio: accel: fxls8962af: add hw buffered sampling")
+> Cc: stable@vger.kernel.org
+> Suggested-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 > ---
->  drivers/gpu/drm/imagination/Kconfig      |  1 +
->  drivers/gpu/drm/imagination/pvr_device.c | 33 +++++++++++--
->  drivers/gpu/drm/imagination/pvr_device.h |  6 +++
->  drivers/gpu/drm/imagination/pvr_power.c  | 82 +++++++++++++++++++++-----------
->  4 files changed, 89 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/imagination/Kconfig b/drivers/gpu/drm/imagination/Kconfig
-> index 3bfa2ac212dccb73c53bdc2bc259bcba636e7cfc..737ace77c4f1247c687cc1fde2f139fc2e118c50 100644
-> --- a/drivers/gpu/drm/imagination/Kconfig
-> +++ b/drivers/gpu/drm/imagination/Kconfig
-> @@ -11,6 +11,7 @@ config DRM_POWERVR
->  	select DRM_SCHED
->  	select DRM_GPUVM
->  	select FW_LOADER
-> +  select POWER_SEQUENCING
-
-Messed indent.
-
->  	help
->  	  Choose this option if you have a system that has an Imagination
->  	  Technologies PowerVR (Series 6 or later) or IMG GPU.
-> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
-> index 8b9ba4983c4cb5bc40342fcafc4259078bc70547..19d48bbc828cf2b8dbead602e90ff88780152124 100644
-> --- a/drivers/gpu/drm/imagination/pvr_device.c
-> +++ b/drivers/gpu/drm/imagination/pvr_device.c
-> @@ -25,6 +25,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/pwrseq/consumer.h>
->  #include <linux/reset.h>
->  #include <linux/slab.h>
->  #include <linux/stddef.h>
-> @@ -631,10 +632,34 @@ pvr_device_init(struct pvr_device *pvr_dev)
->  	if (err)
->  		return err;
->  
-> -	/* Get the reset line for the GPU */
-> -	err = pvr_device_reset_init(pvr_dev);
-> -	if (err)
-> -		return err;
-> +	/*
-> +	 * Try to get a power sequencer. If successful, it will handle clocks
-> +	 * and resets. Otherwise, we fall back to managing them ourselves.
-> +	 */
-> +	pvr_dev->pwrseq = devm_pwrseq_get(dev, "gpu-power");
-> +	if (IS_ERR(pvr_dev->pwrseq)) {
-> +		int pwrseq_err = PTR_ERR(pvr_dev->pwrseq);
-> +
-> +		/*
-> +		 * If the error is -EPROBE_DEFER, it's because the
-> +		 * optional sequencer provider is not present
-> +		 * and it's safe to fall back on manual power-up.
-
-It is safe but why it is desirable? The rule is rather to defer the
-probe, assuming this is probe path.
-
-Best regards,
-Krzysztof
+> Changes in v2:
+> - As per David's suggestion; switched to use synchronize_irq() instead.
+> - Link to v1: https://lore.kernel.org/r/20250524-fxlsrace-v1-1-dec506dc87ae@geanix.com
+Were you able to find a way to reproduce the bug well enough to
+test this?
 
 
