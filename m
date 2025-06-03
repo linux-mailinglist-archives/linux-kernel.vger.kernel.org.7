@@ -1,83 +1,60 @@
-Return-Path: <linux-kernel+bounces-671305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC7AACBF78
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:11:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877B0ACBF6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD2A16DC4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1747B18914AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4F41F131A;
-	Tue,  3 Jun 2025 05:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92051F4616;
+	Tue,  3 Jun 2025 05:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WAP6lHRJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="aDovO5fi"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752E81F7060;
-	Tue,  3 Jun 2025 05:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B823F2C3261;
+	Tue,  3 Jun 2025 05:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748927485; cv=none; b=GusWUzXwSF8sJdS7MM7gc1dQt4+z9weXHuFc4wQdFDtb0dBAeCP6nh00LUXCSR8JBypQr72FT0K4FtTX39zuugrB+Egs1NpPurNvN2Eh5z+E4G6IOXz0vbl9FKzKK3gQjx0+Hk+gQAYzy2kTb/jGg7W8wS68Il+UPIyd6/2hZKY=
+	t=1748927009; cv=none; b=sVDQBVYEAdcjA2WZMsnFIlN5cdSF1Mke7/4XOZt+QnQH0YckVtATEXqtXLffuSVkiF+gtWzK0sg8VGG47HKLuifuZiDBH9RqKq80Or9lRp1579OpFFO/xgt1i++HD/zMXJQQ10vG59jo6KfB2LbbMGW1+GVnLRkXHBrJ7+I7YhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748927485; c=relaxed/simple;
-	bh=A4LDdea+SqFvSsp7QIZfn63yvE0Iup0Y5Vmq4FjSSs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BSYc9MW3FP2VaZlIkzueRtWLCn7u9Z9d1QjI8r6ZnGKd2vTfFH1LzvbfXFZxg4gUfpdMIhvRAKgJH5wa6jk2/QEI8bDKQACzRRAk204ewf7taWstsrF8nnEbeEZ/qcInMCxVTG+QUa/vXqOBeCRnLepkTLhpIDvpiwQCnYbCBtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WAP6lHRJ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748927484; x=1780463484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A4LDdea+SqFvSsp7QIZfn63yvE0Iup0Y5Vmq4FjSSs8=;
-  b=WAP6lHRJULfGwaBDordXZjf8BQRcOsFCpCjS30/1/tg88ILkEolyAecG
-   bWiH2FUOXr/QexAX+IQNsFUQBYnBCIXHbCSI245y5bPdDxTiPVVWbwDAN
-   DK+TGCG8jgOPpPuM5zHjfcuN4UANoJML80aBI2A6n67GUdFsoVQ3dskgV
-   VTeM11hlCdOI1AKRbO086hufp7JJ3ZRSfPqD4UNJqefDQ7Bgd1GVciGeh
-   7qQSK6KOzbEziCgD97ank7yWwu9Eha9LKnjapxzsRdFy/UcbYbiKcuOEb
-   Gle4ApLMQIenXhXIheqRWr+LZgDITGV3Vwkd3rYd6YmqdV6bfy6XLzAM/
-   A==;
-X-CSE-ConnectionGUID: bn3wGxucQx6Ju6oRqw7VvA==
-X-CSE-MsgGUID: NkivxYQTTmS3dVmg5AgLtg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="62007039"
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="62007039"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2025 22:07:47 -0700
-X-CSE-ConnectionGUID: vMpLU8zvR5e2O0JVHMgjXg==
-X-CSE-MsgGUID: glbqWyGzSAW042M4b3+m5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
-   d="scan'208";a="175700501"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa002.jf.intel.com with ESMTP; 02 Jun 2025 22:07:41 -0700
-Date: Tue, 3 Jun 2025 13:01:09 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: kvm@vger.kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	dan.j.williams@intel.com, aik@amd.com, linux-coco@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, vivek.kasireddy@intel.com,
-	yilun.xu@intel.com, linux-kernel@vger.kernel.org, lukas@wunner.de,
-	yan.y.zhao@intel.com, daniel.vetter@ffwll.ch, leon@kernel.org,
-	baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
-	tao1.su@intel.com, linux-pci@vger.kernel.org, zhiw@nvidia.com,
-	simona.vetter@ffwll.ch, shameerali.kolothum.thodi@huawei.com,
-	aneesh.kumar@kernel.org, iommu@lists.linux.dev,
-	kevin.tian@intel.com
-Subject: Re: [RFC PATCH 10/30] vfio/pci: Export vfio dma-buf specific info
- for importers
-Message-ID: <aD6BlXfuCGCOw4PM@yilunxu-OptiPlex-7050>
-References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
- <20250529053513.1592088-11-yilun.xu@linux.intel.com>
- <20250602133009.GC233377@nvidia.com>
+	s=arc-20240116; t=1748927009; c=relaxed/simple;
+	bh=W0OlLUg24npmRbi7FaBwFQJ8Sz1kEcWRUPcpU8Fsw+4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iXLMDcOkQmR1y5W52L1uB/tEjbXbjPouUwi1Ym40Z/Rve+LLOBnFj8DVfOTCJa54M7qiMy3SZjMJgxZg14MhwQjhT8/XnCvaBW81u03lfybTibTv03kn5dsVFQ/+vq0JNMtaoRwV0nryg7nRGZflTRNxae36ApICyFFuC27z9Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=aDovO5fi; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
+	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ojVvU2aglR1btkL9Xcwy4+f2CauLOAnpQP+oJKyOOz8=; b=aDovO5fiGQuOBmVN7vw84eHsT4
+	XPgHv/7Yx9H/W/mhSdX6C39qkUhGbTyfYJmwCRGq/ejPYosJnqSz30DURJB9JWo4UbIIkB4RvVhTp
+	Q1oxLxwBsxAQZlYFQG5fNXYRzYoBAyUSNET6FUKfaRbGCagvGr07NuAq9XJRJg+YUUDy2WqmHTjq1
+	PVDcaVwY5UMkt2Krbpesctqgo5qebdBBYm2tBHqOG9JHBdL3b/axzaHlBnG7rYPYrX2dUE3xcGEjN
+	M9uOlmb4Bmp49UCyjC3tdFqGBsSlwP28Srh67pRfoui0PPJ1P4dFWhJp6XT6yeHErNoQlHTeV+kb+
+	yLjG2RDw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uMJny-00AU2T-2y;
+	Tue, 03 Jun 2025 13:03:20 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 03 Jun 2025 13:03:18 +0800
+Date: Tue, 3 Jun 2025 13:03:18 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 6.16
+Message-ID: <aD6CFvN-fgiCs_-6@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,30 +63,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250602133009.GC233377@nvidia.com>
 
-On Mon, Jun 02, 2025 at 10:30:09AM -0300, Jason Gunthorpe wrote:
-> On Thu, May 29, 2025 at 01:34:53PM +0800, Xu Yilun wrote:
-> > Export vfio dma-buf specific info by attaching vfio_dma_buf_data in
-> > struct dma_buf::priv. Provide a helper vfio_dma_buf_get_data() for
-> > importers to fetch these data. Exporters identify VFIO dma-buf by
-> > successfully getting these data.
-> > 
-> > VFIO dma-buf supports disabling host access to these exported MMIO
-> > regions when the device is converted to private. Exporters like KVM
-> > need to identify this type of dma-buf to decide if it is good to use.
-> > KVM only allows host unaccessible MMIO regions been mapped in private
-> > roots.
-> > 
-> > Export struct kvm * handler attached to the vfio device. This
-> > allows KVM to do another sanity check. MMIO should only be assigned to
-> > a CoCo VM if its owner device is already assigned to the same VM.
-> 
-> This doesn't seem right, it should be encapsulated into the standard
-> DMABUF API in some way.
+Hi Linus:
 
-OK.
+The following changes since commit 0a84874c7e7dde5cdddc80a82093120e924a348b:
 
-> 
-> Jason
+  crypto: shash - Fix buffer overrun in import function (2025-05-27 13:43:32 +0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.16-p3
+
+for you to fetch changes up to b9802b54d41bbe98f673e08bc148b0c563fdc02e:
+
+  asm-generic: Add sched.h inclusion in simd.h (2025-05-30 20:56:48 +0800)
+
+----------------------------------------------------------------
+This push fixes a loongarch header regression and a module name
+collision on s390.
+----------------------------------------------------------------
+
+Eric Biggers (1):
+      crypto: s390/sha256 - rename module to sha256-s390
+
+Huacai Chen (1):
+      asm-generic: Add sched.h inclusion in simd.h
+
+ arch/s390/lib/crypto/Makefile | 3 ++-
+ include/asm-generic/simd.h    | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
