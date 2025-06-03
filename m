@@ -1,211 +1,350 @@
-Return-Path: <linux-kernel+bounces-672121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893D7ACCB36
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3E8ACCB3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D07F7A6802
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6686C166CD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223B023E329;
-	Tue,  3 Jun 2025 16:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3C923F27B;
+	Tue,  3 Jun 2025 16:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GFmL4mso"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XY8IFX/M"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF2322F767
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 16:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748967966; cv=none; b=kwp4kEuXIiuk9l/8xzBP5ep04TXm+ywTxP+P1sfsPb896KgaBQRfGWDJ9gsdJgDkMvc/FkNBbsKdNGdOtG6GyCQ19+QUkoPBvBCqJe+jO5AijBaAIPPuj0xJu/lClQX96URi1OyXgSuOar8q3YVc2Fqc4PkmM4AXfJKnTnX47aQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748967966; c=relaxed/simple;
-	bh=qYUkchjTxE1MzQV5k1KofmSbFrtEMfwqFdzUPzbBrHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axawRLPGDsj8K7/WyFy6KkLuZcD2m1682TUfQ0936Kx3TlXRfzfliPKTF1OCbJ3AEtK2lNnv9oAQ2++EKtkOST+5F1eAlfFBW7AuMvi1LT1nmbhwx7IuPzhfXJthcyU/GiKnqkqp9FdJ++zoaK78sKIdvc4rRFmuRWZbHmDp6GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GFmL4mso; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748967963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=I0elFj4iCpU3Q37dfy3qczDfEot5ZH9J+BNq48Sc/WI=;
-	b=GFmL4msoxVK/CJH6HWad2peOeRp055fW64AGnSqcWG56avuF19Rh7X+9swpDOjiL4vh+nh
-	txizmHf9/ICAp73mppGTCtAIkCcHGyNMAqFlT77zyYCdzBKwIGPhW1YTorUo4KyGFI98bd
-	b40EZgA6H4R9YnE9K3eIrMRcG5LuG9o=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-502--q-VAWbyPOubWzhB3Fx46g-1; Tue, 03 Jun 2025 12:26:02 -0400
-X-MC-Unique: -q-VAWbyPOubWzhB3Fx46g-1
-X-Mimecast-MFC-AGG-ID: -q-VAWbyPOubWzhB3Fx46g_1748967961
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso2915244f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 09:26:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748967961; x=1749572761;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=I0elFj4iCpU3Q37dfy3qczDfEot5ZH9J+BNq48Sc/WI=;
-        b=NXdYMnwc9gLuoimSquwdxz6C5dtus7zJ905aQe+n8+ympaS04LGIMkpYCFuxrmk0bq
-         al7Oe9mrEa2XqG8kBG3AgMyehsB3yFB/GEL7ro7/AdS/7ZVbqklCn8DwyHnGBn41wXOd
-         H1l/IeBxmxpDhC8iYb2MhcocS+vRC2xlH2eaf71quMWBJZplTNVufRvvI6V2nVS9g47o
-         xO3/64hJsxv0hTxCYrlM2sMtjKWR8c4mpD/wIjBCBETfOHDmwW0pT5k6xCzDQIcZ3pLG
-         BmCKxh1hFibBjep6va19rl0BCqKucmX0hMnGeKJfS9XzwXNFpuaNuwEJhWknuk38YLhb
-         uS1g==
-X-Forwarded-Encrypted: i=1; AJvYcCU998gvjs24FAJtiRUwf2r/MlrG8KCQ31uewPi+P4BMJ7Wh/bcF+88nzwcIZrtXX++new6qsoJG2vKJepE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB+S3pKrnmrU5Pl0pcGJoZDIjlYYz7scSZ96Sd7cFr3pfWDGmH
-	rRh4F01PjOMxMdwsdkCMoa9D+Wq7oVSR+fZr1VK4NZU5l4oo8V4AfLpbh2Er+rcSc6FMWPBGCfx
-	AvLt6XOJ1PPvJs22ZzgfzE4Od3bbQzj/6e01f3hXa7FFGN0nJD6fzgAeGWtIvsFmfVw==
-X-Gm-Gg: ASbGnctDfLvG3vPJp0I4DayZhSXAdgAQDnpDjZKIKwPq20hZzUs1dbJxJSyrldXg4l0
-	KimRLI+I2WZJyAyKmu3ryvrhV/LunNe8c32CDmVyMVHLTmJzc3Bc4vKOk1tyrs8STKSrd/xAJiR
-	cPJAXUz87XHTJv4eVYLpiyNq70N7uXK/IeybxplkRytc92bNPIOPzeWyIlJiCVEXRBB8K+sv9iT
-	/wvLNUfhgv4YJvwlLd2LUmlh7rnANuOngv4lNb4U65/w0UQHLXi+mnAxGABEJ3LhNWIsyDqwBGv
-	FgCppkLWecbfMctpVXFMSoGxutE6q38uILYTJ0w+YMxsKw6f9PI2xo9HWz9iB0R9jnyYu6RbW0c
-	sG7a/+sf0y7UgKx51fiIVUiQCkspx39AsxuJITkLNkDmXcpqYHA==
-X-Received: by 2002:a5d:5f47:0:b0:3a3:7749:9783 with SMTP id ffacd0b85a97d-3a4fe3a6c35mr10417208f8f.51.1748967960847;
-        Tue, 03 Jun 2025 09:26:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvQhQSejc4TxEAgYHYCI3h3d2YF9MKT2tL4RJ+lf40ORcTkjO3BavM3f1f2E8GMn64ILzM3g==
-X-Received: by 2002:a5d:5f47:0:b0:3a3:7749:9783 with SMTP id ffacd0b85a97d-3a4fe3a6c35mr10417186f8f.51.1748967960393;
-        Tue, 03 Jun 2025 09:26:00 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0d:f000:eec9:2b8d:4913:f32a? (p200300d82f0df000eec92b8d4913f32a.dip0.t-ipconnect.de. [2003:d8:2f0d:f000:eec9:2b8d:4913:f32a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f009fd9bsm18456031f8f.82.2025.06.03.09.25.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 09:25:59 -0700 (PDT)
-Message-ID: <d7cbbab2-8fe0-4a10-8b06-e47da955865e@redhat.com>
-Date: Tue, 3 Jun 2025 18:25:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF6F23D28C;
+	Tue,  3 Jun 2025 16:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748967993; cv=fail; b=tOmqoI/XRhd3XOVbWNne8wWcTb4en4O4qKb/FOt++E6ftXaDq0VJmNSvZb35ipRMvY6C1GpQYFmU+Yr9A7+376QtZMYkqv2byURYdHqfusKr0Nt00yc9/ZO2yfdyW6LbPkCQvekarcjtAwDWMgI25KrByk6rGLXPjnJ8zGUu3fQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748967993; c=relaxed/simple;
+	bh=a3qCNjJPou8OEdV4sm/Oe1Acdi08FG0qM4hYwB6NOpg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Y63r6Yd+duLWz/QE/0Y3k0tcc6iKbDQiZVxzkdsybdM/dBeQqBp8FweK2l9QpD0pBaxrGEzffHbH3+p1KSrOb0vGh6s5hRX8JUlDHoMbWNLVZlbAKZG74rLP/TIFEm+txDE+XCBlqRZ5MB6HFpSWd+aniYFY4R4Fa380aJm9Gr0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XY8IFX/M; arc=fail smtp.client-ip=40.107.237.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nU4GB5DZxB0iQp8nTojxwsI+Av1d/J8cEurMExBiTTyQhhrJKQNTCe2YRcOdvW+32Pf1gaZovoXlD1EfuFOi50uLM38DnPCDIECzn2QVn0Vn5XzTcL2mmcbp2CvmFdIJGXg1d0PzStuRHUedYnOSHS7FahUZsn1yngsoogZkKGEW0ue8DXp2oNO0a3ZIBcr43cuDnwtMm2gPfUDHa3fWipnQI1tKpGRUFluXYcRyezWM5qMugl9BbZ3gPL8CwkrORBLixUo/SdkYMYp6kUrNMas3D0eeNBx8n2AMRHHZEi4+XMqsi7i80E9nVF/+ZOGecb7LEl4NjgfVJNv8U2eOqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l0VpPDVP8HyQcf/Oc+ij6mbqVJDI9HT+eU1x57WBKhc=;
+ b=J7voBG40soGH1tAETQPJd7vcESs/i/zMhetLyupeF4I9+QRiZc3F1GcXjUinyvqT+6ZbK/EM4/WoV19HXHPceDXY1a6S6eVQAjnC/QDumRPK4NDvIJXOq2Sre4IGklzl4q1q6M75HnfknjZjsA+tUsJtQ6NwWL+DqR4Pt2yEw8ZGgKPOhommzpnvsnP124b43jRbwy41whJdJ/qCHshTPPl8aSKgu42TQd9fgSeirxYaO8wvDWG+nKLhyBd+dFKEYtQ5cI3CehDjSv0s2/rjKpoAuyawCtS7Dui9Kd6M8jEQmBEIjLkOaOUu5QywKT7qN45XLV42GQCGVgxdTDF+Uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l0VpPDVP8HyQcf/Oc+ij6mbqVJDI9HT+eU1x57WBKhc=;
+ b=XY8IFX/MADYuuWzP8EqscgCZzxos+R+X91Rs1RWzsQgeM2Dss4vvi1hf6aYDvdm7BsAm9u5CfKVGaArG1YaJstZu0kBevA7m2Ag3qNcxdA0MxDCQNYEf3Wyni+XOw0Cgq+LdcrfUZDMCLhb1BtnkyoavD+6XfAISB7/raUm9JwY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by PH0PR12MB7862.namprd12.prod.outlook.com (2603:10b6:510:26d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
+ 2025 16:26:26 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8792.034; Tue, 3 Jun 2025
+ 16:26:26 +0000
+Message-ID: <a6b39023-447d-67bf-9502-4340f9d41c81@amd.com>
+Date: Tue, 3 Jun 2025 11:26:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 5/5] KVM: SEV: Add SEV-SNP CipherTextHiding support
+Content-Language: en-US
+To: Ashish Kalra <Ashish.Kalra@amd.com>, corbet@lwn.net, seanjc@google.com,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au,
+ akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org
+Cc: x86@kernel.org, thuth@redhat.com, ardb@kernel.org,
+ gregkh@linuxfoundation.org, john.allen@amd.com, davem@davemloft.net,
+ michael.roth@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org
+References: <cover.1747696092.git.ashish.kalra@amd.com>
+ <e663930ca516aadbd71422af66e6939dd77e7b06.1747696092.git.ashish.kalra@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <e663930ca516aadbd71422af66e6939dd77e7b06.1747696092.git.ashish.kalra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR05CA0011.namprd05.prod.outlook.com
+ (2603:10b6:806:2d2::13) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] kdump: wait for DMA to finish when using CMA
-To: Jiri Bohac <jbohac@suse.cz>
-Cc: Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
- Philipp Rudo <prudo@redhat.com>, Donald Dutile <ddutile@redhat.com>,
- Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>,
- linux-kernel@vger.kernel.org, David Hildenbrand <dhildenb@redhat.com>,
- Michal Hocko <mhocko@suse.cz>
-References: <aDoT08LfXUEkS9E4@dwarf.suse.cz> <aDoVO4H4CpXPjAdI@dwarf.suse.cz>
- <da52a835-6a4b-4f11-acac-f4ef995da7e1@redhat.com>
- <aD8b7Q8Z9sC8meGU@dwarf.suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aD8b7Q8Z9sC8meGU@dwarf.suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH0PR12MB7862:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1045002b-8655-413e-285f-08dda2bb62fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkZJRFFXczc3NXRrL2RSeDZxbGQxeUFLc3lnOTJleE5yaDRGNDZCVlZYWTN6?=
+ =?utf-8?B?RnUzSXpMdEVQb2pSTUhNODc0S2JBR2ppYnk5UEt0T1ZaYnVuQzVuQmpWQnVU?=
+ =?utf-8?B?ZkM2U0NjdWNqbE0xYUtBbXpKTlJTVnBweWdkNkpZQWJHL2E0bnhjM0poMDZE?=
+ =?utf-8?B?cmZIbnIrUkRpcWNHSnl5MGtNT3hWbkk4V1dMWGg2ZUdvejA4aEVDWCs3azZE?=
+ =?utf-8?B?M0NONVRVcU1UaTNDcXdHMXFzZFJlamNNOC9UZ2FGTlRIUHFZV2NWRU1JT2Nt?=
+ =?utf-8?B?SHJlaXVhZ1Bld3dKS3RVKyt0TGgxdGtyZG5PMVA2eWw3UFlQNXBJVndDWkhR?=
+ =?utf-8?B?R1BUb0xCM2hWY1BWUXVTZlNKTExMTE1qWllad2RadHQvVXZzUERteFROT3Fh?=
+ =?utf-8?B?UmFlYWFSRWtxdmNzMmVBV0xNTGZlYnRqQ1FJWUYvS0hGekJYdEtDTzJDMWh3?=
+ =?utf-8?B?TUZJTkxjaktvUHJPVEdKeXZBWWJNdmg2Q2QrN0pCQ1ZyaS9DTTRTT2RBbzJN?=
+ =?utf-8?B?b29xNnBTTFBMdjlKZ2FJUThPSUNVcVdjRmN1VUFCZ0laMkZCem9FLzlTazJy?=
+ =?utf-8?B?Y09qc0F4bUtvZkV2RXZaY1hSNnZlSVMyZjdQdCtuN0Z4OXljcU0vYzYyRzJV?=
+ =?utf-8?B?OGRxWk9JV2V6VnpjU1JNTno1cHhLNzdsS2p0K29KaUFGcGtSQmxUaSsva2hy?=
+ =?utf-8?B?N3ExMitvck5FQVBxV1MwQTZFYWoxaUVSVmR3QTVSMmJ0RGFVcHZCYVhUVytz?=
+ =?utf-8?B?anEwakdKbEFHWUQyaWNXcXhjN21lMk0vL1F3VmZnUzh6d24rREJBOFZpa3E3?=
+ =?utf-8?B?TTlodHA0KzhzN0tNMVdhQ3ZySktuU0dWblcyRks3ZENDa1JkdnAvdGEzOW9k?=
+ =?utf-8?B?d0JXWHVUMzd2VWlrME0zM3dzdHZvUzNsbnJnSm5HdHpNT2ZuRTJhdUcxdW9Q?=
+ =?utf-8?B?WDJkSmtpRmRDWTFHSDZ1NU4yQkNaUWFlU0p5aE85dU9YK281Z2ZCWkg3NWph?=
+ =?utf-8?B?L3BIRzNEekk3VEVudkRHb2dSeU9WV0NDNzJmaHV2S1I4YTNuWXZMTGdjREFs?=
+ =?utf-8?B?ZnhWWnB4WEhmVFhqdnVqSVZ3dkFlaXhzRkxvRzkxNWlqOWlZNUd5ZXB2OXV0?=
+ =?utf-8?B?TnlTYURlcTV5L1A2WElPKzByblZGc3U3ckNFWFFrRVI0YlMwY1FyUVZ1TmJG?=
+ =?utf-8?B?MDNSQTk2Rk1yVTBUdDNIQVpLaUl5b1IyTDJBVTRRWjl1UnJzTnd5TXJBWG03?=
+ =?utf-8?B?d3hhZTh1OHNYeTJYTWg5Lzh2Wk1DWkZSTmlWYkNQcGxPZkVXR0R1bmU3MVVt?=
+ =?utf-8?B?cGtPSXJQLy9qTWJjaVkwT3M2eklDeFZnalY5WXlMVVh3am5ETU5NMW1Ed3Vl?=
+ =?utf-8?B?Mit3bHh2TzRSVGlrV0xlR3NDcXJYTXozUWxnVElWdDFuMS9HbndJek5TQnFw?=
+ =?utf-8?B?aVlBSk90R1pLYll3bHA2NFNFZmRCY3FoRTk4QktsdkhMeWYrY2k4bmdkYlUx?=
+ =?utf-8?B?Z0hEWkRKT2RqVGxQZ0ZhOUtkd3J1b1JrclJSeW1BNWZYOEhvMFVzalJJd0lx?=
+ =?utf-8?B?VzAzZ3BzNFRhNU1RVmZYMW5QS0lXV0JkVG5LeWVGakUyeUNGbWlPc3NTd3hB?=
+ =?utf-8?B?ZEtEMmRTUGw3c1pmTmt5MnFSSGplMUVObytvb2M5Z1FMS0R0T0ZxWXdsb21T?=
+ =?utf-8?B?K0tpUkZtYis1UVBuMWYwNER0ZWM3V1kvN014SDZtMlRrWUk0VW96bWNpNllw?=
+ =?utf-8?B?TzEwcExCWEw0MkpPczJZTUNjOEJwaE5mWEhXMkNHQXVPV2tkQnJLWEZ1Sldo?=
+ =?utf-8?B?RFZhaUxXWURYMytBVENtMWdLdzVuL1BjOWMrN09zdFFlTlhhUys1dUJxWXQ1?=
+ =?utf-8?B?MlJzNG5qRVBENnBjdmVoOFdJRC95OHF5VytWZkxLZTBLU241SmUrMUk4Ymda?=
+ =?utf-8?B?Yk9aQ281NkdYbGtEeG5kVllmdkxzN2tBeVhTVzNlUThGL3VRRHpxMzNINkI4?=
+ =?utf-8?B?c2swcjA0NlZnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Yy85UHo1UXRybXhiVW92bmc4cmFDRVJxV1F4V2djcmdvdmhEUW9jU3grNExn?=
+ =?utf-8?B?eXBqb1BjSWt0VVdaZFRwTWUwaHdkOUJYbEFOSFpYek0yZmwxWlNIdEw3TCtp?=
+ =?utf-8?B?aHJoaTBMVWRRUHJlRnVIcEpWOWx3aTM2TzdocXQ1RURHMWgydS9scTI3R00r?=
+ =?utf-8?B?R1d2eTc1RWhsUVptSm84NDk0MXd3QkdBOVhxWE8yeXZZTVFGU01IN3FCRnRv?=
+ =?utf-8?B?b3owMGthbUpnRktuaFdqSUR4blg1Qmd6ajlJRTdJa01SQU1SV3F3ckZVSk0y?=
+ =?utf-8?B?NFNjYzg0MU5TeERJeXlNeFFNSDZzaFlGcjU3aDhNc1FNYTFtbHc0R1Vhdmkr?=
+ =?utf-8?B?NGYrVVBHWDFWeFIrbXZtTUVyNWpmTDgzNkdodWxIV0JUaFhVZFRhazV0RG15?=
+ =?utf-8?B?ZTZJdUhBOFRnQ1I2SWJRakxYUWlPZHBmdU9rQ3dWMCs0Q3N5Mmh2THM5Qkxt?=
+ =?utf-8?B?UXBGU1BZNjFmelNhUEtoelVTVzVaVXJMUmxTWjlsUnptaEszUmlmNm9hOEZK?=
+ =?utf-8?B?eklSQXd2VlZ2Sm1yUVUzN0g0K3Q0U1o5dDlndVdVcW9rSFNyOGNWTTh3Q2du?=
+ =?utf-8?B?RVpocUhEd1Y3Y3prU0FJRmZrbXgzczNDT1BmQWd6NFJZQ1pTU1RTTVhYdm5C?=
+ =?utf-8?B?dllnR1A2c1VIUGZLTTNWY0w5eW1WYWxnSEZqL1dzbllteDdsa1IyUW01czd4?=
+ =?utf-8?B?NTBTTG1NbzlkVHhzTlRERHpSSmNyOXFuTjdNKzY4NFhCbVJ3M201SURFWmxC?=
+ =?utf-8?B?OGFRMEFPcUpDU3lOcU9RUzN0QU5LcThyNjM2UndOZlM0ckVhK3JlR2cwVkti?=
+ =?utf-8?B?S2F6NnhrSVVzTU5kckFmTmZ3djFpTXRza0d0ZjdnNmtkN3gwazlQVUhZYkw1?=
+ =?utf-8?B?bmpaS2R6NitSNnAvTHU2QzVocjV5WmxpTVBUbno0emtuSWYwQU1IditrcURL?=
+ =?utf-8?B?dXlkU1U0cUo3QlRURXpIaTM3cUFTcnhoWDlELzJwUko4b0RzVHRMUmE1MVYy?=
+ =?utf-8?B?aDZONFJKY015MXNDK0VPWDR0aDRBVzQ2dXNFQ0wyc2pyakFlNVF1bCtKOVdP?=
+ =?utf-8?B?bUMvb092eGkyRDloeGxaK3djL0MyOVhPaW4zeGN5VHgvajNtV0Fnb2Fzb1pn?=
+ =?utf-8?B?YldUVk5LeXhoV01mUDBLZUZjSC8wKytqbmVXOVZNank1c1BzWkJ1WTBBNE5L?=
+ =?utf-8?B?SVBjbTNXOS9sZ3YrQUIyVlVKd002WFdlc09uMHRPa0dhYW1WOS8xeUpwM0Q5?=
+ =?utf-8?B?NFBocVZMemVBUTZUQVhwcHpJSVBCcGMzZUExOE0wL0xhUUJFYTdweVUrSEtv?=
+ =?utf-8?B?R0tvYjBXNEhoM1FnQXlBdzZHVkZjNFVkNXV6dTRJUkxBcUg5TytjTTlrK0N0?=
+ =?utf-8?B?eFU5UmUxZmppcTdaRjkzcTNIOUpVVXdkOU5lSVNOYWNrOFVKZy9MQzlsdENa?=
+ =?utf-8?B?aThBN0owYTdoYnJzSkpGUTdrR3BTcHVZdUNxeWtKYk8xcWw0UHBkL2lySm5x?=
+ =?utf-8?B?RjRFVFpjRDRrSCt1SzJ4YjJkaUM0d2R4UGpKL3g0MFBwb1dIRmpPRVlXcmRJ?=
+ =?utf-8?B?b0w5eHd3dGZZVDhsUXdPajF2RlRWRkExY0h5c1d4RGRzZitTNVM1QXY1WkVP?=
+ =?utf-8?B?MVEwaWlwK1JSUkxzeWtUdDFJaExQaXRLbDhsczZEbkI3MWcyNWJaZUNOSmlU?=
+ =?utf-8?B?S0VQL0lJQTBsWm9IUm0zUlFDRUMxYStQQys4eE9FV00ybkFKZWgzNGd1TnJz?=
+ =?utf-8?B?MmlQTE9la05yRThuQjVFS0NPaVNyWWxKUVo3Rm9hQzlBMXZPLzR4dHpTSkUx?=
+ =?utf-8?B?bnM0a29NMmFNK0hyeHJydFl5QUZKZ0tVdDhUYVFOQlBPKzNENHExWG1HTVRq?=
+ =?utf-8?B?Y0swQUJid05LMzJvSldKNVNDQWpCQURlWDlFZHpqSmVEL2p1d0JjRDJzUjlu?=
+ =?utf-8?B?SUorWUFvcnNPUGtDOUc1OVFSWDV5ajI4WFVzRmJFQ3d3ZTF1ZER4ODBZbHZy?=
+ =?utf-8?B?K2pkb0FXemlhamdrZGVtenlhOGFNL29adlNHOGpQQW4xZFFYQUdST1N0OWdT?=
+ =?utf-8?B?WEpQaEN3eGlKbmx6ZlNxYmZJbXhEMDBZbXYrd1diNzJWY1BzTEhzOXc0b3Ew?=
+ =?utf-8?Q?znQM9Mv1vMKUZQhBbEAiXfqFx?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1045002b-8655-413e-285f-08dda2bb62fd
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 16:26:26.1258
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g4uzoPIGFEIfN3ErEKgNZLZ0Y7uqjWcdetp/Ba1SflDjac4ZsOxMeYAWtfe8jvl4FcVWjAgQ6RvqbZ8DJk2qPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7862
 
-On 03.06.25 17:59, Jiri Bohac wrote:
-> On Tue, Jun 03, 2025 at 03:15:03PM +0200, David Hildenbrand wrote:
->> On 30.05.25 22:29, Jiri Bohac wrote:
->>> When re-using the CMA area for kdump there is a risk of pending DMA into
->>> pinned user pages in the CMA area.
->>>
->>> Pages that are pinned long-term are migrated away from CMA, so these are
->>> not a concern. Pages pinned without FOLL_LONGTERM remain in the CMA and may
->>> possibly be the source or destination of a pending DMA transfer.
->>
->> I'll note that we right now do have an upstream BUG where that is sometimes
->> not the case. I mentioned it previously that such bugs will be a problem :(
->>
->> https://lkml.kernel.org/r/20250523023709epcms1p236d4f55b79adb9366ec1cf6d5792b06b@epcms1p2
+On 5/19/25 19:02, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> I'll just reitarate the whole purpose of this patchset, as
-> added to Documentation:
-
-I know, but stating "these are not a concern", when they are currently a 
-concern upstream is a bit suboptimal. :)
-
-I'd phrase it more like "Pages residing in CMA areas can usually not get 
-long-term pinned, so long-term pinning is typically not a concern. BUGs 
-in the kernel might still lead to long-term pinning of such pages if 
-everything goes wrong."
-
-Or sth like that.
-
->>> +static void crash_cma_clear_pending_dma(void)
->>> +{
->>> +	unsigned int s = cma_dma_timeout_sec;
->>> +
->>> +	if (!crashk_cma_cnt)
->>> +		return;
->>> +
->>> +	while (s--)
->>> +		mdelay(1000);
->>
->> Any reason we cannot do it in a single mdelay() invocation?
->>
->> mdelay() already is a loop around udelay on larger values IIUC.
+> Ciphertext hiding prevents host accesses from reading the ciphertext of
+> SNP guest private memory. Instead of reading ciphertext, the host reads
+> will see constant default values (0xff).
 > 
-> No good reasons ;)
-> I just wanted to prevent a totally theoretical overflow (if cma_dma_timeout_sec was made configurable;
-> I also anticipated someone might want to add some progress printks into the cycle (without verifying if
-> that's even possible in this context).
+> The SEV ASID space is basically split into legacy SEV and SEV-ES+.
+> CipherTextHiding further partitions the SEV-ES+ ASID space into SEV-ES
+
+s/CipherTextHiding/Ciphertext hiding/
+
+> and SEV-SNP.
 > 
-> If you want, I have no problem changing this to:
-> +	mdelay(cma_dma_timeout_sec * 1000);
+> Add new module parameter to the KVM module to enable CipherTextHiding
 
-Probably good enough. Or just hard-code 10s and call it a day. :)
+Ditto.
 
--- 
-Cheers,
+> support and a user configurable system-wide maximum SNP ASID value. If
+> the module parameter value is -1 then the ASID space is equally
+> divided between SEV-SNP and SEV-ES guests.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         | 10 ++++++
+>  arch/x86/kvm/svm/sev.c                        | 31 +++++++++++++++++++
+>  2 files changed, 41 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1e5e76bba9da..2cddb2b5c59d 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2891,6 +2891,16 @@
+>  			(enabled). Disable by KVM if hardware lacks support
+>  			for NPT.
+>  
+> +	kvm-amd.ciphertext_hiding_nr_asids=
 
-David / dhildenb
+s/ns_asids/asids/
 
+I'm not sure that the "nr" adds anything here.
+
+> +			[KVM,AMD] Enables SEV-SNP CipherTextHiding feature and
+> +			controls show many ASIDs are available for SEV-SNP guests.
+> +			The ASID space is basically split into legacy SEV and
+> +			SEV-ES+. CipherTextHiding feature further splits the
+> +			SEV-ES+ ASID space into SEV-ES and SEV-SNP.
+> +			If the value is -1, then it is used as an auto flag
+> +			and splits the ASID space equally between SEV-ES and
+> +			SEV-SNP ASIDs.
+> +
+
+Ditto on Dave's comments.
+
+>  	kvm-arm.mode=
+>  			[KVM,ARM,EARLY] Select one of KVM/arm64's modes of
+>  			operation.
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 383db1da8699..68dcb13d98f2 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -59,6 +59,10 @@ static bool sev_es_debug_swap_enabled = true;
+>  module_param_named(debug_swap, sev_es_debug_swap_enabled, bool, 0444);
+>  static u64 sev_supported_vmsa_features;
+>  
+> +static int ciphertext_hiding_nr_asids;
+> +module_param(ciphertext_hiding_nr_asids, int, 0444);
+> +MODULE_PARM_DESC(max_snp_asid, "  Number of ASIDs available for SEV-SNP guests when CipherTextHiding is enabled");
+> +
+>  #define AP_RESET_HOLD_NONE		0
+>  #define AP_RESET_HOLD_NAE_EVENT		1
+>  #define AP_RESET_HOLD_MSR_PROTO		2
+> @@ -200,6 +204,9 @@ static int sev_asid_new(struct kvm_sev_info *sev, unsigned long vm_type)
+>  	/*
+>  	 * The min ASID can end up larger than the max if basic SEV support is
+>  	 * effectively disabled by disallowing use of ASIDs for SEV guests.
+> +	 * Similarly for SEV-ES guests the min ASID can end up larger than the
+> +	 * max when CipherTextHiding is enabled, effectively disabling SEV-ES
+> +	 * support.
+>  	 */
+>  
+>  	if (min_asid > max_asid)
+> @@ -2955,6 +2962,7 @@ void __init sev_hardware_setup(void)
+>  {
+>  	unsigned int eax, ebx, ecx, edx, sev_asid_count, sev_es_asid_count;
+>  	struct sev_platform_init_args init_args = {0};
+> +	bool snp_cipher_text_hiding = false;
+>  	bool sev_snp_supported = false;
+>  	bool sev_es_supported = false;
+>  	bool sev_supported = false;
+> @@ -3052,6 +3060,27 @@ void __init sev_hardware_setup(void)
+>  	if (min_sev_asid == 1)
+>  		goto out;
+>  
+> +	/*
+> +	 * The ASID space is basically split into legacy SEV and SEV-ES+.
+> +	 * CipherTextHiding feature further partitions the SEV-ES+ ASID space
+> +	 * into ASIDs for SEV-ES and SEV-SNP guests.
+
+I think it is already understood that the ASID space is split between SEV
+and SEV-ES/SEV-SNP guests. So something like this maybe?
+
+The ciphertext hiding feature partions the joint SEV-ES/SEV-SNP ASID range
+into separate SEV-ES and SEV-SNP ASID ranges with teh SEV-SNP ASID range
+starting at 1.
+
+> +	 */
+> +	if (ciphertext_hiding_nr_asids && sev_is_snp_ciphertext_hiding_supported()) {
+> +		/* Do sanity checks on user-defined ciphertext_hiding_nr_asids */
+> +		if (ciphertext_hiding_nr_asids != -1 &&
+> +		    ciphertext_hiding_nr_asids >= min_sev_asid) {
+> +			pr_info("ciphertext_hiding_nr_asids module parameter invalid, limiting SEV-SNP ASIDs to %d\n",
+> +				 min_sev_asid);
+> +			ciphertext_hiding_nr_asids = min_sev_asid - 1;
+
+So specifying a number greater than min_sev_asid will result in enabling
+ciphertext hiding and no SEV-ES guests allowed even though you report that
+the number is invalid?
+
+I think the message can be worded better to convey what happens.
+
+"Requested ciphertext hiding ASIDs (%u) exceeds minimum SEV ASID (%u), setting ciphertext hiding ASID range to the maximum value (%u)\n"
+
+Or something a little more concise.
+
+> +		}
+> +
+> +		min_sev_es_asid = ciphertext_hiding_nr_asids == -1 ? (min_sev_asid - 1) / 2 :
+
+Should this be (min_sev_asid - 1) / 2 + 1 ?
+
+Take min_sev_asid = 3, that means min_sev_es_asid would be 2 and
+max_snp_asid would be 1, right?
+
+And if you set min_sev_es_asid before first you favor SEV-ES.
+
+So should you do:
+
+max_snp_asid = ciphertext_hiding_asids != -1 ? : (min_sev_asid - 1) / 2 + 1;
+min_sev_es_asid = max_snp_asid + 1;
+
+
+> +				  ciphertext_hiding_nr_asids + 1;
+> +		max_snp_asid = min_sev_es_asid - 1;
+> +		snp_cipher_text_hiding = true;
+> +		pr_info("SEV-SNP CipherTextHiding feature support enabled\n");
+
+"SEV-SNP ciphertext hiding enabled\n"
+
+No need to use the CipherTextHiding nomenclature everywhere.
+
+Thanks,
+Tom
+
+> +	}
+> +
+>  	sev_es_asid_count = min_sev_asid - 1;
+>  	WARN_ON_ONCE(misc_cg_set_capacity(MISC_CG_RES_SEV_ES, sev_es_asid_count));
+>  	sev_es_supported = true;
+> @@ -3092,6 +3121,8 @@ void __init sev_hardware_setup(void)
+>  	 * Do both SNP and SEV initialization at KVM module load.
+>  	 */
+>  	init_args.probe = true;
+> +	if (snp_cipher_text_hiding)
+> +		init_args.snp_max_snp_asid = max_snp_asid;
+>  	sev_platform_init(&init_args);
+>  }
+>  
 
