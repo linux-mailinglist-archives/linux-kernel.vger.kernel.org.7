@@ -1,168 +1,213 @@
-Return-Path: <linux-kernel+bounces-671953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F797ACC8E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:18:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B559ACC8F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3A33A76CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:17:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A7F1886EF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96761231A55;
-	Tue,  3 Jun 2025 14:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB12239E80;
+	Tue,  3 Jun 2025 14:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgipLgso"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uO9J/oUs"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2078.outbound.protection.outlook.com [40.107.102.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0186D20C031
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748960289; cv=none; b=gwWJgZBG4eGkYnN+ec/bkt5wOVpbLrmMjb0bQnnojcb5PNFZxpokKOt0TwiLA39HTtYjgSLDsY+VkY8RXMH/QrtaQncWJtgbioi6GbBrS6T/v+XpGBKY3ni+/85B3Czt2VALTaBIbCss29x6LktNi7QRqW1Qn9W/8owwdD0QJw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748960289; c=relaxed/simple;
-	bh=lUFGuC5ycdcnI5caajtZ9t5Zj3/9mRBKp3NDiUwuLWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DOlyAB2w9/wKPZkFki89HkXi9mHZA6k8/Rdt01fTQ8uBtiHC/HwT3gqqHDp9p5Qm3Lat88hODwAiRhWGE13X7ziP+aCDlKlHCQEBR3n2Cy3nk7JzxVjYaih16ABdPJCKTRRhcNl0AlBm1Ej40v5ZPd3pXD8up42fru9k1URUSjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgipLgso; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62288C4CEED;
-	Tue,  3 Jun 2025 14:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748960288;
-	bh=lUFGuC5ycdcnI5caajtZ9t5Zj3/9mRBKp3NDiUwuLWI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sgipLgsomXQr5yJk2XUmUkEV51djBPrldROzvsO2rwa6QsBFE6sacVDIZF3IppF2v
-	 LKHaqseAjjKnwvNqsokboTlK3NgOc+IbLaeCFNrbq7u+yQTf/jcQ1PyXY3rNnIAYQb
-	 Aj6I2ONBI4KmVg+oxkV30PAIfs+zbDtTdzUq4fiH0+nUHeIjBl2FrbGcRs7vheQYVq
-	 STsip0Nsljjv7ru2iZiVkYv7SL6Hi7LeDhsBGhWYEzch+dv8vzQcMZy67OpxWMaWMp
-	 Ht1dOyY5zie3FXqktEPtZdb+BQsHyGgQL6Agxhe/fdxIIZ46pOPhAaE7dcDqLBAyG7
-	 sI4P0V7sOqsYQ==
-Received: from [149.88.19.236] (helo=localhost.localdomain)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uMSSs-002rPF-4s;
-	Tue, 03 Jun 2025 15:18:06 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH] PCI/MSI: Size device MSI domain with the maximum number of vectors
-Date: Tue,  3 Jun 2025 15:18:01 +0100
-Message-ID: <20250603141801.915305-1-maz@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6274A22A4E8;
+	Tue,  3 Jun 2025 14:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748960319; cv=fail; b=sLwtSRDdDZecancRdQC1MxjdEck5j/kf0ymVbsl5u5H/y4LUe1Wjei/7K5uaCVpOV4O1sfgGZTHGzYBzql8AtdJyJMzdQAJXWyFblVRdlnn2QzD706RB1csbl7SoKV/1iEP8Cvyu+dm8aSfnf/uJuxzDfeQyqbD0s3/nbgmLfag=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748960319; c=relaxed/simple;
+	bh=yQJfVJYZyx37FhmZ4mzSyB/nfNkxW/ggnuI1xlUREqA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kP+mW6W0qBtEsOkQQPNnPopzIxLP+9cHHmhy+tbgkk5zs+WTXuPhSRX7DuJhuC+z2p13Yx0gESSGxySM7KXvUymWXCcsRcjnkEJszqW7r1NWr/Pkd07sYcJuh76KHrQj2z7eFrt4X9VyUfhLMHvqirDvKZ6YBnKD9C1/Vpcje6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uO9J/oUs; arc=fail smtp.client-ip=40.107.102.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YZb0YeeJTIF2ZNa3H4GjN7yOEJ/DHOzMwvSKGz/W4MEDGL5ahl6JEAyXwIirSMgdhHAKb+9+NQAKcgPuDKeAOaf7zjwu+iSaUmxdHTDFmreAXp1WVKcXAlTNruBU6EAH7TxsJGwl0dNfcSFRod5QGr26sercV9iRHFj4tn4f1IbFmb9AkHJA2wTdWeQrO/pU809ECj8P4SuEXPZqzuSJ0FUvrg4xzFFc1JJKxrcm6Za1QzMPnoq5Ocdisdjav8KmbUpvJHXXEtkfQoyIQrZnJs7+FFV0Z2xbBG62mZB3wBqrOw6FEmO4ufvRJt4wHq4dnb/SzosCd/EOUBEIkZPRzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dRkfjBJwjz9F33JbcWXxiaXaXaBniiCUMF4JZmjhrwo=;
+ b=aW1U7sa84vs9HGjDM7jby1LLd7Ao95I7b0uTuJM+eYo3Fsxrcea3KZ68a/T5cxeRpXO2OUJu3lKLkXCHnBp6XZj5ZgudPWLIaLikKGBrT3v15R7eAUjIoNHLJFjd56GUc16t18K6o8YcB+wLT0bfLcZVCLUjOXTHuAUUdtc0WJvKXlW59A3R7uOSLcXYyWeh4WdrKtuHwg8/5nPqnT8ldP37wb72YGGgOWocqxqVNSsLR2m3M9z38Z88tkTUPHUVxgZF2Oe4op1ZBUAfHea7p9BzyhYSZYvMM0zxdiWWWtkMtj8UZAanS7JZgniiCcT4e7qxniq1DWT46t+YrhMWDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dRkfjBJwjz9F33JbcWXxiaXaXaBniiCUMF4JZmjhrwo=;
+ b=uO9J/oUsnNvd7hnSI+OtLmOobpsEyWp8O/d7IbaupzqkHE86VafJHddU1MYjXZ2VTVApf/q7PMLKH+D4Nl/1pUCrt9cfMJU7nxp+aZDc586JJadZYHqRo204EE+92hs23fAYDMKL+q1tEYR00ki5hsv//vVFOozLNeYPS4vxWd8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CY8PR12MB7169.namprd12.prod.outlook.com (2603:10b6:930:5e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Tue, 3 Jun
+ 2025 14:18:32 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8722.031; Tue, 3 Jun 2025
+ 14:18:32 +0000
+Message-ID: <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
+Date: Tue, 3 Jun 2025 16:18:22 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+To: Christoph Hellwig <hch@infradead.org>
+Cc: wangtao <tao.wangtao@honor.com>, sumit.semwal@linaro.org,
+ kraxel@redhat.com, vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+ amir73il@gmail.com, benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
+ jstultz@google.com, tjmercier@google.com, jack@suse.cz,
+ baolin.wang@linux.alibaba.com, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, bintian.wang@honor.com, yipengxiang@honor.com,
+ liulu.liu@honor.com, feng.han@honor.com
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <aD72alIxu718uri4@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0118.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9d::10) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 149.88.19.236
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, lpieralisi@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY8PR12MB7169:EE_
+X-MS-Office365-Filtering-Correlation-Id: b21eb87b-d161-464c-073e-08dda2a984e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aXEyTzI0M2MvaXZYV3FDdFRMVEZsb3hmS09RczA0TmJZdzdjTjA3UWVIMWI5?=
+ =?utf-8?B?M0dQaHhmckZqSzhGdkdoeUdzczBtc1k1K0tvMitFWnRYUlZ2OGhxOTA1MzN1?=
+ =?utf-8?B?eldLSTVyd3BsNVlxZDFobDQ2TitROEFwc3pCMEYvdjlOdzl4c09zRmF4dlhW?=
+ =?utf-8?B?NkdTWWVjN3JGUlVYRU94K2Vhc2dZS2tsekh3c1pLdk5QSG5CVWZtbmhUcm9T?=
+ =?utf-8?B?MDcvMDQ3TFMwZDVQWksvV2tFMkNDd2VBU0JBV1VWUklQdyt4aUdMWG0xdnEw?=
+ =?utf-8?B?QXozb2FZNWRKL0VhRERYMmNtL3VDYXRLT0VqVmJpQUg2em5mS1crcXBiZkRi?=
+ =?utf-8?B?c2M1UFNIamZvL3JpN2NWK1h5N3VENXUrSFBoQXpmOFJvbEpUcVN6SEdQM3F0?=
+ =?utf-8?B?cU40MDNRRjFKNjZmcHlZMktrdjNncjNGQ1BFMytlS2h1ZkdOTTlzRCt0K3Rs?=
+ =?utf-8?B?THZRNnlIZmR3anFYbjRxNEJFcGJwbHVnMWV6dm5IY0NSMXdXdUM1M2xCd0tG?=
+ =?utf-8?B?YXhnNGcyMWtRTVlhck5vODd6Q05iejM1amVuMDg2YmRQSFZoSTdjRWhqZHBp?=
+ =?utf-8?B?VUl1dWh3WGxCMXAvRFpYUXJZcjhwdGw3aCtWMWo4b205d0MwTWFtMHozeDh2?=
+ =?utf-8?B?Tk5HSytiOXl2R0hCRDkyZzc2S3oxMmpFUDBqYWtjaXI4VzdHV0RSVnNKZUdJ?=
+ =?utf-8?B?S0d3MzBWbS84a2U0VG1QSWRjbER2b2RJTGRvSllWZHVSNlZKMFhFT1VvMlZK?=
+ =?utf-8?B?ZW9nRitwNjZmeitQaDdvd3JaRXJpWTVXTWdRVytrbW5VNjQ3L1ZMN1R6M2NU?=
+ =?utf-8?B?S1gvbVJwR3RPQzF0QnBCL3ZuVGZnVkNxM0YxaUEzTXZSdTY1czN1ZmdpeS9k?=
+ =?utf-8?B?OWo1eUh1TVZRNkNzVHlJMHRLK3RUUjduSDhpTVNXL0U5M3B4Nk9ZYWlZYnVj?=
+ =?utf-8?B?OHoxM21Ia1kzekdTWklnQ1R1SlZQdUJ3SjNyU1RRWEluaXFLc1BzNzdTRkt6?=
+ =?utf-8?B?ZTRlU0FybWc1QlVjUmo1UUQ4bTRnU1FPdUhaTG5BUDM2OE9wdXVCdU0rRHFz?=
+ =?utf-8?B?UDZ2S3JsN014RXJucXFQemdrMTc3WEp4eVRKaTRidDhXZnUwSjZJVU41bkpK?=
+ =?utf-8?B?SHczOGFlYTVZT1lzUHRxN2lMRmwwckRFdmllQVhKKzBiQjhDUCsraUFmeGdK?=
+ =?utf-8?B?VUdrczFMNWhJNll0SDhlMWxSUzM3MXN0ekFlYnpWWXhXZmZrVVdnY3ZtT2xC?=
+ =?utf-8?B?dkJzOW1rWlJoSGFySTF6K0VDR1BnWWU2cFFmTDV4SGlDL0xVb2pBODZNeUVu?=
+ =?utf-8?B?QlRsMHhVVDUzaFdMNXVFNnVzcmdzeFdZaDhjUzlPUWZYbndqZ2ZkZEF6YWkz?=
+ =?utf-8?B?RXUxb1FHb0ZkS2x6MWU2VGdlMmZQVUJFSHBxRzlFQkNzMUFBVjdDSjRsajJs?=
+ =?utf-8?B?YTYzT2ZKR1NtV1Q0dVRQNzJiU0FLRFhDcndaTVFpSmtvZ2lTOUdJM0dST044?=
+ =?utf-8?B?T1Y0YjFKM2txWmFwRVEwSFhsS21LSmJ4bVJiRGhQcTh5NnJ0M2xLaS9tdS9r?=
+ =?utf-8?B?K3U5L3o5SFRBc3NwbkdLbjdwUDVaVXB4VUhLS1ZLNkhEK09TQ2ppL0NJOHdU?=
+ =?utf-8?B?RzFjUm4zMVRFSVFFSjVjQjJDcThlVnBTMm56OVBsTVovSitVOVN0RGs2Tnoz?=
+ =?utf-8?B?U3BkcEZIS1JVTEdHYVB0YmZVTlIwNURZQWZkTFlISE9kMXgvc0ZrWXpoUHIx?=
+ =?utf-8?B?WmpEU29vSUhIYU81dE4wRG9ybmNzWnd1MHE0aVh6RE56VkFOejJRMUVtanU5?=
+ =?utf-8?B?Smdiam9GNG1NSkxYV2JuMTlFUVZzYjdDMnRvU2tYZ1FJMlhPNTJnM1dmYUpl?=
+ =?utf-8?B?TC9xWVAzKzFoc09BRWVOVW1TZmNlWVRYYnZuUElObFZFNkhreExYaHhEQVRX?=
+ =?utf-8?Q?al5l/n6gLGM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dUF1SHp5S3FBT2FZWmtDaUZXcE9kNzI0R2JvT1hhKytQdzVwSEtvdmtZNEN2?=
+ =?utf-8?B?VERNWnE3SitFcUxCNFlSMzJzL1c2WTJBMDg2QlNqTlBNTjNWanZMVTFZUlg5?=
+ =?utf-8?B?cy9RWVk2RlkrTE1KRUVUeG9sbVJLY2dFRFM1S1RScnpnUENkZTNxYkJCY2x2?=
+ =?utf-8?B?c3ZiTVRPZGdyYS9EQzF3RFhkNVcxUzlkbDlEK3Z0WU1KbHoxeGtkaStrZlpa?=
+ =?utf-8?B?VVkyeVBER0dPM0lvOXNqQ3EyeDBqdy9VVUU2S1lEcE94ckNYRnZkOGFlL2cr?=
+ =?utf-8?B?enpGS2orb1ZSTUNpU2tTaCtQR21UdUJKbVZseThJV1hzNkRTNjZteDRNQ3lu?=
+ =?utf-8?B?RE5XdzU4M2VGVXFnSnZYTjVDaGUzZlN0VU9nRTljTlNTTGJxMVBSOFdYZitV?=
+ =?utf-8?B?dHh1YW9BRW9DS21DekYxYTNqL3FHRTdaOXpsa0xHRHNlOGwyWDAramtnZUk3?=
+ =?utf-8?B?cnc4YnY0ajM4aXhvVm8vSys1cjFqdkFtUmhoQVBYMCtIdFpVZzJYZHRZQVlO?=
+ =?utf-8?B?R21GYUdMNTF5NVNnMWI3Q3B3U25CRllDOU50MnJ6VjZsZXlWMkNQT2hYV1ZX?=
+ =?utf-8?B?Vzk3emdHZ2orY2xMNGRkWmFHbGlpck5oaFNoaUFBdU5zUUZNanhsWjhYNVM3?=
+ =?utf-8?B?L1ZoT253V3pwaXB3L3dhVzFUdVUzQ0xDNTh0TTZkMVhlMmp6NGlnTGg1Z2RV?=
+ =?utf-8?B?UkVRVyt5ZlZYOWI2cnU2cU4yUFZHUnpPMzFrWDRyU1BsYjRRWjR5aVNIcU4z?=
+ =?utf-8?B?ZEZLcFV5dzBzdzVOcHgrWStIbnRUREx3YWE0T05pbFQ4eVhwS1JhbnROV3k5?=
+ =?utf-8?B?NkxTcHkwb3ZIWldQd1lGTnl5ZW90VkhKQnVoanV3Q0tBZ3V4TVRONTN3T05v?=
+ =?utf-8?B?UGZidjlBV0kwWjNkZnhlb3BhTHlidnU1cUpPdVZGSVIrYzhQZEs3Mk5hanJW?=
+ =?utf-8?B?U3g3ZVU1b0M3LzhiOWRLUldkWVNFU2h4VTlZUnN4WEQvRzN1VlpCYWh5aU54?=
+ =?utf-8?B?TDMvVUZITkRHcGszSDhFc3phNlArZUEvTlgwTUlSMzdjeDJoNzdDeitwVUhm?=
+ =?utf-8?B?NWNOUkZDUk56ZEYweHFJci9OeWRWNC9LY2NzeVZlcG1PMnpIMTFxT3FwVnBv?=
+ =?utf-8?B?UUlPWEtsc0w0bW9Va2s3cHMvQm1aa2w3SUNZdHNLUE5McFB0MlJ3cCtGNmdX?=
+ =?utf-8?B?SWsyZnk0dkV3RzEyV3ZJeE10Um1PZFZIRytxajBMK3l0MDBwZEdCOUlHTzNx?=
+ =?utf-8?B?TGEvbzF3RThhdENVMm13L25PY0tKRGd0UE01QURQdVZmbUtHakQyUXJ3bkEv?=
+ =?utf-8?B?U1FyUlA5bXg4MnAxU21SV0JaOTNwc3NMcVAyRFFKZTVBUitDYTZQbWcvSjRz?=
+ =?utf-8?B?ZW1oQ1ZaMnNKZk8rTHdCbUN1VDJpdzBtQWp6WW5EK1BNWkhEQ1FYRWZMMTlC?=
+ =?utf-8?B?K20wZ004c21GSEhBSU54UVpha0QvUDZ3bXRWM2dDdVdWcFZHVDV1REUreVo2?=
+ =?utf-8?B?dW50NG9JVmNIREVhM1QxaDZvNnVZdzhwSmNyTmw0ZWt2eURidlkyOXhMeS8v?=
+ =?utf-8?B?elluMktsWEd4K0JFL2tRdWR5OGlySEp2bXQxd0pUVWt3QlVRd280UmkwY1Ra?=
+ =?utf-8?B?QjY0OGRGZzEvQVN4YUpBei8xVGd2RGx1Mk1DL2o1SSt1WlVLV2Z1TWc0cEZa?=
+ =?utf-8?B?NXJoZTNyVGkrb1BpcjlMWWdBa3FtU0s5TEZYTTRaaXVvWElBejJGays4cldn?=
+ =?utf-8?B?YTNIaFNzTWpaeU4xYStTOE9uUHp3WjY2a0pIbEtMQlp3RCs0ZXlKSkg0VEJW?=
+ =?utf-8?B?RG5HRHBudDZoU25MSU1MdWhrdTRjQ0lONHZ6VUlrdVZjSjlIYXJzaW12SFJD?=
+ =?utf-8?B?M3UyOVZ3eHhEejhyU2g3eWxmQjF5RmZZZm51eHc4cTZ1d3pvaUJPZnFEQW1G?=
+ =?utf-8?B?OG9QM1hid1RnTEFLN1ZhdFBTZmNuSTZWVTBFekI0YVZ5TVYwV2VPRWZiQVNz?=
+ =?utf-8?B?N042OEE5VUgwTGNqdTlKQnZ0SGxkOS8xSEdnTUpHN3dGM0hlWW1LY2JERlBw?=
+ =?utf-8?B?bmdFajN2ZENtWVVtdmQvalluN01EdEFuTXdhN2IrNW5iSG53ZnJmN01SaG52?=
+ =?utf-8?Q?Xh0GjNL4271TuVLIlDQ/CzExj?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b21eb87b-d161-464c-073e-08dda2a984e2
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 14:18:32.1143
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vzF5dHKajhuYKpFRNVGV5h6pyFlLiIXvRXSlrOibDxLykN0vhRtNlYWhRGqh+FLb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7169
 
-Zenghui reports that since 1396e89e09f0 ("genirq/msi: Move prepare()
-call to per-device allocation"), his Multi-MSI capable device isn't
-working anymore.
+On 6/3/25 15:19, Christoph Hellwig wrote:
+> On Tue, Jun 03, 2025 at 03:14:20PM +0200, Christian König wrote:
+>> On 6/3/25 15:00, Christoph Hellwig wrote:
+>>> This is a really weird interface.  No one has yet to explain why dmabuf
+>>> is so special that we can't support direct I/O to it when we can support
+>>> it to otherwise exotic mappings like PCI P2P ones.
+>>
+>> With udmabuf you can do direct I/O, it's just inefficient to walk the
+>> page tables for it when you already have an array of all the folios.
+> 
+> Does it matter compared to the I/O in this case?
 
-This is a consequence of 15c72f824b32 ("PCI/MSI: Add support for
-per device MSI[X] domains"), which always creates a MSI domain of
-size 1, even in the presence of Multi-MSI.
+It unfortunately does, see the numbers on patch 3 and 4.
 
-While this was somehow working until then, moving the .prepare()
-call ends up sizing the ITS table with a tiny value for this device,
-and making the endpoint driver unhappy.
+I'm not very keen about it either, but I don't see much other way to do this.
 
-Instead, always create the domain (and call the .prepare() helper)
-with the maximum expected size.
+> Either way there has been talk (in case of networking implementations)
+> that use a dmabuf as a first class container for lower level I/O.
+> I'd much rather do that than adding odd side interfaces.  I.e. have
+> a version of splice that doesn't bother with the pipe, but instead
+> just uses in-kernel direct I/O on one side and dmabuf-provided folios
+> on the other.
 
-Fixes: 1396e89e09f0 ("genirq/msi: Move prepare() call to per-device allocation")
-Fixes: 15c72f824b32 ("PCI/MSI: Add support for per device MSI[X] domains")
-Link: https://lore.kernel.org/r/0b1d7aec-1eac-a9cd-502a-339e216e08a1@huawei.com
-Reported-by: Zenghui Yu <yuzenghui@huawei.com>
-Tested-by: Zenghui Yu <yuzenghui@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/pci/msi/irqdomain.c | 5 +++--
- drivers/pci/msi/msi.c       | 8 ++++----
- drivers/pci/msi/msi.h       | 2 +-
- 3 files changed, 8 insertions(+), 7 deletions(-)
+That would work for me as well. But if splice or copy_file_range is used is not that important to me.
 
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index d7ba8795d60f..c05152733993 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -271,6 +271,7 @@ static bool pci_create_device_domain(struct pci_dev *pdev, const struct msi_doma
- /**
-  * pci_setup_msi_device_domain - Setup a device MSI interrupt domain
-  * @pdev:	The PCI device to create the domain on
-+ * @hwsize:	The maximum number of MSI vectors
-  *
-  * Return:
-  *  True when:
-@@ -287,7 +288,7 @@ static bool pci_create_device_domain(struct pci_dev *pdev, const struct msi_doma
-  *	- The device is removed
-  *	- MSI is disabled and a MSI-X domain is created
-  */
--bool pci_setup_msi_device_domain(struct pci_dev *pdev)
-+bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize)
- {
- 	if (WARN_ON_ONCE(pdev->msix_enabled))
- 		return false;
-@@ -297,7 +298,7 @@ bool pci_setup_msi_device_domain(struct pci_dev *pdev)
- 	if (pci_match_device_domain(pdev, DOMAIN_BUS_PCI_DEVICE_MSIX))
- 		msi_remove_device_irq_domain(&pdev->dev, MSI_DEFAULT_DOMAIN);
- 
--	return pci_create_device_domain(pdev, &pci_msi_template, 1);
-+	return pci_create_device_domain(pdev, &pci_msi_template, hwsize);
- }
- 
- /**
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index d6ce04054702..6ede55a7c5e6 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -439,16 +439,16 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (nvec < minvec)
- 		return -ENOSPC;
- 
--	if (nvec > maxvec)
--		nvec = maxvec;
--
- 	rc = pci_setup_msi_context(dev);
- 	if (rc)
- 		return rc;
- 
--	if (!pci_setup_msi_device_domain(dev))
-+	if (!pci_setup_msi_device_domain(dev, nvec))
- 		return -ENODEV;
- 
-+	if (nvec > maxvec)
-+		nvec = maxvec;
-+
- 	for (;;) {
- 		if (affd) {
- 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
-diff --git a/drivers/pci/msi/msi.h b/drivers/pci/msi/msi.h
-index fc70b601e942..0b420b319f50 100644
---- a/drivers/pci/msi/msi.h
-+++ b/drivers/pci/msi/msi.h
-@@ -107,7 +107,7 @@ enum support_mode {
- };
- 
- bool pci_msi_domain_supports(struct pci_dev *dev, unsigned int feature_mask, enum support_mode mode);
--bool pci_setup_msi_device_domain(struct pci_dev *pdev);
-+bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize);
- bool pci_setup_msix_device_domain(struct pci_dev *pdev, unsigned int hwsize);
- 
- /* Legacy (!IRQDOMAIN) fallbacks */
--- 
-2.47.2
+My question is rather if it's ok to call f_op->write_iter() and f_op->read_iter() with pages allocated by alloc_pages(), e.g. where drivers potentially ignore the page count and just re-use pages as they like?
+
+Regards,
+Christian.
 
 
