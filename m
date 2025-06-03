@@ -1,88 +1,114 @@
-Return-Path: <linux-kernel+bounces-671498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA04ACC24F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:46:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EC3ACC25C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1B11891510
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 968D91891A00
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 08:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A7828136C;
-	Tue,  3 Jun 2025 08:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6EC281358;
+	Tue,  3 Jun 2025 08:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EU/Xn7u5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="W43ANvm/"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CBF281356;
-	Tue,  3 Jun 2025 08:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D071E4A4;
+	Tue,  3 Jun 2025 08:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748940394; cv=none; b=tNFS93NLzbn9sOsgYwq2votedGH4pOzEu9yydXUZRGi5OqwP7yvoN3jmQuAGhMTrG+YfOCThEkyxClgM5p2tGjzOxs5X1WnoiKK4fKbDFVNsltBj5gl/d61flFpD0zQ44EjXbiRDYIIiNYhXjy2U4xhs7b1Qucd27cLU7xOYmO8=
+	t=1748940468; cv=none; b=XJrXu5jO5gbuDEypAo+Lhal4xwXtKSjfCiPHRzI2sn7N//PGMGm8h5dwbpv9UqayvNIefhsKX4lzmPI+fCaKpeEIIHAJpROTNOuCejbolJBFP7olxZc73jLE1PKBlKLpXM9WwT+e1V1Q0YSdwZZMkJ+Hq30etDP5Y6rd34jwHk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748940394; c=relaxed/simple;
-	bh=LFz97GGrXjWAWsO5RMuTD/kfw8sj5af6GuoPaqymOlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4ssGRo3PTetmOcdBQnFceR8SPDF+5dzSBhU3bDod93r9E+mvtZgml7MCE6GlKfVxoivbN8iMJNQsBZScFy68GYC8q8BTZmY/PPQa2EKcA2hd7XpeibJnaDg+Q/1S4wFd91DcnP0Iy1UrM7FG8X1wXacGbziieoi0h1VDdd4gCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EU/Xn7u5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E217BC4CEF0;
-	Tue,  3 Jun 2025 08:46:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748940394;
-	bh=LFz97GGrXjWAWsO5RMuTD/kfw8sj5af6GuoPaqymOlQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EU/Xn7u5cUhPiquzi/rd7uYTgeD6XfWXKchE918IFUg/0Vun3SGBMVzBdjXFjdVsW
-	 CWynyRUI4haZSFEBPj0Z2ZAww6sO3kGnUQ0lNHnEEI2av/2JWpTiEg1t4l0tw2Z9hF
-	 zLRV2kNF9c1kiP/+5WkBRQrNNN7jkgMcLfTSsucdz6ukhBkkmuDrQlf7Yt/+PksgTs
-	 TKPzt+DPDlFqOhIw/Vfm00d/XLGxn6WOC+jjkL78nIwzoJlKABDdJwc7UYjIVwl21k
-	 r4k4y+A0qnULLPsCkeUZCtOuqbQw1/UYT0heCl06Jy0q7+6+anZg63c3R8xa1pfiTg
-	 stgAGvD9FMvyA==
-Date: Tue, 3 Jun 2025 10:46:28 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] rust: irq: add support for request_irq()
-Message-ID: <aD62ZGBwqXxTroeX@cassiopeiae>
-References: <20250514-topics-tyr-request_irq-v3-0-d6fcc2591a88@collabora.com>
- <20250514-topics-tyr-request_irq-v3-1-d6fcc2591a88@collabora.com>
- <aCUQ0VWgoxdmIUaS@pollux>
- <aD3PCc6QREqNgBYU@google.com>
- <aD3f1GSZJ6K-RP5r@pollux>
- <aD6yOte8g4_pcks7@google.com>
+	s=arc-20240116; t=1748940468; c=relaxed/simple;
+	bh=jJl7zNe61UoVTJuk1dJpds0EqaxQd/Bjp7rrpdF3Vrg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O1RWHlQeNIO3lztG2SYP+QNSM01u40WvUMPuBGRjInPJs69hGDJZnG3R5JnsOb/mGzn3MDDt66DbQxVbbb9KM3R/sWKODdkeD3QjMjYizgQgbpNp8M2DkeY6zLkUcDenNavqbq67ndu9CkqSb0+SHFcJNKLYxUdnB+4LQ7bq+wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=W43ANvm/; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ll9HQg8JHducpOZaqvXxVZxIxZ1+gNQW3g36PYXusgc=;
+	t=1748940467; x=1750150067; b=W43ANvm/jK2PCmf4C1oXzPDqDDSRZ1zVHQkxCJcm6w/HiYB
+	VW6658f7aklLrNQNLom+gJ1hRl9ycgnkPhERK9THyfshpc23RtOAqz2ZZ5qXxBJFlMPmeEYm1aZc+
+	O3IwiVjeRbdDUMTZfWQ4hCj4K0XskBvgHmH1GHqA8Pou+aX60Bni5Wi2OhDgCrMZcAhl5CBv3T2qe
+	FIYjR8//KG0nDEQm8XjikFkzgD2xIiQ3nqdB0QIPpyepc9QBEOtY7gRcaoEkej0SlaTJOUpOrpGp4
+	661ZL7FYZuhoI6EweKtt83zB67dvOKFPnNR0VaBxJHGY+lfKfxM0cHnOpdP9SdcQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uMNIR-00000009mC8-119O;
+	Tue, 03 Jun 2025 10:46:59 +0200
+Message-ID: <b4fe62d12be677dc047ee2fce4a65284a5f915e8.camel@sipsolutions.net>
+Subject: Re: [PATCH 2/2] arch: use always-$(KBUILD_BUILTIN) for vmlinux.lds
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Alexander Gordeev	
+ <agordeev@linux.ibm.com>, Alexandre Ghiti <alex@ghiti.fr>, Andreas Larsson	
+ <andreas@gaisler.com>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Borislav Petkov	 <bp@alien8.de>, Brian Cain <bcain@kernel.org>, Catalin
+ Marinas	 <catalin.marinas@arm.com>, Chris Zankel <chris@zankel.net>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Dave Hansen	 <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Dinh Nguyen <dinguyen@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Guo Ren	 <guoren@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Heiko Carstens	 <hca@linux.ibm.com>,
+ Helge Deller <deller@gmx.de>, Huacai Chen	 <chenhuacai@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, "James E.J. Bottomley"	
+ <James.Bottomley@HansenPartnership.com>, John Paul Adrian Glaubitz	
+ <glaubitz@physik.fu-berlin.de>, Jonas Bonn <jonas@southpole.se>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Matt Turner <mattst88@gmail.com>, Max
+ Filippov <jcmvbkbc@gmail.com>,  Michael Ellerman <mpe@ellerman.id.au>,
+ Michal Simek <monstr@monstr.eu>, Naveen N Rao <naveen@kernel.org>, Nicholas
+ Piggin <npiggin@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul
+ Walmsley	 <paul.walmsley@sifive.com>, Rich Felker <dalias@libc.org>,
+ Richard Henderson	 <richard.henderson@linaro.org>, Richard Weinberger
+ <richard@nod.at>, Russell King <linux@armlinux.org.uk>, Stafford Horne
+ <shorne@gmail.com>, Stefan Kristiansson	
+ <stefan.kristiansson@saunalahti.fi>, Sven Schnelle <svens@linux.ibm.com>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,  Vineet Gupta
+ <vgupta@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Will Deacon
+ <will@kernel.org>,  Yoshinori Sato <ysato@users.sourceforge.jp>,
+ linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-um@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+	sparclinux@vger.kernel.org, x86@kernel.org
+Date: Tue, 03 Jun 2025 10:46:57 +0200
+In-Reply-To: <20250602181256.529033-2-masahiroy@kernel.org>
+References: <20250602181256.529033-1-masahiroy@kernel.org>
+	 <20250602181256.529033-2-masahiroy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aD6yOte8g4_pcks7@google.com>
+X-malware-bazaar: not-scanned
 
-On Tue, Jun 03, 2025 at 08:28:42AM +0000, Alice Ryhl wrote:
-> That optimization sounds like something we definitely want, but I have
-> one question: is free_irq() safe to use in atomic context / inside
-> rcu_read_lock()? What about the threaded-irq variant?
+On Tue, 2025-06-03 at 03:12 +0900, Masahiro Yamada wrote:
+> The extra-y syntax is deprecated. Instead, use always-$(KBUILD_BUILTIN),
+> which behaves equivalently.
 
-No, free_irq() must not be called from atomic context. Hence, it's not valid to
-call it from within an RCU read-side critical section.
+OK, whatever you say ;-)
 
-I assume you're confusing something, free_irq() is called from the destructor of
-the irq::Registration object, hence it is either called when the object itself
-is dropped or from the devres callback, which is called after the
-synchronize_rcu(), but not from an RCU read-side critical section.
+>  arch/um/kernel/Makefile         | 2 +-
+
+Acked-by: Johannes Berg <johannes@sipsolutions.net>
+
+johannes
 
