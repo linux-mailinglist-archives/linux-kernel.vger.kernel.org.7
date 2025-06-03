@@ -1,184 +1,122 @@
-Return-Path: <linux-kernel+bounces-672168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F76ACCBC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 19:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B07AACCBCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 19:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E546175EFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:12:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C87BA164CAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 17:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0306B1D8E07;
-	Tue,  3 Jun 2025 17:11:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E9E1E1A3F;
+	Tue,  3 Jun 2025 17:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eVL5SC6z"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8327B1DF268
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 17:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4721B0F0A
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 17:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748970674; cv=none; b=Wtit9j/MiJyRBUV2nPLi2Ki+N4X/TJpiTPaKz18OGp+aFuMy4XfyLjvq1IyWa9yy+ehjkyCa+souUxy8A/vph/EPi4ho92NnOBb3iog372+rUYGS+qqcUs28LSW/7Bw3xwxkWg1y4lFH6GFGxX6g1oF6123mbQAOYVABxVaMTc0=
+	t=1748970745; cv=none; b=ta26Zx+booQgFPmsgAfA8qHC69c1UCwMGrxZYIzVIfaV8Ir+unk/GhKq19Dbz6i8Bz9N8k7dzVGP14nh3gFLEGqxHYIya8wk/V2gLfn5rdQLqpjTefQZw6mpSI3uWEZI9FOL7aaZVciYPihNBA0foHQFmd10svBqI4Qjaa5UO90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748970674; c=relaxed/simple;
-	bh=usGSICZBZcT+AQRM8OuiXrD2b9kfIFSK0gg2jjAzeIo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=nc8eHq/wEz77ZJQoDKWBg74PZaZBRGmWq2RgV9LJqp1MyxM9F6XLJRIMd821I2TmMFbJ1GQAw77lj+YfDtQfL/9TBnEr6yutvF5Q1tiVcZMK4V51K5DX1A9doN1GGgb42cP+1H4DUGux11YDErPToKIHHGl1Sqdem/zCZpgvl74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68DF9C4CEF6;
-	Tue,  3 Jun 2025 17:11:14 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uMVBd-0000000E41W-15lR;
-	Tue, 03 Jun 2025 13:12:29 -0400
-Message-ID: <20250603171229.109414670@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 03 Jun 2025 13:11:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Shiyang Ruan <ruansy.fnst@fujitsu.com>,
- "Darrick J. Wong" <djwong@kernel.org>,
- Ross Zwisler <zwisler@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>
-Subject: [for-linus][PATCH 5/5] fsdax: Remove unused trace events for dax insert mapping
-References: <20250603171149.582996770@goodmis.org>
+	s=arc-20240116; t=1748970745; c=relaxed/simple;
+	bh=aBZTPoy+j2RvyY9xp9Dng4bIGIWmvFpCRUS3iPsWumc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aLc6n5uXoNJhRjvP8AGcAezvAC5XOMjUkULCfHI7LEB5fI/tVL0Z/7qBQwWbXQwQgQLDJSDqxO7UBM9nPxc2ZH9+JnEecnvFIT4Tez1sP0+d1hKqk4ObD/G1Sh5Bj8JMGzx+8NuYp3+wlgvtYKhyKjBT7TyjtcMxsGgR+vVQvp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eVL5SC6z; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-86d074fc24bso133490139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 10:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1748970743; x=1749575543; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1MwMXq01gJ1aVcg4TMQoAlvogQ3BB/CkVvLj7iIXR30=;
+        b=eVL5SC6zU6Rcoa7EShwOPo8Zp94K4PDHtVqb6DlpCyYzVgSlCRDoLOW49Ho4UoTSbq
+         LJdE7xe0b3PRsMfDhAN72pLIb+gSE0NObtKM/arYcdvR0++bXar7fMo5sfFnNHIlt9SO
+         iIWfS1tI8hW73l5y575Q9bWX7tbTnghtwjTqc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748970743; x=1749575543;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1MwMXq01gJ1aVcg4TMQoAlvogQ3BB/CkVvLj7iIXR30=;
+        b=J/DJy1OawWQPQnBr2xryj4YEhjKWI1bf9APazMezNWkBCF7U4nhAQzSzozS2mYeb0C
+         sIvf5oOulXe1ytyTsJEQ41m4yrLRcNpHdeJfAOgFqekBDTzAAbTF7n+QR/QV5WG647qI
+         3JQDttLJ8bptD3HAtB/tdJ1tZCiLvAdFY1DAVzk7JxwpDtOc7ex2/p/XWWBA0Dcnt9hk
+         MhNzQpVP4vzR37FyX/RMmKnbReC7XXOpvfifVfn1SDO41GgRUyFNCyJhtPX0xVAkUE1s
+         xTxAd9Ml5a/GxiiurU8eTQdQ7qMadgaUw9elX4IhUyR8xo2A+yTD/HTOzs0KMiIyVk0S
+         0mYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlT/TQbhCCjxd1M1KgsVzEKQNL8W2+tKhGR0h8S/ubYraIoH1OK019ZpDDAhICfurAswuJPmss8t5tq64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq+l/NJyxzO7pLxGjJus6GzGnJKUlwfeuWreZHQXOVdQVBPlVF
+	wfXAQb82J4R6aPkkufZpMz1L0992Jog5DwBbkq9pzs3pjrx2L0mFG/beYTgkvwXpp5o=
+X-Gm-Gg: ASbGnctZykgKuMrxSOSU/XVt5pgHXXPV6qpAc27+afAFqkmV7bI53rwDbhMz6+yDtY6
+	8OI1uug2joQSYxyt9i16jsr9F2bzBRaXVmbL1YzCP1sV42UfuOn6exTF/hphcDowMTFmx3qgsg5
+	zOEUmV6UfkqJKUzzkrYq68tTRokbgScOfT7KhGZiQelz0KPrG5Urb5i5YBzyMU1LYeZxhTqeZqf
+	i8yle7TTakSzUx2RSy9RQDoy+M8ZhRFNh7GLHbXsTEHRa8WUM7yTqpviu7pMmmViUAQLoEtL6zH
+	a0Scdp4sGZCglsVKF+VWLJdadKTkphJ7Tm0/e9dwkN5o3xLVwuUb6H/qlQD1Aw==
+X-Google-Smtp-Source: AGHT+IFqdE/Rv34mnRjjnq3frW36aEbqp6DknO1kuzPgluh1D3x0RxohnU3W0kvIiYd58v8VDK1dDQ==
+X-Received: by 2002:a05:6602:2c15:b0:86a:1fce:f1a6 with SMTP id ca18e2360f4ac-86d050945fdmr1683962039f.5.1748970742966;
+        Tue, 03 Jun 2025 10:12:22 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7dfe577sm2349735173.11.2025.06.03.10.12.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 10:12:22 -0700 (PDT)
+Message-ID: <afd3f81a-237e-4076-9e35-f478bb1b9844@linuxfoundation.org>
+Date: Tue, 3 Jun 2025 11:12:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/325] 6.1.141-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250602134319.723650984@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250602134319.723650984@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 6/2/25 07:44, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.141 release.
+> There are 325 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 04 Jun 2025 13:42:20 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.141-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-When the dax_fault_actor() helper was factored out, it removed the calls
-to the dax_pmd_insert_mapping and dax_insert_mapping events but never
-removed the events themselves. As each event created takes up memory
-(roughly 5K each), this is a waste as it is never used.
+Compiled and booted on my test system. No dmesg regressions.
 
-Remove the unused dax_pmd_insert_mapping and dax_insert_mapping trace
-events.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Link: https://lore.kernel.org/all/20250529130138.544ffec4@gandalf.local.home/
-
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Ross Zwisler <zwisler@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20250529152211.688800c9@gandalf.local.home
-Fixes: c2436190e492 ("fsdax: factor out a dax_fault_actor() helper")
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/trace/events/fs_dax.h | 78 -----------------------------------
- 1 file changed, 78 deletions(-)
-
-diff --git a/include/trace/events/fs_dax.h b/include/trace/events/fs_dax.h
-index 86fe6aecff1e..76b56f78abb0 100644
---- a/include/trace/events/fs_dax.h
-+++ b/include/trace/events/fs_dax.h
-@@ -102,54 +102,6 @@ DEFINE_EVENT(dax_pmd_load_hole_class, name, \
- DEFINE_PMD_LOAD_HOLE_EVENT(dax_pmd_load_hole);
- DEFINE_PMD_LOAD_HOLE_EVENT(dax_pmd_load_hole_fallback);
- 
--DECLARE_EVENT_CLASS(dax_pmd_insert_mapping_class,
--	TP_PROTO(struct inode *inode, struct vm_fault *vmf,
--		long length, pfn_t pfn, void *radix_entry),
--	TP_ARGS(inode, vmf, length, pfn, radix_entry),
--	TP_STRUCT__entry(
--		__field(unsigned long, ino)
--		__field(unsigned long, vm_flags)
--		__field(unsigned long, address)
--		__field(long, length)
--		__field(u64, pfn_val)
--		__field(void *, radix_entry)
--		__field(dev_t, dev)
--		__field(int, write)
--	),
--	TP_fast_assign(
--		__entry->dev = inode->i_sb->s_dev;
--		__entry->ino = inode->i_ino;
--		__entry->vm_flags = vmf->vma->vm_flags;
--		__entry->address = vmf->address;
--		__entry->write = vmf->flags & FAULT_FLAG_WRITE;
--		__entry->length = length;
--		__entry->pfn_val = pfn.val;
--		__entry->radix_entry = radix_entry;
--	),
--	TP_printk("dev %d:%d ino %#lx %s %s address %#lx length %#lx "
--			"pfn %#llx %s radix_entry %#lx",
--		MAJOR(__entry->dev),
--		MINOR(__entry->dev),
--		__entry->ino,
--		__entry->vm_flags & VM_SHARED ? "shared" : "private",
--		__entry->write ? "write" : "read",
--		__entry->address,
--		__entry->length,
--		__entry->pfn_val & ~PFN_FLAGS_MASK,
--		__print_flags_u64(__entry->pfn_val & PFN_FLAGS_MASK, "|",
--			PFN_FLAGS_TRACE),
--		(unsigned long)__entry->radix_entry
--	)
--)
--
--#define DEFINE_PMD_INSERT_MAPPING_EVENT(name) \
--DEFINE_EVENT(dax_pmd_insert_mapping_class, name, \
--	TP_PROTO(struct inode *inode, struct vm_fault *vmf, \
--		long length, pfn_t pfn, void *radix_entry), \
--	TP_ARGS(inode, vmf, length, pfn, radix_entry))
--
--DEFINE_PMD_INSERT_MAPPING_EVENT(dax_pmd_insert_mapping);
--
- DECLARE_EVENT_CLASS(dax_pte_fault_class,
- 	TP_PROTO(struct inode *inode, struct vm_fault *vmf, int result),
- 	TP_ARGS(inode, vmf, result),
-@@ -194,36 +146,6 @@ DEFINE_PTE_FAULT_EVENT(dax_load_hole);
- DEFINE_PTE_FAULT_EVENT(dax_insert_pfn_mkwrite_no_entry);
- DEFINE_PTE_FAULT_EVENT(dax_insert_pfn_mkwrite);
- 
--TRACE_EVENT(dax_insert_mapping,
--	TP_PROTO(struct inode *inode, struct vm_fault *vmf, void *radix_entry),
--	TP_ARGS(inode, vmf, radix_entry),
--	TP_STRUCT__entry(
--		__field(unsigned long, ino)
--		__field(unsigned long, vm_flags)
--		__field(unsigned long, address)
--		__field(void *, radix_entry)
--		__field(dev_t, dev)
--		__field(int, write)
--	),
--	TP_fast_assign(
--		__entry->dev = inode->i_sb->s_dev;
--		__entry->ino = inode->i_ino;
--		__entry->vm_flags = vmf->vma->vm_flags;
--		__entry->address = vmf->address;
--		__entry->write = vmf->flags & FAULT_FLAG_WRITE;
--		__entry->radix_entry = radix_entry;
--	),
--	TP_printk("dev %d:%d ino %#lx %s %s address %#lx radix_entry %#lx",
--		MAJOR(__entry->dev),
--		MINOR(__entry->dev),
--		__entry->ino,
--		__entry->vm_flags & VM_SHARED ? "shared" : "private",
--		__entry->write ? "write" : "read",
--		__entry->address,
--		(unsigned long)__entry->radix_entry
--	)
--)
--
- DECLARE_EVENT_CLASS(dax_writeback_range_class,
- 	TP_PROTO(struct inode *inode, pgoff_t start_index, pgoff_t end_index),
- 	TP_ARGS(inode, start_index, end_index),
--- 
-2.47.2
-
-
+thanks,
+-- Shuah
 
