@@ -1,121 +1,202 @@
-Return-Path: <linux-kernel+bounces-671604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03B0ACC39F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:52:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26B4ACC3AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530F31736D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5493A38BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2915D2820BF;
-	Tue,  3 Jun 2025 09:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LWeCr4rn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5QNFbJ6c"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E9828469A;
+	Tue,  3 Jun 2025 09:53:56 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA85928151E;
-	Tue,  3 Jun 2025 09:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE1F27FD5D;
+	Tue,  3 Jun 2025 09:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748944346; cv=none; b=M+IxzA1suwUPHXKwh5KjOvLilnDC8EJhLGZBMenOSEpuDvpHsS6Kb/m6tyv1oJEz6Xw8aYQW6A8nnlBaUWcHcxOHE4GbRm7RbTIowG34vqnKXiB0Ke2g2CaziGOLiLtW/11M5WMLv7NrL8qLMrdxnABtV3VmGxhpXIGpyCvnp0g=
+	t=1748944436; cv=none; b=TeKbgg2kPUc8Yy5UYkCfq//PLzznrCXB5DQSyoDP6ETpnuCzJr01xdryik+u5PIMr7QtMxQLXJLOCGKow44UvPs/muPYTAMx3h6u9pYlVdtwrHgfGB8boREgjKs7JddpQGbGm4BBZ/OyztWkLkXTUcS3zEcbjLH2yNIxazmuLx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748944346; c=relaxed/simple;
-	bh=Xlxi9rPd9vD9mqlymmA7AuEXXEJbaZWZ9v07jx7GWOI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g4t1CkVjClpexpMmvBw46OQli1rw1ugrA07AbCMQrnolzq03ZaVjxMw4GhKuMoocvG9KYm+AWnyeTud3Y//l6aPEPIaTZ+TSvgKhJtaL1OhNqbFk71cluroC/VAItGoya6T90TCEmvFqwBcEFtZmtknT5ETNvTQuMly6drPj2M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LWeCr4rn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5QNFbJ6c; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1748944337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rmYgAnk0V4lp/9zkefQtVct+J2O63fqxijSOg/js5bY=;
-	b=LWeCr4rnQ8CKYH5Y3v54ZkDkEqGHqYbjpIgtgrAmV10YeqOmIFI3xH2inH60m/rinQGR+N
-	kEBkA4sHSJH4fO1G8uK/xr5fk2H/hgAaq9A6YxWxuES0c6JmwA/o5Y6HgdNiz8LMpjyc1r
-	vFMnwXl/svo1RYoRp7xQDYiGjpn7LvDP89HArd98pjhF3qSTD/PZy7g6N/OfEkfi3coV2V
-	ytbHg8X7HYiYgBPF3N9g3Mh/hM1Xg/fG+hzxY1h5HYt/T5yGylUEnT5wZLqTcj78t2tslr
-	5eFQP7S6Irop0b3dbYFqbFqAyOjwcKbhhOWBHeBeqHkgGM+Hz8qIkz3aXZYytg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1748944337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rmYgAnk0V4lp/9zkefQtVct+J2O63fqxijSOg/js5bY=;
-	b=5QNFbJ6cHzeTgRCctSafeiupEElh8yGKbOaviuWXQoz8s8lpjC+ahpqMcXgcCjVdBh19z9
-	WlXQyXm5apjgiyAQ==
-Date: Tue, 03 Jun 2025 11:52:13 +0200
-Subject: [PATCH] sched: Fix preemption string of preempt_dynamic_none
+	s=arc-20240116; t=1748944436; c=relaxed/simple;
+	bh=Ya8+59ToWbCjfLw1jynXXieitwELbxZ1p5gQPXXhebI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JWbDM4cCzkzPZIdo40z9ynceokb5AjG4iAA9kx4vgXqkKlLrAEq8UeBHApgjVwrJYfNUdonu0RWZYM0lYjwDaA55W1MgCYGv6l7khpu9H1AlPGCDdKxQADjauYWWyf5yzt4DGRW3VZOAMimdNG2El3izVrOza1AkDebi8VlHUQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bBQwM6P0wzYlSdQ;
+	Tue,  3 Jun 2025 17:51:47 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
+ 2025 17:53:50 +0800
+Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
+ 2025 17:53:49 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
+	<kraxel@redhat.com>, <vivek.kasireddy@intel.com>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <hughd@google.com>, <akpm@linux-foundation.org>,
+	<amir73il@gmail.com>
+CC: <benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
+	<jstultz@google.com>, <tjmercier@google.com>, <jack@suse.cz>,
+	<baolin.wang@linux.alibaba.com>, <linux-media@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <bintian.wang@honor.com>, <yipengxiang@honor.com>,
+	<liulu.liu@honor.com>, <feng.han@honor.com>, wangtao <tao.wangtao@honor.com>
+Subject: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Date: Tue, 3 Jun 2025 17:52:41 +0800
+Message-ID: <20250603095245.17478-1-tao.wangtao@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250603-preempt-str-none-v1-1-f0e9916dcf44@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAMzFPmgC/x2MQQqAIBAAvxJ7bkFXiugr0SF0qz2kohGB+Pek4
- 8DMFMichDPMXYHEj2QJvoHuO7Dn5g9GcY2BFA1qVAZjYr7ijflO6INndKTJaGuJzAQta8Iu779
- c1lo/F9Oz4WIAAAA=
-X-Change-ID: 20250603-preempt-str-none-d21231cc2238
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Shrikanth Hegde <sshegde@linux.ibm.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1748944334; l=1237;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Xlxi9rPd9vD9mqlymmA7AuEXXEJbaZWZ9v07jx7GWOI=;
- b=rU9NK325oLcYMqv3CYc1Zro/M5sdzjehER2RK3SaMV9Ymni4W3xTWHL0I7UCRw6dG7TOk9S6U
- k2ypHlC8c85DgoNM4lD1gTI1SQaHUuzRT1mDetLVm6MdioqZH+ztnGK
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a010.hihonor.com
+ (10.68.16.52)
 
-Zero is a valid value for "preempt_dynamic_mode", namely
-"preempt_dynamic_none".
+Main steps to load file data into dmabuf:
+1. dmabuf_fd = dmabuf_alloc(len, heap_fd)
+2. vaddr = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, dmabuf_fd, 0)
+3. file_fd = open(file_path, O_RDONLY)
+4. read(file_fd, vaddr, len)
 
-Fix the off-by-one in preempt_model_str(), so that "preempty_dynamic_none"
-is correctly formatted as PREEMPT(none) instead of PREEMPT(undef).
+dmabuf's attachment/map/fence model sets VM_PFNMAP for mmap, which lacks
+direct I/O support[1]. Buffer IO causes latency when loading large AI model
+files.
 
-Fixes: 8bdc5daaa01e ("sched: Add a generic function to return the preemption string")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My previous patch added dmabuf ioctl for Direct IO file operations, showing
+good performance on low-power CPUs[2][3]. Christian suggested using existing
+uAPIs (read/sendfile/splice/c_f_r) instead of new ioctls.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index dce50fa57471dffc4311b9d393ae300a43d38d20..021b0a703d094b3386c5ba50e0e111e3a7c2b3df 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7663,7 +7663,7 @@ const char *preempt_model_str(void)
- 
- 		if (IS_ENABLED(CONFIG_PREEMPT_DYNAMIC)) {
- 			seq_buf_printf(&s, "(%s)%s",
--				       preempt_dynamic_mode > 0 ?
-+				       preempt_dynamic_mode >= 0 ?
- 				       preempt_modes[preempt_dynamic_mode] : "undef",
- 				       brace ? "}" : "");
- 			return seq_buf_str(&s);
+sendfile/splice/c_f_r enable zero-copy via Direct IO for disk-disk/network:
+sendfile(skt_fd, disk_fd): [DISK]-DMA->[pipe(buf)]-DMA->[NIC]
+sendfile(dst_disk, src_disk): [DISK] -DMA-> [pipe(buf)] -DMA-> [DISK]
 
----
-base-commit: 546b1c9e93c2bb8cf5ed24e0be1c86bb089b3253
-change-id: 20250603-preempt-str-none-d21231cc2238
+Analysis shows existing uAPIs can't achieve zero-copy disk-to-dmabuf.
+Since dmabuf lacks file ops, using tmpfs for disk-to-tmpfs CPU analysis:
+| Method            | CPU Copies | Key Overhead               |
+|-------------------|------------|----------------------------|
+| 1. Buffer R+W     | 2          | Alloc(cache) & 2 CPU copies|
+| 2. Direct R+W     | 1          | GUP(usr_buf) & 1 CPU copy  |
+| 3. Mmap+Buffer R  | 1          | Alloc(cache) & 1 CPU copy  |
+| 4. Mmap+Direct R  | 0          | GUP(mem_buf) ~50% CPU      |
+| 5. Buffer Sendfile| 1          | Alloc(cache) & 1 CPU copy  |
+| 6. Direct Sendfile| 1          | Small pipe, high IRQ       |
+| 7. Buffer Splice  | 1          | Alloc(cache) & 1 CPU copy  |
+| 8. Direct Splice  | 1          | Larger pipe buffer         |
+| 9. c_f_r          | N/A        | Cross-FS blocked           |
 
-Best regards,
+GUP: get_user_page
+Alloc(cache): allocate page cache
+
+Data flows:
+1. [DISK] -DMA-> [Alloc(cache)] -COPY-> [usr_buf] -COPY-> [MEM]
+2. [DISK] -DMA-> [GUP(usr_buf)] -COPY-> [MEM]
+3. [DISK] -DMA-> [Alloc(cache)] -COPY-> [mem_buf]
+4. [DISK] -DMA-> [GUP(mem_buf)]
+5. [DISK] -DMA-> [pipe(Alloc(cache))] -COPY-> [tmpfs page]
+6. [DISK] -DMA-> [pipe(buf)] -COPY-> [tmpfs page]
+7. [DISK] -DMA-> [big_pipe(Alloc(cache))] -COPY-> [tmpfs page]
+8. [DISK] -DMA-> [big_pipe(buf)] -COPY-> [tmpfs page]
+9. [DISK] -DMA-> [tmpfs page] (blocked)
+
+Key findings:
+- Buffer I/O requires page cache allocation and at least one CPU copy
+- Read+Write incurs excessive CPU copies and will no longer be analyzed.
+  Future approaches will use Read instead of mmap+Read.
+- Mmap+Direct has zero copies but 50% GUP overhead, and dmabuf doesn't support
+- sendfile/splice require intermediate pipes, needing 1 CPU copy
+- c_f_r limitations: Cross-FS blocks + missing memory FS support
+
+Modifications:
+1. Enable cross-FS c_f_r for memory file types
+2. Add dmabuf c_f_r callbacks for [DISK]-DMA->[dmabuf]
+3. Test tmpfs c_f_r locally only (no upstream) due to lock_page deadlock risks
+
+Performance (1GHz CPU, UFS4@4GB):
+1. tmpfs(memfd) direct c_f_r(1197 MB/s): +15% vs mmap&read(1014)
+2. udmabuf+memfd(2318 MB/s): +50% vs mmap&read(1457 MB/s)
+3. dmabuf direct c_f_r(3405 MB/s): 260% faster than buffer IO(918 MB/s)
+   40% faster than udmabuf(2318 MB/s)
+
+|    32x32MB Read 1024MB  |Creat-ms|Close-ms|  I/O-ms|I/O-MB/s| I/O%
+|-------------------------|--------|--------|--------|--------|-----
+| 1)Beg  dmabuf buffer R/W|     52 |      5 |   1170 |    918 | 100%
+| 2)    udmabuf buffer R/W|    591 |    326 |   1281 |    838 |  91%
+| 3)      memfd buffer R/W|      1 |    323 |   2370 |    453 |  49%
+| 4)      memfd direct R/W|      1 |    321 |   1058 |   1014 | 110%
+| 5) memfd buffer sendfile|      1 |    329 |   1577 |    681 |  74%
+| 6) memfd direct sendfile|      1 |    327 |   2672 |    401 |  43%
+| 7)   memfd buffer splice|      2 |    321 |   1729 |    621 |  67%
+| 8)   memfd direct splice|      2 |    324 |   1528 |    702 |  76%
+| 9)    memfd buffer c_f_r|      1 |    325 |   1586 |    677 |  73%
+|10)    memfd direct c_f_r|      1 |    323 |    897 |   1197 | 130%
+|11)      u+mfd buffer R/W|    609 |    344 |   2207 |    486 |  52%
+|12)      u+mfd direct R/W|    580 |    342 |    737 |   1457 | 158%
+|13) u+mfd buffer sendfile|    582 |    343 |   1270 |    845 |  92%
+|14) u+mfd direct sendfile|    573 |    344 |   2254 |    476 |  51%
+|15)   u+mfd buffer splice|    584 |    341 |   1202 |    893 |  97%
+|16)   u+mfd direct splice|    564 |    340 |    851 |   1263 | 137%
+|17)    u+mfd buffer c_f_r|    585 |    344 |   1244 |    863 |  94%
+|18)    u+mfd direct c_f_r|    578 |    341 |    581 |   1848 | 201%
+|19)  udmabuf buffer c_f_r|    585 |    328 |   1163 |    923 | 100%
+|20)  udmabuf direct c_f_r|    579 |    328 |    464 |   2318 | 252%
+|21)   dmabuf buffer c_f_r|     48 |      5 |   1058 |   1015 | 110%
+|22)   dmabuf direct c_f_r|     48 |      5 |    316 |   3405 | 370%
+|23)End  dmabuf buffer R/W|     48 |      5 |   1173 |    915 |  99%
+
+u+mfd = udma+memfd = udmabuf + pre-allocated memfd combo.
+Cache cleared during tests to simulate real-world large file loading.
+
+dmabuf file Use Cases:
+- Loading large AI models using dmabuf
+- Real-time data capture and storage with dmabuf
+- Persisting task snapshots in Android
+
+v3 -> v4:
+ Add memory_copy_file_fops to simplify code and add FMODE_ODIRECT check
+ Explicitly add dependency headers for udmabuf
+ Simplify rw_file implementation in udmabuf/system_heaps
+ Set FMODE_ODIRECT for dmabuf supporting Direct I/O
+v2 -> v3: [4]
+ copy_file_range supports copying from disk files to memory files.
+ Implement the copy_file_range callback functions for dmabuf/udmabuf.
+v1 -> v2: [3]
+ Dma-buf exporter verify exclusive access to the dmabuf's sgtable.
+v1: [2]
+
+Reference:
+[1] https://lore.kernel.org/all/0393cf47-3fa2-4e32-8b3d-d5d5bdece298@amd.com
+[2] https://lore.kernel.org/all/20250513092803.2096-1-tao.wangtao@honor.com
+[3] https://lore.kernel.org/all/20250516092148.12778-1-tao.wangtao@honor.com
+[4] https://lore.kernel.org/all/20250530103941.11092-1-tao.wangtao@honor.com
+
+wangtao (4):
+  fs: allow cross-FS copy_file_range for memory file with direct I/O
+  dmabuf: Implement copy_file_range callback for dmabuf direct I/O prep
+  udmabuf: Implement udmabuf direct I/O
+  dmabuf:system_heap Implement system_heap dmabuf direct I/O
+
+ drivers/dma-buf/dma-buf.c           | 32 +++++++++++++
+ drivers/dma-buf/heaps/system_heap.c | 69 +++++++++++++++++++++++++++++
+ drivers/dma-buf/udmabuf.c           | 54 ++++++++++++++++++++++
+ fs/read_write.c                     | 64 +++++++++++++++++++++-----
+ include/linux/dma-buf.h             | 16 +++++++
+ include/linux/fs.h                  |  2 +
+ 6 files changed, 225 insertions(+), 12 deletions(-)
+
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.17.1
 
 
