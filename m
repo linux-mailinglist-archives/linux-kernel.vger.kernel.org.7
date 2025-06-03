@@ -1,226 +1,79 @@
-Return-Path: <linux-kernel+bounces-671967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AAAACC91F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1744ACC922
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AD1188E1DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:29:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7F017A43BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D565A23A9A8;
-	Tue,  3 Jun 2025 14:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96442238C10;
+	Tue,  3 Jun 2025 14:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JuWtqqmc"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UEflr7AC"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44439239E9E
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF18F1F8751
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748960922; cv=none; b=NU8MaNSmW3zRQ9wmHnu3h1TyPD4e1ENjIeYNBMljnHqKughLPOD8+y86pvT8Px9AVDivjWhYT7DOWuLX9dxcJqvdDZzlin6inhBBIT4O0KRBzoDLgDGIQjvCFis1IVbE1sidQ8qTJa1UNqZ1rwEy365U4rOk+5rmH2z2hQbvv2E=
+	t=1748960962; cv=none; b=ADSqa+W9JVDtMln1SI276LiVePXxmnLmFPb0nYqZnMmg9ITelW7rvf427yoOgUtW8cdpIxBBwxm3wFHS3fX6uwgQT4YbCFZJLXORLOneMEbbaoqOdwGcFAkIN3NNbVoer1pvbn8cIXJ0w8xOx+CVIvd2jIZChT2jT55LvN7Saos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748960922; c=relaxed/simple;
-	bh=BHoROxq4Yg70EhGIUKjQurV0ymRZkbKIPnWlHTUtRds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kghJ1fosx1wOPh8x9iTZg1C8LKAYapA/d5SMXn823ll/WJaqOPEMrp+SvBNLNmP8QgGGuNYKFymWkXX1bj1vwu97FDyJn2wcwdQebhm3pJpNAy9Sh41+G+R2TvQ3b2AtWrSuwzCXWsM8BFOaBj+jcKuPEll5Hw7iUIARfLn5sT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JuWtqqmc; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso2241483f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 07:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748960918; x=1749565718; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QVoevd4lyUI3zPOEpq/RIzyFhX2NtvaxczLaES3uue8=;
-        b=JuWtqqmcW7cs/mhXv5O115HtovW8asw97hwTSQw9d9XqBDzUrRVEWGisSLkHnVVYmI
-         CUzsDzFZj0FfNU2CBWftGl3eQhSbCBp6slJia9l+RcRM82Ta04EAGMOJANfBcdUN6s3p
-         5yNiVDC+zEsNSXi7Iax54ef+CplDKEttjYunsjVE9kJsz9jLQ4zz1tR944hvjcEif/Dz
-         7yiaauwTIrjmDUZhNYYHxeswAmra3sn8GnCsKFIS+q6pMcCmnBT9NGFzjN4ryG2fIkYB
-         /VY5oyOl4JENgGVqXEEMEYK1LedohwkxjJD1f7LbAAnx/vQV7iyWCVX1vT9Q+xQEi9Fv
-         RvyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748960918; x=1749565718;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QVoevd4lyUI3zPOEpq/RIzyFhX2NtvaxczLaES3uue8=;
-        b=qdolet4uDZEiuYEh3jnlPjRJDluV2oqAUL3Z9o6PwXpV/sQaTpD7/yVH0l6YZLAIBJ
-         yDmdIiKmWP048I+Pb3cJIE4sr4rXAxRRa8PkmccUF56n8N7O6915sQ4wxIiJcznODibE
-         7+lbP0FyIYb0gJ1kdUK76rQ/PSvPwSsZxZ19XdXuVmTvMdToJPK/9DIhaVH8qoKuziXi
-         SmT0ykuOPXqb5tfe/2Xqufhd0NT0VDtemnlG8I9VF+JmGzw35HQCF7g4+ZpDHoueISfo
-         XeZePT0a6NkBALIrsUwH/r9D8az6VHsL2S/WUFmR8Fsqo/s82/mExWTWuSp65/3K/Wjl
-         RvAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoXk17lHjFbIEvQv528sHz2/1A2HLy3lMgJv07A0AWW7DDb0gwJS45mAb5z6Ls5MjaIRM+kebWYK6WbV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqhBQJFnF4jHOHdbzBMEPIQNcKD5D8pMJbmLWXCamePV5YIyjh
-	IuagQm+KmL7Xqp6WtbDOdtEA1FOUkkQda3dvGELjhkKf0WiE13QJg13Z1U+ksCMvzmQ=
-X-Gm-Gg: ASbGncsFSm6cZjFPpl3g1bZXKMhPbd7G6ZGcayPpUGpZY7JN+rMFvPCMFB0drLc8sXt
-	fkgQwiNvf8y+N0Q3ioclSBGup/plXvTtCJiDe+YWBa+ssO/Fd67z0GG+VN2VA4afPl9Z1bxAMCy
-	RgbRmxZDhgPQDkZgJMyj2fWSE1EfIplcqJVvQrYERZ6Q/jCPaIlnGkbxy23ldePMIUr5S9wDz00
-	3Z9rGEskH+/tmZCYZT2e6PBziGeLXpaQDUtxPIFhhTVCOylIkzsrTwqyfMNEU8YiXRfBIYAiJNW
-	QbOpa3bUo6zEa9Os87N2VurO+NDZNTBeSJ4fMS7mPuf4Xv9gZeUDDozwxxqrVr09GJlFNronsFT
-	wlHF/tFrVT/yEKzcK82L1+omN4Yk=
-X-Google-Smtp-Source: AGHT+IHZurIKIq1+E6HJ23X1xCR/CPwysvL7IX6Z+9+U73oLFe1k7nAiy+c7nnudAfdU7L/qlrvwEA==
-X-Received: by 2002:a05:6000:2306:b0:3a4:de02:208 with SMTP id ffacd0b85a97d-3a4f89ac91cmr13017254f8f.25.1748960918481;
-        Tue, 03 Jun 2025 07:28:38 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c4f2sm18232873f8f.22.2025.06.03.07.28.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Jun 2025 07:28:38 -0700 (PDT)
-Message-ID: <f912588b-fb54-4257-a4d8-db58e93b8378@linaro.org>
-Date: Tue, 3 Jun 2025 15:28:37 +0100
+	s=arc-20240116; t=1748960962; c=relaxed/simple;
+	bh=tQNECUGCwVN8w2nYeGxHhxzcbA2Ok5UYLhhpx9vz1U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDSrYitESHJhQgKq3eMNlYRxrGrp8M1dBfZ2oazIfAnNGND8RvtXOwOMSRDmUYCXlhKkSRd+NuyUH6GhZEhtSdq/yKtjC/KuZrs8Yi/J1qrfstVtRxURTisutGSQcQ6idWSs0UFmNcdQFbNlTmzQIpWlIhK8cb8GriK7emZhiz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UEflr7AC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=biEa0C/Zx7biEXb9wrt4J7t8LJ1eZ405M+nXFoTKcvw=; b=UEflr7AC00Fja8TgNI4V56+5Xl
+	lAVk1dQ6yvd1mttvOdmIvxG2jwVo34OgfToE+1k0ECnW6ZnJvEYk8ST5O7uwaTdgsZW/Gd2dgYIrx
+	5v2SOfYJz4Ap/rzMsdr1YyrSGrlteiyaNLs0pOwR8pR6irR/chHc43KfQ0KpIDkSvLd3YAL12gckc
+	NIAPlZDn5UUVv8l4JuexDHusjnp9gvM8EC6BTNiArB55u7nhSBf7uvcfrueJ5r5KTwqdlfkd9yDtz
+	c0QlsagG6aF9PiMyZMGSppEkXAigxezW8y8cQrl0VHMf8Gc6mp4qrXJHezaITrTXXuqrT87Icik9N
+	201yssGQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMSde-0000000Deph-1ZQN;
+	Tue, 03 Jun 2025 14:29:14 +0000
+Date: Tue, 3 Jun 2025 15:29:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Julian Vetter <julian@outer-limits.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Remove unaligned/packed_struct.h header
+Message-ID: <20250603142914.GA299672@ZenIV>
+References: <20250603132414.3676142-1-julian@outer-limits.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/8] serial: qcom-geni: move resource control logic to
- separate functions
-To: Praveen Talari <quic_ptalari@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
- quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
- quic_mnaresh@quicinc.com, quic_shazhuss@quicinc.com
-References: <20250506180232.1299-1-quic_ptalari@quicinc.com>
- <vTOsjvsB7oSpu2Oe8i1ufoz5C2Hy3EtfDnfBsLag2p-s63J0BLdqbLn44Hds17WR12JGfo7sd52k7uHaXlTTeQ==@protonmail.internalid>
- <20250506180232.1299-6-quic_ptalari@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250506180232.1299-6-quic_ptalari@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603132414.3676142-1-julian@outer-limits.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 06/05/2025 19:02, Praveen Talari wrote:
-> Supports use in PM system/runtime frameworks, helping to
-> distinguish new resource control mechanisms and facilitate
-> future modifications within the new API.
-> 
-> The code that handles the actual enable or disable of resources
-> like clock and ICC paths to a separate function
-> (geni_serial_resources_on() and geni_serial_resources_off()) which
-> enhances code readability.
-> 
-> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
-> ---
-> v3 -> v4
-> - added version log after ---
-> 
-> v1 -> v2
-> - returned 0 instead of ret variable
-> ---
->   drivers/tty/serial/qcom_geni_serial.c | 54 +++++++++++++++++++++------
->   1 file changed, 42 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 6ad759146f71..2cd2085473f3 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -1588,6 +1588,42 @@ static struct uart_driver qcom_geni_uart_driver = {
->   	.nr =  GENI_UART_PORTS,
->   };
-> 
-> +static int geni_serial_resources_off(struct uart_port *uport)
+On Tue, Jun 03, 2025 at 03:24:14PM +0200, Julian Vetter wrote:
+> The functions in this header are deprecated and are not used anymore.
+> So, remove the header entirely.
 
-It seems like an extremely nit-picky thing to say BUT
-
-geni_serial_resources_on();
-geni_serial_resources_off();
-
-since that is the order you use in the code below.
-
-> +{
-> +	struct qcom_geni_serial_port *port = to_dev_port(uport);
-> +	int ret;
-> +
-> +	dev_pm_opp_set_rate(uport->dev, 0);
-> +	ret = geni_se_resources_off(&port->se);
-> +	if (ret)
-> +		return ret;
-> +
-> +	geni_icc_disable(&port->se);
-> +
-> +	return 0;
-> +}
-> +
-> +static int geni_serial_resources_on(struct uart_port *uport)
-> +{
-> +	struct qcom_geni_serial_port *port = to_dev_port(uport);
-> +	int ret;
-> +
-> +	ret = geni_icc_enable(&port->se);
-> +	if (ret)
-> +		return ret;
-You're adding additional logical checks here, which seem reasonable but 
-are not stated in your commit log.
-
-Please make clear in the commit log that additional, minor function 
-return checks are added as you do your functional decomposition.
-
-> +
-> +	ret = geni_se_resources_on(&port->se);
-> +	if (ret) {
-> +		geni_icc_disable(&port->se);
-> +		return ret;
-> +	}
-> +
-> +	if (port->clk_rate)
-> +		dev_pm_opp_set_rate(uport->dev, port->clk_rate);
-> +
-> +	return 0;
-> +}
-> +
->   static int geni_serial_resource_init(struct qcom_geni_serial_port *port)
->   {
->   	int ret;
-> @@ -1628,23 +1664,17 @@ static int geni_serial_resource_init(struct qcom_geni_serial_port *port)
->   static void qcom_geni_serial_pm(struct uart_port *uport,
->   		unsigned int new_state, unsigned int old_state)
->   {
-> -	struct qcom_geni_serial_port *port = to_dev_port(uport);
-> 
->   	/* If we've never been called, treat it as off */
->   	if (old_state == UART_PM_STATE_UNDEFINED)
->   		old_state = UART_PM_STATE_OFF;
-> 
-> -	if (new_state == UART_PM_STATE_ON && old_state == UART_PM_STATE_OFF) {
-> -		geni_icc_enable(&port->se);
-> -		if (port->clk_rate)
-> -			dev_pm_opp_set_rate(uport->dev, port->clk_rate);
-> -		geni_se_resources_on(&port->se);
-> -	} else if (new_state == UART_PM_STATE_OFF &&
-> -			old_state == UART_PM_STATE_ON) {
-> -		geni_se_resources_off(&port->se);
-> -		dev_pm_opp_set_rate(uport->dev, 0);
-> -		geni_icc_disable(&port->se);
-> -	}
-> +	if (new_state == UART_PM_STATE_ON && old_state == UART_PM_STATE_OFF)
-> +		geni_serial_resources_on(uport);
-> +	else if (new_state == UART_PM_STATE_OFF &&
-> +			old_state == UART_PM_STATE_ON)
-> +		geni_serial_resources_off(uport);
-> +
->   }
-> 
->   static const struct uart_ops qcom_geni_console_pops = {
-> --
-> 2.17.1
-> 
-> 
-Assuming you address my points.
-
-
-
+; git grep -n __get_unaligned_cpu32
+include/linux/jhash.h:80:               a += __get_unaligned_cpu32(k);
+include/linux/jhash.h:81:               b += __get_unaligned_cpu32(k + 4);
+include/linux/jhash.h:82:               c += __get_unaligned_cpu32(k + 8);
+include/linux/unaligned/packed_struct.h:16:static inline u32 __get_unaligned_cpu32(const void *p)
+tools/include/linux/jhash.h:80:         a += __get_unaligned_cpu32(k);
+tools/include/linux/jhash.h:81:         b += __get_unaligned_cpu32(k + 4);
+tools/include/linux/jhash.h:82:         c += __get_unaligned_cpu32(k + 8);
+tools/include/linux/unaligned/packed_struct.h:17:static inline u32 __get_unaligned_cpu32(const void *p)
 
