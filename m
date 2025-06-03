@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-671306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9B5ACBF84
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 07:20:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBC6ACBF18
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 06:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070DB3A5D73
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 05:20:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE52F7A60E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 04:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9607F1F0E50;
-	Tue,  3 Jun 2025 05:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177D81D6DB9;
+	Tue,  3 Jun 2025 04:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ijw4OHOY"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mn5HTkKW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E54344C77;
-	Tue,  3 Jun 2025 05:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0E71A5B95;
+	Tue,  3 Jun 2025 04:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748928021; cv=none; b=c2VoznpONufRYWEmcxnmKp3LoNNmJ1gV0wlFRvyQdX0R4EhUQoBO3C+j+b5OEWWk2rmRuyBgzcad0rsSx/P0Sw57QzElIaLxbY6k0w1/pLWfcbyJrtI+deckxMzmqFt87TXA6LE42VKhRRn0P/IZ6scf2ibUNxqhlOwMrRrF8D4=
+	t=1748923923; cv=none; b=l6mBSZVeEDZTbPldNMEN2jbOGPRklsNeAC17mROhS8v3QDNT+zDQQ2e6z68dKbJG7DFAc533W8CHmMk6eITYRo5B58xIbbO0VOHVJNEfYvFot3vm/12hijzM6uuUL8BFTgUciMi6E2bPS5M8eWjXRiXG1jjjhydeRf+I/8yfn20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748928021; c=relaxed/simple;
-	bh=uSrBUA7qXhmPgCeFnxoDsqzn0cDtA79gkNIX9CnLPbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A51WR0rMycEmcaL9dolRrJ8Evniv13m24RaFpUN4wJwav259a5wsE+rS4BByEKPmI8I/S3VzdvZfP+EgQ/6mAVjghWhxhzWtY7PpVkxq450AojUYeF3NLhy1r/50dX3a+1bCSNSF4a/echnIYeVM6JnOvwZAXLdUCDHITEXwxdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ijw4OHOY; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so56134015e9.1;
-        Mon, 02 Jun 2025 22:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748928017; x=1749532817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSrBUA7qXhmPgCeFnxoDsqzn0cDtA79gkNIX9CnLPbY=;
-        b=ijw4OHOYwEw6jnktbEz00qrnGlpS/ItaPXiQ10S6FJnMXPB3VIhW6Cu3dBuHPbjPay
-         m2AzkH/BQWOlp5uughmY0BRC6IdDWi97n7qNhchz/A1cTBrFV35jEQ0eaAFH8rzFfKi3
-         uWweOcY7/YMYO2cvOo+XJwmMi+Jsnr9L3fx90w/tgHZz1GKAVR5B6+PNPvlNCirXVxhE
-         yar5qIFC2tDnC5hEawDNUVBrlo+7pRL/DccC0BS2KTCf+ND0At4fRPcIATVrmZY6Edu3
-         gJvgEFduP81pPEFTdh3gc6ur94eiyk6PZ/w7BiBIuLAUbEEL6fppGKX/v4GxV0hfqkse
-         1Ocw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748928017; x=1749532817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uSrBUA7qXhmPgCeFnxoDsqzn0cDtA79gkNIX9CnLPbY=;
-        b=uUcFAMlbienQMsRnS/obiAX0fAiKovrZIfFG64yi31shAwcGQhWBLFBl9FLQwPHoLo
-         zxDuB8z8qKTWSZgvXeerHdMYts64qPGN0sBuXkQ8Nsd0nkLVT9XuiVP9lgPsgEf+LK1G
-         GCKuKiDb3NipcHXzPC6luVJDlcKI+iJnb2OPGUh0ME/t6ULpk0wsmmxjegvnDzQGQ8FB
-         780je0Io2vh38xpiQ+Hw88XGnenVrLrVfn7nrSPwSh4NZNKS8a5stfKSoEvcfdT4FD0G
-         Oh4xL67bvCuL4KXJ8pk9QswYMJlrjbKYUfwJU8y8es/XnscoZxajhjtWj/5aTy0lNSmi
-         LRiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdb8KSeCyqN9sE5NDnn5R2UAKsPN2fnzTOWFFRPQ+bpR+DJxsbqDi0csA1tR9WpUbWm9k/I7JCQaBOh3Rh@vger.kernel.org, AJvYcCXCdqxO6EkRW5/0Br9S+eWilAYE2TDSVwqEYNTv01/wrFfUcrrCA8tqBfQOY+H14DuPyHJ84OoNvjWF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3uLqHPBh5dco+Izg6+l/jaulSWfnaZ+IbdmX1mJ+tcOpjtfZS
-	jXv97u4S0BmTaBrP25RA882i8sOKv3uSrHQSjiARAmBFjuPGoGPNDzA1
-X-Gm-Gg: ASbGncvaQbtaIQ3Gr3j2rOVia29GrpH1D686bAQZQCy66c8AWa0hN59z87rlo/8Ai1x
-	0EvbMtObrcPuJI5de9Nkj6AEeJp00YcLFCGEeXm4Bwk9Q1VyTVdeACkwj+MyCb30/oAB4pySlkL
-	yge1Fea4qQ+WQg86fXGYbVKFnPX3hcjPjE3nBtbKRCkQP92qTwuHU4FVM9xe3Im/W64ZE9QaFVy
-	L6CNO2gf1iV2gtMWghfwJfJSVNYWkJqxe4U3iDsbGtc7y63/UksfMt1LTrRSWbb3QOYoEMP5ime
-	kaDWJzMjlt5Z/J5EeDZXn0/IxVg0fESUY0WuT7vpKcWQGHydg9NWZsnb8YZts1d99DOQH2jFzYK
-	YG8Q14ebYcCo=
-X-Google-Smtp-Source: AGHT+IF4XDMIUZS1NygKfEDgB/9iNHXsSuXUUSOgnrWMBsOxy/H6LoHW1BTp2q7VdfRALOnOPI6MNQ==
-X-Received: by 2002:a05:600c:5287:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-4511ee15434mr82345975e9.19.1748928017238;
-        Mon, 02 Jun 2025 22:20:17 -0700 (PDT)
-Received: from masalkhi.. (ip-109-43-115-37.web.vodafone.de. [109.43.115.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fb7dafsm144578025e9.25.2025.06.02.22.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Jun 2025 22:20:16 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: krzk@kernel.org
-Cc: abd.masalkhi@gmail.com,
-	arnd@arndb.de,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: Add Device Tree binding for ST M24LR control interface
-Date: Mon,  2 Jun 2025 17:47:53 +0000
-Message-ID: <20250602174753.2029658-1-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <29b221e2-254c-4964-adfd-b99cda8b5011@kernel.org>
-References: <29b221e2-254c-4964-adfd-b99cda8b5011@kernel.org>
+	s=arc-20240116; t=1748923923; c=relaxed/simple;
+	bh=eH7LWOmmL1anId5z2wZhvvJt6A5G/MNr+wNHWrMB2So=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vc97c6EijxhxRQBhnxmar7VmGAIjMW3IurcHJKj8Zm7xdLT7kyvbUcDOvpemfunvkhEZpUNNAOFdO4ei4lveHVBR1OOf6sFCWUIVvyPUH3uSBwHjqaR/AAkOO3tdv/d83oOmlOR/zLdC6hHPK24kUbovCAwWbxhe6HHrpZIJK8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mn5HTkKW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8094C4CEF3;
+	Tue,  3 Jun 2025 04:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748923922;
+	bh=eH7LWOmmL1anId5z2wZhvvJt6A5G/MNr+wNHWrMB2So=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mn5HTkKWy8TqffJMMcHGw2AT7jOqA40bv0HBM9y2bspWZhxv0UBdHg9FQHOokjziW
+	 kqVP7KwOXfjZt9d6o93SNX9NEn3fyzfVnQ/bulYin10ouBxIADQJFx/WL2hjqHu8Z9
+	 1x6vf0AAHLbxIOS09sgd5GMnhfiysFcCqivcqnECs4//flKjtG4O6MRxrJYnG5xbto
+	 6xue6gGU222aFvGg8TZEPvnhkHzHgKfEGKqwyvNkiML74VmzC3Z+qDKwNjaY/sVUy8
+	 hABvYPLnBL6wIXP3wffwI4ZU3TKwCj6vq8Jk/Rx6JiNxLL1CRjdtnH+YrH0l0P0syY
+	 oSduBF6o72jgw==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-604f5691bceso9234238a12.0;
+        Mon, 02 Jun 2025 21:12:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQD4MluL7Ybq2DNzBOS1UuYEDnDLY51XKAWQkFQC5JmoWGmO2xjTPDMC50KRp4lIsT7J5I/aATLMDeWrk=@vger.kernel.org, AJvYcCX0AKW1KUkPTaTS3NI6dKlBcMbaRtXHYmDQkSkCq/YlgbbwCA0CMd4Czir+pxwDATjx2xZwBi7m@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKHLx/7SBXcJDIZrs9mvU4SaTxgRAcQUFJ6VhgGUxiiBusW9/S
+	aXWTL4pRLEfiLAeQh08gkeszsq4osZxsLVmGS1gRxhaZIjjxOTRERR6kqloTmNi3gMaczJWfzs3
+	HWPQeMhJ99LBpi0xLcrinjoa4YvpJtHI=
+X-Google-Smtp-Source: AGHT+IFC3hZdYHnSXCAINF0e85twNdshEaSayERpY7dehkXv4qNlJa5HjD+1EG/20i3L++8LHTZqVITFe/NbV6v/Xpw=
+X-Received: by 2002:a05:6402:5112:b0:604:e602:77a5 with SMTP id
+ 4fb4d7f45d1cf-6056df4758fmr13815147a12.15.1748923921501; Mon, 02 Jun 2025
+ 21:12:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250531113851.21426-1-ziyao@disroot.org> <20250531113851.21426-2-ziyao@disroot.org>
+In-Reply-To: <20250531113851.21426-2-ziyao@disroot.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 3 Jun 2025 12:11:48 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com>
+X-Gm-Features: AX0GCFvre-UhQqbT7tbRl4VbSXuk5rN06luar9i31Dym01mPU6UQN37YMzcM_AY
+Message-ID: <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/loongarch: laptop: Get brightness setting
+ from EC on probe
+To: Yao Zi <ziyao@disroot.org>
+Cc: Jianmin Lv <lvjianmin@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-
->> Is it acceptable to keep the current driver logic as-is, while limiting
->> the change to just fixing the binding and device tree representation?
+On Sat, May 31, 2025 at 7:39=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
 >
-> Dunno, did not look at your driver. Again, I am here talking about
-> bindings. How you implement it in the driver is up to you. You have
-> however one device with two addresses, so you should most likely have
-> only one device node in DTS with two addresses. In certain cases, like
-> separate resources and re-usability, children are common, but that was
-> not really the case here.
+> Previously 1 is unconditionally taken as current brightness value. This
+> causes problems since it's required to restore brightness settings on
+> resumption, and a value that doesn't match EC's state before suspension
+> will cause surprising changes of screen brightness.
+laptop_backlight_register() isn't called at resuming, so I think your
+problem has nothing to do with suspend (S3).
+
+But there is really a problem about hibernation (S4): the brightness
+is 1 during booting, but when switching to the target kernel, the
+brightness may jump to the old value.
+
+If the above case is what you meet, please update the commit message.
+
+Huacai
+
 >
-> Look at ti,pcm6240.yaml, ti,tas2781.yaml and few others (you can git
-> grep for them for reg with coma).
-
-Okay, I'll rework the pathcs to use a single device node with two
-addresses instead of modeling it as an I2C mux. Thanks also for the
-hint about ti,pcm6240.yaml and ti,tas2781.yaml, I'll review those
-to make sure the structure aligns properly.
-
-I appreciate your guidance.
-
-Best regards,
-Abd-Alrhman Masalkhi
+> Let's get brightness from EC and take it as the current brightness on
+> probe of the laptop driver to avoid the surprising behavior. Tested on
+> TongFang L860-T2 3A5000 laptop.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 6246ed09111f ("LoongArch: Add ACPI-based generic laptop driver")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  drivers/platform/loongarch/loongson-laptop.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/loongarch/loongson-laptop.c b/drivers/platf=
+orm/loongarch/loongson-laptop.c
+> index 99203584949d..828bd62e3596 100644
+> --- a/drivers/platform/loongarch/loongson-laptop.c
+> +++ b/drivers/platform/loongarch/loongson-laptop.c
+> @@ -392,7 +392,7 @@ static int laptop_backlight_register(void)
+>         if (!acpi_evalf(hotkey_handle, &status, "ECLL", "d"))
+>                 return -EIO;
+>
+> -       props.brightness =3D 1;
+> +       props.brightness =3D ec_get_brightness();
+>         props.max_brightness =3D status;
+>         props.type =3D BACKLIGHT_PLATFORM;
+>
+> --
+> 2.49.0
+>
+>
 
