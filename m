@@ -1,164 +1,98 @@
-Return-Path: <linux-kernel+bounces-671963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CF4ACC90A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1090ACC919
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E707188BC47
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77127188400D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 14:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2BA239E62;
-	Tue,  3 Jun 2025 14:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1575239E62;
+	Tue,  3 Jun 2025 14:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcZZUlY4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CafIKnhM"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B86D238D49
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 14:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29043E47B;
+	Tue,  3 Jun 2025 14:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748960686; cv=none; b=FEu9/+4VbaMQf1wZgyCbEa/tT7waKuFHSZtPXlSOa6tLy8KpOHZeaXjTGNWpDW0PyTRsXob1+Mh2MmnQZ1eq2xtey3SqSqkVbRb6qjaW3/ZlP4u+Eg6ihZUPmgAYJwY73sqft7jP9Zpk0uZM9Kpr0vbmp1ManH/LKDARre/9Xc8=
+	t=1748960918; cv=none; b=U7gLhDwBQ0H+Dv0jnM8ko5tor1x2ObIkYoNA7WoEHE59EPfyLX1iHT0e78ZM82D1WtH8VA7eaRgikkL4hvqxudBoYXlfdJFJ/9zrhy2rGnDTTQjN9gQkMQAId9hU8UhrCvRSsconIX8P4xbXdZlP0DlOw/kPZzKZkTjirKuj2z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748960686; c=relaxed/simple;
-	bh=8P8VpDyERLX0d7YNci0mUwMHPwaKMA33bffoWYiDOoQ=;
+	s=arc-20240116; t=1748960918; c=relaxed/simple;
+	bh=m5XIq5RIlUaWirh4C/5WCxMUv5LGKm0wzhHqzU3F/rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uss3t2z8FLeW07aDfDdCFs99LVIWmPttrFNWygHgdAYuBOIssrMgAF4qpJ9x9OXUJtiKw44o/G1vlZNSn8BxFnvfKwm8weE5LCEtSyidPvXGD64fMDWy4d2iPUk/TPAQfEd4NVWQ5fwHw7kNz9CCSXqHyDZv46/0YjZ/W1cyIk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcZZUlY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F937C4CEED;
-	Tue,  3 Jun 2025 14:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748960685;
-	bh=8P8VpDyERLX0d7YNci0mUwMHPwaKMA33bffoWYiDOoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tcZZUlY4T6EfydwCQ090MG6vqI7M4UU9SIKhGZRzBEnWbgz/cP1Uy/djS+adVoJNQ
-	 NwWME4e3vLT/EELNQnDkSgIN0y1aNf4ZGKWCDPo5D/xAPt+q4hyNS6UnuXOlGufVCl
-	 aSfrdoWeAuHab//2ghDX/LhcrAp3UOwKdAf3lstikV4Pwg0tWWdtTEHK0Wlkc2A2J9
-	 0E8lWXJQ7ZH959nry1KBohTeWMB1TgLyBaAE0YS174Cyqn+Qc2mHz4wROWHJwkjj/F
-	 IroNYxEkovS4Ok4uCF7bLQH9LS2TKBRRB9hAYYB6BvLia1enGpH7axLzxTsG99QxfF
-	 VSXmpo7Rrykwg==
-Date: Tue, 3 Jun 2025 16:24:40 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH] PCI/MSI: Size device MSI domain with the maximum number
- of vectors
-Message-ID: <aD8FqJvZWaZR7J9m@lpieralisi>
-References: <20250603141801.915305-1-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYWM8XTLimuO3IbaQtzrsO4+1cF1+yX88Dwn4HQqpSdnDdTUAOxWnIhidJKn3ym1U73qYNDBjeUMEjORxa5Sd0hfbsmm13gCU6BtFoDOtYivbAnG4DzyFx84IzapxW9NKIEt0Rm5wzfCKzD0X/cpTlPSYlgu58eV0yjyU4SvDxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CafIKnhM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NWF/m+whQ9NAjVENjezimZjEsDuS6u9BY+WJdI7HJ7o=; b=CafIKnhMe1WPVgL4WKM41su/Ak
+	E7StKkX2E1DEcMgLjvKFH/jd78ALjQwMvnEcq2P20jUG97qs78yniKMQ/v65O78Dbtsj3E/JIbAwD
+	qBvI+1Xo5mol3tHN8hJPdDkjYQ+NcVqva+GiyMYfbsWSSdvQITjgXQ+NONKG9yyyDskWO1zV6WYaW
+	3CK8l67Bw+lyoryEGXw6MBrV6UHzwr5BYek6FMPiOMWUHY9velz2syJfrB59U3Sg8aSi45YYFtCit
+	8SMyRKwdhXhKYejhw9B7shM+qiUa65uktVt+/kqQ0+IPf426MgY99owDskiPpJKRu1CeRXvxodpuD
+	Sjytdo/Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMSct-0000000BAHP-1w1p;
+	Tue, 03 Jun 2025 14:28:27 +0000
+Date: Tue, 3 Jun 2025 07:28:27 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Christoph Hellwig <hch@infradead.org>, wangtao <tao.wangtao@honor.com>,
+	sumit.semwal@linaro.org, kraxel@redhat.com,
+	vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+	amir73il@gmail.com, benjamin.gaignard@collabora.com,
+	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
+	jack@suse.cz, baolin.wang@linux.alibaba.com,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	bintian.wang@honor.com, yipengxiang@honor.com, liulu.liu@honor.com,
+	feng.han@honor.com
+Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Message-ID: <aD8Gi9ShWDEYqWjB@infradead.org>
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org>
+ <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250603141801.915305-1-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jun 03, 2025 at 03:18:01PM +0100, Marc Zyngier wrote:
-> Zenghui reports that since 1396e89e09f0 ("genirq/msi: Move prepare()
-> call to per-device allocation"), his Multi-MSI capable device isn't
-> working anymore.
+On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian König wrote:
+> > Does it matter compared to the I/O in this case?
 > 
-> This is a consequence of 15c72f824b32 ("PCI/MSI: Add support for
-> per device MSI[X] domains"), which always creates a MSI domain of
-> size 1, even in the presence of Multi-MSI.
-> 
-> While this was somehow working until then, moving the .prepare()
-> call ends up sizing the ITS table with a tiny value for this device,
-> and making the endpoint driver unhappy.
-> 
-> Instead, always create the domain (and call the .prepare() helper)
-> with the maximum expected size.
-> 
-> Fixes: 1396e89e09f0 ("genirq/msi: Move prepare() call to per-device allocation")
-> Fixes: 15c72f824b32 ("PCI/MSI: Add support for per device MSI[X] domains")
-> Link: https://lore.kernel.org/r/0b1d7aec-1eac-a9cd-502a-339e216e08a1@huawei.com
-> Reported-by: Zenghui Yu <yuzenghui@huawei.com>
-> Tested-by: Zenghui Yu <yuzenghui@huawei.com>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/pci/msi/irqdomain.c | 5 +++--
->  drivers/pci/msi/msi.c       | 8 ++++----
->  drivers/pci/msi/msi.h       | 2 +-
->  3 files changed, 8 insertions(+), 7 deletions(-)
+> It unfortunately does, see the numbers on patch 3 and 4.
 
-Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+That's kinda weird.  Why does the page table lookup tage so much
+time compared to normal I/O?
 
-> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-> index d7ba8795d60f..c05152733993 100644
-> --- a/drivers/pci/msi/irqdomain.c
-> +++ b/drivers/pci/msi/irqdomain.c
-> @@ -271,6 +271,7 @@ static bool pci_create_device_domain(struct pci_dev *pdev, const struct msi_doma
->  /**
->   * pci_setup_msi_device_domain - Setup a device MSI interrupt domain
->   * @pdev:	The PCI device to create the domain on
-> + * @hwsize:	The maximum number of MSI vectors
->   *
->   * Return:
->   *  True when:
-> @@ -287,7 +288,7 @@ static bool pci_create_device_domain(struct pci_dev *pdev, const struct msi_doma
->   *	- The device is removed
->   *	- MSI is disabled and a MSI-X domain is created
->   */
-> -bool pci_setup_msi_device_domain(struct pci_dev *pdev)
-> +bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize)
->  {
->  	if (WARN_ON_ONCE(pdev->msix_enabled))
->  		return false;
-> @@ -297,7 +298,7 @@ bool pci_setup_msi_device_domain(struct pci_dev *pdev)
->  	if (pci_match_device_domain(pdev, DOMAIN_BUS_PCI_DEVICE_MSIX))
->  		msi_remove_device_irq_domain(&pdev->dev, MSI_DEFAULT_DOMAIN);
->  
-> -	return pci_create_device_domain(pdev, &pci_msi_template, 1);
-> +	return pci_create_device_domain(pdev, &pci_msi_template, hwsize);
->  }
->  
->  /**
-> diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-> index d6ce04054702..6ede55a7c5e6 100644
-> --- a/drivers/pci/msi/msi.c
-> +++ b/drivers/pci/msi/msi.c
-> @@ -439,16 +439,16 @@ int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
->  	if (nvec < minvec)
->  		return -ENOSPC;
->  
-> -	if (nvec > maxvec)
-> -		nvec = maxvec;
-> -
->  	rc = pci_setup_msi_context(dev);
->  	if (rc)
->  		return rc;
->  
-> -	if (!pci_setup_msi_device_domain(dev))
-> +	if (!pci_setup_msi_device_domain(dev, nvec))
->  		return -ENODEV;
->  
-> +	if (nvec > maxvec)
-> +		nvec = maxvec;
-> +
->  	for (;;) {
->  		if (affd) {
->  			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
-> diff --git a/drivers/pci/msi/msi.h b/drivers/pci/msi/msi.h
-> index fc70b601e942..0b420b319f50 100644
-> --- a/drivers/pci/msi/msi.h
-> +++ b/drivers/pci/msi/msi.h
-> @@ -107,7 +107,7 @@ enum support_mode {
->  };
->  
->  bool pci_msi_domain_supports(struct pci_dev *dev, unsigned int feature_mask, enum support_mode mode);
-> -bool pci_setup_msi_device_domain(struct pci_dev *pdev);
-> +bool pci_setup_msi_device_domain(struct pci_dev *pdev, unsigned int hwsize);
->  bool pci_setup_msix_device_domain(struct pci_dev *pdev, unsigned int hwsize);
->  
->  /* Legacy (!IRQDOMAIN) fallbacks */
-> -- 
-> 2.47.2
-> 
+> My question is rather if it's ok to call f_op->write_iter() and 
+> f_op->read_iter() with pages allocated by alloc_pages(), e.g.
+> where drivers potentially ignore the page count and just re-use pages
+> as they like?
+
+read_iter and write_iter with ITER_BVEC just use the pages as source
+and destination of the I/O.  They must not touch the refcounts or
+do anything fancy with them.  Various places in the kernel rely on
+that.
+
 
