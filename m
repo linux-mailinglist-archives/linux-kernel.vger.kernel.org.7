@@ -1,189 +1,281 @@
-Return-Path: <linux-kernel+bounces-672376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAFAACCE7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 22:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5839ACCE98
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 23:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD62218968E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 20:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FBE3A554F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 21:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935F02248A6;
-	Tue,  3 Jun 2025 20:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27BF223DF1;
+	Tue,  3 Jun 2025 21:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0vL7EPH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="SYBaqtRb"
+Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5794821C16D;
-	Tue,  3 Jun 2025 20:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A861F12F4;
+	Tue,  3 Jun 2025 21:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748983884; cv=none; b=hR3T79QXOIT99sshQkOY03Lc6Mv3o9Ey4JS3Bp6lLpH/NoLvmyDul0sOsc+Nbb4wYiODdzIJuRkddC9AVl5k7UzDSRAoHYnaQ4sY+DnhH28zfikl9pwPVSpYyytT2qOKFQtzQcECXK1QI5T7kj1JrWX5USHO+ogM5qAaj3mqrfw=
+	t=1748984636; cv=none; b=KM8SU6zMP3CN38nLl+5pDDeVkYgOguN9TZPR45fndMBEzG+u6zXGaRnaykIdjBOXxWWJoiM7YhcRjR6NoyskXDcosgvb4nXbQyPEgt75WXXI4bG8I2Aah8c1bAsmSMrM+4+vNv9SrEoYyjy0vCDryc2TgMyLrtT0ZPMD3mVKKcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748983884; c=relaxed/simple;
-	bh=o4zOLvZFW8pO4zLwuxYUFfk4IAFaKCqbEJ5gNrQFVOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5TEiN/6pENiawsSglAXRp4znGbXsmr6HgnMPmnPlvLiXnc2Fz6D7wKqNA5ZuKuzdt86w93CZ/eDdnI3uEaoKjWOApdcD+jI+BfdjxkCp3O3fr2/+7NZ2iIyvgmNl317vPjwEKqjGPPmjUqdUUEgbAApNHDANuE94ovHOiTzaqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0vL7EPH; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748983882; x=1780519882;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=o4zOLvZFW8pO4zLwuxYUFfk4IAFaKCqbEJ5gNrQFVOg=;
-  b=P0vL7EPHuDiqV0+XpZFrTN28HFBGtrV8NqT1FN+9a/q52H1cn/yv6k6w
-   buELJecZD3C9nttH0QG7aUmFBR5Z+CCaDJRalv/IOoJU550tfektYp2KT
-   UIYj1eNbkGnJLeus3QQHIrVux7qlwHNx+50LgBJ1omD6ay389VzGBvDTH
-   QcZLko/wzF9/z+WSU+bigGDzAcnEyNWP8XSIAcjZhehfyv1JRdyeol5Jc
-   QgEZ3+cHZg093GH7Q/DaShfM6MXnC4MRqygAtHAn32jUfqEHlPhsiSqDX
-   zEr82rgePoo/KeZ0U33Zo0BSBtmRi+MbZTgbfk0sF6B2mAvsiQ36U6XGY
-   A==;
-X-CSE-ConnectionGUID: Z+CpDmTXQLyaH/ID6G3HwA==
-X-CSE-MsgGUID: d/YSKdpnTQ+aIj0Knww0mQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="53668521"
-X-IronPort-AV: E=Sophos;i="6.16,207,1744095600"; 
-   d="scan'208";a="53668521"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 13:51:21 -0700
-X-CSE-ConnectionGUID: AGrOcP48Te6x84iR91XP2w==
-X-CSE-MsgGUID: wCO6PN/LQnmJUW2Bw83T/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,207,1744095600"; 
-   d="scan'208";a="175839494"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 13:51:21 -0700
-Received: from [10.124.221.22] (unknown [10.124.221.22])
-	by linux.intel.com (Postfix) with ESMTP id B7E6620B58A2;
-	Tue,  3 Jun 2025 13:51:19 -0700 (PDT)
-Message-ID: <220323bb-ebe1-41f8-aca2-53bb9885ea0a@linux.intel.com>
-Date: Tue, 3 Jun 2025 13:51:19 -0700
+	s=arc-20240116; t=1748984636; c=relaxed/simple;
+	bh=W6Nhh3ZCRHLqwfzIjPbKNeTIxBcOEyxYHK4U+kynE/E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eQYhMJtIDHePSkfZ2iWaPqTK3fz0OWATJ8XyZ+6arZ0Dcq76aRHDVVeR/zQGQ4TjTVLo8AIbhEUxfnaHXnnMLy+FQy6+h1q8o32+SZN9Vt9aoDZbabd9b2xtRSyX+JYRn2X/8jCSAZIIgm1RFEMJkmjaYDLPNXBhYP4aOznVaq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=SYBaqtRb; arc=none smtp.client-ip=131.188.11.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1748984285; bh=xfzs1Ogf0DKZ/YULLmQfkygDrX6ZPmGjv16hUj4o9H0=;
+	h=From:To:Subject:Date:From:To:CC:Subject;
+	b=SYBaqtRb39acS5t+QgIbA5sTlWkgJzSPyuQBg1BDigIHp16Q2J/creWnuLgUDMWZJ
+	 HM92g2qDmrsm9ijFygECQZpwQg4b9fHx5AKuv6kh2x7aDcuzebqcLZlnVvcr0wKrNV
+	 hSoY28zujYOOGh8snrGw3+Cxg7/FDQiImLPk/gCq4lw0rs9C1EUAej/4+//y8Uk1XF
+	 LyIDw5qlnWUEEayv4TalHGl8qToxaNA8suYioxYyqfmvdkkZJv6+9TGWWyJvKavuoc
+	 /eDRiOqrKMYivjN3ntSu8Gd2+miv7iE3ZU1TYst+lOHPTTzDVoVPRO1xHnkS3iH4ky
+	 OYT1MNbk3MiTw==
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4bBjj90qyPzPjvv;
+	Tue,  3 Jun 2025 22:58:05 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:3639:fe00:a21f:4ce4:8495:5578
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:3639:fe00:a21f:4ce4:8495:5578])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1+JbA/3lyDF+n/+UvApQhduk6C5CJwWwrU=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4bBjj46tHzzPkFW;
+	Tue,  3 Jun 2025 22:58:00 +0200 (CEST)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Luis Gerhorst <luis.gerhorst@fau.de>,
+	Henriette Herzog <henriette.herzog@rub.de>,
+	Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+	Cupertino Miranda <cupertino.miranda@oracle.com>,
+	Jiayuan Chen <mrpre@163.com>,
+	Matan Shachnai <m.shachnai@gmail.com>,
+	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v4 0/9] bpf: Mitigate Spectre v1 using barriers
+Date: Tue,  3 Jun 2025 22:57:51 +0200
+Message-ID: <20250603205800.334980-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4 v3] PCI/AER: Modify pci_print_aer() to take log level
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-cxl@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org, linux-edac@vger.kernel.org
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-References: <20250603155536.577493-1-fabio.m.de.francesco@linux.intel.com>
- <20250603155536.577493-3-fabio.m.de.francesco@linux.intel.com>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250603155536.577493-3-fabio.m.de.francesco@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This improves the expressiveness of unprivileged BPF by inserting
+speculation barriers instead of rejecting the programs.
+
+The approach was previously presented at LPC'24 [1] and RAID'24 [2].
+
+To mitigate the Spectre v1 (PHT) vulnerability, the kernel rejects
+potentially-dangerous unprivileged BPF programs as of
+commit 9183671af6db ("bpf: Fix leakage under speculation on mispredicted
+branches"). In [2], we have analyzed 364 object files from open source
+projects (Linux Samples and Selftests, BCC, Loxilb, Cilium, libbpf
+Examples, Parca, and Prevail) and found that this affects 31% to 54% of
+programs.
+
+To resolve this in the majority of cases this patchset adds a fall-back
+for mitigating Spectre v1 using speculation barriers. The kernel still
+optimistically attempts to verify all speculative paths but uses
+speculation barriers against v1 when unsafe behavior is detected. This
+allows for more programs to be accepted without disabling the BPF
+Spectre mitigations (e.g., by setting cpu_mitigations_off()).
+
+For this, it relies on the fact that speculation barriers generally
+prevent all later instructions from executing if the speculation was not
+correct (not only loads). See patch 7 ("bpf: Fall back to nospec for
+Spectre v1") for a detailed description and references to the relevant
+vendor documentation (AMD and Intel x86-64, ARM64, and PowerPC).
+
+In [1] we have measured the overhead of this approach relative to having
+mitigations off and including the upstream Spectre v4 mitigations. For
+event tracing and stack-sampling profilers, we found that mitigations
+increase BPF program execution time by 0% to 62%. For the Loxilb network
+load balancer, we have measured a 14% slowdown in SCTP performance but
+no significant slowdown for TCP. This overhead only applies to programs
+that were previously rejected.
+
+I reran the expressiveness-evaluation with v6.14 and made sure the main
+results still match those from [1] and [2] (which used v6.5).
+
+Main design decisions are:
+
+* Do not use separate bytecode insns for v1 and v4 barriers (inspired by
+  Daniel Borkmann's question at LPC). This simplifies the verifier
+  significantly and has the only downside that performance on PowerPC is
+  not as high as it could be.
+
+* Allow archs to still disable v1/v4 mitigations separately by setting
+  bpf_jit_bypass_spec_v1/v4(). This has the benefit that archs can
+  benefit from improved BPF expressiveness / performance if they are not
+  vulnerable (e.g., ARM64 for v4 in the kernel).
+
+* Do not remove the empty BPF_NOSPEC implementation for backends for
+  which it is unknown whether they are vulnerable to Spectre v1.
+
+[1] https://lpc.events/event/18/contributions/1954/ ("Mitigating
+    Spectre-PHT using Speculation Barriers in Linux eBPF")
+[2] https://arxiv.org/pdf/2405.00078 ("VeriFence: Lightweight and
+    Precise Spectre Defenses for Untrusted Linux Kernel Extensions")
+
+Changes:
+
+* v3 -> v4:
+  - Remove insn parameter from do_check_insn() and extract
+    process_bpf_exit_full as a function as requested by Eduard
+  - Investigate apparent sanitize_check_bounds() bug reported by
+    Kartikeya (does appear to not be a bug but only confusing code),
+    sent separate patch to document it and add an assert
+  - Remove already-merged commit 1 ("selftests/bpf: Fix caps for
+    __xlated/jited_unpriv")
+  - Drop former commit 10 ("bpf: Allow nospec-protected var-offset stack
+    access") as it did not include a test and there are other places
+    where var-off is rejected. Also, none of the tested real-world
+    programs used var-off in the paper. Therefore keep the old behavior
+    for now and potentially prepare a patch that converts all cases
+    later if required.
+  - Add link to AMD lfence and PowerPC speculation barrier (ori 31,31,0)
+    documentation
+  - Move detailed barrier documentation to commit 7 ("bpf: Fall back to
+    nospec for Spectre v1")
+  - Link to v3: https://lore.kernel.org/all/20250501073603.1402960-1-luis.gerhorst@fau.de/
+
+* v2 -> v3:
+  - Fix
+    https://lore.kernel.org/oe-kbuild-all/202504212030.IF1SLhz6-lkp@intel.com/
+    and similar by moving the bpf_jit_bypass_spec_v1/v4() prototypes out
+    of the #ifdef CONFIG_BPF_SYSCALL. Decided not to move them to
+    filter.h (where similar bpf_jit_*() prototypes live) as they would
+    still have to be duplicated in bpf.h to be usable to
+    bpf_bypass_spec_v1/v4() (unless including filter.h in bpf.h is an
+    option).
+  - Fix
+    https://lore.kernel.org/oe-kbuild-all/202504220035.SoGveGpj-lkp@intel.com/
+    by moving the variable declarations out of the switch-case.
+  - Build touched C files with W=2 and bpf config on x86 to check that
+    there are no other warnings introduced.
+  - Found 3 more checkpatch warnings that can be fixed without degrading
+    readability.
+  - Rebase to bpf-next 2025-05-01
+  - Link to v2: https://lore.kernel.org/bpf/20250421091802.3234859-1-luis.gerhorst@fau.de/
+
+* v1 -> v2:
+  - Drop former commits 9 ("bpf: Return PTR_ERR from push_stack()") and 11
+    ("bpf: Fall back to nospec for spec path verification") as suggested
+    by Alexei. This series therefore no longer changes push_stack() to
+    return PTR_ERR.
+  - Add detailed explanation of how lfence works internally and how it
+    affects the algorithm.
+  - Add tests checking that nospec instructions are inserted in expected
+    locations using __xlated_unpriv as suggested by Eduard (also,
+    include a fix for __xlated_unpriv)
+  - Add a test for the mitigations from the description of
+    commit 9183671af6db ("bpf: Fix leakage under speculation on
+    mispredicted branches")
+  - Remove unused variables from do_check[_insn]() as suggested by
+    Eduard.
+  - Remove INSN_IDX_MODIFIED to improve readability as suggested by
+    Eduard. This also causes the nospec_result-check to run (and fail)
+    for jumping-ops. Add a warning to assert that this check must never
+    succeed in that case.
+  - Add details on the safety of patch 10 ("bpf: Allow nospec-protected
+    var-offset stack access") based on the feedback on v1.
+  - Rebase to bpf-next-250420
+  - Link to v1: https://lore.kernel.org/all/20250313172127.1098195-1-luis.gerhorst@fau.de/
+
+* RFC -> v1:
+  - rebase to bpf-next-250313
+  - tests: mark expected successes/new errors
+  - add bpt_jit_bypass_spec_v1/v4() to avoid #ifdef in
+    bpf_bypass_spec_v1/v4()
+  - ensure that nospec with v1-support is implemented for archs for
+    which GCC supports speculation barriers, except for MIPS
+  - arm64: emit speculation barrier
+  - powerpc: change nospec to include v1 barrier
+  - discuss potential security (archs that do not impl. BPF nospec) and
+    performance (only PowerPC) regressions
+  - Link to RFC: https://lore.kernel.org/bpf/20250224203619.594724-1-luis.gerhorst@fau.de/
+
+Luis Gerhorst (9):
+  bpf: Move insn if/else into do_check_insn()
+  bpf: Return -EFAULT on misconfigurations
+  bpf: Return -EFAULT on internal errors
+  bpf, arm64, powerpc: Add bpf_jit_bypass_spec_v1/v4()
+  bpf, arm64, powerpc: Change nospec to include v1 barrier
+  bpf: Rename sanitize_stack_spill to nospec_result
+  bpf: Fall back to nospec for Spectre v1
+  selftests/bpf: Add test for Spectre v1 mitigation
+  bpf: Fall back to nospec for sanitization-failures
+
+ arch/arm64/net/bpf_jit.h                      |   5 +
+ arch/arm64/net/bpf_jit_comp.c                 |  28 +-
+ arch/powerpc/net/bpf_jit_comp64.c             |  80 ++-
+ include/linux/bpf.h                           |  11 +-
+ include/linux/bpf_verifier.h                  |   3 +-
+ include/linux/filter.h                        |   2 +-
+ kernel/bpf/core.c                             |  32 +-
+ kernel/bpf/verifier.c                         | 633 ++++++++++--------
+ tools/testing/selftests/bpf/progs/bpf_misc.h  |   4 +
+ .../selftests/bpf/progs/verifier_and.c        |   8 +-
+ .../selftests/bpf/progs/verifier_bounds.c     |  66 +-
+ .../bpf/progs/verifier_bounds_deduction.c     |  45 +-
+ .../selftests/bpf/progs/verifier_map_ptr.c    |  20 +-
+ .../selftests/bpf/progs/verifier_movsx.c      |  16 +-
+ .../selftests/bpf/progs/verifier_unpriv.c     |  65 +-
+ .../bpf/progs/verifier_value_ptr_arith.c      | 101 ++-
+ .../selftests/bpf/verifier/dead_code.c        |   3 +-
+ tools/testing/selftests/bpf/verifier/jmp32.c  |  33 +-
+ tools/testing/selftests/bpf/verifier/jset.c   |  10 +-
+ 19 files changed, 755 insertions(+), 410 deletions(-)
 
 
-On 6/3/25 8:54 AM, Fabio M. De Francesco wrote:
-> Modify pci_print_aer() to take a printk() log level in preparation of a
-> patch that logs PCIe Components and Link errors from ELOG.
-
-I think you need to rebase this patch on top of latest PCI changes. A patch to
-consolidate the AER error logging is pushed for v6.16 merge.
-
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-> ---
->   drivers/cxl/core/pci.c |  2 +-
->   drivers/pci/pcie/aer.c | 16 ++++++++--------
->   include/linux/aer.h    |  4 ++--
->   3 files changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 3b80e9a76ba86..ad8d7939c2e1c 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
-> @@ -885,7 +885,7 @@ static void cxl_handle_rdport_errors(struct cxl_dev_state *cxlds)
->   	if (!cxl_rch_get_aer_severity(&aer_regs, &severity))
->   		return;
->   
-> -	pci_print_aer(pdev, severity, &aer_regs);
-> +	pci_print_aer(KERN_ERR, pdev, severity, &aer_regs);
->   
->   	if (severity == AER_CORRECTABLE)
->   		cxl_handle_rdport_cor_ras(cxlds, dport);
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a1cf8c7ef628a..d0ebf7c15afa9 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -760,7 +760,7 @@ int cper_severity_to_aer(int cper_severity)
->   EXPORT_SYMBOL_GPL(cper_severity_to_aer);
->   #endif
->   
-> -void pci_print_aer(struct pci_dev *dev, int aer_severity,
-> +void pci_print_aer(char *level, struct pci_dev *dev, int aer_severity,
->   		   struct aer_capability_regs *aer)
->   {
->   	int layer, agent, tlp_header_valid = 0;
-> @@ -785,14 +785,15 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
->   	info.mask = mask;
->   	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
->   
-> -	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
-> +	pci_printk(level, dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n",
-> +		   status, mask);
->   	__aer_print_error(dev, &info);
-> -	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
-> -		aer_error_layer[layer], aer_agent_string[agent]);
-> +	pci_printk(level, dev, "aer_layer=%s, aer_agent=%s\n",
-> +		   aer_error_layer[layer], aer_agent_string[agent]);
->   
->   	if (aer_severity != AER_CORRECTABLE)
-> -		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
-> -			aer->uncor_severity);
-> +		pci_printk(level, dev, "aer_uncor_severity: 0x%08x\n",
-> +			   aer->uncor_severity);
->   
->   	if (tlp_header_valid)
->   		pcie_print_tlp_log(dev, &aer->header_log, dev_fmt("  "));
-> @@ -1146,8 +1147,7 @@ static void aer_recover_work_func(struct work_struct *work)
->   			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
->   			continue;
->   		}
-> -		pci_print_aer(pdev, entry.severity, entry.regs);
-> -
-> +		pci_print_aer(KERN_ERR, pdev, entry.severity, entry.regs);
->   		/*
->   		 * Memory for aer_capability_regs(entry.regs) is being
->   		 * allocated from the ghes_estatus_pool to protect it from
-> diff --git a/include/linux/aer.h b/include/linux/aer.h
-> index 02940be66324e..45d0fb2e2e759 100644
-> --- a/include/linux/aer.h
-> +++ b/include/linux/aer.h
-> @@ -64,8 +64,8 @@ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
->   static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
->   #endif
->   
-> -void pci_print_aer(struct pci_dev *dev, int aer_severity,
-> -		    struct aer_capability_regs *aer);
-> +void pci_print_aer(char *level, struct pci_dev *dev, int aer_severity,
-> +		   struct aer_capability_regs *aer);
->   int cper_severity_to_aer(int cper_severity);
->   void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
->   		       int severity, struct aer_capability_regs *aer_regs);
-
+base-commit: cd2e103d57e5615f9bb027d772f93b9efd567224
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+2.49.0
 
 
