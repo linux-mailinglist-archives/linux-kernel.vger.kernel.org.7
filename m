@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-671859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2DCACC755
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:06:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3ECACC757
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 15:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A321893DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:05:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA9C7A5CE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DCA30100;
-	Tue,  3 Jun 2025 13:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004F22F389;
+	Tue,  3 Jun 2025 13:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Svw4zhmS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8Rtsj3d"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE5022F16C;
-	Tue,  3 Jun 2025 13:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE67DE555;
+	Tue,  3 Jun 2025 13:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748955929; cv=none; b=OsqOnBcN+fujHJpv87rEDEU4PCnNyH/myvsGO+N9dcXcr+LgtQgPKXXLgVF/7ojjxC8kbs7C9sCUVCW4tet7r40wwZzjrtaIkHfpy6bo/Tw/0f4qaFxh+tyU0+QxZ7YhUAllfKfr0pAeJOiepPNm/udqfvqwF00hkKTk2M0nlDI=
+	t=1748956002; cv=none; b=UC8hX7jiBNdsYzvetctHtBMEvSocHPY3o3Y2aCZcqP7N6kKfClj20iVd3qqpS7aS83qsQVC32F9I9jyWMX5quKJH/0pBqGR4RdFPfACmAq674zGVPm3rm3gOylCEOI0cGsoDxX4XXVB7fMm3O8r3m/LHx/hqew26pE4elu1oycg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748955929; c=relaxed/simple;
-	bh=CQR2F4P/WFuLDUfY7mMG0WsFnPiqWfcgBuMnmRlV4Rw=;
+	s=arc-20240116; t=1748956002; c=relaxed/simple;
+	bh=BCr7GIiuUO2pKsPic3aDxYvqICfx1M5/86X3EyLcGx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vENbYHaWb3jDIr+lQZboOKU95xuT04GgOzbdPnIK/paEP7D5wkrXS1NpaVBDuT7ELRXIU1YPREqdJcJOy6INfqvBgdpaJpqUEf1tO05d594RIJt/HhZiwnonA/34BsLzfKgvujzWx0YUhZqnCpa5QPTfQwmx0PoSZ54QESd24dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Svw4zhmS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2651C4CEED;
-	Tue,  3 Jun 2025 13:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748955928;
-	bh=CQR2F4P/WFuLDUfY7mMG0WsFnPiqWfcgBuMnmRlV4Rw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Svw4zhmSwk5wlMEpy885E553vr9FZiwmTa06hHqVug9C3ZC+qBt57F1ya33rflZNo
-	 t4HpISxklHGjZsVBP4Ad6v89xohy/Tbmk6r++MnwbcWUCy1HcTl7NBaYqbUXlD0+TD
-	 SrFHr579GfoAFLB8dWZggToNmHpiQyMc8YUOEA5+bWn6mPhphgAcUp8dLXx25xs1fR
-	 6z+AP6mf9+dMOZmNJLky/KQn+h1qtaY3ifxvW0GmRJoWylZgPKN6L33N5x260EC8te
-	 vaBARCbkxOJlVldTLq/q86RSe8DvhVF78QYivga0I3HDIDlTHWFNNFymgMpsGcyLz9
-	 rnbm7gmSHn+Zw==
-Date: Tue, 3 Jun 2025 14:05:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] selftests/mm: Fix test result reporting in
- gup_longterm
-Message-ID: <7ea6e0bf-da88-41a4-b6a0-1b1ee15c8dd0@sirena.org.uk>
-References: <20250527-selftests-mm-cow-dedupe-v2-0-ff198df8e38e@kernel.org>
- <20250527-selftests-mm-cow-dedupe-v2-4-ff198df8e38e@kernel.org>
- <7ca09fbb-8b10-4dea-9456-dce21ade2099@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M28dDHV4pgeVScK4eMYb/gxwPrVOeSx2RqGSmll9bMnVjJ6nVk3E6gUXbcUKmtGbJkLab8DP9FUFvEhmSi22kPWj3yDsVQAbqot4lZFxrcy5E+Wjgr5Bjloz2T7/3CAifH8nJvr7+P38b9WwurCmTisq0JCdxrws7l14YWCPZKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8Rtsj3d; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-747c2cc3419so2939864b3a.2;
+        Tue, 03 Jun 2025 06:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748956000; x=1749560800; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0/f20/458IAFhCzkUWgHcem7N3YGetstsrc6uh9Gjc8=;
+        b=H8Rtsj3dy/LGHBYdM2jsoVXuksNlfrCO9Vc8yVqxHfpGmYwG8jp1DYQgnxuX9wVC/m
+         jC0i1mrUBrO/rMHBGocxJKB3jQpT1t6lP3J+IN0TT5nqfn0kl+caZKvtahCLpVA+lEIV
+         sxeRHxn9WIN6xskrzY5W/xxqOlkeNHlegUITwvIaq/nrfMXrujfP6yEEVPAEzWB5MnAP
+         8ZCZpVsNQMtmE4P9IPvSpvgli6QC4o+yvtcIzPRotWDS9MqxKBKMn1cyoitMoJo4soOy
+         BsMLmTIq9nVwwu1jP37ZoSakyVfKnkTwsI0uk5nDHsfF7pkiZIJ/bgn9aTU2+/RdQFEe
+         AKRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748956000; x=1749560800;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0/f20/458IAFhCzkUWgHcem7N3YGetstsrc6uh9Gjc8=;
+        b=MXs9lIyCSXN2vbUfWmAO+jRelujmqPH3+WarOzqRPok3QTnehHx9T2xJ7YrCA75RiX
+         Zr+jdbi+/Ewyyvw1VCXarhjgEVSr2IgwaeqXbQHS/MEbCrIeqpR0VuWPQIKxCLQbLxbT
+         pGsnHbZ5/I9mYdDS7IxXUJMer9omneZEfgTLIz3XrMih6D6z9wO/ompt95Rz5RjriXK3
+         AM1zmDRO8LAtJAZSe8np6uaZCu8/GyRhL9sfoAEAV7LdOsF1xiD+0eYuXh91xWt52YNe
+         B4T10xIeNFAeTG7sfhn0KnNUHKtoEWtk8MZEQP9ZB14I1ie2/bPYyBaXLKsggcLITE5+
+         61cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Ages6nxzDTdR+eTtwvbGopLo2lFRJ09DrMW2ki2/AQMgdUssR5jXNzVEeOV3+hecAqJPbKrl44t4@vger.kernel.org, AJvYcCUWif/snteA45bZtqO13N0q9SJujj7XwxJRRGICCpnpuFQI54aup9WiZcUsC2JrXL2KTiQ5MjOiUv2DcK2a@vger.kernel.org, AJvYcCXGv82edvc3HAZVqzcDGAovELITVcIuLX63VOvpjibr5SksfZ5zlJaUfqS0LjbgXJMhphGT1FNAhsrY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxKV55WOFQk7Ad+HIJB3ZHlB36qvbv60mJL9vDfvl/va+4Tf8f
+	EuQ9nvX8tSk5PSbRd1u3O1LJsYhMWIIe0RwCDzX/BfHiPOVgH17UtlVV
+X-Gm-Gg: ASbGnctBbb+t1xBAzcVH7G8/KaVqvazDDzMaTCaLx5ckbPwgMAm2rYN8aRPnCgzxkCb
+	BJxes6glPg9gyiW17zvgXwn3JE2OYiAlqRJkH7kE3qDa5D5hmZvE3WMho6VbBRmJ3JO60sWWqZR
+	xje0muCThuSYJbqPZ0DTq1Gj8YC7Wh0UTGQ7+yRe6ITdadvI6VMYXp4FqOIQTuWjNipUz5sNxJE
+	8WqscShiocWyUvdy6+HVEKeh+Nsv9lVLIRM06hwRyWUA7cjBY18SKaYsNqpFcZvYlA+hrHr8Oo/
+	ReBBHGGHOZ6CZcSl518MzwfnuBuECV+cl7+Lap9J50K8wR40k4LrgPF99DTqckGh
+X-Google-Smtp-Source: AGHT+IFS6CTlI8UpfHYxqjdx1tNG8cfSJRAGppMmlPcr/BiaoL+v48NartI8bBJjtEqQATncKxJnKQ==
+X-Received: by 2002:a05:6a21:32a1:b0:1f5:9016:3594 with SMTP id adf61e73a8af0-21adff61278mr25343927637.18.1748955999729;
+        Tue, 03 Jun 2025 06:06:39 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2ecebb6857sm6097535a12.73.2025.06.03.06.06.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 06:06:39 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 3 Jun 2025 06:06:37 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: Jonathan.Cameron@huawei.com, dan.j.williams@intel.com, rppt@kernel.org,
+	rafael@kernel.org, lenb@kernel.org, akpm@linux-foundation.org,
+	alison.schofield@intel.com, rrichter@amd.com, bfaccini@nvidia.com,
+	haibo1.xu@intel.com, david@redhat.com, chenhuacai@kernel.org,
+	linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	chenbaozi@phytium.com.cn, loongarch@lists.linux.dev
+Subject: Re: [PATCH v3 1/1] mm: numa_memblks: introduce
+ numa_add_reserved_memblk
+Message-ID: <06a0abfd-5508-4fb5-8a96-a13cf3d8aca7@roeck-us.net>
+References: <20250508022719.3941335-1-wangyuquan1236@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/mJ9tvidvqv+qSmO"
-Content-Disposition: inline
-In-Reply-To: <7ca09fbb-8b10-4dea-9456-dce21ade2099@redhat.com>
-X-Cookie: Avec!
-
-
---/mJ9tvidvqv+qSmO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250508022719.3941335-1-wangyuquan1236@phytium.com.cn>
 
-On Tue, Jun 03, 2025 at 02:36:07PM +0200, David Hildenbrand wrote:
-> On 27.05.25 18:04, Mark Brown wrote:
+Hi,
 
-> > +	int result = KSFT_PASS;
-> >   	int ret;
-> > +	if (fd < 0) {
-> > +		result = KSFT_FAIL;
-> > +		goto report;
-> > +	}
+On Thu, May 08, 2025 at 10:27:19AM +0800, Yuquan Wang wrote:
+> acpi_parse_cfmws() currently adds empty CFMWS ranges to numa_meminfo
+> with the expectation that numa_cleanup_meminfo moves them to
+> numa_reserved_meminfo. There is no need for that indirection when it is
+> known in advance that these unpopulated ranges are meant for
+> numa_reserved_meminfo in support of future hotplug / CXL provisioning.
+> 
+> Introduce and use numa_add_reserved_memblk() to add the empty CFMWS
+> ranges directly.
+> 
+> Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
 
-> Not a fan of that, especially as it suddenly converts
-> ksft_test_result_skip() -- e.g., on the memfd path -- to KSFT_FAIL.
+Just on case this has not been reported yet:
 
-It looks like the memfd path was an outlier here, the others all failed
-if they couldn't allocate the FD.
+Building loongarch:defconfig ... failed
+--------------
+Error log:
+drivers/acpi/numa/srat.c: In function 'acpi_parse_cfmws':
+drivers/acpi/numa/srat.c:467:13: error: implicit declaration of function 'numa_add_reserved_memblk' 
 
-> Can we just do the log_test_result(KSFT_FAIL/KSFT_SKIP) in the caller?
-
-Nothing stopping that, or doing it for the cases where we want to skip.
-IIRC this simplified some of the other callers a little.
-
---/mJ9tvidvqv+qSmO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmg+8xMACgkQJNaLcl1U
-h9A1/Qf/Xl85W859yQaAXxzS9ufb4fK7OtXZ7yGVpwtzQmY5v8GLTRLRLJjgw3Jx
-HnhtZCEwnrs2uqx7Z8nIGgOCZOhv1+TEiZurBY8BJgc9OY79InqKqvQuE5vIkkNl
-BTpHyZlUxWXUCOetEE36of+aGWHi20qY1Qh8VaALARABdaqTc1I5i/VN6hOdOIG4
-WKsHJIKi41FvrQzMsJoQSiA57OdcnOIpKOWYDdkVEtF4e0+H7ARBOEzmphxyri2l
-sDfGkYmmwymn0JZSpVMWzSZnS47uzE0+EPLYWjpsPN/gNY/LV/vNnZYPIL+gTeAy
-o/jX+FEiqUnwozeW8Vc99YtdDjG8PA==
-=/ARE
------END PGP SIGNATURE-----
-
---/mJ9tvidvqv+qSmO--
+Guenter
 
