@@ -1,143 +1,87 @@
-Return-Path: <linux-kernel+bounces-672108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C054AACCB13
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:15:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9395ACCB2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 18:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90683A5077
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D78616F392
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 16:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE2E23E329;
-	Tue,  3 Jun 2025 16:15:38 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9228F2417F9;
+	Tue,  3 Jun 2025 16:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="hYNGNbqz"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7C734545
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 16:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C7423F41F;
+	Tue,  3 Jun 2025 16:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748967337; cv=none; b=k6KSQZRe30KvGPjUs5R9+5eODB80ZLvxL1bF6+Kl42Nb3vH+YNeOcQGeo5ea4ABukhK06TO1FKmJLDzNQBqaoScTNLYCP6BN1SlNlMpLTeaThRe6wpQn5Ix3uXkm8UZIcogor14n7F6OZRVOOdfYee3x53psdkZ3bXbZTCuW5hs=
+	t=1748967747; cv=none; b=Xl0+pxkErgKRHvJJ7UQKwfuVRRpKFLJvDx6n90WX2zx3LEFSW+pvSUXdZ1KRO+b7pD95I/9w4HGwQQvQR0QUGdItonrFIrXr65xcm8qOd260ig8g7ZvFZlrhf8orgk8TQnRexfoHaT92+8YDBc0H63K9y5lehW/jRSRv2hqE1a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748967337; c=relaxed/simple;
-	bh=w+cYj+bZFDm9P7nXNSWeYs9M2oMy2QoF+kzDd6xE5Ak=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M2wiTo3MQoW8Twj9waRP/g6X5xiSXjUUUXcGYAHPTfxTOnzK4y5O/7HjiyvkMh3LbqPbKSpN2AVim9fwh2rNQpx2XZHhWxuqdwE9WBl+vwjTBGUN4KWx2stTxQNRhsz3tnn8T2YeRcj9FrdufbUpKbn+14oHXFHHhBE5tbIQt70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3dcd10297d5so89337355ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 09:15:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748967335; x=1749572135;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=76X/DdAmGEp03OYcwF3qW6PE+GuefCWrC1PptIUvkEw=;
-        b=wxFhwsLNl+KAcNE7xFIB/uwHhRAV6dW1mWAEHi3P63wqd142shK47nc/NjBmce0pRx
-         lVd1InvYqR9Led99JxfKiXUCR51auyCImMuLiSWch3feoq00GY6eSK/6OBeZTm29h2OB
-         F4MMCjtfPDLeNmZ0seZZobG1mBRDHZD2HAV04ZO+7NHe1kvHCA3yiEbrfkRINXN3Dovf
-         jr+uvq0Oa+xpbVE6COlmbfeW4XRgdEcgfe9rPJ1DHH2KE3W+UmFXzupvgupS31/Oi8OR
-         aBh3G2UsZ1vvmd4bPo+jbi4dn6jW+YgNKgeNIcYEskqZtN7rSQs6o8WxaGg18QwY5oh3
-         JBSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRFw2QjaFhWrRy6LKtyX3A7y5ByZq/npV512k3Eum5JQUOqEY0SPGtYyEmKMCvQqhr3GVNkBJgZI4hHgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHYWPpALY3H/aVtbd5cBwG4MpiYiEkpCLr/P+u7uN5r3T7dkBg
-	RXfoOthQ+0XX7Z0S/jWTZgxlLGMOAQZ/pZQ5K4bzJdLiB8H+keX2X8dEUNTHNAYrkaRd/ehrEPK
-	MnmMaLTm4iTcHXkKgSuJ8hOoxEfUOeRllIr8oIdtOD+quu1gEEtw+Pn1OMUA=
-X-Google-Smtp-Source: AGHT+IEeYHEFfYjc0zLBj+UxmFFz22As+TynOI7W6GEuDGXDb6Sc/mswRPV1NBw/uU0lh9iw0rkUIRYH0QQamN+sfReImq6YsOW3
+	s=arc-20240116; t=1748967747; c=relaxed/simple;
+	bh=NUifpzHDnHNDPNl6Q5xZ0+qSJf33uWp+49wVHTW6OfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tpn8HQ2MTpLkiVOzCJAohAPIavU+xqv7z8yxAyADLpPgFUaM2JXi6mIEmAiYbxLYFJKDe0iqW9/p46f/Z2o3Y7C/MO9V3iIJ8PkO3Ow6jmXdQSuBLa1fxbxWTLLm7Sz2g5ot1ePs8w1S3noNt0/6iUZJYR1CMLbhnSV6ae8xi34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=hYNGNbqz; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 76F6766BE05;
+	Tue,  3 Jun 2025 18:22:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1748967737;
+	bh=NUifpzHDnHNDPNl6Q5xZ0+qSJf33uWp+49wVHTW6OfI=;
+	h=From:Subject:Date;
+	b=hYNGNbqzHCPIPt+tKqvN3NNKgi16BNFkdR5DSPbibFIgpWWTcz1oTWTw7U2R1ZulB
+	 ij04DFCV+QS+jn+mCOy9Cx5YCAIwYXuiBWAAvQ0rlS2CovR67UB/3xSgW8ZDqSCYc0
+	 isGM9L7xsptB0ZUsNz+E+lnxPFiNyaCsKck6f3dpSKWAE16JJK8kf6XS5NTGPT8p4Q
+	 Gzbgv8oMeYffgqnF7ATTXtMZzqJYXDNONudr8IAXkgCn+fk2PrtCzKIyfch4nWpm9D
+	 zZiwNwMAleSidcuDDPDSr6TkYvBm4xf4rg1xY4/+Xk0j9yRDOIDlZEj9EOLnr1LGso
+	 bRBL6PERRkG4A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Chris Bainbridge <chris.bainbridge@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Saravana Kannan <saravanak@google.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v1 0/3] PM: sleep: Fixes related to aborted suspend handling
+Date: Tue, 03 Jun 2025 18:16:18 +0200
+Message-ID: <6166108.lOV4Wx5bFT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c8a:b0:3dd:b762:ed1d with SMTP id
- e9e14a558f8ab-3ddb762f05bmr34986295ab.14.1748967335335; Tue, 03 Jun 2025
- 09:15:35 -0700 (PDT)
-Date: Tue, 03 Jun 2025 09:15:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <683f1fa7.a00a0220.d8eae.0071.GAE@google.com>
-Subject: [syzbot] [cgroups?] WARNING in css_rstat_flush
-From: syzbot <syzbot+7a605e85e5b5a7e4a5e3@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	mkoutny@suse.com, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tj@kernel.org
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTEjkZYBjFYBp2cBJuVnU/BKOuLwg9+gEpedEOqZJbV3rOrfcF1V6bVJuOosJ1C9zw+HDh7uqdl4gu7IqwK6zj2VVFz20cfG5s2LTeySOY4CG/+lY24EOYHtgk5wO2JqhrChKHOC5au+c5n2UjgUAa5KjMrUTwTVJk4a4R9uJMa2h5r1lnK29KrEonCg9ER4FuvtN1lKuLcEMJREhQ4vsF2e4MwNLjzTGq3eVmEYvENM64d3wL26+awiykHqARX5DSAuDTBgoOq1LtJ3DaFdO1xEzUx9ut+OHCt0bTcuUkR5Zj/u+mxzBeBrsL/qgnIKFtmBuj+JRRVr6G4WJAZqX70nBl4XqhKALJRC2/M1tFTDrBj4jqy88LclwIH6i7zMkWKRX8Rt11W/zX0T+YVs2fi0xokbCZ3bHDMQIJD19T3og6m2OrZcRo4vCDkJoMLMMbepHK7ng8Rw/GC+Zc++hSK4zqLt6Z0M62HmOWBKsXatZjxL0OImnIrShLXN+VLmaAQna7jkcPpbGmz/HZKuWdZScRhX4dkitnVMiT1G79cegQSjG5lE4kjZ+zFdsLSIK9zDh61txLnnyLm07KK/oRKHY/TQfvtpEHs5sQXTyjSN3q47bs0Tt21dRJb3q3PCTUxXLd6hqY7J3vYEWHqSJbwGPFhNYK1JNe4ER0RTYBFONA
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-Hello,
+Hi Everyone,
 
-syzbot found the following issue on:
+Recently merged updates of the PM core have introduced three issues that
+manifest themselves when system suspend is aborted and the patches in this
+series fix them.
 
-HEAD commit:    90b83efa6701 Merge tag 'bpf-next-6.16' of git://git.kernel..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=1034f482580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=262b2977ef00756b
-dashboard link: https://syzkaller.appspot.com/bug?extid=7a605e85e5b5a7e4a5e3
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+Please refer to the patch changelogs for details.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Many thanks to Chris Bainbridge for reporting the issues and testing the
+fixes.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d5357fcb09e6/disk-90b83efa.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dcb0f12e4d5a/vmlinux-90b83efa.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/278fcadd7519/bzImage-90b83efa.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7a605e85e5b5a7e4a5e3@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 10 at kernel/cgroup/rstat.c:302 css_rstat_updated_list kernel/cgroup/rstat.c:302 [inline]
-WARNING: CPU: 0 PID: 10 at kernel/cgroup/rstat.c:302 css_rstat_flush+0x76f/0x1fa0 kernel/cgroup/rstat.c:413
-Modules linked in:
-CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-syzkaller-g90b83efa6701 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: cgroup_destroy css_free_rwork_fn
-RIP: 0010:css_rstat_updated_list kernel/cgroup/rstat.c:302 [inline]
-RIP: 0010:css_rstat_flush+0x76f/0x1fa0 kernel/cgroup/rstat.c:413
-Code: df 80 3c 08 00 74 08 4c 89 e7 e8 4c 3a 6a 00 49 8b 1c 24 48 3b 5c 24 38 74 22 e8 9c 1c 07 00 e9 72 ff ff ff e8 92 1c 07 00 90 <0f> 0b 90 eb bd e8 87 1c 07 00 45 31 e4 e9 bb 03 00 00 e8 7a 1c 07
-RSP: 0018:ffffc900000f7780 EFLAGS: 00010093
-RAX: ffffffff81b8de5e RBX: ffffffff99c36880 RCX: ffff88801d2b1e00
-RDX: 0000000000000000 RSI: ffffffff8be263a0 RDI: ffffffff8be26360
-RBP: ffffc900000f79b8 R08: ffffffff8fa0b1b7 R09: 1ffffffff1f41636
-R10: dffffc0000000000 R11: fffffbfff1f41637 R12: ffff8880b8642758
-R13: ffffffff99c36880 R14: ffffffff8db91c60 R15: ffff888125c66008
-FS:  0000000000000000(0000) GS:ffff888125c66000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f350fc65760 CR3: 0000000032e5c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- css_rstat_exit+0xa9/0x320 kernel/cgroup/rstat.c:479
- css_free_rwork_fn+0x8b/0xc50 kernel/cgroup/cgroup.c:5449
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Thanks!
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
