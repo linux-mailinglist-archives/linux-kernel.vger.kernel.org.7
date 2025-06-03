@@ -1,265 +1,391 @@
-Return-Path: <linux-kernel+bounces-671752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7F8ACC5B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:45:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 143ABACC5C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 13:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADF01890850
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:46:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 110557A21DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23214AD5E;
-	Tue,  3 Jun 2025 11:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECB722B8D9;
+	Tue,  3 Jun 2025 11:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b="HAHggRZ7"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CD3U2aQ/"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D104C3597C
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 11:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5C03597C;
+	Tue,  3 Jun 2025 11:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748951147; cv=none; b=evPuQNhofgFAdJw9tGmbyo1dfCQfAwkv30ga/x9Rs8aGAcm8g+8gxGDdxQQj2TRLyz5/CuvtrnPZK/GsP4BlXx6cQ+ZG72pHZSQIEKeB/i04eAIdUGpJDkAFo/aOJYzaz+pTpHUUQlu5SvYR71MS0d7iSqvYHfXfX3M5rwNq0W0=
+	t=1748951352; cv=none; b=TBNidhoUQ5HXwIOe7paI3ik+gK1ghDLBR7WT5k58Xb14cm3yYvoZa8lvQYrdVAuW5b9Yg2VT7l1XH6I7XKLxD/LMM30Yh8nMuoyRBLE8VS8mapY4/hGQwkfv9ZN/RZroUrAVZAayAZiljklD4hLn/QvmPgJ1k8peRSXA5MEvckY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748951147; c=relaxed/simple;
-	bh=Wtk6AFHWfq6XPA5wRUyQI9qTTYvmaR7EWEbBvQSTd4A=;
+	s=arc-20240116; t=1748951352; c=relaxed/simple;
+	bh=YFRAfVQT/IsrC7NSXrBMkZvKbXmwtLxA+4zLmBoHs28=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FWIXTXF2PtMbP0IWUN+3Ufl+8MFbliWI20rGdEU7Q1Fn7cltcfqN/xgmgKp1JNxEZJ8+iFf29P8FPNMVocsE3b8XCiqtKlkvE+z3MArnwJNfnDwd85koM6pcyoGlhCiXeKnqB4l2FMy3tpSy1pweU8uMUvEN7spRgIHd5zuOJPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com; spf=pass smtp.mailfrom=vayavyalabs.com; dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b=HAHggRZ7; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vayavyalabs.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7db5c13088so4771841276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 04:45:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=TaKJq6kTZDdZdAIqbb4u+/N3X2n15SjH8JL3JsRFHsjpCmt/yfgEHkGxwAAbOSElEpdxAAjvP7XmiMzVjOg1PhNf+1CroQgGJILQV6J3JBk3ZhWSuOZzM+pvjXnfRclZQN0GYulj7Z43MhBg9ZkZ+VLaaN7pfo3FC9Eu5cqb+6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CD3U2aQ/; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32a6a91f0easo19269511fa.0;
+        Tue, 03 Jun 2025 04:49:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vayavyalabs.com; s=google; t=1748951143; x=1749555943; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1748951348; x=1749556148; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WU2jL29VSYgtyt74swmZUn3uXnZniaAi4pgLdOtSj3A=;
-        b=HAHggRZ7FlxI9loqStLqrmv+eEe0P0pHJ+oXG//ZhWVZ1Hl2NnLBGHR8jMsMoTUNYY
-         WXCwLNhmOSNPPuFmRGHV+wUaqdQUS11ybAzvQCQqW5h0ou75kRQh6ADOBUD3jwShKqUu
-         MyHu87I1ERWHZYnIM9mRYrquW31KKH6+HAGsQ=
+        bh=CDRcA+T6Fi9CfWPBz64dW6ekkPgHNPPDc7aXpEK7++Y=;
+        b=CD3U2aQ/IzPDCgctsrJr8CtSpIcrUsWP45k4NLzDOpBKMlbbwBO1VHvUM7j17wiWDI
+         CwYEg4btbDoeGb74H81HWupn8j1lLyz1uW5DiQ8fbUky6puUJx6CQ+cjohriirTSckha
+         y89UHxVJvlLJywEf9jCgVzQElFyTVbKKKIW9m6CANh2OWwtV61UKqbLHj0nFXCAO5zZ7
+         I8wSPSaznALYsdkhsGWUma0VUuQx84+puBJ3fLUccvJW7FMBSv2UVJ4/4IjYFWOqhlGM
+         Iw9XRbVsmhBMvbPPWoh7lfDaJwrDjS460dN+O5uiWUzXWo+k6cn24w23tPGu2HXxuCUa
+         aaJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748951143; x=1749555943;
+        d=1e100.net; s=20230601; t=1748951348; x=1749556148;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WU2jL29VSYgtyt74swmZUn3uXnZniaAi4pgLdOtSj3A=;
-        b=ihA6HNxOctpKG+Ew7ZBJNcpNU8gqmswNDylS2m+o6rR/Sr37usXvkGvCkQ0Fg8qzhk
-         oPbfcbqrup6LKEElmK6Ftzf6E34olOcto8oDiNZoi0813qH9fYkP24niKpCbUMn83t3x
-         /VZw/z/h1cX8bGz7C5fhLe+EYzB0JANKf9r9rFLuDTREVXx8S79l9t1LfNGF31Vh4RZC
-         koY44haJc598JH436BBURpq3Gg+RDLzg3sUHEjEE2UwZJhuxwMfckzwyHWLpstUPp79y
-         rPgoyen5ze8dUb08SSAnU9kKO3APXThcE1nNG2CJpfIXMJBoP5Q4yzAMOBhA1OjR/Og/
-         uggw==
-X-Forwarded-Encrypted: i=1; AJvYcCWU4K17auaw1ZJKl2iWt3Uif2GSsC3YVxNHYs3A1giFGWL1T0D3HyC1A3E1fMMNAmaFeCD1eGYEovhCvsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxKzalKywOPFQhRCI8uClbyvQdijxM4NvrDp7ro9bhjrwwpeCf
-	WVM9aEWT3lPLJi6vm+ruxwnBPrWPDFeSVgE0KksNZvDU/YTgQPcM+/Z3UFFfVEivOgqNAKbKoJT
-	lOiaaGNtPT4/5ykgN5bMDKf2LvoizS0HkmbspWA0Z+A==
-X-Gm-Gg: ASbGncuHQohAMGAqzRtdZS3mu30gHrGHWa1gc38a3i0tkqs1GJSUE6Fnbfiea7bVxtG
-	whJucmGOF3wNDN0n2ldRlF4xgTuVZ2otmz/Plxmc2gfZ9qXCWQpkHd/o1TJ0/RavOPN0eEzKUjA
-	WjTG7Ciii9aF/b4Ywtk8Y6LN5GlB0dggCFow==
-X-Google-Smtp-Source: AGHT+IFZFuVWzeSCYr5E7m41i/9aDNVpyn69bOnsaB/aNiCiM41tO005L0j039m41q399lOdfjixO5eaHFaDG/FfEfo=
-X-Received: by 2002:a05:6902:4911:b0:e7d:c9e1:170d with SMTP id
- 3f1490d57ef6-e8161e52682mr2384135276.11.1748951142488; Tue, 03 Jun 2025
- 04:45:42 -0700 (PDT)
+        bh=CDRcA+T6Fi9CfWPBz64dW6ekkPgHNPPDc7aXpEK7++Y=;
+        b=aSpE/dhXWqRTvQ7GkgNQDG5sxa8jl/FHp/Abjb83VGoTER+jUuYvkkwLucelYrVAnc
+         pmBAMBVH1k+SyM2jJ5UZB5ST0roMl55lOTDOCT0+67KApqTD7nAG82P9RxLrIyFwbKwA
+         mvCfNge3mWDeTH1SFSjZyZGP5Hns5F3D3svirGmuAZDvklvmmbAkVxlDfIUD68hovQhA
+         WGlQmGJxkNGK4ZfE0dRavDzAPpH6KzTLv51uVsobcBdfItvSMgGsvWj9Oz4zhkMqDhnK
+         TykoFjeuu3fFJH3L7vX6QNhY6S6xx9o9aG4Sm448O+sm3XMuozxQhfAmgt2L9WbSeOBC
+         XnfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPZjKzMKH6e6IK+D5YsCrzbsmiADOBrrjgg6ElYVrOW5Mik7YV1o0PZWbrNVaVrz7TjkmQ0wbf@vger.kernel.org, AJvYcCUoR9yDBvjsF4/KqUpbqUDK+WBHFQK5cnRGMQF9dMeCimugVkPwfAcpcORcoQQLW8NmH2uZHLRGv4SyfLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX3sna9fHlz6k7JeE5C+TpyjgLduRItqeb5T0ic2EhgtfRZX0W
+	LcjM1VKZOYt61UFyKFd93oFALsbFr0n7WUFIac1vnAZ1/C+nEhbwB4f6YTh53dwD8usYClg5+F4
+	Hkq7d56XctBaG5yicLml0FWr2evUKA5A54gF9TWs=
+X-Gm-Gg: ASbGnctdGBRIuR+GLTDbp3A7Y2PH1y6iahYgHAGhCFITItQQ3i4BYaFCpyGXNA/nO17
+	qtC9nHqbHwq4VdFzhiN1eZeBy1agdWTqlMMnNZCX9Fd/ABwY5W0o5nLJwrjMXkxK8fEeJpOztdD
+	E3tWlOjAfzcXnp47TsZBLu7zVPNVP9LDygwXzLCNTqCqY=
+X-Google-Smtp-Source: AGHT+IGM/SASzWhhUTrY3uUzMWyJSMweqBgIdXZyU0E7noNfgJkGiCnAdF8at5x8bukX8dJz5+IH+N1p4N9YAoNkADk=
+X-Received: by 2002:a2e:bc19:0:b0:32a:7a2d:a589 with SMTP id
+ 38308e7fff4ca-32a906cec93mr41852711fa.13.1748951347781; Tue, 03 Jun 2025
+ 04:49:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
- <20250602053231.403143-2-pavitrakumarm@vayavyalabs.com> <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
-In-Reply-To: <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
-From: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
-Date: Tue, 3 Jun 2025 17:15:31 +0530
-X-Gm-Features: AX0GCFsi1_WhsXRy4U7lWQV3XKiZq8jOsIJ1nSTGBjFSBrQaz8ZfGBHLoV3EgL4
-Message-ID: <CALxtO0mpQtqPB0h_Wff2dLGo=Mxk02JJQkK4rn+=TuScNdSfxQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/6] dt-bindings: crypto: Document support for SPAcc
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com, 
-	manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com, 
-	Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+References: <20250602181419.20478-1-ryncsn@gmail.com> <aD4KyHz_H5WPLLf4@x1.local>
+ <CAGsJ_4wbU=4ECxNPEB0dKGXibrAKuR-N3i8wwmVCYAgWCuupnQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4wbU=4ECxNPEB0dKGXibrAKuR-N3i8wwmVCYAgWCuupnQ@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 3 Jun 2025 19:48:49 +0800
+X-Gm-Features: AX0GCFvpZgb4jbkGTHBdzZSITw6Z_SdDPq42ADh9_afW-sX_weoyjolG37LBaHQ
+Message-ID: <CAMgjq7C_nVynRpMV8xkyVuhpyDY6qZX_ShzxChen5Fh5gXSJVg@mail.gmail.com>
+Subject: Re: [PATCH v3] mm: userfaultfd: fix race of userfaultfd_move and swap cache
+To: Barry Song <21cnbao@gmail.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Andrea Arcangeli <aarcange@redhat.com>, David Hildenbrand <david@redhat.com>, 
+	Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
-  Thanks for the inputs, my comments are embedded below.
-
-Warm regards,
-PK
-
-On Mon, Jun 2, 2025 at 11:28=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Tue, Jun 3, 2025 at 6:08=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
+:
 >
-> On 02/06/2025 07:32, Pavitrakumar Managutte wrote:
-> > Add DT bindings related to the SPAcc driver for Documentation.
-> > DWC Synopsys Security Protocol Accelerator(SPAcc) Hardware Crypto
-> > Engine is a crypto IP designed by Synopsys.
+> On Tue, Jun 3, 2025 at 8:34=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote=
+:
 > >
-> > Co-developed-by: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
-> > Signed-off-by: Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
-> > Signed-off-by: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
-> > Acked-by: Ruud Derwig <Ruud.Derwig@synopsys.com>
->
-> Where was this Ack given? It's not on the lists, it's not public, so it
-> cannot be after your SoB.
-
-PK: Yes, its not on the mailing list. I will remove that.
-
->
-> > ---
-> >  .../bindings/crypto/snps,dwc-spacc.yaml       | 77 +++++++++++++++++++
-> >  1 file changed, 77 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/crypto/snps,dwc-s=
-pacc.yaml
+> > On Tue, Jun 03, 2025 at 02:14:19AM +0800, Kairui Song wrote:
+> > > From: Kairui Song <kasong@tencent.com>
+> > >
+> > > On seeing a swap entry PTE, userfaultfd_move does a lockless swap cac=
+he
+> > > lookup, and try to move the found folio to the faulting vma when.
+> > > Currently, it relies on the PTE value check to ensure the moved folio
+> > > still belongs to the src swap entry, which turns out is not reliable.
+> > >
+> > > While working and reviewing the swap table series with Barry, followi=
+ng
+> > > existing race is observed and reproduced [1]:
+> > >
+> > > ( move_pages_pte is moving src_pte to dst_pte, where src_pte is a
+> > >  swap entry PTE holding swap entry S1, and S1 isn't in the swap cache=
+.)
+> > >
+> > > CPU1                               CPU2
+> > > userfaultfd_move
+> > >   move_pages_pte()
+> > >     entry =3D pte_to_swp_entry(orig_src_pte);
+> > >     // Here it got entry =3D S1
+> > >     ... < Somehow interrupted> ...
+> > >                                    <swapin src_pte, alloc and use fol=
+io A>
+> > >                                    // folio A is just a new allocated=
+ folio
+> > >                                    // and get installed into src_pte
+> > >                                    <frees swap entry S1>
+> > >                                    // src_pte now points to folio A, =
+S1
+> > >                                    // has swap count =3D=3D 0, it can=
+ be freed
+> > >                                    // by folio_swap_swap or swap
+> > >                                    // allocator's reclaim.
+> > >                                    <try to swap out another folio B>
+> > >                                    // folio B is a folio in another V=
+MA.
+> > >                                    <put folio B to swap cache using S=
+1 >
+> > >                                    // S1 is freed, folio B could use =
+it
+> > >                                    // for swap out with no problem.
+> > >                                    ...
+> > >     folio =3D filemap_get_folio(S1)
+> > >     // Got folio B here !!!
+> > >     ... < Somehow interrupted again> ...
+> > >                                    <swapin folio B and free S1>
+> > >                                    // Now S1 is free to be used again=
+.
+> > >                                    <swapout src_pte & folio A using S=
+1>
+> > >                                    // Now src_pte is a swap entry pte
+> > >                                    // holding S1 again.
+> > >     folio_trylock(folio)
+> > >     move_swap_pte
+> > >       double_pt_lock
+> > >       is_pte_pages_stable
+> > >       // Check passed because src_pte =3D=3D S1
+> > >       folio_move_anon_rmap(...)
+> > >       // Moved invalid folio B here !!!
+> > >
+> > > The race window is very short and requires multiple collisions of
+> > > multiple rare events, so it's very unlikely to happen, but with a
+> > > deliberately constructed reproducer and increased time window, it can=
+ be
+> > > reproduced [1].
+> > >
+> > > It's also possible that folio (A) is swapped in, and swapped out agai=
+n
+> > > after the filemap_get_folio lookup, in such case folio (A) may stay i=
+n
+> > > swap cache so it needs to be moved too. In this case we should also t=
+ry
+> > > again so kernel won't miss a folio move.
+> > >
+> > > Fix this by checking if the folio is the valid swap cache folio after
+> > > acquiring the folio lock, and checking the swap cache again after
+> > > acquiring the src_pte lock.
+> > >
+> > > SWP_SYNCRHONIZE_IO path does make the problem more complex, but so fa=
+r
+> > > we don't need to worry about that since folios only might get exposed=
+ to
+> > > swap cache in the swap out path, and it's covered in this patch too b=
+y
+> > > checking the swap cache again after acquiring src_pte lock.
 > >
-> > diff --git a/Documentation/devicetree/bindings/crypto/snps,dwc-spacc.ya=
-ml b/Documentation/devicetree/bindings/crypto/snps,dwc-spacc.yaml
-> > new file mode 100644
-> > index 000000000000..2780b3db2182
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/crypto/snps,dwc-spacc.yaml
-> > @@ -0,0 +1,77 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/crypto/snps,dwc-spacc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Synopsys DesignWare Security Protocol Accelerator(SPAcc) Crypto=
- Engine
-> > +
-> > +maintainers:
-> > +  - Ruud Derwig <Ruud.Derwig@synopsys.com>
-> > +
-> > +description: |
-> > +  This binding describes the Synopsys DWC Security Protocol Accelerato=
-r (SPAcc),
+> > [1]
+> >
+> > >
+> > > Testing with a simple C program to allocate and move several GB of me=
+mory
+> > > did not show any observable performance change.
+> > >
+> > > Cc: <stable@vger.kernel.org>
+> > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > > Closes: https://lore.kernel.org/linux-mm/CAMgjq7B1K=3D6OOrK2OUZ0-tqCz=
+i+EJt+2_K97TPGoSt=3D9+JwP7Q@mail.gmail.com/ [1]
+> > > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > >
+> > > ---
+> > >
+> > > V1: https://lore.kernel.org/linux-mm/20250530201710.81365-1-ryncsn@gm=
+ail.com/
+> > > Changes:
+> > > - Check swap_map instead of doing a filemap lookup after acquiring th=
+e
+> > >   PTE lock to minimize critical section overhead [ Barry Song, Lokesh=
+ Gidra ]
+> > >
+> > > V2: https://lore.kernel.org/linux-mm/20250601200108.23186-1-ryncsn@gm=
+ail.com/
+> > > Changes:
+> > > - Move the folio and swap check inside move_swap_pte to avoid skippin=
+g
+> > >   the check and potential overhead [ Lokesh Gidra ]
+> > > - Add a READ_ONCE for the swap_map read to ensure it reads a up to da=
+ted
+> > >   value.
+> > >
+> > >  mm/userfaultfd.c | 23 +++++++++++++++++++++--
+> > >  1 file changed, 21 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > index bc473ad21202..5dc05346e360 100644
+> > > --- a/mm/userfaultfd.c
+> > > +++ b/mm/userfaultfd.c
+> > > @@ -1084,8 +1084,18 @@ static int move_swap_pte(struct mm_struct *mm,=
+ struct vm_area_struct *dst_vma,
+> > >                        pte_t orig_dst_pte, pte_t orig_src_pte,
+> > >                        pmd_t *dst_pmd, pmd_t dst_pmdval,
+> > >                        spinlock_t *dst_ptl, spinlock_t *src_ptl,
+> > > -                      struct folio *src_folio)
+> > > +                      struct folio *src_folio,
+> > > +                      struct swap_info_struct *si, swp_entry_t entry=
+)
+> > >  {
+> > > +     /*
+> > > +      * Check if the folio still belongs to the target swap entry af=
+ter
+> > > +      * acquiring the lock. Folio can be freed in the swap cache whi=
+le
+> > > +      * not locked.
+> > > +      */
+> > > +     if (src_folio && unlikely(!folio_test_swapcache(src_folio) ||
+> > > +                               entry.val !=3D src_folio->swap.val))
+> > > +             return -EAGAIN;
+> > > +
+> > >       double_pt_lock(dst_ptl, src_ptl);
+> > >
+> > >       if (!is_pte_pages_stable(dst_pte, src_pte, orig_dst_pte, orig_s=
+rc_pte,
+> > > @@ -1102,6 +1112,15 @@ static int move_swap_pte(struct mm_struct *mm,=
+ struct vm_area_struct *dst_vma,
+> > >       if (src_folio) {
+> > >               folio_move_anon_rmap(src_folio, dst_vma);
+> > >               src_folio->index =3D linear_page_index(dst_vma, dst_add=
+r);
+> > > +     } else {
+> > > +             /*
+> > > +              * Check if the swap entry is cached after acquiring th=
+e src_pte
+> > > +              * lock. Or we might miss a new loaded swap cache folio=
+.
+> > > +              */
+> > > +             if (READ_ONCE(si->swap_map[swp_offset(entry)]) & SWAP_H=
+AS_CACHE) {
+> >
+> > Do we need data_race() for this, if this is an intentionally lockless r=
+ead?
 >
-> Don't say that binding describes a binding.  Describe here hardware.
-
-PK: Sure, I will fix that.
-
+> Not entirely sure. But I recommend this pattern, borrowed from
+> zap_nonpresent_ptes() -> free_swap_and_cache_nr(),
+> where the PTL is also held and READ_ONCE is used.
 >
-> > +  which is a hardware IP designed to accelerate cryptographic operatio=
-ns, such
-> > +  as encryption, decryption, and hashing.
-> > +
-> > +  The SPAcc supports virtualization where a single physical SPAcc can =
-be
-> > +  accessed as multiple virtual SPAcc instances, each with its own regi=
-ster set.
-> > +  These virtual instances can be assigned different priorities.
-> > +
-> > +  In this configuration, the SPAcc IP is instantiated within the Synop=
-sys
-> > +  NSIMOSCI virtual SoC platform, a SystemC simulation environment used=
- for
-> > +  software development and testing. The device is accessed as a memory=
--mapped
-> > +  peripheral and generates interrupts to the ARC interrupt controller.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: snps,nsimosci-hs-spacc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  snps,vspacc-id:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: |
-> > +      Virtual SPAcc instance identifier.
-> > +      The SPAcc hardware supports multiple virtual instances (determin=
-ed by
-> > +      ELP_SPACC_CONFIG_VSPACC_CNT parameter), and this ID is used to i=
-dentify
-> > +      which virtual instance this node represents.
+>                 if (READ_ONCE(si->swap_map[offset]) =3D=3D SWAP_HAS_CACHE=
+) {
+>                        ..
+>                         nr =3D __try_to_reclaim_swap(si, offset,
+>                                                    TTRS_UNMAPPED | TTRS_F=
+ULL);
 >
-> No, IDs are not accepted.
+>                         if (nr =3D=3D 0)
+>                                 nr =3D 1;
+>                         else if (nr < 0)
+>                                 nr =3D -nr;
+>                         nr =3D ALIGN(offset + 1, nr) - offset;
+>                 }
 
-PK: This represents the specific virtual SPAcc that is being used in
-the current configuration. It is used to index into the register banks
-and the context memories of the virtual SPAcc that is being used. The
-SPAcc IP can be configured as dedicated virtual SPAccs in
-heterogeneous environments.
-
-This was also discssed with Rob Herring and updated from
-"vpsacc-index" to "vspacc-id" based on Rob's inputs
-https://lore.kernel.org/linux-crypto/CALxtO0mkmyaDYta0tfx9Q1qi_GY0OwUoFDDVm=
-cL15UH_fEZ25w@mail.gmail.com/
-
->
-> > +    minimum: 0
-> > +    maximum: 7
-> > +
-> > +  snps,spacc-internal-counter:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: |
-> > +      Hardware counter that generates an interrupt based on a count va=
-lue.
-> > +      This counter starts ticking when there is a completed job sittin=
-g on
-> > +      the status fifo to be serviced. This makes sure that no jobs are
-> > +      starved of processing.
->
-> Not a DT property.
-
-PK: This is a hardware counter which starts ticking when a processed
-job is sitting on the STAT FIFO. This makes sure a JOB does not stay
-in STATUS FIFO unprocessed.
-
-This was called watchdog timer - wdtimer, which we renamed to
-"spacc-internal-counter" based on your inputs.
-https://lore.kernel.org/linux-crypto/CALxtO0k4RkopERap_ykrMTZ4Qtdzm8hEPJGLC=
-Q2pknQGjfQ4Eg@mail.gmail.com/
-
-If you think this "does not qualify" as a DT property, I will make
-this into a Kconfig input for the driver.
+Thanks for the explanation, I also agree that holding PTL here is good
+enough here.
 
 >
-> > +    minimum: 0x19000
-> > +    maximum: 0xFFFFF
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +
+> I think we could use this to further optimize the existing
+> filemap_get_folio(), since in the vast majority of cases we don't
+> have a swapcache, yet we still always call filemap_get_folio().
 >
-> Drop blank line.
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index bc473ad21202..c527ec73c3b4 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+>
+> @@ -1388,7 +1388,7 @@ static int move_pages_pte(struct mm_struct *mm,
+> pmd_t *dst_pmd, pmd_t *src_pmd,
+>                  * folios in the swapcache. This issue needs to be resolv=
+ed
+>                  * separately to allow proper handling.
+>                  */
+>
+> -               if (!src_folio)
+> +               if (!src_folio & (swap_map[offset] & SWAP_HAS_CACHE))
+>                         folio =3D filemap_get_folio(swap_address_space(en=
+try),
+>                                         swap_cache_index(entry));
+>                 if (!IS_ERR_OR_NULL(folio)) {
+>
+> To be future-proof, we may want to keep the READ_ONCE to ensure
+> the compiler doesn't skip the second read inside move_swap_pte().
 
-PK: I will fix that
+Maybe we can do this optimization in another patch I think.
 
 >
-> > +    crypto@40000000 {
-> > +        compatible =3D "snps,nsimosci-hs-spacc";
-> > +        reg =3D <0x40000000 0x3FFFF>;
+> >
+> > Another pure swap question: the comment seems to imply this whole thing=
+ is
+> > protected by src_pte lock, but is it?
+> >
+> > I'm not familiar enough with swap code, but it looks to me the folio ca=
+n be
+> > added into swap cache and set swap_map[] with SWAP_HAS_CACHE as long as=
+ the
+> > folio is locked.  It doesn't seem to be directly protected by pgtable l=
+ock.
+> >
+> > Perhaps you meant this: since src_pte lock is held, then it'll serializ=
+e
+> > with another thread B concurrently swap-in the swap entry, but only _la=
+ter_
+> > when thread B's do_swap_page() will check again on pte_same(), then it'=
+ll
+> > see the src pte gone (after thread A uffdio_move happened releasing src=
+_pte
+> > lock), hence thread B will release the newly allocated swap cache folio=
+?
+> >
+> > There's another trivial detail that IIUC pte_same() must fail because
+> > before/after the uffdio_move the swap entry will be occupied so no way =
+to
+> > have it reused, hence src_pte, even if re-populated again after uffdio_=
+move
+> > succeeded, cannot become the orig_pte (points to the swap entry in
+> > question) that thread B read, hence pte_same() must check fail.
 >
-> Lowercase hex only.
+> in v1 of this patch, we had some similar discussions [1][2]:
+>
+> [1] https://lore.kernel.org/linux-mm/CAGsJ_4wBMxQSeoTwpKoWwEGRAr=3DiohbYf=
+64aYyJ55t0Z11FkwA@mail.gmail.com/
+> [2] https://lore.kernel.org/linux-mm/CAGsJ_4wM8Tph0Mbc-1Y9xNjgMPL7gqEjp=
+=3DArBuv3cJijHVXe6w@mail.gmail.com/
+>
+> At the very least, [2] is possible, although the probability is extremely=
+ low.
+>
+> "It seems also possible for the sync zRAM device.
+>
+>  step 1: src pte points to a swap entry S without swapcache
+>  step 2: we call move_swap_pte()
+>  step 3: someone swap-in src_pte by sync path, no swapcache; swap slot
+> S is freed.
+>              -- for zRAM;
+>  step 4: someone swap-out src_pte, get the exactly same swap slot S as st=
+ep 1,
+>              adds folio to swapcache due to swapout;
+>  step 5: move_swap_pte() gets ptl and finds page tables are stable
+> since swap-out
+>              happens to have the same swap slot as step1;
+>  step 6: we clear src_pte, move src_pte to dst_pte; but miss to move the =
+folio.
+>
+> Yep, we really need to re-check pte for swapcache after holding PTL.
+> "
+>
+> Personally, I agree that improving the changelog or the comments
+> would be more helpful. In fact, there are two bugs here, and Kairui=E2=80=
+=99s
+> changelog clearly describes the first one.
 
-PK: I will fix that
-
->
->
->
-> Best regards,
-> Krzysztof
+Yeah, the first one is quite a long and complex race already, so I
+made the description on the second issue shorter. I thought it
+wouldn't be too difficult to understand given the first example. I can
+add some more details.
 
