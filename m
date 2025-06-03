@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-672302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF34DACCD7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 21:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3413DACCD85
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 21:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F1F16E779
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 19:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92D61712A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 19:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE07217F3D;
-	Tue,  3 Jun 2025 19:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116EF21FF35;
+	Tue,  3 Jun 2025 19:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u9BMIIzL"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mVbgeGEh"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98949202F65
-	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 19:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19941F7910
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 19:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748977468; cv=none; b=BXQ5jArDjeZng0RvPzXjFCBeTchaDnCFRG/Ab+2jkGhEahuJ1VOsQK3r1shwN5Gdk9AiO1/Y+NPnjvMWjaOXZbP5CO197UGurW785Q4AKRyDuScjgx/gac/fMCBv8K+rEcvpeFDH2NrYwOPFoGdR6Hl0+K2h/eud7kUGplz7ips=
+	t=1748977794; cv=none; b=urFNBKZmffaZUbsh9gURtTM+PiRGPMgBMh2d7PcbbksCSsQOGoM/wpLglC/5d8qxPAYRCsJv5kM5nHawt+0i59vsNieLRoqe1E4EInR6tIVBD3NcB9lS9WNlu87Mh/hbJp8/NotkGh8/nOEqQHUS3sxA9gFT1cpA5vSoHWXZsRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748977468; c=relaxed/simple;
-	bh=Be9rZg2wVm5Jh98zlevbaUzkraeXZD+KJ2pLFhtjhK8=;
+	s=arc-20240116; t=1748977794; c=relaxed/simple;
+	bh=4QNqoswYNS6AhpNKdKJXEKRbNRybMqTV40SOe4X1O1Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWXDalvW7LebuZCuHDD+Ql8rZC6/gZcDV26xuXifLUXZCv+Ybe99Pkk9/LApTPYRNXaLp+/xz2jEdp55oQe7iobhrAvnhk/70Fg+y0t3g7DMMrJjaO9qiy7bDMe75rSNrhCM07AgC9z780KrD2W8fHlWTHlXLsKJHTFxso5r8cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u9BMIIzL; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=QXZbrbxhz7CUX6B3H3NnBn08y89Poy2g2rLUe089G2CkgTfcit41t4PHuixW7EB9wVX7BsTeChdvh0Vxkjyd6WKUpOh+5CBX5+OIwIn8gL75SAi57MXq4TltlwRDN5ZPkS1URIQyLqCPqCzIxADZwEUASVL01ZZcLdtttiH0BF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mVbgeGEh; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2102a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 12:04:26 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso2169a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 12:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748977465; x=1749582265; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1748977791; x=1749582591; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=upW65V3EzmhIq53ol8W+l4SqDfLitB19YO+d44FV2Xc=;
-        b=u9BMIIzLIRTs5wjnCE24rtIDCehwmizNEi0JabC5233Tsao6QLSBYdZAbIfd18CROQ
-         l2uMrQQ26q37WIib3A0kp7HO9xNV+Ub4NO0JVT/xXZIfLGPyoY9THW5MVhwfpHoK/TM0
-         +BPy8J3/hWUuhZXS+y1ERIV6msySDLDyDs7CZ7v/z7BxKZSpMh2WsIpcADD//c30//qZ
-         iCeSUZC+HPZOORXbvEQuNIwZcwhbEAinn4GSoke6RhcHQl9oDivkJesduuDBMYPhl0P6
-         epvt71hFvqQ2tgqDUNODiaiI2ThPs41zxOwcUbWq///D5C8ItCfhF0C67FVJlWIdi8Mn
-         L63A==
+        bh=gDFpNE99L8Pksyp1ve3dfkrnf/nLOEF78F5qU2cr+gY=;
+        b=mVbgeGEhkhq8FclT/eeOxcNPJs0+BQtsULSBKDaSJp0KTXCoXCNJMF1+m5ihl8y2pb
+         qHfxv66KsWP54TRCB4XDdW696nhuzxYFTJvdNX22gs6s2JiTqq2Z+YNATlKg2iPvcx7N
+         uuyNhys0PrR1gHtCKaoaxnsXoU8149WkDPej/eKTimSDgvcaky5KZAoZht44PXabOfxn
+         A8EigFs8epFxOiO2BBTBmusbRUKq3UW//CigSU/vmAw7SaBMbSCKnsqNfyOGHS2pC6Cm
+         zDFtikyMtIOPlTuUT+NjODxxSY1cw1M2On+M7amIj/eN8V+zbavr5VsnWOKOllHF+1zp
+         M3lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748977465; x=1749582265;
+        d=1e100.net; s=20230601; t=1748977791; x=1749582591;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=upW65V3EzmhIq53ol8W+l4SqDfLitB19YO+d44FV2Xc=;
-        b=UZuDLSbnOgDbhAUCdUNzzW2MA2n3EoVIZ91PHTgv4c77a+sfAKd/OMErTc4tjklCYn
-         hESzgNjPMaGjQFp7rP1GBd4jtrps+7VLrcYDOiJpBx8fmSIfZo9j8bXgry0UFx+FS10y
-         guihTFDrhSxrrsEKlgo7dUnWpE51gvhKhYuLJuYjUlUFXTRwOdt9Lr2+xF89vNhGr8IV
-         b6GdR0GfcgydXR/S+j0M3AXA31AapR1DW3G3u/xvEMBf+WUw/yS6gaQH92b6JcmGkRxZ
-         7n1/ps3eCpgiiwQhPDSxjRa3IfT5BA4K0mFp1FaTDxOS6+OEkq/Y9/dk//6EiPVzwO7r
-         YQfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzz7kBhFHIXJQfnfP3WSZRAp5MsRUF7WcC97P/i36pp5IRtOREuorP4RIURnQ39oRYj4IVwPDVvTY8vDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7f1IH/iYvI0d5wjB91xWVzy8rylre4v46Yc78e0VeeCeT7ogB
-	Ddj3n01BPtDP3IUJVi3GhaPwr4SGX2or4jugfs1NTYXFxEvSo7iH9dT9VAmlpym+ZrQ+9J0QV0+
-	2fgtvyvKd++iAPSe4j+nHuXi3Yak3hz6/k8JHy+7h
-X-Gm-Gg: ASbGncuTvt6cTEkl0Xulp/gp7sWe3suj4WmErPkB97fm015QDe4Vg7h1I7a90vTVBrP
-	vFT9vcNE29CNUaUAVnIwIpb+GdOn6HT9xC/XSpBHstk5t8Ji8k8R+dPCrG29Qbw6sPaQQ2MUN7O
-	+4w95L5N6TzMIpQBgt5d6UIczakK7OCfo8Hk+gO8OQP0htuA12FH3Af3tk55Alqt9Q/1OtIA==
-X-Google-Smtp-Source: AGHT+IF27moEhGBhsm/ksC0oM3TPqemrqOpUYPAOkCX+3zVbgLX/VHp3AFay/v6jG66/ME7gmjt84tbCZzSThScYaow=
-X-Received: by 2002:aa7:d4cf:0:b0:604:58e9:516c with SMTP id
- 4fb4d7f45d1cf-606e887b718mr4783a12.5.1748977464523; Tue, 03 Jun 2025 12:04:24
+        bh=gDFpNE99L8Pksyp1ve3dfkrnf/nLOEF78F5qU2cr+gY=;
+        b=Ff02Q+iJmuntgUYB3RH6yq3td7G0Yu9NZICzq52LiLUvRdGNEXHYZuublKS9Rgwhii
+         IH+byTsfiQ55U2pzfMQc6Zs1yQZCI8Y/AAXlc+1YBp0lEeyqy2Mh196DGLwJj92yV84B
+         o6k8CjwqLQul64hERlFtnpEZjYTM1d1gPmJmDkmAsjyzqraMu/EtrRvTu9IHffS1odIk
+         FXKzSlmttwvNn7w5juEu7BC7ozEcey40sb0JqmeFbyqaD9ZyBVIEYIW+s61+Fjyx6W0W
+         RTKQNp1C696alVw8oigabWeMyKM3SrnlnKkzxFCPkKL0vIhku6SWia9wDBxhRsDMQC4+
+         X9oA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCt6LWoWNW0CVnUihU4xJnmcvQNz1oI7g2r1vvyhZ05hTdLX0BqLK0QRbONByfO09B3McUbCXJ1TnWT1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv3COSzXP85maW8YtQ+rgjPUyQ0qSpqE7DeeRiPxUHLh1EWrb9
+	BfLhk7YK+4I9Y74BEIkCKDz9+ipCBIhtzLYSMdx04ACEW6s8Wui3G7IbU87wFxE/JuHbvAFJMf4
+	Nm5rVk9HhACkglTcTPI8SDoDMqQDA0APU7yfqAxoL
+X-Gm-Gg: ASbGncuTWA5g92p54vWlBa5rs8BoyPzcbal6RWfZVo5gVWBTbOhud8EZp/qzuQXcHtE
+	aErbPKVa11fEtwOv4qVwUvl4gZe29Trpmi66d6miyTWp+Ls6Af6dS2PCjgA0+91ecHkMWXyX4NT
+	CS/VW1dpYF0ody7btp9uU6Pj3FiZvz/n0QAm+JRl/uPiDL78k5edOztuUtyMgWO/Clnv1vfg==
+X-Google-Smtp-Source: AGHT+IHYswGWanAgWKQSMSfiihgsgNs0+6ptfegE1kE6Wp0sHUCbGa3ku/B3CMF12kd7vrUzCMpjPaYUWT3nbfhBJfM=
+X-Received: by 2002:a05:6402:324:b0:606:e3ff:b7f9 with SMTP id
+ 4fb4d7f45d1cf-606e887b723mr5721a12.3.1748977790474; Tue, 03 Jun 2025 12:09:50
  -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,14 +75,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250603-fork-tearing-v1-0-a7f64b7cfc96@google.com>
  <20250603-fork-tearing-v1-1-a7f64b7cfc96@google.com> <aD8--plab38qiQF8@casper.infradead.org>
-In-Reply-To: <aD8--plab38qiQF8@casper.infradead.org>
+ <db2268f0-7885-471d-94a3-8ae4641ba2e5@redhat.com>
+In-Reply-To: <db2268f0-7885-471d-94a3-8ae4641ba2e5@redhat.com>
 From: Jann Horn <jannh@google.com>
-Date: Tue, 3 Jun 2025 21:03:48 +0200
-X-Gm-Features: AX0GCFuy6Pe40ZC9PMfricVFy-j_0bakFIrtt-vNxRDcTJvFrwsni0IVhkAOpww
-Message-ID: <CAG48ez36t3ZaG7DsDCw1xLpdOhKVWQMjcH-hwP66Cbd8p4eTAA@mail.gmail.com>
+Date: Tue, 3 Jun 2025 21:09:14 +0200
+X-Gm-Features: AX0GCFtCpIPsWFmnSr9w2T4NN3PLSn_1dA8DhnOyioQLG_9FoZlqKdP7GI5LlqA
+Message-ID: <CAG48ez2NX-L0Wq-DQDB2vb3CvOJ1uTmJOqmbMW=FOTtxVoouxg@mail.gmail.com>
 Subject: Re: [PATCH 1/2] mm/memory: ensure fork child sees coherent memory snapshot
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+To: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
 	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
 	Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org, Peter Xu <peterx@redhat.com>, 
@@ -90,60 +91,71 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.c
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 3, 2025 at 8:29=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+On Tue, Jun 3, 2025 at 8:37=E2=80=AFPM David Hildenbrand <david@redhat.com>=
  wrote:
-> On Tue, Jun 03, 2025 at 08:21:02PM +0200, Jann Horn wrote:
-> > When fork() encounters possibly-pinned pages, those pages are immediate=
-ly
-> > copied instead of just marking PTEs to make CoW happen later. If the pa=
-rent
-> > is multithreaded, this can cause the child to see memory contents that =
-are
-> > inconsistent in multiple ways:
-> >
-> > 1. We are copying the contents of a page with a memcpy() while userspac=
-e
-> >    may be writing to it. This can cause the resulting data in the child=
- to
-> >    be inconsistent.
-> > 2. After we've copied this page, future writes to other pages may
-> >    continue to be visible to the child while future writes to this page=
+> On 03.06.25 20:29, Matthew Wilcox wrote:
+> > On Tue, Jun 03, 2025 at 08:21:02PM +0200, Jann Horn wrote:
+> >> When fork() encounters possibly-pinned pages, those pages are immediat=
+ely
+> >> copied instead of just marking PTEs to make CoW happen later. If the p=
+arent
+> >> is multithreaded, this can cause the child to see memory contents that=
  are
-> >    no longer visible to the child.
+> >> inconsistent in multiple ways:
+> >>
+> >> 1. We are copying the contents of a page with a memcpy() while userspa=
+ce
+> >>     may be writing to it. This can cause the resulting data in the chi=
+ld to
+> >>     be inconsistent.
+> >> 2. After we've copied this page, future writes to other pages may
+> >>     continue to be visible to the child while future writes to this pa=
+ge are
+> >>     no longer visible to the child.
+> >>
+> >> This means the child could theoretically see incoherent states where
+> >> allocator freelists point to objects that are actually in use or stuff=
+ like
+> >> that. A mitigating factor is that, unless userspace already has a dead=
+lock
+> >> bug, userspace can pretty much only observe such issues when fancy loc=
+kless
+> >> data structures are used (because if another thread was in the middle =
+of
+> >> mutating data during fork() and the post-fork child tried to take the =
+mutex
+> >> protecting that data, it might wait forever).
 > >
-> > This means the child could theoretically see incoherent states where
-> > allocator freelists point to objects that are actually in use or stuff =
-like
-> > that. A mitigating factor is that, unless userspace already has a deadl=
-ock
-> > bug, userspace can pretty much only observe such issues when fancy lock=
-less
-> > data structures are used (because if another thread was in the middle o=
-f
-> > mutating data during fork() and the post-fork child tried to take the m=
-utex
-> > protecting that data, it might wait forever).
+> > Um, OK, but isn't that expected behaviour?  POSIX says:
+> >
+> > : A process shall be created with a single thread. If a multi-threaded
+> > : process calls fork(), the new process shall contain a replica of the
+> > : calling thread and its entire address space, possibly including the
+> > : states of mutexes and other resources. Consequently, the application
+> > : shall ensure that the child process only executes async-signal-safe
+> > : operations until such time as one of the exec functions is successful=
+.
+> >
+> > It's always been my understanding that you really, really shouldn't cal=
+l
+> > fork() from a multithreaded process.
 >
-> Um, OK, but isn't that expected behaviour?  POSIX says:
+> I have the same recollection, but rather because of concurrent O_DIRECT
+> and locking (pthread_atfork ...).
+>
+> Using the allocator above example: what makes sure that no other thread
+> is halfway through modifying allocator state? You really have to sync
+> somehow before calling fork() -- e.g., grabbing allocator locks in
+> pthread_atfork().
 
-I don't think it is expected behavior that locklessly-updated data
-structures in application code could break.
+Yeah, like what glibc does for its malloc implementation to prevent
+allocator calls from racing with fork(), so that malloc() keeps
+working after fork(), even though POSIX says that the libc doesn't
+have to guarantee that.
 
-> : A process shall be created with a single thread. If a multi-threaded
-> : process calls fork(), the new process shall contain a replica of the
-> : calling thread and its entire address space, possibly including the
-> : states of mutexes and other resources. Consequently, the application
-> : shall ensure that the child process only executes async-signal-safe
-> : operations until such time as one of the exec functions is successful.
-
-I think that is only talking about ways in which you can interact with
-libc, and does not mean that application code couldn't access its own
-lockless data structures or such.
-
-Though admittedly that is a fairly theoretical point, since in
-practice the most likely place where you'd encounter this kind of
-issue would be in an allocator implementation or such.
-
-> It's always been my understanding that you really, really shouldn't call
-> fork() from a multithreaded process.
+> For Linux we document in the man page
+>
+> "After  a  fork() in a multithreaded program, the child can safely call
+> only async-signal-safe functions (see signal-safety(7)) until such time
+> as it calls execve(2)."
 
