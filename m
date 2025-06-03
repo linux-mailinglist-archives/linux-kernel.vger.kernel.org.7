@@ -1,164 +1,126 @@
-Return-Path: <linux-kernel+bounces-671206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E34ACBE07
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 03:03:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3237FACBE11
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 03:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE97E1890EC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 01:03:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7C7173424
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 01:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D6070824;
-	Tue,  3 Jun 2025 01:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FE86BFC0;
+	Tue,  3 Jun 2025 01:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="LppgaXle"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (1024-bit key) header.d=vfemail.net header.i=@vfemail.net header.b="bVFSaQ36"
+Received: from smtp161.vfemail.net (smtp161.vfemail.net [146.59.185.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AF010E5;
-	Tue,  3 Jun 2025 01:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07483FB1B
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 01:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.59.185.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748912578; cv=none; b=LGr/S01uQOILWbgftQ/3dA3zU084BraBSgPfX6rg/p0kjHx43QWy0zBSsUnLJVeet6sYuSjQNdZqYJSftfynlcrXjD7v1fgUp3XgrAut9CK+X/auA0oi0Ib68Co2FvWIA5PXCsATKeN1B2GiHRLwlHpQlLUS2GW8l1w5N5wuLG4=
+	t=1748913127; cv=none; b=JPx2DZ0n+vUuBkw9uCeOwKacyM00ouD3ECVmZwHZ1X6on7+DYsAORXSCANEr7BCPLzoXjy5L4hzEXPay+En98qSflHAIVvwJ6kMZBBcuxn/DCftHp7mRrKYRdydlQn+/Ki3kwfV6Z14hQQas2y2LzpTrqYKUBiwwDAutQmYF1cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748912578; c=relaxed/simple;
-	bh=fyPQ/mfs2CSaeT6RM8/3j9A3OgCvFV5ebkXfbNQ6tqA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XvTPiYjOCe9Q7CQOdqlT6CGY27bD3jWxyeknXWZZjfn0k/fyUWR01v0s0N/DdXHu/2eRXaloeEeN7dLumSlJwX+JYtZEY6CPQ/gB24FTiL+JHCA1DT4rT0/d9Ca3Z8x5jZ42hqZJ2lSVy4A7iFnM0KG55k0bvFrzxEpOLwpIF3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=LppgaXle; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1748912532;
-	bh=A93XqZVqVhYz+KFT6k3LBe2oQch3w3UxJ0GXN9kjeh4=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=LppgaXle1ssr0tAAQM/r2gVUSDJDYrpA/5RZ3VgF1ubcANm50K9XKw4fyBjUobOi3
-	 JDN7uhnQ0SR68uuRuoHB22OverKxBRbSUDHf6WJPae0zL4168qk5t3GwJC8S7O0CVW
-	 sYaMotoMSoOMDJC0hR3+lE1JsKb45y1rdNDFOLOA=
-X-QQ-mid: zesmtpip4t1748912524taa33fcd8
-X-QQ-Originating-IP: lF+E614tet5TqMgpQePt/nNBt+sipuA1E3BTD/dh+Ts=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 03 Jun 2025 09:02:02 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12453671181303604206
-EX-QQ-RecipientCnt: 8
-From: tuhaowen <tuhaowen@uniontech.com>
-To: rafael@kernel.org
-Cc: tuhaowen@uniontech.com,
-	huangbibo@uniontech.com,
-	len.brown@intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	pavel@kernel.org,
-	wangyuli@uniontech.com
-Subject: [PATCH v4] PM/console: Fix the black screen issue
-Date: Tue,  3 Jun 2025 09:01:57 +0800
-Message-Id: <20250603010157.19121-1-tuhaowen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250526010854.7834-1-tuhaowen@uniontech.com>
-References: <20250526010854.7834-1-tuhaowen@uniontech.com>
+	s=arc-20240116; t=1748913127; c=relaxed/simple;
+	bh=ScoRkzfWxwKPIKnrJDTp2bupEd2tmJxoop3VVwf7i34=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=koN1gC4YxX3x0HfWYh26xlutN/aGr4+FU3B4MvFb+v6hRXRRPyqX8Gz2oDp6BIOQh0lNPyrXinJLlzlrAY0UDw8cLvmKGrl0lSTBvfxLkbMsMs77m8GzN4uka+/0Pj02kOQKmvwymOj4/3BZLkHPWEXy0I8CHnY6jLlsRYt+XXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vfemail.net; spf=pass smtp.mailfrom=vfemail.net; dkim=pass (1024-bit key) header.d=vfemail.net header.i=@vfemail.net header.b=bVFSaQ36; arc=none smtp.client-ip=146.59.185.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vfemail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vfemail.net
+Received: (qmail 1616 invoked from network); 3 Jun 2025 01:04:05 +0000
+Received: from localhost (HELO nl101-3.vfemail.net) ()
+  by smtpout.vfemail.net with SMTP; 3 Jun 2025 01:04:05 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=vfemail.net; h=date:from
+	:to:cc:subject:message-id:mime-version:content-type
+	:content-transfer-encoding; s=2018; bh=ScoRkzfWxwKPIKnrJDTp2bupE
+	d2tmJxoop3VVwf7i34=; b=bVFSaQ36BouCUAeeekcHjlQKJb63O/77YVOzKYN96
+	M1ySS72ziPTulBP2dz258xNfunuu5eeCHr+XvEnkPvR9YOb23NMVunLoFlykSAlN
+	M3GnrJDlkyNhJQSJ/hrzh+7DPUFkecUj/T9CS2DGJrEm7Tdrg4LSVoux57crXGkJ
+	UY=
+Received: (qmail 94987 invoked from network); 2 Jun 2025 20:05:22 -0500
+Received: by simscan 1.4.0 ppid: 94928, pid: 94942, t: 0.9122s
+         scanners:none
+Received: from unknown (HELO bmwxMDEudmZlbWFpbC5uZXQ=) (aGdudGt3aXNAdmZlbWFpbC5uZXQ=@MTkyLjE2OC4xLjE5Mg==)
+  by nl101.vfemail.net with ESMTPA; 3 Jun 2025 01:05:21 -0000
+Date: Mon, 2 Jun 2025 21:05:14 -0400
+From: David Niklas <simd@vfemail.net>
+To: Linux RAID <linux-raid@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Need help increasing raid scan efficiency.
+Message-ID: <20250602210514.7acd5325@Zen-II-x12.niklas.com>
+X-Mailer: Claws Mail 4.3.0git38 (GTK 3.24.24; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OFwcIyq3IdMxWT3YhTJ2p3yaYIiOcux8PuE6O/BySTnj7so4MhmQTa8J
-	KcSccOmUU0hnJ3pZztcH3ITrkWba7pENOLwbr3tO1YbTCeQN1OVYjRb3VlvTFUJ5p6uZSlI
-	pTBHgBuc0cAsOAI0grw96Jd5O4VQObqHM3tlbPmgfKbK1sknF4+OR6/X4K+fJ8wNM0rGovg
-	YuMMn0jrZr+DeMAygzQ8duhFvN59cUwk1cTWqxKAek4e3FYLbS58yftxzthSTcJfLzpJD6/
-	fORSmEP4VVyIgx4iYzldD0jk1nSld5010aIL0o2Yi+vVL2xvQbt3fZouroTfUvtmvZN4aoi
-	5w8EWvjbA5zLMd/wJyt/IbnfHLLh3TxmgSP8E0V4eY3ErMAjvLbk5jDOeg2eFIlLbyE+WjZ
-	r593bq+iguZ4A701qII5oq9mkhn5EAyKQZQBO0Q7hcMjZXcsZMbzNaf1egnW9yNzSxHaTac
-	I3FtRM7mHVD6nq6TLOGRFnfKEmfoGYnHbzYdUnppq4s+DtUDh6g/1xjCx5lr64soOpK8z+y
-	7fPcsdK0xGhS7Tx+3NgC2aLwoQotzHO9gFz66OS5BVSS3dCyEzWcAZO3rTzOfi72vxi8P9k
-	hfMRhXX7OgJQ0O200gb7pLQgymnCEl1TMbvjOu361+zf4HwNZFj5wulurEqf7drHRn+y/RD
-	VC1Q2kaYSiQcYociX7fuO9ULy1CJdZDI23F9oYin/b1wIoc+sCb1Lwg4vq9p+wcrW5+FgtR
-	4VdzyX3LwhuPnnUXAIuNFSRWJUq7W2HG7hZexMEhRZz1Qqw4a/770iTGi6+owLNnH79Cu3C
-	Ya9ta0zaIhWfu0KUW7nn6E6MZzZlvoeL3cw8Fjr7uPW0raiyX44zGYqbZAQKIWipytWGUjL
-	28dyFETHfIjJVaaqnrGXP+xL9e5RxkqRBJ7CGxFAMr9Vdvay7BW3lV9NJJ3CO/txrY7gqpW
-	vs/lG3vdqK9AVH8Qh7foJCToRf+1UJZZZOvUyh4kr7JMPrn/phXZcb+IcKxnfRs6h3WfIPY
-	N7mFss3rktzcn1P+2fOR5wsX8HY8A=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When the computer enters sleep status without a monitor
-connected, the system switches the console to the virtual
-terminal tty63(SUSPEND_CONSOLE).
+Hello,
+My PC suffered a rather nasty case of HW failure recently where the MB
+would break the CPU and RAM. I ended up with different data on different
+members of my RAID6 array.
 
-If a monitor is subsequently connected before waking up,
-the system skips the required VT restoration process
-during wake-up, leaving the console on tty63 instead of
-switching back to tty1.
+I wanted to scan through the drives and take some checksums of various
+files in an attempt to ascertain which drives took the most data
+corruption damage, to try and find the date that the damage started
+occurring (as it was unclear when exactly this began), and to try and
+rescue some of the data off of the good pairs.
 
-To fix this issue, a global flag vt_switch_done is introduced
-to record whether the system has successfully switched to
-the suspend console via vt_move_to_console() during suspend.
+So I setup the array into read-only mode and started the array with only
+two of the drives. Drives 0 and 1. Then I proceeded to try and start a
+second pair, drives 2 and 3, so that I could scan them simultaneously.
+With the intent of then switching it over to 0 and 2 and 1 and 3, then 0
+and 3 and 1 and 2.
 
-If the switch was completed, vt_switch_done is set to 1.
-Later during resume, this flag is checked to ensure that
-the original console is restored properly by calling
-vt_move_to_console(orig_fgconsole, 0).
 
-This prevents scenarios where the resume logic skips console
-restoration due to incorrect detection of the console state,
-especially when a monitor is reconnected before waking up.
+This failed with the error message:
+# mdadm --assemble -o --run /dev/md128 /dev/sdc /dev/sdd
+mdadm: Found some drive for array that is already active: /dev/md127
+mdadm: giving up.
+# mdadm --detail /dev/md127
+           Version : 1.2
+     Creation Time : XXX
+        Raid Level : raid6
+        Array Size : XXX
+     Used Dev Size : XXX
+      Raid Devices : 4
+     Total Devices : 2
+       Persistence : Superblock is persistent
 
-Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
----
-Changes in v4:
-- Moved `vt_switch_done = false;` below the `if (orig_fgconsole >= 0)`
-  block to ensure it is only reset after a console switch has occurred.
-- Link to v3: https://lore.kernel.org/all/20250526010854.7834-1-tuhaowen@uniontech.com
-- Link to v2: https://lore.kernel.org/all/20250516084011.29309-1-tuhaowen@uniontech.com
-- Link to v1: https://lore.kernel.org/all/20250516034643.22355-1-tuhaowen@uniontech.com
----
- kernel/power/console.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+     Intent Bitmap : Internal
 
-diff --git a/kernel/power/console.c b/kernel/power/console.c
-index fcdf0e14a47d..19c48aa5355d 100644
---- a/kernel/power/console.c
-+++ b/kernel/power/console.c
-@@ -16,6 +16,7 @@
- #define SUSPEND_CONSOLE	(MAX_NR_CONSOLES-1)
- 
- static int orig_fgconsole, orig_kmsg;
-+static bool vt_switch_done;
- 
- static DEFINE_MUTEX(vt_switch_mutex);
- 
-@@ -136,17 +137,21 @@ void pm_prepare_console(void)
- 	if (orig_fgconsole < 0)
- 		return;
- 
-+	vt_switch_done = true;
-+
- 	orig_kmsg = vt_kmsg_redirect(SUSPEND_CONSOLE);
- 	return;
- }
- 
- void pm_restore_console(void)
- {
--	if (!pm_vt_switch())
-+	if (!pm_vt_switch() && !vt_switch_done)
- 		return;
- 
- 	if (orig_fgconsole >= 0) {
- 		vt_move_to_console(orig_fgconsole, 0);
- 		vt_kmsg_redirect(orig_kmsg);
- 	}
-+
-+	vt_switch_done = false;
- }
--- 
-2.20.1
+       Update Time : XXX
+             State : clean, degraded 
+    Active Devices : 2
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 0
 
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : bitmap
+
+              Name : XXX
+              UUID : XXX
+            Events : 3826931
+
+    Number   Major   Minor   RaidDevice State
+       7       9        0        0      active sync   /dev/md0
+       -       0        0        1      removed
+       -       0        0        2      removed
+       6       9        1        3      active sync   /dev/md1
+
+
+
+Any ideas as to how I can get mdadm to run the array as I requested
+above? I did try --force, but mdadm refused to listen.
+
+Thanks,
+David
 
