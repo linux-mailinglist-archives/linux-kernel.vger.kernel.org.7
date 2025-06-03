@@ -1,139 +1,124 @@
-Return-Path: <linux-kernel+bounces-671638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB21ACC410
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:12:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEADFACC42B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 12:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFB47A23FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F9B3A2E33
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 10:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FF61DEFDB;
-	Tue,  3 Jun 2025 10:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B4C228CB8;
+	Tue,  3 Jun 2025 10:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONSM1g9R"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L9wcuCoc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WvtCDCkh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4725826290;
-	Tue,  3 Jun 2025 10:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623B61DE3D9;
+	Tue,  3 Jun 2025 10:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748945558; cv=none; b=oh1nmB0PbMATvS8Y833KK4s9MOF9jKqC177hhqeCOVevzxgnP635IKhtJKgDv8LzEWTqdl8yIrbZOA0rqblY0wJSVXlfL6iXO/8IqxxF466dmIneT/lamu+9Q5Fh5na1CjjnNz52JySqi9D9NE8Rdfv3Io2jP8ju8QtR7QET+LY=
+	t=1748945617; cv=none; b=jY5x7U3abhvVhtz4WGueo+skOVK61T9e5QVE4a4AAAIIGGtBmb72xxvaHBOLvU4oTl3GAEmvQW+G4eYUpH7LH3Ou+l4pSZyznYejFmKeUtohzw7GgpJKFt0nb+deUdpZEz/QuNRkRx3GFBOZPYYSUI4CaQXR4b+9mngPF3FqHoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748945558; c=relaxed/simple;
-	bh=fb+1aoVEIY3lvgFvicVgPsuZu53K3kj2915ek084rRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FeAhySFfdfrvxsXC1HEJTreYG9Y/n/T0kqNTe3suQcofousGH4f/fls2fUstDpVs94hEM5bu9dZFnGwQoZF+kxbK0RfiS4VktGqaTCRIoY7Be8ATvr3rW/qa+UQlyiwcq56sbNYnP32PlfcNLbepKRcMOXK+h6PjzPkkZrOFr7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ONSM1g9R; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b26f01c638fso4851208a12.1;
-        Tue, 03 Jun 2025 03:12:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748945556; x=1749550356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5MxnhBc+O3vpHmBRAaLCl1aOvgfUSOP4JyB4k/c7duo=;
-        b=ONSM1g9Rn7kFaOQcfHk8KQIXoQwdpDOQvAszp3Yl8TsU2ESKUTquk5O3wEihRk0v7F
-         dlgr6dYMelz8Ld0r3SUWb0+676PBsVHmlLdLyaMwtsmbHavoy9sVKGcVmVRsxTdqOkvh
-         kFJ5T5WmxllyyKzxzEre2BcNBPy7MvzAuSJXBhiLgkPk2+wB29bDjXjZQetPkCAivlVA
-         YRf6YBYou4wVmJioZ2Jmh02cwN8GNmi7pl+tQNnq4sCXijKxj483aWeWriA2jFlMig2G
-         WIDeQf2ijxYTbqj5FHjQNstdIaRuz7Tt/rkbkLxDTUHPQyO2zXUeVxk2PpnbauWqZOe9
-         NAYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748945556; x=1749550356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5MxnhBc+O3vpHmBRAaLCl1aOvgfUSOP4JyB4k/c7duo=;
-        b=oqEmc1dum6xPVbbyFEcRY258Fq+cFs30NpvGppyL8kHDVWk4JA7t6QZ/fcy5rmpJFo
-         HXGXHjSAP0HncKJ6AVAjHXjupHrsjH49mNJRe9SnZ6sQDwPsmZepdx6R5Lpwh4tbLra7
-         ZKKV4L2ksXlp+8knonO4jI9emwUIyeFbBGd+9mOPW/vPpyOt/gTIjNlpwZeok5oWqbDZ
-         HxCgKMD1VKKEyAtR3aVuvMBKkt1mXFaYPIx5zotljDb3DwjIO1vfwxthGBKY54nH6Yay
-         YHH54igIBQBxkTkBMPJtrX5gFPDxNg8I0f0bOiAC5/+HXQkeDxIjd53fXUFpC9qf6Ue7
-         kp9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUt9nLLWVHok5/aIWDLTF74UvWnuhc8XsZ6ecLm2/NJv2lrxk2on+Y8tOL4YLGBJWKmDwO3gUrSxHqnVP4=@vger.kernel.org, AJvYcCVRNrGqqcXe80feIdJm3EPjlAQpCM0rkn8ah6tZ4zMYmu5AV4B4zRqD1stcAe3g6jn1Xwx9z5OA@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYHxbgISZi4hesxw18x/BjB+HMHn7M0bBEOlmLE90N+iuCJ2Tn
-	Ef6ENuotDUhYOyNMEF5F3CBPNeS2l/eX4vDv9ITdHNDseYvLg+GD199iFCxaSxWTM4kjR6CjQFv
-	FrNK4LT2u+x4JX2e9YjxA6hQnMzhZSh8=
-X-Gm-Gg: ASbGncs9m5SzWMsypr6oatxF10cf/HKWUIxrTX6lTf1IPTqiPGSW0cu8AmvlmBtSlqD
-	/nY7wYojWUJmPDP8+l1VScl9PdQhaQrsQSnj+V4pVeb4HU5Vk6TCKx1JBY/KHNDXV2Nm+n7ePB5
-	PVnGPet9u57CTnvhjPsPwtLcFyG4Ryd53+7Ve8P4Lht661fq8rYE7BxHTTvb6mKFx6ECw=
-X-Google-Smtp-Source: AGHT+IGdrSQjP4rJ8T/Sa2miwSpApd88R5Td7U6KQDGe3xw3mMPJJkK3NjL8KmDWn2w5uF+kr6yqXS0rcElvgAO2dgY=
-X-Received: by 2002:a17:90b:2dc7:b0:311:c939:c84a with SMTP id
- 98e67ed59e1d1-3127c6ec095mr20445724a91.15.1748945556376; Tue, 03 Jun 2025
- 03:12:36 -0700 (PDT)
+	s=arc-20240116; t=1748945617; c=relaxed/simple;
+	bh=WpA8vk81DM7YpkDfuHTbQ/Sfa1Xajazk+5EhEjjP3ww=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M2KHLe+197qe4dHAcltduVjQRn4BE18BgfhTiqAOGOKA6olCnDdLwz45u2nq/klXi7xZxwfTbSFlebIusu7BYiAbCO9Th1AH5+t7gFnznO8yOzGTT+uvvfy+PMgpvsMWlYadSs/wS5/k2ldOjXklAqj/o+1BNDWCH3Sy1+sEeoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L9wcuCoc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WvtCDCkh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748945613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3fmXLNY28v1hpCt9gnOZ3e1NvaAcrprXNPAeAIatdwY=;
+	b=L9wcuCocVvAROJB+Vm0OMYtp7fufY8dT/XSrg66W/wPnRPYVwXbuzvxw6y/I0bxWGZLl7k
+	hhsYZ/WXTKhJcBS9P8EKndIyRzxkuIQ5eFMfUEWTNKAYq6xom2+K4mQx/Wo77fZEx6sr8+
+	XOtD/Br06ez9QfpXwaQVqrvV0XLpFymmBMDTjPqFb0QNvuCbEUBr0cKhcMuwBcHjaBJTNM
+	tOfbZCzQ5GIKH0JUeRQ25WViQOjsHG8rJ0HlJubM6ctKGLqwmAIqif7h8LoYDAs16AyeDN
+	ai7LFH63uRhQXBclK7LDIn6QNMiEYLWsgRaqkKEp2jarZ+cAbJDinATxEB/Fdw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748945613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3fmXLNY28v1hpCt9gnOZ3e1NvaAcrprXNPAeAIatdwY=;
+	b=WvtCDCkhUyXu1qXvp7/fcYjduzLtlT//gr4N95lbI4JHE7mq1qxMduaAOFDCksOFsOXHo9
+	a39axwuqZMvMlJBg==
+To: "Toshiyuki Sato (Fujitsu)" <fj6611ie@fujitsu.com>, 'Michael Kelley'
+ <mhklinux@outlook.com>
+Cc: "pmladek@suse.com" <pmladek@suse.com>, 'Ryo Takakura'
+ <ryotkkr98@gmail.com>, Russell King <linux@armlinux.org.uk>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+ <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "Toshiyuki Sato (Fujitsu)"
+ <fj6611ie@fujitsu.com>
+Subject: RE: Problem with nbcon console and amba-pl011 serial port
+In-Reply-To: <OS7PR01MB13775FE1A20762D1EA4A38D0ED76DA@OS7PR01MB13775.jpnprd01.prod.outlook.com>
+References: <SN6PR02MB4157A4C5E8CB219A75263A17D46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <OS7PR01MB13775FE1A20762D1EA4A38D0ED76DA@OS7PR01MB13775.jpnprd01.prod.outlook.com>
+Date: Tue, 03 Jun 2025 12:19:32 +0206
+Message-ID: <84y0u95e0j.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250531101308.155757-1-noltari@gmail.com> <20250531101308.155757-10-noltari@gmail.com>
- <455d5122-7716-4323-b712-9a7d84063c0c@broadcom.com>
-In-Reply-To: <455d5122-7716-4323-b712-9a7d84063c0c@broadcom.com>
-From: =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Date: Tue, 3 Jun 2025 12:12:03 +0200
-X-Gm-Features: AX0GCFshSXcSsBhqGSUlWkOAp_xe8ImHNIAwihgvNfHTL013-EJ0y_m3uSttTJU
-Message-ID: <CAKR-sGcqVv8LO2sqE-wsh5As=9f+s1EcaVcMF264RafdWVVkdg@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/10] net: dsa: b53: fix b53_imp_vlan_setup for BCM5325
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: jonas.gorski@gmail.com, andrew@lunn.ch, olteanv@gmail.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	vivien.didelot@gmail.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dgcbueu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Florian,
+Hi Toshiyuki,
 
-El lun, 2 jun 2025 a las 20:11, Florian Fainelli
-(<florian.fainelli@broadcom.com>) escribi=C3=B3:
->
-> On 5/31/25 03:13, =C3=81lvaro Fern=C3=A1ndez Rojas wrote:
-> > CPU port should be B53_CPU_PORT instead of B53_CPU_PORT_25 for
-> > B53_PVLAN_PORT_MASK register.
-> >
-> > Fixes: ff39c2d68679 ("net: dsa: b53: Add bridge support")
-> > Signed-off-by: =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
-> > ---
-> >   drivers/net/dsa/b53/b53_common.c | 4 ++++
-> >   1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53=
-_common.c
-> > index d5216ea2c984..802020eaea44 100644
-> > --- a/drivers/net/dsa/b53/b53_common.c
-> > +++ b/drivers/net/dsa/b53/b53_common.c
-> > @@ -543,6 +543,10 @@ void b53_imp_vlan_setup(struct dsa_switch *ds, int=
- cpu_port)
-> >       unsigned int i;
-> >       u16 pvlan;
-> >
-> > +     /* BCM5325 CPU port is at 8 */
-> > +     if ((is5325(dev) || is5365(dev)) && cpu_port =3D=3D B53_CPU_PORT_=
-25)
-> > +             cpu_port =3D B53_CPU_PORT;
->
-> Don't we get to that point only if we have invalid Device Tree settings?
-> In which case wouldn't a WARN_ON() be more adequate?
+On 2025-06-03, "Toshiyuki Sato (Fujitsu)" <fj6611ie@fujitsu.com> wrote:
+>> 4. pr_emerg() has a high logging level, and it effectively steals the console
+>> from the "pr/ttyAMA0" task, which I believe is intentional in the nbcon design.
+>> Down in pl011_console_write_thread(), the "pr/ttyAMA0" task is doing
+>> nbcon_enter_unsafe() and nbcon_exit_unsafe() around each character
+>> that it outputs.  When pr_emerg() steals the console, nbcon_exit_unsafe()
+>> returns 0, so the "for" loop exits. pl011_console_write_thread() then
+>> enters a busy "while" loop waiting to reclaim the console. It's doing this
+>> busy "while" loop with interrupts disabled, and because of the panic,
+>> it never succeeds. Whatever CPU is running "pr/ttyAMA0" is effectively
+>> stuck at this point.
+>> 
+>> 5. Meanwhile panic() continues, calling panic_other_cpus_shutdown(). On
+>> ARM64, other CPUs are stopped by sending them an IPI. Each CPU receives
+>> the IPI and calls the PSCI function to stop itself. But the CPU running
+>> "pr/ttyAMA0" is looping forever with interrupts disabled, so it never
+>> processes the IPI and it never stops. ARM64 doesn't have a true NMI that
+>> can override the looping with interrupts disabled, so there's no way to
+>> stop that CPU.
+>> 
+>> 6. The failure to stop the "pr/ttyAMA0" CPU then causes downstream
+>> problems, such as when loading and running a kdump kernel.
 
-I just copied the same code that's already present on b53_enable_cpu_port:
-https://github.com/torvalds/linux/blob/master/drivers/net/dsa/b53/b53_commo=
-n.c#L753-L755
+[...]
 
-I believe that the correct configuration should have the CPU port at
-#5, but certain registers expect it at #8:
-https://github.com/openwrt/openwrt/blob/cc5421128e44effd5df05227cec4d4c5d05=
-be8dc/target/linux/bmips/dts/bcm6358-huawei-hg556a-b.dts#L155-L204
+> After reproducing the issue, 
+> I plan to try a workaround that forcibly terminates the nbcon_reacquire_nobuf
+> loop in pl011_console_write_thread if other_cpu_in_panic is true.
+> Please comment if you have any other ideas.
 
-> --
-> Florian
+For panic, if it is OK to leave uap->clk enabled and not restore REG_CR,
+then it should be fine to just return. But only for panic.
 
-Best regards,
-=C3=81lvaro.
+So something like:
+
+	while (!nbcon_enter_unsafe(wctxt)) {
+		if (other_cpu_in_panic())
+			return;
+		nbcon_reacquire_nobuf(wctxt);
+	}
+
+(And other_cpu_in_panic() will need to be made generally available.)
+
+John Ogness
 
