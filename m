@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-671567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-671569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70201ACC33C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:36:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6AAACC345
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 11:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D4C167CC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718E018906E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Jun 2025 09:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3A22820A7;
-	Tue,  3 Jun 2025 09:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZG2M14i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F422BD04;
+	Tue,  3 Jun 2025 09:38:25 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1971478C91;
-	Tue,  3 Jun 2025 09:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6867262D
+	for <linux-kernel@vger.kernel.org>; Tue,  3 Jun 2025 09:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748943411; cv=none; b=ayBuy64cwpQBgMGavzn6V43I6rxRZsB5c7vz9R1MsR4ywzKgG/NLb4ri1BcDUp1iIfbqlbXuWZnQWNqW4SSVg5PSiIcYlZeXFsL5/GcON9nEi/LxhNacvrTmb7K7e458ueNE6gnujJ6FpRXqdoTiistODaHz88nKiM58YePJV5w=
+	t=1748943504; cv=none; b=mc62CA2W31TEFVhr9a3YnavMKoGOBKD0W9SuZVp+Tu/1MexNBzd2wvz9xMGyL4sHJXFtg8eDxr504K3TYfruvjLPKfEkZtxexwALCTHXRfOlNdZEG9QREBaQuMnw3UnbjmWNMDcaaz/VlSEaNK+EzucIfWFyhcIn2y1vR0Gp/AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748943411; c=relaxed/simple;
-	bh=y5NijpC1W+kaj0Db6iS/C/FXikX2cDrmNfwqHGZF9wY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQhCHyK03I6kz/s3/LfQo1va1ZfMzfnaz5PqokZRdQmzLdMMJvfOShKR1jQ0N3JunZi8kUN8qqGnYZuB1Nkh2sFMJdWPT6H9xArOpo3XYB7e/32134W75P6SoHimp5+kcv/exeGsX23oNwP9mkA2qfW7dforuS60vsafgffh/3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZG2M14i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8128AC4CEEF;
-	Tue,  3 Jun 2025 09:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748943410;
-	bh=y5NijpC1W+kaj0Db6iS/C/FXikX2cDrmNfwqHGZF9wY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XZG2M14i2pIgwU/dE4wgqR1O5udb2CfYWIVR4gvZxauprVJGINfLDovYq/c19TNwA
-	 YXoehwNxFdiHjPhZ683gu13qqRWeXmR/jhjSLRrYAnuHENNN9hlALkMepuosf5/Ol0
-	 x+l01FSzL7Us6cvwLH3EKRDscRQyg4v2tjDH5DR6FTsnzvz4nC3K9dU8lr8n+AoA1/
-	 dCPj/L5JaqtlqhVMxMKQteFBhn6IYQ/bg4rt2g3giAMSRq84s5z0yp14DYar6LpiMB
-	 HYdPW+O6TMj98pn9cJFCYHsJ4etq7WH5Lj8RtyK8+ytHt/VdkNK9z3Gvn/wUBgq9J8
-	 fAWI/H3wPWTUA==
-Message-ID: <c3b326ea-8d79-47c1-82b7-a9f2f46ab0c3@kernel.org>
-Date: Tue, 3 Jun 2025 10:36:46 +0100
+	s=arc-20240116; t=1748943504; c=relaxed/simple;
+	bh=IB032qsp2887c7Ok5kbpqpTQvBFl43MFeUSsFjqPH8w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ak4aRXRFvVbVxrE4aZ9lzcqG6daZJMuM0Bi3ewrK/qwrNavRycdWayPQK89xHPL0c4pCkksn77Un6Hq7uw0Yc+XDUoJ0geIJXZxrNivQpDM42vxX++CoANbo4eRO22wfzl3AuRLlsI8apT/9qaBmAyGmIlP3FHvIpn6AJnP715w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3dd759fd518so59056855ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 02:38:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748943502; x=1749548302;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dOX2874ohwBkFW6x8Q+3RcT0hX/nbGdRgutYAjuBqkw=;
+        b=Vq9VC9QrbfbxoMSi8FDFMaJT3b/UaIQmqDluADveOOU3vQB8JKwl4p9khMDbo5AxjX
+         WyvMQhtxxMt9nFNGnmL4lzTdT0ffPKeuxPpeF0NV842ujwSu/Kfpfm90wZrzeC4eaBy0
+         H+ohl2n0JDB+RU57/bJRayxUO/RknsZRlrKd4Rwu1iRTOtmr6z6Inp7VLr/x9iSyZGHR
+         H+P/3LB3Jf5zM3DUj6fIctppBNcUamMmrmE7U530+saNArcAIW1SwIpWxNYwLqbfEwdm
+         e1znYdeD76rgoi56vqH4g5Jj7FK3J5n8HfOlkiTqTVYU2W0omPIJreAwdcgmF+yC+pCL
+         K54Q==
+X-Gm-Message-State: AOJu0YwVS4aD6EiRQfWHe+YJJVSIG0K+tjFVPJBt+Xx4IUkJgES2j8Kk
+	ImKfwJlVBfYXP6Z3X6OMWFFlc5zxzQ8p0FhGa/NHPUjdm6Ur2gQ64rOj679fTmRNdKkVEvOuAfo
+	iB3KL+G5JA8zdIDtC0OJC4nmg8oG5LnnEIDod5DAJXaO0C8N+7MlI2yYtIRE=
+X-Google-Smtp-Source: AGHT+IGlhvLlcTJ+bj1kA/KxYsHLiv/nvIdD9C5SD8Vs6GdVK1MK1r4rqHmEpz9JTOWCBs4j32zvcZ1ctY1cd2001kr+JRjSxn/x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 3/3] bpftool: Display cookie for raw_tp link
- probe
-To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, jolsa@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250603022610.3005963-1-chen.dylane@linux.dev>
- <20250603022610.3005963-3-chen.dylane@linux.dev>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20250603022610.3005963-3-chen.dylane@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:4515:10b0:3dd:b5c6:4225 with SMTP id
+ e9e14a558f8ab-3ddb5c64337mr28480175ab.6.1748943502310; Tue, 03 Jun 2025
+ 02:38:22 -0700 (PDT)
+Date: Tue, 03 Jun 2025 02:38:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <683ec28e.050a0220.55ceb.000b.GAE@google.com>
+Subject: [syzbot] Monthly nfs report (Jun 2025)
+From: syzbot <syzbot+listc06ab228b356f0d07b0c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/06/2025 03:26, Tao Chen wrote:
-> Display cookie for raw_tp link probe, in plain mode:
-> 
->  #bpftool link
-> 
-> 22: raw_tracepoint  prog 14
->         tp 'sys_enter'  cookie 23925373020405760
->         pids test_progs(176)
-> 
-> And in json mode:
-> 
->  #bpftool link -j | jq
-> 
-> [
->   {
->     "id": 47,
->     "type": "raw_tracepoint",
->     "prog_id": 79,
->     "tp_name": "sys_enter",
->     "cookie": 23925373020405760,
->     "pids": [
->       {
->         "pid": 274,
->         "comm": "test_progs"
->       }
->     ]
->   }
-> ]
-> 
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  tools/bpf/bpftool/link.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
-> index 52fd2c9fac..bd37f364be 100644
-> --- a/tools/bpf/bpftool/link.c
-> +++ b/tools/bpf/bpftool/link.c
-> @@ -484,6 +484,7 @@ static int show_link_close_json(int fd, struct bpf_link_info *info)
->  	case BPF_LINK_TYPE_RAW_TRACEPOINT:
->  		jsonw_string_field(json_wtr, "tp_name",
->  				   u64_to_ptr(info->raw_tracepoint.tp_name));
-> +		jsonw_lluint_field(json_wtr, "cookie", info->raw_tracepoint.cookie);
->  		break;
->  	case BPF_LINK_TYPE_TRACING:
->  		err = get_prog_info(info->prog_id, &prog_info);
-> @@ -876,6 +877,8 @@ static int show_link_close_plain(int fd, struct bpf_link_info *info)
->  	case BPF_LINK_TYPE_RAW_TRACEPOINT:
->  		printf("\n\ttp '%s'  ",
+Hello nfs maintainers/developers,
 
+This is a 31-day syzbot report for the nfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nfs
 
-Nit: See how we use a double space at the end of the string here, to
-separate the different fields in the plain output...
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 9 issues are still open and 16 have already been fixed.
 
+Some of the still happening issues:
 
->  		       (const char *)u64_to_ptr(info->raw_tracepoint.tp_name));
-> +		if (info->raw_tracepoint.cookie)
-> +			printf("cookie %llu ", info->raw_tracepoint.cookie);
+Ref Crashes Repro Title
+<1> 20162   Yes   INFO: task hung in nfsd_nl_listener_set_doit
+                  https://syzkaller.appspot.com/bug?extid=d1e76d963f757db40f91
+<2> 2398    No    INFO: task hung in nfsd_umount
+                  https://syzkaller.appspot.com/bug?extid=b568ba42c85a332a88ee
+<3> 927     No    INFO: task hung in nfsd_nl_version_get_doit
+                  https://syzkaller.appspot.com/bug?extid=41bc60511c2884783c27
+<4> 810     No    INFO: task hung in nfsd_nl_threads_get_doit
+                  https://syzkaller.appspot.com/bug?extid=c0831b61d6ade1e2d098
+<5> 799     No    INFO: task hung in nfsd_nl_rpc_status_get_dumpit
+                  https://syzkaller.appspot.com/bug?extid=68f089d6e18e8b1d41eb
+<6> 777     No    INFO: task hung in nfsd_nl_listener_get_doit
+                  https://syzkaller.appspot.com/bug?extid=4207adf14e7c0981d28d
+<7> 319     Yes   INFO: task hung in nfsd_nl_threads_set_doit
+                  https://syzkaller.appspot.com/bug?extid=e7baeb70aa00c22ed45e
+<8> 49      No    INFO: task hung in nfsd_nl_version_set_doit
+                  https://syzkaller.appspot.com/bug?extid=f56732cee5a3c93a262f
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-... Please use a double space here in a similar way, at the end of your
-"cookie %llu  " format string.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Looks good otherwise. Thanks,
-Quentin
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
