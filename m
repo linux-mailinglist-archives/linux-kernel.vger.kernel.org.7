@@ -1,156 +1,116 @@
-Return-Path: <linux-kernel+bounces-673610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858AEACE395
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:27:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF1BACE391
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A496F189AB1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA3D61781C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401131FFC4B;
-	Wed,  4 Jun 2025 17:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387D213237;
+	Wed,  4 Jun 2025 17:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K16Xu1EQ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUFIWL7V"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E131F2BAB
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 17:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA582101BD;
+	Wed,  4 Jun 2025 17:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749057813; cv=none; b=HMMcZj1gVqfVlqwvjHQHPQb+HVl8wBXvPSK+PSZT0oyxsB0e8Kah7L7v59+8BWdO8NjrvGGW+GMJBIAyrLsJRUCAOvq+bOrA+dVYx3vNO9avtvsZyjAbIW932yKAUpb8dhTqqkV05oomK7vmvO76ixbdKUKzVoOpe/E3FkWx5Cw=
+	t=1749057878; cv=none; b=nE4r3uk0etbV42nDQy+kBu1ZqjPmMNVUMDH+FR6Loz70Wf6UVRbx93gxG4O+UuATjAIP4rCn4y08QfO6odQXZq/TitJUeanko8FYAYvRhUI3GusSp7YTl5Y9idHwj96+r7mEckRp3ZhnHMY4vxEsZIJiJbtHigiKHpeBmnU75f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749057813; c=relaxed/simple;
-	bh=gZSXx3AMeT4oZP2iB0iJUp1MZzfV5OppJkNcfJLcdDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rphqPfONC8B6suvP960kuaiSj+IIW8mSf2dG7qtbpG/oKiQ/A21OwnUA5fcbrS1NNaordpxJ2yZCTIst8OQ/VtMVkP7ssPdqu5GQAGELHoSlzs7Whm9NITBYxIhPAqsqS+TvfqIAu5D03FY48gRu73xT1fTeQevD60T0+MkqSNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K16Xu1EQ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-231e98e46c0so893915ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 10:23:31 -0700 (PDT)
+	s=arc-20240116; t=1749057878; c=relaxed/simple;
+	bh=4T2Xhltii2sdundiNV4DDC+vFusCJPHnJZUONFyp2cA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gKNx9b2WqmJVhYcvyrnVexAJsSm/pKrFmAHTsmqDWJICis7RZa2rnuzTgQy9HNG6lLjYwWkD2vMoo0XU0CjyTogKNvYjsI/ISRnEf9rQk7ZI1KGb7Gz7g942Vth7nvr6gL+I6o6RsiPfvZbGWQb+qHRLxYF83pdKYG3Xm88NbB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUFIWL7V; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e694601f624so100596276.1;
+        Wed, 04 Jun 2025 10:24:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749057811; x=1749662611; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QHono2++O4fr0FrSH5Q5xobqEyxv94ONXS/va49k4Z8=;
-        b=K16Xu1EQarnOLYxZ+KxOUwiFUrFPGthEsvvxo/KFVx5wyedFw+0ShZrfd1GX7uOeRl
-         nMs4/3Zpt5j35wnkexKWWtw0NXaDY7k74k9KJQOUc52KV3zFlhMBymJKibaIsDyEiJAB
-         NoJZKxo5U4yjG/E/rIXoQ32/kmDvRR9WsfKQH0Gw2/oe3nrUpYdSYSnrKQNd1RJ//dYB
-         ALIyjQT1lJ8LK4+g/Ai0QCiFyVNf0pBf1wSFSIg5SNLHs7vKTSyBhXFLrna07wmfxxUk
-         3h5ZcPm9kD0B/FChnixl4mnEEiAYiE33WWjaysWE+JKtP37+Tx5muYElQdEntbfQ9Kkw
-         oT2A==
+        d=gmail.com; s=20230601; t=1749057876; x=1749662676; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nANItJ3n9rHzK0lPnEVgoGoN0BgH3bisoRcHmb6FsOY=;
+        b=eUFIWL7VVISZ6R7uCEEOLa9aRFBEnhPFweoMJKr/1lJiQn+lnJ2QGT9gX1Xoo3OWs3
+         DMLb80GUOhRftXRDCUZPEnBwDNC1P/NDxYM4jQnuNySYjRKEzQlOZm0hMRYBBeBY+d42
+         6qkA4RaHntvBGzeytjx22AFqSyGVJMnioIus4xeyWI+YPUSbPGxMw3AvlQalcr3neiBD
+         68+cGJ74Ql/sZUnrNGHQ67d3qsy6YFuIxdUfDbY8jRblgjclAH/djAUCzm+28GNrGLb2
+         kxCltpDzfGt1xk1tOYBgvvEJG4F+X6chRTwpZlioGxX9vttqdl2k9PjroBvp+lqKeeM1
+         4hoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749057811; x=1749662611;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QHono2++O4fr0FrSH5Q5xobqEyxv94ONXS/va49k4Z8=;
-        b=g03foLEozW09EPJSQ/lk7/VFIngzrAic1fZqTANVlhXwWufhRYtekqR7wd2sVwhx7G
-         i2qVSMgLEndop8+VZSl8kKyzoWOV8GFJzAJIgezmPsWXcfhPRZ5zmBtqaqtuudv0RCPz
-         DJG+ONeQG2NaufBhMKFTLGBK0/WskHufV3RAu/dYtUUjWoxXj35VkW3m65uLOD6/3qgP
-         H5KOIJNHyXTQvASiDTwbh9WHvv4JZbTxcdsSlUkubO0DK8I6GPCVgkak9NODiPziXfiy
-         1K/R99jsA70dgPX2bQxNywegYkYCgtw/fsU12mXcEa/eOeVivo93hzQIKQPgZF1XPUNk
-         BcWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHfU5vBswbRUv5EweOkiOVTKnHRx/f3q4KJ/L+MkEqyJrDZJqBifTbZekf/U+Nnjrq+tCOm2s++Un3m/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH1/tpXiLRZCnSO7VMqJizW3d/e095sUiEwuXaUifKIFraXW8c
-	2g0e/FKJaPYZ+ldM7Ce5tLEv+NAOOZq1FX0HhrrvzqhlLWAMc8lQNNQrZf+dRBug1Q==
-X-Gm-Gg: ASbGncuzCs8TURBBLursHtNR6GlXdJCx4J8TaoNvC4RldCnVXJLq+ap3dY4b6qsgPCk
-	Zq4phbXvQdEPAk+Rl2pQWbMIOhhI54ocSYr4v1G50hIOM1Qs9YkM14FDTp9a/RS9U48qMmi5qMo
-	eoWKp8lebWIvGCy/V+dYShYTXOPo5iS4siGDS//G+BN+RKeBB6oVw6t5ivrC+F8WU8oSNMDqJBr
-	/K6/vqCkEUlmSc1WFqTO8u6EEtuGhJP5S20S+1cq3fnkFsxDKX+65OwTr+kzYoL8+A2m9flreaJ
-	p6dNawwtunyLooU9HmNwk5VZHgU32eI9DCfYZonXC1DpdKJiCjYkX5Vj9H+zIg==
-X-Google-Smtp-Source: AGHT+IGwgeJyFDpkWLW3KBe5vXSpgr0D7NF/b6JqvGw4nc8XALIL1xWj89jgG04Uup6TALuRObzniQ==
-X-Received: by 2002:a17:902:c94f:b0:234:ef42:5d69 with SMTP id d9443c01a7336-235e112337emr48387725ad.13.1749057811256;
-        Wed, 04 Jun 2025 10:23:31 -0700 (PDT)
-Received: from thinkpad ([120.60.60.253])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-235caa81c24sm30776725ad.200.2025.06.04.10.23.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 10:23:30 -0700 (PDT)
-Date: Wed, 4 Jun 2025 22:53:26 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/pwrctrl: Fix double cleanup on
- devm_add_action_or_reset() failure
-Message-ID: <tghehtcxc45rtdnt4mj6td4zziebckwfclbu665mtmcwvz562u@q24eds5pn4bn>
-References: <f60c445e965ba309f08c33de78bd62f358e68cd0.1749025687.git.geert+renesas@glider.be>
+        d=1e100.net; s=20230601; t=1749057876; x=1749662676;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nANItJ3n9rHzK0lPnEVgoGoN0BgH3bisoRcHmb6FsOY=;
+        b=TZCGhrxrrTebN22Yes4ncgZyP0Ci2p7qqPJAQtRM54SCcEupiyNy3CVt+Lflw/a6j7
+         M8ubcrnY7EeIIVTUk0oR5R6ud18W3sYtQCzhzYJIk4Bz8Mx/E+6HhuMi+urvwPJWTLqc
+         YKwAue2uPEn5y/SczPFDP+2i/EtT+azcX9UKqqEjYegsVooiSdLQ2wCUmtb5jWKNmGst
+         qn/HzTkRKB1A+HAlkV5rXlGXKENYHKHSL0Sdwtcn3IJmYE4Ooep4ANsyYha25bVZzZ5n
+         tIVmZ3BUhol1shbG7A4fRXNl2wpadbFstsRrxRj1dn8eLBjeOZW1UzWhV3O1rs7it4gV
+         NFRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfhHSBoDo0zKtKczpfzj9/aCTGCFPm+0rLbIE3aXZGnO8VlUi/eIdFPzTEco3NBx346jTfBiaIWtZqzpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKg8rVJICLsbeLrZ/6a9/9ulH74a0fU5N2ihqmEpAASDNcD2Uv
+	nDU3m/dTLlYdHV+wRz7RcSi0oOnbjudzWgsurkIzwltP3oVTtOZUMLOQ9TZxeEW+7oc4OOTqHxC
+	WirFgdVpvquaifIZR8s4DfeofGqSA6KY=
+X-Gm-Gg: ASbGncuWCjtoQJKYvN3YSZo2VzRsjtftyEj0YGMAOy7nWHbeU3Os8ZrhWHvasSMmAYz
+	YT1JMQtVVwNXZr2T+VXUKfszDORCLgqIU3CXMXb94/tYd9AevFPB4+/BeKA6yU+9EDzgil3pU/4
+	Q7OGc5Gj41QnZNcMxmoisat2WU0Dvq7jGwcbVLN1KB5w==
+X-Google-Smtp-Source: AGHT+IFqkrIQksf+ZagsLNKprT5D9Gkx/ZIPUPXWNL3tQVC5N49QOKwKG+17ubQNHdTkJZuEZwnE8mYB9j3MltCsOrE=
+X-Received: by 2002:a05:690c:4988:b0:70f:87c5:5270 with SMTP id
+ 00721157ae682-710d9afc82cmr54862237b3.19.1749057875817; Wed, 04 Jun 2025
+ 10:24:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f60c445e965ba309f08c33de78bd62f358e68cd0.1749025687.git.geert+renesas@glider.be>
+References: <20250604153510.55689-1-stefano.radaelli21@gmail.com> <92e4de77-07da-4583-bf0f-46891101c327@lunn.ch>
+In-Reply-To: <92e4de77-07da-4583-bf0f-46891101c327@lunn.ch>
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Date: Wed, 4 Jun 2025 19:24:19 +0200
+X-Gm-Features: AX0GCFsi-0DPQCLx4D-kw5G9NJPOyVhmZhQWfWIPFkfSiLFQtS5JLkD2hBDD0uQ
+Message-ID: <CAK+owogo4+R+DM9rM_-ZqKRPX1wV6Vhdjrh6KWM71pqjQpYNuQ@mail.gmail.com>
+Subject: Re: [v2] arm64: dts: freescale: imx93-var-som: update eqos support
+ for MaxLinear PHY
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, othacehe@gnu.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 04, 2025 at 10:38:33AM +0200, Geert Uytterhoeven wrote:
-> When devm_add_action_or_reset() fails, it calls the passed cleanup
-> function.  Hence the caller must not repeat that cleanup.
-> 
-> Replace the "goto err_regulator_free" by the actual freeing, as there
-> will never be a need again for a second user of this label.
-> 
-> Fixes: 75996c92f4de309f ("PCI/pwrctrl: Add pwrctrl driver for PCI slots")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you Andrew,
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+would it be ok to add your Reviewed-by tag in v3 after applying also
+the corrections suggested by Fabio Estevam?
 
-- Mani
+Best,
+Stefano
 
-> ---
-> Compile-tested only.
-> ---
->  drivers/pci/pwrctrl/slot.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pci/pwrctrl/slot.c b/drivers/pci/pwrctrl/slot.c
-> index 18becc144913e047..26b21746da50baa4 100644
-> --- a/drivers/pci/pwrctrl/slot.c
-> +++ b/drivers/pci/pwrctrl/slot.c
-> @@ -47,13 +47,14 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
->  	ret = regulator_bulk_enable(slot->num_supplies, slot->supplies);
->  	if (ret < 0) {
->  		dev_err_probe(dev, ret, "Failed to enable slot regulators\n");
-> -		goto err_regulator_free;
-> +		regulator_bulk_free(slot->num_supplies, slot->supplies);
-> +		return ret;
->  	}
->  
->  	ret = devm_add_action_or_reset(dev, devm_pci_pwrctrl_slot_power_off,
->  				       slot);
->  	if (ret)
-> -		goto err_regulator_disable;
-> +		return ret;
->  
->  	pci_pwrctrl_init(&slot->ctx, dev);
->  
-> @@ -62,13 +63,6 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, ret, "Failed to register pwrctrl driver\n");
->  
->  	return 0;
-> -
-> -err_regulator_disable:
-> -	regulator_bulk_disable(slot->num_supplies, slot->supplies);
-> -err_regulator_free:
-> -	regulator_bulk_free(slot->num_supplies, slot->supplies);
-> -
-> -	return ret;
->  }
->  
->  static const struct of_device_id pci_pwrctrl_slot_of_match[] = {
-> -- 
-> 2.43.0
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Il giorno mer 4 giu 2025 alle ore 19:16 Andrew Lunn <andrew@lunn.ch> ha scritto:
+>
+> >  &eqos {
+> >       pinctrl-names = "default";
+> >       pinctrl-0 = <&pinctrl_eqos>;
+> > +     /*
+> > +      * The required RGMII TX and RX 2ns delays are implemented directly
+> > +      * in hardware via passive delay elements on the SOM PCB.
+> > +      * No delay configuration is needed in software via PHY driver.
+> > +      */
+> >       phy-mode = "rgmii";
+>
+> For this part only:
+>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>
+>     Andrew
 
