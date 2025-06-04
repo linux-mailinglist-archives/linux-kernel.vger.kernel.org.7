@@ -1,283 +1,213 @@
-Return-Path: <linux-kernel+bounces-673734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441EBACE55F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 21:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF46ACE4B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 21:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40A81745C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07FD818992F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C947020CCE3;
-	Wed,  4 Jun 2025 19:54:42 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8E2202C2A;
+	Wed,  4 Jun 2025 19:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ey6DhIS2"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011007.outbound.protection.outlook.com [52.101.65.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0F111BF;
-	Wed,  4 Jun 2025 19:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749066882; cv=none; b=LoyTU/9s6fOAdGytjGBaBHFWegTuN1xA6ieTPQcKgP1PfxaJeGByaFxR0IB4az8JQJI+EPaOpT04Of0a4uSaMfqEMuRo+jxisVaxWFnpeePKqKMx81i1vtJXB5Tv6Ki4HabiWLzeFcGoIK8JHwJW/y3CPW0Wf+E7nwFJIV7NGZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749066882; c=relaxed/simple;
-	bh=oKw90SyLsedrAFGhq66683nzBJAYf46emgOFII6AEx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rXCNenvjAiajBx40lvED+PS8MiZNF+W23bOXXkqP9j/LsOfnYI7J8e3tMiC0wW5BhDKpm+uBNMDH8aVnftl2mtmIloqyoskQm+EReaOihv5V35RQyvBkR9CDnbXGKdhDiR9XDYiqMGY4dii/Sd1aS4ZOQFVkoscdWPquIvI719E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 2138D1A05B1;
-	Wed,  4 Jun 2025 19:15:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 8E5F42F;
-	Wed,  4 Jun 2025 19:15:08 +0000 (UTC)
-Date: Wed, 4 Jun 2025 15:16:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] eventfs: Simplify code using guard()s
-Message-ID: <20250604151625.250d13e1@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E284B1A7262;
+	Wed,  4 Jun 2025 19:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749064662; cv=fail; b=i92oG8zxbYPT9D4A3nqpGGSojeddq6fl79TzQ4QwKn1RS6jqpqyj5ssnZR1UqwZeHayNeq1I88IuiZt3OxwLBAdvF/uumxactw9IakgAJLzDVmn/uhOn0gumA2cuRldTf48BbOeo3rLjY3o3q3ghNEPWqKSg3CtscTsEYhHamaE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749064662; c=relaxed/simple;
+	bh=80z5cTv9wRxUDYZSjff1E5095M1XvgzjlRQShobc1sY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GUiisKJkskx1Jeux9pnjnKf4HwcNkBbZ7ExbD0rvin0iVpuJ1VWTMXEH6TaLtPGBDsbYjrn1VC26X3wxuznWETjGTWjAUCbgUzX749Qc5udhiBadf15RLm5YW16nqwMR9gA5ZooGwD+8fO5ArFyAba4qOm7jTvJ3ZlZJpJRDTTM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ey6DhIS2; arc=fail smtp.client-ip=52.101.65.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B15IoKGjpVydVyGr2Th5X0FlanhLPmVTk1DzDcBIDZfS0+eUs5FYo+rn5bE9twyux8RZr28fRFkwVNixYKeKGA6VgE/UjL9DcZHqLjyKXuWGrMN8b6GoBDXstRNUo5FjWHSSiegjaRbqyegLqZQPLtFDoR0DKPmJVtMYFSvKgyRKXspm+/YwG78zK15hncO247ZixfdFXUoE5ij7VtfqjWQecVV54/4T1dfr6jLax4qGpQYmf0LUE3SW61wlP5GpTyQS4K+eLw5vZLasWYVbiGvhrsCcSkY32xpDhzfD7bH2eSn6j3ReasKK30vpUc6YlhCe80R8LDu4q5ZYYcBYIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/uy16r52HWkWTbZwkFEmYUgykHKHL3Z8qobbtpQBINk=;
+ b=KVEimugmZbsA/LxIdb01/AhwwdX6LHFKPv9Y2ukNiaz07+Xg+Ba8f9elDBOGk+FmRHKOkeAc74rQYXyiLf/Oq7eX5zd+a7MxbK5QiJcarGrygnyxVoHaBx97DvtnjNKck3BMNQsWKKYJZIP2c8ctYPfpsZYPAmDrRFkOctlkd3nZdTrLV89ekzHHTauCL6s5wRL0AtmPPk6xcyNfmm5BflpPdUE9T5Cs/sH35YGowaLC1hj/FUEH1u/QL6Z4B0J6b4J7Xysud5qpPQahGLtXcYNJ79hf9QCaxXKN/TItw56jpzhufRVf6hkgudfHi4RacBuD/V7z89WT1ZqLWDIhvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/uy16r52HWkWTbZwkFEmYUgykHKHL3Z8qobbtpQBINk=;
+ b=Ey6DhIS22/ppAhfJ74Z+MoeOiRLjMk6QV5e44zQZeTRrkKYmQgvbtzdEAEwQsxOn7kQB8/GipaJgJt8PuQT+uECllT2T5LeuMZ4mrjDv+r/dCyT6SWqfnnwWWJkCzzyDQETbvSaLmHjm7Wij/IinRJ2FG94emF0u8NMJm/ZHetEV6RTZSmwoSHmvqFZxiRrhrILKkIOheMw60z4JwgmDAEHRdA/T1qKDu8WaN5koQmlS+l6F/SFtGAyhccCA2JGXA9AifPWz5HYssSvM0dVYLLm6e0gLX5ipxraYRMDzD8bOJ4GOqelIjSnijcVq42LvMjFnNsY3PdcUTGQxxx/nRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB7595.eurprd04.prod.outlook.com (2603:10a6:10:20d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.34; Wed, 4 Jun
+ 2025 19:17:38 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Wed, 4 Jun 2025
+ 19:17:38 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Noah Wang <noahwang.wang@outlook.com>,
+	Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Naresh Solanki <naresh.solanki@9elements.com>,
+	Grant Peltier <grantpeltier93@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v3 1/1] dt-bindings: trivial-devices: Add compatible string synaptics,synaptics_i2c
+Date: Wed,  4 Jun 2025 15:17:18 -0400
+Message-Id: <20250604191720.1158975-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0056.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 8E5F42F
-X-Stat-Signature: 53uycops735pk585ew3nrdg1t36e45qd
-X-Rspamd-Server: rspamout07
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX190ANwMAkLRQwGtYb8o1JhLLF/z4Ly/Yyc=
-X-HE-Tag: 1749064508-499009
-X-HE-Meta: U2FsdGVkX19K54TRwk+lP3533Vh+tzF9iJwSy5fWAOFZ3Ac72gvRDnmpKHEbBXwTvgMq0CE5f9wfIG4fOJqSJpE2RcnbUhCPYuGi222TNC9mwtqPMI0ZcrjgfKEH52WLNuVJA9vBTRjAWNT1PdgArnGoWGqr2Go5aDkWCdxvXu9/6Zsz9XnCzZNV5EecYp145E/jLGTclbQdJyOdWo8Cw8ssyOkkogE3x4MAfR2b4fru62xbCV13BrXqN40ebDzlAZah2kqWg7925uWGfiMjOI3Kf+g3vZhyRjEeEEkmZoAjZgGp5nASYu58xQwKEItTjKMgkx3EScEI9E+bPlg4rPeu+IYyfQ2DYiX+Tiii414vG4M3Z13aa3EVNQgMAmM1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7595:EE_
+X-MS-Office365-Filtering-Correlation-Id: d362b08a-d5fa-40f7-eef2-08dda39c7806
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?SiEczB2Yj9sekyOW+3jZ4n7gM5uhVuxcmX+x4OaMUtMnalrW1M5XXzbEOcmv?=
+ =?us-ascii?Q?dbDkmB9LYMm9wks0nGKciea7ppM0TE6JHSuK0hU/21PLuuoNvQjJ2OAVZv95?=
+ =?us-ascii?Q?gXnS8Y83rQl2XnVSjHpeNPosWAyjORO3ismvg54eccVv1BhliuD1bxo0ayUb?=
+ =?us-ascii?Q?oDKncCkM4UlcUBc8deWyp9x8nbuKsENb2zQHdhQXOWHTRFHUJDjFOmXHM5Nx?=
+ =?us-ascii?Q?54KAhsal1uv1BGp1125MeKVbwvByUReuif4WOyudfFo6hZsX2R3I6YGWjT3l?=
+ =?us-ascii?Q?0lt3Pdne6BYXPFR+bX1hhUC40/WvMiKMfCRCamZ0rgWjL+c1BXK3UebBW7dt?=
+ =?us-ascii?Q?EAtORFbwjbn2SRZ3WgEJyCkhoYL0TNJ62N5zWCmjc9xd7XFw4tfOwEo8ee5M?=
+ =?us-ascii?Q?Wv+r9X3dowp76/7+1qh8ufINsYHVbYsehZ5XlMk7RcjXjOz1kBcMy7296fJO?=
+ =?us-ascii?Q?TLzYfMvSioLrm6HaeBnDibniJBpTvFHccY1HIAG2PK5FduHLy7swsP+W5qs4?=
+ =?us-ascii?Q?VSg0F6hTvXX2LDYsMGj4DeQEASPFUXqspZipIrjSFAJc2qV9A/eEMpEkMQf0?=
+ =?us-ascii?Q?VkpF0VYQVMPiN7CdgQ9HzcxaprZoCw3Gs/A4/0t9NyFC8iGbf5jfzk5Juh0f?=
+ =?us-ascii?Q?DV8WL1qr7HdvnVXLzEUgiooQurgFhX1NcOlBJnTx5ZD6sKOEqOJcF7oVcgBH?=
+ =?us-ascii?Q?T+JvF1akVMJN1nXEdmuLpFeKk5lp/LulX34RBgYwfZ3ilEJ9lZe5CgqFXUPD?=
+ =?us-ascii?Q?UYlr0n/zqac/gxB+t+oVYRDfLzb7gHdI+JLLHNX9Ugss0Y+x4Iq8M1G18fVz?=
+ =?us-ascii?Q?QZwa01cd4qjHvTJU4RYIzsES/Qbw8ihSYZc5A6ALwzljArM/sdAUe7gUk7t4?=
+ =?us-ascii?Q?uGgYQnF2qnrUgjZM8pDD3vEpkhXWUJzwb241/uC/AcWppKi2VPr2U4fwKrJg?=
+ =?us-ascii?Q?NxX7fUhsBAilSrLOcvCpYesXeSlt0whJv/pJ3k9U2NiqEfp+7nIxRvfNzJBQ?=
+ =?us-ascii?Q?So2wsKl2CTz5AWrtTN97Q68SoQuEL5E6+07elVP3boLhNUx3me5688oEfczW?=
+ =?us-ascii?Q?CWIvSqeMswQd2CAzVXu6iD+zQOlFlxGrHtyA+UAB5zK+KGqLC8ZiAd1gFs41?=
+ =?us-ascii?Q?8okuWC+QjEL+udYsKb39rW7FSiUBv8/QhVMP9CrISXCHxTs4gAW6YxFKWC9M?=
+ =?us-ascii?Q?M3iHYhl6V3KG7cnyuGIfRPWxmjg7Wl1OX1uV4YBUGC0APorYbVmmdP+b8isp?=
+ =?us-ascii?Q?SwsTthFEyl0pTP1CmmXr64FJC+nShH5hfHD+G2w4vDlXKOu7iOOT1dh93Pxu?=
+ =?us-ascii?Q?0qZIoZYe8vOrsv2KYoDRbdZEsnM/IOmSZ9WjDOags9Le86JjncLeiDK8yxwS?=
+ =?us-ascii?Q?M2obynSsUOq7Zc9m8YUeE9Vs0PKWNBd27mQ5+W2/oULTjEqxqd5OFrP4Jk9Y?=
+ =?us-ascii?Q?Uun9TNaPXPX5hOEuDdmiAldvWGvEAEocE6wwutKOKo84Hiet+itkyxyxpos1?=
+ =?us-ascii?Q?Keql+DfddWd8VAY=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?xny6EjW3XjoFegxJpTRQaM+Xqih87IoBhpiNrVL/B2Xav8Zlg4bp6dndCWKm?=
+ =?us-ascii?Q?HwICzGBD359aKnkiazuHHgO6ZYn2gXITefpfKvWeN/t43O89Apy2c1rNxqf4?=
+ =?us-ascii?Q?3kIlTOYVOBMOJkP7zDhbsZoBu4Ysgf2ufpQphoqMuJX+DPXVRbZTlINLW0q+?=
+ =?us-ascii?Q?kl2KIw+pFGygkaF6ANcodiYhx7Bg8hq5O5EmO0PJj/1BOnPyUMziYP1ourwv?=
+ =?us-ascii?Q?Gb/gHqwk7Y2aBJKE5sComta2wcuGe7cs4iwWUsGUICq+9iXxl/+x7RtZ0Wrb?=
+ =?us-ascii?Q?qNJuQPSAKHO/IXj4pRM/azBwjVMDDDyVXuTsWDYfGxDU0PVyoj6pl7wWsDsH?=
+ =?us-ascii?Q?UCTiMuomQGt+UGfzgG5rdodxKNHaoSSmTklLvH/+AHjl6+TJBR/OUdV3DW5/?=
+ =?us-ascii?Q?YF43vNeQw2iNt65CTvkGIAglcNmQWE1MoY7WfA2vnC5u2c/NYWiWAd7mmLz6?=
+ =?us-ascii?Q?r9gMsJOgTkNkuIwxMHWgvP04HNJfAIrqAcSg2nmZuR89AxujY11Ar2oADAg7?=
+ =?us-ascii?Q?W2GhnVUcvD7Hqh+NZicIfiXiI8llCA2d+aVO3QqCBYmhRdKVPD7KAlQGjdqH?=
+ =?us-ascii?Q?TEjDk2hnp+WaBrQbug0Pwk5zv9/xBfgbXLxej9HP9+ThA6Mrd3+Hm2rkU638?=
+ =?us-ascii?Q?z2SiX1QbH5zKgKvSYTw7YykEzH1asty0+8uKPSum4VT7yN8/o1qFy2540Ax0?=
+ =?us-ascii?Q?Xb2Cv46M740QaauvYqMOb3fVuOS3fbL+qbSRN+tyKymS2Wa6xSUT31ncPf7c?=
+ =?us-ascii?Q?soHAUNZ4dQ0+mkIksS6+SG8hUQ0SxNlud0TYncMOgkYlZwGtTaKDWT5zSxpw?=
+ =?us-ascii?Q?kK4aLfZ1lDgr3RfCZR3M6FD1WfCdZi/1rnPG8ecYjpyCjgJvsHfzUReivZ/q?=
+ =?us-ascii?Q?MRsj37obD0J801mafLzJxo64+FVtD+bmJ+4MMbeqf4Xk8ukijSk/KAjgJFUB?=
+ =?us-ascii?Q?YPN8W9lFQdtqkJd15l7jHOlwkAWSA2YcbhpdcXSZE06yunp1lbIbhnAK20Zh?=
+ =?us-ascii?Q?qIxrM/mwhbL21keGTxIJsEbhMCReWAdHjP1luQB9uIwVtGa2Ru/wfCX1g0bm?=
+ =?us-ascii?Q?kPHjg8Fto+CwjVyrNxYY+ccPcRWHSZV31b/ueC5o2pL73QdrAZDdvpnOEQbP?=
+ =?us-ascii?Q?oMGV+ONWqBu60afdcLkV0asgONsEQawW1ciYlhhyVzbwkT4Y1xyJZEvjGxmo?=
+ =?us-ascii?Q?OQyy8wMCdWQsAgYrMc7ud1j7ztHGKn0neJb8kNdbU/8mkkhAOgZBX+EXcnt9?=
+ =?us-ascii?Q?Ik3iTgdS0CoxqgP2qqE2Qav3eEP5aUq4j4VBV5GIsA9W5l9QEZ3njw09fOhe?=
+ =?us-ascii?Q?AoO4THpraRJYBVUpTJ4cxA+iUkFh0GAvgG0mIscSEuujUPajqOT0N9PBe2VF?=
+ =?us-ascii?Q?b1ThJz8XwiB/+10tnutSUn97MmVZigZ4zm+a8odEOMZvaeNJbit3JaFSneVa?=
+ =?us-ascii?Q?YVukMALcz1lnddXBqtLKE+ZlAyT1YZl13BJOswg/4UKdg6kUOlYKGzqfaVAI?=
+ =?us-ascii?Q?o5FnqO6C78TBB21Ur2JekXLsa7RDU9qASNWxMivc4d0+t8Cqs21AFgJc/M40?=
+ =?us-ascii?Q?L/FZmfTvQtfzWM5VObuu1Cxn11U8CacfoqkOyZqh?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d362b08a-d5fa-40f7-eef2-08dda39c7806
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 19:17:38.2398
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IkzQbE8sFmvNFUYbOnHcRXK/p4dZOX0KdSRljuOUHVAmOfbQhn+c7rVLn3KLBGvNgqP0VBDLWtcLZAWfZBPp1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7595
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Add compatible string synaptics,synaptics_i2c for synaptics touch pad. It
+match existed driver drivers/input/mouse/synaptics_i2c.c.
 
-Use guard(mutex), scoped_guard(mutex) and guard(src) to simplify the code
-and remove a lot of the jumps to "out:" labels.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- fs/tracefs/event_inode.c | 96 +++++++++++++++-------------------------
- 1 file changed, 36 insertions(+), 60 deletions(-)
+change in v3
+- fix order in vendor-prefixes
+change in v2
+- update vendor-prefixes
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-index 8705c77a9e75..117110fbabbf 100644
---- a/fs/tracefs/event_inode.c
-+++ b/fs/tracefs/event_inode.c
-@@ -180,29 +180,25 @@ static int eventfs_set_attr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	const char *name;
- 	int ret;
- 
--	mutex_lock(&eventfs_mutex);
-+	guard(mutex)(&eventfs_mutex);
- 	ei = dentry->d_fsdata;
--	if (ei->is_freed) {
--		/* Do not allow changes if the event is about to be removed. */
--		mutex_unlock(&eventfs_mutex);
-+	/* Do not allow changes if the event is about to be removed. */
-+	if (ei->is_freed)
- 		return -ENODEV;
--	}
- 
- 	/* Preallocate the children mode array if necessary */
- 	if (!(dentry->d_inode->i_mode & S_IFDIR)) {
- 		if (!ei->entry_attrs) {
- 			ei->entry_attrs = kcalloc(ei->nr_entries, sizeof(*ei->entry_attrs),
- 						  GFP_NOFS);
--			if (!ei->entry_attrs) {
--				ret = -ENOMEM;
--				goto out;
--			}
-+			if (!ei->entry_attrs)
-+				return -ENOMEM;
- 		}
- 	}
- 
- 	ret = simple_setattr(idmap, dentry, iattr);
- 	if (ret < 0)
--		goto out;
-+		return ret;
- 
- 	/*
- 	 * If this is a dir, then update the ei cache, only the file
-@@ -225,8 +221,6 @@ static int eventfs_set_attr(struct mnt_idmap *idmap, struct dentry *dentry,
- 			}
- 		}
- 	}
-- out:
--	mutex_unlock(&eventfs_mutex);
- 	return ret;
- }
- 
-@@ -528,26 +522,24 @@ static struct dentry *eventfs_root_lookup(struct inode *dir,
- 	struct tracefs_inode *ti;
- 	struct eventfs_inode *ei;
- 	const char *name = dentry->d_name.name;
--	struct dentry *result = NULL;
- 
- 	ti = get_tracefs(dir);
- 	if (WARN_ON_ONCE(!(ti->flags & TRACEFS_EVENT_INODE)))
- 		return ERR_PTR(-EIO);
- 
--	mutex_lock(&eventfs_mutex);
-+	guard(mutex)(&eventfs_mutex);
- 
- 	ei = ti->private;
- 	if (!ei || ei->is_freed)
--		goto out;
-+		return NULL;
- 
- 	list_for_each_entry(ei_child, &ei->children, list) {
- 		if (strcmp(ei_child->name, name) != 0)
- 			continue;
- 		/* A child is freed and removed from the list at the same time */
- 		if (WARN_ON_ONCE(ei_child->is_freed))
--			goto out;
--		result = lookup_dir_entry(dentry, ei, ei_child);
--		goto out;
-+			return NULL;
-+		return lookup_dir_entry(dentry, ei, ei_child);
- 	}
- 
- 	for (int i = 0; i < ei->nr_entries; i++) {
-@@ -561,14 +553,12 @@ static struct dentry *eventfs_root_lookup(struct inode *dir,
- 
- 		data = ei->data;
- 		if (entry->callback(name, &mode, &data, &fops) <= 0)
--			goto out;
-+			return NULL;
-+
-+		return lookup_file_dentry(dentry, ei, i, mode, data, fops);
- 
--		result = lookup_file_dentry(dentry, ei, i, mode, data, fops);
--		goto out;
- 	}
-- out:
--	mutex_unlock(&eventfs_mutex);
--	return result;
-+	return NULL;
- }
- 
- /*
-@@ -584,7 +574,6 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
- 	struct eventfs_inode *ei;
- 	const char *name;
- 	umode_t mode;
--	int idx;
- 	int ret = -EINVAL;
- 	int ino;
- 	int i, r, c;
-@@ -598,16 +587,13 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
- 
- 	c = ctx->pos - 2;
- 
--	idx = srcu_read_lock(&eventfs_srcu);
-+	guard(srcu)(&eventfs_srcu);
- 
--	mutex_lock(&eventfs_mutex);
--	ei = READ_ONCE(ti->private);
--	if (ei && ei->is_freed)
--		ei = NULL;
--	mutex_unlock(&eventfs_mutex);
--
--	if (!ei)
--		goto out;
-+	scoped_guard(mutex, &eventfs_mutex) {
-+		ei = READ_ONCE(ti->private);
-+		if (!ei || ei->is_freed)
-+			return -EINVAL;
-+	}
- 
- 	/*
- 	 * Need to create the dentries and inodes to have a consistent
-@@ -622,21 +608,19 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
- 		entry = &ei->entries[i];
- 		name = entry->name;
- 
--		mutex_lock(&eventfs_mutex);
- 		/* If ei->is_freed then just bail here, nothing more to do */
--		if (ei->is_freed) {
--			mutex_unlock(&eventfs_mutex);
--			goto out;
-+		scoped_guard(mutex, &eventfs_mutex) {
-+			if (ei->is_freed)
-+				return -EINVAL;
-+			r = entry->callback(name, &mode, &cdata, &fops);
- 		}
--		r = entry->callback(name, &mode, &cdata, &fops);
--		mutex_unlock(&eventfs_mutex);
- 		if (r <= 0)
- 			continue;
- 
- 		ino = EVENTFS_FILE_INODE_INO;
- 
- 		if (!dir_emit(ctx, name, strlen(name), ino, DT_REG))
--			goto out;
-+			return -EINVAL;
- 	}
- 
- 	/* Subtract the skipped entries above */
-@@ -659,19 +643,13 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
- 
- 		ino = eventfs_dir_ino(ei_child);
- 
--		if (!dir_emit(ctx, name, strlen(name), ino, DT_DIR))
--			goto out_dec;
-+		if (!dir_emit(ctx, name, strlen(name), ino, DT_DIR)) {
-+			/* Incremented ctx->pos without adding something, reset it */
-+			ctx->pos--;
-+			return -EINVAL;
-+		}
- 	}
--	ret = 1;
-- out:
--	srcu_read_unlock(&eventfs_srcu, idx);
--
--	return ret;
--
-- out_dec:
--	/* Incremented ctx->pos without adding something, reset it */
--	ctx->pos--;
--	goto out;
-+	return 1;
- }
- 
- /**
-@@ -728,11 +706,10 @@ struct eventfs_inode *eventfs_create_dir(const char *name, struct eventfs_inode
- 	INIT_LIST_HEAD(&ei->children);
- 	INIT_LIST_HEAD(&ei->list);
- 
--	mutex_lock(&eventfs_mutex);
--	if (!parent->is_freed)
--		list_add_tail(&ei->list, &parent->children);
--	mutex_unlock(&eventfs_mutex);
--
-+	scoped_guard(mutex, &eventfs_mutex) {
-+		if (!parent->is_freed)
-+			list_add_tail(&ei->list, &parent->children);
-+	}
- 	/* Was the parent freed? */
- 	if (list_empty(&ei->list)) {
- 		cleanup_ei(ei);
-@@ -877,9 +854,8 @@ void eventfs_remove_dir(struct eventfs_inode *ei)
- 	if (!ei)
- 		return;
- 
--	mutex_lock(&eventfs_mutex);
-+	guard(mutex)(&eventfs_mutex);
- 	eventfs_remove_rec(ei, 0);
--	mutex_unlock(&eventfs_mutex);
- }
- 
- /**
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 38bc1937ff3c9..dbec1300bb7ed 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -362,6 +362,8 @@ properties:
+           - sparkfun,qwiic-joystick
+             # Sierra Wireless mangOH Green SPI IoT interface
+           - swir,mangoh-iotport-spi
++            # Synaptics I2C touchpad
++          - synaptics,synaptics_i2c
+             # Ambient Light Sensor with SMBUS/Two Wire Serial Interface
+           - taos,tsl2550
+             # Temperature and humidity sensor with i2c interface
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 5d2a7a8d3ac6c..865c61499af49 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1491,6 +1491,9 @@ patternProperties:
+     description: Sierra Wireless
+   "^syna,.*":
+     description: Synaptics Inc.
++  "^synaptics,.*":
++    description: Synaptics Inc.
++    deprecated: true
+   "^synology,.*":
+     description: Synology, Inc.
+   "^synopsys,.*":
 -- 
-2.47.2
+2.34.1
 
 
