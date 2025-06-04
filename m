@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-673379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A2AACE08B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D572ACE060
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38BC17B3DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:39:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8800C18894A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD6229293C;
-	Wed,  4 Jun 2025 14:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="VWhgABLz"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64837290D93;
+	Wed,  4 Jun 2025 14:35:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9AC28ECE9;
-	Wed,  4 Jun 2025 14:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFB528E609
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047841; cv=none; b=e/i84inXcW9E/wdRpw9LuIhG89wIfhS+0T9CW2QU9YzBy0Dwiz9OjJEXkyI9r/zlaH3jumYXOxTpEeejQJ56hquASOGnm89UWOP7uuoMuxf0gBHvcCXn8ElLoUiMmen+0GO0MywupcrDvWuEe3tn0ADNF9dI4YPwaLQrXeEz3ec=
+	t=1749047729; cv=none; b=VUKD/8hpzaFO7fnfrQYPb/Cdq1pwc/DnbTOUpdFkHTw7w8Fj/asm1LZakFo2PZG9/4QpH7DvL+bCmnpm871Waa/JMDtQuRA1Y9sLxuHBNnidaRc4bD93iv+ihZpNPg4R31p1jBwNBs4olftWpono0M9DUeQjVRViK9Ei9ogvjx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047841; c=relaxed/simple;
-	bh=o/eS0IF6n81//MErCyau1coRDfnLuZuoMMa9zXVwLg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=koPhM67n+Msp1sIrbF68JqaCviKDzq+IGN2YTBWH2R0QmTKSFhelBrb334h3seMqJM6XsRADhCxH2OwL6pCSRM9/3eFMerGcNP2PwtTidM/rG5mMbr+n0IoV9tW3PuSVczRabtHsrSY/gBrWcRfoxnWza8Qt6d7ji5jdXTSs864=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=VWhgABLz; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2485541F28
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1749047838; bh=wNJhZW6ihKPzqnGzsjX01EfMfrNUVHiRICJcUri79Tc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VWhgABLzPv5K191kbMmASTQ4FJhxOc93Wb0ofcM+VzBxGSI9IhJWJgus1vlJbgO3f
-	 +ezPU8nDNiyyEfi0FoBpaI+3MMb9ctJOVqkwwG+OnmwWVw+A/BGZFb/cQYN6FaghaS
-	 Au58jdselallcC7zVGKNunPxXJAfAxqKPEHfBW2PvkIaqIRJnTJEgItLEajxloRttt
-	 AHpCUl5tAYm9ZtGcdoKGIkBEe5DRnjFHZ3dP7BpbIU1WQZ+1WgP6bHbgzYHab/mwa5
-	 vL/b7osrDH7R7u9UExP6iFPPk2W/hWot5cXrjzM1Nt+L3Npnq4INA0zjUexrQyO/yE
-	 AdEvE+3cnd9Ww==
-Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 2485541F28;
-	Wed,  4 Jun 2025 14:37:18 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 1/3] docs: automarkup: Remove some Sphinx 2 holdovers
-Date: Wed,  4 Jun 2025 08:36:43 -0600
-Message-ID: <20250604143645.78367-2-corbet@lwn.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250604143645.78367-1-corbet@lwn.net>
-References: <20250604143645.78367-1-corbet@lwn.net>
+	s=arc-20240116; t=1749047729; c=relaxed/simple;
+	bh=9VdxedsOYm0r0hMXgOM1bra4XGrjU1bsrGDncgfayZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rGrW25d5Fl3wPPSImOSc0/bGVL2cScP1xjZy9iL7F2X9/6+9xnr57vtbmpJDxTNoRqQa18js7f/WJ6PdhS6I0qIWVJv799+bNatyNMGE7Qt4EqJxT1L1gsWgApDQRdYS8DnHp3sphYux5M+0/N0YGicdW2Zcbo10if4tpSpnnQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A43DC4CEE4;
+	Wed,  4 Jun 2025 14:35:27 +0000 (UTC)
+Date: Wed, 4 Jun 2025 10:36:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
+ mathieu.desnoyers@efficios.com, tglx@linutronix.de, bigeasy@linutronix.de,
+ kprateek.nayak@amd.com, vineethr@linux.ibm.com
+Subject: Re: [PATCH V5 5/6] Sched: Add tracepoint for sched time slice
+ extension
+Message-ID: <20250604103644.4b41b9a3@gandalf.local.home>
+In-Reply-To: <20250603233654.1838967-6-prakash.sangappa@oracle.com>
+References: <20250603233654.1838967-1-prakash.sangappa@oracle.com>
+	<20250603233654.1838967-6-prakash.sangappa@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Remove a few declarations that are no longer doing anything now that we
-have left Sphinx 2 behind.
+On Tue,  3 Jun 2025 23:36:53 +0000
+Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
-v2: Remove RE_generic_type as suggested by Mauro
+> @@ -134,6 +138,10 @@ __always_inline unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+>  		ti_work = read_thread_flags();
+>  	}
+>  
+> +	if (ti_work_cleared)
+> +		trace_sched_delay_resched(current, ti_work_cleared &
+> +			(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY));
+> +
 
- Documentation/sphinx/automarkup.py | 18 ++----------------
- 1 file changed, 2 insertions(+), 16 deletions(-)
+Please make the above into a conditional tracepoint and you can also just
+pass in ti_work_cleared. No reason to do that outside the tracepoint. As
+the above is always checked regardless if tracing is enabled or not.
 
-diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-index fd633f7a0bc3..7828aeac92e7 100644
---- a/Documentation/sphinx/automarkup.py
-+++ b/Documentation/sphinx/automarkup.py
-@@ -22,12 +22,6 @@ from kernel_abi import get_kernel_abi
- #
- RE_function = re.compile(r'\b(([a-zA-Z_]\w+)\(\))', flags=re.ASCII)
- 
--#
--# Sphinx 2 uses the same :c:type role for struct, union, enum and typedef
--#
--RE_generic_type = re.compile(r'\b(struct|union|enum|typedef)\s+([a-zA-Z_]\w+)',
--                             flags=re.ASCII)
--
- #
- # Sphinx 3 uses a different C role for each one of struct, union, enum and
- # typedef
-@@ -150,20 +144,12 @@ def markup_func_ref_sphinx3(docname, app, match):
-     return target_text
- 
- def markup_c_ref(docname, app, match):
--    class_str = {# Sphinx 2 only
--                 RE_function: 'c-func',
--                 RE_generic_type: 'c-type',
--                 # Sphinx 3+ only
--                 RE_struct: 'c-struct',
-+    class_str = {RE_struct: 'c-struct',
-                  RE_union: 'c-union',
-                  RE_enum: 'c-enum',
-                  RE_typedef: 'c-type',
-                  }
--    reftype_str = {# Sphinx 2 only
--                   RE_function: 'function',
--                   RE_generic_type: 'type',
--                   # Sphinx 3+ only
--                   RE_struct: 'struct',
-+    reftype_str = {RE_struct: 'struct',
-                    RE_union: 'union',
-                    RE_enum: 'enum',
-                    RE_typedef: 'type',
--- 
-2.49.0
+TRACE_EVENT_CONDITION(sched_delay_resched,
 
+	TP_PROTO(struct task_struct *p, unsigned int ti_work_cleared),
+
+	TP_ARGS(p, ti_work_cleared),
+
+	TP_CONDITION(ti_work_cleared),
+
+	TP_STRUCT__entry(
+		__array( char, comm, TASK_COMM_LEN	)
+		__field( pid_t, pid			)
+		__field( int, cpu			)
+		__field( int, flg			)
+	),
+
+	TP_fast_assign(
+		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
+		__entry->pid		= p->pid;
+		__entry->cpu 		= task_cpu(p);
+		__entry->flg		= ti_work_cleared & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY);
+	),
+
+
+-- Steve
 
