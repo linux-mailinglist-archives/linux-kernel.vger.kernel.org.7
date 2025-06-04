@@ -1,148 +1,157 @@
-Return-Path: <linux-kernel+bounces-673195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6FACDDEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906D7ACDDF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F08C16FCAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:29:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F173E18940D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6348728F504;
-	Wed,  4 Jun 2025 12:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A5F28EA67;
+	Wed,  4 Jun 2025 12:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G8voyw2u"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkAvOxw3"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C367A28EA69
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 12:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A0E4C92;
+	Wed,  4 Jun 2025 12:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749040174; cv=none; b=lZOLcK8/2KTV+V2ZnUWUmehwrrv7nr31DpzUGid70Ipmqxxx6TNcYyzs3zsq+Td3p9eIGizn00Z1v0nrK3+YEadFI8Rd2AY1zh9zl1LQMtUJ9loMrF4M2VdB/UuXnlqpSKHUd8aV7N4OAKDPBG3E33qhCdhzGwN+j45jCr90Fy0=
+	t=1749040329; cv=none; b=gEjHodq6p+JRrL5aNBPm1Uw5VlmUMgBvSObBGQa2WSU5hghPX/A2S9dnBCdMDsGTNq0pYch56zLVxki086KF5oK1ziqTpQ4ZPofjTCgWWSlam6e67KEwlAgkTqv8YRPpo/yfyGrcWwAOwFjZT+e1Y6VcaskLYVB6PyWqYXDT6jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749040174; c=relaxed/simple;
-	bh=jJAJ2zNRS4Mcm3SBhX/rRP1UzssTd1Y00hBueZo4LTs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gClM2+uBJOL1Iro24ez3jHAr+X9a8wa4zceLWjjGycDNOSVpJAjjeUywecnEOYr2jhG6y7l7FZ/AmKncS+qn8cPjvvFEPgJWk/zCM6Yyd/bfOQabpBkOECZSgkD3VDsbEhJDrhx/BCxIccbjzXjKdhQFnb/DsVW+GM8qm5LmZgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G8voyw2u; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a522224582so282840f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 05:29:31 -0700 (PDT)
+	s=arc-20240116; t=1749040329; c=relaxed/simple;
+	bh=PSAtI+pLo/Q2Xlq1c9GfZ74wRv6150SmJdXYrUeDBp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=brdQEUVdysTx2N2HQVNtmLlNe84ih+yGcW6ncMtmqZUkC8N3sOqgbMSzWs+ZqO/VTs60xTZEpCxS5mBbZUSkkXRdHjHKlcFnmn7GWTdCF6ydsT+fWGNfHJ8jsmc7wDRPXShQki7RRpz+qszgWuloEdh1EdtOEH46EhY+CD2HR1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkAvOxw3; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-442f9043f56so41733455e9.0;
+        Wed, 04 Jun 2025 05:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749040170; x=1749644970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rlUevRnkRKcLl384cvLF8laETHh3L8+aAG0Z3FSxUTk=;
-        b=G8voyw2ucePadkaSRs17pdS+esFxGSwCoQ7WwvdU/jDbAEiYmy8A2j0L9us4J4TTt6
-         kwl2BGgcisj7bQGx/ok+U7hkK6+pYDLpXHm0MTdR9IcO/c785JBamvelVyscVSgJRC8G
-         +nWv5+TvTX/S4u390QcD8/RHgh79WKxWOgWhZpIinXA0Hwuup2RFFkndgbN2vAH90KcB
-         +Ix7nglPjjixuXUyl/4NUo4CZXk5LT/kD8+4tk+h2ZUsb+BKRuQE8+obBboZR/T0p0M7
-         5dnxxOMjb/J/G/BwL/6y/yzr4K+uqw2vy5YYvDxNFbrlCdZMvJ7yGur2PHld7JbyASsk
-         ASjQ==
+        d=gmail.com; s=20230601; t=1749040326; x=1749645126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A8kZ/aDiYOkf9h5oCh4UvH8Rt42D9SQNqq0ELvzG+vI=;
+        b=OkAvOxw31Fm1Tpgm8b8hawEVTETYJtWTo6qeVa9VVujvjX4d2gpCtihp4sOL6b2fFU
+         ixtv2lXPXikHc1Ys4REP0VIXWNFz8E8MdLD7g/9Kb52pkMU0KbhNJy3coF4YhQvUqEC7
+         liEfq4DEVhWckKueBfjULTpLkXexeiKzk9cnTjeIJSzK2B1hae8X7d7L75ZTJ+17sUZL
+         UI1Fi8h4XpKWAXqArCgU1E3P1vuHGyZJpHxTkM5UXRfS8400+4gLy14YRtnZFKo2hrI2
+         ei7f7ajgoRysb2A3bq8MpTTEGzK8WdFhMOhXqFwvwMwE+5O3AZlHLVpxQDQlkN6v6+BK
+         pBDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749040170; x=1749644970;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rlUevRnkRKcLl384cvLF8laETHh3L8+aAG0Z3FSxUTk=;
-        b=PCn/LWGiYDnsRph2hN5oTZa/QiAeKysOEg3FQMaFno6+jVrJwF8UXrtJjAP7hUdIDv
-         RXvW9IqJZ4lX7jIN6k53AosC9+BARn9VJpHkrSvVio/nAuMx+kz6UynsheJjzxQffyCy
-         gJYo7l6zFUrrj7d9Pwe9KHB7c1z2LgvDHgas9/wS6O2DRFAjnOVCl9dQ115LdxPWgBsk
-         96SwL5fHpCojLY5qIRk6Hp6uRLOYZ0HSHX/7N5JmZsjfzGVem4yq4cgLsdbFN7nJ0ceU
-         VkP7s4TDBf1lH8s9DPps9VDEh/p+aFhc2zdJtYTn5h9sV9JJY3CRUIoKLJjn8wcehtuc
-         rjeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ2w4uRg2Q00AML4KOMunXZeHKsAnBFdum0LUhzIrLdmKgbF2KXGmDEE4BSPTddEl0KlUN3Oo3x438XyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAfMeS6aMmHb1bv1EuIVoCdzWF/GcXs1dpYCTwjNxMAeg5He34
-	OpGkO7o3J7lNtRwi7Fda3T/DDCMgjpr3jLYdlSrV6bBhXUUvueJRllsX0dZAHdAuzMQ=
-X-Gm-Gg: ASbGncvntsbrfUMNF5UOmzknAvo5PMoBzfcmeQFkIWEUmonZ2fYpb/fiN10tRAFyHgi
-	zKP/CGfASCZWNBk7bQe4e4qztJsaLpPrzfXECZgMaRekWMEAfQz2RzlhuaWtpgbJ4P2hVVuLWry
-	0PnrHV9PIxRwZD0VaYTcb6ZyJ7p/GDFLAdn2zBXr+iz5BxGHixzZ8ZH7eVvvJXl85j7BR2hRG44
-	1mKLyKINhPNS7YJeOlJr5njVsKmueNALbsdmMTzaVrlocPHABxH1ZDqVRYQWPSLpfq1btPzq7AI
-	O5y3ZAWn5Va4pTfmm6K4fJhr1Gsq82Elwx31QLC6w3wtImAl0F1ceegf3Vhr7cWS6I2lqOwJaYk
-	vuXmQMVXkPVz3FBVvMsKn7AbJ2Q==
-X-Google-Smtp-Source: AGHT+IFAqt37X/nVv/2RwOdCdcs4UXjT/VL/HCTdp4l4p06zsedWg/2pZgay4ZmFeC40lhzrgmbAuw==
-X-Received: by 2002:a05:6000:1a8d:b0:3a4:cbc6:9db0 with SMTP id ffacd0b85a97d-3a51dc49afcmr2088240f8f.51.1749040170100;
-        Wed, 04 Jun 2025 05:29:30 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:fef9:cf1c:18f:2ab8? ([2a01:e0a:3d9:2080:fef9:cf1c:18f:2ab8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fb7e41sm194312145e9.26.2025.06.04.05.29.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 05:29:29 -0700 (PDT)
-Message-ID: <6976052f-a3b8-48b8-97f5-4fea7538e976@linaro.org>
-Date: Wed, 4 Jun 2025 14:29:29 +0200
+        d=1e100.net; s=20230601; t=1749040326; x=1749645126;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A8kZ/aDiYOkf9h5oCh4UvH8Rt42D9SQNqq0ELvzG+vI=;
+        b=E4zBgFDL6t2pFwFVup0eyVqhi7Z8r9Px9ApRlPoYz4Fx/PBWkjFc5rP9wyQMGoe2AU
+         zVLUeST4vncP5118CDmZdAMi17KPkdsadQ53LLdZWr8B9kfElRK/LjR1HuUZba3boWsV
+         cl24JQcd7of8dtRB86e0wMf1MwVe3ATqEnmTBu73UF0NR1K6MN3gagZ4B2c1XelbLhhA
+         aij17VKHwputM6ZvcSYpjqjhrNpvAy/4MCGvIn87fp1wQp5YDRnHn5YMT4AakKxJxkmJ
+         0lRcwdKo+pbAY3vZyJCfQxqC7v/HoKmkpsij8OyyZ7sR06xdx7y2ZQIHPEFGMtjGJAXn
+         g5bw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0cZqmUGfep74hg0DC0rjfcahDMQizctHuhOXvUSYpfm1xmd5CCoC9W4iPHwNo7eTovb5WOSqQEQI3gNWasdg=@vger.kernel.org, AJvYcCVG1ittkFYFvdRSvHd4p2z/oIACkbML6NYn6BPUkzHAUuChWH21a/Cb3B+wqHF4hfUkl5ZM3kBI/muJi4B2@vger.kernel.org, AJvYcCVVyouKx/j6FiM0RylnpsT/81gJ/syHOPirJA7PtH0Y5f8VqeZdmjEuGUJM1hjEhjfYIdT9iuX2oOXSjA==@vger.kernel.org, AJvYcCVbqix9064ZNmnTbxkDDGTX3L6S7IxUtL6Lf4Rc/G6cj/y9+y70/slvYYAXvkVhEnGOti96rbRKcWPw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrC9Obk49RfpHfWCkij1VjQzFn0IxMBOMjbGqLlz8JH1MNQsJq
+	GnhjDXmVmxFu6dMx6DMGauL3p7hZ2VAI0g+oK6g8s7ZUVghEneAUGTeu
+X-Gm-Gg: ASbGncvA+EGlyGgyfvh4nW18V9cxdEDuBnDQs23HbVkIKu05xzah9hS9jWA7W/CqZKK
+	IckNY29B38FkDjs3JhbnDoinv+Ue/y2O+v+BSwv+755u5tlEYtYFsww+ob+wb1VhS8L7JjpFr6M
+	L59f8Gcy2kChR+zz34qelvtO9uGqRaAdklCFjOHjGXUFLCtymMRwlRANJBF1IDUP3QuKqnA4z6r
+	b1E8SHmx7WF7BchASoR4TsUUVUhrB7WLPq9G513SbH+yJE8GPaVEkECO68+X8zdbpKpwN9HYG3h
+	SBIw0+gRNrlaHPBDn6pZSnFfQ05Z1ZtusIqffgDy+2YMgEdMeCjI24HpnpYXQGYpfRxeWL5zoXJ
+	2QTTFO/BXUYIXqd3WdyKQ0xqucHq2
+X-Google-Smtp-Source: AGHT+IGdLaFVhNtwtOVwGjagea6FvBR1QsRFelh3QuUgD4knq/vMES6atm6mlno8cGKeqS0tJEseEQ==
+X-Received: by 2002:a05:600c:350b:b0:43d:17f1:2640 with SMTP id 5b1f17b1804b1-451f0b209d8mr23102975e9.26.1749040326138;
+        Wed, 04 Jun 2025 05:32:06 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8006c21sm194467085e9.33.2025.06.04.05.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 05:32:05 -0700 (PDT)
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	Igor Korotin <igor.korotin.linux@gmail.com>
+Subject: [PATCH v1 0/5] rust: Add ACPI match table support for Rust drivers
+Date: Wed,  4 Jun 2025 13:29:39 +0100
+Message-ID: <20250604122945.3445776-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 2/2] mailmap: Add a new entry for Manivannan Sadhasivam
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20250604120833.32791-1-manivannan.sadhasivam@linaro.org>
- <20250604120833.32791-3-manivannan.sadhasivam@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250604120833.32791-3-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/06/2025 14:08, Manivannan Sadhasivam wrote:
-> Map my Linaro e-mail address is going to bounce soon. So remap it to my
-> kernel.org alias.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   .mailmap | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index a885e2eefc69..1e87b388f41b 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -458,6 +458,7 @@ Maheshwar Ajja <quic_majja@quicinc.com> <majja@codeaurora.org>
->   Malathi Gottam <quic_mgottam@quicinc.com> <mgottam@codeaurora.org>
->   Manikanta Pubbisetty <quic_mpubbise@quicinc.com> <mpubbise@codeaurora.org>
->   Manivannan Sadhasivam <mani@kernel.org> <manivannanece23@gmail.com>
-> +Manivannan Sadhasivam <mani@kernel.org> <manivannan.sadhasivam@linaro.org>
->   Manoj Basapathi <quic_manojbm@quicinc.com> <manojbm@codeaurora.org>
->   Marcin Nowakowski <marcin.nowakowski@mips.com> <marcin.nowakowski@imgtec.com>
->   Marc Zyngier <maz@kernel.org> <marc.zyngier@arm.com>
+This patch series introduces support for ACPI match tables in Rust 
+drivers.
 
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+Currently, Rust abstractions support only Open Firmware (OF) device 
+matching. This series extends the driver model to support ACPI-based 
+matching, enabling Rust drivers to bind to ACPI-described devices.
+
+Changes include:
+  - A new `acpi::DeviceId` abstraction for working with 
+   `struct acpi_device_id`.
+  - A helper function `is_of_node()` for determining fwnode types.
+  - Updates to the core `Adapter` trait and `platform::Driver` to support
+    optional ACPI ID tables.
+  - A sample implementation in the Rust platform driver, demonstrating 
+    multi-bus matching.
+
+This is especially useful for writing drivers that work across platforms 
+using both OF and ACPI.
+
+Tested using QEMU with a custom SSDT that creates an ACPI device matching
+the sample Rust platform driver.
+
+Igor Korotin (5):
+  rust: acpi: add `acpi::DeviceId` abstraction
+  rust: helpers: Add `is_of_node` helper function
+  rust: driver: Add ACPI id table support to Adapter trait
+  rust: platform: Add ACPI match table support to `Driver` trait
+  samples: rust: add ACPI match table example to platform driver
+
+ MAINTAINERS                          |  2 +
+ rust/bindings/bindings_helper.h      |  1 +
+ rust/helpers/helpers.c               |  1 +
+ rust/helpers/of.c                    |  6 +++
+ rust/kernel/acpi.rs                  | 62 ++++++++++++++++++++++++++++
+ rust/kernel/driver.rs                | 58 ++++++++++++++++++++++++--
+ rust/kernel/lib.rs                   |  1 +
+ rust/kernel/platform.rs              | 17 +++++++-
+ samples/rust/rust_driver_platform.rs | 41 +++++++++++++++++-
+ 9 files changed, 183 insertions(+), 6 deletions(-)
+ create mode 100644 rust/helpers/of.c
+ create mode 100644 rust/kernel/acpi.rs
+
+-- 
+2.43.0
+
 
