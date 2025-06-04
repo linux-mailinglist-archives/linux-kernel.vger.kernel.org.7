@@ -1,279 +1,186 @@
-Return-Path: <linux-kernel+bounces-673341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4145ACE02A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CB3ACE02E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6A216E318
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6C51899E6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11F228F505;
-	Wed,  4 Jun 2025 14:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3001D28FFDE;
+	Wed,  4 Jun 2025 14:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jImr0aJ5";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jImr0aJ5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="Q4ErSjeW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D0j+LQ7c"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689953595A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C42426ACC;
+	Wed,  4 Jun 2025 14:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749046866; cv=none; b=ehaSqA3uk25+0dGXapmOaMVAGHvL6KVhLoHoiuXdgM353M+9l+El3pZTloiASqbIc7Zn+0+C9QOHcOoDPiewLc9lFmevZQ5iK9zvcaP1IIqWMlZVrURFjd9hJRGHtbv+ax2BtU6VT/115XmnzrMYSbJ+SIalUNF6mcUOlfkb87w=
+	t=1749046943; cv=none; b=FB23tD793sTAGpyDAFhZY1bc+XVQlba5hBdbv8LA5LiLjFOXmMyk3wOWaf9Nu6iVUIxNTUpPZq03ANtuLhPsY5/0faidPS1oUyZ9d+FgZnKSKwXOb//bii4DuyDbHe7IJpRXJRYc9GC+Ga/YundbxMjmTd2L9vJK2uXdlJV7fhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749046866; c=relaxed/simple;
-	bh=T4x64PN7OhuJ+VVZnlwfgOCHUQ1ENCLEJmnYuXzxbNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iGt5FLg/YpCkknuabgQBxKzWNkNV/VrUpmnt1FMYwRdZDCrGbmpZQ4dMophhmxjymO5uW4K2KDMiViqfGst5UqoF8O5BPPRnd+lGEt8IK1BZVadzJ+TQb18vTLklk4M7v7+Gy/Q4Buj9GjtxIcIzLO+p8BZ39d3j79xfHtU5RMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jImr0aJ5; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jImr0aJ5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from pathway.suse.cz (unknown [10.100.208.146])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 6B3431FE0F;
-	Wed,  4 Jun 2025 14:21:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1749046860; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=dn8ycOFPKuW7F8mba8U0a3Fdcnope2szBHssTbLgnV8=;
-	b=jImr0aJ5eqn77qP29wl1Ni+2dWAxxG+rQggMFERr0vX7DuAjc1rKsu2fZ2sZBia5IC7PCW
-	bYkjnovyeGvPwKslyUPX0aFIOdh+ErExW4vl7beHZH++n08/nC6wc3fbfutF3fW29LJ7/1
-	CeqXaOXGMcD31fR3l+hvAEEIRzJRT9E=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1749046860; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=dn8ycOFPKuW7F8mba8U0a3Fdcnope2szBHssTbLgnV8=;
-	b=jImr0aJ5eqn77qP29wl1Ni+2dWAxxG+rQggMFERr0vX7DuAjc1rKsu2fZ2sZBia5IC7PCW
-	bYkjnovyeGvPwKslyUPX0aFIOdh+ErExW4vl7beHZH++n08/nC6wc3fbfutF3fW29LJ7/1
-	CeqXaOXGMcD31fR3l+hvAEEIRzJRT9E=
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>,
-	Michael Cobb <mcobb@thegoodpenguin.co.uk>,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] printk: Allow to use the printk kthread immediately even for 1st nbcon
-Date: Wed,  4 Jun 2025 16:20:45 +0200
-Message-ID: <20250604142045.253301-1-pmladek@suse.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749046943; c=relaxed/simple;
+	bh=21q2Hgnh+ETCIq892NOXpcaeeVs0BPFo0vdeaSX1P5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OejlejE0E1el9O0MmAo2lihyxB1ImO/I6+ZUgFdSalsUDG1/6Tu8xFo9EweDbSk8eMNNoabmhKqeh8sf4zGtt9kmQfebkGbJ7OiDHCZAmsBWO+6OpedxxLsLllFTgCUnyNSzSJbCYsAe67EVmyT250AZDBOGbFkyTQfRKYOClKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=Q4ErSjeW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D0j+LQ7c; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 417A21140237;
+	Wed,  4 Jun 2025 10:22:20 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 04 Jun 2025 10:22:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1749046940;
+	 x=1749133340; bh=l9qTL6VyDfkoyc94nfz6CdcDFNs7QiHmBUzDCEMHvgE=; b=
+	Q4ErSjeW4VOznKj0N+l3iczNlcBj+NXKv2ttSNWavCZIq8sDZ9aSXq6qnKzCuMsG
+	K5In3r//KTUnq7X3M4aNES5WcC+p1RdR16RNz8VHhbvFYGcxnnODJGsc6p/D7OCs
+	cky8j3l8OKDIkYrT4eiKkaYXYRWgm5/wOCGEYGA93nmrED45BFUKl+TeZIvmUHDx
+	4r22XvBct4APiCGsoXjbFtSN+xZfCOz5tnKcN0m6gR1NvPlilC1MqyXdYE9Uqp+4
+	ZfWkw0JiMdovs2aE4Mn3pQ3xKcQR8J63AhorWedPjEsZ/ZnX9qQMCOemxn1VyoUZ
+	UrOQ9TirfiFKwq0Z/x/elg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1749046940; x=1749133340; bh=l9qTL6VyDfkoyc94nfz6CdcDFNs7QiHmBUz
+	DCEMHvgE=; b=D0j+LQ7cOJA1nQG4pbbCqsU+8T60bcyhWBSItXL5xkQ2AScoRup
+	D6g4gDmau1B431JqpfNxV3xt57U4JDhFpjfZ+nhowCNxV4g4f/rJ+htSU9nXGg3o
+	74J+lhyCe1zhavHk5HjkbV2NtYsXrLddg1LY6oYfM0d5FzrpEgbNxLawWBpNF7B9
+	J2asq5O3u4rMDl4ayVWbUvR1Or1mSbYOuDfy403SsoLyDEwcaPtx3oUM/bWPZdeF
+	u+Glkou7WcVwQHq6SKjdRXVkE7ZXYEkq8mBzvqvbs6VEMAd94p393OhV+ckBkhne
+	fVinQQncbTo5iuwokYLteKc5APqImwNbZzg==
+X-ME-Sender: <xms:m1ZAaPw6UWuK9hpeyxebyC6A52423UjSdibmiQKlGTFVdUVfMejm0w>
+    <xme:m1ZAaHSh2tywL0-gFkcmuHcEBkbc70T-H7K4mJybqLp1XTy1rjeOh1Nve0O9AN7YL
+    u8P6zxXU0V6XA>
+X-ME-Received: <xmr:m1ZAaJVOddxB3gO064bczIBpuj1OQ_vGKB4MPRikzRCKr0eQhzkg0jpWVpOm4iHKKpNjmQ1bfcgDd0QY8H3VcaLdHBTph-YOq6k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesghdtroertddtjeen
+    ucfhrhhomhepofgrrhgvkhcuofgrrhgtiiihkhhofihskhhiqdfikphrvggtkhhiuceomh
+    grrhhmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomheqnecuggft
+    rfgrthhtvghrnheptdetvdfhkedutedvleffgeeutdektefhtefhfffhfeetgefhieegle
+    dvtddtkedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
+    mhepmhgrrhhmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomhdpnh
+    gspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhoghgv
+    rhdrphgruhestghithhrihigrdgtohhmpdhrtghpthhtohepjhhgrhhoshhssehsuhhsvg
+    drtghomhdprhgtphhtthhopeigvghnqdguvghvvghlsehlihhsthhsrdigvghnphhrohhj
+    vggtthdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehjrghsohhnrdgrnhgurhihuhhksegrmhgurdgt
+    ohhmpdhrtghpthhtohepjhifsehnuhgtlhgvrghrfhgrlhhlohhuthdrnhgvthdprhgtph
+    htthhopehsshhtrggsvghllhhinhhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopeho
+    lhgvkhhsrghnughrpghthihshhgthhgvnhhkohesvghprghmrdgtohhmpdhrtghpthhtoh
+    epshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:m1ZAaJi_yy7OaaEYivfAL-FTDb0mEe_8_itFv7hYF8TfdadF9Da2xQ>
+    <xmx:m1ZAaBDoRqc-amRoTlDHMh_luKJYVdJJq8m2ZY10fIqFT5830IZaLQ>
+    <xmx:m1ZAaCLLVT38noOg_E7NdYhKtNB50na0NfVage2tJKiaOL-_4fAA7Q>
+    <xmx:m1ZAaACb_WNon-eBBvWPrABlBSzf3x4PwdbrF_dWVL47s0fa_Ugsug>
+    <xmx:nFZAaP2ldpj4cJl3_ertUruqbAmMgG4SV2TvOG0W_agpxzhVp9iSGrxX>
+Feedback-ID: i1568416f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Jun 2025 10:22:18 -0400 (EDT)
+Date: Wed, 4 Jun 2025 16:22:16 +0200
+From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: Roger Pau Monne <roger.pau@citrix.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org, jason.andryuk@amd.com,
+	John <jw@nuclearfallout.net>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] xen/x86: fix initial memory balloon target
+Message-ID: <aEBWmAoDSaNpsrvQ@mail-itl>
+References: <20250514080427.28129-1-roger.pau@citrix.com>
+ <aCWtZNxfhazmmj_S@mail-itl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rjdcZPeLS3c+Qw6Y"
+Content-Disposition: inline
+In-Reply-To: <aCWtZNxfhazmmj_S@mail-itl>
 
-The kthreads for nbcon consoles are created by nbcon_alloc() at
-the beginning of the console registration. But it currently works
-only for the 2nd or later nbcon console because the code checks
-@printk_kthreads_running.
 
-The kthread for the 1st registered nbcon console is created at the very
-end of register_console() by printk_kthreads_check_locked(). As a result,
-the entire log is replayed synchronously when the "enabled" message
-gets printed. It might block the boot for a long time with a slow serial
-console.
+--rjdcZPeLS3c+Qw6Y
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 4 Jun 2025 16:22:16 +0200
+From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: Roger Pau Monne <roger.pau@citrix.com>
+Cc: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org, jason.andryuk@amd.com,
+	John <jw@nuclearfallout.net>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] xen/x86: fix initial memory balloon target
 
-Prevent the synchronous flush by creating the kthread even for the 1st
-nbcon console when it is safe (kthreads ready and no boot consoles).
+On Thu, May 15, 2025 at 11:01:24AM +0200, Marek Marczykowski-G=C3=B3recki w=
+rote:
+> On Wed, May 14, 2025 at 10:04:26AM +0200, Roger Pau Monne wrote:
+> > When adding extra memory regions as ballooned pages also adjust the bal=
+loon
+> > target, otherwise when the balloon driver is started it will populate
+> > memory to match the target value and consume all the extra memory regio=
+ns
+> > added.
+> >=20
+> > This made the usage of the Xen `dom0_mem=3D,max:` command line paramete=
+r for
+> > dom0 not work as expected, as the target won't be adjusted and when the
+> > balloon is started it will populate memory straight to the 'max:' value.
+> > It would equally affect domUs that have memory !=3D maxmem.
+> >=20
+> > Kernels built with CONFIG_XEN_UNPOPULATED_ALLOC are not affected, becau=
+se
+> > the extra memory regions are consumed by the unpopulated allocation dri=
+ver,
+> > and then balloon_add_regions() becomes a no-op.
+> >=20
+> > Reported-by: John <jw@nuclearfallout.net>
+> > Fixes: 87af633689ce ('x86/xen: fix balloon target initialization for PV=
+H dom0')
+> > Signed-off-by: Roger Pau Monn=C3=A9 <roger.pau@citrix.com>
+>=20
+> Tested-by: Marek Marczykowski-G=C3=B3recki <marmarek@invisiblethingslab.c=
+om>
 
-Also inform printk() to use the kthread by setting
-@printk_kthreads_running. Note that the kthreads already must be
-running when it is safe and this is not the 1st nbcon console.
+I think this wants Cc: stable, since the commit named in Fixes: got
+backported too. Or is the Fixes tag enough?
 
-Symmetrically, clear @printk_kthreads_running when the last nbcon
-console was unregistered by nbcon_free(). This requires updating
-@have_nbcon_console before nbcon_free() gets called.
-
-Note that there is _no_ problem when the 1st nbcon console replaces boot
-consoles. In this case, the kthread will be started at the end
-of registration after the boot consoles are removed. But the console
-does not reply the entire log buffer in this case. Note that
-the flag CON_PRINTBUFFER is always cleared when the boot consoles are
-removed and vice versa.
-
-Closes: https://lore.kernel.org/r/20250514173514.2117832-1-mcobb@thegoodpenguin.co.uk
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
-Hi,
-
-I am sending this patch for a proper review.
-
-I have just updated comments according to the review. Otherwise,
-there is no function change against the already tested patch,
-see https://lore.kernel.org/all/aD8JOlDVP4ufgv44@pathway.suse.cz/
-
+--=20
 Best Regards,
-Petr
+Marek Marczykowski-G=C3=B3recki
+Invisible Things Lab
 
- kernel/printk/internal.h |  2 ++
- kernel/printk/nbcon.c    | 26 ++++++++++++++++++++++++--
- kernel/printk/printk.c   | 20 +++++++++++---------
- 3 files changed, 37 insertions(+), 11 deletions(-)
+--rjdcZPeLS3c+Qw6Y
+Content-Type: application/pgp-signature; name=signature.asc
 
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 48a24e7b309d..567c9e100d47 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -64,6 +64,7 @@ struct dev_printk_info;
- 
- extern struct printk_ringbuffer *prb;
- extern bool printk_kthreads_running;
-+extern bool printk_kthreads_ready;
- extern bool debug_non_panic_cpus;
- 
- __printf(4, 0)
-@@ -180,6 +181,7 @@ static inline void nbcon_kthread_wake(struct console *con)
- #define PRINTKRB_RECORD_MAX	0
- 
- #define printk_kthreads_running (false)
-+#define printk_kthreads_ready (false)
- 
- /*
-  * In !PRINTK builds we still export console_sem
-diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index fd12efcc4aed..d60596777d27 100644
---- a/kernel/printk/nbcon.c
-+++ b/kernel/printk/nbcon.c
-@@ -1671,6 +1671,9 @@ bool nbcon_alloc(struct console *con)
- {
- 	struct nbcon_state state = { };
- 
-+	/* Synchronize the kthread start. */
-+	lockdep_assert_console_list_lock_held();
-+
- 	/* The write_thread() callback is mandatory. */
- 	if (WARN_ON(!con->write_thread))
- 		return false;
-@@ -1701,12 +1704,15 @@ bool nbcon_alloc(struct console *con)
- 			return false;
- 		}
- 
--		if (printk_kthreads_running) {
-+		if (printk_kthreads_ready && !have_boot_console) {
- 			if (!nbcon_kthread_create(con)) {
- 				kfree(con->pbufs);
- 				con->pbufs = NULL;
- 				return false;
- 			}
-+
-+			/* Might be the first kthread. */
-+			printk_kthreads_running = true;
- 		}
- 	}
- 
-@@ -1716,14 +1722,30 @@ bool nbcon_alloc(struct console *con)
- /**
-  * nbcon_free - Free and cleanup the nbcon console specific data
-  * @con:	Console to free/cleanup nbcon data
-+ *
-+ * Important: @have_nbcon_console must be updated before calling
-+ *	this function. In particular, it can be set only when there
-+ *	is still another nbcon console registered.
-  */
- void nbcon_free(struct console *con)
- {
- 	struct nbcon_state state = { };
- 
--	if (printk_kthreads_running)
-+	/* Synchronize the kthread stop. */
-+	lockdep_assert_console_list_lock_held();
-+
-+	if (printk_kthreads_running) {
- 		nbcon_kthread_stop(con);
- 
-+		/* Might be the last nbcon console.
-+		 *
-+		 * Do not rely on printk_kthreads_check_locked(). It is not
-+		 * called in some code paths, see nbcon_free() callers.
-+		 */
-+		if (!have_nbcon_console)
-+			printk_kthreads_running = false;
-+	}
-+
- 	nbcon_state_set(con, &state);
- 
- 	/* Boot consoles share global printk buffers. */
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1eea80d0648e..0efbcdda9aab 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3574,7 +3574,7 @@ EXPORT_SYMBOL(console_resume);
- static int unregister_console_locked(struct console *console);
- 
- /* True when system boot is far enough to create printer threads. */
--static bool printk_kthreads_ready __ro_after_init;
-+bool printk_kthreads_ready __ro_after_init;
- 
- static struct task_struct *printk_legacy_kthread;
- 
-@@ -3713,6 +3713,7 @@ static void printk_kthreads_check_locked(void)
- 	if (!printk_kthreads_ready)
- 		return;
- 
-+	/* Start or stop the legacy kthread when needed. */
- 	if (have_legacy_console || have_boot_console) {
- 		if (!printk_legacy_kthread &&
- 		    force_legacy_kthread() &&
-@@ -4204,14 +4205,6 @@ static int unregister_console_locked(struct console *console)
- 	 */
- 	synchronize_srcu(&console_srcu);
- 
--	if (console->flags & CON_NBCON)
--		nbcon_free(console);
--
--	console_sysfs_notify();
--
--	if (console->exit)
--		res = console->exit(console);
--
- 	/*
- 	 * With this console gone, the global flags tracking registered
- 	 * console types may have changed. Update them.
-@@ -4232,6 +4225,15 @@ static int unregister_console_locked(struct console *console)
- 	if (!found_nbcon_con)
- 		have_nbcon_console = found_nbcon_con;
- 
-+	/* @have_nbcon_console must be updated before calling nbcon_free(). */
-+	if (console->flags & CON_NBCON)
-+		nbcon_free(console);
-+
-+	console_sysfs_notify();
-+
-+	if (console->exit)
-+		res = console->exit(console);
-+
- 	/* Changed console list, may require printer threads to start/stop. */
- 	printk_kthreads_check_locked();
- 
--- 
-2.49.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEEhrpukzGPukRmQqkK24/THMrX1ywFAmhAVpgACgkQ24/THMrX
+1yxTXAf/f2m+HJfB41dbfKE54f3JNUqW0V87ci8kZTbhmd1/JxZFU+o1phpKn9Dd
+PW4Dd2qzBqcu7h+rlG6C3q9Y6ugtR17qU3eTWA3OCNmBgwK34ga3oJ6bJ5Fbvkyv
+//B71ZXIXTv3KxjQgRUH6v3n1WNNqLjkFQBtHqjlC/1K8NCierXgiQK25ysueo/K
+yybT8woevQgoZm1E6VINtDYo6c8sbtGE+RorVX8Q4DeSn3AutWRG/AFL/yw1RF7U
+QAgZq297ZSLAyHFVtNiGoWY5zELHTVb9EW/ajvPE0jPnuOjEgGw+Mwg2SnAmHejb
+rgokQ7UTD84BW7b58MHEMK0W190lRA==
+=Birs
+-----END PGP SIGNATURE-----
+
+--rjdcZPeLS3c+Qw6Y--
 
