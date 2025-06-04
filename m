@@ -1,152 +1,156 @@
-Return-Path: <linux-kernel+bounces-673134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31231ACDCCD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:40:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74342ACDCD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 244CA7A64BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F4B1898548
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCA628ECD9;
-	Wed,  4 Jun 2025 11:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qa7IBXXJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA4D22A4DA;
+	Wed,  4 Jun 2025 11:45:30 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB20E28D8ED;
-	Wed,  4 Jun 2025 11:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6323C1E1DE7
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749037194; cv=none; b=hTx+vHI0vPhE27r8U9n8BR3HYjy8HydhKk4RkSy0M6/677matXiZtMQNQItxfRMTmAngmSrbfXulshvGZ9rzG80fMor6HNI7oKYiup4k0Rfg9l6eyr2WP3FddamFf5JNgTAytQ3krEZFc+w/Os+Rzl+MgcYvWS4VKgPy+Vd+/CA=
+	t=1749037530; cv=none; b=YoO4SIa0fsQlZygALDtM9iFXPw/3M7VykxZKjjYxaLwv+7IfkZ93brSVeVwZnDS5KYJ06G6sk9rnFb8C/e2pWo7zO6EpVQn6Ec/x9kXNGL4tpxQbYjTTuwmA8EJ5/DIy1IVK2kIY52vpbdf5FoM2ZEKpFDcdex0Y0FKcYDAsI1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749037194; c=relaxed/simple;
-	bh=ufZGYSMjuWeE0gmaN3weztdJUrBUeABeoB5cfpDXF9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbElBr7Bg4gFZL6O2i0OMyFqbxZg6pC90oCCXBttOmMmPbTxqLjj2UPhdAtBYunUqWjPkOZYPRXRGkBcl8/+ylmiQusOGtPZBwyY3RjUHIzhST7QiZGjXiaGQQoD2Q3Bcsk1oiyyvirpU9Kt9PqWoEp1ZT7lXBjMhSrrczGmXJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qa7IBXXJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749037192; x=1780573192;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ufZGYSMjuWeE0gmaN3weztdJUrBUeABeoB5cfpDXF9c=;
-  b=Qa7IBXXJ1MzG4ZhQY2/jh9zRWDTnD/QSKCwuYzGs2wg0D0+RqksM+zjy
-   3RXMhEarpMTAs2n/qe6RHuUpragMW0DRW7cDyksQKaYcqCdYI4d+sbLFz
-   PsA/HI76RnhvuwZ8456LdNEavQNvJMmS6PkkGNXkMXOD6zewhmvSxbCIu
-   a2BD7XL3ujEy69atTcDaAtxuDn+6JMDv0fKQhly1J8ktfZ9x3egcGQ7vO
-   8UNINKoZLrwVozt3jkMrF9gSWigNtmoYe7NS8ag9qVRZziQRWgo1s2J8E
-   +Rbj+t7+kqQTTkFXtZZQg6JQlMehiKRB3H0HMvQxFesRvcI3EDl2phqKG
-   w==;
-X-CSE-ConnectionGUID: ZvTCTuzCTMOniRW/Xc8S1g==
-X-CSE-MsgGUID: 7zyYtGSXT1qgggdyvJo0DA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="54776197"
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="54776197"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 04:39:52 -0700
-X-CSE-ConnectionGUID: 4gH2R/qmRh+J8XxmpdEsLA==
-X-CSE-MsgGUID: f0YM29GmS/uxrFTQImlS1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="149950623"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 04:39:52 -0700
-Date: Wed, 4 Jun 2025 04:44:59 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	Yunhong Jiang <yunhong.jiang@linux.intel.com>
-Subject: Re: [PATCH v4 02/10] x86/acpi: Move acpi_wakeup_cpu() and helpers to
- smpwakeup.c
-Message-ID: <20250604114459.GA29325@ranerica-svr.sc.intel.com>
-References: <20250603-rneri-wakeup-mailbox-v4-0-d533272b7232@linux.intel.com>
- <20250603-rneri-wakeup-mailbox-v4-2-d533272b7232@linux.intel.com>
- <CAJZ5v0geZAnLRkeunW06JKE1gyDcd15EGzqJ_A-cZHO_koJVAw@mail.gmail.com>
+	s=arc-20240116; t=1749037530; c=relaxed/simple;
+	bh=TmHCFiRDPScVcYmoA0LMLEoluTj57EotqkbpUyllzTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W1v/FSIIChSvJC04T1FMSuogYtYCHPoQqSYn/0GnACcfJx7Z+UMc1updascX+7zoNnn37NC+Xf3ToxrOqTvPWrggyD3dhUMowPpkPK33CR8scb5cGB3ivqYXIm7bRuNTscvOOhBkqZSOsyaUbzttCG0iA1KBZdsMCUdo7xuQInM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6790B439B4;
+	Wed,  4 Jun 2025 11:45:19 +0000 (UTC)
+Message-ID: <57a1ced6-406b-4197-96ca-6b83d99ca1a0@ghiti.fr>
+Date: Wed, 4 Jun 2025 13:45:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] RISC-V: vDSO: Wire up getrandom() vDSO implementation
+To: Xi Ruoyao <xry111@xry111.site>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Nathan Chancellor <nathan@kernel.org>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Guo Ren <guoren@kernel.org>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250411024600.16045-1-xry111@xry111.site>
+ <20250411095103-2aad099a-e4a1-4efb-8374-dd27bf05b668@linutronix.de>
+ <a2477829-f3a5-4763-89f3-8c2c1f4716b8@ghiti.fr>
+ <7f840a23ab8865d7f205caec56817c660e237d64.camel@xry111.site>
+ <71f093d5-4823-4bc6-b9ee-23433bd8c60c@ghiti.fr>
+ <0f0eb024d7ed062141a8aa048017e6f7ef7c1fd4.camel@xry111.site>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <0f0eb024d7ed062141a8aa048017e6f7ef7c1fd4.camel@xry111.site>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0geZAnLRkeunW06JKE1gyDcd15EGzqJ_A-cZHO_koJVAw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvtdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeffhfdvfedtvdffhffhleejveeviedvffdtudegveffffegffdtieetveehjeduveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlughsrdhssgenucfkphepudelfedrfeefrdehjedrudelleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleefrdeffedrheejrdduleelpdhhvghloheplgduledvrdduieekrddvuddrvdeingdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepgihrhiduudduseigrhihudduuddrshhithgvpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplfgrshhonhesiiigvdgtgedrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrt
+ ghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopehguhhorhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-On Wed, Jun 04, 2025 at 11:12:53AM +0200, Rafael J. Wysocki wrote:
-> On Wed, Jun 4, 2025 at 2:18 AM Ricardo Neri
-> <ricardo.neri-calderon@linux.intel.com> wrote:
-> >
-> > The bootstrap processor uses acpi_wakeup_cpu() to indicate to firmware that
-> > it wants to boot a secondary CPU using a mailbox as described in the
-> > Multiprocessor Wakeup Structure of the ACPI specification.
-> >
-> > The platform firmware may implement the mailbox as described in the ACPI
-> > specification but enumerate it using a DeviceTree graph. An example of
-> > this is OpenHCL paravisor.
-> >
-> > Move the code used to setup and use the mailbox for CPU wakeup out of the
-> > ACPI directory into a new smpwakeup.c file that both ACPI and DeviceTree
-> > can use.
-> >
-> > No functional changes are intended.
-> >
-> > Co-developed-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> > Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > ---
-> > Changes since v3:
-> >  - Create a new file smpwakeup.c instead of relocating it to smpboot.c.
-> >    (Rafael)
-> >
-> > Changes since v2:
-> >  - Only move to smpboot.c the portions of the code that configure and
-> >    use the mailbox. This also resolved the compile warnings about unused
-> >    functions that Michael Kelley reported.
-> >  - Edited the commit message for clarity.
-> >
-> > Changes since v1:
-> >  - None.
-> > ---
-> >  arch/x86/Kconfig                   |  7 ++++
-> >  arch/x86/kernel/Makefile           |  1 +
-> >  arch/x86/kernel/acpi/madt_wakeup.c | 76 ----------------------------------
-> >  arch/x86/kernel/smpwakeup.c        | 83 ++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 91 insertions(+), 76 deletions(-)
-> >
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> > index cb0f4af31789..82147edb355a 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -1113,6 +1113,13 @@ config X86_LOCAL_APIC
-> >         depends on X86_64 || SMP || X86_UP_APIC || PCI_MSI
-> >         select IRQ_DOMAIN_HIERARCHY
-> >
-> > +config X86_MAILBOX_WAKEUP
-> > +       def_bool y
-> > +       depends on OF || ACPI_MADT_WAKEUP
-> 
-> At this point the dependency on OF is premature.  IMV it should be
-> added in a later patch.
+Hi Xi,
 
-I see your point. Sure, I will the dependency in a later patch.
+On 6/3/25 14:48, Xi Ruoyao wrote:
+> On Fri, 2025-05-23 at 12:06 +0200, Alexandre Ghiti wrote:
+>> On 5/23/25 10:02, Xi Ruoyao wrote:
+>>> On Fri, 2025-05-23 at 10:01 +0200, Alexandre Ghiti wrote:
+>>>> Hi Xi,
+>>>>
+>>>> On 4/11/25 10:04, Thomas Weißschuh wrote:
+>>>>> On Fri, Apr 11, 2025 at 10:46:00AM +0800, Xi Ruoyao wrote:
+>>>>>> Hook up the generic vDSO implementation to the generic vDSO
+>>>>>> getrandom
+>>>>>> implementation by providing the required
+>>>>>> __arch_chacha20_blocks_nostack
+>>>>>> and getrandom_syscall implementations. Also wire up the selftests.
+>>>>>>
+>>>>>> The benchmark result:
+>>>>>>
+>>>>>> 	vdso: 25000000 times in 2.466341333 seconds
+>>>>>> 	libc: 25000000 times in 41.447720005 seconds
+>>>>>> 	syscall: 25000000 times in 41.043926672 seconds
+>>>>>>
+>>>>>> 	vdso: 25000000 x 256 times in 162.286219353 seconds
+>>>>>> 	libc: 25000000 x 256 times in 2953.855018685 seconds
+>>>>>> 	syscall: 25000000 x 256 times in 2796.268546000 seconds
+>>>>>>
+>>>>>> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+>>>>>> ---
+>>>>>>
+>>>>>> [v1]->v2:
+>>>>>> - Fix the commit message.
+>>>>>> - Only build the vDSO getrandom code if CONFIG_VDSO_GETRANDOM, to
+>>>>>>      unbreak RV32 build.
+>>>>>> - Likewise, only enable the selftest if __riscv_xlen == 64.
+>>>>>>
+>>>>>> [v1]:
+>>>>>> https://lore.kernel.org/all/20250224122541.65045-1-xry111@xry111.site/
+>>>>>>
+>>>>>>     arch/riscv/Kconfig                            |   1 +
+>>>>>>     arch/riscv/include/asm/vdso/getrandom.h       |  30 +++
+>>>>>>     arch/riscv/kernel/vdso/Makefile               |  12 +
+>>>>>>     arch/riscv/kernel/vdso/getrandom.c            |  10 +
+>>>>>>     arch/riscv/kernel/vdso/vdso.lds.S             |   1 +
+>>>>>>     arch/riscv/kernel/vdso/vgetrandom-chacha.S    | 244
+>>>>>> ++++++++++++++++++
+>>>>>>     .../selftests/vDSO/vgetrandom-chacha.S        |   2 +
+>>>>>>     7 files changed, 300 insertions(+)
+>>>>>>     create mode 100644 arch/riscv/include/asm/vdso/getrandom.h
+>>>>>>     create mode 100644 arch/riscv/kernel/vdso/getrandom.c
+>>>>>>     create mode 100644 arch/riscv/kernel/vdso/vgetrandom-chacha.S
+>>>>> <snip>
+>>>>>
+>>>>>> diff --git a/arch/riscv/kernel/vdso/vdso.lds.S
+>>>>>> b/arch/riscv/kernel/vdso/vdso.lds.S
+>>>>>> index 8e86965a8aae..abc69cda0445 100644
+>>>>>> --- a/arch/riscv/kernel/vdso/vdso.lds.S
+>>>>>> +++ b/arch/riscv/kernel/vdso/vdso.lds.S
+>>>>>> @@ -80,6 +80,7 @@ VERSION
+>>>>>>     #ifndef COMPAT_VDSO
+>>>>>>     		__vdso_riscv_hwprobe;
+>>>>>>     #endif
+>>>>>> +		__vdso_getrandom;
+>>>>> For consistency this could be gated behind CONFIG_VDSO_GETRANDOM.
+>>>> Nathan sent a fix for this here:
+>>>>
+>>>> https://lore.kernel.org/all/20250423-riscv-fix-compat_vdso-lld-v2-1-b7bbbc244501@kernel.org/
+>>> I've given it an R-b.  Do you prefer me to squash the patches and keep
+>>> the SoB of both I and Nathan?
+>> Hmm I was about to send a new PR today after the CI passes, I mentioned
+>> Nathan's patch in the squash so he keeps credit for the fix. Unless you
+>> can send something today, I'll keep my squashed patch.
+> Palmer has reverted this in for-next and Thomas just informed me another
+> mistake in the code at https://lore.kernel.org/all/20250603-loongarch-
+> vdso-syscall-v1-1-6d12d6dfbdd0@linutronix.de/.
+>
+> I'll try to sort things up and send v3 in the week.
+
+
+I already sent this patch with a few fixes in my second PR for 6.16 
+(https://git.kernel.org/pub/scm/linux/kernel/git/alexghiti/linux.git/commit/?h=alex-for-next-sbi-3.0-rebase-6.15-rc6&id=dc5240f09bca7b5fc72ad8894d6b9321bce51139)
+
+Can you just send the fix? I'll merge it next week in -rc2.
+
+Thanks,
+
+Alex
+
+
+>
 
