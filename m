@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-673823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA87ACE690
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1138ACE692
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590C41893DE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 22:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E253A87C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 22:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4BC20B813;
-	Wed,  4 Jun 2025 22:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3A322D4CE;
+	Wed,  4 Jun 2025 22:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ep1PFRGY"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hLuR4RxD"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6EF29A2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 22:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA2F227E8A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 22:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749074982; cv=none; b=a7WeeXZ+E9ofGEcRIIw7sPxF2i1M5u2O8BHNZhXClwCLve8LUh58OL65mePhGTM2Fn+xwwD1wR66Td6mvV5WdxEqF8GzGJkfGJHKYP9SkyyH4DTk+zWNOWeIAiR+ePd5Artk+dT+AMgj1MDPnVnFEBEICIfeXbJP6jbQpfYhHms=
+	t=1749074988; cv=none; b=rO9+cNVesp+KJh+mMOVJO0hMMAkLNhhg1/+0ERDN6M0XpXYc4JQrUQbiYN3RLXQM/QFSPGH3kHPFl/2grVMpGud0IuCba/OOYXjU2r8WpFRXmurmwqdyge8LKg49/C84h9wkprtX122Vb2Hu23DRZeuwv/Fe79uUPrgOE4iOQQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749074982; c=relaxed/simple;
-	bh=TjGCTN2WElX2W0wWftYpeQAE777rXI2b0T6a8Mxb63Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bkf3FMtvZ4M5NWV519NMfPCgkIGKbpUvMfQEuPlvFdl4EwKqFXEvzfy2fZ3JvdSofzREGSROplxQs1EFIX6cUXrEbSUrphRTHYOkUVqNrJk2HAOp+6CQ0xA9DCVy0CV8Sp928i0/glFIEC7vJNW3iQS6p9yypk5rxAYa0x8A7uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ep1PFRGY; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1749074988; c=relaxed/simple;
+	bh=rFUH/WjWtJsebkZkqHw9z4PKcVgUSgJepocYqPbgZNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tVs/HXjOQZHtAPo9iHJxVm5R5jpflAMARyv6hFrurFXOanHy3kPheACmWGzBU2o8wqFpyRotcERLuixaWVG3plVLdigNNQyESGPuSTChawyjbPwjJLdXo49qrFfDlgpnGh3J3l8uofexqi2nBjN5CElcOLMeLeghwGYXiBmNRW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hLuR4RxD; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749074979;
+	s=mimecast20190719; t=1749074985;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T2yexuRi18rJgKIKVwh54stcOMquX5XP7HKHgjkZl5A=;
-	b=Ep1PFRGYOncb8JEf1uhswJ4m05xdKOcGa28Jz69mQIBrv/53pqto0fmsaDZAUiT0teRsvP
-	vjgqGV2UBSsEcENRNGOpkk0+bK0+s0m1Lst03V5jQV+QvwEf5BaSOOwZ16fW4SHchLVcyT
-	KxHGKr3Cl4mQbL9iVTExUhaK3oMLasU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w2uXb0O4PrtAILd3wFl5a6hCIiKKPh//OjNLuoh+Rbk=;
+	b=hLuR4RxD3ymP98+sVlnSCFgzp7AgYWGnIrbM5zsxdD0FAIZtANxtz7OAAIBrbut+Tsq3Ar
+	ognRC8ic7bB43fsV7hEIBgV6U2Bsm1I7h6lXeMjSyyqshJj27gi0iNmGzV8g7C5+sZXj5j
+	WQ1GzQrJRAXakHUboHqepFJ3U9iVccY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-505-plrHPBgsNiqKFLYn_qQTJw-1; Wed,
- 04 Jun 2025 18:09:38 -0400
-X-MC-Unique: plrHPBgsNiqKFLYn_qQTJw-1
-X-Mimecast-MFC-AGG-ID: plrHPBgsNiqKFLYn_qQTJw_1749074977
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-195-MjuovzHTOB6fPxFH_Lk2eg-1; Wed,
+ 04 Jun 2025 18:09:39 -0400
+X-MC-Unique: MjuovzHTOB6fPxFH_Lk2eg-1
+X-Mimecast-MFC-AGG-ID: MjuovzHTOB6fPxFH_Lk2eg_1749074978
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C11CB19560AF;
-	Wed,  4 Jun 2025 22:09:36 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 95144180035E;
+	Wed,  4 Jun 2025 22:09:38 +0000 (UTC)
 Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.125])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1AA0B1955D8E;
-	Wed,  4 Jun 2025 22:09:34 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 35A1D1955DDA;
+	Wed,  4 Jun 2025 22:09:36 +0000 (UTC)
 From: Waiman Long <longman@redhat.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -61,9 +63,11 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Waiman Long <longman@redhat.com>
-Subject: [PATCH 0/3] timers: Disable memory pre-allocation of timer debug objects
-Date: Wed,  4 Jun 2025 18:09:23 -0400
-Message-ID: <20250604220926.870760-1-longman@redhat.com>
+Subject: [PATCH 1/3] debugobjects: Add ODEBUG_FLAG_NO_ALLOC to disable memory allocation
+Date: Wed,  4 Jun 2025 18:09:24 -0400
+Message-ID: <20250604220926.870760-2-longman@redhat.com>
+In-Reply-To: <20250604220926.870760-1-longman@redhat.com>
+References: <20250604220926.870760-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,30 +77,99 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-A circular locking dependency was reported by lockdep involving printk()
-called from within the memory allocator, console driver with timeout
-capability and timer code calling debug_object_activate() doing object
-pool refill by allocating memory.
+Some of the objects associated with debug_obj may be handled
+in a sensitive context that allowing debug_obj pre-allocation
+in debug_objects_fill_pool() may casue deadlock. Add a new flags
+parameter to the debug_obj_descr structure as well as adding the new
+ODEBUG_FLAG_NO_ALLOC flag to enable us to disallow memory allocation
+for those types of objects.
 
-One simple way to break this circular locking dependency is to disable
-memory allocation when timer debug objects are being handled which is
-what this series is about. The majority of the changes is in the
-debugobjects code with a one-line change in the timer code.
-
-I have also considered updating the console driver to not hold the lock
-when setting up timeout, but many console drivers are using timeout in
-some ways. So this problem may not specific to just a single one.
-
-Waiman Long (3):
-  debugobjects: Add ODEBUG_FLAG_NO_ALLOC to disable memory allocation
-  debugobjects: Show the state of debug_objects_enabled
-  timers: Disable memory pre-allocation of timer debug objects
-
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
  include/linux/debugobjects.h |  6 ++++++
- kernel/time/timer.c          |  1 +
- lib/debugobjects.c           | 29 +++++++++++++++++------------
- 3 files changed, 24 insertions(+), 12 deletions(-)
+ lib/debugobjects.c           | 10 +++++-----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/debugobjects.h b/include/linux/debugobjects.h
+index 8b95545e7924..a058c7dba898 100644
+--- a/include/linux/debugobjects.h
++++ b/include/linux/debugobjects.h
+@@ -41,6 +41,7 @@ struct debug_obj {
+  * struct debug_obj_descr - object type specific debug description structure
+  *
+  * @name:		name of the object typee
++ * @flags:		debug object flags
+  * @debug_hint:		function returning address, which have associated
+  *			kernel symbol, to allow identify the object
+  * @is_static_object:	return true if the obj is static, otherwise return false
+@@ -58,6 +59,7 @@ struct debug_obj {
+  */
+ struct debug_obj_descr {
+ 	const char		*name;
++	unsigned long		 flags;
+ 	void *(*debug_hint)(void *addr);
+ 	bool (*is_static_object)(void *addr);
+ 	bool (*fixup_init)(void *addr, enum debug_obj_state state);
+@@ -67,6 +69,10 @@ struct debug_obj_descr {
+ 	bool (*fixup_assert_init)(void *addr, enum debug_obj_state state);
+ };
+ 
++enum debug_obj_flags {
++	ODEBUG_FLAG_NO_ALLOC = 0x1,	/* Disallow debug object pre-allocation */
++};
++
+ #ifdef CONFIG_DEBUG_OBJECTS
+ extern void debug_object_init      (void *addr, const struct debug_obj_descr *descr);
+ extern void
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 7f50c4480a4e..52bc77b41f48 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -694,7 +694,7 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket
+ 	return NULL;
+ }
+ 
+-static void debug_objects_fill_pool(void)
++static void debug_objects_fill_pool(bool no_alloc)
+ {
+ 	if (!static_branch_likely(&obj_cache_enabled))
+ 		return;
+@@ -705,7 +705,7 @@ static void debug_objects_fill_pool(void)
+ 	/* Try reusing objects from obj_to_free_list */
+ 	fill_pool_from_freelist();
+ 
+-	if (likely(!pool_should_refill(&pool_global)))
++	if (likely(!pool_should_refill(&pool_global) || no_alloc))
+ 		return;
+ 
+ 	/*
+@@ -734,7 +734,7 @@ __debug_object_init(void *addr, const struct debug_obj_descr *descr, int onstack
+ 	struct debug_bucket *db;
+ 	unsigned long flags;
+ 
+-	debug_objects_fill_pool();
++	debug_objects_fill_pool(descr->flags & ODEBUG_FLAG_NO_ALLOC);
+ 
+ 	db = get_bucket((unsigned long) addr);
+ 
+@@ -811,7 +811,7 @@ int debug_object_activate(void *addr, const struct debug_obj_descr *descr)
+ 	if (!debug_objects_enabled)
+ 		return 0;
+ 
+-	debug_objects_fill_pool();
++	debug_objects_fill_pool(descr->flags & ODEBUG_FLAG_NO_ALLOC);
+ 
+ 	db = get_bucket((unsigned long) addr);
+ 
+@@ -1000,7 +1000,7 @@ void debug_object_assert_init(void *addr, const struct debug_obj_descr *descr)
+ 	if (!debug_objects_enabled)
+ 		return;
+ 
+-	debug_objects_fill_pool();
++	debug_objects_fill_pool(descr->flags & ODEBUG_FLAG_NO_ALLOC);
+ 
+ 	db = get_bucket((unsigned long) addr);
+ 
 -- 
 2.49.0
 
