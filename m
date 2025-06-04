@@ -1,91 +1,142 @@
-Return-Path: <linux-kernel+bounces-672995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF3ACDACC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:19:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F556ACDADD
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D51164FCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F908189991D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8250028C2A5;
-	Wed,  4 Jun 2025 09:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892DF28D8CB;
+	Wed,  4 Jun 2025 09:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bmoy5xXE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8y441Po"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFEB19F101;
-	Wed,  4 Jun 2025 09:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EF028D841;
+	Wed,  4 Jun 2025 09:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749028789; cv=none; b=lS+/6bcCoUBPmk621P3dgv6hOoxRI2cQSte0bC8oFau1Q8W1mv+rVahtPj/iWIGGnZMnPznmFnX8k3oPHrlIH4lW6u7Zu9Nrbl4WAfkaM2x/qIJQ0LRPQUXvtYb6GMgB/Jq9GX3E84/6F/XWTt6RsGHpmjKj2G8Z6sPpYsFxmLQ=
+	t=1749028810; cv=none; b=aIxzgDRI4FAy0Zn4TM/J0c9osnrQbud7Hr+Rj0Y95532WsqhCJ8FxkFZFQI/lJaxFJ+MFIe++I/Fk3lPIqHh+i0M1aQ4FYGPWOGeDlwJRUj8PvnuhCWkN3xhq11ON9V4YaR78teEaqohCudizXX/k0dW83qGdu5If9dEqjXf3XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749028789; c=relaxed/simple;
-	bh=lxLNldesewtz8jaymqrDTOlOB3djGqwwU1UpzOKfUVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQX2nDpLJUBNe+Xi7PC3L0mF1GFEB7CLZ7Q+SHP4dV7t1Ah/gP5lTVmipNrte4MI29Fy+2Wgu6fPWqcfLazRroQDe3OCiHOz56XMugVBQEB3RLj/RWnM9d+Kcxw4lZ9ZFuw2q4MBOa6vQC/vxsnRUw6rcP8QU+U+hPwnyHzzOb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bmoy5xXE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4qucXv8AaXrbxT1HvJ0ArOKNfkabQLNKPBxoV6EhBP8=; b=bmoy5xXET0BUvyFu7Mjf/i50KL
-	tVm74cGRt4i5vASMRo/1LE9ipvRWnhM58QjCuaCKuZO6RFzCcBBKxj4BEuQ2QE09x9KHtjzwaJyZS
-	qY8PILURnzscxyf33fV9l6cmhM/mjfzxZeNtJUa9/Vbg0mEvgormJpVbmXN7ac7cCzLAh7/Ctlolw
-	7Hnj35mnF214h84iCe3PDPmUJR9WEprpoSnzrOvGrILDvPh452q6CUGj3n74CbYMMwBBZZXPUJ75n
-	NCTrmgBwWCaYzQ2f9lYrs+zuk3Pdlqg53wT2imtDMOv2b9B2o22DbRWh7PgX+qtn7mJiBhAqF/i3P
-	Z9BpeEGg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMkHZ-00000002x3O-0JEH;
-	Wed, 04 Jun 2025 09:19:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6559A300787; Wed,  4 Jun 2025 11:19:36 +0200 (CEST)
-Date: Wed, 4 Jun 2025 11:19:36 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, davidcc@google.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] perf/core: Fix nr_cgroups/cpuctx->cgrp is not
- updated correctly
-Message-ID: <20250604091936.GG38114@noisy.programming.kicks-ass.net>
-References: <20250604033924.3914647-1-luogengkun@huaweicloud.com>
- <20250604033924.3914647-2-luogengkun@huaweicloud.com>
+	s=arc-20240116; t=1749028810; c=relaxed/simple;
+	bh=cNaCil0gJZpgGRs7Ox2udGrktOvU6cHcizpq93pLZXk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S3vShb6ISpd5YNq2/wjTBoOv1KFRKII9XGmFtkoJShgXZOfAMrp9YGlQf+aqqoBNQ26QgAqP4SYORlra0AfIeX69nUrhFOb5uwbmVlDWN0raeO79Eqifjkepm9wZPTJGnWAvxwKMOcdPTCEZN8OwdF3zyWJxOtWemZYbTqgZcN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8y441Po; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554810od004261;
+	Wed, 4 Jun 2025 09:20:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=W8N7i2L/i6AYCDylNiiZl/m365luZzBqXlm
+	L45hJbV0=; b=h8y441PoMGqvhHZCHCm/3d/QINHQYDT1YGlPBZNmNTN1yW7vATQ
+	oXyWx043SIOYwPYZMaO5Hbe6S3+e+VIlVdN89GJjEEEQbqyNcCXDC4hYDkmzuWWD
+	Kjyq2a/EgeOzBBZuviyNqLRvHaPqf3CkCoy9R1Nyq+W/dwNdZgRjEsfGAZPI/wQH
+	BNjgw+zwAjc4FcvOJGWsyR+reGDTZC5JE8VElWS690qGOsVAbyFgTapok4KM8MSI
+	ZXsF8m2rroozVOcPP2VGND20PVniSHaDe54gPvgbhmbVBLe5eNkckzPxceA14U2a
+	IKwvBu3mwz71i4faEVRdTmuDxev0RtuGXKw==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8rwjhf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 09:20:01 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5549JwhB004853;
+	Wed, 4 Jun 2025 09:19:58 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 46ytum70ee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 09:19:58 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5549JwEH004839;
+	Wed, 4 Jun 2025 09:19:58 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5549JvTL004834
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 09:19:58 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id DC6E635E1; Wed,  4 Jun 2025 17:19:51 +0800 (CST)
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+To: lpieralisi@kernel.org, kwilczynski@kernel.org,
+        manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
+        krzk+dt@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+        kw@linux.com, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qianyu@quicinc.com,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Subject: [PATCH v1 0/2] Add Equalization Settings for 8.0 GT/s and Add PCIe Lane Equalization Preset Properties for 8.0 GT/s and 16.0 GT/s
+Date: Wed,  4 Jun 2025 17:19:44 +0800
+Message-Id: <20250604091946.1890602-1-quic_ziyuzhan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604033924.3914647-2-luogengkun@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Dd3bulXl8YwclfFWjSNQTsmumIW-juD5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA2OSBTYWx0ZWRfX3koqlSDJioCY
+ 2duGTTBrTkhqBetfYF6zR0KFLj3/qgYhpPHx8TWWd/xZ97CxEoISk6xPKQss5dlqeTlI5oOdMnY
+ vWQNAjMXRyuYQ7Alrvg2xPTXBsNutYFeosWPxDOTKsA8/FbdrnMyDNCXNo9ZRiIGnW2ZGtlLShc
+ ogOfJLFHsKpainqdEH4RglzdD4KB5ztzIPuxsBPTn+aS4d2aH4MeJ/CvFWt8gJKrsa+k5Kgst/u
+ P58K4k0szUwa5D8+hGU2omps58eC2DaLWfkfGeqCfqfUguL6L+byJM2alPSd2GjRJdCPqyiO3sx
+ iZxMha9ppQMab7X9vltEzvXGh+XoBOT0EPnfiX8/9gTYXHFhUTW28g1gu5mMaeY7jHPIKlhsWrI
+ DrEW6iuoVI9JonzSRTY4Q+CpBflGtkYZB2i6cpl5rqb7FF6ch4hiU07ZExHsCeb51QFt927i
+X-Authority-Analysis: v=2.4 cv=RdWQC0tv c=1 sm=1 tr=0 ts=68400fc1 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=pGW_TeUqoRlRwQqC-JsA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: Dd3bulXl8YwclfFWjSNQTsmumIW-juD5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=707 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506040069
 
-On Wed, Jun 04, 2025 at 03:39:23AM +0000, Luo Gengkun wrote:
-> Since __perf_remove_from_context updates event->state before
-> list_del_event, this prevents list_del_event from calling
-> perf_cgroup_event_disable, resulting in will not update nr_cgroups and
-> cpuctx->cgrp.
-> 
-> To fix this problem, move perf_cgroup_event_disable into
-> __perf_remove_from_context as:
-> 
-> commit a3c3c66670ce ("perf/core: Fix child_total_time_enabled accounting bug at task exit")
-> 
-> did.
-> 
-> Fixes: a3c3c66670ce ("perf/core: Fix child_total_time_enabled accounting bug at task exit")
-> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+This series adds add equalization settings for 8.0 GT/s, and add PCIe lane equalization
+preset properties for 8.0 GT/s and 16.0 GT/s for sa8775p ride platform, which fix AER
+errors.
 
-So I already have Yeoreum's patch for this:
+While equalization settings for 16 GT/s have already been set, this update adds the
+required equalization settings for PCIe operating at 8.0 GT/s, including the
+configuration of shadow registers, ensuring optimal performance and stability.
 
-  https://lkml.kernel.org/r/20250603144414.GC38114@noisy.programming.kicks-ass.net
+The DT change for sa8775p add PCIe lane equalization preset properties for 8 GT/s
+and 16 GT/s data rates used in lane equalization procedure.
+
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+
+Ziyue Zhang (2):
+  PCI: qcom: Add equalization settings for 8.0 GT/s
+  arm64: dts: qcom: sa8775p: Add PCIe lane equalization preset
+    properties
+
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         |  8 +++
+ drivers/pci/controller/dwc/pcie-designware.h  |  1 -
+ drivers/pci/controller/dwc/pcie-qcom-common.c | 55 ++++++++++---------
+ drivers/pci/controller/dwc/pcie-qcom-common.h |  2 +-
+ drivers/pci/controller/dwc/pcie-qcom.c        |  3 +-
+ 5 files changed, 40 insertions(+), 29 deletions(-)
+
+
+base-commit: 911483b25612c8bc32a706ba940738cc43299496
+-- 
+2.34.1
+
 
