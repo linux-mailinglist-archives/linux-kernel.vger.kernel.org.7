@@ -1,339 +1,290 @@
-Return-Path: <linux-kernel+bounces-673073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8BBACDBDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2E2ACDBE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8FB175F11
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 679B63A468D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B38A28CF75;
-	Wed,  4 Jun 2025 10:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A8722B8C2;
+	Wed,  4 Jun 2025 10:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcSiyIO1"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Z60bS6rZ"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0EA19DF48;
-	Wed,  4 Jun 2025 10:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D9C2236F0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749032439; cv=none; b=qxpIoAVW1tVFYrWaKmu2xllCCrWs7EyHBdZoTuGuxXkXfILQ1P4Itf4fxSIupzXBGdWtezlUcozSBIrlaEU/ik0JzNoQGU10cbeQZRVAcY2RFSya31JvEq45Z270rpon0T0lIPcNYyCZCJ65h7te5MYwnijlelF5KyIhrCUbsyg=
+	t=1749032552; cv=none; b=eLMSGFFNHnsmxRoiuks3G+PjbNHoz3CM/1FHbkv+8jE7Xz+yxbFN6ED9WC7cjGiVKEXWOiohWFGmhN6pHrUlBtOQRAkmqPLTDuqTCSIWLbGwiTLMmEVxWk7aEjcaGSWbhpWteUuT9FXxu3MC5y2ejmfDqjdRepnu9Ay9cf42yLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749032439; c=relaxed/simple;
-	bh=2nP4D7Pp64PEPL5G3sjyZgtyDpXKVhkDNwiQajpcrFI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=nKXo/daRLl5gI8RpJs6ysV40hQypd0nty2oucwWmOpGaskygFBuZbv/czqjCk6ipfFW2tHk+rjoPCIhtoboGL2fBiehMl+mH7+ou/vwEbJZXtkpFX3Ypf5sXwM3IhqE8q5ZqhdFkMYyK7etLlUBW32ytKgB4bYTaeSuf9CMM2KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcSiyIO1; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a35c894313so5925438f8f.2;
-        Wed, 04 Jun 2025 03:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749032436; x=1749637236; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gksmbVMdlMg2K8PgWxvAtllhStxQNr+LZ8Dt0YW8uEI=;
-        b=LcSiyIO1ob8nplXDpQ/nVNl/ErBAsalI9vx0jKvw+Fiy8930o1DSThxTfrwxqzbayi
-         cU+sTzN73qo7zteQ2sDwRoGaBk5q9Y/esdPzvNjdvrUMuk9YCoqWQJTltjsi60BtE+4z
-         fMZhm0jlr0ITL5FMfOe05DP049asiE2cWExNKCuFBtRRORAGAh7cQqLG+Bzdwu4FKfCh
-         tBTQEppteTqW75PMS5R1VUXfgzbgvNFzNXNHk8YvtB5GtDytofX7qQRJIzLNmfZ9m7dq
-         NNBi2Qc4jEKY0r/nTdnKmGzzlRPR5wvB4cOrY/KmkSIzLH2Pf7V9+e/YmMVk56wjlrDl
-         4InA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749032436; x=1749637236;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gksmbVMdlMg2K8PgWxvAtllhStxQNr+LZ8Dt0YW8uEI=;
-        b=dHBaENdqFvh1nZ3M7mlRzLr3c0LbaxmIjD+cPBkUwFyBVZroR5eAKSC11TWWtWShEs
-         3jHiXM2+DL/MI+iwA0tQdnwYP8Gi8gPY+McD5cw1WX2yEqHtaFY71QI92aCB1uDQuaQ2
-         HS/eGak3+WeAMq29Mnnk0gyb4aCCRQRUVsWYnPsmI5cE0LBnRGSDqNZA3lJvWtKz7h13
-         cXwsxEnXdWkG0rmra+g78WMGO8XR4Lns18C3lp5I45gC2gXAcLzhztcnbgjQpuk+jXHb
-         kCY00uHBnvRa1tnzUF4Brpeno2ygGxny2df8k6sqzspkTTcCjaytrkoiv8kE0uQOdi7j
-         EFeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVquZfIcwPUs3otBx0Dx6Kj+jxEcRqbEEItRBu07XYF9DBqORpJkGTh6euIear+CU/9nfVEdj+Ilm52V50=@vger.kernel.org, AJvYcCWJGio7Xb91wWf89+yqnHGXm7yEe5+nKaBOdfgXJMzWsnqmhmBzlXMvPNegREVmUnV8THFr3vWmDXre@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5UcUuDX4BdxMuCOuWKPI7QpfAbEkHClTIGPhyJB/LO8ICX1O/
-	w/UKbx7nsH7NOXoa7ZMkLSuzCVdYAfMJ/N+BmGI+HwTr0hd2KpmtRlKO
-X-Gm-Gg: ASbGncs1sa5/Mf7gXzceFRe0GU5InM1gaEfYcR5VaVb7eJX1WykKpOnkVfrnCEOUbUy
-	eNlsGVnEajNvlzRm4wY92yxdjXtYmbtwBgM2Wa+c/34tbF/0AE7/KEDMvfxPqAj74/mrfc3ZyyX
-	k3ID4duuWnmoILkTXRJ/H6y15QGIofMr/lxnBzGF6uNb8OmL8RrXekZVTZDXkQof22Sgqo0kGg2
-	33wJqp7W/swhBkLcK/ZcMBb8lcJ5ajpMXasYYVPRM3bpED6ggZMQo9oiytqM9NKsiNwja5kaGDx
-	reG27q56tdmOa1hJr+XO1kH1JklVezv9eOk4r4Vy3Kv4fMsJdxiBIQ/uR6LtYELeZFkY5+kXjts
-	F
-X-Google-Smtp-Source: AGHT+IF88CeFxKvQxdvXREnSkr8GHdt7EoWxmbkqn8grATbGWlFIxrHVsbxE7StTbOeQY8wMZZYAXg==
-X-Received: by 2002:a05:6000:240c:b0:3a0:b1f7:c1da with SMTP id ffacd0b85a97d-3a51d967e0emr1682017f8f.46.1749032435644;
-        Wed, 04 Jun 2025 03:20:35 -0700 (PDT)
-Received: from smtpclient.apple ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a03bdsm21776589f8f.91.2025.06.04.03.20.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 04 Jun 2025 03:20:35 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1749032552; c=relaxed/simple;
+	bh=Qz5W+vvradWz8G1yGaxhcXNSB9TzaaANhMo6byS0QGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=DOgxqOlTILn9veHeIdvFMMe5Sy0PjSrhTtFmu61iPk7RuUlXRtvKtoi+kVeQXAD+lmp56Ogu2SJvSLn2Wx01SffVmaAZO/T62Pn0N0Gxsb5FzBMVOJj2HWJUWBpoUfALQcWZmayM4LmgBwI1NcxTaxG98Tu7Uzj925S1oOL7Bt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Z60bS6rZ; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250604102221epoutp03ce3d137257c69dfeb46ba9a06da04897~Fz9SB_QMj1578015780epoutp03l
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:22:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250604102221epoutp03ce3d137257c69dfeb46ba9a06da04897~Fz9SB_QMj1578015780epoutp03l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749032541;
+	bh=5PFJKOcCJULULXlfEo0K6/6CMfBVPePa/hBz4dur49c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z60bS6rZdi0hWnk0sSxuIcUwZq7U8bml6F/zXGZL9fEBhyHqaq7fDze/nW+lE24dm
+	 OghcnvaKeBad/vT4zhggvzlTGIybJSCTtTWwftVdZbzwMjSf2ybJaI2vgrhGWd+cfA
+	 VZ+EHGpXsILXfPXvbhoXTu4LwfsH8Dgoee766ufk=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250604102220epcas2p1cf5f69cfed7f307bb22bda90b73cce9f~Fz9RHCVZR1135311353epcas2p1Z;
+	Wed,  4 Jun 2025 10:22:20 +0000 (GMT)
+Received: from epcas2p2.samsung.com (unknown [182.195.36.90]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bC3Y82q3dz6B9m7; Wed,  4 Jun
+	2025 10:22:20 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250604102219epcas2p4e13cbdf67accf9389272d1889e073898~Fz9QDGduJ0169101691epcas2p4Y;
+	Wed,  4 Jun 2025 10:22:19 +0000 (GMT)
+Received: from tiffany (unknown [10.229.95.142]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250604102219epsmtip2cea4cb3046f85c7514d67452e731543e~Fz9QAFh431738217382epsmtip2j;
+	Wed,  4 Jun 2025 10:22:19 +0000 (GMT)
+Date: Wed, 4 Jun 2025 19:20:31 +0900
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: janghyuck.kim@samsung.com, zhaoyang.huang@unisoc.com,
+	jaewon31.kim@gmail.com, Andrew Morton <akpm@linux-foundation.org>, Jason
+	Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, Peter Xu
+	<peterx@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: gup: fail migration when no migratable page to
+ prevent CMA pinning
+Message-ID: <20250604102031.GA4060485@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH 1/2] PCI: rockchip-host: Retry link training on
- failure without PERST#
-From: Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <aEAOiO_YIqWH9frQ@geday>
-Date: Wed, 4 Jun 2025 14:20:20 +0400
-Cc: linux-rockchip@lists.infradead.org,
- Hugh Cole-Baker <sigmaris@gmail.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Heiko Stuebner <heiko@sntech.de>,
- linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <317943F7-8658-436D-9E3C-05CB6404F122@gmail.com>
-References: <aEAOiO_YIqWH9frQ@geday>
-To: Geraldo Nascimento <geraldogabriel@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+In-Reply-To: <fa9d72ac-1b46-4a09-8f29-af97f2ca6e2e@redhat.com>
+X-CMS-MailID: 20250604102219epcas2p4e13cbdf67accf9389272d1889e073898
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----6COtjJDFSqE3oSvckRkzJ3gMdAJ_hz7naVTtDv8sVOxgD1sZ=_290f2_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55
+References: <CGME20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55@epcas2p1.samsung.com>
+	<20250604095049.4052078-1-hyesoo.yu@samsung.com>
+	<fa9d72ac-1b46-4a09-8f29-af97f2ca6e2e@redhat.com>
 
-> On 4 Jun 2025, at 1:14=E2=80=AFpm, Geraldo Nascimento =
-<geraldogabriel@gmail.com> wrote:
->=20
-> Hi,
->=20
-> After almost 30 days of battling with RK3399 buggy PCIe on my Rock Pi
-> N10 through trial-and-error debugging, I finally got positive results
-> with enumeration on the PCI bus for both a Realtek 8111E NIC and a
-> Samsung PM981a SSD.
->=20
-> The NIC was connected to a M.2->PCIe x4 riser card and it would get
-> stuck on Polling.Compliance, without breaking electrical idle on the
-> Host RX side. The Samsung PM981a SSD is directly connected to M.2
-> connector and that SSD is known to be quirky (OEM... no support)
-> and non-functional on the RK3399 platform.
->=20
-> The Samsung SSD was even worse than the NIC - it would get stuck on
-> Detect.Active like a bricked card, even though it was fully functional
-> via USB adapter.
->=20
-> It seems both devices benefit from retrying Link Training if - big if
-> here - PERST# is not toggled during retry. This patch does exactly =
-that.
-> I find the patch to be ugly as hell but it works - every time.
->=20
-> I added Hugh Cole-Baker and Christian Hewitt to Cc: as both are
-> experienced on RK3399 and hopefully at least one of them has faced
-> the non-working SSD experience on RK3399 and will be able to test =
-this.
+------6COtjJDFSqE3oSvckRkzJ3gMdAJ_hz7naVTtDv8sVOxgD1sZ=_290f2_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-I think you have me confused with another Christian (or auto-complete
-scored a new victim). Sadly I have no clue about PCI and not a lot of
-knowledge on RK3399 matters :)
+On Wed, Jun 04, 2025 at 12:07:21PM +0200, David Hildenbrand wrote:
+> On 04.06.25 11:50, Hyesoo Yu wrote:
+> > Commit 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
+> > caused CMA pages to become pinned in some cases when handling longterm GUP.
+> > This happened because migration would return success immediately if no pages
+> > were in the movable_page_list, without retrying.
+> > 
+> > However, CMA pages can be temporarily off the LRU (e.g., in pagevecs), and
+> 
+> A better example might be concurrent isolation. Just imagine two of these
+> longterm pinnings racing.
+> 
 
-CH.
+I will change the example below.
 
-> ---
-> drivers/pci/controller/pcie-rockchip-host.c | 141 ++++++++++++--------
-> 1 file changed, 87 insertions(+), 54 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-rockchip-host.c =
-b/drivers/pci/controller/pcie-rockchip-host.c
-> index 6a46be17aa91..6a465f45a09c 100644
-> --- a/drivers/pci/controller/pcie-rockchip-host.c
-> +++ b/drivers/pci/controller/pcie-rockchip-host.c
-> @@ -284,6 +284,53 @@ static void rockchip_pcie_set_power_limit(struct =
-rockchip_pcie *rockchip)
-> rockchip_pcie_write(rockchip, status, PCIE_RC_CONFIG_DCR);
-> }
->=20
-> +static int rockchip_pcie_set_vpcie(struct rockchip_pcie *rockchip)
-> +{
-> + struct device *dev =3D rockchip->dev;
-> + int err;
-> +
-> + if (!IS_ERR(rockchip->vpcie12v)) {
-> + err =3D regulator_enable(rockchip->vpcie12v);
-> + if (err) {
-> + dev_err(dev, "fail to enable vpcie12v regulator\n");
-> + goto err_out;
-> + }
-> + }
-> +
-> + if (!IS_ERR(rockchip->vpcie3v3)) {
-> + err =3D regulator_enable(rockchip->vpcie3v3);
-> + if (err) {
-> + dev_err(dev, "fail to enable vpcie3v3 regulator\n");
-> + goto err_disable_12v;
-> + }
-> + }
-> +
-> + err =3D regulator_enable(rockchip->vpcie1v8);
-> + if (err) {
-> + dev_err(dev, "fail to enable vpcie1v8 regulator\n");
-> + goto err_disable_3v3;
-> + }
-> +
-> + err =3D regulator_enable(rockchip->vpcie0v9);
-> + if (err) {
-> + dev_err(dev, "fail to enable vpcie0v9 regulator\n");
-> + goto err_disable_1v8;
-> + }
-> +
-> + return 0;
-> +
-> +err_disable_1v8:
-> + regulator_disable(rockchip->vpcie1v8);
-> +err_disable_3v3:
-> + if (!IS_ERR(rockchip->vpcie3v3))
-> + regulator_disable(rockchip->vpcie3v3);
-> +err_disable_12v:
-> + if (!IS_ERR(rockchip->vpcie12v))
-> + regulator_disable(rockchip->vpcie12v);
-> +err_out:
-> + return err;
-> +}
-> +
-> /**
->  * rockchip_pcie_host_init_port - Initialize hardware
->  * @rockchip: PCIe port information
-> @@ -291,11 +338,14 @@ static void rockchip_pcie_set_power_limit(struct =
-rockchip_pcie *rockchip)
-> static int rockchip_pcie_host_init_port(struct rockchip_pcie =
-*rockchip)
-> {
-> struct device *dev =3D rockchip->dev;
-> - int err, i =3D MAX_LANE_NUM;
-> + int err, i =3D MAX_LANE_NUM, is_reinit =3D 0;
-> u32 status;
->=20
-> - gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
-> + if (!is_reinit) {
-> + gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
-> + }
->=20
-> +reinit:
-> err =3D rockchip_pcie_init_port(rockchip);
-> if (err)
-> return err;
-> @@ -322,16 +372,46 @@ static int rockchip_pcie_host_init_port(struct =
-rockchip_pcie *rockchip)
-> rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
->    PCIE_CLIENT_CONFIG);
->=20
-> - msleep(PCIE_T_PVPERL_MS);
-> - gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
-> -
-> - msleep(PCIE_T_RRS_READY_MS);
-> + if (!is_reinit) {
-> + msleep(PCIE_T_PVPERL_MS);
-> + gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
-> + msleep(PCIE_T_RRS_READY_MS);
-> + }
->=20
-> /* 500ms timeout value should be enough for Gen1/2 training */
-> err =3D readl_poll_timeout(rockchip->apb_base + =
-PCIE_CLIENT_BASIC_STATUS1,
-> status, PCIE_LINK_UP(status), 20,
-> 500 * USEC_PER_MSEC);
-> - if (err) {
-> +
-> + if (err && !is_reinit) {
-> + while (i--)
-> + phy_power_off(rockchip->phys[i]);
-> + i =3D MAX_LANE_NUM;
-> + while (i--)
-> + phy_exit(rockchip->phys[i]);
-> + i =3D MAX_LANE_NUM;
-> + is_reinit =3D 1;
-> + dev_dbg(dev, "Will reinit PCIe without toggling PERST#");
-> + if (!IS_ERR(rockchip->vpcie12v))
-> + regulator_disable(rockchip->vpcie12v);
-> + if (!IS_ERR(rockchip->vpcie3v3))
-> + regulator_disable(rockchip->vpcie3v3);
-> + regulator_disable(rockchip->vpcie1v8);
-> + regulator_disable(rockchip->vpcie0v9);
-> + rockchip_pcie_disable_clocks(rockchip);
-> + err =3D rockchip_pcie_enable_clocks(rockchip);
-> + if (err)
-> + return err;
-> + err =3D rockchip_pcie_set_vpcie(rockchip);
-> + if (err) {
-> + dev_err(dev, "failed to set vpcie regulator\n");
-> + rockchip_pcie_disable_clocks(rockchip);
-> + return err;
-> + }
-> + goto reinit;
-> + }
-> +
-> + else if (err) {
-> dev_err(dev, "PCIe link training gen1 timeout!\n");
-> goto err_power_off_phy;
-> }
-> @@ -613,53 +693,6 @@ static int rockchip_pcie_parse_host_dt(struct =
-rockchip_pcie *rockchip)
-> return 0;
-> }
->=20
-> -static int rockchip_pcie_set_vpcie(struct rockchip_pcie *rockchip)
-> -{
-> - struct device *dev =3D rockchip->dev;
-> - int err;
-> -
-> - if (!IS_ERR(rockchip->vpcie12v)) {
-> - err =3D regulator_enable(rockchip->vpcie12v);
-> - if (err) {
-> - dev_err(dev, "fail to enable vpcie12v regulator\n");
-> - goto err_out;
-> - }
-> - }
-> -
-> - if (!IS_ERR(rockchip->vpcie3v3)) {
-> - err =3D regulator_enable(rockchip->vpcie3v3);
-> - if (err) {
-> - dev_err(dev, "fail to enable vpcie3v3 regulator\n");
-> - goto err_disable_12v;
-> - }
-> - }
-> -
-> - err =3D regulator_enable(rockchip->vpcie1v8);
-> - if (err) {
-> - dev_err(dev, "fail to enable vpcie1v8 regulator\n");
-> - goto err_disable_3v3;
-> - }
-> -
-> - err =3D regulator_enable(rockchip->vpcie0v9);
-> - if (err) {
-> - dev_err(dev, "fail to enable vpcie0v9 regulator\n");
-> - goto err_disable_1v8;
-> - }
-> -
-> - return 0;
-> -
-> -err_disable_1v8:
-> - regulator_disable(rockchip->vpcie1v8);
-> -err_disable_3v3:
-> - if (!IS_ERR(rockchip->vpcie3v3))
-> - regulator_disable(rockchip->vpcie3v3);
-> -err_disable_12v:
-> - if (!IS_ERR(rockchip->vpcie12v))
-> - regulator_disable(rockchip->vpcie12v);
-> -err_out:
-> - return err;
-> -}
-> -
-> static void rockchip_pcie_enable_interrupts(struct rockchip_pcie =
-*rockchip)
-> {
-> rockchip_pcie_write(rockchip, (PCIE_CLIENT_INT_CLI << 16) &
-> --=20
-> 2.49.0
->=20
+CMA pages may be temporarily off the LRU due to concurrent isolation, for example
+when multiple longterm GUP requests are racing.
 
+
+> > therefore not appear in movable_page_list, even though they can be migrated
+> > later. Before commit 1aaf8c, the kernel would retry migration in such cases,
+> > which helped avoid accidental CMA pinning.
+> > 
+> > The commit 1aaf8c aimed to support an out-of-tree use case (like pKVM), where
+> > longterm GUP was applied to non-LRU CMA pages. But allowing CMA pinning
+> > in general for this corner case could lead to more fragmentation and
+> > reliability issues. So this patch prevents that.
+> > 
+> > Instead of retrying, this patch explicitly fails the migration attempt
+> > (-EBUSY) if no movable pages are found and unpinnable pages remain.
+> > This avoids infinite loops and gives user a clear signal to retry,
+> > rather then spinning inside kernel.
+> 
+> Hmmm, that means we will return EBUSY to the caller. Are all users actually
+> prepared to deal with that?
+> 
+> So far we only returned EBUSY in this corner-case
+> migrate_device_coherent_folio() that most callers never actually trigger.
+> 
+> Maybe we should do EAGAIN for now (old way of doing it?), and look into
+> doing EBUSY separately.
+> 
+
+Thank you for the feedback. I agree. I'll keep this patch focused on resolving
+the CMA pinning issue using -EAGAIN. Handling -EBUSY can be considered separately.
+
+> > 
+> > Fixes: 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
+> > Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+> > ---
+> >   mm/gup.c | 49 ++++++++++++++++++++++++++-----------------------
+> >   1 file changed, 26 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index e065a49842a8..446938aedcc9 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -2303,12 +2303,13 @@ static void pofs_unpin(struct pages_or_folios *pofs)
+> >   /*
+> >    * Returns the number of collected folios. Return value is always >= 0.
+> >    */
+> 
+> Comment should be removed.
+> 
+
+Got it. I'll remove the comment.
+
+> > -static void collect_longterm_unpinnable_folios(
+> > +static bool collect_longterm_unpinnable_folios(
+> >   		struct list_head *movable_folio_list,
+> >   		struct pages_or_folios *pofs)
+> >   {
+> >   	struct folio *prev_folio = NULL;
+> >   	bool drain_allow = true;
+> > +	bool any_unpinnable = false;
+> >   	unsigned long i;
+> >   	for (i = 0; i < pofs->nr_entries; i++) {
+> > @@ -2321,6 +2322,8 @@ static void collect_longterm_unpinnable_folios(
+> >   		if (folio_is_longterm_pinnable(folio))
+> >   			continue;
+> > +		any_unpinnable = true;
+> > +
+> >   		if (folio_is_device_coherent(folio))
+> >   			continue;
+> > @@ -2342,6 +2345,8 @@ static void collect_longterm_unpinnable_folios(
+> >   				    NR_ISOLATED_ANON + folio_is_file_lru(folio),
+> >   				    folio_nr_pages(folio));
+> >   	}
+> > +
+> > +	return any_unpinnable;
+> >   }
+> >   /*
+> > @@ -2353,8 +2358,13 @@ static int
+> >   migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+> >   				   struct pages_or_folios *pofs)
+> >   {
+> > -	int ret;
+> > +	int ret = -EAGAIN;
+> >   	unsigned long i;
+> > +	struct migration_target_control mtc = {
+> > +		.nid = NUMA_NO_NODE,
+> > +		.gfp_mask = GFP_USER | __GFP_NOWARN,
+> > +		.reason = MR_LONGTERM_PIN,
+> > +	};
+> 
+> Reverse xmas tree while we're at it.
+> 
+> But, can we do this cleanup here separately, and not as part of the fix?
+> 
+
+I'll prepare a separate patch for the cleanup.
+
+> >   	for (i = 0; i < pofs->nr_entries; i++) {
+> >   		struct folio *folio = pofs_get_folio(pofs, i);
+> > @@ -2370,6 +2380,7 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+> >   			gup_put_folio(folio, 1, FOLL_PIN);
+> >   			if (migrate_device_coherent_folio(folio)) {
+> > +				pofs_unpin(pofs);
+> >   				ret = -EBUSY;
+> >   				goto err;
+> >   			}
+> > @@ -2388,27 +2399,11 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+> >   		pofs_clear_entry(pofs, i);
+> >   	}
+> > -	if (!list_empty(movable_folio_list)) {
+> > -		struct migration_target_control mtc = {
+> > -			.nid = NUMA_NO_NODE,
+> > -			.gfp_mask = GFP_USER | __GFP_NOWARN,
+> > -			.reason = MR_LONGTERM_PIN,
+> > -		};
+> > -
+> > -		if (migrate_pages(movable_folio_list, alloc_migration_target,
+> > -				  NULL, (unsigned long)&mtc, MIGRATE_SYNC,
+> > -				  MR_LONGTERM_PIN, NULL)) {
+> > -			ret = -ENOMEM;
+> > -			goto err;
+> > -		}
+> > -	}
+> > -
+> > -	putback_movable_pages(movable_folio_list);
+> > -
+> > -	return -EAGAIN;
+> > +	if (migrate_pages(movable_folio_list, alloc_migration_target, NULL,
+> > +			  (unsigned long)&mtc, MIGRATE_SYNC, MR_LONGTERM_PIN, NULL))
+> > +		ret = -ENOMEM;
+> >   err:
+> > -	pofs_unpin(pofs);
+> >   	putback_movable_pages(movable_folio_list);
+> >   	return ret;
+> > @@ -2417,11 +2412,19 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+> >   static long
+> >   check_and_migrate_movable_pages_or_folios(struct pages_or_folios *pofs)
+> >   {
+> > +	bool any_unpinnable;
+> > +
+> >   	LIST_HEAD(movable_folio_list);
+> > -	collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
+> > -	if (list_empty(&movable_folio_list))
+> > +	any_unpinnable = collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
+> > +
+> > +	if (list_empty(&movable_folio_list)) {
+> > +		if (any_unpinnable) {
+> 
+> /*
+>  * If we find any longterm unpinnable page that we failed to
+>  * isolated for migration, it might be because someone else
+>  * concurrently isolated it. Make the caller retry until it
+>  * succeeds.
+>  */
+> 
+> 
+
+I will add the comment.
+
+> > +			pofs_unpin(pofs);
+> > +			return -EBUSY;
+> > +		}
+> >   		return 0;
+> > +	}
+> >   	return migrate_longterm_unpinnable_folios(&movable_folio_list, pofs);
+> >   }
+> 
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+
+Thanks,
+Regards. 
+
+------6COtjJDFSqE3oSvckRkzJ3gMdAJ_hz7naVTtDv8sVOxgD1sZ=_290f2_
+Content-Type: text/plain; charset="utf-8"
+
+
+------6COtjJDFSqE3oSvckRkzJ3gMdAJ_hz7naVTtDv8sVOxgD1sZ=_290f2_--
 
