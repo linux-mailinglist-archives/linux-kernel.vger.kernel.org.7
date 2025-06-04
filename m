@@ -1,116 +1,139 @@
-Return-Path: <linux-kernel+bounces-673613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF1BACE391
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 863EEACE390
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA3D61781C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87FC41778A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387D213237;
-	Wed,  4 Jun 2025 17:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2DC20E6F3;
+	Wed,  4 Jun 2025 17:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUFIWL7V"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AMzyjRze"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA582101BD;
-	Wed,  4 Jun 2025 17:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED561F8755
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 17:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749057878; cv=none; b=nE4r3uk0etbV42nDQy+kBu1ZqjPmMNVUMDH+FR6Loz70Wf6UVRbx93gxG4O+UuATjAIP4rCn4y08QfO6odQXZq/TitJUeanko8FYAYvRhUI3GusSp7YTl5Y9idHwj96+r7mEckRp3ZhnHMY4vxEsZIJiJbtHigiKHpeBmnU75f8=
+	t=1749057873; cv=none; b=vDVBrglnf9+VxiMbvmZ/vaXNAMtyvQ9lhKFP7J7wkT3b/7K8CihrNugrgBOK0Czz3Azw7EEPVz8ghZXnG+Iw+b4BX9RUmq8b7jLHV1DC6NV38JdKpaRQFhKO7zFcjW4DFsHvqdng0tm71qqZ4NssSTqD05DSdVbblH+8ePrNIjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749057878; c=relaxed/simple;
-	bh=4T2Xhltii2sdundiNV4DDC+vFusCJPHnJZUONFyp2cA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gKNx9b2WqmJVhYcvyrnVexAJsSm/pKrFmAHTsmqDWJICis7RZa2rnuzTgQy9HNG6lLjYwWkD2vMoo0XU0CjyTogKNvYjsI/ISRnEf9rQk7ZI1KGb7Gz7g942Vth7nvr6gL+I6o6RsiPfvZbGWQb+qHRLxYF83pdKYG3Xm88NbB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUFIWL7V; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e694601f624so100596276.1;
-        Wed, 04 Jun 2025 10:24:36 -0700 (PDT)
+	s=arc-20240116; t=1749057873; c=relaxed/simple;
+	bh=YI5mFLWc53VgL5FQ8bsi7skJV4Aik/gLWAIifjuXyD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVmdhe69jnXBh26cAZQulyXDfmsByFrsyCfJupsmNGofCPIWqUha0SOj2yBngBWNHibdXJ5kig865xDdfV+QPcbal0yeZ8uvrOqTmikF9ldboWq+NilIbRifZFxAqLpEveQzCC694LGo/MeuOcPePpMAZAPwmtsaA4s5tl0vQNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AMzyjRze; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso13147066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 10:24:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749057876; x=1749662676; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nANItJ3n9rHzK0lPnEVgoGoN0BgH3bisoRcHmb6FsOY=;
-        b=eUFIWL7VVISZ6R7uCEEOLa9aRFBEnhPFweoMJKr/1lJiQn+lnJ2QGT9gX1Xoo3OWs3
-         DMLb80GUOhRftXRDCUZPEnBwDNC1P/NDxYM4jQnuNySYjRKEzQlOZm0hMRYBBeBY+d42
-         6qkA4RaHntvBGzeytjx22AFqSyGVJMnioIus4xeyWI+YPUSbPGxMw3AvlQalcr3neiBD
-         68+cGJ74Ql/sZUnrNGHQ67d3qsy6YFuIxdUfDbY8jRblgjclAH/djAUCzm+28GNrGLb2
-         kxCltpDzfGt1xk1tOYBgvvEJG4F+X6chRTwpZlioGxX9vttqdl2k9PjroBvp+lqKeeM1
-         4hoQ==
+        d=linaro.org; s=google; t=1749057870; x=1749662670; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Rx6gG3qsE4+StDVhI8Ouf35YkFJYK0JatY+uS2ZTLI=;
+        b=AMzyjRze6N+CdUwAkkXRMLQyhnHh9VDOOuZs+j+q4uiq3s6KdS9GFEJq21qhfvtPbT
+         fIWXNFaXLOTxIwjTCNkfIvXcpEosYQQPg5iJzgep+ehIulc0V+bVRYGCnkBxwHkMDqqB
+         bqwXc7EHXMYSqAccUPKt6OAqNcatvCVEbAxbEjlEajeTA+LU1c29uD9TusSxu+t7bPkY
+         R9iG7DILGEi3VM/KXvE1u565yUR7oWFZXWikYkBf0VF9Vd2sh16GqmUi0UcvdC7N1wQ0
+         5kGY9jSP8ABtAdXSTZbucGAFCNzT4cj92axqg3sGplWAFRYqluAkGP7o3TQ+dDlxmpFP
+         x60w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749057876; x=1749662676;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nANItJ3n9rHzK0lPnEVgoGoN0BgH3bisoRcHmb6FsOY=;
-        b=TZCGhrxrrTebN22Yes4ncgZyP0Ci2p7qqPJAQtRM54SCcEupiyNy3CVt+Lflw/a6j7
-         M8ubcrnY7EeIIVTUk0oR5R6ud18W3sYtQCzhzYJIk4Bz8Mx/E+6HhuMi+urvwPJWTLqc
-         YKwAue2uPEn5y/SczPFDP+2i/EtT+azcX9UKqqEjYegsVooiSdLQ2wCUmtb5jWKNmGst
-         qn/HzTkRKB1A+HAlkV5rXlGXKENYHKHSL0Sdwtcn3IJmYE4Ooep4ANsyYha25bVZzZ5n
-         tIVmZ3BUhol1shbG7A4fRXNl2wpadbFstsRrxRj1dn8eLBjeOZW1UzWhV3O1rs7it4gV
-         NFRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfhHSBoDo0zKtKczpfzj9/aCTGCFPm+0rLbIE3aXZGnO8VlUi/eIdFPzTEco3NBx346jTfBiaIWtZqzpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKg8rVJICLsbeLrZ/6a9/9ulH74a0fU5N2ihqmEpAASDNcD2Uv
-	nDU3m/dTLlYdHV+wRz7RcSi0oOnbjudzWgsurkIzwltP3oVTtOZUMLOQ9TZxeEW+7oc4OOTqHxC
-	WirFgdVpvquaifIZR8s4DfeofGqSA6KY=
-X-Gm-Gg: ASbGncuWCjtoQJKYvN3YSZo2VzRsjtftyEj0YGMAOy7nWHbeU3Os8ZrhWHvasSMmAYz
-	YT1JMQtVVwNXZr2T+VXUKfszDORCLgqIU3CXMXb94/tYd9AevFPB4+/BeKA6yU+9EDzgil3pU/4
-	Q7OGc5Gj41QnZNcMxmoisat2WU0Dvq7jGwcbVLN1KB5w==
-X-Google-Smtp-Source: AGHT+IFqkrIQksf+ZagsLNKprT5D9Gkx/ZIPUPXWNL3tQVC5N49QOKwKG+17ubQNHdTkJZuEZwnE8mYB9j3MltCsOrE=
-X-Received: by 2002:a05:690c:4988:b0:70f:87c5:5270 with SMTP id
- 00721157ae682-710d9afc82cmr54862237b3.19.1749057875817; Wed, 04 Jun 2025
- 10:24:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749057870; x=1749662670;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Rx6gG3qsE4+StDVhI8Ouf35YkFJYK0JatY+uS2ZTLI=;
+        b=TavfOnKvFvO52U/mdxzs3x1glrUeG9DGVvDw3hpk1EMiknWJwy8Aagu6CxyMCqDkZx
+         VB6etvFWXhcN8Se9mf/x2RJ9icL/cvjjAfpEcYoOdg8DQr3gq/GA1obC6n5CKfxJo+gu
+         t8pVjt7r9zeHBcyQnbcxBf9LqQECFC3ag3k0W4emq46Xu1jRaTDiNyT2wqVvYkZBeLK/
+         iKN5UEEuBe2YXdXU4khDKvjn/0v2u3F3iCBCCQCKvByxMpMcg5iBS4f8J4yXcTDIxrUl
+         c8DjjyObNq/pie8bYlopfouImCoYmGziogoqGyWu/oCBN0UK769erI4EaW3JyMfu9i4e
+         0MOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMh/rTkFUzfydA9lrDylU7e4t/kMU2CYBAPYSgvtNfUQzk0RkxZ90tBpAVw/ykPS2euZiYT5S45ft653I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/EMZce9UsGDeNtWng5s552uPLtbWZyM5P5ThQuSphFjeq8e5b
+	xip960+xmnmjkzQpiRsKDT4ykIY28IteZJPvwsCnQsivw7OwNWZEh0n90y7HeGEMvxk=
+X-Gm-Gg: ASbGncvipUYRhM9XDN8ggN/SEZuD1PhjhyqqwgUaKnG3LmFvK/G4e56Qo/L8VzPicWq
+	qWUZ+OQbf/aUyGhduaB6z1YxSA53WT6T+M95jfr36aWteLI00WV478rSdVhUpTP7dAqT6g1ZJhV
+	M2IP6b6Eauc+f/ipB4/Wea5ABco/ADC0aD/rhYfXj+AfLK4xZ2mY7Bln1r7WqdOZ70KZ4YwQ5ar
+	h+2d3F00tTicnA064nCMU6VApaX/QFcpCEPJavwctv1K2OY4xDtvdstgfGZRmK/qMBcaCl/RoP1
+	RzoUQ7d8ptHhKdzD4/enKRPDLz6fYPAY97nwQlASjBhNhmH07oQCXtg=
+X-Google-Smtp-Source: AGHT+IH+P0WeybYhDtQX0mOthiBD4sJUH0iS4YBwLkOkmeksTa502is8e50CYha9Oj5de4xARn23DA==
+X-Received: by 2002:a17:907:3e11:b0:ad8:89f8:3f66 with SMTP id a640c23a62f3a-addf8cd2118mr358479966b.21.1749057869894;
+        Wed, 04 Jun 2025 10:24:29 -0700 (PDT)
+Received: from localhost ([41.210.155.222])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ada5d7fef72sm1127136966b.34.2025.06.04.10.24.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 10:24:29 -0700 (PDT)
+Date: Wed, 4 Jun 2025 20:24:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: PradeepVineshReddy.Kodamati@amd.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com, bhelgaas@google.com,
+	bp@alien8.de, ming.li@zohomail.com, shiju.jose@huawei.com,
+	Smita.KoralahalliChannabasappa@amd.com, kobayashi.da-06@fujitsu.com,
+	yanfei.xu@intel.com, rrichter@amd.com, peterz@infradead.org,
+	colyli@suse.de, uaisheng.ye@intel.com,
+	fabio.m.de.francesco@linux.intel.com, ilpo.jarvinen@linux.intel.com,
+	yazen.ghannam@amd.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v9 03/16] CXL/AER: Introduce kfifo for forwarding CXL
+ errors
+Message-ID: <aECBR79lhlj7SPUV@stanley.mountain>
+References: <20250603172239.159260-1-terry.bowman@amd.com>
+ <20250603172239.159260-4-terry.bowman@amd.com>
+ <aD_hQ7sKu-s7Yxiq@stanley.mountain>
+ <1f719cfd-2c2b-4431-a370-290a865b0bf2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604153510.55689-1-stefano.radaelli21@gmail.com> <92e4de77-07da-4583-bf0f-46891101c327@lunn.ch>
-In-Reply-To: <92e4de77-07da-4583-bf0f-46891101c327@lunn.ch>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Wed, 4 Jun 2025 19:24:19 +0200
-X-Gm-Features: AX0GCFsi-0DPQCLx4D-kw5G9NJPOyVhmZhQWfWIPFkfSiLFQtS5JLkD2hBDD0uQ
-Message-ID: <CAK+owogo4+R+DM9rM_-ZqKRPX1wV6Vhdjrh6KWM71pqjQpYNuQ@mail.gmail.com>
-Subject: Re: [v2] arm64: dts: freescale: imx93-var-som: update eqos support
- for MaxLinear PHY
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, othacehe@gnu.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f719cfd-2c2b-4431-a370-290a865b0bf2@amd.com>
 
-Thank you Andrew,
+On Wed, Jun 04, 2025 at 09:37:02AM -0500, Bowman, Terry wrote:
+> 
+> 
+> On 6/4/2025 1:01 AM, Dan Carpenter wrote:
+> > On Tue, Jun 03, 2025 at 12:22:26PM -0500, Terry Bowman wrote:
+> >> +static struct work_struct cxl_prot_err_work;
+> >> +static DECLARE_WORK(cxl_prot_err_work, cxl_prot_err_work_fn);
+> >> +
+> >>  int cxl_ras_init(void)
+> >>  {
+> >> -	return cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
+> >> +	int rc;
+> >> +
+> >> +	rc = cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
+> >> +	if (rc)
+> >> +		pr_err("Failed to register CPER AER kfifo (%x)", rc);
+> > This shouldn't return rc;?
+> 
+> This was implemented to allow for native CXL handling initialization even if
+> FW-first (CPER) initialization fails. This can be changed to return rc.
 
-would it be ok to add your Reviewed-by tag in v3 after applying also
-the corrections suggested by Fabio Estevam?
+No no.  I'm fine with it either way so long as it's deliberate.  But
+maybe add a comment if we can continue.
 
-Best,
-Stefano
+	rc = cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
+	if (rc) {
+		pr_err("Failed to register CPER AER kfifo (%x)", rc);
+		/* Continuing regardless.  Thanks. */
+	}
 
-Il giorno mer 4 giu 2025 alle ore 19:16 Andrew Lunn <andrew@lunn.ch> ha scritto:
->
-> >  &eqos {
-> >       pinctrl-names = "default";
-> >       pinctrl-0 = <&pinctrl_eqos>;
-> > +     /*
-> > +      * The required RGMII TX and RX 2ns delays are implemented directly
-> > +      * in hardware via passive delay elements on the SOM PCB.
-> > +      * No delay configuration is needed in software via PHY driver.
-> > +      */
-> >       phy-mode = "rgmii";
->
-> For this part only:
->
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->
->     Andrew
+	rc = cxl_register_prot_err_work(&cxl_prot_err_work);
+
+regards,
+dan carpenter
+
 
