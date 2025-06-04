@@ -1,129 +1,79 @@
-Return-Path: <linux-kernel+bounces-673354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07959ACE04A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:31:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F25EACE045
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BEA176997
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:31:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE24174B2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9419C29009F;
-	Wed,  4 Jun 2025 14:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="R+xeHyZt"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E40528FFEF;
+	Wed,  4 Jun 2025 14:29:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862A2226863;
-	Wed,  4 Jun 2025 14:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979438384
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047469; cv=none; b=V267i9as7ub9LUQaUoLx9qh/CYqIm6dvkjjpg4S5HNiTdl0yN3+aqi434kEbmaTT5Gmjn0JFqrLL0RkZ50lDKe+KXo5MQcqGUsbs9BT5rRwHD7+dKOUrsKGW4SA3Z6BfUtYpztnsZpiv/GcU4VDHREgeyAlTPnK8H4YZiEWfY8M=
+	t=1749047391; cv=none; b=CWzyy5A/yfXrFsbNmHr4qa8+NwRs6K0GWw2TMtIj1cVQ2yVBnNWFDP6J1/oL2rWQ0bFz3FxB5qyafc4jQj5KUXxkYtfxL4CK6Hq/WttedcQteY3BopZ9Czf3ujKHO92972muLVgns3yBUGg7spNjyyLLJuPqZDwdcmzPn2D/XAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047469; c=relaxed/simple;
-	bh=szGzg1VWdLNaQhzap8mRj1Cx9myok4IZd5/gZyF9eLY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=czIUJzm5oBDF39E5vHrxhknAN0lbGz8cnTS/Y6OMvyJkZ/Xtg4xPDUtDrDmF/5p2qQzGZjDko9988tobkeEp8KdxNQnROozl+uQFt/BJIC+HDDPNJMWxpne+KyD1M5J1f3dNWdx1aQCLQlefcP+oPiU+uXGj9cbhM5bLQ0NSpqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=R+xeHyZt; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1749047460;
-	bh=BN1yZiR+/rn2XlLp429yT8gjgjOJLYeI4IJXSvPwvg0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=R+xeHyZtmJ35nzniBZYxy1o5fen5ftCDTSL9p2CTl2fdc3BAmsCAoF+KqluKg1g0g
-	 8mqtABzO3jFZwy1KO7ys+jf8BWDX2uYWUYsv6VuITEtHUm/mznuL383T01T2e44pHY
-	 SJLxYop6m+LUrn4tGhxE/B1o9x68EgAPA/GHWxJg=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id AA7A865F62;
-	Wed,  4 Jun 2025 10:30:57 -0400 (EDT)
-Message-ID: <5a5329feaab84acb91bbb4f48ea548b3fb4eab0f.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch: vDSO: correctly use asm parameters in
- syscall wrappers
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>, Thomas =?ISO-8859-1?Q?Wei=DFschuh?=
-	 <thomas.weissschuh@linutronix.de>
-Cc: WANG Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>, "Jason
- A. Donenfeld" <Jason@zx2c4.com>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers	 <nick.desaulniers+lkml@gmail.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Jiaxun Yang
- <jiaxun.yang@flygoat.com>, 	loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 	stable@vger.kernel.org
-Date: Wed, 04 Jun 2025 22:30:55 +0800
-In-Reply-To: <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
-References: 
-	<20250603-loongarch-vdso-syscall-v1-1-6d12d6dfbdd0@linutronix.de>
-	 <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1749047391; c=relaxed/simple;
+	bh=B6OpX1d9C5FQH9QBXEjnvZ/p0W1fYsSZa9lHLO12kKU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=At2isJLUHuJ5lnEXk1zUoxMrOtsLJcVN7EjnP0kZemZ7CxF3kz9xabpdfu/Lr3i6KEAIYYyboW/xyTQTpqQR4eQNGDmTPKZ8+GV5ZEfSiBXU7ZvT2Cv19UxfEFofx5y5dOi7Zy9x9ckEE1XpexMZrkdwhb8UfWSiMg13LPh+5f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E42C4CEE4;
+	Wed,  4 Jun 2025 14:29:49 +0000 (UTC)
+Date: Wed, 4 Jun 2025 10:31:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Prakash Sangappa <prakash.sangappa@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
+ mathieu.desnoyers@efficios.com, tglx@linutronix.de, bigeasy@linutronix.de,
+ kprateek.nayak@amd.com, vineethr@linux.ibm.com
+Subject: Re: [PATCH V5 1/6] Sched: Scheduler time slice extension
+Message-ID: <20250604103106.1465f847@gandalf.local.home>
+In-Reply-To: <20250603233654.1838967-2-prakash.sangappa@oracle.com>
+References: <20250603233654.1838967-1-prakash.sangappa@oracle.com>
+	<20250603233654.1838967-2-prakash.sangappa@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-06-04 at 22:05 +0800, Huacai Chen wrote:
-> On Tue, Jun 3, 2025 at 7:49=E2=80=AFPM Thomas Wei=C3=9Fschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >=20
-> > The syscall wrappers use the "a0" register for two different register
-> > variables, both the first argument and the return value. The "ret"
-> > variable is used as both input and output while the argument register i=
-s
-> > only used as input. Clang treats the conflicting input parameters as
-> > undefined behaviour and optimizes away the argument assignment.
-> >=20
-> > The code seems to work by chance for the most part today but that may
-> > change in the future. Specifically clock_gettime_fallback() fails with
-> > clockids from 16 to 23, as implemented by the upcoming auxiliary clocks=
-.
-> >=20
-> > Switch the "ret" register variable to a pure output, similar to the oth=
-er
-> > architectures' vDSO code. This works in both clang and GCC.
-> Hmmm, at first the constraint is "=3Dr", during the progress of
-> upstream, Xuerui suggested me to use "+r" instead [1].
-> [1]=C2=A0 https://lore.kernel.org/linux-arch/5b14144a-9725-41db-7179-c059=
-c41814cf@xen0n.name/
+On Tue,  3 Jun 2025 23:36:49 +0000
+Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
 
-Based on the example at
-https://gcc.gnu.org/onlinedocs/gcc/Local-Register-Variables.html:
+> @@ -2249,6 +2251,20 @@ static inline bool owner_on_cpu(struct task_struct *owner)
+>  unsigned long sched_cpu_util(int cpu);
+>  #endif /* CONFIG_SMP */
+>  
+> +#ifdef CONFIG_RSEQ
+> +
+> +extern bool rseq_delay_resched(void);
+> +extern void rseq_delay_resched_fini(void);
+> +extern void rseq_delay_resched_tick(void);
+> +
+> +#else
+> +
+> +static inline bool rseq_delay_resched(void) { return false; }
+> +static inline void rseq_delay_resched_fini(void) { }
+> +static inline void rseq_delay_resched_tick(void) { }
+> +
+> +#endif
+> +
 
-   To force an operand into a register, create a local variable and specify
-   the register name after the variable=E2=80=99s declaration. Then use the=
- local
-   variable for the asm operand and specify any constraint letter that
-   matches the register:
-  =20
-   register int *p1 asm ("r0") =3D =E2=80=A6;
-   register int *p2 asm ("r1") =3D =E2=80=A6;
-   register int *result asm ("r0");
-   asm ("sysint" : "=3Dr" (result) : "0" (p1), "r" (p2));
-  =20
-I think this should actually be written
+Can we add a config to make this optional. I don't want to allow any task
+to have an extended timeslice over RT tasks regardless of how small the
+delay is.
 
- 	asm volatile(
- 	"      syscall 0\n"
-	: "=3Dr" (ret)
- 	: "r" (nr), "0" (buffer), "r" (len), "r" (flags)
- 	: "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7",
-"$t8",
- 	  "memory");
-
-i.e. "=3D" should be used for the output operand 0, and "0" should be used
-for the input operand 2 (buffer) to emphasis the same register as
-operand 0 is used.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+-- Steve
 
