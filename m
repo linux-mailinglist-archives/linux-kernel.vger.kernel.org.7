@@ -1,151 +1,206 @@
-Return-Path: <linux-kernel+bounces-673319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204E4ACDFD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:08:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B58ACDFE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A351898D9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A644A188ED21
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91991290BA5;
-	Wed,  4 Jun 2025 14:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4575290BA5;
+	Wed,  4 Jun 2025 14:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGsYUtSw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gERBw3I/"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B141E52D;
-	Wed,  4 Jun 2025 14:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707DB1E52D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749046070; cv=none; b=t/PXdFiKjgPTYZb4pu1q/E3h1WD20gUcnWp5f9+L1VlFJxl1J4g+QKqOWM+NzoSHiURQ7jLRbBkLNlFrxyoscONmXHSkkrNSUNl+OGl+UahNqI5EpU/98kkB+W9nNMNsp04z57XxJrMje416KqhGEMK89JtZUTLER8n1ANBhmTk=
+	t=1749046140; cv=none; b=ka9+iLeEj+32cS6+NiMr8bdtUotxlrgPxRY8tdvJsx2IoF6MGm3Dx97m3R6k9/aKOqMOJJh2RPX4nO+uNSdjONSQ4rTAeYzc26GnXEChhu33OSDhBnObPdue+rFSD2g72aVZ5iAaQfJ76lLgq+vGKu4ATM9v2gg+fc97IlG3Dcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749046070; c=relaxed/simple;
-	bh=b6xnqzpYhDmE6s6nfOyKsqfw46QpWokc7n3shvEH8eE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ONctVcK4F09+C5pAQXRJWQh99QiDcQLMBURSVjtefptBk9tNK00ekPJ+/piEpvKnY5duXR7N/CdjWEPTKiLxOgoOYNRhhv1v5DM4ns+/AKBm9mLhkjSPkz1KLkW/39sanWH5FcXZmjJz+GYgkt2Mu2740KjbD0RNJqa78oflVtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGsYUtSw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C44C4CEE4;
-	Wed,  4 Jun 2025 14:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749046069;
-	bh=b6xnqzpYhDmE6s6nfOyKsqfw46QpWokc7n3shvEH8eE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qGsYUtSwf16XeOcAzxtoTu8ey1M0HmLlDL0wk9MemHSHWIUKgo5LwAsy1akEtLCye
-	 wXbnF66y821mK49ulzh0fkdNghwDJOM+nqmLYrjnMpoux6dnhZENm1loJAXawIVGVj
-	 fZkFUrPM14uKPZrNRuuMKKlPeDcufHlgqumWvocceKk81jp5xk3qc77RqZ51SCp2Gf
-	 NWe+FEhQMeI+bjQazBCjHMD7RBbt9+Q0lg2dYZRTSJObz4BNwbw2YEpW2tf43V6tlp
-	 ZKIrnlrXon8J4EggkkhyJPS5Bh2R3ng6Dr8tvC90v39TohVNqZpXnMPWhAg1b0092S
-	 +NcN4Fn/mP6jQ==
-Message-ID: <cd6e92af-1304-4078-9ed7-de1cb53c66da@kernel.org>
-Date: Wed, 4 Jun 2025 16:07:43 +0200
+	s=arc-20240116; t=1749046140; c=relaxed/simple;
+	bh=gOOWlCX1FpgYOZem8m3o9sFlBzYMOYduHrSfBZ/m3k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9dJqY+NRx+6I6fIDqUXuEkCX6OahoMJ5k3xshGIHpn6E+JZrdD6o/RRm1X4Kdr6Doux9Xecit/kGCn+th0u8Ziobrx1Ojy1lplhSBRbQwcc4ixqIP5kmfKsdzk455fA6MiJ3ySS3k6578212QTV1km+GLCK6kmMtWMk/H+ig18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gERBw3I/; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e817ac96e87so711779276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 07:08:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749046137; x=1749650937; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bCKMLvfrG58EXYW/q3xMdTa1ro6Bjgf7O9LMZV8k7Fg=;
+        b=gERBw3I/uRvzah26Ks6yrsFmAGUwdgbR/vhjn3pYabYRtf7KNBuZvRCzPbDOn80R52
+         6YykBUvUXRZ4K3w7h3bdcumHrrpXhzL43TB29ppeD5dJkyu1EoQrpztuA4JhEI+5E/Es
+         cmlWOqTEY0YZcq9Nuw39yFADRNNXjBgnqZTM0TSE0Flj80SnPHqdgFP+++Jsp/M8IVTa
+         2MFO1CtradtwwzcYYpRGNTi5aASzT5f+xdLsEyG8XUHhW9nLqxESSVNoVVNhGfpvJnoD
+         VuvfwbJQr2QO6crf2T+SSYc+7GpNbNiRfOBiCowswfTPLimDv8/EIcCKMZlDmeuI+Rq4
+         d8rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749046137; x=1749650937;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bCKMLvfrG58EXYW/q3xMdTa1ro6Bjgf7O9LMZV8k7Fg=;
+        b=LJJ/fE5lpq62Fy+z4F/se6ptR9e8uUOaivkQEGEVOJQ60OGBKGPqhaDC69AgE/3BIo
+         Lred9awW6HH3J+fOx8909oJ+sWb5dHTyByGcHwTpYlMm3jx5WhGP1lxQ0Fnb0tq/CTP6
+         4UtoVp0NG1hSBEmCuuWGzL34AKKRDo33U4OGt0m997w/Ib6YJBDF5Rgiht8YZCYP7sG4
+         4Dy2m1Pe9q9RZTdX1XKRQ76jFyx9R6Xi14irelykMadJYt0bL3HaM6Gn+PrSNi5co9Fn
+         SYNSD8kpu8TncgP98EulKY0a5CJ+MwqL/pBQMqKIla6m4bpP2c13/q8Lu3hnsNeBTUrC
+         HdXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPRS+afg6l+zCVTdBHc48IuMnnOKWVTtTIPgiYu7ZtO1p/RiJtwa7w6KEBvB6eJvlJXV3UvtvTvV0ImpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBU2XbIHfu753AugFHNgOiI210mzopA0Uaxu61y3dAVzj2z6qq
+	VO171EaqESulP3gMGqT8Ntu3wD9dxQjwAIKKeVcWED++GR19OkkGtw8JY2OZ0AL0pI2AuiKTber
+	HoVpIHmYBgILVxVAHQCIyjSrjsV5EhFfuerdpK/N07w==
+X-Gm-Gg: ASbGncuZyXlkJywEbGAlJbufFbFETtCtu7TU3EwKwtIYmcRX77o26vC3B+NrkXffCGC
+	EgU0T+THqXBdQNSez9D5cFpiZdwOvvN/Ir70soUyT0dwl1m2/5CK6oZPqFcFI22/CubLNbus4Jf
+	cNplmjfg7wy8kzyu0Pln/NZ7yWy7KHxDwJNw==
+X-Google-Smtp-Source: AGHT+IH1uN9PQBI4TxvQgOMEHLZAQqYAI1FFT1QA2Z54eVoaJJVTZCIulnmyyn43PiYP3CgChRHTn+sbXKdyr+ZK87c=
+X-Received: by 2002:a05:6902:2291:b0:e81:8639:c5aa with SMTP id
+ 3f1490d57ef6-e818639ce67mr1014126276.32.1749046137370; Wed, 04 Jun 2025
+ 07:08:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: crypto: Document support for SPAcc
-To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
- manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
- Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
-References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
- <20250602053231.403143-2-pavitrakumarm@vayavyalabs.com>
- <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
- <CALxtO0mpQtqPB0h_Wff2dLGo=Mxk02JJQkK4rn+=TuScNdSfxQ@mail.gmail.com>
- <3570be5b-cb20-4259-9a9b-959098b902d0@kernel.org>
- <CALxtO0mH=GwhQxQBsmMQYd+qgAue9WxXN1XWo9BncVJvJk6d8A@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CALxtO0mH=GwhQxQBsmMQYd+qgAue9WxXN1XWo9BncVJvJk6d8A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250410-sets-bxs-4-64-patch-v1-v6-0-eda620c5865f@imgtec.com> <20250410-sets-bxs-4-64-patch-v1-v6-5-eda620c5865f@imgtec.com>
+In-Reply-To: <20250410-sets-bxs-4-64-patch-v1-v6-5-eda620c5865f@imgtec.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Jun 2025 16:08:21 +0200
+X-Gm-Features: AX0GCFvzY5vbkEIzVaD80QV5URTGeK5dhN_mN9Qk3_Vhcas3hbWoHL7IT58BST4
+Message-ID: <CAPDyKFpKkSb=kGn4y18uFy9uhxFkjt7Gi2bUAzzqGnyUtTAoMg@mail.gmail.com>
+Subject: Re: [PATCH v6 05/18] drm/imagination: Add power domain control
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>, 
+	Darren Etheridge <detheridge@ti.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	Alessio Belle <alessio.belle@imgtec.com>, Alexandru Dadu <alexandru.dadu@imgtec.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/06/2025 14:20, Pavitrakumar Managutte wrote:
->>
->>>>> +
->>>>> +  snps,vspacc-id:
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    description: |
->>>>> +      Virtual SPAcc instance identifier.
->>>>> +      The SPAcc hardware supports multiple virtual instances (determined by
->>>>> +      ELP_SPACC_CONFIG_VSPACC_CNT parameter), and this ID is used to identify
->>>>> +      which virtual instance this node represents.
->>>>
->>>> No, IDs are not accepted.
->>>
->>> PK: This represents the specific virtual SPAcc that is being used in
->>> the current configuration. It is used to index into the register banks
->>> and the context memories of the virtual SPAcc that is being used. The
->>> SPAcc IP can be configured as dedicated virtual SPAccs in
->>> heterogeneous environments.
->>
->> OK. Why registers are not narrowed to only this instance? It feels like
->> you provide here full register space for multiple devices and then
->> select the bank with above ID.
-> 
-> PK: No, we cant narrow the registers to only this instance since its
-> is just a single SPAcc with multiple virtual SPAcc instances. The same
-> set of registers(aka register banks) and context memories are
-> repeated, but sit at different offset addresses (i*4000 +
-> register-offsets). The crypto hardware engine inside is shared by all
-> the virtual SPAccs. This is very much for a heterogeneous computing
-> scenario.
+On Thu, 10 Apr 2025 at 12:12, Matt Coster <matt.coster@imgtec.com> wrote:
+>
+> The first supported GPU only used a single power domain so this was
+> automatically handled by the device runtime.
+>
+> In order to support multiple power domains, they must be enumerated from
+> devicetree and linked to both the GPU device and each other to ensure
+> correct power sequencing at start time.
+>
+> For all Imagination Rogue GPUs, power domains are named "a", "b", etc. and
+> the sequence A->B->... is always valid for startup with the reverse true
+> for shutdown. Note this is not always the *only* valid sequence, but it's
+> simple and does not require special-casing for different GPU power
+> topologies.
+>
+> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> Reviewed-by: Frank Binns <frank.binns@imgtec.com>
 
-Then maybe you have one crypto engine? You ask us to guess all of this,
-also because you do not upstream the DTS for real product. Any
-mentioning of "virtual" already raises concerns...
+Realize that I am a bit late to this, but I was recently pointed to
+this commit [1] by Michal.
 
-Best regards,
-Krzysztof
+[...]
+
+> +
+> +int pvr_power_domains_init(struct pvr_device *pvr_dev)
+> +{
+> +       struct device *dev = from_pvr_device(pvr_dev)->dev;
+> +
+> +       struct device_link **domain_links __free(kfree) = NULL;
+> +       struct device **domain_devs __free(kfree) = NULL;
+> +       int domain_count;
+> +       int link_count;
+> +
+> +       char dev_name[2] = "a";
+
+It's certainly good to use a name to be future proof, but we should at
+least try to pick a somewhat descriptive name for what this PM domain
+is used for.
+
+Moreover, this requires a corresponding update to the DT docs.
+
+> +       int err;
+> +       int i;
+> +
+> +       domain_count = of_count_phandle_with_args(dev->of_node, "power-domains",
+> +                                                 "#power-domain-cells");
+> +       if (domain_count < 0)
+> +               return domain_count;
+> +
+> +       if (domain_count <= 1)
+> +               return 0;
+> +
+> +       link_count = domain_count + (domain_count - 1);
+> +
+> +       domain_devs = kcalloc(domain_count, sizeof(*domain_devs), GFP_KERNEL);
+> +       if (!domain_devs)
+> +               return -ENOMEM;
+> +
+> +       domain_links = kcalloc(link_count, sizeof(*domain_links), GFP_KERNEL);
+> +       if (!domain_links)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < domain_count; i++) {
+> +               struct device *domain_dev;
+> +
+> +               dev_name[0] = 'a' + i;
+> +               domain_dev = dev_pm_domain_attach_by_name(dev, dev_name);
+> +               if (IS_ERR_OR_NULL(domain_dev)) {
+> +                       err = domain_dev ? PTR_ERR(domain_dev) : -ENODEV;
+> +                       goto err_detach;
+> +               }
+> +
+> +               domain_devs[i] = domain_dev;
+> +       }
+> +
+> +       for (i = 0; i < domain_count; i++) {
+> +               struct device_link *link;
+> +
+> +               link = device_link_add(dev, domain_devs[i], DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
+> +               if (!link) {
+> +                       err = -ENODEV;
+> +                       goto err_unlink;
+> +               }
+> +
+> +               domain_links[i] = link;
+> +       }
+> +
+> +       for (i = domain_count; i < link_count; i++) {
+> +               struct device_link *link;
+> +
+> +               link = device_link_add(domain_devs[i - domain_count + 1],
+> +                                      domain_devs[i - domain_count],
+> +                                      DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
+> +               if (!link) {
+> +                       err = -ENODEV;
+> +                       goto err_unlink;
+> +               }
+> +
+> +               domain_links[i] = link;
+> +       }
+
+Most of the code above (and the error/remove-path) can be considered
+as boiler-plate code and can be replaced by using
+devm_pm_domain_attach_list() instead.
+
+[...]
+
+Kind regards
+Uffe
+
+[1]
+https://lore.kernel.org/all/a68e3bee-f4ad-4d73-a5a8-e39772c41711@samsung.com/
 
