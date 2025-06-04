@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-673062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93F4ACDBA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:07:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192E1ACDBB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C763A410A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741FD1895CDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8AC28D837;
-	Wed,  4 Jun 2025 10:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC78D28DB53;
+	Wed,  4 Jun 2025 10:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bLT7tM+T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MYITG1KW"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D7928D828
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44BA28D8E9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749031648; cv=none; b=eCvFSR6i7qwRouMGtTvmoq5cUH2IR2Qy1aDBAkFt104DjChC3VBr5SB11ze8bIIqFeOaAVWkYgwhxGQBNNVngDtdxbZSyj06sEP3mgnjpsVbFE6DOFSncdIcSzsUpHSRmzqT7gP9UjgG+dsGRu3HREgiAmSex/7csu4zszO/39E=
+	t=1749031905; cv=none; b=hFLwGwtpsRCgXLUqOp64Fadi3MWwfuj+VITSpkkRNJMgz9J4ilE7s2xnTNmbOGwjxtsL5su3CfMZvj/T7I1NrE65/xgDdCUyuz/ntFEg5Od5biRPBn79JlApSL0gnmshMoC5nqWi5FdkAsOSimHfDvoIobYaIZ46acqFJRcA9YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749031648; c=relaxed/simple;
-	bh=12SlAVxWL49IT3DlM/LrsD+2sJP1//rmG4q4/hAXMd4=;
+	s=arc-20240116; t=1749031905; c=relaxed/simple;
+	bh=bMz8PIBAQbrvx8Djn/oBl8MxTjTq84wAVZa1BcDfmSI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WE1VvC5i4ubJbFPWH3y4xpbLQ2ucWGPw8VS+xQ+dSyEVcjSggETZLrcjc7mdbTBLNyXN6PmNNYFHoScU2EFN5zb7ND0ePf+ChlGMOyfx/Vdo1Mvb52QT7KsjI+dUdBXTUtMJA4fRg6HhINrTIfiTjJ+WiSqyUcCW4OaME7c7kXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bLT7tM+T; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749031645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7PRfniGheLvssRHrIJEaU1qt06uo8ioIfyXuvxIrE6A=;
-	b=bLT7tM+TiyvsSZJ8R0HXmV0xYMG0gwc9YIfwYU4vm40ZJO4RYOtxDDc4Ocrfqzxmgc5Wk8
-	A4afuOttdL0+BREnG2L5AzKBnncPVUDmhNWg0eMTWLQRS2rlzJ5iaodjvPSMR2NREK9myI
-	5SW2umENqgI1nvvcmMJ4VIkxOMJw25Y=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-vAoOVoNrOQe9Gfal9m4_Kg-1; Wed, 04 Jun 2025 06:07:24 -0400
-X-MC-Unique: vAoOVoNrOQe9Gfal9m4_Kg-1
-X-Mimecast-MFC-AGG-ID: vAoOVoNrOQe9Gfal9m4_Kg_1749031643
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450dada0f83so38734705e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 03:07:24 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=UouLyuLmPnGPh8W6NJgq6Xk8PPvQxWNWNpS2b6DqRY2Y/RGXT1xb9k1ihYkP7xd/uKQH4hBXoMPPOv+Si0dT4DYZXBr6bBl/uIfpoQLDTxuGnoMLg6MjaSX8PbJqlSpOwJeqeaP5c2M7pKDbJfqW1AXidrQ+f4CyumyI97sBgpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MYITG1KW; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad89ee255easo1199601766b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 03:11:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749031900; x=1749636700; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oWPoWbzUhmp2RDptwz5xvj52B4NS6cLJTvzVIv/q4Ys=;
+        b=MYITG1KW2pDdcyH0HIRjSnh29SjV6H0LusgszbnRgJmvAPA6jn2WewC8cAHg1Nr+De
+         l7PtwxmbFx1veP94y3WcND0QBPLjRHpiVJKv9HR4ZbyXFO/oq4UMXVS7H2Pd+RnbYRl0
+         7hRGDvoPtpsxUucOik1NfinqsvY1s0FsUtfVfS7JyhNrlk6TwVPzAiiRdI5Rt3TMGop2
+         TKZDXxPupvVlvfiVs/IQPVaz2MSGbdFc/4AFy3n1ukHCHXsRWxRcv1GD9VHKdhzaTuVJ
+         G1HI3rJJmo3NMHAg1IKCngyMi4EqC3Ax0efTG8iC03dpaRpkSPy7Yrky4fgWB6nOlM08
+         X3iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749031643; x=1749636443;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7PRfniGheLvssRHrIJEaU1qt06uo8ioIfyXuvxIrE6A=;
-        b=mje6yjB3slp1f2yAlH38t4q11cMCQTH96vw4lliFDKnHqEoR+RCYZFwwHgFCTDyk7t
-         GJnZd+aBlei369BnOVq0URkKXVRLNXKfvr2WpfDjG9ZMaRpoWy6kNUE1llYYgUtaJdVr
-         nz83zk6BdVpJwArD2fA6huj1JAoaAeFG1peiSgf1e/gRrVrL6LISCg6hJDJvVnWzqntj
-         OHK1oF7xNN31sUcZcbqGdXAqRN7oFEIB+wwVphi4/iW35GqVUgLnk4IPciaEZN8q7wR5
-         lCPSinYJ8zQvsazCf/YF0LZSMpgKF+CWKIPwp04qO4gfnZXGv/1CzIuLgdPFMebRB2s+
-         rqIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYL1+MUqt1Gec/lUk9y9VweJSa4/9yG9ZJjQ9yk/+7jzdqtsQpf76XUgJRXX+bLrDJOAJm5nOpRDUTOJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGeI0raA7nv5mMO/o6ek37nhoq1FNFRFiICKxWS++lkTqU+izA
-	4c5NuzJ9H/NoF2WtCZuP+V3jBCDMiFQfj4M2w9VSSOVEw14wCiNy8x+IWDcg03bSRNS7EhfZHvW
-	+y2lWDF+gZCWgsOLwESfFetsyF8FgCg55SeJXOHlzUetyeIujRgVjbrSrQIWkme7Vpg==
-X-Gm-Gg: ASbGnctKf8Kn6jcC+Ka4nMW9g8yOfMLeKx/qtq8Uk4Vc7fkM+KfpwMF8XaxcZtNsgwr
-	SqpbSWqePNVFo9Df5aP5mTLSi9Ca5bl4QZNnj8JIy/+lLQ0vTyf0HMPtez7enwpSO5dakJ8b+wG
-	89F4wrMn9gEEcN+Ys/zhMxyPDTqHL3/OYfb9RzY29aImpfheSfQFRXJNTK1O5dX+YoBKcIHLU5Q
-	0kRwMwaz8vmF6W1ge2Uxjc3Im5iJ1KJK9M47HfbbmF19MpB+Ab7+LaF42hNKRTfuAbCm9Ejn5S2
-	aUZiFUjXJCRVWa0Nf4wMjNHwCjECD1e5NFghEsNiVagf1CDBpK/gPVjshNbsWbrvmdYmg7hTPA2
-	RCDMw85vIrMqlesEp/87CYJTALW03SDYjmY3+o6blfDejGqa4/w==
-X-Received: by 2002:a05:600c:a015:b0:450:d37c:9fc8 with SMTP id 5b1f17b1804b1-451f0a74191mr18412185e9.13.1749031643158;
-        Wed, 04 Jun 2025 03:07:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7o2bEYM4OLlTeV0JBA6sp6f4ZXgEdhRDuQC/nWLoEHV+qeqnF/gO2YE9gGAKeTmJLS62Qxg==
-X-Received: by 2002:a05:600c:a015:b0:450:d37c:9fc8 with SMTP id 5b1f17b1804b1-451f0a74191mr18411865e9.13.1749031642639;
-        Wed, 04 Jun 2025 03:07:22 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf? (p200300d82f1bb8006fdb1af24fbd1fdf.dip0.t-ipconnect.de. [2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8006613sm201595465e9.28.2025.06.04.03.07.21
+        d=1e100.net; s=20230601; t=1749031900; x=1749636700;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oWPoWbzUhmp2RDptwz5xvj52B4NS6cLJTvzVIv/q4Ys=;
+        b=gimBQ6bK/urfjtH2afhBZhW4thH1GfwPpFRT7paDnJw2Sp3ABWISamINdX4c4gGxnl
+         8Y3y7x5njZRmQ9QiW0yKoC6rC4bCKzcPRqEkEZ2z87ZxpNOqoQuWt/z5gBBsxyR/0zVF
+         EK9pe4M6SDoA7NvVBvhMXh2t9bKU/Sccp/JTrpMxlWN78zknPVaZ2wzXWh+Z8bsR14zI
+         NaW1YBfQihBM2ZKz++l6qWjE3mggRf1JpL3NgqPDZ7LpPMTNHNBZEikU9G5SYybDRg8h
+         BJpu0i6uPUnkmN0yeJmVjZQyioJtsVELmqb8LmThCEubhm/bTruHGgPNf9JKhIQ9tnUC
+         W6ew==
+X-Gm-Message-State: AOJu0Ywr6FBuKsA8s71Sm0TV96lk/7gQiXe4JRnGe8lRaWuFCsaCLilV
+	jME6MjAUFiD6gZnVrxYNMrNemk8hOy4koil08s8P4iUmKpeCF8fCFeqeXDwb7UowGDA=
+X-Gm-Gg: ASbGnctSmigqyBmN7iZj5VDkKq0q1flL5dergaWLi8Jl21YdyMF3ogQhBXykKsLFG7j
+	t+RV15L8vsw9Wxw8nwVXCqmt1ymzgiIUenRqGYWOitx2VyLNBp2ZWOsWMZx2brY8Iuz/mr9ArGV
+	9WNRAh7o/W1+n/ziFhwMmWmYXESb2pIE2XiRun1IbrK9DwcfT6Du9Gf8vVkHoU7my9EFKy680Hp
+	UfqqVFhZHdMfE6iahoZEF2/ev14YUYln17/LqDn1fb1g0IK5kNq5NFJVoRD77poOz7H+k8exwjs
+	b9IvheII8ZbZRk07kVh16pQ4koAK4CYDePe5lVYku+X6Dzam25I7aDa+lMGLznoEVbjnjwRWp1d
+	Nfqka3W8889TScwm1GQ==
+X-Google-Smtp-Source: AGHT+IEN7+lUvVjlo5WrsWRuQY/5JwNtTIftyeq/8cm9Qk7+1lHTStjH4l2FSVtegPvjKCRSAb2npw==
+X-Received: by 2002:a17:906:7b56:b0:adb:2ef9:db38 with SMTP id a640c23a62f3a-addf8ebb630mr142177666b.36.1749031899644;
+        Wed, 04 Jun 2025 03:11:39 -0700 (PDT)
+Received: from ?IPV6:2001:a61:13e2:3601:e970:9c8e:9666:22ea? ([2001:a61:13e2:3601:e970:9c8e:9666:22ea])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb325c829csm920799566b.145.2025.06.04.03.11.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 03:07:22 -0700 (PDT)
-Message-ID: <fa9d72ac-1b46-4a09-8f29-af97f2ca6e2e@redhat.com>
-Date: Wed, 4 Jun 2025 12:07:21 +0200
+        Wed, 04 Jun 2025 03:11:39 -0700 (PDT)
+Message-ID: <b4c15a6b-0906-4fea-b218-4467afdd8345@suse.com>
+Date: Wed, 4 Jun 2025 12:11:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,243 +80,387 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: gup: fail migration when no migratable page to
- prevent CMA pinning
-To: Hyesoo Yu <hyesoo.yu@samsung.com>
-Cc: janghyuck.kim@samsung.com, zhaoyang.huang@unisoc.com,
- jaewon31.kim@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <CGME20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55@epcas2p1.samsung.com>
- <20250604095049.4052078-1-hyesoo.yu@samsung.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v12 1/7] mfd: Add core driver for Nuvoton NCT6694
+To: a0282524688@gmail.com, lee@kernel.org, linus.walleij@linaro.org,
+ brgl@bgdev.pl, andi.shyti@kernel.org, mkl@pengutronix.de,
+ mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com,
+ alexandre.belloni@bootlin.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-usb@vger.kernel.org, Ming Yu <tmyu0@nuvoton.com>
+References: <20250604041418.1188792-1-tmyu0@nuvoton.com>
+ <20250604041418.1188792-2-tmyu0@nuvoton.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250604095049.4052078-1-hyesoo.yu@samsung.com>
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <20250604041418.1188792-2-tmyu0@nuvoton.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04.06.25 11:50, Hyesoo Yu wrote:
-> Commit 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
-> caused CMA pages to become pinned in some cases when handling longterm GUP.
-> This happened because migration would return success immediately if no pages
-> were in the movable_page_list, without retrying.
+On 04.06.25 06:14, a0282524688@gmail.com wrote:
+> From: Ming Yu <tmyu0@nuvoton.com>
 > 
-> However, CMA pages can be temporarily off the LRU (e.g., in pagevecs), and
-
-A better example might be concurrent isolation. Just imagine two of 
-these longterm pinnings racing.
-
-> therefore not appear in movable_page_list, even though they can be migrated
-> later. Before commit 1aaf8c, the kernel would retry migration in such cases,
-> which helped avoid accidental CMA pinning.
+> The Nuvoton NCT6694 provides an USB interface to the host to
+> access its features.
 > 
-> The commit 1aaf8c aimed to support an out-of-tree use case (like pKVM), where
-> longterm GUP was applied to non-LRU CMA pages. But allowing CMA pinning
-> in general for this corner case could lead to more fragmentation and
-> reliability issues. So this patch prevents that.
+> Sub-devices can use the USB functions nct6694_read_msg() and
+> nct6694_write_msg() to issue a command. They can also request
+> interrupt that will be called when the USB device receives its
+> interrupt pipe.
 > 
-> Instead of retrying, this patch explicitly fails the migration attempt
-> (-EBUSY) if no movable pages are found and unpinnable pages remain.
-> This avoids infinite loops and gives user a clear signal to retry,
-> rather then spinning inside kernel.
-
-Hmmm, that means we will return EBUSY to the caller. Are all users 
-actually prepared to deal with that?
-
-So far we only returned EBUSY in this corner-case 
-migrate_device_coherent_folio() that most callers never actually trigger.
-
-Maybe we should do EAGAIN for now (old way of doing it?), and look into 
-doing EBUSY separately.
-
-> 
-> Fixes: 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
-> Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
 > ---
->   mm/gup.c | 49 ++++++++++++++++++++++++++-----------------------
->   1 file changed, 26 insertions(+), 23 deletions(-)
+> Changes since version 11:
+> - Modify the irq_domain_add_simple() to irq_domain_create_simple()
+> - Fix mfd_cell back to v9, and use Use platform_device's id to replace IDA
+>    in sub-drivers
 > 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index e065a49842a8..446938aedcc9 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -2303,12 +2303,13 @@ static void pofs_unpin(struct pages_or_folios *pofs)
->   /*
->    * Returns the number of collected folios. Return value is always >= 0.
->    */
-
-Comment should be removed.
-
-> -static void collect_longterm_unpinnable_folios(
-> +static bool collect_longterm_unpinnable_folios(
->   		struct list_head *movable_folio_list,
->   		struct pages_or_folios *pofs)
->   {
->   	struct folio *prev_folio = NULL;
->   	bool drain_allow = true;
-> +	bool any_unpinnable = false;
->   	unsigned long i;
+> Changes since version 10:
+> - Add change log for the patch
+> - Fix mfd_cell to MFD_CELL_NAME()
+> - Remove unnecessary blank line
+> 
+> Changes since version 9:
+> - Add KernelDoc to exported functions
+> 
+> Changes since version 8:
+> - Modify the signed-off-by with my work address
+> - Rename all MFD cell names to "nct6694-xxx"
+> - Fix some comments in nct6694.c and in nct6694.h
+> 
+> Changes since version 7:
+> - Add error handling for devm_mutex_init()
+> 
+> Changes since version 6:
+> 
+> Changes since version 5:
+> - Fix mfd_cell to MFD_CELL_NAME() and MFD_CELL_BASIC()
+> - Drop unnecessary macros
+> 
+> Changes since version 4:
+> - Modify arguments in read/write function to a pointer to cmd_header
+> 
+> Changes since version 3:
+> - Modify array buffer to structure
+> - Fix defines and comments
+> - Add header <linux/bits.h> and use BIT macro
+> - Modify mutex_init() to devm_mutex_init()
+> 
+> Changes since version 2:
+> 
+> Changes since version 1:
+> - Implement IRQ domain to handle IRQ demux
+> - Modify USB_DEVICE to USB_DEVICE_AND_INTERFACE_INFO API
+> - Add command structure
+> - Fix USB functions
+> - Sort each driver's header files alphabetically
+> 
+>   MAINTAINERS                 |   6 +
+>   drivers/mfd/Kconfig         |  15 ++
+>   drivers/mfd/Makefile        |   2 +
+>   drivers/mfd/nct6694.c       | 386 ++++++++++++++++++++++++++++++++++++
+>   include/linux/mfd/nct6694.h |  98 +++++++++
+>   5 files changed, 507 insertions(+)
+>   create mode 100644 drivers/mfd/nct6694.c
+>   create mode 100644 include/linux/mfd/nct6694.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 98201e1f4ab5..29d2d05bac22 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17679,6 +17679,12 @@ F:	drivers/nubus/
+>   F:	include/linux/nubus.h
+>   F:	include/uapi/linux/nubus.h
 >   
->   	for (i = 0; i < pofs->nr_entries; i++) {
-> @@ -2321,6 +2322,8 @@ static void collect_longterm_unpinnable_folios(
->   		if (folio_is_longterm_pinnable(folio))
->   			continue;
->   
-> +		any_unpinnable = true;
+> +NUVOTON NCT6694 MFD DRIVER
+> +M:	Ming Yu <tmyu0@nuvoton.com>
+> +S:	Supported
+> +F:	drivers/mfd/nct6694.c
+> +F:	include/linux/mfd/nct6694.h
 > +
->   		if (folio_is_device_coherent(folio))
->   			continue;
+>   NVIDIA (rivafb and nvidiafb) FRAMEBUFFER DRIVER
+>   M:	Antonino Daplas <adaplas@gmail.com>
+>   L:	linux-fbdev@vger.kernel.org
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 96992af22565..489c1950f1ac 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1078,6 +1078,21 @@ config MFD_MENF21BMC
+>   	  This driver can also be built as a module. If so the module
+>   	  will be called menf21bmc.
 >   
-> @@ -2342,6 +2345,8 @@ static void collect_longterm_unpinnable_folios(
->   				    NR_ISOLATED_ANON + folio_is_file_lru(folio),
->   				    folio_nr_pages(folio));
->   	}
+> +config MFD_NCT6694
+> +	tristate "Nuvoton NCT6694 support"
+> +	select MFD_CORE
+> +	depends on USB
+> +	help
+> +	  This enables support for the Nuvoton USB device NCT6694, which shares
+> +	  peripherals.
+> +	  The Nuvoton NCT6694 is a peripheral expander with 16 GPIO chips,
+> +	  6 I2C controllers, 2 CANfd controllers, 2 Watchdog timers, ADC,
+> +	  PWM, and RTC.
+> +	  This driver provides core APIs to access the NCT6694 hardware
+> +	  monitoring and control features.
+> +	  Additional drivers must be enabled to utilize the specific
+> +	  functionalities of the device.
 > +
-> +	return any_unpinnable;
->   }
+>   config MFD_OCELOT
+>   	tristate "Microsemi Ocelot External Control Support"
+>   	depends on SPI_MASTER
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 5e5cc279af60..a96204d938fc 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -120,6 +120,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+>   obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+>   obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
 >   
->   /*
-> @@ -2353,8 +2358,13 @@ static int
->   migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
->   				   struct pages_or_folios *pofs)
->   {
-> -	int ret;
-> +	int ret = -EAGAIN;
->   	unsigned long i;
-> +	struct migration_target_control mtc = {
-> +		.nid = NUMA_NO_NODE,
-> +		.gfp_mask = GFP_USER | __GFP_NOWARN,
-> +		.reason = MR_LONGTERM_PIN,
-> +	};
-
-Reverse xmas tree while we're at it.
-
-But, can we do this cleanup here separately, and not as part of the fix?
-
->   
->   	for (i = 0; i < pofs->nr_entries; i++) {
->   		struct folio *folio = pofs_get_folio(pofs, i);
-> @@ -2370,6 +2380,7 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
->   			gup_put_folio(folio, 1, FOLL_PIN);
->   
->   			if (migrate_device_coherent_folio(folio)) {
-> +				pofs_unpin(pofs);
->   				ret = -EBUSY;
->   				goto err;
->   			}
-> @@ -2388,27 +2399,11 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
->   		pofs_clear_entry(pofs, i);
->   	}
->   
-> -	if (!list_empty(movable_folio_list)) {
-> -		struct migration_target_control mtc = {
-> -			.nid = NUMA_NO_NODE,
-> -			.gfp_mask = GFP_USER | __GFP_NOWARN,
-> -			.reason = MR_LONGTERM_PIN,
-> -		};
-> -
-> -		if (migrate_pages(movable_folio_list, alloc_migration_target,
-> -				  NULL, (unsigned long)&mtc, MIGRATE_SYNC,
-> -				  MR_LONGTERM_PIN, NULL)) {
-> -			ret = -ENOMEM;
-> -			goto err;
-> -		}
-> -	}
-> -
-> -	putback_movable_pages(movable_folio_list);
-> -
-> -	return -EAGAIN;
-> +	if (migrate_pages(movable_folio_list, alloc_migration_target, NULL,
-> +			  (unsigned long)&mtc, MIGRATE_SYNC, MR_LONGTERM_PIN, NULL))
-> +		ret = -ENOMEM;
->   
->   err:
-> -	pofs_unpin(pofs);
->   	putback_movable_pages(movable_folio_list);
->   
->   	return ret;
-> @@ -2417,11 +2412,19 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
->   static long
->   check_and_migrate_movable_pages_or_folios(struct pages_or_folios *pofs)
->   {
-> +	bool any_unpinnable;
+> +obj-$(CONFIG_MFD_NCT6694)	+= nct6694.o
 > +
->   	LIST_HEAD(movable_folio_list);
+>   obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
 >   
-> -	collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
-> -	if (list_empty(&movable_folio_list))
-> +	any_unpinnable = collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
+>   ocelot-soc-objs			:= ocelot-core.o ocelot-spi.o
+> diff --git a/drivers/mfd/nct6694.c b/drivers/mfd/nct6694.c
+> new file mode 100644
+> index 000000000000..82d378ee47ed
+> --- /dev/null
+> +++ b/drivers/mfd/nct6694.c
+> @@ -0,0 +1,386 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025 Nuvoton Technology Corp.
+> + *
+> + * Nuvoton NCT6694 core driver using USB interface to provide
+> + * access to the NCT6694 hardware monitoring and control features.
+> + *
+> + * The NCT6694 is an integrated controller that provides GPIO, I2C,
+> + * CAN, WDT, HWMON and RTC management.
+> + */
 > +
-> +	if (list_empty(&movable_folio_list)) {
-> +		if (any_unpinnable) {
-
-/*
-  * If we find any longterm unpinnable page that we failed to
-  * isolated for migration, it might be because someone else
-  * concurrently isolated it. Make the caller retry until it
-  * succeeds.
-  */
-
-
-> +			pofs_unpin(pofs);
-> +			return -EBUSY;
-> +		}
->   		return 0;
+> +#include <linux/bits.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/nct6694.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/usb.h>
+> +
+> +static const struct mfd_cell nct6694_devs[] = {
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 0),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 1),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 2),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 3),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 4),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 5),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 6),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 7),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 8),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 9),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 10),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 11),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 12),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 13),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 14),
+> +	MFD_CELL_BASIC("nct6694-gpio", NULL, NULL, 0, 15),
+> +
+> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 0),
+> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 1),
+> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 2),
+> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 3),
+> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 4),
+> +	MFD_CELL_BASIC("nct6694-i2c", NULL, NULL, 0, 5),
+> +
+> +	MFD_CELL_BASIC("nct6694-canfd", NULL, NULL, 0, 0),
+> +	MFD_CELL_BASIC("nct6694-canfd", NULL, NULL, 0, 1),
+> +
+> +	MFD_CELL_BASIC("nct6694-wdt", NULL, NULL, 0, 0),
+> +	MFD_CELL_BASIC("nct6694-wdt", NULL, NULL, 0, 1),
+> +
+> +	MFD_CELL_NAME("nct6694-hwmon"),
+> +
+> +	MFD_CELL_NAME("nct6694-rtc"),
+> +};
+> +
+> +static int nct6694_response_err_handling(struct nct6694 *nct6694, unsigned char err_status)
+> +{
+> +	switch (err_status) {
+> +	case NCT6694_NO_ERROR:
+> +		return 0;
+> +	case NCT6694_NOT_SUPPORT_ERROR:
+> +		dev_err(nct6694->dev, "Command is not supported!\n");
+> +		break;
+> +	case NCT6694_NO_RESPONSE_ERROR:
+> +		dev_warn(nct6694->dev, "Command received no response!\n");
+> +		break;
+> +	case NCT6694_TIMEOUT_ERROR:
+> +		dev_warn(nct6694->dev, "Command timed out!\n");
+> +		break;
+> +	case NCT6694_PENDING:
+> +		dev_err(nct6694->dev, "Command is pending!\n");
+> +		break;
+> +	default:
+> +		return -EINVAL;
 > +	}
->   
->   	return migrate_longterm_unpinnable_folios(&movable_folio_list, pofs);
->   }
+> +
+> +	return -EIO;
+> +}
+> +
+> +/**
+> + * nct6694_read_msg() - Read message from NCT6694 device
+> + * @nct6694: NCT6694 device pointer
+> + * @cmd_hd: command header structure
+> + * @buf: buffer to store the response data
+> + *
+> + * Sends a command to the NCT6694 device and reads the response.
+> + * The command header is specified in @cmd_hd, and the response
+> + * data is stored in @buf.
+> + *
+> + * Return: Negative value on error or 0 on success.
+> + */
+> +int nct6694_read_msg(struct nct6694 *nct6694, const struct nct6694_cmd_header *cmd_hd, void *buf)
+> +{
+> +	union nct6694_usb_msg *msg = nct6694->usb_msg;
+> +	struct usb_device *udev = nct6694->udev;
+> +	int tx_len, rx_len, ret;
+> +
+> +	guard(mutex)(&nct6694->access_lock);
+> +
+> +	memcpy(&msg->cmd_header, cmd_hd, sizeof(*cmd_hd));
+> +	msg->cmd_header.hctrl = NCT6694_HCTRL_GET;
+> +
+> +	/* Send command packet to USB device */
+> +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT_EP), &msg->cmd_header,
+> +			   sizeof(*msg), &tx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Receive response packet from USB device */
+> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), &msg->response_header,
+> +			   sizeof(*msg), &rx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Receive data packet from USB device */
+> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), buf,
+> +			   le16_to_cpu(cmd_hd->len), &rx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (rx_len != le16_to_cpu(cmd_hd->len)) {
+> +		dev_err(nct6694->dev, "Expected received length %d, but got %d\n",
+> +			le16_to_cpu(cmd_hd->len), rx_len);
+> +		return -EIO;
+> +	}
+> +
+> +	return nct6694_response_err_handling(nct6694, msg->response_header.sts);
+> +}
+> +EXPORT_SYMBOL_GPL(nct6694_read_msg);
+> +
+> +/**
+> + * nct6694_write_msg() - Write message to NCT6694 device
+> + * @nct6694: NCT6694 device pointer
+> + * @cmd_hd: command header structure
+> + * @buf: buffer containing the data to be sent
+> + *
+> + * Sends a command to the NCT6694 device and writes the data
+> + * from @buf. The command header is specified in @cmd_hd.
+> + *
+> + * Return: Negative value on error or 0 on success.
+> + */
+> +int nct6694_write_msg(struct nct6694 *nct6694, const struct nct6694_cmd_header *cmd_hd, void *buf)
+> +{
+> +	union nct6694_usb_msg *msg = nct6694->usb_msg;
+> +	struct usb_device *udev = nct6694->udev;
+> +	int tx_len, rx_len, ret;
+> +
+> +	guard(mutex)(&nct6694->access_lock);
+> +
+> +	memcpy(&msg->cmd_header, cmd_hd, sizeof(*cmd_hd));
+> +	msg->cmd_header.hctrl = NCT6694_HCTRL_SET;
+> +
+> +	/* Send command packet to USB device */
+> +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT_EP), &msg->cmd_header,
+> +			   sizeof(*msg), &tx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Send data packet to USB device */
+> +	ret = usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT_EP), buf,
+> +			   le16_to_cpu(cmd_hd->len), &tx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Receive response packet from USB device */
+> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), &msg->response_header,
+> +			   sizeof(*msg), &rx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Receive data packet from USB device */
+> +	ret = usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_EP), buf,
+> +			   le16_to_cpu(cmd_hd->len), &rx_len, NCT6694_URB_TIMEOUT);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (rx_len != le16_to_cpu(cmd_hd->len)) {
+> +		dev_err(nct6694->dev, "Expected transmitted length %d, but got %d\n",
+> +			le16_to_cpu(cmd_hd->len), rx_len);
+> +		return -EIO;
+> +	}
+> +
+> +	return nct6694_response_err_handling(nct6694, msg->response_header.sts);
+> +}
+> +EXPORT_SYMBOL_GPL(nct6694_write_msg);
+> +
+> +static void usb_int_callback(struct urb *urb)
+> +{
+> +	struct nct6694 *nct6694 = urb->context;
+> +	unsigned int *int_status = urb->transfer_buffer;
+> +	int ret;
+> +
+> +	switch (urb->status) {
+> +	case 0:
+> +		break;
+> +	case -ECONNRESET:
+> +	case -ENOENT:
+> +	case -ESHUTDOWN:
+> +		return;
+> +	default:
+> +		goto resubmit;
+> +	}
+> +
+> +	while (*int_status) {
+> +		int irq = __ffs(*int_status);
+> +
+> +		generic_handle_irq_safe(irq_find_mapping(nct6694->domain, irq));
+> +		*int_status &= ~BIT(irq);
+> +	}
 
+Does modifying the byte have any benefit?
 
--- 
-Cheers,
+> +resubmit:
+> +	ret = usb_submit_urb(urb, GFP_ATOMIC);
+> +	if (ret)
+> +		dev_warn(nct6694->dev, "Failed to resubmit urb, status %pe",  ERR_PTR(ret));
+> +}
+> +
+> +static void nct6694_irq_lock(struct irq_data *data)
+> +{
+> +	struct nct6694 *nct6694 = irq_data_get_irq_chip_data(data);
+> +
+> +	mutex_lock(&nct6694->irq_lock);
+> +}
 
-David / dhildenb
+Why? Does this do anything but make it _harder_ to tell that you
+cannot take the lock in interrupt?
+
+	Regards
+		Oliver
 
 
