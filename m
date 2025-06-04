@@ -1,184 +1,241 @@
-Return-Path: <linux-kernel+bounces-672665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2008DACD634
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0F0ACD645
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5917D189E859
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8AE189DD8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020EA25C6EF;
-	Wed,  4 Jun 2025 02:53:16 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369A423906A;
-	Wed,  4 Jun 2025 02:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07DD22D790;
+	Wed,  4 Jun 2025 02:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ry5W4Pg0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA27216605;
+	Wed,  4 Jun 2025 02:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749005595; cv=none; b=NjF+W1LoLrr6riYoAVqT53xXQ/0MwwnebujVw0ss+A13qqh1dp90XGW9Dtq8bhBuqCFnd4L2JCbk9O4RbO7YNPRzmIfz2kiVPmfHBpp4cYtnWhyE5VO/e4rg/oIGTmqio9i2jbytCVrcjyHrdVITVu3QnP1bFInd8/JN4DWuF1E=
+	t=1749005811; cv=none; b=VXNTWxy8pIactNj3tgIwz151hH49UMuuYMGxLXayZ9XoXm4FfKufRy9Vb8ZjHqgHunQoMTi1DjfapkS2vXKcGOmRItLKzF18nq39YHS4vCMKxWRkxLHhvXopOEwP2qfOth1o0URft42yWbr08N+IK7sjfPDAmC4C0i339rzV6ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749005595; c=relaxed/simple;
-	bh=mcub4JtT0gUWqPG8n/KXl/GyqQiEcFNqH1upQrURVyY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=X2BgoFn51LZ1p/J6/KoKH+cDm3akbs24JPd/O4Z32YrMvWFrEYLHVOf3LRK+/yjBQvpv9a7k6tWB2YdEQvSXj13oUiLqYZORnv4eshyIq7ATOq/kNMFaFy0NcnWgUPVoh3lXSuznas08ppBWVbRES2gFupe0M1JhoZP0EOI8TOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-70-683fb50a0023
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	kuba@kernel.org,
-	almasrymina@google.com,
-	ilias.apalodimas@linaro.org,
-	harry.yoo@oracle.com,
-	hawk@kernel.org,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch,
-	asml.silence@gmail.com,
-	toke@redhat.com,
-	tariqt@nvidia.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	horms@kernel.org,
-	linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org,
-	vishal.moola@gmail.com
-Subject: [RFC v4 18/18] page_pool: access ->pp_magic through struct netmem_desc in page_pool_page_is_pp()
-Date: Wed,  4 Jun 2025 11:52:46 +0900
-Message-Id: <20250604025246.61616-19-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250604025246.61616-1-byungchul@sk.com>
-References: <20250604025246.61616-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRXUhTYRjHe3fenbMNh4cldlL6cNCHkpVm8ZRi3hjvhVDQhaQXNfLUVtNk
-	fkfhKsO0tsqCpFZNRXNTmkzLGSZlNhXNhh85yzQWRokudCbqpJor7378n//vf/OIKNlbHCJS
-	ZWTzmgyFWk5LsGQ6oCJS8uygcnfZ1AEwWOppqFvIhydfbEIwmJ8jmFv8xICno5OGqop5Cgzv
-	izD8sixRMGF3MTBe8w1Da3EzBa6bXTToirwUXLbVCsDxXC+Eu0vVFDRrvzAw8MJAw1j9HyF8
-	a9dh6L5vwjCuTwC7MRjme6YQdFiaBTB/4yENd/qNNHwtGkfQ/8aF4cElPQJLm1MI3gUDnRBG
-	mkwjAtJy/zNDjNYc0lgbQUqd/RSxmktoYp0tY8joh1aadJV7MWmxeQREd8VNk5mJj5j8bBui
-	iaVpCJNeYwdDPNaNR9gUSVwar1bl8ppd8SckyoFuB84clOVXXi1BWjQaWIrEIo6N4dz2SrzK
-	jzpMghWm2W2c07lIrXAQG8V5XJ2+jkREsW4hN2Hw+ktrWRU3U+ryy5jdwj0uHvGzlN3H/bAP
-	/R/dxNU1vPIPiX35qPue35WxezmdbZBaGeXYaYbT3bAJ/wnrude1TnwLSY1ojRnJVBm56QqV
-	OmansiBDlb/z5Ll0K/I9t+bicqoNzTqOtiNWhOQBUttovFImVORmFaS3I05EyYOkm8J9kTRN
-	UXCe15w7rslR81ntKFSE5euk0fN5aTL2tCKbP8vzmbxm9SoQiUO0KKe3eE/TerS42Wz6nexO
-	njoW+p0hWwvnHNqz5sT6aklKbPihB1X49rWC6DJt3IV+756+/eWK2e3v6qrO6G0bIq5vLirT
-	Dq9LVIuTguraSPEd8eR47HBgvSesMPKp51le0imeofoyl3eMkUbTZHJDYcBL5nCwPCrGGxnY
-	lNpTI8dZSkVUBKXJUvwFNZAvYNgCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRXUhTYRzGe3fenc3l6LiWntQQRh+kaQpaf6jMJPGkEF0EgTc68tCG25RN
-	RZNwpSGO1JZRotNWos1NnKjpTBGbYzoSFD9ilqVNFKMwTbOpQemiux/P183DJ0QmHMyXq3JZ
-	tUqqkJACLLh6riRS8OqiLFrffxQM1lYSLN4CeDlv44LB3I1gY+sDD9YdwyQ0Pt8kwDBWiuGn
-	dZuARaeHB3PNSxj6y3oI8FSNkFBRukPAPZuJA0P1Li6Md1dy4fF2EwE92nkeTL42kPCp9Q8X
-	luwVGFy1LRjmKhPAaQyEzbffEDisPRzYfFBPQvWEkYSF0jkEE0MeDHV3KxFYB9xc2PEayAQJ
-	09Uyw2F6az/yGGNHHtNpCmd07gmC6TCXk0zHj0c8ZvZdP8mM1Oxgpte2zmEqSlZIZm3xPWa+
-	D0yTTOPyKoexdk1jZtTo4F0LSBOcz2QV8nxWfTo+QyCbdI3jnClRwYv75UiLZg/okB+fpmLp
-	BkcLZ49J6gTtdm8ReyymYuh1zzDWIQGfoFa49KJhxxc6SMnpNZ0H7zGmjtHPymZ8LKTO0F+c
-	0/jfaBhtaR/0Dfnt6rMrT31dERVHV9imiIdIYET7zEgsV+UrpXJFXJQmS1aokhdE3cxWdqDd
-	/5rv/Nbb0MZksh1RfCTxF9pm42UirjRfU6i0I5pPSMTCsJO7kjBTWnibVWenq/MUrMaOQvhY
-	EiRMucFmiKhb0lw2i2VzWPV/l8P3C9Yic/lZh77a4lKZuvXRy6MWjy61rddTl+to8lKqy8PL
-	kYPZzc669H3+xTMXarTF0ohLndOHaz4nFB1RlnvfBDZETUVUPVEZ3d2xcYkLp46z0aHGNLw9
-	NF/VZk9VFCX1JQZgxf6vA0nXJX1XRn+1tsuSD40528SrQSEElRLqmJFgjUwaE06oNdK/gSRD
-	AbsCAAA=
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1749005811; c=relaxed/simple;
+	bh=9ADNWried8jflnHLRDx186uAkTp4IyX00tCTcIjR754=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eBGaAfHgK0MbH3CdJWMSg2/jOMjSPjT0JctdUJc/MYgd/wn8kdpPagv01ZukFNySAPjAxsnwFHnw62ay/L82V7axAQJSpK2KEd38QkPG9HuLMs5ch4fY2DsAYvkkkc+maBCDNlvaJ7D2TzRD9HGXmeAnSJ7a/1vIc3XZG4POaHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ry5W4Pg0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=1+gC4E8VWHE9PGcJadHKddNRK0r0Jr+nTzO4YDbUhM8=; b=ry5W4Pg0sUCX5eeqe6bN55Axow
+	baO70AknOxnRoArfgroiLNCmk+65aLqidvM1S9KFlSh/TdjpZECN+/9kgSdH0imMJM0/zJj6kzZ8R
+	2R/P+ENkj+UMMyRxIHfcRfcjb3D/OVdP5EPflz1iHxwphqN73Oh8Sh5K3U08QLG56rHoHpj4pmPvX
+	5hPoFwY/206CLFN0aunwsOCgqjikXhACGEoyoSNyanwo/OkGTQI3/dzWS4g5gRxGeqq7V/BudQEm0
+	3XetiJLZVX12WzH/JGRD14jKIpb0ZGvTVkh6/J+QRnWHfAfk5Jei17yQt6jBVbl8DRs8NeXUMwZwQ
+	0swV/6lA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMeIl-00000002gNf-2hWz;
+	Wed, 04 Jun 2025 02:56:27 +0000
+Message-ID: <7992a607-c06f-4739-a0cd-52b5e06100b2@infradead.org>
+Date: Tue, 3 Jun 2025 19:56:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v3 01/15] Documentation: hyperv: Confidential
+ VMBus
+To: Roman Kisel <romank@linux.microsoft.com>, alok.a.tiwari@oracle.com,
+ arnd@arndb.de, bp@alien8.de, corbet@lwn.net, dave.hansen@linux.intel.com,
+ decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+ kys@microsoft.com, mingo@redhat.com, mhklinux@outlook.com,
+ tglx@linutronix.de, wei.liu@kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com
+References: <20250604004341.7194-1-romank@linux.microsoft.com>
+ <20250604004341.7194-2-romank@linux.microsoft.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250604004341.7194-2-romank@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To simplify struct page, the effort to separate its own descriptor from
-struct page is required and the work for page pool is on going.
+Hi--
 
-To achieve that, all the code should avoid directly accessing page pool
-members of struct page.
+On 6/3/25 5:43 PM, Roman Kisel wrote:
+> Define what the confidential VMBus is and describe what advantages
+> it offers on the capable hardware.
+> 
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
+>  Documentation/virt/hyperv/coco.rst | 125 ++++++++++++++++++++++++++++-
+>  1 file changed, 124 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/virt/hyperv/coco.rst b/Documentation/virt/hyperv/coco.rst
+> index c15d6fe34b4e..b4904b64219d 100644
+> --- a/Documentation/virt/hyperv/coco.rst
+> +++ b/Documentation/virt/hyperv/coco.rst
+> @@ -178,7 +178,7 @@ These Hyper-V and VMBus memory pages are marked as decrypted:
+>  
+>  * VMBus monitor pages
+>  
+> -* Synthetic interrupt controller (synic) related pages (unless supplied by
+> +* Synthetic interrupt controller (SynIC) related pages (unless supplied by
+>    the paravisor)
+>  
+>  * Per-cpu hypercall input and output pages (unless running with a paravisor)
+> @@ -258,3 +258,126 @@ normal page fault is generated instead of #VC or #VE, and the page-fault-
+>  based handlers for load_unaligned_zeropad() fixup the reference. When the
+>  encrypted/decrypted transition is complete, the pages are marked as "present"
+>  again. See hv_vtom_clear_present() and hv_vtom_set_host_visibility().
+> +
+> +Confidential VMBus
+> +------------------
+> +
+> +The confidential VMBus enables the confidential guest not to interact with the
+> +untrusted host partition and the untrusted hypervisor. Instead, the guest relies
+> +on the trusted paravisor to communicate with the devices processing sensitive
+> +data. The hardware (SNP or TDX) encrypts the guest memory and the register state
+> +while measuring the paravisor image using the platform security processor to
+> +ensure trusted and confidential computing.
+> +
+> +Confidential VMBus provides a secure communication channel between the guest and
+> +the paravisor, ensuring that sensitive data is protected from  hypervisor-level
+                                                                ^^
+                                                              s/  / /
 
-Access ->pp_magic through struct netmem_desc instead of directly
-accessing it through struct page in page_pool_page_is_pp().  Plus, move
-page_pool_page_is_pp() from mm.h to netmem.h to use struct netmem_desc
-without header dependency issue.
+> +access through memory encryption and register state isolation.
+> +
+> +The unencrypted data never leaves the VM so neither the host partition nor the
+> +hypervisor can access it at all. In addition to that, the guest only needs to
+> +establish a VMBus connection with the paravisor for the channels that process
+> +sensitive data, and the paravisor abstracts the details of communicating with
+> +the specific devices away.
+> +
+> +Confidential VMBus is an extension of Confidential Computing (CoCo) VMs
+> +(a.k.a. "Isolated" VMs in Hyper-V terminology). Without Confidential VMBus,
+> +guest VMBus device drivers (the "VSC"s in VMBus terminology) communicate
+> +with VMBus servers (the VSPs) running on the Hyper-V host. The
+> +communication must be through memory that has been decrypted so the
+> +host can access it. With Confidential VMBus, one or more of the VSPs reside
+> +in the trusted paravisor layer in the guest VM. Since the paravisor layer also
+> +operates in encrypted memory, the memory used for communication with
+> +such VSPs does not need to be decrypted and thereby exposed to the
+> +Hyper-V host. The paravisor is responsible for communicating securely
+> +with the Hyper-V host as necessary. In some cases (e.g. time synchonization,
+> +key-value pairs exchange) the unencrypted data doesn't need to be communicated
+> +with the host at all, and a conventional VMBus connection suffices.
+> +
+> +Here is the data flow for a conventional VMBus connection and the Confidential
+> +VMBus connection (C stands for the client or VSC, S for the server or VSP):
+> +
+> ++---- GUEST ----+       +----- DEVICE ----+        +----- HOST -----+
+> +|               |       |                 |        |                |
+> +|               |       |                 |        |                |
+> +|               |       |                 ==========                |
+> +|               |       |                 |        |                |
+> +|               |       |                 |        |                |
+> +|               |       |                 |        |                |
+> ++----- C -------+       +-----------------+        +------- S ------+
+> +       ||                                                   ||
+> +       ||                                                   ||
+> ++------||------------------ VMBus --------------------------||------+
+> +|                     Interrupts, MMIO                              |
+> ++-------------------------------------------------------------------+
+> +
+> ++---- GUEST --------------- VTL0 ------+               +-- DEVICE --+
+> +|                                      |               |            |
+> +| +- PARAVISOR --------- VTL2 -----+   |               |            |
+> +| |     +-- VMBus Relay ------+    ====+================            |
+> +| |     |   Interrupts, MMIO  |    |   |               |            |
+> +| |     +-------- S ----------+    |   |               +------------+
+> +| |               ||               |   |
+> +| +---------+     ||               |   |
+> +| |  Linux  |     ||    OpenHCL    |   |
+> +| |  kernel |     ||               |   |
+> +| +---- C --+-----||---------------+   |
+> +|       ||        ||                   |
+> ++-------++------- C -------------------+               +------------+
+> +        ||                                             |    HOST    |
+> +        ||                                             +---- S -----+
+> ++-------||----------------- VMBus ---------------------------||-----+
+> +|                     Interrupts, MMIO                              |
+> ++-------------------------------------------------------------------+
+> +
+> +An implementation of the VMBus relay that offers the Confidential VMBus channels
+> +is available in the OpenVMM project as a part of the OpenHCL paravisor. Please
+> +refer to https://openvmm.dev/ and https://github.com/microsoft/openvmm for more
+> +information about the OpenHCL paravisor.
+> +
+> +A guest that is running with a paravisor must determine at runtime if
+> +Confidential VMBus is supported by the current paravisor. It does so by first
+> +trying to establish a Confidential VMBus connection with the paravisor using
+> +standard mechanisms where the memory remains encrypted. If this succeeds,
+> +then the guest can proceed to use Confidential VMBus. If it fails, then the
+> +guest must fallback to establishing a non-Confidential VMBus connection with
+> +the Hyper-V host.
+> +
+> +Confidential VMBus is a characteristic of the VMBus connection as a whole,
+> +and of each VMBus channel that is created. When a Confidential VMBus
+> +connection is established, the paravisor provides the guest the message-passing
+> +path that is used for VMBus device creation and deletion, and it provides a
+> +per-CPU synthetic interrupt controller (SynIC) just like the SynIC that is
+> +offered by the Hyper-V host. Each VMBus device that is offered to the guest
+> +indicates the degree to which it participates in Confidential VMBus. The offer
+> +indicates if the device uses encrypted ring buffers, and if the device uses
+> +encrypted memory for DMA that is done outside the ring buffer. These settings
+> +may be different for different devices using the same Confidential VMBus
+> +connection.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
----
- include/linux/mm.h   | 12 ------------
- include/net/netmem.h | 14 ++++++++++++++
- mm/page_alloc.c      |  1 +
- 3 files changed, 15 insertions(+), 12 deletions(-)
+Various lines throughout:
+Please try to keep line lengths to <= 80 characters foe people who read
+documentation in a terminal window.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index e51dba8398f7..f23560853447 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4311,16 +4311,4 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-  */
- #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
- 
--#ifdef CONFIG_PAGE_POOL
--static inline bool page_pool_page_is_pp(struct page *page)
--{
--	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
--}
--#else
--static inline bool page_pool_page_is_pp(struct page *page)
--{
--	return false;
--}
--#endif
--
- #endif /* _LINUX_MM_H */
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index d84ab624b489..8f354ae7d5c3 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -56,6 +56,20 @@ NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
-  */
- static_assert(sizeof(struct netmem_desc) <= offsetof(struct page, _refcount));
- 
-+#ifdef CONFIG_PAGE_POOL
-+static inline bool page_pool_page_is_pp(struct page *page)
-+{
-+	struct netmem_desc *desc = (struct netmem_desc *)page;
-+
-+	return (desc->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-+}
-+#else
-+static inline bool page_pool_page_is_pp(struct page *page)
-+{
-+	return false;
-+}
-+#endif
-+
- /* net_iov */
- 
- DECLARE_STATIC_KEY_FALSE(page_pool_mem_providers);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 4f29e393f6af..be0752c0ac92 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -55,6 +55,7 @@
- #include <linux/delayacct.h>
- #include <linux/cacheinfo.h>
- #include <linux/pgalloc_tag.h>
-+#include <net/netmem.h>
- #include <asm/div64.h>
- #include "internal.h"
- #include "shuffle.h"
+> +Although these settings are separate, in practice it'll always be encrypted
+> +ring buffer only or both encrypted ring buffer and external data. If a channel
+> +is offered by the paravisor with confidential VMBus, the ring buffer can always
+> +be encrypted since it's strictly for communication between the VTL2 paravisor
+> +and the VTL0 guest. However, other memory regions are often used for e.g. DMA,
+> +so they need to be accessible by the underlying hardware, and must be unencrypted
+> +(unless the device supports encrypted memory). Currently, there are no any VSPs
+
+                                                                       not
+
+> +in OpenHCL that support encrypted external memory, but we will use it in the
+> +future.
+> +
+> +Because some devices on a Confidential VMBus may require decrypted ring buffers
+> +and DMA transfers, the guest must interact with two SynICs -- the one provided
+> +by the paravisor and the one provided by the Hyper-V host when Confidential
+> +VMBus is not offered. Interrupts are always signaled by the paravisor SynIC, but
+> +the guest must check for messages and for channel interrupts on both SynICs.
+> +
+> +In the case of a confidential VM, regular SynIC access by the guest is
+> +intercepted by the paravisor (this includes various MSRs such as the SIMP and
+> +SIEFP, as well as hypercalls like HvPostMessage and HvSignalEvent). If the guest
+> +actually wants to communicate with the hypervisor, it has to use special mechanisms
+> +(GHCB page on SNP, or tdcall on TDX). Messages will always be one or the other:
+> +with confidential VMBus, all messages use the paravisor SynIC, otherwise they all
+> +use the hypervisor SynIC. For interrupt signaling, though, some channels may be
+> +running on the host (non-confidential, using the VMBus relay) and use the hypervisor
+> +SynIC, and some on the paravisor and use its SynIC. The RelIDs are coordinated by
+> +the OpenHCL VMBus server and are guaranteed to be unique regardless of whether
+> +the channel originated on the host or the paravisor.
+
 -- 
-2.17.1
+~Randy
 
 
