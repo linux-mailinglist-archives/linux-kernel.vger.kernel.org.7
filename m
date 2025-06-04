@@ -1,102 +1,296 @@
-Return-Path: <linux-kernel+bounces-672945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BEAACD9EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C243ACD9F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399D7189336A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:34:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA9E1893BBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D5C2853E3;
-	Wed,  4 Jun 2025 08:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06FF28C005;
+	Wed,  4 Jun 2025 08:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DR9tZW67"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="hP40nAtp"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA5B10E9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1C82836A4
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749026059; cv=none; b=f0o0uKGcbZy+pu2pnn+3Os/Wc/xayMTeyFWPcsSXrEfs0SFfUHOvN4f6xFNX+rkDQlzlr82ELEydOIfwy+660f4BZfi9Nb1owN2VSc5u4AwLTzrpTmvyI2pTMosX7v/Jqplt7nocUyAiC89Pri1pGvHdaLRdk5Pcs/lzjqXSVoE=
+	t=1749026219; cv=none; b=hciGKqoYxT23CpQxz4WLJMKrrr4WF+IloThrM0K6p251e7Fj56mbuJp8xGaT6T2uNy01tsyth00MMfO4e77KYYIo6nh/oQbfKDCwBcUGhF/x13B50gsE/wD8iBcE+ZC85yxTACtSBSVv/9/NyLhlnWgBybWijRXwhrCkhSyGfow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749026059; c=relaxed/simple;
-	bh=oIRXxYpaCE7P1jXJfM1KOU/ukUCp6xeSehnHV/gu2PY=;
+	s=arc-20240116; t=1749026219; c=relaxed/simple;
+	bh=lZUMVPd+TjXOnbewMrKPKU2D7vXCosD5LXoZwVJJ2Ek=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SAavrqjXiiIfGJ8nxJS0StLAbknmdlF59YtYeJJbBNjdI0C7dbiqqC6GhDYz8m3Ah3Ozt7COS40TPzj2Du3BYi/4oHb4VVqHhIsj9WmRzxuBYcf7mkAzWEHwBjLfnYXPc09qPD2uuZCw9Cc+VdIRV478kInXL93txcFYqVWaZlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DR9tZW67; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-710bbd7a9e2so25704357b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 01:34:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=ElAHOcvtidSvmqPdq6+Q2K3+WhGprbzn9Tx6h9n2Yx0A0Bj7fSKW8YwJrYey+Kee3Ic7ePMD5zf8Sr+nZxGme8XhlhD7975Xn/wLk1975OcrCQw7U6FC9OKgB1FTHJkCO4ef4qtfwBMV9MfCGx/SvxRSGssrSDUqxkVSN7+xT1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=hP40nAtp; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70e75f30452so44489067b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 01:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749026054; x=1749630854; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oIRXxYpaCE7P1jXJfM1KOU/ukUCp6xeSehnHV/gu2PY=;
-        b=DR9tZW67GrnfddsR2iQhT3KM5xtXRrndODiWvxGgPodgfcPLV+zt0tu+HNPzOPKsxf
-         fPEg7E+rbrrnr5/2x00+CemiTSfkhFQHkBw2eqLuylNCPOo7mkNxSQbPHRQyeJAagMLN
-         R81NPeq96OZzESD18wBPRm3robMDmPJTSCMdDwrGqwwHC3iri7NjppnGeccMoxbsyaW3
-         P2hN83HLGgygGLTea/aYuTUBUKYkDge/piLqDxgn6bfoZ7aJY0g/QZKAcwm2awch8w14
-         gT3rb9nrMjmd7yoSfnxemnuxYk3/hrShWKePfbmQX8FiDbBtSXJyy9fFUZamcvgUI5C7
-         WM+w==
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1749026215; x=1749631015; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJmj/95wgXcHpVI6Ou9qJ8Nq5fJR29OVttEikN7mIco=;
+        b=hP40nAtpC+FRA1i2/eBrUmPSmU9lS4LBPhlKK35WcwEU7lh8gzXNCnOPQUtgAlFTqq
+         9E2NGaiMGQGkpgwc7SDsdN8biceeUpNBYK4Cm8DqOrvaehYuslhMXPVhjLDhY+vRY3Lu
+         mU/fVLPM1ZzVmhLLMbGcY+VsjT1gA+dFic7w7gcFVUnUCVspr4k31X3+REWiNvBRRbKH
+         VEQ01x4sxUbmY8DJdk+Fsk2Zu24CN0IVOl60bAq7O4u+hAXBaT0m6kCE2zayq7Xwl2YT
+         vdGYwnWqWaGNOTHIum4GwW6DFf+/5iUVI5EfLqhKoge7N9bUGE/LqV6gBi6XiZV5NlUK
+         Yh0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749026054; x=1749630854;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oIRXxYpaCE7P1jXJfM1KOU/ukUCp6xeSehnHV/gu2PY=;
-        b=lbqMCKZh4FbAE1Zbwd+uwwXgl40yaRgMd/L7O+XseCJ/KpN9rjTapC03FjP2nOZxdV
-         /B9XeSsR3pnmiPx6Iu43YSSpAnsozIjVN0J8o4EUko0wZvbkdI/SUTvWclchnzfvaCHj
-         o11KAWVzWt5F62uZZFNm9kU2hVdQECLlQ5hQ9fVkv75vCH6VI1DLUvHX4Mx8rFiIiYAd
-         EhYurvDNeqyi582V44V0GKfFjgIbSsnSeZ555nF4uB7dfYSKbBjd9PeUmGBHqa2u6xJl
-         5p5TRt6pg9mYm4E48YqSXpvT90J3qCQyGlD6KHChFrXhbGtcquBDY8zDKSrwS/5RxXg8
-         7PWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrli9vQP/gL/dekDNM+sRUuWbgfyogpGsXt1+EvReruZpE5srKF92FWR3jqNyMzOdk+dy0L2UNzoiBN7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXMGLLE/r8+VEI4E7wqx5ydocGPyaCHoDHDhTM4obyW7ENlD87
-	O8NCttFQPT6OiE+A8ac2GhhfStF5e1WK76mCLkJ2snaCQnIcGkqm/LWtwcKpAFD4c5VP4R6uo4t
-	mL/pWedsPWcKWplDmSfPxXhTdOpUKWGIrK4Ci3gz9Mw==
-X-Gm-Gg: ASbGncsnKm+3PhxOd4OS+alwKzEBw3cPt2CLm1oQBpbYgZhMyvmgL9DuPX+VS2lYgn9
-	l3ZHgNJvFlC0vm+aSVV3wfa/NlId7TC4Oplq9AIYQnI2ddN7uIyrbVdsipwOANblaJSk5oNaxwX
-	YyMBS8As4uH0lhT/J2QkrgG+s5B98SS+P6
-X-Google-Smtp-Source: AGHT+IFdMlKQEHFB9rAIPubm+oWCxtLQaBriPs9FGR9ZFu04+vMyrF1AGrH76Qny9PZkqn4FiSFsMO29KEcocYymM64=
-X-Received: by 2002:a05:690c:6e01:b0:70e:29d2:fb7b with SMTP id
- 00721157ae682-710d9dba8e0mr22420457b3.33.1749026054535; Wed, 04 Jun 2025
- 01:34:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749026215; x=1749631015;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zJmj/95wgXcHpVI6Ou9qJ8Nq5fJR29OVttEikN7mIco=;
+        b=OJZjDb4p4fnS/Dj5RwwL/0yPqLd6jV64V7FoiP6SG5tNT8qMq6eFB347POOyfPP9Te
+         3uja/4/BlJe2mt4V7J0REyU08Q4X3swzEJviCaA0P65YQX9JerkI+Y8uRH6n02cbhAXh
+         lyb6EaeYmhQ7nhhyguseocoC2Z5AR5KnHhnvbDVmBEDbV9yKZ28YiLLQ1eDCaLiVRpV9
+         IoriRboYCVyClL5U5sF5xY2xJMZnQz7HPGlGQDj0EYn6sjN2RadpLKgVa7po8mD2DkRT
+         VXFgnx1lkr/Axx8vREvdZro36YTIQT05iwp6PN9N19AFeqY3ABfXcBLWXB6enSd6AtGU
+         T2oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWb8hLzxllUiz9xUTCoSD9wk+UTQncQv1JbAizNq2fLPCTqhQm8UlQmjYHXFIXsCcTATP1LmY4qTTUDo64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywul42SYje4EycL5nBUVZoBRIt7ge5kZSLgMxLivwvCVqyBo70s
+	GBdoHkU6V1+m0ktwgpmVnSCOSfVxO61eaPHpXBhO+o+Pm7pFCdkhy7VP8Vp4kFyh7r0=
+X-Gm-Gg: ASbGncuB33JA/1O+ZcGVIaJch1I6s6I6E/33J2WcalnGLtaU1owCOGCnCMIByRGmlfT
+	ToEwdELT/Dz+Qp/K7KXV2j8vvURjb7IOB/lTpeaT25KxMsHhJg76o1cibkAELlrlgVZzxKraEdb
+	ZZNe4ChTmnV2IZVFi52/KV3q27aA36d8bjUD6F1HdRfFKkopKL324+FDcg5zhVQLJnH2SrmHYhU
+	aUuknEpYhBZl6eLSJQ4eAMUj5CcWupdGnsguooO6u5TQBtvoRtjr0aSqi3IisukqfeWyN1LJzqB
+	j9mzLYgrqfoGkhCYAbqXChm5yTzmQk/MkqorCN5vOcBghjdWIrdyVAuP2pcPaqpcKtRYPM9QKkj
+	tDIPAjkrGLohelFr25a8=
+X-Google-Smtp-Source: AGHT+IGAtiLPhQPOwsV52/wbwHI6aGaNzcA7rtap+Rcs1v0V8QQ0deHXme2lqVPOqUfKUHS1nKWE4A==
+X-Received: by 2002:a05:690c:5b41:b0:70e:7503:1180 with SMTP id 00721157ae682-710d99a37f4mr15471087b3.1.1749026214852;
+        Wed, 04 Jun 2025 01:36:54 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70f8acd51aesm28953687b3.84.2025.06.04.01.36.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Jun 2025 01:36:54 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e7dd151f79eso6290894276.2;
+        Wed, 04 Jun 2025 01:36:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULW+UTfFh+tT0J44z1K6JYbmHlv/wd1MXXy7KKCEtBGCgRyN797NLiJGgErUHzPXOAy1j8TsWLlWFEvLw=@vger.kernel.org, AJvYcCVM/NXB0C5w3H9PDbxdx4ri8kz+r+wR0mHzdoTZllFU2cIVxw7UCYZjGJHgpab0v+R3bmH7+U8Bnwq9@vger.kernel.org, AJvYcCX431fODxXURRvDjMnwc5r0kvbnILTzAMgl36ph0qdgXUQo9BcH8muM4qlc6MQurVWU4qfxZ00XfSf9uohh@vger.kernel.org, AJvYcCXR51l+eC1sz1L0RVb2S89pJmWSbVH8OLrbhdLbrbiuT45xLlBrHwMiWjIlw3kqVx0EY4fXfN8N0Mnd@vger.kernel.org
+X-Received: by 2002:a05:6902:2684:b0:e7d:cfd0:957f with SMTP id
+ 3f1490d57ef6-e8179c4e822mr2337109276.11.1749026214087; Wed, 04 Jun 2025
+ 01:36:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603201036.44504-1-terry.tritton@linaro.org> <CANDhNCoiKjPOyGwiu5Apg2y4LduPTRQvEjG7snmbzrenZojAKg@mail.gmail.com>
-In-Reply-To: <CANDhNCoiKjPOyGwiu5Apg2y4LduPTRQvEjG7snmbzrenZojAKg@mail.gmail.com>
-From: Terry Tritton <terry.tritton@linaro.org>
-Date: Wed, 4 Jun 2025 09:34:03 +0100
-X-Gm-Features: AX0GCFvGl7sGmmJPlA-wX27a4YxRu7KVpfougQMpQZxrLZQMi9H8NHMyKYJfLQs
-Message-ID: <CABeuJB3vDEaaPuCK_n1JZ_0j2wgcpe9j01yLkEpkt6hsMLSB_A@mail.gmail.com>
-Subject: Re: [PATCH] selftests/timers: Fix integer overlow errors on 32 bit systems
-To: John Stultz <jstultz@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	ttritton@google.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250604-6-10-rocket-v6-0-237ac75ddb5e@tomeuvizoso.net>
+ <20250604-6-10-rocket-v6-1-237ac75ddb5e@tomeuvizoso.net> <2024813.jZfb76A358@diego>
+In-Reply-To: <2024813.jZfb76A358@diego>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Wed, 4 Jun 2025 10:36:42 +0200
+X-Gmail-Original-Message-ID: <CAAObsKB6UDp-yBE3oNNn0GkiVN0TeYFkL5nzQCroUHaSK47tUA@mail.gmail.com>
+X-Gm-Features: AX0GCFvL5nJeCruhYVKFwWz9ImMH3rGz7U0FgI_gqBjbHTrFFbFoGu46LHESGLo
+Message-ID: <CAAObsKB6UDp-yBE3oNNn0GkiVN0TeYFkL5nzQCroUHaSK47tUA@mail.gmail.com>
+Subject: Re: [PATCH v6 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Kever Yang <kever.yang@rock-chips.com>, 
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> So this seems to be undoing commit 80fa614e2fbc ("selftests: timers:
-> Remove local NSEC_PER_SEC and USEC_PER_SEC defines")
-Thanks John, I somehow missed 80fa614e2fbc and was wondering how
-this had got in.
+On Wed, Jun 4, 2025 at 10:25=E2=80=AFAM Heiko St=C3=BCbner <heiko@sntech.de=
+> wrote:
+>
+> Am Mittwoch, 4. Juni 2025, 09:57:14 Mitteleurop=C3=A4ische Sommerzeit sch=
+rieb Tomeu Vizoso:
+> > Add the bindings for the Neural Processing Unit IP from Rockchip.
+> >
+> > v2:
+> > - Adapt to new node structure (one node per core, each with its own
+> >   IOMMU)
+> > - Several misc. fixes from Sebastian Reichel
+> >
+> > v3:
+> > - Split register block in its constituent subblocks, and only require
+> >   the ones that the kernel would ever use (Nicolas Frattaroli)
+> > - Group supplies (Rob Herring)
+> > - Explain the way in which the top core is special (Rob Herring)
+> >
+> > v4:
+> > - Change required node name to npu@ (Rob Herring and Krzysztof Kozlowsk=
+i)
+> > - Remove unneeded items: (Krzysztof Kozlowski)
+> > - Fix use of minItems/maxItems (Krzysztof Kozlowski)
+> > - Add reg-names to list of required properties (Krzysztof Kozlowski)
+> > - Fix example (Krzysztof Kozlowski)
+> >
+> > v5:
+> > - Rename file to rockchip,rk3588-rknn-core.yaml (Krzysztof Kozlowski)
+> > - Streamline compatible property (Krzysztof Kozlowski)
+> >
+> > v6:
+> > - Remove mention to NVDLA, as the hardware is only incidentally related
+> >   (Kever Yang)
+> > - Mark pclk and npu clocks as required by all clocks (Rob Herring)
+> >
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---
+> >  .../bindings/npu/rockchip,rk3588-rknn-core.yaml    | 144 +++++++++++++=
+++++++++
+> >  1 file changed, 144 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn=
+-core.yaml b/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-cor=
+e.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..9a5e9e213912d0997da2f6a=
+e26189adf044dcc7b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-core.y=
+aml
+> > @@ -0,0 +1,144 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/npu/rockchip,rk3588-rknn-core.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Neural Processing Unit IP from Rockchip
+> > +
+> > +maintainers:
+> > +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > +
+> > +description:
+> > +  Rockchip IP for accelerating inference of neural networks.
+> > +
+> > +  There is to be a node per each core in the NPU. In Rockchip's design=
+ there
+> > +  will be one core that is special and needs to be powered on before a=
+ny of the
+> > +  other cores can be used. This special core is called the top core an=
+d should
+> > +  have the compatible string that corresponds to top cores.
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    pattern: '^npu@[a-f0-9]+$'
+> > +
+> > +  compatible:
+> > +    enum:
+> > +      - rockchip,rk3588-rknn-core-top
+> > +      - rockchip,rk3588-rknn-core
+> > +
+> > +  reg:
+> > +    maxItems: 3
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: pc
+> > +      - const: cna
+> > +      - const: core
+> > +
+> > +  clocks:
+> > +    maxItems: 4
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: aclk
+> > +      - const: hclk
+> > +      - const: npu
+> > +      - const: pclk
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  iommus:
+> > +    maxItems: 1
+> > +
+> > +  npu-supply: true
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 2
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: srst_a
+> > +      - const: srst_h
+> > +
+> > +  sram-supply: true
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - clocks
+> > +  - clock-names
+> > +  - interrupts
+> > +  - iommus
+> > +  - power-domains
+> > +  - resets
+> > +  - reset-names
+> > +  - npu-supply
+> > +  - sram-supply
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - rockchip,rknn-core-top
+>
+> should be rockchip,rk3588-rknn-core-top I think
+>
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 4
+> > +
+> > +        clock-names:
+> > +          minItems: 4
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - rockchip,rknn-core
+>
+> should be rockchip,rk3588-rknn-core
 
-> Would it make more sense to fix the NSEC_PER_SEC definition in time64.h to a LL?
-I was just thinking the same this morning but wasn't sure if this would cause
-issues anywhere else.
+Thanks. Actually, all the addOf section is not needed any more as we
+now know that from a resources point of view all cores are the same.
 
-I'll send a patch to change NSEC_PER_SEC in time64.h as its a lot cleaner
-that way.
+Cheers,
 
-Thanks
-Terry
+Tomeu
+
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 2
+> > +        clock-names:
+> > +          maxItems: 2
+>
+>
+> Heiko
+>
+>
 
