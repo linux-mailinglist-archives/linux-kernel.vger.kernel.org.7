@@ -1,285 +1,235 @@
-Return-Path: <linux-kernel+bounces-672598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE37ACD4DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:34:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E47ACD4DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D572D16DD1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:33:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEF337A2005
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187C87082D;
-	Wed,  4 Jun 2025 01:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3843C19CC0A;
+	Wed,  4 Jun 2025 01:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="r0cCIf/g"
-Received: from esa14.fujitsucc.c3s2.iphmx.com (esa14.fujitsucc.c3s2.iphmx.com [68.232.156.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FiMEPWcI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA762C324C;
-	Wed,  4 Jun 2025 01:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.156.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749000205; cv=fail; b=Rss6QkvS7eAncehSjDvoiJ0twO9FMXd+77Xt0t/UKVUxACvH255zDekgJr0YVou7pANvtXSLJ9/k9bnDyttg5uSpDOJ3xGDgj3ORWmHzIYgtm/9OoccUcYxaF7hDbUvPIiJbicmYtbVYKuxX7Lmo1L5YS5F+IJfpamQ/xl860dg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749000205; c=relaxed/simple;
-	bh=ce1cPRIj1BlCIOthgUmNGHTT6kTIfLLqsfWj/Cb6eis=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RULiVFhMSIazmhsKLKfMpLv+luudbc1dVSXpewpAFKsHqqza26UG7McOAdkqKJiEI95gcQeOsobFNfDhVFRVRZXQe8ITVvyBgz8P6B9HxwSNvGudF2hYRx0k1IkVXXnvMXwcd4szRlH2U9r0pz2XIPefVEiH/KBkd43kIEd2Oms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=r0cCIf/g; arc=fail smtp.client-ip=68.232.156.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1749000203; x=1780536203;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ce1cPRIj1BlCIOthgUmNGHTT6kTIfLLqsfWj/Cb6eis=;
-  b=r0cCIf/g4I3vOtlcq80ElQO+W7AS8TIz4b0V9S8PPpy1NQLao5wCNFCh
-   fODdRcPTAq6SqI69uc4SLr1t4IdiJEKOOkBjXUlnGcR20eUCC0ItGca+Y
-   pg46s8IGRjOZ78btvZcmM7QSRHGtwctY4ZmEbyQIzv8wrgjtbDp/0XlQ9
-   HkNzwFd9xMGjnv8Ma+QAxnMUSKZk3Uwao2PTQ9AXtUecP56US8HZ74U7o
-   bBQ+4OgLW9ZX4uojV8Lt9xGnZxAR17iwxVd1Aun//ttkhDytBPkt2ion1
-   xucVz1nB6vtVXEsNGy56GVzedf4bP/BXma58Dt4SHXq8Yh/mXHgEdnGt0
-   w==;
-X-CSE-ConnectionGUID: fDloVt6RS4ipfsS+0EalJA==
-X-CSE-MsgGUID: OGZ/evuTQjKYxka/fK6J/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="157059182"
-X-IronPort-AV: E=Sophos;i="6.16,207,1744038000"; 
-   d="scan'208";a="157059182"
-Received: from mail-japanwestazon11010012.outbound.protection.outlook.com (HELO OS0P286CU011.outbound.protection.outlook.com) ([52.101.228.12])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 10:22:10 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lRoScgfdC4MqBLDiYb/kEsW7wjZDmYFFjTvywR8VW8mshNPvIX1zDdklN21TKYA5BTNvcF+S3I2rLdsj5RJ2A2QRVD7fiINh29JviIiEzLTT4lmomDot2myPFn6idAm5a+PcB2D1cyNO1AVW361d5bdJgSa7HsnKWXVlC45S+C/GeHqN1VhGQmAyFQOEFiz4GK9TgAHGrVwLtSbUP391pPgS1T8eO30VZId8YMOZlgeGwQXYz4XzRvcUgPmQT/osvsVSAuTZE3u1maecHlQhML2DTrWWJBn9DDeGZjG4FtnhBieQV/vBCr7JQSxD75+QePVxodqORMdkOb93lK+bUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d5tPJ26E6W0AWU+fNuo24HaLnQwMrC4Oz7piAaws5aA=;
- b=PdgWtnf1WoUqKtkZqdCogwmR32FHO/xXXuEfyOVepQg9sAaA6Kb6YZDIEI4yXHfCxBj60Mf4rJXipYOx2fIQNkVaym/wgMYm3+xX/C1csA4Jzwm4frOcB+Hwnsmklzuo9CMpVTcK3wAvw0RkUOpC+MaMbLY7rxVpQim35wD6e1ENh3HmwKC5ZRHIdN2T0tm49pa5Vyx9rxACFMiXtl7wJUGzL6mE190YYNXBzmsmvLy5UxtN4aRrfcQZoUjtLfW648sQmOVqFJKhJCk+uAb5QazNsWAT5AVXRSpNiTZ2JLO63tNuYb2NNFEsvnUZw1YTUpnKgafIVltdNwXnqwAALQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-Received: from TY4PR01MB13777.jpnprd01.prod.outlook.com (2603:1096:405:1f8::9)
- by OSZPR01MB7082.jpnprd01.prod.outlook.com (2603:1096:604:13f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Wed, 4 Jun
- 2025 01:22:06 +0000
-Received: from TY4PR01MB13777.jpnprd01.prod.outlook.com
- ([fe80::60b7:270b:27c7:4fcc]) by TY4PR01MB13777.jpnprd01.prod.outlook.com
- ([fe80::60b7:270b:27c7:4fcc%7]) with mapi id 15.20.8813.018; Wed, 4 Jun 2025
- 01:22:06 +0000
-From: "Toshiyuki Sato (Fujitsu)" <fj6611ie@fujitsu.com>
-To: 'John Ogness' <john.ogness@linutronix.de>
-CC: 'Michael Kelley' <mhklinux@outlook.com>, "pmladek@suse.com"
-	<pmladek@suse.com>, 'Ryo Takakura' <ryotkkr98@gmail.com>, Russell King
-	<linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "Toshiyuki Sato (Fujitsu)"
-	<fj6611ie@fujitsu.com>
-Subject: RE: Problem with nbcon console and amba-pl011 serial port
-Thread-Topic: Problem with nbcon console and amba-pl011 serial port
-Thread-Index: AdvULbS8DdGjT9TLS9OOSVhbv2AtDgAN1+gwAALFDgAAARcagAAYniHQ
-Date: Wed, 4 Jun 2025 01:22:06 +0000
-Message-ID:
- <TY4PR01MB13777DAC71E234B9E58CC6C0DD76CA@TY4PR01MB13777.jpnprd01.prod.outlook.com>
-References:
- <SN6PR02MB4157A4C5E8CB219A75263A17D46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <OS7PR01MB13775FE1A20762D1EA4A38D0ED76DA@OS7PR01MB13775.jpnprd01.prod.outlook.com>
- <84y0u95e0j.fsf@jogness.linutronix.de> <84sekh5cki.fsf@jogness.linutronix.de>
-In-Reply-To: <84sekh5cki.fsf@jogness.linutronix.de>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ActionId=65f5f5ba-92cb-476b-a277-2f1e02816b7a;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ContentBits=0;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Enabled=true;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Method=Privileged;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Name=FUJITSU-PUBLIC?;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SetDate=2025-06-03T22:31:17Z;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY4PR01MB13777:EE_|OSZPR01MB7082:EE_
-x-ms-office365-filtering-correlation-id: 6100f152-928d-4441-9ede-08dda306383c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018|1580799027;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?VGtwNkNEaXUyZWRmaFV2QU50eXd6YkZKbDRVd1U4L21kanhCVjBNZUl2?=
- =?iso-2022-jp?B?UWZ4NUhHbmt4b1pqb3ZHU1QzZ3A0WlhMellFQkgyVnFKdU0xMnhCQ3pN?=
- =?iso-2022-jp?B?cDU3bXMyVjdDbUwvVEhwT05ZQkt1Njd6YzNnSTRFWlp5SmNOMmdoeXpB?=
- =?iso-2022-jp?B?SmFsWmVlL1JVL3QzRmJCV2ZrTVh4aDJwK2FUMmxKQXZrdkY5NWt0SlZq?=
- =?iso-2022-jp?B?UXpLZjZOT1Z5d2c4QlhXa3pMOFNwaE4wY3h1QUFTY1p2ZE01Uk1iZENx?=
- =?iso-2022-jp?B?R0pqT05LVWtsTUU3SWxzNTRsWW5XeWdySUJBMzY1NEk2ejdYbEtUWWhI?=
- =?iso-2022-jp?B?OU5uR1V5a3JtYm05NHUwUzFrTnRqTlJMRHBjODQ4djBnMWE1Qk1GLzlj?=
- =?iso-2022-jp?B?SDZVWTFQSHlGOE1aVkxFY245cWlpd0tIcEN1K2lvME9rZ0hXN1ZIalZY?=
- =?iso-2022-jp?B?cENIRENFaGNzOFQxQU9BamRVWjFRdXc1R2Vha3BNQS94T1BJS0pjTlJw?=
- =?iso-2022-jp?B?ZWhPSHFGbFJuTnBLckhaOGg1SkFVT3JnbFpZd3lKdVVaQnF1RTlMS2da?=
- =?iso-2022-jp?B?MWR2TlZRMjhlaWlYWEwwUW1uWXRKYk9xVTBINDdSR09xd3J5bXpZQSsr?=
- =?iso-2022-jp?B?RXVLSjZkOWx1dkdpMExEU3pzYWg1YkhqUWVNRll3akxmYnlZZWJvZDBq?=
- =?iso-2022-jp?B?WEdXWmswRCtmRzRmclF4ZmdpbER2Qzg4QXZhKzdwTFN4WWlVKzN4eVFw?=
- =?iso-2022-jp?B?YVZVTFJNZDBXeHJNUjA0Y29jUFlGSEt5QjIrM1ZLaHlEWWJXQ0hmQ0px?=
- =?iso-2022-jp?B?T0dZMXVIcTY4V3pvUmNpL1huc1NXYlZpNllhYWlKYWREd1k2TXl0MGNk?=
- =?iso-2022-jp?B?SUZSWFE1UFQydUlvczlTby9NdHluYXRSWEFFNWp5RU41MDd4MW5mUEpU?=
- =?iso-2022-jp?B?c2gxYnBJSXhjb1ZNU09XRHFpcWQvZktrcUdZSjJncTBDNk45R2x1T3J1?=
- =?iso-2022-jp?B?RzFIS0VuaVFxZFZzdURHM3FTZlBRc2NTMzRTemF0S2pNMlpVR2pJN3Ay?=
- =?iso-2022-jp?B?VGNkTURuaXNQaks1YTMvT3c4L05jUDZySStCTmdkcEpHaVA3UCt2Qkh1?=
- =?iso-2022-jp?B?QTVvMWNVWXZLRXNsMUs1ZkVHaDEyaFh4TDNQQnNKdXRyMGVpWE1JUVVm?=
- =?iso-2022-jp?B?K1RBdndrTld5Mi9RSnNJTzJ4b0hXMnJHNkpoUWxkTW9HcEdIdmxzcmlv?=
- =?iso-2022-jp?B?VlYzWjhSbEJxTE5Ra0NkV0NqOFhRSnl5VUFnNEMreGZQU0F0eXB5TUlY?=
- =?iso-2022-jp?B?TzVLL1l2ZGlOSWVaeU5PYU1Fc3NRTlZPZUpRY3NrbFZpK2o5ZVBCNW0z?=
- =?iso-2022-jp?B?V0ZWZkFFRHJEeVEzbWk4aUllQWovZGRPd010a3NibTg4UzlwL25HL3NH?=
- =?iso-2022-jp?B?V1drQVlwVTh5OWg0elhkaGJGblI5aXpVWTVSZk5NQ1pXU3J5cHRpaG5s?=
- =?iso-2022-jp?B?dExsWHZCRUZnUkNSbzBhR01QVEY5bVNZN0hOWUdFUmhaYktESVNSekZD?=
- =?iso-2022-jp?B?a1hUMjhpenZuMWxwUXRMRXg2V1FBNU5BZGZEVEZRdE5hanJIL21wdVFo?=
- =?iso-2022-jp?B?RWlhQTNEVUlqM2VXSzg0ckdadkJIYW1ncUJNZGwzQTI4M0ErcTMzSklY?=
- =?iso-2022-jp?B?ZkE3UHRLUHZibzBvOG5BWEpFVGtGMVd6MnZCaEQrb2UyZGFFNW5QVmxs?=
- =?iso-2022-jp?B?Y1ZjcjRGQUtmd010ckw4UUhqZkE5WW1RK01MY2owRDVsb0Y5TnlVeHBt?=
- =?iso-2022-jp?B?QjJhS25TeVFDYllpL2xrbHF6S1RLc3VGOGkxbkdDWUxLazc3WDU1S1ZR?=
- =?iso-2022-jp?B?UWc4c3ZCVDBLNUFwNG5yVXBWV0RzODFOY3AvbzE4cVdaQXdkWXpCL0tu?=
- =?iso-2022-jp?B?azA0TDR0STJudkEwbnVWOTlSZDZDaC9KN0FsMUNyTDF5bEtaQzZhNkJj?=
- =?iso-2022-jp?B?R0NCZ2drMUpHYjhJWUJRVTZDcUhPWnAyaXc1aUoySFVPM2lHeGp0Tkpu?=
- =?iso-2022-jp?B?cHZlTTRVa0VaZm1FSkdTSWluRGQwL2VIV00xNmZuZTQ5ZTc4YzRYdVp6?=
- =?iso-2022-jp?B?L0VyNHdTamluVVdkeGdicmpIMWJJQncvNDRGZlN3Qjhqa216QXlJbi9T?=
- =?iso-2022-jp?B?VHB2cXlQdkF6TGxYQVlvYkI0R2YzQmow?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY4PR01MB13777.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018)(1580799027);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?RU5GVFY3NTMvMTFoKzNyTDQ5UW81eG00OU5KRmc0STVSd0drbGhoTXdC?=
- =?iso-2022-jp?B?VmpkeWRxbXZZVUR1cjQxZm9ZTUZFRVhqanJFT1ZBWGxFWmYvb3psV1Fr?=
- =?iso-2022-jp?B?OWxVcGZrNUVBbHFtL3JpN0hYNlZmVjFYRjkrNzRnczdUNjNsOUZkYnl2?=
- =?iso-2022-jp?B?cnFhSk5vSndHNzlZYTVsOUJPTUdMeHl0NXQrNk9ZKzJOOHlYbUt2aURS?=
- =?iso-2022-jp?B?cDgxT3NieDVHZXhBdXZlOU81VTZ4RjNab2xqM3QvRVFQY1pTKzBEM20r?=
- =?iso-2022-jp?B?UUdwKy9vVHE3alRRSlY2cTBmanNpNkJLVG9XOWZpcG9zRTllbkdYN3Zy?=
- =?iso-2022-jp?B?ZzlPbml2WS9neERrSEY5em0vMjRFM2M5bTE3aTEvL0tsT2dVcmJQVkNF?=
- =?iso-2022-jp?B?MlorWU1wY2lSVHlHWmFqM2VHWHZla3FqaWd2ektndEh4YlFOYXJ4QUda?=
- =?iso-2022-jp?B?M3BBaEo2a1BvL0laUkhmR1BaTUdCZlU0U2JSQkJadkNwbmpoM3BnRTZu?=
- =?iso-2022-jp?B?WnhGdTdmZWI1eE9pSmlFUWtoWGE5ZHVJLzA1RjJHem9vZDJ6Z3R0SnV1?=
- =?iso-2022-jp?B?Vkdnd3RQamhrYUxRM3l4YXJGTTNrSEc1QnpLSW5XZ2NQejg2cnh1UnND?=
- =?iso-2022-jp?B?NUQ1Zndjc001ZHhnWUtZYU1qY1Q0WmRYRm93dDlTWFVxdGlxRFVkOTd1?=
- =?iso-2022-jp?B?WWhsbjQyanZOUTU4ZVZSTURnVkNqMmpvZy9kU3gvMEtRYlJIcU52NDd3?=
- =?iso-2022-jp?B?MVFSZXU0VlN0Z0N3ODdhZkxRRmJ5bTU3aGpuc0pULzYvYjZYTzdURE1r?=
- =?iso-2022-jp?B?dFRuNmE0RGZyZFplVlhmcnhwN3F4MTFQalV4N1YraVBsbFdyQWFsTVFr?=
- =?iso-2022-jp?B?RTYvZWd4bVhTNmhOTXBkbDM2Tk1TZEhtUHVPaThoNzFkMUtCTm1nUUZK?=
- =?iso-2022-jp?B?QitHL0NHKzFNVDd6L0h1c09WQzZqTW0yWXZ5U2tsS3JpeFY1ZjRuc3U4?=
- =?iso-2022-jp?B?Q1dRQnhxN0R5NzZDNWNUcERTOUhMam5MVFpoLzMrbzJ5ampRMVNiUSt6?=
- =?iso-2022-jp?B?NkY1Y1ZqK0FWOURLTlRucHFheFlOUWdLQWgvdmNFUThZL1ZRMXI1QnBG?=
- =?iso-2022-jp?B?MUdka0NkdEZiZXYzS0M4LzN5anB6QmtxeEh6a1ZJbmRHcFIrRXhpamor?=
- =?iso-2022-jp?B?MUpDMU1nRElPdHdZOXdlZXg0Z09xdi8zcWZIdjU5VmowTFBjQjBDYzgx?=
- =?iso-2022-jp?B?RThiS3ZIa2xUeVRtVXRTeHphKytybzZudlZ6K2txQWFucUNjZ1RidFg3?=
- =?iso-2022-jp?B?MjBJWThubjRORmUvam81VUhmekxnTVJNc200SG5wZU5LUkhCUDdiU3dS?=
- =?iso-2022-jp?B?ZHJuem0xNFI5bXpEOWRFVXFTOEVOSWdZUmtYeUlkRmoxRG93UGZ1VGI5?=
- =?iso-2022-jp?B?RFhUM1JzYVZGZXgvV1ZMeTZ2enpYQnpYbmcya21CQ0lLQXQ1cTNEMTYy?=
- =?iso-2022-jp?B?YkJhSERTUGxlL2pXNjNINjJsdTdsWWNOTTBEWkc2c1kxbkRFbVR4Q05v?=
- =?iso-2022-jp?B?NVB1b1lKMDVPUWVwY1Q5aEMxa3pSbE81Q2Z2YVVxemN0bDRlUUZUK2R2?=
- =?iso-2022-jp?B?THYzemkyODF2bnpaV05NalRvOWV6T2hocXZZWDNCZE5EQWhwczBoclJp?=
- =?iso-2022-jp?B?QUlpZG95WVcwVG9pQjVBMm5NWWJOR0pQOWh6aS9hMHBwYWovcU9GZXFV?=
- =?iso-2022-jp?B?NjkvWkhFTEQ4WmZ0RHFLVytwY3NqZUkxV3dEMmovMTRKSk53bnA1dnBZ?=
- =?iso-2022-jp?B?VzBKQWNObUovWkVUVVVaRy9VODFvSFg0bjcwSkRYbUx5MDUzZUdrOW9v?=
- =?iso-2022-jp?B?WXpHNm9aSVA1L3pIWmRnNVJMWWxEWk1KaVl4dWw2V3k2eFFUdFdWQ3o4?=
- =?iso-2022-jp?B?ZEk4eHNvWDZEUEFjdkllR0ZQNnVHM2JXTGZYUzh5WXBrMWlnQ2Uxcnh0?=
- =?iso-2022-jp?B?N0ptc0MzRXZNVkFodkhoU1BiTVZrWC85aHpKNUpRdkFJVFV1VlBpck5M?=
- =?iso-2022-jp?B?eklHcCtseHlIenZGYmpTNmI4MXd1UmMrUDM3V1MrcDNVNUJ5dnFFUHR4?=
- =?iso-2022-jp?B?WWNvZ0lVU1o3NGRRcW9oWVBNY0RWKzhhbWVvSjF4MXRjS2VPRlN1UC9k?=
- =?iso-2022-jp?B?MEwyQ2hwenlVaWx4Tkh1OVd6V0tnYUM2WU5ITDNtNC9Ha0Fjemw4aVRi?=
- =?iso-2022-jp?B?YVVUYWxvTzI2YW9JQnVYK25FZzhtdWNOTUtxU0pCWXFNSjFxWmdWYWpP?=
- =?iso-2022-jp?B?MktmeFRSbEI5TUdaUjZVOXViZklOOGRQMkE9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C143D2C324C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 01:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749000442; cv=none; b=cNfTRlZUTF1fKMTMKPQuBUPf0H+lXb2B1y6IeJGl/D00P1eHukcyqh91tsMt6+QypZu6D8r6CgOVSut/+48aKK4lcQTekLFmxEimV7nPQ+GH/sNjtmwhMsElt1TNOXmKMjt6hgq/OH5YONI7h8BUf3FNY9+zR9l1rHo2tL6whL0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749000442; c=relaxed/simple;
+	bh=zj+kNdMecZ1mWILUvz4WG8GAQb/rm/mvr7EU/CCZ8DI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=erwx925NhX0Tpv6cDParoE9o/xUayLu7JytodqZrORR+kQvQIKo5VK6Mx1LuBCrTidQpA1XRUYo1lZk5HLYoMutFQm0GZr96mkCNIXzRgV/62gEpF4Af2ut4oMGfBqtTZfZ7YpMGP3gOoavzNik82x3ZECU4+5P9ErmhzA3uN5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FiMEPWcI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749000438;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BVmJXGHCgwooCqymme55wOEwxwtQ0yZmHm9VDK+DDWs=;
+	b=FiMEPWcI1myBY4wOs3/HanZaJbN5Mgdem+ditHx8t0gyxyHlexv1G4UD3Jh87sqbgFRkIj
+	iKY9rdemcTeP2mhXCaiiMmrQroNebtxOMa2UlkBTHjtY5zHXlAuqQVyYKZbTBBZ/7gdnQJ
+	TU4R8ym7NySQXWpFIJeBtZit2Dxiqhw=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-6B--Hj6yNlubc2byGe5N5g-1; Tue, 03 Jun 2025 21:27:17 -0400
+X-MC-Unique: 6B--Hj6yNlubc2byGe5N5g-1
+X-Mimecast-MFC-AGG-ID: 6B--Hj6yNlubc2byGe5N5g_1749000436
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7462aff55bfso5034694b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 18:27:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749000436; x=1749605236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BVmJXGHCgwooCqymme55wOEwxwtQ0yZmHm9VDK+DDWs=;
+        b=HKT4myVdiMkfhAr0JSrYcMNPEzc+lJzcvMAJwF6U8Y1gWnHZGKGIfZort+OO9iWJwO
+         OX1+NjXnwAkYUHE6wZxaWXWfRjNVvMyJAm9TaVsEyk2kWNVNyBIWUdLxGdMG97eBeOLw
+         IkGAiRPa7bEMmBGs0hVrfGo8WfFeLYED4SE0UJWGd/qrXJj+0HIEWYRCKLhZ4NedI7og
+         igUroC0OiCUvhxoqjHXwhMs6REMS2qL/5uExSYGMPr/MLiq3jXdaGFjQGLlYaf4Xq5zy
+         0d33nAmO6/TJf/Rqx8ClU/xmttSAQ5nkeN+N+L6C9tRG147rtpnUiHc+6Zr8xjE9qZ1E
+         +AJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXdEnSgrFTP0zkGNYX6VxpKo8QOqWkglJausM0JrtB4A0ad79ku2TafS06lzbA4+iCkaSSHedejtSBtZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXB2yjiPhy/+J2s192VaqacEEjJYLdbDZwjcp4vA62bisrjXx1
+	AAqtxeGdwIEZlG67uBiuebEDWVG/nZo4b3mwLJmhWVZO4hb5E4Yvccr4YP2b/ZxsdVtffUC5jHO
+	xHGq9s8MEvV/M3IV5MesT/w2DypK+302ErOUwnzqEqlS5eyQ2Dmo0LV7tvyk3Rrw57K04hUXWrC
+	TyA54IoizHSygY0axZ94BvCySRFRj/fhP0mD/9ltai
+X-Gm-Gg: ASbGncv451CVr4hUjrd5l4p3SEooGJvJIg471Z4uCifctOczAzQJ6IzR881XsgmIx+0
+	WT8C0ckYxUpDWc0RZaZEnzI3ec2QvVmpBJYO7dMQGSQb2hNmSqgo5/jSqL18r4mjwLascXg==
+X-Received: by 2002:a05:6a00:218e:b0:746:cc71:cc0d with SMTP id d2e1a72fcca58-7480b48d71emr1594628b3a.12.1749000436442;
+        Tue, 03 Jun 2025 18:27:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFU7UshbqAmiFChVYE6GtmnkwbH2sxix2Z0rwMiDn2wsmE31jBilsjSxpe70S1Y+X8iIvmuRFYjW8X4WKcP5fA=
+X-Received: by 2002:a05:6a00:218e:b0:746:cc71:cc0d with SMTP id
+ d2e1a72fcca58-7480b48d71emr1594593b3a.12.1749000436015; Tue, 03 Jun 2025
+ 18:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	NBjdfOSzM1JtPWn0udLR4xiXT0JTdwLr7GmPWm4Kfps+6g2AdLh0ayv7+1mEFNrmgWW8UbGcqxrT30j1QlNiCYucrN0oXLlAQtBybxjMPIM94Y3RPsPcY7usgL0DbwKoDXFmW3C1ZlTRtI635c0+8QELFxZp4LBx7nRC62IntoItqOA2QoqMIUUNAprIf6eP/MRFkvyoSpWsbHs1aiZGYzb255ChESdDwWQEKftSxYneRj7y1GXqWQHEWvvrjSWEXRpIZVhUU5gXT57th/k4ybsuoiTYlSzVTSa65yP62CFcuW7RVyd86ubCezW5M7DqK6CzJVQF+f1N6noe/L73llabbm+CbiplVuvBuy8a7XLIvLLTukg6jMqib4zLE7njChBjKyoZxwIbPSPxM6p+9aG8aCfSO+OCUGJlKX/pCy5I7alQ101xyyoCVtL3Oh9cAlb9P2XGiiN0nRXjVg+CxzVyVXafAKCHWteRW5IppxGAdt7K7/TjwgXyy8JjX/y86Me3aUoW2e8Ao1pvrq56FyxBy+XnoCmibvEJJGlKwjON0EdCpEVDsvHDArP6mwfXvULVEStiytt44xeQnK7mQN2Lkf471+V5RIk6zyk2lYnGbKgrRhfbXa2eAe/fcMTH
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY4PR01MB13777.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6100f152-928d-4441-9ede-08dda306383c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2025 01:22:06.4603
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: s7teaY6JdXJ1V0vZ4M4zqPucne0le6062ee140gD14ZKRcANIynVbJMZW6Ka7ljDm6wzt2d1uEPiqhsfufDV2QnpB+9on+9ORJaYgK/jiic=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7082
+References: <20250530-rss-v12-0-95d8b348de91@daynix.com> <20250530-rss-v12-3-95d8b348de91@daynix.com>
+In-Reply-To: <20250530-rss-v12-3-95d8b348de91@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 4 Jun 2025 09:27:05 +0800
+X-Gm-Features: AX0GCFuYlEXU2HjXeMTaDnRIvTFcw3ocyvQ95aagHgYzrm-PLm8iX2G4BD1kF-4
+Message-ID: <CACGkMEvVf0LrquZcWSv3vp-r44sTj0ZDnjwbwB20N0aU35+vxw@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 03/10] tun: Allow steering eBPF program to
+ fall back
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+On Fri, May 30, 2025 at 12:50=E2=80=AFPM Akihiko Odaki <akihiko.odaki@dayni=
+x.com> wrote:
+>
+> This clarifies a steering eBPF program takes precedence over the other
+> steering algorithms.
 
-Thank you for your help with this issue.
+Let's give an example on the use case for this.
 
-> On 2025-06-03, Michael Kelley <mhklinux@outlook.com> wrote:
-> > The problem is the failure to stop secondary CPU 2.  (The CPU # that fa=
-ils
-> > to stop varies from run-to-run.) It is mostly reproducible, but not alw=
-ays. I
-> > bisected to commit 2eb2608618ce ("serial: amba-pl011: Implement nbcon
-> > console") in the 6.15 kernel.
->=20
-> Unrelated to this particular report, I am looking at commit 2eb2608618ce
-> ("serial: amba-pl011: Implement nbcon console") and I do not think it
-> implements atomic printing correctly.
->=20
-> pl011_console_write_atomic() assumes uap->clk is disabled when it is
-> called. However, if it took over ownership from the printing kthread,
-> the uap->clk is already enabled. And then after printing its line it
-> disables uap->clk, even though the interrupted printing kthread expects
-> uap->clk to still be enabled once it regains ownership.
->=20
-> The atomic printing needs to track if the clock is enabled or disabled
-> and act accordingly. I suppose something like this:
->=20
-> diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl=
-011.c
-> index 11d65097578cd..914449b46b95b 100644
-> --- a/drivers/tty/serial/amba-pl011.c
-> +++ b/drivers/tty/serial/amba-pl011.c
-> @@ -2520,11 +2520,14 @@ pl011_console_write_atomic(struct console *co,
-> struct nbcon_write_context *wctxt
->  {
->  	struct uart_amba_port *uap =3D amba_ports[co->index];
->  	unsigned int old_cr =3D 0;
-> +	bool old_enabled;
->=20
->  	if (!nbcon_enter_unsafe(wctxt))
->  		return;
->=20
-> -	clk_enable(uap->clk);
-> +	old_enabled =3D __clk_is_enabled(uap->clk);
-> +	if (!old_enabled)
-> +		clk_enable(uap->clk);
->=20
->  	if (!uap->vendor->always_enabled) {
->  		old_cr =3D pl011_read(uap, REG_CR);
-> @@ -2542,7 +2545,8 @@ pl011_console_write_atomic(struct console *co, stru=
-ct
-> nbcon_write_context *wctxt
->  	if (!uap->vendor->always_enabled)
->  		pl011_write(old_cr, uap, REG_CR);
->=20
-> -	clk_disable(uap->clk);
-> +	if (!old_enabled)
-> +		clk_disable(uap->clk);
->=20
->  	nbcon_exit_unsafe(wctxt);
+>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> ---
+>  Documentation/networking/tuntap.rst |  7 +++++++
+>  drivers/net/tun.c                   | 28 +++++++++++++++++-----------
+>  include/uapi/linux/if_tun.h         |  9 +++++++++
+>  3 files changed, 33 insertions(+), 11 deletions(-)
+>
+> diff --git a/Documentation/networking/tuntap.rst b/Documentation/networki=
+ng/tuntap.rst
+> index 4d7087f727be..86b4ae8caa8a 100644
+> --- a/Documentation/networking/tuntap.rst
+> +++ b/Documentation/networking/tuntap.rst
+> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable it=
+::
+>        return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+>    }
+>
+> +3.4 Reference
+> +-------------
+> +
+> +``linux/if_tun.h`` defines the interface described below:
+> +
+> +.. kernel-doc:: include/uapi/linux/if_tun.h
+> +
+>  Universal TUN/TAP device driver Frequently Asked Question
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index d8f4d3e996a7..9133ab9ed3f5 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -476,21 +476,29 @@ static u16 tun_automq_select_queue(struct tun_struc=
+t *tun, struct sk_buff *skb)
+>         return txq;
 >  }
->=20
-> I am guessing that it is allowed to use __clk_is_enabled() for this
-> purpose. Otherwise it can be tracked as a bool in struct uart_amba_port.
->=20
-> John Ogness
+>
+> -static u16 tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff =
+*skb)
+> +static bool tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff=
+ *skb,
+> +                                 u16 *ret)
+>  {
+>         struct tun_prog *prog;
+>         u32 numqueues;
+> -       u16 ret =3D 0;
+> +       u32 prog_ret;
+> +
+> +       prog =3D rcu_dereference(tun->steering_prog);
+> +       if (!prog)
+> +               return false;
+>
+>         numqueues =3D READ_ONCE(tun->numqueues);
+> -       if (!numqueues)
+> -               return 0;
+> +       if (!numqueues) {
+> +               *ret =3D 0;
+> +               return true;
+> +       }
+>
+> -       prog =3D rcu_dereference(tun->steering_prog);
+> -       if (prog)
+> -               ret =3D bpf_prog_run_clear_cb(prog->prog, skb);
+> +       prog_ret =3D bpf_prog_run_clear_cb(prog->prog, skb);
+> +       if (prog_ret =3D=3D TUN_STEERINGEBPF_FALLBACK)
+> +               return false;
 
-I believe the Common Clock Framework manages the enable count for clocks.
-Specifically, uap->clk->core->enable_count is incremented by clk_enable
-and decremented by clk_disable.
-Wouldn't the clock remain enabled until enable_count reaches 0?
+This seems to break the uAPI. So I think we need a new ioctl to enable
+the behaviour
 
-Regards,=20
-Toshiyuki Sato
+>
+> -       return ret % numqueues;
+> +       *ret =3D (u16)prog_ret % numqueues;
+> +       return true;
+>  }
+>
+>  static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
+> @@ -500,9 +508,7 @@ static u16 tun_select_queue(struct net_device *dev, s=
+truct sk_buff *skb,
+>         u16 ret;
+>
+>         rcu_read_lock();
+> -       if (rcu_dereference(tun->steering_prog))
+> -               ret =3D tun_ebpf_select_queue(tun, skb);
+> -       else
+> +       if (!tun_ebpf_select_queue(tun, skb, &ret))
+>                 ret =3D tun_automq_select_queue(tun, skb);
+>         rcu_read_unlock();
+>
+> diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
+> index 287cdc81c939..980de74724fc 100644
+> --- a/include/uapi/linux/if_tun.h
+> +++ b/include/uapi/linux/if_tun.h
+> @@ -115,4 +115,13 @@ struct tun_filter {
+>         __u8   addr[][ETH_ALEN];
+>  };
+>
+> +/**
+> + * define TUN_STEERINGEBPF_FALLBACK - A steering eBPF return value to fa=
+ll back
+> + *
+> + * A steering eBPF program may return this value to fall back to the ste=
+ering
+> + * algorithm that should have been used if the program was not set. This=
+ allows
+> + * selectively overriding the steering decision.
+> + */
+> +#define TUN_STEERINGEBPF_FALLBACK -1
+
+Not a native speaker, consider it works more like XDP_PASS, would it
+be better to use "TUN_STERRING_PASS"?
+
+Thanks
+
+> +
+>  #endif /* _UAPI__IF_TUN_H */
+>
+> --
+> 2.49.0
+>
 
 
