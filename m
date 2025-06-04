@@ -1,219 +1,202 @@
-Return-Path: <linux-kernel+bounces-672976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24702ACDA7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:04:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABA7ACDA78
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B96913A472D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45AFB173E77
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE63283FE5;
-	Wed,  4 Jun 2025 09:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9E428C2D7;
+	Wed,  4 Jun 2025 09:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ejS75Y0t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TkVRi41F";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ejS75Y0t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TkVRi41F"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n6lAo/+1"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8367D224B01
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9851171A1;
+	Wed,  4 Jun 2025 09:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749027875; cv=none; b=IIyHsfhlyaEGoTSOfKACCAPttuVcmGdc2UMYvVBNPdKtAPm87EkRDyaK7My39Ac9cpvnJCWmY62iXUJro44gNz6FUAvzYq8YC6fhYSHNJ54ErUtx2pQ3nvSH4+hLtG/3Fs0As77nT4yMkDu1OPgnG8bGOdMUCcrnhwEWI7Ndyso=
+	t=1749027779; cv=none; b=WGpAXcQNie7aAzoDALmyForHEguh+xDDLyHy0K6T6AZTQIORrJ0fgGX8wXf8+PqjS7+1iIjlkKIYzwjm74bI7ZCS2AgJ0dvTvJdrV9IxYdxR6EvpWiLorc/o5e1layoVWeQ/B0RqJCFUl6OqM1xlklx0qrGxzkmN4wTb++8F8NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749027875; c=relaxed/simple;
-	bh=PcyXwCVJ7cRrxvLn2m3szoKF8wpqDILWGuHeQ3GGAr4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=rc+iy/fxZAAjOC/rohMxshcYpzumN+HLHI/VTmWrhW3C1aTml86ABUxYbDSKYE9rw20ctoBEO9UjwGidtn7tgJj7njFVRJc29O6FhjQZQ3tz6hTH6rlaheFgHzW26rCGDlmgqkuUce9+96qyVW9OU06oAxBUuglBLMmD83BWWW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ejS75Y0t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TkVRi41F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ejS75Y0t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TkVRi41F; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B653222B9;
-	Wed,  4 Jun 2025 09:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749027746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=EWaKDjaPwadi6P+l7VSUCRUxsh1flKoXVZWuovKzTAQ=;
-	b=ejS75Y0tHkDLug2DEd0xQQO0eJKqzUuldAFe/KZ9ldFrfTan32m2QNMcNPEcGqvGZclvZp
-	rhc4lpYITdh2o1+//WakDRHg1KB5me9WmCvSgasVwIexyzFKmP/O77BjyngWSfRp42OLWr
-	m0bSwyFSU1+0sMzdUK0JyyfBSGNJmmM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749027746;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=EWaKDjaPwadi6P+l7VSUCRUxsh1flKoXVZWuovKzTAQ=;
-	b=TkVRi41FsyIrVxB4SLsSRDvbOMbfpPhT8KVicojApdLmgz7ySXINwxbP4RIzzbyI/w8FCu
-	WHSWXn+HRxILYCDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ejS75Y0t;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TkVRi41F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749027746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=EWaKDjaPwadi6P+l7VSUCRUxsh1flKoXVZWuovKzTAQ=;
-	b=ejS75Y0tHkDLug2DEd0xQQO0eJKqzUuldAFe/KZ9ldFrfTan32m2QNMcNPEcGqvGZclvZp
-	rhc4lpYITdh2o1+//WakDRHg1KB5me9WmCvSgasVwIexyzFKmP/O77BjyngWSfRp42OLWr
-	m0bSwyFSU1+0sMzdUK0JyyfBSGNJmmM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749027746;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=EWaKDjaPwadi6P+l7VSUCRUxsh1flKoXVZWuovKzTAQ=;
-	b=TkVRi41FsyIrVxB4SLsSRDvbOMbfpPhT8KVicojApdLmgz7ySXINwxbP4RIzzbyI/w8FCu
-	WHSWXn+HRxILYCDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3683A1369A;
-	Wed,  4 Jun 2025 09:02:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +zn7DKILQGjyCgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 04 Jun 2025 09:02:26 +0000
-Message-ID: <7f9a7fe2-da23-422f-a5f1-14fa99eb38d9@suse.cz>
-Date: Wed, 4 Jun 2025 11:02:26 +0200
+	s=arc-20240116; t=1749027779; c=relaxed/simple;
+	bh=ACscrL2viB9MccNiRSmG7exlusg6hWuddEnoY03JguA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=fMQu8aMhTi36HgwKuG3G7c9lZT/DM2KAeZ7CBPpuLpZCBf0epHua08rHnnNackZKmmVJCaXA8f4fS5dhXIYIyPbEKHvBBl823pZLOS1Dy6P9Lyo7SaqP4jOJo19YgQYxyTdHQ7LVYJ9Vlhnm+owaVBuWlGErBdBZ1iq8bWAa4C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n6lAo/+1; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 83E82432FC;
+	Wed,  4 Jun 2025 09:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749027769;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Nmq+6v2A71B0bX8QqGblVfzuVcGFArdbHQL7ep/nDU=;
+	b=n6lAo/+16LWdc57oz+Z5OQbqq5O62F1rsRLiGS2p6TFSfAjyskbkQtbhDEsZm1KdNCoX0S
+	ng17QFnHMgV0DQUmociuS/rHsZLZsGJetjsJ6NFsM1vOioue2IrKX/PXoaZz2QKGB1L3X2
+	ecnLSxmzffTC0quPLldjqPasHXpNPmMoqpi/x8t91vxrWfji/OeEnsihZ6dC99WzDo+J3s
+	WnZ0TzE5fZD9tN/wijK3T18zor9d7kBJHiFcGPpI+eDK3izPQiW/6fGSkhPIXiyNPhEX04
+	pQuHsQO6MB+4XF3FEo9sUOjA23gLZWYAiIHE+0QGRs6OChIvpQttLy7ANz/GfQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab updates for 6.16
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 4B653222B9
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
-X-Spam-Level: 
+Date: Wed, 04 Jun 2025 11:02:44 +0200
+Message-Id: <DADMLIVHMSSO.3AXSI5216WCT6@bootlin.com>
+Subject: [Question] attributes encoding in BTF
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, "Andrii
+ Nakryiko" <andrii.nakryiko@gmail.com>
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "John Fastabend" <john.fastabend@gmail.com>,
+ "Andrii Nakryiko" <andrii@kernel.org>, "Martin KaFai Lau"
+ <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>, "Song Liu"
+ <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>, "KP Singh"
+ <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo"
+ <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Puranjay Mohan"
+ <puranjay@kernel.org>, "Xu Kuohai" <xukuohai@huaweicloud.com>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Mykola Lysenko" <mykolal@fb.com>, "Shuah Khan" <shuah@kernel.org>, "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, "Alexandre Torgue"
+ <alexandre.torgue@foss.st.com>, "Florent Revest" <revest@chromium.org>,
+ "Bastien Curutchet" <bastien.curutchet@bootlin.com>,
+ <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, <bpf@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kselftest@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <dwarves@vger.kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250411-many_args_arm64-v1-0-0a32fe72339e@bootlin.com>
+ <20250411-many_args_arm64-v1-1-0a32fe72339e@bootlin.com>
+ <CAEf4Bzbn6BdXTOb0dTcsQmOMZpp5=DzGS2hHHQ3+dwcja=gv+w@mail.gmail.com>
+ <D98Q8BRNUVS9.11J60C67L1ALR@bootlin.com>
+ <CAEf4BzZHMYyGDZ4c4eNXG7Fm=ecxCCbKhKbQTbCjvWmKtdwvBw@mail.gmail.com>
+ <D9E9IQQ3QKXM.3UJ17G9CBS1FH@bootlin.com>
+In-Reply-To: <D9E9IQQ3QKXM.3UJ17G9CBS1FH@bootlin.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddukeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkuffhvfevofhfjgesthhqredtredtjeenucfhrhhomheptehlvgigihhsucfnohhthhhorhoruceorghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetueeljeefkeejheduudfgffdvhfegffdvleeggeefvdeikefhleeuhefgtefgudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvuddvrddutdehrdduhedtrddvhedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdduvddruddthedrudehtddrvdehvddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigihhsrdhlohhthhhorhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefvddprhgtphhtthhopegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhhiihdrnhgrkhhrhihikhhosehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlsehiohhgvggrrhgsohigr
+ dhnvghtpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvhdprhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhm
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-Hi Linus,
+Hi all,
+a simpler version of this series has been merged, and so I am now taking a
+look at the issue I have put aside in the merged version: dealing with more
+specific data layout for arguments passed on stack. For example, a function
+can pass small structs on stack, but this need special care when generating
+the corresponding bpf trampolines. Those structs have specific alignment
+specified by the target ABI, but it can also be altered with attributes
+packing the structure or modifying the alignment.
 
-please pull the latest slab updates from:
+Some platforms already support structs on stack (see
+tracing_struct_many_args test), but as discussed earlier, those may suffer
+from the same kind of issue mentioned above.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.16
+On Wed Apr 23, 2025 at 9:24 PM CEST, Alexis Lothor=C3=A9 wrote:
+> Hi Andrii,
+>
+> On Wed Apr 23, 2025 at 7:15 PM CEST, Andrii Nakryiko wrote:
+>> On Thu, Apr 17, 2025 at 12:14=E2=80=AFAM Alexis Lothor=C3=A9
+>> <alexis.lothore@bootlin.com> wrote:
+>>>
+>>> Hi Andrii,
+>>>
+>>> On Wed Apr 16, 2025 at 11:24 PM CEST, Andrii Nakryiko wrote:
 
-AFAIK no conflicts. A small PR this time, but the next merge window should
-be different. The second commit came somewhat late hence the PR is also
-later than usual to allow for more -next soak time.
+[...]
+
+>> I'd suggest looking at btf__align_of() in libbpf (tools/lib/bpf/btf.c)
+>> to see how we calculate alignment there. It seems to work decently
+>> enough. It won't cover any arch-specific extra rules like double
+>> needing 16-byte alignment (I vaguely remember something like that for
+>> some architectures, but I might be misremembering), or anything
+>> similar. It also won't detect (I don't think it's possible without
+>> DWARF) artificially increased alignment with attribute((aligned(N))).
+>
+> Thanks for the pointer, I'll take a look at it. The more we discuss this
+> series, the less member size sounds relevant for what I'm trying to achie=
+ve
+> here.
+>
+> Following Xu's comments, I have been thinking about how I could detect th=
+e
+> custom alignments and packing on structures, and I was wondering if I cou=
+ld
+> somehow benefit from __attribute__ encoding in BTF info ([1]). But
+> following your hint, I also see some btf_is_struct_packed() in
+> tools/lib/bpf/btf_dump.c that could help. I'll dig this further and see i=
+f
+> I can manage to make something work with all of this.
+
+Andrii's comment above illustrates well my current issue: when functions
+pass arguments on stack, we are missing info for some of them to correctly
+build trampolines, especially for struct, which can have attributes like
+__attribute__((packed)) or __attribute__((align(x))). [1] seems to be a
+recent solution implemented for BTF to cover this need. IIUC it encodes any
+arbitratry attribute affecting a data type or function, so if I have some
+struct like this one in my kernel or a module:
+
+struct foo {
+    short b
+    int a;
+} __packed;
+
+I would expect the corresponding BTF data to have some BTF_KIND_DECL_TAG
+describing the "packed" attribute for the corresponding structure, but I
+fail to find any of those when running:
+
+$ bpftool btf dump file vmlinux format raw
+
+In there I see some DECL_TAG but those are mostly 'bpf_kfunc', I see not
+arbitrary attribute like 'packed' or 'aligned(x)'.
+
+What I really need to do in the end is to be able to parse those alignments
+attributes info in the kernel at runtime when generating trampolines, but I
+hoped to be able to see them with bpftool first to validate the concept.
+
+I started taking a look further at this and stumbled upon [2] in which Alan
+gives many more details about the feature, so I did the following checks:
+- kernel version 6.15.0-rc4 from bpf-next_base: it contains the updated
+  Makefile.btf calling pahole with `--btf_features=3Dattributes`
+- pahole v1.30
+  $ pahole --supported_btf_features
+  encode_force,var,float,decl_tag,type_tag,enum64,optimized_func,consistent=
+_func,decl_tag_kfuncs,reproducible_build,distilled_base,global_var,attribut=
+es
+  This pahole comes from my distro pkg manager, but I have also done the
+  same test with a freshly built pahole, while taking care of pulling the
+  libbpf submodule.
+- bpftool v7.6.0
+    bpftool v7.6.0
+    using libbpf v1.6
+    features: llvm, skeletons
+
+Could I be missing something obvious ? Or did I misunderstand the actual
+attribute encoding feature ?
 
 Thanks,
-Vlastimil
 
-======================================
+Alexis
 
-* Make kvmalloc() more suitable for callers that need it to succeed, but
-  without unnecessary overhead by reclaim and compaction to get a physically
-  contiguous allocation. Instead fallback to vmalloc() more easily by default,
-  unless instructed by __GFP_RETRY_MAYFAIL to prefer kmalloc() harder.
-  This should allow the removal of a xfs-specific workaround (Michal Hocko)
+[1] https://lore.kernel.org/bpf/20250130201239.1429648-1-ihor.solodrai@linu=
+x.dev/
+[2] https://lore.kernel.org/all/CA+icZUW31vpS=3DR3zM6G4FMkzuiQovqtd+e-8ihws=
+K_A-QtSSYg@mail.gmail.com/
 
-* Remove potentially excessive warnings due to memory pressure when allocating
-  structures for per-object allocation profiling metadata (Usama Arif)
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-----------------------------------------------------------------
-Michal Hocko (1):
-      mm: kvmalloc: make kmalloc fast path real fast path
-
-Usama Arif (1):
-      mm: slub: only warn once when allocating slab obj extensions fails
-
- mm/slub.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
