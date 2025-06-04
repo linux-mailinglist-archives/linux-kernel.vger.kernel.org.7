@@ -1,123 +1,230 @@
-Return-Path: <linux-kernel+bounces-673371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B4AACE07A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:38:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01C2ACE065
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A717D3A8157
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:37:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F3B87A9D7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C1E290DB8;
-	Wed,  4 Jun 2025 14:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3B8291141;
+	Wed,  4 Jun 2025 14:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWPkp9GI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SrAO6fDh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C62291162;
-	Wed,  4 Jun 2025 14:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8090928F950;
+	Wed,  4 Jun 2025 14:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047772; cv=none; b=tJSdz9oHogR9VHJVMyc86VO8zwvZgLA0oV/wsr3hspNApM6bU/xjAenhmb58mC0hLOt0NNnQSuDwd5azC2HLODL3hFHAk/ydz5Tldtcw1p5LL0fFrS/gkQnmO8cfdrfF3q/iUOflBJqnq0m+g5Pu3EngG9f+5Yyyzo9CE1XrmVw=
+	t=1749047738; cv=none; b=FvRvU+YxR1OXskNbHqf+w5QP3LDBN2TXp9DmWbcHGMZuDUUFceQP9QTby1RYW3HteUNvlizbsTXn4A4Xdkg0lzf3S5dbDb9wJoTeYP9C6IZTp0nRQ3467FOe2TrFvNj00G1Jz+ht25yrkb6CrGW8rY8sz88ty8z6GkYRQFFaV9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047772; c=relaxed/simple;
-	bh=57PGqZIr4MccX98/Q9s3avEIt4j4j+e1Z330hecZA8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QgUNcHN8pd4GI2Lmxf9XVWMY8oBFq96AT0m1yaGf7TeWMVwEM/xDkE4KgEL9I25z4v94AcXHQRs0rfsiwNvloCPGpM314iHEPLkQXg00bVpZc2pQZWhs7pw2qA8P9miQ8E7BO93wCsIKKH7nhV3fyOlpBUDQ+k7uJspO6YAvcvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWPkp9GI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA9AC4CEE4;
-	Wed,  4 Jun 2025 14:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749047772;
-	bh=57PGqZIr4MccX98/Q9s3avEIt4j4j+e1Z330hecZA8c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EWPkp9GIk6Tclt42p7KK/Qk0o++CraPChb3Lhx0BjWRxcV9ea3KG8TYrsT5s9wUmO
-	 yYGkzR/9gDPYZaIRx9cYxGlGBSS5feyKj08Flsx6haFbRnZ7wPrn585ftDZkNVuN/X
-	 nFtI3N512CiJURPD7pdOODbFzWESo99WEKK/DN4xr8wOXc+uGc3NEGcQvlukjK81Ji
-	 wQuDutr3o7GoTvwHNwhyYux63/UNasbADPm9ZgJPMASFv54qZ+4ZuX0VdEibef1wT2
-	 yT7/aX5SVWq3RlDNa7mrosS5ftbmrf2WIu4n4hOd01CfMZXsRb+01NapgT8vEWqGsf
-	 RdEDX8/GdM/Yg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1uMpDt-000000006nT-3w5U;
-	Wed, 04 Jun 2025 16:36:09 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
-	Baochen Qiang <quic_bqiang@quicinc.com>,
-	linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 5/5] wifi: ath11k: fix dest ring-buffer corruption when ring is full
-Date: Wed,  4 Jun 2025 16:34:57 +0200
-Message-ID: <20250604143457.26032-6-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250604143457.26032-1-johan+linaro@kernel.org>
-References: <20250604143457.26032-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1749047738; c=relaxed/simple;
+	bh=x/HDN8ZE77fRy93+e9zpmrKLhx3xowe0WlDM+Fs+tB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y/XBE+EOqNhHF1ezhuKwOt4dn7n4MxH+xM0/tw4mjeMSR3ZWzdRTczbGiTDjPVDF7YCHOdbp24bMFKyRW7bfbCGNuUCM7BGwBloitHT1JGVn0AhezzLeuFVZ7M2s3h8/SOeVP7n1wkjbzhnAAr3mZSWBATQWNaenswGfoNr4aVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SrAO6fDh; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749047736; x=1780583736;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=x/HDN8ZE77fRy93+e9zpmrKLhx3xowe0WlDM+Fs+tB8=;
+  b=SrAO6fDhDfNVbmjW5MH9sy28n05d3PgxBYTN1LOJItDJDFyBsNy+JNsD
+   aRSn0zkxc+CLv0zLGm5d33jcHw1cwEpiDzCcd2gPH6OL70ISH/p7e8IZ1
+   pnOYeaj79J2OCWPNZ3FJ4XpnW1dDJZUmJaJX5XD/2uA6RHkkVoANghjrZ
+   t6k4tQG19J4wydVYmfKzP2dm4RrRm3YPPbuQCNaIAOZGa4yHUDt0LvqV0
+   DZ4osbASI2lcLgJiTIC3ketnbzssEr2xxb7fR5GTlmu2gf9sNY7pwW5GJ
+   3cg1uh4nzLwl/E1hmyE5+og7INDWhD8OOYZlXViKg7VHGz1KON97nuBV6
+   g==;
+X-CSE-ConnectionGUID: 86NMfliHT5mMZMY04cO9tg==
+X-CSE-MsgGUID: O/gp1rXESiOu9NhHKoc2/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="54924141"
+X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
+   d="scan'208";a="54924141"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 07:35:35 -0700
+X-CSE-ConnectionGUID: m/5wgwI3TjG4pYN4XeiUAQ==
+X-CSE-MsgGUID: BnW7+6TUSMOdwad30rho3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
+   d="scan'208";a="145104296"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.110.233]) ([10.125.110.233])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 07:35:34 -0700
+Message-ID: <acb0f359-cd4a-4221-a7ba-9c473ad7ecd2@intel.com>
+Date: Wed, 4 Jun 2025 07:35:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/7] cxl/acpi: Add background worker to wait for
+ cxl_pci and cxl_mem probe
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ "Xingtao Yao (Fujitsu)" <yaoxt.fnst@fujitsu.com>,
+ Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
+ Nathan Fontenot <nathan.fontenot@amd.com>,
+ Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>
+References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250603221949.53272-5-Smita.KoralahalliChannabasappa@amd.com>
+ <860121d7-4f40-4da5-b49a-cfeea5bc14c5@fujitsu.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <860121d7-4f40-4da5-b49a-cfeea5bc14c5@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add the missing memory barriers to make sure that destination ring
-descriptors are read before updating the tail pointer (and passing
-ownership to the device) to avoid memory corruption on weakly ordered
-architectures like aarch64 when the ring is full.
 
-Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
 
-Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-Cc: stable@vger.kernel.org      # 5.6
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/net/wireless/ath/ath11k/hal.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+On 6/4/25 2:40 AM, Zhijian Li (Fujitsu) wrote:
+> 
+> 
+> On 04/06/2025 06:19, Smita Koralahalli wrote:
+>>   drivers/cxl/acpi.c         | 23 +++++++++++++++++++++++
+>>   drivers/cxl/core/suspend.c | 21 +++++++++++++++++++++
+>>   drivers/cxl/cxl.h          |  2 ++
+>>   3 files changed, 46 insertions(+)
+>>
+>> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+>> index cb14829bb9be..978f63b32b41 100644
+>> --- a/drivers/cxl/acpi.c
+>> +++ b/drivers/cxl/acpi.c
+>> @@ -813,6 +813,24 @@ static int pair_cxl_resource(struct device *dev, void *data)
+>>   	return 0;
+>>   }
+>>   
+>> +static void cxl_softreserv_mem_work_fn(struct work_struct *work)
+>> +{
+>> +	/* Wait for cxl_pci and cxl_mem drivers to load */
+>> +	cxl_wait_for_pci_mem();
+>> +
+>> +	/*
+>> +	 * Wait for the driver probe routines to complete after cxl_pci
+>> +	 * and cxl_mem drivers are loaded.
+>> +	 */
+>> +	wait_for_device_probe();
+>> +}
+>> +static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
+>> +
+>> +static void cxl_softreserv_mem_update(void)
+>> +{
+>> +	schedule_work(&cxl_sr_work);
+>> +}
+>> +
+>>   static int cxl_acpi_probe(struct platform_device *pdev)
+>>   {
+>>   	int rc;
+>> @@ -887,6 +905,10 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+>>   
+>>   	/* In case PCI is scanned before ACPI re-trigger memdev attach */
+>>   	cxl_bus_rescan();
+>> +
+>> +	/* Update SOFT RESERVE resources that intersect with CXL regions */
+>> +	cxl_softreserv_mem_update();
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> @@ -918,6 +940,7 @@ static int __init cxl_acpi_init(void)
+>>   
+>>   static void __exit cxl_acpi_exit(void)
+>>   {
+>> +	cancel_work_sync(&cxl_sr_work);
+>>   	platform_driver_unregister(&cxl_acpi_driver);
+>>   	cxl_bus_drain();
+>>   }
+>> diff --git a/drivers/cxl/core/suspend.c b/drivers/cxl/core/suspend.c
+>> index 72818a2c8ec8..c0d8f70aed56 100644
+>> --- a/drivers/cxl/core/suspend.c
+>> +++ b/drivers/cxl/core/suspend.c
+>> @@ -2,12 +2,15 @@
+>>   /* Copyright(c) 2022 Intel Corporation. All rights reserved. */
+>>   #include <linux/atomic.h>
+>>   #include <linux/export.h>
+>> +#include <linux/wait.h>
+>>   #include "cxlmem.h"
+>>   #include "cxlpci.h"
+>>   
+>>   static atomic_t mem_active;
+>>   static atomic_t pci_loaded;
+>>   
+>> +static DECLARE_WAIT_QUEUE_HEAD(cxl_wait_queue);
+> 
+> Given that this file (suspend.c) focuses on power management functions,
+> it might be more appropriate to move the wait queue declaration and its
+> related changes to acpi.c in where the its caller is.
 
-diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
-index 927ed2bc3fbf..7eeffb36899e 100644
---- a/drivers/net/wireless/ath/ath11k/hal.c
-+++ b/drivers/net/wireless/ath/ath11k/hal.c
-@@ -854,7 +854,6 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
- {
- 	lockdep_assert_held(&srng->lock);
- 
--	/* TODO: See if we need a write memory barrier here */
- 	if (srng->flags & HAL_SRNG_FLAGS_LMAC_RING) {
- 		/* For LMAC rings, ring pointer updates are done through FW and
- 		 * hence written to a shared memory location that is read by FW
-@@ -869,7 +868,11 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
- 			WRITE_ONCE(*srng->u.src_ring.hp_addr, srng->u.src_ring.hp);
- 		} else {
- 			srng->u.dst_ring.last_hp = *srng->u.dst_ring.hp_addr;
--			*srng->u.dst_ring.tp_addr = srng->u.dst_ring.tp;
-+			/* Make sure descriptor is read before updating the
-+			 * tail pointer.
-+			 */
-+			dma_mb();
-+			WRITE_ONCE(*srng->u.dst_ring.tp_addr, srng->u.dst_ring.tp);
- 		}
- 	} else {
- 		if (srng->ring_dir == HAL_SRNG_DIR_SRC) {
-@@ -885,6 +888,10 @@ void ath11k_hal_srng_access_end(struct ath11k_base *ab, struct hal_srng *srng)
- 					   srng->u.src_ring.hp);
- 		} else {
- 			srng->u.dst_ring.last_hp = *srng->u.dst_ring.hp_addr;
-+			/* Make sure descriptor is read before updating the
-+			 * tail pointer.
-+			 */
-+			mb();
- 			ath11k_hif_write32(ab,
- 					   (unsigned long)srng->u.dst_ring.tp_addr -
- 					   (unsigned long)ab->mem,
--- 
-2.49.0
+You mean drivers/cxl/acpi.c and not drivers/cxl/core/acpi.c right? The core one is my mistake and I'm going to create a patch to remove that.
+
+DJ
+
+> 
+> 
+> Thanks
+> Zhijian
+> 
+>> +
+>>   bool cxl_mem_active(void)
+>>   {
+>>   	if (IS_ENABLED(CONFIG_CXL_MEM))
+>> @@ -19,6 +22,7 @@ bool cxl_mem_active(void)
+>>   void cxl_mem_active_inc(void)
+>>   {
+>>   	atomic_inc(&mem_active);
+>> +	wake_up(&cxl_wait_queue);
+>>   }
+>>   EXPORT_SYMBOL_NS_GPL(cxl_mem_active_inc, "CXL");
+>>   
+>> @@ -28,8 +32,25 @@ void cxl_mem_active_dec(void)
+>>   }
+>>   EXPORT_SYMBOL_NS_GPL(cxl_mem_active_dec, "CXL");
+>>   
+>> +static bool cxl_pci_loaded(void)
+>> +{
+>> +	if (IS_ENABLED(CONFIG_CXL_PCI))
+>> +		return atomic_read(&pci_loaded) != 0;
+>> +
+>> +	return false;
+>> +}
+>> +
+>>   void mark_cxl_pci_loaded(void)
+>>   {
+>>   	atomic_inc(&pci_loaded);
+>> +	wake_up(&cxl_wait_queue);
+>>   }
+>>   EXPORT_SYMBOL_NS_GPL(mark_cxl_pci_loaded, "CXL");
+>> +
+>> +void cxl_wait_for_pci_mem(void)
+>> +{
+>> +	if (!wait_event_timeout(cxl_wait_queue, cxl_pci_loaded() &&
+>> +				cxl_mem_active(), 30 * HZ))
+>> +		pr_debug("Timeout waiting for cxl_pci or cxl_mem probing\n");
+>> +}
 
 
