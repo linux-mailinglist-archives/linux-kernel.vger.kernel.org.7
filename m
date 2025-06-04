@@ -1,855 +1,663 @@
-Return-Path: <linux-kernel+bounces-673577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD09FACE2D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD17BACE2E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3DE3A6D23
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:12:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACCB3A4E58
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E1A1EB1AA;
-	Wed,  4 Jun 2025 17:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6CD1F5849;
+	Wed,  4 Jun 2025 17:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uq8DhPJP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EaJohHCv"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8565532C85;
-	Wed,  4 Jun 2025 17:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA3D18DF8D
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 17:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749057182; cv=none; b=FZ36Fnm1lUdROX72c01cjxudFONGn69+81ApurqQE2hz/TauC+1ECYZqqgaNkRB/EV9XfTjalqeK9NAFpZRmfMUVqEPOdgRoWVybVj0XiOUt5/ST6CsLcGWHemXPrOf1KkRRL6C8LzUnPUqeqTGSofVAq0pVAUr35gKONmmS55k=
+	t=1749057378; cv=none; b=TBz/qAaSNdo1BZMmrw7JePD0v80C5wvMrdggiQASOhIn4bdEaPcGHxDxYZxOok6NWoKFWkzVaZHDHY4myhekB6pS0DRNEqDaa8ppDzy1zljsm0v2infFHFSIVVmF0+JJ+AgBinXfL3hKWp3MupQjVkapUk0wzxR/q13b/0W51v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749057182; c=relaxed/simple;
-	bh=zenKx8uoevSrDIqPqROPm+UNn1VyyWz9jPqh6BVPk2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MerQt6KsiSFVze8Q/PoP4LGFa+MpWbY2vG9wYwo0qi/1ximcgSwSGgP3447DmCw1XqMYSqDNk/dDjyQ4zR7EJzUUoK3o0SKIB8CUrJVG4i1d1kuFgiWTn/AgNUfr4sdZYlUxgyRDIGRLqk0FTBJahmOPeJ0cJsdmwv6MXz5ojG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uq8DhPJP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE56BC4CEE4;
-	Wed,  4 Jun 2025 17:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749057182;
-	bh=zenKx8uoevSrDIqPqROPm+UNn1VyyWz9jPqh6BVPk2U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=uq8DhPJPlbkWclEEXa9bizuMHAqiYWoL8ow61EJFVQ2CZ934Zsi5GsvTdxnGgnIlO
-	 j3zNM1GneNje8o1RcArDMzxWQjIGAJCBgH09k0ubY7vHQik4gENj9ShqVf78vdF+L4
-	 iDofSO3zq6v7Wb36jwG+XDnLVwiqGwhiuiH0t3IpY4KXj0+vS1m2OmMl/IE/wGPmJu
-	 TgjaITgNmpYSnUCdzjdhYOINkjYnZremmoLLde6NG5UInDyt2g5uesUx9Zuc+aYCXB
-	 abjF+vQf+sS9qTc6q1pr8S5rr+U/td45Wj2UJ/lQqZD9WElkWtFGsWEniOt/x0C1Jd
-	 NwTYbKjLfwBnw==
-Date: Wed, 4 Jun 2025 12:13:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [GIT PULL] PCI changes for v6.16
-Message-ID: <20250604171300.GA533412@bhelgaas>
+	s=arc-20240116; t=1749057378; c=relaxed/simple;
+	bh=75VO9d5iLkd4GCA7ik1ldzeCSl5HAzwUPueqR1rAE+Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gVc2cfNHLykZyO98oOLs5XgaKqWLGODxW0JO/5b+CZ7RCYt7MnToOLElnNCc/z+bDYs9ugGp48KrEs3jxZ+5K5LVqztShXRVQ1cK2O80cVbpcx8lvAZCPKjy8R42P7VgpWQn9jkkivh29hMtmBrU9D/JZgpoeyEhevfafj1ro1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EaJohHCv; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b07d607dc83so26263a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 10:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1749057373; x=1749662173; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3DDEZCNtsvRZOHYMd2nOy0jeQIHw6YJanFKsy8XbCfk=;
+        b=EaJohHCvaQb3/Qgaf7M37sJBMCbFb5Bzs5f5maKF78SPsbcVemHWqBE0Izxihn41I0
+         f23pbY9d1R+tRgbqOi8xknPLtO9OKmvc62M2MfwGC7T0x1PQUFA/f9CCiwSj9J08LJAj
+         Y0+zibRZtsxHBTPX3Tdt4LpoPPVLDtBoV6tNw6UGBiOXjmXXYyYy8UZNzVeKmVvM5GYx
+         e6JfFaD8HS7GCFHm5it9tNk/0x0QxciL+IOnvTt3vW0zruGVraM5xVxzCCTQ2nuyi7Mp
+         93mwEexBuJ2QHTtI3FK8jkqNgrqVA0/fx5OAs0gJrhOziLjbOvUmP97rZbC6E5RkyL7v
+         OXRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749057373; x=1749662173;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3DDEZCNtsvRZOHYMd2nOy0jeQIHw6YJanFKsy8XbCfk=;
+        b=K6+KDr8vlEmlRhyexprZHCkNcMz4kYdPNryVR8B8PjoOdKfra6imTyR+DQRTSediDs
+         x3CDlXlm8Ehujag5SryK+XJizKwLeBHodhVqKnBdES05kK8DySUoGYacuj7URF/mP7Ir
+         sVQfDrcA5+Pz6vHe9guwRR7rUKOCBnPJk34z/8mYNKuSytpegJ1XXnlJVRJxdl7f3nBc
+         sbqnKFtZ0cM+0HjMQF0w6DXiXJqPfKrmypmVTGvfjn3ZVdPhwlObgatv68hTP0EVWAQw
+         FNi6JMLwSzTfbTEYMasfEfhcpqqQKqVf16T6p0A+iB1//C2IY6AW3F7gH5nPeKdadF+O
+         1q7Q==
+X-Gm-Message-State: AOJu0YxlsvMBT8slqSsSe+m6shQhyDlZHxpV7CfsqW33zCtFk321bg1B
+	J6SdHBlv2d8oKHjP6SOJ3kzmn5YffZgScp8TKInbR0WQaEhvsy2O2MHIE3YepTReBaw=
+X-Gm-Gg: ASbGnct0hf6o6pWI7dSCVREBrJswtsQi5Wz65PmYHlZV4IHIE1jE4td8OkWr7a/uRKO
+	NetrGXkK+lNBUIiafOn8Mmoasy5HB9t+1e/ajwKe2Pqh1ZnnRbFUSx2tLXVvO8I+rM1QrcUxLn1
+	h6IXJXKZGEneZGorV+bJbUD6jFizUTfyQQ0xPkl03WxHq6njRc5gwC9KNkRX+UgXO7Jb9SwDmAA
+	xRKxwIgYRlyfnOzjXCchI4+De2Mne+XIxhhV7TWKfKA6J8/tP0OjWmA6/Au9HWUH4duuRZrMYrN
+	l2WJ5X9Jg0AUu5MXOy0ASsog1C3MKbcHq9v/JAlLi5SRWNR50Nxq2bg21MFrQeOWQqt3nuO+
+X-Google-Smtp-Source: AGHT+IG5hANOGAdenUoRuSEpLRD2wRaP2u1hKPdL9MtwMOffhbFqSSrHuaElPJfzRX64TYq6ldIqIg==
+X-Received: by 2002:a17:90a:d444:b0:311:abba:53c0 with SMTP id 98e67ed59e1d1-3130cd12d75mr5472518a91.9.1749057372805;
+        Wed, 04 Jun 2025 10:16:12 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e2e9c9fsm9178972a91.30.2025.06.04.10.16.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 10:16:12 -0700 (PDT)
+From: Deepak Gupta <debug@rivosinc.com>
+Subject: [PATCH v17 00/27] riscv control-flow integrity for usermode
+Date: Wed, 04 Jun 2025 10:15:24 -0700
+Message-Id: <20250604-v5_user_cfi_series-v17-0-4565c2cf869f@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACx/QGgC/3XSzU7DMAwA4FdBPVNkx/nlxHsgNCVpwnJgRS1Uo
+ GnvjluEViEvt0TxF8f2uZvL1MrcPd6du6ksbW7jiTfo7u+6fIyn19K3gQ86BUpDIOgXc/jkoEO
+ u7fAb3NOQiVT11STVceD7VGr72tTnF94f2/wxTt/bIwuupxuHAChxC/bQU4rWJFuMgfo0tWWc2
+ yk/5PGtW8XF7hUvKpYVC0OoBRxVcoLidooKouJYUU65XEIgm5Og+KvCS1Q8K0MuqGMkUCDlEv4
+ Uwxe0qARWErmoQzYKTBYUhB2DIJcX2EHLXauRMFuQHLw6dMtZ++RtWstSU0DRUXtH/hYqdopBv
+ pQMIXnJoauj1Q2H2AkONbmhGG+j5Oi9I7ec04TeKAo8FQOgEh1zdbjSsmPWfFAHa7VD743k2J2
+ jbjjbJOtqMZIppfyfnsvl8gNxEbweyAMAAA==
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+ Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
+ rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
+ Zong Li <zong.li@sifive.com>, David Hildenbrand <david@redhat.com>, 
+ Deepak Gupta <debug@rivosinc.com>, Andy Chiu <andybnac@gmail.com>
+X-Mailer: b4 0.13.0
+
+Basics and overview
+===================
+
+Software with larger attack surfaces (e.g. network facing apps like databases,
+browsers or apps relying on browser runtimes) suffer from memory corruption
+issues which can be utilized by attackers to bend control flow of the program
+to eventually gain control (by making their payload executable). Attackers are
+able to perform such attacks by leveraging call-sites which rely on indirect
+calls or return sites which rely on obtaining return address from stack memory.
+
+To mitigate such attacks, risc-v extension zicfilp enforces that all indirect
+calls must land on a landing pad instruction `lpad` else cpu will raise software
+check exception (a new cpu exception cause code on riscv).
+Similarly for return flow, risc-v extension zicfiss extends architecture with
+
+- `sspush` instruction to push return address on a shadow stack
+- `sspopchk` instruction to pop return address from shadow stack
+  and compare with input operand (i.e. return address on stack)
+- `sspopchk` to raise software check exception if comparision above
+  was a mismatch
+- Protection mechanism using which shadow stack is not writeable via
+  regular store instructions
+
+More information an details can be found at extensions github repo [1].
+
+Equivalent to landing pad (zicfilp) on x86 is `ENDBRANCH` instruction in Intel
+CET [3] and branch target identification (BTI) [4] on arm.
+Similarly x86's Intel CET has shadow stack [5] and arm64 has guarded control
+stack (GCS) [6] which are very similar to risc-v's zicfiss shadow stack.
+
+x86 and arm64 support for user mode shadow stack is already in mainline.
+
+Kernel awareness for user control flow integrity
+================================================
+
+This series picks up Samuel Holland's envcfg changes [2] as well. So if those are
+being applied independently, they should be removed from this series.
+
+Enabling:
+
+In order to maintain compatibility and not break anything in user mode, kernel
+doesn't enable control flow integrity cpu extensions on binary by default.
+Instead exposes a prctl interface to enable, disable and lock the shadow stack
+or landing pad feature for a task. This allows userspace (loader) to enumerate
+if all objects in its address space are compiled with shadow stack and landing
+pad support and accordingly enable the feature. Additionally if a subsequent
+`dlopen` happens on a library, user mode can take a decision again to disable
+the feature (if incoming library is not compiled with support) OR terminate the
+task (if user mode policy is strict to have all objects in address space to be
+compiled with control flow integirty cpu feature). prctl to enable shadow stack
+results in allocating shadow stack from virtual memory and activating for user
+address space. x86 and arm64 are also following same direction due to similar
+reason(s).
+
+clone/fork:
+
+On clone and fork, cfi state for task is inherited by child. Shadow stack is
+part of virtual memory and is a writeable memory from kernel perspective
+(writeable via a restricted set of instructions aka shadow stack instructions)
+Thus kernel changes ensure that this memory is converted into read-only when
+fork/clone happens and COWed when fault is taken due to sspush, sspopchk or
+ssamoswap. In case `CLONE_VM` is specified and shadow stack is to be enabled,
+kernel will automatically allocate a shadow stack for that clone call.
+
+map_shadow_stack:
+
+x86 introduced `map_shadow_stack` system call to allow user space to explicitly
+map shadow stack memory in its address space. It is useful to allocate shadow
+for different contexts managed by a single thread (green threads or contexts)
+risc-v implements this system call as well.
+
+signal management:
+
+If shadow stack is enabled for a task, kernel performs an asynchronous control
+flow diversion to deliver the signal and eventually expects userspace to issue
+sigreturn so that original execution can be resumed. Even though resume context
+is prepared by kernel, it is in user space memory and is subject to memory
+corruption and corruption bugs can be utilized by attacker in this race window
+to perform arbitrary sigreturn and eventually bypass cfi mechanism.
+Another issue is how to ensure that cfi related state on sigcontext area is not
+trampled by legacy apps or apps compiled with old kernel headers.
+
+In order to mitigate control-flow hijacting, kernel prepares a token and place
+it on shadow stack before signal delivery and places address of token in
+sigcontext structure. During sigreturn, kernel obtains address of token from
+sigcontext struture, reads token from shadow stack and validates it and only
+then allow sigreturn to succeed. Compatiblity issue is solved by adopting
+dynamic sigcontext management introduced for vector extension. This series
+re-factor the code little bit to allow future sigcontext management easy (as
+proposed by Andy Chiu from SiFive)
+
+config and compilation:
+
+Introduce a new risc-v config option `CONFIG_RISCV_USER_CFI`. Selecting this
+config option picks the kernel support for user control flow integrity. This
+optin is presented only if toolchain has shadow stack and landing pad support.
+And is on purpose guarded by toolchain support. Reason being that eventually
+vDSO also needs to be compiled in with shadow stack and landing pad support.
+vDSO compile patches are not included as of now because landing pad labeling
+scheme is yet to settle for usermode runtime.
+
+To get more information on kernel interactions with respect to
+zicfilp and zicfiss, patch series adds documentation for
+`zicfilp` and `zicfiss` in following:
+Documentation/arch/riscv/zicfiss.rst
+Documentation/arch/riscv/zicfilp.rst
+
+How to test this series
+=======================
+
+Toolchain
+---------
+$ git clone git@github.com:sifive/riscv-gnu-toolchain.git -b cfi-dev
+$ riscv-gnu-toolchain/configure --prefix=<path-to-where-to-build> --with-arch=rv64gc_zicfilp_zicfiss --enable-linux --disable-gdb  --with-extra-multilib-test="rv64gc_zicfilp_zicfiss-lp64d:-static"
+$ make -j$(nproc)
+
+Qemu
+----
+Get the lastest qemu
+$ cd qemu
+$ mkdir build
+$ cd build
+$ ../configure --target-list=riscv64-softmmu
+$ make -j$(nproc)
+
+Opensbi
+-------
+$ git clone git@github.com:deepak0414/opensbi.git -b v6_cfi_spec_split_opensbi
+$ make CROSS_COMPILE=<your riscv toolchain> -j$(nproc) PLATFORM=generic
+
+Linux
+-----
+Running defconfig is fine. CFI is enabled by default if the toolchain
+supports it.
+
+$ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc) defconfig
+$ make ARCH=riscv CROSS_COMPILE=<path-to-cfi-riscv-gnu-toolchain>/build/bin/riscv64-unknown-linux-gnu- -j$(nproc)
+
+In case you're building your own rootfs using toolchain, please make sure you
+pick following patch to ensure that vDSO compiled with lpad and shadow stack.
+
+"arch/riscv: compile vdso with landing pad"
+
+Branch where above patch can be picked
+https://github.com/deepak0414/linux-riscv-cfi/tree/vdso_user_cfi_v6.12-rc1
+
+Running
+-------
+
+Modify your qemu command to have:
+-bios <path-to-cfi-opensbi>/build/platform/generic/firmware/fw_dynamic.bin
+-cpu rv64,zicfilp=true,zicfiss=true,zimop=true,zcmop=true
+
+vDSO related Opens (in the flux)
+=================================
+
+I am listing these opens for laying out plan and what to expect in future
+patch sets. And of course for the sake of discussion.
+
+Shadow stack and landing pad enabling in vDSO
+----------------------------------------------
+vDSO must have shadow stack and landing pad support compiled in for task
+to have shadow stack and landing pad support. This patch series doesn't
+enable that (yet). Enabling shadow stack support in vDSO should be
+straight forward (intend to do that in next versions of patch set). Enabling
+landing pad support in vDSO requires some collaboration with toolchain folks
+to follow a single label scheme for all object binaries. This is necessary to
+ensure that all indirect call-sites are setting correct label and target landing
+pads are decorated with same label scheme.
+
+How many vDSOs
+---------------
+Shadow stack instructions are carved out of zimop (may be operations) and if CPU
+doesn't implement zimop, they're illegal instructions. Kernel could be running on
+a CPU which may or may not implement zimop. And thus kernel will have to carry 2
+different vDSOs and expose the appropriate one depending on whether CPU implements
+zimop or not.
+
+References
+==========
+[1] - https://github.com/riscv/riscv-cfi
+[2] - https://lore.kernel.org/all/20240814081126.956287-1-samuel.holland@sifive.com/
+[3] - https://lwn.net/Articles/889475/
+[4] - https://developer.arm.com/documentation/109576/0100/Branch-Target-Identification
+[5] - https://www.intel.com/content/dam/develop/external/us/en/documents/catc17-introduction-intel-cet-844137.pdf
+[6] - https://lwn.net/Articles/940403/
+
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Ingo Molnar <mingo@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+To: x86@kernel.org
+To: H. Peter Anvin <hpa@zytor.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Liam R. Howlett <Liam.Howlett@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Albert Ou <aou@eecs.berkeley.edu>
+To: Conor Dooley <conor@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+To: Christian Brauner <brauner@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+To: Eric Biederman <ebiederm@xmission.com>
+To: Kees Cook <kees@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Shuah Khan <shuah@kernel.org>
+To: Jann Horn <jannh@google.com>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+To: Alex Gaynor <alex.gaynor@gmail.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+To: Gary Guo <gary@garyguo.net>
+To: Björn Roy Baron <bjorn3_gh@protonmail.com>
+To: Benno Lossin <benno.lossin@proton.me>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+To: Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-riscv@lists.infradead.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: alistair.francis@wdc.com
+Cc: richard.henderson@linaro.org
+Cc: jim.shu@sifive.com
+Cc: andybnac@gmail.com
+Cc: kito.cheng@sifive.com
+Cc: charlie@rivosinc.com
+Cc: atishp@rivosinc.com
+Cc: evan@rivosinc.com
+Cc: cleger@rivosinc.com
+Cc: alexghiti@rivosinc.com
+Cc: samitolvanen@google.com
+Cc: broonie@kernel.org
+Cc: rick.p.edgecombe@intel.com
+Cc: rust-for-linux@vger.kernel.org
+
+changelog
+---------
+v17:
+- fixed warnings due to empty macros in usercfi.h (reported by alexg)
+- fixed prefixes in commit titles reported by alexg
+- took below uprobe with fcfi v2 patch from Zong Li and squashed it with
+  "riscv/traps: Introduce software check exception and uprobe handling"
+  https://lore.kernel.org/all/20250604093403.10916-1-zong.li@sifive.com/
+
+v16:
+- If FWFT is not implemented or returns error for shadow stack activation, then
+  no_usercfi is set to disable shadow stack. Although this should be picked up
+  by extension validation and activation. Fixed this bug for zicfilp and zicfiss
+  both. Thanks to Charlie Jenkins for reporting this.
+- If toolchain doesn't support cfi, cfi kselftest shouldn't build. Suggested by
+  Charlie Jenkins.
+- Default for CONFIG_RISCV_USER_CFI is set to no. Charlie/Atish suggested to
+  keep it off till we have more hardware availibility with RVA23 profile and
+  zimop/zcmop implemented. Else this will start breaking people's workflow
+- Includes the fix if "!RV64 and !SBI" then definitions for FWFT in
+  asm-offsets.c error.
+
+v15:
+- Toolchain has been updated to include `-fcf-protection` flag. This
+  exists for x86 as well. Updated kernel patches to compile vDSO and
+  selftest to compile with `fcf-protection=full` flag.
+- selecting CONFIG_RISCV_USERCFI selects CONFIG_RISCV_SBI.
+- Patch to enable shadow stack for kernel wasn't hidden behind
+  CONFIG_RISCV_USERCFI and CONFIG_RISCV_SBI. fixed that.
+
+v14:
+- rebased on top of palmer/sbi-v3. Thus dropped clement's FWFT patches
+  Updated RISCV_ISA_EXT_XXXX in hwcap and hwprobe constants.
+- Took Radim's suggestions on bitfields.
+- Placed cfi_state at the end of thread_info block so that current situation
+  is not disturbed with respect to member fields of thread_info in single
+  cacheline.
+
+v13:
+- cpu_supports_shadow_stack/cpu_supports_indirect_br_lp_instr uses
+  riscv_has_extension_unlikely()
+- uses nops(count) to create nop slide
+- RISCV_ACQUIRE_BARRIER is not needed in `amo_user_shstk`. Removed it
+- changed ternaries to simply use implicit casting to convert to bool.
+- kernel command line allows to disable zicfilp and zicfiss independently.
+  updated kernel-parameters.txt.
+- ptrace user abi for cfi uses bitmasks instead of bitfields. Added ptrace
+  kselftest.
+- cosmetic and grammatical changes to documentation.
+
+v12:
+- It seems like I had accidently squashed arch agnostic indirect branch
+  tracking prctl and riscv implementation of those prctls. Split them again.
+- set_shstk_status/set_indir_lp_status perform CSR writes only when CPU
+  support is available. As suggested by Zong Li.
+- Some minor clean up in kselftests as suggested by Zong Li.
+
+v11:
+- patch "arch/riscv: compile vdso with landing pad" was unconditionally
+  selecting `_zicfilp` for vDSO compile. fixed that. Changed `lpad 1` to
+  to `lpad 0`. 
+v10:
+- dropped "mm: helper `is_shadow_stack_vma` to check shadow stack vma". This patch
+  is not that interesting to this patch series for risc-v. There are instances in
+  arch directories where VM_SHADOW_STACK flag is anyways used. Dropping this patch
+  to expedite merging in riscv tree.
+- Took suggestions from `Clement` on "riscv: zicfiss / zicfilp enumeration" to
+  validate presence of cfi based on config.
+- Added a patch for vDSO to have `lpad 0`. I had omitted this earlier to make sure
+  we add single vdso object with cfi enabled. But a vdso object with scheme of 
+  zero labeled landing pad is least common denominator and should work with all
+  objects of zero labeled as well as function-signature labeled objects.
+
+v9:
+- rebased on master (39a803b754d5 fix braino in "9p: fix ->rename_sem exclusion")
+- dropped "mm: Introduce ARCH_HAS_USER_SHADOW_STACK" (master has it from arm64/gcs)
+- dropped "prctl: arch-agnostic prctl for shadow stack" (master has it from arm64/gcs)
+
+v8:
+- rebased on palmer/for-next
+- dropped samuel holland's `envcfg` context switch patches.
+  they are in parlmer/for-next
+  
+v7:
+- Removed "riscv/Kconfig: enable HAVE_EXIT_THREAD for riscv"
+  Instead using `deactivate_mm` flow to clean up.
+  see here for more context
+  https://lore.kernel.org/all/20230908203655.543765-1-rick.p.edgecombe@intel.com/#t
+- Changed the header include in `kselftest`. Hopefully this fixes compile
+  issue faced by Zong Li at SiFive.
+- Cleaned up an orphaned change to `mm/mmap.c` in below patch
+  "riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE"
+- Lock interfaces for shadow stack and indirect branch tracking expect arg == 0
+  Any future evolution of this interface should accordingly define how arg should
+  be setup.
+- `mm/map.c` has an instance of using `VM_SHADOW_STACK`. Fixed it to use helper
+  `is_shadow_stack_vma`.
+- Link to v6: https://lore.kernel.org/r/20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com
+
+v6:
+- Picked up Samuel Holland's changes as is with `envcfg` placed in
+  `thread` instead of `thread_info`
+- fixed unaligned newline escapes in kselftest
+- cleaned up messages in kselftest and included test output in commit message
+- fixed a bug in clone path reported by Zong Li
+- fixed a build issue if CONFIG_RISCV_ISA_V is not selected
+  (this was introduced due to re-factoring signal context
+  management code)
+
+v5:
+- rebased on v6.12-rc1
+- Fixed schema related issues in device tree file
+- Fixed some of the documentation related issues in zicfilp/ss.rst
+  (style issues and added index)
+- added `SHADOW_STACK_SET_MARKER` so that implementation can define base
+  of shadow stack.
+- Fixed warnings on definitions added in usercfi.h when
+  CONFIG_RISCV_USER_CFI is not selected.
+- Adopted context header based signal handling as proposed by Andy Chiu
+- Added support for enabling kernel mode access to shadow stack using
+  FWFT
+  (https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-firmware-features.adoc)
+- Link to v5: https://lore.kernel.org/r/20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com
+  (Note: I had an issue in my workflow due to which version number wasn't
+  picked up correctly while sending out patches)
+
+v4:
+- rebased on 6.11-rc6
+- envcfg: Converged with Samuel Holland's patches for envcfg management on per-
+thread basis.
+- vma_is_shadow_stack is renamed to is_vma_shadow_stack
+- picked up Mark Brown's `ARCH_HAS_USER_SHADOW_STACK` patch
+- signal context: using extended context management to maintain compatibility.
+- fixed `-Wmissing-prototypes` compiler warnings for prctl functions
+- Documentation fixes and amending typos.
+- Link to v4: https://lore.kernel.org/all/20240912231650.3740732-1-debug@rivosinc.com/
+
+v3:
+- envcfg
+  logic to pick up base envcfg had a bug where `ENVCFG_CBZE` could have been
+  picked on per task basis, even though CPU didn't implement it. Fixed in
+   this series.
+
+- dt-bindings
+  As suggested, split into separate commit. fixed the messaging that spec is
+  in public review
+
+- arch_is_shadow_stack change
+  arch_is_shadow_stack changed to vma_is_shadow_stack
+
+- hwprobe
+  zicfiss / zicfilp if present will get enumerated in hwprobe
+
+- selftests
+  As suggested, added object and binary filenames to .gitignore
+  Selftest binary anyways need to be compiled with cfi enabled compiler which
+  will make sure that landing pad and shadow stack are enabled. Thus removed
+  separate enable/disable tests. Cleaned up tests a bit.
+
+- Link to v3: https://lore.kernel.org/lkml/20240403234054.2020347-1-debug@rivosinc.com/
+
+v2:
+- Using config `CONFIG_RISCV_USER_CFI`, kernel support for riscv control flow
+  integrity for user mode programs can be compiled in the kernel.
+
+- Enabling of control flow integrity for user programs is left to user runtime
+
+- This patch series introduces arch agnostic `prctls` to enable shadow stack
+  and indirect branch tracking. And implements them on riscv.
+
+---
+Changes in v17:
+- Link to v16: https://lore.kernel.org/r/20250522-v5_user_cfi_series-v16-0-64f61a35eee7@rivosinc.com
+
+Changes in v16:
+- Link to v15: https://lore.kernel.org/r/20250502-v5_user_cfi_series-v15-0-914966471885@rivosinc.com
+
+Changes in v15:
+- changelog posted just below cover letter
+- Link to v14: https://lore.kernel.org/r/20250429-v5_user_cfi_series-v14-0-5239410d012a@rivosinc.com
+
+Changes in v14:
+
+- changelog posted just below cover letter
+- Link to v13: https://lore.kernel.org/r/20250424-v5_user_cfi_series-v13-0-971437de586a@rivosinc.com
+
+Changes in v13:
+- changelog posted just below cover letter
+- Link to v12: https://lore.kernel.org/r/20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com
+
+Changes in v12:
+- changelog posted just below cover letter
+- Link to v11: https://lore.kernel.org/r/20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com
+
+Changes in v11:
+- changelog posted just below cover letter
+- Link to v10: https://lore.kernel.org/r/20250210-v5_user_cfi_series-v10-0-163dcfa31c60@rivosinc.com
+
+---
+Andy Chiu (1):
+      riscv: signal: abstract header saving for setup_sigcontext
+
+Deepak Gupta (25):
+      mm: VM_SHADOW_STACK definition for riscv
+      dt-bindings: riscv: zicfilp and zicfiss in dt-bindings (extensions.yaml)
+      riscv: zicfiss / zicfilp enumeration
+      riscv: zicfiss / zicfilp extension csr and bit definitions
+      riscv: usercfi state for task and save/restore of CSR_SSP on trap entry/exit
+      riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE
+      riscv/mm: manufacture shadow stack pte
+      riscv/mm: teach pte_mkwrite to manufacture shadow stack PTEs
+      riscv/mm: write protect and shadow stack
+      riscv/mm: Implement map_shadow_stack() syscall
+      riscv/shstk: If needed allocate a new shadow stack on clone
+      riscv: Implements arch agnostic shadow stack prctls
+      prctl: arch-agnostic prctl for indirect branch tracking
+      riscv: Implements arch agnostic indirect branch tracking prctls
+      riscv/traps: Introduce software check exception and uprobe handling
+      riscv/signal: save and restore of shadow stack for signal
+      riscv/kernel: update __show_regs to print shadow stack register
+      riscv/ptrace: riscv cfi status and state via ptrace and in core files
+      riscv/hwprobe: zicfilp / zicfiss enumeration in hwprobe
+      riscv: kernel command line option to opt out of user cfi
+      riscv: enable kernel access to shadow stack memory via FWFT sbi call
+      riscv: create a config for shadow stack and landing pad instr support
+      riscv: Documentation for landing pad / indirect branch tracking
+      riscv: Documentation for shadow stack on riscv
+      kselftest/riscv: kselftest for user mode cfi
+
+Jim Shu (1):
+      arch/riscv: compile vdso with landing pad
+
+ Documentation/admin-guide/kernel-parameters.txt    |   8 +
+ Documentation/arch/riscv/index.rst                 |   2 +
+ Documentation/arch/riscv/zicfilp.rst               | 115 +++++
+ Documentation/arch/riscv/zicfiss.rst               | 179 +++++++
+ .../devicetree/bindings/riscv/extensions.yaml      |  14 +
+ arch/riscv/Kconfig                                 |  21 +
+ arch/riscv/Makefile                                |   5 +-
+ arch/riscv/include/asm/asm-prototypes.h            |   1 +
+ arch/riscv/include/asm/assembler.h                 |  44 ++
+ arch/riscv/include/asm/cpufeature.h                |  12 +
+ arch/riscv/include/asm/csr.h                       |  16 +
+ arch/riscv/include/asm/entry-common.h              |   2 +
+ arch/riscv/include/asm/hwcap.h                     |   2 +
+ arch/riscv/include/asm/mman.h                      |  26 +
+ arch/riscv/include/asm/mmu_context.h               |   7 +
+ arch/riscv/include/asm/pgtable.h                   |  30 +-
+ arch/riscv/include/asm/processor.h                 |   2 +
+ arch/riscv/include/asm/thread_info.h               |   3 +
+ arch/riscv/include/asm/usercfi.h                   |  95 ++++
+ arch/riscv/include/asm/vector.h                    |   3 +
+ arch/riscv/include/uapi/asm/hwprobe.h              |   2 +
+ arch/riscv/include/uapi/asm/ptrace.h               |  34 ++
+ arch/riscv/include/uapi/asm/sigcontext.h           |   1 +
+ arch/riscv/kernel/Makefile                         |   1 +
+ arch/riscv/kernel/asm-offsets.c                    |  10 +
+ arch/riscv/kernel/cpufeature.c                     |  27 +
+ arch/riscv/kernel/entry.S                          |  33 +-
+ arch/riscv/kernel/head.S                           |  27 +
+ arch/riscv/kernel/process.c                        |  27 +-
+ arch/riscv/kernel/ptrace.c                         |  95 ++++
+ arch/riscv/kernel/signal.c                         | 148 +++++-
+ arch/riscv/kernel/sys_hwprobe.c                    |   2 +
+ arch/riscv/kernel/sys_riscv.c                      |  10 +
+ arch/riscv/kernel/traps.c                          |  51 ++
+ arch/riscv/kernel/usercfi.c                        | 545 +++++++++++++++++++++
+ arch/riscv/kernel/vdso/Makefile                    |   6 +
+ arch/riscv/kernel/vdso/flush_icache.S              |   4 +
+ arch/riscv/kernel/vdso/getcpu.S                    |   4 +
+ arch/riscv/kernel/vdso/rt_sigreturn.S              |   4 +
+ arch/riscv/kernel/vdso/sys_hwprobe.S               |   4 +
+ arch/riscv/mm/init.c                               |   2 +-
+ arch/riscv/mm/pgtable.c                            |  16 +
+ include/linux/cpu.h                                |   4 +
+ include/linux/mm.h                                 |   7 +
+ include/uapi/linux/elf.h                           |   2 +
+ include/uapi/linux/prctl.h                         |  27 +
+ kernel/sys.c                                       |  30 ++
+ tools/testing/selftests/riscv/Makefile             |   2 +-
+ tools/testing/selftests/riscv/cfi/.gitignore       |   3 +
+ tools/testing/selftests/riscv/cfi/Makefile         |  16 +
+ tools/testing/selftests/riscv/cfi/cfi_rv_test.h    |  82 ++++
+ tools/testing/selftests/riscv/cfi/riscv_cfi_test.c | 173 +++++++
+ tools/testing/selftests/riscv/cfi/shadowstack.c    | 385 +++++++++++++++
+ tools/testing/selftests/riscv/cfi/shadowstack.h    |  27 +
+ 54 files changed, 2369 insertions(+), 29 deletions(-)
+---
+base-commit: 4181f8ad7a1061efed0219951d608d4988302af7
+change-id: 20240930-v5_user_cfi_series-3dc332f8f5b2
+--
+- debug
 
-The following changes since commit fdc348121f2465897792f946715a5da7887e5f97:
-
-  irqdomain: pci: Switch to of_fwnode_handle() (2025-04-07 12:15:14 -0500)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-changes
-
-for you to fetch changes up to 3de914864c0d53b7c49aaa94e4ccda9e1dd271d7:
-
-  Merge branch 'pci/misc' (2025-06-04 10:50:45 -0500)
-
-
-NB:
-
-  - Rebased this morning to add Mani's email address change and update
-    merge commit logs.
-
-  - These are changes since fdc348121f24 ("irqdomain: pci: Switch to
-    of_fwnode_handle()"), not the usual v6.15-rc1.
-
-    I applied fdc348121f24 to the PCI tree, but Thomas picked it up
-    via 6a08164de9fc ("Merge irq/cleanup fragments into irq/msi"), and
-    you already merged it via 44ed0f35df34 ("Merge tag
-    'irq-msi-2025-05-25' of
-    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip").  Confused
-    me a bit.
-
-  - You should see the following conflicts:
-
-    * MAINTAINERS between commit:
-
-	0747c136753e ("MAINTAINERS: Move Manivannan Sadhasivam as PCI Native host bridge and endpoint maintainer")
-
-      from upstream and commit:
-
-	308f8c7a626e ("MAINTAINERS: Update Manivannan Sadhasivam email address")
-      
-      from the PCI tree.
-
-    * drivers/pci/controller/pcie-apple.c between commit:
-
-	5d627a9484ec ("PCI: apple: Convert to MSI parent infrastructure")
-
-      from upstream and commit:
-
-	3f1ccd6e85d7 ("PCI: apple: Abstract register offsets via a SoC-specific structure")
-
-      from the PCI tree.
-
-    * drivers/pci/pci.h between commit:
-
-	d5124a9957b2 ("PCI/MSI: Provide a sane mechanism for TPH")
-
-      and commits:
-
-	51f6aec99cb0 ("PCI: Remove hybrid devres nature from request functions")
-	8e9987485d9a ("PCI: Remove pcim_request_region_exclusive()")
-	dfc970ad6197 ("PCI: Remove function pcim_intx() prototype from pci.h")
-
-      from the PCI tree.
-
-    * drivers/gpu/drm/xe/Kconfig between commit:
-
-        e4931f8be347 ("drm/xe/vsec: fix CONFIG_INTEL_VSEC dependency")
-
-      from the drm-xe tree (not merged to upstream yet AFAICS) and commit:
-
-        8fe743b5eba0 ("PCI: Add CONFIG_MMU dependency")
-
-      from the PCI tree.
-
-----------------------------------------------------------------
-
-Enumeration:
-
-  - Print the actual delay time in pci_bridge_wait_for_secondary_bus()
-    instead of assuming it was 1000ms (Wilfred Mallawa)
-
-  - Revert 'iommu/amd: Prevent binding other PCI drivers to IOMMU PCI
-    devices', which broke resume from system sleep on AMD platforms and has
-    been fixed by other commits (Lukas Wunner)
-
-Resource management:
-
-  - Remove mtip32xx use of pcim_iounmap_regions(), which is deprecated and
-    unnecessary (Philipp Stanner)
-
-  - Remove pcim_iounmap_regions() and pcim_request_region_exclusive() and
-    related flags since all uses have been removed (Philipp Stanner)
-
-  - Rework devres 'request' functions so they are no longer 'hybrid', i.e.,
-    their behavior no longer depends on whether pcim_enable_device or
-    pci_enable_device() was used, and remove related code (Philipp Stanner)
-
-  - Warn (not BUG()) about failure to assign optional resources (Ilpo
-    Järvinen)
-
-Error handling:
-
-  - Log the DPC Error Source ID only when it's actually valid (when
-    ERR_FATAL or ERR_NONFATAL was received from a downstream device) and
-    decode into bus/device/function (Bjorn Helgaas)
-
-  - Determine AER log level once and save it so all related messages use
-    the same level (Karolina Stolarek)
-
-  - Use KERN_WARNING, not KERN_ERR, when logging PCIe Correctable Errors
-    (Karolina Stolarek)
-
-  - Ratelimit PCIe Correctable and Non-Fatal error logging, with sysfs
-    controls on interval and burst count, to avoid flooding logs and RCU
-    stall warnings (Jon Pan-Doh)
-
-Power management:
-
-  - Increment PM usage counter when probing reset methods so we don't try
-    to read config space of a powered-off device (Alex Williamson)
-
-  - Set all devices to D0 during enumeration to ensure ACPI opregion is
-    connected via _REG (Mario Limonciello)
-
-Power control:
-
-  - Rename pwrctrl Kconfig symbols from 'PWRCTL' to 'PWRCTRL' to match the
-    filename paths.  Retain old deprecated symbols for compatibility,
-    except for the pwrctrl slot driver (PCI_PWRCTRL_SLOT) (Johan Hovold)
-
-  - When unregistering pwrctrl, cancel outstanding rescan work before
-    cleaning up data structures to avoid use-after-free issues (Brian
-    Norris)
-
-Bandwidth control:
-
-  - Simplify link bandwidth controller by replacing the count of Link
-    Bandwidth Management Status (LBMS) events with a PCI_LINK_LBMS_SEEN
-    flag (Ilpo Järvinen)
-
-  - Update the Link Speed after retraining, since the Link Speed may have
-    changed (Ilpo Järvinen)
-
-PCIe native device hotplug:
-
-  - Ignore Presence Detect Changed caused by DPC.  pciehp already ignores
-    Link Down/Up events caused by DPC, but on slots using in-band presence
-    detect, DPC causes a spurious Presence Detect Changed event (Lukas
-    Wunner)
-
-  - Ignore Link Down/Up caused by Secondary Bus Reset.  On hotplug ports
-    using in-band presence detect, the reset causes a Presence Detect
-    Changed event, which mistakenly caused teardown and re-enumeration of
-    the device.  Drivers may need to annotate code that resets their device
-    (Lukas Wunner)
-
-Virtualization:
-
-  - Add an ACS quirk for Loongson Root Ports that don't advertise ACS but
-    don't allow peer-to-peer transactions between Root Ports; the quirk
-    allows each Root Port to be in a separate IOMMU group (Huacai Chen)
-
-Endpoint framework:
-
-  - For fixed-size BARs, retain both the actual size and the possibly
-    larger size allocated to accommodate iATU alignment requirements
-    (Jerome Brunet)
-
-  - Simplify ctrl/SPAD space allocation and avoid allocating more space
-    than needed (Jerome Brunet)
-
-  - Correct MSI-X PBA offset calculations for DesignWare and Cadence
-    endpoint controllers (Niklas Cassel)
-
-  - Align the return value (number of interrupts) encoding for
-    pci_epc_get_msi()/pci_epc_ops::get_msi() and
-    pci_epc_get_msix()/pci_epc_ops::get_msix() (Niklas Cassel)
-
-  - Align the nr_irqs parameter encoding for
-    pci_epc_set_msi()/pci_epc_ops::set_msi() and
-    pci_epc_set_msix()/pci_epc_ops::set_msix() (Niklas Cassel)
-
-Common host controller library:
-
-  - Convert pci-host-common to a library so platforms that don't need
-    native host controller drivers don't need to include these helper
-    functions (Manivannan Sadhasivam)
-
-Apple PCIe controller driver:
-
-  - Extract ECAM bridge creation helper from pci_host_common_probe() to
-    separate driver-specific things like MSI from PCI things (Marc Zyngier)
-
-  - Dynamically allocate RID-to_SID bitmap to prepare for SoCs with varying
-    capabilities (Marc Zyngier)
-
-  - Skip ports disabled in DT when setting up ports (Janne Grunau)
-
-  - Add t6020 compatible string (Alyssa Rosenzweig)
-
-  - Add T602x PCIe support (Hector Martin)
-
-  - Directly set/clear INTx mask bits because T602x dropped the accessors
-    that could do this without locking (Marc Zyngier)
-
-  - Move port PHY registers to their own reg items to accommodate T602x,
-    which moves them around; retain default offsets for existing DTs that
-    lack phy%d entries with the reg offsets (Hector Martin)
-
-  - Stop polling for core refclk, which doesn't work on T602x and the
-    bootloader has already done anyway (Hector Martin)
-
-  - Use gpiod_set_value_cansleep() when asserting PERST# in probe because
-    we're allowed to sleep there (Hector Martin)
-
-Cadence PCIe controller driver:
-
-  - Drop a runtime PM 'put' to resolve a runtime atomic count underflow
-    (Hans Zhang)
-
-  - Make the cadence core buildable as a module (Kishon Vijay Abraham I)
-
-  - Add cdns_pcie_host_disable() and cdns_pcie_ep_disable() for use by
-    loadable drivers when they are removed (Siddharth Vadapalli)
-
-Freescale i.MX6 PCIe controller driver:
-
-  - Apply link training workaround only on IMX6Q, IMX6SX, IMX6SP (Richard
-    Zhu)
-
-  - Remove redundant dw_pcie_wait_for_link() from imx_pcie_start_link();
-    since the DWC core does this, imx6 only needs it when retraining for a
-    faster link speed (Richard Zhu)
-
-  - Toggle i.MX95 core reset to align with PHY powerup (Richard Zhu)
-
-  - Set SYS_AUX_PWR_DET to work around i.MX95 ERR051624 erratum: in some
-    cases, the controller can't exit 'L23 Ready' through Beacon or PERST#
-    deassertion (Richard Zhu)
-
-  - Clear GEN3_ZRXDC_NONCOMPL to work around i.MX95 ERR051586 erratum:
-    controller can't meet 2.5 GT/s ZRX-DC timing when operating at 8 GT/s,
-    causing timeouts in L1 (Richard Zhu)
-
-  - Wait for i.MX95 PLL lock before enabling controller (Richard Zhu)
-
-  - Save/restore i.MX95 LUT for suspend/resume (Richard Zhu)
-
-Mobiveil PCIe controller driver:
-
-  - Return bool (not int) for link-up check in mobiveil_pab_ops.link_up()
-    and layerscape-gen4, mobiveil (Hans Zhang)
-
-NVIDIA Tegra194 PCIe controller driver:
-
-  - Create debugfs directory for 'aspm_state_cnt' only when CONFIG_PCIEASPM
-    is enabled, since there are no other entries (Hans Zhang)
-
-Qualcomm PCIe controller driver:
-
-  - Add OF support for parsing DT 'eq-presets-<N>gts' property for lane
-    equalization presets (Krishna Chaitanya Chundru)
-
-  - Read Maximum Link Width from the Link Capabilities register if DT lacks
-    'num-lanes' property (Krishna Chaitanya Chundru)
-
-  - Add Physical Layer 64 GT/s Capability ID and register offsets for 8,
-    32, and 64 GT/s lane equalization registers (Krishna Chaitanya Chundru)
-
-  - Add generic dwc support for configuring lane equalization presets
-    (Krishna Chaitanya Chundru)
-
-  - Add DT and driver support for PCIe on IPQ5018 SoC (Nitheesh Sekar)
-
-Renesas R-Car PCIe controller driver:
-
-  - Describe endpoint BAR 4 as being fixed size (Jerome Brunet)
-
-  - Document how to obtain R-Car V4H (r8a779g0) controller firmware
-    (Yoshihiro Shimoda)
-
-Rockchip PCIe controller driver:
-
-  - Reorder rockchip_pci_core_rsts because reset_control_bulk_deassert()
-    deasserts in reverse order, to fix a link training regression (Jensen
-    Huang)
-
-  - Mark RK3399 as being capable of raising INTx interrupts (Niklas Cassel)
-
-Rockchip DesignWare PCIe controller driver:
-
-  - Check only PCIE_LINKUP, not LTSSM status, to determine whether the link
-    is up (Shawn Lin)
-
-  - Increase N_FTS (used in L0s->L0 transitions) and enable ASPM L0s for
-    Root Complex and Endpoint modes (Shawn Lin)
-
-  - Hide the broken ATS Capability in rockchip_pcie_ep_init() instead of
-    rockchip_pcie_ep_pre_init() so it stays hidden after PERST# resets
-    non-sticky registers (Shawn Lin)
-
-  - Call phy_power_off() before phy_exit() in rockchip_pcie_phy_deinit()
-    (Diederik de Haas)
-
-Synopsys DesignWare PCIe controller driver:
-
-  - Set PORT_LOGIC_LINK_WIDTH to one lane to make initial link training
-    more robust; this will not affect the intended link width if all lanes
-    are functional (Wenbin Yao)
-
-  - Return bool (not int) for link-up check in dw_pcie_ops.link_up() and
-    armada8k, dra7xx, dw-rockchip, exynos, histb, keembay, keystone, kirin,
-    meson, qcom, qcom-ep, rcar_gen4, spear13xx, tegra194, uniphier,
-    visconti (Hans Zhang)
-
-  - Add debugfs support for exposing DWC device-specific PTM context
-    (Manivannan Sadhasivam)
-
-TI J721E PCIe driver:
-
-  - Make j721e buildable as a loadable and removable module (Siddharth
-    Vadapalli)
-
-  - Fix j721e host/endpoint dependencies that result in link failures in
-    some configs (Arnd Bergmann)
-
-Device tree bindings:
-
-  - Add qcom DT binding for 'global' interrupt (PCIe controller and
-    link-specific events) for ipq8074, ipq8074-gen3, ipq6018, sa8775p,
-    sc7280, sc8180x sdm845, sm8150, sm8250, sm8350 (Manivannan Sadhasivam)
-
-  - Add qcom DT binding for 8 MSI SPI interrupts for msm8998, ipq8074,
-    ipq8074-gen3, ipq6018 (Manivannan Sadhasivam)
-
-  - Add dw rockchip DT binding for rk3576 and rk3562 (Kever Yang)
-
-  - Correct indentation and style of examples in brcm,stb-pcie,
-    cdns,cdns-pcie-ep, intel,keembay-pcie-ep, intel,keembay-pcie,
-    microchip,pcie-host, rcar-pci-ep, rcar-pci-host, xilinx-versal-cpm
-    (Krzysztof Kozlowski)
-
-  - Convert Marvell EBU (dove, kirkwood, armada-370, armada-xp) and
-    armada8k from text to schema DT bindings (Rob Herring)
-
-  - Remove obsolete .txt DT bindings for content that has been moved to
-    schemas (Rob Herring)
-
-  - Add qcom DT binding for MHI registers in IPQ5332, IPQ6018, IPQ8074 and
-    IPQ9574 (Varadarajan Narayanan)
-
-  - Convert v3,v360epc-pci from text to DT schema binding (Rob Herring)
-
-  - Change microchip,pcie-host DT binding to be 'dma-noncoherent' since
-    PolarFire may be configured that way (Conor Dooley)
-
-Miscellaneous:
-
-  - Drop 'pci' suffix from intel_mid_pci.c filename to match similar files
-    (Andy Shevchenko)
-
-  - All platforms with PCI have an MMU, so add PCI Kconfig dependency on
-    MMU to simplify build testing and avoid inadvertent build regressions
-    (Arnd Bergmann)
-
-  - Update Krzysztof Wilczyński's email address in MAINTAINERS (Krzysztof
-    Wilczyński)
-
-  - Update Manivannan Sadhasivam's email address in MAINTAINERS (Manivannan
-    Sadhasivam)
-
-----------------------------------------------------------------
-Alex Williamson (2):
-      PM: runtime: Define pm_runtime_put cleanup helper
-      PCI: Increment PM usage counter when probing reset methods
-
-Alyssa Rosenzweig (1):
-      dt-bindings: pci: apple,pcie: Add t6020 compatible string
-
-Andy Shevchenko (1):
-      x86/PCI: Drop 'pci' suffix from intel_mid_pci.c
-
-Arnd Bergmann (2):
-      PCI: Add CONFIG_MMU dependency
-      PCI: j721e: Fix host/endpoint dependencies
-
-Bjorn Helgaas (40):
-      PCI/DPC: Initialize aer_err_info before using it
-      PCI/DPC: Log Error Source ID only when valid
-      PCI/AER: Factor COR/UNCOR error handling out from aer_isr_one_error()
-      PCI/AER: Consolidate Error Source ID logging in aer_isr_one_error_type()
-      PCI/AER: Extract bus/dev/fn in aer_print_port_info() with PCI_BUS_NUM(), etc
-      PCI/AER: Move aer_print_source() earlier in file
-      PCI/AER: Initialize aer_err_info before using it
-      PCI/AER: Simplify pci_print_aer()
-      PCI/AER: Update statistics before ratelimiting
-      PCI/AER: Trace error event before ratelimiting
-      PCI/ERR: Add printk level to pcie_print_tlp_log()
-      PCI/AER: Convert aer_get_device_error_info(), aer_print_error() to index
-      PCI/AER: Simplify add_error_device()
-      Merge branch 'pci/aer'
-      Merge branch 'pci/bwctrl'
-      Merge branch 'pci/devres'
-      Merge branch 'pci/enumeration'
-      Merge branch 'pci/hotplug'
-      Merge branch 'pci/irq'
-      Merge branch 'pci/pci-acpi'
-      Merge branch 'pci/pm'
-      Merge branch 'pci/pwrctrl'
-      Merge branch 'pci/reset'
-      Merge branch 'pci/virtualization'
-      Merge branch 'pci/endpoint'
-      Merge branch 'pci/controller/apple'
-      Merge branch 'pci/controller/cadence'
-      Merge branch 'pci/controller/dw-rockchip'
-      Merge branch 'pci/controller/dwc-ep'
-      Merge branch 'pci/controller/dwc'
-      Merge branch 'pci/controller/imx6'
-      Merge branch 'pci/controller/mobiveil'
-      Merge branch 'pci/controller/mvebu'
-      Merge branch 'pci/controller/qcom'
-      Merge branch 'pci/controller/rcar-gen4'
-      Merge branch 'pci/controller/rockchip'
-      Merge branch 'pci/controller/tegra194'
-      Merge branch 'pci/ptm-debugfs'
-      Merge branch 'pci/dt-bindings'
-      Merge branch 'pci/misc'
-
-Brian Norris (1):
-      PCI/pwrctrl: Cancel outstanding rescan work when unregistering
-
-Chen Ni (1):
-      PCI: ls-gen4: Use to_delayed_work()
-
-Conor Dooley (1):
-      dt-bindings: PCI: microchip,pcie-host: Fix DMA coherency property
-
-Diederik de Haas (1):
-      PCI: dw-rockchip: Fix PHY function call sequence in rockchip_pcie_phy_deinit()
-
-Hans Zhang (10):
-      PCI: cadence: Fix runtime atomic count underflow
-      PCI: dw-rockchip: Remove unused PCIE_CLIENT_GENERAL_DEBUG definition
-      PCI: dw-rockchip: Reorganize register and bitfield definitions
-      PCI: dw-rockchip: Use rockchip_pcie_link_up() to check link up instead of open coding
-      PCI: tegra194: Create debugfs directory only when CONFIG_PCIEASPM is enabled
-      PCI: dwc: ep: Use FIELD_GET() where applicable
-      PCI: dwc: Return bool from link up check
-      PCI: mobiveil: Return bool from link up check
-      PCI: cadence: Simplify J721e link status check
-      PCI: cadence: Remove duplicate message code definitions
-
-Hector Martin (6):
-      PCI: apple: Fix missing OF node reference in apple_pcie_setup_port
-      PCI: apple: Move port PHY registers to their own reg items
-      PCI: apple: Drop poll for CORE_RC_PHYIF_STAT_REFCLK
-      PCI: apple: Use gpiod_set_value_cansleep in probe flow
-      PCI: apple: Abstract register offsets via a SoC-specific structure
-      PCI: apple: Add T602x PCIe support
-
-Heiner Kallweit (1):
-      PCI: Remove pci_fixup_cardbus()
-
-Huacai Chen (1):
-      PCI: Add ACS quirk for Loongson PCIe
-
-Ilpo Järvinen (7):
-      PCI: Use PCI_STD_NUM_BARS instead of 6
-      PCI: Fix lock symmetry in pci_slot_unlock()
-      PCI/bwctrl: Replace lbms_count with PCI_LINK_LBMS_SEEN flag
-      PCI: Update Link Speed after retraining
-      PCI: Remove unused pci_printk()
-      PCI: WARN (not BUG()) when we fail to assign optional resources
-      PCI: Remove unnecessary linesplit in __pci_setup_bridge()
-
-Janne Grunau (1):
-      PCI: apple: Set only available ports up
-
-Jensen Huang (1):
-      PCI: rockchip: Fix order of rockchip_pci_core_rsts
-
-Jerome Brunet (3):
-      PCI: rcar-gen4: set ep BAR4 fixed size
-      PCI: endpoint: Retain fixed-size BAR size as well as aligned size
-      PCI: endpoint: pci-epf-vntb: Simplify ctrl/SPAD space allocation
-
-Johan Hovold (4):
-      PCI/pwrctrl: Rename pwrctrl Kconfig symbols and slot module
-      wifi: ath11k: switch to PCI_PWRCTRL_PWRSEQ
-      wifi: ath12k: switch to PCI_PWRCTRL_PWRSEQ
-      arm64: Kconfig: switch to HAVE_PWRCTRL
-
-Jon Pan-Doh (4):
-      PCI/AER: Rename aer_print_port_info() to aer_print_source()
-      PCI/AER: Ratelimit correctable and non-fatal error logging
-      PCI/AER: Add ratelimits to PCI AER Documentation
-      PCI/AER: Add sysfs attributes for log ratelimits
-
-Karolina Stolarek (3):
-      PCI/AER: Check log level once and remember it
-      PCI/AER: Reduce pci_print_aer() correctable error level to KERN_WARNING
-      PCI/AER: Rename struct aer_stats to aer_info
-
-Kever Yang (2):
-      dt-bindings: PCI: dw: rockchip: Add rk3576 support
-      dt-bindings: PCI: dwc: rockchip: Add rk3562 support
-
-Kishon Vijay Abraham I (1):
-      PCI: cadence: Add support to build pcie-cadence library as a kernel module
-
-Krishna Chaitanya Chundru (4):
-      PCI: of: Add of_pci_get_equalization_presets() API
-      PCI: dwc: Update pci->num_lanes to maximum supported link width
-      PCI: Add lane equalization register offsets
-      PCI: dwc: Add support for configuring lane equalization presets
-
-Krzysztof Kozlowski (2):
-      dt-bindings: PCI: Correct indentation and style in DTS example
-      dt-bindings: PCI: sifive,fu740-pcie: Fix include placement in DTS example
-
-Krzysztof Wilczyński (1):
-      MAINTAINERS: Update Krzysztof Wilczyński email address
-
-Lukas Wunner (5):
-      PCI: pciehp: Ignore Presence Detect Changed caused by DPC
-      PCI: pciehp: Ignore Link Down/Up caused by Secondary Bus Reset
-      PCI: hotplug: Drop superfluous #include directives
-      Revert "iommu/amd: Prevent binding other PCI drivers to IOMMU PCI devices"
-      PCI: Limit visibility of match_driver flag to PCI core
-
-Manivannan Sadhasivam (17):
-      dt-bindings: PCI: qcom,pcie-sm8150: Add 'global' interrupt
-      dt-bindings: PCI: qcom,pcie-sm8250: Add 'global' interrupt
-      dt-bindings: PCI: qcom,pcie-sm8350: Add 'global' interrupt
-      dt-bindings: PCI: qcom,pcie-sa8775p: Add 'global' interrupt
-      dt-bindings: PCI: qcom,pcie-sc7280: Add 'global' interrupt
-      dt-bindings: PCI: qcom: Add 'global' interrupt for SDM845 SoC
-      dt-bindings: PCI: qcom: Allow MSM8998 to use 8 MSI and one 'global' interrupt
-      dt-bindings: PCI: qcom: Allow IPQ8074 to use 8 MSI and one 'global' interrupt
-      dt-bindings: PCI: qcom: Allow IPQ6018 to use 8 MSI and one 'global' interrupt
-      dt-bindings: PCI: qcom,pcie-sc8180x: Add 'global' interrupt
-      PCI: Add debugfs support for exposing PTM context
-      PCI: dwc: Pass DWC PCIe mode to dwc_pcie_debugfs_init()
-      PCI: dwc: Add debugfs support for PTM context
-      PCI: qcom-ep: Mask PTM_UPDATING interrupt
-      PCI/ERR: Remove misleading TODO regarding kernel panic
-      PCI: host-common: Convert to library for host controller drivers
-      MAINTAINERS: Update Manivannan Sadhasivam email address
-
-Marc Zyngier (5):
-      PCI: host-generic: Extract an ECAM bridge creation helper from pci_host_common_probe()
-      PCI: ecam: Allow cfg->priv to be pre-populated from the root port device
-      PCI: apple: Move over to standalone probing
-      PCI: apple: Dynamically allocate RID-to_SID bitmap
-      PCI: apple: Move away from INTMSK{SET,CLR} for INTx and private interrupts
-
-Mario Limonciello (1):
-      PCI: Explicitly put devices into D0 when initializing
-
-Niklas Cassel (10):
-      PCI: rockchip-ep: Mark RK3399 as intx_capable
-      PCI: dwc: ep: Fix errno typo
-      PCI: dwc: ep: Correct PBA offset in .set_msix() callback
-      PCI: cadence-ep: Correct PBA offset in .set_msix() callback
-      PCI: endpoint: Align pci_epc_get_msi(), pci_epc_ops::get_msi() return value encoding
-      PCI: endpoint: Align pci_epc_get_msix(), pci_epc_ops::get_msix() return value encoding
-      PCI: endpoint: Align pci_epc_set_msi(), pci_epc_ops::set_msi() nr_irqs encoding
-      PCI: endpoint: Align pci_epc_set_msix(), pci_epc_ops::set_msix() nr_irqs encoding
-      PCI: dw-rockchip: Replace PERST# sleep time with proper macro
-      PCI: qcom: Replace PERST# sleep time with proper macro
-
-Nitheesh Sekar (2):
-      dt-bindings: PCI: qcom: Add IPQ5018 SoC
-      PCI: qcom: Add support for IPQ5018
-
-Philipp Stanner (9):
-      mtip32xx: Remove unnecessary pcim_iounmap_regions() calls
-      PCI: Remove pcim_iounmap_regions()
-      PCI: Remove hybrid devres nature from request functions
-      Documentation/driver-api: Update pcim_enable_device()
-      PCI: Remove pcim_request_region_exclusive()
-      PCI: Remove exclusive requests flags from _pcim_request_region()
-      PCI: Remove redundant set of request functions
-      PCI: Remove hybrid-devres usage warnings from kernel-doc
-      PCI: Remove function pcim_intx() prototype from pci.h
-
-Richard Zhu (7):
-      PCI: imx6: Skip link up workaround for newer platforms
-      PCI: imx6: Call dw_pcie_wait_for_link() from start_link() callback only when required
-      PCI: imx6: Toggle the core reset for i.MX95 PCIe
-      PCI: imx6: Add workaround for errata ERR051624
-      PCI: imx6: Add workaround for errata ERR051586
-      PCI: imx6: Add PLL lock check for i.MX95 SoC
-      PCI: imx6: Save and restore the LUT setting during suspend/resume for i.MX95 SoC
-
-Rick Wertenbroek (1):
-      Documentation: Fix path for NVMe PCI endpoint target driver
-
-Rob Herring (Arm) (5):
-      PCI: mvebu: Use for_each_of_range() iterator for parsing "ranges"
-      dt-bindings: PCI: Convert Marvell EBU to schema
-      dt-bindings: PCI: Convert marvell,armada8k-pcie to schema
-      dt-bindings: PCI: Remove obsolete .txt docs
-      dt-bindings: PCI: Convert v3,v360epc-pci to DT schema
-
-Shawn Lin (3):
-      PCI: dw-rockchip: Remove PCIE_L0S_ENTRY check from rockchip_pcie_link_up()
-      PCI: dw-rockchip: Enable ASPM L0s capability for both RC and EP modes
-      PCI: dw-rockchip: Move rockchip_pcie_ep_hide_broken_ats_cap_rk3588() to dw_pcie_ep_ops::init()
-
-Siddharth Vadapalli (3):
-      PCI: cadence-host: Introduce cdns_pcie_host_disable() helper for cleanup
-      PCI: cadence-ep: Introduce cdns_pcie_ep_disable() helper for cleanup
-      PCI: j721e: Add support to build as a loadable module
-
-Varadarajan Narayanan (1):
-      dt-bindings: PCI: qcom: Add MHI registers for IPQ9574
-
-Wenbin Yao (1):
-      PCI: dwc: Make link training more robust by setting PORT_LOGIC_LINK_WIDTH to one lane
-
-Wilfred Mallawa (1):
-      PCI: Print the actual delay time in pci_bridge_wait_for_secondary_bus()
-
-Yoshihiro Shimoda (1):
-      PCI: rcar-gen4: Document how to obtain platform firmware
-
-Zhe Qiao (1):
-      PCI/ACPI: Fix allocated memory release on error in pci_acpi_scan_root()
-
- .mailmap                                           |   3 +
- Documentation/ABI/testing/debugfs-pcie-ptm         |  70 ++++
- ...devices-aer_stats => sysfs-bus-pci-devices-aer} |  44 +++
- Documentation/PCI/controller/index.rst             |  10 +
- .../PCI/controller/rcar-pcie-firmware.rst          |  32 ++
- Documentation/PCI/endpoint/pci-nvme-function.rst   |   2 +-
- Documentation/PCI/index.rst                        |   1 +
- Documentation/PCI/pcieaer-howto.rst                |  17 +-
- .../devicetree/bindings/pci/apple,pcie.yaml        |  33 +-
- .../devicetree/bindings/pci/brcm,stb-pcie.yaml     |  81 ++--
- .../devicetree/bindings/pci/cdns,cdns-pcie-ep.yaml |  16 +-
- .../bindings/pci/intel,keembay-pcie-ep.yaml        |  26 +-
- .../bindings/pci/intel,keembay-pcie.yaml           |  38 +-
- .../bindings/pci/marvell,armada8k-pcie.yaml        | 100 +++++
- .../bindings/pci/marvell,kirkwood-pcie.yaml        | 277 +++++++++++++
- .../bindings/pci/microchip,pcie-host.yaml          |  56 +--
- .../devicetree/bindings/pci/mvebu-pci.txt          | 310 ---------------
- .../bindings/pci/nvidia,tegra194-pcie-ep.yaml      |   2 +-
- .../devicetree/bindings/pci/pci-armada8k.txt       |  48 ---
- .../devicetree/bindings/pci/pci-iommu.txt          | 171 --------
- Documentation/devicetree/bindings/pci/pci-msi.txt  | 220 -----------
- Documentation/devicetree/bindings/pci/pci.txt      |  84 ----
- .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml |  10 +-
- .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  |   9 +-
- .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml |  10 +-
- .../devicetree/bindings/pci/qcom,pcie-sm8150.yaml  |   9 +-
- .../devicetree/bindings/pci/qcom,pcie-sm8250.yaml  |   9 +-
- .../devicetree/bindings/pci/qcom,pcie-sm8350.yaml  |   9 +-
- .../devicetree/bindings/pci/qcom,pcie.yaml         |  65 ++-
- .../devicetree/bindings/pci/rcar-pci-ep.yaml       |  34 +-
- .../devicetree/bindings/pci/rcar-pci-host.yaml     |  46 +--
- .../bindings/pci/rockchip-dw-pcie-common.yaml      |  10 +-
- .../devicetree/bindings/pci/rockchip-dw-pcie.yaml  |  60 ++-
- .../devicetree/bindings/pci/sifive,fu740-pcie.yaml |   2 +-
- .../bindings/pci/snps,dw-pcie-common.yaml          |   3 +-
- .../devicetree/bindings/pci/snps,dw-pcie.yaml      |   4 +-
- .../devicetree/bindings/pci/v3,v360epc-pci.yaml    | 100 +++++
- .../devicetree/bindings/pci/v3-v360epc-pci.txt     |  76 ----
- .../devicetree/bindings/pci/xilinx-versal-cpm.yaml | 112 +++---
- Documentation/driver-api/driver-model/devres.rst   |   3 +-
- MAINTAINERS                                        |  50 +--
- arch/arm64/Kconfig.platforms                       |   2 +-
- arch/x86/pci/Makefile                              |   6 +-
- arch/x86/pci/{intel_mid_pci.c => intel_mid.c}      |   0
- drivers/accel/qaic/Kconfig                         |   1 -
- drivers/block/mtip32xx/mtip32xx.c                  |   7 +-
- drivers/firewire/Kconfig                           |   2 +-
- drivers/gpu/drm/Kconfig                            |   2 +-
- drivers/gpu/drm/amd/amdgpu/Kconfig                 |   3 +-
- drivers/gpu/drm/ast/Kconfig                        |   2 +-
- drivers/gpu/drm/gma500/Kconfig                     |   2 +-
- drivers/gpu/drm/hisilicon/hibmc/Kconfig            |   1 -
- drivers/gpu/drm/loongson/Kconfig                   |   2 +-
- drivers/gpu/drm/mgag200/Kconfig                    |   2 +-
- drivers/gpu/drm/nouveau/Kconfig                    |   3 +-
- drivers/gpu/drm/qxl/Kconfig                        |   2 +-
- drivers/gpu/drm/radeon/Kconfig                     |   2 +-
- drivers/gpu/drm/tiny/Kconfig                       |   2 +-
- drivers/gpu/drm/vmwgfx/Kconfig                     |   2 +-
- drivers/gpu/drm/xe/Kconfig                         |   2 +-
- drivers/iommu/amd/init.c                           |   3 -
- drivers/net/ethernet/broadcom/Kconfig              |   1 -
- drivers/net/wireless/ath/ath11k/Kconfig            |   2 +-
- drivers/net/wireless/ath/ath12k/Kconfig            |   2 +-
- drivers/pci/Kconfig                                |   1 +
- drivers/pci/bus.c                                  |   4 +-
- drivers/pci/controller/Kconfig                     |   8 +-
- drivers/pci/controller/cadence/Kconfig             |  16 +-
- drivers/pci/controller/cadence/pci-j721e.c         |  40 +-
- drivers/pci/controller/cadence/pcie-cadence-ep.c   |  36 +-
- drivers/pci/controller/cadence/pcie-cadence-host.c | 124 +++++-
- drivers/pci/controller/cadence/pcie-cadence.c      |  12 +
- drivers/pci/controller/cadence/pcie-cadence.h      |  25 +-
- drivers/pci/controller/dwc/pci-dra7xx.c            |   4 +-
- drivers/pci/controller/dwc/pci-exynos.c            |   4 +-
- drivers/pci/controller/dwc/pci-imx6.c              | 213 ++++++++--
- drivers/pci/controller/dwc/pci-keystone.c          |   5 +-
- drivers/pci/controller/dwc/pci-meson.c             |   6 +-
- drivers/pci/controller/dwc/pcie-armada8k.c         |   6 +-
- .../pci/controller/dwc/pcie-designware-debugfs.c   | 252 +++++++++++-
- drivers/pci/controller/dwc/pcie-designware-ep.c    |  30 +-
- drivers/pci/controller/dwc/pcie-designware-host.c  |  81 +++-
- drivers/pci/controller/dwc/pcie-designware.c       |  29 +-
- drivers/pci/controller/dwc/pcie-designware.h       |  32 +-
- drivers/pci/controller/dwc/pcie-dw-rockchip.c      | 102 +++--
- drivers/pci/controller/dwc/pcie-hisi.c             |   1 +
- drivers/pci/controller/dwc/pcie-histb.c            |   9 +-
- drivers/pci/controller/dwc/pcie-keembay.c          |   2 +-
- drivers/pci/controller/dwc/pcie-kirin.c            |   7 +-
- drivers/pci/controller/dwc/pcie-qcom-ep.c          |  10 +-
- drivers/pci/controller/dwc/pcie-qcom.c             |   7 +-
- drivers/pci/controller/dwc/pcie-rcar-gen4.c        |   3 +-
- drivers/pci/controller/dwc/pcie-spear13xx.c        |   7 +-
- drivers/pci/controller/dwc/pcie-tegra194.c         |  23 +-
- drivers/pci/controller/dwc/pcie-uniphier.c         |   2 +-
- drivers/pci/controller/dwc/pcie-visconti.c         |   4 +-
- .../pci/controller/mobiveil/pcie-layerscape-gen4.c |  12 +-
- drivers/pci/controller/mobiveil/pcie-mobiveil.h    |   2 +-
- drivers/pci/controller/pci-host-common.c           |  30 +-
- drivers/pci/controller/pci-host-common.h           |  20 +
- drivers/pci/controller/pci-host-generic.c          |   2 +
- drivers/pci/controller/pci-mvebu.c                 |  26 +-
- drivers/pci/controller/pci-thunder-ecam.c          |   2 +
- drivers/pci/controller/pci-thunder-pem.c           |   1 +
- drivers/pci/controller/pcie-apple.c                | 247 ++++++++----
- drivers/pci/controller/pcie-rcar-ep.c              |   8 +-
- drivers/pci/controller/pcie-rockchip-ep.c          |  10 +-
- drivers/pci/controller/pcie-rockchip.h             |   7 +-
- drivers/pci/controller/plda/pcie-microchip-host.c  |   1 +
- drivers/pci/devres.c                               | 225 ++---------
- drivers/pci/ecam.c                                 |   2 +
- drivers/pci/endpoint/functions/pci-epf-vntb.c      |  26 +-
- drivers/pci/endpoint/pci-epc-core.c                |  26 +-
- drivers/pci/endpoint/pci-epf-core.c                |  22 +-
- drivers/pci/hotplug/pci_hotplug_core.c             |  73 +++-
- drivers/pci/hotplug/pciehp.h                       |   1 +
- drivers/pci/hotplug/pciehp_core.c                  |  29 --
- drivers/pci/hotplug/pciehp_ctrl.c                  |   2 +-
- drivers/pci/hotplug/pciehp_hpc.c                   |  78 ++--
- drivers/pci/iomap.c                                |  16 -
- drivers/pci/of.c                                   |  44 +++
- drivers/pci/pci-acpi.c                             |  23 +-
- drivers/pci/pci-driver.c                           |   8 +-
- drivers/pci/pci-sysfs.c                            |   4 +
- drivers/pci/pci.c                                  |  88 ++---
- drivers/pci/pci.h                                  |  75 +++-
- drivers/pci/pcie/aer.c                             | 438 +++++++++++++++------
- drivers/pci/pcie/bwctrl.c                          |  86 +---
- drivers/pci/pcie/dpc.c                             |  73 ++--
- drivers/pci/pcie/err.c                             |   1 -
- drivers/pci/pcie/ptm.c                             | 300 ++++++++++++++
- drivers/pci/pcie/tlp.c                             |   6 +-
- drivers/pci/probe.c                                |   3 +-
- drivers/pci/pwrctrl/Kconfig                        |  22 +-
- drivers/pci/pwrctrl/Makefile                       |   8 +-
- drivers/pci/pwrctrl/core.c                         |   2 +
- drivers/pci/quirks.c                               |  33 +-
- drivers/pci/setup-bus.c                            |  16 +-
- drivers/pcmcia/cardbus.c                           |   1 -
- drivers/scsi/bnx2fc/Kconfig                        |   1 -
- drivers/scsi/bnx2i/Kconfig                         |   1 -
- drivers/vfio/pci/Kconfig                           |   2 +-
- include/linux/pci-ecam.h                           |   6 -
- include/linux/pci-epc.h                            |  11 +-
- include/linux/pci-epf.h                            |   3 +
- include/linux/pci.h                                |  64 ++-
- include/linux/pm_runtime.h                         |   2 +
- include/uapi/linux/pci_regs.h                      |  12 +-
- 148 files changed, 3401 insertions(+), 2220 deletions(-)
- create mode 100644 Documentation/ABI/testing/debugfs-pcie-ptm
- rename Documentation/ABI/testing/{sysfs-bus-pci-devices-aer_stats => sysfs-bus-pci-devices-aer} (72%)
- create mode 100644 Documentation/PCI/controller/index.rst
- create mode 100644 Documentation/PCI/controller/rcar-pcie-firmware.rst
- create mode 100644 Documentation/devicetree/bindings/pci/marvell,armada8k-pcie.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/marvell,kirkwood-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/mvebu-pci.txt
- delete mode 100644 Documentation/devicetree/bindings/pci/pci-armada8k.txt
- delete mode 100644 Documentation/devicetree/bindings/pci/pci-iommu.txt
- delete mode 100644 Documentation/devicetree/bindings/pci/pci-msi.txt
- delete mode 100644 Documentation/devicetree/bindings/pci/pci.txt
- create mode 100644 Documentation/devicetree/bindings/pci/v3,v360epc-pci.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/v3-v360epc-pci.txt
- rename arch/x86/pci/{intel_mid_pci.c => intel_mid.c} (100%)
- create mode 100644 drivers/pci/controller/pci-host-common.h
 
