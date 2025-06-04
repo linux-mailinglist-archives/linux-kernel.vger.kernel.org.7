@@ -1,211 +1,180 @@
-Return-Path: <linux-kernel+bounces-673018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1855EACDB1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E927ACDB24
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073EB189311D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784A417875A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5291728C87A;
-	Wed,  4 Jun 2025 09:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2753A28CF6D;
+	Wed,  4 Jun 2025 09:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JOGYFj+5"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="F68IY2jo"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB7479F2
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5A428C849
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749029882; cv=none; b=aIWqo0vqIyuX9X/KSQefxLWSspAb7cu6JtyjNAx0oseaeSMCzr8u/nlVahwov6xwd46YjgBRJMAvN8xBxSHoCORj8Q2RaTWbUqz50WEbeBjinZCEvZ+NSK9xHJm6O1aUZLt1D05PH5E1YOlgpPtA7vPALMKTg/JUcc5cl7vkZ7Q=
+	t=1749029905; cv=none; b=hFrs/pYWc8NfbSfYTZE1YkXxE7Z1QpyojsmE4hDCe2v1V0uCPx+JHEMJJJxlC/MyLneWjOMLSZ+q3LBUIQd2cdQ+7asfyTpqD5QHFQASSyBnzMFxLIVsQv4k8puxgG3cDLqMFfpU3voC439yF9zAb9diuWM6l7dhWJML58ZTPdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749029882; c=relaxed/simple;
-	bh=IefVJKRoaTZXyYlWJwwqwPpNNzeZVtle+HBXhnWHRus=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=igF/Qvd8Tz+UO/NBDwEFlll64viomELTpo0JjY5VhPNW28mIh7WroMR9xOZShQvMu+mK24Bbot2q96iqfBvNs0YcQ4SGtbS7PUdZ6Jte8wtzNR7Z3giJ5McvxnWIQBUbZgoPUPmgkRgZTKP5UW2+zK6+IDJQnfcVwMqO2CFO3SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JOGYFj+5; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-450dada0f83so38485505e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 02:38:00 -0700 (PDT)
+	s=arc-20240116; t=1749029905; c=relaxed/simple;
+	bh=jpnVSxC75EQ10vHXIZ0wGKgad+cQai+ufsPJbvoqCTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L17ENpD4cD0XZn66H7/onm5jkf3q4CTswCeUiPJBWnFyGXuBT+JpPPp0DMBZ/nvTr7aPpjaPT1veD6mdrq2v5sxPtbfehnddcpL4p7FN9xV9z7N8CTLIzIhs4XdIGlv4oLNS+XMyEHsFbLJ7quyrFLXEtrFpxboE3VjhQMYa5g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=F68IY2jo; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-8731c4ba046so58464439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 02:38:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749029879; x=1749634679; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9Z4UCGtO6U0GVT4g7AwP3ADkarkEdCLcrxioVcqn6k=;
-        b=JOGYFj+5OBQXm17ZWZ/atAlN2VVVHVerzisuifHukR1jQ8N05g9NSxXDaYCctkZmRk
-         R6LkH5KNfqusgDwaG/j6gDz7Kgsj2k9fQGpzQmZUwO1cGM8pXmzkYwC4zkbfUWgW2hSe
-         WS7HXFauCwbkSaFGm7MB7wuFdjQZdfObuj6NkirUB/9gy1yrrT/7HgJE7eCTvbVPKw4H
-         5QGOHBW2jdkW3KiCgEkO1SkYzQObDxySBjvjioerorW/J4sVYoxbzaCw3a9TRmENOzSt
-         i9PoMbEqZJHzb0gbXMWevlPrDxR451n3LqCCifZuLh+kz5YuLsgWOcwT6DQ1WZWpdgsL
-         bbeA==
+        d=sifive.com; s=google; t=1749029903; x=1749634703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eOIWCXEE0RxznYIyh26beXHBZUfQdbelgMFfKBCSM8U=;
+        b=F68IY2jog384+sE/HANp0y33QI1QLT8kxydaHCo9nDMAjbviDCpIIXHKoP5NMuJo06
+         2jOgt2IVE5o6YmtIiyJMMtzgPZVMOEViTWCnwZrMu+6vwRZl9DtUly7L29vLxx1hZ/Yi
+         GAEwjMjg43unoyOjA3Q+jur+XNj0w4JhuFQ+dCS3SklRXblaaAVgxahTfUZUz0h4RnnH
+         oWkbVddjNKZMCFSsz9oj19aSv6ig/BhUVSj6ZHS4iZ7o44ZhQJHCUTmzIG0NT4aX3lZL
+         fjLbpXqVoS53oN4UR+zyJD6VTopxoHQDly30WeEZxsh5FlKDScoRw2idmANL/IRLYpD7
+         rxAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749029879; x=1749634679;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9Z4UCGtO6U0GVT4g7AwP3ADkarkEdCLcrxioVcqn6k=;
-        b=OAtEzKlgey467tX/eHJOed8xtuxccJg6/XfDx2Udi0oWlV6F2X97pA8DTWh+l0QXSD
-         rH1QwcPEhImhtY1zqhQ49XGvknTjk0WxgF65ly/1J4nNTrL4u8OhOPaU8aRvP/Fy1Qo+
-         d7TZUCCixKOWejWlymWpTN+xgtW8JUNzu7/S7+8PFey9aNceyoFqcBNzRptmMaM0PdO9
-         k+s0sRR4U/e0PAVwWZV/tR6DIopQXS1gCHcqjf8jJ2L8GtLbCraV3xx/QqDCL0NlIyLB
-         ap/VC9NR/dnfuCW3VbEYezrJUYuYmYoYA8Hn1KWcwJkA4vFyhojoDmlh0z3MBoAsWyPr
-         kM5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWt+MjqW/1TmxddyjCjUweRweMOS61iN6R7ftSws6dE1ogxeNZuJ3lCVa4Nd2vcRXKF4+AcH9o8HNLUU5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFfSQhZPME7h/DcK0xlSkVfDJew63yhpAt6S+YCmB1z0ZCuxfS
-	e1qPtVlJoR3E+0PD+Rwi3P/3tZDvtQhWOmGFIAY+5W3kKDG9Yz5sjyRGK58dabf+Arp63lapxjl
-	XtLSKQXvUiw2s1x9SnA==
-X-Google-Smtp-Source: AGHT+IHbB15ak9OkLyyLKjiL2SuiJUR5ZPZ+YNrGcnXzpsUEWmNZ70EDL0B0udyTAmN0Mlas7cyYu9RJKod5RTQ=
-X-Received: from wmbay12.prod.google.com ([2002:a05:600c:1e0c:b0:43d:b30:d2df])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:35d4:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-451f0a63602mr16072705e9.2.1749029879077;
- Wed, 04 Jun 2025 02:37:59 -0700 (PDT)
-Date: Wed, 4 Jun 2025 09:37:56 +0000
-In-Reply-To: <DAACCYW3QRQE.1O75L2SHJYVPM@kernel.org>
+        d=1e100.net; s=20230601; t=1749029903; x=1749634703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eOIWCXEE0RxznYIyh26beXHBZUfQdbelgMFfKBCSM8U=;
+        b=hrnUbda9eiUwHx5DcSHI5ovqtk5SXwLa2rigFoxBXD1CfX9m3i3tzZ3ODCLGPxO3r5
+         zb4KXEaXnTg0AoU1rs9Ko6Ufu0tGfIoii0cYAgmPnrgGoiWUZhPRhjF98HLZ9qTt0l8M
+         8cG7/B5R+45kbpojSFZkZNQkj3jCb6ZU6lgjpnQTABhQYTbxaZjyRRe7GpbKr4ATW/pS
+         oEvq2kUv9y+B6nvd0RpaAQbhp4Sc0yDeDZLvR/s2NKnrZeZhmSnVJZ3krxqHKQwY5Lvv
+         U42Zc/qakMGTo2M99yKAF7+RBOOJscvT2voT9YyrUiKWSlICOgB5H1xLJk3/e8SdgeND
+         96og==
+X-Forwarded-Encrypted: i=1; AJvYcCXD6LPOzTWbWL3vIwd7KQz/vs3ynWyk3QCP3eQwbV4RCrhAdmSdpv1wpmGNbJBwWCmiCBOIxSQmvbGWfBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9J4L7KLQzZSJ3WVgGlj7PDVnjehRVsVroIbeLYIYXV7EvCpcT
+	r07EtkDa25L98kBsUG2Q9Qc9zSa0J9el5geqNvlxESNtYsATbQIKlUyVIYDZEkbjTgu+aFMyE3F
+	0PE9urGY8yxYUParnRDQNbxYUH0309IxddvmVShHQrg==
+X-Gm-Gg: ASbGnctUtWqaIUvzrmQ64es8KEYsF2HEJvu4u92EN8xfbzfX3EzuFeE7HwynfkcqnaJ
+	Nda8wFH74YY+cA0pqMgPuDgQxMdptCbNKnnuUgukpde4FavyqbgPf9/BpEx/FJY9a3Cugzc1iDn
+	uxgqL6Rgie/W23bn6QzLZHsJdFymD5ib/YXKPMGXjDmGKUqQ==
+X-Google-Smtp-Source: AGHT+IG8vOXK+h+y2p/PdmXHtYUOgTT0CvnkZ6qhAFOmZ6ZirSdzqcS/OrgftpiwqYuby9tRcEPX+da9XrFykmbetkg=
+X-Received: by 2002:a05:6e02:1c29:b0:3dc:87c7:a5b9 with SMTP id
+ e9e14a558f8ab-3ddbededa44mr20700675ab.10.1749029902722; Wed, 04 Jun 2025
+ 02:38:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250530-b4-rust_miscdevice_registrationdata-v4-0-d313aafd7e59@gmail.com>
- <20250530-b4-rust_miscdevice_registrationdata-v4-2-d313aafd7e59@gmail.com> <DAACCYW3QRQE.1O75L2SHJYVPM@kernel.org>
-Message-ID: <aEAT9B669Qvi0rlR@google.com>
-Subject: Re: [PATCH v4 2/3] rust: miscdevice: add additional data to MiscDeviceRegistration
-From: Alice Ryhl <aliceryhl@google.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Christian Schrefl <chrisi.schrefl@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee@kernel.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, 
-	"Gerald =?utf-8?Q?Wisb=C3=B6ck?=" <gerald.wisboeck@feather.ink>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250314092614.27372-1-zong.li@sifive.com> <aD3WKnyp_ffk60oF@debug.ba.rivosinc.com>
+ <CANXhq0r8DeksFQC2ht8jeLpfn-0Tvuy4LU52BOMAj-AAB83+5A@mail.gmail.com> <aD-cE9IGrV6nOUjX@debug.ba.rivosinc.com>
+In-Reply-To: <aD-cE9IGrV6nOUjX@debug.ba.rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Wed, 4 Jun 2025 17:38:11 +0800
+X-Gm-Features: AX0GCFv8-KLRNyJz3iFIGgmal8-qIs3VXEvUr1UzUc56Y1s2sLF1iT12dkOeEaE
+Message-ID: <CANXhq0pATf+gOHLbft5bo5GxoD9xKBfq=NA4t3o_2M=0DeKWEA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: traps: handle uprobe event in software-check exception
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 31, 2025 at 02:23:23PM +0200, Benno Lossin wrote:
-> On Fri May 30, 2025 at 10:46 PM CEST, Christian Schrefl wrote:
-> > @@ -45,32 +46,46 @@ pub const fn into_raw<T: MiscDevice>(self) -> bindings::miscdevice {
-> >  /// # Invariants
-> >  ///
-> >  /// `inner` is a registered misc device.
-> > -#[repr(transparent)]
-> > +#[repr(C)]
-> 
-> Why do we need linear layout? `container_of!` also works with the `Rust`
-> layout.
-> 
-> >  #[pin_data(PinnedDrop)]
-> > -pub struct MiscDeviceRegistration<T> {
-> > +pub struct MiscDeviceRegistration<T: MiscDevice> {
-> >      #[pin]
-> >      inner: Opaque<bindings::miscdevice>,
-> > +    #[pin]
-> > +    data: Opaque<T::RegistrationData>,
-> >      _t: PhantomData<T>,
-> 
-> No need to keep the `PhantomData` field around, since you're using `T`
-> above.
-> 
-> >  }
-> >  
-> > -// SAFETY: It is allowed to call `misc_deregister` on a different thread from where you called
-> > -// `misc_register`.
-> > -unsafe impl<T> Send for MiscDeviceRegistration<T> {}
-> > -// SAFETY: All `&self` methods on this type are written to ensure that it is safe to call them in
-> > -// parallel.
-> > -unsafe impl<T> Sync for MiscDeviceRegistration<T> {}
-> > +// SAFETY:
-> > +// - It is allowed to call `misc_deregister` on a different thread from where you called
-> > +//   `misc_register`.
-> > +// - Only implements `Send` if `MiscDevice::RegistrationData` is also `Send`.
-> > +unsafe impl<T: MiscDevice> Send for MiscDeviceRegistration<T> where T::RegistrationData: Send {}
-> > +
-> > +// SAFETY:
-> > +// - All `&self` methods on this type are written to ensure that it is safe to call them in
-> > +//   parallel.
-> > +// - `MiscDevice::RegistrationData` is always `Sync`.
-> > +unsafe impl<T: MiscDevice> Sync for MiscDeviceRegistration<T> {}
-> 
-> I would feel better if we still add the `T::RegistrationData: Sync`
-> bound here even if it is vacuous today.
-> 
-> >  impl<T: MiscDevice> MiscDeviceRegistration<T> {
-> >      /// Register a misc device.
-> > -    pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
-> > +    pub fn register(
-> > +        opts: MiscDeviceOptions,
-> > +        data: impl PinInit<T::RegistrationData, Error>,
-> > +    ) -> impl PinInit<Self, Error> {
-> >          try_pin_init!(Self {
-> > +            data <- Opaque::pin_init(data),
-> >              inner <- Opaque::try_ffi_init(move |slot: *mut bindings::miscdevice| {
-> >                  // SAFETY: The initializer can write to the provided `slot`.
-> >                  unsafe { slot.write(opts.into_raw::<T>()) };
-> >  
-> > -                // SAFETY: We just wrote the misc device options to the slot. The miscdevice will
-> > -                // get unregistered before `slot` is deallocated because the memory is pinned and
-> > -                // the destructor of this type deallocates the memory.
-> > +                // SAFETY:
-> > +                // * We just wrote the misc device options to the slot. The miscdevice will
-> > +                //   get unregistered before `slot` is deallocated because the memory is pinned and
-> > +                //   the destructor of this type deallocates the memory.
-> > +                // * `data` is Initialized before `misc_register` so no race with `fops->open()`
-> > +                //   is possible.
-> >                  // INVARIANT: If this returns `Ok(())`, then the `slot` will contain a registered
-> >                  // misc device.
-> >                  to_result(unsafe { bindings::misc_register(slot) })
-> > @@ -93,13 +108,24 @@ pub fn device(&self) -> &Device {
-> >          // before the underlying `struct miscdevice` is destroyed.
-> >          unsafe { Device::as_ref((*self.as_raw()).this_device) }
-> >      }
-> > +
-> > +    /// Access the additional data stored in this registration.
-> > +    pub fn data(&self) -> &T::RegistrationData {
-> > +        // SAFETY:
-> > +        // * No mutable reference to the value contained by `self.data` can ever be created.
-> > +        // * The value contained by `self.data` is valid for the entire lifetime of `&self`.
-> 
-> Please add type invariants for these two requirements.
-> 
-> > +        unsafe { &*self.data.get() }
-> > +    }
-> >  }
-> >  
-> >  #[pinned_drop]
-> > -impl<T> PinnedDrop for MiscDeviceRegistration<T> {
-> > +impl<T: MiscDevice> PinnedDrop for MiscDeviceRegistration<T> {
-> >      fn drop(self: Pin<&mut Self>) {
-> >          // SAFETY: We know that the device is registered by the type invariants.
-> >          unsafe { bindings::misc_deregister(self.inner.get()) };
-> > +
-> > +        // SAFETY: `self.data` is valid for dropping and nothing uses it anymore.
-> 
-> Ditto.
-> 
-> > +        unsafe { core::ptr::drop_in_place(self.data.get()) };
-> >      }
-> >  }
-> >  
-> > @@ -109,6 +135,13 @@ pub trait MiscDevice: Sized {
-> >      /// What kind of pointer should `Self` be wrapped in.
-> >      type Ptr: ForeignOwnable + Send + Sync;
-> >  
-> > +    /// The additional data carried by the [`MiscDeviceRegistration`] for this [`MiscDevice`].
-> > +    /// If no additional data is required than the unit type `()` should be used.
-> > +    ///
-> > +    /// This data can be accessed in [`MiscDevice::open()`] using
-> > +    /// [`MiscDeviceRegistration::data()`].
-> > +    type RegistrationData: Sync;
-> 
-> Why do we require `Sync` here?
-> 
-> We might want to give this a shorter name?
+On Wed, Jun 4, 2025 at 9:06=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> wr=
+ote:
+>
+> On Tue, Jun 03, 2025 at 09:48:08AM +0800, Zong Li wrote:
+> >On Tue, Jun 3, 2025 at 12:50=E2=80=AFAM Deepak Gupta <debug@rivosinc.com=
+> wrote:
+> >>
+> >> Hi Zong,
+> >>
+> >> Thanks for taking the initiative for making cfi work with uprobe.
+> >> And sorry for not noticing the patch earlier.
+> >> Few comments inline.
+> >>
+> >>
+> >> On Fri, Mar 14, 2025 at 05:26:14PM +0800, Zong Li wrote:
+> >> >Handle the uprobe event first before handling the CFI violation in
+> >> >software-check exception handler. Because when the landing pad is
+> >> >activated, if the uprobe point is set at the lpad instruction at
+> >> >the beginning of a function, the system triggers a software-check
+> >> >exception instead of an ebreak exception due to the exception
+> >> >priority, then uprobe can't work successfully.
+> >> >
+> >> >Co-developed-by: Deepak Gupta <debug@rivosinc.com>
+> >> >Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> >> >Signed-off-by: Zong Li <zong.li@sifive.com>
+> >> >---
+> >> >
+> >> >This patch is based on top of the following series
+> >> >[PATCH v11 00/27] riscv control-flow integrity for usermode
+> >> >
+> >> > arch/riscv/kernel/traps.c | 9 ++++++---
+> >> > 1 file changed, 6 insertions(+), 3 deletions(-)
+> >> >
+> >> >diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> >> >index 3f7709f4595a..ef5a92111ee1 100644
+> >> >--- a/arch/riscv/kernel/traps.c
+> >> >+++ b/arch/riscv/kernel/traps.c
+> >> >@@ -386,9 +386,12 @@ asmlinkage __visible __trap_section void do_trap=
+_software_check(struct pt_regs *
+> >> >       if (user_mode(regs)) {
+> >> >               irqentry_enter_from_user_mode(regs);
+> >> >
+> >> >-              /* not a cfi violation, then merge into flow of unknow=
+n trap handler */
+> >> >-              if (!handle_user_cfi_violation(regs))
+> >> >-                      do_trap_unknown(regs);
+> >> >+              /* handle uprobe event frist */
+> >> >+              if (!probe_breakpoint_handler(regs)) {
+> >>
+> >> If task has uprobe enabled and there is a cfi violation due to mismatc=
+h in
+> >> return address on shadow stack and regular stack, then it would be a c=
+fi
+> >> bypass, right?
+> >> Perhaps we should be doing this only when we match that sw check excep=
+tion
+> >> is due to forward cfi violation?
+> >>
+> >> Do you agree?
+> >
+> >Yes, let me add a condition for forward cfi violation here. Thanks for
+> >pointing it out.
+>
+> Cool, I'll send out another revision for my cfi series this week.
+> If you send out your uprobe fix, I can include it in my patchset.
 
+Hi Deepak,
+I have submitted the v2 patch. Please let me know if further
+modifications are required. Thanks
+https://lists.infradead.org/pipermail/linux-riscv/2025-June/071483.html
 
+>
+> >
+> >>
+> >> >+                      /* not a cfi violation, then merge into flow o=
+f unknown trap handler */
+> >> >+                      if (!handle_user_cfi_violation(regs))
+> >> >+                              do_trap_unknown(regs);
+> >> >+              }
+> >> >
+> >> >               irqentry_exit_to_user_mode(regs);
+> >> >       } else {
+> >> >--
+> >> >2.17.1
+> >> >
+> >>
+> >> _______________________________________________
+> >> linux-riscv mailing list
+> >> linux-riscv@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
