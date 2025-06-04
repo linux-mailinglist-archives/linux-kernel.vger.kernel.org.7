@@ -1,235 +1,120 @@
-Return-Path: <linux-kernel+bounces-673502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE77ACE1FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:11:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD09ACE1FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA557A1530
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA241739F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889631DD9AD;
-	Wed,  4 Jun 2025 16:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754251DE3B5;
+	Wed,  4 Jun 2025 16:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cDtRzrhR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="PgC3zLsc"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D81F1A0730
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9398D1DB34B;
+	Wed,  4 Jun 2025 16:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749053507; cv=none; b=fERug+zTi+YKfr/0C1hs8YOH1o6T1BCd3n8n2C/yWENF4VMOKFkQTCZV0XL2U0aT6eirwuX97wELhHbnACj13zu10GLKIYmKq1478xa3p+xwMJQsWBvVFwjWp1My9AWuT2AM8opIIiSlN5miZLmVp2AHtY4BRrBlMh3VJN8mCZA=
+	t=1749053636; cv=none; b=npvp1gHp6vA7LW0102uejCSrSToUO+ZMxHnpdkLrLn/gWYitRGvIaImlpPacHjW4qT/6TpDc+TjIE4XXSCPoAVe171+nctDhyYF8Cnro8XPQ2MfDn3xgsYFB91jG5s8kffsPzT+s8XHufjfWsMbLvNGWFlP9tjWv/W0HK/nyhVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749053507; c=relaxed/simple;
-	bh=PEBRC6vyw7Zzr/Dx+RgU1IbBLuh5V9Aboc7E0pI4nxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfonipRcxzvKekNM7Hq5OvQgRqJl7Gk2J7C0Vrw2Pesnl1bNCvyHjR4kM0QWNMjgEU9Bqhc3wuQoFwjzrTSBfwRrHVCZfR0qLBbiSsqp3p+4u4uMYht5nKFwQMWVsjq+5vp4+MJALrDcze+yTHQkgdKphnmt+bA4j1pGffNVPxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cDtRzrhR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749053505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DsR/Xi77gXaYpWGLoi6n+eLDE2ORizgb2ZfPz94+A/w=;
-	b=cDtRzrhRgFC4KxcIoxRz9lnT+Jxwmj/WilC8f+XwAMlAevGZ2/N1WScvRN6giE6170maZ8
-	3m+fyAx8X3Ac9z97oTO3Uo64lAvxo/rZoRliQwgPNvKBdDtZbZNSUdNDLXIxBYaKNmN/vR
-	8vr6vyNSPg0p0rpc+BCQRNx+VNCAyHo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-sckkTm1JMHCTcWJ2opdOHw-1; Wed, 04 Jun 2025 12:11:43 -0400
-X-MC-Unique: sckkTm1JMHCTcWJ2opdOHw-1
-X-Mimecast-MFC-AGG-ID: sckkTm1JMHCTcWJ2opdOHw_1749053503
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450d021b9b1so29638535e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 09:11:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749053502; x=1749658302;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DsR/Xi77gXaYpWGLoi6n+eLDE2ORizgb2ZfPz94+A/w=;
-        b=V+BY4cDX3YNVaRYBQ8WQ3g+tUDl6q9Snhx+WVq1AzGdKSlnCWqb8kWx81ukjUX6044
-         CQPSDsZL10R/dySBzDpi4vCMVFDFJjI3lmUh35WLn8nhwthBpvAR6HHeReTvrE18XN35
-         A/ks6SOxYNp2G09NDYaF7vZuJyYrm05vYCMTn3VzD+BWARix+GBb3x9nRr6kdwT0ZEIT
-         B4nFqUAK+4RJIrrN6buKS8rmG5SMK+PflxM7iTbNqoGuqJh976UaMubVVzGX8X95HA6D
-         cTQGS+F8qEGdTPnjB+TvkNiwSh6KeDbYQxwpJCYsgQ5YZ2GD+AuRVCvUtYFs4DXQk3YE
-         HPsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHsDBFhLXpvCX7sTZgPAyzpCLLyrSqf3i7Ps4PRpxTla/gHD9qYgwGonWhd4rvkvBHurxW2ARGw/NyPvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz27upnzu4//X7zJ46jo3XIYXoRLju99OxJ8nWLpzuK8r9qH/fy
-	ktEF/+IGU9TMMyJhCBRxnEefSrEKY+eEopwKSx49HtYBgc5dHDr369Foy5VuZ3d+ame1NtyTkis
-	mAoX2xJKuVFH9ddZFEBFlRmlTh01dxPl8lIZ6ekfqQiwySIsT34o6S49r7QyC0mcKKg==
-X-Gm-Gg: ASbGncscg9rcv8V3U25X2QVEqR9eFdDIKyxhrot4t0w5JQitiTVbg3YaZmknneSHCYN
-	tZkTTJvfJvyp1usQwYG04XmnrP7Lk9Yf8HVa0wnFM70GCwsgRaV7RKk50KCCA3E0UeqOVCca2W2
-	/v8N3lQhu+OyG6fs0+zvcgJXCnQQEzRpvDgAT9qI9f4A3VICSXSqCDNhMHilcvgMOcyK2Wva0cW
-	4bqEemw6JR3jQrwoRxZ8i9HgvG7fkv+DITKzjCVvJqDngYAU71AEym3EZPKNkwVMKqWc62BKswQ
-	gegvqlszBmOPmg==
-X-Received: by 2002:a05:600c:c84:b0:442:dc75:5625 with SMTP id 5b1f17b1804b1-451f0a64fc7mr31302355e9.5.1749053502622;
-        Wed, 04 Jun 2025 09:11:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHteOnS0Gg77gqG4u7I26C//pPyu/v0qnnwsZvQ18MOxZ2BNEIuvk8lMeeyoo1HHYFxGcsk3A==
-X-Received: by 2002:a05:600c:c84:b0:442:dc75:5625 with SMTP id 5b1f17b1804b1-451f0a64fc7mr31301905e9.5.1749053502227;
-        Wed, 04 Jun 2025 09:11:42 -0700 (PDT)
-Received: from [192.168.10.81] ([151.49.64.79])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a4efe6c7e5sm22134216f8f.28.2025.06.04.09.11.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 09:11:41 -0700 (PDT)
-Message-ID: <1392db34-0c37-49db-8ece-68c02ff3520d@redhat.com>
-Date: Wed, 4 Jun 2025 18:11:40 +0200
+	s=arc-20240116; t=1749053636; c=relaxed/simple;
+	bh=gT9GBvOSDzBhGo5mZNNkNzJ98TDzw354ctI3xOd57PA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HUNZhjkneOsRYbwFeNcv/x/O+ooM3YlQB2BXWwIAVe+DoTnOYHAm6sUaHwrG4xOxbaMgTUUFeoG/h8/rIY4PHJkC0/ptYDQhxMBHQOhnsraJqmT8DpTbl7V/2u8by5izO+QLtoh2UM8lyP52ooYeZCYwN/aRPOvbE/a6CVmcOTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=PgC3zLsc; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.17])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 3DDB0407618E;
+	Wed,  4 Jun 2025 16:13:52 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 3DDB0407618E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1749053632;
+	bh=nkt1L82aQ6GsktfVLB7qp2/gA1gCgwVjkKxLM6i0PJg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PgC3zLsc1Ouq2zG3taX0bUnQ8246aBUrrOOsRYI7YKW09WxsJBtAPzE3v5utZ1iW4
+	 FZltqut5lZbVuxM1pzUl8VZDMYOpnObCp9KlzKiaJ3BqHgb9AzM2Ekc5H/UjPrk0a7
+	 CIQ50KdDb/p1jKY+DcZDKk6MbJa/nlhusnlOB4DA=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH rtw-next v2 1/2] wifi: rtw89: sar: drop lockdep assertion in rtw89_set_sar_from_acpi
+Date: Wed,  4 Jun 2025 19:13:32 +0300
+Message-ID: <20250604161339.119954-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/28] KVM: SVM: Add helpers for accessing MSR bitmap that
- don't rely on offsets
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>,
- Chao Gao <chao.gao@intel.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
-References: <20250529234013.3826933-1-seanjc@google.com>
- <20250529234013.3826933-12-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20250529234013.3826933-12-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/30/25 01:39, Sean Christopherson wrote:
-> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-> index 47a36a9a7fe5..e432cd7a7889 100644
-> --- a/arch/x86/kvm/svm/svm.h
-> +++ b/arch/x86/kvm/svm/svm.h
-> @@ -628,6 +628,50 @@ static_assert(SVM_MSRS_PER_RANGE == 8192);
->   #define SVM_MSRPM_RANGE_1_BASE_MSR	0xc0000000
->   #define SVM_MSRPM_RANGE_2_BASE_MSR	0xc0010000
->   
-> +#define SVM_MSRPM_FIRST_MSR(range_nr)	\
-> +	(SVM_MSRPM_RANGE_## range_nr ##_BASE_MSR)
-> +#define SVM_MSRPM_LAST_MSR(range_nr)	\
-> +	(SVM_MSRPM_RANGE_## range_nr ##_BASE_MSR + SVM_MSRS_PER_RANGE - 1)
-> +
-> +#define SVM_MSRPM_BIT_NR(range_nr, msr)						\
-> +	(range_nr * SVM_MSRPM_BYTES_PER_RANGE * BITS_PER_BYTE +			\
-> +	 (msr - SVM_MSRPM_RANGE_## range_nr ##_BASE_MSR) * SVM_BITS_PER_MSR)
-> +
-> +#define SVM_MSRPM_SANITY_CHECK_BITS(range_nr)					\
-> +static_assert(SVM_MSRPM_BIT_NR(range_nr, SVM_MSRPM_FIRST_MSR(range_nr) + 1) ==	\
-> +	      range_nr * 2048 * 8 + 2);						\
-> +static_assert(SVM_MSRPM_BIT_NR(range_nr, SVM_MSRPM_FIRST_MSR(range_nr) + 7) ==	\
-> +	      range_nr * 2048 * 8 + 14);
-> +
-> +SVM_MSRPM_SANITY_CHECK_BITS(0);
-> +SVM_MSRPM_SANITY_CHECK_BITS(1);
-> +SVM_MSRPM_SANITY_CHECK_BITS(2);
+The following assertion is triggered on the rtw89 driver startup. It
+looks meaningless to hold wiphy lock on the early init stage so drop the
+assertion.
 
-Replying here for patches 11/25/26.  None of this is needed, just write 
-a function like this:
+ WARNING: CPU: 7 PID: 629 at drivers/net/wireless/realtek/rtw89/sar.c:502 rtw89_set_sar_from_acpi+0x365/0x4d0 [rtw89_core]
+ CPU: 7 UID: 0 PID: 629 Comm: (udev-worker) Not tainted 6.15.0+ #29 PREEMPT(lazy)
+ Hardware name: LENOVO 21D0/LNVNB161216, BIOS J6CN50WW 09/27/2024
+ RIP: 0010:rtw89_set_sar_from_acpi+0x365/0x4d0 [rtw89_core]
+ Call Trace:
+  <TASK>
+  rtw89_sar_init+0x68/0x2c0 [rtw89_core]
+  rtw89_core_init+0x188e/0x1e50 [rtw89_core]
+  rtw89_pci_probe+0x530/0xb50 [rtw89_pci]
+  local_pci_probe+0xd9/0x190
+  pci_call_probe+0x183/0x540
+  pci_device_probe+0x171/0x2c0
+  really_probe+0x1e1/0x890
+  __driver_probe_device+0x18c/0x390
+  driver_probe_device+0x4a/0x120
+  __driver_attach+0x1a0/0x530
+  bus_for_each_dev+0x10b/0x190
+  bus_add_driver+0x2eb/0x540
+  driver_register+0x1a3/0x3a0
+  do_one_initcall+0xd5/0x450
+  do_init_module+0x2cc/0x8f0
+  init_module_from_file+0xe1/0x150
+  idempotent_init_module+0x226/0x760
+  __x64_sys_finit_module+0xcd/0x150
+  do_syscall_64+0x94/0x380
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-static inline u32 svm_msr_bit(u32 msr)
-{
-	u32 msr_base = msr & ~(SVM_MSRS_PER_RANGE - 1);
-	if (msr_base == SVM_MSRPM_RANGE_0_BASE_MSR)
-		return SVM_MSRPM_BIT_NR(0, msr);
-	if (msr_base == SVM_MSRPM_RANGE_1_BASE_MSR)
-		return SVM_MSRPM_BIT_NR(1, msr);
-	if (msr_base == SVM_MSRPM_RANGE_2_BASE_MSR)
-		return SVM_MSRPM_BIT_NR(2, msr);
-	return MSR_INVALID;
-}
+Found by Linux Verification Center (linuxtesting.org).
 
-and you can throw away most of the other macros.  For example:
+Fixes: 88ca3107d2ce ("wifi: rtw89: sar: add skeleton for SAR configuration via ACPI")
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
 
-> +#define SVM_BUILD_MSR_BITMAP_CASE(bitmap, range_nr, msr, bitop, bit_rw)		\
-> +	case SVM_MSRPM_FIRST_MSR(range_nr) ... SVM_MSRPM_LAST_MSR(range_nr):	\
-> +		return bitop##_bit(SVM_MSRPM_BIT_NR(range_nr, msr) + bit_rw, bitmap);
+v2: no changes
 
-... becomes a lot more lowercase:
+ drivers/net/wireless/realtek/rtw89/sar.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-static inline rtype svm_##action##_msr_bitmap_##access(
-	unsigned long *bitmap, u32 msr)
-{
-	u32 bit = svm_msr_bit(msr);
-	if (bit == MSR_INVALID)
-		return true;
-	return bitop##_bit(bit + bit_rw, bitmap);
-}
-
-
-In patch 25, also, you just get
-
-static u32 svm_msrpm_offset(u32 msr)
-{
-	u32 bit = svm_msr_bit(msr);
-	if (bit == MSR_INVALID)
-		return MSR_INVALID;
-	return bit / BITS_PER_BYTE;
-}
-
-And you change everything to -EINVAL in patch 26 to kill MSR_INVALID.
-
-Another nit...
-
-> +#define BUILD_SVM_MSR_BITMAP_HELPERS(ret_type, action, bitop)			\
-> +	__BUILD_SVM_MSR_BITMAP_HELPER(ret_type, action, bitop, read,  0)	\
-> +	__BUILD_SVM_MSR_BITMAP_HELPER(ret_type, action, bitop, write, 1)
-> +
-> +BUILD_SVM_MSR_BITMAP_HELPERS(bool, test, test)
-> +BUILD_SVM_MSR_BITMAP_HELPERS(void, clear, __clear)
-> +BUILD_SVM_MSR_BITMAP_HELPERS(void, set, __set)
-Yes it's a bit duplication, but no need for the nesting, just do:
-
-BUILD_SVM_MSR_BITMAP_HELPERS(bool, test,  test,    read,  0)
-BUILD_SVM_MSR_BITMAP_HELPERS(bool, test,  test,    write, 1)
-BUILD_SVM_MSR_BITMAP_HELPERS(void, clear, __clear, read,  0)
-BUILD_SVM_MSR_BITMAP_HELPERS(void, clear, __clear, write, 1)
-BUILD_SVM_MSR_BITMAP_HELPERS(void, set,   __set,   read,  0)
-BUILD_SVM_MSR_BITMAP_HELPERS(void, set,   __set,   write, 1)
-
-Otherwise, really nice.
-
-Paolo
+diff --git a/drivers/net/wireless/realtek/rtw89/sar.c b/drivers/net/wireless/realtek/rtw89/sar.c
+index 517b66022f18..33a4b5c23fe7 100644
+--- a/drivers/net/wireless/realtek/rtw89/sar.c
++++ b/drivers/net/wireless/realtek/rtw89/sar.c
+@@ -499,8 +499,6 @@ static void rtw89_set_sar_from_acpi(struct rtw89_dev *rtwdev)
+ 	struct rtw89_sar_cfg_acpi *cfg;
+ 	int ret;
+ 
+-	lockdep_assert_wiphy(rtwdev->hw->wiphy);
+-
+ 	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
+ 	if (!cfg)
+ 		return;
+-- 
+2.49.0
 
 
