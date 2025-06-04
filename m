@@ -1,131 +1,124 @@
-Return-Path: <linux-kernel+bounces-673401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD48ACE0C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0D2ACE0CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4D5A3A7650
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:51:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F38A16C898
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9F6290D8F;
-	Wed,  4 Jun 2025 14:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8C129114B;
+	Wed,  4 Jun 2025 14:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zhr0gPrR"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="pwmdBUqr"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0442728E5F9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9125628FFCB;
+	Wed,  4 Jun 2025 14:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749048707; cv=none; b=QaNK7sMNDomLFwe2vfspyaD2Lf84a+Gzj04O6xG2txwlKal2JYGxg/Zf2kUt3jqUFgyP8f28s8A+Ila9D+YXxgNdTlIVuvyUS0YSkTix3FY4xBWov/3gABlL8d+96T2dG3f2ty4n3RfznH94oiC5JsneGUtZPyL2DL6E1yhUJeI=
+	t=1749048919; cv=none; b=hOd3TfyLWip36pgCPFZgATP+K00lqaMRebJ2h+wVy8EsZT6aSbv6ikJ4uIh7EnZJLp88W8zoq3AaUmLOmvSimFe4aVtThx3MHxwS3I8w62MB5wg8HvXCTo9VjEc6Zj+Mzdp5pTcipk/dB2x8UjQHIu28jhTY4aT5Bpk0xco617w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749048707; c=relaxed/simple;
-	bh=veZA9K4vWZMYgmiPCVxICQpb/n5o5wxx2w15FU1JhmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A/BgvX42jjHfNWY6MS7CEU+RRUQmp2D02f6uYGiXzrJipDo1QsRfcvTKVn5Ic4oxrE38lHA6oDsMd4pq+cpjSTGlwCPzI6qlzbK3pUVV2TiB9L5rM2GyfFF3+3vfotJk7a9/vILQI8xdQU+LemSAoicchfk1xJ2c/zbEdsRlgbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zhr0gPrR; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-312a806f002so500722a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 07:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749048705; x=1749653505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AVa8Qq+qX2ca3yq1SCHBs+6bwMYdjHXn9QCvwLrSQxQ=;
-        b=Zhr0gPrRHlCSHleRAz1HiDb2aWbw2wGD+UZxejXRd40XiAUurE/YaK+2/niib2MeKf
-         7SMiiuywAV8t9MeVCoDw5zu+atn9bwfvC1Wy33SgDnbEuVR8oSzxfwPvdNOIEKzgEJ2i
-         68Mu9eoQxNgNf4jH6nktmkAmeLJof10jK6lHloZLpmRVqmQQhmAJPnW8Xj4edSzEgplm
-         XW6kC0HoVLkoq+Khuda9+ct5ZRA2PCLBH91aiyXIAaRFaq+rXXsL8c4mrzqcR8iFLN1Q
-         Yk8O4oNRVmOFRhbmCXmVEAYGfWyg62y5Tr2aqvYozsYVx3VqaYtlX3a17NNTkkGkVakY
-         QyXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749048705; x=1749653505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AVa8Qq+qX2ca3yq1SCHBs+6bwMYdjHXn9QCvwLrSQxQ=;
-        b=hCUwgEFjlVVfMUj5MqDVYWdGHA42vKa5bGxRRLje4KCIRo+U9L9WmoE2FRlBo18JlW
-         XQy6gfLRyoRQj6zCvUfNw879WgFj16DKJ3AQWoTlwDIplWfqfJ153j0Txp3MwctI/cKB
-         VXs4Mx+BUnxk6tS2++PG2ZsjWf9dPLQdvo1wlX/9wdejH9R9plxNo6HYRiwvs13hxHXT
-         UgyRqlbH2QIP2ENBlC+STyoMtQ5TLWnxsbBzMjgcvIbLX4G1245vDN2jvKihjxf+O0z3
-         Qxgp0adXAdEjezeqTPofM+SCsSoYCHgbxVWiXwBmlkp4eiE4iKAhcNguvQOqX8Y7j1xN
-         Bqng==
-X-Forwarded-Encrypted: i=1; AJvYcCUe5UBQ3+FiLGrnWDLDowWcNzjWVgvTB8WvON+tvnBtnehxX0A7ck7K55joil7QNA+FYtZUdTSBsuoS8nM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2vgimVg7mzwoJZ53mCVhTIeZDerzR8yF7ndOxPv9aiKgWlpl1
-	3sJ3eaEJop4CeNQ50aCB8n7GwPD301QWbJDAf9u6Zt+34FP0ckcz21hbCKhVc0G3mdTHILfqS8q
-	p22tMjYp7ng1dFg8vI3ts24tVX++sQRUT6w8a
-X-Gm-Gg: ASbGncuBNX8AbxC3OPNG/cUzKqlFsskbOrHvOD6tq/fWLoAS5siiNEVTBLOjL1T2xxE
-	ZGZrrkTSj2p2TIcjEy9i1PGufN1JHsYYeAa4bVDpMz2FjiDoGFajqHIbnhE+39sOAwSWwTMnKiK
-	JsKqkRM58O0mYu1YLhzfENUc7Spr0+T9r/4Q==
-X-Google-Smtp-Source: AGHT+IEXhbBU5Ad6IMEuXf05cu8wNhInf6Dr5JPGtJC47oiJd4VMATt6Jx4PUI5odSmqlnX6gbZ4IHvUxsdlUZ55jno=
-X-Received: by 2002:a17:90b:180c:b0:311:c939:c842 with SMTP id
- 98e67ed59e1d1-3130cd7eab2mr1699539a91.7.1749048705130; Wed, 04 Jun 2025
- 07:51:45 -0700 (PDT)
+	s=arc-20240116; t=1749048919; c=relaxed/simple;
+	bh=U1XJE14dmK7zk8SqMJr1ydY/J2fqolOgpBQJC2LkLhs=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=bDJGxgO+UW1kNt9TzAd8uTGITikylYYFwzjMPtITpb5uXnqvVs61qWiDEjqwd6dp+HgZAQyGHE+qRMvsoTemfdS4YOfHkbQ9Wl0t/ksv89ycj4kL9vkqpJOnCOAZBi/CthWoUA4Td1ZKEe/cFt4Nh3FuLljpjPk6hyD+ox4Gzys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=pwmdBUqr; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=L5Uci1aNRqDvpavMZwVGQCSAcmTvjFdTlpswIPgwNFM=; b=pwmdBUqrSi/2JKlNzyeLA+or1f
+	d5iYtvyEaGKbHR4oF9weAoUlLJTFx0XX023Gns/VQdo0aSAZ6SdmfDB6K+rWh7WX1Lx3+w4cTsvm5
+	yShd1SYN2tGTlMBpt0FsldkDMFFAJhs8B6AtPhzOzKDQk/Pwbl22Oq2awsfI8/I2kk7g=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:60436 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1uMpWG-0000LY-Ud; Wed, 04 Jun 2025 10:55:09 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: biju.das.jz@bp.renesas.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hugo@hugovil.com,
+	chris.brandt@renesas.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Date: Wed,  4 Jun 2025 10:53:05 -0400
+Message-Id: <20250604145306.1170676-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604143217.1386272-1-lizhi.hou@amd.com>
-In-Reply-To: <20250604143217.1386272-1-lizhi.hou@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 4 Jun 2025 10:51:33 -0400
-X-Gm-Features: AX0GCFuFLQhl24WQZAscJZ2gULKE1SWhCQ5ymXTk-y5XTHc0fhk0LJCRP8nA58U
-Message-ID: <CADnq5_NMamTAd0whqwr+xcokFThCNX7T7qFBfX+u3vnS6oc=tA@mail.gmail.com>
-Subject: Re: [PATCH V1] accel/amdxdna: Fix incorrect PSP firmware size
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: ogabbay@kernel.org, quic_jhugo@quicinc.com, 
-	jacek.lawrynowicz@linux.intel.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, max.zhen@amd.com, min.ma@amd.com, 
-	sonal.santan@amd.com, mario.limonciello@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH v4 0/1] drm: rcar-du: rzg2l_mipi_dsi: add MIPI DSI command support
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Wed, Jun 4, 2025 at 10:42=E2=80=AFAM Lizhi Hou <lizhi.hou@amd.com> wrote=
-:
->
-> The incorrect PSP firmware size is used for initializing. It may
-> cause error for newer version firmware.
->
-> Fixes: 8c9ff1b181ba ("accel/amdxdna: Add a new driver for AMD AI Engine")
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->  drivers/accel/amdxdna/aie2_psp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/accel/amdxdna/aie2_psp.c b/drivers/accel/amdxdna/aie=
-2_psp.c
-> index dc3a072ce3b6..f28a060a8810 100644
-> --- a/drivers/accel/amdxdna/aie2_psp.c
-> +++ b/drivers/accel/amdxdna/aie2_psp.c
-> @@ -126,8 +126,8 @@ struct psp_device *aie2m_psp_create(struct drm_device=
- *ddev, struct psp_config *
->         psp->ddev =3D ddev;
->         memcpy(psp->psp_regs, conf->psp_regs, sizeof(psp->psp_regs));
->
-> -       psp->fw_buf_sz =3D ALIGN(conf->fw_size, PSP_FW_ALIGN) + PSP_FW_AL=
-IGN;
-> -       psp->fw_buffer =3D drmm_kmalloc(ddev, psp->fw_buf_sz, GFP_KERNEL)=
-;
-> +       psp->fw_buf_sz =3D ALIGN(conf->fw_size, PSP_FW_ALIGN);
-> +       psp->fw_buffer =3D drmm_kmalloc(ddev, psp->fw_buf_sz + PSP_FW_ALI=
-GN, GFP_KERNEL);
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Why do you need the extra PSP_FW_ALIGN in the allocation?
+Hello,
+this patch series add support for sending MIPI DSI command packets to the
+Renesas RZ/G2L MIPI DSI driver.
 
-Alex
+Tested on a custom board with a SolidRun RZ/G2L SOM, with two different LCD
+panels using the jd9365da and st7703 drivers.
 
->         if (!psp->fw_buffer) {
->                 drm_err(ddev, "no memory for fw buffer");
->                 return NULL;
-> --
-> 2.34.1
->
+Tested short and long writes.
+
+Tested read of 1 byte, 2 bytes and long reads. Note that to test long reads,
+most LCD panels need to be sent a DCS configuration command to increase the
+maximum packet size, which is set to 1 byte by default (at least on the two
+panels that I tested).
+
+Thank you.
+
+Link: [v1] https://lore.kernel.org/all/20250520164034.3453315-1-hugo@hugovil.com
+Link: [v3] https://lore.kernel.org/all/20250522143911.138077-1-hugo@hugovil.com
+Link: [dep1] https://lore.kernel.org/all/20250521210335.3149065-1-chris.brandt@renesas.com/raw
+
+Changes for V4:
+- Rebased on drm-misc-next, since this series depends on [dep1]
+- Move init of DCS maximum return packet size to rzg2l_mipi_dsi_startup()
+- Reworded comment for DCS maximum return packet size
+- Merged patches 1 and 2
+
+Changes for V3:
+- No code change, resending after fixing mail server config resulting in
+  only cover letter being sent
+
+Changes for V2:
+- Change commit message prefix to "drm: renesas: rz-du: "
+- Reorder variables in rzg2l_mipi_dsi_read_response()
+- Remove unused macros
+- Add missing bitfield include (kernel test robot)
+
+Hugo Villeneuve (1):
+  drm: renesas: rz-du: Implement MIPI DSI host transfers
+
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 186 ++++++++++++++++++
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  54 +++++
+ 2 files changed, 240 insertions(+)
+
+
+base-commit: 685c407f168cb49a12cc703230d1e2d62767bfd2
+-- 
+2.39.5
+
 
