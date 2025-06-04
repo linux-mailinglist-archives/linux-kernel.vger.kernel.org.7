@@ -1,188 +1,163 @@
-Return-Path: <linux-kernel+bounces-672895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193E5ACD93E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:06:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5921ACD944
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F03A189D5F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1485C3A933A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BB0286D5F;
-	Wed,  4 Jun 2025 08:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619952820AF;
+	Wed,  4 Jun 2025 08:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b="lx7RFWvw"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oSE8SrGC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B37280026
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6ED01F0E24;
+	Wed,  4 Jun 2025 08:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749024108; cv=none; b=CBBfqH4y98hr8KxlhEpNikQieWjdi6RiskZVPWgKsKAQ3M4yKR/QAtKUxbWoiOnZ+g91WVXVAosVQHGAqRrmB9yfkrI5IGy48A9qk0RxGQ3iUxVGOl1o4JYiz3fmVha/1D/UI/qDjF9qCt8+Fbois8CwCNWT4rwcJ9VFbll0H4I=
+	t=1749024186; cv=none; b=cMoLMjgsNaAN/IzZ11G4XuEsU54CW1LJlgWvNhpO/6BzZ/yVc4AeSsUxz6DPwJ86SkBrRl/nhwkNNBJtOx+0U1IZ7kvEX8oq+LoBsZYQGmo62apNkkCO/34a2yZJds8DhGA7cDpllj02asWwxnyXuHzhSMInZSe7bp8htQRPKQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749024108; c=relaxed/simple;
-	bh=ZV3zmP8/HWd8IP6LH+qVrBUnhU+he1EKR8z3CtxnEiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ObYySefvyIxM2ZCi4h+tEqWHgW219SSoBsNb5wRcpgZuPCzF4XVdpdmmZa09NvQCAziwpYqxjAOnKKDs84g2TbWDhyQ4Z1WxrO1RwXOuqveeOYdr8CVt0F4oONtfC+mdPauLhBpLUIhG9kFh0HtXBsOFlwYQEmHJp9SJ59G2ois=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org; spf=pass smtp.mailfrom=quora.org; dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b=lx7RFWvw; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quora.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-acacb8743a7so129610266b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 01:01:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=quora.org; s=google; t=1749024103; x=1749628903; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/GISmhyXSYm4I4kugK9hsCQWAMnGYj9YvW19lAeuh6A=;
-        b=lx7RFWvwrS1FKbho+sPiv9HPwdxyOJ+44SJ5OgxwFPcjAmq2SZGu2RuAD5uqn+MbiY
-         Mli1xQuNQ94MI8IRC0sMasN4QRW1yCtCsmbvslmaGY80xNyt9UHTjo0zfrM0a+U4Ks3E
-         l/cK7Aa33S/zD6t7cM/BaEGwYBw35AT+aC0xE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749024103; x=1749628903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/GISmhyXSYm4I4kugK9hsCQWAMnGYj9YvW19lAeuh6A=;
-        b=mvsB4RTpKqF8h8mPWT37bIVA9w6OxC5OJHg06eWrxFLSQjgypzcb4fH9Gv4gT1HLsM
-         CFbh/ZD9IgKi1XrBbpQ78PQeD1aYAQ8P6m1/0jqf+8bwPNMCKE1ngh8CDJ10RmLAIuHG
-         6tGaCYFUrA66IYk1kJjFGMHHH6szeBUtyQxC8pzS76uZljWDooWiniAOTn4OdELlqElY
-         Ieqi64zff7AGmruG5ehB56GeeGHtoU9x99NYZ+H8UNGq1AFSRP/cQxWEpFhjpRqzFu3L
-         2O5B7om1qwZbcyQTb6/9O1N4OSS+auQ9a62W0Ifgbfwg/XXiSshaQfvs3ed/z2FN4s6y
-         7Kag==
-X-Forwarded-Encrypted: i=1; AJvYcCWXTajNIHUG9UbMzZUH8vqFUxw+e4x5XlIPS+rbwPJUlAKb5QKpRyMQi9AGie3OXCQ+PBVg/d1M3vTnsEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLws/10QnKHWG8miTei9PbISXM4UAO+6o80v1BwVTLt6xNKPH3
-	MC6KuLmN5e26oBBUlwJHZCjSwZESFZPyDnnxYfx44sgx2n2H4ELDd40/IyPfQXPi52yjMZF8+Q5
-	aTqAe/dCL/gnmrO2Tkrjq+9yCpU2YuXakCWLQPWJB/Q==
-X-Gm-Gg: ASbGncuCkqiJ1pove7ZH0CR8djQOdkRLRq591AXTdI78ulG0OIbFnK4Z8Ca4If12nnS
-	6APcYi9b0EAh3zw2JPIGVzXecirt6fBINjYY78NQ9H+ptMwSpwrvNDfPNF20z9JjchXQ0XRQIH+
-	UY/iejshE+oM7B3CXjWz3KCmtU/OeHvLD/tu8gElV5r2y4ihgsR1Pwc10i2XWczkHEZtI=
-X-Google-Smtp-Source: AGHT+IF3wlbZEeEv6BI76hpjLBKmKeQjJgafj4INC3kTA4P8qmJWCG5rCPSmW6OMzlcUCgxNVZ/4+/Te6VS03GA17tk=
-X-Received: by 2002:a17:907:9627:b0:ad8:959c:c567 with SMTP id
- a640c23a62f3a-addf6ea249fmr212374666b.10.1749024102944; Wed, 04 Jun 2025
- 01:01:42 -0700 (PDT)
+	s=arc-20240116; t=1749024186; c=relaxed/simple;
+	bh=ffpe9H2AGyWvAtUDKYO5q1a8AYZUW941LlYAH45pzRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MgfuMqicefvtBNxOIIqoKpSlGdJMWeTnKYdvNJ4TDj1KLCtOyBmYbDi50ohQkTavsUQuqAeAqMl5U6O+wtyTNyisJSEttWQwAMfOGqf4sifb75udJiAXOkspv81M8W7ixc/bVFvWH4TCBXbA6JnB/+Amzyse4zgjQwXLCB7HzuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oSE8SrGC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5540FG8Z013323;
+	Wed, 4 Jun 2025 08:02:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=WvPOB5jmVHirrF+ZgOg9OU5FJ+cx1ttj/y1
+	9N8lrRAE=; b=oSE8SrGCFKAwjT3n12v7OzCtlvxurfjfQIwD5gwDAl5PnYfH2m4
+	P5P6gPdnLjQ8D7oHF6lNbvI8obtRip8IdaQ94EsukOaCR5y+nJjkPlDr6dybRKqm
+	qqzO+tNhNAsU1F3n/bEvAXZpplS3lVzaiTmrDdB1v9TTIJH+wLSzW22BcWHRUDgI
+	RkoxaTiBB1+sln7c0tG8QFYkj+fKyts+S2e5p5To81sALdCMtKPV/ZJmcHW9iDmz
+	6WBt93SYa/xDpRPInkNqUz8jfHEAw/Fa/wBpaVSJEAKLbpMeb/YDSQwHpiRcmiJI
+	j3+x1LOX9C7fOYyT9mRsrs+OJ/3cNUAAoQQ==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472be810gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 08:02:44 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55482fVN003901;
+	Wed, 4 Jun 2025 08:02:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 46ytumenrn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 08:02:41 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55482eFm003893;
+	Wed, 4 Jun 2025 08:02:41 GMT
+Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 55482eLp003888
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 08:02:40 +0000
+Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
+	id 8FA7E40D25; Wed,  4 Jun 2025 16:02:39 +0800 (CST)
+From: Wenbin Yao <quic_wenbyao@quicinc.com>
+To: catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, kishon@kernel.org, sfr@canb.auug.org.au,
+        linux-phy@lists.infradead.org
+Cc: krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
+        quic_mrana@quicinc.com, quic_cang@quicinc.com,
+        qiang.yu@oss.qualcomm.com, quic_wenbyao@quicinc.com
+Subject: [PATCH v4 0/5] arm64: qcom: x1e80100-qcp: Add power supply and sideband signals for PCIe RC
+Date: Wed,  4 Jun 2025 16:02:32 +0800
+Message-Id: <20250604080237.494014-1-quic_wenbyao@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602223251.496591-1-daniel@quora.org> <CANDhNCqn__w4kGE2N6P5MndR4=2KwJnrb9=+eMo0=j5ToP6UZQ@mail.gmail.com>
-In-Reply-To: <CANDhNCqn__w4kGE2N6P5MndR4=2KwJnrb9=+eMo0=j5ToP6UZQ@mail.gmail.com>
-From: Daniel J Blueman <daniel@quora.org>
-Date: Wed, 4 Jun 2025 16:01:31 +0800
-X-Gm-Features: AX0GCFvGYDB0ZmzJCkGMQsrCqGO_4sXcTNNHSUCLgXCHfO_4HOwHNG70mgOmb_Y
-Message-ID: <CAMVG2ssyhp2zFAOu74FUQtWn55XwUtiSp49FqNwy6Pj-f6sgQw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] Prevent unexpected TSC to HPET clocksource
- fallback on many-socket systems
-To: John Stultz <jstultz@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	stable@kernel.org, Scott Hamilton <scott.hamilton@eviden.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=bNYWIO+Z c=1 sm=1 tr=0 ts=683ffda4 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Bg7XDE4CPuCW5LNoTQ8A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: oxCH5CblYAdxVFJljLq4RirJs-ofu0RQ
+X-Proofpoint-ORIG-GUID: oxCH5CblYAdxVFJljLq4RirJs-ofu0RQ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA2MyBTYWx0ZWRfX/aDIFhGjh4lq
+ ROf3g+FmqCt45a9ln5oLfuUyxPENEEIcMmb8Ug5pXuXc/cM5DPtA24crJFz3ZPgXR1U3VeIJMMM
+ zHukVV8dOlVCGAP4GIm4L5YsNAFAkTcoAz5X1JItUj6VZ09dpm3oqwpQpW4LxIKO9PRDJqfWzdk
+ So3Nx2vKCwijFxjwRLCF1MaCDtHsmyotXIhlQptyc17wOVN3s/L+Scx77KE52rvhx4nNIOijXeI
+ 0m4BCl2GPRuaw0zHa1+hS8llPKLBv+Q/GTC1JhD4nvQCRy+sXvSSQ5ubHmD5Xo3BdyeSMEOw3Lh
+ vWJHwBDfMSGT7d9+5rI+DXTK2flIpIHfEgE+zOgVvz1E7rhUeXPFdkqJx4gmFXLy6n+BgnPH5nt
+ mpWYALNce4pF/8VrQXptOeiklEr/bTYGN5NbGbtlwZA0cwnQWSfgSuL1/wrQ2R60O2O8vW+9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 mlxscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 adultscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506040063
 
-On Tue, 3 Jun 2025 at 09:35, John Stultz <jstultz@google.com> wrote:
->
-> On Mon, Jun 2, 2025 at 3:34=E2=80=AFPM Daniel J Blueman <daniel@quora.org=
-> wrote:
-> >
-> > On systems with many sockets, kernel timekeeping may quietly fallback f=
-rom
-> > using the inexpensive core-level TSCs to the expensive legacy socket HP=
-ET,
-> > notably impacting application performance until the system is rebooted.
-> > This may be triggered by adverse workloads generating considerable
-> > coherency or processor mesh congestion.
-> >
-> > This manifests in the kernel log as:
-> >  clocksource: timekeeping watchdog on CPU1750: Marking clocksource 'tsc=
-' as unstable because the skew is too large:
-> >  clocksource:                       'hpet' wd_nsec: 503029760 wd_now: 4=
-8a38f74 wd_last: 47e3ab74 mask: ffffffff
-> >  clocksource:                       'tsc' cs_nsec: 503466648 cs_now: 32=
-24653e7bd cs_last: 3220d4f8d57 mask: ffffffffffffffff
-> >  clocksource:                       Clocksource 'tsc' skewed 436888 ns =
-(0 ms) over watchdog 'hpet' interval of 503029760 ns (503 ms)
-> >  clocksource:                       'tsc' is current clocksource.
-> >  tsc: Marking TSC unstable due to clocksource watchdog
-> >  TSC found unstable after boot, most likely due to broken BIOS. Use 'ts=
-c=3Dunstable'.
-> >  sched_clock: Marking unstable (882011139159, 1572951254)<-(91339503244=
-6, -29810979023)
-> >  clocksource: Checking clocksource tsc synchronization from CPU 1800 to=
- CPUs 0,187,336,434,495,644,1719,1792.
-> >  clocksource: Switched to clocksource hpet
-> >
-> > Scale the default timekeeping watchdog uncertainty margin by the log2 o=
-f
-> > the number of online NUMA nodes; this allows a more appropriate margin
-> > from embedded systems to many-socket systems.
->
-> So, missing context from the commit message:
-> * Why is it "appropriate" for the TSC and HPET to be further out of
-> sync on numa machines?
+The first patch enables the PCI Power Control driver to control the power
+state of PCI slots. The second patch adds the bus topology of PCIe domain 3
+on x1e80100 platform. The third patch adds perst, wake and clkreq sideband
+signals, and describe the regulators powering the rails of the PCI slots in
+the devicetree for PCIe3 controller and PHY device. The fourth patch adds
+qref supply in dts nodes of PCIe PHYs. The fifth patch requests qref supply
+for PCIe PHYs.
 
-I absolutely agree TSC skew is inappropriate. The TSCs are in sync
-here using the same low-jitter base clock across all modules, meaning
-this is an observability problem.
+The patchset has been modified based on comments and suggestions.
 
-> * Why is log2(numa nodes) the right metric to scale by?
+Changes in v4:
+- Replace pcie3port with pcie3_port in Patch 2/5.
+- Add restoring the vdda-qref request for the 3th PCIe instance by
+  reverting commit eb7a22f830f6("phy: qcom: qmp-pcie: drop bogus x1e80100
+  qref supply") in Patch 5/5.
+- Link to v3: https://lore.kernel.org/all/20250508081514.3227956-1-quic_wenbyao@quicinc.com/
 
-This is the simplest strategy I could determine to model latency from
-the underlying cache coherency mesh congestion, and fits well with the
-previous and future processor architectures.
+Changes in v3:
+- Replace PCI_PWRCTL_SLOT with PCI_PWRCTRL_SLOT in Patch 1/5.
+- Keep the order of pinctrl-0 before pinctrl-names in Patch 3/5.
+- Add Patch 5/5 to request qref supply for PCIe PHYs.
+- Link to v2: https://lore.kernel.org/all/20250425092955.4099677-1-quic_wenbyao@quicinc.com/
 
-> > This fix successfully prevents HPET fallback on Eviden 12 socket/1440
-> > thread SH120 and 16 socket/1920 thread SH160 Intel SPR systems with
-> > Numascale XNC node controllers.
->
-> I recognize improperly falling back to HPET is costly and unwanted,
-> but given the history of bad TSCs, why is this loosening of the sanity
-> checks actually safe?
+Changes in v2:
+- Select PCI_PWRCTL_SLOT by ARCH_QCOM in arch/arm64/Kconfig.platforms in
+  Patch 1/4.
+- Add an empty line before pcie3port node in Patch 2/4.
+- Rename regulator-pcie_12v regulator-pcie_3v3_aux and regulator-pcie_3v3
+  in Patch 3/4.
+- Add Patch 4/4 to describe qref supply of PCIe PHYs.
+- Link to v1: https://lore.kernel.org/all/20250320055502.274849-1-quic_wenbyao@quicinc.com/
 
-The current approach fails on large systems, therefore interconnect
-market leaders of these 12-16 socket systems require users to boot
-with "tsc=3Dnowatchdog".
+Qiang Yu (5):
+  arm64: Kconfig: enable PCI Power Control Slot driver for QCOM
+  arm64: dts: qcom: x1e80100: add bus topology for PCIe domain 3
+  arm64: dts: qcom: x1e80100-qcp: enable pcie3 x8 slot for X1E80100-QCP
+  arm64: dts: qcom: x1e80100-qcp: Add qref supply for PCIe PHYs
+  phy: qcom: qmp-pcie: add x1e80100 qref supplies
 
-Since this change introduces scaling, it therefore conservatively
-tightens the margin for 1-2 NUMA node systems; these values have been
-historically appropriate.
+ arch/arm64/Kconfig.platforms              |   1 +
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 121 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    |  11 ++
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c  |  41 ++++++--
+ 4 files changed, 167 insertions(+), 7 deletions(-)
 
-> The skew you've highlighted above looks to be > 800ppm, which is well
-> beyond what NTP can correct for, so it might be good to better explain
-> why this skew is happening (you mention congestion, so is the skew
-> consistent, or short term due to read latencies? if so would trying
-> again or changing how we sample be more appropriate than just growing
-> the acceptable skew window?).
 
-For the workloads I instrumented, the read latencies aren't
-consistently high enough to trip HPET fallback if there was further
-retrying, so characterising the read latencies as 'bursty' might be
-reasonable.
+base-commit: a0bea9e39035edc56a994630e6048c8a191a99d8
+-- 
+2.34.1
 
-Ultimately, this reflects complex dependency patterns in inter and
-intra-socket coherency queuing, so there is some higher baseline
-latency.
-
-> These sorts of checks were important before as NUMA systems might have
-> separate crystals on different nodes, so the TSCs (and HPETs) could
-> drift relative to each other, and ignoring such a problem could result
-> in visible TSC inconsistencies.  So I just want to make sure this
-> isn't solving an issue for you but opening a problem for someone else.
-
-Yes, we didn't have an inter-module shared base clock in early cache
-coherent interconnects. The hierarchical software clocksource mech I
-developed closed the gap on near-TSC performance, though at higher
-jitter of course.
-
-Definitely agreed that we want to detect systematic TSC skew; I am
-happy to prepare an alternative approach if preferred.
-
-Many thanks for the discussion on this John,
-  Dan
---=20
-Daniel J Blueman
 
