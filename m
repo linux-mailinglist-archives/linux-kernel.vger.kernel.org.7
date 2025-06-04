@@ -1,167 +1,133 @@
-Return-Path: <linux-kernel+bounces-672571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2C9ACD1A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:59:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AB7ACD12B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F1D1899ED7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:57:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924D516321E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909FC1A29A;
-	Wed,  4 Jun 2025 00:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099EB155333;
+	Wed,  4 Jun 2025 00:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ok4Nna4W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRPfEF5L"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6896846C;
-	Wed,  4 Jun 2025 00:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBB414A4F9;
+	Wed,  4 Jun 2025 00:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998419; cv=none; b=bGo4llLrHd3kcQmutkpsGNQZBS6lzVHyuEEt1PIH0gXs/T+VxHEoPvh01ScGmt8PjYgH1y6ZwbyKIXl2f35ax6aIVmbMoo5xxkBDEUSihCr8W9uC3ukbS/nYAqHthrZr8rMWwPWQTC1pEjT2iJYSKn0aGf/x0NTDkHNhDPJpcvo=
+	t=1748998278; cv=none; b=FrjPVFxYTv8woQc5h7r3+EEN3ybASTg9Zak1ihtIJC5NPdlJXb6u9AqFJB2YsiY5hbXraAKdhl0OE8k0fPZyATm/BkZ2IVKtlCWnFOLDUcU+E6NYcUXo3lOcBTy2Kxjint5txyVIoiMyd0q+Ln79XEzc3zzwl44w8isZiOvuHkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998419; c=relaxed/simple;
-	bh=UXVheTpvg5OQNWGin8it3cRdgct17TTyM5yWdd+kH/k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MtruIWsYmZtPVsZ0edMzorS5P54fqwHalP2oQsAqziP545dg3EkQqHGA01j++UtiTngqtxc2pXTSDKSO6U4eEA7BBEYLsHnKnT3bFdYGDDxY8cd8ovRm4buBDd0EroFmJc8h0xGgTehoFA5rIg+0q5qQZjGb4KO+QddPYrP3sc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ok4Nna4W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59FB9C4CEED;
-	Wed,  4 Jun 2025 00:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748998418;
-	bh=UXVheTpvg5OQNWGin8it3cRdgct17TTyM5yWdd+kH/k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ok4Nna4WrGQk+Ojfe14G8PJJV5QUTKI+4y8yIHwUx3wmYCIlyrzpe0q1w7QN+ZSIc
-	 VYyPQzvIO8JLq+GP8DrkKfwvqez7dm7JMVW3ymF73J+8Pmx88Xy7IN/0as9aJRMPVr
-	 2zThgA43/JU0hYnl9dYJZoEDdQyOQ6EglIs/5/JlIRocOS7kRVe4Wami3x1HH1UzOr
-	 wPRqhOosgG1VDN9rYhfQJnxzC2TA+7lzME/z0pIt5XIMx35OcNd3x/CbT+hWgEIkzC
-	 N4sS8ab2K9HUPNptr56+nXD59DDQmA8f9g18PTC+Yl7tmf6irHNimK5R9KeuWZx1lT
-	 mtFhwP2uHguCg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 070/118] tracing: Only return an adjusted address if it matches the kernel address
-Date: Tue,  3 Jun 2025 20:50:01 -0400
-Message-Id: <20250604005049.4147522-70-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250604005049.4147522-1-sashal@kernel.org>
-References: <20250604005049.4147522-1-sashal@kernel.org>
+	s=arc-20240116; t=1748998278; c=relaxed/simple;
+	bh=qBzNwBzfolO2/LfeGfIOJHvjCQIIBYm7a0UQHpcr9gs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsSv1pqNlEr/fuWTT9GquoocKnIIrFVaWlTEO72yu/58Lk0zcpSGXnS894Odr3tHsZZLvXdBov7DVl2U5Qh1jlGF6mMnunJSU/GdA9+zvPD1Fn5KL/W30oLUqspL0N1xvigDhhe/8I9BdyBZ8JoTYOcExd1SQ8DUkxAPH9c6tfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRPfEF5L; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so4784641b3a.0;
+        Tue, 03 Jun 2025 17:51:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748998276; x=1749603076; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWmlyCAlnT2OdldqgB6HsoakV73qVZDwnZszdKB+GK8=;
+        b=ZRPfEF5Lm+Ji2lM3kWk4k6iAWn8HJr4PIuXgrijSGd1/ERHgG9EXETjKEJqr22G0Om
+         K/4220Z/1zAAqOgC+WFqzBo8k1k0UAMKEqTSLsBonWiM+kf8d24E5TNo2LNsuK1Avg0X
+         RmArVvYQFx6pXVHeemzSbFXp+WpcDLJuMs8c8AGM+A4fl08fTaxfUx7kncR6UORYO0ys
+         R5WxQKuUJ0KNS4MxO6rxl8li5fsx2g2ZiK0kzXoagbREod6+E0qhcRsmrKuez9TmmH65
+         xBA8wTZcunEGwkac35qPFU8KpiVi3z5hJkCYu7G+LETYdiHixDUS47bcAgq7U0oxBQ+V
+         E4rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748998276; x=1749603076;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fWmlyCAlnT2OdldqgB6HsoakV73qVZDwnZszdKB+GK8=;
+        b=kXCq1p29sONQjiCMDmQZwAHZibF+SVu1gUabXEuqdNLjt5foR3pKVICXRnLTsn2G1h
+         FPLosbEzIe9dpT6J9O2ehAVWuV2S55Qi6PDZnS7UY9/k+pMIFUf5Hd0LS2G9dynRsCOf
+         Cdd1g4y/hYWwazZvP/YXkukUZMkeReVIZEwRQph/ZvAq4yVxn+RsgiXDYnJfZPh9U5TK
+         GwqJocE7Kd6wh4pWIXCyBk7rqyKutaHkeDOznjNI93A6JB59UC9wtQZ8TjsY/njN+IHV
+         KO+YT+Pt2BebwBKRqTbHbHgJoIfUzC4zpRp0sJNiIM9icZ3j3Zltml0iI3CNiJuPeesc
+         A3sA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgj3H2UjArU9L/bo+C9OzId2pP8Av3jwlt8c4f8TP/nBI2HZdhr9fUzqzg2GopkCDPw7molIaUVonpAW6v@vger.kernel.org, AJvYcCWdkBnPNb1HyF9z9gMWce57QfcZHgKigF6jB82Tsxwca5/mBllzGUI6GybyBsbeZjniSxrQxRQ7YBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWEPGsxeCJXS4xOIO/1OWvWRnYssPCMJ9Sw86iPD5RREL7hhd8
+	FzNlgqKYjwXhA+8n6ax55YqNvRSV0+Hi1b4ObI3tj3wEP0OujfZxM6Tn
+X-Gm-Gg: ASbGncsS0YOYpJsNSwuHpVL5TpWWUQrjQfY4JOAvpA1NEQiDJWBF3Ku/WK4xyrpuZOu
+	zCY/LQoRvL77yZa3162j9+A4M7s7YfXfVjR5p8WA7/q1pyCkDx68NQAp2n711vgt1ZzhYfZ+/n8
+	WSH/DKVVhntfqgTpfHNq3mQmHelGxkwnz8PJUOtI3OcJD44UvNKmqtrmLbGtX+PI4prV/g2LxFu
+	42e8HmXsc6I5X53IJ7eCCrsKhppL3zh+rmwmhXbGZQMZO0lCLyzdLalnCaV/6XOFv57ZPhMcbSb
+	kiDygarT0tTDRM6oKXJYQFSP445jlZBxvU0SU0kVnIeFDqtWIUg=
+X-Google-Smtp-Source: AGHT+IF159HmD5hepvxivJRJH4JtIaxvmo53Xo/sR+42O6QZd7/fg8pOX20EevUWqTdRNYyeLTI7XA==
+X-Received: by 2002:a17:902:ea08:b0:235:6aa:1675 with SMTP id d9443c01a7336-235e120f8d4mr9973865ad.52.1748998275999;
+        Tue, 03 Jun 2025 17:51:15 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-235069fa2c7sm92607795ad.0.2025.06.03.17.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 17:51:15 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 7A5B94209E8D; Wed, 04 Jun 2025 07:51:12 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Build System <linux-kbuild@vger.kernel.org>
+Cc: Matthias Maennich <maennich@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] module: Wrap EXPORT_SYMBOL_GPL_FOR_MODULES() example in literal code block
+Date: Wed,  4 Jun 2025 07:51:09 +0700
+Message-ID: <20250604005110.13040-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1380; i=bagasdotme@gmail.com; h=from:subject; bh=qBzNwBzfolO2/LfeGfIOJHvjCQIIBYm7a0UQHpcr9gs=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBn20z/+60rY9kOxaPbm9vOz7ZN9QwQauu1mtiyw7uuXy r6/YlZyRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACYSpMXIMM1k1vk34Ze+Hee1 ZpJft8TQ440LE/evDvd1ZXLTlt84dpDhf8KmsvlcN80iKv7dWd0j8csg1XJig/BqxbtTJud4GQU 48QMA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Stephen Rothwell reports htmldocs warning:
 
-[ Upstream commit 00d872dd541cdf22230510201a1baf58f0147db9 ]
+Documentation/core-api/symbol-namespaces.rst:90: WARNING: Inline emphasis start-string without end-string. [docutils]
 
-The trace_adjust_address() will take a given address and examine the
-persistent ring buffer to see if the address matches a module that is
-listed there. If it does not, it will just adjust the value to the core
-kernel delta. But if the address was for something that was not part of
-the core kernel text or data it should not be adjusted.
+Fix the warning by wrapping EXPORT_SYMBOL_GPL_FOR_MODULES() example in
+literal code block, just like other examples in symbol namespaces
+documentation.
 
-Check the result of the adjustment and only return the adjustment if it
-lands in the current kernel text or data. If not, return the original
-address.
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250506102300.0ba2f9e0@gandalf.local.home
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 707f853d7fa3 ("module: Provide EXPORT_SYMBOL_GPL_FOR_MODULES() helper")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/linux-next/20250526180350.06b825de@canb.auug.org.au/
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
+ Documentation/core-api/symbol-namespaces.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-**YES** This commit should be backported to stable kernel trees based on
-the following comprehensive analysis: ## Security Analysis ### 1.
-**Critical Security Fix** The commit addresses a significant security
-vulnerability in the `trace_adjust_address()` function. The change on
-lines 6148-6149 adds crucial validation: ```c raddr = addr +
-tr->text_delta; return __is_kernel(raddr) || is_kernel_core_data(raddr)
-|| is_kernel_rodata(raddr) ? raddr : addr; ``` **Before the fix**: The
-function would blindly return `addr + tr->text_delta` without validating
-whether the resulting address falls within legitimate kernel memory
-regions. **After the fix**: The function validates that adjusted
-addresses only point to valid kernel sections (text, core data, or read-
-only data). If the adjusted address doesn't fall within these legitimate
-regions, it returns the original address unchanged. ### 2. **KASLR
-Protection** This fix is particularly important for KASLR (Kernel
-Address Space Layout Randomization) security: - **Information Disclosure
-Risk**: Without validation, the function could return addresses pointing
-to arbitrary memory locations, potentially leaking kernel address layout
-information - **KASLR Bypass**: Invalid address adjustments could reveal
-the kernel's memory layout, defeating KASLR protections - **Cross-boot
-attacks**: The persistent ring buffer functionality could be exploited
-to extract address information from previous boot sessions ### 3.
-**Memory Safety** The validation prevents potential memory corruption
-scenarios: - **Out-of-bounds access**: Ensures addresses used for symbol
-resolution and string dereferencing are within valid kernel regions -
-**Kernel crashes**: Prevents dereferencing of invalid addresses that
-could cause kernel panics - **Information leakage**: Stops potential
-disclosure of arbitrary kernel memory contents ### 4. **Limited Risk of
-Regression** This is a defensive fix that only affects the tracing
-subsystem: - **Minimal impact**: Only changes behavior when addresses
-would be invalid anyway - **Backwards compatible**: Legitimate addresses
-continue to work as before - **Contained scope**: Limited to persistent
-ring buffer functionality ### 5. **Alignment with Stable Tree Criteria**
-The commit meets all the criteria for stable tree backporting: - ✅
-**Important bug fix**: Addresses a security vulnerability - ✅ **Small
-and contained**: Only adds validation logic, doesn't change architecture
-- ✅ **Minimal regression risk**: Defensive change that only affects
-invalid cases - ✅ **Clear benefit**: Improves kernel security without
-breaking functionality - ✅ **Non-feature**: Pure security fix, not
-adding new functionality ### 6. **Real-world Impact** This vulnerability
-could be exploited in environments where: - Persistent tracing is
-enabled across reboots - Attackers have access to trace output - Systems
-rely on KASLR for security The fix ensures that the tracing subsystem
-cannot be used as a vector for kernel address space information
-disclosure or memory corruption attacks. **Conclusion**: This is a clear
-security fix that should be backported to maintain the security
-integrity of stable kernel releases.
-
- kernel/trace/trace.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 5b8db27fb6ef3..01572ef79802f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6032,6 +6032,7 @@ unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
- 	struct trace_module_delta *module_delta;
- 	struct trace_scratch *tscratch;
- 	struct trace_mod_entry *entry;
-+	unsigned long raddr;
- 	int idx = 0, nr_entries;
+diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
+index f7cfa7b73e974d..32fc73dc5529e8 100644
+--- a/Documentation/core-api/symbol-namespaces.rst
++++ b/Documentation/core-api/symbol-namespaces.rst
+@@ -85,7 +85,7 @@ namespace cannot be imported.
+ The macro takes a comma separated list of module names, allowing only those
+ modules to access this symbol. Simple tail-globs are supported.
  
- 	/* If we don't have last boot delta, return the address */
-@@ -6045,7 +6046,9 @@ unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
- 	module_delta = READ_ONCE(tr->module_delta);
- 	if (!module_delta || !tscratch->nr_entries ||
- 	    tscratch->entries[0].mod_addr > addr) {
--		return addr + tr->text_delta;
-+		raddr = addr + tr->text_delta;
-+		return __is_kernel(raddr) || is_kernel_core_data(raddr) ||
-+			is_kernel_rodata(raddr) ? raddr : addr;
- 	}
+-For example:
++For example::
  
- 	/* Note that entries must be sorted. */
+   EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
+ 
+
+base-commit: 85c4f3d89b17f569e9b718df6b6e19d6081f01c7
 -- 
-2.39.5
+An old man doll... just what I always wanted! - Clara
 
 
