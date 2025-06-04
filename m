@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-673353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B009ACE048
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204E4ACDFD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19737A9C1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A351898D9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A9428ECED;
-	Wed,  4 Jun 2025 14:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91991290BA5;
+	Wed,  4 Jun 2025 14:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wd+QjN0T"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGsYUtSw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7464BE67
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B141E52D;
+	Wed,  4 Jun 2025 14:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047455; cv=none; b=kMzmaJLZlhYUISFRd3fS+wQ/dF67QAyP11wzsMPng9xABQKxhQpWAJJ/HCz7mqEPPQ8GNfOi4kmo1GfNah3CJw9BR77aS+D7dja/Qkjf1m9R811yuEH7EJfat0gZ/BN+tJBofbvYgSEoH5D444gVPuZF4S09nBL8HRyxQqoMnCc=
+	t=1749046070; cv=none; b=t/PXdFiKjgPTYZb4pu1q/E3h1WD20gUcnWp5f9+L1VlFJxl1J4g+QKqOWM+NzoSHiURQ7jLRbBkLNlFrxyoscONmXHSkkrNSUNl+OGl+UahNqI5EpU/98kkB+W9nNMNsp04z57XxJrMje416KqhGEMK89JtZUTLER8n1ANBhmTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047455; c=relaxed/simple;
-	bh=5JB+GYJIDPXn9o6tcyZZmI0bJQETRfFPrn1mq4SbOr4=;
+	s=arc-20240116; t=1749046070; c=relaxed/simple;
+	bh=b6xnqzpYhDmE6s6nfOyKsqfw46QpWokc7n3shvEH8eE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZnmWLJEDLybI2NjiF3wif8A7oJ/IQpMcy1l4ulj9AodGrXwPzlRmGUg7V1S8gi5gQRT3ibJdwaEEgIMIW3MErIR4jHSA2I8LkXP/k1LRZQNkC0sI208gZAEZ+D3rKqyOWXty4wjPxOvlDI1ki7OKlCGynlzcsWVie5TW+DSVJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Wd+QjN0T; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554DCawf032172;
-	Wed, 4 Jun 2025 13:17:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=AyofCP
-	+ZN+6ircaf7mXhdeuKJnDTj+s9f0clMqZxlXs=; b=Wd+QjN0T53cJ5UBS0BP1xh
-	UoNltEcgex7nx4RL2dI/9ob1j+9I0sh8lGb06Z8yDECNrMDf1LZWEPMwMv6I8s5j
-	IcNdrV/mfCpCobGpLaKXpuAyhzs3gga7PjSFbyY7C+OBpr6RSVsBGJ6PegI0tRjD
-	lm0JhgdAQFrFiZhLqssqlyD53tZa1D9qQZBVRqkatFL6+hiF0T8PwA4u+tx31VC1
-	buUgd7LyC28IYlSDhDoqBHJvUXnJf8cHwtRBUch7NcdoZ0YMNu+awjzOxrfpk6nm
-	WvELcIcPxBe6adYvR3VwJBbi5Lppb+StgHvIFoYyGY3X0WVB02NDLSrsBnl9r75A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geytmnc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 13:17:11 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 554CxI1B029221;
-	Wed, 4 Jun 2025 13:17:11 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geytmna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 13:17:11 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 554BoRl0031650;
-	Wed, 4 Jun 2025 13:17:10 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 470cfyyymw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 13:17:10 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 554DH8MM25297572
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Jun 2025 13:17:09 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AD4BB58067;
-	Wed,  4 Jun 2025 13:17:08 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF0ED5805D;
-	Wed,  4 Jun 2025 13:17:02 +0000 (GMT)
-Received: from [9.39.21.166] (unknown [9.39.21.166])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  4 Jun 2025 13:17:02 +0000 (GMT)
-Message-ID: <9f7ae0e6-4640-418d-a4db-dba594377ac2@linux.ibm.com>
-Date: Wed, 4 Jun 2025 18:47:01 +0530
+	 In-Reply-To:Content-Type; b=ONctVcK4F09+C5pAQXRJWQh99QiDcQLMBURSVjtefptBk9tNK00ekPJ+/piEpvKnY5duXR7N/CdjWEPTKiLxOgoOYNRhhv1v5DM4ns+/AKBm9mLhkjSPkz1KLkW/39sanWH5FcXZmjJz+GYgkt2Mu2740KjbD0RNJqa78oflVtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGsYUtSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C44C4CEE4;
+	Wed,  4 Jun 2025 14:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749046069;
+	bh=b6xnqzpYhDmE6s6nfOyKsqfw46QpWokc7n3shvEH8eE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qGsYUtSwf16XeOcAzxtoTu8ey1M0HmLlDL0wk9MemHSHWIUKgo5LwAsy1akEtLCye
+	 wXbnF66y821mK49ulzh0fkdNghwDJOM+nqmLYrjnMpoux6dnhZENm1loJAXawIVGVj
+	 fZkFUrPM14uKPZrNRuuMKKlPeDcufHlgqumWvocceKk81jp5xk3qc77RqZ51SCp2Gf
+	 NWe+FEhQMeI+bjQazBCjHMD7RBbt9+Q0lg2dYZRTSJObz4BNwbw2YEpW2tf43V6tlp
+	 ZKIrnlrXon8J4EggkkhyJPS5Bh2R3ng6Dr8tvC90v39TohVNqZpXnMPWhAg1b0092S
+	 +NcN4Fn/mP6jQ==
+Message-ID: <cd6e92af-1304-4078-9ed7-de1cb53c66da@kernel.org>
+Date: Wed, 4 Jun 2025 16:07:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,141 +49,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] drivers/base/node: Optimize memory block
- registration to reduce boot time
-To: David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
-        Zi Yan <ziy@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-        Danilo Krummrich <dakr@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Nilay Shroff
- <nilay@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-References: <2a0a05c2dffc62a742bf1dd030098be4ce99be28.1748452241.git.donettom@linux.ibm.com>
- <20250603200729.b7581e017e4ca63f502c795e@linux-foundation.org>
- <b355e72d-0284-4a31-84e3-ae4a79ad922f@redhat.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: crypto: Document support for SPAcc
+To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
+ manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
+ Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
+ <20250602053231.403143-2-pavitrakumarm@vayavyalabs.com>
+ <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
+ <CALxtO0mpQtqPB0h_Wff2dLGo=Mxk02JJQkK4rn+=TuScNdSfxQ@mail.gmail.com>
+ <3570be5b-cb20-4259-9a9b-959098b902d0@kernel.org>
+ <CALxtO0mH=GwhQxQBsmMQYd+qgAue9WxXN1XWo9BncVJvJk6d8A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <b355e72d-0284-4a31-84e3-ae4a79ad922f@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4FsplurUS7c-nNdN0AmIoqUxedlpBq1v
-X-Proofpoint-ORIG-GUID: cm-Oc-tEKoBA3qeJIzbOxbnJXz9fYfvv
-X-Authority-Analysis: v=2.4 cv=X4dSKHTe c=1 sm=1 tr=0 ts=68404757 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=k8bw5oIpvhWMPjh-KD8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA5OSBTYWx0ZWRfXwW6CTbwXdFug zCXnZycTe/FqRgU6/7hAGmicwbUedmIIArWprAYdtHHYFavfFa4G+KxKc+VYO1pl6alcHRcrnEf xtqqWsw7o4wouJXJZzoiVu80TLtzFLtJwUNLpc6hsMSpgi2KAPuhJs5p3mGD9U84OeoklTUc5sn
- PO0Oz36/aec/Qkgp/dwSynzy9BzkcF+qgNlnrvE9Xo4/YUm9T/pCxhQS/mkX2twpZ2oBIWO+y4E fLsZmb8Hm2OFz2Owb8eVOZs0ET6iz52pippiIXA9bORtj7zfZU5Vif2yLNxoL/mevj+FhZvouV4 jeOJ8otynWo0iTOxhMKjLDCuX5C0uN78khP7zH28mqiv/t1+dsNkBy3020SYjol1DSCiNLzXe9j
- DxyfRX481RrnuSrz9kupxaY++cA4LzgAC6gDwjUeAhnBviMJhEI4V4hGPkwPy4jkwFCF2rTS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-04_03,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 clxscore=1015 phishscore=0 bulkscore=0
- malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506040099
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALxtO0mH=GwhQxQBsmMQYd+qgAue9WxXN1XWo9BncVJvJk6d8A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On 6/4/25 3:15 PM, David Hildenbrand wrote:
-> On 04.06.25 05:07, Andrew Morton wrote:
->> On Wed, 28 May 2025 12:18:00 -0500 Donet Tom <donettom@linux.ibm.com> 
->> wrote:
+On 04/06/2025 14:20, Pavitrakumar Managutte wrote:
 >>
->>> During node device initialization, `memory blocks` are registered under
->>> each NUMA node. The `memory blocks` to be registered are identified 
->>> using
->>> the node’s start and end PFNs, which are obtained from the node's 
->>> pg_data
->>
->> It's quite unconventional to omit the [0/N] changelog.  This omission
->> somewhat messed up my processes so I added a one-liner to this.
->>
->
-> Yeah, I was assuming that I simply did not get cc'ed on the cover 
-> letter, but there is actually none.
->
-> Donet please add that in the future. git can do this using 
-> --cover-letter.
-
-Sure,
-
-I will add cover letter in next revision.
-
-
->
+>>>>> +
+>>>>> +  snps,vspacc-id:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>> +    description: |
+>>>>> +      Virtual SPAcc instance identifier.
+>>>>> +      The SPAcc hardware supports multiple virtual instances (determined by
+>>>>> +      ELP_SPACC_CONFIG_VSPACC_CNT parameter), and this ID is used to identify
+>>>>> +      which virtual instance this node represents.
+>>>>
+>>>> No, IDs are not accepted.
 >>>
->>> ...
->>>
->>> Test Results on My system with 32TB RAM
->>> =======================================
->>> 1. Boot time with CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled.
->>>
->>> Without this patch
->>> ------------------
->>> Startup finished in 1min 16.528s (kernel)
->>>
->>> With this patch
->>> ---------------
->>> Startup finished in 17.236s (kernel) - 78% Improvement
+>>> PK: This represents the specific virtual SPAcc that is being used in
+>>> the current configuration. It is used to index into the register banks
+>>> and the context memories of the virtual SPAcc that is being used. The
+>>> SPAcc IP can be configured as dedicated virtual SPAccs in
+>>> heterogeneous environments.
 >>
->> Well someone is in for a nice surprise.
->>
->>> 2. Boot time with CONFIG_DEFERRED_STRUCT_PAGE_INIT disabled.
->>>
->>> Without this patch
->>> ------------------
->>> Startup finished in 28.320s (kernel)
->>
->> what.  CONFIG_DEFERRED_STRUCT_PAGE_INIT is supposed to make bootup
->> faster.
->
-> Right, that's weird. Especially that it is still slower after these 
-> changes.
->
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT should be initializing in parallel 
-> which ... should be faster.
->
-> @Donet, how many CPUs and nodes does your system have? Can you 
-> identify what is taking longer than without 
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT?
+>> OK. Why registers are not narrowed to only this instance? It feels like
+>> you provide here full register space for multiple devices and then
+>> select the bank with above ID.
+> 
+> PK: No, we cant narrow the registers to only this instance since its
+> is just a single SPAcc with multiple virtual SPAcc instances. The same
+> set of registers(aka register banks) and context memories are
+> repeated, but sit at different offset addresses (i*4000 +
+> register-offsets). The crypto hardware engine inside is shared by all
+> the virtual SPAccs. This is very much for a heterogeneous computing
+> scenario.
 
+Then maybe you have one crypto engine? You ask us to guess all of this,
+also because you do not upstream the DTS for real product. Any
+mentioning of "virtual" already raises concerns...
 
-
-My system has,
-
-CPU      - 1528
-Node     - 16
-Memory - 31TB
-
-I ran the same test with and without CONFIG_DEFERRED_STRUCT_PAGE_INIT, 
-and the boot time was consistently higher with 
-CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled.
-
-I'm still investigating this. I'll check further and get back to you.
-
-
-
-CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled
-----------------------------------------------------------------------
-1. Startup finished in 12.959s (kernel)
-2. Startup finished in 13.036s (kernel)
-3. Startup finished in 12.944s (kernel)
-
-
-CONFIG_DEFERRED_STRUCT_PAGE_INIT disabled
------------------------------------------------------------------------
-1. Startup finished in 12.234s (kernel)
-2. Startup finished in 12.287s (kernel)
-3. Startup finished in 12.230s (kernel)
-
-Thanks
-Donet
-
+Best regards,
+Krzysztof
 
