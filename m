@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-673306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012E3ACDFB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:59:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EC9ACDFBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DAFF173A9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A781317587E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BFE28FFF4;
-	Wed,  4 Jun 2025 13:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E0128FFF4;
+	Wed,  4 Jun 2025 13:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tg77kAut"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrkI/N5l"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC49290DA0;
-	Wed,  4 Jun 2025 13:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794CC28F51C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 13:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749045495; cv=none; b=dPN9WsM/muLCCjdWmELHHmBJsMZN7OQYACmo9BHWBxOGKiod5L6/uIr1EHhJkk1JCFDiR7pkcvehiAp78/VfXJBwxmmPJAFEaSdnwHSu1rMft7kU8f5EwOBXpQ+Vw2w7ssF7Phof0ldviVucBYBN4JVe/T9lSBTxJbSJLZEJLGM=
+	t=1749045539; cv=none; b=HU8NMvp+WRTN4WzEK5nFh0voUMRfoRl1moK2SSzhmYW7uo/VsWIPSAs2rWtpklVWH6/Ad80GMdSLiac8pUgcGeARYgnlZ5a+q6euUS7uq1Du95EnBq0LxVZ+okPsYY6kV8r9HYoWEgTfB043tQC9RBKKXHyEuWcszjriDQAJa30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749045495; c=relaxed/simple;
-	bh=Bqg4UfN3rwgsslMdb/hy9V7kMIKcpgx0adtAHnyJeUs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=cYkFOOmJlh1q2YpDvQDA3i3Y8hdc1jUCD5I4wdoZ/+o8nGkKS0Bfm3zZy0X9GR0nm15dJY20l5FTKnZz7IqkNSwj4ubuV5p7vSqQQVA+0piy9VewXPDdzRumHFVshgacOIRIIQwJxDmdFPWCatJ64s6vFjt+igwB+fJjsUcNe60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tg77kAut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E53EAC4CEE7;
-	Wed,  4 Jun 2025 13:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749045495;
-	bh=Bqg4UfN3rwgsslMdb/hy9V7kMIKcpgx0adtAHnyJeUs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=tg77kAutQJ/i6IUyrsf2GE8fEIsvU219l2sdKoIoRAC6JETM9rVTYIV68AW2dBrcW
-	 nqnVR35PKl1LR08tz56gg+2vlOb6jQKagLUbN5oSLccDBz3rTM+0xMq0LzCAZ4zdKN
-	 /ntFtovHrpxFd6VhG+x+/cNPsCtvMFhMvx1/lKQBCSZOLBR7xO+z7Jpu6YQLT4ZndJ
-	 baaqSOUPtLwPRjFRf6KRqAYqT9BWWsIS7z/4JowUzsxjc5K9YD0NAO3jRyTSZYxofX
-	 JGh/7z4z/eOyspMzW3sHy5LLClo5pho5ySsFsUaJ6JtJEDBIcFyV/HwLX5tu+Z9fnC
-	 cs78vQ2MfZicg==
-Date: Wed, 04 Jun 2025 08:58:13 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1749045539; c=relaxed/simple;
+	bh=zk1n73mzXW2cVf92+qDik1vWwaIq1RTipTgZMB8Ps6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WpOVTf4us5pvflz+AQAJqfvib0XVGKBtWUVM8NjUm8dd0qhUWUZDDCLfYAl/d9hX2LYwlCJS4iw85i8RaHxK1DV+Y2MbxLBMKhSYX5tjPejCL5tvXA6z06UygEYmbbwWR7hiCl+wlMe+hrmtrXkazllQuY0oC99sYKa0lAD/Tf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrkI/N5l; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2347012f81fso84295725ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 06:58:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749045538; x=1749650338; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TezHNz2odnPb4Tc8G+1GEc+yw5qGixOkkXSyDu8G92s=;
+        b=nrkI/N5lABIPkGecuUilqjl3jXj2kNRQmMOy8L6F8+f+dzK6xDsxNXtK4FfWmaZ7Pu
+         nk1IKHKaFmoQXpe6Y3Jspq9fnA+T4LIM7nT6TGoogBsWHsjaDJcz0FcphBV8FPLRpJKX
+         W8EWqTO700OBoA33lEZugsxTuJHEcZEdsGcK4fw3nM2wW/steheL24iGZpdAm21gyWOU
+         4GQSonWqlaPMcwhTZjGmGdCdQXlk6TgYsLOe2BSFF4vViRkpr/2jgrCwHWGjHvHrDfp9
+         kDtoJqZQr6PA6Y9bqbXBsbuQFpU7D0hpoukx/f/fzAlk5o7k8zMiOkZ94xph1eLCWEl+
+         muQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749045538; x=1749650338;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TezHNz2odnPb4Tc8G+1GEc+yw5qGixOkkXSyDu8G92s=;
+        b=AddW32Bu58Dp968n4aJykiAFiraOFRmT3RxZ0GQYYa6UhBTPYYvZ92PCmDw7Bxkb9P
+         BcffjeV7BL9HP1dje0MdD7AwWnoOpzE+TGlf57keCrPdpkJksmYTMyAJzq2X1XCCI8FD
+         /vbp99viwnC0MFurvlr+kMAF86DoyqmOHwnCSLuntVi0NsW9fk/KDlSpYfalSwhjO44V
+         1MU+/d12DZkVxgWzDn64oumri4QHKdbjWiD84zM065ltVueNL+3kitv2JFQsIdWjuTdf
+         DL0jRE1uVsrWdjT8fMVmR+ndAAEEiVSjYlPX/asL0g5BgQ/Ul7CeozY07JtAyMx4gxj3
+         ccyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUY0wnQZD95mVTemVUEnPUunLDmnW1+3+2aS0dApD55dXLy9imD+VOc2oTlxsFEpnbKCKxYfzhGaww+DwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxrVyslXLlGdC14NExDIjDAtORLoFn8Bu7pLDar1fsGJC7B7mc
+	1qE5i67sO+I/oqGWwTxsBwqjS+XM/bjzk3UHzbfb/apd41OQw4sI3KhW
+X-Gm-Gg: ASbGncsIvenUFmMIpnFSWoEygV7uDb8cA28o+paKEmT/z+nYodIUcSdbDDc3AWg1nkS
+	kaxKcAd+ef4bCtcAiJqLMVSul+nx5FnRBhN+MeY2pi3dBn5drU+jIy6e3TaA1MGwWiIIk2oioO3
+	6g7CHuSzIBr2FzmewY7ja3oJVP1/24d3xaJP/W2x58rC0uACV7OSuCUlUn7ite3QgK4jgBfZ0k1
+	MU/7BsokH3ccyFnYfmOPIgRhrSTEmCGjRc4fNSACVPDMachfkw0h3KJgLiXWM6pDVOAfV4PWm/3
+	wkuBtKbFh6QHrCOD9CltyEGdM3vYa4zAdnrymKu3Q0zzYbrvvDC5+nHoBSCNCg0/vV/L
+X-Google-Smtp-Source: AGHT+IHmbkpEZcrl1kkqJkoknQgXjKEbbbKpB/jzhsDiUnyUK+LB63k5/qKBP6dihtZ3xkB0st7gVQ==
+X-Received: by 2002:a17:903:181:b0:234:f580:9ed with SMTP id d9443c01a7336-235e116bddbmr41463585ad.21.1749045537523;
+        Wed, 04 Jun 2025 06:58:57 -0700 (PDT)
+Received: from ubuntu.. ([103.149.59.114])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cf5110sm104251755ad.177.2025.06.04.06.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 06:58:57 -0700 (PDT)
+From: Jagadeesh Yalapalli <jagadeesharm14@gmail.com>
+To: William Hubbs <w.d.hubbs@gmail.com>
+Cc: Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>,
+	Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org,
+	Jagadeesh Yalapalli <jagadeesh.yalapalli@einfochips.com>
+Subject: [PATCH v1] speakup: Replace u_short with u16 for spk_chartab
+Date: Wed,  4 Jun 2025 13:58:36 +0000
+Message-ID: <20250604135846.46184-1-jagadeesharm14@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, kristo@kernel.org, 
- linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org, r-donadkar@ti.com, 
- linux-kernel@vger.kernel.org, vigneshr@ti.com, nm@ti.com, 
- devicetree@vger.kernel.org
-To: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20250604104656.38752-1-j-choudhary@ti.com>
-References: <20250604104656.38752-1-j-choudhary@ti.com>
-Message-Id: <174904540135.3869675.422953390616565367.robh@kernel.org>
-Subject: Re: [PATCH 0/3] Enable audio support for J721S2-EVM
+Content-Transfer-Encoding: 8bit
 
+From: Jagadeesh Yalapalli <jagadeesh.yalapalli@einfochips.com>
 
-On Wed, 04 Jun 2025 16:16:53 +0530, Jayesh Choudhary wrote:
-> These 3 patches add the support to enable audio on J721S2-EVM.
-> 
-> This required the i2c-mux support[0] which is now in linux tree.
-> 
-> Now, this series ***depends upon only one dts change[1]*** to ensure there
-> are no dtbs_check warnings (no functional issues):
-> "ti,j721e-system-controller.yaml" refers to "ti,am654-ehrpwm-tbclk.yaml"
-> for clock-controller nodes, but for audio we need "ti,am62-audio-refclk".
-> When scm_conf is "simple-bus", there are no such warnings.
-> 
-> Test log: https://gist.github.com/Jayesh2000/840c19ef8f9b7f0f75dedd015ccbf98a
-> 
-> [0]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0fc829dbde9bf1f349631c677a85e08782037ecf
-> [1]: https://lore.kernel.org/all/20250603095609.33569-4-j-choudhary@ti.com/
-> 
-> 
-> Jayesh Choudhary (3):
->   arm64: dts: ti: k3-j721s2-main: Add McASP nodes
->   arm64: dts: ti: k3-j721s2-main: Add audio_refclk node
->   arm64: dts: ti: k3-j721s2-common-proc-board: Enable analog audio
->     support
-> 
->  .../dts/ti/k3-j721s2-common-proc-board.dts    | 131 ++++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi    |  99 +++++++++++++
->  2 files changed, 230 insertions(+)
-> 
-> --
-> 2.34.1
-> 
-> 
-> 
+The spk_chartab array was previously declared as `u_short`,
+which is a non-standard type and may vary in size across platforms.
+Replace it with `u16` to ensure consistent 16-bit width and improve
+code portability and readability.
 
+Signed-off-by: Jagadeesh Yalapalli <jagadeesh.yalapalli@einfochips.com>
+---
+ drivers/accessibility/speakup/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250604 (best guess, 1/2 blobs matched)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/ti/' for 20250604104656.38752-1-j-choudhary@ti.com:
-
-arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4:#clock-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-am68-phyboard-izar.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4:compatible:0: 'ti,am62-audio-refclk' is not one of ['ti,am654-ehrpwm-tbclk', 'ti,am64-epwm-tbclk', 'ti,am62-epwm-tbclk']
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4:#clock-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4:compatible:0: 'ti,am62-audio-refclk' is not one of ['ti,am654-ehrpwm-tbclk', 'ti,am64-epwm-tbclk', 'ti,am62-epwm-tbclk']
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4: 'assigned-clock-parents', 'assigned-clocks', 'clocks' do not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4:#clock-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dtb: syscon@104000 (ti,j721e-system-controller): clock-controller@42e4:compatible:0: 'ti,am62-audio-refclk' is not one of ['ti,am654-ehrpwm-tbclk', 'ti,am64-epwm-tbclk', 'ti,am62-epwm-tbclk']
-	from schema $id: http://devicetree.org/schemas/soc/ti/ti,j721e-system-controller.yaml#
-
-
-
-
+diff --git a/drivers/accessibility/speakup/main.c b/drivers/accessibility/speakup/main.c
+index e68cf1d83787..34c7cb6a9b43 100644
+--- a/drivers/accessibility/speakup/main.c
++++ b/drivers/accessibility/speakup/main.c
+@@ -187,7 +187,7 @@ char *spk_default_chars[256] = {
+  * initialized to default_chartab and user selectable via
+  * /sys/module/speakup/parameters/chartab
+  */
+-u_short spk_chartab[256];
++u16 spk_chartab[256];
+ 
+ static u_short default_chartab[256] = {
+ 	B_CTL, B_CTL, B_CTL, B_CTL, B_CTL, B_CTL, B_CTL, B_CTL,	/* 0-7 */
+-- 
+2.43.0
 
 
