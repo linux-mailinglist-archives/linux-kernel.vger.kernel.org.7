@@ -1,183 +1,230 @@
-Return-Path: <linux-kernel+bounces-673044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3CAACDB68
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 718E6ACDB6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6F9172319
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315F3165BE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B669628CF53;
-	Wed,  4 Jun 2025 09:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2299028C85A;
+	Wed,  4 Jun 2025 09:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ig2Owuvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ImtRb+zp"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC451E3772;
-	Wed,  4 Jun 2025 09:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC7123817A
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749030601; cv=none; b=FJEpgikllfavLd8KOxzDAeevYWRIpEtKnbfv0zIPbFuR7XAGjnshlx2zVUEY972XuKLveNRpa1uAGNvgARxmB62LHRWfsRNQ0iJwyYmNPw1n1Hv9u6lL4uP6a5Ooys2Vt+IxUXnJLw0I1Jwg0vzCNjaQU9fpE0Tk5rsW9WUCOT0=
+	t=1749030770; cv=none; b=N7EHLG4m5wcIhaNAEut7rcxEid5qQ5n1zSzuwX4kKtYuJvLp7X3MRVKjSW/l73nhYJCyt48HzaVyvLGKlJ5W+PtDIJ644J2Pm3TT4OGVUmzIV5d7KckAzXrtlrmNNBz488SYy8TuKdEbHKodFRAmM68EBWx08c6qYsAFIA1EBys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749030601; c=relaxed/simple;
-	bh=Ab424E9k28t4IDBrmxzZpiv39b/KLWE7lhSswN4XFJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UD8lhii3n3PYd85uRkge722gBa94sLe5sH3nXzm/IN3k+QAYwLBPBccbMzCDPZabtQcMRAGqbvHZG1//aSI1c1Cb9V2IwNVPcQz+RlEn9pUe2+oSO+Ino4XckEXVVLCwzWW7/gW6GPs0FwV4AlKeMaP6UMaOUM1Q+y+gOGpvTi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ig2Owuvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC7AC4CEE7;
-	Wed,  4 Jun 2025 09:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749030600;
-	bh=Ab424E9k28t4IDBrmxzZpiv39b/KLWE7lhSswN4XFJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ig2Owuvfk1TYotGhEXFMRgP7tIhEPMEP8zhQituOqKBsNEWNJ3JmRw/dOcKRd8KCC
-	 hmtstscqscz2CND9P4MWh0aysetXK6HmrZBtHwz5DIBwZOBbvtGMYH3+99qcC8sRjx
-	 VG1e/6UqOIlPY0GxyUGp+GlcXkkgLQeUmgY8KUfiHdQrxOcTi/cZ7Z36tT1S8L5Dvi
-	 sSezxPBIpJJAAU6hNRZ9LyxeSzb2qGi9pjx1EwfiZHQ4HI01GOM0uSGaP079DtZTGg
-	 VP7J8jgZ0j40VuAoBH4oG4Qs5+AWJ6JTqrfGxTAVQL7akPvOtM75IZp8pAsvJ/LG2Y
-	 31hajWnW/fwOw==
-Date: Wed, 4 Jun 2025 11:49:54 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, chrisi.schrefl@gmail.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] rust: devres: fix race in Devres::drop()
-Message-ID: <aEAWwnyP4zwwrccX@pollux>
-References: <20250603205416.49281-1-dakr@kernel.org>
- <20250603205416.49281-4-dakr@kernel.org>
- <aD-EiRChuScS5TK-@tardis.local>
+	s=arc-20240116; t=1749030770; c=relaxed/simple;
+	bh=5CUfTXSZL28fjRaCIudb0p1svpbj3kaP7AIJ7fQDE0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=tT8KtHStMKVffc7akt9lpQ2frwFtCWXfGnfeGvgAEDwWR2+BAygCSIX/1jgO4BJqauD74Vb6SaIlcTiB6UzLu4XtaDzWoqrtxeQf0wJ0HBHp7TkSxYvyNimc7gOF1JpEFAVbLu4Hlaxp1jA+SSNyo5L5dsOuL2PxgB3VEW+GzRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ImtRb+zp; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250604095244epoutp018816ec6e455f3d76e74242448d46247d~FzjauxIS51454014540epoutp01V
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:52:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250604095244epoutp018816ec6e455f3d76e74242448d46247d~FzjauxIS51454014540epoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749030764;
+	bh=U1e46riN5AgpP+BOTQu5flAeRIz4W1sPhNu7S+rH/Xc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ImtRb+zpcTMnsRvuuzyfk526/bW3kQ2JGKPv1K68ZjiQfP9ijKsgYMyhYY/xP+Zja
+	 p+vfBn2xmL1OcA/NxgRmDLlBcBYHlLmf5bgrj9JHsdM3MSYQdwNEAq4YMu1XcnqPtR
+	 MPlodIS0MMYSqMTVXEOIUi5BKmQztnWCV8CHVSEg=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250604095244epcas2p2f47d4a9682f3931646c1fc0d7b5af49f~FzjaQ3bMI0398503985epcas2p2P;
+	Wed,  4 Jun 2025 09:52:44 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.36.97]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bC2tz2pn2z3hhTC; Wed,  4 Jun
+	2025 09:52:43 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55~FzjZMA2Cy0178901789epcas2p1N;
+	Wed,  4 Jun 2025 09:52:42 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.229.95.142]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250604095242epsmtip255f2c31e21b6ff74081e2097b3e4fd75~FzjZGKufv3057430574epsmtip2z;
+	Wed,  4 Jun 2025 09:52:42 +0000 (GMT)
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: 
+Cc: janghyuck.kim@samsung.com, zhaoyang.huang@unisoc.com,
+	jaewon31.kim@gmail.com, david@redhat.com, Hyesoo Yu <hyesoo.yu@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: gup: fail migration when no migratable page to prevent
+ CMA pinning
+Date: Wed,  4 Jun 2025 18:50:46 +0900
+Message-ID: <20250604095049.4052078-1-hyesoo.yu@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aD-EiRChuScS5TK-@tardis.local>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55
+References: <CGME20250604095242epcas2p17032a1133b03be2d24c8ebcff94d1d55@epcas2p1.samsung.com>
 
-On Tue, Jun 03, 2025 at 04:26:01PM -0700, Boqun Feng wrote:
-> On Tue, Jun 03, 2025 at 10:48:52PM +0200, Danilo Krummrich wrote:
-> > In Devres::drop() we first remove the devres action and then drop the
-> > wrapped device resource.
-> > 
-> > The design goal is to give the owner of a Devres object control over when
-> > the device resource is dropped, but limit the overall scope to the
-> > corresponding device being bound to a driver.
-> > 
-> > However, there's a race that was introduced with commit 8ff656643d30
-> > ("rust: devres: remove action in `Devres::drop`"), but also has been
-> > (partially) present from the initial version on.
-> > 
-> > In Devres::drop(), the devres action is removed successfully and
-> > subsequently the destructor of the wrapped device resource runs.
-> > However, there is no guarantee that the destructor of the wrapped device
-> > resource completes before the driver core is done unbinding the
-> > corresponding device.
-> > 
-> > If in Devres::drop(), the devres action can't be removed, it means that
-> > the devres callback has been executed already, or is still running
-> > concurrently. In case of the latter, either Devres::drop() wins revoking
-> > the Revocable or the devres callback wins revoking the Revocable. If
-> > Devres::drop() wins, we (again) have no guarantee that the destructor of
-> > the wrapped device resource completes before the driver core is done
-> > unbinding the corresponding device.
-> > 
-> > Depending on the specific device resource, this can potentially lead to
-> > user-after-free bugs.
-> > 
-> 
-> This all sounds reasonable, one question though: it seems to me the
-> problem exists only for the device resources that expect the device
-> being bounded, so hypothetically if the device resources can be
-> programmed against unbound devices, then the current behavior should be
-> fine?
+Commit 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
+caused CMA pages to become pinned in some cases when handling longterm GUP.
+This happened because migration would return success immediately if no pages
+were in the movable_page_list, without retrying.
 
-I don't think that such device resources exist from a semantical point of view.
+However, CMA pages can be temporarily off the LRU (e.g., in pagevecs), and
+therefore not appear in movable_page_list, even though they can be migrated
+later. Before commit 1aaf8c, the kernel would retry migration in such cases,
+which helped avoid accidental CMA pinning.
 
-We always have to guarantee that a driver released the device resources once the
-corresponding device is unbound from the driver.
+The commit 1aaf8c aimed to support an out-of-tree use case (like pKVM), where
+longterm GUP was applied to non-LRU CMA pages. But allowing CMA pinning
+in general for this corner case could lead to more fragmentation and
+reliability issues. So this patch prevents that.
 
-However, there certainly are differences between how fatal it is if we don't do
-so.
+Instead of retrying, this patch explicitly fails the migration attempt
+(-EBUSY) if no movable pages are found and unpinnable pages remain.
+This avoids infinite loops and gives user a clear signal to retry,
+rather then spinning inside kernel.
 
-Complementing your example below, if we for instance fail to release a memory
-region in time, a subsequent driver probing the device may fail requesting the
-corresponding region.
+Fixes: 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
+Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+---
+ mm/gup.c | 49 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 26 insertions(+), 23 deletions(-)
 
-> For example, in your case, you want free_irq() to happen before
-> the device becomes unbound, which is of course reasonable, but it sounds
-> more like a design choice (or what device model we want to use), because
-> hypothetically you can program an irq that still works even if the
-> device is unbound, no?
+diff --git a/mm/gup.c b/mm/gup.c
+index e065a49842a8..446938aedcc9 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2303,12 +2303,13 @@ static void pofs_unpin(struct pages_or_folios *pofs)
+ /*
+  * Returns the number of collected folios. Return value is always >= 0.
+  */
+-static void collect_longterm_unpinnable_folios(
++static bool collect_longterm_unpinnable_folios(
+ 		struct list_head *movable_folio_list,
+ 		struct pages_or_folios *pofs)
+ {
+ 	struct folio *prev_folio = NULL;
+ 	bool drain_allow = true;
++	bool any_unpinnable = false;
+ 	unsigned long i;
+ 
+ 	for (i = 0; i < pofs->nr_entries; i++) {
+@@ -2321,6 +2322,8 @@ static void collect_longterm_unpinnable_folios(
+ 		if (folio_is_longterm_pinnable(folio))
+ 			continue;
+ 
++		any_unpinnable = true;
++
+ 		if (folio_is_device_coherent(folio))
+ 			continue;
+ 
+@@ -2342,6 +2345,8 @@ static void collect_longterm_unpinnable_folios(
+ 				    NR_ISOLATED_ANON + folio_is_file_lru(folio),
+ 				    folio_nr_pages(folio));
+ 	}
++
++	return any_unpinnable;
+ }
+ 
+ /*
+@@ -2353,8 +2358,13 @@ static int
+ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+ 				   struct pages_or_folios *pofs)
+ {
+-	int ret;
++	int ret = -EAGAIN;
+ 	unsigned long i;
++	struct migration_target_control mtc = {
++		.nid = NUMA_NO_NODE,
++		.gfp_mask = GFP_USER | __GFP_NOWARN,
++		.reason = MR_LONGTERM_PIN,
++	};
+ 
+ 	for (i = 0; i < pofs->nr_entries; i++) {
+ 		struct folio *folio = pofs_get_folio(pofs, i);
+@@ -2370,6 +2380,7 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+ 			gup_put_folio(folio, 1, FOLL_PIN);
+ 
+ 			if (migrate_device_coherent_folio(folio)) {
++				pofs_unpin(pofs);
+ 				ret = -EBUSY;
+ 				goto err;
+ 			}
+@@ -2388,27 +2399,11 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+ 		pofs_clear_entry(pofs, i);
+ 	}
+ 
+-	if (!list_empty(movable_folio_list)) {
+-		struct migration_target_control mtc = {
+-			.nid = NUMA_NO_NODE,
+-			.gfp_mask = GFP_USER | __GFP_NOWARN,
+-			.reason = MR_LONGTERM_PIN,
+-		};
+-
+-		if (migrate_pages(movable_folio_list, alloc_migration_target,
+-				  NULL, (unsigned long)&mtc, MIGRATE_SYNC,
+-				  MR_LONGTERM_PIN, NULL)) {
+-			ret = -ENOMEM;
+-			goto err;
+-		}
+-	}
+-
+-	putback_movable_pages(movable_folio_list);
+-
+-	return -EAGAIN;
++	if (migrate_pages(movable_folio_list, alloc_migration_target, NULL,
++			  (unsigned long)&mtc, MIGRATE_SYNC, MR_LONGTERM_PIN, NULL))
++		ret = -ENOMEM;
+ 
+ err:
+-	pofs_unpin(pofs);
+ 	putback_movable_pages(movable_folio_list);
+ 
+ 	return ret;
+@@ -2417,11 +2412,19 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
+ static long
+ check_and_migrate_movable_pages_or_folios(struct pages_or_folios *pofs)
+ {
++	bool any_unpinnable;
++
+ 	LIST_HEAD(movable_folio_list);
+ 
+-	collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
+-	if (list_empty(&movable_folio_list))
++	any_unpinnable = collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
++
++	if (list_empty(&movable_folio_list)) {
++		if (any_unpinnable) {
++			pofs_unpin(pofs);
++			return -EBUSY;
++		}
+ 		return 0;
++	}
+ 
+ 	return migrate_longterm_unpinnable_folios(&movable_folio_list, pofs);
+ }
+-- 
+2.49.0
 
-You can, just like for every other registration (e.g. class devices, such as
-misc device), but it's sub-optimal, since then we could not treat the
-registering device of the registration as &Device<Bound>, which allows direct
-access to device resources with Devres::access(). Please see also [1] and [2].
-
-We have two (safe and correct) ways to access device resources, one is the
-runtime checked access through Revocable::try_access() (which implies the RCU
-read-side critical section and atomic check); the other one is the compile-time
-checked access through providing a &Device<Bound> as cookie for directy access
-without runtime overhead.
-
-Wherever possible, we want to enable the latter, which means that registrations
-need to be properly guarded.
-
-[1] https://lore.kernel.org/lkml/20250530142447.166524-6-dakr@kernel.org/
-[2] https://lore.kernel.org/lkml/20250530142447.166524-7-dakr@kernel.org/
-
-> Again this sounds reasonable to me, just want to check my understanding
-> here.
-> 
-> Regards,
-> Boqun
-> 
-> > In order to fix this, implement the following logic.
-> > 
-> > In the devres callback, we're always good when we get to revoke the
-> > device resource ourselves, i.e. Revocable::revoke() returns true.
-> > 
-> > If Revocable::revoke() returns false, it means that Devres::drop(),
-> > concurrently, already drops the device resource and we have to wait for
-> > Devres::drop() to signal that it finished dropping the device resource.
-> > 
-> > Note that if we hit the case where we need to wait for the completion of
-> > Devres::drop() in the devres callback, it means that we're actually
-> > racing with a concurrent Devres::drop() call, which already started
-> > revoking the device resource for us. This is rather unlikely and means
-> > that the concurrent Devres::drop() already started doing our work and we
-> > just need to wait for it to complete it for us. Hence, there should not
-> > be any additional overhead from that.
-> > 
-> > (Actually, for now it's even better if Devres::drop() does the work for
-> > us, since it can bypass the synchronize_rcu() call implied by
-> > Revocable::revoke(), but this goes away anyways once I get to implement
-> > the split devres callback approach, which allows us to first flip the
-> > atomics of all registered Devres objects of a certain device, execute a
-> > single synchronize_rcu() and then drop all revocable objects.)
-> > 
-> > In Devres::drop() we try to revoke the device resource. If that is *not*
-> > successful, it means that the devres callback already did and we're good.
-> > 
-> > Otherwise, we try to remove the devres action, which, if successful,
-> > means that we're good, since the device resource has just been revoked
-> > by us *before* we removed the devres action successfully.
-> > 
-> > If the devres action could not be removed, it means that the devres
-> > callback must be running concurrently, hence we signal that the device
-> > resource has been revoked by us, using the completion.
-> > 
-> > This makes it safe to drop a Devres object from any task and at any point
-> > of time, which is one of the design goals.
-> > 
-> [...]
 
