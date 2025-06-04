@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-673323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FAEACDFEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:10:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84A1ACDFF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D4B41887286
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:10:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D3C188BE54
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AD4290BB1;
-	Wed,  4 Jun 2025 14:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F8D290D93;
+	Wed,  4 Jun 2025 14:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlvsPzPX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ho+WukD5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE452397B0;
-	Wed,  4 Jun 2025 14:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498E32900B7;
+	Wed,  4 Jun 2025 14:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749046230; cv=none; b=rMnIQczEPewX6crrIdg72O5eVeqGzpe8ZdpQUM9wgLe9QjAoMVBgW7hjJRAzVSMV4wZhP0/7fBvjhfY+i+P7QmIRy4LbreFyC7r6kn66jTIrTnsXX1IEYi4rX5CPiC6EZC6gsvxNCpFptA98qqYKRHVzSM9Q/JJZq4j8Hlzhu8Q=
+	t=1749046265; cv=none; b=gjJUZzfLdGbSj+QdQ0VbsmsUpk0BeQiq6n2kR8AwGLdvBs1vegEZLJsIb5V8RrfqspnVABe205kfrwctx8PbeNo59r4OzNYk6hX+JlPnz2Rq1jRjghBlLVYTvqfCx40Sj+T7Q2Fyor7LhGyhdCGY9o8J66TatGM9A5kkx641z+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749046230; c=relaxed/simple;
-	bh=HqA+R87orsdoOs/Jn/ihLSl7JTKNEUTdR/FSCbhLcWI=;
+	s=arc-20240116; t=1749046265; c=relaxed/simple;
+	bh=QHd963OG136C8dBtaEAon6yYYj9jJAr3IfwDyW0E51I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bbCP3U8v7JOfA+EgFXUee2jsYUKCa9wYuE9/BmUbnZmbvhZ37PpiHVsXsfmcMgQrOn9cTX5lBJ+1wf7fSnzMVe8RfGO4w5jt8aivTHHVOJWDxjX8MP2WuyMpfRFG3i8E/aJYEuiId0P+9Pv7kTrvlApQjhG7LtSXqXx4tLXDwHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlvsPzPX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DEAC4CEE4;
-	Wed,  4 Jun 2025 14:10:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=jNkCOi/0linb0weI1s4mO/SQa/QdVQ9gFWjmg6E6+HoUk1C5oNXtmQ65DeztQz/iFbvhQ3mBA/fiKT6aoJ/zcQetdk8aWl7CkON6SV66HLtdz2gqaruMpdrepgfOyBZwIZsCuxArksu3QdY7Fvz7zYKZCOMdMQ3XC9MBxMb72kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ho+WukD5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7574BC4CEE4;
+	Wed,  4 Jun 2025 14:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749046229;
-	bh=HqA+R87orsdoOs/Jn/ihLSl7JTKNEUTdR/FSCbhLcWI=;
+	s=k20201202; t=1749046264;
+	bh=QHd963OG136C8dBtaEAon6yYYj9jJAr3IfwDyW0E51I=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=dlvsPzPXxvOn01+Cp2ZTrilk+OhUKFB01Gf4MRV73nMpG42WChW4A8lycFTpHSzBo
-	 0eyEdxSXRSL+MAkK5DkeMTLq2WezLO5p+UwNEOefFbRNaUr5NsuAHUeBWfnjVacKtD
-	 2kPLQqkuVPLvMHr9pllpwL7wzemK+C/sDkX7qh2pBGSwDTgI3dSZxCja+d80m4ZXqW
-	 qBPxkdIkOAUkgzylc/AW1H38qRjCL5Gu4v8vPoT/kuozlGEHegUpvgMUSYA65oOEY2
-	 XdyvS6VeFNY9x7UnDFRKVkADLtpli/B47K6U7dLi6FBA8LsF92UcLMBIli9n7HFd/5
-	 y6WMqZz2b87gQ==
-Message-ID: <9bf60780-30fa-4ac1-88cf-8964f1ade593@kernel.org>
-Date: Wed, 4 Jun 2025 16:10:24 +0200
+	b=ho+WukD5xc0a1WdsrxBBknOO9JpQgmQF8l05lLIp3lJo9O3XiTaMGV4+DduWyvb+H
+	 5S8DoTr1Bufu3UJ8DvY+kd/9IdmfMeS3hYtslLukYxcCAIaKDZvavA4YEOEYTV+gt5
+	 pW8nGI/Uu1wXh6GedEOJPaWVePZxg/BqM9Phu41gay1+zCmyHhtCajrf0rUUTtdd9o
+	 L5gKB8y8jTIgiQ0yqx2bK/U9FzYqgNzgWgLugNtZZIRfaVnCImvgKqPJ9fB4IzP5ug
+	 7a30ux4acE0KaiDiQAiJ8mTkTDQktUIspnqZ/XOngL9r2v4bJDFx3siK3f489XRVyt
+	 u7avk61cI+KsQ==
+Message-ID: <56e8101a-76f3-4a27-9826-fcb97320a9c5@kernel.org>
+Date: Wed, 4 Jun 2025 16:10:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] ASPEED: Add mailbox driver for AST2700 series
-To: Jammy Huang <jammy_huang@aspeedtech.com>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: mailbox: Add ASPEED AST2700 series
+ SoC
+To: Jammy Huang <jammy_huang@aspeedtech.com>, jassisinghbrar@gmail.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
 References: <20250604125558.1614523-1-jammy_huang@aspeedtech.com>
- <e967473f-f1cc-42d8-9786-437f52db4162@kernel.org>
- <SEZPR06MB65691F4A1A28AC189D38A55EF16CA@SEZPR06MB6569.apcprd06.prod.outlook.com>
+ <20250604125558.1614523-2-jammy_huang@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,26 +103,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <SEZPR06MB65691F4A1A28AC189D38A55EF16CA@SEZPR06MB6569.apcprd06.prod.outlook.com>
+In-Reply-To: <20250604125558.1614523-2-jammy_huang@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/06/2025 15:07, Jammy Huang wrote:
->> On 04/06/2025 14:55, Jammy Huang wrote:
->>> Add mailbox controller driver for AST27XX SoCs, which provides
->>> independent tx/rx mailbox between different processors. There are 4
->>> channels for each tx/rx mailbox and each channel has an 32-byte FIFO.
->>>
->>>  v2 changes:
->>>   - Update document
->>
->> This is vague. What did you update there?
-> Sorry, let me supply some information as below.
->  1. Correct error in dts example.
->  2. Drop description for mbox-cell as you suggested previously.
+On 04/06/2025 14:55, Jammy Huang wrote:
+> Introduce the mailbox module for AST27XX series SoC, which is responsible
+> for interchanging messages between asymmetric processors.
+> 
+> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
 
-Then please write proper, descriptive changelogs. I am sure U asked
-Aspeed that already.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
