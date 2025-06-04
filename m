@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-672944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF6EACD9E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7652BACD9F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C738172A82
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C20B18936B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D521221ABCB;
-	Wed,  4 Jun 2025 08:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CLy9I11u";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QN/ZIwAX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9572428C2B2;
+	Wed,  4 Jun 2025 08:36:51 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12322BAF4
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73ED42853E3
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749025907; cv=none; b=LDKso8PsJlfygOxeYv2FfkmzHf2Rfl6lk0hOb0kiJlghcO+96SxLHzOxXeJNXefB8Ufndc4euatOyHOyWxmHjemI3Fvtmk7pvCCQR3wuBqq1GMjd9mj3p2TehOKOjJXLI26bJAehhTEPHBjiWFgeaAj5oMhVGB4ikAGh3u/iUDs=
+	t=1749026211; cv=none; b=M409jG34nkYNVsHskYkSazRHEKDuoO1FBBadOx2uqufYluuWKmlL0nB97MhO6OPinsJHz/OOWvj94VmC6+ayah7A28QHnt+YPKS6muqogmYMPe5y0NoPd2HLVso2NuplDjq7Di57/v6nexlmw56Gl9B+ELDT1pIJwTqELIy7pS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749025907; c=relaxed/simple;
-	bh=d65MstfFvuzOXxquIWVaVULj0QYTs91IuDc3ZONuqOs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z1IUEu1qLfXDJ286G9PQiC+AkDTdnWfcVdE1uLf91QaY3T8K0tOnH3lpQUxNFYObQmTBv0GVf1c00UMom6Gp7i9MasK4gpDgJPiBv0A48oYKLy5Ada/YjeCoah2RaxLLqY6FQ6Id0mWPVIirSdHTre85uxMIK5f0oeMSQKqE4dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CLy9I11u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QN/ZIwAX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749025903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d65MstfFvuzOXxquIWVaVULj0QYTs91IuDc3ZONuqOs=;
-	b=CLy9I11uUkHUoiLMNCiMfZgRvMZYKwO56zSjtE2suePuugkT313N9CHUvtmdn/OAJXoAOl
-	74J0Wo08dFhwJdTCRrYvGcS+pDa2ZRJvaKoqwqq1mM4tRNFggjAGnfapYT9KdEptmk1HSa
-	yHK1Sg6OVVOoZUx67oPZ1QhFknK0xhJ4E/sdAP74bGhvLldR6nBYaYmZpYT21Bp3GGusK2
-	RQ5E71bqtgAw+uNsOhoU58H8SqxTQCHjGSXQdOY7qit625Colz8swiICqEoUg6hmq4vceb
-	/oPNlxHJ/TOBs773cZLA76hUrufYmZixbk1En4GODYDEkmWqlSN3fAU15sDtYA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749025904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d65MstfFvuzOXxquIWVaVULj0QYTs91IuDc3ZONuqOs=;
-	b=QN/ZIwAXPkroA1wzqBT0aDMNdXXdbNxfTD+attYp6//myNqdBhIG3BdjKeZW68Gj9vBi65
-	uG259TgMGXY49xBw==
-To: Vlastimil Babka <vbabka@suse.cz>, syzbot
- <syzbot+23de6daeb71241d36a18@syzkaller.appspotmail.com>,
- Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, pfalcato@suse.de,
- syzkaller-bugs@googlegroups.com
-Cc: Suren Baghdasaryan <surenb@google.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Peter Zijlstra <peterz@infradead.org>, Petr
- Mladek <pmladek@suse.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in __vma_start_write
-In-Reply-To: <f03916ab-19fc-4832-b564-58d3c885011d@suse.cz>
-References: <68387feb.a70a0220.29d4a0.0830.GAE@google.com>
- <f03916ab-19fc-4832-b564-58d3c885011d@suse.cz>
-Date: Wed, 04 Jun 2025 10:37:43 +0206
-Message-ID: <84qzzzoqkw.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1749026211; c=relaxed/simple;
+	bh=+smY9GzeWHhgC2GFdJxz0JEiurmnnj5OUspz/Qv3mE4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HOfCYXyIq5gcwj3ACvBmvMcZ2uY4vtYhubfuFlgwUyquESMnm6qFEYd56Qg0MuyoncxNJKCzMLSoaFCEOzv+vSR9K9/PGhSUssQqeZVqUwqirbZd72zCZFuw5Hu0AUC2Vnc9kDLpvfgWxQS3Lk1byOToJJBXCrnaiKfaivni6kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bC18Y0XPvz1R7PM;
+	Wed,  4 Jun 2025 16:34:21 +0800 (CST)
+Received: from dggpemf100018.china.huawei.com (unknown [7.185.36.183])
+	by mail.maildlp.com (Postfix) with ESMTPS id 80B6C1A0188;
+	Wed,  4 Jun 2025 16:36:39 +0800 (CST)
+Received: from huawei.com (10.67.174.51) by dggpemf100018.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Jun
+ 2025 16:36:38 +0800
+From: Yipeng Zou <zouyipeng@huawei.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<peterz@infradead.org>, <sohil.mehta@intel.com>, <rui.zhang@intel.com>,
+	<arnd@arndb.de>, <yuntao.wang@linux.dev>, <linux-kernel@vger.kernel.org>
+CC: <zouyipeng@huawei.com>
+Subject: [BUG REPORT] x86/apic: CPU Hang in x86 VM During Kdump
+Date: Wed, 4 Jun 2025 08:33:19 +0000
+Message-ID: <20250604083319.144500-1-zouyipeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf100018.china.huawei.com (7.185.36.183)
 
-On 2025-06-04, Vlastimil Babka <vbabka@suse.cz> wrote:
-> After consulting PeterZ on IRC, he said:
->
->> so the thing complains about: vmlock <- mapping.invalidate_lock <- bcachefs_btree <- console_lock <- &helper->lock <- dev->mode_config.idr_mutex <- mm->mmap_lock <- vmlock
->
-> so bcachefs is doing printk which wants console_lock, and in
-> drm console a possible lock chain exists that can lead to mmap lock
->
-> To me it seems all rather theoretical, but not sure where and how we could safely
-> break this chain.
-> Hopefully one day console_lock goes away? :)
+Recently, A issue has been reported that CPU hang in x86 VM.
 
-It is a known problem that any caller holding a lock used by a
-registered legacy console will result in printk() deadlocking. This is
-particularly a problem with the port->lock and power management.
+The CPU halted during Kdump likely due to IPI issues when one CPU was
+rebooting and another was in Kdump:
 
-One workaround is to enable CONFIG_PREEMPT_RT. ;-)
+CPU0			  CPU2
+========================  ======================
+reboot			  Panic
+machine shutdown	  Kdump
+			  machine shutdown
+stop other cpus
+			  stop other cpus
+...			  ...
+local_irq_disable	  local_irq_disable
+send_IPIs(REBOOT)	  [critical regions]
+[critical regions]	  1) send_IPIs(REBOOT)
+			  wait timeout
+			  2) send_IPIs(NMI);
+Halt,NMI context
+			  3) lapic_shutdown [IPI is pending]
+			  ...
+			  second kernel start
+			  4) init_bsp_APIC [IPI is pending]
+			  ...
+			  local irq enable
+			  Halt, IPI context
 
-A year ago (exactly) there was patch [0] providing a "threadprintk" boot
-argument that would also work around this problem.
+In simple terms, when the Kdump jump to the second kernel, the IPI that
+was pending in the first kernel remains and is responded to by the
+second kernel.
 
-However, the only real solution is to convert the legacy consoles to
-nbcon. This is work in progress.
+I was thinking maybe we need mask IPI in clear_local_APIC() to solve this
+problem. In that way, it will clear the pending IPI in both 3) and 4).
 
-John
+I can't seem to find a solution in the SDM manual. I want to ask if this
+approach is feasible, or if there are other ways to fix the issue.
 
-[0] https://lore.kernel.org/lkml/20240603232453.33992-17-john.ogness@linutronix.de
+Signed-off-by: Yipeng Zou <zouyipeng@huawei.com>
+---
+ arch/x86/kernel/apic/apic.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index d73ba5a7b623..68c41d579303 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1117,6 +1117,8 @@ void clear_local_APIC(void)
+ 	}
+ #endif
+ 
++	// Mask IPI here
++
+ 	/*
+ 	 * Clean APIC state for other OSs:
+ 	 */
+-- 
+2.34.1
+
 
