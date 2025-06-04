@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-672564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AB7ACD12B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:52:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA49FACD150
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924D516321E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C231883EBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099EB155333;
-	Wed,  4 Jun 2025 00:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEFC1A42C4;
+	Wed,  4 Jun 2025 00:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRPfEF5L"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3L6b/f1H"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBB414A4F9;
-	Wed,  4 Jun 2025 00:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE6685C5E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 00:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998278; cv=none; b=FrjPVFxYTv8woQc5h7r3+EEN3ybASTg9Zak1ihtIJC5NPdlJXb6u9AqFJB2YsiY5hbXraAKdhl0OE8k0fPZyATm/BkZ2IVKtlCWnFOLDUcU+E6NYcUXo3lOcBTy2Kxjint5txyVIoiMyd0q+Ln79XEzc3zzwl44w8isZiOvuHkk=
+	t=1748998315; cv=none; b=m1tJPOPrNUygNkwAen4DRJ3Qny/rQLEmXr/llgIdEXmpuSZ1GwZxUxYq5/eRhnPkUMFFjnZMY++u99MUZnKMGedTSCdS2aJ9U3NL9vE0CmfF3JtEgEarHJN15cRGZzgOqVE+AK/nTTFQmmhDbZJ+dJUaXjRaumI8m5rox6krF70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998278; c=relaxed/simple;
-	bh=qBzNwBzfolO2/LfeGfIOJHvjCQIIBYm7a0UQHpcr9gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsSv1pqNlEr/fuWTT9GquoocKnIIrFVaWlTEO72yu/58Lk0zcpSGXnS894Odr3tHsZZLvXdBov7DVl2U5Qh1jlGF6mMnunJSU/GdA9+zvPD1Fn5KL/W30oLUqspL0N1xvigDhhe/8I9BdyBZ8JoTYOcExd1SQ8DUkxAPH9c6tfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRPfEF5L; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so4784641b3a.0;
-        Tue, 03 Jun 2025 17:51:16 -0700 (PDT)
+	s=arc-20240116; t=1748998315; c=relaxed/simple;
+	bh=9GZ1X1eX5tuvtagwQoq7PN+4ufnqZ4w7To92odq8Gws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aavy0SkF2dzaxqmrnW90uOPJiSklwaAQohzW0bxxRSXXO/yqYf8vPzrw86wyNQT/zq/J7LLRbIwoSKz+R7Y1hFed2hCvHlVGwylf30the0BA2DatyQ6NRfgr7DiQoUP8jKjrKgam9D7lyfNlv/SHFYrNkBxM0/mxQEs4VDAELO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3L6b/f1H; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47e9fea29easo132321cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 17:51:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748998276; x=1749603076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWmlyCAlnT2OdldqgB6HsoakV73qVZDwnZszdKB+GK8=;
-        b=ZRPfEF5Lm+Ji2lM3kWk4k6iAWn8HJr4PIuXgrijSGd1/ERHgG9EXETjKEJqr22G0Om
-         K/4220Z/1zAAqOgC+WFqzBo8k1k0UAMKEqTSLsBonWiM+kf8d24E5TNo2LNsuK1Avg0X
-         RmArVvYQFx6pXVHeemzSbFXp+WpcDLJuMs8c8AGM+A4fl08fTaxfUx7kncR6UORYO0ys
-         R5WxQKuUJ0KNS4MxO6rxl8li5fsx2g2ZiK0kzXoagbREod6+E0qhcRsmrKuez9TmmH65
-         xBA8wTZcunEGwkac35qPFU8KpiVi3z5hJkCYu7G+LETYdiHixDUS47bcAgq7U0oxBQ+V
-         E4rA==
+        d=google.com; s=20230601; t=1748998313; x=1749603113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9GZ1X1eX5tuvtagwQoq7PN+4ufnqZ4w7To92odq8Gws=;
+        b=3L6b/f1HvxNxnX/ZF9eNSPJ/FTR1B/oH+3/hWfapnXbPKdaQwLUVr5+rRpe+blFixP
+         iJsmy9+lbU9FQtREmxq/Xhm41eyguXU+Phok7zrCzSG+f4HQtDnlsKksI4WBe5cdffUN
+         QncPW80J6t5NHF+zDRC9W366VFxknaDQSpF9HGvyMlEIdXZaRjE52unQW0GuUgFfyj7o
+         fbmWE8wRyu5Y9LnQYkUFZKFj2x45g78lANIjQITckY/qwshoE56hqcBGpavuDHCkgJ1M
+         mu1dcQUJGktxDJyE0o9ALNQvNVVKET0YNVAH0vhPk1Wu/3ao+f33puJJ2M3PJPabvihI
+         GlRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748998276; x=1749603076;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fWmlyCAlnT2OdldqgB6HsoakV73qVZDwnZszdKB+GK8=;
-        b=kXCq1p29sONQjiCMDmQZwAHZibF+SVu1gUabXEuqdNLjt5foR3pKVICXRnLTsn2G1h
-         FPLosbEzIe9dpT6J9O2ehAVWuV2S55Qi6PDZnS7UY9/k+pMIFUf5Hd0LS2G9dynRsCOf
-         Cdd1g4y/hYWwazZvP/YXkukUZMkeReVIZEwRQph/ZvAq4yVxn+RsgiXDYnJfZPh9U5TK
-         GwqJocE7Kd6wh4pWIXCyBk7rqyKutaHkeDOznjNI93A6JB59UC9wtQZ8TjsY/njN+IHV
-         KO+YT+Pt2BebwBKRqTbHbHgJoIfUzC4zpRp0sJNiIM9icZ3j3Zltml0iI3CNiJuPeesc
-         A3sA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgj3H2UjArU9L/bo+C9OzId2pP8Av3jwlt8c4f8TP/nBI2HZdhr9fUzqzg2GopkCDPw7molIaUVonpAW6v@vger.kernel.org, AJvYcCWdkBnPNb1HyF9z9gMWce57QfcZHgKigF6jB82Tsxwca5/mBllzGUI6GybyBsbeZjniSxrQxRQ7YBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWEPGsxeCJXS4xOIO/1OWvWRnYssPCMJ9Sw86iPD5RREL7hhd8
-	FzNlgqKYjwXhA+8n6ax55YqNvRSV0+Hi1b4ObI3tj3wEP0OujfZxM6Tn
-X-Gm-Gg: ASbGncsS0YOYpJsNSwuHpVL5TpWWUQrjQfY4JOAvpA1NEQiDJWBF3Ku/WK4xyrpuZOu
-	zCY/LQoRvL77yZa3162j9+A4M7s7YfXfVjR5p8WA7/q1pyCkDx68NQAp2n711vgt1ZzhYfZ+/n8
-	WSH/DKVVhntfqgTpfHNq3mQmHelGxkwnz8PJUOtI3OcJD44UvNKmqtrmLbGtX+PI4prV/g2LxFu
-	42e8HmXsc6I5X53IJ7eCCrsKhppL3zh+rmwmhXbGZQMZO0lCLyzdLalnCaV/6XOFv57ZPhMcbSb
-	kiDygarT0tTDRM6oKXJYQFSP445jlZBxvU0SU0kVnIeFDqtWIUg=
-X-Google-Smtp-Source: AGHT+IF159HmD5hepvxivJRJH4JtIaxvmo53Xo/sR+42O6QZd7/fg8pOX20EevUWqTdRNYyeLTI7XA==
-X-Received: by 2002:a17:902:ea08:b0:235:6aa:1675 with SMTP id d9443c01a7336-235e120f8d4mr9973865ad.52.1748998275999;
-        Tue, 03 Jun 2025 17:51:15 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-235069fa2c7sm92607795ad.0.2025.06.03.17.51.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 17:51:15 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7A5B94209E8D; Wed, 04 Jun 2025 07:51:12 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Build System <linux-kbuild@vger.kernel.org>
-Cc: Matthias Maennich <maennich@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] module: Wrap EXPORT_SYMBOL_GPL_FOR_MODULES() example in literal code block
-Date: Wed,  4 Jun 2025 07:51:09 +0700
-Message-ID: <20250604005110.13040-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1748998313; x=1749603113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9GZ1X1eX5tuvtagwQoq7PN+4ufnqZ4w7To92odq8Gws=;
+        b=kAfndBatk8q3IYN0nZg8psh6UqM0LR8pRmbcWz1ZUEX07JChKxJFsLWtqV9maxkcTx
+         rFUf5mXZtBrBzZgzcNqAZPyeYf+FtAfMc9B/01KpdUvbNxBMn3w/uL5cKe43EeLbSe2A
+         MaKZlShuoOdftGIEOasCY4y0CoED0oStApqbTLR3vNzgm0r92VT+EOBf674UPQtBXsg3
+         LDzPg2jhRSYAai2kJ3tkMJIAjc80WqL0j5UZlH0WTALE3t8fyE4O8voB4KsT3/PyLrgo
+         5OZSqXt5A7/B7gmP8Z7T2IMljex8+OkJFnsB5vOxU641mt1VJYMR9j315XtRn/HR3nNg
+         Qr5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXb3Rr0RF8SEArW4LF2c+LfO2iXO83IN+t08XtmxftoKdjTamK1Jaui4NVL2CioW750MMEw4nG0qolGmZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY/x/2Xs5IYWa2qnJst1v70Tv72UR+E3ZD8IK2aEhgOTCTQLp5
+	qMwElpRXIpwadD1PhLphko78qaVyw0+p/I/YwGvtIycl/tXbIReLJxhPiaZcHqCGp1sNreZ8Ybi
+	JkhfWfI1lxrsywKO0A870Eg8iGeXmfOys930N73Q6
+X-Gm-Gg: ASbGncuLlaiem7gqjo4dY8ixKo5spGf001dVx2EOeruCK2xRtgOz5sgs8+1VxE4T5Rw
+	KXmX/D12mZVCYpiyHdjT9xiIaSHYh924KzwMwoBVLPtK1P7tWU0jN6qUwUuPeJudKILnZqBre1o
+	F7VnHgpSVJJe5OocHwZ6XL0OxoAId+M0wSWh3nyriqSg==
+X-Google-Smtp-Source: AGHT+IE6h2Ckb7KMmnnETjQdbNcdY5DVtcVbGTPVil7WKcQwPZMmxbVDhK9DC7J7Rx+YodWq+VrA0i2ejNt8EZnt7WY=
+X-Received: by 2002:a05:622a:6092:b0:486:b41d:b0ed with SMTP id
+ d75a77b69052e-4a5a5281a0cmr1461481cf.12.1748998312604; Tue, 03 Jun 2025
+ 17:51:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1380; i=bagasdotme@gmail.com; h=from:subject; bh=qBzNwBzfolO2/LfeGfIOJHvjCQIIBYm7a0UQHpcr9gs=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBn20z/+60rY9kOxaPbm9vOz7ZN9QwQauu1mtiyw7uuXy r6/YlZyRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACYSpMXIMM1k1vk34Ze+Hee1 ZpJft8TQ440LE/evDvd1ZXLTlt84dpDhf8KmsvlcN80iKv7dWd0j8csg1XJig/BqxbtTJud4GQU 48QMA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+References: <68387feb.a70a0220.29d4a0.0830.GAE@google.com> <04c893fe-0498-4847-a525-9efb6d9306da@lucifer.local>
+ <CAJuCfpGRaP2H8S6ZEr4PmxktL1tVdGM-18QyQ_N54S=RwE5tvA@mail.gmail.com> <59aed5fa-1d19-442b-9b7b-a99aee9b7689@lucifer.local>
+In-Reply-To: <59aed5fa-1d19-442b-9b7b-a99aee9b7689@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 3 Jun 2025 17:51:41 -0700
+X-Gm-Features: AX0GCFvLmXNvNcnG6loABZSWkoE6v8JbRF-Dj9yyYGCaf93cpqx9pKYuItJ3iH0
+Message-ID: <CAJuCfpHeHYxo1ZvG-mjDxcHd63nq_g9o5i-au-wZWHj+_dRy_A@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] possible deadlock in __vma_start_write
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: syzbot <syzbot+23de6daeb71241d36a18@syzkaller.appspotmail.com>, 
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, pfalcato@suse.de, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Stephen Rothwell reports htmldocs warning:
+On Mon, Jun 2, 2025 at 7:19=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Mon, Jun 02, 2025 at 07:16:40AM -0700, Suren Baghdasaryan wrote:
+> > On Mon, Jun 2, 2025 at 6:04=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > +cc Suren
+> > >
+> > > Suren - could you take a look at this please?
+> >
+> > Sure. I'll take a look today or tomorrow once I sort out my email
+> > backlog. I was away for 10 days and have 2K emails to go through.
+> >
+>
 
-Documentation/core-api/symbol-namespaces.rst:90: WARNING: Inline emphasis start-string without end-string. [docutils]
+I spent some time trying to connect the dots and still don't have the
+definitive answer. I'll dive into it again tomorrow and post once I
+have something useful.
+Thanks,
+Suren.
 
-Fix the warning by wrapping EXPORT_SYMBOL_GPL_FOR_MODULES() example in
-literal code block, just like other examples in symbol namespaces
-documentation.
-
-Fixes: 707f853d7fa3 ("module: Provide EXPORT_SYMBOL_GPL_FOR_MODULES() helper")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250526180350.06b825de@canb.auug.org.au/
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/core-api/symbol-namespaces.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/core-api/symbol-namespaces.rst b/Documentation/core-api/symbol-namespaces.rst
-index f7cfa7b73e974d..32fc73dc5529e8 100644
---- a/Documentation/core-api/symbol-namespaces.rst
-+++ b/Documentation/core-api/symbol-namespaces.rst
-@@ -85,7 +85,7 @@ namespace cannot be imported.
- The macro takes a comma separated list of module names, allowing only those
- modules to access this symbol. Simple tail-globs are supported.
- 
--For example:
-+For example::
- 
-   EXPORT_SYMBOL_GPL_FOR_MODULES(preempt_notifier_inc, "kvm,kvm-*")
- 
-
-base-commit: 85c4f3d89b17f569e9b718df6b6e19d6081f01c7
--- 
-An old man doll... just what I always wanted! - Clara
-
+> Oh man and I thought my inbox was bad :) Sorry to add to it!
+>
+> No pressure, just a weird locking case, I'm wondering if there's somethin=
+g
+> here or we just need to teach lockdep that this situation is ok.
+>
+> Hope you had some nice time away anyway :)
+>
+> Cheers, Lorenzo
 
