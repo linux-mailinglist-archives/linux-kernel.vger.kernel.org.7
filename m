@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-673352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16257ACE046
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:30:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07959ACE04A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F64D189A1FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BEA176997
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CCF28FFEF;
-	Wed,  4 Jun 2025 14:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9419C29009F;
+	Wed,  4 Jun 2025 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3b036G6K"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="R+xeHyZt"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED0D38384
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862A2226863;
+	Wed,  4 Jun 2025 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047398; cv=none; b=c5yVn6iF4dihFCfsj5UYQMgxhIVP42C16qjGjn8KqP82fImfbifiW93okusfHSbq7y/D4fMReZltEGkzmSTAXSoWvJLq1CiqqfPdgN2dNHifwcVgW4MedqIrBy12hccqaNomY+qwPTIlVoh+KCH9VSLBJ9UvwdalBVLtlFDkyhQ=
+	t=1749047469; cv=none; b=V267i9as7ub9LUQaUoLx9qh/CYqIm6dvkjjpg4S5HNiTdl0yN3+aqi434kEbmaTT5Gmjn0JFqrLL0RkZ50lDKe+KXo5MQcqGUsbs9BT5rRwHD7+dKOUrsKGW4SA3Z6BfUtYpztnsZpiv/GcU4VDHREgeyAlTPnK8H4YZiEWfY8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047398; c=relaxed/simple;
-	bh=qp7aYlF0MV91SCClGl2CM8m+7fsdEEm/fOdBZkN/thg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bZe0IfyZIn7Vh1k9Ty6VNXVVsntRZyAxSxd63CEp4YpAfCDLRfIDVVt+wxWAd+qveko31RwC0SrHFxL9xDg5dQFHeRZPNfCwP88BkcvxAZwLCo5wivwAv2ZATiAAFrgu1ZiD8kt//ceIVQNLO+Be1SOeyd32RNSWRjESSeGtaX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3b036G6K; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a5ac8fae12so107461cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 07:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749047396; x=1749652196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qp7aYlF0MV91SCClGl2CM8m+7fsdEEm/fOdBZkN/thg=;
-        b=3b036G6KI9RO/p5MsY2yBKie3mkLkjXiqHE0YX+g9Ve8W2y7YF89qLAY271uyEbh7j
-         RnCuzTDEa1tIzXwRShETK25wHASDFcm687JIkcqPi4+KH/8Viynty/lxwd47mTagfU9E
-         xnSonEayAg4bmoAxqjLzw8PZEwdRymlNFBEcykDOS/MK9OmTEb1U6eJ6TeiW/fS5db+i
-         YfeGRJPlDS5AS9Q1LhzvB1LHz/VJOPQXmHtiGy5FQgXE8+LKa8LdbT8hUQ8+I9Z84sIg
-         +exsQtHI68vhatesoa2s7h5P4Gg1hk1lasX9B5aoWvYlC9kncs03EYm46FCxfwPvanv/
-         beQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749047396; x=1749652196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qp7aYlF0MV91SCClGl2CM8m+7fsdEEm/fOdBZkN/thg=;
-        b=cx4biVszAJ4Ub2WqUWdUYqfTGb2Ma7Jgup+uoW12hB8x0Ml1B838nhXlL4cS3cW4Zt
-         HNI0G84P2IKfVzVnRiJQONmJH194lIkPDrIQab6oxj0Ce9YPZDTHrWsx2REIbnzKlKxJ
-         chPlUo7okX+SFJYvD4uM9QALnFfIDje/tZkA+Fsw09sjoHP7Thola0JylrnvznOr+egM
-         /KFmWrakl5bG5Ev7bVl04Z3YLt53qtkVFlZvbJiR7ilNsYLzjfKlXBf4MD1SP2hDxelr
-         yivKwm8BBqljP41FtokOsVBl+nAuz8jwWT3Vgipjt1BVUxWaCk9ys0pZfP4QAqPukUaR
-         485g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+/4+KWsuue7FJu/z/8Md2DLYZZo5zg8U/aPKo3L6GIBIKn+w4kVV//xer1Wg7aojYwr1b1xMykevObtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSo9P6s6GzPQpvVCtX4vpMS29v5eusDnqq5cmXOIX0zkgXoSxH
-	rDybk1um7T7Akor4QYINolzwJJyqcxtBsXAHD7xccC7YX2SdU7wEGqUbGTOb5OIJVMP//r6n3r/
-	GsTyDlouchdqV8pZ+ZX0t+y2rlk2oE2Itwnmut1vM
-X-Gm-Gg: ASbGncsiJ7zgRZUpVzMhN/Vhpq2qU9PLpkrIZ+3I/+X13D4f0qLcRzwO7vbBpdLHxCY
-	7rl0Dzy0sYUUgdnxorb1pafy1E3dZ8tDlRNITiRFmOwC3aAiw+GBz0fwxhXvW/nBDa3cH3kv75h
-	/xsWoiroah0GYeZxE1UTYKh3kF2Fdo48td5/bWAeVUh3vh39p/dQo2R++94G+omLInN48OzUIR
-X-Google-Smtp-Source: AGHT+IH7QU9THUOIJXkcFhhyY5pE8ZZNfgzXLg84Ex5Q6A11Vwd6k1wi1S4TyvhsAwEvthJSpcOZcMrWncOSW4BQnNI=
-X-Received: by 2002:a05:622a:2284:b0:4a5:9b0f:9a54 with SMTP id
- d75a77b69052e-4a5a52d361amr4019381cf.18.1749047395522; Wed, 04 Jun 2025
- 07:29:55 -0700 (PDT)
+	s=arc-20240116; t=1749047469; c=relaxed/simple;
+	bh=szGzg1VWdLNaQhzap8mRj1Cx9myok4IZd5/gZyF9eLY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=czIUJzm5oBDF39E5vHrxhknAN0lbGz8cnTS/Y6OMvyJkZ/Xtg4xPDUtDrDmF/5p2qQzGZjDko9988tobkeEp8KdxNQnROozl+uQFt/BJIC+HDDPNJMWxpne+KyD1M5J1f3dNWdx1aQCLQlefcP+oPiU+uXGj9cbhM5bLQ0NSpqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=R+xeHyZt; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1749047460;
+	bh=BN1yZiR+/rn2XlLp429yT8gjgjOJLYeI4IJXSvPwvg0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=R+xeHyZtmJ35nzniBZYxy1o5fen5ftCDTSL9p2CTl2fdc3BAmsCAoF+KqluKg1g0g
+	 8mqtABzO3jFZwy1KO7ys+jf8BWDX2uYWUYsv6VuITEtHUm/mznuL383T01T2e44pHY
+	 SJLxYop6m+LUrn4tGhxE/B1o9x68EgAPA/GHWxJg=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id AA7A865F62;
+	Wed,  4 Jun 2025 10:30:57 -0400 (EDT)
+Message-ID: <5a5329feaab84acb91bbb4f48ea548b3fb4eab0f.camel@xry111.site>
+Subject: Re: [PATCH] LoongArch: vDSO: correctly use asm parameters in
+ syscall wrappers
+From: Xi Ruoyao <xry111@xry111.site>
+To: Huacai Chen <chenhuacai@kernel.org>, Thomas =?ISO-8859-1?Q?Wei=DFschuh?=
+	 <thomas.weissschuh@linutronix.de>
+Cc: WANG Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>, "Jason
+ A. Donenfeld" <Jason@zx2c4.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers	 <nick.desaulniers+lkml@gmail.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Jiaxun Yang
+ <jiaxun.yang@flygoat.com>, 	loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 	stable@vger.kernel.org
+Date: Wed, 04 Jun 2025 22:30:55 +0800
+In-Reply-To: <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
+References: 
+	<20250603-loongarch-vdso-syscall-v1-1-6d12d6dfbdd0@linutronix.de>
+	 <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68387feb.a70a0220.29d4a0.0830.GAE@google.com> <f03916ab-19fc-4832-b564-58d3c885011d@suse.cz>
- <84qzzzoqkw.fsf@jogness.linutronix.de>
-In-Reply-To: <84qzzzoqkw.fsf@jogness.linutronix.de>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 4 Jun 2025 07:29:44 -0700
-X-Gm-Features: AX0GCFsIVzK9pgbt2dn3Cpgu7lCKSaLlimWGtVShPPXekcZUBUaMMXaeZ1lEQN8
-Message-ID: <CAJuCfpEbRJ7vrptiC_NxSO_4U=mShZoiN+LdX8j5=rPux4cgdQ@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in __vma_start_write
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	syzbot <syzbot+23de6daeb71241d36a18@syzkaller.appspotmail.com>, 
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, 
-	Peter Zijlstra <peterz@infradead.org>, Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 4, 2025 at 1:31=E2=80=AFAM John Ogness <john.ogness@linutronix.=
-de> wrote:
->
-> On 2025-06-04, Vlastimil Babka <vbabka@suse.cz> wrote:
-> > After consulting PeterZ on IRC, he said:
-> >
-> >> so the thing complains about: vmlock <- mapping.invalidate_lock <- bca=
-chefs_btree <- console_lock <- &helper->lock <- dev->mode_config.idr_mutex =
-<- mm->mmap_lock <- vmlock
-> >
-> > so bcachefs is doing printk which wants console_lock, and in
-> > drm console a possible lock chain exists that can lead to mmap lock
-> >
-> > To me it seems all rather theoretical, but not sure where and how we co=
-uld safely
-> > break this chain.
-> > Hopefully one day console_lock goes away? :)
->
-> It is a known problem that any caller holding a lock used by a
-> registered legacy console will result in printk() deadlocking. This is
-> particularly a problem with the port->lock and power management.
->
-> One workaround is to enable CONFIG_PREEMPT_RT. ;-)
->
-> A year ago (exactly) there was patch [0] providing a "threadprintk" boot
-> argument that would also work around this problem.
->
-> However, the only real solution is to convert the legacy consoles to
-> nbcon. This is work in progress.
+On Wed, 2025-06-04 at 22:05 +0800, Huacai Chen wrote:
+> On Tue, Jun 3, 2025 at 7:49=E2=80=AFPM Thomas Wei=C3=9Fschuh
+> <thomas.weissschuh@linutronix.de> wrote:
+> >=20
+> > The syscall wrappers use the "a0" register for two different register
+> > variables, both the first argument and the return value. The "ret"
+> > variable is used as both input and output while the argument register i=
+s
+> > only used as input. Clang treats the conflicting input parameters as
+> > undefined behaviour and optimizes away the argument assignment.
+> >=20
+> > The code seems to work by chance for the most part today but that may
+> > change in the future. Specifically clock_gettime_fallback() fails with
+> > clockids from 16 to 23, as implemented by the upcoming auxiliary clocks=
+.
+> >=20
+> > Switch the "ret" register variable to a pure output, similar to the oth=
+er
+> > architectures' vDSO code. This works in both clang and GCC.
+> Hmmm, at first the constraint is "=3Dr", during the progress of
+> upstream, Xuerui suggested me to use "+r" instead [1].
+> [1]=C2=A0 https://lore.kernel.org/linux-arch/5b14144a-9725-41db-7179-c059=
+c41814cf@xen0n.name/
 
-Thanks for additional info, folks! I'll look into it some more to see
-if the chain can be broken somehow but most likely will have to live
-with it for now.
-Cheers,
-Suren.
+Based on the example at
+https://gcc.gnu.org/onlinedocs/gcc/Local-Register-Variables.html:
 
+   To force an operand into a register, create a local variable and specify
+   the register name after the variable=E2=80=99s declaration. Then use the=
+ local
+   variable for the asm operand and specify any constraint letter that
+   matches the register:
+  =20
+   register int *p1 asm ("r0") =3D =E2=80=A6;
+   register int *p2 asm ("r1") =3D =E2=80=A6;
+   register int *result asm ("r0");
+   asm ("sysint" : "=3Dr" (result) : "0" (p1), "r" (p2));
+  =20
+I think this should actually be written
 
->
-> John
->
-> [0] https://lore.kernel.org/lkml/20240603232453.33992-17-john.ogness@linu=
-tronix.de
+ 	asm volatile(
+ 	"      syscall 0\n"
+	: "=3Dr" (ret)
+ 	: "r" (nr), "0" (buffer), "r" (len), "r" (flags)
+ 	: "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7",
+"$t8",
+ 	  "memory");
+
+i.e. "=3D" should be used for the output operand 0, and "0" should be used
+for the input operand 2 (buffer) to emphasis the same register as
+operand 0 is used.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
