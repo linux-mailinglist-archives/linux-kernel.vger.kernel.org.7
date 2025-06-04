@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-672975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B33AACDA7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512C6ACDA87
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD3D188B629
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E843B3A3F58
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71A428C001;
-	Wed,  4 Jun 2025 09:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B1428C001;
+	Wed,  4 Jun 2025 09:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpZEoFCF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shd1f7LX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6F6224B01;
-	Wed,  4 Jun 2025 09:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB311EEA5D;
+	Wed,  4 Jun 2025 09:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749027833; cv=none; b=OB7VERvHWHr36ym+0vNL3DCIxAqeVY+DjjXZsyI8RKQX55bpoW45jr+oa5WDJC+QnD02XGa19CAwTLa1kTqXaWZpLJWCybti8PZ4i013pJftWm620CyYSNXtH4VRU9LrAG/Sz+Ea6seNTWcET+Xk8YlqszJmvZAa6iLhmQiQzMc=
+	t=1749028034; cv=none; b=TUF0fbM6IGMyb7T+s1Rr3sR7wKx4t4IA/rghNZc4ePN8xJIfFO1KA0QBolJqnL/RPv647JSi87TQ2nwpaMUcZaxg6cqt2ua5//5do8qO0zANVyj6rRPfm/JYDbEKQ1incPpJBEfkse+ADb7SErTpuUL+kPDJ9C/Wj+Q3ZM6n8zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749027833; c=relaxed/simple;
-	bh=A5ufNgaB5QqNQve2lIwPQhyGKgxomX8BNHHcVwPsIFs=;
+	s=arc-20240116; t=1749028034; c=relaxed/simple;
+	bh=2LfvYBBuB61cvGqQ+O19xrEGVsNJSyMRqavEO2CEclU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zva6UlwBOqZ/AhHiCLEMpOL1Pm/8u4ACR2KmedoqtAHP8mttO0B0WoAOqUyeR/QGEah0PpM/wD/1rZx9UPPxYubzJ7Uo3CX1eBI8cVlmE4cO5b40qYhIUDEdI0cXdK9AbnBroLAUOuyjfv6tVA3WY1MxzPHqq/ee7tVX+c5G2Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpZEoFCF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 802A0C4CEF0;
-	Wed,  4 Jun 2025 09:03:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qtSL2vmIfUd63JeZoBlmN7iduVm8ziRgdl/mAe3qyRafQgIy8fEu3rYxQw8v/ZBWkSq9TM1n+V41whVNAtPGc1yoRSdkG2+pgH6Ch0nqW4GuOwdvRCXwLezWj4/EI1NOybOT6BUw5Eg/X+NOMB6uytp816IeN9GTGYlHmFSYJd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shd1f7LX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2C8C4CEF0;
+	Wed,  4 Jun 2025 09:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749027832;
-	bh=A5ufNgaB5QqNQve2lIwPQhyGKgxomX8BNHHcVwPsIFs=;
+	s=k20201202; t=1749028033;
+	bh=2LfvYBBuB61cvGqQ+O19xrEGVsNJSyMRqavEO2CEclU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mpZEoFCF9+3magtF+MmP4NkwPLFkCHbG+qizXSpelm8g4UiQEpyrtx8OBRuVlXgn7
-	 LDjwJizxZyfOWqFAEje9brNnBl2dVeZIx2MtcGVcHdTBGT9PdqKAr78kp5lZKnSoqC
-	 ePcCiAhS4YvQmJM6SINMQF2K5HNia92pbhMvQ0xD8kC3ZD7kcP9D5V/1w1Pe7Wa60E
-	 y+327IDKU4AE9Ny9CzQYtx/Cfe7zzpVej2OuX5sCpp8PF09gO82+TiD19NdAXui03R
-	 6yRCk/7b4SilakfjME/Pb4XCS6Je/Qpl9O1Jsn+Ezzhew6eSWRS7EWdYRVHoFX9rw/
-	 GNjIoWyhT0zNw==
-Message-ID: <df534020-f34c-4d23-85c4-eb9c241e5c7b@kernel.org>
-Date: Wed, 4 Jun 2025 11:03:47 +0200
+	b=shd1f7LXEXsrT3HCLpzFlkPEyCNtZLHo8ypfjHX1HSsZ1NeQFEu6p2XiAEFTc6Bs7
+	 KGKGSVstGO4gldoPMuNrLMphI5YCLpmy/5xpP9dIUHdefkp+Um0KP4Lfb9y1BZKeNB
+	 946vprGXVkbXpW7LuZgzU313KNUq3ryTR9eGOolSD1dCgvI/kQyO0IxhZDnj6CxE29
+	 6b3siIax+3Mzc10dXUyRegt45njWac5r/Ej2Bh1yVYBKRFAi8x7jseAgalXRgi/JzK
+	 Mgzkj3fsYF8ZSnX0+NxO/Cth4WnZjp26inzW5vP21/dFdZ3tffJ9EwXZGDi63eBfjl
+	 n3oNw2VN/q4gw==
+Message-ID: <ab813159-14e1-434f-8055-80486f5d6b3f@kernel.org>
+Date: Wed, 4 Jun 2025 11:07:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: reset: eswin: Documentation for
- eic7700 SoC
-To: dongxuyang@eswincomputing.com, p.zabel@pengutronix.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- huangyifeng@eswincomputing.com
-References: <20250604085124.2098-1-dongxuyang@eswincomputing.com>
- <20250604085235.2153-1-dongxuyang@eswincomputing.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: regulator: add pca9450: Add
+ regulator-allowed-modes
+To: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Robin Gong <yibin.gong@nxp.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250525071823.819342-1-martijn.de.gouw@prodrive-technologies.com>
+ <aced65a2-937e-494d-a3bd-aa9b295f73b7@prodrive-technologies.com>
+ <5ea091c6-7e78-4945-81b4-9b5c427d2e4d@kernel.org>
+ <194f6c85-ad28-4217-b014-54bc64c6a9ca@prodrive-technologies.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,38 +105,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250604085235.2153-1-dongxuyang@eswincomputing.com>
+In-Reply-To: <194f6c85-ad28-4217-b014-54bc64c6a9ca@prodrive-technologies.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/06/2025 10:52, dongxuyang@eswincomputing.com wrote:
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: eswin,eic7700-reset
-> +      - const: syscon
+On 04/06/2025 10:58, Martijn de Gouw wrote:
+> 
+> 
+> On 6/4/2025 10:27 AM, Krzysztof Kozlowski wrote:
+>> On 04/06/2025 09:04, Martijn de Gouw wrote:
+>>> Hi,
+>>>
+>>> On 5/25/2025 9:18 AM, Martijn de Gouw wrote:
+>>>> Make the PWM mode on the buck controllers configurable from devicetree.
+>>>> Some boards require forced PWM mode to keep the supply ripple within
+>>>> acceptable limits under light load conditions.
+>>>>
+>>>> Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+>>>> ---
+>>>> Changes in v3:
+>>>>   - Fix typo in the examples
+>>>> Changes in v2:
+>>>>   - Add the header to the binding patch
+>>>>   - Improve commit message
+>>>>
+>>>>  .../regulator/nxp,pca9450-regulator.yaml       | 14 ++++++++++++++
+>>>>  .../regulator/nxp,pca9450-regulator.h          | 18 ++++++++++++++++++
+>>>>  2 files changed, 32 insertions(+)
+>>>
+>>> Does this patch need additional changes?
+>>
+>> What is wrong with the email you already received? What do you exactly
+>> need from us?
+> 
+> V2 was merged rather quickly, on V3 there was only the Acked-by: Conor Dooley. So it's safe to assume V3 is now waiting to be merged?
 
-Hm? Did you just add it for the driver? If so, then no, drop. Use
-standard MMIO regmap (if you want regmap).
+So this was ping for merging of entire patchset, not that patch? There
+is little point in pinging frequent and during the merge window -
+usually nothing can happen now.
 
-> +      - const: simple-mfd
-
-Why did this appear? Changelog is silent on this and it makes no sense
-here. No children.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#reset-cells':
-> +    const: 2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#reset-cells'
-> +
 Best regards,
 Krzysztof
 
