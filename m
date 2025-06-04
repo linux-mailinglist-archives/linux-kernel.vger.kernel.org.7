@@ -1,221 +1,153 @@
-Return-Path: <linux-kernel+bounces-673468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7489ACE198
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 635CEACE18C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9883916FBC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA8F16AD0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94B5199FAC;
-	Wed,  4 Jun 2025 15:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8BB3595E;
+	Wed,  4 Jun 2025 15:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXBTY03Z"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="v3je2yRK"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4AE18A6DF;
-	Wed,  4 Jun 2025 15:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EC818B47E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749051406; cv=none; b=qrlJErJFdmT+k4C06ZDzfec8myZRb0qUkdP8lnGHdzK0iOdofQVvwuew74VUaqiBYajZJCr1WInKel2oVFo5I7kMROrkUFX2tvhjc1sJypP/kkc3EVLYzeI0PXzUmxAASXwPWscmQI87sruJAkf+b5dzOHYm2YNm6U4Y4ZdVi3I=
+	t=1749051327; cv=none; b=XHjon5sGHxbqvxlRbme/8Vdvjy1Z5NdIR/rfd0jA/6riJcSBHwx0gQeLOGSdfDBx/VkgvzejbeG4xX3mQJkIkBCBFu+72aPbLyedzDp7/v2unqc7ghxB8x1omuvvMRquaTi92JXhCCtoA3pqZTPufhBpjHoKtHGXgbdUnV5snYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749051406; c=relaxed/simple;
-	bh=VAVBXJfyud+eYn9s3sAYWNbfc3RcXs5f9i6EwU+Eguk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EpGaxnEUKI8yyXZ1x5IRYlL6uaZnW7ZU0rBI+JseJ0zWCGGO4QpnLy2XvEvvroe/OBw7sbpUqUK0iUQTNRVyedhYvfeDTs+9avY+tRFdsWGALQxTTj3WWAZqjV7pyCNyj7DWh5F2kVHIAUfIYbHsIMZGBYZhY3LTKNZgNpRjIcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXBTY03Z; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so194305e9.1;
-        Wed, 04 Jun 2025 08:36:43 -0700 (PDT)
+	s=arc-20240116; t=1749051327; c=relaxed/simple;
+	bh=YoMzcreeLf0Uer5t9WftYAytQbmcukCa1uEM4ng5180=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GbAmglUtEOClnUikaNjxyAoQhGcQIeyA4gQoaXf9kbAlr6hkPvs4IvIQ1yRz/dFaDjpq38vGU2LZWfV1/b2fDLhE84nA8CCR5IXDuRFxJYegl0fHy138hK/b80DRqihvTwNXVayK2s4bjZ1XrKEPl4ZjUhZeGbgUVbpQi5dHKi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=v3je2yRK; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6fadd3ad18eso412506d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 08:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749051402; x=1749656202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=po4hRDSGCZuh9pjG/L2z6feCTEmaDMC+4+ptAw6xPXg=;
-        b=gXBTY03ZWKa+yDVJZmToZ8R6mJBCzRI9GlR+wcgEcJmXAQ3LCzYAaldxgkX8j1yK/D
-         XjNXXcXyOfnuYR/t5wuV44/4kxTH8R2knEgqNYYXJLLjYSJWoCPEYj329mXI37al9tqA
-         C9OIAa7lcen8yCUJt9wGCr6/bpNN4ndT/0B8QPdKBp5klRG5Br62mHLXUatTjCiN4FjA
-         LDkM86rhFkqt2YHsuAtKDTOwgDaYMbe50ZT3loIiktVFTEDnngodhZYQKGfZDT+FCBcA
-         O573KwFa/sFp1vAS2NvlPPhik/yEIAG4MaiWY7B6IvnYLbSyQ21MSCG1PADki+/437zE
-         /G2g==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1749051324; x=1749656124; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q7DZnXDDw2f7bOVU5h41kTY3jPLyxY+7Em6dlbFk/dY=;
+        b=v3je2yRKPLXrJXXyYD0Yu1k5/CIu+2uUpSHbWDjPdzzgiHkgyX4mCskNkHieRVWiek
+         ZrBiJ8Z0wqtFrNXK0FOkJfxJvvhAzMtOEWFAAs8uPhd0nsaCHTp83/A94uOZB6SX0Rd3
+         qA32E6xyq3CyCxVilcJ+cQuIbN4aX7EPNdDTqKCM2Gi1v+uC3khauMvETzsWebMJ8rg3
+         wyp4PS7H7Ttn+4Qn0a0O56PWoKkjf/ANE2c6HJCWrjgRj4ffoMLgIr1MUdHZUBxMOpAJ
+         QWfw5A69NQlYRrCI1R97Hk42eH+Ncv3xM2vhtRmQptTCyFMg9UMzpl0xAdQhfv7khePU
+         ovfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749051402; x=1749656202;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=po4hRDSGCZuh9pjG/L2z6feCTEmaDMC+4+ptAw6xPXg=;
-        b=baZFjT54vNrSUrPSXn587KGXOKAuPe7g2u4aRCq52CfFg5e7zCotmJtThIsVnnwO8g
-         6+mWz1Zv+P96g19gnQxwrBQIgyHHLvjAoWkwS9OQf2AZ3OqPqxDeO7DYEwpxqtdGOKO0
-         JUZaU5/04kn9aDt4PWp22tWE8RQqzyKTiZYepD7wOGHgwpbbLSslmQ8aKi4xK4eWMajZ
-         YTfgIus0HDfslkyN8gcRtTv0Gt2HGlZz8cBTJuLIxf5SNN4KroOP95uo4KDBnhYWFhtZ
-         qx+lnfmtJ8T4uM544foEW4RpG3/10UtkAgsOR5evSqxaoFQfInkzWPguXdXz6qOEc0Rp
-         0quA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3xRIR+P0UCoknz9o1Adi15PVwrwxSCfscby0OWE0d80MGYctvaSwq0QHy9qSgDjQJdQbcRBr+yvXhdto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOoBlgNnZ0tPn3XGJnDHYyOBGu924r8dD+jR9Gs4vp9dwjlFRh
-	t7Kp5/sLU+mRYvLjWTcXhHqJaN4FQ++Cfx2AIK9wDHflQ2eAa/GHTd9p3Mk47j6k
-X-Gm-Gg: ASbGncvmZP2f6BEo83CCc4mK0K3EjRRJWFyvWPMURvR/X5nCeX+wgwDPtiz4MAo4WjT
-	h8KZSrhyoTMoW1nuOHd9laAdk41+JpTc8yb1yZR4JQP7jKnhXix1MfYzkhPeu+VvQn4PqaIMi43
-	KP/bRxiIFvLeqfLua5jnBuAXNqD3BjkpUo9Ea/Tg/i3rA4kMCZx9Ijjeu4MouVNZ590PobjaD/M
-	L+4FNpdMYTwfsEzkYTwJhMVWNnU4WvmOVSd3oz9Ihm4IJujoaEVRNxImLSLbytjYsYS5JvWSSui
-	etNMedefLU5jxzbd8InMTXv9dtZi5nAn8Nd/+vnnjxG9MVBVaHEwfoK9AbTBCOnXOx7f8Mj4VPi
-	2tXr7uiF5dqGGeMsugBEaVgIyEzDslIwOVdScJOvNDarFDQ==
-X-Google-Smtp-Source: AGHT+IEiuiACGB5AsupJRC8pwPtzuBvDCDBA2W8wfZMmUi90dxJ20Ue6vRcyhVvfN7K/S5TF5w2O8g==
-X-Received: by 2002:a05:600c:8b26:b0:43b:c6a7:ac60 with SMTP id 5b1f17b1804b1-451efe946acmr30208025e9.10.1749051401531;
-        Wed, 04 Jun 2025 08:36:41 -0700 (PDT)
-Received: from Lord-Beerus.station (net-93-70-53-177.cust.vodafonedsl.it. [93.70.53.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8012b09sm200711165e9.37.2025.06.04.08.36.40
+        d=1e100.net; s=20230601; t=1749051324; x=1749656124;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q7DZnXDDw2f7bOVU5h41kTY3jPLyxY+7Em6dlbFk/dY=;
+        b=RbuHT4RV+BpM5j/HWpkCQWs/E1iOpq5Z0nm0c25d9z9saOHsaHrla/jMXXjkCxo2fC
+         2VsWJjqTPI6PunLeNvAZakDiyP7ZO2/UcZ9UCatameJK/dD7E96/UrEJeh2lk9EIzn/6
+         fb+5W930l0mNnCx6ZGtCl2xftRZthAlXOTN8Bx3OrKP+dsSAjuuFn4a8lDKROkckZo3h
+         m7kKnawTU9bVIWBoncB2AwYSC1wu4C2VLAYrDpOmX9XsiPwZE1tyMb/KKfJGTwPn91gy
+         2pYxSi9JzvWJwzbeAuLYKMZQ4qMAVZsKxm1iLfZtN3h2Hy7kSBFytcSdMP7NCkZJZCb5
+         m8DA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2MJbmsMjhdEzFfy39MEHsSpY5LMMdNLysxN7J5T+e7KsUqUt3RrWMJOH/9IugdBPlOS8ZfliBATKSGso=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/BLL9dG4Rz1qJvGzHhYqktz93XwUdNW80sP26TXW/e03BwO3w
+	Ftny2dTuelhT/z2Gw8r6Dl6Qwpyyvq2m273CloQdFUe4YK0TX2Dh8jfJqfEVLweAwLc=
+X-Gm-Gg: ASbGncspzLW1Nvnk/T3yJmomq1/g5akNLj59DmhWJkhdlY0VghSJxQ9B+ZdZeFjq/cL
+	JtWjpK8q9fYwP476jiWI4FSPtAtg1MSqC/YWK4XEylkvS7Zl7Ecv0AdfOri+OV7NunpqvRhyMAt
+	8obskGTlYwA+fBBEn5PvtPOFBQNZPkULET70TCD6GDxhOwetyYF0rXaiugx8EI97FaV2k2CU+gJ
+	7c2cK8H6J93JN6wlY3JfpfDCTcK1lhwSU26kegP239p7CeV37whArFBTp0110zaENo140Vse+Fp
+	/HPQmAQODFvsO2kDgP5eO048ZUxJDNA4rR22JarOxnX+Zo8MV9tTecgI
+X-Google-Smtp-Source: AGHT+IFTVb5P+MMCAOPUE3KfAdaPQyevv0cConXsNDIySkFVkZ+c+t8LYnjxLTtV0EwxgimezZwiiw==
+X-Received: by 2002:ad4:5de8:0:b0:6fa:9baa:fad9 with SMTP id 6a1803df08f44-6faf6e87e73mr48632366d6.17.1749051324172;
+        Wed, 04 Jun 2025 08:35:24 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:10:5285::5ac? ([2606:6d00:10:5285::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00d37sm101270436d6.79.2025.06.04.08.35.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 08:36:41 -0700 (PDT)
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: othacehe@gnu.org,
-	Stefano Radaelli <stefano.radaelli21@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [v2] arm64: dts: freescale: imx93-var-som: update eqos support for MaxLinear PHY
-Date: Wed,  4 Jun 2025 17:35:09 +0200
-Message-ID: <20250604153510.55689-1-stefano.radaelli21@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 04 Jun 2025 08:35:23 -0700 (PDT)
+Message-ID: <254309f1c527d782e0c50c425602c94683f395b6.camel@ndufresne.ca>
+Subject: Re: [PATCH] media: v4l2-ctrls: Fix H264 SEPARATE_COLOUR_PLANE check
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: James Cowgill <james.cowgill@blaize.com>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Ezequiel Garcia
+	 <ezequiel@vanguardiasur.com.ar>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Date: Wed, 04 Jun 2025 11:35:22 -0400
+In-Reply-To: <20250604143552.2955475-1-james.cowgill@blaize.com>
+References: <20250604143552.2955475-1-james.cowgill@blaize.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Variscite has updated the Ethernet PHY on the VAR-SOM-MX93 from the
-Murata CYW43353 to the MaxLinear MXL86110, as documented in the
-August 2023 revision changelog.
-Link: https://variwiki.com/index.php?title=VAR-SOM-MX93_rev_changelog
+Hi James,
 
-Update the device tree accordingly:
-- Drop the unused regulator node previously used to power the Murata PHY.
-- Add support for the reset line using GPIO1_IO07 with proper timings.
-- Configure the PHY LEDs via the LED subsystem under /sys/class/leds/,
-  leveraging the support implemented in the mxl86110 PHY driver
-  (drivers/net/phy/mxl-86110.c).
-  Two LEDs are defined to match the LED configuration on the Variscite
-  VAR-SOM Carrier Boards:
-    * LED@0: Yellow, netdev trigger.
-    * LED@1: Green, netdev trigger.
-- Adjust the RGMII clock pad control settings to match the updated PHY
-  requirements.
+Le mercredi 04 juin 2025 =C3=A0 14:38 +0000, James Cowgill a =C3=A9crit=C2=
+=A0:
+> The `separate_colour_plane_flag` element is only present in the SPS if
+> `chroma_format_idc =3D=3D 3`, so the corresponding flag should be disable=
+d
+> whenever that is not the case and not just on profiles where
+> `chroma_format_idc` is not present.
 
-These changes ensure proper PHY initialization and LED status indication
-for the new MaxLinear MXL86110, improving board compatibility with the
-latest hardware revision.
 
-Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
----
-v2:
-  - Clarified the use of 'rgmii' mode by adding a comment in the DT,
-    explaining that hardware delays are already implemented on the SOM PCB.
+The fix seems correct indeed. This has no incidence on any current driver, =
+since
+there is nothing upstream that supports decoding 4:4:4. Would you mind if w=
+e
+extend the commit with something such as:
 
-v1: https://lore.kernel.org/imx/20250603221416.74523-1-stefano.radaelli21@gmail.com/
+	This prevents invalid flags being passed, though no upstream drivers
+	currently supports YCbCr 4:4:4 decoding.
 
- .../boot/dts/freescale/imx93-var-som.dtsi     | 45 ++++++++++++-------
- 1 file changed, 30 insertions(+), 15 deletions(-)
+Feel free to to suggest a better edit. It will make stable people (and bot)=
+ aware
+of the patch priority. I can make the edit while applying.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
-index 783938245e4f..cea8d792328c 100644
---- a/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
-@@ -19,26 +19,19 @@ mmc_pwrseq: mmc-pwrseq {
- 		reset-gpios = <&gpio4 14 GPIO_ACTIVE_LOW>,	/* WIFI_RESET */
- 			      <&gpio3 7 GPIO_ACTIVE_LOW>;	/* WIFI_PWR_EN */
- 	};
--
--	reg_eqos_phy: regulator-eqos-phy {
--		compatible = "regulator-fixed";
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinctrl_reg_eqos_phy>;
--		regulator-name = "eth_phy_pwr";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		gpio = <&gpio1 7 GPIO_ACTIVE_HIGH>;
--		enable-active-high;
--		startup-delay-us = <100000>;
--		regulator-always-on;
--	};
- };
- 
- &eqos {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_eqos>;
-+	/*
-+	 * The required RGMII TX and RX 2ns delays are implemented directly
-+	 * in hardware via passive delay elements on the SOM PCB.
-+	 * No delay configuration is needed in software via PHY driver.
-+	 */
- 	phy-mode = "rgmii";
- 	phy-handle = <&ethphy0>;
-+	snps,clk-csr = <5>;
- 	status = "okay";
- 
- 	mdio {
-@@ -51,6 +44,27 @@ ethphy0: ethernet-phy@0 {
- 			compatible = "ethernet-phy-ieee802.3-c22";
- 			reg = <0>;
- 			eee-broken-1000t;
-+			reset-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <10000>;
-+			reset-deassert-us = <100000>;
-+			leds {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				led@0 {
-+					reg = <0>;
-+					color = <LED_COLOR_ID_YELLOW>;
-+					function = LED_FUNCTION_LAN;
-+					linux,default-trigger = "netdev";
-+				};
-+
-+				led@1 {
-+					reg = <1>;
-+					color = <LED_COLOR_ID_GREEN>;
-+					function = LED_FUNCTION_LAN;
-+					linux,default-trigger = "netdev";
-+				};
-+			};
- 		};
- 	};
- };
-@@ -75,14 +89,15 @@ MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x57e
- 			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x57e
- 			MX93_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2			0x57e
- 			MX93_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3			0x57e
--			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x5fe
-+			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x58e
- 			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL		0x57e
- 			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0			0x57e
- 			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1			0x57e
- 			MX93_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2			0x57e
- 			MX93_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3			0x57e
--			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x5fe
-+			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x58e
- 			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x57e
-+			MX93_PAD_UART2_TXD__GPIO1_IO07				0x51e
- 		>;
- 	};
- 
+regards,
+Nicolas
 
-base-commit: a9dfb7db96f7bc1f30feae673aab7fdbfbc94e9c
-prerequisite-patch-id: 2335ebcc90360b008c840e7edf7e34a595880edf
--- 
-2.43.0
-
+>=20
+> Fixes: b32e48503df0 ("media: controls: Validate H264 stateless controls")
+> Signed-off-by: James Cowgill <james.cowgill@blaize.com>
+> ---
+> =C2=A0drivers/media/v4l2-core/v4l2-ctrls-core.c | 8 ++++----
+> =C2=A01 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4=
+l2-core/v4l2-ctrls-core.c
+> index 90d25329661e..b45809a82f9a 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
+> @@ -968,12 +968,12 @@ static int std_validate_compound(const struct v4l2_=
+ctrl *ctrl, u32 idx,
+> =C2=A0
+> =C2=A0			p_h264_sps->flags &=3D
+> =C2=A0				~V4L2_H264_SPS_FLAG_QPPRIME_Y_ZERO_TRANSFORM_BYPASS;
+> -
+> -			if (p_h264_sps->chroma_format_idc < 3)
+> -				p_h264_sps->flags &=3D
+> -					~V4L2_H264_SPS_FLAG_SEPARATE_COLOUR_PLANE;
+> =C2=A0		}
+> =C2=A0
+> +		if (p_h264_sps->chroma_format_idc < 3)
+> +			p_h264_sps->flags &=3D
+> +				~V4L2_H264_SPS_FLAG_SEPARATE_COLOUR_PLANE;
+> +
+> =C2=A0		if (p_h264_sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY)
+> =C2=A0			p_h264_sps->flags &=3D
+> =C2=A0				~V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD;
 
