@@ -1,193 +1,174 @@
-Return-Path: <linux-kernel+bounces-672888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976FFACD928
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:03:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09027ACD924
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91FB189B37F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBB83A7EC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C73241661;
-	Wed,  4 Jun 2025 07:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14B02690F9;
+	Wed,  4 Jun 2025 07:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fXLuZ/aO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aw4NBG5w"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE672512C8;
-	Wed,  4 Jun 2025 07:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311C426981C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 07:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749023889; cv=none; b=A6DgSFoZKgSCiYVq5nhl9YbVnc4weZ24hIJLZpJl8N9AR0j+m9X5lu2XNBV9Hud4A9C6AFTBabMuvYrMbnEfBr6YlS/wZ+tSEUpZgFBR9oHyPqDKBWe9kOk08M6H9jlF4PsP+vba35a2jjLNL9ILYsxI4rW7Czn7JVwgvv5vzYg=
+	t=1749023921; cv=none; b=s42hiCSTDga39g9X6k3F9qfUEQnsZ5zET/jkOQA4RS3gtuOx3n9GTQ87rtzINa7NA0ZU0T+V6PILuXVnVONHVb7Vi+7+hpDlNQtwIiUPPZVs6kMBEAbh45n/9bwhZHnpKMyqbufkrY/0A5dU6RYFOhmximIQrdJpaYSp63FWJ0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749023889; c=relaxed/simple;
-	bh=UYbkKmFr5UeqFtFI+nJW2S2A5YoPkpfAfOm6qQvwN/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pOicfUmyXk+t7WW09/3QkSFuwRNgmYYQooOpSboXroQqeXyNhUORgSQ9lyeyObHxljo/pf8aOlfBPl6fJVj+3fhssY4kLeDXUzviLqEVFvv7FzyDoiBDuAMNPV/WjLYY1zQ8+OCuCoIxoD0PVJkMma6QYZkV1/muLycSQgpPuoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fXLuZ/aO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5547gt5q013476;
-	Wed, 4 Jun 2025 07:58:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	anivJ2eg09Hruutk0YLTt4SfGPp8ix1kxgXyCn4T76w=; b=fXLuZ/aOrTB57i9a
-	+3VpTTRfVuBUGtRYzZpzJuIzfWsljZ1ZYCQmA4+A34l47BPPBaEvYgJNrO7+U4P8
-	+yHFWHz0DbUVN3fBE6UDI6pDeW/eFsqosoq0kwmITqsCjbCjU64JFwGT00Di4FJL
-	psSd7wakUutcz332LHskC74HFCvWXJHYFIeVUt20W6jh4tOBPszztuV+87Ad5Y3O
-	P2m4g9wOWBEW67VfUG4CdHePXT88FhBngj8dolW/BLFQvVKg4pntUQH+BESb0LZb
-	51eHW0lldXmI/M//0WyDlhA6UC1F0wZjwDlyk50UjmljifHrc+JxVi6ANmuuFQjo
-	a4M5Ww==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8nn93k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 07:58:03 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5547w2se011415
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Jun 2025 07:58:02 GMT
-Received: from [10.133.33.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Jun 2025
- 00:58:00 -0700
-Message-ID: <79b4bac1-6e55-408c-a334-006eded4229f@quicinc.com>
-Date: Wed, 4 Jun 2025 15:57:57 +0800
+	s=arc-20240116; t=1749023921; c=relaxed/simple;
+	bh=jXoEQa4n+T1Kw1wrWF7p8M6Blxs7hSx8GnF38itpWII=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=vCdRCVORm4PwF014duUbz1D/NzEsdOAU6HvpGO09qwfFFWv4EyboNrVkGGDqj+W3jydzcPK4hxrn/Hcqk4Lr7H79zJdNytclZxVN8elHFCsH1YGuqstbRn8MUdxfgU+STK/WupkC5r1HvC/d8HdZo6eoauoFmLC+EK/9sh5B0qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aw4NBG5w; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-312116d75a6so5370172a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 00:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1749023918; x=1749628718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XvXmFFuXZemPVLmDJrliCn1kqX4Z09vjc+TkZ/tmAug=;
+        b=aw4NBG5wRT7xpyXCZ3nqWi+Xa2HptsL5rEKIGtYA77WZUZADBwzOU9yGUzKUkzMCMt
+         pmlnUH5xZxhPH4I5oBrzFO7A6IyfLWR2T4pmt5CrqiEAS0bgJQ1XbRQtogLCbitjinyc
+         82BverSgckxJUT2AcyYMNEQINvt0pBZ8T/IdPQfWniC+OD6zilo9bf3jC6d1TRmBwrKV
+         73GIBXoxAEz98GD48oaZMS1me6H8tWMRhlrebZj98U/lQTgOrOdCzVM9cIUvu3OJrGFS
+         8dFVLeLtPOrPYe7XBJm69cl28sLNilxCODUSoIqiZrovXQPRONwyiB8U6h8OXwGwszJs
+         dZYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749023918; x=1749628718;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XvXmFFuXZemPVLmDJrliCn1kqX4Z09vjc+TkZ/tmAug=;
+        b=ICXs8ALg+z4boYKKmstl4H2YnYsHZWXTYy2Pi4NCfcnMNKi8N7B4G/MGU0TaLSLc/I
+         FwEwsgbb7jjf2Kxezkg5BTXIfqhT8JyGMqOMTEuzc7cNrPPvdqBMpKdmwhtPNa3eg6c9
+         gMrJ3vIzUo5RVuPB+HSlQsO3GGYD4nc7Uawc8/rhWmUX9O/vwvsOihcebtDC3XBA8LO8
+         HW9z07LjpvKyjCe8c5oQ8/5GQ5teJx+q9DEVtVzSXKUUQf/fnLOBZCTkk/briHIzt2Bq
+         AXnTg1ua6qfZsoAe0HGjVk4LbZho37PJMOfQOSMbziquWJb2sNCu2RLa75xzH+ma2d3a
+         zvKw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/iKRBhDtZGc8KPDQDoXKrce8B9PMOoEpfjUJYNfj1Vx48p+AN17BvDWY89kFC1M9AYDYZaJ2w6K65TcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyycWy+434da0eDdqb0D1NHF6Eslg4JjntdaXZAZdr6OnQGpsZ9
+	KNOg4MFIsvNaEgy0fdLk8qcRMn5Ive74icopRl0R1oStzj2Xf7OD62fjHx4U/FCwPDg=
+X-Gm-Gg: ASbGnctDI305nZjf+TACOgELo15X5B9+MYYDDYlbW5xx8SwV5dolb3jk0Quie9h1/WX
+	AwhGKSC7rs3HI8CMOriUp0/JMF5JvrwfauyYqYNEsuranM5dlM2XAUbt47d1dThpVH3x6AilCxv
+	+gZq9VaAL0NnWX9ng7/1DKSd4+sGsTUWrQmp2WBPR6c8SfJUEEAe9k0zIIDgMTRGcl/f51Um/De
+	KikA80a/ZtZPPoT4y4CGeIBD24h59qGRcwX8qz4uVBKvfRCjojW88cEJnNjJOUoN2+vzN9KX3UA
+	e7FRWALieQCG64m4fusCddI1yhDkprnqTFJTDjZ0rKkbDem+kV6X5FnHigzhTIvFdl6rJacjSAV
+	9XQk=
+X-Google-Smtp-Source: AGHT+IE8ZdBcfHRqeD7gLSsugXNBHZwBfcGsxChnuZcWsLIjnwQIZA7o60dEujqTl4yozJp30iiVog==
+X-Received: by 2002:a17:90b:388d:b0:312:e76f:5213 with SMTP id 98e67ed59e1d1-313110995cemr2085795a91.28.1749023918030;
+        Wed, 04 Jun 2025 00:58:38 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cd362fsm98677305ad.116.2025.06.04.00.58.34
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 04 Jun 2025 00:58:37 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: akpm@linux-foundation.org
+Cc: david@redhat.com,
+	dev.jain@arm.com,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lizhe.67@bytedance.com,
+	muchun.song@linux.dev,
+	peterx@redhat.com
+Subject: Re: [PATCH v2] gup: optimize longterm pin_user_pages() for large folio
+Date: Wed,  4 Jun 2025 15:58:30 +0800
+Message-ID: <20250604075830.27751-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250603204414.f2963e4a094e360cad7f966e@linux-foundation.org>
+References: <20250603204414.f2963e4a094e360cad7f966e@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] wifi: ath11k: fix dest ring-buffer corruption
-To: Johan Hovold <johan@kernel.org>
-CC: Baochen Qiang <quic_bqiang@quicinc.com>,
-        Johan Hovold
-	<johan+linaro@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250526114803.2122-1-johan+linaro@kernel.org>
- <20250526114803.2122-2-johan+linaro@kernel.org>
- <026b710f-b50f-4302-ad4f-36932c2558ff@quicinc.com>
- <aD1axxSAJsbUfnHH@hovoldconsulting.com>
- <5268c9ba-16cf-4d3a-87df-bbe0ddd3d584@quicinc.com>
- <aD7h0OOoGjVm8pDK@hovoldconsulting.com>
- <01634993-80b1-496e-8453-e94b2efe658c@quicinc.com>
- <7025db40-dda0-4cbb-80bd-09bd590584da@quicinc.com>
- <aD_wgACEfm1_1GNz@hovoldconsulting.com>
-Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <aD_wgACEfm1_1GNz@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: w_XPjTFSZNiX8ks9rHAHNceZHHXIJp0p
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA2MiBTYWx0ZWRfX5vrSLcCIdqi5
- bhMR3JPe4iY/k3ige1RY1H7RQSJ/omLn1XbPiOAOiIroEPNKxxKgVOondJDinyKtswOXO9cgC8x
- KFZ4+ONI+tHtxnt0/meVDm8dl3MyYKGKVvngoDNHGUSQCWgYGqg008rsssN3t23bLhr2VZzbArv
- Lufq0ggEgsxbanj1xy2lmqkA3nQv8FBcQyYbEemghTrkndo8A0ABR7bRe02GJuGOcGa5w0Ub+Yx
- /bX9Phn2rPfLAgfYTWm2MKv8RuqJxNo1L/m9EOskR1x1OM/h/HZszMZGSik+rrGTD7T5F+gp0Fj
- 62a3nG9wzeDELtxjRCJ02Evg6JrnP6++haOuU/XLJ3HefQPAdsYJci5f8dk0GS2dqUm3V9oogb6
- nvc724v9eGOIroMOOqcKrGvs8BBP+Q8OCKpRwhwN/tcsSU/2LQzjCCT0Zpp6a+X+uSilRslt
-X-Proofpoint-ORIG-GUID: w_XPjTFSZNiX8ks9rHAHNceZHHXIJp0p
-X-Authority-Analysis: v=2.4 cv=UphjN/wB c=1 sm=1 tr=0 ts=683ffc8b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
- a=vX_C0UsDqE-s7w2R9qsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=478 clxscore=1015 malwarescore=0 adultscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506040062
 
+On Tue, 3 Jun 2025 20:44:14 -0700, akpm@linux-foundation.org wrote:
 
-
-On 6/4/2025 3:06 PM, Johan Hovold wrote:
-> On Wed, Jun 04, 2025 at 01:32:08PM +0800, Miaoqing Pan wrote:
->> On 6/4/2025 10:34 AM, Miaoqing Pan wrote:
->>> On 6/3/2025 7:51 PM, Johan Hovold wrote:
->>>> On Tue, Jun 03, 2025 at 06:52:37PM +0800, Baochen Qiang wrote:
->>>>> On 6/2/2025 4:03 PM, Johan Hovold wrote:
->>>>
->>>>>> No, the barrier is needed between reading the head pointer and
->>>>>> accessing
->>>>>> descriptor fields, that's what matters.
->>>>>>
->>>>>> You can still end up with reading stale descriptor data even when
->>>>>> ath11k_hal_srng_dst_get_next_entry() returns non-NULL due to
->>>>>> speculation
->>>>>> (that's what happens on the X13s).
->>>>>
->>>>> The fact is that a dma_rmb() does not even prevent speculation, no
->>>>> matter where it is
->>>>> placed, right?
->>>>
->>>> It prevents the speculated load from being used.
->>>>
->>>>> If so the whole point of dma_rmb() is to prevent from compiler
->>>>> reordering
->>>>> or CPU reordering, but is it really possible?
->>>>>
->>>>> The sequence is
->>>>>
->>>>>      1# reading HP
->>>>>          srng->u.dst_ring.cached_hp = READ_ONCE(*srng-
->>>>>> u.dst_ring.hp_addr);
->>>>>
->>>>>      2# validate HP
->>>>>          if (srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp)
->>>>>              return NULL;
->>>>>
->>>>>      3# get desc
->>>>>          desc = srng->ring_base_vaddr + srng->u.dst_ring.tp;
->>>>>
->>>>>      4# accessing desc
->>>>>          ath11k_hal_desc_reo_parse_err(... desc, ...)
->>>>>
->>>>> Clearly each step depends on the results of previous steps. In this
->>>>> case the compiler/CPU
->>>>> is expected to be smart enough to not do any reordering, isn't it?
->>>>
->>>> Steps 3 and 4 can be done speculatively before the load in step 1 is
->>>> complete as long as the result is discarded if it turns out not to be
->>>> needed.
+> On Wed,  4 Jun 2025 11:15:36 +0800 lizhe.67@bytedance.com wrote:
 > 
->>> If the condition in step 2 is true and step 3 speculatively loads
->>> descriptor from TP before step 1, could this cause issues?
->>
->> Sorry for typo, if the condition in step 2 is false and step 3
->> speculatively loads descriptor from TP before step 1, could this cause
->> issues?
+> > From: Li Zhe <lizhe.67@bytedance.com>
+> > 
+> > In the current implementation of the longterm pin_user_pages() function,
+> > we invoke the collect_longterm_unpinnable_folios() function. This function
+> > iterates through the list to check whether each folio belongs to the
+> > "longterm_unpinnabled" category. The folios in this list essentially
+> > correspond to a contiguous region of user-space addresses, with each folio
+> > representing a physical address in increments of PAGESIZE. If this
+> > user-space address range is mapped with large folio, we can optimize the
+> > performance of function pin_user_pages() by reducing the frequency of
+> > memory accesses using READ_ONCE. This patch leverages this approach to
+> > achieve performance improvements.
+> > 
+> > The performance test results obtained through the gup_test tool from the
+> > kernel source tree are as follows. We achieve an improvement of over 70%
+> > for large folio with pagesize=2M. For normal page, we have only observed
+> > a very slight degradation in performance.
+> > 
+> > Without this patch:
+> > 
+> >     [root@localhost ~] ./gup_test -HL -m 8192 -n 512
+> >     TAP version 13
+> >     1..1
+> >     # PIN_LONGTERM_BENCHMARK: Time: get:13623 put:10799 us#
+> >     ok 1 ioctl status 0
+> >     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+> >     [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
+> >     TAP version 13
+> >     1..1
+> >     # PIN_LONGTERM_BENCHMARK: Time: get:129733 put:31753 us#
+> >     ok 1 ioctl status 0
+> >     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+> > 
+> > With this patch:
+> > 
+> >     [root@localhost ~] ./gup_test -HL -m 8192 -n 512
+> >     TAP version 13
+> >     1..1
+> >     # PIN_LONGTERM_BENCHMARK: Time: get:4075 put:10792 us#
+> >     ok 1 ioctl status 0
+> >     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+> >     [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
+> >     TAP version 13
+> >     1..1
+> >     # PIN_LONGTERM_BENCHMARK: Time: get:130727 put:31763 us#
+> >     ok 1 ioctl status 0
+> >     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 > 
-> Almost correct; the descriptor can be loaded (from TP) before the head
-> pointer is loaded and thus before the condition in step 2 has been
-> evaluated. And if the condition in step 2 later turns out to be false,
-> step 4 may use stale data from before the head pointer was updated.
-> 
+> I see no READ_ONCE()s in the patch and I had to go off and read the v1
+> review to discover that the READ_ONCE is invoked in
+> page_folio()->_compound_head().  Please help us out by including such
+> details in the changelogs.
 
-Actually, there's a missing step between step 3 and step 4: TP+1.
+Sorry for the inconvenience. I will refine the wording of this part in
+the next version.
 
-TP+1:
-	srng->u.dst_ring.tp += srng->entry_size
+> Is it credible that a humble READ_ONCE could yield a 3x improvement in
+> one case?  Why would this happen?
 
-TP is managed by the CPU and points to the current first unprocessed 
-descriptor, while HP and the descriptor are asynchronously updated by 
-DMA. So are you saying that the descriptor obtained through speculative 
-loading has not yet been updated, or is in the process of being updated?
+Sorry for the incomplete description. I believe that this optimization
+is the result of multiple factors working together. In addition to
+reducing the use of READ_ONCE(), when dealing with a large folio, we
+simplify the check from comparing with prev_folio after invoking
+pofs_get_folio() to determine if the next page is within the folio.
+This change reduces the number of branches and increase cache hit rates.
+The overall effect is a combination of these optimizations. I will
+incorporate these details into the commit message in the next version.
 
-
-
+Thanks,
+Zhe
 
