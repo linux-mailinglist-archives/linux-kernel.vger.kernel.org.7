@@ -1,106 +1,164 @@
-Return-Path: <linux-kernel+bounces-673128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2F4ACDC9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:35:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06868ACDCC7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508453A591E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5D3176218
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D977F28ECCA;
-	Wed,  4 Jun 2025 11:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyS8n5/l"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A602128ECCE;
+	Wed,  4 Jun 2025 11:38:37 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC928EA4F;
-	Wed,  4 Jun 2025 11:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB76028ECC9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749036910; cv=none; b=l1iYbZegW8mzxUYBWm1NiH8uNfr4moKxSc9Q2cMfnbP4s7prmRjRPKzvKdvykNfw3G09/dpXjq0lgUuPWL5TtxhbUiSneJEuSKdFU84Oyw9sV/CzL2JuuPVF91LQDVqt5yVX7Vu6kuRvDxoAVi8Vj9VtvhsNh7vBG5EbBGb64WU=
+	t=1749037117; cv=none; b=Xin6UU09rY8/8okA3AZt68UeqTVR4RhBt1EQADI5MTQfupo6Lq20/4iToAjc+/5mL38NBlGe573ixs3jPZLzc7rGeSPt7Xc+yNWjlu9G6iuzxlsB7Y3eNmJfRYtI2NMzm+aqitYwj6ngMG1ZdAmYbaOrCuAotVG65g/t2qZmTyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749036910; c=relaxed/simple;
-	bh=eC4zQahnbIG0zimMI3qqobsDEY2WS5TdQDTeDCRi8Wg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REzUZ3p4Z1I+TJ6U//25S21s0Wi08z2xX3AhZZ01Bh9jv9ExSGJP7aFN2WDcefIq1bc0+CvjE7mn16KU+HsQ5nYjtr7DVp5ZuscpLTKHxk1Hj6gix34ryhaJfanJvbr/NOgS7FDG/oPl3b/X1VUG2wsmAdA6t41a44Zf7Uk9LIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kyS8n5/l; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-311ef4fb43dso5075431a91.3;
-        Wed, 04 Jun 2025 04:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749036908; x=1749641708; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eC4zQahnbIG0zimMI3qqobsDEY2WS5TdQDTeDCRi8Wg=;
-        b=kyS8n5/lFtYIhTAfZj8SKO86ZbmOe1vveEClx6G79N+BpGpfx4T/v9MclbaJfNIitZ
-         m5J/7rXMH3pHbn8ZPVunvsxi/o69ArBrlyQWgvl/trAqwmHjkkUzmWJ9KTXElG9iKHEz
-         mD96tQCQLtUbZRRMTZ4+xhMuFj4pz6Dpdi/o/z3JhbDiftt2nd9riQTiKveMYq1jPTSc
-         jgQtf6/jKhfJPx4Dvu1M/y6st/nsczNpqaWWWJC3qYGciCATdq2N1xsQe+Br86x7A7ob
-         eW5zv44y1FAn4RNIR8eT/8Cdp1tdP7vKWq1xok1Q1lEgxSxLcRJYTX+awNJ2qCZ6Y6H7
-         biCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749036908; x=1749641708;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eC4zQahnbIG0zimMI3qqobsDEY2WS5TdQDTeDCRi8Wg=;
-        b=MTTMsdi/0hEISF1/HvQCS8j2UyVoLXJO/jT1x0Lr0orrNQDt9NAwb1rUPvOvH1Qjwo
-         zkfttrQoQEujCU+ip3XF+lECfDb7q7i5U3AKWNexcVd4xyy7e1xd03qajnl2IwXafQgy
-         bXA1UP0EZXUPRpG2AHhzsEYVDawsY5iFyvqq/LB18V9H4mBcH4WaUlR+UyQqzP7fgROW
-         7dMzlgmfCrvQaGD9+oFw7CsN9e4oBut+fAMbN4it+km4ExFFZkOaVTgwXxUGKf+ma4oV
-         +RcXM4E141DUsrmy+K7AJkZsffgEytrzln5SIjgiu3P+UdEnjHkvAChr/5izLMa6EHi0
-         RINw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4uVmfyIZ7I9MWw9we7mqGZUTbEDXPF1al8voOiD/a7un9yR5Rhqy950NfyriNx8gOl9wmu1jf74aNg/nVmowVTg==@vger.kernel.org, AJvYcCWq4VLa03IIpLujgkyOPVZxYwDC66qUcKhLWzU+leUgAtk3UfSZNpeIemwWrLqPm9n6CXyPYOYdZ6vv@vger.kernel.org, AJvYcCXGKqfWC7o9qVBsM44WS5cZCzCjJISS9pb4S1as2vH6cN5U4ZxzoJgF9nozxgfF8BUGmVQxNLIisENP9EB7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw67XfbOJhwMbtWlXsbssjOdAOHc9xXGmm3LUitC1t/773xTXzB
-	uHo3rYURUyTfmXdWrUaDmO3VjzuyAUVFUqLrnYqtFAzb6KyRu4UXRuN+xLMHQfZ+tvkDsRMs+be
-	BNHjyjmuR5TgHVwKDx6BRzxsAB1mYDFE=
-X-Gm-Gg: ASbGncu00tRfkOo2SYyA5bNoT1tRMAUn7joYpgSRLBbwXapO+RIOtbI/Jm60h8UJLlK
-	6MPrShH8kr9kd4z2EARjkL9jftDzQnEuaYigNezJj5LqGhbT3XoDe0Ebq8SM7YCpBYo1e2KNeUK
-	PAnLMXrUlWaONGeJcvpp5gTuMURRxmZA==
-X-Google-Smtp-Source: AGHT+IGwIGTmxieNXznAoBW8LEiVl/ryKLqB13xhYIunkErEyJpECY1o6OzL5PMiS9fUTOhNK6TrQ2RtqRozCxKlADg=
-X-Received: by 2002:a17:90b:390c:b0:311:a561:86f3 with SMTP id
- 98e67ed59e1d1-3130ccf65dcmr3679787a91.6.1749036908156; Wed, 04 Jun 2025
- 04:35:08 -0700 (PDT)
+	s=arc-20240116; t=1749037117; c=relaxed/simple;
+	bh=bkWYBN0z7L5PXWrZDWUNaAzGfO2efcEkm/tCxSovQGc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hv045OFPASdvNwYQ6U6l/bx+UEiM6laVVVAH6e2hvbA9XSV1Tc7D0KkDZe/YT13jVGgKqm8VwMEiZ9fpFZuvt50jvRmC4DPwIIA7hmxHnIHPwfh9gYytwD/IKa81Xp6c1YtTRxjg4ehfWasURxo7HMa20Asogp7Mtq2tflHvLkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 554BbvWC063964;
+	Wed, 4 Jun 2025 19:37:57 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bC59374gHz2NZDyW;
+	Wed,  4 Jun 2025 19:35:03 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Wed, 4 Jun 2025 19:37:55 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>, <baocong.liu@unisoc.com>
+Subject: [PATCH v2] f2fs: compress: fix UAF of f2fs_inode_info in f2fs_free_dic
+Date: Wed, 4 Jun 2025 19:37:39 +0800
+Message-ID: <1749037059-4243-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604-imx95-rproc-1-v1-0-a6e5f512731c@nxp.com> <20250604-imx95-rproc-1-v1-3-a6e5f512731c@nxp.com>
-In-Reply-To: <20250604-imx95-rproc-1-v1-3-a6e5f512731c@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 4 Jun 2025 14:37:04 +0300
-X-Gm-Features: AX0GCFuTyob7yQ_CjnB1akDwMMdIK7thx9Xx1AgvnXPVg4AWe6fnJ67XkMM0Idc
-Message-ID: <CAEnQRZAm_-zr6W4KffXCjzWqBZ2G8TYmMvgF_ABPWhTZNNZGbQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] remoteproc: imx_rproc: Add support for i.MX95
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Iuliana Prodan <iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 554BbvWC063964
 
-On Wed, Jun 4, 2025 at 5:37=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
-> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping
-> Add i.MX95 of_device_id entry
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+The decompress_io_ctx may be released asynchronously after
+I/O completion. If this file is deleted immediately after read,
+and the kworker of processing post_read_wq has not been executed yet
+due to high workloads, It is possible that the inode(f2fs_inode_info)
+is evicted and freed before it is used f2fs_free_dic.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+    The UAF case as below:
+    Thread A                                      Thread B
+    - f2fs_decompress_end_io
+     - f2fs_put_dic
+      - queue_work
+        add free_dic work to post_read_wq
+                                                   - do_unlink
+                                                    - iput
+                                                     - evict
+                                                      - call_rcu
+    This file is deleted after read.
+
+    Thread C                                 kworker to process post_read_wq
+    - rcu_do_batch
+     - f2fs_free_inode
+      - kmem_cache_free
+     inode is freed by rcu
+                                             - process_scheduled_works
+                                              - f2fs_late_free_dic
+                                               - f2fs_free_dic
+                                                - f2fs_release_decomp_mem
+                                      read (dic->inode)->i_compress_algorithm
+
+This patch use __iget before f2fs_free_dic and iput after free the dic.
+
+Cc: Daeho Jeong <daehojeong@google.com>
+Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
+---
+v2: use __iget/iput function
+---
+ fs/f2fs/compress.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index b3c1df9..3f0c18d 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
+ }
+ 
+ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+-		bool bypass_destroy_callback);
++		bool bypass_destroy_callback, bool late_free);
+ 
+ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+ {
+@@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+ 	return dic;
+ 
+ out_free:
+-	f2fs_free_dic(dic, true);
++	f2fs_free_dic(dic, true, false);
+ 	return ERR_PTR(ret);
+ }
+ 
+ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+-		bool bypass_destroy_callback)
++		bool bypass_destroy_callback, bool late_free)
+ {
+ 	int i;
+ 
+@@ -1775,6 +1775,8 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+ 	}
+ 
+ 	page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
++	if (late_free)
++		iput(dic->inode);
+ 	kmem_cache_free(dic_entry_slab, dic);
+ }
+ 
+@@ -1783,16 +1785,20 @@ static void f2fs_late_free_dic(struct work_struct *work)
+ 	struct decompress_io_ctx *dic =
+ 		container_of(work, struct decompress_io_ctx, free_work);
+ 
+-	f2fs_free_dic(dic, false);
++	f2fs_free_dic(dic, false, true);
+ }
+ 
+ static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
+ {
+ 	if (refcount_dec_and_test(&dic->refcnt)) {
+ 		if (in_task) {
+-			f2fs_free_dic(dic, false);
++			f2fs_free_dic(dic, false, false);
+ 		} else {
+ 			INIT_WORK(&dic->free_work, f2fs_late_free_dic);
++			/* to avoid inode is evicted simultaneously */
++			spin_lock(&dic->inode->i_lock);
++			__iget(dic->inode);
++			spin_unlock(&dic->inode->i_lock);
+ 			queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
+ 					&dic->free_work);
+ 		}
+-- 
+1.9.1
+
 
