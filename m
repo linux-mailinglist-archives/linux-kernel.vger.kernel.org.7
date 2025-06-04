@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-673131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D405ACDCC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5112ACDCAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A530417612B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55093A59E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B2928ECD0;
-	Wed,  4 Jun 2025 11:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0E020F063;
+	Wed,  4 Jun 2025 11:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neOuFRF4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byI6xZ56"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B4228ECC9;
-	Wed,  4 Jun 2025 11:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C77028EA6D;
+	Wed,  4 Jun 2025 11:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749037072; cv=none; b=nwEOtA3tV5A/R+dNGxIOwVyeH0FWC9fSWWNh1kRIsxKDjjLlyN1e1B517INJXktEuOeTR9vdcn4SXAEy6zU/zD6xTab5d8TyhJ+mxyPtZHkee+VY/6kpyC5xdBJ6SGcmHs4Nqrg2uXE+yb4uffklb17XfRx0W5MghqwTsjX3tUU=
+	t=1749036928; cv=none; b=HlbYhZHfdS2QFUCSsc8JWiu4FUj4svfM0J/FeGKs/zWmei3xIVo6/MrqzfyBIVoQ7vkOOgTNpnDDWl4WIZxSgl2JbtiMu0uokm+mfy6iiB6gsUq4nqYQGj4JbxFR8qiwd9oiBFZCMu9p/0Z15ByPx2S6vGXiqIEh/m/i+mF76LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749037072; c=relaxed/simple;
-	bh=ggwoki9c2BwP/sGTmMHE1VekW49QINGECUTib6v7NpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fnS+6vEyt9TQNtiBfSLPzOM3OLhnyjQvdaJU+c6QvFTrp7RxdZILtBbtohy6K3CFZ0jdk0iN19IvUAlh0jbrgDY0awoYiCMfT2HaiS0PH9siHo7MkoPzx+wnH8T5dJVv17xUr+lf1ZKOnhHnA7cIVSZEJrtW7eHcvIaaB+qeqig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neOuFRF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83471C4CEE7;
-	Wed,  4 Jun 2025 11:37:50 +0000 (UTC)
+	s=arc-20240116; t=1749036928; c=relaxed/simple;
+	bh=wXSTBOc9hfPvgHW6k38UqyP60yWHejz7Bu4vESAaYGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tw2KvT8JJ6dXxxrEU8fGv0UpagKTU2gHzDPzLJvqXk+F13YJKzkBRpV9QX03M8/btwlHuF4pOQ7g4cRI/PRP5XoJ3BK2iYa9DiY38GxGZU3q+mh1y2vjQS4vJUHGZfHigu9QajAhZe1BdhIsjxAIY1WFq2pQ2+LHDJH92WrYUAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byI6xZ56; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6247CC4CEE7;
+	Wed,  4 Jun 2025 11:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749037072;
-	bh=ggwoki9c2BwP/sGTmMHE1VekW49QINGECUTib6v7NpM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=neOuFRF48UZGjxlObU4xZCA5Yr9n25W6u25RkSNKEYoOIEw9JUA9ulaCVZe+5lghk
-	 vDC9CaB8Jo4dKC0cdMZ4v3ev3w95q265X23RMSJfMDwyFV5r3efIDpRFx8af1L0FZJ
-	 +FnWZ8T67ALqDl28OFOpLkOELjBELaeZ7Jj6OqUxC2SAR0XFQt6Y8vX0QBlBHYFOly
-	 GJNcz4QDfHos1z3mxPI1zhYRmiuAOXaoOjzMzcSzPx+T7dz2Jd6+81YF9HTOtR/4mB
-	 LWRhfpurNku4qigtpFSKKiD0aHf6h8MRm3/J21GbYevZiA1PHmL1PIT8UzHzpn9JKh
-	 L5YKCSq5yxmSQ==
-From: Philipp Stanner <phasta@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <phasta@kernel.org>
-Subject: [PATCH] ata: macio: Use non-hybrid PCI devres API
-Date: Wed,  4 Jun 2025 13:34:24 +0200
-Message-ID: <20250604113423.138595-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=k20201202; t=1749036927;
+	bh=wXSTBOc9hfPvgHW6k38UqyP60yWHejz7Bu4vESAaYGk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=byI6xZ56+XQ73QaQFzVyf3xS+xcl4WnFhC/Yo9S8+yMrqTI4Tje/ARheZJsjWSCo4
+	 eiAMaihUpAUlyLoo7oRPmdDK1iXVNdFUQ5hUh4Q8Vpcy1EP/viiRDFSudIa2c6ao8U
+	 y71BzzlcWn1e9GRCjG6jbztgcYfhv0Pf5vpDSkQHdzNarlQgEBFiusi23mznCKwtqE
+	 iEJRvZNtc56L6zyNxnPw/2/AfvOIY5mIOAdWyVg8H0wlHbbzf8jFb08t3oTz7ALID/
+	 QbdpU4UhBjYKGyUB2RGa71VkswRBtb7OZRyXzzvEWepJN5sl4PHAJUA0/xQ3Dngxjt
+	 /HNxqs4IaZx1A==
+Date: Wed, 4 Jun 2025 12:35:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: samuel.kayode@savoirfairelinux.com
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v4 3/6] regulator: pf1550: add support for regulator
+Message-ID: <eb1fb4e2-42aa-4795-bc6c-dbcf1fa04f11@sirena.org.uk>
+References: <20250603-pf1550-v4-0-bfdf51ee59cc@savoirfairelinux.com>
+ <20250603-pf1550-v4-3-bfdf51ee59cc@savoirfairelinux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7ow0kNdE51Zb6Qp/"
+Content-Disposition: inline
+In-Reply-To: <20250603-pf1550-v4-3-bfdf51ee59cc@savoirfairelinux.com>
+X-Cookie: Non-sequiturs make me eat lampshades.
 
-macio enables its PCI device with pcim_enable_device(). This,
-implicitly, switches the function pci_request_regions() into managed
-mode, where it becomes a devres function.
 
-The PCI subsystem wants to remove this hybrid nature from its
-interfaces. To do so, users of the aforementioned combination of
-functions must be ported to non-hybrid functions.
+--7ow0kNdE51Zb6Qp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Replace the call to sometimes-managed pci_request_regions() with one to
-the always-managed pcim_request_all_regions().
+On Tue, Jun 03, 2025 at 02:27:47PM -0400, Samuel Kayode via B4 Relay wrote:
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
-Hi,
-seems I forgot sending this patch out a while ago. Mea culpa.
+> +static int pf1550_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+> +{
+> +	int id = rdev_get_id(rdev);
+> +	unsigned int ramp_bits = 0;
+> +	int ret;
+> +
+> +	if (id > PF1550_VREFDDR)
+> +		return -EACCES;
+> +
+> +	if (ramp_delay > 0) {
+> +		ramp_delay = 6250 / ramp_delay;
+> +		ramp_bits = ramp_delay >> 1;
+> +	}
 
-PCI has currently chained the changes mentioned above queued up for
-Linus, so it's probably a good idea to get this into macio relatively
-soonish. Otherwise the driver would likely fail to reload in v6.16,
-because the device's PCI regions remain blocked.
+I'm not seeing validation of the maximum ramp_delay value here?
 
-Thx
-P.
----
- drivers/ata/pata_macio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	switch (irq_type) {
+> +	case PF1550_PMIC_IRQ_SW1_LS:
+> +		event = REGULATOR_EVENT_OVER_CURRENT;
+> +	case PF1550_PMIC_IRQ_SW1_HS:
+> +		event = REGULATOR_EVENT_OVER_CURRENT;
+> +	case PF1550_PMIC_IRQ_LDO1_FAULT:
+> +		event = REGULATOR_EVENT_OVER_CURRENT;
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index fbf5f07ea357..f7a933eefe05 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -1298,7 +1298,7 @@ static int pata_macio_pci_attach(struct pci_dev *pdev,
- 	priv->dev = &pdev->dev;
- 
- 	/* Get MMIO regions */
--	if (pci_request_regions(pdev, "pata-macio")) {
-+	if (pcim_request_all_regions(pdev, "pata-macio")) {
- 		dev_err(&pdev->dev,
- 			"Cannot obtain PCI resources\n");
- 		return -EBUSY;
--- 
-2.48.1
+You appear to be flagging all these events as over current events which
+doesn't seem entirely plausible.
 
+--7ow0kNdE51Zb6Qp/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhAL3gACgkQJNaLcl1U
+h9BP0gf7BQBYj/vVLKsA5wseOvzZSYmWZEKxie9t4vNLf1wwUtWrL8QpfAW6AMuA
+zTuTdnQpclS9lZMHtfcdUfLpgEma4S59VuiMDIt7EcjE16R7NvjFppzaRG+rSLHG
+EsaPxW4w2VV7m+oLjGKTMJYxFpBbcldcwNgXKlLsSPnC/tY2x7x1jymSJYuZ93UX
+Z13o6DQjL+9Ku3brZKjPubVwnAnUU8/hY5W9gbNj+Q1yZHReSwNU2Rbre4qOxCRJ
+YsRk1x4xVMcD8E9xDK3iNpk+1Uf3aC2heiSRy2k1tpNCR9AKYqH+pJ3FN61Xc/QP
+cIetZ86IqOH4t8q/Y6lLqNCxEE526A==
+=7Ooj
+-----END PGP SIGNATURE-----
+
+--7ow0kNdE51Zb6Qp/--
 
