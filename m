@@ -1,102 +1,79 @@
-Return-Path: <linux-kernel+bounces-673364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850F2ACE067
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:36:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05B7ACE085
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18CC216AFC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C697188FFC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46725290DA7;
-	Wed,  4 Jun 2025 14:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B472918EB;
+	Wed,  4 Jun 2025 14:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H23h20oS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="tLXp9jny"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9805A2900B7;
-	Wed,  4 Jun 2025 14:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C76291158;
+	Wed,  4 Jun 2025 14:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047752; cv=none; b=DK1UZ/VyTALGS248AqqqL1JRrQOPm/dR8A0Xyw4jHSRnFmrnpjxX0mFlSeYXEgPNZRZac4REuGMk6/bugzJ1sURaDeNezdCtbmVqTbGb1CuNodvA213CecDsmts716CdtnPheS7AUETrimi9vtpBEWRfFRNIr2XkXXin+UP73PQ=
+	t=1749047840; cv=none; b=BmbhIWZbR0yrK20ilyqLnit1LHM2t+/yRWKqSo8xIxLhurODveAzd70aVbmBPIkES0mkYs5PwU55AKlnp08apWTra/k7TZb+/4zOJDGzxlX5dv9BkWKX1dWeikeI/nRorli0bCyPPqJUYZ/HtxHklyuEDbYFrre9epbaI1oOgKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047752; c=relaxed/simple;
-	bh=5t5I2NI/JMw2bEnJTqzhPKY9bh0Wo+3tCVbzxMva+CQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=aTq61p5kqUYb5+DS65EdAT0MQ9ytztl3IDZ/TVUwaFp8KCNoKudI4EnbO0bMmGU3oQDxgxSiZD6Js9fZZIcI9SiFjUnPhDbNUHVpBf3QDV6Ec/UDdk7AWgCC14Rockaux1Mu7/hvXGIxQAAPEd1Q+d6XlKMKI9c2Q2hcJ4e43Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H23h20oS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA53C4CEE4;
-	Wed,  4 Jun 2025 14:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749047752;
-	bh=5t5I2NI/JMw2bEnJTqzhPKY9bh0Wo+3tCVbzxMva+CQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=H23h20oSkr5wnFXM8TFWBPGBAlo37cL9WeSh/3XpfRiqO85sbEluXHlyKDm6X+t4c
-	 QxYRJ3LVtLul3FRNiRQzBU33RJVk/E2DSICZKHACGdrVOiF0pwy7YNX/utROFlN0xO
-	 hkh/cOB0+K4gsRhr9bQV1KcPc3R+vMucXPoCviDd9Rz11hGxrmIj3xgQMPN3Gq0XXD
-	 ydSmYx9TTcSovNlXaONNOmh7clCqKil33EG5EoalAZWs4zpkpwGdPjU8Em9EZe46Nn
-	 ywAnKMrukcXgt2qVw3z+13ID6t4yYshD2Wy7cImNWDX/CVuTRNOUQPq88FigswQ5op
-	 ybAzCNkTM9Ehg==
-Date: Wed, 04 Jun 2025 09:35:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1749047840; c=relaxed/simple;
+	bh=U9UcFZGo4t5LQCr1cPoXo1VfTqtAYWounRfmjXPN8nQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I+XGxqBUB5whYQERf3zCOiqadB+o6DIKYoUtqbTxwVtVxXYYRDLW3mEK8o6dUBqKL/zJvdp6gkkyHCKjR0uYS6e5DiepHuVFca/XwlbDJpjxyQ/OijmZ2RCX47aNgiX0fjc/PLYj6TiIb9sCSPuaQFmjsNBG+Ydjl2dXVugMp40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=tLXp9jny; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8D4BC41AA1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1749047837; bh=SukbAVqJ7Y6ZCjVklDhnIprrOusgKb3L2fIJadSLOfc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tLXp9jnyeGKNf9MtT9XG0Y5DuI98qyvtHP9J6J5Z5OWK/nCNg4HoURBjx4ADB9gx8
+	 ktsY9JUzRzB1qSKLbS2Cb6ONv4MFteHikBYGS7AFp947O1nc8VcJ+OXpujoPfTB3UZ
+	 YI1RINsjIyazvOQYapExokKJDo8lSzWQOthmFgMIb6jD2mUD0603cu9olcPFCxs1Nw
+	 K7Yh3LnxMyxRTgVLTKe80aPrssjKESLKHsDMkPrmq8+74VCcY09VtaLRJ7pqDNdJEb
+	 i7uYvAgZNa0MJGr6jK0HfxJqzVB1dcy4MtiT+bCLkN1e8l8shLrigpLDyeWYFrcjVV
+	 3WZr2lPE40DaQ==
+Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
+	by ms.lwn.net (Postfix) with ESMTPA id 8D4BC41AA1;
+	Wed,  4 Jun 2025 14:37:17 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v2 0/3] docs: some automarkup improvements
+Date: Wed,  4 Jun 2025 08:36:42 -0600
+Message-ID: <20250604143645.78367-1-corbet@lwn.net>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org, 
- jassisinghbrar@gmail.com, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, joel@jms.id.au, linux-kernel@vger.kernel.org, 
- andrew@codeconstruct.com.au
-To: Jammy Huang <jammy_huang@aspeedtech.com>
-In-Reply-To: <20250604125558.1614523-2-jammy_huang@aspeedtech.com>
-References: <20250604125558.1614523-1-jammy_huang@aspeedtech.com>
- <20250604125558.1614523-2-jammy_huang@aspeedtech.com>
-Message-Id: <174904774987.4021667.10220150728052993146.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: mailbox: Add ASPEED AST2700 series
- SoC
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+A small set of automarkup changes to improve the visual consistency
+of the rendered HTML documents.
 
-On Wed, 04 Jun 2025 20:55:57 +0800, Jammy Huang wrote:
-> Introduce the mailbox module for AST27XX series SoC, which is responsible
-> for interchanging messages between asymmetric processors.
-> 
-> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
-> ---
->  .../mailbox/aspeed,ast2700-mailbox.yaml       | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/aspeed,ast2700-mailbox.yaml
-> 
+Jonathan Corbet (3):
+  docs: automarkup: Remove some Sphinx 2 holdovers
+  docs: automarkup: Mark up undocumented entities too
+  docs: CSS: make cross-reference links more evident
 
-My bot found errors running 'make dt_binding_check' on your patch:
+ Documentation/sphinx-static/custom.css |  7 +++++++
+ Documentation/sphinx/automarkup.py     | 27 +++++++++-----------------
+ 2 files changed, 16 insertions(+), 18 deletions(-)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/aspeed,ast2700-mailbox.example.dtb: mailbox@12c1c200 (aspeed,ast2700-mailbox): reg: [[0, 314688000], [0, 512]] is too long
-	from schema $id: http://devicetree.org/schemas/mailbox/aspeed,ast2700-mailbox.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250604125558.1614523-2-jammy_huang@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.49.0
 
 
