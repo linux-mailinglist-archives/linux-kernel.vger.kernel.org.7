@@ -1,197 +1,251 @@
-Return-Path: <linux-kernel+bounces-672810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D525BACD7C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:17:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6DAACD7D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1381897E8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 06:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F201897737
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 06:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ECD230BF6;
-	Wed,  4 Jun 2025 06:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56232620FA;
+	Wed,  4 Jun 2025 06:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YZh5ats5"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pGRO57He"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4AA12B73;
-	Wed,  4 Jun 2025 06:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749017842; cv=fail; b=XoUyO7da7J8A5rjE2We3eOEbaLNBi9FiXfzIWW1oZRCLKg3Lj3CpXfhY/f/yxl8ZKqEdMpunPHULqeNBaQBLfWCNYDUeuVQlELkc5IJMAt25PCVHbnDpFtnvEgz8ZCPT7dlZti7mAKZ4Xv4a+6/+R5er3z3psZ2KBUsy1xwzDAI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749017842; c=relaxed/simple;
-	bh=2RajOS6/1IFZYGJHHhhfhrKceW6Dly6GkcPlIIpBCRw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RA1LBVAu+bkGjSW50+gtxdZmnlU7xaG5bA8MIsGGVPR8fl3qcDvW5sxsWjGWCq5L4sDh3kgsQ0C52UwfsiTTkg/h6gAv3lX1Fjdtmx0W9YDNI6Z2y7mpQ8m3XQMDNOEmL2h3jz+Sp54gXpECDIUD1j+eMf81D/I5e2USxIXGpUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YZh5ats5; arc=fail smtp.client-ip=40.107.220.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nluPVFmI5rBjJr3yCLcOZvf0GDLLN02CcubYAe8/1LUajQ85njGZB5mN0vDyIT26Oj75SGXoqPZmt5pw7QB9pLvWjtOKGv04O94+G6ePD+9QFE/+DrtPlOJ66VZNPMeuKUaijtAfFBMXSv3/AC2ITS6AdwKMEWyWr8eU2gQc7DHM31umCPYbjyrSAKO4XVB7F5F0zvjlEwZI+Ddqea0ukLKQNJtBrMGY7SrhO0WqTCqJOPgBL1y/XegwsAfvdDGz0CIkpOSIQZb+3ngspN13580VQ911nOZ/sgnRPidRGYlvuC4XrwBAqp9wD/WAKtP8BMiK9sWgFC6U5K/BaCHQyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2RajOS6/1IFZYGJHHhhfhrKceW6Dly6GkcPlIIpBCRw=;
- b=aYJI63TqLWumRL99/6ui0tkr9IxgNsLt8r32QN99Td5ZFnKWxYpSTMN41SMWxpj21KeSVZQKdAs1BQJqm+Lnri6ZfLIF/G0WLv/TVviBfmk0j9T0PiOkWmH5COvrzbZH5gye1++if3VrgXR8KhtG4/5Is/JVzWI4QCS77G7h1g6WSTggMRSz6WWunoAmSCOHWungt1uwq+T8NO+vy3XHzf8F2kOyXIuz3x8XbBwxh8h4thPR/NhvXveD3ro0EvGmWRkXsIy1M5Sg8dvYU/aCSXi5fr1ytgkdsXX7WsKzgsfI0p3Vb2QMK84rRsl63q/z8Hsi0uHuVWzaRzJu42S6xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2RajOS6/1IFZYGJHHhhfhrKceW6Dly6GkcPlIIpBCRw=;
- b=YZh5ats5jlGqe9Skvl+w8BDmqHEUeWRUBagAwXEizsISScvj2eJCoS+pl9I8Vh63KN/NxEOBhTXIaXIi6LeOu/27xjtnen9qwO74FT+62VsCmeCTXS6oyqJe2u7Jsi7qiC/wPzrCCgGjdbzal0S4FYHQ9rd5V8J255+0HWf0vRsEVGKC1+YpETaOYx+5VbG3g2c4Z4TS2IouCmhyVw6Z9TPx8R3Km3sueO9tM4aNMV/jz2D8NjptIxX/9PH6LWaqAZJ4lBWSN3O0dZMSbqgzs/kY4QIPsKhjxIkA6Axp3iBTNHM8Je1GqSH4zwrHKK9Fz9Eqbz6ZkYMeT1mZI9fl+Q==
-Received: from PH7PR11MB6451.namprd11.prod.outlook.com (2603:10b6:510:1f4::16)
- by DM4PR11MB6144.namprd11.prod.outlook.com (2603:10b6:8:af::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Wed, 4 Jun
- 2025 06:17:16 +0000
-Received: from PH7PR11MB6451.namprd11.prod.outlook.com
- ([fe80::80a8:f388:d92e:41f8]) by PH7PR11MB6451.namprd11.prod.outlook.com
- ([fe80::80a8:f388:d92e:41f8%5]) with mapi id 15.20.8769.033; Wed, 4 Jun 2025
- 06:17:16 +0000
-From: <Dharma.B@microchip.com>
-To: <dlechner@baylibre.com>, <kamel.bouhara@bootlin.com>, <wbg@kernel.org>,
-	<Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] TCB: Add DMA support to read the capture register AB
-Thread-Topic: [PATCH 0/2] TCB: Add DMA support to read the capture register AB
-Thread-Index: AQHbz5eoRxwKaWCNoU2VSHjGz2Ho37PpvPsAgAjUj4A=
-Date: Wed, 4 Jun 2025 06:17:16 +0000
-Message-ID: <7e9d228c-62e0-4b60-ad65-b7e23f6ced8f@microchip.com>
-References: <20250528-mchp-tcb-dma-v1-0-083a41fb7b51@microchip.com>
- <b9b9aea9-e02d-4d5f-9f07-ef1c54e46b89@baylibre.com>
-In-Reply-To: <b9b9aea9-e02d-4d5f-9f07-ef1c54e46b89@baylibre.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB6451:EE_|DM4PR11MB6144:EE_
-x-ms-office365-filtering-correlation-id: 9abfed56-575d-4f63-a6fc-08dda32f7458
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RGZzRSs5UVFDcTRidVBnY3dKVXY0L3krYVJNMjBIdmZmeml2UkF5K2Y0clJz?=
- =?utf-8?B?ZFRQZGUrSVc0bVNPK0kyQnAxQmVodit5S1ZRTm55OG1sd0d6dmxkSkkrR1hP?=
- =?utf-8?B?a29BTmVmcEIrOEs5K1phcHd6a1paWUhrM1U2T2FBaGhFaThBdmZnZXh1Q1ox?=
- =?utf-8?B?Q2xRSnBFUWp3ZzBMWjBxWkh3eHBxcGd0M0NHczE0dVhxMnh6ckdDUU9YUEs3?=
- =?utf-8?B?R1FwZnhNNzZkOWZGTkFiMDB3cU9KMlJaenJFSDBScS94S0U4Y0ZkTjhDby9N?=
- =?utf-8?B?SHRqNWo3NURDd1BFMGlkVkJZMkRSZUc3VTNGd1dMMHZLeFNTc2lmUTNYc0dQ?=
- =?utf-8?B?NFJVZzZvT3ZXMTh6Y3ZIbmU4OGZIRWs4azB3bFRpZkdJY2xpd0YvKzBBYWIr?=
- =?utf-8?B?anVIQlFIMTFyeGoyNUtmQS9XYTYvN2VjYmdMKzEvcUFqRHZoTUtUekNZOHBw?=
- =?utf-8?B?QW9TTlRMQm5HWWdHaGwzV2s5MUx6enJ3Q0xlL1NtODBraVRvdUtrWGNDbkhQ?=
- =?utf-8?B?Sm1aRDBUTlpBTUNRQUNZSWNndnJyTVF1MndCSWZvVy9xYTcxelRtMXV3NVQr?=
- =?utf-8?B?V0FZdllWYWJ1aHd5enFZZElmK3dtY29abzhRRVgwVTgvcVBWQUdaaDVEVkhz?=
- =?utf-8?B?dTcvRnF0WXJDUDNPTS8rQkR4ajB1OXU0ZTJNRmVmcnhISXZKektPb2tyQ1Fy?=
- =?utf-8?B?TVhZNzB3OHZjNzdzVmt3ckZGdStadS9rN2FzUU8yMDN2dDBLNmZVL1BQblNI?=
- =?utf-8?B?ZFpuN3BnREluM041SjBCbmpmTFhHOXAzQ2xUd3llZGZCUXFSWWZQU0lCekdQ?=
- =?utf-8?B?VTBzcGxoMkpaaDJLZHpLNFhMcXZqcWhZV245aUNYSGt2M09sRzhWZDlXUEp6?=
- =?utf-8?B?TGdIVEhLdVlydTd2eXNQQzNPU0FaQ1NidjF6dUVuNnlOd0MwTFh4eHg0d20w?=
- =?utf-8?B?S1g5YTByd1FVS0g2WHg4Z0N5d3VqYmI1S3NBdngzTmFCT2FTVERZNTB2bVlQ?=
- =?utf-8?B?WUtMTGppUkVjRlNnT2VWYk5odVF0MXRTNTJWZFB1TXNiVVFWa3FqSTcvT1pF?=
- =?utf-8?B?dmNhaVIyRllkY0ZjMkkvWXR5bGRVWnZFczc1RklWeWw3WlJEM1NJdW0wcGFO?=
- =?utf-8?B?WVA1MFdJMGVrNlM1cnEvWGtFdTFCeHVlNUMvdFRUNGRsNk1lVnB0OENlMEZs?=
- =?utf-8?B?ZklVSi9NWldDbWNvNC96S0w0TUVyL3lJMVpCT1F6b1dTRk9BZ0V4cE9WR3FH?=
- =?utf-8?B?K2c1Mkw5OGs5S2FaNjB6YTVmS2ErNVJIVTNQc1V4ZVk3elBRd2djVVBWb0ds?=
- =?utf-8?B?dWJGTGJFNlQ0ZFVoVmhqenp0aVNZcmM3Y3M0a2MrQ2ZycDdmSWVqNmRPc1JI?=
- =?utf-8?B?M2lGUlR2MDAzQjZlcUJBbjlkZ2dRbTdBQjFZaWo1cmEwdnczYTBQTGVpR0xT?=
- =?utf-8?B?WVZob2hranVIbWUwS0tkTGM1M1Y3TERPRmpQVHpUeFVOak9OaE5EclFra3pC?=
- =?utf-8?B?enlpK1Z2Y2lkR29WNmE1Q3NONHRwTkhzajJ4RUlPRE1FTmRGa3dndGhoK3dl?=
- =?utf-8?B?amd4a1p5SmUyWDBta2RwQTNDWHpDaWwzVU0rTGRodFRPSjlFOS9iMkU1NzdP?=
- =?utf-8?B?WWMzbnRMWU56cDg3YlZLN3dXUGdzVHZQTlQ3RVl6QWFBenNMbDNJbXd0M0c2?=
- =?utf-8?B?RS9zbGw3OHptVE9NRlFEVkVkSlk4aU9IbkV6Z1orQ2JrUGExU1l2OVQvbnM2?=
- =?utf-8?B?cExTYjdKRm9MMGtIVldnUVNVcFZ5dktrMGhkMkdZL1ozYlJCMGw1NklCNldl?=
- =?utf-8?B?SnU2TlI5dWNVUWR5WGl6dnFCRjMxMkhldFZLQkFIK2pySmhkdFRVWnhJNVhv?=
- =?utf-8?B?NTYvSW9JSFlSV0dXTDN0M0FLUEJUV2R6MnNWMkxiZVgyMGJobHRvRGlnbGNY?=
- =?utf-8?B?eEhRZS9yWkxrbTAwUnF1VFpHM3BGR0pSeTd2QzBVZGV5RGZncFBxQmZXYUtp?=
- =?utf-8?Q?9MpgDTKuY6qi4rLCAnw3kZPKJjRKvU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6451.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UG9sWXEyTlNaY1R6NjZoVHp0cFJtZ2dNSUhBRURRS2ZtWXJOdStPQktqVzgr?=
- =?utf-8?B?cjNoTHV2U0NZVjhob2lqL04xbTR0cWZNOVNRS2ZxNzVHWVp1USt1TThpMjB0?=
- =?utf-8?B?d0JDR1M5RmNtK2NiMkljUkVnSTdjNEhnMjZETkRLVTAxQm9pWCtwbk94TE5K?=
- =?utf-8?B?WGZPVWs4VWtLSmtDclg5MndyZDR4bWVQa1h4eFpRQnBQaHMwZm1BQXJuaXZ2?=
- =?utf-8?B?TXo0RVo0VEd0a2JWVE9sYmg4ZUpYb2dXdldFQmdXL0dvczVkeTZTdE5kdUMw?=
- =?utf-8?B?bnRDSWx1cHZPMkg4VkNVRTBzM1dISWNBOHQ4c2tSZVVKNjdhbThCck5BU1JR?=
- =?utf-8?B?QXRlYmQ0WVJXWk5wczdoSDhSNHZwS09tTi9zWUdkeVlHMElFa2FIZjVjSnNl?=
- =?utf-8?B?d3JmTnAwYnlJY0lQdmV6eG5DNXJwVnlJbytUOGRBWE44WFJkcUJjRWE0a3Z0?=
- =?utf-8?B?T3pqQi95UDlxdG1ja2IwejVZaXlTQU9OVEQ5UlQxOEVPeUc3NmQ2cVAzS3VU?=
- =?utf-8?B?bGFjUkNvMWlEOGk5ZXZqeHVTOENpdllXY2Z5Z2dLaGYvMi81eFRMZkczZnJz?=
- =?utf-8?B?TzhneWdLUy9veU9Cd0N4R0o2YzRjeFpqWEV0aU5rU0RraWpvWWFHcnE1UllG?=
- =?utf-8?B?Tkd4eHl1Z1FOSm9vSEhHeGRVWEdVYnM3bGRSbUkrZnhUSHJHblkzclc4d2ZK?=
- =?utf-8?B?TFFLQlBCS2dBTWE2R01VZ0t3K1c2WXc1L1ZJWlhabzZ2VG9oQlUvZHd6dG0y?=
- =?utf-8?B?MEZjS0xRUE50bGJuRmQ3K2w4dnJhVTVJVlUwZURMRTlaclVVZUlKNmRLV0JL?=
- =?utf-8?B?eGtiT3grZngzVmdxenZ2UERtTS9JOE10U3B1TkhzQnhpSzU3Y0FKUHpHQWlR?=
- =?utf-8?B?QVFYaTZHZFdkSGJJMFZvT3FlenFBVUUydkJPM1lXdHZ5andsL3pEVGlNNWZB?=
- =?utf-8?B?c3pRZHVKOHZ2aFhDT0hBejR5NlZQOWtVcDhnSGtGOWdNbzVoTnlqaHhTUTRH?=
- =?utf-8?B?a0JvVG9uNTFoaTFKSFFNV1FKRS9ack1yQWk2T28ybGx1Mk9VS0JZVEFUTlNt?=
- =?utf-8?B?ZVFIbHlSTDJ2UmhwMjczaGZ2T2tSampkY1ZDODVYYjgwdVY1azJQVlFrb01C?=
- =?utf-8?B?RWE4SVIweUtBOThHb2Vlb2hKZjFlUUZHR3NuNDBPT0pkNjB5a3ZMZGZKQ3Zz?=
- =?utf-8?B?SUZuMk02L3U5b09MMUE5WTE1SW0vMGxmMWV1NnlrQk4zc0VjZmpHTm9zd20w?=
- =?utf-8?B?UC9kSG44RlU4SER2STFWa0VpRTl0dlVyUzh6Mm9DUFA2eHFCQ25ZWXJuc2p1?=
- =?utf-8?B?OWtCS2d2U00raE1FRzFFc3VYT1FXbVo3U2M2bVd0V1AvSmlwcjFEU3VXRGUx?=
- =?utf-8?B?NGVJT0dJR3U4R1BZNU9KSWRmZFM4S2s1WjdRTDYwU2hra213WG1ZOHBTM1hM?=
- =?utf-8?B?VTdWd0UyamE1S21MdjFNRnBTZm5sbWNralNvcVF6MlpPYXhJVnlSY3JNTktr?=
- =?utf-8?B?WFg3d2o5cXVob3ZGWiswQnFYd2dRTjJvMDR4RmtZTGVQUDU2YUtQa0pGdmh0?=
- =?utf-8?B?cDZST2NHaGhVOWx6MStXN2U1QlpuMGhmd0g0YkZIQlZ5UkpuSElhKys5dHZT?=
- =?utf-8?B?cDU3QzZEY0RqSHlOcGdWSHVHZnNrUTlpZWUxOVRJaDc5M2V6SU9nc1Bydmx0?=
- =?utf-8?B?YkR3UWZKSWR4WWJvOUJidnFSVkFaeGw0S0dSYnN4K1RGY1pEU2R4eGczd0ZT?=
- =?utf-8?B?ZHA1RXY0WTFUOXQyblRGcFprUXhLUE1jMm9ka2FlOWlBcGp1VG5oYkhQTk50?=
- =?utf-8?B?OWhwdUltMWl3VDg1V2tnN1RMTTZiby9xbHhYVFhTTzVQaHN5TS9id00xeng4?=
- =?utf-8?B?Q2JINHhnbWsvUGFoSHVLaFJUb3Z5MHE2bnBZaUJlakNNWjhKZVBhM2htZElj?=
- =?utf-8?B?eFNKNzk1K3hLczFiRk9KbUYzc2NXRmJHMkdnUWRUTXFQVzJEZzVIcmhhZFNB?=
- =?utf-8?B?UFFhbk5ad21TU3pOL1dWNVhRbG95NlNsczVQaVlaWmlMNm1IU1h3MERtTFIr?=
- =?utf-8?B?Mk03SU9DQzhydjFNclcxOVk1YnRyYlhnQ290bzNhYXprUEJMbEY4UlpaeG1q?=
- =?utf-8?Q?dFVkOfmfaC9mXMR0A09XIqwJr?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4356CBD173005B4EA05B80430F9370D7@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3B8224CC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 06:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749018454; cv=none; b=AmauHJBgFsyuOyb/cYfPneMq8d15OaRIIrj6gEcfu7fms2DN+FxeoOLXyyMWFPDFJ2Zs/S8dKYh8dBOr8ygPhfsSZaWMjvaYnjIuzMl5itCbQnoBmdPfEnBqwdMxx/CD3ns2P1rkd5Ii93EJlzUO2lBjFXbhpvvEi5BRAjYXtnY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749018454; c=relaxed/simple;
+	bh=S+Vr06DNm7YB89ZupCnoEi5l0tnbrL6S5BIihirZLd8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cj7oB4jIZJZvTJl/c6K0sXM1HdeWWjk54C8ftR+J826IRYG03wAMjI2Ae2j41doxJYJML0KLJK7u2uYpM0aHSu5MwbXABNAldklE2t5TSQakBhE3OJklZdzysD+yxfnXIMkfRBZMu0IjhRWDBtGnAnEKA1Y26VhtAyjFFZaenig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pGRO57He; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553KkbFW027442
+	for <linux-kernel@vger.kernel.org>; Wed, 4 Jun 2025 06:27:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=i8Jdnl0unu1Ugmz+Sny018
+	vDTajWqp19uec6eBvnv5o=; b=pGRO57HemMVI9jKKIFfzdJxIBU7eyj+kYIZX1R
+	gp1IRNLfkjlAymdr6hwEqUM+UnR00MnqNBES0XEDDxnQduHClljdKhRXIHHEs8VB
+	ZIdE2mJOpcUVnZpv4BE7apkYZPVGKUd9jh6pZCYTvlj+FFeDBZgPQ0QrYz5BM0Ak
+	4I2QUUC68//oG/ZEBoWo1/G7pyLIa86OdnDCjVryQSPXcpOQAjI90Vre95M603tG
+	OSjBttUZ2soFeriZq9+DCzXmka+FLeOVGFZvj1lJxjoh/dNpwENbMtRD40mKzRSM
+	AFAMrAbBdRCPZNVXCPy80EAn1lVadP1uLzzNdwxjg5sFOQbA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8t52s5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 06:27:31 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-af59547f55bso3854916a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 23:27:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749018450; x=1749623250;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i8Jdnl0unu1Ugmz+Sny018vDTajWqp19uec6eBvnv5o=;
+        b=DKvJHcKO/SOOscUgP/Sgog5f/DSCjo/wq0pgct07NmYVsIYMl7vQpM/70mH5r8B1aZ
+         /sVgQ8LXCAsi9lVUIBz+IPZ1KhIaSDIJATL/Lal31Ej9KM6i7mPJ6Y5Rwp0mBQCg2fSQ
+         87rn5F82lBZncUJpTtshJGKdBRpw+rrVX/YWgNVZEq+yzQvJNl5QGVNYePwKUNtCiBQq
+         9O6AZjlbfifZ2VBW1xXhML1lETAjOlBv+t5tIBRCLfsP+/DYliOn8f/Lp2u58gO0ONio
+         66V2uzZwojbrhmSUo1oQ9O5+ucRaFCAh87dIhbMGu0vXGI5/YoYKYEpemy7XOeEhcKuj
+         AJVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLPn7bz4qfVSEnmOHokgehq6iLiam3J48lRyxxJ1qHFqQGn1K8LOm8RHl41xLEAbfi0PjAPhAgYq7Is48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoHpHX+67GIrXN1zp4b7gTA3GumL0afQ3iqnbCXsVv84QqG6WK
+	cFx9VN0pUhpaHS3FUhLDRw30aqtLPbARGmYjVO//Joe40oxNfVUTnktkUZmOJzEBTciq+AVENjG
+	Nhinel4Y7yUg5FTPFMriIyv0CuA4s1l0e7oTpqQYsPeJdMYiJ5lpmtW46pGgeI1aSs1I=
+X-Gm-Gg: ASbGncvdoD6YwOvjnd9U9f1kyMO3fJU621Je3RbpP1bd7RCBCbwVf/T5A6qhqJXebKt
+	Y4uRJzOc19/3CjuSCfPvIEb1ZwAYl4GSQ1Td0HYQVEbE5YIBIFkS0NJEmX909L5hoq1s3fBpSVh
+	RzhXe2Zhvof/FZcLbUkpVS0e0AEsTiFBJvfAJFcZQeR6RgMExg2Xh/OAuvkb5GhLd89blIIAfPd
+	u0Tq9TxyhJisE5jgXIvkXuTgu9XyDzPFtIn4+v2gKoFom3S0HleGXjAA+EnoaptHyCS4v++2Ifr
+	IA4iBQDSp03HlNDtesdKDKtguBE8rRlwUEFDzaYrTw==
+X-Received: by 2002:a05:6a21:a8c:b0:1f5:7eb5:72dc with SMTP id adf61e73a8af0-21d22a6cb78mr2708323637.3.1749018450406;
+        Tue, 03 Jun 2025 23:27:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtTUwNbIkJQJC3mzKumJbHlzqEtns/3tOR6yrzopn28l0jLbp3v8hr1YQAE1z8rStZV2svvQ==
+X-Received: by 2002:a05:6a21:a8c:b0:1f5:7eb5:72dc with SMTP id adf61e73a8af0-21d22a6cb78mr2708294637.3.1749018450037;
+        Tue, 03 Jun 2025 23:27:30 -0700 (PDT)
+Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afff70b5sm10419995b3a.160.2025.06.03.23.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 23:27:29 -0700 (PDT)
+From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Date: Wed, 04 Jun 2025 11:57:22 +0530
+Subject: [PATCH] arm64: dts: qcom: sm8550: Correct the max voltage for
+ vreg_l6n_3p3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6451.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9abfed56-575d-4f63-a6fc-08dda32f7458
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2025 06:17:16.6925
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SYIeiD+WDaB24VbbtjiOWKn5DoeJw+8tPDtMH7DHpWylDvF+VDC2iKqGwf32EHoqbTR41gGjSNKD7CgHSW45iw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6144
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250604-sm8550-correct-vreg_l6n_3p3-voltage-v1-1-18cd01a69ac6@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAEnnP2gC/x2NQQqDMBAAvyJ77sI2aUT7lSIS42oXbCIbCQXx7
+ w09zmFmTsiswhmezQnKRbKkWOF+ayC8fVwZZa4MhoyjlizmT+ccYUiqHA4syuu4tXG0u8WStsN
+ XJUze9N0UyPQPqKVdeZHv//IarusHYl9LuXUAAAA=
+X-Change-ID: 20250603-sm8550-correct-vreg_l6n_3p3-voltage-cba298bc0294
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, david.collins@oss.qualcomm.com,
+        jishnu.prakash@oss.qualcomm.com,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749018446; l=4308;
+ i=kamal.wadhwa@oss.qualcomm.com; s=20241018; h=from:subject:message-id;
+ bh=S+Vr06DNm7YB89ZupCnoEi5l0tnbrL6S5BIihirZLd8=;
+ b=JJpUElkUFdjfrIHZKxSvhqXVXiczcVEXM+2ZUYp5bPJ6TDP9u7M6y81kHuSsoA3y9ukCy6i5S
+ aQU+foMz4dDDwJNmp2mKlMwSUISqhbq7Z51r4QUPWkar8gMG80kXsmZ
+X-Developer-Key: i=kamal.wadhwa@oss.qualcomm.com; a=ed25519;
+ pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
+X-Authority-Analysis: v=2.4 cv=eJQTjGp1 c=1 sm=1 tr=0 ts=683fe753 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=G29jiHXVfx2XXIaXbRkA:9
+ a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: fnvJhce7wKcAI8ysUnYFfxtwYvHSn1Z3
+X-Proofpoint-GUID: fnvJhce7wKcAI8ysUnYFfxtwYvHSn1Z3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA1MyBTYWx0ZWRfX5svdEwDjTZ17
+ xURva3/aSXEZvxhmOSzGNLep5QMb7wihDKHBsWwCMxROWNVHIePovDM0yLBXpaQdSCGuS0sEW0k
+ qVYEmglWs31JBp1n6Q//ebx3vGoq1h6OZm/0hmuEZl5FsnXraFLJhh0UnruNRY0g6RxHGGXGnjl
+ iQlyIZdSLpkCUMWg3YTIhtFTBy95Fbf9//2NeBkZQCYoOPoW+7lgFp/vRieL03lXWujPMI+6hMN
+ lCMyao4xkLU/zJtahyzarx8ewTa4cp96dyo7+B4aWQ3ur8CFCVq2/UClf/KRJFL7iYpH+tlkLf3
+ uluwzzaOVDkH95dsZ8OlJFB2pvMqDVrduoIEaicobFtsmR3wxLhGbnH4qbhradqmHA4an8I3Hb/
+ 3lcpkyOXAbPBLGwJqUItwAnlKw7KgQ8YYjVwCQlPqTUmhjegL6fXe+20evnXs2DQSkAF28EB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_01,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506040053
 
-T24gMjkvMDUvMjUgODo1NiBwbSwgRGF2aWQgTGVjaG5lciB3cm90ZToNCj4gRVhURVJOQUwgRU1B
-SUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25v
-dyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBQbGVhc2UgaW5jbHVkZSB0aGUgY291bnRlcjog
-cHJlZml4IGluIHRoZSBzdWJqZWN0IG9mIHRoZSBjb3ZlciBsZXR0ZXINCj4gYXMgd2VsbC4gSXQg
-bWFrZXMgaXQgZWFzaWVyIHRvIHNlZSBhdCBhIGdsYW5jZSB3aGF0IHRoaXMgc2VyaWVzIG1pZ2h0
-DQo+IGJlIGFib3V0Lg0KDQpTdXJlLCBJIHdpbGwgdGFrZSBjYXJlIG9mIHRoaXMgbmV4dCB0aW1l
-LCBUaGFua3MuDQoNCj4gDQo+IE9uIDUvMjgvMjUgMToxMyBBTSwgRGhhcm1hIEJhbGFzdWJpcmFt
-YW5pIHdyb3RlOg0KPj4gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IHRvIGVuYWJsZSB0
-aGUgRE1BIHN1cHBvcnQgZm9yIFRDQi4NCj4+DQo+PiBXaGVuIERNQSBpcyB1c2VkLCB0aGUgUmVn
-aXN0ZXIgQUIgKFRDX1JBQikgYWRkcmVzcyBtdXN0IGJlIGNvbmZpZ3VyZWQgYXMNCj4+IHNvdXJj
-ZSBhZGRyZXNzIG9mIHRoZSB0cmFuc2Zlci4gVENfUkFCIHByb3ZpZGVzIHRoZSBuZXh0IHVucmVh
-ZCB2YWx1ZSBmcm9tDQo+PiBUQ19SQSBhbmQgVENfUkIuIEl0IG1heSBiZSByZWFkIGJ5IHRoZSBE
-TUEgYWZ0ZXIgYSByZXF1ZXN0IGhhcyBiZWVuDQo+PiB0cmlnZ2VyZWQgdXBvbiBsb2FkaW5nIFRD
-X1JBIG9yIFRDX1JCLg0KPiANCj4gQ2FuIHlvdSBwbGVhc2UgZXhwbGFpbiB3aGF0IHByb2JsZW0g
-dGhpcyBzZXJpZXMgaXMgc29sdmluZyBhbmQgd2h5IHdlDQo+IG5lZWQgdGhpcyBjaGFuZ2U/DQoN
-ClRoaXMgaXNuJ3Qgc29sdmluZyBhbnkgaXNzdWVzIGJ1dCBJJ20gdHJ5aW5nIHRvIG1ha2UgdXNl
-IG9mIHRoZSBmZWF0dXJlLg0KPiANCg0KDQotLSANCldpdGggQmVzdCBSZWdhcmRzLA0KRGhhcm1h
-IEIuDQo=
+Voltage regulator 'vreg_l6n_3p3' max-microvolt prop is currently
+configured at 3304000uV in different sm8550 board files. However this
+is not a valid voltage value for 'pmic5_pldo502ln' type voltage
+regulators.
+
+Check below the max value(3200mV) in the regulator summary for min/max
+used as 2800mV/3304mV in DT:-
+
+logs:
+
+[    0.294781] vreg_l6n_3p3: Setting 2800000-3304000uV
+
+regulator summary:
+
+regulator     use open bypass  opmode   voltage current  min     max
+---------------------------------------------------------------------
+..
+vreg_l6n_3p3   0    0    0     normal   2800mV   0mA  2800mV  3200mV
+..
+
+Correct the max value to 3200000uV, so that it is aligned to voltages
+allowed by the regulator.
+
+Also, correct the phandle name of 'vreg_l6n_3p3' to 'vreg_l6n_3p2',
+so it reflect this change in settings.
+
+Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/sm8550-hdk.dts         | 6 +++---
+ arch/arm64/boot/dts/qcom/sm8550-mtp.dts         | 6 +++---
+ arch/arm64/boot/dts/qcom/sm8550-qrd.dts         | 6 +++---
+ arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts | 6 +++---
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+index 29bc1ddfc7b25f203c9f3b530610e45c44ae4fb2..fe46699804b3a8fb792edc06b58b961778cd8d70 100644
+--- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
++++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+@@ -857,10 +857,10 @@ vreg_l5n_1p8: ldo5 {
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+-		vreg_l6n_3p3: ldo6 {
+-			regulator-name = "vreg_l6n_3p3";
++		vreg_l6n_3p2: ldo6 {
++			regulator-name = "vreg_l6n_3p2";
+ 			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <3304000>;
++			regulator-max-microvolt = <3200000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+index 5648ab60ba4c4bfaf5baa289969898277ee57cef..1e95a2849146e3eeea9f68085ac504e32b63fdaf 100644
+--- a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+@@ -624,10 +624,10 @@ vreg_l5n_1p8: ldo5 {
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+-		vreg_l6n_3p3: ldo6 {
+-			regulator-name = "vreg_l6n_3p3";
++		vreg_l6n_3p2: ldo6 {
++			regulator-name = "vreg_l6n_3p2";
+ 			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <3304000>;
++			regulator-max-microvolt = <3200000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+index 3a6cb279130489168f8d20a6e27808647debdb41..5a33d7d7ac923c7c0bf6aeb51d0db728e65883ac 100644
+--- a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
++++ b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+@@ -700,10 +700,10 @@ vreg_l5n_1p8: ldo5 {
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+-		vreg_l6n_3p3: ldo6 {
+-			regulator-name = "vreg_l6n_3p3";
++		vreg_l6n_3p2: ldo6 {
++			regulator-name = "vreg_l6n_3p2";
+ 			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <3304000>;
++			regulator-max-microvolt = <3200000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts b/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts
+index 7d29a57a2b540708fa88fb59e821406f400a3174..073040fbd7ba215169adbe3862d3e1f6d2c786e0 100644
+--- a/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts
++++ b/arch/arm64/boot/dts/qcom/sm8550-samsung-q5q.dts
+@@ -485,10 +485,10 @@ vreg_l5n_1p8: ldo5 {
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+-		vreg_l6n_3p3: ldo6 {
+-			regulator-name = "vreg_l6n_3p3";
++		vreg_l6n_3p2: ldo6 {
++			regulator-name = "vreg_l6n_3p2";
+ 			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <3304000>;
++			regulator-max-microvolt = <3200000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+
+---
+base-commit: 393d0c54cae31317deaa9043320c5fd9454deabc
+change-id: 20250603-sm8550-correct-vreg_l6n_3p3-voltage-cba298bc0294
+
+Best regards,
+-- 
+Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+
 
