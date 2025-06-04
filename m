@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-673056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C2EACDB92
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:02:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5697FACDB9A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691A53A430D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:02:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A65267A1EC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4935D28D85F;
-	Wed,  4 Jun 2025 10:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D03828D8CD;
+	Wed,  4 Jun 2025 10:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GZpFy6cG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1Wxwlrx"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7B91F873E
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBDD2B9BC;
+	Wed,  4 Jun 2025 10:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749031341; cv=none; b=nBDDKtuW7/8IIHd+MYc52yU3YStNpYDu91Ni2W33MwwJky23iZH7iSLq5bZQFG4AfFJZAQURlK7m7AqoYM8Q2IuDpqTTkHN4ItoljZjwnUfg+EGd2IAhxQ4h0VLlZ8WXyB6zy3t9Mj7sCWR94KSA2tSssWRF45Ei6vOozuKovKI=
+	t=1749031427; cv=none; b=t0j9MPq255Y8J/yKr4s5WKxopKVbB28Zt/+j0J65a0e4qocwrocrdEkTFLBdW/QYMrmW4Mg22W3eBnWKuXoVUWackPNXSSoy2wvBqXAAUi5i+YHO2cR24u4/cqrzd6ocAYPnoI1Mdoy1Xq3xMY1m3xe+W3GjjvoTpKs+qQyBO9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749031341; c=relaxed/simple;
-	bh=sLPoz34XcgLXIRhfhqNHWOIvPeZoKDI1bDStOXNazJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F62yCXvRopvyXIMsBHCH2UQaCQai1+icXAJwIpDFuu5TRPppMqLM51lFMexTNMWPRHfRGpAgpN0v3vRpNLC/rNa3v2PdmNyhQYcVBrlKh6xOjF7n5yCjlkRAwisbicwQRvRCNfq/LtP297dLflOXfCWH+n11ZmFQ0VxQiVxZfNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GZpFy6cG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749031337;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tDCGxTzwpKIeg+WG1qzk+ag5Tw2hTP//K4tpxVqw090=;
-	b=GZpFy6cG6npAE4OIQECGbVdy/pfwiWahwj0DH5+WImCFFFZIqMh8lbB67/R00Cwxk84YQY
-	gGpI0p/dZJYch35XA/BYYJ9ZMOuhuu1MlbnuPOceuIKkcivt7Y/GLi1Ijc9txnG6n+a/ej
-	/b9C4lQwjf9Cw2pGhZChRIaPlj8jUjM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-hb5wSsczNL6VCHwuhOX8vg-1; Wed, 04 Jun 2025 06:02:16 -0400
-X-MC-Unique: hb5wSsczNL6VCHwuhOX8vg-1
-X-Mimecast-MFC-AGG-ID: hb5wSsczNL6VCHwuhOX8vg_1749031335
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a1f6c5f4f2so2424921f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 03:02:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749031335; x=1749636135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1749031427; c=relaxed/simple;
+	bh=iYIRVfkXKufURUDOPAucqCIYt8hFzqU7YK1s1FIrhP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cpjgGwsaGUkv2+I1avQd1HIKNS4Uthe4OmE04T8J6MJpnsV6T7kO1MqQywk39GKND+E/tpfXrm4jSyj8cGQeYbgh8cxl/gsIzN1j2i12ivOFFt7D56MftX7pgAuDvICsJD2Z9cDceHS7g0nss0q04vT2WOqeYygPnjEaQ1xzZvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1Wxwlrx; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2705e3810cso616427a12.0;
+        Wed, 04 Jun 2025 03:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749031425; x=1749636225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tDCGxTzwpKIeg+WG1qzk+ag5Tw2hTP//K4tpxVqw090=;
-        b=pb7wmY1zgTCbmDcCLp8GpBvTOcgku97g4BnVwxdRqZqVhSqkU7eAEYPpMImrzt/hDV
-         HHvIFpyhOBWNO+FEqGC2UA+gb2FgQ8DrgwfpKBk6MMMN32PmdWQszI6aVcCrEXEYTATk
-         fJmpqdmaPA7kTKXl/ue6DfS4R0qC73/Ho1xJRrT80e3UnVxzkV10P2HKABas4RSBlq4P
-         W1pkUoMksnoA26ifwaMEBTcs4HCE7O9FPel0MvBMlCIK7ONPAiZ2Xethtn+iTwSjPFUD
-         lvcQOVELfUsjfFIM5P9D0W3ZivjtclCnskofxRgO6PCe3gC/r+dG98l+SO+jhyPHEtwV
-         Fj+A==
-X-Gm-Message-State: AOJu0Ywt4uo6F91uJD+Y0Y7RYbWGgPaaCN8sXXVdVDQVK54F2EnoEAfe
-	2ZLLxV7B2bno37iPlBXK95DRVnfyZ6QZCz/WlcNcaa6hwP16XjFN75Xgj6zEEleZBcAp6AaAKgx
-	8b1yXWNHgryX6AlqocvMAxkkce71IKOdRbubqzHTomQGgdMUbBPQml8Y0WudOW2spvg==
-X-Gm-Gg: ASbGncvTR4iSApaS44RAvONIU0fz+sjjurZDMdzG1IQE+vv/FsjlwVFLzgpCmxHoitD
-	1rXso/PvAOg/QfH5eSshK1MIOcNGSwX1gEyVoi+h6AvgepYtaQdoMhbEYJ6qifHFtlA53pH+T8D
-	bzzQefTvWGVihmv5y7BILoLieR0N9PCMgqKm4FBA4fh+alcQixTfnENIdONAnp0dbRRgTtZKMsB
-	3/1tZ8rzgXgkMGgVHoAz/qzSJLvhpNbHZOmC5OwZabEvHP/46JOoY5DyZ1MPIdbrRbL1STWlwM2
-	4qwbOSBpzBqZJZEouIPheLHsQ4oeIQO3Pjwcp8Dn+03JwIj/49zr
-X-Received: by 2002:a05:6000:2dc6:b0:3a4:d939:62fc with SMTP id ffacd0b85a97d-3a51d920b3cmr1490994f8f.22.1749031335367;
-        Wed, 04 Jun 2025 03:02:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESd9xrE10B8oV6pKkf1J4F6ZlcEe1Vr3hNQtiSD2N7bfqicy4vZTUhvvKpmT2z676IOGjS9g==
-X-Received: by 2002:a05:6000:2dc6:b0:3a4:d939:62fc with SMTP id ffacd0b85a97d-3a51d920b3cmr1490954f8f.22.1749031334938;
-        Wed, 04 Jun 2025 03:02:14 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.57.104])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe740bbsm21264184f8f.54.2025.06.04.03.02.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 03:02:13 -0700 (PDT)
-Date: Wed, 4 Jun 2025 12:02:11 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Subject: Re: [PATCH v2 06/10] sched/debug: Add support to change sched_ext
- server params
-Message-ID: <aEAZo3_g-OMVEgc-@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250602180110.816225-1-joelagnelf@nvidia.com>
- <20250602180110.816225-7-joelagnelf@nvidia.com>
+        bh=iYIRVfkXKufURUDOPAucqCIYt8hFzqU7YK1s1FIrhP8=;
+        b=S1WxwlrxhvGu6me8x2hmoqmLFx0N/FFnA33hE72rpQc1A5/c1t++4Mmptr+z3mtIkz
+         oTFH1BC2Zn8KWUUdUBocQ/bKsHO6jbZmDTrUgpCxfXVQ6WsnvjaU/ulUv2eUgpm/XCgd
+         We/9m5qc1cet7OpEGzSKqsdG/HvXs1sQUPDOIt7RaktlnFxxi1G46F4Bo+bYpkKKS4r6
+         O/PpcX6sjSBuq5kadHPj6H1/kSMyJ3gZGM6mJn7yd1DDR3gAhP6PhfXPxRPdYDtprNWe
+         OrJWXmugdDg4k07MCq3qlLK3bkXqC/nzSj0DlI08ZMwIS/pXu2tDZc08SvlP3xqMOKzX
+         4gGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749031425; x=1749636225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iYIRVfkXKufURUDOPAucqCIYt8hFzqU7YK1s1FIrhP8=;
+        b=kiajUKFb+YciceI/bfQl/srESzixdq+ucvdacKuSWihUuBNajiYPi79IRMhSIGtgyK
+         w51uam2zMIySseq7Ns0hAgVn+Hhku3MffYyyS9oyiVBgnrjDveX805rXj9sVYNhkxeV/
+         JVxHDaBFtpp6YVcdKnePbHkrB8trocM/Azbsbv16iY6a8WfCeYnOiSNMjGPftZIuXtRi
+         eNFkYwgMWjpxcg9Qn7CJc204Mz9V0cfdeoCiQbH3BnJPmCPXqvm9UMXqLAT6ibJiLsP6
+         ciGihq5LGy2W+jNvL5u7b+hJPBEPpjDNTzD/nSV/L0iveTZ7Aari0fJWtaicSBX5dJmM
+         6Glg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoR4bKUal6gHODOhLxXCqWFVb9XmW5ShMTeugPBt5LlzMLnJQHG1lWYS4m8p6sxYVd1IoIfY7KfCT+h0vxfys=@vger.kernel.org, AJvYcCWE5qRUUlT93lknJWIB5tBL9LYZgprTT2sMhF+hqCAF6ATPUFqt6KvytOZfm0Z+YZSWHH6jsOn0bpOShRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+DLjqjC1yNlu7e5RGGfUdZ/qQDPTfqX9uVuewTQNxU87C5nOO
+	idOb5+YYse0hu7mTKgRDLH/CG9ESotDJozl7Fp5JqAcO5esiIEiNusPaM2JAeeQ6EYES6vgE+CZ
+	rSBmD7Rh7FEnpPkklgBJgBth+mY7D7xI=
+X-Gm-Gg: ASbGncuAaDglpX1NYJItmOs+QNhJ7QgAATku54pvwOXcji9DgY96zcngj/vb52Fp5Hh
+	4fiv8ggua0C2KukuLUZJvSvsljfWlbOvf7CIouxNB5Ccg5M51jDdp8ObHeNaVMsBtmM+AHmwwoU
+	+w5hAXF4OdfF/TS2GDHlgR38b1Pbanb/mD
+X-Google-Smtp-Source: AGHT+IFY54/4SXuHhNfhR34u/tz7WHBUhSm2/IfQ3AqffQFchQvW18uxeL7Cd6oGwhaiU9pD6yfyiIBQ6dRYcZzfLS8=
+X-Received: by 2002:a17:903:181:b0:234:11cb:6f95 with SMTP id
+ d9443c01a7336-235e116766cmr12020315ad.6.1749031425395; Wed, 04 Jun 2025
+ 03:03:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250602180110.816225-7-joelagnelf@nvidia.com>
+References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
+ <20250521-nova-frts-v4-16-05dfd4f39479@nvidia.com> <f528cd2d491f15404f30317dd093cc7af5a00fa7.camel@redhat.com>
+In-Reply-To: <f528cd2d491f15404f30317dd093cc7af5a00fa7.camel@redhat.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 4 Jun 2025 12:03:32 +0200
+X-Gm-Features: AX0GCFvjWD_zgPyKD-OQaU5vX3FRf-KmGpph09TCktkVk0tXDV8Lo-vignDRYHw
+Message-ID: <CANiq72=daoTUH0qdEuTLtgaDsdNj=RVvX4fn2xjDtQZn7-xYcw@mail.gmail.com>
+Subject: Re: [PATCH v4 16/20] nova-core: Add support for VBIOS ucode
+ extraction for boot
+To: Lyude Paul <lyude@redhat.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
+	Ben Skeggs <bskeggs@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, Shirish Baskaran <sbaskaran@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+On Tue, Jun 3, 2025 at 11:05=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> Not sure this makes sense - debug_assertions is supposed to be about
+> assertions, we probably shouldn't try to use it for other things (especia=
+lly
+> since we've already got dev_dbg! here)
 
-On 02/06/25 14:01, Joel Fernandes wrote:
-> When a sched_ext server is loaded, tasks in CFS are converted to run in
-> sched_ext class. Modify the ext server parameters as well along with the
-> fair ones.
-> 
-> Re-use the existing interface to modify both ext and fair servers to
-> keep number of interfaces less (as it is, we have a per-cpu interface).
+Yeah, we added it in `pr_debug!`, but I think we should match the C
+side for that one instead.
 
-We have a bit of code duplication, don't we? I wonder if we can do
-anything early on to prevent mis-alignment between servers in the
-future.
+In general, we probably want to say that enabling `debug_assertions`
+should ideally have no "visible" effect on the program if there are no
+bugs (modulo performance etc.; and it should have a loud effect if
+there is indeed a bug :)
 
-Also, is a single shared interface enough? Is the assumption that either
-all tasks are FAIR or SCX always guaranteed?
-
-Thanks,
-Juri
-
+Cheers,
+Miguel
 
