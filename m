@@ -1,297 +1,223 @@
-Return-Path: <linux-kernel+bounces-673318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A364ACDFD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:06:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B009ACE048
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5417116A436
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:06:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19737A9C1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F274290D99;
-	Wed,  4 Jun 2025 14:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A9428ECED;
+	Wed,  4 Jun 2025 14:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dTqimwbu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wd+QjN0T"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3C7290098
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7464BE67
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749045956; cv=none; b=LEGHw30XUxVftp2hmR+ULDsINlYVZh1mCPc29MWW00v3HCsN1RMuWxh/vHh7+fFgWCr+S4uKrW6/6D8fVMFohTM9P+ekASboWo2o3zUWec0VbBFILU+gjcA0ilzGSsA3KH9sEYN6ugE800meZ4DLGZn/19D8LFhrvWTApYmgPXw=
+	t=1749047455; cv=none; b=kMzmaJLZlhYUISFRd3fS+wQ/dF67QAyP11wzsMPng9xABQKxhQpWAJJ/HCz7mqEPPQ8GNfOi4kmo1GfNah3CJw9BR77aS+D7dja/Qkjf1m9R811yuEH7EJfat0gZ/BN+tJBofbvYgSEoH5D444gVPuZF4S09nBL8HRyxQqoMnCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749045956; c=relaxed/simple;
-	bh=gVK2x7ewP/8uQNxMtsG5EaKhriyU7xBAW3layZKbYN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OC1ecYkxERgHLIpijry4GGDLg8HYlATxIM7bhgr3f6DK5tZmfI5ThvxDl+immVcway97aHmd3Z2bAuim2h83WeFXQqoOqLcL6HRL8ksU9acSCxWUvdRn1Uls1f7IBJrzsBR/rDD3xq0tEL3b+k1WvHjT31xAuYiDu1WjQWQYGT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dTqimwbu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749045950;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ceQ8MrBEyOYSLsVlLloLQm5cGgLaPimBF5PhfObg4oc=;
-	b=dTqimwbuJRJzSctTKOxTGmPqh8h/fp3TfK9niShpcZ/AzxOhCHjq2AeaQNhmLDj0swFICc
-	zu+GsDNyFo3QpRIVKMRUV8DMy5Rs/uei1asBZ4iTdQ4KzMK+OXJxK9NreAC3mI/bx7bV0Y
-	Z/RltqlFRVfTRHmxSHLMP3ovv1zMErI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-519-UGTFNHICOcSxrTo_1N6BJQ-1; Wed, 04 Jun 2025 10:05:47 -0400
-X-MC-Unique: UGTFNHICOcSxrTo_1N6BJQ-1
-X-Mimecast-MFC-AGG-ID: UGTFNHICOcSxrTo_1N6BJQ_1749045947
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-450d50eacafso37990645e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 07:05:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749045947; x=1749650747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ceQ8MrBEyOYSLsVlLloLQm5cGgLaPimBF5PhfObg4oc=;
-        b=LB5Rv7PrPO8M3MYg8Pa0nWJkjlxYFWn+3ExzAZMAjiu2FL7lXWcEhX6moFLYGxlkvc
-         lI5HPVDfo/LtS25V2I7FJaGAv6lAfQfs28MBc4kyp2/K+VUl6UW1cqB84xNvwQiTsIPk
-         teXl8sNPaXt1PSD+J8kKX6aynvhcTtcgLw1vtjshax9Frk+kU0kgahx7OiIqSSku4nRq
-         /clMb9sSe5c1yG4h4rPF94qahWiehefJrAlP3NykNvTnEvVDfJtok3Bpa6baIFkem+YH
-         SzxJkXxm07Xu9TNMfzURFTDFAItIcWaNX/hXs3oojc2jlD33WrzTsx5B2zw/CixxDcuu
-         YV1g==
-X-Gm-Message-State: AOJu0YyPyShrUYxAd6Ufj75yFwD+Wt5st9b3iLe57Fnr0KSJD/fYtmcj
-	nHeew3ELgIUL0ny4iIKYOsaOoChvScSOG1/lbenJP0Ik4jGP/3kaP0Di4bffmDAj3TinW8kgaQm
-	SseWNDW6XDZAkAiYpG0I3+jzFD+qz0Inm2godgkZpFpT/28ZL/R7fdD4Q6QTleTpi4D+7Oa4fkV
-	60YSjoTBCX3QV9CgX1Lk/JshT6Zahl6iUbkzYXKLTHmX0AkhJ/
-X-Gm-Gg: ASbGncvl4uDe5vfWrl+MI2hSkSTrypSREFNnZzHYISgMW+XwgFXBUOkvg6wCzyEjIp0
-	8XkpAWauxi1ESkq9f4DYFUcYtvHXQVlCRtAgCREo/QiCEKN9oAb441qpKjp8gnrfIK98V7eBfdZ
-	+kYDPbzT/atIj5NE9plNifrbhbQt1KY1/nU56tIK9WCDtIf79yjFoUX4mUFfhgr3NO/m2/w5zAr
-	jRaQuPcKLeG1IeetYjrc2ZSJsIZNW7AnxmNb7M/87tQkIk1p4C5Y2R2Qd72xx7GmbQRo/a8/l6n
-	LNRSkr92Q0z+jNmmTZ6AeCTBUBOB55sA9QjoxWRjsgUb6cmSQ/iGEch65D+01kdUpn5RhXRm
-X-Received: by 2002:a05:600c:4a27:b0:450:d614:cb with SMTP id 5b1f17b1804b1-451f0e547a4mr16907085e9.33.1749045946528;
-        Wed, 04 Jun 2025 07:05:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYe6tbzgwHaqVnJry21P3Q8c38NZTtjrZN6NtysuRTvfJy+CJBRQzZRfgenFSVCPefI/EKxA==
-X-Received: by 2002:a05:600c:4a27:b0:450:d614:cb with SMTP id 5b1f17b1804b1-451f0e547a4mr16906525e9.33.1749045945863;
-        Wed, 04 Jun 2025 07:05:45 -0700 (PDT)
-Received: from localhost (p200300d82f1bb8006fdb1af24fbd1fdf.dip0.t-ipconnect.de. [2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-450d7fc2725sm201643215e9.37.2025.06.04.07.05.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 07:05:45 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>
-Subject: [PATCH v1] mm/gup: remove (VM_)BUG_ONs
-Date: Wed,  4 Jun 2025 16:05:44 +0200
-Message-ID: <20250604140544.688711-1-david@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749047455; c=relaxed/simple;
+	bh=5JB+GYJIDPXn9o6tcyZZmI0bJQETRfFPrn1mq4SbOr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gZnmWLJEDLybI2NjiF3wif8A7oJ/IQpMcy1l4ulj9AodGrXwPzlRmGUg7V1S8gi5gQRT3ibJdwaEEgIMIW3MErIR4jHSA2I8LkXP/k1LRZQNkC0sI208gZAEZ+D3rKqyOWXty4wjPxOvlDI1ki7OKlCGynlzcsWVie5TW+DSVJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Wd+QjN0T; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554DCawf032172;
+	Wed, 4 Jun 2025 13:17:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=AyofCP
+	+ZN+6ircaf7mXhdeuKJnDTj+s9f0clMqZxlXs=; b=Wd+QjN0T53cJ5UBS0BP1xh
+	UoNltEcgex7nx4RL2dI/9ob1j+9I0sh8lGb06Z8yDECNrMDf1LZWEPMwMv6I8s5j
+	IcNdrV/mfCpCobGpLaKXpuAyhzs3gga7PjSFbyY7C+OBpr6RSVsBGJ6PegI0tRjD
+	lm0JhgdAQFrFiZhLqssqlyD53tZa1D9qQZBVRqkatFL6+hiF0T8PwA4u+tx31VC1
+	buUgd7LyC28IYlSDhDoqBHJvUXnJf8cHwtRBUch7NcdoZ0YMNu+awjzOxrfpk6nm
+	WvELcIcPxBe6adYvR3VwJBbi5Lppb+StgHvIFoYyGY3X0WVB02NDLSrsBnl9r75A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geytmnc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 13:17:11 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 554CxI1B029221;
+	Wed, 4 Jun 2025 13:17:11 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geytmna-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 13:17:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 554BoRl0031650;
+	Wed, 4 Jun 2025 13:17:10 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 470cfyyymw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 13:17:10 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 554DH8MM25297572
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 4 Jun 2025 13:17:09 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AD4BB58067;
+	Wed,  4 Jun 2025 13:17:08 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF0ED5805D;
+	Wed,  4 Jun 2025 13:17:02 +0000 (GMT)
+Received: from [9.39.21.166] (unknown [9.39.21.166])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  4 Jun 2025 13:17:02 +0000 (GMT)
+Message-ID: <9f7ae0e6-4640-418d-a4db-dba594377ac2@linux.ibm.com>
+Date: Wed, 4 Jun 2025 18:47:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/5] drivers/base/node: Optimize memory block
+ registration to reduce boot time
+To: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
+        Zi Yan <ziy@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
+        Danilo Krummrich <dakr@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Yury Norov <yury.norov@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Nilay Shroff
+ <nilay@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
+References: <2a0a05c2dffc62a742bf1dd030098be4ce99be28.1748452241.git.donettom@linux.ibm.com>
+ <20250603200729.b7581e017e4ca63f502c795e@linux-foundation.org>
+ <b355e72d-0284-4a31-84e3-ae4a79ad922f@redhat.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <b355e72d-0284-4a31-84e3-ae4a79ad922f@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4FsplurUS7c-nNdN0AmIoqUxedlpBq1v
+X-Proofpoint-ORIG-GUID: cm-Oc-tEKoBA3qeJIzbOxbnJXz9fYfvv
+X-Authority-Analysis: v=2.4 cv=X4dSKHTe c=1 sm=1 tr=0 ts=68404757 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=k8bw5oIpvhWMPjh-KD8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA5OSBTYWx0ZWRfXwW6CTbwXdFug zCXnZycTe/FqRgU6/7hAGmicwbUedmIIArWprAYdtHHYFavfFa4G+KxKc+VYO1pl6alcHRcrnEf xtqqWsw7o4wouJXJZzoiVu80TLtzFLtJwUNLpc6hsMSpgi2KAPuhJs5p3mGD9U84OeoklTUc5sn
+ PO0Oz36/aec/Qkgp/dwSynzy9BzkcF+qgNlnrvE9Xo4/YUm9T/pCxhQS/mkX2twpZ2oBIWO+y4E fLsZmb8Hm2OFz2Owb8eVOZs0ET6iz52pippiIXA9bORtj7zfZU5Vif2yLNxoL/mevj+FhZvouV4 jeOJ8otynWo0iTOxhMKjLDCuX5C0uN78khP7zH28mqiv/t1+dsNkBy3020SYjol1DSCiNLzXe9j
+ DxyfRX481RrnuSrz9kupxaY++cA4LzgAC6gDwjUeAhnBviMJhEI4V4hGPkwPy4jkwFCF2rTS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_03,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1015 phishscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506040099
 
-Especially once we hit one of the assertions in
-sanity_check_pinned_pages(), observing follow-up assertions failing
-in other code can give good clues about what went wrong, so use
-VM_WARN_ON_ONCE instead.
 
-While at it, let's just convert all VM_BUG_ON to VM_WARN_ON_ONCE as
-well. Add one comment for the pfn_valid() check.
+On 6/4/25 3:15 PM, David Hildenbrand wrote:
+> On 04.06.25 05:07, Andrew Morton wrote:
+>> On Wed, 28 May 2025 12:18:00 -0500 Donet Tom <donettom@linux.ibm.com> 
+>> wrote:
+>>
+>>> During node device initialization, `memory blocks` are registered under
+>>> each NUMA node. The `memory blocks` to be registered are identified 
+>>> using
+>>> the node’s start and end PFNs, which are obtained from the node's 
+>>> pg_data
+>>
+>> It's quite unconventional to omit the [0/N] changelog.  This omission
+>> somewhat messed up my processes so I added a one-liner to this.
+>>
+>
+> Yeah, I was assuming that I simply did not get cc'ed on the cover 
+> letter, but there is actually none.
+>
+> Donet please add that in the future. git can do this using 
+> --cover-letter.
 
-We have to introduce VM_WARN_ON_ONCE_VMA() to make that fly.
+Sure,
 
-Drop the BUG_ON after mmap_read_lock_killable(), if that ever returns
-something > 0 we're in bigger trouble. Convert the other BUG_ON's into
-VM_WARN_ON_ONCE as well, they are in a similar domain "should never
-happen", but more reasonable to check for during early testing.
+I will add cover letter in next revision.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Peter Xu <peterx@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
 
-Wanted to do this for a long time, but my todo list keeps growing ...
+>
+>>>
+>>> ...
+>>>
+>>> Test Results on My system with 32TB RAM
+>>> =======================================
+>>> 1. Boot time with CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled.
+>>>
+>>> Without this patch
+>>> ------------------
+>>> Startup finished in 1min 16.528s (kernel)
+>>>
+>>> With this patch
+>>> ---------------
+>>> Startup finished in 17.236s (kernel) - 78% Improvement
+>>
+>> Well someone is in for a nice surprise.
+>>
+>>> 2. Boot time with CONFIG_DEFERRED_STRUCT_PAGE_INIT disabled.
+>>>
+>>> Without this patch
+>>> ------------------
+>>> Startup finished in 28.320s (kernel)
+>>
+>> what.  CONFIG_DEFERRED_STRUCT_PAGE_INIT is supposed to make bootup
+>> faster.
+>
+> Right, that's weird. Especially that it is still slower after these 
+> changes.
+>
+> CONFIG_DEFERRED_STRUCT_PAGE_INIT should be initializing in parallel 
+> which ... should be faster.
+>
+> @Donet, how many CPUs and nodes does your system have? Can you 
+> identify what is taking longer than without 
+> CONFIG_DEFERRED_STRUCT_PAGE_INIT?
 
-Based on mm/mm-unstable
 
----
- include/linux/mmdebug.h | 12 ++++++++++++
- mm/gup.c                | 41 +++++++++++++++++++----------------------
- 2 files changed, 31 insertions(+), 22 deletions(-)
 
-diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
-index a0a3894900ed4..14a45979cccc9 100644
---- a/include/linux/mmdebug.h
-+++ b/include/linux/mmdebug.h
-@@ -89,6 +89,17 @@ void vma_iter_dump_tree(const struct vma_iterator *vmi);
- 	}								\
- 	unlikely(__ret_warn_once);					\
- })
-+#define VM_WARN_ON_ONCE_VMA(cond, vma)		({			\
-+	static bool __section(".data..once") __warned;			\
-+	int __ret_warn_once = !!(cond);					\
-+									\
-+	if (unlikely(__ret_warn_once && !__warned)) {			\
-+		dump_vma(vma);						\
-+		__warned = true;					\
-+		WARN_ON(1);						\
-+	}								\
-+	unlikely(__ret_warn_once);					\
-+})
- #define VM_WARN_ON_VMG(cond, vmg)		({			\
- 	int __ret_warn = !!(cond);					\
- 									\
-@@ -115,6 +126,7 @@ void vma_iter_dump_tree(const struct vma_iterator *vmi);
- #define VM_WARN_ON_FOLIO(cond, folio)  BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_ONCE_FOLIO(cond, folio)  BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_ONCE_MM(cond, mm)  BUILD_BUG_ON_INVALID(cond)
-+#define VM_WARN_ON_ONCE_VMA(cond, vma)  BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ON_VMG(cond, vmg)  BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN_ONCE(cond, format...) BUILD_BUG_ON_INVALID(cond)
- #define VM_WARN(cond, format...) BUILD_BUG_ON_INVALID(cond)
-diff --git a/mm/gup.c b/mm/gup.c
-index e065a49842a87..3c3931fcdd820 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -64,11 +64,11 @@ static inline void sanity_check_pinned_pages(struct page **pages,
- 		    !folio_test_anon(folio))
- 			continue;
- 		if (!folio_test_large(folio) || folio_test_hugetlb(folio))
--			VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page), page);
-+			VM_WARN_ON_ONCE_PAGE(!PageAnonExclusive(&folio->page), page);
- 		else
- 			/* Either a PTE-mapped or a PMD-mapped THP. */
--			VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page) &&
--				       !PageAnonExclusive(page), page);
-+			VM_WARN_ON_ONCE_PAGE(!PageAnonExclusive(&folio->page) &&
-+					     !PageAnonExclusive(page), page);
- 	}
- }
- 
-@@ -760,8 +760,8 @@ static struct page *follow_huge_pmd(struct vm_area_struct *vma,
- 	if (!pmd_write(pmdval) && gup_must_unshare(vma, flags, page))
- 		return ERR_PTR(-EMLINK);
- 
--	VM_BUG_ON_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
--			!PageAnonExclusive(page), page);
-+	VM_WARN_ON_ONCE_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
-+			     !PageAnonExclusive(page), page);
- 
- 	ret = try_grab_folio(page_folio(page), 1, flags);
- 	if (ret)
-@@ -899,8 +899,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 		goto out;
- 	}
- 
--	VM_BUG_ON_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
--		       !PageAnonExclusive(page), page);
-+	VM_WARN_ON_ONCE_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
-+			     !PageAnonExclusive(page), page);
- 
- 	/* try_grab_folio() does nothing unless FOLL_GET or FOLL_PIN is set. */
- 	ret = try_grab_folio(folio, 1, flags);
-@@ -1180,7 +1180,7 @@ static int faultin_page(struct vm_area_struct *vma,
- 	if (unshare) {
- 		fault_flags |= FAULT_FLAG_UNSHARE;
- 		/* FAULT_FLAG_WRITE and FAULT_FLAG_UNSHARE are incompatible */
--		VM_BUG_ON(fault_flags & FAULT_FLAG_WRITE);
-+		VM_WARN_ON_ONCE(fault_flags & FAULT_FLAG_WRITE);
- 	}
- 
- 	ret = handle_mm_fault(vma, address, fault_flags, NULL);
-@@ -1760,10 +1760,7 @@ static __always_inline long __get_user_pages_locked(struct mm_struct *mm,
- 		}
- 
- 		/* VM_FAULT_RETRY or VM_FAULT_COMPLETED cannot return errors */
--		if (!*locked) {
--			BUG_ON(ret < 0);
--			BUG_ON(ret >= nr_pages);
--		}
-+		VM_WARN_ON_ONCE(!*locked && (ret < 0 || ret >= nr_pages));
- 
- 		if (ret > 0) {
- 			nr_pages -= ret;
-@@ -1808,7 +1805,6 @@ static __always_inline long __get_user_pages_locked(struct mm_struct *mm,
- 
- 		ret = mmap_read_lock_killable(mm);
- 		if (ret) {
--			BUG_ON(ret > 0);
- 			if (!pages_done)
- 				pages_done = ret;
- 			break;
-@@ -1819,11 +1815,11 @@ static __always_inline long __get_user_pages_locked(struct mm_struct *mm,
- 				       pages, locked);
- 		if (!*locked) {
- 			/* Continue to retry until we succeeded */
--			BUG_ON(ret != 0);
-+			VM_WARN_ON_ONCE(ret != 0);
- 			goto retry;
- 		}
- 		if (ret != 1) {
--			BUG_ON(ret > 1);
-+			VM_WARN_ON_ONCE(ret > 1);
- 			if (!pages_done)
- 				pages_done = ret;
- 			break;
-@@ -1885,10 +1881,10 @@ long populate_vma_page_range(struct vm_area_struct *vma,
- 	int gup_flags;
- 	long ret;
- 
--	VM_BUG_ON(!PAGE_ALIGNED(start));
--	VM_BUG_ON(!PAGE_ALIGNED(end));
--	VM_BUG_ON_VMA(start < vma->vm_start, vma);
--	VM_BUG_ON_VMA(end   > vma->vm_end, vma);
-+	VM_WARN_ON_ONCE(!PAGE_ALIGNED(start));
-+	VM_WARN_ON_ONCE(!PAGE_ALIGNED(end));
-+	VM_WARN_ON_ONCE_VMA(start < vma->vm_start, vma);
-+	VM_WARN_ON_ONCE_VMA(end   > vma->vm_end, vma);
- 	mmap_assert_locked(mm);
- 
- 	/*
-@@ -1957,8 +1953,8 @@ long faultin_page_range(struct mm_struct *mm, unsigned long start,
- 	int gup_flags;
- 	long ret;
- 
--	VM_BUG_ON(!PAGE_ALIGNED(start));
--	VM_BUG_ON(!PAGE_ALIGNED(end));
-+	VM_WARN_ON_ONCE(!PAGE_ALIGNED(start));
-+	VM_WARN_ON_ONCE(!PAGE_ALIGNED(end));
- 	mmap_assert_locked(mm);
- 
- 	/*
-@@ -2908,7 +2904,8 @@ static int gup_fast_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
- 		} else if (pte_special(pte))
- 			goto pte_unmap;
- 
--		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
-+		/* If it's not marked as special it must have a valid memmap. */
-+		VM_WARN_ON_ONCE(!pfn_valid(pte_pfn(pte)));
- 		page = pte_page(pte);
- 
- 		folio = try_grab_folio_fast(page, 1, flags);
+My system has,
 
-base-commit: 2d0c297637e7d59771c1533847c666cdddc19884
--- 
-2.49.0
+CPU      - 1528
+Node     - 16
+Memory - 31TB
+
+I ran the same test with and without CONFIG_DEFERRED_STRUCT_PAGE_INIT, 
+and the boot time was consistently higher with 
+CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled.
+
+I'm still investigating this. I'll check further and get back to you.
+
+
+
+CONFIG_DEFERRED_STRUCT_PAGE_INIT enabled
+----------------------------------------------------------------------
+1. Startup finished in 12.959s (kernel)
+2. Startup finished in 13.036s (kernel)
+3. Startup finished in 12.944s (kernel)
+
+
+CONFIG_DEFERRED_STRUCT_PAGE_INIT disabled
+-----------------------------------------------------------------------
+1. Startup finished in 12.234s (kernel)
+2. Startup finished in 12.287s (kernel)
+3. Startup finished in 12.230s (kernel)
+
+Thanks
+Donet
 
 
