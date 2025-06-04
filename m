@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-673351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F25EACE045
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:29:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C499ACE051
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE24174B2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A612A3A77E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E40528FFEF;
-	Wed,  4 Jun 2025 14:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C8E290D8A;
+	Wed,  4 Jun 2025 14:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3VoA2AT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979438384
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC58528ECED;
+	Wed,  4 Jun 2025 14:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749047391; cv=none; b=CWzyy5A/yfXrFsbNmHr4qa8+NwRs6K0GWw2TMtIj1cVQ2yVBnNWFDP6J1/oL2rWQ0bFz3FxB5qyafc4jQj5KUXxkYtfxL4CK6Hq/WttedcQteY3BopZ9Czf3ujKHO92972muLVgns3yBUGg7spNjyyLLJuPqZDwdcmzPn2D/XAg=
+	t=1749047530; cv=none; b=CXACZVTAW3DnK9a4YY0TFOCaaPG58C2QfZnC0aoW2mxtZNMDYjsCPmESL4xDtdo9DgaaS4eRUBhTxj4dFmQzjwTFtqI+iutStBX+BBXhY0uo7McMOlHEBu1n+VE0dLbAUyKWTJEIic77xYP2cKP0DAxv/LOQ+J0GPejlvgzBJrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749047391; c=relaxed/simple;
-	bh=B6OpX1d9C5FQH9QBXEjnvZ/p0W1fYsSZa9lHLO12kKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=At2isJLUHuJ5lnEXk1zUoxMrOtsLJcVN7EjnP0kZemZ7CxF3kz9xabpdfu/Lr3i6KEAIYYyboW/xyTQTpqQR4eQNGDmTPKZ8+GV5ZEfSiBXU7ZvT2Cv19UxfEFofx5y5dOi7Zy9x9ckEE1XpexMZrkdwhb8UfWSiMg13LPh+5f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7E42C4CEE4;
-	Wed,  4 Jun 2025 14:29:49 +0000 (UTC)
-Date: Wed, 4 Jun 2025 10:31:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
- mathieu.desnoyers@efficios.com, tglx@linutronix.de, bigeasy@linutronix.de,
- kprateek.nayak@amd.com, vineethr@linux.ibm.com
-Subject: Re: [PATCH V5 1/6] Sched: Scheduler time slice extension
-Message-ID: <20250604103106.1465f847@gandalf.local.home>
-In-Reply-To: <20250603233654.1838967-2-prakash.sangappa@oracle.com>
-References: <20250603233654.1838967-1-prakash.sangappa@oracle.com>
-	<20250603233654.1838967-2-prakash.sangappa@oracle.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749047530; c=relaxed/simple;
+	bh=PNnRD6gL8fWk7hdZqeCrnED11vXVXXttbbydPicR/PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lZfXEThTx93Rm5hpkE1tLgH+0F/I/ghVziaQYFVWYa3GfWFpz9Gc4eA6CNFIOs/RrJZvm4/EyjZ5zWn5CU5iE46PNOs/W9y5nZGctY/YGBmZN9JTMH1QNa32rfpVB1AY3Tulgh8ixRyCMXdGyxjFgKvWRvvXh6KMzJdWeP4NZSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3VoA2AT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3395CC4CEE4;
+	Wed,  4 Jun 2025 14:32:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749047529;
+	bh=PNnRD6gL8fWk7hdZqeCrnED11vXVXXttbbydPicR/PM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=o3VoA2ATNbG2J0YJpoV5J5NM4BpCueexbKJIWoR8KiEJM7aVioU3wmaXYivuILtR4
+	 dgEE+EKTwE6RMCP5EDTOQM7Q4qy+i/p2C7NYhwfhPm3JaCnGxjQIWefxrApJb/OT5Z
+	 jdx9pbtbzUPObeHTQbu9QJwDwQb9bo1w1zokVw1kik00JWwi34Uhc7Qy59QNfCCURf
+	 WPRsPKMoPvVrbW7lXn6WJ0lZrd3e9yvuNRBDxPRCs2oLwTf/UolMEzpsepEQ2Ou4Le
+	 Cgd7G2y0J9SH09R/85YQ+FHlKFpEmMfm7bw4q3ije6KETz5jirXZDT6TrmLtdU3s+O
+	 6MmHKHS51+/rQ==
+Date: Wed, 4 Jun 2025 09:32:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 0/2] Update my e-mail address
+Message-ID: <20250604143207.GA516466@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250604120833.32791-1-manivannan.sadhasivam@linaro.org>
 
-On Tue,  3 Jun 2025 23:36:49 +0000
-Prakash Sangappa <prakash.sangappa@oracle.com> wrote:
+On Wed, Jun 04, 2025 at 05:38:29PM +0530, Manivannan Sadhasivam wrote:
+> Hi,
+> 
+> My Linaro e-mail is going to bounce soon. So update the MAINTAINERS file to use
+> my kernel.org alias and also add a mailmap entry to map the Linaro email to the
+> same.
+> 
+> @Bjorn H: Could you please merge this series via PCI tree?
+> 
+> - Mani
+> 
+> Manivannan Sadhasivam (2):
+>   MAINTAINERS: Update the e-mail address of Manivannan Sadhasivam
+>   mailmap: Add a new entry for Manivannan Sadhasivam
+> 
+>  .mailmap    |  1 +
+>  MAINTAINERS | 38 +++++++++++++++++++-------------------
+>  2 files changed, 20 insertions(+), 19 deletions(-)
 
-> @@ -2249,6 +2251,20 @@ static inline bool owner_on_cpu(struct task_struct *owner)
->  unsigned long sched_cpu_util(int cpu);
->  #endif /* CONFIG_SMP */
->  
-> +#ifdef CONFIG_RSEQ
-> +
-> +extern bool rseq_delay_resched(void);
-> +extern void rseq_delay_resched_fini(void);
-> +extern void rseq_delay_resched_tick(void);
-> +
-> +#else
-> +
-> +static inline bool rseq_delay_resched(void) { return false; }
-> +static inline void rseq_delay_resched_fini(void) { }
-> +static inline void rseq_delay_resched_tick(void) { }
-> +
-> +#endif
-> +
-
-Can we add a config to make this optional. I don't want to allow any task
-to have an extended timeslice over RT tasks regardless of how small the
-delay is.
-
--- Steve
+Squashed these together and applied to pci/misc for v6.16, thanks!
 
