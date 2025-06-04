@@ -1,147 +1,191 @@
-Return-Path: <linux-kernel+bounces-673748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DBBACE586
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 22:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C040ACE588
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 22:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42DA47A2FA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 20:07:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 135FA7A4A7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 20:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB02212B28;
-	Wed,  4 Jun 2025 20:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CC620E03C;
+	Wed,  4 Jun 2025 20:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RDhnPcVb"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w2VY1pQ3"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535831F4C8A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 20:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12C51940A1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 20:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749067702; cv=none; b=uNW0L3r7YHLuZsBMNtpavwLidR4JJtjQ4tJc6UktGrrztR1s0FZRKba2xfA4bhKNEGtqKCPat6bugiiX6UxlS+1z0GVbhm/5CQ5P/tFTIOGVRMWvsJcpkVupLSlWp1Zt5e1ZkH+Z2aMEgkb+T64Cy2V8Jo98XKcCGy/+7wh8wTo=
+	t=1749067751; cv=none; b=i5kk7IYJZM1S28aUH9wTN24QhFIZthvlS5GF0OFnB8/ZK+D9RAyj3nUDTiOpwRKsnqisLuEuHAYXhnRqIgg5iHDYS/Gnq01/6/F8dd979q4xM/OCfyMUaix1TpJDyevKcR2v0bpiDB9SXGMHmN2SFpYZ5h0GfUjvd/YqhuB3fJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749067702; c=relaxed/simple;
-	bh=U1OnM+wDx42RJMhEFhzFdLnhJjVXk9QUKvgzs6hObX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=t4IKwy7EIG7MUtg/araxE+gZ56g7/xIVZXEunjf4CO6MtNp1M8gdflGmbmk51AxJ3wDB9UroI0ouLWPgwwBxJSKBQl1njJlojevPaTXRoswjyFO9EOTOWdpHafpHQCMaK1IKC8YPxzq8FROGZuErqj9xaJmJPjIy0EImRUevs3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RDhnPcVb; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-408d7e2b040so191555b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 13:08:19 -0700 (PDT)
+	s=arc-20240116; t=1749067751; c=relaxed/simple;
+	bh=JeOoVB0bIPowliZ3Nqz1q2FpC5OCUaH8ypU+/TyDaMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UdRbW15eFJSlJj940GTYlBJ2KFbIr1aRvs6k+EeydcGuQ1vK7ibu+sbRNHuAvAPZ19IdHXEsV+rBjDn3JyIAiWFscWWpf4hqUf7/rfaTQjcb3LoRMEzeZxEplGN9Qr6ve1g8DJ6dnBN0882gH3aZZaEMlsc+aVMZV7Sg+h2RcFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w2VY1pQ3; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3ddc10f09easo126135ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 13:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749067698; x=1749672498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0GflgBwk2Erquo5jED04z907LZDLKiN9eNZQrfhMtwM=;
-        b=RDhnPcVb1xg72o/62ONhztNJPBp6BJg7unzdMVzRaSQl40SVsclJ+OPt2w0y/rAotk
-         HEmTEmzILQXVL4nTjmLV9s+jjuIOxNsxj0YMtXL6XgKJkfblHc5oXDWO0PoijZTyKerO
-         GeasyaQ+xERBXfTG/u+ihg/+G/7I2XbsnHGyaYTIlzd1XjnlvyTijrYqFKrTfZnRZKRU
-         I+ajrlQUumP2kDH9XbcTBqLRlqeCj2XWsz89LlT1jkBrvtPir67lwNmea82lRgAzWrgN
-         /YJbpzIv5SioY3ltvSzH34srKL6EZlerVQ/IUKrGcH5XaXaOboI5D9PRwjpU2oQ7tSKS
-         Kvxg==
+        d=google.com; s=20230601; t=1749067749; x=1749672549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uQd/6lxEQmh10n4MdeZg3ZypUWfH+P8Jft7FB6Fs6q8=;
+        b=w2VY1pQ33HyWOZ2Ndwj3r8DDQza3CWk8SiPyoKFVUHmIfdoy0y8BxHKp259QCdXJfO
+         QC028AiXOmjhn1q8SLHLWz4Z3L2seM/oL0TEMWmZ+w8vTVudiIxUk3YrUW+EOzMxmDAG
+         MjmGvkCW+RudczKr90WB72DyNHHW8mbvLfDC11qSjam8kUL8/lTk+eudwcft4xWhNJNn
+         o79IOFwK1SFmFL5u205sN3+FK2lsJPeB2XmB+FSzfb1io3Ch9UeQEuA8ygmI1J84UAB9
+         RqeFVBELog2XohfRqwgy4f/CNLyiFhXKRZPOWVNudEg+LqfRNVz/x1keCnRcCO/pZIyH
+         7Wng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749067698; x=1749672498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0GflgBwk2Erquo5jED04z907LZDLKiN9eNZQrfhMtwM=;
-        b=uCczBsBu8UAWA5UC6S8nN1Gd5Zkv1bzdNZ1eCrtZl6q6cVU1TdXbVr5552wwOFrUAR
-         ZA4CyPk/GQReuIDyM/IlhrWjyllX1pvsszpu52gjiEeTwKtzW3EzraQ9xMm/LwKvNwv2
-         50NvD5ct/7MDYvVzzlIY4qcMgRWT6M03yc+bpY72ZF2nFJlt6YgZjz1TnrqtHofavhEd
-         xLx9H8QrBVnv4EiyMyavOivk5IzCrQhRc08QQejafn/EYBjYPqTmXKrR0iH+37hRXGQB
-         9Qwh5JEygyfgZtHPmpj7f5PlJQHt8KdAdrBB5EuX71vSIwCd5aAb774e4slNMdfIXYJ9
-         328Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX97LkwoguFGfg08u90gGnxUA82Yj6aF47wf2jmn7Cht3JFJ+2S91dEr2HqMOZzZDERrTL0T1+74rx3OgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8pZ723zbn4w+iHHVlSnsTfum1qscpYkQIBfT0LYfiYd2sUsyd
-	5FJwgdqAT6bcuc7tI7GbxakKVkDJ3rHZC67FOPEv7m1c0wHgCKAOO97F1EnJzua2gZY=
-X-Gm-Gg: ASbGncu5WTEVX1jr7rKfifBd6Ax1w/Eyz9iqkKsGpkKy3qe1zdXKLZ2MWjDrdNBlywH
-	U3zOLNyQX8Q+leM6rnCIWVObwVOcsWhVqy1vuFKfxf1AWRTgJTKUgOsb0Myvo+jktbs9PFHd56M
-	k/lYB8kwfKCpKysUy0mQf7pCk/PDXfR9n0oxVBGVkTOzE9/GAkPTDBFw9xzmq1MyaFYJSqQeYv2
-	thAyh7SEPX4P3VddSng8ICrxMJw9YPimPWA3pUcrwCK6rjk1f4JTvx8tyUWFwvjM5CDsYTNNhc4
-	LY3vmmb9UeUP90WGzG+slz3b17w9KyvPjFnQ2yQkN2b7J1tu9E8fgywIx97RgZrPwLa0OYEOHEL
-	YZ1EOQTSeKUDugPAXS3qZjmD8mQ==
-X-Google-Smtp-Source: AGHT+IF0A9E9JcoP0NaXp+49IGKBNN/o1YoH+RW3ZA4P/jSh9TsURsmLa7tjhJk/OQ0OgontXEwQfA==
-X-Received: by 2002:a05:6808:11d1:b0:404:e2fe:ee91 with SMTP id 5614622812f47-408f0eadd95mr3375166b6e.8.1749067698218;
-        Wed, 04 Jun 2025 13:08:18 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:829:fdd0:311c:c481? ([2600:8803:e7e4:1d00:829:fdd0:311c:c481])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-735af82d2dbsm2363213a34.7.2025.06.04.13.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 13:08:17 -0700 (PDT)
-Message-ID: <eeef8217-f6d1-40ad-839e-2e0efe3b7d01@baylibre.com>
-Date: Wed, 4 Jun 2025 15:08:16 -0500
+        d=1e100.net; s=20230601; t=1749067749; x=1749672549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uQd/6lxEQmh10n4MdeZg3ZypUWfH+P8Jft7FB6Fs6q8=;
+        b=MTa4vEba+pvQx+V18YYqDfJNRoGf7sutzt2LLUPO/Op3xWhEmNsGaDwJ+Di3G/Zgns
+         hWOPA3cMhMkbTxmNEm5J66snWUEuFptL16ovCDt8C/ezkFttJRNtlqG3/0DUmkxw9TRB
+         rCqcvx2oi3tDAJ8LEdOjw1FjUr46Rijeom0nFDaJOC8fPdZrWWma8xadMGeECSbMU0HQ
+         pXspTC3Qgr2qTEz/1WgCGNL9GMYhtIDuXeA4H15MtSO92INsLNjG0V4hfCzLHe8UOrfH
+         ZILJMwS4ClydSDvCAqf6pE5FYh6zniVTHyVU+RRoinmy/ms1eNxgV9PyYvQSXwmBwMiw
+         nMFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDNQNb7M+trbkfRGSfOlFRu2JgsONlyEI2RGffg+cRfH3RhBd5PZSnqhRWuATdhlAVjs2kfxm1hNf+bAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaAjjdAjU5i67VHumxqSUfHf69tQUthbZZIeGQ+4pEc4KnKrGR
+	DpX+0lyorS/L5u/n+aw4qg5OOxUSWSSYEqJruXQoDxwVyjck7JCldyR3GUS1nnQIyC1HXPO1T+h
+	uMe/s7VYv9uzRw6bTvvo3FmECHHf/cMdplvBltfir
+X-Gm-Gg: ASbGnctAk8e/rznJUD1d4vkSeF0n9SivCVnqsHztBEgxRecz6nfAQPGg+LiWOl9unXu
+	eIWILFxSYpR7yYtiCIpdlXlP+xb6X5Y9h/4zenife57Wt/xajlGFevLmu7tPRXQw7EraVlT0MFg
+	b+dlVlRLcyijbTmgccFqUcFyiSpYNCaB9q6j9iBq3/02wQInmFkZqIQcr3HQZ+S+caZCTQw5s=
+X-Google-Smtp-Source: AGHT+IFxxFvhMmlbkQhVjaeWObABV3WoeoOVT5fSHhijIuYsrBno4ADnY5diwgzhSEBnYHCkQ7K8VovdxIPM4tB5l28=
+X-Received: by 2002:a05:6e02:4d1:b0:3dd:b826:deca with SMTP id
+ e9e14a558f8ab-3ddc69d0cadmr520205ab.26.1749067748380; Wed, 04 Jun 2025
+ 13:09:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] dt-bindings: iio: adc: add ad7405
-To: Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Tobias Sperling <tobias.sperling@softing.com>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250604133413.1528693-1-pop.ioan-daniel@analog.com>
- <20250604133413.1528693-5-pop.ioan-daniel@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250604133413.1528693-5-pop.ioan-daniel@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250604171554.3909897-1-kan.liang@linux.intel.com>
+In-Reply-To: <20250604171554.3909897-1-kan.liang@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 4 Jun 2025 13:08:57 -0700
+X-Gm-Features: AX0GCFu_ae4C-apM5oZSw0bUB-TV69VsOZiStuOFLxft_vnnKpidVhfv4nqHewo
+Message-ID: <CAP-5=fX9+XouUy=KeFbHw_GEMKjHteg_0OPvvohhe6hxgVP6UQ@mail.gmail.com>
+Subject: Re: [PATCH V3] perf: Fix the throttle error of some clock events
+To: kan.liang@linux.intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org, 
+	mark.rutland@arm.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, eranian@google.com, ctshao@google.com, 
+	tmricht@linux.ibm.com, Leo Yan <leo.yan@arm.com>, 
+	Aishwarya TCV <aishwarya.tcv@arm.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/4/25 8:34 AM, Pop Ioan Daniel wrote:
-> Add devicetree bindings for ad7405/adum770x family.
-> 
-> Signed-off-by: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
+On Wed, Jun 4, 2025 at 10:16=E2=80=AFAM <kan.liang@linux.intel.com> wrote:
+>
+> From: Kan Liang <kan.liang@linux.intel.com>
+>
+> Both ARM and IBM CI reports RCU stall, which can be reproduced by the
+> below perf command.
+>   perf record -a -e cpu-clock -- sleep 2
+>
+> The issue is introduced by the generic throttle patch set, which
+> unconditionally invoke the event_stop() when throttle is triggered.
+>
+> The cpu-clock and task-clock are two special SW events, which rely on
+> the hrtimer. The throttle is invoked in the hrtimer handler. The
+> event_stop()->hrtimer_cancel() waits for the handler to finish, which is
+> a deadlock. Instead of invoking the stop(), the HRTIMER_NORESTART should
+> be used to stop the timer.
+>
+> There may be two ways to fix it.
+> - Introduce a PMU flag to track the case. Avoid the event_stop in
+>   perf_event_throttle() if the flag is detected.
+>   It has been implemented in the
+>   https://lore.kernel.org/lkml/20250528175832.2999139-1-kan.liang@linux.i=
+ntel.com/
+>   The new flag was thought to be an overkill for the issue.
+> - Add a check in the event_stop. Return immediately if the throttle is
+>   invoked in the hrtimer handler. Rely on the existing HRTIMER_NORESTART
+>   method to stop the timer.
+>
+> The latter is implemented here.
+>
+> Move event->hw.interrupts =3D MAX_INTERRUPTS before the stop(). It makes
+> the order the same as perf_event_unthrottle(). Except the patch, no one
+> checks the hw.interrupts in the stop(). There is no impact from the
+> order change.
+>
+> Reported-by: Leo Yan <leo.yan@arm.com>
+> Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+> Closes: https://lore.kernel.org/lkml/20250527161656.GJ2566836@e132581.arm=
+.com/
+> Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Closes: https://lore.kernel.org/lkml/djxlh5fx326gcenwrr52ry3pk4wxmugu4jcc=
+djysza7tlc5fef@ktp4rffawgcw/
+> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> Closes: https://lore.kernel.org/lkml/8e8f51d8-af64-4d9e-934b-c0ee9f131293=
+@linux.ibm.com/
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
 > ---
-> no changes in v6.
-
-In previous reviews, it was requested to keep the full changelog
-of all versions here. This advice applies to all patches in
-all series. It makes it easier for reviewers so that we don't
-have to go looking at 5 different revisions on lore to remind
-us what the history was.
-
-...
-
-> +examples:
-> +  - |
-> +    adc {
-> +        compatible = "adi,ad7405";
-> +        clocks = <&axi_clk_gen 0>;
-> +        vdd1-supply = <&vdd1>;
-> +        vdd2-supply = <&vdd2>;
-> +        io-backends = <&axi_adc>;
-
-Changing this one line from :
-
-        io-backends = <&iio_backend>;
-
-is not really a significant change, so Krzysztof's review tag should
-have been kept and would have saved him some time in making additional
-reviews.
-
-> +    };
-> +...
-
+>
+> Changes since V2:
+> - Apply a different way to fix the issue.
+>   Remove all Tested-by since a different way is applied
+> - Update the change log
+> - Add more Reported-by
+>
+>  kernel/events/core.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index f34c99f8ce8f..46441c23475d 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2656,8 +2656,8 @@ static void perf_event_unthrottle(struct perf_event=
+ *event, bool start)
+>
+>  static void perf_event_throttle(struct perf_event *event)
+>  {
+> -       event->pmu->stop(event, 0);
+>         event->hw.interrupts =3D MAX_INTERRUPTS;
+> +       event->pmu->stop(event, 0);
+>         if (event =3D=3D event->group_leader)
+>                 perf_log_throttle(event, 0);
+>  }
+> @@ -11749,7 +11749,12 @@ static void perf_swevent_cancel_hrtimer(struct p=
+erf_event *event)
+>  {
+>         struct hw_perf_event *hwc =3D &event->hw;
+>
+> -       if (is_sampling_event(event)) {
+> +       /*
+> +        * The throttle can be triggered in the hrtimer handler.
+> +        * The HRTIMER_NORESTART should be used to stop the timer,
+> +        * rather than hrtimer_cancel(). See perf_swevent_hrtimer()
+> +        */
+> +       if (is_sampling_event(event) && (hwc->interrupts !=3D MAX_INTERRU=
+PTS)) {
+>                 ktime_t remaining =3D hrtimer_get_remaining(&hwc->hrtimer=
+);
+>                 local64_set(&hwc->period_left, ktime_to_ns(remaining));
+>
+> --
+> 2.38.1
+>
 
