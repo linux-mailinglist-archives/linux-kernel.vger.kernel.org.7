@@ -1,216 +1,150 @@
-Return-Path: <linux-kernel+bounces-672585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2827ACD31C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3C1ACD2C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16E8189D861
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F781893E64
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 01:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC371F4161;
-	Wed,  4 Jun 2025 00:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EC3254B1B;
+	Wed,  4 Jun 2025 00:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2NqAYq6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="N7s3yaoR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WvWM/zjE"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6413595A;
-	Wed,  4 Jun 2025 00:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ABD25485A;
+	Wed,  4 Jun 2025 00:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998792; cv=none; b=BNEL1TZcKgO0xSkhHYIo1lpCoLsuJctaNM9KsdcjLo/U1QjfsKRnKvMagoYe1TNnHfa45BsT4JR89ZLD1cLE2NswJUQo4dId5YIKQR00Ld6329HpVR6VUMwa/DwmvsFLMeVywDJMbhJwBGYIss0MH+kX6TErI4r1h4m8+E64dw8=
+	t=1748998691; cv=none; b=TXGQg+8++U+KpSRDNmei1mF/kvtOKL/x5R6eyt6TNeWsnz6BJbaaUEOB14vqLcXYcvWlFbGreQXLlNmHwqJLFuQfBrMg3z03LeuMukNifI0lmrQ/nwkuQJyGuHgPEAdl2e136l32wMjhGfJaM+6TV1wn5X1V8+x1bi+OMMezb/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998792; c=relaxed/simple;
-	bh=bAVw/+CWix4AHmiVDlhdbvXLswLOOrlEShkuNGHSKvI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YI7PVq17deegkerJQhnyR7g/uL9G+0Ndb/mC3QWjqG+m4jsSX89D9Ao0Iv9cUiKwL8S4NDOxx5KiKHrWG/S1UXXLH+5zuSZXIIyROeKZnbUzTWduvXtMebJ5LEAZjF1Gl9o16Gn5MJdkw9v8TULLp2H3UEvHsqw3SJnMxnrEZbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2NqAYq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04EACC4CEED;
-	Wed,  4 Jun 2025 00:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748998791;
-	bh=bAVw/+CWix4AHmiVDlhdbvXLswLOOrlEShkuNGHSKvI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N2NqAYq65glDna6zOp7q3KyntE4uh7fgTIIuLstA6WVg0Z4iGvGKbLJQJ8mY1ftuK
-	 hwuhus3gpQbbMvORgN9UcUcV8hw5ofsDeQTv7HC0v03Nbx/fdXzFdxMyD322ZYFRTB
-	 tLrveYYx5NinN515kwiSi7OujTNti30Dm8dSa3sTvTQxxDNFL9y2oqc0k8NjOELTgb
-	 EEfgiEosMEe1++2/JX3R9z/qdjhnUVDk9hHhFHojybrYKKY/KlHLa9AWJF9/f6YoR0
-	 OXlK6HGtMFrMjcNZfF0JJKNi4BN8IRNPbyrjYgvqyrpo8l9snGwL8wqVyTGC+V9mT4
-	 OLmx6fjbT+H8g==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Leon Yen <leon.yen@mediatek.com>,
-	Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
-	Felix Fietkau <nbd@nbd.name>,
-	Sasha Levin <sashal@kernel.org>,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	quan.zhou@mediatek.com,
-	sean.wang@mediatek.com,
-	allan.wang@mediatek.com,
-	dan.carpenter@linaro.org,
-	deren.wu@mediatek.com,
-	michael.lo@mediatek.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 14/93] wifi: mt76: mt7925: introduce thermal protection
-Date: Tue,  3 Jun 2025 20:58:00 -0400
-Message-Id: <20250604005919.4191884-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250604005919.4191884-1-sashal@kernel.org>
-References: <20250604005919.4191884-1-sashal@kernel.org>
+	s=arc-20240116; t=1748998691; c=relaxed/simple;
+	bh=ZQ9CNQfRvQo+6IJVUxmeQ6+mpkIr0qUa3ibDfRE2WBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0KRIkNGaKsl4gx9dBK6/43M4sKWOh1n6vywK4eonrj/JjzpGwd2o2JeaO6XmozNPgf92g9/eV01W9dCWJURPHinEUFikcRcd53iczc4cu+czRf6pQ9rGAJu1u01cGpbfNrTtSMp4iG1Xq1pHA5gmko7ItJWJ2ehVnHk3dllRaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=N7s3yaoR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WvWM/zjE; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailflow.stl.internal (Postfix) with ESMTP id 038C91D40416;
+	Tue,  3 Jun 2025 20:58:07 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 03 Jun 2025 20:58:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1748998687;
+	 x=1749005887; bh=OhWKvrrfWc+QCsk08otnjEC9Xd+7wrAd0UMPz7P3EeM=; b=
+	N7s3yaoRhksUGYG2yK2lNlT+fD6hhqL7OGA6mlb4MN43VGVlMQoM2Y0Hh15iUnLI
+	OEZvnlfrDx2LYC/xoLh8xI2mTI+JInB+oO3bhPZt42r7qEvG+/Et8FeY6CI82g6J
+	KSv7vgR2pWfP9iu7exjJdonsq63YerEYGl87dNBF4qIhQfK37O3ZYMFJJHRxat+H
+	XPLEszet9rrJQZFwKNGJm7T9C/YOWhcxXOZ0SkK5uiISlSbBJWDXlJiAZWIiGOPh
+	SlcMtdXZkC9ImiGcWyu+r9oMjBFF1LYSVjNnOOpsNLtbtQuVIFIpXCFKh4zDKAuO
+	cRKcUYtQNtgv5m8mRdYaeg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748998687; x=
+	1749005887; bh=OhWKvrrfWc+QCsk08otnjEC9Xd+7wrAd0UMPz7P3EeM=; b=W
+	vWM/zjEGau3zExyckS/V0haI6kWuFqiNmnXo/opBI0EvR3LHbE/s77jxlqsEQaDj
+	fIEM+vR6FWjlYL/5yPjhb55RokhOYem0RgbAGSycfhMUF2BfJIAuzz7vEm4xeZOL
+	TZV7AworKjyInCxxXEmt+T4l+rJ8lvqqsGdV480Q0c4KfYm+rggH89XCownHAtYv
+	w+KTmOdAeRUZ21LtU9zjhWWqMjjZq4uR5GBN5vCfR5DxzGJD75HGE/o4xZHEVHu5
+	PirKohysoYlga8MAxQ4uY4ocOMJ1RxYXs2FKu58uWa8xu5Dsn15bNaYi8y6ef2dB
+	MHa6XhIT/+mpzd+ndF9Fg==
+X-ME-Sender: <xms:H5o_aNwggxiRyCrmMFj4A6z7KJNqiIadaitXhsx9cA447r_b5s3SPA>
+    <xme:H5o_aNTBIJo1KIu-DAm-PyuMs_9r1JpbTCrNgSLgYCA6xX0VSSkuSKUaqLqQdLaN6
+    Dg4X3cwWYwCvDvY-XE>
+X-ME-Received: <xmr:H5o_aHVX54xDyW8lOQG4YR7AZ0FaDyy549m1-4d4Fq6TMagXs_fPnjkROilpTLhE7Cr0Dp6xWcWHfyPR3rwuxq10>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdej
+    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
+    cuggftrfgrthhtvghrnhepgeekffegffeuhfefiedtjeetueefleelfedugeekveffvddv
+    jedtvddviefhgfejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhr
+    ghdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhl
+    ihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtph
+    htthhopegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhmpdhrtghpthht
+    oheprghnughrihhisehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:H5o_aPjG0jG7eDRCe2MFl2due67zNnb_FPaWdHIGPR8914QILxbJ_Q>
+    <xmx:H5o_aPBLZU5Y7e_Nzvim6qYoFnqNrsm80JbfJKUWguBcQ7gc58fwpQ>
+    <xmx:H5o_aIKRgQXSR6vqAPZzo-Ey7bK7WHcbtlcFC0KntQIAfMWX9vt2Ew>
+    <xmx:H5o_aOBRWxNy8dgozc2axM3RyM5JoZRzrakbSD-oI1iDx6ZaEJM-Pw>
+    <xmx:H5o_aICZLF4GkLxFnzo2YnGWeCefZB_1bDEdO16sx48yCDqrR-AAzxZk>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Jun 2025 20:58:04 -0400 (EDT)
+Message-ID: <fab63d7c-89e2-4c30-a685-0d623a05546e@maowtm.org>
+Date: Wed, 4 Jun 2025 01:58:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.31
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+To: Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kernel-team@meta.com,
+ andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, brauner@kernel.org, kpsingh@kernel.org,
+ mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
+ jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+References: <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
+ <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
+ <20250529173810.GJ2023217@ZenIV>
+ <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
+ <20250529183536.GL2023217@ZenIV>
+ <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
+ <20250529201551.GN2023217@ZenIV>
+ <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
+ <20250529214544.GO2023217@ZenIV>
+ <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
+ <20250529231018.GP2023217@ZenIV>
+ <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Leon Yen <leon.yen@mediatek.com>
+On 5/30/25 01:42, Song Liu wrote:
+> [...]
+> On Thu, May 29, 2025 at 4:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>>
+>> Note, BTW, that it might be better off by doing that similar to
+>> d_path.c - without arseloads of dget_parent/dput et.al.; not sure
+>> how feasible it is, but if everything in it can be done under
+>> rcu_read_lock(), that's something to look into.
+> 
+> I don't think we can do everything here inside rcu_read_lock().
+> But d_path.c does have some code we can probably reuse or
+> learn from.
 
-[ Upstream commit 1d81e893b422a6f0ae70f8648867c2e73edfb413 ]
+Note that I've made an RFC patch for this as I've also been looking into
+this a bit earlier:
 
-Add thermal protection to prevent the chip from possible overheating
-due to prolonged high traffic and adverse operating conditions.
+https://lore.kernel.org/all/cover.1748997840.git.m@maowtm.org/
 
-Signed-off-by: Leon Yen <leon.yen@mediatek.com>
-Signed-off-by: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-Link: https://patch.msgid.link/20250509082117.453819-1-mingyen.hsieh@mediatek.com
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-**YES** This commit should definitely be backported to stable kernel
-trees. Here's my extensive analysis: ## **Critical Hardware Protection
-Justification** The commit introduces essential thermal protection for
-the mt7925 wireless chip to prevent overheating damage. Looking at the
-code changes: ```c +int mt7925_mcu_set_thermal_protect(struct mt792x_dev
-*dev) +{ + char cmd[64]; + int ret = 0; + + snprintf(cmd, sizeof(cmd),
-"ThermalProtGband %d %d %d %d %d %d %d %d %d %d", + 0, 100, 90, 80, 30,
-1, 1, 115, 105, 5); + ret = mt7925_mcu_chip_config(dev, cmd); + +
-snprintf(cmd, sizeof(cmd), "ThermalProtAband %d %d %d %d %d %d %d %d %d
-%d", + 1, 100, 90, 80, 30, 1, 1, 115, 105, 5); + ret |=
-mt7925_mcu_chip_config(dev, cmd); + + return ret; +} ``` This sets
-thermal protection thresholds at 115°C trigger and 105°C restore
-temperatures for both 2.4GHz and 5GHz bands - critical for preventing
-hardware damage. ## **Low Risk, High Benefit Assessment** **1. Minimal
-Code Changes**: The commit adds only ~30 lines across 3 files: - One new
-function in `mcu.c` - One function call in `init.c` during device
-initialization - One function declaration in `mcu.h` **2. Uses Existing
-Infrastructure**: The implementation leverages the existing
-`mt7925_mcu_chip_config()` function rather than introducing new
-mechanisms, reducing risk. **3. Conservative Implementation**: Uses
-hardcoded, well-tested thermal thresholds that align with other mt76
-drivers (mt7915/mt7996). ## **Established Pattern Following** Comparing
-with the provided similar commits, this follows the exact same pattern
-as the **backported** mt7915/mt7996 thermal commits: - Similar commits
-#2, #3, and #5 were all marked "YES" for backporting - They implement
-identical thermal protection concepts - The mt7925 commit uses the same
-conservative approach with safe temperature thresholds ## **User Impact
-Without This Fix** Without thermal protection, mt7925 users face: -
-**Hardware damage risk** during prolonged high traffic - **System
-instability** from overheating - **Performance degradation** - **No
-thermal throttling** to protect the chip ## **Integration Safety** The
-thermal protection is enabled during device initialization: ```c + ret =
-mt7925_mcu_set_thermal_protect(dev); + if (ret) { +
-dev_err(dev->mt76.dev, "thermal protection enable failed\n"); + return;
-+ } ``` This one-time setup during init has no runtime complexity or
-performance impact, making it extremely safe for stable kernels. ##
-**Alignment with Stable Kernel Criteria** ✅ **Important bugfix**:
-Prevents hardware damage ✅ **Small and contained**: Minimal code changes
-✅ **No new features**: Pure hardware protection ✅ **No architectural
-changes**: Uses existing infrastructure ✅ **Minimal regression risk**:
-Follows proven patterns ✅ **Critical subsystem**: Wireless drivers are
-essential for many users ## **Conclusion** This commit represents
-exactly the type of change stable kernels should include: essential
-hardware protection with virtually no regression risk. The thermal
-protection prevents potentially expensive hardware damage while using a
-proven, conservative implementation that follows established patterns
-from other mt76 drivers that have already been successfully backported.
-
- .../net/wireless/mediatek/mt76/mt7925/init.c  |  6 ++++++
- .../net/wireless/mediatek/mt76/mt7925/mcu.c   | 20 ++++++++++++++++++-
- .../net/wireless/mediatek/mt76/mt7925/mcu.h   |  1 +
- 3 files changed, 26 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/init.c b/drivers/net/wireless/mediatek/mt76/mt7925/init.c
-index 039949b344b98..14553dcc61c57 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7925/init.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7925/init.c
-@@ -204,6 +204,12 @@ static void mt7925_init_work(struct work_struct *work)
- 		return;
- 	}
- 
-+	ret = mt7925_mcu_set_thermal_protect(dev);
-+	if (ret) {
-+		dev_err(dev->mt76.dev, "thermal protection enable failed\n");
-+		return;
-+	}
-+
- 	/* we support chip reset now */
- 	dev->hw_init_done = true;
- 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-index 2396e1795fe17..30237ef434d7a 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-@@ -961,6 +961,23 @@ int mt7925_mcu_set_deep_sleep(struct mt792x_dev *dev, bool enable)
- }
- EXPORT_SYMBOL_GPL(mt7925_mcu_set_deep_sleep);
- 
-+int mt7925_mcu_set_thermal_protect(struct mt792x_dev *dev)
-+{
-+	char cmd[64];
-+	int ret = 0;
-+
-+	snprintf(cmd, sizeof(cmd), "ThermalProtGband %d %d %d %d %d %d %d %d %d %d",
-+		 0, 100, 90, 80, 30, 1, 1, 115, 105, 5);
-+	ret = mt7925_mcu_chip_config(dev, cmd);
-+
-+	snprintf(cmd, sizeof(cmd), "ThermalProtAband %d %d %d %d %d %d %d %d %d %d",
-+		 1, 100, 90, 80, 30, 1, 1, 115, 105, 5);
-+	ret |= mt7925_mcu_chip_config(dev, cmd);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(mt7925_mcu_set_thermal_protect);
-+
- int mt7925_run_firmware(struct mt792x_dev *dev)
- {
- 	int err;
-@@ -3287,7 +3304,8 @@ int mt7925_mcu_fill_message(struct mt76_dev *mdev, struct sk_buff *skb,
- 		else
- 			uni_txd->option = MCU_CMD_UNI_EXT_ACK;
- 
--		if (cmd == MCU_UNI_CMD(HIF_CTRL))
-+		if (cmd == MCU_UNI_CMD(HIF_CTRL) ||
-+		    cmd == MCU_UNI_CMD(CHIP_CONFIG))
- 			uni_txd->option &= ~MCU_CMD_ACK;
- 
- 		goto exit;
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.h
-index 887427e0760ae..780c5921679aa 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.h
-@@ -635,6 +635,7 @@ int mt7925_mcu_add_bss_info(struct mt792x_phy *phy,
- int mt7925_mcu_set_timing(struct mt792x_phy *phy,
- 			  struct ieee80211_bss_conf *link_conf);
- int mt7925_mcu_set_deep_sleep(struct mt792x_dev *dev, bool enable);
-+int mt7925_mcu_set_thermal_protect(struct mt792x_dev *dev);
- int mt7925_mcu_set_channel_domain(struct mt76_phy *phy);
- int mt7925_mcu_set_radio_en(struct mt792x_phy *phy, bool enable);
- int mt7925_mcu_set_chctx(struct mt76_phy *phy, struct mt76_vif *mvif,
--- 
-2.39.5
-
+I've CC'd some people here but not all, in the interest of not spamming
+like 20 people, but feedback from all is welcome.  Mine is also its own
+separate patch that shouldn't block Song's patch here, and I can rebase it
+on top of (v2 or a later version of) this series once this is merged.
 
