@@ -1,84 +1,193 @@
-Return-Path: <linux-kernel+bounces-673587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509E2ACE30D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:19:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755D8ACE37F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268981893A0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:19:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24E11754F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD0F1F2BAB;
-	Wed,  4 Jun 2025 17:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327341F5823;
+	Wed,  4 Jun 2025 17:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5LMJuy8c"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tqI6fcgw"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042F9216605;
-	Wed,  4 Jun 2025 17:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44991F4631
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 17:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749057401; cv=none; b=n9S/vlxpvTJPFrvLeyg5QIVQo14rQREGw+yuYzbqucyhYqr06okpR0FfZCsoOj8hLj/syyeT4H9isHldX3s/8EwIoQZDPVW6u1fBp900sOcOfsbfNJw6N9vL4iiK65EjzZ6r+XVULG7DVu/wir65MSnJkFhxyA//5mtB165cWiM=
+	t=1749057741; cv=none; b=iAjoX0fGKusSDa1//65aq2r5Meoszxo+H61st4CSwvqGHiAgRSjkt3QN+SXhpkcVUMjj8ua4HLrs2uySF7ZiTpecwUzEVd9EhdcNTZV2623pbY3PUsbLJmP0IzWhMEr597f7Nj9qvIl1d1UbVYKUN5Amt01659heQsCSfxf3xvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749057401; c=relaxed/simple;
-	bh=jqI3bnr2y0DT3lT0IjpB2KyKs3IAiXIr+YBxZOeldNk=;
+	s=arc-20240116; t=1749057741; c=relaxed/simple;
+	bh=sKSYyUTmKbFRcwzxl/2agtBhqQgXK9AN08QzSiogKtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ow8n/Zam8UwJEdljYZ3eZvmASIwmRvJZyo59pUS7sDkp+dIQYE0gbC8b7jXDd2ck9ikZh8PPInQcZ58QVxxE9l1dzfhcyubaPJ8a9l72IFaKjJbweRzkkMvnQ2EQwJ9WeUDD+9IGp2zRuxME46qMVu/q+yT3W3DQMKqnP5mKeQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5LMJuy8c; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=pbjjAievrk0TRpJw/qD0GOXbcxqQaMhuiUNPc/d2A7k=; b=5LMJuy8czXGhJbnvQhd/7KM5jD
-	xTa7+YBTRAVXVqntNCeDTCOV8p8YdzlX479W00i+Zc4rVUj/Ytd2u4EdMhrqVfrKBSYofbfOUA0X9
-	dqwY8Jipbbud+Qt2813lGG7FaNXlnpzblFG7oIcsHY/9L+SoNnNIXq1/wzThGSQch2Uo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uMrj3-00EhMP-QE; Wed, 04 Jun 2025 19:16:29 +0200
-Date: Wed, 4 Jun 2025 19:16:29 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	othacehe@gnu.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [v2] arm64: dts: freescale: imx93-var-som: update eqos support
- for MaxLinear PHY
-Message-ID: <92e4de77-07da-4583-bf0f-46891101c327@lunn.ch>
-References: <20250604153510.55689-1-stefano.radaelli21@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5j4SFbDILAM1+ueZZS/FDjlSVYZ/BXBu8vNEE6ANFKUywmuti45OVZbWLwfhmg4/RWqYtt643+cXJ/ffDdEjCN4b2rztKJLQ4G70fgyo9KRyp5UFs1GLlZJ+1jvXy/nSU9yreSTXlEAMKqCxRh8t0QFriY3KqJqzhZqmpOFGpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tqI6fcgw; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7406c6dd2b1so1154496b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 10:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749057739; x=1749662539; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eRFhhLJjI4zA7koH9NNbXkaz3+o0i9nOOHT1b6Am9B4=;
+        b=tqI6fcgwECZShrNWkE7HO9IkhId5FzM7tdTO5DuK1q6LT82Fpqtn56uQBj2Qmw+mX2
+         4n0shTp+6KoDbxNUPUwYgfD4u0Kee9qEt7PyMwTqGxJRM0k2fmJ9dezCq8o/OE5sq30D
+         XWCYhJQjKBDtogm6A8aFM6RZN3Z8EWQUQ7LiGk63MciQJ4sRVUu+zzRzFKm92eNLZgXs
+         eHwMr2cvUYmVVU9PK8St56UimKPnO/yKeqOjneYztOemYbC+z7G0AiplxZiu5BhczGww
+         grFYlDP5l4Hhr+lJZJhhu2B+f+UEo+d0CyQ+hhZSfZtksPdrfkbYXFi8MFIqisks/ok9
+         7ykg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749057739; x=1749662539;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eRFhhLJjI4zA7koH9NNbXkaz3+o0i9nOOHT1b6Am9B4=;
+        b=ArnbZ3h9gGMuErTxTTsjDw1Z7S55NorOcVzavtS1deqplCH7x+Qc3LftkQYjBK/Koy
+         5RBwoMOl3NrylX72ksSV0JW95VJdJk8+oC2vUsIR4A4EDQGWk8nJYclLqSAp7/Hbz/r6
+         07Bh1F4POnJdwbkAKcdc+aFGzrbC7wnba+lHjVgIGCV+No0NmPJbUIYKSXAfe3lLEQ28
+         LlSuyLuEbktQdePJSr0QCkdji3kcz6bNPS6kMKqAZOfzfWNP4uP157+Qy5PowKMmYxgF
+         xe0/9ds8gzxQBcwaXCnoKLmClBuRc/f6vKyU8UzzYlJ5UqoPNxyb4KLbvL/p9W3INbjr
+         MgxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSeJC5P+jpiFobruin252DcDt6N5rTATAS3cqAe6ya5wJ4FnnN9HkAt48DmZ0lIeoZ/x75zyrjwF6jFTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHCXgF1PlWFUh040uunl8armA5LA6MePuPm7+wN816MEja6bbc
+	WAGmtI/1PNkQc8sY7/jI4bPxE67EukDRA9f5l7OOjUuNNkgYShBCBkvIIt2eyPUIRw==
+X-Gm-Gg: ASbGncuegbPPUJfXMiOWu2ddmY7HYtiEk437J4QMTCkHKswRaafo1QM28SRJeWtsL0a
+	SaY/rU7bFHLoMM5Qg0FgsOAWtRAnhTVtNJAp7laCL08sbJ5Q5NZwgBjYj3YeQsRtRe/PtYj2x8G
+	B8jsE8yBiPD07JOwScyra/vOYemAJdrnXty12At/WKN/MEJhTN3JidTNXeyotmL4Mu05CdeRkuv
+	RHz6FvGzyKTmKgntnlheMHI5KIiZpzx+bBSHf0ckWfA/NClXBhkZj5nDFbG7hfr6rREX8tcwY6M
+	9XlbpDMiZtRjs0uW+RhwUvkcRJ1O49AFe4HhaQMejFdMO6/YZzWv37B8bMnN/A==
+X-Google-Smtp-Source: AGHT+IEfy4DmIHTrKSJlkqSXJHSlJ3gLkmiP8MmaPN6LL/v90GBnAH1FIJiiM09/woNRLt0+WHE+iQ==
+X-Received: by 2002:a05:6a00:3b0d:b0:736:b400:b58f with SMTP id d2e1a72fcca58-7481814420fmr375938b3a.0.1749057738824;
+        Wed, 04 Jun 2025 10:22:18 -0700 (PDT)
+Received: from thinkpad ([120.60.60.253])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afff7e3bsm11735265b3a.175.2025.06.04.10.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 10:22:18 -0700 (PDT)
+Date: Wed, 4 Jun 2025 22:52:12 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>, 
+	linux-arm-kernel@lists.infradead.org, Anand Moon <linux.amoon@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] PCI/pwrctrl: Add optional slot clock to pwrctrl
+ driver for PCI slots
+Message-ID: <zzm2nyrm4nw5di7afe5nxte3hxbx3dvorjg74rsjhl3jlaywp4@x7icn3epnh67>
+References: <20250530225504.55042-1-marek.vasut+renesas@mailbox.org>
+ <CAMuHMdUFHKHKfymqa6jwfNnxZTAuH3kbj5WL+-zN=TR6XGd0eA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250604153510.55689-1-stefano.radaelli21@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUFHKHKfymqa6jwfNnxZTAuH3kbj5WL+-zN=TR6XGd0eA@mail.gmail.com>
 
->  &eqos {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_eqos>;
-> +	/*
-> +	 * The required RGMII TX and RX 2ns delays are implemented directly
-> +	 * in hardware via passive delay elements on the SOM PCB.
-> +	 * No delay configuration is needed in software via PHY driver.
-> +	 */
->  	phy-mode = "rgmii";
+On Wed, Jun 04, 2025 at 10:40:25AM +0200, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> Thanks for your patch!
+> 
+> On Sat, 31 May 2025 at 00:55, Marek Vasut
+> <marek.vasut+renesas@mailbox.org> wrote:
+> > Add the ability to enable optional slot clock into the pwrctrl driver.
+> > This is used to enable slot clock in split-clock topologies, where the
+> > PCIe host/controller supply and PCIe slot supply are not provided by
+> > the same clock. The PCIe host/controller clock should be described in
+> > the controller node as the controller clock, while the slot clock should
+> > be described in controller bridge/slot subnode.
+> >
+> > Example DT snippet:
+> > &pcicontroller {
+> >     clocks = <&clk_dif 0>;             /* PCIe controller clock */
+> >
+> >     pci@0,0 {
+> >         #address-cells = <3>;
+> >         #size-cells = <2>;
+> >         reg = <0x0 0x0 0x0 0x0 0x0>;
+> >         compatible = "pciclass,0604";
+> >         device_type = "pci";
+> >         clocks = <&clk_dif 1>;         /* PCIe slot clock */
+> 
+> I assume this should be documented in
+> dtschema/schemas/pci/pci-bus-common.yaml, too?
 
-For this part only:
+You are right.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> 
+> >         vpcie3v3-supply = <&reg_3p3v>;
+> >         ranges;
+> >     };
+> > };
+> >
+> > Example clock topology:
+> >  ____________                    ____________
+> > |  PCIe host |                  | PCIe slot  |
+> > |            |                  |            |
+> > |    PCIe RX<|==================|>PCIe TX    |
+> > |    PCIe TX<|==================|>PCIe RX    |
+> > |            |                  |            |
+> > |   PCIe CLK<|======..  ..======|>PCIe CLK   |
+> > '------------'      ||  ||      '------------'
+> >                     ||  ||
+> >  ____________       ||  ||
+> > |  9FGV0441  |      ||  ||
+> > |            |      ||  ||
+> > |   CLK DIF0<|======''  ||
+> > |   CLK DIF1<|==========''
+> > |   CLK DIF2<|
+> > |   CLK DIF3<|
+> > '------------'
+> >
+> > Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> 
+> > --- a/drivers/pci/pwrctrl/slot.c
+> > +++ b/drivers/pci/pwrctrl/slot.c
+> 
+> > @@ -30,6 +31,7 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+> >  {
+> >         struct pci_pwrctrl_slot_data *slot;
+> >         struct device *dev = &pdev->dev;
+> > +       struct clk *clk;
+> >         int ret;
+> >
+> >         slot = devm_kzalloc(dev, sizeof(*slot), GFP_KERNEL);
+> > @@ -50,6 +52,13 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+> >                 goto err_regulator_free;
+> >         }
+> >
+> > +       clk = devm_clk_get_optional_enabled(dev, NULL);
+> > +       if (IS_ERR(clk)) {
+> > +               ret = dev_err_probe(dev, PTR_ERR(clk),
+> > +                                   "Failed to enable slot clock\n");
+> > +               goto err_regulator_disable;
+> > +       }
+> 
+> You are adding this block in the middle of the regulator handling.
+> Please move it below, under the devm_add_action_or_reset() call
+> (which is handled wrong, I have sent a patch[1]).
+> 
 
-    Andrew
+Good catch!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
