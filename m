@@ -1,119 +1,102 @@
-Return-Path: <linux-kernel+bounces-672947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7652BACD9F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BEAACD9EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C20B18936B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399D7189336A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9572428C2B2;
-	Wed,  4 Jun 2025 08:36:51 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D5C2853E3;
+	Wed,  4 Jun 2025 08:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DR9tZW67"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73ED42853E3
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA5B10E9
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749026211; cv=none; b=M409jG34nkYNVsHskYkSazRHEKDuoO1FBBadOx2uqufYluuWKmlL0nB97MhO6OPinsJHz/OOWvj94VmC6+ayah7A28QHnt+YPKS6muqogmYMPe5y0NoPd2HLVso2NuplDjq7Di57/v6nexlmw56Gl9B+ELDT1pIJwTqELIy7pS0=
+	t=1749026059; cv=none; b=f0o0uKGcbZy+pu2pnn+3Os/Wc/xayMTeyFWPcsSXrEfs0SFfUHOvN4f6xFNX+rkDQlzlr82ELEydOIfwy+660f4BZfi9Nb1owN2VSc5u4AwLTzrpTmvyI2pTMosX7v/Jqplt7nocUyAiC89Pri1pGvHdaLRdk5Pcs/lzjqXSVoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749026211; c=relaxed/simple;
-	bh=+smY9GzeWHhgC2GFdJxz0JEiurmnnj5OUspz/Qv3mE4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HOfCYXyIq5gcwj3ACvBmvMcZ2uY4vtYhubfuFlgwUyquESMnm6qFEYd56Qg0MuyoncxNJKCzMLSoaFCEOzv+vSR9K9/PGhSUssQqeZVqUwqirbZd72zCZFuw5Hu0AUC2Vnc9kDLpvfgWxQS3Lk1byOToJJBXCrnaiKfaivni6kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bC18Y0XPvz1R7PM;
-	Wed,  4 Jun 2025 16:34:21 +0800 (CST)
-Received: from dggpemf100018.china.huawei.com (unknown [7.185.36.183])
-	by mail.maildlp.com (Postfix) with ESMTPS id 80B6C1A0188;
-	Wed,  4 Jun 2025 16:36:39 +0800 (CST)
-Received: from huawei.com (10.67.174.51) by dggpemf100018.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Jun
- 2025 16:36:38 +0800
-From: Yipeng Zou <zouyipeng@huawei.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<peterz@infradead.org>, <sohil.mehta@intel.com>, <rui.zhang@intel.com>,
-	<arnd@arndb.de>, <yuntao.wang@linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <zouyipeng@huawei.com>
-Subject: [BUG REPORT] x86/apic: CPU Hang in x86 VM During Kdump
-Date: Wed, 4 Jun 2025 08:33:19 +0000
-Message-ID: <20250604083319.144500-1-zouyipeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749026059; c=relaxed/simple;
+	bh=oIRXxYpaCE7P1jXJfM1KOU/ukUCp6xeSehnHV/gu2PY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SAavrqjXiiIfGJ8nxJS0StLAbknmdlF59YtYeJJbBNjdI0C7dbiqqC6GhDYz8m3Ah3Ozt7COS40TPzj2Du3BYi/4oHb4VVqHhIsj9WmRzxuBYcf7mkAzWEHwBjLfnYXPc09qPD2uuZCw9Cc+VdIRV478kInXL93txcFYqVWaZlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DR9tZW67; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-710bbd7a9e2so25704357b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 01:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749026054; x=1749630854; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oIRXxYpaCE7P1jXJfM1KOU/ukUCp6xeSehnHV/gu2PY=;
+        b=DR9tZW67GrnfddsR2iQhT3KM5xtXRrndODiWvxGgPodgfcPLV+zt0tu+HNPzOPKsxf
+         fPEg7E+rbrrnr5/2x00+CemiTSfkhFQHkBw2eqLuylNCPOo7mkNxSQbPHRQyeJAagMLN
+         R81NPeq96OZzESD18wBPRm3robMDmPJTSCMdDwrGqwwHC3iri7NjppnGeccMoxbsyaW3
+         P2hN83HLGgygGLTea/aYuTUBUKYkDge/piLqDxgn6bfoZ7aJY0g/QZKAcwm2awch8w14
+         gT3rb9nrMjmd7yoSfnxemnuxYk3/hrShWKePfbmQX8FiDbBtSXJyy9fFUZamcvgUI5C7
+         WM+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749026054; x=1749630854;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oIRXxYpaCE7P1jXJfM1KOU/ukUCp6xeSehnHV/gu2PY=;
+        b=lbqMCKZh4FbAE1Zbwd+uwwXgl40yaRgMd/L7O+XseCJ/KpN9rjTapC03FjP2nOZxdV
+         /B9XeSsR3pnmiPx6Iu43YSSpAnsozIjVN0J8o4EUko0wZvbkdI/SUTvWclchnzfvaCHj
+         o11KAWVzWt5F62uZZFNm9kU2hVdQECLlQ5hQ9fVkv75vCH6VI1DLUvHX4Mx8rFiIiYAd
+         EhYurvDNeqyi582V44V0GKfFjgIbSsnSeZ555nF4uB7dfYSKbBjd9PeUmGBHqa2u6xJl
+         5p5TRt6pg9mYm4E48YqSXpvT90J3qCQyGlD6KHChFrXhbGtcquBDY8zDKSrwS/5RxXg8
+         7PWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrli9vQP/gL/dekDNM+sRUuWbgfyogpGsXt1+EvReruZpE5srKF92FWR3jqNyMzOdk+dy0L2UNzoiBN7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXMGLLE/r8+VEI4E7wqx5ydocGPyaCHoDHDhTM4obyW7ENlD87
+	O8NCttFQPT6OiE+A8ac2GhhfStF5e1WK76mCLkJ2snaCQnIcGkqm/LWtwcKpAFD4c5VP4R6uo4t
+	mL/pWedsPWcKWplDmSfPxXhTdOpUKWGIrK4Ci3gz9Mw==
+X-Gm-Gg: ASbGncsnKm+3PhxOd4OS+alwKzEBw3cPt2CLm1oQBpbYgZhMyvmgL9DuPX+VS2lYgn9
+	l3ZHgNJvFlC0vm+aSVV3wfa/NlId7TC4Oplq9AIYQnI2ddN7uIyrbVdsipwOANblaJSk5oNaxwX
+	YyMBS8As4uH0lhT/J2QkrgG+s5B98SS+P6
+X-Google-Smtp-Source: AGHT+IFdMlKQEHFB9rAIPubm+oWCxtLQaBriPs9FGR9ZFu04+vMyrF1AGrH76Qny9PZkqn4FiSFsMO29KEcocYymM64=
+X-Received: by 2002:a05:690c:6e01:b0:70e:29d2:fb7b with SMTP id
+ 00721157ae682-710d9dba8e0mr22420457b3.33.1749026054535; Wed, 04 Jun 2025
+ 01:34:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf100018.china.huawei.com (7.185.36.183)
+References: <20250603201036.44504-1-terry.tritton@linaro.org> <CANDhNCoiKjPOyGwiu5Apg2y4LduPTRQvEjG7snmbzrenZojAKg@mail.gmail.com>
+In-Reply-To: <CANDhNCoiKjPOyGwiu5Apg2y4LduPTRQvEjG7snmbzrenZojAKg@mail.gmail.com>
+From: Terry Tritton <terry.tritton@linaro.org>
+Date: Wed, 4 Jun 2025 09:34:03 +0100
+X-Gm-Features: AX0GCFvGl7sGmmJPlA-wX27a4YxRu7KVpfougQMpQZxrLZQMi9H8NHMyKYJfLQs
+Message-ID: <CABeuJB3vDEaaPuCK_n1JZ_0j2wgcpe9j01yLkEpkt6hsMLSB_A@mail.gmail.com>
+Subject: Re: [PATCH] selftests/timers: Fix integer overlow errors on 32 bit systems
+To: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	ttritton@google.com, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Recently, A issue has been reported that CPU hang in x86 VM.
+> So this seems to be undoing commit 80fa614e2fbc ("selftests: timers:
+> Remove local NSEC_PER_SEC and USEC_PER_SEC defines")
+Thanks John, I somehow missed 80fa614e2fbc and was wondering how
+this had got in.
 
-The CPU halted during Kdump likely due to IPI issues when one CPU was
-rebooting and another was in Kdump:
+> Would it make more sense to fix the NSEC_PER_SEC definition in time64.h to a LL?
+I was just thinking the same this morning but wasn't sure if this would cause
+issues anywhere else.
 
-CPU0			  CPU2
-========================  ======================
-reboot			  Panic
-machine shutdown	  Kdump
-			  machine shutdown
-stop other cpus
-			  stop other cpus
-...			  ...
-local_irq_disable	  local_irq_disable
-send_IPIs(REBOOT)	  [critical regions]
-[critical regions]	  1) send_IPIs(REBOOT)
-			  wait timeout
-			  2) send_IPIs(NMI);
-Halt,NMI context
-			  3) lapic_shutdown [IPI is pending]
-			  ...
-			  second kernel start
-			  4) init_bsp_APIC [IPI is pending]
-			  ...
-			  local irq enable
-			  Halt, IPI context
+I'll send a patch to change NSEC_PER_SEC in time64.h as its a lot cleaner
+that way.
 
-In simple terms, when the Kdump jump to the second kernel, the IPI that
-was pending in the first kernel remains and is responded to by the
-second kernel.
-
-I was thinking maybe we need mask IPI in clear_local_APIC() to solve this
-problem. In that way, it will clear the pending IPI in both 3) and 4).
-
-I can't seem to find a solution in the SDM manual. I want to ask if this
-approach is feasible, or if there are other ways to fix the issue.
-
-Signed-off-by: Yipeng Zou <zouyipeng@huawei.com>
----
- arch/x86/kernel/apic/apic.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index d73ba5a7b623..68c41d579303 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1117,6 +1117,8 @@ void clear_local_APIC(void)
- 	}
- #endif
- 
-+	// Mask IPI here
-+
- 	/*
- 	 * Clean APIC state for other OSs:
- 	 */
--- 
-2.34.1
-
+Thanks
+Terry
 
