@@ -1,234 +1,194 @@
-Return-Path: <linux-kernel+bounces-672841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64976ACD847
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85793ACD85A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2B51880938
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 07:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE303A3F2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 07:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195F023BCFD;
-	Wed,  4 Jun 2025 07:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CF01EB19B;
+	Wed,  4 Jun 2025 07:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="x83A3Ox3"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iih1QpkM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE44B1EB19B
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 07:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773FA79EA;
+	Wed,  4 Jun 2025 07:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749021205; cv=none; b=FK8MQ4yPlhgWMReRGQdz17IIB5Mc4lQ+2FVQ5tm4ed5FxPUCK9VBpA5CWd8ucWGiEcDTPPZS+YU+4Kt4D7MF19P/ATRUJzhft32MInBLgvjtJpm76XGXX1QGVduvf7NiGu9V//UcCRoCYwsG00tf9Z7cZJoAG+pAmk5FUfoqTnk=
+	t=1749021518; cv=none; b=oYp+msYRKu4H6seNF2xFju3qIwiU7x2UOvoy7H0OIewbPie8aRkxyejo6Arj5kah3063ZLRqfcNfgTN428nC/zhahQKZzvmMlq40nOc7pQ6X3PFuMlb19XKogZ5SIXNluF168iTu32N1P1/oNBpxSaH6f72rJs3Du7RsUvBKNCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749021205; c=relaxed/simple;
-	bh=3AVbLqlURSjEvnMOfjuDeMBo+P0IV4Xq272XRqwuuOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNPJGu8Hq+Lgo4JqiP6P5TCUsV3WLw+U3WzjoPh2MJ3+FlvIs5v34A43B7kDgO3w8obtzoKtAQU/oqDMCFKZxZQfn0d/7xZdTIU2kgtzm97MGFrdRqB9m9sd9Xo0XaOTiGMwF+WwHNGUyXbqdmnX19RF0fpic5Ul0W1E5a59hB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=x83A3Ox3; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e7db6aaef22so5038285276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 00:13:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1749021202; x=1749626002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=egAKscK3QoP1kYQu5KkN3aoibVnnNSd6rVfa6InXH/s=;
-        b=x83A3Ox3gy3vG6dzlMUWol32yCgOi7ep1cSEAVIg1T3RgOJWY0Tu2phiQ/8rK6I30x
-         xk59yLGfacN39TAuOT3hdE29jQ54ouo+QCo2pKewPMGFBZ0EhTKBDPtW0Oxbmma0dQe9
-         GmTiYjuMqe1EoKBQH5WYQ/e08Mr8poFIY9wXKOlDlkK5ARgAA5RcdKyhbHsQ2G1ASiA/
-         wQ8XPcIk3nWOPJc+CkegYB2F+j0ZEJZ2bdCvc4mtEXW5DS8dkT+5ant+GD4M9GOS7nok
-         q9nAwu0Ff824mNg/9hOOlwF12L/pzXYwmnOiqF/3j630et6pmIfJgVZwOFvl3WkgwDbk
-         ZR0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749021202; x=1749626002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=egAKscK3QoP1kYQu5KkN3aoibVnnNSd6rVfa6InXH/s=;
-        b=T5026CBlW0FYFfuFJzm6+PUT3YqiKbFwXVPeGmxxASXZBnR7WEr5/OfwyYmXjcdA5C
-         NdMX33Wi2BpPy+7cjg2kPebn4be2on4RZ8Eg9WcAcBnqXpT1KvYW7v4UU9IqKdsm+fjT
-         OXllW2t5Tcs7xC1CdXOwqAd4eGEViDGi+DQCa4rjoURNQ2MRPF/MzpEiVwnyLEsU6DBB
-         0M8J+MWORQ8jJLFucUDqAm4u/dPjs8P4hsOyBpvaoab2uFEsNOnGlF5qVgSfU5wmbEZ0
-         TKbwKGqinQ6qJf3Kiyx6RkgbzFvpCtnia8XaCAS7ZSt9rCD6t7aU25GTySDgy9MBV7uq
-         WhxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHNDIt1A0WjptTt4cZaGshPHT4XGiwgeHjmNfWn8540p/v3cJqnWYvuO5GqEOHk0kupat0Vz3cDa4E9Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRxeapKkjBxZJQwz/Eb8XVwMTReqhNrbS8lJf4ZYYuq0wP38JC
-	tlxqLQ/74NM/0JIqrUQq79uCodo0vhIrl8ir5A6NutdE5H1bixJBM8CX3CwURqbE5mSvTRKmpw6
-	J0gji3A45vQ==
-X-Gm-Gg: ASbGncuH3xxW/1Cqiaea+atZyjRr/QSjEXbY6AFRTEijJSmlX1OKz/iitLATDAYubpm
-	YaB0KpJfoO4Hipd68Q4CKtPTBkINTQGkIbq0BhbzfizabELYQZ4k98nbcb0E52cGrWDlLxYH/zj
-	PYs1Zj+r9pHehiSDIj8GyV6X64fY0W1GBoEZA/JjiM7URAs4+GngPCAGk0E8d5NgTUxvlamLdMb
-	2JYKKjcf0Ib8GA6KmBstPlE4wWc/HBtYJyxtxZNqdV1DjeSq/0BLDSoHhNeYGkMkPHnlSTPqyPY
-	0MNUOjuujke/DewLUyUHNBseWjcgfhALcZ7h0WJ7f5qMEvPUVJViurQwQkNs7ilCIbdFlympTp3
-	sbq8dcS7Xx7Ycq1ShoRua/5D2olZAnw==
-X-Google-Smtp-Source: AGHT+IECH36FIWR3WtlVbi9pIVrUarBTvW9M64iPEf4vW1z/5lI7aXueUFIWtfoUkZsSo9xn+ErQqA==
-X-Received: by 2002:a05:6902:448a:b0:e7f:7352:bb30 with SMTP id 3f1490d57ef6-e8179c2e503mr1883481276.18.1749021202551;
-        Wed, 04 Jun 2025 00:13:22 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e817b41605esm188431276.0.2025.06.04.00.13.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 00:13:15 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e733a6ff491so5910113276.2;
-        Wed, 04 Jun 2025 00:13:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+r8Gra7vRQAyzegetNBGr3mYOPT300RRMyy5GnrKsFOzbgaDpbek+mxYL5qWetvi0LJBut6ioRpUw7WM=@vger.kernel.org, AJvYcCU/f+WRphs1kEiZtZ95sZ+z490KMzrN/2F/HxpqnLlu9cqz1rGJLnKopqkeA9mAKaVODenI9dqNtN0amUs3@vger.kernel.org, AJvYcCUwqT0UUCxwjrObguZdH7XL31LEyb5pYyKnnWTE+XeRBr2fxrHb9oEtK9dawR2VMqoVu42ilpesjyuu@vger.kernel.org, AJvYcCVcQZTBL5+Uq5KFTiapfho8yVoStiIi8YJhVXejaQo4MKBm4Tho4Y0dwY/avvFRDY7T304W3aaMCbE8@vger.kernel.org
-X-Received: by 2002:a05:6902:1009:b0:e7d:b06c:709d with SMTP id
- 3f1490d57ef6-e8179dac9c2mr2086427276.37.1749021193915; Wed, 04 Jun 2025
- 00:13:13 -0700 (PDT)
+	s=arc-20240116; t=1749021518; c=relaxed/simple;
+	bh=hLV6bUQrXlzvrssls30vFCh548KG3Got5mJHkOfBrZE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=TUKBVt+8SueWwhgGgZ9SglQJZsojelT0s04NPXseXMldmF3OJth2xo0RMjmpRdIv9DtjeMRJU/ZbJj1M1YaFwSqoa3njgTjQheClq3iWA9v4WAmelquNovYc8g/0WKdfkUSmUheqgvwxW7r5MujXEf6A/ttvF3HlBJ+4gWA19CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iih1QpkM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CBEC4CEE7;
+	Wed,  4 Jun 2025 07:18:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749021517;
+	bh=hLV6bUQrXlzvrssls30vFCh548KG3Got5mJHkOfBrZE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=iih1QpkMfxbsDlUAHq58TXJMsIkC8tbUwjHy5IpvIlgaDruw6V4+kZYqxpdwqRNmL
+	 wnioY11fpwZFS0uK2W3iDN5MPTCtXv5J3lhhQhiOHtBa/4sEIvhx/1Wq2839gC15mY
+	 lNkmheiTD+OKRABEajAtfk6eOI8Laah/kcz+TyfdRcEzJLAAxHUmst5/GByU+fyaCz
+	 OBUJ4SbJzt4jsODMvDWQ1suuwzf/wwe4Y9ETvYr9MKALlOzC8SVnAoU/JqHxCI+GnN
+	 i7A7+Df57sFynFYl8jaLjTCys7U8x0ePCnWqd9YpofNnY1giZSljV/FR1X99UggmSN
+	 GrxxPW8M5B6tQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250520-6-10-rocket-v5-0-18c9ca0fcb3c@tomeuvizoso.net>
- <20250520-6-10-rocket-v5-1-18c9ca0fcb3c@tomeuvizoso.net> <CAL_Jsq+2mvUDWWvtPSryAiCNJP_=1vNRxARxWTS=-O-LTQO3Dg@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+2mvUDWWvtPSryAiCNJP_=1vNRxARxWTS=-O-LTQO3Dg@mail.gmail.com>
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Wed, 4 Jun 2025 09:13:03 +0200
-X-Gmail-Original-Message-ID: <CAAObsKCUusE68Bzce5fxukpOJ34M_w5vt7+gLSHZuMC8KXqtLA@mail.gmail.com>
-X-Gm-Features: AX0GCFujZUaEEoiRSaHh2B6hjHyNEBOF25EbCsvQFur0Wj0AZ2p1QcOal7DajJE
-Message-ID: <CAAObsKCUusE68Bzce5fxukpOJ34M_w5vt7+gLSHZuMC8KXqtLA@mail.gmail.com>
-Subject: Re: [PATCH v5 01/10] dt-bindings: npu: rockchip,rknn: Add bindings
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Jeff Hugo <jeff.hugo@oss.qualcomm.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 04 Jun 2025 09:18:31 +0200
+Message-Id: <DADKDQ1KGJJP.3T20P9V1D2PO1@kernel.org>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
+ "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ "Alistair Popple" <apopple@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 04/20] rust: add new `num` module with useful integer
+ operations
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>
+X-Mailer: aerc 0.20.1
+References: <20250521-nova-frts-v4-0-05dfd4f39479@nvidia.com>
+ <20250521-nova-frts-v4-4-05dfd4f39479@nvidia.com>
+ <DA82KFLNAOG7.R7YT4BHCLNZQ@kernel.org>
+ <DA88YHU4AZT7.B8JGZHW9P9L9@nvidia.com>
+ <DA8GTD7LT7KO.1A3LBQGEQTCEW@kernel.org>
+ <DAC2L6ZKR6U2.WOMERUJIOENK@nvidia.com>
+ <DAD9TNUBUGPN.1ED519FYR29U4@kernel.org>
+ <DADB6892Z31G.12LB1BVSGTEAQ@nvidia.com>
+In-Reply-To: <DADB6892Z31G.12LB1BVSGTEAQ@nvidia.com>
 
-On Wed, May 28, 2025 at 3:41=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
+On Wed Jun 4, 2025 at 2:05 AM CEST, Alexandre Courbot wrote:
+> On Wed Jun 4, 2025 at 8:02 AM JST, Benno Lossin wrote:
+>> On Mon Jun 2, 2025 at 3:09 PM CEST, Alexandre Courbot wrote:
+>>> On Thu May 29, 2025 at 4:27 PM JST, Benno Lossin wrote:
+>>>> On Thu May 29, 2025 at 3:18 AM CEST, Alexandre Courbot wrote:
+>>>>> On Thu May 29, 2025 at 5:17 AM JST, Benno Lossin wrote:
+>>>>>> On Wed May 21, 2025 at 8:44 AM CEST, Alexandre Courbot wrote:
+>>>>>>> +    /// Align `self` up to `alignment`.
+>>>>>>> +    ///
+>>>>>>> +    /// `alignment` must be a power of 2 for accurate results.
+>>>>>>> +    ///
+>>>>>>> +    /// Wraps around to `0` if the requested alignment pushes the =
+result above the type's limits.
+>>>>>>> +    ///
+>>>>>>> +    /// # Examples
+>>>>>>> +    ///
+>>>>>>> +    /// ```
+>>>>>>> +    /// use kernel::num::NumExt;
+>>>>>>> +    ///
+>>>>>>> +    /// assert_eq!(0x4fffu32.align_up(0x1000), 0x5000);
+>>>>>>> +    /// assert_eq!(0x4000u32.align_up(0x1000), 0x4000);
+>>>>>>> +    /// assert_eq!(0x0u32.align_up(0x1000), 0x0);
+>>>>>>> +    /// assert_eq!(0xffffu16.align_up(0x100), 0x0);
+>>>>>>> +    /// assert_eq!(0x4fffu32.align_up(0x0), 0x0);
+>>>>>>> +    /// ```
+>>>>>>> +    fn align_up(self, alignment: Self) -> Self;
+>>>>>>
+>>>>>> Isn't this `next_multiple_of` [1] (it also allows non power of 2
+>>>>>> inputs).
+>>>>>>
+>>>>>> [1]: https://doc.rust-lang.org/std/primitive.u32.html#method.next_mu=
+ltiple_of
+>>>>>
+>>>>> It is, however the fact that `next_multiple_of` works with non powers=
+ of
+>>>>> two also means it needs to perform a modulo operation. That operation
+>>>>> might well be optimized away by the compiler, but ACAICT we have no w=
+ay
+>>>>> of proving it will always be the case, hence the always-optimal
+>>>>> implementation here.
+>>>>
+>>>> When you use a power of 2 constant, then I'm very sure that it will ge=
+t
+>>>> optimized [1]. Even with non-powers of 2, you don't get a division [2]=
+.
+>>>> If you find some code that is not optimized, then sure add a custom
+>>>> function.
+>>>>
+>>>> [1]: https://godbolt.org/z/57M9e36T3
+>>>> [2]: https://godbolt.org/z/9P4P8zExh
+>>>
+>>> That's impressive and would definitely work well with a constant. But
+>>> when the value is not known at compile-time, the division does occur
+>>> unfortunately: https://godbolt.org/z/WK1bPMeEx
+>>>
+>>> So I think we will still need a kernel-optimized version of these
+>>> alignment functions.
+>>
+>> Hmm what exactly is the use-case for a variable align amount? Could you
+>> store it in const generics?
 >
-> On Tue, May 20, 2025 at 5:27=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizoso.n=
-et> wrote:
-> >
-> > Add the bindings for the Neural Processing Unit IP from Rockchip.
-> >
-> > v2:
-> > - Adapt to new node structure (one node per core, each with its own
-> >   IOMMU)
-> > - Several misc. fixes from Sebastian Reichel
-> >
-> > v3:
-> > - Split register block in its constituent subblocks, and only require
-> >   the ones that the kernel would ever use (Nicolas Frattaroli)
-> > - Group supplies (Rob Herring)
-> > - Explain the way in which the top core is special (Rob Herring)
-> >
-> > v4:
-> > - Change required node name to npu@ (Rob Herring and Krzysztof Kozlowsk=
-i)
-> > - Remove unneeded items: (Krzysztof Kozlowski)
-> > - Fix use of minItems/maxItems (Krzysztof Kozlowski)
-> > - Add reg-names to list of required properties (Krzysztof Kozlowski)
-> > - Fix example (Krzysztof Kozlowski)
-> >
-> > v5:
-> > - Rename file to rockchip,rk3588-rknn-core.yaml (Krzysztof Kozlowski)
-> > - Streamline compatible property (Krzysztof Kozlowski)
-> >
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > ---
-> >  .../bindings/npu/rockchip,rk3588-rknn-core.yaml    | 147 +++++++++++++=
-++++++++
-> >  1 file changed, 147 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn=
--core.yaml b/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-cor=
-e.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..9eb426367afcbc03c387d43=
-c4b8250cdd1b9ee86
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-core.y=
-aml
-> > @@ -0,0 +1,147 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/npu/rockchip,rk3588-rknn-core.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Neural Processing Unit IP from Rockchip
-> > +
-> > +maintainers:
-> > +  - Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> > +
-> > +description:
-> > +  Rockchip IP for accelerating inference of neural networks, based on =
-NVIDIA's
-> > +  open source NVDLA IP.
-> > +
-> > +  There is to be a node per each core in the NPU. In Rockchip's design=
- there
-> > +  will be one core that is special and needs to be powered on before a=
-ny of the
-> > +  other cores can be used. This special core is called the top core an=
-d should
-> > +  have the compatible string that corresponds to top cores.
+> Say you have an IOMMU with support for different pages sizes, the size
+> of a particular page can be decided at runtime.
 >
-> Is this really a distinction in the h/w? If you change which core is
-> the top one in the DT, does it still work?
-
-I asked Kever about it, and he confirmed that the core 0/top is
-special in that it is able to relay register writes and share data
-with the other cores.
-
-Regards,
-
-Tomeu
-
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    pattern: '^npu@[a-f0-9]+$'
-> > +
-> > +  compatible:
-> > +    enum:
-> > +      - rockchip,rk3588-rknn-core-top
-> > +      - rockchip,rk3588-rknn-core
-> > +
-> > +  reg:
-> > +    maxItems: 3
-> > +
-> > +  reg-names:
-> > +    items:
-> > +      - const: pc
-> > +      - const: cna
-> > +      - const: core
-> > +
-> > +  clocks:
-> > +    minItems: 2
-> > +    maxItems: 4
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: aclk
-> > +      - const: hclk
-> > +      - const: npu
-> > +      - const: pclk
-> > +    minItems: 2
+>>
+>> If not, there are also these two variants that are more efficient:
+>>
+>> * option: https://godbolt.org/z/ecnb19zaM
+>> * unsafe: https://godbolt.org/z/EqTaGov71
+>>
+>> So if the compiler can infer it from context it still optimizes it :)
 >
-> It is odd that the non-top cores only have bus clocks and no module
-> clock. But based on the clock names, I'm guessing the aclk/hclk are
-> not shared, but the npu and pclk are shared. Since you make the top
-> core probe first, then it will enable the shared clocks and the
-> non-top cores don't have to worry about them. If so, that is wrong as
-> it is letting the software design define the bindings.
+> I think the `Option` (and subsequent `unwrap`) is something we want to
+> avoid on such a common operation.
+
+Makes sense.
+
+>> But yeah to be extra sure, you need your version. By the way, what
+>> happens if `align` is not a power of 2 in your version?
 >
-> Rob
+> It will just return `(self + (self - 1)) & (alignment - 1)`, which will
+> likely be a value you don't want.
+
+So wouldn't it be better to make users validate that they gave a
+power-of-2 alignment?
+
+> So yes, for this particular operation we would prefer to only use powers
+> of 2 as inputs - if we can ensure that then it solves most of our
+> problems (can use `next_multiple_of`, no `Option`, etc).
+>
+> Maybe we can introduce a new integer type that, similarly to `NonZero`,
+> guarantees that the value it stores is a power of 2? Users with const
+> values (90+% of uses) won't see any difference, and if working with a
+> runtime-generated value we will want to validate it anyway...
+
+I like this idea. But it will mean that we have to have a custom
+function that is either standalone and const or in an extension trait :(
+But for this one we can use the name `align_up` :)
+
+Here is a cool idea for the implementation: https://godbolt.org/z/x6navM5WK
+
+> (I can already hear you saying "send that to upstream Rust!" ^_^;)
+
+This one isn't as clear I'd say. The stdlib of Rust is strict on what
+gets added. Since they already have `next_multiple_of`, adding a
+`prev_multiple_of` sounds very reasonable, but a new type for powers of
+2? That could be something they don't want to add. Ultimately I don't
+know, but if we need it, we should build it ourselves first :)
+
+---
+Cheers,
+Benno
 
