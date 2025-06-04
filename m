@@ -1,1603 +1,284 @@
-Return-Path: <linux-kernel+bounces-672668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352F4ACD63D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C0EACD5E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 04:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40BA171B95
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:59:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52EE917162D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C532842065;
-	Wed,  4 Jun 2025 02:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVyuURvW"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C394EDDC1;
-	Wed,  4 Jun 2025 02:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466F623370F;
+	Wed,  4 Jun 2025 02:53:11 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43580214228;
+	Wed,  4 Jun 2025 02:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749005646; cv=none; b=bBfVLF8JxREXIFl+N+WHYR4YD607VUs+BahEQvFQv/o+sF8mjCBLvWr0ahzlUc/RDcLfC1y4XjyrOM9zJkcuS+5iR2XMqOGHPh7EbIbBja4LM9Nq67uXwa5i71QWrJN9FBbxR8LlH70S3LnyBMY3nE9I2HRVuWZTcX0fRZNPTCA=
+	t=1749005590; cv=none; b=GYDFlTjw/Gmjz9JIRlfLRXXcVrQ9m1nSJbF99n1nhCDBW5zvvF6y0wwRAz9ZUzVYe8uYobo4jBOQb+NbRxpzwnUMX2WW/KyNi0iEsqDXV7Zp4BHfWSFanPEQdKCsemG83uTSqKHrLpDDSqFlXfI8iOeeeIuTCUE+K6gmwXGOokw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749005646; c=relaxed/simple;
-	bh=AmmqbW06TbV7zHebuuy5fN5yIVIseFkWTjlG4YvzzIM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FlzgxCvZ8AcGeHM9WIFdK9KG+cZS1fbTIA2HusGvD3SzhrS9BJZjX3h8sjMiV9DN2MRoTmSO4+LvBdNeNTuJQPfsD1HK2VUnI5i0zdIVu2bsczNt+igwIL5XcVa1l56zVdJcHx9ogwp01kbNRazhXp+GgKi7S3ZOVkpungEu0zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVyuURvW; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-742b614581dso6112081b3a.3;
-        Tue, 03 Jun 2025 19:54:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749005643; x=1749610443; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1XFdYHlj7i7otZQXjTzRkVo4Zb++Ee/1fgOIDCqNr94=;
-        b=DVyuURvWEDhYecPwQEH8ZEanC2MjxLF7Ge8LBbWJzGdczFl6pX98pFZ3+4U3lXeb4Q
-         uaNaDeYvch9jLlI4k0EyPvfC4prCqPVvLCgKP8v2CreY9w/+P3G/k2/P6f3RKS677yh4
-         aWpwtmeOVBWddl72ZFamdDcVGx5EermpQXVNVCa2XF5w/z1mSFZe8nJV5uCddQDIHicj
-         9nAqhblGSpQ3zUznyfjrMJRpYrceDcTMJUbOmlkp9CMYRigAl+5rDtEe281QVYSbfTa4
-         VcdSNs3WmPlNVo6Lx5zn99hnS2GhQeA6GWSP/pR6St7q79w1Cd2FMVHKd3wgYjs4zwat
-         CGgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749005643; x=1749610443;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1XFdYHlj7i7otZQXjTzRkVo4Zb++Ee/1fgOIDCqNr94=;
-        b=J2m+aw+QvnnPM9e5gMgtT0qoGsaTfXYG6Dq9gFuwww313jPwiFFqvWsHu6hkybeIT1
-         sELUz3/zTAXA+f1Yvgh9EsYzRxNq68wjXC5CiUgB9oc5JjxAgdkgdLuz+vNzcpGUtc3c
-         l9SYCVmETL/Zv2RHt0hQj1BLujfGB1FpvF9oB8QiM9IDDWcqSNbIzZLHk0fOpMx+gAaI
-         G+ws4iLILe6hxckH7kJgEu8UOgYy/Z0SxqInxlX+m9BI2pmBvFFGRW294rIQc/7jFode
-         YM/CcB0H3gFxneNaXd9bhoXkIoS2pJiHBjUiFzuk7LtS77WvUhi5mdsW/5X/knoX3QII
-         vMRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyFVbsnpuqmm9w8+9mMzk9QATkPmUAaS3glUk5SY+8Q0DOGtPsrRcJbdz5L9SHRvAwoWO/Z1Dr52vaMT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG4LOpw4Y5n/yiefT+Hm+asHKp4C9YlwA385gHLy/BLa++JG1a
-	89WiswzIuy/VgARacKuZPLNDuiTtZd/JvXH4w2rHIladLKAnQZdQIwIl
-X-Gm-Gg: ASbGncudL2xRnWnronovgj/CcJjgAb1FZgj5L4jgkeqwE/rUX/kj1QsvrL6Jc3crRZN
-	XIvlFbQBeVC0eukh+1hkMy4pMymRGE1P6RdtSofGlJyBcl7w234UkaE+gVSS5fICJHWcDlHeJpn
-	9Q+I5EdzqRT1ooj8ym1VSP3fOk9yFDLfEeczcDZYtn6LqWrYkA5h4I1ss8M3uCaRYVO4qKA0seV
-	VAtYQOaWhej8y+QEYs+s15xbdi119YMFml3+i4w7QVsg2wwj1rbRc8hJ2672Rzh8F2EiS1wp+CS
-	m2ot3McIVPUIj7zsPflEXIqs94S96bT4IH7x5bt+5IMjXDi2vT9awtqaoGAoAoNyR3zPWfx0gpd
-	lVoFdjNMSOVvbJrM/cUwhhdarkXPspSBOiYPi1evXGjP/Jm1pgq+L/Q==
-X-Google-Smtp-Source: AGHT+IEhvlYg4CXx7AXbdgkI0o9K+0L+lts+glwNHX/g6pNY0X+yKl9lwrBKNbi7A5DtMDuqh6eCdQ==
-X-Received: by 2002:a05:6a00:2e10:b0:746:24c9:c92e with SMTP id d2e1a72fcca58-7480b25e9a1mr2308522b3a.8.1749005642622;
-        Tue, 03 Jun 2025 19:54:02 -0700 (PDT)
-Received: from cs00-MS-7C09.. (2001-b400-e303-56f7-0ad3-ef89-8727-568b.emome-ip6.hinet.net. [2001:b400:e303:56f7:ad3:ef89:8727:568b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb9d1dfsm7763725a12.55.2025.06.03.19.54.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 19:54:01 -0700 (PDT)
-From: hsyemail2@gmail.com
-X-Google-Original-From: syhuang3@nuvoton.com
-To: johan@kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sheng-Yuan Huang <syhuang3@nuvoton.com>
-Subject: [PATCH v2 1/1] USB: serial: nct_usb_serial: add support for Nuvoton USB adapter
-Date: Wed,  4 Jun 2025 10:51:54 +0800
-Message-ID: <20250604025154.10165-2-syhuang3@nuvoton.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250604025154.10165-1-syhuang3@nuvoton.com>
-References: <2025060325-everyone-padlock-931a@gregkh>
- <20250604025154.10165-1-syhuang3@nuvoton.com>
+	s=arc-20240116; t=1749005590; c=relaxed/simple;
+	bh=WwXiCyZhb6yzKKt9THlSbvf+dnLCzsV7abwnY/VLqio=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Vj7YAFUqTpRmF9iJ9LxMjbhIhF4JJtpYm282YrhHnMA9pOTr34dizZq2vFdP4PD2AtSdJ51eQ72cTqO1OoX+7qH4XYKLncjkd50gW7m4APpZaJSiJqJEAYLB+zA1wC6Nah0o2Rxbur+EXOsey2ZV28qdyvSQLpc9VltIg0OGA/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-ba-683fb5094085
+From: Byungchul Park <byungchul@sk.com>
+To: willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel_team@skhynix.com,
+	kuba@kernel.org,
+	almasrymina@google.com,
+	ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com,
+	hawk@kernel.org,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	john.fastabend@gmail.com,
+	andrew+netdev@lunn.ch,
+	asml.silence@gmail.com,
+	toke@redhat.com,
+	tariqt@nvidia.com,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	horms@kernel.org,
+	linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org,
+	vishal.moola@gmail.com
+Subject: [RFC v4 00/18] Split netmem from struct page
+Date: Wed,  4 Jun 2025 11:52:28 +0900
+Message-Id: <20250604025246.61616-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWRXUhTcRiH/Z9zds7ZdHBcWicDrdEHDsoMpRcq86LgDwkJXRQF5chDW80p
+	WzM1wmnLaOSKDBJdNalMp7Va6paJ2bLSEjJHsdKcKDNBW+hy+EXliu4enoffe/OypKyZSmDV
+	2tOCTqvUyGkJJfkeU7dZ3LpbtdV2OQmsjmYamuaK4P6IWwRWexuCn/ODDIS639Bwpy5MgvW9
+	iYJZxwIJgdejDPjrxynouOgiYfRKDw2VpkUSyt0NBPS3WURwfeEeCS7jCAPedisNw82/RTDu
+	qaSgt6aRAr8lE17bVkL43RSCboeLgPDlmzRUDdhoGDP5EQy8HKWgtsyCwNHpE8HinJXOXIdb
+	Gj8T+GnNVwbbnAb8pEGBzb4BEjvtl2jsnLnG4KFPHTTuqV6k8FN3iMCV54M0ng58ofCPzo80
+	drR8pHCfrZvBIWdiNndYsjNX0KgLBV1KRo5E1e6qZQomdhSFgx9oI7qRYkZilufS+FsBE21G
+	7F+esJdENM1t4n2+eTLCcVwqHxp9Q5mRhCW5oIgPWBeJSFjBpfPDg2EmwhS3gZ8M3hZFWLrs
+	A4Ex9O9+Et/0qIuMjHlumOEn/UvEv7Caf9Hgo66iaBuKsiOZWluYp1Rr0raoirXqoi3H8/Oc
+	aPmH9eeWjrjRTP8BD+JYJI+RuocyVDKRslBfnOdBPEvK46RJyctKmqssLhF0+cd0Bo2g96A1
+	LCVfJd0WPpMr404oTwunBKFA0P2vBCtOMKLYV72xF/aaf+2Z6qqoD7W39pyMisJH4dCCN7kt
+	y0W8vRZTc+TxMW+KodQ+XVXRtC9jrUNsPH4ivevTA1NiQzxRv2f/813TFZtGhIeUIlD2zRN/
+	0KtIGPGuN9VaF8prcsTbFZeKN9/9ED7bt7HTMnh/9uCzrNLs7DtkZpohGF3dKKf0KmWqgtTp
+	lX8ARprZHr8CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAwGiAl39CAMSjwQaCGludGVybmFsIgYKBApOO4MtCbU/aDCh8wo4nK+sBjir
+	+Hg4p+C4BTicqrYBOPT52wc488THBjijofYDOJzPhAQ49a/6AzjlxuIHON+m5gQ4vIe3Azji
+	j8gGOI2E+wM4grioAjjDnckFONC2jgU4lPqlAzi3gOAHONO6nAY43qz/BTjmwo0EOMmaqQQ4
+	345AOMagFjj2y+wBOMSvtwI49oydBjiT0qAGOOOE3wE40sPiBDibgY4BOK++2AU4+/icBkAi
+	SLSp2QJIuZrdB0igsnVIs6gqSIrY0gNIsqqJBkiy8pIHSNzWvAZIyJj7BEi5uPMCSI2D7gZI
+	8eXaBEjvvtUGSKPo8AJIr7TVBEjMoMQHUBFaCjxkZWxpdmVyLz5gCmi6t5sHcOg7ePbu0QaA
+	AZcvigEICBgQNBjoqnqKAQkIBhAnGNjY+QOKAQkIFBAxGPPixwSKAQoIAxDuBRjlnPsCigEJ
+	CBMQNRje2/YHigEJCAQQJRjr7p8FigEJCA0QNRjl5eMBigEJCBgQHxirsMADkAEIoAEAqgEU
+	aW52bWFpbDUuc2toeW5peC5jb22yAQYKBKZ9/JG4AfTTR8IBEAgBIgwNuNw+aBIFYXZzeW3C
+	ARgIAyIUDR8pPmgSDWRheXplcm9fcnVsZXPCARsIBCIXDUpXZWASEGdhdGVrZWVwZXJfcnVs
+	ZXPCAQIICRqAAYWF2lLhMnhFUz+v8J2j/wIGgDEfykPfRw1GVNckynP3CQ1j0OfA1ZBz2k/g
+	Qq1CxIt5b9xPybk4pXrZkv/O+FcWB4iqt9+H6vWJU9jiT+fJAkkgYFGDzrQvwHJV3SFGjmBW
+	qL09FCEscsVDvz9j9pWPZqAriysoNGmfYYdTyIT+IgRzaGExKgNyc2Hu9aA3ogIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Sheng-Yuan Huang <syhuang3@nuvoton.com>
+The MM subsystem is trying to reduce struct page to a single pointer.
+The first step towards that is splitting struct page by its individual
+users, as has already been done with folio and slab.  This patchset does
+that for netmem which is used for page pools.
 
-Add support for the Nuvoton USB-to-serial adapter, which provides
-multiple serial ports over a single USB interface.
+Matthew Wilcox tried and stopped the same work, you can see in:
 
-The device exposes one control endpoint, one bulk-in endpoint, and
-one bulk-out endpoint for data transfer. Port status is reported via
-an interrupt-in or bulk-in endpoint, depending on device configuration.
+   https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
 
-This driver implements basic TTY operations.
+Mina Almasry already has done a lot fo prerequisite works by luck.  I
+stacked my patches on the top of his work e.i. netmem.
 
-Signed-off-by: Sheng-Yuan Huang <syhuang3@nuvoton.com>
+I focused on removing the page pool members in struct page this time,
+not moving the allocation code of page pool from net to mm.  It can be
+done later if needed.
+
+The final patch removing the page pool fields will be submitted once
+all the converting work of page to netmem are done:
+
+   1. converting of libeth_fqe by Tony Nguyen.
+   2. converting of mlx5 by Tariq Toukan.
+   3. converting of prueth_swdata (on me).
+   4. converting of freescale driver (on me).
+
+For our discussion, I'm sharing what the final patch looks like the
+following.
+
+	Byungchul
+--8<--
+commit 1847d9890f798456b21ccb27aac7545303048492
+Author: Byungchul Park <byungchul@sk.com>
+Date:   Wed May 28 20:44:55 2025 +0900
+
+    mm, netmem: remove the page pool members in struct page
+    
+    Now that all the users of the page pool members in struct page have been
+    gone, the members can be removed from struct page.
+    
+    However, since struct netmem_desc still uses the space in struct page,
+    the important offsets should be checked properly, until struct
+    netmem_desc has its own instance from slab.
+    
+    Remove the page pool members in struct page and modify static checkers
+    for the offsets.
+    
+    Signed-off-by: Byungchul Park <byungchul@sk.com>
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 32ba5126e221..db2fe0d0ebbf 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -120,17 +120,6 @@ struct page {
+ 			 */
+ 			unsigned long private;
+ 		};
+-		struct {	/* page_pool used by netstack */
+-			/**
+-			 * @pp_magic: magic value to avoid recycling non
+-			 * page_pool allocated pages.
+-			 */
+-			unsigned long pp_magic;
+-			struct page_pool *pp;
+-			unsigned long _pp_mapping_pad;
+-			unsigned long dma_addr;
+-			atomic_long_t pp_ref_count;
+-		};
+ 		struct {	/* Tail pages of compound page */
+ 			unsigned long compound_head;	/* Bit zero is set */
+ 		};
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index 8f354ae7d5c3..3414f184d018 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -42,11 +42,8 @@ struct netmem_desc {
+ 	static_assert(offsetof(struct page, pg) == \
+ 		      offsetof(struct netmem_desc, desc))
+ NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
+-NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
+-NETMEM_DESC_ASSERT_OFFSET(pp, pp);
+-NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
+-NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
+-NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
++NETMEM_DESC_ASSERT_OFFSET(lru, pp_magic);
++NETMEM_DESC_ASSERT_OFFSET(mapping, _pp_mapping_pad);
+ #undef NETMEM_DESC_ASSERT_OFFSET
+ 
+ /*
 ---
- drivers/usb/serial/nct_usb_serial.c | 1480 +++++++++++++++++++++++++++
- 1 file changed, 1480 insertions(+)
- create mode 100644 drivers/usb/serial/nct_usb_serial.c
+Changes from v3:
+	1. Relocates ->owner and ->type of net_iov out of netmem_desc
+	   and make them be net_iov specific.
+	2. Remove __force when casting struct page to struct netmem_desc.
 
-diff --git a/drivers/usb/serial/nct_usb_serial.c b/drivers/usb/serial/nct_usb_serial.c
-new file mode 100644
-index 000000000000..b17b14c64e4f
---- /dev/null
-+++ b/drivers/usb/serial/nct_usb_serial.c
-@@ -0,0 +1,1480 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024-2025 Nuvoton Corp.
-+ * Copyright (C) 2024-2025 Sheng-Yuan Huang <syhuang3@nuvoton.com>
-+ *
-+ * Nuvoton USB to serial adapter driver
-+ *
-+ * This device interface consists of one control endpoint for configuration,
-+ * one bulk-out endpoint used for transmitting data for all serial ports,
-+ * and one bulk-in endpoint for receiving data from all serial ports.
-+ * The status of the ports may be reported via either an interrupt endpoint
-+ * or the bulk-in endpoint, depending on the device configuration.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/errno.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/serial.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/tty.h>
-+#include <linux/tty_driver.h>
-+#include <linux/tty_flip.h>
-+#include <linux/uaccess.h>
-+#include <linux/usb.h>
-+#include <linux/usb/serial.h>
-+#include <linux/version.h>
-+
-+#define NCT_VENDOR_ID			0x0416
-+#define NCT_PRODUCT_ID			0x200B
-+#define NCT_USB_CLASS			0xFF
-+#define NCT_USB_SUBCLASS		0x0
-+#define NCT_USB_PROTOCOL		0x1
-+
-+#define NCT_MAX_VENDOR_READ_SIZE	8
-+
-+static const struct usb_device_id id_table[] = {
-+	{USB_DEVICE_AND_INTERFACE_INFO(NCT_VENDOR_ID, NCT_PRODUCT_ID, NCT_USB_CLASS,
-+				       NCT_USB_SUBCLASS, NCT_USB_PROTOCOL)},
-+	{} /* Terminating entry */
-+};
-+
-+#define NCT_DRVNAME "nct_mtuart"
-+
-+MODULE_DEVICE_TABLE(usb, id_table);
-+
-+#define NCT_MAX_SEND_BULK_SIZE 128
-+#define NCT_EMPTY_PORT	0xFF	/* The port does not exist in FW (For device status) */
-+
-+/*
-+ * The max loop count when disconnecting for the
-+ * send-work
-+ */
-+#define NCT_DISCONN_QUEUE_LOOP_CNT	10
-+
-+/* Hardware configure */
-+#define NCT_MAX_NUM_COM_DEVICES		8
-+#define NCT_MAX_PACKAGE_SIZE		4096 /* The max size of one writing package */
-+#define NCT_MAX_BULK_IN_SIZE		512
-+#define NCT_MAX_BULK_OUT_SIZE		512
-+
-+#define NCT_DEFAULT_BAUD		14 /* 115200 */
-+static const unsigned int NCT_BAUD_SUP[] = {
-+	/* It should be the same as FW's baud-rate table */
-+	B0,	B50,	B75,	B150,	B300,	B600,	B1200,
-+	B1800,	B2400,	B4800,	B9600,	B19200,	B38400,	B57600,
-+	B115200, B230400, B460800, B921600, B1500000
-+};
-+
-+/* USB request */
-+#define NCT_VENDOR_COM_READ_REQUEST_TYPE	0xc0
-+#define NCT_VENDOR_COM_WRITE_REQUEST_TYPE	0x40
-+#define NCT_VENDOR_COM_READ_REQUEST		0x01
-+#define NCT_VENDOR_COM_WRITE_REQUEST		0x01
-+/* Index definition */
-+enum {
-+	NCT_VCOM_INDEX_0 = 0,
-+	NCT_VCOM_INDEX_1,
-+	NCT_VCOM_INDEX_2,
-+	NCT_VCOM_INDEX_3,
-+	NCT_VCOM_INDEX_4,
-+	NCT_VCOM_INDEX_5,
-+	NCT_VCOM_INDEX_GLOBAL = 0xF,
-+};
-+
-+/* Command */
-+enum {
-+	NCT_VCOM_GET_NUM_PORTS = 0,
-+	NCT_VCOM_GET_PORTS_SUPPORT,
-+	NCT_VCOM_GET_BAUD,
-+	NCT_VCOM_SET_INIT,
-+	NCT_VCOM_SET_CONFIG,
-+	NCT_VCOM_SET_BAUD,
-+	NCT_VCOM_SET_HCR,
-+	NCT_VCOM_SET_OPEN_PORT,
-+	NCT_VCOM_SET_CLOSE_PORT,
-+	NCT_VCOM_SILENT,
-+	/* Use bulk-in status instead of interrupt-in status */
-+	NCT_VCON_SET_BULK_IN_STATUS,
-+};
-+
-+union nct_vendor_cmd {
-+	struct pkg0 {
-+		u16 index:4;
-+		u16 cmd:8;
-+	} p;
-+	u16 val;
-+} __packed;
-+
-+#define NCT_HDR_MAGIC		0xA5
-+#define NCT_HDR_MAGIC2		0x5A
-+#define NCT_HDR_MAGIC_STATUS	0x5B
-+
-+struct nct_packet_header {
-+	unsigned int magic:8;
-+	unsigned int magic2:8;
-+	unsigned int idx:4;
-+	unsigned int len:12;
-+} __packed;
-+
-+/* The definitions are for the feilds of nct_ctrl_msg */
-+#define NCT_VCOM_1_STOP_BIT		0
-+#define NCT_VCOM_2_STOP_BITS		1
-+#define NCT_VCOM_PARITY_NONE		0
-+#define NCT_VCOM_PARITY_ODD		1
-+#define NCT_VCOM_PARITY_EVEN		2
-+#define NCT_VCOM_DL5			0
-+#define NCT_VCOM_DL6			1
-+#define NCT_VCOM_DL7			2
-+#define NCT_VCOM_DL8			3
-+#define NCT_VCOM_DISABLE_FLOW_CTRL	0
-+#define NCT_VCOM_XOFF			1
-+#define NCT_VCOM_RTS_CTS		2
-+union nct_ctrl_msg {
-+	struct pkg1 {
-+		u16 stop_bit:1;
-+		u16 parity:2;
-+		u16 data_len:2;
-+		u16 flow:2;
-+		u16 spd:5;
-+		u16 reserved:4;
-+	} p;
-+	u16 val;
-+} __packed;
-+
-+#define NCT_USR_RDR	0x01
-+#define NCT_USR_ORR	0x02
-+#define NCT_USR_PBER	0x04
-+#define NCT_USR_NSER	0x08
-+#define NCT_USR_SBD	0x10
-+#define NCT_USR_TBRE	0x20
-+#define NCT_USR_TSRE	0x40
-+#define NCT_USR_RFEI	0x80
-+#define NCT_HSR_TCTS	0x01
-+#define NCT_HSR_TDSR	0x02
-+#define NCT_HSR_FERI	0x04
-+#define NCT_HSR_TDCD	0x08
-+#define NCT_HSR_CTS	0x10
-+#define NCT_HSR_DSR	0x20
-+#define NCT_HSR_RI	0x40
-+#define NCT_HSR_DCD	0x80
-+#define NCT_HCR_DTR	0x01
-+#define NCT_HCR_RTS	0x02
-+#define NCT_UART_STATE_MSR_MASK (NCT_HSR_TCTS | NCT_HSR_TDSR | NCT_HSR_TDCD | NCT_HSR_DCD)
-+struct nct_port_status {
-+	u8 index;
-+	u8 usr;
-+	u8 hsr;
-+	u8 hcr;
-+};
-+
-+struct nct_serial {
-+	spinlock_t serial_lock; /* Protects the private data in structure 'usb_serial' */
-+	bool device_init;
-+
-+	/* Reading data information */
-+	struct nct_tty_port *cur_port;
-+	int cur_len;
-+
-+	bool status_trans_mode;
-+	u8 en_device_mask;
-+	u8 last_assigned_hw_idx;
-+	struct usb_endpoint_descriptor *bulk_out_ep;
-+};
-+
-+struct nct_tty_port {
-+	union nct_ctrl_msg msg;
-+
-+	unsigned long sysrq; /* Sysrq timeout */
-+	u8 hw_idx;
-+	u8 usr;
-+	u8 hsr;
-+	u8 hcr;
-+	/*
-+	 * Flow control - stop writing data to device.
-+	 * 0:Write enalbe, 1:Stop writing
-+	 */
-+	bool flow_stop_wrt;
-+
-+	spinlock_t port_lock; /* Protects the port data */
-+	bool write_urb_in_use;
-+};
-+
-+/* Functions */
-+
-+/* Read from USB control pipe */
-+static int nct_vendor_read(struct usb_interface *intf, union nct_vendor_cmd cmd,
-+			   unsigned char *buf, int size)
-+{
-+	struct device *dev = &intf->dev;
-+	struct usb_device *udev = interface_to_usbdev(intf);
-+	u8 *tmp_buf;
-+	int res;
-+
-+	tmp_buf = kmalloc(NCT_MAX_VENDOR_READ_SIZE, GFP_KERNEL);
-+	if (!tmp_buf)
-+		return -ENOMEM;
-+
-+	if (size > NCT_MAX_VENDOR_READ_SIZE)
-+		dev_err(dev, "%s - failed to read [%04x]: over size %d\n",
-+			__func__, cmd.p.cmd, size);
-+
-+	res = usb_control_msg(udev, usb_rcvctrlpipe(udev, 0),
-+			      NCT_VENDOR_COM_READ_REQUEST,
-+			      NCT_VENDOR_COM_READ_REQUEST_TYPE,
-+			      cmd.val,
-+			      intf->cur_altsetting->desc.bInterfaceNumber,
-+			      tmp_buf, size, 100);
-+
-+	if (res < 0) {
-+		dev_err(dev, "%s - failed to read [%04x]: %d\n", __func__, cmd.p.cmd, res);
-+
-+		kfree(tmp_buf);
-+		return res;
-+	}
-+	memcpy(buf, tmp_buf, res);
-+	kfree(tmp_buf);
-+
-+	return res;
-+}
-+
-+static int nct_vendor_write(struct usb_interface *intf, union nct_vendor_cmd cmd, u16 val)
-+{
-+	struct device *dev = &intf->dev;
-+	struct usb_device *udev = interface_to_usbdev(intf);
-+	int res;
-+	u8 *buf_val;
-+
-+	buf_val = kmalloc(2, GFP_KERNEL);
-+	if (!buf_val)
-+		return -ENOMEM;
-+
-+	/* Copy data to the buffer for sending */
-+	buf_val[0] = val & 0xff;
-+	buf_val[1] = (val >> 8) & 0xff;
-+
-+	res = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
-+			      NCT_VENDOR_COM_WRITE_REQUEST,
-+			      NCT_VENDOR_COM_WRITE_REQUEST_TYPE,
-+			      cmd.val,
-+			      intf->cur_altsetting->desc.bInterfaceNumber,
-+			      buf_val,
-+			      2,
-+			      100);
-+	kfree(buf_val);
-+	if (res < 0)
-+		dev_err(dev, "%s - failed to write [%04x]: %d\n", __func__, cmd.p.cmd, res);
-+	else
-+		res = 0; /* Set to 0 to align with the design. */
-+
-+	return res;
-+}
-+
-+static u16 nct_set_baud(struct usb_interface *intf, u16 index, unsigned int cflag)
-+{
-+	union nct_ctrl_msg msg;
-+	union nct_vendor_cmd cmd;
-+	u16 i;
-+
-+	msg.val = 0;
-+	cmd.p.cmd = NCT_VCOM_SET_BAUD;
-+	msg.p.spd = NCT_DEFAULT_BAUD;
-+	cmd.p.index = index;
-+	dev_dbg(&intf->dev, "tty baud: 0x%X\n", (cflag & CBAUD));
-+	for (i = 0; i < ARRAY_SIZE(NCT_BAUD_SUP); i++) {
-+		if ((cflag & CBAUD) == NCT_BAUD_SUP[i]) {
-+			msg.p.spd = i;
-+			dev_dbg(&intf->dev,
-+				"index %d set baud: NCT_BAUD_SUP[%d]=%d\n",
-+				cmd.p.index, msg.p.spd, NCT_BAUD_SUP[i]);
-+			if (nct_vendor_write(intf, cmd, msg.val))
-+				dev_err(&intf->dev,
-+					"%s - Set index: %d speed error\n",
-+					__func__, cmd.p.index);
-+
-+			break;
-+		}
-+	}
-+
-+	return msg.p.spd;
-+}
-+
-+static void nct_serial_set_termios(struct tty_struct *tty,
-+				   struct usb_serial_port *port,
-+				   const struct ktermios *old)
-+{
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	struct usb_interface *intf = serial->interface;
-+	struct ktermios *termios = &tty->termios;
-+	union nct_ctrl_msg msg;
-+	union nct_vendor_cmd cmd;
-+	unsigned int cflag = termios->c_cflag;
-+	int ret;
-+	speed_t baud;
-+
-+	baud = tty_get_baud_rate(tty);
-+	cmd.p.index = (u16)tport->hw_idx;
-+	cmd.p.cmd = NCT_VCOM_SET_CONFIG;
-+	msg.val = 0;
-+	msg.p.stop_bit =
-+	    (cflag & CSTOPB) ? (NCT_VCOM_2_STOP_BITS) : (NCT_VCOM_1_STOP_BIT);
-+	if (cflag & PARENB)
-+		msg.p.parity = (cflag & PARODD) ? (NCT_VCOM_PARITY_ODD) :
-+						  (NCT_VCOM_PARITY_EVEN);
-+	else
-+		msg.p.parity = NCT_VCOM_PARITY_NONE;
-+
-+	switch (cflag & CSIZE) {
-+	case CS5:
-+		msg.p.data_len = NCT_VCOM_DL5;
-+		break;
-+	case CS6:
-+		msg.p.data_len = NCT_VCOM_DL6;
-+		break;
-+	case CS7:
-+		msg.p.data_len = NCT_VCOM_DL7;
-+		break;
-+	default:
-+	case CS8:
-+		msg.p.data_len = NCT_VCOM_DL8;
-+		break;
-+	}
-+	if (C_CRTSCTS(tty)) {
-+		msg.p.flow = NCT_VCOM_RTS_CTS;
-+		/* Flow control - Set flag of RTSCTS */
-+		tty_port_set_cts_flow(tty->port, true);
-+
-+	} else if (I_IXON(tty)) {
-+		msg.p.flow = NCT_VCOM_XOFF;
-+		/* Flow control - Clear flag of RTSCTS */
-+		tty_port_set_cts_flow(tty->port, false);
-+	} else {
-+		msg.p.flow = NCT_VCOM_DISABLE_FLOW_CTRL;
-+		/* Flow control - Clear flag of RTSCTS */
-+		tty_port_set_cts_flow(tty->port, false);
-+	}
-+	ret = nct_vendor_write(intf, cmd, msg.val);
-+	if (ret)
-+		dev_err(&intf->dev,
-+			"%s - Set index: %d set configure error\n",
-+			__func__, cmd.p.index);
-+
-+	tport->msg.val = msg.val;
-+
-+	/*
-+	 * Set baud if speed changed
-+	 * Note: 'nct_set_baud()' also send the speed to the FW
-+	 */
-+	if (!old ||
-+	    old->c_cflag != termios->c_cflag ||
-+	    old->c_ispeed != termios->c_ispeed ||
-+	    old->c_ospeed != termios->c_ospeed)
-+		tport->msg.p.spd = nct_set_baud(intf, cmd.p.index, cflag);
-+
-+	tty_encode_baud_rate(tty, baud, baud);
-+}
-+
-+static int nct_serial_break(struct tty_struct *tty, int break_state)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	struct usb_interface *intf = serial->interface;
-+	union nct_vendor_cmd cmd;
-+
-+	cmd.p.index = tport->hw_idx;
-+	cmd.p.cmd = NCT_VCOM_SILENT;
-+
-+	return nct_vendor_write(intf, cmd, 0);
-+}
-+
-+static int nct_tiocmset_helper(struct tty_struct *tty, unsigned int set,
-+			       unsigned int clear)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	struct usb_interface *intf = serial->interface;
-+	union nct_ctrl_msg msg;
-+	union nct_vendor_cmd cmd;
-+	unsigned long flags;
-+	u8 hcr = 0;
-+
-+	if (set & TIOCM_RTS)
-+		hcr |= NCT_HCR_RTS;
-+	if (set & TIOCM_DTR)
-+		hcr |= NCT_HCR_DTR;
-+	if (clear & TIOCM_RTS)
-+		hcr &= ~NCT_HCR_RTS;
-+	if (clear & TIOCM_DTR)
-+		hcr &= ~NCT_HCR_DTR;
-+	cmd.p.index = (u16)tport->hw_idx;
-+	cmd.p.cmd = NCT_VCOM_SET_HCR;
-+	msg.val = (u16)hcr;
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	tport->hcr = hcr;
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	dev_dbg(&intf->dev,
-+		"index/cmd/val(hcr)=%X, %X, %X [RTS=%X, DTR=%X]\n",
-+		cmd.p.index, cmd.p.cmd, msg.val, hcr & NCT_HCR_RTS,
-+		hcr & NCT_HCR_DTR);
-+
-+	return nct_vendor_write(intf, cmd, msg.val);
-+}
-+
-+static int nct_serial_tiocmget(struct tty_struct *tty)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	struct usb_interface *intf = serial->interface;
-+
-+	unsigned long flags;
-+	unsigned int res;
-+	u8 hcr, hsr;
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	hcr = tport->hcr;
-+	hsr = tport->hsr;
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+	res = ((hcr & NCT_HCR_DTR) ? TIOCM_DTR : 0) |
-+		((hcr & NCT_HCR_RTS) ? TIOCM_RTS : 0) |
-+		((hsr & NCT_HSR_CTS) ? TIOCM_CTS : 0) |
-+		((hsr & NCT_HSR_DSR) ? TIOCM_DSR : 0) |
-+		((hsr & NCT_HSR_TDCD) ? TIOCM_RI : 0) |
-+		((hsr & NCT_HSR_DCD) ? TIOCM_CD : 0);
-+
-+	dev_dbg(&intf->dev, "DTR/RTS/CTS/DSR=%X,%X,%X,%X\n",
-+		(hcr & NCT_HCR_DTR), (hcr & NCT_HCR_RTS),
-+		(hsr & NCT_HSR_CTS), (hsr & NCT_HSR_DSR));
-+
-+	return res;
-+}
-+
-+static int nct_serial_tiocmset(struct tty_struct *tty, unsigned int set,
-+			       unsigned int clear)
-+{
-+	return nct_tiocmset_helper(tty, set, clear);
-+}
-+
-+static void nct_rx_throttle(struct tty_struct *tty)
-+{
-+	unsigned int set;
-+	unsigned int clear = 0;
-+
-+	/* If we are implementing RTS/CTS, control that line */
-+	if (C_CRTSCTS(tty)) {
-+		set = 0;
-+		clear = TIOCM_RTS;
-+		nct_tiocmset_helper(tty, set, clear);
-+	}
-+}
-+
-+static void nct_rx_unthrottle(struct tty_struct *tty)
-+{
-+	unsigned int set;
-+	unsigned int clear = 0;
-+
-+	/* If we are implementing RTS/CTS, control that line */
-+	if (C_CRTSCTS(tty)) {
-+		set = 0;
-+		set |= TIOCM_RTS;
-+		nct_tiocmset_helper(tty, set, clear);
-+	}
-+}
-+
-+static int nct_serial_write_data(struct tty_struct *tty, struct usb_serial_port *port,
-+				 const unsigned char *buf, int count)
-+{
-+	int ret;
-+	unsigned long flags;
-+	struct nct_packet_header hdr;
-+	int wr_len;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+
-+	wr_len = min((unsigned int)count, NCT_MAX_SEND_BULK_SIZE - sizeof(hdr));
-+
-+	if (!wr_len)
-+		return 0;
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+
-+	if (tport->write_urb_in_use) {
-+		spin_unlock_irqrestore(&tport->port_lock, flags);
-+		return 0;
-+	}
-+
-+	/* Fill header */
-+	hdr.magic = NCT_HDR_MAGIC;
-+	hdr.magic2 = NCT_HDR_MAGIC2;
-+	hdr.idx = tport->hw_idx; /* The 'hw_idx' is based on 1 */
-+
-+	/* Copy data */
-+	memcpy(port->write_urb->transfer_buffer + sizeof(hdr),
-+	       (const void *)buf, wr_len);
-+
-+	hdr.len = wr_len; /* File filed 'len' of header */
-+
-+	/* Filled urb data */
-+	memcpy(port->write_urb->transfer_buffer, (const void *)&hdr,
-+	       sizeof(hdr)); /* Copy header after filling all other fields */
-+
-+	/* Set urb length(Total length) */
-+	port->write_urb->transfer_buffer_length = wr_len + sizeof(hdr);
-+
-+	port->write_urb->transfer_flags |= URB_ZERO_PACKET;
-+
-+	ret = usb_submit_urb(port->write_urb, GFP_ATOMIC);
-+	if (ret < 0) {
-+		dev_err(&port->dev,
-+			"%s: usb_submit_urb failed, ret=%d, hw_idx=%d\n",
-+			__func__, ret, tport->hw_idx);
-+	} else {
-+		tport->write_urb_in_use = true; /* Set it as busy */
-+		ret = wr_len + sizeof(hdr);
-+	}
-+
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	if (ret > sizeof(hdr))
-+		ret = ret - sizeof(hdr);
-+
-+	dev_dbg(&port->dev, "returning %d\n", ret);
-+	return ret;
-+}
-+
-+static int nct_serial_write(struct tty_struct *tty, struct usb_serial_port *port,
-+			    const unsigned char *buf, int count)
-+{
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+
-+	if (!port) {
-+		pr_err("%s: port is NULL!\n", __func__);
-+		return -EIO;
-+	}
-+	if (!port->write_urb) {
-+		dev_err(&port->dev, "%s: write_urb not initialized!\n",	__func__);
-+		return -EIO;
-+	}
-+	if (!port->write_urb->transfer_buffer) {
-+		dev_err(&port->dev, "%s: transfer_buffer not initialized!\n", __func__);
-+		return -EIO;
-+	}
-+
-+	/* Flow control */
-+	if (tty_port_cts_enabled(tty->port))
-+		if (tport->flow_stop_wrt)
-+			return 0;
-+
-+	return nct_serial_write_data(tty, port, buf, count);
-+}
-+
-+static void nct_write_bulk_callback(struct urb *urb)
-+{
-+	struct usb_serial_port *port = urb->context;
-+	struct nct_tty_port *tport;
-+	unsigned long flags;
-+	int status = urb->status;
-+
-+	/* Port and serial sanity check */
-+	if (!port) {
-+		pr_err("%s: port is NULL, status=%d\n", __func__, status);
-+		return;
-+	}
-+
-+	tport = usb_get_serial_port_data(port);
-+	if  (!tport) {
-+		dev_err(&port->dev, "%s: port->private is NULL, status=%d\n", __func__, status);
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	tport->write_urb_in_use = false;
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	tty_port_tty_wakeup(&port->port);
-+}
-+
-+static unsigned int nct_write_room(struct tty_struct *tty)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	unsigned long flags;
-+	unsigned int room;
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	if (tport->write_urb_in_use)
-+		room = 0;
-+	else
-+		room = NCT_MAX_SEND_BULK_SIZE - sizeof(struct nct_packet_header);
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	dev_dbg(&port->dev, "port=%d, room=%u\n", tport->hw_idx, room);
-+	return room;
-+}
-+
-+static unsigned int nct_chars_in_buffer(struct tty_struct *tty)
-+{
-+	struct usb_serial_port *port = tty->driver_data;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	unsigned long flags;
-+	unsigned int chars;
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	if (tport->write_urb_in_use)
-+		chars = NCT_MAX_SEND_BULK_SIZE - sizeof(struct nct_packet_header);
-+	else
-+		chars = 0;
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	dev_dbg(&port->dev, "port=%d, chars=%d\n", tport->hw_idx, chars);
-+	return chars;
-+}
-+
-+/*
-+ *  Starts reads urb on all ports. It is to avoid potential issues caused by
-+ *  multiple ports being opened almost simultaneously.
-+ *  It must be called AFTER startup, with urbs initialized.
-+ *  Returns 0 if successful, non-zero error otherwise.
-+ */
-+static int nct_startup_device(struct usb_serial *serial)
-+{
-+	int ret = 0;
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	struct usb_serial_port *port;
-+	unsigned long flags;
-+
-+	/* Be sure this happens exactly once */
-+	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-+
-+	if (serial_priv->device_init) {
-+		spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+		return 0;
-+	}
-+	serial_priv->device_init = true;
-+	spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+
-+	/* Start reading from bulk in endpoint */
-+	port = serial->port[0];
-+	if (!port->read_urb)
-+		dev_dbg(&port->dev, "port->read_urb is null, index=%d\n", 0);
-+
-+	ret = usb_submit_urb(port->read_urb, GFP_KERNEL);
-+	if (ret)
-+		dev_err(&port->dev,
-+			"%s: usb_submit_urb failed, ret=%d, port=%d\n",
-+			__func__, ret, 0);
-+
-+	/* For getting status from interrupt-in */
-+	if (!serial_priv->status_trans_mode) {
-+		/* Start reading from interrupt pipe */
-+		port = serial->port[0];
-+		ret = usb_submit_urb(port->interrupt_in_urb, GFP_KERNEL);
-+		if (ret)
-+			dev_err(&port->dev,
-+				"%s: usb_submit_urb(intr) failed, ret=%d, port=%d\n",
-+				__func__, ret, 0);
-+	}
-+	return ret;
-+}
-+
-+static void nct_serial_port_end(struct usb_serial_port *port)
-+{
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	struct usb_interface *intf = serial->interface;
-+	union nct_ctrl_msg msg;
-+	union nct_vendor_cmd cmd;
-+
-+	/* Send 'Close Port' to the device */
-+	cmd.p.index = (u16)tport->hw_idx;
-+	cmd.p.cmd = NCT_VCOM_SET_CLOSE_PORT;
-+	msg.val = 0;
-+	if (!intf) {
-+		pr_err("%s: No intf => do not send 'close' event\n", __func__);
-+		return;
-+	}
-+	nct_vendor_write(intf, cmd, msg.val);
-+}
-+
-+static int nct_open(struct tty_struct *tty, struct usb_serial_port *port)
-+{
-+	union nct_vendor_cmd cmd;
-+	union nct_ctrl_msg msg;
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	struct usb_interface *intf = serial->interface;
-+
-+	if (!port->serial)
-+		return -ENXIO;
-+
-+	/* Allocate write_urb */
-+	if (!port->write_urb) {
-+		port->write_urb = usb_alloc_urb(0, GFP_KERNEL);
-+		if (!port->write_urb) {
-+			dev_err(&port->dev, "%s: Failed to allocate write URB\n", __func__);
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	/* Allocate bulk_out_buffer */
-+	port->write_urb->transfer_buffer = kmalloc(NCT_MAX_SEND_BULK_SIZE, GFP_KERNEL);
-+	if (!port->write_urb->transfer_buffer) {
-+		usb_free_urb(port->write_urb);
-+		port->write_urb = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	/* Clear(init) buffer */
-+	memset(port->write_urb->transfer_buffer, 0, NCT_MAX_SEND_BULK_SIZE);
-+
-+	/* Set write_urb */
-+	usb_fill_bulk_urb(port->write_urb, serial->dev,
-+			  usb_sndbulkpipe(serial->dev, serial_priv->bulk_out_ep->bEndpointAddress),
-+			  port->write_urb->transfer_buffer, NCT_MAX_SEND_BULK_SIZE,
-+			  nct_write_bulk_callback, port);
-+
-+	/* Be sure the device is started up */
-+	if (nct_startup_device(port->serial) != 0)
-+		return -ENXIO;
-+
-+	cmd.p.index = (u16)tport->hw_idx;
-+	cmd.p.cmd = NCT_VCOM_SET_OPEN_PORT;
-+	msg.val = 0;
-+	nct_vendor_write(intf, cmd, msg.val);
-+	/*
-+	 * Delay 1ms for firmware to configure hardware after opening the port.
-+	 * (Especially at high speed)
-+	 */
-+	usleep_range(1000, 2000);
-+	return 0;
-+}
-+
-+static void nct_close(struct usb_serial_port *port)
-+{
-+	struct nct_tty_port *tport = usb_get_serial_port_data(port);
-+	unsigned long flags;
-+
-+	mutex_lock(&port->serial->disc_mutex);
-+	/* If disconnected, don't send the close-command to the firmware */
-+	if (port->serial->disconnected)
-+		goto exit;
-+
-+	nct_serial_port_end(port);
-+
-+exit:
-+	/* Shutdown any outstanding bulk writes */
-+	usb_kill_urb(port->write_urb);
-+
-+	/* Free transfer_buffer */
-+	kfree(port->write_urb->transfer_buffer);
-+	port->write_urb->transfer_buffer = NULL;
-+
-+	if (tport) {
-+		spin_lock_irqsave(&tport->port_lock, flags);
-+		tport->write_urb_in_use = false;
-+		spin_unlock_irqrestore(&tport->port_lock, flags);
-+	}
-+
-+	mutex_unlock(&port->serial->disc_mutex);
-+}
-+
-+static void nct_update_status(struct usb_serial *serial, unsigned char *data)
-+{
-+	struct nct_port_status *nps = (struct nct_port_status *)data;
-+	struct usb_interface *intf = serial->interface;
-+	struct nct_tty_port *tport;
-+	struct tty_struct *tty;
-+	struct usb_serial_port *port;
-+	unsigned long flags;
-+	bool found;
-+	int i;
-+
-+	if (nps->index >= NCT_MAX_NUM_COM_DEVICES) {
-+		if (nps->index != NCT_EMPTY_PORT) /* Un-used port */
-+			dev_warn(&intf->dev, "%s: Receive wrong H/W index\n", __func__);
-+		return;
-+	}
-+	if (!(nps->hsr & (NCT_UART_STATE_MSR_MASK | NCT_HSR_CTS)))
-+		return; /* No any state changed. */
-+	tport = NULL;
-+	found = false;
-+	for (i = 0; i < serial->type->num_ports; i++) {
-+		port = serial->port[i];
-+
-+		if (!port) {
-+			dev_err(&intf->dev, "%s: port[%d] is NULL\n", __func__, i);
-+			continue;
-+		}
-+
-+		tport = usb_get_serial_port_data(port);
-+
-+		if (!tport) {
-+			dev_err(&intf->dev, "%s: Get NULL port data for port[%d]\n",
-+				__func__, i);
-+			continue;
-+		}
-+
-+		if (tport->hw_idx == nps->index) {
-+			found = true;
-+			break;
-+		}
-+	}
-+
-+	if (!found) {
-+		dev_err(&intf->dev, "%s: Decode serial packet index failed.\n",	__func__);
-+		return;
-+	}
-+
-+	if (!tport) {
-+		dev_err(&intf->dev, "%s: Decode serial packet index failed.\n",	__func__);
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	tport->usr = nps->usr;
-+	tport->hsr = nps->hsr;
-+	tport->hcr = nps->hcr;
-+	tport->sysrq = (tport->sysrq & ~0x01) | (-(nps->usr & NCT_USR_SBD) & 0x01);
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	if (serial->disconnected) {
-+		dev_err(&intf->dev, "%s: Device disconnected, skipping update_status\n", __func__);
-+		return;
-+	}
-+
-+	tty = tty_port_tty_get(&port->port);
-+	if (!tty)
-+		return; /* The port has been closed. */
-+
-+	if (nps->hsr & NCT_UART_STATE_MSR_MASK) {
-+		if (nps->hsr & NCT_HSR_DCD) {
-+			if (tty) {
-+				struct tty_ldisc *ld = tty_ldisc_ref(tty);
-+
-+				if (ld) {
-+					if (ld->ops->dcd_change)
-+						ld->ops->dcd_change(tty, 0x01);
-+					tty_ldisc_deref(ld);
-+				}
-+				wake_up_interruptible(&tty->port->open_wait);
-+			}
-+		}
-+	}
-+
-+	/* Flow control */
-+	if (tty_port_cts_enabled(&port->port)) {
-+		if ((nps->hsr & NCT_HSR_CTS)) {
-+			if (tport->flow_stop_wrt)
-+				tport->flow_stop_wrt = false;
-+		} else {
-+			tport->flow_stop_wrt = true;
-+		}
-+	}
-+
-+	tty_kref_put(tty);
-+}
-+
-+static void nct_usb_serial_read(struct urb *urb)
-+{
-+	struct usb_serial_port *port =  urb->context;
-+	struct usb_serial *serial = port->serial;
-+	struct usb_interface *intf = serial->interface;
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	struct nct_tty_port *tport;
-+	struct nct_packet_header *hdr = NULL;
-+	unsigned char *data = urb->transfer_buffer;
-+	int i, j;
-+	int actual_len = urb->actual_length;
-+	int len = 0;
-+	struct nct_port_status *nps;
-+	unsigned long flags;
-+
-+	if (!urb->actual_length)
-+		return;
-+
-+again:
-+	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-+	tport = serial_priv->cur_port;
-+	if (!tport) {
-+		/*
-+		 * Handle a new data package (i.e., it is not
-+		 * the remaining data without a header).
-+		 * The package does not need to be combined this time.
-+		 */
-+
-+		for (i = 0; i < urb->actual_length; i++) {
-+			hdr = (struct nct_packet_header *)data;
-+			/* Decode the header */
-+
-+			if (serial_priv->status_trans_mode) {
-+				/*
-+				 * Status data is also transmitted via bulk-in
-+				 * pipe.
-+				 */
-+				if (hdr->magic == NCT_HDR_MAGIC &&
-+				    hdr->magic2 == NCT_HDR_MAGIC_STATUS &&
-+				    hdr->len == 24 && actual_len >= 28) {
-+					/*
-+					 * Notice: actual_len will be decreased,
-+					 * it is equal to urb->actual_length
-+					 * only at the beginning.
-+					 */
-+
-+					/*
-+					 * Status report.
-+					 * It should be a standalone package in
-+					 * one URB
-+					 */
-+					data += sizeof(struct nct_packet_header);
-+					actual_len -=
-+						sizeof(struct nct_packet_header);
-+
-+					nps = (struct nct_port_status *)data;
-+
-+					for (j = 0; j < actual_len - 4; j++) {
-+						nct_update_status(serial,
-+								  (unsigned char *)nps);
-+						nps++;
-+					}
-+
-+					spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+					return;
-+				}
-+			}
-+
-+			if (hdr->magic == NCT_HDR_MAGIC &&
-+			    hdr->magic2 == NCT_HDR_MAGIC2 &&
-+			    hdr->idx <= NCT_MAX_NUM_COM_DEVICES &&
-+			    hdr->len <= 512)
-+				break;
-+
-+			data++;
-+			actual_len--;
-+			if (!actual_len) {
-+				dev_err(&intf->dev, "%s: Decode packet size failed.\n", __func__);
-+				spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+				return;
-+			}
-+		}
-+		/*
-+		 * Search tty port
-+		 * Search the tty device by the idx in header, and check if
-+		 * it is registered or opened.
-+		 * If it is, record them. The record will be used later for
-+		 * 2 purposes:
-+		 *   (1) If the current data package is incomplete, the following
-+		 *       incoming data will not include a header.
-+		 *   (2) To determine which device will be used for transmission.
-+		 */
-+		tport = NULL;
-+		for (i = 0; i < serial->type->num_ports; i++) {
-+			port = serial->port[i];
-+			tport = usb_get_serial_port_data(port);
-+			if (tport->hw_idx != hdr->idx)
-+				continue;
-+
-+			break;
-+		}
-+		if (!tport) {
-+			dev_err(&intf->dev, "%s: Decode serial packet index failed.\n",	__func__);
-+			spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+			return;
-+		}
-+		/*
-+		 * Calculate the data length.
-+		 * Then, check if the length specified in the header matches
-+		 * the data length. If not, it indicates that the data we
-+		 * received spans across two (or more) packets.
-+		 */
-+		actual_len -= sizeof(struct nct_packet_header);
-+		data += sizeof(struct nct_packet_header);
-+		/* actual_len: the data length of the data we got this time */
-+		if (hdr->len > actual_len) {
-+			/*
-+			 * It means the length specified in the header (the
-+			 * custom header) is greater than the length of the
-+			 * data we received.
-+			 * Therefore, the data we received this time does not
-+			 * span across another packet (i.e. no new header).
-+			 */
-+			len = actual_len;
-+			/*
-+			 * cur_len: Record how many data does not handle yet
-+			 */
-+			serial_priv->cur_len = hdr->len - len;
-+			/*
-+			 * Record the current port. When we got remained data of
-+			 * the package next time
-+			 */
-+			serial_priv->cur_port = tport;
-+		} else {
-+			/*
-+			 * The data we got crosses packages(not belong
-+			 * to the same header). We only handle data by
-+			 * the length in header. And we will handle
-+			 * another package when 'goto "again" '.
-+			 */
-+			len = hdr->len;
-+		}
-+	} else { /*  Handling the remained data which crosses package */
-+		if (serial_priv->cur_len > actual_len) {
-+			/*
-+			 * The unhandled part of the data exceeds the data we
-+			 * received this time. We only handle the data we
-+			 * have, expecting more data to be received later.
-+			 */
-+			len = actual_len;
-+		} else {
-+			/*
-+			 * This means the package has been fully handled.
-+			 * Clear 'cur_port' as no additional data needs to be
-+			 * attached to the current package.
-+			 */
-+			len = serial_priv->cur_len;
-+			serial_priv->cur_port = NULL;
-+		}
-+		serial_priv->cur_len -= len;
-+	}
-+	spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+	/*
-+	 * The per character mucking around with sysrq path it too slow for
-+	 * stuff like 3G modems, so shortcircuit it in the 99.9999999% of
-+	 * cases where the USB serial is not a console anyway.
-+	 */
-+	if (tport->sysrq) {
-+		for (i = 0; i < len; i++, data++)
-+			tty_insert_flip_char(&port->port, *data, TTY_NORMAL);
-+	} else {
-+		tty_insert_flip_string(&port->port, data, len);
-+		data += len;
-+	}
-+	/*
-+	 * Send data to the tty device (according to the port identified above).
-+	 */
-+	tty_flip_buffer_push(&port->port);
-+	actual_len -= len;
-+
-+	/*
-+	 * It means that the data we received this time contains two or
-+	 * more data packages, so it needs to continue processing the next
-+	 * data packages.
-+	 */
-+	if (actual_len > 0)
-+		goto again;
-+}
-+
-+static void nct_process_read_bulk(struct urb *urb)
-+{
-+	struct usb_serial_port *port =  urb->context;
-+	bool stopped = false;
-+	int status = urb->status;
-+	int ret;
-+
-+	switch (status) {
-+	case 0:
-+		nct_usb_serial_read(urb);
-+		break;
-+	case -ENOENT:
-+	case -ECONNRESET:
-+	case -ESHUTDOWN:
-+		dev_dbg(&port->dev, "urb stopped: %d\n", status);
-+		stopped = true;
-+		break;
-+	case -EPIPE:
-+		dev_dbg(&port->dev, "urb stopped: %d\n", status);
-+		stopped = true;
-+		break;
-+	case -ETIME:
-+		dev_dbg(&port->dev, "urb ETIME t: %d\n", status);
-+		break;
-+	case -ETIMEDOUT:
-+		dev_dbg(&port->dev, "urb ETIMEDOUT t: %d\n", status);
-+		break;
-+	default:
-+		dev_dbg(&port->dev, "nonzero urb status: %d\n", status);
-+		break;
-+	}
-+
-+	if (stopped)
-+		return;
-+
-+	ret = usb_submit_urb(urb, GFP_ATOMIC);
-+	if (ret != 0 && ret != -EPERM)
-+		dev_err(&port->dev, "%s: failed resubmitting urb, ret=%d\n", __func__, ret);
-+}
-+
-+static void nct_read_bulk_callback(struct urb *urb)
-+{
-+	struct usb_serial_port *port = urb->context;
-+	struct nct_serial *serial_priv;
-+
-+	/* Port sanity check, do not resubmit if port is not valid */
-+	if (urb->status == -ESHUTDOWN)
-+		return;
-+
-+	if (!port) {
-+		pr_err("%s: port or serial is NULL, status=%d\n", __func__, urb->status);
-+		return;
-+	}
-+
-+	if (!port->serial) {
-+		dev_err(&port->dev, "%s: serial is NULL, status=%d\n", __func__, urb->status);
-+		return;
-+	}
-+
-+	if (port->serial->disconnected)
-+		return;
-+
-+	serial_priv = usb_get_serial_port_data(port);
-+	if (!serial_priv) {
-+		dev_err(&port->dev, "%s: port->private is NULL, status=%d\n",
-+			__func__, urb->status);
-+		return;
-+	}
-+
-+	if (!port->serial) {
-+		dev_err(&port->dev, "%s: serial is NULL, status=%d\n", __func__, urb->status);
-+		return;
-+	}
-+
-+	serial_priv = usb_get_serial_data(port->serial);
-+	if (!serial_priv) {
-+		dev_err(&port->dev,
-+			"%s: serial->private is NULL, status=%d\n",
-+			__func__, urb->status);
-+		return;
-+	}
-+
-+	/* Processing data */
-+	nct_process_read_bulk(urb);
-+}
-+
-+static int nct_usb_attach(struct usb_serial *serial)
-+{
-+	return 0;
-+}
-+
-+static int nct_calc_num_ports(struct usb_serial *serial,
-+			      struct usb_serial_endpoints *epds)
-+{
-+	union nct_vendor_cmd cmd;
-+	u8 buf[8];
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	struct usb_interface *intf = serial->interface;
-+	int ret;
-+	int i;
-+	int num_ports;
-+
-+	//Send init command
-+	cmd.p.index = NCT_VCOM_INDEX_GLOBAL;
-+	cmd.p.cmd = NCT_VCOM_SET_INIT;
-+	ret = nct_vendor_write(intf, cmd, 0);
-+	if (ret) {
-+		dev_err(&intf->dev, "%s - Set COM init error\n", __func__);
-+		return ret;
-+	}
-+
-+	/* Get ports' index supported by the device(/FW) */
-+	cmd.p.index = NCT_VCOM_INDEX_GLOBAL;
-+	cmd.p.cmd = NCT_VCOM_GET_PORTS_SUPPORT;
-+	ret = nct_vendor_read(intf, cmd, buf, 1);
-+	if (ret != 1) {
-+		dev_err(&intf->dev, "%s - Get COM port index error\n", __func__);
-+		return 0;
-+	}
-+	serial_priv->en_device_mask = buf[0];
-+	serial_priv->last_assigned_hw_idx = 0; /* Note: hw_idx is based on 1 */
-+	dev_dbg(&intf->dev, "Enabled devices mask:%X\n", buf[0]);
-+
-+	for (i = 0, num_ports = 0; i < NCT_MAX_NUM_COM_DEVICES; i++) {
-+		if ((buf[0] & (1 << i)) == 0)
-+			continue;	/* The port is disabled */
-+
-+		num_ports++;
-+	}
-+
-+	return num_ports;
-+}
-+
-+static int nct_probe(struct usb_serial *serial, const struct usb_device_id *id)
-+{
-+	struct nct_serial *serial_priv;
-+	int i;
-+	struct usb_endpoint_descriptor *endpoint;
-+	struct usb_interface *intf = serial->interface;
-+	struct usb_host_interface *iface_desc;
-+
-+	serial_priv = kzalloc(sizeof(*serial_priv), GFP_KERNEL);
-+	if (!serial_priv)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&serial_priv->serial_lock);
-+	usb_set_serial_data(serial, serial_priv);
-+
-+	iface_desc = intf->cur_altsetting;
-+
-+	/* For bulk-out */
-+	for (i = 0; i < iface_desc->desc.bNumEndpoints; i++) {
-+		endpoint = &iface_desc->endpoint[i].desc;
-+		if (usb_endpoint_is_bulk_out(endpoint)) {
-+			serial_priv->bulk_out_ep = endpoint;
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * Initialize the mode as 'Status data is transmitted via
-+	 * bulk-in pipe'.
-+	 */
-+	serial_priv->status_trans_mode = true;
-+	serial->type->num_interrupt_in = 0;
-+	for (i = 0; i < iface_desc->desc.bNumEndpoints; i++) {
-+		endpoint = &iface_desc->endpoint[i].desc;
-+
-+		if (usb_endpoint_is_int_in(endpoint)) {
-+			/* Status data is transmitted via interrupt-in pipe. */
-+			serial_priv->status_trans_mode = false;
-+			serial->type->num_interrupt_in = 1;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int nct_port_init(struct usb_serial_port *port, unsigned int port_num)
-+{
-+	struct nct_tty_port *tport;
-+	struct usb_serial *serial = port->serial;
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	unsigned long flags;
-+	int i;
-+
-+	tport = kzalloc(sizeof(*tport), GFP_KERNEL);
-+	if (!tport)
-+		return -ENOMEM;
-+
-+	/* Assigned the hw_idx */
-+	spin_lock_init(&tport->port_lock);
-+
-+	spin_lock_irqsave(&tport->port_lock, flags);
-+	for (i = serial_priv->last_assigned_hw_idx + 1; i < NCT_MAX_NUM_COM_DEVICES; i++) {
-+		if ((serial_priv->en_device_mask & (1 << i)) == 0)
-+			continue;	/* the port is disabled */
-+
-+		tport->hw_idx = i;
-+		serial_priv->last_assigned_hw_idx = i;
-+		break;
-+	}
-+	spin_unlock_irqrestore(&tport->port_lock, flags);
-+
-+	usb_set_serial_port_data(port, tport);
-+
-+	return 0;
-+}
-+
-+static void nct_interrupt_in_callback(struct urb *urb)
-+{
-+	struct usb_serial_port *port = urb->context;
-+	int status = urb->status;
-+	struct usb_serial *serial = port->serial;
-+
-+	unsigned char *data = urb->transfer_buffer;
-+	int retval;
-+	int i;
-+	int actual_len = urb->actual_length;
-+	struct nct_port_status *nps;
-+
-+	switch (status) {
-+	case 0:
-+		/* Success */
-+		if ((actual_len % 4) != 0)
-+			return;
-+
-+		nps = (struct nct_port_status *)data;
-+
-+		for (i = 0; i < (actual_len / 4); i++) {
-+			nct_update_status(serial, (unsigned char *)nps);
-+			nps++;
-+		}
-+		break;
-+
-+	case -ECONNRESET:
-+	case -ENOENT:
-+	case -ESHUTDOWN:
-+		/* This urb is terminated, clean up */
-+		return;
-+	default:
-+		break;
-+	}
-+	retval = usb_submit_urb(urb, GFP_ATOMIC);
-+	if (retval)
-+		dev_err(&port->dev, "%s: Submit intr URB failed, ret=%d\n", __func__, retval);
-+}
-+
-+static void nct_disconnect(struct usb_serial *serial)
-+{
-+	int i;
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	unsigned long flags;
-+
-+	/* Reset status */
-+	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-+	serial_priv->device_init = false;
-+	serial_priv->cur_port = NULL;
-+	serial_priv->cur_len = 0;
-+	spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+
-+	/* Stop reads and writes on all ports */
-+	for (i = 0; i < serial->type->num_ports; i++) {
-+		if (!serial->port[i])
-+			continue;
-+		usb_kill_urb(serial->port[i]->read_urb);
-+		usb_kill_urb(serial->port[i]->write_urb);
-+	}
-+	if (!serial_priv->status_trans_mode)
-+		if (serial->port[0] && serial->port[0]->interrupt_in_urb)
-+			usb_kill_urb(serial->port[0]->interrupt_in_urb);
-+}
-+
-+static int nct_port_probe(struct usb_serial_port *port)
-+{
-+	return nct_port_init(port, port->port_number);
-+}
-+
-+static void nct_port_remove(struct usb_serial_port *port)
-+{
-+	struct nct_tty_port *priv;
-+
-+	priv = usb_get_serial_port_data(port);
-+	kfree(priv);
-+}
-+
-+static void nct_release(struct usb_serial *serial)
-+{
-+	struct nct_serial *serial_priv;
-+
-+	serial_priv = usb_get_serial_data(serial);
-+	kfree(serial_priv);
-+}
-+
-+static int nct_suspend(struct usb_serial *serial, pm_message_t message)
-+{
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	int i;
-+
-+	/* Stop all URBs */
-+	for (i = 0; i < serial->type->num_ports; i++) {
-+		if (serial->port[i]) {
-+			usb_kill_urb(serial->port[i]->read_urb);
-+			usb_kill_urb(serial->port[i]->write_urb);
-+		}
-+	}
-+
-+	if (!serial_priv->status_trans_mode)
-+		if (serial->port[0] && serial->port[0]->interrupt_in_urb)
-+			usb_kill_urb(serial->port[0]->interrupt_in_urb);
-+
-+	return 0;
-+}
-+
-+static int nct_resume(struct usb_serial *serial)
-+{
-+	struct nct_serial *serial_priv = usb_get_serial_data(serial);
-+	struct usb_interface *intf = serial->interface;
-+	struct usb_host_interface *iface_desc;
-+	struct usb_endpoint_descriptor *endpoint;
-+	unsigned long flags;
-+	int i, ret = 0;
-+
-+	/* Reacquire endpoint descriptors */
-+	iface_desc = intf->cur_altsetting;
-+	for (i = 0; i < iface_desc->desc.bNumEndpoints; i++) {
-+		endpoint = &iface_desc->endpoint[i].desc;
-+		if (usb_endpoint_is_bulk_out(endpoint)) {
-+			serial_priv->bulk_out_ep = endpoint;
-+			break;
-+		}
-+	}
-+
-+	/* Reset driver internal state */
-+	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-+	serial_priv->cur_port = NULL;
-+	serial_priv->cur_len = 0;
-+	spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+
-+	/* Resubmit URBs */
-+	if (serial->port[0] && serial->port[0]->read_urb) {
-+		ret = usb_submit_urb(serial->port[0]->read_urb, GFP_KERNEL);
-+		if (ret)
-+			dev_err(&intf->dev, "%s: Submit read URB failed, ret=%d\n",
-+				__func__, ret);
-+	}
-+
-+	if (!serial_priv->status_trans_mode) {
-+		if (serial->port[0] && serial->port[0]->interrupt_in_urb) {
-+			ret = usb_submit_urb(serial->port[0]->interrupt_in_urb,
-+					     GFP_KERNEL);
-+			if (ret)
-+				dev_err(&intf->dev, "%s: Submit interrupt URB failed, ret=%d\n",
-+					__func__, ret);
-+		}
-+	}
-+
-+	/* Restore status flags */
-+	spin_lock_irqsave(&serial_priv->serial_lock, flags);
-+	serial_priv->device_init = true;  /* Reset initialization flag */
-+	spin_unlock_irqrestore(&serial_priv->serial_lock, flags);
-+
-+	return 0;
-+}
-+
-+static struct usb_serial_driver nct_usb_serial_device = {
-+	.driver	= {
-+		.name =		NCT_DRVNAME,
-+	},
-+	.description =		"Nuvoton USB to serial adapter",
-+	.id_table =		id_table,
-+	.num_ports =		6,
-+	.num_bulk_in =		1,
-+	.num_bulk_out =		1,
-+	.open =			nct_open,
-+	.close =		nct_close,
-+	.write =		nct_serial_write,
-+	.write_room =		nct_write_room,
-+	.write_bulk_callback =	nct_write_bulk_callback,
-+	.read_bulk_callback =	nct_read_bulk_callback,
-+	.read_int_callback =	nct_interrupt_in_callback,
-+	.chars_in_buffer =	nct_chars_in_buffer,
-+	.throttle =		nct_rx_throttle,
-+	.unthrottle =		nct_rx_unthrottle,
-+	.probe =		nct_probe,
-+	.calc_num_ports =	nct_calc_num_ports,
-+	.set_termios =		nct_serial_set_termios,
-+	.break_ctl =		nct_serial_break,
-+	.tiocmget =		nct_serial_tiocmget,
-+	.tiocmset =		nct_serial_tiocmset,
-+	.attach	=		nct_usb_attach,
-+	.disconnect =		nct_disconnect,
-+	.release =		nct_release,
-+	.port_probe =		nct_port_probe,
-+	.port_remove =		nct_port_remove,
-+	.suspend =		nct_suspend,
-+	.resume =		nct_resume,
-+};
-+
-+static struct usb_serial_driver * const nct_serial_drivers[] = {
-+	&nct_usb_serial_device, NULL
-+};
-+
-+module_usb_serial_driver(nct_serial_drivers, id_table);
-+MODULE_DESCRIPTION("Nuvoton USB to serial adaptor driver");
-+MODULE_AUTHOR("Sheng-Yuan Huang <syhuang3@nuvoton.com>");
-+MODULE_LICENSE("GPL v2");
+Changes from v2:
+	1. Introduce a netmem API, virt_to_head_netmem(), and use it
+	   when it's needed.
+	2. Introduce struct netmem_desc as a new struct and union'ed
+	   with the existing fields in struct net_iov.
+	3. Make page_pool_page_is_pp() access ->pp_magic through struct
+	   netmem_desc instead of struct page.
+	4. Move netmem alloc APIs from include/net/netmem.h to
+	   net/core/netmem_priv.h.
+	5. Apply trivial feedbacks, thanks to Mina, Pavel, and Toke.
+	6. Add given 'Reviewed-by's, thanks to Mina.
+
+Changes from v1:
+	1. Rebase on net-next's main as of May 26.
+	2. Check checkpatch.pl, feedbacked by SJ Park.
+	3. Add converting of page to netmem in mt76.
+	4. Revert 'mlx5: use netmem descriptor and APIs for page pool'
+	   since it's on-going by Tariq Toukan.  I will wait for his
+	   work to be done.
+	5. Revert 'page_pool: use netmem APIs to access page->pp_magic
+	   in page_pool_page_is_pp()' since we need more discussion.
+	6. Revert 'mm, netmem: remove the page pool members in struct
+	   page' since there are some prerequisite works to remove the
+	   page pool fields from struct page.  I can submit this patch
+	   separatedly later.
+	7. Cancel relocating a page pool member in struct page.
+	8. Modify static assert for offests and size of struct
+	   netmem_desc.
+
+Changes from rfc:
+	1. Rebase on net-next's main branch.
+	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
+	2. Fix a build error reported by kernel test robot.
+	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
+	3. Add given 'Reviewed-by's, thanks to Mina and Ilias.
+	4. Do static_assert() on the size of struct netmem_desc instead
+	   of placing place-holder in struct page, feedbacked by
+	   Matthew.
+	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
+	   of wholly renaming it to strcut netmem_desc, feedbacked by
+	   Mina and Pavel.
+
+Byungchul Park (18):
+  netmem: introduce struct netmem_desc mirroring struct page
+  netmem: introduce netmem alloc APIs to wrap page alloc APIs
+  page_pool: use netmem alloc/put APIs in __page_pool_alloc_page_order()
+  page_pool: rename __page_pool_alloc_page_order() to
+    __page_pool_alloc_netmem_order()
+  page_pool: use netmem alloc/put APIs in __page_pool_alloc_pages_slow()
+  page_pool: rename page_pool_return_page() to page_pool_return_netmem()
+  page_pool: use netmem put API in page_pool_return_netmem()
+  page_pool: rename __page_pool_release_page_dma() to
+    __page_pool_release_netmem_dma()
+  page_pool: rename __page_pool_put_page() to __page_pool_put_netmem()
+  page_pool: rename __page_pool_alloc_pages_slow() to
+    __page_pool_alloc_netmems_slow()
+  mlx4: use netmem descriptor and APIs for page pool
+  netmem: use _Generic to cover const casting for page_to_netmem()
+  netmem: remove __netmem_get_pp()
+  page_pool: make page_pool_get_dma_addr() just wrap
+    page_pool_get_dma_addr_netmem()
+  netdevsim: use netmem descriptor and APIs for page pool
+  netmem: introduce a netmem API, virt_to_head_netmem()
+  mt76: use netmem descriptor and APIs for page pool
+  page_pool: access ->pp_magic through struct netmem_desc in
+    page_pool_page_is_pp()
+
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c    |  48 +++---
+ drivers/net/ethernet/mellanox/mlx4/en_tx.c    |   8 +-
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h  |   4 +-
+ drivers/net/netdevsim/netdev.c                |  19 +--
+ drivers/net/netdevsim/netdevsim.h             |   2 +-
+ drivers/net/wireless/mediatek/mt76/dma.c      |   6 +-
+ drivers/net/wireless/mediatek/mt76/mt76.h     |  12 +-
+ .../net/wireless/mediatek/mt76/sdio_txrx.c    |  24 +--
+ drivers/net/wireless/mediatek/mt76/usb.c      |  10 +-
+ include/linux/mm.h                            |  12 --
+ include/net/netmem.h                          | 138 ++++++++++++------
+ include/net/page_pool/helpers.h               |   7 +-
+ mm/page_alloc.c                               |   1 +
+ net/core/netmem_priv.h                        |  14 ++
+ net/core/page_pool.c                          | 103 ++++++-------
+ 15 files changed, 234 insertions(+), 174 deletions(-)
+
+
+base-commit: 90b83efa6701656e02c86e7df2cb1765ea602d07
 -- 
-2.43.0
+2.17.1
 
 
