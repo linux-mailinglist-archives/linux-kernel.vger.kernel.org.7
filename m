@@ -1,77 +1,70 @@
-Return-Path: <linux-kernel+bounces-672541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D180DACD0BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:39:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B475ACD0C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 02:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037CD188B3C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E1A3A7247
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 00:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF62BE67;
-	Wed,  4 Jun 2025 00:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1B61DDD1;
+	Wed,  4 Jun 2025 00:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cjt0HMGd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768E6B665
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 00:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LY7DtV0k"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F3A79F5;
+	Wed,  4 Jun 2025 00:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748997549; cv=none; b=SZ4szfD1bdS+uKMr/PHIFUu8bnb+eg2WMRcTnOe6awO6r0aMkRXFG5DeVZvAJy7hlbUbd/wS6UZYAotyODK1m89FZrPabGTCkG8EwmUvKSuHswOiIyFkIQ4qSL3i45udqoyKBRJH0It7Msav4gxA8F/n+thXLxRx6IdcvRqlpTE=
+	t=1748997826; cv=none; b=cqBJNUCGua5I4B5PnT/e3NsF8WDkzkJlZIsUAiUGBwjnszGtdfS48jUsf5voJ8IhtaMLubGs9lM0wQTS7Km67GsHGHDPDnCif6WRvDitsVVSBMfvOC1DZuBajNQQYO5ARph8cH08C6zocrSpOx882cEI0ZdHwgL7GrXQkVrOHw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748997549; c=relaxed/simple;
-	bh=sV0fxa4gfgOOrnxqSA6w5QF023wOAeg8/ZM5DkSBckg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fGTi0bjpPA882TZCYH/V8LkOa7hTf3roAL5DQ4UmUiVHkvb0TwYm2Jj/RhREZYnkMYoMexbmSi9iZmf3zBwWAAjhmo5IikWrbvzuEvRrJXCgz9EgutgZyIxbyLnrXvW1hJpt0DzieZSQotdGW9dQpZmYllr3lXBqq3FvWD1RIJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cjt0HMGd; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748997547; x=1780533547;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sV0fxa4gfgOOrnxqSA6w5QF023wOAeg8/ZM5DkSBckg=;
-  b=cjt0HMGdkkliWwodcm03IaF/lGLHSCuN6tiLNVmK6iUAiydUI4n5t9kO
-   c94Njz3Z4yBsC56zwzCmOaLrrMQ5vzVEyTzlw8HkGd681oQ5lE4Ylt4sy
-   vIX8TXOaiaA8qyroyPINlILpqEHyI/bdkah3DLMh8k5WSy/zU5JTi5HOx
-   IRzsgtkNX6k2o1PeXUCSxLk4ZGCxysW7+V9ffIpLu+hRmD+m7pmM2oXRh
-   IL87xpB064C46NZ4sww9XKKeXcMgEN7BASUCNhH/owiy/PkM9jtzArJgi
-   ciKQ0nVzzt7/dU3jEep0d3yd+O5DxozwSyhLxiBg8R/68qJGJwGR8lhpx
-   Q==;
-X-CSE-ConnectionGUID: RTv0IzMLSSujr1qh+S+p3A==
-X-CSE-MsgGUID: IB+59o7XSGGocNqPei/Uqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="54721305"
-X-IronPort-AV: E=Sophos;i="6.16,207,1744095600"; 
-   d="scan'208";a="54721305"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 17:39:06 -0700
-X-CSE-ConnectionGUID: K3naTJ0PS6Ojq/InZphH/g==
-X-CSE-MsgGUID: ZRdcfBtEQA6CTeFbEMk+eQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,207,1744095600"; 
-   d="scan'208";a="145970070"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.56])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 17:39:03 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	peterz@infradead.org,
-	tglx@linutronix.de,
+	s=arc-20240116; t=1748997826; c=relaxed/simple;
+	bh=5XlTn7oXcjao3VqHkxnk9Xb/cg6Dq4G3kzQhnyid41k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dEQF57h03JjBHHukFPpFDKsvbfrhFxrfL1dE1dqfW2Q4z4pESj2eUu5atOU8US7W33U8DH1nXH/qjtCbRgiBetC1d3H3lI5PydS+rsE2AkACt3cVIMBvo8LEo62u+2UYTDNGn0DgLdsp608rd2z2E4RKM9KBbh1ZKV50nHQdoDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LY7DtV0k; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 754982115DB5;
+	Tue,  3 Jun 2025 17:43:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 754982115DB5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1748997824;
+	bh=W2kFVrUcVkC6qHNqYEoSix4ZwhxOLqNhoLnHoPiRR+c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LY7DtV0kmuWobLbPPHtkrVUrZjWvxjkEkbfpHYS2b/JHnat2cngNZPjSI61BA7Z6U
+	 bviDzkZGY6OUYK1/nNrnAtzrFyCboCxnufUCh2obzVhFcSxmMsQ8AS07+Ag9D1h3Kh
+	 JWjQ4B7FT8okormu0vJFf0E801MYGP4kbBFarjIk=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: alok.a.tiwari@oracle.com,
+	arnd@arndb.de,
 	bp@alien8.de,
-	mingo@redhat.com,
+	corbet@lwn.net,
+	dave.hansen@linux.intel.com,
+	decui@microsoft.com,
+	haiyangz@microsoft.com,
 	hpa@zytor.com,
-	kirill.shutemov@linux.intel.com
-Cc: rick.p.edgecombe@intel.com,
-	x86@kernel.org,
-	samitolvanen@google.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/virt/tdx: Add ENDBR for low level SEAMCALL assembly functions
-Date: Wed,  4 Jun 2025 12:38:48 +1200
-Message-ID: <20250604003848.13154-1-kai.huang@intel.com>
-X-Mailer: git-send-email 2.49.0
+	kys@microsoft.com,
+	mingo@redhat.com,
+	mhklinux@outlook.com,
+	tglx@linutronix.de,
+	wei.liu@kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	bperkins@microsoft.com,
+	sunilmut@microsoft.com
+Subject: [PATCH hyperv-next v3 00/15] Confidential VMBus
+Date: Tue,  3 Jun 2025 17:43:26 -0700
+Message-ID: <20250604004341.7194-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,135 +73,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Build warnings about missing ENDBR around making SEAMCALLs[*] were
-observed when using some randconfig[1] to build today's Linus's tree.
+The guests running on Hyper-V can be confidential where the memory and the
+register content are encrypted, provided that the hardware supports that
+(currently support AMD SEV-SNP and Intel TDX is implemented) and the guest
+is capable of using these features. The confidential guests cannot be
+introspected by the host nor the hypervisor without the guest sharing the
+memory contents upon doing which the memory is decrypted.
 
-In the C code, the low level SEAMCALL assembly functions (__seamcall(),
-__seamcall_ret() and __seamcall_saved_ret()) are indirectly called via
-the common sc_retry() function:
+In the confidential guests, neither the host nor the hypervisor need to be
+trusted, and the guests processing sensitive data can take advantage of that.
 
-    static inline u64 sc_retry(sc_func_t func, u64 fn,
-		    	       struct tdx_module_args *args)
-    { ... }
+Not trusting the host and the hypervisor (removing them from the Trusted
+Computing Base aka TCB) ncessitates that the method of communication
+between the host and the guest be changed. Below there is the breakdown of
+the options used in the both cases (in the diagrams below the server is
+marked as S, the client is marked as C):
 
-    #define seamcall(_fn, _args) sc_retry(__seamcall, (_fn), (_args))
+1. Without the paravisoor the devices are connected to the host, and the
+host provides the device emulation or translation to the guest:
 
-It turns out compilers may not always be smart enough to figure out how
-to call those assembly functions directly.
++---- GUEST ----+       +----- DEVICE ----+        +----- HOST -----+
+|               |       |                 |        |                |
+|               |       |                 |        |                |
+|               |       |                 ==========                |
+|               |       |                 |        |                |
+|               |       |                 |        |                |
+|               |       |                 |        |                |
++----- C -------+       +-----------------+        +------- S ------+
+       ||                                                   ||
+       ||                                                   ||
++------||------------------ VMBus --------------------------||------+
+|                     Interrupts, MMIO                              |
++-------------------------------------------------------------------+
 
-The disassembly of the vmlinux built from the aforementioned config
-confirms that __seamcall*() are indirectly called:
+2. With the paravisor, the devices are connected to the paravisor, and
+the paravisor provides the device emulation or translation to the guest.
+The guest doesn't communicate with the host directly, and the guest
+communicates with the paravisor via the VMBus. The host is not trusted
+in this model, and the paravisor is trusted:
 
-    <sc_retry>:
-			       ......
++---- GUEST --------------- VTL0 ------+               +-- DEVICE --+
+|                                      |               |            |
+| +- PARAVISOR --------- VTL2 -----+   |               |            |
+| |     +-- VMBus Relay ------+    ====+================            |
+| |     |   Interrupts, MMIO  |    |   |               |            |
+| |     +-------- S ----------+    |   |               +------------+
+| |               ||               |   |
+| +---------+     ||               |   |
+| |  Linux  |     ||    OpenHCL    |   |
+| |  kernel |     ||               |   |
+| +---- C --+-----||---------------+   |
+|       ||        ||                   |
++-------++------- C -------------------+               +------------+
+        ||                                             |    HOST    |
+        ||                                             +---- S -----+
++-------||----------------- VMBus ---------------------------||-----+
+|                     Interrupts, MMIO                              |
++-------------------------------------------------------------------+
 
-       4c 89 ee                mov    %r13,%rsi
-       4c 89 e7                mov    %r12,%rdi
-       e8 35 8c 7d 01          call   ffffffff82b3e220 <__pi___x86_indirect_thunk_rbp>
-       4c 39 f0                cmp    %r14,%rax
+Note that in the second case the guest doesn't need to share the memory
+with the host as it communicates only with the paravisor within their
+partition boundary. That is precisely the raison d'etre and the value
+proposition of this patch series: equip the confidential guest to use
+private (encrypted) memory and rely on the paravisor when this is
+available to be more secure.
 
-In this case ENDBR is needed at the beginning of __seamcall*().
+An implementation of the VMBus relay that offers the Confidential VMBus channels
+is available in the OpenVMM project as a part of the OpenHCL paravisor. Please
+refer to https://openvmm.dev/ and https://github.com/microsoft/openvmm for more
+information about the OpenHCL paravisor.
 
-Change SYM_FUNC_START() to SYM_TYPED_FUNC_START() for __seamcall*() to
-add ENDBR to them.
+I'd like to thank the following people for their help with this
+patch series:
 
-When the compiler can generate direct call for __seamcall*(), the
-additional ENDBR is safe since it has no impact to directly called
-functions.
+* Dexuan for help with validation and the fruitful discussions,
+* Easwar for reviewing the refactoring of the page allocating and
+  freeing in `hv.c`,
+* John and Sven for the design,
+* Mike for helping to avoid pitfalls when dealing with the GFP flags,
+* Sven for blazing the trail and implementing the design in few
+  codebases.
 
-When kernel IBT was added to the kernel, initially the SYM_FUNC_START()
-had the ENDBR added in commit
+I made sure to validate the patch series on
 
-  c4691712b546 ("x86/linkage: Add ENDBR to SYM_FUNC_START*()")
+    {TrustedLaunch(x86_64), OpenHCL} x
+    {SNP(x86_64), TDX(x86_64), No hardware isolation, No paravisor} x
+    {VMBus 5.0, VMBus 6.0} x
+    {arm64, x86_64}.
 
-However when the commit
+[V3]
+    - The patch series is rebased on top of the latest hyperv-next branch.
+    - Reworked the "wiring" diagram in the cover letter, added links to the
+      OpenVMM project and the OpenHCL paravisor.
 
-  582077c94052 ("x86/cfi: Clean up linkage")
+    - More precise wording in the comments and clearer code.
+    **Thank you, Alok!**
 
-removed the ENDBR from the SYM_FUNC_START() and added it to the
-SYM_TYPED_FUNC_START(), it didn't touch the SEAMCALL assembly.
+    - Reworked the documentation patch.
+    - Split the patchset into much more granular patches.
+    - Various fixes and improvements throughout the patch series.
+    **Thank you, Michael!**
 
-[*] Aforementioned build warning:
+[V2] https://lore.kernel.org/linux-hyperv/20250511230758.160674-1-romank@linux.microsoft.com/
+    - The patch series is rebased on top of the latest hyperv-next branch.
+  
+    - Better wording in the commit messages and the Documentation.
+    **Thank you, Alok and Wei!**
 
-vmlinux.o: warning: objtool: try_init_module_global+0x5d: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: read_sys_metadata_field+0x4a: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: do_global_key_config+0x36: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_phymem_page_reclaim+0x71: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_phymem_cache_wb+0x41: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_phymem_page_wbinvd_tdr+0x95: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdx_cpu_enable+0x7b: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: init_tdmr+0x59: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: config_tdx_module.constprop.0+0x19d: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_vp_addcx+0x91: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_vp_init+0x76: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_vp_wr+0x87: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_vp_rd+0x6d: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_vp_flush+0x4c: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_vp_create+0x85: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mng_create+0x73: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mem_page_aug+0xb4: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mem_sept_add+0xb4: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mem_page_add+0xce: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mng_addcx+0x91: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mem_page_remove+0x7e: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mem_track+0x4c: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mng_init+0x6d: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mng_key_freeid+0x4c: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mng_vpflushdone+0x4c: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mr_finalize+0x4c: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mr_extend+0x77: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mng_rd+0x6d: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_mng_key_config+0x4c: relocation to !ENDBR: __seamcall+0x0
-vmlinux.o: warning: objtool: tdh_mem_range_block+0x7e: relocation to !ENDBR: __seamcall_ret+0x0
-vmlinux.o: warning: objtool: tdh_phymem_page_wbinvd_hkid+0x7d: relocation to !ENDBR: __seamcall+0x0
+    - Removed the patches 5 and 6 concerning turning bounce buffering off from
+      the previous version of the patch series as they were found to be
+      architecturally unsound. The value proposition of the patch series is not
+      diminished by this removal: these patches were an optimization and only for
+      the storage (for the simplicity sake) but not for the network. These changes
+      might be proposed in the future again after revolving the issues.
+    ** Thanks you, Christoph, Dexuan, Dan, Michael, James, Robin! **
 
-Fixes: 582077c94052 ("x86/cfi: Clean up linkage")
-Link: https://download.01.org/0day-ci/archive/20250524/202505240530.5KktQ5mX-lkp@intel.com/config [1]
-Signed-off-by: Kai Huang <kai.huang@intel.com>
----
- arch/x86/virt/vmx/tdx/seamcall.S | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+[V1] https://lore.kernel.org/linux-hyperv/20250409000835.285105-1-romank@linux.microsoft.com/
 
-diff --git a/arch/x86/virt/vmx/tdx/seamcall.S b/arch/x86/virt/vmx/tdx/seamcall.S
-index 6854c52c374b..637226ae935d 100644
---- a/arch/x86/virt/vmx/tdx/seamcall.S
-+++ b/arch/x86/virt/vmx/tdx/seamcall.S
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
-+#include <linux/cfi_types.h>
- #include <asm/frame.h>
- 
- #include "tdxcall.S"
-@@ -18,7 +19,7 @@
-  * Return (via RAX) TDX_SEAMCALL_VMFAILINVALID if the SEAMCALL itself
-  * fails, or the completion status of the SEAMCALL leaf function.
-  */
--SYM_FUNC_START(__seamcall)
-+SYM_TYPED_FUNC_START(__seamcall)
- 	TDX_MODULE_CALL host=1
- SYM_FUNC_END(__seamcall)
- 
-@@ -37,7 +38,7 @@ SYM_FUNC_END(__seamcall)
-  * Return (via RAX) TDX_SEAMCALL_VMFAILINVALID if the SEAMCALL itself
-  * fails, or the completion status of the SEAMCALL leaf function.
-  */
--SYM_FUNC_START(__seamcall_ret)
-+SYM_TYPED_FUNC_START(__seamcall_ret)
- 	TDX_MODULE_CALL host=1 ret=1
- SYM_FUNC_END(__seamcall_ret)
- 
-@@ -59,6 +60,6 @@ SYM_FUNC_END(__seamcall_ret)
-  * Return (via RAX) TDX_SEAMCALL_VMFAILINVALID if the SEAMCALL itself
-  * fails, or the completion status of the SEAMCALL leaf function.
-  */
--SYM_FUNC_START(__seamcall_saved_ret)
-+SYM_TYPED_FUNC_START(__seamcall_saved_ret)
- 	TDX_MODULE_CALL host=1 ret=1 saved=1
- SYM_FUNC_END(__seamcall_saved_ret)
+Roman Kisel (15):
+  Documentation: hyperv: Confidential VMBus
+  drivers: hv: VMBus protocol version 6.0
+  arch: hyperv: Get/set SynIC synth.registers via paravisor
+  arch/x86: mshyperv: Trap on access for some synthetic MSRs
+  Drivers: hv: Rename fields for SynIC message and event pages
+  Drivers: hv: Allocate the paravisor SynIC pages when required
+  Drivers: hv: Post messages via the confidential VMBus if available
+  Drivers: hv: remove stale comment
+  Drivers: hv: Use memunmap() to check if the address is in IO map
+  Drivers: hv: Rename the SynIC enable and disable routines
+  Drivers: hv: Functions for setting up and tearing down the paravisor
+    SynIC
+  Drivers: hv: Allocate encrypted buffers when requested
+  Drivers: hv: Support confidential VMBus channels
+  Drivers: hv: Support establishing the confidential VMBus connection
+  Drivers: hv: Set the default VMBus version to 6.0
 
-base-commit: 5abc7438f1e9d62e91ad775cc83c9594c48d2282
+ Documentation/virt/hyperv/coco.rst | 125 ++++++++-
+ arch/x86/kernel/cpu/mshyperv.c     |  67 ++++-
+ drivers/hv/channel.c               |  43 ++--
+ drivers/hv/channel_mgmt.c          |  27 +-
+ drivers/hv/connection.c            |   6 +-
+ drivers/hv/hv.c                    | 399 ++++++++++++++++++++---------
+ drivers/hv/hv_common.c             |  13 +
+ drivers/hv/hyperv_vmbus.h          |  28 +-
+ drivers/hv/mshv_root.h             |   2 +-
+ drivers/hv/mshv_synic.c            |   6 +-
+ drivers/hv/ring_buffer.c           |   5 +-
+ drivers/hv/vmbus_drv.c             | 187 +++++++++-----
+ include/asm-generic/mshyperv.h     |   3 +
+ include/linux/hyperv.h             |  69 +++--
+ 14 files changed, 740 insertions(+), 240 deletions(-)
+
+
+base-commit: 96959283a58d91ae20d025546f00e16f0a555208
 -- 
-2.49.0
+2.43.0
 
 
