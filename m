@@ -1,197 +1,246 @@
-Return-Path: <linux-kernel+bounces-673877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA1FACE718
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 01:14:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61643ACE6D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32CD16BCFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 23:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933021892597
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 22:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9F426D4C0;
-	Wed,  4 Jun 2025 23:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A78E1F4179;
+	Wed,  4 Jun 2025 22:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nnvKkec1"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="sRlcpays"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927B126C38E;
-	Wed,  4 Jun 2025 23:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859CE1B4145;
+	Wed,  4 Jun 2025 22:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749078766; cv=none; b=WXOeetRlHe5ES2vUKBu5W/Zlp52X6PxJng7SPpveritJ5oYSwSJmqfFusWzV4w9qc3SP65mcLhA0HylnbU3kjwhXxtqgSIOl1dzRwSTcWEH9YkpT8kW6nZvdKhdglSPDfjNqNIFbLDvPvxCBmkM2MVrHEJVI2/7pd1k5Ln8UPrg=
+	t=1749077632; cv=none; b=sx3TPzsxzR0lBqrItM+xu5ni3CaB7rSDcK2K8GAiXsfczsn81NwAlDZ6cTj2MQMPt0J+AarNszy4GDj3TmfwLhM+vszpWmK/2JlMs/DP9sY85JmM+GXTZ5RuUI3zAgw8oGfXhg1oKQ7U+jheYWk7CxShUP5xSwM9Kcr6roDXZzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749078766; c=relaxed/simple;
-	bh=dI3zrscUxocjWx/CYt+fx2JLhAr1E1g5rkt3nbMrXWQ=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=HvW/j1H7YJPD63kDU9K7KaSjY6VEFDHrdfm5PXd5/y3ZA+GEqBx23epgDWRFW+9FGW2uZOdgoDofCK98vMrKeJoNytC21vMZKcC/SJWZYz06DAB6i5pmdblznhAVWHZNbNUhn7wlTzLhNHKq7kwvQiSrKduJ6bJJcN3XKSH3PCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nnvKkec1; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554LvVwc030628;
-	Wed, 4 Jun 2025 23:12:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/8T3Wa
-	ZuvL5OZZo93H7D0HmVm+r/qGf9r//grSVRSuo=; b=nnvKkec1dZKCcMdYVXmWqB
-	L3n3DenN7LDxYQseSCyuLgRX0B400IKGEeCxLzA4s+27jTR1/DCydvq0XT3+WQUB
-	wjIa/YsdXIV8KQDCL6BD+Y9+fg0USVbl1a/keagKcoJEEM7sW4XGb2949BPZ4rKL
-	v9PwzjOLPfhaePxq65gq6seBxsK6GQkqWoL4gb/FcgYfBfWmxEH5JydjVr2LKDtz
-	Ha4g9lZ28rIUx2K6BllMuQUikt5tapwBvQS/G5yQrqE/nfU23AIb2IxwSvaVWS+T
-	FdAc5ArH4gRXsxaiIommQ9acDPdIE6ZKPJY8eskF4Sn1P3BE6/wDx0RCIL8lvjgA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geywhf1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 23:12:25 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 554N7WJh024883;
-	Wed, 4 Jun 2025 23:12:24 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 470dkmj0c2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 23:12:24 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 554NCNX37471686
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 4 Jun 2025 23:12:23 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 66BE75803F;
-	Wed,  4 Jun 2025 23:12:23 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 79F4358054;
-	Wed,  4 Jun 2025 23:12:22 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.95.113])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  4 Jun 2025 23:12:22 +0000 (GMT)
-Message-ID: <bf593f8bcadc41e0c4823b7173ee5695da51152e.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        pmenzel@molgen.mpg.de, ruyang@redhat.com, chenste@linux.microsoft.com
-In-Reply-To: <hn455nyrp65bb23ltub4tet6ixfcggshgerxm2bhun4ubv2iau@eanh3ka67irf>
-References: <20250515233953.14685-1-bhe@redhat.com>
-	 <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
-	 <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
-	 <aC6Y3S9hEB1snvwj@MiWiFi-R3L-srv>
-	 <c0f1df02160138d0782cb897eda844287b3d7792.camel@linux.ibm.com>
-	 <hn455nyrp65bb23ltub4tet6ixfcggshgerxm2bhun4ubv2iau@eanh3ka67irf>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Jun 2025 18:53:07 -0400
+	s=arc-20240116; t=1749077632; c=relaxed/simple;
+	bh=v7sGuBc0u5XZMp8KHHODHm/vC3BCSm2pohi9WU+V6y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ji4iP+ikqlS041NvlJnsZUz437ABMZLtPpSanH/B0f16ZDflqeDClQIEhRRwQ+wSJtiXc9gF03IMlX3tp1NYE3dGQh0VGLhxfeYSgtM+QT2xt7H5w8hjCGtQK2/iZU4ZqJvcGD6UwCuCi6Pd9XuWe+11gw00HA4DKhjvleEMUKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=sRlcpays; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1749077620; x=1749682420; i=quwenruo.btrfs@gmx.com;
+	bh=+kDA7NAJkW+p8vIYFTmsWVXRqVvxNLhV0K2T7UJrcGk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sRlcpaysHGvt+ScqlPPAlXJQ7vb3btwK0kOl65g3y+OgNLYsIpbK1E8xZvk7Ruxp
+	 atB9Uptfjg77x+DSOJ0b9bLjv0lgh7du8qadqL9QUvcShX5EcUPD70SvUzJmsJv+T
+	 Al/A34OhkRah5BPoTKPRkodAjBDzA8JCkiecn/8hzUylMysqIXZKKov5fy6vkDQtZ
+	 EZ9v+RcwJs+hJ9VBGckfowl8ivgKiXHLnessTSKRAAlk6qtT72mmnnU6+ZmePb9NC
+	 DXtMb5aN8Rgnvdfn10oYHJLVZKroz9/e2+TU2XwZvxuMio1gBWEXJnYWgPcoHr4IT
+	 d2qzSvwycbKg91PQIw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MiJZO-1v24Un29pe-00qMA3; Thu, 05
+ Jun 2025 00:53:40 +0200
+Message-ID: <d188b1ef-5e84-438c-863b-807e534fb67d@gmx.com>
+Date: Thu, 5 Jun 2025 08:23:34 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6pZ1Jz3TJQ6e-pkSk8DkFV26sECAxnGM
-X-Authority-Analysis: v=2.4 cv=DYMXqutW c=1 sm=1 tr=0 ts=6840d2d9 cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=UeMwZWw34uBX8khp:21 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=metLV1VPRzkCuRW9CoIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 6pZ1Jz3TJQ6e-pkSk8DkFV26sECAxnGM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDE5MSBTYWx0ZWRfX9YNkm/q/Ke9O Oprap30aN9L8gV2BwrImoP9RT1qdyxnyhQWJ6yvXljUsJyA9Xm/vEqtn/fMMAMrjUF4oJX24XFQ VMfA5GLTL8ir0GaTZAJ0Quc7ZuMpDgWg3yyvfsqZYRJrzkQgjyAEwtyfVv5s/YBau6bZJDl2E9d
- +FM5XrOdyhXszpSwnCE0D36EVmrlIVAinGFtm6oSTmr/esgw1CY/lddBwOZ2fmnV0CRS45npryq pXjEy26kVJwyUMG6qaOGve7nzvb3y/842PgX1Dm51fcb+ylkqGTORQ9UXhgHXopBTxVJ7fXpfuv uTzV/iBqVI09BiDFmKywP00f3CNtHW5vVHg3M+cxANawakSJQHLyQeahFjFQVNFedHLL3Mwm8st
- 1vMTsUN4+lOkXicLknwhZl5MZxnwwdP295+6YXoF9dLiFUYh7xccYLobDiksg/KJVE8PzuIQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-04_04,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 spamscore=0 mlxscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 mlxlogscore=999 adultscore=0
- malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506040191
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [btrfs] 8af94e772e: xfstests.btrfs.220.fail
+To: kernel test robot <oliver.sang@intel.com>, Qu Wenruo <wqu@suse.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+References: <202506042235.7e3a37da-lkp@intel.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <202506042235.7e3a37da-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TxDBeL26Xax1jDircGl5E+qo6JjRzAFuHZAo+aUnVOTeNCOX7kH
+ t5u/oSAmJu2kdmgqv7HTXJZcguen7QPThvxsR6HRllb8qSeWUYoEHuqW6VXKJUxL81IdLfT
+ 5WunUMsmj52CYIQOdsRguvERUqnHEMgaCLkENLY0WpGf4Hrho581XwNHgIhh7XkCeCBy2CD
+ wEaUOcEs/p4fIJmJ4Ynww==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NkefiVpwn+U=;SRrJq1IUkdumoKCxKIfRIAGDuGc
+ RakEONIO+nzr2KLOfT+VhljW2gdFbiqAvwpUxxZk1vP/FkQW6vthxchY2uHWp2c27AdsTBZss
+ IwmLnuPkxd+4c8PaBIS/mMCYBOv8FYdZPKDDiB6+U6EgnHRjWKfopffhuDmkKEsaqx1+uaqix
+ Liv4PcOHjFlbj0G/jKU09QoVSOX3TZ/jRNFqBYkT9WMXqQ/PZ4p3z8jBtKoClxE1nATMw645k
+ jLP3WY+KC24E5LtqrWD7+5RSBoMWrggxjXmpRcuPItyK87YGCWgmLbBgDDVgL/vxHKN81A7tb
+ 5Rkje2QpFRwvBJTeTUNu6VTYH9SDBMsJGK9ho4TRF5VKWBx5wnLno8TvzmdWOnF1P+uyAaWfF
+ t214P5Y3oYeFIZ6Nq4e3z+/6LGtBSrvGyRvumm+WRRY4pL/VmgUW5H65axnoRk2pyfQm9gS/6
+ 7M2Hp0ySu978QoBn4VwwBSV7Z9VU0LF9HiuCVCJYuFYqh2TBo5LuQC0Mks1Ty6HwqwLWajqSv
+ uTC/udqYvD0JfA/qojKbOYGWkJFSNofiuseK2bbg3ZNCThEB+unZO10S6hvUss9bpYG1d8606
+ YhlFmIMlNNhGOjH68QttNYV9uJEekor48hq8oNLrW/MaQGGooM5Lsa1A42ntvmv6j08AC5uqD
+ qlX9nsky0iONJhzuNWgMi4lLXOHwL8if380J1dL6xY96GgIM/YvhawJ0z+JooDZvuFYo5lxZQ
+ Q09QbidH2ierZ/I9QQ7wQcGcPVd1oXeBk9yIO4TWEPZqDIbyEC5cJEvT0rInXH51LVeCuzO69
+ U4+A4wZNGaPyjq0Hvs49FxrcWVIr8ekVY7cLztsvgPXtAcqN6sUYjV0jtZmsWS2UKWP0eR6kG
+ bnE/M0+ePNSqmgULjG42Tqvx9rZJD3ZQVrf+FtWA67GyzTlDjPXIO2xT3xqq2pJyKeNa/d0YK
+ 77iSwvQrXFE1gTzuGN0GC06WHvUi+sOWOJgjJjntj+in5Cjn1RDEAjrDEJsz+R1raCy6ZuvNm
+ gQH+5sF6aPVqeTMY40Ks4bGElXuWrs807uhO2vQiNqxwy+rGzG8Sy4w8/DbbP7rScUSzPklje
+ kueOhL4yTPLki7TqgOF0tXq1ufc1gxDMrBLMy07de7Nm20lU7aR92r2BR+kWFaJYmlIvt+YMZ
+ 0X/TtuLBa7ynvvjPgJCryCSL4X8LZPG4xGD7UTbsc+XRJczqvJ66PLh+wlzxhcQjgramlHBOr
+ Al9VNy/cSJ+R/Z70wF0UJSGBbMRUW6K9d97C9fLYWSTxRwW1LE6jDpJO7lJCtsdOTrAvwbs5V
+ brd4u7k07BgLFV83SNOoe7Mp/kWbt5wqDSKmarsuAd3D+ciEQH/lkwwvCNKQyg6KZRVBx5nLO
+ v9K3GVTSUxpdAQ4Q3ZzYLaHU6xDAMPSXfB2EB0mZYcEegXSwdbEiD9C6EKrB1bHePaZt7cNXw
+ fnhBXnuqsk/isOLM8YFu4ZaPNnGSe0fY/Cv7YVCKdQxeatGlNWpFvuUBXHL4um5sVuLm0MEhk
+ s76H7yUIFH/C5LyyPLMiTwRHkNrLqYiYIeax2LDVRyo1fACNYultICD4alhslnhN3XED9JApi
+ eWlmX+BaSLPe3OSgbubEUP+aXSWjAap7wjzsD4LTnL7JN88lQ/4j/MsBK31zJE90HCwP6sPDt
+ fb7kRTJ3vdBcvU0rN/LOa4z02T4SCu/e2vmM32JfDiqQwtO35RdnFzO+hMHEHvSaBqjo0SjHW
+ uSTDJEc2sfSHecS8MeIdFQ4+ZT5XLMYx8zccP8fGb/d96yBt/fYVFTB7NsHnMFGVce07xkI3+
+ 7WCKwVdgrZusdZtaDmqqZs2gYSIHNb+Jh2z27A3x440nbawdl032fXm4ydIg3THwz/lIu7dKW
+ wB/vviquYFxrRiDHOd/uPMlydmM0Z+Lc44qt1RuCAUVkdu53uqIMmZCGBoVprP/d8AInJp4wO
+ DXpHEuIh1pUJqpBysCw+YasCO/7JkSqUufSm4vixZQd2ukMCM8rb84yAz2RfpwyYJbjC32ZR8
+ sN+FcOwvoC8E3HLbje6lHU7uM2joWGEPBqWPdwmGOqYj0OLvbB+H2EbeGJra8pv9q5mPnjDwL
+ y7397D43nzeByRcj0upOTr8LB4qKQlZSWFOFy8sracD5OO1W7ltSykB9sjZiYe8lQHgHVgTRB
+ 3P/zwDsjbN0GqJ7Q+plb1kkMZykkW5GJ4zICSvXjQQs7bfpWxoKRwefRCp+yZ10gdM9G2Zj/Z
+ AKzy1956ZvM9mvZMvOMRYitWnzrde9zQ0JJdNv/u0uiNNK0u1WF3W3AXOwhAHdrTKzIziHJuM
+ ha+KE/Xh6CTmoP8vEDubwadmW0iJajvkdVDEnhQl6B28LiSu/b4e+b92w0RG+cp1Uvmqykzp+
+ gqgF3cXxif4DqDPBiiABO1kPsucL7w5lIp9LIKBivMSFCDsSALR/WlHl9KotfeXnlRFFt6lIp
+ 4OY9SxA27+xm3juHrdE54wvdLRWkOeKFfNazNXiqMZ5NBnZ21xOlbOJDSzjy4yXJQ4MeTNmru
+ Bu4xMONCITwGPxOs1548ZTjHaWJoGipzISORk4ufvRWdPWBeFzaaUh7XZ3hO+BExaoJPllo2V
+ KoGisuyViKcCMwPQg6AU/8/Hk50qf5TAcMRhtsCzeIAE7PXJkd97fPqa3H5J6rrWwVe2cCVqg
+ M/SDjfmD/R3SVcgdEmrOFRvVuTAqsmxACZaBQiafUAoN4nUUqUCG4HGHmX6zbdl+u5OUOOUVq
+ zZv436jvwhHreG4zl5uy54c9meRXxe8IkCaf0G3hIvk3q9B4VwgawG7DhcEbfg8i1V1QtDAAg
+ fjGdUSFDu1iW5oZS3Ws02jbUDKdY4Cndu+WFgrJoLYF4yb5ElcEt+u/7JhzdxwJQGzZLl9Bwi
+ yCRawvieIK68bnqef4YdhDKsDz82fZeu7LgdPgoB3Rhk/xGtxE+U3/ERTZRX5UnWnrOWuTaqs
+ AIU8nc8he0N+DFpXN8DcpGCNeBM+GT0zRf/ODVPhOcpzS+/V1LefoWgIPTFDmayeAuefQTLxR
+ Qp9ln4+CqMfFYK/8S7jti9Ut8ybMP7ulhZvU9Kxhq/DOdfeRbUoW7lTaPRR7hLW+11Cdy8Tn8
+ uZkvNNnW+UW4G8NGc93QNmvJoIigi4VpL/hzd9IbmEpQQVFeqsyZjNcSk2ExoXAGWF1LbLk8t
+ +iKi6DpeRUThmSJ0HqDiViZyzrs7yGuvZCulm2WleJJx5s/dI6j4XDtQsDCW3dH+1NE0=
 
-On Wed, 2025-06-04 at 11:34 +0800, Coiby Xu wrote:
-> On Thu, May 22, 2025 at 07:08:04AM -0400, Mimi Zohar wrote:
-> > On Thu, 2025-05-22 at 11:24 +0800, Baoquan He wrote:
-> > > On 05/21/25 at 08:54am, Mimi Zohar wrote:
-> > > > On Fri, 2025-05-16 at 08:22 +0800, Baoquan He wrote:
-> > > > > CC kexec list.
-> > > > >=20
-> > > > > On 05/16/25 at 07:39am, Baoquan He wrote:
-> > > > > > Kdump kernel doesn't need IMA functionality, and enabling IMA w=
-ill cost
-> > > > > > extra memory. It would be very helpful to allow IMA to be disab=
-led for
-> > > > > > kdump kernel.
-> > >=20
-> > > Thanks a lot for careufl reviewing and great suggestions.
-> > >=20
-> > > >=20
-> > > > The real question is not whether kdump needs "IMA", but whether not=
- enabling
-> > > > IMA in the kdump kernel could be abused.=C2=A0 The comments below d=
-on't address
-> > > > that question but limit/emphasize, as much as possible, turning IMA=
- off is
-> > > > limited to the kdump kernel.
-> > >=20
-> > > Are you suggesting removing below paragraph from patch log because th=
-ey
-> > > are redundant? I can remove it in v2 if yes.
-> >=20
-> > "The comments below" was referring to my comments on the patch, not the=
- next
-> > paragraph.  "don't address that question" refers to whether the kdump k=
-ernel
-> > could be abused.
-> >=20
-> > We're trying to close integrity gaps, not add new ones.  Verifying the =
-UKI's
-> > signature addresses the integrity of the initramfs.  What about the int=
-egrity of
-> > the kdump initramfs (or for that matter the kexec initramfs)?  If the k=
-dump
-> > initramfs was signed, IMA would be able to verify it before the kexec.
->=20
-> Hi Mimi,
->=20
-> I thought you were asking that the commit message should address the
-> question why disabling IMA should be limited to the kdump kernel. It
-> turns out I misunderstood your concern.
->=20
-> Currently there is no way provided to verify the kdump initramfs as a
-> whole file or to verify individual files in the kdump initramfs.
 
-There were multiple attempts to close this integrity gap, but none of them =
-were
-upstreamed.
+
+=E5=9C=A8 2025/6/5 00:21, kernel test robot =E5=86=99=E9=81=93:
 >=20
-> As you have already known, the kdump initramfs is always generated on
-> the fly and will be re-generated when the dumping target changes or
-> some important files change. We try to generate a minimal initramfs in
-> order to save memory. So yes, it's impossible to sign it as a whole file
-> beforehand.
-
-I'm just curious as to how UKI includes the initramfs, if it does, in the
-signature.
-
 >=20
-> And since xattrs like security.ima are not supported in the kdump
-> initramfs, we have no way to use IMA to verify individual file's
-> integrity.  In fact, we have to stop IMA from working otherwise it's
-> very likely kdump will break.
+> Hello,
 >=20
-> So far, I'm not aware of any bug report that complains kdump stops
-> working because of IMA. So it indicates very few users are trying to use
-> IMA in kdump.
+> kernel test robot noticed "xfstests.btrfs.220.fail" on:
 >=20
-> If users do have concerns on the integrity of kdump initramfs, I think
-> we can advice users to make sure the deployed IMA policy will verify the
-> integrity of the files while they are being collected and copied into
-> the kdump initramfs by tools like dracut.
+> commit: 8af94e772ef7bede90895318a3fda6c68a652774 ("btrfs: remove standal=
+one "nologreplay" mount option")
 
-For now, I'd prefer to leave it as an integrity gap that still needs to be
-addressed.
+That is fixed by fstests commit: 49170253afef ("fstests: btrfs/220: do=20
+not use nologreplay when possible"), which is in patches-in-queue branch=
+=20
+already.
 
-thanks,
+Thanks,
+Qu
 
-Mimi
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>=20
+> [test failed on linus/master      7d4e49a77d9930c69751b9192448fda6ff9100=
+f1]
+> [test failed on linux-next/master 3a83b350b5be4b4f6bd895eecf9a92080200ee=
+5d]
+>=20
+> in testcase: xfstests
+> version: xfstests-x86_64-e161fc34-1_20250526
+> with following parameters:
+>=20
+> 	disk: 6HDD
+> 	fs: btrfs
+> 	test: btrfs-220
+>=20
+>=20
+>=20
+> config: x86_64-rhel-9.4-func
+> compiler: gcc-12
+> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4770 CPU @ 3.40GH=
+z (Haswell) with 8G memory
+>=20
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>=20
+>=20
+>=20
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new ver=
+sion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202506042235.7e3a37da-lkp@intel=
+.com
+>=20
+> 2025-06-01 10:11:00 export TEST_DIR=3D/fs/sdb1
+> 2025-06-01 10:11:00 export TEST_DEV=3D/dev/sdb1
+> 2025-06-01 10:11:00 export FSTYP=3Dbtrfs
+> 2025-06-01 10:11:00 export SCRATCH_MNT=3D/fs/scratch
+> 2025-06-01 10:11:00 mkdir /fs/scratch -p
+> 2025-06-01 10:11:00 export SCRATCH_DEV_POOL=3D"/dev/sdb2 /dev/sdb3 /dev/=
+sdb4 /dev/sdb5 /dev/sdb6"
+> 2025-06-01 10:11:01 echo btrfs/220
+> 2025-06-01 10:11:01 ./check btrfs/220
+> FSTYP         -- btrfs
+> PLATFORM      -- Linux/x86_64 lkp-hsw-d01 6.15.0-rc6-00302-g8af94e772ef7=
+ #1 SMP PREEMPT_DYNAMIC Sun May 18 15:54:12 CST 2025
+> MKFS_OPTIONS  -- /dev/sdb2
+> MOUNT_OPTIONS -- /dev/sdb2 /fs/scratch
+>=20
+> btrfs/220       [failed, exit status 1]- output mismatch (see /lkp/bench=
+marks/xfstests/results//btrfs/220.out.bad)
+>      --- tests/btrfs/220.out	2025-05-26 16:25:04.000000000 +0000
+>      +++ /lkp/benchmarks/xfstests/results//btrfs/220.out.bad	2025-06-01 =
+10:11:04.131877139 +0000
+>      @@ -1,2 +1,5 @@
+>       QA output created by 220
+>      -Silence is golden
+>      +mount: /fs/scratch: wrong fs type, bad option, bad superblock on /=
+dev/sdb2, missing codepage or helper program, or other error.
+>      +       dmesg(1) may have more information after failed mount syste=
+m call.
+>      +mount -o nologreplay,ro /dev/sdb2 /fs/scratch failed
+>      +(see /lkp/benchmarks/xfstests/results//btrfs/220.full for details)
+>      ...
+>      (Run 'diff -u /lkp/benchmarks/xfstests/tests/btrfs/220.out /lkp/ben=
+chmarks/xfstests/results//btrfs/220.out.bad'  to see the entire diff)
+> Ran: btrfs/220
+> Failures: btrfs/220
+> Failed 1 of 1 tests
+>=20
+>=20
+>=20
+>=20
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20250604/202506042235.7e3a37da-l=
+kp@intel.com
+>=20
+>=20
+>=20
+
 
