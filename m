@@ -1,198 +1,101 @@
-Return-Path: <linux-kernel+bounces-672890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1BCACD91F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:01:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E94ACD927
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC345179118
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 569817A7BB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6AD27991E;
-	Wed,  4 Jun 2025 07:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2543B24E01F;
+	Wed,  4 Jun 2025 08:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pGLaKOCU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGe/uAgs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEBB27877D;
-	Wed,  4 Jun 2025 07:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731D623C4EE;
+	Wed,  4 Jun 2025 08:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749023950; cv=none; b=HwTb19eYgEqXxLOxc9Kj6yq+IuWE43ln/EiBUEFJ7L5rQ7c5lN6JQc/TjfI76yg2H42he2p4Qcp7XEqhcsekk9GsRXtzEl+5PcLWEWHGzO1z4Dhv85C75s4jMTgA85YQaXWOP1HQHEJwdtEl2u+fa1D4oYPk2WuQcI+NSdR8vXU=
+	t=1749024165; cv=none; b=XddAhxs5rOjgc34D3h3TOXuS/lnojS3ogGMGozNHuJUOBCBd7MYhM4hp/8tJ8bphA+2HIpN8jJnU/Nyhrc3JeJc1xwRpSr5LLvwXinNQy7u8Xy+cab/hQDZD7vwdkhf4u6FeLr0Gof9VYWL7ROqoZ+6uDu+NQnwLCWQwjaB/Mo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749023950; c=relaxed/simple;
-	bh=iCqux5kt4G7I2DhrbXSMK5wVXZlC+bSpbVS0TjtVGRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BpCgn0MCyQADRhfl5P7WiP2A44mN2s8Gx/wUGiYzDyPznCkpTWdu5I37ana27kVdd7vfqpDivp1XONRPK9LH8HCKQBEthCTGchxs3Lsvbku6VM/9k3sGXsRN+CZRjQI0RgLJJae6fz6zd2Cnt4owkHIhhEeBq7h5pDppH+QdeZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pGLaKOCU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553Kohct012745;
-	Wed, 4 Jun 2025 07:58:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	13QvruWdyVcS9mIBsvc1M5XXNtaXK//w/xWjOBf3jyg=; b=pGLaKOCUKqs/q+iv
-	bgDjF75sV8OEY6+6KYBXn9osh2ipby4az29r43hIeyHcTSOP2p8AROQAoZKdYfsC
-	2I/aw+h88KCdgrRddXfo84E4QOMx32ttxewMjo0Oqk/LkRpI7dJaA5m3DezDT2Rs
-	h2uVbHr9oV9tM3cH+IsmkxBnYkeEGhSRw7Ssc/4uvwxahNx+y7MHE/oZIAW8f1mb
-	B6v5ElvzCLvLb01gRru4eBFU0h0oFFh+51UL2LXgLDKWcyN5bXnb+NekA96aC6OR
-	vmH+XqKsgQOhOUlSPkA5z/mQ+KEJrD2xodavJzg62zy2sxiZ6o/NaKmEKQylnOlO
-	ur/nLQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8yn8y9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 07:58:58 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5547wgnq010824
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 4 Jun 2025 07:58:42 GMT
-Received: from [10.253.14.73] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Jun 2025
- 00:58:36 -0700
-Message-ID: <e8d1b60c-97fe-4f50-8ead-66711f1aa3a7@quicinc.com>
-Date: Wed, 4 Jun 2025 15:58:33 +0800
+	s=arc-20240116; t=1749024165; c=relaxed/simple;
+	bh=Jaqas4siZfyHC3zJUwFjJctoaJZnY6E7zLbs1Uswva0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtiQQwH8m6zJdhkFOBEdJ9EdSS6MYpZwPGN5RlZhrv5cfKn9qmY1S1VTOPHFmR5j4cp1AYQI9gJSmPIdKjHpGis/uWZultCBNJKAKryp/afb4akJ6lv7+jbPhDLfvmd9ehoInz0dRSeOEwuG7NsehIaNs8r8vlcEQ5tqm8SSpzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGe/uAgs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEDAC4CEE7;
+	Wed,  4 Jun 2025 08:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749024162;
+	bh=Jaqas4siZfyHC3zJUwFjJctoaJZnY6E7zLbs1Uswva0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pGe/uAgsPIRQU2B2h16hQJgTBzIEgOdiEF4FKsN4XNIriqHqJ6kHgQ5iHr0a/PtrJ
+	 IWvt7c4eSRh4Kerl88SEGyp1StCq/y/k9wKYlkPhswytp+CavJA5CjU/RBkWT9s4N3
+	 iMZnrGVoEHbgIa2pAnyGl3mhSigAg5flocJoCgPQfPagn8sjGi41L+UG30Bcld5sZ3
+	 h9OfBVajv5cf+1tQSBKURhDx7qksnrUdvtzKX5Nl5MTF8atMqODyrjtZwM1anCwNoq
+	 Qx9UXNB1Uteet4o7SEmkC5nVPPkjw9g0gXuOV4APy+1USZpTdRR29AscXKceq9l5iE
+	 4JcGR7i8WmDHA==
+Date: Wed, 4 Jun 2025 10:02:21 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
+	binbin.wu@linux.intel.com, catalin.marinas@arm.com, chao.p.peng@intel.com, 
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, kirill.shutemov@intel.com, 
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maz@kernel.org, mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, 
+	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com, 
+	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, 
+	pvorel@suse.cz, qperret@google.com, quic_cvanscha@quicinc.com, 
+	quic_eberman@quicinc.com, quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, 
+	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org, 
+	steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com, 
+	tabba@google.com, thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz, 
+	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
+ anonymous inode
+Message-ID: <20250604-rational-stunk-9427c610c219@brauner>
+References: <cover.1748890962.git.ackerleytng@google.com>
+ <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
- link_down reset
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>, <kw@linux.com>,
-        <conor+dt@kernel.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_qianyu@quicinc.com>,
-        <quic_krichai@quicinc.com>, <quic_vbadigan@quicinc.com>
-References: <20250529035416.4159963-1-quic_ziyuzhan@quicinc.com>
- <20250529035416.4159963-3-quic_ziyuzhan@quicinc.com>
- <drr7cngryldptgzbmac7l2xpryugbrnydke3alq5da2mfvmgm5@nwjsqkef7ypc>
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <drr7cngryldptgzbmac7l2xpryugbrnydke3alq5da2mfvmgm5@nwjsqkef7ypc>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA2MyBTYWx0ZWRfX77FdHn2XCV8M
- vKMLW3uJTfMu6h/rW0OuqK5CabkLuyZs/YtDfW7zcWih7b2Okt77codf9WliWxFE7SqaxwiTDhd
- BO5tYEFOFNdmO4aJUm3Fvfn5VWkTupELTSP716Cl0n4bC995+NZIaSXxxZnVCrK/VrwM7Kkmuff
- o3gmp4GSdsVjlKSxbwponKSmnVT9jAUSyLbaX/5D2ari45OKQiNq2NazTdFHR6edfMUg9MUmbBE
- lN3KNSEvqSHlw3bo7OdwFIP/j/xKFkPd1F56SpPiRnLlcJB+5wdgRP/2xHTAYPurLNVyvgXBA4T
- 9T0yahIIKfQHbaRUXB5aKyn3zcfB91dNXVdYnOiUmXBjM4zxhg/yYL6cBi0Ug36UYaUzbzaqIwF
- zet8xmYMD7aJxDLIGywxGdyPz9IjEBXhgpqrizM1qy0eRQa3kVwvc3x8tCGW2jogPbKOQfJO
-X-Proofpoint-ORIG-GUID: W8ozeskPvM20bNOMHtkaqIPpffrjzj5Z
-X-Proofpoint-GUID: W8ozeskPvM20bNOMHtkaqIPpffrjzj5Z
-X-Authority-Analysis: v=2.4 cv=T/uMT+KQ c=1 sm=1 tr=0 ts=683ffcc2 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=JfrnYn6hAAAA:8
- a=COk6AnOGAAAA:8 a=WXbjEpnkNGJP-WVJ2wQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=1CNFftbPRP8L7MoqJWF3:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 suspectscore=0 impostorscore=0 mlxscore=0 bulkscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 malwarescore=0 phishscore=0
- adultscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506040063
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
 
+On Mon, Jun 02, 2025 at 12:17:54PM -0700, Ackerley Tng wrote:
+> The new function, alloc_anon_secure_inode(), returns an inode after
+> running checks in security_inode_init_security_anon().
+> 
+> Also refactor secretmem's file creation process to use the new
+> function.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
 
-On 6/3/2025 9:11 PM, Dmitry Baryshkov wrote:
-> On Thu, May 29, 2025 at 11:54:14AM +0800, Ziyue Zhang wrote:
->> Each PCIe controller on sa8775p supports 'link_down'reset on hardware,
->> document it.
-> I don't think it's possible to "support" reset in hardware. Either it
-> exists and is routed, or it is not.
-
-Hi Dmitry,
-
-I will change the commit msg to
-'Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
-document it.'
-"Supports" implies that the PCIe controller has an active role in enabling
-or managing the reset functionality—it suggests that the controller is designed
-to accommodate or facilitate this feature.
-  "Includes" simply states that the reset functionality is present in the
-hardware—it exists, whether or not it's actively managed or configurable.
-So I think change it to includes will be better.
-
-BRs
-Ziyue
-
->> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->> ---
->>   .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml  | 13 +++++++++----
->>   1 file changed, 9 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
->> index e3fa232da2ca..805258cbcf2f 100644
->> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
->> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
->> @@ -61,11 +61,14 @@ properties:
->>         - const: global
->>   
->>     resets:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 2
-> Shouldn't we just update this to maxItems:2 / minItems:2 and drop
-> minItems:1 from the next clause?
-
-Hi Dmitry,
-
-link_down reset is optional. In many other platforms, like sm8550
-and x1e80100, link_down reset is documented as a optional reset.
-PCIe will works fine without link_down reset. So I think setting it
-as optional is better.
-
-BRs
-Ziyue
-
->>   
->>     reset-names:
->> +    minItems: 1
->>       items:
->> -      - const: pci
->> +      - const: pci # PCIe core reset
->> +      - const: link_down # PCIe link down reset
->>   
->>   required:
->>     - interconnects
->> @@ -161,8 +164,10 @@ examples:
->>   
->>               power-domains = <&gcc PCIE_0_GDSC>;
->>   
->> -            resets = <&gcc GCC_PCIE_0_BCR>;
->> -            reset-names = "pci";
->> +            resets = <&gcc GCC_PCIE_0_BCR>,
->> +                     <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
->> +            reset-names = "pci",
->> +                          "link_down";
->>   
->>               perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
->>               wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
->> -- 
->> 2.34.1
->>
->>
->> -- 
->> linux-phy mailing list
->> linux-phy@lists.infradead.org
->> https://lists.infradead.org/mailman/listinfo/linux-phy
+Once -rc1 is out I'll pull the VFS bits and provide a branch that
+remains stable for the duration of v6.16 development that can be pulled.
 
