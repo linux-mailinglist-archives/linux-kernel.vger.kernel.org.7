@@ -1,170 +1,231 @@
-Return-Path: <linux-kernel+bounces-673462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D7BACE19D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:37:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFEBACE1E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 597F57AC9C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7580F3A5134
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D81313A3ED;
-	Wed,  4 Jun 2025 15:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B6oP9n3H"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01A31DD9AD;
+	Wed,  4 Jun 2025 16:04:06 +0000 (UTC)
+Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF751DDC1;
-	Wed,  4 Jun 2025 15:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD0018E1F;
+	Wed,  4 Jun 2025 16:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749051155; cv=none; b=nEKTrhTA7NUYgn6B+txtKVCrbE8W+nhl6KOECTJV/rYl4sSbKNMPD6aPiYGNV+53gKU1ApoC9odf1BnKf379MV+R24iN1bxHtkQdu6JK+OC6LbMeL3vkS7Cia7eINgthL0QfjuIk/WqOTmq45rzgBDfXYPtxQcvazjdxKZaR3JU=
+	t=1749053046; cv=none; b=s1wAFkeK2R2FZyIgeA13q75UY43xGOZB2OJG3Th5z9PYX5xVc8PqWjCRUJbWgBkVh0MpXNc014ESlYyLZprjSeN0tXublBF3AstzbRrqYVAdXs8ColRI6LImhe0WQxvvfCbsEJMHogsPmlwHIQju0SMr3CH0CU8GAgtf4mqhxjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749051155; c=relaxed/simple;
-	bh=Oxj0L0vMUeF1rATIob8FyEydepIqKducGZ1bw6oENWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u4pFkqYiNXbX5m/Sjpzd3k2T2O7Vhi8+GNbPD4grKpOi2x8tJPtrGSlaqSDMARNz+CdgLodupmAjCrDsLmPOAGwaJ9SvTlOH2X1LU/FCs4va33GXCrtli9RwfhAXzcMHw5hiutcot179Kk8wH/ylliRQnLJkmWVNXMyJ0W/0SG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B6oP9n3H; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zSIx60s8W1RWmCAF04ar6XaDTCMxl8+rRsS7EF61guU=; b=B6oP9n3HnEWwmroXUatjSLp0PB
-	NtpK3WbsPpN8PGKdq4svfO035Bd6PjgODgScaDHOjm5fCSfybX4KxecZlOhU5NB5Lzifu0guXSMQ8
-	M+GjaTu2GusJh0wpNjx5civ2v535J9ZftwnpJa8/RbmiBq81Lx+ejCGF6kKjR50sZvmw0y5HC9V1Y
-	rYksRqKo6BWLnF2VO7fKZXe937u3FN6t9MXvcf8/DqXS6xRJn6k1ZQz+ZRZGaVM7qoyK6lKbU7mVG
-	lYfiEmEUWU8yHX+zaABzBqHAcXmAiDZvvLqmHkTW1b+dBS0P9bkL3EEoD2fcFjNrrUfhGEX2hssVb
-	fwxGiKsA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMq6G-00000003ED3-1d8p;
-	Wed, 04 Jun 2025 15:32:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BD968300787; Wed,  4 Jun 2025 17:32:19 +0200 (CEST)
-Date: Wed, 4 Jun 2025 17:32:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Baisheng Gao <baisheng.gao@unisoc.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"reviewer:PERFORMANCE EVENTS SUBSYSTEM" <kan.liang@linux.intel.com>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>,
-	cixi.geng@linux.dev, hao_hao.wang@unisoc.com
-Subject: Re: [PATCH] perf/core: Handling the race between exit_mmap and perf
- sample
-Message-ID: <20250604153219.GJ39944@noisy.programming.kicks-ass.net>
-References: <20250424025429.10942-1-baisheng.gao@unisoc.com>
- <aEBSt2LN7YhxYX7N@J2N7QTR9R3>
- <20250604142437.GM38114@noisy.programming.kicks-ass.net>
- <aEBeRfScZKD-7h5u@J2N7QTR9R3>
+	s=arc-20240116; t=1749053046; c=relaxed/simple;
+	bh=Vbss+hkHN6igBHYC0QfKfg2uSLdRpUecKqmMSm0PGo8=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=ZbAFKeOVvve15XtFfmS4tYFQ51oZUmvfig+WPCwM3qpFKryuB/NyyrCpw8nF1byjyMWhCNi1NRb9jDWOPcKhvHbUWMQz7yiM64kgVg8MXxYpZMc40XhatDQnOlD1KzgaZK3o8ivSdEat8kxmdITyIdfYCXCtmxNevxSQmGTrhdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1uMq7W-000Q0d-RO; Wed, 04 Jun 2025 17:33:39 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
+	id 1uMq7W-000E76-2k;
+	Wed, 04 Jun 2025 17:33:39 +0200
+Message-ID: <9da42688-bfaa-4364-8797-e9271f3bdaef@hetzner-cloud.de>
+Date: Wed, 4 Jun 2025 17:33:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEBeRfScZKD-7h5u@J2N7QTR9R3>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
+ 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
+ wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
+To: Jesper Dangaard Brouer <hawk@kernel.org>, bpf@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+Subject: [BUG] veth: TX drops with NAPI enabled and crash in combination with
+ qdisc
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27658/Wed Jun  4 10:36:16 2025)
 
-On Wed, Jun 04, 2025 at 03:55:01PM +0100, Mark Rutland wrote:
+Hi,
 
-> I think we might need something in the perf core for cpu-bound events, assuming
-> those can also potentially make samples.
-> 
-> From a quick scan of perf_event_sample_format:
-> 
-> 	PERF_SAMPLE_IP			// safe
-> 	PERF_SAMPLE_TID			// safe
-> 	PERF_SAMPLE_TIME		// safe
-> 	PERF_SAMPLE_ADDR		// ???
+while experimenting with XDP_REDIRECT from a veth-pair to another interface, I
+noticed that the veth-pair looses lots of packets when multiple TCP streams go
+through it, resulting in stalling TCP connections and noticeable instabilities.
 
-Safe, set by driver, or 0.
+This doesn't seem to be an issue with just XDP but rather occurs whenever the
+NAPI mode of the veth driver is active.
+I managed to reproduce the same behavior just by bringing the veth-pair into
+NAPI mode (see commit d3256efd8e8b ("veth: allow enabling NAPI even without
+XDP")) and running multiple TCP streams through it using a network namespace.
 
-> 	PERF_SAMPLE_READ		// ???
+Here is how I reproduced it:
 
-This is basically read(2) on a fd, but in sample format. Only the count
-values. This good.
+  ip netns add lb
+  ip link add dev to-lb type veth peer name in-lb netns lb
 
-> 	PERF_SAMPLE_CALLCHAIN		// may access mm
+  # Enable NAPI
+  ethtool -K to-lb gro on
+  ethtool -K to-lb tso off
+  ip netns exec lb ethtool -K in-lb gro on
+  ip netns exec lb ethtool -K in-lb tso off
 
-Right.
+  ip link set dev to-lb up
+  ip -netns lb link set dev in-lb up
 
-> 	PERF_SAMPLE_ID			// safe
-> 	PERF_SAMPLE_CPU			// safe
-> 	PERF_SAMPLE_PERIOD		// safe
-> 	PERF_SAMPLE_STREAM_ID		// ???
-safe
+Then run a HTTP server inside the "lb" namespace that serves a large file:
 
-> 	PERF_SAMPLE_RAW			// ???
-safe, this is random data returned by the driver
+  fallocate -l 10G testfiles/10GB.bin
+  caddy file-server --root testfiles/
 
-> 	PERF_SAMPLE_BRANCH_STACK	// safe
-> 	PERF_SAMPLE_REGS_USER		// safe
-> 	PERF_SAMPLE_STACK_USER		// may access mm
-> 	PERF_SAMPLE_WEIGHT		// ???
-> 	PERF_SAMPLE_DATA_SRC		// ???
-Both should be safe, driver sets them.
+Download this file from within the root namespace multiple times in parallel:
 
-> 	PERF_SAMPLE_IDENTIFIER		// safe
-> 	PERF_SAMPLE_TRANSACTION		// ???
-Safe, another random thing the driver can set. This was for
-transactional memory stuff.
+  curl http://[fe80::...%to-lb]/10GB.bin -o /dev/null
 
-> 	PERF_SAMPLE_REGS_INTR		// safe
-> 	PERF_SAMPLE_PHYS_ADDR		// safe; handles mm==NULL && addr < TASK_SIZE
-> 	PERF_SAMPLE_AUX			// ???
+In my tests, I ran four parallel curls at the same time and after just a few
+seconds, three of them stalled while the other one "won" over the full bandwidth
+and completed the download.
 
-Safe, should be driver, PT for Intel, or that CoreSight for ARM.
+This is probably a result of the veth's ptr_ring running full, causing many
+packet drops on TX, and the TCP congestion control reacting to that.
 
-> 	PERF_SAMPLE_CGROUP		// safe
-> 	PERF_SAMPLE_DATA_PAGE_SIZE	// partial; doesn't check addr < TASK_SIZE
-> 	PERF_SAMPLE_CODE_PAGE_SIZE	// partial; doesn't check addr < TASK_SIZE
+In this context, I also took notice of Jesper's patch which describes a very
+similar issue and should help to resolve this:
+  commit dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to
+  reduce TX drops")
 
-But does use init_mm when !mm, perf_get_page_size().
+But when repeating the above test with latest mainline, which includes this
+patch, and enabling qdisc via
+  tc qdisc add dev in-lb root sfq perturb 10
+the Kernel crashed just after starting the second TCP stream (see output below).
 
-> 	PERF_SAMPLE_WEIGHT_STRUCT	// ???
-Safe, driver bits again.
+So I have two questions:
+- Is my understanding of the described issue correct and is Jesper's patch
+  sufficient to solve this?
+- Is my qdisc configuration to make use of this patch correct and the kernel
+  crash is likely a bug?
 
-> 
-> ... I think all the dodgy cases use mm somehow, so maybe the perf core
-> should check for current->mm?
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in net/sched/sch_sfq.c:203:12
+index 65535 is out of range for type 'sfq_head [128]'
+CPU: 1 UID: 0 PID: 24 Comm: ksoftirqd/1 Not tainted 6.15.0+ #1 PREEMPT(voluntary) 
+Hardware name: GIGABYTE MP32-AR1-SW-HZ-001/MP32-AR1-00, BIOS F31n (SCP: 2.10.20220810) 09/30/2022
+Call trace:
+ show_stack+0x24/0x50 (C)
+ dump_stack_lvl+0x80/0x140
+ dump_stack+0x1c/0x38
+ __ubsan_handle_out_of_bounds+0xd0/0x128
+ sfq_dequeue+0x37c/0x3e0 [sch_sfq]
+ __qdisc_run+0x90/0x760
+ net_tx_action+0x1b8/0x3b0
+ handle_softirqs+0x13c/0x418
+ run_ksoftirqd+0x9c/0xe8
+ smpboot_thread_fn+0x1c0/0x2e0
+ kthread+0x150/0x230
+ ret_from_fork+0x10/0x20
+---[ end trace ]---
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in net/sched/sch_sfq.c:208:8
+index 65535 is out of range for type 'sfq_head [128]'
+CPU: 1 UID: 0 PID: 24 Comm: ksoftirqd/1 Not tainted 6.15.0+ #1 PREEMPT(voluntary) 
+Hardware name: GIGABYTE MP32-AR1-SW-HZ-001/MP32-AR1-00, BIOS F31n (SCP: 2.10.20220810) 09/30/2022
+Call trace:
+ show_stack+0x24/0x50 (C)
+ dump_stack_lvl+0x80/0x140
+ dump_stack+0x1c/0x38
+ __ubsan_handle_out_of_bounds+0xd0/0x128
+ sfq_dequeue+0x394/0x3e0 [sch_sfq]
+ __qdisc_run+0x90/0x760
+ net_tx_action+0x1b8/0x3b0
+ handle_softirqs+0x13c/0x418
+ run_ksoftirqd+0x9c/0xe8
+ smpboot_thread_fn+0x1c0/0x2e0
+ kthread+0x150/0x230
+ ret_from_fork+0x10/0x20
+---[ end trace ]---
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000005
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=000008002ad67000
+[0000000000000005] pgd=0000000000000000, p4d=0000000000000000
+Internal error: Oops: 0000000096000004 [#1]  SMP
 
-This then... I suppose.
+CPU: Ampere(R) Altra(R) Processor Q80-30 CPU @ 3.0GHz
 
----
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f34c99f8ce8f..49944e4ec3e7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7439,6 +7439,10 @@ perf_sample_ustack_size(u16 stack_size, u16 header_size,
- 	if (!regs)
- 		return 0;
- 
-+	/* No mm, no stack, no dump. */
-+	if (!current->mm)
-+		return 0;
-+
- 	/*
- 	 * Check if we fit in with the requested stack size into the:
- 	 * - TASK_SIZE
-@@ -8153,6 +8157,9 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
- 	if (!kernel && !user)
- 		return &__empty_callchain;
- 
-+	if (!current->mm)
-+		user = false;
-+
- 	callchain = get_perf_callchain(regs, 0, kernel, user,
- 				       max_stack, crosstask, true);
- 	return callchain ?: &__empty_callchain;
+# tc qdisc
+qdisc sfq 8001: dev in-lb root refcnt 81 limit 127p quantum 1514b depth 127 divisor 1024 perturb 10sec 
+
+Thanks,
+Marcus
 
