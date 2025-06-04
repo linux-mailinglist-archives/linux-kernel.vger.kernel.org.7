@@ -1,77 +1,118 @@
-Return-Path: <linux-kernel+bounces-673041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C94ACDB5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:46:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FDFACDB5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D94951626B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7810C3A328C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D605F224AF2;
-	Wed,  4 Jun 2025 09:46:53 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBBA28CF6E;
+	Wed,  4 Jun 2025 09:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XOYNRiYG"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030314A1A
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E13422F770;
+	Wed,  4 Jun 2025 09:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749030413; cv=none; b=jkeXJGfZ2lpNnNo+X9ppJLiQwZKGLvDET9i5tK+wMmhZ3+ZyETU4GMQ62Or4oQG6GJ2o+nmyNIV06REr5pipubDgfUB9IiNQ7fR5Bx0CfLZPRhX+ftzv+6xO+WvvzaZM5ccQoeIsejF8CScbjaW27ZEO6Qm3XXVDZQb0Obp8roc=
+	t=1749030540; cv=none; b=W3VJV8LNZ5cm80ddFzVcY79sGkFeJGszNyH2d4iCLzU5BbxK0Sap6OUKmx2tq3K2WbCLDeXr4CD/Zyz0IqgKa6cfKfOHkKYd4MA5FahF1mkOfxm1IPSYB50C74tISVa8Z8tgVIsyoA+tZ5wyX02vkLaVBabrWXWnP1hP6WASue8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749030413; c=relaxed/simple;
-	bh=hVtHhuyE249aQIV4VbWHyBeFM2ZuATkK5EJGj0FPwys=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EvB8PpMn8xncmADsCkfSsGFy3LB9sca6EE8oCM7gGNHdw+jr5iG7brh5E/azrIeL5PYiMSa9va/oiczYliSPs6w0dy1vcR1C9wEBaorORbgm4Ih8yvM3BujrmWETiAgGOPt4IWVEbeQxVVYjgEnwIrjkKASIuaTFBuRSiWOJu3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddbec45b07so8385285ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 02:46:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749030411; x=1749635211;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVtHhuyE249aQIV4VbWHyBeFM2ZuATkK5EJGj0FPwys=;
-        b=cug3KLkw8TpjFmEmSw9P1su7TZmp75xRKFno43iFAHA24MSpE/hrb5Sc5guQI4QMk1
-         UzwkqZGZsAc/dYMAyw1qoj8G/F/7ySbf71h8gV6EOeSYAMcMeHFQDjdkwXC/4Cp2IGeL
-         eALuIY5u7hOA9NG+SRLZ9jSJKqMqnTWomZ0F6Wq+ZWankxEd+QLIixNEkxMFwkNlnxgJ
-         KvHvXAUWGZnqyfCKYJaf2FRFUwkFZxaxvLg6ZWpeqGoYAMaMUsHtGudeYA4ric9iryLy
-         xfsp5cAbVieRBdk555fOOBhdjo2Nyyb+w7A0MFdzt0IKwjkmk58O5lREoY0ta3Eg4vI3
-         Ubeg==
-X-Gm-Message-State: AOJu0YzU39DfwLKmwYo0l+A3pSxlMqQSjtUQ1oGzkT3unu41hmLkXriH
-	docd6YgunD2tjYlvcWgi+o08HyxOfkoJlOfmdVCDj6ZL5Yg3Hg1kM0Bc/oSitTce+5DnPbyw/cW
-	KVn6IbQOPANB4v1KzX41yLu9yaehx4j3uwFvthdFpc07Q7Z/m+kTJdL31Lf4=
-X-Google-Smtp-Source: AGHT+IE7AV3XrORmioMBS8PdK4EW1hYtPoT/Hy0qKWL9dpqx4NhZyiIwrOqWaHfBzbEYWdgMn0jgFc91lQyPcBhgHpIGTYQETF3y
+	s=arc-20240116; t=1749030540; c=relaxed/simple;
+	bh=66KZLAI+Sn3EhX8f3kJupOtyRki6+CSXzYdA/EoACIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ah8F8yXUOr0H6Q7jKFP68HEyTdbwWUE9aPlypWsaJB/bQS8Nb896WSM6IAcwLPlIiiQSNL7pOFBIGs1EvTbiYpfWP3/GfYTzyaUfMleAXrBjSz5WHEclLqj9z9NQkF8kQeqqtRbAHVntTMDD7ILM5Ru2uLdajpnMcqYx7j4yYqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XOYNRiYG; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5549mjQp3778763;
+	Wed, 4 Jun 2025 04:48:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749030525;
+	bh=Bq4EZsLahywFgP1f+8VxyYxdSzxk7zu6x4ss6clsEj8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=XOYNRiYGr17hHOZRZ+Cx1giSNAXcFaNqGIK9Rvk/4iftOBLwP/AQ/sGCjIKoWl226
+	 /OaE/4+l1padrWTmhELfMxVCgwP4xmswve3h7QevT8QiGViy39BXFwL+P3WplQjem0
+	 +CxJsEdWv8JOrmS8A7d/x1JnuC2bScTubCz7bko0=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5549mj2f4179988
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 4 Jun 2025 04:48:45 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
+ Jun 2025 04:48:45 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 4 Jun 2025 04:48:44 -0500
+Received: from [172.24.227.14] (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.14])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5549mfEG1853766;
+	Wed, 4 Jun 2025 04:48:41 -0500
+Message-ID: <0c69137d-93ad-4843-8512-9885b9cba452@ti.com>
+Date: Wed, 4 Jun 2025 15:18:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc3:b0:3dd:babf:9b00 with SMTP id
- e9e14a558f8ab-3ddbecf1cd3mr23409085ab.1.1749030411056; Wed, 04 Jun 2025
- 02:46:51 -0700 (PDT)
-Date: Wed, 04 Jun 2025 02:46:51 -0700
-In-Reply-To: <683eb35e.a00a0220.d8eae.0062.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6840160b.a00a0220.d8eae.0081.GAE@google.com>
-Subject: Re: [syzbot] #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- 5abc7438f1e9d62e91ad775cc83c9594c48d2282
-From: syzbot <syzbot+630f6d40b3ccabc8e96e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] arm64: dts: ti: k3-j721e-main: Make the "scm_conf"
+ node a "simple-bus"
+To: Krzysztof Kozlowski <krzk@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        <devicetree@vger.kernel.org>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <s-vadapalli@ti.com>, <rogerq@kernel.org>,
+        <afd@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250603095609.33569-1-j-choudhary@ti.com>
+ <20250603095609.33569-2-j-choudhary@ti.com>
+ <15da3051-c35e-4876-9185-9079493dc66c@kernel.org>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <15da3051-c35e-4876-9185-9079493dc66c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hello Krzysztof,
 
-***
+On 03/06/25 16:32, Krzysztof Kozlowski wrote:
+> On 03/06/2025 11:56, Jayesh Choudhary wrote:
+>> The "scm_conf" bus need not be "syscon". Now that we have "pcie*_ctrl"
+>> child nodes for "ti,syscon-pcie-ctrl" property in "pcie" nodes, change
+>> "scm_conf" node to "simple-bus".
+>> Also remove "reg" property as it is not needed by "simple-bus".
+> 
+> This (possibly) affects all other users of DTS which were expecting this
+> ABI. It's not only about forward-compatibility, but other projects.
+> 
+> Maybe this doe snot matter for you, so explain that in commit msg and
+> provide rationale why you are affecting other users.
+> 
+> 
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 5abc7438f1e9d62e91ad775cc83c9594c48d2282
-Author: dmantipov@yandex.ru
+This should not affect other users of DTS. J784S4 already has this
+change and it serves as a validation that DT nodes are compatible
+with other projects (for example uboot driver handles it).
+Other SoCs are being modified with taking J784S4 as a working reference.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 5abc7438f1e9d62e91ad775cc83c9594c48d2282
+Considering this, do I still need to add something? Or is it okay
+since I am not exactly affecting other projects?
+Should I add something along the lines of "similar to j784s4...."?
+
+
+Warm Regards,
+Jayesh
+
+> 
+> Best regards,
+> Krzysztof
 
