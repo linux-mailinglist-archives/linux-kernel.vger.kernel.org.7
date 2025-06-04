@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-673003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71EAACDAEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:23:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD928ACDAA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA3E37A55CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1608616AE99
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F2328C84F;
-	Wed,  4 Jun 2025 09:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630B328C843;
+	Wed,  4 Jun 2025 09:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ycher373"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NjH7h2yj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50B2169397;
-	Wed,  4 Jun 2025 09:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49C01804A;
+	Wed,  4 Jun 2025 09:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749029006; cv=none; b=oZOlsA951cXzo4Ah1UQw3oLSPFsPnm0WXHDpPQixXtd/bphi7zRAVuXm4eEzuVM1mq/nM/9K2RbI87GsfLeNgtRtUEIODXaaUHKOQnel1tdQWU0PkamLzZltBeTeRCoCwuq0MpGzgOyF0asHa/m9oNcn+yezgBi7W4NoUH8Fqpg=
+	t=1749028356; cv=none; b=k4OSf5xlbhnubEc6W8dZ17ClT8xS3rTczTqi1Hsc+Pe5aKj5HW23gOyglxpb60YrnnBRDg60FHoAGkSJT5JVj37DoqXZ9InavaeRWQB7ZW00lDhK9qDtzT05YM9Mh+m+QaoIRFQtgvJUqU9nl4B0F/LARKx2NlcXTTUd8wFFTl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749029006; c=relaxed/simple;
-	bh=RIYky3gjpTsCWWoJfEf+lc/dCW5mVapm/m/j24bH0IQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qB2GYhmjleqDoLmO8Gx+QJF1E5CG/1qeTlOOHAXUw3E2lEksY19xN5UwtHDreTPxZcRViE234i2CohWis+n28GL/aAhb0t/hIqKwLz0Ovff7BqYL3uq3EOxonbmwkV18j1PcBPyGC42LKZNexdPsS0kflppvSi4s5hPlzQeK2A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ycher373; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1749028692;
-	bh=RIYky3gjpTsCWWoJfEf+lc/dCW5mVapm/m/j24bH0IQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ycher37324IbzHf505SgsNe0/N4ZdnkYj649dMDb/GhGeWesGIE3SrM/+cZ1q2okb
-	 yoMMu8EXjpW6yYmzZxhOwF48U3a5v616v1tM7AX9TvI4I6ArVWldq/pnj/WxCLLTtR
-	 FlhD+VLFxgrMTYZlAD4Xez5wbXyrcPWL13F9q/lA=
-Received: from [10.56.52.9] ([39.156.73.10])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id 30098838; Wed, 04 Jun 2025 17:12:00 +0800
-X-QQ-mid: xmsmtpt1749028320tno68hupx
-Message-ID: <tencent_CC0310590D7085E8B3EC2E1955E45E4B4709@qq.com>
-X-QQ-XMAILINFO: NvKPbWBbh1DVYUNrtUaO4h9Jj+nOhO0LDaL7Td6QvGV4lWUff2j/vEKUwNnLFs
-	 OLHiU8HjtO7X0BTo/mZpmoEGAb9JuMxziyE13yu5EmANI/1w0vmju9epZ/bZzbSXA1flXKOlJCZZ
-	 0xdvAOAB8VyNKr2QluATxTOYVEe1IAEr29eygOc9y2gqvHEs7zbaNV8svwb2YcQomlJh10O1DWLo
-	 PXJrtg35/w2KjVub9G4hXlaaODVaIv5HxLJLIeGw8haZVbKol3pxT1UVrVP9PIE6iW6oGW1DASKk
-	 JglRxN8iFlXFrH408POil0NYTrv4Qls947B0al8UFnJ6xeYWFPfvmK+l6mw3Cl/4BLpWgDOMRt+k
-	 UrYDh0qAZTVf2FDZg6dIj2VABZbbalypmmpKQdY8zk4jeja07vCJfEocQCBNTybGixtgoKvRvcd0
-	 dSUcqfu9AgFxz8oM4ks2OZfJVc/+1YSKiZdZ5oWg4JzNvrD9IgDKripzGOCf2gfOXHhj67JKwtdc
-	 Xvt5qdrp6RIu3qv8q79nDMT9pBldnw+GpvGZd/GLfkykzwt4ZRmcEt2ADl0Bj/tfDN1XajAgi+NF
-	 AsgwcY3cJtX3K3Gh0WXK45o4Zof4kxKsygFeKzZU7NXl28+E4sH5vCLV4aIsOknG4m5D4CDUYdkm
-	 ac+ZcB+WCWf2D8wX5w4fMtWUtYNjW7X5EOQolpYsuNItcckXyWQP4hfCMgfdHYjzdbYS0UlIiByU
-	 buyWQSQCSzDpvNini1IwsOxoHQ0QcHWYCf9zveyqN85O1YLWoGw3uO39Vd/oSSS+IDCnTmE0vPoY
-	 owrNAXU/M0Msa9kRe2HGy9sJT5ME7CAy1QM/JX+1nQtOq0ShztSqPRXhjEkQ1Q9NeYf8YE416HyZ
-	 z06m9cTiKe6VUYzTY0knFb75smemeGwBRoXSxAC2fADTT93GciJy/QFtVo0WJYjvAQga58hOqboM
-	 8qdx5zDNtzNRgK0zCw8mhNrpqwX8kASut9RkRk/ypcFd0xG05u1ALrQq/VzpXCpTMwV84eDOcSsO
-	 PVaspGNOPthDgcgF8X
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-OQ-MSGID: <365843f4-d33d-490d-b567-fe9250577725@foxmail.com>
-Date: Wed, 4 Jun 2025 17:12:00 +0800
+	s=arc-20240116; t=1749028356; c=relaxed/simple;
+	bh=zZpo6mK8tf383MWZB/POECNU1sIuN6ckveroVl8Bdjs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pYZFCmlIZnuuSL9bicR8bQcCYLOFxwdDHXmxLuysQVQJkTXgNg1h2/sVKyYC+U4w1pxr8GHY+GxAKjLu8M41+XbYYgaIRy5zfsnFv/9S7NVyb0M/NtZjOkCdn+xORYG9r277xgBF292ZKOyVxvwajW6wFIHJNQsPENC41mWYx3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NjH7h2yj; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749028355; x=1780564355;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=zZpo6mK8tf383MWZB/POECNU1sIuN6ckveroVl8Bdjs=;
+  b=NjH7h2yjdi/R4va01KIQhQp8Qtn3vr6k2kD3NA4kM90WpAG0Ny5go8EB
+   kiPjvB2n5lq4fVDjcc2M5+2Qon9F2GVUdC1/NOTleLDtgLezFM1yI/8b4
+   j6t3HWZkqoXlkb4qU3+Rrw/VlylNxXstYcFxWr7QeSoAQgCiPHG4nzqDk
+   o38cEmfzT92APYI20YkljTbSJjx/Gzs1jjSi4pfvwZqd37+pAza+nED9F
+   1OuTYlwx5wOjFctPVqsnfjFW551NRFkAiTAzwMBBu6JPvMDG85qVrCitb
+   xnFC/XLzAStJo14+P05AqcQiPJKc1RZxRrVjBe9CzQRXqPKqzBk16UUFH
+   g==;
+X-CSE-ConnectionGUID: O6FMRUQpTNCOEGGw2ITzWQ==
+X-CSE-MsgGUID: uuzZd4vAT1KqpGzbKcpmaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="51245016"
+X-IronPort-AV: E=Sophos;i="6.16,208,1744095600"; 
+   d="scan'208";a="51245016"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 02:12:34 -0700
+X-CSE-ConnectionGUID: 6KQ7jSotTlyHgRT2Bv6ztA==
+X-CSE-MsgGUID: YHZD5V2FShW3vSBzcpE+kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,208,1744095600"; 
+   d="scan'208";a="149915958"
+Received: from abityuts-desk.ger.corp.intel.com (HELO localhost) ([10.245.245.101])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 02:12:27 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jeff Layton <jlayton@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Joonas
+ Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, Jeff
+ Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v12 03/10] ref_tracker: add a top level debugfs
+ directory for ref_tracker
+In-Reply-To: <20250529-reftrack-dbgfs-v12-3-11b93c0c0b6e@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250529-reftrack-dbgfs-v12-0-11b93c0c0b6e@kernel.org>
+ <20250529-reftrack-dbgfs-v12-3-11b93c0c0b6e@kernel.org>
+Date: Wed, 04 Jun 2025 12:12:25 +0300
+Message-ID: <378d6754aad9991b859a5c2136f4a4211e9fafea@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] selftests/bpf: Fix compile error of
- bin_attribute::read/write()
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, rongtao@cestc.cn,
- Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Shuah Khan <shuah@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Amery Hung <ameryhung@gmail.com>,
- Juntong Deng <juntong.deng@outlook.com>, Oleg Nesterov <oleg@redhat.com>,
- "open list:BPF [SELFTESTS] (Test Runners & Infrastructure)"
- <bpf@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <tencent_A6502A28AF21A3CA88B106F3421159869708@qq.com>
- <aEAJbBH00yL2iTgn@krava>
-Content-Language: en-US
-From: Rong Tao <rtoax@foxmail.com>
-In-Reply-To: <aEAJbBH00yL2iTgn@krava>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-
-On 6/4/25 16:53, Jiri Olsa wrote:
-> On Wed, Jun 04, 2025 at 01:53:22PM +0800, Rong Tao wrote:
->> From: Rong Tao <rongtao@cestc.cn>
->>
->> Since commit 97d06802d10a ("sysfs: constify bin_attribute argument of
->> bin_attribute::read/write()"), make bin_attribute parameter of
->> bin_attribute::read/write() const.
-> hi,
-> there's already fix for this in bpf/master
+On Thu, 29 May 2025, Jeff Layton <jlayton@kernel.org> wrote:
+> Add a new "ref_tracker" directory in debugfs. Each individual refcount
+> tracker can register files under there to display info about
+> currently-held references.
 >
-> thanks,
-> jirka
-I am confused, when should I use bpf/master[2] and when should I use
-bpf-next/master[1]? thank you :)
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  lib/ref_tracker.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/lib/ref_tracker.c b/lib/ref_tracker.c
+> index de71439e12a3bab6456910986fa611dfbdd97980..d374e5273e1497cac0d70c02c282baa2c3ab63fe 100644
+> --- a/lib/ref_tracker.c
+> +++ b/lib/ref_tracker.c
+> @@ -273,3 +273,16 @@ int ref_tracker_free(struct ref_tracker_dir *dir,
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(ref_tracker_free);
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +#include <linux/debugfs.h>
+> +
+> +static struct dentry *ref_tracker_debug_dir = (struct dentry *)-ENOENT;
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+Nitpick, please prefer ERR_PTR(-ENOENT) over casting inline.
 
+BR,
+Jani.
+
+
+> +
+> +static int __init ref_tracker_debugfs_init(void)
+> +{
+> +	ref_tracker_debug_dir = debugfs_create_dir("ref_tracker", NULL);
+> +	return 0;
+> +}
+> +late_initcall(ref_tracker_debugfs_init);
+> +#endif /* CONFIG_DEBUG_FS */
+
+-- 
+Jani Nikula, Intel
 
