@@ -1,84 +1,66 @@
-Return-Path: <linux-kernel+bounces-673614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F8BACE3A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:28:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8037AACE393
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD613A358D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63EF01736A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538DE213240;
-	Wed,  4 Jun 2025 17:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2287F202C2D;
+	Wed,  4 Jun 2025 17:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6rpIk+R"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqbCR5rZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450D620F088
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 17:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8E22F22
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 17:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749057878; cv=none; b=qr96mpyxfneGHoDxLE/CK4So9gKwWXDcZ5O9H/z7HgnJ2qIw72oqrH3aDaeQFrv/RTaaXMYW64We6qHjEDzVZXj6uv3t/xUiRX+UZ7ISTgnFWMF3gKxrTiFaMz/+V0LDveZ8h37shVPS8rcWk2sCZe+GVKn7TyKbaapX6CdGm20=
+	t=1749057932; cv=none; b=LVLCvSlMJD87Y6N3D9akg8JLrfWLBcTG49RMAE8ghLZrjUdUo6WN+R9+9dHrCKdpSyvRBpkHyuw191VZ7S/HKr5hm5M9kcC7UvdqdE3EAVWSVP5CpB1JmmVjnAdDN9xKnajq0MEpsQTZ6IQ39y9c2C845xgkNjutJvwy99+ZK7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749057878; c=relaxed/simple;
-	bh=d1Kq88RwF6WpW/vWXpBCXVjml0oJ+qg5wUHOdtKysjM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZvEwkz1Lg7EIJ/OkCmk4hbOFcBWzTpk5nEbIS5w03M1IavbfKne0QBEhj/fDSQki/JbqpErDNxPQ8GAiRe/NkR4tjyK8yu4BwnY/aXlkVEaO/cB9Kc912TqJoMIKWGDhtxVG41Bxvrc3Rn+CPFLHQafnmJTpomTe0kvdwKmqJTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6rpIk+R; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235e1d4cba0so772265ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 10:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749057876; x=1749662676; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhG1JhoXZUo1f3yXWr0+fS3M+qXdVl1plAhbPO0kUgA=;
-        b=H6rpIk+RuvnApxZo5rr3vAdBJJ9CykulaV/jYYP1tJxxocsdEXLNxXgpTZe5e6RT7x
-         gQO1e5Ot7USaXRiDMRtTUlhOnc5vWLBNWpuHV2dMRj3VE9FdedXDAwmTlNySBthVMkvQ
-         eGCy44HdHYwdDgwJQHD2bchzeD6cXaZTkk4uEfVG+f/MH+UucUPw2o5/+hlQFHMYxMNj
-         xy2f4tskG9DYg8vqnbSl2XHz4QNqY5X122Q40af725psDV46lXAZwVFPCHKRt/jV/GDe
-         zWNpZurUe4InvneyCYWkmt5eJT7bgA7L1XnvCRMU1Ab69kzaiMmYFynq7edCFG7Uc483
-         dJQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749057876; x=1749662676;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zhG1JhoXZUo1f3yXWr0+fS3M+qXdVl1plAhbPO0kUgA=;
-        b=XnxsQJYz9/0L9uhnwDG2IbcJ902dEcAR3lsq4s6YMyjvkxKrZo/BH7vMn3IsbFbtrt
-         bG0EPrtH4d7f/yvnViuxx9Fj05ajfXLVD5jNxFxrWjm/WOlERXNOe/1ftFOqbpuy9DIh
-         ijfXAeZa5D6LkIMRvAAZKl/6lBMJ21fplW98UL1/jxS1dAmXR4Iz/fg0owX+H6masptf
-         oEGEFoyo6csO4r8oBLpFtz8Zs7cwMHGPJgdVffY8K0VUXsRfcYnq45zLMwda7WIdayWr
-         Nh/eNg73/8I57eUvrH92e28lgiFA7mW3D8+leNLAMlN/rWv7W8Pzk5dwVXCNCwGG6NAe
-         LaqQ==
-X-Gm-Message-State: AOJu0YwWwh/1dvSJMOQ/lugX5c0M4DJhx33XtgmjfE+x79PWgOQ/VkNF
-	BG8Tf0w3oFtEqfEXnR/dYIz6+YpYs8J6yAF6TOsYlfZ4ulcNmDmT585ATRGNJg==
-X-Gm-Gg: ASbGncuX0bAhEk7D1eq0+ThwCUVJYSzPYhYXJAKddyDfCzD+lNt3cTVJ8Ky5AIXKlGV
-	3kjsVc+hnZc9e3/NfAct2sBMX5y+4DeRY4zPiNBet4+Hp/V6Zapbv+D/hmbzqdD9ES2TlyGpCHQ
-	YbFspAkA3oE/fZLAjPZEVvjjx+n8w5kej5y5qMZCVLyUjgsnxpeZOKFqhU4bbUFczRiTFp4vLmL
-	6MOLeFeIfpn9RRyu1w2s6kDtaOcUtBjSZRqD5Bj52EFBwCZuLcOaU/joDS6N+Rk4ofnsFdSHxMT
-	ypkkcHOKOo8P3+UC4esBoiKrkISYkG4zTA+UKYIxEkNJ6sTPix97e7DpdsAz0VAVykhsrAkXPu2
-	skbNl8RAf5P3h/OscIQg1YgV4bjuEtkHcrKB0e9L7yw==
-X-Google-Smtp-Source: AGHT+IFX+2C7dStz6l25B6CR114tcxl2LulaJZmZkforLWsc1A1k86t9Ufv4s0w9RWZANI/jnMPbPg==
-X-Received: by 2002:a17:903:22c5:b0:235:779:edfa with SMTP id d9443c01a7336-235e11e3c77mr57450655ad.32.1749057876157;
-        Wed, 04 Jun 2025 10:24:36 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:5d7a:a6c3:97d2:ecd])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb9d33csm8944908a12.47.2025.06.04.10.24.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 10:24:35 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: turn off one_time when forcibly set to foreground GC
-Date: Wed,  4 Jun 2025 10:24:26 -0700
-Message-ID: <20250604172426.3683837-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.49.0.1266.g31b7d2e469-goog
+	s=arc-20240116; t=1749057932; c=relaxed/simple;
+	bh=SD9ZtYC8DZGJPnmggzhoPOkgEH8ofRd+R865IgSmohQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=X43eCnm5LEx9JAml/+P4oPlRkzDA6evcqXxsz8l5peF1I3QIQPGdcc+UNyIqL0Z0w73Meayibwm6SDeMtNYBW51Y146hM9QlVp/BKAd4XYDDe3o5FnZbQzr5g9xjNN8XnrVJvaZLN0i16NMxPwfkj/HI2FsgQn9ENlFMpRCvsTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqbCR5rZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD34C4CEE4;
+	Wed,  4 Jun 2025 17:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749057930;
+	bh=SD9ZtYC8DZGJPnmggzhoPOkgEH8ofRd+R865IgSmohQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gqbCR5rZgMbTFYPVMyb5Cw07NuruYy+eiQkUGkBbqRSXm6w/RtrfJFw9Tsz0fvxhO
+	 imtpwSf67o4rLqv2Ziol8cZMvdRDOabPPP3lyJ9xLp/d9q41eSs0OYmEc5SG4gJuIe
+	 HoL4TYD4wXBGk/w6+9yjRwrQSIJhSvQZ3xbg3EKJZi4KFA23lQTkEjSBvj9xfdrDCh
+	 vKhGTLywOFVin0aybWxPmQGof+zXi4J0OwIujl6Qpn500QwZoehdb5iNVTPcQeh/Kl
+	 IUtyw05TmdcqmB8wrPKLtHeChJwwo+8+t5sB9POIzWH3p8kG9cp2S5pioZe365+Ybc
+	 Y21Z0IXNUQSnw==
+From: SeongJae Park <sj@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>
+Subject: Re: [PATCH v1] mm/gup: remove (VM_)BUG_ONs
+Date: Wed,  4 Jun 2025 10:25:27 -0700
+Message-Id: <20250604172527.7245-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250604140544.688711-1-david@redhat.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,31 +69,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Daeho Jeong <daehojeong@google.com>
+On Wed,  4 Jun 2025 16:05:44 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-one_time mode is only for background GC. So, we need to set it back to
-false when foreground GC is enforced.
+> Especially once we hit one of the assertions in
+> sanity_check_pinned_pages(), observing follow-up assertions failing
+> in other code can give good clues about what went wrong, so use
+> VM_WARN_ON_ONCE instead.
+> 
+> While at it, let's just convert all VM_BUG_ON to VM_WARN_ON_ONCE as
+> well. Add one comment for the pfn_valid() check.
+> 
+> We have to introduce VM_WARN_ON_ONCE_VMA() to make that fly.
+> 
+> Drop the BUG_ON after mmap_read_lock_killable(), if that ever returns
+> something > 0 we're in bigger trouble. Convert the other BUG_ON's into
+> VM_WARN_ON_ONCE as well, they are in a similar domain "should never
+> happen", but more reasonable to check for during early testing.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Mike Rapoport <rppt@kernel.org>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Fixes: 9748c2ddea4a ("f2fs: do FG_GC when GC boosting is required for zoned devices")
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/gc.c | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: SeongJae Park <sj@kernel.org>
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2b8f9239bede..f752dec71e45 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1893,6 +1893,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
- 	/* Let's run FG_GC, if we don't have enough space. */
- 	if (has_not_enough_free_secs(sbi, 0, 0)) {
- 		gc_type = FG_GC;
-+		gc_control->one_time = false;
- 
- 		/*
- 		 * For example, if there are many prefree_segments below given
--- 
-2.49.0.1266.g31b7d2e469-goog
 
+Thanks,
+SJ
+
+[...]
 
