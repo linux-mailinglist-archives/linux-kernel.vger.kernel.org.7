@@ -1,92 +1,113 @@
-Return-Path: <linux-kernel+bounces-673850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F8AACE6CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA01ACE720
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 01:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F02170E5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 22:48:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A1116D3BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 23:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E46C1946DF;
-	Wed,  4 Jun 2025 22:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="zsYONRVJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B1A26B955;
+	Wed,  4 Jun 2025 23:17:45 +0000 (UTC)
+Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3FB1547C9
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 22:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1DF49659;
+	Wed,  4 Jun 2025 23:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749077275; cv=none; b=DrERTMRAIoA93pBJq8oY9VmLSZnOqjcVtJRdtroprwV31/HHPjIn+Ut492/p35Id9EoSR2nXc4sPCDZa1S4WQOY8CdPCXfzAm9IkG0nYc1N/H053TwPONTJrZMjDMUyIGT2h5jVbi0buaBsBZldv7R3CTI1VQQhijiodBHF/X4E=
+	t=1749079065; cv=none; b=bfG7oZpcb6VXvmYw+c6kEd2TFjHR10WuKK4ETdFX95ZPbObTOZqia/bEZTGj8ZaPQoarQXeHWqZsjOmPjTHKyzAX5gsHIuZxpmSDHpH7NQroSECw2Ao6ehwUIHYvBrzedEBY8+fZ+GGH3eNmjiDnHWVtaIRjbx97U3KFHYr2Y28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749077275; c=relaxed/simple;
-	bh=lTyIl3tFEZAFEhIjI5VOgHghdPUqVQ2X+80AE0ergFE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=P/Q2bfrxjVPWngYUGiJyBwZ3uu5xDOldidqLuUKhtiUATbxtftJMrfqtX08y/iKnEDmjwI2w/IKT8UcKVlcAFwDa/l716J2msW6xpyAYKlpxIsCTUIBcpOMQw1WREpyRJQ0K0Hw+BSaGzOW89bxwg/7AEWJNVwbeYpa/6QXxMxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=zsYONRVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E8AC4CEE4;
-	Wed,  4 Jun 2025 22:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749077275;
-	bh=lTyIl3tFEZAFEhIjI5VOgHghdPUqVQ2X+80AE0ergFE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=zsYONRVJWIbFLTEWTOey1C+KZduSzpXfe9px2qj9Z47nLJjO9uITUTfcOFg7N0CSc
-	 Y0osN/dCiKZR954vBcc5lcKwNXCgKbZkyOQ/TdInhViPXF9s/ANuyNLs9zFEB8X0WO
-	 wUWOSJgOfEVR1Ujh18EPzbc7USrYQGIGts1qYk4o=
-Date: Wed, 4 Jun 2025 15:47:54 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: yangge1116@126.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-Subject: Re: [PATCH V2] mm/hugetlb: remove unnecessary holding of
- hugetlb_lock
-Message-Id: <20250604154754.a30e327c3f1640173c8b9cb8@linux-foundation.org>
-In-Reply-To: <1748317010-16272-1-git-send-email-yangge1116@126.com>
-References: <1748317010-16272-1-git-send-email-yangge1116@126.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749079065; c=relaxed/simple;
+	bh=pM8CmrLz/FFL/2U/C4cXcKjLVMqnJpnjvoUhceHqFmM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d2ocm7A1c1M5Npct1CcIRGO1gxicham5u8aYUptlhGiMf6esQ1Gvnyba04lM1ck6vZAiMG0597NcChwwBxe+FUTnGsV7n76tAFRhe3/5sVlYYbRSjxlYLkuhWak5vZ04hsGScINugtsVu84Y/FY1sRiRhIi6+1rifq9ET17JDPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+	by finn.localdomain with esmtp (Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1uMwwC-007Xnc-DK;
+	Wed, 04 Jun 2025 22:50:24 +0000
+From: Tim Harvey <tharvey@gateworks.com>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: imx@lists.linux.dev,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH] arm64: dts: imx8mp-venice-gw74xx: update name of M2SKT_WDIS2# gpio
+Date: Wed,  4 Jun 2025 15:50:22 -0700
+Message-Id: <20250604225022.1429093-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 27 May 2025 11:36:50 +0800 yangge1116@126.com wrote:
+The GW74xx D revision has added a M2SKT_WDIS2# GPIO which routes to the
+W_DISABLE2# pin of the M.2 socket. Update the gpio name for consistency.
 
-> From: Ge Yang <yangge1116@126.com>
-> 
-> In the isolate_or_dissolve_huge_folio() function, after acquiring the
-> hugetlb_lock, it is only for the purpose of obtaining the correct hstate,
-> which is then passed to the alloc_and_dissolve_hugetlb_folio() function.
-> 
-> The alloc_and_dissolve_hugetlb_folio() function itself also acquires the
-> hugetlb_lock. We can have the alloc_and_dissolve_hugetlb_folio() function
-> obtain the hstate by itself, so that the isolate_or_dissolve_huge_folio()
-> function no longer needs to acquire the hugetlb_lock. In addition, we keep
-> the folio_test_hugetlb() check within the isolate_or_dissolve_huge_folio()
-> function. By doing so, we can avoid disrupting the normal path by vainly
-> holding the hugetlb_lock.
-> 
-> The replace_free_hugepage_folios() function has the same issue, and we
-> should address it as well.
-> 
+Fixes: 6a5d95b06d93 ("arm64: dts: imx8mp-venice-gw74xx: add M2SKT_GPIO10 gpio configuration")
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+v2: update commit log to clarify we are just renaming a gpio
+---
+ arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-This change addresses a possible performance issue which was introduced
-by 113ed54ad276 ("mm/hugetlb: fix kernel NULL pointer dereference when
-replacing free hugetlb folios").  113ed54ad276 was added recently and
-was cc:stable.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
+index 6daa2313f879..f00099f0cd4e 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dts
+@@ -301,7 +301,7 @@ &gpio2 {
+ &gpio3 {
+ 	gpio-line-names =
+ 		"", "", "", "", "", "", "m2_rst", "",
+-		"", "", "", "", "", "", "m2_gpio10", "",
++		"", "", "", "", "", "", "m2_wdis2#", "",
+ 		"", "", "", "", "", "", "", "",
+ 		"", "", "", "", "", "", "", "";
+ };
+@@ -310,7 +310,7 @@ &gpio4 {
+ 	gpio-line-names =
+ 		"", "", "m2_off#", "", "", "", "", "",
+ 		"", "", "", "", "", "", "", "",
+-		"", "", "m2_wdis#", "", "", "", "", "",
++		"", "", "m2_wdis1#", "", "", "", "", "",
+ 		"", "", "", "", "", "", "", "rs485_en";
+ };
+ 
+@@ -811,14 +811,14 @@ pinctrl_hog: hoggrp {
+ 			MX8MP_IOMUXC_GPIO1_IO09__GPIO1_IO09	0x40000040 /* DIO0 */
+ 			MX8MP_IOMUXC_GPIO1_IO11__GPIO1_IO11	0x40000040 /* DIO1 */
+ 			MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02	0x40000040 /* M2SKT_OFF# */
+-			MX8MP_IOMUXC_SAI1_TXD6__GPIO4_IO18	0x40000150 /* M2SKT_WDIS# */
++			MX8MP_IOMUXC_SAI1_TXD6__GPIO4_IO18	0x40000150 /* M2SKT_WDIS1# */
+ 			MX8MP_IOMUXC_SD1_DATA4__GPIO2_IO06	0x40000040 /* M2SKT_PIN20 */
+ 			MX8MP_IOMUXC_SD1_STROBE__GPIO2_IO11	0x40000040 /* M2SKT_PIN22 */
+ 			MX8MP_IOMUXC_SD2_CLK__GPIO2_IO13	0x40000150 /* PCIE1_WDIS# */
+ 			MX8MP_IOMUXC_SD2_CMD__GPIO2_IO14	0x40000150 /* PCIE3_WDIS# */
+ 			MX8MP_IOMUXC_SD2_DATA3__GPIO2_IO18	0x40000150 /* PCIE2_WDIS# */
+ 			MX8MP_IOMUXC_NAND_DATA00__GPIO3_IO06	0x40000040 /* M2SKT_RST# */
+-			MX8MP_IOMUXC_NAND_DQS__GPIO3_IO14	0x40000040 /* M2SKT_GPIO10 */
++			MX8MP_IOMUXC_NAND_DQS__GPIO3_IO14	0x40000150 /* M2KST_WDIS2# */
+ 			MX8MP_IOMUXC_SAI3_TXD__GPIO5_IO01	0x40000104 /* UART_TERM */
+ 			MX8MP_IOMUXC_SAI3_TXFS__GPIO4_IO31	0x40000104 /* UART_RS485 */
+ 			MX8MP_IOMUXC_SAI3_TXC__GPIO5_IO00	0x40000104 /* UART_HALF */
+-- 
+2.25.1
 
-David said:
-https://lkml.kernel.org/r/87521d93-cc03-480d-a2ef-3ef8c84481c9@redhat.com
-
-
-Question is, will that bugfix's performance impact be sufficiently
-serious for us to also backport this new patch?
 
