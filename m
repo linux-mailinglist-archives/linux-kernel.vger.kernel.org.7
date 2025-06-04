@@ -1,234 +1,192 @@
-Return-Path: <linux-kernel+bounces-673418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B9ACE0F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:08:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67ECACE0F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073E217289E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:08:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 878737A7461
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D568290D97;
-	Wed,  4 Jun 2025 15:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0585291170;
+	Wed,  4 Jun 2025 15:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X/1H4QUD"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hzOQ2KLr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C500E4AEE0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749049688; cv=fail; b=g+BXw88tt57qk2oBHPuYKJa2gpbAx3sYke1uki3ebEC8SsaB0ktG8DWW72qYzoVG59LNAVHHwpOgToGHDkb3HaUZ8zdMtRLjKW2O2+JIoPa6DUQaeSWFab4vpHGZ3bA4UMKO2Bewv3WrQDXPpJJIy53zFrjCdDSLmgS/zheC42c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749049688; c=relaxed/simple;
-	bh=s7q+TmotzTaeb5NWDpmcYd6Bgj1D76boXAFc9O3SsWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EnfWtqRgApxIYojm6NeaamZaImpAw8VpqFWhO0O9EzyDnaKkpcjbEk9jwndJApUMqbLZV4Tp1y7XrPpAcmq59TFMxmGpmmeTrGHJstRdsPxqL3MOeXbWBV/ZJPwrS9u/y1no7mtKpZyfY60wiqAVdnUYq4OYFB1weqpPZv8e6cc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X/1H4QUD; arc=fail smtp.client-ip=40.107.94.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IYg1A8xcQRzeKVtI1i7afrI3Gg/PWfTm9FHbNzwCVVT5l/RvOoaV1WcnTV6CvS8Sperwqq20qU3sq1Fxx5Zx55t4C3U9NqWkEoyD67Xl4To3mgrYBeOWYCTnmFhfwWYPRWeh0m/Up8nGWpq6sESJjf6xnLWnc0EPTFSLKRqZAqgjOcoWGcQDgc75y4uwZZ/ULkr/aMnjMl0oLSqIIC1okUE371i8jL5yvXkV1jNBhdfKqIAa7MyOHPjExAVXGLRmx69SI9Y55Fsgmt4weh2fI/dp5pkAtaJkzcDIsj7CQlWLOCZo3YWFfVwLAQgX7HKBaEyKvHa6Zbi7WAWIhSd6rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9wsNbqHzaOXBdFXbWEhXRUqIT104FYBvJscGGkBpn2o=;
- b=Oh05FmdehJJHfH+XPxzh5qVidXFI+TOANeDUBvteHAfAfQHNucTiQUZ1V18U1GCv58nx5Yc99k5fgewfeV3EwWzFQW8Klc9ii30oME7d19TjyI53Z+LM5ttvazXt9fIQdqZF3R4FtJQI1KkHDpkvMDnQ9+U7uTtajS+ekKdK2Ivp/Ihw656IhFWdtPmFckr0nw9At1gaaOaOBqqqXPBRJ2yv83NAz/8XOdQBIqKkZlQ5ixlzWg6SeEZe3IUAZWzkMMfdZU3XtthQbqzysz4Xs47+BmBPe3L/lAt5eL4slKmG7d2sXMnzoREKLRckQcYW+fSBB/PXcyVeIVIYpBgslg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9wsNbqHzaOXBdFXbWEhXRUqIT104FYBvJscGGkBpn2o=;
- b=X/1H4QUDIkHn0dFsDg6amxI6Buc8uF2FhoIr8EC//mgdIIHbWmpeGByqQV3Twg8PGcYJl7/6Mk2UVlmEaB8LKYqo1keqPLwgKphYFj6Hf34pthCdz8/SPawoDl6vPwSs5ordqenNzVSBRPi6Bt2dTwiVHsKWAVRPw/ejdEq3U9c7X6IsS3m9fYu5GNK6wW/g/56Vh2nq5tO/uPHdPbW3W0Xwk60KHnKOgSNy6SN7f9OFgQsvOpo5YCjrRx6JGhqZDlTLRBkxxGWyu4TbVGgx1j8jTqhuD+nQ3SjfmWRE2n0Sbh+Do7zBCGVP7Z1pxiO1laXPBvAjXytSg1ycYgIHpQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SA1PR12MB8118.namprd12.prod.outlook.com (2603:10b6:806:333::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.36; Wed, 4 Jun
- 2025 15:08:03 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8792.034; Wed, 4 Jun 2025
- 15:08:03 +0000
-Date: Wed, 4 Jun 2025 17:07:55 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: idle: Skip cross-node search with !CONFIG_NUMA
-Message-ID: <aEBhS-WDH_kaXmVd@gpd4>
-References: <20250603082201.173642-1-arighi@nvidia.com>
- <aEBSm7Lm9Gx_anMo@yury>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEBSm7Lm9Gx_anMo@yury>
-X-ClientProxiedBy: MI1P293CA0010.ITAP293.PROD.OUTLOOK.COM (2603:10a6:290:2::7)
- To LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9140928F51B
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749049783; cv=none; b=Pw9xDA8aDTT81x8xSpOX8Z08zJyocmjNC3tXdtxWOD8Uxj68r7GdEB+Q24E5zZZl3QT8PPjkyAB5YOuYteh6tizIXsrGxePPlOGvJ4Bl6AWwF5BBclQ4izxjoxjhxXs01hxOKTJpN63t3KjBBSeXJBdPMRxnNl/o4T4/pU6qMjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749049783; c=relaxed/simple;
+	bh=MStiwnmTKTIxDYoiFZ0DxSnXZqv5tV3Q2Nw8sIyap1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7zB33/ng0KNBNx0LXxhKH8ubz8D2JQD3j+dEfE/6BwNvT3vZYzJb0fLh4CiL4Xh0OUYNZk6D4Imi6AJKqOL+g9GG9rrEp4r5YcZnMkqcLglXgcB6dRuGSrFT0BklDVT9YVPUdVdW/UrkNl6HrScT/kLn16SxOif2DAC2Rb19c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hzOQ2KLr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749049780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K0Z14f5Dv0sEBCQzCT+N5xWNS5ySL+Tzir6TJSSZ+3Q=;
+	b=hzOQ2KLrlpDOZ1hXZQf0AD6fcXY3j7jIkzh6D9aEwmPbinWIRAkGLLplLKt0cxN8JJZj55
+	4WYEblgqbglTSB2vqRLK8L9Ka9i91M7XbGtpBQ/Pw+34gXtFPowQS5m2VZPjrJMBz3AIqN
+	NLVwH/G271VLnexk2Q/d0x8PBLfh6TY=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-RISzvFFuOyKZxk0zCkyARQ-1; Wed, 04 Jun 2025 11:09:37 -0400
+X-MC-Unique: RISzvFFuOyKZxk0zCkyARQ-1
+X-Mimecast-MFC-AGG-ID: RISzvFFuOyKZxk0zCkyARQ_1749049777
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6facf4cf5e1so84465946d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 08:09:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749049777; x=1749654577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0Z14f5Dv0sEBCQzCT+N5xWNS5ySL+Tzir6TJSSZ+3Q=;
+        b=rAWOo47gL1k6z8dVxuwuffEH7LpIfHWSvkvAYyZgo0/5PHfb6WhYGQHkYlHD0UO6f1
+         sdLBpXzjEgfsVtXSWXB31db5e7vhn0eo67aIsUxUR7AduEKLRew8sRAoTZQdUxtuDt4L
+         k+qnwmBQI3gd9203IGXPPoxhvX+V3wTVAZT7ge2LixKpcHS9kVMN11qdcgDOPLKxSd1C
+         3S1BrrYBmaXMA/jR0w1zeUCHMGKF+R/vVeLOntkHJukg5DgbP2c/YV6fKoirQ7ia+BAZ
+         mSXGHRje2YwBzIPPdbTqeO77u1WQUmJ1iuucDQfIaRLyezBvdDX3NhmgxaCcEiPVKbKE
+         Ioag==
+X-Forwarded-Encrypted: i=1; AJvYcCXIS31mnKcwVAQch5Ok7PWRF50MgUUdoo7+qubxfjH1HLyUBHSRUyy7a9xocVeXViRfvcDP0V+FAsD+LGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6oz7zqPiWmSd9VOYJZqFhrf5g3IVQfEzkozZitmu6SAWWE93O
+	m7YSMf1zF2XNJxWOLh6bPCHC76k+L6BgM0doFuiriUyPSA3ZJ/HomMYf4yI5a5ia0t3bmlYHQj+
+	8DnX/lA3RDaBgdDA4M6qh9uINgo1TV2D4d0+NDiKbO2uyiPi+mgnjeqLoPjMgZ8+0lw==
+X-Gm-Gg: ASbGncuP7+3oiugPTWGKorOfSgAB916S5UoxiEqGLzFiRh/H2WSx3dENRUDvvMOmCNo
+	1gBNWdnKAoJA3q5gLQafFkEw+g8KJblaGj0/jHC1tCHH6Ac5PbXRa0K76ziQF5MIbxbKPr4CPeY
+	OIrc5D5l/U/WkJH+opMXDEmGdcL/9Co+PZOsvXPHdqKp5PpEYq4axCfNhxPDNTiP4wKKLjXyq/R
+	FAjOvGc7uzWAIZzpGw1KArMTp0L41zTNF42wc6uYxq0Siuu/2jG/Rw7B1rVML/w5kuZMaB7yAiF
+	XJk=
+X-Received: by 2002:a05:6214:5086:b0:6fa:ce1e:3a4a with SMTP id 6a1803df08f44-6faf6f9312emr40237106d6.6.1749049776243;
+        Wed, 04 Jun 2025 08:09:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSDUs50177E/rrZpx+xC+0iIv+BIQc1aieeX4oFfx7XS0nPA0qJB8ecAAJUv8L53J89ePgrw==
+X-Received: by 2002:a05:6214:5086:b0:6fa:ce1e:3a4a with SMTP id 6a1803df08f44-6faf6f9312emr40235876d6.6.1749049774940;
+        Wed, 04 Jun 2025 08:09:34 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00d42sm99700586d6.85.2025.06.04.08.09.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 08:09:34 -0700 (PDT)
+Date: Wed, 4 Jun 2025 11:09:31 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Tal Zussman <tz2294@columbia.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Pavel Emelyanov <xemul@parallels.com>,
+	Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+Message-ID: <aEBhqz1UgpP8d9hG@x1.local>
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu>
+ <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB8118:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40acbcdb-8d9d-4313-fb9c-08dda3799a4d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bQlEGJeoBFDPEA9vzb7920LjN9KJV4l8frf9B2Bm7vD4Hg0YNDEHZFf5CSU9?=
- =?us-ascii?Q?n81pk9Ng4di+SXz3khnfwjhkOKfPDo+A78VDVvP7ZdgW5JnDec+XkG4pfnth?=
- =?us-ascii?Q?JmH7LlEY+PLX0ue1kHXNeWzoB6AM/YMPGZPMmDozYUw5Tn5Br1RiKe40cFWO?=
- =?us-ascii?Q?vzBuIvqFJt/Xcx6K7WcjpdhmD1b5Pux19zkOfibDaNpW4qqn7Ax7H/rncaf5?=
- =?us-ascii?Q?1QqPVQLsddYUyce7QprJ0xIqmHXWCbXvOZpyHzjxPucMwzOdxDtvHPJgs8C6?=
- =?us-ascii?Q?oKOYYUo6Bq8sIctzFz3oFYD3SYFSrZeKUrm4vw2ZLt6ccGiS3fPlTudRpfsX?=
- =?us-ascii?Q?F1D0LDVtAD1RDceIBwB/cJsGDFmTnBIjyr9W6FQ7qvapXQYnmVB7F251hQqB?=
- =?us-ascii?Q?keeBomqZhbQUgL1Yjw1qrHknaponJ73AUmvqXegWIIMlBH7i/4Wit523TOdV?=
- =?us-ascii?Q?mvpxOaFj/QyaOmzKYqyxet72LYCF3Pubr52foeBby5ZpKPl1FB/NpuVRitTE?=
- =?us-ascii?Q?xsVAnnRQ8l5HLlg4frb5MrXCWrswmQEiI3N/fFRC+58gacrujl+q2w5LkDSn?=
- =?us-ascii?Q?8vbUsRRVWn/sPsc479rPK60lTCAdljUrrlDWEoC282+2HyF1ZXScbWm21u9N?=
- =?us-ascii?Q?c7I/tG3/EqK3BnFoj6k8rGUMuMyWf73AnlXyQO6lwMYI8aE5JvbiiLSNJoTc?=
- =?us-ascii?Q?cUUlRYPFt1aNKyhTZTHPQE38QxTU3YIAwZ+XrJW+1U15YUngTBbsvy3WSmKf?=
- =?us-ascii?Q?4us+yJE1W+yeQKo5Bpi6mrDITNuSogFx0vplqOHXwzVy6JCvjpv5/EnFTq83?=
- =?us-ascii?Q?N2QLjmQFNP2wjtaGr2mlu/du6/XlF/W9wN+YGuCW7Ih16j/FPbE5TKZqDu+D?=
- =?us-ascii?Q?RhCNS6oa0hxJouy8C9aOVwztmGes2XXPjJKCZ5NxkqFf+7Z4vPMyY+KHrVfz?=
- =?us-ascii?Q?WDuDQDdqEQEt6d/zWe0/WL8IJWOFOmauJzpjqZXHM1fxEowlAAtaBiXQKu5O?=
- =?us-ascii?Q?FDTWlBQrSNANOSwL4GxpbTxAumP+5pGuYT2Za8TQ24fB9DBbrsbqLOVt6qgg?=
- =?us-ascii?Q?njGy/3FgYA9Zhbl0yW5fEiRPeudDJ6jsg2qAgn3duX0UHkIPN8EDB72wHhu1?=
- =?us-ascii?Q?wmBQqRI7qOjGPCic73q3t12J9vtAHnOIatSBWZigb0SQ6Nyr227ZwJse9oAV?=
- =?us-ascii?Q?Ujx04H9GVEn83YGf9h0x9LzlIanCOt2phaPFaXI4EwFCRUGOEVMPewMzNbc2?=
- =?us-ascii?Q?2aFNZK1719cZqKF99plt3k7bmlmpZl4pT6kj8Ku3D7C+QStQtDUOjNo1EHSx?=
- =?us-ascii?Q?b1X8a8LWa2nVCW2lK6psjvk0YdbPUfTk4FMTayehxDXja1kbqPVmkGrkWdft?=
- =?us-ascii?Q?y8mAakR2+SAWqXkOstgoxphTYJ9NglS2NStu4RxPPTWYUBm+UVzd2VXbzFID?=
- =?us-ascii?Q?c8uPsJ7dxS0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?p0dpcLFy7VOjsFev422shqnbOO3rqywXwA0cjvrAps74GVLFxBCAOZ3GlfNF?=
- =?us-ascii?Q?tF1qbbCgWvz3ElXvVoRmV3RPMA14SDLoj0pAP6UiMfRpYvVitZdHH9BPUM8G?=
- =?us-ascii?Q?plcyLhDoR6/3rti9EQH6X5JjcEm6T/YKAu0BgzqbZoEVss7Y6+GQ+d6VXId/?=
- =?us-ascii?Q?0e4PnW0SEIBxCadICQwL/nWfkEb1wuitiPFcdmcRZAfc0DN74ihkPPqXnAnb?=
- =?us-ascii?Q?S27IwAw6GPUVBMP+Y7RMr656dUluQ1GHSXt6PnaS6xFu4if3g4wkbf3x4Pha?=
- =?us-ascii?Q?5MUQJraIhsFz2KpZZNd+dV6TVnhXe1dmigwLUHGlvedTWEwGNM84oHPnSPA6?=
- =?us-ascii?Q?qdtx0a7h5YjEa/q8KgVNuHVsJap+Li289wU7UcOSxg+dhoalU3Rz6rAjpzS6?=
- =?us-ascii?Q?x/iku4M9p1PNSbUHlEondCSYULh1NXOhvGY87GPb2Zovztt8FCsIFNF7MtCm?=
- =?us-ascii?Q?NxiP4CVfmiWm1gzknQW/aSkvdPAEqxVg7Hp/cLqG0ACJp+BwBW0Va2Xf+4P3?=
- =?us-ascii?Q?12zC4C4dNJgHgD+Mc5IGQuQDAuNK3Bf5qsfe2hY8/FZT1b1K106vUlZylC5Y?=
- =?us-ascii?Q?vh0OcmqIGC0mmR7KDlxdDNMz+ZRJ8mDbgbYmJHYvsxphpRhTnuTRH0l6GIw4?=
- =?us-ascii?Q?2QuqafIYq6POX0AxwdR+1XHJabZsNweivQtJjdr5MssvCa3zG2Rqb+NVimDq?=
- =?us-ascii?Q?AUGPgKOc7pGzqvwi4kY2in2JWmEgtfXHvTgtFI66B2Le3EPEL2t90qnNTCQh?=
- =?us-ascii?Q?3qZ8o+VIV7M74tBZ+JN7uvOPD4JtInT6yt6g8sgOWYBHAyw9bBuyJguJJtES?=
- =?us-ascii?Q?vFXSqqyheriNFjQ9ad7qah1LUt5ycvFZzvq93KJ16uwP+rzzVwhHoqeXqYkF?=
- =?us-ascii?Q?qXKII3ER6RvmOMrvoX1T143Jn7zXYBbe47BmfGwKbhN6zPDZQXV5bOq/SmqA?=
- =?us-ascii?Q?UQz4C/sCY7tXMoXe+ofFG4nCnGCqXumXoP7bADUAwUmoNcvaidbhPuXLTode?=
- =?us-ascii?Q?jCKpDIyUTIrn6jkuPwywzTPzN2I8cX9k0D9oPDjn2p7frQ6/s7JQJoFE9r61?=
- =?us-ascii?Q?xeAchB5cEOUiJYWuS6oyFgNs303LC4GExQbpNROJgGGpcjS1a55nUhnOUHPj?=
- =?us-ascii?Q?YoVZiZxxidKRWWdVS7ul/qlSWv7EtZY4jmXZIHMF8z8YjFN1EmZEeGE33iB7?=
- =?us-ascii?Q?ijX6AXnmew+HnYYkUZLDwX8s8edzpgdloyvD6Tz4eCmm3UjP6/gpU34JgU4Z?=
- =?us-ascii?Q?OV04ojG20nL6WBSuQ8hzNR8gqgUOgFIgxvdlD+gjh+Qg01GNBuEB1a6sDS00?=
- =?us-ascii?Q?KxCRVXmYbWDykzn4oubfp9PA16Mk0fjZocxf5o4+VVK0Que6jY3LuE4YO+lN?=
- =?us-ascii?Q?rWBy7KaQa5HJwudrFIV4u3jPKvMRbBX24X7BzpxXDhgkfdXGWUIaMI+6zZB3?=
- =?us-ascii?Q?nEty243MvUo4bIcbNFlWrJmEuhGQPHF6hAZbSLmYLHjaOfw3NP4mJsUzIfMT?=
- =?us-ascii?Q?rsNwNb5v+l8nAqCjSqNKbUVj4r93ZPVkehSz765nsn2zppz+lw2CoPBcdBbY?=
- =?us-ascii?Q?d86pI01+1xJV1q5rh9JWeBjNNOMf06SxL5zQENVC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40acbcdb-8d9d-4313-fb9c-08dda3799a4d
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 15:08:03.3041
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +V1dt3ojgc71j1s5gae1Ii2/pdvZOlHVIhTWkhR/hVXbbuHvPEn51abn9nzWZSbz24m+EgSQ9v/HheNtNEuu1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8118
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
 
-Hi Yuri,
-
-On Wed, Jun 04, 2025 at 10:05:15AM -0400, Yury Norov wrote:
-> Hi Andrea!
+On Wed, Jun 04, 2025 at 03:23:38PM +0200, David Hildenbrand wrote:
+> On 04.06.25 00:14, Tal Zussman wrote:
+> > Currently, a VMA registered with a uffd can be unregistered through a
+> > different uffd asssociated with the same mm_struct.
+> > 
+> > Change this behavior to be stricter by requiring VMAs to be unregistered
+> > through the same uffd they were registered with.
+> > 
+> > While at it, correct the comment for the no userfaultfd case. This seems
+> > to be a copy-paste artifact from the analagous userfaultfd_register()
+> > check.
 > 
-> On Tue, Jun 03, 2025 at 10:22:01AM +0200, Andrea Righi wrote:
-> > In the idle CPU selection logic, attempting cross-node searches adds
-> > unnecessary complexity when CONFIG_NUMA is disabled.
+> I consider it a BUG that should be fixed. Hoping Peter can share his
+> opinion.
+
+Agree it smells like unintentional, it's just that the man page indeed
+didn't mention what would happen if the userfaultfd isn't the one got
+registered but only requesting them to be "compatible".
+
+DESCRIPTION
+       Unregister a memory address range from userfaultfd.  The pages in
+       the range must be “compatible” (see UFFDIO_REGISTER(2const)).
+
+So it sounds still possible if we have existing userapp creating multiple
+userfaultfds (for example, for scalability reasons on using multiple
+queues) to manage its own mm address space, one uffd in charge of a portion
+of VMAs, then it can randomly take one userfaultfd to do unregistrations.
+Such might break.
+
+> 
 > > 
-> > Since there's no meaningful concept of nodes in this case, simplify the
-> > logic by restricting the idle CPU search to the current node only.
-> > 
-> > Fixes: 48849271e6611 ("sched_ext: idle: Per-node idle cpumasks")
-> > Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> > Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+> > Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 > > ---
-> >  kernel/sched/ext_idle.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
+> >   fs/userfaultfd.c | 15 +++++++++++++--
+> >   1 file changed, 13 insertions(+), 2 deletions(-)
 > > 
-> > diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
-> > index 66da03cc0b338..8660d9ae40169 100644
-> > --- a/kernel/sched/ext_idle.c
-> > +++ b/kernel/sched/ext_idle.c
-> > @@ -138,6 +138,7 @@ static s32 pick_idle_cpu_in_node(const struct cpumask *cpus_allowed, int node, u
-> >  		goto retry;
-> >  }
-> >  
-> > +#ifdef CONFIG_NUMA
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 22f4bf956ba1..9289e30b24c4 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -1477,6 +1477,16 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+> >   		if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+> >   			goto out_unlock;
+> > +		/*
+> > +		 * Check that this vma isn't already owned by a different
+> > +		 * userfaultfd. This provides for more strict behavior by
+> > +		 * preventing a VMA registered with a userfaultfd from being
+> > +		 * unregistered through a different userfaultfd.
+> > +		 */
+> > +		if (cur->vm_userfaultfd_ctx.ctx &&
+> > +		    cur->vm_userfaultfd_ctx.ctx != ctx)
+> > +			goto out_unlock;
 > 
-> It would be more natural if you move this inside the function body,
-> and not duplicate the function declaration.
-
-I was trying to catch both the function and the per_cpu_unvisited with a
-single #ifdef, but I can definitely split that and add another #ifdef
-inside the function body.
-
+> So we allow !cur->vm_userfaultfd_ctx.ctx to allow unregistering when there
+> was nothing registered.
 > 
-> >  /*
-> >   * Tracks nodes that have not yet been visited when searching for an idle
-> >   * CPU across all available nodes.
-> > @@ -186,6 +187,13 @@ static s32 pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, i
-> >  
-> >  	return cpu;
-> >  }
-> > +#else
-> > +static inline s32
-> > +pick_idle_cpu_from_online_nodes(const struct cpumask *cpus_allowed, int node, u64 flags)
-> > +{
-> > +	return -EBUSY;
-> > +}
-> 
-> This is misleading errno. The system is nut busy, it is disabled. If
-> it was a syscall, I would say you should return ENOSYS. ENODATA is
-> another candidate. Or you have a special policy for the subsystem/
+> A bit weird to set "found = true" in that case. Maybe it's fine, just
+> raising it ...
 
-So, this function is called only from scx_pick_idle_cpu(), that can still
-call pick_idle_cpu_from_online_nodes() even on kernels with !CONFIG_NUMA,
-if the BPF scheduler enables the per-node idle cpumask (setting the flag
-SCX_OPS_BUILTIN_IDLE_PER_NODE).
+This part should be ok, as found is defined as:
 
-We can return -ENOSYS, but then we still need to return -EBUSY from
-scx_pick_idle_cpu(), since its logic is host-wide, so the choice of -EBUSY
-was to be consistent with that.
+	/*
+	 * Search for not compatible vmas.
+	 */
+	found = false;
 
-However, I don't have a strong opinion, if you think it's clearer to return
--ENOSYS/ENODATA from pick_idle_cpu_from_online_nodes() I can change that,
-but I'd still return -EBUSY from scx_pick_idle_cpu().
+So it's still compatible VMA even if not registered.
 
-> 
-> The above pick_idle_cpu_in_node() doesn't have CONFIG_NUMA protection
-> as well. Is it safe against CONFIG_NUMA?
+It's just that I'm not yet sure how this change benefits the kernel
+(besides the API can look slightly cleaner).  There seems to still have a
+low risk of breaking userapps.  It could be a matter of whether there can
+be any real security concerns.
 
-pick_idle_cpu_in_node() is always called with a validated node (when passed
-from BPF) or a node from the kernel and idle_cpumask() is handling the
-NUMA_NO_NODE case, so that should be fine in theory.
+If not, maybe we don't need to risk such a change for almost nothing (I
+almost never think "API cleaness" a goal when it's put together with
+compatilibities).
 
 Thanks,
--Andrea
 
-PS Tejun already applied this patch to his tree, so I'll send all the
-changes as a followup patch, at least the original bug is fixed. :)
+-- 
+Peter Xu
+
 
