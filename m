@@ -1,85 +1,63 @@
-Return-Path: <linux-kernel+bounces-673538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AD5ACE253
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CC4ACE24A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419853A33F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68BE11897149
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596851DFE12;
-	Wed,  4 Jun 2025 16:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861484C7C;
+	Wed,  4 Jun 2025 16:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SZy2zeh+"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2051.outbound.protection.outlook.com [40.107.237.51])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aMePBzl/"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0539B1DED7C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749055178; cv=fail; b=SML3KHHWyWWa9PX7YH9s0BCvr/QIT3Tcw4GOgbiA7jiRJPVpa8Bo+URsuyfiRO9LWSxyc0F38NV6B2yCYK1ZXzPqoYzUhsLMnmDOdYBZYi5OZ7vxLqHFS9ywWaB8hmiI+/1DAzDawhCAMGxi34FRmVpXMkbDIFqDXEm1jGo87QQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749055178; c=relaxed/simple;
-	bh=0rk3R9SZ+AXNmTy8D21OmTkESyjvQg71OQKf90faPW8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nSzmGTwLgFZTX4m7J8dP/igWRayjmDsvPIB6/P2my+NeZY35hGEcZ3BSKB8UEmZiBu/b3WTLTOzAgr+1aL0gHT6GvVdxrsd85QNPdX6jMTW3X2kiUK34V58TDnFcUHMc/MN4XyGYQ3paHmXoy+2EmxLlCtktr5DJ/IQal4J9y9k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SZy2zeh+; arc=fail smtp.client-ip=40.107.237.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sjnY8KxTbWrfSq51jpsCIBushftu94KvgS327GbUjHkhdF7iPXQGXK+0+GLvL+QEFYgp+X/D2o3krY7RwOIZtGQdu+S8zAdRg1lVPuBnaZ0Xu6mEBSK+2Z4PTw9teIdcgVER/gpdS3NswjmTm7UDSObHSRVKjnpNkF4ssDJKK0f9xTtTTCy7b6TvnIDkhTt50tZYwVlrtgDrU4oZQcSgTKuqiTNVb0fbDSeXK0YngkWnczATxvqz1QcRcVJng29dCcFPoz+jVVlp7aqgUIrapCt8Jj2OaXxcdcLJBY5PYL//XXvhuYXuhAtKLv2UDlGY9nn4uNWUknRi6ybwVLljZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dzu4iNpyeuOBW8qNSg9xV+4SnO95FhoMf0dI192aRfA=;
- b=ZVhEbL7Z8wMNRYPSXEOMv4R6BC2UmemVoi18R38wbVAWlpUugEBwoLRF8WEVBrvloqZDNpoRwoqRESRNiI79/JybpO8ke+XRxyXOJbvtycZGldwOWwEvV75QJY89VAUX9I/fMk40xHGY6ysTpZsSzrml7bdgl6eaQA8Reg+4q2AV/X6rOrInHvzwHKQThHlLz9Ic7XRUAZmrhBSzKcE36ws5kIZMlB9ufACOrpbjvflp6X1baXpSgfl+utxsg6lnWH8Y0Etcpf1TWABQvasiopMWosjkn7mPH+gEKMvuxKx2hI/NUyazm7heI27KnC5cn5p/i7TQ2i8YU0a6i8AHJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dzu4iNpyeuOBW8qNSg9xV+4SnO95FhoMf0dI192aRfA=;
- b=SZy2zeh++PI7y7Qg8oioZVqypS3JwEtIbKFvB+5gqCBhXAES5bLccly3nHdbBfW9SQypSBkP7LBxuF89jX/kSLpiASBH2IS0s+k0It7cX0LxSRb/QR1gWFfWqUYKyG0AInIHd6R5DJ2zGHpHzZYFPlMEk6/R3HotE+9vy2LiCSg=
-Received: from MW4P223CA0023.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::28)
- by SA0PR12MB4382.namprd12.prod.outlook.com (2603:10b6:806:9a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Wed, 4 Jun
- 2025 16:39:32 +0000
-Received: from CO1PEPF000075F0.namprd03.prod.outlook.com
- (2603:10b6:303:80:cafe::22) by MW4P223CA0023.outlook.office365.com
- (2603:10b6:303:80::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.18 via Frontend Transport; Wed,
- 4 Jun 2025 16:39:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000075F0.mail.protection.outlook.com (10.167.249.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8792.29 via Frontend Transport; Wed, 4 Jun 2025 16:39:31 +0000
-Received: from BLRDHSRIVAS.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Jun
- 2025 11:39:28 -0500
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-To: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <Vasant.Hegde@amd.com>,
-	<dheerajkumar.srivastava@amd.com>
-Subject: [PATCH v6 8/8] iommu/amd: Add documentation for AMD IOMMU debugfs support
-Date: Wed, 4 Jun 2025 22:06:47 +0530
-Message-ID: <20250604163647.1439-9-dheerajkumar.srivastava@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250604163647.1439-1-dheerajkumar.srivastava@amd.com>
-References: <20250604163647.1439-1-dheerajkumar.srivastava@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B631DED51
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749055067; cv=none; b=sG4GukOC7iFx4dTELptGWAHeLV5FMCeaukyn9vFHN3XUraAdYdd1uAGrvGmQ5xSRVBHRsqZQgEYwKNrSnUssMKQPxB1imqY/GORWYRTe/I20v+oYVToI32AOSpZdkTtQGbkLErDJAPs00Fa4Dn2azjc6z2Y81fxWviFZLpkwfrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749055067; c=relaxed/simple;
+	bh=k1VAhtvWn1mdnc82A42urCXNfSl687+frp/shs2RzIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i1Dao87Av/qMsounI1C9gzGM/Vq2mvjvqVSENcO58vCubtt+vIpuMXnDXChK13pQNSujg1ZJb3f/FidWKJsTlt8PMNP2hmO8LlGI3JnSCUkFVS5xa8xuYDKVfFUryqSyBKyehvZt9fxjBitsz+2XiWwvlpTlTdR+9QC6xb5ihcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aMePBzl/; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749055062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LpQJtvbQ0WTNzxLrRi6c5eMnvReMC88RFvMxCl1x3Ss=;
+	b=aMePBzl/Kpp/mc2Qthi84fsO91CCWhQU6s10DjhzRzngNpjRGDzyOpYaS/Vd78OtVKBHmU
+	B6XxJLcdvcmWF8gxU20PBS6FgsEhyiBp81BcOpkjUcwC6EOgZK7h6DExgVCL/pUBulrwJn
+	cTL90JD5YNNQiu0R0zBQlYz7tjIvNXg=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next] bpf: Add show_fdinfo for perf_event
+Date: Thu,  5 Jun 2025 00:37:22 +0800
+Message-Id: <20250604163723.3175258-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,189 +65,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F0:EE_|SA0PR12MB4382:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a94430f-bb9c-4c91-3414-08dda38661f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bH7P6FF9CIiU4T+E8orQFrFO15w0yQW2spgLXcU5QsJcPbfSTN4/H+W9afr7?=
- =?us-ascii?Q?1VuzNrFvqmuCZwbvx8ypsgyG1NzX3R3cu8tljk5dvpz80pABdaeDBc/wC2cU?=
- =?us-ascii?Q?elz6pfq8jgpJDdTfSfE+EYWDhro3/kKV7W4UjVi1P/ydau+i+siR5Y3O3p9T?=
- =?us-ascii?Q?BdUhtGxrEP2UE5oShHl7AjVYCC+j+JrawQLsbm7z5uTmViuOVzfyK45QKSLq?=
- =?us-ascii?Q?D22DNeJcDi/07u3CrpjC+sxu9KCL3ThAZrXkZXqS2dTUsyj+TYCBL0XGBWa2?=
- =?us-ascii?Q?d98LSmBXa5r2UMXkirtiyavWUYgKWluMBsXQUWvYXnttK2pL58heEsz24fqu?=
- =?us-ascii?Q?4liQKoPZm1GO0EiZZuDer/rMUlVPG4iSEcU+dpy18pXH9BWXXyaV1q8phRg+?=
- =?us-ascii?Q?2saGMDb+5DNAX1YbmDLQ4qvFoftOi5gpEyHA/aVNoqvJ1GNfQAb+jpQ7kpJM?=
- =?us-ascii?Q?tVoMZRCeMVTZCCzP9xgJiVOstxK5xLOdzXpxKR3ai4L1bQ81UeEnlaUu4aQ+?=
- =?us-ascii?Q?zb4bdBynZG07g+BhjLmipwwIuvVL1lTwl47/93OTg8hXUC49pCRulYfg6tNW?=
- =?us-ascii?Q?+Tut2a2dzuGvECP8xEnCDOVfWYHCzNf8W05MwjGeJMwgLrc7rKPHePZbuF87?=
- =?us-ascii?Q?PiPQLfGoyUWocM0HxfrU4Oj6I2xxTMzxwWQb+g4jm42rb83mSa2fQFW1xPnh?=
- =?us-ascii?Q?uN6HOvZ1btY3sNX/26qlffAxvY8jPb13qHMSZeKZluN3KWaX16qNmWspv+L1?=
- =?us-ascii?Q?WC8cxrMGE7JxeVufowjeR8NsKwQDS2xtufzwIN0YKSYXf+/7DD/fXjnDERXe?=
- =?us-ascii?Q?FI3jenJpi4Sr5pTZe7OUCD2tyz8byPI5/ctpRobBth24qQJnlB2bufYnyvsE?=
- =?us-ascii?Q?V2FCGYSXAzdgmv4vDOyFMsZNjfZsRmCr/9RI/WvrFMIPr4hsr6kZt+YVO9LX?=
- =?us-ascii?Q?boKKJNPsLYFDeP6Tv1brPo9VYkl1XsdX/j6+FhbpSLb/1e/WzENs6I1pS1ZH?=
- =?us-ascii?Q?7ER4aLs/9qfNpWPcAA0pO8QM545F3vO/ssyHfisYcSC9b9KOH9bMqFdfoVab?=
- =?us-ascii?Q?YCKFFPiox2eFj+VubfU5wGvLHwd4QbpFbxfLJ9OSYYNGUfvbIo6nko73zgmO?=
- =?us-ascii?Q?E7dOk/yVcWZLNBKFVBaAre/7YdRWHcTg/EDk0Kfs5JfHUYi1kYOJ/LDVA0HE?=
- =?us-ascii?Q?rtvVhMuc74uB1zXwQzNSKeE5FI4E/p6G82FRTh8jrdiJy/yhSWMtaOCQVGM2?=
- =?us-ascii?Q?lZaQj63I5CrEYHfXvfMJKbejwQGb7vHfcMDKdv/Do1a9hgI1H8T7YH1TRVVd?=
- =?us-ascii?Q?j0kX+nnXpM6yX+wVpZtDSCWLzis6ocIp/BuXg8MzDUhRsnBqLRa77TbyEjdJ?=
- =?us-ascii?Q?hH9zT7BFBTwU/CR2VeStodCQu9muoJroLF7crP/6u4I7j17edFnNEf7uqwHl?=
- =?us-ascii?Q?2vDur1JqV4M0beCmhb8/+LxYl7OF0eHZWRRg4G182B/KCjcgiLWDkHaurjDF?=
- =?us-ascii?Q?gYAt6Jr5AOo35yWELPUb0A4BOATJGLSEKByP?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 16:39:31.9484
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a94430f-bb9c-4c91-3414-08dda38661f6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075F0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4382
+X-Migadu-Flow: FLOW_OUT
 
-Add documentation describing how to use AMD IOMMU debugfs support to
-dump IOMMU data structures - IRT table, Device table, Registers (MMIO and
-Capability) and command buffer.
+After commit 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event") add
+perf_event info, we can also show the info with the method of cat /proc/[fd]/fdinfo.
 
-Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+kprobe fdinfo:
+link_type:	perf
+link_id:	2
+prog_tag:	bcf7977d3b93787c
+prog_id:	18
+name:	bpf_fentry_test1
+offset:	0
+missed:	0
+addr:	ffffffffaea8d134
+event_type:	3
+cookie:	3735928559
+
+uprobe fdinfo:
+link_type:	perf
+link_id:	6
+prog_tag:	bcf7977d3b93787c
+prog_id:	7
+name:	/proc/self/exe
+offset:	6507541
+event_type:	1
+cookie:	3735928559
+
+tracepoint fdinfo:
+link_type:	perf
+link_id:	4
+prog_tag:	bcf7977d3b93787c
+prog_id:	8
+tp_name:	sched_switch
+event_type:	5
+cookie:	3735928559
+
+perf_event fdinfo:
+link_type:	perf
+link_id:	5
+prog_tag:	bcf7977d3b93787c
+prog_id:	9
+type:	1
+config:	2
+event_type:	6
+cookie:	3735928559
+
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
- Documentation/ABI/testing/debugfs-amd-iommu | 114 ++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-amd-iommu
+ kernel/bpf/syscall.c | 126 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/Documentation/ABI/testing/debugfs-amd-iommu b/Documentation/ABI/testing/debugfs-amd-iommu
-new file mode 100644
-index 000000000000..7d6cf1f602ed
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-amd-iommu
-@@ -0,0 +1,114 @@
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/mmio
-+Date:		January 2025
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+		mmio register offset for iommu<x> to print corresponding mmio register
-+		of iommu<x>.
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 9794446bc8..9af54852eb 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3793,6 +3793,35 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
+ 	info->perf_event.kprobe.cookie = event->bpf_cookie;
+ 	return 0;
+ }
 +
-+		Example:
-+		$ echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
++static void bpf_perf_link_fdinfo_kprobe(const struct perf_event *event,
++					struct seq_file *seq)
++{
++	const char *name;
++	int err;
++	u32 prog_id, type;
++	u64 offset, addr;
++	unsigned long missed;
 +
-+		Output:
-+		Offset:0x18 Value:0x000c22000003f48d
++	err = bpf_get_perf_event_info(event, &prog_id, &type, &name,
++				      &offset, &addr, &missed);
++	if (err)
++		return;
 +
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability
-+Date:		January 2025
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+                capability register offset for iommu<x> to print corresponding capability
-+		register of iommu<x>.
++	if (type == BPF_FD_TYPE_KRETPROBE)
++		type = BPF_PERF_EVENT_KRETPROBE;
++	else
++		type = BPF_PERF_EVENT_KPROBE;
 +
-+		Example:
-+		$ echo "0x10" > /sys/kernel/debug/iommu/amd/iommu00/capability
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability
++	seq_printf(seq,
++		   "name:\t%s\n"
++		   "offset:\t%llu\n"
++		   "missed:\t%lu\n"
++		   "addr:\t%llx\n"
++		   "event_type:\t%u\n"
++		   "cookie:\t%llu\n",
++		   name, offset, missed, addr, type, event->bpf_cookie);
++}
+ #endif
+ 
+ #ifdef CONFIG_UPROBE_EVENTS
+@@ -3820,6 +3849,34 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
+ 	info->perf_event.uprobe.cookie = event->bpf_cookie;
+ 	return 0;
+ }
 +
-+		Output:
-+		Offset:0x10 Value:0x00203040
++static void bpf_perf_link_fdinfo_uprobe(const struct perf_event *event,
++					struct seq_file *seq)
++{
++	const char *name;
++	int err;
++	u32 prog_id, type;
++	u64 offset, addr;
++	unsigned long missed;
 +
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+Date:		January 2025
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This file is an output read only file that contains iommu<x> command
-+		buffer entries.
++	err = bpf_get_perf_event_info(event, &prog_id, &type, &name,
++				      &offset, &addr, &missed);
++	if (err)
++		return;
 +
-+		Examples:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
++	if (type == BPF_FD_TYPE_URETPROBE)
++		type = BPF_PERF_EVENT_URETPROBE;
++	else
++		type = BPF_PERF_EVENT_UPROBE;
 +
-+		Output:
-+		CMD Buffer Head Offset:339 Tail Offset:339
-+		  0: 00835001 10000001 00003c00 00000000
-+		  1: 00000000 30000005 fffff003 7fffffff
-+		  2: 00835001 10000001 00003c01 00000000
-+		  3: 00000000 30000005 fffff003 7fffffff
-+		  4: 00835001 10000001 00003c02 00000000
-+		  5: 00000000 30000005 fffff003 7fffffff
-+		  6: 00835001 10000001 00003c03 00000000
-+		  7: 00000000 30000005 fffff003 7fffffff
-+		  8: 00835001 10000001 00003c04 00000000
-+		  9: 00000000 30000005 fffff003 7fffffff
-+		 10: 00835001 10000001 00003c05 00000000
-+		 11: 00000000 30000005 fffff003 7fffffff
-+		[...]
++	seq_printf(seq,
++		   "name:\t%s\n"
++		   "offset:\t%llu\n"
++		   "event_type:\t%u\n"
++		   "cookie:\t%llu\n",
++		   name, offset, type, event->bpf_cookie);
 +
-+What:		/sys/kernel/debug/iommu/amd/devid
-+Date:		January 2025
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write file that takes device id user input.
-+		This input can be used for dumping iommu data structures like
-+		interrupt remapping table, device table etc.
++}
+ #endif
+ 
+ static int bpf_perf_link_fill_probe(const struct perf_event *event,
+@@ -3888,10 +3945,79 @@ static int bpf_perf_link_fill_link_info(const struct bpf_link *link,
+ 	}
+ }
+ 
++static void bpf_perf_event_link_show_fdinfo(const struct perf_event *event,
++					    struct seq_file *seq)
++{
++	seq_printf(seq,
++		   "type:\t%u\n"
++		   "config:\t%llu\n"
++		   "event_type:\t%u\n"
++		   "cookie:\t%llu\n",
++		   event->attr.type, event->attr.config,
++		   BPF_PERF_EVENT_EVENT, event->bpf_cookie);
++}
 +
-+		Example:
-+		1.
-+		$ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
++static void bpf_tracepoint_link_show_fdinfo(const struct perf_event *event,
++					    struct seq_file *seq)
++{
++	int err;
++	const char *name;
++	u32 prog_id;
 +
-+		Output:
-+		0000:01:00.0
++	err = bpf_get_perf_event_info(event, &prog_id, NULL, &name, NULL,
++				      NULL, NULL);
++	if (err)
++		return;
 +
-+		2.
-+		$ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
++	seq_printf(seq,
++		   "tp_name:\t%s\n"
++		   "event_type:\t%u\n"
++		   "cookie:\t%llu\n",
++		   name, BPF_PERF_EVENT_TRACEPOINT, event->bpf_cookie);
++}
 +
-+		Output:
-+		0000:01:00.0
++static void bpf_probe_link_show_fdinfo(const struct perf_event *event,
++				       struct seq_file *seq)
++{
++#ifdef CONFIG_KPROBE_EVENTS
++	if (event->tp_event->flags & TRACE_EVENT_FL_KPROBE)
++		return bpf_perf_link_fdinfo_kprobe(event, seq);
++#endif
 +
-+What:		/sys/kernel/debug/iommu/amd/devtbl
-+Date:		January 2025
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains device table entry for
-+		the device id input given in /sys/kernel/debug/iommu/amd/devid.
++#ifdef CONFIG_UPROBE_EVENTS
++	if (event->tp_event->flags & TRACE_EVENT_FL_UPROBE)
++		return bpf_perf_link_fdinfo_uprobe(event, seq);
++#endif
++}
 +
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/devtbl
++static void bpf_perf_link_show_fdinfo(const struct bpf_link *link,
++				      struct seq_file *seq)
++{
++	struct bpf_perf_link *perf_link;
++	const struct perf_event *event;
 +
-+		Output:
-+		DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
-+		0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
++	perf_link = container_of(link, struct bpf_perf_link, link);
++	event = perf_get_event(perf_link->perf_file);
++	if (IS_ERR(event))
++		return;
 +
-+What:		/sys/kernel/debug/iommu/amd/irqtbl
-+Date:		January 2025
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains IRT table valid entries
-+		for the device id input given in /sys/kernel/debug/iommu/amd/devid.
++	switch (event->prog->type) {
++	case BPF_PROG_TYPE_PERF_EVENT:
++		return bpf_perf_event_link_show_fdinfo(event, seq);
++	case BPF_PROG_TYPE_TRACEPOINT:
++		return bpf_tracepoint_link_show_fdinfo(event, seq);
++	case BPF_PROG_TYPE_KPROBE:
++		return bpf_probe_link_show_fdinfo(event, seq);
++	default:
++		return;
++	}
++}
 +
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/irqtbl
-+
-+		Output:
-+		DeviceId 0000:01:00.0
-+		IRT[0000] 0000000000000020 0000000000000241
-+		IRT[0001] 0000000000000020 0000000000000841
-+		IRT[0002] 0000000000000020 0000000000002041
-+		IRT[0003] 0000000000000020 0000000000008041
-+		IRT[0004] 0000000000000020 0000000000020041
-+		IRT[0005] 0000000000000020 0000000000080041
-+		IRT[0006] 0000000000000020 0000000000200041
-+		IRT[0007] 0000000000000020 0000000000800041
-+		[...]
+ static const struct bpf_link_ops bpf_perf_link_lops = {
+ 	.release = bpf_perf_link_release,
+ 	.dealloc = bpf_perf_link_dealloc,
+ 	.fill_link_info = bpf_perf_link_fill_link_info,
++	.show_fdinfo = bpf_perf_link_show_fdinfo,
+ };
+ 
+ static int bpf_perf_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
 -- 
-2.25.1
+2.43.0
 
 
