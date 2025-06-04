@@ -1,163 +1,214 @@
-Return-Path: <linux-kernel+bounces-672897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C24ACD92C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B293ACD931
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9891717787F
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31A46189A28F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8608628C027;
-	Wed,  4 Jun 2025 08:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EB727F747;
+	Wed,  4 Jun 2025 07:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p3u6RaDr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fM14O1Vy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8508D27FB3E;
-	Wed,  4 Jun 2025 08:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D13C26A0EA;
+	Wed,  4 Jun 2025 07:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749024182; cv=none; b=Ar/odSXuJ0uN1A95DxJqqV7C4D4W1ycJxfF30qITm4/yVd3IN0NIrGX3TQ7r3uZNwax1aCLmdACD/8v+9b3lv8VzScmV1XCAqssQlv12qdyR56qsEsS6yNIuaZ0ryx/r15l3ruZYYOeupJXri3GnrzokWsToSiBI2DUSjs+MLBk=
+	t=1749023983; cv=none; b=R3qWhI058d/6WJKNb2TEOPtfNB4/lraQAF2Mb98/An8SOf28/FcRPH7vpIbmfLNWyCIPp67qbKRvOkb/eotyx+E8oJ2sdV8xVsdVkE26wdPQwKX5Z7HRwoldzY5WRGA730RRTK4Mrwy6cspmopS97HCLV3VWWpL+5GtzZm9Mcro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749024182; c=relaxed/simple;
-	bh=iwD3bGLpR1NyUzs6GyvILRJlvIVEmrZ6Nmr4B0zx/xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hT7q1h/6YnzBQKABGGPpVSK/fEbvgpgp7/+RHmR0D1x0+pq9WSggxkXdoPylDZNkXVj5hchixMLKAcCA30Hm3BerbZ48adqU0ajHBFoKvVqaKEMx1Wf+knmbQ9aGZ+0EAFto7ehTbM9jtfYL9SPvKQ6SdA4J9uMYOeB82LvoN1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p3u6RaDr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5540G03u014378;
-	Wed, 4 Jun 2025 08:02:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=bzWTEW+W3lG
-	iCAhiPR5K0lLXKV9A8/Cr9jORc6rODr0=; b=p3u6RaDrre5XBDpAaxkRR5sWGtn
-	AEr4JnFEH8Q5VowQbVfQL7q6pDCAoI2Ewt4H2pinP/7pwbxmjcBxw8pPu/U9lTsz
-	S12iA4PMg4QUj4+81eksNmtlHwhr/DJVeBFCUY/rpUj/jGRhPE9i1pZCXjgOTnw3
-	L96/xwk8To0SLXE4x9L+C+LiSgGbx29qVFWLwsrtOh1aSLgp3zwy1e0j/LJIlBw5
-	GPOISfRk7EkcwAXOeb1xOLmkNHtzdYG2UaDYNAv27PzxNOer2cm1/YaSFCWC5+4K
-	pc0+heZxqzWACkoMITXDZAhQbCorYWUbywBQ4LQcNuPqIwcf+gcGBvLYe3w==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472be810gx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 08:02:49 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 55482kLQ018808;
-	Wed, 4 Jun 2025 08:02:46 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 46ytum6jgp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 08:02:46 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55482kZp018800;
-	Wed, 4 Jun 2025 08:02:46 GMT
-Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 55482kcw018797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 04 Jun 2025 08:02:46 +0000
-Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
-	id 4093940D26; Wed,  4 Jun 2025 16:02:45 +0800 (CST)
-From: Wenbin Yao <quic_wenbyao@quicinc.com>
-To: catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, kishon@kernel.org, sfr@canb.auug.org.au,
-        linux-phy@lists.infradead.org
-Cc: krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
-        quic_mrana@quicinc.com, quic_cang@quicinc.com,
-        qiang.yu@oss.qualcomm.com, quic_wenbyao@quicinc.com
-Subject: [PATCH v4 4/5] arm64: dts: qcom: x1e80100-qcp: Add qref supply for PCIe PHYs
-Date: Wed,  4 Jun 2025 16:02:36 +0800
-Message-Id: <20250604080237.494014-5-quic_wenbyao@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250604080237.494014-1-quic_wenbyao@quicinc.com>
-References: <20250604080237.494014-1-quic_wenbyao@quicinc.com>
+	s=arc-20240116; t=1749023983; c=relaxed/simple;
+	bh=cM075RtYNtApE6hMLvBD71DnCdfNXCoBoA9hVqxEA7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTmQhWbeCu+NUQjVEe1wqs6xs9K8Mrf65zanje9mpRTLCNL4xKZC9UTYuqzZceyTbTng2O2fHf2dmC8wgfZPxVFFp2BzverQuj5YPaBCeNu9w0QZz8Yntf8DmvhF/f6njDtLmUDj/AXpjF1uYK1M2NOneU3A7V01oSPwmSO4o5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fM14O1Vy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D557FC4CEE7;
+	Wed,  4 Jun 2025 07:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749023982;
+	bh=cM075RtYNtApE6hMLvBD71DnCdfNXCoBoA9hVqxEA7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fM14O1VyGa217AmCOHG9SGUX7udL4TZjk7VZDuGwKSsgsWQdN1y460ldmuGEsd7Ym
+	 x+uW9eeelKeG+CjuuiWnWOP7XKFu7dDcJ/Tp0qiN9UnsDDnSOb8ia9qoJpj9TLbNE2
+	 8R5ET6gd1w/m88Q1b0xKgGgOzkbRE2cWCyiUjqB1CSyZ2q/QnCxFknTVjkpoDYmSxF
+	 Q2SVdK9UQTITBK4Q6LXFjYpnAYI/z95qKGzZKR+6VqQ/rOtCR03n9+ubv6ZQchE1aS
+	 Sv1iEYv6FtPnoPJT+GUb4k5rbOVdJ/5tUP+Fg/UIImNFfMiHMDlxx1Z/etssMtN+LQ
+	 lFs6ynfLF4+OA==
+Date: Wed, 4 Jun 2025 10:59:11 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+	ajones@ventanamicro.com, akpm@linux-foundation.org,
+	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca,
+	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
+	keirf@google.com, kent.overstreet@linux.dev,
+	kirill.shutemov@intel.com, liam.merwick@oracle.com,
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name,
+	maz@kernel.org, mic@digikod.net, michael.roth@amd.com,
+	mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com,
+	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com,
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com,
+	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com,
+	pvorel@suse.cz, qperret@google.com, quic_cvanscha@quicinc.com,
+	quic_eberman@quicinc.com, quic_mnalajal@quicinc.com,
+	quic_pderrin@quicinc.com, quic_pheragu@quicinc.com,
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com,
+	rientjes@google.com, roypat@amazon.co.uk, seanjc@google.com,
+	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
+	suzuki.poulose@arm.com, tabba@google.com, thomas.lendacky@amd.com,
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com,
+	Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
+ anonymous inode
+Message-ID: <aD_8z4pd7JcFkAwX@kernel.org>
+References: <cover.1748890962.git.ackerleytng@google.com>
+ <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=bNYWIO+Z c=1 sm=1 tr=0 ts=683ffda9 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=tbgy-Di65HE5H-DEitsA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Jb3zl6ZJ9lXJ3Ii9JmAgHg35wUgNWerC
-X-Proofpoint-ORIG-GUID: Jb3zl6ZJ9lXJ3Ii9JmAgHg35wUgNWerC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA2MyBTYWx0ZWRfX4r04uPZVJ259
- kK6/t7YUI2/vg5hA4LOyzgMPYGhz3Zdr5aO31SfxLOaGvaaDPSwDE7YyZNnG+H92o9W5Ds1Lelk
- c4H9nqoMRcfl3NGJvlDMUOgY/LI6YQe+LMuZ5d993AXArs1Fg8Uidw0fmvVz2r0Q/mi34xIFDfr
- qJ861DsQPBFPXDNGfxUE9ybgxJ/kKk/VF46JK9d22V1PPe2dXgskogNU6ToCdHDPYiUOrjQBpWI
- t/jYX7mYkhoXLR9ngiZsNZ7n9waN2gGsZLfP5zcDp+QEXA1wyAamJGl98yj6/cWF5RwCitR+ZPf
- JNJOsKVZThHIFgyuveAxHL1VW3Ur+UzF1Fu5Ezw92iidyHYclfCWKmfF5L5tbJJRrI+7bYB0Yti
- htRJvw7nOQFeQwl6/vqWdORZslR4StgMTbrk5K8XSsnm9ixIQldewox7X2VXoZokRguEUzDG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- suspectscore=0 mlxscore=0 impostorscore=0 spamscore=0 clxscore=1015
- mlxlogscore=882 adultscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506040063
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
 
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+(added Paul Moore for selinux bits)
 
-All PCIe PHYs on X1E80100 require vdda-qref power supplies, but this is
-missing in the current PHY device tree node. The PCIe port can still
-function because the regulator L3J, which vdda-qref consumes, is voted by
-other components.
+On Mon, Jun 02, 2025 at 12:17:54PM -0700, Ackerley Tng wrote:
+> The new function, alloc_anon_secure_inode(), returns an inode after
+> running checks in security_inode_init_security_anon().
+> 
+> Also refactor secretmem's file creation process to use the new
+> function.
+> 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
+>  fs/anon_inodes.c   | 22 ++++++++++++++++------
+>  include/linux/fs.h |  1 +
+>  mm/secretmem.c     |  9 +--------
+>  3 files changed, 18 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+> index 583ac81669c2..4c3110378647 100644
+> --- a/fs/anon_inodes.c
+> +++ b/fs/anon_inodes.c
+> @@ -55,17 +55,20 @@ static struct file_system_type anon_inode_fs_type = {
+>  	.kill_sb	= kill_anon_super,
+>  };
+> 
+> -static struct inode *anon_inode_make_secure_inode(
+> -	const char *name,
+> -	const struct inode *context_inode)
+> +static struct inode *anon_inode_make_secure_inode(struct super_block *s,
+> +		const char *name, const struct inode *context_inode,
+> +		bool fs_internal)
+>  {
+>  	struct inode *inode;
+>  	int error;
+> 
+> -	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
+> +	inode = alloc_anon_inode(s);
+>  	if (IS_ERR(inode))
+>  		return inode;
+> -	inode->i_flags &= ~S_PRIVATE;
+> +
+> +	if (!fs_internal)
+> +		inode->i_flags &= ~S_PRIVATE;
+> +
+>  	error =	security_inode_init_security_anon(inode, &QSTR(name),
+>  						  context_inode);
+>  	if (error) {
+> @@ -75,6 +78,12 @@ static struct inode *anon_inode_make_secure_inode(
+>  	return inode;
+>  }
+> 
+> +struct inode *alloc_anon_secure_inode(struct super_block *s, const char *name)
+> +{
+> +	return anon_inode_make_secure_inode(s, name, NULL, true);
+> +}
+> +EXPORT_SYMBOL_GPL(alloc_anon_secure_inode);
+> +
+>  static struct file *__anon_inode_getfile(const char *name,
+>  					 const struct file_operations *fops,
+>  					 void *priv, int flags,
+> @@ -88,7 +97,8 @@ static struct file *__anon_inode_getfile(const char *name,
+>  		return ERR_PTR(-ENOENT);
+> 
+>  	if (make_inode) {
+> -		inode =	anon_inode_make_secure_inode(name, context_inode);
+> +		inode = anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
+> +						     name, context_inode, false);
+>  		if (IS_ERR(inode)) {
+>  			file = ERR_CAST(inode);
+>  			goto err;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 016b0fe1536e..0fded2e3c661 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3550,6 +3550,7 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
+>  extern const struct address_space_operations ram_aops;
+>  extern int always_delete_dentry(const struct dentry *);
+>  extern struct inode *alloc_anon_inode(struct super_block *);
+> +extern struct inode *alloc_anon_secure_inode(struct super_block *, const char *);
+>  extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
+>  extern const struct dentry_operations simple_dentry_operations;
+> 
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 1b0a214ee558..c0e459e58cb6 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
+>  	struct file *file;
+>  	struct inode *inode;
+>  	const char *anon_name = "[secretmem]";
+> -	int err;
+> 
+> -	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
+> +	inode = alloc_anon_secure_inode(secretmem_mnt->mnt_sb, anon_name);
+>  	if (IS_ERR(inode))
+>  		return ERR_CAST(inode);
 
-Since the device tree should accurately describe the hardware, add the
-vdda-qref power supply explicitly in all PCIe PHY device nodes.
+I don't think we should not hide secretmem and guest_memfd inodes from
+selinux, so clearing S_PRIVATE for them is not needed and you can just drop
+fs_internal parameter in anon_inode_make_secure_inode() 
 
-Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 3 +++
- 1 file changed, 3 insertions(+)
+> 
+> -	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
+> -	if (err) {
+> -		file = ERR_PTR(err);
+> -		goto err_free_inode;
+> -	}
+> -
+>  	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
+>  				 O_RDWR, &secretmem_fops);
+>  	if (IS_ERR(file))
+> --
+> 2.49.0.1204.g71687c7c1d-goog
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 71c44e37a..3bbd234e5 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -993,6 +993,7 @@ &pcie3 {
- &pcie3_phy {
- 	vdda-phy-supply = <&vreg_l3c_0p8>;
- 	vdda-pll-supply = <&vreg_l3e_1p2>;
-+	vdda-qref-supply = <&vreg_l3j_0p8>;
- 
- 	status = "okay";
- };
-@@ -1016,6 +1017,7 @@ &pcie4 {
- &pcie4_phy {
- 	vdda-phy-supply = <&vreg_l3i_0p8>;
- 	vdda-pll-supply = <&vreg_l3e_1p2>;
-+	vdda-qref-supply = <&vreg_l3j_0p8>;
- 
- 	status = "okay";
- };
-@@ -1052,6 +1054,7 @@ &pcie6a {
- &pcie6a_phy {
- 	vdda-phy-supply = <&vreg_l1d_0p8>;
- 	vdda-pll-supply = <&vreg_l2j_1p2>;
-+	vdda-qref-supply = <&vreg_l3j_0p8>;
- 
- 	status = "okay";
- };
 -- 
-2.34.1
-
+Sincerely yours,
+Mike.
 
