@@ -1,86 +1,123 @@
-Return-Path: <linux-kernel+bounces-673549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC11ACE274
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5DAACE27C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF411779A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1D93A6A92
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8CA1E5714;
-	Wed,  4 Jun 2025 16:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF1C1DE89A;
+	Wed,  4 Jun 2025 16:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXT6NWtA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icXspVYL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3798418E1F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36B31F1306
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749056029; cv=none; b=NyZvk8P1cDg2V1ndifikeRbum4EcE4MzbE1aL+i8uX5d2EEGU8AU4Ffw2up0c4XP13kmKyh2iCtjqwhejmrJah31KIuhYnPRQu//k21iBwV59xBFJsqLRRYgfc12oonji6nyv4tsNC7uhlhI+qjvhqRuaNSd0AKwHnDQIoZATJ8=
+	t=1749056081; cv=none; b=YEg+l/1jBaCFxQcNjTozGJhIoJlCHJxFDu9c/wQdTYfHb8l38dp1LgOaqUlLdWTQK+71/Fu+wHw005DkhumWeLolXdl8PQqRnVj87FZb6LjVvG4Lhz6lqFDvouXICZ2Qzd6DmSTMcRG7ZqkoDZU2eGxgaTPtqIXYVBAPoKm6JDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749056029; c=relaxed/simple;
-	bh=hhaoHECGZqzEpU9MTiy2t7cqLq5LWg93CmxEmAbN2pM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUACOlnR5Xl1xx9NyGsNazNnpBrmhIfo5Q/C8fz8yo2OJHU3WfrF9B1fcK0y9lhooiO2j8JH0okR3yoAM7I7Ww9z8T3PHWAAqjyN3rT6hUoDbuzfqUEM7X8xxWMQv8qeLYeRD4caTqyfsGezXSa7RrUP+CenE0NNuxU6BHK3bbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXT6NWtA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F77C4CEE4;
-	Wed,  4 Jun 2025 16:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749056028;
-	bh=hhaoHECGZqzEpU9MTiy2t7cqLq5LWg93CmxEmAbN2pM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WXT6NWtAmVdO6YCKYmBq1oxfVRkO/uSH6SnVzBZ9qhEGoHV3lrl4Jx8S+qcptwIK+
-	 Jur1H7p5sTLycJzMoZkbRM6r91ygI3u/LdNCS+r7jOOZFKrVF2iX8OADTmL7YRXbqI
-	 RBYvJtHKr2U7FrsWXRo7ajPyntQ0ic276AXO2okaHqaufPnVMpuVNuT90qqJyH14eF
-	 uWxGA259OB44qflNK5oQnKvnd1AR2vnoGaXmK4FAQEgAMbC/KupBpbMCGzNl2qQVfc
-	 dn0OII6WNP5UCHsQJU2kTp/IOQCG0R52C8VCfGA4d+JvOSKm7gBnogf8CfuUwqhARt
-	 5j4NlWpwaoqFg==
-Date: Wed, 4 Jun 2025 18:53:44 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sched: Discourage usage of separate workqueues
-Message-ID: <aEB6GOTlC_Z_Rq8b@cassiopeiae>
-References: <20250604081657.124453-2-phasta@kernel.org>
- <7a09c357-2d28-4dd6-b637-4387cc430938@amd.com>
- <aEBhIzccXBPyt_58@phenom.ffwll.local>
- <aEB4DFFE2C7gElRL@lstrano-desk.jf.intel.com>
+	s=arc-20240116; t=1749056081; c=relaxed/simple;
+	bh=tcd0Zzewl9fyLQbRjA4EgreSr8MAtbggVIRO6sDPbgk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sxby5W7jXTn6JBsf2Xw/J47OSp8bUlTPqkzU1AHY/QiGtMIMwqEVuBV1y9kST52VNozQw/yhccg1caWMG0ysFJPWdGWHWoC5Hke4qyqFFBdpYcg2IKWcgns3ateSGEXVnoi8b592UWlJ4OvrEeVgHekHrYlgnpb78gMSSOY5u6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icXspVYL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749056079;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tcd0Zzewl9fyLQbRjA4EgreSr8MAtbggVIRO6sDPbgk=;
+	b=icXspVYLppPhFIJOs+7UyET7C/99Cx7SzcEAUjeDGFcDC9l10NVhMpBWxN+K/C5HMatSFI
+	sVzPhHW/FKpjE3cPRwz7K/EWiAVd8FHgkPfGmzrvfZMuWkzQO3QiiJo7GOfC8/YcRQmh5W
+	3LGrCXnYgPTFEMB9MZviF0tfxoVBlfI=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-FxfIfxDMPy-ju0WBlupz6Q-1; Wed, 04 Jun 2025 12:54:37 -0400
+X-MC-Unique: FxfIfxDMPy-ju0WBlupz6Q-1
+X-Mimecast-MFC-AGG-ID: FxfIfxDMPy-ju0WBlupz6Q_1749056076
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-55328b79ec3so72186e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 09:54:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749056076; x=1749660876;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tcd0Zzewl9fyLQbRjA4EgreSr8MAtbggVIRO6sDPbgk=;
+        b=J4YryhwlZ8AKQk2yudlaJoCAAyhXvSBFp6MsbcjZ+prJfS4Dw183LMJ8L3SrWTd6Mn
+         414r5f41Vytu7VBMGRhalMwC8Xc4hAk2nAnbmerhv1nSI5EfmixsHMckT2phC8UDlT3M
+         9LpcMOGY/up586usWKuv+nSNVpGh9/UiFNYCSYmQOPFIWUlert22qp5pOwdqXjo+XMiP
+         RTlCIzRD/9qyd16laT2qWtoeRGzbU+kXu2qscNhUmSfMBPrMujqPATt665DDWjstf2C8
+         Q/JuvaBtu/smsS0sDTE7HTwVFBHFXAvX1gEmYLv8s6nqOHpJPLLvNQVgaXSBvSVAxcBl
+         pwMA==
+X-Gm-Message-State: AOJu0Yx7sNGhwpiJ5y4tXNnZY8qeTJqIwhXtnoliTqPCywRXs1/5SB/P
+	Et4QIcKdJFNSRLQiv76PeOVj92PnhIGPqererWcd5juvYP0MQep41OJlWcP8ajBShPvB/fCvtYt
+	ivgNtsthRRowDIzjFQkXZncTkfMQFwRDGfK0ud3qFdF//LlZjLU8IM4AuRbviBBKsqg==
+X-Gm-Gg: ASbGncvC2qmEEezOt2tPJbNQnYcySJCRK5KFhGPHepMHeaAfjtx2JLmNMGAs6OabhP/
+	YAd30z5zejB7uxp24+aIbxKB0e6hB5PZuZqiUKt8N3N3IrOxzjTBrtg26fV7ruP3q6RPB2gmC/d
+	iPlMxuqvJ7/vOZZCc4I/LYwYAhOvWNTTJ/SdoJHLkFSAr1idH9siEktpstbN/VpdrayHzOKT1yw
+	nRft8L+BNYm3Hkkswluu4o3aD1MXHt31v0QohOxHIZrihJjdjTa4oG2Ng3QbUqZqXSPRKNGX2ny
+	VCBX2gGzayw3UFIWGDM=
+X-Received: by 2002:a17:907:7eaa:b0:adb:4085:fb88 with SMTP id a640c23a62f3a-ade075beddcmr32537866b.1.1749056064122;
+        Wed, 04 Jun 2025 09:54:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+FyEzbRQ7ljsnYaqZEY9RyRG/Pit4hUmUJvWYN4/otGwuEi027SbI5iZa7eBk4SkzaaVb2g==
+X-Received: by 2002:a17:907:72c7:b0:ad8:93a3:29c2 with SMTP id a640c23a62f3a-ade077dafb1mr27934766b.14.1749056049265;
+        Wed, 04 Jun 2025 09:54:09 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada6ad6abc2sm1124547566b.173.2025.06.04.09.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 09:54:08 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 9A0E71AA9158; Wed, 04 Jun 2025 18:54:07 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, asml.silence@gmail.com, tariqt@nvidia.com,
+ edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com,
+ leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+Subject: Re: [RFC v4 03/18] page_pool: use netmem alloc/put APIs in
+ __page_pool_alloc_page_order()
+In-Reply-To: <20250604025246.61616-4-byungchul@sk.com>
+References: <20250604025246.61616-1-byungchul@sk.com>
+ <20250604025246.61616-4-byungchul@sk.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Wed, 04 Jun 2025 18:54:07 +0200
+Message-ID: <874iwvwiq8.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEB4DFFE2C7gElRL@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 04, 2025 at 09:45:00AM -0700, Matthew Brost wrote:
-> On Wed, Jun 04, 2025 at 05:07:15PM +0200, Simona Vetter wrote:
-> > We should definitely document this trick better though, I didn't find any
-> > place where that was documented.
-> 
-> This is a good idea.
+Byungchul Park <byungchul@sk.com> writes:
 
-I think - and I also mentioned this a few times in the patch series that added
-the workqueue support - we should also really document the pitfalls of this.
+> Use netmem alloc/put APIs instead of page alloc/put APIs and make it
+> return netmem_ref instead of struct page * in
+> __page_pool_alloc_page_order().
+>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-If the scheduler shares a workqueue with the driver, the driver needs to take
-special care when submitting work that it's not possible to prevent run_job and
-free_job work from running by doing this.
+Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
-For instance, if it's a single threaded workqueue and the driver submits work
-that allocates with GFP_KERNEL, this is a deadlock condition.
-
-More generally, if the driver submits N work that, for instance allocates with
-GFP_KERNEL, it's also a deadlock condition if N == max_active.
 
