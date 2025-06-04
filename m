@@ -1,129 +1,201 @@
-Return-Path: <linux-kernel+bounces-672932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1ACACD99D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:22:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84968ACD9A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACF93A5102
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C351890163
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 08:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D119263F5D;
-	Wed,  4 Jun 2025 08:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37C628C030;
+	Wed,  4 Jun 2025 08:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RJ8zO+l8"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lh1XKtDx"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E43A28B7F1;
-	Wed,  4 Jun 2025 08:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A3728C007
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 08:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749025322; cv=none; b=FmaKhV9Jt7w/LvYLwxFhgagITmpCoMc/xYLvKIDx5LFDiiEuwC6ZQnhaMDlG6ofADv/2xF5HJdmUWp5d3wk5H14SRhgCL3rns5Jt9TZdKZsLg7NiZoZJPrNUWOXIM0zyNMNhLe1rsYmPdIFrAr94kUZZ62emCSQZ8R2ErfqCh1E=
+	t=1749025507; cv=none; b=XcZlWmguqTNSJF1xpZrUL6rA4CxH7vFP9Iqjiq/7PSZTctVcO+16Zh1baS4hA1ApwvyWQGd/STzjk5CQMxfY+9MTsDum0oY7bYoy0Sg845fCjudGd5cD7xhwA922FaZ98KNQhADGV14VEogXURzrVk8wB8DyiYfutLfgC+aCjZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749025322; c=relaxed/simple;
-	bh=2MbOYAGfsJiwHmN9D7mlKgKUXPWhJh2aDzHwQlwXU+0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kVkx/BNtnXA+yKW4ZytLhzchifTjrLwmihtzpXEWilv8qgj5mrtaWRgCaLW0yz5DClapQsEUSJDQU5Y0oLqcdRANimxYLx38WD8lxXFnG7feW65YcoyuBqxCdCdr9n90K6qUcwoL+1KvTJ8juWM7E5b/lSPQOTo5ET4QsDdkWxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RJ8zO+l8; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 132B741DF4;
-	Wed,  4 Jun 2025 08:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1749025312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ARK4ijAucPeE4qCV1xVX4pQHEcXz2x/7N4iFgPfnZ0M=;
-	b=RJ8zO+l82jyuNiy2HFZ7/KyFcElAhMahVKs7JPWxjfv0P8EoptkLA+RBG7PwDYmBxNJJ3t
-	mCUQ4x6/k1fI9mrIh9b+pujdCMlqpvSbNL06qzvDw7Q92ISgbKWIbK0HtLFCs29SrWMWHH
-	duJPQWtQZ5FsY92KUbQ7UIF5IddFhxCLF7J++jLIuHezzZ+LBZH/1/zUSBY/9WtgtijB2x
-	lkXR0HW4wUxOQrVSuXBaKSX4bIC1Oa8RrfZln5NG738CMANzzrxbfKt9FWUGaDaoebFLy4
-	58M90GxOxQGNNsDiPzt/YkqetPwlbvQwRcsfVX6guYPnXl7LqFeEsYF6to8kkA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: <richard@nod.at>,  <vigneshr@ti.com>,  <robh@kernel.org>,
-  <krzk+dt@kernel.org>,  <conor+dt@kernel.org>,
-  <linux-mtd@lists.infradead.org>,  <devicetree@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <git@amd.com>,
-  <amitrkcian2002@gmail.com>,  Bernhard Frauendienst
- <kernel@nospam.obeliks.de>
-Subject: Re: [PATCH v13 3/3] mtd: Add driver for concatenating devices
-In-Reply-To: <20250603194209.1341374-4-amit.kumar-mahapatra@amd.com> (Amit
-	Kumar Mahapatra's message of "Wed, 4 Jun 2025 01:12:09 +0530")
-References: <20250603194209.1341374-1-amit.kumar-mahapatra@amd.com>
-	<20250603194209.1341374-4-amit.kumar-mahapatra@amd.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 04 Jun 2025 10:21:50 +0200
-Message-ID: <87sekfkjc1.fsf@bootlin.com>
+	s=arc-20240116; t=1749025507; c=relaxed/simple;
+	bh=E+ctp5Kf/i4Vkucx3SYkHv1ekiPgitLob8eYzy5uk/A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TVwHU6GAmpgnJfuRLh2JvjxGLo1A4ZPoeP/iuEH4VahlrYtK9tzlBc7ghO4BWaVLPMOL7uBregnSqGi5fSlFmZJMhdMTB6BypGOfxbzaSslQlU6igi3nmlDwXl74qgyewjHZXLnrWcny0xBAVsrjq/AUrlkflr0B1nbWAHUGztc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lh1XKtDx; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235e3f93687so4761805ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 01:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749025503; x=1749630303; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BR/cqEY4np4yUPPU0CUL00J0wezf5HZmGTl9XyHaXUk=;
+        b=Lh1XKtDx/fkQLu3uh+h+kdmG3+lSIX8EEp2p7+1cVcb3moW5oMsWNjr99poImHrHu5
+         5kkaVub5pFF/H1y+nfG6kDVvlifq+9gvQSjXPg2hznBNjhEY3cTx3d/HKv4FOxeqY0hl
+         nUg0UtrVp5tNgY94hBgrnbtq+ttDPdWP+iaU+yp67KnSBdpUP8Aqt8SYk2yoUlDiXVUd
+         QuDjpuwnw5fz/AOsX1YNuDWuw2NiSIfqb1FAK2CRdTKLznznC44Qj7hKeKXQAGijC8cQ
+         JBkYyuWe56YtUeKLAdbIpHT1Mo2IA3b9pzXHr2s3LpRtblRUfUnMlR8svejNWzYxAhZb
+         A9qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749025503; x=1749630303;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BR/cqEY4np4yUPPU0CUL00J0wezf5HZmGTl9XyHaXUk=;
+        b=Wn0AgCdPE86EkpvUOH0U1+jiQl88UT1DVeUtiauI2dXpG6R7J/MRDkOoxsj9gqLH4e
+         oZa6+opwvWAp64W5A2jKdL6u9kXp4FcV46bKsLexBqMl/gl1OfLuI5j5Gbp09gwXoGmo
+         ptjHGd5UI18FGrxCvkCSHbeXqpZxmJfHzE+N4HHNxZaqUysRkMGZHJ2iDfAFjRC5Aw/Q
+         eaij+IUTHY8baK9Fe78XaovwCuk4chhQPJZhf5T6AaxMAVSE8VKfYrmZgB2SRICpIVRa
+         ZOQo2cRcITfSvnsP3PF4oWP5GQLtdNGkawg7JwydFTlMnEsaIU/eaiZEVukd6qekxG6w
+         WbAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgaJhMMnQCveJEw+LJIWnbhoa+60wtxzQLqLAyYAarNYY58kl99OpmEV8BTyYLpMgw9xR2o/3gdMRcUdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6vlrY/HA3C5OysGsUcUgNymvGsi/uzMz9ZiOfhhx3oH3p9Clj
+	VYSSmnZHGOGY8jeikwxbuUsQMou46eDWO6uzNsIfJ86Uyt6P97Dbs+QP/rJCSZvSmS+a+zbwcm6
+	lyF7BDDXIb+IBLtdUvQ==
+X-Google-Smtp-Source: AGHT+IGJiuIlt5+Y4kHcki1caySgyQkGIABrznkydsidONCfyonDF8tyBnPrVY+m2CsPNRKAhiwmnN0YzQM616k=
+X-Received: from pgh11.prod.google.com ([2002:a05:6a02:4e0b:b0:b2c:df7b:f167])
+ (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:6bc7:b0:235:ca87:37ae with SMTP id d9443c01a7336-235e1201315mr22269695ad.41.1749025503391;
+ Wed, 04 Jun 2025 01:25:03 -0700 (PDT)
+Date: Wed,  4 Jun 2025 08:23:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddukedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepvdduvddruddthedrudehtddrvdehvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvuddvrddutdehrdduhedtrddvhedvpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegrmhhithdrkhhumhgrrhdqmhgrhhgrphgrthhrrgesrghmugdrtghomhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodguthesk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: miquel.raynal@bootlin.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1204.g71687c7c1d-goog
+Message-ID: <20250604082449.2029156-1-guanyulin@google.com>
+Subject: [PATCH v14 0/4] Support system sleep with offloaded usb transfers
+From: Guan-Yu Lin <guanyulin@google.com>
+To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, gargaditya08@live.com, 
+	kekrby@gmail.com, jeff.johnson@oss.qualcomm.com, quic_zijuhu@quicinc.com, 
+	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, broonie@kernel.org, 
+	quic_wcheng@quicinc.com, krzysztof.kozlowski@linaro.org, 
+	sumit.garg@kernel.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guan-Yu Lin <guanyulin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Amit,
+Wesley Cheng and Mathias Nyman's USB offload design enables a co-processor
+to handle some USB transfers, potentially allowing the system to sleep
+(suspend-to-RAM) and save power. However, Linux's System Sleep model halts
+the USB host controller when the main system isn't managing any USB
+transfers. To address this, the proposal modifies the system to recognize
+offloaded USB transfers and manage power accordingly. This way, offloaded
+USB transfers could still happen during system sleep (Suspend-to-RAM).
 
-> --- a/include/linux/mtd/concat.h
-> +++ b/include/linux/mtd/concat.h
-> @@ -28,5 +28,37 @@ struct mtd_info *mtd_concat_create(
->=20=20
->  void mtd_concat_destroy(struct mtd_info *mtd);
->=20=20
-> +/**
-> + * mtd_virt_concat_node_create - Create a component for concatenation
-> + *
-> + * Returns a positive number representing the no. of devices found for
-> + * concatenation, or a negative error code.
-> + *
-> + * List all the devices for concatenations found in DT and create a
-> + * component for concatenation.
-> + */
-> +int mtd_virt_concat_node_create(void);
-> +
-> +/**
-> + * mtd_virt_concat_add - add mtd_info object to the list of subdevices f=
-or concatenation
-> + * @mtd: pointer to new MTD device info structure
-> + *
-> + * Returns true if the mtd_info object is added successfully else return=
-s false.
-> + *
-> + * The mtd_info object is added to the list of subdevices for concatenat=
-ion.
-> + * It returns true if a match is found, and false if all subdevices have
-> + * already been added or if the mtd_info object does not match any of the
-> + * intended MTD devices.
-> + */
-> +bool mtd_virt_concat_add(struct mtd_info *mtd);
-> +
-> +/**
-> + * mtd_virt_concat_create_join - Create and register the concatenated MT=
-D device
-> + *
-> + * Returns on succes, or a negative error code.
-> + *
-> + * Creates and registers the concatenated MTD device
-> + */
-> +int mtd_virt_concat_create_join(void);
->  #endif
+This involves two key steps:
+1. Transfer Status Tracking: Propose offload_usage and corresponding apis
+drivers could track USB transfers on the co-processor, ensuring the
+system is aware of any ongoing activity.
+2. Power Management Adjustment:  Modifications to the USB driver stack
+(xhci host controller driver, and USB device drivers) allow the system to
+sleep (Suspend-to-RAM) without disrupting co-processor managed USB
+transfers. This involves adding conditional checks to bypass some power
+management operations in the System Sleep model.
 
-Don't we miss some destructors? It seems that removing the mtd device or
-the concat module might lead to an unstable state. Can you please test
-these two situations?
+changelog
+----------
+Changes in v14:
+- Introduce CONFIG_USB_OFFLOAD for control usb offload related features.
+- Specify __must_hold marco on usb_offload_check().
+- Cosmetics changes on coding style.
 
-Thanks,
-Miqu=C3=A8l
+
+Changes in v13:
+- Ensure offload_usage is modified only when the device is neither
+  suspended nor marked as "offload_at_suspend".
+- Move lock manipulations into usb_offload_get()/usb_offload_put().
+- Cosmetics changes on coding style.
+
+Changes in v12:
+- Rebase on TOT.
+- Cosmetics changes on coding style.
+
+Changes in v11:
+- Use USB subsystem wrappers in usb_offload_get()/usb_offload_put().
+- Refine logics and add comment in usb_suspend_both()/usb_resume_both().
+
+Changes in v10:
+- Remove unnecessary operations in dwc3 driver.
+- Introduce CONFIG_USB_XHCI_SIDEBAND_SUSPEND to enable/disable offloaded
+  usb transfers during system Suspend-to-RAM.
+- Modify the approach to detect offloaded USB transfers when the system
+  resumes from Suspend-to-RAM.
+- Mark sideband activity when sideband interrupters are created/removed.
+- Cosmetics changes on coding style.
+
+Changes in v9:
+- Remove unnecessary white space change.
+
+Changes in v8:
+- Change the runtime pm api to correct the error handling flow.
+- Not flushing endpoints of actively offloaded USB devices to avoid
+  possible USB transfer conflicts.
+
+Changes in v7:
+- Remove counting mechanism in struct usb_hcd. The USB device's offload
+  status will be solely recorded in each related struct usb_device.
+- Utilizes `needs_remote_wakeup` attribute in struct usb_interface to
+  control the suspend flow of USB interfaces and associated USB endpoints.
+  This addresses the need to support interrupt transfers generated by
+  offloaded USB devices while the system is suspended.
+- Block any offload_usage change during USB device suspend period.
+
+Changes in v6:
+- Fix build errors when CONFIG_USB_XHCI_SIDEBAND is disabled.
+- Explicitly specify the data structure of the drvdata refereced in
+  dwc3_suspend(), dwc3_resume().
+- Move the initialization of counters to the patches introducing them.
+
+Changes in v5:
+- Walk through the USB children in usb_sideband_check() to determine the
+  sideband activity under the specific USB device. 
+- Replace atomic_t by refcount_t.
+- Reduce logs by using dev_dbg & remove __func__.
+
+Changes in v4:
+- Isolate the feature into USB driver stack.
+- Integrate with series "Introduce QC USB SND audio offloading support"
+
+Changes in v3:
+- Integrate the feature with the pm core framework.
+
+Changes in v2:
+- Cosmetics changes on coding style.
+
+[v3] PM / core: conditionally skip system pm in device/driver model
+[v2] usb: host: enable suspend-to-RAM control in userspace
+[v1] [RFC] usb: host: Allow userspace to control usb suspend flows
+---
+
+Guan-Yu Lin (4):
+  usb: xhci-plat: separate dev_pm_ops for each pm_event
+  usb: offload: add apis for offload usage tracking
+  xhci: sideband: add api to trace sideband usage
+  usb: host: enable USB offload during system sleep
+
+ drivers/usb/core/Kconfig          |  10 +++
+ drivers/usb/core/Makefile         |   1 +
+ drivers/usb/core/driver.c         |  50 +++++++++--
+ drivers/usb/core/offload.c        | 136 ++++++++++++++++++++++++++++++
+ drivers/usb/core/usb.c            |   1 +
+ drivers/usb/host/Kconfig          |  11 +++
+ drivers/usb/host/xhci-plat.c      |  42 ++++++++-
+ drivers/usb/host/xhci-plat.h      |   1 +
+ drivers/usb/host/xhci-sideband.c  |  38 +++++++++
+ include/linux/usb.h               |  18 ++++
+ include/linux/usb/xhci-sideband.h |   9 ++
+ 11 files changed, 307 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/usb/core/offload.c
+
+-- 
+2.49.0.1204.g71687c7c1d-goog
+
 
