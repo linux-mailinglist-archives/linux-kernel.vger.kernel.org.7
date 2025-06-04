@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-672719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A734ACD6AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:44:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8389ACD6B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACB8A1895F94
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0A6D16EC5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDE523E34C;
-	Wed,  4 Jun 2025 03:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cJi1R5/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3D726156A;
+	Wed,  4 Jun 2025 03:53:53 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9212D25F968
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 03:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772079CD
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 03:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749008655; cv=none; b=I5RgUkhndHnYj63SOl71ywtcshvdfjHpiTuMGn32fwL7jPnylBfPv/YJWTU9X8mFNmEcTMolgOBw5J6MIpeaF2ZgeHPour/zChptjzDv0SzxA3yshi0iUihluXDejXxO0Y6/oyP/sdGVWlVZvV3iinsYgWn3qyQ/JnH6NgMiT1M=
+	t=1749009233; cv=none; b=I4cRBjEVsrWxCjr4LpdR9H8HJxuh78kE2eN1uTVMBz6fRx/SmlGf/iQByS7iRxDoIgQuLMlGPBJB3MWznd0OXtZYo5HnRKpRXXqrdF0ewq3TtfoFcp5g47SLHt/XAEyZgSNmuGiXxUXVgNJ0UByFis2kJLVmQGB+hkA8izKtDE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749008655; c=relaxed/simple;
-	bh=BbZ9Q/nSUbSTJzvV4QKRTDB8TX7GZOe3HXqU9MTNjPk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=b6IZ8DRz2Fzk6KkG+3xpBvSlfcPJuRv1JwEcvOiYUww97TsCFV8jY2xx38AGNDJjtyhQVHiu7o4sSYlaCyXae8eodHdvx2qNK+15uLs7WlotjFRDWPWymjapHUB92uACFUEZw3vwtRARKhvf2cDlhUhSPwXOVwMETRREQBaWEZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cJi1R5/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F27C4CEE7;
-	Wed,  4 Jun 2025 03:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749008654;
-	bh=BbZ9Q/nSUbSTJzvV4QKRTDB8TX7GZOe3HXqU9MTNjPk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cJi1R5/aIPln+w9qGzHl/DWn683Q6nxxiPcT/3R/fCYrk0kzHS7vHZnSaS2fAul42
-	 rf4jBfuCevApSLpY+BJLYo1N6p6upSXY7zWSVPYYlBoMmxUywR+92+eVct5jlDPhxm
-	 5QE2YUH/2Iw0a5E8vfFTTCMvkDVOulUDWx5KEex4=
-Date: Tue, 3 Jun 2025 20:44:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: lizhe.67@bytedance.com
-Cc: david@redhat.com, jgg@ziepe.ca, jhubbard@nvidia.com, peterx@redhat.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, dev.jain@arm.com,
- muchun.song@linux.dev
-Subject: Re: [PATCH v2] gup: optimize longterm pin_user_pages() for large
- folio
-Message-Id: <20250603204414.f2963e4a094e360cad7f966e@linux-foundation.org>
-In-Reply-To: <20250604031536.9053-1-lizhe.67@bytedance.com>
-References: <20250604031536.9053-1-lizhe.67@bytedance.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749009233; c=relaxed/simple;
+	bh=tdS2rHG+ufHcKeUbNdtFyzh5CMAWDSyRXep60d0zdGc=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=W+tIfho99337StGN8lju5dWn0jDDblXVIPXtPm1ON542bUxLXQZ6UJLkpR77nadku1mmyJzDxiMM0/vYv8nox1HeosbXZKHW8RKEC/tJujX2UmPhtXh9KQhVMjBOE8yHTAzkRtsPNgP7DNFIn+PCOhCyMOB7/dyziuuT7eXXNpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bBtl95MjQz3bkR
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:45:25 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.137])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4bBtl26KT5z5TCG0
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:45:18 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bBtkr0j4hz8RVF6;
+	Wed,  4 Jun 2025 11:45:08 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 5543j0WP086912;
+	Wed, 4 Jun 2025 11:45:00 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 4 Jun 2025 11:45:01 +0800 (CST)
+Date: Wed, 4 Jun 2025 11:45:01 +0800 (CST)
+X-Zmail-TransId: 2afb683fc13d277-84121
+X-Mailer: Zmail v1.0
+Message-ID: <20250604114501931NW2by8F85vCd24yqRYHAx@zte.com.cn>
+In-Reply-To: <20250604031758.4150209-2-xialonglong@kylinos.cn>
+References: 20250604031758.4150209-1-xialonglong@kylinos.cn,20250604031758.4150209-2-xialonglong@kylinos.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: <xu.xin16@zte.com.cn>
+To: <xialonglong@kylinos.cn>
+Cc: <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <xialonglong@kylinos.cn>,
+        <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzJdIG1tL2tzbTogY2FsY3VsYXRlIGtzbV9wcm9jZXNzX3Byb2ZpdCBtb3JlIGFjY3VyYXRlbHk=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 5543j0WP086912
+X-FangMail-Miltered: at cgslv5.04-192.168.251.14.novalocal with ID 683FC154.001 by FangMail milter!
+X-FangMail-Envelope: 1749008725/4bBtl95MjQz3bkR/683FC154.001/10.35.20.165/[10.35.20.165]/mxde.zte.com.cn/<xu.xin16@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 683FC154.001/4bBtl95MjQz3bkR
 
-On Wed,  4 Jun 2025 11:15:36 +0800 lizhe.67@bytedance.com wrote:
+> The general_profit_show() only considers ksm_pages_sharing,
+> whereas ksm_process_profit() accounts for both ksm_pages_sharing
+> and ksm_pages_shared for each process. This discrepancy leads to
+> the sum of ksm_process_profit() across all processes not being equal
+> to general_profit_show().
+> 
+> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
+> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
+> ---
+>  mm/ksm.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
 
-> From: Li Zhe <lizhe.67@bytedance.com>
-> 
-> In the current implementation of the longterm pin_user_pages() function,
-> we invoke the collect_longterm_unpinnable_folios() function. This function
-> iterates through the list to check whether each folio belongs to the
-> "longterm_unpinnabled" category. The folios in this list essentially
-> correspond to a contiguous region of user-space addresses, with each folio
-> representing a physical address in increments of PAGESIZE. If this
-> user-space address range is mapped with large folio, we can optimize the
-> performance of function pin_user_pages() by reducing the frequency of
-> memory accesses using READ_ONCE. This patch leverages this approach to
-> achieve performance improvements.
-> 
-> The performance test results obtained through the gup_test tool from the
-> kernel source tree are as follows. We achieve an improvement of over 70%
-> for large folio with pagesize=2M. For normal page, we have only observed
-> a very slight degradation in performance.
-> 
-> Without this patch:
-> 
->     [root@localhost ~] ./gup_test -HL -m 8192 -n 512
->     TAP version 13
->     1..1
->     # PIN_LONGTERM_BENCHMARK: Time: get:13623 put:10799 us#
->     ok 1 ioctl status 0
->     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
->     [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
->     TAP version 13
->     1..1
->     # PIN_LONGTERM_BENCHMARK: Time: get:129733 put:31753 us#
->     ok 1 ioctl status 0
->     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> With this patch:
-> 
->     [root@localhost ~] ./gup_test -HL -m 8192 -n 512
->     TAP version 13
->     1..1
->     # PIN_LONGTERM_BENCHMARK: Time: get:4075 put:10792 us#
->     ok 1 ioctl status 0
->     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
->     [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
->     TAP version 13
->     1..1
->     # PIN_LONGTERM_BENCHMARK: Time: get:130727 put:31763 us#
->     ok 1 ioctl status 0
->     # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+Thanks for you report, but we'd better not change the definition of ksm_merging_pages which means
+all pages involved in ksm merging (pages_sharing + pages_shared), and Do not rename the existing
+of interface, which breaks user-space tools.
 
-I see no READ_ONCE()s in the patch and I had to go off and read the v1
-review to discover that the READ_ONCE is invoked in
-page_folio()->_compound_head().  Please help us out by including such
-details in the changelogs.
+If we reallt want a more pricise profit of a process , I suggest:
+ -  1) Add a variable 'ksm_pages_sharing'  in mm_struct for processes.
+ -  2) Refine the implementation of ksm_process_profit().
 
-Is it credible that a humble READ_ONCE could yield a 3x improvement in
-one case?  Why would this happen?
+Thanks~
 
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 8583fb91ef13..fa4e1618b671 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -824,12 +824,10 @@ static void remove_node_from_stable_tree(struct ksm_stable_node *stable_node)
+>  	hlist_for_each_entry(rmap_item, &stable_node->hlist, hlist) {
+>  		if (rmap_item->hlist.next) {
+>  			ksm_pages_sharing--;
+> +			rmap_item->mm->ksm_merging_pages--;
+>  			trace_ksm_remove_rmap_item(stable_node->kpfn, rmap_item, rmap_item->mm);
+> -		} else {
+> +		} else
+>  			ksm_pages_shared--;
+> -		}
+> -
+> -		rmap_item->mm->ksm_merging_pages--;
 
