@@ -1,136 +1,76 @@
-Return-Path: <linux-kernel+bounces-673122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E24ACDC86
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:29:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176BDACDC90
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68BAF3A5809
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B571896006
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FA728EA53;
-	Wed,  4 Jun 2025 11:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCld74uj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AC328D8FB;
+	Wed,  4 Jun 2025 11:31:52 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9D828E5EF;
-	Wed,  4 Jun 2025 11:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F7938DD1
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749036566; cv=none; b=qbM24bFRKSagCncJ7ZvDpWPO+WRX141i53r43YTh/Qw1LZ8k2KDZjEHaZX9JjNTrD635pQKaeloZDif3/F1ewNkeHOJ1/T9Xx6CcqL3OGnom+C0C+IgT+I9BtvW6RYOW1+I2l1htpfLd+yGiGPAH+rFtbyPHeoF6qDXTjg9WmDg=
+	t=1749036712; cv=none; b=fRP8pV2LOJooRXTdKCPpLZ9WsmTC9px+LDzRPDHQ0xxDumMQe8UWb7Yctzp/RBvwVPBkqkf0VVjbYWyc3lcLxB4c9wqWNolp1v+aTQQsO3v4I9Epxznn2COyzaMh/9AOIgCMef21RCLaHOhIuhnrjCGF9mpxEdHR7QmDdknEsWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749036566; c=relaxed/simple;
-	bh=d2BIPMNimzjXbgSV6A0P6u4TSLLraPPLngeklZCCS+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FVVgpPeI+nQ4PfYvtYR6zMmVB8NFb2UkhfMD5Ye4RW9URm/wf9RYFRztAW2zVgA6mK1m6wDRbrx/sJsB4QyerBCp3EU/ruXcqCcVS2Lxwyq0NDztBlTfl2RXQPt17bG3ZCwfKjKedLD97MPlvtg2r/WBMztPSpQM9WDhQ4BigOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCld74uj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C18BC4CEE7;
-	Wed,  4 Jun 2025 11:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749036566;
-	bh=d2BIPMNimzjXbgSV6A0P6u4TSLLraPPLngeklZCCS+8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qCld74uj1bdGLZvkMJaf+A8oQK0B+MBUAmM/eTkAhSfJHfYsdGVjnR9AsxXuVgeEc
-	 NEh3h132u/4CgE4wLt4BuCvWolfFTjeuaJZRS/4TmZI87KFnLfiuD2+ciLcl8i/Wms
-	 jt5+6dcVmIuTgt4GXxtMvoKOAfEqyrDeGYpAumthMjX6bSk69qN00tT3GaLwgIhLFO
-	 x3rMhPJnPtpcokt2XOrhnp1ZghyWqtSYc6AnhbJMp9BTExv3/SPV43q3RqRmOwDX89
-	 DHzeqepI1u0epFvuBYrRBLHVmvZrkhvTc9J0h2rcAhtZm4KDHmgz7dtKPZDz0J458z
-	 NKJgh5Umh3w3A==
-Message-ID: <71a7422a-f139-404f-8759-54dc1510b571@kernel.org>
-Date: Wed, 4 Jun 2025 13:29:11 +0200
+	s=arc-20240116; t=1749036712; c=relaxed/simple;
+	bh=zBYGvX52BxLQ4GUMUxG0DeMTjGwYb+sctll/J9DgxZ0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WUyh/SaCCbh6Dydk6pbjTWhqAOD6e94MspL6s1njWj5gYty88ugP0q2C8ErXWPvknfY3tbK/in15tToTpQoGBOkIrRdf8129ObT335gMe3ucSlcNqtdisU3zKOcKWSVU5hAz2vr1LrHY5MmJqMwWsnASE7dbj+Tits5hL1AXp+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddbec809acso12054225ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 04:31:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749036710; x=1749641510;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zBYGvX52BxLQ4GUMUxG0DeMTjGwYb+sctll/J9DgxZ0=;
+        b=wfWIkUzyYWYRF3NhWt9ABURGKVRjL2TnU7lZx3+GzAp/Etn1jkP2EQOnFpesMy5zod
+         MIvQ5Dfee4zvsgliOF47kQny7x/1voSSpUJv1HoULr1kLNOrSASc674oRCOOL73Ixviv
+         vZv0allIA/qO42djxWBIVTCl5DavN027kVGMQmynmcTLxPpnUHmcar6mlF+z1ejNWEHi
+         Mv+iy8NyHZFJjlPXHe5BWCZz62wujiacQPf2qYldSShg313b9mPLcPYMJ2c+aepcHijy
+         FgX7DIB1G4SNhlnP7aYe/zBUoOW3Plc+7RgEmOp2kNzUfJ9C9LHG8nHXL3oApugIw+YT
+         swog==
+X-Gm-Message-State: AOJu0YzQZPUl+q9y7XmXoeAfWy25X59QAgqzF7SvPEnZYnFWkQAdRoIl
+	2VVjU/1xrxxEMuu2EMOWVL5uzW+i3HjuQEyKaWR1JdmXNrwTDnX+8cy81ae1ouTkNbjocR/YFb+
+	tT4IA6Vw4tj++gwBkJGnaD9xaOJcFwz3LW+js5PB3brDy1lFnCGV19WgNrNQ=
+X-Google-Smtp-Source: AGHT+IHGlYWvW7Y00Yspy+dOuOvGQTA/yh4gPJr6hPXEI1xQxgg1DEwHUBkPkMGdK3wtpuqC5IZAiywuwgyfJ57nYc8wkiaC5vWY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: trivial-devices: Add compatible
- string synaptics,synaptics_i2c
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
- Noah Wang <noahwang.wang@outlook.com>,
- Naresh Solanki <naresh.solanki@9elements.com>,
- Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
- Michal Simek <michal.simek@amd.com>, Grant Peltier
- <grantpeltier93@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
- <heiko@sntech.de>, Kever Yang <kever.yang@rock-chips.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev, wahrenst@gmx.net
-References: <20250603151239.1065763-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250603151239.1065763-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:250d:b0:3dc:8a54:c244 with SMTP id
+ e9e14a558f8ab-3ddbed6e5fbmr26970305ab.12.1749036710060; Wed, 04 Jun 2025
+ 04:31:50 -0700 (PDT)
+Date: Wed, 04 Jun 2025 04:31:50 -0700
+In-Reply-To: <68344557.a70a0220.1765ec.0165.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68402ea6.a00a0220.d8eae.0088.GAE@google.com>
+Subject: Re: [syzbot] #syz test
+From: syzbot <syzbot+5138f00559ffb3cb3610@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/06/2025 17:12, Frank Li wrote:
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> index 5d2a7a8d3ac6c..5b9c7ab6d8185 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -1496,6 +1496,9 @@ patternProperties:
->    "^synopsys,.*":
->      description: Synopsys, Inc. (deprecated, use snps)
->      deprecated: true
-> +  "^synaptics,.*":
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: #syz test
+Author: abhinav.ogl@gmail.com
 
 
-Please place it in alphabetical order.
-
-
-Best regards,
-Krzysztof
 
