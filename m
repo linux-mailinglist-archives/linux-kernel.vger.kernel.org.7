@@ -1,86 +1,128 @@
-Return-Path: <linux-kernel+bounces-673503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EABACE1FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:13:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F633ACE1EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AAD1895138
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:13:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA937AA3F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DB51DB34B;
-	Wed,  4 Jun 2025 16:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="PZiEpIsE"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4746A146D6A;
-	Wed,  4 Jun 2025 16:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91521D63C6;
+	Wed,  4 Jun 2025 16:08:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07B628DD0;
+	Wed,  4 Jun 2025 16:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749053588; cv=none; b=CrkURoPMBuy5n3W9xnprAlBHYo4tp5DmIxhq+iI2h59F9u4E4aqLcxPlqpWIHev4pMHnd+h4bV+yBTqd4VBPU+/elVch/W3HMDEMzn7IEcnTum4PHU4wrBc+lVy+/J/VbaDmFBhH2m1jrfKwFCx9A6c+SDonp35efi9A2FnGCJ0=
+	t=1749053317; cv=none; b=icvNMIT4yHcnFkzfABoEbyw8JAJJ1z7kpBXmNPseVlifqNF6PiRDtTnVXTf8f/TVAhqa814+NyRB9Zfz/JB6nD5pbbpNNXbtTsX/HZ0fZIvsf2Uefd3somdvy/c3mBrVsRod7c9OchnXu4jvkuR1DeozyBF/zS2khcagykbPKho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749053588; c=relaxed/simple;
-	bh=fB2UD26wzMl1GY+lHaukD4lWmoYr5jXMlH+/ugTc4yE=;
+	s=arc-20240116; t=1749053317; c=relaxed/simple;
+	bh=ppswMUxkFPu2BpBWwr3iS8sQtvjltaCv3JhK3TXGmA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b21t60lGt9bOJ8o+29VkYifc2WxKd/e8bsl5gOcGu1Bf0hDXOo5OCbSkmHhETbz8ifkd5NSVtxS6eIdiNQSslOtJLOLJhJJK7rQ7JA42qXyu35QTYGmeiyVh4HrU8PCQW9IFMDRDijyyrnak/W8Xg0TA6SWP+6gPrqsmNEoYdj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=PZiEpIsE; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.17])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 56334407618E;
-	Wed,  4 Jun 2025 16:06:20 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 56334407618E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1749053180;
-	bh=srOffEYPm8C2RDInEtO8Jo4/UKBSIM6ojmOSklDGXgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PZiEpIsEb7xdqrOCjwzC05dxDw8244WL9mulD7qcA8mUMlXD6msBCg+dZ0VwzeI3T
-	 /vKpPi2gRrN+RPO6Wy8880JyQ4xr29xdBwbakhXRX/hytV0KMVhGkHzjpD5LQ2BD+N
-	 Ayzxm2lT4eFr/FzS52MpwzhoGMr+WApOvRHf91IM=
-Date: Wed, 4 Jun 2025 19:06:20 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Zong-Zhe Yang <kevin_yang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH rtw-next] wifi: rtw89: sar: drop assertion from
- rtw89_sar_set_src()
-Message-ID: <ose7mun3sogq2434ba6v7pnzgpctusmhdfk4x5khwk5qnwhyoz@4bfb4jcljrae>
-References: <20250603152642.185672-1-pchelkin@ispras.ru>
- <aa24adf30a1e4944acefa4effff46dfd@realtek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJTDDpSlju2ohF4+WUP7B/R2WbYBNC4EW9YswqD5WSYjA+dyMGyghMIs6oQnHheoskErSQndY5ITdjCrvRlngitYU8bogaP4kr/axbwox+BrHJHZxrD5kpfqetCuRJXmVNH1GUzYuxeVZCIC9aN6Ggs/qNSF1SlLqRKoHln9wzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD8E01758;
+	Wed,  4 Jun 2025 09:08:17 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5690C3F5A1;
+	Wed,  4 Jun 2025 09:08:32 -0700 (PDT)
+Date: Wed, 4 Jun 2025 17:08:23 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Baisheng Gao <baisheng.gao@unisoc.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"reviewer:PERFORMANCE EVENTS SUBSYSTEM" <kan.liang@linux.intel.com>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>,
+	cixi.geng@linux.dev, hao_hao.wang@unisoc.com
+Subject: Re: [PATCH] perf/core: Handling the race between exit_mmap and perf
+ sample
+Message-ID: <aEBvd8fIdjlTV53j@J2N7QTR9R3>
+References: <20250424025429.10942-1-baisheng.gao@unisoc.com>
+ <aEBSt2LN7YhxYX7N@J2N7QTR9R3>
+ <20250604142437.GM38114@noisy.programming.kicks-ass.net>
+ <aEBeRfScZKD-7h5u@J2N7QTR9R3>
+ <20250604153219.GJ39944@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aa24adf30a1e4944acefa4effff46dfd@realtek.com>
+In-Reply-To: <20250604153219.GJ39944@noisy.programming.kicks-ass.net>
 
-On Wed, 04. Jun 01:28, Ping-Ke Shih wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > Urgh, this one wasn't caught as my system doesn't have any SAR available
-> > from ACPI. But it would be falsely triggered, too. If I saw it earlier,
-> > I'd better prepared this as a followup patch in a series though..
+On Wed, Jun 04, 2025 at 05:32:19PM +0200, Peter Zijlstra wrote:
+> On Wed, Jun 04, 2025 at 03:55:01PM +0100, Mark Rutland wrote:
+> 
+> > I think we might need something in the perf core for cpu-bound events, assuming
+> > those can also potentially make samples.
 > > 
-> 
-> Good catch. 
-> 
-> There are two consumers. One is rtw89_apply_sar_acpi() which should not
-> assert wiphy_lock, but the other rtw89_apply_sar_common() can be. As I know,
-> the assertion is added for the latter one initially.
-> 
-> Another way is to assert the lock under condition of 
->    test_bit(RTW89_FLAG_PROBE_DONE, rtwdev->flags)
-> 
+> > From a quick scan of perf_event_sample_format:
 
-Ok, thanks! So I'll fold this reworked patch and the other one [1] into
-a series and send them out.
+> > 	PERF_SAMPLE_DATA_PAGE_SIZE	// partial; doesn't check addr < TASK_SIZE
+> > 	PERF_SAMPLE_CODE_PAGE_SIZE	// partial; doesn't check addr < TASK_SIZE
+> 
+> But does use init_mm when !mm, perf_get_page_size().
 
-[1]: https://lore.kernel.org/linux-wireless/20250603144614.175003-1-pchelkin@ispras.ru/
+Yeah; think there might be a distinct issue (at least on arm64) where
+it's possible to probe the depth of the kernel page tables, but that
+might only be a problem on arm64 due to the separate TTBR0/TTBR1 tables
+for the low/high halves.
+
+I'll go take another look; that needn't block the rest of this.
+
+[...]
+
+> > 	PERF_SAMPLE_WEIGHT_STRUCT	// ???
+> Safe, driver bits again.
+
+Thanks for digging through the rest of these!
+
+> > ... I think all the dodgy cases use mm somehow, so maybe the perf core
+> > should check for current->mm?
+> 
+> This then... I suppose.
+
+That looks good to me!
+
+Mark.
+
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index f34c99f8ce8f..49944e4ec3e7 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -7439,6 +7439,10 @@ perf_sample_ustack_size(u16 stack_size, u16 header_size,
+>  	if (!regs)
+>  		return 0;
+>  
+> +	/* No mm, no stack, no dump. */
+> +	if (!current->mm)
+> +		return 0;
+> +
+>  	/*
+>  	 * Check if we fit in with the requested stack size into the:
+>  	 * - TASK_SIZE
+> @@ -8153,6 +8157,9 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+>  	if (!kernel && !user)
+>  		return &__empty_callchain;
+>  
+> +	if (!current->mm)
+> +		user = false;
+> +
+>  	callchain = get_perf_callchain(regs, 0, kernel, user,
+>  				       max_stack, crosstask, true);
+>  	return callchain ?: &__empty_callchain;
 
