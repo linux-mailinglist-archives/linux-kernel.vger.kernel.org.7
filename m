@@ -1,241 +1,309 @@
-Return-Path: <linux-kernel+bounces-673685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB33FACE49A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 21:01:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7A8ACE49D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 21:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD8B189A13E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1167517806E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7F21F4625;
-	Wed,  4 Jun 2025 19:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576681FAC4A;
+	Wed,  4 Jun 2025 19:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="cPBbrC+j"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EP8diKj9"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90BE42A87;
-	Wed,  4 Jun 2025 19:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749063699; cv=pass; b=rfBHr4y/QK9pEyTX+oDA6vczaFpyx0BbZxrH8PtHk3UNuz3xRvKkrZ2VCdFElmM/30AiMRyirsSKwFGaYx3MMcH1bOfKZVd/fMp04kTPEa4/mtSFVrbCG6USxwdgW0p7r+BMrv8k9joDCtuK/SS6RTAVZKkWZU0E1iPyc9gcRQI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749063699; c=relaxed/simple;
-	bh=SOnrepsUwPOPme6HxYyDAp3IOHter7CNwPduJeBDi9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u6U5vf+anuKJvTSpQPevhVrFYktbHFH4gW7l2jGnohMs/b0epw6iW3PmDB/e2zhCqOCMzAoSgISoKndbsI+ZEHql+FFC20C2L5UfyK0qtdoEild1DUNF7qUy8hLwruhfr6LisUnpRGIK8NqBk2qZshdA/uyB4M/Bl64zSZZQMl8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=cPBbrC+j; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749063687; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hUZbeOaldCTjbNvHXnX0G72M5BW9GejfrJ9UZJmeBTi+Fknig7vKZnLgpp4395QZcHCksZOkjDGEFwV61C+iwUACY/kCOowEBMoMYJOyHcm/2Jrs4c+bKNrNeap01G34BCMqGyIvt4zaXP7UuVxyWBfNH2y6D5Htz62lvUKwOro=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749063687; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=RR07ZJb8JV1Gn3LQ5leTmhQEEeyoSF6a+ry7Y8x0k4k=; 
-	b=b/4blPvALM0jm4+1EnZtq3tYPK77jJcnnFzvhTJgpZL4WnR1B49em+e1xPzwDpyVIGmkMof9S2VeJW4suNesUk8kipw0WBz20N4W1pCEcO51lPCijFS8nXH6EU1/YeQhw78HD/YU7HxsgIgKjM+KIfeQjNmMUcmWa9CldKg4dnE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749063687;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=RR07ZJb8JV1Gn3LQ5leTmhQEEeyoSF6a+ry7Y8x0k4k=;
-	b=cPBbrC+jF6wKlqbdkGk/TQz0dU7RSQZTij2iqSiQNILpLtaUuczypAivoSr4+iUU
-	fzbSSSBlbI49220TxrtPcsA8Y3aRSrOxDY27yGgmc/qGGAFQpcnJuzMqiybCRi8KfkP
-	lo13DsX2Nb4P6mdVAmcpFOFfNcetvjmnamBeTXDQ=
-Received: by mx.zohomail.com with SMTPS id 1749063684919734.5257602364985;
-	Wed, 4 Jun 2025 12:01:24 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Alexey Charkov <alchark@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexey Charkov <alchark@gmail.com>
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: enable wifi on ArmSoM Sige5
-Date: Wed, 04 Jun 2025 21:01:20 +0200
-Message-ID: <11432858.nUPlyArG6x@workhorse>
-In-Reply-To: <20250603-sige5-updates-v1-3-717e8ce4ab77@gmail.com>
-References:
- <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
- <20250603-sige5-updates-v1-3-717e8ce4ab77@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD90B42A87;
+	Wed,  4 Jun 2025 19:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749063825; cv=none; b=GCW8Dk//E+SFTunynjjvmUF6h1n3ORWTuRfktZC0Px77fnvi49jlfv5semJ/nL3+sxF5CGR76IY4xacHbAV8wfI5Kd2ki/gXEV8caIKnXDYuRuRGfzDLx3yNWtK2BhoJUpBpHAFD/v2VfylS3ySDeM9zneUNtF2amR/V+uWl8Cc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749063825; c=relaxed/simple;
+	bh=SSj0a4S8JWpcVi82OUcXIiFFPHSMfq7dSD4fpm8a/0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QBFBDWrmVTdFm2o1qqESf5fdTe2y6junWs++khuKxGZRxnKscxE6Nlqa0s6vyZObXCsQDb4CT4iEFqfXJlsqB2Q1V/3wR6W30fYLCahQy+eYVTJI318dZCYXwVuNJ1Rneq2COZi+j/GQZAZf0lbniNmugN0uxOBhAJSgEpxGdtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EP8diKj9; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 554J3MYI897878;
+	Wed, 4 Jun 2025 14:03:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749063802;
+	bh=Hu/CStfhLTfYqP6nHqBde5DQUaGmbLCwbgur7Xid0WE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=EP8diKj9O6TG7m21CFVcddkbSdMEEynTIAk75cyWBVwnEkK8Bu4IEati/nSY5uuYU
+	 VP7LqqjsUXfEGdJhuqTZfILUJSmzdEAe84j+i/fPeSqRm0S4cUEygEXxdnCllx6E+E
+	 qUnwysfBt7BdNxJxpkDRzV3IzZoWVlrWWSrDYhWQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 554J3Mdx566029
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 4 Jun 2025 14:03:22 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
+ Jun 2025 14:03:21 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 4 Jun 2025 14:03:21 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 554J3LR42513033;
+	Wed, 4 Jun 2025 14:03:21 -0500
+Message-ID: <967bc855-76f3-4598-853c-d65ce142995d@ti.com>
+Date: Wed, 4 Jun 2025 14:03:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Discussion] Global vs Local devicetree overlays for addon board
+ + connector setups
+To: Ayush Singh <ayush@beagleboard.org>, <xypron.glpk@gmx.de>,
+        Jason Kridner
+	<jkridner@beagleboard.org>,
+        Deepak Khatri <lorforlinux@beagleboard.org>,
+        Dhruva Gole <d-gole@ti.com>,
+        Robert Nelson <robertcnelson@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Pantelis Antoniou
+	<pantelis.antoniou@gmail.com>,
+        Herve Codina <herve.codina@bootlin.com>
+CC: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <b1990c97-8751-4964-a3e8-9598f4cfac2a@beagleboard.org>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <b1990c97-8751-4964-a3e8-9598f4cfac2a@beagleboard.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tuesday, 3 June 2025 19:01:15 Central European Summer Time Alexey Charkov wrote:
-> ArmSoM Sige5 uses a soldered-on SDIO connected WiFi module. Namely,
-> board v1.1 uses a Realtek based BL-M8852BS2, while v1.2 uses a Broadcom
-> based BW3752-50B1.
+On 4/30/25 7:07 AM, Ayush Singh wrote:
+> Hello everyone,
+> 
+> 
+> This mailing thread is dedicated to discussing what approach should be taken regarding overlays for addon board + connector setups. It is loosely a continuation of [0], so feel free to go through it.
+> 
+> 
+> Introduction
+> *************
+> 
+> To provide a background, the goal is to have a common way to support setups involving addon board + connector. Some examples are as follows:
+> 
+> - MikroBUS [1]
+> 
+> - PocketBeagle 2 [2]: After discussion in [0], it seems that even board headers should be treated as a addon board + connector problem.
+> 
+> 
+> There are 2 main approaches currently floating around. They serve as examples of Global and Local approaches. However, the main discussion topic is global vs local rather than the specific approaches.
+> 
 
-Okay, so there's two board revisions, which makes this patch and the
-following that adds bluetooth a problem. This patch here doesn't
-seem to actually add the SDIO Wi-Fi module node where it'll differ,
-so skirts around the issue AFAIU. It might also be that it's not
-needed for you and I just don't notice because I have v1.1 where the
-SDIO driver for that module doesn't exist yet iirc.
-
-But what we should think about is first doing
-- probably add a new compatible for armsom,sige5-v1.2
-- git mv arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts \
-         arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtsi
-- commit here like Sebastian Reichel had to do for [1]
-- create a new arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-  that includes the dtsi and moves the model and compatible property
-  there. Make sure the model includes v1.1 in the name, compatible
-  should remain the same
-- commit here that will be a squash commit like Sebastian Reichel
-  had to do in [2]
-- create a new arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5-v1.2.dts,
-  could be adding the Wi-Fi node here to cut down on how many patches we
-  do. I assume you only have the v1.2 board and can't test the older Wi-Fi,
-  which is fine.
-  compatible should probably be something like
-    compatible = "armsom,sige5-v1.2", "armsom,sige5", "rockchip,rk3576";
-  Don't forget to change the model property as well.
-
-I know this will be a royal PITA, especially considering they'll likely
-never produce v1.1 again and it now hogs the name, but keeping the
-current dts as 1.1 may be the best way forward, as it keeps compat (though
-the Wi-Fi changes won't affect anything already in there) and will stop
-people from accidentally picking the higher number better DTS like what
-happens with rockpro64 all the time where the non-numbered DTS is 2.1 and
-the numbered one is 2.0 and people keep picking 2.0.
+This is far too reductive, local vs global is only a minor detail as part
+of a couple proposed solutions to a much larger topic. There are much more
+fundamental issues around add-on boards to be worked out before we get to
+this level of detail.
 
 > 
-> Add required device tree nodes in the SoC .dtsi for the SDIO controller
-> and pinctrl / clock wiring in the board .dts for the module itself.
+> 1. __symbols__ based approach [3]
 > 
-> Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> ---
->  .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 36 ++++++++++++++++++++++
->  arch/arm64/boot/dts/rockchip/rk3576.dtsi           | 16 ++++++++++
->  2 files changed, 52 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> index 7ce1fb1380b0863c902fdd9cbc7454ee6011cf92..dcd033859398312f7693bebb7f080ee4f2ecaa32 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> @@ -219,6 +219,15 @@ vcc_5v0_host: regulator-vcc-5v0-host {
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&usb_host_pwren>;
->  	};
-> +
-> +	sdio_pwrseq: sdio-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		clocks = <&hym8563>;
-> +		clock-names = "ext_clock";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&wifi_reg_on>;
-> +		reset-gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_LOW>;
-> +	};
->  };
->  
->  &combphy1_psu {
-> @@ -781,6 +790,16 @@ usb_host_pwren: usb-host-pwren {
->  			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
->  		};
->  	};
-> +
-> +	wireless-wlan {
-> +		wifi_wake_host: wifi-wake-host {
-> +			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_down>;
-> +		};
-> +
-> +		wifi_reg_on: wifi-reg-on {
-> +			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
->  };
->  
->  &sai1 {
-> @@ -808,6 +827,23 @@ &sdhci {
->  	status = "okay";
->  };
->  
-> +&sdio {
-> +	bus-width = <4>;
-> +	cap-sdio-irq;
-> +	disable-wp;
-> +	keep-power-in-suspend;
-> +	mmc-pwrseq = <&sdio_pwrseq>;
-> +	no-sd;
-> +	no-mmc;
-> +	non-removable;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr104;
-> +	vmmc-supply = <&vcc_3v3_s3>;
-> +	vqmmc-supply = <&vcc_1v8_s3>;
-> +	wakeup-source;
-> +	status = "okay";
-> +};
-> +
->  &sdmmc {
->  	bus-width = <4>;
->  	cap-mmc-highspeed;
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-
-Okay, I think adding the sdio node to the SoC dtsi should be a separate
-patch before this one.
-
-> index 1086482f04792325dc4c22fb8ceeb27eef59afe4..a09582470bb7f654b711308da1e51fa8571ca1e8 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-> @@ -1695,6 +1695,22 @@ sdmmc: mmc@2a310000 {
->  			status = "disabled";
->  		};
->  
-> +		sdio: mmc@2a320000 {
-> +			compatible = "rockchip,rk3576-dw-mshc", "rockchip,rk3288-dw-mshc";
-> +			reg = <0x0 0x2a320000 0x0 0x4000>;
-> +			clocks = <&cru HCLK_SDIO>, <&cru CCLK_SRC_SDIO>;
-> +			clock-names = "biu", "ciu";
-> +			fifo-depth = <0x100>;
-> +			interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
-> +			max-frequency = <200000000>;
-> +			pinctrl-0 = <&sdmmc1m0_clk &sdmmc1m0_cmd &sdmmc1m0_bus4>;
-> +			pinctrl-names = "default";
-> +			power-domains = <&power RK3576_PD_SDGMAC>;
-> +			resets = <&cru SRST_H_SDIO>;
-> +			reset-names = "reset";
-> +			status = "disabled";
-> +		};
-> +
->  		sdhci: mmc@2a330000 {
->  			compatible = "rockchip,rk3576-dwcmshc", "rockchip,rk3588-dwcmshc";
->  			reg = <0x0 0x2a330000 0x0 0x10000>;
+> This was originally proposed by Andre Davis [3]. It defines an overlay with just special names in `__symbols__`, which is used along with an overlay for the addon-board, which makes use of the node names defined in the connector `__symbols__` overlay. Please take a look at the original patch series since it provides a working example of how it can be used [3].
 > 
->
+> 
+> It has a few nice benefits such as it works pretty well with existing infrastructure, and does not need much in the way of new functionality. However, for this discussion thread, I want to consolidate the discussion regarding how this approach directly adds the devices to the appropriate nodes, Eg. An SPI device in addon board will be added to the appropriate SPI controller, etc. This means the changes are made to the global tree.
+> 
 
-So in conclusion:
-- bindings patch adding v1.2 compatible
-- SoC dtsi patch for the sdio node
-- git mv patch
-- rk3576-armsom-sige5.dts patch, ask maintainer to squash it into the
-  previous patch, make it obvious by giving it the same subject or something
-- rk3576-armsom-sige5-v1.2.dts patch
+This is how devices are already added, if you add a SPI device you
+put it under the SPI controller. There is no "global tree", there
+is just one device tree to represent the device, and it has a well
+established ways of hierarchically representing devices.
 
-Sorry to drop all this on you, it's a little unpleasant and in-the-woods
-with regards to preparing a patch series. Basically, the reason why I've
-held off on this for the moment is that I don't have a v1.2 board and my
-v1.1 board's Wi-Fi module doesn't seem to be supported (yet).
+> 
+> 2. export-symbols based approach [4]
+> 
+> 
+> This approach was originally proposed by Herve Codina [5]. It defines a special node (local to the connector) say `export-symbols`. This node takes precedence over global `__symbols__`, and thus is used to define standard names for nodes used in addon board overlay. Please look at [4] to get a more in-depth explanation.
+> 
+> 
+> The main difference here is that all the addon board overlay changes are isolated to the connector node in the devicetree. Eg: an I2C device in addon board will be added to the connector node (as defined in i2c bus extension patch series [6]). This means the changes are made to the connector node and not the global tree.
+> 
+> 
+> This approach needs extra plumbing (like i2c bus extension [6], something similar for SPI, etc) to make the whole approach work. Only GPIO and PWM with Nexus node can use this approach right now.
+> 
 
-Kind regards,
-Nicolas Frattaroli
+This is the more fundamental issue: do you want to work within the existing
+device tree framework, or do you want to make something new. `export-symbols`
+is only the tip of the iceberg of new things that will be needed.
 
-[1]: https://lore.kernel.org/linux-rockchip/20250508-rock5bp-for-upstream-v2-1-677033cc1ac2@kernel.org/
-[2]: https://lore.kernel.org/linux-rockchip/20250508-rock5bp-for-upstream-v2-2-677033cc1ac2@kernel.org/
+This "extra plumbing" is bus extensions in DT for every wired bus type.
+Countless new Nexus nodes, connector definitions, pinmuxing, and bindings
+for the same. And then changes to DT overlay tooling including all the
+infrastructure that uses overlays in many external projects, which IMHO is
+the largest issue here.
+
+My core point here is this, imagine you take a BeagleBone and plug in
+a cape. This statically combined device in your hand can be completely
+described using existing DT today. For any solution we come up with for
+doing this dynamically, the resulting DT should look the same as if
+it was done for the combined device by hand ahead of time. The combined
+Beagle+cape device is exactly the same device no matter what time you
+plug in the cape. So why should the DT that describes this combined
+device be different in the two cases?
+
+> 
+> Basic Requirements
+> 
+> *********************
+> 
+> 
+> Here are some basic functionality that the chosen approach can do for it to be viable for the connector + addon board setups:
+> 
+> 
+> 1. Dynamic device addition/removal from userspace
+> 
+
+I'm going to suggest we ignore the removal part. Not because it is too
+difficult to solve, but because it is impossible to solve.
+
+A huge amount of drivers and devices do not actually allow for removal.
+
+The reason is because there is no need, hot-pluggable busses are the
+exception, not the rule. The rare cases like USB are built to handle
+this both in hardware and software. None of the connectors we have
+talked about are actually hot-pluggable! I2C, SPI, etc.. none of
+these are hot-pluggable. Even if you get away with yanking the cape
+off a BeagleBone while it is running once or twice, it is violating
+the electrical specifications and you will eventually break something.
+
+If we don't focus on the (non-valid) removal part, so many other parts
+solutions become viable again. Right now we have no good way to even
+*add* an add-on board, even statically, so let's not let "perfect" be
+the enemy of good..
+
+> 
+> A lot of connectors + addon board setups do not have any dynamic discovery addition. This is compounded when talking about treating the whole header in SBCs like PocketBeagle 2 as a connector, since people would want to wire LEDs and stuff to individual pins. So a mechanism using sysfs or configfs is required
+> 
+> 
+> 2. Dynamic device addition/removal by driver using EEPROM or something else
+> 
+> 
+> Some setups (MikroBUS boards with 1-wire EEPROM, Beagle capes) have EEPROMs that contain board information which can be used to detect which overlay should be applied.
+> 
+> 
+> Main Discussion
+> 
+> *****************
+> 
+> The main topic I wish to discuss if global devicetree overlays are okay for addon-board setups. Let me outline some reasons for I prefer the local devicetree overlays approach:
+> 
+> 
+> 1. Addon board removal on multiple connector setups
+> 
+> 
+> Say connector A added an I2C device to the controller, then connector B added an I2C device to the same controller. I am not sure how well removing overlays out-of-order works.
+> 
+
+I don't follow here. Multiple of the same I2C device are still identifiable
+even on the same controller. Their IDs give them away, and even if not, this
+would be trivially solved with a little bit of meta-data tracking in the
+driver model layer.
+
+> 
+> 2. Who owns the device
+> 
+> 
+> Say there are 2 connectors A and B. Both connectors share an I2C controller. Let both connectors have the same device attached. In case of `__symbols__` based approach, both connectors would technically be successful in applying the overlays, rather than one of the overlays failing.
+> 
+
+How does the connector solution help here? Seems the `__symbols__` way would make
+it easier to detect as both devices would need added to the same controller node,
+which would be the point to detect such conflicts. Were each connector would have
+no way to communicate that the resource is double-booked.
+
+> 
+> 3. How to register the newly added devices
+> 
+> 
+> I am a bit unsure about this one since I will have to check if the kernel tries to register new devices automatically after applying the overlay. For local setups, I was using `devm_of_platform_populate` on the connector device.
+> 
+
+Easy to solve for either method, we can always re-run the device registration loop
+after applying an overlay if it doesn't already.
+
+> 
+> 4. Security
+> 
+> 
+> I think local modification is more secure than global tree modification. A completely local solution should be as secure from devicetree perspective as USB. But I am not an expert.
+> 
+> 
+> Drawbacks of local setups
+> 
+> ***************************
+> 
+> 
+> 1. Needs a lot of surrounding work.
+> 
+> 
+> I2C bus extension is needed for I2C devices to work, something similar for SPI. At least ADC, PWM and GPIO should be covered with just nexus nodes.
+> 
+> 
+> Closing Thoughts
+> 
+> ******************
+> 
+> 
+> I would really like to reach consensus regarding weather the addon-board overlays should be global or local. This will help to give a direction regarding what should be improved, and hopefully make future development move faster. Once a bit of consensus has been reached, we can discuss specific implementations.
+> 
 
 
+There is one big benefit of evil vendor trees: you can test things out like
+this before sending things upstream. You are working with the Beagle folks,
+and that has to be the most perfect testing ground for add-on board overlay
+solutions.
 
+So I would suggest you take the solution you like the most and implement it
+in the Beagle ecosystem. Try it out and find the pros and cons first hand,
+see if it can even work in the first place.
+
+Asking everyone to all reach a consensus on the "right" solution by
+talking it out is not going to happen here. This has been an open issue
+for way too long for it to be that easy :)
+
+Andrew
+
+> 
+> [0]: https://lore.kernel.org/linux-devicetree/d42100cb-eaa0-487f-aaaa-6d8f87bc0705@beagleboard.org/T/#m09b2ebe28b6202b2a926970150caf718eff6d9ac
+> 
+> [1]: https://www.mikroe.com/mikrobus
+> 
+> [2]: https://www.beagleboard.org/boards/pocketbeagle-2
+> 
+> [3]: https://lore.kernel.org/lkml/20240702164403.29067-1-afd@ti.com/
+> 
+> [4]: https://lore.kernel.org/devicetree-spec/dbe566ea-447f-4f91-a0b2-f464374955f4@beagleboard.org/T/#m591e737b48ebe96aafa39d87652e07eef99dff90
+> 
+> [5]: https://lore.kernel.org/all/20241209151830.95723-1-herve.codina@bootlin.com/
+> 
+> [6]: https://lore.kernel.org/devicetree-spec/20250401081041.114333-1-herve.codina@bootlin.com/T/#t
+> 
+> 
+> 
+> Best Regards,
+> 
+> Ayush Singh
+> 
 
