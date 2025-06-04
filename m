@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-672725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8389ACD6B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D753ACD6B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0A6D16EC5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C181781BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3D726156A;
-	Wed,  4 Jun 2025 03:53:53 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772079CD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 03:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90C5261570;
+	Wed,  4 Jun 2025 03:48:55 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id B818770838;
+	Wed,  4 Jun 2025 03:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749009233; cv=none; b=I4cRBjEVsrWxCjr4LpdR9H8HJxuh78kE2eN1uTVMBz6fRx/SmlGf/iQByS7iRxDoIgQuLMlGPBJB3MWznd0OXtZYo5HnRKpRXXqrdF0ewq3TtfoFcp5g47SLHt/XAEyZgSNmuGiXxUXVgNJ0UByFis2kJLVmQGB+hkA8izKtDE0=
+	t=1749008935; cv=none; b=sIWQlYcMoNQVA4RfvO52Q576zeZKfnfxSLD0P2yAMXz/gSE7xjFZXNioOCImal4gxYWUkjpenwrHF0XkODvVr+1ZWyflomQgRoKXgUwWJ6Mbjoeg5Age3fRgOP90HnpNc7DsyvdtK00njlb5wDbeen9MnaTc5eJTHZWiFvE4Du8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749009233; c=relaxed/simple;
-	bh=tdS2rHG+ufHcKeUbNdtFyzh5CMAWDSyRXep60d0zdGc=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=W+tIfho99337StGN8lju5dWn0jDDblXVIPXtPm1ON542bUxLXQZ6UJLkpR77nadku1mmyJzDxiMM0/vYv8nox1HeosbXZKHW8RKEC/tJujX2UmPhtXh9KQhVMjBOE8yHTAzkRtsPNgP7DNFIn+PCOhCyMOB7/dyziuuT7eXXNpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bBtl95MjQz3bkR
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:45:25 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.137])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4bBtl26KT5z5TCG0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:45:18 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bBtkr0j4hz8RVF6;
-	Wed,  4 Jun 2025 11:45:08 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 5543j0WP086912;
-	Wed, 4 Jun 2025 11:45:00 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 4 Jun 2025 11:45:01 +0800 (CST)
-Date: Wed, 4 Jun 2025 11:45:01 +0800 (CST)
-X-Zmail-TransId: 2afb683fc13d277-84121
-X-Mailer: Zmail v1.0
-Message-ID: <20250604114501931NW2by8F85vCd24yqRYHAx@zte.com.cn>
-In-Reply-To: <20250604031758.4150209-2-xialonglong@kylinos.cn>
-References: 20250604031758.4150209-1-xialonglong@kylinos.cn,20250604031758.4150209-2-xialonglong@kylinos.cn
+	s=arc-20240116; t=1749008935; c=relaxed/simple;
+	bh=p1azAzD1JQm81XfjGQoJVYO2dhg0xi6TF9uyuTGkfnw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ri1eeYXZbGXitgJ1RMhAJnS2b6vza8qGOqStRB8mfVS1c7Ue60PA+XU1Ghwdb6UMAho829CcmuXO50rCbkDgpE3Dk/3ZYh8XylZf3J4cfSXq+dQOposbV3diNQk3GpnQK6dSic5mHrsC95TPF065DPMKFN1vGaABZSWDX02kf/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id E26EB6018DA57;
+	Wed,  4 Jun 2025 11:48:35 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neil@brown.name,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com
+Cc: Su Hui <suhui@nfschina.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] nfsd: Change the type of ek_fsidtype from int to u8 and use kstrtou8
+Date: Wed,  4 Jun 2025 11:47:26 +0800
+Message-Id: <20250604034725.450911-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <xialonglong@kylinos.cn>
-Cc: <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <xialonglong@kylinos.cn>,
-        <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzJdIG1tL2tzbTogY2FsY3VsYXRlIGtzbV9wcm9jZXNzX3Byb2ZpdCBtb3JlIGFjY3VyYXRlbHk=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 5543j0WP086912
-X-FangMail-Miltered: at cgslv5.04-192.168.251.14.novalocal with ID 683FC154.001 by FangMail milter!
-X-FangMail-Envelope: 1749008725/4bBtl95MjQz3bkR/683FC154.001/10.35.20.165/[10.35.20.165]/mxde.zte.com.cn/<xu.xin16@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 683FC154.001/4bBtl95MjQz3bkR
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> The general_profit_show() only considers ksm_pages_sharing,
-> whereas ksm_process_profit() accounts for both ksm_pages_sharing
-> and ksm_pages_shared for each process. This discrepancy leads to
-> the sum of ksm_process_profit() across all processes not being equal
-> to general_profit_show().
-> 
-> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
-> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
-> ---
->  mm/ksm.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
+The valid values for ek_fsidtype are actually 0-7 so it's better to
+change the type to u8. Also using kstrtou8() to relpace simple_strtoul(),
+kstrtou8() is safer and more suitable for u8.
 
-Thanks for you report, but we'd better not change the definition of ksm_merging_pages which means
-all pages involved in ksm merging (pages_sharing + pages_shared), and Do not rename the existing
-of interface, which breaks user-space tools.
+Signed-off-by: Su Hui <suhui@nfschina.com>
+Suggested-by: NeilBrown <neil@brown.name>
+---
+v2:
+ - change the type of ek_fsidtype to u8 and using kstrtou8.
+v1:
+ - https://lore.kernel.org/all/20250527092548.1931636-1-suhui@nfschina.com/
 
-If we reallt want a more pricise profit of a process , I suggest:
- -  1) Add a variable 'ksm_pages_sharing'  in mm_struct for processes.
- -  2) Refine the implementation of ksm_process_profit().
+ps: I don't add the v1 patch's review tag because it's very different
+between v1 and v2.
 
-Thanks~
+ fs/nfsd/export.c | 8 +++-----
+ fs/nfsd/export.h | 2 +-
+ fs/nfsd/trace.h  | 4 ++--
+ 3 files changed, 6 insertions(+), 8 deletions(-)
 
-> 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index 8583fb91ef13..fa4e1618b671 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -824,12 +824,10 @@ static void remove_node_from_stable_tree(struct ksm_stable_node *stable_node)
->  	hlist_for_each_entry(rmap_item, &stable_node->hlist, hlist) {
->  		if (rmap_item->hlist.next) {
->  			ksm_pages_sharing--;
-> +			rmap_item->mm->ksm_merging_pages--;
->  			trace_ksm_remove_rmap_item(stable_node->kpfn, rmap_item, rmap_item->mm);
-> -		} else {
-> +		} else
->  			ksm_pages_shared--;
-> -		}
-> -
-> -		rmap_item->mm->ksm_merging_pages--;
+diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+index 88ae410b4113..cadfc2bae60e 100644
+--- a/fs/nfsd/export.c
++++ b/fs/nfsd/export.c
+@@ -82,8 +82,7 @@ static int expkey_parse(struct cache_detail *cd, char *mesg, int mlen)
+ 	int len;
+ 	struct auth_domain *dom = NULL;
+ 	int err;
+-	int fsidtype;
+-	char *ep;
++	u8 fsidtype;
+ 	struct svc_expkey key;
+ 	struct svc_expkey *ek = NULL;
+ 
+@@ -109,10 +108,9 @@ static int expkey_parse(struct cache_detail *cd, char *mesg, int mlen)
+ 	err = -EINVAL;
+ 	if (qword_get(&mesg, buf, PAGE_SIZE) <= 0)
+ 		goto out;
+-	fsidtype = simple_strtoul(buf, &ep, 10);
+-	if (*ep)
++	if (kstrtou8(buf, 10, &fsidtype))
+ 		goto out;
+-	dprintk("found fsidtype %d\n", fsidtype);
++	dprintk("found fsidtype %u\n", fsidtype);
+ 	if (key_len(fsidtype)==0) /* invalid type */
+ 		goto out;
+ 	if ((len=qword_get(&mesg, buf, PAGE_SIZE)) <= 0)
+diff --git a/fs/nfsd/export.h b/fs/nfsd/export.h
+index 4d92b99c1ffd..b9c0adb3ce09 100644
+--- a/fs/nfsd/export.h
++++ b/fs/nfsd/export.h
+@@ -88,7 +88,7 @@ struct svc_expkey {
+ 	struct cache_head	h;
+ 
+ 	struct auth_domain *	ek_client;
+-	int			ek_fsidtype;
++	u8			ek_fsidtype;
+ 	u32			ek_fsid[6];
+ 
+ 	struct path		ek_path;
+diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+index 3c5505ef5e3a..b244c6b3e905 100644
+--- a/fs/nfsd/trace.h
++++ b/fs/nfsd/trace.h
+@@ -344,7 +344,7 @@ TRACE_EVENT(nfsd_exp_find_key,
+ 		 int status),
+ 	TP_ARGS(key, status),
+ 	TP_STRUCT__entry(
+-		__field(int, fsidtype)
++		__field(u8, fsidtype)
+ 		__array(u32, fsid, 6)
+ 		__string(auth_domain, key->ek_client->name)
+ 		__field(int, status)
+@@ -367,7 +367,7 @@ TRACE_EVENT(nfsd_expkey_update,
+ 	TP_PROTO(const struct svc_expkey *key, const char *exp_path),
+ 	TP_ARGS(key, exp_path),
+ 	TP_STRUCT__entry(
+-		__field(int, fsidtype)
++		__field(u8, fsidtype)
+ 		__array(u32, fsid, 6)
+ 		__string(auth_domain, key->ek_client->name)
+ 		__string(path, exp_path)
+-- 
+2.30.2
+
 
