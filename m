@@ -1,93 +1,154 @@
-Return-Path: <linux-kernel+bounces-673680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93736ACE489
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 20:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9595ACE490
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 20:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6413A8CD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2125C189674F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7182B1E1DF2;
-	Wed,  4 Jun 2025 18:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC75B1FBEBD;
+	Wed,  4 Jun 2025 18:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAigJKNk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X51E8hV/"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF75F320F
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 18:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03E9320F;
+	Wed,  4 Jun 2025 18:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749063297; cv=none; b=Klcp6HS8rszhz37OaSQCqmWxQ+EAmNpIp5OafZTAtcb4pwjTuqv+wpNCDpwmXVpCY6IxA0b1VtoUqzToCvXsyG4DM+NBUcu9LFfdf07Qi/KDjdAjXIJR3mctnmTAq6ny10ugnz6zc4L4cmtkog/EJ3RXLXOoOhGz92DwUnejrw4=
+	t=1749063505; cv=none; b=DIOqG7nX+rVEZECLBVeDRAiQZLnuAhQOYiLqPQ6TaNrGoimjCdNogjBRaZIpD8+UfpYg4wZOr0fCJCXsLK0AMPVZJcflLUsFqYugHgyqbWiNsmuITeeGdyAnUpRb6Go49iBiOpIj6K5iXrLg/CnCYNAvgZg7TED1/fghvFJetM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749063297; c=relaxed/simple;
-	bh=ulrMt2J3mWVFWJI6mwV5q4GOYMWQW089wjWIyDr66f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oKOhRmVEuyGIzF2fIhS+C/UjgS1xRDypH6dPI1vvoenh5EHJM0pHzdCaWA4SUkoArmiFApHEPvld88V9ITzHs42ImlzAymOdsZvnehTTNOXIKiPDLH9TYnDrlORhe5IecLlBKZ4Y+8C312Trbt1eqfqTB9/etpoqgputPgGDrSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAigJKNk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851E2C4CEE4;
-	Wed,  4 Jun 2025 18:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749063297;
-	bh=ulrMt2J3mWVFWJI6mwV5q4GOYMWQW089wjWIyDr66f0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rAigJKNkO5CLYkrGK7xZHxBDZzH8PZIDT2aR3hZjyVUDG52H4eHF3r5AJ8D/wn1vB
-	 bIDjUdQWH7qpRdejOB91P88W6WEb5BwCQRPE3nXhk0VslRye9MPSLQOvCUtjRj2KZS
-	 aBz5Oes0YrPqRTAWmH57P1P/+M/XNYlBUUDovQ4y7WMGrRX85PM+tyGvUldV5d3Ios
-	 pPX7zJ/5xaBaNdC7/34JzB0riny7yWw33GgI68KJWx0PvVur+39oIA6E9DQeyIFTQT
-	 1miwV9vnUQYZ0Kl0j7RHPeZ3Bxag3LFnP5+jgudFN2f+PfPEh6dSdMaZ7z16n2bVuF
-	 Snx/6c00J2MzA==
-Date: Wed, 4 Jun 2025 08:54:56 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [GIT PULL] sched_ext: Fixes for v6.16-rc1
-Message-ID: <aECWgEYwOhciTIuk@slm.duckdns.org>
+	s=arc-20240116; t=1749063505; c=relaxed/simple;
+	bh=mzGOHlpXmqwWMa0Wr+MTGcZeDudXFPUN2a3kzEWMULE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bHa0oGRzJBh2uBiQ1ar/h7irz9NO1yHSGps+TuRFVM3fuwWfZFUOAhkYD+wBXzxO6D3t6Qi5CoyLUWxw6Je2Mbsu7PT0AZ1UX7uXAneiZAjLULFByvKdvWK0/UIEN3rYXoAqk3JE4yhoD/5sU5RJkzhDWNX+HYam8aLp3nYUXwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X51E8hV/; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2301ac32320so1741525ad.1;
+        Wed, 04 Jun 2025 11:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749063503; x=1749668303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AMYbwbXYccHSVQPKYSpzbCZ+y7pvWM10sRF6pDZbbxY=;
+        b=X51E8hV/dtYUNi8t+bisa9U/xdT5c0e25qniKfgHiFX635wiZdoWYls3uQOlC2HRx6
+         clFyKEkxmADDY56ycp495bf42QeHbOxU1er763YgZR44Vz7gljfIBy+WZMC/5SRwa6SY
+         1f3TTc6VjdzfQejXRpcnSaActdUUXPD8qYfLXohmzjYr+q8AbVNgEw8HOOniJ8m68A2Q
+         WDggG5b479pxGOlub4geHMlqLMOF1LZIyB3xsIXCFS/Ct2Zkt1xh5SH7SUk5jxqfUvP1
+         pA63yBjPrHHJ7szYs+Z+akoociYNf364r5ex/UxQcQyb4WxDQIWhJF175/ArH6+gBsc+
+         bKSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749063503; x=1749668303;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AMYbwbXYccHSVQPKYSpzbCZ+y7pvWM10sRF6pDZbbxY=;
+        b=Vm5mCfxw5EqDnl+ksG/Y5HjlEYUsVQxocZCOTRABRFU9LKka6JikyIBHFGlsCWozIY
+         csgQxgNQDeqs3bl84K1sin2NmCL2N5VqSGcbqMKNhN1ZKyEA5eBkSExKbVPhyIJpp9mu
+         WfpMcZflLLYOd7DipCF1RcXgDsg7TCLagzp94TVgPNneg/T4iYeYE6yYds9E5bakdo6Z
+         8XJUBP5l8lkqUuaCfElz2xemTVHBvbxeONfGbLarEKdYyylFp/+axpN3jm+qIX9WQdPy
+         jnMZPw2Yr3ZL9tsb/BVD7k9pGB7qF5TPNdYwb10agvRbJzCLDHgjPCATED/pQAhnKUoN
+         Gcow==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0BIgYyzYb7VTGieO7+HouVxM+raVMu9xKRvDlEKPKLhTG6E5D7wA0+l5bUI15sa54slztSXbCUra1Mw=@vger.kernel.org, AJvYcCXz8/3XPobA7g3+z/Hp6AesnRvYkmKsnaVCI3XOz/nHa+KEykhhw0AbhGot/mJf5dfNOk81X32o@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLphT5d+1WkdmAFkyE1HJK0dugHN0bvu5Mtp60lE17rpBbCqTg
+	v8hdg7C1N+rcmkMh0Qp3yO0XZBynbaBeCJr9gs+65I9Qb+zS5c2eH28=
+X-Gm-Gg: ASbGnct0Ny7PxsNjmopLYUvoPKYFMcIIAyRJSa7cdmHhAb3w5OmxCw37t1dCKIxsfFy
+	HZYKHUfpaMe3wG24JoIXU+hMrs4xg1sWb3TeTwFbxjoW/NEfzMj2HFfbjVsPBxKVxXlmTNW1pG8
+	VQxGo/THrW7/dzlgST+CfkQY8qX7fq7dkhZoADld4/0qITB6fRZ3Zebr4Nt/5fw1oz8lQ1SUI4k
+	NqFH0xDCugj7A5goKbhNrDL0L/x3UREcFNXy3NtV6V2+p2fefmnYlgqlVPPt8Z+JMHK+y/U0ZPA
+	xSWdDsi0lkdCHYfmqkbxQeXOi8++
+X-Google-Smtp-Source: AGHT+IFGNavVpVXbSNDzCNHh541HFTvUZ/3LSwb0lEij0rwquG0taUQdVUEvneaPNYwhjS5e4aBOpQ==
+X-Received: by 2002:a17:903:a50:b0:235:e71e:a396 with SMTP id d9443c01a7336-235e71ea9a9mr26420135ad.51.1749063502848;
+        Wed, 04 Jun 2025 11:58:22 -0700 (PDT)
+Received: from fedora.. ([2601:647:6700:3390::c8d1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bd939asm107532785ad.70.2025.06.04.11.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 11:58:22 -0700 (PDT)
+From: Kuniyuki Iwashima <kuni1840@gmail.com>
+To: luka.2016.cs@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com
+Subject: Re: [Bug] task hung in rtnl_newlink in Linux kernel v6.12
+Date: Wed,  4 Jun 2025 11:56:39 -0700
+Message-ID: <20250604185820.147956-1-kuni1840@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CALm_T+0emUog-74YTfGnpY4AAgh=jFsYBmttc-uesXFRoyofhw@mail.gmail.com>
+References: <CALm_T+0emUog-74YTfGnpY4AAgh=jFsYBmttc-uesXFRoyofhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 0f70f5b08a47a3bc1a252e5f451a137cde7c98ce:
+From: Luka <luka.2016.cs@gmail.com>
+Date: Wed, 4 Jun 2025 12:18:55 +0800
+> Dear Kernel Maintainers,
+> 
+> I am writing to report a potential vulnerability identified in the
+> upstream Linux Kernel version v6.12, corresponding to the following
+> commit in the mainline repository:
+> 
+> Git Commit:  adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
 
-  Merge tag 'pull-automount' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs (2025-05-30 15:38:29 -0700)
+Please run syzkaller on the latest upstream or at least the latest LTS
+release.
 
-are available in the Git repository at:
+> 
+> This issue was discovered during the testing of the Android 16 AOSP
+> kernel, which is based on Linux kernel version 6.12, specifically from
+> the AOSP kernel branch:
+> 
+> AOSP kernel branch: android16-6.12
+> Manifest path: kernel/common.git
+> Source URL:  https://android.googlesource.com/kernel/common/+/refs/heads/android16-6.12
+> 
+> Although this kernel branch is used in Android 16 development, its
+> base is aligned with the upstream Linux v6.12 release. I observed this
+> issue while conducting stability and fuzzing tests on the Android 16
+> platform and identified that the root cause lies in the upstream
+> codebase.
+> 
+> 
+> Bug Location: rtnl_newlink+0x64c/0x12f4 net/core/rtnetlink.c:3772
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.16-rc1-fixes
+You can find a bunch of similar reports in the mailing list or the
+syzbot dashboard, where too many threads waiting for the same global
+mutex, e.g.
 
-for you to fetch changes up to 9960be72a54cf0e4d47abdd4cacd1278835a3bb4:
+https://lore.kernel.org/netdev/tencent_A3FB41E607B2126D163C5D4C87DC196E0707@qq.com/
 
-  sched_ext: idle: Skip cross-node search with !CONFIG_NUMA (2025-06-03 08:22:27 -1000)
+When you don't have a repro, please make sure there is no duplicate
+report before posting.
 
-----------------------------------------------------------------
-sched_ext: Fixes for v6.16-rc1
+Thanks
 
-Two fixes in the built-in idle selection helpers.
-
-- Fix prev_cpu handling to guarantee that idle selection never returns a CPU
-  that's not allowed.
-
-- Skip cross-node search when !NUMA which could lead to infinite looping due
-  to a bug in NUMA iterator.
-
-----------------------------------------------------------------
-Andrea Righi (2):
-      sched_ext: idle: Properly handle invalid prev_cpu during idle selection
-      sched_ext: idle: Skip cross-node search with !CONFIG_NUMA
-
- kernel/sched/ext_idle.c | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
-
--- 
-tejun
+> 
+> Bug Report: https://hastebin.com/share/omisagagir.bash
+> 
+> Entire Log: https://hastebin.com/share/cetuxoduko.perl
+> 
+> 
+> Thank you very much for your time and attention. I sincerely apologize
+> that I am currently unable to provide a reproducer for this issue.
+> However, I am actively working on reproducing the problem, and I will
+> make sure to share any findings or reproducing steps with you as soon
+> as they are available.
+> 
+> I greatly appreciate your efforts in maintaining the Linux kernel and
+> your attention to this matter.
+> 
 
