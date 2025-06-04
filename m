@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-673091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA4FACDC19
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:47:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0498ACDC14
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262683A5627
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFECB17726D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCBE28EA44;
-	Wed,  4 Jun 2025 10:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24B828D8CD;
+	Wed,  4 Jun 2025 10:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SjlOuvRl"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hIkqJzEK"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E91D28E604;
-	Wed,  4 Jun 2025 10:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AA03FE4;
+	Wed,  4 Jun 2025 10:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749034035; cv=none; b=MiOzHzMv6iqKGoPOZypS4PVk9pkrZv9mEYESkm8GlNMFveCNad7c5lk1+1q58Huol9nn9VloqeeLebte+gjycuoBXgOkf0cOFbq0duZsy28gQR1m/ezBQzOp0AEl4D5pycnAoTJgjUu/zfCH5GosxdmEzlHQ00PfzwnRZ++uTEM=
+	t=1749034030; cv=none; b=qmax+B/cX5TgABX8dvC46z1Zn/cBvDk+PTwMgs3rXoCvpY8MhcF8VE6rt2YhX0OUvkBucRwwMXJvjzJMmDsHkC0J/f/NJja2DDtGSyXtD+C8YmX1snEMTlM4BB9YIkE41UPzP0jHejlwzERLgakyDnqT6ulTkc/bXiE3pzhWxNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749034035; c=relaxed/simple;
-	bh=60Fl1KOrUPbNv5vrl/G82DJcxcAXOwQWTH0HZCHnWek=;
+	s=arc-20240116; t=1749034030; c=relaxed/simple;
+	bh=fcBWWL1rS4f5Sk+veiqqjg2rTPrlh664bDCvpXlsWx0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lrcmoaIeAyvs+y05w6h93l3lWk2OQXgBUfWrbiPZ5llQSvOWQ54SbnGHyDF4u66SSeyw8JlG68Jm37I79pfG1GMaH71w/hUEc3NhP+Z1oib6D8L21Te3na4n8O5tGjJ8Y0fdDR7mrAz0p518lYA/GevGgoJmZZfjlRfh5wNpVF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SjlOuvRl; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=BWrxl3Utf1LdVf7U57ewdlXz2j1K986/XqRGKunAyP88NlalgTVvVRpx9JqHSF8J1w0jeYM7WUnh0pwo5qlIOiikbBCa8vmo9+MsONTuXb7i8HPpAV6qR4v0bgrlekLppIKwV8A+6r3gpUb/WkBLtBFNI4Ykd2LdrYPVuRG9RcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hIkqJzEK; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 554Al0iU772444;
-	Wed, 4 Jun 2025 05:47:00 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 554Al12Q3789918;
+	Wed, 4 Jun 2025 05:47:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1749034020;
-	bh=ASLg/A5fi+W/LA+IOM+ZsHtSzRzn5LVIqH4St0CX4uE=;
+	s=ti-com-17Q1; t=1749034021;
+	bh=URUAuGhJ6oVpvppDA506Q+cOUcLV4A0Cy2nR7TJqxBA=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=SjlOuvRl5xdH1RKUkllJe+gqteEuQ4vJQldUSAn9paJwNBOgQbRQlRS4MsBihKhoF
-	 7ZfA7h/RdfZlAC+v5crpqOCJiUDpOydiTWQRChCiQNKXMPSw7PIWEvQoK6lo82X6v7
-	 Q/xt+9Egr5XClt7lq4FWJNPM4/fnvx40uCq9UmYo=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 554Al0Ij091644
+	b=hIkqJzEKREQcoCXDqFEQCNQ/nmNIeRUyJSWlOTg/9qKw+4smOxu/evYrSiuzmBtCz
+	 G7CouK0O7ebdwhwdghsB49tYbz7w8QCqu+XQo+Pr7Ek/ANPwQYYwdFy4KEoYIl08mH
+	 IiqwTSy5T95qR1snHUb83a8N96wWUcFz1PlJD5Fg=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 554Al1PE1977638
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 4 Jun 2025 05:47:00 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 4 Jun 2025 05:47:01 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 4
- Jun 2025 05:46:59 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
+ Jun 2025 05:47:01 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE103.ent.ti.com
  (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 4 Jun 2025 05:46:59 -0500
+ Frontend Transport; Wed, 4 Jun 2025 05:47:00 -0500
 Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [172.24.227.14])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 554AkwXX1917892;
-	Wed, 4 Jun 2025 05:46:59 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 554Al0OL1830865;
+	Wed, 4 Jun 2025 05:47:00 -0500
 From: Jayesh Choudhary <j-choudhary@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <devicetree@vger.kernel.org>
 CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
         <conor+dt@kernel.org>, <r-donadkar@ti.com>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <j-choudhary@ti.com>
-Subject: [PATCH 1/3] arm64: dts: ti: k3-j721s2-main: Add McASP nodes
-Date: Wed, 4 Jun 2025 16:16:54 +0530
-Message-ID: <20250604104656.38752-2-j-choudhary@ti.com>
+Subject: [PATCH 2/3] arm64: dts: ti: k3-j721s2-main: Add audio_refclk node
+Date: Wed, 4 Jun 2025 16:16:55 +0530
+Message-ID: <20250604104656.38752-3-j-choudhary@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250604104656.38752-1-j-choudhary@ti.com>
 References: <20250604104656.38752-1-j-choudhary@ti.com>
@@ -77,113 +77,36 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add McASP 0-4 instances and keep them disabled because several
-required properties are missing as they are board specific.
+On J721S2 SoC, the AUDIO_REFCLK1 can be used as input to external
+peripherals when configured through CTRL_MMR.
+Add audio_refclk1 node which would be used as system clock for
+audio codec PCM3168A.
 
 Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-index 605f753d3258..6dee0c573980 100644
+index 6dee0c573980..e21f6092b3f0 100644
 --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-@@ -2066,4 +2066,94 @@ gpu: gpu@4e20000000 {
- 		power-domain-names = "a", "b";
- 		dma-coherent;
+@@ -74,6 +74,15 @@ ehrpwm_tbclk: clock-controller@140 {
+ 			reg = <0x140 0x18>;
+ 			#clock-cells = <1>;
+ 		};
++
++		audio_refclk1: clock-controller@42e4 {
++			compatible = "ti,am62-audio-refclk";
++			reg = <0x42e4 0x4>;
++			clocks = <&k3_clks 157 299>;
++			assigned-clocks = <&k3_clks 157 299>;
++			assigned-clock-parents = <&k3_clks 157 328>;
++			#clock-cells = <0>;
++		};
  	};
-+
-+	mcasp0: mcasp@2b00000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x00 0x02b00000 0x00 0x2000>,
-+		      <0x00 0x02b08000 0x00 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 544 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 545 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+		dmas = <&main_udmap 0xc400>, <&main_udmap 0x4400>;
-+		dma-names = "tx", "rx";
-+		clocks = <&k3_clks 209 0>;
-+		clock-names = "fck";
-+		assigned-clocks = <&k3_clks 209 0>;
-+		assigned-clock-parents = <&k3_clks 209 1>;
-+		power-domains = <&k3_pds 209 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
-+	};
-+
-+	mcasp1: mcasp@2b10000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x00 0x02b10000 0x00 0x2000>,
-+		      <0x00 0x02b18000 0x00 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 547 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+		dmas = <&main_udmap 0xc401>, <&main_udmap 0x4401>;
-+		dma-names = "tx", "rx";
-+		clocks = <&k3_clks 210 0>;
-+		clock-names = "fck";
-+		assigned-clocks = <&k3_clks 210 0>;
-+		assigned-clock-parents = <&k3_clks 210 1>;
-+		power-domains = <&k3_pds 210 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
-+	};
-+
-+	mcasp2: mcasp@2b20000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x00 0x02b20000 0x00 0x2000>,
-+		      <0x00 0x02b28000 0x00 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 548 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 549 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+		dmas = <&main_udmap 0xc402>, <&main_udmap 0x4402>;
-+		dma-names = "tx", "rx";
-+		clocks = <&k3_clks 211 0>;
-+		clock-names = "fck";
-+		assigned-clocks = <&k3_clks 211 0>;
-+		assigned-clock-parents = <&k3_clks 211 1>;
-+		power-domains = <&k3_pds 211 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
-+	};
-+
-+	mcasp3: mcasp@2b30000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x00 0x02b30000 0x00 0x2000>,
-+		      <0x00 0x02b38000 0x00 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+		dmas = <&main_udmap 0xc403>, <&main_udmap 0x4403>;
-+		dma-names = "tx", "rx";
-+		clocks = <&k3_clks 212 0>;
-+		clock-names = "fck";
-+		assigned-clocks = <&k3_clks 212 0>;
-+		assigned-clock-parents = <&k3_clks 212 1>;
-+		power-domains = <&k3_pds 212 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
-+	};
-+
-+	mcasp4: mcasp@2b40000 {
-+		compatible = "ti,am33xx-mcasp-audio";
-+		reg = <0x00 0x02b40000 0x00 0x2000>,
-+		      <0x00 0x02b48000 0x00 0x1000>;
-+		reg-names = "mpu","dat";
-+		interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "tx", "rx";
-+		dmas = <&main_udmap 0xc404>, <&main_udmap 0x4404>;
-+		dma-names = "tx", "rx";
-+		clocks = <&k3_clks 213 0>;
-+		clock-names = "fck";
-+		assigned-clocks = <&k3_clks 213 0>;
-+		assigned-clock-parents = <&k3_clks 213 1>;
-+		power-domains = <&k3_pds 213 TI_SCI_PD_EXCLUSIVE>;
-+		status = "disabled";
-+	};
- };
+ 
+ 	main_ehrpwm0: pwm@3000000 {
 -- 
 2.34.1
 
