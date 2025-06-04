@@ -1,95 +1,207 @@
-Return-Path: <linux-kernel+bounces-673135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E49ACDCCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:40:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A676CACDCD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C88597A7092
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66EE3176ED3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC25228ECF5;
-	Wed,  4 Jun 2025 11:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D42928ECD1;
+	Wed,  4 Jun 2025 11:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="suV3Xt94"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UONAhmd/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557B828ECE5;
-	Wed,  4 Jun 2025 11:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D89E28E594
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 11:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749037196; cv=none; b=I0lVLcnDLGU7y19UFyK4uJ+nV6fmsPw7Lr9YllALJwILb+wVItpa2/MP7uxVrErZxdPOMnmLr+SDELxiYWSwsHBJt8G1J8EazLNMZYC8WtE0eDLU1i77dxUkdGZRBYlTtNTM6pVHiKiHiDS9SHoKjGh2wps0lDBR7BWH57kA6w4=
+	t=1749037465; cv=none; b=HzFgy4bd9yxvypQgVV99unpIdY7D/CCcyJNMrP7HBRVmwuGfvtfQFVk88x+dTm424lMR/LhGujdyyV9feP0oPRf+KpCB1yCPdBMo9jjYLKlykuafjToJLv9yb89oSa2SeoqMsjlkiuhePY/71Tdz83QHC58RNu+SjyzYWOYsNx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749037196; c=relaxed/simple;
-	bh=f5sb3YV8qwEzrJRbbUo0eU1F2vSViH0WxMz1v6VOMKA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RSR00xdthOItkMPuGuJusCoCeE9Erj/21qP1FsHHLbPqAYMBETECDoVoTrSVa+TVHq0182z1uDDujd98db2pAw04ClndNXBQa3+W7wMNi2Ecp/IQ+vnD9voYsDhL2jp47WQVLJUFcxYEL7od8E2U/OPoXBSDlwW+bk4pMagEttA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=suV3Xt94; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B946AC4CEE7;
-	Wed,  4 Jun 2025 11:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749037195;
-	bh=f5sb3YV8qwEzrJRbbUo0eU1F2vSViH0WxMz1v6VOMKA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=suV3Xt94XZ0j5pd1qxnjcqnX63gG9D709HAX+kcJPaKQ3RzfUNRbbE1jxBaq+nkCl
-	 oduer5jd7f49zsB6uKoeWPBRGluK22AlgTl58dGkJAHS8vftT/GLk1mIh+nieWoLrJ
-	 0y45gcpyQ6HVER32f3Hclin6B/zLcQeekptpi49+xGcOAvfbhbe0jlMqOKkodc+8fO
-	 i2RtOr8XQVovYo8pG0w6A0F7MaPt3BOTS5PnJvsJ31l2SXBxax1eBijyxv8+V74Rux
-	 sJn7+ouf+dGfREsZVkGmyRJmr752Fj4LswpeyiONueC7Cet2fH8VuzXk9OEVwdcBYU
-	 AYGBEW0lR1fag==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C8D38111E5;
-	Wed,  4 Jun 2025 11:40:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749037465; c=relaxed/simple;
+	bh=KuOgRbBgfLn4JiytyJCJWxPgQxC7L3xGE0gJqeHLfzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LAoCc12LsLHAQn5V7bug3CfzRlINnYd6iOjn4R5zhumK6IiJ0q714Y7APQ08Hg7vbuaO+b3Y9NmIUCdPKGEwgqQsU4gTFD+d+tTL042GTixXAFK6UJzPXhmk2CRxZPP5acIAQ2BkxYPcZVlwkwwrwuXEvQzcjXYFTgcVgfjQyXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UONAhmd/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749037462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lAZ6PoM2yHxT2XxiC3h9Ua+Sq3PY55BOVc0a18RVQnA=;
+	b=UONAhmd/W0N8wviiARmn4O3zJAeu35bBSbdzpxuiglhQfSHpFZXARrC8BKX/7265A3H76B
+	oM7ReL+wa40wd8DquxALT+0nyEiJ9sVQYeGXO/ZJ5H2JbPZcpqKczoTJReJz3H3nR9p+G4
+	za9lbMQfLOlXe99pGT8TGYo1CNo3VYs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-kEvfvVC8PJiW9YLsg1R50A-1; Wed, 04 Jun 2025 07:44:21 -0400
+X-MC-Unique: kEvfvVC8PJiW9YLsg1R50A-1
+X-Mimecast-MFC-AGG-ID: kEvfvVC8PJiW9YLsg1R50A_1749037460
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4eeed54c2so4270146f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 04:44:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749037460; x=1749642260;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lAZ6PoM2yHxT2XxiC3h9Ua+Sq3PY55BOVc0a18RVQnA=;
+        b=qM6xS2YgBvTJLvzh1ynaJbWgq0M94+tvhZ2SLVF8o9zbvZI1XJnk6t+GXdpTUtWZ8x
+         YJ69LcJV6Jn+8YWMex4gUZ/H2i2126MZr8i8M+5nhTeQn+TmFKDO1bG4+xNSuDCzQ2Ll
+         mtr+6cptdrKyi+hQSmIMx9CSkXMShazSRXkPAoaw8OsSnvzDjw4s38RIxRVvDTUXu3hI
+         X72REEBFbuXEIZww2FNxBU91wzDqkmIr7hEwQeNn+GyWKBw3pNaMGNrNYfwKFawL+1Ct
+         eKup1pJ4QiCbzgRKpopB/ejCzsAh5ZCM3a40P/8nVtIGM4y89ZRn/j1/qn5y4YU7uGoj
+         IZcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0RQ/wJIUBQtPUiO8rZYbXT5Jrn4VJr3R8//2e7TYAR5mpC4NLO+p2LyT2gpXoBGQB01cKg9LTr+QjKdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF8WFgEZ4oJYKlILw37NutKeIC9YS9bUgzoTnjSglaq2Mqz2Ty
+	WN39y9LRQJ+zpo2gDYSfnwl9q4qq3Jg+bkUbi27f2ZV6FLO9eERfpRRmTGo15RRFobPz00cq6gt
+	PyvTUDWbpgipL2z/TVZlNBzKTI7zt9G7KN7hEXUDixLqkpBAhw2DqioiS/EiLVZI9Sw==
+X-Gm-Gg: ASbGncvh0RgQD0e3/tsOlA3Z3BNUUg4+7gBwi3ITTZpqeM0NQ7R0WIx5qi5aSEze0AS
+	G3JPwvZQ/TCEL7LJiMRx582EMQWnNYPci8n5qToUDKtwhuDgSgHpRiEW+0FIaUu8UybFA9ygkiZ
+	x00xMKlRanlUTNGkzLakSmcw4KSfGzkqG1W8k9NnDx93BTJonuOvLv9r71yEoAclSuyJEMjj3Sm
+	6lMM8s7Z/t0zRt3krrBq3sQn2AkfW30ZcLdxXvsgL0pUd57ftsavyhJRN/y8WwoORxlBW4PynyV
+	f536l0K/nbicz0wls8vcKuSl8dNludFM/WjTxGuiACTJ4bGaVVQ4oBjHZyFDt/yx6l7Yr50OL7Q
+	Kv6DzEsWfz4nVMfSV4yEilQLwvD/8AKWxxKYCZd6Or80iWSEdsA==
+X-Received: by 2002:a5d:5f95:0:b0:3a4:ed62:c7e1 with SMTP id ffacd0b85a97d-3a51d8f59cfmr1948577f8f.12.1749037460531;
+        Wed, 04 Jun 2025 04:44:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTk+ZZ/txMdPYiZPbWtN+UTbUQiFhEQ2KYLiZED5o28ZN+uPzMH8V5s47pXStLZWFaTG3UiA==
+X-Received: by 2002:a5d:5f95:0:b0:3a4:ed62:c7e1 with SMTP id ffacd0b85a97d-3a51d8f59cfmr1948538f8f.12.1749037460114;
+        Wed, 04 Jun 2025 04:44:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf? (p200300d82f1bb8006fdb1af24fbd1fdf.dip0.t-ipconnect.de. [2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451e505c350sm51456695e9.0.2025.06.04.04.44.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Jun 2025 04:44:19 -0700 (PDT)
+Message-ID: <d72c77b7-2f40-4236-8288-e811f82671c6@redhat.com>
+Date: Wed, 4 Jun 2025 13:44:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] mm: Optimize mprotect() by batch-skipping PTEs
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+ joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+ kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250519074824.42909-1-dev.jain@arm.com>
+ <20250519074824.42909-2-dev.jain@arm.com>
+ <912757c0-8a75-4307-a0bd-8755f6135b5a@redhat.com>
+ <76afb4f3-79b5-4126-b408-614bb6202526@arm.com>
+ <25c0c700-656c-4a8a-8ef1-5093581cf25c@redhat.com>
+ <4f97491c-b0dd-406a-9ddb-4f4424571704@arm.com>
+ <8c389ee5-f7a4-44f6-a0d6-cc01c3da4d91@redhat.com>
+ <92cc1bfb-ab7a-4abc-afd0-49f8f2d12da0@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <92cc1bfb-ab7a-4abc-afd0-49f8f2d12da0@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] gve: add missing NULL check for
- gve_alloc_pending_packet() in TX DQO
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174903722800.2252645.3715137704739506343.git-patchwork-notify@kernel.org>
-Date: Wed, 04 Jun 2025 11:40:28 +0000
-References: <20250602103450.3472509-1-alok.a.tiwari@oracle.com>
-In-Reply-To: <20250602103450.3472509-1-alok.a.tiwari@oracle.com>
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>
-Cc: almasrymina@google.com, bcf@google.com, joshwash@google.com,
- willemb@google.com, pkaligineedi@google.com, pabeni@redhat.com,
- kuba@kernel.org, jeroendb@google.com, hramamurthy@google.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, darren.kenny@oracle.com
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Mon,  2 Jun 2025 03:34:29 -0700 you wrote:
-> gve_alloc_pending_packet() can return NULL, but gve_tx_add_skb_dqo()
-> did not check for this case before dereferencing the returned pointer.
+On 04.06.25 12:38, Dev Jain wrote:
 > 
-> Add a missing NULL check to prevent a potential NULL pointer
-> dereference when allocation fails.
+> On 22/05/25 9:48 pm, David Hildenbrand wrote:
+>> On 22.05.25 09:47, Dev Jain wrote:
+>>>
+>>> On 22/05/25 12:43 pm, David Hildenbrand wrote:
+>>>>
+>>>>>> ... likely with a better function name,
+>>>>>
+>>>>>
+>>>>> I want to be able to reuse the folio from vm_normal_folio(), and we
+>>>>> also
+>>>>> need
+>>>>>
+>>>>> nr_ptes to know how much to skip, so if there is no objection in
+>>>>> passing
+>>>>> int *nr_ptes,
+>>>>>
+>>>>> or struct folio **foliop to this new function, then I'll carry on with
+>>>>> your suggestion :)
+>>>>
+>>>> Can you quickly prototype what you have in mind and paste it here?
+>>>> Will make it easier :)
+>>>
+>>>
+>>> if (prot_numa)
+>>>
+>>>        func(vma, addr, oldpte, &nr);
+>>
+>> I'd probably return "nr_ptes" and return the folio using a &folio
+>> instead.
+>>
+>> That way, you can easily extend the function to return the folio in
+>> the patch where you really need it (not this patch IIUR :) )
 > 
-> This improves robustness in low-memory scenarios.
-> 
-> [...]
+> Just confirming, you mean to return nr_ptes and get the folio by passing
+> &folio, and the function parameter will be struct folio **foliop?
 
-Here is the summary with links:
-  - [net,v2] gve: add missing NULL check for gve_alloc_pending_packet() in TX DQO
-    https://git.kernel.org/netdev/net/c/12c331b29c73
+Yes.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Cheers,
 
+David / dhildenb
 
 
