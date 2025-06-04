@@ -1,224 +1,84 @@
-Return-Path: <linux-kernel+bounces-672759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B813ACD738
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 06:29:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A78ACD73C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 06:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A327A2908
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 04:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641353A6DE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 04:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD222609F5;
-	Wed,  4 Jun 2025 04:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE0A2620E5;
+	Wed,  4 Jun 2025 04:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JHajTVmB"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="k4r5apP8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408581420DD
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 04:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96981DE4CA;
+	Wed,  4 Jun 2025 04:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749011361; cv=none; b=iPAcGEJ/MOTBCgJLa8cifSn2STfGC9h81R2C6CBVTKbbhHSYvcJdhFN3k8S1/BxcOBexBtUZW5WYOMGibHx9WwQQdYV5iw9bUU7br8t5kyG0ErXUANuOj2z2Fkeo3pa0/sPx6A1WB05sgEVlvQNYWIE/J21sBfZGOIGaph9VP0k=
+	t=1749011619; cv=none; b=hmQJ1ataKC/LZ+AwVSSYouw9U73HUf020EkOXZExWwT+wMGO8a8d2vvEfCYx3iaGF5KgeuSk6z0zcYXhqHcCj1CNrFlPwBjNb27mTAp4ymLlk9PwGFVnTmiGFj3BeEz83UvU2lWfxHZ9nDLeKVkhDEEdgVPA0kQf3Q7IE6VudXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749011361; c=relaxed/simple;
-	bh=9csZ3Gcth6WJNkB5b9Wr1HShSGj7odzvAtZL7/7yaZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n61/7IqVDizN1+1VvIsoygCLY6AHQ+6Z/ePnhLpv17ReGzF4/3xuf7FvSSc79KwGE7itrbOvSSTLjFWK0g4+8ABXeBhDACxAX93TlwDqY1OrR7pLp7LLWbOWLnXXZcNb/I/yP+PDR94M0auI6neraf20kJwtDOWGEYIypw8RiBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JHajTVmB; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-235ca5eba8cso125975ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 21:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749011359; x=1749616159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FGNSBEf0AD284oSE13H/FFAffi0rYgrIINmsLvBpAlI=;
-        b=JHajTVmBDIRWXZooXOtWBKdogAMylkEASxJL9i2Q1EAxY3G+Qg7vGlxjVDGZ3Vxpd5
-         Qr6OCxCg/Sh/Kcme8mm1GLq8DoH8x7ByIEfB8U/WrotlcwXmLyltlq82TumrcItay/Wk
-         v0rc71pvKg7dr4s71aGQerIvLrU4Vi56tp4oQvWIBh2d5k9IUjUjBdtUwnTNAhCLWZFk
-         pV2NFvnNfQpSkQSsChQ0UiG3sCq9LeqLoc9Es2VP5a5MzqPkcamZOr+87Lh5NbeTIVKs
-         oNl27mPk6Nqdm8PxnrTHSgJHVqCVy1vXTLchSyCMCYoIC4kEUyNP47aXrZWHgBE2IJoA
-         jvBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749011359; x=1749616159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FGNSBEf0AD284oSE13H/FFAffi0rYgrIINmsLvBpAlI=;
-        b=K7oVTP7NGEgvbaMj7Ok643Kes6s6EP2GAls0/ai3ujjNYz4maRWddXsJq6lIqTgMvp
-         XOGRxTWX5gFUkNE8SN4PyZhnq+eOMFuwPx4tBdg7FeCwk3CK57rtaASBEVjCjgVHZSvy
-         ZCGJmJ/Lsz4Q1giGp+hhIA1c6YkIhUOTYouBDb44RE2ZFwXejsG3BjNK80a1RMjC8lre
-         ozbzfnpBY9648Knz5rDbSAIDIpsKhZhvGsIJ220sllfrT9YHs3gzc5G1FpvjufiNjcsQ
-         J4Yy5Ju4gjOBfrA8Ivg6UD6aSUnv7kpjuAK5L7+u9HJE0WF/NZpktStRm33x+OB2I1RD
-         5ywQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViJqEVRyTzEgxlorG+i52fQQQMB8Tdj2k4dGTcWwFoAmvl622QlhZERy972bEbrlHNPxr67e+8y8ppMMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlNJfQb9uxefFBLE0UnJFae3+ui2hbh37VqlnioejjzKVy1F+j
-	os/mJddqYNjDLDoPBfuELyCd0SR4zATq4bLayJOAgC4J9/w4wU1ueaX9cqbdE5sL3O4ucaq5Jxg
-	abQKQzxXF4ZEzxHi0KuDc/v8OXoCL6zpnjUlDz3oI
-X-Gm-Gg: ASbGncvJWjgvEm8aSFtisVgGsC9nthNnh7OetvywErMaUmLcqupo5R+0tVWW6APX9Vn
-	k3CKhAHf2wJNfiARRQoVamYUOW9rDG+5VzeGBgXdg8uwYvNHz+l6KuWuzL76GGR9tDP+qNRV1fB
-	XxZaIH8DTUb+LgZDPDv7TpDkIKIgMxNl9lWwBqvI8p5xYZJDYjjeMFKL8dOxMwMM+PfY8y9uBbH
-	2KT8w==
-X-Google-Smtp-Source: AGHT+IHy/g9C8sI0sjL+N9l9hpzfx35P0wqLjEKU9oirnFb5JVmTK0JdB84muXaLwaPVMYaPK0IuUbGE5zc7poSJqyw=
-X-Received: by 2002:a17:903:41c5:b0:234:c2e7:a0e7 with SMTP id
- d9443c01a7336-235df7bed95mr1828935ad.4.1749011359087; Tue, 03 Jun 2025
- 21:29:19 -0700 (PDT)
+	s=arc-20240116; t=1749011619; c=relaxed/simple;
+	bh=9NeDDdxV0q4sXEFhvG5y3MBDGxM6rM76CNHh5/RF2/c=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NC8D+iUZ3TqthMzUw+yLLb19gIzAgjl5oAlCMv5Qxt/X4b0tgr8c4eJHM02LsPQDaieyzKftsqT1xlexmE23x0Edq5QOPFddOXUGjuRiaW09gqVhkiaW+O9tJzfy80nZJgwVMbcq6ijfV/Qj8MEPzSmFezo1clpljITdvOcGhb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=k4r5apP8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD94FC4CEE7;
+	Wed,  4 Jun 2025 04:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1749011619;
+	bh=9NeDDdxV0q4sXEFhvG5y3MBDGxM6rM76CNHh5/RF2/c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k4r5apP8Gx8lEe5htLA+PcDXUKwh7TZpQZgx5DX5ZFjAb+lHsV+QQC/pZDznExcu4
+	 tgEPBts+Tx2ZiHI3hZe0BW0QYQB6Q8KEZnGyfZ+lLO4l2QDJ4bWLQ4B2xUIi6J88pD
+	 cOyBO/+8jH2lK3ig/zy2cKtbEg2B0MinQpkPGiB8=
+Date: Tue, 3 Jun 2025 21:33:38 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: willy@infradead.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, david@redhat.com, anshuman.khandual@arm.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, aneesh.kumar@kernel.org
+Subject: Re: [PATCH v2] xarray: Add a BUG_ON() to ensure caller is not
+ sibling
+Message-Id: <20250603213338.7d80bbe0e021052c20e1c5f5@linux-foundation.org>
+In-Reply-To: <20250604041533.91198-1-dev.jain@arm.com>
+References: <20250604041533.91198-1-dev.jain@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250603154843.1565239-1-ziy@nvidia.com>
-In-Reply-To: <20250603154843.1565239-1-ziy@nvidia.com>
-From: Juan Yescas <jyescas@google.com>
-Date: Tue, 3 Jun 2025 21:29:03 -0700
-X-Gm-Features: AX0GCFsUhw_kYI1BgM3xj3T5QLJPcCPGMcq_7qHbZq4EEuyDApPMnZU8AKcfntI
-Message-ID: <CAJDx_riftoahYGWdvHukiZpndvFDHViO1tmVjJnnGa=VA6LnNg@mail.gmail.com>
-Subject: Re: [PATCH] mm: rename CONFIG_PAGE_BLOCK_ORDER to CONFIG_PAGE_BLOCK_ORDER_CEIL.
-To: Zi Yan <ziy@nvidia.com>
-Cc: david@redhat.com, Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	isaacmanjarres@google.com, kaleshsingh@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	masahiroy@kernel.org, mhocko@suse.com, minchan@kernel.org, rppt@kernel.org, 
-	surenb@google.com, tjmercier@google.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 3, 2025 at 8:49=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->
-> The config is in fact an additional upper limit of pageblock_order, so
-> rename it to avoid confusion.
->
-> Fixes: e13e7922d034 ("mm: add CONFIG_PAGE_BLOCK_ORDER to select page bloc=
-k order")
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->  include/linux/mmzone.h          | 14 +++++++-------
->  include/linux/pageblock-flags.h |  8 ++++----
->  mm/Kconfig                      | 15 ++++++++-------
->  3 files changed, 19 insertions(+), 18 deletions(-)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 283913d42d7b..523b407e63e8 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -38,19 +38,19 @@
->  #define NR_PAGE_ORDERS (MAX_PAGE_ORDER + 1)
->
->  /* Defines the order for the number of pages that have a migrate type. *=
-/
-> -#ifndef CONFIG_PAGE_BLOCK_ORDER
-> -#define PAGE_BLOCK_ORDER MAX_PAGE_ORDER
-> +#ifndef CONFIG_PAGE_BLOCK_ORDER_CEIL
-> +#define PAGE_BLOCK_ORDER_CEIL MAX_PAGE_ORDER
->  #else
-> -#define PAGE_BLOCK_ORDER CONFIG_PAGE_BLOCK_ORDER
-> -#endif /* CONFIG_PAGE_BLOCK_ORDER */
-> +#define PAGE_BLOCK_ORDER_CEIL CONFIG_PAGE_BLOCK_ORDER_CEIL
-> +#endif /* CONFIG_PAGE_BLOCK_ORDER_CEIL */
->
->  /*
->   * The MAX_PAGE_ORDER, which defines the max order of pages to be alloca=
-ted
-> - * by the buddy allocator, has to be larger or equal to the PAGE_BLOCK_O=
-RDER,
-> + * by the buddy allocator, has to be larger or equal to the PAGE_BLOCK_O=
-RDER_CEIL,
->   * which defines the order for the number of pages that can have a migra=
-te type
->   */
-> -#if (PAGE_BLOCK_ORDER > MAX_PAGE_ORDER)
-> -#error MAX_PAGE_ORDER must be >=3D PAGE_BLOCK_ORDER
-> +#if (PAGE_BLOCK_ORDER_CEIL > MAX_PAGE_ORDER)
-> +#error MAX_PAGE_ORDER must be >=3D PAGE_BLOCK_ORDER_CEIL
->  #endif
->
->  /*
-> diff --git a/include/linux/pageblock-flags.h b/include/linux/pageblock-fl=
-ags.h
-> index e73a4292ef02..e7a86cd238c2 100644
-> --- a/include/linux/pageblock-flags.h
-> +++ b/include/linux/pageblock-flags.h
-> @@ -41,18 +41,18 @@ extern unsigned int pageblock_order;
->   * Huge pages are a constant size, but don't exceed the maximum allocati=
-on
->   * granularity.
->   */
-> -#define pageblock_order                MIN_T(unsigned int, HUGETLB_PAGE_=
-ORDER, PAGE_BLOCK_ORDER)
-> +#define pageblock_order                MIN_T(unsigned int, HUGETLB_PAGE_=
-ORDER, PAGE_BLOCK_ORDER_CEIL)
->
->  #endif /* CONFIG_HUGETLB_PAGE_SIZE_VARIABLE */
->
->  #elif defined(CONFIG_TRANSPARENT_HUGEPAGE)
->
-> -#define pageblock_order                MIN_T(unsigned int, HPAGE_PMD_ORD=
-ER, PAGE_BLOCK_ORDER)
-> +#define pageblock_order                MIN_T(unsigned int, HPAGE_PMD_ORD=
-ER, PAGE_BLOCK_ORDER_CEIL)
->
->  #else /* CONFIG_TRANSPARENT_HUGEPAGE */
->
-> -/* If huge pages are not used, group by PAGE_BLOCK_ORDER */
-> -#define pageblock_order                PAGE_BLOCK_ORDER
-> +/* If huge pages are not used, group by PAGE_BLOCK_ORDER_CEIL */
-> +#define pageblock_order                PAGE_BLOCK_ORDER_CEIL
->
->  #endif /* CONFIG_HUGETLB_PAGE */
->
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index eccb2e46ffcb..3b27e644bd1f 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1017,8 +1017,8 @@ config ARCH_FORCE_MAX_ORDER
->  # the default page block order is MAX_PAGE_ORDER (10) as per
->  # include/linux/mmzone.h.
->  #
-> -config PAGE_BLOCK_ORDER
-> -       int "Page Block Order"
-> +config PAGE_BLOCK_ORDER_CEIL
-> +       int "Page Block Order Upper Limit"
->         range 1 10 if ARCH_FORCE_MAX_ORDER =3D 0
->         default 10 if ARCH_FORCE_MAX_ORDER =3D 0
->         range 1 ARCH_FORCE_MAX_ORDER if ARCH_FORCE_MAX_ORDER !=3D 0
-> @@ -1026,12 +1026,13 @@ config PAGE_BLOCK_ORDER
->         help
->           The page block order refers to the power of two number of pages=
- that
->           are physically contiguous and can have a migrate type associate=
-d to
-> -         them. The maximum size of the page block order is limited by
-> -         ARCH_FORCE_MAX_ORDER.
-> +         them. The maximum size of the page block order is at least limi=
-ted by
-> +         ARCH_FORCE_MAX_ORDER/MAX_PAGE_ORDER.
->
-> -         This config allows overriding the default page block order when=
- the
-> -         page block order is required to be smaller than ARCH_FORCE_MAX_=
-ORDER
-> -         or MAX_PAGE_ORDER.
-> +         This config adds a new upper limit of default page block
-> +         order when the page block order is required to be smaller than
-> +         ARCH_FORCE_MAX_ORDER/MAX_PAGE_ORDER or other limits
-> +         (see include/linux/pageblock-flags.h for details).
->
->           Reducing pageblock order can negatively impact THP generation
->           success rate. If your workloads uses THP heavily, please use th=
-is
-> --
-> 2.47.2
+On Wed,  4 Jun 2025 09:45:33 +0530 Dev Jain <dev.jain@arm.com> wrote:
 
-Acked-by: Juan Yescas <jyescas@google.com>
+> Suppose xas is pointing somewhere near the end of the multi-entry batch.
+> Then it may happen that the computed slot already falls beyond the batch,
+> thus breaking the loop due to !xa_is_sibling(), and computing the wrong
+> order. For example, suppose we have a shift-6 node having an order-9
+> entry => 8 - 1 = 7 siblings, so assume the slots are at offset 0 till 7 in
+> this node. If xas->xa_offset is 6, then the code will compute order as
+> 1 + xas->xa_node->shift = 7. Therefore, the order computation must start
+> from the beginning of the multi-slot entries, that is, the non-sibling
+> entry. Thus ensure that the caller is aware of this by triggering a BUG
+> when the entry is a sibling entry.
 
-Thanks
-Juan
->
+Why check this thing in particular?  There are a zillion things we
+could check...
+
+> Note that this BUG_ON() is only
+> active while running selftests, so there is no overhead in a running
+> kernel.
+
+hm, how do we know this?  Now and in the future?  xa_get_order() and
+xas_get_order() have callers all over the place.
+
 
