@@ -1,93 +1,145 @@
-Return-Path: <linux-kernel+bounces-673484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED00ACE1C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD808ACE1C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 190F5179EC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB60179E33
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524641DE2AD;
-	Wed,  4 Jun 2025 15:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B361D619F;
+	Wed,  4 Jun 2025 15:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KzcHHVug"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vb2N4Nwz"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0FD1D5ABA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190674C7C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749052196; cv=none; b=lZMXxAMr1fo0i5X1rc9vIfEHLFDfZeM6/Ogs6h3mRUQRtGsLut4Ko0qoX1Z7f3Pyg0+Ny7NJDnoG0lZcGEOtSv/7x4zEnrpKYwvq6dUo3MdTs7cNRr2SBkvMtVIQad8uRRfntXdF5sHXiNOGg9tP3halWsC+2pZ5WR94MwYJYzw=
+	t=1749052165; cv=none; b=t/TMcRY3vk6cBC56qAVHJPDfbnyuzw5ndvaATS1qagYM94MNBsamnRTHdfwxGTQZUiTv56RJS5czQCMRnfgW2aezI5ph4S9Y4aAfYClaPra+Wf+D4AFf+VsD/yMDSnC3VpLvj276GhnbeuHM/UdsF06uzNd1uHclyCGr1fHT2UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749052196; c=relaxed/simple;
-	bh=6G5JxN/BVDCcwydBLM00eHdMpYDGWh6mGgRQXDJ2llg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=seJ8pyH6G4xXQDg7o29sCibgQwYWS3qMELPn6qkVqczdPcZ6EOk4QWUXT+/1w3hMELb6xILLHMPN1OB4mkIQ3auKipbIYYnFVBT+68/5AuIPQOtOp3ko002fuAVO7dHpvLajhoRbFsvImq5MCrnrOD5ANGJJMAF2YWtphaBxU2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KzcHHVug; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 4 Jun 2025 08:49:12 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749052192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=va3tPoFKvEZvnM+DL5DLzHoxmXtQwY1XyzpbkHe61Io=;
-	b=KzcHHVugoFfkefRf47HU3usVKdW0NqhvWH9TCHKIPBCJm9OajrSbQyqBMxB/46I1yHYkcp
-	UhtddbC8ziUjBCE0lZxtHO6EHO3InWGXbm8PaGzYPplYwCUWyTjcKWPU+tg7ASo7wui0uk
-	m9fd3AX2hvu2o2bmlX2XZUx7QgpbgnA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
-	hannes@cmpxchg.org, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
-	Konstantin Khlebnikov <koct9i@gmail.com>
-Subject: Re: [PATCH] mm/vmstat: Fix build with MEMCG=y and VM_EVENT_COUNTERS=n
-Message-ID: <hwn7s3xjgpfdtvjtnywvv4wwqqxh3ojha7nblp7vy4zfee4epb@25rgcpyhebb5>
-References: <20250604095111.533783-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1749052165; c=relaxed/simple;
+	bh=E355dxQOrr/PVcwroKhZnO7dWd/iZ1NHGiq889Ab9X0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fXKudo2p7HXhr2LP3pRHqR5BrYRobGqo8e3P2EZ3DFDUGg9Cp9zQiLAio86MqRwuaYv8rxmLZKIAV8ltQAKMfuXFebO5/cz2ArT26LRdNKRF4Xejca3OUUNvrj5Q9vZ4xmJJelR4TBLpNY3XuIz30CNbrwundvyWjkdiWHVZveM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vb2N4Nwz; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-312436c2224so5576a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 08:49:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749052163; x=1749656963; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=APQsb45khTfPV4BXCtKSSbtPEml4hNZfBir9V5yfOUU=;
+        b=vb2N4NwzMmDUdRJy9eacC+fhVRJa7mVGnOlspJTZ9O3Xss488uiMNaRIKJd40aD849
+         Rm7SeSHbpi81siSGLq22lVAqEUKmgs8T4M1DQAbIvwycXvsG4iu1mtIKR652yA8VDA3v
+         Ndywt+Zw9NfRQjGbH+BDghFF+insHeaksYyGfKaQiav18JgGA0diVfgG8oVnZBz60mtI
+         tLPl4iYbrECgKPPDbPzQHKYX68SIEQjaB/RWrQA4gDd2paYFFM+9BkSI7E0qedC3svN/
+         TbB32QhsCMcTAUmiExOyO+zRBVIocf5DLW0RiwC/CBUUpC2uRTk4JwcdDsDFvjHVm9bB
+         jPDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749052163; x=1749656963;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=APQsb45khTfPV4BXCtKSSbtPEml4hNZfBir9V5yfOUU=;
+        b=htionW+9A8EM2A4DZkRafcj7cxipXStQXqTCMYQjzwyujgnDPqXSmi6QgyXZU4t8CW
+         SUiX2J+rsVnpB6c+INdYEeOxQ2Sbc2h/gwhhggvDOWAUnAIB9EnT2iA/knt+bHjdjP0O
+         aP7gMNQoe8ntN4dbWxcdBtvDV+kv851etSBZgnA0MWgR4iBA4RwMfEPPL33eSe48/mT3
+         xMr/3/2eB99LFmBu5yz/Lb0nlek9BFn5JBVjufY9zhRkY9GkjQUPDOsdShgxHjY53Bmf
+         LqTUOctb4TimvM/GMIMOqXLXDNSljpYIc164sMA8+Xr6IZOb7mQJprP8p68wYdhs855N
+         PzLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYLu4hxQPnmkjufHoleFm2t8R9Um5Q6ySmS7qFqgKL6upm8OxxAr2bDozkFkdLzm6HUphkLk6JuD5TZ4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZH/IIoiJnHXEz+pdK5CyugO+N23DoCHUB3Idpq/e0NZKzow4T
+	jAmu2mpy3XM0NjKjLa4LEwjsv2wJmEI/TVsRq45HUNoDrH851lugjB3nMmIxsWC18H2BTsUhn4a
+	4hfu0mg==
+X-Google-Smtp-Source: AGHT+IEhBYHH0jG1lNTT5kDcZ2O2I2zO4DfrveKxEVf0tri6G7bWBC1AeFJUjRv/5iW3hgKOjhXeD0GyTU4=
+X-Received: from pjboe5.prod.google.com ([2002:a17:90b:3945:b0:312:4274:c4ce])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a:b0:311:bdea:dca0
+ with SMTP id 98e67ed59e1d1-3130ce0458fmr6517554a91.33.1749052163390; Wed, 04
+ Jun 2025 08:49:23 -0700 (PDT)
+Date: Wed, 4 Jun 2025 08:49:21 -0700
+In-Reply-To: <688ba3c4-bf8a-47f1-ad14-85a23399582c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604095111.533783-1-kirill.shutemov@linux.intel.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250529234013.3826933-1-seanjc@google.com> <20250529234013.3826933-9-seanjc@google.com>
+ <688ba3c4-bf8a-47f1-ad14-85a23399582c@redhat.com>
+Message-ID: <aEBrAbhRFkou4Mvj@google.com>
+Subject: Re: [PATCH 08/28] KVM: nSVM: Use dedicated array of MSRPM offsets to
+ merge L0 and L1 bitmaps
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>, Chao Gao <chao.gao@intel.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jun 04, 2025 at 12:51:11PM +0300, Kirill A. Shutemov wrote:
-> When compiling with MEMCG enabled but VM_EVENT_COUNTERS disabled,
-> BUILD_BUG_ON() is triggered in vmstat_start because the vmstat_text
-> array is larger than NR_VMSTAT_ITEMS.
+On Wed, Jun 04, 2025, Paolo Bonzini wrote:
+> On 5/30/25 01:39, Sean Christopherson wrote:
+> > Use a dedicated array of MSRPM offsets to merge L0 and L1 bitmaps, i.e. to
+> > merge KVM's vmcb01 bitmap with L1's vmcb12 bitmap.  This will eventually
+> > allow for the removal of direct_access_msrs, as the only path where
+> > tracking the offsets is truly justified is the merge for nested SVM, where
+> > merging in chunks is an easy way to batch uaccess reads/writes.
+> > 
+> > Opportunistically omit the x2APIC MSRs from the merge-specific array
+> > instead of filtering them out at runtime.
+> > 
+> > Note, disabling interception of XSS, EFER, PAT, GHCB, and TSC_AUX is
+> > mutually exclusive with nested virtualization, as KVM passes through the
+> > MSRs only for SEV-ES guests, and KVM doesn't support nested virtualization
+> > for SEV+ guests.  Defer removing those MSRs to a future cleanup in order
+> > to make this refactoring as benign as possible.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/svm/nested.c | 72 +++++++++++++++++++++++++++++++++------
+> >   arch/x86/kvm/svm/svm.c    |  4 +++
+> >   arch/x86/kvm/svm/svm.h    |  2 ++
+> >   3 files changed, 67 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> > index 89a77f0f1cc8..e53020939e60 100644
+> > --- a/arch/x86/kvm/svm/nested.c
+> > +++ b/arch/x86/kvm/svm/nested.c
+> > @@ -184,6 +184,64 @@ void recalc_intercepts(struct vcpu_svm *svm)
+> >   	}
+> >   }
+> > +static int nested_svm_msrpm_merge_offsets[9] __ro_after_init;
+> > +static int nested_svm_nr_msrpm_merge_offsets __ro_after_init;
+> > +
+> > +int __init nested_svm_init_msrpm_merge_offsets(void)
+> > +{
+> > +	const u32 merge_msrs[] = {
 > 
-> This issue arises because some elements of the vmstat_text array are
-> present when either MEMCG or VM_EVENT_COUNTERS is enabled, but
-> NR_VMSTAT_ITEMS only accounts for these elements if VM_EVENT_COUNTERS is
-> enabled.
-> 
-> The recent change in the BUILD_BUG_ON() check made it more strict,
-> disallowing extra elements in the array, which revealed the issue.
-> 
-> Instead of adjusting the NR_VMSTAT_ITEMS definition to account for
-> MEMCG, make MEMCG select VM_EVENT_COUNTERS. VM_EVENT_COUNTERS is
-> enabled in most configurations anyway.
-> 
-> There is no need to backport this fix to stable trees. Without the
-> strict BUILD_BUG_ON(), the issue is not harmful. The elements in
-> question would only be read by the memcg code, not by /proc/vmstat.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Fixes: ebc5d83d0443 ("mm/memcontrol: use vmstat names for printing statistics")
-> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+> "static const", please.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Ugh, I was thinking the compiler would be magical enough to not generate code to
+fill an on-stack array at runtime, but that's not the case.
+
+AFAICT, tagging it __initdata works, so I'll do this to hopefully ensure the
+memory is discarded after module load.
+
+diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+index fb4808cf4711..af530f45bf64 100644
+--- a/arch/x86/kvm/svm/nested.c
++++ b/arch/x86/kvm/svm/nested.c
+@@ -205,7 +205,7 @@ static int svm_msrpm_offset(u32 msr)
+ 
+ int __init nested_svm_init_msrpm_merge_offsets(void)
+ {
+-       const u32 merge_msrs[] = {
++       static const u32 __initdata merge_msrs[] = {
+                MSR_STAR,
+                MSR_IA32_SYSENTER_CS,
+                MSR_IA32_SYSENTER_EIP,
 
