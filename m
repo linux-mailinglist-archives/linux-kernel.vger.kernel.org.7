@@ -1,214 +1,240 @@
-Return-Path: <linux-kernel+bounces-673733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A504ACE55E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 21:54:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81632ACE563
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 21:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0ACA3A9330
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D907178F6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 19:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8696A20C488;
-	Wed,  4 Jun 2025 19:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4066213E90;
+	Wed,  4 Jun 2025 19:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffgH1hU1"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AOB7THtn"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2070.outbound.protection.outlook.com [40.107.101.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4F4111BF;
-	Wed,  4 Jun 2025 19:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749066866; cv=none; b=FFuGpMVM34a87mqw2bQCgathnI9tmRbb+h+n2o/PuelLMm9rt2PQ/p/21T8D2ZSvQGyM+YwVt7xbfftz0wi8U8RjiLDW1a7/5lBgul1Pt6Vx4qvMCj586KXGNENqpeavFtwhOp2E1D3XrNghA3L1Ra6sPlp2UoDhPralZ1N/zHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749066866; c=relaxed/simple;
-	bh=FK5qCDPK6HuTjCJbnQOSRwdSyUGsa/lU7mjXf4FKb7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J0ll3KKaJqq16oynI8IqxJhd5AFJw4jrVCQcKV5SvwbbIkDPnp0zWQ8eSUF8fpmUPzQG2LhKd0J8sRJur3LW8InS4PNM5U+6RpTKFZzeBHIdlAMYNPiRinJ2pCIFFR+TBH3w3THEXueV9bOnkPJc5AFRMdyT9BvAcshpDZcgQfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffgH1hU1; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a589b7dd5fso2808101cf.0;
-        Wed, 04 Jun 2025 12:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749066864; x=1749671664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kqa5razpkQwxe4vQQTx47r6fs83MP5HEXihvc/yiIDU=;
-        b=ffgH1hU14ELFRpPmWToMokb0gZhGUKCMbaU0kx4ESlBMmqIUMbXDhx9C8S1AK7ADOQ
-         LqQB5M2JrBoAlolkYYqdZni9E7cKcre3+VIZyzZDiBn7re1GQxTicuO/JjyK40FTlTjg
-         +vbi/+/QEHaNQuk3XUn6B9rPFQUw3AdpAMHra6hrJyS26K94gn4zaeZYcivyDpVyI11+
-         Vz7+v0gWwy/DDvuVGtaAv80Y2r2FWzBNLbH7cl4CgnzQMyZHxtsIDffqmiwk1eHWiaQ3
-         HCm8/yivbAMj25rhIzzZnOeTY7XW2bHtcppUX+B6MrCzZ8hrUnO0LmJ8UgdzgtssfeyT
-         Jy4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749066864; x=1749671664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kqa5razpkQwxe4vQQTx47r6fs83MP5HEXihvc/yiIDU=;
-        b=u9k7ncfvcFpW0ehFh8W3RPcXXe4LrsDbz7IvSeizVSu8tm4iRF+4l+fstQnxADLPwf
-         i4c9nnl4byvIICFzdo8arW+mERzTGN19u/y1Oe9E4uHbB2FIR4IB/4tlSEGA8b11lASV
-         1Amuy+GmPA+B5rLGhVHSVQ7hKATuYqH58YlpXPOwzXpqp/tgrRMPlHe/o5/85lU4ToME
-         7VM86nJkKqW2sL8s578joy3lgIEnFV0uEva8u2vRtrP2c0u0ulgFt1clBYmIWpAQroMt
-         ImE1rpc/HJ1JOm/jXnE+Y5URLISt+PkupH9K3njI4MkZq7km17ISNOg1lKD9DzdsJlCk
-         AUlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU02wxFxhseBKiZoh5gduxWgtUoBNevdmz49oPJAVgkzhkmFCAByJXlB/YVAz81syz74qadFZ3hjHy8YyOW@vger.kernel.org, AJvYcCVtm04wOii6rUg9yFGM+jkX8guJ9+zhJvQEorYnt71e4mUNdy9V8DMjCVhrRYIv1h9xaKbAE4cRJYED@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqueylSZpqoFC0O6uP1KPbvddFXnk1r9/oCX5k5NT5qalYAz6e
-	Xxo4w4KJvZaKhT5smniCk76ODlB/+pUNri1+r4dKWes3TkeaOMUoMMfle5NIIjq06XEQWnwyQVI
-	+Wtnvr3BrBsmTQ1F7XXxvyvm9DSn+2ZE=
-X-Gm-Gg: ASbGncvou7d88PaCtlTqKR1V2VIfkzQxEfXDAk/HWvuFI4BILRMxzObI3esJP661VjZ
-	39TfdTDB6tz2yiL3h+f4GczXDEnvpBLAnIq4465z/NqYOrOdEcp5oc8J9g1DE0YxqOD18kGEkIU
-	dAu7cfo7+ivvpMg7RSsZJFHUCxa16Dx8lQ+0KCghzLbKyMUtTE/gdgQn9N36Wf1aRxMw==
-X-Google-Smtp-Source: AGHT+IHAyy7cOKoQrKo/qrn3FqhxEupKgT1BOK1u+EwZ6v7KzrpFo7ToVVNkwt6ARpY9qanwEAnINSvWr4g7fwW6JX0=
-X-Received: by 2002:a05:622a:1927:b0:4a1:511a:b99f with SMTP id
- d75a77b69052e-4a5a573b2c3mr68994861cf.3.1749066864086; Wed, 04 Jun 2025
- 12:54:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B23111BF;
+	Wed,  4 Jun 2025 19:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749066992; cv=fail; b=a1yLoYoclnID9XtgMmsF/xkSbRkcQVtGMNm06Hcbo2VRmLU2dvM0YodmPL/K5XjL2jvm6SZZJg2AfxHTH55CCDnzSverO7CuPi/PE4YHdBAmExBikJ+NV5b9LLQsbcSiTl+RMpycvzc6pOCPCQYLT61DcQnBJiTp0LZnc/xnu3w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749066992; c=relaxed/simple;
+	bh=UqKNzEhwQUj6YWf+BeW2Jp/7N6y3IjkNrVKFd9mwjok=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BX78EKKV/O2vnJHq9nQAjxO88heIq/OwqPAZgPclsdDLpJRv85VlfJpOQMrpjYjxDnPXYGgROe4KIxqQcFD/ex5KpfLrQU2T6rxizJowLcf6wtZn/UsmNrFJw/XM/cJRLfp5pu1Rpni+omZOU2GL1uRvp56uiaeIMC2fejL4zy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AOB7THtn; arc=fail smtp.client-ip=40.107.101.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aqwj4g+DIohZv/K+E1QPsQiRLqqKm1YKD7AmXXWRQLq2tXnp3hLuvwX2FsKdnSPmTBAKVU/tIC87mHRD+xdRQ5X/0Mrm+4fv9OHgJnsFh4NzTtPpZW+jCZ6AGt7pbEZouEsMUNAyvWGKMj2LE3sObGPKl0xwsp+h3yvTII/jZ3VZw5YP5TWyLErVQZvcrpZj8oDWdM3lmcn1t954adlBTGYZwWP2IWe0Ayj4jxLcNEICf1JtU7/JXLzaImUP/n9b22tKxM7F1GvdIvwzDLVG+ohdtBT6v49q2u9gfVswPUuIwJ+i0gQGl/Uj6eCJEsAulIFEGfoPuVGuJJvTejh2kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HqrRYagQO0A/3kjoscxlGaj7ErrJxlVi0C132e6VRMc=;
+ b=ym/hnWMBxMnpELR/A+JgKWlFgGomvv4uCgaxO5/AE9L1yXXjbOlMt5uUO93IiM16KFkEDb25qC5EACPcaPYcmSF+X+3uxD/ZNC2nzNpn2CGUVngeGRDhpE7KLY3r5vU7EIYDiNqSI+8LqZuuKrQFZSPDG0hmieBRyWv0mrMvHOaxL8QyQz4NC3gow3/KtEe5x+VphT6ARW/5R1XW0v8nvZaeGboV2LLfTA2ib4K/pbPxcRwAtSbDYEJ6ShVaZWIaRkRYrsKus0On62QUb7VocoxHDr8hanNCYIzeGt/CQDFHuTG2+9s4TbgeReCxlGqMBUxELsuimbvvJkNdXT7rqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HqrRYagQO0A/3kjoscxlGaj7ErrJxlVi0C132e6VRMc=;
+ b=AOB7THtnKLkHR4jDV7pcUBxXDWS7QdLcjiYWBzQdjydH6b8Hoa2xUBM9ErwiU6h2eoTz77XMjs9SZF3DLJn8Vg0LquUUGUVbFpodoomLeCa6bFJDzJDvhOR78swMD5MP8WTXjmx9/nWUREiUrH+YWMwr/lpX3pgHrAqf7C125zI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6222.namprd12.prod.outlook.com (2603:10b6:208:3c2::19)
+ by DM4PR12MB9071.namprd12.prod.outlook.com (2603:10b6:8:bd::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Wed, 4 Jun
+ 2025 19:56:26 +0000
+Received: from MN0PR12MB6222.namprd12.prod.outlook.com
+ ([fe80::4044:a263:92a1:6b3e]) by MN0PR12MB6222.namprd12.prod.outlook.com
+ ([fe80::4044:a263:92a1:6b3e%7]) with mapi id 15.20.8769.037; Wed, 4 Jun 2025
+ 19:56:26 +0000
+Message-ID: <e13cace9-1ab3-4c22-88f7-0d020423c430@amd.com>
+Date: Wed, 4 Jun 2025 14:56:22 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] cxl/region: Avoid null pointer dereference in
+ is_cxl_region()
+To: Dave Jiang <dave.jiang@intel.com>,
+ Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+ linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+ Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Ying Huang <huang.ying.caritas@gmail.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Terry Bowman <terry.bowman@amd.com>,
+ Robert Richter <rrichter@amd.com>,
+ Benjamin Cheatham <benjamin.cheatham@amd.com>,
+ PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
+ Zhijian Li <lizhijian@fujitsu.com>
+References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20250603221949.53272-2-Smita.KoralahalliChannabasappa@amd.com>
+ <3464d8cb-e53c-4e6b-b810-49e51c98e902@intel.com>
+From: Nathan Fontenot <nathan.fontenot@amd.com>
+Content-Language: en-US
+Organization: AMD
+In-Reply-To: <3464d8cb-e53c-4e6b-b810-49e51c98e902@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0206.namprd04.prod.outlook.com
+ (2603:10b6:806:126::31) To MN0PR12MB6222.namprd12.prod.outlook.com
+ (2603:10b6:208:3c2::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
- <6656934.DvuYhMxLoT@workhorse> <CABjd4Yx05SCm+03jWbsEP-A5AuhL14wLj=+VdKyQgqMbnxi3xQ@mail.gmail.com>
- <23482965.EfDdHjke4D@workhorse>
-In-Reply-To: <23482965.EfDdHjke4D@workhorse>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 4 Jun 2025 23:54:14 +0400
-X-Gm-Features: AX0GCFuLXULnMLr8rryeq8foOrYa4cmHNsLuY_-MFNEhem-Gq9QzyGKN9mE70Mw
-Message-ID: <CABjd4YxBHn4f4QRVxk1uLGgt7-n=VQqF0_ZSJsKSxZuVtrLiaw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] arm64: dts: rockchip: list all CPU supplies on ArmSoM Sige5
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6222:EE_|DM4PR12MB9071:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e4c70f9-0605-4f4b-e937-08dda3a1e3b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YUtKcTc1N3BEaHAyeS9Ic2JGOWxaZGpxQ3c4REorQXdwMTNLR1Zoc3NsUGRw?=
+ =?utf-8?B?TWk5OFQxMU1RQUU2S3VvM3BLN2k1SU1yVmZRSlJWd3hUVExPbUtORXRzSGJs?=
+ =?utf-8?B?NnNSdW04b3psMmkrVWZqbWFYam8rdnJueFBqNnF1OW44SDBldjI2SGgxWGdF?=
+ =?utf-8?B?eXNZZUdhdGhPSjBJS0hkKzB4bFduRlE3NFM2NFZLTXBNbHdkMnc1bFo0NEVK?=
+ =?utf-8?B?MmRPYUdGT2FTNlp5K250REtMQW1aMjJtUzJzSGxLM2Y4Zk9NSERibkQ1K0kv?=
+ =?utf-8?B?RWEzbytSLzhUQjlGTWw3UHhzREVTYXJ5KzRmWFFrVEorTk8zaDVYTndoOUQ1?=
+ =?utf-8?B?VDBGcmJDYlM3TXFJcnpKYlBnc1RsTWpaQ1c0bTBIRTVyNURqVGRCY2NpcTNi?=
+ =?utf-8?B?VUtxTFhCTmFyV3BLYVNybnZoVzNlaDgvdDRVL1RmdkQ1ZUtNRmtUN3k1eE43?=
+ =?utf-8?B?MGROZU5FNGxDcG5WQTVJZDNZemp5SE5OS3VaYjZXRmFpVWgxTUROdlhzMXNH?=
+ =?utf-8?B?anBSOGh5UWx4QUVsdHp0LzM0K0QzZ1NxNXRiUlloQy9BRk5sTjJIMllQaFdQ?=
+ =?utf-8?B?UVFhRUVhTE9lbUJzS3VDaUdJenBZMjZZZGx2Q3pVR05iQUdWUVlrQXV6NkxP?=
+ =?utf-8?B?d1ZwdDMzR2R2NmN1NTFzNjhsaWVsZWJSR0ZHNWV3ZjBtQjVDNjJ6QlhZU1dN?=
+ =?utf-8?B?UDVvMkNjcjJwcU0yNXJVNUxCY3JOWEJ0aDBrblZwdDFEMDFUOGh5Z2M1aEsv?=
+ =?utf-8?B?alY4cUgvQUlNWVRaUGpleWNuQW5GRWswRHlhTWhCNmdxY2s5N2tZRVV5Qldq?=
+ =?utf-8?B?bXoyb1Qrc3VEb1hlL0ZlczdKaHp1YVpXaUN1cHUyNERhR2pFVjB6Sng0VEFG?=
+ =?utf-8?B?U3lHbG8rV25CRVdIdGo1ZWNOVVVrb2ZBZmdIWmlFQmJjTDEyNEhuaXhWcDA5?=
+ =?utf-8?B?T1Rtd296SlhNSVhEQWhuOVlob1ZvRU81T3IwdDdCZ0Nzc0grUTlGeTVDVFZL?=
+ =?utf-8?B?b0pNSkUvUmxNVXpEYVZVVVp5ODNrNWtKNHhCSWV5eDBwSEE1a0g5T053TlVs?=
+ =?utf-8?B?RmN3Wks2UlYzaldGakdyZy92aTNXRHZabEw5WW9lby9Sb0V4R3RHcjZXbGpK?=
+ =?utf-8?B?NHRYSjdTWDJnSTc5T1JpQkVrZitSU0JVWWJnUyttbndnemkzT2RNTXpPcE1G?=
+ =?utf-8?B?bEU3dm5jblJ5OGJnbmpzQjZxRmFwN1dIQ2E2aTdLMmVsZU9LcEd4eGYwN0V3?=
+ =?utf-8?B?UE9Ebm1mcEZGUTFvM3BqWlYvUEY2MjRUc0FEYUVrekowMmEwekE4ODlqcTVJ?=
+ =?utf-8?B?N0NqWnNKZVQ2MGVsSUo3cTh6ZGFUNTRzQlZRd25maTJBcXpRR3I0enlpbk5o?=
+ =?utf-8?B?Z25KSEgrU0ZMbCsyeFF0SGlLLzNQM2ZCWkx3bkNuSXJSeWRCYWhCa1E4VjZ6?=
+ =?utf-8?B?WjR5VDRvaDQ1Z2cvY2JqWEhjak92OXFrbG1IWi93b3pMZEc1TWlZSnFkMVNQ?=
+ =?utf-8?B?SzkzeVU1elFDOCs2YVhoM2pDRmxOTStDcG5CYlBMUkN6bGNvTFZMVkhKTExV?=
+ =?utf-8?B?KzJNbGNOSjl1Zy9vbTVNcVVCci8xQkVEMUl5YlEvdEV0b1g2eTUrOGdPcVVR?=
+ =?utf-8?B?QmRlN2tTVEhMUERiNXB5WWFsbzhuTGlPWXBDdUxxNnVDT2xNaDBOdHA2VUQ3?=
+ =?utf-8?B?RTZ3NHRrcTVPTnZpYkNON0pzZEVrVWhtcGdGQ09FNEF4RGYwdHkrMFNiU0ds?=
+ =?utf-8?B?ZHpkYTh3MlJVZXZwVUVKUkhrU0lnM3JLS081c3Q2RjcrVlZpajFhb21qN3ly?=
+ =?utf-8?B?SEtGeWRSUUdZOXliTXFLSitidEVQWGhqUDU5M0tOSFpaK3d3WnlZM3FjYVlB?=
+ =?utf-8?B?SkNpL05uN3B2T25QSHlaeFVSeVErZzhIeEE1QjlEQ1dHZ1NNbXViNXowMkhi?=
+ =?utf-8?Q?CFekoWNhB/U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6222.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Uyt4UFRaZ0tPbnZzUGR3NVQvVHZBcXFKQVFadVZVRUorR2JsQTlzSmxlQkpQ?=
+ =?utf-8?B?bXUzTUwzcHNsTzNaOUtGWkg4NUpUMUs5QnlrWDVsZEw2MDc4aXBFcDFuUnE3?=
+ =?utf-8?B?eHp1OHA5Y2xsaWJ4bmNUZHhscEFYekxkVno2OHhYNXdERFg2TDNRaTBFVzJu?=
+ =?utf-8?B?dTdrQ2NVaFc5ZENZWnROQnBMSHFiWitSOFVEdHNNYlhUN0FWY0d2R1FKR25l?=
+ =?utf-8?B?cjJQaTZrbnI2ZzBZdmdXWEhmM2tiRTUzU3pDWTJFVXBScGc0Z0dZUS9BKzIx?=
+ =?utf-8?B?cjJQZzlDWWdBSjRxYnRnY1NueGVaSHJhblJRUiticmtNN1VKSXRFdUEwbGJa?=
+ =?utf-8?B?dEVzSmdjbStMWGFSdXhoVE96Z3FHR1Z4U2gxL0RkTkdMcVZHUHdjY2Q0UWlo?=
+ =?utf-8?B?WUhad090ZFlFOS9ITjNqSFBTOHh4QXJJTkdTeStzelBrSnNMR0wxcm9RbmJu?=
+ =?utf-8?B?M0JENG54U2xBSzVIQ2NzL2xvN0NRMGYxMjZDWmF3bGUzN0pGeFlzcHp6T1FC?=
+ =?utf-8?B?M2JQMEgwTDBNZlgxQjd3U041UWJaekhxSHBKcGhGN212UGUreUhVc2NiMWs1?=
+ =?utf-8?B?Z3pGTUNMNTRlMzU4VFdZWTFMTE5VbkU4TTRpODNlQTNWQlUzYUxGQ1QrRDBF?=
+ =?utf-8?B?VFU4Zjd4bjFGSG5vcndnTXo1KzJya2lsS25vdWVjS3lWVm5xYjh6Ylltc0NL?=
+ =?utf-8?B?MnhuekVoVHBpZCs5QmE0Q1dpQVY0d2s4L1NoNVJVWndNN1BQcW4reGVnRHQ4?=
+ =?utf-8?B?eVdKc2JWcVlodUR3QnRBclNmclZaeFN0dFNYcmtqYXZsOVBKQlpETktqSThT?=
+ =?utf-8?B?eEI1aW9CdlBBYlY5ekRLcHhXek12b0Zqa2lUelgzUkZiNngwd3JjSVdqZHZC?=
+ =?utf-8?B?MnpKdG5hTWVpYkVFRUl3TENybUZ4eittbldmVVhlZFQ1OGZBN1o0TFF5VmxV?=
+ =?utf-8?B?dzQzdDZjUjR3Ukw3a0duWHd3aWRqOFU1NExtWGE4OXVyL3UrTTVmUU5uci9i?=
+ =?utf-8?B?N0VETFZLRnNWUHVWRXVKSUJGWEVLUHoxNDd1M3JvdXEvUk5oMmlqaWpXOWsr?=
+ =?utf-8?B?N2JZZUhvZ0JxQm1rK2h1bFpwWFNrVURTZWZ5L1VYRmlYZm1ZdjUxRVFWaFVH?=
+ =?utf-8?B?NU1JUWpJMlM2TEQ5RUgweEpsdkNpOUI3TmlWdy9yNkQ1RmJ1R1hkbE1ZY2lB?=
+ =?utf-8?B?eXVIM3BTSDZ0VTBUc3NOWGF3alZZR0VPcElBaGorVDBTZ1czQ0NGQWdzenA1?=
+ =?utf-8?B?UG1YdUlzc25TWWY1cDBzaGIxc3NTWS96aEY0bFJlcHBWNjFQMytqdHpoVmJW?=
+ =?utf-8?B?alQ0YTdWSjg5VGpKekVObHdTcFJ3UHdTdUVEQXlXWngvc2FaRVZmS0RvZkY5?=
+ =?utf-8?B?d2IzOWw5c0Y1alNDRGpjc3IrSE5Tam5IQ2w4SkJvY1VGWWVrdDYzTmhNVSs3?=
+ =?utf-8?B?UlB0cmJrY0NCRVhLOU5XNHpGYkxYUUZ2UTU1bUNBSTRJMmtqZmgybGVFVGFL?=
+ =?utf-8?B?WGVjZGgrVEE0QU9uUitNdWRFa1E1TTJ6VHVKcEwrSTVmcTNaejgxQ2lJdjBr?=
+ =?utf-8?B?WDBKUXhQYmt4SE12MGg2ZnVBSWNwOUF6U2c4UUF5MUh0ZnJMQ29VL3VpUXJv?=
+ =?utf-8?B?Vm9yRXJXT0hnOElIbDJ5N2tqVTBLTnZFT0x2TVVOTVdMSG1iUTJyZUc5Si9E?=
+ =?utf-8?B?YVA4bDQzNForaFA5b3kzeGFHWnVCSW1ldStqZnJPSlJvaElnNW9wU08zTWpH?=
+ =?utf-8?B?SlE0Rk42ZmdYODVxK2ZXNy9tV0lnZGFjd2JBZ3M2NlFxN1dIRWx1ODZHa1Fp?=
+ =?utf-8?B?d1RQaVNtY3lpSEZlWmNIalYwM2RkeUFTYjVDaFNteGVEQXA5RUcxaXBCNVVj?=
+ =?utf-8?B?ZTdLSU8xcDVXZXZqODhDbGZmZzhBbkpJZDdQbmR4UHlvUDdsNldNdmhhNysx?=
+ =?utf-8?B?dFQ2SUF2NFdNeE1QcVh4M2o5MWswVVIxalpZTHNHd0VqWGR6ME5pUGYyQk1m?=
+ =?utf-8?B?Uytxa2FlNWd0Z3NRUS92MXZQZmNTenRNYUVLTWZNUzk2ZWxvdmNYL3lEeEVS?=
+ =?utf-8?B?L25BZFoybzlvdGhJUGtraEZ6UlhrMW5NYS81Lzk5aVJoRG0zTHhCSlkxd2hN?=
+ =?utf-8?Q?+4NcLqkMEx10G05YLJ+VS6YgQ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e4c70f9-0605-4f4b-e937-08dda3a1e3b6
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6222.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 19:56:26.3829
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: utmuX9vxORd0XIueRTJMAauKbzMcC0BSU1VSqnk5hboGQBfck2mHKtRW8oU/nsHMn0sMvPxr78P83yLXxO+u/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB9071
 
-On Wed, Jun 4, 2025 at 11:23=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> On Wednesday, 4 June 2025 21:12:35 Central European Summer Time Alexey Ch=
-arkov wrote:
-> > On Wed, Jun 4, 2025 at 10:38=E2=80=AFPM Nicolas Frattaroli
-> > <nicolas.frattaroli@collabora.com> wrote:
-> > >
-> > > On Tuesday, 3 June 2025 19:01:13 Central European Summer Time Alexey =
-Charkov wrote:
-> > > > List both CPU supply regulators which drive the little and big CPU
-> > > > clusters, respectively, so that cpufreq can pick them up.
-> > > >
-> > > > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > > > ---
-> > > >  .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 28 ++++++++++=
-++++++++++++
-> > > >  1 file changed, 28 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b=
-/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> > > > index b09e789c75c47fec7cf7e9810ab0dcca32d9404a..d9c129be55a0d997e04=
-e6d677cdc98fb50353418 100644
-> > > > --- a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> > > > +++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> > > > @@ -207,6 +207,22 @@ vcc_3v3_ufs_s0: regulator-vcc-ufs-s0 {
-> > > >       };
-> > > >  };
-> > > >
-> > > > +&cpu_b0 {
-> > > > +     cpu-supply =3D <&vdd_cpu_big_s0>;
-> > > > +};
-> > > > +
-> > > > +&cpu_b1 {
-> > > > +     cpu-supply =3D <&vdd_cpu_big_s0>;
-> > > > +};
-> > > > +
-> > > > +&cpu_b2 {
-> > > > +     cpu-supply =3D <&vdd_cpu_big_s0>;
-> > > > +};
-> > > > +
-> > > > +&cpu_b3 {
-> > > > +     cpu-supply =3D <&vdd_cpu_big_s0>;
-> > > > +};
-> > > > +
-> > > >  &combphy0_ps {
-> > > >       status =3D "okay";
-> > > >  };
-> > > > @@ -215,6 +231,18 @@ &cpu_l0 {
-> > > >       cpu-supply =3D <&vdd_cpu_lit_s0>;
-> > > >  };
-> > > >
-> > > > +&cpu_l1 {
-> > > > +     cpu-supply =3D <&vdd_cpu_lit_s0>;
-> > > > +};
-> > > > +
-> > > > +&cpu_l2 {
-> > > > +     cpu-supply =3D <&vdd_cpu_lit_s0>;
-> > > > +};
-> > > > +
-> > > > +&cpu_l3 {
-> > > > +     cpu-supply =3D <&vdd_cpu_lit_s0>;
-> > > > +};
-> > > > +
-> > > >  &gmac0 {
-> > > >       phy-mode =3D "rgmii-id";
-> > > >       clock_in_out =3D "output";
-> > > >
-> > > >
-> > >
-> > > Reviewed-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > > Tested-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > >
-> > > > so that cpufreq can pick them up.
-> > >
-> > > Fwiw, even without this patch they're picked up by cpufreq-dt for me:
-> > >
-> > >     user@trixie:~$ sudo cpupower frequency-info
-> > >       analyzing CPU 5:
-> > >       driver: cpufreq-dt
-> > >       CPUs which run at the same hardware frequency: 4 5 6 7
-> > >       CPUs which need to have their frequency coordinated by software=
-: 4 5 6 7
-> > >       maximum transition latency: 40.0 us
-> > >       hardware limits: 408 MHz - 2.30 GHz
-> > >       available frequency steps:  408 MHz, 600 MHz, 816 MHz, 1.01 GHz=
-, 1.20 GHz, 1.42 GHz, 1.61 GHz, 1.80 GHz, 2.02 GHz, 2.21 GHz, 2.30 GHz
-> > >       available cpufreq governors: ondemand userspace performance sch=
-edutil
-> > >       current policy: frequency should be within 408 MHz and 2.30 GHz=
-.
-> > >                       The governor "schedutil" may decide which speed=
- to use
-> > >                       within this range.
-> > >       current CPU frequency: 1.61 GHz (asserted by call to hardware)
-> > >     user@trixie:~$ uname -a
-> > >     Linux trixie 6.15.0-11173-g546b1c9e93c2 #2 SMP PREEMPT Wed Jun  4=
- 20:32:52 CEST 2025 aarch64 GNU/Linux
-> >
-> > Frequencies are fine, but I don't think the more power hungry big CPU
-> > cluster gets any voltage scaling without it. Once I try to load the
-> > system enough that the governor decides to bump the big cluster
-> > frequency up, the regulator stays at 850000 microvolts, causing random
-> > reboots when the whole cluster starts starving. With the patch,
-> > voltage oscillates between 700000-737000 microvolts in idle and jumps
-> > up to 950000 under load, and the system seems stable.
->
-> Okay, that sounds pretty serious and in this case you should add the
-> following tag at the end of the commit message, usually as the first
-> thing after the line break:
->
->   Fixes: 40f742b07ab2 ("arm64: dts: rockchip: Add rk3576-armsom-sige5 boa=
-rd")
->
-> That way, our stable kernel robot overlords will pick it up and
-> backport it to the kernels that already contain the mentioned commit.
+On 6/3/2025 6:49 PM, Dave Jiang wrote:
+> 
+> 
+> On 6/3/25 3:19 PM, Smita Koralahalli wrote:
+>> Add a NULL check in is_cxl_region() to prevent potential null pointer
+>> dereference if a caller passes a NULL device. This change ensures the
+>> function safely returns false instead of triggering undefined behavior
+>> when dev is NULL.
+> 
+> Don't think this change is necessary. The code paths should not be hitting any NULL region devices unless it's a programming error.
 
-Will do, thanks!
+I originally added this to the patchset during some initial development to handle possible
+NULL dev pointers when updating soft reserve resources, see cxl_region_softreserv_update()
+in patch 5/7.
 
-Best regards,
-Alexey
+In the current form of the that routine it appears we shouldn't execute the while loop
+if dev is NULL so this could get from the patch set.
+
+-Nathan 
+
+> 
+>>
+>> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+>> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+>> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+>> ---
+>>  drivers/cxl/core/region.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index c3f4dc244df7..109b8a98c4c7 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -2333,7 +2333,7 @@ const struct device_type cxl_region_type = {
+>>  
+>>  bool is_cxl_region(struct device *dev)
+>>  {
+>> -	return dev->type == &cxl_region_type;
+>> +	return dev && dev->type == &cxl_region_type;
+>>  }
+>>  EXPORT_SYMBOL_NS_GPL(is_cxl_region, "CXL");
+>>  
+> 
+
 
