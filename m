@@ -1,64 +1,86 @@
-Return-Path: <linux-kernel+bounces-673335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E694ACE011
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE836ACE01B
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 250387A7CC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7366E3A749C
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6107290094;
-	Wed,  4 Jun 2025 14:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59D3290094;
+	Wed,  4 Jun 2025 14:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DO5iJMat"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RN4lMjof"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD3870810;
-	Wed,  4 Jun 2025 14:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6719D26ACC
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 14:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749046640; cv=none; b=GhecgNakvgXcuAwiWLWbo+Qw0Blp3VtayZyrPO+x5Xor09f48AM26KKeBnYge3U5pysk7P7IeiWzQKhvFsfSFzA0PaZdrwxOMt/MPQ0XYquGufAgm8uCSJ1G8lM1Hm5mYI9duqkqkSOxFVLMcQTZ06qGWjk/2dRI5cGA278lG1Q=
+	t=1749046766; cv=none; b=LsAZ6szgfevzWeK8KCXh9gSRz9T/Z3IzHfYVtrf1EvFTVwl8ZxI55S9esww/PDIp2EQdXlxRxwZJ2XJtjqI7g1UlfVuOjsbqStrUSMK6dBVJjU4GgjZvAJ+6RvQonFrJk+JPO+LOiy+CzJhDeSmfZIoNjbaCMUTNtQ+VmXmOQKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749046640; c=relaxed/simple;
-	bh=N3zAS7KbRmxSSWpgx3DYsurs4M4ohLgCBpXoeWFUkw0=;
+	s=arc-20240116; t=1749046766; c=relaxed/simple;
+	bh=251WaT+JMDeyl8gX0jmb2fEMK7HNiXSHDKHWNo2ZsgA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=udv7KiIuiohS5PjCDNv39iJGo4T+rSmXHlVwoIqDLMDwVjXVTe2aErOZx9DbjIN4lKFARHQSLpfYzWViV1Iu+cFJlqD8Jj33HcLXNHRnGrRggF1Jbtc3/Hubtr/pOOr3ps6Ud8pfLNl9IcMduc7NKTTE/EJ27N36iu2jdkBhdIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DO5iJMat; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749046638; x=1780582638;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N3zAS7KbRmxSSWpgx3DYsurs4M4ohLgCBpXoeWFUkw0=;
-  b=DO5iJMatiaPgo0B+pKqysW/ezQSUbW/50nyWb6orpugLeqrvpCWYO348
-   EoXB5f2eqKw6WVfn+bHtqSi659XwvBHhVASD/TCxOEiXjrXPedgCJRkyd
-   M7seKPOm7rEk8nz6pGTocx6o7uGZyWUYdxcLEHbqFWaYSvixk8qGPBfTz
-   3fgI9vMnGN0aDt/53lYNrHDSboLw1xCV7bKYzmCBG6R1hXFbkJbLHlvq/
-   bEBzqRT4sK25M04lJkQYlKcxm3NVUbfkg7TYMOJCPXR/MWjf57rFAgLTl
-   1QO/FYXQdw7ePbSCzwpMUUWJ8ruaulP8Bj89fKkxK4MIbZ6iXK1y91MBc
-   Q==;
-X-CSE-ConnectionGUID: rWzHQ6hdT+uRNpUeFdz49g==
-X-CSE-MsgGUID: fqTOauj6QgOI6NVqdudaeg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="62489080"
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="62489080"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 07:17:17 -0700
-X-CSE-ConnectionGUID: zm8arlrJTxmzd+YMP9V39w==
-X-CSE-MsgGUID: 231SeiXeTnuDl2uDP9aoOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="145169480"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by fmviesa007.fm.intel.com with ESMTP; 04 Jun 2025 07:17:15 -0700
-Message-ID: <459184db-6fc6-453b-933d-299f827bdc55@linux.intel.com>
-Date: Wed, 4 Jun 2025 17:17:14 +0300
+	 In-Reply-To:Content-Type; b=OgFokzf80yajPECR9HFJdLjwuyk7SVOtzSAzjpWdcYFUOYvdyAjxInmoCeG2Rjmd3hL/ig122cigkL03ZAZutQkjWpVFLzWU7lIoZsSHokBdots1CFtblz56bA80Oaoewa3KvEqvy11UkI9XYFpSV23QeumcviwE9jrq3bymm/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RN4lMjof; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5547linj010763
+	for <linux-kernel@vger.kernel.org>; Wed, 4 Jun 2025 14:19:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	68QutcxCYHS15NpUFLvGoYlDPJbMclT9Ep0Qrq9GkMQ=; b=RN4lMjofG/LdXVbT
+	RKNs+BWuyv0r2q/Rjd5Vycklz8k9guLF+eYxJ5MIUbApT5HbK8qrHjOeAQMqaO9h
+	C/7xyaGU0eqEzb3ANecUw8pjj/hbDKJWXMtUnndh73nrjz2MKQHQoc46zd5ipUyN
+	NMKIzEWgtglnQo+/WH/LWXIYVoSBJ0WFxnA7gPhOfG87PLce0ui6/k5I7P2WI96K
+	pceAo8DM80nPq0JAwODUqY9+9pesLQHpWLhKIpjR7m8eQqeY+OcbMM+26uttKPwB
+	yuq0iHGkbFP8U1BjqkwyioWzbt6tCfG+331056+uz0iB1LohGqlWbOnnpHAKPVPb
+	W1yyJA==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8ypa28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 14:19:23 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d09a3b806aso144524485a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 07:19:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749046762; x=1749651562;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=68QutcxCYHS15NpUFLvGoYlDPJbMclT9Ep0Qrq9GkMQ=;
+        b=a0fKpM1i4ibcXAiDCaD1rE4HSSdTFXijsW3GfDB6rob2vyFnXsKzTzdvc2QaUVQsDB
+         efju7hXM/wAeCsYDlTqKyPdt6wJsJUDWNPyQWJeF4d4m/ai1ejG7pB0gdoqxjzyrmjjj
+         +pGQzFhcCe4nVMSDdaMaqFfwuAjGfYsD+uIsZfkK8lxCgCaN7gwh/U+eTAUNMb5uqRrt
+         gbZ7L94BiMutaEapxgQtMy0gW3eBSKdbEJz2RlzxjH/CdYxQvwEPgKfHgLI6NxcWhObE
+         fD/wx/Xfwkoikx7BL0NMjLaGwGi8dONw1L6v+sbFuUqErRDAKCubK07Umd4+dLAe8i1u
+         6/iw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9DDmGkyJe+hn5E5F3rzJy4ydehZr7WFLsQA4WFQAe4Th1+rm3f/oaWMT2zXn/vl2BIj60Yy7vb3YhSiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjhCeJhKtaahXJSsmSxFfSNp5waDlMNWVsr/aAZInXIsacDfz9
+	5yxVZFvBdw+Hvu6TdOBggWsH2ZHNJj3ve5AEtQw0GTWFT2NGT6XLaq5zH8PLqjJU+mtdFEro3Bv
+	GBxuNhrxYqt5s9EPq+FhH8VH+W6rAsXhhDPX296NUeCBOnXKwfrLw5Y+ud3p4mljF9/Y=
+X-Gm-Gg: ASbGncumPrFgEErINCaBk+dlaeEo0DQrQa+g8KOeWrsus95OMuxpk7bgNNo8Y1QZxLZ
+	Iw6/+kI7n2fZ/7JBiADgWxpye9vHQoR4+slzaFVVSbr+fpHJHsRnh12AQb1WlJi4gh36wWXcyXf
+	f8C6lLs60VWC6j3h3Y6AVZYeR4EQKk2l/1sSXUXfgmJlqxlWJtsicqi+7hsUHUfcquZvzDHd3ZL
+	6E7Xzg073d8R5o0KgiLmAOrDIeQhC1Ja8sAHNtpenIG4/zEaAAjq0HAhZq5MxsIEPdZ00yiL1ZL
+	FLkpfglwsSStkf1pK3yDgudw9P+BbR1mK/KUijV+sMCwXYEWM8IQK33VBn4w6mVvpA==
+X-Received: by 2002:a05:620a:24d3:b0:7c7:a574:c6d2 with SMTP id af79cd13be357-7d2198eee0cmr172821085a.9.1749046762026;
+        Wed, 04 Jun 2025 07:19:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhu5IVwhXMCxfnNg+GTBKDVnu8vAYsZyd0PXpSc6Ek1K+ankBBiRwyZhFW7ELTLDR8pmTeZA==
+X-Received: by 2002:a05:620a:24d3:b0:7c7:a574:c6d2 with SMTP id af79cd13be357-7d2198eee0cmr172818785a.9.1749046761567;
+        Wed, 04 Jun 2025 07:19:21 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-606a0ec0430sm2846895a12.80.2025.06.04.07.19.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Jun 2025 07:19:21 -0700 (PDT)
+Message-ID: <b9752b9f-54d8-4ae0-916a-76149abcce69@oss.qualcomm.com>
+Date: Wed, 4 Jun 2025 16:19:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,109 +88,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] usb: xhci: Skip xhci_reset in xhci_resume if xhci
- is being removed
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
- Roy Luo <royluo@google.com>,
- "quic_ugoswami@quicinc.com" <quic_ugoswami@quicinc.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "michal.pecio@gmail.com" <michal.pecio@gmail.com>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20250522190912.457583-1-royluo@google.com>
- <20250522190912.457583-2-royluo@google.com>
- <20250523230633.u46zpptaoob5jcdk@synopsys.com>
- <b982ff0e-1ae8-429d-aa11-c3e81a9c14e5@linux.intel.com>
- <20250529011745.xkssevnj2u44dxqm@synopsys.com>
+Subject: Re: [PATCH v7 2/3] arm64: dts: qcom: qcs615: add venus node to
+ devicetree
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Renjiang Han <quic_renjiang@quicinc.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20250527-add-venus-for-qcs615-v7-0-cca26e2768e3@quicinc.com>
+ <20250527-add-venus-for-qcs615-v7-2-cca26e2768e3@quicinc.com>
+ <429b4c99-b312-4015-8678-0371eac86de4@oss.qualcomm.com>
+ <6a9e7daf-c0df-42db-b02d-96d9893afcde@quicinc.com>
+ <idc4476ibh4geraklzpas5536jnwvbp6xhjjaajcdcwxicorrf@myh7kyz77rxy>
+ <43e1f8db-5ab1-44ce-97c8-50910704788f@quicinc.com>
+ <d6udpwmocodvlsm5ljqz7zbyonj2yahtlzmm2jjjveqrm2hmkz@andh5j4jgixr>
+ <9faff664-9717-4259-8b23-bc44e64f6947@quicinc.com>
+ <77ea49c3-f042-4ba9-a0da-1d0e4e4088d3@oss.qualcomm.com>
+ <wyzyffaksofnubx72dy6uj6wuv5nk3bxii2ncdvb7ga3fegynj@z44aoiu4ywt6>
 Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250529011745.xkssevnj2u44dxqm@synopsys.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <wyzyffaksofnubx72dy6uj6wuv5nk3bxii2ncdvb7ga3fegynj@z44aoiu4ywt6>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDExMCBTYWx0ZWRfX0cXVEU5hkM27
+ hk6CT1sbm+mCAojED5YO5e1CHscCCxorogEUkY8vYm8RnkD7FmGLSvYNxppsBNy+Xy8PgAZVQqD
+ ecPyWyyeZfAD9ngR0NJW8Y8cHcQahhsGmW6dx6AQEki6kLehMYWyS2Xtkx1nDvLG+SMoKz6I+x9
+ cY2DTX9a6E0fA89WQnOZsMICfCCiciy+kvjOIxCQUnGTT9iWXTaC4ZfleeHXufgSqFr8chfOR4X
+ CncLqwHxcr/hjS1gXv9ubgTIffGLraYoBRM7O3AilorU0CD/SuGHf8cBfb1OIUBUOumgsO6wDBS
+ JdTAxnQn7hbOqwW/cxDRGL0NjPxQe/SpG9TBox0vpmU8LAJGN5s7y78FNtpUXizNjdaJSbM5i4n
+ t+zpHovYryiHLqNhJ6LmLV60Qv23qp9B3JrsiBhXpO9e2jUhvH2Xo/EhqH/QX0SnMZzmqdIb
+X-Proofpoint-ORIG-GUID: h1qhjRb2dxQnhgAb6I0PAn-CJO1YDo-F
+X-Proofpoint-GUID: h1qhjRb2dxQnhgAb6I0PAn-CJO1YDo-F
+X-Authority-Analysis: v=2.4 cv=T/uMT+KQ c=1 sm=1 tr=0 ts=684055eb cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=CsjPDDX-YaRk47nNTkkA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_03,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 suspectscore=0 impostorscore=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 malwarescore=0 phishscore=0
+ adultscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506040110
 
-On 29.5.2025 4.17, Thinh Nguyen wrote:
-> On Mon, May 26, 2025, Mathias Nyman wrote:
->> On 24.5.2025 2.06, Thinh Nguyen wrote:
->>> Hi Mathias, Roy,
+On 6/4/25 3:41 PM, Dmitry Baryshkov wrote:
+> On Wed, Jun 04, 2025 at 03:24:25PM +0200, Konrad Dybcio wrote:
+>> On 6/4/25 2:05 PM, Renjiang Han wrote:
 >>>
->>> On Thu, May 22, 2025, Roy Luo wrote:
->>>> xhci_reset() currently returns -ENODEV if XHCI_STATE_REMOVING is
->>>> set, without completing the xhci handshake, unless the reset completes
->>>> exceptionally quickly. This behavior causes a regression on Synopsys
->>>> DWC3 USB controllers with dual-role capabilities.
->>>>
->>>> Specifically, when a DWC3 controller exits host mode and removes xhci
->>>> while a reset is still in progress, and then attempts to configure its
->>>> hardware for device mode, the ongoing, incomplete reset leads to
->>>> critical register access issues. All register reads return zero, not
->>>> just within the xHCI register space (which might be expected during a
->>>> reset), but across the entire DWC3 IP block.
->>>>
->>>> This patch addresses the issue by preventing xhci_reset() from being
->>>> called in xhci_resume() and bailing out early in the reinit flow when
->>>> XHCI_STATE_REMOVING is set.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> Fixes: 6ccb83d6c497 ("usb: xhci: Implement xhci_handshake_check_state() helper")
->>>> Suggested-by: Mathias Nyman <mathias.nyman@intel.com>
->>>> Signed-off-by: Roy Luo <royluo@google.com>
->>>> ---
->>>>    drivers/usb/host/xhci.c | 5 ++++-
->>>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
->>>> index 90eb491267b5..244b12eafd95 100644
->>>> --- a/drivers/usb/host/xhci.c
->>>> +++ b/drivers/usb/host/xhci.c
->>>> @@ -1084,7 +1084,10 @@ int xhci_resume(struct xhci_hcd *xhci, bool power_lost, bool is_auto_resume)
->>>>    		xhci_dbg(xhci, "Stop HCD\n");
->>>>    		xhci_halt(xhci);
->>>>    		xhci_zero_64b_regs(xhci);
->>>> -		retval = xhci_reset(xhci, XHCI_RESET_LONG_USEC);
->>>> +		if (xhci->xhc_state & XHCI_STATE_REMOVING)
->>>> +			retval = -ENODEV;
->>>> +		else
->>>> +			retval = xhci_reset(xhci, XHCI_RESET_LONG_USEC);
+>>> On 6/3/2025 9:21 PM, Dmitry Baryshkov wrote:
+>>>> On Thu, May 29, 2025 at 10:29:46AM +0800, Renjiang Han wrote:
+>>>>> On 5/28/2025 7:04 PM, Dmitry Baryshkov wrote:
+>>>>>> On Wed, May 28, 2025 at 05:13:06PM +0800, Renjiang Han wrote:
+>>>>>>> On 5/27/2025 9:57 PM, Konrad Dybcio wrote:
+>>>>>>>> On 5/27/25 5:32 AM, Renjiang Han wrote:
+>>>>>>>>> Add the venus node to the devicetree for the qcs615 platform to enable
+>>>>>>>>> video functionality. The qcs615 platform currently lacks video
+>>>>>>>>> functionality due to the absence of the venus node. Fallback to sc7180 due
+>>>>>>>>> to the same video core.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+>>>>>>>>> ---
+>>>>>>>> [...]
+>>>>>>>>
+>>>>>>>>> +            interconnect-names = "video-mem",
+>>>>>>>>> +                         "cpu-cfg";
+>>>>>>>>> +
+>>>>>>>>> +            iommus = <&apps_smmu 0xe40 0x20>;
+>>>>>>>> fwiw docs mention 0xe60 0x20 (which result in the exact same resulting sid)
+>>>>>>> OK. Will update it with next version.
+>>>>>> How would you update this?
+>>>>> Thanks for your comments. I'll update it like this.
+>>>>> iommus = <&apps_smmu 0xe60 0x20>;
+>>>>>
+>>>>> This 0xe40 SID was based on a previous project. However, after rechecking
+>>>>> the documentation yesterday and confirming with colleagues, the correct
+>>>>> SID value should be 0xe60. I’ve also validated it on local device, it
+>>>>> works as expected. The reason 0xe40 seemed to work earlier is due to the
+>>>>> mask value being 0x20, which causes the effective SID derived from 0xe40
+>>>>> to be the same as 0xe60.
+>>>> Using 0xe60 would be counterintuitive, as we have a non-zero masked bits
+>>>> in the base value. It should be either <0xe60 0x0> or <0xe40 0x20>.
 >>>
->>> How can this prevent the xhc_state from changing while in reset? There's
->>> no locking in xhci-plat.
+>>> Hi Dmitry
+>>>
+>>> Thank you for your comment.
+>>>
+>>> I’ve followed up on this sid with a colleague from the kernel team,
+>>> and based on our discussion, it seems that the sid in this case should
+>>> be the result sid. The actual sid is 0xe60, and with a mask of 0x20,
+>>> the resulting sid would be 0xe40. Therefore, it should be <0xe40 0x20>.
+>>>
+>>> @Konrad, I’d appreciate any thoughts or suggestions you might have on it.
 >>
->> Patch 2/2, which is the revert of 6ccb83d6c497 prevents xhci_reset() from
->> aborting due to xhc_state flags change.
+>> What our docs describe as 'result sid' is literally 'base ~& mask', so if
+>> we used that, setting the mask would be useless..
 >>
->> This patch makes sure xHC is not reset twice if xhci is resuming due to
->> remove being called. (XHCI_STATE_REMOVING is set).
+>> Now, some old NHLOS builds are known to cause issues if the values aren't
+>> exactly what they expect (some whitelisting must be going on there).
+>>
+>> I don't think this should be an issue on this platform, but let's just
+>> use 0xe60 0x20 here to reflect the real values
 > 
-> Wouldn't it still be possible for xhci to be removed in the middle of
-> reset on resume? The watchdog may still timeout afterward if there's an
-> issue with reset right?
-> 
+> Isn't 0xe40 also 'real'?
 
-Probably yes, but that problem is the same if we only revert 6ccb83d6c497.
+0xe60 and 0xe40 (unmasked) are two separate streams
 
->> Why intentionally bring back the Qcom watchdog issue by only reverting
->> 6ccb83d6c497 ?. Can't we solve both in one go?
-> 
-> I feel that the fix is doesn't cover all the scenarios, that's why I
-> suggest the revert for now and wait until the fix is properly tested
-> before applying it to stable?
-
-Ok, we have different views on this.
-
-I think we should avoid causing as much known regression as possible even
-if the patch  might not cover all scenarios.
-
-By reverting 6ccb83d6c497 we fix a SNPS DWC3 regression, but at the same
-time bring back the Qcom issue, so cause another regression.
-
-We can avoid the main part or the Qcom regression by adding this patch as
-issue is with (long) xhci reset during resume if xhci is being removed, and
-driver always resumes xhci during ->remove callback.
-
-If we discover the patch is not perfect then we fix it
-
-Thanks
-Mathias
+Konrad> 
 
