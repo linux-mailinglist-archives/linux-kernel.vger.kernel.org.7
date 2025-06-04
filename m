@@ -1,144 +1,170 @@
-Return-Path: <linux-kernel+bounces-672797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88858ACD79E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 07:59:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCD1ACD798
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 07:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C471790F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:58:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77C41896C44
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838C4262FC7;
-	Wed,  4 Jun 2025 05:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="j8EUBg02"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B99B23ED5E;
+	Wed,  4 Jun 2025 05:56:17 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64EF230BD2;
-	Wed,  4 Jun 2025 05:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CD2581
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 05:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749016730; cv=none; b=HQ0n50PycJELNO7i8pWpxh3Ibb3Fp1RhbJv4Y7Cp0hrawx3PI2DcnyKRhtbtLv//ebOiy0KiDa+aJNnNEzZLxs9GxPOp30My8e2ZcpwqUBfaTuonJOQ+fkp1ZjVk47w3IEJtSJ/ZnORZgTj8EGVBmdxhoNF0C91oFE/k9LEaWGE=
+	t=1749016576; cv=none; b=Jv1YG2BI2K44ba5tdpsvOcqdtV7ZbXsvsNM7ZVfyacpxf1kcT1DYOsS8rmv3d3SK36ZvWbq8FxfIIbUxNPo+QdCcIHneX2eEWpgQ61ENQBwfEw/k4X5FQvtrqWfODDx1vFt+h6qU8OVbmnQbVE35/UGmprzWoCuneUqPqrOYhwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749016730; c=relaxed/simple;
-	bh=T+0ACzjcRPUCr/NNL+Xz2/jt8sPhrX+Xfym653JfVTY=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=in2ZVN4dOjp9IgnxEj/Y9QSZlQIXlKxJy8jsjA4186NIwRZbBBgv3BrTKDBf4zjkOCHk3gz8USWcN5aMBF2+VtN7jbSr7YMaaKuWCONGVebuLQRnx9sr9fgOG30hzqQfL/otdzPu7+59SSiZjvh0jR70xpWa5kmNekLantLAvpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=j8EUBg02; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1749016414;
-	bh=dxK57rrh1jvoo1g24molYIQ1YbfbH2OZpE0y+PyiV/c=;
-	h=From:To:Cc:Subject:Date;
-	b=j8EUBg02aEnilOpHZCWkZ0BRObtR1z8LLex8B0Nmvp5bywuBr0tqIFXqpgqtUN+Ek
-	 DWPPmbKeK4FnK0LlnspTPyYrY9B0PEtfBFOqyuVCiSacdCNh6hpkMGmiTvADD9h8hR
-	 R5EBvV1PNxaxflrmWghZzuC5hKu64CLZQWydpB9o=
-Received: from NUC10.. ([39.156.73.10])
-	by newxmesmtplogicsvrszgpua8-0.qq.com (NewEsmtp) with SMTP
-	id D5E8A2A8; Wed, 04 Jun 2025 13:53:30 +0800
-X-QQ-mid: xmsmtpt1749016410tl4fl36g6
-Message-ID: <tencent_A6502A28AF21A3CA88B106F3421159869708@qq.com>
-X-QQ-XMAILINFO: NQzH8pzEc5hGPs3uj3kHrPeahZXak4dASrsyrlzi8+3SJ7ZOTDpWGr79QAvJA0
-	 fhuR2sbv+Msr+YEK+VIb74pqi2uxdzWNu1OdHXfeB+gQ03Su/LZcBfmkwasrzX9FYuUnQXit9C+8
-	 0IGhc4QLAqbKjZD2amrQ9T+2pXDPAHE6zE9GoK//b4lUK7qCg59+iZvbfFjqbiBHo2ENmXdEPY9o
-	 zCcyfK05WmOKNR16Gm10Z71NYlowvtf8olaxSsExCHxDWghK7mKS53Z0w1Zlidk+iXMa/C4XQCiy
-	 3PtbVLIPiynLUyTUW/WJrl/7CuVbUIpWgTYSdKL2pqwNrw/tDpSXOQ1hw8QsaEC9qQxeM4siDjic
-	 xO5BKctg33BahoFO/o11+aebzWKaRomZaU9YeqRZILrG8rtEGKIjvpnFbIUvnHFq5qKCaV/1g9CE
-	 b+Tvda3WblLyGp5R4B1ybfjTRi7bzLIhcObdUeogv0Ovz6nBlKdAlkhDlk/7TzI+JgLq0urLwHZn
-	 Bd9mfje5NdZvG0aBDfd3HsARwebUUxi79N7F1hd+64PcRbaGV3qtIpaCdA6jwIHWOSb/VvXsf3Xq
-	 2IIeq/+33mu/I7IkCFknTgMP3obpfF8b6sR+EIZJfYDoRArzXNZcHoZUv/2RgZ4mWUUvtu4yLLBQ
-	 AML7h0BY4RTkSoFxrTSd5U0M4q0xWbywZiDdrTcKkLGDH4a8DZ0kJlCf2dljGbY0+QrBDnGbLd7U
-	 YrdmJeSInyQ/AiQwoj5qfElxvyst5HOcko0dhXHeacRUWEDDbeEXzm5w5+s7gzq8AkXqMZqt1nKK
-	 gawqU30CpqXDpEHnLpgGZ+tmOIklp4yY8TCXhdfQ9i1gjILJFTDL4EQZoLUrF26XXA8SGgzGoY9G
-	 5SIOqn0KAkov8Plr9prRgfZzXXi4meZrkw/iUdPHs+vY5gdNQTZiakfZPdradkPBZ75gVmMfQ+fG
-	 mzxismGJH8a23K/56wMcUloUA3OxUmqFqRJc0tai9nrTW5oqwHvx/QQNkfGv28p3VR+OPlF3U=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii@kernel.org,
-	eddyz87@gmail.com
-Cc: rongtao@cestc.cn,
-	rtoax@foxmail.com,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Amery Hung <ameryhung@gmail.com>,
-	Juntong Deng <juntong.deng@outlook.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	bpf@vger.kernel.org (open list:BPF [SELFTESTS] (Test Runners & Infrastructure)),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32 ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf-next] selftests/bpf: Fix compile error of bin_attribute::read/write()
-Date: Wed,  4 Jun 2025 13:53:22 +0800
-X-OQ-MSGID: <20250604055324.222850-1-rtoax@foxmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749016576; c=relaxed/simple;
+	bh=bouI8G1RCJFrYUxKLMlvgTppgPpvVWjm7uAA7NORbeQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gfTOB0slpvVzY0GwAnH8iRsaqqzK1p7L0dRjG9wPTM4UY06N7lH6d+9p1JzfyNDJP2lteH5e0DNaNNiMMd0nD5whVkfKKM3TueNedKmQXb5XRj43a4e72crAP6CLq2OSFP7vRpxa3mpWTQIlGomgYSFzZPjQkbHAV2SEvuKMmcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 5545uAR6087460
+	for <linux-kernel@vger.kernel.org>; Wed, 4 Jun 2025 13:56:10 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 5545tCa2081483;
+	Wed, 4 Jun 2025 13:55:12 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4bBxYb1T71z2Nr6MM;
+	Wed,  4 Jun 2025 13:52:19 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.48; Wed, 4 Jun 2025 13:55:09 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>, <baocong.liu@unisoc.com>
+Subject: [PATCH] f2fs: compress: fix UAF of f2fs_inode_info in f2fs_free_dic
+Date: Wed, 4 Jun 2025 13:54:52 +0800
+Message-ID: <1749016492-31835-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 5545tCa2081483
 
-From: Rong Tao <rongtao@cestc.cn>
+The decompress_io_ctx may be released asynchronously after
+I/O completion. If this file is deleted immediately after read,
+and the kworker of processing post_read_wq has not been executed yet
+due to high workloads, It is possible that the inode(f2fs_inode_info)
+is evicted and freed before it is used f2fs_free_dic.
 
-Since commit 97d06802d10a ("sysfs: constify bin_attribute argument of
-bin_attribute::read/write()"), make bin_attribute parameter of
-bin_attribute::read/write() const.
+    The UAF case as below:
+    Thread A                                      Thread B
+    - f2fs_decompress_end_io
+     - f2fs_put_dic
+      - queue_work
+        add free_dic work to post_read_wq
+                                                   - do_unlink
+                                                    - iput
+                                                     - evict
+                                                      - call_rcu
+    This file is deleted after read.
 
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
+    Thread C                                 kworker to process post_read_wq
+    - rcu_do_batch
+     - f2fs_free_inode
+      - kmem_cache_free
+     inode is freed by rcu
+                                             - process_scheduled_works
+                                              - f2fs_late_free_dic
+                                               - f2fs_free_dic
+                                                - f2fs_release_decomp_mem
+                                      read (dic->inode)->i_compress_algorithm
+
+This patch increase inode->i_count before f2fs_free_dic and decrease it
+after free the dic.
+
+Cc: Daeho Jeong <daehojeong@google.com>
+Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
 ---
- tools/testing/selftests/bpf/test_kmods/bpf_testmod.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/compress.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-index e6c248e3ae54..e9e918cdf31f 100644
---- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
-@@ -385,7 +385,7 @@ int bpf_testmod_fentry_ok;
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index b3c1df9..6b3b3a7 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
+ }
  
- noinline ssize_t
- bpf_testmod_test_read(struct file *file, struct kobject *kobj,
--		      struct bin_attribute *bin_attr,
-+		      const struct bin_attribute *bin_attr,
- 		      char *buf, loff_t off, size_t len)
- {
- 	struct bpf_testmod_test_read_ctx ctx = {
-@@ -465,7 +465,7 @@ ALLOW_ERROR_INJECTION(bpf_testmod_test_read, ERRNO);
+ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+-		bool bypass_destroy_callback);
++		bool bypass_destroy_callback, bool late_free);
  
- noinline ssize_t
- bpf_testmod_test_write(struct file *file, struct kobject *kobj,
--		      struct bin_attribute *bin_attr,
-+		      const struct bin_attribute *bin_attr,
- 		      char *buf, loff_t off, size_t len)
+ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
  {
- 	struct bpf_testmod_test_write_ctx ctx = {
-@@ -567,7 +567,7 @@ static void testmod_unregister_uprobe(void)
+@@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+ 	return dic;
  
- static ssize_t
- bpf_testmod_uprobe_write(struct file *file, struct kobject *kobj,
--			 struct bin_attribute *bin_attr,
-+			 const struct bin_attribute *bin_attr,
- 			 char *buf, loff_t off, size_t len)
+ out_free:
+-	f2fs_free_dic(dic, true);
++	f2fs_free_dic(dic, true, false);
+ 	return ERR_PTR(ret);
+ }
+ 
+ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+-		bool bypass_destroy_callback)
++		bool bypass_destroy_callback, bool late_free)
  {
- 	unsigned long offset = 0;
+ 	int i;
+ 
+@@ -1775,6 +1775,11 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+ 	}
+ 
+ 	page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
++	if (late_free) {
++		spin_lock(&dic->inode->i_lock);
++		atomic_dec(&dic->inode->i_count);
++		spin_unlock(&dic->inode->i_lock);
++	}
+ 	kmem_cache_free(dic_entry_slab, dic);
+ }
+ 
+@@ -1783,16 +1788,20 @@ static void f2fs_late_free_dic(struct work_struct *work)
+ 	struct decompress_io_ctx *dic =
+ 		container_of(work, struct decompress_io_ctx, free_work);
+ 
+-	f2fs_free_dic(dic, false);
++	f2fs_free_dic(dic, false, true);
+ }
+ 
+ static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
+ {
+ 	if (refcount_dec_and_test(&dic->refcnt)) {
+ 		if (in_task) {
+-			f2fs_free_dic(dic, false);
++			f2fs_free_dic(dic, false, false);
+ 		} else {
+ 			INIT_WORK(&dic->free_work, f2fs_late_free_dic);
++			/* to avoid inode is evicted simultaneously */
++			spin_lock(&dic->inode->i_lock);
++			atomic_inc(&dic->inode->i_count);
++			spin_unlock(&dic->inode->i_lock);
+ 			queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
+ 					&dic->free_work);
+ 		}
 -- 
-2.49.0
+1.9.1
 
 
