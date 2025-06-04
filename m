@@ -1,149 +1,158 @@
-Return-Path: <linux-kernel+bounces-673307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461C6ACDFBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0A8ACDFB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6567F189840B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2CB13A4CE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607DA291166;
-	Wed,  4 Jun 2025 13:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC971290BDE;
+	Wed,  4 Jun 2025 13:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T7SXF2UB"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fb1apBZg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6A0290DAC;
-	Wed,  4 Jun 2025 13:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B5228F51C;
+	Wed,  4 Jun 2025 13:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749045497; cv=none; b=GWXMjuBwcrXoU4gr/yCvNU9LwegO+zZ1uJovKX4w+mlKM3RmPYmMk+301bq3Hs5j/8V2q216/DqIx7/o1J0q6RoltwGfGb0zPixWth154oO3PQ2sbifngtvf4QvavxCyTT5YMRnVb7XAk3V+BVpH3JAASDVY3Vpj/DqZ5Kxjcq0=
+	t=1749045492; cv=none; b=Rr/+sIC5AKsneErwynahYY0H0MxcFCTbz3XVHTYRFAUwWoZ6OLSdvFufLuCVN2JjFCoID9A51t9mDgBK25HX5dBKiyFxFgdATbLswT/uY7IhfhOFSs89JMohqyAgCeJhvgr3DMFLpwpwqZyrdIzpPzsEITGkIApTlEwiNESPHP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749045497; c=relaxed/simple;
-	bh=g2WNtm+gErCC9zaaOUPQLB+n6rSn4DJGYIEUDZ2bxLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kri3oUXZqQgAsrVpCC90keuBGY6wvuAAJMnYr4AGez/wshhSiEV6Xoj/80qN0CnaeEmPfZV71etPeNMscjUr1aZzrxfR19Mpt55+1jZxFS8Op3/qWl9nUC7lfFoiJfEpqUu+GTYWNxyKNI4uGqleF5E8porjr7M43OmXD5fF39s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T7SXF2UB; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MofrKRmOHg0W6dvhylNzDHTjMTJLFlneoIq4UXMJ4/s=; b=T7SXF2UBFHfGJ6v3nIdlJfpgtH
-	lOyY6rEp7V5XRZk+LxmhCX4zfe6hTFaPZA6OZK9V5heaLcvxDnLkYiwLymVvuaaoEe8zza/fDry3T
-	xJyUR9Qxa+V8EYVkU9QtK6H5TBq4nprrjM73SfGmEadMrcrRmyugYmxzttDKbkedOkguEvRJy3v4W
-	kbg+1mT0nzTWEAgbyqjYO4Hokmp1Q1bnAsahXSHUzz3Et7EQe2GTuD6FPYgEP62lwHxqs2Sys20Wd
-	bVFW7mwLbyb8cARRP65Yg8rAVLJ4ocvZrlGuv1s/OjTY+JWhB1uX7bdX2vZ0blNvfey5Do3U9oAnR
-	yEHwDwfg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMod0-00000000uDF-33ZC;
-	Wed, 04 Jun 2025 13:58:02 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E0625300787; Wed,  4 Jun 2025 15:58:01 +0200 (CEST)
-Date: Wed, 4 Jun 2025 15:58:01 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, mingo@redhat.com, mingo@kernel.org,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Wang <00107082@163.com>
-Subject: Re: [PATCH 1/1] perf/core: fix dangling cgroup pointer in cpuctx
-Message-ID: <20250604135801.GK38114@noisy.programming.kicks-ass.net>
-References: <20250602184049.4010919-1-yeoreum.yun@arm.com>
- <20250603140040.GB8020@e132581.arm.com>
- <20250603144414.GC38114@noisy.programming.kicks-ass.net>
- <20250604080339.GB35970@noisy.programming.kicks-ass.net>
- <20250604101821.GC8020@e132581.arm.com>
+	s=arc-20240116; t=1749045492; c=relaxed/simple;
+	bh=DmoZb/9o3rHGp2jGpcgoTHMl8Ju66rgQCq7at8FrRfM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=SlSSsdz3C9QdHG90a5OJCoStEE7C4yyd2Zn5oKtw0v3/Pgv1ftRxVl1d1DstUPbGEMWEenFN+LN35/wuxO7XiIQjHLFuZQezmw28O59jlF4DNGqB8l2qSrxVJwvtexY45oZE4dmbJJu1LYMmW1DJ7LJcxKvQHPpOZB1O9LUy00k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fb1apBZg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE84DC4CEE4;
+	Wed,  4 Jun 2025 13:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749045492;
+	bh=DmoZb/9o3rHGp2jGpcgoTHMl8Ju66rgQCq7at8FrRfM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Fb1apBZg+VOhlfLXG1iDiloTrcIMRFweni9mL+9petMCQ5sqx1/Ay5x4uPlWMHyFA
+	 RPU58NRypx5ukcZPLC40Gxx5v2ti+g2uLIGi2YwAxn/yuXikFUdyfGw332fZ9TpAnY
+	 3fg0DV30D+fSSS9/2as7/N2zy0B96Mbt9pqK1ZNcio0dXO6IbhCCfnI9/0cCHxzWqn
+	 7IHKk1Svq3I+hpK5ouwT71QmpS4xbqTBZFaEhIqjg74QcVUPo44fybVwCV+mYmzGt9
+	 7LxVyNiOKoincQzEV3t9EaykZj8625C4CFBO2SDxztmTIIq3J0+Hj8U6s1dcGrcpg+
+	 xdi4F/0uPUaBg==
+Date: Wed, 04 Jun 2025 08:58:09 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604101821.GC8020@e132581.arm.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+To: Alexey Charkov <alchark@gmail.com>
+In-Reply-To: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
+References: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
+Message-Id: <174904540020.3869609.29886103068021354.robh@kernel.org>
+Subject: Re: [PATCH 0/4] arm64: dts: rockchip: enable further peripherals
+ on ArmSoM Sige5
 
-On Wed, Jun 04, 2025 at 11:18:21AM +0100, Leo Yan wrote:
 
-> Totally agree. The comment would be very useful!
+On Tue, 03 Jun 2025 21:01:12 +0400, Alexey Charkov wrote:
+> Add support for the two USB type A ports, link up the CPU regulators for
+> DVFS, enable WiFi and Bluetooth.
+> 
+> The bluetooth part might warrant some discussion and thoughts from the
+> list, given that it's connected over UART and thus not discoverable. At
+> the same time, there are two revisions of the board which have different
+> Bluetooth chips soldered on: Realtek based on v1.1 and Broadcom based on
+> v1.2. I'm not sure if there is any way to determine board version from
+> software. Mine is v1.2, so the respective patch deals with the Broadcom
+> case only, but maybe it's better to move it into a .dtso and thus kick
+> the can down the road (i.e. make the user deal with board identification
+> and loading of the right overlay)? Thoughts welcome.
+> 
+> Best regards,
+> Alexey
+> 
+> Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> ---
+> Alexey Charkov (4):
+>       arm64: dts: rockchip: list all CPU supplies on ArmSoM Sige5
+>       arm64: dts: rockchip: enable USB A ports on ArmSoM Sige5
+>       arm64: dts: rockchip: enable wifi on ArmSoM Sige5
+>       arm64: dts: rockchip: enable bluetooth on ArmSoM Sige5
+> 
+>  .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 135 +++++++++++++++++++++
+>  arch/arm64/boot/dts/rockchip/rk3576.dtsi           |  16 +++
+>  2 files changed, 151 insertions(+)
+> ---
+> base-commit: 546b1c9e93c2bb8cf5ed24e0be1c86bb089b3253
+> change-id: 20250602-sige5-updates-a162b501a1b1
+> 
+> Best regards,
+> --
+> Alexey Charkov <alchark@gmail.com>
+> 
+> 
+> 
 
-I have the below. Let me go read your email in more than 2 seconds to
-see if I should amend things.
 
-I'm not sure doing the INACTIVE->INACTIVE cycle in the ASCII art is
-going to make it clearer, might leave that off. But yeah, possible.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
----
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Subject: perf: Add comment to enum perf_event_state
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed Jun  4 10:21:38 CEST 2025
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Better describe the event states.
+  pip3 install dtschema --upgrade
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/perf_event.h |   42 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
 
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -635,8 +635,46 @@ struct perf_addr_filter_range {
- 	unsigned long			size;
- };
- 
--/**
-- * enum perf_event_state - the states of an event:
-+/*
-+ * The normal states are:
-+ *
-+ *            ACTIVE    --.
-+ *               ^        |
-+ *               |        |
-+ *       sched_{in,out}() |
-+ *               |        |
-+ *               v        |
-+ *      ,---> INACTIVE  --+ <-.
-+ *      |                 |   |
-+ *      |                {dis,en}able()
-+ *   sched_in()           |   |
-+ *      |       OFF    <--' --+
-+ *      |                     |
-+ *      `--->  ERROR    ------'
-+ *
-+ * That is:
-+ *
-+ * sched_in:       INACTIVE          -> {ACTIVE,ERROR}
-+ * sched_out:      ACTIVE            -> INACTIVE
-+ * disable:        {ACTIVE,INACTIVE} -> OFF
-+ * enable:         {OFF,ERROR}       -> INACTIVE
-+ *
-+ * Where {OFF,ERROR} are disabled states.
-+ *
-+ * Then we have the {EXIT,REVOKED,DEAD} states which are various shades of
-+ * defunct events:
-+ *
-+ *  - EXIT means task that the even was assigned to died, but child events
-+ *    still live, and further children can still be created. But the event
-+ *    itself will never be active again. It can only transition to
-+ *    {REVOKED,DEAD};
-+ *
-+ *  - REVOKED means the PMU the event was associated with is gone; all
-+ *    functionality is stopped but the event is still alive. Can only
-+ *    transition to DEAD;
-+ *
-+ *  - DEAD event really is DYING tearing down state and freeing bits.
-+ *
-  */
- enum perf_event_state {
- 	PERF_EVENT_STATE_DEAD		= -5,
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 546b1c9e93c2bb8cf5ed24e0be1c86bb089b3253
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/rockchip/' for 20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com:
+
+arch/arm64/boot/dts/rockchip/rk3576-roc-pc.dtb: mmc@2a320000 (rockchip,rk3576-dw-mshc): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3576-dw-mshc', 'rockchip,rk3288-dw-mshc'] is too long
+	'rockchip,rk2928-dw-mshc' was expected
+	'rockchip,rk3288-dw-mshc' was expected
+	'rockchip,rk3576-dw-mshc' is not one of ['rockchip,px30-dw-mshc', 'rockchip,rk1808-dw-mshc', 'rockchip,rk3036-dw-mshc', 'rockchip,rk3128-dw-mshc', 'rockchip,rk3228-dw-mshc', 'rockchip,rk3308-dw-mshc', 'rockchip,rk3328-dw-mshc', 'rockchip,rk3368-dw-mshc', 'rockchip,rk3399-dw-mshc', 'rockchip,rk3528-dw-mshc', 'rockchip,rk3562-dw-mshc', 'rockchip,rk3568-dw-mshc', 'rockchip,rk3588-dw-mshc', 'rockchip,rv1108-dw-mshc', 'rockchip,rv1126-dw-mshc']
+	from schema $id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtb: mmc@2a320000 (rockchip,rk3576-dw-mshc): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3576-dw-mshc', 'rockchip,rk3288-dw-mshc'] is too long
+	'rockchip,rk2928-dw-mshc' was expected
+	'rockchip,rk3288-dw-mshc' was expected
+	'rockchip,rk3576-dw-mshc' is not one of ['rockchip,px30-dw-mshc', 'rockchip,rk1808-dw-mshc', 'rockchip,rk3036-dw-mshc', 'rockchip,rk3128-dw-mshc', 'rockchip,rk3228-dw-mshc', 'rockchip,rk3308-dw-mshc', 'rockchip,rk3328-dw-mshc', 'rockchip,rk3368-dw-mshc', 'rockchip,rk3399-dw-mshc', 'rockchip,rk3528-dw-mshc', 'rockchip,rk3562-dw-mshc', 'rockchip,rk3568-dw-mshc', 'rockchip,rk3588-dw-mshc', 'rockchip,rv1108-dw-mshc', 'rockchip,rv1126-dw-mshc']
+	from schema $id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtb: mmc@2a320000 (rockchip,rk3576-dw-mshc): Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-evb1-v10.dtb: mmc@2a320000 (rockchip,rk3576-dw-mshc): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3576-dw-mshc', 'rockchip,rk3288-dw-mshc'] is too long
+	'rockchip,rk2928-dw-mshc' was expected
+	'rockchip,rk3288-dw-mshc' was expected
+	'rockchip,rk3576-dw-mshc' is not one of ['rockchip,px30-dw-mshc', 'rockchip,rk1808-dw-mshc', 'rockchip,rk3036-dw-mshc', 'rockchip,rk3128-dw-mshc', 'rockchip,rk3228-dw-mshc', 'rockchip,rk3308-dw-mshc', 'rockchip,rk3328-dw-mshc', 'rockchip,rk3368-dw-mshc', 'rockchip,rk3399-dw-mshc', 'rockchip,rk3528-dw-mshc', 'rockchip,rk3562-dw-mshc', 'rockchip,rk3568-dw-mshc', 'rockchip,rk3588-dw-mshc', 'rockchip,rv1108-dw-mshc', 'rockchip,rv1126-dw-mshc']
+	from schema $id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+arch/arm64/boot/dts/rockchip/rk3576-rock-4d.dtb: mmc@2a320000 (rockchip,rk3576-dw-mshc): compatible: 'oneOf' conditional failed, one must be fixed:
+	['rockchip,rk3576-dw-mshc', 'rockchip,rk3288-dw-mshc'] is too long
+	'rockchip,rk2928-dw-mshc' was expected
+	'rockchip,rk3288-dw-mshc' was expected
+	'rockchip,rk3576-dw-mshc' is not one of ['rockchip,px30-dw-mshc', 'rockchip,rk1808-dw-mshc', 'rockchip,rk3036-dw-mshc', 'rockchip,rk3128-dw-mshc', 'rockchip,rk3228-dw-mshc', 'rockchip,rk3308-dw-mshc', 'rockchip,rk3328-dw-mshc', 'rockchip,rk3368-dw-mshc', 'rockchip,rk3399-dw-mshc', 'rockchip,rk3528-dw-mshc', 'rockchip,rk3562-dw-mshc', 'rockchip,rk3568-dw-mshc', 'rockchip,rk3588-dw-mshc', 'rockchip,rv1108-dw-mshc', 'rockchip,rv1126-dw-mshc']
+	from schema $id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+
+
+
+
+
 
