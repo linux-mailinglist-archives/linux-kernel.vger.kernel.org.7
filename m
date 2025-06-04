@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-673052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70C6ACDB85
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:59:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C981FACDB8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9081893CB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66EB1168E9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2103F28D846;
-	Wed,  4 Jun 2025 09:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808D728D8C3;
+	Wed,  4 Jun 2025 10:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GF9aA4Tb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V5gVPwYN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3C313D24D;
-	Wed,  4 Jun 2025 09:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795C282864;
+	Wed,  4 Jun 2025 10:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749031141; cv=none; b=V8CKY3+uMOdL0Wt0pjvOzUddahKkRjtYJ7hpsmzI94ZRv/itHNLMBDxqcd1Jj6Z6ap4DC3l2oJXd1t/YuW4gOYXemtNTJ0B+AFKvZuOJ2YTm9MJ8Gu80llzzI9lQyel1lqKF62vbrp3a5bXJS6qWz6KLwTWV085ocfnb9nsLUHU=
+	t=1749031268; cv=none; b=SorhRLUi7AEbh5nAD5/2H0HG8knclqIfhfUpgZfeRSZ3TQh0cvqZB1Tx8Z5jOS1aaKXQpTCL/4WqFVPQ96bpO+Qf9D5Hd1ui8AW1zzVQWZx3GW7fA6P6JkZtoq/xhODUiHztuuW4LRUa7MO5hue+vj0mTjHHfE3Nrajcy9wCj94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749031141; c=relaxed/simple;
-	bh=CqCmbrbXobJgc1ymA9/kKEL8N3CEYCC7UPRgK9vYaoA=;
+	s=arc-20240116; t=1749031268; c=relaxed/simple;
+	bh=g7dNmCFIuya1AhW9VqQ7BiqRh+rsuId820P66lxPe3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DBPNhut90BzP4z9FfFaYi6aKFAoGnHAt1GziRFfxoy24WvFSuUeNS1kGYZcP/ZSFvsOtJgo2NnX0YZbmXcRihKWEmaMpAeW2lezkI3r7rfPglbIkjBzTx3AonICVcZnAFdSvETimwSeWepvIkEQHqainAFujvmHzIsw9v73KmXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GF9aA4Tb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A071C4CEE7;
-	Wed,  4 Jun 2025 09:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1749031140;
-	bh=CqCmbrbXobJgc1ymA9/kKEL8N3CEYCC7UPRgK9vYaoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GF9aA4TbIZJFMyVVDGQL3bsBKLwjB13kEJh2YOjr/VtsqKnhID7qPC+gVYoQ5gm47
-	 SvLAtiEvMBpXUJd1EUeckKoTUmAgZd70ZpvxYUVNvIvG4xYMX9esHHrsXSTetjzCoY
-	 3Av3FNqciKp3cEaPuk49+/o7Tjsvx8TMuS7BhNwc=
-Date: Wed, 4 Jun 2025 11:58:57 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.12 00/55] 6.12.32-rc1 review
-Message-ID: <2025060446-chewer-dill-080e@gregkh>
-References: <20250602134238.271281478@linuxfoundation.org>
- <ff0b4357-e2d4-4d39-aa0e-bb73c59304c1@drhqmail203.nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjfuZnhYpO4Wl/devvLufNYljiBOCsJwOCN1dCtK4UBi7tSKDwU7RmWE+LLkT2uVaWV94a7SLFAdaiRl6m1KVowYh5LUlOciCftPUV/ShOPCeHEUFyZTAUJP/RVLrZX5/Kqr6GnK+2YReD7vAsncbuwYuoiH7FtCvwF/MFr5wME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V5gVPwYN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hvswKOspXfPTomvHlFFhmYJf0rg8SY9R3ztOupfQW1k=; b=V5gVPwYNk3egL6TbXhE4FB0B0O
+	9OWoVUpjbd6KhfBwhZs4MpN6QBPVxKc9M84ZPChKCN5d771V/VcxwIK5SrPd54p7HruLbXmcLa3OQ
+	cwhxmojiIlLzewnu7hRud3tIaZgHh6g15hk6XDCXKRaSyXx6AEvceQ0Bb0JH8+2rLPsKKaPxJnWwR
+	a+VO8SbpyJoBRODZ6x3ABpL/WJsHlOCYvuYSRaR+Rz/XdIc8o80Y8tmJwA6WEr6XR1JpE2R7PrvJv
+	OwDfWlH4zt+sR1HTcLNOg+UFP24YEW0rDQ6mACnzbKUXMeOWGZdZdE2JTbtlj/oXqyJYuLJgv3ug0
+	msCswAtw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMkvV-00000000t0z-2SCQ;
+	Wed, 04 Jun 2025 10:00:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CC1C830078B; Wed,  4 Jun 2025 12:00:52 +0200 (CEST)
+Date: Wed, 4 Jun 2025 12:00:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Luo Gengkun <luogengkun@huaweicloud.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, davidcc@google.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] perf/core: Fix
+ WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0) in perf_cgroup_switch
+Message-ID: <20250604100052.GH38114@noisy.programming.kicks-ass.net>
+References: <20250604033924.3914647-1-luogengkun@huaweicloud.com>
+ <20250604033924.3914647-3-luogengkun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,47 +67,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff0b4357-e2d4-4d39-aa0e-bb73c59304c1@drhqmail203.nvidia.com>
+In-Reply-To: <20250604033924.3914647-3-luogengkun@huaweicloud.com>
 
-On Wed, Jun 04, 2025 at 02:41:11AM -0700, Jon Hunter wrote:
-> On Mon, 02 Jun 2025 15:47:17 +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.12.32 release.
-> > There are 55 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 04 Jun 2025 13:42:20 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.32-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+On Wed, Jun 04, 2025 at 03:39:24AM +0000, Luo Gengkun wrote:
+> There may be concurrency between perf_cgroup_switch and
+> perf_cgroup_event_disable. Consider the following scenario: after a new
+> perf cgroup event is created on CPU0, the new event may not trigger
+> a reprogramming, causing ctx->is_active to be 0. In this case, when CPU1
+> disables this perf event, it executes __perf_remove_from_context->
+> list _del_event->perf_cgroup_event_disable on CPU1, which causes a race
+> with perf_cgroup_switch running on CPU0.
 > 
-> Failures detected for Tegra ...
+> The following describes the details of this concurrency scenario:
 > 
-> Test results for stable-v6.12:
->     10 builds:	10 pass, 0 fail
->     28 boots:	28 pass, 0 fail
->     116 tests:	115 pass, 1 fail
+> CPU0						CPU1
 > 
-> Linux version:	6.12.32-rc1-gce2ebbe0294c
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
->                 tegra194-p3509-0000+p3668-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra210-p3450-0000,
->                 tegra30-cardhu-a04
+> perf_cgroup_switch:
+>    ...
+>    # cpuctx->cgrp is not NULL here
+>    if (READ_ONCE(cpuctx->cgrp) == NULL)
+>    	return;
 > 
-> Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
+> 						perf_remove_from_context:
+> 						   ...
+> 						   raw_spin_lock_irq(&ctx->lock);
+> 						   ...
+> 						   # ctx->is_active == 0 because reprogramm is not
+> 						   # tigger, so CPU1 can do __perf_remove_from_context
+> 						   # for CPU0
+> 						   __perf_remove_from_context:
+> 						         perf_cgroup_event_disable:
+> 							    ...
+> 							    if (--ctx->nr_cgroups)
+> 							    ...
+> 
+>    # this warning will happened because CPU1 changed
+>    # ctx.nr_cgroups to 0.
+>    WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
+> 
+> To fix this problem, expand the lock-holding critical section in
+> perf_cgroup_switch.
+> 
+> Fixes: db4a835601b7 ("perf/core: Set cgroup in CPU contexts for new cgroup events")
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> ---
 
-Any hints as to what is causing the failure?
+Right, so how about we simply re-check the condition once we take the
+lock?
 
-thanks,
+Also, take the opportunity to convert to guard instead of adding goto
+unlock.
 
-greg k-h
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -207,6 +207,19 @@ static void perf_ctx_unlock(struct perf_
+ 	__perf_ctx_unlock(&cpuctx->ctx);
+ }
+ 
++typedef struct {
++	struct perf_cpu_context *cpuctx;
++	struct perf_event_context *ctx;
++} class_perf_ctx_lock_t;
++
++static inline void class_perf_ctx_lock_destructor(class_perf_ctx_lock_t *_T)
++{ perf_ctx_unlock(_T->cpuctx, _T->ctx); }
++
++static inline class_perf_ctx_lock_t
++class_perf_ctx_lock_constructor(struct perf_cpu_context *cpuctx,
++				struct perf_event_context *ctx)
++{ perf_ctx_lock(cpuctx, ctx); return (class_perf_ctx_lock_t){ cpuctx, ctx }; }
++
+ #define TASK_TOMBSTONE ((void *)-1L)
+ 
+ static bool is_kernel_event(struct perf_event *event)
+@@ -944,7 +957,13 @@ static void perf_cgroup_switch(struct ta
+ 	if (READ_ONCE(cpuctx->cgrp) == cgrp)
+ 		return;
+ 
+-	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
++	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
++	/*
++	 * Re-check, could've raced vs perf_remove_from_context().
++	 */
++	if (READ_ONCE(cpuctx->cgrp) == NULL)
++		return;
++
+ 	perf_ctx_disable(&cpuctx->ctx, true);
+ 
+ 	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+@@ -962,7 +981,6 @@ static void perf_cgroup_switch(struct ta
+ 	ctx_sched_in(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+ 
+ 	perf_ctx_enable(&cpuctx->ctx, true);
+-	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
+ }
+ 
+ static int perf_cgroup_ensure_storage(struct perf_event *event,
 
