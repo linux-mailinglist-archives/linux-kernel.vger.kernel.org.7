@@ -1,174 +1,173 @@
-Return-Path: <linux-kernel+bounces-673475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E0EACE1B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:44:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F10DACE1BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5083A8A3B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394CF1631AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F271A254C;
-	Wed,  4 Jun 2025 15:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783A519E971;
+	Wed,  4 Jun 2025 15:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jq9sFDO+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FDqwOq0l";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r74BRPCk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6plmO64f"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=vfemail.net header.i=@vfemail.net header.b="YQTIedBv"
+Received: from smtp161.vfemail.net (smtp161.vfemail.net [146.59.185.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017CD19E7D0
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B3214B086
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.59.185.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749051867; cv=none; b=paKk1hQD6b3VmvvWJkLq4vl9WyudptuT9vaYYLKjkPkm9nGqDXpC0Xh7TCFbbjnCxDc3DDRcqG3fgktnkp9S9o9nwZunSUslUOadpU2lR7UFXBTvkw//rvAO6RwHFjzn0/s4CAarXxYDqsuCMQfv2oGP94bwxXe1/CvcWHGqCrM=
+	t=1749051973; cv=none; b=U1EDIt1v6nFi7o9z4wJtX5RUxnfnE/QZhqyjAzBu/6DOD04gdtwNrM3faflRuz9q0dNHOjRq25sAfa3l/p1NirzB6Kte8h/CK0e/AXsi03NJuzKFt2L2BPq5Xv0W3bhW7Y3o2TFOHg84QUD3CmpdqsM3IKNxKFXfbEkwABfrEqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749051867; c=relaxed/simple;
-	bh=f7lRk+b2SIr/M1jbrfGzBguI5XqViR8QimvPyjso0UY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwbRl1XvRRuvB6oEDvkCBScVKIz3UW41osLJURuMHS1jmm7UdgWlIIPv6fpW+bigwqSytzSr3+klhe4SoEfu0hQypy39ohhAuUuxMxvikTkrZwc1rCh0IYafzyCefQAnA6CSIpA5uj0pOTz8QtOCC6vE6sSSr3bbHT0y3/YJepk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jq9sFDO+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FDqwOq0l; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r74BRPCk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6plmO64f; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D7FBA1FEF2;
-	Wed,  4 Jun 2025 15:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749051864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=Jq9sFDO+OXExv9H/ECrc3/kkj4FEJjvBUv/KUMLSokDTT/tDPCbBehkplqPUEzATPxyt2k
-	ZhWaZEB4Vk9YAMSMw1U3sgHguTHD6xy+6NLrX8TqDGW5XPABmnDnbx7kJtSfw3bmDXQMmS
-	JT4+rS97ATsiwIayfbWr3lv+n44wPCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749051864;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=FDqwOq0lhb+b0Cel/nEtVwKCGhCq4IkCXU9OfHh+mlszveJzsP62aqjmNR5Kjchn7eCb/i
-	0kB4asU3ZXg3+MAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r74BRPCk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6plmO64f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749051863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=r74BRPCktuxJVMtT86wnDKlCv9NvFGtd5toUKsd69F7Cl5Ql8P6yxv2f9S429HSCLHCWO0
-	yr6b8r6fGdw95ebKYO0Akeomnef1rhkwk8jWl3iu/h8wcQjBlHx2+rudYiyWv2jUSa17aA
-	sN7SwfP2Jm0x05b2L0xU9rLXg0v1vpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749051863;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=6plmO64fjxDstv+2auLmT/Tkp0J4X35NypvAXEoohnGzTMJ0E64QMzJ7nZck2xsXqmcK5x
-	teWTEy9uyJLB8gAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C0C511369A;
-	Wed,  4 Jun 2025 15:44:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hskGL9dpQGgxFQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Jun 2025 15:44:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E96B1A095C; Wed,  4 Jun 2025 17:44:22 +0200 (CEST)
-Date: Wed, 4 Jun 2025 17:44:22 +0200
-From: Jan Kara <jack@suse.cz>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Luka <luka.2016.cs@gmail.com>
-Subject: Re: [Bug] possible deadlock in vfs_rmdir in Linux kernel v6.12
-Message-ID: <bfyuxaa7cantq2fvrgizsawyclaciifxub3lortq5oox44vlsd@rxwrvg2avew7>
-References: <CALm_T+2FtCDm4R5y-7mGyrY71Ex9G_9guaHCkELyggVfUbs1=w@mail.gmail.com>
- <CALm_T+0j2FUr-tY5nvBqB6nvt=Dc8GBVfwzwchtrqOCoKw3rkQ@mail.gmail.com>
- <CALm_T+3H5axrkgFdpAt23mkUyEbOaPyehAbdXbhgwutpyfMB7w@mail.gmail.com>
- <20250604-quark-gastprofessor-9ac119a48aa1@brauner>
- <20250604-alluring-resourceful-salamander-6561ff@lemur>
+	s=arc-20240116; t=1749051973; c=relaxed/simple;
+	bh=sVv9tfQSi/F3EG4Cu3S8TUx3854kAJcKUGCB7EOgU2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nKsbmx1O3ihHvbA9jKgzrkfSRej9oTToDcwODIDBV45SfWmxuc24TuAT3c2Je408jWmU4c3oOMfv5J02mT4lqPquWvWpwlHKk/fkT4nVycShwrBsh+hy55vtBWZ98TO4SV8g8qYGKIj2a9CYk9fgFFHnfDWZTNlC1jI+CmL7tLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vfemail.net; spf=pass smtp.mailfrom=vfemail.net; dkim=pass (1024-bit key) header.d=vfemail.net header.i=@vfemail.net header.b=YQTIedBv; arc=none smtp.client-ip=146.59.185.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vfemail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vfemail.net
+Received: (qmail 3606 invoked from network); 4 Jun 2025 15:44:46 +0000
+Received: from localhost (HELO nl101-3.vfemail.net) ()
+  by smtpout.vfemail.net with SMTP; 4 Jun 2025 15:44:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=vfemail.net; h=date:from
+	:to:cc:subject:message-id:in-reply-to:references:mime-version
+	:content-type:content-transfer-encoding; s=2018; bh=sVv9tfQSi/F3
+	EG4Cu3S8TUx3854kAJcKUGCB7EOgU2Y=; b=YQTIedBvvVd3v4PqdxVwfYexscjs
+	TNLX0TEi3+v7YNa42xUXx4PZTy32dD9Grc9ly3rUtmOjAS6KYmD9yRWTdC5iJH9T
+	nXRAfZnnAHj3RelylC/s8NjdF7JmlxF5bQz/t2uadJ0jwdpR43/mQ5Ib+echeTrO
+	WFllUPe5Zw/PlEQ=
+Received: (qmail 52508 invoked from network); 4 Jun 2025 10:46:03 -0500
+Received: by simscan 1.4.0 ppid: 52486, pid: 52504, t: 0.6537s
+         scanners:none
+Received: from unknown (HELO bmwxMDEudmZlbWFpbC5uZXQ=) (aGdudGt3aXNAdmZlbWFpbC5uZXQ=@MTkyLjE2OC4xLjE5Mg==)
+  by nl101.vfemail.net with ESMTPA; 4 Jun 2025 15:46:02 -0000
+Date: Wed, 4 Jun 2025 11:45:58 -0400
+From: David Niklas <simd@vfemail.net>
+To: Linux RAID <linux-raid@vger.kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Need help increasing raid scan efficiency.
+Message-ID: <20250604114558.4d27abce@Zen-II-x12.niklas.com>
+In-Reply-To: <26688.15707.98922.15948@quad.stoffel.home>
+References: <20250602210514.7acd5325@Zen-II-x12.niklas.com>
+	<26688.15707.98922.15948@quad.stoffel.home>
+X-Mailer: Claws Mail 4.3.0git38 (GTK 3.24.24; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604-alluring-resourceful-salamander-6561ff@lemur>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: D7FBA1FEF2
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -2.51
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed 04-06-25 10:45:49, Konstantin Ryabitsev wrote:
-> On Wed, Jun 04, 2025 at 09:45:23AM +0200, Christian Brauner wrote:
-> > Konstantin, this looks actively malicious.
-> > Can we do something about this list-wise?
+I'm replying to everyone in the same email.
+
+On Wed, 4 Jun 2025 08:34:35 -0400
+"John Stoffel" <john@stoffel.org> wrote:
+> >>>>> "David" == David Niklas <simd@vfemail.net> writes:  
 > 
-> Malicious in what sense? Is it just junk, or is it attempting to have
-> maintainers perform some potentially dangerous operation?
+> > My PC suffered a rather nasty case of HW failure recently where the
+> > MB would break the CPU and RAM. I ended up with different data on
+> > different members of my RAID6 array.  
+> 
+> Ouch, this is not good.  But you have RAID6, so it should be ok...
+> 
+> > I wanted to scan through the drives and take some checksums of
+> > various files in an attempt to ascertain which drives took the most
+> > data corruption damage, to try and find the date that the damage
+> > started occurring (as it was unclear when exactly this began), and
+> > to try and rescue some of the data off of the good pairs.  
+> 
+> What are you comparing the checksums too?  Just because you assemble
+> drives 1 and 2 and read the filesystem, then assemble drives 3 and 4
+> into another array, how do you know which checksum is correct if they
+> differ?  
 
-Well, useless it is for certain but links like:
+Once I find some files whose checksums differ, I can perform some
+automated data tests to find which file is the intact one.
 
-Bug Report: https://hastebin.com/share/pihohaniwi.bash
+> > So I setup the array into read-only mode and started the array with
+> > only two of the drives. Drives 0 and 1. Then I proceeded to try and
+> > start a second pair, drives 2 and 3, so that I could scan them
+> > simultaneously.  With the intent of then switching it over to 0 and
+> > 2 and 1 and 3, then 0 and 3 and 1 and 2.  
+> 
+> I'm not sure this is really going to work how you think.... 
+<snip>
 
-Entire Log: https://hastebin.com/share/orufevoquj.perl
+I just think that I'll be able to read from all 4 drives but doing it in
+2 arrays of 2 drives. Basically, I'll get a 2x speed increase over doing
+it as 2 drives at a time.
 
-are rather suspicious and suggest there's more in there than just a lack of
-knowledge (but now that I've tried the suffixes seem to be automatically
-added by some filetype detection logic in the hastebin.com site itself so
-more likely this is not malicious after all). FWIW I've downloaded one of
-the files through wget and looked into it and it seems to have a reasonable
-content and does not seem malicious but it is difficult to be sure in the
-maze of HTML and JS...
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On Wed, 4 Jun 2025 07:22:15 +0300
+Jani Partanen <jiipee@sotapeli.fi> wrote:
+> On 03/06/2025 23.04, David Niklas wrote:
+> > I think you misunderstood my original question, how do I assemble the
+> > RAID6 pairs (RO mode) into two different arrays such that I can read
+> > from them simultaneously?  
+> 
+> I dont think there is any other way to do what you want to do than use
+> overlayfs. You may find some ideas from here:
+> 
+> https://archive.kernel.org/oldwiki/raid.wiki.kernel.org/index.php/Irreversible_mdadm_failure_recovery.html
+
+Thanks for the idea. I'm not following why we setup the overlay but then
+use mapper devices (which came from where?), with the mdadm commands.
+
+
+On Tue, 3 Jun 2025 21:27:35 +0100
+anthony <antmbox@youngman.org.uk> wrote:
+> On 03/06/2025 21:04, David Niklas wrote:
+> > Searching online turned up raid6check.
+> > https://unix.stackexchange.com/questions/137384/raid6-scrubbing- 
+> > mismatch-repair
+> > 
+> > But the people there also pointed out that Linux's raid repair
+> > operation only recalculates the parity. I would have thought that it
+> > did a best of 3 option. I mean, that's a big part of why we have
+> > RAID6 instead of RAID5, right?  
+> 
+>  From what I remember of raid6check, it actually does a proper raid 6
+> calculation to recover the damaged data.
+> 
+<snip>
+> I've done it slightly differently, I've got raid-5 sat on top of
+> dm-integrity, so if a disk gets corrupted dm-integrity will simply
+> return a read failure, and the raid doesn't have to work out what's
+> been corrupted. I've got a different problem at the moment - my array
+> has assembled itself as three spares, so I've got to fix that ... :-(
+> 
+> Cheers,
+> Wol
+
+Good to know. Thanks Wol. I hope you're able to get your drives up and
+running again.
+
+
+On Wed, 4 Jun 2025 10:59:21 +0200
+Reindl Harald <h.reindl@thelounge.net> wrote:
+<snip>
+> > as I don't have enough room otherwise  
+> 
+> seriously?
+> 
+> an external 10 TB disk costs around 200 EUR
+> an external 20 TB disk costs around 400 EUR
+<snip>
+
+Every time I upgraded the size of my array, I'd take the old disks and
+use them as backup disks. Over time, it became a matter of not having
+enough SATA ports, not a matter of costing too much. I was trying to
+reuse disks instead of the disks being tossed out or collecting dust. I've
+learned better now.
+
+
+Thanks,
+David
+
 
