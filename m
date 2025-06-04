@@ -1,315 +1,319 @@
-Return-Path: <linux-kernel+bounces-673156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95899ACDD65
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBF1ACDD6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 14:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E6F3A5C21
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7781D1899068
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA27728DB78;
-	Wed,  4 Jun 2025 12:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA41F22DFB5;
+	Wed,  4 Jun 2025 12:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gqki9vYH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FYoJkKgK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128F21A5BBD;
-	Wed,  4 Jun 2025 12:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749038529; cv=fail; b=APNMzsQWNGlbtpkjVWzVYFBE4oeBpD0XUstpujwT26ply3KUIYDoK2QwngqqvJ3QyuZ2myywcw2BDSJq/JH+mSMrkyZl9ZI5AsmAQCpRM98YOkUJaQStESYYXQjvRBcXbO4XlaNXHD0PBrru3bZqLzgvh/6Fd+bRPN+2Q/is3jI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749038529; c=relaxed/simple;
-	bh=a/wtQmHCm8JmgkhE3122nA+VORXNAZ4rdR8FxzFAdss=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FZx8HDc0bT9Y+hGI7umY/wEh95qPzOWGyhfJEnsc17zYtUDbWPOtzEY3PUn47bwCpi5m5Jmgiy2V/pqCFzo6ZoIwixCO2e1rPuOV6BcdBvHllbKnIa5nklpqvqKpG/ht4WwA+tgNZgxga45nMhRDrZJGf5z9RkztxUna3qYXjRY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gqki9vYH; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749038527; x=1780574527;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=a/wtQmHCm8JmgkhE3122nA+VORXNAZ4rdR8FxzFAdss=;
-  b=gqki9vYHnrRe+CcPtcaRAwed4hvcCftCbUruaTfOeXGS56prQfeH5aNY
-   CppKJcIf8ald0ezlUsSBp6Y9R3v74n5SJa+XNC3B8NuP8IbLH84YbUEnP
-   iSqPLDvP8wrRjNIIqKA+66b43Anlfl/iKNXZV6PvqgT5KTnbfJbbfxheh
-   8CXOdqP7N6iPffh+LORlPtMEsnkqiNrEvetPRN7oVyzb86ia7w/3e9+Jg
-   oRlWczNENRD//VSx4AEB3QYTuV1xUtZ/+s5k8BvOd+Q1WlPBn8epeGfUv
-   qswYbPpLlkHmoFMj8SICawmk46/C7swGP1v+sZ9ve2bwfeQBSAn58ObL1
-   A==;
-X-CSE-ConnectionGUID: fYqW1tMYQGWue8E79RBE/Q==
-X-CSE-MsgGUID: A3wZDjCBSMaRX24gvlQdRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="51261980"
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="51261980"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 05:02:06 -0700
-X-CSE-ConnectionGUID: cmJD8+aFT2e1UA25TfubRA==
-X-CSE-MsgGUID: RP9Seig5QkiTBbXAe22kCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="145655622"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 05:02:05 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 4 Jun 2025 05:02:05 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 4 Jun 2025 05:02:05 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.69) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 4 Jun 2025 05:02:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xG0qq12wFdc8TXFC3oloh/2Mhjztqn1THukO+/s2bQIMClv9O+6lqCHtT2ykkatSDosJXZeuRuTEDUj+qej7BZeOdBaEr1WAMc+VDoo/SUXxHD6e/h+9psdMSkn2u6g0Xv7pKjWjmBmZhJh8BNLGns31c+U0D58AOWbMWV7XbwLI+QafaxAK7xa4xGisihZ9/kzBDW2r8BJhsxmjrwr8RcWQQ6AHKUK1R69psP3/pyJaaBxfiTUy1fYM0VSCCtQgjrKw2vWmnji3Ov7tAt+OyYbZaZofGtqCE+iX9LcnT2sBRuxW+YNsk47IS9xAXNLqOjZmF6bbQ/Z2KJKISHdfUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xwrf+PC3mHzI4j/PGMEmtWWA/7yqhNJhEOsmUV4MrAA=;
- b=lCNH+4mY/uHsTo0t/KamhLbPYKRGrRGBEPX9VeQPuJGGDYtCiMj2JvV9g+fd2hSWaYPlOA/bbryYIcGLPsUbklrs6L4xNKSQk/hCJAWSilhsWb8VL6KoL4W5HV6Qmp69LCIixJOh6gdmZsR7L1pXJ/ceoqVF7t2c6LMday50Xwrv96dCTnuQWrD7O6UXCE30upIk0765GVSNRa29S8JdBi1U9YOKMgPIQJVEF8xNv70MF9GGEThx3Ch8QY79yWLmTMUkHelQfi+uy7z/C7MD0TlLcH4punPTW82ucdsdQez2RGjZXU7S5/4ofYNrp/rgskFLTQX6JBjfYjrFYXu3sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB7540.namprd11.prod.outlook.com (2603:10b6:806:340::7)
- by IA4PR11MB9012.namprd11.prod.outlook.com (2603:10b6:208:56d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.19; Wed, 4 Jun
- 2025 12:01:30 +0000
-Received: from SN7PR11MB7540.namprd11.prod.outlook.com
- ([fe80::399f:ff7c:adb2:8d29]) by SN7PR11MB7540.namprd11.prod.outlook.com
- ([fe80::399f:ff7c:adb2:8d29%6]) with mapi id 15.20.8792.033; Wed, 4 Jun 2025
- 12:01:29 +0000
-Date: Wed, 4 Jun 2025 14:01:08 +0200
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: Jinjian Song <jinjian.song@fibocom.com>
-CC: <andrew+netdev@lunn.ch>, <angelogioacchino.delregno@collabora.com>,
-	<chandrashekar.devegowda@intel.com>, <chiranjeevi.rapolu@linux.intel.com>,
-	<corbet@lwn.net>, <danielwinkler@google.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <haijun.liu@mediatek.com>, <helgaas@kernel.org>,
-	<horms@kernel.org>, <ilpo.jarvinen@linux.intel.com>,
-	<johannes@sipsolutions.net>, <kuba@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<loic.poulain@linaro.org>, <m.chetan.kumar@linux.intel.com>,
-	<matthias.bgg@gmail.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<ricardo.martinez@linux.intel.com>, <ryazanov.s.a@gmail.com>,
-	<sreehari.kancharla@linux.intel.com>
-Subject: Re: [net v3] net: wwan: t7xx: Fix napi rx poll issue
-Message-ID: <aEA1hBEltWuIE-Yy@soc-5CG4396X81.clients.intel.com>
-References: <20250530031648.5592-1-jinjian.song@fibocom.com>
- <aD7BsIXPxYtZYBH_@soc-5CG4396X81.clients.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aD7BsIXPxYtZYBH_@soc-5CG4396X81.clients.intel.com>
-X-ClientProxiedBy: VI1PR02CA0051.eurprd02.prod.outlook.com
- (2603:10a6:802:14::22) To SN7PR11MB7540.namprd11.prod.outlook.com
- (2603:10b6:806:340::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C62522157E
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 12:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749038610; cv=none; b=p9VLcTqPZsoj8xfBknhI5SQCpjo2iupZffBzVR/E1FBOgnUjqpV42AFc2wBfJ3doj808GgjJovtT+3XmdFdP9Zq1qG7OrUsWNWDHlEadkpim3gx76th6M7Kmx+PasD40I7F+6JEjOJLBxJTu6XO/9Am6425zMvEs8yfZbcWbblg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749038610; c=relaxed/simple;
+	bh=224ooLFIfGjQiYB9ezkIszdxnmiRrwLeu0GIHwWE3fY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X9cWXapKGH0QSLCZj2ehVxcxazOT2Y2/HZgFkIU6tCogExgKMnI8ZndXIizclYQpUa7JWOmi9sXluo2wI5X3DxrNClNDsOWzZaKN3MCd+NXKwGRzzyZoJX2x/d7ZRcRSRy20wqtx1QscAktVo9GZGesAnghE1toBNA5sdpG0Q40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FYoJkKgK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749038608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4diXHUDmAcP7SFBj3azFrHhHSD0swnED0H5Eh4tf6ok=;
+	b=FYoJkKgKmrnJVqr2LiQLPsMw7D3z0xFE7AMbXdXH9lhY6RgzDiDN90USn9pjV/k5/AotwF
+	q1nC2sthLcDGVKX/WKJ/K3WfRpOGZZEMUbW4y0enibiRVx+yoYkxYByxvP7U+ICQt8X1Wo
+	EYq2t2AWXPfU1CvtwozCvID+FE6Vb1k=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-371-RWcW63S3O2ehkvSuSXhWkg-1; Wed, 04 Jun 2025 08:03:26 -0400
+X-MC-Unique: RWcW63S3O2ehkvSuSXhWkg-1
+X-Mimecast-MFC-AGG-ID: RWcW63S3O2ehkvSuSXhWkg_1749038606
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a503f28b09so446395f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 05:03:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749038606; x=1749643406;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4diXHUDmAcP7SFBj3azFrHhHSD0swnED0H5Eh4tf6ok=;
+        b=b43TYhRunxSjRBWnVmqf3y3qlcB1BLutBrFDWhvD7JPmhuuFeNtd8u57QjSCFktUx2
+         6iAwjrxNCK//pSOXY1v4ldpRPgf317ak2REhhBgMIYJoKg+WEGJ9BsLYWzr1mpVJm8f6
+         BQ7HrzDX/+sL3mVvhoGGxyG9BqUOho5XtZFRgMdaQzEv6JXvHpDRpgtFLaRzQop57E9t
+         atnq5tK263Hgx0Tyy234wkUUSq2aQNEM9AsdI+FxKg3tTPKiKJ6ldQVcKTTvboXSWijE
+         5E9XonsJtgf4AbSpc+rYADCzNDSpcPwOUWtingNkjGB7vygGPmtt2QUxSnaJWhElai3N
+         PLBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUT4RYE26kaRBAeDhve+2+tqgCNk2qKUdAlzotIaizH7Z6E3MIbeYtCiiEGcHV+yVBYL4PDzXOYFRMblSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWrhrSREBoHjp0IN3qrpvQuseQKQBuMoTeC4uRzKfngGvxR451
+	KbNCmwgscOULWr97PkKrdwJTC0iXAPeKy6oryiAWV2LJwUtlQTinc12qKUkVUlorjxysEaNWPiH
+	7Epv64XT1WY07TiSNvQUE0UeWxar7AZQyWUtKZEoiqcfSAsHHehhl9we4HRK+Kg/jaA==
+X-Gm-Gg: ASbGncvPYMWMDqKxLMYg+cHoUF9YN4xjNWQQ8Jv5CfueH+BjrIv0+bLBSS7iYiX1lzH
+	uqccOCL9+MevFvJZRbQMFFITcQq4KxswEPgTUtWAwftTRvyibKaJ0D3yqwsJBHblP9DqpRhCShL
+	GAPJj/0FtJpJQTkXWyzKxvnDwxSgIjkaeqBM2d9HGzeqjmq36fAEsuLMaIebZdYMXyKYwjGw/3T
+	HDhijyMEaxmL9uaWAy/UtbGWk8udOSrCSNO1onBcJp7Rs+/8xLGl7uH0s+fyfxqRJ/4swPmQYnv
+	k9ejtkUFAos0Q+VPeRnDtlRwzmIn+LX2HWuLOpMF608lQwFeLBhg/0pKG1ZHpc8ZP08323K2vpb
+	oGDe4wsNGF1bjkV+XQClVrY5dpxSP1c7iz21Pe1s=
+X-Received: by 2002:adf:fe8f:0:b0:3a5:23c6:eeee with SMTP id ffacd0b85a97d-3a523c6f100mr837997f8f.21.1749038605615;
+        Wed, 04 Jun 2025 05:03:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxDHrxlwX2CRsMft0T9uSibYrKTzC6gJCsnUQc1+VzckE3rTrUtENVBFWIg5Pk5c2/LzskBQ==
+X-Received: by 2002:adf:fe8f:0:b0:3a5:23c6:eeee with SMTP id ffacd0b85a97d-3a523c6f100mr837944f8f.21.1749038605086;
+        Wed, 04 Jun 2025 05:03:25 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf? (p200300d82f1bb8006fdb1af24fbd1fdf.dip0.t-ipconnect.de. [2003:d8:2f1b:b800:6fdb:1af2:4fbd:1fdf])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe5b92bsm21209118f8f.9.2025.06.04.05.03.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Jun 2025 05:03:24 -0700 (PDT)
+Message-ID: <ddcdd8b9-566c-4f6c-b1f7-861e93a80fbb@redhat.com>
+Date: Wed, 4 Jun 2025 14:03:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB7540:EE_|IA4PR11MB9012:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b513cce-b637-4992-e64e-08dda35f8a2f
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?cDrM/pS+lJc8vut+19bP5Gdy6kxSn2BkRcPxKy7HmPXb30x1YRTYDgLVWQRe?=
- =?us-ascii?Q?6Mcg/pFP7nqvmOKxNlI8+Dok8RkFGG17li3ep8cvrNbYXhVGvkVuAnE75j99?=
- =?us-ascii?Q?/6pjV1If6uocLpM0evhhc9eAg+0D4/ynL3fJBLGU2Hj/9S+CGMgf1Pax2urY?=
- =?us-ascii?Q?LVV70GMGSYyMVD1hEF2NRBdi+8oGBh4433H6gUIKmiBaXx+JwqevguYbt8QY?=
- =?us-ascii?Q?Jx07rAZ1hPd9ymng6/JfQf219v2rQKUKWX24QUMqiDi/RSLhKn+gv+W8c4So?=
- =?us-ascii?Q?G04GOwQhZsyokAXstBTk7spHHS1Bb5YMLUyz2lbOWDLMsr7uAGTTYnqxR7GA?=
- =?us-ascii?Q?dwekiwW7VQ2i+03vrGHDMk/K4w9QKu7Q6oPcxhxrv0xyVVundEiTDhQCFdmw?=
- =?us-ascii?Q?vpM1y0MlGRypALQLJgafsgjoHGs4CPkNVrYMkhwucQ963CRn/zmoE6uSgJbA?=
- =?us-ascii?Q?iZYAFP8DLkgUfOIhLUWuu4sMz3BhYoIg9oBdi3a5iMbydBjlr0ywaGpHP1y5?=
- =?us-ascii?Q?GfuTUt0LqXkA00OqZH6VGJAvOJMMORBKS9Dowss72lzMtGuIzTxvPT5OYK6u?=
- =?us-ascii?Q?cAX6/fo7LII8Om6F3SUxVZaHr6vhcL3ezuFmJsg4LiNlraZxyL5bec3Su5Xm?=
- =?us-ascii?Q?XGmicUu91phxHxUj4PYIiwfdT0Ga1GkFW05GPiJkqwxQNnlJgk/9xxld5CkE?=
- =?us-ascii?Q?nsG6WuWKMqQ5i8s+p5ENIG6xrBTbyylLj9ICi9Ba3XypRW6YdXuPVP1KLq/f?=
- =?us-ascii?Q?IdbTxjpLMamrEVtLS+FxnTVqnTDkVzSKiT8fD0HN5bYw9oFDQOmY1R1fT9Qf?=
- =?us-ascii?Q?pcoH6DnLSUny+Lm2MKdWLz40IfF8KMmgYrbkloJhINA/r6D1RH29LIKsa80O?=
- =?us-ascii?Q?LoRKRgzXwj33bUXSqXvuFw0ZvFzr7gvUo4M+e7Us8WiBrKrZZc3mAHmfS7UR?=
- =?us-ascii?Q?NYN72umQGaNK9PrG6tJHIjThJfkW5bUrbeYzMnRun1TBs1+gU2BiPkpkS0VC?=
- =?us-ascii?Q?1iLkdgtlfBG49opOZFYcf8n5giGy6FhIAx9+1Mgi94va0hAXN4HFieNJinm8?=
- =?us-ascii?Q?P6LQ68lM3O2s0dxn2spykgXgrepjjEPfep0BjYAbNcsmR7Pc1wXIBf9XE6iO?=
- =?us-ascii?Q?FD4SDUNsNIWwIYXZxc7n+0J/AaebDYo7noZEYItYAUF14LHtDyBBk7rhqjZS?=
- =?us-ascii?Q?EbVmtOzEnH8YCGARODh3lnoMaUut4aUwEoI/DmICvmImcv9wfBcVKrZb76wg?=
- =?us-ascii?Q?2ALmxBZ9ZqvUubIhjQXM71J+urgwJCHkc6d2bBfmeblwG5dGyu0VSrvZwCZr?=
- =?us-ascii?Q?Rrh7f6tq37fN1OWjdig3I1Kx2dIBc3xaDSGgsqunQLHItyEMqdL2FhZKRhQ/?=
- =?us-ascii?Q?vlf2fuL9wF9GC8BbTm/XK6bV474S6j2LaQZPom67vr6e8JRoa2LLjtlyfPHz?=
- =?us-ascii?Q?taar/2axgbk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB7540.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?y4ksMCmH8Kz4rLVUOjqKvACJWVyZMYL4SGu8BcYQTJVSnFfwZic5IlOAdpj/?=
- =?us-ascii?Q?N4+Ze/SJpAgWyzw3omg4MA3oCpEBXh3P8ufBBUgtpIoAr6wE63nXe7NAds87?=
- =?us-ascii?Q?wJ5QfKMdX5mCq2X++zvvNzxybGS3Oj8iPS/4HXrMvShz1NuRXEBqH+1iupZC?=
- =?us-ascii?Q?MANBsMalF9sXNjav0h53kYAa7hlhFqfuoX2oG428BHZKeym7f1vfPZAUNDFF?=
- =?us-ascii?Q?nnROwntDdHifdosRQ3NQ1u7F3E2Z7vc+nXuQXEt6XTblpRS/UZ+RlrX7PVwr?=
- =?us-ascii?Q?45vJGhYPzaWyGVVlACvtwAhf1v7gD9sXgrwwCj0IxFMg5DYGweLKHEfDmAsG?=
- =?us-ascii?Q?bn4t9krm/MIShCzLom7H04SDeehzZQN+cNaTY9DWFF9sE2kEsepXAaJ0j0Rh?=
- =?us-ascii?Q?xFl0sP6dvGdqG0nxMblJVewUvOzIElbsmjyTfSLGEXdiQRTNOa5mZCfdAVzG?=
- =?us-ascii?Q?VLvugfXP2bVDJFtBFPqPvsbu84FTRk5b4oMm6UN0AwiPYhXTf/c/APwFZjMA?=
- =?us-ascii?Q?ptKBKehYyWqQxO0X44s/ixupHA43p6NqrqFgGHOdvr6iAkmEeUwksIT+oIdA?=
- =?us-ascii?Q?+ShQ4NCOwC2FZ74fNNw6YCJLwenP9k0Q8rrAXNBRFuhkqx+2cJts2rm9OuV+?=
- =?us-ascii?Q?JRM2nHIhgVsNDZCFhQTLHWHflDbzeqDNF2wmr5PvbSw9iFJABTy9KcIOXIIA?=
- =?us-ascii?Q?BBBZAsno9IwwTdU+59a6Aik4rCw8BMDaHEo+mqt75zsNSLLP6ciedWoWaUfL?=
- =?us-ascii?Q?P9HZkI7xuAS4Jm8y6S2zN/7LHfjMq+MfPA+veAsoCuJin4pDWnYVqesVH24B?=
- =?us-ascii?Q?l2vMICKk8NxBelVT8pqfbA6cyXs4nnQ0WAccrv4RyslhKpXzgCL11lJPXX41?=
- =?us-ascii?Q?DZOxgYOboNQTmWoTjqG6MyRqG93RepbxtDkvz5Ju4PX2a8kugeLu45UetF+M?=
- =?us-ascii?Q?LHl91OolfmnnnGUvZoOptHb6aFaFwN4NXmQXt/zB0vX/lb5ATIVwCudyipEz?=
- =?us-ascii?Q?4AToidVADTqDbfA+IF9pmdzY1HxTtblTcAp2M0tGbXVHF482Uie4ZdSfulAz?=
- =?us-ascii?Q?9WaaTT+gDWbhtbTzi1FEaBxKaSxu/S60di1FrnHRbl1tPvby0oPPOxR/C9yO?=
- =?us-ascii?Q?KsFz1+VcZVQyrYm0hSbcoJmn5nNw7DuKQX4heboOoXjQpFbkAUdbRYb/L/hI?=
- =?us-ascii?Q?V7DZ/PkUQbZpVx2JXd4LD/wJR+k/VNNcsppUuDSaizSyPzdxBcFz3cz57hcC?=
- =?us-ascii?Q?2IAfymYvsNn198n4Z8cFVx8DLBnHi3pV9Z0Z14NZl6glTdVHdsR1/pxoOj0j?=
- =?us-ascii?Q?VKQZb8oDjBKZCMCFONbIDlh7b2Cj66wHg6uPWgFIHEGhMNEj2Rh5exO4twBC?=
- =?us-ascii?Q?NQbHY0X1p6gQBUA3yttR2rWGUMwJm+XGbcd0foxcedDNba3RqLa3QbMB9wgz?=
- =?us-ascii?Q?Kp7rkqzZ3n4n14SAXrCQSxMgeUhSpdBlQ8HSiNyufE5u2HKjAJ1UbCXZabUi?=
- =?us-ascii?Q?1WHblc59esi4iR4uDKNFmp6Br2xHuEfXPllzWv0IjRRNEst/c+XOM39BrXIl?=
- =?us-ascii?Q?SN9A4WwcQmyAxtazs5Vp/4ykzEgpSEgxUsTy8EdzMkpuQJBdjG72DQay/KQi?=
- =?us-ascii?Q?b036JMCOIhauFQmAxUSxoR+H+e9tten+U3j/Aay5sB4eHeZDSLdQ79o144tl?=
- =?us-ascii?Q?eHdfKA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b513cce-b637-4992-e64e-08dda35f8a2f
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7540.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 12:01:29.4400
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s3ssfX/3lNv3oY5Rbxc/k2w6EQ1B2O3PVSu9maPM4spZYLLnpiQL9JPVNJQ+uMc/A50pFcjLCPiICgzxQJXiuKQ/rLEo6Lckl62eN4vZzOU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9012
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] mm,memory_hotplug: Implement numa node notifier
+To: Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250603110850.192912-1-osalvador@suse.de>
+ <20250603110850.192912-3-osalvador@suse.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250603110850.192912-3-osalvador@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 04, 2025 at 06:19:53PM +0800, Jinjian Song wrote:
-> From: Larysa Zaremba <larysa.zaremba@intel.com>
+On 03.06.25 13:08, Oscar Salvador wrote:
+> There are at least six consumers of hotplug_memory_notifier that what they
+> really are interested in is whether any numa node changed its state, e.g: going
+> from being memory aware to becoming memoryless and vice versa.
 > 
-> >> Fixes: 5545b7b9f294 ("net: wwan: t7xx: Add NAPI support")
-> >> Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
-> >> ---
-> >> v3:
-> >>  * Only Use READ_ONCE/WRITE_ONCE when the lock protecting ctlb->ccmni_inst
-> >>    is not held.
-> >
-> >What do you mean by "lock protecting ctlb->ccmni_inst"? Please specify.
+> Implement a specific notifier for numa nodes when their state gets changed,
+> and have those consumers that only care about numa node state changes use it.
 > 
-> Hi Larysa,
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>   drivers/acpi/numa/hmat.c  |   6 +-
+>   drivers/base/node.c       |  21 +++++
+>   drivers/cxl/core/region.c |  14 ++--
+>   drivers/cxl/cxl.h         |   4 +-
+>   include/linux/memory.h    |  38 ++++++++-
+>   kernel/cgroup/cpuset.c    |   2 +-
+>   mm/memory-tiers.c         |   8 +-
+>   mm/memory_hotplug.c       | 161 +++++++++++++++++---------------------
+>   mm/mempolicy.c            |   8 +-
+>   mm/slub.c                 |  13 ++-
+>   10 files changed, 155 insertions(+), 120 deletions(-)
 > 
-> This description might have been a bit simplified. This process is as follow:
-> 
-> In patch v1, I directly set ctlb->ccmni_inst. This may be not safe, as the NAPI
-> processing and the driver's internal interface might not be synchronized. Therefoe,
-> following Jakub's suggestion, I add READ_ONCE/WRITE_ONCE in all places where this
-> pointer is accessed.
-> 
-> In patch v2, Paolo suggested using READ_ONCE in places that are not protected by locks.
-> Some interfaces are protected by synchronization mechanisms, so it's unnecesssary to add them there.
-> Therefore, I removed READ_ONCE from the interfaces.
->
+> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+> index 9d9052258e92..9ac82a767daf 100644
+> --- a/drivers/acpi/numa/hmat.c
+> +++ b/drivers/acpi/numa/hmat.c
+> @@ -962,10 +962,10 @@ static int hmat_callback(struct notifier_block *self,
+>   			 unsigned long action, void *arg)
+>   {
+>   	struct memory_target *target;
+> -	struct memory_notify *mnb = arg;
+> +	struct node_notify *mnb = arg;
+>   	int pxm, nid = mnb->status_change_nid;
+>   
+> -	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
+> +	if (nid == NUMA_NO_NODE || action != NODE_BECAME_MEM_AWARE)
+>   		return NOTIFY_OK;
+>   
+>   	pxm = node_to_pxm(nid);
+> @@ -1118,7 +1118,7 @@ static __init int hmat_init(void)
+>   	hmat_register_targets();
+>   
+>   	/* Keep the table and structures if the notifier may use them */
+> -	if (hotplug_memory_notifier(hmat_callback, HMAT_CALLBACK_PRI))
+> +	if (hotplug_node_notifier(hmat_callback, HMAT_CALLBACK_PRI))
+>   		goto out_put;
+>   
+>   	if (!hmat_set_default_dram_perf())
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
 
-I have seen the discussion for previous version, I am asking you for the symbol 
-name/names for the locks that make READ_ONCE in the removed places not needed.
 
-> >> @@ -441,7 +442,7 @@ static void t7xx_ccmni_recv_skb(struct t7xx_ccmni_ctrl *ccmni_ctlb, struct sk_bu
-> >>  
-> >>  static void t7xx_ccmni_queue_tx_irq_notify(struct t7xx_ccmni_ctrl *ctlb, int qno)
-> >>  {
-> >> -	struct t7xx_ccmni *ccmni = ctlb->ccmni_inst[0];
-> >> +	struct t7xx_ccmni *ccmni = READ_ONCE(ctlb->ccmni_inst[0]);
-> >>  	struct netdev_queue *net_queue;
-> >> 
-> >
-> >You do not seem to check if ccmni is NULL here, so given ctlb->ccmni_inst[0] is 
-> >not being hot-swapped, I guess that there are some guarantees of it not being 
-> >NULL at this moment, so I would drop READ_ONCE here.
-> 
-> This ctlb->ccmni_inst[0] is checked in the upper-level interface:
-> static void t7xx_ccmni_queue_state_notify([...]) {
-> 	[...]
-> 	if (!READ_ONCE(ctlb->ccmni_inst[0])) {
-> 		return;
-> 	}
-> 
-> 	if (state == DMPAIF_TXQ_STATE_IRQ)
-> 		t7xx_ccmni_queue_tx_irq_notify(ctlb, qno);
-> 	else if (state == DMPAIF_TXQ_STATE_FULL)
-> 		t7xx_ccmni_queue_tx_full_notify(ctlb, qno);
-> }
-> 
-> Since this is part of the driver's internal logic for handing queue events, would it be
-> safer to add READ_ONCE here as well?
->
+[...]
 
-Well, I am not 100% sure.  What would make the code easier to reason about in 
-terms of READ_ONCE/WRITE_ONCE is if you replaced struct t7xx_ccmni_ctrl *ctlb 
-argument in t7xx_ccmni_queue_tx_irq_notify() and 
-t7xx_ccmni_queue_tx_full_notify() with ctlb->ccmni_inst[0], the code would look 
-like this:
 
-	struct t7xx_ccmni *ccmni = 
-		READ_ONCE(t7xx_dev->ccmni_ctlb->ccmni_inst[0]);
+> diff --git a/include/linux/memory.h b/include/linux/memory.h
+> index 5ec4e6d209b9..8c5c88eaffb3 100644
+> --- a/include/linux/memory.h
+> +++ b/include/linux/memory.h
+> @@ -99,6 +99,14 @@ int set_memory_block_size_order(unsigned int order);
+>   #define	MEM_PREPARE_ONLINE	(1<<6)
+>   #define	MEM_FINISH_OFFLINE	(1<<7)
+>   
+> +/* These states are used for numa node notifiers */
+> +#define NODE_BECOMING_MEM_AWARE		(1<<0)
+> +#define NODE_BECAME_MEM_AWARE		(1<<1)
+> +#define NODE_BECOMING_MEMORYLESS	(1<<2)
+> +#define NODE_BECAME_MEMORYLESS		(1<<3)
+> +#define NODE_CANCEL_MEM_AWARE		(1<<4)
+> +#define NODE_CANCEL_MEMORYLESS		(1<<5)
 
-	if (!ccmni) {
-		dev_warn(&t7xx_dev->pdev->dev, "No netdev registered yet\n");
-		return;
-	}
+Very nitpicky: MEM vs. MEMORY inconsistency. Also, I am not sure about 
+"MEMORYLESS vs. MEMORY AWARE" terminology (opposite of aware is not 
+less) and "BECOMING" vs. "CANCEL" ...
 
-	if (state == DMPAIF_TXQ_STATE_IRQ)
-		t7xx_ccmni_queue_tx_irq_notify(ccmni, qno);
-	else if (state == DMPAIF_TXQ_STATE_FULL)
-		t7xx_ccmni_queue_tx_full_notify(ccmni, qno);
+There must be something better ... but what is it. :)
 
-This way atomic reads in notifiers would be dependent on a single READ_ONCE, 
-which should prevent nasty reordering, as far as I am concerned.
+NODE_ADDING_FIRST_MEMORY
+NODE_ADDED_FIRST_MEMORY
+NODE_CANCEL_ADDING_FIRST_MEMORY
 
-The above holds if you think you do not need to check for NULL in the notifiers, 
-but is such case I would rather consider proper locking or RCU.
+NODE_REMOVING_LAST_MEMORY
+NODE_REMOVED_LAST_MEMORY
+NODE_CANCEL_REMOVING_LAST_MEMORY
 
-> >> @@ -453,7 +454,7 @@ static void t7xx_ccmni_queue_tx_irq_notify(struct t7xx_ccmni_ctrl *ctlb, int qno
-> >>  
-> >>  static void t7xx_ccmni_queue_tx_full_notify(struct t7xx_ccmni_ctrl *ctlb, int qno)
-> >>  {
-> >> -	struct t7xx_ccmni *ccmni = ctlb->ccmni_inst[0];
-> >> +	struct t7xx_ccmni *ccmni = READ_ONCE(ctlb->ccmni_inst[0]);
-> >>  	struct netdev_queue *net_queue;
-> >>
-> >
-> >Same as above, either READ_ONCE is not needed or NULL check is required.
-> 
-> Yes, This function in the same upper-level interface.
-> 
-> >  	if (atomic_read(&ccmni->usage) > 0) {
-> > @@ -471,7 +472,7 @@ static void t7xx_ccmni_queue_state_notify(struct t7xx_pci_dev *t7xx_dev,
-> >  	if (ctlb->md_sta != MD_STATE_READY)
-> >  		return;
-> >  
-> > -	if (!ctlb->ccmni_inst[0]) {
-> > +	if (!READ_ONCE(ctlb->ccmni_inst[0])) {
-> >  		dev_warn(&t7xx_dev->pdev->dev, "No netdev registered yet\n");
-> >  		return;
-> >  	}
-> > -- 
-> > 2.34.1
-> > 
-> > 
-> 
-> Thanks.
-> 
-> Jinjian,
-> Best Regards.
+Maybe something like that? I still don't quite like the "CANCEL" stuff.
+
+NODE_ADDING_FIRST_MEMORY
+NODE_ADDED_FIRST_MEMORY
+NODE_NOT_ADDED_FIRST_MEMORY
+
+NODE_REMOVING_LAST_MEMORY
+NODE_REMOVED_LAST_MEMORY
+NODE_NOT_REMOVED_LAST_MEMORY
+
+Hm ...
+
+> +
+>   struct memory_notify {
+>   	/*
+>   	 * The altmap_start_pfn and altmap_nr_pages fields are designated for
+> @@ -109,7 +117,10 @@ struct memory_notify {
+>   	unsigned long altmap_nr_pages;
+>   	unsigned long start_pfn;
+>   	unsigned long nr_pages;
+> -	int status_change_nid_normal;
+> +	int status_change_nid;
+> +};
+
+Could/should that be a separate patch after patch #1 removed the last user?
+
+Also, I think the sequence should be (this patch is getting hard to 
+review for me due to the size):
+
+#1 existing patch 1
+#2 remove status_change_nid_normal
+#3 introduce node notifier
+#4-#X: convert individual users to node notifier
+#X+1: change status_change_nid to always just indicate the nid, renaming
+       it on the way (incl current patch #3)
+
+
+> +
+> +struct node_notify {
+>   	int status_change_nid;
+
+This should be called "nid" right from the start.
+
+>   
+> @@ -157,15 +168,34 @@ static inline unsigned long memory_block_advised_max_size(void)
+>   {
+>   	return 0;
+>   }
+> +
+
+[...]
+
+>   	 * {on,off}lining is constrained to full memory sections (or more
+> @@ -1194,11 +1172,22 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+>   	/* associate pfn range with the zone */
+>   	move_pfn_range_to_zone(zone, pfn, nr_pages, NULL, MIGRATE_ISOLATE);
+>   
+> -	arg.start_pfn = pfn;
+> -	arg.nr_pages = nr_pages;
+> -	node_states_check_changes_online(nr_pages, zone, &arg);
+> +	node_arg.status_change_nid = NUMA_NO_NODE;
+> +	if (!node_state(nid, N_MEMORY)) {
+> +		/* Node is becoming memory aware. Notify consumers */
+> +		cancel_node_notifier_on_err = true;
+> +		node_arg.status_change_nid = nid;
+> +		ret = node_notify(NODE_BECOMING_MEM_AWARE, &node_arg);
+> +		ret = notifier_to_errno(ret);
+> +		if (ret)
+> +			goto failed_addition;
+> +	}
+
+I assume without NUMA, that code would never trigger? I mean, the whole 
+notifier doesn't make sense without CONFIG_NUMA :)
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
