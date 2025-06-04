@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-672697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4047EACD685
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B4EACD683
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5F31885A6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2908D3A78ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 03:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB33A25E46F;
-	Wed,  4 Jun 2025 03:23:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C0025E836;
+	Wed,  4 Jun 2025 03:24:00 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF6125E449;
-	Wed,  4 Jun 2025 03:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBF231828;
+	Wed,  4 Jun 2025 03:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749007435; cv=none; b=cqFXFrUrENHIYfhnAG1qYU+6nA56n+sPmxzdMnLVc7UdA5BbZiykZDeo+xYjJnDW0aThPQcVk+9NlFb74cGo6yMDOhfZ8x64oeedOaXhBwPPMMzuj4fDqdwXrV4lFOHpEeRfT3fbvarr8llfPP+vmZguxSAei6kjS3rWx+szM7c=
+	t=1749007440; cv=none; b=EotZwPUhR4BEdYk8BI7enw+WKvMXHrtPss3GSdB6TL3597qkso8I5JYJspziFllZ2YOaxZEbcMRLZBt7q7CCIpT7E6C6If0gaIe9MqdgyDFXz+AtHd/QrCSgx6aeJQ57r1boQpX/iUQNRtZkJ34Xz5r8zo0yvL1twBup0RPVa2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749007435; c=relaxed/simple;
-	bh=GaIZHI2iHdcx1NzRvfEH8Ec6CXweNlSy+LmYuvXzuUw=;
+	s=arc-20240116; t=1749007440; c=relaxed/simple;
+	bh=KKCtxcNKDurQedRm8dJ/mP8QxHRVX5UPgpzxDkDohe8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=APAXfzBqLynpTie2L5qmIFnURCkBbz4Ro8loLqe9TVXUFGM2DdYHJnbd0yj2GgTVCuFYmKWS1mJw522mufJzRhEH2fl6QvlX9MBY4wuNyfwJGrVu/4xjw3WO8naWl89k46rDxmbw1LbmS+60Lny/oyElxX7EFdYuhe9aKlbqXrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Y7K8UMwUDjZ4iJ7Lb0XCE4LZnRBYNZsonFSKqV9Ooz+DnK31XEK9/yQc4lagOY5yzgesTlOBk+WGcfQGPxynlO7AGyWMpEVvtMKXTZ7+HoRnx058+L7TBBu4Wn8iRNFn6uyQe3W+wq33ZhjfsqHMMhmKuryKc5zlFcYOeUSir7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bBtGH5tWgzYQvQN;
-	Wed,  4 Jun 2025 11:23:51 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bBtGJ4Hq3zKHND7;
+	Wed,  4 Jun 2025 11:23:52 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id DC04A1A0DE2;
+	by mail.maildlp.com (Postfix) with ESMTP id F16FF1A118D;
 	Wed,  4 Jun 2025 11:23:50 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.67.174.193])
-	by APP1 (Coremail) with SMTP id cCh0CgC3GntEvD9ondLUOA--.11688S5;
+	by APP1 (Coremail) with SMTP id cCh0CgC3GntEvD9ondLUOA--.11688S6;
 	Wed, 04 Jun 2025 11:23:50 +0800 (CST)
 From: Luo Gengkun <luogengkun@huaweicloud.com>
 To: peterz@infradead.org
@@ -52,9 +52,9 @@ Cc: mingo@redhat.com,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	luogengkun@huaweicloud.com
-Subject: [PATCH v2 1/2] perf/core: Fix nr_cgroups/cpuctx->cgrp is not updated correctly
-Date: Wed,  4 Jun 2025 03:39:23 +0000
-Message-Id: <20250604033924.3914647-2-luogengkun@huaweicloud.com>
+Subject: [PATCH v2 2/2] perf/core: Fix WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0) in perf_cgroup_switch
+Date: Wed,  4 Jun 2025 03:39:24 +0000
+Message-Id: <20250604033924.3914647-3-luogengkun@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250604033924.3914647-1-luogengkun@huaweicloud.com>
 References: <20250604033924.3914647-1-luogengkun@huaweicloud.com>
@@ -65,13 +65,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgC3GntEvD9ondLUOA--.11688S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFy8uFyfJr4xWF45Gw18uFg_yoW8AFWDpr
-	s3CrsxK3y0qw1jvw13tw18W345Gw4rtFZ0gw1DKw4fZFW5WrWrXF1xGa4rZFs8Zr97AFy3
-	tw1jvr17C3yUJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgC3GntEvD9ondLUOA--.11688S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF4DWr17XF1kuF1rZF1kXwb_yoW5GF47pa
+	n7CrW29ws5XF90qay5t34vq3W0qa1Fqa95Wr1jkw4ayrW5Xr1fXF4xCw43JF15AFn7JFy3
+	trZ0vr15C34UKaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUQv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
-	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
 	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
 	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
@@ -82,60 +82,90 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7CFy8uFyfJr4xWF45Gw18uFg_yoW8AFWDpr
 	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAI
 	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
 	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4OJ5UUUUU=
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQXo7UUUUU=
 X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-Since __perf_remove_from_context updates event->state before
-list_del_event, this prevents list_del_event from calling
-perf_cgroup_event_disable, resulting in will not update nr_cgroups and
-cpuctx->cgrp.
+There may be concurrency between perf_cgroup_switch and
+perf_cgroup_event_disable. Consider the following scenario: after a new
+perf cgroup event is created on CPU0, the new event may not trigger
+a reprogramming, causing ctx->is_active to be 0. In this case, when CPU1
+disables this perf event, it executes __perf_remove_from_context->
+list _del_event->perf_cgroup_event_disable on CPU1, which causes a race
+with perf_cgroup_switch running on CPU0.
 
-To fix this problem, move perf_cgroup_event_disable into
-__perf_remove_from_context as:
+The following describes the details of this concurrency scenario:
 
-commit a3c3c66670ce ("perf/core: Fix child_total_time_enabled accounting bug at task exit")
+CPU0						CPU1
 
-did.
+perf_cgroup_switch:
+   ...
+   # cpuctx->cgrp is not NULL here
+   if (READ_ONCE(cpuctx->cgrp) == NULL)
+   	return;
 
-Fixes: a3c3c66670ce ("perf/core: Fix child_total_time_enabled accounting bug at task exit")
+						perf_remove_from_context:
+						   ...
+						   raw_spin_lock_irq(&ctx->lock);
+						   ...
+						   # ctx->is_active == 0 because reprogramm is not
+						   # tigger, so CPU1 can do __perf_remove_from_context
+						   # for CPU0
+						   __perf_remove_from_context:
+						         perf_cgroup_event_disable:
+							    ...
+							    if (--ctx->nr_cgroups)
+							    ...
+
+   # this warning will happened because CPU1 changed
+   # ctx.nr_cgroups to 0.
+   WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
+
+To fix this problem, expand the lock-holding critical section in
+perf_cgroup_switch.
+
+Fixes: db4a835601b7 ("perf/core: Set cgroup in CPU contexts for new cgroup events")
 Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
 ---
- kernel/events/core.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+ kernel/events/core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f34c99f8ce8f..280d42b40b34 100644
+index 280d42b40b34..1e442897ebde 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -2120,18 +2120,6 @@ list_del_event(struct perf_event *event, struct perf_event_context *ctx)
- 	if (event->group_leader == event)
- 		del_event_from_groups(event, ctx);
+@@ -931,20 +931,20 @@ static void perf_cgroup_switch(struct task_struct *task)
+ 	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 	struct perf_cgroup *cgrp;
  
--	/*
--	 * If event was in error state, then keep it
--	 * that way, otherwise bogus counts will be
--	 * returned on read(). The only way to get out
--	 * of error state is by explicit re-enabling
--	 * of the event
--	 */
--	if (event->state > PERF_EVENT_STATE_OFF) {
--		perf_cgroup_event_disable(event, ctx);
--		perf_event_set_state(event, PERF_EVENT_STATE_OFF);
--	}
--
- 	ctx->generation++;
- 	event->pmu_ctx->nr_events--;
++	cgrp = perf_cgroup_from_task(task, NULL);
++	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
+ 	/*
+ 	 * cpuctx->cgrp is set when the first cgroup event enabled,
+ 	 * and is cleared when the last cgroup event disabled.
+ 	 */
+ 	if (READ_ONCE(cpuctx->cgrp) == NULL)
+-		return;
++		goto unlock;
+ 
+ 	WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
+ 
+-	cgrp = perf_cgroup_from_task(task, NULL);
+ 	if (READ_ONCE(cpuctx->cgrp) == cgrp)
+-		return;
++		goto unlock;
+ 
+-	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
+ 	perf_ctx_disable(&cpuctx->ctx, true);
+ 
+ 	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+@@ -962,6 +962,7 @@ static void perf_cgroup_switch(struct task_struct *task)
+ 	ctx_sched_in(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+ 
+ 	perf_ctx_enable(&cpuctx->ctx, true);
++unlock:
+ 	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
  }
-@@ -2498,6 +2486,9 @@ __perf_remove_from_context(struct perf_event *event,
- 		state = PERF_EVENT_STATE_DEAD;
- 	}
- 	event_sched_out(event, ctx);
-+
-+	if (event->state > PERF_EVENT_STATE_OFF)
-+		perf_cgroup_event_disable(event, ctx);
- 	perf_event_set_state(event, min(event->state, state));
  
- 	if (flags & DETACH_GROUP)
 -- 
 2.34.1
 
