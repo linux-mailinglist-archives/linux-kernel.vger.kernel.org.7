@@ -1,96 +1,215 @@
-Return-Path: <linux-kernel+bounces-673055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629F7ACDB91
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:02:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C29ACDB96
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D4737A9DBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E943A423D
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1228D85F;
-	Wed,  4 Jun 2025 10:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFEE28D8F1;
+	Wed,  4 Jun 2025 10:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b="Vp82e9Wh"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KQ3jDaEv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFBA7082D
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749031310; cv=pass; b=HqgSWcD0M49MhLcRxjobpJmOa+7O67oNHf2Xy1ZwaX7/frmB0W8AvW6SVaTHkeCum6OomvD3ZkEMd58IoJ/oQci58MoSzyo3QNTYRyQ76sJ+6WVifRlb0Z0FDEqBsMs/2U02cXtTAhWhzzIesRdg0Ht1C7GMOkBDWNOh7oeBQms=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749031310; c=relaxed/simple;
-	bh=00m+DbRyqp8HvMfpmN9CYVvYGT+Po1qjBi0T8xcp3f0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=DCHGqPDiivKS8tEwnlYcfB0s1Wpdft4YhPzJdraY39wZdW9F8a37I2rVisafritYY2Xg7RsrSPFVA+fbLeBcDNB3+eUzyFkLueTrdTnTeCtrKP5MAbIH0UFmIIizLXEVRthuK9h2SDVXYtniHpKz0EEWFEFTDxgthhdei+hjgpg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ashley.smith@collabora.com header.b=Vp82e9Wh; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749031289; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FRejhhTIFTuj4rxFeJOSz3XFZ0qEUzvBM97t7uJ3067hEZJ7JEFjGWyNrUfOeOJn5ghJlcsmMO/Cmecetp9EL389menn4U6w0/0L2Cvptz5bNFdJXMRepw/nKiLziCL3sK7WOX3VlK3fJkHIz9XT6yFPyYqDO1HB7o5v9KeAwpg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749031289; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9gcEv4agCiJl8Utx0HIyKDah065hsCsg0Lwo1J+yp8k=; 
-	b=ZwGvFOXgS9pIwa0ELza71Wk1WefJ6MYt1Dh7YO8VDY0UayzB8wM6BohEr1RA7uVCCWtokijL5eCIrYVO6dsbS6gNin574RGWEcYiVVDPdWoywalst8e8meqypRCvXeVM2sMOGbzAsbLrJtBOZ4UxO4B7Yy6e4WVbl1IlFWVun2c=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ashley.smith@collabora.com;
-	dmarc=pass header.from=<ashley.smith@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749031289;
-	s=zohomail; d=collabora.com; i=ashley.smith@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=9gcEv4agCiJl8Utx0HIyKDah065hsCsg0Lwo1J+yp8k=;
-	b=Vp82e9Wh9xGss/m1WtWrBanV3U9BlR/l9NOClM4uFlocKdw+sBYkG9iLmEsvcGao
-	rZ+WSoSq2TyrE+rKxl86wIrpaoNgvMjedWXyMdd9bqnSF2hbnqJa9swLFPfTUBvvnc1
-	bm4n1y6vnEJnr/7T2OEME5LYxiRh6EK/BYrgkKTQ=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1749031287445538.6080897635943; Wed, 4 Jun 2025 03:01:27 -0700 (PDT)
-Date: Wed, 04 Jun 2025 11:01:27 +0100
-From: Ashley Smith <ashley.smith@collabora.com>
-To: "Liviu Dudau" <liviu.dudau@arm.com>
-Cc: "Boris Brezillon" <boris.brezillon@collabora.com>,
-	"Steven Price" <steven.price@arm.com>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>, "kernel" <kernel@collabora.com>,
-	"open list:ARM MALI PANTHOR DRM DRIVER" <dri-devel@lists.freedesktop.org>,
-	"open list" <linux-kernel@vger.kernel.org>
-Message-ID: <1973a637a7f.b61987aa482053.3031227813632792112@collabora.com>
-In-Reply-To: <aD7X-O8ykIGZjHjc@e110455-lin.cambridge.arm.com>
-References: <20250603094952.4188093-1-ashley.smith@collabora.com>
- <20250603094952.4188093-2-ashley.smith@collabora.com> <aD7X-O8ykIGZjHjc@e110455-lin.cambridge.arm.com>
-Subject: Re: [PATCH v5 1/2] drm/panthor: Reset queue slots if termination
- fails
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4F28C2CC;
+	Wed,  4 Jun 2025 10:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749031367; cv=none; b=qHBZqGnCrWIzo9Skd76rdXZwMtnW3KFJBc5q1yJjj5wUjNdUfEPzp/7pSdlT3pGNjdrQRRdcvUBFzHlgTgfpjITz4uaZUBN9RsFAwr5m8lmAmGLc49tqhcRGqNHj9TB2AC6+1BjHgKJoWae2+qBfjXDjXS2rhCm6VcxZWH5q7Vk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749031367; c=relaxed/simple;
+	bh=hHfwX93Z1LNoyiAbTbrxQDAYuvLkrymMo+5mny2wZDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LeJCUTVe06PidsrYchuiCrCaiRIc3XbDeu3twpHYQlWtgZVWpANEAHpN6ciL6xjLfAeaePC9Bq8r6hSPHTsfgkbWP+X4+qw6Q4AAp0TZyX5tQoHeU81zUXFGd4ywAAMFto589z6KmebH2m6H8JfmGJYBjHScKaTmVX/UNSOhd7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KQ3jDaEv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554875DU013521;
+	Wed, 4 Jun 2025 10:02:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XMWU8a/DXCAez/wWFLWi1bCf9nSDlbvC+BavkR9SOYM=; b=KQ3jDaEvx5GGJ8o4
+	m5n+AGbafDd5oOq98rJZgBZknQLd+eBkzYNJLIt8I7YuRe/IRyE+to8KoufHmDKp
+	mzx3szcPwOkjKSy8tCQw641WLwcoBP4bP06bmek8LEpUv34/oqGl+6I70F/MsZjQ
+	AdVfEQAUAtZAcBvVHUMZqtxr5+9lvRTwM9sL5ir3VnoEBke78OlAVMKS1CfWdllo
+	rBEZRPHFHRJA5MECQatsw+0N0jn2cMvrtrcui96p5U63imNpsdvenDxRg0M7OwH3
+	MmhDZDwUZNDrjtXoIPMtATRoxwqF31he6qowg6hJXPt77tepnHp8DqO0WqJwG8f4
+	mI58IQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8nnmx7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 10:02:32 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 554A2Wh6005912
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Jun 2025 10:02:32 GMT
+Received: from [10.239.31.134] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Jun 2025
+ 03:02:27 -0700
+Message-ID: <772f5e33-5040-4a68-84f4-25e048aa4432@quicinc.com>
+Date: Wed, 4 Jun 2025 18:02:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
+ link_down reset
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Ziyue Zhang
+	<quic_ziyuzhan@quicinc.com>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>, <kw@linux.com>,
+        <conor+dt@kernel.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_krichai@quicinc.com>,
+        <quic_vbadigan@quicinc.com>
+References: <20250529035416.4159963-1-quic_ziyuzhan@quicinc.com>
+ <20250529035416.4159963-3-quic_ziyuzhan@quicinc.com>
+ <drr7cngryldptgzbmac7l2xpryugbrnydke3alq5da2mfvmgm5@nwjsqkef7ypc>
+ <e8d1b60c-97fe-4f50-8ead-66711f1aa3a7@quicinc.com>
+ <34dnpaz3gl5jctcohh5kbf4arijotpdlxn2eze3oixrausyev3@4qso3qg5zn4t>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <34dnpaz3gl5jctcohh5kbf4arijotpdlxn2eze3oixrausyev3@4qso3qg5zn4t>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: M78myJrI6CB7Jy1T4BD-DqDvxKB0H3iT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA3NSBTYWx0ZWRfX5qxemDmXAipZ
+ ZahAIbqzRnKjfSdtDOq9GBm9FSXMjDmVOsVEqjI0FJsT/CgS4CZyo33r37vFQ4sojv5JaIO8aJD
+ XIbVLAx/5mkc2FTZMWqRgeAjA0p5+a/zI2+jKSOEU+jFjxMQubv4GrwfoSpbXmx2AtduwrPs1eL
+ xMTUM2aahi+KZ+tb8qvhqM/hfyOdmbL3qNvPOL/LsjwjfmbjVcKmrR2lC2gxv/60ROjQEnvXBcI
+ fLMvbfg6YgHI+cMZlxcDN1vFv4XvLuNN3ox4HW6aPELt7iommu0ThBOwgGpBcNH7YvyzZ8CBj7W
+ 2tPwUbXlhkHoPCUrfrwhcqwqDKiUs/7OiXLL2co7KY3ZW8UCzIUm9q2D+y6xNRfBmtlsw0g6Lqh
+ oPM2XNdFd25s/sfIBC+NquMVzeNMDi3yKeD3TszK8WUNguXEqdKZjuLSuSFfM/rdPjC4hq9T
+X-Proofpoint-ORIG-GUID: M78myJrI6CB7Jy1T4BD-DqDvxKB0H3iT
+X-Authority-Analysis: v=2.4 cv=UphjN/wB c=1 sm=1 tr=0 ts=684019b8 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=JfrnYn6hAAAA:8
+ a=COk6AnOGAAAA:8 a=gDmLj3BAQhsnJV4uteAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1CNFftbPRP8L7MoqJWF3:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 impostorscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1011 malwarescore=0 adultscore=0
+ bulkscore=0 mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506040075
 
-On Tue, 03 Jun 2025 12:09:44 +0100 Liviu Dudau <liviu.dudau@arm.com> wrote:
- > On Tue, Jun 03, 2025 at 10:49:31AM +0100, Ashley Smith wrote: 
- > > This fixes a bug where if we timeout after a suspend and the termination 
- > > fails, due to waiting on a fence that will never be signalled for 
- > > example, we do not resume the group correctly. The fix forces a reset 
- > > for groups that are not terminated correctly. 
- >  
- > I have a question on the commit message: you're describing a situation where 
- > a fence will *never* be signalled. Is that a real example? I thought this is 
- > not supposed to ever happen! Or are you trying to say that the fence signalling 
- > happens after the timeout?
 
-This covers cases where a fence is never signalled. It shouldn't happen, but we have found this in some situations with a FW hang. Since queue_suspend_timeout() is only called on state update, if a suspend/terminate fails due to a FW hang for example this will leave delayed work, possibly leading to an incorrect queue_timeout_work(). Maybe I should not have used the word bug, it's more choosing a failsafe path.
+On 6/4/2025 5:15 PM, Dmitry Baryshkov wrote:
+> On Wed, Jun 04, 2025 at 03:58:33PM +0800, Ziyue Zhang wrote:
+>> On 6/3/2025 9:11 PM, Dmitry Baryshkov wrote:
+>>> On Thu, May 29, 2025 at 11:54:14AM +0800, Ziyue Zhang wrote:
+>>>> Each PCIe controller on sa8775p supports 'link_down'reset on hardware,
+>>>> document it.
+>>> I don't think it's possible to "support" reset in hardware. Either it
+>>> exists and is routed, or it is not.
+>> Hi Dmitry,
+>>
+>> I will change the commit msg to
+>> 'Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
+>> document it.'
+>> "Supports" implies that the PCIe controller has an active role in enabling
+>> or managing the reset functionality—it suggests that the controller is designed
+>> to accommodate or facilitate this feature.
+>>  "Includes" simply states that the reset functionality is present in the
+>> hardware—it exists, whether or not it's actively managed or configurable.
+>> So I think change it to includes will be better.
+>>
+>> BRs
+>> Ziyue
+>>
+>>>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>>>> ---
+>>>>   .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml  | 13 +++++++++----
+>>>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>>>> index e3fa232da2ca..805258cbcf2f 100644
+>>>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>>>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>>>> @@ -61,11 +61,14 @@ properties:
+>>>>         - const: global
+>>>>     resets:
+>>>> -    maxItems: 1
+>>>> +    minItems: 1
+>>>> +    maxItems: 2
+>>> Shouldn't we just update this to maxItems:2 / minItems:2 and drop
+>>> minItems:1 from the next clause?
+>> Hi Dmitry,
+>>
+>> link_down reset is optional. In many other platforms, like sm8550
+>> and x1e80100, link_down reset is documented as a optional reset.
+>> PCIe will works fine without link_down reset. So I think setting it
+>> as optional is better.
+> You are describing a hardware. How can a reset be optional in the
+> _hardware_? It's either routed or not.
+>
+> I feel a bit confused. According to the theory above, everything seems to
+> be non-optional when describing hardware, such as registers, clocks,
+> resets, regulators, and interrupts—all of them either exist or do not.
+>
+> Seems like I misunderstand the concept of 'optional'? Is 'optional' only
+> used for compatibility across different platforms?
+>
+> Additionally, we have documented the PCIe global interrupt as optional. I
+> was taught that, in the PCIe driver, this interrupt is retrieved using the
+> platform_get_irq_byname_optional API, so it can be documented as optional.
+> However, this still seems to contradict the theory mentioned earlier.
+>> BRs
+>> Ziyue
+>>
+>>>>     reset-names:
+>>>> +    minItems: 1
+>>>>       items:
+>>>> -      - const: pci
+>>>> +      - const: pci # PCIe core reset
+>>>> +      - const: link_down # PCIe link down reset
+>>>>   required:
+>>>>     - interconnects
+>>>> @@ -161,8 +164,10 @@ examples:
+>>>>               power-domains = <&gcc PCIE_0_GDSC>;
+>>>> -            resets = <&gcc GCC_PCIE_0_BCR>;
+>>>> -            reset-names = "pci";
+>>>> +            resets = <&gcc GCC_PCIE_0_BCR>,
+>>>> +                     <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
+>>>> +            reset-names = "pci",
+>>>> +                          "link_down";
+>>>>               perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>>>               wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>>
+>>>> -- 
+>>>> linux-phy mailing list
+>>>> linux-phy@lists.infradead.org
+>>>> https://lists.infradead.org/mailman/listinfo/linux-phy
+
+-- 
+With best wishes
+Qiang Yu
+
 
