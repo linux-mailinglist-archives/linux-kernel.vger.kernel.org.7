@@ -1,74 +1,113 @@
-Return-Path: <linux-kernel+bounces-673529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3D2ACE249
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF83BACE256
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98733A523C
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464E03A4BBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5451E1E1F;
-	Wed,  4 Jun 2025 16:37:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672B1E2823;
+	Wed,  4 Jun 2025 16:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xen0n.name header.i=@xen0n.name header.b="rlUTbXSG"
+Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960CE1DDA0C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253D81DDA0C;
+	Wed,  4 Jun 2025 16:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.28.160.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749055043; cv=none; b=QzGDn09poundHCVwlBJg/9VfPnIIhpkLhZGkcGHGUTT+MADoEv9p7R2gJuzbBCTeJvx7PoN66J2V2jcodvPpcEISEXiEScypVk8V9bjw7Rq+rPRndWdYgWe4ErG5Lxhg958sdsav3YKCmzX/a7+Xfb7LpEipHqGl/FnycFl0dRM=
+	t=1749055210; cv=none; b=SH+CjLmiUmVfJnH+bl0OBdY5Ht0BTZu75+CoDOD2Jj94x7XnQuQPMysgzGQV2Gtpvk7njDEA8CP7BRXekcOU5NDuLnHqnnddrLUqrELHttvQVNmTlP40BaxBF6SWsYFuPD05bMdSg80ChTfYOq41M/ESX2YD4+697UX9SwuUvvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749055043; c=relaxed/simple;
-	bh=jC+2l4bpQLFniTd2XMMKy3YMABlelBNu/BiI4joa0Ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eYah8PnLOeG9SYWjzJ68RrqTjKToDYaCNOZfbhIxu3S7aY5+7TnYlbcJ+O6ImLzAZHiFiE5cDGyq9mRG+kZqE/IkyVY6TtZ0r/PdN54fPI94HNYW389RZfcHPyVWkdjtRXlkoKkwALVVKMA5kq8H3e8v1S9ZSItCiAtNie0ftzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A3AC4CEE4;
-	Wed,  4 Jun 2025 16:37:21 +0000 (UTC)
-Date: Wed, 4 Jun 2025 12:38:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?= <thomas.hellstrom@linux.intel.com>,
- LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Christian
- Koenig <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Matthew
- Auld <matthew.auld@intel.com>, Matthew Brost <matthew.brost@intel.com>,
- dri-devel@lists.freedesktop.org, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v2] drm/ttm: Fix compile error when CONFIG_SHMEM is not
- set
-Message-ID: <20250604123837.0603354d@gandalf.local.home>
-In-Reply-To: <d996ffad-42f1-1643-e44e-e837b2e3949d@google.com>
-References: <20250604085121.324be8c1@gandalf.local.home>
-	<6b3a37712330ec4b17968075f71296717db54046.camel@linux.intel.com>
-	<d996ffad-42f1-1643-e44e-e837b2e3949d@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749055210; c=relaxed/simple;
+	bh=Z2ajJa3jqcL9eosQXVw90LfEQcomAMUhBxXUYrZ+pRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PfM97pUOMpZsoK5yRpjk6S7yliI3b5FHcXgdAeTT7Gvkqq/y+MCxdv+93QMqia7dDqI4n/ifPl/+CR+jYJsxzz76rRn+6VhKTNThFFR7ghBP+EKUF2DAWoWlJq8spzQTy2gNEYyCiSxSUhDi4hDTlMLemeOuKOWAG6luz0kh9d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xen0n.name; spf=pass smtp.mailfrom=xen0n.name; dkim=pass (1024-bit key) header.d=xen0n.name header.i=@xen0n.name header.b=rlUTbXSG; arc=none smtp.client-ip=115.28.160.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xen0n.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xen0n.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
+	t=1749055199; bh=Z2ajJa3jqcL9eosQXVw90LfEQcomAMUhBxXUYrZ+pRk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rlUTbXSG4Q/CMfpm3kh5zEqXZbLVZFgjlx2DWFw2onvZNU5gbu41LEbtC4VnOTn/y
+	 kLz/mGTdxNxZlQl3yv3Pe48fI4iYGObu/WyNUS7VimW/Ed0KUPpfGilhq4T7SNi1pA
+	 oTvT52PIUJE7uWqYRUPn507LoQsVo7AtsfHH/InA=
+Received: from [IPV6:240e:b8f:949a:9000:aa4b:215a:c634:4370] (unknown [IPv6:240e:b8f:949a:9000:aa4b:215a:c634:4370])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mailbox.box.xen0n.name (Postfix) with ESMTPSA id EFA376011F;
+	Thu,  5 Jun 2025 00:39:58 +0800 (CST)
+Message-ID: <edca541e-a2a7-4c26-bea7-15fd0b25597b@xen0n.name>
+Date: Thu, 5 Jun 2025 00:39:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] LoongArch: vDSO: correctly use asm parameters in syscall
+ wrappers
+To: Huacai Chen <chenhuacai@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Xi Ruoyao <xry111@xry111.site>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, stable@vger.kernel.org
+References: <20250603-loongarch-vdso-syscall-v1-1-6d12d6dfbdd0@linutronix.de>
+ <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
+Content-Language: en-US
+From: WANG Xuerui <kernel@xen0n.name>
+In-Reply-To: <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 4 Jun 2025 09:26:21 -0700 (PDT)
-Hugh Dickins <hughd@google.com> wrote:
+On 6/4/25 22:05, Huacai Chen wrote:
+> On Tue, Jun 3, 2025 at 7:49 PM Thomas Weißschuh
+> <thomas.weissschuh@linutronix.de> wrote:
+>>
+>> The syscall wrappers use the "a0" register for two different register
+>> variables, both the first argument and the return value. The "ret"
+>> variable is used as both input and output while the argument register is
+>> only used as input. Clang treats the conflicting input parameters as
+>> undefined behaviour and optimizes away the argument assignment.
+>>
+>> The code seems to work by chance for the most part today but that may
+>> change in the future. Specifically clock_gettime_fallback() fails with
+>> clockids from 16 to 23, as implemented by the upcoming auxiliary clocks.
+>>
+>> Switch the "ret" register variable to a pure output, similar to the other
+>> architectures' vDSO code. This works in both clang and GCC.
+> Hmmm, at first the constraint is "=r", during the progress of
+> upstream, Xuerui suggested me to use "+r" instead [1].
+> [1]  https://lore.kernel.org/linux-arch/5b14144a-9725-41db-7179-c059c41814cf@xen0n.name/
 
-> > Reviewed-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com> =
-=20
->=20
-> Acked-by: Hugh Dickins <hughd@google.com>
+Oops, I've already completely forgotten! That said...
 
-Thanks Thomas and Hugh,
+I didn't notice back then, that `ret` and the first parameter actually 
+shared the same manually allocated register, so I replied as if the two 
+shared one variable. If it were me to write the original code, I would 
+re-used `ret` for arg0 (with a comment explaining the a0 situation) so 
+that "+r" could be properly used there without UB.
 
-Now the question is, who's gonna take it? ;-)
+As for the current situation -- both this patch's approach or my 
+alternative above are OK to me. Feel free to take either; and have my 
+R-b tag if you send a v2.
 
--- Steve
+Reviewed-by: WANG Xuerui <git@xen0n.name>
+
+Thanks!
+
+-- 
+WANG "xen0n" Xuerui
+
+Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
 
