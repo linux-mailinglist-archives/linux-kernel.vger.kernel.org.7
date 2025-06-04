@@ -1,139 +1,238 @@
-Return-Path: <linux-kernel+bounces-672760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3987ACD73A
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 06:32:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EA5ACD732
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 06:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D41893F96
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 04:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D2F3A4D69
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 04:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF33C261575;
-	Wed,  4 Jun 2025 04:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878A1238166;
+	Wed,  4 Jun 2025 04:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LbnU+Vth"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YHmnqRJr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A3817548;
-	Wed,  4 Jun 2025 04:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749011555; cv=none; b=qSQBoBsu8sNgfpRZNU9y1J5/atJjhEHXWEv4+1Sw92T3wnp8xRyUvzQE+T+HVLmE9JZ7vyRIcJt3k9669bzk7YFSZ8sUZ58fvQaoT7zNnI2cWIePCoXc87TvopqF47kIexktvoFkA1ShLGySP3Cey34eANrgd+ksscLF4+EDj70=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749011555; c=relaxed/simple;
-	bh=1fpC3Hybi/eVGZh4MEeqKTWPmCJz86JZI3OFCfdqyoo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U+oszMAwEtYBTz6qzlgVxD/0soBeqw59v2I1QuPM/aIGFEUps5hC50NGx7kP9q1KDb4rVL1aaMWyPsGaJwdN4AW6YJJjQbFwCo1IOWCqsmCTah4mYCpTQ0atnH6hRxfLDRNk6H6UVc+Oh9Nw/b9vCRH5OBjjaoxwQ7HbBehC4E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LbnU+Vth; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EA317AE11
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 04:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749011224; cv=fail; b=n9JLXnN1fvW0ax4uNKjfIvTtiUyhxpGueowIBZcQk0QRbu4jSQQg3QHLX8IRNcpd4XhAv8UUXJZDs2rBu4Zdnev/gVZrTWLp5uG42V8SqoHtQpJHRGLONcnJN3U9SFRseUDYYGZyscCXZl8WIEIIDM5D/WStUibnNgoBy37GAjA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749011224; c=relaxed/simple;
+	bh=Gw3lSA4WXOavm2Lzj1UzlFr8/xbTFcAuQNmdTqMLMVo=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ne+TuhzSjyFUCthDzuiKL3uyWd5I8FTpprTj0JXbrITPZBluuKgKggIuZU14RnYbHu2zIhITLbbTHdNMQVb3AKkGXjZq4stGz3h3UNx8ziLWaVrKWQMicHfWtllLBDS2Y8LPGBTcXmRBjnadHQmc6pdUfZQc3ctYXrPJ8IdJA9s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YHmnqRJr; arc=fail smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749011554; x=1780547554;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1fpC3Hybi/eVGZh4MEeqKTWPmCJz86JZI3OFCfdqyoo=;
-  b=LbnU+VthNRtc4WbynW1jIQiP2Mh8bqI4jxYJ5HrG3veOqTaBWABfjRAh
-   ar2WLkDWKTcNAZDKECT2oDAQ8Bk0xAwB27tg7hgxL8cQKbC2MdbNG9NKw
-   ZSD3Y6yvN1RoBjPCeWXtLiLE3id5MPTZ9tSyG3UVHffbptHcmL9mqocLg
-   nJ6L1e2jUqgziHe4qImGbR6vZj/11EvC5xpgVRiYh3taacekJ+eCkiclF
-   QuTwalB8FwdT4eLhr9guzcqlsziLhwQ/q/5iArpOGQ0SbM6JzDsAsZk5E
-   JJ3ogA3K4DGyVr8SyahFPGSyUgnk/eRBqC4aWE7vcTKuxajTjemzFJaoW
-   Q==;
-X-CSE-ConnectionGUID: m8g6KL0ORzezSKwvO+Kvnw==
-X-CSE-MsgGUID: uKvHA1HQQD+5PFwSKlgzkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="51217522"
+  t=1749011223; x=1780547223;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Gw3lSA4WXOavm2Lzj1UzlFr8/xbTFcAuQNmdTqMLMVo=;
+  b=YHmnqRJrv8ikHBVZmygGm1z/1Eh56jlbbKq5P8kZqVEyql8BkhhDf/ke
+   J4ZlNjRqhqpXi5hNv+B8ncpqo4tfNCl8zq4bTieZE1rpyl10+Vya7TLjD
+   rEUmJJhTRGnXVYg5tUmoEzOUQxNyIpXjvtHrpoFOQ1F9FWgzh+bmKj3dq
+   fKRJfYHK3xUPwuSI6dc0ou0OXqrV2J6/2YslzDC4AEFnzwnEXNd6cPsr0
+   nCg3QoN7a5c62G3zVhwOg8DV4Gb5ittejYvdsO4VudzcJ6UEpYRfQW8Ix
+   Q9X6VFnu9eWsm9pom0MvBsqEtNEIH27f4CU0LSOTxODd9UmZ25d1AQ48f
+   w==;
+X-CSE-ConnectionGUID: O0BZ9R0vTFS3whYgzhBiLA==
+X-CSE-MsgGUID: 6GpB13QQTUKKBTNE5XTuuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11453"; a="51072617"
 X-IronPort-AV: E=Sophos;i="6.16,208,1744095600"; 
-   d="scan'208";a="51217522"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 21:32:33 -0700
-X-CSE-ConnectionGUID: ADEZ9NkNT56f57CeRBtwIg==
-X-CSE-MsgGUID: 2PWEErnlRCa62D6QTvh1+A==
+   d="scan'208";a="51072617"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 21:27:03 -0700
+X-CSE-ConnectionGUID: C9Xnm7GTToSREEaOpo55xA==
+X-CSE-MsgGUID: Q8+G26O6S8iXPdh9gp5jiw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,208,1744095600"; 
-   d="scan'208";a="150221411"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by fmviesa004.fm.intel.com with ESMTP; 03 Jun 2025 21:32:23 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH RESEND] scsi: megaraid_sas: Fix invalid Node index
-Date: Wed,  4 Jun 2025 12:25:56 +0800
-Message-Id: <20250604042556.3731059-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+   d="scan'208";a="145022681"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 21:27:03 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 3 Jun 2025 21:27:01 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 3 Jun 2025 21:27:01 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.64)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Tue, 3 Jun 2025 21:27:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sT6YDXmjWwRSICOdn/uxAr/e7boa2BJ9m5IR/oMIp6PwKUsJxYO9r+93k6RyxeCxa0au/L/kfAqRU7VA/Tg7UAFRT9VeCCjmX26+uOwSvVgE7xp8iZ2OH/dy09psWo0djIsWwVsVSRhCDBYJafrbr5Qd3ptXiea9ao3PLxZNBkynaOW4eBoFSqQUUd75TATNR5Ps49aAkr6omRmPJm+lX0NqjdTbU8IJHenFDg/bPDhAdEIjXPt6C0HO++KPJ8xm6aEj1+ToeQCGmx3rhId+Y//9DpabvjsprH7TlzLdt/vlEFLQUB5fRyQWY2iuO+PMcfDBkT+DuqNOU+Tov8YFpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hQ2A0zzigtBPHOuABfdxky+HhnhQh3IxoDO2/7hKbiM=;
+ b=ZDfOGNgCjiy39fTrP4Lw6AqGxjC84pDVYnp9dyu9nKuEkbxXTTmzDTCUDzXqXBwjqkmwtECKJdXUnKtvNSB3TE6j0jFapAnJHKiSlYqqsz31cHL84Tb/mzgbTiXUGvzNtcJXNM464PPt2OurQHZDnOeU3DgpPMYV7yHXiJa/RklIpBHPE2NN1tNreq3R6uMl8FJTeB6ImKIj+4mvq0dXFcez0E+QFK1fvOxM8fnz+ME3DmfWnLRGuDBCgg0qC+2+G1f34PJUSrJGhKRTAgV8VcKqhCtBXYAFQeramlRV6ldnhsuuu/tIttMpymKuKPs2LGsLntzfVLS+MyLeaqIWlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
+ DM4PR11MB6287.namprd11.prod.outlook.com (2603:10b6:8:a6::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8792.33; Wed, 4 Jun 2025 04:26:32 +0000
+Received: from DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
+ ([fe80::4af6:d44e:b6b0:fdce%6]) with mapi id 15.20.8769.029; Wed, 4 Jun 2025
+ 04:26:31 +0000
+Message-ID: <b38301cb-6d8a-40c5-a84b-c59711ea1548@intel.com>
+Date: Wed, 4 Jun 2025 12:26:23 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched: Skip useless sched_balance_running acquisition if
+ load balance is not due
+To: Tim Chen <tim.c.chen@linux.intel.com>
+CC: Vincent Guittot <vincent.guittot@linaro.org>, Doug Nelson
+	<doug.nelson@intel.com>, Mohini Narkhede <mohini.narkhede@intel.com>,
+	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Ingo
+ Molnar" <mingo@kernel.org>
+References: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
+Content-Language: en-US
+From: "Chen, Yu C" <yu.c.chen@intel.com>
+In-Reply-To: <20250416035823.1846307-1-tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR06CA0213.apcprd06.prod.outlook.com
+ (2603:1096:4:68::21) To DM4PR11MB6020.namprd11.prod.outlook.com
+ (2603:10b6:8:61::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|DM4PR11MB6287:EE_
+X-MS-Office365-Filtering-Correlation-Id: e53d9d81-5d5d-4616-1454-08dda31ffb63
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?S2gzSnlBWmxrdUoyV0tnOVE2MGFQRVVydE1KQ0hhd3VpTFFKcWZjdnlVZUpj?=
+ =?utf-8?B?QkFiZi9EdFBYZzA0RGRaQnJwNXVDaG0rQzBZMGZTR1F6ZkYzUHp2VzJsSllv?=
+ =?utf-8?B?akc1ckhHTEIraDBWZlFYNEtvRE83VE1RY1J5OWQ0RENjd3pRaXA5SnRTTXRD?=
+ =?utf-8?B?ZlZZZ3dsRFE1N0RoVG9ib1NtTTgxbXF6Vk5SWTNIWGZTcEd3Tk9IblZiSFhx?=
+ =?utf-8?B?dXl3WFhtYkN1SnlOQW5haTN4Zkdwbnp1UWk0QUNpck41Qm8wbmlxNUpWZFR3?=
+ =?utf-8?B?TGd4NkFJQ1JxSTQyUHUrTzYvNUJiRkRveUxvQXR6T0RGdGRreFRtaHhLWnVB?=
+ =?utf-8?B?WU9KNUpqcG1Dc3RFOWR2R0pQNk1GTnNKU3hmblVtVU5tUHZ5eEJaV292RTVa?=
+ =?utf-8?B?RGZxand3bm4wZlI1WmUzMGFzTmQwTGxEMGZHb2RURyswaTZCc0pKenBFTm9U?=
+ =?utf-8?B?c2ErUmZUSkpwbFJGZTFiWjllc25IVkMrMENxK2d3VXVCa3R1WFlzQWZmY1dJ?=
+ =?utf-8?B?eHJqdUdQS2JzM2ZEUGx4TWtRVG5NZWhlVHNQM2pEZ21lZG1JMnVBMWR1ZS9l?=
+ =?utf-8?B?ekpNNksxdjMrMTJKemM1UXFENlMvTnFLWnhaRU1YV3hYeXc1eU55aUtQU3k5?=
+ =?utf-8?B?SmZ4bVZxMDJ3S1ErNURyVE8xNDVjV1I3Zy82MjlVTzE0d0prK2VwM0h1Tk1D?=
+ =?utf-8?B?YnBrS2lxYWhPZndJWFYyKzBBSFFWRDRQdTR1VWIzTUJQMFZ5VEtyVGI0SHVE?=
+ =?utf-8?B?YXRVREhhdHVjR2d6Y1lCWjlxU3lUL21DVmt6NjFnb0RidEUzRml3NHBwaDNQ?=
+ =?utf-8?B?aExzVS8xLy9kMnZSZkhaRkk3K25sRjg1YmhmK0tZakxNeVFtNjYzeGFuTERp?=
+ =?utf-8?B?a3FKU2tob2gycS94VmNZSjY0TExEYlFkRlpMQnVMaVRDbFdEY0g0d0IzTHFn?=
+ =?utf-8?B?T3d2M0tjRnZSUTBuaUdmK29UNHlIbFpkWXl0ejFmbW52allUZ2ptaFlBczBE?=
+ =?utf-8?B?REE5RjRRWXpMN0h2RW90VkpNVEdnSHV6YkU3UTBJblBmYjIvOERiSFpKN2F4?=
+ =?utf-8?B?R01zNlBoQXJFTlcvM2xpcjZDYkJ4cHlKaTdXVFBBUUNwaGo0TmJtMG1mN3FL?=
+ =?utf-8?B?SWZKVU9FTVdtdVo5ckxGZll6MkNVTjViOGk5U2RlZUV6SHhQdTNEUGM1dVNr?=
+ =?utf-8?B?bkdWZFZNOVNRQWtEZUtUTU1Gd3pDR2hrcUtqR0F5Y29SRFNaOUNlRFJ2ckNC?=
+ =?utf-8?B?anlabzdWd2RmVVVyL2tWNXdVb0EzVkRST2F5OXZ0SkVia1Nmd2lmTlBOczdv?=
+ =?utf-8?B?MWMvK3hRYnN0bW13UUJteHNXUkI3R2M3aDN5c3k1dUdoT1JlUFNKMUo0Wm0r?=
+ =?utf-8?B?Zmg5UU82cDliTVRsSFg0QTMvMWVIZ0luenJxdFZEakV3L2tFSVZCY2I1eW5v?=
+ =?utf-8?B?Ly9wUlBuTWxPMDlrT2pxSnBoa25icTFmMWtkYkt3ZitFMERlS3orcU9yNVRJ?=
+ =?utf-8?B?QVovNzNocjBqZjRuRC9sK2dWSEhvMEY5MzlvczZJRHFWcUdwMEluM1NsWmQw?=
+ =?utf-8?B?cGNmaS9qUTNyektwK3pNWmkzZDNSQ2syQUI2QjB5aTJaMGRaTWJ2RGRZTHpW?=
+ =?utf-8?B?Ti9lVVdPbzRmWEZHT3NKUkkvQ1BLVlJhdnRkS1pUbkdsYlM3OWp6L3BRSFZz?=
+ =?utf-8?B?T2dGY1ZPMUhDQzZSTFhLcnl2eHoyNDBuZzZMZVNNZ2JzTUNmaXY0M0tWN3p0?=
+ =?utf-8?B?QTBaMXV5OVpURGJqa1Z2bGN6NTNDd25ubjJJNXgvR1FVOHZ5T2tHV090SE1p?=
+ =?utf-8?B?QnRpdjdycnkrbndFVm13TVBFQko1d0lQYWVKVTM1b2l2akZBQUR5bkNtaTI0?=
+ =?utf-8?B?RE5TRHBHYittVnVKSlJGQUZ3N05kc3gyM2k0d1FLRTdubnZOQi9lSVRjeDJk?=
+ =?utf-8?Q?kkpjpov1eno=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VE1zR2hReWRZT2ZIcUh5MXkwdXpETDVCRUxaWllXNmtsY0FOZHFwSFpoOHVm?=
+ =?utf-8?B?N3NqdVZrcDhkZWZYNWVSUHdham00WjNKUDZkNlZVODFRalBtZDVydmc3TW9m?=
+ =?utf-8?B?U2Y5S3Qzbm52NlNVQWJJZmhTRHA5RmdSZ1RvektkU0VOT3RrMlFaNnFjamNB?=
+ =?utf-8?B?WmRaVDh6anBqeSthU2RWM2daUmdicFhHQUo0UWRtbnU2VDhqUS9HZVlsUmQw?=
+ =?utf-8?B?RVVlb2RrbnlFaFUrbTZHbnZtcnU0VnAxUm8yYklicEE4QjhLaDgrdmVId2lp?=
+ =?utf-8?B?ZjBST1QyMlAzMnFMNG9uZkF6L3RvM1NwTHhqVnNQMnpiamZJSjlaelFhaExp?=
+ =?utf-8?B?V3psbkMvbHhPTEhQN3MxcnR1ZEVDd0lhRURWWEZJZjUvbW1hTW1iQUhxZjR0?=
+ =?utf-8?B?TXlSOThHS1R6ZW83ZjVSdTNGdU04TCtmTE5DK0NwS2xUNndjTzhSUFA1aGp2?=
+ =?utf-8?B?QVJoR2t1bldCMS9ibTBjOUo5ajBvNmlLZWJTZ0JUMUVveFc2aFBKeEw1cmpL?=
+ =?utf-8?B?Q2hrRjQwYjR6aEExb21GeDhQQjZHaFdtOHlQL3YrbmdzVkdlVEhNWUl3UE4v?=
+ =?utf-8?B?MUpkZzhLMFR6VVhaeUhSaHRCRStrWXBEQlZZalp6aFNjZklGTlFPRWMwc3ky?=
+ =?utf-8?B?SDIvczhta09wSlRXbkFiUldwYmFMalVXRE1DYmpIeFJNQzBuV2ppUzEwODZx?=
+ =?utf-8?B?Q1VZOFg1eWFJakEvcm91bTdYUXBVZ2Z4MlNnMEZwSm14OG1ZVDIxL2pmQ05E?=
+ =?utf-8?B?V085RVUzSWMwVlpCTDBNVS9QTlFJdXVYeUFTd1NUbFhQbWh3c1RMM3JFNyti?=
+ =?utf-8?B?NUhidnFMb3BkQUhQTG9mQkxrTDRZK1duandrUG4zNU90bm52QW5CQ3FTRWw5?=
+ =?utf-8?B?S1RqdHhKTHRQMitVdnBZclJGRmU4YUtJRVdiN3hWcExHK3NkcVlQbG1Xc0l6?=
+ =?utf-8?B?a0VSeVllU3gyRDhWSVVwaDFETGRXTTBBVE80aDBrSmJkMVdvYkNGaDhhait2?=
+ =?utf-8?B?a2RLZE8ra1hDNWppTVdrUldhTGZKcHY1NjIyZnRhL2Z0Nm9ZcnpIZ0VldnI3?=
+ =?utf-8?B?Q0lXMkxxVE9XVHNGcWFZVnFiWEppK3NTajVldTdVL2xJSVVna3BDV1RRNEIr?=
+ =?utf-8?B?SGhLZWJHRFR1cDJ1Y3JJL2I3dTVDNng3N2MvOERZRXJveVZmaG0xMVBBRzBa?=
+ =?utf-8?B?VUJBYmNWY2REYUN5TXBvb1pob1pBTzFjNVdqYi9IUXJIdnZsekV6eWxMQVl5?=
+ =?utf-8?B?Sld6M2ptT3VBTUpTcS95ZExvdFd3RW1FRTJ5TWh3NHlraTlXUENYd0NVbjVG?=
+ =?utf-8?B?cGhRQXVrNGc5cGNVQ2UvbnlrZ1poSENCL1doRzYzSzNMVjhtM0JWR3E3QkVR?=
+ =?utf-8?B?cDhNWkFhNlNnVTkvRGMxeDBzRlNsaW11aFJjZ0ZlMTB1RmtoYnV4OW5JTzI4?=
+ =?utf-8?B?VUpkWVpCOEhDaEppK21ITXdxajEwTE1vWTRIVTVQMTlnOGxVODYwcDNlcWpp?=
+ =?utf-8?B?YkNmQkZDYzVMY29pY1Uyc0FBZlRJVHhhVzBnaFB2bnFmMFJkWlRLQW9xZzhV?=
+ =?utf-8?B?OUxYMTJCQ0UyU2hrQVJWR1Y2dFpMeWZWa2NBT3FRZTJUVkpUN3MxVlJGc0E1?=
+ =?utf-8?B?bzRQQnJrVUN0TkNmb2JyeGRlNitKZnFuT050dG90a3lzamhqWDhCTHFMcVp1?=
+ =?utf-8?B?SUprb3hpc0FuNzhWSEVTdjNtdjFiZVJsSUEwd1hkTmUxQlRHSUY4L05XRzM5?=
+ =?utf-8?B?Rjd2MEFiM0tUbGFUNGxjUWZrNGJKY3BpRTFobEpMRG41R0dMZjBrSTV3V3ZN?=
+ =?utf-8?B?ZzJDSE9lRTNMY0NEem5sU0lDbVczejFESHplSFk4ajdtQ3F3d2RHUWhhNXQ2?=
+ =?utf-8?B?dXh2N0FRb0RiU0d1bDNic3FRQ0VRbUdhWWRVMm81eWdYMUx1NEhDOVY5U0do?=
+ =?utf-8?B?a1FRMUlUSU9zbFhRQ3ZvOS9RYjNaNUpZZ2hDWFlzczRoRStlQzNxdmRoVXI4?=
+ =?utf-8?B?anFNRG51UmJoWitwUFg1TUxTV2tFK0JPY09iY3QyQ3BxdjY4RVdvRG9oOU5y?=
+ =?utf-8?B?UFZLZVB2amdteWdtcnFzazJWN2FDUzN6VW1LNkFSWVA4azBxaGlFOGJxM1VM?=
+ =?utf-8?Q?A/2NiN0c+SrwjVg1Wqd2LeAoO?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e53d9d81-5d5d-4616-1454-08dda31ffb63
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jun 2025 04:26:31.7066
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GCOFxSWV0QUYJnfpgzBc6jv/unmYO0vYBUWkjbQG+F0t8pdnHiuQ+4qa59rJjJUEJYzKcSaXZsg4MmlELbpe7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6287
+X-OriginatorOrg: intel.com
 
-On a system with DRAM interleave enabled, out-of-bound access
-is detected:
+On 4/16/2025 11:58 AM, Tim Chen wrote:
+> At load balance time, balance of last level cache domains and
+> above needs to be serialized. The scheduler checks the atomic var
+> sched_balance_running first and then see if time is due for a load
+> balance. This is an expensive operation as multiple CPUs can attempt
+> sched_balance_running acquisition at the same time.
+> 
+> On a 2 socket Granite Rapid systems enabling sub-numa cluster and
+> running OLTP workloads, 7.6% of cpu cycles are spent on cmpxchg of
+> sched_balance_running.  Most of the time, a balance attempt is aborted
+> immediately after acquiring sched_balance_running as load balance time
+> is not due.
+> 
+> Instead, check balance due time first before acquiring
+> sched_balance_running. This skips many useless acquisitions
+> of sched_balance_running and knocks the 7.6% CPU overhead on
+> sched_balance_domain() down to 0.05%.  Throughput of the OLTP workload
+> improved by 11%.
+> 
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Reported-by: Mohini Narkhede <mohini.narkhede@intel.com>
+> Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
+> ---
 
-megaraid_sas 0000:3f:00.0: requested/available msix 128/128 poll_queue 0
-------------[ cut here ]------------
-UBSAN: array-index-out-of-bounds in ./arch/x86/include/asm/topology.h:72:28
-index -1 is out of range for type 'cpumask *[1024]'
-dump_stack_lvl+0x5d/0x80
-ubsan_epilogue+0x5/0x2b
-__ubsan_handle_out_of_bounds.cold+0x46/0x4b
-megasas_alloc_irq_vectors+0x149/0x190 [megaraid_sas]
-megasas_probe_one.cold+0xa4d/0x189c [megaraid_sas]
-local_pci_probe+0x42/0x90
-pci_device_probe+0xdc/0x290
-really_probe+0xdb/0x340
-__driver_probe_device+0x78/0x110
-driver_probe_device+0x1f/0xa0
-__driver_attach+0xba/0x1c0
-bus_for_each_dev+0x8b/0xe0
-bus_add_driver+0x142/0x220
-driver_register+0x72/0xd0
-megasas_init+0xdf/0xff0 [megaraid_sas]
-do_one_initcall+0x57/0x310
-do_init_module+0x90/0x250
-init_module_from_file+0x85/0xc0
-idempotent_init_module+0x114/0x310
-__x64_sys_finit_module+0x65/0xc0
-do_syscall_64+0x82/0x170
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
+This change is straightforward(simple enough) to mitigate the
+costly atomic operation, it looks good from my understanding, so:
 
-Fix it accordingly.
+Reviewed-by: Chen Yu yu.c.chen@intel.com
 
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 5e33d411fa3d..6d4de06082d1 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -5910,7 +5910,11 @@ megasas_set_high_iops_queue_affinity_and_hint(struct megasas_instance *instance)
- 	const struct cpumask *mask;
- 
- 	if (instance->perf_mode == MR_BALANCED_PERF_MODE) {
--		mask = cpumask_of_node(dev_to_node(&instance->pdev->dev));
-+		int nid = dev_to_node(&instance->pdev->dev);
-+
-+		if (nid == NUMA_NO_NODE)
-+			nid = 0;
-+		mask = cpumask_of_node(nid);
- 
- 		for (i = 0; i < instance->low_latency_index_start; i++) {
- 			irq = pci_irq_vector(instance->pdev, i);
--- 
-2.25.1
-
+thanks,
+Chenyu
 
