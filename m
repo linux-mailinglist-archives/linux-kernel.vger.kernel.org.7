@@ -1,171 +1,174 @@
-Return-Path: <linux-kernel+bounces-673301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A12ACDFA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42581ACDFAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE33C16E844
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:56:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE093172AA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 13:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEE628FFE1;
-	Wed,  4 Jun 2025 13:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B655290098;
+	Wed,  4 Jun 2025 13:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tX5i7gfV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRoq57/T"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C0A28F51C;
-	Wed,  4 Jun 2025 13:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA97028F51C
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 13:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749045393; cv=none; b=PnCREEZBGB/AGsaDf42HMxxrSRcZkHvwd69RSKhEptc0MgBz73GvRvi+NxsoflcFv/07EkRytW2tfgPtRyKn0flZPAPlmDRl43g2UUB+gkWQjo1I6w5EIKWXIb46GagCSl1/B/i7nkrIgYfkisMqI3i+MmrBZYDHAV/GsIfcEhs=
+	t=1749045487; cv=none; b=r9BolriEHl3hgAbNTs8q9AFPecjDJYaGuAyNMI2C3sAyuFK6oLK4vXNJnKbnxFq0wamrESujQV1jNjLCxFthbj7LfeQbzBcXa609rwRJydq+InYZgGY3bk5W6AJACROMFHqbR1A4cJ5SMZKfUL2FijI2JSoTxls2oSOViyuvHMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749045393; c=relaxed/simple;
-	bh=hNaIjnP9UQIXqs9XzN5BySAC1EeT1gYOVTmbEjhso3w=;
+	s=arc-20240116; t=1749045487; c=relaxed/simple;
+	bh=zRFxwlOuzhqwZx7qzxl80h5Bo/0p7oc7WIbfN8Qjlw4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fpr7W71uQk4b1q2yYmq6aq0qNjzwpwnobambXLbnpYCHy7rgq2NsVAdds21iMltq4IV3UHHH+lwh1MU11/H7yRw0HDv4Nb0PbEM+v8EaP23O9KP3g2B+ruU3ZCpxP4j3uiYUhdDMCK02MyrHBj2dk9DTLNVxuRmvgSEU0ZEEs+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tX5i7gfV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF15C4CEE7;
-	Wed,  4 Jun 2025 13:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749045393;
-	bh=hNaIjnP9UQIXqs9XzN5BySAC1EeT1gYOVTmbEjhso3w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tX5i7gfV/An0o+OVPNY+A2Ngdo4eZD2cKGN+XVYmr9KtKpr9kxuomMtKfA5+gFeSG
-	 vygJBmnirp8AaBVUBkv8sNJ4daJQH/AQewxPpMagVRCCZ4YhHozBbU+JFrQsNdC+wz
-	 cYn8FcZt2f3YQuPIpnj4M9q1IOXthHh+6YaKN0A6U2ZtTMlTw6bUmfncjC9TdyIbas
-	 8uziFl4hKDealqfUt2A1E3lpMlCMij9e/QYRBfCFiTy+rTxYzq1v78cdgvFPsZ+71p
-	 O0c1mF/9UsdfBEu0Vk+AWQAgAiAIhw7HBgnhcr5K56huHTHvGaA0JoS1HQz03hvVlq
-	 ViYwVV0wdUHHg==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so1078173a12.3;
-        Wed, 04 Jun 2025 06:56:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0TAmQvHclJDNFYcmErt93y0zHKbwQE2lWS2XNA6Kam4hK6umsvMwzuMzj+gy1W0ud+C0jJVX1Q99a1mw=@vger.kernel.org, AJvYcCVJQQvlR8JiVlclaA2SdbNRY6R3slOewrKmWhDsPay5hK+siid+ec58pqOiOudfaWxhVsmvhE3U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUu2aay2ZLMgqmeeFm8OYwLpp64pPRc0JB7gP8dKFBJOXyYep5
-	jAs3OwZiAxgRg1IpJYTJwKWLLrxyt4Fd39UCVwlsVrywJn7b6AswAz/wVmaJWlfwCUn9o1oxrby
-	4vn2Fs5c1TaJzXgmQYfUVViZPGqoMfX0=
-X-Google-Smtp-Source: AGHT+IEpDdOfH7JSv9qoSDGd0z3t6ymqMnmQbNlmw+p25nqvJV9s6gLViUbiEfnbyljEN/038PRobbX/6ph/Dv/+ZLM=
-X-Received: by 2002:a05:6402:524d:b0:607:1b7a:b989 with SMTP id
- 4fb4d7f45d1cf-6071b7abda8mr281358a12.12.1749045391972; Wed, 04 Jun 2025
- 06:56:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=Q+Q18UYuasyY4bU700hhcNPmKmWdx/H5O1CsxvMsiEIrhbfBs3lKKxELayqflsV8Gc6z+9KGyD7w+f9gAePoCvCzIOxpZ+Fi5nnH8r2EAwl5eXAC8gsWl0LGx2LJVJg+exmb0Hb/oT5KUVei1xhjxvtKq1p+TaOKZGQA6WCjzWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRoq57/T; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e7dc3df7ac3so6848859276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 06:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749045485; x=1749650285; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IFWXnsIMSq1bn0DUFYmY7z6V87/rRA1du54TZxFaV2Y=;
+        b=NRoq57/TUbyB7bb5VxHVyq24yoAGAr1hQ99CQFtbu6trcUZRoVYF23HAk6hj45wG3D
+         xLe1YFmQwsOHaa9BMDXe14VjCzh96PvvR5MUJNO+l+6aOU9AEcCfRV2eQXWBsinrtB8e
+         kA7MBL8cGEHkE2KlegjBelu5eMfxydvNaMguOW2laDNBFcNSQkSll6Nkz7IEey4Guwd4
+         e7qStXO29JO3J6kXMPCMFiM0TYqmMgOpi4u+EEWdWhHwSKZ+J4Mg4WdzGWZyTRTfZQ6f
+         rs2D2tVO5bqTuHr7m4Q8BaMd++fXkMlFMTwk1Z5gYK51QjoqSP0HG8sQltH7IStlAGTI
+         g0Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749045485; x=1749650285;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IFWXnsIMSq1bn0DUFYmY7z6V87/rRA1du54TZxFaV2Y=;
+        b=G6v+rgWeeE9Mdz1SK9GTmj1t3XT2HW6nnkPZNvhAYDv5qX0XhPGuPQ26UacYXiT+AJ
+         +kfMrG4EVoFFnJe7SmZfIOwNX7vkGviJ/2KdD8RmE7II/pfVpeWW6cam2yx4tjfRB/q0
+         7HP1Fav+hHYSTheN+xCQUMJYpIcpUPysFMT7ISkqB2E/HAZRYMZYp7ktVxRSlxPNAv+8
+         xDw8kJMgr5One4dL9pJ+IABNQgw8+88rvbdWmqKCgqco4gbpmzY2GEWupO4DdvuzeOEs
+         UjoxvG9+gy1vYSs9QUMr8mozgkfSeel8Q6ib1yg7mImESPcEKgtfudG0NYhdBt4AFqFW
+         uqsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY/HdqQfCWNAA2D6MOABxBFDrBXB/Ij4jAjb20dV/44A/9twscgnyPgFcnn8GR/ijiTwn9tpMDv/ve4F8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysOKHZ7pHxleH5U5JDgWM4xvLOyuOyIWEBwGGi+9rZpMR2kuOZ
+	pdFjkcQBn6si9/SUqWfPe3LP9UQky2Zo3jBFtxtylGEiV2fFcSiA5aS59fX3KvsVcqG7WFe+bU1
+	dHqXLrtvu/viFpqE54CuHwCtgOzUuCok5F004DcLsaw==
+X-Gm-Gg: ASbGncvqtN95LzqQTV0fCWfsw9fEAmCFgy65ZeKtCVdJBNUS3TmTMtiWWfqTd8HhChP
+	qfkrlzsVZY6qND71ExPYRUPnU4PHDoBtiZRLz/JrcVp5VvLhdQP3s3BVyhTTTCD8VA8wTsbGoOs
+	Jx/cnTpHV2wxdM7H+HfmRii3IDC9QyMbcnVQ==
+X-Google-Smtp-Source: AGHT+IGXFY8gppNCB1I6k87GeD/bmWPUV8R4mMgK2i7dZCLcfF2RhkUBwoySiJMKIOMWeHJraaSZXAxgR7paTZPeyFU=
+X-Received: by 2002:a05:6902:1383:b0:e81:2447:6b74 with SMTP id
+ 3f1490d57ef6-e817a0011f4mr3409868276.43.1749045484537; Wed, 04 Jun 2025
+ 06:58:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250531113851.21426-1-ziyao@disroot.org> <20250531113851.21426-2-ziyao@disroot.org>
- <CAAhV-H7pvaz5N0-EfvhDNHAXJtR13p9Xi5hfgDxOpeXi9zMbTQ@mail.gmail.com> <aD6Zz8L9WJRXvwaW@pie.lan>
-In-Reply-To: <aD6Zz8L9WJRXvwaW@pie.lan>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 4 Jun 2025 21:56:20 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6j1OT9D8ZBtyEP=Mu5+m=t0ebUvuC=gVeNsoPizwK1TQ@mail.gmail.com>
-X-Gm-Features: AX0GCFvuz6tVp6jU6zQuxGpjxaWdrfNqx3hl5IIjC66LsSXVYjnimt4J7d3OKdw
-Message-ID: <CAAhV-H6j1OT9D8ZBtyEP=Mu5+m=t0ebUvuC=gVeNsoPizwK1TQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] platform/loongarch: laptop: Get brightness setting
- from EC on probe
-To: Yao Zi <ziyao@disroot.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, stable@vger.kernel.org
+References: <CGME20250529222410eucas1p2e1d41a2fc717caef1aed51367a7db944@eucas1p2.samsung.com>
+ <20250530-apr_14_for_sending-v3-0-83d5744d997c@samsung.com>
+ <20250530-apr_14_for_sending-v3-7-83d5744d997c@samsung.com>
+ <CAPDyKFpYfZNthdRN=pCv4FEdFCzrKEH4aFBy4ew-xLKtpbJ5Tg@mail.gmail.com> <a68e3bee-f4ad-4d73-a5a8-e39772c41711@samsung.com>
+In-Reply-To: <a68e3bee-f4ad-4d73-a5a8-e39772c41711@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Jun 2025 15:57:28 +0200
+X-Gm-Features: AX0GCFsKqqHfcoyjgQNY4Bx0T-G_vnaUmkhnEv_Xdt_09WriRo8KoB3SpnFxVUU
+Message-ID: <CAPDyKFo8scYL59+ELgawop30habZad0Xsd6bKGLXtSF+UNd9Ng@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 3, 2025 at 2:44=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrote:
+On Wed, 4 Jun 2025 at 14:40, Michal Wilczynski <m.wilczynski@samsung.com> wrote:
 >
-> On Tue, Jun 03, 2025 at 12:11:48PM +0800, Huacai Chen wrote:
-> > On Sat, May 31, 2025 at 7:39=E2=80=AFPM Yao Zi <ziyao@disroot.org> wrot=
-e:
-> > >
-> > > Previously 1 is unconditionally taken as current brightness value. Th=
-is
-> > > causes problems since it's required to restore brightness settings on
-> > > resumption, and a value that doesn't match EC's state before suspensi=
-on
-> > > will cause surprising changes of screen brightness.
-> > laptop_backlight_register() isn't called at resuming, so I think your
-> > problem has nothing to do with suspend (S3).
 >
-> It does have something to do with it. In loongson_hotkey_resume() which
-> is called when leaving S3 (suspension), the brightness is restored
-> according to props.brightness,
 >
->         bd =3D backlight_device_get_by_type(BACKLIGHT_PLATFORM);
->         if (bd) {
->                 loongson_laptop_backlight_update(bd) ?
->                 pr_warn("Loongson_backlight: resume brightness failed") :
->                 pr_info("Loongson_backlight: resume brightness %d\n", bd-=
->props
-> .brightness);
->         }
->
-> and without this patch, props.brightness is always set to 1 when the
-> driver probes, but actually (at least with the firmware on my laptop)
-> the screen brightness is set to 80 instead of 1 on cold boot, IOW, a
-> brightness value that doesn't match hardware state is set to
-> props.brightness.
->
-> On resumption, loongson_hotkey_resume() restores the brightness
-> settings according to props.brightness. But as the value isn't what is
-> used by hardware before suspension. the screen brightness will look very
-> different (1 v.s. 80) comparing to the brightness before suspension.
->
-> Some dmesg proves this as well, without this patch it says
->
->         loongson_laptop: Loongson_backlight: resume brightness 1
->
-> but before suspension, reading
-> /sys/class/backlight/loongson3_laptop/actual_brightness yields 80.
-OK, that makes sense. But the commit message can still be improved, at
-least replace suspension/resumption with suspend/resume. You can grep
-them at Documentation/power.
-
-Huacai
-
->
-> > But there is really a problem about hibernation (S4): the brightness
-> > is 1 during booting, but when switching to the target kernel, the
-> > brightness may jump to the old value.
+> On 6/3/25 14:27, Ulf Hansson wrote:
+> > On Fri, 30 May 2025 at 00:24, Michal Wilczynski
+> > <m.wilczynski@samsung.com> wrote:
+> >>
+> >> Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
+> >> TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
+> >> the GPU using the drm/imagination driver.
+> >>
+> >> By adding this node, the kernel can recognize and initialize the GPU,
+> >> providing graphics acceleration capabilities on the Lichee Pi 4A and
+> >> other boards based on the TH1520 SoC.
+> >>
+> >> Add fixed clock gpu_mem_clk, as the MEM clock on the T-HEAD SoC can't be
+> >> controlled programatically.
+> >>
+> >> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> >> ---
+> >>  arch/riscv/boot/dts/thead/th1520.dtsi | 22 ++++++++++++++++++++++
+> >>  1 file changed, 22 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> >> index 6170eec79e919b606a2046ac8f52db07e47ef441..ee937bbdb7c08439a70306f035b1cc82ddb4bae2 100644
+> >> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> >> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> >> @@ -225,6 +225,13 @@ aonsys_clk: clock-73728000 {
+> >>                 #clock-cells = <0>;
+> >>         };
+> >>
+> >> +       gpu_mem_clk: mem-clk {
+> >> +               compatible = "fixed-clock";
+> >> +               clock-frequency = <0>;
+> >> +               clock-output-names = "gpu_mem_clk";
+> >> +               #clock-cells = <0>;
+> >> +       };
+> >> +
+> >>         stmmac_axi_config: stmmac-axi-config {
+> >>                 snps,wr_osr_lmt = <15>;
+> >>                 snps,rd_osr_lmt = <15>;
+> >> @@ -504,6 +511,21 @@ clk: clock-controller@ffef010000 {
+> >>                         #clock-cells = <1>;
+> >>                 };
+> >>
+> >> +               gpu: gpu@ffef400000 {
+> >> +                       compatible = "thead,th1520-gpu", "img,img-bxm-4-64",
+> >> +                                    "img,img-rogue";
+> >> +                       reg = <0xff 0xef400000 0x0 0x100000>;
+> >> +                       interrupt-parent = <&plic>;
+> >> +                       interrupts = <102 IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       clocks = <&clk_vo CLK_GPU_CORE>,
+> >> +                                <&gpu_mem_clk>,
+> >> +                                <&clk_vo CLK_GPU_CFG_ACLK>;
+> >> +                       clock-names = "core", "mem", "sys";
+> >> +                       power-domains = <&aon TH1520_GPU_PD>;
+> >> +                       power-domain-names = "a";
 > >
-> > If the above case is what you meet, please update the commit message.
-> >
-> > Huacai
+> > If the power-domain-names are really needed, please pick a
+> > useful/descriptive name.
 >
-> Thanks,
-> Yao Zi
->
-> > >
-> > > Let's get brightness from EC and take it as the current brightness on
-> > > probe of the laptop driver to avoid the surprising behavior. Tested o=
-n
-> > > TongFang L860-T2 3A5000 laptop.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 6246ed09111f ("LoongArch: Add ACPI-based generic laptop driver=
-")
-> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > > ---
-> > >  drivers/platform/loongarch/loongson-laptop.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/platform/loongarch/loongson-laptop.c b/drivers/p=
-latform/loongarch/loongson-laptop.c
-> > > index 99203584949d..828bd62e3596 100644
-> > > --- a/drivers/platform/loongarch/loongson-laptop.c
-> > > +++ b/drivers/platform/loongarch/loongson-laptop.c
-> > > @@ -392,7 +392,7 @@ static int laptop_backlight_register(void)
-> > >         if (!acpi_evalf(hotkey_handle, &status, "ECLL", "d"))
-> > >                 return -EIO;
-> > >
-> > > -       props.brightness =3D 1;
-> > > +       props.brightness =3D ec_get_brightness();
-> > >         props.max_brightness =3D status;
-> > >         props.type =3D BACKLIGHT_PLATFORM;
-> > >
-> > > --
-> > > 2.49.0
-> > >
-> > >
+> Yeah they are required. Even though this convention doesn't seem to be
+> enforced by the dt-binding it seems like it's hard-coded into the driver
+> 330e76d31697 ("drm/imagination: Add power domain control"). So I don't
+> think I have any choice here.
+
+Well, unless there is a DT doc describing the power-domain-names it's
+perfectly fine to change the driver too.
+
+Moreover, it looks like 330e76d31697 is a brand new commit, just in
+linux-next, so not even included in a release yet.
+
+Kind regards
+Uffe
 
