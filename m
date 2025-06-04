@@ -1,181 +1,183 @@
-Return-Path: <linux-kernel+bounces-673042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A00ACDB5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3CAACDB68
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 11:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106241889855
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:49:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6F9172319
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 09:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DC028CF6E;
-	Wed,  4 Jun 2025 09:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B669628CF53;
+	Wed,  4 Jun 2025 09:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF7iY5xA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ig2Owuvf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8D1E5B97
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 09:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC451E3772;
+	Wed,  4 Jun 2025 09:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749030532; cv=none; b=P0kMv1jERQutuKIjZ9Xap6aiqGGl0ZipWfAlSMqT6E8dZVRed8dhB/M0xWHtB1rbDxTVjhPOOnK9BnsEyjIjtsdh75gGgVbkCye0wy1mbhoEDv8yrla/6BqXaT15v7DIteEjGtoVqqbczeLZQu/g6QZBoyOaRDdqXqxC7NY1624=
+	t=1749030601; cv=none; b=FJEpgikllfavLd8KOxzDAeevYWRIpEtKnbfv0zIPbFuR7XAGjnshlx2zVUEY972XuKLveNRpa1uAGNvgARxmB62LHRWfsRNQ0iJwyYmNPw1n1Hv9u6lL4uP6a5Ooys2Vt+IxUXnJLw0I1Jwg0vzCNjaQU9fpE0Tk5rsW9WUCOT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749030532; c=relaxed/simple;
-	bh=pbdV4FPg+q7X6VNKgCyiuIlkd0/NfsNnQ/IoEFmOi0Q=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X/IiSlbyLSAOWRQcxxCCfBz5gGCPZ5hyqlG3RQwwH6JH6RElGkw20JfVfJvUYChe+A9nattZRv2+mL0pD5m0U7qCxwr7QPxF3vz8skBp6Z8idNoYLyRSAryknadcnsSuQj2oZmRoPfBsH+HEyhh0fUxyL8kbKKomgZJ5+cGJMMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF7iY5xA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8741C4CEE7;
-	Wed,  4 Jun 2025 09:48:49 +0000 (UTC)
+	s=arc-20240116; t=1749030601; c=relaxed/simple;
+	bh=Ab424E9k28t4IDBrmxzZpiv39b/KLWE7lhSswN4XFJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UD8lhii3n3PYd85uRkge722gBa94sLe5sH3nXzm/IN3k+QAYwLBPBccbMzCDPZabtQcMRAGqbvHZG1//aSI1c1Cb9V2IwNVPcQz+RlEn9pUe2+oSO+Ino4XckEXVVLCwzWW7/gW6GPs0FwV4AlKeMaP6UMaOUM1Q+y+gOGpvTi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ig2Owuvf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC7AC4CEE7;
+	Wed,  4 Jun 2025 09:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749030531;
-	bh=pbdV4FPg+q7X6VNKgCyiuIlkd0/NfsNnQ/IoEFmOi0Q=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=LF7iY5xADR0LXMGkmm3+bM5eMGvuyWceDXQquWYHJu8o1DPGweDZUlbzSun2oxC3O
-	 i3kw8nB+PYnttftlV0vYg5XjKjdBopEPmcgtYqBZcBo+Nz/qSn6gsmUaz5n/PzrGhA
-	 JyMCaTySGc34cBPHkY6frvjDwcqawYDJuPVvJlAoGAEZVYonc7rlBOeHBpRudP1AgP
-	 Tzl58nSAPGh+/Q2S7eRAKjKZqtjlt1+lXQKHT9ZkktGx8M0DUapK8BLy5djzbfq1qr
-	 Y9a2u1fZrCbtM3LhFOva3vRDZTAZsU+qY48KDXKVAovDq/4h+Xa9EkI19YznbbyfoJ
-	 wA+jhVm3U4duQ==
-Message-ID: <061c94ab-ff57-42e3-ad7c-592dfb2a822e@kernel.org>
-Date: Wed, 4 Jun 2025 17:48:47 +0800
+	s=k20201202; t=1749030600;
+	bh=Ab424E9k28t4IDBrmxzZpiv39b/KLWE7lhSswN4XFJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ig2Owuvfk1TYotGhEXFMRgP7tIhEPMEP8zhQituOqKBsNEWNJ3JmRw/dOcKRd8KCC
+	 hmtstscqscz2CND9P4MWh0aysetXK6HmrZBtHwz5DIBwZOBbvtGMYH3+99qcC8sRjx
+	 VG1e/6UqOIlPY0GxyUGp+GlcXkkgLQeUmgY8KUfiHdQrxOcTi/cZ7Z36tT1S8L5Dvi
+	 sSezxPBIpJJAAU6hNRZ9LyxeSzb2qGi9pjx1EwfiZHQ4HI01GOM0uSGaP079DtZTGg
+	 VP7J8jgZ0j40VuAoBH4oG4Qs5+AWJ6JTqrfGxTAVQL7akPvOtM75IZp8pAsvJ/LG2Y
+	 31hajWnW/fwOw==
+Date: Wed, 4 Jun 2025 11:49:54 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, chrisi.schrefl@gmail.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] rust: devres: fix race in Devres::drop()
+Message-ID: <aEAWwnyP4zwwrccX@pollux>
+References: <20250603205416.49281-1-dakr@kernel.org>
+ <20250603205416.49281-4-dakr@kernel.org>
+ <aD-EiRChuScS5TK-@tardis.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, ke.wang@unisoc.com,
- Hao_hao.Wang@unisoc.com, baocong.liu@unisoc.com
-Subject: Re: [PATCH] f2fs: compress: fix UAF of f2fs_inode_info in
- f2fs_free_dic
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1749016492-31835-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1749016492-31835-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aD-EiRChuScS5TK-@tardis.local>
 
-On 6/4/25 13:54, Zhiguo Niu wrote:
-> The decompress_io_ctx may be released asynchronously after
-> I/O completion. If this file is deleted immediately after read,
-> and the kworker of processing post_read_wq has not been executed yet
-> due to high workloads, It is possible that the inode(f2fs_inode_info)
-> is evicted and freed before it is used f2fs_free_dic.
+On Tue, Jun 03, 2025 at 04:26:01PM -0700, Boqun Feng wrote:
+> On Tue, Jun 03, 2025 at 10:48:52PM +0200, Danilo Krummrich wrote:
+> > In Devres::drop() we first remove the devres action and then drop the
+> > wrapped device resource.
+> > 
+> > The design goal is to give the owner of a Devres object control over when
+> > the device resource is dropped, but limit the overall scope to the
+> > corresponding device being bound to a driver.
+> > 
+> > However, there's a race that was introduced with commit 8ff656643d30
+> > ("rust: devres: remove action in `Devres::drop`"), but also has been
+> > (partially) present from the initial version on.
+> > 
+> > In Devres::drop(), the devres action is removed successfully and
+> > subsequently the destructor of the wrapped device resource runs.
+> > However, there is no guarantee that the destructor of the wrapped device
+> > resource completes before the driver core is done unbinding the
+> > corresponding device.
+> > 
+> > If in Devres::drop(), the devres action can't be removed, it means that
+> > the devres callback has been executed already, or is still running
+> > concurrently. In case of the latter, either Devres::drop() wins revoking
+> > the Revocable or the devres callback wins revoking the Revocable. If
+> > Devres::drop() wins, we (again) have no guarantee that the destructor of
+> > the wrapped device resource completes before the driver core is done
+> > unbinding the corresponding device.
+> > 
+> > Depending on the specific device resource, this can potentially lead to
+> > user-after-free bugs.
+> > 
 > 
->     The UAF case as below:
->     Thread A                                      Thread B
->     - f2fs_decompress_end_io
->      - f2fs_put_dic
->       - queue_work
->         add free_dic work to post_read_wq
->                                                    - do_unlink
->                                                     - iput
->                                                      - evict
->                                                       - call_rcu
->     This file is deleted after read.
+> This all sounds reasonable, one question though: it seems to me the
+> problem exists only for the device resources that expect the device
+> being bounded, so hypothetically if the device resources can be
+> programmed against unbound devices, then the current behavior should be
+> fine?
+
+I don't think that such device resources exist from a semantical point of view.
+
+We always have to guarantee that a driver released the device resources once the
+corresponding device is unbound from the driver.
+
+However, there certainly are differences between how fatal it is if we don't do
+so.
+
+Complementing your example below, if we for instance fail to release a memory
+region in time, a subsequent driver probing the device may fail requesting the
+corresponding region.
+
+> For example, in your case, you want free_irq() to happen before
+> the device becomes unbound, which is of course reasonable, but it sounds
+> more like a design choice (or what device model we want to use), because
+> hypothetically you can program an irq that still works even if the
+> device is unbound, no?
+
+You can, just like for every other registration (e.g. class devices, such as
+misc device), but it's sub-optimal, since then we could not treat the
+registering device of the registration as &Device<Bound>, which allows direct
+access to device resources with Devres::access(). Please see also [1] and [2].
+
+We have two (safe and correct) ways to access device resources, one is the
+runtime checked access through Revocable::try_access() (which implies the RCU
+read-side critical section and atomic check); the other one is the compile-time
+checked access through providing a &Device<Bound> as cookie for directy access
+without runtime overhead.
+
+Wherever possible, we want to enable the latter, which means that registrations
+need to be properly guarded.
+
+[1] https://lore.kernel.org/lkml/20250530142447.166524-6-dakr@kernel.org/
+[2] https://lore.kernel.org/lkml/20250530142447.166524-7-dakr@kernel.org/
+
+> Again this sounds reasonable to me, just want to check my understanding
+> here.
 > 
->     Thread C                                 kworker to process post_read_wq
->     - rcu_do_batch
->      - f2fs_free_inode
->       - kmem_cache_free
->      inode is freed by rcu
->                                              - process_scheduled_works
->                                               - f2fs_late_free_dic
->                                                - f2fs_free_dic
->                                                 - f2fs_release_decomp_mem
->                                       read (dic->inode)->i_compress_algorithm
+> Regards,
+> Boqun
 > 
-> This patch increase inode->i_count before f2fs_free_dic and decrease it
-> after free the dic.
-> 
-> Cc: Daeho Jeong <daehojeong@google.com>
-> Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
-> ---
->  fs/f2fs/compress.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index b3c1df9..6b3b3a7 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
->  }
->  
->  static void f2fs_free_dic(struct decompress_io_ctx *dic,
-> -		bool bypass_destroy_callback);
-> +		bool bypass_destroy_callback, bool late_free);
->  
->  struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->  {
-> @@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->  	return dic;
->  
->  out_free:
-> -	f2fs_free_dic(dic, true);
-> +	f2fs_free_dic(dic, true, false);
->  	return ERR_PTR(ret);
->  }
->  
->  static void f2fs_free_dic(struct decompress_io_ctx *dic,
-> -		bool bypass_destroy_callback)
-> +		bool bypass_destroy_callback, bool late_free)
->  {
->  	int i;
->  
-> @@ -1775,6 +1775,11 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
->  	}
->  
->  	page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
-> +	if (late_free) {
-> +		spin_lock(&dic->inode->i_lock);
-> +		atomic_dec(&dic->inode->i_count);
-> +		spin_unlock(&dic->inode->i_lock);
-
-If it is the last one release i_count, it needs to call iput_final to evict inode
-like what iput did, so we'd better to call iput() here?
-
-> +	}
->  	kmem_cache_free(dic_entry_slab, dic);
->  }
->  
-> @@ -1783,16 +1788,20 @@ static void f2fs_late_free_dic(struct work_struct *work)
->  	struct decompress_io_ctx *dic =
->  		container_of(work, struct decompress_io_ctx, free_work);
->  
-> -	f2fs_free_dic(dic, false);
-> +	f2fs_free_dic(dic, false, true);
->  }
->  
->  static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
->  {
->  	if (refcount_dec_and_test(&dic->refcnt)) {
->  		if (in_task) {
-> -			f2fs_free_dic(dic, false);
-> +			f2fs_free_dic(dic, false, false);
->  		} else {
->  			INIT_WORK(&dic->free_work, f2fs_late_free_dic);
-> +			/* to avoid inode is evicted simultaneously */
-> +			spin_lock(&dic->inode->i_lock);
-> +			atomic_inc(&dic->inode->i_count);
-> +			spin_unlock(&dic->inode->i_lock);
-
-iget()?
-
-BTW, can we store i_compress_algorithm in dic to avoid inode access?
-
-Thanks,
-
->  			queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
->  					&dic->free_work);
->  		}
-
+> > In order to fix this, implement the following logic.
+> > 
+> > In the devres callback, we're always good when we get to revoke the
+> > device resource ourselves, i.e. Revocable::revoke() returns true.
+> > 
+> > If Revocable::revoke() returns false, it means that Devres::drop(),
+> > concurrently, already drops the device resource and we have to wait for
+> > Devres::drop() to signal that it finished dropping the device resource.
+> > 
+> > Note that if we hit the case where we need to wait for the completion of
+> > Devres::drop() in the devres callback, it means that we're actually
+> > racing with a concurrent Devres::drop() call, which already started
+> > revoking the device resource for us. This is rather unlikely and means
+> > that the concurrent Devres::drop() already started doing our work and we
+> > just need to wait for it to complete it for us. Hence, there should not
+> > be any additional overhead from that.
+> > 
+> > (Actually, for now it's even better if Devres::drop() does the work for
+> > us, since it can bypass the synchronize_rcu() call implied by
+> > Revocable::revoke(), but this goes away anyways once I get to implement
+> > the split devres callback approach, which allows us to first flip the
+> > atomics of all registered Devres objects of a certain device, execute a
+> > single synchronize_rcu() and then drop all revocable objects.)
+> > 
+> > In Devres::drop() we try to revoke the device resource. If that is *not*
+> > successful, it means that the devres callback already did and we're good.
+> > 
+> > Otherwise, we try to remove the devres action, which, if successful,
+> > means that we're good, since the device resource has just been revoked
+> > by us *before* we removed the devres action successfully.
+> > 
+> > If the devres action could not be removed, it means that the devres
+> > callback must be running concurrently, hence we signal that the device
+> > resource has been revoked by us, using the completion.
+> > 
+> > This makes it safe to drop a Devres object from any task and at any point
+> > of time, which is one of the design goals.
+> > 
+> [...]
 
