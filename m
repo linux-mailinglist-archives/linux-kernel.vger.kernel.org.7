@@ -1,145 +1,169 @@
-Return-Path: <linux-kernel+bounces-673480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD808ACE1C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:49:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC138ACE1CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 17:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB60179E33
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7491E1737DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 15:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B361D619F;
-	Wed,  4 Jun 2025 15:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD361D63C7;
+	Wed,  4 Jun 2025 15:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vb2N4Nwz"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prTlrsWi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190674C7C
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 15:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B24C7C;
+	Wed,  4 Jun 2025 15:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749052165; cv=none; b=t/TMcRY3vk6cBC56qAVHJPDfbnyuzw5ndvaATS1qagYM94MNBsamnRTHdfwxGTQZUiTv56RJS5czQCMRnfgW2aezI5ph4S9Y4aAfYClaPra+Wf+D4AFf+VsD/yMDSnC3VpLvj276GhnbeuHM/UdsF06uzNd1uHclyCGr1fHT2UY=
+	t=1749052568; cv=none; b=BxzYu7AxJq+1hQnKuUpSTjqO2DNKtFcjYokV9vVsepFiUZOMktjJy9vZctXTXAIT8LFQT5/0ffyItisd9HDdGwFr0/8p5HvAl1LbkjysDv7SE3iA41bdLRrHR27aMvDE/MpsoRQ2V1tBNL0EDSs57fDnVlPd0zm5ssGgUM98hoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749052165; c=relaxed/simple;
-	bh=E355dxQOrr/PVcwroKhZnO7dWd/iZ1NHGiq889Ab9X0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fXKudo2p7HXhr2LP3pRHqR5BrYRobGqo8e3P2EZ3DFDUGg9Cp9zQiLAio86MqRwuaYv8rxmLZKIAV8ltQAKMfuXFebO5/cz2ArT26LRdNKRF4Xejca3OUUNvrj5Q9vZ4xmJJelR4TBLpNY3XuIz30CNbrwundvyWjkdiWHVZveM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vb2N4Nwz; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-312436c2224so5576a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 08:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749052163; x=1749656963; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=APQsb45khTfPV4BXCtKSSbtPEml4hNZfBir9V5yfOUU=;
-        b=vb2N4NwzMmDUdRJy9eacC+fhVRJa7mVGnOlspJTZ9O3Xss488uiMNaRIKJd40aD849
-         Rm7SeSHbpi81siSGLq22lVAqEUKmgs8T4M1DQAbIvwycXvsG4iu1mtIKR652yA8VDA3v
-         Ndywt+Zw9NfRQjGbH+BDghFF+insHeaksYyGfKaQiav18JgGA0diVfgG8oVnZBz60mtI
-         tLPl4iYbrECgKPPDbPzQHKYX68SIEQjaB/RWrQA4gDd2paYFFM+9BkSI7E0qedC3svN/
-         TbB32QhsCMcTAUmiExOyO+zRBVIocf5DLW0RiwC/CBUUpC2uRTk4JwcdDsDFvjHVm9bB
-         jPDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749052163; x=1749656963;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=APQsb45khTfPV4BXCtKSSbtPEml4hNZfBir9V5yfOUU=;
-        b=htionW+9A8EM2A4DZkRafcj7cxipXStQXqTCMYQjzwyujgnDPqXSmi6QgyXZU4t8CW
-         SUiX2J+rsVnpB6c+INdYEeOxQ2Sbc2h/gwhhggvDOWAUnAIB9EnT2iA/knt+bHjdjP0O
-         aP7gMNQoe8ntN4dbWxcdBtvDV+kv851etSBZgnA0MWgR4iBA4RwMfEPPL33eSe48/mT3
-         xMr/3/2eB99LFmBu5yz/Lb0nlek9BFn5JBVjufY9zhRkY9GkjQUPDOsdShgxHjY53Bmf
-         LqTUOctb4TimvM/GMIMOqXLXDNSljpYIc164sMA8+Xr6IZOb7mQJprP8p68wYdhs855N
-         PzLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYLu4hxQPnmkjufHoleFm2t8R9Um5Q6ySmS7qFqgKL6upm8OxxAr2bDozkFkdLzm6HUphkLk6JuD5TZ4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZH/IIoiJnHXEz+pdK5CyugO+N23DoCHUB3Idpq/e0NZKzow4T
-	jAmu2mpy3XM0NjKjLa4LEwjsv2wJmEI/TVsRq45HUNoDrH851lugjB3nMmIxsWC18H2BTsUhn4a
-	4hfu0mg==
-X-Google-Smtp-Source: AGHT+IEhBYHH0jG1lNTT5kDcZ2O2I2zO4DfrveKxEVf0tri6G7bWBC1AeFJUjRv/5iW3hgKOjhXeD0GyTU4=
-X-Received: from pjboe5.prod.google.com ([2002:a17:90b:3945:b0:312:4274:c4ce])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a:b0:311:bdea:dca0
- with SMTP id 98e67ed59e1d1-3130ce0458fmr6517554a91.33.1749052163390; Wed, 04
- Jun 2025 08:49:23 -0700 (PDT)
-Date: Wed, 4 Jun 2025 08:49:21 -0700
-In-Reply-To: <688ba3c4-bf8a-47f1-ad14-85a23399582c@redhat.com>
+	s=arc-20240116; t=1749052568; c=relaxed/simple;
+	bh=acLawW878StXvnWA+xjn0w4gxzlzkiefGpw3iDr4dkw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bVUr4bNq5GHw4huU5SJliTT2+1Dom2fl5DKjgvFxhOVuIIa05w+6vEIraIykEhZJlTbsAoZonlMq773VRqHyjNYAoxc9A4aIhQLje7VLWiOVtbU39NTBccsAeGm+6K3FoPUf+cxtKjLRaLD/rcMi/OIW/grIN1XvanGSCSthHBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prTlrsWi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973F9C4CEE4;
+	Wed,  4 Jun 2025 15:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749052567;
+	bh=acLawW878StXvnWA+xjn0w4gxzlzkiefGpw3iDr4dkw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=prTlrsWiHcJqPPXwDnLSeFSH1u1eaZofMsODN2b4qWWr9lvdVJOIvAfnitx4UhVcY
+	 VXLHYyg1hEIgdjJPAr9PQQGyslvB3yAXfpiRkDy8nPPPMzzxi2KT0QQqoQmuSJQqji
+	 wRkh3SIK73BAoVJ6YuYyw1pTcxZhkRs65TI1zpw5PyRIBaa9jDx3uvWAQzkFNmdguH
+	 gcGEBitSnUEhKLrhYAA/5hnLyFS+GtWn4ZrMa1ZXOicI9ztcIU7TG5PCX1LgGrxZdc
+	 AVsKDHCGncCvFQrJkFYUOlPrV8mjePvB6QU/Gg6WvwJ4FcnhtDrhqq+dr3zacyZbWn
+	 3LJGOcZH2Sk3A==
+Received: from [149.88.19.236] (helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uMqTF-003GGp-8I;
+	Wed, 04 Jun 2025 16:56:05 +0100
+Date: Wed, 04 Jun 2025 16:56:02 +0100
+Message-ID: <878qm7ec19.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	andre.przywara@arm.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	suzuki.poulose@arm.com
+Subject: Re: [PATCH v4 01/26] dt-bindings: interrupt-controller: Add Arm GICv5
+In-Reply-To: <aD/0tuak7Hja8k4g@lpieralisi>
+References: <20250513-gicv5-host-v4-0-b36e9b15a6c3@kernel.org>
+	<20250513-gicv5-host-v4-1-b36e9b15a6c3@kernel.org>
+	<aDhWlytLCxONZdF9@lpieralisi>
+	<CAFEAcA_3YLMSy+OsSsRayaRciQ1+jjh-dGzEjrh2Wa8BqdmqrA@mail.gmail.com>
+	<aD6ouVAXy5qcZtM/@lpieralisi>
+	<CAL_JsqJ5N2ZUBeAes=wexq=EstRSZ5=heF1_6crAw76yZ9uXog@mail.gmail.com>
+	<CAFEAcA-JrS0BiT66iin-pRVFadrY-pnJZ8TkDNxcjErknSCnUA@mail.gmail.com>
+	<CAL_JsqL7x53an2-MaLHP5tfVXb4JxT8ORUMaA8pL-gMsWLJqkA@mail.gmail.com>
+	<aD/0tuak7Hja8k4g@lpieralisi>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250529234013.3826933-1-seanjc@google.com> <20250529234013.3826933-9-seanjc@google.com>
- <688ba3c4-bf8a-47f1-ad14-85a23399582c@redhat.com>
-Message-ID: <aEBrAbhRFkou4Mvj@google.com>
-Subject: Re: [PATCH 08/28] KVM: nSVM: Use dedicated array of MSRPM offsets to
- merge L0 and L1 bitmaps
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 149.88.19.236
+X-SA-Exim-Rcpt-To: lpieralisi@kernel.org, robh@kernel.org, peter.maydell@linaro.org, krzk+dt@kernel.org, tglx@linutronix.de, conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, andre.przywara@arm.com, arnd@arndb.de, sascha.bischoff@arm.com, timothy.hayes@arm.com, Liam.Howlett@oracle.com, mark.rutland@arm.com, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, suzuki.poulose@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Jun 04, 2025, Paolo Bonzini wrote:
-> On 5/30/25 01:39, Sean Christopherson wrote:
-> > Use a dedicated array of MSRPM offsets to merge L0 and L1 bitmaps, i.e. to
-> > merge KVM's vmcb01 bitmap with L1's vmcb12 bitmap.  This will eventually
-> > allow for the removal of direct_access_msrs, as the only path where
-> > tracking the offsets is truly justified is the merge for nested SVM, where
-> > merging in chunks is an easy way to batch uaccess reads/writes.
-> > 
-> > Opportunistically omit the x2APIC MSRs from the merge-specific array
-> > instead of filtering them out at runtime.
-> > 
-> > Note, disabling interception of XSS, EFER, PAT, GHCB, and TSC_AUX is
-> > mutually exclusive with nested virtualization, as KVM passes through the
-> > MSRs only for SEV-ES guests, and KVM doesn't support nested virtualization
-> > for SEV+ guests.  Defer removing those MSRs to a future cleanup in order
-> > to make this refactoring as benign as possible.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/kvm/svm/nested.c | 72 +++++++++++++++++++++++++++++++++------
-> >   arch/x86/kvm/svm/svm.c    |  4 +++
-> >   arch/x86/kvm/svm/svm.h    |  2 ++
-> >   3 files changed, 67 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > index 89a77f0f1cc8..e53020939e60 100644
-> > --- a/arch/x86/kvm/svm/nested.c
-> > +++ b/arch/x86/kvm/svm/nested.c
-> > @@ -184,6 +184,64 @@ void recalc_intercepts(struct vcpu_svm *svm)
-> >   	}
-> >   }
-> > +static int nested_svm_msrpm_merge_offsets[9] __ro_after_init;
-> > +static int nested_svm_nr_msrpm_merge_offsets __ro_after_init;
-> > +
-> > +int __init nested_svm_init_msrpm_merge_offsets(void)
-> > +{
-> > +	const u32 merge_msrs[] = {
-> 
-> "static const", please.
+On Wed, 04 Jun 2025 08:24:38 +0100,
+Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+>=20
+> On Tue, Jun 03, 2025 at 02:11:34PM -0500, Rob Herring wrote:
+> > On Tue, Jun 3, 2025 at 10:37=E2=80=AFAM Peter Maydell <peter.maydell@li=
+naro.org> wrote:
+> > >
+> > > On Tue, 3 Jun 2025 at 16:15, Rob Herring <robh@kernel.org> wrote:
+> > > >
+> > > > On Tue, Jun 3, 2025 at 2:48=E2=80=AFAM Lorenzo Pieralisi <lpieralis=
+i@kernel.org> wrote:
+> > > > >
+> > > > > On Thu, May 29, 2025 at 02:17:26PM +0100, Peter Maydell wrote:
+> > > > > > secure.txt says:
+> > > > > > # The general principle of the naming scheme for Secure world b=
+indings
+> > > > > > # is that any property that needs a different value in the Secu=
+re world
+> > > > > > # can be supported by prefixing the property name with "secure-=
+". So for
+> > > > > > # instance "secure-foo" would override "foo".
+> > > >
+> > > > Today I would say a 'secure-' prefix is a mistake. To my knowledge,
+> > > > it's never been used anyways. But I don't have much visibility into
+> > > > what secure world firmware is doing.
+> > >
+> > > QEMU uses it for communicating with the secure firmware if
+> > > you run secure firmware on the virt board. It's done that
+> > > since we introduced that binding. Indeed that use case is *why*
+> > > the binding is there. It works fine for the intended purpose,
+> > > which is "most devices are visible in both S and NS, but a few
+> > > things are S only (UART, a bit of RAM, secure-only flash").
+> >=20
+> > I meant "secure-" as a prefix allowed on *any* property, not
+> > "secure-status" specifically, which is the only thing QEMU uses
+> > AFAICT. IOW, I don't think we should be creating secure-reg,
+> > secure-interrupts, secure-clocks, etc.
+>=20
+> Reading secure.txt, what does it mean "device present and usable in
+> the secure world" ?
+>=20
+> So:
+>=20
+> status =3D "disabled"
+> secure-status =3D "okay"
+>=20
+> basically means that the device in question allows secure-only MMIO
+> access, is that what it says ?
+>=20
+> If that's the case and we really want to have all config frames
+> in a single DT, would it be reasonable to have an IRS/ITS DT node
+> per-frame ?
+>=20
+> Then yes, the secure- tag is not enough any longer (because we have to
+> cope with 4 interrupt domains) but that's a separate problem - again,
+> this would leave the current reviewed bindings unchanged.
 
-Ugh, I was thinking the compiler would be magical enough to not generate code to
-fill an on-stack array at runtime, but that's not the case.
+No, this is the same problem, and we need a way to address it.
+"secure-*" doesn't cut it in a system with FEAT_RME, where resources
+are only available to a single Physical Address Space (PAS). So we
+need a way to qualify these resources with a PAS.
 
-AFAICT, tagging it __initdata works, so I'll do this to hopefully ensure the
-memory is discarded after module load.
+Either that, or we have to restrict DT to describe the view of a
+single PAS. Which Peter will understandably be unhappy about.
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index fb4808cf4711..af530f45bf64 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -205,7 +205,7 @@ static int svm_msrpm_offset(u32 msr)
- 
- int __init nested_svm_init_msrpm_merge_offsets(void)
- {
--       const u32 merge_msrs[] = {
-+       static const u32 __initdata merge_msrs[] = {
-                MSR_STAR,
-                MSR_IA32_SYSENTER_CS,
-                MSR_IA32_SYSENTER_EIP,
+Thanks,
+
+	M.
+
+--=20
+Jazz isn't dead. It just smells funny.
 
