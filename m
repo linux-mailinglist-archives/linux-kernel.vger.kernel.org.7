@@ -1,95 +1,62 @@
-Return-Path: <linux-kernel+bounces-673074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BFEACDBDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:22:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D977ACDBA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32D41896677
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2E0217168A
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0733F214811;
-	Wed,  4 Jun 2025 10:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BC728D8EC;
+	Wed,  4 Jun 2025 10:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nDm4AHKU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WHdEUh1n";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nDm4AHKU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WHdEUh1n"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PXU03Ir8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAD92153EA
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 10:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F40280339;
+	Wed,  4 Jun 2025 10:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749032467; cv=none; b=cYq6yIW3xup0l7hv+JDWsrEc4LGqmBmzBlqmsUtI4sbtEOIPRDVVNVZRZCPvxA3+X5jvP95aZe3x0KpQy/fMxjNsffAHkLP7JjMhAiFC0UeU5+cBDxDvgt4rF0E6X3YMEXitXO87Xsy+0BsEPXlHxQYTc0dgvtWNavM762ierTI=
+	t=1749031541; cv=none; b=e+nWbfrY2nVa+JKIzHVLh0okbzmrzfsSkq3q9ff/lM7gU3KTb5I4NSWm+jIywKFJ2r0TpN1B1SFw4mGuUJoi4Pa4ufkf1DdRbXK4Wig+ryy/xarKJMkVUgqAeX2qB9wtz/BInoXrruSlZu7Q+6ewE2uT73zsIbmaKowKWNPnD3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749032467; c=relaxed/simple;
-	bh=fr2U+QjdTUfwEtNfL8gz/GPmo2b3XjHY/ERjpu0d+HM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cqr5ERiOmYMgyHpArIOsrJqYgHu1xVWD/ucWHLcpia+dGyZgWBsUpirPwU08B05RLhisaIYhv2/JobRPQZJCuk2RhT7Bk2/Uq3TknTt4WHCrzjcNTuzihy+ebe7dNLSQict2RQ8ZTmzkydbefWzJJ+fZMlQkXtYc610micdpnU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nDm4AHKU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WHdEUh1n; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nDm4AHKU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WHdEUh1n; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 565BA5F993;
-	Wed,  4 Jun 2025 09:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749031002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1jjyZmVb2kI0wJ/xwBd+UN6NcrjIdsAAEgibBT83Kx4=;
-	b=nDm4AHKUVbsQhlSq/U90NBb1bblcevUHw4674wIXVoEjVtlYPEN07cOI/0cAHk0SaziQgs
-	Msacas3qAilmtwhwGocAhgupoEg5S4SHjexOhy0vxhh2XelNBoNl4Y01LFlhaLlLZV1ACN
-	xTK/3B5kN9vezkH4a54aO2NA+gbSi5k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749031002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1jjyZmVb2kI0wJ/xwBd+UN6NcrjIdsAAEgibBT83Kx4=;
-	b=WHdEUh1nWrWg3bcwwuBdeF+QRyGtFm9jDfeWDb3u3jgh4ls9UM7ai8UcJw8DeIP+jupdnB
-	ADVbo4Cfps0ImPCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nDm4AHKU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WHdEUh1n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749031002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1jjyZmVb2kI0wJ/xwBd+UN6NcrjIdsAAEgibBT83Kx4=;
-	b=nDm4AHKUVbsQhlSq/U90NBb1bblcevUHw4674wIXVoEjVtlYPEN07cOI/0cAHk0SaziQgs
-	Msacas3qAilmtwhwGocAhgupoEg5S4SHjexOhy0vxhh2XelNBoNl4Y01LFlhaLlLZV1ACN
-	xTK/3B5kN9vezkH4a54aO2NA+gbSi5k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749031002;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1jjyZmVb2kI0wJ/xwBd+UN6NcrjIdsAAEgibBT83Kx4=;
-	b=WHdEUh1nWrWg3bcwwuBdeF+QRyGtFm9jDfeWDb3u3jgh4ls9UM7ai8UcJw8DeIP+jupdnB
-	ADVbo4Cfps0ImPCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35C1113AD9;
-	Wed,  4 Jun 2025 09:56:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +cLEDFoYQGjAHAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 04 Jun 2025 09:56:42 +0000
-Message-ID: <6fffd2fe-0cee-405f-af78-b57b5e5d02e8@suse.cz>
-Date: Wed, 4 Jun 2025 11:56:42 +0200
+	s=arc-20240116; t=1749031541; c=relaxed/simple;
+	bh=CcTfuyjqSM12x50F8W1XyXrsWuiAPxaoahPzB/aeJmc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aQ87C7gwMBFSxktq2weOvTvr2V3EHoqeZo4D/upDPGuRc6I+IwFIynYfvDZIvVVSTkZDI3jju50aHp/AIlSzYoNET+6olR3oc4XwjoETwfieMfTgFkgI3jINiLwwtmncxrw+5GZG5MQtFNyZEVGinNOCF+idMN/7jSiq6WUOmpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PXU03Ir8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5548d3Ql004284;
+	Wed, 4 Jun 2025 10:05:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LLWn+M7Jb3tl19nO3TgCdp05g80bpe8bTMMZoETnm2Y=; b=PXU03Ir8zSvNrplc
+	go2gEUMB7tWONFsOvQ4viPgwwLQCBqTeLr0ioCBXLKX7KGEwEmG9dec0lrVC+TpZ
+	DFbcCqqB93ykpzgvAgiD7655+Y/IUzzlpQPDFdKMb0+vs7kdPhwYqIGkfiMd3GwV
+	zfROOOuTVb/uc8jAnBkzwgnaV15H85cRjGi26wMdCg/ehBjexd2vVDMf7mOOlFA8
+	y3v+TCYWPU5W2ZKJnlZREvgmVCDQy10Nqni+IU7MzZcJSrAFQAE9TDAdRxghW6ep
+	TFQECwHEgF/L7h85Om1BMxo1MXUo3eys/MPN3BgUqYtooWTind0yx+oDC9B8BWwA
+	WsWwoA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8rwpja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 10:05:30 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 554A5TEm005531
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 4 Jun 2025 10:05:29 GMT
+Received: from [10.239.31.134] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 4 Jun 2025
+ 03:05:24 -0700
+Message-ID: <43a6e141-adab-42e9-9966-ec54cb91a6de@quicinc.com>
+Date: Wed, 4 Jun 2025 18:05:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,186 +64,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/vmstat: Fix build with MEMCG=y and VM_EVENT_COUNTERS=n
+Subject: Re: [PATCH v1 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
+ link_down reset
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Ziyue Zhang
+	<quic_ziyuzhan@quicinc.com>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>, <kw@linux.com>,
+        <conor+dt@kernel.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_krichai@quicinc.com>,
+        <quic_vbadigan@quicinc.com>
+References: <20250529035416.4159963-1-quic_ziyuzhan@quicinc.com>
+ <20250529035416.4159963-3-quic_ziyuzhan@quicinc.com>
+ <drr7cngryldptgzbmac7l2xpryugbrnydke3alq5da2mfvmgm5@nwjsqkef7ypc>
+ <e8d1b60c-97fe-4f50-8ead-66711f1aa3a7@quicinc.com>
+ <34dnpaz3gl5jctcohh5kbf4arijotpdlxn2eze3oixrausyev3@4qso3qg5zn4t>
 Content-Language: en-US
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- shakeel.butt@linux.dev, muchun.song@linux.dev, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
- Konstantin Khlebnikov <koct9i@gmail.com>
-References: <20250604095111.533783-1-kirill.shutemov@linux.intel.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250604095111.533783-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 565BA5F993
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,kernel.org,google.com,suse.com,cmpxchg.org,linux.dev,kvack.org,vger.kernel.org,infradead.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
-X-Spam-Level: 
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <34dnpaz3gl5jctcohh5kbf4arijotpdlxn2eze3oixrausyev3@4qso3qg5zn4t>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kr1ygYF-xldh2_nW38WLv7Xgzahp8F7z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA3NiBTYWx0ZWRfXydctOvOa9SmP
+ /qo4oM6jGlGtQACfZRJfoYKTaT+0JMovEgzeaLABBzhhxSoeNFrgazYh/bLrGlaPROVjgG6VElB
+ jEcJGd7ennwLg94abgN2FMZP5TaYC3ZtN08IG1fWFyaOKWQh17I1yR1Gx0ad8BCMJfFRvwf5GjP
+ AIu9eD+6PMgzpGaI6DvCPzZsm+7WvqmwKd39DDeTn5jeS8dODGTJtWcaV+bjIP6Q/MqGI1l1xUI
+ xnCrjAfMsaba9rtNIAjl7BRbOsnGbWrb//JpxgKl1fj0Z+8zLX3wNtR2FpdffEvDVZOhEGbCbWG
+ HYV5sXx+phgwwmYtipQIaa7mKWb2pX/SLTiMntx7YU2a62RAQt+goxFDevDnC88x+c2fe66VbXz
+ lfEa5xAF/86c4Ckt4viy9KwCvZjwtLfdslPcbkC44R6zEJeKkNK+9+Ixzxbogc8ckbl9jQpL
+X-Authority-Analysis: v=2.4 cv=RdWQC0tv c=1 sm=1 tr=0 ts=68401a6a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=JfrnYn6hAAAA:8
+ a=COk6AnOGAAAA:8 a=gDmLj3BAQhsnJV4uteAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1CNFftbPRP8L7MoqJWF3:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: kr1ygYF-xldh2_nW38WLv7Xgzahp8F7z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-04_02,2025-06-03_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ clxscore=1011 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=999 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506040076
 
-On 6/4/25 11:51, Kirill A. Shutemov wrote:
-> When compiling with MEMCG enabled but VM_EVENT_COUNTERS disabled,
-> BUILD_BUG_ON() is triggered in vmstat_start because the vmstat_text
-> array is larger than NR_VMSTAT_ITEMS.
-> 
-> This issue arises because some elements of the vmstat_text array are
-> present when either MEMCG or VM_EVENT_COUNTERS is enabled, but
-> NR_VMSTAT_ITEMS only accounts for these elements if VM_EVENT_COUNTERS is
-> enabled.
-> 
-> The recent change in the BUILD_BUG_ON() check made it more strict,
-> disallowing extra elements in the array, which revealed the issue.
-> 
-> Instead of adjusting the NR_VMSTAT_ITEMS definition to account for
-> MEMCG, make MEMCG select VM_EVENT_COUNTERS. VM_EVENT_COUNTERS is
-> enabled in most configurations anyway.
-> 
-> There is no need to backport this fix to stable trees. Without the
-> strict BUILD_BUG_ON(), the issue is not harmful. The elements in
-> question would only be read by the memcg code, not by /proc/vmstat.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Fixes: ebc5d83d0443 ("mm/memcontrol: use vmstat names for printing statistics")
 
-Well in that case I think we should put Fixes: to the BUILD_BUG_ON() change.
-And if it's not yet a stable sha1, squash that together with this?
-It doesn't seem ebc5d83d0443 alone needs this fix.
+On 6/4/2025 5:15 PM, Dmitry Baryshkov wrote:
+> On Wed, Jun 04, 2025 at 03:58:33PM +0800, Ziyue Zhang wrote:
+>> On 6/3/2025 9:11 PM, Dmitry Baryshkov wrote:
+>>> On Thu, May 29, 2025 at 11:54:14AM +0800, Ziyue Zhang wrote:
+>>>> Each PCIe controller on sa8775p supports 'link_down'reset on hardware,
+>>>> document it.
+>>> I don't think it's possible to "support" reset in hardware. Either it
+>>> exists and is routed, or it is not.
+>> Hi Dmitry,
+>>
+>> I will change the commit msg to
+>> 'Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
+>> document it.'
+>> "Supports" implies that the PCIe controller has an active role in enabling
+>> or managing the reset functionality—it suggests that the controller is designed
+>> to accommodate or facilitate this feature.
+>>  "Includes" simply states that the reset functionality is present in the
+>> hardware—it exists, whether or not it's actively managed or configurable.
+>> So I think change it to includes will be better.
+>>
+>> BRs
+>> Ziyue
+>>
+>>>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+>>>> ---
+>>>>   .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml  | 13 +++++++++----
+>>>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>>>> index e3fa232da2ca..805258cbcf2f 100644
+>>>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>>>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>>>> @@ -61,11 +61,14 @@ properties:
+>>>>         - const: global
+>>>>     resets:
+>>>> -    maxItems: 1
+>>>> +    minItems: 1
+>>>> +    maxItems: 2
+>>> Shouldn't we just update this to maxItems:2 / minItems:2 and drop
+>>> minItems:1 from the next clause?
+>> Hi Dmitry,
+>>
+>> link_down reset is optional. In many other platforms, like sm8550
+>> and x1e80100, link_down reset is documented as a optional reset.
+>> PCIe will works fine without link_down reset. So I think setting it
+>> as optional is better.
+> You are describing a hardware. How can a reset be optional in the
+> _hardware_? It's either routed or not.
 
-> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+I feel a bit confused. According to the theory above, everything seems to
+be non-optional when describing hardware, such as registers, clocks,
+resets, regulators, and interrupts—all of them either exist or do not.
 
-Otherwise,
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Seems like I misunderstand the concept of 'optional'? Is 'optional' only
+used for compatibility across different platforms?
 
-> ---
->  include/linux/vmstat.h | 4 ++--
->  init/Kconfig           | 1 +
->  mm/vmstat.c            | 4 ++--
->  3 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-> index b2ccb6845595..c287998908bf 100644
-> --- a/include/linux/vmstat.h
-> +++ b/include/linux/vmstat.h
-> @@ -507,7 +507,7 @@ static inline const char *lru_list_name(enum lru_list lru)
->  	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
->  }
->  
-> -#if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
-> +#if defined(CONFIG_VM_EVENT_COUNTERS)
->  static inline const char *vm_event_name(enum vm_event_item item)
->  {
->  	return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-> @@ -516,7 +516,7 @@ static inline const char *vm_event_name(enum vm_event_item item)
->  			   NR_VM_STAT_ITEMS +
->  			   item];
->  }
-> -#endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
-> +#endif /* CONFIG_VM_EVENT_COUNTERS */
->  
->  #ifdef CONFIG_MEMCG
->  
-> diff --git a/init/Kconfig b/init/Kconfig
-> index ab83abe0fd9d..dd332cac6036 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -989,6 +989,7 @@ config MEMCG
->  	select PAGE_COUNTER
->  	select EVENTFD
->  	select SLAB_OBJ_EXT
-> +	select VM_EVENT_COUNTERS
->  	help
->  	  Provides control over the memory footprint of tasks in a cgroup.
->  
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 27dc37168cfd..c3114b8826e4 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1301,7 +1301,7 @@ const char * const vmstat_text[] = {
->  	[I(NR_MEMMAP_BOOT_PAGES)]		= "nr_memmap_boot_pages",
->  #undef I
->  
-> -#if defined(CONFIG_VM_EVENT_COUNTERS) || defined(CONFIG_MEMCG)
-> +#if defined(CONFIG_VM_EVENT_COUNTERS)
->  	/* enum vm_event_item counters */
->  #define I(x) (NR_VM_ZONE_STAT_ITEMS + NR_VM_NUMA_EVENT_ITEMS + \
->  	     NR_VM_NODE_STAT_ITEMS + NR_VM_STAT_ITEMS + x)
-> @@ -1498,7 +1498,7 @@ const char * const vmstat_text[] = {
->  #endif
->  #endif
->  #undef I
-> -#endif /* CONFIG_VM_EVENT_COUNTERS || CONFIG_MEMCG */
-> +#endif /* CONFIG_VM_EVENT_COUNTERS */
->  };
->  #endif /* CONFIG_PROC_FS || CONFIG_SYSFS || CONFIG_NUMA || CONFIG_MEMCG */
->  
+Additionally, we have documented the PCIe global interrupt as optional. I
+was taught that, in the PCIe driver, this interrupt is retrieved using the
+platform_get_irq_byname_optional API, so it can be documented as optional.
+However, this still seems to contradict the theory mentioned earlier.
+
+>> BRs
+>> Ziyue
+>>
+>>>>     reset-names:
+>>>> +    minItems: 1
+>>>>       items:
+>>>> -      - const: pci
+>>>> +      - const: pci # PCIe core reset
+>>>> +      - const: link_down # PCIe link down reset
+>>>>   required:
+>>>>     - interconnects
+>>>> @@ -161,8 +164,10 @@ examples:
+>>>>               power-domains = <&gcc PCIE_0_GDSC>;
+>>>> -            resets = <&gcc GCC_PCIE_0_BCR>;
+>>>> -            reset-names = "pci";
+>>>> +            resets = <&gcc GCC_PCIE_0_BCR>,
+>>>> +                     <&gcc GCC_PCIE_0_LINK_DOWN_BCR>;
+>>>> +            reset-names = "pci",
+>>>> +                          "link_down";
+>>>>               perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+>>>>               wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>>
+>>>> -- 
+>>>> linux-phy mailing list
+>>>> linux-phy@lists.infradead.org
+>>>> https://lists.infradead.org/mailman/listinfo/linux-phy
+
+-- 
+With best wishes
+Qiang Yu
 
 
