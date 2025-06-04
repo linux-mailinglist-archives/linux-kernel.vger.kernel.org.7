@@ -1,107 +1,75 @@
-Return-Path: <linux-kernel+bounces-673495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0B7ACE1E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:03:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938E2ACE1E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 18:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6E03A40C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5795A1892CC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 16:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A2B1917D6;
-	Wed,  4 Jun 2025 16:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1E61624D5;
+	Wed,  4 Jun 2025 16:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFRMqztp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GopEpRFj"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816B618E1F;
-	Wed,  4 Jun 2025 16:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE4118A6DF
+	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 16:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749052996; cv=none; b=Rf11S15IEDm+1ufQIFT7z0DcLOD8lykyhCkEmmc7BeJcx4j/OP/tt/gSLXTHsFV3s7kppbgAM8XdUXCJPmw96hcvlc4OyFpa+a3F15WZnIZ2Yo1Z+3BhCBRAOus/jPyM+yjyIYpVhq9Q+8bABYGT72IXBKzePDDT8ZSl3U4i0j8=
+	t=1749053083; cv=none; b=chOs40dS9lNcVQCv7j5HteacBobvyHQ73nYAlE/lhG5SZ+LPzhuB8NoQcv1WK6r1HfEmswqe0PrUXdNwbszON9aYwTMNmXKMpeXT+6CuH/YQr9GYP3cAGuJQfqqfIrHb36PYvAaZlTyxTvXENOcskQdSVJC7gr5XIdRUZqb3Kz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749052996; c=relaxed/simple;
-	bh=9aZRPwCzG+hd7s+OZOm2wdSI0vs5RWHmsaU+Uw6uWOM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=S9IAs8fJt6Y0+9V6d2npkFypi+uaZiYpQOZ04F/Penki5WujTlX8dyeVe0T8m0vxph12WOBSzCiNY98jnUYhoXKq4EKYmPI77YOFDvLEN4IRYDxBbrXlhOzvayCMjWJhftX9EcOWbiyLX88OZmAroguqX7N8soKe1QZFWiKUBbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFRMqztp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E11C4CEE4;
-	Wed,  4 Jun 2025 16:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749052995;
-	bh=9aZRPwCzG+hd7s+OZOm2wdSI0vs5RWHmsaU+Uw6uWOM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=uFRMqztpQ+FUYtVBFJNoUYnCssGOmr5EK0+hMQr+XR5SFyd9buqw1hj6WtapTgX4K
-	 W/lTxSrO8C3FOiq6rsRfvLnck9w+7hwuq+74VhqHqm/QTeGhwvozOobNxyDbaOBG5m
-	 sE4ol0DTfioMdqVIwfnpVa1xWsfHbit7DJdC+Rw0LXTSQcs5DvPRotIjkDP5rMt8aY
-	 Gbackjv5P9WvQzxa5sqRvFZ8f5gOhKTWwiLlNKogQOnsFggK/YyhPvvxK3UsB0u2r9
-	 hKE0izLUmcDi1cWc2g+wEFlSM1TyEJVpxmOZBEHs8ovgLkJ4dZfbbRX1AmYFi8vGMp
-	 WBN7rlPWM1ngQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com
-Subject: Re: [RFC v2 01/16] kho: make debugfs interface optional
-In-Reply-To: <20250515182322.117840-2-pasha.tatashin@soleen.com>
-References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
-	<20250515182322.117840-2-pasha.tatashin@soleen.com>
-Date: Wed, 04 Jun 2025 18:03:06 +0200
-Message-ID: <mafs0msantryd.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1749053083; c=relaxed/simple;
+	bh=aX7D/nHqjvADGjMie4fjxlziA0J8uk/7y2iQte4HpdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZOakj1zILBrELmCCX8TR7TclSIaUVDDKgPWr77/XJqYLdda71UeinPmMJLpN+3fMM1ReoCAzW/pZDms+E+mExxkotFOuF5D65iVRHhFXAvPf0o+M6aVEtPembagjlCuvMKcJVl1GtRtoMhMZ+nlsBnqOsem9lIMdS0F+nvHYkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GopEpRFj; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aX7D/nHqjvADGjMie4fjxlziA0J8uk/7y2iQte4HpdQ=; b=GopEpRFjfbxlPA8FYTjL6s1Ryg
+	vqJb82tDPgzwnXXrowEJMAl9XN0wQdRD0hrQTBXe9gPfIHQ6QlKxU6j1bILR6F4l56YaYFARpT+TC
+	8VV5v3fwMlRCM4Y5Kq9J1jL2jGClWVYzu6ViG+mtL3ThEsJkpA1Daq3XyWSBf9ENE1lCziTF8fpf3
+	85NC0CEBBdT1PEouMkKGSEKgLkvTIx25Z16vWVxdeg4wvZwlAPah4wcOHoaia7yEptcjqoOh9hV9M
+	H0NhLQ6eYGE7UfTM3aEo/WTIMHp0oLiu3P8d5VsXLqquejPspLhswv1M+GW+XBPA7LcRU9t7lHXNh
+	B0I5itqg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMqbV-00000000ulB-1MGc;
+	Wed, 04 Jun 2025 16:04:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A756330057C; Wed,  4 Jun 2025 18:04:36 +0200 (CEST)
+Date: Wed, 4 Jun 2025 18:04:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kuyo Chang <kuyo.chang@mediatek.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/1] stop_machine: Fix migrate_swap() vs. balance_push()
+ racing
+Message-ID: <20250604160436.GL39944@noisy.programming.kicks-ass.net>
+References: <20250529084614.885184-1-kuyo.chang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250529084614.885184-1-kuyo.chang@mediatek.com>
 
-On Thu, May 15 2025, Pasha Tatashin wrote:
 
-> Currently, KHO is controlled via debugfs interface, but once LUO is
-> introduced, it can control KHO, and the debug interface becomes
-> optional.
->
-> Add a separate config CONFIG_KEXEC_HANDOVER_DEBUG that enables
-> the debugfs interface, and allows to inspect the tree.
->
-> Move all debufs related code to a new file to keep the .c files
 
-Nit: s/debufs/debugfs/
-
-I don't have any other feedback for this patch so a lot of bits wasted
-for one typo fix ;-)
-
-> clear of ifdefs.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+This and your other patch about migrate_swap() are two distinct
+problems, right?
 
