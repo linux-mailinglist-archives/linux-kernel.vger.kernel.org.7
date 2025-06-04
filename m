@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-672794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-672797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31CDACD794
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 07:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88858ACD79E
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 07:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAEA18954BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C471790F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 05:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA802581;
-	Wed,  4 Jun 2025 05:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838C4262FC7;
+	Wed,  4 Jun 2025 05:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QSU/0jch"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="j8EUBg02"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BFF3C17
-	for <linux-kernel@vger.kernel.org>; Wed,  4 Jun 2025 05:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64EF230BD2;
+	Wed,  4 Jun 2025 05:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749016391; cv=none; b=FP/X4tHotBuWbknrlI6vXZdRc8QdlrJiXpsYI7tNkIYy3/tr4/6GeERcPJW20Jwp8RAsLsMRs14rHvNK/O4KiaN/a0f8fJKyl7bGLTZcocsWrSXlMJQUA5A7/w8gFwqUXSqhlSRTOaZmGRIg4gOcakMwfqCw0jCMj6LBYalWsnY=
+	t=1749016730; cv=none; b=HQ0n50PycJELNO7i8pWpxh3Ibb3Fp1RhbJv4Y7Cp0hrawx3PI2DcnyKRhtbtLv//ebOiy0KiDa+aJNnNEzZLxs9GxPOp30My8e2ZcpwqUBfaTuonJOQ+fkp1ZjVk47w3IEJtSJ/ZnORZgTj8EGVBmdxhoNF0C91oFE/k9LEaWGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749016391; c=relaxed/simple;
-	bh=tzlv4oylmNO8aJYZeRq6x4+sQ62yIGkI6pIDgXS2aLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pq/tH6Exe8es/oKUjSgbs789ANrZPK17cNs+1Dor9oktGEiw97sX4FyJLJ03nwX+5BNOqnzB1ndMf/PixmNwNdlabazV1DUdZSfa7I/zgnoAZWWxItuGzKawHKqZ317kd+LCcHcqlmSMzhIR92AQa5JAnWLpjh8nR0/uLDcSCF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QSU/0jch; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 553JZghU032471
-	for <linux-kernel@vger.kernel.org>; Wed, 4 Jun 2025 05:53:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=6mPyPqOohXXvTddm3xF8dctlb/vnPecy4zR
-	eWJway9E=; b=QSU/0jchxWJZ9JtRr65e9TuGTWO35kEehGwyHVeGAeIF8dOfyxY
-	9IqDvm+3UwxgooNA/Lsc9C8qZ653XtzwynxC8v1Q2b6dLpob7rV/4qm4EAK1wlKb
-	DrEqbmgErzFTCFswOZVYYczr1JeW1mGk7oPgT9pxxWXVIGUMon8jUBZpwvjbUmAQ
-	2BOPwyXT9Q+0xJM1rjP0TwjLpyq+EauBvQBtwOov80klwXcn/zvGQXrAJEQPBWMn
-	LeYe4FOoB+6vde8Mbd8M76+K6QMIVZnyHaIE/W6uycWdxwjx41fweDA7QrvIfm5C
-	pVAV5FyA3amtP7csrcfodvyRNweJ6Kvc/fg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471sfuusqk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 05:53:08 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-740270e168aso5256024b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jun 2025 22:53:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749016387; x=1749621187;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6mPyPqOohXXvTddm3xF8dctlb/vnPecy4zReWJway9E=;
-        b=nzoBu1UGYlGbAJoS6cFvP5NacUOaIw35PSDZVe+zlDsjGQDE+JoSL55RzyF9nlG9Rc
-         U7/QiSF5IhtqM3U74wG0uYMnMwDJmldH3O/RhEM70BnvLbo1sMvxVRSN/NhnravV8F/r
-         arwElBdeR2QG08Bty+83dvk4hLl5rjrLWM2IuVP/jjdWlburjb4rpk9d5EsMtOTIDRxk
-         6d9eHA9dG40b0A+7wqnMKBZ2f36qEUSigZ81u+BfAdK76hD0qwUU0NaGn62jNXBwRMzf
-         0snbggzlwZeGbxu4hXlFmTtIVvRd5dj1IjE4mb7F+50OjjkdhibZPbQKRjOdE9emvPRj
-         mXqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqsfTwUFyHFKJOhDNOrvojCcPAgTJT5jWQNafx5Bb/NWz+gV1Nz0Kt4zWC0qADQ7Z67/8KwGOLkhxF6nY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYqVPjtLXRyD2zRyzSGhaCcWVwSYmQiKFGZjXkTVZboI1iUnfd
-	9CO4U4oMD/BD0OmA1yDdegrtB7YDasdPY/2RJIex/EWaOlpPHwsFBx0m06MwmFvbMwkBfz/v/b4
-	adsjph7DASEqHMpeMYRYgpdX+/yWjJH7COz7w/YCOEsbvywwiRTkvKYNTdc4UrYKiG1ehVBQQNs
-	uCXA==
-X-Gm-Gg: ASbGncs8kVF93nbn1koamUbdkWrNGaciobvXi0/Gen8GJ6+zgayjqJT8CtzenKAh60c
-	v+/TtaRpY5WZ9CnMIec2sFnRf5zDC1wMj+z8Y6l9mIDOdEHu/kXsqC8INHvl9Y76qPdSeCeiczQ
-	EdgRwaLjEGW19gc47vnAvuDEEkDyl4euLFUZE0mRBgAow/0Cb6cTnk2qJbnGB8Zs2xmL6h+4TVm
-	2DbXrPLTj87HhWGHedj5dViQha6po7fUsvaQEzs7rtTCUZuupYRdBbbhFEkvYNhKNVxL8DClk3r
-	iem1dutJSR7JkZ0PRjdi1fXFEnKVpUpxghGrCR2cJTKjRhl84zsr/1bIgEfYJLVIgnKFq7k=
-X-Received: by 2002:a05:6a00:b93:b0:73e:30af:f479 with SMTP id d2e1a72fcca58-7480b4b3643mr2310631b3a.19.1749016387485;
-        Tue, 03 Jun 2025 22:53:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSnPzCsfA2iQIrtlqFTnD1joMbqRjSXjSD1ZpPYgu1ZIxTqFBm47Nxh1QE+SXu2zjtHXscYw==
-X-Received: by 2002:a05:6a00:b93:b0:73e:30af:f479 with SMTP id d2e1a72fcca58-7480b4b3643mr2310609b3a.19.1749016387142;
-        Tue, 03 Jun 2025 22:53:07 -0700 (PDT)
-Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afff725asm10702500b3a.172.2025.06.03.22.53.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 22:53:06 -0700 (PDT)
-From: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
-To: jjohnson@kernel.org
-Cc: ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
-Subject: [PATCH ath-next] wifi: ath12k: fix uaf in ath12k_core_init()
-Date: Wed,  4 Jun 2025 13:52:50 +0800
-Message-Id: <20250604055250.1228501-1-miaoqing.pan@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749016730; c=relaxed/simple;
+	bh=T+0ACzjcRPUCr/NNL+Xz2/jt8sPhrX+Xfym653JfVTY=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=in2ZVN4dOjp9IgnxEj/Y9QSZlQIXlKxJy8jsjA4186NIwRZbBBgv3BrTKDBf4zjkOCHk3gz8USWcN5aMBF2+VtN7jbSr7YMaaKuWCONGVebuLQRnx9sr9fgOG30hzqQfL/otdzPu7+59SSiZjvh0jR70xpWa5kmNekLantLAvpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=j8EUBg02; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1749016414;
+	bh=dxK57rrh1jvoo1g24molYIQ1YbfbH2OZpE0y+PyiV/c=;
+	h=From:To:Cc:Subject:Date;
+	b=j8EUBg02aEnilOpHZCWkZ0BRObtR1z8LLex8B0Nmvp5bywuBr0tqIFXqpgqtUN+Ek
+	 DWPPmbKeK4FnK0LlnspTPyYrY9B0PEtfBFOqyuVCiSacdCNh6hpkMGmiTvADD9h8hR
+	 R5EBvV1PNxaxflrmWghZzuC5hKu64CLZQWydpB9o=
+Received: from NUC10.. ([39.156.73.10])
+	by newxmesmtplogicsvrszgpua8-0.qq.com (NewEsmtp) with SMTP
+	id D5E8A2A8; Wed, 04 Jun 2025 13:53:30 +0800
+X-QQ-mid: xmsmtpt1749016410tl4fl36g6
+Message-ID: <tencent_A6502A28AF21A3CA88B106F3421159869708@qq.com>
+X-QQ-XMAILINFO: NQzH8pzEc5hGPs3uj3kHrPeahZXak4dASrsyrlzi8+3SJ7ZOTDpWGr79QAvJA0
+	 fhuR2sbv+Msr+YEK+VIb74pqi2uxdzWNu1OdHXfeB+gQ03Su/LZcBfmkwasrzX9FYuUnQXit9C+8
+	 0IGhc4QLAqbKjZD2amrQ9T+2pXDPAHE6zE9GoK//b4lUK7qCg59+iZvbfFjqbiBHo2ENmXdEPY9o
+	 zCcyfK05WmOKNR16Gm10Z71NYlowvtf8olaxSsExCHxDWghK7mKS53Z0w1Zlidk+iXMa/C4XQCiy
+	 3PtbVLIPiynLUyTUW/WJrl/7CuVbUIpWgTYSdKL2pqwNrw/tDpSXOQ1hw8QsaEC9qQxeM4siDjic
+	 xO5BKctg33BahoFO/o11+aebzWKaRomZaU9YeqRZILrG8rtEGKIjvpnFbIUvnHFq5qKCaV/1g9CE
+	 b+Tvda3WblLyGp5R4B1ybfjTRi7bzLIhcObdUeogv0Ovz6nBlKdAlkhDlk/7TzI+JgLq0urLwHZn
+	 Bd9mfje5NdZvG0aBDfd3HsARwebUUxi79N7F1hd+64PcRbaGV3qtIpaCdA6jwIHWOSb/VvXsf3Xq
+	 2IIeq/+33mu/I7IkCFknTgMP3obpfF8b6sR+EIZJfYDoRArzXNZcHoZUv/2RgZ4mWUUvtu4yLLBQ
+	 AML7h0BY4RTkSoFxrTSd5U0M4q0xWbywZiDdrTcKkLGDH4a8DZ0kJlCf2dljGbY0+QrBDnGbLd7U
+	 YrdmJeSInyQ/AiQwoj5qfElxvyst5HOcko0dhXHeacRUWEDDbeEXzm5w5+s7gzq8AkXqMZqt1nKK
+	 gawqU30CpqXDpEHnLpgGZ+tmOIklp4yY8TCXhdfQ9i1gjILJFTDL4EQZoLUrF26XXA8SGgzGoY9G
+	 5SIOqn0KAkov8Plr9prRgfZzXXi4meZrkw/iUdPHs+vY5gdNQTZiakfZPdradkPBZ75gVmMfQ+fG
+	 mzxismGJH8a23K/56wMcUloUA3OxUmqFqRJc0tai9nrTW5oqwHvx/QQNkfGv28p3VR+OPlF3U=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii@kernel.org,
+	eddyz87@gmail.com
+Cc: rongtao@cestc.cn,
+	rtoax@foxmail.com,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Amery Hung <ameryhung@gmail.com>,
+	Juntong Deng <juntong.deng@outlook.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	bpf@vger.kernel.org (open list:BPF [SELFTESTS] (Test Runners & Infrastructure)),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+	linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32 ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf-next] selftests/bpf: Fix compile error of bin_attribute::read/write()
+Date: Wed,  4 Jun 2025 13:53:22 +0800
+X-OQ-MSGID: <20250604055324.222850-1-rtoax@foxmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,104 +95,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=CY8I5Krl c=1 sm=1 tr=0 ts=683fdf44 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=TzEngFNX8HBHNH07LrEA:9
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-ORIG-GUID: 9WMYwDd2gVN9rH5aHxxMxd0mxdE5OiNi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA0MDA0OCBTYWx0ZWRfX/x7uTQf07T8W
- Jto2ZNum4psPXnve3wkoUNFvtnlka1oLwVut50PscTZZPu5dPEe7cXIQFoYQlA/kuxEGji6369U
- kTrvwUg5V9KvvFI8czAEM5LK6SY07LMrYzrLxBc5axXkXdnuVMBe3IQmRAkBuqJc2h0LkvHvn3n
- vLZSk881mdTTT+RBr27RaGWBSR+zOLAy/T0JTTVGoFugsRYvafaXNJ4u2OR5X9h9bViiBxJ/olS
- Vxk2A1I2nV02CgHwjrDNDkJBU3VhM3v0HuvRLakBODly1+XtUJ0BM2Uv8ubdNx94P03hNSl0g5i
- DN1Yki/LuWu8eAeDYEbJrBwNWsl9fNcEeoMDashXbqMXE/HATurAh/Wor7ey5NUNZGQ+dYAgclb
- 8j9wr1NigUkwgikKeHymLAc7/jaNBK9Jnhu/5herHBK5PUjkczJrGdCROpoxKLtovwU/tJuy
-X-Proofpoint-GUID: 9WMYwDd2gVN9rH5aHxxMxd0mxdE5OiNi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-04_01,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 impostorscore=0
- phishscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506040048
 
-When the execution of ath12k_core_hw_group_assign() or
-ath12k_core_hw_group_create() fails, the registered notifier chain is not
-unregistered properly. Its memory is freed after rmmod, which may trigger
-to a use-after-free (UAF) issue if there is a subsequent access to this
-notifier chain.
+From: Rong Tao <rongtao@cestc.cn>
 
-Fixes the issue by calling ath12k_core_panic_notifier_unregister() in
-failure cases.
+Since commit 97d06802d10a ("sysfs: constify bin_attribute argument of
+bin_attribute::read/write()"), make bin_attribute parameter of
+bin_attribute::read/write() const.
 
-Call trace:
- notifier_chain_register+0x4c/0x1f0 (P)
- atomic_notifier_chain_register+0x38/0x68
- ath12k_core_init+0x50/0x4e8 [ath12k]
- ath12k_pci_probe+0x5f8/0xc28 [ath12k]
- pci_device_probe+0xbc/0x1a8
- really_probe+0xc8/0x3a0
- __driver_probe_device+0x84/0x1b0
- driver_probe_device+0x44/0x130
- __driver_attach+0xcc/0x208
- bus_for_each_dev+0x84/0x100
- driver_attach+0x2c/0x40
- bus_add_driver+0x130/0x260
- driver_register+0x70/0x138
- __pci_register_driver+0x68/0x80
- ath12k_pci_init+0x30/0x68 [ath12k]
- ath12k_init+0x28/0x78 [ath12k]
-
-Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-
-Fixes: 6f245ea0ec6c ("wifi: ath12k: introduce device group abstraction")
-Signed-off-by: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
 ---
- drivers/net/wireless/ath/ath12k/core.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index 31d851d8e688..ebc0560d40e3 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -2129,7 +2129,8 @@ int ath12k_core_init(struct ath12k_base *ab)
- 	if (!ag) {
- 		mutex_unlock(&ath12k_hw_group_mutex);
- 		ath12k_warn(ab, "unable to get hw group\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_unregister_notifier;
- 	}
+diff --git a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+index e6c248e3ae54..e9e918cdf31f 100644
+--- a/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/test_kmods/bpf_testmod.c
+@@ -385,7 +385,7 @@ int bpf_testmod_fentry_ok;
  
- 	mutex_unlock(&ath12k_hw_group_mutex);
-@@ -2144,7 +2145,7 @@ int ath12k_core_init(struct ath12k_base *ab)
- 		if (ret) {
- 			mutex_unlock(&ag->mutex);
- 			ath12k_warn(ab, "unable to create hw group\n");
--			goto err;
-+			goto err_destroy_hw_group;
- 		}
- 	}
+ noinline ssize_t
+ bpf_testmod_test_read(struct file *file, struct kobject *kobj,
+-		      struct bin_attribute *bin_attr,
++		      const struct bin_attribute *bin_attr,
+ 		      char *buf, loff_t off, size_t len)
+ {
+ 	struct bpf_testmod_test_read_ctx ctx = {
+@@ -465,7 +465,7 @@ ALLOW_ERROR_INJECTION(bpf_testmod_test_read, ERRNO);
  
-@@ -2152,9 +2153,12 @@ int ath12k_core_init(struct ath12k_base *ab)
+ noinline ssize_t
+ bpf_testmod_test_write(struct file *file, struct kobject *kobj,
+-		      struct bin_attribute *bin_attr,
++		      const struct bin_attribute *bin_attr,
+ 		      char *buf, loff_t off, size_t len)
+ {
+ 	struct bpf_testmod_test_write_ctx ctx = {
+@@ -567,7 +567,7 @@ static void testmod_unregister_uprobe(void)
  
- 	return 0;
- 
--err:
-+err_destroy_hw_group:
- 	ath12k_core_hw_group_destroy(ab->ag);
- 	ath12k_core_hw_group_unassign(ab);
-+err_unregister_notifier:
-+	ath12k_core_panic_notifier_unregister(ab);
-+
- 	return ret;
- }
- 
-
-base-commit: c3910de7bab78afbc106206aed5ec8e79458fbee
+ static ssize_t
+ bpf_testmod_uprobe_write(struct file *file, struct kobject *kobj,
+-			 struct bin_attribute *bin_attr,
++			 const struct bin_attribute *bin_attr,
+ 			 char *buf, loff_t off, size_t len)
+ {
+ 	unsigned long offset = 0;
 -- 
-2.34.1
+2.49.0
 
 
