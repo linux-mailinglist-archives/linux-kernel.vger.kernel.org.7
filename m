@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-673065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780F6ACDBB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:13:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A75ACDBFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 12:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75F1188629B
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947A318986BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Jun 2025 10:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210B028D8D5;
-	Wed,  4 Jun 2025 10:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFCF28DB7E;
+	Wed,  4 Jun 2025 10:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXwFfY6B"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=aladdin.ru header.i=@aladdin.ru header.b="vz6lJEDI"
+Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F45D28C030;
-	Wed,  4 Jun 2025 10:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946CB2153EA;
+	Wed,  4 Jun 2025 10:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749032021; cv=none; b=ri6DIZkZGIXPH50MpmoPC/KN9NeBv9YZqUliHiQddyGR7rUIq0xxQaQ6ehhahbjBLK1usnpAGyDTH9pW/J908sodD/kUwKfCYLiA/pxa0Qo/juSTQalZh0L9T0+OMz4jysQluviICJavY0UtFkHaKPE6dM6W7eqwGhy12ZNIHOc=
+	t=1749032972; cv=none; b=fFtAimAwJZ+KPVdiYBcGYL2w0j75Vo6P64dqEamDizcyCU5KitaOBL8imyOrb8lvsNXp2TAs2fRWtylraDfjnOVYvFbKdJYLXkk1HIFbRWPKZ9DXhnrlDlhm5yZBH33QH7L9LvqraziqpNHuU/GhuNlwFJE3DyuWmWNLyHMAb2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749032021; c=relaxed/simple;
-	bh=lMABpan9iE9b5FiftfCZKRFqnb71Y82a2DsbpqpyudU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LBvbpZgab3mnc1H32+tcuSuB9ihFzaVUyU99JKUDlJkAfmSjAFw4pvW8ntXdecYQ5ZOJ/yHtbpb0v49P6LS/H3aGNrj8WNSB6xRLXI+M+3gUZtBgoEh/PfNg1KBksEiwQD/mZF9D8DI6zdmpT9g0boxBGOCrpyj84dry/aEzWpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXwFfY6B; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-312a806f002so465153a91.3;
-        Wed, 04 Jun 2025 03:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749032019; x=1749636819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMABpan9iE9b5FiftfCZKRFqnb71Y82a2DsbpqpyudU=;
-        b=iXwFfY6BPN1C0v4YHx4cZNM9dxMgUI2516TUs7SUsEfSISpKeb9LgrL9I5jYoIneMM
-         TnHMaTRusqb0BR6bvtqZWnIqMuqQBX7+1EYJ1ffLdJp2zjGdosDqikPa2C0bRRcJXSUg
-         zULAaFZvUeHLXVMi77zDAwNDLsPVveuJuIJTcGA4yXWp3z+Cz90sgGxFHpI5kJB3ul/h
-         7qFOPBu6laNyUXE1btEnCe/VMtUZg+ZxhWteJSgCX0HxJStSOCaww5cCliSylKY5CACT
-         EejO1M3Yh0F9NFff75SpSSnJLilZOrpr/1uOsBaoUOmuf17iSUtdfB67ZG4MzXDsWW4S
-         zZFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749032019; x=1749636819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMABpan9iE9b5FiftfCZKRFqnb71Y82a2DsbpqpyudU=;
-        b=dtLkQufKE0+i7T5CSffdtCKKfX6UNOR8BFvS28FiF11kp0jZOoow67ZXncsfzTYHzA
-         n/ENeedlDFPsrBWXuiTp7jZB2ilGedWJt+atAOr/tmXlKg9sNqmE8MYYdDVoODEQtmWg
-         4z2VTZsdvOwgUpUJ4P1mepjMcMON1Vb4ZwcpcU1lY3G3No53nQ5KesNheROf7HBcNL0H
-         0HqtmSdsFLL1AHn5JHuenjQ3ps685e82ytxYgB+exRbaC9LOB5HocJRqDb8apiLr5nSe
-         lpE8lktYD5wNrfIW4dVKvFr2IsnCvSUyxeeF1JgB5vLKp8bCehkgJmBq6+Os3Y65FyUV
-         x0+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXVwZoNQK/Q97uijViO9HWSwe4WDWZDP1yrEQw/wF+rjFZindoBkSXsXB3s1PxB7Wx1KWBvAhvK4b4v6ws=@vger.kernel.org, AJvYcCXv49qcdo5vQxDfuJQElZrQJa6w/pE8kerPyStoCv9Dqu0AkiQZ++3HmCkrYPBNc1dWqDB59VlqD9S5OHjPDEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkPOfXS493ijyn81c6U1i8exz7J/Y4CF0jR8WhTrIYCj/r8I3Z
-	X0YrGD4GRkMGjD1VfiuplEFf9o6f1bD2ntb5TyqjQ2QTuzFZ1NZJQuykueiUGnDXHU0jxR0vxwg
-	9WmDXhVFKXlkqaVm47bqMxE6T3YiuUnA=
-X-Gm-Gg: ASbGncvsVeFglyzbiRim5o6Imbtwsk/xZaS6ofd33KAWQKpjSjl/JKNG4Ixm9YS875i
-	+WnBxQ/OsKIok96I4BIETQwoJO83I9xGPSBoUeVnZkdAVq3vFNvP0vNFLg5ako0iUMCM/3FBVCq
-	ydGlAtEjgDSLDfJVo+u/Dfv3wIxYxnbyxoQZMCf3P4AcE=
-X-Google-Smtp-Source: AGHT+IFcTXBF+gTGjJ32WA7AwDMf5FOdkFiFympx6S8u4ynrijxsyC/aBymU2IsbEIbDK9n3nW8sDRHu3GPTwfVni/g=
-X-Received: by 2002:a17:90b:2ec5:b0:311:9c9a:58db with SMTP id
- 98e67ed59e1d1-3130ccaf030mr1374802a91.1.1749032019354; Wed, 04 Jun 2025
- 03:13:39 -0700 (PDT)
+	s=arc-20240116; t=1749032972; c=relaxed/simple;
+	bh=K0KH87Eqmp0gY8TpGdW3mtysyP6xVb0gwpGfKjIWs7k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uTB15avj9JSlSlfq03npLfdxr6x4nl+yf7ex5Ye3cIvcaWEedkjrkMF5ulkRASgBmAReXqqtutoN8gvqLyx/UgORKpWjBJgZl7S7UvNIwDTnZmgvwz+DUiMxh72wYdnV85DovfuK4sHGOZ0udLc32vsEMMXDR/1Vd65m7ZqKWDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; dkim=pass (2048-bit key) header.d=aladdin.ru header.i=@aladdin.ru header.b=vz6lJEDI; arc=none smtp.client-ip=91.199.251.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
+DKIM-Signature: v=1; a=rsa-sha256; d=aladdin.ru; s=mail; c=simple/simple;
+	t=1749032043; h=from:subject:to:date:message-id;
+	bh=K0KH87Eqmp0gY8TpGdW3mtysyP6xVb0gwpGfKjIWs7k=;
+	b=vz6lJEDITQM61yQXqmdMenRaQvSX3SrS+iGH9t/NNNPxlBXwjYd92l0sEhHP/aMOFEFQtN2MPJE
+	VLiWbh124z2HFn3U7vyy/sGQjUwyQTtPTAw/Kt7Ijy+fJ5UY0SVwWb5Z7tOAY6TJh1QsuKKYv86P8
+	D6o7IppyT4xGGLakYNPHkBKguUJqA7euPRGwT13UnK3yAosdwYfPm4+vW+M630sGu9jkrO8Ipoxqq
+	GcvIuPzRh+IQfRcT0i065Q4C4P8iHDTY2c9dK0jVVh9tWn8T2Jpez8aC4LiCzYeCARGKjgZ+89GdQ
+	ENAN0VwovpvOQmPOVuO+IOW7DrYfxoPMDUNw==
+From: Daniil Dulov <d.dulov@aladdin.ru>
+To: Johannes Berg <johannes.berg@intel.com>
+CC: Daniil Dulov <d.dulov@aladdin.ru>, Kees Cook <kees@kernel.org>, "Emmanuel
+ Grumbach" <emmanuel.grumbach@intel.com>, Miri Korenblit
+	<miriam.rachel.korenblit@intel.com>, "John W. Linville"
+	<linville@tuxdriver.com>, Daniel Drake <dsd@gentoo.org>,
+	<linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] wifi: zd1211rw: Fix potential data race in zd_mac_tx_to_dev()
+Date: Wed, 4 Jun 2025 13:13:56 +0300
+Message-ID: <20250604101356.6292-1-d.dulov@aladdin.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250530-b4-rust_miscdevice_registrationdata-v4-0-d313aafd7e59@gmail.com>
- <20250530-b4-rust_miscdevice_registrationdata-v4-2-d313aafd7e59@gmail.com>
- <DAACCYW3QRQE.1O75L2SHJYVPM@kernel.org> <3eef5777-9190-4782-8433-7b6ad4b9acd3@gmail.com>
- <DADAEIT9E1R8.1J69W5DKYAQGY@kernel.org> <CANiq72=893T0ZHawsym358N5iexbj+5UEL_RqMA_w_dEbJ+Ujw@mail.gmail.com>
- <de844563-651a-4a6e-bf61-7a7b41d1cb43@gmail.com>
-In-Reply-To: <de844563-651a-4a6e-bf61-7a7b41d1cb43@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 4 Jun 2025 12:13:27 +0200
-X-Gm-Features: AX0GCFvf3tldhMcAt47pMJDVKok6Hzu38Q8OPRGaR3AE0QqUvMjIGgC2Mn7Wukk
-Message-ID: <CANiq72mWN+o-wF0GNi34PttNqaNWoYuiY9H+KJs5Q_Gi=hesyg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] rust: miscdevice: add additional data to MiscDeviceRegistration
-To: Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee@kernel.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, 
-	=?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EXCH-2016-03.aladdin.ru (192.168.1.103) To
+ EXCH-2016-01.aladdin.ru (192.168.1.101)
 
-On Wed, Jun 4, 2025 at 11:54=E2=80=AFAM Christian Schrefl
-<chrisi.schrefl@gmail.com> wrote:
->
-> I think that we can add it to `build_assert.rs`, since this would
-> be a build time construct.
+There is a potential data race in zd_mac_tx_to_dev(). For example, it is
+possible for filter_ack() to clear the ack_wait_queue right after
+zd_mac_tx_to_dev() checks that queue has more than 50 elements, but before
+it dequeues any skb. This results in skb_dequeue() returns NULL and the
+pointer is dereferenced in zd_mac_tx_status().
 
-Hmm... it definitely makes sense, but I am not sure we want to mix
-them -- the `build_assert!` is fairly special / different from the
-others, since it is not really at compile-time like the others (which
-is why it is a last-resort option), and it would be nice to have its
-implementation self-contained in a different mod/file too.
+In order to avoid potential data races and leading dereference of a NULL
+pointer, acquire the queue lock before any work with the queue is done and
+replace all skb_* calls with their lockless version.
 
-Perhaps `compile_asserts.rs` or similar if we want to split them into
-compiletime/buildtime/runtime?
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-> Should I do this in a separate series?
+Fixes: 459c51ad6e1f ("zd1211rw: port to mac80211")
+Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+---
+ drivers/net/wireless/zydas/zd1211rw/zd_mac.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Yeah, no worries, it can be done later.
+diff --git a/drivers/net/wireless/zydas/zd1211rw/zd_mac.c b/drivers/net/wireless/zydas/zd1211rw/zd_mac.c
+index 9653dbaac3c0..e7e0d1b7b9ab 100644
+--- a/drivers/net/wireless/zydas/zd1211rw/zd_mac.c
++++ b/drivers/net/wireless/zydas/zd1211rw/zd_mac.c
+@@ -568,6 +568,7 @@ void zd_mac_tx_to_dev(struct sk_buff *skb, int error)
+ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+ 	struct ieee80211_hw *hw = info->rate_driver_data[0];
+ 	struct zd_mac *mac = zd_hw_mac(hw);
++	unsigned long flags;
+ 
+ 	ieee80211_tx_info_clear_status(info);
+ 
+@@ -581,13 +582,17 @@ void zd_mac_tx_to_dev(struct sk_buff *skb, int error)
+ 	} else {
+ 		struct sk_buff_head *q = &mac->ack_wait_queue;
+ 
+-		skb_queue_tail(q, skb);
++		spin_lock_irqsave(&q->lock, flags);
++
++		__skb_queue_tail(q, skb);
+ 		while (skb_queue_len(q) > ZD_MAC_MAX_ACK_WAITERS) {
+-			zd_mac_tx_status(hw, skb_dequeue(q),
++			zd_mac_tx_status(hw, __skb_dequeue(q),
+ 					 mac->ack_pending ? mac->ack_signal : 0,
+ 					 NULL);
+ 			mac->ack_pending = 0;
+ 		}
++
++		spin_unlock_irqrestore(&q->lock, flags);
+ 	}
+ }
+ 
+-- 
+2.34.1
 
-Thanks!
-
-Cheers,
-Miguel
 
