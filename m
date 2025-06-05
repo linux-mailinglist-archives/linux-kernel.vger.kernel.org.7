@@ -1,120 +1,149 @@
-Return-Path: <linux-kernel+bounces-675076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DF3ACF8B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:20:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F72ACF8AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB26179CEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9B7F178468
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0448627E7D1;
-	Thu,  5 Jun 2025 20:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="rm6yCB+o"
-Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB90C27D779;
+	Thu,  5 Jun 2025 20:18:52 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB9527C163
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 20:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7706C14A4C7;
+	Thu,  5 Jun 2025 20:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749154802; cv=none; b=UAljyksfr/QLf7ZidiDvRj7fDymBKtsf2TtXutc0r2qDVLJOfR2yYCERS7qbwfTH4ijCqgVWxfGdhKkFuwdyt3PsZSJRDodGgTHN6nLTwmGBMJFvGbO//mxChiMyVNUW+y6uqfWXnSiUfP4xw94nVPUWw+Y0Z9vEjB0IzrEbGlc=
+	t=1749154732; cv=none; b=J7vnKAxb6LErqOW76uefn9uMbV4Y+P+pgZNhOaOt5lf/XbW01JoO3HNxR3iemjEqcf92PDmF9gwQkmk4QIh0J5qXlbL/hsA+wUE2PQ4H7Wk5O27/CerIZ3V1I4c+8uqlhN+AughqAVXrpsfNOdLVorxejHZDF4ZN4nmKNb8mz9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749154802; c=relaxed/simple;
-	bh=TeGhnktdSvFxXreUkwhblyYxGqCrkCLuVr00TRFUiKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fn3QHEy+YMMtmAbBfcyUIZj9yWcSrth6IRGYV7oXIoRJeeziddIwpDkWttkKUW/qYTejvZjvpCWR5b7EhIis/YTcP/dj9zvzUudFAVoXa6z/nWIbvvvOKdSlCM+Ko1JtIzkBiYOWZy6e62F/ENWPhQ/c/Nv1b5uRnp9ps36XIWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=rm6yCB+o; arc=none smtp.client-ip=195.133.245.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
-Received: from mail.nppct.ru (localhost [127.0.0.1])
-	by mail.nppct.ru (Postfix) with ESMTP id 414F91C2ABD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 23:19:57 +0300 (MSK)
-Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
-	reason="pass (just generated, assumed good)" header.d=nppct.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:to:from:from; s=
-	dkim; t=1749154796; x=1750018797; bh=TeGhnktdSvFxXreUkwhblyYxGqC
-	rkCLuVr00TRFUiKg=; b=rm6yCB+o3Z3hQU5WzYf37ke60L1n2HbJe+h6EnbXih6
-	PUVbK5yUD2rjoHyBT10ycx8Dsm2hpwKQVrnM2cN1EOeeZIU+Pg8oPcT+lM3EK50R
-	CQwPMc90Ia6mXLIqGX/ivzrwDEqwHV0Ee4xBHyAC6NyOtck6F0kieuB5yDM8I+cA
-	=
-X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
-Received: from mail.nppct.ru ([127.0.0.1])
-	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lbEisGPpNHCD for <linux-kernel@vger.kernel.org>;
-	Thu,  5 Jun 2025 23:19:56 +0300 (MSK)
-Received: from localhost.localdomain (unknown [87.249.24.51])
-	by mail.nppct.ru (Postfix) with ESMTPSA id 11A101C1151;
-	Thu,  5 Jun 2025 23:19:48 +0300 (MSK)
-From: Alexey Nepomnyashih <sdl@nppct.ru>
-To: Lyude Paul <lyude@redhat.com>
-Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] drm/nouveau/instmem/gk20a: fix incorrect argument in iommu_unmap
-Date: Thu,  5 Jun 2025 20:19:21 +0000
-Message-ID: <20250605201927.339352-2-sdl@nppct.ru>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250605201927.339352-1-sdl@nppct.ru>
-References: <20250605201927.339352-1-sdl@nppct.ru>
+	s=arc-20240116; t=1749154732; c=relaxed/simple;
+	bh=L2FN8aVUMIxFboZiUb09rQ953kWIeYaD3a/zsb4fjbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N/zyya6YUXLVqGUbiNHqdyGTFfwRWPC1APjpvhHwdQTV4uYY58gLuaYf7PAOeilMl1Ii1OsTMA7vqYpAzsFu5KttOSjC/fnjRC6HTOfmdr52bYQE5dNZQIm/4DBBk/bbEYdsW3S0p6g9hWvdUm+e09uYgfdGgm7B95Qd4v8P8fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 102F812169B;
+	Thu,  5 Jun 2025 20:18:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id DC2966000F;
+	Thu,  5 Jun 2025 20:18:39 +0000 (UTC)
+Date: Thu, 5 Jun 2025 16:19:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-mm@kvack.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+Subject: [PATCH] mmap: Remove unused events vma_mas_szero and vma_store
+Message-ID: <20250605161959.328ed2a7@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: DC2966000F
+X-Stat-Signature: e6kafeutbfgm8w1t86x3zxtzfqzt5q86
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19zYBTYrdAQI+0fA9yqDXU/8il5cWKEtfg=
+X-HE-Tag: 1749154719-696794
+X-HE-Meta: U2FsdGVkX19rrlChUTkMolyY9BbaPyOzyDTxbnStfSTUO/TWDklMgdLH6kkUuCjp6VqxXEnnCzDRQp578hdxVcVQIBZ0uIwemF1VkPnwlmXOYsUvUdJfGH41e9Nz/7eBU/Y/QpcQIpift3JmpOYcTwbzJJuJu06lN3dTumaugFEsRZy/q2ADodK6tZrcqMt+41KrT+j3wSe9wyQFFuUV5uRHeQ/jCjWjgnE8rXmxtZXbaqiZjF8NlYyCgJ5LN8UFy+r/kecDVDx3oZApck45BdmxHWKLXnRrD+vPC7gpimLN6hCeqIrNfrcJELh5iBjQ3uzI/1b2BjOqxkfHuuT/DfY84g07etfGhbG1ocUIDxUHVpSbMBeXg6exXurB7wbba/CV7Txrf06DZdTN9uZjqg==
 
-The unmap logic assumes a fixed step size of PAGE_SIZE, but the
-actual IOVA step depends on iommu_pgshift, not PAGE_SHIFT. If
-iommu_pgshift > PAGE_SHIFT, this results in mismatched offsets and
-causes iommu_unmap() to target incorrect addresses, potentially
-leaving mappings intact or corrupting IOMMU state.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Fix this by recomputing the offset per index using the same logic as
-in the map loop, ensuring symmetry and correctness.
+When the __vma_adjust() was converted to use the vma iterator it removed
+the functions vma_mas_store() and vma_mas_remove(). These functions called
+the tracepoints trace_vma_mas_store() and trace_vma_mas_szero()
+respectively. The calls to these tracepoints were removed but the trace
+events that created the tracepoints were not removed. Each trace event can
+take up to 5K of memory, and it is allocated regardless of if they are
+called or not.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Remove the unused trace events.
 
-Cc: stable@vger.kernel.org # v4.3+
-Fixes: a7f6da6e758c ("drm/nouveau/instmem/gk20a: add IOMMU support")
-Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
+Link: https://lore.kernel.org/all/20250529130138.544ffec4@gandalf.local.home/
+
+Fixes: fbcc3104b843 ("mmap: convert __vma_adjust() to use vma iterator")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/trace/events/mmap.h | 52 -------------------------------------
+ 1 file changed, 52 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-index 17a0e1a46211..f58e0d4fb2b1 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
-@@ -481,8 +481,9 @@ gk20a_instobj_ctor_iommu(struct gk20a_instmem *imem, u32 npages, u32 align,
- 			nvkm_error(subdev, "IOMMU mapping failure: %d\n", ret);
+diff --git a/include/trace/events/mmap.h b/include/trace/events/mmap.h
+index f8d61485de16..ee2843a5daef 100644
+--- a/include/trace/events/mmap.h
++++ b/include/trace/events/mmap.h
+@@ -43,58 +43,6 @@ TRACE_EVENT(vm_unmapped_area,
+ 		__entry->align_offset)
+ );
  
- 			while (i-- > 0) {
--				offset -= PAGE_SIZE;
--				iommu_unmap(imem->domain, offset, PAGE_SIZE);
-+				iommu_unmap(imem->domain,
-+					    ((unsigned long)r->offset + i) << imem->iommu_pgshift,
-+					    PAGE_SIZE);
- 			}
- 			goto release_area;
- 		}
+-TRACE_EVENT(vma_mas_szero,
+-	TP_PROTO(struct maple_tree *mt, unsigned long start,
+-		 unsigned long end),
+-
+-	TP_ARGS(mt, start, end),
+-
+-	TP_STRUCT__entry(
+-			__field(struct maple_tree *, mt)
+-			__field(unsigned long, start)
+-			__field(unsigned long, end)
+-	),
+-
+-	TP_fast_assign(
+-			__entry->mt		= mt;
+-			__entry->start		= start;
+-			__entry->end		= end;
+-	),
+-
+-	TP_printk("mt_mod %p, (NULL), SNULL, %lu, %lu,",
+-		  __entry->mt,
+-		  (unsigned long) __entry->start,
+-		  (unsigned long) __entry->end
+-	)
+-);
+-
+-TRACE_EVENT(vma_store,
+-	TP_PROTO(struct maple_tree *mt, struct vm_area_struct *vma),
+-
+-	TP_ARGS(mt, vma),
+-
+-	TP_STRUCT__entry(
+-			__field(struct maple_tree *, mt)
+-			__field(struct vm_area_struct *, vma)
+-			__field(unsigned long, vm_start)
+-			__field(unsigned long, vm_end)
+-	),
+-
+-	TP_fast_assign(
+-			__entry->mt		= mt;
+-			__entry->vma		= vma;
+-			__entry->vm_start	= vma->vm_start;
+-			__entry->vm_end		= vma->vm_end - 1;
+-	),
+-
+-	TP_printk("mt_mod %p, (%p), STORE, %lu, %lu,",
+-		  __entry->mt, __entry->vma,
+-		  (unsigned long) __entry->vm_start,
+-		  (unsigned long) __entry->vm_end
+-	)
+-);
+-
+-
+ TRACE_EVENT(exit_mmap,
+ 	TP_PROTO(struct mm_struct *mm),
+ 
 -- 
-2.43.0
+2.47.2
 
 
