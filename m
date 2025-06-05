@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-674343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0F3ACEDB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:34:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FF4ACEDAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA2188030D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:34:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F6527A566B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED92218ADC;
-	Thu,  5 Jun 2025 10:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2DD2165F3;
+	Thu,  5 Jun 2025 10:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rg9LwBi9"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I19/7Rbp"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77032040B6
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BC11A7262;
+	Thu,  5 Jun 2025 10:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749119607; cv=none; b=ZwJFcqjzyY3ORPnL9KmHgFVAXrigIAa9df+m4trR6MCdGKUzcvX5mV5ASlP7RHMdAMKJ9hhGu9QZO4prg/D2bSsC6gmyk+L2of96OQXTfsCF3UX24eGQhb3kcL/4+ZaNSdJQPPdn6jny8vRvova0B7PcpKS2vnV+NVUmO0Dr7lM=
+	t=1749119541; cv=none; b=ECOW+6R1lV4gKJPg5gN1XuecPBVGgogzqO67D9CEc8g5U77g4TVe2dwqF2rYCGsAeYbL6KAYDuolThn3/bbnAvRQhjUQ8qq6o9tO+pXp//kSqQCKs0QXSrWwO4SKWHzR7VdNSOs9nstv42rw35XHwkpXCuJqUil0mcvcmi4MXwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749119607; c=relaxed/simple;
-	bh=a22MTugVqXJqn2rVeTYu08Ru3J9spYEy5/2EYGhxPUY=;
+	s=arc-20240116; t=1749119541; c=relaxed/simple;
+	bh=2gO7PwgVWx+9PJ0gy7nF/BYJCRAv8Img8db1uQ0fA3c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g4ziBbiT5J7QsrKbvfEbXiyj3Zmgb/uJCdg79rp+zquHfxG2W9ZhpgDXYQHZlTkD9TfpeVSVzWQ8L0l2BfUp6hsya/KeGxpEBtAmXxheJ0RbXVqOyPbn81GbB/XGNDxgH8/YC671rLlZM7xBFijPUmJ31Je2wWNlwq33ezdJ/2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rg9LwBi9; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-442fda876a6so6406765e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:33:24 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Rg62m7L4XD0U+Vh70MR794WYoRvbs5aTNejSe2lyTFLwNuSiP9/T3zFmbAalVC/40FCaT3CQ0ssEWxuPSHerZle/tvXA61i8CMIuTauipwC+g2+FzG6ym8wMlxpyEk0EwUlptW09X461B5FypAmzUBwB1jGCyJsMHoaBhWkcY+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I19/7Rbp; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-604b9c53f6fso1579393a12.2;
+        Thu, 05 Jun 2025 03:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749119603; x=1749724403; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749119536; x=1749724336; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=CcvdK+kUqsSYXK1dvlLkx29YE1Y4FdRzYsL+M29q+YQ=;
-        b=Rg9LwBi97TjfLJ/j2rkXiV7RqDLcR1pT1E7ovvAhi73iXulx7wbdfRPm5fDAJ3tPV6
-         knOtXVMhwX+shg2RQ8vtmLnEjxG4lMjkGZLtzE+J/h3LhreFQdTXOivrOixT9clH6zIR
-         pi4QM2e1eZwsykiVR/QYlD4AzkwCUvnSP55v0Cw9WcLRA0+OQYd62IpfskkvhxIH1GzN
-         5l5EFuYcvMqIQKur+caIKOs/P+u1ohNuusOiXT0Ooa5mR/kRjKxOkwq6jO8yQPNZ/U+g
-         a1SEd6LiyAViU9kMKzXBhHmffFK+55CWiB3EADYlb/5ZHwKGfjCBmmqJyHjayjPBDwet
-         oDpA==
+        bh=RcMUQCfxa0uC8pzdzvPwMQlIQ3/k2Rjbm8T9aOOzae0=;
+        b=I19/7RbptVPI4OkqBkZzCw+daeyq1jaXjW9M3FuSj3U40uuZALrmHPpnUFcX8Acj+p
+         XVjHLyg0/eIacgYbYWuURwP6E7pZDra45IpeA6+rV7OfBecRDMn2vE6cgDvEa1DAIfu9
+         CHr5yhoHUmKXLanSCCiJfOVdvz1cBKdDpUX7szVVbTS+mIN4wXY0TI0ETvc2CMxtDNlM
+         LAtBxFiobOqENfdxvirxA3rvqfOEyThTOEDoXzDgjoRjJwpLvFhUV4qG7idZiyDs5w66
+         xzu/dCBNb4zSRQKSTKuQ6KQd/xPljEeC+RTW0gnuOtmkGOYPgMAC5iSCtlWQmRGrR7tp
+         CSpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749119603; x=1749724403;
+        d=1e100.net; s=20230601; t=1749119536; x=1749724336;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CcvdK+kUqsSYXK1dvlLkx29YE1Y4FdRzYsL+M29q+YQ=;
-        b=Li0YOhpGJectqJCJuKdI5F75DeyyoxgvYAqeSgWNizX5Ebf5rmoYUXNVhkhGzvdiZ8
-         2bFfqiDB8ivdC5KfNidnfky6840c3T2+ZRWsr+F6r+bsJ8la39COh7Sy6EKPg20mkFK0
-         8dttPU9Bot2BOnBNJy1QHB6Oruzmg9gKtipl13bNyza0NFpdtZ4QwfpsqnF+nZ1gclDz
-         f1dq/h5EWqtibQh2FoXyfdY7cyUx7qO0bXUEqPivosggrAEpUSZaiQdpmMhXJS2d0RdY
-         2oaCOYEQWqCcXtkQiQj6u6qPbYwuHsmAAVE3+a1WhsklKxPn3zVcG6E2gAiGpfFHH/TL
-         bLsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwmt4p4jJunNNQTtet4PyjZnqS5Pg0ZZEjaB11XzFAFOugWbI4zfcMUVahBFB5mElXZ5wsey9BB1Ml7Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBvly7IZlVepuRCDRBRgyvf2W6QYO8SCYSLRqQ3g2k/QF1rBbo
-	ryfniO0u1Mfx2JBcobE0lXDSM23WibmJYEMAZfQe6XGLdA39TBeN8rQ05gW+xY+mdnw=
-X-Gm-Gg: ASbGnct8YdFvJGQBwvm1CugGZEJKkN6ZY7RtUVPu6N9H2nVvq8+D8SM9oyA9d86zGTK
-	Uu9EkukdFOaTCMuf2ktkKrdTXRz2kIRpZWxtXyJeCakxs1ROEDH/A3Drjgs6Id8Q7VRISOSj5bE
-	Qzx7ZMYCrCSsIA4V4aihJ4YDykZF6Mq9L/i0GAzVHOeUxlrsaE7GjaXx3H3n6LBWaO5s3Lv+jmm
-	l85JUNB8LaRUAydecLRShLYqtVswLUmSeaJF/b3NtGys3iDUcK2Jo2hvN8aTP418UeXdc6Jri3B
-	c6dJ7e6QFUpyGoSHJ2ELzcW3W0ENjQZfjtuv3FqLznRrTFx7PFLz/XWU
-X-Google-Smtp-Source: AGHT+IG/pYQASQpxqALpdTzyKn6tGv+QxqdbmbGFod1wFV2dwtYmyNkB99H/KuhQnFWYsX9U2WTL4A==
-X-Received: by 2002:a05:600c:8112:b0:43d:1b95:6d0e with SMTP id 5b1f17b1804b1-451f0b3ce3fmr54377325e9.23.1749119603114;
-        Thu, 05 Jun 2025 03:33:23 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6ca08sm24967656f8f.33.2025.06.05.03.33.21
+        bh=RcMUQCfxa0uC8pzdzvPwMQlIQ3/k2Rjbm8T9aOOzae0=;
+        b=RP7YgF7jLVms4EOPcd8ncQJ2vQIGl71uLzTde11IRmn/n8LO/XbXsSjwT/A0xO6X5k
+         paejjhPL2ucsL+3BKaY5IdLRBo6mNH0wVZsHUdHv8z7PBseSRVPRtvPvg3DetIf/DtaN
+         5BSTXWZyjCvOrrZFFdcfxie7tsAOB9TuRB6K40YtrOQ2G0NOcrnMz8KzoKfsPzxoicgM
+         9U57s+XVAoiTZPXVbYfwbHXwx59rQu7XAF7DCngnNW8w8S5yUqRn7U+KQkQr0yBEy58f
+         A0qsnRfQx50YHze7QBZSRbDLJYH+JV6wQJ2SR7WhzWQqKMqiWQ9+FTSgzsfkMktTNhRN
+         N7uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgDGa6Wpv7QAJc9t+zsKxOjkFyeMnbq6E67/HiTpp3uVBixca7ZgfDwgHsjCKHescHA+WIRkZp@vger.kernel.org, AJvYcCXG1FZGNw3+FqDTB7cuVYnOoXD0j5E1UTtM7ikAhICQbRhn+fh3RLeli5+N8i3S2T7qzfA=@vger.kernel.org, AJvYcCXxdGs/rFPoIsTIwnveY95pPPvBLfxNxWiXksIn7CCyAJuF0mSF+zLslLrMzP+70ZSu4SYdFKZ5SuKh9g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdmNkZ3JXZorLvoMfSBHWFGeVHz8W1sWPBBelByzm13vd6CqfY
+	IRibr85KGrkJSPzsxF2FFv8/fZ/sjLsuRQm/BF+ifO0Bj06Vq44IhfGC
+X-Gm-Gg: ASbGncuxJBB/3JvgHLnedrLEj4f6OeG6BVcH/cvujkE5Nzwn/dVXHaHFG/VT0QlphyE
+	OvRXuTtrxtkh+pXpVodvB4HmHmW1GblgkFNowGP55Aksr2Gv9gvBTaZVw+nTwu6N3jvA37ovka/
+	1Q0AwXS4mIFd6QbZcCgaq7GxaJG0hxMJWlODhC2kfsNdLq5OFKWsycEH8o+DEHALYyCtCGBZ4AH
+	5UL2limeZdi+CN8e/yB8RDXbcLoVD2lmL8BD+lIwKB2+QY0O8CzF/NLCVmBYUXGu7WWTE4LZEse
+	JIrBwbeD6MCmu1uIxwiAHufzEtasT+tz64hjXTe3FpeD8a8foCkxB1FVtvPCSqQY
+X-Google-Smtp-Source: AGHT+IGJV4w4MyjgzgbWc6ZlWikV0SpiTCf2D3BKmMkklaQZpTnw0Xa1hsU1I+YbdE/tucex19ZGDQ==
+X-Received: by 2002:a05:6402:1e8f:b0:603:5a23:2997 with SMTP id 4fb4d7f45d1cf-606ea15f285mr6577294a12.17.1749119536398;
+        Thu, 05 Jun 2025 03:32:16 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::22f? ([2620:10d:c092:600::1:d66f])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-606f0d84327sm2114656a12.30.2025.06.05.03.32.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 03:33:22 -0700 (PDT)
-Message-ID: <632eadac-e5fd-4e50-9ced-cd4f2b9e6c82@linaro.org>
-Date: Thu, 5 Jun 2025 11:33:21 +0100
+        Thu, 05 Jun 2025 03:32:15 -0700 (PDT)
+Message-ID: <96d3ffe0-b743-4596-aaee-87cce1603756@gmail.com>
+Date: Thu, 5 Jun 2025 11:33:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,153 +80,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/11] KVM: arm64: Add trap configs for PMSDSFR_EL1
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
- Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
- kvmarm@lists.linux.dev
-References: <20250529-james-perf-feat_spe_eft-v2-0-a01a9baad06a@linaro.org>
- <20250529-james-perf-feat_spe_eft-v2-6-a01a9baad06a@linaro.org>
- <867c1ze4pg.wl-maz@kernel.org>
- <2fb1965b-bef9-4a8e-a1c7-c8a77d957b23@linaro.org>
- <87a56ned6r.wl-maz@kernel.org>
+Subject: Re: [RFC v4 07/18] page_pool: use netmem put API in
+ page_pool_return_netmem()
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
+ edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+References: <20250604025246.61616-1-byungchul@sk.com>
+ <20250604025246.61616-8-byungchul@sk.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <87a56ned6r.wl-maz@kernel.org>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250604025246.61616-8-byungchul@sk.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 6/4/25 03:52, Byungchul Park wrote:
+> Use netmem put API, put_netmem(), instead of put_page() in
+> page_pool_return_netmem().
+> 
+> While at it, delete #include <linux/mm.h> since the last put_page() in
+> page_pool.c has been just removed with this patch.
+> 
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> ---
+>   net/core/page_pool.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index b7680dcb83e4..dab89bc69f10 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -20,7 +20,6 @@
+>   #include <linux/dma-direction.h>
+>   #include <linux/dma-mapping.h>
+>   #include <linux/page-flags.h>
+> -#include <linux/mm.h> /* for put_page() */
+>   #include <linux/poison.h>
+>   #include <linux/ethtool.h>
+>   #include <linux/netdevice.h>
+> @@ -712,7 +711,7 @@ static __always_inline void __page_pool_release_page_dma(struct page_pool *pool,
+>   /* Disconnects a page (from a page_pool).  API users can have a need
+>    * to disconnect a page (from a page_pool), to allow it to be used as
+>    * a regular page (that will eventually be returned to the normal
+> - * page-allocator via put_page).
+> + * page-allocator via put_netmem()).
+>    */
+>   static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem)
+>   {
+> @@ -733,7 +732,7 @@ static void page_pool_return_netmem(struct page_pool *pool, netmem_ref netmem)
+>   
+>   	if (put) {
+>   		page_pool_clear_pp_info(netmem);
+> -		put_page(netmem_to_page(netmem));
+> +		put_netmem(netmem);
 
+Same comment as well. I guess we shouldn't even be returning "put"
+from memory providers.
 
-On 04/06/2025 4:31 pm, Marc Zyngier wrote:
-> On Tue, 03 Jun 2025 10:50:23 +0100,
-> James Clark <james.clark@linaro.org> wrote:
->>
->>
->>
->> On 29/05/2025 5:56 pm, Marc Zyngier wrote:
->>> On Thu, 29 May 2025 12:30:27 +0100,
->>> James Clark <james.clark@linaro.org> wrote:
->>>>
->>>> SPE data source filtering (SPE_FEAT_FDS) adds a new register
->>>> PMSDSFR_EL1, add the trap configs for it.
->>>>
->>>> Signed-off-by: James Clark <james.clark@linaro.org>
->>>> ---
->>>>    arch/arm64/kvm/emulate-nested.c | 1 +
->>>>    arch/arm64/kvm/sys_regs.c       | 1 +
->>>>    2 files changed, 2 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
->>>> index 0fcfcc0478f9..05d3e6b93ae9 100644
->>>> --- a/arch/arm64/kvm/emulate-nested.c
->>>> +++ b/arch/arm64/kvm/emulate-nested.c
->>>> @@ -1169,6 +1169,7 @@ static const struct encoding_to_trap_config encoding_to_cgt[] __initconst = {
->>>>    	SR_TRAP(SYS_PMSIRR_EL1,		CGT_MDCR_TPMS),
->>>>    	SR_TRAP(SYS_PMSLATFR_EL1,	CGT_MDCR_TPMS),
->>>>    	SR_TRAP(SYS_PMSNEVFR_EL1,	CGT_MDCR_TPMS),
->>>> +	SR_TRAP(SYS_PMSDSFR_EL1,	CGT_MDCR_TPMS),
->>>>    	SR_TRAP(SYS_TRFCR_EL1,		CGT_MDCR_TTRF),
->>>>    	SR_TRAP(SYS_TRBBASER_EL1,	CGT_MDCR_E2TB),
->>>>    	SR_TRAP(SYS_TRBLIMITR_EL1,	CGT_MDCR_E2TB),
->>>> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
->>>> index 5dde9285afc8..9f544ac7b5a6 100644
->>>> --- a/arch/arm64/kvm/sys_regs.c
->>>> +++ b/arch/arm64/kvm/sys_regs.c
->>>> @@ -2956,6 +2956,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->>>>    	{ SYS_DESC(SYS_PMBLIMITR_EL1), undef_access },
->>>>    	{ SYS_DESC(SYS_PMBPTR_EL1), undef_access },
->>>>    	{ SYS_DESC(SYS_PMBSR_EL1), undef_access },
->>>> +	{ SYS_DESC(SYS_PMSDSFR_EL1), undef_access },
->>>
->>> PMSDSFR_EL1 has an offset in the VNCR page (0x858), and must be
->>> described as such. This is equally true for a bunch of other
->>> SPE-related registers, so you might as well fix those while you're at
->>> it.
->>>
->>> Thanks,
->>>
->>> 	M.
->>>
->>
->> I got a bit stuck with what that would look like with registers that
->> are only undef in case there was something that I missed, but do I
->> just document the offsets?
->>
->> +++ b/arch/arm64/include/asm/vncr_mapping.h
->> @@ -87,6 +87,8 @@
->>   #define VNCR_PMSICR_EL1         0x838
->>   #define VNCR_PMSIRR_EL1         0x840
->>   #define VNCR_PMSLATFR_EL1       0x848
->> +#define VNCR_PMSNEVFR_EL1       0x850
->> +#define VNCR_PMSDSFR_EL1        0x858
->>
-> 
-> This should be enough.
-> 
-
-Thanks, I'll resend with these added.
-
->> +++ b/arch/arm64/include/asm/kvm_host.h
->> @@ -596,6 +596,16 @@ enum vcpu_sysreg {
->>          VNCR(ICH_HCR_EL2),
->>          VNCR(ICH_VMCR_EL2),
->>
->> +       /* SPE Registers */
->> +       VNCR(PMBLIMITR_EL1),
->> +       VNCR(PMBPTR_EL1),
->> +       VNCR(PMBSR_EL1),
->> +       VNCR(PMSCR_EL1),
->> +       VNCR(PMSEVFR_EL1),
->> +       VNCR(PMSICR_EL1),
->> +       VNCR(PMSIRR_EL1),
->> +       VNCR(PMSLATFR_EL1),
-> 
-> I don't see a point in having those until we actually have SPE support
-> for guests, if ever, as these will potentially increase the size of
-> the vcpu sysreg array for no good reason.
-> 
->> And then sys_reg_descs[] remain as "{ SYS_DESC(SYS_PMBLIMITR_EL1),
->> undef_access }," rather than EL2_REG_VNCR() because we don't actually
->> want to change to bad_vncr_trap()?
-> 
-> This seem OK for now. We may want to refine this in the future though,
-> as these registers cannot trap when NV is enabled. Yes, this is a bug
-> in the architecture.
-> 
->> There are some other parts about fine grained traps and res0 bits for
->> NV, but they all already look to be setup correctly. Except
->> HDFGRTR2_EL2.nPMSDSFR_EL1, but it's inverted, none of the FGT2 traps
->> are configured currently and PMSDSFR_EL1 is already trapped by
->> MDCR_EL2 anyway.
-> 
-> Can you elaborate on that? We have:
-> 
-> 	SR_FGT(SYS_PMSDSFR_EL1,		HDFGRTR2, nPMSDSFR_EL1, 0),
-> 
-> which seems to match the spec.
-> 
-> We also have full support for FEAT_FGT2 already (even if we have no
-> support for the stuff they trap).
-
-Oh I think that was misleading, the version I was poking around on 
-didn't have the FEAT_FGT2 stuff applied yet but I see it now. And yes, 
-as you say, what's there matches the spec.
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
+-- 
+Pavel Begunkov
 
 
