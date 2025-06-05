@@ -1,683 +1,868 @@
-Return-Path: <linux-kernel+bounces-674352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C95ACEDD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCDCACEDD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7047C7A333B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:37:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E0C43AC476
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE1215793;
-	Thu,  5 Jun 2025 10:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804AA217651;
+	Thu,  5 Jun 2025 10:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="guBQAQiw"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="MGvWbbmE"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44980217654
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E237F1A7262
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749119853; cv=none; b=fRozp0os6wK+dV/yYyErw8yelezIn+CNrdK6qtl/LhfRX9UPXCT9M2lcu1xj+h6jqHHJlpiSCXgcptrpOsfTM35q/ivz8WqmEW5V+FNz24HnpPIbEXuSw14IUtYNtXcPTZNHuPhhp1U14zz0rg13fDQXwDhqFB//IgvyH7z2RNs=
+	t=1749119940; cv=none; b=sfle+vaZsuno92IRnyJQWuso4D+iP8EOos3CB5FyhrJNcPxi1lRIcpNo70xs6zlbQD6f/ssUYhvEwHTEl7rQg6ODUQ1KS4SbaKzQgfn/TsfM1K3mPZScxEP2rCSUdZkoGzZ5aeK3eqTRwAkxrXQh70CBXHOEnULvuokjXokh9rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749119853; c=relaxed/simple;
-	bh=5W99aD1HPPU70uFrXi4wd3DyADurA3SSuHBr+b7XjMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c/L73Nv/W48ShBArT4y7o/e0VfkNwYC1Si0GclPygsKGz9suGxQDq8N+ahOi5isei7eGLqWJWBuLpsxqodl6G5JS5FhK/WrmwOQWZ5hlAqGygKhRk/cFncnpqcBZxUGmZV0jdAn0Rdl9IQXyUuw45dJFhgv8gBurlLox1Nx5caA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=guBQAQiw; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad8826c05f2so154966266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:37:29 -0700 (PDT)
+	s=arc-20240116; t=1749119940; c=relaxed/simple;
+	bh=2WAs0lhlVnhb9ip5CzlONPzV0WTDB1mdue6VeXSYEAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rg1PTfQsc4H2XhW8IfAVdbC/ZkE2/4/TsHVRafiHCkJl4zItCJsBo0lFUI0PZ7z0ZIcB8gu6/lPYY1QaPHquFWTWtBMSLX1wWTJa/xHbj9ztuPSTVb8l0txni/65Srw+OyGoTajyssdJFyNpYEENXjqK/a5x+fYmUOFTzE0iJ6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=MGvWbbmE; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60461fc88d7so1579234a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:38:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749119848; x=1749724648; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eXn3QIeAiS3fNUutBHTej2gUQDr8syUYYLvUu5jnOQ0=;
-        b=guBQAQiwmdYT4eEHKn+dQvdO04rkq7BfuOwAFr4J+G8COQ31SjnXVO9JKX8AoimP7S
-         fxDIJaEsFTO7XdTxhOORhW+XcjI1L+4/V2V/TaC6GuxTnHy+kN7Pd11choC/Jho9hfwt
-         TX8xsauoJMRmSZXxXXP+iNWQlmJVLT+NDaEV0tH+GjKDSPussK93sWUCSQWiNbeIFO+2
-         EXAi+X7CpnzRAjXvN4OldzCOclARYDEt1xWGGXTfl7FUVmE6eD47oh8DrYr1cm02XyqC
-         z9hQ0mW9QOx2LEpYoneOLKegacvJsaZ+6gWuFTbjiYwzoPCGcwe/Uh0AfI7H/QDj0ZOP
-         Je4A==
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1749119935; x=1749724735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1VKVgPyDTD7FcC13I4CKc8IjBxTy3Bp73Mc+aF8JhY=;
+        b=MGvWbbmEXV9m3Pmexet4U8AcUCe0XzuYYPjrXT+vFKoU0QS1VfmsjG3au78Oalp7oq
+         6fm2K7V9hDb9jkZhvdhyg+qw2W1ZUHbc2A43DSy5+S1S+iJ6+Vu8K0xtsJQQ3PKXw4Vm
+         vSFB3B3D83JrMkIT+BKjHs18w+eno6ry7A3gcb6Oh6RSljmRVCShrTWgi7sRorQkHyB2
+         2upEq+H+5/Ibw/WdvrQ9aCPKrn/JuJ3cTQX149y58OMUeYhBCyNPIQBD62hblGwZMFzF
+         Va9+vDbkKMtXrtas5PWiRtkFFSieiF813J5n+Q5kxECwOp1VvVkY9G3UM54pMFMrUO+7
+         AjCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749119848; x=1749724648;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eXn3QIeAiS3fNUutBHTej2gUQDr8syUYYLvUu5jnOQ0=;
-        b=bEGTZgpCa4lZC1afxlfIm2+vYNcjI1GVrvnDmBIFwLMEVax+1He0ZFJQDPoFxXBs2i
-         YEFihLXGLgzAsmLdBLJ80ZOevT0RjWfcDydHRQHF9GiHB0Dwbn614DHUJ26xoRnAQ5Ow
-         LoorJG8BsLafeCtVxdpk+52JfW4fCVloVQUEDP0Fx7Xx/ggXMjMFLyCyYZzNPbHebS8c
-         PkkZXCd2wN0rWqHrD053J0J9P+4qBO/LuDVMeHNAcc23007xKvfW0ciabrVxoaOLMdyY
-         1n4UyLvb3Qpnzm4+7ZtSaRCpHlHsTwNdcRpVPmkg1cQH02KfRBwhAfD3ykxMOwWEV2uj
-         WeYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU5mb6yluQpnpkMHSrDMxJLds8aqLGeFhKTuYcfzs56C0VqQ9niH03YDrOcfFnuUe8Ku5fQZKK5sN5J3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWZ/pbvPx/Ux8S+ZXYmy0tb6UAa4C7MDobc6edOTyt+Y8Ufitj
-	Q0RqkcqGWRWn4TT5LqKrr2KkoTFZ5/06/m4dhc2OShwHSrBQEb1c8sSFRnSBzYinOOc=
-X-Gm-Gg: ASbGncsx/HMvC/fgorccd0bXNeVeyqBrlhBIGPcMFR9Lxe4meidB8WhSlBVYOoceqrd
-	6AbnB0VODc8WyaBRHWL8AXrE7OnONbLKZdAP/nfdWrTCu0I2Cg1pwpR58ubKTUL4MysSeuH4pgr
-	MXwIgw7qXnivmbNrj3FRMSZdswEBIano0SSfScDtRn8sWWcElo7K/v9XgP2mYl8ZPrksKQLavqm
-	6cqbOWOBJowqVma+xrT0PGFS6GL2SoUW3qnT/Ip+j26VWhBq+335doBj3aMKeMo1zzeJxy4IG//
-	AF25d0t4CQUUWLWzAWtXboMzhVrnD/oW4nuQPP0kZVvWXR61MoHsiNAU7QXu
-X-Google-Smtp-Source: AGHT+IG4imuIKem/lacSZ6kswTIN1P3NtX5m21Xzl748xyEppt8Z7hqNmdhVquPXd1dCij8MnG6lzA==
-X-Received: by 2002:a17:907:980f:b0:ad4:f517:ca3 with SMTP id a640c23a62f3a-addf8d27228mr582111566b.20.1749119848014;
-        Thu, 05 Jun 2025 03:37:28 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82e760sm1253095066b.52.2025.06.05.03.37.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 03:37:27 -0700 (PDT)
-Message-ID: <7b8ae87e-f733-45f9-bf45-302d755ebbf6@tuxon.dev>
-Date: Thu, 5 Jun 2025 13:37:25 +0300
+        d=1e100.net; s=20230601; t=1749119935; x=1749724735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L1VKVgPyDTD7FcC13I4CKc8IjBxTy3Bp73Mc+aF8JhY=;
+        b=soVSLhAY4tynRstu2EJIgUWANnp9mT19JAS1cjrUTMOhyv2wUd+oemjhfbPymrtJnT
+         xnR2l41VUP3f8IwdY8ucFSs2bb4c62SS3pj1hsrHiJmorl9qiO7tkg0ZKhoa3u3hRasa
+         wXdhT3r6C9gg6ebFl5Pf/fGKRf1Kk3yzjFdEkngXsEqT3ZbK0TL8R/mZlk34o/g5RQX8
+         3NjW9D/A5CIh/k27xiBie7ZvqYxfRXY1nEI/JmQofnbCly43kFui/MDHZvfrfPaGT382
+         nqTw5a7Tn/j3FdWaEuQ5Wce8fTIuOHDw3JJRMtw3C49NMzTgOskbBSQ+3ysbTfg4JaLG
+         xsTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwYlgJWQB7+PkgogOdz2VH84LXRHYBBMwhQuCniKOveyJjPXkto+DnlN0+114n3ta7BdMURPIRAEnFgAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/9FxluA+VP85RST96tff2fr5NDpBtKlOxSHWEw3Uzx04c1xXJ
+	FDx0iNy/OUtz8UCbYFSvT5tEPPCrkDlmXeg7CpRpxraX0+YgXWc0A6A78SYUFqwNzUXyT/Ke91y
+	uovDv
+X-Gm-Gg: ASbGncss4L9StAfNZuGohxcvycnjueYayck9JQf0loOUqVN9YpnogbaVe9d5S2XaEZB
+	MbcYTM4Syd/KnAbB+C7ghff03WOcb1bQUfnSle5xFy68nIG+E9qLyOBZXFz/D9+DM7oSLcRxU2s
+	wmUOWq0Pg0V0Z0iaONgP5XgejT9Eb/NL5+pXzjgXrJxr9RZHPYhYYp6eYMxNEjSmNELV/tERVJf
+	H7CT1HbT6bET8StHWYFmdB6OIWNd0jPjtOABijB/7jGRNe5mH4TIMWIVMBRnCItsQ+pmojL1x09
+	Z7PcUySigw6YoWcWE0Ycc3qvBOIt5+PDGZAiSnYpcYLPrQoYc6tyaOOzF08Vohabixy0z0jKEbL
+	N6z9YCCtotC5B9CAcqS6LD5kEvIypvRmEhNk=
+X-Google-Smtp-Source: AGHT+IGclUS1k1su+f50C6wj0i365j7X82QoNxAP8m/+UNr7j/+6qGJjOKZSDyUiJpKR/oUHOHZRew==
+X-Received: by 2002:a17:907:9688:b0:ad5:74cd:1824 with SMTP id a640c23a62f3a-addf8e3ecfbmr553565566b.38.1749119934953;
+        Thu, 05 Jun 2025 03:38:54 -0700 (PDT)
+Received: from localhost.localdomain (h082218028181.host.wavenet.at. [82.218.28.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada6ad6ac6bsm1234670866b.169.2025.06.05.03.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 03:38:54 -0700 (PDT)
+From: =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: drbd-dev@lists.linbit.com,
+	linux-kernel@vger.kernel.org,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	linux-block@vger.kernel.org,
+	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
+Subject: [PATCH] drbd: Remove the open-coded page pool
+Date: Thu,  5 Jun 2025 12:38:52 +0200
+Message-ID: <20250605103852.23029-1-christoph.boehmwalder@linbit.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- john.madieu.xa@bp.renesas.com,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250530111917.1495023-1-claudiu.beznea.uj@bp.renesas.com>
- <20250530111917.1495023-5-claudiu.beznea.uj@bp.renesas.com>
- <a58abc2a-6583-d4be-aea2-b2178b2acf60@linux.intel.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <a58abc2a-6583-d4be-aea2-b2178b2acf60@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi, Ilpo,
+From: Philipp Reisner <philipp.reisner@linbit.com>
 
-On 02.06.2025 19:18, Ilpo Järvinen wrote:
-> On Fri, 30 May 2025, Claudiu wrote:
-> 
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->> only as a root complex, with a single-lane (x1) configuration. The
->> controller includes Type 1 configuration registers, as well as IP
->> specific registers (called AXI registers) required for various adjustments.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - dropped the references to other RZ SoCs from patch description
->> - dropped the dot at the end of single line comments that are not a
->>   sentence
->> - as a result of v2 rework removed unused macros and definitions
->>   (e.g. RZG3S_PCI_REQISS_TR_TP1_RD, RZG3S_PCI_REQISS_TR_TP1_WR,
->>   enum rzg3s_pcie_cfg_access_type)
->> - dropped driver specific defines that are for generic PCI
->>   register offsets and used the generic ones
->> - updated the value of RZG3S_PCI_MSI_INT_NR as on RZ/G3S there
->>   are no more than 32 MSIs (v1 value was due to mistake in the
->>   HW manual)
->> - added timeout macros to be used by read_poll_timeout() specific
->>   functions
->> - re-worked the reset handling part by using reset subsystem specific
->>   functions only; with this the struct rzg3s_pcie_soc_data was
->>   added; reference to PHY initialization function was added to this
->>   structure as well
->> - dropped devres_group_id as the issue it tried to address will
->>   now be fixed in platform bus code (v2 posted [2])
->> - use 80 columns alignment
->> - updated function name in the idea of using names similar to
->>   what is used in other drivers
->> - added rzg3s_pcie_root_ops and rzg3s_pcie_child_ops and populate
->>   bridge->ops, bridge->child_ops with it; from probe:
->> +	bridge->ops = &rzg3s_pcie_root_ops;
->> +	bridge->child_ops = &rzg3s_pcie_child_ops;
->> - print a warning for 32 bit accesses (based on the value of
->>   bus->unsafe_warn as done in the common code)
->> - dropped dev_dbg() in read/write functions
->> - added HW manual revision identifier in comments that points to the
->>   statements from manual
->> - reworked the rzg3s_pcie_intx_setup() as the legacy interrupt DT
->>   node is not used anymore
->> - in rzg3s_pcie_config_init() do not hardcode anymore the
->>   primary bus, secondary bus, subordinate bus but get this information
->>   from device tree and update HW registers accordingly
->> - dropped rzg3s_pcie_remove() and added rzg3s_pcie_host_remove_action()
->>   to be used as a devm action or reset function
->> - s/rzg3s_pcie_suspend/rzg3s_pcie_suspend_noirq,
->>   s/rzg3s_pcie_resume/rzg3s_pcie_resume_noirq
->> - dropped DEFINE_NOIRQ_DEV_PM_OPS()
->> - updated driver name (rzg3s-pcie-host) to reflect it is for RZ/G3S 
->>
->> [2] https://lore.kernel.org/all/20250526122054.65532-2-claudiu.beznea.uj@bp.renesas.com
->>
->>  MAINTAINERS                              |    8 +
->>  drivers/pci/controller/Kconfig           |    7 +
->>  drivers/pci/controller/Makefile          |    1 +
->>  drivers/pci/controller/pcie-rzg3s-host.c | 1686 ++++++++++++++++++++++
->>  4 files changed, 1702 insertions(+)
->>  create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 0d59a5910e63..3076065955f0 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -19286,6 +19286,14 @@ S:	Maintained
->>  F:	drivers/pci/controller/dwc/pcie-qcom-common.c
->>  F:	drivers/pci/controller/dwc/pcie-qcom.c
->>  
->> +PCIE DRIVER FOR RENESAS RZ/G3S SERIES
->> +M:	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> +L:	linux-pci@vger.kernel.org
->> +L:	linux-renesas-soc@vger.kernel.org
->> +S:	Supported
->> +F:	Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
->> +F:	drivers/pci/controller/pcie-rzg3s-host.c
->> +
->>  PCIE DRIVER FOR ROCKCHIP
->>  M:	Shawn Lin <shawn.lin@rock-chips.com>
->>  L:	linux-pci@vger.kernel.org
->> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
->> index 886f6f43a895..76fa5f330105 100644
->> --- a/drivers/pci/controller/Kconfig
->> +++ b/drivers/pci/controller/Kconfig
->> @@ -258,6 +258,13 @@ config PCI_RCAR_GEN2
->>  	  There are 3 internal PCI controllers available with a single
->>  	  built-in EHCI/OHCI host controller present on each one.
->>  
->> +config PCIE_RENESAS_RZG3S_HOST
->> +	tristate "Renesas RZ/G3S PCIe host controller"
->> +	depends on ARCH_RENESAS || COMPILE_TEST
->> +	select MFD_SYSCON
->> +	help
->> +	  Say Y here if you want PCIe host controller support on Renesas RZ/G3S SoC.
->> +
->>  config PCIE_ROCKCHIP
->>  	bool
->>  	depends on PCI
->> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
->> index 038ccbd9e3ba..229929a945c2 100644
->> --- a/drivers/pci/controller/Makefile
->> +++ b/drivers/pci/controller/Makefile
->> @@ -10,6 +10,7 @@ obj-$(CONFIG_PCI_TEGRA) += pci-tegra.o
->>  obj-$(CONFIG_PCI_RCAR_GEN2) += pci-rcar-gen2.o
->>  obj-$(CONFIG_PCIE_RCAR_HOST) += pcie-rcar.o pcie-rcar-host.o
->>  obj-$(CONFIG_PCIE_RCAR_EP) += pcie-rcar.o pcie-rcar-ep.o
->> +obj-$(CONFIG_PCIE_RENESAS_RZG3S_HOST) += pcie-rzg3s-host.o
->>  obj-$(CONFIG_PCI_HOST_COMMON) += pci-host-common.o
->>  obj-$(CONFIG_PCI_HOST_GENERIC) += pci-host-generic.o
->>  obj-$(CONFIG_PCI_HOST_THUNDER_ECAM) += pci-thunder-ecam.o
->> diff --git a/drivers/pci/controller/pcie-rzg3s-host.c b/drivers/pci/controller/pcie-rzg3s-host.c
->> new file mode 100644
->> index 000000000000..7649674bf72d
->> --- /dev/null
->> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
->> @@ -0,0 +1,1686 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * PCIe driver for Renesas RZ/G3S SoCs
->> + *
->> + * Copyright (C) 2025 Renesas Electronics Corp.
->> + *
->> + * Based on:
->> + *  drivers/pci/controller/pcie-rcar-host.c
->> + *  Copyright (C) 2009 - 2011  Paul Mundt
->> + */
->> +
->> +#include <linux/bitmap.h>
->> +#include <linux/bitops.h>
->> +#include <linux/cleanup.h>
->> +#include <linux/delay.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqchip/chained_irq.h>
->> +#include <linux/irqdomain.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/msi.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/pci.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/regmap.h>
-> 
-> Do you need to select something REGMAP related in Kconfig?
+If the network stack keeps a reference for too long, DRBD keeps
+references on a higher number of pages as a consequence.
 
-I haven't selected it explicitly as Kconfig selects MFD_SYSCON which
-selects REGMAP_MMIO which selects REGMAP.
+Fix all that by no longer relying on page reference counts dropping to
+an expected value. Instead, DRBD gives up its reference and lets the
+system handle everything else. While at it, remove the open-coded
+custom page pool mechanism and use the page_pool included in the
+kernel.
 
-> 
->> +#include <linux/reset.h>
->> +#include <linux/slab.h>
->> +
->> +/* AXI registers */
->> +#define RZG3S_PCI_REQDATA(id)			(0x80 + (id) * 0x4)
->> +#define RZG3S_PCI_REQRCVDAT			0x8c
->> +#define RZG3S_PCI_REQADR1			0x90
->> +#define RZG3S_PCI_REQADR1_BUS			GENMASK(31, 24)
->> +#define RZG3S_PCI_REQADR1_DEV			GENMASK(23, 19)
->> +#define RZG3S_PCI_REQADR1_FUNC			GENMASK(18, 16)
->> +#define RZG3S_PCI_REQADR1_REG			GENMASK(11, 0)
-> 
-> Consider adding new lines into this long list of defines. E.g., when there 
-> are reg + it's fields which naturally form a group that could have empty 
-> lines around it.
+Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
+Signed-off-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+---
+ drivers/block/drbd/drbd_int.h      |  39 +----
+ drivers/block/drbd/drbd_main.c     |  59 ++-----
+ drivers/block/drbd/drbd_receiver.c | 264 ++++-------------------------
+ drivers/block/drbd/drbd_worker.c   |  56 ++----
+ 4 files changed, 71 insertions(+), 347 deletions(-)
 
-Ok, I'll consider it but it will lead to some inconsistencies accross
-different defines in this list as there will be new lines after some
-defines only. If I understood correctly your proposal, the result will be
-something like this:
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index e21492981f7d..f6d6276974ee 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -380,6 +380,9 @@ enum {
+ 	/* this is/was a write request */
+ 	__EE_WRITE,
+ 
++	/* hand back using mempool_free(e, drbd_buffer_page_pool) */
++	__EE_RELEASE_TO_MEMPOOL,
++
+ 	/* this is/was a write same request */
+ 	__EE_WRITE_SAME,
+ 
+@@ -402,6 +405,7 @@ enum {
+ #define EE_IN_INTERVAL_TREE	(1<<__EE_IN_INTERVAL_TREE)
+ #define EE_SUBMITTED		(1<<__EE_SUBMITTED)
+ #define EE_WRITE		(1<<__EE_WRITE)
++#define EE_RELEASE_TO_MEMPOOL	(1<<__EE_RELEASE_TO_MEMPOOL)
+ #define EE_WRITE_SAME		(1<<__EE_WRITE_SAME)
+ #define EE_APPLICATION		(1<<__EE_APPLICATION)
+ #define EE_RS_THIN_REQ		(1<<__EE_RS_THIN_REQ)
+@@ -858,7 +862,6 @@ struct drbd_device {
+ 	struct list_head sync_ee;   /* IO in progress (P_RS_DATA_REPLY gets written to disk) */
+ 	struct list_head done_ee;   /* need to send P_WRITE_ACK */
+ 	struct list_head read_ee;   /* [RS]P_DATA_REQUEST being read */
+-	struct list_head net_ee;    /* zero-copy network send in progress */
+ 
+ 	struct list_head resync_reads;
+ 	atomic_t pp_in_use;		/* allocated from page pool */
+@@ -1329,24 +1332,6 @@ extern struct kmem_cache *drbd_al_ext_cache;	/* activity log extents */
+ extern mempool_t drbd_request_mempool;
+ extern mempool_t drbd_ee_mempool;
+ 
+-/* drbd's page pool, used to buffer data received from the peer,
+- * or data requested by the peer.
+- *
+- * This does not have an emergency reserve.
+- *
+- * When allocating from this pool, it first takes pages from the pool.
+- * Only if the pool is depleted will try to allocate from the system.
+- *
+- * The assumption is that pages taken from this pool will be processed,
+- * and given back, "quickly", and then can be recycled, so we can avoid
+- * frequent calls to alloc_page(), and still will be able to make progress even
+- * under memory pressure.
+- */
+-extern struct page *drbd_pp_pool;
+-extern spinlock_t   drbd_pp_lock;
+-extern int	    drbd_pp_vacant;
+-extern wait_queue_head_t drbd_pp_wait;
+-
+ /* We also need a standard (emergency-reserve backed) page pool
+  * for meta data IO (activity log, bitmap).
+  * We can keep it global, as long as it is used as "N pages at a time".
+@@ -1354,6 +1339,7 @@ extern wait_queue_head_t drbd_pp_wait;
+  */
+ #define DRBD_MIN_POOL_PAGES	128
+ extern mempool_t drbd_md_io_page_pool;
++extern mempool_t drbd_buffer_page_pool;
+ 
+ /* We also need to make sure we get a bio
+  * when we need it for housekeeping purposes */
+@@ -1488,10 +1474,7 @@ extern struct drbd_peer_request *drbd_alloc_peer_req(struct drbd_peer_device *,
+ 						     sector_t, unsigned int,
+ 						     unsigned int,
+ 						     gfp_t) __must_hold(local);
+-extern void __drbd_free_peer_req(struct drbd_device *, struct drbd_peer_request *,
+-				 int);
+-#define drbd_free_peer_req(m,e) __drbd_free_peer_req(m, e, 0)
+-#define drbd_free_net_peer_req(m,e) __drbd_free_peer_req(m, e, 1)
++extern void drbd_free_peer_req(struct drbd_device *device, struct drbd_peer_request *req);
+ extern struct page *drbd_alloc_pages(struct drbd_peer_device *, unsigned int, bool);
+ extern void _drbd_clear_done_ee(struct drbd_device *device, struct list_head *to_be_freed);
+ extern int drbd_connected(struct drbd_peer_device *);
+@@ -1610,16 +1593,6 @@ static inline struct page *page_chain_next(struct page *page)
+ 	for (; page && ({ n = page_chain_next(page); 1; }); page = n)
+ 
+ 
+-static inline int drbd_peer_req_has_active_page(struct drbd_peer_request *peer_req)
+-{
+-	struct page *page = peer_req->pages;
+-	page_chain_for_each(page) {
+-		if (page_count(page) > 1)
+-			return 1;
+-	}
+-	return 0;
+-}
+-
+ static inline union drbd_state drbd_read_state(struct drbd_device *device)
+ {
+ 	struct drbd_resource *resource = device->resource;
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index ced2cc5f46f2..96ab63896e90 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -114,20 +114,10 @@ struct kmem_cache *drbd_al_ext_cache;	/* activity log extents */
+ mempool_t drbd_request_mempool;
+ mempool_t drbd_ee_mempool;
+ mempool_t drbd_md_io_page_pool;
++mempool_t drbd_buffer_page_pool;
+ struct bio_set drbd_md_io_bio_set;
+ struct bio_set drbd_io_bio_set;
+ 
+-/* I do not use a standard mempool, because:
+-   1) I want to hand out the pre-allocated objects first.
+-   2) I want to be able to interrupt sleeping allocation with a signal.
+-   Note: This is a single linked list, the next pointer is the private
+-	 member of struct page.
+- */
+-struct page *drbd_pp_pool;
+-DEFINE_SPINLOCK(drbd_pp_lock);
+-int          drbd_pp_vacant;
+-wait_queue_head_t drbd_pp_wait;
+-
+ DEFINE_RATELIMIT_STATE(drbd_ratelimit_state, 5 * HZ, 5);
+ 
+ static const struct block_device_operations drbd_ops = {
+@@ -1611,6 +1601,7 @@ static int _drbd_send_zc_bio(struct drbd_peer_device *peer_device, struct bio *b
+ static int _drbd_send_zc_ee(struct drbd_peer_device *peer_device,
+ 			    struct drbd_peer_request *peer_req)
+ {
++	bool use_sendpage = !(peer_req->flags & EE_RELEASE_TO_MEMPOOL);
+ 	struct page *page = peer_req->pages;
+ 	unsigned len = peer_req->i.size;
+ 	int err;
+@@ -1619,8 +1610,13 @@ static int _drbd_send_zc_ee(struct drbd_peer_device *peer_device,
+ 	page_chain_for_each(page) {
+ 		unsigned l = min_t(unsigned, len, PAGE_SIZE);
+ 
+-		err = _drbd_send_page(peer_device, page, 0, l,
+-				      page_chain_next(page) ? MSG_MORE : 0);
++		if (likely(use_sendpage))
++			err = _drbd_send_page(peer_device, page, 0, l,
++					      page_chain_next(page) ? MSG_MORE : 0);
++		else
++			err = _drbd_no_send_page(peer_device, page, 0, l,
++						 page_chain_next(page) ? MSG_MORE : 0);
++
+ 		if (err)
+ 			return err;
+ 		len -= l;
+@@ -1962,7 +1958,6 @@ void drbd_init_set_defaults(struct drbd_device *device)
+ 	INIT_LIST_HEAD(&device->sync_ee);
+ 	INIT_LIST_HEAD(&device->done_ee);
+ 	INIT_LIST_HEAD(&device->read_ee);
+-	INIT_LIST_HEAD(&device->net_ee);
+ 	INIT_LIST_HEAD(&device->resync_reads);
+ 	INIT_LIST_HEAD(&device->resync_work.list);
+ 	INIT_LIST_HEAD(&device->unplug_work.list);
+@@ -2043,7 +2038,6 @@ void drbd_device_cleanup(struct drbd_device *device)
+ 	D_ASSERT(device, list_empty(&device->sync_ee));
+ 	D_ASSERT(device, list_empty(&device->done_ee));
+ 	D_ASSERT(device, list_empty(&device->read_ee));
+-	D_ASSERT(device, list_empty(&device->net_ee));
+ 	D_ASSERT(device, list_empty(&device->resync_reads));
+ 	D_ASSERT(device, list_empty(&first_peer_device(device)->connection->sender_work.q));
+ 	D_ASSERT(device, list_empty(&device->resync_work.list));
+@@ -2055,19 +2049,11 @@ void drbd_device_cleanup(struct drbd_device *device)
+ 
+ static void drbd_destroy_mempools(void)
+ {
+-	struct page *page;
+-
+-	while (drbd_pp_pool) {
+-		page = drbd_pp_pool;
+-		drbd_pp_pool = (struct page *)page_private(page);
+-		__free_page(page);
+-		drbd_pp_vacant--;
+-	}
+-
+ 	/* D_ASSERT(device, atomic_read(&drbd_pp_vacant)==0); */
+ 
+ 	bioset_exit(&drbd_io_bio_set);
+ 	bioset_exit(&drbd_md_io_bio_set);
++	mempool_exit(&drbd_buffer_page_pool);
+ 	mempool_exit(&drbd_md_io_page_pool);
+ 	mempool_exit(&drbd_ee_mempool);
+ 	mempool_exit(&drbd_request_mempool);
+@@ -2086,9 +2072,8 @@ static void drbd_destroy_mempools(void)
+ 
+ static int drbd_create_mempools(void)
+ {
+-	struct page *page;
+ 	const int number = (DRBD_MAX_BIO_SIZE/PAGE_SIZE) * drbd_minor_count;
+-	int i, ret;
++	int ret;
+ 
+ 	/* caches */
+ 	drbd_request_cache = kmem_cache_create(
+@@ -2125,6 +2110,10 @@ static int drbd_create_mempools(void)
+ 	if (ret)
+ 		goto Enomem;
+ 
++	ret = mempool_init_page_pool(&drbd_buffer_page_pool, number, 0);
++	if (ret)
++		goto Enomem;
++
+ 	ret = mempool_init_slab_pool(&drbd_request_mempool, number,
+ 				     drbd_request_cache);
+ 	if (ret)
+@@ -2134,15 +2123,6 @@ static int drbd_create_mempools(void)
+ 	if (ret)
+ 		goto Enomem;
+ 
+-	for (i = 0; i < number; i++) {
+-		page = alloc_page(GFP_HIGHUSER);
+-		if (!page)
+-			goto Enomem;
+-		set_page_private(page, (unsigned long)drbd_pp_pool);
+-		drbd_pp_pool = page;
+-	}
+-	drbd_pp_vacant = number;
+-
+ 	return 0;
+ 
+ Enomem:
+@@ -2169,10 +2149,6 @@ static void drbd_release_all_peer_reqs(struct drbd_device *device)
+ 	rr = drbd_free_peer_reqs(device, &device->done_ee);
+ 	if (rr)
+ 		drbd_err(device, "%d EEs in done list found!\n", rr);
+-
+-	rr = drbd_free_peer_reqs(device, &device->net_ee);
+-	if (rr)
+-		drbd_err(device, "%d EEs in net list found!\n", rr);
+ }
+ 
+ /* caution. no locking. */
+@@ -2863,11 +2839,6 @@ static int __init drbd_init(void)
+ 		return err;
+ 	}
+ 
+-	/*
+-	 * allocate all necessary structs
+-	 */
+-	init_waitqueue_head(&drbd_pp_wait);
+-
+ 	drbd_proc = NULL; /* play safe for drbd_cleanup */
+ 	idr_init(&drbd_devices);
+ 
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index e5a2e5f7887b..fe3d0521de0b 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -33,6 +33,7 @@
+ #include <linux/string.h>
+ #include <linux/scatterlist.h>
+ #include <linux/part_stat.h>
++#include <linux/mempool.h>
+ #include "drbd_int.h"
+ #include "drbd_protocol.h"
+ #include "drbd_req.h"
+@@ -63,182 +64,31 @@ static int e_end_block(struct drbd_work *, int);
+ 
+ #define GFP_TRY	(__GFP_HIGHMEM | __GFP_NOWARN)
+ 
+-/*
+- * some helper functions to deal with single linked page lists,
+- * page->private being our "next" pointer.
+- */
+-
+-/* If at least n pages are linked at head, get n pages off.
+- * Otherwise, don't modify head, and return NULL.
+- * Locking is the responsibility of the caller.
+- */
+-static struct page *page_chain_del(struct page **head, int n)
+-{
+-	struct page *page;
+-	struct page *tmp;
+-
+-	BUG_ON(!n);
+-	BUG_ON(!head);
+-
+-	page = *head;
+-
+-	if (!page)
+-		return NULL;
+-
+-	while (page) {
+-		tmp = page_chain_next(page);
+-		if (--n == 0)
+-			break; /* found sufficient pages */
+-		if (tmp == NULL)
+-			/* insufficient pages, don't use any of them. */
+-			return NULL;
+-		page = tmp;
+-	}
+-
+-	/* add end of list marker for the returned list */
+-	set_page_private(page, 0);
+-	/* actual return value, and adjustment of head */
+-	page = *head;
+-	*head = tmp;
+-	return page;
+-}
+-
+-/* may be used outside of locks to find the tail of a (usually short)
+- * "private" page chain, before adding it back to a global chain head
+- * with page_chain_add() under a spinlock. */
+-static struct page *page_chain_tail(struct page *page, int *len)
+-{
+-	struct page *tmp;
+-	int i = 1;
+-	while ((tmp = page_chain_next(page))) {
+-		++i;
+-		page = tmp;
+-	}
+-	if (len)
+-		*len = i;
+-	return page;
+-}
+-
+-static int page_chain_free(struct page *page)
+-{
+-	struct page *tmp;
+-	int i = 0;
+-	page_chain_for_each_safe(page, tmp) {
+-		put_page(page);
+-		++i;
+-	}
+-	return i;
+-}
+-
+-static void page_chain_add(struct page **head,
+-		struct page *chain_first, struct page *chain_last)
+-{
+-#if 1
+-	struct page *tmp;
+-	tmp = page_chain_tail(chain_first, NULL);
+-	BUG_ON(tmp != chain_last);
+-#endif
+-
+-	/* add chain to head */
+-	set_page_private(chain_last, (unsigned long)*head);
+-	*head = chain_first;
+-}
+-
+-static struct page *__drbd_alloc_pages(struct drbd_device *device,
+-				       unsigned int number)
++static struct page *__drbd_alloc_pages(unsigned int number)
+ {
+ 	struct page *page = NULL;
+ 	struct page *tmp = NULL;
+ 	unsigned int i = 0;
+ 
+-	/* Yes, testing drbd_pp_vacant outside the lock is racy.
+-	 * So what. It saves a spin_lock. */
+-	if (drbd_pp_vacant >= number) {
+-		spin_lock(&drbd_pp_lock);
+-		page = page_chain_del(&drbd_pp_pool, number);
+-		if (page)
+-			drbd_pp_vacant -= number;
+-		spin_unlock(&drbd_pp_lock);
+-		if (page)
+-			return page;
+-	}
+-
+ 	/* GFP_TRY, because we must not cause arbitrary write-out: in a DRBD
+ 	 * "criss-cross" setup, that might cause write-out on some other DRBD,
+ 	 * which in turn might block on the other node at this very place.  */
+ 	for (i = 0; i < number; i++) {
+-		tmp = alloc_page(GFP_TRY);
++		tmp = mempool_alloc(&drbd_buffer_page_pool, GFP_TRY);
+ 		if (!tmp)
+-			break;
++			goto fail;
+ 		set_page_private(tmp, (unsigned long)page);
+ 		page = tmp;
+ 	}
+-
+-	if (i == number)
+-		return page;
+-
+-	/* Not enough pages immediately available this time.
+-	 * No need to jump around here, drbd_alloc_pages will retry this
+-	 * function "soon". */
+-	if (page) {
+-		tmp = page_chain_tail(page, NULL);
+-		spin_lock(&drbd_pp_lock);
+-		page_chain_add(&drbd_pp_pool, page, tmp);
+-		drbd_pp_vacant += i;
+-		spin_unlock(&drbd_pp_lock);
++	return page;
++fail:
++	page_chain_for_each_safe(page, tmp) {
++		set_page_private(page, 0);
++		mempool_free(page, &drbd_buffer_page_pool);
+ 	}
+ 	return NULL;
+ }
+ 
+-static void reclaim_finished_net_peer_reqs(struct drbd_device *device,
+-					   struct list_head *to_be_freed)
+-{
+-	struct drbd_peer_request *peer_req, *tmp;
+-
+-	/* The EEs are always appended to the end of the list. Since
+-	   they are sent in order over the wire, they have to finish
+-	   in order. As soon as we see the first not finished we can
+-	   stop to examine the list... */
+-
+-	list_for_each_entry_safe(peer_req, tmp, &device->net_ee, w.list) {
+-		if (drbd_peer_req_has_active_page(peer_req))
+-			break;
+-		list_move(&peer_req->w.list, to_be_freed);
+-	}
+-}
+-
+-static void drbd_reclaim_net_peer_reqs(struct drbd_device *device)
+-{
+-	LIST_HEAD(reclaimed);
+-	struct drbd_peer_request *peer_req, *t;
+-
+-	spin_lock_irq(&device->resource->req_lock);
+-	reclaim_finished_net_peer_reqs(device, &reclaimed);
+-	spin_unlock_irq(&device->resource->req_lock);
+-	list_for_each_entry_safe(peer_req, t, &reclaimed, w.list)
+-		drbd_free_net_peer_req(device, peer_req);
+-}
+-
+-static void conn_reclaim_net_peer_reqs(struct drbd_connection *connection)
+-{
+-	struct drbd_peer_device *peer_device;
+-	int vnr;
+-
+-	rcu_read_lock();
+-	idr_for_each_entry(&connection->peer_devices, peer_device, vnr) {
+-		struct drbd_device *device = peer_device->device;
+-		if (!atomic_read(&device->pp_in_use_by_net))
+-			continue;
+-
+-		kref_get(&device->kref);
+-		rcu_read_unlock();
+-		drbd_reclaim_net_peer_reqs(device);
+-		kref_put(&device->kref, drbd_destroy_device);
+-		rcu_read_lock();
+-	}
+-	rcu_read_unlock();
+-}
+-
+ /**
+  * drbd_alloc_pages() - Returns @number pages, retries forever (or until signalled)
+  * @peer_device:	DRBD device.
+@@ -263,9 +113,8 @@ struct page *drbd_alloc_pages(struct drbd_peer_device *peer_device, unsigned int
+ 			      bool retry)
+ {
+ 	struct drbd_device *device = peer_device->device;
+-	struct page *page = NULL;
++	struct page *page;
+ 	struct net_conf *nc;
+-	DEFINE_WAIT(wait);
+ 	unsigned int mxb;
+ 
+ 	rcu_read_lock();
+@@ -273,37 +122,9 @@ struct page *drbd_alloc_pages(struct drbd_peer_device *peer_device, unsigned int
+ 	mxb = nc ? nc->max_buffers : 1000000;
+ 	rcu_read_unlock();
+ 
+-	if (atomic_read(&device->pp_in_use) < mxb)
+-		page = __drbd_alloc_pages(device, number);
+-
+-	/* Try to keep the fast path fast, but occasionally we need
+-	 * to reclaim the pages we lended to the network stack. */
+-	if (page && atomic_read(&device->pp_in_use_by_net) > 512)
+-		drbd_reclaim_net_peer_reqs(device);
+-
+-	while (page == NULL) {
+-		prepare_to_wait(&drbd_pp_wait, &wait, TASK_INTERRUPTIBLE);
+-
+-		drbd_reclaim_net_peer_reqs(device);
+-
+-		if (atomic_read(&device->pp_in_use) < mxb) {
+-			page = __drbd_alloc_pages(device, number);
+-			if (page)
+-				break;
+-		}
+-
+-		if (!retry)
+-			break;
+-
+-		if (signal_pending(current)) {
+-			drbd_warn(device, "drbd_alloc_pages interrupted!\n");
+-			break;
+-		}
+-
+-		if (schedule_timeout(HZ/10) == 0)
+-			mxb = UINT_MAX;
+-	}
+-	finish_wait(&drbd_pp_wait, &wait);
++	if (atomic_read(&device->pp_in_use) >= mxb)
++		schedule_timeout_interruptible(HZ / 10);
++	page = __drbd_alloc_pages(number);
+ 
+ 	if (page)
+ 		atomic_add(number, &device->pp_in_use);
+@@ -314,29 +135,25 @@ struct page *drbd_alloc_pages(struct drbd_peer_device *peer_device, unsigned int
+  * Is also used from inside an other spin_lock_irq(&resource->req_lock);
+  * Either links the page chain back to the global pool,
+  * or returns all pages to the system. */
+-static void drbd_free_pages(struct drbd_device *device, struct page *page, int is_net)
++static void drbd_free_pages(struct drbd_device *device, struct page *page)
+ {
+-	atomic_t *a = is_net ? &device->pp_in_use_by_net : &device->pp_in_use;
+-	int i;
++	struct page *tmp;
++	int i = 0;
+ 
+ 	if (page == NULL)
+ 		return;
+ 
+-	if (drbd_pp_vacant > (DRBD_MAX_BIO_SIZE/PAGE_SIZE) * drbd_minor_count)
+-		i = page_chain_free(page);
+-	else {
+-		struct page *tmp;
+-		tmp = page_chain_tail(page, &i);
+-		spin_lock(&drbd_pp_lock);
+-		page_chain_add(&drbd_pp_pool, page, tmp);
+-		drbd_pp_vacant += i;
+-		spin_unlock(&drbd_pp_lock);
+-	}
+-	i = atomic_sub_return(i, a);
++	page_chain_for_each_safe(page, tmp) {
++		set_page_private(page, 0);
++		if (page_count(page) == 1)
++			mempool_free(page, &drbd_buffer_page_pool);
++		else
++			put_page(page);
++		i++;
++	}
++	i = atomic_sub_return(i, &device->pp_in_use);
+ 	if (i < 0)
+-		drbd_warn(device, "ASSERTION FAILED: %s: %d < 0\n",
+-			is_net ? "pp_in_use_by_net" : "pp_in_use", i);
+-	wake_up(&drbd_pp_wait);
++		drbd_warn(device, "ASSERTION FAILED: pp_in_use: %d < 0\n", i);
+ }
+ 
+ /*
+@@ -380,6 +197,8 @@ drbd_alloc_peer_req(struct drbd_peer_device *peer_device, u64 id, sector_t secto
+ 					gfpflags_allow_blocking(gfp_mask));
+ 		if (!page)
+ 			goto fail;
++		if (!mempool_is_saturated(&drbd_buffer_page_pool))
++			peer_req->flags |= EE_RELEASE_TO_MEMPOOL;
+ 	}
+ 
+ 	memset(peer_req, 0, sizeof(*peer_req));
+@@ -403,13 +222,12 @@ drbd_alloc_peer_req(struct drbd_peer_device *peer_device, u64 id, sector_t secto
+ 	return NULL;
+ }
+ 
+-void __drbd_free_peer_req(struct drbd_device *device, struct drbd_peer_request *peer_req,
+-		       int is_net)
++void drbd_free_peer_req(struct drbd_device *device, struct drbd_peer_request *peer_req)
+ {
+ 	might_sleep();
+ 	if (peer_req->flags & EE_HAS_DIGEST)
+ 		kfree(peer_req->digest);
+-	drbd_free_pages(device, peer_req->pages, is_net);
++	drbd_free_pages(device, peer_req->pages);
+ 	D_ASSERT(device, atomic_read(&peer_req->pending_bios) == 0);
+ 	D_ASSERT(device, drbd_interval_empty(&peer_req->i));
+ 	if (!expect(device, !(peer_req->flags & EE_CALL_AL_COMPLETE_IO))) {
+@@ -424,14 +242,13 @@ int drbd_free_peer_reqs(struct drbd_device *device, struct list_head *list)
+ 	LIST_HEAD(work_list);
+ 	struct drbd_peer_request *peer_req, *t;
+ 	int count = 0;
+-	int is_net = list == &device->net_ee;
+ 
+ 	spin_lock_irq(&device->resource->req_lock);
+ 	list_splice_init(list, &work_list);
+ 	spin_unlock_irq(&device->resource->req_lock);
+ 
+ 	list_for_each_entry_safe(peer_req, t, &work_list, w.list) {
+-		__drbd_free_peer_req(device, peer_req, is_net);
++		drbd_free_peer_req(device, peer_req);
+ 		count++;
+ 	}
+ 	return count;
+@@ -443,18 +260,13 @@ int drbd_free_peer_reqs(struct drbd_device *device, struct list_head *list)
+ static int drbd_finish_peer_reqs(struct drbd_device *device)
+ {
+ 	LIST_HEAD(work_list);
+-	LIST_HEAD(reclaimed);
+ 	struct drbd_peer_request *peer_req, *t;
+ 	int err = 0;
+ 
+ 	spin_lock_irq(&device->resource->req_lock);
+-	reclaim_finished_net_peer_reqs(device, &reclaimed);
+ 	list_splice_init(&device->done_ee, &work_list);
+ 	spin_unlock_irq(&device->resource->req_lock);
+ 
+-	list_for_each_entry_safe(peer_req, t, &reclaimed, w.list)
+-		drbd_free_net_peer_req(device, peer_req);
+-
+ 	/* possible callbacks here:
+ 	 * e_end_block, and e_end_resync_block, e_send_superseded.
+ 	 * all ignore the last argument.
+@@ -1975,7 +1787,7 @@ static int drbd_drain_block(struct drbd_peer_device *peer_device, int data_size)
+ 		data_size -= len;
+ 	}
+ 	kunmap(page);
+-	drbd_free_pages(peer_device->device, page, 0);
++	drbd_free_pages(peer_device->device, page);
+ 	return err;
+ }
+ 
+@@ -5220,16 +5032,6 @@ static int drbd_disconnected(struct drbd_peer_device *peer_device)
+ 		put_ldev(device);
+ 	}
+ 
+-	/* tcp_close and release of sendpage pages can be deferred.  I don't
+-	 * want to use SO_LINGER, because apparently it can be deferred for
+-	 * more than 20 seconds (longest time I checked).
+-	 *
+-	 * Actually we don't care for exactly when the network stack does its
+-	 * put_page(), but release our reference on these pages right here.
+-	 */
+-	i = drbd_free_peer_reqs(device, &device->net_ee);
+-	if (i)
+-		drbd_info(device, "net_ee not empty, killed %u entries\n", i);
+ 	i = atomic_read(&device->pp_in_use_by_net);
+ 	if (i)
+ 		drbd_info(device, "pp_in_use_by_net = %d, expected 0\n", i);
+@@ -5976,8 +5778,6 @@ int drbd_ack_receiver(struct drbd_thread *thi)
+ 	while (get_t_state(thi) == RUNNING) {
+ 		drbd_thread_current_set_cpu(thi);
+ 
+-		conn_reclaim_net_peer_reqs(connection);
+-
+ 		if (test_and_clear_bit(SEND_PING, &connection->flags)) {
+ 			if (drbd_send_ping(connection)) {
+ 				drbd_err(connection, "drbd_send_ping has failed\n");
+diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+index 4352a50fbb3f..d74064bb64be 100644
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -1029,22 +1029,6 @@ int drbd_resync_finished(struct drbd_peer_device *peer_device)
+ 	return 1;
+ }
+ 
+-/* helper */
+-static void move_to_net_ee_or_free(struct drbd_device *device, struct drbd_peer_request *peer_req)
+-{
+-	if (drbd_peer_req_has_active_page(peer_req)) {
+-		/* This might happen if sendpage() has not finished */
+-		int i = PFN_UP(peer_req->i.size);
+-		atomic_add(i, &device->pp_in_use_by_net);
+-		atomic_sub(i, &device->pp_in_use);
+-		spin_lock_irq(&device->resource->req_lock);
+-		list_add_tail(&peer_req->w.list, &device->net_ee);
+-		spin_unlock_irq(&device->resource->req_lock);
+-		wake_up(&drbd_pp_wait);
+-	} else
+-		drbd_free_peer_req(device, peer_req);
+-}
+-
+ /**
+  * w_e_end_data_req() - Worker callback, to send a P_DATA_REPLY packet in response to a P_DATA_REQUEST
+  * @w:		work object.
+@@ -1058,9 +1042,8 @@ int w_e_end_data_req(struct drbd_work *w, int cancel)
+ 	int err;
+ 
+ 	if (unlikely(cancel)) {
+-		drbd_free_peer_req(device, peer_req);
+-		dec_unacked(device);
+-		return 0;
++		err = 0;
++		goto out;
+ 	}
+ 
+ 	if (likely((peer_req->flags & EE_WAS_ERROR) == 0)) {
+@@ -1073,12 +1056,12 @@ int w_e_end_data_req(struct drbd_work *w, int cancel)
+ 		err = drbd_send_ack(peer_device, P_NEG_DREPLY, peer_req);
+ 	}
+ 
+-	dec_unacked(device);
+-
+-	move_to_net_ee_or_free(device, peer_req);
+-
+ 	if (unlikely(err))
+ 		drbd_err(device, "drbd_send_block() failed\n");
++out:
++	dec_unacked(device);
++	drbd_free_peer_req(device, peer_req);
++
+ 	return err;
+ }
+ 
+@@ -1119,9 +1102,8 @@ int w_e_end_rsdata_req(struct drbd_work *w, int cancel)
+ 	int err;
+ 
+ 	if (unlikely(cancel)) {
+-		drbd_free_peer_req(device, peer_req);
+-		dec_unacked(device);
+-		return 0;
++		err = 0;
++		goto out;
+ 	}
+ 
+ 	if (get_ldev_if_state(device, D_FAILED)) {
+@@ -1154,13 +1136,12 @@ int w_e_end_rsdata_req(struct drbd_work *w, int cancel)
+ 		/* update resync data with failure */
+ 		drbd_rs_failed_io(peer_device, peer_req->i.sector, peer_req->i.size);
+ 	}
+-
+-	dec_unacked(device);
+-
+-	move_to_net_ee_or_free(device, peer_req);
+-
+ 	if (unlikely(err))
+ 		drbd_err(device, "drbd_send_block() failed\n");
++out:
++	dec_unacked(device);
++	drbd_free_peer_req(device, peer_req);
++
+ 	return err;
+ }
+ 
+@@ -1175,9 +1156,8 @@ int w_e_end_csum_rs_req(struct drbd_work *w, int cancel)
+ 	int err, eq = 0;
+ 
+ 	if (unlikely(cancel)) {
+-		drbd_free_peer_req(device, peer_req);
+-		dec_unacked(device);
+-		return 0;
++		err = 0;
++		goto out;
+ 	}
+ 
+ 	if (get_ldev(device)) {
+@@ -1219,12 +1199,12 @@ int w_e_end_csum_rs_req(struct drbd_work *w, int cancel)
+ 		if (drbd_ratelimit())
+ 			drbd_err(device, "Sending NegDReply. I guess it gets messy.\n");
+ 	}
+-
+-	dec_unacked(device);
+-	move_to_net_ee_or_free(device, peer_req);
+-
+ 	if (unlikely(err))
+ 		drbd_err(device, "drbd_send_block/ack() failed\n");
++out:
++	dec_unacked(device);
++	drbd_free_peer_req(device, peer_req);
++
+ 	return err;
+ }
+ 
 
-+#define RZG3S_PCI_REQISS			0x9c
-+#define RZG3S_PCI_REQISS_REQ_ISSUE		BIT(0)
-+#define RZG3S_PCI_REQISS_TR_TYPE		GENMASK(11, 8)
-+#define RZG3S_PCI_REQISS_TR_TP0_RD		FIELD_PREP(RZG3S_PCI_REQISS_TR_TYPE, 0x4)
-+#define RZG3S_PCI_REQISS_TR_TP0_WR		FIELD_PREP(RZG3S_PCI_REQISS_TR_TYPE, 0x5)
-+#define RZG3S_PCI_REQISS_MOR_STATUS		GENMASK(18, 16)
+base-commit: b02f5eedbcabe6e1982fdd7ff3f0ac5d1fddc68f
+-- 
+2.49.0
 
-+#define RZG3S_PCI_MSIRCVWADRL			0x100
-+#define RZG3S_PCI_MSIRCVWADRL_ENA		BIT(0)
-+#define RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA	BIT(1)
-
-+#define RZG3S_PCI_MSIRCVWADRU			0x104
-+#define RZG3S_PCI_MSIRCVWMSKL			0x108
-+#define RZG3S_PCI_MSIRCVWMSKU			0x10c
-+#define RZG3S_PCI_PINTRCVIE			0x110
-+#define RZG3S_PCI_PINTRCVIE_INTX(i)		BIT(i)
-+#define RZG3S_PCI_PINTRCVIE_MSI			BIT(4)
-
-+#define RZG3S_PCI_PINTRCVIS			0x114
-+#define RZG3S_PCI_PINTRCVIS_INTX(i)		BIT(i)
-
-
-> 
->> +#define RZG3S_PCI_REQBE				0x98
->> +#define RZG3S_PCI_REQBE_BYTE_EN			GENMASK(3, 0)
->> +#define RZG3S_PCI_REQISS			0x9c
->> +#define RZG3S_PCI_REQISS_REQ_ISSUE		BIT(0)
->> +#define RZG3S_PCI_REQISS_TR_TYPE		GENMASK(11, 8)
->> +#define RZG3S_PCI_REQISS_TR_TP0_RD		FIELD_PREP(RZG3S_PCI_REQISS_TR_TYPE, 0x4)
->> +#define RZG3S_PCI_REQISS_TR_TP0_WR		FIELD_PREP(RZG3S_PCI_REQISS_TR_TYPE, 0x5)
->> +#define RZG3S_PCI_REQISS_MOR_STATUS		GENMASK(18, 16)
->> +#define RZG3S_PCI_MSIRCVWADRL			0x100
->> +#define RZG3S_PCI_MSIRCVWADRL_ENA		BIT(0)
->> +#define RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA	BIT(1)
->> +#define RZG3S_PCI_MSIRCVWADRU			0x104
->> +#define RZG3S_PCI_MSIRCVWMSKL			0x108
->> +#define RZG3S_PCI_MSIRCVWMSKU			0x10c
->> +#define RZG3S_PCI_PINTRCVIE			0x110
->> +#define RZG3S_PCI_PINTRCVIE_INTX(i)		BIT(i)
->> +#define RZG3S_PCI_PINTRCVIE_MSI			BIT(4)
->> +#define RZG3S_PCI_PINTRCVIS			0x114
->> +#define RZG3S_PCI_PINTRCVIS_INTX(i)		BIT(i)
->> +#define RZG3S_PCI_PINTRCVIS_MSI			BIT(4)
->> +#define RZG3S_PCI_MSGRCVIE			0x120
->> +#define RZG3S_PCI_MSGRCVIE_MSG_RCV		BIT(24)
->> +#define RZG3S_PCI_MSGRCVIS			0x124
->> +#define RZG3S_PCI_MSGRCVIS_MRI			BIT(24)
->> +#define RZG3S_PCI_PEIE0				0x200
->> +#define RZG3S_PCI_PEIS0				0x204
->> +#define RZG3S_PCI_PEIS0_DL_UPDOWN		BIT(9)
->> +#define RZG3S_PCI_PEIS0_RX_DLLP_PM_ENTER	BIT(12)
->> +#define RZG3S_PCI_PEIE1				0x208
->> +#define RZG3S_PCI_PEIS1				0x20c
->> +#define RZG3S_PCI_AMEIE				0x210
->> +#define RZG3S_PCI_AMEIS				0x214
->> +#define RZG3S_PCI_ASEIE1			0x220
->> +#define RZG3S_PCI_ASEIS1			0x224
->> +#define RZG3S_PCI_PCSTAT1			0x408
->> +#define RZG3S_PCI_PCSTAT1_DL_DOWN_STS		BIT(0)
->> +#define RZG3S_PCI_PCSTAT1_LTSSM_STATE		GENMASK(14, 10)
->> +#define RZG3S_PCI_PCCTRL2			0x410
->> +#define RZG3S_PCI_PCCTRL2_LS_CHG_REQ		BIT(0)
->> +#define RZG3S_PCI_PCCTRL2_LS_CHG		GENMASK(9, 8)
->> +#define RZG3S_PCI_PCSTAT2			0x414
->> +#define RZG3S_PCI_PCSTAT2_STATE_RX_DETECT	GENMASK(15, 8)
->> +#define RZG3S_PCI_PCSTAT2_SDRIRE		GENMASK(7, 0)
->> +#define RZG3S_PCI_PCSTAT2_LS_CHG_DONE		BIT(28)
->> +#define RZG3S_PCI_PERM				0x300
->> +#define RZG3S_PCI_PERM_PIPE_PHY_REG_EN		BIT(1)
->> +#define RZG3S_PCI_PERM_CFG_HWINIT_EN		BIT(2)
->> +#define RZG3S_PCI_MSIRE(id)			(0x600 + (id) * 0x10)
->> +#define RZG3S_PCI_MSIRE_ENA			BIT(0)
->> +#define RZG3S_PCI_MSIRM(id)			(0x608 + (id) * 0x10)
->> +#define RZG3S_PCI_MSIRS(id)			(0x60c + (id) * 0x10)
->> +#define RZG3S_PCI_AWBASEL(id)			(0x1000 + (id) * 0x20)
->> +#define RZG3S_PCI_AWBASEL_WIN_ENA		BIT(0)
->> +#define RZG3S_PCI_AWBASEU(id)			(0x1004 + (id) * 0x20)
->> +#define RZG3S_PCI_AWMASKL(id)			(0x1008 + (id) * 0x20)
->> +#define RZG3S_PCI_AWMASKU(id)			(0x100c + (id) * 0x20)
->> +#define RZG3S_PCI_ADESTL(id)			(0x1010 + (id) * 0x20)
->> +#define RZG3S_PCI_ADESTU(id)			(0x1014 + (id) * 0x20)
->> +#define RZG3S_PCI_PWBASEL(id)			(0x1100 + (id) * 0x20)
->> +#define RZG3S_PCI_PWBASEL_ENA			BIT(0)
->> +#define RZG3S_PCI_PWBASEU(id)			(0x1104 + (id) * 0x20)
->> +#define RZG3S_PCI_PDESTL(id)			(0x1110 + (id) * 0x20)
->> +#define RZG3S_PCI_PDESTU(id)			(0x1114 + (id) * 0x20)
->> +#define RZG3S_PCI_PWMASKL(id)			(0x1108 + (id) * 0x20)
->> +#define RZG3S_PCI_PWMASKU(id)			(0x110c + (id) * 0x20)
->>
->> +/* PHY control registers */
->> +#define RZG3S_PCI_PHY_XCFGD(id)			(0x2000 + (id) * 0x10)
->> +#define RZG3S_PCI_PHY_XCFGD_NUM			39
->> +#define RZG3S_PCI_PHY_XCFGA_CMN(id)		(0x2400 + (id) * 0x10)
->> +#define RZG3S_PCI_PHY_XCFGA_CMN_NUM		16
->> +#define RZG3S_PCI_PHY_XCFGA_RX(id)		(0x2500 + (id) * 0x10)
->> +#define RZG3S_PCI_PHY_XCFGA_RX_NUM		13
->> +#define RZG3S_PCI_PHY_XCFGA_TX			0x25d0
->> +#define RZG3S_PCI_PHY_XCFG_CTRL			0x2a20
->> +#define RZG3S_PCI_PHY_XCFG_CTRL_PHYREG_SEL	BIT(0)
->> +
->> +/* PCIe registers */
->> +#define RZG3S_PCI_CFG_BASE			0x6000
->> +#define RZG3S_PCI_CFG_BARMSK00L			0xa0
->> +#define RZG3S_PCI_CFG_BARMSK00U			0xa4
->> +#define RZG3S_PCI_CFG_LINKCS			0x70
->> +#define RZG3S_PCI_CFG_LINKCS_CUR_LS		GENMASK(19, 16)
->> +#define RZG3S_PCI_CFG_LINCS2			0x90
->> +#define RZG3S_PCI_CFG_LINCS2_TARGET_LS		GENMASK(3, 0)
-> 
-> Are these duplicating offsets / fields in the PCI Express Capability?
-> If yes, you should use include/uapi/linux/pci_regs.h defines and not add 
-> duplicates.
-
-OK, I'll double check include/uapi/linux/pci_regs.h again.
-
-> 
->> +
->> +/* System controller registers */
->> +#define RZG3S_SYS_PCIE_RST_RSM_B		0xd74
->> +#define RZG3S_SYS_PCIE_RST_RSM_B_MASK		BIT(0)
->> +
->> +/* Maximum number of windows */
->> +#define RZG3S_MAX_WINDOWS			8
->> +
->> +/* Number of MSI interrupts per register */
->> +#define RZG3S_PCI_MSI_INT_PER_REG		32
->> +/* The number of MSI interrupts */
->> +#define RZG3S_PCI_MSI_INT_NR			RZG3S_PCI_MSI_INT_PER_REG
->> +
->> +/* Timeouts */
->> +#define RZG3S_REQ_ISSUE_TIMEOUT_US		2500
->> +#define RZG3S_LTSSM_STATE_TIMEOUT_US		1000
->> +#define RZG3S_LS_CHANGE_TIMEOUT_US		1000
->> +#define RZG3S_LINK_UP_TIMEOUT_US		500000
->> +
->> +/**
->> + * enum rzg3s_pcie_link_speed - RZ/G3S PCIe available link speeds
->> + * @RZG3S_PCIE_LINK_SPEED_2_5_GTS: 2.5 GT/s
->> + * @RZG3S_PCIE_LINK_SPEED_5_0_GTS: 5.0 GT/s
->> + */
->> +enum rzg3s_pcie_link_speed {
->> +	RZG3S_PCIE_LINK_SPEED_2_5_GTS = 1,
->> +	RZG3S_PCIE_LINK_SPEED_5_0_GTS
->> +};
-> 
-> Use include/uapi/linux/pci_regs.h defines instead?
-
-Will do it.
-
-[ ... ]
-
->> +static int rzg3s_pcie_msi_enable(struct rzg3s_pcie_host *host)
->> +{
->> +	struct platform_device *pdev = to_platform_device(host->dev);
->> +	struct rzg3s_pcie_msi *msi = &host->msi;
->> +	struct device *dev = host->dev;
->> +	const char *devname;
->> +	int irq, ret;
->> +
->> +	mutex_init(&msi->map_lock);
-> 
-> Use devm_mutex_init() + remember error handling.
-
-OK.
-
-> 
->> +
->> +	irq = platform_get_irq_byname(pdev, "msi");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq ? irq : -EINVAL,
->> +				     "Failed to get MSI IRQ!\n");
->> +
->> +	devname = devm_kasprintf(dev, GFP_KERNEL, "%s-msi", dev_name(dev));
->> +	if (!devname)
->> +		return -ENOMEM;
->> +
->> +	ret = rzg3s_pcie_msi_allocate_domains(msi);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_request_irq(dev, irq, rzg3s_pcie_msi_irq, 0, devname, host);
->> +	if (ret) {
->> +		dev_err_probe(dev, ret, "Failed to request IRQ: %d\n", ret);
->> +		goto free_domains;
->> +	}
->> +
->> +	ret = rzg3s_pcie_msi_setup(host);
->> +	if (ret) {
->> +		dev_err_probe(dev, ret, "Failed to setup MSI!\n");
->> +		goto free_domains;
->> +	}
->> +
->> +	return 0;
->> +
->> +free_domains:
->> +	rzg3s_pcie_msi_free_domains(msi);
-> 
-> I'm a bit worried about tear down order here as you seem to be mixing 
-> devm* and non-devm*. All devres based teardown will occur only after the 
-> probe returns error.
-
-I added it here to avoid adding a new devres helper for irq_domain_remove()
-in case this failure happens. I can add a new devres helper for it, as well.
-
-[ ...]
-
->> +static int rzg3s_pcie_resets_prepare(struct rzg3s_pcie_host *host)
->> +{
->> +	const struct rzg3s_pcie_soc_data *data = host->data;
->> +	int ret;
->> +
->> +	host->power_resets = devm_kmalloc_array(host->dev,
->> +						data->num_power_resets,
->> +						sizeof(*host->power_resets),
->> +						GFP_KERNEL);
->> +	if (!host->power_resets)
->> +		return -ENOMEM;
->> +
->> +	for (unsigned int i = 0; i < data->num_power_resets; i++)
->> +		host->power_resets[i].id = data->power_resets[i];
->> +
->> +	host->cfg_resets = devm_kmalloc_array(host->dev,
->> +					      data->num_cfg_resets,
->> +					      sizeof(*host->cfg_resets),
->> +					      GFP_KERNEL);
-> 
-> For these 2 allocs, devm_kcalloc() to init it to zero?
-
-I considered it unnecessary to init it to zero as the the id member is
-initialized below in this function and the rstc member is initialized through:
-
-devm_reset_control_bulk_get_exclusive() ->
-  __devm_reset_control_bulk_get() ->
-    __reset_control_bulk_get()
-
-[ ... ]
-
->> +static int rzg3s_pcie_set_inbound_windows(struct rzg3s_pcie_host *host,
->> +					  struct resource_entry *entry,
->> +					  int *index)
->> +{
->> +	u64 pci_addr = entry->res->start - entry->offset;
->> +	u64 cpu_addr = entry->res->start;
->> +	u64 cpu_end = entry->res->end;
->> +	u64 size_id = 0;
->> +	int id = *index;
->> +	u64 size;
->> +
->> +	while (cpu_addr < cpu_end) {
->> +		if (id >= RZG3S_MAX_WINDOWS)
->> +			return dev_err_probe(host->dev, -EINVAL,
->> +					     "Failed to set inbound windows!\n");
->> +
->> +		size = resource_size(entry->res) - size_id;
->> +
->> +		/*
->> +		 * According to the RZ/G3S HW manual (Rev.1.10,
->> +		 * section 34.3.1.71 AXI Window Mask (Lower) Registers) the min
->> +		 * size is 4K.
->> +		 */
->> +		size = max(size, 4096);
-> 
-> SZ_4K + remember to add the #include for it if not there yet.
-
-OK
-
-> 
->> +
->> +		/*
->> +		 * According the RZ/G3S HW manual (Rev.1.10, sections:
->> +		 * - 34.3.1.69 AXI Window Base (Lower) Registers
->> +		 * - 34.3.1.71 AXI Window Mask (Lower) Registers
->> +		 * - 34.3.1.73 AXI Destination (Lower) Registers)
->> +		 * the CPU addr, PCIe addr, size should be 4K alined and be a
-> 
-> aligned
-
-OK
-
-> 
->> +		 * power of 2.
->> +		 */
->> +		size = ALIGN(size, 4096);
-> 
-> SZ_4K
-
-OK
-
-> 
->> +
->> +		/*
->> +		 * According to the RZ/G3S HW manual (Rev.1.10, section
->> +		 * 34.3.1.71 AXI Window Mask (Lower) Registers) HW expects first
->> +		 * 12 LSB bits to be 0xfff. Extract 1 from size for this.
->> +		 */
->> +		size = roundup_pow_of_two(size) - 1;
->> +
->> +		cpu_addr = ALIGN(cpu_addr, 4096);
->> +		pci_addr = ALIGN(pci_addr, 4096);
-> 
-> Ditto.
-
-OK
-
-> 
->> +
->> +		rzg3s_pcie_set_inbound_window(host, cpu_addr, pci_addr, size,
->> +					      id);
->> +
->> +		pci_addr += size;
->> +		cpu_addr += size;
->> +		size_id = size;
->> +		id++;
->> +	}
->> +	*index = id;
->> +
->> +	return 0;
->> +}
->> +
->> +static int rzg3s_pcie_parse_map_dma_ranges(struct rzg3s_pcie_host *host)
->> +{
->> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
->> +	struct resource_entry *entry;
->> +	int i = 0, ret;
->> +
->> +	resource_list_for_each_entry(entry, &bridge->dma_ranges) {
->> +		ret = rzg3s_pcie_set_inbound_windows(host, entry, &i);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void rzg3s_pcie_set_outbound_window(struct rzg3s_pcie_host *host,
->> +					   struct resource_entry *win,
->> +					   int id)
->> +{
->> +	struct resource *res = win->res;
->> +	resource_size_t size = resource_size(res);
->> +	resource_size_t res_start;
->> +
->> +	if (res->flags & IORESOURCE_IO)
->> +		res_start = pci_pio_to_address(res->start) - win->offset;
->> +	else
->> +		res_start = res->start - win->offset;
->> +
->> +	/*
->> +	 * According to the RZ/G3S HW manual (Rev.1.10, section 34.3.1.75 PCIe
->> +	 * Window Base (Lower) Registers) the window base address need to be 4K
->> +	 * aligned.
->> +	 */
->> +	res_start = ALIGN(res_start, 4096);
->> +
->> +	size = ALIGN(size, 4096);
-> 
-> Ditto.
-
-OK
-
-[ ... ]
-
->> +
->> +static int rzg3s_pcie_resume_noirq(struct device *dev)
->> +{
->> +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
->> +	const struct rzg3s_pcie_soc_data *data = host->data;
->> +	struct regmap *sysc = host->sysc;
->> +	int ret;
->> +
->> +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
->> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
->> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * According to the RZ/G3S HW manual (Rev.1.10, section
->> +	 * 34.5.1.2 De-asserting the Reset) the PCIe IP needs to wait 5ms from
->> +	 * power on to the de-assertion of reset.
->> +	 */
->> +	usleep_range(5000, 5100);
-> 
-> Please make a define out of this since you're using it in multiple places.
-
-OK
-
-> 
->> +	ret = reset_control_bulk_deassert(data->num_power_resets,
->> +					  host->power_resets);
->> +	if (ret)
->> +		goto assert_rst_rsm_b;
-> 
-> Maybe add a helper for the wait + bulk_deassert().
-
-OK.
-
-Thank you for your review,
-Claudiu
 
