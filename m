@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-674265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F31ACEC39
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0637ACEC5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24ABE17658C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5DA177457
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E52120E31C;
-	Thu,  5 Jun 2025 08:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395277E1;
+	Thu,  5 Jun 2025 08:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnKPlq/w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="sHN411Tb"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E8F1E7C03;
-	Thu,  5 Jun 2025 08:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9566C1DFE12;
+	Thu,  5 Jun 2025 08:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749113058; cv=none; b=NxurVoSRTcollaoP/vbLskTcIoWgtmNvQkjpjvk3vvJTWclVcFbNfz2nGvJLe6bEStVbnah3w+/4lcteepcEuTNwn+eyvXbAzb2w6tK/M9IAoHuPzAwtjgEuI4rpRWkFQ4sIsZVVYZ9fHNZlQlIgeyPQ98oFoHv29JlsK+98QRM=
+	t=1749113512; cv=none; b=SOZ7o6r52Owf8jVDfTXzCytbJrbQSfUCnh0XPq/Wqi79V9MVEO5cN11S+W7Hipf1p9LN3yI7LrA6garLbXkK85kcstq5m4YclSYu1CDQKi5CIyUY2GCuFQfOz6HfFIL9xqJs++/sKx+rD+K+0kITaYlAA7pkui3K9KRos0Cv6pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749113058; c=relaxed/simple;
-	bh=lBPuO1YMAGHxrbRVxdgi7NFW6/i2QW0+MHmlw7SzfA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ioH+5gCxkJL4sd+y8USlCmzL+uAsx28jkiJXtWo2eFi7qoDsXWCXHhe+3QvTlSR2jTHRNu2qWrEMmgc33TaXDP4/KOsX+YKiayz1K7f4j8Rad1OngmqYszxx3ybGFTOWEpxBy5JVxvHf4UyVobkk30pW8Ez2/1/mx3d/6UeKh4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnKPlq/w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6572C4CEE7;
-	Thu,  5 Jun 2025 08:44:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749113057;
-	bh=lBPuO1YMAGHxrbRVxdgi7NFW6/i2QW0+MHmlw7SzfA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PnKPlq/wkIofiLCU7TdIMb9gY/E7MMpIhWZYHFdiVmGDYra2IfjsdTs1X5/iv8x7t
-	 lhtv2vQbCI/XMpTJ1PJQhxys2qYC2GSNHaONU3t+Aj030R7aXzrU6x76oaGZL5cxy3
-	 oXUXh/8DSp8mRHIGLAUyGwYWjCTrzQdIMC+avYhhh6I0x5uB5302f+6sAzPDPVLJHH
-	 tEcMTg596emvT8GS3N9yYyDhd/DLZOgh2rXIdgAhwAqCvzCIcdLSlYYhYTvP58+6//
-	 JevDj7vd0nYanHLlJupTt3uuCwSML09ZMrAS9UJPmVD0tbbrlJl0YORQEIqJYrL52j
-	 tBh7BNz0SJpHg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uN6Cs-000000007lv-3jMS;
-	Thu, 05 Jun 2025 10:44:14 +0200
-Date: Thu, 5 Jun 2025 10:44:14 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Miaoqing Pan <quic_miaoqing@quicinc.com>,
-	Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] wifi: ath12k: fix dest ring-buffer corruption
-Message-ID: <aEFY3iz2gXtF_Dgx@hovoldconsulting.com>
-References: <20250604144509.28374-1-johan+linaro@kernel.org>
- <257bf9e9-f4b2-4ab9-804f-b895243c924d@quicinc.com>
+	s=arc-20240116; t=1749113512; c=relaxed/simple;
+	bh=DmWtOysdA0Nmoh/X3y+VMEQ694VNJeZDCcbZ+gNbVPU=;
+	h=Message-ID:From:To:Subject:Date:MIME-Version; b=gV5/ZTR65nMtd9Yq4yrRbFLTR43QN9VZM0gO7713MRoyKovyuKPHmMJNHfGfol+Kmizllc5/fc9X3bVqz+LyRoV2zLNWkV1/yOqFX53u3qcmUshuPQOXeqGvHyuayMI1mBNFsdFDGojWxUlKlJ8dJQtV8CxLPS8FZ+dxXvG/dkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=sHN411Tb; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1749113503;
+	bh=Ns6Z7O8rmMKISC4J3f9FZ4mWtQOdi3wfP7xqU/uLv1o=;
+	h=From:To:Subject:Date;
+	b=sHN411TbxK859SJhTjstwxDSuMym9RTVjToryz7HvJnHrDoc3E+uvuffdcJla7aUv
+	 l1ybSgblwGQK+zMPc2/hYQ4LXk/wz3QHuSz/mhpoxQZHVW5zHrQ5fm8gMS9X6PSvXI
+	 z5/bOQFtIIjvvC6x7nBE0NKpEgMbVXIyut8J4uao=
+Received: from NUC10.. ([39.156.73.10])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id B51A7CC6; Thu, 05 Jun 2025 16:45:17 +0800
+X-QQ-mid: xmsmtpt1749113117tqk3sbk1c
+Message-ID: <tencent_3DD7405C0839EBE2724AC5FA357B5402B105@qq.com>
+X-QQ-XMAILINFO: NFB6T0Z6Ys1E1T8LRCAA3Q5cCT745Of5aONkg7N3j82TuaUg4mVTA3qD1h39FH
+	 rFl7K8LOKeiXnbBQR3BZHn1EZCted/XMYS1CQsX/jB2sdX8m3gdmbsjHCmhq5L9rPa1nljn7FZCa
+	 FHahyWmgr+e5UCSTkAVdq2H/gQnn7rbVbKVlx9jVFIf4vO3XE7KD2LkABTWB0+5RVG0ZRN2p5GJw
+	 zb1REP4WCl8Cb2t4HkaSDKWTlSnAKMcaBWJFZO3xZeEU3ZMnZgR3wgeaq7deGE9BraznIi8mtzJL
+	 MJeYx2H21zxqLWBLj/LuMg6hyfqJsz/xUo9w7z1iUkhlvOtvsFxtJQ6JtXZPJwTHqX66gwyG18kZ
+	 lv0W+mcmMxlR43yGCfk38Wuqqn3AOFjr6vv61/kY0ini5UmUgxanb567xpWYZ78jzl5V33lu0x8v
+	 0rYwSRuYAKqJUjXWVfJQxJjPmf3vIbz74kmJhOi0PaU45hV2vYWmHktHMm8zoNfAfoLqrpMRxEuK
+	 IZGeTnnaa83RHffw2h5jrl/7OTUa7yPWkESmE0VeUyPIkoYq5nKZGjDgUJSL/aUS9I3PYa8LcGcH
+	 +c8akGjwRtmnwV9gcicH5PsoufybTB+2NefLATGMkxGjT7qk2MktpZCUbzLbMbgsL7jYyglDMVJ4
+	 svnz7x+y2wNjwSkrnYtkKALosKTtgn+kuitt6GBcbM3e/KZqrNp0h12YAArS/V42RK2vXJYGXAW2
+	 l03VsRVTsXn0qJ8MZlaF8XEIIH/W2/b/yuk6Y0aTJgc2QofraBuScScZ74ti7Syx1fJizxkUapcM
+	 hEeEeySVpcUMxDIIsPsCX2QwV4Vg8b8ULHrWO6D8+I3KAISIN7jTuJ5VmBvpdF3WPGxZwn341STz
+	 HMxoN2MegXFbR2c85UvvZLIBKg/PM617djQ2BxDkp9XlMBzG212meGt43qMTz9KkNmvz8n8hfGfo
+	 7szGmWIBhWlIP2Rho/4EBr4T13supbNEIRoSspWTE=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Rong Tao <rtoax@foxmail.com>
+To: rongtao@cestc.cn,
+	rtoax@foxmail.com,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf-next] selftests/bpf: rbtree: Fix incorrect global variable usage
+Date: Thu,  5 Jun 2025 16:45:14 +0800
+X-OQ-MSGID: <20250605084516.287041-1-rtoax@foxmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <257bf9e9-f4b2-4ab9-804f-b895243c924d@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 05, 2025 at 04:37:13PM +0800, Baochen Qiang wrote:
-> On 6/4/2025 10:45 PM, Johan Hovold wrote:
-> > As a follow up to commit:
-> > 
-> > 	b67d2cf14ea ("wifi: ath12k: fix ring-buffer corruption")
-> > 
-> > add the remaining missing memory barriers to make sure that destination
-> > ring descriptors are read after the head pointers to avoid using stale
-> > data on weakly ordered architectures like aarch64.
-> > 
-> > Also switch back to plain accesses for the descriptor fields which is
-> > sufficient after the memory barrier.
-> > 
-> > New in v2 are two patches that add the missing barriers also for source
-> > rings and when updating the tail pointer for destination rings.
-> > 
-> > To avoid leaking ring details from the "hal" (lmac or non-lmac), the
-> > barriers are added to the ath12k_hal_srng_access_end() helper. For
-> 
-> Could you elaborate? what do you mean by "leaking ring details from the 'hal'"?
+From: Rong Tao <rongtao@cestc.cn>
 
-The type of barrier needed depends on the type of the ring. If we add
-the barrier directly in the caller, the caller would need to know what
-kind of ring (lmac or non-lmac) it is operating on, something which is
-currently abstracted away in the hal helpers.
+Within __add_three() function, should use function parameters instead of
+global variables. So that the variables groot_nested.inner.root and
+groot_nested.inner.glock in rbtree_add_nodes_nested() are tested
+correctly.
 
-> > symmetry I therefore moved also the dest ring barriers into
-> > ath12k_hal_srng_access_begin() and made the barrier conditional.
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ tools/testing/selftests/bpf/progs/rbtree.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Johan
+diff --git a/tools/testing/selftests/bpf/progs/rbtree.c b/tools/testing/selftests/bpf/progs/rbtree.c
+index a3620c15c136..49fe93d7e059 100644
+--- a/tools/testing/selftests/bpf/progs/rbtree.c
++++ b/tools/testing/selftests/bpf/progs/rbtree.c
+@@ -61,19 +61,19 @@ static long __add_three(struct bpf_rb_root *root, struct bpf_spin_lock *lock)
+ 	}
+ 	m->key = 1;
+ 
+-	bpf_spin_lock(&glock);
+-	bpf_rbtree_add(&groot, &n->node, less);
+-	bpf_rbtree_add(&groot, &m->node, less);
+-	bpf_spin_unlock(&glock);
++	bpf_spin_lock(lock);
++	bpf_rbtree_add(root, &n->node, less);
++	bpf_rbtree_add(root, &m->node, less);
++	bpf_spin_unlock(lock);
+ 
+ 	n = bpf_obj_new(typeof(*n));
+ 	if (!n)
+ 		return 3;
+ 	n->key = 3;
+ 
+-	bpf_spin_lock(&glock);
+-	bpf_rbtree_add(&groot, &n->node, less);
+-	bpf_spin_unlock(&glock);
++	bpf_spin_lock(lock);
++	bpf_rbtree_add(root, &n->node, less);
++	bpf_spin_unlock(lock);
+ 	return 0;
+ }
+ 
+-- 
+2.49.0
+
 
