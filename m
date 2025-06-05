@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-674472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DE3ACF014
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A13FACF01B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BAC51763CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6F83A6042
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD795225408;
-	Thu,  5 Jun 2025 13:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08176226177;
+	Thu,  5 Jun 2025 13:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DzpQn7LK"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WqCsjrL/"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8F038FB9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B112420C016
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749129349; cv=none; b=PedVKoZQCdW4IMxwtmn/fEboD39ZprFlUzqgyTyE4uvJ1UoPvtXg31NgsOpyiHKY9cGNFaRBSkbjCGy770EG2e0b8/MfDWWVbK0Ab8/OezdQaplGC/gChfuZg4W9c3n+mG7u1uWyPtsxfZhMfrHjFk+97ohte/b3Z5ptT6z6Tg0=
+	t=1749129409; cv=none; b=Sma1a1uq3vRQZGeogCsuXi90bT2XmDlVH4qAkTBphrJrw3thsmrI88Rmn3TyBDfQnXS6SuZs3HWn9fndjUJ5pvNu3olq8IrekDKP5VUhNzAKAd3GyqIuQojtdqfVutfFDjMrySZSNiCK8fZDRGOg/uNxot3wfIjZQgO0jyVBgOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749129349; c=relaxed/simple;
-	bh=6F4q5xmmE5BQVkd6RD+tYOcoViDlm8Q7EzNfL1Qdroc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hF8A5e3e38C70R6JsZtmmodXf3dVx8JQjLAIlVgbKtzwrKuQEql0I6/Bpi/rI2el3BJEwIwP1bpjRwI1dh/z/1bhCKLBc/1tt9M+Dxj1sBMg3K33UcOaR5aij4UwZqGqwG1axBlcEWF9m7fmsxYf/9kvHjoqAMx65HmQImd6J88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DzpQn7LK; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b26e0fee53eso659436a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 06:15:47 -0700 (PDT)
+	s=arc-20240116; t=1749129409; c=relaxed/simple;
+	bh=k0Hbyy3QvPmBEmGfE+iw2klZZIGcUzF4JX5g7Ivo23Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZorkJCX/W/vjqhuLrcbOhSuVkJwd64Fie3sDgqvkw3JW++GifW3hUgmANkOIdevslQXS3MhYwN+qQTRLshXEaNCLpr6IznWcG8ZzFSUDZP9JFIp7dzIQD358Dk0qRtBJhTJ2VnQQKMhTHzGOLtyagvnxUEbWr1Wg6bSTZ//sTkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WqCsjrL/; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so1154407e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 06:16:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749129347; x=1749734147; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/+2Y/zIOL+LRaOKjuWDLx5oHEI75Blg1ekXEnDKeJQ=;
-        b=DzpQn7LKnaQDTNeUkra1FysgjKR1iplO2Jk4duvjj/VsREK8MSaYft6n5l49sMEA5A
-         cS67OLeX3G62bwCRKqPdyxSQYSisw9sTOlDCGio9qbMa6YYagdq27vQQ+DC+29CJlEwS
-         WCoN73Xu/jFyczEEW9T6gQG0qVF49XRtNz47a2OY6dlneuHoo4oUhDt4hOcXVmoTp5Bg
-         WmYVdwUQ1Y7LJ7LjBY1abAAMp8q0L6Q+hLVX5REcya/g/s7ixvAwJgPiRhQwceGWe59j
-         Ams3kMkstMwM5+O1h9aJoZIzYxV6qJF1BSjIx0Obm20mS0ADU/JMEP00A0NEnl7+Q2T5
-         qMPw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749129406; x=1749734206; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LxXez72tmox59Cq75Oo66zXwfJ67mOMcPg20hwp9f4M=;
+        b=WqCsjrL/PINi7XA3g9VTu//V5gowv4RCHLjliivBp/UCZElsxBvTrQDRoE4oFskZqG
+         Fsclrv6k6VUHvlmLszGfItAYZq9/r/cjuu0FGKnjvKmTc07epoAa8R0qzxPObcnZrRbd
+         d1tKwphqo32XgMBhlSnMBlRYQ0ouQeP3aL0OzNdeHGZKj7tK6/Zbnw/5YNaFxNl5Lz8M
+         j5kXfgruW2JIWl35alN4saTsSds8ipV/p31Iru8w0gQPm4eQifeYaz1pFjujn7LVvP34
+         aVn0ZXJFEiTtmILWKSH7sRKbyRuDvENHy6Rj453IKWtjnxZaWcJD8Jq4bOU9OuLpjib+
+         9lew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749129347; x=1749734147;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/+2Y/zIOL+LRaOKjuWDLx5oHEI75Blg1ekXEnDKeJQ=;
-        b=eAubhNj7EYXhxdwAw6UIa2DD/EDlAZKRWWaKi1weAmUZhbaLGMbDauFTqo/w5ro4bN
-         0F9GL3AVHJp/SSVAfGHZZMg0q839Y3PtTiR5U3nRSBqs8aY6H3AQKX/1itETo9TnDVSg
-         3+Jn5jO4a+GUg8+QgC8dYNFaqx7Ti2a50gamrYOmhURVqTMy+Leo54YeqDpOoHQ+iHiN
-         8+d1cl8/lNea/GnjA0OD9qTNP2K+4aVURHc+qY3eeV1s6b1s8Rg3AkO59P2IlDpwLy/U
-         3Spq2eKsIF1mve9vp8WnqtB3409jdazfBi/9lWwmIXlLTRq4pfUl4kaOO5TelR2g1SRS
-         6whw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVH1iqeJCIBEhWV6XR3U+iOOtkGIjJse4Eq5pQeGzXSsnNtQgKPC2duFNMYdjxmVclW3yhxB9SFN46sJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypwNamb/5v5FPMQJvEHMB/BppWGesMrU2XftI1mHqHi92tK8Y6
-	nMxQfqP8xv3j1m2xk/mcQ3Ogj1ewAqXNm0hoeT02esxGlkgnxACM48tY5CmVk7reaMcmISExCpK
-	HX5yujA==
-X-Google-Smtp-Source: AGHT+IEZPNUxk+OKZ1dQ1Jj9IPJf63zrEzZezjPo30v5n4gJja21vzXgNIlYWy1Nh2/ea6zsjE1WMI99wmM=
-X-Received: from pjbli9.prod.google.com ([2002:a17:90b:48c9:b0:309:f831:28e0])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d03:b0:312:ec:4128
- with SMTP id 98e67ed59e1d1-3130cd7bf73mr8709145a91.34.1749129346857; Thu, 05
- Jun 2025 06:15:46 -0700 (PDT)
-Date: Thu, 5 Jun 2025 06:15:45 -0700
-In-Reply-To: <684196cd.050a0220.2461cf.001e.GAE@google.com>
+        d=1e100.net; s=20230601; t=1749129406; x=1749734206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LxXez72tmox59Cq75Oo66zXwfJ67mOMcPg20hwp9f4M=;
+        b=ZwnHITsAt8TbOxdKM5cGnKOIIKiYvbpgjilaccUUQqMk1BB+KgUdE71RlGp0aP6vbK
+         KZgk23SVn4u3TvgbPixJ9rPJ6tAdv7sVYXAoKzJFZdSJi53iaLqt7kSszPLWF+I0q4CT
+         w/6gj7jKwRbW2B8/RPP1VIXk7Jxk3mHHaAhQroYTVcOpDPXkRj7lozqnkuW5kwa1J5Nc
+         2hMUhdhknlT+CQpC9fuTsXRXitzRgmEwDc3AQfVShvlsrMiWZI4HXDM5YH0Jnuvb8Mq7
+         OCpIWrduzFU4VKVnsjghELHJO7PTcHdTb/1AbXQX3XL8+W1Hzfhq7ICu3oMoPbhx7n9L
+         E/1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUrjFoFgLt0O1OvZU0OSc3nG0RHfFpzsEuJn92wsVtBayQ6YoESXKeuPgCQ3QSF6+bdb5lDCAuNXxiYU+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRyY+4DOor5J8CBeJSnTv239OqCLOheK7PiPR4AyYUBvG4uaSG
+	TdOiC6lz/udoVthI2OGrsUHDirMQ5Faunq1ES0hOmHeAFMts44Zr8U18rfSraxC7Xilpl5hZyhq
+	X0ZMZU0N6vPYn6ak6cvM3tK4XfMM0zSl4vaPDQsBLOA==
+X-Gm-Gg: ASbGncs/lezw5ICgWZ275I6YX4owwCKTRYYrFnMtwHVdqeC7hwr6tXFl4UmE5/KlO1e
+	xfkjzDU8PqIq+asbARLB6YIgsBaztqE9JBorBHfO0RgANn+zz4jhAx2bC/hUH4/78u+e2TYH3Ad
+	HDJ0SEWov1S/SpWRMZRL/heE6TMH5pYfz83yEIsmmYsSORaGB4HvF+Qkr10J3Q8dY=
+X-Google-Smtp-Source: AGHT+IG1FLIfsa6ezMp3MccDVHC5XAJOHj0QyInfJVqCTEun1SDxwdcWFvKFJCuA2PNkGlpvqJmb88wRcDaLGqLLsh0=
+X-Received: by 2002:a05:6512:10ce:b0:553:37e7:867c with SMTP id
+ 2adb3069b0e04-55356df2a9emr2071437e87.50.1749129405586; Thu, 05 Jun 2025
+ 06:16:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <684196cd.050a0220.2461cf.001e.GAE@google.com>
-Message-ID: <aEGYgQ0CyF8mxJtq@google.com>
-Subject: Re: [syzbot] [kvm-x86?] WARNING in kvm_apic_accept_events
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+b1784a9a955885da51cd@syzkaller.appspotmail.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250528-hdp-upstream-v4-0-7e9b3ad2036d@foss.st.com> <CACRpkdZ2NUfcn7O7tKSFDyAr8Hni3pvpTN6QpOz7N3J+EsFdLg@mail.gmail.com>
+In-Reply-To: <CACRpkdZ2NUfcn7O7tKSFDyAr8Hni3pvpTN6QpOz7N3J+EsFdLg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 5 Jun 2025 15:16:34 +0200
+X-Gm-Features: AX0GCFt62eNdDo8nSZ5fnuh_lgkPFAVa1oZqnviWb6rgA9ggBUhsLTEWXYkHUBU
+Message-ID: <CAMRc=Mddp=rmogziQ2XrzsO-TiRh9A5U3v8UxJqz_so1otPMLw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/9] Introduce HDP support for STM32MP platforms
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 05, 2025, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    64980441d269 Merge tag 'bpf-fixes' of git://git.kernel.org..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=145b31d4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=73696606574e3967
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b1784a9a955885da51cd
-> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110fcc0c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16340c0c580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/b721c3fbaf59/disk-64980441.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b28b1e530885/vmlinux-64980441.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5aee07cc8b41/bzImage-64980441.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b1784a9a955885da51cd@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5841 at arch/x86/kvm/lapic.c:3407 kvm_apic_accept_events+0x341/0x490 arch/x86/kvm/lapic.c:3407
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5841 Comm: syz-executor279 Not tainted 6.15.0-syzkaller-12058-g64980441d269 #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-> RIP: 0010:kvm_apic_accept_events+0x341/0x490 arch/x86/kvm/lapic.c:3407
+On Thu, Jun 5, 2025 at 3:04=E2=80=AFPM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
+>
+> On Wed, May 28, 2025 at 3:33=E2=80=AFPM Cl=C3=A9ment Le Goffic
+> <clement.legoffic@foss.st.com> wrote:
+>
+> > Cl=C3=A9ment Le Goffic (9):
+> >       gpio: mmio: add BGPIOF_NO_INPUT flag for GPO gpiochip
+> >       dt-bindings: pinctrl: stm32: Introduce HDP
+> >       pinctrl: stm32: Introduce HDP driver
+> >       MAINTAINERS: add Cl=C3=A9ment Le Goffic as STM32 HDP maintainer
+>
+> Can I apply the driver and bindings patches 1-4 separately
+> from the rest of the series?
+>
+> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp13
+> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp15
+> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp25
+> >       ARM: dts: stm32: add alternate pinmux for HDP pin and add HDP pin=
+ctrl node
+> >       ARM: dts: stm32: add Hardware debug port (HDP) on stm32mp157c-dk2=
+ board
+>
+> Or does it need to be merged along with these?
+>
 
-Pretty straightforward; syzkaller sets MP_STATE to INIT_RECEIVED, and then
-stuffs vmxon.  KVM, courtesy of commit 28bf28887976 ("KVM: x86: fix user
-triggerable warning in kvm_apic_accept_events()"), only guards against the
-opposite ordering.
+Would you mind me taking patch 1/9 through the GPIO tree as I'll have
+some gpio-mmio rework going on next cycle? I will then send you an
+immutable tag to pull.
 
-Rather than play a losing game of whack-a-mole with ioctl ordering (SVM's GIF=0
-case is even harder to deal with), I'm going to modify KVM to wait until KVM_RUN
-to enforce the check, similar to how KVM handles the scenario where emulation is
-required (due to !URG) but KVM can't emulate.
+Bartosz
 
