@@ -1,113 +1,225 @@
-Return-Path: <linux-kernel+bounces-674440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3D0ACEF79
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:47:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCAA8ACEF86
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C40177039
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84B33AD267
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E38221FB2;
-	Thu,  5 Jun 2025 12:47:27 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F72521D590;
+	Thu,  5 Jun 2025 12:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bTm9LWdG"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F001FC0E2;
-	Thu,  5 Jun 2025 12:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B631EF39E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 12:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749127646; cv=none; b=KsHdLkBlZ68ph7XDmq6seka8W22lS7KlGUbr3obf34hfn7NLgbPXk+JhT9/3JNFoM+6Ryg/vSjLzsEB85Cl1baCqq/mSEbBRA4GvbjcYwSRgSENNjY0hsycOSGDQNwto6VlerFyZ9JCcE+Y8E9P5MRUGyIcxdyX+f4tVs951ThI=
+	t=1749127784; cv=none; b=kCSt2xVONQSaV8CtDti2jYfRrBG3a0Igks+61MMz8Mf5A4gYUlkvyxryS8rGWXz/1nqV9h6ZhfuiZyCFaNk4R8W1ZIsHMUYuUsHAxS/dO4aYywso3C+rWRkkenlnZHivQ+h+jSMv7/Ts4QkAC8Xw33TZhqI1U5Sehrs/sMYa7TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749127646; c=relaxed/simple;
-	bh=SH9qwzbyg8F36LBU6FR7xOXsvoNAZ5waCbu7aTMlBCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YA6/oflAQguMKyTh712F2q2QVXyGQvI7Z1bW5fOizf2ysysDA8bEVlsjjYMzeATPfvjQd23um94LkN8ef3z5qALSsqtUPzKwO1Wi/GXwGutgOC5s3LUQiF4TsqFbvrr3Cg+JJTyy2EcJuQz9zJ/+60yp8KRp1Iio29fWtesrBSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 859D512088A;
-	Thu,  5 Jun 2025 12:47:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 331E620025;
-	Thu,  5 Jun 2025 12:47:19 +0000 (UTC)
-Date: Thu, 5 Jun 2025 08:48:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- bpf@vger.kernel.org, linux-rt-users@vger.kernel.org,
- linux-rt-devel@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: BUG: scheduling while atomic with PREEMPT_RT=y and bpf
- selftests
-Message-ID: <20250605084816.3e5d1af1@gandalf.local.home>
-In-Reply-To: <20250605091904.5853-1-spasswolf@web.de>
-References: <20250605091904.5853-1-spasswolf@web.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749127784; c=relaxed/simple;
+	bh=vmbVw2wsurXb9j40f+2hXw8upSBNZIO88QPl82+zeq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cX5kR/Rh1n5745+1km0F6hAbv58gZEnqi5zdjSqwLfT/yG/cgaOs+3IH8OWb0pi1dRXog9KUK+973+ZrIj0q4I0D0RNO4t9sCLqUkUHwRht9ARqRrI6aL+McPX/iZMs+npsDUtkRmTBybVOCeJXHkMSh8tzexHbC5EC2Mk7dp/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bTm9LWdG; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23035b3edf1so8696095ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 05:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1749127782; x=1749732582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a69UoxQiniJ12TTGhKY8q3U2LANJbh8OmrhxQdK1ePg=;
+        b=bTm9LWdG/Qn9zI6oiaRxZZJkL6O8sDrArBdcRk0j98xrCc/kPlmmF0OHEScVWjpUnv
+         BMkjlWWBmsx2A2xxiFga2zguTBymy2PNH13YzUepvipZ7M0KXD683A/9ks3MNMMp0Vnx
+         JfkNdcRFACt45DjLXZAL2dojzLfb8aGc4TQGJHdecfU9ZGomD9muNjHN1JbThapFZjL1
+         yyIQ5/TPfHm6cLDBWG+hXmvo1NHcZebrJng4pD6oMSwGUErbPKyxsgJWaPRcodeKmTBp
+         v3kF61W3HHa7zXA+07LpkV4J/uYo8UDLd8Dm8gV+NFQbiX15cYG0vd/uPYophMLMqoDp
+         KdZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749127782; x=1749732582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a69UoxQiniJ12TTGhKY8q3U2LANJbh8OmrhxQdK1ePg=;
+        b=hsos1Q0Y7tTRHqxdvJoB+ZWw9LeDIiRZg5S+Pu/3MaUSJO64nmYs0LyDxyrR7M6b+j
+         FsCSGjRK3xyfe7vHjMQ1hUIYFKvyHEv93X0ZG//2D0gBaej0VZBgIhARpiH5C1wrBLze
+         PXVu+8XEH3KfXcMHAbpgjhKBU5dmMWydtsVoZvfnhlN++dXKEcC8259zRrXNWWCHhNaE
+         Z96MA5UHHQwPQx/4hA21Y6dXUOWBduPu7SxVjsI3bt/3YWP98UlgG0Fpd5064xA6mdlA
+         Cee+0/ebZpREcaMAdErTvUc25A6XZQpBz/jhUYzDdwfm/+RTimb7hf8NnwPddBu1s5r5
+         1dEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCED3hVcMgnMTH+16gHOeeSQU1HbQZ9X0ttQeRSRwaLPx/afjmMpA2F58rDUE4lyCDhdhFWwQRG+rvW4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMkRqY4K2/H8fN97qpP7c+K2X4XCC7dLgVDxd4dDh6pP6SjAcv
+	7OIZ+42nI2+DkLxQ7Ws6ou0fRhjkGn+DyK2q6ugUc238lnlT0gBOzG6WfeEb/8MlVoH2v38UH5I
+	M2EUo
+X-Gm-Gg: ASbGncvDeVrMw43m61LqIoGfjArtV/VCWQnm214aKCYV1qmRJkgrBnZq5NAtOqrbUIO
+	m4p5RsIM/Eo9YV2N6zRxGn0DWfpKQFEVmkpSDjTK8GUC7lJ6wzSh+UzqPSpAhfZkSnVJXafWb6I
+	OyyUzjuP0HoIuGK/keKOpThAZkVF/RFjiJAaWOXhlob5/vHh1a9YLwzNcQBJTPP0X65uiMbXT4T
+	hc1HkcRbzpGHvx8qK/YhXwH7lAGrzsNqVHiSdqE+Oy6lGWQ0Ma7kSQsCRy9N+OEXaWuk2okWAn/
+	chKI/VdkCcRYbuSs9drY1bQkfDESuaCGrLCFDsKGjrc7RHoXZIzErm9uucgVkbn05NM9lORd6TE
+	o6oU=
+X-Google-Smtp-Source: AGHT+IG1C2j2YafQGfRMV/ciHY4JTVlIZs2dvU3z8kWhKzdkG0PBX2Mp8lN+qS+9FVIWYjcMQwU5iw==
+X-Received: by 2002:a17:902:ec85:b0:235:eb8d:801b with SMTP id d9443c01a7336-235eb8d8434mr71936225ad.32.1749127781995;
+        Thu, 05 Jun 2025 05:49:41 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d21f57sm119043045ad.249.2025.06.05.05.49.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 05 Jun 2025 05:49:41 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lizhe.67@bytedance.com
+Subject: [RFC] vfio/type1: optimize vfio_unpin_pages_remote() for large folio
+Date: Thu,  5 Jun 2025 20:49:23 +0800
+Message-ID: <20250605124923.21896-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 331E620025
-X-Stat-Signature: whh6bi9m5mr9jaw1d1867w4c6y7arhmz
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX187PQPCPjtJ4X6JvRAdXb0ZxxIf5B+1DAw=
-X-HE-Tag: 1749127639-233947
-X-HE-Meta: U2FsdGVkX1/NnoGasWV1VjzEiL0KUVJxN9Ft2Mh7D3kD+XZHV1EgB1XCq0ujiQLw074g4gP9GWj4jK5u6UN7xEUOZr61u05zTgU7c0W5IIqZjYX3QSec6X9+3Se2jp5OaHHU864AZvbLFLlKw1IK4VvP2B3o+UTnAj6HkBzCVfhoTh23zEXS8GJa8hJvnRo0RzoG+5A3jml9efRS9OAVf8RWmtn8E/PRflcHwhyoNIGwZk41vky58qd/vmDW/S4KWiJB1RU5ebh/Jv/2LJHlU3AMVYxKgwTBmKcnMeBfmV4zWbaMXtIZQdu9LNdn/nym
+Content-Transfer-Encoding: 8bit
 
-On Thu,  5 Jun 2025 11:19:03 +0200
-Bert Karwatzki <spasswolf@web.de> wrote:
+From: Li Zhe <lizhe.67@bytedance.com>
 
-> This patch seems to create so much output that the orginal error message and
-> backtrace often get lost, so I needed several runs to get a meaningful message
-> when running
+This patch is based on patch 'vfio/type1: optimize vfio_pin_pages_remote()
+for large folios'[1].
 
-Are you familiar with preempt count tracing?
+When vfio_unpin_pages_remote() is called with a range of addresses that
+includes large folios, the function currently performs individual
+put_pfn() operations for each page. This can lead to significant
+performance overheads, especially when dealing with large ranges of pages.
 
-~# trace-cmd start -e preempt_enable -e preempt_disable
-~# trace-cmd show
-# tracer: nop
-#
-# entries-in-buffer/entries-written: 177552/177552   #P:8
-#
-#                                _-----=> irqs-off/BH-disabled
-#                               / _----=> need-resched
-#                              | / _---=> hardirq/softirq
-#                              || / _--=> preempt-depth
-#                              ||| / _-=> migrate-disable
-#                              |||| /     delay
-#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-#              | |         |   |||||     |         |
-       trace-cmd-1131    [001] ...1.   965.046684: preempt_disable: caller=vfs_write+0x89c/0xe90 parent=vfs_write+0x89c/0xe90
-       trace-cmd-1131    [001] ...1.   965.046695: preempt_enable: caller=vfs_write+0x923/0xe90 parent=vfs_write+0x923/0xe90
-       trace-cmd-1131    [001] ...1.   965.046729: preempt_disable: caller=_raw_spin_lock+0x17/0x40 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046746: preempt_enable: caller=_raw_spin_unlock+0x2d/0x50 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046749: preempt_disable: caller=count_memcg_events+0x74/0x480 parent=count_memcg_events+0x74/0x480
-       trace-cmd-1131    [001] ...1.   965.046751: preempt_enable: caller=count_memcg_events+0x2b4/0x480 parent=count_memcg_events+0x2b4/0x480
-       trace-cmd-1131    [001] ...1.   965.046765: preempt_disable: caller=_raw_spin_lock+0x17/0x40 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046769: preempt_enable: caller=_raw_spin_unlock+0x2d/0x50 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046771: preempt_disable: caller=count_memcg_events+0x74/0x480 parent=count_memcg_events+0x74/0x480
-       trace-cmd-1131    [001] ...1.   965.046773: preempt_enable: caller=count_memcg_events+0x2b4/0x480 parent=count_memcg_events+0x2b4/0x480
-       trace-cmd-1131    [001] ...1.   965.046787: preempt_disable: caller=_raw_spin_lock+0x17/0x40 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046801: preempt_enable: caller=_raw_spin_unlock+0x2d/0x50 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046803: preempt_disable: caller=count_memcg_events+0x74/0x480 parent=count_memcg_events+0x74/0x480
-       trace-cmd-1131    [001] ...1.   965.046805: preempt_enable: caller=count_memcg_events+0x2b4/0x480 parent=count_memcg_events+0x2b4/0x480
-       trace-cmd-1131    [001] d..1.   965.046812: preempt_disable: caller=_raw_spin_lock_irq+0x2b/0x60 parent=0x0
-       trace-cmd-1131    [001] ...1.   965.046815: preempt_enable: caller=_raw_spin_unlock_irq+0x38/0x60 parent=0x0
-[..]
+This patch optimize this process by batching the put_pfn() operations.
 
-It's very light weight. There's also trace_printk() that is also very light
-weight to use.
+The performance test results, based on v6.15, for completing the 8G VFIO
+IOMMU DMA unmapping, obtained through trace-cmd, are as follows. In this
+case, the 8G virtual address space has been separately mapped to small
+folio and physical memory using hugetlbfs with pagesize=2M. For large
+folio, we achieve an approximate 66% performance improvement. However,
+for small folios, there is an approximate 11% performance degradation.
 
-It's enabled when you enable CONFIG_PREEMPT_TRACER.
+Before this patch:
 
--- Steve
+    hugetlbfs with pagesize=2M:
+    funcgraph_entry:      # 94413.092 us |  vfio_unmap_unpin();
+
+    small folio:
+    funcgraph_entry:      # 118273.331 us |  vfio_unmap_unpin();
+
+After this patch:
+
+    hugetlbfs with pagesize=2M:
+    funcgraph_entry:      # 31260.124 us |  vfio_unmap_unpin();
+
+    small folio:
+    funcgraph_entry:      # 131945.796 us |  vfio_unmap_unpin();
+
+[1]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
+
+Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+---
+ drivers/vfio/vfio_iommu_type1.c | 58 ++++++++++++++++++++++++++-------
+ 1 file changed, 47 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 28ee4b8d39ae..9d3ee0f1b298 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -469,17 +469,24 @@ static bool is_invalid_reserved_pfn(unsigned long pfn)
+ 	return true;
+ }
+ 
+-static int put_pfn(unsigned long pfn, int prot)
++/*
++ * The caller must ensure that these npages PFNs belong to the same folio.
++ */
++static int put_pfns(unsigned long pfn, int prot, int npages)
+ {
+ 	if (!is_invalid_reserved_pfn(pfn)) {
+-		struct page *page = pfn_to_page(pfn);
+-
+-		unpin_user_pages_dirty_lock(&page, 1, prot & IOMMU_WRITE);
+-		return 1;
++		unpin_user_page_range_dirty_lock(pfn_to_page(pfn),
++				npages, prot & IOMMU_WRITE);
++		return npages;
+ 	}
+ 	return 0;
+ }
+ 
++static int put_pfn(unsigned long pfn, int prot)
++{
++	return put_pfns(pfn, prot, 1);
++}
++
+ #define VFIO_BATCH_MAX_CAPACITY (PAGE_SIZE / sizeof(struct page *))
+ 
+ static void __vfio_batch_init(struct vfio_batch *batch, bool single)
+@@ -801,19 +808,48 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 	return pinned;
+ }
+ 
++static long get_step(unsigned long pfn, unsigned long npage)
++{
++	struct folio *folio;
++	struct page *page;
++
++	if (is_invalid_reserved_pfn(pfn))
++		return 1;
++
++	page = pfn_to_page(pfn);
++	folio = page_folio(page);
++
++	if (!folio_test_large(folio))
++		return 1;
++
++	/*
++	 * The precondition for doing this here is that pfn is contiguous
++	 */
++	return min_t(long, npage,
++			folio_nr_pages(folio) - folio_page_idx(folio, page));
++}
++
+ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+ 				    unsigned long pfn, unsigned long npage,
+ 				    bool do_accounting)
+ {
+ 	long unlocked = 0, locked = 0;
+-	long i;
+ 
+-	for (i = 0; i < npage; i++, iova += PAGE_SIZE) {
+-		if (put_pfn(pfn++, dma->prot)) {
+-			unlocked++;
+-			if (vfio_find_vpfn(dma, iova))
+-				locked++;
++	while (npage) {
++		long step = get_step(pfn, npage);
++
++		/*
++		 * Although the third parameter of put_pfns() is of type int,
++		 * the value of step here will not exceed the range that int
++		 * can represent. Therefore, it is safe to pass step.
++		 */
++		if (put_pfns(pfn, dma->prot, step)) {
++			unlocked += step;
++			locked += vpfn_pages(dma, iova, step);
+ 		}
++		pfn += step;
++		iova += PAGE_SIZE * step;
++		npage -= step;
+ 	}
+ 
+ 	if (do_accounting)
+-- 
+2.20.1
+
 
