@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-674535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFB5ACF0C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:35:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F18ACF0D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2FC1758C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:33:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092A817B5BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515772356BA;
-	Thu,  5 Jun 2025 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C41258CD3;
+	Thu,  5 Jun 2025 13:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXXzABH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GvNoO3WB"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AD623507C;
-	Thu,  5 Jun 2025 13:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8497257AD3
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749130419; cv=none; b=MEvvET8WUadPEsfpnbIoUGhs3OdDXESX7YmrSekhRXJVejdGL0uWqK3W5K+VI7I5bUnEAJvRQpR7oAtdgtdOKuQA6V7YPxV+kv3pP3hMe7mZ6UH8rtS7YgXfrE4jK8ehOWuyaS+lGKTVtbiVohhLcP/YZ6uoQjXZu1T3IORfqYU=
+	t=1749130471; cv=none; b=NRcIaGG7d4PdXbjbQgjW5aztKab22EyCqvRuJWXX/armS7/D9FSw+dpq8UZfZn/wRPRy7R6M8rSggXT3a376b9DqbBW74Ie4vBh/uD4UpXc2UIO15M58u6gYa7Ic2RaMAmDaXqB6035XeuqMhn+2+S2Tg3+kkTCS812VxFUesF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749130419; c=relaxed/simple;
-	bh=yxqHU2sOZN27FulrAoAbvaO56DcbsQKhcY/tONUxapg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vmow+wxomqGdVtu4QlbHtQoP4+/tulVNabY1gVy2cT/egaekqyHzXp2/E1HAhlBH02KmgSvlP4WCShbkoVtsDmjeLszHe8+nmkLul2d5rHsDt7A/o/1iQiBUwVh7aBJVmC8Cw1LGcmKvTNXTrf8WoIodhQthdR/q1h8cUBHb1Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXXzABH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121AFC4CEE7;
-	Thu,  5 Jun 2025 13:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749130419;
-	bh=yxqHU2sOZN27FulrAoAbvaO56DcbsQKhcY/tONUxapg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PXXzABH/J2X+vsgPNiyyVobzGpKHW4ZnkuN6qgNbdAWtraINx/hRirrLgERmAI2fg
-	 O3r2rSRBLCJRdcVmRHNj5RhVOqxcCoqzSGyOdkYopDU6HUbp8TqXz3xDFiOOryliDs
-	 wylMSmmKV252l0db+CVj7VxuSeX7JEVkrHn8ztKfHi0UGSmdRr3G2xSZeflt0exUJG
-	 dbSUDq8Ao1qFERKPsnvMxBStOqO3KSvYDjMkrDGQGC67oO1WzOt2AqvPxnUCSNWyb6
-	 K75JqBZDQg01SnJv1qIyupDf4uZ8pHjB8IPOWJRYCrqxdfF0bc1CUPRgJItS+dZLwN
-	 Odn3i+cZ2P0TA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uNAiu-004J3E-Kj;
-	Thu, 05 Jun 2025 14:33:36 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Sebastian Ott <sebott@redhat.com>
-Cc: Colton Lewis <coltonlewis@google.com>,
-	Ricardo Koller <ricarkol@google.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] KVM: arm64: selftests: arch_timer_edge_cases fixes
-Date: Thu,  5 Jun 2025 14:33:30 +0100
-Message-Id: <174913039935.1215874.15467510100629405540.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250605103613.14544-1-sebott@redhat.com>
-References: <20250605103613.14544-1-sebott@redhat.com>
+	s=arc-20240116; t=1749130471; c=relaxed/simple;
+	bh=vOICNqN98USb6CrWzrPe3jO4IKU6MEq8Zi+BY+9xBWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZAlh2msSJ3SWgJ698D9RNEJ8+387yuPSWY3ppGPMy/A4JFgPiBlLBKllJ8jwskopq9+C8Jw0yEVah7mng/7vYP6WjcQGudCwvEDPBa06oIKFzO/Or4s8X5wMYHuk+Bu1hvq8ZT8xMNQ9/kP+bg0OwOBzuQIMvNhFlFF4zPwl40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GvNoO3WB; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so1044347e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 06:34:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749130468; x=1749735268; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JdHw8SajT6NSEOVUedJOLVFr0dcQsp/AO6t3n5ZTzMA=;
+        b=GvNoO3WBN74bOe2M7jIYXGBD3D+mzn4Zo82p2SFw1+kJHZuI+IvwJBF7OMQLYoY3pJ
+         0sqov6ntD+M1DPT8cTU4EF0GDZTomr+0VtEuMPRmm1A05pyIZW+a8rj1AjTiGt0H+9pJ
+         LmI2VUFd4QnaxaeO9cm4AFWG5eE4BDqsxoPWSwK+bpTJvhkUTuM6Md+FNjGHQmEeKP02
+         yQe1VWUx2KL4MLa6KeScvYJInlJpoVaOmNrkakjevwoxCXrAVj8ap7lAkkwWmFa5mhtm
+         ULYDSJ+Hvj6fU3UqpdFq/JmqoII6pIWaZ8dAG49lMn/sQCcWIPGY0cwiLnG+5DBi2YO0
+         ux8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749130468; x=1749735268;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JdHw8SajT6NSEOVUedJOLVFr0dcQsp/AO6t3n5ZTzMA=;
+        b=pldAbz0xMK89MV7TknPGs9Dyq5Pc2ZLM/Mj4hPvDP4TVdLtG8uelAspZkrlt/MebJ6
+         HOhggehNqJw4BDgSHNwNJen5U3ZjHUy0pV+/JxpimAvouwAEPhuvPcUQqKplVYLrnyrM
+         e4va1LQ25ORbNjOyfAFQ1hMWHUfDIoVnxhf7NJwmjJef6w2gtpMUWNZyDlxJDxCttHg5
+         1WFCcchnLhc/nm2Q3CjaPwSxLVhk5LnTKXCiGyEnfxnyrbnpO6jjKZGycuhAjCxz4G/J
+         DBC+Pq9Oh/p3Fj61O1Xo8nBc3dtlbsayO/Co/Zq0SmIyiB31dHXluMCYhHAGV2iNUO3Z
+         LRAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGMZ7r3oT7WNm8+jYHblZLsqmGoJ6xKNk0yOb6pXvTJ+YwAd4A0ePbZQWgEGiomebQ8groTDzkWyKmDUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbYGJ2dJmNoEpeABzDvM8wZOOkYccirjJAgmswNfXISs+X3rfW
+	6dxGIPM/dLuzwExUvNKZ7//fzVxS2tRO5bMyxwp7rp9sdTMRAThahOepVCPBu8nctsLLLR6O4UR
+	5pe29YrLvpUibsVSMXTrs+mtNCzzCvJQ5mHSFmWYtxEEMtNvWVsol
+X-Gm-Gg: ASbGncv3Yxu0t/N8HHt82xGJzBbn78EuO6CCOUilv/29mSJuB4l0bugtePyTqg+6zoW
+	T/nJpHQr0O2Y+Bt8d6Gwz3Zib918t/I7+FG+bx3Bk/PbPSGUqumbZHWtFmMVbas9MzSC3qwf6DG
+	b0Zo1w7FCfL40Tl0Q7cZQSzKu3sJxqIJhu
+X-Google-Smtp-Source: AGHT+IGwrsRhcxejm2B7TIv0Jmtzv081ls93xQzgyznzl4hNVDVZDc8rSTwawh7S/z8e7ya3iwoUv7ta05XF2Y24f5U=
+X-Received: by 2002:a05:6512:a91:b0:549:38eb:d694 with SMTP id
+ 2adb3069b0e04-55357bacff5mr1686265e87.26.1749130467806; Thu, 05 Jun 2025
+ 06:34:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, sebott@redhat.com, coltonlewis@google.com, ricarkol@google.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <20250601105100.27927-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250601105100.27927-2-krzysztof.kozlowski@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 5 Jun 2025 15:34:16 +0200
+X-Gm-Features: AX0GCFumg_yzf47SQes9X-E90Svhn2Zu4LV3i_LqM-EmbGGW0q70i3L_4Gmqvkk
+Message-ID: <CACRpkdbbUbydRfm3zDV2xhRa59dw=-KYCANRwpeJOHBCMNB=4g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: tb10x: Drop of_match_ptr for ID table
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 05 Jun 2025 12:36:09 +0200, Sebastian Ott wrote:
-> Some small fixes for arch_timer_edge_cases that I stumbled upon
-> while debugging failures for this selftest on ampere-one.
-> 
-> Changes since v1:
->  * determine effective counter width based on suggestions from Marc
-> Changes since v2:
->  * new patch to fix xval initialization
-> 
-> [...]
+On Sun, Jun 1, 2025 at 12:51=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-Applied to fixes, thanks!
+> The driver can match only via the DT table so the table should be always
+> used and the of_match_ptr does not have any sense (this also allows ACPI
+> matching via PRP0001, even though it might not be relevant here).  This
+> also fixes !CONFIG_OF warning:
+>
+>   pinctrl-tb10x.c:815:34: warning: unused variable 'tb10x_pinctrl_dt_ids'=
+ [-Wunused-const-variable]
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202505301317.EI1caRC0-lkp@i=
+ntel.com/
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[1/4] KVM: arm64: selftests: fix help text for arch_timer_edge_cases
-      commit: 9a9864fd09c7e52440c05e70609bf5ee8da425d0
-[2/4] KVM: arm64: selftests: fix thread migration in arch_timer_edge_cases
-      commit: 050632ae6571d0f148fa0d4b90b6409a12645461
-[3/4] KVM: arm64: selftests: arch_timer_edge_cases - fix xval init
-      commit: 05ce38d489dbc96eb1dd700b287f949cb8cc0610
-[4/4] KVM: arm64: selftests: arch_timer_edge_cases - determine effective counter width
-      commit: fad4cf944839da7f5c3376243aa353295c88f588
+Patch applied for fixes!
 
-Cheers,
-
-	M.
--- 
-Without deviation from the norm, progress is not possible.
-
-
+Yours,
+Linus Walleij
 
