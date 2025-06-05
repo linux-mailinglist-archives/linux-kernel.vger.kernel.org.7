@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-675106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992A5ACF900
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45223ACF903
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC276189274A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7DC43A9619
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF45A27F749;
-	Thu,  5 Jun 2025 20:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C918A27F16F;
+	Thu,  5 Jun 2025 20:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Q+HrzrIV"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010010.outbound.protection.outlook.com [52.101.84.10])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UOYSThdC"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013069.outbound.protection.outlook.com [40.107.159.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168A827CCF3;
-	Thu,  5 Jun 2025 20:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4768527CCE7;
+	Thu,  5 Jun 2025 20:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749157152; cv=fail; b=rgMZ7bJC9dtI4g4JK9CEovdOD+G/+C5La64HAxvi8V94G8qUxm+tY9saw3zAy/hxrdVAw9vskpyaSpv6dgI8zOKOrIWyb6Kgc4tcoOlfc6X8hl//vvWEowKgdhPsDJz+ETedanuJtlPngxfK4yJ1r7EjuhhZ/8mzgBf7GJy9VWI=
+	t=1749157160; cv=fail; b=dym+YH41g5as8luozElkISdhwdZ3tii5fr52TU1xwOHIjAYFR75H+zCOS4YJTdDaLsBxnaQl+ZkiEzmeOBC1piqMoElkx1KuAWP/zZXj7Qg/54Ydz+ptWuns8LgSWSXHN+51XKfINEt6IyqIKVqtmbkTxCfKpDbNYfb5wMhGJYY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749157152; c=relaxed/simple;
-	bh=7f5rYS/G5Co5ezbQ0qXbvFtJlrX8bqNiyLDDZP7R5V4=;
+	s=arc-20240116; t=1749157160; c=relaxed/simple;
+	bh=S3B5qF8n+h1SzbyyEKod0r4/WjL2hHyWSyGn4O95+fk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GhCv6e10muLoMsp6VQEAt0OPss5tA952dqECRMwfeZne+8RzodyKmludQ0jjGUwKzsgytRii91PAqPHppMJIRy5UXarK/jOJnbYC0jkRgnekPl4VxWBCiJiMkN7GDwPvLBq8o50sKt+yIJyo4y/QBwmVo+aKAlj0O7iQrmZ0+34=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Q+HrzrIV; arc=fail smtp.client-ip=52.101.84.10
+	 Content-Type:MIME-Version; b=KfiqGqmjfWw6QQGeSYoaaVrH3kgZ6eAUK3FAwXIr0+ll3o8g9oHpa6p6dCuvhSfzoje80RhngdGJ5lGLLBczQUinqwo8fcN6k0iXKLJa1TMj87ZQjffBl0uiKGzx/yyfzjDbP8sbHj0UoMJQSk+eFuPNZhT2wj0PwEx4v2B52pQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UOYSThdC; arc=fail smtp.client-ip=40.107.159.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X6BAXqRA1i+rXZrCW4qGF3V+1AbwZYl9HgqiNGYjUPCxdR23SpCpzL50cfYC1Lc28qXJ716Cassy6m5SynxvJjmz0kBUq/sEle7rekPtWqyJmNYvGpapfsYW18tv+TRwvikiiUhSXx+4TtTlejy8xLFsUsRymJby7Lm9oV/7RTLbz/VcY3V6i3QLkvQMyUMNhtL5GVrmy+4zOvs6+mnvCgky9PcFDm5hmkzAXCqUyRblFcO/UwER0EJSLXILP0fg1FtUqbLfRYHG/OK9csFmTClnoUMzDEuCLQmE3S8gzX/X7IGuj8XrljDfzydWAqFGoprY1G3InujDuWChHTyiPQ==
+ b=uTbQIZzqgkvVsMQaKfmfhl/yY2wrDFekD9AuAE0s7EeHsLymbRogeiggb+T4CSbyOMqSuludXlGJuAdkn4LobW0H3+22E/EIcATpg6IqMrspYl7TdBibCXaGF2bvcimJzKro03zE5DVj0PDMalIsGfYvKJYO0XDGcjGBzI9rwa9VnjGKPs2LouOWcfV/DAThGEiFChBeVeefWPOAnof+zSDwJEL06GaN1VPGAq0FT1phQGeSFVZclurusSQqsnnZHt7KQ+Is8Uh1HNqs3P5wBZuo9pTgsp1vh+TNaOJHmub067VZId9ptN/8lvd7HxhnA3TMlaAfaYYd4gZ1v+Adaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gJHORHEwOzhyfbFUF4R5IGYc98WpcYh99P2tAVRCOCg=;
- b=L6Rqb46KcA2Mq4MOmUlWbsMttuOrCQTphCiL1qEDqG91AoDDhIuC6pH/X+ZkxLt8Hj6UFVypRKFv1+JnYD09XOlI9ig5V9caKYLhOQo5zcbfOf+87pVhgbvPND8OLxbSZ78oQno1ian3QBlVwnKYl2F0N0BjIAt5dyDFhf+V/MgLDbEoiZHsSpHs86xqVkzGjVL6vxIm8oA4gYuUR6g4Rx6v7LW+TPQIwziIdQNhss/EmldU6d5q90QQE7KAS00p37ta2dOdeUVs6z2XUEAtR//MLMFbT2RRthlGOlKBje+UwwMeXHpjK2qfQBZwS5LKXBM6TFW1RqX6IANBMTtYsQ==
+ bh=JF1/t9qzUjBsTnNXLsgBaLd9k9qlTtB5K80FRU++BQs=;
+ b=KQCUeGoOBGw0PIAx8cUbI4KFKIwyCJwggWlA23aBiM0XBbnHW6wL+hG+qXYvzKktTVperEGzB1O84NNbbQ0dOvRt/j3zbA6YxzchdxTx7Ym+mZT9DrqfPhgCkR6ZSyb7qjqDzrDzcavW3LfJtlXUYIud2DbmLrSXSyPkkuI0IiLfm5rvD3GKbOWt9rJRYSmyqY2R4JMHqa5lZcl7WGnKkrlGc6TeRvVAzdsy0jS9hfOabBb1gPeKUX0B0L6sJ+JfkTT/geSmGnLuyd1qkVO3QalGAMHT0f+iIQpQ5sDDTrs0/ATpVM0n304XG02Tv7W7cNVGf7OxhcMDxffTUToe+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gJHORHEwOzhyfbFUF4R5IGYc98WpcYh99P2tAVRCOCg=;
- b=Q+HrzrIVN5h+pXH9lWPFI00lS8bpNxGIXqGnzi2brtH7j7xOcS/kfvGQsWgsqWepzRVjFjVXv2mwGlJe9jYP6DFBJaqcUKnwwBaH5Cd1gDFCygBQb7FZCYarZdleev7pfh09qhRya6S49hUxemtlo4A7XdOAk7T9bOmC6/RjZ2uvgVYUF89UzLW8TSw6OcTt6B3g1z8qod41apQkNgQ2151mmT+igZUnlCAZmjkBWWLnR2PXCQhNCTwd2PlzIVDq1/ZFaTmUYU4V99UPJrc1ncPNa5cGQwLBO4TFIbiVvUFznKSSN/VwrNWg0iv/HdWsRaHYGQHXtpm7Z59mDe7d5w==
+ bh=JF1/t9qzUjBsTnNXLsgBaLd9k9qlTtB5K80FRU++BQs=;
+ b=UOYSThdCd642UOKfR6m9MQolzveK1ZR+XxrtkYwQTKAxH/0P4cjdlgtOB4jmw3s1+sCcMUjb/yCSPSXrbrQOa4bTtBzfOlaN5RZX7T/JAIei2R2h4ARINOc9ozRIjOcENgq5GLS81yb5klX8Tkz+T66YggglBlQW0Ik9A2NUa3d9nokenYPA9HE2+8Fl6sO6cxeL7YbFnELc4JMSYKBzYKji/QvcgkRGTgmu4nbuNDHwNtaQZZrNgz8s8pyoGzz/wGMwffVfKJ/MxxXhiw4sbmY9dWHraAy5Pj+xpO1C24iYBcW35eItTCb3b8zuwbkFlYY3Umx0EOgrXL8Lores6A==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
  by AS1PR04MB9697.eurprd04.prod.outlook.com (2603:10a6:20b:480::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Thu, 5 Jun
- 2025 20:59:09 +0000
+ 2025 20:59:12 +0000
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8769.025; Thu, 5 Jun 2025
- 20:59:09 +0000
+ 20:59:12 +0000
 From: Frank Li <Frank.Li@nxp.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -63,16 +63,14 @@ To: Rob Herring <robh@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
 	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
 	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
 	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list),
-	netdev@vger.kernel.org (open list:PTP HARDWARE CLOCK SUPPORT:Keyword:(?:\b|_)ptp(?:\b|_))
+	linux-kernel@vger.kernel.org (open list)
 Cc: imx@lists.linux.dev
-Subject: [PATCH 2/6] arm64: dts: imx93: remove eee-broken-1000t for eqos node
-Date: Thu,  5 Jun 2025 16:58:49 -0400
-Message-Id: <20250605205853.1334131-2-Frank.Li@nxp.com>
+Subject: [PATCH 3/6] arm64: dts: imx93: add usdhc3 and lpuart5
+Date: Thu,  5 Jun 2025 16:58:50 -0400
+Message-Id: <20250605205853.1334131-3-Frank.Li@nxp.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250605205853.1334131-1-Frank.Li@nxp.com>
 References: <20250605205853.1334131-1-Frank.Li@nxp.com>
@@ -89,116 +87,509 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS1PR04MB9697:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a44e5d7-5504-4b1e-43fc-08dda473d117
+X-MS-Office365-Filtering-Correlation-Id: 38ad8468-375c-44a6-049b-08dda473d311
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kQzu5Uuq3vOEqYX/u4WjRiguRbwtdbAryrIsQx03KZ/EtAdbMC+ee5+/XXxb?=
- =?us-ascii?Q?9HI56a8gQHfGkFB0kjSWpQ5q+fLmhjqmDJ+7BMSy5Frm1/K63sBsP2KHbusV?=
- =?us-ascii?Q?I41J1PH+mWpSUeDZiFGoFSbo51wNkNS01UHwFWKQuzEKKMnTxkZ+/6Q/TTTC?=
- =?us-ascii?Q?fKE5VDG4E/MrA8oh/vVbLs2ub/JKdgSGtw68ADJKKf7mtkgKpXPzYDfHu24Y?=
- =?us-ascii?Q?Ck+sGasnRExpV8Np9eOeWZXS5ExCXLa2teKfXyqLLSeVWrlfOvr9lbU9YUhc?=
- =?us-ascii?Q?pQbQnopBlCoHxex27LzmnFaQ14MCSC48mU5UniIrmdC76hJbSxmKFMKJ+hDY?=
- =?us-ascii?Q?XWyng7X9hVyUvDGT2tJK1MaonvdoJ2MQzGuyq60/kfAnWhJYhZAfFDqCUiSJ?=
- =?us-ascii?Q?JiBKbcK5/M3iqnSZjbIMRSMvTWUFNe/3OGSlr8gDN3AmljnFDLRqpALbLFCX?=
- =?us-ascii?Q?kaG9FLs2WaxWB3BkgSaQawmswH2n5Q3EwE0oxH3sYSUCI4PJKRw0b3klHSJ9?=
- =?us-ascii?Q?mJFibRR3OFEWKTwf/k7UhbvoCLYnuLZM5eyXF0sGZBDJFHKDBK+y8ol7ZTxb?=
- =?us-ascii?Q?k1r/XRmhrwzsHps5G0YO/WAApi01d9r/imMafIm4x1iCtqTrv9wC3l3YrS1c?=
- =?us-ascii?Q?+AqLjV9DxU7wiWtkKHychgHawFLREpmhUIoXZWVXJygAdTh3YwpBVgG4gODV?=
- =?us-ascii?Q?yDyCWWmQX2Hh3vtSJsIf6N2dkc62LmMpGAnuYgPFitiJNW/ifo11ISFH21wX?=
- =?us-ascii?Q?bDf7bHYOFApf72z8keYyTD8OLJW7tz9AqO2JdRfkKU3uQFTXjbl1EsULgBMS?=
- =?us-ascii?Q?mxx2USqRHIO9DotlqhEWYUmmdRoTWqRkaIAc7HnSG8SZYw1Fc4+Hc0UkaH1o?=
- =?us-ascii?Q?pKR2osMWpQbcf1K2OQ7c2JTw1pgp32b6hYWrE2VihPz69eZZvcg+TVxsVESH?=
- =?us-ascii?Q?l7+6oDai1WYSmuhSnHfZFPSXYj59DZ9bEYbE2FmMG6Ax3+BJ7UWrUs84gvA2?=
- =?us-ascii?Q?lrWUo36RqcxJ/8Tb2q2AUIfwURonKpvPCTFtfvlcX7KP3fNZ4MBA2jBT/YUz?=
- =?us-ascii?Q?wCR1OeySyzw9bCYGm17VhbVmKwP4CCWGq37MuHUQQrCwZrZ65vIV1if7BnOE?=
- =?us-ascii?Q?b2ZNPoWMSv5zyzrtP/bXpRMArpHHcFGoO2AVByF5/CSPIYaWKiX84klulYUL?=
- =?us-ascii?Q?nC/Q30YB0fcR/8PzN/CTtoM+lDJcTaJDUzyXvkP39u7TzbM1FhUqVYqfK2i/?=
- =?us-ascii?Q?NEX8XF+iwBWKyb+szy1LZvryJWmnwHu9a1sE5BqAn63O+VuYnXfV+77DtMEx?=
- =?us-ascii?Q?cz99EFw/gkA545BxPeNHY7LuLw3PnRGWxhbVHJY2zaK2GsGzU8VTlpN4orKd?=
- =?us-ascii?Q?KDhm5RvwLt1QtKmClwJl/Ysw2Wv40ML053BhuNY1tFSnex7leVRZv37T9teM?=
- =?us-ascii?Q?S6+hheqv/lS1sF8zvDmnelnro7nyvnQ/Cm/YGBGER2pWag4gTsXqgiu55/6K?=
- =?us-ascii?Q?nvQhqsRYXbz+LrI=3D?=
+	=?us-ascii?Q?c+vPRftLRtP/Vj9bmmyxFJn/irJxdaoEG7RGBnTZ5bOiVM9v3Q9A4iEQF56i?=
+ =?us-ascii?Q?rR0P/vN2q0sUrh41WXB0FfhaOSUjFrcLVsmaNyBb+HFf+AZj7/kLsn+lXbm3?=
+ =?us-ascii?Q?F5I4IiDjemHqZfbru3WwdnEsvSorbJk/X+jcR38oumwflgkQrOe74QYuDVsD?=
+ =?us-ascii?Q?chZ4ViBm1JWEsqPvNsaCVPiI0hDCXbtSDtEr5ejFIrGaj1K7ZBVVHH/E/zdo?=
+ =?us-ascii?Q?jnu7T74iEDrLMwspVzJ1XFo1q0kWIvCYFxbr5OohrzmzuKvHVUiNWPGFtKR/?=
+ =?us-ascii?Q?AqQc9ZAqVqLk7Hm/MJAgu7XhaWMllaPjuLnmaemdWQNVFcyUEMvkdrtFst9P?=
+ =?us-ascii?Q?smNW8YuIKR/dVZjqeNfUdVbXFFQgD9HkFqxlNsp2s8Wvtww84hcFcNhm/si9?=
+ =?us-ascii?Q?DESLBQ1VMOWbvh4HiewDVxgnhlt256bP5nzsMq3cEl4ZRrk8aait8EKvIBoB?=
+ =?us-ascii?Q?m1SVPamo+VSNeUYVQVxHnSOQv4eNFBPG/R8uaoXdLgUn4ScAmmuWc/UNspSh?=
+ =?us-ascii?Q?72m83iRJsJfBHuZ2T8El5lP3e7VZ2/2T3a6o/F5s4cqn1M8hGCI/igLvrx86?=
+ =?us-ascii?Q?lHdSm+ZsUbUI0MnBfGzZ3T0M6Xz/IXDKy7tUHxs2cy86/93ZYQONSgcC8oA/?=
+ =?us-ascii?Q?sBMTzu4zPPMTE4MNdDOzLMvyUFVZn/JEX9RYgGMoJncZHT93Gf7emOgjHjgQ?=
+ =?us-ascii?Q?ZcfkAOxtmre4/XEdWwWAr9YKcAB+xol1RgAlYKdo2b4BIqY1gO0b5wsqoagr?=
+ =?us-ascii?Q?rstWARhZpfBWZPIPsOG50Y7ngd4JlqmtC+ipDzcbd6yoj+L9NRfWTIMwDNO1?=
+ =?us-ascii?Q?MzlMe7kMktyzhiCRPcPyr9EM9s5Wt4TE9GceGt3eVGYnxrc397tSgbs8hQjW?=
+ =?us-ascii?Q?MKk5cgJJhnHCTegs4nv6aLf62L1yg/n2ZpGtgJ2oF3GF+XlX+gzTSeVgLwDi?=
+ =?us-ascii?Q?2uQ48NS7bczNHcW0bRS5aeTabPEzIh46sWZFgbnSe2NCJEBjjG1hOvf25N5l?=
+ =?us-ascii?Q?5twmbUCu5jnZzKpPgGuboHko5hWRs1Lky2seS9P8jsvZOrd07Cu4mMUNKaQS?=
+ =?us-ascii?Q?EyLcvgvorZug0U5d7jL0ziAM5LbFgxRA0vcMEHKS0uo4p2BceuNZBHmJov14?=
+ =?us-ascii?Q?5Goc9tWncq8VdMPH1VhBf50tWJhrhRgI37N1nYgXpYxaXgYBklwmoKDdSh+b?=
+ =?us-ascii?Q?uRAlq+QMpICaCt7He7hOlXSRgCgN821yGsRde4wjQEGF1afajdN1RoLRmUwm?=
+ =?us-ascii?Q?RlDQD2uQEqJvUs2f3jNUeGBrXPl5MthNrBkS/EgIPUA6NJjHK6YEAEWgFYX0?=
+ =?us-ascii?Q?cMvLqRdcRvDiH7Pbv3U5HPf5KMdPrMBfvXe0jDG1wTCF1d7E0M1TYYunPL+M?=
+ =?us-ascii?Q?2VkPWGF7pfk6Y2as0isdC2bcDQ2KGMEOViQmavn4p+k38FTN0ku5KsYLuDBd?=
+ =?us-ascii?Q?50Z/SJUYm1KpTY9hNgwoNSconktWWCQD4cqukrA1fj8lNSXpNkXt4qPmtvu1?=
+ =?us-ascii?Q?Nc0Evh6UoPfbXoU=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rYZRZ8naq1rxoB+pdAJBwr7r0yhwN7F3NDxbDc6EeJQV9JuhD9nGuGcyx+c+?=
- =?us-ascii?Q?WY0l6mXbWbAxrkhaOZr6VlpxqG7YqK1tlI3e+WVN3l8HEbfkjdrUih7IRjvx?=
- =?us-ascii?Q?m2TFLGlfju3GEdT9t/ltxclQIg9WTYLEt1G5BUoELasn8U+IYIMLLfR60K8N?=
- =?us-ascii?Q?xJQ1NRSGqao34ltZ73X5kv0wxN+LMq3SkUTulVXjUugpfoiDtl+EpJee2+HC?=
- =?us-ascii?Q?oubYT6OyEGOYtJDmSupGeVnoHayIBMk0eJNDjoZWMhJfmNjXuLO/wDdkY/R4?=
- =?us-ascii?Q?sgvM7iV3yhp/jxrJMNJR0SbqGq+MXoqVL0c8Zr9hZoggFuad+L42BUd+AChC?=
- =?us-ascii?Q?/5qiVSmvgYScBgSxNGw66BIGgnSrwclDCn+XDuWpjsPhRxUSpwL6N91Gp26i?=
- =?us-ascii?Q?wPJ+DDX8s79eQAz2S+Gwt5Os30+5L03llLumaeDJ204tdryJ3Zu9RTWr08ek?=
- =?us-ascii?Q?JK3f79QTXNOMJGNjVKLhK5e9+BX4G5KvnHWHosBKsVrneA2hp9+1DW0smTYm?=
- =?us-ascii?Q?J6NZaKK7zfLSkRY3Yuix0XqzA4ZT3C4PiphQgpJPUwHxLlcFBcqHvk7g5x5+?=
- =?us-ascii?Q?OtoorGei/ArxBhIJiVjBOCDoJg8ehlxnM/wSpfM08byupiYjBuX+8y8lsouk?=
- =?us-ascii?Q?oW4H4/tCM9hMCi8oN2dS+QJ55xXn9wb3HfDgwEqK6bUhLeEU/UYjDVRZZzG9?=
- =?us-ascii?Q?EZgtTnwEKD/iCFqKRwog9+7QtBZxXL10ebPwJXLgahJEFdQbXX4raIxq7mvJ?=
- =?us-ascii?Q?p8CBt3aGFYHLoFPSZOFluIyfrY7WAvKt10jIhako0oJk/92vtJHvauq1yM7F?=
- =?us-ascii?Q?++INywW5GB9qK9CjvTj3u5QprMn4ttSMLxeibYmDuSSEc5L1oIjT+ASxEASF?=
- =?us-ascii?Q?1XjoXBGaSgtGHd6OiKh93CAQsXckj6yviQWvKkQO9K4ivdojTX3P9GP8UlTW?=
- =?us-ascii?Q?xoRu8FN4F+RMPK7hv8z696nbILnk9rAFfwGLY96eqg3oaOfGP5g1SaOALLtJ?=
- =?us-ascii?Q?5LU8MgdDIg9r5gNcLm0noBzPhEpjclM5CEDjxPomDbXpZ+b5lESOW1bjYM+J?=
- =?us-ascii?Q?nQHYkpuUhjEjlpvYoEoLacIKfDXsOaeNKVWDPtrTJLkH+bOURsX48gNd5u0B?=
- =?us-ascii?Q?DZkd37JeyIYEAi2mU1Zoc1MXjP4rd19GpkmVSV7rPVGmJzrciifb4furCAI6?=
- =?us-ascii?Q?0nhgFXjQAEhEOBaOMDW7gdePwCs8OAOuDl4U7DpOQBxMO7Fli7eg/GKvQESV?=
- =?us-ascii?Q?U6uxTcHfdtHXiIQs8Aad37FqHD4huxipZNdirf1lQJYkB5pWMCYxlvHWhoJz?=
- =?us-ascii?Q?TLkuEiJCVzzHgRt4mk9lL0A82baIwdEY1HadXqqy4frQ37a4OBIEhTcjlQRd?=
- =?us-ascii?Q?dNK/NjGkk7IUkyVx5GNSxng09YB0MJIqE+Z6mDzHwskpSXpEci5J3NRN6Hsn?=
- =?us-ascii?Q?647zxDISrr62Evqq8EZB45rHTKQ5SlxhwAVUThbYbNXF86/P6dImophjlDOF?=
- =?us-ascii?Q?7Yg9b32eNmPnLdDiaYkYVwiz4uJn0vVAz03vqz8x7uHhCOgtVvL9yXp+K843?=
- =?us-ascii?Q?ydf0MPyuyg8Zfd8E9+NLO2fIGhToACiB2jNHM9P8?=
+	=?us-ascii?Q?GSifTMr4KQzzHcHQfcqGJivEQBM7JV/3hL/61rXMagwD9hONYTL4/MizbXoE?=
+ =?us-ascii?Q?VgF3JOMpacFasMPXsKeLtIbO/oGVuGRrFaScVhTDZhayFtR9FS2IU8q27WVi?=
+ =?us-ascii?Q?qdbrQRmY50ZrXwTZWKT7Vv/fIdp4mki9Bj6bjJcIKhtnbuEAeYxgA7VHkqr6?=
+ =?us-ascii?Q?eoYYK6EPh4flzD5QjyNDkRseRVJ3genHznOBKP06G1kbzMG60E7jk/gpwIme?=
+ =?us-ascii?Q?dx2uEry+emSk6iewcj2ifcRFW9ZzFBdWQUWkxPq2q+IWdMe5kKupwoL3eWsB?=
+ =?us-ascii?Q?hz5lblP7xwLKpswEHB2UF9lLpbzcxp6rP0tW6UGip/s2lo5rzQadsr3dx2vx?=
+ =?us-ascii?Q?debYjmgzoYXYjr2NvXpk7X4E+lDsNsuR/eiQaUOcx8iSGyGm+dU8ektvG7pB?=
+ =?us-ascii?Q?dJTjTi91QkruCh8jajLvSbeM9HwUcQfOLfXe/IyKGAzdIw8vKD8OCLyqklIP?=
+ =?us-ascii?Q?E+KuaPxsJb8X7SS/2Nb+YT2MsVlSySd/vvrVfR/jzRYse0/qq6rsRjF/yZI3?=
+ =?us-ascii?Q?0gte2zU9y4CP8JB/jHQnFWUOlewAGU0+I016wI+UkrYlGVtzuOwTG2TMZ3t8?=
+ =?us-ascii?Q?ZwoHZ7Bverh3NJ87ZwY3mvp+uW3Hm/9iGfR+SjhNh+v6QOO0NVL/p3jvLa1c?=
+ =?us-ascii?Q?pEl9D5uGn38lrncllCyGPzkd3zaJVqEm2YJWjGY+Z8nMLQuesO9OsSPnuydm?=
+ =?us-ascii?Q?dDHMaupdEtcYtymla7q+KLCniwp0bJjbaIi3coQiMCE9PpRydKhx3/i4uNrR?=
+ =?us-ascii?Q?WIX8uqKJR+MY+bdjcfmAFoQo2WO98zjg20M7X4igmrAULkN1f1Pjm6CbeKB7?=
+ =?us-ascii?Q?BjodYdRWonAdBehDjvn4rCUbk1p7gy1TVhsDIFZUrOk7GBzefrgmEPu1LiDS?=
+ =?us-ascii?Q?GGLNRajq7rI7yLwj7Z+KKm66Vc91A/jhLfBwtpNZO5A0D5UkvZXqloEGIZDA?=
+ =?us-ascii?Q?CN862ITfR55GKuLsAXu25y067w2vE79jhJLJJZrjnsZJM3S2nWLIrxO5Ar3O?=
+ =?us-ascii?Q?TeaqYMjPK7SysRXYZuw1KWFvNu2ENcvuO8D8+Am8j6n5s07BB3Fz+6HMVo83?=
+ =?us-ascii?Q?g3NcjfB4FO2QI4T+YCmr6arTfLGAvwDo6z7hQbqe5eLNtrihbcHNTdssjK0e?=
+ =?us-ascii?Q?g8VELQGijKcxDBHDQ7aqZZlcXqZ672JabVJQWYg83CHbV9k3VXJaO+J0B802?=
+ =?us-ascii?Q?YEn00RegRkpVX40kqiv4xyOIzU13zV4CFn+1h1qtQa5jDb+8vM9LzP+jhW4C?=
+ =?us-ascii?Q?7rVOST+vPLC7qBhq3/i0inkdtt2HphggupX9w/uyU3xCXGrOCoZMsVYhsSoe?=
+ =?us-ascii?Q?xvOB4V0tuyq506N6V5yqVI9dnCfosqy3p7xtXJWRXNdtUfn9A98B5nt6qy62?=
+ =?us-ascii?Q?drrTyCI5sudT6K+tnR7/KeUnsSotQwjfGFWfoJT5Q1i0m7yLuI6yZtinFVEY?=
+ =?us-ascii?Q?b5vylsIOUxyV5WFVfcM6S1PHuxi+C7VgjI9cMxBKOAXLTYhzOVu2BoHDvIAQ?=
+ =?us-ascii?Q?aDEKqBXqWug0ibsBCngkoN6LL+Q1ObQuF97s4QvIJqO5W6TmblukrXjja/PZ?=
+ =?us-ascii?Q?WkMG470GKC26X9f8/6xhQLYW+GM5ETzzJb6/ZTuH?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a44e5d7-5504-4b1e-43fc-08dda473d117
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38ad8468-375c-44a6-049b-08dda473d311
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 20:59:09.4581
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 20:59:12.8724
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A+MZk1Ee/yF1rXrsgc/yU33Njn91WFpll7Mk4UwYmoDyhDN4T7GxlVTTG6i5OzUAHnTdlxgLXKzk/foSJzBUgw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8efh9Daw+onGiE2KWPkEXQHOfuNZVoKuuupZubfPkE1NE81lBhXGmIc4pyoErq5PTaC8wRVHkpdK2vhJDanqPg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9697
 
-From: Clark Wang <xiaoning.wang@nxp.com>
+Add usdhc3 and lpuart5 for imx93-9x9-qsb, imx93-11x11-evk and
+imx93-14x14-evk, which connect to onboard wifi/bt module.
 
-The "eee-broken-1000t" was added on 8mm for FEC to avoid issue of ptp sync.
-EQoS haven't such issue. So, remove this for EQoS phys.
-
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts | 1 -
- arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts   | 1 -
- 2 files changed, 2 deletions(-)
+ .../boot/dts/freescale/imx93-11x11-evk.dts    | 103 ++++++++++++++++++
+ .../boot/dts/freescale/imx93-14x14-evk.dts    |  99 +++++++++++++++++
+ .../boot/dts/freescale/imx93-9x9-qsb.dts      |  92 ++++++++++++++++
+ 3 files changed, 294 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-index 8491eb53120e6..a6ebeb642eb65 100644
+index a6ebeb642eb65..295eb8d90f03f 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-@@ -217,7 +217,6 @@ mdio {
+@@ -95,6 +95,15 @@ reg_can2_standby: regulator-can2-standby {
+ 		gpio = <&adp5585 6 GPIO_ACTIVE_LOW>;
+ 	};
  
- 		ethphy1: ethernet-phy@1 {
- 			reg = <1>;
--			eee-broken-1000t;
- 			reset-gpios = <&pcal6524 15 GPIO_ACTIVE_LOW>;
- 			reset-assert-us = <10000>;
- 			reset-deassert-us = <80000>;
++	reg_m2_pwr: regulator-m2-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "M.2-power";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pcal6524 13 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
+@@ -107,6 +116,28 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		enable-active-high;
+ 	};
+ 
++	reg_usdhc3_vmmc: regulator-usdhc3 {
++		compatible = "regulator-fixed";
++		regulator-name = "WLAN_EN";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&reg_m2_pwr>;
++		gpio = <&pcal6524 20 GPIO_ACTIVE_HIGH>;
++		/*
++		 * IW612 wifi chip needs more delay than other wifi chips to complete
++		 * the host interface initialization after power up, otherwise the
++		 * internal state of IW612 may be unstable, resulting in the failure of
++		 * the SDIO3.0 switch voltage.
++		 */
++		startup-delay-us = <20000>;
++		enable-active-high;
++	};
++
++	usdhc3_pwrseq: usdhc3_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&pcal6524 12 GPIO_ACTIVE_LOW>;
++	};
++
+ 	backlight_lvds: backlight-lvds {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&adp5585 0 100000 0>;
+@@ -492,6 +523,10 @@ &lpuart5 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart5>;
+ 	status = "okay";
++
++	bluetooth {
++		compatible = "nxp,88w8987-bt";
++	};
+ };
+ 
+ &micfil {
+@@ -593,6 +628,21 @@ &usdhc2 {
+ 	no-mmc;
+ };
+ 
++&usdhc3 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
++	pinctrl-0 = <&pinctrl_usdhc3>, <&pinctrl_usdhc3_wlan>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>, <&pinctrl_usdhc3_wlan>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>, <&pinctrl_usdhc3_wlan>;
++	pinctrl-3 = <&pinctrl_usdhc3_sleep>, <&pinctrl_usdhc3_wlan>;
++	mmc-pwrseq = <&usdhc3_pwrseq>;
++	vmmc-supply = <&reg_usdhc3_vmmc>;
++	bus-width = <4>;
++	keep-power-in-suspend;
++	non-removable;
++	wakeup-source;
++	status = "okay";
++};
++
+ &wdog3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_wdog>;
+@@ -934,6 +984,59 @@ MX93_PAD_SD2_VSELECT__GPIO3_IO19	0x51e
+ 		>;
+ 	};
+ 
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x1582
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x40001382
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x40001382
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x40001382
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x40001382
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x40001382
++		>;
++	};
++
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x158e
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x4000138e
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x4000138e
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x4000138e
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x4000138e
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x4000138e
++		>;
++	};
++
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x15fe
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x400013fe
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x400013fe
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x400013fe
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x400013fe
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x400013fe
++		>;
++	};
++
++	pinctrl_usdhc3_sleep: usdhc3grpsleepgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__GPIO3_IO20		0x31e
++			MX93_PAD_SD3_CMD__GPIO3_IO21		0x31e
++			MX93_PAD_SD3_DATA0__GPIO3_IO22		0x31e
++			MX93_PAD_SD3_DATA1__GPIO3_IO23		0x31e
++			MX93_PAD_SD3_DATA2__GPIO3_IO24		0x31e
++			MX93_PAD_SD3_DATA3__GPIO3_IO25		0x31e
++		>;
++	};
++
++	pinctrl_usdhc3_wlan: usdhc3wlangrp {
++		fsl,pins = <
++			MX93_PAD_CCM_CLKO1__GPIO3_IO26		0x31e
++		>;
++	};
++
+ 	pinctrl_wdog: wdoggrp {
+ 		fsl,pins = <
+ 			MX93_PAD_WDOG_ANY__WDOG1_WDOG_ANY	0x31e
+diff --git a/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts b/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts
+index f556b6569a68e..c5d86b54ad33b 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts
+@@ -99,6 +99,15 @@ reg_can2_en: regulator-can2-en {
+ 		enable-active-high;
+ 	};
+ 
++	reg_m2_pwr: regulator-m2-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "M.2-power";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pcal6524 13 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
+@@ -111,6 +120,23 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		off-on-delay-us = <12000>;
+ 	};
+ 
++	reg_usdhc3_vmmc: regulator-usdhc3 {
++		compatible = "regulator-fixed";
++		regulator-name = "WLAN_EN";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&reg_m2_pwr>;
++		gpio = <&pcal6524 20 GPIO_ACTIVE_HIGH>;
++		/*
++		 * IW612 wifi chip needs more delay than other wifi chips to complete
++		 * the host interface initialization after power up, otherwise the
++		 * internal state of IW612 may be unstable, resulting in the failure of
++		 * the SDIO3.0 switch voltage.
++		 */
++		startup-delay-us = <20000>;
++		enable-active-high;
++	};
++
+ 	reg_vdd_12v: regulator-vdd-12v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "reg_vdd_12v";
+@@ -126,6 +152,11 @@ reg_vref_1v8: regulator-adc-vref {
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
+ 	};
++
++	usdhc3_pwrseq: usdhc3_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&pcal6524 12 GPIO_ACTIVE_LOW>;
++	};
+ };
+ 
+ &adc1 {
+@@ -366,6 +397,21 @@ &usdhc2 {
+ 	status = "okay";
+ };
+ 
++&usdhc3 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
++	pinctrl-0 = <&pinctrl_usdhc3>, <&pinctrl_usdhc3_wlan>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>, <&pinctrl_usdhc3_wlan>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>, <&pinctrl_usdhc3_wlan>;
++	pinctrl-3 = <&pinctrl_usdhc3_sleep>, <&pinctrl_usdhc3_wlan>;
++	mmc-pwrseq = <&usdhc3_pwrseq>;
++	vmmc-supply = <&reg_usdhc3_vmmc>;
++	bus-width = <4>;
++	keep-power-in-suspend;
++	non-removable;
++	wakeup-source;
++	status = "okay";
++};
++
+ &wdog3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_wdog>;
+@@ -552,6 +598,59 @@ MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
+ 		>;
+ 	};
+ 
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x1582
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x40001382
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x40001382
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x40001382
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x40001382
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x40001382
++		>;
++	};
++
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x158e
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x4000138e
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x4000138e
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x4000138e
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x4000138e
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x4000138e
++		>;
++	};
++
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x15fe
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x400013fe
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x400013fe
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x400013fe
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x400013fe
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x400013fe
++		>;
++	};
++
++	pinctrl_usdhc3_sleep: usdhc3grpsleepgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__GPIO3_IO20		0x31e
++			MX93_PAD_SD3_CMD__GPIO3_IO21		0x31e
++			MX93_PAD_SD3_DATA0__GPIO3_IO22		0x31e
++			MX93_PAD_SD3_DATA1__GPIO3_IO23		0x31e
++			MX93_PAD_SD3_DATA2__GPIO3_IO24		0x31e
++			MX93_PAD_SD3_DATA3__GPIO3_IO25		0x31e
++		>;
++	};
++
++	pinctrl_usdhc3_wlan: usdhc3wlangrp {
++		fsl,pins = <
++			MX93_PAD_CCM_CLKO1__GPIO3_IO26	  0x31e
++		>;
++	};
++
+ 	pinctrl_wdog: wdoggrp {
+ 		fsl,pins = <
+ 			MX93_PAD_WDOG_ANY__WDOG1_WDOG_ANY	0x31e
 diff --git a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-index acbd981ba548a..cceca130c5b4e 100644
+index cceca130c5b4e..f6f8d105b737e 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
-@@ -184,7 +184,6 @@ mdio {
- 		ethphy1: ethernet-phy@1 {
- 			compatible = "ethernet-phy-ieee802.3-c22";
- 			reg = <1>;
--			eee-broken-1000t;
- 			reset-gpios = <&pcal6524 15 GPIO_ACTIVE_LOW>;
- 			reset-assert-us = <10000>;
- 			reset-deassert-us = <80000>;
+@@ -82,6 +82,15 @@ reg_audio_pwr: regulator-audio-pwr {
+ 		enable-active-high;
+ 	};
+ 
++	reg_m2_pwr: regulator-m2-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "M.2-power";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pcal6524 13 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	reg_rpi_3v3: regulator-rpi {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VDD_RPI_3V3";
+@@ -103,6 +112,23 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		off-on-delay-us = <12000>;
+ 	};
+ 
++	reg_usdhc3_vmmc: regulator-usdhc3 {
++		compatible = "regulator-fixed";
++		regulator-name = "WLAN_EN";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&reg_m2_pwr>;
++		gpio = <&pcal6524 20 GPIO_ACTIVE_HIGH>;
++		/*
++		 * IW612 wifi chip needs more delay than other wifi chips to complete
++		 * the host interface initialization after power up, otherwise the
++		 * internal state of IW612 may be unstable, resulting in the failure of
++		 * the SDIO3.0 switch voltage.
++		 */
++		startup-delay-us = <20000>;
++		enable-active-high;
++	};
++
+ 	sound-bt-sco {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "bt-sco-audio";
+@@ -151,6 +177,11 @@ sound-wm8962 {
+ 			"IN3R", "AMIC",
+ 			"IN1R", "AMIC";
+ 	};
++
++	usdhc3_pwrseq: usdhc3_pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&pcal6524 12 GPIO_ACTIVE_LOW>;
++	};
+ };
+ 
+ &adc1 {
+@@ -384,6 +415,17 @@ &lpuart1 { /* console */
+ 	status = "okay";
+ };
+ 
++&lpuart5 {
++	/* BT */
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart5>;
++	status = "okay";
++
++	bluetooth {
++		compatible = "nxp,88w8987-bt";
++	};
++};
++
+ &micfil {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_pdm>;
+@@ -462,6 +504,20 @@ &usdhc2 {
+ 	status = "okay";
+ };
+ 
++&usdhc3 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc3>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
++	mmc-pwrseq = <&usdhc3_pwrseq>;
++	vmmc-supply = <&reg_usdhc3_vmmc>;
++	bus-width = <4>;
++	keep-power-in-suspend;
++	non-removable;
++	wakeup-source;
++	status = "okay";
++};
++
+ &wdog3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_wdog>;
+@@ -654,6 +710,42 @@ MX93_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
+ 		>;
+ 	};
+ 
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x1582
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x40001382
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x40001382
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x40001382
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x40001382
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x40001382
++		>;
++	};
++
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x158e
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x4000138e
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x4000138e
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x4000138e
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x4000138e
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x4000138e
++		>;
++	};
++
++	/* need to config the SION for data and cmd pad, refer to ERR052021 */
++	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
++		fsl,pins = <
++			MX93_PAD_SD3_CLK__USDHC3_CLK		0x15fe
++			MX93_PAD_SD3_CMD__USDHC3_CMD		0x400013fe
++			MX93_PAD_SD3_DATA0__USDHC3_DATA0	0x400013fe
++			MX93_PAD_SD3_DATA1__USDHC3_DATA1	0x400013fe
++			MX93_PAD_SD3_DATA2__USDHC3_DATA2	0x400013fe
++			MX93_PAD_SD3_DATA3__USDHC3_DATA3	0x400013fe
++		>;
++	};
++
+ 	pinctrl_wdog: wdoggrp {
+ 		fsl,pins = <
+ 			MX93_PAD_WDOG_ANY__WDOG1_WDOG_ANY	0x31e
 -- 
 2.34.1
 
