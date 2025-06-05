@@ -1,515 +1,190 @@
-Return-Path: <linux-kernel+bounces-674603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DECACF1BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:26:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFE3ACF1AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C731897810
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEE61748E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A61917FB;
-	Thu,  5 Jun 2025 14:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2601156677;
+	Thu,  5 Jun 2025 14:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Cj5z66+V"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zWbYJvWL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mI60w1ai";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zWbYJvWL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mI60w1ai"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B579A1F09A1
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10ED1552FD
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133434; cv=none; b=e2inynApSKlUB5saaqPSTkVqB48MBt6E7oDYU1KP611O9jAzC9xWkTxNuyTlwRpvTfk7JaLFF5Gfiv5VMbRWhVSnhaT3+jmbrm7ur5DauqxfU0B0dScKITDQRTQQ0Efni5Nui5jwt+kWZ48UQgPoU3mFhRK6TCXUt8nlhFVrgLo=
+	t=1749133418; cv=none; b=GH/BEPMAGJGpZ6IyzmJIPBt857+rX2oHg6EmmbtKYJ+e4Q8p9POXR1H4nrLPFOT8Ggfqf8XrUg3q8C639idJ/NdMJcdtyZrP273Yf96UxO5/qcuClNN7YFn6s2lUDE7fONh3fdnaFBG8mFuMWpE6iHe7icl6858lZCrRU4T6W4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133434; c=relaxed/simple;
-	bh=cVqSblQRPUMKuxExdj6fRaq3ounZ01k/ElYFHjbgK58=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aLcvQkDbjftpvUenrlArFoQXq5s05NLy+Pz/Hbh5vRmvaK+zCVB/gpJQ0P07qAvpp9if6Ath93y0sOF0UwNPIyQAiEFPAff6+OM7umAuPsHpbjL6jLhHy1HkQfGS7P1hSdFSJGkx+uOWSAG2mFwnBUyO8kU4mciDrkCO/GGxJKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Cj5z66+V; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749133429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1749133418; c=relaxed/simple;
+	bh=unRD5RKD6xhSaEllEGZZH2fCsQ/seiSinfUoX+565ok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MkszhDHCz4jXfgc+uEfaucHWY3+MRRYnCpSTqbwtl8oh5jkdWoh4sn3vUUMhqn2NbN0a0ZSabpfdxCX3jMb39ZwyNPrr7gfZL+gtFI7vLXzH+Nn0U3BtWuhemxCPwaWJyISrqGsd7GfX2hu3JCvP4Rn1CPFqNslLDfuwjirfVso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zWbYJvWL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mI60w1ai; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zWbYJvWL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mI60w1ai; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B57891FC07;
+	Thu,  5 Jun 2025 14:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749133399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fe4m3owosPzB3KvlAMRW3NDZUpPP7y6rq1nR9F2nKx0=;
-	b=Cj5z66+VtoenRz6bZve+z4yR8qfxBbCTSdcG7+t8YbnVMjRbBa9QS2QRrgmnVIj2+KfAHn
-	LLOyyLn1LMtvW5oZC2SHAjCjjpFzZwU5ifWRPLsDS+PRzganlpALEVhsc85OR1whwmxjhh
-	iA25NI5fIdKi0gdrFui2/Q/+63AHw/E=
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-To: mpatocka@redhat.com,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@Huawei.com
-Cc: linux-block@vger.kernel.org,
+	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
+	b=zWbYJvWL9IwlUT0QyuNU1e/H2zkY9nAGFWR9gPCQ4kCvfvgl1m6Y7Xc28xFo+8veSh/mHe
+	OSP10casSp+KJt6Qba0V/J0hKa8OyQ6UVMMlvvCxNUnRhMDF6CRwhhFnTxywsNJ6AXUXD6
+	P+eQeBAYlCsAMW3Sy7KSN7Ae2x03CiE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749133399;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
+	b=mI60w1aiFARGc5RyNWieEIvw2NTo1b+pDiwkVvz1NKMO4yIFQggBvpjOw0kliuEAvlFbPH
+	oDIIxvIyIX7v/fCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749133399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
+	b=zWbYJvWL9IwlUT0QyuNU1e/H2zkY9nAGFWR9gPCQ4kCvfvgl1m6Y7Xc28xFo+8veSh/mHe
+	OSP10casSp+KJt6Qba0V/J0hKa8OyQ6UVMMlvvCxNUnRhMDF6CRwhhFnTxywsNJ6AXUXD6
+	P+eQeBAYlCsAMW3Sy7KSN7Ae2x03CiE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749133399;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
+	b=mI60w1aiFARGc5RyNWieEIvw2NTo1b+pDiwkVvz1NKMO4yIFQggBvpjOw0kliuEAvlFbPH
+	oDIIxvIyIX7v/fCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24BBE137FE;
+	Thu,  5 Jun 2025 14:23:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CPEABleoQWipRwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:19 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	dm-devel@lists.linux.dev,
-	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [RFC PATCH 02/11] dm-pcache: add backing device management
-Date: Thu,  5 Jun 2025 14:22:57 +0000
-Message-Id: <20250605142306.1930831-3-dongsheng.yang@linux.dev>
-In-Reply-To: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
-References: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v5 07/10] drivers,hmat: Use node-notifier instead of memory-notifier
+Date: Thu,  5 Jun 2025 16:22:58 +0200
+Message-ID: <20250605142305.244465-8-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
+References: <20250605142305.244465-1-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Spam-Flag: NO
+X-Spam-Score: -5.30
+X-Spamd-Result: default: False [-5.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	URIBL_BLOCKED(0.00)[suse.de:mid,suse.de:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,oracle.com:email,huawei.com:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Level: 
 
-This patch introduces *backing_dev.{c,h}*, a self-contained layer that
-handles all interaction with the *backing block device* where cache
-write-back and cache-miss reads are serviced.  Isolating this logic
-keeps the core dm-pcache code free of low-level bio plumbing.
+hmat driver is only concerned when a numa node changes its memory state,
+specifically when a numa node with memory comes into play for the first
+time, because it will register the memory_targets belonging to that numa
+node.
+So stop using the memory notifier and use the new numa node notifer
+instead.
 
-* Device setup / teardown
-  - Opens the target with `dm_get_device()`, stores `bdev`, file and
-    size, and initialises a dedicated `bioset`.
-  - Gracefully releases resources via `backing_dev_stop()`.
-
-* Request object (`struct pcache_backing_dev_req`)
-  - Two request flavours:
-    - REQ-type – cloned from an upper `struct bio` issued to
-      dm-pcache; trimmed and re-targeted to the backing LBA.
-    - KMEM-type – maps an arbitrary kernel memory buffer
-      into a freshly built.
-  - Private completion callback (`end_req`) propagates status to the
-    upper layer and handles resource recycling.
-
-* Submission & completion path
-  - Lock-protected submit queue + worker (`req_submit_work`) let pcache
-    push many requests asynchronously, at the same time, allow caller
-    to submit backing_dev_req in atomic context.
-  - End-io handler moves finished requests to a completion list processed
-    by `req_complete_work`, ensuring callbacks run in process context.
-  - Direct-submit option for non-atomic context.
-
-* Flush
-  - `backing_dev_flush()` issues a flush to persist backing-device data.
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- drivers/md/dm-pcache/backing_dev.c | 305 +++++++++++++++++++++++++++++
- drivers/md/dm-pcache/backing_dev.h |  84 ++++++++
- 2 files changed, 389 insertions(+)
- create mode 100644 drivers/md/dm-pcache/backing_dev.c
- create mode 100644 drivers/md/dm-pcache/backing_dev.h
+ drivers/acpi/numa/hmat.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/md/dm-pcache/backing_dev.c b/drivers/md/dm-pcache/backing_dev.c
-new file mode 100644
-index 000000000000..080944cd6c93
---- /dev/null
-+++ b/drivers/md/dm-pcache/backing_dev.c
-@@ -0,0 +1,305 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+#include <linux/blkdev.h>
-+
-+#include "../dm-core.h"
-+#include "pcache_internal.h"
-+#include "cache_dev.h"
-+#include "backing_dev.h"
-+#include "cache.h"
-+#include "dm_pcache.h"
-+
-+static void backing_dev_exit(struct pcache_backing_dev *backing_dev)
-+{
-+	kmem_cache_destroy(backing_dev->backing_req_cache);
-+}
-+
-+static void req_submit_fn(struct work_struct *work);
-+static void req_complete_fn(struct work_struct *work);
-+static int backing_dev_init(struct dm_pcache *pcache)
-+{
-+	struct pcache_backing_dev *backing_dev = &pcache->backing_dev;
-+	int ret;
-+
-+	backing_dev->backing_req_cache = KMEM_CACHE(pcache_backing_dev_req, 0);
-+	if (!backing_dev->backing_req_cache) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	INIT_LIST_HEAD(&backing_dev->submit_list);
-+	INIT_LIST_HEAD(&backing_dev->complete_list);
-+	spin_lock_init(&backing_dev->submit_lock);
-+	spin_lock_init(&backing_dev->complete_lock);
-+	INIT_WORK(&backing_dev->req_submit_work, req_submit_fn);
-+	INIT_WORK(&backing_dev->req_complete_work, req_complete_fn);
-+
-+	return 0;
-+err:
-+	return ret;
-+}
-+
-+static int backing_dev_open(struct pcache_backing_dev *backing_dev, const char *path)
-+{
-+	struct dm_pcache *pcache = BACKING_DEV_TO_PCACHE(backing_dev);
-+	int ret;
-+
-+	ret = dm_get_device(pcache->ti, path,
-+			BLK_OPEN_READ | BLK_OPEN_WRITE, &backing_dev->dm_dev);
-+	if (ret) {
-+		pcache_dev_err(pcache, "failed to open dm_dev: %s: %d", path, ret);
-+		goto err;
-+	}
-+	backing_dev->dev_size = bdev_nr_sectors(backing_dev->dm_dev->bdev);
-+
-+	return 0;
-+err:
-+	return ret;
-+}
-+
-+static void backing_dev_close(struct pcache_backing_dev *backing_dev)
-+{
-+	struct dm_pcache *pcache = BACKING_DEV_TO_PCACHE(backing_dev);
-+
-+	dm_put_device(pcache->ti, backing_dev->dm_dev);
-+}
-+
-+int backing_dev_start(struct dm_pcache *pcache, const char *backing_dev_path)
-+{
-+	struct pcache_backing_dev *backing_dev = &pcache->backing_dev;
-+	int ret;
-+
-+	ret = backing_dev_init(pcache);
-+	if (ret)
-+		goto err;
-+
-+	ret = backing_dev_open(backing_dev, backing_dev_path);
-+	if (ret)
-+		goto destroy_backing_dev;
-+
-+	return 0;
-+
-+destroy_backing_dev:
-+	backing_dev_exit(backing_dev);
-+err:
-+	return ret;
-+}
-+
-+void backing_dev_stop(struct dm_pcache *pcache)
-+{
-+	struct pcache_backing_dev *backing_dev = &pcache->backing_dev;
-+
-+	flush_work(&backing_dev->req_submit_work);
-+	flush_work(&backing_dev->req_complete_work);
-+
-+	/* There should be no inflight backing_dev_request */
-+	BUG_ON(!list_empty(&backing_dev->submit_list));
-+	BUG_ON(!list_empty(&backing_dev->complete_list));
-+
-+	backing_dev_close(backing_dev);
-+	backing_dev_exit(backing_dev);
-+}
-+
-+/* pcache_backing_dev_req functions */
-+void backing_dev_req_end(struct pcache_backing_dev_req *backing_req)
-+{
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+
-+	if (backing_req->end_req)
-+		backing_req->end_req(backing_req, backing_req->ret);
-+
-+	switch (backing_req->type) {
-+	case BACKING_DEV_REQ_TYPE_REQ:
-+		pcache_req_put(backing_req->req.upper_req, backing_req->ret);
-+		break;
-+	case BACKING_DEV_REQ_TYPE_KMEM:
-+		kfree(backing_req->kmem.bvecs);
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	kmem_cache_free(backing_dev->backing_req_cache, backing_req);
-+}
-+
-+static void req_complete_fn(struct work_struct *work)
-+{
-+	struct pcache_backing_dev *backing_dev = container_of(work, struct pcache_backing_dev, req_complete_work);
-+	struct pcache_backing_dev_req *backing_req;
-+	unsigned long flags;
-+	LIST_HEAD(tmp_list);
-+
-+	spin_lock_irqsave(&backing_dev->complete_lock, flags);
-+	list_splice_init(&backing_dev->complete_list, &tmp_list);
-+	spin_unlock_irqrestore(&backing_dev->complete_lock, flags);
-+
-+	while (!list_empty(&tmp_list)) {
-+		backing_req = list_first_entry(&tmp_list,
-+					    struct pcache_backing_dev_req, node);
-+		list_del_init(&backing_req->node);
-+		backing_dev_req_end(backing_req);
-+	}
-+}
-+
-+static void backing_dev_bio_end(struct bio *bio)
-+{
-+	struct pcache_backing_dev_req *backing_req = bio->bi_private;
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+
-+	backing_req->ret = bio->bi_status;
-+
-+	spin_lock(&backing_dev->complete_lock);
-+	list_move_tail(&backing_req->node, &backing_dev->complete_list);
-+	spin_unlock(&backing_dev->complete_lock);
-+
-+	queue_work(BACKING_DEV_TO_PCACHE(backing_dev)->task_wq, &backing_dev->req_complete_work);
-+}
-+
-+static void req_submit_fn(struct work_struct *work)
-+{
-+	struct pcache_backing_dev *backing_dev = container_of(work, struct pcache_backing_dev, req_submit_work);
-+	struct pcache_backing_dev_req *backing_req;
-+	LIST_HEAD(tmp_list);
-+
-+	spin_lock(&backing_dev->submit_lock);
-+	list_splice_init(&backing_dev->submit_list, &tmp_list);
-+	spin_unlock(&backing_dev->submit_lock);
-+
-+	while (!list_empty(&tmp_list)) {
-+		backing_req = list_first_entry(&tmp_list,
-+					    struct pcache_backing_dev_req, node);
-+		list_del_init(&backing_req->node);
-+		submit_bio_noacct(&backing_req->bio);
-+	}
-+}
-+
-+void backing_dev_req_submit(struct pcache_backing_dev_req *backing_req, bool direct)
-+{
-+	struct pcache_backing_dev *backing_dev = backing_req->backing_dev;
-+
-+	if (direct) {
-+		submit_bio_noacct(&backing_req->bio);
-+		return;
-+	}
-+
-+	spin_lock(&backing_dev->submit_lock);
-+	list_add_tail(&backing_req->node, &backing_dev->submit_list);
-+	spin_unlock(&backing_dev->submit_lock);
-+
-+	queue_work(BACKING_DEV_TO_PCACHE(backing_dev)->task_wq, &backing_dev->req_submit_work);
-+}
-+
-+static struct pcache_backing_dev_req *req_type_req_create(struct pcache_backing_dev *backing_dev,
-+							struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_request *pcache_req = opts->req.upper_req;
-+	struct pcache_backing_dev_req *backing_req;
-+	struct bio *clone, *orig = pcache_req->bio;
-+	u32 off = opts->req.req_off;
-+	u32 len = opts->req.len;
-+	int ret;
-+
-+	backing_req = kmem_cache_zalloc(backing_dev->backing_req_cache, opts->gfp_mask);
-+	if (!backing_req)
-+		return NULL;
-+
-+	ret = bio_init_clone(backing_dev->dm_dev->bdev, &backing_req->bio, orig, opts->gfp_mask);
-+	if (ret)
-+		goto err_free_req;
-+
-+	backing_req->type = BACKING_DEV_REQ_TYPE_REQ;
-+
-+	clone = &backing_req->bio;
-+	BUG_ON(off & SECTOR_MASK);
-+	BUG_ON(len & SECTOR_MASK);
-+	bio_trim(clone, off >> SECTOR_SHIFT, len >> SECTOR_SHIFT);
-+
-+	clone->bi_iter.bi_sector = (pcache_req->off + off) >> SECTOR_SHIFT;
-+	clone->bi_private = backing_req;
-+	clone->bi_end_io = backing_dev_bio_end;
-+
-+	backing_req->backing_dev = backing_dev;
-+	INIT_LIST_HEAD(&backing_req->node);
-+	backing_req->end_req     = opts->end_fn;
-+
-+	pcache_req_get(pcache_req);
-+	backing_req->req.upper_req	= pcache_req;
-+	backing_req->req.bio_off	= off;
-+
-+	return backing_req;
-+
-+err_free_req:
-+	kmem_cache_free(backing_dev->backing_req_cache, backing_req);
-+	return NULL;
-+}
-+
-+static void bio_map(struct bio *bio, void *base, size_t size)
-+{
-+	if (is_vmalloc_addr(base))
-+		flush_kernel_vmap_range(base, size);
-+
-+	while (size) {
-+		struct page *page = is_vmalloc_addr(base)
-+				? vmalloc_to_page(base)
-+				: virt_to_page(base);
-+		unsigned int offset = offset_in_page(base);
-+		unsigned int len = min_t(size_t, PAGE_SIZE - offset, size);
-+
-+		BUG_ON(!bio_add_page(bio, page, len, offset));
-+		size -= len;
-+		base += len;
-+	}
-+}
-+
-+static struct pcache_backing_dev_req *kmem_type_req_create(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts)
-+{
-+	struct pcache_backing_dev_req *backing_req;
-+	struct bio *backing_bio;
-+	u32 n_vecs = DIV_ROUND_UP(opts->kmem.len, PAGE_SIZE);
-+
-+	backing_req = kmem_cache_zalloc(backing_dev->backing_req_cache, opts->gfp_mask);
-+	if (!backing_req)
-+		return NULL;
-+
-+	backing_req->kmem.bvecs = kcalloc(n_vecs, sizeof(struct bio_vec), opts->gfp_mask);
-+	if (!backing_req->kmem.bvecs)
-+		goto err_free_req;
-+
-+	backing_req->type = BACKING_DEV_REQ_TYPE_KMEM;
-+
-+	bio_init(&backing_req->bio, backing_dev->dm_dev->bdev, backing_req->kmem.bvecs,
-+			n_vecs, opts->kmem.opf);
-+
-+	backing_bio = &backing_req->bio;
-+	bio_map(backing_bio, opts->kmem.data, opts->kmem.len);
-+
-+	backing_bio->bi_iter.bi_sector = (opts->kmem.backing_off) >> SECTOR_SHIFT;
-+	backing_bio->bi_private = backing_req;
-+	backing_bio->bi_end_io = backing_dev_bio_end;
-+
-+	backing_req->backing_dev = backing_dev;
-+	INIT_LIST_HEAD(&backing_req->node);
-+	backing_req->end_req     = opts->end_fn;
-+
-+	return backing_req;
-+
-+err_free_req:
-+	kmem_cache_free(backing_dev->backing_req_cache, backing_req);
-+	return NULL;
-+}
-+
-+struct pcache_backing_dev_req *backing_dev_req_create(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts)
-+{
-+	if (opts->type == BACKING_DEV_REQ_TYPE_REQ)
-+		return req_type_req_create(backing_dev, opts);
-+	else if (opts->type == BACKING_DEV_REQ_TYPE_KMEM)
-+		return kmem_type_req_create(backing_dev, opts);
-+
-+	return NULL;
-+}
-+
-+void backing_dev_flush(struct pcache_backing_dev *backing_dev)
-+{
-+	blkdev_issue_flush(backing_dev->dm_dev->bdev);
-+}
-diff --git a/drivers/md/dm-pcache/backing_dev.h b/drivers/md/dm-pcache/backing_dev.h
-new file mode 100644
-index 000000000000..935fdd88ef6e
---- /dev/null
-+++ b/drivers/md/dm-pcache/backing_dev.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _BACKING_DEV_H
-+#define _BACKING_DEV_H
-+
-+#include <linux/device-mapper.h>
-+
-+#include "pcache_internal.h"
-+
-+struct pcache_backing_dev_req;
-+typedef void (*backing_req_end_fn_t)(struct pcache_backing_dev_req *backing_req, int ret);
-+
-+#define BACKING_DEV_REQ_TYPE_REQ		1
-+#define BACKING_DEV_REQ_TYPE_KMEM		2
-+
-+struct pcache_request;
-+struct pcache_backing_dev_req {
-+	u8				type;
-+	struct bio			bio;
-+	struct pcache_backing_dev	*backing_dev;
-+
-+	void				*priv_data;
-+	backing_req_end_fn_t		end_req;
-+
-+	struct list_head		node;
-+	int				ret;
-+
-+	union {
-+		struct {
-+			struct pcache_request		*upper_req;
-+			u32				bio_off;
-+		} req;
-+		struct {
-+			struct bio_vec	*bvecs;
-+		} kmem;
-+	};
-+};
-+
-+struct pcache_backing_dev {
-+	struct pcache_cache		*cache;
-+
-+	struct dm_dev			*dm_dev;
-+	struct kmem_cache		*backing_req_cache;
-+
-+	struct list_head		submit_list;
-+	spinlock_t			submit_lock;
-+	struct work_struct		req_submit_work;
-+
-+	struct list_head		complete_list;
-+	spinlock_t			complete_lock;
-+	struct work_struct		req_complete_work;
-+
-+	u64				dev_size;
-+};
-+
-+struct dm_pcache;
-+int backing_dev_start(struct dm_pcache *pcache, const char *backing_dev_path);
-+void backing_dev_stop(struct dm_pcache *pcache);
-+
-+struct pcache_backing_dev_req_opts {
-+	u32 type;
-+	union {
-+		struct {
-+			struct pcache_request *upper_req;
-+			u32 req_off;
-+			u32 len;
-+		} req;
-+		struct {
-+			void *data;
-+			blk_opf_t opf;
-+			u32 len;
-+			u64 backing_off;
-+		} kmem;
-+	};
-+
-+	gfp_t gfp_mask;
-+	backing_req_end_fn_t	end_fn;
-+};
-+
-+void backing_dev_req_submit(struct pcache_backing_dev_req *backing_req, bool direct);
-+void backing_dev_req_end(struct pcache_backing_dev_req *backing_req);
-+struct pcache_backing_dev_req *backing_dev_req_create(struct pcache_backing_dev *backing_dev,
-+						struct pcache_backing_dev_req_opts *opts);
-+void backing_dev_flush(struct pcache_backing_dev *backing_dev);
-+#endif /* _BACKING_DEV_H */
+diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+index 9d9052258e92..fe626e969fdc 100644
+--- a/drivers/acpi/numa/hmat.c
++++ b/drivers/acpi/numa/hmat.c
+@@ -962,10 +962,10 @@ static int hmat_callback(struct notifier_block *self,
+ 			 unsigned long action, void *arg)
+ {
+ 	struct memory_target *target;
+-	struct memory_notify *mnb = arg;
+-	int pxm, nid = mnb->status_change_nid;
++	struct node_notify *nb = arg;
++	int pxm, nid = nb->nid;
+ 
+-	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
++	if (nid == NUMA_NO_NODE || action != NODE_ADDED_FIRST_MEMORY)
+ 		return NOTIFY_OK;
+ 
+ 	pxm = node_to_pxm(nid);
+@@ -1118,7 +1118,7 @@ static __init int hmat_init(void)
+ 	hmat_register_targets();
+ 
+ 	/* Keep the table and structures if the notifier may use them */
+-	if (hotplug_memory_notifier(hmat_callback, HMAT_CALLBACK_PRI))
++	if (hotplug_node_notifier(hmat_callback, HMAT_CALLBACK_PRI))
+ 		goto out_put;
+ 
+ 	if (!hmat_set_default_dram_perf())
 -- 
-2.34.1
+2.49.0
 
 
