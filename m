@@ -1,215 +1,181 @@
-Return-Path: <linux-kernel+bounces-673941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3EBCACE7BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:28:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A029ACE777
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 02:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3717717153C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 01:27:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3B2A7A86B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A33542A99;
-	Thu,  5 Jun 2025 01:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81458C120;
+	Thu,  5 Jun 2025 00:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="I+mag0WL"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F103209
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 01:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749086872; cv=none; b=oo/5wBtCkmFiDAfTrC4Zvv9648gdpz/UORon+ev21ZgT7AVHx2DRGnwX4XYeNApnDAOjgRgvV0jnDlFK/bhQW4nBmdmtJzB7+ttbuCWoj58QV7R7ujZc4b03yiiCnlHoiP9D9OhgBmeLerqatbCygBUXlgjZ9W0InkkZyTJCK8g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749086872; c=relaxed/simple;
-	bh=ijd99Osw0Nw2cZ90UK5pS/kzZb/MHnWbvjnoFn8lXNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uhkTcnIByZYNxXbXyOPCuXH6QyFxn50tSBaC3gVvOwGieMy534YBWQrpy9TmJ3zFWqDoop863u4m7cyRBeaN87O4VBB3Ff5bDBnGoCfwqULo5OfLYvJiSntoIjDL3LZvIycW1b377EcxvlUj/hAS0aU42awU1tOuE0+LRespbWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=I+mag0WL; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=VF6d1hNFoWZZrBNVh1/uHW4JjbdNaRgqQ1rrbdlVpXE=;
-	b=I+mag0WLALJquH4hA/sasQEe8mqlOfkGtqW3oju40AGCx2qCBqH5mrpok3Au+0
-	gJhhVIcTdA8y/G/8OtYJtZXsg1rlEKBfEvIh9xI5mpLEZlYnfzY2qe0RjHDKE7F4
-	MisFQLZdTS0O6Q2QrXbthgAF6suGTw/rOx7yCubsSUM2E=
-Received: from [192.168.125.68] (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDnRixs8kBoPUizBw--.26145S2;
-	Thu, 05 Jun 2025 09:27:10 +0800 (CST)
-Message-ID: <4ea563c6-0d77-4a5c-95ff-8821552ad5d7@163.com>
-Date: Thu, 5 Jun 2025 09:27:07 +0800
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="FYbo3ZHP"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013054.outbound.protection.outlook.com [40.107.159.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA53FFD;
+	Thu,  5 Jun 2025 00:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749082829; cv=fail; b=r2m+AIDCGzNyTAfiIFkh72wuMeeVwYZ57r+tEiVyyeaAr4l4uuJ4KHQRSdiIlisay/2Za653sLoQ9cH0MdkPQxxbvQvsm2rtHbeyYevZaV5IqwZ0k8nxsD5uM/K33d2zu553QSHDHwfh3QpRB0FtKcKoehx/PRNCG1+1mZIexn8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749082829; c=relaxed/simple;
+	bh=Sq4s3luz4PeJhYp1PBm+jl3IklKWHEmKqXaixHGPwns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nQpCIKQClur//nEI08Bvc37Ty9cysjlzzrm+uqrWznYEYO/YWt0Vz2K729D2csjXwA3g0emTMMLo0C4D05Gt0GzMn6GvK+6aBMjYS9aCFA9EKXhfbb6yD0pNfK95dsSuBgraFl6N+le8lmgDSd78xXuc8ZgT0d7AMqgEOh1kels=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=FYbo3ZHP; arc=fail smtp.client-ip=40.107.159.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qaJiJ0ipFY+jrdFwaysUmz9gbWTTVNGOy2fiAx56KTIecIz2km8XhEshRMoHjZIu92tGLPkooeuPPYjKhWJOPRjU5eFKT0r0YqfD0PLImwRhyOXOw3r8ZVbsdp7yKoYI/6+3a968A71Q7yxeipmq4jeka/VFSGjvXRWwBZFsKI13vf1BUDrWy+OF7SJjYSNU9hM7nEzObGE59qXyiRSJissl6QNTY7vvooqpmDHtXdQ3yj/pyq0Pllnm/6DpAibO8ge96fwleMftDj0DB0RUTKFE152a5kQlvgvgo7RlaUrcSrxqXF3D1AGYh6zxUkYzGsIixWFYxaOLTO/JZ55+0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sq4s3luz4PeJhYp1PBm+jl3IklKWHEmKqXaixHGPwns=;
+ b=R+RTz3Cv6sxMN5HiRThP/J02FVHimh6OrnI5K8hDyR+HFsFiKhkz1FDnf+HKikk2JUFU0fUDInfpFUr6OwjwrI+pfVPVIVS8IhEtMdvsfoHPtROSYUhevcTjMITKVJde96122DvJI892if/FriK3uXY5xpxeoeDwhp1CpyVdJQ5v+u1jOz7leF+2IQVtnswL/9T9yxsOR1y/OuaNcrOf+M0YVc8C+2DZGX3/w6q1LkOxoHB9qezAAxu59tV2t9uFdkwBrjxNkBKdYZWYEAzoVOUqxPKaezflbCYjqoQ2JlIfsrJ8Ug1xHA7bol2oNuhS1rzBIJRbW+HwTRfl5L9Kag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sq4s3luz4PeJhYp1PBm+jl3IklKWHEmKqXaixHGPwns=;
+ b=FYbo3ZHP+zEuuKTO2ZgXvWq+X2ZcVCJCAfqAOdVZUFAcz6EEjXuKOk8ZP3H1/SKMWsyJxF+83DU9H7s3+gkNlM33l8GCY/JKA5A9CvVxJQVEZrKfgjxp4HzOVW7gQq7egGAspo0TzSGS8Uv8kBKzlsa0TzcN0M8wRuUjMT9xPjaMgC/znIPILqISxFIh/+MRCsn1JlLCgszdJrba0PtzYD5I3bM85fvnns3bl+7+bqzV+OESngwyX8InHDpBsphHzt5mQiNOzZXbH66Cxb8YcxSIvPR9N2a+1W1IIVLgR4Kvk1PxzlidtpC7Wqd9MWJm62qiCapaWWKGacPYTMJjYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DB4PR04MB11280.eurprd04.prod.outlook.com (2603:10a6:10:5e5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.21; Thu, 5 Jun
+ 2025 00:20:24 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8813.018; Thu, 5 Jun 2025
+ 00:20:24 +0000
+Date: Thu, 5 Jun 2025 09:30:23 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+	m.felsch@pengutronix.de, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] arm64: dts: imx8mp: drop gpcv2 vpu power-domains and
+ clocks
+Message-ID: <20250605013023.GB29462@nxa18884-linux>
+References: <20250530221713.54804-1-aford173@gmail.com>
+ <20250530221713.54804-2-aford173@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250530221713.54804-2-aford173@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI1PR02CA0003.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::20) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mfd: Remove unused of_node variables
-To: kernel test robot <lkp@intel.com>, lee@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- Baolin Liu <liubaolin@kylinos.cn>
-References: <20250604081043.802659-1-liubaolin12138@163.com>
- <202506042124.mV2W3XrQ-lkp@intel.com>
-From: liubaolin <liubaolin12138@163.com>
-In-Reply-To: <202506042124.mV2W3XrQ-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgDnRixs8kBoPUizBw--.26145S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WFyDWr1rKF4fCFyxWr45Jrb_yoWfKw17pr
-	y3JanIyFWUJr1kKa48Jrn5Aan5trWkGay8ur15G340g3s0y3yvv3WFgrZxZ3W7ury2yF95
-	AF4xWryIqrn0kaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRfOz-UUUUU=
-X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiIARjymhA7hjMBwAAsY
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB4PR04MB11280:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3efd589-9572-497b-5f85-08dda3c6c3b4
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IQk1ReAygbVHi5IrmuXuvSTMtX1jmtNyntO19YrTdzMKJSqDJk3dHfB5Mz+B?=
+ =?us-ascii?Q?AfmolQGENQ1k5cFWtEWbzyJryOWsXNarAFG2SocftXTm3T7sENjGJELQaIRS?=
+ =?us-ascii?Q?K6cZJc7k0R9pTP2Zt4ouZDFHxqDhAIXW5p38aD87TYFhUrPyVfEOkJfdB3Wq?=
+ =?us-ascii?Q?OcXw9NVe9vNKFCiUaBgRshteQzNQjgY8OzwobWOtb3+6A+eCtuJyteL9dOUw?=
+ =?us-ascii?Q?TvlPIGW2ljWVAN563rKujmPmtSqZrBPEITxWtLg+JWMBIaJNcV/Ch44pdHS+?=
+ =?us-ascii?Q?QucssFUoJBSQBt3UB55hzUinHvXQRkBqeMOQimV5MjPf++Snig4SL2PSBfIx?=
+ =?us-ascii?Q?U888aFMqSNgwqMmJGOHbp/hZugtmtxneBuS8LLyoO+9ttFv1DKMYjfC7Ny/+?=
+ =?us-ascii?Q?WroR/rv0/GJozphdFX2e6enouw+4/mNtnjE3TUheof4YUwPTDTsA48H7k8dc?=
+ =?us-ascii?Q?NXzCdNqi33CzwjLXnnKRwyyz3L9C6oM2Dmb+ZNW/0VNFDBb8LUllWJeW4qhL?=
+ =?us-ascii?Q?1jwYPg6uRcqWCQy6RcvQwrZaTsJ8q2Cw4ZaAHCWsJg4Gc3byEJXAnDHuzK9O?=
+ =?us-ascii?Q?HX3sM9sYwLgtATEf9Yy9i3XI8F4ioWVrE+KDPRqBi4Aretrl7bpNzFJjPe4m?=
+ =?us-ascii?Q?6PPajI0tnIzJJqX6F72yHlzQAQUQ2yFoaJxrcSfipElKheOADEtqi6ZXFenk?=
+ =?us-ascii?Q?1UKAUxaxfFfCkkWbzwly/NmyFmUTmpkRDvAvUKfKDnw9ZPsEcIGpyJCU9Qio?=
+ =?us-ascii?Q?XHoL9k1U38tyN49BMe/+Bt/r+iRry0TgZYLMQdutn//ut+oVQb6iu6rWebDZ?=
+ =?us-ascii?Q?BHl4CHKBIflTCxm9asO0Z6ZsEdOzT5dGr3/5deVAU4hxrvW28jTUSEa//TNm?=
+ =?us-ascii?Q?e3/ecBr7Mo+oCe8mR06sesaWV8H9GrqF17mdYS2xl2VxbeThfu1bGvUS2GBz?=
+ =?us-ascii?Q?/BqoR7mzr1LY0g9z2o93mZzW68oX+XaHbj4OsAv47ZOORH03adRbS3WFvtKp?=
+ =?us-ascii?Q?hwafBtJxNXlcUKyjLb3f/CYKZqT/fQDXI8KpGtv6BDvXT3Xcl6oa7hSfYqMr?=
+ =?us-ascii?Q?h/34Z/NjKPTzaOtOBhQ3aZguoJXOnljB0M/aN9ujvVIZbnb/Il/bZ/Dfz913?=
+ =?us-ascii?Q?/FRpxqHmP/sqBj7orrRz+pNuC+QMkQf99Ez+f4IQ/oefKNKsnDWk6z6zrFZS?=
+ =?us-ascii?Q?4ynkj0TlTu+/7NIDVkrmCj5HuJvqz5J5maqbzic7Y+q28YmdyRo2XtvUk2m6?=
+ =?us-ascii?Q?yO/oOICJ56JSmRxvaG3Ger727BrNvBJHJpCqylCmVcdKwVTWFhsCiZotCprb?=
+ =?us-ascii?Q?lvy1t5V85rxEYClwpya8tpEKyAIeG8Y6QtZW8Jf2ZaYq39v2CqbOmKGugTGG?=
+ =?us-ascii?Q?fX+j90HNO67eux9C0XvW7VRgBamCD2W+ZUUmC3fD0v1Dw3Mz4d+CoBdS7L+l?=
+ =?us-ascii?Q?UmiYex5O3jDFq0+N7UnO3bi/DU6pHcu9WiozuYpLDecjVPInYT2qGQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?H/wAhRuaLhj+s45lLtSzPawR5ToPLj26stUCsaftT44bovHCmr52KG00e98q?=
+ =?us-ascii?Q?BlWoN7tAVXdH5j6Ses4B68tAVQ7mStDKcurYASqoveV+4wGcubgcBus15X7p?=
+ =?us-ascii?Q?wqf3iQkZeP7Y2t1OKfD9lPiAcIGf2s7unxCmkCQRfthUsdP1grW1bAuOrQ4l?=
+ =?us-ascii?Q?hKKBHlzPTIallivy9K1z2moYRq5Nuq7IhTQmCDZZgrM8kbfDCF5MWfVBPrbC?=
+ =?us-ascii?Q?0eIGQxtRekPBSiI+OkRHHzTCUJIWTIFCyKFR73RKTnHYbHVT592lTh/pF8l/?=
+ =?us-ascii?Q?eqwOMtSJqrQn/oC+o3KnIip5mRN/ltkeBPWrl/kWeeZ12g8tD05NWEIaQakJ?=
+ =?us-ascii?Q?wn630/es/EFGgSyZavHfTjMlFWf+A40v0uHYONZbPXpCUVGXt3CrKx4pkL8L?=
+ =?us-ascii?Q?L0xOPHdkkshT8ljQGdvuTT3R319jIhBgmd7box50fo+b7uGFFQ/N1slGfFtb?=
+ =?us-ascii?Q?vNMPzaBcKpP81u9dn4h/q0amrxDgsmH1qCkshzGveJ9AwypgVnM2wMIj3Xvc?=
+ =?us-ascii?Q?EVerCPuZyyhNdqKvD15j8uB0MYTooRuYsGR/jXDQwfClbDpqzCrSmggfAk+p?=
+ =?us-ascii?Q?vZIYFSeovCh6bvGgThbmb+duck+PxUNmd1gdy0TTlBVUg7mXDtHdspuop281?=
+ =?us-ascii?Q?D2j7F4uyMNy0ZKoMpv2N+vv4D8aZzzG/0cGukvklAfeUoKeH31HAqe4SKTsw?=
+ =?us-ascii?Q?MZjmYm1qowb+Y8fFSiAlB6ncV/324TCF2ReauLXFP1GMYadqQYhASNQqk5rp?=
+ =?us-ascii?Q?LjJVzp9tykyjIBk4ctUss4S7yyVg1rLhJ8a7vyfrrOUb/alFKFhMEka3c2Ch?=
+ =?us-ascii?Q?PIcfaMhnwSd/+Jz9dIE9tOjm/HSXfn4BnVEnjemZp5PxB4w7sq/teWwaXmbl?=
+ =?us-ascii?Q?hwERuWB/rfmoHjL8qT+d0pCy9nzcAhh8mG7bDEJiQEYdRzE6cmuDKAkDoxSA?=
+ =?us-ascii?Q?Ma35U48+Y6DgJN5zB0MWHERJNeoH6ZyA5LDiTvz6jllydGiF9SWRQ4Qv3T6p?=
+ =?us-ascii?Q?d3Al8IUpQ+LF7fPSgT9/Id5Ou6QrWOcQwkGwIxmKgCt7VQuUm7fJ5qUh+Eb2?=
+ =?us-ascii?Q?PT1Jo+fUJTbVlcFzeC4RAZ+bm++z1wnnP8+CbalWnYoglWe5MedfaP9jPVSl?=
+ =?us-ascii?Q?fm69/Pit6yK6IY7dZ4j6QFqDvhEARTp4b3c2999QQsnwoqeQBbk5t8BdYkQU?=
+ =?us-ascii?Q?hbVrtQMF7NMRkyCFSorFvMC9jTWOqXnw9T/GXY2vyFCeC1GSKavAcHfcydfk?=
+ =?us-ascii?Q?ECrUGlITXu+u1JID8KnDPD/AUYbGHnbhcupuyEAd72DByVMm4o/qLgfR3Bc5?=
+ =?us-ascii?Q?UP9qzJ9Spbo5uTrUg/fznQAoB7otsNh8tz+F588UsxLHq8mdUmsI011qgRgX?=
+ =?us-ascii?Q?lKk75fD1oegd4c4hWoWg9iqqauH08PkjWXuShw5rTq4YlfVmyFAWxdDoKouW?=
+ =?us-ascii?Q?LvosUDVtqMbyGVl3+cQH7iYaTT23gJ5j8IL6gFea7ic5cCbAq0mAuhfXcvd2?=
+ =?us-ascii?Q?NpJ6Ja9aYkLJHwSiekLb7QNRlMrGwmA4xrBi3nWK+PIHwWYEsra42t//c5x3?=
+ =?us-ascii?Q?okbnwl+qkukV3aD93p4F8sxGvJICnfTqUTcb2k0a?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3efd589-9572-497b-5f85-08dda3c6c3b4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 00:20:24.0986
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sC4GZspf++qw/McjIUmmkrXaO5ksMQcONwstlKhwHBiw/uTDJmh3k9dBVAvN8oimdQoPmpsuOijrGOI15bI6fw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR04MB11280
 
-> My apologies - I submitted this patch to address compilation warnings, 
-> “drivers/mfd/88pm860x-core.c: In function ‘device_irq_init’:
-> drivers/mfd/88pm860x-core.c:576:29: warning: unused variable ‘node’ [-Wunused-variable]
->  |         struct device_node *node = i2c->dev.of_node;
->  |                             ^~~~
-> 	
-> drivers/mfd/twl4030-irq.c: In function ‘twl4030_init_irq’:
->  679 |         struct                  device_node *node = dev->of_node;
->  |                                              ^~~~
-> 	
-> drivers/mfd/max8925-core.c: In function ‘max8925_irq_init’:
-> drivers/mfd/max8925-core.c:659:29: warning: unused variable ‘node’ [-Wunused-variable]
->  659 |         struct device_node *node = chip->dev->of_node;
->   | ”
-> but it appears they were false positives as the node is actually used via 'of_fwnode_handle(node)'. 
-> Please discard this patch and cancel the review. Sorry for the inconvenience.
+On Fri, May 30, 2025 at 05:17:08PM -0500, Adam Ford wrote:
+>From: Marco Felsch <m.felsch@pengutronix.de>
+>
+>The GPCv2 G1, G2 and VC8000E power-domain don't need to reference the
+>VPUMIX power-domain nor their module clocks since the power and reset
+>handling is done by the VPUMIX blkctrl driver.
+>
+>Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
+LGTM: Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
+Just curious is there any issues without this change?
 
-
-在 2025/6/4 21:48, kernel test robot 写道:
-> Hi Baolin,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on lee-mfd/for-mfd-next]
-> [also build test ERROR on lee-leds/for-leds-next lee-mfd/for-mfd-fixes tmlind-omap/for-next linus/master v6.15 next-20250604]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Baolin-Liu/mfd-Remove-unused-of_node-variables/20250604-161317
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-> patch link:    https://lore.kernel.org/r/20250604081043.802659-1-liubaolin12138%40163.com
-> patch subject: [PATCH v1] mfd: Remove unused of_node variables
-> config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250604/202506042124.mV2W3XrQ-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250604/202506042124.mV2W3XrQ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202506042124.mV2W3XrQ-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->     drivers/mfd/88pm860x-core.c: In function 'device_irq_init':
->>> drivers/mfd/88pm860x-core.c:626:31: error: 'node' undeclared (first use in this function)
->       626 |         irq_domain_add_legacy(node, nr_irqs, chip->irq_base, 0,
->           |                               ^~~~
->     drivers/mfd/88pm860x-core.c:626:31: note: each undeclared identifier is reported only once for each function it appears in
-> --
->     drivers/mfd/twl4030-irq.c: In function 'twl4030_init_irq':
->>> drivers/mfd/twl4030-irq.c:693:31: error: 'node' undeclared (first use in this function); did you mean 'inode'?
->       693 |         irq_domain_add_legacy(node, nr_irqs, irq_base, 0,
->           |                               ^~~~
->           |                               inode
->     drivers/mfd/twl4030-irq.c:693:31: note: each undeclared identifier is reported only once for each function it appears in
-> --
->     drivers/mfd/max8925-core.c: In function 'max8925_irq_init':
->>> drivers/mfd/max8925-core.c:684:31: error: 'node' undeclared (first use in this function)
->       684 |         irq_domain_add_legacy(node, MAX8925_NR_IRQS, chip->irq_base, 0,
->           |                               ^~~~
->     drivers/mfd/max8925-core.c:684:31: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> 
-> vim +/node +626 drivers/mfd/88pm860x-core.c
-> 
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  566
-> f791be492f76de Bill Pemberton 2012-11-19  567  static int device_irq_init(struct pm860x_chip *chip,
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  568  				     struct pm860x_platform_data *pdata)
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  569  {
-> 2e57848fed7435 Lee Jones      2014-05-08  570  	struct i2c_client *i2c = (chip->id == CHIP_PM8607) ?
-> 2e57848fed7435 Lee Jones      2014-05-08  571  		chip->client : chip->companion;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  572  	unsigned char status_buf[INT_STATUS_NUM];
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  573  	unsigned long flags = IRQF_TRIGGER_FALLING | IRQF_ONESHOT;
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  574  	int data, mask, ret = -EINVAL;
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  575  	int nr_irqs, irq_base = -1;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  576
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  577  	mask = PM8607_B0_MISC1_INV_INT | PM8607_B0_MISC1_INT_CLEAR
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  578  		| PM8607_B0_MISC1_INT_MASK;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  579  	data = 0;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  580  	chip->irq_mode = 0;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  581  	if (pdata && pdata->irq_mode) {
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  582  		/*
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  583  		 * irq_mode defines the way of clearing interrupt. If it's 1,
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  584  		 * clear IRQ by write. Otherwise, clear it by read.
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  585  		 * This control bit is valid from 88PM8607 B0 steping.
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  586  		 */
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  587  		data |= PM8607_B0_MISC1_INT_CLEAR;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  588  		chip->irq_mode = 1;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  589  	}
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  590  	ret = pm860x_set_bits(i2c, PM8607_B0_MISC1, mask, data);
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  591  	if (ret < 0)
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  592  		goto out;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  593
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  594  	/* mask all IRQs */
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  595  	memset(status_buf, 0, INT_STATUS_NUM);
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  596  	ret = pm860x_bulk_write(i2c, PM8607_INT_MASK_1,
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  597  				INT_STATUS_NUM, status_buf);
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  598  	if (ret < 0)
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  599  		goto out;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  600
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  601  	if (chip->irq_mode) {
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  602  		/* clear interrupt status by write */
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  603  		memset(status_buf, 0xFF, INT_STATUS_NUM);
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  604  		ret = pm860x_bulk_write(i2c, PM8607_INT_STATUS1,
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  605  					INT_STATUS_NUM, status_buf);
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  606  	} else {
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  607  		/* clear interrupt status by read */
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  608  		ret = pm860x_bulk_read(i2c, PM8607_INT_STATUS1,
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  609  					INT_STATUS_NUM, status_buf);
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  610  	}
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  611  	if (ret < 0)
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  612  		goto out;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  613
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  614  	mutex_init(&chip->irq_lock);
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  615
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  616  	if (pdata && pdata->irq_base)
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  617  		irq_base = pdata->irq_base;
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  618  	nr_irqs = ARRAY_SIZE(pm860x_irqs);
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  619  	chip->irq_base = irq_alloc_descs(irq_base, 0, nr_irqs, 0);
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  620  	if (chip->irq_base < 0) {
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  621  		dev_err(&i2c->dev, "Failed to allocate interrupts, ret:%d\n",
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  622  			chip->irq_base);
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  623  		ret = -EBUSY;
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  624  		goto out;
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  625  	}
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02 @626  	irq_domain_add_legacy(node, nr_irqs, chip->irq_base, 0,
-> 837c8293ba24d0 Haojian Zhuang 2012-10-02  627  			      &pm860x_irq_domain_ops, chip);
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  628  	chip->core_irq = i2c->irq;
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  629  	if (!chip->core_irq)
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  630  		goto out;
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  631
-> 2e57848fed7435 Lee Jones      2014-05-08  632  	ret = request_threaded_irq(chip->core_irq, NULL, pm860x_irq,
-> 2e57848fed7435 Lee Jones      2014-05-08  633  				   flags | IRQF_ONESHOT, "88pm860x", chip);
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  634  	if (ret) {
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  635  		dev_err(chip->dev, "Failed to request IRQ: %d\n", ret);
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  636  		chip->core_irq = 0;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  637  	}
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  638
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  639  	return 0;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  640  out:
-> 2afa62ea76027b Haojian Zhuang 2010-02-08  641  	chip->core_irq = 0;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  642  	return ret;
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  643  }
-> 5c42e8c4a9c86e Haojian Zhuang 2009-12-15  644
-> 
-
+Regards,
+Peng
 
