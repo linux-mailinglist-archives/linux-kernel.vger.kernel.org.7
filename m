@@ -1,315 +1,120 @@
-Return-Path: <linux-kernel+bounces-675127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68F9ACF937
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:20:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839C4ACF93F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7498C16E46D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52037189A600
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5EC27F16D;
-	Thu,  5 Jun 2025 21:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9734727FB06;
+	Thu,  5 Jun 2025 21:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="rOUiZQ42"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlKPATe/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E491E7C03;
-	Thu,  5 Jun 2025 21:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F119E20330;
+	Thu,  5 Jun 2025 21:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749158432; cv=none; b=MlaQ9oT7a1MH418kFDxbtCR5nW4mtzyXVY+zdGO3mTd9ijwOVh06kjL8HHGZs3FahcwOWqV9TXhH1lIB9cMWpq2Znq3PiP2a5gZPS2+tuIX5faBXtjsH6fhRlHVF5p7YxDYEwrvtjAT/93v8ziPM87Iwy98zYKYGLt24SgtnKtQ=
+	t=1749159613; cv=none; b=U5tWDjEt26/3fT4IVUGeI/8MqSaazwBLjBpX/Y4YZTj08mgSqBbee0HpHH4xM5S+8y2IJS50FTcto1xU/LBrqs2Bq6wcowLXz/6r77zWuy+52xOhlIQzbuvEwyANZV0QaAFY2tz/AxT1paSYk+0IofRjwiccA6ws4fwHzqZKhfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749158432; c=relaxed/simple;
-	bh=mufn19hPlgQ6NEoSc03kk/eDPI9BBT8SEPAfnKWcjzI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dryFGdl+qzZZ8BbKQ7QYf17sNfDmGNLWfABoxAlV3s93vA1y2Os1WiANpceCNMPwVLPh2kY2Q/R1z5jDrezhFuulwPxvSnCpnG3qYmoLAmEt4da0DfIey6+IUg6n9jDIjlIFRhPtZ9LNqfkRvoQkG2HZYGVwVTN+XE8FHKCHVyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=rOUiZQ42; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1749158413; x=1749417613;
-	bh=47lez6F5pabPoFPvx8kOKO3g/OggZmFNdiAKAkn0fxE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=rOUiZQ424MFhcTamtDLMBjX27SJcn48z0adoCkiWKOiPLX0MbLW9PO4UCLqnRipl9
-	 6E3W1jw4vlHvRRmMhPHaFcf1tqnYMh8ypK6QS8tzjJUppKGGWbEEbKtyHa4DL00HBn
-	 X1wlJhFGf/413Cuo6Ty/0Pgq3oC+ws8xivzrImMdP8ZtDV80Wi/GX/J41kRrK+B3k5
-	 irsZGJ1e2oAbgUBfn5F0camaYke8puW9UJ+2sNvwBvTgpHtnxufpaaYaheNmUM7H25
-	 G7hwJDxxgaB3fVLbaus06w4nWHj6oGO4peD2cjYSbi/sAEFrMJ8ZdNRxbsGK5eq3Nr
-	 SKDAdL2jj76PQ==
-Date: Thu, 05 Jun 2025 21:20:09 +0000
-To: Burak Emir <bqe@google.com>
-From: Pekka Ristola <pekkarr@protonmail.com>
-Cc: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, Carlos LLama <cmllamas@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v11 3/5] rust: add bitmap API.
-Message-ID: <LGWNtyhjCByj6PPHMsGCwo-WBkCCUuCOn_cUuwlwHPhfRZ4TdDR97a3u63ACSIvJQZF2SyAInyX90iMkERX2MK3Up-R6jazWHWhFzTIWah4=@protonmail.com>
-In-Reply-To: <20250602135231.1615281-4-bqe@google.com>
-References: <20250602135231.1615281-1-bqe@google.com> <20250602135231.1615281-4-bqe@google.com>
-Feedback-ID: 29854222:user:proton
-X-Pm-Message-ID: 101473ab8081905c8394262b66904cff266291bd
+	s=arc-20240116; t=1749159613; c=relaxed/simple;
+	bh=jF4uQG4JzF72d7snTV6xQmqLe92fvsopln0oHorfTsM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YfQZ0oXh0vFFgiY/jVByGQlBrJaHAWlkHNVAb7S8DQG/nDOoipIzJwTkaBCBjNOrVGhgSWNIxM1h+lc6puZOkvRPnIN+V/8mBNJvOor+Gf0vpgkVfki4S7szC3YdB1FsRMOogwfITGEu/2+PttoUCCPhVPjeySjdGWphUVrw/1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlKPATe/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B46CC4CEEB;
+	Thu,  5 Jun 2025 21:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749159612;
+	bh=jF4uQG4JzF72d7snTV6xQmqLe92fvsopln0oHorfTsM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=GlKPATe/Avsm6ZuNOpe704ziDRKivTFQ7MOe6uZNlB9t5qMm4cqmXH6Rq4RRm0K0x
+	 r8Iflr3yiR1/Oi0EntShR5LLAD4hoyLjugTn2+0RFwR/GfE3zdFbYI0NUZF8QRnPVN
+	 GpaRipwiY/8HVIFMgMZHpE3MlPJyUSarM/Rp1fDwhAWgqqRwYXkE7I7yYpsKl4gcJW
+	 5BvSqaIHmGWbw13oHaIn/153L5/p+17TEcfRzXaxckIwH+efuSKbpkkGRBbaMXFs65
+	 xtGI/0sMcLRMhykdLzBRfXGj0XWB6ElV+5pYkGN/xXDBw1IVhz+PUbCd3frBU0tez/
+	 VXDSGwzHHS7UQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 05 Jun 2025 22:34:31 +0100
+Subject: [PATCH] selftests/mm: Skip failed memfd setups in gup_longterm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250605-selftest-mm-gup-longterm-tweaks-v1-1-2fae34b05958@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAGYNQmgC/x3NQQ6CMBBG4auQWTtJwRTQqxgWjf7UCbSQTkETw
+ t1tXH6b9w5SJIHSvTooYReVJRbUl4qebxc9WF7F1JjGmtZcWTGPGZo5BPbbyvMSfUYKnD9wkzL
+ a3rre4dbZmkplTRjl+z88hvP8AZBYcXJxAAAA
+X-Change-ID: 20250603-selftest-mm-gup-longterm-tweaks-e685a8ae9751
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1375; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=jF4uQG4JzF72d7snTV6xQmqLe92fvsopln0oHorfTsM=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoQg66dsI93JV7jaEUVWpgeecRKK89umoSWS2U+wte
+ WjYo/yuJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaEIOugAKCRAk1otyXVSH0PtTB/
+ 9/UeYw9A7wm3FKaXvq2MEwdVcJo4LgFSyAItBCoqVAe00bppjaqaxjMIGfBh0rzwY5pSqr/7gk7D7w
+ /T78BTJ8ChN1LUXm++WUw72gXvhxCAxtTY2LyaQvAjAN0wOSWf61ziQmAy6zDdSNqVGEzO3IBtnmlc
+ pnH/CoibYybieEhalHrnxOJtti7shLtoYtNRKoW8gQQZPHCaSk+phYC2PkVzj8aifFvj3J+l5V6wxA
+ EDkDZ6HYWlXTZ4Twqw2knAXmTPo/n79shLjahyarK6LchvzMRGGSKLH/BCETV0NX09Zre275yqLEL4
+ vALD93orwfK0aSVdE37UE0zhGGMufx
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Monday, June 2nd, 2025 at 16.53, Burak Emir <bqe@google.com> wrote:
-> Provides an abstraction for C bitmap API and bitops operations.
->=20
-> This commit enables a Rust implementation of an Android Binder
-> data structure from commit 15d9da3f818c ("binder: use bitmap for faster
-> descriptor lookup"), which can be found in drivers/android/dbitmap.h.
-> It is a step towards upstreaming the Rust port of Android Binder driver.
->=20
-> We follow the C Bitmap API closely in naming and semantics, with
-> a few differences that take advantage of Rust language facilities
-> and idioms:
->=20
->   * We leverage Rust type system guarantees as follows:
->=20
->     * all (non-atomic) mutating operations require a &mut reference which
->       amounts to exclusive access.
->=20
->     * the Bitmap type implements Send. This enables transferring
->       ownership between threads and is needed for Binder.
->=20
->     * the Bitmap type implements Sync, which enables passing shared
->       references &Bitmap between threads. Atomic operations can be
->       used to safely modify from multiple threads (interior
->       mutability), though without ordering guarantees.
->=20
->   * The Rust API uses `{set,clear}_bit` vs `{set,clear}_bit_atomic` as
->     names, which differs from the C naming convention which uses
->     set_bit for atomic vs __set_bit for non-atomic.
->=20
->   * we include enough operations for the API to be useful, but not all
->     operations are exposed yet in order to avoid dead code. The missing
->     ones can be added later.
->=20
->   * We follow the C API closely with a fine-grained approach to safety:
->=20
->     * Low-level bit-ops get a safe API with bounds checks. Calling with
->       an out-of-bounds arguments to {set,clear}_bit becomes a no-op and
->       get logged as errors.
->=20
->     * We introduce a RUST_BITMAP_HARDENED config, which
->       causes invocations with out-of-bounds arguments to panic.
->=20
->     * methods correspond to find_* C methods tolerate out-of-bounds
->       since the C implementation does. Also here, we log out-of-bounds
->       arguments as errors and panic in RUST_BITMAP_HARDENED mode.
->=20
->     * We add a way to "borrow" bitmaps from C in Rust, to make C bitmaps
->       that were allocated in C directly usable in Rust code (`CBitmap`).
->=20
->   * the Rust API is optimized to represent the bitmap inline if it would
->     fit into a pointer. This saves allocations which is
->     relevant in the Binder use case.
->=20
-> The underlying C bitmap is *not* exposed, and must never be exposed
-> (except in tests). Exposing the representation of the owned bitmap would
-> lose static guarantees.
->=20
-> An alternative route of vendoring an existing Rust bitmap package was
-> considered but suboptimal overall. Reusing the C implementation is
-> preferable for a basic data structure like bitmaps. It enables Rust
-> code to be a lot more similar and predictable with respect to C code
-> that uses the same data structures and enables the use of code that
-> has been tried-and-tested in the kernel, with the same performance
-> characteristics whenever possible.
->=20
-> We use the `usize` type for sizes and indices into the bitmap,
-> because Rust generally always uses that type for indices and lengths
-> and it will be more convenient if the API accepts that type. This means
-> that we need to perform some casts to/from u32 and usize, since the C
-> headers use unsigned int instead of size_t/unsigned long for these
-> numbers in some places.
->=20
-> Adds new MAINTAINERS section BITMAP API [RUST].
->=20
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Burak Emir <bqe@google.com>
-> ---
->  MAINTAINERS                |   7 +
->  rust/kernel/bitmap.rs      | 574 +++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs         |   1 +
->  security/Kconfig.hardening |  10 +
->  4 files changed, 592 insertions(+)
->  create mode 100644 rust/kernel/bitmap.rs
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 04d6727e944c..565eaa015d9e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4127,6 +4127,13 @@ S:=09Maintained
->  F:=09rust/helpers/bitmap.c
->  F:=09rust/helpers/cpumask.c
->=20
-> +BITMAP API [RUST]
-> +M:=09Alice Ryhl <aliceryhl@google.com>
-> +M:=09Burak Emir <bqe@google.com>
-> +R:=09Yury Norov <yury.norov@gmail.com>
-> +S:=09Maintained
-> +F:=09rust/kernel/bitmap.rs
-> +
->  BITOPS API
->  M:=09Yury Norov <yury.norov@gmail.com>
->  R:=09Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-> new file mode 100644
-> index 000000000000..28c11e400d1e
-> --- /dev/null
-> +++ b/rust/kernel/bitmap.rs
-> @@ -0,0 +1,574 @@
+Unlike the other cases gup_longterm's memfd tests previously skipped the
+test when failing to set up the file descriptor to test, restore this
+behaviour.
 
-[...]
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/mm/gup_longterm.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> +    /// Returns a raw pointer to the backing [`Bitmap`].
-> +    pub fn as_ptr(&self) -> *const usize {
-> +        self as *const CBitmap as *const usize
-> +    }
-> +
-> +    /// Returns a mutable raw pointer to the backing [`Bitmap`].
-> +    pub fn as_mut_ptr(&mut self) -> *mut usize {
-> +        self as *mut CBitmap as *mut usize
-> +    }
-> +
-> +    /// Returns length of this [`CBitmap`].
-> +    #[allow(clippy::len_without_is_empty)]
+diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
+index 8a97ac5176a4..29047d2e0c49 100644
+--- a/tools/testing/selftests/mm/gup_longterm.c
++++ b/tools/testing/selftests/mm/gup_longterm.c
+@@ -298,8 +298,11 @@ static void run_with_memfd(test_fn fn, const char *desc)
+ 	log_test_start("%s ... with memfd", desc);
+ 
+ 	fd = memfd_create("test", 0);
+-	if (fd < 0)
++	if (fd < 0) {
+ 		ksft_print_msg("memfd_create() failed (%s)\n", strerror(errno));
++		log_test_result(KSFT_SKIP);
++		return;
++	}
+ 
+ 	fn(fd, pagesize);
+ 	close(fd);
+@@ -366,6 +369,8 @@ static void run_with_memfd_hugetlb(test_fn fn, const char *desc,
+ 	fd = memfd_create("test", flags);
+ 	if (fd < 0) {
+ 		ksft_print_msg("memfd_create() failed (%s)\n", strerror(errno));
++		log_test_result(KSFT_SKIP);
++		return;
+ 	}
+ 
+ 	fn(fd, hugetlbsize);
 
-Using `expect` would be more idiomatic than `allow`.
+---
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
+change-id: 20250603-selftest-mm-gup-longterm-tweaks-e685a8ae9751
 
-> +    pub fn len(&self) -> usize {
-> +        self.data.len()
-> +    }
-> +}
-> +
-> +/// Holds either a pointer to array of `unsigned long` or a small bitmap=
-.
-> +#[repr(C)]
-> +union BitmapRepr {
-> +    bitmap: usize,
-> +    ptr: NonNull<usize>,
-> +}
-> +
-> +macro_rules! bitmap_assert {
-> +    ($cond:expr, $($arg:tt)+) =3D> {
-> +        #[cfg(RUST_BITMAP_HARDENED)]
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
-The config name should be prefixed with `CONFIG_`.
-
-> +        assert!($e, $($arg)*);
-
-`$e` is not defined, it should be `$cond`.
-
-> +    }
-> +}
-> +
-> +macro_rules! bitmap_assert_return {
-> +    ($cond:expr, $($arg:tt)+) =3D> {
-> +        #[cfg(RUST_BITMAP_HARDENED)]
-> +        assert!($e, $($arg)*);
-> +
-> +        #[cfg(not(RUST_BITMAP_HARDENED))]
-> +        if !($cond) {
-> +            pr_err!($($arg)*);
-> +            return
-> +        }
-> +    }
-> +}
-
-Same for this macro.
-
-[...]
-
-> +    #[test]
-> +    fn bitmap_set_clear_find() {
-> +        let mut b =3D Bitmap::new(128, GFP_KERNEL).unwrap();
-> +
-> +        // Zero-initialized
-> +        assert_eq!(None, b.next_bit(0));
-> +        assert_eq!(Some(0), b.next_zero_bit(0));
-> +        assert_eq!(None, b.last_bit());
-> +
-> +        b.set_bit(17);
-> +
-> +        assert_eq!(Some(17), b.next_bit(0));
-> +        assert_eq!(Some(17), b.next_bit(17));
-> +        assert_eq!(None, b.next_bit(18));
-> +        assert_eq!(Some(17), b.last_bit());
-> +
-> +        b.set_bit(107);
-> +
-> +        assert_eq!(Some(17), b.next_bit(0));
-> +        assert_eq!(Some(17), b.next_bit(17));
-> +        assert_eq!(Some(107), b.next_bit(18));
-> +        assert_eq!(Some(107), b.last_bit());
-> +
-> +        b.clear_bit(17);
-> +
-> +        assert_eq!(Some(107), b.next_bit(0));
-> +        assert_eq!(Some(107), b.last_bit());
-> +    }
-> +
-> +    #[cfg(not(RUST_BITMAP_HARDENED))]
-
-Here as well, the config name should be `CONFIG_RUST_BITMAP_HARDENED`.
-
-> +    #[test]
-> +    fn bitmap_out_of_bounds() {
-> +        let mut b =3D Bitmap::new(128, GFP_KERNEL).unwrap();
-> +
-> +        b.set_bit(2048);
-> +        b.set_bit_atomic(2048);
-> +        b.clear_bit(2048);
-> +        b.clear_bit_atomic(2048);
-> +        assert_eq!(None, b.next_bit(2048));
-> +        assert_eq!(None, b.next_zero_bit(2048));
-> +        assert_eq!(None, b.last_bit());
-> +    }
-
-[...]
-
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index 3fe9d7b945c4..3ca3c7dc4381 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -324,6 +324,16 @@ config LIST_HARDENED
->=20
->  =09  If unsure, say N.
->=20
-> +config RUST_BITMAP_HARDENED
-> +=09bool "Check integrity of linked list manipulation"
-
-The description seems to have been copied from the previous menu entry.
-
-> +=09depends on CONFIG_RUST
-
-This needs to be `depends on RUST`, as Kconfig doesn't use the `CONFIG_`
-prefix here.
-
-> +=09help
-> +=09  Enables additional assertions in the Rust Bitmap API to catch
-> +=09  arguments that are not guaranteed to result in an immediate access
-> +=09  fault.
-> +
-> +=09  If unsure, say N.
-> +
->  config BUG_ON_DATA_CORRUPTION
->  =09bool "Trigger a BUG when data corruption is detected"
->  =09select LIST_HARDENED
-> --
-> 2.49.0.1204.g71687c7c1d-goog
-
-Cheers,
-Pekka
 
