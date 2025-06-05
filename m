@@ -1,208 +1,270 @@
-Return-Path: <linux-kernel+bounces-674363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61747ACEDFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F028ACEE16
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4B41779D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:50:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52AB2168D8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091CB21A420;
-	Thu,  5 Jun 2025 10:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34485223710;
+	Thu,  5 Jun 2025 10:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GvGRPep9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="NT07QpkT"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1EA21421A;
-	Thu,  5 Jun 2025 10:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749120594; cv=none; b=amfp9eyZ8YpVriFNi4FEkohHDf3HGOV6YD0aiKq7feBQxQZbroIiOIHWPIPdsTkfY1uajbgGLxIyhn1MbfIBhH9qj0UKO1LDawICMWOhi9OJQrDkNemKE6nrGyYyGzGvzxnSrH4zklv2kPWTuQgahtoPNJfVoJuR9hEpWuggAV4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749120594; c=relaxed/simple;
-	bh=Ty0Rqu5WTEruxD6Ugl5MQUQ2m+ogUAxhdpPN3wwQz+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pN4IWxjYG0ofaQwxHUrdqyXUGKpCflmH8AqWsrBsObK/UmxBoasvlzwBhTuFTpta7vY5xKNWMaeA7ypNruRRlbPHhHToclgbyDCMij152Cp7Z/dFMpdq09pp15KO7MLjreNIkdwYUEa+4S2pBzo8zyI6zeWi3xF9qdGmIv8JWiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GvGRPep9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555AE7fS011697;
-	Thu, 5 Jun 2025 10:49:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1Nu48KAOTUJB110jqb0YRD3nekgoGR2DuxLGlevIej0=; b=GvGRPep9awRZkHig
-	yQ3MSVtCSS0VBY3QTPBNOjs2mvjz37OV3eEeqUajbvPKZ5qmJR2KcZ0CW6EeTe6c
-	l9XNgAw3MdQy/ilPhs+YLsu3eRk1Z3WjL1ku+xt8ewrqOD4k61P+yzKpu9mmiSt9
-	2e4cxBnql0JhYbDEQ58UdjndT7i1HnyWuBXbh2HnmSoPK9VTONucFPQwFF3zPGbQ
-	gvuqjCkl7YVgXX5axhtvuQedDSbcGf1hkIKsjeHmJTsl6c6hVN1hidXLUwyv60SH
-	JCRpuJGQI3EAjDkjkY74HBK1jLXAvnyUB5GqEnKlC/bULzum9zfFDzywxDd2i2pW
-	YTAMDQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47202wen8r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 10:49:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 555AnhDS000699
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 5 Jun 2025 10:49:43 GMT
-Received: from [10.253.10.58] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Jun 2025
- 03:49:40 -0700
-Message-ID: <ed06d62a-4b98-443a-a2ed-c92058bb521a@quicinc.com>
-Date: Thu, 5 Jun 2025 18:49:37 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21056215062;
+	Thu,  5 Jun 2025 10:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749120746; cv=pass; b=DEDiOL4u1IOdadNnQX9p10RcCt4/bJ+LzAdkm51hBse9b2kG/6VFAt+XBNXqNTNT93KH8wLXxSH5yPjdrhWKcHUoQMSuw06FtfhPqPQaQ/pXBXg20KoBrOZvoFxSUJPkMmpdP/4QzqpehZopUWXM1neMT0VwK9v0g4cSxuBcDKc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749120746; c=relaxed/simple;
+	bh=3KAXOZuaBz9Dv9DJEb/iDjXU7Oc5bKzSDIHRfogA5wY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FwSS6Y23cMSCTvwb+2gxfXFZKAAMggufTBRWv0qEN8ZtiwljQeIp5pXPiT+mtwB5aSanpULm+qPA93MRaIeQDxB5ygb+SqU5Y9rVSHD0En/njktE0triVpDMxVgFRKelpMVt1s7oawYtjOkMWOOBmYSzwfoN8p6ZVwgTlU/uh/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=NT07QpkT; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1749120715; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=O0k20jIieuJVJKHzhP6vy+maShQ2Fr0s32WLWJN6YvFFCwSH3M+JgJV7VXCvAJWZKdrLcj6Gu5pYGyianIBw7m1yvcXTCiTWKicR0Lg2FaDhpsgY+cvbuT+F3L17Cve2zzgMyZxWywK9V/I3O/Xrzck/i/xsuZPUIDQ9uD74kP4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749120715; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SAie0uRwKxnup3S4O6PlgMQP08g2PVUJ7Grj8M8zYe8=; 
+	b=RQgAd0ptaTx1pINDT1scDu83sXABgeHMku4IKELEV4B3F/6Sb/yqYtRE47W4yeVaQzmESiiV941NytlTnyyX07GP8UXaoeIBJMrvYPMAnIiFzjEfSC6mROBvdX7QBiPL7tkTYt43TNZcbA6YJBAZIoVd8GKixrysQvW6zJTKLkI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749120715;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=SAie0uRwKxnup3S4O6PlgMQP08g2PVUJ7Grj8M8zYe8=;
+	b=NT07QpkTvINCnNHuF7k1rEu84BUpvfkjM28N9wyo12B0nwJJo1Qcpb9kaLdwR+QY
+	WL97IiJLjfiDdKNHum9quO7RyNOilSxEX3qk24d0qqD6BTubJREnSg++plcamVJwvlv
+	bzxrG8eSKXIMy75eHjNjUSR1MK5p3xkAFfmuSGleAbBOAyo+xl5ezVQY15Jy7hZy47D
+	tk/3kF0TlS/eA7Qv/3Zar+zmEZClS1gFkiQYw+xSGHqmygob2+iBEmmXFdmOMcjig6F
+	0O70DEsRaB+HU+IwHbzaNqFS2M5nw9/FMApIq8Lk/4KQZf24Vh35CXww+sXtk4ZDNxf
+	irNLb2Ve+Q==
+Received: by mx.zohomail.com with SMTPS id 1749120712498839.2967324276685;
+	Thu, 5 Jun 2025 03:51:52 -0700 (PDT)
+Message-ID: <84c534f9dbfa7c82300863cd40e5a9b6e6e29411.camel@icenowy.me>
+Subject: Re: [PATCH net v2] dt-bindings: net: ethernet-controller: Add
+ informative text about RGMII delays
+From: Icenowy Zheng <uwu@icenowy.me>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>,  netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 05 Jun 2025 18:51:43 +0800
+In-Reply-To: <aEFmNMSvffMvNA8I@shell.armlinux.org.uk>
+References: <20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch>
+	 <e4db4e6f0a5a42ceacacc925adbe13747a6f948e.camel@icenowy.me>
+	 <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
+	 <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
+	 <aEFmNMSvffMvNA8I@shell.armlinux.org.uk>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] wifi: ath12k: fix dest ring-buffer corruption
-To: Johan Hovold <johan@kernel.org>, P Praneesh <quic_ppranees@quicinc.com>
-CC: Johan Hovold <johan+linaro@kernel.org>,
-        Jeff Johnson
-	<jjohnson@kernel.org>,
-        Miaoqing Pan <quic_miaoqing@quicinc.com>,
-        "Remi
- Pommarel" <repk@triplefau.lt>, <linux-wireless@vger.kernel.org>,
-        <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250604144509.28374-1-johan+linaro@kernel.org>
- <20250604144509.28374-2-johan+linaro@kernel.org>
- <6f3eb9fa-617e-4434-8fc4-33dd92c4bdd2@quicinc.com>
- <aEFqsghEuJc3xxlU@hovoldconsulting.com>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <aEFqsghEuJc3xxlU@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QWF4qvpqRSQead5CaefYpnkqDX2ylmKx
-X-Proofpoint-GUID: QWF4qvpqRSQead5CaefYpnkqDX2ylmKx
-X-Authority-Analysis: v=2.4 cv=Y/D4sgeN c=1 sm=1 tr=0 ts=68417648 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
- a=5WrX-GbsLVy5X1M0D7oA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA5NCBTYWx0ZWRfX2yo99HAX7Ce/
- dpCDtf1K5s4ubhPzf493z2ZSfHa9aq6AXiM2g2X9kNLCFoIzJ1kk3Y/zIAnVBX5RoqS1modMcXK
- hRtp1h8Ht1QkaNRaDMc1BOPIHwZcin5nqLxBRXrS60muGyfUN2MBbTzF/HaUAR1kEz1EFEMuh3D
- FTKpki/psNFH7uezpaxcS86kDxIgtnWzFhGjtclYl5FNRGNVUDatHBIIZDz5i7ZZ2Kq6V6zV4qp
- V92cUeIlOw71AFENCO+xYe+VaoeBD2p35J6g4gIzpT9prKtu7VNVTEWkm3XZVydXnTznVYE1OGH
- d9LNyNElr/N1RR0SfDWYBP9z9wE6LvkrCmvCcXSdNJWrYU+2N1WftVG6lMYj/9S1GIaAVplIhqU
- 3yef5zZvr5YVFh2xpyYPgZyhZp6lEONTCJM2eD/SlfPiTCFn/tjlAKNQNAnYgc/bldWZi9/f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_02,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050094
+X-ZohoMailClient: External
 
+=E5=9C=A8 2025-06-05=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 10:41 +0100=EF=BC=
+=8CRussell King (Oracle)=E5=86=99=E9=81=93=EF=BC=9A
+> On Thu, Jun 05, 2025 at 05:06:43PM +0800, Icenowy Zheng wrote:
+> > In addition, analyzing existing Ethernet drivers, I found two
+> > drivers
+> > with contradition: stmicro/stmmac/dwmac-qcom-ethqos.c and
+> > ti/icssg/icssg_prueth.c .
+> >=20
+> > The QCOM ETHQOS driver enables the MAC's TX delay if the phy_mode
+> > is
+> > rgmii or rgmii-rxid, and the PRU ETH driver, which works on some
+> > MAC
+> > with hardcoded TX delay, rejects rgmii and rgmii-rxid, and patches
+> > rgmii-id or rgmii-txid to remove the txid part.
+>=20
+> No, this is wrong.
+>=20
+> First, it does not reject any RGMII mode. See qcom_ethqos_probe() and
+> the switch() in there. All four RGMII modes are accepted.
 
+Well my sentence have its subject switched here. I mean the TI PRU ETH
+driver is rejecting modes.
 
-On 6/5/2025 6:00 PM, Johan Hovold wrote:
-> On Thu, Jun 05, 2025 at 04:41:32PM +0800, Baochen Qiang wrote:
->> On 6/4/2025 10:45 PM, Johan Hovold wrote:
->>> Add the missing memory barrier to make sure that destination ring
->>> descriptors are read after the head pointers to avoid using stale data
->>> on weakly ordered architectures like aarch64.
->>>
->>> The barrier is added to the ath12k_hal_srng_access_begin() helper for
->>> symmetry with follow-on fixes for source ring buffer corruption which
->>> will add barriers to ath12k_hal_srng_access_end().
->>>
->>> Note that this may fix the empty descriptor issue recently worked around
->>> by commit 51ad34a47e9f ("wifi: ath12k: Add drop descriptor handling for
->>> monitor ring").
->>
->> why? I would expect drunk cookies are valid in case of HAL_MON_DEST_INFO0_EMPTY_DESC,
->> rather than anything caused by reordering.
-> 
-> Based on a quick look it seemed like this could possibly fall in the
-> same category as some of the other workarounds I've spotted while
-> looking into these ordering issues (e.g. f9fff67d2d7c ("wifi: ath11k:
-> Fix SKB corruption in REO destination ring")).
-> 
-> If you say this one is clearly unrelated, I'll drop the comment.
+>=20
+> The code in ethqos_rgmii_macro_init() is the questionable bit, but
+> again, does _not_ do any rejection of any RGMII mode. It simply sets
+> the transmit clock phase shift according to the mode, and the only
+> way this can work is if the board does not provide the required
+> delay.
+>=20
+> This code was not reviewed by phylib maintainers, so has slipped
+> through the review process. It ought to be using the delay properties
+> to configure the MAC.
+>=20
+> > The logic of QCOM ETHQOS clearly follows the original DT binding,
+> > which
+>=20
+> Let's make this clear. "original DT binding" - no, nothing has
+> *actually* changed with the DT binding - the meaning of the RGMII
+> modes have not changed. The problem is one of interpretation, and
+> I can tell you from personal experience that getting stuff documented
+> so that everyone gets the same understanding is nigh on impossible.
+> People will pick holes, and deliberately interpret whatever is
+> written
+> in ways that it isn't meant to - and the more words that are used the
+> more this happens.
 
-Praneesh, could you comment here since you made that change?
+Well I am not sure, considering two examples I raised here (please note
+I am comparing QCOM ETHQOS and TI PRUETH two drivers, they have
+contrary handling of RGMII modes, and one matches the old binding
+document, one matches the new one).
 
-> 
->>> @@ -343,9 +343,6 @@ static int ath12k_ce_completed_recv_next(struct ath12k_ce_pipe *pipe,
->>>  		goto err;
->>>  	}
->>>  
->>> -	/* Make sure descriptor is read after the head pointer. */
->>> -	dma_rmb();
->>> -
->>>  	*nbytes = ath12k_hal_ce_dst_status_get_length(desc);
->>>  
->>>  	*skb = pipe->dest_ring->skb[sw_index];
->>> diff --git a/drivers/net/wireless/ath/ath12k/hal.c b/drivers/net/wireless/ath/ath12k/hal.c
->>> index 91d5126ca149..9eea13ed5565 100644
->>> --- a/drivers/net/wireless/ath/ath12k/hal.c
->>> +++ b/drivers/net/wireless/ath/ath12k/hal.c
->>> @@ -2126,13 +2126,24 @@ void *ath12k_hal_srng_src_get_next_reaped(struct ath12k_base *ab,
->>>  
->>>  void ath12k_hal_srng_access_begin(struct ath12k_base *ab, struct hal_srng *srng)
->>>  {
->>> +	u32 hp;
->>> +
->>>  	lockdep_assert_held(&srng->lock);
->>>  
->>> -	if (srng->ring_dir == HAL_SRNG_DIR_SRC)
->>> +	if (srng->ring_dir == HAL_SRNG_DIR_SRC) {
->>>  		srng->u.src_ring.cached_tp =
->>>  			*(volatile u32 *)srng->u.src_ring.tp_addr;
->>> -	else
->>> -		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
->>> +	} else {
->>> +		hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
->>> +
->>> +		if (hp != srng->u.dst_ring.cached_hp) {
->>
->> This consumes additional CPU cycles in hot path, which is a concern to me.
->>
->> Based on that, I prefer the v1 implementation.
-> 
-> The conditional avoids a memory barrier in case the ring is empty, so
-> for all callers but ath12k_ce_completed_recv_next() it's an improvement
-> over v1 in that sense.
-> 
-> I could make the barrier unconditional, which will only add one barrier
-> to ath12k_ce_completed_recv_next() in case the ring is empty compared to
-> v1. Perhaps that's a good compromise if you worry about the extra
-> comparison?
+>=20
+> The RGMII modes have been documented in
+> Documentation/networking/phy.rst
+> (Documentation/networking/phy.txt predating) since:
 
-I guess the unconditional barrier also has impact on performance? If so I am not sure
-which one is better then ...
+I checked the document here, and it seems that it's against the changed
+binding document (it matches the original one):
 
-Let's just keep it as is and see what others think.
+The phy.rst document says:
+```
+* PHY_INTERFACE_MODE_RGMII: the PHY is not responsible for inserting
+any
+  internal delay by itself, it assumes that either the Ethernet MAC (if
+capable)
+  or the PCB traces insert the correct 1.5-2ns delay
+```
 
-> 
-> I very much want to avoid having both explicit barriers in the caller
-> and barriers in the hal end() helper. I think it should be either or.
->  
->>> +			srng->u.dst_ring.cached_hp = hp;
->>> +			/* Make sure descriptor is read after the head
->>> +			 * pointer.
->>> +			 */
->>> +			dma_rmb();
->>> +		}
->>> +	}
-> 
-> Johan
+The changed binding document says:
+```
+# If the PCB does not add these delays via extra long traces,
+# 'rgmii-id' should be used. Here, 'id' refers to 'internal delay',
+# where either the MAC or PHY adds the delay.
+```
+
+In the case of MAC inserting delays, the phy.rst document assumes it's
+PHY_INTERFACE_MODE_RGMII but the changed binding document assumes it's
+'rgmii-id'.
+
+> commit bf8f6952a233f5084431b06f49dc0e1d8907969e
+> Author: Florian Fainelli <f.fainelli@gmail.com>
+> Date:=C2=A0=C2=A0 Sun Nov 27 18:45:14 2016 -0800
+>=20
+> =C2=A0=C2=A0=C2=A0 Documentation: net: phy: Add blurb about RGMII
+>=20
+> =C2=A0=C2=A0=C2=A0 RGMII is a recurring source of pain for people with Gi=
+gabit
+> Ethernet
+> =C2=A0=C2=A0=C2=A0 hardware since it may require PHY driver and MAC drive=
+r level
+> =C2=A0=C2=A0=C2=A0 configuration hints. Document what are the expectation=
+s from
+> PHYLIB and
+> =C2=A0=C2=A0=C2=A0 what options exist.
+>=20
+> =C2=A0=C2=A0=C2=A0 Reviewed-by: Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com>
+> =C2=A0=C2=A0=C2=A0 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> =C2=A0=C2=A0=C2=A0 Signed-off-by: David S. Miller <davem@davemloft.net>
+>=20
+> > describes "rgmii-id" as `RGMII with internal RX and TX delays
+> > provided
+> > by the PHY, the MAC should not add the RX or TX delays in this
+> > case`
+> > (the driver skips the delay for rgmii-id). The logic of PRU ETH
+> > follows
+> > the logic of the new DT binding. This shows that the DT binding
+> > patch
+> > is not a simple clarification, but a change of meanings.
+>=20
+> Let me say again. Nothing has changed. There is no "old binding" or
+> "new binding". If you think there is, then it's down to
+> misinterpretation.
+>=20
+> This is precisely why I've been opposed to documenting these
+> properties
+> in the binding document _and_ Documentation/networking/phy.* because
+> keeping them both in sync is going to be a pain, leading to ambiguity
+> and misinterpretation.
+>=20
+> > > If you want the kernel to not touch the PHY, use
+> > >=20
+> > > phy-mode =3D 'internal'
+> >=20
+> > This sounds weird, and may introduce side effect on the MAC side.
+> >=20
+> > Well we might need to allow PHY to have phy-mode property in
+> > addition
+> > to MAC, in this case MAC phy-mode=3D'rgmii*' and PHY phy-
+> > mode=3D'internal'
+> > might work?
+>=20
+> I'm not convinced that adding more possibilities to the problem
+> (i.o.w.
+> the idea that phy=3Dmode =3D "internal" can be used to avoid the delays
+> being messed with) is a good idea - not at this point, because as you
+> point out MACs (and PHYs) won't know that they need to be configured
+> for RGMII mode. "internal" doesn't state this, and if we do start
+> doing
+> this, we'll end up with "internal" selecting RGMII mode which may
+> work
+> for some platforms but not all.
+>=20
+> So, IMHO this is a bad idea.
+>=20
+> > > > In addition, the Linux kernel contains a "Generic PHY" driver
+> > > > for
+> > > > any
+> > > > 802.1 c22 PHYs to work, without setting any delays.
+> > >=20
+> > > genphy is best effort, cross your fingers, it might work if you
+> > > are
+> > > luckily. Given the increasing complexity of PHYs, it is becoming
+> > > less
+> > > and less likely to work. From a Maintainers perspective, i only
+> > > care
+> > > if the system works with the proper PHY driver for the
+> > > hardware. Anything else is unmaintainable.
+> >=20
+> > Well this sounds unfortunate but reasonable.
+>=20
+> We're already in this state with PHYs faster than gigabit, because
+> IEEE 802.3 in their wisdom did not define where the 1000BASE-T
+> autoneg parameters appear in the register space. As a result, vendors
+> have done their own thing, and every vendor / PHY is different.
+> Without access to this key data, phylib has no way to know the
+> negotiation results. Thus, a generic PHY driver that works correctly
+> for PHYs > 1G just isn't possible.
+>=20
+> I expect that in years to come, we'll see IEEE 802.3 updated with
+> the 1G registers for Clause 45 PHYs, but the boat has already sailed
+> so this would be totally pointless as there will be too many PHYs
+> out there doing their own thing for whatever IEEE 802.3 says about
+> this to have any relevence what so ever. Just like they did with
+> 2500BASE-X, which is a similar mess due to IEEE 802.3 being way too
+> late.
+>=20
+> I hope that there isn't going to be more of this, because each time
+> it happens, the IEEE 802.3 "standard" less relevant.
+>=20
 
 
