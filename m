@@ -1,190 +1,510 @@
-Return-Path: <linux-kernel+bounces-674596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFE3ACF1AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CECACF1C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEE61748E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:24:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A348C18964FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2601156677;
-	Thu,  5 Jun 2025 14:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79892749EE;
+	Thu,  5 Jun 2025 14:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zWbYJvWL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mI60w1ai";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zWbYJvWL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mI60w1ai"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D0WibMpl"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10ED1552FD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786A52749F8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133418; cv=none; b=GH/BEPMAGJGpZ6IyzmJIPBt857+rX2oHg6EmmbtKYJ+e4Q8p9POXR1H4nrLPFOT8Ggfqf8XrUg3q8C639idJ/NdMJcdtyZrP273Yf96UxO5/qcuClNN7YFn6s2lUDE7fONh3fdnaFBG8mFuMWpE6iHe7icl6858lZCrRU4T6W4A=
+	t=1749133440; cv=none; b=hUlNL5EPYd3jkeTOJwMb4FlBKU6qB//xBN927jyt3RKFYk/6vtNHmQBmunZCFdpywyreSL6ZBQubD/OeVu6hpLmKCwxA0cEyqK3pG0gONGtOBy3mrJjm6at4wNlHpY9lt5Lr2g6Kvdttzz9XI+TzQs1ux3Yuke5eRgyFwTtEfNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133418; c=relaxed/simple;
-	bh=unRD5RKD6xhSaEllEGZZH2fCsQ/seiSinfUoX+565ok=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MkszhDHCz4jXfgc+uEfaucHWY3+MRRYnCpSTqbwtl8oh5jkdWoh4sn3vUUMhqn2NbN0a0ZSabpfdxCX3jMb39ZwyNPrr7gfZL+gtFI7vLXzH+Nn0U3BtWuhemxCPwaWJyISrqGsd7GfX2hu3JCvP4Rn1CPFqNslLDfuwjirfVso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zWbYJvWL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mI60w1ai; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zWbYJvWL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mI60w1ai; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B57891FC07;
-	Thu,  5 Jun 2025 14:23:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749133399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	s=arc-20240116; t=1749133440; c=relaxed/simple;
+	bh=Wd6UwPHbh5g8fk5xB/7evE07lpJ7pMuMRzQ/jcJuniY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a9e2LmPLk0EpX80/8oiwHedjA17o+W8rOGJ8hgu42U8+DQ2I4ATUlkQYeeTOvjBfUDfdZTawYOQd/6tDjWdSliwPjX3qQ8z8BqLs62XyCxnwu5FDxweS4AOo4LtrM8Iz4uEnT2NYVUnjW4NkIb9VLZ6jzVvVC2VzyyVzfi/CNzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D0WibMpl; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749133434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
-	b=zWbYJvWL9IwlUT0QyuNU1e/H2zkY9nAGFWR9gPCQ4kCvfvgl1m6Y7Xc28xFo+8veSh/mHe
-	OSP10casSp+KJt6Qba0V/J0hKa8OyQ6UVMMlvvCxNUnRhMDF6CRwhhFnTxywsNJ6AXUXD6
-	P+eQeBAYlCsAMW3Sy7KSN7Ae2x03CiE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749133399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
-	b=mI60w1aiFARGc5RyNWieEIvw2NTo1b+pDiwkVvz1NKMO4yIFQggBvpjOw0kliuEAvlFbPH
-	oDIIxvIyIX7v/fCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749133399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
-	b=zWbYJvWL9IwlUT0QyuNU1e/H2zkY9nAGFWR9gPCQ4kCvfvgl1m6Y7Xc28xFo+8veSh/mHe
-	OSP10casSp+KJt6Qba0V/J0hKa8OyQ6UVMMlvvCxNUnRhMDF6CRwhhFnTxywsNJ6AXUXD6
-	P+eQeBAYlCsAMW3Sy7KSN7Ae2x03CiE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749133399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TfQBDueegZSN3Kmr3ysy5n8hn7Z096/ISwoCXJ5ZmnM=;
-	b=mI60w1aiFARGc5RyNWieEIvw2NTo1b+pDiwkVvz1NKMO4yIFQggBvpjOw0kliuEAvlFbPH
-	oDIIxvIyIX7v/fCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24BBE137FE;
-	Thu,  5 Jun 2025 14:23:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CPEABleoQWipRwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:19 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
+	bh=sIsclH7WNkkF/JVTKezZJI19OpMaWanv0inQs2KR4wo=;
+	b=D0WibMplEtLcfccq8vPrYCcauKRxt68c8Y/E+McTQMca2J0+Xul96vIfUTkh0OrR1VhrO0
+	FQC8QFzyv3n8hk2ba6zAyCF+cJYMHpounNKu8Z7Zi93BQl+YW98ZwlwHCm+LUzWG9ckzcf
+	nAL/fEH0piBsnlsbdhbBNxDZhUvUIQI=
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+To: mpatocka@redhat.com,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@Huawei.com
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v5 07/10] drivers,hmat: Use node-notifier instead of memory-notifier
-Date: Thu,  5 Jun 2025 16:22:58 +0200
-Message-ID: <20250605142305.244465-8-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
-References: <20250605142305.244465-1-osalvador@suse.de>
+	linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	dm-devel@lists.linux.dev,
+	Dongsheng Yang <dongsheng.yang@linux.dev>
+Subject: [RFC PATCH 03/11] dm-pcache: add cache device
+Date: Thu,  5 Jun 2025 14:22:58 +0000
+Message-Id: <20250605142306.1930831-4-dongsheng.yang@linux.dev>
+In-Reply-To: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
+References: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -5.30
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.de:mid,suse.de:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,oracle.com:email,huawei.com:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Level: 
+X-Migadu-Flow: FLOW_OUT
 
-hmat driver is only concerned when a numa node changes its memory state,
-specifically when a numa node with memory comes into play for the first
-time, because it will register the memory_targets belonging to that numa
-node.
-So stop using the memory notifier and use the new numa node notifer
-instead.
+Add cache_dev.{c,h} to manage the persistent-memory device that stores
+all pcache metadata and data segments.  Splitting this logic out keeps
+the main dm-pcache code focused on policy while cache_dev handles the
+low-level interaction with the DAX block device.
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+* DAX mapping
+  - Opens the underlying device via dm_get_device().
+  - Uses dax_direct_access() to obtain a direct linear mapping; falls
+    back to vmap() when the range is fragmented.
+
+* On-disk layout
+  ┌─ 4 KB ─┐  super-block (SB)
+  ├─ 4 KB ─┤  cache_info[0]
+  ├─ 4 KB ─┤  cache_info[1]
+  ├─ 4 KB ─┤  cache_ctrl
+  └─ ...  ─┘  segments
+  Constants and macros in the header expose offsets and sizes.
+
+* Super-block handling
+  - sb_read(), sb_validate(), sb_init() verify magic, CRC32 and host
+    endianness (flag *PCACHE_SB_F_BIGENDIAN*).
+  - Formatting zeroes the metadata replicas and initialises the segment
+    bitmap when the SB is blank.
+
+* Segment allocator
+  - Bitmap protected by seg_lock; find_next_zero_bit() yields the next
+    free 16 MB segment.
+
+* Lifecycle helpers
+  - cache_dev_start()/stop() encapsulate init/exit and are invoked by
+    dm-pcache core.
+  - Gracefully handles errors: CRC mismatch, wrong endianness, device
+    too small (< 512 MB), or failed DAX mapping.
+
+Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- drivers/acpi/numa/hmat.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/md/dm-pcache/cache_dev.c | 310 +++++++++++++++++++++++++++++++
+ drivers/md/dm-pcache/cache_dev.h |  70 +++++++
+ 2 files changed, 380 insertions(+)
+ create mode 100644 drivers/md/dm-pcache/cache_dev.c
+ create mode 100644 drivers/md/dm-pcache/cache_dev.h
 
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index 9d9052258e92..fe626e969fdc 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -962,10 +962,10 @@ static int hmat_callback(struct notifier_block *self,
- 			 unsigned long action, void *arg)
- {
- 	struct memory_target *target;
--	struct memory_notify *mnb = arg;
--	int pxm, nid = mnb->status_change_nid;
-+	struct node_notify *nb = arg;
-+	int pxm, nid = nb->nid;
- 
--	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
-+	if (nid == NUMA_NO_NODE || action != NODE_ADDED_FIRST_MEMORY)
- 		return NOTIFY_OK;
- 
- 	pxm = node_to_pxm(nid);
-@@ -1118,7 +1118,7 @@ static __init int hmat_init(void)
- 	hmat_register_targets();
- 
- 	/* Keep the table and structures if the notifier may use them */
--	if (hotplug_memory_notifier(hmat_callback, HMAT_CALLBACK_PRI))
-+	if (hotplug_node_notifier(hmat_callback, HMAT_CALLBACK_PRI))
- 		goto out_put;
- 
- 	if (!hmat_set_default_dram_perf())
+diff --git a/drivers/md/dm-pcache/cache_dev.c b/drivers/md/dm-pcache/cache_dev.c
+new file mode 100644
+index 000000000000..8089518fe5c9
+--- /dev/null
++++ b/drivers/md/dm-pcache/cache_dev.c
+@@ -0,0 +1,310 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include <linux/blkdev.h>
++#include <linux/dax.h>
++#include <linux/vmalloc.h>
++#include <linux/pfn_t.h>
++#include <linux/parser.h>
++
++#include "cache_dev.h"
++#include "backing_dev.h"
++#include "cache.h"
++#include "dm_pcache.h"
++
++static void cache_dev_dax_exit(struct pcache_cache_dev *cache_dev)
++{
++	struct dm_pcache *pcache = CACHE_DEV_TO_PCACHE(cache_dev);
++
++	if (cache_dev->use_vmap)
++		vunmap(cache_dev->mapping);
++
++	dm_put_device(pcache->ti, cache_dev->dm_dev);
++}
++
++static int build_vmap(struct dax_device *dax_dev, long total_pages, void **vaddr)
++{
++	struct page **pages;
++	long i = 0, chunk;
++	pfn_t pfn;
++	int ret;
++
++	pages = vmalloc_array(total_pages, sizeof(struct page *));
++	if (!pages)
++		return -ENOMEM;
++
++	do {
++		chunk = dax_direct_access(dax_dev, i, total_pages - i,
++					  DAX_ACCESS, NULL, &pfn);
++		if (chunk <= 0) {
++			ret = chunk ? chunk : -EINVAL;
++			goto out_free;
++		}
++
++		if (!pfn_t_has_page(pfn)) {
++			ret = -EOPNOTSUPP;
++			goto out_free;
++		}
++
++		while (chunk-- && i < total_pages) {
++			pages[i++] = pfn_t_to_page(pfn);
++			pfn.val++;
++			if (!(i & 15))
++				cond_resched();
++		}
++	} while (i < total_pages);
++
++	*vaddr = vmap(pages, total_pages, VM_MAP, PAGE_KERNEL);
++	if (!*vaddr)
++		ret = -ENOMEM;
++out_free:
++	vfree(pages);
++	return ret;
++}
++
++static int cache_dev_dax_init(struct pcache_cache_dev *cache_dev, const char *path)
++{
++	struct dm_pcache	*pcache = CACHE_DEV_TO_PCACHE(cache_dev);
++	struct dax_device	*dax_dev;
++	long			total_pages, mapped_pages;
++	u64			bdev_size;
++	void			*vaddr;
++	int			ret, id;
++	pfn_t			pfn;
++
++	ret = dm_get_device(pcache->ti, path,
++			    BLK_OPEN_READ | BLK_OPEN_WRITE, &cache_dev->dm_dev);
++	if (ret) {
++		pcache_dev_err(pcache, "failed to open dm_dev: %s: %d", path, ret);
++		goto err;
++	}
++
++	dax_dev	= cache_dev->dm_dev->dax_dev;
++
++	/* total size check */
++	bdev_size = bdev_nr_bytes(cache_dev->dm_dev->bdev);
++	if (!bdev_size) {
++		ret = -ENODEV;
++		pcache_dev_err(pcache, "device %s has zero size\n", path);
++		goto put_dm;
++	}
++
++	total_pages = bdev_size >> PAGE_SHIFT;
++	/* attempt: direct-map the whole range */
++	id = dax_read_lock();
++	mapped_pages = dax_direct_access(dax_dev, 0, total_pages,
++					 DAX_ACCESS, &vaddr, &pfn);
++	if (mapped_pages < 0) {
++		pcache_dev_err(pcache, "dax_direct_access failed: %ld\n", mapped_pages);
++		ret = mapped_pages;
++		goto unlock;
++	}
++
++	if (!pfn_t_has_page(pfn)) {
++		ret = -EOPNOTSUPP;
++		goto unlock;
++	}
++
++	if (mapped_pages == total_pages) {
++		/* success: contiguous direct mapping */
++		cache_dev->mapping = vaddr;
++	} else {
++		/* need vmap fallback */
++		ret = build_vmap(dax_dev, total_pages, &vaddr);
++		if (ret) {
++			pcache_dev_err(pcache, "vmap fallback failed: %d\n", ret);
++			goto unlock;
++		}
++
++		cache_dev->mapping	= vaddr;
++		cache_dev->use_vmap	= true;
++	}
++	dax_read_unlock(id);
++
++	return 0;
++unlock:
++	dax_read_unlock(id);
++put_dm:
++	dm_put_device(pcache->ti, cache_dev->dm_dev);
++err:
++	return ret;
++}
++
++void cache_dev_zero_range(struct pcache_cache_dev *cache_dev, void *pos, u32 size)
++{
++	memset(pos, 0, size);
++	dax_flush(cache_dev->dm_dev->dax_dev, pos, size);
++}
++
++static int sb_read(struct pcache_cache_dev *cache_dev, struct pcache_sb *sb)
++{
++	struct pcache_sb *sb_addr = CACHE_DEV_SB(cache_dev);
++
++	if (copy_mc_to_kernel(sb, sb_addr, sizeof(struct pcache_sb)))
++		return -EIO;
++
++	return 0;
++}
++
++static void sb_write(struct pcache_cache_dev *cache_dev, struct pcache_sb *sb)
++{
++	struct pcache_sb *sb_addr = CACHE_DEV_SB(cache_dev);
++
++	memcpy_flushcache(sb_addr, sb, sizeof(struct pcache_sb));
++	pmem_wmb();
++}
++
++static int sb_init(struct pcache_cache_dev *cache_dev, struct pcache_sb *sb)
++{
++	struct dm_pcache *pcache = CACHE_DEV_TO_PCACHE(cache_dev);
++	u64 nr_segs;
++	u64 cache_dev_size;
++	u64 magic;
++	u32 flags = 0;
++
++	magic = le64_to_cpu(sb->magic);
++	if (magic)
++		return -EEXIST;
++
++	cache_dev_size = bdev_nr_bytes(file_bdev(cache_dev->dm_dev->bdev_file));
++	if (cache_dev_size < PCACHE_CACHE_DEV_SIZE_MIN) {
++		pcache_dev_err(pcache, "dax device is too small, required at least %llu",
++				PCACHE_CACHE_DEV_SIZE_MIN);
++		return -ENOSPC;
++	}
++
++	nr_segs = (cache_dev_size - PCACHE_SEGMENTS_OFF) / ((PCACHE_SEG_SIZE));
++
++#if defined(__BYTE_ORDER) ? (__BIG_ENDIAN == __BYTE_ORDER) : defined(__BIG_ENDIAN)
++	flags |= PCACHE_SB_F_BIGENDIAN;
++#endif
++	sb->flags = cpu_to_le32(flags);
++	sb->magic = cpu_to_le64(PCACHE_MAGIC);
++	sb->seg_num = cpu_to_le32(nr_segs);
++	sb->crc = cpu_to_le32(crc32(PCACHE_CRC_SEED, (void *)(sb) + 4, sizeof(struct pcache_sb) - 4));
++
++	cache_dev_zero_range(cache_dev, CACHE_DEV_CACHE_INFO(cache_dev),
++			     PCACHE_CACHE_INFO_SIZE * PCACHE_META_INDEX_MAX +
++			     PCACHE_CACHE_CTRL_SIZE);
++
++	return 0;
++}
++
++static int sb_validate(struct pcache_cache_dev *cache_dev, struct pcache_sb *sb)
++{
++	struct dm_pcache *pcache = CACHE_DEV_TO_PCACHE(cache_dev);
++	u32 flags;
++	u32 crc;
++
++	if (le64_to_cpu(sb->magic) != PCACHE_MAGIC) {
++		pcache_dev_err(pcache, "unexpected magic: %llx\n",
++				le64_to_cpu(sb->magic));
++		return -EINVAL;
++	}
++
++	crc = crc32(PCACHE_CRC_SEED, (void *)(sb) + 4, sizeof(struct pcache_sb) - 4);
++	if (crc != le32_to_cpu(sb->crc)) {
++		pcache_dev_err(pcache, "corrupted sb: %u, expected: %u\n", crc, le32_to_cpu(sb->crc));
++		return -EINVAL;
++	}
++
++	flags = le32_to_cpu(sb->flags);
++#if defined(__BYTE_ORDER) ? (__BIG_ENDIAN == __BYTE_ORDER) : defined(__BIG_ENDIAN)
++	if (!(flags & PCACHE_SB_F_BIGENDIAN)) {
++		pcache_dev_err(pcache, "cache_dev is not big endian\n");
++		return -EINVAL;
++	}
++#else
++	if (flags & PCACHE_SB_F_BIGENDIAN) {
++		pcache_dev_err(pcache, "cache_dev is big endian\n");
++		return -EINVAL;
++	}
++#endif
++	return 0;
++}
++
++static int cache_dev_init(struct pcache_cache_dev *cache_dev, u32 seg_num)
++{
++	cache_dev->seg_num = seg_num;
++	cache_dev->seg_bitmap = bitmap_zalloc(cache_dev->seg_num, GFP_KERNEL);
++	if (!cache_dev->seg_bitmap)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void cache_dev_exit(struct pcache_cache_dev *cache_dev)
++{
++	bitmap_free(cache_dev->seg_bitmap);
++}
++
++void cache_dev_stop(struct dm_pcache *pcache)
++{
++	struct pcache_cache_dev *cache_dev = &pcache->cache_dev;
++
++	cache_dev_exit(cache_dev);
++	cache_dev_dax_exit(cache_dev);
++}
++
++int cache_dev_start(struct dm_pcache *pcache, const char *cache_dev_path)
++{
++	struct pcache_cache_dev *cache_dev = &pcache->cache_dev;
++	struct pcache_sb sb;
++	bool format = false;
++	int ret;
++
++	mutex_init(&cache_dev->seg_lock);
++
++	ret = cache_dev_dax_init(cache_dev, cache_dev_path);
++	if (ret) {
++		pcache_dev_err(pcache, "failed to init cache_dev via dax way: %d.", ret);
++		goto err;
++	}
++
++	ret = sb_read(cache_dev, &sb);
++	if (ret)
++		goto dax_release;
++
++	if (le64_to_cpu(sb.magic) == 0) {
++		format = true;
++		ret = sb_init(cache_dev, &sb);
++		if (ret < 0)
++			goto dax_release;
++	}
++
++	ret = sb_validate(cache_dev, &sb);
++	if (ret)
++		goto dax_release;
++
++	cache_dev->sb_flags = le32_to_cpu(sb.flags);
++	ret = cache_dev_init(cache_dev, sb.seg_num);
++	if (ret)
++		goto dax_release;
++
++	if (format)
++		sb_write(cache_dev, &sb);
++
++	return 0;
++
++dax_release:
++	cache_dev_dax_exit(cache_dev);
++err:
++	return ret;
++}
++
++int cache_dev_get_empty_segment_id(struct pcache_cache_dev *cache_dev, u32 *seg_id)
++{
++	int ret;
++
++	mutex_lock(&cache_dev->seg_lock);
++	*seg_id = find_next_zero_bit(cache_dev->seg_bitmap, cache_dev->seg_num, 0);
++	if (*seg_id == cache_dev->seg_num) {
++		ret = -ENOSPC;
++		goto unlock;
++	}
++
++	set_bit(*seg_id, cache_dev->seg_bitmap);
++	ret = 0;
++unlock:
++	mutex_unlock(&cache_dev->seg_lock);
++	return ret;
++}
+diff --git a/drivers/md/dm-pcache/cache_dev.h b/drivers/md/dm-pcache/cache_dev.h
+new file mode 100644
+index 000000000000..3b5249f7128e
+--- /dev/null
++++ b/drivers/md/dm-pcache/cache_dev.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _PCACHE_CACHE_DEV_H
++#define _PCACHE_CACHE_DEV_H
++
++#include <linux/device.h>
++#include <linux/device-mapper.h>
++
++#include "pcache_internal.h"
++
++#define PCACHE_MAGIC				0x65B05EFA96C596EFULL
++
++#define PCACHE_SB_OFF				(4 * PCACHE_KB)
++#define PCACHE_SB_SIZE				(4 * PCACHE_KB)
++
++#define PCACHE_CACHE_INFO_OFF			(PCACHE_SB_OFF + PCACHE_SB_SIZE)
++#define PCACHE_CACHE_INFO_SIZE			(4 * PCACHE_KB)
++
++#define PCACHE_CACHE_CTRL_OFF			(PCACHE_CACHE_INFO_OFF + (PCACHE_CACHE_INFO_SIZE * PCACHE_META_INDEX_MAX))
++#define PCACHE_CACHE_CTRL_SIZE			(4 * PCACHE_KB)
++
++#define PCACHE_SEGMENTS_OFF			(PCACHE_CACHE_CTRL_OFF + PCACHE_CACHE_CTRL_SIZE)
++#define PCACHE_SEG_INFO_SIZE			(4 * PCACHE_KB)
++
++#define PCACHE_CACHE_DEV_SIZE_MIN		(512 * PCACHE_MB)	/* 512 MB */
++#define PCACHE_SEG_SIZE				(16 * PCACHE_MB)	/* Size of each PCACHE segment (16 MB) */
++
++#define CACHE_DEV_SB(cache_dev)			((struct pcache_sb *)(cache_dev->mapping + PCACHE_SB_OFF))
++#define CACHE_DEV_CACHE_INFO(cache_dev)		((void *)cache_dev->mapping + PCACHE_CACHE_INFO_OFF)
++#define CACHE_DEV_CACHE_CTRL(cache_dev)		((void *)cache_dev->mapping + PCACHE_CACHE_CTRL_OFF)
++#define CACHE_DEV_SEGMENTS(cache_dev)		((void *)cache_dev->mapping + PCACHE_SEGMENTS_OFF)
++#define CACHE_DEV_SEGMENT(cache_dev, id)	((void *)CACHE_DEV_SEGMENTS(cache_dev) + (u64)id * PCACHE_SEG_SIZE)
++
++/*
++ * PCACHE SB flags configured during formatting
++ *
++ * The PCACHE_SB_F_xxx flags define registration requirements based on cache_dev
++ * formatting. For a machine to register a cache_dev:
++ * - PCACHE_SB_F_BIGENDIAN: Requires a big-endian machine.
++ */
++#define PCACHE_SB_F_BIGENDIAN			BIT(0)
++
++struct pcache_sb {
++	__le32 crc;
++	__le32 flags;
++	__le64 magic;
++
++	__le32 seg_num;
++};
++
++struct pcache_cache_dev {
++	u32				sb_flags;
++	u32				seg_num;
++	void				*mapping;
++	bool				use_vmap;
++
++	struct dm_dev			*dm_dev;
++
++	struct mutex			seg_lock;
++	unsigned long			*seg_bitmap;
++};
++
++struct dm_pcache;
++int cache_dev_start(struct dm_pcache *pcache, const char *cache_dev_path);
++void cache_dev_stop(struct dm_pcache *pcache);
++
++void cache_dev_zero_range(struct pcache_cache_dev *cache_dev, void *pos, u32 size);
++
++int cache_dev_get_empty_segment_id(struct pcache_cache_dev *cache_dev, u32 *seg_id);
++
++#endif /* _PCACHE_CACHE_DEV_H */
 -- 
-2.49.0
+2.34.1
 
 
