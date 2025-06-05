@@ -1,182 +1,112 @@
-Return-Path: <linux-kernel+bounces-674459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D377ACEFDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:03:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03412ACEFDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BE61898939
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:03:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E76337A2F36
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C046122655B;
-	Thu,  5 Jun 2025 13:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B0D22A4F6;
+	Thu,  5 Jun 2025 13:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bp6Up4BR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="rfZhXYjF"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6098A13D24D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628F2218E91;
+	Thu,  5 Jun 2025 13:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749128578; cv=none; b=Ph26q0rXWD/Kxbdo+CG6mjxrFrFXMmk4wQf6nOGhumG+1aaZScsZRNAqK7CEtrSk2HPABmaNEvv3zTXai9i/DDlS9EL2yR6cV6BjI+p47QB+El1khGAbzfl4eECPCQMbRazEWDYaMlecpjNfHD0pG75ZG2C1gXvK7sq3rdrqpEQ=
+	t=1749128596; cv=none; b=neoFo22ofVweNb5iRMzWBb7JAFOUC3JMChRSPIYAxd7HrP7aZSiA67WmZtTTcFE2e5z8IS3vbya0mkGY9H1LekeYQO3xCo/pCCd5HMKIfc3uP8rkSBe7X3c38VMFqMw5+gzRP+XEBE3IlB4ix1xkTr5VxJxn972BlXhT1oGwyG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749128578; c=relaxed/simple;
-	bh=5de8RG8f3o6sWoFM1mI4X9Fp3LN5IoyHomEe0eRNiZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GR+cspHAqr/DdBKMOIqnEzreoy26T2zmVBFXOX63v6/ngSAnPu433jl2t3ZMNqV/Zqa29hr3aLXs/qrNqTUHzv3fPzPIodh4oPmbmWbtMTFGtekQ+lqiZtNMb4hLMf1GNDeyGiltP646nhSpjsmhVemBTZ2VAppZChhYNNWde2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bp6Up4BR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749128574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xg498BWU6yCD+3EXYlmoQ452Swm7wT/w2qqavlOm8pU=;
-	b=bp6Up4BRUvC5+8BMszyYS4YNhn30Pd5pGW+qgnlQUE8V/gFzWuUfU1O5uqVgGvb8ZPROgd
-	TgXubv1i9iSrbaaJi0472jNCABPo2GfjaNaRwq75y6OJbzjM8AKSI2QMuSbKy9OpHKCZmJ
-	w8GU1/Gn47yWejNFuUytb2BthZd29+c=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-_2DsAPpYN1mqERet4tER8g-1; Thu, 05 Jun 2025 09:02:51 -0400
-X-MC-Unique: _2DsAPpYN1mqERet4tER8g-1
-X-Mimecast-MFC-AGG-ID: _2DsAPpYN1mqERet4tER8g_1749128569
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43eea5a5d80so4369365e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 06:02:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749128569; x=1749733369;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xg498BWU6yCD+3EXYlmoQ452Swm7wT/w2qqavlOm8pU=;
-        b=FgzRdsJAnMCbYqWmZHdzOtCKGzEBf+QvNmorvFI1wKtd9+fn8wTeZXdjAzMp8NFTHA
-         cUHs9zVfToFARp89sWmpjspDEj6rBdes1qrFFVx1Fo+TadBbO3HAHbnBH5PKRsdSQxQ/
-         /Rxs0iQMY2EW2jfN2EY+UlehBbxPvvNAulBgxakWjmnTZAYgNQksezpe0EjLtoAMvyVP
-         l1kpaK53LrLYfzVERdGpEjbkN74hfw0+p9i7z65Tko/qmFQkgyR5SHF/cDBEy6Mu9lqi
-         OHX6kf+L+CXAf/6wKjw746EyKXZrbAdLmMbK3sEERBxII+DWriuKdLfgqZxUyQwhlRa2
-         kDgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpCtCgpeAdi6vxQATuGQoYpIy8fw9PVzjGXvhuzm2LL76FueKUWs8it8yzB/A4lN6LZpM6MnnJ1GvLuXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqxnLWclZbAsaFvsCY6jAhknNKtiGuzhAS2ZLdMD/SUELbHJcF
-	RkgQX4g5QWwOrC0xVB2y1MMJ2wvceHNPoRx13N8pUANYsO/90/DkWGwle8yV1GYp34KeMVbyeIh
-	kd396UxdJER3nDDBWLXjbuIeiRAiK8DbMHyZpfiHP2fEYiEUEWsBfTTT00XfuvaJzIA==
-X-Gm-Gg: ASbGncsql+Ft/dOr8hG6rEFdwqAwzFC6O8MHrjQ/Hr/TmbzUrbIUfyjAtwN2Za0+1Qm
-	tuE/doqTUoxvGeDAdFZZ8HEemIoyUdd4ppmHK6fM9T6tYsS5qp8CV542MdZf4MAA9MtBmcMpHEp
-	XeBhlYOw+N8Nmb88sVBYGuiYXXCmWvAc9LABm+CvOAk+J+uYOLCmX3KW7Q7IMGUwlD2IEscVZal
-	QqHaxMwIdI8KnZhTZ/YKw8W95CN50qYpSV2sQ4Ykyh0bUT0xP3dWmTYfc6lLXTJVoE6ry75ayQW
-	aQy6Z87FHJweNR/f2/Kanx4tI0/cj7osnqJ1BJGbGV23HmhtNKs=
-X-Received: by 2002:a05:6000:2204:b0:3a1:f564:cd9d with SMTP id ffacd0b85a97d-3a51d961c1fmr5842946f8f.36.1749128569243;
-        Thu, 05 Jun 2025 06:02:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLOWcpTWTCDyXBY4w2ZvbieYKYJr5NwdKMUi24PSZUQgwCDHfdsFZ1q9E35GmfdHu/7yFH7g==
-X-Received: by 2002:a05:6000:2204:b0:3a1:f564:cd9d with SMTP id ffacd0b85a97d-3a51d961c1fmr5842816f8f.36.1749128568020;
-        Thu, 05 Jun 2025 06:02:48 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a13fasm24830979f8f.98.2025.06.05.06.02.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 06:02:47 -0700 (PDT)
-Message-ID: <f1927c1b-95b7-4d98-9d95-fcd52bd06766@redhat.com>
-Date: Thu, 5 Jun 2025 15:02:46 +0200
+	s=arc-20240116; t=1749128596; c=relaxed/simple;
+	bh=0qx6Hubyt4O4AdYD0nN1QeadlJ17tKUMfZHsy1X6CrE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=caFJreBMT9gRaJovj4CK1akbKe5zBdbBn8ocxUH2SMXEMivLvJvQLHg3hRU5mec7/l/M3UnMRvgQanpu1MRcKwBAZBpO75Kh61+Krrt5MrRy0v4YkjmFLyfCNLywT1B8b1C4zgHFbZh74rhUN3dGJbKu2ttAX2vBtH32cUnT+hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=rfZhXYjF; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 0E2D81FC21;
+	Thu,  5 Jun 2025 15:03:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1749128591;
+	bh=1/K0m/4uJlUAUHLqOtNd4YAqnOEAV+gHKTqgtCKKZUc=; h=From:To:Subject;
+	b=rfZhXYjFZ0lSsAvHxA2NUfIDac5g86VXo5YqgRjL0BKCUksdF1ySd7Vw3rpxi2AWc
+	 CiwfvaM7s2yoHU5TiCKifO3CQ6gRhK4nWBNRI9BtNfEbNQjcsOi8krIKgH7qbFK1uX
+	 KYH0BV9zWoP8rKjQdIl0T1jfGYPyDbeETy3ct0WSJXZCag+57wsoCqT5VITdVyg6Sr
+	 VZKd8pgZkfiFjvjeG3olv+AdY3xMWmZDobUoHG0uM1VPtpnli+ZAKgpw+h5GbKLVEJ
+	 gxWmoS9JSNflWOxsIusbtn/ZRM6+qUGy+j4dVSPAlKjZBPXUKlF9gnNaWGwE5Pxa+G
+	 Oh5Dqld9jUFTQ==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Brian Norris <briannorris@chromium.org>,
+	Francesco Dolcini <francesco@dolcini.it>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeff Chen <jeff.chen_1@nxp.com>,
+	stable@vger.kernel.org
+Subject: [PATCH wireless v2] Revert "wifi: mwifiex: Fix HT40 bandwidth issue."
+Date: Thu,  5 Jun 2025 15:03:02 +0200
+Message-Id: <20250605130302.55555-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC drm-misc-next v2 1/1] drm/hyperv: Add support for
- drm_panic
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>, drawat.floss@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250526090117.80593-1-ryasuoka@redhat.com>
- <20250526090117.80593-2-ryasuoka@redhat.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250526090117.80593-2-ryasuoka@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 26/05/2025 11:01, Ryosuke Yasuoka wrote:
-> Add drm_panic module for hyperv drm so that panic screen can be
-> displayed on panic.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-I've just pushed it to drm-misc-next.
+This reverts commit 4fcfcbe457349267fe048524078e8970807c1a5b.
 
-Thanks for your contribution.
+That commit introduces a regression, when HT40 mode is enabled,
+received packets are lost, this was experience with W8997 with both
+SDIO-UART and SDIO-SDIO variants. From an initial investigation the
+issue solves on its own after some time, but it's not clear what is
+the reason. Given that this was just a performance optimization, let's
+revert it till we have a better understanding of the issue and a proper
+fix.
 
+Cc: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: stable@vger.kernel.org
+Fixes: 4fcfcbe45734 ("wifi: mwifiex: Fix HT40 bandwidth issue.")
+Closes: https://lore.kernel.org/all/20250603203337.GA109929@francesco-nb/
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+v2: fix reverted commit sha
+v1: https://lore.kernel.org/all/20250605100313.34014-1-francesco@dolcini.it/
+---
+ drivers/net/wireless/marvell/mwifiex/11n.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/11n.c b/drivers/net/wireless/marvell/mwifiex/11n.c
+index 738bafc3749b..66f0f5377ac1 100644
+--- a/drivers/net/wireless/marvell/mwifiex/11n.c
++++ b/drivers/net/wireless/marvell/mwifiex/11n.c
+@@ -403,14 +403,12 @@ mwifiex_cmd_append_11n_tlv(struct mwifiex_private *priv,
+ 
+ 		if (sband->ht_cap.cap & IEEE80211_HT_CAP_SUP_WIDTH_20_40 &&
+ 		    bss_desc->bcn_ht_oper->ht_param &
+-		    IEEE80211_HT_PARAM_CHAN_WIDTH_ANY) {
+-			chan_list->chan_scan_param[0].radio_type |=
+-				CHAN_BW_40MHZ << 2;
++		    IEEE80211_HT_PARAM_CHAN_WIDTH_ANY)
+ 			SET_SECONDARYCHAN(chan_list->chan_scan_param[0].
+ 					  radio_type,
+ 					  (bss_desc->bcn_ht_oper->ht_param &
+ 					  IEEE80211_HT_PARAM_CHA_SEC_OFFSET));
+-		}
++
+ 		*buffer += struct_size(chan_list, chan_scan_param, 1);
+ 		ret_len += struct_size(chan_list, chan_scan_param, 1);
+ 	}
 -- 
-
-Jocelyn
-
-> 
-> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-> ---
->   drivers/gpu/drm/hyperv/hyperv_drm_modeset.c | 36 +++++++++++++++++++++
->   1 file changed, 36 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
-> index f7d2e973f79e..945b9482bcb3 100644
-> --- a/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
-> +++ b/drivers/gpu/drm/hyperv/hyperv_drm_modeset.c
-> @@ -17,6 +17,7 @@
->   #include <drm/drm_gem_framebuffer_helper.h>
->   #include <drm/drm_gem_shmem_helper.h>
->   #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_panic.h>
->   #include <drm/drm_plane.h>
->   
->   #include "hyperv_drm.h"
-> @@ -181,10 +182,45 @@ static void hyperv_plane_atomic_update(struct drm_plane *plane,
->   	}
->   }
->   
-> +static int hyperv_plane_get_scanout_buffer(struct drm_plane *plane,
-> +					   struct drm_scanout_buffer *sb)
-> +{
-> +	struct hyperv_drm_device *hv = to_hv(plane->dev);
-> +	struct iosys_map map = IOSYS_MAP_INIT_VADDR_IOMEM(hv->vram);
-> +
-> +	if (plane->state && plane->state->fb) {
-> +		sb->format = plane->state->fb->format;
-> +		sb->width = plane->state->fb->width;
-> +		sb->height = plane->state->fb->height;
-> +		sb->pitch[0] = plane->state->fb->pitches[0];
-> +		sb->map[0] = map;
-> +		return 0;
-> +	}
-> +	return -ENODEV;
-> +}
-> +
-> +static void hyperv_plane_panic_flush(struct drm_plane *plane)
-> +{
-> +	struct hyperv_drm_device *hv = to_hv(plane->dev);
-> +	struct drm_rect rect;
-> +
-> +	if (!plane->state || !plane->state->fb)
-> +		return;
-> +
-> +	rect.x1 = 0;
-> +	rect.y1 = 0;
-> +	rect.x2 = plane->state->fb->width;
-> +	rect.y2 = plane->state->fb->height;
-> +
-> +	hyperv_update_dirt(hv->hdev, &rect);
-> +}
-> +
->   static const struct drm_plane_helper_funcs hyperv_plane_helper_funcs = {
->   	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
->   	.atomic_check = hyperv_plane_atomic_check,
->   	.atomic_update = hyperv_plane_atomic_update,
-> +	.get_scanout_buffer = hyperv_plane_get_scanout_buffer,
-> +	.panic_flush = hyperv_plane_panic_flush,
->   };
->   
->   static const struct drm_plane_funcs hyperv_plane_funcs = {
+2.39.5
 
 
