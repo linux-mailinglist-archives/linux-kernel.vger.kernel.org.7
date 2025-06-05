@@ -1,96 +1,145 @@
-Return-Path: <linux-kernel+bounces-675113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78F6ACF912
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:01:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0615ACF917
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 195F13AF7BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:00:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C16E7A2AB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA91280323;
-	Thu,  5 Jun 2025 21:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB7527CCEA;
+	Thu,  5 Jun 2025 21:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWqapLBI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="lXP4G1Xq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eeiE05iw"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF0B27703E;
-	Thu,  5 Jun 2025 21:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2059A17548;
+	Thu,  5 Jun 2025 21:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749157204; cv=none; b=l4GpKD/ZYKokZnVaxlsiz8ljfpsgD55I7U/+S9h9rtGSp69Ae+a/1W0e3+lxDkhznFm/VlFhWq343JY8UTTUGcREC1Kpiz1qDQChpPVc0Iq8b4np57KGlRg5fyX+BeCm6hIKfhpA8juqZc1I/iXLUrrCqvRXR59oQEZD/O9Jjt0=
+	t=1749157421; cv=none; b=FPTWwuoBew3iiEwaOiS7dPjI6r5BogVlfOngpdBkYUJqB+WDvpKHpEWKbbRZoEMWw+AOGnyNaY8YB7GNbqmvoznqXRLVRKv8IuwdPjfJAewacFH9xsCgqdhBqbn2VM0CbgsUB685KXNR9CEEu0IsrR4UM0Wm1ocs2hucFYCm0WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749157204; c=relaxed/simple;
-	bh=Np29VEghXNFRrDmIwdo8IoqrgkTyjYUe/Nzr5GcwPwE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ptPymAbWe5u5wA8JKJRE0LjHlUYuZfzE3BfVDc6Mmru0naoHEzvMWUYQYq2X/P+/5KO72nkGDSA/Py/mz+cIHr8w9Z8zoKDblXorqMNVyGrI4lkEbWi3H7Y8zQ+0cX62aEiT1Njg9g1QKQPqCOu2lQu8EAf8NEkMum0CkpZgYzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWqapLBI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0C0C4AF0B;
-	Thu,  5 Jun 2025 21:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749157204;
-	bh=Np29VEghXNFRrDmIwdo8IoqrgkTyjYUe/Nzr5GcwPwE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EWqapLBIrteSn6G1HL1zkoZIlyU3mAeAleWff2+HZxRUABXy4UUACLdHbyVOeaLpe
-	 v3krzzatrm05+7zfiT/WRbgS92Kw0kMC0mc74kNCFpD8iKYyCBjy4baseyRfkL3lOL
-	 KI+gAgJH7RZZhwTWyoZYpVqgfkqQejBTyys/r1RqaJ+J9zhsr5aossyrrh8z0IRc/j
-	 Ava6MfEuYOPmwywcUJIVNf6FA3u97Mwx9DVgOHpv7JYlPwt/Ti688oNdTaq5C3WAgc
-	 omJEfPEoI+tupRRkau9Ltgjs19Flv9Be3hVqpMUUkvuKCUhgaPhd8FxpD1p26zSkR8
-	 l1wuiaALXctMA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FA939D60B4;
-	Thu,  5 Jun 2025 21:00:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749157421; c=relaxed/simple;
+	bh=DxZuCT3zQTNmwF1w5Jm8UNNxG3gAbyWGaSO957EG0X0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=NFX/E9MhZbRZK8XCZn49S3ZW/9jo83RSzlGFJe4vnhDQwFV4anST5IBrksM/HKKnlhgFeQrRsnAUQafx2fjvtHUO7WqD3uVpgKiVAQEoUwV78/PkTeauHolGBZPQtBpkfd8QsNWmn2x9LT10LjQLevXko6lZBAOHzDYcYE7Iivo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=lXP4G1Xq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eeiE05iw; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 934E825400A6;
+	Thu,  5 Jun 2025 17:03:36 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Thu, 05 Jun 2025 17:03:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1749157416;
+	 x=1749243816; bh=zVXTQZbdvC/TAzsb8x4vqo9EMW+NlidVTsUt3AlM1ic=; b=
+	lXP4G1Xq5ZjVlFKq7Gix18VYqGVRI/WRB0nc7KXjXTNDuuRMIHdVUkJd5GDrEqbn
+	F0fBSSDKhriKiwnMEKUEKPSZwyHliTMH38NCC2h4d1UPa9P8Q0Jh5eEZXo1sRyXJ
+	R1k7Y6xy0TIC3edWP5R2/Jz/IxHIFArRH9F6jB8rpgj3rmFk51OW0/RNAv24mVzW
+	Tx4hNjMkzSGZRVPDZ5M4CddPVoG7OF//c1EDNtFfWif/UglsuUfsG6mUA5dVtORf
+	vOKyBhq10IhVRJvBTcZpOq89utXSmCajHfH1d+F61dSeroEHmBMtsr3SqLsWTY+R
+	nQasJAaVFhP9l0DurRyrUQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749157416; x=
+	1749243816; bh=zVXTQZbdvC/TAzsb8x4vqo9EMW+NlidVTsUt3AlM1ic=; b=e
+	eiE05iwGYDaO3E/O8JDndkKK0VxO6F1x6Hm+rFuL2llSHoH1UAXlJuLOflOElRMD
+	9v1rv9b6bzgasRmeA7aJcU4Zs4VT0vvmr+BFoSt72hzIn1uKN/Ndex6j3ViGtWoo
+	8LHA0abS9VAUTl6Z1bZ9hLdClhmLfyZfFm/6ZdIThtPeiIHVlp7ja5A+RCaB6zU9
+	Uf6JQHymBioylFyLYZt+gaZnBAC0jEG+/hWGDmwmE8avbY7hJwwGeG6pqZOmIvac
+	IUZ29rY7b6Fs2cSdiR6WRg0LH+3jqwBeJTzHHdpDBd55rTY1gyeAHZ/l9Yyl4yw8
+	KDt0c+rhum9FGvMTmGmxA==
+X-ME-Sender: <xms:JwZCaNOYXk3GU1KfdHQwcm5gjtm0nFK96JEChOWimEFb3Xsf0z7tDw>
+    <xme:JwZCaP-_DhP4kX2MeE_ciRlbqT7TmRQtQ8NoFCUmBoRJ5UsTBbFMUu9073LjeT52O
+    ktUjF2kVaSwlzXyEuY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdegudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
+    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
+    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
+    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepihhkvghprghnhhgtsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    figprghrmhhinhesghhmgidruggvpdhrtghpthhtohephhhmhheshhhmhhdrvghnghdrsg
+    hrpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhn
+    thgvlhdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrd
+    hinhhtvghlrdgtohhmpdhrtghpthhtohepihgsmhdqrggtphhiqdguvghvvghlsehlihhs
+    thhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheptghorhgsvghtsehlfi
+    hnrdhnvghtpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgt
+    phhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:JwZCaMQxO3al6dnB9sAdgd8ehpyzlkre8wKXr_4f6tlTNw8GmhNm2Q>
+    <xmx:JwZCaJu0faNmirli2wnJb6Qgxyczz_r6eaqfNJ85KVD4rGjFJ2wxTA>
+    <xmx:JwZCaFfs8LEfV22mhfqxO6oZU_Bd1x-r8bDhi14rhokQhsQUNLo5yw>
+    <xmx:JwZCaF1nBQuTKr9assGbqRn69EmcugK5WfAevgrNEySn17TCeyC7tw>
+    <xmx:KAZCaB89Oo0mEfqAobynotnzf2EN0r0SWxl4WmYtyFEH5vw3KrU3ka-W>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BFFF82CE0060; Thu,  5 Jun 2025 17:03:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next] selftests/bpf: rbtree: Fix incorrect global
- variable
- usage
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174915723575.3244853.11233965980667764500.git-patchwork-notify@kernel.org>
-Date: Thu, 05 Jun 2025 21:00:35 +0000
-References: <tencent_3DD7405C0839EBE2724AC5FA357B5402B105@qq.com>
-In-Reply-To: <tencent_3DD7405C0839EBE2724AC5FA357B5402B105@qq.com>
-To: Rong Tao <rtoax@foxmail.com>
-Cc: rongtao@cestc.cn, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+X-ThreadId: T107eb5199b18744c
+Date: Thu, 05 Jun 2025 17:03:15 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Hans de Goede" <hdegoede@redhat.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ ikepanhc@gmail.com, "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
+ "Armin Wolf" <W_Armin@gmx.de>, linux-doc@vger.kernel.org,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ ibm-acpi-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Message-Id: <dd3b79e3-a0d1-4413-8c69-58ca6b4fb8c9@app.fastmail.com>
+In-Reply-To: <aEHzYT4XqhzIpO5k@smile.fi.intel.com>
+References: <mpearson-lenovo@squebb.ca>
+ <20250604173702.3025074-1-mpearson-lenovo@squebb.ca>
+ <aEEyEfYgpPQm8Tlx@smile.fi.intel.com>
+ <71f410f4-6ac6-41d2-8c99-2a02e0f05fed@app.fastmail.com>
+ <aEHzYT4XqhzIpO5k@smile.fi.intel.com>
+Subject: Re: [PATCH v2] platform/x86: Move Lenovo files into lenovo subdir
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello:
+Hi Andy
 
-This patch was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+On Thu, Jun 5, 2025, at 3:43 PM, Andy Shevchenko wrote:
+> On Thu, Jun 05, 2025 at 11:53:47AM -0400, Mark Pearson wrote:
+>> On Thu, Jun 5, 2025, at 1:58 AM, Andy Shevchenko wrote:
+>> > On Wed, Jun 04, 2025 at 01:36:53PM -0400, Mark Pearson wrote:
+>> >> Create lenovo subdirectory for holding Lenovo specific drivers.
+>
+> ...
+>
+>> >> -F:	drivers/platform/x86/lenovo-wmi-hotkey-utilities.c
+>> >> +F:	drivers/platform/x86/lenovo/lenovo-wmi-hotkey-utilities.c
+>> >
+>> > You may follow the trick in the Makefile (see intel folder) to avoid repetition
+>> > of the folder name in the file names. Note, the modules will be called the
+>> > same (assuming no ABI breakages due to renames).
+>> >
+>> Interesting - I'll have to look at that a bit more.
+>> Any objections if I leave that for a future change?
+>
+> IF it's nearest future :-)
+>
+I got this implemented - I'll include it with v3. It's less complicated than I thought when I initially looked. 
+Thanks for the suggestion.
 
-On Thu,  5 Jun 2025 16:45:14 +0800 you wrote:
-> From: Rong Tao <rongtao@cestc.cn>
-> 
-> Within __add_three() function, should use function parameters instead of
-> global variables. So that the variables groot_nested.inner.root and
-> groot_nested.inner.glock in rbtree_add_nodes_nested() are tested
-> correctly.
-> 
-> [...]
-
-Here is the summary with links:
-  - [bpf-next] selftests/bpf: rbtree: Fix incorrect global variable usage
-    https://git.kernel.org/bpf/bpf-next/c/64a064ce33b1
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Mark
 
