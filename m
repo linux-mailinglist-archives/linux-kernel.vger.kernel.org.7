@@ -1,222 +1,190 @@
-Return-Path: <linux-kernel+bounces-674954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80C4ACF749
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:42:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBE1ACF691
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E226F3AFA96
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:41:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6222E16C455
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87B128A1FB;
-	Thu,  5 Jun 2025 18:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AB727A93A;
+	Thu,  5 Jun 2025 18:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qt+kGGO5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mQWxTIBn"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2054.outbound.protection.outlook.com [40.107.244.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C085F28A1FA
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749148445; cv=none; b=ot2i5rEBU4e599Sr0NLHV4KWQ60589XPa+MeUf4WD/6rG0IYVcuvhyblO40Hdr9HGBW8oPG+rv/Y53Ma9OniauLdYrbHRdAWJnlyfNYBN1RYl/IksPvM+SueyPDJYvPCEu98UkhhzSKyddMcRoswlmVL99YhejQefYkvIqEtDnI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749148445; c=relaxed/simple;
-	bh=EplCkbkulILusxv/wohoVfpD+NhRaGSSQ6P4eW0lfgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N4tlF8mhIHy32zcdygVPPYwxoe14z7JgsIQ70tSU1l4qCXHptegj1WJLAf1Mw51WLzsiNqo5NPM3nIa8TkU8mCimsHAUDihUsdbJeaKK8rvggZkc98h1gzlQswHPUWiiyS5lPGuX1QPKrv2kPifn+Fr4XdZstSyftBUnKU5/zxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qt+kGGO5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5559q6Do004169
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 18:34:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=aq5Mlb2wvM6
-	cddTJVtPFg+Q8+IGCZmAcY73uOcj02Js=; b=Qt+kGGO5q7zuA0bUvX990t53AK2
-	aorO+Z98d+v2HySgmc1Jfv4IpuLsqOC2N5HGaIV8myIW+CyAo8cuSyiuCcmlNod3
-	BynZ9OJJ6UtF+LnCg1MEyCPjAt3YIQa8LBnGz78er7c4lHi2eL7LEERSaPJCzSgf
-	LWJmsihV6AN/SJrIG4pCQu0v57sUXC2Q5xg4+GUx6OUCnFzZX7kdiLKpu7tjwfh1
-	JjnqaYGk/OVU6Cz9wEdhTPwEhtgYrME8sOxA0GHmqSfP4ezA+TG6uwmENHbcNvFk
-	LxyNgqJ3PzQMzNOQojJwa3mURpQmYl+A7Iqtm1N8PoTuK4qVzKPLiigyYiA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472mn04km4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 18:33:58 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-234a102faa3so8612105ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:33:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749148405; x=1749753205;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aq5Mlb2wvM6cddTJVtPFg+Q8+IGCZmAcY73uOcj02Js=;
-        b=KzmwGG//nX7GVlQAVrlTa1lFvRrmYoBIiDiSA6lt4My3JhUJ3NnjktpHNAEDujY4nA
-         dwT2OMjTuZ/y/x3bnZPgTCg5rpDrnRtjnm+IIDPKlmXc/WejPuiU1OM1yafg+VgxPtaQ
-         ztzuNsZDIQkaYPU2AsVqIxxKyDEstzYPlrEIKwW+eOt0PKw0q2+45DDiEmcoJ3F3w8xn
-         vBoKSqNWS82/6JW1thK8L6q6SsPUN1kwJwdYCw3tKiYjJ5UCa6BtTfGWgEM00KYIuv6w
-         lLHr61hi00p39De8d63qqh66Jphh9AtPIlmBQXV/wEJzDH8ktU3k1HkGKgLDWWmTzzz7
-         kmZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdONcAUgLqoi15suSjdizqXvla26myI91JNp7FgCrVEI5Vva7pyP67Z9urXO488mqZHa+epeP2uLGW174=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTCWlQbsOuKGfC9WwU82U/aMDYz1c9fgK4xWlNNWnA2DjvGyUZ
-	vj00PmYXnMHHT4kPACHjtPb41NoQ1GFOVYe8V2OOI7K3p7+RNjH+ej6rxEQ/CL94EDvwMERnHVB
-	YlBIdproksPsKt/fwB4Sfpz2QZvvX+4fHSd9p4Gjc0jPedErUNQ2WPPDeQSbfRjeQSFc=
-X-Gm-Gg: ASbGncuZuWbywzR3QTLVPlgGYVMGJkd7wUU1PUeqb1MPmQfsjvNunjwFYC6Bv5buet8
-	DRAVQaOG/K8QuCQsr2ZlNvjZ+EJDwg1GPorFo9hMijqE30DJzVVapUkpm6Vyn7DdtxDXKTY4d85
-	jqwaqaP7NpZcTH69m2sIbxQnNfSC4RxqcDJSd5ybGEWisv9rkLpFAz5M0Bx+qE7SlpEk+LAjqvk
-	NCmqihLNf3Vbt7Jwl0rrLtwCbW+Afd98DoLs9Qd9dqYJH1TYFQOIFVKc0ufF+yviuQe4J1tGOiC
-	JCw8KU7F8zLFN8bl/tutuw==
-X-Received: by 2002:a17:902:ea11:b0:234:f19a:eead with SMTP id d9443c01a7336-23601ed546dmr4753965ad.43.1749148404754;
-        Thu, 05 Jun 2025 11:33:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGv4pHc4fnYu4s1RXNlIzNDDJsXYuIILJZfiVF+w0RPFujOSg/3fi9tGM3rphg+6/s7TBErbQ==
-X-Received: by 2002:a17:902:ea11:b0:234:f19a:eead with SMTP id d9443c01a7336-23601ed546dmr4753535ad.43.1749148404374;
-        Thu, 05 Jun 2025 11:33:24 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:89fa:e299:1a34:c1f5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506cf47c0sm122369965ad.175.2025.06.05.11.33.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 11:33:23 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 40/40] drm/msm: Add VM_BIND throttling
-Date: Thu,  5 Jun 2025 11:29:25 -0700
-Message-ID: <20250605183111.163594-41-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605183111.163594-1-robin.clark@oss.qualcomm.com>
-References: <20250605183111.163594-1-robin.clark@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B9F1F1515;
+	Thu,  5 Jun 2025 18:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749148189; cv=fail; b=rSMVQRqvmeNzhnc7bwuCmZYDGMvDSE2CiVVuAsmvqvAqN4h1PgjWJawvn1ADQh+eURmdRsra0/yt7tFgW7ou9oUMjbezvIZkyEU7m4bOD7x12mnUhQJMW36/NtjyabwQf0avNPYjapSRpe6ix6NzGRWz9w/UnGFAxDwUHln7fxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749148189; c=relaxed/simple;
+	bh=MCFz8LKJ8ff6hnsPNxV2FJVGktvEmShsjTNKAMRTh54=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aELfWxW4FiSkWELbvfLEo3r37TCWHisE/HIf7Ph/Pl/EvecI/5A8ZyCOiL8/ejuEGsfKhMMhRjnR8HWIZMiomhJunTEFkwIwPsZT01vf4CNJNnX61k+vvn1QUcZEqEo7D8YFHJ2WvzRLRVXYPUypVbIlSC2UiTbGh86+fiVulEg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mQWxTIBn; arc=fail smtp.client-ip=40.107.244.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B38EeKDf3M2fWqtZmebVy8P2rJlCz0WOwmz2zXwHUzipjygDBZR6btPWLoHNUgBobh5wEL+6oCMn+LBVWoY9Bieq5GL97wzhlycudJZZ9fdqqyUVBpfx7CV1Q6ggQj7vrJViR+Jk9efB2MIE/ng84Gw7NacBaeNLF5WjP6A8L3++kNEgkFtq3K/XcZqlYjvprMuR/kDUs5yiFtaRMJ2dwnJf9dt8doEaHdJp5AbAJ/Mjr5ixSd4owGXcMInQ791hViBF3h5EYJ1BlfIam0Cn28qmkR3GuDe+v9uZQrMVuf+rBSfZhusC8Rss18TQBC4RpUFiVESC5lY7vNBoxGcCdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UBOkRwEQvLXKYGTn0VC+09AwyvnINSXidmZ9vbum7xI=;
+ b=DVyFnPGl5FTqlDrO3i4Svgr54ZdoY3nmfP1vjJwvIzvIBeKTRtfJAYRYxmQdUGpMUf6VggAnDfuXqAgHv7xEaclKO3IMuTueCsqHUe10DNFOnEhUotghFIHg4PIOmW60aQrTOFPBbOir0EV/Ei6qERuZ1J0CfmSV8o2lArAbB7cFwpsIyS8tZOgou13f+a4+iy69Rt9MMbfV8GelFzQ+nHNv7lGz2cK42d7VfpgjAq7t4euI4LzMIBAHoJOlksYpKzfhGLeMGQHV8fmGcDZT2xB0qLXBvJbVXg7u3ZJ6klqxRPL92WVYIlBAhkiGw/qPONUlorwgmDFx3yZxkXkdug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linuxfoundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UBOkRwEQvLXKYGTn0VC+09AwyvnINSXidmZ9vbum7xI=;
+ b=mQWxTIBnVybaQLrsqAEKNwFbyIHBR8vAAIQ/E8ffYxIz45bX1UxFeMVKANM0dwIyrDKo6krhO2zEkZQaAySWlHlsfaI2doGnC2+LeEoHUC8qU/mRl1gPQ4iOpGT/4SwC79XJ7udfIrwa++EUwYEkH42LmAOVkLB0C622MhXo83s=
+Received: from BN1PR13CA0020.namprd13.prod.outlook.com (2603:10b6:408:e2::25)
+ by PH7PR12MB5901.namprd12.prod.outlook.com (2603:10b6:510:1d5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Thu, 5 Jun
+ 2025 18:29:45 +0000
+Received: from BN1PEPF00004682.namprd03.prod.outlook.com
+ (2603:10b6:408:e2:cafe::4f) by BN1PR13CA0020.outlook.office365.com
+ (2603:10b6:408:e2::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.9 via Frontend Transport; Thu, 5
+ Jun 2025 18:29:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8792.29 via Frontend Transport; Thu, 5 Jun 2025 18:29:45 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 5 Jun
+ 2025 13:29:43 -0500
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 5 Jun 2025 13:29:41 -0500
+From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To: <gregkh@linuxfoundation.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <michal.simek@amd.com>
+CC: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <git@amd.com>, Radhey Shyam Pandey
+	<radhey.shyam.pandey@amd.com>
+Subject: [PATCH] dt-bindings: usb: microchip,usb5744: Add support for configurable board reset delays
+Date: Thu, 5 Jun 2025 23:59:31 +0530
+Message-ID: <1749148171-1729610-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: yVmfsjcqx-AQ0QiJqqjfRMYyWdOgLWeO
-X-Proofpoint-GUID: yVmfsjcqx-AQ0QiJqqjfRMYyWdOgLWeO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE2NiBTYWx0ZWRfXweoo13+gCMls
- dB8jusk50bdvKhwpWRt8zW59IlL+8DgBpFq3zy5mX8jnjUsBrIZ+SN7AhXq5zsO4DtOTURT4YtJ
- Lyr7bLJPyTDbarG2xNW4mOizkWU0he6j2QrGfZkQMfpl2DHHt4Z57uPrkOAquNiv5mu6DFZIhN3
- MzrV0zibLv3/FUyJV/KtvytDotIn33XgwKUEnuQTHR/EJgl0ijSU5o7Rm9gdVD+qrOUBsIGWRRt
- E3cZ947OZ4rimFDNGAOWhxzzEF724PisnnBHghkF35/LD0WTq509FzYBSN2dfP9NupIxz6sDKQM
- kUZZSnWEWNKpx6Z7YoeWw6vC8+RLObgIhpDywdCE0JfD38M0waLCgmIO+iyU2XdscmQRcdYkDEi
- S9tf+7KMcpaYHNYx5+xRj5BLuULuWqh0SArMppgwXbxpQVdTDD9HvLZZIZNtQvO9zcs10vAl
-X-Authority-Analysis: v=2.4 cv=Y8/4sgeN c=1 sm=1 tr=0 ts=6841e316 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
- a=EUspDBNiAAAA:8 a=x_1jt8ETcTvhpFk4nSoA:9 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_05,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050166
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: radhey.shyam.pandey@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|PH7PR12MB5901:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bc66e09-2484-42b4-d89b-08dda45ef258
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3USuY4Ar5oT799eO+RrC/VNkTkaVFfE2iGHudQRpKBYe/xJHixVi8okWBUS3?=
+ =?us-ascii?Q?6yv3Jmfq1VYj7vokUPLUVu/MhvI6u1aWYUBEKX2jmq3+Hj+q/ye8rsH35pNL?=
+ =?us-ascii?Q?lHiBiSPzGzMffh998hOTVRqkzf2E3PaOTUFVfnUoOt15Ok0ZgKcmTLbZTd9C?=
+ =?us-ascii?Q?N9vweoDSxg3iMBsR0Pd+unkErS6uwBQ3Pgzyk/lEBB3PXx5GD6MlGBMjxV7p?=
+ =?us-ascii?Q?KEGyPnKI6h0HzqOJ14TIZmXKs4Ta95tksxsRhFD9/X0miEyOsdCxPB6cMGhR?=
+ =?us-ascii?Q?/e72olXsnNvAMOeN2bGGpOxgulzTGvCHzRCxPsbDHifCmRs6X+FFqz41rNLp?=
+ =?us-ascii?Q?KnxIzbLLDuR87hdlk/G0x/Am6KNJE9rRd3oK3GEr5ITIcbeUlnKS9kpMXbtr?=
+ =?us-ascii?Q?abcKhcNkRd/TdCPqCppR6ZnP0RDHEsmvxjgie5Ip39rMRcj8UHGCxEraxVS/?=
+ =?us-ascii?Q?tfJWLbWJ6iDwuYnClM9gtCTOZija03ULS18XPzw3fXtrc7JT8sfnn/sDtF1G?=
+ =?us-ascii?Q?+zTslPkwLNeQYPhvyhrTlKwjRE8UFVF7QeLGGbG8jc98cqabmH1tDAXH/U5M?=
+ =?us-ascii?Q?vnHO7U8kppvHqHUf9E0a9GryA3/Br0JibiRsD/5nrXjWQpldOVcKT1WkdYkc?=
+ =?us-ascii?Q?iZB+bTtLyWtU5prVzhx7n6HaTfKNpssgPF8vw4OnjrnRKLJKVvP+FVtNnfk3?=
+ =?us-ascii?Q?uOZty1du6PcMhCybOHLZqr4/XpmLgeUvi80vlwRDnkfyim4sgxF+HJEmxLiY?=
+ =?us-ascii?Q?/IE56oFZgHvyRLifB5xpFuzhd33ZLBjNqb67UswhIl14cFwdnPJhvSFFOd3d?=
+ =?us-ascii?Q?XAC7Wzcne4qnwsvZesqRcAq+0UhUggguQAsbnsD27NIROamt3wq6sGKUzvGK?=
+ =?us-ascii?Q?ymSPbPwZsHhu02grvgac1Y1XGSINHsT4aOU+6yr/xMdAXeydVf664Fmu3lRh?=
+ =?us-ascii?Q?Qu8BSTMl2ezqfzoRQEgTkk6iDCTP67WWraVybMiqgS03GTQuX4S+5G0mFohL?=
+ =?us-ascii?Q?ZgZwFF1o8tnVK99Uorl2m3ESuvDyfMQhrx+4fl3rLybv2KxUa6qKqMSayClh?=
+ =?us-ascii?Q?Gl7EOJN5At7ZnT6u3FVX2m8nh0/00GSQ1JRoUp8aMOLA2bgaIgCx9SgTEK2M?=
+ =?us-ascii?Q?JH/QIBLweK/BLWpNz3Z+cgKxhECWKfIfY+4lB61FFcW0sIoKx6jJDdf+/bpr?=
+ =?us-ascii?Q?dmi3Pv7HrGgq2W0FF8qjd3G6eKpfTZj2y9iL51CA9cioLewET0C2ghbMtZ8n?=
+ =?us-ascii?Q?Xs8WFT9yyYqfRQxcMnLUqTlrF7eiiXES27+voO1SlpvpJTJRl+ibb8Df7X7/?=
+ =?us-ascii?Q?jQMCHCqxhm5t15aXbe8AA/Q8xrw6pFrfil0WLwy5cgir9gUxn03ovCHUvSV2?=
+ =?us-ascii?Q?Zy1ug7FFq3zb2mli0eukT8Yygi2bMqrLYMuHY0GIS0fheIoBw94vTZt33cN8?=
+ =?us-ascii?Q?1Vhycn7b1LS/p6jqPFjuH6NvMzk35jJ+n0GTpzyNY7ccC1yvd6Au+o8JZl4+?=
+ =?us-ascii?Q?IKwYSFs0FPchs+TrdGuajObNzgo4Mt4MWh2T?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 18:29:45.5845
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc66e09-2484-42b4-d89b-08dda45ef258
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004682.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5901
 
-A large number of (unsorted or separate) small (<2MB) mappings can cause
-a lot of, probably unnecessary, prealloc pages.  Ie. a single 4k page
-size mapping will pre-allocate 3 pages (for levels 2-4) for the
-pagetable.  Which can chew up a large amount of unneeded memory.  So add
-a mechanism to put an upper bound on the # of pre-alloc pages.
+Introduce 'reset-delay-us' and 'power-on-delay-us' properties. Default
+delays in datasheet are not good enough for Xilinx Kria KR260 Robotics
+Starter Kit (and others) so there is a need to program board specific
+reset and power on delay via DT.
 
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 ---
- drivers/gpu/drm/msm/msm_gem_vma.c | 23 +++++++++++++++++++++--
- drivers/gpu/drm/msm/msm_gpu.h     |  3 +++
- 2 files changed, 24 insertions(+), 2 deletions(-)
+Taken reference from mdio.yaml[1]
+[1]: Documentation/devicetree/bindings/net/mdio.yaml
+---
+ .../devicetree/bindings/usb/microchip,usb5744.yaml   | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index b6de87e5c3f7..83f6f95b4865 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -705,6 +705,8 @@ msm_vma_job_free(struct drm_sched_job *_job)
+diff --git a/Documentation/devicetree/bindings/usb/microchip,usb5744.yaml b/Documentation/devicetree/bindings/usb/microchip,usb5744.yaml
+index c68c04da3399..94a2bebd32da 100644
+--- a/Documentation/devicetree/bindings/usb/microchip,usb5744.yaml
++++ b/Documentation/devicetree/bindings/usb/microchip,usb5744.yaml
+@@ -52,6 +52,16 @@ properties:
+     description:
+       phandle of an usb hub connected via i2c bus.
  
- 	mmu->funcs->prealloc_cleanup(mmu, &job->prealloc);
- 
-+	atomic_sub(job->prealloc.count, &job->queue->in_flight_prealloc);
++  reset-delay-us:
++    description:
++      RESET pulse width in microseconds.
 +
- 	drm_sched_job_cleanup(_job);
- 
- 	job_foreach_bo (obj, job)
-@@ -1087,10 +1089,11 @@ ops_are_same_pte(struct msm_vm_bind_op *first, struct msm_vm_bind_op *next)
-  * them as a single mapping.  Otherwise the prealloc_count() will not realize
-  * they can share pagetable pages and vastly overcount.
-  */
--static void
-+static int
- vm_bind_prealloc_count(struct msm_vm_bind_job *job)
- {
- 	struct msm_vm_bind_op *first = NULL, *last = NULL;
-+	int ret;
- 
- 	for (int i = 0; i < job->nr_ops; i++) {
- 		struct msm_vm_bind_op *op = &job->ops[i];
-@@ -1119,6 +1122,20 @@ vm_bind_prealloc_count(struct msm_vm_bind_job *job)
- 
- 	/* Flush the remaining range: */
- 	prealloc_count(job, first, last);
++  power-on-delay-us:
++    description:
++      Delay after power on in microseconds. USB5744 Hub requires some
++      delay after reset to get to state when SMBus configuration
++      data is going to be accepted.
 +
-+	/*
-+	 * Now that we know the needed amount to pre-alloc, throttle on pending
-+	 * VM_BIND jobs if we already have too much pre-alloc memory in flight
-+	 */
-+	ret = wait_event_interruptible(
-+			to_msm_vm(job->vm)->sched.job_scheduled,
-+			atomic_read(&job->queue->in_flight_prealloc) <= 1024);
-+	if (ret)
-+		return ret;
-+
-+	atomic_add(job->prealloc.count, &job->queue->in_flight_prealloc);
-+
-+	return 0;
- }
+ required:
+   - compatible
+   - reg
+@@ -69,6 +79,8 @@ allOf:
+         vdd2-supply: false
+         peer-hub: false
+         i2c-bus: false
++        reset-delay-us: false
++        power-on-delay-us: false
+     else:
+       $ref: /schemas/usb/usb-device.yaml
  
- /*
-@@ -1389,7 +1406,9 @@ msm_ioctl_vm_bind(struct drm_device *dev, void *data, struct drm_file *file)
- 	if (ret)
- 		goto out_unlock;
- 
--	vm_bind_prealloc_count(job);
-+	ret = vm_bind_prealloc_count(job);
-+	if (ret)
-+		goto out_unlock;
- 
- 	struct drm_exec exec;
- 	unsigned flags = DRM_EXEC_IGNORE_DUPLICATES | DRM_EXEC_INTERRUPTIBLE_WAIT;
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index 31b83e9e3673..5508885d865f 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -555,6 +555,8 @@ static inline int msm_gpu_convert_priority(struct msm_gpu *gpu, int prio,
-  *             seqno, protected by submitqueue lock
-  * @idr_lock:  for serializing access to fence_idr
-  * @lock:      submitqueue lock for serializing submits on a queue
-+ * @in_flight_prealloc: for VM_BIND queue, # of preallocated pgtable pages for
-+ *             queued VM_BIND jobs
-  * @ref:       reference count
-  * @entity:    the submit job-queue
-  */
-@@ -569,6 +571,7 @@ struct msm_gpu_submitqueue {
- 	struct idr fence_idr;
- 	struct spinlock idr_lock;
- 	struct mutex lock;
-+	atomic_t in_flight_prealloc;
- 	struct kref ref;
- 	struct drm_sched_entity *entity;
- 
+
+base-commit: 4f27f06ec12190c7c62c722e99ab6243dea81a94
 -- 
-2.49.0
+2.34.1
 
 
