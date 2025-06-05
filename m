@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-674209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BECACEB39
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:51:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839E6ACEB45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177DF189B9A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D5C189B529
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB0B1FECDD;
-	Thu,  5 Jun 2025 07:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A98201270;
+	Thu,  5 Jun 2025 07:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="AYd+VJE5"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvQqNmGz"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC821F4176;
-	Thu,  5 Jun 2025 07:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B461FCFFB;
+	Thu,  5 Jun 2025 07:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749109903; cv=none; b=HrvOzbPDqa+ScxXB4hi7ZvbVW/ENU0UiLU52ScFwUbEZWi/Y+KM+M7K+ykl14PBEgQiuM6jd7Mc6BdYod4xD9XE3HHgHRyLA+A01V6SfWtsQ49QWnp0Ho6mXxevmudnu+OpIs/nNbeOLjA2FtDMrfzl3Q0vtHJ5wIuy0RuB0zCI=
+	t=1749110129; cv=none; b=PYVdVCuaeCTWZdWEDODPfhtgYnvrLEQ8Hck1d6Wnk110To1H/jradU3hN8cLiXStbMd0jrKh+VZOAlh8Y6l3sr5sZXC7M6b+YXAFfaXGNjHr+wjwBx0Bt9bF2pzfgPuNYvkzf37nw1BD/exgnXOaNYDuxFRIFfdlSBdsznIy+Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749109903; c=relaxed/simple;
-	bh=ADAo4tuAn9RJse2Dsl/pLYasjN1HWf+dOgXZED+HZ0c=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=R5eSTmWsraynviKI4JR79fj6KAKZOUC5md8sAumYSJzI2IKUZ1PuIH8ygaPeaaaRA0GYAr1Y1LHMC9x8O84G4TsVLKgRTpX7LwPpIhkQXvbJkn/pto6Aom1UVICG/LtSLyT2dMra+AMNCEAUY8FErhmtjfK/gqlDebGPvuQcr5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=AYd+VJE5; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1749109883;
-	bh=riOYvbqngrrZtJixWRHCaMdJe6DT8P5TkGFvEYl78Zg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=AYd+VJE5lKlEjhHf5oHs05oZUpDJ2BsMS3x+/D01ci4p5dtZTDLw/RtuQCezvK4H4
-	 9JOfr/k+yyHOMjRFZ+a+HK+2J9PF9ugugnt+8r4dMoSJQj3zvINBu7MroedVSc0Bky
-	 Ts0VX32LXNwaiOpUJPsFN8Sog3eTxdg6IHqu+MuA=
-Received: from NUC10.. ([39.156.73.10])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id CD1A1A28; Thu, 05 Jun 2025 15:51:17 +0800
-X-QQ-mid: xmsmtpt1749109877th51j190x
-Message-ID: <tencent_F85EF146D110170D48845EB3F02ED5549409@qq.com>
-X-QQ-XMAILINFO: MRMtjO3A6C9XKLqM7JeVPGU0RrgQGAi/gOOybpETim/eOO5nyhGqNka7shneg+
-	 EufHpPXJz532I2fJbZBPyyrG3nQTLAkguSn7BQRmDhkzAWl4orFo2S8X4OFdhxguZdsUGxFa9Mpo
-	 qHPVqqQ0mrHBhc7D1Q8wSg5YZkRCmYPtwpavBWcH18V9vABB8UGGspg4hfTxmR3qmO3u6+Ktjq3l
-	 vSoZbLqoXUFQYpoZc1j8UPk5Pucde7gn5Qqv3XoNlOZxzCzKmXwhxoloFjKx984LuvDP58qvzmrV
-	 mBpBBU38mmOuvsEgc9PIcUszCcbjXYPjMNSHGarFQ6Ziu2GG+nkRm0z2rJk1PPRWI75iMnAqOLZW
-	 wLUfRSTdc+7lTQzflFTgQC+qGbQwW+yS1Gxe3II6ct8IoL1K/TBbAVYeTydoWxc2CJP/Kbw+YPtt
-	 clrenvo9DNdjIDhr4qsbkIA2ZK0by+x5oYRX9CwdPEZa5jt8vBDQSoEFveJhTXhQw98xFdoDMpRb
-	 86nIuZfXCUsnJAazvQZu5OUmn5qVY70GFgY3duM3sAnyNJZhnJINFI9GcR2GDqYXmMB/g7wHcBjf
-	 pCuCYUITgbELJKl7b4Ib9pNISvM1/Afst8/uMe9vF5utiVAHpYQAZsiH/gu3xF6Yq6EyRlIk1pxn
-	 0XfryPS4YcCy8Op+GlanCOTtnMR+EHoJM/Nyj3sazXKTu2giouYGJsL5Fr0uaiTnze4uTe62qDtR
-	 N7lC+jSMoE6cqWm8TmhyHebAEt8C4SGbOWs4bok2Gwv1fWCyBvMKMy7zbAHb45a/u22oVs/WNY6q
-	 KdII5KSnQ6U4Xfkz3WLdYJH6qo+OdbkbtWi4IiOZfD5N71mg6yfCGkqHQ/h1jHRrRWv3VHrDXF1h
-	 cJr+2ZRobCb7qhbKiY5AwJjE1P8PFEY3PrAbWhmpIhkytZvI7wipn/g08cQpNg0/P6fcoY4dmVo4
-	 EwdfnowzxsSO0h1wfBAol3gVIBd1wjrL0d7KATx1GZv8t8k7SzViUFb0XAVT/tYe7OQmvCrP8mW9
-	 NdohZDZPVkg1QnDtxcZAM+hicZx+I=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Rong Tao <rtoax@foxmail.com>
-To: Quentin Monnet <qmo@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Andrew Kreimer <algonell@gmail.com>,
-	Rong Tao <rongtao@cestc.cn>,
-	Lin Yikai <yikai.lin@vivo.com>,
-	bpf@vger.kernel.org (open list:BPF [TOOLING] (bpftool)),
-	linux-kernel@vger.kernel.org (open list)
-Cc: rtoax@foxmail.com
-Subject: [PATCH bpf-next 2/2] bpftool: skel: Introduce NAME__open_and_load_opts()
-Date: Thu,  5 Jun 2025 15:51:13 +0800
-X-OQ-MSGID: <8c0f486b44591013c4fe538fb5edb908992978b8.1749109589.git.rongtao@cestc.cn>
+	s=arc-20240116; t=1749110129; c=relaxed/simple;
+	bh=GpoQ+3Ee8T8lm6I9aP2enWwTg2qztQbdsDSevWYvSxA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kNVsUtPgtbiOBTbET5Wb+H261e02crYSnJ/O0NMU160pboo7Xz6IRVMzvBA3Q3LUsxK6sC2DTeXGwsrCP42ZoMeauKOtfacQfTispf1QMqg5Xf8j3MaPE66SqD6IxoC98ZhIF6qyymi+1B1fOUWDd7JX+/syQqvbYh1oaIqgmro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvQqNmGz; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2c384b2945so512890a12.0;
+        Thu, 05 Jun 2025 00:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749110127; x=1749714927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MN1EThQK7jwsdU6684ZQQdUH0BeblPeQioulBRCACxM=;
+        b=gvQqNmGziK4xqVoM2fV+Gg0QUbXnHfLc/HTYKRtIg3nRUfxd7hyOYo244n5z7xLUHR
+         xhaHAtZMczyI4UCGJuk2BLKGGHTknOyB8/DovFKGFcOGPQtrd9wRCCDjb+OJbfSKdnUd
+         g3yNnI7srNHRp047aYtX05jOtfdGzCQEwNNDe3o1coqBK9k167fypI9km6lzXccw7rEu
+         MI4SFlvvIZ2BRuf0Vb4spFf6eSDExcQc2EOW3HshSVPNkczp7ey4m4O7eQhhQ/G587uw
+         ZJEJzI5KI7opLFZTtDvPUx/R3jtTRB3o1TRV4NPwT5BMw/gnwiBHhB8ECoOUfeuGkmeo
+         84zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749110127; x=1749714927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MN1EThQK7jwsdU6684ZQQdUH0BeblPeQioulBRCACxM=;
+        b=kwNTw2k8QmMrppSAMDojeIkEiM8feyyIvuRS6DypozZab74xuEcjBFh3jhZ5byyTEI
+         AH/igCOqvhhHdiv0JmB/Q7ugNs6h1D+9iK6sYU2AcYhik8C6rP25Y/XE0+lYU1Li+Cja
+         2SM70I3rfB/Hjs5w2ic3P2LU7plyoSrXW40CCK17Lv+iD9zV6fsg+CwhNlkzfXCMbshC
+         Xe7MISV4qkXc4AQQoGiwFgWXsQW8xUCemvQoIDuDmu+TZOJQnecGGi88+G4Cx9dYzI7N
+         rj41dVfaSgh86eQ1bqxtbvlySL75NV4iuhCPsYIRIyNpa1fqc+mHvZJe6i2lVcd+bijr
+         AVug==
+X-Forwarded-Encrypted: i=1; AJvYcCUKYqhEy4YeYbH6NOgjVg6f1W2m5Qp9BHpvF2DLIQYdfjfoyI7UNM5pGb3DdPHKqcqjhA2KEwQDKuTTeN8c@vger.kernel.org, AJvYcCUm2xEUUSHH2fbfsfz6HE0kWSYCwyn7Q8+Uaw5UgVinTmPjkg4SIBOGU3OPa1N1OvPueqTqRI7UfsX0@vger.kernel.org, AJvYcCXiFEFzaGpwIl0AW2khz6MFPejexoGDutTkwGfg7fEV7BBWoPwULuOJxXl/ogDYpdFxFIRPhxtSn664@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsXAJhwGPIfiBCsWumb6tPzYN/X6QmfnjOaS2rhCVPbPsB6u5Y
+	6h9WdOmXthYciViGzzVOG689yj36b4edsHRtyYMy+KW17lZvSIKJZss6/fNwtJYt
+X-Gm-Gg: ASbGnctF2/Qq0cHl7QTAqH+EubugO66NLKCqzxjVKLEz6F2Ou2sI//rWK1eZDbn/Fdi
+	JUnlo00rjX9P7Sd2pNmxH7u9LkjNXxfG8ws2Q6b42Zlj4W4zXOdZAyNSBbGtjMhUb2ZGmmyX9LW
+	mrxLQiqg5DI3WAh96pzkJFN0bzMM1Dccl+doTSjeQv+evrD3Idl6ud1JBCEQJknJczYadJvGUCI
+	4KX2UbmYhZ/QQO/yVwyKVSSaPjFWlyzYeIieAGvM8tEkO4qH+2dXnWnwSE3szfXEPot5CKfcIrm
+	TCTzkYp2LoTJcI3kJSJLJsvIL4GySObUM9hHPZi70Eml60WwSHocgvaHtPPG
+X-Google-Smtp-Source: AGHT+IHh4IlR4kSwzddiIXdouQOY+AA/MICiWnCJd0UnK8DHLokqCrXMf2Tek4xlqGOD+8rK78ijtw==
+X-Received: by 2002:a17:90b:268f:b0:311:9c9a:58ca with SMTP id 98e67ed59e1d1-3130cd12d80mr8263145a91.8.1749110126595;
+        Thu, 05 Jun 2025 00:55:26 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc86cdsm115201015ad.8.2025.06.05.00.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 00:55:26 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@foundries.io>
+Cc: linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengyu Luo <mitltlatltl@gmail.com>
+Subject: [PATCH RESEND 0/3] arm64: dts: qcom: Enable GPI DMA for sc8280xp
+Date: Thu,  5 Jun 2025 15:54:31 +0800
+Message-ID: <20250605075434.412580-1-mitltlatltl@gmail.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749109589.git.rongtao@cestc.cn>
-References: <cover.1749109589.git.rongtao@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,42 +94,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Rong Tao <rongtao@cestc.cn>
+This series adds GPI DMA support for sc8280xp platform and related devices.
 
-Update Documentation for skel NAME__open_and_load_opts()
-
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
 ---
- tools/bpf/bpftool/Documentation/bpftool-gen.rst | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Changes in resend:
+- document dt-bindings (Dmitry)
+- enable it for sc8280xp based devices
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20250605054208.402581-1-mitltlatltl@gmail.com
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-gen.rst b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-index ca860fd97d8d..4dc2a624090e 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-gen.rst
-@@ -107,8 +107,10 @@ bpftool gen skeleton *FILE*
-       global data maps. It corresponds to libbpf's **bpf_object__load**\ ()
-       API.
- 
--    - **example__open_and_load** combines **example__open** and
--      **example__load** invocations in one commonly used operation.
-+    - **example__open_and_load** and **example__open_and_load_opts**.
-+      Combines **example__open** and **example__load** invocations in one
-+      commonly used operation. **_opts** variants accepts extra
-+      **bpf_object_open_opts** options.
- 
-     - **example__attach** and **example__detach**.
-       This pair of functions allow to attach and detach, correspondingly,
-@@ -336,6 +338,9 @@ files into the final BPF ELF object file *example.bpf.o*.
-                 const struct bpf_object_open_opts *opts);
-   static inline struct example *example__open();
-   static inline int example__load(struct example *obj);
-+  static inline struct example *example__open();
-+  static inline struct example *example__open_and_load_opts(
-+                const struct bpf_object_open_opts *opts);
-   static inline struct example *example__open_and_load();
-   static inline int example__attach(struct example *obj);
-   static inline void example__detach(struct example *obj);
+---
+Pengyu Luo (3):
+  dt-bindings: dma: qcom,gpi: Document the sc8280xp GPI DMA engine
+  arm64: dts: qcom: sc8280xp: Add GPI DMA configuration
+  arm64: dts: qcom: sc8280xp: Enable GPI DMA
+
+ .../devicetree/bindings/dma/qcom,gpi.yaml     |   1 +
+ arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     |  12 +
+ .../boot/dts/qcom/sc8280xp-huawei-gaokun3.dts |  12 +
+ .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  12 +
+ .../dts/qcom/sc8280xp-microsoft-arcata.dts    |  12 +
+ .../dts/qcom/sc8280xp-microsoft-blackrock.dts |  12 +
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi        | 368 ++++++++++++++++++
+ 7 files changed, 429 insertions(+)
+
 -- 
 2.49.0
 
