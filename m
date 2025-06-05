@@ -1,295 +1,235 @@
-Return-Path: <linux-kernel+bounces-675102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12759ACF8F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:49:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8920ACF8F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD54189CB5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 844987A70C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7F727CCF3;
-	Thu,  5 Jun 2025 20:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F28127D77B;
+	Thu,  5 Jun 2025 20:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ScOsjFYl"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="OmVD0gad"
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B6D23741;
-	Thu,  5 Jun 2025 20:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC77A23741
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 20:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749156582; cv=none; b=WdSaKXxLiT1yNVw1yeM3uYzIzrsyRgz/DUEvfGXRdPb4MChqMO6/0ZAlXCllwJLQQro0ztcyf9zkSzJMyDPrnFgRDQns30GZKQAp/07URovTeQuLbF+9poCcWgjUXHbhdzHk5jGzIdFBuvfyWssnuCYW1bxl+7xvSqI3pE7LbV4=
+	t=1749156980; cv=none; b=ASw+bx2t6M57fUb/SrQJ/WA15C0XYvcWxx+e+S5yUa+yglTYDOgauom8hNy6BwMgifS6fIFczqZBsG8WjusrO8bA+T63X3LtsCyRSQT4Lb3vKQa3+iMY6BVxFsgcf8cLtLkvlWarJNGhVNzXgm1Bca8VRc4sCnTXm2odQHicAcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749156582; c=relaxed/simple;
-	bh=SA9LwLv4OTP57A/TZlK6BnROG3g+5FbkckDxFV1uqQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiR500I5GuOXK1K3UaDwQfYY5sUO9PpW/DFnV5NBKFgJWRCzKwROZl4M1oI/MI+zzq8PZRCNdV8djVGpy3xPeZC/dqjPSsVk5FzcE/lXa1BwlbacUEgCf4KvxzXXvU/mWy396qs+bHsXzs6z1e1nk1yDRhOc8zaubf5N7ra9av4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ScOsjFYl; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555GPosL030925;
-	Thu, 5 Jun 2025 20:49:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=iBMPUZ
-	BpDFsc6gfy03c++YYDiwHCoN78oz1YYmnfzPs=; b=ScOsjFYlLX4ojzq9wu7fOB
-	PziGl8xRQG7ZDzXusPec9tx6xyxhlcGc+eW23d8mBj1C0AzN0ze32GVwYVmN+WH1
-	QtyzEdtU3xmhZcAHM7WNFsQ6t9vXe5/XSUViHbXVmdxp2vKcbDLR+R+Akbzx2JQT
-	eJk//y9aJSfye/hhAPOxjVBilw6kJx8L8xTzXdaEgO6MKAr03o7ycxKhk860iL+3
-	h64YeMs/Rr8q3FN5QUYTtG1I73F73hBeb7iGv8CY/wMVlQZIuAwnJQr+ZJ6yRdxr
-	Umfi/Zl0nANxMNSmUeZvuPzdG0KE44KZeEsb1MXQAhtiJYASI2inAZGIRuiahuxg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471gf032ss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 20:49:21 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 555Kl6FX006954;
-	Thu, 5 Jun 2025 20:49:21 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471gf032sn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 20:49:21 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 555KQtlC028434;
-	Thu, 5 Jun 2025 20:49:20 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 470eakp9aa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 20:49:20 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 555KnIQZ9306626
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Jun 2025 20:49:18 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E3A158056;
-	Thu,  5 Jun 2025 20:49:18 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7B0645803F;
-	Thu,  5 Jun 2025 20:49:14 +0000 (GMT)
-Received: from [9.124.215.100] (unknown [9.124.215.100])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Jun 2025 20:49:14 +0000 (GMT)
-Message-ID: <f4c7d9b6-38fe-452b-af8f-d18c2b506fe6@linux.ibm.com>
-Date: Fri, 6 Jun 2025 02:19:12 +0530
+	s=arc-20240116; t=1749156980; c=relaxed/simple;
+	bh=DSobZZnWgM17JBG0B1yyZn7k6c2byf3fBmEAKAS/DRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hRZ5oFVtNOsFzUBZaNsQkTLFpl+4HoBKIslDEH53xQciP8/NgqwDI7dNRKpqKFMEJEuS4yYyEtvZBZZWRU5yc1E+L5V7vjjgr3MQnJ04FOoaanjrxDpuLktKVX/H0HKyCIzMdmecOSWRCFgECcUCBV2pI8cBfp2grR125I028R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=OmVD0gad; arc=none smtp.client-ip=148.163.135.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
+Received: from pps.filterd (m0167071.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555KjSRv032558
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 16:56:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pps01;
+ bh=xm4+j5Ivo2wgP6zUM7+5vhC6Rb1oLpKBdxSCgVg/kKE=;
+ b=OmVD0gadQQRw+VbVLnP6EB6eeYJlPT7XFCU5P1NJAsou1AWNcJWefDOQqQ9j+/j7VLGx
+ UIheI0KY0kCbU4GwaXXJVpSiyl2g0qpOVMc7gFiW36l/GMj0AlegPdhqkTu2l1qNvZzQ
+ JWbSOs4yo1wfr/IV09hJjdxuW8DSJc8cyhE25kCsemiEGpcFwCdVxu+0HXKBvpc/7pK7
+ xiO2XqZF5WZ2hwhEaJYxnZqu/ay3xYFNwVZnZAenlL6tMrV4CVe7zRundMdWoXFMCGfO
+ gJZqpRi1huHObQfRqARRQYhknGFvjFq+Od4I6Axey9rYfTU1ciwN//B1NnCskO7AtZop +A== 
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 473emdamcf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 16:56:12 -0400
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-70cd5e0c5b8so17138877b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 13:56:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749156971; x=1749761771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xm4+j5Ivo2wgP6zUM7+5vhC6Rb1oLpKBdxSCgVg/kKE=;
+        b=HxBqqNG3n78uDch54/BVfKEbZH1lUVe6A6ZL2VshS0mYI1v1Gvt8uqDP/Q7Zj9oQPu
+         pvn3Wq7qEaNoHKiR9sqYoOjFsYfeRl1wJjyG8JrwOlYII7xgI8E6uXhyMrpB43vwxQAo
+         sVmoipGkOjvYG1wYmaA6fZnRZZbMe63ho/xXrPOdP3kZUBtMMzLKJpY+l3b6XoTHTSl/
+         A90y5l9r4TABCKdKGIKYY4m1ZscbnSy8y6nUZhYnlrZwLbLkTiIuDEGb9fzbzInZOaE+
+         iF15n9E16BlaBogsa9/iSD36R9tZtahE9elM+OfoB4VMxEE01JGZfgjDxi7EX6bTaCeA
+         /ZKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKiMAoVOtyl005aVgHJVfRhuG5ik8um+XvWNEMK5KUi4GC4jDkodbGn2NhkhXfwBKxlbXxR3WgqsaK7Q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuQ3hmM7ll9vylvZeRh+Vdm6KCSbHHzro/Ku0LPWk5/5CRNTQG
+	Ka1hs43hEiS5dzAjZtDN8AMWKrEHliDdcXu+0OXMvNHjbZ3g2ShZeSq+gQjmVnL8cNUAbKjQG8i
+	kJQQ3KCGqu+saR70sU5IVYNfZK987TR4GhTeIkgh50H1Hqd4UjOjLQoo6iMXyDFTIaHfEqPEOB0
+	GdguiFDeqXTZdL7I0dfU1OX+FdeeRUSgij1mERTJG9pVv2wpo=
+X-Gm-Gg: ASbGncsI2IRBT5Skj01RNx84kRcLt4XOzjfczBsbUAcGR4F0xv7ITx2Ktmk89sdf75Y
+	yYGtAxfYtiI1euu74bzMG2k/8KOZ2/D0NTysYYcwgkAc9kKkD1gdEHU+cV4QFCAndbM1OeQ==
+X-Received: by 2002:a05:690c:6711:b0:710:ee42:5c37 with SMTP id 00721157ae682-710f76a075amr14815077b3.17.1749156971112;
+        Thu, 05 Jun 2025 13:56:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGeRm2n9CQ9cmSHniujfrPxJWEMnLDbBKF4rJQ6yoAy8eJprBTSY131Rr0KabDbauqak23pCjd3D9jhbArEmGk=
+X-Received: by 2002:a05:690c:6711:b0:710:ee42:5c37 with SMTP id
+ 00721157ae682-710f76a075amr14814857b3.17.1749156970703; Thu, 05 Jun 2025
+ 13:56:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] powerpc/secvar: Expose secvars relevant to the key
- management mode
-To: =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
-Cc: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
-        zohar@linux.ibm.com, nayna@linux.ibm.com, linux-kernel@vger.kernel.org
-References: <20250521105759.8408-1-ssrish@linux.ibm.com>
- <20250521105759.8408-3-ssrish@linux.ibm.com>
- <aDATahmPIsOmiFAK@kitsune.suse.cz>
- <7dcd0f77-852b-4f4c-9842-f1d96e1d8b65@linux.ibm.com>
- <aEB3MPAYeAaFVpTc@kitsune.suse.cz>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <aEB3MPAYeAaFVpTc@kitsune.suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: pUIT8FN7lu5-ekz5hH9QnVn6SpUS0kxz
-X-Authority-Analysis: v=2.4 cv=DYMXqutW c=1 sm=1 tr=0 ts=684202d1 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=1AcIt4NcVLqilGCoAC8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: N22Eis7WxtDybmoRU2gulXHpm56H0ggW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE4NSBTYWx0ZWRfXzmfK3PG1NOg0 3BqY2a6RE013zT5DGBrTHsLfC4K9AxsUvLZZHNr6JkLE1Hl1ulWPu/7csZp3lsbcdg7m/Fv1M36 2GGAc1RWCXO0KKXI4YxDYvtvPtxl7Jxt7jT/ndz1PT3JZgs387OkgNR6DxHUqCGqfqxtYxtiGwk
- +pUZoeXDAfb3gz8T8X3EkIV8vNk8WzWaVFjN13GZAyxADmWw4L11rY6pi5X/D7RuQnhe+yo/1BZ Mttj+v4/AvTWAhzPXtMRcUjgvU4l2Ql5GNH7kapvy5Zs32G9XzWm3G/wtQ/zYxds00PdLZ75G/w zXu5nyEf9+t7G+8aDWPJFPb2xygEgy5SQHJmls5xrL7AQJPTmAS6/qwYqgnmqoASNfnfWfAMfIH
- qAZYODz2biUHsSFYU9Z8ZQL0XfnXqb3je529/IwXJ99Xpr2l7ShkLdtD/Ggcw/IJReJgkFyD
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu> <CADrL8HWM9zmJY=paJjWYPZkw5gYXHMH7MmEMhzHoMpcETEJiUg@mail.gmail.com>
+In-Reply-To: <CADrL8HWM9zmJY=paJjWYPZkw5gYXHMH7MmEMhzHoMpcETEJiUg@mail.gmail.com>
+From: Tal Zussman <tz2294@columbia.edu>
+Date: Thu, 5 Jun 2025 16:56:00 -0400
+X-Gm-Features: AX0GCFt9W11qCzc-mT2qybe1SfA1xJ_Jio9aAw4Ju_-YhONUSDy6b-R_EmrG9-I
+Message-ID: <CAKha_sr1srsvnYTYYQgbPXK4CGmMGfiN9vVPWvGgN+vifFnt9g@mail.gmail.com>
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+To: James Houghton <jthoughton@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE4OSBTYWx0ZWRfX2lGVzsoxGA/r jajumzn4tnZTp17ydN+Zka6XoScLFybHHoLC5U/bCQDxw4teC9pbOc6TEBx3WoJoSV9OJ/2q9xw KYXmM7dK6Cxd/6c5Mi6MgAJXkjPtI0ESXQrRkeYp2K0mgyv6KzMsapMUGcQXKWkKA1fdcXyRYIj
+ ZJDHHuv93N5igklROYuRh+DzrSeK3+JbkAuJQUEo7lWmJpn+pXvp10mRHsn+yf1ZVovl9Jv4lbT 7++TlVxv7t15HSh/JY50nJ76OxnphHBP/1IK6K2fsUGMgtBw9z7++b3WaXWapgA7nx/zVUxd2My XFNCJoTTVbvEsoTgOYdkAp7KL2pulWCtuHbjE2JciyMSvRtdw2qVxpGBmN70V6uqCZk2oPtNGkH 6YjtCC6+
+X-Proofpoint-ORIG-GUID: FwidK0_rhYekeObjhkGuVDY-NBxrIl2K
+X-Proofpoint-GUID: FwidK0_rhYekeObjhkGuVDY-NBxrIl2K
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-05_06,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 spamscore=0 mlxscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 mlxlogscore=999 adultscore=0
- malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050185
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ suspectscore=0 bulkscore=10 mlxlogscore=773 lowpriorityscore=10
+ adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506050189
 
-
-On 6/4/25 10:11 PM, Michal Suchánek wrote:
-> On Thu, May 29, 2025 at 10:39:58PM +0530, Srish Srinivasan wrote:
->> On 5/23/25 11:49 AM, Michal Suchánek wrote:
->>> Hello,
->>>
->>> On Wed, May 21, 2025 at 04:27:58PM +0530, Srish Srinivasan wrote:
->>>> The PLPKS enabled PowerVM LPAR sysfs exposes all of the secure boot
->>>> secvars irrespective of the key management mode.
->>>>
->>>> The PowerVM LPAR supports static and dynamic key management for secure
->>>> boot. The key management option can be updated in the management
->>>> console. Only in the dynamic key mode can the user modify the secure
->>>> boot secvars db, dbx, grubdb, grubdbx, and sbat, which are exposed via
->>>> the sysfs interface. But the sysfs interface exposes these secvars even
->>>> in the static key mode. This could lead to errors when reading them or
->>>> writing to them in the static key mode.
->>> would it cause an error when reading these variables or only when
->>> writing them?
->>>
->>> Thanks
->>>
->>> Michal
->> Hi Michal,
->> Thanks for taking a look.
->>
->>
->> Yes, when PKS is enabled without enabling dynamic key secure boot, the
->> secvars
->> are NOT yet initialized with the default keys built into the binaries, and
->> therefore
->> reading them will result in an error.
-> That suggests that 'cannot be written' as said in the documentation and
-> commit message, which would imply readonly, is misleading. The value is
-> not accessible at all.
-
-Hi Michal.
-
-Yes, this seems to be misleading.
-
-Will address this.
-
+On Tue, Jun 3, 2025 at 8:52=E2=80=AFPM James Houghton <jthoughton@google.co=
+m> wrote:
 >
->> Now, while in static key management mode with PKS enabled, if one tries to
->> populate secvars that are relevant to dynamic key management, the write does
->> not fail as long as the "Platform KeyStore Signed Update Infrastructure"
->> flag on
->> the HMC is enabled and the signed updates are authorized by valid PK/KEK
->> keys.
-> Which suggests that some variables can if fact be written
+> On Tue, Jun 3, 2025 at 3:15=E2=80=AFPM Tal Zussman <tz2294@columbia.edu> =
+wrote:
+> >
+> > Currently, a VMA registered with a uffd can be unregistered through a
+> > different uffd asssociated with the same mm_struct.
+> >
+> > Change this behavior to be stricter by requiring VMAs to be unregistere=
+d
+> > through the same uffd they were registered with.
+> >
+> > While at it, correct the comment for the no userfaultfd case. This seem=
+s
+> > to be a copy-paste artifact from the analagous userfaultfd_register()
+> > check.
+> >
+> > Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory ex=
+ternalization")
+> > Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 >
->> However, secvars like db and grubdb populated while in static key management
->> mode are not used by the Partition Firmware or grub as SB_VERSION is not
->> present,
-> but are not used until the key management is switched to dynamic
+> Thanks, Tal! I like this patch, but I can't really meaningfully
+> comment on if it's worth it to change the UAPI.
 >
->> i.e dynamic key secure boot has not been enabled yet. In this case, when
->> there is a
->> transition from static key management to dynamic key management, secvars
->> with
->> the signed update policy bit set will not be overwritten by the hypervisor
->> with the
->> default keys. Now, if the keys written into these secvars were not the ones
->> that were
->> used to sign the grub and kernel, it would fail to verify them.
-> Which is the case even for the case the system is already in dynamic key
-> mode, unless the variables are append-only.
-
-Yes, that is correct. The main intention of this patch is to not expose 
-secvars that are
-
-to be consumed only in the dynamic key management mode while in static key
-
-management mode.
-
-
-I will post v4 with the updated patch description and documentation.
-
-> Thanks
+> > ---
+> >  fs/userfaultfd.c | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 22f4bf956ba1..9289e30b24c4 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -1477,6 +1477,16 @@ static int userfaultfd_unregister(struct userfau=
+ltfd_ctx *ctx,
+> >                 if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+> >                         goto out_unlock;
+> >
+> > +               /*
+> > +                * Check that this vma isn't already owned by a differe=
+nt
+> > +                * userfaultfd. This provides for more strict behavior =
+by
+> > +                * preventing a VMA registered with a userfaultfd from =
+being
+> > +                * unregistered through a different userfaultfd.
+> > +                */
+> > +               if (cur->vm_userfaultfd_ctx.ctx &&
+> > +                   cur->vm_userfaultfd_ctx.ctx !=3D ctx)
+> > +                       goto out_unlock;
+> > +
 >
-> Michal
+> Very minor nitpick: I think this check should go above the
+> !vma_can_userfault() check above, as `wp_async` was derived from
+> `ctx`, not `cur->vm_userfaultfd_ctx.ctx`.
+
+Thanks, this is a good point! I'll change it for v2.
+
+This also seems to indicate that the current behavior is broken and may rej=
+ect
+unregistering some VMAs incorrectly. For example, a file-backed VMA registe=
+red
+with `wp_async` and UFFD_WP cannot be unregistered through a VMA that does =
+not
+have `wp_async` set.
+
+> >                 found =3D true;
+> >         } for_each_vma_range(vmi, cur, end);
 >
->> These are the reasons behind the decision to expose only those secvars that
->> are
->> relevant to the key management mode.
->>
->>>
->>>> Expose only PK, trustedcadb, and moduledb in the static key mode to
->>>> enable loading of signed third-party kernel modules.
->>>>
->>>> Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
->>>> Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
->>>> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
->>>> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->>>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->>>> Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
->>>> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
->>>> ---
->>>>    Documentation/ABI/testing/sysfs-secvar        |  6 ++++
->>>>    arch/powerpc/platforms/pseries/plpks-secvar.c | 28 ++++++++++++++++---
->>>>    2 files changed, 30 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/Documentation/ABI/testing/sysfs-secvar b/Documentation/ABI/testing/sysfs-secvar
->>>> index 45281888e520..948df3446a03 100644
->>>> --- a/Documentation/ABI/testing/sysfs-secvar
->>>> +++ b/Documentation/ABI/testing/sysfs-secvar
->>>> @@ -37,6 +37,12 @@ Description:	Each secure variable is represented as a directory named as
->>>>    		representation. The data and size can be determined by reading
->>>>    		their respective attribute files.
->>>> +		Only secvars relevant to the key management mode are exposed.
->>>> +		Only in the dynamic key mode can the user modify the secure boot
->>>> +		secvars db, dbx, grubdb, grubdbx, and sbat. PK, trustedcadb and
->>>> +		moduledb are the secvars common to both static and dynamic key
->>>> +		management modes.
->>>> +
->>>>    What:		/sys/firmware/secvar/vars/<variable_name>/size
->>>>    Date:		August 2019
->>>>    Contact:	Nayna Jain <nayna@linux.ibm.com>
->>>> diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c b/arch/powerpc/platforms/pseries/plpks-secvar.c
->>>> index 767e5e8c6990..f9e9cc40c9d0 100644
->>>> --- a/arch/powerpc/platforms/pseries/plpks-secvar.c
->>>> +++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
->>>> @@ -59,7 +59,14 @@ static u32 get_policy(const char *name)
->>>>    		return PLPKS_SIGNEDUPDATE;
->>>>    }
->>>> -static const char * const plpks_var_names[] = {
->>>> +static const char * const plpks_var_names_static[] = {
->>>> +	"PK",
->>>> +	"moduledb",
->>>> +	"trustedcadb",
->>>> +	NULL,
->>>> +};
->>>> +
->>>> +static const char * const plpks_var_names_dynamic[] = {
->>>>    	"PK",
->>>>    	"KEK",
->>>>    	"db",
->>>> @@ -213,21 +220,34 @@ static int plpks_max_size(u64 *max_size)
->>>>    	return 0;
->>>>    }
->>>> +static const struct secvar_operations plpks_secvar_ops_static = {
->>>> +	.get = plpks_get_variable,
->>>> +	.set = plpks_set_variable,
->>>> +	.format = plpks_secvar_format,
->>>> +	.max_size = plpks_max_size,
->>>> +	.config_attrs = config_attrs,
->>>> +	.var_names = plpks_var_names_static,
->>>> +};
->>>> -static const struct secvar_operations plpks_secvar_ops = {
->>>> +static const struct secvar_operations plpks_secvar_ops_dynamic = {
->>>>    	.get = plpks_get_variable,
->>>>    	.set = plpks_set_variable,
->>>>    	.format = plpks_secvar_format,
->>>>    	.max_size = plpks_max_size,
->>>>    	.config_attrs = config_attrs,
->>>> -	.var_names = plpks_var_names,
->>>> +	.var_names = plpks_var_names_dynamic,
->>>>    };
->>>>    static int plpks_secvar_init(void)
->>>>    {
->>>> +	u8 mode;
->>>> +
->>>>    	if (!plpks_is_available())
->>>>    		return -ENODEV;
->>>> -	return set_secvar_ops(&plpks_secvar_ops);
->>>> +	mode = plpks_get_sb_keymgmt_mode();
->>>> +	if (mode)
->>>> +		return set_secvar_ops(&plpks_secvar_ops_dynamic);
->>>> +	return set_secvar_ops(&plpks_secvar_ops_static);
->>>>    }
->>>>    machine_device_initcall(pseries, plpks_secvar_init);
->>>> -- 
->>>> 2.47.1
->>>>
->>>>
+> I don't really like this for_each_vma_range() for loop, but I guess it
+> is meaningful to the user: invalid unregistration attempts will fail
+> quickly instead of potentially making some progress. So unfortunately,
+> without a good reason, I suppose we can't get rid of it. :(
+>
+> >         BUG_ON(!found);
+> > @@ -1491,10 +1501,11 @@ static int userfaultfd_unregister(struct userfa=
+ultfd_ctx *ctx,
+> >                 cond_resched();
+> >
+> >                 BUG_ON(!vma_can_userfault(vma, vma->vm_flags, wp_async)=
+);
+> > +               BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
+> > +                      vma->vm_userfaultfd_ctx.ctx !=3D ctx);
+>
+> IMO, this new BUG_ON should either be
+> (1) moved and should not be a BUG_ON. See the WARN_ON_ONCE() below,
+> OR
+> (2) removed.
+>
+> Perhaps the older BUG_ON() should be removed/changed too.
+
+I added this mainly to maintain symmetry with the userfaulfd_register()
+implementation. I'm happy to leave it out, so  I'll either convert it, and
+the other one, to a VM_WARN_ON_ONCE(), as per David, or remove it.
+
+> >
+> >                 /*
+> > -                * Nothing to do: this vma is already registered into t=
+his
+> > -                * userfaultfd and with the right tracking mode too.
+> > +                * Nothing to do: this vma is not registered with userf=
+aultfd.
+> >                  */
+> >                 if (!vma->vm_userfaultfd_ctx.ctx)
+> >                         goto skip;
+>
+> if (WARN_ON_ONCE(vmx->vm_userfaultfd_ctx.ctx !=3D ctx)) {
+>     ret =3D -EINVAL;
+>     break;
+> }
+>
+> where the WARN_ON_ONCE() indicates that the VMA should have been
+> filtered out earlier. The WARN_ON_ONCE() isn't even really necessary.
+>
+>
+> >
+> > --
+> > 2.39.5
+> >
+> >
 
