@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-674929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63F9ACF709
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163FAACF70D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E017A3EB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6563175737
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761BD2777FC;
-	Thu,  5 Jun 2025 18:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DF928136C;
+	Thu,  5 Jun 2025 18:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PeKrppCO"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fXfPX0d6"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573F428031C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19CA27FD71
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749148374; cv=none; b=P+mamahlqsAteldTzzY+yUEapZ92Q/6n/8aI4XgnBfR0zIMIjlgzik45Qo4oXqVrKxU354CAmroMQNQbkfDxiKZLPAIkJl5NLRfqq5rKqNOY+FiRVy+qz/1QO/OEux9OAIFl5E9ArH18Lv2DAVzSca3mbNxKV//A8TL9HXQUdm4=
+	t=1749148376; cv=none; b=TK6SSbqPw3NH2ecd2YOEnHlMZkYoCFMFCn9/PWFJX/qwO/wC0K2ifUL7DnA48+BGHscxNxgKHjnggN1nutgdsVcK3Z0P6t87Nnib/sk0Zj8hB+pdRYfNGkl5EbOLUSS9Vl93ZQsZp9nECViH/Gq8ZLxIvC7LJnSIzh1gEsHB81Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749148374; c=relaxed/simple;
-	bh=B9eE+MJ7+O1AN7BKJ5NQdswWxGPSuZQjmPfgsgUDJiM=;
+	s=arc-20240116; t=1749148376; c=relaxed/simple;
+	bh=1DeDF0ar0bWjHYOdiDm1icJLnBGNeW7jU5ESThe4AlM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P1SLSJ8Lsz7p+I6OHWnnXlsZsa333sW9XCU/jbYEMMvbIzDMP+nTiqAuXeSXQUPtqL+qhwjgL8YaSutgt4vM3maztsowcpRtxA8zzCgmVj9mVTIIFiCafGOG8URwmoEJotb088exZ+FL3FiLs0iwwioKlwJ/I9ZbIvPDuYvzLoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PeKrppCO; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=AcH8KKw+Z2uptuYaiferWkQgkLAhUPGaWWppYIEpTnuI3Nkgv89gWowQGJVxk3ZLkPPuUqYja1R1stFvU+2ODWFOUPJVqW/DvM5yySsMRxUxURlWg7aJw3XlP5A+gpg4J9vqcXlpUjGkjmzhweKegh75ViPGHJOjHsWH+NFHtfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fXfPX0d6; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555GrJTf006553
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 18:32:51 GMT
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5559kgBa014378
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 18:32:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=uUof/zDaOaC
-	uzta8w72KM+mWpGInUe/M4USMZdkFuc4=; b=PeKrppCOxxNODy9F/tVq+FcFJi4
-	dOkQ+mdt6SuviCpAZfONak5goTINH3OIVgMDyBgW5tePxyUhZqRZrt7VIWCfVclo
-	+cs3HaOfNzEoLMUFyJajX/t9lJV1bkoydeC3i+UQSOUYhi24aPnWStfydborUC18
-	VRzUSIODKewo+4TKb4VY2ASWLUx+niTc7i6LlcT2uuwWrbmDzpK5qJs6Ak2fNekG
-	X2G0MglPizE/yy7BCh/h0eGTyMWdp7vKI2wMfg5tpxK0pzlctOnvEaGtPWux7FPu
-	oBueTTZxM5un0eZXXHjvtQiyoGICDfkADqgOTQ40fbJob9y7AnPbAoS1LSw==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8t2aba-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=3u7saZqSf9v
+	I7fV2Qhb933URL/6xLtZCDgVKJFmz8jc=; b=fXfPX0d6PaVGIBJgExovILPPK6D
+	4Z3RwxgfsjKXQxaNjqbCUG7u2YaYqS7eBEK0DZT7vlZ7BAtBFov6m4zWNkp98Cyy
+	iVCic8TFb6pc+wPgE5EJa6KWQaqxm6N2SGe/xbZSKb0P7OFJWw0emJJCBoiGKqhg
+	3FNhH979z7fcSO2ciTpLTEljwwm70wa6Es3TNLyunn9OoYZj1iucP6KGtst2PbpX
+	hQA+/L85wUnlfG/cMu0tdpyHz6NG3YAujuXVn73DiAfxdNX+7xF3x/B79055yf3a
+	GAnkwYn2AGtj5anXDvi8ghLavu4RXIwP5PhkSGjWzkN2UOnthztJH7jkgMQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472be8619a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 18:32:51 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23536f7c2d7so19120735ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:32:51 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 18:32:52 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-311d067b3faso2252981a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:32:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749148370; x=1749753170;
+        d=1e100.net; s=20230601; t=1749148372; x=1749753172;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uUof/zDaOaCuzta8w72KM+mWpGInUe/M4USMZdkFuc4=;
-        b=IHOGGhnbKFVqEZmYT/593gnlh3oo5jZwHmAiziyiQzQ7F7LJpKLpo204NJ6uW/RnVX
-         T6qtRGNv2CnVHYwoBoR8u9GtS1A8sp5BapztKDS4tjdpQQcmZFxIZCJksX0p+XWPRWie
-         yUL3gwK4xivy3eOe1Kp13xfuQ+vM4RbSolpJ22dA2kH2rc3I666oLDY95B08vmvaAeeq
-         VD1IsQcYQ8D/z28IFaZlByj1yr0nduDSZIH6t2WZfepZN2ERI7Jz094jF+zPRFUkkUJm
-         tIt5d1SKJ4WTkjAASbOD2NZu8yg/YZx4QFFMSFvQMwmi9e83MlBm3dKAaOmO6xXVnXFz
-         LC/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8IOg/mGsszuPAij9mp5gCVVpEZFAQsMIziZenzlTrxRRhnnEO96XzCUyUUX/0jk5oDNATDRqBxANBOW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeBCBMfB69DnMK+nC5lHbB9q7PDM/zNb0JRW//lKFgkP0xNQdW
-	JFoId/YCni0ctzhxHU3Jna2+Kxyzk7StP5G2QOULmgBxsffXr86gPT8NcqnasNhd+OP7F0GGwsV
-	Bbr17GAvvnttwniuvrlh6IbS9YqzP798GxV6sNvPCHKK9Xc0fcd1HNWu1xlKOagmE5ls=
-X-Gm-Gg: ASbGncvT4lzmh/hDVNqH5r03PU6U8ZXcKMzsfE8eP1sBEwUygnbUo577UfZkP4AJpob
-	PluujHt6oaqLwSgseO2RL5vpNmY7ybOaS7HITEYkQ91MettRw8UFp3jIKGBkBNX3D6QPGXiO139
-	DePNBN6blSIg4f7vhr1hWNKeKjs1aFDheWo0ClVSeUOpcfS5USmMMV1ztRbPoV1LkgP7TZeyXrO
-	nKimsQOQC1WD9TlG8dGBlyPrnjS/6fz2suHWrIJNdrwocTC770NoK1iHQltcv7WD6QG7rl9JNbE
-	KuC26V2/E/ZGXoR4DCLI2Q==
-X-Received: by 2002:a17:902:e890:b0:235:1706:1fe7 with SMTP id d9443c01a7336-23601cf6b9amr6390115ad.4.1749148370467;
-        Thu, 05 Jun 2025 11:32:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQnM4xAK6Q7sA9TaODreLehbG/7tDzSTuO9E5rA5DKAL+arxWePbEuiI6ffeNfHj2Qkxo12w==
-X-Received: by 2002:a17:902:e890:b0:235:1706:1fe7 with SMTP id d9443c01a7336-23601cf6b9amr6389695ad.4.1749148370060;
-        Thu, 05 Jun 2025 11:32:50 -0700 (PDT)
+        bh=3u7saZqSf9vI7fV2Qhb933URL/6xLtZCDgVKJFmz8jc=;
+        b=D6hc7epJroLqIfc3GEi2/cfcOgTO17QDBdb/Oc3/sdDA1PKsuUfUjXiXINb2sQcifL
+         BmvqI4i/nK7LAcFIk4gTpU/cIDDKXY8diZ+sgM2171+NqxVPHNwm/yAfC3cXd3i/MUbc
+         JtLFqUfSN8isPuc9EozOnkqV3y5PxvV5xtdph0juWKvZ6ZBjeqWZVtxUo9vYGxvyvOzI
+         Qpls/0pH/WaI9CvlxLX7VOKNwUaZLRHSoebUzjKEXiJrLTMBfALK1AZrWEdyHHJE2E2h
+         2OHISDH7mONNxipC7xT3s0T4DDX53QOcFPhSTl1RGjW69rtyRgkD74il8qRRGYdzyaP5
+         y8ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXbtoEPS5/kTeKWJa2ggIO49OffLH2hlAMapnROzkpP72yWxOCF6wEpEzDKD5fyg2I7JC0ah/p8CfU7J6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlYGWMWpd8BDpb73BAVcg3vKbQikfxpoJAmXsqZStsUaTLagNx
+	4+/DLak0mBZWbZMHgeh4tre3nPzySJONjrawnLN3lJIwgFeRbEcFnTpoclTvCFS5aW96GLstunj
+	Rd67fvrRukiJpdJg+zZbzzYJakLbQje+IiR8SYLBUahNoRI60cG5Q7h/jwWuFXvmB6rrwbycZdP
+	o=
+X-Gm-Gg: ASbGncs3mGROnQeTN49xAOo2gDl5zU//vh46J7XLFFzTAHFjqK8gEFC/+Uu44fp41Lw
+	5WKq+DlpxONs8iNW2EQl9uUtEAJbMFZ/XQtErUygelw0EicHCZJ5oeZerbDWIRfv3Sgb87Vj1Z8
+	HndXCIxmwNCKKPl/ACqAFza+X7wsl2qi4j5Hpwemxx8ZN6bbPDNaEpI23fGmJnNJ13fk7FhtCG/
+	LZsbPcguLVfXJrPc5okOi2LD42PLhVBRip9CjTGj9PKDOvwZd8zIgLZQeCmFalpK7z86FI6LqrH
+	yyck5zy5mm1BwZummkwOKQ==
+X-Received: by 2002:a17:90b:4e83:b0:312:f54e:ba28 with SMTP id 98e67ed59e1d1-31347057c9amr1124725a91.24.1749148371737;
+        Thu, 05 Jun 2025 11:32:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGf8XXJ8Mf/VVr/G14I6Dua2+GHn6PtLKJaQTP4schM9Oyz0kgDx0QvXZTk1AeUyR9rUESodA==
+X-Received: by 2002:a17:90b:4e83:b0:312:f54e:ba28 with SMTP id 98e67ed59e1d1-31347057c9amr1124675a91.24.1749148371293;
+        Thu, 05 Jun 2025 11:32:51 -0700 (PDT)
 Received: from localhost ([2601:1c0:5000:d5c:89fa:e299:1a34:c1f5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bd92c7sm122605935ad.62.2025.06.05.11.32.49
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349fe0048sm59361a91.42.2025.06.05.11.32.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 11:32:49 -0700 (PDT)
+        Thu, 05 Jun 2025 11:32:50 -0700 (PDT)
 From: Rob Clark <robin.clark@oss.qualcomm.com>
 To: dri-devel@lists.freedesktop.org
 Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
@@ -90,10 +91,13 @@ Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         Dmitry Baryshkov <lumag@kernel.org>,
         Marijn Suijten <marijn.suijten@somainline.org>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 15/40] drm/msm: Add mmu support for non-zero offset
-Date: Thu,  5 Jun 2025 11:29:00 -0700
-Message-ID: <20250605183111.163594-16-robin.clark@oss.qualcomm.com>
+Subject: [PATCH v6 16/40] drm/msm: Add PRR support
+Date: Thu,  5 Jun 2025 11:29:01 -0700
+Message-ID: <20250605183111.163594-17-robin.clark@oss.qualcomm.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250605183111.163594-1-robin.clark@oss.qualcomm.com>
 References: <20250605183111.163594-1-robin.clark@oss.qualcomm.com>
@@ -104,229 +108,191 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 19Q5aE90R7e-HVya1__d5gir1uOYpHto
-X-Authority-Analysis: v=2.4 cv=EPcG00ZC c=1 sm=1 tr=0 ts=6841e2d3 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
- a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8 a=SJjE8ph6EfIcxDFTuEgA:9
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: 19Q5aE90R7e-HVya1__d5gir1uOYpHto
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE2NSBTYWx0ZWRfX5JJWTsAyWphW
- A3CpHr3vGx21ICS+H1jCC7ptzGTvJQACC/iLxslKl92ARxCQWJ9J5m+DptAbeIcK+kwqNTYkXXy
- RAeBIPyFCpMy1Rb+clERIG8H/iYw5MQaZWbX35SaYY5pJhsJVidFDbg5tTvBYGmIfXV3g4yDbwJ
- 4KstkXVegZEFIu0p2AxulGgMcQ1+h12eAWwpSe/rW6blRsJve20YgXbfxBPIAHk6xOQd6cBCIn2
- AEA0BVexn1SdiOX3REhbrALAOHz2WHrnIRM10Onu/qZhTnsVbV7WrnUy9WlFGXGt0R6JKF0Yet1
- zlEOU8MjP322I6BR4wjP4MWxBMcdQV4us5uxxn/Mgu9FY9Lo+clVRHjqwhLsoqrGAZYUYAxZB5M
- T87gF5YyxzoyBIRqTWEietB0g5DU0JvVpbJCCupFGXRzs1HNxpt09Ns4pP64F3tYr8wHxr2e
+X-Authority-Analysis: v=2.4 cv=bNYWIO+Z c=1 sm=1 tr=0 ts=6841e2d4 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
+ a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8 a=m2jltaIWnU9X2HFGTMUA:9
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: qgnNLHaGjlhvjcXBR5Cx5GjU7RroLKwi
+X-Proofpoint-ORIG-GUID: qgnNLHaGjlhvjcXBR5Cx5GjU7RroLKwi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE2NSBTYWx0ZWRfX0QkNFxxkbcFD
+ gQwd4wFwqWK6l91sLVDUwsqHtHhbYQshwxtaNhbMLMTIEN3HsUouFrC2zGs0T0pjBjIvNJFpIDp
+ Epj+dkzFr9+2+L2Kh0lhvGJXleC84K7fBVeOimFNj+upmCw9eeKPKmvd36M3GU3z6X++lEAJBw6
+ ybhbvDt6YT+RrN9SQZLzB5IdKKlXAVL2brSs3g8Yploj1PszBiPSjjUC5aFtubT1CMMdJjDVafG
+ SZH6puj1XPnmBDr6O+zFA+0Ju09pf4C10jKvmd9YEJ6bIQ9mvKz5NSLxMcRUjRgEIwSKAATRIAI
+ WOlZO3gsYwYNMt0xA9Vc8Efgp4Z/pHs17bduSD20oHeZqxL341svWgZXCSm0w2uogKvO/vdZkjg
+ /Ngl3tvWkgJQ7NYauXZQtothaTvVpqsP7kU1qLz42QlScyMVBFg7IvpP5lA/Szwg6mFwcy4I
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-05_05,2025-06-05_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- impostorscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0 mlxscore=0
- clxscore=1015 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050165
+ lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 mlxscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 adultscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506050165
 
 From: Rob Clark <robdclark@chromium.org>
 
-Only needs to be supported for iopgtables mmu, the other cases are
-either only used for kernel managed mappings (where offset is always
-zero) or devices which do not support sparse bindings.
+Add PRR (Partial Resident Region) is a bypass address which make GPU
+writes go to /dev/null and reads return zero.  This is used to implement
+vulkan sparse residency.
+
+To support PRR/NULL mappings, we allocate a page to reserve a physical
+address which we know will not be used as part of a GEM object, and
+configure the SMMU to use this address for PRR/NULL mappings.
 
 Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/adreno/a2xx_gpummu.c |  5 ++++-
- drivers/gpu/drm/msm/msm_gem.c            |  4 ++--
- drivers/gpu/drm/msm/msm_gem.h            |  4 ++--
- drivers/gpu/drm/msm/msm_gem_vma.c        | 13 +++++++------
- drivers/gpu/drm/msm/msm_iommu.c          | 22 ++++++++++++++++++++--
- drivers/gpu/drm/msm/msm_mmu.h            |  2 +-
- 6 files changed, 36 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++
+ drivers/gpu/drm/msm/msm_iommu.c         | 62 ++++++++++++++++++++++++-
+ include/uapi/drm/msm_drm.h              |  2 +
+ 3 files changed, 73 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a2xx_gpummu.c b/drivers/gpu/drm/msm/adreno/a2xx_gpummu.c
-index 39641551eeb6..6124336af2ec 100644
---- a/drivers/gpu/drm/msm/adreno/a2xx_gpummu.c
-+++ b/drivers/gpu/drm/msm/adreno/a2xx_gpummu.c
-@@ -29,13 +29,16 @@ static void a2xx_gpummu_detach(struct msm_mmu *mmu)
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index f6624a246694..e24f627daf37 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -361,6 +361,13 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
+ 	return 0;
  }
  
- static int a2xx_gpummu_map(struct msm_mmu *mmu, uint64_t iova,
--		struct sg_table *sgt, size_t len, int prot)
-+			   struct sg_table *sgt, size_t off, size_t len,
-+			   int prot)
- {
- 	struct a2xx_gpummu *gpummu = to_a2xx_gpummu(mmu);
- 	unsigned idx = (iova - GPUMMU_VA_START) / GPUMMU_PAGE_SIZE;
- 	struct sg_dma_page_iter dma_iter;
- 	unsigned prot_bits = 0;
- 
-+	WARN_ON(off != 0);
++static bool
++adreno_smmu_has_prr(struct msm_gpu *gpu)
++{
++	struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(&gpu->pdev->dev);
++	return adreno_smmu && adreno_smmu->set_prr_addr;
++}
 +
- 	if (prot & IOMMU_WRITE)
- 		prot_bits |= 1;
- 	if (prot & IOMMU_READ)
-diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
-index 09c40a7e04ac..194a15802a5f 100644
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -457,7 +457,7 @@ static struct drm_gpuva *get_vma_locked(struct drm_gem_object *obj,
- 	vma = lookup_vma(obj, vm);
- 
- 	if (!vma) {
--		vma = msm_gem_vma_new(vm, obj, range_start, range_end);
-+		vma = msm_gem_vma_new(vm, obj, 0, range_start, range_end);
- 	} else {
- 		GEM_WARN_ON(vma->va.addr < range_start);
- 		GEM_WARN_ON((vma->va.addr + obj->size) > range_end);
-@@ -499,7 +499,7 @@ int msm_gem_pin_vma_locked(struct drm_gem_object *obj, struct drm_gpuva *vma)
- 	if (IS_ERR(pages))
- 		return PTR_ERR(pages);
- 
--	return msm_gem_vma_map(vma, prot, msm_obj->sgt, obj->size);
-+	return msm_gem_vma_map(vma, prot, msm_obj->sgt);
- }
- 
- void msm_gem_unpin_locked(struct drm_gem_object *obj)
-diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_gem.h
-index 278ec34c31fc..2dd9a7f585f4 100644
---- a/drivers/gpu/drm/msm/msm_gem.h
-+++ b/drivers/gpu/drm/msm/msm_gem.h
-@@ -110,9 +110,9 @@ struct msm_gem_vma {
- 
- struct drm_gpuva *
- msm_gem_vma_new(struct drm_gpuvm *vm, struct drm_gem_object *obj,
--		u64 range_start, u64 range_end);
-+		u64 offset, u64 range_start, u64 range_end);
- void msm_gem_vma_purge(struct drm_gpuva *vma);
--int msm_gem_vma_map(struct drm_gpuva *vma, int prot, struct sg_table *sgt, int size);
-+int msm_gem_vma_map(struct drm_gpuva *vma, int prot, struct sg_table *sgt);
- void msm_gem_vma_close(struct drm_gpuva *vma);
- 
- struct msm_gem_object {
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index df8eb910ca31..ef0efd87e4a6 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -38,8 +38,7 @@ void msm_gem_vma_purge(struct drm_gpuva *vma)
- 
- /* Map and pin vma: */
- int
--msm_gem_vma_map(struct drm_gpuva *vma, int prot,
--		struct sg_table *sgt, int size)
-+msm_gem_vma_map(struct drm_gpuva *vma, int prot, struct sg_table *sgt)
+ int adreno_get_param(struct msm_gpu *gpu, struct msm_context *ctx,
+ 		     uint32_t param, uint64_t *value, uint32_t *len)
  {
- 	struct msm_gem_vma *msm_vma = to_msm_vma(vma);
- 	struct msm_gem_vm *vm = to_msm_vm(vma->vm);
-@@ -62,8 +61,9 @@ msm_gem_vma_map(struct drm_gpuva *vma, int prot,
- 	 * Revisit this if we can come up with a scheme to pre-alloc pages
- 	 * for the pgtable in map/unmap ops.
- 	 */
--	ret = vm->mmu->funcs->map(vm->mmu, vma->va.addr, sgt, size, prot);
--
-+	ret = vm->mmu->funcs->map(vm->mmu, vma->va.addr, sgt,
-+				  vma->gem.offset, vma->va.range,
-+				  prot);
- 	if (ret) {
- 		msm_vma->mapped = false;
+@@ -444,6 +451,9 @@ int adreno_get_param(struct msm_gpu *gpu, struct msm_context *ctx,
+ 	case MSM_PARAM_UCHE_TRAP_BASE:
+ 		*value = adreno_gpu->uche_trap_base;
+ 		return 0;
++	case MSM_PARAM_HAS_PRR:
++		*value = adreno_smmu_has_prr(gpu);
++		return 0;
+ 	default:
+ 		return UERR(EINVAL, drm, "%s: invalid param: %u", gpu->name, param);
  	}
-@@ -93,7 +93,7 @@ void msm_gem_vma_close(struct drm_gpuva *vma)
- /* Create a new vma and allocate an iova for it */
- struct drm_gpuva *
- msm_gem_vma_new(struct drm_gpuvm *gpuvm, struct drm_gem_object *obj,
--		u64 range_start, u64 range_end)
-+		u64 offset, u64 range_start, u64 range_end)
- {
- 	struct msm_gem_vm *vm = to_msm_vm(gpuvm);
- 	struct drm_gpuvm_bo *vm_bo;
-@@ -107,6 +107,7 @@ msm_gem_vma_new(struct drm_gpuvm *gpuvm, struct drm_gem_object *obj,
- 		return ERR_PTR(-ENOMEM);
- 
- 	if (vm->managed) {
-+		BUG_ON(offset != 0);
- 		ret = drm_mm_insert_node_in_range(&vm->mm, &vma->node,
- 						obj->size, PAGE_SIZE, 0,
- 						range_start, range_end, 0);
-@@ -120,7 +121,7 @@ msm_gem_vma_new(struct drm_gpuvm *gpuvm, struct drm_gem_object *obj,
- 
- 	GEM_WARN_ON((range_end - range_start) > obj->size);
- 
--	drm_gpuva_init(&vma->base, range_start, range_end - range_start, obj, 0);
-+	drm_gpuva_init(&vma->base, range_start, range_end - range_start, obj, offset);
- 	vma->mapped = false;
- 
- 	ret = drm_gpuva_insert(&vm->base, &vma->base);
 diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-index e70088a91283..2fd48e66bc98 100644
+index 2fd48e66bc98..756bd55ee94f 100644
 --- a/drivers/gpu/drm/msm/msm_iommu.c
 +++ b/drivers/gpu/drm/msm/msm_iommu.c
-@@ -113,7 +113,8 @@ static int msm_iommu_pagetable_unmap(struct msm_mmu *mmu, u64 iova,
+@@ -13,6 +13,7 @@ struct msm_iommu {
+ 	struct msm_mmu base;
+ 	struct iommu_domain *domain;
+ 	atomic_t pagetables;
++	struct page *prr_page;
+ };
+ 
+ #define to_msm_iommu(x) container_of(x, struct msm_iommu, base)
+@@ -112,6 +113,36 @@ static int msm_iommu_pagetable_unmap(struct msm_mmu *mmu, u64 iova,
+ 	return (size == 0) ? 0 : -EINVAL;
  }
  
++static int msm_iommu_pagetable_map_prr(struct msm_mmu *mmu, u64 iova, size_t len, int prot)
++{
++	struct msm_iommu_pagetable *pagetable = to_pagetable(mmu);
++	struct io_pgtable_ops *ops = pagetable->pgtbl_ops;
++	struct msm_iommu *iommu = to_msm_iommu(pagetable->parent);
++	phys_addr_t phys = page_to_phys(iommu->prr_page);
++	u64 addr = iova;
++
++	while (len) {
++		size_t mapped = 0;
++		size_t size = PAGE_SIZE;
++		int ret;
++
++		ret = ops->map_pages(ops, addr, phys, size, 1, prot, GFP_KERNEL, &mapped);
++
++		/* map_pages could fail after mapping some of the pages,
++		 * so update the counters before error handling.
++		 */
++		addr += mapped;
++		len  -= mapped;
++
++		if (ret) {
++			msm_iommu_pagetable_unmap(mmu, iova, addr - iova);
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
  static int msm_iommu_pagetable_map(struct msm_mmu *mmu, u64 iova,
--		struct sg_table *sgt, size_t len, int prot)
-+				   struct sg_table *sgt, size_t off, size_t len,
-+				   int prot)
- {
- 	struct msm_iommu_pagetable *pagetable = to_pagetable(mmu);
- 	struct io_pgtable_ops *ops = pagetable->pgtbl_ops;
-@@ -125,6 +126,19 @@ static int msm_iommu_pagetable_map(struct msm_mmu *mmu, u64 iova,
+ 				   struct sg_table *sgt, size_t off, size_t len,
+ 				   int prot)
+@@ -122,6 +153,9 @@ static int msm_iommu_pagetable_map(struct msm_mmu *mmu, u64 iova,
+ 	u64 addr = iova;
+ 	unsigned int i;
+ 
++	if (!sgt)
++		return msm_iommu_pagetable_map_prr(mmu, iova, len, prot);
++
+ 	for_each_sgtable_sg(sgt, sg, i) {
  		size_t size = sg->length;
  		phys_addr_t phys = sg_phys(sg);
+@@ -177,9 +211,16 @@ static void msm_iommu_pagetable_destroy(struct msm_mmu *mmu)
+ 	 * If this is the last attached pagetable for the parent,
+ 	 * disable TTBR0 in the arm-smmu driver
+ 	 */
+-	if (atomic_dec_return(&iommu->pagetables) == 0)
++	if (atomic_dec_return(&iommu->pagetables) == 0) {
+ 		adreno_smmu->set_ttbr0_cfg(adreno_smmu->cookie, NULL);
  
-+		if (!len)
-+			break;
-+
-+		if (size <= off) {
-+			off -= size;
-+			continue;
++		if (adreno_smmu->set_prr_bit) {
++			adreno_smmu->set_prr_bit(adreno_smmu->cookie, false);
++			__free_page(iommu->prr_page);
++			iommu->prr_page = NULL;
 +		}
++	}
 +
-+		phys += off;
-+		size -= off;
-+		size = min_t(size_t, size, len);
-+		off = 0;
-+
- 		while (size) {
- 			size_t pgsize, count, mapped = 0;
- 			int ret;
-@@ -140,6 +154,7 @@ static int msm_iommu_pagetable_map(struct msm_mmu *mmu, u64 iova,
- 			phys += mapped;
- 			addr += mapped;
- 			size -= mapped;
-+			len  -= mapped;
- 
- 			if (ret) {
- 				msm_iommu_pagetable_unmap(mmu, iova, addr - iova);
-@@ -400,11 +415,14 @@ static void msm_iommu_detach(struct msm_mmu *mmu)
+ 	free_io_pgtable_ops(pagetable->pgtbl_ops);
+ 	kfree(pagetable);
  }
- 
- static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
--		struct sg_table *sgt, size_t len, int prot)
-+			 struct sg_table *sgt, size_t off, size_t len,
-+			 int prot)
- {
- 	struct msm_iommu *iommu = to_msm_iommu(mmu);
- 	size_t ret;
- 
-+	WARN_ON(off != 0);
+@@ -336,6 +377,25 @@ struct msm_mmu *msm_iommu_pagetable_create(struct msm_mmu *parent)
+ 			kfree(pagetable);
+ 			return ERR_PTR(ret);
+ 		}
 +
- 	/* The arm-smmu driver expects the addresses to be sign extended */
- 	if (iova & BIT_ULL(48))
- 		iova |= GENMASK_ULL(63, 49);
-diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
-index c33247e459d6..c874852b7331 100644
---- a/drivers/gpu/drm/msm/msm_mmu.h
-+++ b/drivers/gpu/drm/msm/msm_mmu.h
-@@ -12,7 +12,7 @@
- struct msm_mmu_funcs {
- 	void (*detach)(struct msm_mmu *mmu);
- 	int (*map)(struct msm_mmu *mmu, uint64_t iova, struct sg_table *sgt,
--			size_t len, int prot);
-+			size_t off, size_t len, int prot);
- 	int (*unmap)(struct msm_mmu *mmu, uint64_t iova, size_t len);
- 	void (*destroy)(struct msm_mmu *mmu);
- 	void (*resume_translation)(struct msm_mmu *mmu);
++		BUG_ON(iommu->prr_page);
++		if (adreno_smmu->set_prr_bit) {
++			/*
++			 * We need a zero'd page for two reasons:
++			 *
++			 * 1) Reserve a known physical address to use when
++			 *    mapping NULL / sparsely resident regions
++			 * 2) Read back zero
++			 *
++			 * It appears the hw drops writes to the PRR region
++			 * on the floor, but reads actually return whatever
++			 * is in the PRR page.
++			 */
++			iommu->prr_page = alloc_page(GFP_KERNEL | __GFP_ZERO);
++			adreno_smmu->set_prr_addr(adreno_smmu->cookie,
++						  page_to_phys(iommu->prr_page));
++			adreno_smmu->set_prr_bit(adreno_smmu->cookie, true);
++		}
+ 	}
+ 
+ 	/* Needed later for TLB flush */
+diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
+index 2342cb90857e..5bc5e4526ccf 100644
+--- a/include/uapi/drm/msm_drm.h
++++ b/include/uapi/drm/msm_drm.h
+@@ -91,6 +91,8 @@ struct drm_msm_timespec {
+ #define MSM_PARAM_UBWC_SWIZZLE 0x12 /* RO */
+ #define MSM_PARAM_MACROTILE_MODE 0x13 /* RO */
+ #define MSM_PARAM_UCHE_TRAP_BASE 0x14 /* RO */
++/* PRR (Partially Resident Region) is required for sparse residency: */
++#define MSM_PARAM_HAS_PRR    0x15  /* RO */
+ 
+ /* For backwards compat.  The original support for preemption was based on
+  * a single ring per priority level so # of priority levels equals the #
 -- 
 2.49.0
 
