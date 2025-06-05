@@ -1,127 +1,166 @@
-Return-Path: <linux-kernel+bounces-674187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C5FACEAE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29982ACEAC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A98263ABCAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:33:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E469F176030
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EE71C3F02;
-	Thu,  5 Jun 2025 07:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="fy3gZALw"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B589D1EB1AA;
+	Thu,  5 Jun 2025 07:18:48 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2083A1F1301
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B673C2F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749108839; cv=none; b=gJI0Xb25JF4qZwSss03ljbmgT1oAM999x/7JhfdQ2XToFiOXAudzpfv8dT2rivFihLaCisb9EMglEKV0Fxp38dUC4d/MU04lh6Aad/wbBe+68TtnjZE//PcDIOS/YvFG4SFI5zZ2zV0YDxh00IZ8iMcBONVI34PK9Be9saTX2rc=
+	t=1749107928; cv=none; b=GGhF6ig+K2uMw9kjOfSvlRbYjp7R+fJ2f2Urnw/33bYfwUzctNYM6U8aZEOaOUPFnXKD6/kxuDKNmYUfCUAD18efSc9U7pL9BSOVovkrJTfcRO/y/zv/+AZUwsPSGwuhU3UGCtmmKTx8hnc7QBl0hm6tbHDwQBpnb52fWRVOMYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749108839; c=relaxed/simple;
-	bh=Oq23UztHZrFpE5MHj9Wy2J9DoFWem7fBQMScvu1GuwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nuteleXXjbBjcdtlsStrdAWYN+K0qzAGHC8go07aHhxJbXDp77ZWgLtU++WS5SEqdLaKYJ4NJ1YFU+422bI1K4ZTf2EsH8aw6ir72r1wIPg7GlxOLNy57yHOSfRlgodygu332AylCvHffr6/E4ZhLVfpAFCMOEZAS0YNvfAT+HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=fy3gZALw; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742af848148so473747b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 00:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1749108835; x=1749713635; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DVZjus1ELPzuP51DN+x+ciUrQVA+2y5n7YpTYBbGMMA=;
-        b=fy3gZALwmKsVSTkbcZuX0w58aEF42HDnaSu7sz1dDqQZSE5sGolpgkPpHOcOfdONR+
-         BvvgrFP/4JuCWI73Y4gB+u+Cj2QMg/gd2vzS0o5n4MLQTCctyImKflX8IXPvqQAnRNQ9
-         Qvx9K6WXY7bDEUAL6wkY8C+PSJ5ioQk+tqfYvWev45xny/AhsGvBG8D26CYW8ooIdvhs
-         4FLNdFNL9sdypimW73EyxrXWp0LdZmGr8vI9tbbqE7mll4yvT2A6CRf51xbgbo3hrBmm
-         Z4zyf8cNxtRwsY4kuhNBUdusm98YRu+P/EdDxlvp+2L7lqdJSk78ewZ81SdzJdIYJSyx
-         0byA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749108835; x=1749713635;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DVZjus1ELPzuP51DN+x+ciUrQVA+2y5n7YpTYBbGMMA=;
-        b=eLZb8UI6/R0R25K76DWlLhtNRgm4MOobr7hP+5/s6vzYZOZSTdweSId/dQpFaRvHiD
-         2WWVAqMaNalQf1fHeDs7x1K5TR02OgifExDyOlLkv3h00SYQsMiLB8GZQW+PVpCgrD7h
-         Fs2xwpupP3wmn7gCT8r++OVzbZSQRBIeG6ipLov/eXk5PUuTr7EJ86qeurdcmrbo6iMZ
-         4tYoW8nqW4aCo9lOvVXrW/+5d01tjeLd6PGRdkEsGd/igzaJlu54rbcK3srbXq23w62V
-         6XtF00at3FB85KqTCgX6jcJ7pITSclTE4DkxAugKgzOLdBe/i3IcoN24SlzigbhtTG6m
-         cvhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPuROgoAbT5lp7uzGoOjLKx0CR5b+WUerwLdGCSpYOGqbp6cLxu0XhIhJkFD3z4ggAqVFKohci3wMVN2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA4n+c7brsfqEKMfzbtRfZbxtEuOQjgDm5aed5Xx8mv4X4UlSI
-	TJ+SvZbhTnR52GPHwJQBRTbfzBHao6ZsV1QwhzDoSuG5j61bXCNBFMygRxFUuO6h6o8=
-X-Gm-Gg: ASbGncuSyTF0HWNmukzNs2wAtnvrAv/5Uq2u60kLwM/DDXCkklOenpsPc/jJjAePK1t
-	4H1taAXNOgGWmgdRQC3JBeHCCXGG3BncE6EUgxxmTUlPERY0KKdC8dzMOfXQgJBbHaT9t6QPbBr
-	uTpZI4ZKk20IYXz64Z48qvmyxlSJ2i7V1rnUPR9BZjbA3gf8HAjXnJSrOEQGiFMga9klxL6926g
-	mVYtiu3j8PnJCJ2bcKrKhmWLqfEmN1jHIw0SKJgFhIsgsoTdg2wrY46p9O0A5KONi1MLkzmTptS
-	oX5LOKRcMLh18V55Iv0ePK6NnDzJHjFXAtj7xKgvGTEtEtBrzahhGjH32vA=
-X-Google-Smtp-Source: AGHT+IH0324sFIz083/koIgx+gH9KYl0BcA5zNyP6D3F8oqFko/vUktQ55Hf8LJzzH/VR98FTVsa5g==
-X-Received: by 2002:a17:903:2304:b0:234:eadc:c0b4 with SMTP id d9443c01a7336-235e11fdc01mr89861685ad.44.1749108835283;
-        Thu, 05 Jun 2025 00:33:55 -0700 (PDT)
-Received: from thelio.tailc1103.ts.net ([97.120.245.255])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d14abdsm114511405ad.239.2025.06.05.00.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 00:33:54 -0700 (PDT)
-From: Drew Fustini <drew@pdp7.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>
-Subject: [PATCH] riscv: defconfig: Enable TH1520 aon, mbox and reset support
-Date: Thu,  5 Jun 2025 00:17:48 -0700
-Message-ID: <20250605071940.348873-3-drew@pdp7.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749107928; c=relaxed/simple;
+	bh=IL/Hd3yIqTvIVLzMgkriI+WGtf8SJIpzTT8RklcLaB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CqZXJ7nH+cMiMEcDpCFK3DN7YAKu/99Un6IIej5BrAC2oJ2m3mo1SFInj/RK/rpKyLHF78KHKGIVGcT8XYWd3aKTrQQCNCzEa0XvHhm8yPP8nmp5nckACSPbnoAPoeNK52LfVszqVzcbyGByEUNX8rOc9JWOOC6ZoqQQ1QzMaEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bCbLH4l0hzGpwn;
+	Thu,  5 Jun 2025 15:14:47 +0800 (CST)
+Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
+	by mail.maildlp.com (Postfix) with ESMTPS id 67BF1180080;
+	Thu,  5 Jun 2025 15:18:36 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 5 Jun 2025 15:18:35 +0800
+Message-ID: <d1e1896b-8685-fd7c-d17d-f4328939b96f@huawei.com>
+Date: Thu, 5 Jun 2025 15:18:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [syzbot] [mm?] kernel BUG in try_to_unmap_one (2)
+To: David Hildenbrand <david@redhat.com>, syzbot
+	<syzbot+3b220254df55d8ca8a61@syzkaller.appspotmail.com>,
+	<Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>,
+	<harry.yoo@oracle.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<lorenzo.stoakes@oracle.com>, <riel@surriel.com>,
+	<syzkaller-bugs@googlegroups.com>, <vbabka@suse.cz>, Jens Axboe
+	<axboe@kernel.dk>, Catalin Marinas <catalin.marinas@arm.com>
+References: <68412d57.050a0220.2461cf.000e.GAE@google.com>
+ <4fc2c008-2384-4d94-b1bf-f0a076585a4a@redhat.com>
+ <fda7a3e3-1711-4f1b-a0bb-6a4369aa80ab@redhat.com>
+ <b9a43f6d-1865-4074-b91c-a5bd7e10f2a9@redhat.com>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <b9a43f6d-1865-4074-b91c-a5bd7e10f2a9@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemo200002.china.huawei.com (7.202.195.209)
 
-Enable TH1520 Always-On (AON) firmware protocol, TH1520 Mailbox and
-TH1520 reset controller.
 
-Signed-off-by: Drew Fustini <drew@pdp7.com>
----
- arch/riscv/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+在 2025/6/5 14:37, David Hildenbrand 写道:
+> On 05.06.25 08:27, David Hildenbrand wrote:
+>> On 05.06.25 08:11, David Hildenbrand wrote:
+>>> On 05.06.25 07:38, syzbot wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following issue on:
+>>>>
+>>>> HEAD commit:    d7fa1af5b33e Merge branch 'for-next/core' into 
+>>>> for-kernelci
+>>>
+>>> Hmmm, another very odd page-table mapping related problem on that tree
+>>> found on arm64 only:
+>>
+>> In this particular reproducer we seem to be having MADV_HUGEPAGE and
+>> io_uring_setup() be racing with MADV_HWPOISON, MADV_PAGEOUT and
+>> io_uring_register(IORING_REGISTER_BUFFERS).
+>>
+>> I assume the issue is related to MADV_HWPOISON, MADV_PAGEOUT and
+>> io_uring_register racing, only. I suspect MADV_HWPOISON is trying to
+>> split a THP, while MADV_PAGEOUT tries paging it out.
+>>
+>> IORING_REGISTER_BUFFERS ends up in
+>> io_sqe_buffers_register->io_sqe_buffer_register where we GUP-fast and
+>> try coalescing buffers.
+>>
+>> And something about THPs is not particularly happy :)
+>>
+>
+> Not sure if realted to io_uring.
+>
+> unmap_poisoned_folio() calls try_to_unmap() without TTU_SPLIT_HUGE_PMD.
+>
+> When called from memory_failure(), we make sure to never call it on a 
+> large folio: WARN_ON(folio_test_large(folio));
+>
+> However, from shrink_folio_list() we might call unmap_poisoned_folio() 
+> on a large folio, which doesn't work if it is still PMD-mapped. Maybe 
+> passing TTU_SPLIT_HUGE_PMD would fix it.
+>
+TTU_SPLIT_HUGE_PMD only converts the PMD-mapped THP to PTE-mapped THP, and may trigger the below WARN_ON_ONCE in try_to_unmap_one.
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index fe8bd8afb418..86b13177f27b 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -178,6 +178,7 @@ CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_AXP20X=y
- CONFIG_REGULATOR_GPIO=y
-+CONFIG_RESET_TH1520=m
- CONFIG_MEDIA_SUPPORT=m
- CONFIG_MEDIA_PLATFORM_SUPPORT=y
- CONFIG_VIDEO_CADENCE_CSI2RX=m
-@@ -258,7 +259,9 @@ CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_VIRTIO=y
- CONFIG_PM_DEVFREQ=y
- CONFIG_IIO=y
-+CONFIG_TH1520_AON_PROTOCOL=m
- CONFIG_THEAD_C900_ACLINT_SSWI=y
-+CONFIG_THEAD_TH1520_MBOX=m
- CONFIG_PHY_SUN4I_USB=m
- CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=m
- CONFIG_PHY_STARFIVE_JH7110_PCIE=m
--- 
-2.43.0
+	if (PageHWPoison(subpage) && (flags & TTU_HWPOISON)) {
+		...
+	} else if (likely(pte_present(pteval)) && pte_unused(pteval) &&
+		!userfaultfd_armed(vma)) {
+		 ....
+	} else if (folio_test_anon(folio)) {
+		swp_entry_t entry = page_swap_entry(subpage);
+		pte_t swp_pte;
+		/*
+		 * Store the swap location in the pte.
+		 * See handle_pte_fault() ...
+		*/
+		if (unlikely(folio_test_swapbacked(folio) !=
+			folio_test_swapcache(folio))) {
+			WARN_ON_ONCE(1);          // here. if the subpage isn't hwposioned, and we hasn't call add_to_swap() for the THP
+			goto walk_abort;
+		 }
 
+If we want to unmap in shrink_folio_list, we have to try_to_split_thp_page() like memory_failure(). But it't too complicated, maybe just skip the
+hwpoisoned folio is enough? If the folio is accessed again, memory_failure will be trigerred again and kill the accessing process since the folio
+has be hwpoisoned.
+
+>
+> Likely the relevant commit is:
+>
+> commit 1b0449544c6482179ac84530b61fc192a6527bfd
+> Author: Jinjiang Tu <tujinjiang@huawei.com>
+> Date:   Tue Mar 18 16:39:39 2025 +0800
+
+Yes, It is caused by this commit.
+
+>
+>     mm/vmscan: don't try to reclaim hwpoison folio
+>         Syzkaller reports a bug as follows:
+>         Injecting memory failure for pfn 0x18b00e at process virtual 
+> address 0x20ffd000
+>     Memory failure: 0x18b00e: dirty swapcache page still referenced by 
+> 2 users
+>     Memory failure: 0x18b00e: recovery action for dirty swapcache 
+> page: Failed
+>     page: refcount:2 mapcount:0 mapping:0000000000000000 index:0x20ffd 
+> pfn:0x18b00e
+>     memcg:ffff0000dd6d9000
+>     anon flags: 
+> 0x5ffffe00482011(locked|dirty|arch_1|swapbacked|hwpoison|node=0|zone=2|lastcpupid=0xfffff)
+>     raw: 005ffffe00482011 dead000000000100 dead000000000122 
+> ffff0000e232a7c9
+>     raw: 0000000000020ffd 0000000000000000 00000002ffffffff 
+> ffff0000dd6d9000
+>     page dumped because: VM_BUG_ON_FOLIO(!folio_test_uptodate(folio))
+>
+> CCing Jinjiang Tu
+>
 
