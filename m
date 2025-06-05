@@ -1,53 +1,95 @@
-Return-Path: <linux-kernel+bounces-674059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB4AACE954
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:29:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5B6ACE959
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C72D1896877
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:29:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E498A3AABBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A781EFF96;
-	Thu,  5 Jun 2025 05:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EDF1C4A20;
+	Thu,  5 Jun 2025 05:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="IBl0Re54"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="opGC/FK+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mVStbnYJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kgXs7i7Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fX6Ozx35"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2791A76D4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 05:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52A82F5B
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 05:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749101336; cv=none; b=NVI5cCnXfVR3LRVAHmI9DE1goTrzfL2BeqJcNb31OTmkgm3oKNcPwI1ZqaPHwZQIydan30ACA9EwntfGaU9XJ8YCoqAq9xvIwJsFA52B4szNQTWQcP8eAQ2aJBcuhZD3gxJ4/nROvTH093V/b+c+MqDU6dI1axlF3qrdIe3cEKQ=
+	t=1749101747; cv=none; b=AIgLPvemVxfOfZCYRbUtxGqd9gnUI5T/oZszB3WaCuUf+RYUv4NOwzCHA7BIdp//EqEI4f1WjKUJa+1R1890v1Y12qsU4E7in13c4/SJuuvrp0GqvpuH17fwION73doTFEcZ82SDS+xDZlfjLniGpDppC2OmURcu06599daQKfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749101336; c=relaxed/simple;
-	bh=KFcGoLRLWg8X4zWzB4O40GYzNM4iFqXsVs9PzNXVnas=;
+	s=arc-20240116; t=1749101747; c=relaxed/simple;
+	bh=dPXmYki4HgBNXKP/cxr+cuwHNklk+QBR3oBdoZeE380=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aFLsN9i5ZUCsTLjagkL5Yr63cRnfZVyvtTP2UF1wEFBxMUkIwYV9o9qH5fE+STZzUs7yrJ9IfT1Kf7MDfca0U447BsYvKO5mdXUl7PLI/DDo+76LOGQMw2kYr+24A1IsZ/T/8HrjqPMh5Kq8uGvHYOMTYEhZMARutGOAtnWchus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=IBl0Re54; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gSyoNzyQ9XoEccUpbjxD2l1GqkZQQAGZqYL17arYIw4=; b=IBl0Re54obuqf9mSNuDqiOdJSg
-	ZbAClafroxSPdNCooQo7wmW3UuFNVVfSQ0g0133SSmzv7dmuSQjuB5YO+3AFn7HKLEj0xZa+EIhXL
-	ti2ut08nRCAuyvbI5CEFDg0K7TGPwtS+8sQm+volFpjwc25+EPWgRWbhWAOb0eevbUINuPmhuWzoe
-	mlaZMV4BPE8UlPC4SESrmf5+W0S6lI+AaS1zhByg4M9MWVFbD9wydk6gpjYlyqCPWCTWRGT7fL0fy
-	/9iljmJ1JPI564QznOrndjMoT331uTaMX6TqwSi3Ya1A5HxheGQlpTqPcExUpmIePmkwHDr5w4x0C
-	a5y2uQhg==;
-Received: from [37.209.163.134] (helo=[172.16.18.203])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uN39Z-00HNjd-Dm; Thu, 05 Jun 2025 07:28:37 +0200
-Message-ID: <5b18b631-c570-43fa-ac76-a09f0fb4363e@igalia.com>
-Date: Thu, 5 Jun 2025 07:28:36 +0200
+	 In-Reply-To:Content-Type; b=qyNQAnCSQrMHpwPdEgqcl1M6pdmSeGUwYZ6skiMLIw55+vlQH3Q9cuMnX/m09MpyLWEk0YY1bBspFGcuXMxE6FG+7h59IkKN74cTA0Z2smRGxiyV5VpDgqRLRSCbTmIKEqfVGjKe2cId64gyju0TmLAzfN4i7so6/VLEI3rr1JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=opGC/FK+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mVStbnYJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kgXs7i7Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fX6Ozx35; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8531820F36;
+	Thu,  5 Jun 2025 05:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749101743; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1zFAGQL67yIQc08V/ieb98UHjH10SiwbBG8bKHtslCM=;
+	b=opGC/FK+X/amAbI8TD8upYCIdj52TjB9v23NlEUGYUmwrxlFWiB+4o11qvKVCfSnIQ02M/
+	TMo44PohSX2FYkJnmp/UJLhm5LWOLSuLLAa5eUhoKPZ0vSPNh3UU38SGrO5bsSgnUhCcdu
+	o8XQ66BMUUrBBGhWUWFfKaesxbaYbEk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749101743;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1zFAGQL67yIQc08V/ieb98UHjH10SiwbBG8bKHtslCM=;
+	b=mVStbnYJRxmOSzfgQZ4Z+SQcVHQbcE2XFKPHvqqEcwgnv/MqdDS1S2iPf5QmUPWBb0CFW6
+	rrHSlX6P5WKtUbDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kgXs7i7Z;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=fX6Ozx35
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1749101742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1zFAGQL67yIQc08V/ieb98UHjH10SiwbBG8bKHtslCM=;
+	b=kgXs7i7ZJpwhv7O5hSTAYxiyX1AoiwEPv8s3fTt04AIogTtDuZVsE74hWOhYs70KzuL9O5
+	89FTka3ziGQM2V+gZJUlII467p1innTJepmrkX7iUnMpe7tyDi74tdSX/FwIt4pTyX1x4R
+	LXir1RVqdOegjjud/zo08iBwAB7Or80=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1749101742;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1zFAGQL67yIQc08V/ieb98UHjH10SiwbBG8bKHtslCM=;
+	b=fX6Ozx351SYd+2xEia0RYSEK82xgM844lCILj809drn9eEFHgB2K7X9mJunBKgIt/O4QCW
+	QioPojtA22WMTHAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 64CE21398F;
+	Thu,  5 Jun 2025 05:35:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C6czGK4sQWhlCgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 05 Jun 2025 05:35:42 +0000
+Message-ID: <fcab18fd-9752-4da1-83f4-243ad0b2b974@suse.cz>
+Date: Thu, 5 Jun 2025 07:35:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,65 +97,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] sched_ext: Make scx_locked_rq() shared
-To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
- David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20250604143547.708202-1-arighi@nvidia.com>
- <20250604143547.708202-5-arighi@nvidia.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20250604143547.708202-5-arighi@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2] mm: rename CONFIG_PAGE_BLOCK_ORDER to
+ CONFIG_PAGE_BLOCK_MAX_ORDER.
+To: Zi Yan <ziy@nvidia.com>, david@redhat.com
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+ isaacmanjarres@google.com, jyescas@google.com, kaleshsingh@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, masahiroy@kernel.org, mhocko@suse.com,
+ minchan@kernel.org, rppt@kernel.org, surenb@google.com,
+ tjmercier@google.com, Anshuman Khandual <anshuman.khandual@arm.com>,
+ Oscar Salvador <osalvador@suse.de>
+References: <20250604211427.1590859-1-ziy@nvidia.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250604211427.1590859-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,nvidia.com:email];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 8531820F36
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-Hi Andrea,
-
-On 6/4/25 23:33, Andrea Righi wrote:
-> scx_locked_rq() is used both from ext.c and ext_idle.c, so make it
-> public and declare its prototype in ext.h.
-
-scx_rq_bypassing() is the same, but it is defined with "static inline".
-Would it be better to define with "static inline" for consistency? And,
-anyway scx_rq_bypassing() is used only within ext*.
-
-Regards,
-Changwoo Min
-
+On 6/4/25 23:14, Zi Yan wrote:
+> The config is in fact an additional upper limit of pageblock_order, so
+> rename it to avoid confusion.
 > 
-> No functional changes.
-> 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
->   kernel/sched/ext.c | 2 +-
->   kernel/sched/ext.h | 2 ++
->   2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 3e483138dff60..941603ec67e27 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -1265,7 +1265,7 @@ static inline void update_locked_rq(struct rq *rq)
->    * Return the rq currently locked from an scx callback, or NULL if no rq is
->    * locked.
->    */
-> -static inline struct rq *scx_locked_rq(void)
-> +struct rq *scx_locked_rq(void)
->   {
->   	return __this_cpu_read(locked_rq);
->   }
-> diff --git a/kernel/sched/ext.h b/kernel/sched/ext.h
-> index d30f2d1bc00d5..cda5dfa4dad09 100644
-> --- a/kernel/sched/ext.h
-> +++ b/kernel/sched/ext.h
-> @@ -18,6 +18,8 @@ static inline bool scx_rq_bypassing(struct rq *rq)
->   	return unlikely(rq->scx.flags & SCX_RQ_BYPASSING);
->   }
->   
-> +struct rq *scx_locked_rq(void);
-> +
->   DECLARE_STATIC_KEY_FALSE(scx_ops_allow_queued_wakeup);
->   
->   void scx_tick(struct rq *rq);
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Acked-by: Juan Yescas <jyescas@google.com>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
 
