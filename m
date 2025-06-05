@@ -1,171 +1,112 @@
-Return-Path: <linux-kernel+bounces-674522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D165ACF095
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:31:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C1AACF058
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 192A5167A31
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B54E1796A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7AB242D78;
-	Thu,  5 Jun 2025 13:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC592231C91;
+	Thu,  5 Jun 2025 13:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lS8gNIbp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMAlnBgd"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9750323F40F;
-	Thu,  5 Jun 2025 13:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639E5231858
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749130094; cv=none; b=q9395dCw+Hbe+wS4tx1d3+6/q4aJOVw/Buuvzpechmu5k3VKsGyVXu/gvBTynf6PJb4e4rD069Ym2qbKMF1Qa6u9AZNAF2Z2H+IwlI/f7olCXHyPGM3PU0e31oiOcVZUBrs0dOoOibq3dFppkRGSS8F/axu/M7iSmMJGL06g2+s=
+	t=1749129880; cv=none; b=UNsUBEpelJyQsSEi5HuMjg0jO/hRVYSAkbPjto6qRv9SlzWFOfeRkCBN25BHI/hM4oBFVXOrAcLtlYVfiWEEn9jdSXcJFRa0vGwMy40hvGTkZL6RxTM582wOPF381S8/VVLdiyfiUxAAkDF680C0WJnJyrZIuGk5Z9BosIjrilg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749130094; c=relaxed/simple;
-	bh=EqbqFyzPoVlsUd8OJ/wRieFevPUGJYsc6E0swOY0ulg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iEQVEhEKGm85osUUgb3g3J7sDaBCpU2m4VY4jNAeqOwEmNaZ4dFbY8axQB4gaBko5Ft6c6RE2fn6KL+ZInFcqGhDeEs8Rly5txskhQgIbDrJbstaL0ukJl3I0P2+EWi0Sy4ZCYXgsjwFgmFvWAlMU/JG+CYzbua8ZsgOopzx2pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lS8gNIbp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA7FC4CEE7;
-	Thu,  5 Jun 2025 13:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749130094;
-	bh=EqbqFyzPoVlsUd8OJ/wRieFevPUGJYsc6E0swOY0ulg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lS8gNIbpGnEvVFK1uPIIujv4/As6yrLMS+yVvQ/nGlx1PZmdaxdbg+i3qv/X+3u1O
-	 +cFhTD5VJse0UX8LezZyVK1qglXkCxA37NSfPnreswKMf/VoFgh9b97wvO1c+qVg9n
-	 I8Y14EnBpBsZ4D5abOQLkgfURvhbF2DNN9aY9Kn/+X3t4LB1F0IfjnnN/DnnixhjoU
-	 zjVq5L5cyvHTXTMap/tUQ2Ls2s8anh/Jl+fqqaDe1S3AskaeSGEYi+L6GOHHCiFJHb
-	 MHVlLjJKhgZAsnJKBypPTqZgVHRdAMlCPIxbGI9/PQsbK90UPjqj/94BKYRVvtlVzJ
-	 AbKjenRI6rxQQ==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@ACULAB.COM>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCHv3 22/22] man2: Add uprobe syscall page
-Date: Thu,  5 Jun 2025 15:23:49 +0200
-Message-ID: <20250605132350.1488129-23-jolsa@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605132350.1488129-1-jolsa@kernel.org>
-References: <20250605132350.1488129-1-jolsa@kernel.org>
+	s=arc-20240116; t=1749129880; c=relaxed/simple;
+	bh=ph8J09n5JKQD535azyDhvY/sp5bOQf//77AfpWmxs2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gvxYyPrdPrPV4H9FGdWoAwLsGeBY+Uzg7+1Jn/oAf6Pg5mfFqrZ/aq2q+x7BEP0oIfdD7bSMW983Zc7J49giON6gu/KdT7Mv7a78h6JCPc1bLhHXX/BRRt5R/LBay3M7lOPfrIG1mGg3qUUx4quhbaopEgYX8TqNa1yKNx4yfig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mMAlnBgd; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5534edc6493so1209125e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 06:24:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749129876; x=1749734676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ph8J09n5JKQD535azyDhvY/sp5bOQf//77AfpWmxs2Y=;
+        b=mMAlnBgdW4sGDqrEMLIy8yhAW6JMQ+PDIgc1Np0QNTGa5egENV9Lnqw7OQuxSpQJlm
+         n1SRIal3lV+FoMqfo2cTkPUTCCPkGNwXGqOJPGBP1IWzP5yUiibyl/OyVkO+74RiUGqR
+         JXGQ20tED3ViIDwDxeRfVD0LihY21+XHUZaOkmatj3ah+tJZMTDNVE2RH652QZ4DsE+A
+         kE5MCLDDKQJLXXj/NJGpz6JBofY8d9rY/4dUJRegDST+pbn0mB/PNV3IcR6iz3hZ4oZC
+         +hp4x+AHqW6DqbIdrsruUT3j8y+1kGypLTVg4ewGIjR9L60L3SOnowBSs4KTGZ0SS32H
+         7W0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749129876; x=1749734676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ph8J09n5JKQD535azyDhvY/sp5bOQf//77AfpWmxs2Y=;
+        b=qMmc9RSn3McsS/fyaqRCQbWJXyX6SMOYWhco/hRDclWI0Ozex1DaOLSpFt7wAneAyH
+         +43d+JzxIkLFUJYRgffeVJxBYAHcC7qh9LKsXkPlINK5euhoBK9fejxLWuL/Yj2Go9Rp
+         p3eYalG1Yr0kbHf8Udme3tvITIBB54C2tDkWXdHDv//7cvnTeSqlQqsKvjxWaVfGlUny
+         tv215NLaRbvtGXxML6x1O4y4yuTgdfB6CHylu9XsvYVUV/YgWwxGZlevGMNL9yXFX52k
+         hQ5BbL7MrpT5YlOfsLOKEEOK4H0OD8UGcRnnSWkdgSQn1OQzHqsERbfpvrBp5Celevvq
+         JiTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnIXS622CjrXduv0qc4+BI/N66H6Kj5DZcToWPII36CzLeu85YR+NwwQ07eRMgPYZYJ0lqMxjWZwgNquw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjRhDB1te8DkZfjG8JDx0hzpzjr++Er/oZ+3hVHqiee9j1gSM7
+	qOZCLopVIk1uPMaoMBIv9VzzhvrvtwQ3lR9a5yE6DgagJNIBigArYLzaI8Ja9dd0A7UQr3ABwfz
+	wBXWL72Gte5T8yFZp7MUANOh9V6wCzQlZOOpamCa0pQ==
+X-Gm-Gg: ASbGncv/8qcK7Y4+E0NzSUVmaaiF08/nrjsb9GDE57hg9xE6+5jHslR7imXFzq96O8V
+	25L5yF3wWmOdhI03+pvKtVsyglRSFhJwnUbV6A8yKJImlUwSdPlGmVTlb6mElDIUv6/H3yOyTNl
+	LZg9mE6KQ/FQ1C/W85gbPCXlPwqgcyZKZh
+X-Google-Smtp-Source: AGHT+IHcFKkR1DgTHybFc9+cXkjDfNRWO9Y5rsQ/Vs78BAkzeGllU9ZiczF0eVkbFtRkeWxN8XAgTwUOdn8ciwJ5GKY=
+X-Received: by 2002:a05:6512:4011:b0:553:26f6:bc01 with SMTP id
+ 2adb3069b0e04-55356e0492dmr1902010e87.53.1749129876416; Thu, 05 Jun 2025
+ 06:24:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250529-b4-drm_panel_mass_driver_convert_part3-v2-0-5d75a3711e40@redhat.com>
+ <20250529-b4-drm_panel_mass_driver_convert_part3-v2-29-5d75a3711e40@redhat.com>
+In-Reply-To: <20250529-b4-drm_panel_mass_driver_convert_part3-v2-29-5d75a3711e40@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 5 Jun 2025 15:24:24 +0200
+X-Gm-Features: AX0GCFv_P_oe8_LfoK0HrETyIz_pn_ODXYaiFB7vtLAilhJTNSsv4UaB2RLH_HU
+Message-ID: <CACRpkdaFYcvq+XsQ6FocXqW-gnoP+66CL4hTiSQ=w0fc1jckig@mail.gmail.com>
+Subject: Re: [PATCH v2 29/46] panel/sony-acx565akm: Use refcounted allocation
+ in place of devm_kzalloc()
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Robert Chiras <robert.chiras@nxp.com>, Markuss Broks <markuss.broks@gmail.com>, 
+	Artur Weber <aweber.kernel@gmail.com>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+	Janne Grunau <j@jannau.net>, Michael Trimarchi <michael@amarulasolutions.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Changing uretprobe syscall man page to be shared with new
-uprobe syscall man page.
+On Fri, May 30, 2025 at 4:52=E2=80=AFAM Anusha Srivatsa <asrivats@redhat.co=
+m> wrote:
 
-Cc: Alejandro Colomar <alx@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- man/man2/uprobe.2    |  1 +
- man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
- 2 files changed, 25 insertions(+), 12 deletions(-)
- create mode 100644 man/man2/uprobe.2
+> Move to using the new API devm_drm_panel_alloc() to allocate the
+> panel.
+>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
-diff --git a/man/man2/uprobe.2 b/man/man2/uprobe.2
-new file mode 100644
-index 000000000000..ea5ccf901591
---- /dev/null
-+++ b/man/man2/uprobe.2
-@@ -0,0 +1 @@
-+.so man2/uretprobe.2
-diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
-index bbbfb0c59335..df0e5d92e5ed 100644
---- a/man/man2/uretprobe.2
-+++ b/man/man2/uretprobe.2
-@@ -2,22 +2,28 @@
- .\"
- .\" SPDX-License-Identifier: Linux-man-pages-copyleft
- .\"
--.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-+.TH uprobe 2 (date) "Linux man-pages (unreleased)"
- .SH NAME
-+uprobe,
- uretprobe
- \-
--execute pending return uprobes
-+execute pending entry or return uprobes
- .SH SYNOPSIS
- .nf
-+.B int uprobe(void);
- .B int uretprobe(void);
- .fi
- .SH DESCRIPTION
-+.BR uprobe ()
-+is an alternative to breakpoint instructions
-+for triggering entry uprobe consumers.
-+.P
- .BR uretprobe ()
- is an alternative to breakpoint instructions
- for triggering return uprobe consumers.
- .P
- Calls to
--.BR uretprobe ()
-+these system calls
- are only made from the user-space trampoline provided by the kernel.
- Calls from any other place result in a
- .BR SIGILL .
-@@ -26,22 +32,28 @@ The return value is architecture-specific.
- .SH ERRORS
- .TP
- .B SIGILL
--.BR uretprobe ()
--was called by a user-space program.
-+These system calls
-+were called by a user-space program.
- .SH VERSIONS
- The behavior varies across systems.
- .SH STANDARDS
- None.
- .SH HISTORY
-+.TP
-+.BR uprobe ()
-+TBD
-+.TP
-+.BR uretprobe ()
- Linux 6.11.
- .P
--.BR uretprobe ()
--was initially introduced for the x86_64 architecture
--where it was shown to be faster than breakpoint traps.
--It might be extended to other architectures.
-+These system calls
-+were initially introduced for the x86_64 architecture
-+where they were shown to be faster than breakpoint traps.
-+They might be extended to other architectures.
- .SH CAVEATS
--.BR uretprobe ()
--exists only to allow the invocation of return uprobe consumers.
--It should
-+These system calls
-+exist only to allow the invocation of
-+entry or return uprobe consumers.
-+They should
- .B never
- be called directly.
--- 
-2.49.0
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
 
