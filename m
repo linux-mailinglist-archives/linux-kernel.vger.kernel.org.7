@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-674993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D82EACF7D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:24:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E23ACF7D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B8A189C179
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFEE23AFB04
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7015E27AC4D;
-	Thu,  5 Jun 2025 19:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0868F27A915;
+	Thu,  5 Jun 2025 19:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CbsIvaIQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7Y7zJbPL"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KkCtZJnl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oDl0P0AG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637F527C179
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E4227CCE0
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749151455; cv=none; b=b2/nrRoq4jv//O10Kf4nG0HLf8vAxyCLKp3yz6sqXu03UwhLTJ/WU7SIhbwOJfN8yDO37eDSRoZYTbryCC7Jjg1jmnb6+hF/SHjGsogx87+VTYe5yFdHDh2lUA/IQVweJslMxB6YzywZqOIdWmL7MAeborX5PoY/2ppPZ3Z1Ofc=
+	t=1749151458; cv=none; b=DpLYMYXQcIUghy6e0+eQNHT2vRYiZow6n9ccDA8v46ly4uGJ5MWG3oD5p/jTVYoH2B/4TGbkY7l2dZYNBGZjfnnwVmE5To7HYXYfwgbt0IS0PNhT1t7EXkQ43XGLehji/UdpRWEPPF+SB+lWaLcBGoGkJ1CsgVP24Tl1ghF0fOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749151455; c=relaxed/simple;
-	bh=6Pf/tXMZzJo5FfKHir7iP/T7zDvDoWdK5wp07Bj9XFo=;
+	s=arc-20240116; t=1749151458; c=relaxed/simple;
+	bh=F4tqLRtbGgjBpOY21OndsaKH9Gm167SzfWMAbd4Sp5M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uwAXFzjBKqn3dXfgkxjP7P1w2BPkpsRbj++K4gmqjtcfLCEs4H53ysyiNW1bL6MnoQoYsTKhhsWQHTaGoIZJarsITHU/301QfGI12nm4nvFund6D+5GkIyOsboo6GNCAEhV2DaChkbQyvgRFeeujWVYn47WA4zzY0uSMivCezQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CbsIvaIQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7Y7zJbPL; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=QJf1UkhT+J7RMfHL5jmV5u8mCZNOmnn5M7HWqg0D7m0Lv3uohOSm1plK/898Q+XiP/+lJjIrOfez++zuS50K65lfjSYZHUqk0c1JMiNUYmuav8UTQLjeCJdL0N28eD02xW8i0czT/oPxxX7N/wasK/HoOrcFbyDqKpj/O1X5Nec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KkCtZJnl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oDl0P0AG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749151452;
+	s=2020; t=1749151455;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=moW3grsIEEkZ24nmNYOLsz6RTNF0J1cs4slM6upzMSY=;
-	b=CbsIvaIQ+bas0+eL4kt8Vx3JpOCwCsS0s4As6sD8nA+tSj0sRLPvqyGHRjx4cmPgeMPwAL
-	wGAyo9P5PRWZYnxcwREWK/LmgDF64Rp26IP8lm+/WEmkCUdirZCSRi7suKYvEdfAHcbsNa
-	sKTnXse64hvuQ1zdRx8uJ/CBB8hL7FDWu5Rs+xj/YNc/KGgtlZ6QaIrArzhdkUxKRb9WBC
-	9a8iOA6xH9xtk9h6sbBw2twvTFQrUHWvVOdqFee4i2oi8+bfOyQXJYZNr1r+nbOMBeEjG7
-	MQ5hPCLdYEObgQFooTKS3HRQbjic+HuKK6FQZSHNVmJCt3LTyapOOaUtyIX6AA==
+	bh=amNIawb44I9zROWG5Fp3ygnS3V/5NV1r2k2CpbHjiNU=;
+	b=KkCtZJnlgkoaW60KefV5QCnjyBN9xw/NmBWKCc1UQ7GXzOyXxpyh/TTp3aFwZXrZzveujn
+	RQUrKHndtZzJOhC7tSjVTVs1JK01q+Ua+x+4T/dfcvI3GWjtISXPVafU8txr/vPe6sq70i
+	w2AyjdJ1Zu4GGBuydLCa84SKecqM8F4JovC4Xu0ouZ3BbLiIWBH3AGnAF9oIbmLCJTKNca
+	SzJt8DKsqqmI6O6odmAdY4psoAJm25MTrqMZ8qwuQLXny0l0TYWV8kv6cnVO+FpyK6RaMg
+	jPqWeIRQy8JDSK7IokTi8ur8vrgsSrLS9rQv7i4SF6DTpDQjcTFs/MiZGt5tKw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749151452;
+	s=2020e; t=1749151455;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=moW3grsIEEkZ24nmNYOLsz6RTNF0J1cs4slM6upzMSY=;
-	b=7Y7zJbPLyB7UdfllbHAtT/GpbP7jSDSMskWOKQOgaginVJUEZm9BcBon5V36GTaq9yvfji
-	IthbvNCEWjtGaSCw==
+	bh=amNIawb44I9zROWG5Fp3ygnS3V/5NV1r2k2CpbHjiNU=;
+	b=oDl0P0AGeJYA2wg45260GkyrmMV7JjM+T9/fTHQ2V+vYQzg5n/ctyNGXtlHs21NPvKLkf1
+	P3CKVOenYmv5wJCg==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -68,9 +68,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v2 01/27] x86/cpuid: Remove transitional <asm/cpuid.h> header
-Date: Thu,  5 Jun 2025 21:23:30 +0200
-Message-ID: <20250605192356.82250-2-darwi@linutronix.de>
+Subject: [PATCH v2 02/27] x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf() APIs
+Date: Thu,  5 Jun 2025 21:23:31 +0200
+Message-ID: <20250605192356.82250-3-darwi@linutronix.de>
 In-Reply-To: <20250605192356.82250-1-darwi@linutronix.de>
 References: <20250605192356.82250-1-darwi@linutronix.de>
 Precedence: bulk
@@ -81,36 +81,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All CPUID call sites were updated at commit:
+A new CPUID model will be added where its APIs will be designated as the
+"official" CPUID API.  Free the cpuid_leaf() and cpuid_subleaf() function
+names for that model.  Rename them accordingly to cpuid_read() and
+cpuid_read_subleaf().
 
-    968e30006807 ("x86/cpuid: Set <asm/cpuid/api.h> as the main CPUID header")
+Note, for kernel/cpuid.c, rename its local file operations read function
+from cpuid_read() to cpuid_read_f() so that it does not conflict with the
+new names.
 
-to include <asm/cpuid/api.h> instead of <asm/cpuid.h>.
-
-The <asm/cpuid.h> header was still retained as a wrapper, just in case
-some new code in -next started using it.  Now that everything is merged
-to Linus' tree, remove the header.
+No functional change.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/include/asm/cpuid.h | 8 --------
- 1 file changed, 8 deletions(-)
- delete mode 100644 arch/x86/include/asm/cpuid.h
+ arch/x86/include/asm/cpuid/api.h   | 6 +++---
+ arch/x86/kernel/cpu/topology_amd.c | 2 +-
+ arch/x86/kernel/cpu/topology_ext.c | 2 +-
+ arch/x86/kernel/cpuid.c            | 5 ++---
+ 4 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
-deleted file mode 100644
-index d5749b25fa10..000000000000
---- a/arch/x86/include/asm/cpuid.h
-+++ /dev/null
-@@ -1,8 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--
--#ifndef _ASM_X86_CPUID_H
--#define _ASM_X86_CPUID_H
--
--#include <asm/cpuid/api.h>
--
--#endif /* _ASM_X86_CPUID_H */
+diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
+index 44fa82e1267c..2b9750cc8a75 100644
+--- a/arch/x86/include/asm/cpuid/api.h
++++ b/arch/x86/include/asm/cpuid/api.h
+@@ -131,12 +131,12 @@ static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
+ 	__cpuid(regs + CPUID_EAX, regs + CPUID_EBX, regs + CPUID_ECX, regs + CPUID_EDX);
+ }
+ 
+-#define cpuid_subleaf(leaf, subleaf, regs) {		\
++#define cpuid_read_subleaf(leaf, subleaf, regs) {	\
+ 	static_assert(sizeof(*(regs)) == 16);		\
+ 	__cpuid_read(leaf, subleaf, (u32 *)(regs));	\
+ }
+ 
+-#define cpuid_leaf(leaf, regs) {			\
++#define cpuid_read(leaf, regs) {			\
+ 	static_assert(sizeof(*(regs)) == 16);		\
+ 	__cpuid_read(leaf, 0, (u32 *)(regs));		\
+ }
+@@ -228,7 +228,7 @@ static inline u32 cpuid_base_hypervisor(const char *sig, u32 leaves)
+  */
+ static inline void cpuid_leaf_0x2(union leaf_0x2_regs *regs)
+ {
+-	cpuid_leaf(0x2, regs);
++	cpuid_read(0x2, regs);
+ 
+ 	/*
+ 	 * All Intel CPUs must report an iteration count of 1.	In case
+diff --git a/arch/x86/kernel/cpu/topology_amd.c b/arch/x86/kernel/cpu/topology_amd.c
+index 843b1655ab45..efef40733e04 100644
+--- a/arch/x86/kernel/cpu/topology_amd.c
++++ b/arch/x86/kernel/cpu/topology_amd.c
+@@ -79,7 +79,7 @@ static bool parse_8000_001e(struct topo_scan *tscan, bool has_topoext)
+ 	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
+ 		return false;
+ 
+-	cpuid_leaf(0x8000001e, &leaf);
++	cpuid_read(0x8000001e, &leaf);
+ 
+ 	tscan->c->topo.initial_apicid = leaf.ext_apic_id;
+ 
+diff --git a/arch/x86/kernel/cpu/topology_ext.c b/arch/x86/kernel/cpu/topology_ext.c
+index 467b0326bf1a..41fdcce16a38 100644
+--- a/arch/x86/kernel/cpu/topology_ext.c
++++ b/arch/x86/kernel/cpu/topology_ext.c
+@@ -70,7 +70,7 @@ static inline bool topo_subleaf(struct topo_scan *tscan, u32 leaf, u32 subleaf,
+ 	default: return false;
+ 	}
+ 
+-	cpuid_subleaf(leaf, subleaf, &sl);
++	cpuid_read_subleaf(leaf, subleaf, &sl);
+ 
+ 	if (!sl.num_processors || sl.type == INVALID_TYPE)
+ 		return false;
+diff --git a/arch/x86/kernel/cpuid.c b/arch/x86/kernel/cpuid.c
+index dae436253de4..5b21ecbd9c8e 100644
+--- a/arch/x86/kernel/cpuid.c
++++ b/arch/x86/kernel/cpuid.c
+@@ -58,8 +58,7 @@ static void cpuid_smp_cpuid(void *cmd_block)
+ 	complete(&cmd->done);
+ }
+ 
+-static ssize_t cpuid_read(struct file *file, char __user *buf,
+-			  size_t count, loff_t *ppos)
++static ssize_t cpuid_read_f(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ {
+ 	char __user *tmp = buf;
+ 	struct cpuid_regs_done cmd;
+@@ -119,7 +118,7 @@ static int cpuid_open(struct inode *inode, struct file *file)
+ static const struct file_operations cpuid_fops = {
+ 	.owner = THIS_MODULE,
+ 	.llseek = no_seek_end_llseek,
+-	.read = cpuid_read,
++	.read = cpuid_read_f,
+ 	.open = cpuid_open,
+ };
+ 
 -- 
 2.49.0
 
