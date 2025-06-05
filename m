@@ -1,112 +1,141 @@
-Return-Path: <linux-kernel+bounces-674182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30678ACEAD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:28:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348C4ACEAEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CD93ABABF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56C9177DFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178811F4CAE;
-	Thu,  5 Jun 2025 07:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="44wjUv4U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7nGuYZc8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A386D1FF1C9;
+	Thu,  5 Jun 2025 07:35:33 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017653C2F;
-	Thu,  5 Jun 2025 07:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E461ACEDC;
+	Thu,  5 Jun 2025 07:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749108500; cv=none; b=W/eUX6sxzouIuvi9pwj1dd+dMHe2V/ZZGV3O4RIuhgToHFYJWne40WNaZKW/sFCO/JTArijBVNZSwfoMtA/LOZx5VVGDS2Y8ZOWsgVLkfakoE1OFkKzusMU+BmuEEEA+Md6x+ztQZAiQJjiLy6po24WOxZk4DJM75tpVaqt050Y=
+	t=1749108933; cv=none; b=aBPJWv/N72SvS4PGx3DQYvA865KVmMRiBsxIc+pQxq2sVuq3PmP/rgzX3rYRoav+lYhC15yaIENt/QNBm0Q9BNJSbldcOnDpzW47TZQKjRW53DUAFAgHFQHH00G/yhF19WcuZBfK1olznCxET7n4aFkc/3RNXbC5PR3gTQYs0os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749108500; c=relaxed/simple;
-	bh=ZOw3IuAiSmo2ua+6HTrwwvoBdIWpFhsXQJL3DZeQDqA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UoS0K4Jlr1ocZdOvnfEtfaQ7h9VUS+cC6Ga7Rs1mEXRlb2+K3iQH0zGngAqdgZX8KFNJV/bhVtNArPPY4GnInLxxjcQbGfD5Zf8+IRaTaa4dxgCNBOe2t3FxX+hsAwEBnZTGKyOH1cdoDfwVoZY+AfgvNQ+CDezEmduTktmVPJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=44wjUv4U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7nGuYZc8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749108495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZOw3IuAiSmo2ua+6HTrwwvoBdIWpFhsXQJL3DZeQDqA=;
-	b=44wjUv4U8VcgzA+cI4nC/yZ4EMPg422vwZJduguOFeROcMjNTL07XvDd2a5lgWN7OAplCW
-	M7h5625mTQDVX/ADYe4Cbgsj/8KlU0PMcRpqSfJpqnuuOF5QaaRIUyQC7CkNaC2MmGmxIi
-	CuFnbnELZoxV3ltt8TYyjtBcjZ00ztQ3QPJZJAXPxll4lnXHys1kg2xNPPZFLSL33vx2bw
-	OoHn2YyeZTKyM/yepIPCaBRZ/ajvct/b+5tb0n0+sQjH3CGxjfJ9++5LqmiuaPB8HEVUlA
-	nr/D/8pmTtbhvv2u/U3q9m0Q/08lI/R/Z78QsixFLUQlak6KdJglhjX+0ChCTg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749108495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZOw3IuAiSmo2ua+6HTrwwvoBdIWpFhsXQJL3DZeQDqA=;
-	b=7nGuYZc8BQ1hTssqk4Hwlv9FfX55u6JC5KchirFvKP22YkFKPLmANKURzniOyiYeVOiNBm
-	rjkbve3cKhMLPXCg==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Petr Mladek <pmladek@suse.com>, Michael Cobb
- <mcobb@thegoodpenguin.co.uk>, rostedt@goodmis.org,
- senozhatsky@chromium.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: Allow to use the printk kthread immediately
- even for 1st nbcon
-In-Reply-To: <20250604142045.253301-1-pmladek@suse.com>
-References: <20250604142045.253301-1-pmladek@suse.com>
-Date: Thu, 05 Jun 2025 09:34:15 +0206
-Message-ID: <84jz5qve9c.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1749108933; c=relaxed/simple;
+	bh=JiPjZpPszKvce3bAitOvkf5ocNgd1DZGGqYRlad1oWQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LMzj3aF5l0B1FW8dkCPQJz2M+pIyOB4c+fhdXsPs62CN+46Fqf+JL9st+znWboM3AXiu4MXf1B/oFFNUge7nXSbMHiSpmu83GDg56QwAAaCY3xY65vUA79OASMRHhiiX2Dcw+ugd9I0vhRvvePYom6UgU9QgYWgqfe9YqA3bADg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: eac0473241de11f0b29709d653e92f7d-20250605
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5f0b65d3-5033-4296-8fe1-3298b09a26ea,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:6493067,CLOUDID:bbfc68758d43e42d124c0b08258bac5d,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: eac0473241de11f0b29709d653e92f7d-20250605
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1051063951; Thu, 05 Jun 2025 15:30:12 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 5A0B1E00891C;
+	Thu,  5 Jun 2025 15:30:12 +0800 (CST)
+X-ns-mid: postfix-68414784-21522215
+Received: from localhost.localdomain (unknown [172.25.120.77])
+	by mail.kylinos.cn (NSMail) with ESMTPA id BF327E00891B;
+	Thu,  5 Jun 2025 15:30:11 +0800 (CST)
+From: Zhang Heng <zhangheng@kylinos.cn>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhang Heng <zhangheng@kylinos.cn>
+Subject: [PATCH] HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY
+Date: Thu,  5 Jun 2025 15:29:59 +0800
+Message-Id: <20250605072959.91625-1-zhangheng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-06-04, Petr Mladek <pmladek@suse.com> wrote:
-> The kthreads for nbcon consoles are created by nbcon_alloc() at
-> the beginning of the console registration. But it currently works
-> only for the 2nd or later nbcon console because the code checks
-> @printk_kthreads_running.
->
-> The kthread for the 1st registered nbcon console is created at the very
-> end of register_console() by printk_kthreads_check_locked(). As a result,
-> the entire log is replayed synchronously when the "enabled" message
-> gets printed. It might block the boot for a long time with a slow serial
-> console.
->
-> Prevent the synchronous flush by creating the kthread even for the 1st
-> nbcon console when it is safe (kthreads ready and no boot consoles).
->
-> Also inform printk() to use the kthread by setting
-> @printk_kthreads_running. Note that the kthreads already must be
-> running when it is safe and this is not the 1st nbcon console.
->
-> Symmetrically, clear @printk_kthreads_running when the last nbcon
-> console was unregistered by nbcon_free(). This requires updating
-> @have_nbcon_console before nbcon_free() gets called.
->
-> Note that there is _no_ problem when the 1st nbcon console replaces boot
-> consoles. In this case, the kthread will be started at the end
-> of registration after the boot consoles are removed. But the console
-> does not reply the entire log buffer in this case. Note that
-> the flag CON_PRINTBUFFER is always cleared when the boot consoles are
-> removed and vice versa.
->
-> Closes: https://lore.kernel.org/r/20250514173514.2117832-1-mcobb@thegoodpenguin.co.uk
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+MARTLINKTECHNOLOGY is a microphone device, when the HID interface in an
+audio device is requested to get specific report id, the following error
+may occur.
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
+[  562.939373] usb 1-1.4.1.2: new full-speed USB device number 21 using x=
+hci_hcd
+[  563.104908] usb 1-1.4.1.2: New USB device found, idVendor=3D4c4a, idPr=
+oduct=3D4155, bcdDevice=3D 1.00
+[  563.104910] usb 1-1.4.1.2: New USB device strings: Mfr=3D1, Product=3D=
+2, SerialNumber=3D3
+[  563.104911] usb 1-1.4.1.2: Product: USB Composite Device
+[  563.104912] usb 1-1.4.1.2: Manufacturer: SmartlinkTechnology
+[  563.104913] usb 1-1.4.1.2: SerialNumber: 20201111000001
+[  563.229499] input: SmartlinkTechnology USB Composite Device as /device=
+s/pci0000:00/0000:00:07.1/0000:04:00.3/usb1/1-1/1-1.4/1-1.4.1/1-1.4.1.2/1=
+-1.4.1.2:1.2/0003:4C4A:4155.000F/input/input35
+[  563.291505] hid-generic 0003:4C4A:4155.000F: input,hidraw2: USB HID v2=
+.01 Keyboard [SmartlinkTechnology USB Composite Device] on usb-0000:04:00=
+.3-1.4.1.2/input2
+[  563.291557] usbhid 1-1.4.1.2:1.3: couldn't find an input interrupt end=
+point
+[  568.506654] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+[  573.626656] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+[  578.746657] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+[  583.866655] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+[  588.986657] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
 
-Thanks Petr! And thank you Michael for looking into this. I think this
-will be a big improvement in boot times for a lot of developers.
+Ignore HID interface. The device is working properly.
 
-John
+Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
+---
+
+I also tried adding HID_QUIRK_NOGET, but it didn't work.
+
+ drivers/hid/hid-ids.h    | 3 +++
+ drivers/hid/hid-quirks.c | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index e3fb4e2fe911..83d731c9fcd2 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -1525,4 +1525,7 @@
+ #define USB_VENDOR_ID_SIGNOTEC			0x2133
+ #define USB_DEVICE_ID_SIGNOTEC_VIEWSONIC_PD1011	0x0018
+=20
++#define USB_VENDOR_ID_SMARTLINKTECHNOLOGY              0x4c4a
++#define USB_DEVICE_ID_SMARTLINKTECHNOLOGY_4155         0x4155
++
+ #endif
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 7fefeb413ec3..78db734c3f6f 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -904,6 +904,7 @@ static const struct hid_device_id hid_ignore_list[] =3D=
+ {
+ #endif
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_YEALINK, USB_DEVICE_ID_YEALINK_P1K_P4K_B=
+2K) },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_QUANTA, USB_DEVICE_ID_QUANTA_HP_5MP_CAME=
+RA_5473) },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_SMARTLINKTECHNOLOGY, USB_DEVICE_ID_SMART=
+LINKTECHNOLOGY_4155) },
+ 	{ }
+ };
+=20
+--=20
+2.25.1
+
 
