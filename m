@@ -1,176 +1,304 @@
-Return-Path: <linux-kernel+bounces-674316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52892ACED17
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:48:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F267DACED06
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1364A3A61D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:47:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19EB47A2E6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15832139B5;
-	Thu,  5 Jun 2025 09:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92B2212FB0;
+	Thu,  5 Jun 2025 09:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jzl9LojX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZvAUiyFA"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9E62C3242;
-	Thu,  5 Jun 2025 09:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF934212B28
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 09:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749116884; cv=none; b=OnxkdfRSwmgJi4ZFATXECljRKwiDf2FV5Y8Q0vrsGr2/DYEXjXMg5cRKARnULpCQv210yubip2JLUDqyLeL7OHq2bCHacoRWHJXYbxl+mWnRt0BMxELtgNtHQC2XYN7frmjIK68d/OIE9G/PQ6Ekd+y19GlmH9fjelCW7Ayz2bM=
+	t=1749116604; cv=none; b=YQJptM/nogCXeXSJ07gDTPR3IzEGJ7HboH+P9E8NuKjKp53V0Hm1V4iUHqOT+kFINji/IyasTCsW395pY9PnGWwK9Fy5kTXmQe713vEKQ4XYsDLRWYThfadft6YzE9w3lWQ4YlchqFaxso6PsgUVJasNte+fkthGVEjRplyUajk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749116884; c=relaxed/simple;
-	bh=/VL9o7ChNpJtoUsc5ibEOwDBnVANVkT3Ha++wcl3fYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sxqv/yqPZ91Z6yu+St9Kr9ScP9xdF1Mf+glVdpT/eogz9ZxZy9K1TAv3HEVl4dd0VMmyQGngyVEMGGtQAN0fNA0OQa6qxI9eOCmPRqW5OwEFj3zVLWCzOjVArKc29LAqFCLy/aFgSMhoFB44C5BFizyMWdtP+q+c2AZwVGbRDdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jzl9LojX; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749116883; x=1780652883;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/VL9o7ChNpJtoUsc5ibEOwDBnVANVkT3Ha++wcl3fYE=;
-  b=Jzl9LojXTcxA9v2vPNSYC+YgABD1rahkREzXZ/iQkE2Uw6jeezJHimKm
-   I+A/CrUWSydOvc9AhaRAU85GnZ1lTymdzmVpaQYBqyE+FMO4HFU5RJgQ0
-   MAvZV3qarpEo8Wy5mYIQw3tMUXRfBcO5L1sclTC56eF4YLLRY6F8OAZtq
-   bAE877swmE+/w/yYLPsoih2mQxtBkHrZPTxtzOOieLUyRn2n++0BFctsW
-   4MYYKMLtrlDQW+oRFqCCGAymQBlNOumWkTAZi8fKCeTU1muZZtWrFWTny
-   KALOsUAj2SeJcrbND+z6PqnjyhJj9hIa3hPx2uI8SKj8co0fVOFz718+v
-   Q==;
-X-CSE-ConnectionGUID: b8Tnf0HQTN6ckJytSyY1MA==
-X-CSE-MsgGUID: /qLFletzQaSMOJjHMzPmCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="61894012"
-X-IronPort-AV: E=Sophos;i="6.16,211,1744095600"; 
-   d="scan'208";a="61894012"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 02:48:02 -0700
-X-CSE-ConnectionGUID: bZl8PvLtTTmumH8CpnrPsQ==
-X-CSE-MsgGUID: NroY4ThARXa4bErMmRN2Vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,211,1744095600"; 
-   d="scan'208";a="145358422"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa006.jf.intel.com with ESMTP; 05 Jun 2025 02:47:55 -0700
-Date: Thu, 5 Jun 2025 17:41:17 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: kvm@vger.kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
-	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
-	jgg@nvidia.com, dan.j.williams@intel.com, aik@amd.com,
-	linux-coco@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	vivek.kasireddy@intel.com, yilun.xu@intel.com,
-	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
-	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
-	zhenzhong.duan@intel.com, tao1.su@intel.com,
-	linux-pci@vger.kernel.org, zhiw@nvidia.com, simona.vetter@ffwll.ch,
-	shameerali.kolothum.thodi@huawei.com, iommu@lists.linux.dev,
-	kevin.tian@intel.com
-Subject: Re: [RFC PATCH 19/30] vfio/pci: Add TSM TDI bind/unbind IOCTLs for
- TEE-IO support
-Message-ID: <aEFmPaYorqaYCKBY@yilunxu-OptiPlex-7050>
-References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
- <20250529053513.1592088-20-yilun.xu@linux.intel.com>
- <yq5aplfn210z.fsf@kernel.org>
- <aD24r44v0g1NgeZs@yilunxu-OptiPlex-7050>
- <yq5ajz5r8w6p.fsf@kernel.org>
+	s=arc-20240116; t=1749116604; c=relaxed/simple;
+	bh=3CzAUpmVmfrQ1t4F5v8cEc+jwk13Dy2UTL8cmMebjbQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=aqkyj/GBrqgCiB8otvze8CVpWDyKM6SaeRi1B5GzibtTaH3rn6w3Hm4IF5WMMpXMuGJBPBP1kiNJaMyxW6LLYtoTYUlNvW+AfLW41lyqpXXh1Da1j0v6a+lCDttnc5FZlUUGhxs2TJjFfFDFkeP5P/t+lWWtniB9WVxbTWx6KUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZvAUiyFA; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749116589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9lThtLOtQl+h3cysY0wqvjMRcuzy/6SuzhFkQRTpDlE=;
+	b=ZvAUiyFAu9nMRJs58c2zOJSV4g2RXqfQC2U3dVx0ORx5bnsaYBTji+MCOs0iMxnNQw6y24
+	mZXnixMu3Sbn/L3MmiSDVPvtVDTALEwKNR6w7KlumpV0qTDytZiZZd8lMKSpUesuNbO4G0
+	CJQskSEZ0XkPU78YwhMqb3U4lHrL1sI=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq5ajz5r8w6p.fsf@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2] mm/pagewalk: split walk_page_range_novma() into
+ kernel/user parts
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <5a06f383-7d01-4ea7-a010-013063770240@lucifer.local>
+Date: Thu, 5 Jun 2025 17:42:16 +0800
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Barry Song <baohua@kernel.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>,
+ Oscar Salvador <osalvador@suse.de>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>,
+ Jonas Bonn <jonas@southpole.se>,
+ Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+ Stafford Horne <shorne@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>,
+ Jann Horn <jannh@google.com>,
+ loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ linux-openrisc@vger.kernel.org,
+ linux-riscv@lists.infradead.org,
+ linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1AA4A4B3-AEBE-484A-8EE2-35A15035E748@linux.dev>
+References: <20250604141958.111300-1-lorenzo.stoakes@oracle.com>
+ <536f5ffd-b4cf-4f35-970c-ad3a7593af2f@suse.cz>
+ <5a06f383-7d01-4ea7-a010-013063770240@lucifer.local>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 04, 2025 at 07:07:18PM +0530, Aneesh Kumar K.V wrote:
-> Xu Yilun <yilun.xu@linux.intel.com> writes:
-> 
-> > On Sun, Jun 01, 2025 at 04:15:32PM +0530, Aneesh Kumar K.V wrote:
-> >> Xu Yilun <yilun.xu@linux.intel.com> writes:
-> >> 
-> >> > Add new IOCTLs to do TSM based TDI bind/unbind. These IOCTLs are
-> >> > expected to be called by userspace when CoCo VM issues TDI bind/unbind
-> >> > command to VMM. Specifically for TDX Connect, these commands are some
-> >> > secure Hypervisor call named GHCI (Guest-Hypervisor Communication
-> >> > Interface).
-> >> >
-> >> > The TSM TDI bind/unbind operations are expected to be initiated by a
-> >> > running CoCo VM, which already have the legacy assigned device in place.
-> >> > The TSM bind operation is to request VMM make all secure configurations
-> >> > to support device work as a TDI, and then issue TDISP messages to move
-> >> > the TDI to CONFIG_LOCKED or RUN state, waiting for guest's attestation.
-> >> >
-> >> > Do TSM Unbind before vfio_pci_core_disable(), otherwise will lead
-> >> > device to TDISP ERROR state.
-> >> >
-> >> 
-> >> Any reason these need to be a vfio ioctl instead of iommufd ioctl?
-> >> For ex: https://lore.kernel.org/all/20250529133757.462088-3-aneesh.kumar@kernel.org/
-> >
-> > A general reason is, the device driver - VFIO should be aware of the
-> > bound state, and some operations break the bound state. VFIO should also
-> > know some operations on bound may crash kernel because of platform TSM
-> > firmware's enforcement. E.g. zapping MMIO, because private MMIO mapping
-> > in secure page tables cannot be unmapped before TDI STOP [1].
-> >
-> > Specifically, for TDX Connect, the firmware enforces MMIO unmapping in
-> > S-EPT would fail if TDI is bound. For AMD there seems also some
-> > requirement about this but I need Alexey's confirmation.
-> >
-> > [1] https://lore.kernel.org/all/aDnXxk46kwrOcl0i@yilunxu-OptiPlex-7050/
-> >
-> 
-> According to the TDISP specification (Section 11.2.6), clearing either
-> the Bus Master Enable (BME) or Memory Space Enable (MSE) bits will cause
-> the TDI to transition to an error state. To handle this gracefully, it
-> seems necessary to unbind the TDI before modifying the BME or MSE bits.
 
-Yes. But now the suggestion is never let VFIO do unbind, instead VFIO
-should block these operations when device is bound.
 
-> 
-> If I understand correctly, we also need to unmap the Stage-2 mapping due
-> to the issue described in commit
-> abafbc551fddede3e0a08dee1dcde08fc0eb8476. Are there any additional
-> reasons we would want to unmap the Stage-2 mapping for the BAR (as done
-> in vfio_pci_zap_and_down_write_memory_lock)?
+> On Jun 5, 2025, at 17:24, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> =
+wrote:
+>=20
+> On Thu, Jun 05, 2025 at 08:56:59AM +0200, Vlastimil Babka wrote:
+>> On 6/4/25 16:19, Lorenzo Stoakes wrote:
+>>> The walk_page_range_novma() function is rather confusing - it =
+supports two
+>>> modes, one used often, the other used only for debugging.
+>>>=20
+>>> The first mode is the common case of traversal of kernel page =
+tables, which
+>>> is what nearly all callers use this for.
+>>>=20
+>>> Secondly it provides an unusual debugging interface that allows for =
+the
+>>> traversal of page tables in a userland range of memory even for that =
+memory
+>>> which is not described by a VMA.
+>>>=20
+>>> It is far from certain that such page tables should even exist, but =
+perhaps
+>>> this is precisely why it is useful as a debugging mechanism.
+>>>=20
+>>> As a result, this is utilised by ptdump only. Historically, things =
+were
+>>> reversed - ptdump was the only user, and other parts of the kernel =
+evolved
+>>> to use the kernel page table walking here.
+>>>=20
+>>> Since we have some complicated and confusing locking rules for the =
+novma
+>>> case, it makes sense to separate the two usages into their own =
+functions.
+>>>=20
+>>> Doing this also provide self-documentation as to the intent of the =
+caller -
+>>> are they doing something rather unusual or are they simply doing a =
+standard
+>>> kernel page table walk?
+>>>=20
+>>> We therefore establish two separate functions - =
+walk_page_range_debug() for
+>>> this single usage, and walk_kernel_page_table_range() for general =
+kernel
+>>> page table walking.
+>>>=20
+>>> We additionally make walk_page_range_debug() internal to mm.
+>>>=20
+>>> Note that ptdump uses the precise same function for kernel walking =
+as a
+>>=20
+>> IMHO it's not clear at this point what "the precise same function" =
+means.
+>>=20
+>>> convenience, so we permit this but make it very explicit by having
+>>> walk_page_range_novma() invoke walk_kernel_page_table_range() in =
+this case.
+>>=20
+>>  ^ walk_page_range_debug()
+>=20
+> Oops will fix.
+>=20
+>>=20
+>> Maybe this could be reworded in the sense (AFAIU) that
+>> walk_page_range_debug() can be used for both user space page table =
+walking
+>> or kernel depending on what mm is passed, so in the case of init_mm =
+it
+>> invokes walk_kernel_page_table_range() internally.
+>=20
+> Sure.
+>=20
+>>=20
+>>>=20
+>>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+>>> ---
+>>> v2:
+>>> * Renamed walk_page_range_novma() to walk_page_range_debug() as per =
+David.
+>>> * Moved walk_page_range_debug() definition to mm/internal.h as per =
+Mike.
+>>> * Renamed walk_page_range_kernel() to walk_kernel_page_table_range() =
+as
+>>>  per David.
+>>>=20
+>>> v1 resend:
+>>> * Actually cc'd lists...
+>>> * Fixed mistake in walk_page_range_novma() not handling kernel =
+mappings and
+>>>  update commit message to referene.
+>>> * Added Mike's off-list Acked-by.
+>>> * Fixed up comments as per Mike.
+>>> * Add some historic flavour to the commit message as per Mike.
+>>> =
+https://lore.kernel.org/all/20250603192213.182931-1-lorenzo.stoakes@oracle=
+.com/
+>>>=20
+>>> v1:
+>>> (accidentally sent off-list due to error in scripting)
+>>>=20
+>>> arch/loongarch/mm/pageattr.c |  2 +-
+>>> arch/openrisc/kernel/dma.c   |  4 +-
+>>> arch/riscv/mm/pageattr.c     |  8 +--
+>>> include/linux/pagewalk.h     |  7 ++-
+>>> mm/hugetlb_vmemmap.c         |  2 +-
+>>> mm/internal.h                |  4 ++
+>>> mm/pagewalk.c                | 98 =
+++++++++++++++++++++++++------------
+>>> mm/ptdump.c                  |  3 +-
+>>> 8 files changed, 82 insertions(+), 46 deletions(-)
+>>>=20
+>>> diff --git a/arch/loongarch/mm/pageattr.c =
+b/arch/loongarch/mm/pageattr.c
+>>> index 99165903908a..f5e910b68229 100644
+>>> --- a/arch/loongarch/mm/pageattr.c
+>>> +++ b/arch/loongarch/mm/pageattr.c
+>>> @@ -118,7 +118,7 @@ static int __set_memory(unsigned long addr, int =
+numpages, pgprot_t set_mask, pgp
+>>> return 0;
+>>>=20
+>>> mmap_write_lock(&init_mm);
+>>> - ret =3D walk_page_range_novma(&init_mm, start, end, &pageattr_ops, =
+NULL, &masks);
+>>> + ret =3D walk_kernel_page_table_range(start, end, &pageattr_ops, =
+NULL, &masks);
+>>> mmap_write_unlock(&init_mm);
+>>=20
+>> You've removed init_mm from walk_page_range_novma() but I see most =
+callers
+>> do the locking of init_mm immediately around it. This suggests a =
+version
+>> handling that automatically? A bit complicated by the read/write
+>> possibilities, so maybe not worth wrapping? Just a thought, as David =
+says ;)
+>=20
+> Most callers write lock interestingly, but then one read lock's, so we =
+can't
+> just assume and would need to pass a boolean which would kind of suck.
 
-I think no more reason. 
+Hi Lorenzo,
 
-> 
-> Additionally, with TDX, it appears that before unmapping the Stage-2
-> mapping for the BAR, we should first unbind the TDI (ie, move it to the
-> "unlock" state?) Is this step related Section 11.2.6 of the TDISP spec,
-> or is it driven by a different requirement?
+Actually, the write lock introduced in commit 8782fb61cc848 to fix the
+race condition when walking user page tables can be replaced with a read
+lock. As explained in commit b123d09304d86, it is safe to walk kernel
+page tables while holding the mmap read lock. The function name
+`walk_kernel_page_table_range` clearly indicates its purpose: walking
+kernel page tables. Thus, using a read lock internally is appropriate
+and safe. Please correct me, if I am wrong.
 
-No, this is not device side TDISP requirement. It is host side
-requirement to fix DMA silent drop issue. TDX enforces CPU S2 PT share
-with IOMMU S2 PT (does ARM do the same?), so unmap CPU S2 PT in KVM equals
-unmap IOMMU S2 PT.
+To further enhance robustness, it is better to add a WARN_ON check to
+ensure that the address range passed to walk_kernel_page_table_range
+is indeed within the kernel address space. This will help prevent any
+accidental misuse and catch issues early.
 
-If we allow IOMMU S2 PT unmapped when TDI is running, host could fool
-guest by just unmap some PT entry and suppress the fault event. Guest
-thought a DMA writting is successful but it is not and may cause
-data integrity issue.
+Muchun,
+Thanks.
 
-This is not a TDX specific problem, but different vendors has different
-mechanisms for this. For TDX, firmware fails the MMIO unmap for S2. For
-AMD, will trigger some HW protection called "ASID fence" [1]. Not sure
-how ARM handles this?
+>=20
+> Also other walkers assume the caller has the lock so it's consistent =
+to
+> keep it this way.
+>=20
+>>=20
+>>>=20
+>>> flush_tlb_kernel_range(start, end);
+>>> diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
+>>> index 3a7b5baaa450..af932a4ad306 100644
+>>> --- a/arch/openrisc/kernel/dma.c
+>>> +++ b/arch/openrisc/kernel/dma.c
+>>> @@ -72,7 +72,7 @@ void *arch_dma_set_uncached(void *cpu_addr, size_t =
+size)
+>>>  * them and setting the cache-inhibit bit.
+>>>  */
+>>> mmap_write_lock(&init_mm);
+>>> - error =3D walk_page_range_novma(&init_mm, va, va + size,
+>>> + error =3D walk_kernel_page_table_range(va, va + size,
+>>> &set_nocache_walk_ops, NULL, NULL);
+>>> mmap_write_unlock(&init_mm);
+>>>=20
+>>> @@ -87,7 +87,7 @@ void arch_dma_clear_uncached(void *cpu_addr, =
+size_t size)
+>>>=20
+>>> mmap_write_lock(&init_mm);
+>>> /* walk_page_range shouldn't be able to fail here */
+>>> - WARN_ON(walk_page_range_novma(&init_mm, va, va + size,
+>>> + WARN_ON(walk_kernel_page_table_range(va, va + size,
+>>> &clear_nocache_walk_ops, NULL, NULL));
+>>> mmap_write_unlock(&init_mm);
+>>> }
+>>> diff --git a/arch/riscv/mm/pageattr.c b/arch/riscv/mm/pageattr.c
+>>> index d815448758a1..3f76db3d2769 100644
+>>> --- a/arch/riscv/mm/pageattr.c
+>>> +++ b/arch/riscv/mm/pageattr.c
+>>> @@ -299,7 +299,7 @@ static int __set_memory(unsigned long addr, int =
+numpages, pgprot_t set_mask,
+>>> if (ret)
+>>> goto unlock;
+>>>=20
+>>> - ret =3D walk_page_range_novma(&init_mm, lm_start, lm_end,
+>>> + ret =3D walk_kernel_page_table_range(lm_start, lm_end,
+>>>     &pageattr_ops, NULL, &masks);
+>>=20
+>> Note this and other places break the second line's arguments =
+alignment on
+>> the opening bracket. Maybe it just shows it's a bit fragile style...
+>>=20
+>>=20
+>=20
+> Yeah I know :) I know you won't believe this coming from me, but I was
+> trying to minimise the churn :P
 
-https://lore.kernel.org/all/aDnXxk46kwrOcl0i@yilunxu-OptiPlex-7050/
 
-Thanks,
-Yilun
-
-> 
-> -aneesh
 
