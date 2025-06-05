@@ -1,208 +1,123 @@
-Return-Path: <linux-kernel+bounces-674791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84CFACF4B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:50:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F9CACF4BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58AF53AC8D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61781174889
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D956B5FEE6;
-	Thu,  5 Jun 2025 16:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48ED276045;
+	Thu,  5 Jun 2025 16:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G5TQU6+Y"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLzfAC5q"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF061F4CAC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 16:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB00F274FFE;
+	Thu,  5 Jun 2025 16:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749142234; cv=none; b=QUEddjyzK17mmpy5fIMfzMkJmSoNCo+096sLfxc8C8vIuFP9s1ADO6WVoRSG986AkfK/vodIRHWd3lLDfXCHB1+8djlBDXchO4TpjV7xntJW6MAoM23tSe4dcRlkVLI6nQIgQzkcJyxj7rYjnthkfELPBtcg2OIEPbpwGuC9+ug=
+	t=1749142256; cv=none; b=e+HRpa3S+yq6XyKEsQicdjbz1N/yUyRquueTRp4FBqwsYK1IqxhkRF7YrfVmKlYY9iC+86crCuhwKyegN6sFLyuyuUARwjMSHx5psb1dte+53yZ78/fqk0L9UTZ3fwLwF7sFz8sWV92Iqx5OP5/j+ARk8/QPIl8vOlwBW4EYIwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749142234; c=relaxed/simple;
-	bh=ZHCAmfHlX4KQFHaG55ogITAmWjpCAZ9v2RgfvCQDhOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FVITji1euCPOBkHq1X7E2OACVEyeLroRn2hrM7XM4fPlTDOIxUsHMpH3NvcG4+Apz82maD/qMshI3qug/5bf5rVbBbktHj6msiA/bYXzzAXgKYGZRupIhgc/dUhOqw6DIKaQg2roFJFSZvCqY6nzVJXE8HLP/KRSjj4vutduNQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G5TQU6+Y; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a0ac853894so1135170f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 09:50:30 -0700 (PDT)
+	s=arc-20240116; t=1749142256; c=relaxed/simple;
+	bh=XIFaf4bEWALQrBBhUMLGiEsl+xvEuzIUbJHmGcT3v04=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WdWN+P8vYEvvNBnTEVvHWJS0RFkUHWYBgl7wc5DPZ4TSuKY5NwhQTu/Duo38/4CWPAOqgiQC+yStEcbiG3CJ8lpwFHqH/fAeRKkcCe/c9+naQfRJiwM5LrMKpv0AYsHk5I3RulqsXorGwpmr98m41r8Sk1QGhqESfuhcR66PZCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLzfAC5q; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74264d1832eso1515213b3a.0;
+        Thu, 05 Jun 2025 09:50:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749142229; x=1749747029; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1749142254; x=1749747054; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jz9xUyA/EiH5AU4vuSWkBdaNT/IXuogFlw5tRX78z5A=;
-        b=G5TQU6+YeHyOtWB4O/1sTjRNIW654AyUZq4loPCuE0lKAgJ2OWs5s1TOfHA7Qil8u1
-         PDOIxRvXPJLiaarxgf5lk7PCV8UthsFWq86M+xLPunjpN+QCJj+coHs1G20rDQXguH7k
-         3Cpzj2KdlKJybWl6xx/WQmmouvexIMX3FebzQeR9CvERIVr1y8wm9kADTR5qUwPFFtlG
-         AdrXq4kR0tsFm1cLYY/K3DT0Osw+PNxuBy909MjQzRjv17grsXyS64O9ur8eaLlrM56o
-         wdTX6kiVujrYoBmaV4yhMNL/mTZ3JTxJA2m5Ao60vkPndThXrcUQkwCVlvxaHXmD8YFT
-         BPvA==
+        bh=Jr1AjOf8uNWev/Vso1mJTfg4siB3r6WSL8vizNNJAl0=;
+        b=ZLzfAC5q0IhhVmYaqs3bEG8FPIU43omk7OC9MZ7YN4mhnOXMQUT8yE+ZrBpw0U8BNP
+         ErPh9TpvhKjIuS60XVgDawyUKt/i+YCwfZ5muOI2QAHA/mUJ96jd+qEa7JoSM6P+fuzR
+         v0NjrgSo/vE+h+pCj26LrizLPii0kpVoD4SFZdSOsSWZHD1qCjH4aB3MoFEXgPe01jeB
+         yGQMimDLJ1BkNenZGlNY/QpFuVy2M7U359Wtkf3/wrg7aSgtpYDQA5w8n449UpvSViOt
+         DnqdvIXcMeQlMgwTBvsk0Pw9/y7nSPrb/bDRiLbyJXawH1ol1fohPjYE0VlIs/DGSg9b
+         wAOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749142229; x=1749747029;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1749142254; x=1749747054;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jz9xUyA/EiH5AU4vuSWkBdaNT/IXuogFlw5tRX78z5A=;
-        b=tqzt582qQkxWs2wKcEFhGNFVHjs+woheSJaOMs9WIVBDDUWm4vAyMPLfZH45jgvE5m
-         a85gZ8h5QndvmTGe0r0ZB3jy+QCHLyPi8bxZ2ft4kGUWnXLLrcxpLjbvFGI7PuTzC4eT
-         /FGutjjfbz+Hm2T9KZgAj8lEWjyg0U4UWyFXBlqsXE6I/xVzaG/jvChEyrtyFjXYacnI
-         o49OyAcTba+TI8OBrNpuUfYxNF1cFj+6iT+5blv3WYQ1Ot0Tm9vecjnyVCqeknN291+K
-         7WrIpmQNTlDBZut0I5N5jB81mayCbrAkQr/1ubQVdkVMQARDgTaeScFnKPHxsnrc/P7x
-         9/XA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8I48d5k6YY7I+wFFZ/0P/4aaMdd8NvpQqSTZojErwbYkeL0xOhQemN+tS967rlmT7lnUU+Db163jjh9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwsotGeciH4TW/FGw3hfbPM4YS/kBwTpq2GoBo+pgKCSEAZUPb
-	zoxqvRyS+X5WgD312i8sYqVP2ZPdgC0mQrq5kayKEmFqhAY+7Jzm9cY96BCmV+Bm6lE=
-X-Gm-Gg: ASbGncuD28pgudQK8AZrujVocXIrIcttuE0cbISVc2GCXfSNvCdCkQFGqPUO8C70k/J
-	WsQb7DPXJxm7sLpJvmGvSH70p3yA/onuYaeZCikHYMEwwDPjPOclxwfZp5eDFhFj3pRV5nnF+GD
-	x4/Vtk8w17Sow6ixKKfoNT1dknCDxbXlN5gAYczx6hwjxUgjm1S3kEWb3w9JleHN3Ze2gJwrr5n
-	/mPTdQEVIvxzB/ogxr1+XALgxShcBkmynRd7kdHKB/HtQbVhwW8/5VWDUsTv+CL7QlHR8W+aFZ2
-	/AkCFm3Tvg5Tg2iJoIbzHaZM4E8mamxkpp2DKBlAaFyKjaMHKRV3YlnT7nFRpKyMLtyQlg==
-X-Google-Smtp-Source: AGHT+IGRSHzXfap9n0kjJuSMfLR19jyrXtVbAavtSq9J0Rzklw4pAacRpF/BuRTIrpXiqvpyofge9w==
-X-Received: by 2002:a05:6000:2283:b0:3a4:fa6a:9174 with SMTP id ffacd0b85a97d-3a51d9708d4mr7314965f8f.33.1749142229184;
-        Thu, 05 Jun 2025 09:50:29 -0700 (PDT)
-Received: from [10.0.1.22] (109-81-1-248.rct.o2.cz. [109.81.1.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a0a96sm25345955f8f.96.2025.06.05.09.50.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 09:50:28 -0700 (PDT)
-Message-ID: <6a770057-2076-4523-9c98-5ff10ac3562f@suse.com>
-Date: Thu, 5 Jun 2025 18:50:27 +0200
+        bh=Jr1AjOf8uNWev/Vso1mJTfg4siB3r6WSL8vizNNJAl0=;
+        b=dYeLKZVzeagyvH2CxqF54kZ/US8Dfvy1fVnWRmSjnm6Dkuk0WfAgnivvbxXoJf56UA
+         PzLr4fgoICcL5I7f5VToryrCrC85uv4bFsxYgvygrAlVUaEROUGXLPVCWJpmqpWKLGk0
+         0JaEqgbXyLGYGr7EsbB5G7/FiIbMD0a6AmBGG1pILmDvI0r8No3WKMRha4FLYZBD0BDL
+         axRoUxb6FMjpyUHj+Y4bctrZ25BBTz0LiFrKTHk+x33LSu9dhsmmaoUE+U9P4FAopZUU
+         SCPC07z6Uzh+8LR8Xt8JxU2OATSpdmZYwVpJ4RtazyXCXZlrpBJtPG02kcG25zJ8SIRt
+         HT+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsWvYdeWm+cJ4AgBmy3WF0HESOLFJN8Vv+Od2dhPFFYZgnjGCQZwoA/YWXbCsBvAHqLi20pCZ1hwdLlYY=@vger.kernel.org, AJvYcCWugIHAS01BSedz1ukNJSwClzJ13FqS49nhmdIGb962YKmIGJ9mx0GTO5rjDFftDjXmvENezQQMINEQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYOK+R0C8Hi45dSEAwezjSL+mIb6mVvHcdkEltf1+U0zu+ryf4
+	bpGTZ/ehLKArzUCMUs0muDQiqzTcAyNiu8eFwxFWLJfBSatKRakYJrgN
+X-Gm-Gg: ASbGncuSKJmmdH+IPWM2dTZ5Xx3oakUxhxbbZNBplKhy6pK2AhXIOoKtF61mhvalldV
+	Bq4L5rpV8wAlk+WrkCuEvNVeLaKGqbh81P0xUyIq+KAXQFufbAhbNEpvvDVdUX1UXrIb/50vkqg
+	LIwKMLD9LNEn4JwcFD0a0af75VJ2kkzSnEW/wplLKA1b24liF6jWUb+g2Gfz/OnfOsESrp2fEva
+	vGj7sBei2Ms8tLNDO3RPcKVTa34B7DqNwEj7Hy4s3fZXAtorByLEKO2Ze4TrIW4Jm2Gz33zc7w4
+	4oxoBs9k7TIAPCTdXeTfKAh9Wl/2fKalDcR1VHc=
+X-Google-Smtp-Source: AGHT+IF2YLBAw2b9nyArKYI1W0OrOBCWggspyFjLKv1f0P5D1GAck9jyxFdfQ/L9pHNfflmpDzKqAg==
+X-Received: by 2002:a05:6a00:1956:b0:73f:f816:dd78 with SMTP id d2e1a72fcca58-74827f09cd8mr531718b3a.15.1749142254029;
+        Thu, 05 Jun 2025 09:50:54 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:110a::dead:c001])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe96825sm13061717b3a.36.2025.06.05.09.50.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 09:50:53 -0700 (PDT)
+Date: Thu, 5 Jun 2025 13:50:47 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Hugh Cole-Baker <sigmaris@gmail.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND RFC PATCH 2/2] arm64: dts: rockchip: drop PCIe 3v3 always-on
+ and boot-on
+Message-ID: <aEHK5zQbjQuCR1ui@geday>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] module: Make sure relocations are applied to the
- per-CPU section
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-modules@vger.kernel.org, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Allison Henderson <allison.henderson@oracle.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
- Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-References: <202506041623.e45e4f7d-lkp@intel.com>
- <20250604152707.CieD9tN0@linutronix.de>
- <20250605060738.SzA3UESe@linutronix.de>
- <beb343ec-6349-4f9c-9fea-588b04eb49ee@suse.com>
- <20250605155405.3BiTtQej@linutronix.de>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250605155405.3BiTtQej@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/5/25 5:54 PM, Sebastian Andrzej Siewior wrote:
-> On 2025-06-05 15:44:23 [+0200], Petr Pavlu wrote:
->> Isn't this broken earlier by "Don't relocate non-allocated regions in modules."
->> (pre-Git, [1])?
-> 
-> Looking further back into the history, we have
-> 	21af2f0289dea ("[PATCH] per-cpu support inside modules (minimal)")
-> 
-> which does
-> 
-> +       if (pcpuindex) {
-> +               /* We have a special allocation for this section. */
-> +               mod->percpu = percpu_modalloc(sechdrs[pcpuindex].sh_size,
-> +                                             sechdrs[pcpuindex].sh_addralign);
-> +               if (!mod->percpu) {
-> +                       err = -ENOMEM;
-> +                       goto free_mod;
-> +               }
-> +               sechdrs[pcpuindex].sh_flags &= ~(unsigned long)SHF_ALLOC;
-> +       }
-> 
-> so this looks like the origin.
+Example commit of needed dropping of regulator always-on/boot-on
+declarations to make sure quirky devices known to not be working
+on RK3399 are able to enumerate on second try without
+assertion/deassertion of PERST# in-band PCIe reset signal.
 
-This patch added the initial per-cpu support for modules. The relocation
-handling at that point appears correct to me. I think it's the mentioned patch
-"Don't relocate non-allocated regions in modules" that broke it.
+One example only, to avoid patch-bomb.
 
-> 
-> …
->>> --- a/kernel/module/main.c
->>> +++ b/kernel/module/main.c
->>> @@ -2816,6 +2816,10 @@ static struct module *layout_and_allocate(struct load_info *info, int flags)
->>>  	if (err)
->>>  		return ERR_PTR(err);
->>>  
->>> +	/* Add SHF_ALLOC back so that relocations are applied. */
->>> +	if (IS_ENABLED(CONFIG_SMP) && info->index.pcpu)
->>> +		info->sechdrs[info->index.pcpu].sh_flags |= SHF_ALLOC;
->>> +
->>>  	/* Module has been copied to its final place now: return it. */
->>>  	mod = (void *)info->sechdrs[info->index.mod].sh_addr;
->>>  	kmemleak_load_module(mod, info);
->>
->> This looks like a valid fix. The info->sechdrs[info->index.pcpu].sh_addr
->> is set by rewrite_section_headers() to point to the percpu data in the
->> userspace-passed ELF copy. The section has SHF_ALLOC reset, so it
->> doesn't move and the sh_addr isn't adjusted by move_module(). The
->> function apply_relocations() then applies the relocations in the initial
->> ELF copy. Finally, post_relocation() copies the relocated percpu data to
->> their final per-CPU destinations.
->>
->> However, I'm not sure if it is best to manipulate the SHF_ALLOC flag in
->> this way. It is ok to reset it once, but if we need to set it back again
->> then I would reconsider this.
-> 
-> I had the other way around but this flag is not considered anywhere
-> else other than the functions called here. So I decided to add back what
-> was taken once.
-> 
->> An alternative approach could be to teach apply_relocations() that the
->> percpu section is special and should be relocated even though it doesn't
->> have SHF_ALLOC set. This would also allow adding a comment explaining
->> that we're relocating the data in the original ELF copy, which I find
->> useful to mention as it is different to other relocation processing.
-> 
-> Not sure if this makes it better. It looks like it continues a
-> workaround…
-> The only reason why it has been removed in the first place is to skip
-> the copy process.
+Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-The SHF_ALLOC flag is also removed to prevent the section from being allocated
-by layout_sections().
-
-> We could also keep the flag and skip the section during the copy
-> process based on its id. This was the original intention.
-> 
->> For instance:
->>
->> 	/*
->> 	 * Don't bother with non-allocated sections.
->> 	 *
->> 	 * An exception is the percpu section, which has separate allocations
->> 	 * for individual CPUs. We relocate the percpu section in the initial
->> 	 * ELF template and subsequently copy it to the per-CPU destinations.
->> 	 */
->> 	if (!(info->sechdrs[infosec].sh_flags & SHF_ALLOC) &&
->> 	    infosec != info->index.pcpu)
->> 		continue;
->>
-> 
-> If you insist but…
-
-It seems logical to me that the SHF_ALLOC flag is removed for the percpu section
-since it isn't directly allocated by the regular process. This is consistent
-with what the module loader does in other similar cases. I could also understand
-keeping the flag and explicitly skipping the layout and allocate process for the
-section. However, adjusting the flag back and forth to trigger the right code
-paths in between seems fragile to me and harder to maintain if we need to
-shuffle things around in the future.
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+index 8ce7cee92af0..d31fd3d34cda 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+@@ -25,8 +25,6 @@ vcc3v3_pcie: regulator-vcc-pcie {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pcie_pwr>;
+ 		regulator-name = "vcc3v3_pcie";
+-		regulator-always-on;
+-		regulator-boot-on;
+ 		vin-supply = <&vcc5v0_sys>;
+ 	};
+ 
 -- 
-Cheers,
-Petr
+2.49.0
+
 
