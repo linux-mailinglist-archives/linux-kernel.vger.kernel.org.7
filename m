@@ -1,107 +1,222 @@
-Return-Path: <linux-kernel+bounces-674050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5964AACE93A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:20:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5B3ACE93D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 283E3173E98
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D9918953DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC3D1DDC0F;
-	Thu,  5 Jun 2025 05:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B142D1EF39E;
+	Thu,  5 Jun 2025 05:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFZw4RtT"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="G8amYOV4"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD9C1A76D4;
-	Thu,  5 Jun 2025 05:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEA71A76D4;
+	Thu,  5 Jun 2025 05:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749100850; cv=none; b=QfTyhk8lhAvggTiPyvR1ajFYU27pVCgfUGXT+7scZhPNBPYt2QOlSBG/Dm+hg3UFqi+tt2c4xrATeP43l/crx9eB3JuaMwhi7DqkgGV/CB0vaZCw6hKZLnSZm3dUPMlJSG0s4Bbf3YDb2fcFO3Y4QlAG0D2mVFciOPY1mRDsaMI=
+	t=1749101050; cv=none; b=KvdLMmqJKTZPj0YCoMxmx+OTZuJXYFlf4M5yWdRdnWdu+vIsJGu0+uK5qYIhQ5PBP4ZOe+M8qCXcJJTL6cy/f2iwuCCOxky0LoQBzMiP/KaPMsHM6Xl5QPRUtBcTbgVDlwCKbIV8eayx8Xdo2obgS49avWeaiSNmS1h95F/IfYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749100850; c=relaxed/simple;
-	bh=ULsChxBcc2XUy1SxCccxS6KMnlpMConuFdkgaahqBj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bNWpKGI0cPpNJdrwraWrNVqCZdpbuYGH9Av04m2tvYLlgbU6MdFCN2f+iJVax8xGRLUfwSB1FEkHf3UWq8XFnGIvA+uet6VoGTF7k7xgoDDNXct3KMj9UVQhnLXkbI1UuvY5YK3eQaVJPNyxBkLfhVdDWWWXiWTNMoDueaZMJTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFZw4RtT; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-313067339e9so48250a91.2;
-        Wed, 04 Jun 2025 22:20:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749100848; x=1749705648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pisDPyCNhVloACjdr/CP/aoyNXW5eGbehzF4WzQdg6I=;
-        b=fFZw4RtTQv9FF1Y4Vm6ZQcH+WNbJTmoQyq5j4fdLQSOSJdmOSNo8rBPcfYOHALeOXd
-         NT2e+g2iWmH3Z0TQdptKUmKsQt/ioT16Lj/1pru0j8jbF13u4/KRxF5/2QusQ9zFRtQb
-         wFVgxdc4Uqke3gTu5EfUqnLDG2eMpD/y+enulIkeI6Of5ODitfwBDVqtVS//ekoEjSHk
-         cDPmuZRC6aAdsZyjrlkguyw9Mf4qYt6XFgT0auL4g8ZyM4hJT0KML3YNnl6MWDlRVnQE
-         d0qw9Rk8rG8fpd9nQRJ3i29O4pZhrAk7vC54EWU2ZT/yjoWynU2MjxCMvM56zXa1aDsZ
-         feig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749100848; x=1749705648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pisDPyCNhVloACjdr/CP/aoyNXW5eGbehzF4WzQdg6I=;
-        b=kf3hueOElG2IwGTzlu0MMNVoKHoILXy8aSwHgz+RZRY6FyPnEt3KY/4w/DfvqgKpet
-         V8q7jCkRfk9nEATxOK1kjEzR03PPky6MoDVcZPmsh2chZo5+L0TCCZkhiBpXp90U/f3y
-         cNRgEVuewmHQVAtaY5OyIbfxtfuJVB/ZF0YuVj/C6iGEHVjQ9SAtzByLYQ3tHjJhVayG
-         SqQiy+TUKGhaDQD7wBwiOEpJfLdkOifu+KAHCRQfrjKg5V4kPP42pSfnaMt8pxm42+/X
-         FHxJJxEHhaqUu5eGE+JhmltSzcOUFuygipLJihx7dwlwHYJMQCLGB42MU2C8SGEuT1az
-         nnbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcBI9EzttynOY/BN4+wMvM0J1uuQxFv0YGPBfyqjhtCESr7as1jIO4rHjIb0ses6avsqQ9mSpKRVmZ5b2SNik=@vger.kernel.org, AJvYcCXdCU9qOtQJIMZU5oWYcbq1XO5gxrK2eInx9pCdy2K75vrUQmfoyjWLIaKd8+NJpNYC88jpwuad0uA9s5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVXBUr0H/pJrkR4icIHUqilztlXDu5wJDjHvUOp+46Y/GdTkhP
-	A5HZ8KhaYJf/4LEVRG0Y48A7vH9BDRAGmk8/ax6qSsqs+zSMBVlunb9V+/TBM96PwSWksY7CQ10
-	hp8960b4DhWKXQCZxJx8+ltz8Ebvei0g=
-X-Gm-Gg: ASbGncuFIX2CP1QD2Lm35GLxV6AjujBaa2Y+juHXaJCnTZ0tTvvbVZOuLyNOKDviBRS
-	yNOYHy0NJH2EBbZlmAUnEJdJ/eCMYmRlz1dSKCQPa0LXdk7U04NOM11iOrXWxq/ElX2F3ZMM9Ug
-	/2ZUerVRix+COZEXaeV4OddabweauC1m2A
-X-Google-Smtp-Source: AGHT+IEhxlOAlFFMrVuiT7puZFaVOBDL40scV6ced0++5NAhQaJ0OdfMZ/bWyG9q/HXKGiRTDeuOVWJWAvIbl5d0Xpo=
-X-Received: by 2002:a17:90b:5587:b0:311:b0d3:851 with SMTP id
- 98e67ed59e1d1-3130cd2f168mr3035784a91.4.1749100848420; Wed, 04 Jun 2025
- 22:20:48 -0700 (PDT)
+	s=arc-20240116; t=1749101050; c=relaxed/simple;
+	bh=ya/koOj6cO+ct9Hs3+IinxxRmA9fxrsQslP4v/NxUgI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2KbsD08/La613a7p/QToWNv7nJ5EsswEruxszpYkJK6YuA9jdpGeAJe03GibSkK60cPZByiYyutTyJYT2e+MHzUUY1rrD1PPR0wOHgcpVIlnlth0084GqR+DkqAxi3BC8yO6pJDcyGcnYJ06CcPPGe3a9XpyXPSjuLU34yM488=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=G8amYOV4; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554NaLC9000416;
+	Wed, 4 Jun 2025 22:23:40 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=PNM3IaA5jL17ak3UbjRpIWW8f
+	0RDYWYEWHICKDUDx/0=; b=G8amYOV4+kkq2zFNNBmFV8AgTegLcIFSWQl0MbtwJ
+	YBPKwTrnzAVxy+YLe4sInPhh+fmCYGVIcfmGAqIM24hFdI0YkPNTQ5+7NcbmblNJ
+	jmNXD02z5+GiK/MtDE3V6L2nii2E0V96a7u6dGYGKi3jbkNUGQUfNbUgqMIdzDbl
+	+ZmTL/IXWrZDGWzkFL4ulN1IASfSdDBgCLbwR39zX5jXvXKgTxCB87bCyX6WLFWn
+	+tvYTieK6mWzZUiw+lrN86nwfkCj2/SpPL6gUqo4BLlL4rYKJ6IO/XF81kM8kRJ2
+	ka8kPyHRjrN3CiMV7u5Ru/VVdDb0BLAvxuU8Kj3Ax7Ijw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 472yyb8gr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Jun 2025 22:23:39 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 4 Jun 2025 22:23:38 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 4 Jun 2025 22:23:38 -0700
+Received: from 4c2d361be676 (unknown [10.193.66.94])
+	by maili.marvell.com (Postfix) with SMTP id D01C33F7082;
+	Wed,  4 Jun 2025 22:23:34 -0700 (PDT)
+Date: Thu, 5 Jun 2025 05:23:32 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: <carlos.fernandez@technica-engineering.de>
+CC: <andreu.montiel@technica-enginnering.de>,
+        Andreu Montiel
+	<Andreu.Montiel@technica-engineering.de>,
+        Sabrina Dubroca
+	<sd@queasysnail.net>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hannes Frederic Sowa
+	<hannes@stressinduktion.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v3] macsec: MACsec SCI assignment for ES = 0
+Message-ID: <aEEp1IOlVY9BrXVY@4c2d361be676>
+References: <20250604123407.2795263-1-carlos.fernandez@technica-engineering.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605025400.244965-1-ojeda@kernel.org> <CAHk-=wik7gvxt-CEak_4HsGziRwo6-7q9LGeW37Pj9182dJ=ow@mail.gmail.com>
- <aEEjzTMJm7YzS1Ks@Mac.home>
-In-Reply-To: <aEEjzTMJm7YzS1Ks@Mac.home>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 5 Jun 2025 07:20:36 +0200
-X-Gm-Features: AX0GCFsV6wLuSWV8CngJk8vkZzJHN_e3b_sEoLPriNaHvICgprIi_KmAJTlN7DM
-Message-ID: <CANiq72kWgLKoswZL5h1U9oY8qo0-U03awS-3Sm1gvuX_9PcvBw@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust for 6.16
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250604123407.2795263-1-carlos.fernandez@technica-engineering.de>
+X-Proofpoint-GUID: hmR4WaaxTRJmk8aY3fW7-g_nB353chm2
+X-Authority-Analysis: v=2.4 cv=F9hXdrhN c=1 sm=1 tr=0 ts=684129dc cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=M5GUcnROAAAA:8 a=OUTCSzjuWNMhYzDvx4IA:9 a=CjuIK1q_8ugA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA0NSBTYWx0ZWRfXyHHawB9g+zds A54qWeMABPuZOs64Agcj2i6DBDHwFegP2KjNXaNRn8qy0hgeaNQ37Wz7fPleCIeatgX9L7IygWG akXOcDIPcj0aulOQ3mGoP/8y8GlqxCNI84obVXQIzr2vFIJisT1jERTRXYYCHxsz67WESaDchlV
+ 6SMSjDXJiG4a4QHazXf3ol7Lf9ZEUmSIChMC5uYJTnJDIGN69JMmmdL5R4i2yXitVLxHBeRF4B6 TP8YHMuToqbGFobYr2VK8gYoBIgbFJ11LE8mprtQggzUjJGIQKueWUnGt5PN66vcx/DynJlNsaq ZhEMfimB1FIrJ85nQ/8Octrb5zsDuC2XRjPQZlsouMRmfiyXJzWaF8tHg0QSE7Imo56Kizf4moH
+ 99KnFkBh0j9EZ+ELylK7vemjtld9ql8j2GHAb0w4fyzdIuJg3aWX6tbB7/yj5zRQiFmxLbJd
+X-Proofpoint-ORIG-GUID: hmR4WaaxTRJmk8aY3fW7-g_nB353chm2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_01,2025-06-03_02,2025-03-28_01
 
-On Thu, Jun 5, 2025 at 6:57=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> wr=
-ote:
->
-> FWIW, I think this thread has the explanation:
->
->         https://lore.kernel.org/regressions/CANiq72mFL4dn+0JppLLfxyKnM+xY=
-wKeduFw2j07hUfxWVVHdUw@mail.gmail.com/
+On 2025-06-04 at 12:33:55, carlos.fernandez@technica-engineering.de (carlos.fernandez@technica-engineering.de) wrote:
+> From: Carlos Fernandez <carlos.fernandez@technica-engineering.de>
+> 
+> According to 802.1AE standard, when ES and SC flags in TCI are zero,
+> used SCI should be the current active SC_RX. Current code uses the
+> header MAC address. Without this patch, when ES flag is 0 (using a
+> bridge or switch), header MAC will not fit the SCI and MACSec frames
+> will be discarted.
+> 
+> Fixes: c09440f7dcb3 ("macsec: introduce IEEE 802.1AE driver")
+> Co-developed-by: Andreu Montiel <Andreu.Montiel@technica-engineering.de>
+> Signed-off-by: Andreu Montiel <Andreu.Montiel@technica-engineering.de>
+> Signed-off-by: Carlos Fernandez <carlos.fernandez@technica-engineering.de>
 
-Indeed, thanks Boqun.
+ Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
 
-Cheers,
-Miguel
+Also please let me know how to test this single secy and single
+RXSC for my understanding.
+
+Thanks,
+Sundeep
+
+> ---
+> v3:
+> * Wrong drop frame afer macsec_frame_sci
+> * Wrong Fixes tag in message 
+> 
+> v2: https://patchwork.kernel.org/project/netdevbpf/patch/20250604113213.2595524-1-carlos.fernandez@technica-engineering.de/
+> * Active sci lookup logic in a separate helper.
+> * Unnecessary loops avoided. 
+> * Check RXSC is exactly one for lower device.
+> * Drops frame in case of error.
+> 
+> 
+> v1: https://patchwork.kernel.org/project/netdevbpf/patch/20250529124455.2761783-1-carlos.fernandez@technica-engineering.de/
+> 
+>  drivers/net/macsec.c | 40 ++++++++++++++++++++++++++++++++++------
+>  1 file changed, 34 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+> index 3d315e30ee47..7edbe76b5455 100644
+> --- a/drivers/net/macsec.c
+> +++ b/drivers/net/macsec.c
+> @@ -247,15 +247,39 @@ static sci_t make_sci(const u8 *addr, __be16 port)
+>  	return sci;
+>  }
+>  
+> -static sci_t macsec_frame_sci(struct macsec_eth_header *hdr, bool sci_present)
+> +static sci_t macsec_active_sci(struct macsec_secy *secy)
+>  {
+> -	sci_t sci;
+> +	struct macsec_rx_sc *rx_sc = rcu_dereference_bh(secy->rx_sc);
+> +
+> +	/* Case single RX SC */
+> +	if (rx_sc && !rcu_dereference_bh(rx_sc->next))
+> +		return (rx_sc->active) ? rx_sc->sci : 0;
+> +	/* Case no RX SC or multiple */
+> +	else
+> +		return 0;
+> +}
+> +
+> +static sci_t macsec_frame_sci(struct macsec_eth_header *hdr, bool sci_present,
+> +			      struct macsec_rxh_data *rxd)
+> +{
+> +	struct macsec_dev *macsec;
+> +	sci_t sci = 0;
+>  
+> -	if (sci_present)
+> +	/* SC = 1 */
+> +	if (sci_present) {
+>  		memcpy(&sci, hdr->secure_channel_id,
+>  		       sizeof(hdr->secure_channel_id));
+> -	else
+> +	/* SC = 0; ES = 0 */
+> +	} else if ((!(hdr->tci_an & (MACSEC_TCI_ES | MACSEC_TCI_SC))) &&
+> +		   (list_is_singular(&rxd->secys))) {
+> +		/* Only one SECY should exist on this scenario */
+> +		macsec = list_first_or_null_rcu(&rxd->secys, struct macsec_dev,
+> +						secys);
+> +		if (macsec)
+> +			return macsec_active_sci(&macsec->secy);
+> +	} else {
+>  		sci = make_sci(hdr->eth.h_source, MACSEC_PORT_ES);
+> +	}
+>  
+>  	return sci;
+>  }
+> @@ -1109,7 +1133,7 @@ static rx_handler_result_t macsec_handle_frame(struct sk_buff **pskb)
+>  	struct macsec_rxh_data *rxd;
+>  	struct macsec_dev *macsec;
+>  	unsigned int len;
+> -	sci_t sci;
+> +	sci_t sci = 0;
+>  	u32 hdr_pn;
+>  	bool cbit;
+>  	struct pcpu_rx_sc_stats *rxsc_stats;
+> @@ -1156,11 +1180,14 @@ static rx_handler_result_t macsec_handle_frame(struct sk_buff **pskb)
+>  
+>  	macsec_skb_cb(skb)->has_sci = !!(hdr->tci_an & MACSEC_TCI_SC);
+>  	macsec_skb_cb(skb)->assoc_num = hdr->tci_an & MACSEC_AN_MASK;
+> -	sci = macsec_frame_sci(hdr, macsec_skb_cb(skb)->has_sci);
+>  
+>  	rcu_read_lock();
+>  	rxd = macsec_data_rcu(skb->dev);
+>  
+> +	sci = macsec_frame_sci(hdr, macsec_skb_cb(skb)->has_sci, rxd);
+> +	if (!sci)
+> +		goto drop_nosc;
+> +
+>  	list_for_each_entry_rcu(macsec, &rxd->secys, secys) {
+>  		struct macsec_rx_sc *sc = find_rx_sc(&macsec->secy, sci);
+>  
+> @@ -1283,6 +1310,7 @@ static rx_handler_result_t macsec_handle_frame(struct sk_buff **pskb)
+>  	macsec_rxsa_put(rx_sa);
+>  drop_nosa:
+>  	macsec_rxsc_put(rx_sc);
+> +drop_nosc:
+>  	rcu_read_unlock();
+>  drop_direct:
+>  	kfree_skb(skb);
+> -- 
+> 2.43.0
+> 
 
