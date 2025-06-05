@@ -1,462 +1,194 @@
-Return-Path: <linux-kernel+bounces-674679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD613ACF2C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:15:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3445ACF2D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CDCE17ACA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:14:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 892D07AD5B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AAA2797B2;
-	Thu,  5 Jun 2025 15:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D8B1DF267;
+	Thu,  5 Jun 2025 15:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="A3NvI3Rb"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r+Dek4k5"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50808226D07;
-	Thu,  5 Jun 2025 15:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749136304; cv=none; b=FxYK+rvZzs3SQWjcO8t9wMQt7rgtZiwyvp+xfhFIfFGP2jzdKS1V8+z7Lkz1MUbGx1FCzM4NGIO5cdKA6X21MRY2jTPYDu5e/O1PL7qj22tsPp4glR2FkNzubqfMsFLYMAnbbhvT6gDO9qTayIeWSr5BGqdEhwKqynSeCKeCtBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749136304; c=relaxed/simple;
-	bh=AkE6eikqbRICrJDgdyEY4dj2dy8Ahj5jbvh6y8zteJs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LkhWeqS7e+4Tj7t9jvtFF4ZexqsW9dGnDbArTVHwVrJgP+furEPLfaWP/VUbKYsYdRaxBup0+xsnH0N7fyOYqpiqzkqf9nSAMtP794sYu+6vZq+MBXk+NvodRw3T2POl8oHdZpLhC8hh8LfjqewwSKOF126FQsWBQ3yRPDigvIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=A3NvI3Rb; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555C4bFX022062;
-	Thu, 5 Jun 2025 11:11:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=36mB5
-	K/Es1fvkJdJgnEFU1eeWBa1NFggy8+45jAJItY=; b=A3NvI3RbHdR9Rl1s/CWaj
-	wxGBn1ITcW05s8AasGUHb78I42uwy5RUPiESskvfJef04fgX8a0u2N9OQgaHudOV
-	SCzyTLrD+2mZy6Y7sycF0LpTt/M8uyOfYHk4uGuSnWBlJYUHGeG8N8xEW5lgGOV7
-	JziwFK4+ynUggeLZ/7a9snebeD3jHRH+JDroX63HpqdqQNcsqVM+m3A9Z+TjqSAX
-	E2Wf86li2/Gat7xYjxV89D6jd9bVk2VGY64D11Bq3PbRTCBe/I6l3eRTYi3TVwEK
-	7LDgt5DoPu08ovxhU/lPtaYlZsuEGre7GrxFMr67Jf1/YV3QH0b56enlCgmwUb+G
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 472k2u7b4r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 11:11:15 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 555FBEAE004187
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 5 Jun 2025 11:11:14 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 5 Jun 2025 11:11:14 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 5 Jun 2025 11:11:14 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Thu, 5 Jun 2025 11:11:14 -0400
-Received: from romlx5.adlk.analog.com ([10.48.65.73])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 555FA1uu027831;
-	Thu, 5 Jun 2025 11:11:04 -0400
-From: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "David
- Lechner" <dlechner@baylibre.com>,
-        =?UTF-8?q?Nuno=20S=C3=A1?=
-	<nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-        "Dragos Bogdan" <dragos.bogdan@analog.com>,
-        Antoniu Miclaus
-	<antoniu.miclaus@analog.com>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-        Matti Vaittinen
-	<mazziesaccount@gmail.com>,
-        Angelo Dureghello <adureghello@baylibre.com>,
-        Guillaume Stols <gstols@baylibre.com>,
-        Tobias Sperling
-	<tobias.sperling@softing.com>,
-        Marcelo Schmitt <marcelo.schmitt@analog.com>,
-        Trevor Gamblin <tgamblin@baylibre.com>,
-        Alisa-Dariana Roman
-	<alisadariana@gmail.com>,
-        Ramona Alexandra Nechita
-	<ramona.nechita@analog.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        "Thomas
- Bonnefille" <thomas.bonnefille@bootlin.com>,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
-        Ioan Daniel <pop.ioan-daniel@analog.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 5/5] iio: adc: ad7405: add ad7405 driver
-Date: Thu, 5 Jun 2025 18:09:43 +0300
-Message-ID: <20250605150948.3091827-6-pop.ioan-daniel@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250605150948.3091827-1-pop.ioan-daniel@analog.com>
-References: <20250605150948.3091827-1-pop.ioan-daniel@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907901E519;
+	Thu,  5 Jun 2025 15:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749136236; cv=fail; b=niKKS08e/5qLN+wJJWZdU7aeAOs6+gEO36esnGD5rx0pyluDtbcmMbegFDHyK8dClKAuYX9wuLKZSd44hDvG+Q/g7fpUosAx+beQYWgvgMt0os8fsVUmKDtP53dkN62O6JX31sLbw2Upv3i+O1k3g4FZjBCZ73ize70daNJtN1k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749136236; c=relaxed/simple;
+	bh=1Sb1XpYjDECKUUN3Iv9p3MPeTH4lNKQgLfXFQ6UsNNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YneMHXS91TbhhyCP2tckAM4iRCEUPdrEzk5+f+qXJp931SzvOVm0Epc0a+IXyUGCtFje8m/IOVPjhgIr/XHHSgeRALuLZ9OdDkYxgfk4GQpn9BiAvS9wY1iN7hOR2XK7Pu09ntI35KLJrmNLRtv00d86MzL+tNbBlkejm1c1Rpw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r+Dek4k5; arc=fail smtp.client-ip=40.107.92.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=One5hzuPoxfdrRSC0jZoQpVbAzSVUQE+4H2oab61a5blancCv8rjU+b4uAr+le7XlD182pl4TxdFzUGbaxSOJDXEyRnj4VYmmMqdzmGnUL0oIgwOvqQKGctmFoi27ToLwQVK22nvQcNiycF5sVAXiPmdPCdamgIZG+8SGFZCJ5089Ri6UG0C42LLHkicNpyy7cYv004a0+iUW94E7KJ0j6r2vn5Bby+q93SNH42ah3LS7sUzRsiSIAAcrptIsz+C7Pt4VUzCLpZHv/B+Hn6o5wFDJ56tGYizDWdAXM03GYW9/V0xNBzvdkWdV2MChCLbSMxEdw8p9DLIHoXUil4IZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sq5BBXoM8W602IWL88Q0nT3aeD/x47Dsd+4p6D638PY=;
+ b=wKiHh4Dew3JjWWYe7BJQ2kk6GaxQDBlkoRlQ0q3tR1S3S8Ih4CqOq36r5nB2yIeBebrsS4Leg+2EGktAm8fdse9j+oUszVLvwHsR1803HKOVuH+2UILPF1kv9+uvZ9Bp+pemhdDCZWw6DPllPB3596UgH5CaMwg6zXhiSOekWo+vvXyCDH440sVF341pYISiS6dykJ0yOrIMn/czOZStZMZgeglR/tXPGLfqCW+Bh8ZNH0cmbcNK8vmvnU4siE2MgPkxoLPRh99ncvsf8QBED+jL3U/QzXhj/H9G3wBMuA0nLSyNP2mTm8LpexVl4lm47hO/tzIih8mS6PrjW4zxzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sq5BBXoM8W602IWL88Q0nT3aeD/x47Dsd+4p6D638PY=;
+ b=r+Dek4k5y5qcJWUDbVYieCFNr2cY+xIhwJDr5U0wLCoSO0vFCcQBFt2FUIZCU+qTbyqIu+WMIvI6bDKFqRcg8uORFkcbr5Ru6KW08j/L2Ecfq0UdaeikrB8F0aOmISx+LuJXV3TV97OCLJR3tNz+ZYFpIM/uKTj5XklQpzQpQN2YyXsHkG4Td1cwx5LFl3mXAcq3TOAVxYlG3TCGLxdGqpspIEp+A+NmAB9BY4sCwJD3QDUEqBnknl+sa7jUT7/CfFk/Z4rhzuKktyj4kmPOG3uAgCLXMfygMXuns4xsHdJvh9gYgSwhoz0j4ntHkDQGMC3VUdQe8GI2ey2rNje8tQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BL1PR12MB5993.namprd12.prod.outlook.com (2603:10b6:208:399::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Thu, 5 Jun
+ 2025 15:10:31 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%6]) with mapi id 15.20.8792.034; Thu, 5 Jun 2025
+ 15:10:31 +0000
+Date: Thu, 5 Jun 2025 12:10:29 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: Xu Yilun <yilun.xu@linux.intel.com>, kvm@vger.kernel.org,
+	sumit.semwal@linaro.org, christian.koenig@amd.com,
+	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
+	dan.j.williams@intel.com, aik@amd.com, linux-coco@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, vivek.kasireddy@intel.com,
+	yilun.xu@intel.com, linux-kernel@vger.kernel.org, lukas@wunner.de,
+	yan.y.zhao@intel.com, daniel.vetter@ffwll.ch, leon@kernel.org,
+	baolu.lu@linux.intel.com, zhenzhong.duan@intel.com,
+	tao1.su@intel.com, linux-pci@vger.kernel.org, zhiw@nvidia.com,
+	simona.vetter@ffwll.ch, shameerali.kolothum.thodi@huawei.com,
+	iommu@lists.linux.dev, kevin.tian@intel.com
+Subject: Re: [RFC PATCH 19/30] vfio/pci: Add TSM TDI bind/unbind IOCTLs for
+ TEE-IO support
+Message-ID: <20250605151029.GC19710@nvidia.com>
+References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
+ <20250529053513.1592088-20-yilun.xu@linux.intel.com>
+ <yq5ah60u8kev.fsf@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq5ah60u8kev.fsf@kernel.org>
+X-ClientProxiedBy: YT3PR01CA0112.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:85::30) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: ffjLrwqzCg0J9TRbcbDVVB9irkep3AZM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDEzMiBTYWx0ZWRfXz64ENhkxiK4G
- emP9L3AOgC7LZaDG/BQ/0xLQS/OoKkDtOy61nQchMGcxfM271/NnB49/gCdFHeLOErlOlt+snvA
- YfyOWAvAiefBuOZzOLJ1FoCIH+AAgm0XmEwu9X3REnv0d0u88ouM/ia5T08/PnLFacBCtEfLY1g
- aoedfcwaRjsYm8MaZfH0hdjL7abVxh8dZpupTaO0C0PEYS9iQHxm/EBwkNCfY/ZHHIoBD9ggvG1
- OsJgfuf4HAgjtLaLhcpA+nOPQ5ZsszOWH8ATbFFwVp+vYJyS/mnfb3o5gwuUHcADMn6r21p85Lm
- L4Wn+9wF7jvIaklHkxUTXmfTuB7PYCWvvxEMUDeNiZ+1xbiI46IZt1tHtxLzz6nHhJ85Pu1s9fv
- 4/grXSpbopYNzqvUsymu4NlcriAerQxcQxoL55DexufuKkRks2cd7zJO6po4ied+IjJWaUpM
-X-Proofpoint-ORIG-GUID: ffjLrwqzCg0J9TRbcbDVVB9irkep3AZM
-X-Authority-Analysis: v=2.4 cv=Fv4F/3rq c=1 sm=1 tr=0 ts=6841b393 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=xMrnY01I1BIIJWUPG5oA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_03,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- malwarescore=0 phishscore=0 clxscore=1011 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506050132
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL1PR12MB5993:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3a09373-8ae6-4193-25da-08dda4431cc8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jZt0TaGoBwgG5ls9yVYzgNt/LaSYXqtKqGWPul3Cv0keOImZzcKuE9abDggF?=
+ =?us-ascii?Q?ghfrjIzsFVMlgSR1JFYxkjOneeLY6zUGOiJNH+ljQdtN2jTXVafTQ3D2KyrG?=
+ =?us-ascii?Q?+uDSq5Wb3GkEiK74144CIcFciHXmTT2yKu9G0y7UA39Rc6Ii77SRzp2czfJl?=
+ =?us-ascii?Q?iLxMpshFD+DI+F8HxuWIvcWJ9/4OnWS8lZ/LNl0aV2ZVZyGWgShXuBa/rW4P?=
+ =?us-ascii?Q?/9UKe9RmLJglQRBAhZKtVKEJVjfNwUrcTYgQ+t7ePqt3/gDAZUNjfB+Ctv/K?=
+ =?us-ascii?Q?rU1j5rCPWbDqfI+ZAUQ60LEWgUI9pZdmxYIM+T9v5m0PTfS7WHSaX/nO82kD?=
+ =?us-ascii?Q?8ZG5PPI8IwoTx7/KQ0E96bEHGKIjik8e9uKBPqrLHIWs8lpdqAMu6KJ8ZDlg?=
+ =?us-ascii?Q?GAXVUWLMHjnI75tJD1AvoJvEZkDVBnWMDxCeQ4VLFZAneO6fgCM4GhthndJl?=
+ =?us-ascii?Q?saO4I+Oo4cnUJXZIaAnSWjhMyPx2fISrKzSCUkC04UDQiPj2Hv0dIzLjoL7l?=
+ =?us-ascii?Q?wHnNKrKYloHZUR3f2yvLR/75v9E88Bv9GsMAQCQHveE16EzyzFVkPGOxqEAs?=
+ =?us-ascii?Q?2PIXA5d7JBmXg1koLT9ZreOSTpB5+PEstgH83MoL1gYE40VKOTGinn9dVGBP?=
+ =?us-ascii?Q?Ip4pBpPkTOtqTMliJhhhLCAuRfN9eZOPejzKWZP3ReZcocXADi+adZgCF3Q2?=
+ =?us-ascii?Q?UGIb72y9O39LE7V/uUDU7Y9jI6dHjSrvAYnaZsxYB8YuqRK23aGDAp8GHPVo?=
+ =?us-ascii?Q?qD17NsrsHNSKSSH4EouX+jip5q4EGU6B30e3Oa5V9vjFr7r2vbywiY6fTU2B?=
+ =?us-ascii?Q?uuzqVbbIopET3s18ZyFw8ypZu7tXOmWBCEcpv8liwe4UE9jzGmZ4/dkxwy27?=
+ =?us-ascii?Q?iz5ji51KbX6XcMhlxDXfxNc2jIUNW18BJapkGbLm5G/KjjzHF8hS3a3LQ1EV?=
+ =?us-ascii?Q?fZI/dDteE7/wjIoRfg7bkmvV/9iuV1KL7IX7ZMyZTni8FJmliM3K6E9rcUrN?=
+ =?us-ascii?Q?ckycPxQH90tHWou1pevUVU0M1PtecC7Iyr23p3tnusLqXSDanFQvdw40Y5Wv?=
+ =?us-ascii?Q?RTUC8bT6ZZ6RYnUkf4pcrLzabfQY5tngGokDaP5T2msfjmzsBB/fRuCRBnm9?=
+ =?us-ascii?Q?WFdctwYDcnaksBtYl/JuPhCVeLJjnVY6V0P6IiUJs7AtL30HcFqZWZLaq2HL?=
+ =?us-ascii?Q?xsaX2RX7xXsYyh7vhcqqWMsJNPo0el7THA+MJb42tx8hPpSs56lrz/D84BFL?=
+ =?us-ascii?Q?7e8XIf4AXXJ5ruLHmTRy15559hqcTbcpUTSX+yH1lneQLcEs5yzMqMWgBtI5?=
+ =?us-ascii?Q?Psgpx2dUpbaIPCKMMhMxsm0tc2KNAp9yushVdCP3q4Bz7EPcyait+avktJAS?=
+ =?us-ascii?Q?s5REsAYkuBPKhvUnzfzuAzhuu/dOtlOkdYNf+cWwPbqnZ87IvQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yGteoiXrdfCRUBqJFZKMIrFIhfR7FAPFRP6d93wKuN21AE715xNmLaG0Sa0b?=
+ =?us-ascii?Q?9hnG6Z6RxtYGKixV7GZ3dOZUi6ox3gX77GbYNncO2ImVXNEDBKQrZBo72+Um?=
+ =?us-ascii?Q?CKq5iGMRPgILDwZyQUUXN++oPFWZnrYJso2YgX2BGXMm73F9MqX/o/gl4Zu3?=
+ =?us-ascii?Q?KvgljXcSWFbZ5hr6Z4uHp4qlTiAwClifdwfvZ3B41KD2/JUFZQquzUGxkCH6?=
+ =?us-ascii?Q?EJEwA+AsbXsgGGejSQtoLX0AjRkQZ3XM7mc66AnvXBhqNbKz9Jx2c+9P/ytu?=
+ =?us-ascii?Q?Z4pPUoHCR7B/I1q4XKZIxtrOO+/bpq2Ijh39MuUG0GzvHjSeDQrwfCqaLVst?=
+ =?us-ascii?Q?iT0h2azt6tVWZ87KmVsqZmdEUoAwCpYND6yZed3A4H0MJ1D17UN/B0+ldae0?=
+ =?us-ascii?Q?UWjutLGC8twmRcLsQ0JOh0Gj4uls2ssWWz6wmJT4U9OV+WF52cnFMKfzwb0G?=
+ =?us-ascii?Q?TCyvU87NoV6j7b9wDZKKEbsS/y2LTTkiIaY0uoSYLhJyZVKBfDr9PuhBDGk1?=
+ =?us-ascii?Q?3+5GR2JwC6MjPcj9TVNQGOx5mefp8WZjvTaY91v8knvaGylxGbn5rttMCNEc?=
+ =?us-ascii?Q?mogdNuAVDGXARl/5ujbfew3+FXi6yT3amo3uvC+fAmeTFp0Aw15bdKWVjFrW?=
+ =?us-ascii?Q?ySSyRGKaP/qUWKebiTxM02zxXrUMkyvfJz/xgcVp10BOqaH/Jh43/2+T5ZtE?=
+ =?us-ascii?Q?Qu6Rn4OqsxxL8XuoZUNW3dmRICsb2pWQEE0zRkELi9OlbQJXCHG9fMUiQoRJ?=
+ =?us-ascii?Q?BrhwEnvXS6rqruoJEzFPgRnZ4BSLeEjwCb/4O2L+RWZgmhqXq/akHBzUN3V9?=
+ =?us-ascii?Q?YZf3TU7aV5kHkwX56zOhBJRZr2KbLETKa4LhLbyC4YglkqCuSmdEyckOKmNa?=
+ =?us-ascii?Q?Hu/tK5DOZa5ZDQSZn+3lsQl85HK494BAeQWRJxjvMmQA93BjI5oac7Anza/M?=
+ =?us-ascii?Q?Lc+xdgv0gUNgRvJTg26ZMgfLa/JRgiGvqxXjxkSNbo+EoXH3lZ3Qa3RW9kJi?=
+ =?us-ascii?Q?U2XkW6OLmQNDx/9+ObCG1U5zYwXP/3BN8gs/+4H0criKe32bFFJSuH62PZTk?=
+ =?us-ascii?Q?3PDPzqlSCJEJzGNGVLoqzD55ox7+qxcvL6dCg0ps0S8sb+VRixsZLWn6+fv9?=
+ =?us-ascii?Q?+N503AQUxTsSgSaEN1wnHDyD8tL7I7YTwZHfx+sI1/hFI5/MzHaTR146dWK6?=
+ =?us-ascii?Q?pPcOL1dfPSDTZMQmV2GcSW8nz/sEr39uvqGPJf8tJlXQ5wKwladeH9M4G/zu?=
+ =?us-ascii?Q?bWt6shl8recAbr6Mb2aPTEeNZMXLdBDKVS/nyoYMqfFc4VYrNaPCz2NdRLw/?=
+ =?us-ascii?Q?VZnJSOpQtoUBfCRxkQDk3Io+oYl/l5gxOcnZywQwDrQSKOnKeqXMC5jCnpFc?=
+ =?us-ascii?Q?OzW35gtvBOMIlkkHd3eQaKO/8HHxlDzHkeO1dV2pumWScmkmMaQEGnnXpvtF?=
+ =?us-ascii?Q?dH8BQFFZn1LFAn9e+fO0jpkGLIRIE0My4GfdFGSiFsv9W4fHcLBnMm7TQVyb?=
+ =?us-ascii?Q?lnsnjcqWTeJhvLNneCi4mjTg4G76TaMj1HJU6aWOlzkRdV918nBnEQF2dsTp?=
+ =?us-ascii?Q?IN+U8tCi6H6IGG1dDypX40iwU5em2l/eIReLPPq1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3a09373-8ae6-4193-25da-08dda4431cc8
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 15:10:31.0713
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9EQiPkEgXPRFVmuuyh1hYrmFZWuB+EB4Oh++6BBEEXIq3lhlZUjUVjTgdali5Uaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5993
 
-Add support for the AD7405/ADUM770x, a high performance isolated ADC,
-1-channel, 16-bit with a second-order Σ-Δ modulator that converts an
-analog input signal into a high speed, single-bit data stream.
+On Thu, Jun 05, 2025 at 05:33:52PM +0530, Aneesh Kumar K.V wrote:
 
-Signed-off-by: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
----
-changes in v7:
- - replace kernel.h with math64.h that define DIV_ROUND_CLOSEST_ULL()
- - restructure ad7405_set_dec_rate function
- - fix indentation
- drivers/iio/adc/Kconfig  |  10 ++
- drivers/iio/adc/Makefile |   1 +
- drivers/iio/adc/ad7405.c | 259 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 270 insertions(+)
- create mode 100644 drivers/iio/adc/ad7405.c
+> > +
+> > +	/* To ensure no host side MMIO access is possible */
+> > +	ret = pci_request_regions_exclusive(pdev, "vfio-pci-tsm");
+> > +	if (ret)
+> > +		goto out_unlock;
+> > +
+> >
+> 
+> I am hitting failures here with similar changes. Can you share the Qemu
+> changes needed to make this pci_request_regions_exclusive successful.
+> Also after the TDI is unbound, we want the region ownership backto
+> "vfio-pci" so that things continue to work as non-secure device. I don't
+> see we doing that. I could add a pci_bar_deactivate/pci_bar_activate in
+> userspace which will result in vfio_unmap()/vfio_map(). But that doesn't
+> release the region ownership.
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index ad06cf556785..43af2070e27f 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -251,6 +251,16 @@ config AD7380
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called ad7380.
- 
-+config AD7405
-+	tristate "Analog Device AD7405 ADC Driver"
-+	depends on IIO_BACKEND
-+	help
-+	  Say yes here to build support for Analog Devices AD7405, ADUM7701,
-+	  ADUM7702, ADUM7703 analog to digital converters (ADC).
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called ad7405.
-+
- config AD7476
- 	tristate "Analog Devices AD7476 1-channel ADCs driver and other similar devices from AD and TI"
- 	depends on SPI
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index 07d4b832c42e..8115f30b7862 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_AD7291) += ad7291.o
- obj-$(CONFIG_AD7292) += ad7292.o
- obj-$(CONFIG_AD7298) += ad7298.o
- obj-$(CONFIG_AD7380) += ad7380.o
-+obj-$(CONFIG_AD7405) += ad7405.o
- obj-$(CONFIG_AD7476) += ad7476.o
- obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
- obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
-diff --git a/drivers/iio/adc/ad7405.c b/drivers/iio/adc/ad7405.c
-new file mode 100644
-index 000000000000..c07b90fbd429
---- /dev/null
-+++ b/drivers/iio/adc/ad7405.c
-@@ -0,0 +1,259 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Analog Devices AD7405 driver
-+ *
-+ * Copyright 2025 Analog Devices Inc.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/math64.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/util_macros.h>
-+
-+#include <linux/iio/backend.h>
-+#include <linux/iio/iio.h>
-+
-+static const unsigned int ad7405_dec_rates_range[] = {
-+	32, 1, 4096,
-+};
-+
-+struct ad7405_chip_info {
-+	const char *name;
-+	struct iio_chan_spec channel;
-+	const unsigned int full_scale_mv;
-+};
-+
-+struct ad7405_state {
-+	struct iio_backend *back;
-+	const struct ad7405_chip_info *info;
-+	unsigned int ref_frequency;
-+	unsigned int dec_rate;
-+};
-+
-+static int ad7405_set_dec_rate(struct iio_dev *indio_dev,
-+			       const struct iio_chan_spec *chan,
-+			       unsigned int dec_rate)
-+{
-+	struct ad7405_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	if (dec_rate > 4096 || dec_rate < 32)
-+		return -EINVAL;
-+
-+	if (!iio_device_claim_direct(indio_dev))
-+		return -EBUSY;
-+
-+	ret = iio_backend_oversampling_ratio_set(st->back, chan->scan_index, dec_rate);
-+	iio_device_release_direct(indio_dev);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	st->dec_rate = dec_rate;
-+
-+	return 0;
-+}
-+
-+static int ad7405_read_raw(struct iio_dev *indio_dev,
-+			   const struct iio_chan_spec *chan, int *val,
-+			   int *val2, long info)
-+{
-+	struct ad7405_state *st = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = st->info->full_scale_mv;
-+		*val2 = st->info->channel.scan_type.realbits - 1;
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		*val = st->dec_rate;
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*val = DIV_ROUND_CLOSEST_ULL(st->ref_frequency, st->dec_rate);
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_OFFSET:
-+		*val = -(1 << (st->info->channel.scan_type.realbits - 1));
-+		return IIO_VAL_INT;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad7405_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan, int val,
-+			    int val2, long info)
-+{
-+	switch (info) {
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		if (val < 0)
-+			return -EINVAL;
-+		return ad7405_set_dec_rate(indio_dev, chan, val);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad7405_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     const int **vals, int *type, int *length,
-+			     long info)
-+{
-+	switch (info) {
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		*vals = ad7405_dec_rates_range;
-+		*type = IIO_VAL_INT;
-+		return IIO_AVAIL_RANGE;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info ad7405_iio_info = {
-+	.read_raw = &ad7405_read_raw,
-+	.write_raw = &ad7405_write_raw,
-+	.read_avail = &ad7405_read_avail,
-+};
-+
-+#define AD7405_IIO_CHANNEL {					\
-+	.type = IIO_VOLTAGE,					\
-+	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-+			BIT(IIO_CHAN_INFO_OFFSET),		\
-+	.info_mask_shared_by_all = IIO_CHAN_INFO_SAMP_FREQ |	\
-+			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+	.info_mask_shared_by_all_available =			\
-+			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+	.indexed = 1,						\
-+	.channel = 0,						\
-+	.channel2 = 1,						\
-+	.differential = 1,					\
-+	.scan_index = 0,					\
-+	.scan_type = {						\
-+		.sign = 'u',					\
-+		.realbits = 16,					\
-+		.storagebits = 16,				\
-+	},							\
-+}
-+
-+static const struct ad7405_chip_info ad7405_chip_info = {
-+	.name = "ad7405",
-+	.full_scale_mv = 320,
-+	.channel = AD7405_IIO_CHANNEL,
-+};
-+
-+static const struct ad7405_chip_info adum7701_chip_info = {
-+	.name = "adum7701",
-+	.full_scale_mv = 320,
-+	.channel = AD7405_IIO_CHANNEL,
-+};
-+
-+static const struct ad7405_chip_info adum7702_chip_info = {
-+	.name = "adum7702",
-+	.full_scale_mv = 64,
-+	.channel = AD7405_IIO_CHANNEL,
-+};
-+
-+static const struct ad7405_chip_info adum7703_chip_info = {
-+	.name = "adum7703",
-+	.full_scale_mv = 320,
-+	.channel = AD7405_IIO_CHANNEL,
-+};
-+
-+static const char * const ad7405_power_supplies[] = {
-+	"vdd1",	"vdd2",
-+};
-+
-+static int ad7405_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct iio_dev *indio_dev;
-+	struct ad7405_state *st;
-+	struct clk *clk;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+
-+	st->info = device_get_match_data(dev);
-+	if (!st->info)
-+		return dev_err_probe(dev, -EINVAL, "no chip info\n");
-+
-+	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(ad7405_power_supplies),
-+					     ad7405_power_supplies);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to get and enable supplies");
-+
-+	clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	st->ref_frequency = clk_get_rate(clk);
-+	if (!st->ref_frequency)
-+		return -EINVAL;
-+
-+	indio_dev->name = st->info->name;
-+	indio_dev->channels = &st->info->channel;
-+	indio_dev->num_channels = 1;
-+	indio_dev->info = &ad7405_iio_info;
-+
-+	st->back = devm_iio_backend_get(dev, NULL);
-+	if (IS_ERR(st->back))
-+		return dev_err_probe(dev, PTR_ERR(st->back),
-+				     "failed to get IIO backend");
-+
-+	ret = iio_backend_chan_enable(st->back, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_iio_backend_enable(dev, st->back);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Set 256 decimation rate. The default value in the AXI_ADC register
-+	 * is 0, so we set the register with a decimation rate value that is
-+	 * functional for all parts.
-+	 */
-+	ret = ad7405_set_dec_rate(indio_dev, &indio_dev->channels[0], 256);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(dev, indio_dev);
-+}
-+
-+static const struct of_device_id ad7405_of_match[] = {
-+	{ .compatible = "adi,ad7405", .data = &ad7405_chip_info, },
-+	{ .compatible = "adi,adum7701", .data = &adum7701_chip_info, },
-+	{ .compatible = "adi,adum7702", .data = &adum7702_chip_info, },
-+	{ .compatible = "adi,adum7703", .data = &adum7703_chip_info, },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ad7405_of_match);
-+
-+static struct platform_driver ad7405_driver = {
-+	.driver = {
-+		.name = "ad7405",
-+		.owner = THIS_MODULE,
-+		.of_match_table = ad7405_of_match,
-+	},
-+	.probe = ad7405_probe,
-+};
-+module_platform_driver(ad7405_driver);
-+
-+MODULE_AUTHOR("Dragos Bogdan <dragos.bogdan@analog.com>");
-+MODULE_AUTHOR("Pop Ioan Daniel <pop.ioan-daniel@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD7405 driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("IIO_BACKEND");
--- 
-2.34.1
+Again, IMHO, we should not be doing this dynamically. VFIO should do
+pci_request_regions_exclusive() once at the very start and it should
+stay that way.
 
+There is no reason to change it dynamically.
+
+The only decision to make is if all vfio should switch to exclusive
+mode or if we need to make it optional for userspace.
+
+Jason
 
