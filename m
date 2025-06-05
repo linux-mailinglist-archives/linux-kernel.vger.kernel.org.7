@@ -1,175 +1,177 @@
-Return-Path: <linux-kernel+bounces-674641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E18ACF232
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:40:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265DDACF23D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6E5188F887
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6206173A68
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972E81957FC;
-	Thu,  5 Jun 2025 14:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E0194A45;
+	Thu,  5 Jun 2025 14:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="dMkiogsX"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzNbi196"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B5715747D;
-	Thu,  5 Jun 2025 14:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1518B2E659;
+	Thu,  5 Jun 2025 14:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749134389; cv=none; b=dErTnalugsfL30gLP31p89UKqYEgMSy3vlbq9SvF6TtxdKckSeHNjJczihhMeyRp35C3bZw77T8HdHfRfMBmdmZKLNlHKeQ9P0nOssPfEZ54ZRXPti+I6VoNbfTVVdEXmbvmp6MWix4U6r1ZbUskt1z7PmD7tzV0UaON+XwwW7o=
+	t=1749134507; cv=none; b=CNsz10f0OqisqDKzii286y93lWK9YKVbzB/lJcq8C3TrLfCtXLx6iHYaZFNOvAcH122v733vfT5k5lRII699qv94d2BEP/TQp+Wv+y+9ThHos3fU4N5olQipm6bp+hnesihwL12VaJUyImya+4fAdj2JjH+hLFq+NZUFU/SX6jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749134389; c=relaxed/simple;
-	bh=L6aA5Viruzm2wERJh3j0+c0zu7oOACnuzqloM0reXk8=;
+	s=arc-20240116; t=1749134507; c=relaxed/simple;
+	bh=yO5fqt9HuK0kjVxjDKW2m26zjnbn/JAZBHwnXsXNWqQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jGxJl3uOuI16qaToskatba8IVtNdvuDcIDvYIT4ALJ538FqO8KmJzJsjbaInJSWru3J3ev/Snko4lOf0wc7XrlavFB1gmfKaGH87J+n7ooz+yLZGioh1RaN3MKvPKMEvzxohu2MLg/HjM7ac9jFHTtqa5tN9sPNwLhIPaN1eeJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=dMkiogsX; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=76dZEhygqEmfXO4M+UtL7RXa31FuQvFw4pYtr93FC8o=; b=dMkiogsXx/sRijvX
-	p2WEvMt21radIYsASpJfvJ+7YP2XRMaVw6+cFA0HrrAC/PZYcio9fHUnq+yM+Jhe7MgLQG4+cgrsj
-	Ok7NilWtZRk0F52cf9WltlUL5ATLDKNBf3VcbltxEelEeeac79JZdvKu53OoWJTGMu0eq72Kq/x2o
-	pfzUjsp/VfXbYqMJcffcspeC705dbTmBvGTHZZC3qXu20ekyvM0OqoWq7AMXus32hteAL7WcQxSoU
-	gbd8f6EOtxKcj8Y/UYR8JbtiAjdE+TTfau/Vn432dzfevLeAdL+OTn/wv27F/C97MrP1EbOjEvvSO
-	UmQl+KR/VkKvRoLgbQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uNBkr-007nEF-2s;
-	Thu, 05 Jun 2025 14:39:41 +0000
-Date: Thu, 5 Jun 2025 14:39:41 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	linux-arch@vger.kernel.org, netdev@vger.kernel.org,
-	Nadav Amit <nadav.amit@gmail.com>, Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Subject: Re: Large modules with 6.15 [was: [PATCH v4 6/6] percpu/x86: Enable
- strict percpu checks via named AS qualifiers]
-Message-ID: <aEGsLeUWj6_wiovf@gallifrey>
-References: <20250127160709.80604-1-ubizjak@gmail.com>
- <20250127160709.80604-7-ubizjak@gmail.com>
- <02c00acd-9518-4371-be2c-eb63e5d11d9c@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQd02+Y5s/Ewc12ru8zg1Q2LfiauCFt8wIAbYsHwP0MftS5Jlv1fkWAyeCpGpZ9gabBc4bRPf4olnXIqvlpSM74ULoMmv52b0MXGFEwtUnE3ts18sFGXiY+NGuJU7Lrs4x2c9vz5WRFxGYwiLhL0scwjTd38RUCBuSC8clGkgFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzNbi196; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4351AC4CEEB;
+	Thu,  5 Jun 2025 14:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749134506;
+	bh=yO5fqt9HuK0kjVxjDKW2m26zjnbn/JAZBHwnXsXNWqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WzNbi196JZko7WsBkAtNHT7clAsU2rlKFe1W4Ry43owbvfA8kIZMgoGmnSVuNUUiR
+	 nQSF0LTyLqzNrTrYsEqDG9WyrzGG61wZbmz9OA7zpuKH+w5roTplYwUmuAJ3TXMn3e
+	 TjrRtqrKO03hyYGUMpmOeRbhP+RfHMaHWyW9NnZBJdkNVOe3rr/NP2zbYtZJ824rzG
+	 k2YcvaO3jN12B6d51/qRc1iqAOyCz9w/5igBEMxnvPP7CrQkOaBKpDUaCBnbxxQ4s/
+	 F5WixNznQg7yOHqPGtqPl4wUUU6tkw2Sl6Y0mWVChw92iJAZ4Gnn6IhXQ6QI92r/ZI
+	 n1XAME+AgMzUQ==
+Date: Thu, 5 Jun 2025 09:41:44 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Cc: Devarsh Thakkar <devarsht@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Jayesh Choudhary <j-choudhary@ti.com>, Nishanth Menon <nm@ti.com>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v9 2/4] dt-bindings: display: ti: Add schema for AM625
+ OLDI Transmitter
+Message-ID: <174913450088.2539370.15860584421984514366.robh@kernel.org>
+References: <20250528122544.817829-1-aradhya.bhatia@linux.dev>
+ <20250528122544.817829-3-aradhya.bhatia@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <02c00acd-9518-4371-be2c-eb63e5d11d9c@kernel.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 14:39:23 up 38 days, 22:52,  1 user,  load average: 0.04, 0.06, 0.02
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20250528122544.817829-3-aradhya.bhatia@linux.dev>
 
-* Jiri Slaby (jirislaby@kernel.org) wrote:
-> On 27. 01. 25, 17:05, Uros Bizjak wrote:
-> > This patch declares percpu variables in __seg_gs/__seg_fs named AS
-> > and keeps them named AS qualified until they are dereferenced with
-> > percpu accessor. This approach enables various compiler check
-> > for cross-namespace variable assignments.
-> > 
-> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> > Acked-by: Nadav Amit <nadav.amit@gmail.com>
-> > Cc: Dennis Zhou <dennis@kernel.org>
-> > Cc: Tejun Heo <tj@kernel.org>
-> > Cc: Christoph Lameter <cl@linux.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Cc: Brian Gerst <brgerst@gmail.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > ---
-> >   arch/x86/include/asm/percpu.h | 15 ++++++++++++---
-> >   1 file changed, 12 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-> > index 27f668660abe..474d648bca9a 100644
-> > --- a/arch/x86/include/asm/percpu.h
-> > +++ b/arch/x86/include/asm/percpu.h
-> > @@ -95,9 +95,18 @@
-> >   #endif /* CONFIG_SMP */
-> > -#define __my_cpu_type(var)	typeof(var) __percpu_seg_override
-> > -#define __my_cpu_ptr(ptr)	(__my_cpu_type(*(ptr))*)(__force uintptr_t)(ptr)
-> > -#define __my_cpu_var(var)	(*__my_cpu_ptr(&(var)))
-> > +#if defined(CONFIG_USE_X86_SEG_SUPPORT) && defined(USE_TYPEOF_UNQUAL)
-> > +# define __my_cpu_type(var)	typeof(var)
-> > +# define __my_cpu_ptr(ptr)	(ptr)
-> > +# define __my_cpu_var(var)	(var)
-> > +
-> > +# define __percpu_qual		__percpu_seg_override
-> > +#else
-> > +# define __my_cpu_type(var)	typeof(var) __percpu_seg_override
-> > +# define __my_cpu_ptr(ptr)	(__my_cpu_type(*(ptr))*)(__force uintptr_t)(ptr)
-> > +# define __my_cpu_var(var)	(*__my_cpu_ptr(&(var)))
-> > +#endif
-> > +
-> 
-> Another issue with this is this causes all modules in 6.15 are 2-4 times
-> (compressed size) bigger:
 
-Oh, is that why config-all kernel is too big?
+On Wed, 28 May 2025 17:55:42 +0530, Aradhya Bhatia wrote:
+> From: Aradhya Bhatia <a-bhatia1@ti.com>
+> 
+> The OLDI transmitters (TXes) do not have registers of their own, and are
+> dependent on the source video-ports (VPs) from the DSS to provide
+> configuration data. This hardware doesn't directly sit on the internal
+> bus of the SoC, but does so via the DSS. Hence, the OLDI TXes are
+> supposed to be child nodes under the DSS, and not independent devices.
+> 
+> Two of the OLDI TXes can function in tandem to output dual-link OLDI
+> output, or cloned single-link outputs. In these cases, one OLDI will be
+> the primary OLDI, and the other one, a companion. The following diagram
+> represents such a configuration.
+> 
+> +-----+-----+         +-------+
+> |     |     |         |       |
+> |     | VP1 +----+--->+ OLDI0 |  (Primary - may need companion)
+> |     |     |    |    |       |
+> | DSS +-----+    |    +-------+
+> |     |     |    |
+> |     | VP2 |    |    +-------+
+> |     |     |    |    |       |
+> +-----+-----+    +--->+ OLDI1 |  (Companion OLDI)
+>                       |       |
+>                       +-------+
+> 
+> The DSS in AM625 SoC has a configuration like the one above. The AM625
+> DSS VP1 (port@0) can connect and control 2 OLDI TXes, to use them in
+> dual-link or cloned single-link OLDI modes. It is only the VP1 that can
+> connect to either OLDI TXes for the AM625 DSS, and not the VP2.
+> 
+> Alternatively, on some future TI SoCs, along with the above
+> configuration, the OLDI TX can _also_ connect to separate video sources,
+> making them work entirely independent of each other. In this case,
+> neither of the OLDIs are "companion" or "secondary" OLDIs, and nor do
+> they require one. They both are independent and primary OLDIs. The
+> following diagram represents such a configuration.
+> 
+> +-----+-----+               +-------+
+> |     |     |               |       |
+> |     | VP1 +--+----------->+ OLDI0 |  (Primary - may need companion)
+> |     |     |  |            |       |
+> |     +-----+  |            +-------+
+> |     |     |  |
+> |     | VP2 |  |
+> |     |     |  |
+> | DSS +-----+  |   +---+    +-------+
+> |     |     |  +-->+ M |    |       |
+> |     | VP3 +----->+ U +--->+ OLDI1 |  (Companion or Primary)
+> |     |     |      | X |    |       |
+> |     +-----+      +---+    +-------+
+> |     |     |
+> |     | VP4 |
+> |     |     |
+> +-----+-----+
+> 
+> Note that depending on the mux configuration, the OLDIs can either be
+> working together in tandem - sourced by VP1, OR, they could be working
+> independently sourced by VP1 and VP3 respectively.
+> The idea is to support all the configurations with this OLDI TX schema.
+> 
+> The OLDI functionality is further supported by a system-control module,
+> which contains a few registers to control OLDI IO power and other
+> electrical characteristics of the IO lanes.
+> 
+> Add devicetree binding schema for the OLDI TXes to support various
+> configurations, and extend their support to the AM625 DSS.
+> 
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+> ---
+> Changes Log:
+> V9:
+>   - Reword the "ti,companion-oldi" property description.
+>   - Fix the missing "ti,companion-oldi" property in the schema example.
+>   - v8 of this patch: https://lore.kernel.org/all/20250525151721.567042-3-aradhya.bhatia@linux.dev/
+> 
+> V8:
+>   - Drop the condition that made the "secondary-oldi" and "companion-oldi"
+>     properties mutually exclusive.
+>   - Add "ti,am62l-dss" compatible to the list of compatibles that cannot
+>     use the multiple endpoints or have "oldi-transmitters", on port@0.
+>   - Because of above, drop R-b tags from Tomi Valkeinen, and Rob Herring.
+>   - v7 of this patch: https://lore.kernel.org/all/20250329133943.110698-3-aradhya.bhatia@linux.dev/
+> 
+> ---
+>  .../bindings/display/ti/ti,am625-oldi.yaml    |  79 +++++++++
+>  .../bindings/display/ti/ti,am65x-dss.yaml     | 157 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  3 files changed, 237 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> 
 
-Dave
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> $ ll /usr/lib/modules/*-[0-9]-default/kernel/drivers/atm/atmtcp.ko.zst
-> > -rw-r--r--. 1 root root 10325 May 13 11:49
-> /usr/lib/modules/6.14.6-2-default/kernel/drivers/atm/atmtcp.ko.zst
-> > -rw-r--r--. 1 root root 39677 Jun  2 09:13
-> /usr/lib/modules/6.15.0-1-default/kernel/drivers/atm/atmtcp.ko.zst
-> 
-> It's due to larger .BTF section:
-> .BTF              PROGBITS         0000000000000000  [-00003080-]
-> [-       00000000000011a8-]  {+00003100+}
-> {+       0000000000012cf8+}  0000000000000000           0     0     1
-> 
-> There are a lot of new BTF types defined in each module like:
-> +attribute_group STRUCT
-> +backing_dev_info STRUCT
-> +bdi_writeback STRUCT
-> +bin_attribute STRUCT
-> +bio_end_io_t TYPEDEF
-> +bio_list STRUCT
-> +bio_set STRUCT
-> +bio STRUCT
-> +bio_vec STRUCT
-> 
-> Reverting this gives me back to normal sizes.
-> 
-> Any ideas?
-> 
-> FTR downstream report:
-> https://bugzilla.suse.com/show_bug.cgi?id=1244135
-> 
-> thanks,
-> -- 
-> js
-> suse labs
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
