@@ -1,234 +1,280 @@
-Return-Path: <linux-kernel+bounces-674642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EE6ACF23B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:41:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07925ACF222
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5628171B17
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C106188A25A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3506C1957FC;
-	Thu,  5 Jun 2025 14:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jNG0vLci"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E48917A2EC;
+	Thu,  5 Jun 2025 14:36:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D5A2E659;
-	Thu,  5 Jun 2025 14:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8914C154457
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749134491; cv=none; b=k1mQArOKDlmYlyXhhdb+Pf0SuiFwBUDYeTN4BSFKDfoZBUdCQP8UFVEqdRV4fe9jkvIiJVitFs43aiuK7keEWnehD4rOsQqt6ud6M77I7UdSUphul4DJoBL209e739vul8Xtlo4ittKjYCcX63qtfCv64qDmTBa9YNeiDimYSRs=
+	t=1749134165; cv=none; b=iGapE/CQBIgriumT0SpRyclyCEEMAentSGZVwOmZYSGSHQ4wI8OKadct0XjBReubwiCFwd/zayfbSbpycyRyNVmLOcF4VjcClrZu/IPBCKffy9VOxNuM6sjssmgGs/DfxFRQH1khOAejNnwbgyRmSkhjVsxm3fiFNY6kdpG8xUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749134491; c=relaxed/simple;
-	bh=G4+47qc1n3bzX5gU3JB3YwOCDw7FrUpLqtOCy4J2WNk=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=blOrspqQ/StGYrJD/7hR4SXX52XZLyqbHGdiBuUsMLHTE+xwFsZUITg+jyCCR5waoeunev3gaxJy3m2dcvNen7TJ2+FzWkSBwSi58dS8IdQWfKZMHt7T00aS87P69QyOn1VU549VSomJ8B/bNE2y4EiPL+AyfGD3/DAztCMyOpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jNG0vLci; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555BYYaP029077;
-	Thu, 5 Jun 2025 14:35:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=WMO587
-	RkCAs2RHbCh4bywkWzWURKdVqSdrgZo4cRfeQ=; b=jNG0vLciJY2CsB5MAZbwgY
-	O4QO0DDRBrQms+0ruJXhfcNzzkC1yniWGKFECzJ+MhszMCHb89xAYZ2PWGPtIwcZ
-	K/b0xogWr1Bb/0xKitRMtLw0LADyQWfeZK8qtcYns6H8ECHJbCezIc0QenuCODqO
-	M4YXSkNeNmbmGGL+UNBkE8N3xwy/2SffAO6vuXCo/fRcuGSjNWkkDgPtKIBppTmJ
-	sBdOroRnRffKAMFPxsvHMTEbq0qdinfV5SesdZa/f20mfQNQi/5yC9LIiQhMfI+T
-	Sq7kCxGX1ET8vu1OkggVfqI5EB4RmJtUz1mBOQwMy9INyljPJ8XSA8/J+b+pQ5aw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geyhbm9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 14:35:45 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 555EVwFO007403;
-	Thu, 5 Jun 2025 14:35:45 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geyhbm6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 14:35:45 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 555D1UQm012562;
-	Thu, 5 Jun 2025 14:35:44 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 470et2ms1f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 14:35:43 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 555EZhV515401646
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Jun 2025 14:35:43 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2E18558059;
-	Thu,  5 Jun 2025 14:35:43 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C630D5804B;
-	Thu,  5 Jun 2025 14:35:40 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.24.49])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Jun 2025 14:35:40 +0000 (GMT)
-Message-ID: <a7b89a65ab24454676b8eb858d2b24445abe0a30.camel@linux.ibm.com>
-Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
- signatures verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-modules@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        David
- Woodhouse	 <dwmw2@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis
- Chamberlain	 <mcgrof@kernel.org>,
-        Petr Pavlu <petr.pavlu@suse.com>,
-        Sami
- Tolvanen	 <samitolvanen@google.com>,
-        Daniel Gomez <da.gomez@samsung.com>,
-        Roberto Sassu	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge
- E. Hallyn"	 <serge@hallyn.com>,
-        Peter Jones <pjones@redhat.com>,
-        Robert
- Holmes	 <robeholmes@gmail.com>,
-        Jeremy Cline <jcline@redhat.com>, Coiby Xu	
- <coxu@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Gerd Hoffmann <kraxel@redhat.com>
-In-Reply-To: <20250602132535.897944-1-vkuznets@redhat.com>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Jun 2025 10:35:40 -0400
+	s=arc-20240116; t=1749134165; c=relaxed/simple;
+	bh=xNgWHesA4MpAxyzyjfbvxsgN2h1+0cInSmxdKAuSg+o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=N/1OWzBaf/pWC7bL81UhS8W/lkBtzPHjoNlp6IykrcKGr89VcVnMrDzsMwRZwef6xNC0KzuJTCNF6x2KfULjljMaIt3BLNET8gVIUtG/G2HonJWtHfJMWvdwJl3CjKXq9Ryuh6K9I4bb0OfSUS9ZqJB3QRdpjjvtGNlIeNYUkFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddc158b78aso12811915ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 07:36:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749134162; x=1749738962;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FwNez352C+0vLnrjKDxvQz6y/XZ5LQqbLNXM7j73vXA=;
+        b=Ifcy0JEShJXmOPKdeHBC4UoYjHfV8wC4aPpvO7CGpD+m06tyn3xcrYGOajDZoX9OCW
+         GEmnsh59LQ1EvNPYPyGbHgbTakiU0EUoosVDF6IjC4KmOrHwH8aGkDpP0WNPNnJJzTCA
+         0xGqbXmgQXPEC44S+OKKtCYBwDmFI0k0SLH08DW96I4z1omzmv9mz+eV5fANvCDdS8r3
+         zE/FlWjIBwHht+7varZiA+KBcGEN13SbFzAtPufSfXwJRn9USVTauGPGvVIBrsW9/ssC
+         oS5EVazJy05HXmR+57UzpyuqQ62DIlWovAW+XzmcCLTslVYL6n1V/U2xzn1qF1nZlzQm
+         Rf4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWDOgPZEaBPmHaAPi5YLXspK4M3c+DO0npWRH5chAIzITrqBxsiWpPYTywCNIFmBd94i7P2VlKZZg1O17c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQWylmejwEvjlonHmU09kjhaaUQOGSYHeZyR9P413BGyA8oT9L
+	X8ieZgY3Yav6EqgmJXbVFT+BurDpfv+QdhS39QfnuFR7ffLbhC+ZRg3/1EaVpLnvlyXNOc/935g
+	C5OFaWD2wp1qUwdPSDGnMxuhczCEdZCqqzsres3pNV9HcyAtxHqeadwnrezw=
+X-Google-Smtp-Source: AGHT+IEgV7VFustUpAl0/PS6HgiAGzZsDGwGcIoNzCutuqWG0mtUcCjw/VNJONoAgX50gAG6IC9yk0cLl1XE2EK7IzAL9w9CbqJR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=ea09f6EH c=1 sm=1 tr=0 ts=6841ab41 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=D1HWW76GpMGOKR5Gno0A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: vHFrR4Ila0Sw6f-MNBSE6vwCv-niH7M_
-X-Proofpoint-ORIG-GUID: RcUfx5CmD7cpmR59MoAjvRUeAcHLXhaN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDEyNSBTYWx0ZWRfX67RurhBXVm98 BdyZYmy5wGJ7aaw5jqMtNbWCizupbUA2uS8Tqr03rxbi0joFb6JPq9QV4+GU6QTK7bvHLf0j1Sz gQt1qwHoYqn+YS66brb4rTFalIq/Hi//iCojEyP1+U49l9vUKLLZXfMOQVMuKm9gsaOTGBj1RKx
- 7HRkrt0bkCD9wzUHnuKt+flSboAUvguAmP3W1p4I7IVCCo7Hs8kANoBJBCISh/+H/4oKUy6nczM 5httlEmusJr4x4g42Nl7IeyoJR84CPI+cNPg1/fpqIv+aJuj8jUs32K2olnhWBweGTHSn1r81qh 0mJ6BfmBg+/HzFC8XsCLaCJ+/ufzsZnsgkKxzF17QcGRgrQuWncXGStU1pfVMy6dABaPNqDipkz
- Xmr6LaFkpx2OyJaoddr8/1FmuT0l1UwhaKkYN30tU2gaA/237EllMr8uMmI/wqge+vF4tbiP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_03,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- spamscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 phishscore=0 mlxscore=0 adultscore=0 clxscore=1011
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050125
+X-Received: by 2002:a05:6e02:398e:b0:3dd:b726:cc52 with SMTP id
+ e9e14a558f8ab-3ddbece8c89mr91335225ab.5.1749134162620; Thu, 05 Jun 2025
+ 07:36:02 -0700 (PDT)
+Date: Thu, 05 Jun 2025 07:36:02 -0700
+In-Reply-To: <a4c7f11b-b503-4525-adb4-2d7263292614@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6841ab52.a00a0220.d4325.001e.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] KASAN: slab-use-after-free Read in gfs2_invalidate_folio
+From: syzbot <syzbot+3a36aeabd31497d63f6e@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-06-02 at 15:25 +0200, Vitaly Kuznetsov wrote:
-> UEFI SecureBoot 'db' keys are currently not trusted for modules signature=
-s
-> verification. RedHat based downstream distros (RHEL, Fedora, ...) carry a
-> patch changing that for many years (since 2019 at least). This RFC is an
-> attempt to upstream it as the functionality seems to be generally useful.
->=20
-> Previously, pre-boot keys (SecureBoot 'db', MOK) were not trusted within
-> kernel at all. Things have changed since '.machine' keyring got introduce=
-d
-> making MOK keys optionally trusted.
+Hello,
 
-The changes were made incrementally:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in block_invalidate_folio
 
-The original trust model relied on the secure boot signature chain of trust=
-.
-After pivoting root, only keys that were built into the kernel were trusted=
-.=20
-Anyone building a kernel could embed their keys in the kernel image, but th=
-ere
-was no way of loading other keys.
+INFO: task kworker/0:1H:152 blocked for more than 143 seconds.
+      Not tainted 6.15.0-syzkaller-12141-gec7714e49479-dirty #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:1H    state:D stack:28456 pid:152   tgid:152   ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: gfs2-glock/syz:syz glock_work_func
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5396 [inline]
+ __schedule+0x116a/0x5de0 kernel/sched/core.c:6785
+ __schedule_loop kernel/sched/core.c:6863 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:6878
+ io_schedule+0xbf/0x130 kernel/sched/core.c:7723
+ bit_wait_io+0x15/0xe0 kernel/sched/wait_bit.c:247
+ __wait_on_bit_lock+0x112/0x1a0 kernel/sched/wait_bit.c:90
+ out_of_line_wait_on_bit_lock+0xd9/0x110 kernel/sched/wait_bit.c:117
+ wait_on_bit_lock_io include/linux/wait_bit.h:221 [inline]
+ __lock_buffer fs/buffer.c:71 [inline]
+ lock_buffer include/linux/buffer_head.h:434 [inline]
+ discard_buffer fs/buffer.c:1612 [inline]
+ block_invalidate_folio+0x56c/0x600 fs/buffer.c:1669
+ folio_invalidate mm/truncate.c:140 [inline]
+ truncate_cleanup_folio+0x2f6/0x490 mm/truncate.c:160
+ truncate_inode_pages_range+0x24e/0xe50 mm/truncate.c:379
+ rgrp_go_inval+0x1a4/0x210 fs/gfs2/glops.c:239
+ do_xmote+0x9ca/0xf70 fs/gfs2/glock.c:759
+ run_queue+0x4c4/0x6d0 fs/gfs2/glock.c:871
+ glock_work_func+0x127/0x4d0 fs/gfs2/glock.c:1096
+ process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3321 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+ kthread+0x3c5/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+INFO: task syz-executor.0:5338 blocked for more than 143 seconds.
+      Not tainted 6.15.0-syzkaller-12141-gec7714e49479-dirty #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor.0  state:D stack:24136 pid:5338  tgid:5338  ppid:1      task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5396 [inline]
+ __schedule+0x116a/0x5de0 kernel/sched/core.c:6785
+ __schedule_loop kernel/sched/core.c:6863 [inline]
+ schedule+0xe7/0x3a0 kernel/sched/core.c:6878
+ schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common+0x2fc/0x4e0 kernel/sched/completion.c:116
+ __flush_work+0x7d7/0xcc0 kernel/workqueue.c:4246
+ gfs2_clear_rgrpd+0x28d/0x330 fs/gfs2/rgrp.c:731
+ gfs2_put_super+0x4a1/0x780 fs/gfs2/super.c:637
+ generic_shutdown_super+0x153/0x390 fs/super.c:643
+ kill_block_super+0x3b/0x90 fs/super.c:1753
+ gfs2_kill_sb+0x371/0x420 fs/gfs2/ops_fstype.c:1798
+ deactivate_locked_super+0xc1/0x1a0 fs/super.c:474
+ deactivate_super fs/super.c:507 [inline]
+ deactivate_super+0xde/0x100 fs/super.c:503
+ cleanup_mnt+0x225/0x450 fs/namespace.c:1417
+ task_work_run+0x150/0x240 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:114
+ exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
+ do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd41ae7f197
+RSP: 002b:00007ffc04a0b268 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007fd41aec93b9 RCX: 00007fd41ae7f197
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc04a0b320
+RBP: 00007ffc04a0b320 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc04a0c3e0
+R13: 00007fd41aec93b9 R14: 000000000000f02b R15: 0000000000000001
+ </TASK>
 
-- The original exception was for verifying the kexec kernel image.  For tha=
-t
-reason and that reason alone, the pre-boot keys were loaded onto the platfo=
-rm
-keyring.
+Showing all locks held in the system:
+1 lock held by khungtaskd/41:
+ #0: ffffffff8dfc0140 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8dfc0140 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8dfc0140 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6770
+2 locks held by kworker/0:1H/152:
+ #0: ffff888021117148 ((wq_completion)gfs2-glock/syz:syz){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3213
+ #1: ffffc9000305fd10 ((work_completion)(&(&gl->gl_work)->work)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3214
+2 locks held by getty/5001:
+ #0: ffff88802b11f0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900000db2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
+1 lock held by syz-executor.0/5338:
+ #0: ffff888023eb40e0 (&type->s_umount_key#66){+.+.}-{4:4}, at: __super_lock fs/super.c:57 [inline]
+ #0: ffff888023eb40e0 (&type->s_umount_key#66){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:72 [inline]
+ #0: ffff888023eb40e0 (&type->s_umount_key#66){+.+.}-{4:4}, at: deactivate_super fs/super.c:506 [inline]
+ #0: ffff888023eb40e0 (&type->s_umount_key#66){+.+.}-{4:4}, at: deactivate_super+0xd6/0x100 fs/super.c:503
 
-- From an IMA perspective, the second exception allowed loading public keys
-needed for verifying locally signed code.  The first attempt stored and loa=
-ded
-keys from the TPM.  (Unfortunately) instead, what was upstreamed was loadin=
-g
-public keys stored in MOK.  There's an option to only load CA certificates
-stored in MOK, which would be "safer".
+=============================================
 
-Changing the existing behavior will impact everyone's security/integrity
-assumptions of the existing system trusted keyrings.=20
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 41 Comm: khungtaskd Not tainted 6.15.0-syzkaller-12141-gec7714e49479-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
+ watchdog+0xfd1/0x1760 kernel/hung_task.c:470
+ kthread+0x3c5/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0,2-3:
+NMI backtrace for cpu 3
+CPU: 3 UID: 0 PID: 0 Comm: swapper/3 Not tainted 6.15.0-syzkaller-12141-gec7714e49479-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 7b 57 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa eb 07 0f 00 2d 43 c0 1e 00 fb f4 <e9> 7c fa 02 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffc90000197df8 EFLAGS: 00000282
+RAX: 0000000000076507 RBX: 0000000000000003 RCX: ffffffff8b4b4c79
+RDX: 0000000000000000 RSI: ffffffff8d925e13 RDI: ffffffff8bd436e0
+RBP: ffffed10030d3000 R08: 0000000000000001 R09: ffffed100d66664d
+R10: ffff88806b33326b R11: 0000000000000001 R12: 0000000000000003
+R13: ffff888018698000 R14: ffffffff9037c950 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880d7e50000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7be17576e8 CR3: 0000000025b50000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:743
+ default_idle_call+0x6d/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x391/0x510 kernel/sched/idle.c:325
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
+ start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
+ common_startup_64+0x13e/0x148
+ </TASK>
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-syzkaller-12141-gec7714e49479-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 7b 57 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa eb 07 0f 00 2d 43 c0 1e 00 fb f4 <e9> 7c fa 02 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffffff8dc07e08 EFLAGS: 00000282
+RAX: 00000000000c0e89 RBX: 0000000000000000 RCX: ffffffff8b4b4c79
+RDX: 0000000000000000 RSI: ffffffff8d925e13 RDI: ffffffff8bd436e0
+RBP: fffffbfff1b92ef0 R08: 0000000000000001 R09: ffffed100d60664d
+R10: ffff88806b03326b R11: 0000000000000001 R12: 0000000000000000
+R13: ffffffff8dc97780 R14: ffffffff9037c950 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880d7b50000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fad04958b18 CR3: 000000000dd82000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:743
+ default_idle_call+0x6d/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x391/0x510 kernel/sched/idle.c:325
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
+ rest_init+0x16b/0x2b0 init/main.c:744
+ start_kernel+0x3ee/0x4d0 init/main.c:1101
+ x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:307
+ x86_64_start_kernel+0x130/0x190 arch/x86/kernel/head64.c:288
+ common_startup_64+0x13e/0x148
+ </TASK>
+NMI backtrace for cpu 2
+CPU: 2 UID: 0 PID: 0 Comm: swapper/2 Not tainted 6.15.0-syzkaller-12141-gec7714e49479-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 7b 57 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa eb 07 0f 00 2d 43 c0 1e 00 fb f4 <e9> 7c fa 02 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffc90000187df8 EFLAGS: 00000282
+RAX: 000000000006f871 RBX: 0000000000000002 RCX: ffffffff8b4b4c79
+RDX: 0000000000000000 RSI: ffffffff8d925e13 RDI: ffffffff8bd436e0
+RBP: ffffed1003051910 R08: 0000000000000001 R09: ffffed100d64664d
+R10: ffff88806b23326b R11: 0000000000000001 R12: 0000000000000002
+R13: ffff88801828c880 R14: ffffffff9037c950 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880d7d50000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fad04915480 CR3: 00000000334de000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:743
+ default_idle_call+0x6d/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x391/0x510 kernel/sched/idle.c:325
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
+ start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
+ common_startup_64+0x13e/0x148
+ </TASK>
 
-What's clear today is that we need finer key granularity than at the level =
-of
-keyrings.
 
-Mimi
+Tested on:
 
-> Before that, there was a discussion to
-> make .platform trusted by default:
-> https://lore.kernel.org/lkml/1556116431-7129-1-git-send-email-robeholmes@=
-gmail.com/
-> which didn't go very far because the assumption was that this is only use=
-ful
-> when the user has control over 'db'. I believe there's a fairly common
-> use-case where this is true.
->=20
-> The use-case: virtualized and cloud infrastructure generally provide an
-> ability to customize SecureBoot variables, in particular, it is possible
-> to bring your own SecureBoot 'db'. This may come handy when a user wants =
-to
-> load a third party kernel module (self built or provided by a third party
-> vendor) while still using a distro provided kernel. Generally, distro
-> provided kernels sign modules with an ephemeral key and discard the priva=
-te
-> part during the build. While MOK can sometimes be used to sign something
-> out-of-tree, it is a tedious process requiring either a manual interventi=
-on
-> with shim or a 'certmule'=20
-> (see https://blogs.oracle.com/linux/post/the-machine-keyring). In contras=
-t,
-> the beauty of using SecureBoot 'db' in this scenario is that for public
-> clouds and virtualized infrastructure it is normally a property of the OS
-> image (or the whole infrastructure/host) and not an individual instance;
-> this means that all instances created from the same template will have 'd=
-b'
-> keys in '.platform' by default.
->=20
-> The suggested approach is not to change the default, but to introduce a
-> Kconfig variable (CONFIG_MODULE_SIG_PLATFORM) doing the job. Note, the=
-=20
-> kernel already trusts '.platform' for kexec (see commit 278311e417be=20
-> ("kexec, KEYS: Make use of platform keyring for signature verify"))
-> and dm-verity (see commit 6fce1f40e951 ("dm verity: add support for
-> signature verification with platform keyring")) so maybe changing the
-> default or introducing a generic '.plarform is fully trusted' option
-> would actually be better.
->=20
-> Vitaly Kuznetsov (1):
->   module: Make use of platform keyring for module signature verify
->=20
->  Documentation/admin-guide/module-signing.rst |  6 ++++++
->  kernel/module/Kconfig                        | 11 +++++++++++
->  kernel/module/signing.c                      |  9 ++++++++-
->  security/integrity/Kconfig                   |  2 +-
->  4 files changed, 26 insertions(+), 2 deletions(-)
->=20
+commit:         ec7714e4 Merge tag 'rust-6.16' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a9e570580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6b90d4aac37eea48
+dashboard link: https://syzkaller.appspot.com/bug?extid=3a36aeabd31497d63f6e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14a2d282580000
 
 
