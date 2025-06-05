@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-674129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9225AACEA48
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1F5ACEA45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8EC168F9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 06:35:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F61B189A295
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 06:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C421F4CAE;
-	Thu,  5 Jun 2025 06:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139301F582A;
+	Thu,  5 Jun 2025 06:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JHy/TmF+"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dvbccyEw"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091F61F4626;
-	Thu,  5 Jun 2025 06:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F071876;
+	Thu,  5 Jun 2025 06:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749105329; cv=none; b=D7mSBIm5vQpxON4NIZSjIKNSwtzckyV8oXV1U3jwoTTJk+XmAhj/7NOD+Zcc3vREpil69ngMqqFvAeKAMKg1GC4yttBN1eoVQ15/vy1vKZRK3yEG0d0MXdTeu/iW+XBMomHxDp1+su1lZHwgf0A8S/hxF9F0Xavq9xSGG7PNj1Q=
+	t=1749105322; cv=none; b=tNZAJu7Z2jan+bIIheI1E0WgG/jQ2Gb4FiMEpwf06RceVD3ZkaUm5XEuhfZXmcjsWvsdkYF/Mt9gndelZhr02dZq+tDFupHrh/ixAsy3MHTWABLJDcGzkPAEz2zy7+Youd4YClg0nKYmkUHQyyslWn8u5W1/nAIQt2VM+yJK4eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749105329; c=relaxed/simple;
-	bh=0NDZlSjwj7JeXYucz/nNwwdorPxcDXzfwZb4HakkOQc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bzKZYbuqt2JTBP1yopZobfdgsPMF9HPMNb57IZ1XEg8gr95v1qVlIga4kkyM9mF/4eG1ppaskv+s72BDc1F20Ckg5DcWnsyQISENFR4D5hRkyyqJ0qr76jb/BDzR7DiND98ok0AscNUsGAPBKs0npTSsD3F1ijmo1GV3ivSOsaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JHy/TmF+; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5556ZJwj1031528;
-	Thu, 5 Jun 2025 01:35:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1749105319;
-	bh=ZLwho06vrhR2st2QbPaI2lCYTW/PqUtL05pCheR4f6I=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=JHy/TmF+N5zOIkgG/JkWvCtoShNuSUSQ4WJlDioN7kZzmDai/icZz1q1MkLQpIER/
-	 +YrJpdo5B3rdtyjoEuHKFUjtY3zzoUvv2yZf+K+MKfZUVgBc5WRyf5V4gBJKGKNndQ
-	 D5CDbJCVS0142sBuXczgvNaBOyK8NPXLfcn4iE0M=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5556ZJY3948598
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 5 Jun 2025 01:35:19 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 5
- Jun 2025 01:35:18 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 5 Jun 2025 01:35:18 -0500
-Received: from a0497641-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.69.37] (may be forged))
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5556Z7Va3168702;
-	Thu, 5 Jun 2025 01:35:15 -0500
-From: Neha Malcom Francis <n-francis@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <n-francis@ti.com>
-Subject: [PATCH v4 2/2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Add PBIST_14 node
-Date: Thu, 5 Jun 2025 12:05:06 +0530
-Message-ID: <20250605063506.2005637-3-n-francis@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250605063506.2005637-1-n-francis@ti.com>
-References: <20250605063506.2005637-1-n-francis@ti.com>
+	s=arc-20240116; t=1749105322; c=relaxed/simple;
+	bh=xtl04Ru3+hySUvvsxwfudo+3sMxK5la2F+9A+Q0D4Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EKbXXnXeECe+OlD9DKZdlSyY39M7tfd31QBxByvk3qRIurfRHCQjJSGuyn0wRBbTKB1SZQaZY0jb5QkMURM7IBTaYQBXRUXZ2mH6WbOrV1nuzoLP1MNWaUnopeKrME6adzA+9FHE57VXzh/iXODt8FXpkF8DYAgO4AlWt5uHxTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dvbccyEw; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1749105315;
+	bh=Z0a5pRAqENCInUSAGi71Pcld7tarEoX9Yzz8XCJFZ8I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=dvbccyEwRo3ZQLA8uRHDcmYpN1YYH+TFUl223JQOxjFhrwENVPHxnR7WAN4FG9Js5
+	 GYXotnh6sS6gulktEqvPIFwAis/3eBCfoRbyXT7NbtIAOrhsQrtaT91hSxnMDy2EAm
+	 7NFyJltpzN+igd090hiL4u4oO/82CzeVp9X5VPI6eeeZKJyEFLELyErAKvIFNH2lqP
+	 fsEohmPxuPhC/NRdIbEmM/k1U3GzGfDN85ruy7Zw3HjQNup8Ix8IA7nnxVq7uGNmfD
+	 MUjcYcy1Lfb+G2i8Y6e+VuzsjWhrZF8goYT09UzITzdOlobKdnHB+JTaviNLlIdz6y
+	 2Nm5U5DdlAU2A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bCZSf0qbkz4wvb;
+	Thu,  5 Jun 2025 16:35:13 +1000 (AEST)
+Date: Thu, 5 Jun 2025 16:35:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Cyril Bur <cyrilbur@tenstorrent.com>, Alexandre Ghiti
+ <alexghiti@rivosinc.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the risc-v tree
+Message-ID: <20250605163513.7cfb7f2b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; boundary="Sig_/1cRZFh3OSivbt/CiHWDPuSv";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Add DT node for PBIST_14 that is responsible for triggering the PBIST
-self-tests for the MAIN_R5_2_x cores.
+--Sig_/1cRZFh3OSivbt/CiHWDPuSv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Udit Kumar <u-kumar1@ti.com>
-Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
----
-Changes since v3:
-- add support for J742S2 as well by moving node to common DTSI
+Hi all,
 
- .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi     | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+In commit
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 1944616ab357..50954e9d5779 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -2670,4 +2670,15 @@ mcasp4: mcasp@2b40000 {
- 		power-domains = <&k3_pds 269 TI_SCI_PD_EXCLUSIVE>;
- 		status = "disabled";
- 	};
-+
-+	bist_main14: bist@33c0000 {
-+		compatible = "ti,j784s4-bist";
-+		reg = <0x00 0x033c0000 0x00 0x400>,
-+		      <0x00 0x0010c1a0 0x00 0x01c>;
-+		reg-names = "cfg", "ctrl_mmr";
-+		clocks = <&k3_clks 237 7>;
-+		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>;
-+		bootph-pre-ram;
-+		ti,sci-dev-id = <234>;
-+	};
- };
--- 
-2.34.1
+  4e27ce58e7fa ("riscv: uaccess: Only restore the CSR_STATUS SUM bit")
 
+Fixes tag
+
+  Fixes: 788aa64c0c01 ("riscv: save the SR_SUM status over switches")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: b0feecf5b812 ("riscv: save the SR_SUM status over switches")
+Fixes: 788aa64c01f1 ("riscv: save the SR_SUM status over switches")
+or
+Fixes: 8f9b274ad153 ("riscv: save the SR_SUM status over switches")
+
+(yes, they are all the same patch ... and all ancestors of 4e27ce58e7fa)
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1cRZFh3OSivbt/CiHWDPuSv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhBOqEACgkQAVBC80lX
+0GxsMQf+MXtDlHfmRRDgOpGhXmwyGPpy4naV2ndns0BZklyUjuDpBlq5/TZLd4DC
+WgYNGBw05mrgQJrDnJM61zraLNC4oljrMQWIR7NgTrSOqXQ44QLKunQL04M0JEAV
+gVL/5cPbZsh1xlgr4WQGP5/SWr+VAt8N/KJ72hsSv0SZTUGmgjhs4mUkyZUFVeNc
+52PmEua1mdjPB7jlI5CwrSzP1yxIYR+doZo4O4wiPaKTS/ROe8tUYvBp3OXIXS2y
+6XVsDPKH+8QpmYF1XFiKLWdpgwgo9C9t2dEITT7+9pts0iBXGiXQDjGQY2Ups+e7
+tWCqS+E4rO6MKGR3YhuP69YhK2G0AQ==
+=Q/Uq
+-----END PGP SIGNATURE-----
+
+--Sig_/1cRZFh3OSivbt/CiHWDPuSv--
 
