@@ -1,155 +1,98 @@
-Return-Path: <linux-kernel+bounces-673991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BA6ACE87D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15436ACE881
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5331894F49
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DBA1887448
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CB413AA3E;
-	Thu,  5 Jun 2025 03:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OubdubNO"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB7D1E3DEB;
+	Thu,  5 Jun 2025 03:03:31 +0000 (UTC)
+Received: from cstnet.cn (smtp20.cstnet.cn [159.226.251.20])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50858462;
-	Thu,  5 Jun 2025 03:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CBA1F5617;
+	Thu,  5 Jun 2025 03:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749092433; cv=none; b=FjiBdFEmP5PZXhDvoOI+4zHO4YO1S74YRZ0Yuy0uKtdGVPL6jyUFs8lnNnoHjTe3PgG7D9YL0uIgjNXqMnKi234go4ckDMBYn4uVgo0Wa6x2Q9Vbs91Gcxd6L5/Pu2/ver2Wf5ROAjS71n5+z/Net/wyAIG5DDpP9/3y3yZcG9w=
+	t=1749092611; cv=none; b=dd3vh96gCuGRUNL07dRHCwjLmLreKheZewSwJtR1aB9xG3GK9NAYZ8EnxXl4r+pslDjbOe+HMz7eusfr+DdUicOxlXzM6lsgTkyHz3zQB4XiabB237XofXaksd7hI5JESquL0pmL2eadJcLjW7qLs5vr1oUddhMMOBJ9pozSA4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749092433; c=relaxed/simple;
-	bh=od8Srxi0ZDThkk/K8ZieVDKuC/Csm+DVoiedt/ryxPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOpYphNnThDjMV/i+TdZdOVX+d23N3PESnWqE2bynML87UEHA7Z17SRas1gC96wEn8hfGqrdjCRczS12N/Y5n0WfAvCG0N8mdc97f/wT1EHXQ7bSti+iX8d9wpF3VthAVP6x8e56qghcuK0tNeyWSKdg3iKGBifD+U6GPduwItc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OubdubNO; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-747c2cc3419so415461b3a.2;
-        Wed, 04 Jun 2025 20:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749092431; x=1749697231; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Slde/kYagTx037Us5u9pqXevqwcUDRHPhGcdcmkeis0=;
-        b=OubdubNO0VVnv9EnCGM0YudYrbbucgqc9wqR1E3k7plaORlyRKqfbsQRmPEN5M8pr7
-         OFRogMANX6xJ10fZGVHMpmXnuwMdH2C8d0tjk+JwtWnOK8pXEqsYuHxeGJmuO5nh6omH
-         XViZ0xqPhkPBHWPDaSKWF2TdnpA5ivoiOZKkGS0g6LBijDswZf+YGmAWn9xOGG5ynB4y
-         xiGv3nLUSK+WnHQnMGBAtokALhgLluBy9QQieV6cB2xir3j3xP4c8rOgx8vpf2wdRjNM
-         8v6S0pbt5Oh6ChZKACLTSpsiKzMhcntVpJabhvpgjNMxSirf1aqnCaaDxoXDmLfmFmg5
-         p9zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749092431; x=1749697231;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Slde/kYagTx037Us5u9pqXevqwcUDRHPhGcdcmkeis0=;
-        b=BEpfvTdXcXIMu9rbzWbMZdfgtrGqW1qx2trKop2QiUpodAmXVrgtAHLuYW4lxrIkrj
-         Td/sc8UK6PG1TT5PvGKUbcXAzzjyfmV3d92MKANA0dTUZvLG4sgE6EWUytz/Pe473oWQ
-         TbqiUpxv3GnSND5B8DFlbJb7w3AsmTmXqpm+jvL1QoTRhIGPfgjsSf0mAAkbNHdssdHO
-         zNWN3TNGXmRjYVS6oiVzu1NVYXA6XGcYsGNhjPDQV5MsrpeP/QAd9SaGcvsACZDDupTB
-         sEtLzdN+WgreUndD4hX4hmkkl4yzs3bZtvsf1IOTMt2/zowgH6f6rokwhVty47ap98os
-         2diw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVwZi4Hs9sZ4ySr9HuFrB0OU3079xB+w+f9k0mg9A2V69JMq1yEq7f5bzmyq4r5An4fSe1PofyEk90fvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPcFo9bHUZZ8Hp6lUVD1YVPuH8gd7CRNhH8RU0+fz8q0xEYPWz
-	ZOn0kW3XatkzsEFEKVfa6+XoJDRycWCHRItnZNQBqMCGtaWPgIbmcxuL
-X-Gm-Gg: ASbGncsrHZvEMyvkb9lT4dI9Uyt6cfgZSdJ2VXKeqoG/c6OrhtGoVKCGqCMfv/wIPFN
-	zvFE2Lf9e8CqODETdDQca2nlP8CnE47bej1LK8UN5yQ44z2OJEpnLNBJXtWqQvn9bf75KzcEVE4
-	6IYS4WiPGXxsScRkvn8n/vZPDwGScRGBE4aabB33GwCEeHwb8FbYwbewqO/BmQyPl+fei5xaBmg
-	xM56DiXbrd8e96V2pxdUh8hG/sNBc7K9GZx4XFBunSXATph+lrTRklfsMhjqIFRjzogj8AnrjK1
-	xZBFrjkawgnrOjQHEYGPeD113yO0Z61VySElzpa2jSREz3GTcO9nWdgVi6YkOw==
-X-Google-Smtp-Source: AGHT+IGp8g8iik3RW6LdOVwHZPYHPYCXIc+7QLRz1H7jq6cTd3prufZaUyjdG7LXG7YLR9ql0G+naA==
-X-Received: by 2002:a05:6a00:1823:b0:746:2591:e531 with SMTP id d2e1a72fcca58-7480b4974dfmr7198327b3a.12.1749092430882;
-        Wed, 04 Jun 2025 20:00:30 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747bd44eb1asm10677468b3a.61.2025.06.04.20.00.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 20:00:29 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id CEC9B4209E8C; Thu, 05 Jun 2025 10:00:26 +0700 (WIB)
-Date: Thu, 5 Jun 2025 10:00:26 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v2 0/3] docs: some automarkup improvements
-Message-ID: <aEEISsfy-O3DwXMJ@archie.me>
-References: <20250604143645.78367-1-corbet@lwn.net>
- <ebeb020a-8403-441b-ab02-f017ffcb7b83@notapiano>
+	s=arc-20240116; t=1749092611; c=relaxed/simple;
+	bh=jg24Yo+Bw83kcQE5Zz+uHIe9HXkorbFQAvED/E/Ahmc=;
+	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=kF3X4mCiCyO36zzxW0HBtVJKQTI1wP7a2iJJQ0tTrdWEr/DU8tqDKdTopT1y1f+GUU0knkvdGcVHjv1l9rBSO0qAoXQx62tJ15BW1rmeccICuSl6d3sf7HpStRdMv+rRTfIrU9yBE9Dgr3byiWW9stTGvOceshpHUBlcPbQVJp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ict.ac.cn; spf=pass smtp.mailfrom=ict.ac.cn; arc=none smtp.client-ip=159.226.251.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ict.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ict.ac.cn
+Received: from chenglingfei22s$ict.ac.cn ( [115.42.62.11] ) by
+ ajax-webmail-APP-10 (Coremail) ; Thu, 5 Jun 2025 11:02:51 +0800 (GMT+08:00)
+Date: Thu, 5 Jun 2025 11:02:51 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?56iL5YeM6aOe?= <chenglingfei22s@ict.ac.cn>
+To: sven@svenpeter.dev, j@jannau.net, alyssa@rosenzweig.io, neal@gompa.dev
+Cc: zhangzhenwei22b@ict.ac.cn, wangzhe12@ict.ac.cn, 
+	chenglingfei22s@ict.ac.cn, maddy@linux.ibm.com, mpe@ellerman.id.au, 
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, 
+	andi.shyti@kernel.org, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [BUG] rmmod i2c-pasemi-platform causing kernel crash on Apple M1.
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
+ 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EEjZrgwjpbfZiAAG"
-Content-Disposition: inline
-In-Reply-To: <ebeb020a-8403-441b-ab02-f017ffcb7b83@notapiano>
+Message-ID: <5c598fea.3165d.1973e0a9a3a.Coremail.chenglingfei22s@ict.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:tACowABnWYXcCEForT8GAA--.62932W
+X-CM-SenderInfo: xfkh0wpolqwwthlsj2g6lf3hldfou0/1tbiBgoEDmhA0QvjOgAAst
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-
---EEjZrgwjpbfZiAAG
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 04, 2025 at 06:05:06PM -0400, N=C3=ADcolas F. R. A. Prado wrote:
-> The only other thing I noticed is that the links in the sidebar still use=
- the
-> old style, since they rely on a different CSS selector for some reason:
->=20
->   div.sphinxsidebar a {
->     text-decoration: none;
->     border-bottom: 1px dotted #999;
->   }
->=20
-> That makes it a bit inconsistent style-wise, so I think it'd be sensible =
-to
-> update that selector as well to follow suit.
-
-It can be done simply by also applying the same style to aforementioned
-selector:
-
----- >8 ----
-diff --git a/Documentation/sphinx-static/custom.css b/Documentation/sphinx-=
-static/custom.css
-index c9991566f91488..14e1bb9c4e63eb 100644
---- a/Documentation/sphinx-static/custom.css
-+++ b/Documentation/sphinx-static/custom.css
-@@ -137,8 +137,9 @@ div.language-selection ul li:hover {
-     background: #dddddd;
- }
-=20
--/* Make xrefs more universally visible */
--a.reference, a.reference:hover {
-+/* Make xrefs and sidebar links more universally visible */
-+a.reference, a.reference:hover,
-+div.sphinxsidebar a {
-     border-bottom: none;
-     text-decoration: underline;
-     text-underline-offset: 0.3em;
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---EEjZrgwjpbfZiAAG
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaEEIRwAKCRD2uYlJVVFO
-o5r1AQCSfBjD1Q0WBtDnGDrAS2WvGCFR7odGDRswMdh0m8uE0AD8CKSSOn7a+uW0
-PIcRkEq4dX+1fFt+rcbSt91j3zhf6QQ=
-=yF4l
------END PGP SIGNATURE-----
-
---EEjZrgwjpbfZiAAG--
+SGksIGFsbCEKCldl4oCZdmUgZW5jb3VudGVyZWQgYSBrZXJuZWwgY3Jhc2ggd2hlbiBydW5uaW5n
+IHJtbW9kIGkyYy1wYXNlbWktcGxhdGZvcm0gb24gYSBNYWMgTWluaSBNMSAoVDgxMDMpIHJ1bm5p
+bmcgQXNhaGkgQXJjaCBMaW51eC4gCgpUaGUgYnVnIHdhcyBmaXJzdCBmb3VuZCBvbiB0aGUgTGlu
+dXggdjYuNiwgd2hpY2ggaXMgYnVpbHQgbWFudWFsbHkgd2l0aCB0aGUgQXNhaGkgZ2l2ZW4gY29u
+ZmlnIHRvIHJ1biBvdXIgc2VydmljZXMuIApBdCB0aGF0IHRpbWUsIHRoZSBpMmMtcGFzZW1pLXBs
+YXRmb3JtIHdhcyBpMmMtYXBwbGUuCgpXZSBub3RpY2VkIGluIHRoZSBMaW51eCB2Ni43LCB0aGUg
+cGFzZW1pIGlzIHNwbGl0dGVkIGludG8gdHdvIHNlcGFyYXRlIG1vZHVsZXMsIG9uZSBvZiB3aGlj
+aCBpcyBpMmMtcGFzZW1pLXBsYXRmb3JtLgpUaGVyZWZvcmUsIHdlIGJ1aWx0IExpbnV4IHY2LjE0
+LjYgYW5kIHRyaWVkIHRvIHJtbW9kIGkyYy1wYXNlbWktcGxhdGZvcm0gYWdhaW4sIHRoZSBjcmFz
+aCBzdGlsbCBleGlzdHMuIE1vcmVvdmVyLCB3ZSBmZXRjaGVkIAp0aGUgbGF0ZXN0IGkyYy1wYXNl
+bWktcGxhdGZvcm0gb24gbGludXgtbmV4dCg5MTE0ODNiMjU2MTJjOGJjMzJhNzA2YmE5NDA3Mzhj
+YzQzMjk5NDk2KSBhbmQgYXNhaGksIGJ1aWx0IHRoZW0gYW5kIAp0ZXN0ZWQgYWdhaW4gd2l0aCBM
+aW51eCB2Ni4xNC42LCBidXQgdGhlIGNyYXNoIHJlbWFpbnMuCgpCZWNhdXNlIGtleGVjIGlzIG5v
+dCBzdXBwb3J0ZWQgYW5kIHdpbGwgbmV2ZXIgYmUgZnVsbHkgc3VwcG9ydGVkIG9uIEFwcGxlIFNp
+bGljb24gcGxhdGZvcm1zIGR1ZSB0byBoYXJkd2FyZSBhbmQgZmlybXdhcmUgCmRlc2lnbiBjb25z
+dHJhaW50cywgd2UgY2FuIG5vdCByZWNvcmQgdGhlIHBhbmljIGxvZ3MgdGhyb3VnaCBrZHVtcC4K
+ClRodXMgd2UgdHJpZWQgdG8gZmluZCB0aGUgcm9vdCBjYXVzZSBvZiB0aGUgaXNzdWUgbWFudWFs
+bHkuIFdoZW4gd2UgcGVyZm9ybSBybW1vZCwgdGhlIGtlcm5lbCBwZXJmb3JtcyBkZXZpY2UgcmVs
+ZWFzaW5nIG9uIAp0aGUgaTJjIGJ1cywgdGhlbiBjYWxscyB0aGUgcmVtb3ZlIGZ1bmN0aW9uIGlu
+IHNuZC1zb2MtY3M0Mmw4My1pMmMsIHdoaWNoIGNhbGxzIHRoZSBjczQybDQyX2NvbW1vbl9yZW1v
+dmUgaW4gY3M0Mmw0MiwgCmJlY2F1c2UgY3M0Mmw0Mi0mZ3Q7aW5pdF9kb25lIGlzIHRydWUsIGl0
+IHBlcmZvcm1zIHJlZ21hcF93cml0ZSwgYW5kIGZpbmFsbHkgY2FsbHMgaW50byBwYXNlbWlfc21i
+X3dhaXRyZWFkeSBpbiBpMmMtcGFzZW1pCi1jb3JlLmMuIFdlIG5vdGljZWQgdGhhdCBzbWJ1cy0m
+Z3Q7dXNlX2lycSBpcyB0cnVlLCBhbmQgYWZ0ZXIgaXQgY2FsbHMgaW50byB3YWl0X2Zvcl9jb21w
+bGV0aW9uX3RpbWVvdXQsIHRoZSBzeXN0ZW0gY3Jhc2hzIQoKV2UgZm91bmQgdGhhdCB3YWl0X2Zv
+cl9jb21wbGV0aW9uX3RpbWVvdXQgaXMgb25lIG9mIHRoZSBjb3JlIHNjaGVkdWxlciBBUElzIHVz
+ZWQgYnkgdGVucyBvZiB0aG91c2FuZHMgb2Ygb3RoZXIgZHJpdmVycywKaXQgaXMgdW5saWtlbHkg
+Y2F1c2luZyB0aGUgY3Jhc2guIFNvIHdlIHRyaWVkIHRvIHJlbW92ZSB0aGUgY2FsbCB0byB3YWl0
+X2Zvcl9jb21wbGV0aW9uX3RpbWVvdXQsIHRoZW4gdGhlIHN5c3RlbSBzZWVtcyB0bwpydW4gd2Vs
+bC4KCkhvd2V2ZXIsIGJlY2F1c2Ugd2UgaGF2ZSBsaXR0bGUga25vd2xlZGdlIGFib3V0IGkyYyBk
+ZXZpY2VzIGFuZCBzcGVjaWZpY2F0aW9ucywgd2UgYXJlIG5vdCBzdXJlIHdoZXRoZXIgdGhpcyBj
+aGFuZ2Ugd2lsbCAKY2F1c2Ugb3RoZXIgcG90ZW50aWFsIGhhcm1zIGZvciB0aGUgc3lzdGVtIGFu
+ZCBkZXZpY2UuIElzIHRoaXMgY2FsbCB0byB3YWl0IG5lY2VzYXJ5IGhlcmU/IE9yIGNhbiB5b3Ug
+Z2l2ZSBhIG1vcmUgCnNvcGhpc3RpY2F0ZWQgZml4PwoKV2XigJlyZSBoYXBweSB0byBwcm92aWRl
+IGFkZGl0aW9uYWwgbG9ncywgY29uZmlncywgb3IgdGVzdGluZyBhc3Npc3RhbmNlLiBBbnkgZ3Vp
+ZGFuY2Ugd291bGQgYmUgZ3JlYXRseSBhcHByZWNpYXRlZCEKCgo=
 
