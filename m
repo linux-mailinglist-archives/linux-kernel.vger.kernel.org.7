@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-674863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02D5ACF5E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:54:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51F5ACF5FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467331793BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F253AED87
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D2027F4CA;
-	Thu,  5 Jun 2025 17:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1743F27A13D;
+	Thu,  5 Jun 2025 17:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D1YRJps2"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I1VnEq3T"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB8227A47A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 17:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAA127A935
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 17:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749145991; cv=none; b=tMwO7Q1civx+fYhlCAyNBhIuyVze9lQZoJZ6wSJrcPGiiGHrv0C+ItgT4vJLRAFCywyxH+dMh03ApqoTzm6LXYp70cqKX21txJFIVuUii6+APN6P3rLulaT/8DVAx63TjpO75WFtZQBuyGfbTiePze1qvdok8358ea8k40tFmTE=
+	t=1749145992; cv=none; b=YnKWG6BonaE+QVe9b28jDvxK8ER34VS1NLPwN0zKHyqGxyR7HJbM/EibMRQ3qUSr4FkF0/LkTnYt95eh08ucr5f04Ux08XqDbN4tPh5q3/YcrmCiy5mSelfUoOvUhecBuhvEBpcCdmSXHxS2+oI+u+3l3kTnWC+/tvENweZkwmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749145991; c=relaxed/simple;
-	bh=yCJh8xYi8LYreBh5dydvM47XVBLZAxTNUSYJHtb7x4M=;
+	s=arc-20240116; t=1749145992; c=relaxed/simple;
+	bh=NngJ6Yx0t8C9t8P4XXbFrpgjfgvwAkcfBnBpT4lxGFs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YIsR8pDNbj9XcQ9cOiG9m3e7wRCI7fCdZW7CvmWWmAA7XS771xC2N/UJbf869VtL7eQwsVQYE6LHx6/mUOdJF0o5SYBjs8AAsgBvZFNXaGAitMlqQIo7oc6aDuyAuwg7Rfxvtbljtt6uOYy+ItkV7TTEat8QJKc59A+wEOQbmhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D1YRJps2; arc=none smtp.client-ip=209.85.167.49
+	 In-Reply-To:To:Cc; b=GqBmuMmLpG/paEOLzCB5PqgLIh4XP0Wux5t/1asCgM/OH/4NaozchkK9oAkOpa7HZaKqbAkczAYNbnpvLw1CbBWAA2rJ4GBcOhgI/pD5gDbJfbzZu+NPvakxSdEj6+ebs/nE0l6a1klHazAT67HFGApw3yCahz2tM8n5c+Jue6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I1VnEq3T; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553241d30b3so1176693e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 10:53:07 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-551fc6d4a76so1309723e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 10:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749145985; x=1749750785; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1749145986; x=1749750786; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5bWh2ADW8TZRmlfflymQkf2Dq+w112Fwi8JTTMtqDFE=;
-        b=D1YRJps2zRih9coxBVTJrdx/51+lbtjKYRtENATLKOOVOlpyGlG9RH6yDbXUop3PFC
-         Li6dRkgEYA7bQK84Z1zpJ8upk7MmM5j3Fxoi04JNCcAEX2n+XWksq9RUbGaGHLWm1hVk
-         kR7Zn2Yn9TS1/lFia5inydJLM2WAwPacg8Yrs=
+        bh=Ar8+oEy28CepxnVsr2jEiRDXTfDok/weLPLs5Z9kVHA=;
+        b=I1VnEq3T8ddqhvoQ5NQEukgf98kgl7JFV0+hJFR08RpOZNJJecr1c0dpbMFgc2cV05
+         0qvwE/NiO1qE7Mp+j7Wh7nVnDoL2Ul0nM8dMnVCvPQiR8V5swuaCtKPfusjdb1M3GaMR
+         wlX1GOuM584IpO1TFQgHjYERmMzoyas7NAhKw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749145985; x=1749750785;
+        d=1e100.net; s=20230601; t=1749145986; x=1749750786;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5bWh2ADW8TZRmlfflymQkf2Dq+w112Fwi8JTTMtqDFE=;
-        b=xGOqeL+DbRcLmKParqOUligiWxOUatZ8zkyHoipQwLmgF+lQSMdO0fl6yVw3H7PYLc
-         a4OsXmVyWe2K/m8VMAZKovuikwwQ2hvLNESzoQutIlnEV1c3+2peAevY8eMvMNN8HFcC
-         eF86HsEX7sAoj5730URQEf5IGtdurqUhYM69WfdwwdGP84Lk0T4FNguJfIdvCryP73lz
-         NGaQhx6nYndOg13Yw9pLHriIziTAdSkI9M741SVxdoJ9JOR7jJ6YEN0SizrTq6qo3Ml0
-         ubp7zQp/rXrrJCkYQMDGkzsitecAMmP204xQG+KphRFzJkFZQOYU58b61D1ohownPxWQ
-         sjYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUP2RE4TTa+yXj248bO3fMDMhfA96xWj5KiG99YLRn2Ow9V7DhrqD8S3nL+DB873wSJtFI1TpHvgvqhTQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpIlwXrMu/9zxnnr0abmFsu04hdjM1JDwsL+F+6bqDXNoBczA9
-	hcLUBwvPmqUYPPcQyk5L8oy8jzvX8b0YVhxEpwIrnJxyO2u7AjxzlVphqhYURVBWnvaV6InIvrW
-	Fwg4=
-X-Gm-Gg: ASbGncs5dXUCWPyK5/VQvwffZarGI72r8RAhl99nKxA1leQLG1JAgoO0O2ZV8BYXbp9
-	uXJPCxobfNYUyAFdDpkZsjgJY9pMjZWABe7M9a7KkvEp+XqfLbByxWj+S4kQCPbDnoBv5yG7VCH
-	kCGFJeUyB6S6GfHpk3uo4OLGNglxKDKAtzWWxIFyQ8qX9Sh/UPgEzX/uUHfmUXB2QTScVhsKwEa
-	QHGo7hTGsENcEGf/7GSZwXxLTgLAXrM0UcT5pG5VSxJ922Fi+SSjyz6euc72zNV4arYrHWv6Ucx
-	Gzbgo+Hyfpp2W/DZuCPf9swyfdtbBSSYV+RyiclX0YkdL7yvqY7ksdmVG76tU/6pAkApiiXIPbA
-	QzrgGHSom47KIHWEy0NfDuD8Pug==
-X-Google-Smtp-Source: AGHT+IHP/jNThy5aDvW7T/hvxtEAhADh14D+is1JaPoxECZSvFGKZLcZx8jZje+1dqjf1fDgdS/nDw==
-X-Received: by 2002:a05:6512:2247:b0:553:2dce:3aab with SMTP id 2adb3069b0e04-55366c301f2mr13260e87.40.1749145985423;
+        bh=Ar8+oEy28CepxnVsr2jEiRDXTfDok/weLPLs5Z9kVHA=;
+        b=VsA52h+XCQj/sivnYvMaePM5AH2+6uPS78xU7I+2J0uq4HG5jDMyxVBhnPAOic/SeD
+         3D5NrygJxP5L+X9plBNWlp3voGclzyue0xDSXzPb5W8TdGTsMZw/Z2MPjUmxdIkBZJf1
+         XGVvYCUm6wNcnGRYkmstopKk+WEG0nMlN8TccZGSfjV7REY3hxZyzGeI7D+K44LvkHXn
+         CsKBOaLd7yIhhn9+B3z3YDbFyJ0SmTabyjyAPVoEANBkIkHIWgce1sN0h2JxjrrWK4O/
+         WQMiId5LWeHyWg2pzaOg7rcUzBCgvBYzeQQdGZiBkQ9QhvKbAbsTxPXliqIIbEJXbSM1
+         ZLLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXi6rjCwlo+DzH8LSliv3tpwlzGidEOPboQ0N8G61MikLrZjnehOivPZzd6vBPBgH+I9tUkhmpdSlGKBlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPJryzX9wgpALNUmhc6gf48+114qQn+0ouKpIaDIK0uBfooQJG
+	1xdOQXKRmculBPUe4WfRVBNXH4A9NvlSs48EM5xBNu4TxI8pJGFv4papbjMg+JSSqv4MdqnNQsd
+	Rs9E=
+X-Gm-Gg: ASbGnct9JDYgD6KGW6xQkC94mqX/pAqYDi+cUTKQ+QC1Kra32lXWDGMofv5LOeapfI4
+	syWTmoKqy3nAAf5yUumPDd/9kefw4kvRFvKljerJfK3BRXn6BqDgMsRx1ScPKxlNOqqKcY6PssU
+	8ul6dbwdXeQUZhU7lqqdztZNgikjHxg8a85mBvtKs0GW0cgpKN3hGaVYLCXx4Y4H/ZQKEUi0c3w
+	7DQ7NEcp6XCa/qlRHC6c4bHRQqB+agkL5QLaodAXO5D30HP2uaPcuQ7KtLlHHvv52XGvvEI/KMs
+	V6qGlDcw9YV7gL46TQHAlki0NzApJNS4sIJAqa7LgIrLNj9YopOixniANsxHBFogQIbVvjwogbr
+	n2KdGsUXtmeV2wJtz8SD5SfQ3wn/y7vLGPxKr
+X-Google-Smtp-Source: AGHT+IGuo9eAuj3/ZulUgVYVuEINR6TV4aJnWcXikBTGTDNlZ8YqpVl3rERmqVeHdcMBB1locGc5IA==
+X-Received: by 2002:a05:6512:2242:b0:553:3892:5ec3 with SMTP id 2adb3069b0e04-55366c354f4mr16249e87.46.1749145985864;
         Thu, 05 Jun 2025 10:53:05 -0700 (PDT)
 Received: from ribalda.c.googlers.com (90.52.88.34.bc.googleusercontent.com. [34.88.52.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553379379c2sm2641210e87.251.2025.06.05.10.53.04
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553379379c2sm2641210e87.251.2025.06.05.10.53.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 05 Jun 2025 10:53:05 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 05 Jun 2025 17:52:58 +0000
-Subject: [PATCH v2 05/12] media: ipu-bridge: Use v4l2_fwnode for unknown
- rotations
+Date: Thu, 05 Jun 2025 17:52:59 +0000
+Subject: [PATCH v2 06/12] dt-bindings: usb: usb-device: Add orientation and
+ rotation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250605-uvc-orientation-v2-5-5710f9d030aa@chromium.org>
+Message-Id: <20250605-uvc-orientation-v2-6-5710f9d030aa@chromium.org>
 References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
 In-Reply-To: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -102,91 +102,53 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.14.2
 
-The v4l2_fwnode_device_properties contains information about the
-rotation. Use it if the ssdb data is inconclusive.
+For some devices, such as cameras, the OS needs to know where they are
+mounted.
+
+ACPI has a property for this purpose, which is parsed by
+acpi_get_physical_device_location():
+https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/06_Device_Configuration/Device_Configuration.html#pld-physical-location-of-device
+
+In DT we have similar properties for video-interface-devices called
+orientation and rotation:
+Documentation/devicetree/bindings/media/video-interface-devices.yaml
+
+Add rotation and orientation for usb-devices that matches the already
+existing properties of video-interface-devices.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/pci/intel/ipu-bridge.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/usb/usb-device.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-index 020aa52f590d66b6d333adc56ebfb9ab0561db51..6f436a8b4d23373af8a6668530333a827eca467a 100644
---- a/drivers/media/pci/intel/ipu-bridge.c
-+++ b/drivers/media/pci/intel/ipu-bridge.c
-@@ -236,37 +236,41 @@ static int ipu_bridge_read_acpi_buffer(struct acpi_device *adev, char *id,
- }
+diff --git a/Documentation/devicetree/bindings/usb/usb-device.yaml b/Documentation/devicetree/bindings/usb/usb-device.yaml
+index c676956810331b81f11f3624340fc3e612c98315..a44eb24c657993f88145377a4706ec419b6cd998 100644
+--- a/Documentation/devicetree/bindings/usb/usb-device.yaml
++++ b/Documentation/devicetree/bindings/usb/usb-device.yaml
+@@ -44,6 +44,14 @@ properties:
+       - minimum: 1
+         maximum: 255
  
- static u32 ipu_bridge_parse_rotation(struct acpi_device *adev,
--				     struct ipu_sensor_ssdb *ssdb)
-+				     struct ipu_sensor_ssdb *ssdb,
-+				     struct v4l2_fwnode_device_properties *props)
- {
- 	switch (ssdb->degree) {
- 	case IPU_SENSOR_ROTATION_NORMAL:
- 		return 0;
- 	case IPU_SENSOR_ROTATION_INVERTED:
- 		return 180;
--	default:
-+	}
++  orientation:
++    description: If present, specifies the orientation of the usb device.
++    $ref: /schemas/media/video-interface-devices.yaml#/properties/orientation
 +
-+	if (props->rotation == V4L2_FWNODE_PROPERTY_UNSET) {
- 		dev_warn(ADEV_DEV(adev),
- 			 "Unknown rotation %d. Assume 0 degree rotation\n",
- 			 ssdb->degree);
- 		return 0;
- 	}
++  rotation:
++    description: If present, specifies the rotation of the usb device.
++    $ref: /schemas/media/video-interface-devices.yaml#/properties/rotation
 +
-+	return props->rotation;
- }
+   "#address-cells":
+     description: should be 1 for hub nodes with device nodes,
+       should be 2 for device nodes with interface nodes.
+@@ -103,6 +111,8 @@ examples:
+         device@2 {
+             compatible = "usb123,4567";
+             reg = <2>;
++            orientation = <0>;
++            rotation = <90>;
+         };
  
--static enum v4l2_fwnode_orientation ipu_bridge_parse_orientation(struct acpi_device *adev)
-+static enum v4l2_fwnode_orientation
-+ipu_bridge_parse_orientation(struct acpi_device *adev,
-+			     struct v4l2_fwnode_device_properties *props)
- {
--	struct v4l2_fwnode_device_properties props;
--	int ret;
--
--	ret = v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
--	if (!ret || props.rotation == V4L2_FWNODE_PROPERTY_UNSET) {
-+	if (props->orientation == V4L2_FWNODE_PROPERTY_UNSET) {
- 		dev_warn(ADEV_DEV(adev), "Using default orientation\n");
- 		return V4L2_FWNODE_ORIENTATION_EXTERNAL;
- 	}
- 
--	return props.orientation;
-+	return props->orientation;
- }
- 
- int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
- {
-+	struct v4l2_fwnode_device_properties props;
- 	struct ipu_sensor_ssdb ssdb = {};
- 	int ret;
- 
-@@ -274,6 +278,10 @@ int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
- 	if (ret)
- 		return ret;
- 
-+	ret = v4l2_fwnode_device_parse(ADEV_DEV(adev), &props);
-+	if (ret)
-+		return ret;
-+
- 	if (ssdb.vcmtype > ARRAY_SIZE(ipu_vcm_types)) {
- 		dev_warn(ADEV_DEV(adev), "Unknown VCM type %d\n", ssdb.vcmtype);
- 		ssdb.vcmtype = 0;
-@@ -287,8 +295,8 @@ int ipu_bridge_parse_ssdb(struct acpi_device *adev, struct ipu_sensor *sensor)
- 	sensor->link = ssdb.link;
- 	sensor->lanes = ssdb.lanes;
- 	sensor->mclkspeed = ssdb.mclkspeed;
--	sensor->rotation = ipu_bridge_parse_rotation(adev, &ssdb);
--	sensor->orientation = ipu_bridge_parse_orientation(adev);
-+	sensor->rotation = ipu_bridge_parse_rotation(adev, &ssdb, &props);
-+	sensor->orientation = ipu_bridge_parse_orientation(adev, &props);
- 
- 	if (ssdb.vcmtype)
- 		sensor->vcm_type = ipu_vcm_types[ssdb.vcmtype - 1];
+         device@3 {
 
 -- 
 2.50.0.rc0.642.g800a2b2222-goog
