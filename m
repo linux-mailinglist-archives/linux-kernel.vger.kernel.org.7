@@ -1,237 +1,83 @@
-Return-Path: <linux-kernel+bounces-675189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B833ACFA12
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829C5ACFA1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8D73B045B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:40:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C281892A9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59738280CD3;
-	Thu,  5 Jun 2025 23:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A234627FB38;
+	Thu,  5 Jun 2025 23:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KoYkv7G3"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1Bqm2Dj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA81280330
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 23:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087DD211484;
+	Thu,  5 Jun 2025 23:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749166796; cv=none; b=Lu3oFJwIET4UmoaLxaXR0OiE1OY7FSTzrDEc5mfZ1YAkVOZKaUOhP8yLma30G2+KTXLlQObC14IHedjb5jG74pLkUU3CAGBgRanNn1ugAyqK5vn9/4a75NzaV0ZQKeC5gGWuWDrMCjQzwFAPLOsvtUFCCvl80S+UkFnsvntXxLM=
+	t=1749167053; cv=none; b=hihHa1GYeqxisWFaS/eTqB28NMe1K1DfjGwnZOwQyilmuI235vmYe0uJn8TkBsnmD7tr4ahVwm1DEOsGBlrJ+fXMy47diRKVhCs2BRKY1zQ8CyLVVOYkvL9sqBaUjIqYVMW8q6MoInNl+23ZTV8RyuMaJ34ikudGaKfjRy6EsWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749166796; c=relaxed/simple;
-	bh=b5qIz6P3lrcv3sGS7KxAxKzdqooPdqfn8oztpbwmp10=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=u9ZqoBAIsD2ZhqHAkoUVwI4BvtQcBxOSMkyQtnnh9fPQULaMRN4NL8GofnyvngctAOxxVSWHmi90mkykcg+6yNaW3yw3Qy39ssAvbaKrvV+EKWlkEd86++9/iJReTcIwtozw1dNHuBxivFWz1u5V/nAy0BgyJq2pFwFYtrVoh1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KoYkv7G3; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30a39fa0765so2440123a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 16:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749166794; x=1749771594; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iFfeaMcLuzx3qT6HoU1lCQOc9APQy0cingwV7epWcY=;
-        b=KoYkv7G3t2JacguDnQHkoLBhbfUedimSiSODTtF/fmj+UCDxcVKrXJwSz/RO+LAxDD
-         SXjhZRz80la3GK/70l1ddjc2UexGjM+kYdQzg1R9gTmX0ite7NDD08t8gygHpreMHnW2
-         ww92zqAxQK1Yj5DXxCo2mXzZ89SgOIFfgFrNVJvaeYb4DK3EA/bHxXaWTOb9+bhJFbhP
-         skIRNYzTvXpqOmlQHtLuTr6ur1e8BGvvQCVZhrmmJKuY70/6EhdeayuN8If3Ts/waaTa
-         BPF0NyCjURvxs7X7/EKAkUpGCXT+istdBqo7SijG+ThX/OC8HYN5LDyZWkWYvnNFqins
-         NNMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749166794; x=1749771594;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iFfeaMcLuzx3qT6HoU1lCQOc9APQy0cingwV7epWcY=;
-        b=I78PoFBdaiwFOY6huKqSN9IDZx5tCk9DiXwZv9/ADoqY0J349UF3ZcIHs3fx8WPH7/
-         G/iFwyRqaZDAlwu0TTvbsmsH5gSGRP8Ps0UzbTXechkFhVFhg3xJET1OtCld1w5VDX3U
-         kYPD7okcSBEfyZNsHLgQ8cgtA7tYUm9SWSKOGMj67pq9ckbNl3ZAptGCDyNRGtrjBygZ
-         VT02+ereaisgMw1z16+S520ghzik4HKnt8GKCzGHhBosM/ANRBlLyJtVrELORQC0bpW7
-         8lWpu3lD5pecq9zy3gpirAVtuFPQFluIl/klXlrzxeChnLInbWp/lfxN03t2D6mENQE8
-         6NgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDldIUZu0P0RFvQE/r5SEmWU3I134moHWEGShZ41dB/aB8ZyyHlk3CaMscDjrlHYToqNlgU7kd9pvaXlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2/psU5CtneTebBvycKZ3yxz3+YI8nOwmEeN398PJFnUtmvn8Y
-	EjACtcmXukou9tjHN3/t4JYxOmYC9KRxvp0va9EJUuubF5/CF7oDqSVen3yxdw4iWqtCzdZFDG0
-	Xb2U0T70C54lzdfv92MZDCw==
-X-Google-Smtp-Source: AGHT+IFUcFav0NjAszjunYAxed+zQO9SwfdaT5YNefYYg0tyYpUQXQps02dUQweyT2eKvQCmOpCRVw1JAQd50fP3
-X-Received: from pjh7.prod.google.com ([2002:a17:90b:3f87:b0:311:4aa8:2179])
- (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:38c3:b0:30e:ee4:3094 with SMTP id 98e67ed59e1d1-31346b04333mr1683541a91.1.1749166794276;
- Thu, 05 Jun 2025 16:39:54 -0700 (PDT)
-Date: Thu,  5 Jun 2025 16:39:34 -0700
-In-Reply-To: <20250605233934.1881839-1-blakejones@google.com>
+	s=arc-20240116; t=1749167053; c=relaxed/simple;
+	bh=ci1tb/wXcXuwrPfKM5LKaLeTe08xlJRjZvzDC9gp/jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EM3nqrSBso5EwLtgX1vwKSSrlvsV/j3Ay5CzaNqcKHqhDQ998OMlPzJg80P2J9kEwJX6ox4V6Jg2u6RY844nyup7XOKzsg/9TPlaoDXfc4/ZSGuAGsn+O0MMqp1RlE3G6m/SU6tZXO7ViPnppmJqRwidQe0vizNZlFJHi3KhJUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1Bqm2Dj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D478C4CEEF;
+	Thu,  5 Jun 2025 23:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749167052;
+	bh=ci1tb/wXcXuwrPfKM5LKaLeTe08xlJRjZvzDC9gp/jc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U1Bqm2DjqrbLuHTabKUdf6xvl3KXQiqUlfetXxrdz5ncjDsH0m8vUjilY2ecMylD3
+	 HrSVk8zr9NI3fE2rK2buaHCY1IVR15VXT8JepKXyCZvwDl2QnjVBirdHZuII7WenxP
+	 kpnXCHJeG3kon0P0+xv5YWCdlcztnKdSxGonNMfiHDvMXSxY5tEKIG/Iuw2bcyaBN5
+	 QDsT4xTDpDJwqyV36zq/l3ECN1MQ4sF3KdLPmPxu14UFKwz7X5ZE+j3aep53RSwedh
+	 YPPFG4cJ2Y5LDK1taVW57xYP1pK7M9ZSR70IfAoTq7HycjmquvQp0TGz2CWnOGVpsl
+	 xMUqNjaTdxU9A==
+Date: Thu, 5 Jun 2025 18:44:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: display: convert sitronix,st7586 to YAML
+Message-ID: <20250605234410.GA3479190-robh@kernel.org>
+References: <20250530-devicetree-convert-sitronix-st7586-to-yaml-v1-1-c132b512ec57@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250605233934.1881839-1-blakejones@google.com>
-X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
-Message-ID: <20250605233934.1881839-5-blakejones@google.com>
-Subject: [PATCH v2 4/4] perf: add test for PERF_RECORD_BPF_METADATA collection
-From: Blake Jones <blakejones@google.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Yujie Liu <yujie.liu@intel.com>, 
-	Graham Woodward <graham.woodward@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Ben Gainey <ben.gainey@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Blake Jones <blakejones@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250530-devicetree-convert-sitronix-st7586-to-yaml-v1-1-c132b512ec57@baylibre.com>
 
-This is an end-to-end test for the PERF_RECORD_BPF_METADATA support.
-It adds a new "bpf_metadata_perf_version" variable to perf's BPF programs,
-so that when they are loaded, there will be at least one BPF program with
-some metadata to parse. The test invokes "perf record" in a way that loads
-one of those BPF programs, and then sifts through the output to find its
-BPF metadata.
+On Fri, May 30, 2025 at 06:05:42PM -0500, David Lechner wrote:
+> Convert the sitronix,st7586 binding documentation from .txt to .yaml.
+> 
+> Also added a link to the datasheet while we are touching this.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  .../bindings/display/sitronix,st7586.txt           | 22 --------
+>  .../bindings/display/sitronix,st7586.yaml          | 61 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  2 +-
+>  3 files changed, 62 insertions(+), 23 deletions(-)
 
-Signed-off-by: Blake Jones <blakejones@google.com>
----
- tools/perf/Makefile.perf                    |  3 +-
- tools/perf/tests/shell/test_bpf_metadata.sh | 76 +++++++++++++++++++++
- tools/perf/util/bpf_skel/perf_version.h     | 17 +++++
- 3 files changed, 95 insertions(+), 1 deletion(-)
- create mode 100755 tools/perf/tests/shell/test_bpf_metadata.sh
- create mode 100644 tools/perf/util/bpf_skel/perf_version.h
+Applied, thanks.
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index d4c7031b01a7..4f292edeca5a 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -1250,8 +1250,9 @@ else
- 	$(Q)cp "$(VMLINUX_H)" $@
- endif
- 
--$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vmlinux.h | $(SKEL_TMP_OUT)
-+$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(OUTPUT)PERF-VERSION-FILE util/bpf_skel/perf_version.h $(LIBBPF) $(SKEL_OUT)/vmlinux.h | $(SKEL_TMP_OUT)
- 	$(QUIET_CLANG)$(CLANG) -g -O2 --target=bpf $(CLANG_OPTIONS) $(BPF_INCLUDE) $(TOOLS_UAPI_INCLUDE) \
-+	  -include $(OUTPUT)PERF-VERSION-FILE -include util/bpf_skel/perf_version.h \
- 	  -c $(filter util/bpf_skel/%.bpf.c,$^) -o $@
- 
- $(SKEL_OUT)/%.skel.h: $(SKEL_TMP_OUT)/%.bpf.o | $(BPFTOOL)
-diff --git a/tools/perf/tests/shell/test_bpf_metadata.sh b/tools/perf/tests/shell/test_bpf_metadata.sh
-new file mode 100755
-index 000000000000..11df592fb661
---- /dev/null
-+++ b/tools/perf/tests/shell/test_bpf_metadata.sh
-@@ -0,0 +1,76 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# BPF metadata collection test.
-+
-+set -e
-+
-+err=0
-+perfdata=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-+
-+cleanup() {
-+	rm -f "${perfdata}"
-+	rm -f "${perfdata}".old
-+	trap - EXIT TERM INT
-+}
-+
-+trap_cleanup() {
-+	cleanup
-+	exit 1
-+}
-+trap trap_cleanup EXIT TERM INT
-+
-+test_bpf_metadata() {
-+	echo "Checking BPF metadata collection"
-+
-+	if ! perf check -q feature libbpf-strings ; then
-+		echo "Basic BPF metadata test [skipping - not supported]"
-+		err=0
-+		return
-+	fi
-+
-+	# This is a basic invocation of perf record
-+	# that invokes the perf_sample_filter BPF program.
-+	if ! perf record -e task-clock --filter 'ip > 0' \
-+			 -o "${perfdata}" sleep 1 2> /dev/null
-+	then
-+		echo "Basic BPF metadata test [Failed record]"
-+		err=1
-+		return
-+	fi
-+
-+	# The BPF programs that ship with "perf" all have the following
-+	# variable defined at compile time:
-+	#
-+	#   const char bpf_metadata_perf_version[] SEC(".rodata") = <...>;
-+	#
-+	# This invocation looks for a PERF_RECORD_BPF_METADATA event,
-+	# and checks that its content contains the string given by
-+	# "perf version".
-+	VERS=$(perf version | awk '{print $NF}')
-+	if ! perf script --show-bpf-events -i "${perfdata}" | awk '
-+		/PERF_RECORD_BPF_METADATA.*perf_sample_filter/ {
-+			header = 1;
-+		}
-+		/^ *entry/ {
-+			if (header) { header = 0; entry = 1; }
-+		}
-+		$0 !~ /^ *entry/ {
-+			entry = 0;
-+		}
-+		/perf_version/ {
-+			if (entry) print $NF;
-+		}
-+	' | egrep "$VERS" > /dev/null
-+	then
-+		echo "Basic BPF metadata test [Failed invalid output]"
-+		err=1
-+		return
-+	fi
-+	echo "Basic BPF metadata test [Success]"
-+}
-+
-+test_bpf_metadata
-+
-+cleanup
-+exit $err
-diff --git a/tools/perf/util/bpf_skel/perf_version.h b/tools/perf/util/bpf_skel/perf_version.h
-new file mode 100644
-index 000000000000..1ed5b2e59bf5
---- /dev/null
-+++ b/tools/perf/util/bpf_skel/perf_version.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+
-+#ifndef __PERF_VERSION_H__
-+#define __PERF_VERSION_H__
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+/*
-+ * This is used by tests/shell/record_bpf_metadata.sh
-+ * to verify that BPF metadata generation works.
-+ *
-+ * PERF_VERSION is defined by a build rule at compile time.
-+ */
-+const char bpf_metadata_perf_version[] SEC(".rodata") = PERF_VERSION;
-+
-+#endif /* __PERF_VERSION_H__ */
--- 
-2.50.0.rc0.604.gd4ff7b7c86-goog
-
+Rob
 
