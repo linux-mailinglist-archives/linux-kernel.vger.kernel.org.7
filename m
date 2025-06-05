@@ -1,172 +1,170 @@
-Return-Path: <linux-kernel+bounces-675034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C58ACF825
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FC1ACF82C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA76C17A436
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2229C17A2B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1C97260C;
-	Thu,  5 Jun 2025 19:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF6C235074;
+	Thu,  5 Jun 2025 19:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iqG5kmtf"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="lUsiyOJ8"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E87119F42D
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1AA275842
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749152410; cv=none; b=Esl1Bs9d/2QkyWmSkswrHK4oW09Jxk/Vs5qgnpSTbtompv3eezFnQgI82zQoEc9499wuOV51BdjKu/ddYvg66Mrl5NFpOdoCwR/xyKn5wAHmvR9LgNX129qRJZTnUFuuSxUqqjM9DbQA7AsE8eTRS6I4WocRKx/+P4YBnqEeXX0=
+	t=1749152448; cv=none; b=CLGW3nel7hxh3lbxL0Q0OB7UBgiwkUkwNSwhP9LorO9x2iU2GGfPpx0iJHXqpU04hz3CHm9zDvcaJo/AFnqySG6ChzpZslU+HQGyIAzwSKmJx74SqYX/7l0jvGE2+Bh1BkIRb01oNRQ7pQyYnuaUdBRueKR8PSG78Wcv5+5gPh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749152410; c=relaxed/simple;
-	bh=0z6CW5q8CQV/wMH7D+qnHlnbKdM+YxP0rsRBNbXmvIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qw8+XC+4yF75X3fAXYz6nmLqYzu4rssG5J6dcbiwWcafsojTjxcbf7ahZfuqpOsHH2SnFmad3dWDlJiUIgS046ej5KQ/6h22+4t8uZd2aPo+cyRXaNR3LGQ/N87XBmazVXo2vkXqbbVr8r00yjGGXhx89bvBPx2DHWwvauQiU2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iqG5kmtf; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2348ac8e0b4so4795ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 12:40:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749152409; x=1749757209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+gbRXiixoAXfGdGLxJ2oFtFITg4n/f+sldemH0In+WE=;
-        b=iqG5kmtfmYpoPJgTLi1pTx/Ysb5WDDVMNa2hNMcxB2upkSS8J2hKGdaBFpHR9P3mDB
-         ehLf/QRUGJFSQfjfcwsddwfZ6+evAzGiwYC34maAHJMwl/idMCREX+xf3QGaXOt5953H
-         pL3jGDG2KQPJAyCxUg+xh2eCL0D4f7404ci7ECmbm0s8+vYhHKXlpmX1gHIvb/H9tnmE
-         xF6FaEOmwAik2CxKaiK3jGCC0U9hUauU0GKUNrf5URyDS6rYCAclVQIxNd8L2ozg5hkK
-         yfX5HAT4LEPHrTnGsDv4eZ6tbSA2boaa3QBS0KVtpG9EPaQNeLV3pATMwDrnoF7xpItv
-         mHbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749152409; x=1749757209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+gbRXiixoAXfGdGLxJ2oFtFITg4n/f+sldemH0In+WE=;
-        b=oKC2UOkETiuSw2f3CiQMt529UB+mPw6m4QZQFUSn1+vlxXNyTJX3WheQJvcg7pCfZN
-         HiorvFBLL6NFvCJU5noe0vnZ/A6FJpl0sIuZYrapliu8xr5/FYyYYh/W7hhyGJlacXXa
-         xaPB4szJSNVhPLuELMvAij5XZiyd+YeLWUipa5EF3dBZUlOY4OnDp4FpcKMqAma6mlud
-         Z+RhNBSoIRAurP2zDJZm/I7LHymkMoFJGeYvppITFCIZ4FYreL5xmyfTUjcdp9ZRNXMt
-         mFd4Z5yJxyY/+XpM4cf2EUdV3ZmonVgZVhdYhRBHnrEkyurAMLm964bbLYE2KuSq7IVQ
-         abaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtNKH7SGK+1D7fC8zbYAtPJY3bTAkg+00V+GOyY4RG5pugVz5IP9W/hnNi+EFybucL2iWks/kGzjT6SK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf4TMvqje51D/YDGkF0vzM91tGfRXlV/2E0ePDej46AXpPFq3b
-	rfc1R4xOo4lO9g4ABa3ldq0WcXC4lPfnhWe0jD+TBk0VSe7qgfodWPu8N+Nf1egEDKtu8prKioW
-	6xtSiqTZm55aQfyhk6eAWZS/og7CV82M0Z4wywKI5
-X-Gm-Gg: ASbGncumYdWMuJ65IKrHrTJYbzrH3x4UhER6KVcQR7nxqwJsS9Bjb9zpkU9MOJ01nlb
-	vlNLRA97GasQwuy+CwkWmX4VGR5Pjvq53TFDC/Sw6Z0xNG+d8tsV2J8gLrEEArT+xqqHm2WGjiL
-	QRRon/2+VCrGWada3E2xSuIV4PQhvMmxTfsY8oPi39ANa1JQNKTUsolCY=
-X-Google-Smtp-Source: AGHT+IHcTT2o1MKZq8UOcR4hL4bLiIFrmHftqSOGm8UgMZTc0+7X62O4TzoVnuFdqoRLnvK6zwsJrTF6DgwOQtF9S6k=
-X-Received: by 2002:a17:902:bd01:b0:235:e1d6:5343 with SMTP id
- d9443c01a7336-23602368069mr378735ad.20.1749152408349; Thu, 05 Jun 2025
- 12:40:08 -0700 (PDT)
+	s=arc-20240116; t=1749152448; c=relaxed/simple;
+	bh=inRgr52GjZfFrKDVU9fieFtTTun76Wq3lzUBEq+MZ0E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jEQox1qz5Tz+aAIx6eZ8Krf2Q3VhxBM0BVBJyWwbYSffFNuOuaOlfISSLZj7+y/pyZIjsLSm796DVMVpogPemtxCE/XCL60WqgMTUpDq5gkI6jxBqegKRiB+r6CZcb0jtmCXOLSN8/mpwQgPVW9FFm9Is8/U2NjkbCUeaR18e44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=lUsiyOJ8; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=lGLDQ1mU4DPm7FkayXjh2cfSy1FXbI8/RPDPA0tLNw4=; b=lUsiyOJ8i33WV1kvz8Q0B3oEIQ
+	5NAcIudxH9G0oCbhM40pdUQ41FLfNcqBkPpyAT31Kwbd+czUdS0s8dc72rJeOkEZhM3cIvJFShaWV
+	PV92kYPuqx+N2DVlyVuNonBxRp2xDMl5wQUY9t9Bv73zpGwjl5YwNIfy87a8PcxSEsQKHsaH1CND6
+	AL5qamRpb04IE3Y7POTjLx1bfSHQfyLcrL4J5VVyCpId/8g6gCELsvjR0/TYl9FujIxdbhtK6Q40K
+	4Lql0drJl6BYijikJM3bQ2XOZ/SSwevW7TY8ZFVf5O1gHIRPxxwm4UIXQv70mIIw5QK6gPQBLnTNM
+	X9bNQXsg==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uNGRx-000000004p5-3fXo;
+	Thu, 05 Jun 2025 15:40:29 -0400
+Message-ID: <2666b165d262a3bad73a3a4d886fa6d16bced03c.camel@surriel.com>
+Subject: Re: [RFC PATCH v3 5/7] x86/mm: Introduce Remote Action Request
+From: Rik van Riel <riel@surriel.com>
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	kernel-team@meta.com, Dave Hansen <dave.hansen@linux.intel.com>,
+ luto@kernel.org, 	peterz@infradead.org, Borislav Petkov <bp@alien8.de>, the
+ arch/x86 maintainers	 <x86@kernel.org>, Sean Christopherson
+ <seanjc@google.com>, Thomas Gleixner	 <tglx@linutronix.de>, Yu-cheng Yu
+ <yu-cheng.yu@intel.com>
+Date: Thu, 05 Jun 2025 15:40:27 -0400
+In-Reply-To: <9290E368-A0E1-4429-B14C-9AEF8DC71672@gmail.com>
+References: <20250605163544.3852565-1-riel@surriel.com>
+	 <20250605163544.3852565-6-riel@surriel.com>
+	 <9290E368-A0E1-4429-B14C-9AEF8DC71672@gmail.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604025246.61616-1-byungchul@sk.com> <20250604025246.61616-4-byungchul@sk.com>
- <29f2c375-65e3-4d22-8274-552653222f8d@gmail.com>
-In-Reply-To: <29f2c375-65e3-4d22-8274-552653222f8d@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 5 Jun 2025 12:39:55 -0700
-X-Gm-Features: AX0GCFtD68ApdCzrpjOMryrJ8sFch7OmJFbZRp-t7ALE-eD446rw2nCSo1WQWYU
-Message-ID: <CAHS8izMb23eaav-Fz50sefuS8BhF7as7=BX+Sv1wj01+0n6tMg@mail.gmail.com>
-Subject: Re: [RFC v4 03/18] page_pool: use netmem alloc/put APIs in __page_pool_alloc_page_order()
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Byungchul Park <byungchul@sk.com>, willy@infradead.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel_team@skhynix.com, 
-	kuba@kernel.org, ilias.apalodimas@linaro.org, harry.yoo@oracle.com, 
-	hawk@kernel.org, akpm@linux-foundation.org, davem@davemloft.net, 
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 5, 2025 at 3:25=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.c=
-om> wrote:
->
-> On 6/4/25 03:52, Byungchul Park wrote:
-> > Use netmem alloc/put APIs instead of page alloc/put APIs and make it
-> > return netmem_ref instead of struct page * in
-> > __page_pool_alloc_page_order().
-> >
-> > Signed-off-by: Byungchul Park <byungchul@sk.com>
-> > Reviewed-by: Mina Almasry <almasrymina@google.com>
-> > ---
-> >   net/core/page_pool.c | 26 +++++++++++++-------------
-> >   1 file changed, 13 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> > index 4011eb305cee..523354f2db1c 100644
-> > --- a/net/core/page_pool.c
-> > +++ b/net/core/page_pool.c
-> > @@ -518,29 +518,29 @@ static bool page_pool_dma_map(struct page_pool *p=
-ool, netmem_ref netmem, gfp_t g
-> >       return false;
-> >   }
-> >
-> > -static struct page *__page_pool_alloc_page_order(struct page_pool *poo=
-l,
-> > -                                              gfp_t gfp)
-> > +static netmem_ref __page_pool_alloc_page_order(struct page_pool *pool,
-> > +                                            gfp_t gfp)
-> >   {
-> > -     struct page *page;
-> > +     netmem_ref netmem;
-> >
-> >       gfp |=3D __GFP_COMP;
-> > -     page =3D alloc_pages_node(pool->p.nid, gfp, pool->p.order);
-> > -     if (unlikely(!page))
-> > -             return NULL;
-> > +     netmem =3D alloc_netmems_node(pool->p.nid, gfp, pool->p.order);
-> > +     if (unlikely(!netmem))
-> > +             return 0;
-> >
-> > -     if (pool->dma_map && unlikely(!page_pool_dma_map(pool, page_to_ne=
-tmem(page), gfp))) {
-> > -             put_page(page);
-> > -             return NULL;
-> > +     if (pool->dma_map && unlikely(!page_pool_dma_map(pool, netmem, gf=
-p))) {
-> > +             put_netmem(netmem);
->
-> It's a bad idea to have {put,get}_netmem in page pool's code, it has a
-> different semantics from what page pool expects for net_iov. I.e.
-> instead of releasing the netmem and allowing it to be reallocated by
-> page pool, put_netmem(niov) will drop a memory provider reference and
-> leak the net_iov. Depending on implementation it might even underflow
-> mp refs if a net_iov is ever passed here.
->
+On Thu, 2025-06-05 at 21:54 +0300, Nadav Amit wrote:
+> Just few small things that jump out=E2=80=A6
+>=20
+> > On 5 Jun 2025, at 19:35, Rik van Riel <riel@surriel.com> wrote:
+> >=20
+> > +void rar_cpu_init(void)
+> > +{
+> > +	u64 r;
+> > +	u8 *bitmap;
+> > +	int max_payloads;
+> > +	int this_cpu =3D smp_processor_id();
+> > +
+> > +	cpumask_clear(&per_cpu(rar_cpu_mask, this_cpu));
+> > +
+> > +	/* The MSR contains N defining the max [0-N] rar payload
+> > slots. */
+> > +	rdmsrl(MSR_IA32_RAR_INFO, r);
+> > +	max_payloads =3D (r >> 32) + 1;
+> > +
+> > +	/* If this CPU supports less than RAR_MAX_PAYLOADS, lower
+> > our limit. */
+> > +	if (max_payloads < rar_max_payloads)
+> > +		rar_max_payloads =3D max_payloads;
+>=20
+> Unless I am missing something, this looks very racy.
+>=20
+All the CPUs in the system should support the same
+number rar_max_payloads, since they share the same
+rar_action table.
 
-Hmm, put_netmem (I hope) is designed and implemented to do the right
-thing no matter what netmem you pass it (and it needs to, because we
-can't predict what netmem will be passed to it):
+> BTW: should rar_max_payloads be ro_after_init?
+>=20
+> > +	pr_info_once("RAR: support %d payloads\n", max_payloads);
+> > +
+> > +	bitmap =3D (u8 *)per_cpu(rar_action, this_cpu);
+>=20
+> this_cpu_ptr() would be cleaner (here and when using rar_cpu_mask).
 
-- For non-pp pages, it drops a page ref.
-- For pp pages, it drops a pp ref.
-- For non-pp net_iovs (devmem TX), it drops a net_iov ref (which for
-devmem net_iovs is a binding ref)
-- For pp net_iovs, it drops a niov->pp ref (the same for both iouring
-and devmem).
+A CPU cannot start using the rar_action table until
+the wrmsl below.
 
-In my estimation using it should be safe to use put_netmem here, but
-I'm not opposed to reverting to put_page here, since we're sure it's a
-page in this call path anyway.
+That should ensure there is no race here.
+
+Thank you for the cleanup ideas. I'll apply those for v4.
+
+> > +	/*
+> > +	 * Allow RAR events to be processed while interrupts are
+> > disabled on
+> > +	 * a target CPU. This prevents "pileups" where many CPUs
+> > are waiting
+> > +	 * on one CPU that has IRQs blocked for too long, and
+> > should reduce
+> > +	 * contention on the rar_payload table.
+> > +	 */
+> > +	r =3D RAR_CTRL_ENABLE | RAR_CTRL_IGNORE_IF;
+>=20
+> Do we really need r ?
+
+I suppose not. The original code added another
+value into r, but that hangs hard with today's
+microcode :)
+
+>=20
+> > +	wrmsrl(MSR_IA32_RAR_CTRL, r);
+> > +}
+>=20
+>=20
 
 --=20
-Thanks,
-Mina
+All Rights Reversed.
 
