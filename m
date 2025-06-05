@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-674567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7454DACF14B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:51:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568ADACF151
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2615A7A7CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD443AC417
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B90D2741C2;
-	Thu,  5 Jun 2025 13:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1621D274676;
+	Thu,  5 Jun 2025 13:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CxIuH5PN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epgr8JOB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4154F272E54;
-	Thu,  5 Jun 2025 13:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F132741A4;
+	Thu,  5 Jun 2025 13:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749131489; cv=none; b=Mpl2uOiTuJbO2Zsjg7o26C/zoVyvpnF086teEg2NRciQbQzuV6jHu2k48JovAaD4KFGlnXHx64tenpWBowH0cnXgoCOeJ28Zq6MVMjZKwgoCnTZCwe/1bWTpmcq0LcSFm+0DQkUOb9DOVfW5mtzyGyi1oBpqIrFRKKevXJ62VOc=
+	t=1749131532; cv=none; b=QS9ri0LBLAft/xFeF3YBpXZL49CZPYzIhRNOD4CkGQUC+czlhsrXVUzvqCNe1MocI8cZOpPw7keU8VJ6eKTgiYVOQ88kkiXi2bxiLADUy6dxsuQiI9LPhFQSKdQUrC6Z/lD/N9ymzljfdAVibVgJe2J2ht+FoJM+2LhFqXaxam0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749131489; c=relaxed/simple;
-	bh=yAV1qmK+GD0TtFCwzR+lZZRLe8ffoaN7xhVT0oGq4Og=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dW4VUKYBiBgqMus/nQ9j2EDmCSJrSVTI1UzPV6mkMp7E3uqaL8kP8w4Gj7I4RXX6XlsXYv5EKbO9fw3VUPOcpX86W46FrNEO6LcNQQHrQ0uYMNxGMIWeCkthJh53uotLZgzKNbcLfbKdCc3dQNVsTN8LvAUtTPxPzYn/C10SD84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CxIuH5PN; arc=none smtp.client-ip=192.198.163.10
+	s=arc-20240116; t=1749131532; c=relaxed/simple;
+	bh=OEi12Lmi5YITJkvxZt4IvCwmlqEWCmXok9rCvTypycg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueOfNpPZ60biLudq7lhMqT+u7K7cAdYwXIi6IPaNTf8sBdBSJ7w0YM+clCnyP0ge4eNmhmeW38xr4BbFyzjZ1YxhcdZqLTTLwmwSCgrHow8JWckPE/fsRMUhQ3spTwlg0LREQoEtjOlyJUmUNAi2CbwssPI49SgMwH4HrgHQYKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epgr8JOB; arc=none smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749131488; x=1780667488;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yAV1qmK+GD0TtFCwzR+lZZRLe8ffoaN7xhVT0oGq4Og=;
-  b=CxIuH5PNgYHb9x48bRO35oenvhCIKm3iwgfLWTvlwqiFNmEPCMyTs0f0
-   tafhaYywKxDGS6/+rc8GviEFuE/xgKDje5Srg6wSsm20u4W9BMs9fCpBs
-   ga256pJkbn3PfPRjLnt2j+H+Ht8GbqEH9gpth5pphDcjbZ0cpTvtRgxVs
-   UW8xNTssm6xT4k+IkQ1bYbcF+EBIIyNunF45NU2sdn/TvQdM1G+R7+3uE
-   1IiHXcn4hg2HZWP/6Fr5pH7IFBGc86AwENmmOzRUOXktAUdf5lBmRqq0L
-   v8z92Dcx2litjoGWP7JNQVvBBX37VeECICRmp60Pf2eCDfgQvvwY4grja
-   Q==;
-X-CSE-ConnectionGUID: /XE7QyUqSsinz2eFqzaHdQ==
-X-CSE-MsgGUID: edBYGxpuSy21tWdcFWBJog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11455"; a="62607354"
+  t=1749131531; x=1780667531;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=OEi12Lmi5YITJkvxZt4IvCwmlqEWCmXok9rCvTypycg=;
+  b=epgr8JOBLQ+tBWq86j0i7nLhC8POYtHwtDAupvJOYUsFT9j47BnUrd8O
+   DkZlkext23/BugGrggWHbNU2+ogPTW977nia+LFXgFKaqN6Uo3gJVv9Ls
+   cIGANVmyAQYYOW4RAIWGEg1wo/S2df5JLbT4pOc6P5YpdF7eLTM7GExWm
+   91NWGtscaYE+NU+1h1dOUqHaq2qKlPM3X/KrXkHUoDbBmh4gL9p7Y73CJ
+   6DeZbJm5gOBrytTyd2x24X67cDtKM3GomF0W7zBrikw5/DHpdc1LLseAR
+   jfXoMqCRoD79Z6ZM7DePlBN4dR/1xUOWBxPi57MHywN1QCfRhjqnTSyjN
+   g==;
+X-CSE-ConnectionGUID: FjlCWzh7TrqUd2eRXJK75g==
+X-CSE-MsgGUID: ut46IR/YTQ653whvyvWigw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11455"; a="61871057"
 X-IronPort-AV: E=Sophos;i="6.16,212,1744095600"; 
-   d="scan'208";a="62607354"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 06:51:28 -0700
-X-CSE-ConnectionGUID: RGgWUE6UTwuS67os1UEwPA==
-X-CSE-MsgGUID: KygK6xT1S9CXI8J+gpPULA==
+   d="scan'208";a="61871057"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 06:52:10 -0700
+X-CSE-ConnectionGUID: IhciTlgHTfmBlgMyd0MgSw==
+X-CSE-MsgGUID: yV2MX031TjeT3OKJqwBolw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,212,1744095600"; 
-   d="scan'208";a="146474689"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 06:51:27 -0700
-Received: from [10.246.136.52] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4936120B5736;
-	Thu,  5 Jun 2025 06:51:25 -0700 (PDT)
-Message-ID: <1f97aa2e-c488-4800-ac7b-e7351f2a30ea@linux.intel.com>
-Date: Thu, 5 Jun 2025 09:51:24 -0400
+   d="scan'208";a="176476213"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 06:52:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uNB0k-00000003sSd-16ab;
+	Thu, 05 Jun 2025 16:52:02 +0300
+Date: Thu, 5 Jun 2025 16:52:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Ioan-daniel, Pop" <Pop.Ioan-daniel@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	"Sa, Nuno" <Nuno.Sa@analog.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>,
+	"Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
+	"Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 5/5] iio: adc: ad7405: add ad7405 driver
+Message-ID: <aEGhAa1a9GHPNQjH@smile.fi.intel.com>
+References: <20250604133413.1528693-1-pop.ioan-daniel@analog.com>
+ <20250604133413.1528693-6-pop.ioan-daniel@analog.com>
+ <aEBlqPqxd0-C7j63@smile.fi.intel.com>
+ <PH0PR03MB63350BE9DC927335D0FEBEE2D16FA@PH0PR03MB6335.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] perf: Fix the throttle error of some clock events
-To: Ingo Molnar <mingo@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
- irogers@google.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, eranian@google.com, ctshao@google.com,
- tmricht@linux.ibm.com, Leo Yan <leo.yan@arm.com>,
- Aishwarya TCV <aishwarya.tcv@arm.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-References: <20250604171554.3909897-1-kan.liang@linux.intel.com>
- <aEE7ug56bPS_ZJUQ@gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <aEE7ug56bPS_ZJUQ@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH0PR03MB63350BE9DC927335D0FEBEE2D16FA@PH0PR03MB6335.namprd03.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Jun 05, 2025 at 01:42:50PM +0000, Ioan-daniel, Pop wrote:
+> 
+> > On Wed, Jun 04, 2025 at 04:34:07PM +0300, Pop Ioan Daniel wrote:
+> > > Add support for the AD7405/ADUM770x, a high performance isolated ADC,
+> > > 1-channel, 16-bit with a second-order Σ-Δ modulator that converts an
+> > > analog input signal into a high speed, single-bit data stream.
+> > 
+> > Hmm...
+> > Have you seen these?
+> 
+> Just a question for my clarification. 
+> Except for comment from David Lechner, what should I do in the
+> next patch that is different from this patch regarding your requests?
 
+I believe those are generic advice, use them in any code you submit.
 
-On 2025-06-05 2:39 a.m., Ingo Molnar wrote:
-> 
-> * kan.liang@linux.intel.com <kan.liang@linux.intel.com> wrote:
-> 
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> Both ARM and IBM CI reports RCU stall, which can be reproduced by the
->> below perf command.
->>   perf record -a -e cpu-clock -- sleep 2
->>
->> The issue is introduced by the generic throttle patch set, which
->> unconditionally invoke the event_stop() when throttle is triggered.
->>
->> The cpu-clock and task-clock are two special SW events, which rely on
->> the hrtimer. The throttle is invoked in the hrtimer handler. The
->> event_stop()->hrtimer_cancel() waits for the handler to finish, which is
->> a deadlock. Instead of invoking the stop(), the HRTIMER_NORESTART should
->> be used to stop the timer.
->>
->> There may be two ways to fix it.
->> - Introduce a PMU flag to track the case. Avoid the event_stop in
->>   perf_event_throttle() if the flag is detected.
->>   It has been implemented in the
->>   https://lore.kernel.org/lkml/20250528175832.2999139-1-kan.liang@linux.intel.com/
->>   The new flag was thought to be an overkill for the issue.
->> - Add a check in the event_stop. Return immediately if the throttle is
->>   invoked in the hrtimer handler. Rely on the existing HRTIMER_NORESTART
->>   method to stop the timer.
->>
->> The latter is implemented here.
->>
->> Move event->hw.interrupts = MAX_INTERRUPTS before the stop(). It makes
->> the order the same as perf_event_unthrottle(). Except the patch, no one
->> checks the hw.interrupts in the stop(). There is no impact from the
->> order change.
->>
->> Reported-by: Leo Yan <leo.yan@arm.com>
->> Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
->> Closes: https://lore.kernel.org/lkml/20250527161656.GJ2566836@e132581.arm.com/
->> Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
->> Closes: https://lore.kernel.org/lkml/djxlh5fx326gcenwrr52ry3pk4wxmugu4jccdjysza7tlc5fef@ktp4rffawgcw/
->> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
->> Closes: https://lore.kernel.org/lkml/8e8f51d8-af64-4d9e-934b-c0ee9f131293@linux.ibm.com/
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Any idea which commit introduced this bug?
-> 
-> Was it:
-> 
->   9734e25fbf5a perf: Fix the throttle logic for a group
->  
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yes.
-Since it is still in the tip.git, I'm not sure if the commit ID is valid
-for the Fixes tag. so I didn't mention the commit ID in the log.
-
-Thanks,
-Kan
-
-> plus the followup driver updates?
-> > Thanks,
-> 
-> 	Ingo
 
 
