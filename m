@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-674875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E519ACF613
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8562ACF617
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFCE7173CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C8317B4F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D908A27C857;
-	Thu,  5 Jun 2025 17:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB9827A103;
+	Thu,  5 Jun 2025 17:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YKnCut+c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VK2C4C7T"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922432797BE
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 17:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D8F2750F0;
+	Thu,  5 Jun 2025 17:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749146201; cv=none; b=Elkt/UPM+H8iQmZt5AYQd/+6kAslaa9hLSUv/u3BhqQbrlZ0Abx3g6bw619Rhk+utqNkB55T4ITWXKegvD5m0lunHW6lT2IKw3/VxtKR9Temu3dvZa57KsIKqNf5LZ3aiVhmnwZjhyafJG/xZroW88hg9jo5vjvm6mo9WL+5rII=
+	t=1749146274; cv=none; b=L9U8opgDefvwn++8Q0b9OKoSYPgZuHqtFfKY3f9JtDKDMsu6OhdihbRLIHYSOmiWjYiFtaIb9Jvj/4O+9ISGGo4heKsg6baowNj6y7tYeEvhwQJJG7KUHB/ZJ7lrI7jkWg430lSqrtwheu4RZoFeEyrzrEouE3YUwlp0Ye74PMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749146201; c=relaxed/simple;
-	bh=gMroWcHjboWrDGM0ZLdaI8dfCuaAXIz3Ryz9wJRs4Y0=;
+	s=arc-20240116; t=1749146274; c=relaxed/simple;
+	bh=rvD48nSdgnQrRF8apaLY0OWIycvkx9NLB/OwctTjzes=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QLqKUP3WqgsSq6+9xk5TKhS33yWaBO0OXZ3ZZpjcPV7dm4TnrPKjd4gAV434JcW7kC3WPtmrEjJ2WMVXwkHt0yJDcyLLLGsxEW9Ld8hfbYqz2RiH8JF++2+a8pKoVyodFl0rPBVBbKoaNTNQ8z4JMLUbaxdqmJaqmeLwLwY1tGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YKnCut+c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555H4xE7032282
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 17:56:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kZcQKtQ1ov37yB/aXsBXEWGJWFPqRd9laCgmUZnxfnI=; b=YKnCut+cQlT0BUlC
-	qNGULUZb/+z9n5FK3yZoJ+Bj27zW8a3gB3yrKhR7mkXvcTikrfk9nk2OhpZ3vREW
-	Lf0N0+lEVYq4PqtJFMgwkssNpI601/0HRIQNg7IIUm+jR7jOi/Xtxar/xFlYd9I3
-	YQhLsH3EllhEOuCy4J26MFt76M1t2Qb3A9iQ2kk3OXvUcdz3OUlejgnsyKUhcYfQ
-	l7MQUCO+kqhV1W/HaN4m/ZL4/n4LtXCpO6s+BiXxm96nAQdSSFeOp/nldRJoGt+/
-	4LhtrKYLGnAfczR1acA7h7/tDBHoppU2dDs4HtQkaEp2ZDUPge0w7RVj40WcP8SU
-	eYQl9w==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471sfv14rk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 17:56:38 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a43be59f17so2208321cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 10:56:38 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=L0cL6xE9RtAYGvqvvQrR5uoPrZPsBZ7n5DZ9bl4RMv/FW+8ScZy3dQZd2McWbpl8QFj05nbq6MEaVbAPVySY4i5bLBwGJiBqkw+IrKfoAgQTyYj7LUASJQ4PLUrlEcrcLsgBhdVYnr49D9HuHe1IqOZbYxgIP8jnJM4v6TZfaVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VK2C4C7T; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso2306350a12.1;
+        Thu, 05 Jun 2025 10:57:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749146271; x=1749751071; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0vDdUwwKQJNe/fkcnVHvcRpEhmg0nlamAkVjZwwBZ4A=;
+        b=VK2C4C7TGHnwCiZfBjNhyha3ogasqBsMq5lS7elMm12X6lGcoXw95klh7pkDYraHca
+         EUyj/nuPD6sqXFlVz9VZbXo6LmqIjA/3ZE2eTh0IECTL83b+AeQw2kfg7nlffAq9Vs25
+         tREpEOeO2pBVicqjQ+9GjPtGD4SNHrNN0iVdkBNNGUMSTmgFcjUW7WexsT/VdxTQTF0J
+         JQBcRtsItOrpDY8v8S+2xYM9HBHv1llQeDWa3sQPF/AB2l7Gmj92UswT7vspDy3eRDpk
+         2p4dOrctdu8ZxMp0d2YgQzoPFn95WXKhJ9iJxDpa4Czwk2bbixuLla5/Bx27Z87bF7EI
+         92qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749146197; x=1749750997;
+        d=1e100.net; s=20230601; t=1749146271; x=1749751071;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZcQKtQ1ov37yB/aXsBXEWGJWFPqRd9laCgmUZnxfnI=;
-        b=joJPJL1eyZk/VpPMYQhsmNfamFRyyrGy8wfYwolOA/pCbxEJwiAzhDhWPzs2esXlJS
-         1E3AXCJkpr5vmMD7pi5kesBCDIKKJ0JMwgh1Ko4MM+b62+QViEu+AlJ3yffUJY6EyRkf
-         BnspxADFVCLEiNXVlPNdHETwZIpSiJS0S8DwRTpn4si/oVennBip6/tBJWHMHpN4Ms3v
-         UNtK5ieouTub/+7HCaHJHlR5mxsSYfMaWRWDz2EwudLiry9WHHJ0kHi3thvlqCuPkXYA
-         N8ClFWgfneV0EEs0uY8/t3lvoETUX7xCEVQ9YQjY6l81PoJ1Pj6O+gqr7sMWIhzisOi4
-         KjGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSf16p/4ThLuEbjJTt+ZbeqUQO4qJmU6CrFZdPNlHgVaToKD2kH8K7S4YC+98tLcVV74tU+fCm0HiAVIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQMi3H0WNGa2+k/o0Sc7eOemwEsP1tYT1DD985LIUWOfDTnIqn
-	HN0a/zJpnfHeapZ2xl7zGdUgJHKbaALwaOu60k8C1EpvrD6QMOhCNHTY0quND2N8+thzviCi2Dv
-	f7Gvtn08k8I+z6mjR0SiMY2htw+XKN7d0Pw2FnjXc7UxmmTlj9BAhFh1Ws1hPQaXgheA=
-X-Gm-Gg: ASbGncswVShgzYIL+rK4sH33vbhT3JT8yXSM0IvHAvfa2JFN0Mz8Py2vz4XF5KD6Nfv
-	kdXtBaKFloLxgAyPVHmfLtM5l7/WUSCurXEf/UX7XA0lqehuA7tqntmHpfxSNm3CTyqPdyS+T+f
-	gqqz7hDV6vjm74mBGe8GGSYEEaG0OmtuSI4NfKZDuve7mYPfz/jMeTBoh9oCrm2eKRa2sA7jl46
-	Ya17GqUS9hyIvloCJRJfUkdxBy5xi0jOX2WpBvWnHvmKwd+uECOD4h2fysnDwP1UWWEw6b3hV8O
-	UX1rYds60APpqwnuojDa7caePjafbof2mLVZV/2MEdRA5WY46bM1XJ17Pf1v0c+YLA==
-X-Received: by 2002:a05:622a:607:b0:4a4:323a:2d76 with SMTP id d75a77b69052e-4a5b9f3c841mr3459221cf.10.1749146197321;
-        Thu, 05 Jun 2025 10:56:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGT3i6QouPUynjX4yzcxTQBbYY9kUpqtzwk6L8Pm4W1giH5Gphq0ngetzOJkdmxHBjlqVwyAw==
-X-Received: by 2002:a05:622a:607:b0:4a4:323a:2d76 with SMTP id d75a77b69052e-4a5b9f3c841mr3458951cf.10.1749146196865;
-        Thu, 05 Jun 2025 10:56:36 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82e80csm1283599666b.71.2025.06.05.10.56.35
+        bh=0vDdUwwKQJNe/fkcnVHvcRpEhmg0nlamAkVjZwwBZ4A=;
+        b=nrcwYs59JhOkbI73JS5hcCnvDK11J7iZVcqlXz3WsP49WJ3+l/MacWVv7I4QuLPRLl
+         6L24hJbcmcJR3I+ke5iCcCWTAPISTpY3CVgSnwyPcl4ASJS6NqoxS2WprY3Kl+hu0IPv
+         KuZTKqhP1bAkswv+vA8oBUCxsPpM6o698mj/8nVKM2rQcg4uJmZkl7bOFVr+CdSjd35B
+         J5/1HUCtTma+UgRY9SSBDheezMwiZZzZPgbOlwEtOQJ0bS8brVpa+i8UzxywMWuYZHm7
+         RxtGhCTVubRNxFfY9gohMf/f3CEcrkPAdjmyDQAxcoqbXJ78z73eYuKIFIOrH/uG4AAV
+         2q5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXE8XZbLiICoCBGUXFusp9KsNpLwxxxYgTXPQ8U/Wf8cUOQTcbNMcg2EsW+C+z6HfJMptIGoJr7MOpAcrjMiA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdWD9gVKQQInORlaLVS7BUYGAOWJojGiOLKPa9wLTYQz5KpkJs
+	PVDeGzo5Key1NQhYnh7ucCz2jdfKz/5SlxJB921CWzzWAfTH7lrnAIwt
+X-Gm-Gg: ASbGnctZSll7UL04rp13TF+uYcduiGEtAhqZaoUiLXCbE/WLUTRG656VTjUN9fop2s9
+	kzCT9SFBgdh3iLV2U6yn6xmKbss/pz0/thml9iy+wEG5g6lUjCOK7vrLjtwR9fDnc4ZYAGaVlPq
+	dz4pwehLq4F91qGRtTEYpJ5e/YrpbEgZkJzsCObanQilZ4I2DkI+zyQeUHQXeWNRqOUIJczM2rI
+	pUQRSvplbEJ7OhW9O9FIMDexoS2/4Mo93XaHpLfoevRWlv3P2w8BmMj0/FsYR0aicUE+76D4QMG
+	1lMAEqDeDZ20qtYAkbB7TEo4XaQkABcb93Y/jLy58zSB6Kkab48oLvyaUWML
+X-Google-Smtp-Source: AGHT+IG54aLW+rl06pwJxjOcQ8r1a2fqNltqry+pbYsiFNt2bOWt1+fRbHMPH2wnbkY+c3e8hyAwPg==
+X-Received: by 2002:a17:907:1c8e:b0:ad8:9466:3354 with SMTP id a640c23a62f3a-ade1a9e9335mr15216766b.54.1749146270897;
+        Thu, 05 Jun 2025 10:57:50 -0700 (PDT)
+Received: from [10.5.1.144] ([193.170.134.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada6ad6abc2sm1294282566b.173.2025.06.05.10.57.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 10:56:36 -0700 (PDT)
-Message-ID: <922180a7-ff39-4511-8640-ed8bfd777fc1@oss.qualcomm.com>
-Date: Thu, 5 Jun 2025 19:56:34 +0200
+        Thu, 05 Jun 2025 10:57:50 -0700 (PDT)
+Message-ID: <63f92378-dde9-4bee-b2ae-b994052e8fd0@gmail.com>
+Date: Thu, 5 Jun 2025 19:57:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,59 +80,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: sc7280: Add wake GPIO
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20250605-wake_irq_support-v3-0-7ba56dc909a5@oss.qualcomm.com>
- <20250605-wake_irq_support-v3-1-7ba56dc909a5@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250605-wake_irq_support-v3-1-7ba56dc909a5@oss.qualcomm.com>
+Subject: Re: [PATCH v4 1/3] rust: add UnsafePinned type
+To: Benno Lossin <lossin@kernel.org>, Sky <sky@sky9.dev>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev, Ralf Jung <post@ralfj.de>
+References: <20250511-rust_unsafe_pinned-v4-0-a86c32e47e3d@gmail.com>
+ <20250511-rust_unsafe_pinned-v4-1-a86c32e47e3d@gmail.com>
+ <1553eea9-9ced-410a-b6e7-886e11e2edba@gmail.com>
+ <DAES0YHHTRQS.3EGLTCPLP3SK3@kernel.org>
+Content-Language: en-US, de-DE
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <DAES0YHHTRQS.3EGLTCPLP3SK3@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CY8I5Krl c=1 sm=1 tr=0 ts=6841da56 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=lN5UOK94kOf-3Ws_NdwA:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: oZoPZ_z9qIwXLYZZDPHYduO9AGxc_WLd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE1OSBTYWx0ZWRfXwyTLan5UJhUZ
- 6XTYlo9Ay2UftDHFv+/AIPsXn3ucpUGRyD2ViHoxMR3CqwfT5y7LrekDXZ6uPQkOjtB5PZjX4X3
- ljWMLWNf+G2O8of/AhbdSO/Nxkbf/nZHGC8gH2FrYWnzE4KhmjoSPMtMCu2K1ByRj5zc/QIl1p/
- KXbxzQLu9Ly5fevZwqulbbLPqpLVMi4X7ZQEYPfoTI1xBwrc1Re20E+Wi/WTmA9c8lCCe4P3XD+
- l7iS/vHxIz/k8KdNcEBlkeRXU+Sx8c5XZFDNXQ6mE1iTop/Egl7I4FbHZKpdAny8eEb6RaqjNaA
- QmOZkf4pbOzltLJZx/GKL5UpKa0NPL7W+lwu9JSmkQPGZwh+KsgO0sMw9BzR0qBSanTAcJGR+Gv
- YAc6pGRYLCyug77MQ2g5S+DRqjfu+hQCclFWGmsaIXGn2yA5Mlizip6iW1BgIlHeLuhmSm+V
-X-Proofpoint-GUID: oZoPZ_z9qIwXLYZZDPHYduO9AGxc_WLd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_05,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 impostorscore=0
- phishscore=0 mlxlogscore=788 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050159
 
-On 6/5/25 7:24 AM, Krishna Chaitanya Chundru wrote:
-> Add WAKE# gpio which is needed to bring PCIe device state
-> from D3cold to D0.
+On 05.06.25 7:30 PM, Benno Lossin wrote:
+> On Thu Jun 5, 2025 at 7:03 PM CEST, Christian Schrefl wrote:
+>> On 11.05.25 8:21 PM, Christian Schrefl wrote:
+>>> +/// This type provides a way to opt-out of typical aliasing rules;
+>>> +/// specifically, `&mut UnsafePinned<T>` is not guaranteed to be a unique pointer.
+>>> +///
+>>> +/// However, even if you define your type like `pub struct Wrapper(UnsafePinned<...>)`, it is still
+>>> +/// very risky to have an `&mut Wrapper` that aliases anything else. Many functions that work
+>>> +/// generically on `&mut T` assume that the memory that stores `T` is uniquely owned (such as
+>>> +/// `mem::swap`). In other words, while having aliasing with `&mut Wrapper` is not immediate
+>>> +/// Undefined Behavior, it is still unsound to expose such a mutable reference to code you do not
+>>> +/// control! Techniques such as pinning via [`Pin`](core::pin::Pin) are needed to ensure soundness.
+>>> +///
+>>> +/// Similar to [`UnsafeCell`], [`UnsafePinned`] will not usually show up in
+>>> +/// the public API of a library. It is an internal implementation detail of libraries that need to
+>>> +/// support aliasing mutable references.
+>>> +///
+>>> +/// Further note that this does *not* lift the requirement that shared references must be read-only!
+>>> +/// Use [`UnsafeCell`] for that.
+>>
+>> The upstream rust PR [0] that changes this was just merged. So now `UnsafePinned` includes
+>> `UnsafeCell` semantics. It's probably best to also change this in the kernel docs.
+>> Though it's still the case that removing the guarantee is simpler than adding it back later,
+>> so let me know what you all think.
 > 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+> Depends on how "stable" this decision is. I haven't followed the
+> discussion, but given that this once changed to the "non-backwards"
+> compatible case it feels permanent.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+It seems pretty permanent, from what I understand its hard to
+define the exact semantics `UnsafePinned` without `UnsafeCell`
+in a way that is sound and because of some interactions with
+`Pin::deref` it would have some backwards compatibility issues.
+See this comment by Ralf on github [1].
 
-Konrad
+[1]: https://github.com/rust-lang/rust/pull/137043#discussion_r1973978597
+
+> 
+> How close is it to stabilization?
+> 
+> If it's close-ish, then I'd suggest we change this to reflect the new
+> semantics. If not, then we should leave it as-is.
+
+It's pretty new, I'm not sure how long it's going to stay in nightly,
+but it's probably going to be quite some time.
+
+I wouldn't change it if it would already be in the kernel, but I think
+its probably good to add the current state of the feature. This
+would also reduce the difference between docs and implementation.
+
+Cheers
+Christian
+
 
