@@ -1,291 +1,183 @@
-Return-Path: <linux-kernel+bounces-674805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8461DACF4E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:04:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED5AACF4F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6498D3AD5F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3FF2178F6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1783C275864;
-	Thu,  5 Jun 2025 17:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB56278170;
+	Thu,  5 Jun 2025 17:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXaFU8lD"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lbLiXaFO"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199AE274FC2;
-	Thu,  5 Jun 2025 17:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749143039; cv=none; b=kOqZbLHLwZNbp1RkhgeAZyRkus+Gif/Rrh0i9jftCPMTEPlpDDfpPy4FhEsGo0TLjzAqRhugqpcWmiYcdxhwOkg4m8tlnWjfFFWReQhpYNHI6DvRX+k8Rv3VT7rDUe+m9TmWk95iPcJoM3xYbjQNs+d7flW0DEC4TAN+4pInVoU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749143039; c=relaxed/simple;
-	bh=RXJ2bhB++ekpp+g5wU/mlsuiZBxchp5iRzfW6p4lPv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5ZifV7YfEHTabH9CN9peqjEZeW8+PJCaBzLN/hOEf/SP4JAEuEwhpVN0m4iKfcmOd7MmUxx93Y1InhQdEtgTBRn5GVm7JIw4m0ZlJ80ilE83SbO86yc/m/0lCgmRR04o6mjHi6etB6/fL2DcXy5NqklqF8jOWqq8PvNIFnA+9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXaFU8lD; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad93ff9f714so201234966b.2;
-        Thu, 05 Jun 2025 10:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749143035; x=1749747835; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vc9h3N4L8wdtAazwz7x66wCAf7y1keOjKnFs7I8c9Y8=;
-        b=gXaFU8lDC+xNiAR488bmjKIJpkFuSqKJdxQQEeEOCXNqz+hrvL8UkzoItu2wWUZwFo
-         E60cbMGhA0Jp9mURgI7IeCnhS+RtN6zTtI16yHLnjEqjlx7721v3n71qlXF9iPqGg1RP
-         I5BisnrCjnDDO7cPQfiU6wugvLOWAiNgrJiO5+5AcGnGwt1PKIzrMh+E4otlZ16X644W
-         HVF8tbfKu1tuicfHiJXqwU1mM8cU3ulxVkRLYfsC5gQRDe6B+jHb86oOvBpwAzc6tgGZ
-         BRbneR0IbfwO/w3jtGGAh4MGo8L7QemnYiNJ4xSCKSzj+p7Bflb8kF0prpaRq39lSYyN
-         scgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749143035; x=1749747835;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vc9h3N4L8wdtAazwz7x66wCAf7y1keOjKnFs7I8c9Y8=;
-        b=Ftd1iNUb2l9saSz2AkIDKQUUswCuqd7RtVyp/6yrRseM6chUtonUFXMH4i8KumG41B
-         95rnxMzKNP/VlYVTf8OU5Q4NDl5gpY5iXoaAnB8bzTjlJKwNv1Hvnn8Z6eejCesbWOph
-         aUM4hT+NWR7mJ29yY8EBuNuPLgMjlbcfd7LTCenMxFUPm4n+7uAnutzmi/BVhkxP2jYb
-         zo8Xk4+aXdcTNOGPu+l5HhENj7dpwKvGHfPzcRDGKQ22vkvYJ4/t0WkltFeVB4tiN4QC
-         83bGXdmVcP6BIWtdJVFqH6rqdUZjn0BrmqxgMZPdH3s8W5vcMJHdZX24wy8hOdsebidH
-         KqYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpS/yjNzuJJAHG0CzlmUso9W113Bwmv6RPHlwIWpjkwFCFCWCp3Dc4y2sk9Oe4w2hB1f+W+q3XaVTJMMBivA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWdtso5CKK1O2AIdVi+XeUOWjZoEjnCsR28gATbJie9EjquSvq
-	0h/RviykypVfqwPaNJhfTSqhjtvLSwz7wTtMR5riQGMTihJVCpWXroAS
-X-Gm-Gg: ASbGncs89PYzYG9ny+Ek8gvwZTufGE1BilHLliHheGNu34TZFLNWXC6THVd9QPMVxoS
-	VHUgu+pgRvuwEpTcRKfzo1GAJApjmZyJozsuktPVibgA6ZrtOtEYEzhCYOhbWlzaMG/nxpR3SFC
-	qXDaG8F+HaY9Jj0PZJu0YQZHSxUe/NV/y3BGio3gO9hO2nrSZKOuOKy09i9frhRROcj7FxgtcAS
-	3h7+NKWMHvY29QvwBULaRtIMDjoVYTJAeeKh+NetKyzEWNoV/rHqebc220jFPHjyxf/oaOXmY31
-	lQuUTQMdwe1XZN5yyaAoKVAS6f0oNoajn59B1udYl5IzUSPKl5W0WRWf8AjmEgTHVFlr/Hk=
-X-Google-Smtp-Source: AGHT+IGrLnLeZBwGuxAvClJF7twaYSOSuOrRWBB4JEpKXwF+Y4tHGOWY+eeHT2vK/tA8JOXrMWFq1Q==
-X-Received: by 2002:a17:906:c113:b0:ad8:adbc:bbf6 with SMTP id a640c23a62f3a-addf8ff6f75mr765904766b.58.1749143025633;
-        Thu, 05 Jun 2025 10:03:45 -0700 (PDT)
-Received: from [10.5.1.144] ([193.170.134.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade0964136fsm157554766b.180.2025.06.05.10.03.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 10:03:45 -0700 (PDT)
-Message-ID: <1553eea9-9ced-410a-b6e7-886e11e2edba@gmail.com>
-Date: Thu, 5 Jun 2025 19:03:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF302777F1;
+	Thu,  5 Jun 2025 17:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749143102; cv=fail; b=sSCDm0/tNWyiN5OwPQZ5M8IGEO1l1UYjYMUSZNSWF2ToWvfxf9jwPlk2eP+Wah73elsSROp1I8ADgLzJj4OqNTGWWG8eENKcppczpJ//T+G7ywh7sCLf17j3F+v4vyyQ5hzcQ8/Fe5VKeccmqfXCTwkp+kCS5r4KCYaONhmwlHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749143102; c=relaxed/simple;
+	bh=MNhi40dcc/jq7WUwSjINafDiTVS8LwElfI4X0KwR0/E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qe56bmM9DG9MDNc4f05SlRkhgB6Rnb1xCOvHJAAbPl5xvVFqiK5QwNC4rBTR54pkLirWhHNDG9F3cf7IJ0VQvniZml0f9mGLQh4vLkuVtwdImxqljverF9kp9JYvxnq77j1K1rpuyEZcpI40fXm3IMcbIAJgvsEerg6io9DZCbo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lbLiXaFO; arc=fail smtp.client-ip=40.107.94.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BKBvmfMSNNTQ8YS3AATzI82+KRY5T9/ncefc3IazdWzoVp6k3nw38cPcYQHog4v1UCUg1YJx0kFMaLn6v66yA0Uh2dsLR9g5mo5h/W+DKgAphPbxLtNydkeaVcPrnCpD2qdz3+du8nMT1hxCrVH/2EmOFH5VDrWi8ZfIHBSRhRFj7LmDCiaNfYEkxDfRlIgoPWpogkVLFhpi/KsJKBnhzshwjLWKPEV1kO2Mf+8Wu2e8W1jkynrubRNNjcFimpsxEeGVkmZX8tbDavPZ/bnz3Zls5CuQNZ5G9+tNT8q4ne31+9npWXhwVf1dU/9ciyOFpbIWbeKYv/t46pgMRz+AGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UX9kPUP8/yZb2YGv61Znrbu5egff02qnf5J0x3nDwdQ=;
+ b=HDgGGk/bZn+Uv0HN1wvuGbarGlJHNRW8oSYk0c0lvSF/GO4ComxDqztXdEjyhMFEGrNOeq1rQDjHg9JdxB6cocILMG8xnJ23om11j0qJMCio8b6CNPXtYSqQFQjQ+4ueonADSsfyvydA79+vGnw5VJQiYUuJfnbsDl6BKp81Cc0AQtG2D/fEQrk254ZiNIo9hckN+qGVu0AiAwfxmscfxWhWojiAdOLeu2KxpyaxlpfKlsJOC3fthp9rM0R+J4Hfpt3i9VbUn+WlsH13yJalz9LJreo8jdjF9hAO51FDWlfnNGg9JCpGy5C2FYangayIE/aykVv22/EirOWtBxQGWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UX9kPUP8/yZb2YGv61Znrbu5egff02qnf5J0x3nDwdQ=;
+ b=lbLiXaFOg0HhHrXxOdEtVVGzxadJjVLo1kKybjn4agGYUPTa5dsOO0cccm9KmUJZAmmDBWJQUPzsCkk0TH84gOC73vVfhxhLVQyxbEez05z2qVpKdOBvFYOwiMGhWmPj1p+UaShwQY8pNFpWF2mc89IHKSOSknDEpchVpDiR32Xt4hy0AVvw9O3ME1GC7yloSIjuSIsZq4H5w2pTvr0R+Na9Ix8fA7mTlbAUNos2GqZLIzzlC4V1xpG92E6nfBfL95HgQCU7+nIz/u95NTNcst9GHXQ0QWjfUidTHsxIK/7cOyOCOExnhbezXK5++0A3qI4HW2nipUrCLY165Fa+PA==
+Received: from BN9PR03CA0691.namprd03.prod.outlook.com (2603:10b6:408:ef::6)
+ by DM6PR12MB4451.namprd12.prod.outlook.com (2603:10b6:5:2ab::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.37; Thu, 5 Jun
+ 2025 17:04:57 +0000
+Received: from MN1PEPF0000F0E0.namprd04.prod.outlook.com
+ (2603:10b6:408:ef:cafe::63) by BN9PR03CA0691.outlook.office365.com
+ (2603:10b6:408:ef::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.19 via Frontend Transport; Thu,
+ 5 Jun 2025 17:04:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0E0.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8792.29 via Frontend Transport; Thu, 5 Jun 2025 17:04:57 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 5 Jun 2025
+ 10:04:39 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 5 Jun
+ 2025 10:04:38 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 5 Jun 2025 10:04:36 -0700
+Date: Thu, 5 Jun 2025 10:04:35 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <will@kernel.org>,
+	<bagasdotme@gmail.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<shuah@kernel.org>, <jsnitsel@redhat.com>, <nathan@kernel.org>,
+	<peterz@infradead.org>, <yi.l.liu@intel.com>, <mshavit@google.com>,
+	<praan@google.com>, <zhangzekun11@huawei.com>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <patches@lists.linux.dev>,
+	<mochs@nvidia.com>, <alok.a.tiwari@oracle.com>, <vasant.hegde@amd.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v5 10/29] iommufd: Abstract iopt_pin_pages and
+ iopt_unpin_pages helpers
+Message-ID: <aEHOI522eucrOZyI@Asurada-Nvidia>
+References: <cover.1747537752.git.nicolinc@nvidia.com>
+ <49f7143c1b513049fd8158278a11d9f8b6c837d3.1747537752.git.nicolinc@nvidia.com>
+ <20250528171754.GY61950@nvidia.com>
+ <aEEY28ZXH+NqiE+T@Asurada-Nvidia>
+ <20250605151648.GD19710@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] rust: add UnsafePinned type
-To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20250511-rust_unsafe_pinned-v4-0-a86c32e47e3d@gmail.com>
- <20250511-rust_unsafe_pinned-v4-1-a86c32e47e3d@gmail.com>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <20250511-rust_unsafe_pinned-v4-1-a86c32e47e3d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250605151648.GD19710@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E0:EE_|DM6PR12MB4451:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b4238b6-a9a1-4952-8136-08dda453197b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?plp2PCo+dNST6/wPQi56NMcqr/eWDv2kDmU2L7b15KFFIO5rsRKDJEJ25KMl?=
+ =?us-ascii?Q?hit9VorG1ZDAfsmVwXt8iwyOiZc2uU+/C5ugXbLuGiC4TUjsWv67ubehwEpX?=
+ =?us-ascii?Q?RUc1r53NNGk1kRcq00U2asSXZehc9CfUnUURF3qUXCYEex3XrjRH24mWQNmg?=
+ =?us-ascii?Q?wpnhTkun/ujHQsSX2nC/mJodkOF0HgVIk18Zh/ivtl4d4vbDBn5cCxPPRkLJ?=
+ =?us-ascii?Q?l0OH6bRkQVk52D19gIIFV5KyCVaevt1irrPfpbow5coCpVtKrxNov75P0bO3?=
+ =?us-ascii?Q?YhEECuRSEU2ttiRZ6hEO/pc90FdZhbDanwx/YAnUXlpUDkDL4ad0nnMEz3pR?=
+ =?us-ascii?Q?rsGOGgm8W9CjBSV30A4nETNwbBUKEgTKhCwtHEOA+/qtMxwspPu0OGxk8WqU?=
+ =?us-ascii?Q?jble9k2QwgW5Z0vu1YwtrJLgGn67Mi0OGWV87Fie+JxYDQRuWvMEtbw4ditu?=
+ =?us-ascii?Q?Npu7U8H5TTtZr6mVTMKjeyV5js7wocX83+ebCbPipwo2akc0Jyf+Tk+gnV6O?=
+ =?us-ascii?Q?ilNKduo+r8OslfshIQ5IaiB3euCswNnyDOcrNsb+sM8gQx4nuKUehJu6gdtR?=
+ =?us-ascii?Q?yhXOPovP1GpevBTQiSPggtwaggEyhSp4iZKxyv0bxpbxbLUKhx3AXje+nmSE?=
+ =?us-ascii?Q?CdbXq6qzVIsRPx8lPY0mG29cjab6tIgj9zx6utZ0kezv3dINDgt4E1ItYpnh?=
+ =?us-ascii?Q?lV56ky3hdnUHuI9cK/FwN6nYV4Q0WKRap2s2BSDrSfHHEvruTO3A04+mmYUv?=
+ =?us-ascii?Q?bgBq9RlgclIH2rV/TE2LlK2njOGXOvKj20bUkIEv9ISrfuVK/+gvncX2pHUm?=
+ =?us-ascii?Q?J+bJfF8lgAa4RYvu/Qo2sEQNO7G09rlIg9uwKmED37LJFL8L8fS8YV6aEosP?=
+ =?us-ascii?Q?0agI8cyKZcSeBzTt8hyv7IlXIAbUxSYrLhFBL3+NM4fCDJXs4t0V2LDZMzUq?=
+ =?us-ascii?Q?mWqW3RxR2xI6HTPDsBBJj917wl1CaF3JMmKNpRBDxGLo0wbPsfLbAya7uy0p?=
+ =?us-ascii?Q?Hfd1PvBE2tFT5HB+Pu7OpQ21gOrIaiZY4yqN2L7UeuH0c31KOBXap9/ChEwO?=
+ =?us-ascii?Q?fIrExcEU4XzHWdqJPNhi0MrGl63iixraxpslvywLsNsjJQJ2Lj1hKZm9NRta?=
+ =?us-ascii?Q?J3jNkOdAQVc2kDcNUxRBXikTTr+70GjkEio8a/+NXRGExzgmzuhxL5c0g1Qv?=
+ =?us-ascii?Q?w1PYjFFc/g2h7GRLdYrzolW2zPevwTsoYWVqrebTqBZhT5Bw4sx00IhdoGQx?=
+ =?us-ascii?Q?21e1dFm5a+3eRuXg2SwkAhmFi9vHvuw6kV2RpHi3vk5juRI/0o37WVbC8sqG?=
+ =?us-ascii?Q?ErQj20fSBgiEc5h9aGU9Qg5/sGlOxm1rDVvg+UYwUSUT8K5WGbjfwBj0TW6l?=
+ =?us-ascii?Q?nA/ODZ5eZYlltJpO0SbgAew/s2SkoHfK+VBmHAY5evhXYWyBMGdTF6T3AJp1?=
+ =?us-ascii?Q?5gSxLSzDjsCSEJYgE3mGdBYpJjtOSx9On31fLLl0Wv689gSndH7q6qwDPwtd?=
+ =?us-ascii?Q?VlPVhbwHaIgb1ON4SRgZWwSWv3oaJZ/ahHfo?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 17:04:57.1196
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b4238b6-a9a1-4952-8136-08dda453197b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E0.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4451
 
-On 11.05.25 8:21 PM, Christian Schrefl wrote:
-> `UnsafePinned<T>` is useful for cases where a value might be shared with
-> C code but not directly used by it. In particular this is added for
-> storing additional data in the `MiscDeviceRegistration` which will be
-> shared between `fops->open` and the containing struct.
+On Thu, Jun 05, 2025 at 12:16:48PM -0300, Jason Gunthorpe wrote:
+> On Wed, Jun 04, 2025 at 09:11:07PM -0700, Nicolin Chen wrote:
 > 
-> Similar to `Opaque` but guarantees that the value is always initialized
-> and that the inner value is dropped when `UnsafePinned` is dropped.
+> > I found the entire ictx would be locked by iommufd_access_create(),
+> > then the release fop couldn't even get invoked to destroy objects.
 > 
-> This was originally proposed for the IRQ abstractions [0] and is also
-> useful for other where the inner data may be aliased, but is always
-> valid and automatic `Drop` is desired.
+> Yes, that makes sense..
 > 
-> Since then the `UnsafePinned` type was added to upstream Rust [1] by Sky
-> as a unstable feature, therefore this patch implements the subset of the
-> upstream API for the `UnsafePinned` type required for additional data in
-> `MiscDeviceRegistration` and in the implementation of the `Opaque` type.
-> 
-> Some differences to the upstream type definition are required in the
-> kernel implementation, because upstream type uses some compiler changes
-> to opt out of certain optimizations, this is documented in the
-> documentation and a comment on the `UnsafePinned` type.
-> 
-> The documentation on is based on the upstream rust documentation with
-> minor modifications for the kernel implementation.
-> 
-> Link: https://lore.kernel.org/rust-for-linux/CAH5fLgiOASgjoYKFz6kWwzLaH07DqP2ph+3YyCDh2+gYqGpABA@mail.gmail.com [0]
-> Link: https://github.com/rust-lang/rust/pull/137043 [1]
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Gerald Wisböck <gerald.wisboeck@feather.ink>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Co-developed-by: Sky <sky@sky9.dev>
-> Signed-off-by: Sky <sky@sky9.dev>
-> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-> ---
->  rust/kernel/types.rs               |   6 ++
->  rust/kernel/types/unsafe_pinned.rs | 111 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 117 insertions(+)
-> 
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 9d0471afc9648f2973235488b441eb109069adb1..705f420fdfbc4a576de1c4546578f2f04cdf615e 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -253,6 +253,9 @@ fn drop(&mut self) {
->  ///
->  /// [`Opaque<T>`] is meant to be used with FFI objects that are never interpreted by Rust code.
->  ///
-> +/// In cases where the contained data is only used by Rust, is not allowed to be
-> +/// uninitialized and automatic [`Drop`] is desired [`UnsafePinned`] should be used instead.
-> +///
->  /// It is used to wrap structs from the C side, like for example `Opaque<bindings::mutex>`.
->  /// It gets rid of all the usual assumptions that Rust has for a value:
->  ///
-> @@ -578,3 +581,6 @@ pub enum Either<L, R> {
->  /// [`NotThreadSafe`]: type@NotThreadSafe
->  #[allow(non_upper_case_globals)]
->  pub const NotThreadSafe: NotThreadSafe = PhantomData;
-> +
-> +mod unsafe_pinned;
-> +pub use unsafe_pinned::UnsafePinned;
-> diff --git a/rust/kernel/types/unsafe_pinned.rs b/rust/kernel/types/unsafe_pinned.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..315248cb88c089239bd672c889b5107060175ec3
-> --- /dev/null
-> +++ b/rust/kernel/types/unsafe_pinned.rs
-> @@ -0,0 +1,111 @@
-> +// SPDX-License-Identifier: Apache-2.0 OR MIT
-> +
-> +//! The contents of this file partially come from the Rust standard library, hosted in
-> +//! the <https://github.com/rust-lang/rust> repository, licensed under
-> +//! "Apache-2.0 OR MIT" and adapted for kernel use. For copyright details,
-> +//! see <https://github.com/rust-lang/rust/blob/master/COPYRIGHT>.
-> +//!
-> +//! This file provides a implementation / polyfill of a subset of the upstream
-> +//! rust `UnsafePinned` type. For details on the difference to the upstream
-> +//! implementation see the comment on the [`UnsafePinned`] struct definition.
-> +
-> +use core::{cell::UnsafeCell, marker::PhantomPinned};
-> +use pin_init::{cast_pin_init, PinInit, Wrapper};
-> +
-> +/// This type provides a way to opt-out of typical aliasing rules;
-> +/// specifically, `&mut UnsafePinned<T>` is not guaranteed to be a unique pointer.
-> +///
-> +/// However, even if you define your type like `pub struct Wrapper(UnsafePinned<...>)`, it is still
-> +/// very risky to have an `&mut Wrapper` that aliases anything else. Many functions that work
-> +/// generically on `&mut T` assume that the memory that stores `T` is uniquely owned (such as
-> +/// `mem::swap`). In other words, while having aliasing with `&mut Wrapper` is not immediate
-> +/// Undefined Behavior, it is still unsound to expose such a mutable reference to code you do not
-> +/// control! Techniques such as pinning via [`Pin`](core::pin::Pin) are needed to ensure soundness.
-> +///
-> +/// Similar to [`UnsafeCell`], [`UnsafePinned`] will not usually show up in
-> +/// the public API of a library. It is an internal implementation detail of libraries that need to
-> +/// support aliasing mutable references.
-> +///
-> +/// Further note that this does *not* lift the requirement that shared references must be read-only!
-> +/// Use [`UnsafeCell`] for that.
+> It looks to me like you can safely leave ictx as NULL instead of
+> adding a flag? That would be nicer than leaving a unrefcounted
+> pointer floating around..
 
-The upstream rust PR [0] that changes this was just merged. So now `UnsafePinned` includes
-`UnsafeCell` semantics. It's probably best to also change this in the kernel docs.
-Though it's still the case that removing the guarantee is simpler than adding it back later,
-so let me know what you all think.
+Hmm, there are a few iommufd_get_object calls using access->ictx
+in iommufd_access_attach() and iommufd_access_destroy().
 
-[0]: https://github.com/rust-lang/rust/pull/140638
+We could have a set of internal access APIs to leave access->ictx
+as NULL, as an internal caller has an ictx to pass in. It's going
+to be a larger change though..
 
-> +///
-> +/// This type blocks niches the same way [`UnsafeCell`] does.
-> +///
-> +/// # Kernel implementation notes
-> +///
-> +/// This implementation works because of the "`!Unpin` hack" in rustc, which allows (some kinds of)
-> +/// mutual aliasing of `!Unpin` types. This hack might be removed at some point, after which only
-> +/// the `core::pin::UnsafePinned` type will allow this behavior. In order to simplify the migration
-> +/// to future rust versions only this polyfill of this type should be used when this behavior is
-> +/// required.
-> +//
-> +// As opposed to the upstream Rust type this contains a `PhantomPinned` and `UnsafeCell<T>`
-> +// - `PhantomPinned` to ensure the struct always is `!Unpin` and thus enables the `!Unpin` hack.
-> +//   This causes the LLVM `noalias` and `dereferenceable` attributes to be removed from
-> +//   `&mut !Unpin` types.
-> +// - In order to disable niche optimizations this implementation uses `UnsafeCell` internally,
-> +//   the upstream version however currently does not. This will most likely change in the future
-> +//   but for now we don't expose this in the documentation, since adding the guarantee is simpler
-> +//   than removing it. Meaning that for now the fact that `UnsafePinned` contains an `UnsafeCell`
-> +//   must not be relied on (Other than the niche blocking).
-> +//   See this Rust tracking issue: https://github.com/rust-lang/rust/issues/137750
-> +#[repr(transparent)]
-> +pub struct UnsafePinned<T: ?Sized> {
-> +    _ph: PhantomPinned,
-> +    value: UnsafeCell<T>,
-> +}
-> +
-> +impl<T> UnsafePinned<T> {
-> +    /// Constructs a new instance of [`UnsafePinned`] which will wrap the specified value.
-> +    ///
-> +    /// All access to the inner value through `&UnsafePinned<T>` or `&mut UnsafePinned<T>` or
-> +    /// `Pin<&mut UnsafePinned<T>>` requires `unsafe` code.
-> +    #[inline(always)]
-> +    #[must_use]
-> +    pub const fn new(value: T) -> Self {
-> +        UnsafePinned {
-> +            value: UnsafeCell::new(value),
-> +            _ph: PhantomPinned,
-> +        }
-> +    }
-> +}
-> +impl<T: ?Sized> UnsafePinned<T> {
-> +    /// Get read-only access to the contents of a shared `UnsafePinned`.
-> +    ///
-> +    /// Note that `&UnsafePinned<T>` is read-only if `&T` is read-only. This means that if there is
-> +    /// mutation of the `T`, future reads from the `*const T` returned here are UB! Use
-> +    /// [`UnsafeCell`] if you also need interior mutability.
-> +    ///
-> +    /// [`UnsafeCell`]: core::cell::UnsafeCell
-> +    ///
-> +    /// ```rust,no_run
-> +    /// use kernel::types::UnsafePinned;
-> +    ///
-> +    /// unsafe {
-> +    ///     let mut x = UnsafePinned::new(0);
-> +    ///     let ptr = x.get(); // read-only pointer, assumes immutability
-> +    ///     # // Upstream Rust uses `UnsafePinned::get_mut_unchecked` here.
-> +    ///     UnsafePinned::raw_get_mut(&raw mut x).write(1);
-> +    ///     ptr.read(); // UB!
-> +    /// }
-> +    /// ```
-> +    #[inline(always)]
-> +    #[must_use]
-> +    pub const fn get(&self) -> *const T {
-> +        self.value.get()
-> +    }
-> +
-> +    /// Gets a mutable pointer to the wrapped value.
-> +    #[inline(always)]
-> +    #[must_use]
-> +    pub const fn raw_get_mut(this: *mut Self) -> *mut T {
-> +        this as *mut T
-> +    }
-> +}
-> +
-> +impl<T> Wrapper<T> for UnsafePinned<T> {
-> +    fn pin_init<E>(init: impl PinInit<T, E>) -> impl PinInit<Self, E> {
-> +        // SAFETY: `UnsafePinned<T>` has a compatible layout to `T`.
-> +        unsafe { cast_pin_init(init) }
-> +    }
-> +}
-> 
-
+Thanks
+Nicolin
 
