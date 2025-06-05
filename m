@@ -1,129 +1,232 @@
-Return-Path: <linux-kernel+bounces-674660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308DEACF283
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29ACBACF2DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE4718914C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1AE63AF584
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CFF19F480;
-	Thu,  5 Jun 2025 15:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FBD18C031;
+	Thu,  5 Jun 2025 15:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMTGSVmn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gWt0YyBP";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GNlnvf4O"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D8E145355;
-	Thu,  5 Jun 2025 15:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749136123; cv=none; b=MY34ryuONHqmVt90r2Hxw/GR1c19yqsbXs1bb7CJp+jNfcwFDu9ZTiypjxLy/8Mo5cU2bFG2S8ZwNEnUK92dAR39NCPf/RC/h6v8o4Zj63JgTC8akgrWuk9mKYggGQJoURQsyRpm2QEBDPLE5WRBvbY06P0IHJFZ40n8vIqTm54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749136123; c=relaxed/simple;
-	bh=eZKF+KQlpwHqJNTPOrcnmE84pyon0govQK9/bnf1jLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HujX8FrA27oZgPkOoUBNi9RCJb9q2WYFE+FnEzZiBNed3THwL9RH4gRAskdRiz0GyEBXNabYtJ4dNdAkQheRAfdn+0KA2nnKq3VMmt7Z3dhe76WZvL3xPgdHMahFFfN5Vu91kb0EUvTgM1ZJ6/56pLz/AEqxi4M2IvRP7GjMbeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMTGSVmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51B5C4CEE7;
-	Thu,  5 Jun 2025 15:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749136122;
-	bh=eZKF+KQlpwHqJNTPOrcnmE84pyon0govQK9/bnf1jLA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pMTGSVmnD5T11tXRr2QpazpKp63Fa92vzW3P2GCGr2TrgJnUusGrUnbvhcqH1o8e4
-	 GxZzRnHaex7DTHwGessFNcJtXT+MCWJPqLhPJ+Z0Y1uiPyqOfOQwl8YEnfuDJvunkG
-	 KLJQSRSgqsPK8ujg/oxFAn1Hn6kLt6Xqpbcl6C2jdrrIUJvi4JZj4/3jiGHd6eMdiI
-	 U5KHK6N7hZo7r2mlza3meQcwdM+NB5TDDeC3hVKLOdn2c1E1xQqqSm3vkiJdOyL2D8
-	 F6eE25r7j6hxOpEap3A97O/DZ9oKkZJORv6ABccQLj/M7Qz3zFCKSbESNd7vADV1mI
-	 zlOdUG++DGS4A==
-Date: Thu, 5 Jun 2025 10:08:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Remo Senekowitsch <remo@buenzli.dev>
-Cc: Saravana Kannan <saravanak@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v7 5/9] rust: device: Introduce PropertyGuard
-Message-ID: <20250605150840.GA2539727-robh@kernel.org>
-References: <20250530192856.1177011-1-remo@buenzli.dev>
- <20250530192856.1177011-6-remo@buenzli.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28EB1CCB40;
+	Thu,  5 Jun 2025 15:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749136477; cv=fail; b=cm6W2VJmxisXtZ8NtJjfA7JcwTepdlnWsPwxLgxMY6RQ/2L6LM5Sjzv3sWJaF208Q9FF88Bv2CQdRPjst0sFfcvZMinaCBYALikA0KDphx1HIZPm3fuVQThYBGcsOedxLEhIr68vaAcrO0Wol5AnrIL/V1N4ferNj30BBz63PEk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749136477; c=relaxed/simple;
+	bh=X9xntE57zHFQByKs8RUsD+FKcze/A0/FTbk0CaTNcpI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MU9cnVj2OEZpJYhvu/f+rK9Se1cUjYSYAKZXXWa/XS7MY5uiDb3f4CsYWbcmQ0zaDbXCWily01UYGHpOzM+2I8Ao8iYabhZv+biK4QZ2BsHuZ1LRrmUXblZ1c6jbPl6W6ony919U8/mUAETBBmKF9QBPLhJ38sHCMFPhhxLLBJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gWt0YyBP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GNlnvf4O; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555AtVcH032032;
+	Thu, 5 Jun 2025 15:09:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=Fq87XAu7lYpUEvwR
+	ClcAUgMBZCA4iHNTwJR9ge8uwaM=; b=gWt0YyBPb1tZ4a/t/mIAvNYTQ4ylvt2u
+	UhHx88zPiPPMXC4RfQDXl9r13imwFJOkBa2j0CaMOX9Wzw8MHtCrJeBYzSW+Rpnm
+	WEN4X4HFX/qO//p5YwzVEoDNFKaYODkbK1CoeZq7GLP1RapVNpbnFEDbxXuVJPiS
+	QxJvgyj4ktsTSrl0+mf7AAhMUUYDUJmOuj4cRI1ibaJQDIr0Ckk+962cQbInEaWk
+	m1Th/QRsRDuhTxnG6hXSjG6S3fl6VrmjsxgwX8rcnY4I9L9O5oWkMQTOhEs1aEq+
+	ZcTSRf1RINUI4b45KAnS1KDWmud0R2BvqtYKXSgIJF3YsZXFp63z4A==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 471g8ge98f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Jun 2025 15:09:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 555DkCux038592;
+	Thu, 5 Jun 2025 15:09:16 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2052.outbound.protection.outlook.com [40.107.243.52])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46yr7c7jyt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 05 Jun 2025 15:09:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j0ddFA9p9bxHsHiQF9ZiYV3930n/BxOJsae95Yrl7O/6LFggX5mTvXNEtGsboH74NIQmeFazAen2pAFdQa2E1utM+1bTKaugArgVebpCSmDob+l+ygRXGSobqe1+pMtX/XTOrR9r5aMQSceCMinwnd8yFa+dhmzlJid+9C6ba/Ddtfz9tVf6MiPPfkgrP3UjvuRya8ybzxNPem4sZ52TX3z9zT4oZv7vDB8r3Cc8AU/vkgABP2gk1LBjKwZM3PgcDVik8NPGtSCRabqqmMuKTMDhhdNYLqAPxwk8YWQ5Jjv4RktEADNBJTh5LN541T82rVVfHFxBNJSUYJ0wK00W5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fq87XAu7lYpUEvwRClcAUgMBZCA4iHNTwJR9ge8uwaM=;
+ b=ViF1WAnJn7iPtMYFR0U+dvUMHFDObHLrdlslHKmj8Qn8vP+/FTFPvRNmbTLGdhHqsf+X2miUD8ez+jQqYM5J2UAr6jKEodMrgblX5vGOvixioWOdhp6w3SfufimRSYg2tNpFpKev0ONRj4X1JVweJ4h4MxAjeI+FEL6Q3WkOnQcIF4JVol/B8WhCFKYnE6kwZXfKFpFoFPlsDtA59LM9wJIQ4BGsN21rXY6k+UsUlWaccnD9uvleIc1cRlwbWZ1SUm/O0KTo1zbU31uH1aekU3bHoAvC+3u85ImYGb21bht13SPTxZHM6uyFU5iUshHFeNB+HhidXLazXj2/vaUHJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fq87XAu7lYpUEvwRClcAUgMBZCA4iHNTwJR9ge8uwaM=;
+ b=GNlnvf4OW8eTygYwUqPXl4v+sATay4I4kKUo/JzHQJQnYsjn2oR/wy31UMk2cBaSUxWyzLcKtd5SJDo2bqREmOFu/gdbm5cqKmvU98edxt+yM9YzSyVfVGKSBB8irrrfZmfU8N7a2SKgOr/y+zh2qARJ5Ex+OjBSwOqtQ+TikVM=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH0PR10MB5099.namprd10.prod.outlook.com (2603:10b6:610:ca::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.41; Thu, 5 Jun
+ 2025 15:09:13 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8746.041; Thu, 5 Jun 2025
+ 15:09:12 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+        yukuai3@huawei.com, hch@lst.de, nilay@linux.ibm.com, axboe@kernel.dk
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
+        ojaswin@linux.ibm.com, martin.petersen@oracle.com,
+        John Garry <john.g.garry@oracle.com>
+Subject: [PATCH RFC 0/4] block: set chunk_sectors from stacked dev stripe size
+Date: Thu,  5 Jun 2025 15:08:53 +0000
+Message-Id: <20250605150857.4061971-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN0PR04CA0043.namprd04.prod.outlook.com
+ (2603:10b6:408:e8::18) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250530192856.1177011-6-remo@buenzli.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH0PR10MB5099:EE_
+X-MS-Office365-Filtering-Correlation-Id: eab0ecae-389b-438f-9408-08dda442edff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uBcTguouYVrXWJwez4/vq4qQhw3K2KYDtnillPInPgz2nZN32IIxHmiF3M9B?=
+ =?us-ascii?Q?FOmjgDHD9m2VFX+mQm80LSEK9LostNf7KMQqOHNYKi1wYUAYlU6MatOOhB/U?=
+ =?us-ascii?Q?zkC9f0d5XchEe/Ac0QkTSBk8GL0wIPNEkI43LiILWwNTkBOobOqyl4447ehW?=
+ =?us-ascii?Q?HMDJDz4aZdQJlnD51qcbbc4hFGKxfzwg9fuoqPE7dIooZSTEIG4wujHW67QB?=
+ =?us-ascii?Q?mIP+RVPPErcp2uzf8B2fyqX0O9GNQVJOj8umOkObtrwij0bg7/4IIlamRqsg?=
+ =?us-ascii?Q?5vjM+CrzbuGZoPkTXM84P8a1IZj34TVOhi41tXRnyCFgRbFc/G78+sMKL6yL?=
+ =?us-ascii?Q?aJb/Wo5QBlGJMsPawYTkI+JoqA5tecebhTctSVWtGYbYOUbTAk3dSLsgyVlk?=
+ =?us-ascii?Q?Ee91RdCO9I+B2VAS8H4zvg6R/SVYGZBjaImrfa+bqDzIwjgeq/lPb/mBfHPk?=
+ =?us-ascii?Q?7VWZwebirmpBioCl4Cb2uzasEF9FJuI6O7bHQGprQRc4jCvo+PvM94tau6aA?=
+ =?us-ascii?Q?pk7SybXGn/bSnzJAsMBrS7XXqgt/mJwpMctS1T1NPwl57+05JVrHs1COAVkC?=
+ =?us-ascii?Q?7gOjmAkbRQX01hbr6qrsdrBPb2jPZLTPsn5Z6GO44tdNf0CvdFzHUzMU/6IR?=
+ =?us-ascii?Q?ePHZmvlfE7DrOb147Rsz1Vg0WjxbXGyJSVFRaCACRPt/LwPKTWNArH1LMWYZ?=
+ =?us-ascii?Q?tdTtnhfoOqnOYDhxBBYnlrHQGzFu2w8HfG/ev1lmu3D5HLkj0AlHbobzo/0L?=
+ =?us-ascii?Q?EaYwinmZc/YWu6HrzgKedsPoIjPFINGwYrLGtShsvsAhH69BU1xiPQQU3gd9?=
+ =?us-ascii?Q?3iV5HqI7g9V6sQb8uhkeZStc5O7faUFrroRbbE3oKe8B5ua9iusHddDgTV3U?=
+ =?us-ascii?Q?ntz06MzprMrB1BjwrJMtunlNbH5f8A/4zsD+GFyR2qfr8in9cbgThDAxDjCw?=
+ =?us-ascii?Q?H2daVONWXeguJy2v/WsNS1DVeTz6KKvwm0eaXhMEN4h17fB4+eqrmbTQQIhD?=
+ =?us-ascii?Q?lx1/SmsKmrg3tdf9WLQn4m5sofCgcUIk9ZGMqBW9xo0sDrg+mF2MBDcXMB3s?=
+ =?us-ascii?Q?PJePY1RP449RjCb4MFnW8VQ8SgQ5gkZDMq2htalaKKf03+Qb8XiaJcbJhLT6?=
+ =?us-ascii?Q?L8kqR5LiP6tQOxXx0d8GwakRjfuqwrnHczMHovNK2C63n6YBzCzyOlCK4TfU?=
+ =?us-ascii?Q?QUlhdErp88OOXr7qFhWft8VcNO+sHl8BXkbJbZ1EApnemA3AoElcUN3UfiJc?=
+ =?us-ascii?Q?/5z6Je3qjzS6cEFCmyxA9PZiu4AdqaNMQBkNnjLm/sNH8wZEvqsvpTT1jjLN?=
+ =?us-ascii?Q?vEqfT7MBSYzbZFAFOKSK3YVdFZGIdnuJRl6EgR036vfGf46/s3Wlk9aIWZoF?=
+ =?us-ascii?Q?YBJYi7rITApLNEtJEGanZWxYD/8p?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8FRrupfHP5hVI2vzn/AS3kfAlavKHvQKiwEL79AwGkVVovbClyCvQivCr0m7?=
+ =?us-ascii?Q?iCrT/Oy4ox1nA65DFxddB/FAlHepo6td56iTU0WIcsabI7tASxguDC0gRKBG?=
+ =?us-ascii?Q?3qCobIJDlovsNYcKMpbpaHDTe9pgTUW4cE/A21m+Z8fuPTcckTXrkG6WQSJU?=
+ =?us-ascii?Q?huG6zteP4qG4raKSQlPntNUJH20ScMi9WeBpxa13HUlkZ5LerjVV467YJZSD?=
+ =?us-ascii?Q?tA+rgbHiZA/bHGrIa0wElRsbAn27AMEp2aMZu+qlIeYmt/AoTgH11HZ5KPWh?=
+ =?us-ascii?Q?Sq4AdqIYtE6FSgiCL2JniF9NMONV+6q/6mZXum58xU9K4WJt8s9dxP4AnYus?=
+ =?us-ascii?Q?10qPZzlKC7+ysq5Ibmmanqc0HhdswT6jYdWwaC6pigW8Z9/RuVRKtWz+sB2t?=
+ =?us-ascii?Q?3sqjfT4slvTn0gx4s6c6V1/uBzct0m1ezQAM5jdz8Zf8UewrPw+KiR3e9Nrc?=
+ =?us-ascii?Q?VxMbq6N3n4U8gfRMEWkBdAj0uJwiHU8LueIYHv7o65SZMUy3XkawfLZZcCXs?=
+ =?us-ascii?Q?6mrc25uT+Uz7NjEpISwR2yMapbo0sioT6OV7wcEpQHOStgoIA+mET3kQHlCe?=
+ =?us-ascii?Q?S03OvQbbJYMBFkED77BqSkvINVzcuoY1h3G1S/DB3cqC3sDR4dqdQ9M2FPQp?=
+ =?us-ascii?Q?BW/1sD5uzuHsn3A1SqAjRI2fa2wHIyTDT7C7zzbPpYI9MCDWsIV4h8VifeES?=
+ =?us-ascii?Q?lLdBeZ+ktMZPlAGq7QwQqSDI+zHfLLzJD/zsT1DEPXg57cRSYtRV/rVRGlRT?=
+ =?us-ascii?Q?J8j1iFoQhfSzTgY9l25fdbJwdc/FhB2ngr8qhNY/sxuFuP+azyW4gDKVrddD?=
+ =?us-ascii?Q?Z75qcCDIb4f2lM/fZtvhUoVUR39OinCUBDweWFQEAFSnoTjBTJBW6iCfNyfH?=
+ =?us-ascii?Q?XVOxa5lP/65Z29nBiSMfzN47s/ve6bchkQj3vf8ot7IL4J7N/Qy7lbs608ns?=
+ =?us-ascii?Q?RtInvsbBX6Oaf3nMvSFoKZMq2C9jsx452NFOsECYABLMCpNQI2zYBZXBLam6?=
+ =?us-ascii?Q?Zgnsaw2DiySfLEue2UgQqkOsKtVBlIelPcCoIM3N5QApSQZExB0+VaBepCSP?=
+ =?us-ascii?Q?4PiJJQ6hvvwAGpQXvPgoBB9pypFdQ3dXhqVMqQzaipV/NGfSs9mcOIq6ntdB?=
+ =?us-ascii?Q?Puy3NNXum6L86FOgIB9eXRKddL60DoK3sd1rK+JrfYXVKqsyGrmfEuKxfgNx?=
+ =?us-ascii?Q?Emjaq0tKXPsnEfJdrUnjWMyJ960RoO5lm5TkukCVCUHTzOYIidXMvR+z5vEx?=
+ =?us-ascii?Q?ri0qyZ8BPaEnCF0JVSL5agq9d1Hl0AXESXqXFRcXLoLMmaTT0zU+tezhbKAR?=
+ =?us-ascii?Q?XXgl2LOzJSRqXccDxdY2sS2mmeRp4bx+gT6qvZOC6vQ2UxNkCBOnZ5QHrXht?=
+ =?us-ascii?Q?HdrmZ9CnYBXhglX7gAQngV3HuAqGXupPDPqleBNrz2DiXBL44pQs9Qb3whYk?=
+ =?us-ascii?Q?Kj4p0C/i0sKleogrt3lzhLMba8ZXGTZYudsNwmoWpk6uZHnHrcVCEUeW8X2v?=
+ =?us-ascii?Q?nmCZp2iekz1ztMO6u0GrSFg+sTSWccYzL80303Z6opPOMtAfwnLXdrg5Sf9d?=
+ =?us-ascii?Q?XSoISBXl4TNZeFwQf+VGq4qBdTO6h7OvXcgv30+sqwlU/5ANf8gtD1tsYenK?=
+ =?us-ascii?Q?xw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	AznjmWxkfYVnxOwO1JMyKXlsJRsRpDBQGxKRNnn0NcncRk3VGGUQI71aHzepI3zK6gNl9tmiq5hFzRTW2RDGqLAzcqTHYTHKhF31kiEnWwX60X7ZXsNFZZqPqmjv/OSwha1WzBelig5RvjK4B0J0ATsIY9WMKmjlz7LOQdi/s87nbI2OvKOHMnrpNvhFPfMi6LgvoPQa1VKgjollrgMVu2bwiwqGYvgIVq0dlKABjyNmMbCaMu0rdbC7UWS6VYryptAP7qfj17DtD8ov3IQyfQ8ldeZevUNDAjqT6XpvyFlDdBE+jlcp7EEQRcuzD4Fb2SJ7IoDCzOyXzA1XK7TtkSJbzXPosgHnJYwBXbuGUgQQEiQsXiZ0FHmPSKjOxEsro4FqPynDuONDihNtWoYZ2GroNFb1Rjo6Mvt4nvO87TPuFAfZs+5jN8HFu2k3yO+fIPwQHJ9BTO6ytL9US8rC6xwRctFirt2liZSslAitDusdrwYSb9aUccTmPmzpz1ufQXQblhRyAfQB88VYgRcIgSS1sjk4Ab7IhixqxbK4vJspQHkooBvzAJrKT1NKhOrKXdmKP7hwUp8kn6ZAPIzJ+a4zeve9nWIOyNpsWa8Vr6Y=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eab0ecae-389b-438f-9408-08dda442edff
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 15:09:12.6436
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QvFkWTAqe6x09Q+KavZb+4FSdTfa86grc2vQUGU6O9LlcWCtEFQKFexwyIF4GqxgbwQ6qlvXWA/IhWgg4J5GuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5099
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_03,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506050131
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDEzMSBTYWx0ZWRfX2kpIVZ9VfSi0 ohHlx29+Bgi+w84GAdHY59ZPJjoHCEFAjao+WfgLYHzVV9AJ4loSDjBKfovLBu5nY1k/b1j/1wu 2pMFswIoDFhCaTQPAORFbYP9LPHllYpv9cnQ3Oedhrg0YPUB9Ar9eU3Ud8ewMe8Tzi4fAeiJkQB
+ 084bt/vKD/a6hB9f4FNnu+QE3PJSjxxPDeehylMrod6DuUThYI7LyBO+vbVO61y/xJqSLhTzSZs vD5Hd0JrMjKZhsVBNoRMYRN8IOwITdy/qXIexIS1k8Tu40L6l8GTsF5TP2jwAl2Z71sEpOX0SmP sB43G1YEZTD9AHcOSY8zrZv0VmMq1Rpai+FofsxF8t1lHoJkb3jA1LtJDRmjQXbhGeJaY20M891
+ rZND7ghQoAbHdoIN1jZF2cTJ3HI784LLylEl3KsXvcoBWGRGi0pheJIBBpYGnHIfnbyNCPv1
+X-Proofpoint-GUID: yDuQKY3EaPEjiYQVVQhMGO6_gC4k0_W0
+X-Proofpoint-ORIG-GUID: yDuQKY3EaPEjiYQVVQhMGO6_gC4k0_W0
+X-Authority-Analysis: v=2.4 cv=H5Tbw/Yi c=1 sm=1 tr=0 ts=6841b31d cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=_GdD55I-O2iFgXP2jqYA:9
 
-On Fri, May 30, 2025 at 09:28:52PM +0200, Remo Senekowitsch wrote:
-> This abstraction is a way to force users to specify whether a property
-> is supposed to be required or not. This allows us to move error
-> logging of missing required properties into core, preventing a lot of
-> boilerplate in drivers.
-> 
-> It will be used by upcoming methods for reading device properties.
-> 
-> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
-> ---
->  rust/kernel/device/property.rs | 59 ++++++++++++++++++++++++++++++++++
->  1 file changed, 59 insertions(+)
-> 
-> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
-> index 8e0414b0517e4..b789fbbd0e6cc 100644
-> --- a/rust/kernel/device/property.rs
-> +++ b/rust/kernel/device/property.rs
-> @@ -155,3 +155,62 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->          unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
->      }
->  }
-> +
-> +/// A helper for reading device properties.
-> +///
-> +/// Use [`Self::required_by`] if a missing property is considered a bug and
-> +/// [`Self::optional`] otherwise.
-> +///
-> +/// For convenience, [`Self::or`] and [`Self::or_default`] are provided.
-> +pub struct PropertyGuard<'fwnode, 'name, T> {
-> +    /// The result of reading the property.
-> +    inner: Result<T>,
-> +    /// The fwnode of the property, used for logging in the "required" case.
-> +    fwnode: &'fwnode FwNode,
-> +    /// The name of the property, used for logging in the "required" case.
-> +    name: &'name CStr,
-> +}
-> +
-> +impl<T> PropertyGuard<'_, '_, T> {
-> +    /// Access the property, indicating it is required.
-> +    ///
-> +    /// If the property is not present, the error is automatically logged. If a
-> +    /// missing property is not an error, use [`Self::optional`] instead. The
-> +    /// device is required to associate the log with it.
-> +    pub fn required_by(self, dev: &super::Device) -> Result<T> {
-> +        if self.inner.is_err() {
-> +            dev_err!(
-> +                dev,
-> +                "{}: property '{}' is missing\n",
-> +                self.fwnode.display_path(),
+Currently md raid0/10 and dm-stripe sets io_min limit from stripe width.
 
-Is it possible to make "{self.fwnode}: property..." work? Just need to 
-implement Display trait on FwNode, right?
+This value in io_min is used to configure any atomic write limit for the
+stacked device. The idea is that the atomic write unit max is a
+power-of-2 factor of the stripe width.
 
-Doesn't look to me like we can alter what we print like in C, but for 
-dmesg it's usually the full path we want anyways.
+Using io_min causes issues, as:
+a. it may be mutated
+b. the check for io_min being set for determining if we are dealing with
+a striped device is hard to get right, as reported in [0].
 
-Rob
+This series now sets chunk_sectors limit to share stripe size.
+
+Sending as an RFC as I need to test more and I am not totally confident
+that using chunk_sectors is the right approach.
+
+Apologies for any delays in response, as I will be OoO soon, and I
+wanted to send this to share with Nilay.
+
+[0] https://lore.kernel.org/linux-block/888f3b1d-7817-4007-b3b3-1a2ea04df771@linux.ibm.com/T/#mecca17129f72811137d3c2f1e477634e77f06781
+
+John Garry (4):
+  md/raid0: set chunk_sectors limit
+  md/raid10: set chunk_sectors limit
+  dm-stripe: limit chunk_sectors to the stripe size
+  block: use chunk_sectors when evaluating stacked atomic write limits
+
+ block/blk-settings.c          | 8 +++++---
+ drivers/md/dm-stripe.c        | 3 ++-
+ drivers/md/dm-table.c         | 4 ++++
+ drivers/md/raid0.c            | 1 +
+ drivers/md/raid10.c           | 1 +
+ include/linux/device-mapper.h | 3 +++
+ 6 files changed, 16 insertions(+), 4 deletions(-)
+
+-- 
+2.31.1
+
 
