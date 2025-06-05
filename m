@@ -1,128 +1,96 @@
-Return-Path: <linux-kernel+bounces-674892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0C7ACF646
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDD7ACF64B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47697174D26
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5D63A604E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C3B279904;
-	Thu,  5 Jun 2025 18:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D002279904;
+	Thu,  5 Jun 2025 18:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tVz3GuDa"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="h/PhjNNg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EB027A102
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70AA1DFF8;
+	Thu,  5 Jun 2025 18:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749147114; cv=none; b=bsUbk2jq3ikBU40YpmgS2RRhdvpfzPQkVk0x/0ES0+VwIH0eA+wWT7gfpRpTUk1BqhNr6zNdJeUqz2nJCkJVCMbWZ7CLTaDhmWCDKNiREPgfglhr4+eoN2eLC0BHpKuu3WzNyAinJBqoQoS5vK/ZLMUBJmgHypsJT+fW3pSzI7k=
+	t=1749147178; cv=none; b=od7nJrJ9eEc//QrF5dEcWq3FsO8xzEJZZGlQTTfhrKCyiDCryzwDUv9Dy4IfNTRmG+61Y5l3uhN6l1AY3mT/2ao84VGs5wkV+qfjrKBquZK6oc2VrGAoIv72gxKKis2sJKikPvtUSMdbxRpS/cGE9LTbIVuyzfu+lJJO8+0y+eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749147114; c=relaxed/simple;
-	bh=rUmXwGQdDxjV+rRFIkStphHB+nxUW5E5U9j4a+aHMAE=;
+	s=arc-20240116; t=1749147178; c=relaxed/simple;
+	bh=VC8TiWEJbCP5fK0TurDRuMuKqFoNrwTF28zOwDUpCbk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mTpmYxVIDAIo7EwfTpHq1rEIytyC/tb2kMSjVHMPGwQPgZ10WMJYl5dPnzCR/+LFIL/pQeS79Jmuc9l/tSOikjNhlux6UDHPvcJ0Y71/NaKUnrnefK9LIN6Wbj6s8qUAtEQPpejBUQc1iEhX/HLlX7yRXQoAOEK51jej8kGwS2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tVz3GuDa; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54afb5fcebaso1462706e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749147111; x=1749751911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JqsX8qqbM+TCchaFzPooUts8SMOS7Px5HGH4hYP3O60=;
-        b=tVz3GuDatodyJhRXjdxGMvbHS/lpzZgPvSyyHIfq33wdetoqlDpmNxe/Echk9jXkwk
-         q++nEAUfSUphsVHbL9IxcYLW62ZPzWRT4wzucbi6SH3zcFgMGwWLLvIMy4nUXvcAeUzY
-         iHX9SHm+g68yZML/eA3slOhTmJKpQuueUXVLf8AoQkafO9bmMukbLbHeUpb7ydC6LtTx
-         AaipKOuNgzDUnAG0c8G10dKg54iJq6XZe7yegWNOVKd08eRo8xS11POaaOpTAkeZbXiU
-         wfoGYHy8AuQMNNUABfH7Jb0Qx5JHXlT5mkaES748N338qla63Iw5kBq288AQwBfM1Bto
-         l3uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749147111; x=1749751911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JqsX8qqbM+TCchaFzPooUts8SMOS7Px5HGH4hYP3O60=;
-        b=vxNc86L1v16eP9QibabQg/TAMoq9X/F/rVxbOdsJzPmCX18ptXPXR5hYtPS2BIF4cD
-         vkYGx4RoIHLZ88RaB9R0YP5FpiEC1sT36ZGh0zXb748ZakCaLIWkIADszpLZfgB1G671
-         Lj5/cDaEmsxcNDI8tol0UHd3tgiGwyoud2JWq45k+DdppthV4133WmExyjLheRkZJyKL
-         HKnMl5r4h8ZdtSsPMlXYmq3y5BlqU3Ri6CZ8pnOfOCzuek40+hG+HRDGiCpqPwsk7H+b
-         N2CtZVtFthq0J2d7Drku0Epa6zzZWOyaN7ZqS0IYg1ZHcAoXuHCs9REJTSCjO+Sdb5Ql
-         WCQg==
-X-Gm-Message-State: AOJu0YwJ5oFz3gOcA88cnZyguKziHhaFazmUeKnUTrffiVPwmeGqFN43
-	ZeCbTK+VtPpj+gKlxfbGiUVmdNzGF8F/4HHMcvpGreJH0JrogXCKxO43mLZ5A5LVz9NpcRrzO7F
-	jKXHI4YU/1PdKyM1UqBC5Xmd2HX5wrx3hqGcTOYNv2yEP4q9fr7YVNz+Nsg==
-X-Gm-Gg: ASbGncsv/Jo7Qq/2TMtec2+5ClYxTCHuW/OIZoYWbv3xrNJfvHvGpggUBFk+hc69+Qp
-	682D/uFipyLMPf4iARM8AfOjSXxoaUsLmaHmG4y3zBzyyKjC7QD+IQT2WBTScyZ5OEjHA0F/sJp
-	q9htrU08AO1vUUy6pkBig9S4GLWr/Ctuap46IlsGWRg4FUvsv/nrThLXTs5TCydnxoMCOEWJXA
-X-Google-Smtp-Source: AGHT+IFzi4xrYNAH071GgMe065FQ2P3SE4t76MHGyx7VbRSDC8qVEB+1BKPEvbx0ydELHa31Zii4Zs/czWY+H7Bi1KY=
-X-Received: by 2002:a05:6512:304b:b0:553:23f9:bb3b with SMTP id
- 2adb3069b0e04-55366c40efamr31505e87.49.1749147110524; Thu, 05 Jun 2025
- 11:11:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=U/fhOaxOixteZHy6ojucK789LthkXghlHCStbZ/G8TOOcRuvUzGFbi8FpfTq5vVJdMA7lAOXd5LiXGo94CusjQCHm/G1eAvrBPBzsTgIadpnigr6srmTqgtZx6CwXwE1tTEBAcEE5xeW/TTaNnkQkvpRn3G8EF9t8gZJoXcK0Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=h/PhjNNg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA09C4CEF1;
+	Thu,  5 Jun 2025 18:12:56 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="h/PhjNNg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1749147173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yz+riPGjolDYqtLqirI8fOQXzpyk1sCFLqxaGoXvwwo=;
+	b=h/PhjNNgxroIykBgAe51rjx9DmIqLoH5LYWVxtTwERlTxRBAlqFtQuYAeEs1BZ3H4vZCF5
+	r3mVUJoLJTrlZptPHyWpOc7lCUh9UXBIE7ay5aIA4zLHHnhhTJnI5XodwrWe5ebwiMMPdL
+	7MfjJLqrtBzqHNXmSgzoQiT6hdsPc6U=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8d2c07ea (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 5 Jun 2025 18:12:52 +0000 (UTC)
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-6021e3daeabso586254eaf.3;
+        Thu, 05 Jun 2025 11:12:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXX29vuQ7Kry3tJ+3kBQQx5sckDRzvQnvuktaARCd0GRcZMCScrHLuyerFw+XZZmOptn3jTeyUq9axIbyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX6uzNA8ekvHmNsAR67vEhIHIzEJiq5RQF9lmEOenjTFecwiWo
+	KQ3aukK0ejvrbJjGGW0mH5lO7se4q0BrwEIUSTdugbVB4yfT6tArtL0M3d9kMvt7ec4ogGah19l
+	Y7sgeci4WpugnXCfpkJ4PGIso9TVxjc0=
+X-Google-Smtp-Source: AGHT+IFMzxQ0yDITEcbwM4QJbsNSXQVqEevb0+SMynwElAJVD7geXYbMW/G37EuS11U9wW+ZY1BquTGh4cCKmaDmVXQ=
+X-Received: by 2002:a05:6820:3102:b0:60e:d5fc:aa09 with SMTP id
+ 006d021491bc7-60f3cf132e1mr279392eaf.4.1749147171385; Thu, 05 Jun 2025
+ 11:12:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604232550.40491-1-yury.norov@gmail.com> <20250604232550.40491-3-yury.norov@gmail.com>
-In-Reply-To: <20250604232550.40491-3-yury.norov@gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 5 Jun 2025 11:11:38 -0700
-X-Gm-Features: AX0GCFsdjHpjYmvYs_jT3o7oe3wxiPx0OI8DSbCrTtkDaLaC4BErI1mG-0dqcFc
-Message-ID: <CANDhNCqbJZejdVqDJ8BnBstq1FAk5AiAvAo7sRnrKC41mCZ5nQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clocksource: fix opencoded cpumask_next_wrap()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>
+References: <20250605171156.2383-1-ebiggers@kernel.org>
+In-Reply-To: <20250605171156.2383-1-ebiggers@kernel.org>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Thu, 5 Jun 2025 20:12:39 +0200
+X-Gmail-Original-Message-ID: <CAHmME9ot0LdZ+SBYh9xLqFQLT0QL91mupwzUZRFyc=BV2QiJqw@mail.gmail.com>
+X-Gm-Features: AX0GCFswnp-bT3dT59KZzxWSeyWyKRFqNf10qQ5gJIt4H4JINfmYokK9LLexy30
+Message-ID: <CAHmME9ot0LdZ+SBYh9xLqFQLT0QL91mupwzUZRFyc=BV2QiJqw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add entry for crypto library
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, Christoph Hellwig <hch@lst.de>, Kees Cook <kees@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 4, 2025 at 4:25=E2=80=AFPM Yury Norov <yury.norov@gmail.com> wr=
-ote:
+On Thu, Jun 5, 2025 at 7:16=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> w=
+rote:
 >
-> From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> From: Eric Biggers <ebiggers@google.com>
 >
-> cpumask_next_wrap() is more verbose and efficient comparing to
-> cpumask_next() followed by cpumask_first().
->
-> Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-> ---
->  kernel/time/clocksource.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-> index 2e24ce884272..0aef0e349e49 100644
-> --- a/kernel/time/clocksource.c
-> +++ b/kernel/time/clocksource.c
-> @@ -584,9 +584,7 @@ static void clocksource_watchdog(struct timer_list *u=
-nused)
->          * Cycle through CPUs to check if the CPUs stay synchronized
->          * to each other.
->          */
-> -       next_cpu =3D cpumask_next(raw_smp_processor_id(), cpu_online_mask=
-);
-> -       if (next_cpu >=3D nr_cpu_ids)
-> -               next_cpu =3D cpumask_first(cpu_online_mask);
-> +       next_cpu =3D cpumask_next_wrap(raw_smp_processor_id(), cpu_online=
-_mask);
->
+> I am volunteering to maintain the kernel's crypto library code.
 
-This looks ok to me. The only nit is that often folks like to see the
-$Subject line look like:
-  $topic: Capitalized description.
+Lord, please, yes!
 
-So for this one:
-  clocksource: Fix opencoded cpumask_next_wrap()
+    Acked-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
-Acked-by: John Stultz <jstultz@google.com>
-thanks
--john
+And if you'd like a co-maintainer, obviously I've been quite
+enthusiastic about the whole librarification thing for quite some
+time...
+
+Jason
 
