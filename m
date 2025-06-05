@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-673999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95C8ACE897
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:17:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7E0ACE841
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 04:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35C6176BE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C4717191E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 02:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87521BC07A;
-	Thu,  5 Jun 2025 03:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F701E7648;
+	Thu,  5 Jun 2025 02:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="PQVlcpf0"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19CA3C2F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.8
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EwcgxuTM"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A761CD0C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 02:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749093435; cv=none; b=pN7fXHYyL9IlK1jXNJdD+QphSYzfCeWkuPnVnluNZ59C/Znklb7ZH3pxqWesMU50aaF6khIinoizyD74M6+Xt5zHgYCvczPttd7KV/3I3xo2FMKTgs7AI6ofSTn/UCgMkscInp2pcHZNnHiJ/y2pMOgqO3Ad8/KSee2X+FNJxNo=
+	t=1749089697; cv=none; b=KcvFStQdeZiO0Wv6LoU6c6cTxXBQEFHlZlf8c4xUmqlT2wUTaHwv3wAU9IStzZDynMnjNd3+mGhK6Fdojfj16WnVKXrsGoG05TaOHbcCgi+9VToh6TIRvUZSFPw8ZXG3wzhhovrGYIJERdLz0SJtq1DplGf7PWfBpxHX5BnwJWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749093435; c=relaxed/simple;
-	bh=OZK6b8msq6X9GCjEhF+Ir0LQgVfF5QMWvAR/Gp09L3o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pS8rBpkUvxCNyEj3VB6OEAFh13zr42wTGAdm9hefPykoj3hKKnPN1Goj6v0KqeUL7asuiC8ao/7RylFAR+8fPNQT8q1q8VLVilRAe0R3olvg4EnOd0P7nR/UdhOJkzSe8yAqnkKsxyIxK7fp7W4xhgYd6MsMHEX3qksi2DKyZpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=PQVlcpf0; arc=none smtp.client-ip=117.135.210.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=Dgb/YpmpOW9VYXVuxgnzQsBVv3IKixywt4/deZXRAWI=;
-	b=PQVlcpf0R/mFposwvMPvj0ej/YwAbHw25+egKBmSOah1LnRYNhJUBOx7wXKiUA
-	p7Q/0oOi6CQh4EXb6BP7o4J3e73CyBDno5nQwXmOtlNgQAv/YAi6MZMegIeY1u+o
-	pUl0iPuJzA3RCW6tA0vaz8C9qGgTBFPnHzMz7maypz1HU=
-Received: from [172.19.20.199] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD31wtZ6EBox0ZuBA--.54588S2;
-	Thu, 05 Jun 2025 08:44:10 +0800 (CST)
-Message-ID: <c15bfa20-2113-4299-98bf-1865b6b535ef@126.com>
-Date: Thu, 5 Jun 2025 08:44:09 +0800
+	s=arc-20240116; t=1749089697; c=relaxed/simple;
+	bh=+4mn5fNgQOMJOacoOcu07rtim7Io0FoDTdjCWuG/w54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aexGXu19NDuskwEF843t4Pd731ZuFoldQM1dD6j1yxNADTknkb+tTOlNHcJvqJXmwICqM5u9c9tOSodipoNExocbOkwLvWA3Kuxtg8Ci8f604tZlCD4DCncnHLUGJghqKVuI8aGSS4G8QMCjiBfBgVphFZI95+JwGH5bra7IVzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EwcgxuTM; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 4 Jun 2025 22:14:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749089681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2j144z67MmuLGueiqdrGDDX8vDpDTEBiE5P4jXnddcA=;
+	b=EwcgxuTMeYdPdyXsOqZB0FJxWwYmXRMuOUxgACwKQZzo4t4+EYBzGPmHsebYlt1rkUJ3p2
+	4lCQEEU3R/A+wyg2+S6PRx6Dp1gE6KcMrgInvaM4zS4bKwoOI4EpybNz5v9tqk9Q1mThru
+	eLSiHjy/INiO1d+jcboJf6mA6Dzz7YY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/2] bcachefs: Simplify bch2_bio_map()
+Message-ID: <4j4uopk7emegyqrwr3kd7mmdc25ps66prypb3ehfqwo5oqs5pm@ipqb5mdibsml>
+References: <20250605020639.6868-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/hugetlb: remove unnecessary holding of hugetlb_lock
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1748317010-16272-1-git-send-email-yangge1116@126.com>
- <20250604154754.a30e327c3f1640173c8b9cb8@linux-foundation.org>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <20250604154754.a30e327c3f1640173c8b9cb8@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD31wtZ6EBox0ZuBA--.54588S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw18KFy3Cr1ruF45WFyUKFg_yoW8AryrpF
-	yjkF90kF4DJ3yqkw4xtr4rAF1rZws8Xa45trZ5JFWY9rs8XF92gFsrZw1qyay8Crn3Xw4I
-	qFWjgrWqqFn0y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbHUDUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbidQdjG2hA5Jtt0wAAsj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605020639.6868-1-youling.tang@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
+On Thu, Jun 05, 2025 at 10:06:38AM +0800, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
+> 
+> For the part of directly mapping the kernel virtual address, there is no
+> need to increase to bio page-by-page. It can be directly replaced by
+> bio_add_virt_nofail().
+> 
+> For the address part of the vmalloc region, its physical address is
+> discontinuous and needs to be increased page-by-page to bio. The helper
+> function bio_add_vmalloc() can be used to simplify the implementation of
+> bch2_bio_map().
+> 
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 
+Thanks, I'll apply these after I rebase on 6.16-rc1.
 
-在 2025/6/5 6:47, Andrew Morton 写道:
-> On Tue, 27 May 2025 11:36:50 +0800 yangge1116@126.com wrote:
+> ---
+> NOTE:
+> The following patch needs to be applied (because the bcachefs.git repository
+> has not been synchronized to the latest):
+> commit 850e210d5ad2 ("block: add a bio_add_virt_nofail helper")
+> commit 8dd16f5e3469 ("block: add a bio_add_vmalloc helpers")
 > 
->> From: Ge Yang <yangge1116@126.com>
->>
->> In the isolate_or_dissolve_huge_folio() function, after acquiring the
->> hugetlb_lock, it is only for the purpose of obtaining the correct hstate,
->> which is then passed to the alloc_and_dissolve_hugetlb_folio() function.
->>
->> The alloc_and_dissolve_hugetlb_folio() function itself also acquires the
->> hugetlb_lock. We can have the alloc_and_dissolve_hugetlb_folio() function
->> obtain the hstate by itself, so that the isolate_or_dissolve_huge_folio()
->> function no longer needs to acquire the hugetlb_lock. In addition, we keep
->> the folio_test_hugetlb() check within the isolate_or_dissolve_huge_folio()
->> function. By doing so, we can avoid disrupting the normal path by vainly
->> holding the hugetlb_lock.
->>
->> The replace_free_hugepage_folios() function has the same issue, and we
->> should address it as well.
->>
+>  fs/bcachefs/util.c | 15 ++++-----------
+>  1 file changed, 4 insertions(+), 11 deletions(-)
 > 
-> This change addresses a possible performance issue which was introduced
-> by 113ed54ad276 ("mm/hugetlb: fix kernel NULL pointer dereference when
-> replacing free hugetlb folios").  113ed54ad276 was added recently and
-> was cc:stable.
+> diff --git a/fs/bcachefs/util.c b/fs/bcachefs/util.c
+> index dc3817f545fa..5e5075630bc6 100644
+> --- a/fs/bcachefs/util.c
+> +++ b/fs/bcachefs/util.c
+> @@ -623,17 +623,10 @@ void bch2_pd_controller_debug_to_text(struct printbuf *out, struct bch_pd_contro
+>  
+>  void bch2_bio_map(struct bio *bio, void *base, size_t size)
+>  {
+> -	while (size) {
+> -		struct page *page = is_vmalloc_addr(base)
+> -				? vmalloc_to_page(base)
+> -				: virt_to_page(base);
+> -		unsigned offset = offset_in_page(base);
+> -		unsigned len = min_t(size_t, PAGE_SIZE - offset, size);
+> -
+> -		BUG_ON(!bio_add_page(bio, page, len, offset));
+> -		size -= len;
+> -		base += len;
+> -	}
+> +	if (is_vmalloc_addr(base))
+> +		bio_add_vmalloc(bio, base, size);
+> +	else
+> +		bio_add_virt_nofail(bio, base, size);
+>  }
+>  
+>  int bch2_bio_alloc_pages(struct bio *bio, size_t size, gfp_t gfp_mask)
+> -- 
+> 2.34.1
 > 
-> David said:
-> https://lkml.kernel.org/r/87521d93-cc03-480d-a2ef-3ef8c84481c9@redhat.com
-> 
-> 
-> Question is, will that bugfix's performance impact be sufficiently
-> serious for us to also backport this new patch?
-
-In some low-probability scenarios, there could be severe impacts. For 
-example, when multiple CPUs execute the replace_free_hugepage_folios() 
-function simultaneously. It seems that we need to backport this new 
-patch. Thank you.
-
 
