@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-674815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E30ACF50D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:12:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCD0ACF538
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0871883F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:12:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AC407A4769
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F972276045;
-	Thu,  5 Jun 2025 17:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A33A2798FF;
+	Thu,  5 Jun 2025 17:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZ8KEY1F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0Dyyl9u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917DF1F4701
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 17:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7232127E7E3;
+	Thu,  5 Jun 2025 17:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749143518; cv=none; b=beYfgKEA6p9s85wvGit/sDtBvU4Rl3ULwvBFZvrLLNWZbxDn0xNJvoRuNSZmp9L1wSzF/3QK4m0ZuqQ3D1WkYHFHMPYKC9JFXw4LyfPKMi5bO7WlskldvIG6CWgXkAw3q/O1Opx38lqhkj3lq1VJs7gegxBi0QglWg65fSgIEjM=
+	t=1749143781; cv=none; b=PwA5CCJEHSH1QHz0skOIflm1UC9nAE3hboh2NQgR1Tkx7idRXpQmX+P12g/6Qaq7aJTNG7Anz8LVp4iGJb6Ps2kw/z6sbI2fgEP9mFgI6ufAoR1sNe+BDYyXDjwOhryGCQZKnjfRC8nNfogICTG7p++wff3TTcQwtuX0/esRFwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749143518; c=relaxed/simple;
-	bh=VPsAJMShnkum23FOlcYAYrO6mPJpYIio8qbx3qLulTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A7D2ml1XPIWvhAz+oVeNgc4eU97tgDkE4zXLcuBMMvEO2WfEfJlmBY6Tlr/tLFAknmQl36EVHEob79rOTQoTBMimJm6R+hiPfgKp2Cy/3xzRiA4t2Ovpp4Ev4zCAU4kcqmdvvw1O50L1EWbIVaH7R59ueoq6tCdqy8Ykbgu3L9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZ8KEY1F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99E6CC4CEE7;
-	Thu,  5 Jun 2025 17:11:56 +0000 (UTC)
+	s=arc-20240116; t=1749143781; c=relaxed/simple;
+	bh=DgZhQvpBXlB09Hd+4ffRFTQ/OvbWM89FGEGLeEK7fmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDyahb3fzRfOYZr8hF31OpAWFBnhrFaYlb5XwdDM/8iVnC/+O1ZapXu5sSlqHk43voH/CJh6++6rhAp6HS6SGnQlaE8SYyby22XonKE49lFgFiFrxqEjtp3/dLW7Lh9WwFmUUbNXIQTOpG9nqMGSN3/Mjii81YfEMDAnFS9aYuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0Dyyl9u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFCFC4CEE7;
+	Thu,  5 Jun 2025 17:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749143518;
-	bh=VPsAJMShnkum23FOlcYAYrO6mPJpYIio8qbx3qLulTc=;
+	s=k20201202; t=1749143781;
+	bh=DgZhQvpBXlB09Hd+4ffRFTQ/OvbWM89FGEGLeEK7fmA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=MZ8KEY1FI3aFivdxmS7v0djgk2VpJnaC42fl+leC/Zl18zX+AGyshM3gDqhXeufJy
-	 omlf7gLJ2ExTjIpEx5foYIX+0tQw3jbHQHTWDgYqQPlcou2pXsHFH7SAmlXNM0WFLZ
-	 umbmzHnQykgrTLVgDoc2e4CUuHoWoO8gQQ9FrmfT5Dv4DW8V+Yh7rXLyqpZH+76Nm+
-	 SnODbW3kndfYmOXL33LHBAvPwuHp7Ld5nvpzAcTCXc2vbD9p5qlRQZRlFJwC/HLXIw
-	 X7QYxW2cgJ9bU/Yro+k4A63ZFedpSKo4+MeYy8ETFSIYNUBDaFOAKVEKtWoSCnOhQW
-	 G9ayP+IVU24fg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>
-Cc: Pratyush Yadav <ptyadav@amazon.de>,
-	kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] kho: initialize tail pages for higher order folios properly
-Date: Thu,  5 Jun 2025 19:11:41 +0200
-Message-ID: <20250605171143.76963-1-pratyush@kernel.org>
+	b=G0Dyyl9ur57H1SxJSwQNt2xUmsRROjSIC33EgvyghqJRlFbD/oLMlItc6/s7SkVQi
+	 JiDfKc9C+Gaoog8+rCfi6k0ft1kiL8xLZ62BG76g3PNvvvnhIwKdhYFJ/BhQCswn1k
+	 wBnHi1gS+VMTTFgMh4vHtzekLlVEmTl0w75Rsf6kYc4S1nxt34AtxrBB1djuluPotF
+	 zh3xHRq1/s6H8LP3JOkDrG0/58UEmSvGZkfifK44VYzkEnV9CEmj+UxgEEnw6GemHM
+	 V2ORmUiKwrrriZTuGWxk/38s+kkEzMDeBBmh4mHbe/Tko6pW04Kznzy1Rgd/AsAGkO
+	 IzII2OM7Jlo8Q==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Kees Cook <kees@kernel.org>,
+	"Jason A . Donenfeld " <Jason@zx2c4.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] MAINTAINERS: add entry for crypto library
+Date: Thu,  5 Jun 2025 10:11:56 -0700
+Message-ID: <20250605171156.2383-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,104 +61,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Pratyush Yadav <ptyadav@amazon.de>
+From: Eric Biggers <ebiggers@google.com>
 
-Currently, when restoring higher order folios, kho_restore_folio() only
-calls prep_compound_page() on all the pages. That is not enough to
-properly initialize the folios. The managed page count does not
-get updated, the reserved flag does not get dropped, and page count does
-not get initialized properly.
+I am volunteering to maintain the kernel's crypto library code.
 
-Restoring a higher order folio with it results in the following BUG with
-CONFIG_DEBUG_VM when attempting to free the folio:
-
-    BUG: Bad page state in process test  pfn:104e2b
-    page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffffffffffffff pfn:0x104e2b
-    flags: 0x2fffff80000000(node=0|zone=2|lastcpupid=0x1fffff)
-    raw: 002fffff80000000 0000000000000000 00000000ffffffff 0000000000000000
-    raw: ffffffffffffffff 0000000000000000 00000001ffffffff 0000000000000000
-    page dumped because: nonzero _refcount
-    [...]
-    Call Trace:
-    <TASK>
-    dump_stack_lvl+0x4b/0x70
-    bad_page.cold+0x97/0xb2
-    __free_frozen_pages+0x616/0x850
-    [...]
-
-Combine the path for 0-order and higher order folios, initialize the
-tail pages with a count of zero, and call adjust_managed_page_count() to
-account for all the pages instead of just missing them.
-
-In addition, since all the KHO-preserved pages get marked with
-MEMBLOCK_RSRV_NOINIT by deserialize_bitmap(), the reserved flag is not
-actually set (as can also be seen from the flags of the dumped page in
-the logs above). So drop the ClearPageReserved() calls.
-
-Fixes: fc33e4b44b271 ("kexec: enable KHO support for memory preservation")
-Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
+ MAINTAINERS | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Side note: get_maintainers.pl for KHO only lists kexec@ as the mailing list.
-Since KHO has a bunch of MM bits as well, should we also add linux-mm@ to its
-MAINTAINERS entry?
-
-Adding linux-mm@ to this patch at least, in case MM people have an opinion on
-this.
-
- kernel/kexec_handover.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index eb305e7e61296..5214ab27d1f8d 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -157,11 +157,21 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
- }
-
- /* almost as free_reserved_page(), just don't free the page */
--static void kho_restore_page(struct page *page)
-+static void kho_restore_page(struct page *page, unsigned int order)
- {
--	ClearPageReserved(page);
--	init_page_count(page);
--	adjust_managed_page_count(page, 1);
-+	unsigned int i, nr_pages = (1 << order);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eecc41c39a9cb..d64d1ddef842b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6372,15 +6372,22 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git
+ F:	Documentation/crypto/
+ F:	Documentation/devicetree/bindings/crypto/
+ F:	arch/*/crypto/
+-F:	arch/*/lib/crypto/
+ F:	crypto/
+ F:	drivers/crypto/
+ F:	include/crypto/
+ F:	include/linux/crypto*
 +
-+	/* Head page gets refcount of 1. */
-+	set_page_count(page, 1);
-+
-+	/* For higher order folios, tail pages get a page count of zero. */
-+	for (i = 1; i < nr_pages; i++)
-+		set_page_count(page + i, 0);
-+
-+	if (order > 0)
-+		prep_compound_page(page, order);
-+
-+	adjust_managed_page_count(page, nr_pages);
- }
++CRYPTO LIBRARY
++M:	Eric Biggers <ebiggers@kernel.org>
++L:	linux-crypto@vger.kernel.org
++S:	Maintained
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-next
++T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-fixes
++F:	arch/*/lib/crypto/
+ F:	lib/crypto/
+ 
+ CRYPTO SPEED TEST COMPARE
+ M:	Wang Jinchao <wangjinchao@xfusion.com>
+ L:	linux-crypto@vger.kernel.org
 
- /**
-@@ -179,15 +189,10 @@ struct folio *kho_restore_folio(phys_addr_t phys)
- 		return NULL;
-
- 	order = page->private;
--	if (order) {
--		if (order > MAX_PAGE_ORDER)
--			return NULL;
--
--		prep_compound_page(page, order);
--	} else {
--		kho_restore_page(page);
--	}
-+	if (order > MAX_PAGE_ORDER)
-+		return NULL;
-
-+	kho_restore_page(page, order);
- 	return page_folio(page);
- }
- EXPORT_SYMBOL_GPL(kho_restore_folio);
---
-2.47.1
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
+-- 
+2.49.0
 
 
