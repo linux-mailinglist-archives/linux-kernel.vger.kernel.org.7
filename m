@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-673905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54162ACE764
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 02:13:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29EBACE769
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 02:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86A23A8E0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090B93A8E45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB812566;
-	Thu,  5 Jun 2025 00:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87902566;
+	Thu,  5 Jun 2025 00:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7XK6+av"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="kd38s4ZY"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1291FDA
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 00:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255197494;
+	Thu,  5 Jun 2025 00:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749082377; cv=none; b=PzcFtlnHeKnGNfgcFXNl2euGYrBQgrouCqjRjjnvwSMAzv/j9aBLHAVRJOgMHiV5llO0HqX0D86pU2qKN4ettYIm8QR61PBNOwIWiNyLjzSWNgfTQzJqEF8/0yqtRfizhUVkwf8iIKEAqJAv2Dp/29ABYaR2oDgAOlSfNj1MuAY=
+	t=1749082455; cv=none; b=QEdr8V8uJUSEPgWyRu3Qlp2skM/j4vEzxW/SimcFqMhQY3swQO0C72tRDve7dPGed4VkUUFpM4mJqXdjvhAZrPB45UaSFFDQoSgJ2R/tg5MInDcGm3EMUaOpbS8ECsN2GDom/92rf238MUZrPn5NCZ+q5el0Z4ZCcGJ1y+wPRdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749082377; c=relaxed/simple;
-	bh=YJZMDDgQc/tb1CWECbjN53f528oXKyowfHYEh9X4nLY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=asdLXgbIw51lXrCDhESBHTq1pMJmEs3lnDRal185Tannzc7VAueln3HD31c0GfRF3iF8PVCfPXeKFefM+LR1nLevu/ZBjJsDZUBsS13kRqvZX5J3pfGZfGCytxglEeoZSnizTEdtAUT7pW9aHG7axqFw1spbTBjvRHIXNEhxPYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7XK6+av; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70e5d953c0bso5251227b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 17:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749082375; x=1749687175; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vlm5LuAw0F30K4NgAcQzPC3OcpN/icRBRjLVeEN9Y98=;
-        b=J7XK6+av53M/Gws684hFSKC0mD1mcvpXoH55l2+Z5Q6UkGhithYyOFooIwgweAT7Vb
-         JFmTz67lT0/9Vy1FJR/DScUqfGBy52AhxNVdeaoGxCKMLl6suMF9ggQuHcn6qZGmeJd6
-         M85Z11SDSBivNO8anPxIynl2HGzOVQRln41Wwu4vH/++kgIhmWdlmph4sdQY9WZoLPfv
-         PH7pTOsXndkciY7HQmwGoNDDqOzCAaBEMPKkzCr0oZpi2rBheX55ZoOM1LkdZaTWxhK2
-         aWG/NXNjdURRuaM1GfAUzkZyDq6DLwnP62QGlzA6IsHJaN6mYkoi4qSmGNqhdbLOHoed
-         aTIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749082375; x=1749687175;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vlm5LuAw0F30K4NgAcQzPC3OcpN/icRBRjLVeEN9Y98=;
-        b=UoOEOq45eVw4PJu60ucDnwMWJBt4xrzhKk2fmGQTs5vvnN+LjZP4kfA7mLw12NbL7U
-         5pSs9e2x4dqBOq6ib+7vD3TSv0iQBq8AJzfiLWYG2rlKYhLRCOoK2KD9HXQeGsB9uSFt
-         A9YtHfIyMAyDe1mHAnyefoWa4Wg6ZiqCgN85iJBu2uod5yysd5KVsFox5PDYYFx0r1I/
-         Si5bsCnyqMvOCOC8eR4vjsbpzpSThglqZibFYsvPX93WJ7LJohJjXhtqVz6JH7iNn6S4
-         vo0itD9XlSR6005Y7SoIG3shYLMaJFzXbe8NPtC69qQeQGuCLPPn2+uLhlGtHCrTeyfN
-         EJfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdr8fFhQz35r97oPaJOVhlwQSYG+5601kvZqEhBzrMd0Qj8dqwrRUY0kOvamFAJnmTMFE4h6b2G9O2o1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHrDXazN+cWUrmGO9KuPp9G0CHyzdbDs7B+m3bdGyzDfGjlUNV
-	t124Eftl7HLUP+VAIp1CLfFjzgPcRrq5vYrOq7qBOIQziIGz6EKgeWSezkVXUA==
-X-Gm-Gg: ASbGncvxsUJERb+G590rYUYFwHoT7dpOQTtmCILJRdE4iGZMs68aluqmtU3EUG1oT5W
-	eGAV50X3s5uoY/0AOhFmXGvtj9fZywxQFCxMYwvgC5H7uyBV6j8t+Gfgtr2r9iuofa4hsVkFj2x
-	tFyg8zIw3v8w56jNF/vdSPoySnAaJuRcIZzHq2vpyliYkReSjcg5p9pUkAuSTkjJNvNZmCkwNRy
-	rvzTNOd/s00IUsRb3GkCOyzi+h05iuoS+g+Q8nOuxIGJJxnehDPc6emR0eozQ81q7V1cp6Od3wQ
-	j6nDVglkMShMAX4hSunAAyk3kRJFjDxLbj1fBNFrk+EWGBGbDNYCwtqIwVFm9njVptjLSjq+/91
-	QOMi+JX4UnzCquInIe92izw==
-X-Google-Smtp-Source: AGHT+IF6zesAyyqbWv+wh5yA/pft9gVeSHofM9dgbJwAmX9S21FxoAcoddOyYfaoENiGKEaQrOHVBQ==
-X-Received: by 2002:a05:690c:45c6:b0:6fb:91a9:94d9 with SMTP id 00721157ae682-710d9d6e428mr76793657b3.2.1749082375373;
-        Wed, 04 Jun 2025 17:12:55 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70f8abce4bbsm32743167b3.20.2025.06.04.17.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 17:12:54 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: Douglas Anderson <dianders@chromium.org>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] watchdog: fix opencoded cpumask_next_wrap() in watchdog_next_cpu()
-Date: Wed,  4 Jun 2025 20:12:52 -0400
-Message-ID: <20250605001253.46084-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749082455; c=relaxed/simple;
+	bh=OvPLCeB55L0RuDui/KZ+CQQzw8Bt/DaYKr8ttCBT4VY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YAcsvPM+rVmIyiBd59bSpiYgxCrx6YcQnjVvi8RIsczl624UhhnIuTneYe/nV28xsW4a6TTcRejDOCZxGkLQL3rMVyQq5HoiiSSu8/PuwV1720pUl4ReKK1HChe6WWA4JOVnY5kxcSB2X1GJzY+O6Psro+OluCPNIsWy2lJW6rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=kd38s4ZY; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bCQ0s5W72zlgqV2;
+	Thu,  5 Jun 2025 00:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1749082444; x=1751674445; bh=J1hN6iDCB5et+MfuuqWoYZy/
+	UgxCtxyLw1S7Uy+ea8E=; b=kd38s4ZYYqGHNRTD6GPK3WFRz1LfU+991Bm8vzgd
+	aEy4flDgvmU+4I9ET7JUE4Tfv85zn3eaxyZibCLjiQONkYik/0u+A8SPP/9ySvSf
+	7/JILcYL0u54dNTyVlO++36Ta3TRtu4ie2e3Mfo9Fq6r6qO/wiQkHiRnC8F3rW50
+	LyALPYpPD6GKl1a9LlccW22BXFG5YfN4AtYxbI8SUx02TaRq6maJ7EpBNSG8Drtn
+	coT97345B2J176DTCq9sp5r2O5ZadgqV/AP61MlTqTRJGE1tx+WE73tbZm6tJHva
+	iQ8e2Ro+ikbHVlXR9Udhdnb99OveW2jkgNyQknSHuSTyKA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 0RMwR_oiVVUf; Thu,  5 Jun 2025 00:14:04 +0000 (UTC)
+Received: from [192.168.15.124] (59-115-185-62.dynamic-ip.hinet.net [59.115.185.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bCQ0k3zgdzlgqTy;
+	Thu,  5 Jun 2025 00:13:57 +0000 (UTC)
+Message-ID: <0959d3c2-b849-4826-8edf-d72a89fbadff@acm.org>
+Date: Thu, 5 Jun 2025 08:13:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi/fcoe: simplify fcoe_select_cpu()
+To: Yury Norov <yury.norov@gmail.com>, Hannes Reinecke <hare@suse.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250604234201.42509-1-yury.norov@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250604234201.42509-1-yury.norov@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+On 6/5/25 7:42 AM, Yury Norov wrote:
+> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> index b911fdb387f3..07eddafe52ff 100644
+> --- a/drivers/scsi/fcoe/fcoe.c
+> +++ b/drivers/scsi/fcoe/fcoe.c
+> @@ -1312,10 +1312,7 @@ static inline unsigned int fcoe_select_cpu(void)
+>   {
+>   	static unsigned int selected_cpu;
+>   
+> -	selected_cpu = cpumask_next(selected_cpu, cpu_online_mask);
+> -	if (selected_cpu >= nr_cpu_ids)
+> -		selected_cpu = cpumask_first(cpu_online_mask);
+> -
+> +	selected_cpu = cpumask_next_wrap(selected_cpu, cpu_online_mask);
+>   	return selected_cpu;
+>   }
 
-The dedicated helper is more verbose and efficient comparing to
-cpumask_next() followed by cpumask_first().
+Why does this algorithm occur in the FCoE driver? Isn't
+WORK_CPU_UNBOUND good enough for this driver? And if it isn't
+good enough, shouldn't this kind of functionality be integrated in
+kernel/workqueue.c rather than having the above algorithm in a
+kernel driver?
 
-Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
----
- kernel/watchdog_buddy.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Thanks,
 
-diff --git a/kernel/watchdog_buddy.c b/kernel/watchdog_buddy.c
-index 34dbfe091f4b..ee754d767c21 100644
---- a/kernel/watchdog_buddy.c
-+++ b/kernel/watchdog_buddy.c
-@@ -12,10 +12,7 @@ static unsigned int watchdog_next_cpu(unsigned int cpu)
- {
- 	unsigned int next_cpu;
- 
--	next_cpu = cpumask_next(cpu, &watchdog_cpus);
--	if (next_cpu >= nr_cpu_ids)
--		next_cpu = cpumask_first(&watchdog_cpus);
--
-+	next_cpu = cpumask_next_wrap(cpu, &watchdog_cpus);
- 	if (next_cpu == cpu)
- 		return nr_cpu_ids;
- 
--- 
-2.43.0
-
+Bart.
 
