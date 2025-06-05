@@ -1,262 +1,265 @@
-Return-Path: <linux-kernel+bounces-674374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE6BACEE12
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:52:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA4EACEDF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D911178DF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E619177D6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96A1258CF4;
-	Thu,  5 Jun 2025 10:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF04215198;
+	Thu,  5 Jun 2025 10:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s5Yneaw9"
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J3pmxSuV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA49255F2B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DA53C17
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749120622; cv=none; b=l7kYvYjxnyEcFEQMW1U2x9IxrzEit52gsvGjyo2JzJNrIewyNHa8k4FSQFfVEZhfFh27KCKse+PDsJsHTMIO5za6Fxxb5M0pgwyE67jkL6H5v+ayAdnrdkf6TdhUTNEPS5A2ysZTtJvfF0jmWnTePS54s1prr9CXjKlHXjSfC7M=
+	t=1749120584; cv=none; b=VoKf+oq8wpyI7XTPQWrH8u0kYrxm+8ukawPngK6Y6auSiW7di9wjZudvhC5veBeoneVlKBYooDzYQ74HvLqcvj5+wgSw/M96s0f+LhCp39OpQHVIGNvHt20+NNHLpSm5+FzW+i+mgKHovWNL6cT6P4pUJ9feODuFpY84KEANqt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749120622; c=relaxed/simple;
-	bh=MMFbkI7zMPzBdRBdPQfb7pTJMjgrsMrJkf8SuH2PcGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mkMo8EBNKEh9Kh5xPX9x0xfwtA6gXN71jLU8COXf4HGOQ5mWvTDMbL7KV8sYH1G0i1zYaJn9GqqoWCNUsPje6woc5bhJtofAP5+Az44xDgsvqs0Vv6yhG9oiQTED1Amxj/RdhG2mj+gHDYY94zFVbZpOKKEC/MHOBFgZFTjQ6cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s5Yneaw9; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-451d6ade159so6450635e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:50:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749120618; x=1749725418; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TYtpnIAkK3WcCc9sKEGdtsuC5KifjqgSXfNa01d683g=;
-        b=s5Yneaw9KHvOhvd1NjYXiRndEXnRicPmtfIvSUpJbU4CCeD8zAHMw05ghUhtLD+CN9
-         04gMz20XVIlaXkPYZ6p6u/AFHBvE83BFdOmbcqUrZGCsksipl/+FssurC3dVPFIH2n/7
-         5AwcwzvmEQwUH9MjBGot+IjCqn+ovnNFszmQ5f17cijwjM2N+cEuIDD6TshMxKVX4JYl
-         gqsAkETajdXLmeBDTn/ahpqkei0SopherOOmOj37Gg8H2XO53TW69UoalfV4asZbQ1p/
-         bZyDiXQC2cTwyMrj402S5bLSVBYAhHj29o2DKqQToy1j/YsxvvQTiMavQytnkwUv7mbx
-         pvPw==
+	s=arc-20240116; t=1749120584; c=relaxed/simple;
+	bh=v6xtrxLxYH2hT45AwJwhvKFFiSUu0RR5YURtbwGRkts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmNya/eAsgdTyp7QIPT9wKrtYeb7TafPKpn786/nPxPvasAVpsM0xM4Agg/bLH8nc4O6252uUidUj9sG4rRC1xZN8vXsJk4OBl1ivaBpZ/yQk0M4ZrmufKWg9QxoQfG1KsQln5VNRDZP28OLAQFgcvJGm5p8dsauWdFE4EG4YNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J3pmxSuV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749120581;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FFCw24n0s12QidmEWqSONjnqNtdgJB5XvQGER4+bs+o=;
+	b=J3pmxSuVNbf38IVFexS3ncxv/qwuN4/ASviy7RnisqNJ2gPQPDA5w5OfIptVfVwHNwmFrL
+	EHu32n3XOfZa9MCD+x2/EG1vjLxsl9Kwbr56a0167HmbFiimdcoDgamOQw8j+wiG/2MMs+
+	lkesWsQCY4tiRuaGxzlf9XQ5gbgUhmo=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-512-7qp4MUyXO9qC00LGOizzzQ-1; Thu, 05 Jun 2025 06:49:40 -0400
+X-MC-Unique: 7qp4MUyXO9qC00LGOizzzQ-1
+X-Mimecast-MFC-AGG-ID: 7qp4MUyXO9qC00LGOizzzQ_1749120579
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a58f455cdbso7583001cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:49:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749120618; x=1749725418;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TYtpnIAkK3WcCc9sKEGdtsuC5KifjqgSXfNa01d683g=;
-        b=xCZ2iQ8ozqPNo9j0mH+aMXNxwUTvQZTnp04byStKyYQvJs1t/PuVL+/RmmcT+P/zLR
-         bM50WHHMxeuUu/wLQJ4Cgwmkw+q9W+ezpidmW4HgNNC39fAgnWgvyBp2DdLKd33qUiPd
-         /5k3uLKcvLg9vXDjF/6d703MqexDJOx7BK5IplyW5BpBksfjcdcU2sYVwL+x4ZJVxaTS
-         B1SKfcMCvm8C8lG1dwoErpNqstVtLu/0x09WV4AcRbgju2D7pWbOiWXbDIsTB0jT0jIE
-         S+8we4ktdT361r7SaIhaubCoRPjCWA3yazTV72EpUYl02C2Cf+Kod7SHrpAIbgKg2NW8
-         pYjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnyc3dcTJhG8TwC/rR5hLBtwFJ2wNrxdD55PQ0YRISOgeBpnhHIOJMXQBuLXpqmnxYP/5RtCgcZmj/UDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyZM9x2MMoLHMaTdTLbR9bGgXs+swUMPsew7NjFRgrNSc1A+uc
-	jzSFVerrzQE+qFAZsuQXzu7xi8Fk4pTq7fH4fGlV0DWcF3vV8pzKL5NXr8wEZOdNYUE=
-X-Gm-Gg: ASbGnctG4AiHbP4IB+8HhMGBdb9a5WXurFA1IL0UjetH+tb9JTGjDlghm7dsBxqMn9Y
-	o5nIkz3NdUYb7ygmEwMYeJaiE3dKcAslwk6O3nxxNz9xuClZbszP6cZpcgb91nxWddJT316WNun
-	g5qmZmSnjhGARfiXW3inWDS+b5lo9OkQE51s8Zxhi+S9Mm4/ALRCKkS3AMRadckA2A3gvWxBwI7
-	OS3BEQdwZ035UBqd2WUyxwE7lFRzVwf37pP9UJvMPxP55sOXhyGuyIvn25RE8ObwkQv/IG64peA
-	yea82w1zJ4yXf37pH2LlFI349uWlkm/t1vyOPTOewZJlw2JoWfsELISSVYxZ
-X-Google-Smtp-Source: AGHT+IF209QtdWKQIFSgWNU834ITMWh9f6gxkjT2rjm5O4GQe4Nyl3IJTR6vikF94ywt0/mEA5L8wg==
-X-Received: by 2002:a05:600c:548d:b0:43c:f597:d589 with SMTP id 5b1f17b1804b1-451f0b20d15mr54093555e9.27.1749120617749;
-        Thu, 05 Jun 2025 03:50:17 -0700 (PDT)
-Received: from ho-tower-lan.lan ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f990cfe3sm20629965e9.23.2025.06.05.03.50.15
+        d=1e100.net; s=20230601; t=1749120579; x=1749725379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FFCw24n0s12QidmEWqSONjnqNtdgJB5XvQGER4+bs+o=;
+        b=kuJKZs9HXDVUu+4NHOMmhrE4BGSH/tqI2XDNv/9rFxG+/zHD3eNcmfPkeM3WVpYtfG
+         xbSxUlxmjPhG5JwO7MBYPy9WETcH/FWe3XVW/PMHpuFVg7dz2A5W2QqkdeQm4XOq5gOH
+         ow3HmRwBSYe5Z93SOakoiFIlOp2PAlpVKzOw4WNFPld3lR5lWzVFib/bGd87yUEk7C0C
+         vkP5JZ1g23pkwjncYGKoSWZrg6xHW/J1qs1isyBZiOyf8bNsn0KXIiC+3kskiw8qCLS3
+         wCO/sjsrEHwPme30a/UxX1OZO/tsfOmWTHzysVoTcOWyp2FbnPvVwMv13hSSigybCiBo
+         76Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCWovLgf7bMGG3PVUNl6eyOL4H/lQznaorxoFDglr3d6Ltsw0E7QON6mMsW0eaQeulxQMO2CikQ8Ln6RtEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbUXD3pZ3wtslpJpJbWwjvccHtqDlnICL/8FV48VZ0cPeEVVzI
+	cmypv2u108lwpZLk+o5vwQdZhWxbs0GVFhAD6zydQM8O91mU0jfybGrnoxuo2zZi4nF5NbB1Ey2
+	TZjMF/SG6DJY+CCVd1gFhELasOvVlS2j4vLpvVJR6IH4g5ILfp28ngBa1lcQ9m0j2u7UCD2yKit
+	WD
+X-Gm-Gg: ASbGncuYI18YOrtZqj3pS2BDFB/dXY5CZTGk38tb6PQrTTnk6x+dGn1OgiOCYTtW68a
+	DUnJ4mF3h1Axk9vKXPgwSM8CPIbVioc/lmM9cVoE8DjTkmPnUGaonFY/ZYF1QaEqWEeuxnB2twh
+	RYx4PhvPKpumzqbB92EIdUt1hDMqd0HTFZVV14UR74gufwJHxV5J1QI89GmYAQyArvyzRaJo5y3
+	JLDJYz1+6u8fnx4AGn/IiN+kSUbmmSvU6HvNI5Fc2PyA3IznUp//r9CXWf3tUg8Qtt3l6yhDzs8
+	z/GhLSwNWG2wL7/buFmUhsBbC1d+L5weqsyTAZyj
+X-Received: by 2002:a05:622a:1e09:b0:494:7e12:3af1 with SMTP id d75a77b69052e-4a5a57d78c9mr86480671cf.36.1749120579343;
+        Thu, 05 Jun 2025 03:49:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFuytOkkTXaF9171ida68ClPpKBp0qePtAr6diOEmKuDIQGiXedMTQ5nJki//BunkRdWpInWg==
+X-Received: by 2002:a05:622a:1e09:b0:494:7e12:3af1 with SMTP id d75a77b69052e-4a5a57d78c9mr86480401cf.36.1749120578921;
+        Thu, 05 Jun 2025 03:49:38 -0700 (PDT)
+Received: from sgarzare-redhat (nat-pool-mxp-t.redhat.com. [149.6.153.186])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a435a371bcsm109556211cf.52.2025.06.05.03.49.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 03:50:16 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Thu, 05 Jun 2025 11:49:08 +0100
-Subject: [PATCH v3 10/10] perf docs: arm-spe: Document new SPE filtering
- features
+        Thu, 05 Jun 2025 03:49:38 -0700 (PDT)
+Date: Thu, 5 Jun 2025 12:49:33 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next v2 3/3] vsock/test: Cover more CIDs in
+ transport_uaf test
+Message-ID: <dth7n7nahmfzbiymldaxmlir64o2ck5iqo2zldppiukfpwdiqh@u6342kxtih4c>
+References: <20250528-vsock-test-inc-cov-v2-0-8f655b40d57c@rbox.co>
+ <20250528-vsock-test-inc-cov-v2-3-8f655b40d57c@rbox.co>
+ <ocuwnpdoo7yxoqiockcs7yopoayg5x4b747ksvy4kmk3ds6lb3@f7zgcx7gigt5>
+ <77c48b6d-4539-4d01-bd7f-7b5415b7b995@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250605-james-perf-feat_spe_eft-v3-10-71b0c9f98093@linaro.org>
-References: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
-In-Reply-To: <20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>, 
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, leo.yan@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev, James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <77c48b6d-4539-4d01-bd7f-7b5415b7b995@rbox.co>
 
-FEAT_SPE_EFT and FEAT_SPE_FDS etc have new user facing format attributes
-so document them. Also document existing 'event_filter' bits that were
-missing from the doc and the fact that latency values are stored in the
-weight field.
+On Wed, Jun 04, 2025 at 09:11:33PM +0200, Michal Luczaj wrote:
+>On 6/4/25 11:37, Stefano Garzarella wrote:
+>> On Wed, May 28, 2025 at 10:44:43PM +0200, Michal Luczaj wrote:
+>>> +static bool test_stream_transport_uaf(int cid)
+>>> {
+>>> 	int sockets[MAX_PORT_RETRIES];
+>>> 	struct sockaddr_vm addr;
+>>> -	int fd, i, alen;
+>>> +	socklen_t alen;
+>>> +	int fd, i, c;
+>>> +	bool ret;
+>>> +
+>>> +	/* Probe for a transport by attempting a local CID bind. Unavailable
+>>> +	 * transport (or more specifically: an unsupported transport/CID
+>>> +	 * combination) results in EADDRNOTAVAIL, other errnos are fatal.
+>>> +	 */
+>>> +	fd = vsock_bind_try(cid, VMADDR_PORT_ANY, SOCK_STREAM);
+>>> +	if (fd < 0) {
+>>> +		if (errno != EADDRNOTAVAIL) {
+>>> +			perror("Unexpected bind() errno");
+>>> +			exit(EXIT_FAILURE);
+>>> +		}
+>>>
+>>> -	fd = vsock_bind(VMADDR_CID_ANY, VMADDR_PORT_ANY, SOCK_STREAM);
+>>> +		return false;
+>>> +	}
+>>>
+>>> 	alen = sizeof(addr);
+>>> 	if (getsockname(fd, (struct sockaddr *)&addr, &alen)) {
+>>> @@ -1735,38 +1746,73 @@ static void test_stream_transport_uaf_client(const struct test_opts *opts)
+>>> 		exit(EXIT_FAILURE);
+>>> 	}
+>>>
+>>> +	/* Drain the autobind pool; see __vsock_bind_connectible(). */
+>>> 	for (i = 0; i < MAX_PORT_RETRIES; ++i)
+>>> -		sockets[i] = vsock_bind(VMADDR_CID_ANY, ++addr.svm_port,
+>>> -					SOCK_STREAM);
+>>> +		sockets[i] = vsock_bind(cid, ++addr.svm_port, SOCK_STREAM);
+>>>
+>>> 	close(fd);
+>>> -	fd = socket(AF_VSOCK, SOCK_STREAM, 0);
+>>> +	fd = socket(AF_VSOCK, SOCK_STREAM | SOCK_NONBLOCK, 0);
+>>
+>> Why we need this change?
+>
+>It's for the (void)connect() below (not the connect() expecting early
+>EADDRNOTAVAIL, the second one). We're not connecting to anything anyway, so
+>there's no point entering the main `while (sk->sk_state != TCP_ESTABLISHED`
+>loop in vsock_connect().
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-Tested-by: Leo Yan <leo.yan@arm.com>
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/Documentation/perf-arm-spe.txt | 97 ++++++++++++++++++++++++++++---
- 1 file changed, 88 insertions(+), 9 deletions(-)
+I see now, please mention it in the commit description or a comment in 
+the code (maybe better the latter).
 
-diff --git a/tools/perf/Documentation/perf-arm-spe.txt b/tools/perf/Documentation/perf-arm-spe.txt
-index 37afade4f1b2..4092b53b58d2 100644
---- a/tools/perf/Documentation/perf-arm-spe.txt
-+++ b/tools/perf/Documentation/perf-arm-spe.txt
-@@ -141,27 +141,65 @@ Config parameters
- These are placed between the // in the event and comma separated. For example '-e
- arm_spe/load_filter=1,min_latency=10/'
- 
--  branch_filter=1     - collect branches only (PMSFCR.B)
--  event_filter=<mask> - filter on specific events (PMSEVFR) - see bitfield description below
-+  event_filter=<mask> - logical AND filter on specific events (PMSEVFR) - see bitfield description below
-+  inv_event_filter=<mask> - logical OR to filter out specific events (PMSNEVFR, FEAT_SPEv1p2) - see bitfield description below
-   jitter=1            - use jitter to avoid resonance when sampling (PMSIRR.RND)
--  load_filter=1       - collect loads only (PMSFCR.LD)
-   min_latency=<n>     - collect only samples with this latency or higher* (PMSLATFR)
-   pa_enable=1         - collect physical address (as well as VA) of loads/stores (PMSCR.PA) - requires privilege
-   pct_enable=1        - collect physical timestamp instead of virtual timestamp (PMSCR.PCT) - requires privilege
--  store_filter=1      - collect stores only (PMSFCR.ST)
-   ts_enable=1         - enable timestamping with value of generic timer (PMSCR.TS)
-   discard=1           - enable SPE PMU events but don't collect sample data - see 'Discard mode' (PMBLIMITR.FM = DISCARD)
-+  data_src_filter=<mask> - mask to filter from 0-63 possible data sources (PMSDSFR, FEAT_SPE_FDS) - See 'Data source filtering'
- 
- +++*+++ Latency is the total latency from the point at which sampling started on that instruction, rather
- than only the execution latency.
- 
--Only some events can be filtered on; these include:
--
--  bit 1     - instruction retired (i.e. omit speculative instructions)
-+Only some events can be filtered on using 'event_filter' bits. The overall
-+filter is the logical AND of these bits, for example if bits 3 and 5 are set
-+only samples that have both 'L1D cache refill' AND 'TLB walk' are recorded. When
-+FEAT_SPEv1p2 is implemented 'inv_event_filter' can also be used to exclude
-+events that have any (OR) of the filter's bits set. For example setting bits 3
-+and 5 in 'inv_event_filter' will exclude any events that are either L1D cache
-+refill OR TLB walk. If the same bit is set in both filters it's UNPREDICTABLE
-+whether the sample is included or excluded. Filter bits for both event_filter
-+and inv_event_filter are:
-+
-+  bit 1     - Instruction retired (i.e. omit speculative instructions)
-+  bit 2     - L1D access (FEAT_SPEv1p4)
-   bit 3     - L1D refill
-+  bit 4     - TLB access (FEAT_SPEv1p4)
-   bit 5     - TLB refill
--  bit 7     - mispredict
--  bit 11    - misaligned access
-+  bit 6     - Not taken event (FEAT_SPEv1p2)
-+  bit 7     - Mispredict
-+  bit 8     - Last level cache access (FEAT_SPEv1p4)
-+  bit 9     - Last level cache miss (FEAT_SPEv1p4)
-+  bit 10    - Remote access (FEAT_SPEv1p4)
-+  bit 11    - Misaligned access (FEAT_SPEv1p1)
-+  bit 12-15 - IMPLEMENTATION DEFINED events (when implemented)
-+  bit 16    - Transaction (FEAT_TME)
-+  bit 17    - Partial or empty SME or SVE predicate (FEAT_SPEv1p1)
-+  bit 18    - Empty SME or SVE predicate (FEAT_SPEv1p1)
-+  bit 19    - L2D access (FEAT_SPEv1p4)
-+  bit 20    - L2D miss (FEAT_SPEv1p4)
-+  bit 21    - Cache data modified (FEAT_SPEv1p4)
-+  bit 22    - Recently fetched (FEAT_SPEv1p4)
-+  bit 23    - Data snooped (FEAT_SPEv1p4)
-+  bit 24    - Streaming SVE mode event (when FEAT_SPE_SME is implemented), or
-+              IMPLEMENTATION DEFINED event 24 (when implemented, only versions
-+              less than FEAT_SPEv1p4)
-+  bit 25    - SMCU or external coprocessor operation event when FEAT_SPE_SME is
-+              implemented, or IMPLEMENTATION DEFINED event 25 (when implemented,
-+              only versions less than FEAT_SPEv1p4)
-+  bit 26-31 - IMPLEMENTATION DEFINED events (only versions less than FEAT_SPEv1p4)
-+  bit 48-63 - IMPLEMENTATION DEFINED events (when implemented)
-+
-+For IMPLEMENTATION DEFINED bits, refer to the CPU TRM if these bits are
-+implemented.
-+
-+The driver will reject events if requested filter bits require unimplemented SPE
-+versions, but will not reject filter bits for unimplemented IMPDEF bits or when
-+their related feature is not present (e.g. SME). For example, if FEAT_SPEv1p2 is
-+not implemented, filtering on "Not taken event" (bit 6) will be rejected.
- 
- So to sample just retired instructions:
- 
-@@ -171,6 +209,31 @@ or just mispredicted branches:
- 
-   perf record -e arm_spe/event_filter=0x80/ -- ./mybench
- 
-+When set, the following filters can be used to select samples that match any of
-+the operation types (OR filtering). If only one is set then only samples of that
-+type are collected:
-+
-+  branch_filter=1     - Collect branches (PMSFCR.B)
-+  load_filter=1       - Collect loads (PMSFCR.LD)
-+  store_filter=1      - Collect stores (PMSFCR.ST)
-+
-+When extended filtering is supported (FEAT_SPE_EFT), SIMD and float
-+pointer operations can also be selected:
-+
-+  simd_filter=1         - Collect SIMD loads, stores and operations (PMSFCR.SIMD)
-+  float_filter=1        - Collect floating point loads, stores and operations (PMSFCR.FP)
-+
-+When extended filtering is supported (FEAT_SPE_EFT), operation type filters can
-+be changed to AND using _mask fields. For example samples could be selected if
-+they are store AND SIMD by setting 'store_filter=1,simd_filter=1,
-+store_filter_mask=1,simd_filter_mask=1'. The new masks are as follows:
-+
-+  branch_filter_mask=1  - Change branch filter behavior from OR to AND (PMSFCR.Bm)
-+  load_filter_mask=1    - Change load filter behavior from OR to AND (PMSFCR.LDm)
-+  store_filter_mask=1   - Change store filter behavior from OR to AND (PMSFCR.STm)
-+  simd_filter_mask=1    - Change SIMD filter behavior from OR to AND (PMSFCR.SIMDm)
-+  float_filter_mask=1   - Change floating point filter behavior from OR to AND (PMSFCR.FPm)
-+
- Viewing the data
- ~~~~~~~~~~~~~~~~~
- 
-@@ -204,6 +267,10 @@ Memory access details are also stored on the samples and this can be viewed with
- 
-   perf report --mem-mode
- 
-+The latency value from the SPE sample is stored in the 'weight' field of the
-+Perf samples and can be displayed in Perf script and report outputs by enabling
-+its display from the command line.
-+
- Common errors
- ~~~~~~~~~~~~~
- 
-@@ -247,6 +314,18 @@ to minimize output. Then run perf stat:
-   perf record -e arm_spe/discard/ -a -N -B --no-bpf-event -o - > /dev/null &
-   perf stat -e SAMPLE_FEED_LD
- 
-+Data source filtering
-+~~~~~~~~~~~~~~~~~~~~~
-+
-+When FEAT_SPE_FDS is present, 'data_src_filter' can be used as a mask to filter
-+on a subset (0 - 63) of possible data source IDs. The full range of data sources
-+is 0 - 65535 although these are unlikely to be used in practice. Data sources
-+are IMPDEF so refer to the TRM for the mappings. Each bit N of the filter maps
-+to data source N. The filter is an OR of all the bits, so for example setting
-+bits 0 and 3 includes only packets from data sources 0 OR 3. When
-+'data_src_filter' is set to 0 data source filtering is disabled and all data
-+sources are included.
-+
- SEE ALSO
- --------
- 
+>
+>>> 	if (fd < 0) {
+>>> 		perror("socket");
+>>> 		exit(EXIT_FAILURE);
+>>> 	}
+>>>
+>>> -	if (!vsock_connect_fd(fd, addr.svm_cid, addr.svm_port)) {
+>>> -		perror("Unexpected connect() #1 success");
+>>> +	/* Assign transport, while failing to autobind. Autobind pool was
+>>> +	 * drained, so EADDRNOTAVAIL coming from __vsock_bind_connectible() is
+>>> +	 * expected.
+>>> +	 */
+>>> +	addr.svm_port = VMADDR_PORT_ANY;
+>
+>(Ugh, this line looks useless...)
 
--- 
-2.34.1
+Yep, agree.
+
+>
+>>> +	if (!connect(fd, (struct sockaddr *)&addr, alen)) {
+>>> +		fprintf(stderr, "Unexpected connect() success\n");
+>>> +		exit(EXIT_FAILURE);
+>>> +	} else if (errno == ENODEV) {
+>>> +		/* Handle unhappy vhost_vsock */
+>>
+>> Why it's unhappy? No peer?
+>
+>It's the case of test_stream_transport_uaf(VMADDR_CID_HOST) when only
+>vhost_vsock transport is loaded. Before we even reach (and fail)
+>vsock_auto_bind(), vsock_assign_transport() fails earlier: `new_transport`
+>gets set to `transport_g2h` (NULL) and then it's `if (!new_transport)
+>return -ENODEV`. So the idea was to swallow this errno and let the caller
+>report that nothing went through.
+>
+>I guess we can narrow this down to `if (errno == ENODEV && cid ==
+>VMADDR_CID_HOST)`.
+
+I see, yep I agree on this new idea.
+
+>
+>>> +		ret = false;
+>>> +		goto cleanup;
+>>> +	} else if (errno != EADDRNOTAVAIL) {
+>>> +		perror("Unexpected connect() errno");
+>>> 		exit(EXIT_FAILURE);
+>>> 	}
+>>>
+>>> -	/* Vulnerable system may crash now. */
+>>> -	if (!vsock_connect_fd(fd, VMADDR_CID_HOST, VMADDR_PORT_ANY)) {
+>>> -		perror("Unexpected connect() #2 success");
+>>> -		exit(EXIT_FAILURE);
+>>> +	/* Reassign transport, triggering old transport release and
+>>> +	 * (potentially) unbinding of an unbound socket.
+>>> +	 *
+>>> +	 * Vulnerable system may crash now.
+>>> +	 */
+>>> +	for (c = VMADDR_CID_HYPERVISOR; c <= VMADDR_CID_HOST + 1; ++c) {
+>>> +		if (c != cid) {
+>>> +			addr.svm_cid = c;
+>>> +			(void)connect(fd, (struct sockaddr *)&addr, alen);
+>>> +		}
+>>> 	}
+>>>
+>>> +	ret = true;
+>>> +cleanup:
+>>> 	close(fd);
+>>> 	while (i--)
+>>> 		close(sockets[i]);
+>>>
+>>> -	control_writeln("DONE");
+>>> +	return ret;
+>>> }
+>>>
+>>> -static void test_stream_transport_uaf_server(const struct test_opts *opts)
+>>> +/* Test attempts to trigger a transport release for an unbound socket. This can
+>>> + * lead to a reference count mishandling.
+>>> + */
+>>> +static void test_stream_transport_uaf_client(const struct test_opts *opts)
+>>> {
+>>> -	control_expectln("DONE");
+>>> +	bool tested = false;
+>>> +	int cid, tr;
+>>> +
+>>> +	for (cid = VMADDR_CID_HYPERVISOR; cid <= VMADDR_CID_HOST + 1; ++cid)
+>>> +		tested |= test_stream_transport_uaf(cid);
+>>> +
+>>> +	tr = get_transports();
+>>> +	if (!tr)
+>>> +		fprintf(stderr, "No transports detected\n");
+>>> +	else if (tr == TRANSPORT_VIRTIO)
+>>> +		fprintf(stderr, "Setup unsupported: sole virtio transport\n");
+>>> +	else if (!tested)
+>>> +		fprintf(stderr, "No transports tested\n");
+>>> }
+>>>
+>>> static void test_stream_connect_retry_client(const struct test_opts *opts)
+>>> @@ -2034,7 +2080,6 @@ static struct test_case test_cases[] = {
+>>> 	{
+>>> 		.name = "SOCK_STREAM transport release use-after-free",
+>>> 		.run_client = test_stream_transport_uaf_client,
+>>> -		.run_server = test_stream_transport_uaf_server,
+>>
+>> Overall LGTM. I was not able to apply, so I'll test next version.
+>
+>Bummer, I'll make sure to rebase.
+
+Thanks!
+Stefano
 
 
