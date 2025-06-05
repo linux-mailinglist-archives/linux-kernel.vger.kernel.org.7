@@ -1,84 +1,98 @@
-Return-Path: <linux-kernel+bounces-675135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8DFACF94B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8770DACF954
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4930A176AAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED137189AB11
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B427FB3C;
-	Thu,  5 Jun 2025 21:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7C127F165;
+	Thu,  5 Jun 2025 21:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MdoSnqXi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LTr/WfB0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B9127FB0C;
-	Thu,  5 Jun 2025 21:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0A28E17;
+	Thu,  5 Jun 2025 21:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749160313; cv=none; b=Y8TENH/LCPwwRft0sCflp5r+KBTOazdxxea6lrzZAAUAWI099Q+EOG+qmPrBnBDsK3a4mYLl0216BuoUF96LpiY0WeStTb39ikTH9XtYSk1Ls8Qe0YXrQyydEnpr4e885QUQWo9k4BSWbEvFQFutag4ChPp4kyzT3zM594R4iLU=
+	t=1749160712; cv=none; b=MyOApr3aU5pJ86WuxHN18QUvCBBry0PNxQ9Mf/6sCUUsRXEDnc7mBU4a5tNmA4mYUMNgUYyNLapWr/YMqzMgmXfCa2O/ghprFFvv5S10foCij6jAHO1k2YIuWw3pxkqPj3fRTV1T6a1yVaTnWcuYe+W1g29CWTZsAAqn2N13QJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749160313; c=relaxed/simple;
-	bh=KauwIIy/vgGSQeQb/SdnL3/lcMRyEmhp8yxF8XleYkM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GREuMG74R53YOnufevvqqi/zRt3HbWXiiURNra0fYPPDVkf4mmXQPeNFRYfpgrGli0xVFtlP7KRJJg2wY49Mfyvs0xpJvZ8d8E1tx0jSxCayzHrOV5TuoEXug9LINR9Wpb3P1o4yVWo1rC2OAsUFcOtfl6zrgyd79T1Wan+foOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MdoSnqXi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033A8C4CEEB;
-	Thu,  5 Jun 2025 21:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749160313;
-	bh=KauwIIy/vgGSQeQb/SdnL3/lcMRyEmhp8yxF8XleYkM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MdoSnqXiyJU9RPogV+Gl9lF5W3zr6ih/WgToqdUmnfZWF8TN8ipZKFOob7P+LYrnl
-	 XmhANS8dQv1bStWpdlXf1/8DHqdOz9hIPWvxJJgKq6TTW9KBGUNll6KGz8t7nqy5PV
-	 2pKcsqX4Lfh8PrKHQPI3zqHhcxHAKZtRtKkqJzR8=
-Date: Thu, 5 Jun 2025 14:51:52 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Chi Zhiling <chizhiling@163.com>, willy@infradead.org,
- josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>
-Subject: Re: [PATCH] readahead: fix return value of page_cache_next_miss()
- when no hole is found
-Message-Id: <20250605145152.9ae3edb99f29ef46b30096e4@linux-foundation.org>
-In-Reply-To: <qbuhdfdvbyida5y7g34o4rf5s5ntx462ffy3wso3pb5f3t4pev@3hqnswkp7of6>
-References: <20250605054935.2323451-1-chizhiling@163.com>
-	<qbuhdfdvbyida5y7g34o4rf5s5ntx462ffy3wso3pb5f3t4pev@3hqnswkp7of6>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749160712; c=relaxed/simple;
+	bh=YDcKeBvvCH76i4Lg7IQXNCwVtg0zeGFowGCrTovcc2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=adOwufDHIDoTypJ1dlAh6PciNN+TiXsObkc6vbkw6Zn+mUHtG1B6tswBJVwfk4XWS2cxsZIliJowxHiGsscIQOucpicWU96zclBY6NsBN7KONRWw6LOjrLRw+SucQGN8wo9uO5Kr1a8LdJQcVNIDO6KPUvibxyTrCzpFnYQCk+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LTr/WfB0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1749160352;
+	bh=5zwNf8JIwOXt0gCxd/4OJe0h4Pp5ciq/uJCTwjYdGUE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LTr/WfB0nQ/cPvzc74JLXRJLpSkT4SJYTIz4fxZpc1ADQEmGThSjd0pHLbWe80/4+
+	 nJLYwOXZkUNK7prXZhPIo84+lk3cK715Wvmtuj1ygyVRhJ2Qqve90vizYSyY17ulSs
+	 CQGfum7QaEl4xLQBos3eascNJb+EN4haLkwgRtbhKG9/Y8wGADjS0NdxVwYHftM70Z
+	 aFDrISV/7UkpjMUVbfUS+pdMCUqPFY/wGBF1UwDsIpj/uMYb9BqLzBfigE5qEwEr+K
+	 ljvWQM9PDNoucDAZ7BdrX/5/XUV103pszlLedKuZa8t5LaUXWnnUF75i5i7Tz80VLw
+	 943ZyT3YZNKfg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bCyq42mkYz4w2J;
+	Fri,  6 Jun 2025 07:52:31 +1000 (AEST)
+Date: Fri, 6 Jun 2025 07:52:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the block tree
+Message-ID: <20250606075230.6a13c53d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Pyps0HuD9/J/87+6btea1.g";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Pyps0HuD9/J/87+6btea1.g
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 5 Jun 2025 10:22:23 +0200 Jan Kara <jack@suse.cz> wrote:
+Hi all,
 
-> On Thu 05-06-25 13:49:35, Chi Zhiling wrote:
-> > From: Chi Zhiling <chizhiling@kylinos.cn>
-> > 
-> > max_scan in page_cache_next_miss always decreases to zero when no hole
-> > is found, causing the return value to be index + 0.
-> > 
-> > Fix this by preserving the max_scan value throughout the loop.
-> > 
-> > Fixes: 901a269ff3d5 ("filemap: fix page_cache_next_miss() when no hole found")
-> > Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
-> 
-> Indeed. Thanks for catching this. Don't know how I missed that. Feel free
-> to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
+Commit
 
-Thanks.  It's a simple patch - do we expect it to have significant
-runtime effects?
+  10f4a7cd724e ("nvme: fix command limits status code")
 
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Pyps0HuD9/J/87+6btea1.g
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhCEZ4ACgkQAVBC80lX
+0GwToQf9FLX3oEPYyPCQxve/oLm2ICV2QCQNtDinYFKcyAMPxO+Vb+1I6Yg0KvmK
+b1H/eiOgKLG9EnCnetPFkpQLwFrqtwcif5/r1V8JbRo6XJg1lPrOVhNr+FF2M9Te
+8lX9aVA0lEyjO5zUD6j4FYITOb0qC1qxAl03Cdp0g1NqZxKXUFWKlAqWu4Vskh1g
+sEINlhwW5SdSaQVdFAczyJDKEiG8VScHOkw5I8cCbpNS6ZerssLMCpFq9tS5VaCY
+CGBLjvIidsYPF1ZwC5SuTsZ7nUwYiiqLnCIedlDJBZ0lB64ze6AwXRl0+L7o6t/1
+Na6QJ81kHS1k+49gHBcCAZDTR/1M2A==
+=kL69
+-----END PGP SIGNATURE-----
+
+--Sig_/Pyps0HuD9/J/87+6btea1.g--
 
