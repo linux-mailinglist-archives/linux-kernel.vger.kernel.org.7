@@ -1,124 +1,130 @@
-Return-Path: <linux-kernel+bounces-674015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531C0ACE8BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:47:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7751FACE8CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8083AA885
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C9A173352
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECB71FFC6D;
-	Thu,  5 Jun 2025 03:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4781F4CB1;
+	Thu,  5 Jun 2025 03:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+0r5H5l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="GUoaivs9"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FA3200B9F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01705680
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749095214; cv=none; b=UOmwFYqmqDrnHnPpQJB1ibvDBmlKZFeBOegTDXXTXZKOGuBqT2V6+QC2kXMLR7BXTfEAY1xaSXm9ZLYk90E0IRoUcU2YCmZmyKlf1VpGX2Qg+BNU5qo0HjYityZ3qz8cqxR9ttnlEHGSJCnbCyS1/k1QSis5IUabghKNcfQl1zA=
+	t=1749095991; cv=none; b=TEkuSpDpdxcawyxK39eU4YJWpckJDofikKEBoyHb9SHwpq7Vj+2dXtLFQYTC9XXtmAgt0sXj6b13J7yfbobFfXgMAZtfXwYUP504RGY6lvfsn4zCxG/5a3YF8uW0H0flBT4Hqw2AAnRZDURRSumwOy/k236SiSgW5Mh2qOVi564=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749095214; c=relaxed/simple;
-	bh=oUAUULa8xvF5LlZB5tbq87rz3uMzHi3pU21DzZn+Vdo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ie6ruKlymwVfsCx5IOnBgURWR+rtF52PUg0Hnwt+dIIUeCJAUofsosHIT6ZOhU9T8rHonWunBvncsKv9BAlPzxkEiNjTxoeaO1CyGaut+lKAdaQ0+ktoUDOnawRxiusr+mF17Nzcpj4HFJASDjsPPSFtymFgxNk3C7JlukqbNAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+0r5H5l; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749095212;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G9BkRZbsm8aRk3aSpv0SfOyGwsJsIoOb67KS8j+iekY=;
-	b=Q+0r5H5lxuvkksjTLVC/4E9vZdKl47zmL1PwkFfEqlXcvWJEVnq78gi/7ELGJI9iIfv271
-	qinJtT5i9IG00tgqH3BTTHljZ/0Es4occUY4Teka3HvQ0pqdSs6ZTKkf0dyqTYldFbTqUp
-	cdUpJ8XmqAY+rP8yGNKtVcq5i1kkg+M=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-lSpiVRelPRG-Fwu687-Qdg-1; Wed,
- 04 Jun 2025 23:46:50 -0400
-X-MC-Unique: lSpiVRelPRG-Fwu687-Qdg-1
-X-Mimecast-MFC-AGG-ID: lSpiVRelPRG-Fwu687-Qdg_1749095208
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BC6811956094;
-	Thu,  5 Jun 2025 03:46:47 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.229])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B91BE30002C0;
-	Thu,  5 Jun 2025 03:46:42 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Wed, 04 Jun 2025 22:45:13 -0500
-Subject: [PATCH 4/4] drm/panel/exynos: Keep up with refcounting
+	s=arc-20240116; t=1749095991; c=relaxed/simple;
+	bh=a99DJB7kgqKr/Mq3XFCGHLdwCFggirioNhGpFPuOmrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DqLhFsJmxBbZ8XQW+qd9fvumzTCicsW2PoSMTvtTTuAZ7zDQxR+3fGFGPan03dzUaExOFJ1Xf05Sr3j6WcKCwIJcA/RdzcK7Z5Vih9MDBsYm2Gg+zzC3QKMNbUCraRknyfFtpYG8YX63SM3GiOqAwMWhRJr7pvwlUPW811Io5cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=GUoaivs9; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3122368d7cfso474777a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 20:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=inventec.com; s=google; t=1749095988; x=1749700788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SzkZstCCrPCWPsZ455Qf8TsSyXtheVsZkxKhV0y9aO4=;
+        b=GUoaivs9kiZYpzwlYhipgAbl+2mUua5o1Bx68wK1PfOd7ujianyReMF6esYRs6UyXt
+         phfbKOWiKiJhJv8eSneKtwh3fKAp9wC1yvo6Ir75cnqWk8X9mAuwNVNRiLfaiOeGOa9E
+         yxPB/z9q25hVBcHrvcU8LoiTU0jKlr8ICGkeDKnjWTp+pH1gM0yiBadJqPVRrzYK6jzB
+         DYACxj+sGvOME5fED7QuIO+sCrLppUd5IphfwgazXz24kJeHJh0JrWv/aGdIpcApsFl9
+         2oYLknrAwLI5kbrEM2LXOJowH3zFNl5wzw85fqMN6TxJquLmS3WXBUGHGg4FUuKHQsgX
+         Mh6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749095988; x=1749700788;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SzkZstCCrPCWPsZ455Qf8TsSyXtheVsZkxKhV0y9aO4=;
+        b=DedWfJSuMZuAcPDBqFyHgFuCsjVxV1jX7tqtksCE4FX5vGjmzHCjLgxXyrd6jfgy29
+         6RjAstC+uc0N6ak3Z364DaEblCOp1yA+lAbsIbUHvtfwlX4p0v8FWePzcaIgohOMDMtK
+         MUVncmhvpWAK/snz6MsyJ9fwoX0CgYVhQZ/S9SVip8DPGQZPOTYPpRhkbIc1dYA6XWFG
+         OWhuvPpFkDl7yyZmW9wGXe3OqkOMGLSQMs3y53JbDvYqKQWkCCd1rDWf6B2PSg9Y6v/j
+         GC2HGK8O6oL17M7QkatiaHshHb8rAj711YLt1Y5yd3yTnWYzupePdfm3cojU4RpI/aIf
+         bYYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlTCiF7K3GydjCmJKFd+Sd8FEo5+geGLbvy+xEwz9408HEbjSAe7opsxVu6O7/B00vvygELdfHocQ4Rsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz0tywHcyj/tKZckVTkTWkJvCMOST5fNU6mmg3+o8ovr8rP4dn
+	1RZeIsnbWWe66l1QGIvCsV3cmi1j9e/ThsU/DMedA6YmSzRWiGAGFSWJbYBa+KP4FP4=
+X-Gm-Gg: ASbGnct3ZqfURv3tDF7tz9JehznUKcn6cTduidWvfuwrkMJlTSpSU2EwV/wcvAF3g8W
+	7cNCJha4kaFWWX6et1cKXtnmGcDRKV0KbApD/rzr/HveE6THnR8Xn14So2XFz5Q3nOfBEGPVFkT
+	S1OmPDEgbGoETcY1gM2iH6umrvBFSW4TRyXa2hpOKecgmf1pS50t2/AV1hVeTLe+xWlERTjdc4I
+	90/kl5snXCMRCGPLN/9YH0qkDXBTdBiOLT71Z4Utw5iuxrfXuahUcblXdfGvmbDX+LF51nkmxUz
+	QpKPh3dFvPg9xixO4/VryA8LT8PNsq/uXmCvoU6e1YnEnakWIffhTnM/zSfVOlWH/vd9B3mq
+X-Google-Smtp-Source: AGHT+IHwOv1nfgRYxTOZRYlHLTPEDAVKxSayaPRlTfw7ratzj7blGucqQmZiYitkUOV/1EwZKzf8Ew==
+X-Received: by 2002:a17:90b:55c8:b0:313:287e:f1e8 with SMTP id 98e67ed59e1d1-313287ef202mr2764388a91.8.1749095987904;
+        Wed, 04 Jun 2025 20:59:47 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.235.216])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3132bff66d1sm495400a91.7.2025.06.04.20.59.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 20:59:47 -0700 (PDT)
+From: Chiang Brian <chiang.brian@inventec.com>
+To: krzk@kernel.org
+Cc: chiang.brian@inventec.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	geert+renesas@glider.be,
+	grant.peltier.jg@renesas.com,
+	jdelvare@suse.com,
+	krzk+dt@kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux@roeck-us.net,
+	robh@kernel.org
+Subject: Re: [PATCH v4 2/2] hwmon: (pmbus/isl68137) Add support for RAA229621
+Date: Thu,  5 Jun 2025 11:52:33 +0800
+Message-Id: <20250605035233.3394026-1-chiang.brian@inventec.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250602-elated-aspiring-squid-d27ee4@kuoka>
+References: <20250602-elated-aspiring-squid-d27ee4@kuoka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250604-of_drm_find_panel_part1-v1-4-c632e12e131d@redhat.com>
-References: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
-In-Reply-To: <20250604-of_drm_find_panel_part1-v1-0-c632e12e131d@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Inki Dae <inki.dae@samsung.com>, Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-samsung-soc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749095111; l=790;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=oUAUULa8xvF5LlZB5tbq87rz3uMzHi3pU21DzZn+Vdo=;
- b=m9T9DvEk7AHTO8PjuGGuJd4n+/GgbhkJzocE3hfstzW9Lp1snMcHMfDrBcDrOYExSB1as9ZkZ
- QwCScTfjRI8C8A/wkHRdNaRhHj92TooFMlpXTThKTAStQzd5NoFTYBl
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-Put the panel reference back when driver is no
-longer using it.
+On Mon, Jun 02, 2025 at 07:55:37PM GMT, Krzysztof Kozlowski wrote:
+> 
+> On Mon, Jun 02, 2025 at 01:04:15PM GMT, Chiang Brian wrote:
+> > The RAA229621 is a digital dual output multiphase
+> > (X+Y <= 8) PWM controller designed to be compliant
+> > with AMD SVI3 specifications, targeting
+> > VDDCR_CPU and VDDCR_SOC rails.
+> > Add support for it to the isl68137 driver.
+> 
+> Please wrap commit message according to Linux coding style / submission
+> process (neither too early nor over the limit):
+> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dpi.c | 1 +
- 1 file changed, 1 insertion(+)
+I'll wrap the commit message body at 75 columns.
+Thanks for the pointing out.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index 0dc36df6ada34cd0d4544f14e616fe3c52dafc73..7b82ff7f2d2761a679fe3b319a73f7d1d4c87033 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -138,6 +138,7 @@ static void exynos_dpi_disable(struct drm_encoder *encoder)
- 		drm_panel_disable(ctx->panel);
- 		drm_panel_unprepare(ctx->panel);
- 	}
-+	drm_panel_put(ctx->panel);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_dpi_encoder_helper_funcs = {
+> > 
+> > this patch depends on patch:
+> > dt-bindings: hwmon: (pmbus/isl68137) Add RAA229621 support
+> 
+> No, it does not, please drop this sentence.
+> 
 
--- 
-2.48.1
+I'll remove the incorrect sentence as well.
+Thank you for the patient reviewing.
 
+Best regards,
+Brian Chiang
 
