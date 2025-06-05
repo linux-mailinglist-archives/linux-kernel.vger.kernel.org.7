@@ -1,94 +1,75 @@
-Return-Path: <linux-kernel+bounces-674572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068B7ACF15E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:56:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A78BACF166
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 563511892F3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749CC3A4420
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BE4274674;
-	Thu,  5 Jun 2025 13:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33095274661;
+	Thu,  5 Jun 2025 13:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dmUI5xfj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K2JRKfPm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UuDEupoa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mRuZUTQD"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gpWy8An+"
+Received: from sonic315-20.consmr.mail.ne1.yahoo.com (sonic315-20.consmr.mail.ne1.yahoo.com [66.163.190.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E33272E5F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D6A272E5F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749131777; cv=none; b=MUwSFYKG1+e/k/DabPU1fBRYhrDcvzfv91NGjdC2cgzOu/tJkajK+K35QNUI1OQCbrvPuA6nVf4Zt4ATOK+5qKjNlohG0XHK9sKiB2Gl/gXQFiW6p30zoKukqPpbCtPIL0P6ZgJ5MiN+PX6uFbmLU3jSC5QyobReF2m/fNj1NgE=
+	t=1749131854; cv=none; b=OqUan2nJrmD1FzGrACIo5TleRdRcoiSRRyZ8KGzKnkWc+BG9GANLJ5cWU9oZtIFy0HNvXTWvRZLz4CAguYT9t4yl3l5/Dx88p+Lnwb6/dNydJ+aio+ACJNXNL6zWdViIy6ejtfbGYrgUSVDxlKe6jNYAtO2tg+ASCr2Pt6oPbyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749131777; c=relaxed/simple;
-	bh=JY8eguoeVMug3lejr2EeN0T76qesNyoGTWbhLfJBeaI=;
+	s=arc-20240116; t=1749131854; c=relaxed/simple;
+	bh=vLM/1Fwlx8b+UK1HL4acBgZkNMtY/ECcZtBJAw5i8kQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XyV5FrREM103+NKBNDNbsHpX/yslNHiwnmBBUlRicIRQCcs8r39NVxv22UV+XtkGQxvXwEtNGlITJcvZnnH7iOtJNkiGsMUPvqMpgv00O8Nw5ApfQpQq0jNYN5YMgSX/uwUcxTz4esJXYhpSDtk+PezMLJdjcMY5F5Q9Z+sXxi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dmUI5xfj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K2JRKfPm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UuDEupoa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mRuZUTQD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E3D151F78F;
-	Thu,  5 Jun 2025 13:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749131774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jq2iaoJFXus2AuXH2g2QKS5xKjjXyQACZE8THrqxkJc=;
-	b=dmUI5xfj3LZATWHxgVomJxLpJ1kl0v9dCzZ1gHThVGka3hXgtLbPyxjQyEnG8KSE8GUOPb
-	76GIpAIuO8HeDxsuqblULfZhTJCtuhpJGWPRyrPh3Dp+hphjZ1bRsM8psCkYLU5eXLHv3w
-	2v6tFQKW2FKpKTk4wWPsj82Ams4JnkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749131774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jq2iaoJFXus2AuXH2g2QKS5xKjjXyQACZE8THrqxkJc=;
-	b=K2JRKfPmlUUF+Bue/R6qxmWiZDsd+tbTUzBZCDjp+08HVj5b7syFIbVrTnDs3DNfrhmSfx
-	+363d0eXiNcCRSBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749131773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jq2iaoJFXus2AuXH2g2QKS5xKjjXyQACZE8THrqxkJc=;
-	b=UuDEupoaZyyNVc0rJK3bmzudEYCGBK61joM4Im+fyLSvRLEI0F0GvUL1fJgNYCOmxNXdOD
-	UWWY+Cas42L5pMNN3jxzGyE27JS0MkMteTgzovOeXnCCwbIxyZVRK2zW+iHaDipuHbSxjA
-	usU3tknXvlhIBOjw5PCF76uxDauqJUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749131773;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jq2iaoJFXus2AuXH2g2QKS5xKjjXyQACZE8THrqxkJc=;
-	b=mRuZUTQDdgXF7d60CyE8ZNpxrj9ObeQdnPxxUjBFk/TeEIkRKnahVSzsDdw/Jg7CV9oHi0
-	ruzhO2zd9B3m8OAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C53BF1373E;
-	Thu,  5 Jun 2025 13:56:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wcDLL/2hQWhJPAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 05 Jun 2025 13:56:13 +0000
-Message-ID: <69a4b093-1fbd-4178-906b-960a3d8bc529@suse.cz>
-Date: Thu, 5 Jun 2025 15:56:13 +0200
+	 In-Reply-To:Content-Type; b=eQK5KE9Q2uTOlmXqdpO1UPQmfxsn2T78vViflixVMGO6TTtjWBACcD1Gs1sdrzrmRWNRwRpFRwLFBoxy0WeeV1zvbZrtgZwnFQieYuoxjdVmzz08aBZ6l49meIHSD4hcD2p7XAlVuCkYDP1tqW8+9DqQ1C/+YjSfHZ4+wtcYysk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=gpWy8An+; arc=none smtp.client-ip=66.163.190.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749131846; bh=7Pij581zFWjUHqr6AUe1QrFQplXSla6n2vA3DY/kqa4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gpWy8An+JRoWSzveSq2D6pEJhW6mrJNsby2j017NTTU8rHOnd9EDl5C2i2tMxgVaACbD7Iu+s1P9rXeJ89qAzU80jXj6EqPhHwWR0BShz1Mb/1ALz8ffI1vpDMFshBCN1CI0mjMcsnbYsCCZv808RMc/iLyjd1OmroCQdQa34qhlrgozyKIaddlSbpuyoQZ2jk0hmsiT5K7FUTW0VQlSBeCR4gKfG3e+C4fBjfPHxrsHE6R58xFcyprZK1Mj8qvv5BHLcQkkpmD1ZZjXHBnMS2KLreiBCo7CUd4w6J4+NrhktcKNeG5sv8n3ujE7j8bHknKeU/Hcb+RU3oFu1KpAPA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749131846; bh=+0Wh3eI2F1SO811zLel0DC36S2dzMgVS6IxKU8+vCBv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rRuij+LZiIuUwzyrfkYvId7f7tw4VHYJOLKLxT7wvr/NEy9JvvvqgUNRdvV7a3ZZUTNeX9aSEe7BzfRTnjANyOZND6F3JvFSiJuFZipLfcldTfdA0LABSIf8cl1RdfDMu8t5BwOGubR2E7q/DCqGcoatf/4ZaJi6oAU1XGDwUkWABsECa8RdZ7wdOpSAXvAdyRJirMovhAlrhmyEyv9bGinyk0LU7tY77uVNgk4yAP2yF5c8jGTDw5btNIGC+9G/rDokGTtpoeqI6007OP6IKHzYBs1+HR8NuniQCAG812NdB9AtPxs8eP8iVH7HzkpGHEaGrOYx7ojTy76ardOyqw==
+X-YMail-OSG: fwBjBwAVM1kZM4WGig35UZ.bs419msPgG20iG_FR3ESJtpOV9SQ1dZ7HOSrgjwZ
+ w0Gh1yFKMs3huH9kd8ZyxbLiCU9DfDLwHHoTUV7s32cytmTdOEm8DqGuYlQ77JlZULJyoMqYr.wC
+ 0c4vx8VfE63PmXs6nPPyOfPllt.MKeUduRC27IwhLnK53Q1gCO3WxLPgHXvtRsBr8ZQf72t7UTA2
+ PIJimt3uMNz2iDHx0CvpRmh07wQTrY1cXgMyFyzcIop5Y.Un865rsxv_703TvbkAEpoYsCe7UK67
+ QuUZd8zJQ5m03q5hX2ehMmNZm4voHNbTnu5EH_nl8cLONlMCfgKj30fVc4S8LilwbHQeb__dgNgO
+ vUCZwcOA5gdhiGFSo2c4qpvUJiOqtQGyfTKjAyq3IlY_GnjAEcoGdegZcFcwSP69Q4TSQs.hTvNn
+ rAAPaYGPEWHwqA4LQjcr4EHpV7uWzUKPk8FjL.nUaBSysjuvhaMTmQKvf.FGXOJbBKPiWpYmjopD
+ Rp1axoD76BCKCBBy5cMPIfVBecDxdYbrod18XvHG5N6xehfZJIZUf0RsUtGkWKD33id2Ij3raaSN
+ q8R7_POeOBsnVfYbqUJTVPgEVcwecillchl86tn26spnRQTPyJT9IF7bLYiUrMne4EhQ3c86x6vv
+ muTW7F9w0zqVI3LSSDdfzxjs5jSHo26kpkQ4DlI5uQCYD_x1WwWLd6KdLPMGeQwylQVKVWpsDWc9
+ LoqxAS2fEOfQnHuejEtza05dwRH3vCLWaVH0h9ZiHUtx_M_3OxoaCVHH1Si9AFP95QmMOS.9uL2L
+ OS_mF1nbN0_h9h21u8wxi7Ubugqqq6H.DPMoZ2rR719Iebg3TKGHHXKyIDg96MSvNCVmOujmk_xt
+ gS4mHnV.xj8JxGHlqDL3rZ4hbifKmVFk6eE2NGBPUDzT1XsvjxVOGw.Js2WSpnmadUSrVnBR11zP
+ DGslLZT1jqxP6_5XshUwZUqqkzZJjPrqhb0Us4K82ab1s.gu4Ilgo.eCmgyGcA9wbnUMYc.eJOiP
+ 6fx.NhrbCO7sK35EZopZc0DIBMrXVpPCKV2TrpHyB0NWy4o6ta3OsYdWSsXW_LmsKn5iqFOc5P0u
+ CQPKOBvc7H9.Ya1YAj5DnbjYdwUSrv9ug79d7rDDVAmh9kFMG3ukX8FKZEUNKajrSc8y0KaQZIBz
+ eAMKQVMd64hnIKrlV5e3Ld9lHffAJ3CNXSIEH54xi4DaBzc2qgHtqFRi6quqPkZaHm.U8boKWFUt
+ j5iRyzkqhZz83PugOjBcqBkESWCZqpRvlxogkNbmsHiXXR.0htA5f5r2fYSoaDL2fBICNDR3n44s
+ 7oTktF9oV3xnJs4FjgMDKPi.vo1zQQRkFeBcBAvRwyZ46AJ7XlFH07jcFUsfjJn7Fs2oAWVRftfa
+ 7J0bQcyLwJgajlGoZikGOPehIORutMlvB.zLRTT_TptOOnVKtf.pilZsKUXRd.CZ2HbC3kywJEaI
+ eLcwMxeDBjr.oj6BEfEOH81GVMkIRvliaHl_j_vlCyTSywu58dsIZbiJQcAJspojyS_WDrFiWjac
+ TGM1oXHpdTXMFYBsH6b_8s23CrD3LQx3G387npJ8arpPC3dimMu.VMeGeVwZbYfqMrcIiZWqPm1d
+ rqBaOZveyMb0GD5yyHeOosFja5ud1HK41gT3Hr_a5titim7ElZP3V0Trakvj5umU1KC3wHqP8Y1W
+ GLjHC_9Mak1sOHCNCHqp58pOwoN.q0oaBfKzH_6baqdbVZZjaTJtMkdAYlZbco6nts_quu2r6QmN
+ NMEJML0YOQX9AAWyyfKyizmMDD0tbpOk_H2gg1S6zFcZsMR8yM10A8EBcgpJY8Owcbww2GefyMtC
+ wV2PXVc8j3rdCVZOgjDTjmWKkk.ERcKhKbIeyMH1959rOYi9_9k4eglNCaH36o_.G6vdcdjvwWMZ
+ g1Mm3PAlobi8M_PRnKUvz.9b7soam_lBazNSytPNwAHGrHfLLQBam1jF2V7PwI9rt5hQL2MprlTC
+ ly_mILJ1rkyPZ4jtIZ8afyC3julxSOhJm7tPvFDGYI6.0zIDpDBeciL0oM5vWwnE6JtxAsQEAfwr
+ sQTffb6G9dkOKOtH92D3f9YlrQ2eYwZSIkwtZ_dFZQXH0TXSRQTzWIKdOiMpv8tIrJ4y5yfzt0PD
+ G2e98_M0Xv6IxMPbF9qgWM4UsBvLL5hN6JWc5ZLr4m283SozQaBmm3lLb35.VY22FAlfHttZYQbB
+ sy7XTNSkK_7ywkLXfuP.NGfFFogGi7ImIdda1HQmxtoklLQ--
+X-Sonic-MF: <igor.korotin@yahoo.com>
+X-Sonic-ID: 3befdfe6-6df7-4284-8731-6c12b188ce9e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Jun 2025 13:57:26 +0000
+Received: by hermes--production-ir2-858bd4ff7b-w59v5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID aa6bd7898dce500d2c3ef2418e041585;
+          Thu, 05 Jun 2025 13:57:23 +0000 (UTC)
+Message-ID: <2d02be52-b22b-4a2b-bfbe-aff7b62200e8@yahoo.com>
+Date: Thu, 5 Jun 2025 14:57:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,157 +77,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/vmstat: Fix build with MEMCG=y and VM_EVENT_COUNTERS=n
+Subject: Re: [PATCH v1 0/5] rust: Add ACPI match table support for Rust
+ drivers
+To: Danilo Krummrich <dakr@kernel.org>,
+ Igor Korotin <igor.korotin.linux@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Len Brown <lenb@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Hung <alex.hung@amd.com>,
+ Tamir Duberstein <tamird@gmail.com>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ Xiangfei Ding <dingxiangfei2009@gmail.com>
+References: <20250604122945.3445776-1-igor.korotin.linux@gmail.com>
+ <aEC73CHD0fvByrJs@cassiopeiae>
 Content-Language: en-US
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, hannes@cmpxchg.org, shakeel.butt@linux.dev,
- muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Randy Dunlap <rdunlap@infradead.org>,
- Konstantin Khlebnikov <koct9i@gmail.com>
-References: <20250604095111.533783-1-kirill.shutemov@linux.intel.com>
- <6fffd2fe-0cee-405f-af78-b57b5e5d02e8@suse.cz>
- <20250604142043.bdfdf4f9a6a6cbb57946f1a5@linux-foundation.org>
- <03c2b01b-18f5-4015-a19b-79b8af656697@suse.cz>
- <7lakc6hxbimvkgakpocj3aa65sdhmskm5p6hlurbwzyps33gfb@2z2eoz253hs4>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
- AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
- AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
- jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
- 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
- Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
- QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
- 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
- M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
- r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
- Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
- uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
- J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
- /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
- IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
- X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
- wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
- PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
- lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
- zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
- rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
- khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
- xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
- AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
- Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
- rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
- dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
- m6M14QORSWTLRg==
-In-Reply-To: <7lakc6hxbimvkgakpocj3aa65sdhmskm5p6hlurbwzyps33gfb@2z2eoz253hs4>
-Content-Type: text/plain; charset=UTF-8
+From: Igor Korotin <igor.korotin@yahoo.com>
+In-Reply-To: <aEC73CHD0fvByrJs@cassiopeiae>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,redhat.com,oracle.com,kernel.org,google.com,suse.com,cmpxchg.org,linux.dev,kvack.org,vger.kernel.org,infradead.org,gmail.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+X-Mailer: WebService/1.1.23956 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 6/5/25 13:53, Kirill A. Shutemov wrote:
-> On Thu, Jun 05, 2025 at 08:19:28AM +0200, Vlastimil Babka wrote:
->> On 6/4/25 23:20, Andrew Morton wrote:
->> > On Wed, 4 Jun 2025 11:56:42 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
->> > 
->> >> > There is no need to backport this fix to stable trees. Without the
->> >> > strict BUILD_BUG_ON(), the issue is not harmful. The elements in
->> >> > question would only be read by the memcg code, not by /proc/vmstat.
->> >> > 
->> >> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> >> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
->> >> > Fixes: ebc5d83d0443 ("mm/memcontrol: use vmstat names for printing statistics")
->> >> 
->> >> Well in that case I think we should put Fixes: to the BUILD_BUG_ON() change.
->> >> And if it's not yet a stable sha1, squash that together with this?
->> >> It doesn't seem ebc5d83d0443 alone needs this fix.
->> > 
->> > I shuffled things around.
->> > 
->> > I moved "mm: strictly check vmstat_text array size" from mm-hotfixes
->> > and back into mm-new for the next cycle.
->> > 
->> > I reworked "mm/vmstat: fix build with MEMCG=y and VM_EVENT_COUNTERS=n"
->> > so it precedes "mm: strictly check vmstat_text array size".
->> > 
->> > I reworked "mm/vmstat: utilize designated initializers for the
->> > vmstat_text array" so it comes last.
->> > 
->> > 
->> > So the applying order is now
->> 
->> I checked and in general it looks good, except a nit below.
->> 
->> > mm-hotfixes:
->> > mm-fix-vmstat-after-removing-nr_bounce.patch
->> > 
->> > mm-new:
->> > mm-vmstat-fix-build-with-memcg=y-and-vm_event_counters=n.patch
->> > mm-strictly-check-vmstat_text-array-size.patch
->> 
->> The changelogs of these two don't reflect the new ordering though, maybe
->> Kirill can provide updated ones?
-> 
-> Maybe something like this, for the first patch?
 
-LGTM, thanks!
+> Thanks this is great!
+> 
+> Unfortunately, it seems that something went wrong sending this patch series.
+> Patches 3 and 5 are missing on my end (and on the corresponding lists as well).
 
-> > mm/vmstat: Make MEMCG select VM_EVENT_COUNTERS
-> 
-> The vmstat_text array contains labels for counters displayed in /proc/vmstat.
-> It is important to keep the labels in sync with the counters.
-> 
-> There is a BUILD_BUG_ON() check in vmstat_start() that ensures the size of the
-> vmstat_text is not smaller than VM_EVENT_COUNTERS. This helps to catch cases
-> where a new counter is added but the label is not. However, it does not help if
-> a counter is removed but the label remains.
-> 
-> It would be nice to make the BUILD_BUG_ON() check more strict to catch such
-> cases. However, when compiling with MEMCG enabled but VM_EVENT_COUNTERS
-> disabled, the vmstat_text array is larger than NR_VMSTAT_ITEMS.
-> 
-> This issue arises because some elements of the vmstat_text array are present
-> when either MEMCG or VM_EVENT_COUNTERS is enabled, but NR_VMSTAT_ITEMS only
-> accounts for these elements if VM_EVENT_COUNTERS is enabled.
-> 
-> Instead of adjusting the NR_VMSTAT_ITEMS definition to account for MEMCG, make
-> MEMCG select VM_EVENT_COUNTERS. VM_EVENT_COUNTERS is enabled in most
-> configurations anyway.
-> 
+Yes, I know. Gmail has blocked me from sending any letters. I probably hit
+some limit. It will likely unblock me sometime today or tomorrow.
+
+> Also, technically this series is a v2; patch 1 differs from the one you sent
+> originally -- please include a changelog.
+
+Because of this Gmail issue, I need to clarify the right course of 
+action to avoid being blocked again:
+Should I resend the whole series as PATCH v2 with a changelog?
+
+Thanks
+Igor
 
 
