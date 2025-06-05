@@ -1,230 +1,181 @@
-Return-Path: <linux-kernel+bounces-674214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A523ACEB52
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8589DACEB40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3EF189B39A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:56:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318F216E45D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9859520969A;
-	Thu,  5 Jun 2025 07:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861581FFC49;
+	Thu,  5 Jun 2025 07:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlZk04lI"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MTPPh3gQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819392063F3;
-	Thu,  5 Jun 2025 07:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6239E1FECAD
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749110141; cv=none; b=qJD5bY2mvix+AlckIRag7LvP3MZ6sI8euSvIXnDQ3SW/zPdE2NLaZ17Kq/T5AMLKFmTNOj91nkSyRVcqx8k4+ZUhcJTxGTV3qm35xL03y8VYPT1tFiUb/CDjV3vpKQla8ydv8Rnr3wE5lwAwJDGSXwMvzGuWr+Tzw2Y03PYyN/Y=
+	t=1749110086; cv=none; b=oLeofVzme3xQeFFiq/0pBNYSU7g3w26rzzniAxSJi48246CMl3HT8yqOf8bsu9zKxSDcGPsZLYNUiHJm4iUoRZMYSZdGgf6DSk+UcOgs5brHuo9VjNK4KxRoP1JdpE1y3wtaMXSUgq7Y6DT8d9psZ2Fmb7NUYxGzGy95EJQW/R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749110141; c=relaxed/simple;
-	bh=2xA063MC/kRWwLZ2fnrCOQUwpNQHP8a730Tx2EfSIpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hiqGQfkC1KKj7Jykx3t8t3REf3bOrUfX22a3zM2SICbX4+edufKFtm4x8MQrW193EDdLK3ufB4iI4PPWohpZh2SACdTJaYwQIUUr/6hKKJcbbTcCGNAHJIpwdlEAbMYatN3SL5/ws/aPFI8G4jYCuJMI04zPiLMpxZRy/AMhaYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SlZk04lI; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22c33677183so6007455ad.2;
-        Thu, 05 Jun 2025 00:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749110139; x=1749714939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YvczEWOtd3+xUjc0wRT/ahzTCf7ZeIPM0+H+Q6/x2ZA=;
-        b=SlZk04lIZc6TINH97kLREBGQlxcQ0WexEw3Rv7xkuTs7QZfXd5gqBraHHzfOCaL/im
-         OBW/71gjUQvfNcZolODu/3cqrZYSMmlQ3e3EWQELnoRBGgtYyewcRimzj3UYDtcV+CIH
-         SpcHexYVUlCrP3cVbz4Zkuhowi6IDGZ0Sxhp94JBUQ+FFQqJIaFRrOcLGJjlB5We+dhH
-         5ZupHMGCmp9SbitKnPSJFoks04gbQ/ghEZUQQV/W04Dg+wegMY8orhWVKM8eqB41JkqL
-         g8Cn7qecJikCuetVtnuLKERd/wCbeMChsheqspMFZGT4cATGTCT+LmcAFjkGzM9rI8TE
-         V12g==
+	s=arc-20240116; t=1749110086; c=relaxed/simple;
+	bh=NNFSE2fFzpiSASQWnZwDpNqWAbQXEhYo1W4bEKJ2yGQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dYzslWMUmshJY278GQnDRTnZGIto+1y37q6KYqOU12zUKvx8emn0I+6qYF9fT6HeGFWy5BgcfcmkYBT2l8xNGUFLsyQKT46i9NDVqAlrl6Ip9+veNHF4AEQHuX8NjJ2rUfF6GjCMRCWIpuB/ws58Gej/S0AsEPW/3RAtIYSuujk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MTPPh3gQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749110083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EsWFMFas7O2Lvk4gjiHkVtt4n83KeM8DN/r9KQDAJpg=;
+	b=MTPPh3gQR8aKTm01kPJ5h6JxFHhTXoYLqZlJ7I//3iDtOxd+D+p+Hb1DaFui51Qcp6zEmy
+	K1bw1+3mq+FvEY2y3JVpqUxJJcekND6iXZj3hv+zQ5KIl0K95jP7cs0YF3MOm7X/9ycgCp
+	C5Wi+h2qor16sJWGJvyhtnW64JHLiLc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-569-tIQA8IGSPJaQb1Vl43CdZg-1; Thu, 05 Jun 2025 03:54:41 -0400
+X-MC-Unique: tIQA8IGSPJaQb1Vl43CdZg-1
+X-Mimecast-MFC-AGG-ID: tIQA8IGSPJaQb1Vl43CdZg_1749110080
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442f90418b0so2815815e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 00:54:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749110139; x=1749714939;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749110080; x=1749714880;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YvczEWOtd3+xUjc0wRT/ahzTCf7ZeIPM0+H+Q6/x2ZA=;
-        b=NGvw2HpzGY7ZC63955bm4yNFRPN21hnWjPZZye5hJ6ZZlCmftCiHI9u1nF41ky9FPu
-         9oJEZ4XQV8pf0m8441deEnu4KC0yJFoEmbws1lS2KduuiGLSO6lLIzCHndcp9UiqOkw/
-         sh2/NQW1f9sV0thapc4fhH3QC5h0tjDo8k3bRkO/EcFzx0eSk0e5N735o4Dq61TRJank
-         Zg3o9M4b9WgUls8oep/OxME3qQJb8SnouqAtEHDd9mP9iV/3ySO/NP/kXzB7vl0o76I+
-         qmMvuTzx3uhyH483y4CsVe2WRsYca3xXNMoGSympASCLLzu1lK58eWZT1M8iPQeroT3z
-         0ZyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcCB8BULLC9ohO204PezP8c8geyJkFgPpltKsnUUhEQxxlPkTSGWccRtXCs/JfVLR5AnzZL+Is/d9m@vger.kernel.org, AJvYcCUrTJnAY/iTgHZpqM5ov6wGvccL5l44RxXcMrJij9cqgpc5T23ybmIaF+bEY/eg1pisYytcKm+CHo2o@vger.kernel.org, AJvYcCXm8Vva0rnFgIlr5l+98tCpDyZrVsspQ8/zacw4kHYy+oAideTNqnAXvzzwIS41qtxN/YK+SQu3bYKTKzWU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGf5q2WFMVzAfhmx42gUQFf06tj98zBUV5fJWQIPOv6In0NOt1
-	Z9G/c9vZk280txj28tS/9aJvF/3Rxd7vVXm2gtkZGIUADpD0t0IOom2D
-X-Gm-Gg: ASbGncspBDj/OYCbgh6TJPSLXUiorAq5Q65A8qCR+HckoLiCnWp63bxh4Nm/0pAuHQn
-	E70aXF/dLSsy3+6xLOK/0UoA4isweXOJndO2mFAlTSl4AErPiMI8Y5Dz6Z70hbZIMrdNi99HLa2
-	/6JuvgWNsV7z++VObxbLGT7DeiDvWpenw2zKkESgyFg01HxWPGX5LYH96NcSTsDLQhaVary86LE
-	uFZ5RUyY2n9sQMmemr/WdsyFOXAvBFxY91f8GrHTwVEEpinJlHStEo7jj41V56UqDxT/SmambLG
-	XlsAxB4yg8YvaN7p1wH9s/r29HbeQVbsk/8oXitXYhlnfmluPw==
-X-Google-Smtp-Source: AGHT+IHDBtVhYgZv7Nkx8O5e23AQ6vkU0MEDQDC0hGmYlT0A5bgGGLDgSHJWQgz3WLF35zxAQbaZ6w==
-X-Received: by 2002:a17:903:1a6f:b0:234:f4da:7eed with SMTP id d9443c01a7336-235e120069emr90257885ad.44.1749110138600;
-        Thu, 05 Jun 2025 00:55:38 -0700 (PDT)
-Received: from nuvole.. ([144.202.86.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc86cdsm115201015ad.8.2025.06.05.00.55.34
+        bh=EsWFMFas7O2Lvk4gjiHkVtt4n83KeM8DN/r9KQDAJpg=;
+        b=Woy6ntMKr09RdAPG1uDTepvre03UgKfoGR0Eb/0xcKQRdmDZuFEtG67AVb7X+96vQP
+         aN1nnwicIryktA19Ra6ful2jKNY/OeIyb44KubNYYKa0eIAeXjdox6j6pzHBLuoJstTm
+         9CIQnAaRMHZDcp2wPOzhcihe3Y39rk1g8B1iE1se20+gv39Ftqh4vUw3ea8QHSduTzVg
+         OMH50QEDtTQsNSafUmNaUAid9019vcY9vG2KvSnLiNezMl7lcsBn8oO8LjsNSimVX2r3
+         H7PAYWWVwUalW/fVROm+/4ObgZ4Du6RdS7wsMlOord3JBGylmW3ClprKMpR6KGXyrmNk
+         nwjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUZd6/lc6s4/MX9Da7wH2THyh9WRzII00EelaQh1n/MnZ6TlUh1mWrVvs3Eu5wB5/XNx2fB+PENwz7d9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqftgiPYWx7ct96iaNAnEito/EHR1feYp3DQXHqiYl8nsroKpE
+	IiCfhqnc9Eer4RvyIVVnxkGLLHYCKToR8k13HrxPBfDmDc4Jj1bRFYxUmPAet0esNvyifkPxBBB
+	BfNSWQ/BdNRG0H/AWZwgSHZh7bvENyjOQp/2UYm2L9AhWtHUZMy3lsg86dhxEYdAiaw==
+X-Gm-Gg: ASbGncuQ/O4+AXmqYqBI5H2JqkrzwxooXropPH79WnEZ/7ys6n/eTKUY0RZCKFaQoDJ
+	1y9ZIR/UlQuFZ8W07X2Ltfu4fyzIARRBYqkAPH5AY0I9WAHuXMm4+vL1eFRehPC/7Be9aDPVYPe
+	Vh2WY12kgMaVjU3JRAFS67A8CZX3pqeqSipLfVDy9AbsdY4bzNwFkP+0cTTAnSfwjC+WqK6o25M
+	t2ztV8HM0WHgIDAhuN8H/c8daV7VtVRLh12aBVdjZ4cIvf1QPmfPd4SrH6PiZ5MMc7LXjYebApN
+	zfN1ZQFnxWanlFaQbg==
+X-Received: by 2002:a05:600c:1382:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-451f0a5fe0amr51092005e9.5.1749110080156;
+        Thu, 05 Jun 2025 00:54:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1SRbImSlbGm32npkuOoSxiRgAXup0UEUY8LHi/iQ53+IYu08XHv+Q7OLZVb45/K6v+57Beg==
+X-Received: by 2002:a05:600c:1382:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-451f0a5fe0amr51091785e9.5.1749110079698;
+        Thu, 05 Jun 2025 00:54:39 -0700 (PDT)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f97f85casm16199575e9.4.2025.06.05.00.54.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 00:55:38 -0700 (PDT)
-From: Pengyu Luo <mitltlatltl@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@foundries.io>
-Cc: linux-arm-msm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pengyu Luo <mitltlatltl@gmail.com>
-Subject: [PATCH RESEND 3/3] arm64: dts: qcom: sc8280xp: Enable GPI DMA
-Date: Thu,  5 Jun 2025 15:54:34 +0800
-Message-ID: <20250605075434.412580-4-mitltlatltl@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605075434.412580-1-mitltlatltl@gmail.com>
-References: <20250605075434.412580-1-mitltlatltl@gmail.com>
+        Thu, 05 Jun 2025 00:54:38 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>
+Cc: "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "linux-modules@vger.kernel.org"
+ <linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "keyrings@vger.kernel.org"
+ <keyrings@vger.kernel.org>, David Howells <dhowells@redhat.com>, David
+ Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
+ Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Peter Jones <pjones@redhat.com>, Robert
+ Holmes <robeholmes@gmail.com>, Jeremy Cline <jcline@redhat.com>, Coiby Xu
+ <coxu@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>
+Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
+ signatures verification
+In-Reply-To: <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
+References: <20250602132535.897944-1-vkuznets@redhat.com>
+ <0FD18D05-6114-4A25-BD77-C32C1D706CC3@oracle.com>
+ <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
+Date: Thu, 05 Jun 2025 09:54:37 +0200
+Message-ID: <87zfemoc76.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Enable GPI DMA for sc8280xp based devices.
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
----
- arch/arm64/boot/dts/qcom/sc8280xp-crd.dts            | 12 ++++++++++++
- arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts | 12 ++++++++++++
- .../boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts  | 12 ++++++++++++
- .../boot/dts/qcom/sc8280xp-microsoft-arcata.dts      | 12 ++++++++++++
- .../boot/dts/qcom/sc8280xp-microsoft-blackrock.dts   | 12 ++++++++++++
- 5 files changed, 60 insertions(+)
+> On Wed, 2025-06-04 at 17:01 +0000, Eric Snowberg wrote:
+>> > On Jun 2, 2025, at 7:25=E2=80=AFAM, Vitaly Kuznetsov <vkuznets@redhat.=
+com>=20
+>> > The use-case: virtualized and cloud infrastructure generally
+>> > provide an ability to customize SecureBoot variables, in
+>> > particular, it is possible to bring your own SecureBoot 'db'. This
+>> > may come handy when a user wants to load a third party kernel
+>> > module (self built or provided by a third party vendor) while still
+>> > using a distro provided kernel. Generally, distro provided kernels
+>> > sign modules with an ephemeral key and discard the private part
+>> > during the build. While MOK can sometimes be used to sign something
+>> > out-of-tree, it is a tedious process requiring either a manual
+>> > intervention with shim or a 'certmule' (see
+>> > https://blogs.oracle.com/linux/post/the-machine-keyring). In
+>> > contrast, the beauty of using SecureBoot 'db' in this scenario is
+>> > that for public clouds and virtualized infrastructure it is
+>> > normally a property of the OS image (or the whole
+>> > infrastructure/host) and not an individual instance; this means
+>> > that all instances created from the same template will have 'db'
+>> > keys in '.platform' by default.
+>>=20
+>> Hasn=E2=80=99t this approach been rejected multiple times in the past?
+>
+> Well not rejected, just we always thought that people (like me) who
+> take control of their secure boot systems are a tiny minority who can
+> cope with being different.  I have to say the embedding of all the
+> variable manipulations in shim made it quite hard.  However you can use
+> the efitools KeyTool to get a graphical method for adding MoK keys even
+> in the absence of shim.
+>
+> The question is, is there a growing use case for db users beyond the
+> exceptions who own their own keys on their laptop, in which case we
+> should reconsider this.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
-index 8e2c02497..667d840db 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
-@@ -495,6 +495,18 @@ &dispcc0 {
- 	status = "okay";
- };
- 
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+	status = "okay";
-+};
-+
-+&gpi_dma2 {
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts b/arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts
-index 1667c7157..0374251d3 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts
-@@ -586,6 +586,18 @@ &dispcc0 {
- 	status = "okay";
- };
- 
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+	status = "okay";
-+};
-+
-+&gpi_dma2 {
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-index ae7a275fd..3fbd0c005 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-@@ -708,6 +708,18 @@ &dispcc0 {
- 	status = "okay";
- };
- 
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+	status = "okay";
-+};
-+
-+&gpi_dma2 {
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-arcata.dts b/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-arcata.dts
-index d00889fa6..aeed3ef15 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-arcata.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-arcata.dts
-@@ -448,6 +448,18 @@ &dispcc1 {
- 	status = "okay";
- };
- 
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+	status = "okay";
-+};
-+
-+&gpi_dma2 {
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts b/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts
-index 812251324..55ffe615e 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts
-@@ -565,6 +565,18 @@ &dispcc0 {
- 	status = "okay";
- };
- 
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+	status = "okay";
-+};
-+
-+&gpi_dma2 {
-+	status = "okay";
-+};
-+
- &gpu {
- 	status = "okay";
- 
--- 
-2.49.0
+Yes, exactly; I may had missed some of the discussions but what I found
+gave me the impression that the idea was never implemented just because
+'db' was normally considered to be outside of user's control ("just a few
+evil certs from MS"). This may still be true for bare metal but over the
+last few years things have changed in a way that major cloud providers
+started moving towards offering UEFI booted instances by default (or, in
+some cases, UEFI-only instances). At least the three major hyperscalers
+(AWS, GCP, Azure) offer fairly straightforward ways to customize 'db'
+for SecureBoot; it is also possible to have a custom UEFI setup with
+KVM/QEMU+OVMF based infrastructures.=20
+
+'certwrapper' offers _a_ solution which is great. It may, however, not
+be very convenient to use when a user wants to re-use the same OS image
+(e.g. provided by the distro vendor) for various different use-cases as
+proper 'certwrapper' binary needs to be placed on the ESP (and thus
+we'll end up with a bunch of images instead of one). 'db' is different
+because it normally lives outside of the OS disk so it is possible to
+register the exact same OS image with different properties (e.g. with
+and without a custom cert which allows to load third party modules).
+
+One additional consideration is the fact that we already trust 'db' for
+dm-verity (since 6fce1f40e951) and kexec (since 278311e417be) and
+especially the later gives someone who is able to control 'db' access to
+CPL0; a 'db'-signed module (IMO) wouldn't change much.
+
+--=20
+Vitaly
 
 
