@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-674695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D39ACF350
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:40:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C822DACF359
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC673ACA99
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7181A18812F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B06121C177;
-	Thu,  5 Jun 2025 15:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHknZPi2"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B42211713;
+	Thu,  5 Jun 2025 15:41:30 +0000 (UTC)
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1754C19CD1B;
-	Thu,  5 Jun 2025 15:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECCB1E47AD
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 15:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749137942; cv=none; b=JsWKi/4w14duWnIalVnljXjFS99lcCbzQBVc2mJg/igayx2HGkQ6QQE78nGH/c5oNxHo83ps7siedV/RkEyf/a7WppCxAeaEA62d9gdByECYZIHMC6e7+Qjgs+KKDe/DowIlBG/gzzZSvqvR3+TvFB2nO9IQ9GaeWqb8jRGpqcU=
+	t=1749138090; cv=none; b=OO/nZnzIXkpgZyG7NIYnZ04mC6B7OzmGg0VZkAAcMBHzRsKIlm1ESBSZa5GKpuMi+hQTEb49aTZCg2SUQfU3Omr7nDiu/flU2sYihqkoLUjIrSO+aNb4779Y6JHiZXe5Ir4RrmKSlWNWqYsW3NPPunU56POh716i3W0ZIcu1rZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749137942; c=relaxed/simple;
-	bh=22wUPzgezYcFsR3CCShhwuc+dBaYwqkkVxHF3Zv3MRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HztwwA3xImQufJW7uAtB8KAHJEn4SSFPDC8n7Jcf+06NQT1F4caq3VAo0OC3SPL0GjdLYkjIzUfiVbA57CxKcvrllMd5RSydVZOD1zaBWdQ2JICO1HNXZQCyOSmkRhQhmaW8iX5SOjXxycNpySrBR0CgBIpaZ6HHv3XxACTfLA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WHknZPi2; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5534edc646dso1241470e87.1;
-        Thu, 05 Jun 2025 08:38:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749137938; x=1749742738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HcB+2uO+DiEejeTdCfelQfnF/TNIo8w7ThbXV9Hz9O4=;
-        b=WHknZPi2vDjOXGypxJ7n4r7mjKqytKVOK81xoiVTGbn+XUOxRbR8r9Xdc71ZKAs7Dj
-         EvwSoQe8iybdxszVScYlj1Sa1UQIm8PBS+DlExMteWCttimU0KoLcxy3m4n4eJod/haU
-         ZP5jelT0EKiwzVngB8NF2gxtiakjj0QtK6CoCM+EfxJZYO9yCeAtXUyaEBx1vZlaUrin
-         RjS6dw3aH3wYJi1RseOJgFsVLEGJLOnIMnuMcGSH5Zx9KqXIZzV3UYaIwEHNIkypU3sf
-         ZACIHCg1tPIfN05T1+p/ZNpbsPz2bQWQTM0CeGnIbgEIVU39nv1bahSWvJA5cNQIjNaj
-         Ka2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749137938; x=1749742738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HcB+2uO+DiEejeTdCfelQfnF/TNIo8w7ThbXV9Hz9O4=;
-        b=CE+gynuVz0C8abEM2rtxLLYsLnJwKgqjmUZxizt5t1mIwww3m9QsZAE8KaGQ+2jPlS
-         41S63PRUzNu3n2CySE9wAgddC6B5x6tU3Q2W3fUr2VxkTW4DvphHtXxbiJtBnIeE9UAi
-         lYq8/FA7NyBeDboErjVQUDp6N1IRO+r+ptIFGEM5vbBBhr9OblZdS2TT1xHRkhanv4MO
-         lUBSVMFnGcnwVlR6fYD1+4vSzJiom9RD+O5a8/GLYT68R6vHONPsHc3ouiCh8o1MTxQM
-         M50dUVG90XDG/f5s/C9VmrQ3MZi3w7fXxUYMihheco7LPrsdeCy+CfdNxYRS5hPp4hN3
-         jPqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8+SpH+lpQoCltGTyZP4yE8CHYedQDSv87ZU/Wqjr25zJ/qFXmT+C1m7R6bhrwy8O18QGFeaWgSAupqIvQ@vger.kernel.org, AJvYcCX4bUKKtzgy+DRRuzgWCjtUGTDASau1SbZ4nhigI1TJoxd2Z0kCFlAHG9f9iYL1fTCWlq6eOdsATHIGYA==@vger.kernel.org, AJvYcCXFZzDAZCeFCSNs4KdiXbfzSO4ueWi0i8iOneRXwl66zgWoDPFg648I3VpVb51X8aNCtCcqty/eFHSC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx6P6FVb0NK7RsWEXME+L1edBmGZliFfoYy+YZ7KRLTcV6O8Lv
-	EfKFMV94ufjMhd2UISINJcSzhjws/mEYOvjSg2yOwEE6xM2T4kApERHIiaeiig9Zs2rvkeVIUOi
-	sho0Tx1l69NtM8ZXgAqC7uWks5qFtD4F6pQ==
-X-Gm-Gg: ASbGncvk8cWBe4rsd9h6y54EzRsvyg+zorL5dJMrMRRtZ8x1/4uQV/zLeMASqKv4mYy
-	CA02Rksegb8DpGPXC8+1G2NYkKuRtxQ8StT5FiObRenbJDz8Pe4NJ0TPZi2T9N8Ov+bmz3iInzy
-	86QFGboffmxrd5QAw6CmDgGaCM2WdHk829m2/OC32cSV4oxv/vXZT7ni4iL0jsTh5nxqE=
-X-Google-Smtp-Source: AGHT+IHC0f5GGqfgNYGwYwSJIeCwEeKdUI2gdyPCvWXWvqUIECUup6LHJyV7c8AwxFYEGPiNja450oF/CxkrpZQrfjk=
-X-Received: by 2002:a05:6512:3b1f:b0:553:358e:72a8 with SMTP id
- 2adb3069b0e04-55356df1d2fmr2286769e87.38.1749137937811; Thu, 05 Jun 2025
- 08:38:57 -0700 (PDT)
+	s=arc-20240116; t=1749138090; c=relaxed/simple;
+	bh=8+Sypfrx2ChSZvVb5GtzdDo7H4mVx2VmT0mTEBKQXww=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T76QXwhJgVKmPPt7cBBv/e45/Jsa59HNegapfaaaeOB3Z+j/2fLrbsd63vXhrfT45l1p+QJrU78ApdKT9pe/1YvYBz1m5+I5G3PMupgmnOcTkBu+TekapLpTOrcex//nwce56Jyl6nyBlEGOfHXgOk3BsX7lU/KxVa3wofD731M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bCpZl23Znz2f6;
+	Thu,  5 Jun 2025 17:41:19 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bCpZk11YKzppn;
+	Thu,  5 Jun 2025 17:41:18 +0200 (CEST)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Subject: [PATCH v2 0/4] rockchip: rk8xx: allow to customize PMIC reset mode
+ on RK806
+Date: Thu, 05 Jun 2025 17:41:05 +0200
+Message-Id: <20250605-rk8xx-rst-fun-v2-0-143d190596dd@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605160540.76a4c651@canb.auug.org.au> <CAFTVevUGg-HVfd1EBq3BXazLqTbHwALGknFLfyN-rGZv_0UfRQ@mail.gmail.com>
-In-Reply-To: <CAFTVevUGg-HVfd1EBq3BXazLqTbHwALGknFLfyN-rGZv_0UfRQ@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 5 Jun 2025 10:38:45 -0500
-X-Gm-Features: AX0GCFsqAAgN59eyU8C93ApSPcobAOUpcdCsm_vNaegjBecArEq0Qzg7Gga9mJk
-Message-ID: <CAH2r5mt1cQnAUQVbKmkM5CQq+XCvbQJiQNH9F6vsJdQw7ZHyTA@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-To: Meetakshi Setiya <meetakshisetiyaoss@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Meetakshi Setiya <msetiya@microsoft.com>, 
-	Steve French <stfrench@microsoft.com>, CIFS <linux-cifs@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJG6QWgC/3XMQQ6CMBCF4auQWTumNKWCK+9hWGA7lYkJmCk2E
+ NK7W9m7/F/yvh0iCVOEa7WDUOLI81RCnypw4zA9CdmXBq10oxptUV7tuqLEBcNnwqBt7Yx6WK8
+ clM9bKPB6ePe+9MhxmWU7+FT/1n9SqlEhDW1nfGcuhtTNjSSynT1Bn3P+Ap2qUSyqAAAA
+X-Change-ID: 20250526-rk8xx-rst-fun-f261c40b6d0c
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>, 
+ Daniel Semkowicz <dse@thaumatec.com>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>
+X-Mailer: b4 0.14.2
+X-Infomaniak-Routing: alpha
 
-cifs-2.6.git for-next updated with the fixed patch
+This allows to customize the PMIC reset method (also called RST_FUN) on
+RK806 PMIC from Rockchip, mainly found on RK3588 devices but also on
+RK3576.
 
-On Thu, Jun 5, 2025 at 8:42=E2=80=AFAM Meetakshi Setiya
-<meetakshisetiyaoss@gmail.com> wrote:
->
-> Hi Stephen
->
-> Thanks for letting me know. I have sent a patch to fix it.
->
-> Best
->
-> Meetakshi
->
-> On Thu, Jun 5, 2025 at 11:35=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote:
-> >
-> > Hi all,
-> >
-> > After merging the cifs tree, today's linux-next build (htmldocs) produc=
-ed
-> > this warning:
-> >
-> > Documentation/filesystems/smb/smbdirect.rst: WARNING: document isn't in=
-cluded in any toctree
-> >
-> > Introduced by commit
-> >
-> >   b94d1b9e07ba ("cifs: add documentation for smbdirect setup")
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
+Finally, this is required on the two RK3588 devices from Theobroma as
+U-Boot changes the silicon-default (which is suitable for us) to
+something that breaks our companion microcontroller's reboot detection
+which breaks a bunch of assumptions in the MCU FW code.
 
+To validate this works on those devices do the following:
 
+On Tiger:
+i2cset -y -f 6 0x6f 0x9 0x62
+On Jaguar:
+i2cset -y -f 0 0x6f 0x9 0x62
 
---=20
-Thanks,
+You hear a nice (loud :) ) beep, then reboot and it should stop right
+before entering U-Boot TPL again.
 
-Steve
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+Changes in v2:
+- moved rst_fun variable declaration out of the switch-case,
+- initialized rst_fun variable to make kernel test robot happy even
+  though the variable wouldn't be used uninitialized due to breaking
+  before using it,
+- renamed rockchip,rst-fun to rockchip,reset-mode
+- rewrote rockchip,reset-mode binding description to not mention the
+  relation to registers or register values,
+- added binding header file to make it easier to understand what the
+  mode is when reading a Device Tree without having to read the binding,
+- Link to v1: https://lore.kernel.org/r/20250526-rk8xx-rst-fun-v1-0-ea894d9474e0@cherry.de
+
+---
+Quentin Schulz (4):
+      dt-bindings: mfd: rk806: allow to customize PMIC reset mode
+      mfd: rk8xx-core: allow to customize RK806 reset mode
+      arm64: dts: rockchip: force PMIC reset behavior to restart PMU on RK3588 Jaguar
+      arm64: dts: rockchip: force PMIC reset behavior to restart PMU on RK3588 Tiger
+
+ .../devicetree/bindings/mfd/rockchip,rk806.yaml    | 23 ++++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts     |  2 ++
+ arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi     |  2 ++
+ drivers/mfd/rk8xx-core.c                           | 14 +++++++++++++
+ include/dt-bindings/mfd/rockchip,rk8xx.h           | 17 ++++++++++++++++
+ include/linux/mfd/rk808.h                          |  2 ++
+ 6 files changed, 60 insertions(+)
+---
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
+change-id: 20250526-rk8xx-rst-fun-f261c40b6d0c
+
+Best regards,
+-- 
+Quentin Schulz <quentin.schulz@cherry.de>
+
 
