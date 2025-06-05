@@ -1,237 +1,251 @@
-Return-Path: <linux-kernel+bounces-674759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3781AACF43E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:26:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B41ACF4DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FE717258F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AAEC189CA3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DA5204F93;
-	Thu,  5 Jun 2025 16:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60104276051;
+	Thu,  5 Jun 2025 16:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ecyt3C/h";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oymLTDQa"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uWK3Yz1G"
+Received: from sonic312-24.consmr.mail.ne1.yahoo.com (sonic312-24.consmr.mail.ne1.yahoo.com [66.163.191.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4032C2E659;
-	Thu,  5 Jun 2025 16:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749140782; cv=fail; b=uqTZnUUBNuFwZyJ0gNMcT1oeu5KqpnrZa9ecHY9X+3yFompRSidcxI2e8k0YYlw450aU52oqd91nPGd9NgZaD8PA49Xle0W25O66d/NNFr7blgsDX9LEm6B3UKYnYTJiD2wVAGcdS9YNqTW40JvGUt4VB+GFE39C+CNsCpcZiVw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749140782; c=relaxed/simple;
-	bh=3F4Gonc52BdzGbTqyeule21wn3IPeBOXvDtcKYhz8LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=W++xX326pSu8J+OXyNmcz6sOTWFEdD7O2v/+AbqwHjKrkj7tyXE15GxEyJKmiNBflRVL64gwA2Wl9p/uHXCoglQLDJ7c2taKbaTQtdheOMrRnj1Crzv1cfrjY3t9qgqis6HJX1URT8fYAqpU+7DxsLvBIXzne9/aCXxZP8dq0zI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ecyt3C/h; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oymLTDQa; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555FtX0B030865;
-	Thu, 5 Jun 2025 16:26:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=3F4Gonc52BdzGbTqye
-	ule21wn3IPeBOXvDtcKYhz8LU=; b=Ecyt3C/h/dZL2LLbmFfQ4DKO6LhzpP08gl
-	iQ/NEPA+v8vYCPOtlwy3+llvSf6nbDNUK185CaC4tvfu3Om/11+qPeX6CW9sIZyi
-	APsFjT8MU5fQ87zlfZezWdWve4uN1dUaYCYJs3KNp4E4Pem+EIYO/zsBh8DR5wY2
-	d2TmzDK6dQm1rOqJbgdzQVM7VvER0hbZ8V/z8WMsu+8usePQpXSIZyviK4pRZHMz
-	e0jN2LLwsjETZmCcC91rDFbOsylmSDHaMDCnbqF11S/Tw2ygoT7/rZWVmjH/KX5d
-	yHl6StK+ApZfzBX7ZBDaTMfsZwLqd06hygDjgBg5XBdEpR/jVrUA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 471gwheb13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Jun 2025 16:26:11 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 555FAfew033811;
-	Thu, 5 Jun 2025 16:26:10 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46yr7c9dwn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 05 Jun 2025 16:26:10 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bdcDP+mjXdbat1byGtYWocuYKfkmV5wv1+8FyNDEVtC6D/WcmfO6OBGWB57rVtv/O3dEVR14WEYphhWzO/pnAMFYFGU3mCU5TK3jtJ/oh74lLvPLhm2yH155MvWjhCvLulrhLt5Pb90GrRAGxBoP4wLbl9E+hhOjWUxrr7HAQj5wZ6w83uNKd0/tV8DFGGUsrBSp9+OZaYgcMA/dFnh4uY1YllG/7sMRLshAHZwRo6Rxx8aF/PGub9qCdJ7WUuSfKmpUNyAcw2I/6ZCEYl7XpLierzO2q1/aCwtcCeG2l+h9vtqnG+sYYmcHg/gl364REUwv9nylxiFqCzRT+GqYbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3F4Gonc52BdzGbTqyeule21wn3IPeBOXvDtcKYhz8LU=;
- b=M60PDScbgX0Kdi28UADk8kLAG6XEyPTG8lxtTq3brxJrL8UlDnPP92jc9rhLRuX9myV87nMQ1dYuq4KWqA3/hxo4glqoeF4Q0CXJq/R2zMXEFhjuRZ4PQGVSvc5C3qXelDptD3fMJsET0HALobwKTZoAdyWKOB8jnCEyW2kn7TPJAagmcGL1IMgnL9lah7PZJtJ8M6Gd5o8S8k3AknUJ3/Vdobq3643+PMCEMTippNRDMhXsfSuCs2oFDibQCfn+/O2P8/di7Ov/5bGd0dfc5jWBftRlvcVNI8C4AWquuQEOWwEsKEs1UDwZo/F2MEVlHDAtfzVIBE2eDoqbiJVXUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3F4Gonc52BdzGbTqyeule21wn3IPeBOXvDtcKYhz8LU=;
- b=oymLTDQatG8Co6n7IBBKDvW3eGD9B2r6AWIOtAoV3uuHQq7wlULpDmwRnBZjC1GSF3uJDidyw6ANbpRCwRN3ira6dbyALw4DzaQgmbQIWkKsLYecsGyHZBNFGhD55FMjzUnjwxa05finatLHxKZAdhYvRtX8fja8WdnEVP/2BGc=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CH2PR10MB4262.namprd10.prod.outlook.com (2603:10b6:610:a5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.40; Thu, 5 Jun
- 2025 16:26:07 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8746.041; Thu, 5 Jun 2025
- 16:26:07 +0000
-Date: Thu, 5 Jun 2025 17:26:05 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] selftests/mm: Fix test result reporting in
- gup_longterm
-Message-ID: <66db3d9e-73a6-4fcd-8abd-db65cfff49ab@lucifer.local>
-References: <20250527-selftests-mm-cow-dedupe-v2-0-ff198df8e38e@kernel.org>
- <20250527-selftests-mm-cow-dedupe-v2-4-ff198df8e38e@kernel.org>
- <a76fc252-0fe3-4d4b-a9a1-4a2895c2680d@lucifer.local>
- <722628a8-f3fd-4fb9-ae04-2313a52ffb36@sirena.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <722628a8-f3fd-4fb9-ae04-2313a52ffb36@sirena.org.uk>
-X-ClientProxiedBy: LO0P123CA0015.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:354::12) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56CD276026
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 16:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749142678; cv=none; b=In9lPpu2kufcyAyVVb6NdmK/ED89hVLajgu6TdTY5caxE3nJglFkG0WZcmyWUCRoXEWk4pBAWu8L6Jl3VcM3Vtb+EzYo16ZEe5wRWxJB+CFmvxC9eGA1QA4EpwEZi5CO8dtVq9ulfZRnwT/hpyKIsjzJzlUM4qoIB+E4v8KfOQY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749142678; c=relaxed/simple;
+	bh=Se4lCUBfbvGUn11s4S6E/U27wBzXoxFTAw4Zl9wtOuY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JjKd6lizZRMxv7tCc7vb+6fdpgZIcsIiuLLSB/MoGUEHalr7tf3ZzZv+QwYS68cnEdXCmQCr1rXhQ5Aax8z2c/9VIzv7y3hcptQnvHguFj9UBLH/qaDfsalhPLGH10hyBbLA/V08u32OaJuSU6CuKNOGxQOkSzjBKIYvB1w0dMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=uWK3Yz1G; arc=none smtp.client-ip=66.163.191.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749142676; bh=S9xyrmw89L7efj2UYVH5a+PMETFLh/nhQ4bVH6JaxCo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=uWK3Yz1Gvmx/rlC+ek/9+XLoHnBBgBE3ouYOp7vbKYeTh5VtHY5Qk5w4JPmPmMzAihUUK4BFTvsuz8S7ebGzdmj/Qu5H4I2/XVf5H7HMhe/AhIBaU3YcRYmUkmCPXgkJPPm/Jo2MP/MJomhsbmrrJgFS/1mJcqjpe+PDkWcLyBq+bvYpMMh3L6HTxLSH5AQECEcAzNS4X3ZympU3QTrHNzWALyFCzjDfnLmZmm+xJMPnkpbhk9RfLxwAuzy/0wxhCwpFFWtvnFwvJDiKD4NpAndxs03niLyPa6AruoVFHv5M4ZSkp/VbImliNRzz5TGzhD0UBiq8ahSLZjj0yYMBIQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749142676; bh=vrqyb1JIu899nQ3aN4j+U8temFosmg5d2n7vwnSVk/Q=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=o9nlkL3nb+NPnR5IoGq+GCjrV9eXH8UQruPsELxgXLhp/zxAPjIg5KcdKlyj7hWGDpMbaXOEpK7jbMZOiDlakRjg7HD+pHW3zeKXFS9LxtzYTHqDS+1qBXKp2xG9vCmhVSqd6J9Nk2Ua3ep7NjV/bxo0M0PdW1grUp4MxV43myYo6NtAUFmds32rH2jh0S1pAyxlLWKiKEfYspM+0cOlXVn6JgTh5w7VH7ht0P0iABmIa9x1or8SznlZE3ionhwEdZhdg8uDl1IUNvhz60BXdnLaYrsXdYJfmcsAkRO0adBG3zJK+DCz/Jkcu9RVXUAg4xZ0t9x3wS+wTAbtuk8Lqg==
+X-YMail-OSG: QFNIsLEVM1mqoF7iwn5REm71RGrFrfpkmo.PUXNRvSpoz6r1XVdmfQmkwLrXD3Q
+ RX_ivAtcyUkxFRJJnvOADjvekpEoOgbvNWgl4KTu56TxvIZdG34nbVhwpBYo36F2Q3sXzjQANiV2
+ LIz0anEhqJNZpopYEWNnjKkh9fuRJuZM405cASisd.RIrjSrqXNS6EQnq.0yP.OrIpcbqs5z1Xav
+ ZBvDQK0QXp0sVadLK.nMXLC.6qr4w2ypbWkLQ__u5d9LcS0MDcOnWpr8bB.gzmH.YkkWny12Hk_s
+ GkeC0Zt8iuUW7MK8A5mt8U0R.cIgKiH0wxM4NdLkH_dy0HirMbTCibcW.8lw1NCNtsh6U_M.MkAS
+ N_i9lIwIkOuspdve.NzGBn6JnWcxWR4b0aPZ7C4LPuAfi9.e0Dy2WdG6rQnbUjq_D5.K_x8k5JAW
+ qvpeSUs2S7VN9lB00UlDnLbJcYECgiExS3CrvYVqbREMTNkloSLKMZpSjNkee8saXM8WkJmWhOeL
+ Iy9hvSGFDMbv6zZyfvc8x2EP5_zShrGaOEk9pJ3eIReeGyQwFCWiycWYevvuo8lKASg8fwjAzNtg
+ onQSx8Q_4HcwfHI551Pvz9osMHiRoXi4TyH3joqA2FEPzlXkns2PmW2LLyzVX0Vuy880xTOjT1Y3
+ BE.5Ke7fjzIc9a1Z86_fJVJw5IbKoBTwLF3VtIF0pEcdFOuPtrYL7sW9_VcKC_f8X6ek3vgoSx_y
+ wrh1z1ZsYFrolRguzm7SWlnO_rzfWeAAhE_kBkS3A2wHiVXXsoXXqDFgU9cPrwTwGFW0UTsobBg0
+ 9kDh.UjeOe5YGf_vbIdfxs5mXB0wdA8a.xKZWxOiDoaWpgPKgZMWb4rpcfiB6fyhUJLxz2AqEMe8
+ TVNFmKHgPPkv0I6piIAkkIzijt72B94ADS.520wZWmpe7Yi9QeB3xdwl92vgxkWL9g7OIa16GVzk
+ TvFyAlZdMPpUMC2Fq0Kb9yXE6UF01jQ1ThJsC_Kfu_UjEYbZfYIR6nDfiVhQBxHjIP9SGO3OYVli
+ u8PcNYPMu0HKhaE6yJIqa_S.Y0ncBSpFczMAyWSa_tkrfTvKa5XXF.k_XTvss3CzoLkfNcgQP86l
+ 1UEabv_QOkYDaHZr49BBwacHA0jP_bNh9e0gPdJyLz2wjvvx7EmD.lHLLoaqdHhTIZkPjZBzbmn_
+ NxYs96oHCfXsqQWa3yXCkX89ggkaubvv2KNPGk_oH350skRyTYz.X.E51PtVHmF2aDO.1rL3uEud
+ RyIyGFE35yRU0v96iu7f0hSKHPmjj1yRJiYtihtKkJ6S4_GZ2W5bcFnJnvMBbZnVIxwEar.oFO_b
+ BC0yy6khmGqymWTIy_8QOn23COpxMyJDGRdUQ89cBCtDePNtZWwT_W9UOhoq1XyQbhG5ey9xMuv6
+ mROMsztHB.9sForSjzDAdgm.Fu8dh0aMxTPiWZtG6nI0NqQckC4ve5dl5abJSF3BFLaoGQXB5lX2
+ tJ7K0jMq3bfxqXWvMbJjcCCx3FGX6yIPJPHenoVkZtZn8m1ud1G1zlj2xBmXc_7RHQ_MY.kk7ec2
+ RV2FTnlkIKpIkWCGPlypPfWhtI0UCvPHaXYYESLe20AlRZj7MbVZ7QZoyDPe0XNqKMC_MMrAves0
+ XIqk_f8p0DzT4YYAqxfTddQ35_UUcJfBOJYEjeCUOYSHOqm_eAB4rJZiSfu.ucmw6yZPB5CZk7Kf
+ KwYtjuayJmOwkfORE4_LlC2qhF0SXqPiwmnRoiX2K5WpRgrTdt.DM4eRsfARLU093YmB9oLS2nJi
+ oWP_by4C.mCWXg_XF4prul58qAxA4PP0zzqrlxEs0MDSvqs6PRTauFD6lRq1NLkvrMDrTvhzkCIw
+ PR5wrkLDbJC91jHQh9dZev97yKbavrtoFuS2ez5sPNR5VO_qTNzxrfXFjijeQkSXjEil.4sVP65h
+ KZe76DbFvzHMQu2vW92GRhQ5GSasXoWrjcHsMcX3EAqFjnI2mJSeucnFxHAdcVESo8cnWavonaZm
+ b3E_yzClCuY5Ea0b2kBmDRds5qwG_tD5n56EZbxxlyeZG4SMahjnENhjOaDEpZfKNgB8DTh8Rru0
+ ewdaqImohahTlrZarj1g0wSKQD3.5l0LrwD_FS5Xusqdqgd3Y6yFZrJXz7pulvTmKsd9hV5cbgF_
+ ieljg_4C8pYcsGs9.QwWlkybJN9.Bd16izDwSHQMlbuhlxcKqtEz8hSGdwscw4Hjsz7TDQDVkT1I
+ 3CH.1kNwYXviPicTUzdJWL.pvfXLfxFClgQD.3b1L9Ps.m6E0GJk1NT5oGJP_KFjom7Q83GE407X
+ FGGr.Afo-
+X-Sonic-MF: <igor.korotin@yahoo.com>
+X-Sonic-ID: a01551b3-4643-4ab3-9acf-f5730c6599c7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Jun 2025 16:57:56 +0000
+Received: by hermes--production-ir2-858bd4ff7b-rsjdf (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1d1e6bdcafa85f1c72d86546e65fd43d;
+          Thu, 05 Jun 2025 16:27:31 +0000 (UTC)
+From: Igor Korotin <igor.korotin@yahoo.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>,
+	Tamir Duberstein <tamird@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>,
+	Igor Korotin <igor.korotin.linux@gmail.com>
+Subject: [PATCH v2 3/5] rust: driver: Add ACPI id table support to Adapter trait
+Date: Thu,  5 Jun 2025 17:27:26 +0100
+Message-ID: <20250605162726.3659792-1-igor.korotin@yahoo.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250605161956.3658374-1-igor.korotin.linux@gmail.com>
+References: <20250605161956.3658374-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH2PR10MB4262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ce779cd-2a31-45b1-ee5c-08dda44dac92
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NBCH3PzN+wN2BhZ/wuhFKIgnM1d6ZUAh4a4OTTz8BL4Lu/Xp5Do3mOlFbv8g?=
- =?us-ascii?Q?52wyJDzia2LZFdJc7gqlvZ55ztpIq7EysyOrMRpSOsiywpPWUf65gUIGFFsf?=
- =?us-ascii?Q?0aNpgOymG7cIIe/JY5CELePr1SbNiy/8z/rQ54Gx6FolMNx/0lZ/TqVFhjny?=
- =?us-ascii?Q?X691gDGCOfarBmzs9gTkn2GtHk4jiZbjLl9eqrMQSvOke9mYbVet8dZsJrav?=
- =?us-ascii?Q?SPmbTUkOMzuQLqPsI/nFLMfxhdfUdDhNELJESs4wduRTm4b9A7t5efgx7JAT?=
- =?us-ascii?Q?Y2gIu8R6IzO+nbCAuLhRdEYDcKv586qC5DUiFX6WxJTkOwwWs9Of5q0V1InB?=
- =?us-ascii?Q?OszT72qh4NiY/rwGpprn2UDAbRuj5npFIU+vJ7SNImGLEqi0S+SfCXShvWyI?=
- =?us-ascii?Q?jzCcbd+AJxq8sv4DrONC22xc2EU2tfiCYivcavSKExMZ4U46X0CzRKAMP2fz?=
- =?us-ascii?Q?uCdXO+axGox2MMM4UgjhEM5JObSRcuL8f7tbTqnvU7iQnLshvQfB2jTjoxn8?=
- =?us-ascii?Q?W2yJfQZF2HC5k6YdhfFRqGSGvKnYdvgFSnnY8O/HSxJAmUGgbLtLmW2/rPi9?=
- =?us-ascii?Q?jrJ9UvW6qbXHWFjKb534Q7GNpLk6iNlet3pH4H0rpRoentqib20aCwZmUp1j?=
- =?us-ascii?Q?9uqeSA902PoIqy03an4Zh6K5SixTPEZZjLsWjhiF7Nwflfwb2pkq6EgD8Cvd?=
- =?us-ascii?Q?SqCG/ehJhH0XHK7czrE63CRyqBuLNJRxtYYe2Ndvmk8lAgqZ0xVNaq5yNnuq?=
- =?us-ascii?Q?VwOxAhm9yZ/t1PJn+3CU1QY1cLL+qWZEfEVhS1FlV7aT4T/C9wMQZpk8kpGN?=
- =?us-ascii?Q?gSaBGpQnKxZ1pHhiewfjRXfE/S95Xz6oMbf4om96TUApEZ+fGx/7oo2pNFcK?=
- =?us-ascii?Q?/dg6xOta9WMSEVlBKdVn+Qb8haEexE4IE2hxYpYyLkZIaW7vwKCu3JY5AUb3?=
- =?us-ascii?Q?ap9Z7K5278BbbZZyLp6oOGmVx4amaxuGHeBhV5yNTZKYX6eK+opvNgr9uWT7?=
- =?us-ascii?Q?aGrTnbaRIunj3FiRZmz20okA2BEh7yibBFX3csmTnKRf1h7660MmhW6gaGe1?=
- =?us-ascii?Q?zKVlLhyXoZYg/51dkpTNg/N33QkWetjMak5xf9KfycfBNjjAI7axkwIT5Wcd?=
- =?us-ascii?Q?hfafmZvHEaktLGE0ITgheCGx2LzjNqZka3l74/CFw/waGyRPIJCyRyX0nrVA?=
- =?us-ascii?Q?TfYSD72SpxESYZwB4eo3BlqpRULuzI0jadsCDXsoc4N0B3R1cLr8x5I1lUVS?=
- =?us-ascii?Q?LsqxrP8AUkNIpeGTB3sbpw+vIUgodp/l8qM58DOhlmXuDNWuR7VER5VwooYa?=
- =?us-ascii?Q?GeDZ861PmHA80/aeiFnyb5xAvXpL3rXEY+PE0HsOUzu3/Vo8fNH7xR8aCcU7?=
- =?us-ascii?Q?N4uh2DUSZp5HbK97OuyommYWKSmMvVufpKy8Jk95deFWtQZ6t+RYOLqi866s?=
- =?us-ascii?Q?AKmrN5eZOEI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Xpb1E8pDJAC8eNJRtDjghkzJJLj4T4dDjDfzPMi8hwMFegwRx7LpWAzXoy9g?=
- =?us-ascii?Q?xwHOu7+0SdOVqUPz7A3rlzCgKHIaCZqiS++hvdHJ4ZKxRNyj+6y4khDVlN6E?=
- =?us-ascii?Q?c50b3/qgdx0ctMRJdqQKxBePmA6ddYCtSktf7wncYWxU+gVp3lcZkEwY8k36?=
- =?us-ascii?Q?yyJUxvXC1/Z72B6sUEPxZWhV0YNdlkhv1JILoRSh6oXApeBgOsDk2dWE3yzG?=
- =?us-ascii?Q?zbiGp3vtZPLV68ugazJKQFtx6oVzNn1nLRbkfcUAasYdCpFN2RQbWlHUxKB5?=
- =?us-ascii?Q?yDC6Ja18Faia1aQKk8xCpuTNYmUtrXizwBvseokKGnLY/zEKIQt303TCC0P9?=
- =?us-ascii?Q?WArt3sNbnGOpcPc6TlpPPtx/GahOGbuo82EEVIorBgFmOa3dOIGmI+85NwZ6?=
- =?us-ascii?Q?2mcDwSLwLmqTGenC371U3DRSWLQj5dj2BUFD7NlKKBensl1OlOrlyo8RJju0?=
- =?us-ascii?Q?aX97LpA6nH5h24iQw7PR1QVUOUeYoDZg3KG6Z22Hs80/4piFGyPABDntfdnR?=
- =?us-ascii?Q?iQvMI731kZHQKiQfHbM36wyH3aHfcFK551ImPSgFsSO1jhpDBI1EdWENsiG3?=
- =?us-ascii?Q?JSCtXhvBz1fjPbHDHtKtjRLxOMDtzWEfoVwu5j5NsgyCCv/sbFwseLVtJ1LG?=
- =?us-ascii?Q?jWpjFcubH0QL72YwzoIaTB5N4QC5q5lXX2yn0XfhplwZoACKayX4CV3aOvpu?=
- =?us-ascii?Q?y6hag1JR6E8s7n7I40bsEcIBWO/z36IwioBmm3ZKkds1L0sMNLyoLywheVzR?=
- =?us-ascii?Q?HPncFkZCE8wu3fGnvIavrg4xf6LiUWrsMkBfTWjALHw1BEIgPb9mrxz7nUsE?=
- =?us-ascii?Q?hfG2B8ojgZyKHL+2p1gNrCL+mxwenJdFKGLglQmcHImJazNxZuDe6F0H7yrN?=
- =?us-ascii?Q?RirV2EWFcAkRrS5A+njtGKyCErd8bVuf5Ndzx4wX2WFrQOp4SDPkt/S+w9mH?=
- =?us-ascii?Q?9C2mITyUvfXgFogsUnsAIN8xgaxfS4Kzjxpzvd6/3UzQ7JXPz8y2tSj2c7ju?=
- =?us-ascii?Q?BpMD21ZqO3rzl7WnHRFRs2B8pQM5y6BsNoaEfuWHsPZg7L03oWUNnlENUHDo?=
- =?us-ascii?Q?InICo9Ky3qqkVNI4uRFv8pEU0ILpQgIM1L8efCFKs5x3vaKi5BuSrXyq/bMb?=
- =?us-ascii?Q?m5S3QjWJ1+aByB9/1CkvgoKYog2I1HUKQpnfWkxefLzOjIDV1BgudmPx4bFA?=
- =?us-ascii?Q?0uXKqBNirCurxbeqLtvIb+z+9y5aEf854FV6cNjT0zpYxNFETVWqv+Tbc1rE?=
- =?us-ascii?Q?zGkf5OQE7XYACQ/y2la6ysmI1e3JeJWvs5r/HMup+l2rPVSxTK5mbYvZJrx6?=
- =?us-ascii?Q?7QyHs0KOYNtXUTxH+CzwwaVi2Go5Luok7xrODv+PqaGS92ebzjvhmjlXayd6?=
- =?us-ascii?Q?zTzvvSK9C4ZIveId1qEAcjwyo3vUJrR7AwUVPlvivs9VDOBGCCq66GByeW+Z?=
- =?us-ascii?Q?YUU+Fq+seld+DOt8b/sbgqySCz19dEbtdO1QVNF/yr+wTyFO5CdPUtPPzxel?=
- =?us-ascii?Q?mdqSByBrtGKfMyop+L0UhtkDJJIBLFwdhAiwukzjJbBlyFRWyrg6VyyF/MNC?=
- =?us-ascii?Q?bJ1MGWg6ibenkoQwkGT0/aZZGXYldyvIUfr4b0oePtIpIkdRYhGELGqd17+a?=
- =?us-ascii?Q?bQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ZJ3xsUQPek4sppG2OOHwZjqMal9vfi7hQ+zJJL/nn4Dh3G4f44AGuTIT9Pb09eeioy0F23obHQhNYj1bl1fhDGe8kYlr6cPBNoJA1a4KrvIJz7n3WY4QYhqztPvmarDBXxmZDPrbksKeb6U+5blQRKZ88Uw1DLwmGYJ5wwG6/BM223Zt3a1klljBpsI3i1Iy5jfGCk3Ty6bV071rMpW6zgV209yQ2/xJF695rbtEg115R31N79mW2dpjHBPDg2SkdiX6A4MufHRxYABnPKfl/o+YZfy/eCojNT/6fHvriB4A9h9TpfaZVG7hRMzmAGsUSesGfu5gkoFXypEqQi0HfGs4o6L0QREEB3myoF9yMFXO25g/yy8K3i2ss2VPimpCaZefG7en+gMI87+Jx4Gq9iMvar7vnRFdeRNHVNtQQF3z6E5Ugsj/3qjJZSGxHhXX33gwhJ1vSI5riYwMcF4xN/zN56Fiy5EMO60MAZr9Cm4o4oJMoBWI0oFdHY/6vLzPZpvpQp1Gdve4ZTJiWbTMJ0Noq7OKWgGIS3yeG+T7c8gAbQlaWv4C0g9Qgvp0KzbfHbIBjX30Guwlq7COdkgF5D28X+bv8OHb9m2Gp1N37ng=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ce779cd-2a31-45b1-ee5c-08dda44dac92
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 16:26:07.1834
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eadW+96RvDUccpLkYVIRgyFZtc13kdrQWCNcNks1JnxtNOiZYQ3nnJVJO3eebiwEzOP1r8HqOi3n1pKWWlO1FnllprDvnJc+waW/SATZjiU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4262
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_04,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 bulkscore=0
- mlxscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506050144
-X-Authority-Analysis: v=2.4 cv=Wu0rMcfv c=1 sm=1 tr=0 ts=6841c523 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=DcMNablWdiy7X42mhUMA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13207
-X-Proofpoint-GUID: K-5QKpCfTgzWgfdejrEoGgkHec6KgV-P
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE0NCBTYWx0ZWRfXz/t6O0SsWluZ DSFkG5zjBBws2pXWkCXVxwmdPtbWHuS6l/qZHDFD7i/CfiqvHeCEdJAn+gZT2qVucwlZVojp8yq LOwpnJwWOYLjK1/a91MnLXctye6UEaRRkZMBzYmiuzygEl8UGDRNE2Nrt/jjVsE2Hjhq7Ag6b10
- qjNFdq756rV/9brdQZQGen0T2nOAmoeOEAIFF3BEldAHEKZd0zq9wFgWMokF5Ca1BNWxEEsgBuX CdAb3fnfepKzgapQ0+ukgs0cv664XgNv/Oh57EEGxuzxIt5SgjwhvA8fmNb6T0kvb1v4kwnGDs/ c/A+rscnDsbqmMV5560fvhDVAW0HQGoR8/qYKNsUK/tQA1ft9yjmEDhzOfItgnuzV4PjMYqmmPH
- OCotm2s+/gB/SacM83QKJiz+adi090lpkaH1P11n9xrF1MsGA7GTXSG+OxSaE0Wgz+BjI305
-X-Proofpoint-ORIG-GUID: K-5QKpCfTgzWgfdejrEoGgkHec6KgV-P
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 05, 2025 at 05:15:51PM +0100, Mark Brown wrote:
-> On Thu, Jun 05, 2025 at 05:00:49PM +0100, Lorenzo Stoakes wrote:
->
-> > This seems to be causing tests to fail rather than be skipped if hugetlb
-> > isn't configured. I bisected the problem to this patch so it's definitely
-> > changed how things are handled (though of course it might just be
-> > _revealing_ some previously existing bug in this test...).
->
-> > Using a couple of tests as an example:
->
-> > Before this patch:
->
-> > # [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
-> > # memfd_create() failed (Cannot allocate memory)
-> > not ok 39 R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (2048 kB)
-> > # [RUN] R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
-> > # memfd_create() failed (Cannot allocate memory)
-> > not ok 40 R/O longterm GUP-fast pin in MAP_PRIVATE file mapping ... with memfd hugetlb (1048576 kB)
->
-> That's the thing with memfd being special and skipping on setup failure
-> that David mentioned, I've got a patch as part of the formatting series
-> I was going to send after the merge window.
+From: Igor Korotin <igor.korotin.linux@gmail.com>
 
-where did he mention this?
+Extend the `Adapter` trait to support ACPI device identification.
 
-I mean I'd argue that making a test that previously worked now fail due to how
-somebody's set up their system is a reason not to merge that patch.
+This mirrors the existing Open Firmware (OF) support (`of_id_table`) and
+enables Rust drivers to match and retrieve ACPI-specific device data
+when `CONFIG_ACPI` is enabled.
 
-Better to do all of these formating fixes and maintain the _same behaviour_ then
-separately tackle whether or not we should skip.
+To avoid breaking compilation, a stub implementation of `acpi_id_table()`
+is added to the Platform adapter; the full implementation will be provided
+in a subsequent patch.
+---
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/driver.rs           | 58 ++++++++++++++++++++++++++++++---
+ rust/kernel/platform.rs         |  5 +++
+ 3 files changed, 60 insertions(+), 4 deletions(-)
 
-Obviously the better option would be to somehow determine if hugetlb is
-available in advance (of course, theoretically somebody could come in and
-reserve pages but that's not veyr likely).
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index e0bcd130b494..d974fc6c141f 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -6,6 +6,7 @@
+  * Sorted alphabetically.
+  */
+ 
++#include <linux/acpi.h>
+ #include <kunit/test.h>
+ #include <linux/blk-mq.h>
+ #include <linux/blk_types.h>
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index ec9166cedfa7..d4098596188a 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -6,7 +6,7 @@
+ //! register using the [`Registration`] class.
+ 
+ use crate::error::{Error, Result};
+-use crate::{device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
++use crate::{device, of, acpi, str::CStr, try_pin_init, types::Opaque, ThisModule};
+ use core::pin::Pin;
+ use pin_init::{pin_data, pinned_drop, PinInit};
+ 
+@@ -141,6 +141,38 @@ pub trait Adapter {
+     /// The type holding driver private data about each device id supported by the driver.
+     type IdInfo: 'static;
+ 
++    /// The [`acpi::IdTable`] of the corresponding driver
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>>;
++
++    /// Returns the driver's private data from the matching entry in the [`acpi::IdTable`], if any.
++    ///
++    /// If this returns `None`, it means there is no match with an entry in the [`acpi::IdTable`].
++    #[cfg(CONFIG_ACPI)]
++    fn acpi_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        let table = Self::acpi_id_table()?;
++
++        // SAFETY:
++        // - `table` has static lifetime, hence it's valid for read,
++        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
++        let raw_id = unsafe { bindings::acpi_match_device(table.as_ptr(), dev.as_raw()) };
++
++        if raw_id.is_null() {
++            None
++        } else {
++            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
++            // does not add additional invariants, so it's safe to transmute.
++            let id = unsafe { &*raw_id.cast::<acpi::DeviceId>() };
++
++            Some(table.info(<acpi::DeviceId as crate::device_id::RawDeviceId>::index(id)))
++        }
++    }
++
++    #[cfg(not(CONFIG_ACPI))]
++    #[allow(missing_docs)]
++    fn acpi_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        None
++    }
++
+     /// The [`of::IdTable`] of the corresponding driver.
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>>;
+ 
+@@ -178,9 +210,27 @@ fn of_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
+     /// If this returns `None`, it means that there is no match in any of the ID tables directly
+     /// associated with a [`device::Device`].
+     fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
+-        let id = Self::of_id_info(dev);
+-        if id.is_some() {
+-            return id;
++        // SAFETY: `id_info` is called from `Adapter::probe_callback` with a valid `dev` argument.
++        let fwnode = unsafe{ (*dev.as_raw()).fwnode};
++
++        // SAFETY: `bindings::is_acpi_device_node` checks `fwnode` before accessing `fwnode->ops`,
++        // and only compares it with the address of `acpi_device_fwnode_ops`.
++        if unsafe { bindings::is_acpi_device_node(fwnode) } {
++            let id = Self::acpi_id_info(dev);
++
++            if id.is_some() {
++                return id;
++            }
++        }
++
++        // SAFETY: `bindings::is_of_node` checks `fwnode` before accessing `fwnode->ops`,
++        // and only compares it with the address of `of_fwnode_ops`.
++        if unsafe { bindings::is_of_node(fwnode) } {
++            let id = Self::of_id_info(dev);
++
++            if id.is_some() {
++                return id;
++            }
+         }
+ 
+         None
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index fd4a494f30e8..3cc9fe6ccfcf 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -5,6 +5,7 @@
+ //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+ 
+ use crate::{
++    acpi,
+     bindings, device, driver,
+     error::{to_result, Result},
+     of,
+@@ -95,6 +96,10 @@ impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
+         T::OF_ID_TABLE
+     }
++
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
++        None
++    }
+ }
+ 
+ /// Declares a kernel module that exposes a single platform driver.
+-- 
+2.43.0
 
-Anyway, mm-new accepts patches during the merge window, one of the advantages of
-having this separated out from mm-unstable, so there's no reason not to send
-something now.
 
