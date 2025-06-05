@@ -1,231 +1,250 @@
-Return-Path: <linux-kernel+bounces-675016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E791ACF7E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:29:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72041ACF7F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8D7A2BFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2DA3A2FC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05ED27F4ED;
-	Thu,  5 Jun 2025 19:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A0C27FD4A;
+	Thu,  5 Jun 2025 19:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvieLlNt"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QWQcaNf+"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B86E283FDC
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE2927FB05
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749151527; cv=none; b=AChc6RQByrax/q6Fx+MqCy4z5bvX77qbRz+QNXquANPppvseLYrIubc8AyY4FtlV1Essb5vggHRNzDUx8ZZI9/UAtt2iALX1aArv+q4N9dcvTJAgPINYyPY+/FHE1TxlbhKuPW5urcw9LsUhMCT564shfKo3lKb25CeooFwjCJ4=
+	t=1749151643; cv=none; b=au/RybM2PV2BRo51Vhazof/4FFHRAwi6YrSaKPUw2Kt/DYxMBjAg7v+5V7BE4z/hXAZItlvT9bqlFrK01+3LSJbSQaAwytAp92n7XpseYAK074+sSdPF17qlOb2+laCp5LfYy7m7OKuPuz2wUSNxxTD4NAKbXWm0TR9BZgRWUwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749151527; c=relaxed/simple;
-	bh=g1uSPY3ekxdDqUP1FiL97nkkGHxjamontIVvh7+SpJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mrhurd9J6Tq9Maxy+W6t1cbXfY0uwGdNprpfskMB+BWkWIUjH7voxKRQZzacJwAqTrk5jDQ+LRvVjtMhGPmn6IZtWMG5HBnolJ8pZsHw4Be3fitSGNdNWgcUDEVlhYCPCc++HptLYecmTwKpNTq0+VgoiXjr4wDOxLv+y40Wzmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvieLlNt; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70a57a8ffc3so15758217b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 12:25:25 -0700 (PDT)
+	s=arc-20240116; t=1749151643; c=relaxed/simple;
+	bh=IMpfA1wqZarLzuB4nrBCzI9upCvhdpPW0XmBDJS/1F4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1UKOmSmc1NcnK5G9NGy4gaDQQDu+5FbI4rhVlS1eMplt7Zfnhypyz4LemInkJ3cu7e2S34mPPlkxmu12Oas/XOZghCFyfQxjXOuZlGytHUHfNwLXcTCGUTxdRgio9XxPrV04lUD7ug6VPKEwGvnI3WwPgN9BsEZRNth+03kyBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QWQcaNf+; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-602e203db66so2340131a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 12:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749151524; x=1749756324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FprG7nruJwqKDxMeetenSg6au9m16AMAZ5r0mOGn5VE=;
-        b=DvieLlNt05vzfmbYugsfZCJQD2j8zZbwxw0yxg9x0J9eiDgw0tpOXCpZoAXBVKLRvB
-         qkVzX00OPe/Upae5lhi0h2WVdmLSzug/oRSyk5EgvTj8YL+WohF8OP7ASW2uB1l9jiF1
-         kFUIrrbmWKgpEZPBfJL1LN+kqX6osCQqA7My+EMxEl/HGIzQLDAFZH3xF4hEO6LHOYqM
-         44XGBtcli083Sk0oWZXjOzV+kVV7djE74ZYT8uiF5QpEi90MxeDhPu1rv0ASg/kZ5sAj
-         aqmXQ302elocAj2ewFiBsqv0i8oX/UWrr51jzkjr9T6AU4aJQirlUg8dG5cHQkCkYVOD
-         fM/A==
+        d=google.com; s=20230601; t=1749151640; x=1749756440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ktTlyyYyWStVAYtvm1hFc3t1pciBGiotvMTYgEWetf4=;
+        b=QWQcaNf++5qYLOUIj+IO/rjRTBXp83BqsE54IYD7IfqWirN6HhUp0pqo70TI0f2JIh
+         cWlOp5OuEEf0Zfn6MYxS7N+d+zDj0A5jG/7+n6XFRtZvxoaOVkKSoNeGzh/zJ7EYDLfK
+         vPNVAmKqsvkJCjfzwOEpHKt/zlt8N2ujT80hdY/cZ99FuBytnfXUgPJuSs/ZI5VP7Ha9
+         /JfCnVyRQWYojbRkfgyhB9qHDSVK97zZF3y8mHBIeJx3yQVPjL79sAxXRW+GMYe5ja+k
+         JQlRORPkrJLMbp4nBRAIGJrUN0CThaK2WS3KR3qxsbV0Vv/oBfMd5wvYIhycxBGjSkSt
+         leUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749151524; x=1749756324;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FprG7nruJwqKDxMeetenSg6au9m16AMAZ5r0mOGn5VE=;
-        b=aTW+MeYdUnoFlow+Q69av2rVhtfICx3djUN/6lw1R2MswHMtUjeHSOlimN/vj4H1hC
-         yds0Z0XEbw4Z43sVrfcJ+3W+wAxv7YMfLcDwZeY3mYIssp2RsLjTuzCgpafjcmfCsk/c
-         ZUIoXynn4eiSgozqrn+PhVGykdcmim8qr+7LJwnpfVVBFeZCUiZKagkSvksbNNouRsCv
-         JUDYDMv4B6Plr6TR/e2SSons0VO8a42kwgfLlMl40LrZ8o9hG14Ef4a6JRLm4moZp3Hv
-         m3I+yWJvI/QAoDSC1GSwZHDzdyL2JFnCa8vZMwXD/OiE/NIcJfAmrxPi1AgTn7UUHoHI
-         QdaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9WjyeFSQjzHy3nkk/VMEk5hTZIIp55HqSPeoUGMUggooxFbfJ30E3TI6E9wkqeRJvlzuB2AHiuUJLKzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlwgsg11JXR+6CNx0uAELWq+UN+ab+MRe3akE6yODUG1n9c/Me
-	HmiER3vsmLwPoiHgN4Gchh6/1S6Izwhn2zaith2cKI9eJhFeblm0X4ZVqM219A==
-X-Gm-Gg: ASbGncuoKBeOuDHR4n13eZnarvtRwp7TxRs9Dwgh/tUt7Tubd6Iih8BUoRtt8U7h1lU
-	LcVnZSX+VC5LT0WZQPCg4F9TToS4lA0nBEHZcWfZRKN+VCgqmNBg4MSNj+Z9fBpPZraTjpp4SwG
-	EiPIFHy+4Ic3NSqQ+sVc9Oj2kFyRvoRQoKxgoFrBVIbd/iEv3EEUduXRgenaCnHkOcIW6Bm6gJZ
-	JXwTUuhk+Zr9k44rx7Rn3shIWvLg4a4y7gBDU947JDcFaT5js1UB0ttUqF55MuKLEmSbN9uavyv
-	FH2mDR6cLDu0lN1D712W+jnIkgUEX5lTZ279c3ErzyzHTKO0irY=
-X-Google-Smtp-Source: AGHT+IGk++Z15BxbtjJ9K7UZBhMrTiCpmJvFSUyXRDZkfKc9GS6MedIlLmJfAwhoGdBkkpcPFYk5Cw==
-X-Received: by 2002:a05:690c:688b:b0:70d:f673:1412 with SMTP id 00721157ae682-710f751e254mr12464717b3.0.1749151524484;
-        Thu, 05 Jun 2025 12:25:24 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:50::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70f8ad2439asm35895997b3.125.2025.06.05.12.25.23
+        d=1e100.net; s=20230601; t=1749151640; x=1749756440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ktTlyyYyWStVAYtvm1hFc3t1pciBGiotvMTYgEWetf4=;
+        b=N4dHdl2WLdQMgg6WEJK+IhSrWIzU6i03yK5T9RlXQXzyEr/FKiZKrArc3RPX4OMVIb
+         sAtSQh0OuIzvrcPa54UN/GFvn5EdBX+IZFNsY4Jj8KwMSRI9eiQ0MRmS47lrn+ayIm/f
+         j34YsUz5C1FIN5iwC+OLfMfrDYaAfUo1gIxso60Fj3CsSLTPsSJ56obATxk2PsZp7uKQ
+         nbv4wPBaFKtL4Vhai0I0jwy598y0U6K6oHdHs2QJXvOqHXKDnoqOgKjhWzcolNyvW1wY
+         oW7pFdNpBx25t6tQPwKDCcGtGqiaNbmO00LEZd1hfWOHfJsOph6t3H6QVVTzmCJAPRCe
+         o2uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgApQsjEBDbmImyy5Lc3+NrksKAVPOpp7dZEoKni9L6uYfIoONhTMT0H6we4ilFR0qVeg/REv8ZyFK2v0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyczraGgxss4MByKd+mBDzIhM31APaT/vrYUWr2+rFsOA0aRLYN
+	prFFDg6aOngVaWkQPnD4IxgG6C7O9lQ06jHUUOhHRrAYAwI9GfhNnVgxSRWUtgGzdw==
+X-Gm-Gg: ASbGncsQ6LHZuKP5rsxoSmyfWO//C/77jVSuEFL5H2OdhUuWxKsyDtzv5ZS17kB5sNL
+	vYLnpm3iSRtDt1t6ragI7DBqFwyNmRfwz9vwR1JmIotHjk33extq+b8C5x6r3hmI/55De+rZ1BB
+	/bRok6xMbzPjM6NB9KKP58zQiyEUwsPHCTYgzO/f6m7LfcDdenz+5r6LD+PzzUyD3YgGuGWAAEL
+	24RF/lZHgkMPB4G6fw/zFMGHIp5cqMrb23mSilKC2ncfnEDu9SlCQ3+Zmy2aFLgAVPUDnizjzJa
+	ghJ2AD85SFYjIfQFiRg2zvNQPDBKB6jmfbJ3d6GXfZT+D4PejM+YDCg+I5j21KFJjngKLfpEbw8
+	pKnwsi6tvq0ZRIVLXvYy/uX8iFA==
+X-Google-Smtp-Source: AGHT+IGR0eQhUdX+BE/0D+8bzRt7h0N4AhkbBRetRMSEQ3qUIwv2gsp2KOR1vdCbT3C2qlHJYvRLaQ==
+X-Received: by 2002:a05:6402:50d2:b0:604:e33f:e5c0 with SMTP id 4fb4d7f45d1cf-60774b8001amr329835a12.30.1749151639586;
+        Thu, 05 Jun 2025 12:27:19 -0700 (PDT)
+Received: from google.com (57.35.34.34.bc.googleusercontent.com. [34.34.35.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6077837756esm34452a12.17.2025.06.05.12.27.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 12:25:23 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/4] mm/damon: introduce DAMON_STAT module
-Date: Thu,  5 Jun 2025 12:25:20 -0700
-Message-ID: <20250605192521.306529-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250605161129.82107-1-sj@kernel.org>
-References: 
+        Thu, 05 Jun 2025 12:27:18 -0700 (PDT)
+Date: Thu, 5 Jun 2025 19:27:13 +0000
+From: Matt Bobrowski <mattbobrowski@google.com>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kpsingh@kernel.org, amir73il@gmail.com, repnop@google.com,
+	jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net,
+	gnoack@google.com, m@maowtm.org
+Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
+Message-ID: <aEHvkQ1C7Ne1dB4n@google.com>
+References: <20250603065920.3404510-1-song@kernel.org>
+ <20250603065920.3404510-4-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603065920.3404510-4-song@kernel.org>
 
-On Thu,  5 Jun 2025 09:11:29 -0700 SeongJae Park <sj@kernel.org> wrote:
+On Mon, Jun 02, 2025 at 11:59:19PM -0700, Song Liu wrote:
+> Introduce a path iterator, which reliably walk a struct path toward
+> the root. This path iterator is based on path_walk_parent. A fixed
+> zero'ed root is passed to path_walk_parent(). Therefore, unless the
+> user terminates it earlier, the iterator will terminate at the real
+> root.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  kernel/bpf/Makefile    |  1 +
+>  kernel/bpf/helpers.c   |  3 +++
+>  kernel/bpf/path_iter.c | 58 ++++++++++++++++++++++++++++++++++++++++++
+>  kernel/bpf/verifier.c  |  5 ++++
+>  4 files changed, 67 insertions(+)
+>  create mode 100644 kernel/bpf/path_iter.c
+> 
+> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> index 3a335c50e6e3..454a650d934e 100644
+> --- a/kernel/bpf/Makefile
+> +++ b/kernel/bpf/Makefile
+> @@ -56,6 +56,7 @@ obj-$(CONFIG_BPF_SYSCALL) += kmem_cache_iter.o
+>  ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
+>  obj-$(CONFIG_BPF_SYSCALL) += dmabuf_iter.o
+>  endif
+> +obj-$(CONFIG_BPF_SYSCALL) += path_iter.o
+>  
+>  CFLAGS_REMOVE_percpu_freelist.o = $(CC_FLAGS_FTRACE)
+>  CFLAGS_REMOVE_bpf_lru_list.o = $(CC_FLAGS_FTRACE)
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index b71e428ad936..b190c78e40f6 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3397,6 +3397,9 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPAB
+>  BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+>  #endif
+>  BTF_ID_FLAGS(func, __bpf_trap)
+> +BTF_ID_FLAGS(func, bpf_iter_path_new, KF_ITER_NEW | KF_SLEEPABLE)
 
-> On Thu,  5 Jun 2025 08:25:07 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
-> 
-> > On Wed,  4 Jun 2025 11:31:24 -0700 SeongJae Park <sj@kernel.org> wrote:
-> [...]
-> > Hi SJ, thank you for this patch! I have been looking forward to it : -)
-> > I had a few questions about the init function:
-> 
-> Hi Joshua, I'm more than happy to get your questions :)
-> 
-> > 
-> > [...snip...]
-> > 
-> > > +static int damon_stat_start(void)
-> > > +{
-> > > +	damon_stat_context = damon_stat_build_ctx();
-> > > +	if (!damon_stat_context)
-> > > +		return -ENOMEM;
-> > > +	return damon_start(&damon_stat_context, 1, true);
-> > > +}
-> > > +
-> > > +static void damon_stat_stop(void)
-> > > +{
-> > > +	damon_stop(&damon_stat_context, 1);
-> > > +	damon_destroy_ctx(damon_stat_context);
-> > > +}
-> > > +
-> > > +static bool damon_stat_init_called;
-> > > +
-> > > +static int damon_stat_enabled_store(
-> > > +		const char *val, const struct kernel_param *kp)
-> > > +{
-> > > +	bool is_enabled = enabled;
-> > > +	int err;
-> > > +
-> > > +	err = kstrtobool(val, &enabled);
-> > > +	if (err)
-> > > +		return err;
-> > > +
-> > > +	if (is_enabled == enabled)
-> > > +		return 0;
-> > > +
-> > > +	if (!damon_stat_init_called)
-> > > +		/*
-> > > +		 * probably called from command line parsing (parse_args()).
-> > > +		 * Cannot call damon_new_ctx().  Let damon_stat_init() handle.
-> > > +		 */
-> > > +		return 0;
-> > 
-> > I was hoping you could educate me about how damon_stat_init_called works here.
-> > I think my confusion comes from my lack of knowledge about kernel modules : -)
-> > In the cover letter, you wrote that DAMON_STAT is a static kernel module.
-> > My understanding was that this would mean damon_stat_init would always be
-> > called,
-> 
-> To my understanding, the function is called back only when the parameteer value
-> is being changed.  Such changes could be made in runtime via parameter files,
-> and in boot time via the kernel command line.  If there is not kernel command
-> line for setting the parameter, this callback function is not called.
-> 
-> > so I was wondering under what condition it would not be initialized.
-> 
-> The enabled parameter value is initialized at build time, based on
-> CONFIG_DAMON_STAT_ENABLED_DEFAULT.  So, the parameter value will always be
-> initialized.
-> 
-> > I see the comment you wrote above, but was still a little bit confused.
-> 
-> The kernel command line parameters parsing is called in pretty early stage of
-> the bootup, before slab is ready.  Hence, if enabled parmeter is set by the
-> kernel command line, damon_stat_enabled_store() is called in the early stage,
-> and fails from damon_stat_start(), since it needs slab, to initialize DAMON
-> contexts.  For more details of such failure, you could refer to a previous
-> issue report[1].
-> 
-> Meanwhile, damon_stat_init() and module init functions are called later, when
-> slab is ready.  We therefore check the case, and defer real handling of enabled
-> to damon_stat_init() in the case.
-> 
-> Thank you for this question, I find the comment has rooms to improve.  I'll try
-> to make this better documented or easier to read.
+Hm, I'd expect KF_TRUSTED_ARGS to be enforced onto
+bpf_iter_path_new(), no? Shouldn't this only be operating on a stable
+struct path reference?
 
-I see, I think it makes more sense to me now. Thank you for explaining this, SJ!
-I think my confusion came from my lack of knowledge. Please do not feel the need
-to update the comment on this section, if you feel it is already enough : -)
+> +BTF_ID_FLAGS(func, bpf_iter_path_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
+> +BTF_ID_FLAGS(func, bpf_iter_path_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
 
-> > Also, should we perhaps call damon_stat_init() if !damon_stat_init_called?
-> > That way, the first caller would just eat up the time it takes to run
-> > damon_stat_start().
-> 
-> damon_stat_init() is a module init function, and hence it will be called in
-> boot time, regardless of enabled parameter setup on kernel command line.  In
-> other words, it will be always invoked once, with !damon_stat_init_called.  And
-> it will call damon_stat_start(), unless enabled is unset via
-> CONFIG_DAMON_STAT_ENABLED_DEFAULT or kernel command line.
-> 
-> So, the current implementation is working as you suggested, to my
-> understanding.  Please let me know if I'm missing something.
-> > 
-> > One other thought I have is that if this config checks for whether
-> > damon_stat_init was called, this can be moved to the beginning of the function
-> > before the other checks are run, but that is just my thought : -) Feel free
-> > to keep the input check first, since having this at the beginning of the
-> > function would mean incorrect inputs would be silently ignored.
-> 
-> In the kernel command line based parameter setup scenario, later
-> damon_stat_init() call should see the updated 'enabled' variable value.  Hence,
-> the user input value check should be done here, regardless of if this is called
-> before or after damon_stat_init().
-> 
-> So I find no needs to change the code for now.  Nonetheless, I believe this
-> code has many rooms to improve, and I'm always getting more than glad to get
-> this kind of improvement ideas.  Thank you, Joshua.  Please feel free to let me
-> know if you get another idea later.
-> 
-> I hope I answered your questions, but please let me know if I'm missing
-> something!
+At this point, the claim is that such are only to be used from the
+context of the BPF LSM. If true, I'd expect these BPF kfuncs to be
+part of bpf_fs_kfunc_set_ids once moved into fs/bpf_fs_kfuncs.c.
 
-Thanks SJ, it all makes a lot more sense now. Thank you for taking the time
-to explain things!
+>  static const struct btf_kfunc_id_set common_kfunc_set = {
+> diff --git a/kernel/bpf/path_iter.c b/kernel/bpf/path_iter.c
+> new file mode 100644
+> index 000000000000..0d972ec84beb
+> --- /dev/null
+> +++ b/kernel/bpf/path_iter.c
+> @@ -0,0 +1,58 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+> +#include <linux/bpf.h>
+> +#include <linux/bpf_mem_alloc.h>
+> +#include <linux/namei.h>
+> +#include <linux/path.h>
+> +
+> +/* open-coded iterator */
+> +struct bpf_iter_path {
+> +	__u64 __opaque[3];
+> +} __aligned(8);
+> +
+> +struct bpf_iter_path_kern {
+> +	struct path path;
+> +	__u64 flags;
+> +} __aligned(8);
+> +
+> +__bpf_kfunc_start_defs();
+> +
+> +__bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it,
+> +				  struct path *start,
+> +				  __u64 flags)
+> +{
+> +	struct bpf_iter_path_kern *kit = (void *)it;
+> +
+> +	BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
+> +	BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
+> +
+> +	if (flags) {
+> +		memset(&kit->path, 0, sizeof(struct path));
 
-> > 
-> > Thank you SJ! I hope you have a great day!
-> 
-> You too.  Friday is coming!
-> 
-> [1] https://lore.kernel.org/linux-mm/20220604192222.1488-1-sj@kernel.org/
-> 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
+This warrants a comment for sure. Also why not just zero it out
+entirely?
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+> +		return -EINVAL;
+> +	}
+> +
+> +	kit->path = *start;
+> +	path_get(&kit->path);
+> +	kit->flags = flags;
+> +
+> +	return 0;
+> +}
+> +
+> +__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *it)
+> +{
+> +	struct bpf_iter_path_kern *kit = (void *)it;
+> +	struct path root = {};
+
+I think this also warrants a comment. Specifically, that unless the
+loop is explicitly terminated, bpf_iter_path_next() will continue
+looping until we've reached the global root of the VFS.
+
+> +	if (!path_walk_parent(&kit->path, &root))
+> +		return NULL;
+> +	return &kit->path;
+> +}
+> +
+> +__bpf_kfunc void bpf_iter_path_destroy(struct bpf_iter_path *it)
+> +{
+> +	struct bpf_iter_path_kern *kit = (void *)it;
+> +
+> +	path_put(&kit->path);
+> +}
+> +
+> +__bpf_kfunc_end_defs();
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index a7d6e0c5928b..45b45cdfb223 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -7036,6 +7036,10 @@ BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket) {
+>  	struct sock *sk;
+>  };
+>  
+> +BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path) {
+> +	struct dentry *dentry;
+> +};
+
+Only trusted if struct path is trusted, and hence why KF_TRUSTED_ARGS
+should be enforced. 
+
+>  static bool type_is_rcu(struct bpf_verifier_env *env,
+>  			struct bpf_reg_state *reg,
+>  			const char *field_name, u32 btf_id)
+> @@ -7076,6 +7080,7 @@ static bool type_is_trusted_or_null(struct bpf_verifier_env *env,
+>  				    const char *field_name, u32 btf_id)
+>  {
+>  	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket));
+> +	BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path));
+>  
+>  	return btf_nested_type_is_trusted(&env->log, reg, field_name, btf_id,
+>  					  "__safe_trusted_or_null");
+> -- 
+> 2.47.1
+> 
 
