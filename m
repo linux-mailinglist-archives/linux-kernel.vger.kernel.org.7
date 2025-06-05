@@ -1,316 +1,181 @@
-Return-Path: <linux-kernel+bounces-674056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EB0ACE94C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B020ACE943
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03EDA3AA6BD
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9A918951CC
 	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087521FECDF;
-	Thu,  5 Jun 2025 05:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF081EF39E;
+	Thu,  5 Jun 2025 05:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mEBsW1WD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RTox0Obq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA0F1FDE31
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 05:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36731DE88A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 05:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749101110; cv=none; b=drOYRWp2beD9RPklHgSepaSQEAmEVa6DH/nP2CC7pIGLJXQGLNQlnypHf4ZSMZp43WjWZH0wMWVTI9rIUQDRuEoZhEvQsd7QbFNGgyUsnUZDLu5fY53ucqc/fa9jf/N7yNuUGHe0EXsE2Lea8W2hdsaJVusktgeD3gE7rkgbVEQ=
+	t=1749101102; cv=none; b=lBzGlFnt5BNpwTKF7/ht2JAHxwFVOjPOEYE0QNv4Ai5CvQ6V0EyMKZ8gp5bVac7tvDYABS1rpe3yj4Sl/mGEUbDMS5DUXa/4s11pxt3z75reBY51T9BKe0v1Kv8eF/s/gZSxUA2ukVHeE2GFbUtQf0lFd5Tpx8MmriuyslZShTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749101110; c=relaxed/simple;
-	bh=vlJXvAa9X+ezoDZ5kkgtL0pzbm0tSOq3EooVS4mttsg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VXutKXNlqFNCXLN08+QZla9ltE3WGdA6BRSz91fRPj6/QO7u/w8Rl/dvpMI3b5xkV3peRo8QlcwQSyfdz7Ji7ky0vCfhy2bQ0E0HLeP22WzASnQDQDpiTvKV6T04QNZeu4boUGfH80uVJV3052uyldNjiH6zkhYfZFMGougWd6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mEBsW1WD; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1749101102; c=relaxed/simple;
+	bh=M/t0pCLO2KZxMM+bBZlvb/oVz3LhELFVIIlfB6eoU1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QlbfZfzMDD/hfSvY/m4JuKElx+1zSBCvmgnN6j5I1oHw6rrE0/U1++PcUoEl3YXX5C42KWRTVrjYtwCUJTMNUYgfNggp4OdzWNwUe6bFIqBU/l6NnHGQaBHYtNWFgUtAyBrjIatCstihXnEciecwQpgx292Tzu94layOH1E9Psw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RTox0Obq; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554HBuYw004238
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 05:25:08 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554No1dl022637
+	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 05:24:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XOXtSog1QDveCNyYwT9jqHDvpBgbfVSj3rU4ri3NmDo=; b=mEBsW1WDRqFshoHA
-	uTzUhVdfE64SiFtIzd6/gTGhfQWonSx9pDB5NasrBvxjTXTPaTZq8P6kV//UuVkT
-	qVrRpNngnSTFHA1raEa6gkgiQV3XrkwvKUqTY3CjXDgQw3GdmZ1t3johfnSP/ZgX
-	4a5c0lHCCQ5IBYMA0RQqlyGZ0sD+EsNzzKpnMiA9OM6w0+EH+l4MfT7xyY2pehdi
-	ozOW1KSGK5TVKSsYqOcYdsux6UfOataj+UAbIFWTYsc77DSBkgpcdnDDhHQ/jfAl
-	hYWLkdmnL6PjCUHYxKffyYpfWi2xSD6W1+4s9EGC3jKEW+yFKvJG3biv+SyajKh+
-	5rcwSw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8s07ph-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=1a9JgcopP9bJ5yF1Me7vfccR
+	Le+8BXkEbBw51pVceW8=; b=RTox0ObqdSLNR5F8asiRpPLHATO4WAFotd9IbWWM
+	/Lcf2ZR2kFLHkaKRMdSv2q4ftBQC/CjKMEuuv0HoB4nudfoFyp1Kf+sPRaVvor4O
+	2lwZer5akc+gE7QGMyK2fsmh/IySUhT8GaU9GOfyx5/bUgM189yuu+pD/IT3FXl4
+	3R0/SQD1nCAptg5c2MgX+7ssKO5eZCgmASLqFVS0VyXpXiVRoHGSUlqZvB5w7Gp+
+	i7alpuLT9V0xPdSY5KS8vdAFMtpSJbzfPOkStceSW2aNv/Xz2/H94/Nb2AJSmRPz
+	n6Ju7powBABYrI/9whDi5XTkm9ndIeOc6lwlXR0pumhPzg==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472mn02ep4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 05:25:07 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-312eaf676b3so851272a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 22:25:07 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 05:24:53 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b1fa2cad5c9so349539a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 22:24:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749101107; x=1749705907;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XOXtSog1QDveCNyYwT9jqHDvpBgbfVSj3rU4ri3NmDo=;
-        b=uzFCM7rw38HBeChRzO0kOMl9oBrd9sID3WJPOIDJZG8jCf+35EU+6hJbBXOQesLY5t
-         syqmxBdPArpHZMBmFSwtg8nmi7m/wU35gaVkJb+392+Q3cEF7JT4hokU7Ui+1JRVkeLB
-         DpBkuzGa1+Aec3nummuBebC7BzOmf8bFqFFCL8y4N5qMSj9PR5T4tkTJ03D1HZs1JVTf
-         GYG6QG1WmX3mwvQNVqJak85C1HlBPoVOS4swkN1o50lgNoBoTlUDTg9V4y5pS5DpOgya
-         UJeboMJCLY2jiVzzpbsFijcLdshGZpe9rtVo/H+oewb7FhdX0G4D0/u3LGTscLN91ZUn
-         yFEg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2YO6aZoe2hChsNLpQCnOSKSCTjn53xdj69ZoBXvCjj7N60SG6Q95ixnwR9eMGUn2BIChlsIMEfoTbfLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2MOpkLgzRpRoFVZQoLY7ppphUZbuyI1OtSiDArwHsh43G2MnS
-	bfR5SuOmkNtBG9Tp97XELYVJmLtLDPKTOlqaljQP+Fqq1D6AxE3YeWbtUPwBQO4/OlTqe0ow4zo
-	MIjhigNrBy9aAQ1VIcgkwgr7muqZRVne3jOqkofTTC45xc4ljCaiSqImPBGjSo1YUWsk=
-X-Gm-Gg: ASbGnctdR7BpEOxtJI5Lu7bA0o/Gy7uO1Bz3PDf6l0U8yoFLJo2RWBfMqm/6GzmZE/s
-	mVEcwvGa2C569mu2wbN6z2u2TmUqPcHZfyX7m+Wc4wKIDD9+SRJEVmxssSz4lxxJgj4OuHkkti5
-	0fMUStVIcInLr59KEhNUmOw0QJEtUTqz+8KqyWY4wxUnToRbgZD3wID5gd+u1jNYxb/ACxjxCav
-	0MjoKx9G+NKYzmK9vUsH44Q/LgXOnacK0KXTlPKN920VdQc60Wn3XxUhSg3hEQreXVSWKd468Ul
-	rNBdP+FCguCcCxXuWq3gazmFj9xunt6FUUQeMd108Sy5Cyk=
-X-Received: by 2002:a17:90b:52c6:b0:312:1d2d:18df with SMTP id 98e67ed59e1d1-3130cd67f87mr7348328a91.23.1749101106955;
-        Wed, 04 Jun 2025 22:25:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGizPUuInvJsfPhGgAodQGX82jrYIhBDW3+fyLJE7myE9Z/9iGHSaKGIpVNnw9+dcwQ6gmrMw==
-X-Received: by 2002:a17:90b:52c6:b0:312:1d2d:18df with SMTP id 98e67ed59e1d1-3130cd67f87mr7348282a91.23.1749101106412;
-        Wed, 04 Jun 2025 22:25:06 -0700 (PDT)
-Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3132c0ad55csm621815a91.40.2025.06.04.22.25.02
+        d=1e100.net; s=20230601; t=1749101092; x=1749705892;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1a9JgcopP9bJ5yF1Me7vfccRLe+8BXkEbBw51pVceW8=;
+        b=EXkbuQFNUfeFmEPLXi8Tx2v9lzWBBAZmLC7lYoNV62ZhPk0nHgo4VPIk4WjBsacV5C
+         pZVCmdGROYDznKWeX4RPPVn5qw/8YHeh9wKBwO95v0fBkB9N/s7F4uN0ca7xBmRDN1Dq
+         fDT1ZwzOZHxPBlAPIb/0DKmf/ojkTMxi+fO4Ddg2gcxoeyAJehWqdfAtlZKbBq145pYx
+         FxAaA6I50txj33dDOKXTbQwuQsXiMWJfiQ16FMQc1xU87xemAM8YYm/sA9M6U9ODjLod
+         GNcWvDXbMcg5saExTZbN96MGXe8MzZEnStHiGg9QBmetvAbI54H9bLCekYFRFi+rsgx9
+         YXvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdeM5lAGkM0dNb7Wolor7cGFT/nZTD+XbkSEhy6vX8iAR4NgOs8GwTnmNlQUT4kgJwdOPShQeiXrPXIfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdGxmZNsOkspVkK+UhjOxrVLLHQm1TZ7FOyhPJCodknpHdAFW2
+	+gDSQm3N5WEkF4ccTqsCC/KN5lHKT1zDBUjtRY6TZAvVbcBKYInRfVK43AfW2nkg2FTIrd0GAK7
+	8XvCyoi6uson5imke2Z4uZaK8WSNCOpy2zwKcrPwFpbz9dLt/ZrHYKEVTf2WBzjAfFOw=
+X-Gm-Gg: ASbGncsoKVNYvRWS5VhjFTDdf9Mu/3QyxadPtMSQEtE90RV+DZNlu3kMLbZqflJco3R
+	ePA0jjPEhNYtGg6VNFtqC6yq7/xj/otSeYBiRDSWvNx8uO/dQrdF0Pauuc8jlUxy8JNYFfd5kRi
+	pKBYd1yBRfk9nnJ8qOQzsleNaL/TfzdDiBoQw5L2PGH2E45g+WWpLKMQyLQmIzyRoRJoNuetYV+
+	GUG22V1BkeH7aPWzIZ7sTzX5j5KdN/tuwEXSCQY+fD3MCaJY1PeGKBvuqhn/kancSJpVixjVFtZ
+	rnLocHeP9CyU4BF/biiYgzX9sNXn3fFazNx3vvfuvm16Qx1tLcNDR1I5x1g=
+X-Received: by 2002:a05:6a21:3287:b0:1f5:9098:e42e with SMTP id adf61e73a8af0-21d22a6cab8mr8581870637.7.1749101092392;
+        Wed, 04 Jun 2025 22:24:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELuWY/1bcdQXTlNAC0FeBkJQ7D653GZ5CNEp7sdXfBrnquNDS8cgkO69w0uf0qsyvNLiEZIg==
+X-Received: by 2002:a05:6a21:3287:b0:1f5:9098:e42e with SMTP id adf61e73a8af0-21d22a6cab8mr8581844637.7.1749101091990;
+        Wed, 04 Jun 2025 22:24:51 -0700 (PDT)
+Received: from hu-qianyu-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747afe96781sm12040801b3a.29.2025.06.04.22.24.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 22:25:06 -0700 (PDT)
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Date: Thu, 05 Jun 2025 10:54:45 +0530
-Subject: [PATCH v3 2/2] PCI/portdrv: Add support for PCIe wake interrupt
+        Wed, 04 Jun 2025 22:24:51 -0700 (PDT)
+Date: Wed, 4 Jun 2025 22:24:49 -0700
+From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Wenbin Yao <quic_wenbyao@quicinc.com>, catalin.marinas@arm.com,
+        will@kernel.org, linux-arm-kernel@lists.infradead.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, kishon@kernel.org, sfr@canb.auug.org.au,
+        linux-phy@lists.infradead.org, krishna.chundru@oss.qualcomm.com,
+        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
+        quic_cang@quicinc.com
+Subject: Re: [PATCH v4 1/5] arm64: Kconfig: enable PCI Power Control Slot
+ driver for QCOM
+Message-ID: <aEEqIWSU5P9Xp9J/@hu-qianyu-lv.qualcomm.com>
+References: <20250604080237.494014-1-quic_wenbyao@quicinc.com>
+ <20250604080237.494014-2-quic_wenbyao@quicinc.com>
+ <46r6cdcugwvyuvkjqbi3tq4f7ddkrgy4jut5fwqjsfwbsfoke4@upmtzhcmc7ni>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250605-wake_irq_support-v3-2-7ba56dc909a5@oss.qualcomm.com>
-References: <20250605-wake_irq_support-v3-0-7ba56dc909a5@oss.qualcomm.com>
-In-Reply-To: <20250605-wake_irq_support-v3-0-7ba56dc909a5@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Sherry Sun <sherry.sun@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749101092; l=5481;
- i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=vlJXvAa9X+ezoDZ5kkgtL0pzbm0tSOq3EooVS4mttsg=;
- b=+u3TTrTXFx8RDNANNurLLF+fnnpi0DJrWjY6QqkCiRbl4RP7ve/2ANlZxpia7e9xsxF4S9N7P
- ketU6RZ+8BoBbPrH5VNtMwAfMDhwgmizFzSGxHCPQe4R3h+LZ+A/cz9
-X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
- pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-ORIG-GUID: _jHZfaUtPOrAvXPPvhULh7zVIccqoNHj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA0NSBTYWx0ZWRfX3Jrfi6LDeZca
- 8BvlZ1l2zPKq2qbd4Z3tdx2XmX6oOHrc54YMDE8R+J4B7mFyb+5vY8dNYagq+PQ0OafUzKeGAky
- Amt/y5Lo8K+Uk63JL90Ujke3dxdSuxRIP/6M9JKYcdLsDO/yAvbTbEwsl1fNrZGUKjh+ePZnthX
- dEu6RJX+ZHIeOcdfXnHUP31F2lufF6an9jL17vW9Mwu3H1/mRconC+eHA6zKYWMpHPPvkbTyLG1
- 4m4jAuC8pxT7kIXxZdRAogCTUIMTBoGjADRLSN3mglN9uM4s6v/0/mYCPErxpz9BAkHhlhN8wpq
- EGnKUDXXi5DUWRqjHL0ql4zbGgZzSyMjAjUVlfpCsdpYGrUOB1elk7I7m7uZdFAo8puuS9fr09a
- af25sPLtdKUjLe7V262+9NtOiJ+zMuNLaOzlglxkNx4CzbM0/0ukdlanqz5Nqsoli0jsCrW/
-X-Authority-Analysis: v=2.4 cv=RdWQC0tv c=1 sm=1 tr=0 ts=68412a33 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=8AirrxEcAAAA:8
- a=4qw4IQhyAdn_hH04eJkA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
- a=ST-jHhOKWsTCqRlWije3:22
-X-Proofpoint-GUID: _jHZfaUtPOrAvXPPvhULh7zVIccqoNHj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46r6cdcugwvyuvkjqbi3tq4f7ddkrgy4jut5fwqjsfwbsfoke4@upmtzhcmc7ni>
+X-Proofpoint-ORIG-GUID: WO_eDMh3QWm_AmqFlYwi4JICQeiOAN8x
+X-Proofpoint-GUID: WO_eDMh3QWm_AmqFlYwi4JICQeiOAN8x
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA0NSBTYWx0ZWRfX7K7xBq7/Dmgx
+ O4LoGnTiBxZrMbVNpT4CfyTwW3EmtWvbvo2/y39I61ZQlrSybO+SQsZZooKv9mQFyTZ2cJ9rbtv
+ 1ePutFzX5tnqar64X7Zx6eqekuQsLfRdPNUzh4ZHEe5L9CmrIHw5JQbOj9lJ+rJ7D/lzfw4StKL
+ ms1F96Nk4XkbseDztG7Z5isMCCxNPbSYaz+qMwIj0ktCaqvgW8REx48HavKFZSjhubBdk5Qs82t
+ xrP81p/jo9lxLKKO1XIwGQGndaFcnj0GlguW5Yp6NEmMYpKzEUObfpY4bMk9CA/F2SX4otbGZfZ
+ DCC1C1gyFLVqTUn2LPglcVxLDf/vMHbw7rlOKcDVqcwg3LOGRI5I0j8elOluzORVJUlQrZ4khsD
+ gqFnpNhTbVOsrASp+7t9lIfTYNv1+668selzsuOgCiOeSEYG0DKQ5oM47F02BNGaSlE/MXSb
+X-Authority-Analysis: v=2.4 cv=Y8/4sgeN c=1 sm=1 tr=0 ts=68412a25 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=yafonziSkLk5LdqN7hYA:9 a=CjuIK1q_8ugA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+ a=TjNXssC_j7lpFel5tvFf:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-05_01,2025-06-03_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 suspectscore=0
- impostorscore=0 spamscore=0 mlxlogscore=999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506050045
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506050045
 
-PCIe wake interrupt is needed for bringing back PCIe device state
-from D3cold to D0.
+On Wed, Jun 04, 2025 at 03:30:22PM -0500, Bjorn Andersson wrote:
+> On Wed, Jun 04, 2025 at 04:02:33PM +0800, Wenbin Yao wrote:
+> > From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > 
+> > Enable the pwrctrl driver, which is utilized to manage the power supplies
+> > of the devices connected to the PCI slots. This ensures that the voltage
+> > rails of the standard PCI slots on some platforms eg. X1E80100-QCP can be
+> > correctly turned on/off if they are described under PCIe port device tree
+> > node.
+> > 
+> > Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> > ---
+> >  arch/arm64/Kconfig.platforms | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> > index a541bb029..0ffd65e36 100644
+> > --- a/arch/arm64/Kconfig.platforms
+> > +++ b/arch/arm64/Kconfig.platforms
+> > @@ -270,6 +270,7 @@ config ARCH_QCOM
+> >  	select GPIOLIB
+> >  	select PINCTRL
+> >  	select HAVE_PWRCTRL if PCI
+> > +	select PCI_PWRCTRL_SLOT if PCI
+> 
+> PWRCTL isn't a fundamental feature of ARCH_QCOM, so why do we select it
+> here?
+> 
+We were asked to select it in the same way as PCI_PWRCTL_PWRSEQ, following
+an approach like:
 
-Implement new functions, of_pci_setup_wake_irq() and
-of_pci_teardown_wake_irq(), to manage wake interrupts for PCI devices
-using the Device Tree.
+select PCI_PWRCTL_SLOT if ARCH_QCOM in Kconfig and nothing in defconfig.
 
-From the port bus driver call these functions to enable wake support
-for bridges.
+But to be honest, we didn't figure out a more appropriate way. Unlike
+PCI_PWRCTL_PWRSEQ, which is selected by ath11k/ath12k, PCI_PWRCTL_SLOT
+doesn't have a specific endpoint device driver to select it. Would it be
+appropriate to add "select PCI_PWRCTL_SLOT if HAVE_PWRCTL" in the Kconfig
+for portdrv? Do you have any recommendations?
 
-Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Tested-by: Sherry Sun <sherry.sun@nxp.com>
----
- drivers/pci/of.c           | 67 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h          |  6 +++++
- drivers/pci/pcie/portdrv.c | 12 ++++++++-
- 3 files changed, 84 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index ab7a8252bf4137a17971c3eb8ab70ce78ca70969..3487cd62d81f0a66e7408e286475e8d91c2e410a 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -7,6 +7,7 @@
- #define pr_fmt(fmt)	"PCI: OF: " fmt
- 
- #include <linux/cleanup.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/irqdomain.h>
- #include <linux/kernel.h>
- #include <linux/pci.h>
-@@ -15,6 +16,7 @@
- #include <linux/of_address.h>
- #include <linux/of_pci.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_wakeirq.h>
- #include "pci.h"
- 
- #ifdef CONFIG_PCI
-@@ -966,3 +968,68 @@ u32 of_pci_get_slot_power_limit(struct device_node *node,
- 	return slot_power_limit_mw;
- }
- EXPORT_SYMBOL_GPL(of_pci_get_slot_power_limit);
-+
-+/**
-+ * of_pci_slot_setup_wake_irq - Set up wake interrupt for PCI device
-+ * @pdev: The PCI device structure
-+ *
-+ * This function sets up the wake interrupt for a PCI device by getting the
-+ * corresponding WAKE# gpio from the device tree, and configuring it as a
-+ * dedicated wake interrupt.
-+ *
-+ * Return: 0 if the WAKE# gpio is not available or successfully parsed else
-+ * errno otherwise.
-+ */
-+int of_pci_slot_setup_wake_irq(struct pci_dev *pdev)
-+{
-+	struct gpio_desc *wake;
-+	struct device_node *dn;
-+	int ret, wake_irq;
-+
-+	dn = pci_device_to_OF_node(pdev);
-+	if (!dn)
-+		return 0;
-+
-+	wake = devm_fwnode_gpiod_get(&pdev->dev, of_fwnode_handle(dn),
-+				     "wake", GPIOD_IN, NULL);
-+	if (IS_ERR(wake) && PTR_ERR(wake) != -ENOENT) {
-+		dev_err(&pdev->dev, "Failed to get wake GPIO: %ld\n", PTR_ERR(wake));
-+		return PTR_ERR(wake);
-+	}
-+	if (IS_ERR(wake))
-+		return 0;
-+
-+	wake_irq = gpiod_to_irq(wake);
-+	if (wake_irq < 0) {
-+		dev_err(&pdev->dev, "Dailed to get wake irq: %d\n", wake_irq);
-+		return wake_irq;
-+	}
-+
-+	device_init_wakeup(&pdev->dev, true);
-+
-+	ret = dev_pm_set_dedicated_wake_irq(&pdev->dev, wake_irq);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to set wake IRQ: %d\n", ret);
-+		device_init_wakeup(&pdev->dev, false);
-+		return ret;
-+	}
-+	irq_set_irq_type(wake_irq, IRQ_TYPE_EDGE_FALLING);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(of_pci_slot_setup_wake_irq);
-+
-+/**
-+ * of_pci_slot_teardown_wake_irq - Teardown wake interrupt setup for PCI device
-+ *
-+ * @pdev: The PCI device structure
-+ *
-+ * This function tears down the wake interrupt setup for a PCI device,
-+ * clearing the dedicated wake interrupt and disabling device wake-up.
-+ */
-+void of_pci_slot_teardown_wake_irq(struct pci_dev *pdev)
-+{
-+	dev_pm_clear_wake_irq(&pdev->dev);
-+	device_init_wakeup(&pdev->dev, false);
-+}
-+EXPORT_SYMBOL_GPL(of_pci_slot_teardown_wake_irq);
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 39f368d2f26de872f6484c6cb4e12752abfff7bc..dd7a4da1225bbdb1dff82707b580e7e0a95a5abf 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -888,6 +888,9 @@ void pci_release_of_node(struct pci_dev *dev);
- void pci_set_bus_of_node(struct pci_bus *bus);
- void pci_release_bus_of_node(struct pci_bus *bus);
- 
-+int of_pci_slot_setup_wake_irq(struct pci_dev *pdev);
-+void of_pci_slot_teardown_wake_irq(struct pci_dev *pdev);
-+
- int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge);
- bool of_pci_supply_present(struct device_node *np);
- 
-@@ -931,6 +934,9 @@ static inline int devm_of_pci_bridge_init(struct device *dev, struct pci_host_br
- 	return 0;
- }
- 
-+static int of_pci_slot_setup_wake_irq(struct pci_dev *pdev) { return 0; }
-+static void of_pci_slot_teardown_wake_irq(struct pci_dev *pdev) { }
-+
- static inline bool of_pci_supply_present(struct device_node *np)
- {
- 	return false;
-diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-index e8318fd5f6ed537a1b236a3a0f054161d5710abd..9a6beec87e4523a33ecace684109cd44e025c97b 100644
---- a/drivers/pci/pcie/portdrv.c
-+++ b/drivers/pci/pcie/portdrv.c
-@@ -694,12 +694,18 @@ static int pcie_portdrv_probe(struct pci_dev *dev,
- 	     (type != PCI_EXP_TYPE_RC_EC)))
- 		return -ENODEV;
- 
-+	status = of_pci_slot_setup_wake_irq(dev);
-+	if (status)
-+		return status;
-+
- 	if (type == PCI_EXP_TYPE_RC_EC)
- 		pcie_link_rcec(dev);
- 
- 	status = pcie_port_device_register(dev);
--	if (status)
-+	if (status) {
-+		of_pci_slot_teardown_wake_irq(dev);
- 		return status;
-+	}
- 
- 	pci_save_state(dev);
- 
-@@ -732,6 +738,8 @@ static void pcie_portdrv_remove(struct pci_dev *dev)
- 
- 	pcie_port_device_remove(dev);
- 
-+	of_pci_slot_teardown_wake_irq(dev);
-+
- 	pci_disable_device(dev);
- }
- 
-@@ -744,6 +752,8 @@ static void pcie_portdrv_shutdown(struct pci_dev *dev)
- 	}
- 
- 	pcie_port_device_remove(dev);
-+
-+	of_pci_slot_teardown_wake_irq(dev);
- }
- 
- static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
-
--- 
-2.34.1
-
+> Regards,
+> Bjorn
+> 
+> >  	help
+> >  	  This enables support for the ARMv8 based Qualcomm chipsets.
+> >  
+> > -- 
+> > 2.34.1
+> > 
 
