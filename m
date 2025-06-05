@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-674345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5353FACEDBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:34:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F90ACEDC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8503AC69A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376261888CAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EBE217668;
-	Thu,  5 Jun 2025 10:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB35217F24;
+	Thu,  5 Jun 2025 10:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUz+6w30"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B6clUDOm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887C8214815;
-	Thu,  5 Jun 2025 10:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B151204098
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749119671; cv=none; b=gt3QOUxyluIRDvIXK7C4ILJcOv/yC0Ir1qA8GnR6HowL3Z8kuGADx1YV46SqUAzvSy1gacDeOUuTLbQrQ/cqQIdgqrgwqYknGhB1armJdKTCaG8ARKh80a4NQopYF84kLu96AMthF4FyLCVrLLSl/0gTgcSDU/ydtb0MX/TfUAg=
+	t=1749119825; cv=none; b=nGwmLsbcTO+wUhHEe1BkQjNQt4q6Pj2NYFLVw4oF6V15Y+n4LMrb7dXGT5xAeK7Ig8yujO42wHQ2TMoflF/hRKrxQL5doBFdcC7GHQUuh6Q9tV3YFVWiyd2Qs7Dr19nmrct6DI+Sr5qZqMTgYqBUERuP/EXqXiuSuQzXpxMPbUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749119671; c=relaxed/simple;
-	bh=kUMBoBt8t+ujGJnuO8GLvVLinOLvSpOK6xRoibGw/OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcHKtVr2RwPkAuQT/ZhkBpkTorZB924P6zmoQWqpcGOQFEBIGR0CwJnmp+t6zJP5Du3CDouEw90/M4F02oGdWMJ4RM0nEUnpIzh9lnAiTwbcEqfFdWmh8436pnYli4rGB6jVshUF3GIVdoMsuQSRbr6A9VWbqVbaumVWWV66ugU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YUz+6w30; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad8a8da2376so132383366b.3;
-        Thu, 05 Jun 2025 03:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749119668; x=1749724468; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GY6PcUQ7GIdKlT0RbJFYRR/l5dniLA33UzVFFU3Gb/o=;
-        b=YUz+6w30cRtibls6QOLN+AIq1sx1zUbJGt9wYsUAK9kfjfHx+go0K4hxoluqbzVSgD
-         jIWuvSXTAuZtN+VuF/CrVRMXsmCiZoeP8ZEZfwg3Om952XC23ldLCn5wZ7IxE2IzRxwT
-         MKwCIiWsNxTCOahPW0UwG/tG/tacMMDWIZWSuNLYtkMr0V/U3pP1qKlpkq7GCzqRuaxV
-         p2chXOlkWBc3wrbK9xxt5gMPZXYy/RJsxb04icmscj0u/DPakIqE6QvZj6OWteppTZWT
-         J01RuQNqKPxGKOlC8jx1fQUTY2nts9iuo4y2QfSSTQTz6q7at3gGfkTVA4Lk1SpYvQks
-         kcIg==
+	s=arc-20240116; t=1749119825; c=relaxed/simple;
+	bh=HvbmQ8S8Xhki+213LburIQLRhHEu40jaB3IQomFM2a4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F47eHTgAxH+lQ5Ls5gu04cW5OgXiEgvPhYIx5wwhqj5q/i9+j40ldugdz3jCpwv5Uft2VZ2VwU0zIbFf2fcc/MUIhzX8GhyZxubWscImUfNIJh8nOYIWeyTDxi9lSN7AoOF0M6B44nv8+kRb7LotfYE6KcjiWXOAmeKZn5/4fNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B6clUDOm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749119822;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=HfZ+Rq3UxyS14Y2YLAxAGNmm5WZCXoHrHzmHr+0WtKs=;
+	b=B6clUDOmx1qOmcgWvYkFbqxZkBK04XOPsA+9UG0nlStwOVP2z+ikUoncbG7d2FN0h56UZZ
+	TzB6peCusGWwzB9rqXFCPRLQktbL/JddoayjbZXgXDvrx5GQm31SCY8BXXijXzVo4hWJWu
+	H0lICCuCbSHN6Oj2dOdtwifuq83Sz7M=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-19-8QsZqkaNOFuZg2Vcvbhxxw-1; Thu, 05 Jun 2025 06:36:59 -0400
+X-MC-Unique: 8QsZqkaNOFuZg2Vcvbhxxw-1
+X-Mimecast-MFC-AGG-ID: 8QsZqkaNOFuZg2Vcvbhxxw_1749119818
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-442e0e6eb84so5051185e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:36:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749119668; x=1749724468;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GY6PcUQ7GIdKlT0RbJFYRR/l5dniLA33UzVFFU3Gb/o=;
-        b=thBjYL+rbLmgz4PfUM107Ytp1Dw7frHuxwQLVDc6UytQoYyb3VvIa8jndsbIXiyoFF
-         hpWIm13WOkdXKPh4Rdg1fhtZKCbovkSejnFmfCzT3b4fVlBKSRXnnTF4v0lc1Fhdvo6H
-         ra5QMnNUpEmKo8Ey82eA6VZT+X+cDygL5gB7an3Ps9XG2jDre2+v1wAztfaQhQQ11v3T
-         1jAZVagYvDoKkdgeW5xaGJu9J8L+S4+CY6UAfNs7Mh/GW923CjX2CMpoO2K4CfmTIhNE
-         ioUNNcDWTTdzKBJ1rwB8GFp5Pk9kRKvB0x+WVBED/HsSrsrgSRkAANv9FZ5slN29ytUD
-         gpuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9K0Ur4R5NZVoX61fzZujBBjQySU3f7ZL0bRjQAE81pX5kiGvBR4ZFVZlUDw27sGzs9J4=@vger.kernel.org, AJvYcCV/j0q53I0+e0FuUL8oqLuzQSHg0MAbjdQTAvYIQOefBIcBkAgfJhfLWLqQBIEINbuiV6UQeTj9@vger.kernel.org, AJvYcCWET6R1QGKD7nELHTh+t0IavuHAyRpFKsHANSKgMyQE23/qc3tkETriah02DziIDArKOmnqmSbiWk1JtQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8dRz0hDZqlY1X2v7F2rZR7902OK3qNTEBQmOr7mwTcmIOwtbv
-	M+lOJQuEm8ODGhqFzihrSd4Oz7ldJ7kkLuEgkSJtngycffT+fxMa/BeN
-X-Gm-Gg: ASbGncsQlpYgOsb/0EfKjCarZ2DxN3rFszT1hhvuKBenKaYnkLS2kr+FSgdcV1sZ9H9
-	iZBbWjWl05cgdqxxg11rEj/sKhOWjOWiXSoKurq1nXpLyzkh0UGIOdN8NoFiOQYI+ziu6bQJYRM
-	X3SN5NwYkhIx3CesbOa0dThW1d2EGa7KjqlBDep181/pX5gCNOiVMO4lrUQ3bAPqn42iVkidSoh
-	ohXig4MnHRake+L6vSpWYrVBZzE9n9MP3rOp0lWABlpIbyjMMnIHgbX11gH0v8NXUF5PY1qS4Va
-	/C36ZipnXC/q9pytQ8pGpByYeWRmQjgALc43pt5AZCaMhCdLhZFHxpoGHpGi/tt6
-X-Google-Smtp-Source: AGHT+IHg7fUxzeFW9/vUQ85/5jCtPTR8D+webp6yxNq+RW1s4HYGMF1CvkCl+CW8SjxJJEQWQW6O0w==
-X-Received: by 2002:a17:906:81d8:b0:add:fc26:c1c4 with SMTP id a640c23a62f3a-addfc26c29bmr444610266b.59.1749119667697;
-        Thu, 05 Jun 2025 03:34:27 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::22f? ([2620:10d:c092:600::1:d66f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-addedf378ebsm321104366b.32.2025.06.05.03.34.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 03:34:26 -0700 (PDT)
-Message-ID: <fc705cd6-ad20-4f1a-bdaf-d3046f062d20@gmail.com>
-Date: Thu, 5 Jun 2025 11:35:46 +0100
+        d=1e100.net; s=20230601; t=1749119818; x=1749724618;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HfZ+Rq3UxyS14Y2YLAxAGNmm5WZCXoHrHzmHr+0WtKs=;
+        b=FrnZD9pI93OQd3LvorAUZDhkaog56nRNmokOqmdVcA2Av/a33MqJ2qLLiQTNicq4ak
+         Os9W0oh2E372iA2CYK/wXCP2wHwDL+Qkee65bvAclVRxBEaM2DDkUkPL2d/A8EVacBMP
+         hKEfHV5BDI7fdeAeAeuokXqBePnJbG0Xz7grbVfPuROZPWtshiV0Dol1svgnuUE3uNB2
+         B7w6GfueNxL0TuaQ/P19hGvIt24Ewn5p2Pc8i8wFHjsq+bHW3HDoedsUzvajeEkJAy3E
+         zyx9689rgGtAAElff948K3Z28qpd6+m9FFSrTrXUxThtWItWSMUC1IVY/IhuoTt2g5H6
+         YajQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEqpvnZs72DTJH4wcy5hvxWAZqhrvbvsbjpcnkWwGK+5Mw+/J7ZaB0+ZOUFgMb6x9lgw85PRfFdXipW+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG3Z7p257DMScdDop/WlHy1aMjacwGhL5rDtjOI3c7uBnBU4Fc
+	oKvbsHUURE60TEnpHM26ZylSH1pUIcXkZ550Iv0Q51r4Rb1Bv9nK8wi79B7+978tIBoQW9kjyvu
+	Qh0dEHo86H1G+O1gNciM7ftwX7enEjijOlLZcyA9d5u9k7vxAbjkJKO7D7TZisjEi+Q==
+X-Gm-Gg: ASbGnct0W3m7DWT/dw751yzbvcsNSszKXG+WRbMRuXwc+44FrVjRDBMSPutAxzHfY73
+	rxmn2GT3cZ0FKYIwHbmC/if/vMhjohlomiEy3SSMp9qA/BBhwkwPKFOJn27cLDcHYqkJBzHniDf
+	qJt3ooFL4OOhP9RS+O3ZhvbAeh/wrPMQJxlC0huxYSyBuXRL1md4zzu7kkdiEY9hR7bFQq1079x
+	9mg+66yY7wg45OEZkKHnq/Xvdsx/YmaXjaVuCp2M8xUeRYfZJeiWXwsoq/Aoemo+nGeJOnH+6Dy
+	jLu76dgRltt1AQ90IdIT/+qrLRDMBvuHi0IaiRQBNp0dVSDlv4T/Ic1oBTVe1NimG7HehpIKig=
+	=
+X-Received: by 2002:a05:600c:64c3:b0:451:df07:f437 with SMTP id 5b1f17b1804b1-451f0b42832mr62125205e9.30.1749119818008;
+        Thu, 05 Jun 2025 03:36:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1bx8suhPbgO55wHNgDBL3CiHw3bkoX/59SOoKYKbZiUG9FMRz0rmV3itW+HwRwGTHenI8UQ==
+X-Received: by 2002:a05:600c:64c3:b0:451:df07:f437 with SMTP id 5b1f17b1804b1-451f0b42832mr62125005e9.30.1749119817668;
+        Thu, 05 Jun 2025 03:36:57 -0700 (PDT)
+Received: from rh.fritz.box (p200300f6af1bce00e6fe5f11c0a7f4a1.dip0.t-ipconnect.de. [2003:f6:af1b:ce00:e6fe:5f11:c0a7:f4a1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f8311ae6sm14105175e9.2.2025.06.05.03.36.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 03:36:57 -0700 (PDT)
+From: Sebastian Ott <sebott@redhat.com>
+To: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Cc: Colton Lewis <coltonlewis@google.com>,
+	Ricardo Koller <ricarkol@google.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Sebastian Ott <sebott@redhat.com>
+Subject: [PATCH v3 0/4] KVM: arm64: selftests: arch_timer_edge_cases fixes
+Date: Thu,  5 Jun 2025 12:36:09 +0200
+Message-ID: <20250605103613.14544-1-sebott@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v4 09/18] page_pool: rename __page_pool_put_page() to
- __page_pool_put_netmem()
-To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
- ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
- akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
- andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
- edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-References: <20250604025246.61616-1-byungchul@sk.com>
- <20250604025246.61616-10-byungchul@sk.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250604025246.61616-10-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/4/25 03:52, Byungchul Park wrote:
-> Now that __page_pool_put_page() puts netmem, not struct page, rename it
-> to __page_pool_put_netmem() to reflect what it does.
+Some small fixes for arch_timer_edge_cases that I stumbled upon
+while debugging failures for this selftest on ampere-one.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Changes since v1:
+ * determine effective counter width based on suggestions from Marc
+Changes since v2:
+ * new patch to fix xval initialization
 
+I've done tests with this on various machines - no issues during
+several hundreds of test runs.
+
+v1: https://lore.kernel.org/kvmarm/20250509143312.34224-1-sebott@redhat.com/
+v2: https://lore.kernel.org/kvmarm/20250527142434.25209-1-sebott@redhat.com/
+
+Sebastian Ott (4):
+  KVM: arm64: selftests: fix help text for arch_timer_edge_cases
+  KVM: arm64: selftests: fix thread migration in arch_timer_edge_cases
+  KVM: arm64: selftests: arch_timer_edge_cases - fix xval init
+  KVM: arm64: selftests: arch_timer_edge_cases - determine effective counter width
+
+ .../kvm/arm64/arch_timer_edge_cases.c         | 39 ++++++++++++-------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
+
+
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
 -- 
-Pavel Begunkov
+2.49.0
 
 
