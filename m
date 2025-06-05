@@ -1,196 +1,192 @@
-Return-Path: <linux-kernel+bounces-674730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D3FACF3CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F048ACF3D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2988B189AA2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2398A189CB75
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6276A274FCF;
-	Thu,  5 Jun 2025 16:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3388423E33A;
+	Thu,  5 Jun 2025 16:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DA6xyS7R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY/uBsa3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E6D1F4168
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 16:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825B71E834B;
+	Thu,  5 Jun 2025 16:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749139808; cv=none; b=VAtZr/c+mG5Gwuk3MJ4qOd/7TxEy7R5hkCGjW8L4yzSEP7XAtxDWxCNYGCtgf+E08yL3gjtZNW6FniFphJ+j+pKiDoSF7uUBi6VMhIb1DJhNn+WadL3Za7OO6PAonx1u+J5+gfO0eY9WkjCEPp5sVip63+lHf3SUJzBuwQ1MOuY=
+	t=1749139891; cv=none; b=Nz9EhciJnxATfpLTBUvBGy5Q6YpVLeEqyMGh9yZvQGh8PZ86bLiF9/ffbqgBNoQTyIpUm9Pf+iKF2OTccT8mc03cA4wiHkGm+q1N/QFaw0snjNsJKBDLTwzkm+nK5FIlVkTIgaa1JcnBFpx0kcs4Eja0ZdtVp+Hgay7wrv1BV7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749139808; c=relaxed/simple;
-	bh=o/Tlk9x1eSaxP1Eo8YyEvaZZuLAOeOGyA2Hs3yxwQXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J+ZV3ZSNovKBRFZ5EDUHUZmYTfnsdwCA9Al/EmPNzkg7fOap9isW7DMnUjYkyVWZ8lP1AOKfDoNDkAYf02zeyfDIgmx4CFsVYNX0ytNFUe3Apfm8qoauGgPJMKTQEXshc/ywSYafXf2Ranws1qhXnvNCBG+p0gh7RWhCeLUgm40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DA6xyS7R; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749139805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wDs1HzFrKoifF1hub98p0mc0v8p741xLPpTuV3UpURY=;
-	b=DA6xyS7Roo3yzLc7aOvKqSQxpjBtJBR5DmiiX6ZWGHcEBaNYM+Zk2Gabsr8fAztMhyDDNq
-	Za7Zt7QbtszofEJjf5fiD0/TTTOB8Ag1nXJLA0AwSWByiuDx7uDOmO+FImVm+ziTyYOeDE
-	uBQE6rWOFwaFHX3KAoE/jh6DLWiwMmk=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-rSGf6ESROTKGDHIb_BhKbw-1; Thu, 05 Jun 2025 12:10:04 -0400
-X-MC-Unique: rSGf6ESROTKGDHIb_BhKbw-1
-X-Mimecast-MFC-AGG-ID: rSGf6ESROTKGDHIb_BhKbw_1749139804
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddb983411bso2706945ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 09:10:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749139803; x=1749744603;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wDs1HzFrKoifF1hub98p0mc0v8p741xLPpTuV3UpURY=;
-        b=H9ORFhTe1jSxKwhGSSirKybkTRQPLYp6LaNBeaHx06jHc6GpglqlslM7AuE2I2vmk/
-         zGyZkUYTxzXKOiKUkBFeCos6elkwiCNZ88EcrF5a5cF8Ov8Ru4YewM12Epb60J3RJOtB
-         r9x9leLeLyotn4BguU6luGHeR2OZYa+vt4L3+FIMxRR4YwZnnLrv/IRgycG4iTEOYtug
-         QujDAugWAY6erUenx7gYEW11vP74K1FzG6xIFdWkknuPPAJPy/mY4mbCb8aF2nyDqZ9j
-         Q8P6r3+bLxqS7yNwrMfETNopOoUOSjWwfrrY3ttAavywYJWtySR7jk0dfuatVl9BmeDd
-         phmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQcOCCes6/Lb7/qxcNRv+BVCgmFf/JvqXFWwRx0f5jZdpRH2jduxfnt34EtnBu2XSLXmskB4DRekZQz30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvF0pIFJoklttQ4CmZDYId9WI0AKi8K0Zw1hX/YIhhKyNkwWSo
-	2xRLjSZFMNlA9yYdmH0xspFX2UZ8s/eCgAWoVr0bD6aUMITEuqvXgvBjPW065BCdZzJGdjfb6j0
-	0F1AH3P/Yn5jJ7HjZBBGX5cpQ3Nh+9xlCYaIy4h8oQnNOUZkkpHaJfomtb4dJkrei7gKkEkshtw
-	==
-X-Gm-Gg: ASbGncuEaEoUucz9iRKuHqPl/FLiVo5Ms8IiIVUAkSHGWE5kxLByFF/9sArlogOcJVf
-	Bdewnn8KGhmdIuSznYhIWPugYL4nMSg+F7K2K05bTcJI/5ZzAlDVo0TZyBwPKwgJ5xubq6GDwo5
-	fVuKQ7JH28WXNT+bCA2DKCg2Rv6JE966rAGBn2+8lNiJHZMZoRHcI5qVBnq4gM/tKWuuTvdvKgA
-	nhRuj4a797Z3TuCuwTem6HhaSZJUIY+SqIOaPAnMZyuVwl9R4fyuJUSE2CfTGkaFqeoK5GD686W
-	6kkMFeCOWyZ8w1k=
-X-Received: by 2002:a05:6e02:2206:b0:3dd:b589:9da5 with SMTP id e9e14a558f8ab-3ddbece82afmr22588565ab.1.1749139803055;
-        Thu, 05 Jun 2025 09:10:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBfaCbaCOLCMKp+VFVqNAc7n8GjDzBAgP6HF7JopaVxLiFSueJ4pIKVONeJY/lKn0BrZzv1A==
-X-Received: by 2002:a05:6e02:2206:b0:3dd:b589:9da5 with SMTP id e9e14a558f8ab-3ddbece82afmr22588485ab.1.1749139802661;
-        Thu, 05 Jun 2025 09:10:02 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7ed82fbsm3360220173.90.2025.06.05.09.10.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 09:10:00 -0700 (PDT)
-Date: Thu, 5 Jun 2025 10:09:58 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: lizhe.67@bytedance.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] vfio/type1: optimize vfio_unpin_pages_remote() for large
- folio
-Message-ID: <20250605100958.10c885d3.alex.williamson@redhat.com>
-In-Reply-To: <20250605124923.21896-1-lizhe.67@bytedance.com>
-References: <20250605124923.21896-1-lizhe.67@bytedance.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1749139891; c=relaxed/simple;
+	bh=E7VA2CPsBD+xZsq1Va/C0TK1ZuXdJAIigt4d1i/YPfs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GRfkZUKt23mM/s7jd+2xSs3YpSkeAdoYAX1ap5MigD+UQhAN/y5xcKO3GIVcajXVeWKoKZ70d5+6XC8bjKXmw23RqA1uNxpZjSY+KDVKa47yFhIb1Zrx5DUZnfM77YBWL+xB9nH8fCM9VGQdM6SsooSCP65s5z5FcCNXhK6sdEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pY/uBsa3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7C2C4CEE7;
+	Thu,  5 Jun 2025 16:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749139891;
+	bh=E7VA2CPsBD+xZsq1Va/C0TK1ZuXdJAIigt4d1i/YPfs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pY/uBsa3EXGps7nkVHf6ZlFan87fzB+jEHAbV7I1VbGwvXPet2AechYidp/w9NIBL
+	 0DdwUlJvEupi8vlu2KTKZy6gOO1ls60Ab8KXOPXK0zR8SnQ+mZyPhr7jfT7mmTYtJ8
+	 aHq1sqwk5WkEJW6DeMDH7KoniALPUVbO9UcC5z17Z1F/03TuLu8KpUEOMv65eI+L+s
+	 JBUkDF57OcmrwuXBNU2N3erkXquV3vR7Htz6EHEu+hnFQu2AvwyeOCWlzF8Fi8dpyx
+	 DMZeSSfJhPLmR103c+oy6Iimw61akqox7AymWQUhfdCE2asX5Z73xLoiOElb5fFXQ+
+	 y/RCccouvgSnA==
+From: SeongJae Park <sj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/4] mm/damon: introduce DAMON_STAT module
+Date: Thu,  5 Jun 2025 09:11:29 -0700
+Message-Id: <20250605161129.82107-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250605152508.3275113-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu,  5 Jun 2025 20:49:23 +0800
-lizhe.67@bytedance.com wrote:
+On Thu,  5 Jun 2025 08:25:07 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-> From: Li Zhe <lizhe.67@bytedance.com>
+> On Wed,  4 Jun 2025 11:31:24 -0700 SeongJae Park <sj@kernel.org> wrote:
+[...]
+> Hi SJ, thank you for this patch! I have been looking forward to it : -)
+> I had a few questions about the init function:
+
+Hi Joshua, I'm more than happy to get your questions :)
+
 > 
-> This patch is based on patch 'vfio/type1: optimize vfio_pin_pages_remote()
-> for large folios'[1].
+> [...snip...]
 > 
-> When vfio_unpin_pages_remote() is called with a range of addresses that
-> includes large folios, the function currently performs individual
-> put_pfn() operations for each page. This can lead to significant
-> performance overheads, especially when dealing with large ranges of pages.
+> > +static int damon_stat_start(void)
+> > +{
+> > +	damon_stat_context = damon_stat_build_ctx();
+> > +	if (!damon_stat_context)
+> > +		return -ENOMEM;
+> > +	return damon_start(&damon_stat_context, 1, true);
+> > +}
+> > +
+> > +static void damon_stat_stop(void)
+> > +{
+> > +	damon_stop(&damon_stat_context, 1);
+> > +	damon_destroy_ctx(damon_stat_context);
+> > +}
+> > +
+> > +static bool damon_stat_init_called;
+> > +
+> > +static int damon_stat_enabled_store(
+> > +		const char *val, const struct kernel_param *kp)
+> > +{
+> > +	bool is_enabled = enabled;
+> > +	int err;
+> > +
+> > +	err = kstrtobool(val, &enabled);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	if (is_enabled == enabled)
+> > +		return 0;
+> > +
+> > +	if (!damon_stat_init_called)
+> > +		/*
+> > +		 * probably called from command line parsing (parse_args()).
+> > +		 * Cannot call damon_new_ctx().  Let damon_stat_init() handle.
+> > +		 */
+> > +		return 0;
 > 
-> This patch optimize this process by batching the put_pfn() operations.
+> I was hoping you could educate me about how damon_stat_init_called works here.
+> I think my confusion comes from my lack of knowledge about kernel modules : -)
+> In the cover letter, you wrote that DAMON_STAT is a static kernel module.
+> My understanding was that this would mean damon_stat_init would always be
+> called,
+
+To my understanding, the function is called back only when the parameteer value
+is being changed.  Such changes could be made in runtime via parameter files,
+and in boot time via the kernel command line.  If there is not kernel command
+line for setting the parameter, this callback function is not called.
+
+> so I was wondering under what condition it would not be initialized.
+
+The enabled parameter value is initialized at build time, based on
+CONFIG_DAMON_STAT_ENABLED_DEFAULT.  So, the parameter value will always be
+initialized.
+
+> I see the comment you wrote above, but was still a little bit confused.
+
+The kernel command line parameters parsing is called in pretty early stage of
+the bootup, before slab is ready.  Hence, if enabled parmeter is set by the
+kernel command line, damon_stat_enabled_store() is called in the early stage,
+and fails from damon_stat_start(), since it needs slab, to initialize DAMON
+contexts.  For more details of such failure, you could refer to a previous
+issue report[1].
+
+Meanwhile, damon_stat_init() and module init functions are called later, when
+slab is ready.  We therefore check the case, and defer real handling of enabled
+to damon_stat_init() in the case.
+
+Thank you for this question, I find the comment has rooms to improve.  I'll try
+to make this better documented or easier to read.
+
 > 
-> The performance test results, based on v6.15, for completing the 8G VFIO
-> IOMMU DMA unmapping, obtained through trace-cmd, are as follows. In this
-> case, the 8G virtual address space has been separately mapped to small
-> folio and physical memory using hugetlbfs with pagesize=2M. For large
-> folio, we achieve an approximate 66% performance improvement. However,
-> for small folios, there is an approximate 11% performance degradation.
+> Also, should we perhaps call damon_stat_init() if !damon_stat_init_called?
+> That way, the first caller would just eat up the time it takes to run
+> damon_stat_start().
+
+damon_stat_init() is a module init function, and hence it will be called in
+boot time, regardless of enabled parameter setup on kernel command line.  In
+other words, it will be always invoked once, with !damon_stat_init_called.  And
+it will call damon_stat_start(), unless enabled is unset via
+CONFIG_DAMON_STAT_ENABLED_DEFAULT or kernel command line.
+
+So, the current implementation is working as you suggested, to my
+understanding.  Please let me know if I'm missing something.
+
 > 
-> Before this patch:
+> One other thought I have is that if this config checks for whether
+> damon_stat_init was called, this can be moved to the beginning of the function
+> before the other checks are run, but that is just my thought : -) Feel free
+> to keep the input check first, since having this at the beginning of the
+> function would mean incorrect inputs would be silently ignored.
+
+In the kernel command line based parameter setup scenario, later
+damon_stat_init() call should see the updated 'enabled' variable value.  Hence,
+the user input value check should be done here, regardless of if this is called
+before or after damon_stat_init().
+
+So I find no needs to change the code for now.  Nonetheless, I believe this
+code has many rooms to improve, and I'm always getting more than glad to get
+this kind of improvement ideas.  Thank you, Joshua.  Please feel free to let me
+know if you get another idea later.
+
+I hope I answered your questions, but please let me know if I'm missing
+something!
+
 > 
->     hugetlbfs with pagesize=2M:
->     funcgraph_entry:      # 94413.092 us |  vfio_unmap_unpin();
-> 
->     small folio:
->     funcgraph_entry:      # 118273.331 us |  vfio_unmap_unpin();
-> 
-> After this patch:
-> 
->     hugetlbfs with pagesize=2M:
->     funcgraph_entry:      # 31260.124 us |  vfio_unmap_unpin();
-> 
->     small folio:
->     funcgraph_entry:      # 131945.796 us |  vfio_unmap_unpin();
+> Thank you SJ! I hope you have a great day!
 
-I was just playing with a unit test[1] to validate your previous patch
-and added this as well:
+You too.  Friday is coming!
 
-Test options:
+[1] https://lore.kernel.org/linux-mm/20220604192222.1488-1-sj@kernel.org/
 
-	vfio-pci-mem-dma-map <ssss:bb:dd.f> <size GB> [hugetlb path]
 
-I'm running it once with device and size for the madvise and populate
-tests, then again adding /dev/hugepages (1G) for the remaining test:
+Thanks,
+SJ
 
-Base:
-# vfio-pci-mem-dma-map 0000:0b:00.0 16
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO MAP DMA in 0.294 s (54.4 GB/s)
-VFIO UNMAP DMA in 0.175 s (91.3 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO MAP DMA in 0.726 s (22.0 GB/s)
-VFIO UNMAP DMA in 0.169 s (94.5 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO MAP DMA in 0.071 s (224.0 GB/s)
-VFIO UNMAP DMA in 0.103 s (156.0 GB/s)
-
-Map patch:
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO MAP DMA in 0.296 s (54.0 GB/s)
-VFIO UNMAP DMA in 0.175 s (91.7 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO MAP DMA in 0.741 s (21.6 GB/s)
-VFIO UNMAP DMA in 0.184 s (86.7 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO MAP DMA in 0.010 s (1542.9 GB/s)
-VFIO UNMAP DMA in 0.109 s (146.1 GB/s)
-
-Map + Unmap patches:
-------- AVERAGE (MADV_HUGEPAGE) --------
-VFIO MAP DMA in 0.301 s (53.2 GB/s)
-VFIO UNMAP DMA in 0.236 s (67.8 GB/s)
-------- AVERAGE (MAP_POPULATE) --------
-VFIO MAP DMA in 0.735 s (21.8 GB/s)
-VFIO UNMAP DMA in 0.234 s (68.4 GB/s)
-------- AVERAGE (HUGETLBFS) --------
-VFIO MAP DMA in 0.011 s (1434.7 GB/s)
-VFIO UNMAP DMA in 0.023 s (686.5 GB/s)
-
-So overall the map optimization shows a nice improvement in hugetlbfs
-mapping performance.  I was hoping we'd see some improvement in THP,
-but that doesn't appear to be the case.  Will folio_nr_pages() ever be
-more than 1 for THP?  The degradation in non-hugetlbfs case is small,
-but notable.
-
-The unmap optimization shows a pretty substantial decline in the
-non-hugetlbfs cases.  I don't think that can be overlooked.  Thanks,
-
-Alex
-
-[1]https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
-
+[...]
 
