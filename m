@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-674773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2304FACF477
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:37:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD05ACF470
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0C61891598
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:37:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD49E3A5E9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F012750F8;
-	Thu,  5 Jun 2025 16:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078511DF246;
+	Thu,  5 Jun 2025 16:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="QiBLxRLH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="LqooNOCZ"
 Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827194315A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828B7172BB9
 	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 16:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749141364; cv=none; b=cV5euo+Yaq6T+lmRyxRVKkxQkuoHSVDvj7oNdoqf3RSUDfEbICR5cL5QDOVzcKN7p2m0FRtQQbO3mU538MDizEbeCQu23BhI7d6qwP/4povEhywyA8VQHyMqm91eB5IUPwf7OqT7DDs1a4seFDWMIU6vBnyjslU/7d8ThsboqM0=
+	t=1749141363; cv=none; b=XUgYtHuWqokR+kKOu4UyQLFJTh2XmR1HlXP/yU+XfB/jU7mXtupUR/x9oMGa9luQrzBkHe49H+B3XIuhFbeWesde0ZdBo15ptpu6e4GQStZ+Kt3ce5LZRo4A24AVPtLv6Z2eQduNydr1VYzCZT1OcbuSQYdrDdnNE+GpyHhOS/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749141364; c=relaxed/simple;
-	bh=OAMl2/2Up5MxIckrOMb5nox+KObSWQMglG+ax9q9st8=;
+	s=arc-20240116; t=1749141363; c=relaxed/simple;
+	bh=S5cxOSa6d88PfbTdq9eoJMTTbccAluAglm7/Dfl/fm8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Olk/SUj6VV2m3BXJ7PNsU2rtSfJSPWKrfylTGl4cNwDX9uj6sWZbUqUo09Lfh6VKoAVOLPgWlU1Tjv27pI+Jo6QzJCqrW9OChdS4BcioAm+LfQBvFAnO4C4V8N3eXmm5G10JlT5BhJFi4soWZkw3urOUpEv8fAi77hrcCIdCWIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=QiBLxRLH; arc=none smtp.client-ip=96.67.55.147
+	 MIME-Version; b=fzYhR4D1qc8lCdQK6clI2aAvkCrcySDPhPVFkLdWz6i4Br1agteW4zhQYZddQKv9JHKsUqd3K7WqHWQjCZa5EzzGjU0NAM4WWzeC+1u0vItRbMStVceZdOda+N30I8x5Y1wpsnsve1K1BY8z8NHg8ufzp5jt9Q50fFGNadewUw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=LqooNOCZ; arc=none smtp.client-ip=96.67.55.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=f4zP15oJQMI/cNiQtQETjNBzcgWHpdktSGMgq1QqQy0=; b=QiBLxRLHERqlWHVNPz4Kpw0uUz
-	C+LBnp6hw7J/zI9hGXrd8U/iM4/ncoxOrGQPqpBNYr/Br6vezA3cpHPGJvr+SvZvHNiK35H/DGXxe
-	HpL18ggmUASpqyzpjaqldVhmHokIYW2PKtabuYDiS68lHHzcvaR0+hNp0vD3CU72bVD42Ais8Zol1
-	4a7jtIuqSiITZ7lexE7VJyiYtz8Ycwknn2IVlByeU2kBsDNWLDxB2f8A/j5vOUrp59DnjBjDElh1N
-	Tt/MVO1XsUrIMv3oZtEVvNVEX3jHR1BBmT5ZdruH/wt2g3H3hfJBJrIBlG6AlYm713FtZWpIvKp39
-	B4Zh+ZWw==;
+	bh=1SMkrgUDqqJ7Fy358K5JacpCt/v6noOWf3XUoT7x+/I=; b=LqooNOCZTiZ7cTGXsh1U7Jc3tl
+	MbULD+5Zc9VxkZWtMoaypGpilkB/nO6POPonEtWoe3Vh881rNwjFE/idtr19n1sTDPUyZKydGqc0N
+	JpYhp6XlxoCazlLCSNGB5EB5iwXUtQA+eprZentYphTTHmT0lUXtMOq0bP/IKEm213vg8vUwqj9mH
+	hqVmRtbFhdbiZTJC7Yrz+AjNWg/V2MV018lcxhPO5tURZmlisPuxik8GFyf+QccJKufklZ3X24f9I
+	1gpnDFcz7dVHiHf9SfVO0ze1Pi4teE0fieUcGkgXjkjY69/NiJSUOkVyfWO4YVkK1hLCDBb6fTxRa
+	V7vZiXDw==;
 Received: from fangorn.home.surriel.com ([10.0.13.7])
 	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.97.1)
 	(envelope-from <riel@surriel.com>)
-	id 1uNDZC-000000002qg-3BgF;
+	id 1uNDZC-000000002qg-3H7C;
 	Thu, 05 Jun 2025 12:35:46 -0400
 From: Rik van Riel <riel@surriel.com>
 To: linux-kernel@vger.kernel.org
@@ -59,11 +59,11 @@ Cc: kernel-team@meta.com,
 	nadav.amit@gmail.com,
 	seanjc@google.com,
 	tglx@linutronix.de,
-	Yu-cheng Yu <yu-cheng.yu@intel.com>,
+	Rik van Riel <riel@fb.com>,
 	Rik van Riel <riel@surriel.com>
-Subject: [RFC PATCH v3 1/7] x86/mm: Introduce Remote Action Request MSRs
-Date: Thu,  5 Jun 2025 12:35:10 -0400
-Message-ID: <20250605163544.3852565-2-riel@surriel.com>
+Subject: [RFC PATCH v3 2/7] x86/mm: enable BROADCAST_TLB_FLUSH on Intel, too
+Date: Thu,  5 Jun 2025 12:35:11 -0400
+Message-ID: <20250605163544.3852565-3-riel@surriel.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250605163544.3852565-1-riel@surriel.com>
 References: <20250605163544.3852565-1-riel@surriel.com>
@@ -75,61 +75,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+From: Rik van Riel <riel@fb.com>
 
-Remote Action Request (RAR) is a model-specific feature to speed
-up inter-processor operations by moving parts of those operations
-from software to hardware.
+Much of the code for Intel RAR and AMD INVLPGB is shared.
 
-The current RAR implementation handles TLB flushes and MSR writes.
+Place both under the same config option.
 
-This patch introduces RAR MSRs.  RAR is introduced in later patches.
-
-There are five RAR MSRs:
-
-  MSR_CORE_CAPABILITIES
-  MSR_IA32_RAR_CTRL
-  MSR_IA32_RAR_ACT_VEC
-  MSR_IA32_RAR_PAYLOAD_BASE
-  MSR_IA32_RAR_INFO
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- arch/x86/include/asm/msr-index.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/Kconfig.cpu | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index b7dded3c8113..367a62c50aa2 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -110,6 +110,8 @@
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index f928cf6e3252..ab763f69f54d 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -360,7 +360,7 @@ menuconfig PROCESSOR_SELECT
  
- /* Abbreviated from Intel SDM name IA32_CORE_CAPABILITIES */
- #define MSR_IA32_CORE_CAPS			  0x000000cf
-+#define MSR_IA32_CORE_CAPS_RAR_BIT		  1
-+#define MSR_IA32_CORE_CAPS_RAR			  BIT(MSR_IA32_CORE_CAPS_RAR_BIT)
- #define MSR_IA32_CORE_CAPS_INTEGRITY_CAPS_BIT	  2
- #define MSR_IA32_CORE_CAPS_INTEGRITY_CAPS	  BIT(MSR_IA32_CORE_CAPS_INTEGRITY_CAPS_BIT)
- #define MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT_BIT  5
-@@ -122,6 +124,17 @@
- #define SNB_C3_AUTO_UNDEMOTE		(1UL << 27)
- #define SNB_C1_AUTO_UNDEMOTE		(1UL << 28)
+ config BROADCAST_TLB_FLUSH
+ 	def_bool y
+-	depends on CPU_SUP_AMD && 64BIT
++	depends on (CPU_SUP_AMD || CPU_SUP_INTEL) && 64BIT && SMP
  
-+/*
-+ * Remote Action Requests (RAR) MSRs
-+ */
-+#define MSR_IA32_RAR_CTRL		0x000000ed
-+#define MSR_IA32_RAR_ACT_VEC		0x000000ee
-+#define MSR_IA32_RAR_PAYLOAD_BASE	0x000000ef
-+#define MSR_IA32_RAR_INFO		0x000000f0
-+
-+#define RAR_CTRL_ENABLE			BIT(31)
-+#define RAR_CTRL_IGNORE_IF		BIT(30)
-+
- #define MSR_MTRRcap			0x000000fe
- 
- #define MSR_IA32_ARCH_CAPABILITIES	0x0000010a
+ config CPU_SUP_INTEL
+ 	default y
 -- 
 2.49.0
 
