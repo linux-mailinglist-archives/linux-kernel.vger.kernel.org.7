@@ -1,360 +1,253 @@
-Return-Path: <linux-kernel+bounces-674607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B0BACF1DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:28:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC92FACF1B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2327A3AE383
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:26:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09B11897213
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06C6276038;
-	Thu,  5 Jun 2025 14:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9551E17A314;
+	Thu,  5 Jun 2025 14:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XRxby1XR"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wMJQdNQe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M2tk8Jzw";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wMJQdNQe";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M2tk8Jzw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8637A276028
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89E8188734
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133453; cv=none; b=PEneVmgU2w3ShL35/OWYJFXiEYT2SAOuSckMHcPBRl5Ox0I7cgLxiV/nL28jc7+E9jaJVWpn+EvF1GvBF9+ZIGturZBsU9UosT2MvP8GuWlEzOw4Ov6bRG96Sslj7h3dulkltKFPCzlMbk5R4qOBW2goN2dOqgwwfQe97Lr5hh4=
+	t=1749133430; cv=none; b=t8wIgLzdcWqpJWz+w3qmwzhpGXAPF86Oza6LjWmmO0Ch13hwTy2cXzFVBibmVF2OY2RNq6/jM2X9NS6bzbFBvrk1zR4xBpkUyVci3uigeBJc23Z/a0rkSsrQKvDsAAVO7sDPhmenHCfR/hM6Bdq8ZXceH757kOu7EgqH3nTDPEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133453; c=relaxed/simple;
-	bh=UdVyomLcQ9lhCSM5rhMx3fo4dpnn2d6WNpQauCULsYs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sUZiPaK5E1V2ksj+1Azd+qvXC/JptioplstSyGJ7c+LdEmb/TYIN+r1otuoi0ltz6vgQscWlsm4V9rW1n9Q+byD53WpFMWleygmdJPHSbuXmKreXnsthglOD47wvWu0oLQz1A9WJ4G9YYr0vc1IWjF5VGDsONiTgC7BLRAAvtvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XRxby1XR; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749133449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1749133430; c=relaxed/simple;
+	bh=8JcmyBEdd4dZW0ykXLCuOpg53uPa5lB0AReWtq+k78Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=n4p68tp+WCeabQ9t71RSmW1fdckjky8wJMiMV7OLwiZvU7Qeie056gPHs8RWQpmlNkl8xFdDQDsyrpe2gsSf7QR82oste5FwYEa5hBW5TDj4IcuLY7mgvJ9lJ/26/+6mZ91RrT2DOccheNCStHXI0nVSAkI0BxBYThOaTgOrH08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wMJQdNQe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M2tk8Jzw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wMJQdNQe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M2tk8Jzw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BCEC41FDC9;
+	Thu,  5 Jun 2025 14:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749133401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=z6WeMoUEG2NQHEbc1q9LhXV2rOqSNxI45qJl4PwHDKU=;
-	b=XRxby1XR1Yi9NYeh65cM9rbxQEHAXlHDVFqZ7eaZr24rNlW1YvrJZVfleRu6SjIRsjtoc2
-	GTUmASUCMquIdTq+10sv8QDJ6zHHOZqMATeOed1L4tp9n177i+BOnusowXL+HT9dpVUNRJ
-	d0ULysKt3aH/C0G6AlhPX2Do2Lsbcs4=
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-To: mpatocka@redhat.com,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@Huawei.com
-Cc: linux-block@vger.kernel.org,
+	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
+	b=wMJQdNQe2CHkW3QhzHzBnRYpS6r79wY6Pzjenus1EwRVLCfJUnO6VIwHrNUhU5LymiO4Fg
+	Ym85LVtpiJdusifKnEB8uQPfGD/x80AcyEEsrMZCOsgg0EUiRCEwLjJNCOHFeRewkORAiQ
+	shAxpREEx6LV5r+wEWl7OoeM80agUvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749133401;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
+	b=M2tk8Jzw7FwcP9Zi/OpZUDNmqXkw0odqrNWc7yDoFQWfFTjqFZjCwPRTGUglVS4LU/mTJt
+	Y5ah8jcpV+DTVCAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749133401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
+	b=wMJQdNQe2CHkW3QhzHzBnRYpS6r79wY6Pzjenus1EwRVLCfJUnO6VIwHrNUhU5LymiO4Fg
+	Ym85LVtpiJdusifKnEB8uQPfGD/x80AcyEEsrMZCOsgg0EUiRCEwLjJNCOHFeRewkORAiQ
+	shAxpREEx6LV5r+wEWl7OoeM80agUvI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749133401;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
+	b=M2tk8Jzw7FwcP9Zi/OpZUDNmqXkw0odqrNWc7yDoFQWfFTjqFZjCwPRTGUglVS4LU/mTJt
+	Y5ah8jcpV+DTVCAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 23A81137FE;
+	Thu,  5 Jun 2025 14:23:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gPv7BVmoQWipRwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:21 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	dm-devel@lists.linux.dev,
-	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [RFC PATCH 06/11] dm-pcache: add cache_writeback
-Date: Thu,  5 Jun 2025 14:23:01 +0000
-Message-Id: <20250605142306.1930831-7-dongsheng.yang@linux.dev>
-In-Reply-To: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
-References: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v5 10/10] mm,memory_hotplug: Rename status_change_nid parameter in memory_notify
+Date: Thu,  5 Jun 2025 16:23:01 +0200
+Message-ID: <20250605142305.244465-11-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
+References: <20250605142305.244465-1-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Spamd-Result: default: False [-5.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo,oracle.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -5.30
 
-Introduce cache_writeback.c, which implements the asynchronous write-back
-path for pcache.  The new file is responsible for detecting dirty data,
-organising it into an in-memory tree, issuing bios to the backing block
-device, and advancing the cache’s *dirty tail* pointer once data has
-been safely persisted.
+The 'status_change_nid' field was used to track changes in the memory
+state of a numa node, but that funcionality has been decoupled from
+memory_notify and moved to node_notify.
+Current consumers of memory_notify are only interested in which node the
+memory we are adding belongs to, so rename current 'status_change_nid'
+to 'nid'.
 
-* Dirty-state detection
-  - `__is_cache_clean()` reads the kset header at `dirty_tail`, checks
-    magic and CRC, and thus decides whether there is anything to flush.
-
-* Write-back scheduler
-  - `cache_writeback_work` is queued on the cache task-workqueue and
-    re-arms itself at `PCACHE_CACHE_WRITEBACK_INTERVAL`.
-  - Uses an internal spin-protected `writeback_key_tree` to batch keys
-    belonging to the same stripe before IO.
-
-* Key processing
-  - `cache_kset_insert_tree()` decodes each key inside the on-media
-    kset, allocates an in-memory key object, and inserts it into the
-    writeback_key_tree.
-  - `cache_key_writeback()` builds a *KMEM-type* backing request that
-    maps the persistent-memory range directly into a WRITE bio and
-    submits it with `submit_bio_noacct()`.
-  - After all keys from the writeback_key_tree have been flushed,
-    `backing_dev_flush()` issues a single FLUSH to ensure durability.
-
-* Tail advancement
-  - Once a kset is written back, `cache_pos_advance()` moves
-    `cache->dirty_tail` by the exact on-disk size and the new position is
-    persisted via `cache_encode_dirty_tail()`.
-  - When the `PCACHE_KSET_FLAGS_LAST` flag is seen, the write-back
-    engine switches to the next segment indicated by `next_cache_seg_id`.
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- drivers/md/dm-pcache/cache_writeback.c | 239 +++++++++++++++++++++++++
- 1 file changed, 239 insertions(+)
- create mode 100644 drivers/md/dm-pcache/cache_writeback.c
+ Documentation/core-api/memory-hotplug.rst |  9 ++-------
+ include/linux/memory.h                    |  2 +-
+ mm/memory_hotplug.c                       |  4 ++--
+ mm/page_ext.c                             | 12 +-----------
+ 4 files changed, 6 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/md/dm-pcache/cache_writeback.c b/drivers/md/dm-pcache/cache_writeback.c
-new file mode 100644
-index 000000000000..fe07e7fad15e
---- /dev/null
-+++ b/drivers/md/dm-pcache/cache_writeback.c
-@@ -0,0 +1,239 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include <linux/bio.h>
-+
-+#include "cache.h"
-+#include "backing_dev.h"
-+#include "cache_dev.h"
-+#include "dm_pcache.h"
-+
-+static inline bool is_cache_clean(struct pcache_cache *cache, struct pcache_cache_pos *dirty_tail)
-+{
-+	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
-+	struct pcache_cache_kset_onmedia *kset_onmedia;
-+	u32 to_copy;
-+	void *addr;
-+	int ret;
-+
-+	addr = cache_pos_addr(dirty_tail);
-+	kset_onmedia = (struct pcache_cache_kset_onmedia *)cache->wb_kset_onmedia_buf;
-+
-+	to_copy = min(PCACHE_KSET_ONMEDIA_SIZE_MAX, PCACHE_SEG_SIZE - dirty_tail->seg_off);
-+	ret = copy_mc_to_kernel(kset_onmedia, addr, to_copy);
-+	if (ret) {
-+		pcache_dev_err(pcache, "error to read kset: %d", ret);
-+		return true;
-+	}
-+
-+	/* Check if the magic number matches the expected value */
-+	if (kset_onmedia->magic != PCACHE_KSET_MAGIC) {
-+		pcache_dev_debug(pcache, "dirty_tail: %u:%u magic: %llx, not expected: %llx\n",
-+				dirty_tail->cache_seg->cache_seg_id, dirty_tail->seg_off,
-+				kset_onmedia->magic, PCACHE_KSET_MAGIC);
-+		return true;
-+	}
-+
-+	/* Verify the CRC checksum for data integrity */
-+	if (kset_onmedia->crc != cache_kset_crc(kset_onmedia)) {
-+		pcache_dev_debug(pcache, "dirty_tail: %u:%u crc: %x, not expected: %x\n",
-+				dirty_tail->cache_seg->cache_seg_id, dirty_tail->seg_off,
-+				cache_kset_crc(kset_onmedia), kset_onmedia->crc);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+void cache_writeback_exit(struct pcache_cache *cache)
-+{
-+	cancel_delayed_work_sync(&cache->writeback_work);
-+	cache_tree_exit(&cache->writeback_key_tree);
-+}
-+
-+int cache_writeback_init(struct pcache_cache *cache)
-+{
-+	int ret;
-+
-+	ret = cache_tree_init(cache, &cache->writeback_key_tree, 1);
-+	if (ret)
-+		goto err;
-+
-+	/* Queue delayed work to start writeback handling */
-+	queue_delayed_work(cache_get_wq(cache), &cache->writeback_work, 0);
-+
-+	return 0;
-+err:
-+	return ret;
-+}
-+
-+static int cache_key_writeback(struct pcache_cache *cache, struct pcache_cache_key *key)
-+{
-+	struct pcache_backing_dev_req *writeback_req;
-+	struct pcache_backing_dev_req_opts writeback_req_opts = { 0 };
-+	struct pcache_cache_pos *pos;
-+	void *addr;
-+	u32 seg_remain;
-+	u64 off;
-+
-+	if (cache_key_clean(key))
-+		return 0;
-+
-+	pos = &key->cache_pos;
-+
-+	seg_remain = cache_seg_remain(pos);
-+	BUG_ON(seg_remain < key->len);
-+
-+	addr = cache_pos_addr(pos);
-+	off = key->off;
-+
-+	writeback_req_opts.type = BACKING_DEV_REQ_TYPE_KMEM;
-+	writeback_req_opts.end_fn = NULL;
-+	writeback_req_opts.gfp_mask = GFP_NOIO;
-+
-+	writeback_req_opts.kmem.data = addr;
-+	writeback_req_opts.kmem.opf = REQ_OP_WRITE;
-+	writeback_req_opts.kmem.len = key->len;
-+	writeback_req_opts.kmem.backing_off = off;
-+
-+	writeback_req = backing_dev_req_create(cache->backing_dev, &writeback_req_opts);
-+	if (!writeback_req)
-+		return -EIO;
-+
-+	backing_dev_req_submit(writeback_req, true);
-+
-+	return 0;
-+}
-+
-+static int cache_wb_tree_writeback(struct pcache_cache *cache)
-+{
-+	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
-+	struct pcache_cache_tree *cache_tree = &cache->writeback_key_tree;
-+	struct pcache_cache_subtree *cache_subtree;
-+	struct rb_node *node;
-+	struct pcache_cache_key *key;
-+	int ret;
-+	u32 i;
-+
-+	for (i = 0; i < cache_tree->n_subtrees; i++) {
-+		cache_subtree = &cache_tree->subtrees[i];
-+
-+		node = rb_first(&cache_subtree->root);
-+		while (node) {
-+			key = CACHE_KEY(node);
-+			node = rb_next(node);
-+
-+			ret = cache_key_writeback(cache, key);
-+			if (ret) {
-+				pcache_dev_err(pcache, "writeback error: %d\n", ret);
-+				return ret;
-+			}
-+
-+			cache_key_delete(key);
-+		}
-+	}
-+
-+	backing_dev_flush(cache->backing_dev);
-+
-+	return 0;
-+}
-+
-+static int cache_kset_insert_tree(struct pcache_cache *cache, struct pcache_cache_kset_onmedia *kset_onmedia)
-+{
-+	struct pcache_cache_key_onmedia *key_onmedia;
-+	struct pcache_cache_key *key;
-+	int ret;
-+	u32 i;
-+
-+	/* Iterate through all keys in the kset and write each back to storage */
-+	for (i = 0; i < kset_onmedia->key_num; i++) {
-+		key_onmedia = &kset_onmedia->data[i];
-+
-+		key = cache_key_alloc(&cache->writeback_key_tree);
-+		if (!key)
-+			return -ENOMEM;
-+
-+		ret = cache_key_decode(cache, key_onmedia, key);
-+		if (ret) {
-+			cache_key_delete(key);
-+			return ret;
-+		}
-+
-+		ret = cache_key_insert(&cache->writeback_key_tree, key, true);
-+		if (ret) {
-+			cache_key_delete(key);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void last_kset_writeback(struct pcache_cache *cache,
-+		struct pcache_cache_kset_onmedia *last_kset_onmedia)
-+{
-+	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
-+	struct pcache_cache_segment *next_seg;
-+
-+	pcache_dev_debug(pcache, "last kset, next: %u\n", last_kset_onmedia->next_cache_seg_id);
-+
-+	next_seg = &cache->segments[last_kset_onmedia->next_cache_seg_id];
-+
-+	mutex_lock(&cache->dirty_tail_lock);
-+	cache->dirty_tail.cache_seg = next_seg;
-+	cache->dirty_tail.seg_off = 0;
-+	cache_encode_dirty_tail(cache);
-+	mutex_unlock(&cache->dirty_tail_lock);
-+}
-+
-+void cache_writeback_fn(struct work_struct *work)
-+{
-+	struct pcache_cache *cache = container_of(work, struct pcache_cache, writeback_work.work);
-+	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
-+	struct pcache_cache_pos dirty_tail;
-+	struct pcache_cache_kset_onmedia *kset_onmedia;
-+	int ret = 0;
-+
-+	mutex_lock(&cache->writeback_lock);
-+	kset_onmedia = (struct pcache_cache_kset_onmedia *)cache->wb_kset_onmedia_buf;
-+	/* Loop until all dirty data is written back and the cache is clean */
-+	while (true) {
-+		if (pcache_is_stopping(pcache)) {
-+			mutex_unlock(&cache->writeback_lock);
-+			return;
-+		}
-+
-+		/* Get new dirty tail */
-+		mutex_lock(&cache->dirty_tail_lock);
-+		cache_pos_copy(&dirty_tail, &cache->dirty_tail);
-+		mutex_unlock(&cache->dirty_tail_lock);
-+
-+		if (is_cache_clean(cache, &dirty_tail))
-+			break;
-+
-+		if (kset_onmedia->flags & PCACHE_KSET_FLAGS_LAST) {
-+			last_kset_writeback(cache, kset_onmedia);
-+			continue;
-+		}
-+
-+		ret = cache_kset_insert_tree(cache, kset_onmedia);
-+		if (ret)
-+			break;
-+
-+		ret = cache_wb_tree_writeback(cache);
-+		if (ret)
-+			break;
-+
-+		pcache_dev_debug(pcache, "writeback advance: %u:%u %u\n",
-+			dirty_tail.cache_seg->cache_seg_id,
-+			dirty_tail.seg_off,
-+			get_kset_onmedia_size(kset_onmedia));
-+
-+		mutex_lock(&cache->dirty_tail_lock);
-+		cache_pos_advance(&cache->dirty_tail, get_kset_onmedia_size(kset_onmedia));
-+		cache_encode_dirty_tail(cache);
-+		mutex_unlock(&cache->dirty_tail_lock);
-+	}
-+	mutex_unlock(&cache->writeback_lock);
-+
-+	queue_delayed_work(cache_get_wq(cache), &cache->writeback_work, PCACHE_CACHE_WRITEBACK_INTERVAL);
-+}
+diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
+index b19c3be7437d..97efb7b651ac 100644
+--- a/Documentation/core-api/memory-hotplug.rst
++++ b/Documentation/core-api/memory-hotplug.rst
+@@ -59,17 +59,12 @@ The third argument (arg) passes a pointer of struct memory_notify::
+ 	struct memory_notify {
+ 		unsigned long start_pfn;
+ 		unsigned long nr_pages;
+-		int status_change_nid;
++		int nid;
+ 	}
+ 
+ - start_pfn is start_pfn of online/offline memory.
+ - nr_pages is # of pages of online/offline memory.
+-- status_change_nid is set node id when N_MEMORY of nodemask is (will be)
+-  set/clear. It means a new(memoryless) node gets new memory by online and a
+-  node loses all memory. If this is -1, then nodemask status is not changed.
+-
+-  If status_changed_nid* >= 0, callback should create/discard structures for the
+-  node if necessary.
++- nid is set to the node id, where the memory we are adding or removing belongs to.
+ 
+ The callback routine shall return one of the values
+ NOTIFY_DONE, NOTIFY_OK, NOTIFY_BAD, NOTIFY_STOP
+diff --git a/include/linux/memory.h b/include/linux/memory.h
+index a9ccd6579422..918c65ecf299 100644
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -109,7 +109,7 @@ struct memory_notify {
+ 	unsigned long altmap_nr_pages;
+ 	unsigned long start_pfn;
+ 	unsigned long nr_pages;
+-	int status_change_nid;
++	int nid;
+ };
+ 
+ struct notifier_block;
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 0550f3061fc4..bccbc02ed122 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1186,7 +1186,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+ 
+ 	mem_arg.start_pfn = pfn;
+ 	mem_arg.nr_pages = nr_pages;
+-	mem_arg.status_change_nid = node_arg.nid;
++	mem_arg.nid = node_arg.nid;
+ 	cancel_mem_notifier_on_err = true;
+ 	ret = memory_notify(MEM_GOING_ONLINE, &mem_arg);
+ 	ret = notifier_to_errno(ret);
+@@ -1987,7 +1987,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+ 
+ 	mem_arg.start_pfn = start_pfn;
+ 	mem_arg.nr_pages = nr_pages;
+-	mem_arg.status_change_nid = node_arg.nid;
++	mem_arg.nid = node_arg.nid;
+ 	cancel_mem_notifier_on_err = true;
+ 	ret = memory_notify(MEM_GOING_OFFLINE, &mem_arg);
+ 	ret = notifier_to_errno(ret);
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index c351fdfe9e9a..477e6f24b7ab 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -378,16 +378,6 @@ static int __meminit online_page_ext(unsigned long start_pfn,
+ 	start = SECTION_ALIGN_DOWN(start_pfn);
+ 	end = SECTION_ALIGN_UP(start_pfn + nr_pages);
+ 
+-	if (nid == NUMA_NO_NODE) {
+-		/*
+-		 * In this case, "nid" already exists and contains valid memory.
+-		 * "start_pfn" passed to us is a pfn which is an arg for
+-		 * online__pages(), and start_pfn should exist.
+-		 */
+-		nid = pfn_to_nid(start_pfn);
+-		VM_BUG_ON(!node_online(nid));
+-	}
+-
+ 	for (pfn = start; !fail && pfn < end; pfn += PAGES_PER_SECTION)
+ 		fail = init_section_page_ext(pfn, nid);
+ 	if (!fail)
+@@ -436,7 +426,7 @@ static int __meminit page_ext_callback(struct notifier_block *self,
+ 	switch (action) {
+ 	case MEM_GOING_ONLINE:
+ 		ret = online_page_ext(mn->start_pfn,
+-				   mn->nr_pages, mn->status_change_nid);
++				   mn->nr_pages, mn->nid);
+ 		break;
+ 	case MEM_OFFLINE:
+ 		offline_page_ext(mn->start_pfn,
 -- 
-2.34.1
+2.49.0
 
 
