@@ -1,208 +1,92 @@
-Return-Path: <linux-kernel+bounces-675193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5781DACFA29
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:47:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39099ACFA30
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB1C3B02D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:47:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A40175D56
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 23:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1312C27F170;
-	Thu,  5 Jun 2025 23:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8D427FB3E;
+	Thu,  5 Jun 2025 23:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PQLd0QGu"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIKNNcuk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92AC3C465;
-	Thu,  5 Jun 2025 23:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201003C465;
+	Thu,  5 Jun 2025 23:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749167242; cv=none; b=aELrhFVlGc+gAFhrJP7d4dCysaTvOi0Z/a9DKgysdFjPn6ABc9KwjdpOLRBx4NS0WTYKAwinUto+94zbcG2yHXfwzfgchd78A6V/wt4bVGaTXS4A0KdcEAwkX31VnZTXOQXx5Bg5BOrEEumkoM6ILF6e6JaTEzbVYD+dLhjpVi4=
+	t=1749167343; cv=none; b=C/QE63k4i0DX8rw9r/ly4MkCQ8wIYK3j+49kluK+2vqixwEsITCBuMsO5h4k6tjUusBgfUf1D6cHJ45ehKU7NFB8dpdGJQFnc9ahZBJNUX5WTjAgOxtwaVxqBttmkwemRPPDRJeyCPwbaW8uRYvU0A7TBfKgFErzhYjIeHUHZvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749167242; c=relaxed/simple;
-	bh=g4VRSe/HXTRCk8DmhZy4iWzMqe10cctuXgm2676dhjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MKI3QTuJ5wqkmW60wvbmtqfZ6h0Fx5XFMS0hEjMWph5pWXIi8Tu+IN+A+Px0PlpBazd2akZKNE/cau10a8UAW2pvsqY8BYS/WLFUeboC1bsH9BYkINqTarmugmqZu8k8l5+eem4mfGD8+24Rh45uCKXDhXtGSTWMVKfJqCPQWVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PQLd0QGu; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1749167233;
-	bh=15JvHcWTxIrumm959n5nDF+mUowsUAutYuadJfJTyv0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PQLd0QGuWnbp+uhMzA6EicYQNkgdhWk2t4zS0hsNjRdS7bjzO30j0BhNddGU+9Phq
-	 ZzkcNBo0OYOFXWXeyHFy1tkJ5+lkVXJ6Y4GVbPX9k0cOezhDCUQYJAio8Yx8B2ZjKe
-	 D884G8AYko9X8ZUx/4N3YyIRZFe9XEqeFMUC9O6xa76+XisbimGSdUGchOWaoWJyCJ
-	 VWSVcpQ8Q9JicWs6YHtzWEWVS+dqQkuLcaFugV4tCM1swD4CppbP0iGcxeqWTiJ1XC
-	 cvNm56WMYzhNArqGm1+voED/DoNZIzBlU2B7cWRHqnKDQIcHxVg9cyf3GxQfmIypWb
-	 nEiKmJW5HTfHw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bD1MM6xG7z4wbd;
-	Fri,  6 Jun 2025 09:47:11 +1000 (AEST)
-Date: Fri, 6 Jun 2025 09:47:11 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, Dmitry Osipenko
- <dmitry.osipenko@collabora.com>, Jacek Lawrynowicz
- <jacek.lawrynowicz@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-misc-fixes tree with Linus'
- tree
-Message-ID: <20250606094711.4b9909af@canb.auug.org.au>
+	s=arc-20240116; t=1749167343; c=relaxed/simple;
+	bh=g2l0xw2YqveNWEewJqmbBDGNV3httJi1IBdHEF4xqNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKq2X8Mz3ezLBcov3Zw3TDthnMOehOa0yaoo65O58oqFCqzGe7hrFZg6u+48qwuBGujxgNecICCUexy0n+vs0bDPU4jNh1No7bh0uo2e+//5kYLhXrq+OPdKBaX56WsP9G3Ly+jT6oe1zobeYpHQq+j2v3QcF8HAugCF76RQj3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIKNNcuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 591DEC4CEE7;
+	Thu,  5 Jun 2025 23:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749167342;
+	bh=g2l0xw2YqveNWEewJqmbBDGNV3httJi1IBdHEF4xqNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIKNNcukSh03Z7tTG2B00Jbxsd9ShCS5ns2E1k/Q5BwUymKAeEZH+mSPgY3tXmluX
+	 AHJq0j4RP0gZZdHRIcULT+Ajc0A7O7RVVfrxg8QcTjnAoH7nXht7KwVgdr+QC+voq9
+	 mmD4zhiUWtnUiNfyqxLhPG/A7BBjP0SvtJPilvlwuJclyWqzSEXCbRki5UTWB1Tela
+	 SgClrATKsUvE1vgTfUrERdWEj2YBLpEaHJrjFIrvoQTtJuD8DWt7+cvRgEtLU7znLh
+	 BojgW4+O3py0R3wiG4CtIT935bFg752YtPArEg7qjVACgjhbe9tX+KBEa8VsfgjbH5
+	 aDSUGiLvExMgQ==
+Date: Thu, 5 Jun 2025 18:49:00 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jia-Wei Chang <jia-wei.chang@mediatek.com>,
+	linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-mediatek@lists.infradead.org,
+	Johnson Wang <johnson.wang@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] dt-bindings: interconnect: add mt7988-cci compatible
+Message-ID: <174916733838.3486621.4521189465385649614.robh@kernel.org>
+References: <20250531112425.10525-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RPEO+toMXI_H5DxlpAIfJIy";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250531112425.10525-1-linux@fw-web.de>
 
---Sig_/RPEO+toMXI_H5DxlpAIfJIy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Sat, 31 May 2025 13:24:23 +0200, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Add compatible for Mediatek MT7988 SoC with mediatek,mt8183-cci fallback
+> which is taken by driver.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+> v2:
+> - no RFC
+> - drop "items" as sugested by conor
+> ---
+>  .../bindings/interconnect/mediatek,cci.yaml           | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
 
-Today's linux-next merge of the drm-misc-fixes tree got a conflict in:
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-  drivers/accel/ivpu/ivpu_gem.c
-
-between commit:
-
-  835b14ce4ee3 ("accel/ivpu: s/drm_gem_shmem_v[un]map/drm_gem_shmem_v[un]ma=
-p_locked/")
-
-from Linus' tree and commit:
-
-  98d3f772ca7d ("accel/ivpu: Use dma_resv_lock() instead of a custom mutex")
-
-from the drm-misc-fixes tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/accel/ivpu/ivpu_gem.c
-index e0d242d9f3e5,248bfebeaa22..000000000000
---- a/drivers/accel/ivpu/ivpu_gem.c
-+++ b/drivers/accel/ivpu/ivpu_gem.c
-@@@ -28,11 -28,21 +28,21 @@@ static inline void ivpu_dbg_bo(struct i
-  {
-  	ivpu_dbg(vdev, BO,
-  		 "%6s: bo %8p vpu_addr %9llx size %8zu ctx %d has_pages %d dma_mapped %=
-d mmu_mapped %d wc %d imported %d\n",
-- 		 action, bo, bo->vpu_addr, ivpu_bo_size(bo), bo->ctx ? bo->ctx->id : 0,
-+ 		 action, bo, bo->vpu_addr, ivpu_bo_size(bo), bo->ctx_id,
-  		 (bool)bo->base.pages, (bool)bo->base.sgt, bo->mmu_mapped, bo->base.map=
-_wc,
- -		 (bool)bo->base.base.import_attach);
- +		 (bool)drm_gem_is_imported(&bo->base.base));
-  }
- =20
-+ static inline int ivpu_bo_lock(struct ivpu_bo *bo)
-+ {
-+ 	return dma_resv_lock(bo->base.base.resv, NULL);
-+ }
-+=20
-+ static inline void ivpu_bo_unlock(struct ivpu_bo *bo)
-+ {
-+ 	dma_resv_unlock(bo->base.base.resv);
-+ }
-+=20
-  /*
-   * ivpu_bo_pin() - pin the backing physical pages and map them to VPU.
-   *
-@@@ -122,10 -130,9 +130,9 @@@ static void ivpu_bo_unbind_locked(struc
-  		bo->ctx =3D NULL;
-  	}
- =20
- -	if (bo->base.base.import_attach)
- +	if (drm_gem_is_imported(&bo->base.base))
-  		return;
- =20
-- 	dma_resv_lock(bo->base.base.resv, NULL);
-  	if (bo->base.sgt) {
-  		dma_unmap_sgtable(vdev->drm.dev, bo->base.sgt, DMA_BIDIRECTIONAL, 0);
-  		sg_free_table(bo->base.sgt);
-@@@ -277,12 -285,16 +285,16 @@@ static void ivpu_gem_bo_free(struct drm
-  	list_del(&bo->bo_list_node);
-  	mutex_unlock(&vdev->bo_list_lock);
- =20
-- 	drm_WARN_ON(&vdev->drm, !dma_resv_test_signaled(obj->resv, DMA_RESV_USAG=
-E_READ));
-+ 	drm_WARN_ON(&vdev->drm, !drm_gem_is_imported(&bo->base.base) &&
-+ 		    !dma_resv_test_signaled(obj->resv, DMA_RESV_USAGE_READ));
-+ 	drm_WARN_ON(&vdev->drm, ivpu_bo_size(bo) =3D=3D 0);
-+ 	drm_WARN_ON(&vdev->drm, bo->base.vaddr);
- =20
-  	ivpu_bo_unbind_locked(bo);
-- 	mutex_destroy(&bo->lock);
-+ 	drm_WARN_ON(&vdev->drm, bo->mmu_mapped);
-+ 	drm_WARN_ON(&vdev->drm, bo->ctx);
- =20
- -	drm_WARN_ON(obj->dev, bo->base.pages_use_count > 1);
- +	drm_WARN_ON(obj->dev, refcount_read(&bo->base.pages_use_count) > 1);
-  	drm_gem_shmem_free(&bo->base);
-  }
- =20
-@@@ -361,9 -376,9 +376,9 @@@ ivpu_bo_create(struct ivpu_device *vdev
-  		goto err_put;
- =20
-  	if (flags & DRM_IVPU_BO_MAPPABLE) {
-- 		dma_resv_lock(bo->base.base.resv, NULL);
-+ 		ivpu_bo_lock(bo);
- -		ret =3D drm_gem_shmem_vmap(&bo->base, &map);
- +		ret =3D drm_gem_shmem_vmap_locked(&bo->base, &map);
-- 		dma_resv_unlock(bo->base.base.resv);
-+ 		ivpu_bo_unlock(bo);
- =20
-  		if (ret)
-  			goto err_put;
-@@@ -386,9 -401,9 +401,9 @@@ void ivpu_bo_free(struct ivpu_bo *bo
-  	struct iosys_map map =3D IOSYS_MAP_INIT_VADDR(bo->base.vaddr);
- =20
-  	if (bo->flags & DRM_IVPU_BO_MAPPABLE) {
-- 		dma_resv_lock(bo->base.base.resv, NULL);
-+ 		ivpu_bo_lock(bo);
- -		drm_gem_shmem_vunmap(&bo->base, &map);
- +		drm_gem_shmem_vunmap_locked(&bo->base, &map);
-- 		dma_resv_unlock(bo->base.base.resv);
-+ 		ivpu_bo_unlock(bo);
-  	}
- =20
-  	drm_gem_object_put(&bo->base.base);
-
---Sig_/RPEO+toMXI_H5DxlpAIfJIy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhCLH8ACgkQAVBC80lX
-0GwSkAf/XLMVorC/BQUng2JSoICcDyVMT2c370vhORQ395nwOU8qmllWek21qUJc
-eQYPyKsLCyGKI9r4yKzaeaOF+I3XfXm1GrjpfFvtyKQX973y23AyQ6x8lBy9xF0E
-SVhpCOJpYn6dtpbXWQqiO4MobQPJta+mG+4JI0TfkGvTXCNIfUzRCK5GAyHeSQfJ
-y7OUfYoRRxhTcsVNuNniiaZgZuAorQ6ovRwwf/eYNinOelAZEmVLLVqxBs19LKvQ
-7c9XeczI4LkYQ4IVogwo5dFdhdB14m9ytzdOOpSA4ViTJDcXGMD49omGJhCxSf6o
-SAa4SerGGmZkukBZ+6VWMdqgMBtDew==
-=YM/O
------END PGP SIGNATURE-----
-
---Sig_/RPEO+toMXI_H5DxlpAIfJIy--
 
