@@ -1,153 +1,129 @@
-Return-Path: <linux-kernel+bounces-674667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29F7ACF29B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:11:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308DEACF283
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5CC174966
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE4718914C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971CA201278;
-	Thu,  5 Jun 2025 15:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CFF19F480;
+	Thu,  5 Jun 2025 15:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="b/SLqO4d"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMTGSVmn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BAD194A60;
-	Thu,  5 Jun 2025 15:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D8E145355;
+	Thu,  5 Jun 2025 15:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749136196; cv=none; b=PwALTIqZSduJA8Hg3qfZ8LuWDilcw6ZyxLs59+szpa4VpGL6r/CGn8CheBp4dbucdQ7WJa5p0vcxur1UyQDbD1zvNatRzuisqGNv0MHElczbXrf8lMbqrMoAfhSOLvHVjtJ3woSxAJsOnJflGi1Ho/5rQ1cKneNmHajDlkoDwF0=
+	t=1749136123; cv=none; b=MY34ryuONHqmVt90r2Hxw/GR1c19yqsbXs1bb7CJp+jNfcwFDu9ZTiypjxLy/8Mo5cU2bFG2S8ZwNEnUK92dAR39NCPf/RC/h6v8o4Zj63JgTC8akgrWuk9mKYggGQJoURQsyRpm2QEBDPLE5WRBvbY06P0IHJFZ40n8vIqTm54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749136196; c=relaxed/simple;
-	bh=bUZAefnMoQ6GyPP0LPJ56AhGcZo1AvmNMwPv/Ep77s8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rC5ADN592nsjStMMvtf3S46WtArhoUGinlY7OHgAzt+pes4dj5iKTma5a779kFE1N/nA5OUqLlDv9WluM1JXKM/kNA6CTgZE5X/V03VUFev4BK9VlSoTLHL9MKLLV6hN0VzNlvjHHR7GFwNteubUf4V9bhGlb4qoMUMSb0/5VGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=b/SLqO4d; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 25F0166C03A;
-	Thu,  5 Jun 2025 17:09:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1749136185;
-	bh=bUZAefnMoQ6GyPP0LPJ56AhGcZo1AvmNMwPv/Ep77s8=;
-	h=From:Subject:Date;
-	b=b/SLqO4dkgIS3CV1d41iGGnvVFhMbaQUmU7OjKM/ZhhMVeJtXoyHxMsz+jR/weZqg
-	 Vo8H9Dbm+Zly+mvWbOKm+7wvFfxjNGfGcs+49VZgueNCJUzhrgNksGZcihOUkW7vfT
-	 xGNeLYSVZ8t32YWM4yhE7JtpfPFT+IGcskIKOZihXs7NPH4NXisa68T7J6DjFwq66e
-	 5gXgqoA477y8tUCQ9+Chs+B+Svq4MuqSAdAxQ2oGXIDULuV/F2iFUSLwrrP6c1Kh3x
-	 W+K9BozF/5fyw5+i4QzzUlK3iKLNh/wStkSOEK9uGI3YHdeWri6F0icoow10qaHQwD
-	 rJhw2txD083QA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Linux ACPI <linux-acpi@vger.kernel.org>
-Subject:
- [PATCH v1 4/5] ACPI: processor: Rescan "dead" SMT siblings during
- initialization
-Date: Thu, 05 Jun 2025 17:07:31 +0200
-Message-ID: <2005721.PYKUYFuaPT@rjwysocki.net>
-In-Reply-To: <2226957.irdbgypaU6@rjwysocki.net>
-References: <2226957.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1749136123; c=relaxed/simple;
+	bh=eZKF+KQlpwHqJNTPOrcnmE84pyon0govQK9/bnf1jLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HujX8FrA27oZgPkOoUBNi9RCJb9q2WYFE+FnEzZiBNed3THwL9RH4gRAskdRiz0GyEBXNabYtJ4dNdAkQheRAfdn+0KA2nnKq3VMmt7Z3dhe76WZvL3xPgdHMahFFfN5Vu91kb0EUvTgM1ZJ6/56pLz/AEqxi4M2IvRP7GjMbeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMTGSVmn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51B5C4CEE7;
+	Thu,  5 Jun 2025 15:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749136122;
+	bh=eZKF+KQlpwHqJNTPOrcnmE84pyon0govQK9/bnf1jLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pMTGSVmnD5T11tXRr2QpazpKp63Fa92vzW3P2GCGr2TrgJnUusGrUnbvhcqH1o8e4
+	 GxZzRnHaex7DTHwGessFNcJtXT+MCWJPqLhPJ+Z0Y1uiPyqOfOQwl8YEnfuDJvunkG
+	 KLJQSRSgqsPK8ujg/oxFAn1Hn6kLt6Xqpbcl6C2jdrrIUJvi4JZj4/3jiGHd6eMdiI
+	 U5KHK6N7hZo7r2mlza3meQcwdM+NB5TDDeC3hVKLOdn2c1E1xQqqSm3vkiJdOyL2D8
+	 F6eE25r7j6hxOpEap3A97O/DZ9oKkZJORv6ABccQLj/M7Qz3zFCKSbESNd7vADV1mI
+	 zlOdUG++DGS4A==
+Date: Thu, 5 Jun 2025 10:08:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Remo Senekowitsch <remo@buenzli.dev>
+Cc: Saravana Kannan <saravanak@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v7 5/9] rust: device: Introduce PropertyGuard
+Message-ID: <20250605150840.GA2539727-robh@kernel.org>
+References: <20250530192856.1177011-1-remo@buenzli.dev>
+ <20250530192856.1177011-6-remo@buenzli.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTEzSEGzZ/ONVrWENr6vcXfS3S2jicISDIUk4t6WJg+Zjj/tMsiKrH6p/W9hVn65rDd2JKDd5uTYEHknKQT2r7pOoqF3rdVD5yhK7Rprhh7g9Zvcj23lpp2rY7UCLtUpLjrE40L5kP2ENOt7F7JFMQrsU0BxCSyD9ImwCg/5uHKqloLfTfX1B6buKhq24d5iBCDj1fuCRg5EDPCCcGoXCAG/xJ8DxnVxdLMqNeA6Murrcf5yV2bVSf0qD3cTb1ZGJEaagT8ZwEZw1hwmHq4GBUTZA/geTkMBRKK8IMyXCx4LjU27eYT2E9Bi7kPkpz1heTPAWpmaTKgTxzYdBmQllqRTWWWLh9bdarQACukaKKD1gzL4waUdt4/zs1VIPKSdqhTq/U/RVz897VTG9yYY8jkWxQq6PgqADFxzcZK1Xbl84dnPBPiNZZJp2JKO3TrdgQRIF0ftcWkGnuwtdjNGmbFzYx0xs6DyphKqnpfw0doJg/j4R9j02/CnAO0VHZgdc3XcoNq5AfMwnKkkfMlJ0VVvqv0agcecjwk98bxqwjhsD7SzajVr+ob2CJh5RClOTDUea/jBX/8ymupS2mmL96AXsULSd9hO9Jeu+zaC5gH8Q3nNw0PWwvWhQgNX6sclo7xfsl+qVxK82MnU768YcP4Apk++8jWA1uH4MOmnZrpnjw
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250530192856.1177011-6-remo@buenzli.dev>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, May 30, 2025 at 09:28:52PM +0200, Remo Senekowitsch wrote:
+> This abstraction is a way to force users to specify whether a property
+> is supposed to be required or not. This allows us to move error
+> logging of missing required properties into core, preventing a lot of
+> boilerplate in drivers.
+> 
+> It will be used by upcoming methods for reading device properties.
+> 
+> Signed-off-by: Remo Senekowitsch <remo@buenzli.dev>
+> ---
+>  rust/kernel/device/property.rs | 59 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/rust/kernel/device/property.rs b/rust/kernel/device/property.rs
+> index 8e0414b0517e4..b789fbbd0e6cc 100644
+> --- a/rust/kernel/device/property.rs
+> +++ b/rust/kernel/device/property.rs
+> @@ -155,3 +155,62 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>          unsafe { bindings::fwnode_handle_put(obj.cast().as_ptr()) }
+>      }
+>  }
+> +
+> +/// A helper for reading device properties.
+> +///
+> +/// Use [`Self::required_by`] if a missing property is considered a bug and
+> +/// [`Self::optional`] otherwise.
+> +///
+> +/// For convenience, [`Self::or`] and [`Self::or_default`] are provided.
+> +pub struct PropertyGuard<'fwnode, 'name, T> {
+> +    /// The result of reading the property.
+> +    inner: Result<T>,
+> +    /// The fwnode of the property, used for logging in the "required" case.
+> +    fwnode: &'fwnode FwNode,
+> +    /// The name of the property, used for logging in the "required" case.
+> +    name: &'name CStr,
+> +}
+> +
+> +impl<T> PropertyGuard<'_, '_, T> {
+> +    /// Access the property, indicating it is required.
+> +    ///
+> +    /// If the property is not present, the error is automatically logged. If a
+> +    /// missing property is not an error, use [`Self::optional`] instead. The
+> +    /// device is required to associate the log with it.
+> +    pub fn required_by(self, dev: &super::Device) -> Result<T> {
+> +        if self.inner.is_err() {
+> +            dev_err!(
+> +                dev,
+> +                "{}: property '{}' is missing\n",
+> +                self.fwnode.display_path(),
 
-Make acpi_processor_driver_init() call arch_cpu_rescan_dead_smt_siblings(),
-via a new wrapper function called acpi_idle_rescan_dead_smt_siblings(),
-after successfully initializing the driver, to allow the "dead" SMT
-siblings to go into deep idle states, which is necessary for the
-processor to be able to reach deep package C-states (like PC10) going
-forward, so that power can be reduced sufficiently in suspend-to-idle,
-among other things.
+Is it possible to make "{self.fwnode}: property..." work? Just need to 
+implement Display trait on FwNode, right?
 
-However, do it only if the ACPI idle driver is the current cpuidle
-driver (otherwise it is assumed that another cpuidle driver will take
-care of this) and avoid doing it on architectures other than x86.
+Doesn't look to me like we can alter what we print like in C, but for 
+dmesg it's usually the full path we want anyways.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/internal.h         |    6 ++++++
- drivers/acpi/processor_driver.c |    3 +++
- drivers/acpi/processor_idle.c   |    8 ++++++++
- 3 files changed, 17 insertions(+)
-
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -175,6 +175,12 @@
- static inline void acpi_early_processor_control_setup(void) {}
- #endif
- 
-+#ifdef CONFIG_ACPI_PROCESSOR_CSTATE
-+void acpi_idle_rescan_dead_smt_siblings(void);
-+#else
-+static inline void acpi_idle_rescan_dead_smt_siblings(void) {}
-+#endif
-+
- /* --------------------------------------------------------------------------
-                                   Embedded Controller
-    -------------------------------------------------------------------------- */
---- a/drivers/acpi/processor_driver.c
-+++ b/drivers/acpi/processor_driver.c
-@@ -279,6 +279,9 @@
- 	 * after acpi_cppc_processor_probe() has been called for all online CPUs
- 	 */
- 	acpi_processor_init_invariance_cppc();
-+
-+	acpi_idle_rescan_dead_smt_siblings();
-+
- 	return 0;
- err:
- 	driver_unregister(&acpi_processor_driver);
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -24,6 +24,8 @@
- #include <acpi/processor.h>
- #include <linux/context_tracking.h>
- 
-+#include "internal.h"
-+
- /*
-  * Include the apic definitions for x86 to have the APIC timer related defines
-  * available also for UP (on SMP it gets magically included via linux/smp.h).
-@@ -55,6 +57,12 @@
- };
- 
- #ifdef CONFIG_ACPI_PROCESSOR_CSTATE
-+void acpi_idle_rescan_dead_smt_siblings(void)
-+{
-+	if (cpuidle_get_driver() == &acpi_idle_driver)
-+		arch_cpu_rescan_dead_smt_siblings();
-+}
-+
- static
- DEFINE_PER_CPU(struct acpi_processor_cx * [CPUIDLE_STATE_MAX], acpi_cstate);
- 
-
-
-
+Rob
 
