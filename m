@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-674569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568ADACF151
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:52:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A33ACF145
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD443AC417
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49DD517338D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1621D274676;
-	Thu,  5 Jun 2025 13:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE0C272E69;
+	Thu,  5 Jun 2025 13:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epgr8JOB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LxqEvHXJ"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F132741A4;
-	Thu,  5 Jun 2025 13:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E68A272E41
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 13:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749131532; cv=none; b=QS9ri0LBLAft/xFeF3YBpXZL49CZPYzIhRNOD4CkGQUC+czlhsrXVUzvqCNe1MocI8cZOpPw7keU8VJ6eKTgiYVOQ88kkiXi2bxiLADUy6dxsuQiI9LPhFQSKdQUrC6Z/lD/N9ymzljfdAVibVgJe2J2ht+FoJM+2LhFqXaxam0=
+	t=1749131458; cv=none; b=vCoyOxrdD8JKDuS5sjcCVSnBvIEjabe7E2ja3usPqaKtecVyHwoVc2MqsGeBpDCkzpNrgvVocd9N3DX3G27u9aVO+y2tft1N0CcQHkovzS6/ykQ96PxJBKl53YoOSSzkuXzehP3jjBi2yUITfI4B6VumdiKl0HxGhz/+pnoyCGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749131532; c=relaxed/simple;
-	bh=OEi12Lmi5YITJkvxZt4IvCwmlqEWCmXok9rCvTypycg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ueOfNpPZ60biLudq7lhMqT+u7K7cAdYwXIi6IPaNTf8sBdBSJ7w0YM+clCnyP0ge4eNmhmeW38xr4BbFyzjZ1YxhcdZqLTTLwmwSCgrHow8JWckPE/fsRMUhQ3spTwlg0LREQoEtjOlyJUmUNAi2CbwssPI49SgMwH4HrgHQYKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epgr8JOB; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749131531; x=1780667531;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=OEi12Lmi5YITJkvxZt4IvCwmlqEWCmXok9rCvTypycg=;
-  b=epgr8JOBLQ+tBWq86j0i7nLhC8POYtHwtDAupvJOYUsFT9j47BnUrd8O
-   DkZlkext23/BugGrggWHbNU2+ogPTW977nia+LFXgFKaqN6Uo3gJVv9Ls
-   cIGANVmyAQYYOW4RAIWGEg1wo/S2df5JLbT4pOc6P5YpdF7eLTM7GExWm
-   91NWGtscaYE+NU+1h1dOUqHaq2qKlPM3X/KrXkHUoDbBmh4gL9p7Y73CJ
-   6DeZbJm5gOBrytTyd2x24X67cDtKM3GomF0W7zBrikw5/DHpdc1LLseAR
-   jfXoMqCRoD79Z6ZM7DePlBN4dR/1xUOWBxPi57MHywN1QCfRhjqnTSyjN
-   g==;
-X-CSE-ConnectionGUID: FjlCWzh7TrqUd2eRXJK75g==
-X-CSE-MsgGUID: ut46IR/YTQ653whvyvWigw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11455"; a="61871057"
-X-IronPort-AV: E=Sophos;i="6.16,212,1744095600"; 
-   d="scan'208";a="61871057"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 06:52:10 -0700
-X-CSE-ConnectionGUID: IhciTlgHTfmBlgMyd0MgSw==
-X-CSE-MsgGUID: yV2MX031TjeT3OKJqwBolw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,212,1744095600"; 
-   d="scan'208";a="176476213"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 06:52:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uNB0k-00000003sSd-16ab;
-	Thu, 05 Jun 2025 16:52:02 +0300
-Date: Thu, 5 Jun 2025 16:52:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Ioan-daniel, Pop" <Pop.Ioan-daniel@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	"Sa, Nuno" <Nuno.Sa@analog.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>,
-	"Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
-	"Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 5/5] iio: adc: ad7405: add ad7405 driver
-Message-ID: <aEGhAa1a9GHPNQjH@smile.fi.intel.com>
-References: <20250604133413.1528693-1-pop.ioan-daniel@analog.com>
- <20250604133413.1528693-6-pop.ioan-daniel@analog.com>
- <aEBlqPqxd0-C7j63@smile.fi.intel.com>
- <PH0PR03MB63350BE9DC927335D0FEBEE2D16FA@PH0PR03MB6335.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1749131458; c=relaxed/simple;
+	bh=pGhX/wVZN0RGvBVwSNXI+HlZVCiN3e9tQXYEg1OIFho=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6JKbGG8hJGv5WnwcjGcm6R0W1ECA9eU8wvFzENlSrBFepOzEVtTo/CFlGD6Y/llohJfSOV7NFtsw1C6NHX3AfUIOXRvs3SD6OJ9SOVzEPhvzfOOxtV1c4gYYRZvV595f9XjYOacdPYeUcClSNb8vjHtRxk6TUyCcIIDGvtmJts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LxqEvHXJ; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-601f278369bso2016267a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 06:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749131455; x=1749736255; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggZCkgQEfMCBTbPPekOLvTIApHTIQLiYr/IDAMWkO24=;
+        b=LxqEvHXJLYk18bGojUrSLXq17kg7fltNrkO3UaA1AFcH2GbiI1eui22s/l6ekjeMX8
+         U0qiCZZ6Ay6LrYnyuJ18iuQIjZiF1vEGuBGankf8vkdBZBk7qTNO247haDL0jwUL3eHP
+         XwHc5Vmw1tP5pTDCkmXFqM1n6FgPz7L3mZ0K9Ml001YWaGW2J7ZvrkwCPV0nkoWv93Vl
+         y5sDrPL27oxg/hg48BoYip8H+7oMpFWmjev4Sy/HjqKfVSH1VXZel+0/77VX3/KsMhzm
+         45eBu4xreuHYW5V4Ondzg2e32GjHi4AN+GfEpP2z02zBOwvGxWGrwegzkPz6tvlSNwek
+         KjgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749131455; x=1749736255;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggZCkgQEfMCBTbPPekOLvTIApHTIQLiYr/IDAMWkO24=;
+        b=JSFuJaxsB3NoDoWHQTEB7ANgc2QL1EBuu50vnCBOm7hIJ1zUNpvYkXpRUnxS2vRIa7
+         +tPQg9bYRKUiAYZ6b260nIVkXmzL1znj6Ej+q7O89E3OJ2vqfGbsWEtIur8VyKeRBNqg
+         an4RIMwrkdwsmpwbBm0jEfs8vPCN2Y98sbbYqA235NV3sITyo9MwgeQC6flNpXdNXCZ4
+         P13VBn9i/LvIlbwF+3SDnB7JehhZeLvBCvii2/W7eWjmHLArJ6coMvfz+CVBR5rFUj9L
+         PY+dBCoD8lCdnK7GxJhD0OGwBwU88FVVwO2g+2blUtyt+18w2Etpw6kKF6IBxSdIsYdI
+         eJAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFpKtdI/p7bUl7+R6WFHc5sppH6e38DcA1PpGQ4Ln/+sP6lcnZCNZfAk++pnuMaC/UOOctddMhVx9zuVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGbVf7rESbJS+6vQfl10jQf6BQnxLWpW4ZJdNp/68gFtEww4gS
+	nHocc1yXflbQngcF7R2ZHnJVw+NbGmAx5pBq8nRxeNOFXA6n/+Mdl+JpSfIxyZ3ZryY=
+X-Gm-Gg: ASbGncv5ttGtZjgcEYx50xQarzTpVwVxn3PidwvgGnP92j82//C4pWSuRVf6mSFWlWC
+	e6XyJ58HX3QxF4MjUA4JbtBjb33vSeWw1cWY4Trp9Lkjz81bldfLblk1oOOBrKee0Nw+moB6Y9L
+	ZC1wlp3MiBgzTVukxIH7a+9ISqbO/itU7FBEfnckY5pPaXc5TDWVIVQpK6DYdUPJRj3ZMmITaDn
+	T8UoYp4vviyr4Su1mRdV21NUe4LqFZwpMpCRouO6ZQr8iE3KCRusZUgZUZdAXcUlmSbdqP0Eigi
+	9NK3DkpgaLTizz0hue3kCrEmxh5edx0igl1HGFzDYdc+pRxbIxgJ2DnR+bc1EF3z9qZvOHlIlDF
+	ZYnnopqwk4nEz7PBR7de5uFP2NC8M6pQ2JzDCXpm8VmQ=
+X-Google-Smtp-Source: AGHT+IGsZK01GTgeXRGvrF2f+PIjoQHuluhsLAHTkeb0wTJPNILx+jwsb/VHsmQ9utQ5doDtE/qnrQ==
+X-Received: by 2002:a17:906:7951:b0:adb:41b1:feca with SMTP id a640c23a62f3a-addf8ff443cmr600103066b.61.1749131454652;
+        Thu, 05 Jun 2025 06:50:54 -0700 (PDT)
+Received: from localhost (host-87-21-228-106.retail.telecomitalia.it. [87.21.228.106])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d82e760sm1275872866b.52.2025.06.05.06.50.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 06:50:54 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 5 Jun 2025 15:52:31 +0200
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: linux-next: Tree for Jun 3 (clk/clk-rp1.c)
+Message-ID: <aEGhHy7qPyIjG5Xp@apocalypse>
+References: <20250603170058.5e1e1058@canb.auug.org.au>
+ <cee929b0-8b09-4e6b-95c1-c4067a8c389d@infradead.org>
+ <6e88587d-f426-4841-b370-b46917822212@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PH0PR03MB63350BE9DC927335D0FEBEE2D16FA@PH0PR03MB6335.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <6e88587d-f426-4841-b370-b46917822212@broadcom.com>
 
-On Thu, Jun 05, 2025 at 01:42:50PM +0000, Ioan-daniel, Pop wrote:
+On 20:06 Wed 04 Jun     , Florian Fainelli wrote:
 > 
-> > On Wed, Jun 04, 2025 at 04:34:07PM +0300, Pop Ioan Daniel wrote:
-> > > Add support for the AD7405/ADUM770x, a high performance isolated ADC,
-> > > 1-channel, 16-bit with a second-order Σ-Δ modulator that converts an
-> > > analog input signal into a high speed, single-bit data stream.
+> 
+> On 6/3/2025 10:01 AM, Randy Dunlap wrote:
 > > 
-> > Hmm...
-> > Have you seen these?
+> > 
+> > On 6/3/25 12:00 AM, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Please do not add any material destined for v6.17 to you rlinux-next
+> > > included branches until after v6.16-rc1 has been released.
+> > > 
+> > > Changes since 20250530:
+> > > 
+> > 
+> > on i386:
+> > 
+> > ld: drivers/clk/clk-rp1.o: in function `rp1_pll_divider_set_rate':
+> > clk-rp1.c:(.text+0xba1): undefined reference to `__udivdi3'
+> > 
+> > caused by
+> > 	/* must sleep 10 pll vco cycles */
+> > 	ndelay(10ULL * div * NSEC_PER_SEC / parent_rate);
+> > 
+> > 
 > 
-> Just a question for my clarification. 
-> Except for comment from David Lechner, what should I do in the
-> next patch that is different from this patch regarding your requests?
+> Andrea, do you mind fixing this build error for a 32-bit kernel? Thanks!
 
-I believe those are generic advice, use them in any code you submit.
+Sorry for the delay, this should fix it:
 
--- 
-With Best Regards,
-Andy Shevchenko
+@@ -754,7 +769,7 @@ static int rp1_pll_divider_set_rate(struct clk_hw *hw,
+        clockman_write(clockman, data->ctrl_reg, sec);
+ 
+        /* must sleep 10 pll vco cycles */
+-       ndelay(10ULL * div * NSEC_PER_SEC / parent_rate);
++       ndelay(div64_ul(10ULL * div * NSEC_PER_SEC, parent_rate));
+ 
+        sec &= ~PLL_SEC_RST;
+        clockman_write(clockman, data->ctrl_reg, sec);
 
+should I send a new patch with this fix only (against linux-next or stblinux/next?)
+or Florian is it better if you make the change in your next branch directly?
 
+Many thanks,
+Andrea
+
+> -- 
+> Florian
+> 
 
