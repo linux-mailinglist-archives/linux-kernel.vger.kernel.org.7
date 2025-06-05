@@ -1,78 +1,85 @@
-Return-Path: <linux-kernel+bounces-674311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DD8ACED01
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52892ACED17
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80DB3AC7BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1364A3A61D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967AF211A28;
-	Thu,  5 Jun 2025 09:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15832139B5;
+	Thu,  5 Jun 2025 09:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="CVQi9mh4"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jzl9LojX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99662C3272;
-	Thu,  5 Jun 2025 09:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9E62C3242;
+	Thu,  5 Jun 2025 09:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749116508; cv=none; b=gl6oqyAzZZfblelZyn5RgE2IGzuhBNeU9/yCK7hdJp6jyxxBmTa5gpW2lEo6DmBZpQZQfWSvAT039wkNxi45w7qZU/IpINFWbXUUvbpy2R1eKQJi6xKba3k5ALnsf8oNcuGKdoNNCBodOb8rJDBvvTEWPT1ShkdRaBI2OVew5cY=
+	t=1749116884; cv=none; b=OnxkdfRSwmgJi4ZFATXECljRKwiDf2FV5Y8Q0vrsGr2/DYEXjXMg5cRKARnULpCQv210yubip2JLUDqyLeL7OHq2bCHacoRWHJXYbxl+mWnRt0BMxELtgNtHQC2XYN7frmjIK68d/OIE9G/PQ6Ekd+y19GlmH9fjelCW7Ayz2bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749116508; c=relaxed/simple;
-	bh=ZLBC+KA6NGYS62D45P2YGEB4+x9lL6nfJSA2rz2NBK0=;
+	s=arc-20240116; t=1749116884; c=relaxed/simple;
+	bh=/VL9o7ChNpJtoUsc5ibEOwDBnVANVkT3Ha++wcl3fYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lF1MnK7loYoabseu7VSRFi9hw5qhO1EbPsAwg3l3bQx+7qNmgw8gR6dGsm3I+VoGJ6984l1NZjiMdeboxIQSodkVsQ3GD5hgWiSEjBZWFNpJQ7K+wgYKbq3fmrhRL7XCPXzEc4Udl5tsOTqqSOxXSOtnVMkcBG1q5E8LK6gKjOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=CVQi9mh4; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pYfa480QeywizKCHmMV9b915U3JdV7fcJg6oO97CKu8=; b=CVQi9mh4ODfteTqvJxx8P3pgzH
-	J7gv3ERrIwSmKbjAfu/ozSb+f/7Ai2Z8/085hSu5wn0ZMV4ZLHJPccZYuhdZ4hFHifYPX8+lUEeP4
-	YkCuW44+6OgALcJ0ZIU5BybG8D2wtGreR/zTmlaJUEQVdhFWhZGdG8loYAwYmHFdmegxyJ/bNOiFS
-	srJJGO/M09BLQeI55Jy0yAKALvV702c23xNLjumdC7CzJPLBXUBgXi9W2kUDKZUIqiwZtP9qoqxy1
-	zC0V0Q5i0Re3KNHAe2VW0IhA0K/cpyNLlXpRX/G7AJJOcNwINXs5YvpS8KHRZtyqSMjjCEEEe89GN
-	xRYAgE0w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36144)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uN763-00081c-1p;
-	Thu, 05 Jun 2025 10:41:15 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uN75w-00025P-0W;
-	Thu, 05 Jun 2025 10:41:08 +0100
-Date: Thu, 5 Jun 2025 10:41:08 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] dt-bindings: net: ethernet-controller: Add
- informative text about RGMII delays
-Message-ID: <aEFmNMSvffMvNA8I@shell.armlinux.org.uk>
-References: <20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch>
- <e4db4e6f0a5a42ceacacc925adbe13747a6f948e.camel@icenowy.me>
- <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
- <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sxqv/yqPZ91Z6yu+St9Kr9ScP9xdF1Mf+glVdpT/eogz9ZxZy9K1TAv3HEVl4dd0VMmyQGngyVEMGGtQAN0fNA0OQa6qxI9eOCmPRqW5OwEFj3zVLWCzOjVArKc29LAqFCLy/aFgSMhoFB44C5BFizyMWdtP+q+c2AZwVGbRDdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jzl9LojX; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749116883; x=1780652883;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/VL9o7ChNpJtoUsc5ibEOwDBnVANVkT3Ha++wcl3fYE=;
+  b=Jzl9LojXTcxA9v2vPNSYC+YgABD1rahkREzXZ/iQkE2Uw6jeezJHimKm
+   I+A/CrUWSydOvc9AhaRAU85GnZ1lTymdzmVpaQYBqyE+FMO4HFU5RJgQ0
+   MAvZV3qarpEo8Wy5mYIQw3tMUXRfBcO5L1sclTC56eF4YLLRY6F8OAZtq
+   bAE877swmE+/w/yYLPsoih2mQxtBkHrZPTxtzOOieLUyRn2n++0BFctsW
+   4MYYKMLtrlDQW+oRFqCCGAymQBlNOumWkTAZi8fKCeTU1muZZtWrFWTny
+   KALOsUAj2SeJcrbND+z6PqnjyhJj9hIa3hPx2uI8SKj8co0fVOFz718+v
+   Q==;
+X-CSE-ConnectionGUID: b8Tnf0HQTN6ckJytSyY1MA==
+X-CSE-MsgGUID: /qLFletzQaSMOJjHMzPmCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="61894012"
+X-IronPort-AV: E=Sophos;i="6.16,211,1744095600"; 
+   d="scan'208";a="61894012"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 02:48:02 -0700
+X-CSE-ConnectionGUID: bZl8PvLtTTmumH8CpnrPsQ==
+X-CSE-MsgGUID: NroY4ThARXa4bErMmRN2Vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,211,1744095600"; 
+   d="scan'208";a="145358422"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa006.jf.intel.com with ESMTP; 05 Jun 2025 02:47:55 -0700
+Date: Thu, 5 Jun 2025 17:41:17 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: kvm@vger.kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+	pbonzini@redhat.com, seanjc@google.com, alex.williamson@redhat.com,
+	jgg@nvidia.com, dan.j.williams@intel.com, aik@amd.com,
+	linux-coco@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+	vivek.kasireddy@intel.com, yilun.xu@intel.com,
+	linux-kernel@vger.kernel.org, lukas@wunner.de, yan.y.zhao@intel.com,
+	daniel.vetter@ffwll.ch, leon@kernel.org, baolu.lu@linux.intel.com,
+	zhenzhong.duan@intel.com, tao1.su@intel.com,
+	linux-pci@vger.kernel.org, zhiw@nvidia.com, simona.vetter@ffwll.ch,
+	shameerali.kolothum.thodi@huawei.com, iommu@lists.linux.dev,
+	kevin.tian@intel.com
+Subject: Re: [RFC PATCH 19/30] vfio/pci: Add TSM TDI bind/unbind IOCTLs for
+ TEE-IO support
+Message-ID: <aEFmPaYorqaYCKBY@yilunxu-OptiPlex-7050>
+References: <20250529053513.1592088-1-yilun.xu@linux.intel.com>
+ <20250529053513.1592088-20-yilun.xu@linux.intel.com>
+ <yq5aplfn210z.fsf@kernel.org>
+ <aD24r44v0g1NgeZs@yilunxu-OptiPlex-7050>
+ <yq5ajz5r8w6p.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,129 +88,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <yq5ajz5r8w6p.fsf@kernel.org>
 
-On Thu, Jun 05, 2025 at 05:06:43PM +0800, Icenowy Zheng wrote:
-> In addition, analyzing existing Ethernet drivers, I found two drivers
-> with contradition: stmicro/stmmac/dwmac-qcom-ethqos.c and
-> ti/icssg/icssg_prueth.c .
+On Wed, Jun 04, 2025 at 07:07:18PM +0530, Aneesh Kumar K.V wrote:
+> Xu Yilun <yilun.xu@linux.intel.com> writes:
 > 
-> The QCOM ETHQOS driver enables the MAC's TX delay if the phy_mode is
-> rgmii or rgmii-rxid, and the PRU ETH driver, which works on some MAC
-> with hardcoded TX delay, rejects rgmii and rgmii-rxid, and patches
-> rgmii-id or rgmii-txid to remove the txid part.
-
-No, this is wrong.
-
-First, it does not reject any RGMII mode. See qcom_ethqos_probe() and
-the switch() in there. All four RGMII modes are accepted.
-
-The code in ethqos_rgmii_macro_init() is the questionable bit, but
-again, does _not_ do any rejection of any RGMII mode. It simply sets
-the transmit clock phase shift according to the mode, and the only
-way this can work is if the board does not provide the required delay.
-
-This code was not reviewed by phylib maintainers, so has slipped
-through the review process. It ought to be using the delay properties
-to configure the MAC.
-
-> The logic of QCOM ETHQOS clearly follows the original DT binding, which
-
-Let's make this clear. "original DT binding" - no, nothing has
-*actually* changed with the DT binding - the meaning of the RGMII
-modes have not changed. The problem is one of interpretation, and
-I can tell you from personal experience that getting stuff documented
-so that everyone gets the same understanding is nigh on impossible.
-People will pick holes, and deliberately interpret whatever is written
-in ways that it isn't meant to - and the more words that are used the
-more this happens.
-
-The RGMII modes have been documented in Documentation/networking/phy.rst
-(Documentation/networking/phy.txt predating) since:
-
-commit bf8f6952a233f5084431b06f49dc0e1d8907969e
-Author: Florian Fainelli <f.fainelli@gmail.com>
-Date:   Sun Nov 27 18:45:14 2016 -0800
-
-    Documentation: net: phy: Add blurb about RGMII
-
-    RGMII is a recurring source of pain for people with Gigabit Ethernet
-    hardware since it may require PHY driver and MAC driver level
-    configuration hints. Document what are the expectations from PHYLIB and
-    what options exist.
-
-    Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-    Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-> describes "rgmii-id" as `RGMII with internal RX and TX delays provided
-> by the PHY, the MAC should not add the RX or TX delays in this case`
-> (the driver skips the delay for rgmii-id). The logic of PRU ETH follows
-> the logic of the new DT binding. This shows that the DT binding patch
-> is not a simple clarification, but a change of meanings.
-
-Let me say again. Nothing has changed. There is no "old binding" or
-"new binding". If you think there is, then it's down to
-misinterpretation.
-
-This is precisely why I've been opposed to documenting these properties
-in the binding document _and_ Documentation/networking/phy.* because
-keeping them both in sync is going to be a pain, leading to ambiguity
-and misinterpretation.
-
-> > If you want the kernel to not touch the PHY, use
-> > 
-> > phy-mode = 'internal'
+> > On Sun, Jun 01, 2025 at 04:15:32PM +0530, Aneesh Kumar K.V wrote:
+> >> Xu Yilun <yilun.xu@linux.intel.com> writes:
+> >> 
+> >> > Add new IOCTLs to do TSM based TDI bind/unbind. These IOCTLs are
+> >> > expected to be called by userspace when CoCo VM issues TDI bind/unbind
+> >> > command to VMM. Specifically for TDX Connect, these commands are some
+> >> > secure Hypervisor call named GHCI (Guest-Hypervisor Communication
+> >> > Interface).
+> >> >
+> >> > The TSM TDI bind/unbind operations are expected to be initiated by a
+> >> > running CoCo VM, which already have the legacy assigned device in place.
+> >> > The TSM bind operation is to request VMM make all secure configurations
+> >> > to support device work as a TDI, and then issue TDISP messages to move
+> >> > the TDI to CONFIG_LOCKED or RUN state, waiting for guest's attestation.
+> >> >
+> >> > Do TSM Unbind before vfio_pci_core_disable(), otherwise will lead
+> >> > device to TDISP ERROR state.
+> >> >
+> >> 
+> >> Any reason these need to be a vfio ioctl instead of iommufd ioctl?
+> >> For ex: https://lore.kernel.org/all/20250529133757.462088-3-aneesh.kumar@kernel.org/
+> >
+> > A general reason is, the device driver - VFIO should be aware of the
+> > bound state, and some operations break the bound state. VFIO should also
+> > know some operations on bound may crash kernel because of platform TSM
+> > firmware's enforcement. E.g. zapping MMIO, because private MMIO mapping
+> > in secure page tables cannot be unmapped before TDI STOP [1].
+> >
+> > Specifically, for TDX Connect, the firmware enforces MMIO unmapping in
+> > S-EPT would fail if TDI is bound. For AMD there seems also some
+> > requirement about this but I need Alexey's confirmation.
+> >
+> > [1] https://lore.kernel.org/all/aDnXxk46kwrOcl0i@yilunxu-OptiPlex-7050/
+> >
 > 
-> This sounds weird, and may introduce side effect on the MAC side.
+> According to the TDISP specification (Section 11.2.6), clearing either
+> the Bus Master Enable (BME) or Memory Space Enable (MSE) bits will cause
+> the TDI to transition to an error state. To handle this gracefully, it
+> seems necessary to unbind the TDI before modifying the BME or MSE bits.
+
+Yes. But now the suggestion is never let VFIO do unbind, instead VFIO
+should block these operations when device is bound.
+
 > 
-> Well we might need to allow PHY to have phy-mode property in addition
-> to MAC, in this case MAC phy-mode='rgmii*' and PHY phy-mode='internal'
-> might work?
+> If I understand correctly, we also need to unmap the Stage-2 mapping due
+> to the issue described in commit
+> abafbc551fddede3e0a08dee1dcde08fc0eb8476. Are there any additional
+> reasons we would want to unmap the Stage-2 mapping for the BAR (as done
+> in vfio_pci_zap_and_down_write_memory_lock)?
 
-I'm not convinced that adding more possibilities to the problem (i.o.w.
-the idea that phy=mode = "internal" can be used to avoid the delays
-being messed with) is a good idea - not at this point, because as you
-point out MACs (and PHYs) won't know that they need to be configured
-for RGMII mode. "internal" doesn't state this, and if we do start doing
-this, we'll end up with "internal" selecting RGMII mode which may work
-for some platforms but not all.
+I think no more reason. 
 
-So, IMHO this is a bad idea.
-
-> > > In addition, the Linux kernel contains a "Generic PHY" driver for
-> > > any
-> > > 802.1 c22 PHYs to work, without setting any delays.
-> > 
-> > genphy is best effort, cross your fingers, it might work if you are
-> > luckily. Given the increasing complexity of PHYs, it is becoming less
-> > and less likely to work. From a Maintainers perspective, i only care
-> > if the system works with the proper PHY driver for the
-> > hardware. Anything else is unmaintainable.
 > 
-> Well this sounds unfortunate but reasonable.
+> Additionally, with TDX, it appears that before unmapping the Stage-2
+> mapping for the BAR, we should first unbind the TDI (ie, move it to the
+> "unlock" state?) Is this step related Section 11.2.6 of the TDISP spec,
+> or is it driven by a different requirement?
 
-We're already in this state with PHYs faster than gigabit, because
-IEEE 802.3 in their wisdom did not define where the 1000BASE-T
-autoneg parameters appear in the register space. As a result, vendors
-have done their own thing, and every vendor / PHY is different.
-Without access to this key data, phylib has no way to know the
-negotiation results. Thus, a generic PHY driver that works correctly
-for PHYs > 1G just isn't possible.
+No, this is not device side TDISP requirement. It is host side
+requirement to fix DMA silent drop issue. TDX enforces CPU S2 PT share
+with IOMMU S2 PT (does ARM do the same?), so unmap CPU S2 PT in KVM equals
+unmap IOMMU S2 PT.
 
-I expect that in years to come, we'll see IEEE 802.3 updated with
-the 1G registers for Clause 45 PHYs, but the boat has already sailed
-so this would be totally pointless as there will be too many PHYs
-out there doing their own thing for whatever IEEE 802.3 says about
-this to have any relevence what so ever. Just like they did with
-2500BASE-X, which is a similar mess due to IEEE 802.3 being way too
-late.
+If we allow IOMMU S2 PT unmapped when TDI is running, host could fool
+guest by just unmap some PT entry and suppress the fault event. Guest
+thought a DMA writting is successful but it is not and may cause
+data integrity issue.
 
-I hope that there isn't going to be more of this, because each time
-it happens, the IEEE 802.3 "standard" less relevant.
+This is not a TDX specific problem, but different vendors has different
+mechanisms for this. For TDX, firmware fails the MMIO unmap for S2. For
+AMD, will trigger some HW protection called "ASID fence" [1]. Not sure
+how ARM handles this?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+https://lore.kernel.org/all/aDnXxk46kwrOcl0i@yilunxu-OptiPlex-7050/
+
+Thanks,
+Yilun
+
+> 
+> -aneesh
 
