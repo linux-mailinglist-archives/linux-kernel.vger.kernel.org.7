@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-674917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A82ACF6E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:33:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E052ACF74A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD8B7A52A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D750616908F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636E227A445;
-	Thu,  5 Jun 2025 18:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDC327F749;
+	Thu,  5 Jun 2025 18:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gMeGt6vb"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MomzGR2r"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEBC27A105
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ADE27AC59
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749148346; cv=none; b=mZtjJrt+KT0ayX12DubbQF5fx4/kSXhofBWWsBADzFS2l/MrkM7ewxc2X2p5K469FlBa77k+0uzCsgVNUvyL6qw7G7RZRQ+ANCfE3TbCkQz3ObelmIU/7pr1lHh/Wh6ADa67a9nFHgc07dKtDF1afJ4k2HUckLUOsM0vMi7PfNY=
+	t=1749148466; cv=none; b=o7YlfvkA0b1Q+neiAlXtJzyQ+JdmGzxLhcdZRuP/Eeg4j2RbktMcHtiUyoTbJZA5iMo1B9OvWLLRuS5tDm0l26GQW6+/KaE02eiAQmWnU9vjzXsmuiVVPMrIyewksJ/J5TeV2SNyc068WzZuy5qrL3/DI5Ubg99E+XdElqIf9pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749148346; c=relaxed/simple;
-	bh=PD7YuSTb/DT/r03vM8ozZQ4W6Ib9zZrSXEzBWlswyd8=;
+	s=arc-20240116; t=1749148466; c=relaxed/simple;
+	bh=iFCd0wpgRJFbL4Jf6wbbEYYEU3wz31hjGOPPneRDEcc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hsrzyq1MCovUZp9I38tW240EbHR7aGc1xlSD+Q9sPKs69pnmhhgtCr85TWqLtCIXUpTQol7ehaBs1CcQo+eJ1VSx+wz9u2BvrEBwaiPoTC0hD0qkqwj/AKofcx9kQsdHiDLP8j6m1Y0uRLg2y8Wo6OccPY0ZrUhiffLyDGrvIxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gMeGt6vb; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so2030334a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:32:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=rj9n8RtH8BIyT/hse9TQWmwYYW9icKpTqqeytruG6lzBWU1YXAJdvDJ+VYWMtJEx1lI/Rl1ZDlvmRo76O0IA17s8I1bQbaY5pRz9L0gylD+Qmtkob8BAL3WlteWTht30FPgJInlD60f3UzVvvDNWaBQg3ypar2ewz7Q/x053ti4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MomzGR2r; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a5ac8fae12so66911cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:34:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1749148342; x=1749753142; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9urHXe2bN5tHQsZj80Y5j/RW2HoxK004xrWJlKqzeE=;
-        b=gMeGt6vblJ9px6pW61ATZIrAy/44c1yr83/iIhUjGI+Gx0ydQB42dWB1rcV/lRxIg4
-         ZePv57IvZ9RkKPRMszBisdEsd/2xKksqf1wE+TCIVC9shHYzSbmrVzqRQ0nLk3JkPvUZ
-         S9UZ0gbNGpBMJbS2aah5gPtdHNzcXjCmK8drg=
+        d=google.com; s=20230601; t=1749148463; x=1749753263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iFCd0wpgRJFbL4Jf6wbbEYYEU3wz31hjGOPPneRDEcc=;
+        b=MomzGR2r3obVuNha5cQvSi//2Zr+arQY4N0awS2YWS2fCY0QRhigIYfeyuEDb9BKBu
+         fGy+fjmd/CpeIeznLkVDpAwwvAbpudvFP5cqK2F5qSwZlxXcOITnbcxwr5IfjHxZoCyF
+         fVOiUe2uRZ6Mhs4fZNshLqZEJBNckADVikCQ0L5OKriMW8cU+/0t2GCTXFra3KayrIDb
+         7LHWz9uVvJ24vfDM9EZ4a9vLhQwMTAIlqHC7wRaVM61NY+q7g+hmwYRBiATmENTHdIq4
+         wntzoVcu6E49uxqUqhMcmDyAXY71mC3Xu3PzzIk+NVcVF4Oo2aDXEKDLVJ8MA0bbNUS0
+         2Puw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749148342; x=1749753142;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y9urHXe2bN5tHQsZj80Y5j/RW2HoxK004xrWJlKqzeE=;
-        b=D6RSxjyThO/BTJyBk4sFt/FlHxypbUZdIwEcPZKRotS4ap9TrS6lfnNZDsw2XtKBCm
-         MZr/3cdm7gVCT1jWeaxhKllBKMBhIcm48PxouU3NYHTXEBMm5kVEhLoXG9har9ysq58L
-         4ca5MqKFFAMkAzN/cvcautnsCj4uyEfAltH81IJ0mAdA1ckaH9g3XoH8psYf+KkDh0Ih
-         K7kGezGp5BxU+isvW5PU+hqldf8EXciwdUoDMvKqoV+pM4lm5YbIom867YKqUyNK8H4r
-         +F4qYGEwMZwdSa/OpQ4oGY8br2ABBDDUP8cGxAbjpsmbmsodyTXiDDQ1J8ILmOOMjq5S
-         IInQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkFC4JAwROBwx1p0/SpsiHzB9K6WfsDclRaNrV34sncgD97cAXYE2l4/pVyux4wqUKJp7GIwm/AF6TDqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGAcQq3LWa7wJDyOwRnqAl84J3CVO8WFF1M1orKEgLjd1xlT4D
-	UWPt88pDvtzFLYJFdzNhzH/2j8CLZKeYBB6xqOaouRD2pV/IiBlmWzOBmo8vpkxrQaG7k+sRwOd
-	jGc1V38g=
-X-Gm-Gg: ASbGncsVk8bzthSYzqSekxTruJSo2NmLpG4A1/zRyF6kT3dq/8iHMkzv1Yxo4pfb1dr
-	RjVkLC1Zh7/Pm+oSeAXfHPGs+bKvbkX7kdxO4+78dssg6tGjXeulwCjNszf6Vxjpz9rYVpfGG/P
-	fZCUIKurMc3HiZWwkoujBnPVZYR4ggaYWUtMzjHR9Hv1I3CYIwCn5NoEVI4vM1lHtAzDz4TgUhH
-	Ez6LjKqVfCJlU/BIQsvOqhPvuN9tPB1biqGpEVRSMPoaallO2LdcLS+Ny7XxH6XOFqHwzWX7GpA
-	SxJPYw8er93i4dQREddoM15dOZi9+4fPmgoxgMCIuq8EiNmNCZ9U+xgA0+AGF73IR5IbfiM90Y2
-	wbXWN03dHegdexiAdpYyygeQeS606gerCRdLV
-X-Google-Smtp-Source: AGHT+IHWN4lVn3gabfN904Bw0oVixiGSeiDXkhXe5YqzYEUKihjTUuMtV4X66cxQR8oe66MWNZALdA==
-X-Received: by 2002:a17:907:7248:b0:ade:403:da4a with SMTP id a640c23a62f3a-ade1aa06c8amr26637666b.45.1749148342112;
-        Thu, 05 Jun 2025 11:32:22 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade125a01c3sm92739266b.95.2025.06.05.11.32.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 11:32:21 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60477f1a044so2248270a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:32:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPcBnsoKunzJyfnQvdGM7FMtAuTTCSRawwT/Relwy7BGX8nchXic7NFA0SOn42TdjWfdip4MLcbyJPbTw=@vger.kernel.org
-X-Received: by 2002:a05:6402:354a:b0:607:2d8a:9b2a with SMTP id
- 4fb4d7f45d1cf-60774b80025mr197023a12.31.1749148340813; Thu, 05 Jun 2025
- 11:32:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749148463; x=1749753263;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iFCd0wpgRJFbL4Jf6wbbEYYEU3wz31hjGOPPneRDEcc=;
+        b=eQ4GgOm9TYcw9tupWFW8Zej6LVVNyvETgAMvsJ479+xGV6hU4+V7aB58b8FHVqjI0R
+         TuslnqeTA0pKR/JslUdf7o6+D0yTXTvgWP+VcqBW9fsOqdTO/su6ukoldLGmrf9xYR/x
+         n8ihM3zC1erQ3nVjLf1aIYopDrAabrRM579lgxaWMvWz+5VHIj44NKwuyLee2izN9fDx
+         STc6ivzD5pk6rJskGRt6wyvvF73IEa/X1rKqwFJmxvcSLIbT2P3MiPe99PM0oNikWPnn
+         FjhUeStdIubjRat7kEZY4sumFRpL2HfdX7rFaDfrcili9yAFPxy+4pYAAGUB2rwcWMYg
+         6HmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7qXfibQZ8NubiGdQZIZf6dTiToyMB4hB87TX8lzFfmRIIz9bZQxtKhhJuO4JO6bONFuQQHe6JYFynjvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc/CxiI8wLVmIfyY+/tcyunNBhDALFFTKUkCEAwBOll+Ks2BUF
+	cTTjsSqsjTvMrqbQX1UwSRpQ0thhpIuYptc+gwXGeVzlkR0iJrh/wAIYHzgplG1xrx9k5pK6ieN
+	i0sLTUDHSfcSs1If7O5qCcdzAQXezXPlVlX4AKlEl
+X-Gm-Gg: ASbGncvTjrXHzKoxbKo21xzSCk1OayrvbxzLCfI0mtcL5gqu47VtXgo8DHgAudisudy
+	8CHhhrwOOVSYaO2u7jLDh0EX5MB4dddsYEJO5wnwXPNCo5PYzVNmN4+HatrPTdyRCQM4cmBl+Rj
+	Ax1Z7wpRjCvQgR/3ZaR5iYrkJwgwACnASVB73PnK//8ddJgYi0Kzwmzf+5Upmw3+gYo/lC4Mlul
+	w==
+X-Google-Smtp-Source: AGHT+IHJgivjORRUGSyOdnKwc/j/YUOaIyFLPXMeXTtZN3bS7fASxuj1kukT7nKX2tz03k/1gqjLUSAvmHiOo/kmYCo=
+X-Received: by 2002:ac8:5c93:0:b0:48a:5b89:473b with SMTP id
+ d75a77b69052e-4a5cb4260ffmr132921cf.7.1749148463196; Thu, 05 Jun 2025
+ 11:34:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605164733.737543-1-mjguzik@gmail.com>
-In-Reply-To: <20250605164733.737543-1-mjguzik@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 5 Jun 2025 11:32:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg-+FZTCTBY79UBMc=MT1-t5EWtGOXt=kYySUmqZU4qxQ@mail.gmail.com>
-X-Gm-Features: AX0GCFvnsUSPTdHW9Szh8VgHCVZhhWVCbaenV-8IfvYf0fo5SIV88rLBK3OfZig
-Message-ID: <CAHk-=wg-+FZTCTBY79UBMc=MT1-t5EWtGOXt=kYySUmqZU4qxQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86: prevent gcc from emitting rep movsq/stosq for
- inlined ops
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <67bd7af0.050a0220.bbfd1.009e.GAE@google.com> <68342b47.a70a0220.253bc2.0090.GAE@google.com>
+In-Reply-To: <68342b47.a70a0220.253bc2.0090.GAE@google.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 5 Jun 2025 11:34:12 -0700
+X-Gm-Features: AX0GCFsaIXiP66tcFR1RPkYYCN8KeQPAYTtDTfBLiOP4HzV-Eu2RNhwCtT_7elw
+Message-ID: <CAJuCfpGur7p19=HKkmqfD-KXf6FEbvwCV1ewFgBCGPDkoY0Wdw@mail.gmail.com>
+Subject: Re: [syzbot] general protection fault in lock_vma_under_rcu
+To: syzbot <syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	eadavis@qq.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, shivankg@amd.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 5 Jun 2025 at 09:47, Mateusz Guzik <mjguzik@gmail.com> wrote:
+On Mon, May 26, 2025 at 1:50=E2=80=AFAM syzbot
+<syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com> wrote:
 >
-> gcc is over eager to use rep movsq/stosq (starts above 40 bytes), which
-> comes with a significant penalty on CPUs without the respective fast
-> short ops bits (FSRM/FSRS).
+> This bug is marked as fixed by commit:
+> mm: fix a crash due to vma_end_read() that should have been removed
+>
+> But I can't find it in the tested trees[1] for more than 90 days.
+> Is it a correct commit? Please update it by replying:
+>
+> #syz fix: exact-commit-title
 
-I have said this before, and I'll say it again: I do not want random
-crazy internal compiler tuning flags in the kernel sources.
+Yeah, the fix was folded into the original patch
 
-We've had them before with things like inline limits, and it's
-absolutely horrendous.
+#syz fix: mm: replace vm_lock and detached flag with a reference count
 
-If you believe in this so much, add it to your gcc spec file. Or
-continue to push gcc code improvement.
-
-But this is not in any way kernel-specific, and I do not want to have
-random "compiler internal modification flags" for code generation.
-
-We want to have much higher-level things like "-O2" and "-march=xyz"
-for optimization.
-
-Now, for *correctness* issues like instruction choices, we will do odd
-low-level internal flags like "don't use AVX", or
-"-fno-strict-overflow" that are fixing ABI issues or bugs in the
-language definition. So it's not like we don't ever do low-level
-internal implementation compiler flags, but not for random
-microarchitecture tuning.
-
-           Linus
+>
+> Until then the bug is still considered open and new crashes with
+> the same signature are ignored.
+>
+> Kernel: Linux
+> Dashboard link: https://syzkaller.appspot.com/bug?extid=3D556fda2d78f9b0d=
+aa141
+>
+> ---
+> [1] I expect the commit to be present in:
+>
+> 1. for-kernelci branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+>
+> 2. master branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+>
+> 3. master branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+>
+> 4. main branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+>
+> The full list of 10 trees can be found at
+> https://syzkaller.appspot.com/upstream/repos
 
