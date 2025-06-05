@@ -1,181 +1,346 @@
-Return-Path: <linux-kernel+bounces-674210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8589DACEB40
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:54:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E648ACEB55
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318F216E45D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:54:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE42F178CF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861581FFC49;
-	Thu,  5 Jun 2025 07:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA731FFC49;
+	Thu,  5 Jun 2025 07:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MTPPh3gQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YP7M7FMa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+eB6TNeq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YP7M7FMa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+eB6TNeq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6239E1FECAD
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FCB1FF1C9
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749110086; cv=none; b=oLeofVzme3xQeFFiq/0pBNYSU7g3w26rzzniAxSJi48246CMl3HT8yqOf8bsu9zKxSDcGPsZLYNUiHJm4iUoRZMYSZdGgf6DSk+UcOgs5brHuo9VjNK4KxRoP1JdpE1y3wtaMXSUgq7Y6DT8d9psZ2Fmb7NUYxGzGy95EJQW/R0=
+	t=1749110161; cv=none; b=rxSUJ2dXD489KdNQTdMl4hoxEoQL5fAawteunzSIV/MzTm5ZhuP48RvCmKFYZNSFAZkw2OrWYiEZM+vHLrz0QV4dpTjRhV1NMCDJH8j4JzbSOoTuIYnlKorbEKkkdazcDSGRvqCVMdidMAoUoBeEBFwHUz3P9bbsj1CBi7+3ZXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749110086; c=relaxed/simple;
-	bh=NNFSE2fFzpiSASQWnZwDpNqWAbQXEhYo1W4bEKJ2yGQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dYzslWMUmshJY278GQnDRTnZGIto+1y37q6KYqOU12zUKvx8emn0I+6qYF9fT6HeGFWy5BgcfcmkYBT2l8xNGUFLsyQKT46i9NDVqAlrl6Ip9+veNHF4AEQHuX8NjJ2rUfF6GjCMRCWIpuB/ws58Gej/S0AsEPW/3RAtIYSuujk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MTPPh3gQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749110083;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1749110161; c=relaxed/simple;
+	bh=WGdqmRYcIgONgeM3AK7BWmHnn1rBwXkLahoXEQlU0zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y8C0iTtlXeIzfccm+MMk8GKOSRPMXsmKx/6X7ONrNPnZ/q0i+23yvcj6ZDyYfXwZkrb2RiqKRWGVf1vmYiIdY+9JbnEXmg84v/C+1Yfistt4bkS9eUnc5AnVkeoiYUknzwrrR7pQcvMTnpD6NI+jW1+6Xx1FmjwdQQFCktLX7l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YP7M7FMa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+eB6TNeq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YP7M7FMa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+eB6TNeq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ABFDD34684;
+	Thu,  5 Jun 2025 07:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749110151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EsWFMFas7O2Lvk4gjiHkVtt4n83KeM8DN/r9KQDAJpg=;
-	b=MTPPh3gQR8aKTm01kPJ5h6JxFHhTXoYLqZlJ7I//3iDtOxd+D+p+Hb1DaFui51Qcp6zEmy
-	K1bw1+3mq+FvEY2y3JVpqUxJJcekND6iXZj3hv+zQ5KIl0K95jP7cs0YF3MOm7X/9ycgCp
-	C5Wi+h2qor16sJWGJvyhtnW64JHLiLc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-569-tIQA8IGSPJaQb1Vl43CdZg-1; Thu, 05 Jun 2025 03:54:41 -0400
-X-MC-Unique: tIQA8IGSPJaQb1Vl43CdZg-1
-X-Mimecast-MFC-AGG-ID: tIQA8IGSPJaQb1Vl43CdZg_1749110080
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-442f90418b0so2815815e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 00:54:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749110080; x=1749714880;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EsWFMFas7O2Lvk4gjiHkVtt4n83KeM8DN/r9KQDAJpg=;
-        b=Woy6ntMKr09RdAPG1uDTepvre03UgKfoGR0Eb/0xcKQRdmDZuFEtG67AVb7X+96vQP
-         aN1nnwicIryktA19Ra6ful2jKNY/OeIyb44KubNYYKa0eIAeXjdox6j6pzHBLuoJstTm
-         9CIQnAaRMHZDcp2wPOzhcihe3Y39rk1g8B1iE1se20+gv39Ftqh4vUw3ea8QHSduTzVg
-         OMH50QEDtTQsNSafUmNaUAid9019vcY9vG2KvSnLiNezMl7lcsBn8oO8LjsNSimVX2r3
-         H7PAYWWVwUalW/fVROm+/4ObgZ4Du6RdS7wsMlOord3JBGylmW3ClprKMpR6KGXyrmNk
-         nwjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUZd6/lc6s4/MX9Da7wH2THyh9WRzII00EelaQh1n/MnZ6TlUh1mWrVvs3Eu5wB5/XNx2fB+PENwz7d9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqftgiPYWx7ct96iaNAnEito/EHR1feYp3DQXHqiYl8nsroKpE
-	IiCfhqnc9Eer4RvyIVVnxkGLLHYCKToR8k13HrxPBfDmDc4Jj1bRFYxUmPAet0esNvyifkPxBBB
-	BfNSWQ/BdNRG0H/AWZwgSHZh7bvENyjOQp/2UYm2L9AhWtHUZMy3lsg86dhxEYdAiaw==
-X-Gm-Gg: ASbGncuQ/O4+AXmqYqBI5H2JqkrzwxooXropPH79WnEZ/7ys6n/eTKUY0RZCKFaQoDJ
-	1y9ZIR/UlQuFZ8W07X2Ltfu4fyzIARRBYqkAPH5AY0I9WAHuXMm4+vL1eFRehPC/7Be9aDPVYPe
-	Vh2WY12kgMaVjU3JRAFS67A8CZX3pqeqSipLfVDy9AbsdY4bzNwFkP+0cTTAnSfwjC+WqK6o25M
-	t2ztV8HM0WHgIDAhuN8H/c8daV7VtVRLh12aBVdjZ4cIvf1QPmfPd4SrH6PiZ5MMc7LXjYebApN
-	zfN1ZQFnxWanlFaQbg==
-X-Received: by 2002:a05:600c:1382:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-451f0a5fe0amr51092005e9.5.1749110080156;
-        Thu, 05 Jun 2025 00:54:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1SRbImSlbGm32npkuOoSxiRgAXup0UEUY8LHi/iQ53+IYu08XHv+Q7OLZVb45/K6v+57Beg==
-X-Received: by 2002:a05:600c:1382:b0:43d:300f:fa3d with SMTP id 5b1f17b1804b1-451f0a5fe0amr51091785e9.5.1749110079698;
-        Thu, 05 Jun 2025 00:54:39 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f97f85casm16199575e9.4.2025.06.05.00.54.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 00:54:38 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Eric Snowberg
- <eric.snowberg@oracle.com>
-Cc: "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, David Howells <dhowells@redhat.com>, David
- Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
- Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
- E. Hallyn" <serge@hallyn.com>, Peter Jones <pjones@redhat.com>, Robert
- Holmes <robeholmes@gmail.com>, Jeremy Cline <jcline@redhat.com>, Coiby Xu
- <coxu@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>
-Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
- signatures verification
-In-Reply-To: <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
- <0FD18D05-6114-4A25-BD77-C32C1D706CC3@oracle.com>
- <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
-Date: Thu, 05 Jun 2025 09:54:37 +0200
-Message-ID: <87zfemoc76.fsf@redhat.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
+	b=YP7M7FMa74q59tNGP33U+XFVji+IEYwZmnMR6xahitF1Vndpw/jc2T3fWYWl8S027eW+3p
+	UYOOL0IRbGlqtzyh0OxRqtTsLkmNHb8ubYANvFBvaWCFVWvUoFq9GQmLEtzM2RVSHV9YlV
+	E2He5tgYvn14cR0IzwwTj/Rbszcqa+M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749110151;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
+	b=+eB6TNeqZt1/hkbo2PiIRhFrk3iql/AqJneqJ7lA4JvUiytR9pVHgaWVMX6uxomtf8b1ib
+	E2ZGRmXiSM2yxQDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YP7M7FMa;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+eB6TNeq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749110151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
+	b=YP7M7FMa74q59tNGP33U+XFVji+IEYwZmnMR6xahitF1Vndpw/jc2T3fWYWl8S027eW+3p
+	UYOOL0IRbGlqtzyh0OxRqtTsLkmNHb8ubYANvFBvaWCFVWvUoFq9GQmLEtzM2RVSHV9YlV
+	E2He5tgYvn14cR0IzwwTj/Rbszcqa+M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749110151;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
+	b=+eB6TNeqZt1/hkbo2PiIRhFrk3iql/AqJneqJ7lA4JvUiytR9pVHgaWVMX6uxomtf8b1ib
+	E2ZGRmXiSM2yxQDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 43E681373E;
+	Thu,  5 Jun 2025 07:55:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t3UmD4dNQWgYNwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 05 Jun 2025 07:55:51 +0000
+Message-ID: <d7a426b2-a66d-4d65-a9d5-c967b850dad6@suse.de>
+Date: Thu, 5 Jun 2025 09:55:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel
+ memory framebuffers
+To: Michael Kelley <mhklinux@outlook.com>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: David Hildenbrand <david@redhat.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "deller@gmx.de" <deller@gmx.de>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "weh@microsoft.com" <weh@microsoft.com>, "hch@lst.de" <hch@lst.de>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <20250523161522.409504-1-mhklinux@outlook.com>
+ <20250523161522.409504-4-mhklinux@outlook.com>
+ <de0f2cb8-aed6-436f-b55e-d3f7b3fe6d81@redhat.com>
+ <SN6PR02MB41573C075152ECD8428CAF5ED46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <c0b91a50-d3e7-44f9-b9c5-9c3b29639428@suse.de>
+ <SN6PR02MB4157871127ED95AD24EDF96DD46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <9a93813c-4d7c-45ef-b5a2-0ad37e7a078a@suse.de>
+ <aEBcCjMWZJgbsRas@phenom.ffwll.local>
+ <SN6PR02MB415702B00D6D52B0EE962C98D46CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <SN6PR02MB415702B00D6D52B0EE962C98D46CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	FREEMAIL_TO(0.00)[outlook.com,ffwll.ch];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de,outlook.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,ffwll.ch,gmx.de,microsoft.com,kernel.org,linux-foundation.org,lst.de,lists.freedesktop.org,vger.kernel.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,suse.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: ABFDD34684
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+Hi
 
-> On Wed, 2025-06-04 at 17:01 +0000, Eric Snowberg wrote:
->> > On Jun 2, 2025, at 7:25=E2=80=AFAM, Vitaly Kuznetsov <vkuznets@redhat.=
-com>=20
->> > The use-case: virtualized and cloud infrastructure generally
->> > provide an ability to customize SecureBoot variables, in
->> > particular, it is possible to bring your own SecureBoot 'db'. This
->> > may come handy when a user wants to load a third party kernel
->> > module (self built or provided by a third party vendor) while still
->> > using a distro provided kernel. Generally, distro provided kernels
->> > sign modules with an ephemeral key and discard the private part
->> > during the build. While MOK can sometimes be used to sign something
->> > out-of-tree, it is a tedious process requiring either a manual
->> > intervention with shim or a 'certmule' (see
->> > https://blogs.oracle.com/linux/post/the-machine-keyring). In
->> > contrast, the beauty of using SecureBoot 'db' in this scenario is
->> > that for public clouds and virtualized infrastructure it is
->> > normally a property of the OS image (or the whole
->> > infrastructure/host) and not an individual instance; this means
->> > that all instances created from the same template will have 'db'
->> > keys in '.platform' by default.
->>=20
->> Hasn=E2=80=99t this approach been rejected multiple times in the past?
+Am 04.06.25 um 23:43 schrieb Michael Kelley:
+> From: Simona Vetter <simona.vetter@ffwll.ch> Sent: Wednesday, June 4, 2025 7:46 AM
+>> On Wed, Jun 04, 2025 at 10:12:45AM +0200, Thomas Zimmermann wrote:
+>>> Hi
+>>>
+>>> Am 03.06.25 um 19:50 schrieb Michael Kelley:
+>>>> From: Thomas Zimmermann <tzimmermann@suse.de> Sent: Monday, June 2, 2025 11:25 PM
+>>>>> Hi
+>>>>>
+>>>>> Am 03.06.25 um 03:49 schrieb Michael Kelley:
+>>>>> [...]
+>>>>> What is the motivation behind this work? The driver or fbdev as a whole
+>>>>> does not have much of a future anyway.
+>>>>>
+>>>>> I'd like to suggest removing hyperv_fb entirely in favor of hypervdrm?
+>>>>>
+>>>> Yes, I think that's the longer term direction. A couple months ago I had an
+>>>> email conversation with Saurabh Sengar from the Microsoft Linux team where
+>>>> he raised this idea. I think the Microsoft folks will need to drive the deprecation
+>>>> process, as they need to coordinate with the distro vendors who publish
+>>>> images for running on local Hyper-V and in the Azure cloud. And my
+>>>> understanding is that the Linux kernel process would want the driver to
+>>>> be available but marked "deprecated" for a year or so before it actually
+>>>> goes away.
+>>> We (DRM upstream) recently considered moving some fbdev drivers to
+>>> drivers/staging or marking them with !DRM if a DRM driver is available.
+>>> Hyverv_fb would be a candidate.
+>>>
+>>> At least at SUSE, we ship hypervdrm instead of hyperv_fb. This works well on
+>>> the various generations of the hyperv system. Much of our userspace would
+>>> not be able to use hyperv_fb anyway.
+> Good to know.  Red Hat has made the switch as well. The Ubuntu images
+> in Azure have both hyperv_fb and hyperv_drm. I don't know what other
+> distros have done.
 >
-> Well not rejected, just we always thought that people (like me) who
-> take control of their secure boot systems are a tiny minority who can
-> cope with being different.  I have to say the embedding of all the
-> variable manipulations in shim made it quite hard.  However you can use
-> the efitools KeyTool to get a graphical method for adding MoK keys even
-> in the absence of shim.
+>> Yeah investing into fbdev drivers, especially when some mm surgery seems
+>> needed, does not sound like a good idea to me overall.
+>>
+>>>> I do have some concerns about the maturity of the hyperv_drm driver
+>>>> "around the edges". For example, somebody just recently submitted a
+>>>> patch to flush output on panic. I have less familiarity hyperv_drm vs.
+>>>> hyperv_fb, so some of my concern is probably due to that. We might
+>>>> need to do review of hyperv_drm and see if there's anything else to
+>>>> deal with before hyperv_fb goes away.
+>>> The panic output is a feature that we recently added to the kernel. It
+>>> allows a DRM driver to display a final error message in the case of a kernel
+>>> panic (think of blue screens on Windows). Drivers require a minimum of
+>>> support to make it work. That's what the hypervdrm patches were about.
+>> I'm also happy to help with any other issues and shortfalls of drm vs
+>> fbdev. There are some, but I thought it was mostly around some of the low
+>> bit color formats that really old devices want, and not anything that
+>> hyperv would need.
+> You've set me up perfectly to raise an issue. :-)  I'm still relatively new
+> to the hyperv_drm driver and DRM in general, compared with hyperv_fb.
+> One capability in fbdev is deferred I/O, which is what this entire patch
+> series is about. The hyperv_drm driver doesn't currently use anything
+> similar to deferred I/O like hyperv_fb. I don't know if that's because
+> hyperv_drm doesn't make use of what DRM has to offer, or if DRM doesn't
+> have a deferred I/O framework like fbdev. Do you know what the situation
+> is? Or could you point me to an example of doing deferred I/O with DRM
+> that hyperv_drm should be following?
+
+Fbdev deferred I/O is a workaround for the fact that fbdev does not 
+require a flush operation on its I/O buffers. Writing to an mmaped 
+buffer is expected to go to hardware immediately. On devices where this 
+is not the case, deferred I/O tracks written pages and writes them back 
+to hardware at intervals.
+
+For DRM, there's the MODE_DIRTYFB ioctl [1] that all userspace has to 
+call after writing to mmap'ed buffers. So regular DRM doesn't need 
+deferred I/O as userspace triggers writeback explicitly.
+
+[1] 
+https://elixir.bootlin.com/linux/v6.15/source/drivers/gpu/drm/drm_ioctl.c#L686
+
 >
-> The question is, is there a growing use case for db users beyond the
-> exceptions who own their own keys on their laptop, in which case we
-> should reconsider this.
+> I ran a quick performance test comparing hyperv_drm with hyperv_fb.
+> The test does "cat" of a big text file in the Hyper-V graphics console. The
+> file has 1024 * 1024 lines, each with 64 characters, so total file size is
+> 64 MiB.
+>
+> With hyperv_fb the test completes in 24 seconds elapsed time, with
+> 24 seconds of system CPU time. With hyperv_drm, it takes 34 seconds
+> elapsed time, but with about the same 24 seconds of system CPU time.
+> Overall this difference isn't huge, and probably isn't that noticeable
+> when doing human-scale work (i.e., 'dmesg' outputting several
+> hundred lines in 0.19 seconds vs. my test doing 1M lines) on the Hyper-V
+> graphics console. To me, the console doesn't feel slow with hyperv_drm
+> compared to hyperv_fb, which is good.
 
-Yes, exactly; I may had missed some of the discussions but what I found
-gave me the impression that the idea was never implemented just because
-'db' was normally considered to be outside of user's control ("just a few
-evil certs from MS"). This may still be true for bare metal but over the
-last few years things have changed in a way that major cloud providers
-started moving towards offering UEFI booted instances by default (or, in
-some cases, UEFI-only instances). At least the three major hyperscalers
-(AWS, GCP, Azure) offer fairly straightforward ways to customize 'db'
-for SecureBoot; it is also possible to have a custom UEFI setup with
-KVM/QEMU+OVMF based infrastructures.=20
+DRM consoles are technically an fbdev device that operates on a DRM 
+device. Both, DRM and fbdev, have some differences that can make this 
+problematic. I'm not surprised that there are issues.
 
-'certwrapper' offers _a_ solution which is great. It may, however, not
-be very convenient to use when a user wants to re-use the same OS image
-(e.g. provided by the distro vendor) for various different use-cases as
-proper 'certwrapper' binary needs to be placed on the ESP (and thus
-we'll end up with a bunch of images instead of one). 'db' is different
-because it normally lives outside of the OS disk so it is possible to
-register the exact same OS image with different properties (e.g. with
-and without a custom cert which allows to load third party modules).
+>
+> Nonetheless, there's an underlying issue. A main cause of the difference
+> is the number of messages to Hyper-V to update dirty regions. With
+> hyperv_fb using deferred I/O, the messages are limited 20/second, so
+> the total number of messages to Hyper-V is about 480. But hyperv_drm
+> appears to send 3 messages to Hyper-V for each line of output, or a total of
+> about 3,000,000 messages (~90K/second). That's a lot of additional load
+> on the Hyper-V host, and it adds the 10 seconds of additional elapsed
+> time seen in the guest. There also this ugly output in dmesg because the
+> ring buffer for sending messages to the Hyper-V host gets full -- Hyper-V
+> doesn't always keep up, at least not on my local laptop where I'm
+> testing:
+>
+> [12574.327615] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12574.327684] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12574.327760] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12574.327841] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12597.016128] hyperv_sendpacket: 6211 callbacks suppressed
+> [12597.016133] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12597.016172] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12597.016220] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+> [12597.016267] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
+>
+> hyperv_drm could be fixed to not output the ugly messages, but there's
+> still the underlying issue of overrunning the ring buffer, and excessively
+> hammering on the host. If we could get hyperv_drm doing deferred I/O, I
+> would feel much better about going full-on with deprecating hyperv_fb.
 
-One additional consideration is the fact that we already trust 'db' for
-dm-verity (since 6fce1f40e951) and kexec (since 278311e417be) and
-especially the later gives someone who is able to control 'db' access to
-CPL0; a 'db'-signed module (IMO) wouldn't change much.
+Thanks for debugging this. A number of things are playing into this.
 
---=20
-Vitaly
+- DRM performs display output along vblank IRQs. For example, if the 
+display runs with 60 Hz there should be no more than 60 display updates 
+per second. From what I can tell, there's no IRQ support in hypervdrm 
+(or HyperV in general?). Without IRQ support, drivers output to hardware 
+ASAP, which can result in large numbers of buffer updates per second. 
+I've heard about this problem in other context [2] and you're likely 
+seeing a similar issue.
+
+- DRM's console also needs better support for vblank interrupts. It 
+currently sends out updates ASAP as well.
+
+Both points are not much of a problem on most desktop and server 
+systems, but can be an be an issue with virtualization.
+
+[2] https://bugzilla.suse.com/show_bug.cgi?id=1189174
+
+Best regards
+Thomas
+
+>
+> Michael
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
