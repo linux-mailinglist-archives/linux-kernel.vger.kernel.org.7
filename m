@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-693401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-693402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C55ADFE88
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6435ADFE89
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 09:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5DD43BA8BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F973AD8B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Jun 2025 07:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321E624EA90;
-	Thu, 19 Jun 2025 07:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D39224A057;
+	Thu, 19 Jun 2025 07:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OmwLbtVT"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lPA/Y2FZ"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259A6242D6E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2320F242D6E
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Jun 2025 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750317530; cv=none; b=dO7Jv1GjJ7E2sdtUbXSw25/U2H1Mvj69cH+fyi0Qf87ySvAicwG795VyFTyJSzef4Zrx8f5F56VGZMRHmuiTc4WjG7YF4z3Hp+cVE87FsfBhSIS4Rgi+dluoSIztTiiWlU8cabYqGufuvhlZliMqcc0TQyQrMzbyFIqhmkKRGBw=
+	t=1750317554; cv=none; b=WHFGUB/DiWCaxTSYV/lqKvNTvnoUQ3EppAtuc680+n44lpsTcTBnTiYdpek29Dw+NaPA5L5j6axys5LIdXasjmXSeBvekbV+JeKHDhqpMwnibJu/cPrwiQw2paQ9ELAlFYfRqT1sWRk65Ut7poImoDibqoPTKvCgkIDBpDhXIqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750317530; c=relaxed/simple;
-	bh=YHd4xZcBCdKBN8J++MiZTkfPsgwm7PVknj53DY0Zn6A=;
+	s=arc-20240116; t=1750317554; c=relaxed/simple;
+	bh=98JOeQbdHFLnotA+noW+iaW7ngQU/8uiWvpLuOb+XPU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ctTiB3IBSix6fYrsXgi5YoZFgxEZBuGPSugPAhksPToIAMV2ZRH7RUz1VH974iTQ4j3M7uYed2KHPgQTOaOc2l+LV6Un2NeVAGTfWWMKFDSEA2E23NtL3A92I+kwc4KjInH9J5/Ph3oP6BtN+Y/sFEd1rSMoDMFy0D9L/mbmbLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OmwLbtVT; arc=none smtp.client-ip=192.198.163.18
+	 Content-Disposition; b=hQM2ZgpHJiAbKFO7+ApuFSWD/EtDqFd3gpu0G5ksJEl0M15HX3ka7/x7YlS8E34SxrFBaiu97bFUXDmEF9SQSx1i3fkAGQoUUw7a/l5AZ3GeMEHzOR0eDMNQ1vHHucroJKhqMW0TuM3Hir6q69d0kEsIWkeemBkPE72VP9NiVxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lPA/Y2FZ; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750317529; x=1781853529;
+  t=1750317553; x=1781853553;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=YHd4xZcBCdKBN8J++MiZTkfPsgwm7PVknj53DY0Zn6A=;
-  b=OmwLbtVTLIKp1IDDac+J8imrJZBABlw31H9rHlv1m+wGxrogMrXtC4N+
-   C1YGHIfou+YPjSzPULep8omF8u8PsHzcDkNezRTAR7jwlBg/0w0il3h0w
-   YdEsAHb4x7lLPRNwnbp90TKg/cv+nZYBiCroNbQp19vdOGehcL143wbcs
-   wztzvPCVfe7u2Sn5x6D/2LkA9G3wrQPHCPLd1CJo3Ujvmip5VIMswMqHh
-   G+AYor3eet9YphKx2b2vWPEGxM/XwAw09RMCnp0qA7ZeaGsguyJGBjWao
-   E5OXZ6MDUDq9c/GCUATU8BOvk4K8dGqE40mU/aGEOdOOVcDDPetXgkyBf
+  bh=98JOeQbdHFLnotA+noW+iaW7ngQU/8uiWvpLuOb+XPU=;
+  b=lPA/Y2FZ3/gDwhAASUfPk8fST2oWw6Fr572Ilmn+HddMGy9Z/91Kd9Ip
+   rF5YIqFseZqPCzp94HkW/iP1c12zp/CqlK8wY12mDF9ZSNQVm+VHVL7Yu
+   jkvCCipX4BgmdcnKMfemkyJcWZ+YXWOYW5m7AwNMs15QGTjrkFTtqavPy
+   9PkWsEAiaTCGcsXY0mD2XZfcektnHZ+EQbh9V/1JO0yjUoalEHinwZHsz
+   x+af/l0FJZidFHrEalFBN95+Z9iqHHtVobT9qVCws1aV1vnc5rWofzIPz
+   m8zDqVT7abCTowyW/FlDdQcwofqFFZ7HRJ2AkNJQLsQit49Aule8A09Fe
    w==;
-X-CSE-ConnectionGUID: FRNTAtpgTGSGH2TkeD6akQ==
-X-CSE-MsgGUID: iwSg4DOzRYqI0k8fHuTxYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="51794283"
+X-CSE-ConnectionGUID: zhyDSJ7gRmuYdyu6+Rhkmw==
+X-CSE-MsgGUID: 5sTWhZ7oQ5uZdIlFTd28GA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11468"; a="51794304"
 X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="51794283"
+   d="scan'208";a="51794304"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 00:18:48 -0700
-X-CSE-ConnectionGUID: 9Ko/6TgiQOigySm7hs+47A==
-X-CSE-MsgGUID: L3X4iJEeRXGTnNg8nOPIog==
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2025 00:19:12 -0700
+X-CSE-ConnectionGUID: EW0CZaffRPCAeEilQ3aOlg==
+X-CSE-MsgGUID: SEPnU+x+TcC19xzE5bcUZw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,247,1744095600"; 
-   d="scan'208";a="155124667"
+   d="scan'208";a="155124740"
 Received: from igk-lkp-server01.igk.intel.com (HELO 28ae90bf6994) ([10.91.175.65])
-  by orviesa004.jf.intel.com with ESMTP; 19 Jun 2025 00:18:46 -0700
+  by orviesa004.jf.intel.com with ESMTP; 19 Jun 2025 00:19:10 -0700
 Received: from kbuild by 28ae90bf6994 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1uS9Xg-0001KG-0s;
-	Thu, 19 Jun 2025 07:18:36 +0000
-Date: Wed, 4 Jun 2025 19:19:49 +0800
+	id 1uS9Y4-0001KS-18;
+	Thu, 19 Jun 2025 07:19:00 +0000
+Date: Thu, 5 Jun 2025 09:43:43 +0800
 From: kernel test robot <lkp@intel.com>
-To: Shahab Vahedi <shahab@synopsys.com>
+To: Frank Li <Frank.Li@nxp.com>
 Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: arch/arc/net/bpf_jit_arcv2.c:2236:3: error: label at end of compound
- statement
-Message-ID: <202506041921.lFErMU6Q-lkp@intel.com>
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: mipi@21dc000
+ (fsl,imx6-mipi-csi2): 'port' does not match any of the regexes:
+ '^pinctrl-[0-9]+$', '^port@[1-4]$'
+Message-ID: <202506050912.DQmua49D-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,101 +81,34 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5abc7438f1e9d62e91ad775cc83c9594c48d2282
-commit: f122668ddcce450c2585f0be4bf4478d6fd6176b ARC: Add eBPF JIT support
-date:   1 year, 1 month ago
-config: arc-randconfig-2005-20250604 (https://download.01.org/0day-ci/archive/20250604/202506041921.lFErMU6Q-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250604/202506041921.lFErMU6Q-lkp@intel.com/reproduce)
+head:   1af80d00e1e026c317c6ec19b1072f81ba7af64c
+commit: 48dbb76cef65fabaa3ac97461eda90495e954ecd dt-bindings: media: convert imx.txt to yaml format
+date:   4 weeks ago
+config: arm-randconfig-2052-20250514 (https://download.01.org/0day-ci/archive/20250605/202506050912.DQmua49D-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
+dtschema version: 2025.3.dev27+g32749b3
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250605/202506050912.DQmua49D-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506041921.lFErMU6Q-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506050912.DQmua49D-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
-
-   arch/arc/net/bpf_jit_arcv2.c: In function 'gen_swap':
->> arch/arc/net/bpf_jit_arcv2.c:2236:3: error: label at end of compound statement
-      default:
-      ^~~~~~~
-   arch/arc/net/bpf_jit_arcv2.c:2254:3: error: label at end of compound statement
-      default:
-      ^~~~~~~
-   arch/arc/net/bpf_jit_arcv2.c: In function 'gen_jmp_64':
-   arch/arc/net/bpf_jit_arcv2.c:2867:2: error: label at end of compound statement
-     default:
-     ^~~~~~~
---
-   {standard input}: Assembler messages:
->> {standard input}:32583: Error: flag mismatch for instruction 'mpyd'
-
-
-vim +2236 arch/arc/net/bpf_jit_arcv2.c
-
-  2199	
-  2200	u8 gen_swap(u8 *buf, u8 rd, u8 size, u8 endian, bool force, bool do_zext)
-  2201	{
-  2202		u8 len = 0;
-  2203	#ifdef __BIG_ENDIAN
-  2204		const u8 host_endian = BPF_FROM_BE;
-  2205	#else
-  2206		const u8 host_endian = BPF_FROM_LE;
-  2207	#endif
-  2208		if (host_endian != endian || force) {
-  2209			switch (size) {
-  2210			case 16:
-  2211				/*
-  2212				 * r = B4B3_B2B1 << 16 --> r = B2B1_0000
-  2213				 * then, swape(r) would become the desired 0000_B1B2
-  2214				 */
-  2215				len = arc_asli_r(buf, REG_LO(rd), REG_LO(rd), 16);
-  2216				fallthrough;
-  2217			case 32:
-  2218				len += arc_swape_r(BUF(buf, len), REG_LO(rd));
-  2219				if (do_zext)
-  2220					len += zext(BUF(buf, len), rd);
-  2221				break;
-  2222			case 64:
-  2223				/*
-  2224				 * swap "hi" and "lo":
-  2225				 *   hi ^= lo;
-  2226				 *   lo ^= hi;
-  2227				 *   hi ^= lo;
-  2228				 * and then swap the bytes in "hi" and "lo".
-  2229				 */
-  2230				len  = arc_xor_r(buf, REG_HI(rd), REG_LO(rd));
-  2231				len += arc_xor_r(BUF(buf, len), REG_LO(rd), REG_HI(rd));
-  2232				len += arc_xor_r(BUF(buf, len), REG_HI(rd), REG_LO(rd));
-  2233				len += arc_swape_r(BUF(buf, len), REG_LO(rd));
-  2234				len += arc_swape_r(BUF(buf, len), REG_HI(rd));
-  2235				break;
-> 2236			default:
-  2237				/* The caller must have handled this. */
-  2238			}
-  2239		} else {
-  2240			/*
-  2241			 * If the same endianness, there's not much to do other
-  2242			 * than zeroing out the upper bytes based on the "size".
-  2243			 */
-  2244			switch (size) {
-  2245			case 16:
-  2246				len = arc_and_i(buf, REG_LO(rd), 0xffff);
-  2247				fallthrough;
-  2248			case 32:
-  2249				if (do_zext)
-  2250					len += zext(BUF(buf, len), rd);
-  2251				break;
-  2252			case 64:
-  2253				break;
-  2254			default:
-  2255				/* The caller must have handled this. */
-  2256			}
-  2257		}
-  2258	
-  2259		return len;
-  2260	}
-  2261	
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm/boot/dts/nxp/imx/imx6qdl.dtsi:907.28-915.6: Warning (unique_unit_address_if_enabled): /soc/bus@2000000/iomuxc-gpr@20e0000: duplicate unit-address (also used in node /soc/bus@2000000/pinctrl@20e0000)
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /ldb: failed to match any schema with compatible: ['fsl,imx6q-ldb', 'fsl,imx53-ldb']
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: iomuxc-gpr@20e0000 (fsl,imx6q-iomuxc-gpr): 'ipu1_csi0_mux', 'ipu2_csi1_mux' do not match any of the regexes: '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/soc/imx/fsl,imx-iomuxc-gpr.yaml#
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: pcf8523@68 (nxp,pcf8523): $nodename:0: 'pcf8523@68' does not match '^rtc(@.*|-([0-9]|[1-9][0-9]+))?$'
+   	from schema $id: http://devicetree.org/schemas/rtc/nxp,pcf8523.yaml#
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /soc/bus@2100000/i2c@21a0000/tc358743@f: failed to match any schema with compatible: ['toshiba,tc358743']
+>> arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: mipi@21dc000 (fsl,imx6-mipi-csi2): 'port' does not match any of the regexes: '^pinctrl-[0-9]+$', '^port@[1-4]$'
+   	from schema $id: http://devicetree.org/schemas/media/fsl,imx6-mipi-csi2.yaml#
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /soc/bus@2100000/vdoa@21e4000: failed to match any schema with compatible: ['fsl,imx6q-vdoa']
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /soc/ipu@2400000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /soc/ipu@2800000: failed to match any schema with compatible: ['fsl,imx6q-ipu']
+   arch/arm/boot/dts/nxp/imx/imx6q-h100.dtb: /display-subsystem: failed to match any schema with compatible: ['fsl,imx-display-subsystem']
 
 -- 
 0-DAY CI Kernel Test Service
