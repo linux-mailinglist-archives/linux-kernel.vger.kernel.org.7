@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-675069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00E5ACF89F
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:14:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9093AACF8A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558251890152
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:14:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155C31894930
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D9B27A927;
-	Thu,  5 Jun 2025 20:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747FA27CB21;
+	Thu,  5 Jun 2025 20:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dTQ7x9VW"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTKr/Yt2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9C717548
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 20:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4B314A4C7;
+	Thu,  5 Jun 2025 20:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749154461; cv=none; b=O5uKdc1lNTYf/4vEIFHjspBn5mO+OzKWvO/6Zik9QTsBdhP9pwYpmbnCeKMWA9a5XEeDDQaOWAHCT34y2iuu8q+y1edY5bLwF/THr2hgRKsvrzpxHDgmsGkrw0kN6bUuOPykjRkzoORrQb+dH9Ot4ZC1zfgL6h4+sA2k9tfe998=
+	t=1749154533; cv=none; b=ZsGi/9vGk9241Ndh2/uIHGjmBk0bRHMU81kHe6a1Ei9wZ7LxeZtiIYS+QNV21ulT/rWuvF53K/b5d9hnvGiCj+egzxKknHwIHIqDPwfIZhfF0Wrp8Dh4Dj44aSHHHKJiFmdzHgdSG9ad4S4J0GnqyTWosGFeztsF60acmzrQEv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749154461; c=relaxed/simple;
-	bh=6YixZOzPWbkzOYmBEoMzf0Mbs3GxjBDYXyDloyNRgsQ=;
+	s=arc-20240116; t=1749154533; c=relaxed/simple;
+	bh=IYT1CcO4LBvLg1Erh1PUlzPXoV02ZdFG//4pEvVZEPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehgWsi23GauASw4zB1luM4ePzmobWM7fWb90dns5wK54zFy8dtTcmvzAsCJSNa+uMcaIfYMXD1HDPrnE857MDCT54wLKm66pHObZXATvE9oA2LF9xkSRL6ecfSkwehgVJnMyPUdk7+NXWhflabEp6ShvC3r/FTPBZcDxtYF/q+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dTQ7x9VW; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=x0qQ
-	mkD815o36B/CBxf3GbNgkCrxbj8Aa0uApsHGYeU=; b=dTQ7x9VW8DyiF6mWre53
-	kLAnYG71rIdTjSPu9CeV2IO04Uqx8SzyV/wUDTltYQITKwuUfw56ZySY296CCqeW
-	p8Dd1/X033VfYfkZ/BPB9GYrJhWK1Q2F3qeZjscDB0ZCAqbIzrq4XJbWdW7h4XxG
-	uKFtsNGQaRHeTLosa+4zbYjk47NU65cs3ylKDOaalGCi/fCFJSbJiTAOKftzRVYw
-	BCpms55xb1+p25TMSLMR0O+UyvU873OvE5V4DaUl1PlX7qdnWpC7vrdhFJPyIe8E
-	vNNFh3bOLWBJqu0dSDRmeMqxdAwtwPkUvrKwAXVBGvF2aTR6WyAGO21UqMEDhoec
-	PQ==
-Received: (qmail 1269126 invoked from network); 5 Jun 2025 22:14:10 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Jun 2025 22:14:10 +0200
-X-UD-Smtp-Session: l3s3148p1@McGvwdg2OoAujnvk
-Date: Thu, 5 Jun 2025 22:14:10 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Jorge Marques <jorge.marques@analog.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i3c: master: Add driver for Analog Devices I3C
- Controller IP
-Message-ID: <aEH6kpXStLc0dWZq@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Frank Li <Frank.li@nxp.com>,
-	Jorge Marques <jorge.marques@analog.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250604-adi-i3c-master-v1-0-0488e80dafcb@analog.com>
- <20250604-adi-i3c-master-v1-2-0488e80dafcb@analog.com>
- <aECaFQzkPYdfjagK@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UT0w1yBPsWzuryx788aT0PlOKBhUhFHKCJI4qkc0DTWuchreDj7Ul3JyfdzgGuovcGIh8Z/fuqeBjyK4NusPyhhJLxYB5sYDkc4K7UH8vKQngi+OzfAyi29fYSotWq9y9viPBxqw9tbBPfiodxOQF/jHXgL80EQhWVImjc8ZajM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTKr/Yt2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 371BAC4CEE7;
+	Thu,  5 Jun 2025 20:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749154533;
+	bh=IYT1CcO4LBvLg1Erh1PUlzPXoV02ZdFG//4pEvVZEPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dTKr/Yt2Hy5Ra/GPalkzOkUFA7/xkis8nb3QvcUSx1uSkyip3GUeXJLvaI1Q37XYa
+	 gtXxU6j0esbWwO7AK21FwIU08/csOV39EEYuh8Y90tsXAEqXxfJh87ws6ci4CAfU6d
+	 QvebhzDT+5dO28YbZA/5RsMLwzJFcCI1wZaScn/qjLteznxorhfE+Abf9sCB/pnZ9p
+	 /aAw9KIRqxTSARGXt6FedihZ5FXiNVxhjzdvgnyekN+8B+ijeCaAfAh7/ZqWMvQ5pT
+	 zHC5/7LMdIfZm+KDKOSVkeUv88+wMQJ2OMUGLoScaB9oyMoEDv33arK+TILWsn4tYJ
+	 dKR1Q9gFExg9Q==
+Date: Thu, 5 Jun 2025 13:15:32 -0700
+From: Kees Cook <kees@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Rientjes <rientjes@google.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	Thomas Huth <thuth@redhat.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] slab: Decouple slab_debug and no_hash_pointers
+Message-ID: <202506051314.D6EDFA91D@keescook>
+References: <20250415170232.it.467-kees@kernel.org>
+ <Z_-dPcdiGW0fo8Ji@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GXe3Ct2mLNY0M4s8"
-Content-Disposition: inline
-In-Reply-To: <aECaFQzkPYdfjagK@lizhi-Precision-Tower-5810>
-
-
---GXe3Ct2mLNY0M4s8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z_-dPcdiGW0fo8Ji@pathway.suse.cz>
 
+On Wed, Apr 16, 2025 at 02:06:21PM +0200, Petr Mladek wrote:
+> On Tue 2025-04-15 10:02:33, Kees Cook wrote:
+> > Some system owners use slab_debug=FPZ (or similar) as a hardening option,
+> > but do not want to be forced into having kernel addresses exposed due
+> > to the implicit "no_hash_pointers" boot param setting.[1]
+> > 
+> > Introduce the "hash_pointers" boot param, which defaults to "auto"
+> > (the current behavior), but also includes "always" (forcing on hashing
+> > even when "slab_debug=..." is defined), and "never". The existing
+> > "no_hash_pointers" boot param becomes an alias for "hash_pointers=never".
+> > 
+> > This makes it possible to boot with "slab_debug=FPZ hash_pointers=always".
+> > 
+> > Link: https://github.com/KSPP/linux/issues/368 [1]
+> > Fixes: 792702911f58 ("slub: force on no_hash_pointers when slub_debug is enabled")
+> > Co-developed-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+> > Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> > Acked-by: David Rientjes <rientjes@google.com>
+> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> 
+> Tested-by: Petr Mladek <pmladek@suse.com>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> 
+> I am going to wait few more days for a potential feedback.
+> I'll queue it for 6.16 unless anyone complains.
 
-> > +static void adi_i3c_master_wr_to_tx_fifo(struct adi_i3c_master *master,
-> > +					 const u8 *bytes, int nbytes)
-> > +{
-> > +	writesl(master->regs + REG_SDO_FIFO, bytes, nbytes / 4);
-> > +	if (nbytes & 3) {
-> > +		u32 tmp =3D 0;
-> > +
-> > +		memcpy(&tmp, bytes + (nbytes & ~3), nbytes & 3);
->=20
-> ALIGN_DOWN(bytes, 4)?
->=20
-> Do you need conside big/little endian to trim down data?
+Hi,
 
-The driver uses the same code for reading/writing the FIFO as the
-Designware and Cadence driver. The Renesas driver I am working on has
-also the same pattern. Time for a helper function maybe
+Is this still planned for 6.16? I just noticed it wasn't in -next, and
+we're almost to the end of the merge window...
 
-	i3c_{read|write}l_to_fifo(register, data, length);
+-Kees
 
-?
-
---GXe3Ct2mLNY0M4s8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmhB+o4ACgkQFA3kzBSg
-KbYmSA/+IZXTuecloMa7I1/LbmBCQFy5sAh/vUPxCCGQUPFR6YJoIhUs+s7l8S60
-Z5P//0BW4bh2/5sLRBy18SN3UI0ADP1dgeKaTkSb/fxTM49YUJEaS44MxKrfLN4Y
-1g8GiTgx/GERwouQHQDHn/wKQ8ADgynJcoXEldLu6LqpYIq7rRKRYBzJuXnHgRgk
-M3BK8sCOUGt3yU68DO/p5wHyfJHhIaVnP7ZyKFL0nNkfzoQZoz7x3xzsSNJhpUKg
-st3J9Z3K1rFe6lBB1Of5WgxNyqab1GagJl5LkZznUqC5t9YCihxMaeovXrl6Dm8Y
-U1rUU8+ddO6bcGE1cCYJAIAnhJj2K0QCZrFKhrcLqf2N9yRuhvRnSiJ/fD0gHVPL
-4yD/J9bxLQgB++AFlgjGGpCmtSSuUDiYTl7SvC/iaBFb8lW6vFCGHX4ECANbPXA2
-rnlsXWir4YaeLAaD6ryQpOAiTOhhAZkOXtLAPN979UOUPtVl/WkWPKx1YlMdDSgJ
-s5ZhMRU75q8RLM7CLfoWokjj3AEi36fv0ebSPtUS05spiSJVJzTVCCYgIpoiCOPV
-iTjl2VL+22LD/fw4ammODlx/dullZDyOHDqyA5esIjgqKtu8D2wECEsTCMqpV7cd
-410fdnNrxP7UKRmPo8rVC4lY3PrWnHgzSZSv3QbikScKqy8rg7s=
-=xqhH
------END PGP SIGNATURE-----
-
---GXe3Ct2mLNY0M4s8--
+-- 
+Kees Cook
 
