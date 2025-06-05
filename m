@@ -1,253 +1,279 @@
-Return-Path: <linux-kernel+bounces-674601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC92FACF1B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:25:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2DBACF1E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09B11897213
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20AB3AF67D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9551E17A314;
-	Thu,  5 Jun 2025 14:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10B51A3159;
+	Thu,  5 Jun 2025 14:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wMJQdNQe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M2tk8Jzw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wMJQdNQe";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="M2tk8Jzw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bDA4m2Uv"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89E8188734
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0128277004;
+	Thu,  5 Jun 2025 14:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133430; cv=none; b=t8wIgLzdcWqpJWz+w3qmwzhpGXAPF86Oza6LjWmmO0Ch13hwTy2cXzFVBibmVF2OY2RNq6/jM2X9NS6bzbFBvrk1zR4xBpkUyVci3uigeBJc23Z/a0rkSsrQKvDsAAVO7sDPhmenHCfR/hM6Bdq8ZXceH757kOu7EgqH3nTDPEU=
+	t=1749133457; cv=none; b=Pfx5XTBuHM76PLRhzX4jTiHuiHuyd1InbWG6y3ltz9qgLfFgoqtndtQiNxlhG7iBycH/t0nkoEK9lPQFEIJinIaCzFU6zy0nO1LbwqeVp47xTguwHPQs/NI72DZUzS/v8xfbba1V8YWdPLUONnGRGwEN5rXQqgZ5p6JA97/aBrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133430; c=relaxed/simple;
-	bh=8JcmyBEdd4dZW0ykXLCuOpg53uPa5lB0AReWtq+k78Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n4p68tp+WCeabQ9t71RSmW1fdckjky8wJMiMV7OLwiZvU7Qeie056gPHs8RWQpmlNkl8xFdDQDsyrpe2gsSf7QR82oste5FwYEa5hBW5TDj4IcuLY7mgvJ9lJ/26/+6mZ91RrT2DOccheNCStHXI0nVSAkI0BxBYThOaTgOrH08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wMJQdNQe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M2tk8Jzw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wMJQdNQe; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=M2tk8Jzw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BCEC41FDC9;
-	Thu,  5 Jun 2025 14:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749133401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
+	s=arc-20240116; t=1749133457; c=relaxed/simple;
+	bh=OEOqjwTq0CB7SkAzsSCdmG0/u6NaGEdcHaoy/2CrnTA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rCz1TUVsfcX2DWgOejLpDYYgUX95orLJiXUkUU/rodbqSDm3PraabEnjmvzeWvlTyP494FePL57Vf2JZLwj+ZF8ieHhaFgZPmdvqFFlMuHFmuWKIEZ9UmJ/RaIzcoHDnRouWHLZjDMbWy5MYFS0k+jhy8/JncSzT9GT1F1aQIBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bDA4m2Uv; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749133453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
-	b=wMJQdNQe2CHkW3QhzHzBnRYpS6r79wY6Pzjenus1EwRVLCfJUnO6VIwHrNUhU5LymiO4Fg
-	Ym85LVtpiJdusifKnEB8uQPfGD/x80AcyEEsrMZCOsgg0EUiRCEwLjJNCOHFeRewkORAiQ
-	shAxpREEx6LV5r+wEWl7OoeM80agUvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749133401;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
-	b=M2tk8Jzw7FwcP9Zi/OpZUDNmqXkw0odqrNWc7yDoFQWfFTjqFZjCwPRTGUglVS4LU/mTJt
-	Y5ah8jcpV+DTVCAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749133401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
-	b=wMJQdNQe2CHkW3QhzHzBnRYpS6r79wY6Pzjenus1EwRVLCfJUnO6VIwHrNUhU5LymiO4Fg
-	Ym85LVtpiJdusifKnEB8uQPfGD/x80AcyEEsrMZCOsgg0EUiRCEwLjJNCOHFeRewkORAiQ
-	shAxpREEx6LV5r+wEWl7OoeM80agUvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749133401;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SmSyjhZyv9opvDAxMx9rc8iOlerhOsuhbkuJ00p6FnE=;
-	b=M2tk8Jzw7FwcP9Zi/OpZUDNmqXkw0odqrNWc7yDoFQWfFTjqFZjCwPRTGUglVS4LU/mTJt
-	Y5ah8jcpV+DTVCAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 23A81137FE;
-	Thu,  5 Jun 2025 14:23:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gPv7BVmoQWipRwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:21 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
+	bh=vvfeGE4Xx4V2ePfSCn9iOY76koqqsy5YeglcChX6feE=;
+	b=bDA4m2UvshRfsv7CyWxAHJh9ptpVCBG5x8Du1DHxlgWpo8u3P5N/NfSr3Z5kbMKfgplZ8s
+	4sgKxyO1FzDavPa6Tl8cTPrUl2pvUcBv1dTbtNJ5TJV52TR99LtSJkg6vj0u7DlXKhntET
+	mtFaZJmMPc5OxafHaW5b/T27MVKUMRk=
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+To: mpatocka@redhat.com,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@Huawei.com
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v5 10/10] mm,memory_hotplug: Rename status_change_nid parameter in memory_notify
-Date: Thu,  5 Jun 2025 16:23:01 +0200
-Message-ID: <20250605142305.244465-11-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
-References: <20250605142305.244465-1-osalvador@suse.de>
+	linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	dm-devel@lists.linux.dev,
+	Dongsheng Yang <dongsheng.yang@linux.dev>
+Subject: [RFC PATCH 07/11] dm-pcache: add cache_gc
+Date: Thu,  5 Jun 2025 14:23:02 +0000
+Message-Id: <20250605142306.1930831-8-dongsheng.yang@linux.dev>
+In-Reply-To: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
+References: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo,oracle.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -5.30
+X-Migadu-Flow: FLOW_OUT
 
-The 'status_change_nid' field was used to track changes in the memory
-state of a numa node, but that funcionality has been decoupled from
-memory_notify and moved to node_notify.
-Current consumers of memory_notify are only interested in which node the
-memory we are adding belongs to, so rename current 'status_change_nid'
-to 'nid'.
+Introduce cache_gc.c, a self-contained engine that reclaims cache
+segments whose data have already been flushed to the backing device.
+Running in the cache workqueue, the GC keeps segment usage below the
+user-configurable *cache_gc_percent* threshold.
 
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
+* need_gc() – decides when to trigger GC by checking:
+  - *dirty_tail* vs *key_tail* position,
+  - kset integrity (magic + CRC),
+  - bitmap utilisation against the gc-percent threshold.
+
+* Per-key reclamation
+  - Decodes each key in the target kset (`cache_key_decode()`).
+  - Drops the segment reference with `cache_seg_put()`, allowing the
+    segment to be invalidated once all keys are gone.
+  - When the reference count hits zero the segment is cleared from
+    `seg_map`, making it immediately reusable by the allocator.
+
+* Scheduling
+  - `pcache_cache_gc_fn()` loops until no more work is needed, then
+    re-queues itself after *PCACHE_CACHE_GC_INTERVAL*.
+
+Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- Documentation/core-api/memory-hotplug.rst |  9 ++-------
- include/linux/memory.h                    |  2 +-
- mm/memory_hotplug.c                       |  4 ++--
- mm/page_ext.c                             | 12 +-----------
- 4 files changed, 6 insertions(+), 21 deletions(-)
+ drivers/md/dm-pcache/cache_gc.c | 170 ++++++++++++++++++++++++++++++++
+ 1 file changed, 170 insertions(+)
+ create mode 100644 drivers/md/dm-pcache/cache_gc.c
 
-diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
-index b19c3be7437d..97efb7b651ac 100644
---- a/Documentation/core-api/memory-hotplug.rst
-+++ b/Documentation/core-api/memory-hotplug.rst
-@@ -59,17 +59,12 @@ The third argument (arg) passes a pointer of struct memory_notify::
- 	struct memory_notify {
- 		unsigned long start_pfn;
- 		unsigned long nr_pages;
--		int status_change_nid;
-+		int nid;
- 	}
- 
- - start_pfn is start_pfn of online/offline memory.
- - nr_pages is # of pages of online/offline memory.
--- status_change_nid is set node id when N_MEMORY of nodemask is (will be)
--  set/clear. It means a new(memoryless) node gets new memory by online and a
--  node loses all memory. If this is -1, then nodemask status is not changed.
--
--  If status_changed_nid* >= 0, callback should create/discard structures for the
--  node if necessary.
-+- nid is set to the node id, where the memory we are adding or removing belongs to.
- 
- The callback routine shall return one of the values
- NOTIFY_DONE, NOTIFY_OK, NOTIFY_BAD, NOTIFY_STOP
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index a9ccd6579422..918c65ecf299 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -109,7 +109,7 @@ struct memory_notify {
- 	unsigned long altmap_nr_pages;
- 	unsigned long start_pfn;
- 	unsigned long nr_pages;
--	int status_change_nid;
-+	int nid;
- };
- 
- struct notifier_block;
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 0550f3061fc4..bccbc02ed122 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1186,7 +1186,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
- 
- 	mem_arg.start_pfn = pfn;
- 	mem_arg.nr_pages = nr_pages;
--	mem_arg.status_change_nid = node_arg.nid;
-+	mem_arg.nid = node_arg.nid;
- 	cancel_mem_notifier_on_err = true;
- 	ret = memory_notify(MEM_GOING_ONLINE, &mem_arg);
- 	ret = notifier_to_errno(ret);
-@@ -1987,7 +1987,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- 
- 	mem_arg.start_pfn = start_pfn;
- 	mem_arg.nr_pages = nr_pages;
--	mem_arg.status_change_nid = node_arg.nid;
-+	mem_arg.nid = node_arg.nid;
- 	cancel_mem_notifier_on_err = true;
- 	ret = memory_notify(MEM_GOING_OFFLINE, &mem_arg);
- 	ret = notifier_to_errno(ret);
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index c351fdfe9e9a..477e6f24b7ab 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -378,16 +378,6 @@ static int __meminit online_page_ext(unsigned long start_pfn,
- 	start = SECTION_ALIGN_DOWN(start_pfn);
- 	end = SECTION_ALIGN_UP(start_pfn + nr_pages);
- 
--	if (nid == NUMA_NO_NODE) {
--		/*
--		 * In this case, "nid" already exists and contains valid memory.
--		 * "start_pfn" passed to us is a pfn which is an arg for
--		 * online__pages(), and start_pfn should exist.
--		 */
--		nid = pfn_to_nid(start_pfn);
--		VM_BUG_ON(!node_online(nid));
--	}
--
- 	for (pfn = start; !fail && pfn < end; pfn += PAGES_PER_SECTION)
- 		fail = init_section_page_ext(pfn, nid);
- 	if (!fail)
-@@ -436,7 +426,7 @@ static int __meminit page_ext_callback(struct notifier_block *self,
- 	switch (action) {
- 	case MEM_GOING_ONLINE:
- 		ret = online_page_ext(mn->start_pfn,
--				   mn->nr_pages, mn->status_change_nid);
-+				   mn->nr_pages, mn->nid);
- 		break;
- 	case MEM_OFFLINE:
- 		offline_page_ext(mn->start_pfn,
+diff --git a/drivers/md/dm-pcache/cache_gc.c b/drivers/md/dm-pcache/cache_gc.c
+new file mode 100644
+index 000000000000..a122d95c8f46
+--- /dev/null
++++ b/drivers/md/dm-pcache/cache_gc.c
+@@ -0,0 +1,170 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include "cache.h"
++#include "backing_dev.h"
++#include "cache_dev.h"
++#include "dm_pcache.h"
++
++/**
++ * cache_key_gc - Releases the reference of a cache key segment.
++ * @cache: Pointer to the pcache_cache structure.
++ * @key: Pointer to the cache key to be garbage collected.
++ *
++ * This function decrements the reference count of the cache segment
++ * associated with the given key. If the reference count drops to zero,
++ * the segment may be invalidated and reused.
++ */
++static void cache_key_gc(struct pcache_cache *cache, struct pcache_cache_key *key)
++{
++	cache_seg_put(key->cache_pos.cache_seg);
++}
++
++static bool need_gc(struct pcache_cache *cache, struct pcache_cache_pos *dirty_tail, struct pcache_cache_pos *key_tail)
++{
++	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
++	struct pcache_cache_kset_onmedia *kset_onmedia;
++	void *dirty_addr, *key_addr;
++	u32 segs_used, segs_gc_threshold, to_copy;
++	int ret;
++
++	dirty_addr = cache_pos_addr(dirty_tail);
++	key_addr = cache_pos_addr(key_tail);
++	if (dirty_addr == key_addr) {
++		pcache_dev_debug(pcache, "key tail is equal to dirty tail: %u:%u\n",
++				dirty_tail->cache_seg->cache_seg_id,
++				dirty_tail->seg_off);
++		return false;
++	}
++
++	kset_onmedia = (struct pcache_cache_kset_onmedia *)cache->gc_kset_onmedia_buf;
++
++	to_copy = min(PCACHE_KSET_ONMEDIA_SIZE_MAX, PCACHE_SEG_SIZE - key_tail->seg_off);
++	ret = copy_mc_to_kernel(kset_onmedia, key_addr, to_copy);
++	if (ret) {
++		pcache_dev_err(pcache, "error to read kset: %d", ret);
++		return false;
++	}
++
++	/* Check if kset_onmedia is corrupted */
++	if (kset_onmedia->magic != PCACHE_KSET_MAGIC) {
++		pcache_dev_debug(pcache, "gc error: magic is not as expected. key_tail: %u:%u magic: %llx, expected: %llx\n",
++					key_tail->cache_seg->cache_seg_id, key_tail->seg_off,
++					kset_onmedia->magic, PCACHE_KSET_MAGIC);
++		return false;
++	}
++
++	/* Verify the CRC of the kset_onmedia */
++	if (kset_onmedia->crc != cache_kset_crc(kset_onmedia)) {
++		pcache_dev_debug(pcache, "gc error: crc is not as expected. crc: %x, expected: %x\n",
++					cache_kset_crc(kset_onmedia), kset_onmedia->crc);
++		return false;
++	}
++
++	segs_used = bitmap_weight(cache->seg_map, cache->n_segs);
++	segs_gc_threshold = cache->n_segs * pcache_cache_get_gc_percent(cache) / 100;
++	if (segs_used < segs_gc_threshold) {
++		pcache_dev_debug(pcache, "segs_used: %u, segs_gc_threshold: %u\n", segs_used, segs_gc_threshold);
++		return false;
++	}
++
++	return true;
++}
++
++/**
++ * last_kset_gc - Advances the garbage collection for the last kset.
++ * @cache: Pointer to the pcache_cache structure.
++ * @kset_onmedia: Pointer to the kset_onmedia structure for the last kset.
++ */
++static void last_kset_gc(struct pcache_cache *cache, struct pcache_cache_kset_onmedia *kset_onmedia)
++{
++	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
++	struct pcache_cache_segment *cur_seg, *next_seg;
++
++	cur_seg = cache->key_tail.cache_seg;
++
++	next_seg = &cache->segments[kset_onmedia->next_cache_seg_id];
++
++	mutex_lock(&cache->key_tail_lock);
++	cache->key_tail.cache_seg = next_seg;
++	cache->key_tail.seg_off = 0;
++	cache_encode_key_tail(cache);
++	mutex_unlock(&cache->key_tail_lock);
++
++	pcache_dev_debug(pcache, "gc advance kset seg: %u\n", cur_seg->cache_seg_id);
++
++	spin_lock(&cache->seg_map_lock);
++	clear_bit(cur_seg->cache_seg_id, cache->seg_map);
++	spin_unlock(&cache->seg_map_lock);
++}
++
++void pcache_cache_gc_fn(struct work_struct *work)
++{
++	struct pcache_cache *cache = container_of(work, struct pcache_cache, gc_work.work);
++	struct dm_pcache *pcache = CACHE_TO_PCACHE(cache);
++	struct pcache_cache_pos dirty_tail, key_tail;
++	struct pcache_cache_kset_onmedia *kset_onmedia;
++	struct pcache_cache_key_onmedia *key_onmedia;
++	struct pcache_cache_key *key;
++	int ret;
++	int i;
++
++	kset_onmedia = (struct pcache_cache_kset_onmedia *)cache->gc_kset_onmedia_buf;
++
++	while (true) {
++		if (pcache_is_stopping(pcache) || atomic_read(&cache->gc_errors))
++			return;
++
++		/* Get new tail positions */
++		mutex_lock(&cache->dirty_tail_lock);
++		cache_pos_copy(&dirty_tail, &cache->dirty_tail);
++		mutex_unlock(&cache->dirty_tail_lock);
++
++		mutex_lock(&cache->key_tail_lock);
++		cache_pos_copy(&key_tail, &cache->key_tail);
++		mutex_unlock(&cache->key_tail_lock);
++
++		if (!need_gc(cache, &dirty_tail, &key_tail))
++			break;
++
++		if (kset_onmedia->flags & PCACHE_KSET_FLAGS_LAST) {
++			/* Don't move to the next segment if dirty_tail has not moved */
++			if (dirty_tail.cache_seg == key_tail.cache_seg)
++				break;
++
++			last_kset_gc(cache, kset_onmedia);
++			continue;
++		}
++
++		for (i = 0; i < kset_onmedia->key_num; i++) {
++			struct pcache_cache_key key_tmp = { 0 };
++
++			key_onmedia = &kset_onmedia->data[i];
++
++			key = &key_tmp;
++			cache_key_init(&cache->req_key_tree, key);
++
++			ret = cache_key_decode(cache, key_onmedia, key);
++			if (ret) {
++				/* return without re-arm gc work, and prevent future
++				 * gc, because we can't retry the partial-gc-ed kset
++				 */
++				atomic_inc(&cache->gc_errors);
++				pcache_dev_err(pcache, "failed to decode cache key in gc\n");
++				return;
++			}
++
++			cache_key_gc(cache, key);
++		}
++
++		pcache_dev_debug(pcache, "gc advance: %u:%u %u\n",
++			key_tail.cache_seg->cache_seg_id,
++			key_tail.seg_off,
++			get_kset_onmedia_size(kset_onmedia));
++
++		mutex_lock(&cache->key_tail_lock);
++		cache_pos_advance(&cache->key_tail, get_kset_onmedia_size(kset_onmedia));
++		cache_encode_key_tail(cache);
++		mutex_unlock(&cache->key_tail_lock);
++	}
++
++	queue_delayed_work(cache_get_wq(cache), &cache->gc_work, PCACHE_CACHE_GC_INTERVAL);
++}
 -- 
-2.49.0
+2.34.1
 
 
