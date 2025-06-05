@@ -1,201 +1,145 @@
-Return-Path: <linux-kernel+bounces-674230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DB7ACEB74
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A511EACEB72
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B71189BD7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:07:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0139A189BD26
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2FE205ABB;
-	Thu,  5 Jun 2025 08:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDC41FCFE7;
+	Thu,  5 Jun 2025 08:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Amssj6qE"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKmO/cgT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B20A2F5B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 08:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309D62F5B;
+	Thu,  5 Jun 2025 08:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749110794; cv=none; b=uqU4BCBBGsfRollrThlBMzpufd3xEPz/cL9HMMbOK6FDfDyJmeV6MXGhqcyLV+KRPJJMe3ogjTXajBXkMxxHDXv+rFU4M6KMkE8z3GxbBHRn8Q3odScl/x9IT6JqUu6kuFbgraFydyumj5ObnaROJ7UjzrAVjgwjAw/Lbtq/D0E=
+	t=1749110789; cv=none; b=uLMc3oMznu9wQAL2JIBwoFUvVf4oi/gi/1qb/2SsHyjjDUVZMdKMPibFnwX6NnmPPNgPt8EI1bkg+OAYgakXOFf3Wc3XzpgEoY+gv5D2kIOd5DkxNq0roGwQ2sIvuV24WV/2Qfrf68EjIguP5xsvY394NIBuqR3k76imG00EXfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749110794; c=relaxed/simple;
-	bh=8GzO08tndfv721t4McGGmGHqUx0Jo7bW0KEhTttNya0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=fp5cMEkDmfT777rus9m62O1P9wBHy4XehBk1arPnaDfeal3EupkXZg1upfn7ws4GZ9RTo91rj0iIg34torkgUosdxdZZyrcPCTv56xebIYarsKYlWVkxLDo/6bI9BUCOj/Yvefq4GNnFf86iz4aVAG5EiYuCBTjmnDw0iiAkH7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Amssj6qE; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250605080630epoutp029a6ef996bc582742fa7dc821c4f25b3f~GFv8eyRte1890318903epoutp02a
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 08:06:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250605080630epoutp029a6ef996bc582742fa7dc821c4f25b3f~GFv8eyRte1890318903epoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749110790;
-	bh=5Fq5ho7EvwKI7nuqfXI3pZhlK+7Slkc0YlG396IIzDM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Amssj6qEVeJAgxY57Lqyg7KrglOI3H9QEFSkcloS+KWsN1TSdIy+kEgpd22bMaPA6
-	 uhJkIKGxXKsuBfyTdEhptXfXyqh/ZsBksDXYDo8FB6nA3ub2KfGC9o6wCxGDXO12FK
-	 Ln8g567pgWnDRnYreNh8yoxc/MnB8ZXBOIFKsJu8=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250605080629epcas2p2969bcac1c5d4bc57de58347b35d0e89d~GFv795vGH1407914079epcas2p2F;
-	Thu,  5 Jun 2025 08:06:29 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bCcTx1FvWz2SSKp; Thu,  5 Jun
-	2025 08:06:29 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250605080628epcas2p24220eeceef2ae38feeee9d2c18515800~GFv65NGmN1351013510epcas2p2L;
-	Thu,  5 Jun 2025 08:06:28 +0000 (GMT)
-Received: from localhost.localdomain (unknown [10.229.95.142]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250605080628epsmtip120becc5e0bf4cd5fdf0f5fd129ce21f0~GFv615FQg0467304673epsmtip1-;
-	Thu,  5 Jun 2025 08:06:28 +0000 (GMT)
-From: Hyesoo Yu <hyesoo.yu@samsung.com>
-To: 
-Cc: janghyuck.kim@samsung.com, zhaoyang.huang@unisoc.com,
-	jaewon31.kim@gmail.com, david@redhat.com, Hyesoo Yu <hyesoo.yu@samsung.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/1] mm: gup: avoid CMA page pinning by retrying
- migration if no migratable page
-Date: Thu,  5 Jun 2025 17:04:31 +0900
-Message-ID: <20250605080436.3764686-2-hyesoo.yu@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605080436.3764686-1-hyesoo.yu@samsung.com>
+	s=arc-20240116; t=1749110789; c=relaxed/simple;
+	bh=2iz0xU6HSrN4K4tK4hEhiPBRQmZaCe79rTHf++duDHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlyBT2pgl7oXODMu4rtDYS9xN9zXGGwOmjP19J9p7rGsYuLOXpJVuSSHR2UEqDVFR1k4b+yyp0QisOFDUZ0n+oDvDVh/n+VeG+GjXpAQWZGHMYrpy3ufXTanzi59mZF9SrKEEuzMECu5C5XEtaF79tUey+yVgMiH11MFDkYI53Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKmO/cgT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9997C4CEE7;
+	Thu,  5 Jun 2025 08:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749110789;
+	bh=2iz0xU6HSrN4K4tK4hEhiPBRQmZaCe79rTHf++duDHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tKmO/cgTih5V5cwtej6E/eOSdd8IfM2dq4hEQ64rqvF1XNV4O2Kdv3bsek8VhtSwX
+	 FUz9a77eJG2BnpptEdaokF+6TjeZ8YF8tTOlDu02OjC7IkGk1BbipUuName+rv1y4m
+	 oWp8Ot3S8uamg/bAa/JNKUn0aBJ/0hWLpIQGYaFXrJLZciTOPa9za/ZtbZOv60ig+R
+	 cGP75HXbzRmRAmGEUnpokkwk/9dhwUwiNejkjEszVEHtQZKYDBz383+XywHhDvnPtV
+	 LzXEqmHBlObHMVg5kmUE4yc6sNntDigJNpCSKEjHJJmRnUHxWU29PH5zWPgP0QURPB
+	 HJGR63N5mki4g==
+Date: Thu, 5 Jun 2025 10:06:19 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Peter Maydell <peter.maydell@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, andre.przywara@arm.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, suzuki.poulose@arm.com
+Subject: Re: [PATCH v4 01/26] dt-bindings: interrupt-controller: Add Arm GICv5
+Message-ID: <aEFP+wsYCmMgIyhs@lpieralisi>
+References: <aDhWlytLCxONZdF9@lpieralisi>
+ <CAFEAcA_3YLMSy+OsSsRayaRciQ1+jjh-dGzEjrh2Wa8BqdmqrA@mail.gmail.com>
+ <aD6ouVAXy5qcZtM/@lpieralisi>
+ <CAL_JsqJ5N2ZUBeAes=wexq=EstRSZ5=heF1_6crAw76yZ9uXog@mail.gmail.com>
+ <CAFEAcA-JrS0BiT66iin-pRVFadrY-pnJZ8TkDNxcjErknSCnUA@mail.gmail.com>
+ <CAL_JsqL7x53an2-MaLHP5tfVXb4JxT8ORUMaA8pL-gMsWLJqkA@mail.gmail.com>
+ <aD/0tuak7Hja8k4g@lpieralisi>
+ <878qm7ec19.wl-maz@kernel.org>
+ <aEB10JC1bwwOJfWh@lpieralisi>
+ <CAFEAcA9xBJiRQ+UMvyOSOqOwMPYrjja0Vhk8j4_0V7f7_0ETtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250605080628epcas2p24220eeceef2ae38feeee9d2c18515800
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250605080628epcas2p24220eeceef2ae38feeee9d2c18515800
-References: <20250605080436.3764686-1-hyesoo.yu@samsung.com>
-	<CGME20250605080628epcas2p24220eeceef2ae38feeee9d2c18515800@epcas2p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFEAcA9xBJiRQ+UMvyOSOqOwMPYrjja0Vhk8j4_0V7f7_0ETtg@mail.gmail.com>
 
-Commit 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
-introduced an issue where CMA pages could be pinned by longterm GUP requests.
-This occurs when unpinnable pages are detected but the movable_page_list is empty;
-the commit would return success without retrying, allowing unpinnable
-pages (such as CMA) to become pinned.
+On Wed, Jun 04, 2025 at 09:09:27PM +0100, Peter Maydell wrote:
 
-CMA pages may be temporarily off the LRU due to concurrent isolation,
-for example when multiple longterm GUP requests are racing and therefore
-not appear in movable_page_list. Before commit 1aaf8c, the kernel would
-retry migration in such cases, which helped avoid accidental CMA pinning.
+[...]
 
-The original intent of the commit was to support longterm GUP on non-LRU
-CMA pages in out-of-tree use cases such as pKVM. However, allowing this
-can lead to broader CMA pinning issues.
+> > When I said "a separate problem", I meant that, extending secure- tag
+> > (that applies to the "status" property only) to cover other PASes is
+> > independent from the GICv5 binding *if* we define, for a single DT an eg
+> > IRS device per-PAS (with realm-status, root-status, describing what the
+> > reg property represents. Is that what secure-status does today ? Does
+> > it say "this device MMIO space is secure-only" ?).
+> >
+> > It does not look like there is much appetite for tagging the reg
+> > property either and making it GICv5 specific is a shortcut IMO.
+> 
+> I think something GICv5 specific is not unreasonable.
 
-To avoid this, the logic is restored to return -EAGAIN instead of success
-when no folios could be collected but unpinnable pages were found.
-This ensures that migration is retried until success, and avoids
-inadvertently pinning unpinnable pages.
+We need to define up to 4 interrupt domains (so max 4 frames per
+component per frame type: EL3, Secure, Realm, Non-Secure).
 
-Fixes: 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked")
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+Options:
 
----
-We have confirmed that this regression causes CMA pages to be pinned
-in our kernel 6.12-based environment.
+1) Using reg and reg-names, I don't know if reg-names allows us to
+   describe all possible resource names and the order does not matter,
+   please let me know. Keep in mind that some resources are optional.
 
-In addition to CMA allocation failures, we also observed longterm GUP failures
-when repeatedly accessing the same VMA. Specifically, the first longterm GUP
-call would pin a CMA page, and a second call on the same region
-would fail the migration because the cma page was already pinned.
+   Something like, for an IRS:
 
-After reverting commit 1aaf8c122918, the issue no longer reproduced.
+   reg-names = "el3-config", "secure-config", "realm-config",
+   "non-secure-config", "el3-setlpi", "secure-setlpi", "realm-setlpi",
+   "non-secure-setlpi";
 
-Therefore, this fix is important to ensure reliable behavior of longterm GUP
-and CMA-backed memory, and should be backported to stable.
----
- mm/gup.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+   With that, I would remove the description in the reg property and
+   just say minItems: 1
 
-diff --git a/mm/gup.c b/mm/gup.c
-index e065a49842a8..66193421c1d4 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2300,14 +2300,12 @@ static void pofs_unpin(struct pages_or_folios *pofs)
- 		unpin_user_pages(pofs->pages, pofs->nr_entries);
- }
- 
--/*
-- * Returns the number of collected folios. Return value is always >= 0.
-- */
--static void collect_longterm_unpinnable_folios(
-+static bool collect_longterm_unpinnable_folios(
- 		struct list_head *movable_folio_list,
- 		struct pages_or_folios *pofs)
- {
- 	struct folio *prev_folio = NULL;
-+	bool any_unpinnable = false;
- 	bool drain_allow = true;
- 	unsigned long i;
- 
-@@ -2321,6 +2319,8 @@ static void collect_longterm_unpinnable_folios(
- 		if (folio_is_longterm_pinnable(folio))
- 			continue;
- 
-+		any_unpinnable = true;
-+
- 		if (folio_is_device_coherent(folio))
- 			continue;
- 
-@@ -2342,6 +2342,8 @@ static void collect_longterm_unpinnable_folios(
- 				    NR_ISOLATED_ANON + folio_is_file_lru(folio),
- 				    folio_nr_pages(folio));
- 	}
-+
-+	return any_unpinnable;
- }
- 
- /*
-@@ -2417,11 +2419,25 @@ migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
- static long
- check_and_migrate_movable_pages_or_folios(struct pages_or_folios *pofs)
- {
-+	bool any_unpinnable;
-+
- 	LIST_HEAD(movable_folio_list);
- 
--	collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
--	if (list_empty(&movable_folio_list))
-+	any_unpinnable = collect_longterm_unpinnable_folios(&movable_folio_list, pofs);
-+
-+	if (list_empty(&movable_folio_list)) {
-+		/*
-+		 * If we find any longterm unpinnable page that we failed to
-+		 * isolated for migration, it might be because someone else
-+		 * concurrently isolated it. Make the caller retry until it
-+		 * succeeds.
-+		 */
-+		if (any_unpinnable) {
-+			pofs_unpin(pofs);
-+			return -EAGAIN;
-+		}
- 		return 0;
-+	}
- 
- 	return migrate_longterm_unpinnable_folios(&movable_folio_list, pofs);
- }
--- 
-2.49.0
+   This implicitly means that describing in DT a resource that the
+   CPU possibly is not able to reach depending on
+   security-state/exception level is OK. AFAICS reg-names achieves
+   the same purpose of tagging below, at the end of the day it is
+   a means to say eg "if you are non-secure stay away from something
+   that does not belong to you".
 
+2) We add a tagged "reg" property for GICv5 ("reg" refers to non-secure):
+
+   reg
+   el3-reg
+   secure-reg
+   realm-reg
+
+3) We add a GICv5 tagged "status" property and define an eg IRS device per
+   interrupt-domain ("status" refers to non-secure):
+
+   status
+   el3-status
+   secure-status
+   realm-status
+
+4) Anything else that I have not thought of
+
+What's the best option ? Please let me know, I'd like to repost the
+series at v6.16-rc1 with a solution.
+
+Thanks,
+Lorenzo
 
