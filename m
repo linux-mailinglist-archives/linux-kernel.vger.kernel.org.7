@@ -1,120 +1,260 @@
-Return-Path: <linux-kernel+bounces-674599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E32ACF1B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:24:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B47DACF1CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCAE17470C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3296A3AEB93
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005211DE3B5;
-	Thu,  5 Jun 2025 14:23:45 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B200C2750EA;
+	Thu,  5 Jun 2025 14:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hi2pK+F2"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E21DE3A7
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17A9199E89
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133424; cv=none; b=NmdCOAl1ySUMSlv9eHxwaBDvwo5nQjXGVsmI6t1re3EM7SLlD4gG9+EQHiPw+CanH96tdDr7+Tp49YfCEDoa7ERDHO55MyD9+4tRyUwjW+vJ+ZwkDL37JEDzdgglWj/MsmtYVj2XNLzfdpSvYONFk679WMnVCtu1ZPsa1gfAqC4=
+	t=1749133443; cv=none; b=KpbOhZRnQCOvpmluV/aU06rt3mxHFrx+8OmNXL1wDvGSM4h0/ayxcIZOcN4BAicrrLyTeb8MPClU+8SJ3YgbtM6W383uAslDyhljTMqFe0/P5mOpacdv1xmhW0pbZv9JO38C/9UTtHkmV44R5J+10Ic08mEIw8RCcZphX7QdyG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133424; c=relaxed/simple;
-	bh=daxhZFbTtNCtc+n3FkbjtNEJWZrBraCDsQ4oBldj/5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jnYJn4E6X/KwQMfA6+Fv55S1TFgWkQulGyc7G2o54jzX3SuL4zLWx7vcxiuDZRjVPuOl4lulx8FfyCehn1S2MfG8ePRviKhj7hEy5BYU4c7DQYs3QYkfOn+Hl3Ueyk8FHFpk6sNzFudjirhTEjB6YE83M8CdNolnzDE98ficQFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 60A0033726;
-	Thu,  5 Jun 2025 14:23:20 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C5F00139CB;
-	Thu,  5 Jun 2025 14:23:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4CCVLVeoQWipRwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:19 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1749133443; c=relaxed/simple;
+	bh=6LhDWj+WbALn1MUvolvDInqaKgzEidBWA1dt36Wntyg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YQSZ4L5Gb0oyrx2v2Z6+CL3ZZfFfiAToNjQVSC27Q8ZZnHFdxTEr1mkHqIM99iTPPJjIaU05u2stLd6JLSaP8FTsTkiibw4fsVVOYW7g71jnoMfpFk8LBFDp5tvedUjzSojgZg4ODIVBWnUozTIUJyAkl6z63OTQKF8oUX+uWeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hi2pK+F2; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749133439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x6lfDrxfPgeQGKv1xjUH1xAx5cZw742IkyCnqk1rEuc=;
+	b=Hi2pK+F2fLtdU4f0eWmQV0SnVTcVYqhyedoEp9wKZCqhsnWG82Mlo796pKdFksIS9XlHX9
+	L2rkWBWll/lkPxW9IRYmFtReOl5FKGhRgZlhyPwXdInY2Ie8ce1cRWvUuYbNEUL0QuPQME
+	9N8KKMlZdqNSkW400DEfiqadLcUoAPE=
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+To: mpatocka@redhat.com,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@Huawei.com
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v5 08/10] kernel,cpuset: Use node-notifier instead of memory-notifier
-Date: Thu,  5 Jun 2025 16:22:59 +0200
-Message-ID: <20250605142305.244465-9-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
-References: <20250605142305.244465-1-osalvador@suse.de>
+	linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	dm-devel@lists.linux.dev,
+	Dongsheng Yang <dongsheng.yang@linux.dev>
+Subject: [RFC PATCH 04/11] dm-pcache: add segment layer
+Date: Thu,  5 Jun 2025 14:22:59 +0000
+Message-Id: <20250605142306.1930831-5-dongsheng.yang@linux.dev>
+In-Reply-To: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
+References: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	TAGGED_RCPT(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Rspamd-Queue-Id: 60A0033726
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.00
+X-Migadu-Flow: FLOW_OUT
 
-cpuset is only concerned when a numa node changes its memory state,
-as it needs to know the current numa nodes with memory to keep
-an updated mems_allowed mask.
-So stop using the memory notifier and use the new numa node notifer
-instead.
+Introduce segment.{c,h}, an internal abstraction that encapsulates
+everything related to a single pcache *segment* (the fixed-size
+allocation unit stored on the cache-device).
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+* On-disk metadata (`struct pcache_segment_info`)
+  - Embedded `struct pcache_meta_header` for CRC/sequence handling.
+  - `flags` field encodes a “has-next” bit and a 4-bit *type* class
+    (`CACHE_DATA` added as the first type).
+
+* Initialisation
+  - `pcache_segment_init()` populates the in-memory
+    `struct pcache_segment` from a given segment id, data offset and
+    metadata pointer, computing the usable `data_size` and virtual
+    address within the DAX mapping.
+
+* IO helpers
+  - `segment_copy_to_bio()` / `segment_copy_from_bio()` move data
+    between pmem and a bio, using `_copy_mc_to_iter()` and
+    `_copy_from_iter_flushcache()` to tolerate hw memory errors and
+    ensure durability.
+  - `segment_pos_advance()` advances an internal offset while staying
+    inside the segment’s data area.
+
+These helpers allow upper layers (cache key management, write-back
+logic, GC, etc.) to treat a segment as a contiguous byte array without
+knowing about DAX mappings or persistence details.
+
+Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
 ---
- kernel/cgroup/cpuset.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-pcache/segment.c | 63 +++++++++++++++++++++++++++++
+ drivers/md/dm-pcache/segment.h | 74 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 137 insertions(+)
+ create mode 100644 drivers/md/dm-pcache/segment.c
+ create mode 100644 drivers/md/dm-pcache/segment.h
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 83639a12883d..66c84024f217 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -4013,7 +4013,7 @@ void __init cpuset_init_smp(void)
- 	cpumask_copy(top_cpuset.effective_cpus, cpu_active_mask);
- 	top_cpuset.effective_mems = node_states[N_MEMORY];
- 
--	hotplug_memory_notifier(cpuset_track_online_nodes, CPUSET_CALLBACK_PRI);
-+	hotplug_node_notifier(cpuset_track_online_nodes, CPUSET_CALLBACK_PRI);
- 
- 	cpuset_migrate_mm_wq = alloc_ordered_workqueue("cpuset_migrate_mm", 0);
- 	BUG_ON(!cpuset_migrate_mm_wq);
+diff --git a/drivers/md/dm-pcache/segment.c b/drivers/md/dm-pcache/segment.c
+new file mode 100644
+index 000000000000..0597e2bb053b
+--- /dev/null
++++ b/drivers/md/dm-pcache/segment.c
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include <linux/dax.h>
++
++#include "pcache_internal.h"
++#include "cache_dev.h"
++#include "segment.h"
++
++int segment_copy_to_bio(struct pcache_segment *segment,
++		u32 data_off, u32 data_len, struct bio *bio, u32 bio_off)
++{
++	struct iov_iter iter;
++	size_t copied;
++	void *src;
++
++	iov_iter_bvec(&iter, ITER_DEST, &bio->bi_io_vec[bio->bi_iter.bi_idx],
++			bio_segments(bio), bio->bi_iter.bi_size);
++	iter.iov_offset = bio->bi_iter.bi_bvec_done;
++	if (bio_off)
++		iov_iter_advance(&iter, bio_off);
++
++	src = segment->data + data_off;
++	copied = _copy_mc_to_iter(src, data_len, &iter);
++	if (copied != data_len)
++		return -EIO;
++
++	return 0;
++}
++
++int segment_copy_from_bio(struct pcache_segment *segment,
++		u32 data_off, u32 data_len, struct bio *bio, u32 bio_off)
++{
++	struct iov_iter iter;
++	size_t copied;
++	void *dst;
++
++	iov_iter_bvec(&iter, ITER_SOURCE, &bio->bi_io_vec[bio->bi_iter.bi_idx],
++			bio_segments(bio), bio->bi_iter.bi_size);
++	iter.iov_offset = bio->bi_iter.bi_bvec_done;
++	if (bio_off)
++		iov_iter_advance(&iter, bio_off);
++
++	dst = segment->data + data_off;
++	copied = _copy_from_iter_flushcache(dst, data_len, &iter);
++	if (copied != data_len)
++		return -EIO;
++	pmem_wmb();
++
++	return 0;
++}
++
++void pcache_segment_init(struct pcache_cache_dev *cache_dev, struct pcache_segment *segment,
++		      struct pcache_segment_init_options *options)
++{
++	segment->seg_info = options->seg_info;
++
++	segment_info_set_type(segment->seg_info, options->type);
++	segment->seg_info->seg_id = options->seg_id;
++	segment->seg_info->data_off = options->data_off;
++
++	segment->cache_dev = cache_dev;
++	segment->data_size = PCACHE_SEG_SIZE - options->data_off;
++	segment->data = CACHE_DEV_SEGMENT(cache_dev, options->seg_id) + options->data_off;
++}
+diff --git a/drivers/md/dm-pcache/segment.h b/drivers/md/dm-pcache/segment.h
+new file mode 100644
+index 000000000000..6d732709c425
+--- /dev/null
++++ b/drivers/md/dm-pcache/segment.h
+@@ -0,0 +1,74 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef _PCACHE_SEGMENT_H
++#define _PCACHE_SEGMENT_H
++
++#include <linux/bio.h>
++
++#include "pcache_internal.h"
++
++struct pcache_segment_info {
++	struct pcache_meta_header	header;	/* Metadata header for the segment */
++	__u32			flags;
++	__u32			next_seg;
++	__u32			seg_id;
++	__u32			data_off;
++} __packed;
++
++#define PCACHE_SEG_INFO_FLAGS_HAS_NEXT		BIT(0)
++
++#define PCACHE_SEG_INFO_FLAGS_TYPE_MASK         GENMASK(4, 1)
++#define PCACHE_SEGMENT_TYPE_CACHE_DATA		1
++
++static inline bool segment_info_has_next(struct pcache_segment_info *seg_info)
++{
++	return (seg_info->flags & PCACHE_SEG_INFO_FLAGS_HAS_NEXT);
++}
++
++static inline void segment_info_set_type(struct pcache_segment_info *seg_info, u8 type)
++{
++	seg_info->flags &= ~PCACHE_SEG_INFO_FLAGS_TYPE_MASK;
++	seg_info->flags |= FIELD_PREP(PCACHE_SEG_INFO_FLAGS_TYPE_MASK, type);
++}
++
++static inline u8 segment_info_get_type(struct pcache_segment_info *seg_info)
++{
++	return FIELD_GET(PCACHE_SEG_INFO_FLAGS_TYPE_MASK, seg_info->flags);
++}
++
++struct pcache_segment_pos {
++	struct pcache_segment	*segment;	/* Segment associated with the position */
++	u32			off;		/* Offset within the segment */
++};
++
++struct pcache_segment_init_options {
++	u8			type;
++	u32			seg_id;
++	u32			data_off;
++
++	struct pcache_segment_info	*seg_info;
++};
++
++struct pcache_segment {
++	struct pcache_cache_dev	*cache_dev;
++
++	void			*data;
++	u32			data_size;
++
++	struct pcache_segment_info	*seg_info;
++};
++
++int segment_copy_to_bio(struct pcache_segment *segment,
++		      u32 data_off, u32 data_len, struct bio *bio, u32 bio_off);
++int segment_copy_from_bio(struct pcache_segment *segment,
++			u32 data_off, u32 data_len, struct bio *bio, u32 bio_off);
++
++static inline void segment_pos_advance(struct pcache_segment_pos *seg_pos, u32 len)
++{
++	BUG_ON(seg_pos->off + len > seg_pos->segment->data_size);
++
++	seg_pos->off += len;
++}
++
++void pcache_segment_init(struct pcache_cache_dev *cache_dev, struct pcache_segment *segment,
++		      struct pcache_segment_init_options *options);
++#endif /* _PCACHE_SEGMENT_H */
 -- 
-2.49.0
+2.34.1
 
 
