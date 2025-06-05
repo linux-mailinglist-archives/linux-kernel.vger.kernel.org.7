@@ -1,868 +1,505 @@
-Return-Path: <linux-kernel+bounces-674354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCDCACEDD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:39:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B173EACEDE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E0C43AC476
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 059BA7A6031
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804AA217651;
-	Thu,  5 Jun 2025 10:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CABD217F53;
+	Thu,  5 Jun 2025 10:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="MGvWbbmE"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua9Z62JT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E237F1A7262
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 10:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904B142A97;
+	Thu,  5 Jun 2025 10:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749119940; cv=none; b=sfle+vaZsuno92IRnyJQWuso4D+iP8EOos3CB5FyhrJNcPxi1lRIcpNo70xs6zlbQD6f/ssUYhvEwHTEl7rQg6ODUQ1KS4SbaKzQgfn/TsfM1K3mPZScxEP2rCSUdZkoGzZ5aeK3eqTRwAkxrXQh70CBXHOEnULvuokjXokh9rk=
+	t=1749119958; cv=none; b=N7cLqOmZLmt25+7+fgzGJq1LosVimvCFPwMOsrPVIoY4fXaFbbcYIXR3rTaf1rEakfunpT98wBy/9+YGJQJdMxqmoQSFt1xudnX+mAIeGHiS1srxT9asgdG8OVG3w+qeCJc4cl7XktZ7HKnGxGOru9dRXAL1vOxzfMYIhV6BixA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749119940; c=relaxed/simple;
-	bh=2WAs0lhlVnhb9ip5CzlONPzV0WTDB1mdue6VeXSYEAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rg1PTfQsc4H2XhW8IfAVdbC/ZkE2/4/TsHVRafiHCkJl4zItCJsBo0lFUI0PZ7z0ZIcB8gu6/lPYY1QaPHquFWTWtBMSLX1wWTJa/xHbj9ztuPSTVb8l0txni/65Srw+OyGoTajyssdJFyNpYEENXjqK/a5x+fYmUOFTzE0iJ6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=MGvWbbmE; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60461fc88d7so1579234a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 03:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1749119935; x=1749724735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1VKVgPyDTD7FcC13I4CKc8IjBxTy3Bp73Mc+aF8JhY=;
-        b=MGvWbbmEXV9m3Pmexet4U8AcUCe0XzuYYPjrXT+vFKoU0QS1VfmsjG3au78Oalp7oq
-         6fm2K7V9hDb9jkZhvdhyg+qw2W1ZUHbc2A43DSy5+S1S+iJ6+Vu8K0xtsJQQ3PKXw4Vm
-         vSFB3B3D83JrMkIT+BKjHs18w+eno6ry7A3gcb6Oh6RSljmRVCShrTWgi7sRorQkHyB2
-         2upEq+H+5/Ibw/WdvrQ9aCPKrn/JuJ3cTQX149y58OMUeYhBCyNPIQBD62hblGwZMFzF
-         Va9+vDbkKMtXrtas5PWiRtkFFSieiF813J5n+Q5kxECwOp1VvVkY9G3UM54pMFMrUO+7
-         AjCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749119935; x=1749724735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L1VKVgPyDTD7FcC13I4CKc8IjBxTy3Bp73Mc+aF8JhY=;
-        b=soVSLhAY4tynRstu2EJIgUWANnp9mT19JAS1cjrUTMOhyv2wUd+oemjhfbPymrtJnT
-         xnR2l41VUP3f8IwdY8ucFSs2bb4c62SS3pj1hsrHiJmorl9qiO7tkg0ZKhoa3u3hRasa
-         wXdhT3r6C9gg6ebFl5Pf/fGKRf1Kk3yzjFdEkngXsEqT3ZbK0TL8R/mZlk34o/g5RQX8
-         3NjW9D/A5CIh/k27xiBie7ZvqYxfRXY1nEI/JmQofnbCly43kFui/MDHZvfrfPaGT382
-         nqTw5a7Tn/j3FdWaEuQ5Wce8fTIuOHDw3JJRMtw3C49NMzTgOskbBSQ+3ysbTfg4JaLG
-         xsTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwYlgJWQB7+PkgogOdz2VH84LXRHYBBMwhQuCniKOveyJjPXkto+DnlN0+114n3ta7BdMURPIRAEnFgAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/9FxluA+VP85RST96tff2fr5NDpBtKlOxSHWEw3Uzx04c1xXJ
-	FDx0iNy/OUtz8UCbYFSvT5tEPPCrkDlmXeg7CpRpxraX0+YgXWc0A6A78SYUFqwNzUXyT/Ke91y
-	uovDv
-X-Gm-Gg: ASbGncss4L9StAfNZuGohxcvycnjueYayck9JQf0loOUqVN9YpnogbaVe9d5S2XaEZB
-	MbcYTM4Syd/KnAbB+C7ghff03WOcb1bQUfnSle5xFy68nIG+E9qLyOBZXFz/D9+DM7oSLcRxU2s
-	wmUOWq0Pg0V0Z0iaONgP5XgejT9Eb/NL5+pXzjgXrJxr9RZHPYhYYp6eYMxNEjSmNELV/tERVJf
-	H7CT1HbT6bET8StHWYFmdB6OIWNd0jPjtOABijB/7jGRNe5mH4TIMWIVMBRnCItsQ+pmojL1x09
-	Z7PcUySigw6YoWcWE0Ycc3qvBOIt5+PDGZAiSnYpcYLPrQoYc6tyaOOzF08Vohabixy0z0jKEbL
-	N6z9YCCtotC5B9CAcqS6LD5kEvIypvRmEhNk=
-X-Google-Smtp-Source: AGHT+IGclUS1k1su+f50C6wj0i365j7X82QoNxAP8m/+UNr7j/+6qGJjOKZSDyUiJpKR/oUHOHZRew==
-X-Received: by 2002:a17:907:9688:b0:ad5:74cd:1824 with SMTP id a640c23a62f3a-addf8e3ecfbmr553565566b.38.1749119934953;
-        Thu, 05 Jun 2025 03:38:54 -0700 (PDT)
-Received: from localhost.localdomain (h082218028181.host.wavenet.at. [82.218.28.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada6ad6ac6bsm1234670866b.169.2025.06.05.03.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 03:38:54 -0700 (PDT)
-From: =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: drbd-dev@lists.linbit.com,
-	linux-kernel@vger.kernel.org,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	linux-block@vger.kernel.org,
-	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
-Subject: [PATCH] drbd: Remove the open-coded page pool
-Date: Thu,  5 Jun 2025 12:38:52 +0200
-Message-ID: <20250605103852.23029-1-christoph.boehmwalder@linbit.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749119958; c=relaxed/simple;
+	bh=7OhA0PovjsmvN9Ea8pjicG1JaTKuYtzo56D5nmggPkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoMLEzVjC8otzBElIPIwt+tb3rgDFkX1IrrtAmlm6sqh1aSZEWVhVL9fhocgKl8ogTPgjC6Ln81fpMU86Nvyj+TYljDCIuqD2GNERLUZNE5TL87ABBjPqnOOhlgBVEY+2hdYtXifND+WpD2KS1u597suL333UiDd8DpZR2fgO5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ua9Z62JT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4C6C4CEE7;
+	Thu,  5 Jun 2025 10:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749119957;
+	bh=7OhA0PovjsmvN9Ea8pjicG1JaTKuYtzo56D5nmggPkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ua9Z62JTbGBwyF7nkPI9iUc5Lu6bHbSiOu05EB1wU24/vXt6tLEJpTaTLZlTBhDBy
+	 nZ4zpxoPDwdIe/BcX9n1otNSJe3fi+t1ChyT89C1kmf5c5n2yliUMsuO9oXgV/QZ2E
+	 3HIDyWcQwc1jLgyUje1d037D5dqyi5HQEJ3tfGeNFkAKAkfP6Ol5+QqRR+M1U6vK4W
+	 N3siwD8vc/H/pXwVMmEd++AttR+sBGmg8g85Kcdz9EY2/g4hkjARLn96FKs87nsTfv
+	 ffklBq1zBtNhqOlipgFbTzxq9u10nYsQHUwO77ELFSD/tXijCR6VaR+g7uHanXmHc4
+	 BVLq2DrXd6T+w==
+Date: Thu, 5 Jun 2025 12:39:14 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, 
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 2/6] pwm: Add Rust driver for T-HEAD TH1520 SoC
+Message-ID: <q6dkihyfosi3k4mtrvyff54nbsjpovmujdbmoqhapo7daznpja@of2p5gtmcq2m>
+References: <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
+ <CGME20250524211521eucas1p1929a51901c91d1a37e9f4c2da86ff7b0@eucas1p1.samsung.com>
+ <20250524-rust-next-pwm-working-fan-for-sending-v1-2-bdd2d5094ff7@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ilvp5okyjxiiq75c"
+Content-Disposition: inline
+In-Reply-To: <20250524-rust-next-pwm-working-fan-for-sending-v1-2-bdd2d5094ff7@samsung.com>
 
-From: Philipp Reisner <philipp.reisner@linbit.com>
 
-If the network stack keeps a reference for too long, DRBD keeps
-references on a higher number of pages as a consequence.
+--ilvp5okyjxiiq75c
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC 2/6] pwm: Add Rust driver for T-HEAD TH1520 SoC
+MIME-Version: 1.0
 
-Fix all that by no longer relying on page reference counts dropping to
-an expected value. Instead, DRBD gives up its reference and lets the
-system handle everything else. While at it, remove the open-coded
-custom page pool mechanism and use the page_pool included in the
-kernel.
+Hello,
 
-Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
-Signed-off-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
----
- drivers/block/drbd/drbd_int.h      |  39 +----
- drivers/block/drbd/drbd_main.c     |  59 ++-----
- drivers/block/drbd/drbd_receiver.c | 264 ++++-------------------------
- drivers/block/drbd/drbd_worker.c   |  56 ++----
- 4 files changed, 71 insertions(+), 347 deletions(-)
+I don't speak Rust, so please double-check all my feedback if it really
+applies.
 
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index e21492981f7d..f6d6276974ee 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -380,6 +380,9 @@ enum {
- 	/* this is/was a write request */
- 	__EE_WRITE,
- 
-+	/* hand back using mempool_free(e, drbd_buffer_page_pool) */
-+	__EE_RELEASE_TO_MEMPOOL,
-+
- 	/* this is/was a write same request */
- 	__EE_WRITE_SAME,
- 
-@@ -402,6 +405,7 @@ enum {
- #define EE_IN_INTERVAL_TREE	(1<<__EE_IN_INTERVAL_TREE)
- #define EE_SUBMITTED		(1<<__EE_SUBMITTED)
- #define EE_WRITE		(1<<__EE_WRITE)
-+#define EE_RELEASE_TO_MEMPOOL	(1<<__EE_RELEASE_TO_MEMPOOL)
- #define EE_WRITE_SAME		(1<<__EE_WRITE_SAME)
- #define EE_APPLICATION		(1<<__EE_APPLICATION)
- #define EE_RS_THIN_REQ		(1<<__EE_RS_THIN_REQ)
-@@ -858,7 +862,6 @@ struct drbd_device {
- 	struct list_head sync_ee;   /* IO in progress (P_RS_DATA_REPLY gets written to disk) */
- 	struct list_head done_ee;   /* need to send P_WRITE_ACK */
- 	struct list_head read_ee;   /* [RS]P_DATA_REQUEST being read */
--	struct list_head net_ee;    /* zero-copy network send in progress */
- 
- 	struct list_head resync_reads;
- 	atomic_t pp_in_use;		/* allocated from page pool */
-@@ -1329,24 +1332,6 @@ extern struct kmem_cache *drbd_al_ext_cache;	/* activity log extents */
- extern mempool_t drbd_request_mempool;
- extern mempool_t drbd_ee_mempool;
- 
--/* drbd's page pool, used to buffer data received from the peer,
-- * or data requested by the peer.
-- *
-- * This does not have an emergency reserve.
-- *
-- * When allocating from this pool, it first takes pages from the pool.
-- * Only if the pool is depleted will try to allocate from the system.
-- *
-- * The assumption is that pages taken from this pool will be processed,
-- * and given back, "quickly", and then can be recycled, so we can avoid
-- * frequent calls to alloc_page(), and still will be able to make progress even
-- * under memory pressure.
-- */
--extern struct page *drbd_pp_pool;
--extern spinlock_t   drbd_pp_lock;
--extern int	    drbd_pp_vacant;
--extern wait_queue_head_t drbd_pp_wait;
--
- /* We also need a standard (emergency-reserve backed) page pool
-  * for meta data IO (activity log, bitmap).
-  * We can keep it global, as long as it is used as "N pages at a time".
-@@ -1354,6 +1339,7 @@ extern wait_queue_head_t drbd_pp_wait;
-  */
- #define DRBD_MIN_POOL_PAGES	128
- extern mempool_t drbd_md_io_page_pool;
-+extern mempool_t drbd_buffer_page_pool;
- 
- /* We also need to make sure we get a bio
-  * when we need it for housekeeping purposes */
-@@ -1488,10 +1474,7 @@ extern struct drbd_peer_request *drbd_alloc_peer_req(struct drbd_peer_device *,
- 						     sector_t, unsigned int,
- 						     unsigned int,
- 						     gfp_t) __must_hold(local);
--extern void __drbd_free_peer_req(struct drbd_device *, struct drbd_peer_request *,
--				 int);
--#define drbd_free_peer_req(m,e) __drbd_free_peer_req(m, e, 0)
--#define drbd_free_net_peer_req(m,e) __drbd_free_peer_req(m, e, 1)
-+extern void drbd_free_peer_req(struct drbd_device *device, struct drbd_peer_request *req);
- extern struct page *drbd_alloc_pages(struct drbd_peer_device *, unsigned int, bool);
- extern void _drbd_clear_done_ee(struct drbd_device *device, struct list_head *to_be_freed);
- extern int drbd_connected(struct drbd_peer_device *);
-@@ -1610,16 +1593,6 @@ static inline struct page *page_chain_next(struct page *page)
- 	for (; page && ({ n = page_chain_next(page); 1; }); page = n)
- 
- 
--static inline int drbd_peer_req_has_active_page(struct drbd_peer_request *peer_req)
--{
--	struct page *page = peer_req->pages;
--	page_chain_for_each(page) {
--		if (page_count(page) > 1)
--			return 1;
--	}
--	return 0;
--}
--
- static inline union drbd_state drbd_read_state(struct drbd_device *device)
- {
- 	struct drbd_resource *resource = device->resource;
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index ced2cc5f46f2..96ab63896e90 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -114,20 +114,10 @@ struct kmem_cache *drbd_al_ext_cache;	/* activity log extents */
- mempool_t drbd_request_mempool;
- mempool_t drbd_ee_mempool;
- mempool_t drbd_md_io_page_pool;
-+mempool_t drbd_buffer_page_pool;
- struct bio_set drbd_md_io_bio_set;
- struct bio_set drbd_io_bio_set;
- 
--/* I do not use a standard mempool, because:
--   1) I want to hand out the pre-allocated objects first.
--   2) I want to be able to interrupt sleeping allocation with a signal.
--   Note: This is a single linked list, the next pointer is the private
--	 member of struct page.
-- */
--struct page *drbd_pp_pool;
--DEFINE_SPINLOCK(drbd_pp_lock);
--int          drbd_pp_vacant;
--wait_queue_head_t drbd_pp_wait;
--
- DEFINE_RATELIMIT_STATE(drbd_ratelimit_state, 5 * HZ, 5);
- 
- static const struct block_device_operations drbd_ops = {
-@@ -1611,6 +1601,7 @@ static int _drbd_send_zc_bio(struct drbd_peer_device *peer_device, struct bio *b
- static int _drbd_send_zc_ee(struct drbd_peer_device *peer_device,
- 			    struct drbd_peer_request *peer_req)
- {
-+	bool use_sendpage = !(peer_req->flags & EE_RELEASE_TO_MEMPOOL);
- 	struct page *page = peer_req->pages;
- 	unsigned len = peer_req->i.size;
- 	int err;
-@@ -1619,8 +1610,13 @@ static int _drbd_send_zc_ee(struct drbd_peer_device *peer_device,
- 	page_chain_for_each(page) {
- 		unsigned l = min_t(unsigned, len, PAGE_SIZE);
- 
--		err = _drbd_send_page(peer_device, page, 0, l,
--				      page_chain_next(page) ? MSG_MORE : 0);
-+		if (likely(use_sendpage))
-+			err = _drbd_send_page(peer_device, page, 0, l,
-+					      page_chain_next(page) ? MSG_MORE : 0);
-+		else
-+			err = _drbd_no_send_page(peer_device, page, 0, l,
-+						 page_chain_next(page) ? MSG_MORE : 0);
-+
- 		if (err)
- 			return err;
- 		len -= l;
-@@ -1962,7 +1958,6 @@ void drbd_init_set_defaults(struct drbd_device *device)
- 	INIT_LIST_HEAD(&device->sync_ee);
- 	INIT_LIST_HEAD(&device->done_ee);
- 	INIT_LIST_HEAD(&device->read_ee);
--	INIT_LIST_HEAD(&device->net_ee);
- 	INIT_LIST_HEAD(&device->resync_reads);
- 	INIT_LIST_HEAD(&device->resync_work.list);
- 	INIT_LIST_HEAD(&device->unplug_work.list);
-@@ -2043,7 +2038,6 @@ void drbd_device_cleanup(struct drbd_device *device)
- 	D_ASSERT(device, list_empty(&device->sync_ee));
- 	D_ASSERT(device, list_empty(&device->done_ee));
- 	D_ASSERT(device, list_empty(&device->read_ee));
--	D_ASSERT(device, list_empty(&device->net_ee));
- 	D_ASSERT(device, list_empty(&device->resync_reads));
- 	D_ASSERT(device, list_empty(&first_peer_device(device)->connection->sender_work.q));
- 	D_ASSERT(device, list_empty(&device->resync_work.list));
-@@ -2055,19 +2049,11 @@ void drbd_device_cleanup(struct drbd_device *device)
- 
- static void drbd_destroy_mempools(void)
- {
--	struct page *page;
--
--	while (drbd_pp_pool) {
--		page = drbd_pp_pool;
--		drbd_pp_pool = (struct page *)page_private(page);
--		__free_page(page);
--		drbd_pp_vacant--;
--	}
--
- 	/* D_ASSERT(device, atomic_read(&drbd_pp_vacant)==0); */
- 
- 	bioset_exit(&drbd_io_bio_set);
- 	bioset_exit(&drbd_md_io_bio_set);
-+	mempool_exit(&drbd_buffer_page_pool);
- 	mempool_exit(&drbd_md_io_page_pool);
- 	mempool_exit(&drbd_ee_mempool);
- 	mempool_exit(&drbd_request_mempool);
-@@ -2086,9 +2072,8 @@ static void drbd_destroy_mempools(void)
- 
- static int drbd_create_mempools(void)
- {
--	struct page *page;
- 	const int number = (DRBD_MAX_BIO_SIZE/PAGE_SIZE) * drbd_minor_count;
--	int i, ret;
-+	int ret;
- 
- 	/* caches */
- 	drbd_request_cache = kmem_cache_create(
-@@ -2125,6 +2110,10 @@ static int drbd_create_mempools(void)
- 	if (ret)
- 		goto Enomem;
- 
-+	ret = mempool_init_page_pool(&drbd_buffer_page_pool, number, 0);
-+	if (ret)
-+		goto Enomem;
-+
- 	ret = mempool_init_slab_pool(&drbd_request_mempool, number,
- 				     drbd_request_cache);
- 	if (ret)
-@@ -2134,15 +2123,6 @@ static int drbd_create_mempools(void)
- 	if (ret)
- 		goto Enomem;
- 
--	for (i = 0; i < number; i++) {
--		page = alloc_page(GFP_HIGHUSER);
--		if (!page)
--			goto Enomem;
--		set_page_private(page, (unsigned long)drbd_pp_pool);
--		drbd_pp_pool = page;
--	}
--	drbd_pp_vacant = number;
--
- 	return 0;
- 
- Enomem:
-@@ -2169,10 +2149,6 @@ static void drbd_release_all_peer_reqs(struct drbd_device *device)
- 	rr = drbd_free_peer_reqs(device, &device->done_ee);
- 	if (rr)
- 		drbd_err(device, "%d EEs in done list found!\n", rr);
--
--	rr = drbd_free_peer_reqs(device, &device->net_ee);
--	if (rr)
--		drbd_err(device, "%d EEs in net list found!\n", rr);
- }
- 
- /* caution. no locking. */
-@@ -2863,11 +2839,6 @@ static int __init drbd_init(void)
- 		return err;
- 	}
- 
--	/*
--	 * allocate all necessary structs
--	 */
--	init_waitqueue_head(&drbd_pp_wait);
--
- 	drbd_proc = NULL; /* play safe for drbd_cleanup */
- 	idr_init(&drbd_devices);
- 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index e5a2e5f7887b..fe3d0521de0b 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -33,6 +33,7 @@
- #include <linux/string.h>
- #include <linux/scatterlist.h>
- #include <linux/part_stat.h>
-+#include <linux/mempool.h>
- #include "drbd_int.h"
- #include "drbd_protocol.h"
- #include "drbd_req.h"
-@@ -63,182 +64,31 @@ static int e_end_block(struct drbd_work *, int);
- 
- #define GFP_TRY	(__GFP_HIGHMEM | __GFP_NOWARN)
- 
--/*
-- * some helper functions to deal with single linked page lists,
-- * page->private being our "next" pointer.
-- */
--
--/* If at least n pages are linked at head, get n pages off.
-- * Otherwise, don't modify head, and return NULL.
-- * Locking is the responsibility of the caller.
-- */
--static struct page *page_chain_del(struct page **head, int n)
--{
--	struct page *page;
--	struct page *tmp;
--
--	BUG_ON(!n);
--	BUG_ON(!head);
--
--	page = *head;
--
--	if (!page)
--		return NULL;
--
--	while (page) {
--		tmp = page_chain_next(page);
--		if (--n == 0)
--			break; /* found sufficient pages */
--		if (tmp == NULL)
--			/* insufficient pages, don't use any of them. */
--			return NULL;
--		page = tmp;
--	}
--
--	/* add end of list marker for the returned list */
--	set_page_private(page, 0);
--	/* actual return value, and adjustment of head */
--	page = *head;
--	*head = tmp;
--	return page;
--}
--
--/* may be used outside of locks to find the tail of a (usually short)
-- * "private" page chain, before adding it back to a global chain head
-- * with page_chain_add() under a spinlock. */
--static struct page *page_chain_tail(struct page *page, int *len)
--{
--	struct page *tmp;
--	int i = 1;
--	while ((tmp = page_chain_next(page))) {
--		++i;
--		page = tmp;
--	}
--	if (len)
--		*len = i;
--	return page;
--}
--
--static int page_chain_free(struct page *page)
--{
--	struct page *tmp;
--	int i = 0;
--	page_chain_for_each_safe(page, tmp) {
--		put_page(page);
--		++i;
--	}
--	return i;
--}
--
--static void page_chain_add(struct page **head,
--		struct page *chain_first, struct page *chain_last)
--{
--#if 1
--	struct page *tmp;
--	tmp = page_chain_tail(chain_first, NULL);
--	BUG_ON(tmp != chain_last);
--#endif
--
--	/* add chain to head */
--	set_page_private(chain_last, (unsigned long)*head);
--	*head = chain_first;
--}
--
--static struct page *__drbd_alloc_pages(struct drbd_device *device,
--				       unsigned int number)
-+static struct page *__drbd_alloc_pages(unsigned int number)
- {
- 	struct page *page = NULL;
- 	struct page *tmp = NULL;
- 	unsigned int i = 0;
- 
--	/* Yes, testing drbd_pp_vacant outside the lock is racy.
--	 * So what. It saves a spin_lock. */
--	if (drbd_pp_vacant >= number) {
--		spin_lock(&drbd_pp_lock);
--		page = page_chain_del(&drbd_pp_pool, number);
--		if (page)
--			drbd_pp_vacant -= number;
--		spin_unlock(&drbd_pp_lock);
--		if (page)
--			return page;
--	}
--
- 	/* GFP_TRY, because we must not cause arbitrary write-out: in a DRBD
- 	 * "criss-cross" setup, that might cause write-out on some other DRBD,
- 	 * which in turn might block on the other node at this very place.  */
- 	for (i = 0; i < number; i++) {
--		tmp = alloc_page(GFP_TRY);
-+		tmp = mempool_alloc(&drbd_buffer_page_pool, GFP_TRY);
- 		if (!tmp)
--			break;
-+			goto fail;
- 		set_page_private(tmp, (unsigned long)page);
- 		page = tmp;
- 	}
--
--	if (i == number)
--		return page;
--
--	/* Not enough pages immediately available this time.
--	 * No need to jump around here, drbd_alloc_pages will retry this
--	 * function "soon". */
--	if (page) {
--		tmp = page_chain_tail(page, NULL);
--		spin_lock(&drbd_pp_lock);
--		page_chain_add(&drbd_pp_pool, page, tmp);
--		drbd_pp_vacant += i;
--		spin_unlock(&drbd_pp_lock);
-+	return page;
-+fail:
-+	page_chain_for_each_safe(page, tmp) {
-+		set_page_private(page, 0);
-+		mempool_free(page, &drbd_buffer_page_pool);
- 	}
- 	return NULL;
- }
- 
--static void reclaim_finished_net_peer_reqs(struct drbd_device *device,
--					   struct list_head *to_be_freed)
--{
--	struct drbd_peer_request *peer_req, *tmp;
--
--	/* The EEs are always appended to the end of the list. Since
--	   they are sent in order over the wire, they have to finish
--	   in order. As soon as we see the first not finished we can
--	   stop to examine the list... */
--
--	list_for_each_entry_safe(peer_req, tmp, &device->net_ee, w.list) {
--		if (drbd_peer_req_has_active_page(peer_req))
--			break;
--		list_move(&peer_req->w.list, to_be_freed);
--	}
--}
--
--static void drbd_reclaim_net_peer_reqs(struct drbd_device *device)
--{
--	LIST_HEAD(reclaimed);
--	struct drbd_peer_request *peer_req, *t;
--
--	spin_lock_irq(&device->resource->req_lock);
--	reclaim_finished_net_peer_reqs(device, &reclaimed);
--	spin_unlock_irq(&device->resource->req_lock);
--	list_for_each_entry_safe(peer_req, t, &reclaimed, w.list)
--		drbd_free_net_peer_req(device, peer_req);
--}
--
--static void conn_reclaim_net_peer_reqs(struct drbd_connection *connection)
--{
--	struct drbd_peer_device *peer_device;
--	int vnr;
--
--	rcu_read_lock();
--	idr_for_each_entry(&connection->peer_devices, peer_device, vnr) {
--		struct drbd_device *device = peer_device->device;
--		if (!atomic_read(&device->pp_in_use_by_net))
--			continue;
--
--		kref_get(&device->kref);
--		rcu_read_unlock();
--		drbd_reclaim_net_peer_reqs(device);
--		kref_put(&device->kref, drbd_destroy_device);
--		rcu_read_lock();
--	}
--	rcu_read_unlock();
--}
--
- /**
-  * drbd_alloc_pages() - Returns @number pages, retries forever (or until signalled)
-  * @peer_device:	DRBD device.
-@@ -263,9 +113,8 @@ struct page *drbd_alloc_pages(struct drbd_peer_device *peer_device, unsigned int
- 			      bool retry)
- {
- 	struct drbd_device *device = peer_device->device;
--	struct page *page = NULL;
-+	struct page *page;
- 	struct net_conf *nc;
--	DEFINE_WAIT(wait);
- 	unsigned int mxb;
- 
- 	rcu_read_lock();
-@@ -273,37 +122,9 @@ struct page *drbd_alloc_pages(struct drbd_peer_device *peer_device, unsigned int
- 	mxb = nc ? nc->max_buffers : 1000000;
- 	rcu_read_unlock();
- 
--	if (atomic_read(&device->pp_in_use) < mxb)
--		page = __drbd_alloc_pages(device, number);
--
--	/* Try to keep the fast path fast, but occasionally we need
--	 * to reclaim the pages we lended to the network stack. */
--	if (page && atomic_read(&device->pp_in_use_by_net) > 512)
--		drbd_reclaim_net_peer_reqs(device);
--
--	while (page == NULL) {
--		prepare_to_wait(&drbd_pp_wait, &wait, TASK_INTERRUPTIBLE);
--
--		drbd_reclaim_net_peer_reqs(device);
--
--		if (atomic_read(&device->pp_in_use) < mxb) {
--			page = __drbd_alloc_pages(device, number);
--			if (page)
--				break;
--		}
--
--		if (!retry)
--			break;
--
--		if (signal_pending(current)) {
--			drbd_warn(device, "drbd_alloc_pages interrupted!\n");
--			break;
--		}
--
--		if (schedule_timeout(HZ/10) == 0)
--			mxb = UINT_MAX;
--	}
--	finish_wait(&drbd_pp_wait, &wait);
-+	if (atomic_read(&device->pp_in_use) >= mxb)
-+		schedule_timeout_interruptible(HZ / 10);
-+	page = __drbd_alloc_pages(number);
- 
- 	if (page)
- 		atomic_add(number, &device->pp_in_use);
-@@ -314,29 +135,25 @@ struct page *drbd_alloc_pages(struct drbd_peer_device *peer_device, unsigned int
-  * Is also used from inside an other spin_lock_irq(&resource->req_lock);
-  * Either links the page chain back to the global pool,
-  * or returns all pages to the system. */
--static void drbd_free_pages(struct drbd_device *device, struct page *page, int is_net)
-+static void drbd_free_pages(struct drbd_device *device, struct page *page)
- {
--	atomic_t *a = is_net ? &device->pp_in_use_by_net : &device->pp_in_use;
--	int i;
-+	struct page *tmp;
-+	int i = 0;
- 
- 	if (page == NULL)
- 		return;
- 
--	if (drbd_pp_vacant > (DRBD_MAX_BIO_SIZE/PAGE_SIZE) * drbd_minor_count)
--		i = page_chain_free(page);
--	else {
--		struct page *tmp;
--		tmp = page_chain_tail(page, &i);
--		spin_lock(&drbd_pp_lock);
--		page_chain_add(&drbd_pp_pool, page, tmp);
--		drbd_pp_vacant += i;
--		spin_unlock(&drbd_pp_lock);
--	}
--	i = atomic_sub_return(i, a);
-+	page_chain_for_each_safe(page, tmp) {
-+		set_page_private(page, 0);
-+		if (page_count(page) == 1)
-+			mempool_free(page, &drbd_buffer_page_pool);
-+		else
-+			put_page(page);
-+		i++;
-+	}
-+	i = atomic_sub_return(i, &device->pp_in_use);
- 	if (i < 0)
--		drbd_warn(device, "ASSERTION FAILED: %s: %d < 0\n",
--			is_net ? "pp_in_use_by_net" : "pp_in_use", i);
--	wake_up(&drbd_pp_wait);
-+		drbd_warn(device, "ASSERTION FAILED: pp_in_use: %d < 0\n", i);
- }
- 
- /*
-@@ -380,6 +197,8 @@ drbd_alloc_peer_req(struct drbd_peer_device *peer_device, u64 id, sector_t secto
- 					gfpflags_allow_blocking(gfp_mask));
- 		if (!page)
- 			goto fail;
-+		if (!mempool_is_saturated(&drbd_buffer_page_pool))
-+			peer_req->flags |= EE_RELEASE_TO_MEMPOOL;
- 	}
- 
- 	memset(peer_req, 0, sizeof(*peer_req));
-@@ -403,13 +222,12 @@ drbd_alloc_peer_req(struct drbd_peer_device *peer_device, u64 id, sector_t secto
- 	return NULL;
- }
- 
--void __drbd_free_peer_req(struct drbd_device *device, struct drbd_peer_request *peer_req,
--		       int is_net)
-+void drbd_free_peer_req(struct drbd_device *device, struct drbd_peer_request *peer_req)
- {
- 	might_sleep();
- 	if (peer_req->flags & EE_HAS_DIGEST)
- 		kfree(peer_req->digest);
--	drbd_free_pages(device, peer_req->pages, is_net);
-+	drbd_free_pages(device, peer_req->pages);
- 	D_ASSERT(device, atomic_read(&peer_req->pending_bios) == 0);
- 	D_ASSERT(device, drbd_interval_empty(&peer_req->i));
- 	if (!expect(device, !(peer_req->flags & EE_CALL_AL_COMPLETE_IO))) {
-@@ -424,14 +242,13 @@ int drbd_free_peer_reqs(struct drbd_device *device, struct list_head *list)
- 	LIST_HEAD(work_list);
- 	struct drbd_peer_request *peer_req, *t;
- 	int count = 0;
--	int is_net = list == &device->net_ee;
- 
- 	spin_lock_irq(&device->resource->req_lock);
- 	list_splice_init(list, &work_list);
- 	spin_unlock_irq(&device->resource->req_lock);
- 
- 	list_for_each_entry_safe(peer_req, t, &work_list, w.list) {
--		__drbd_free_peer_req(device, peer_req, is_net);
-+		drbd_free_peer_req(device, peer_req);
- 		count++;
- 	}
- 	return count;
-@@ -443,18 +260,13 @@ int drbd_free_peer_reqs(struct drbd_device *device, struct list_head *list)
- static int drbd_finish_peer_reqs(struct drbd_device *device)
- {
- 	LIST_HEAD(work_list);
--	LIST_HEAD(reclaimed);
- 	struct drbd_peer_request *peer_req, *t;
- 	int err = 0;
- 
- 	spin_lock_irq(&device->resource->req_lock);
--	reclaim_finished_net_peer_reqs(device, &reclaimed);
- 	list_splice_init(&device->done_ee, &work_list);
- 	spin_unlock_irq(&device->resource->req_lock);
- 
--	list_for_each_entry_safe(peer_req, t, &reclaimed, w.list)
--		drbd_free_net_peer_req(device, peer_req);
--
- 	/* possible callbacks here:
- 	 * e_end_block, and e_end_resync_block, e_send_superseded.
- 	 * all ignore the last argument.
-@@ -1975,7 +1787,7 @@ static int drbd_drain_block(struct drbd_peer_device *peer_device, int data_size)
- 		data_size -= len;
- 	}
- 	kunmap(page);
--	drbd_free_pages(peer_device->device, page, 0);
-+	drbd_free_pages(peer_device->device, page);
- 	return err;
- }
- 
-@@ -5220,16 +5032,6 @@ static int drbd_disconnected(struct drbd_peer_device *peer_device)
- 		put_ldev(device);
- 	}
- 
--	/* tcp_close and release of sendpage pages can be deferred.  I don't
--	 * want to use SO_LINGER, because apparently it can be deferred for
--	 * more than 20 seconds (longest time I checked).
--	 *
--	 * Actually we don't care for exactly when the network stack does its
--	 * put_page(), but release our reference on these pages right here.
--	 */
--	i = drbd_free_peer_reqs(device, &device->net_ee);
--	if (i)
--		drbd_info(device, "net_ee not empty, killed %u entries\n", i);
- 	i = atomic_read(&device->pp_in_use_by_net);
- 	if (i)
- 		drbd_info(device, "pp_in_use_by_net = %d, expected 0\n", i);
-@@ -5976,8 +5778,6 @@ int drbd_ack_receiver(struct drbd_thread *thi)
- 	while (get_t_state(thi) == RUNNING) {
- 		drbd_thread_current_set_cpu(thi);
- 
--		conn_reclaim_net_peer_reqs(connection);
--
- 		if (test_and_clear_bit(SEND_PING, &connection->flags)) {
- 			if (drbd_send_ping(connection)) {
- 				drbd_err(connection, "drbd_send_ping has failed\n");
-diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
-index 4352a50fbb3f..d74064bb64be 100644
---- a/drivers/block/drbd/drbd_worker.c
-+++ b/drivers/block/drbd/drbd_worker.c
-@@ -1029,22 +1029,6 @@ int drbd_resync_finished(struct drbd_peer_device *peer_device)
- 	return 1;
- }
- 
--/* helper */
--static void move_to_net_ee_or_free(struct drbd_device *device, struct drbd_peer_request *peer_req)
--{
--	if (drbd_peer_req_has_active_page(peer_req)) {
--		/* This might happen if sendpage() has not finished */
--		int i = PFN_UP(peer_req->i.size);
--		atomic_add(i, &device->pp_in_use_by_net);
--		atomic_sub(i, &device->pp_in_use);
--		spin_lock_irq(&device->resource->req_lock);
--		list_add_tail(&peer_req->w.list, &device->net_ee);
--		spin_unlock_irq(&device->resource->req_lock);
--		wake_up(&drbd_pp_wait);
--	} else
--		drbd_free_peer_req(device, peer_req);
--}
--
- /**
-  * w_e_end_data_req() - Worker callback, to send a P_DATA_REPLY packet in response to a P_DATA_REQUEST
-  * @w:		work object.
-@@ -1058,9 +1042,8 @@ int w_e_end_data_req(struct drbd_work *w, int cancel)
- 	int err;
- 
- 	if (unlikely(cancel)) {
--		drbd_free_peer_req(device, peer_req);
--		dec_unacked(device);
--		return 0;
-+		err = 0;
-+		goto out;
- 	}
- 
- 	if (likely((peer_req->flags & EE_WAS_ERROR) == 0)) {
-@@ -1073,12 +1056,12 @@ int w_e_end_data_req(struct drbd_work *w, int cancel)
- 		err = drbd_send_ack(peer_device, P_NEG_DREPLY, peer_req);
- 	}
- 
--	dec_unacked(device);
--
--	move_to_net_ee_or_free(device, peer_req);
--
- 	if (unlikely(err))
- 		drbd_err(device, "drbd_send_block() failed\n");
-+out:
-+	dec_unacked(device);
-+	drbd_free_peer_req(device, peer_req);
-+
- 	return err;
- }
- 
-@@ -1119,9 +1102,8 @@ int w_e_end_rsdata_req(struct drbd_work *w, int cancel)
- 	int err;
- 
- 	if (unlikely(cancel)) {
--		drbd_free_peer_req(device, peer_req);
--		dec_unacked(device);
--		return 0;
-+		err = 0;
-+		goto out;
- 	}
- 
- 	if (get_ldev_if_state(device, D_FAILED)) {
-@@ -1154,13 +1136,12 @@ int w_e_end_rsdata_req(struct drbd_work *w, int cancel)
- 		/* update resync data with failure */
- 		drbd_rs_failed_io(peer_device, peer_req->i.sector, peer_req->i.size);
- 	}
--
--	dec_unacked(device);
--
--	move_to_net_ee_or_free(device, peer_req);
--
- 	if (unlikely(err))
- 		drbd_err(device, "drbd_send_block() failed\n");
-+out:
-+	dec_unacked(device);
-+	drbd_free_peer_req(device, peer_req);
-+
- 	return err;
- }
- 
-@@ -1175,9 +1156,8 @@ int w_e_end_csum_rs_req(struct drbd_work *w, int cancel)
- 	int err, eq = 0;
- 
- 	if (unlikely(cancel)) {
--		drbd_free_peer_req(device, peer_req);
--		dec_unacked(device);
--		return 0;
-+		err = 0;
-+		goto out;
- 	}
- 
- 	if (get_ldev(device)) {
-@@ -1219,12 +1199,12 @@ int w_e_end_csum_rs_req(struct drbd_work *w, int cancel)
- 		if (drbd_ratelimit())
- 			drbd_err(device, "Sending NegDReply. I guess it gets messy.\n");
- 	}
--
--	dec_unacked(device);
--	move_to_net_ee_or_free(device, peer_req);
--
- 	if (unlikely(err))
- 		drbd_err(device, "drbd_send_block/ack() failed\n");
-+out:
-+	dec_unacked(device);
-+	drbd_free_peer_req(device, peer_req);
-+
- 	return err;
- }
- 
+On Sat, May 24, 2025 at 11:14:56PM +0200, Michal Wilczynski wrote:
+> Introduce a PWM driver for the T-HEAD TH1520 SoC written in Rust. It
+> utilizes the Rust PWM abstractions added in the previous commit.
+>=20
+> The driver implements the standard PwmOps for the PWM framework,
+> supporting configuration of period, duty cycle, and polarity for the
+> TH1520's PWM channels. It uses devm managed resources for the PWM chip
+> itself and Rust DevRes for I/O memory. Clock management is handled using
+> Rust's RAII pattern.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  MAINTAINERS               |   1 +
+>  drivers/pwm/Kconfig       |   6 +
+>  drivers/pwm/Makefile      |   1 +
+>  drivers/pwm/pwm_th1520.rs | 272 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 280 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2b080e8f3d873b1e401b3a2fe1207c224c4591fc..0cfac73aea65076c5ccb50a25=
+ea686fb86b472b8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20986,6 +20986,7 @@ F:	drivers/mailbox/mailbox-th1520.c
+>  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+>  F:	drivers/pinctrl/pinctrl-th1520.c
+>  F:	drivers/pmdomain/thead/
+> +F:	drivers/pwm/pwm_th1520.rs
+>  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>  F:	include/dt-bindings/power/thead,th1520-power.h
+>  F:	include/linux/firmware/thead/thead,th1520-aon.h
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index b5bd5c13b3a5e5a575a0fbfb2e285f5665b7a671..796fcd8343b7c8e30f62edc2e=
+0fecf0e9b1ae20e 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -684,6 +684,12 @@ config PWM_TEGRA
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-tegra.
+> =20
+> +config PWM_TH1520_RUST
+> +	tristate "TH1520 PWM support (Rust)"
+> +	depends on RUST_PWM_ABSTRACTIONS
+> +	help
+> +	  Generic PWM framework driver for TH1520 SoC.
+> +
+>  config PWM_TIECAP
+>  	tristate "ECAP PWM support"
+>  	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARC=
+H_K3 || COMPILE_TEST
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 539e0def3f82fcb866ab83a0346a15f7efdd7127..6890f860ada6f1a6ed43dd3a3=
+a9584cd2fa877f3 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -70,3 +70,4 @@ obj-$(CONFIG_PWM_TWL_LED)	+=3D pwm-twl-led.o
+>  obj-$(CONFIG_PWM_VISCONTI)	+=3D pwm-visconti.o
+>  obj-$(CONFIG_PWM_VT8500)	+=3D pwm-vt8500.o
+>  obj-$(CONFIG_PWM_XILINX)	+=3D pwm-xilinx.o
+> +obj-$(CONFIG_PWM_TH1520_RUST)	+=3D pwm_th1520.o
+> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4665e293e8d0bdc1a62a4e295=
+cdaf4d47b3dd134
+> --- /dev/null
+> +++ b/drivers/pwm/pwm_th1520.rs
+> @@ -0,0 +1,272 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
+> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
+> +
+> +//! Rust T-HEAD TH1520 PWM driver
+> +use kernel::{c_str, clk::Clk, device, io::mem::IoMem, of, platform, prel=
+ude::*, pwm, time};
+> +
+> +const MAX_PWM_NUM: u32 =3D 6;
+> +
+> +const fn th1520_pwm_chn_base(n: u32) -> u32 {
+> +    n * 0x20
+> +}
+> +const fn th1520_pwm_ctrl(n: u32) -> u32 {
+> +    th1520_pwm_chn_base(n) + 0x00
+> +}
+> +const fn th1520_pwm_per(n: u32) -> u32 {
+> +    th1520_pwm_chn_base(n) + 0x08
+> +}
+> +const fn th1520_pwm_fp(n: u32) -> u32 {
+> +    th1520_pwm_chn_base(n) + 0x0c
+> +}
+> +
+> +const PWM_START: u32 =3D 1 << 0;
+> +const PWM_CFG_UPDATE: u32 =3D 1 << 2;
+> +const PWM_CONTINUOUS_MODE: u32 =3D 1 << 5;
+> +const PWM_FPOUT: u32 =3D 1 << 8;
+> +const PWM_INFACTOUT: u32 =3D 1 << 9;
+> +
+> +struct Th1520PwmChipData {
+> +    clk: Clk,
+> +    iomem: kernel::devres::Devres<IoMem<0>>,
+> +}
+> +
+> +impl Th1520PwmChipData {
+> +    fn _config(
+> +        &self,
+> +        hwpwm: u32,
+> +        duty_ns: u64,
+> +        period_ns: u64,
+> +        target_polarity: pwm::Polarity,
 
-base-commit: b02f5eedbcabe6e1982fdd7ff3f0ac5d1fddc68f
--- 
-2.49.0
+Why "target_polarity"? duty_ns and period_ns also don't contain
+"target_"?
 
+> +    ) -> Result<u32> {
+> +        let regs =3D self.iomem.try_access().ok_or_else(|| {
+> +            pr_err!("PWM-{}: Failed to access I/O memory in _config\n", =
+hwpwm);
+> +            EBUSY
+> +        })?;
+> +
+> +        // Calculate cycle values
+> +        let rate_hz_u64 =3D self.clk.rate().as_hz() as u64;
+> +
+> +        if duty_ns > period_ns {
+> +            pr_err!(
+> +                "PWM-{}: Duty {}ns > period {}ns\n",
+> +                hwpwm,
+> +                duty_ns,
+> +                period_ns
+> +            );
+> +            return Err(EINVAL);
+> +        }
+> +        if period_ns =3D=3D 0 {
+> +            pr_err!("PWM-{}: Period is zero\n", hwpwm);
+> +            return Err(EINVAL);
+> +        }
+
+You don't need to check for period_ns =3D=3D 0 explicitly. This case then
+hits period_cycle =3D=3D 0 below.
+
+> +
+> +        let mut period_cycle =3D mul_div_u64(period_ns, rate_hz_u64, tim=
+e::NSEC_PER_SEC as u64);
+
+if period_ns is big and rate_hz_u64 > NSEC_PER_SEC this might overflow.
+
+Typically refuse to probe if rate_hz_u64 > NSEC_PER_SEC and call
+clk_rate_exclusive_get().
+
+> +        if period_cycle > u32::MAX as u64 {
+> +            period_cycle =3D u32::MAX as u64;
+> +        }
+> +        if period_cycle =3D=3D 0 {
+> +            pr_err!(
+> +                "PWM-{}: Calculated period_cycle is zero, not allowed by=
+ HW\n",
+> +                hwpwm
+> +            );
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        let mut duty_cycle =3D mul_div_u64(duty_ns, rate_hz_u64, time::N=
+SEC_PER_SEC as u64);
+> +        if duty_cycle > u32::MAX as u64 {
+> +            duty_cycle =3D u32::MAX as u64;
+> +        }
+> +
+> +        let mut base_ctrl_val =3D PWM_INFACTOUT | PWM_CONTINUOUS_MODE;
+> +        if target_polarity =3D=3D pwm::Polarity::Normal {
+> +            // FPOUT=3D1 for Normal
+> +            base_ctrl_val |=3D PWM_FPOUT;
+> +        } else {
+> +            // Inversed, FPOUT=3D0
+> +            base_ctrl_val &=3D !PWM_FPOUT;
+> +        }
+> +        regs.try_write32(base_ctrl_val, th1520_pwm_ctrl(hwpwm) as usize)=
+?;
+> +        pr_debug!(
+> +            "PWM-{}: _config: Initial CTRL write (polarity, mode): 0x{:x=
+}\n",
+> +            hwpwm,
+> +            base_ctrl_val
+> +        );
+> +
+> +        // Write period and duty registers
+> +        regs.try_write32(period_cycle as u32, th1520_pwm_per(hwpwm) as u=
+size)?;
+> +        regs.try_write32(duty_cycle as u32, th1520_pwm_fp(hwpwm) as usiz=
+e)?;
+> +        pr_debug!(
+> +            "PWM-{}: _config: Period_cyc=3D{}, Duty_cyc=3D{}\n",
+> +            hwpwm,
+> +            period_cycle,
+> +            duty_cycle
+> +        );
+> +
+> +        // Apply period/duty by toggling CFG_UPDATE from 0 to 1.
+> +        // The `base_ctrl_val` (just written to HW) has CFG_UPDATE=3D0. =
+Now set it.
+> +        let ctrl_val_for_update =3D base_ctrl_val | PWM_CFG_UPDATE;
+> +        regs.try_write32(ctrl_val_for_update, th1520_pwm_ctrl(hwpwm) as =
+usize)?;
+> +        pr_debug!(
+> +            "PWM-{}: _config: CTRL write with CFG_UPDATE: 0x{:x}\n",
+> +            hwpwm,
+> +            ctrl_val_for_update
+> +        );
+> +
+> +        Ok(ctrl_val_for_update)
+> +    }
+> +
+> +    fn _enable(&self, hwpwm: u32, ctrl_val_after_config: u32) -> Result {
+> +        let regs =3D self.iomem.try_access().ok_or_else(|| {
+> +            pr_err!("PWM-{}: Failed to access I/O memory in _enable\n", =
+hwpwm);
+> +            EBUSY
+> +        })?;
+> +
+> +        // ctrl_val_after_config already has mode, polarity, and CFG_UPD=
+ATE correctly set.
+> +        // Now add the START bit. START bit auto-clears.
+> +        let ctrl_to_start =3D ctrl_val_after_config | PWM_START;
+> +        regs.try_write32(ctrl_to_start, th1520_pwm_ctrl(hwpwm) as usize)=
+?;
+> +        pr_debug!(
+> +            "PWM-{}: _enable: CTRL write with START: 0x{:x}\n",
+> +            hwpwm,
+> +            ctrl_to_start
+> +        );
+> +        Ok(())
+> +    }
+> +
+> +    fn _disable(&self, hwpwm: u32) -> Result<()> {
+> +        let regs =3D self.iomem.try_access().ok_or_else(|| {
+> +            pr_err!("PWM-{}: Failed to access I/O memory in _disable\n",=
+ hwpwm);
+> +            EINVAL
+> +        })?;
+> +
+> +        let mut ctrl_val =3D regs.try_read32(th1520_pwm_ctrl(hwpwm) as u=
+size)?;
+> +        pr_debug!("PWM-{}: _disable: Read CTRL: 0x{:x}\n", hwpwm, ctrl_v=
+al);
+> +
+> +        // Ensure CFG_UPDATE is 0 before updating duty (Limitation #4)
+> +        if (ctrl_val & PWM_CFG_UPDATE) !=3D 0 {
+> +            ctrl_val &=3D !PWM_CFG_UPDATE;
+> +            regs.try_write32(ctrl_val, th1520_pwm_ctrl(hwpwm) as usize)?;
+> +            pr_debug!(
+> +                "PWM-{}: _disable: Cleared CFG_UPDATE, wrote CTRL: 0x{:x=
+}\n",
+> +                hwpwm,
+> +                ctrl_val
+> +            );
+> +        }
+> +
+> +        // Set duty cycle to 0
+> +        regs.try_write32(0, th1520_pwm_fp(hwpwm) as usize)?;
+> +        pr_debug!("PWM-{}: _disable: Wrote 0 to DUTY (FP) register\n", h=
+wpwm);
+> +
+> +        // Apply the 0% duty by toggling CFG_UPDATE from 0 to 1
+> +        // Use the ctrl_val that has CFG_UPDATE cleared (or was already =
+clear)
+> +        ctrl_val |=3D PWM_CFG_UPDATE;
+> +        regs.try_write32(ctrl_val, th1520_pwm_ctrl(hwpwm) as usize)?;
+> +        pr_debug!(
+> +            "PWM-{}: _disable: Set CFG_UPDATE, wrote CTRL: 0x{:x}\n",
+> +            hwpwm,
+> +            ctrl_val
+> +        );
+> +
+> +        Ok(())
+> +    }
+> +}
+> +
+> +impl pwm::PwmOps for Th1520PwmChipData {
+> +    // This driver implements get_state
+
+I don't spot the get_state implementation?!
+
+> +    fn apply(
+> +        pwm_chip_ref: &mut pwm::Chip,
+> +        pwm_dev: &mut pwm::Device,
+> +        target_state: &pwm::State,
+
+In C code I like these variables be called "chip", "pwm" and "state"
+respectively. Is that possible here, too?
+
+> +    ) -> Result {
+> +        let data: &Th1520PwmChipData =3D pwm_chip_ref.get_drvdata().ok_o=
+r(EINVAL)?;
+> +        let hwpwm =3D pwm_dev.hwpwm();
+> +
+> +        if !target_state.enabled() {
+> +            if pwm_dev.state().enabled() {
+> +                data._disable(hwpwm)?;
+> +            }
+> +
+> +            return Ok(());
+> +        }
+> +
+> +        // Configure period, duty, and polarity.
+> +        // This function also latches period/duty with CFG_UPDATE.
+> +        // It returns the control value that was written with CFG_UPDATE=
+ set.
+> +        let ctrl_val_after_config =3D data._config(
+> +            hwpwm,
+> +            target_state.duty_cycle(),
+> +            target_state.period(),
+> +            target_state.polarity(),
+> +        )?;
+> +
+> +        // Enable by setting START bit if it wasn't enabled before this =
+apply call
+> +        if !pwm_dev.state().enabled() {
+> +            data._enable(hwpwm, ctrl_val_after_config)?;
+> +        }
+> +
+> +        Ok(())
+> +    }
+> +}
+> +
+> +impl Drop for Th1520PwmChipData {
+> +    fn drop(&mut self) {
+> +        self.clk.disable_unprepare();
+> +    }
+> +}
+> +
+> +fn mul_div_u64(a: u64, b: u64, c: u64) -> u64 {
+> +    if c =3D=3D 0 {
+> +        return 0;
+> +    }
+> +    a.wrapping_mul(b) / c
+> +}
+
+Is this save if a * b > U64_MAX? I would have expected such a function
+to already exist in generic code.
+
+> +static TH1520_PWM_OPS: pwm::PwmOpsVTable =3D pwm::create_pwm_ops::<Th152=
+0PwmChipData>();
+> +
+> +struct Th1520PwmPlatformDriver;
+> +
+> +kernel::of_device_table!(
+> +    OF_TABLE,
+> +    MODULE_OF_TABLE,
+> +    <Th1520PwmPlatformDriver as platform::Driver>::IdInfo,
+> +    [(of::DeviceId::new(c_str!("thead,th1520-pwm")), ())]
+> +);
+> +
+> +impl platform::Driver for Th1520PwmPlatformDriver {
+> +    type IdInfo =3D ();
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D Some(&OF_TA=
+BLE);
+> +
+> +    fn probe(
+> +        pdev: &platform::Device<device::Core>,
+> +        _id_info: Option<&Self::IdInfo>,
+> +    ) -> Result<Pin<KBox<Self>>> {
+> +        let resource =3D pdev.resource(0).ok_or(ENODEV)?;
+> +        let iomem =3D pdev.ioremap_resource(&resource)?;
+> +
+> +        let clk =3D Clk::get(pdev.as_ref(), None)?;
+> +
+> +        clk.prepare_enable()?;
+
+Is there something like devm_clk_get_enabled() such that the drop
+function becomes redundant?
+
+> +        let driver_data =3D KBox::new(Th1520PwmChipData { clk, iomem }, =
+GFP_KERNEL)?;
+> +        let pwm_chip =3D pwm::devm_chip_alloc(pdev.as_ref(), MAX_PWM_NUM=
+, 0)?;
+> +
+> +        let result =3D pwm::devm_chip_add(pdev.as_ref(), pwm_chip, &TH15=
+20_PWM_OPS);
+> +        if result.is_err() {
+> +            pr_err!("Failed to add PWM chip: {:?}\n", result);
+> +            return Err(EIO);
+> +        }
+> +
+> +        pwm_chip.set_drvdata(driver_data);
+> +        pr_info!("T-HEAD TH1520 PWM probed correctly\n");
+
+Please degrade to pr_debug. Each driver emitting a message is an
+annoyance.
+
+> +        Ok(KBox::new(Self, GFP_KERNEL)?.into())
+> +    }
+> +}
+> +
+> +kernel::module_platform_driver! {
+> +    type: Th1520PwmPlatformDriver,
+> +    name: "pwm_th1520",
+> +    author: "Michal Wilczynski",
+> +    description: "T-HEAD TH1520 PWM driver",
+> +    license: "GPL v2",
+> +}
+
+Best regards
+Uwe
+
+--ilvp5okyjxiiq75c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhBc88ACgkQj4D7WH0S
+/k6MCwgAmH6luE1Gvacr9B2cr0B5Oc37cNczAiM0g5LXlECg/MAyxvMyLJZU39Ty
+NfypdYP4HVJ7fbaySzY8yridWfaK08J0Hlfq0oCCwBaSZ0wnV/2i1ZuJbO76PJ8I
+m0JuyT5w6cQIfnUZKAfEjLGGXi/sTQoJVc/5wHbFfVA2vb398y13/cmgiu7DHqOZ
+5Sec8L9rm+v5pLZN5PcdxrETfKGcFVuIWz3Un9g7wYTP/ASrXoJhZ4M1ctliAfB1
+scOblaUEn4o5/SDE9NEmN56BUvUYoBMA8KsYZ1pIyDRMLwQ7CGEsw6LiDyhcAigZ
+remDwm6kqooeF/7QZCPz/Bh+iYSK2g==
+=WleQ
+-----END PGP SIGNATURE-----
+
+--ilvp5okyjxiiq75c--
 
