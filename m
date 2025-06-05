@@ -1,181 +1,172 @@
-Return-Path: <linux-kernel+bounces-674666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E300ACF2AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 228A3ACF2DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A817AC199
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:09:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6737D7AD753
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A3E1F4168;
-	Thu,  5 Jun 2025 15:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D7D1E22FC;
+	Thu,  5 Jun 2025 15:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="qSH1k1Bt"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="yC5Jwzdt"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83EA1CCB40;
-	Thu,  5 Jun 2025 15:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59121A2622;
+	Thu,  5 Jun 2025 15:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749136195; cv=none; b=iCZvl0SHR6HGVnK7Cqw1MrH3egO1WVEXwjwtmogLc3Nz600uGlgUcSUelGgY895aE5kOQD9+fA2ev/PVVZRownEmdBPyEvfm1VfcsPQJQ74JXFoOg19LiZJz5xpCRKwZ6GIgwMzmJXUAz5jrUoxh3iRfqk/VSv5r5Ab7ClFKq/4=
+	t=1749136258; cv=none; b=qKGStIGPtntjvom+815/O7cdSc6d9xurPszZjaDl+NQyZRmlZRYHdffaYIgw0GKIAbg/5nu3Pz9+SCN3QG8430G1HKnprvP888tOuokD5fh/ElqCzswS6N7T8Hw6+uUZkappSgfNnfEoZw/forbOdVLHltSJbe5Px7v0erT05Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749136195; c=relaxed/simple;
-	bh=5w6Yv93zAQ3ErcgdTrPiDO9Q9Wfrs45HpAf7J5N0gZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s9jeeM+0BV2LpBdI7T3+50OT127mbC+6zze6e641ohyQt09xgP6c53FaJS2llUWgClBgl0v274quT9LjIX9npW0GkNlFkjhueF+FoMF9Rgb0lR6EoemuY22m4J4THyO3lEbEe+ezLHFGHmH69yERNna937QXdX9GEZ4Yfi/jBG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=qSH1k1Bt; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 29D2566C036;
-	Thu,  5 Jun 2025 17:09:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1749136184;
-	bh=5w6Yv93zAQ3ErcgdTrPiDO9Q9Wfrs45HpAf7J5N0gZQ=;
-	h=From:Subject:Date;
-	b=qSH1k1BtkumQjRlAiVzukEKaymWbwSyIEpgjTJCKwbbWza9OEwLmY60+XkKsJH/yi
-	 0eChstEywNEVUS5+ZcCor3NJkdVZxYWwedkT4EnfaDFc9WwPayV/zO1qhCbaU4CW9Z
-	 2YwyJRFpzW+v0vHX7daAFV0kVPMH4kBfPzRB833qY3U20izZP7DPnF7v8+qZHyk3rC
-	 FM6RwjMcgrStNBR79iBAOTFmLToLPd/QbiXb5UqpH25bF3N86pgbMd4am7m35Uir/s
-	 Gl47N9xeatvxdHmtOYVRp3BrMGzadQyqAWCr8aKT0HqTChfLq4NQRz5mVL2JV8vv95
-	 UnQEwyMZnDjKg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Linux ACPI <linux-acpi@vger.kernel.org>
-Subject:
- [PATCH v1 5/5] Reapply "x86/smp: Eliminate mwait_play_dead_cpuid_hint()"
-Date: Thu, 05 Jun 2025 17:09:35 +0200
-Message-ID: <7813065.EvYhyI6sBW@rjwysocki.net>
-In-Reply-To: <2226957.irdbgypaU6@rjwysocki.net>
-References: <2226957.irdbgypaU6@rjwysocki.net>
+	s=arc-20240116; t=1749136258; c=relaxed/simple;
+	bh=DbkGtSX5uPQwnwHmaDPrbgS/BdSVnQmRRQ2CAF3LLE0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XlOLVwereehb/7+t1dSpM6fA6sJGgfJLmwRZ/qENX8H9PNgBjlSuvyaj1kLP5fpoTeN3SZrjDPe5vxHHC63Zl6ApmbIe31lXvc5JlqeKCIEukAaVuyAcA3XsBAxEN6DhLtdqi4nOCU+u6D/l4hj8SqT5xehiXNQg10II7Zwvps0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=yC5Jwzdt; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555D2d5f014028;
+	Thu, 5 Jun 2025 11:10:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=vzDkF4v+KTwu+/2OCes+s1U9Sat
+	3JuMlIoRhUM42ZRs=; b=yC5JwzdtYNva/kKhGfj9VYxLzEXvJmfgR0NUz2XCXjX
+	hlt9ZW8Pnyhk4s5VTvll+aLmiWRrS8FLgolfp6bhAXIaNyfliqV0/rTo6ZJPmZ+q
+	nSL5yBhTYhnX6lYYxNgU9SzxEQtnNbvtIQPpgTH5Yf4Qa6ckY6d++XXr7bLYKl27
+	wOjregY0kSBPSSQPFhPabqDY1lM7ySNnOGzASRjtpRM5pCGsCUnKL7t89qnDpaUK
+	wXfl34gj4UqcaNKF6l3bQ6oVAl3KPs9zxw8AExa/OJfrrLFcYnwBVww/H5S5Iko7
+	o+CffPgQx8zbZwM2pi134bBSrsJZJlXQbtGmoWASAsQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47386c9phj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Jun 2025 11:10:24 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 555FAN6K046892
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 5 Jun 2025 11:10:23 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 5 Jun 2025 11:10:22 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 5 Jun 2025 11:10:22 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 5 Jun 2025 11:10:22 -0400
+Received: from romlx5.adlk.analog.com ([10.48.65.73])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 555FA1up027831;
+	Thu, 5 Jun 2025 11:10:04 -0400
+From: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "David
+ Lechner" <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?=
+	<nuno.sa@analog.com>,
+        Andy Shevchenko <andy@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+        "Dragos Bogdan" <dragos.bogdan@analog.com>,
+        Antoniu Miclaus
+	<antoniu.miclaus@analog.com>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+        Matti Vaittinen
+	<mazziesaccount@gmail.com>,
+        Angelo Dureghello <adureghello@baylibre.com>,
+        Tobias Sperling <tobias.sperling@softing.com>,
+        Marcelo Schmitt
+	<marcelo.schmitt@analog.com>,
+        Trevor Gamblin <tgamblin@baylibre.com>,
+        "Ramona
+ Alexandra Nechita" <ramona.nechita@analog.com>,
+        Pop Ioan Daniel
+	<pop.ioan-daniel@analog.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?=
+	<joao.goncalves@toradex.com>,
+        Herve Codina <herve.codina@bootlin.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 0/5] Add support for AD7405/ADUM770x
+Date: Thu, 5 Jun 2025 18:09:38 +0300
+Message-ID: <20250605150948.3091827-1-pop.ioan-daniel@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTEzSEGzZ/ONVrWENr6vcXfS3S2jicISDIUk4t6WJg+Zjj/tMsiKrH6p/W9hVn65rDd2JKDd5uTYEHknKQT2r7pOoqF3rdVD5yhK7Rprhh7g9Zvcj23lpp2rY7UCLtUpLjrE40L5kP2ENOt7F7JFMQrsU0BxCSyD9ImwCg/5uHKqloLfTfX1B6buKhq24d5iBCDj1fuCRg5EDPCCcGoXCAG/xJ8DxnVxdLMqNeA6Murrcf5yV2bVSf0qD3cTb1ZGJEaagT8ZwEZw1hwmHq4GBUTZA/geTkMBRKK8IMyXCx4LjU27eYT2E9Bi7kPkpz1heTPAWpmaTKgTxzYdBmQllqRTl/Yl2mbTQxvwrPd3I7zV7RAKW8lL8zC1Qqzv74Nqlxzwid9Qnd2k+6vzP8M8lTjbI3EUY48Qn0InRxGMdT0mI6F/wpdr91v91Wod4Xt1EmxclbwDJX2Is1vMQRh2U2mZLIDQN0M9sNrj+X3o5zkShMz+j9Z0XGTwte4UyGTpMainqH1zLPnxQEI/Cs8t6faBMja0m/aGPSYG7PZDZ0JZ8/fORk3jqIccuBkwbYmzOXwKB1kP9qI0b1DCJzVBeBsHtWzitHFlQ9cMDPKTooa6zSw9QtOGbQS78UXLSL9r4vruh1z2hDnMKDwCCPHN4KlkDj1wHu+122qK3UBoDbQH+w
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: MDmK1m5lpJ10jF8joYrN6XDWjNEt9bd2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDEzMSBTYWx0ZWRfXy0kDZdgTaXf2
+ qilGvDuikq1JT4ZqmP2f4Mqgoe7vqfUdYgqFs9LiNhky8l4N/fxkBF53SRy8nO1pPHbTaR+lFQR
+ ozy2nIiLmtfjURvSd3W8Lc9gtWfeFCc14sA/ioAJiUv4x8oQBU48V465DHxKPm6uYt8m+i13ub7
+ SuMQD+qmOw9VJlyN9GDmjXN9ZLBxFSROp3R2dwYdsS0dbeeUWocVE96EGYPxMcLMLW1NDKS+C1D
+ 3UJZeeLRewR9I9D9Ma6glqJohCDBAXEidMYpaEDC11O9VVVfyatzu/hyTy/u6mcejfQ3MXtyy5f
+ e7lp+wLcFDWEguoG1VjoQ9M7u0V/17ajLpiQn/gz1fFO24KaschjrThxNBdtqpnjlKS0W9oB4dk
+ J2sGhw92IQL52yrIjbUkG00HOxBtRKB/W+Ty1eGUkhVAFT403oowqrEUl0ipfSDXZ/IEuDmj
+X-Authority-Analysis: v=2.4 cv=KYLSsRYD c=1 sm=1 tr=0 ts=6841b360 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gkbNl49xHU_gtnum-JMA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: MDmK1m5lpJ10jF8joYrN6XDWjNEt9bd2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_03,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 bulkscore=0 phishscore=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ mlxscore=0 mlxlogscore=815 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506050131
 
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+The AD7405 is a high performance, second-order, Σ-Δ modulator
+that converts an analog input signal into a high speed, single-bit
+LVDS data stream, with on-chip digital isolation based on Analog
+Devices, Inc., iCoupler technology. The AD7405 operates from a
+4.5 V to 5.5 V (VDD1) power supply and accepts a differential input
+signal of ±250 mV (±320 mV full-scale). The differential input is ideally
+suited to shunt voltage monitoring in high voltage applications
+where galvanic isolation is required.
 
-Revert commit 70523f335734 ("Revert "x86/smp: Eliminate
-mwait_play_dead_cpuid_hint()"") to reapply the changes from commit
-96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()")
-reverted by it.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Previously, these changes caused idle power to rise on systems booting
-with "nosmt" in the kernel command line because they effectively caused
-"dead" SMT siblings to remain in idle state C1 after executing the HLT
-instruction, which prevented the processor from reaching package idle
-states deeper than PC2 going forward.
+Pop Ioan Daniel (5):
+  iio: adc: ad4851: ad4851_set_oversampling_ratio parameters update
+  iio: backend: update iio_backend_oversampling_ratio_set
+  iio: adc: adi-axi-adc: add axi_adc_oversampling_ratio_set
+  dt-bindings: iio: adc: add ad7405
+  iio: adc: ad7405: add ad7405 driver
 
-Now, the "dead" SMT siblings are rescanned after initializing a proper
-cpuidle driver for the processor (either intel_idle or ACPI idle), at
-which point they are able to enter a sufficiently deep idle state
-in native_play_dead() via cpuidle, so the code changes in question can
-be reapplied.
+ .../bindings/iio/adc/adi,ad7405.yaml          |  60 ++++
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/ad4851.c                      |   6 +-
+ drivers/iio/adc/ad7405.c                      | 259 ++++++++++++++++++
+ drivers/iio/adc/adi-axi-adc.c                 |  20 +-
+ drivers/iio/industrialio-backend.c            |   3 +-
+ include/linux/iio/backend.h                   |   3 +-
+ 8 files changed, 356 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7405.yaml
+ create mode 100644 drivers/iio/adc/ad7405.c
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- arch/x86/kernel/smpboot.c |   54 +++++-----------------------------------------
- 1 file changed, 7 insertions(+), 47 deletions(-)
-
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1238,6 +1238,10 @@
- 	local_irq_disable();
- }
- 
-+/*
-+ * We need to flush the caches before going to sleep, lest we have
-+ * dirty data in our caches when we come back up.
-+ */
- void __noreturn mwait_play_dead(unsigned int eax_hint)
- {
- 	struct mwait_cpu_dead *md = this_cpu_ptr(&mwait_cpu_dead);
-@@ -1284,50 +1288,6 @@
- }
- 
- /*
-- * We need to flush the caches before going to sleep, lest we have
-- * dirty data in our caches when we come back up.
-- */
--static inline void mwait_play_dead_cpuid_hint(void)
--{
--	unsigned int eax, ebx, ecx, edx;
--	unsigned int highest_cstate = 0;
--	unsigned int highest_subcstate = 0;
--	int i;
--
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
--	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
--		return;
--	if (!this_cpu_has(X86_FEATURE_MWAIT))
--		return;
--	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
--		return;
--
--	eax = CPUID_LEAF_MWAIT;
--	ecx = 0;
--	native_cpuid(&eax, &ebx, &ecx, &edx);
--
--	/*
--	 * eax will be 0 if EDX enumeration is not valid.
--	 * Initialized below to cstate, sub_cstate value when EDX is valid.
--	 */
--	if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED)) {
--		eax = 0;
--	} else {
--		edx >>= MWAIT_SUBSTATE_SIZE;
--		for (i = 0; i < 7 && edx; i++, edx >>= MWAIT_SUBSTATE_SIZE) {
--			if (edx & MWAIT_SUBSTATE_MASK) {
--				highest_cstate = i;
--				highest_subcstate = edx & MWAIT_SUBSTATE_MASK;
--			}
--		}
--		eax = (highest_cstate << MWAIT_SUBSTATE_SIZE) |
--			(highest_subcstate - 1);
--	}
--
--	mwait_play_dead(eax);
--}
--
--/*
-  * Kick all "offline" CPUs out of mwait on kexec(). See comment in
-  * mwait_play_dead().
-  */
-@@ -1377,9 +1337,9 @@
- 	play_dead_common();
- 	tboot_shutdown(TB_SHUTDOWN_WFS);
- 
--	mwait_play_dead_cpuid_hint();
--	if (cpuidle_play_dead())
--		hlt_play_dead();
-+	/* Below returns only on error. */
-+	cpuidle_play_dead();
-+	hlt_play_dead();
- }
- 
- #else /* ... !CONFIG_HOTPLUG_CPU */
-
-
+-- 
+2.34.1
 
 
