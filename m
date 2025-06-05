@@ -1,165 +1,114 @@
-Return-Path: <linux-kernel+bounces-674753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5C4ACF41A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:23:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC244ACF40A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B5F47AA697
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:21:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7B47AA53A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1582E659;
-	Thu,  5 Jun 2025 16:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2CD1F5820;
+	Thu,  5 Jun 2025 16:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKRjHVlX"
-Received: from mail-wm1-f68.google.com (mail-wm1-f68.google.com [209.85.128.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pslbklmL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F3B1E5B7D;
-	Thu,  5 Jun 2025 16:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C7C2E659;
+	Thu,  5 Jun 2025 16:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749140535; cv=none; b=pC7RZktvfJA64yT93katQ5qDdLg0/O4B7M8FqgcFM5xOP4wX/8Oap4ikmPkBgXsaCsb0lZUPdPV6U0/5Kbmtz84J3vg6a1gkk4lVYu/9RNiwuGT1BYQkTiGVe4kHMPhZlT+kB4Db8qUHO4iVNIHsIppkEjKNRpxlA89V37MQwoo=
+	t=1749140450; cv=none; b=ujTve/eWKYS3i1HmdHEhGT9eKCqbLRtSkR7llXgN7J/XgIZDOwuCQ3WPHLOzPGl21VKDPIfa8C8LiIytAAXjOm2wAzHkeks9wh9K/D6ZxSuukxf0oWgLwnz/cnIyU570wWMkDDLmbJKBC0MJFycC14NvzmtHk0k+Y1EruwbSFzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749140535; c=relaxed/simple;
-	bh=WOEAx/OuSA6ujJIrMf+xRi70l3LrT+6XGNIYC00yoYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q7imois8n1J0DFacpqVS3rwSTNIhHbPZuUwpyHyuuvONlDQARPQ+A6kZkGGJxoQ8sl7aQPsM38o8KoLmy7zJIIuQDblUo4du5xtEnna50///+1UkBrpn6GWGlY3aFTXhUjvewMGvrIK+5eSxZqnzKejx+1kbmUANph7yYfjNvZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKRjHVlX; arc=none smtp.client-ip=209.85.128.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f68.google.com with SMTP id 5b1f17b1804b1-451d3f72391so14480955e9.3;
-        Thu, 05 Jun 2025 09:22:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749140531; x=1749745331; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LY3Zmm9CwcbsqE728Ul4F6AXczl5eGOeRnNMCNxXAoY=;
-        b=HKRjHVlX0FJ2S65FHKl6MC/HmxSipJZoyPSPTAfZds4XrLNBLqhslT/MkeWYzmRyMx
-         7QFkuW8WLQvV9kzpFZ8x5Bm3V+SiUa4D4EiqBaMx7TSarCquZI/W+8hQ1fvjPhZAOEGp
-         ZG0wK9sVule0sVJreWgXJWvNlO2bK/jPkN+mnZv2C1eynWBtPrzLbrCSOWloqKrhMLCO
-         Heeq+4F9b/c95eCCMI89eUMgHnNqIBVK98jUqYOomm9RF1cyczTfp0j3CjLiCi562YQ2
-         ji4RM45UIeBrM+9SBuSA1H7mvMu6JdWu/rvOW5iB1eMXeykqVy5QGxH/k1B/vHArA/de
-         aKQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749140531; x=1749745331;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LY3Zmm9CwcbsqE728Ul4F6AXczl5eGOeRnNMCNxXAoY=;
-        b=ikbqEaatKC6ovS7iwJze+IOPLOApmLSOxC0COTrzBu2SWPEdQXIWeqK//P+dTpbyV3
-         emvfwlyh4XkOYL42YOJOY8GBVQcgc7n8J3gBLCUZ7usVGwW2VmXc5LnVmCO8Yv4OHPXY
-         TWkGtN7acmkIjG4y3W2PqPQLrMXuoD15mWBEc/Z47vf61SbDfyUaa/T/3Rf+vv4XUtNh
-         ADrFhcEcftIHESy2OV8V+vxh+NXTEtanM6MNgtvGis/SgQ21eDTc0uzvGbCQHR18GMHH
-         Jy6GXoLpXNQ3hF+UzPNu3bxXr+kQ98U4r94vRUUooTJ8xBhSoluiQoQ7WCYjJzSOI/fv
-         WkqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5/5jh8NVgmcSoY4mXoy7FFJCXn7H8V8E+pT/fyGwRg88hIzweCUsAH8FL5V498tWnUjtURrNPS+oTug==@vger.kernel.org, AJvYcCVJsR0MDu3uOsWLwb0INcYIL5Y8WQco/JZYBkWa8bkizNT9dISZipAgUBuqPGTtOhnIAuOPZXwonU3Imn6WdbQ=@vger.kernel.org, AJvYcCXDUtGGBo0+r61qmcHfAXbJgulM7FyJ5pAAAQKLlteUTmWUxRJHrBmNMw9BEmrYPyNIqGZpxLKOq7cL@vger.kernel.org, AJvYcCXj0emg7DaKm6T/z8BI1CzdVtgAj8zuEjbvC4p00SE0a5VcACcVF1Jx7/8mIcb2HimiiG3xWGUUls1fZq/m@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBN9HNfGnh4whQ74deFVpP6gAYA4dYUNaHhJcn2d9a9jm2VCPp
-	h2FRPn0oVZMgXUFju9UDqDBQjrOWnvgRb/lsYsK9yNYf2GA97+MymKuz
-X-Gm-Gg: ASbGncsmlaZ22pPu4U3Qqi4yY1ge8bAsFW8VifA1M7LaG1Xc7I2cmETOB1K9AKL1+tF
-	k8YHvGyy2Pi2bHMdL0V1omZSEJaiQ9z4QrYBmFQALyZzti70IICxYuXaVYmp4yN68N/ZUOvh+9G
-	Cnq7nHcN4W2L1R9qCtJM6XhO+NHMCQHWQaeIDuBHMxgVimexLkUtIFlyasTDI4AlJb5hgvfOauB
-	MisAAGjc7nt108T2E3nRdwTj8h7b5BFRvsKhoZK1n06I6yWqSdAoRShj1Tec7nfWbnR/zxcEDoS
-	MeiNnuR9UGFimblzCt9f9uBAK91iZkdD2oxjtzB4G/6u4AQM5gkIe4ms4BiQRY7r+cBwxy2JLfG
-	vEnGd+JSfTIIW
-X-Google-Smtp-Source: AGHT+IE4y9d8vikxgvAwpXIodBENHW2PgVwG5bQuSLsdfkNT1qH9L0nf9UIIGAtpDXr/v+6N33XcPA==
-X-Received: by 2002:a05:600c:348e:b0:44a:b7a3:b95f with SMTP id 5b1f17b1804b1-451f0b249a2mr77239945e9.25.1749140531225;
-        Thu, 05 Jun 2025 09:22:11 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.. ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f990cf14sm30010615e9.25.2025.06.05.09.22.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 09:22:10 -0700 (PDT)
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	Igor Korotin <igor.korotin.linux@gmail.com>
-Subject: [PATCH v2 0/5] rust: Add ACPI match table support for Rust drivers
-Date: Thu,  5 Jun 2025 17:19:56 +0100
-Message-ID: <20250605161956.3658374-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749140450; c=relaxed/simple;
+	bh=dLjBR5olXRnbPGN7bgU92sDc99qN++d0vbehJ13dqYI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sf59i281/huVH133VhBg7n8FJ+c8YXc12QG0YFi/8dxqADNF/MD1O+nRrlacqofTf4doMXZpVFlHCHIr+JommpubXp6UeH6lZgx64zlBKBZ57oE/CqdpzKdNvDNFcdUPeJNBCSozyZId2BZBaewjSnOmAhHWeiN0lC+k5JDWsnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pslbklmL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A14C4CEE7;
+	Thu,  5 Jun 2025 16:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749140449;
+	bh=dLjBR5olXRnbPGN7bgU92sDc99qN++d0vbehJ13dqYI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=pslbklmLeEEzrp5m/EBAqtK5VnHNi2OqUp0iZgUOC8UOsZiR8EuzgKDnYAMpaFJTR
+	 wDcoeMnH8umvUj5KEJFvuDoIs9h3b063j6z8ZMXEDHE279Vw7oeGYboLjSrDLFrVsG
+	 MKVWBVpsey+D+gjfjfMn9K1CiwvYEGQeIXNwpbH3v8LPcSxVrynIaQv/6k3r6PgVLK
+	 Sonj64B6xSYngP2BMG09DUj37gNkVZGk+ZnB7OWhmjxO6Bh+lzJW/pcaa381uECZgp
+	 m8VFxFceN9FKR1CBQw0eNcxe1+8Uj89GAZfCemOpTwaIhY4YxNrUoG7ZXcxE7dsDJB
+	 KXhDAVqIUOpaQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com
+Subject: Re: [RFC v2 11/16] luo: luo_sysfs: add sysfs state monitoring
+In-Reply-To: <20250515182322.117840-12-pasha.tatashin@soleen.com>
+References: <20250515182322.117840-1-pasha.tatashin@soleen.com>
+	<20250515182322.117840-12-pasha.tatashin@soleen.com>
+Date: Thu, 05 Jun 2025 18:20:40 +0200
+Message-ID: <mafs0plfirwh3.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-This patch series introduces support for ACPI match tables in Rust 
-drivers.
+On Thu, May 15 2025, Pasha Tatashin wrote:
 
-Currently, Rust abstractions support only Open Firmware (OF) device 
-matching. This series extends the driver model to support ACPI-based 
-matching, enabling Rust drivers to bind to ACPI-described devices.
+> Introduce a sysfs interface for the Live Update Orchestrator
+> under /sys/kernel/liveupdate/. This interface provides a way for
+> userspace tools and scripts to monitor the current state of the LUO
+> state machine.
 
-Changes include:
-  - A new `acpi::DeviceId` abstraction for working with 
-   `struct acpi_device_id`.
-  - A helper function `is_of_node()` for determining fwnode types.
-  - Updates to the core `Adapter` trait and `platform::Driver` to support
-    optional ACPI ID tables.
-  - A sample implementation in the Rust platform driver, demonstrating 
-    multi-bus matching.
+I am not sure if adding and maintaining a new UAPI that does the same
+thing is worth it. Can't we just have commandline utilities that can do
+the ioctls and fetch the LUO state, and those can be called from tools
+and scripts?
 
-This is especially useful for writing drivers that work across platforms 
-using both OF and ACPI.
-
-Tested using QEMU with a custom SSDT that creates an ACPI device matching
-the sample Rust platform driver.
-
-Igor Korotin (5):
-  rust: acpi: add `acpi::DeviceId` abstraction
-  rust: helpers: Add `is_of_node` helper function
-  rust: driver: Add ACPI id table support to Adapter trait
-  rust: platform: Add ACPI match table support to `Driver` trait
-  samples: rust: add ACPI match table example to platform driver
-
-Changelog
----------
-v2:
- - Removed misleading comment in `acpi::DeviceID` implementation. 
- - Removed unnecessary casting in `acpi::DeviceID::new`.
- - Moved `pub mod acpi` to correct alphabetical position in `rust/kernel/lib.rs`.
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250530123815.1766726-1-igor.korotin.linux@gmail.com/
-
- MAINTAINERS                          |  2 +
- rust/bindings/bindings_helper.h      |  1 +
- rust/helpers/helpers.c               |  1 +
- rust/helpers/of.c                    |  6 +++
- rust/kernel/acpi.rs                  | 62 ++++++++++++++++++++++++++++
- rust/kernel/driver.rs                | 58 ++++++++++++++++++++++++--
- rust/kernel/lib.rs                   |  1 +
- rust/kernel/platform.rs              | 17 +++++++-
- samples/rust/rust_driver_platform.rs | 41 +++++++++++++++++-
- 9 files changed, 183 insertions(+), 6 deletions(-)
- create mode 100644 rust/helpers/of.c
- create mode 100644 rust/kernel/acpi.rs
+>
+> The main feature is a read-only file, state, which displays the
+> current LUO state as a string ("normal", "prepared", "frozen",
+> "updated"). The interface uses sysfs_notify to allow userspace
+> listeners (e.g., via poll) to be efficiently notified of state changes.
+>
+> ABI documentation for this new sysfs interface is added in
+> Documentation/ABI/testing/sysfs-kernel-liveupdate.
+>
+> This read-only sysfs interface complements the main ioctl interface
+> provided by /dev/liveupdate, which handles LUO control operations and
+> resource management.
+>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
 
 -- 
-2.43.0
-
+Regards,
+Pratyush Yadav
 
