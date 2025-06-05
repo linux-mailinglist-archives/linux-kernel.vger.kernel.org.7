@@ -1,122 +1,201 @@
-Return-Path: <linux-kernel+bounces-673904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB69ACE762
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 02:09:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA7CACE765
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 02:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8AC172A38
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:09:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44687A4DDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 00:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363C42114;
-	Thu,  5 Jun 2025 00:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077BC46BF;
+	Thu,  5 Jun 2025 00:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5TFpfSb"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ipBpNkrV"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B6736D;
-	Thu,  5 Jun 2025 00:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749082152; cv=none; b=gcyTB5iBuYETQju+jWFWaCfSCUe1EDjnKW+zmamlNsapdVfk1F58EZfXg1FG3qM3OnKR2bFOfMDwd9bh3DI9avVyUP9341Ffi9kQzbFVX50daD7/Ty58THnYW+VIUg+WPpGcxYXhdhaFnyXctEh7n/kEUEi0udnZuw8dq/BHag0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749082152; c=relaxed/simple;
-	bh=A+RZmgsrxtuSox57ZTAqyxC6Tj6CIRVoZcEv3Jpovaw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZU/dkgjdKKm8He4V8odc9S4hZSs2wrGAxwoQ9/EelVL2SxEfLjMBFsRUqeS1s1o9z3uJiHyXIe5bz4PuLl6/gE4/dgoC1OcU526K0nkDtuflsSV0ORNNvB0y+BjlKNSHTRwzZH+a8O9tmUvj/8Uf/ixcwi3eTH5ArUdVJZRKvbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5TFpfSb; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a5903bceffso3871991cf.3;
-        Wed, 04 Jun 2025 17:09:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749082150; x=1749686950; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dhAm9Ru4hxpsou3o64mWUOvWKx3D3uWZ7WU7XX715pI=;
-        b=c5TFpfSb08QPvnv/JjcI2fc3pyeQzr9K5CWueiv8SZk5ZPmM+OUG3Vvm1aapq5p4KD
-         FdHWyt2M2Xa1uK+tPceg3mEagXim5mUfE+JIz1b7ZSYQetK4d3VWHL3sAGG0WNfExxwa
-         JYPG9rSHL04H4gtE49Z2Bk9AascJpUY8IFMl/4K9aWROW1m9K9I9MYov0kB4LU+DvRdf
-         DFqpIGaqF4LBbsyDuEbHuy2+ojUyoC4uybeLt/VGIeyatGgqWfacHngX1bXigFDwGp1U
-         vEUt8DtP+P/aC9RA7fCqIr1nWGimajWbbdwLVoELK0b85sRREjr9dyzapaYZTDT3QXcR
-         /s3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749082150; x=1749686950;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dhAm9Ru4hxpsou3o64mWUOvWKx3D3uWZ7WU7XX715pI=;
-        b=tbpLke/s4vrh8E8KocfAhf56tj+TLTswwXsBSZ7CmFRel62vDwdgD13Xku1sDowv9a
-         DU3pPiOIAtpO8FCK2t0HVf74BHeRnfksHRBV5lxhSJ2rffzy6DIc0TS1AW+M1D+0p5ko
-         qGcdEgsHBEdmjExlOTnB5p+EeUn5pvi9MkncbSWfaxJlH98/ko0YoCoMiiekqAUAIr3Y
-         Z3mQuecCwUt1Tb6TzXrx0GefkqiH2qJaTYIedcj1ITHkEmKxF8xwBa7O6wBcETjz2qwC
-         iBGB5eIrkdd2QRCJKkDHmFjsnmsj2eO7lQHgK0arpeQYeTodDQblVNsD9nQbiB6ZmT6I
-         L7NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6g0b07F1fohNqvmNXmkAQ02Zz5RWIa+iygiOqRiet+qF8bCUqpsNkrhotvwxliGeYPx8kh0PwraXQYbM=@vger.kernel.org, AJvYcCX8BP+hBpH8rsvUO32kAqtNxvIlwq4CALWFVJ/A3M0iC/DMuANTWoG4JeF/U8DaHuJPLjyqdRgDOdKI/fU0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX0NlDHgHEMP7XDPE92Ga8qICJJiZdjUtFlkNNI54mSCUkg2xY
-	/0b4M5ajkmGwts1bkm5Bqr3BEOkLloHhZ/ItTCOh+HkfFk2ZcwcDWBJQpA9JCyxl
-X-Gm-Gg: ASbGncvEhx50d1yZZwUbzsQJnPDv6E6ug2pwU9IZnwjrB81fXQwBs3NL95ZR3cPU2sb
-	KN9p+Lqf866GQMHb47zEeWLTTHWOHavz7g1oE/daGQ7LxEYBvpA2Tep4ZGhHpe45PvaINVLZoQS
-	vExZjs195mh6RbZQTO3YDpFUKj4QX+onGoGp9EaPmFK/g1+muvNywKF/EcdvZl8uqZageXcRHDM
-	rsja6VgcuDcNlzueTXtatu/mOu+rgqEtSKDKjHpGqjRmfvHCNVc+nWfYkYd+0tl27LfL9H/UoMf
-	2O8yBDSCD0zulKFtPXVHoGuPEF+Mat8+o5LGTzOBPlXD9AD3HZ1WlUwdmp6kD/LxiYx6q9QPQuA
-	tCkhzSuymNn+282Pf
-X-Google-Smtp-Source: AGHT+IEq2yryETuB+7PsA2RWKRoqJ5BSjEsJ1mwURZ3Q7KqUbWuTa8vFNf7WHvRL85nZ/O1X9Xb3hg==
-X-Received: by 2002:a05:622a:5984:b0:494:a099:daee with SMTP id d75a77b69052e-4a5a6876380mr73522241cf.19.1749082149980;
-        Wed, 04 Jun 2025 17:09:09 -0700 (PDT)
-Received: from node.. (dhcp-24-53-249-184.cable.user.start.ca. [24.53.249.184])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a4358eef6csm102740471cf.48.2025.06.04.17.09.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 17:09:09 -0700 (PDT)
-From: shanmukh.iyer@gmail.com
-X-Google-Original-From: shanmukh.iyer@polymtl.ca
-To: gregkh@linuxfoundation.org
-Cc: jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	trivial@kernel.org,
-	Shanmukh Iyer <shanmukh.iyer@polymtl.ca>
-Subject: [PATCH] drivers/tty/moxa: Fix spelling mistake in comment
-Date: Wed,  4 Jun 2025 20:09:03 -0400
-Message-Id: <20250605000903.74242-1-shanmukh.iyer@polymtl.ca>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA70220ED
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 00:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749082378; cv=fail; b=fvqHWBFkTJCqoXYxy7IPmlvmLPlCwfbyiKcEjBr5Zo5SBtgJemu60ZvMq7oLDO+uOs5cS9jh0uE9ZOfFhDQJWHy4TvC7BmpL/zfrryFNaqg2JF90JsNv0M/IFvQdFzUXTUCJU9S7uxX+SYxs1fB2dNkeRdcdDftkbFjpnKRlgT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749082378; c=relaxed/simple;
+	bh=rcEWmX63ieWh5xEd/UK1dSWOYcu1Oic4NJPN2naPhj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H8JYsGBv0o112CaRFfbD5omm13/bWVzfV/JT61yefE0zMcQF1FreT0Qj6vRJQQjDTX68jYrp4pVVhIhcOfCClb07aiMTzpraCbRyRMTRrBMnKKcR2qFi4lXgz6uYvnmxl8xNfDuRHVZzpTgJgs9zp31gVSiRR8PaOKEd9KMmsuA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ipBpNkrV; arc=fail smtp.client-ip=40.107.220.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uNS6yEkAK8zBZ/rO/sMypomhBl9HNV93YTHajKKkdKX6heWC/qIfS3KwnsIorNv2Unh4/YYAt0RgqbryKA8Z8DLgVc8VNKEtwqmhVOMaplmZhTT58w3qUAyarMfRbSHj+f7h7FkN3rF4NeaCYm+NP8+eZaU2XNTqIwXhW3pz8uyDPgczSa05IrTK+RAzrqWB2JzjsRbZ8eUq+TMsCkTIWNWtTHaxZXl6jM+PcSrq3rxSfNONtugAm5R58vK2aoHbFCdfzYW60F3zU//U7jYtTvjOE1KKvMSnkEomeuLmk73GgnovXbUd3PMqV7EkyfZt9oA5K/Dv/3bKgtQrtoloLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dg1PWmIZC6x12sWBCPnqJjEYm62vk8l89AuY+V4pOA4=;
+ b=XlBBKkQaOnaOZVZ9qOSN95fCFdfha9+ou7Di/XggrTSowHYR3zld4jlNsfYWZ1FT+rW15RJ0mls1qM1kI2fJCJ+bJ5huwAXLGTIpYgS+jjBkfnKggq1S36sXL2HbeHn9JGwbaqV6gY8en7AFd53ozN8OtXrLqpUiiyr6RI6oCAjac/k/XvJpl3iIkvCGo4T9ozvSl14s3Y7tt+3E3ancz/KNnfRdfqyOhAj7ODHjE/HaMcpJ7OHGwxioip3L60GNK/D0AjVDsnJifcYNLvJPCkE+ZXHBkw6sPpuB32RItdFf/S0RRuub+d1WAIO3/FX44YuEEwe0jtsH895yZnwGvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dg1PWmIZC6x12sWBCPnqJjEYm62vk8l89AuY+V4pOA4=;
+ b=ipBpNkrVrmi2tHf1vA5tkPeX3LpmUyS2s4ENhU8pApcOTZztWxdPTUtjgVqiQcGSvgjaL0K+Ev+TaaeamAqnwZJksPiwTmag+JdMVFJ1fKdLuwdHD3Q81FMrlmwNZFWbOB3ftZeUSyhz3j+dcffhpboFzBR0ppN7ccAGUmmc/qo=
+Received: from BN9PR03CA0375.namprd03.prod.outlook.com (2603:10b6:408:f7::20)
+ by DS0PR12MB9400.namprd12.prod.outlook.com (2603:10b6:8:1b6::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Thu, 5 Jun
+ 2025 00:12:54 +0000
+Received: from BL02EPF0001A106.namprd05.prod.outlook.com
+ (2603:10b6:408:f7:cafe::d) by BN9PR03CA0375.outlook.office365.com
+ (2603:10b6:408:f7::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29 via Frontend Transport; Thu,
+ 5 Jun 2025 00:12:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0001A106.mail.protection.outlook.com (10.167.241.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8792.29 via Frontend Transport; Thu, 5 Jun 2025 00:12:54 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Jun
+ 2025 19:12:53 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 4 Jun 2025 19:12:53 -0500
+Message-ID: <e70bdb30-66cc-7e9e-b666-efff3203bf27@amd.com>
+Date: Wed, 4 Jun 2025 17:12:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1] accel/amdxdna: Fix incorrect PSP firmware size
+Content-Language: en-US
+To: Alex Deucher <alexdeucher@gmail.com>
+CC: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<jacek.lawrynowicz@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <min.ma@amd.com>,
+	<sonal.santan@amd.com>, <mario.limonciello@amd.com>
+References: <20250604143217.1386272-1-lizhi.hou@amd.com>
+ <CADnq5_NMamTAd0whqwr+xcokFThCNX7T7qFBfX+u3vnS6oc=tA@mail.gmail.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <CADnq5_NMamTAd0whqwr+xcokFThCNX7T7qFBfX+u3vnS6oc=tA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A106:EE_|DS0PR12MB9400:EE_
+X-MS-Office365-Filtering-Correlation-Id: db79d339-835e-4d0c-4299-08dda3c5b7b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R0FtUlhtV3FGcDlvWnFoUDR5SW9kMDJMQUcwS0p3QTB1U011ZkJRdzNZSFBZ?=
+ =?utf-8?B?d1dQSjNDbjB3eWNXRGU5amNOYnM2ZVpjL3U3TXplSFE3YzdvTEtOSnRnVlI1?=
+ =?utf-8?B?MkNFUzlUSzJXUzE3WU8xK0tQcHRnTzNyMElrcmtJbEJSMVlGcldZU3dUYmxF?=
+ =?utf-8?B?ekJpOE9HZkx3SzNtSklLaHRZS01Lb01rNXJqRzEySmJSWlplNnFDREl2OVZD?=
+ =?utf-8?B?S1hicW8rQlZiZmZPT1lzSUs1UjVKT0pLYVFmb0R3T3daU3lkNTRkdXU4SXZx?=
+ =?utf-8?B?ZFdIamcyd2tnSVI1TXBaWnkrd1NKeGFPNHMwM3JsWG9JM01wZTJ4UmlKVGZa?=
+ =?utf-8?B?d3d4cnQwbHRGczBwSnVjOUJFT252eXBRN1RrNyt3N0dvYjRMaERkYnhaMVdB?=
+ =?utf-8?B?bFFoM1RWRDREeGk5U1RCMzZHbksxOW9aQnF5OTBMcmh1dlk0ZXFBS3puazJS?=
+ =?utf-8?B?ditkUDBVYmdDd25rUzlid2xnUjNPNnpYU1VNY3Y1b0x4VnM3L1p4V1RTTW5i?=
+ =?utf-8?B?Tnh4c3drdkRRTmU3TXBzcmQzQjNVblhkcWxoYUEwUnc2NExOSmQ1cFdSamx0?=
+ =?utf-8?B?bVdJR0RuZ3Y0QWNIUEtIc2ljaDBIRFZBLyswejF6QzR1cVJsZ1NWdnUxcG84?=
+ =?utf-8?B?TGdMNHVrQmhPUjh0cUkwOTF1RUlLa04wb3RvMWdkS0gvR3Y5UVNSbk9YcC9D?=
+ =?utf-8?B?UWZJdWpVOCt0S2tNK0RLTDkyTG5qLzRwcEZzNjA1UHd5ekIwK2dya2Y5U2xt?=
+ =?utf-8?B?WjNwcHI1cjYvL1JpSTRnRERVUllKazlEVHVLWXZHQlgwQXVaQ1JLWUVOYWdU?=
+ =?utf-8?B?NmNydnJVZnBTbkNwb2U1aVJ1dnAzay9SdlZDTm92czJzUFZIdnNvS1BQMXRz?=
+ =?utf-8?B?TStobUxEREVMN3pNVzMwNWUzeUlvUFhGQ0VqYnh2ek50NldLQkNSdUJtVFh2?=
+ =?utf-8?B?MXdSdFpYU2hsMjJTV09vbkxSeFBmQmRkNEJHVXhVN0tMa0trTUNkaVdSTzNx?=
+ =?utf-8?B?dnUrcCtKcHE4a2U3c2hUQVV2L1pYUElQdkwzKzZxVVMvdTFOMG41YU5DNmV4?=
+ =?utf-8?B?ZXJwTFl2TmplYllqZUFOSnBEY1VndXd1aHR3MUl5NHJoUnJrb2x1R3dBcksy?=
+ =?utf-8?B?cjBhQUdJZ3FtUkc1UGJsaXZ2M2w2ay9CelgyTkFFUDJQYk1jeUp5SEZVVFZq?=
+ =?utf-8?B?dHpFUVBkbUlLQXVxRnlQVnQ4UlpDcTRXQkdGLzJ2cnNyQ0w3SU5ieDZuMHVN?=
+ =?utf-8?B?VDg4c1V0SXc0bFNtcEtkZXlPTjdNR3dXbStRL2NVMFV0T0JkKzZ3V05ET0NL?=
+ =?utf-8?B?ZkZBaXFhWFFvQzZvSlhnVElDcXFESnZNUnc1Q1VMeTltWE5NUVJwMGM2ZUtJ?=
+ =?utf-8?B?dDBIanovbjNocExSY3JJTTVkUkQ1eTFvQVVSVDZiUGlwWDJUQVJUaVV2OFBr?=
+ =?utf-8?B?M20wNTBFd28rRStvRGVRSnVLOGZxaTVCQWVkd094cEFERzAvWmF2cFBLc0NP?=
+ =?utf-8?B?SXV6eUVIREJaM0hyYnpMdUkwc0JlNFA4bHBQZmpiOVZ2eWpJRXk1Uzg5Qkhu?=
+ =?utf-8?B?eUtYNWhVSE4wOE12QnV2VmZJVFE4YjZ4WWNoMGpuS0NwbXhpd2RYOEVPcktw?=
+ =?utf-8?B?eEVKU2MwSFQ3Q05QRE9qSDFRNTZCMkk5QXRTbmVaWVpJZ0srNEpzdDhSUVZI?=
+ =?utf-8?B?ZTNHYmVsS3VDclBDbG5MY1lzT0lBaFBta2pRVU5qR0RNMEtoODlYV1p5MFRT?=
+ =?utf-8?B?NDZUeTJYaXJzWXVibzI5S2gvNXNzU1hKc0thVFNRWmUrNU8vRVY5YlBUQTFC?=
+ =?utf-8?B?ODVFZnd6K2dweEVsT3h0clZoSllORmFPUm5aUTF6Ui93d2pFNk56OFB0bmJL?=
+ =?utf-8?B?V3hHWVZPbFFNaFdENURGakkxbkJnNWdqUkF3dHBlRWZFRE1NZFVLdG1BSGhO?=
+ =?utf-8?B?djY0bS9xcUpFZm1KWXM3aWdpMk4vd0todXhOckpsdTBEdDRIWDBMeWRlVVR2?=
+ =?utf-8?B?VDl6SlNaZHhpcTBnVHFRSlZvMThnMGlRUU1CM3o4dWxMdTZ6MFdEU1pCUGsr?=
+ =?utf-8?Q?+XFyyz?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 00:12:54.1989
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: db79d339-835e-4d0c-4299-08dda3c5b7b4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A106.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9400
 
-From: Shanmukh Iyer <shanmukh.iyer@polymtl.ca>
 
-Corrected to "maximum" as my very first patch to the kernel.
-Just to get used to the contribution workflow.
+On 6/4/25 07:51, Alex Deucher wrote:
+> On Wed, Jun 4, 2025 at 10:42 AM Lizhi Hou <lizhi.hou@amd.com> wrote:
+>> The incorrect PSP firmware size is used for initializing. It may
+>> cause error for newer version firmware.
+>>
+>> Fixes: 8c9ff1b181ba ("accel/amdxdna: Add a new driver for AMD AI Engine")
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   drivers/accel/amdxdna/aie2_psp.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/accel/amdxdna/aie2_psp.c b/drivers/accel/amdxdna/aie2_psp.c
+>> index dc3a072ce3b6..f28a060a8810 100644
+>> --- a/drivers/accel/amdxdna/aie2_psp.c
+>> +++ b/drivers/accel/amdxdna/aie2_psp.c
+>> @@ -126,8 +126,8 @@ struct psp_device *aie2m_psp_create(struct drm_device *ddev, struct psp_config *
+>>          psp->ddev = ddev;
+>>          memcpy(psp->psp_regs, conf->psp_regs, sizeof(psp->psp_regs));
+>>
+>> -       psp->fw_buf_sz = ALIGN(conf->fw_size, PSP_FW_ALIGN) + PSP_FW_ALIGN;
+>> -       psp->fw_buffer = drmm_kmalloc(ddev, psp->fw_buf_sz, GFP_KERNEL);
+>> +       psp->fw_buf_sz = ALIGN(conf->fw_size, PSP_FW_ALIGN);
+>> +       psp->fw_buffer = drmm_kmalloc(ddev, psp->fw_buf_sz + PSP_FW_ALIGN, GFP_KERNEL);
+> Why do you need the extra PSP_FW_ALIGN in the allocation?
 
-Signed-off-by: Shanmukh Iyer <shanmukh.iyer@polymtl.ca>
----
- drivers/tty/moxa.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The start address of the firmware is also required to be PSP_FW_ALIGN 
+aligned.
 
-diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-index 329b30fac8fc..d32fb37e2e1c 100644
---- a/drivers/tty/moxa.c
-+++ b/drivers/tty/moxa.c
-@@ -1628,9 +1628,9 @@ static void MoxaPortFlushData(struct moxa_port *port, int mode)
-  *
-  *           return:    0       : this port is invalid or baud < 50
-  *                      50 - 115200 : the real baud rate set to the port, if
-- *                                    the argument baud is large than maximun
-+ *                                    the argument baud is large than maximum
-  *                                    available baud rate, the real setting
-- *                                    baud rate will be the maximun baud rate.
-+ *                                    baud rate will be the maximum baud rate.
-  *
-  *
-  *      Function 12:    Configure the port.
--- 
-2.34.1
 
+Thanks,
+
+Lizhi
+
+>
+> Alex
+>
+>>          if (!psp->fw_buffer) {
+>>                  drm_err(ddev, "no memory for fw buffer");
+>>                  return NULL;
+>> --
+>> 2.34.1
+>>
 
