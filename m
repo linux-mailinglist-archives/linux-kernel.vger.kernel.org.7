@@ -1,146 +1,199 @@
-Return-Path: <linux-kernel+bounces-674281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608A2ACEC91
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:06:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99116ACEC97
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC45A189A70C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:07:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2DA7A7362
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AF22063FD;
-	Thu,  5 Jun 2025 09:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB5B20C016;
+	Thu,  5 Jun 2025 09:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VIWSv99M"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="kCmiJ2Jg"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DF0566A;
-	Thu,  5 Jun 2025 09:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749114399; cv=none; b=Niw2G+MGPloJwevL3YGotHmSjrlVYAlaQR19AuRnWHu953TYuD2Jw7CdkDAAi05m8TnthjqqBXiQ9nAN7U0xJI4PQI2oBnKFerbBWA965q76NmzqFNV2XzAWj+FCubcH3hy4P+vPBhY2UI34HAkf28yLCakDMdJp8xdm4oz/IC4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749114399; c=relaxed/simple;
-	bh=/shQMOR1zYdDdv8vlDhRoaEdJl02lBuH2es2PgKpYDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDJppbleMl7g2tFHSbtUnRU/AOBeEXCbhNHdIScG+ZVEh7+zolfWNEQL51gTcixrp0w3ACpvAqmFZRxAZwJlTp1cQYGQy2VX15RHVb3LNkIWHUEAhXVQc69W/dtvnKC+UIigRXO2HXKwl8JFffuDMYJG9YDtafgJguwCmF7VfSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VIWSv99M; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 554Na9ES025443;
-	Thu, 5 Jun 2025 09:06:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=RggBQk
-	NjQmrOgTc9mJNXEsYOfIhymx08A05AmkZ32fA=; b=VIWSv99MKpVrS/3KffSt8E
-	DcNdpcD0fnlt/fIeXBkOLmfcU+YyQWUizQB5j8xtzqu9Jg+5Gy3sTaG6O2zcVUAK
-	kAmohvl0B45GY8lL8AQooVk5nYMEXiEUpK6eXB9a6Ueaucdxz4uzivqw4Vdg4iaO
-	pm0AUG2oMZZ8DxsxLhF5CqqNyz9cub7QrHDVaY2sPI8NQJjvG7BKYWtUzJUNgBgM
-	WBb2AoGWdNJu6YQ0/U2jDzf2zGyjmMxMtg096p0+pCMEUR07efpH11DsNZilkHk+
-	vFqm4O8yeTDZmDBFN2dxaaFlTAFXTme9oVo8ezol2usdHPG56LxZXqC0+0DiUaAw
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471geyyrrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 09:06:34 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55590M3Z024899;
-	Thu, 5 Jun 2025 09:06:33 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 470dkmkx2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Jun 2025 09:06:33 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55596TAt48300326
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Jun 2025 09:06:29 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9F3F120040;
-	Thu,  5 Jun 2025 09:06:29 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4F6E72004D;
-	Thu,  5 Jun 2025 09:06:29 +0000 (GMT)
-Received: from [9.152.224.132] (unknown [9.152.224.132])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Jun 2025 09:06:29 +0000 (GMT)
-Message-ID: <408922a2-ec1a-4e60-841a-90714a3310de@linux.ibm.com>
-Date: Thu, 5 Jun 2025 11:06:29 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5144672632;
+	Thu,  5 Jun 2025 09:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749114450; cv=pass; b=LycqJ55M2r/KOLz5vG5M8clWyEF6Pv5xZoVEwGTE/oOpnlDWnxR2XD8KXhCjTMKqhbcyTnr00cPZe6ZZXHkmwueHURmlg9X+UfOf6KnsY/U8+bU6jIuerkV3IAPE4Jv/6GVtbVfjZDidNMPeRdMgrz/XbcTSsyFDCa+H1TVbLSg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749114450; c=relaxed/simple;
+	bh=YuXZNoDSxY8ZWsSaAxsDie1qYj+/azass5LBkX7s62Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tyIriIwkWTQssELcMXgPkq96nEj3ioG/7tTNlXzsDBzaoBM6ZD+XUdNYm5G3kGad+N+mrnwsJF79QtLgVjT0s+oVCIFg5Q0K2A26bFQDfrGi85l0zZMqfe1584GD5Uccidvph6CqjH4QlyOl9B9mLzDK60NzlJHCH1R7OuJmXM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=kCmiJ2Jg; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1749114413; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Rjpt6qKRGn1eCDaHHFbnqdBmTl76gZ190K07Ep3xd/PpgpOZ9XV2M9SugdtLLsU+MR6MgwaPRt5B7OAhrJq0UkiQeIARFTgZ8oZ8U3dOvew23tIFyt7jj01aBhTRo6XkkWLPael/RfcwhDAsbGZdTokP5CJ8p3g1MFa0uEnVDPc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749114413; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YuXZNoDSxY8ZWsSaAxsDie1qYj+/azass5LBkX7s62Q=; 
+	b=DQ8PQndLRHC4Z3ricZaTjtD8dhyd/fXFDdta90KS5gHqayp870u7ymwVdhXxmFvnHQtevBI/EpbHgyfwVMsSSKFopWK5/I4S1/Z+CYGGBsyQPL6+bhiKWbcpGdeIw34d3aMBc8/svfEWRvD/+m+aihybJYJ4GGYT/LYYx6YUafs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749114413;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=YuXZNoDSxY8ZWsSaAxsDie1qYj+/azass5LBkX7s62Q=;
+	b=kCmiJ2JgxugIAbfP2AU7osvpY1sZq4U3VgU77Gy2+wGCjjcQFtOom4lxV2vPN46B
+	jCEmUOZzXu2+hfiPeKP6B+y1NUo8at5iihGDSGEhUoqLu/HYVp66HYSuxSkG7VEdwiX
+	OwvqW36pL3paH38laOB0y7BDPVc6VBRA3PsHx1jJ4DM7z4h/a/rei6ecLYtIZASRzCT
+	stxkblh0fhfEt42lVpFoNACtdnwYD/tt5vuuE51LOCcbgsj93eW6JUJGOtfElF3BWg5
+	NUBxmAd6fWBhPTgYHOTc6c/Q4BS7ZXs0iTr82ubr1UP3wlfMz3+SsH7O82gyyFg/nMZ
+	Thm8NXWeOg==
+Received: by mx.zohomail.com with SMTPS id 174911440997793.93705801338638;
+	Thu, 5 Jun 2025 02:06:49 -0700 (PDT)
+Message-ID: <2e42f2f7985fb036bec6ab085432a49961c8dc42.camel@icenowy.me>
+Subject: Re: [PATCH net v2] dt-bindings: net: ethernet-controller: Add
+ informative text about RGMII delays
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chaoyi Chen <chaoyi.chen@rock-chips.com>, Matthias
+ Schiffer <matthias.schiffer@ew.tq-group.com>, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>,  Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Thu, 05 Jun 2025 17:06:43 +0800
+In-Reply-To: <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
+References: <20250430-v6-15-rc3-net-rgmii-delays-v2-1-099ae651d5e5@lunn.ch>
+	 <e4db4e6f0a5a42ceacacc925adbe13747a6f948e.camel@icenowy.me>
+	 <debcb2e1-b7ef-493b-a4c4-e13d4aaf0223@lunn.ch>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/mm: Fix in_atomic() handling in
- do_secure_storage_access()
-To: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Janosch Frank
- <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250603134936.1314139-1-hca@linux.ibm.com>
- <aEB0BfLG9yM3Gb4u@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <20250604184855.44793208@p-imbrenda>
- <aECCe9bIZORv+yef@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <20250604194043.0ab9535e@p-imbrenda>
- <aEFdoYSKqvqK572c@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <aEFdoYSKqvqK572c@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Pq2TbxM3 c=1 sm=1 tr=0 ts=68415e1a cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=qs_iwHwmzb1svy77jOgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDA3OSBTYWx0ZWRfX56Aaz+6lp1sS mEOeYxehi2DphEuBbod0dYjowDACQZs7aQhdxpa8L0SpbLAby6DJJH9bbvZpKYAhh7P1MYha9Da sBrslJ+UFNr8nstx/WIOK/tYEmzIoZnpq142SUt3RBDM92Ae4i5ow7edrvUM+Sz28VNK5ZOqG+Q
- +LNgw00V67U/f4VUYp4Jn2dyfnC7yu9XmG/DQWbebkxwmrTNd1he5L7OG+63Ft/qVjahuhg6SJ9 jdF7Z+ku0UemEYPOFKNcLacnSM3n75o/8Pne2ElgTvwyFzMvzqzmcDzDjQRYAy1gCFFG2xQpDt0 e5zT8U1heI70tEGbwwBHyAdgTAWW3xVZGWRvIzfTv/ZskxOS4nbZn2BMNTbwbamC6CIP0FO/jgL
- M0c1JVOZzUbBE8uzDnI1Hyf5wEJ90botszjcGy+reLfXkDBFMiLi8M1kg5oeE0C7vDiaASJp
-X-Proofpoint-GUID: RjIhY-TYWY2ygrrA15FlHV_osAC84UCg
-X-Proofpoint-ORIG-GUID: RjIhY-TYWY2ygrrA15FlHV_osAC84UCg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_02,2025-06-03_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=703
- phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506050079
+X-ZohoMailClient: External
 
-Am 05.06.25 um 11:04 schrieb Alexander Gordeev:
-> On Wed, Jun 04, 2025 at 07:40:43PM +0200, Claudio Imbrenda wrote:
->>>>> This could trigger WARN_ON_ONCE() in handle_fault_error_nolock():
->>>>>
->>>>> 		if (WARN_ON_ONCE(!si_code))
->>>>> 			si_code = SEGV_MAPERR;
->>>>>
->>>>> Would this warning be justified in this case (aka user_mode(regs) ==
->>>>> true)?
->>>>
->>>> I think so, because if we are in usermode, we should never trigger
->>>> faulthandler_disabled()
->>>
->>> I think I do not get you. We are in a system call and also in_atomic(),
->>> so faulthandler_disabled() is true and handle_fault_error_nolock(regs, 0)
->>> is called (above).
->>
->> what is the psw in regs?
->> is it not the one that was being used when the exception was triggered?
-> 
-> Hmm, right. I assume is_kernel_fault() returns false not because
-> user_mode(regs) is true, but because we access the secondary AS.
-> 
-> Still, to me it feels wrong to trigger that warning due to a user
-> process activity. But anyway:
-> 
-> Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
+=E5=9C=A8 2025-06-04=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 14:23 +0200=EF=BC=
+=8CAndrew Lunn=E5=86=99=E9=81=93=EF=BC=9A
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # RX and TX delays are added by the M=
+AC when required
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # RX and TX delays are provided by th=
+e PCB. See below
+> >=20
+> > This really sounds like a breaking change that changes the meaning
+> > of
+> > the definition of this item instead of simply rewording.
+> >=20
+> > Everything written according to the original description is broken
+> > by
+> > this change.
+>=20
+> Please give some examples. What has broken, which was not already
+> broken. There has been a lot of discussion about this over the last
+> year, so please do some careful research about what has been said,
+> and
+> try not to repeat past discussion.
 
-Can we trigger a WARN from userspace?
+Yes, I saw many related discussions.
+
+I have the same question with [1], what's the answer?
+
+[1]
+https://lore.kernel.org/netdev/271c15a45f41a110416f65d1f8a44b896aa01e33.cam=
+el@ew.tq-group.com/
+
+In addition, analyzing existing Ethernet drivers, I found two drivers
+with contradition: stmicro/stmmac/dwmac-qcom-ethqos.c and
+ti/icssg/icssg_prueth.c .
+
+The QCOM ETHQOS driver enables the MAC's TX delay if the phy_mode is
+rgmii or rgmii-rxid, and the PRU ETH driver, which works on some MAC
+with hardcoded TX delay, rejects rgmii and rgmii-rxid, and patches
+rgmii-id or rgmii-txid to remove the txid part.
+
+The logic of QCOM ETHQOS clearly follows the original DT binding, which
+describes "rgmii-id" as `RGMII with internal RX and TX delays provided
+by the PHY, the MAC should not add the RX or TX delays in this case`
+(the driver skips the delay for rgmii-id). The logic of PRU ETH follows
+the logic of the new DT binding. This shows that the DT binding patch
+is not a simple clarification, but a change of meanings.
+
+>=20
+> The whole point of this change is this is often wrongly interpreted,
+> and there are a lot of broken .dts files. By including a lot of text,
+> explaining both the pure OS agnostic DT meaning, and how Linux
+> systems
+> should implement it, i hope i have made it less ambiguous.
+>=20
+> > Although these PHYs are able to implement (or not to implement) the
+> > delay, it's not promised that this could be overriden by the kernel
+> > instead of being set up as strap pins.
+>=20
+> If you want the kernel to not touch the PHY, use
+>=20
+> phy-mode =3D 'internal'
+
+This sounds weird, and may introduce side effect on the MAC side.
+
+Well we might need to allow PHY to have phy-mode property in addition
+to MAC, in this case MAC phy-mode=3D'rgmii*' and PHY phy-mode=3D'internal'
+might work?
+
+>=20
+> > In addition, the Linux kernel contains a "Generic PHY" driver for
+> > any
+> > 802.1 c22 PHYs to work, without setting any delays.
+>=20
+> genphy is best effort, cross your fingers, it might work if you are
+> luckily. Given the increasing complexity of PHYs, it is becoming less
+> and less likely to work. From a Maintainers perspective, i only care
+> if the system works with the proper PHY driver for the
+> hardware. Anything else is unmaintainable.
+
+Well this sounds unfortunate but reasonable.
+
+>=20
+> > > +#
+> > > +# There are a small number of cases where the MAC has hard coded
+> > > +# delays which cannot be disabled. The 'phy-mode' only describes
+> > > the
+> > > +# PCB.=C2=A0 The inability to disable the delays in the MAC does not
+> > > change
+> > > +# the meaning of 'phy-mode'. It does however mean that a 'phy-
+> > > mode'
+> > > of
+> > > +# 'rgmii' is now invalid, it cannot be supported, since both the
+> > > PCB
+> > > +# and the MAC and PHY adding delays cannot result in a
+> > > functional
+> > > +# link. Thus the MAC should report a fatal error for any modes
+> > > which
+> >=20
+> > Considering compatibilty, should this be just a warning (which
+> > usually
+> > means a wrong phy-mode setup) instead of a fatal error?
+>=20
+> As i said, there are a large number of broken DT blobs. In order to
+> fix them, but not break backwards compatibility, some MAC and PHY
+> drivers are going to have to check the strapping/bootloader
+> configuration and issue a warning if phy-mode seems wrong, telling
+> the
+> user to update there DT blob. So, yes it is just a warning for
+> systems
+> that are currently broken, but i would consider it an error for
+> correctly implemented systems.
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Andrew
+
 
