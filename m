@@ -1,170 +1,139 @@
-Return-Path: <linux-kernel+bounces-674192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D630ACEAF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:36:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB26EACEAFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 894477AADF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682DF189B72A
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0BC1FECDD;
-	Thu,  5 Jun 2025 07:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5031B1FC0EA;
+	Thu,  5 Jun 2025 07:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oRRIjfmH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KZIMVyFo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iImNtzLO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2B51FC0E2;
-	Thu,  5 Jun 2025 07:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACF442A9B;
+	Thu,  5 Jun 2025 07:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749108974; cv=none; b=kCd/wqab07OeaCTxOBdjnEKLut+JlxCt4xnkqC3dUtCHIo22x5kQ/VbTsmpddIzfGUJxXzleFlLBr1nD/owbVfADDjFGpCkAQW3ZBmSrVG8pLmQhQvPv/4xXgUanbwe9Nbbni2aHBZjjbgxBZtBQHgmFCF0mOXKChNNGVBEmVJE=
+	t=1749109069; cv=none; b=dncsv0OjZEw5U0RSnx1SwcV1CNd93G5qrEu4/iuDgT16/mQe0+Oigp0JdCanYVk2hV2zXHVtVWpOQDifEGGhNeGeo0wA+N+Dbv5v1Lmb5jud6ius2YZqCVvphc5U2zM23w7GSDHoWVeKoWqYhUGR3e19AtMyCFWEz2cN2y8ySlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749108974; c=relaxed/simple;
-	bh=lPSk1zTgBjw5dlObECTVLPMDmMod2obRq9c4037H3KM=;
+	s=arc-20240116; t=1749109069; c=relaxed/simple;
+	bh=IaY5Lgr5VfZJ3xaAOEkb8FT8Ou/Vxrq/5JfjGJ8nIYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRh+Gq4NcfQu1a6E4+mB2L90/k3wLgut7DPaDvH3ZJnMPaGeZEztmgpoU4QOoWplGSmxixHicHvpqnDrY4/8WVmRrS3v9oQloPn8Q2Wga6TskAzlUBGug5+Vfv+xK0IAwxsNAq68xJRN6Hxrdfv9FLylH296L/vNOp54uxSFUmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oRRIjfmH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aqIUgY4IbWVDJNz7BT6PJBOfARTAlq5AqNMDaZOs/Wk=; b=oRRIjfmHBor+Ye/jJINWRyTiNs
-	RpBrGaJBfJPy+oVDmcX9OdGUOlNyERPVr8qimqU8RwyG8PEW7xivQmJEI+Z/7Ytnhx7/c7ICW0JO9
-	NIfAwDyvnCAJrpnJwvAKa8lZ29bl5S9eIXLK2o+49srhPd6UcW145iJed8HfivCV14wUuwVFcI1XR
-	VSOrGn1BgzrjOrevr61t3Y1zr0doX4jCw6niJ7R/a5SHE+dwK+BAMBr9Pp2oippIKs5dEMuzBZr5g
-	a5lcoBQp78fONlo5lTL5ZvBEY1DmiYTnuvUb/Y/Llax3NjOdwVoGndLH/3x5xG+Ybx4mJMi6G9jDW
-	Vu2+Qz3Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uN58r-00000003z5h-15DF;
-	Thu, 05 Jun 2025 07:36:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8F8FB3005AF; Thu,  5 Jun 2025 09:36:00 +0200 (CEST)
-Date: Thu, 5 Jun 2025 09:36:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Luo Gengkun <luogengkun@huaweicloud.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, davidcc@google.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] perf/core: Fix
- WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0) in perf_cgroup_switch
-Message-ID: <20250605073600.GN39944@noisy.programming.kicks-ass.net>
-References: <20250604033924.3914647-1-luogengkun@huaweicloud.com>
- <20250604033924.3914647-3-luogengkun@huaweicloud.com>
- <20250604100052.GH38114@noisy.programming.kicks-ass.net>
- <83d9c5e8-9c72-4ab8-a3ac-638e49691694@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WN/nm7uO/RwXw4jHtK8mEpXYUmYB8zUXSG4ttM1wZSwJuabI3QwRUf1uAlZ0yd1kU55iT0N7S3ob0sCH1BrEKHZNGH9penIfy1nNytswqlgO/JA3L9Axb5yC6syxgnNCvOgfOV7VQQlIcypQlyds8tO//EG4mrt/x+se9M72xgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KZIMVyFo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iImNtzLO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 5 Jun 2025 09:37:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749109066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wF8eAipcjIt3omPev2NAmi21MfMoslaY24iFiYJBlIg=;
+	b=KZIMVyFoeYRQ5S5x7RTvkpWaJXFmfI2wDejc84O+mZOzUODMZG7ly5iS94G2CPZ26PGYt6
+	MBvU+boTcJg7Tc3ijw39zO1ZB1qgLUkemf76TWD+bFjCbdzcBb100LyBNDSW7eav59aQVz
+	SY6bL8yfR3DLuzWt5RT7s0BAOD6SJwUyjO0N1r5onnLVQYSrDGt6kt5EwcHxbLse27H4Ga
+	xWTHepnyyWQStXtTdb4tNmdHG4T7AYHYmWb6tijlVuySGDQt+LoqPy3lLOgK0G0RWhDdHh
+	fSI4j0286Lm1TTBd7hAtuECmtsRUOeWYjjDWSLGeVjxkzeW/ViwefbYqDMmSJw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749109066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wF8eAipcjIt3omPev2NAmi21MfMoslaY24iFiYJBlIg=;
+	b=iImNtzLO6y1nqeyLtGMj/6dkFYnq6dZt1HzVON+HR4uNX52tOLr+vkVL4WfQqlG6QgvU4J
+	aJsRYJZs7bns+sDQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH] LoongArch: vDSO: correctly use asm parameters in syscall
+ wrappers
+Message-ID: <20250605092735-bd76e803-e896-4d4c-a1f1-c30f8d321a9a@linutronix.de>
+References: <20250603-loongarch-vdso-syscall-v1-1-6d12d6dfbdd0@linutronix.de>
+ <CAAhV-H4Ba7DMV6AvGnvNBJ8FL_YcHjeeHYZWw2NG6JHL=X4PkQ@mail.gmail.com>
+ <5a5329feaab84acb91bbb4f48ea548b3fb4eab0f.camel@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <83d9c5e8-9c72-4ab8-a3ac-638e49691694@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5a5329feaab84acb91bbb4f48ea548b3fb4eab0f.camel@xry111.site>
 
-On Thu, Jun 05, 2025 at 11:55:03AM +0800, Luo Gengkun wrote:
+On Wed, Jun 04, 2025 at 10:30:55PM +0800, Xi Ruoyao wrote:
+> On Wed, 2025-06-04 at 22:05 +0800, Huacai Chen wrote:
+> > On Tue, Jun 3, 2025 at 7:49 PM Thomas Weißschuh
+> > <thomas.weissschuh@linutronix.de> wrote:
+> > > 
+> > > The syscall wrappers use the "a0" register for two different register
+> > > variables, both the first argument and the return value. The "ret"
+> > > variable is used as both input and output while the argument register is
+> > > only used as input. Clang treats the conflicting input parameters as
+> > > undefined behaviour and optimizes away the argument assignment.
+> > > 
+> > > The code seems to work by chance for the most part today but that may
+> > > change in the future. Specifically clock_gettime_fallback() fails with
+> > > clockids from 16 to 23, as implemented by the upcoming auxiliary clocks.
+> > > 
+> > > Switch the "ret" register variable to a pure output, similar to the other
+> > > architectures' vDSO code. This works in both clang and GCC.
+> > Hmmm, at first the constraint is "=r", during the progress of
+> > upstream, Xuerui suggested me to use "+r" instead [1].
+> > [1]  https://lore.kernel.org/linux-arch/5b14144a-9725-41db-7179-c059c41814cf@xen0n.name/
 > 
-> On 2025/6/4 18:00, Peter Zijlstra wrote:
-> > On Wed, Jun 04, 2025 at 03:39:24AM +0000, Luo Gengkun wrote:
-> > > There may be concurrency between perf_cgroup_switch and
-> > > perf_cgroup_event_disable. Consider the following scenario: after a new
-> > > perf cgroup event is created on CPU0, the new event may not trigger
-> > > a reprogramming, causing ctx->is_active to be 0. In this case, when CPU1
-> > > disables this perf event, it executes __perf_remove_from_context->
-> > > list _del_event->perf_cgroup_event_disable on CPU1, which causes a race
-> > > with perf_cgroup_switch running on CPU0.
-> > > 
-> > > The following describes the details of this concurrency scenario:
-> > > 
-> > > CPU0						CPU1
-> > > 
-> > > perf_cgroup_switch:
-> > >     ...
-> > >     # cpuctx->cgrp is not NULL here
-> > >     if (READ_ONCE(cpuctx->cgrp) == NULL)
-> > >     	return;
-> > > 
-> > > 						perf_remove_from_context:
-> > > 						   ...
-> > > 						   raw_spin_lock_irq(&ctx->lock);
-> > > 						   ...
-> > > 						   # ctx->is_active == 0 because reprogramm is not
-> > > 						   # tigger, so CPU1 can do __perf_remove_from_context
-> > > 						   # for CPU0
-> > > 						   __perf_remove_from_context:
-> > > 						         perf_cgroup_event_disable:
-> > > 							    ...
-> > > 							    if (--ctx->nr_cgroups)
-> > > 							    ...
-> > > 
-> > >     # this warning will happened because CPU1 changed
-> > >     # ctx.nr_cgroups to 0.
-> > >     WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
-> > > 
-> > > To fix this problem, expand the lock-holding critical section in
-> > > perf_cgroup_switch.
-> > > 
-> > > Fixes: db4a835601b7 ("perf/core: Set cgroup in CPU contexts for new cgroup events")
-> > > Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
-> > > ---
-> > Right, so how about we simply re-check the condition once we take the
-> > lock?
-> > 
-> > Also, take the opportunity to convert to guard instead of adding goto
-> > unlock.
-> > 
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -207,6 +207,19 @@ static void perf_ctx_unlock(struct perf_
-> >   	__perf_ctx_unlock(&cpuctx->ctx);
-> >   }
-> > +typedef struct {
-> > +	struct perf_cpu_context *cpuctx;
-> > +	struct perf_event_context *ctx;
-> > +} class_perf_ctx_lock_t;
-> > +
-> > +static inline void class_perf_ctx_lock_destructor(class_perf_ctx_lock_t *_T)
-> > +{ perf_ctx_unlock(_T->cpuctx, _T->ctx); }
-> > +
-> > +static inline class_perf_ctx_lock_t
-> > +class_perf_ctx_lock_constructor(struct perf_cpu_context *cpuctx,
-> > +				struct perf_event_context *ctx)
-> > +{ perf_ctx_lock(cpuctx, ctx); return (class_perf_ctx_lock_t){ cpuctx, ctx }; }
-> > +
-> >   #define TASK_TOMBSTONE ((void *)-1L)
-> >   static bool is_kernel_event(struct perf_event *event)
-> > @@ -944,7 +957,13 @@ static void perf_cgroup_switch(struct ta
-> >   	if (READ_ONCE(cpuctx->cgrp) == cgrp)
-> >   		return;
-> > -	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
-> > +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
-> > +	/*
-> > +	 * Re-check, could've raced vs perf_remove_from_context().
-> > +	 */
-> > +	if (READ_ONCE(cpuctx->cgrp) == NULL)
-> > +		return;
-> > +
-> >   	perf_ctx_disable(&cpuctx->ctx, true);
-> >   	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
-> > @@ -962,7 +981,6 @@ static void perf_cgroup_switch(struct ta
-> >   	ctx_sched_in(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
-> >   	perf_ctx_enable(&cpuctx->ctx, true);
-> > -	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
-> >   }
-> >   static int perf_cgroup_ensure_storage(struct perf_event *event,
+> Based on the example at
+> https://gcc.gnu.org/onlinedocs/gcc/Local-Register-Variables.html:
 > 
-> Thank for your review, I will make changes based on your suggestions.
+>    To force an operand into a register, create a local variable and specify
+>    the register name after the variable’s declaration. Then use the local
+>    variable for the asm operand and specify any constraint letter that
+>    matches the register:
+>    
+>    register int *p1 asm ("r0") = …;
+>    register int *p2 asm ("r1") = …;
+>    register int *result asm ("r0");
+>    asm ("sysint" : "=r" (result) : "0" (p1), "r" (p2));
+>    
+> I think this should actually be written
 > 
+>  	asm volatile(
+>  	"      syscall 0\n"
+> 	: "=r" (ret)
+>  	: "r" (nr), "0" (buffer), "r" (len), "r" (flags)
+>  	: "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7",
+> "$t8",
+>  	  "memory");
+> 
+> i.e. "=" should be used for the output operand 0, and "0" should be used
+> for the input operand 2 (buffer) to emphasis the same register as
+> operand 0 is used.
 
-No need to resend. I've got your patch with modifications. But please
-confirm it does work :-)
+I would have expected that matching constraints ("0") would only really make
+sense if the compiler selects the specific register to use. When the register is
+already selected manually it seems redundant.
+But my inline ASM knowledge is limited and this is a real example from the GCC
+docs, so it is probably more correct.
+On the other hand all the other vDSO implementations use "r" over "0" for the
+input operand 2 and I'd like to keep them consistent.
+
+
+Thomas
 
