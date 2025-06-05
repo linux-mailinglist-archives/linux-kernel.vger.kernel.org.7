@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-674659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DCFACF27A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:03:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F86ACF2A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E10E77AA853
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2317518935E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CE91D6DDD;
-	Thu,  5 Jun 2025 15:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B0E274FE0;
+	Thu,  5 Jun 2025 15:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xxcbR5lM"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="yAUwfp9f"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417971C5F14
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 15:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0812749F0;
+	Thu,  5 Jun 2025 15:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749135781; cv=none; b=HOsSLJOMEFiTWelUwING8nqmw8n8SGSxQYCq2FIpvHu5KXffhyOnCNwxGheV7OJgUYgG/YJdeL8FCQZnA8nxMsx5splxwTdlZJeAqxMfGDcRWZruTretmHuWfTvYqwB9yLe1K3QNtPsv3UzqGOa5Qau1uIDSWijqiNw2P7tyups=
+	t=1749136205; cv=none; b=ZcEMw8LgdhA4Oekf1RxhDCHc2R8yIjHz9b5tL1Mv3l0HUFz0nDCnB2glt03nxUmkTkJ2YTxSwvRJT4Dhs/i3SvPmEmeE+OKdssxWq1/WF/up6/b733WEB4TDo6NCZktTUcxsUrEV3GLfm6XmpApVIUsPIOHgzObtQsOgkpcz9mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749135781; c=relaxed/simple;
-	bh=3jeQmiKt06GXrIHfpjh0oQlnOaSY9Kr4rz+umFvQdDA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LRaQoZJ/CKkFq26VYx404jy/xn48Ww8BHio5ay3X7F3I+//jVQ2K8ditRtBWU/Hs808RBu5ftdEOKAW4ciT+gM8tJ4paRbQ6NHr6YT7YLKsjc9o7S2Rfo7VTM/2wp4YqL9SY+OaJwbLtSIzNJ5geLdm+Mzsgbd+gVI6HITiW37Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xxcbR5lM; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7377139d8b1so1071401b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 08:02:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749135779; x=1749740579; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xzwm5+cjAdLoNMVYNUU/eCk5jF9CVdW14YhkjiBUlxs=;
-        b=xxcbR5lMaILUjVpQrFjgd3/BOPL+dbjdx7N0iqLoFCCiWU48g512azL/kg8x5DHHsz
-         UMEdP3DXImkfJea5LBpIp/R60bRrhqadUxRMBpJlMQiMQqQnExxL0dC/5kURg4OhZ+Rq
-         3I0v5cJxmk8BudW0COy79kuny57EQ+2LA2Nrwgrlwa23Pt7lPFpNtmfanm+AHmTJiXC2
-         sJzcTrz9/FusxTWSl3Ey8I2GC3Nr6I7D6UKoMkJEHJeoWX3jcG60CJCVNaJ7bZkANJZN
-         nVf084+oupRHmDBN6HjaPMlEnz2qxAjMj9iv5y6DqwmqSCxPgDsJ/LBWz6PH/bt9WXp1
-         mqAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749135779; x=1749740579;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xzwm5+cjAdLoNMVYNUU/eCk5jF9CVdW14YhkjiBUlxs=;
-        b=hmZyc5hcQugvMbTbn41HA6NMl3cfD8o0tjvKPm8LjL8TuF58KIU1COzuXqrHqkxZA0
-         z7zbdnojwtJu+F/k3w6ThBWzv2+NTzoP+jO/TgKt84zIcFbT593yeqR3JvuiYJUZH/Sd
-         dw0Oz3+MwuOjN4q8QSi7eKrcVD97nnTyt1322LNQH1X2m6P91jw2X8xDWEF+mh5eyTH6
-         EVxVqj4HGEBWsx4Agui5s4Vr1ULNNY0nNQkpAurTA+VLhXMpeIlynWUGfJKFI6WJ5WIX
-         1/o9rP0S1WL0sE9q56a+rskNYwIC1MRFacgVQrTrwi1C9E+umvjB1OUB84+6Jmix0n6J
-         1quQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCv9E8JNOhNFJ/4zw7ICpvzm9EQQ9CXIqlc/5PmKQ7FsmxlNJC7TsrWd94vBsH81WLvlb9NMtoOshrO6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymUv9nRY5VOrkwlZo14LXGK8Q8kemw3XpDLWvuHpEGWSi+0wC3
-	ZTzj45IKg7LXaK68rS1McUZA+RtBFcRnSAMPL51MjmLFoHOhJHNtuHJNV0JL83GB+9KLWN3pQ4Y
-	t427Zzu9iJKzH3HYRjnsEjbyamw==
-X-Google-Smtp-Source: AGHT+IHb5hKDUYrgVOzSrfCbbqZtDuSQIRve0rxtHVkUEsiBbiESd9WvsZr9lyVAILAcpiMtqMiFe+S0tlpgh2kuCw==
-X-Received: from pfvx14.prod.google.com ([2002:a05:6a00:270e:b0:747:9faf:ed39])
- (user=dionnaglaze job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:b53:b0:747:ee09:1fb4 with SMTP id d2e1a72fcca58-74827f09679mr61292b3a.15.1749135779455;
- Thu, 05 Jun 2025 08:02:59 -0700 (PDT)
-Date: Thu,  5 Jun 2025 15:02:36 +0000
-In-Reply-To: <20250605150236.3775954-1-dionnaglaze@google.com>
+	s=arc-20240116; t=1749136205; c=relaxed/simple;
+	bh=WsntjljouOPbHdbSquLJoJXrNH7kjo5Cyehy4uSQ4Uo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=THledoigrYJcUbMhBXd+rbUROpG4o/Ei/Hmv0oYKWEnd3Ob2/8GosNTm4h9NKb8DjlRyvIxgTx8OsElGVun/m/X/KPbkIRAeMNClpwDjcltAf6DqpoHerCxN98wWwEDrqTkVoLkQHTA+4f4i4CeXqOQ20uq+bGK3W7cAkSc2zS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=yAUwfp9f; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 1F2A966C044;
+	Thu,  5 Jun 2025 17:09:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1749136189;
+	bh=WsntjljouOPbHdbSquLJoJXrNH7kjo5Cyehy4uSQ4Uo=;
+	h=From:Subject:Date;
+	b=yAUwfp9f6+Yf3Fewx70/e6mr97+PWDZevnXvooQV8plIaTg3M2rfGuhgE2J77lvnX
+	 cXwkfCWJhXaA06qOCNMMqAMR0rK4BCUU9rgUJS0QacqkFCPitzhG6UjKfdpifdfLeR
+	 7m+OHbBGcAPYuLFwtopHYH0OtEcrTo1onq/op+qBmDdPVh21eJh68HKBGoYgtkIX+a
+	 lp4XksNWMNRwXi3Yri7fxst6cQ73jtOdjA+FqabwOxBJpBPdi0UcNOlfmlMEJNeSYz
+	 2nF0As3011AkOtnjrp47SOzF0U9X+DCCJNgJZUIsSJ/iehKq72En5ndTKkR0kTFHDb
+	 ooiCdJVItfoMA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: x86 Maintainers <x86@kernel.org>, Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Linux ACPI <linux-acpi@vger.kernel.org>
+Subject:
+ [PATCH v1 0/5] x86/smp: Restore the elimination of
+ mwait_play_dead_cpuid_hint()
+Date: Thu, 05 Jun 2025 17:03:01 +0200
+Message-ID: <2226957.irdbgypaU6@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250605150236.3775954-1-dionnaglaze@google.com>
-X-Mailer: git-send-email 2.50.0.rc0.642.g800a2b2222-goog
-Message-ID: <20250605150236.3775954-3-dionnaglaze@google.com>
-Subject: [PATCH v6 2/2] kvm: sev: If ccp is busy, report busy to guest
-From: Dionna Glaze <dionnaglaze@google.com>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-coco@lists.linux.dev, Dionna Glaze <dionnaglaze@google.com>, 
-	Thomas Lendacky <Thomas.Lendacky@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Joerg Roedel <jroedel@suse.de>, Peter Gonda <pgonda@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Sean Christopherson <seanjc@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTFgxoheEI+NWfLhkXW46nOJRwoQPjyhtjzK2PMeqp+IFBJDv0dbEecaOBBQv3ODI5hHoLvKO4qggjV7wMyUKH7rvpHM+2q0khd4cBskzjMXa5OVP6/fvVR4NX+IAE5MxbqJhaHV/vLI25++Oxhw0XvJ7Tw1sFvnxsCKjMaiNir/+zhHMbLDTXMAKwoMw0omSoSUQQcZvFJ3WoDQZACckhevk32yYB4ONnkF33LKMXdb51mmTA7HQ7cV8udNC0KF6dGNnLw14bB1fQ1KCQnmYPrUcnheafZ9YxO/DRArbD7H2nOxZzsT37izNVqDHA/Ekyf57/cQFQp8EyOMgRwfFYdCqY4sdDZ3bAYNLDffVlO7RVG9gvXiWPM4sr5/zc6m+y93dNVw/ZMAQ4micCAd0lhuTTl/FJdeD00HpzHXNaK6SUO9i/8mCO7qfOfojK/6TNe+EQEy2XQh/ErVRhx7lseeN4BNoMpGyb5M7au63GWlsF+FkMls3U8c+pOy9tFEUmjA2koqWVQpvzSEL+7Ry6ZFV5q06EH7Mm6LC9lB1JOXiWlxjHg8rGDuksaF0wGoZ7fbeFSzTC57fjeTVg53UmmsFHwz6KoZZ7aJnvrB7EYQVoHKKjUuSFd+9Vct5D+vsS9T9uyBeW4C0Thj/zoF2bXbvDzsXzYYYojt89IjKIl/mQ
+X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
 
-The ccp driver can be overloaded even with guest request rate limits.
-The return value of -EBUSY means that there is no firmware error to
-report back to user space, so the guest VM would see this as
-exitinfo2 = 0. The false success can trick the guest to update its
-message sequence number when it shouldn't have.
+Hi Everyone,
 
-Instead, when ccp returns -EBUSY, that is reported to userspace as the
-throttling return value.
+The purpose of this series is to reapply the code changes from commit
+96040f7273e2 ("x86/smp: Eliminate mwait_play_dead_cpuid_hint()") that
+has been reverted because of an issue introduced by it.  This takes
+place in the last patch ([5/5]) and the previous patches make
+preparatory changes needed to avoid breaking systems in the field
+once again.
 
-Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Gonda <pgonda@google.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Sean Christopherson <seanjc@google.com>
+The problem with commit 96040f7273e2 was that on SMT-capable systems
+booting with "nosmt" in the kernel command line, the "dead" SMT siblings
+were stuck in idle state C1 after initialization because they were
+initialized before a proper cpuidle driver for the given platform got
+ready.  That prevented the whole processor from entering deep package
+C-states later on and pretty much ruined idle power (including power
+in suspend-to-idle).
 
-Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
----
- arch/x86/kvm/svm/sev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+To prevent that from happening, patches [1-4/5] use the approach that
+has been used for some time to address an analogous issue during resume
+from hibernation, in which case the "dead" SMT siblings are also in C1
+when the image kernel gets control back and they need to be put into
+sufficiently deep C-states.  Namely, they are taken online and then
+back offline immediately to make that happen.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index e45f0cfae2bd..0ceb7e83a98d 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4060,6 +4060,11 @@ static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_
- 	 * the PSP is dead and commands are timing out.
- 	 */
- 	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, &fw_err);
-+	if (ret == -EBUSY) {
-+		svm_vmgexit_no_action(svm, SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_BUSY, fw_err));
-+		ret = 1;
-+		goto out_unlock;
-+	}
- 	if (ret && !fw_err)
- 		goto out_unlock;
- 
--- 
-2.50.0.rc0.642.g800a2b2222-goog
+The general idea is to take the "dead" SMT siblings online and then
+back offline immediately when a proper cpuidle driver gets ready, but
+some changes are made to avoid doing that twice in a row in vain.
+For this purpose, the intel_idle driver initialization is pushed
+to an earlier initialization phase (patch [1/5]) and the ACPI
+processor driver only "rescans" the "dead" SMT siblings when
+the ACPI idle driver is the current cpuidle driver.  It also
+avoids doing this on architectures other than x86 (patch [4/5]).
+
+Thanks!
+
+
 
 
