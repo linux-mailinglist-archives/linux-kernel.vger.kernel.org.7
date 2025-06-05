@@ -1,92 +1,51 @@
-Return-Path: <linux-kernel+bounces-674593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D16ACF1AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:23:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E3BACF1AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721D13ADD7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 109AF1741C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C99218D649;
-	Thu,  5 Jun 2025 14:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TIg/cWVZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BEmc0EXF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TIg/cWVZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BEmc0EXF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB8519DF48;
+	Thu,  5 Jun 2025 14:23:33 +0000 (UTC)
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E001617A2F8
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F2C17A2F8
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133405; cv=none; b=QM1XbSMLFmw6+5D0aW5IsxkzNUG3b2KZWMGyb+HdJ+wCgWBI6F8VnHzucYZGnucOAu0Xd/GBa2TW/O5uByFDm7pKSL+czCEqis5YyDFawteQkDwOUBZQdcrU8CQYBGCwlW1+J6o1c3rGZ04WOHIIXmbP8l1i2iawR7I0SgkxnIk=
+	t=1749133412; cv=none; b=b1SrPIFK8c2IislYF4g+8kLDhYtoxf1EKDW7XqsckAph7vH+D3Adet3WBQQl1Hf2Br3rdBmSXeFN4CV0ajBYwtixOVep+5nTtRVxxqOhMiurSU/cGj4X4gPsuwhPXuPR6RABTGN4JWtWxC/d69HBY8dJU6THd4sznljKuEHsB2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133405; c=relaxed/simple;
-	bh=pnFV71/YviZ5WPBl34/gOG+1EOlwF3xCHHMZRhWOmq4=;
+	s=arc-20240116; t=1749133412; c=relaxed/simple;
+	bh=QS1hx1CnyBo07NfCxHuekt1LeTc0CcPxwRw/4XZvZQk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BHGWEYHW7ET0/4ZXw8jbtiJSG3xOCeiN6YWgWLo7izyt7BhUZ082SNaONQR17GlZfMjGg7hHozSrfULAFL0hfpAlVA7hP1wvHVvnWWGq3QU3uTPzc/eqJvXhpWdnilbe5ef8WyJFIKJf7j0dw7CkCmqXukxfhhoVvk9Hm9VDzyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TIg/cWVZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BEmc0EXF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TIg/cWVZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BEmc0EXF; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=fPUCH3g8brGELxfBdQ49K6A5ih8azV8GC6xBag9u2re8sVgfhpNOI575AxuCz3Y7UIuwVVF0MNUuMuLLi0GH4cd3kCdyXXBkz/CgIq11BbeTlB32FSA8d6hA6SQY1VBtLMHOj0e+HYL+YQziNT4f8htMPaeSLzmElwWEHS0nDB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4EABE218D5;
-	Thu,  5 Jun 2025 14:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749133396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5GT2CYRiAr+9AmbzTZ+VtvFRriYDWDxy/TDg03PmFt0=;
-	b=TIg/cWVZfbbsOi6mQWQAesLErovvbFuIkBT+J/SxUgGxlQakyokC0KibOEmTXoYy6trHQN
-	LHYtpk52rSM9Cl4x4T3lz7oORTFz8Wl/wynN3O+4Eb+1HhfAcdaMRM9t7gZuikOlpdeNZR
-	LJrpUVO2OX0Tl8xbx/R5lFNgukuG6c4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749133396;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5GT2CYRiAr+9AmbzTZ+VtvFRriYDWDxy/TDg03PmFt0=;
-	b=BEmc0EXFuVmIzTbWsv9mMnoY4fBNWobI/YlZt848YZx9L6XPyGJpPjDeUpguUGmJIeaJUy
-	7yyujm1ccKSt3SDA==
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E6E522357;
+	Thu,  5 Jun 2025 14:23:17 +0000 (UTC)
 Authentication-Results: smtp-out1.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749133396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5GT2CYRiAr+9AmbzTZ+VtvFRriYDWDxy/TDg03PmFt0=;
-	b=TIg/cWVZfbbsOi6mQWQAesLErovvbFuIkBT+J/SxUgGxlQakyokC0KibOEmTXoYy6trHQN
-	LHYtpk52rSM9Cl4x4T3lz7oORTFz8Wl/wynN3O+4Eb+1HhfAcdaMRM9t7gZuikOlpdeNZR
-	LJrpUVO2OX0Tl8xbx/R5lFNgukuG6c4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749133396;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5GT2CYRiAr+9AmbzTZ+VtvFRriYDWDxy/TDg03PmFt0=;
-	b=BEmc0EXFuVmIzTbWsv9mMnoY4fBNWobI/YlZt848YZx9L6XPyGJpPjDeUpguUGmJIeaJUy
-	7yyujm1ccKSt3SDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B47B1137FE;
-	Thu,  5 Jun 2025 14:23:15 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 627A2139CB;
+	Thu,  5 Jun 2025 14:23:16 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mEAJKFOoQWipRwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:15 +0000
+	id OFUSFVSoQWipRwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:16 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: David Hildenbrand <david@redhat.com>,
@@ -98,9 +57,9 @@ Cc: David Hildenbrand <david@redhat.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v5 02/10] mm,memory_hotplug: Remove status_change_nid_normal and update documentation
-Date: Thu,  5 Jun 2025 16:22:53 +0200
-Message-ID: <20250605142305.244465-3-osalvador@suse.de>
+Subject: [PATCH v5 03/10] mm,memory_hotplug: Implement numa node notifier
+Date: Thu,  5 Jun 2025 16:22:54 +0200
+Message-ID: <20250605142305.244465-4-osalvador@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
 References: <20250605142305.244465-1-osalvador@suse.de>
@@ -110,151 +69,471 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-5.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
 X-Spam-Flag: NO
-X-Spam-Score: -5.80
+X-Rspamd-Queue-Id: 0E6E522357
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Score: -4.00
 
-Now that the last user of status_change_nid_normal is gone, we can remove it.
-Update documentation accordingly.
+There are at least six consumers of hotplug_memory_notifier that what they
+really are interested in is whether any numa node changed its state, e.g: going
+from having memory to not having memory and vice versa.
+
+Implement a specific notifier for numa nodes when their state gets changed,
+which will later be used by those consumers that are only interested
+in numa node state changes.
+
+Add documentation as well.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- Documentation/core-api/memory-hotplug.rst            |  3 ---
- .../translations/zh_CN/core-api/memory-hotplug.rst   |  3 ---
- include/linux/memory.h                               |  1 -
- mm/memory_hotplug.c                                  | 12 ------------
- 4 files changed, 19 deletions(-)
+ Documentation/core-api/memory-hotplug.rst |  66 +++++++++
+ drivers/base/node.c                       |  21 +++
+ include/linux/node.h                      |  42 ++++++
+ mm/memory_hotplug.c                       | 155 ++++++++++------------
+ 4 files changed, 202 insertions(+), 82 deletions(-)
 
 diff --git a/Documentation/core-api/memory-hotplug.rst b/Documentation/core-api/memory-hotplug.rst
-index 682259ee633a..d1b8eb9add8a 100644
+index d1b8eb9add8a..b19c3be7437d 100644
 --- a/Documentation/core-api/memory-hotplug.rst
 +++ b/Documentation/core-api/memory-hotplug.rst
-@@ -56,14 +56,11 @@ The third argument (arg) passes a pointer of struct memory_notify::
- 	struct memory_notify {
- 		unsigned long start_pfn;
- 		unsigned long nr_pages;
--		int status_change_nid_normal;
- 		int status_change_nid;
- 	}
+@@ -9,6 +9,9 @@ Memory hotplug event notifier
  
- - start_pfn is start_pfn of online/offline memory.
- - nr_pages is # of pages of online/offline memory.
--- status_change_nid_normal is set node id when N_NORMAL_MEMORY of nodemask
--  is (will be) set/clear, if this is -1, then nodemask status is not changed.
- - status_change_nid is set node id when N_MEMORY of nodemask is (will be)
-   set/clear. It means a new(memoryless) node gets new memory by online and a
-   node loses all memory. If this is -1, then nodemask status is not changed.
-diff --git a/Documentation/translations/zh_CN/core-api/memory-hotplug.rst b/Documentation/translations/zh_CN/core-api/memory-hotplug.rst
-index 9b2841fb9a5f..c2a4122ae221 100644
---- a/Documentation/translations/zh_CN/core-api/memory-hotplug.rst
-+++ b/Documentation/translations/zh_CN/core-api/memory-hotplug.rst
-@@ -62,7 +62,6 @@ memory_notify结构体的指针::
- 	struct memory_notify {
- 		unsigned long start_pfn;
- 		unsigned long nr_pages;
--		int status_change_nid_normal;
- 		int status_change_nid;
- 	}
+ Hotplugging events are sent to a notification queue.
  
-@@ -70,8 +69,6 @@ memory_notify结构体的指针::
++Memory notifier
++----------------
++
+ There are six types of notification defined in ``include/linux/memory.h``:
  
- - nr_pages是在线/离线内存的页数。
+ MEM_GOING_ONLINE
+@@ -80,6 +83,69 @@ further processing of the notification queue.
  
--- status_change_nid_normal是当nodemask的N_NORMAL_MEMORY被设置/清除时设置节
--  点id，如果是-1，则nodemask状态不改变。
+ NOTIFY_STOP stops further processing of the notification queue.
  
- - status_change_nid是当nodemask的N_MEMORY被（将）设置/清除时设置的节点id。这
-   意味着一个新的（没上线的）节点通过联机获得新的内存，而一个节点失去了所有的内
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index 5ec4e6d209b9..a9ccd6579422 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -109,7 +109,6 @@ struct memory_notify {
- 	unsigned long altmap_nr_pages;
- 	unsigned long start_pfn;
- 	unsigned long nr_pages;
--	int status_change_nid_normal;
- 	int status_change_nid;
++Numa node notifier
++------------------
++
++There are six types of notification defined in ``include/linux/node.h``:
++
++NODE_ADDING_FIRST_MEMORY
++ Generated before memory becomes available to this node for the first time.
++
++NODE_CANCEL_ADDING_FIRST_MEMORY
++ Generated if NODE_ADDING_FIRST_MEMORY fails.
++
++NODE_ADDED_FIRST_MEMORY
++ Generated when memory has become available fo this node for the first time.
++
++NODE_REMOVING_LAST_MEMORY
++ Generated when the last memory available to this node is about to be offlined.
++
++NODE_CANCEL_REMOVING_LAST_MEMORY
++ Generated when NODE_CANCEL_REMOVING_LAST_MEMORY fails.
++
++NODE_REMOVED_LAST_MEMORY
++ Generated when the last memory available to this node has been offlined.
++
++A callback routine can be registered by calling::
++
++  hotplug_node_notifier(callback_func, priority)
++
++Callback functions with higher values of priority are called before callback
++functions with lower values.
++
++A callback function must have the following prototype::
++
++  int callback_func(
++
++    struct notifier_block *self, unsigned long action, void *arg);
++
++The first argument of the callback function (self) is a pointer to the block
++of the notifier chain that points to the callback function itself.
++The second argument (action) is one of the event types described above.
++The third argument (arg) passes a pointer of struct node_notify::
++
++        struct node_notify {
++                int nid;
++        }
++
++- nid is the node we are adding or removing memory to.
++
++  If nid >= 0, callback should create/discard structures for the
++  node if necessary.
++
++The callback routine shall return one of the values
++NOTIFY_DONE, NOTIFY_OK, NOTIFY_BAD, NOTIFY_STOP
++defined in ``include/linux/notifier.h``
++
++NOTIFY_DONE and NOTIFY_OK have no effect on the further processing.
++
++NOTIFY_BAD is used as response to the NODE_ADDING_FIRST_MEMORY,
++NODE_REMOVING_LAST_MEMORY, NODE_ADDED_FIRST_MEMORY or
++NODE_REMOVED_LAST_MEMORY action to cancel hotplugging.
++It stops further processing of the notification queue.
++
++NOTIFY_STOP stops further processing of the notification queue.
++
+ Locking Internals
+ =================
+ 
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 25ab9ec14eb8..c5b0859d846d 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -111,6 +111,27 @@ static const struct attribute_group *node_access_node_groups[] = {
+ 	NULL,
  };
  
++#ifdef CONFIG_MEMORY_HOTPLUG
++static BLOCKING_NOTIFIER_HEAD(node_chain);
++
++int register_node_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_register(&node_chain, nb);
++}
++EXPORT_SYMBOL(register_node_notifier);
++
++void unregister_node_notifier(struct notifier_block *nb)
++{
++	blocking_notifier_chain_unregister(&node_chain, nb);
++}
++EXPORT_SYMBOL(unregister_node_notifier);
++
++int node_notify(unsigned long val, void *v)
++{
++	return blocking_notifier_call_chain(&node_chain, val, v);
++}
++#endif
++
+ static void node_remove_accesses(struct node *node)
+ {
+ 	struct node_access_nodes *c, *cnext;
+diff --git a/include/linux/node.h b/include/linux/node.h
+index 2b7517892230..8c783269011d 100644
+--- a/include/linux/node.h
++++ b/include/linux/node.h
+@@ -123,6 +123,48 @@ static inline void register_memory_blocks_under_node(int nid, unsigned long star
+ #endif
+ 
+ extern void unregister_node(struct node *node);
++
++#ifdef CONFIG_MEMORY_HOTPLUG
++struct node_notify {
++	int nid;
++};
++
++#define NODE_ADDING_FIRST_MEMORY                (1<<0)
++#define NODE_ADDED_FIRST_MEMORY                 (1<<1)
++#define NODE_CANCEL_ADDING_FIRST_MEMORY         (1<<2)
++#define NODE_REMOVING_LAST_MEMORY               (1<<3)
++#define NODE_REMOVED_LAST_MEMORY                (1<<4)
++#define NODE_CANCEL_REMOVING_LAST_MEMORY        (1<<5)
++
++#if defined(CONFIG_MEMORY_HOTPLUG) && defined(CONFIG_NUMA)
++extern int register_node_notifier(struct notifier_block *nb);
++extern void unregister_node_notifier(struct notifier_block *nb);
++extern int node_notify(unsigned long val, void *v);
++
++#define hotplug_node_notifier(fn, pri) ({		\
++	static __meminitdata struct notifier_block fn##_node_nb =\
++		{ .notifier_call = fn, .priority = pri };\
++	register_node_notifier(&fn##_node_nb);			\
++})
++#else
++static inline int register_node_notifier(struct notifier_block *nb)
++{
++	return 0;
++}
++static inline void unregister_node_notifier(struct notifier_block *nb)
++{
++}
++static inline int node_notify(unsigned long val, void *v)
++{
++	return 0;
++}
++static inline int hotplug_node_notifier(notifier_fn_t fn, int pri)
++{
++	return 0;
++}
++#endif
++#endif
++
+ #ifdef CONFIG_NUMA
+ extern void node_dev_init(void);
+ /* Core of the node registration - only memory hotplug should use this */
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index b1caedbade5b..94ae0ca37021 100644
+index 94ae0ca37021..0550f3061fc4 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -706,19 +706,13 @@ static void node_states_check_changes_online(unsigned long nr_pages,
- 	int nid = zone_to_nid(zone);
+@@ -35,6 +35,7 @@
+ #include <linux/compaction.h>
+ #include <linux/rmap.h>
+ #include <linux/module.h>
++#include <linux/node.h>
  
- 	arg->status_change_nid = NUMA_NO_NODE;
--	arg->status_change_nid_normal = NUMA_NO_NODE;
+ #include <asm/tlbflush.h>
  
- 	if (!node_state(nid, N_MEMORY))
- 		arg->status_change_nid = nid;
--	if (zone_idx(zone) <= ZONE_NORMAL && !node_state(nid, N_NORMAL_MEMORY))
--		arg->status_change_nid_normal = nid;
+@@ -699,24 +700,6 @@ static void online_pages_range(unsigned long start_pfn, unsigned long nr_pages)
+ 	online_mem_sections(start_pfn, end_pfn);
  }
  
- static void node_states_set_node(int node, struct memory_notify *arg)
- {
--	if (arg->status_change_nid_normal >= 0)
--		node_set_state(node, N_NORMAL_MEMORY);
+-/* check which state of node_states will be changed when online memory */
+-static void node_states_check_changes_online(unsigned long nr_pages,
+-	struct zone *zone, struct memory_notify *arg)
+-{
+-	int nid = zone_to_nid(zone);
 -
- 	if (arg->status_change_nid >= 0)
- 		node_set_state(node, N_MEMORY);
- }
-@@ -1895,7 +1889,6 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
- 	enum zone_type zt;
- 
- 	arg->status_change_nid = NUMA_NO_NODE;
--	arg->status_change_nid_normal = NUMA_NO_NODE;
+-	arg->status_change_nid = NUMA_NO_NODE;
+-
+-	if (!node_state(nid, N_MEMORY))
+-		arg->status_change_nid = nid;
+-}
+-
+-static void node_states_set_node(int node, struct memory_notify *arg)
+-{
+-	if (arg->status_change_nid >= 0)
+-		node_set_state(node, N_MEMORY);
+-}
+-
+ static void __meminit resize_zone_range(struct zone *zone, unsigned long start_pfn,
+ 		unsigned long nr_pages)
+ {
+@@ -1171,7 +1154,9 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+ 	int need_zonelists_rebuild = 0;
+ 	const int nid = zone_to_nid(zone);
+ 	int ret;
+-	struct memory_notify arg;
++	struct memory_notify mem_arg;
++	struct node_notify node_arg;
++	bool cancel_mem_notifier_on_err = false, cancel_node_notifier_on_err = false;
  
  	/*
- 	 * Check whether node_states[N_NORMAL_MEMORY] will be changed.
-@@ -1907,8 +1900,6 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
+ 	 * {on,off}lining is constrained to full memory sections (or more
+@@ -1188,11 +1173,22 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+ 	/* associate pfn range with the zone */
+ 	move_pfn_range_to_zone(zone, pfn, nr_pages, NULL, MIGRATE_ISOLATE);
+ 
+-	arg.start_pfn = pfn;
+-	arg.nr_pages = nr_pages;
+-	node_states_check_changes_online(nr_pages, zone, &arg);
++	node_arg.nid = NUMA_NO_NODE;
++	if (!node_state(nid, N_MEMORY)) {
++		/* Adding memory to the node for the first time */
++		cancel_node_notifier_on_err = true;
++		node_arg.nid = nid;
++		ret = node_notify(NODE_ADDING_FIRST_MEMORY, &node_arg);
++		ret = notifier_to_errno(ret);
++		if (ret)
++			goto failed_addition;
++	}
+ 
+-	ret = memory_notify(MEM_GOING_ONLINE, &arg);
++	mem_arg.start_pfn = pfn;
++	mem_arg.nr_pages = nr_pages;
++	mem_arg.status_change_nid = node_arg.nid;
++	cancel_mem_notifier_on_err = true;
++	ret = memory_notify(MEM_GOING_ONLINE, &mem_arg);
+ 	ret = notifier_to_errno(ret);
+ 	if (ret)
+ 		goto failed_addition;
+@@ -1218,7 +1214,8 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+ 	online_pages_range(pfn, nr_pages);
+ 	adjust_present_page_count(pfn_to_page(pfn), group, nr_pages);
+ 
+-	node_states_set_node(nid, &arg);
++	if (node_arg.nid >= 0)
++		node_set_state(nid, N_MEMORY);
+ 	if (need_zonelists_rebuild)
+ 		build_all_zonelists(NULL);
+ 
+@@ -1239,16 +1236,23 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+ 	kswapd_run(nid);
+ 	kcompactd_run(nid);
+ 
++	if (node_arg.nid >= 0)
++		/* First memory added successfully. Notify consumers. */
++		node_notify(NODE_ADDED_FIRST_MEMORY, &node_arg);
++
+ 	writeback_set_ratelimit();
+ 
+-	memory_notify(MEM_ONLINE, &arg);
++	memory_notify(MEM_ONLINE, &mem_arg);
+ 	return 0;
+ 
+ failed_addition:
+ 	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
+ 		 (unsigned long long) pfn << PAGE_SHIFT,
+ 		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
+-	memory_notify(MEM_CANCEL_ONLINE, &arg);
++	if (cancel_mem_notifier_on_err)
++		memory_notify(MEM_CANCEL_ONLINE, &mem_arg);
++	if (cancel_node_notifier_on_err)
++		node_notify(NODE_CANCEL_ADDING_FIRST_MEMORY, &node_arg);
+ 	remove_pfn_range_from_zone(zone, pfn, nr_pages);
+ 	return ret;
+ }
+@@ -1880,48 +1884,6 @@ static int __init cmdline_parse_movable_node(char *p)
+ }
+ early_param("movable_node", cmdline_parse_movable_node);
+ 
+-/* check which state of node_states will be changed when offline memory */
+-static void node_states_check_changes_offline(unsigned long nr_pages,
+-		struct zone *zone, struct memory_notify *arg)
+-{
+-	struct pglist_data *pgdat = zone->zone_pgdat;
+-	unsigned long present_pages = 0;
+-	enum zone_type zt;
+-
+-	arg->status_change_nid = NUMA_NO_NODE;
+-
+-	/*
+-	 * Check whether node_states[N_NORMAL_MEMORY] will be changed.
+-	 * If the memory to be offline is within the range
+-	 * [0..ZONE_NORMAL], and it is the last present memory there,
+-	 * the zones in that range will become empty after the offlining,
+-	 * thus we can determine that we need to clear the node from
+-	 * node_states[N_NORMAL_MEMORY].
+-	 */
+-	for (zt = 0; zt <= ZONE_NORMAL; zt++)
+-		present_pages += pgdat->node_zones[zt].present_pages;
+-
+-	/*
+-	 * We have accounted the pages from [0..ZONE_NORMAL); ZONE_HIGHMEM
+-	 * does not apply as we don't support 32bit.
+-	 * Here we count the possible pages from ZONE_MOVABLE.
+-	 * If after having accounted all the pages, we see that the nr_pages
+-	 * to be offlined is over or equal to the accounted pages,
+-	 * we know that the node will become empty, and so, we can clear
+-	 * it for N_MEMORY as well.
+-	 */
+-	present_pages += pgdat->node_zones[ZONE_MOVABLE].present_pages;
+-
+-	if (nr_pages >= present_pages)
+-		arg->status_change_nid = zone_to_nid(zone);
+-}
+-
+-static void node_states_clear_node(int node, struct memory_notify *arg)
+-{
+-	if (arg->status_change_nid >= 0)
+-		node_clear_state(node, N_MEMORY);
+-}
+-
+ static int count_system_ram_pages_cb(unsigned long start_pfn,
+ 				     unsigned long nr_pages, void *data)
+ {
+@@ -1937,13 +1899,17 @@ static int count_system_ram_pages_cb(unsigned long start_pfn,
+ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+ 			struct zone *zone, struct memory_group *group)
+ {
+-	const unsigned long end_pfn = start_pfn + nr_pages;
+-	unsigned long pfn, managed_pages, system_ram_pages = 0;
+-	const int node = zone_to_nid(zone);
+-	unsigned long flags;
+-	struct memory_notify arg;
+-	char *reason;
+ 	int ret;
++	char *reason;
++	enum zone_type zt;
++	unsigned long flags;
++	struct memory_notify mem_arg;
++	struct node_notify node_arg;
++	const int node = zone_to_nid(zone);
++	struct pglist_data *pgdat = zone->zone_pgdat;
++	const unsigned long end_pfn = start_pfn + nr_pages;
++	unsigned long pfn, managed_pages, system_ram_pages = 0, present_pages = 0;
++	bool cancel_mem_notifier_on_err = false, cancel_node_notifier_on_err = false;
+ 
+ 	/*
+ 	 * {on,off}lining is constrained to full memory sections (or more
+@@ -2000,11 +1966,30 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+ 		goto failed_removal_pcplists_disabled;
+ 	}
+ 
+-	arg.start_pfn = start_pfn;
+-	arg.nr_pages = nr_pages;
+-	node_states_check_changes_offline(nr_pages, zone, &arg);
++	/*
++	 * Here we count the possible pages within the range [0..ZONE_MOVABLE].
++	 * If after having accounted all the pages, we see that the nr_pages to
++	 * be offlined is greater or equal to the accounted pages, we know that the
++	 * node will become empty, and so, we will clear N_MEMORY for it.
++	 */
++	node_arg.nid = NUMA_NO_NODE;
++	for (zt = 0; zt <= ZONE_MOVABLE; zt++)
++		present_pages += pgdat->node_zones[zt].present_pages;
++
++	if (nr_pages >= present_pages) {
++		node_arg.nid = node;
++		cancel_node_notifier_on_err = true;
++		ret = node_notify(NODE_REMOVING_LAST_MEMORY, &node_arg);
++		ret = notifier_to_errno(ret);
++		if (ret)
++			goto failed_removal_isolated;
++	}
+ 
+-	ret = memory_notify(MEM_GOING_OFFLINE, &arg);
++	mem_arg.start_pfn = start_pfn;
++	mem_arg.nr_pages = nr_pages;
++	mem_arg.status_change_nid = node_arg.nid;
++	cancel_mem_notifier_on_err = true;
++	ret = memory_notify(MEM_GOING_OFFLINE, &mem_arg);
+ 	ret = notifier_to_errno(ret);
+ 	if (ret) {
+ 		reason = "notifier failure";
+@@ -2084,27 +2069,33 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+ 	 * Make sure to mark the node as memory-less before rebuilding the zone
+ 	 * list. Otherwise this node would still appear in the fallback lists.
  	 */
- 	for (zt = 0; zt <= ZONE_NORMAL; zt++)
- 		present_pages += pgdat->node_zones[zt].present_pages;
--	if (zone_idx(zone) <= ZONE_NORMAL && nr_pages >= present_pages)
--		arg->status_change_nid_normal = zone_to_nid(zone);
+-	node_states_clear_node(node, &arg);
++	if (node_arg.nid >= 0)
++		node_clear_state(node, N_MEMORY);
+ 	if (!populated_zone(zone)) {
+ 		zone_pcp_reset(zone);
+ 		build_all_zonelists(NULL);
+ 	}
  
- 	/*
- 	 * We have accounted the pages from [0..ZONE_NORMAL); ZONE_HIGHMEM
-@@ -1927,9 +1918,6 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
+-	if (arg.status_change_nid >= 0) {
++	if (node_arg.nid >= 0) {
+ 		kcompactd_stop(node);
+ 		kswapd_stop(node);
++		/* Node went memoryless. Notify consumers */
++		node_notify(NODE_REMOVED_LAST_MEMORY, &node_arg);
+ 	}
  
- static void node_states_clear_node(int node, struct memory_notify *arg)
- {
--	if (arg->status_change_nid_normal >= 0)
--		node_clear_state(node, N_NORMAL_MEMORY);
--
- 	if (arg->status_change_nid >= 0)
- 		node_clear_state(node, N_MEMORY);
- }
+ 	writeback_set_ratelimit();
+ 
+-	memory_notify(MEM_OFFLINE, &arg);
++	memory_notify(MEM_OFFLINE, &mem_arg);
+ 	remove_pfn_range_from_zone(zone, start_pfn, nr_pages);
+ 	return 0;
+ 
+ failed_removal_isolated:
+ 	/* pushback to free area */
+ 	undo_isolate_page_range(start_pfn, end_pfn, MIGRATE_MOVABLE);
+-	memory_notify(MEM_CANCEL_OFFLINE, &arg);
++	if (cancel_mem_notifier_on_err)
++		memory_notify(MEM_CANCEL_OFFLINE, &mem_arg);
++	if (cancel_node_notifier_on_err)
++		node_notify(NODE_CANCEL_REMOVING_LAST_MEMORY, &node_arg);
+ failed_removal_pcplists_disabled:
+ 	lru_cache_enable();
+ 	zone_pcp_enable(zone);
 -- 
 2.49.0
 
