@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-673944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CFAACE7C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:32:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC91ACE7C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3CD18928DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 01:32:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71847174420
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 01:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB103D984;
-	Thu,  5 Jun 2025 01:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54890487A5;
+	Thu,  5 Jun 2025 01:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cLsb/uA6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/DaLJDm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3DB3209
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 01:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D458F64
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 01:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749087120; cv=none; b=YIztB08cIseFpZb/rRMJr51w9bUFl9Oc5gmuyrJVpEYHxUN1tlOaYRTq3ngNMtrnyPQQD4InKe3IZCLSeOuBGMK33lzxGS3S4uMI4S9y/z9Wip/jHHObmiZ3I40uNxlkAosparbPqBESyvZuambRWzAwWnVDJgQbQiyBEFgg1c0=
+	t=1749087354; cv=none; b=aDfb+Ugw7K0v0ANbvxa7K/HbCGX8LVDXKICu/P4JXVrH+r0ffe5w+V3Z18jjOAmbjovWhK/xGEStji/DfTdGyK5u4dcNWJtWAUpetBK1ev8XAaC5o5k4Jvbi61YKdSyBiSQcThK+w7N+pm7T4372Lv3Z4ZBmXv/mwRbb5ez3mzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749087120; c=relaxed/simple;
-	bh=Dg7Ex8I2Bb9eye9p3DvMfPJ/1GpGNmk3H2QJunCp9SQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=d7OXixedDKY87q1ka69hLyDhNR985Xdwuflegc5d010NZGa+QeD1Ko0CixNU0yiy3tyh9KUxvH8LO2U/hyjvGdxrrvaWPegXAHZsadDY3Ym/MxxWtJhqAA6glgYGICBAkCt0rrtQ5wBj7BnFyXHfLUx/6YlbMw+k9Lq5dAJcCc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cLsb/uA6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749087118; x=1780623118;
-  h=date:from:to:cc:subject:message-id;
-  bh=Dg7Ex8I2Bb9eye9p3DvMfPJ/1GpGNmk3H2QJunCp9SQ=;
-  b=cLsb/uA6NyRC+t39K+BwH2I+iK7S7uO91NL9VJnjExmyDHwuGs+uWhh1
-   Gco3N3Ps8Cj+u1I6hKy4bW44DWck8AFjGADpiPV5bUJmyVUwO1+uSFq/F
-   PG7Nq6akmdysiE8t8vVDy832SOcFCUyi5jG9R9kJcsY3lfFHj5nvBiPFD
-   w+durY/5Eu7uJM1zHD+VeGCJqY9w5bdmrkY14JrVjMhiqkCJjCeACI9yF
-   uu081CpTRJXsTwWjBQCEEIveipRT/6CAdn7CMAKObjhrmdqpbmkqhsm1z
-   6C0Rus9YF2haL5bXsvnV6ahx6uE8s1RAw/qZBzaMcObzIHso1QpNsVJmp
-   Q==;
-X-CSE-ConnectionGUID: tlV08wDaQsKTN482qk2EXA==
-X-CSE-MsgGUID: 4vPkWRuwRLuTUkWliZ9nPQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="51108714"
-X-IronPort-AV: E=Sophos;i="6.16,210,1744095600"; 
-   d="scan'208";a="51108714"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 18:31:57 -0700
-X-CSE-ConnectionGUID: xki37QsnTC2PJHoJHFUJ0w==
-X-CSE-MsgGUID: YU1WHzMjR1u1xpW0pupJCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,210,1744095600"; 
-   d="scan'208";a="145244715"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 04 Jun 2025 18:31:55 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uMzST-0003b0-0k;
-	Thu, 05 Jun 2025 01:31:53 +0000
-Date: Thu, 05 Jun 2025 09:31:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 166cdd887dd119068a97213ba22a5bab7a910b7f
-Message-ID: <202506050921.o5xkBHO3-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1749087354; c=relaxed/simple;
+	bh=4RXk8f8EkB/3oJ32sdPfocuVh+q/Yys+CY6YmDBvtLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ueCHfJFDYkUU69qVb7/iiBOAjghYI65VtBn/qONbwFM0/1WkgJSh3m5YywUW61H6RyRk6y0aj4jRI8Xc8XLO37LmLGiOPWIGI30WICnfAK4QuD8rsOzjixsKU1eIOA1PQdcr/1h3X0eE5wM5FSqE79KE2EHh4AUKs4S+ztYo0k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/DaLJDm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396B7C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 01:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749087354;
+	bh=4RXk8f8EkB/3oJ32sdPfocuVh+q/Yys+CY6YmDBvtLI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=t/DaLJDm7Bbztq4ZSQgSfTbEQ2CeZyyEuXbb51PKmE6YxJ+DaiK87EIsb8tfnSB78
+	 VUMfRZ5JO2xKG76cEh+c263tK+vI4N/nLYfm0KdUKSVFLa49GTHtYEzMf5JAsdpIes
+	 Fw18uQPqoJ/Fk3sqXpY81rVtMJl5u6QuVacFLXL4x4cCt1nQQztJD8wGFGzs/U8w/k
+	 VL1cKwROIC4+A/DlSj3bLmJIHqZXXOajXPyxhnuqEOImpEoMvyzfxUeoeR+WZ3qXG3
+	 Bfw5uu9LJD2fmBdkWV2BafFx0syvqG2vpaUZu+Eui35C0cGBQdUWWEQwgbudZbAnog
+	 NTQ1eQf5KCTTA==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-602e203db66so732130a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 18:35:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX0zdste7RXwSvArkxLLO16JUdrvYEgvBtQN+9mScB07CGS38vZcg8hNMh3RfKRyH6gjh3K8DYs5ZO4SDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzxVw+mEP25L1rcxjEW7gxjDN9o0XSj7+JmA2GwK3eKaLIe4ui
+	ajRzDMtsqjFyS01zHybQTGIFslIWNr7aExjKLTVvWkSi6zIPaR44DIBDdSLuPF1Y7Cz7TYqQtd7
+	SdK6863joupQ5/fgDlG+Ngu4auM9Aun0=
+X-Google-Smtp-Source: AGHT+IH4UnRqhPWLuPo2FSLiR1pJcQVvNb1gSqgjVarPI/UAaFyvX1m2wjEm2/UyOAI7UXmspLHHTfnWNdDqdkF7A2E=
+X-Received: by 2002:a05:6402:1ecf:b0:5ec:c990:b578 with SMTP id
+ 4fb4d7f45d1cf-606e9694034mr4945973a12.19.1749087352757; Wed, 04 Jun 2025
+ 18:35:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250526065512.13215-1-zhangtianyang@loongson.cn>
+ <1876bf9a-a77d-40a5-bedd-643df939bfbf@linux.dev> <93915902-0a91-921f-1953-b35f1742efb6@loongson.cn>
+In-Reply-To: <93915902-0a91-921f-1953-b35f1742efb6@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 5 Jun 2025 09:35:42 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4_ERm8cZ-Xzeie2wkZKi5VVCT3qi5xeuRTYQvMYC=pTg@mail.gmail.com>
+X-Gm-Features: AX0GCFtdFyvzZPZ5giLq09aBpz7LpbU3m5nyunlEN9HUMd3phao4bf-Hy8Y02TE
+Message-ID: <CAAhV-H4_ERm8cZ-Xzeie2wkZKi5VVCT3qi5xeuRTYQvMYC=pTg@mail.gmail.com>
+Subject: Re: [PATCH] Loongarch:Fixed up panic cause by a NULL-pmd
+To: Tianyang Zhang <zhangtianyang@loongson.cn>
+Cc: Yanteng Si <si.yanteng@linux.dev>, kernel@xen0n.name, zhanghongchen@loongson.cn, 
+	wangming01@loongson.cn, peterx@redhat.com, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 166cdd887dd119068a97213ba22a5bab7a910b7f  Merge branch into tip/master: 'x86/sgx'
+On Thu, Jun 5, 2025 at 9:17=E2=80=AFAM Tianyang Zhang <zhangtianyang@loongs=
+on.cn> wrote:
+>
+> Hi, Yanteng
+>
+> =E5=9C=A8 2025/5/27 =E4=B8=8B=E5=8D=881:47, Yanteng Si =E5=86=99=E9=81=93=
+:
+> > =E5=9C=A8 5/26/25 2:55 PM, Tianyang Zhang =E5=86=99=E9=81=93:
+> >> From: zhangtianyang <zhangtianyang@loongson.cn>
+> >>
+> >> Fixes: bd51834d1cf6 ("LoongArch: Return NULL from huge_pte_offset()
+> >> for invalid PMD")
+> >> ERROR INFO:
+> >>
+> >> CPU 25 Unable to handle kernel paging request at virtual address 0x0
+> >>           ...
+> >>   Call Trace:
+> >>   [<900000000023c30c>] huge_pte_offset+0x3c/0x58
+> >>   [<900000000057fd4c>] hugetlb_follow_page_mask+0x74/0x438
+> >>   [<900000000051fee8>] __get_user_pages+0xe0/0x4c8
+> >>   [<9000000000522414>] faultin_page_range+0x84/0x380
+> >>   [<9000000000564e8c>] madvise_vma_behavior+0x534/0xa48
+> >>   [<900000000056689c>] do_madvise+0x1bc/0x3e8
+> >>   [<9000000000566df4>] sys_madvise+0x24/0x38
+> >>   [<90000000015b9e88>] do_syscall+0x78/0x98
+> >>   [<9000000000221f18>] handle_syscall+0xb8/0x158
+> >>
+> >
+> >> In some cases, pmd may be NULL and rely on NULL as the return value
+> >> for processing, so it is necessary to determine this situation here
+> >
+> > Your description is a bit vague. Could you please specify
+> > on which machines and in what scenarios this bug can be
+> > reproduced? I believe such information should be included
+> > in the commit message.
+> >
+> > Thanks,
+> > Yanteng
+>
+> Sorry for the late reply.
+>
+> I will provide more detailed information in the commit of the next patch
+I think this bug is not machine-specific, just provide something about
+the test program.
 
-elapsed time: 1126m
+Huacai
 
-configs tested: 29
-configs skipped: 133
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                            allnoconfig    gcc-15.1.0
-arc                              allnoconfig    gcc-15.1.0
-arm                              allnoconfig    gcc-15.1.0
-arm64                            allnoconfig    gcc-15.1.0
-csky                             allnoconfig    gcc-15.1.0
-hexagon                          allnoconfig    gcc-15.1.0
-i386                            allmodconfig    gcc-12
-i386                             allnoconfig    gcc-12
-i386                            allyesconfig    gcc-12
-i386       buildonly-randconfig-001-20250604    clang-20
-i386       buildonly-randconfig-002-20250604    gcc-12
-i386       buildonly-randconfig-003-20250604    gcc-12
-i386       buildonly-randconfig-004-20250604    gcc-12
-i386       buildonly-randconfig-005-20250604    clang-20
-i386       buildonly-randconfig-006-20250604    gcc-12
-i386                               defconfig    clang-20
-loongarch                        allnoconfig    gcc-15.1.0
-x86_64                           allnoconfig    clang-20
-x86_64                          allyesconfig    clang-20
-x86_64     buildonly-randconfig-001-20250604    gcc-12
-x86_64     buildonly-randconfig-002-20250604    gcc-12
-x86_64     buildonly-randconfig-003-20250604    gcc-12
-x86_64     buildonly-randconfig-004-20250604    gcc-12
-x86_64     buildonly-randconfig-005-20250604    gcc-12
-x86_64     buildonly-randconfig-006-20250604    clang-20
-x86_64                             defconfig    gcc-11
-x86_64                                 kexec    clang-20
-x86_64                              rhel-9.4    clang-20
-x86_64                         rhel-9.4-rust    clang-18
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Thanks
+>
+> Tianyang
+>
 
