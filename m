@@ -1,164 +1,279 @@
-Return-Path: <linux-kernel+bounces-674026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF044ACE8E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 06:09:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CC6ACE8DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 06:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435D03A9205
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 04:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9FFD7A6C81
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 04:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF97A202C30;
-	Thu,  5 Jun 2025 04:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CB61F4C96;
+	Thu,  5 Jun 2025 04:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="ZL3s7Jij"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UI2nK91j"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF38C1FF1C9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 04:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B721136E
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 04:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749096545; cv=none; b=nwK31dnO1mDsfBkCMfM2LP+gn4hjGT7vNM6+iBgF+U7WNjWu6gVwsQQwnHzTFoKAsbrpq1x/iWrRJ/S5XMyF1o2UXfCFDi4etiKqUlnAgPLgEyRSVNLEgaKaiTZjYakyaUepWcq5+F09TeKpYl1mIjUMpynRQQ5stvfSSkjaaIo=
+	t=1749096481; cv=none; b=apCXsN/Uu4OrFA8cznRdjtP28tnDQ54kV0G6jUlVRXjmhvJH1GSifetcg0yD0qI4eFemzFWpGkyczv9jHWCprxl1qU1rfo+B9rRyEn/EPnQmuaoZEecP/hPsgps1RwjIIxirzs/o5nk69YFmBQObmhnlDEXBP1/OzhPktCKcrB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749096545; c=relaxed/simple;
-	bh=Du3nF+4TgAoVorAuFPh7JS2xEyp8iEm1n0JyZQ91gOw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sIjBZjLdBb5ELOzSafugMNZNoHs9s+3V23GH4NL0Wzol02dMb0bM2Ck6iw7x8TpOSPHyMnadW0YnDjqMG356ejapshylGa1ePuYzNfLZ6i6EQIO7Sld8pGoRL32Uihepg6TpsyB/AEO1hGxHzE7wELuUy7UOkymUHyevEFhQDHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=ZL3s7Jij; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742c2ed0fe1so607318b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 21:09:02 -0700 (PDT)
+	s=arc-20240116; t=1749096481; c=relaxed/simple;
+	bh=JlZa1MR3jqRKxiFr4tenQ3861maa561Y0IEGxPqSOQI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qsz5yMGGizSOyUVZdXs0VgGZdB6kq+Z9+n2yh7EWGKkd9aUHt70lo0WIPn7SR5T57303BDdtZX4GxOPZjED1x8xtzgche3LXu9+iXAmKquEOdPv82ToMk7JnP7LsshhxH9F27IB2S8/RfGiJKdvF8E6TmQslnZgd0n/BBobb36U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UI2nK91j; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4e6a0c274so70101f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 21:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=inventec.com; s=google; t=1749096542; x=1749701342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749096478; x=1749701278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PX//QoBGHGr5lY3j3Fpx+uZHdmH7HbmvrluHo6+r6xo=;
-        b=ZL3s7JijpBHSJjY37LY10NFS3IkO55lREIVNBcpWzhi1E408kmDTHs+bc1wAizsL+m
-         5CBbGJUlLM4KiayAZprriu4IeuYuCtOhro/xIL/sjs6ma0PpGMei/1jcZM9JcJ6teLtg
-         LOLVFEXHhDxOlBUlTp3UN9zojC9ISr9zeMmYE0lUf6z1wf1pdyBO1c0dqo/N10ZStFN3
-         mI1IyWLZEygmacI5ZNeJgk7fBmuR3fECHYACYB6ZWPYHyoKODtBkVH1ywv0GSuvnk6KW
-         FGLB5CEl/Vkl55iARr9DYKbu2PqexsQT8FGVRbwuZYj7bdFOr3YCUZ2yqA9yzg7q05Du
-         q/Fw==
+        bh=AJhyl/czqq/y4sUsvxlz8289DMHwxFEsMSCXaocVBpY=;
+        b=UI2nK91jNhT3GAH6zFkxdkHfzxRw49msTpfjsPQEmzFq69OdFDzvI18snk/Eg3SDYb
+         M2/IoJEMmTRg2CLRwM1rWmmxtOHMzyWjzePqNsD7ktVRvMP6c6V/DqAy59uAopb8oHFa
+         qw7EGx/k2FbDA5GXn+1DYqKhyZdLdCE3sVwVd+gMQkSVhvLwpwB6OS2zB7UbagB4qwvf
+         uTaMmndVccDmTKD+Mi0im+w0EHCF1aUTzuNHdfkkk/TFnySxyGkYn+mSLDXohRbJfYQ4
+         eHUlRmL/12BrDSBNZFmnjgrkwHLDQJ+XqRRCOQx/J3OO1THe1ighQ+wP89so+1JgzP4j
+         ZUVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749096542; x=1749701342;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749096478; x=1749701278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PX//QoBGHGr5lY3j3Fpx+uZHdmH7HbmvrluHo6+r6xo=;
-        b=rI9w/9ozHg6bR8etUiReHdIYHpaxYuEVSSwnh5AzdONvMalgiY/iLCWRcke4r7L+j7
-         QxIGAcMbp7UH+S+nbGKdTajRh2X70dhNQAT87TMnod+JO7KKoa+dKPI1TF8ohiOeajLN
-         9j5WaCpKWxHGhye7NrTwgZkQTn30/5/P415EzT6eWKtyczRxUplHnuD3OrRYSyj4dTlB
-         yumYyx99j54Y0mw8FZmxYPnyszubCU2ycW6Aa72L7O5ewZd2GC73t69lVmZ5MoAmdtLr
-         Hfb2JO6ZLUp99SlB6M3esTVcyyeY6NeOMxVGcG/FhGfWDVqljSgTpJx+0HLAoovVCzDO
-         dHdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCMx8WiU1bNWcDTif71Ry3pxcby65fuQN7mTRh1MP8tqxq1feXl3D09cuAb3bggk2ZB70KS0QsYcqx35s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWyha1lsrEWJXsvWdu40df7mydw4CCOSoGCTfJaI9P/o0h+suS
-	Ai7v+GXSoFm8nmTJRll13uK2WHAFKsQ+KA3TKbHX5YTvWjEcWaLPdDmToNJacJ4eOLQ=
-X-Gm-Gg: ASbGncuG8gVESjcNIF9YlCnljZk64NB00Zy98nSpiglGU5HntgiFB939KAx3/phgKXg
-	3gUm3wW/CEQUbR4PHLs1DT5xVVyX+4QU4dwNMa/1xFw1VaJcERp0VQZPzI/z6FhR8XpZMrmwz4Z
-	tH4LdCyBUGQgyhag8kQQW4ljH7gk4gwZyzMFY/ZKT6N55uSx8T3HNzLWAyTHH+ne8PcPHoX3dGM
-	Y//etePlrbvtYKJnSEL6li7tDv2u53CIgBk5z9aI/9SuleinbWptqMWi3Eweaa9BiAxd4EgwkiL
-	AfxkvUFtF1GiE1v8xP9tINJwU1/q0n1SexayZrp9PU1UJ9QDEhLWa1glzUl+uzsA/6SkqEQlISo
-	HiE9m8KykJpBrttO0N4XYL9UVCBkrSw==
-X-Google-Smtp-Source: AGHT+IGFn4s+BWHMZpFajqhE9M4XL5w1WKIteuwhvPtoIG8N5fx8W5N53z/3lQF0q6Q5jNGNoeQXng==
-X-Received: by 2002:a05:6a20:4325:b0:1f5:8622:5ed5 with SMTP id adf61e73a8af0-21d22b46de9mr8166458637.3.1749096542055;
-        Wed, 04 Jun 2025 21:09:02 -0700 (PDT)
-Received: from localhost.localdomain (60-248-18-139.hinet-ip.hinet.net. [60.248.18.139])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2eceb029fbsm9480924a12.13.2025.06.04.21.08.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 21:09:01 -0700 (PDT)
-From: Chiang Brian <chiang.brian@inventec.com>
-To: chiang.brian@inventec.com
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	geert+renesas@glider.be,
-	grant.peltier.jg@renesas.com,
-	jdelvare@suse.com,
-	krzk+dt@kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux@roeck-us.net,
-	robh@kernel.org
-Subject: [PATCH v5 2/2] hwmon: (pmbus/isl68137) Add support for RAA229621
-Date: Thu,  5 Jun 2025 12:01:34 +0800
-Message-Id: <20250605040134.4012199-3-chiang.brian@inventec.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250605040134.4012199-1-chiang.brian@inventec.com>
-References: <20250605040134.4012199-1-chiang.brian@inventec.com>
+        bh=AJhyl/czqq/y4sUsvxlz8289DMHwxFEsMSCXaocVBpY=;
+        b=Xg3eEQSEwwx0hTnjZ5ZMnXBFNKSo9/uWf+xNCdPh6dqHauJGpT4VOqecpKQv0lUh2E
+         lgTdLHJVfBO7F7P/HnAfzjx7eBOsXLXx481dyv7Mzv7NUsH2VVOcs99MO4sXpWfNNYv4
+         IuSd53LkCR+9TfdB2vxz+7+LZigFK1m4xaWsT2s4NbaKScLlJ1AEDbMkypidpDLih52Z
+         z+Z5XTmnvxmxyP585JxjZXGGHKb/C0OQo8tSOL1+MTKjWrS3axHFtVFZ3Y9m7W7uO1Ab
+         bCWGeoEmuwAMaj1poqoe8MDNJdFsN96gGJTpzedPlzSgPtp4ssWwDuVahqq+b6i63ZXf
+         RzXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhERcFd3p7iEu1IYMGhshSeG2+tLlnixNUJuxzNAKLeZoPAW5ajyjfRrSDXU1jkvVi6a5zngY3qfz9x/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsT3/BPNUKfC+p+Y3MN5Qw9KUXIvg4K2yDeaGRa2BeFhkl+deO
+	t79nRpevgUPfpJMP8TFw2Y10pcGkBG5p9Z8PNJ/bpIL1T6Z/8+MnbVK+XVQ+npQXCfGR28UnQe0
+	HHBWp5LsNw4fYbxx0BkajBa8VKleqcnk=
+X-Gm-Gg: ASbGncuOqCvZQPwvN4iz/llmp60n3WR2SJ+sAX/CldA2/6NQOD0gsWj/MrkcsbR+8PA
+	RM9XuYnyIXOaZbdd5crhZqMcTPjPSRQ/vlp++OmGac/OelcFGNTs3YoJCEcExXjfL5F2x7DPZna
+	CKtsjSA2uZ9EcMp05/GXGK7buRZEIoIahAlg==
+X-Google-Smtp-Source: AGHT+IEmSPI8KqN59ZHEnT3BHsvJbXgMvTKfY3B5/UO28d/mt5dsmTQN6OMmkCQtPB+7dk8uSTqbIiCnW/RzrE4TtXw=
+X-Received: by 2002:a05:600c:1382:b0:439:9a40:aa1a with SMTP id
+ 5b1f17b1804b1-451f0b27b92mr16707885e9.6.1749096477341; Wed, 04 Jun 2025
+ 21:07:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250605032633.2744434-1-chao@kernel.org>
+In-Reply-To: <20250605032633.2744434-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Thu, 5 Jun 2025 12:07:46 +0800
+X-Gm-Features: AX0GCFvpfdoBjZVRPiDxdtYK7pUi7tY4Ahdm2d2v_lWBBaFvMYKpaLHo_lYMFKs
+Message-ID: <CAHJ8P3KmB+TocruTThpTe-YE3LH-uZ7_w_GrHqSV0B-PWwwMjg@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix to zero post-eof page
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, stable@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The RAA229621 is a digital dual output multiphase (X+Y <= 8) PWM controller
-designed to be compliant with AMD SVI3 specifications, targeting VDDCR_CPU 
-and VDDCR_SOC rails.
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2025=E5=B9=B46=E6=9C=885=E6=97=A5=E5=91=A8=E5=9B=9B 11:29=E5=86=99=
+=E9=81=93=EF=BC=9A
+>
+> fstest reports a f2fs bug:
+>
+> generic/363 42s ... [failed, exit status 1]- output mismatch (see /share/=
+git/fstests/results//generic/363.out.bad)
+>     --- tests/generic/363.out   2025-01-12 21:57:40.271440542 +0800
+>     +++ /share/git/fstests/results//generic/363.out.bad 2025-05-19 19:55:=
+58.000000000 +0800
+>     @@ -1,2 +1,78 @@
+>      QA output created by 363
+>      fsx -q -S 0 -e 1 -N 100000
+>     +READ BAD DATA: offset =3D 0xd6fb, size =3D 0xf044, fname =3D /mnt/f2=
+fs/junk
+>     +OFFSET      GOOD    BAD     RANGE
+>     +0x1540d     0x0000  0x2a25  0x0
+>     +operation# (mod 256) for the bad data may be 37
+>     +0x1540e     0x0000  0x2527  0x1
+>     ...
+>     (Run 'diff -u /share/git/fstests/tests/generic/363.out /share/git/fst=
+ests/results//generic/363.out.bad'  to see the entire diff)
+> Ran: generic/363
+> Failures: generic/363
+> Failed 1 of 1 tests
+>
+> The root cause is user can update post-eof page via mmap [1], however, f2=
+fs
+> missed to zero post-eof page in below operations, so, once it expands i_s=
+ize,
+> then it will include dummy data locates previous post-eof page, so during
+> below operations, we need to zero post-eof page.
+>
+> Operations which can include dummy data after previous i_size after expan=
+ding
+> i_size:
+> - write
+> - mapwrite [1]
+> - truncate
+> - fallocate
+>  * preallocate
+>  * zero_range
+>  * insert_range
+>  * collapse_range
+> - clone_range (doesn=E2=80=99t support in f2fs)
+> - copy_range (doesn=E2=80=99t support in f2fs)
+>
+> [1] https://man7.org/linux/man-pages/man2/mmap.2.html 'BUG section'
+>
+> Cc: stable@kernel.org
+> Signed-off-by: Chao Yu <chao@kernel.org>
 
-Add support for it to the isl68137 driver.
-
-Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
----
-v4 -> v5:
-- Wrap commit message body at 75 columns
-- Remove the incorrect description about dependency of dt-bindings
-- Link to v4: https://lore.kernel.org/all/20250602050415.848112-3-chiang.brian@inventec.com/
-
-v3 -> v4:
-- Add Changelog
-- Remove unnecessary "From" tag
-- Link to v3: https://lore.kernel.org/all/20250303083537.3312250-1-chiang.brian@inventec.corp-partner.google.com/
-
-v2 -> v3:
-- Fix the corrupted patch by sending plain text email
-- Link to v2: https://lore.kernel.org/all/CAJCfHmWJ9N1R8x6ikU02_RYq9ieq6yWY7CGdfvc4hRqHnX5szg@mail.gmail.com/
-
-v1 -> v2:
-- Modify subject and description to meet requirements
-- Remove the override of isl68137_probe
-- Add the of_match between raa229621 and raa_dmpvr2_2rail
-- Link to v1: https://lore.kernel.org/all/CAJCfHmXm-fPD70uN-mNJdJkzf9B526y8p=Jh5E+W5cwJ0NVhEQ@mail.gmail.com/
-
- drivers/hwmon/pmbus/isl68137.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/hwmon/pmbus/isl68137.c b/drivers/hwmon/pmbus/isl68137.c
-index 2af921039309..c52c55d2e7f4 100644
---- a/drivers/hwmon/pmbus/isl68137.c
-+++ b/drivers/hwmon/pmbus/isl68137.c
-@@ -63,6 +63,7 @@ enum chips {
- 	raa228228,
- 	raa229001,
- 	raa229004,
-+	raa229621,
- };
- 
- enum variants {
-@@ -465,6 +466,7 @@ static const struct i2c_device_id raa_dmpvr_id[] = {
- 	{"raa228228", raa_dmpvr2_2rail_nontc},
- 	{"raa229001", raa_dmpvr2_2rail},
- 	{"raa229004", raa_dmpvr2_2rail},
-+	{"raa229621", raa_dmpvr2_2rail},
- 	{}
- };
- 
-@@ -512,6 +514,7 @@ static const struct of_device_id isl68137_of_match[] = {
- 	{ .compatible = "renesas,raa228228", .data = (void *)raa_dmpvr2_2rail_nontc },
- 	{ .compatible = "renesas,raa229001", .data = (void *)raa_dmpvr2_2rail },
- 	{ .compatible = "renesas,raa229004", .data = (void *)raa_dmpvr2_2rail },
-+	{ .compatible = "renesas,raa229621", .data = (void *)raa_dmpvr2_2rail },
- 	{ },
- };
- 
--- 
-2.25.1
-
+Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Thanks!
+> ---
+> v3:
+> - fix check condition in f2fs_zero_post_eof_page()
+> - fix wrong parameter passed from f2fs_setattr() to
+> - add a reference
+> f2fs_zero_post_eof_page()
+>  fs/f2fs/file.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 6bd3de64f2a8..696131e655ed 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -35,6 +35,17 @@
+>  #include <trace/events/f2fs.h>
+>  #include <uapi/linux/f2fs.h>
+>
+> +static void f2fs_zero_post_eof_page(struct inode *inode, loff_t new_size=
+)
+> +{
+> +       loff_t old_size =3D i_size_read(inode);
+> +
+> +       if (old_size >=3D new_size)
+> +               return;
+> +
+> +       /* zero or drop pages only in range of [old_size, new_size] */
+> +       truncate_pagecache(inode, old_size);
+> +}
+> +
+>  static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+>  {
+>         struct inode *inode =3D file_inode(vmf->vma->vm_file);
+> @@ -103,8 +114,13 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fau=
+lt *vmf)
+>
+>         f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+>
+> +       filemap_invalidate_lock(inode->i_mapping);
+> +       f2fs_zero_post_eof_page(inode, (folio->index + 1) << PAGE_SHIFT);
+> +       filemap_invalidate_unlock(inode->i_mapping);
+> +
+>         file_update_time(vmf->vma->vm_file);
+>         filemap_invalidate_lock_shared(inode->i_mapping);
+> +
+>         folio_lock(folio);
+>         if (unlikely(folio->mapping !=3D inode->i_mapping ||
+>                         folio_pos(folio) > i_size_read(inode) ||
+> @@ -1109,6 +1125,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct de=
+ntry *dentry,
+>                 f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
+>                 filemap_invalidate_lock(inode->i_mapping);
+>
+> +               if (attr->ia_size > old_size)
+> +                       f2fs_zero_post_eof_page(inode, attr->ia_size);
+>                 truncate_setsize(inode, attr->ia_size);
+>
+>                 if (attr->ia_size <=3D old_size)
+> @@ -1227,6 +1245,10 @@ static int f2fs_punch_hole(struct inode *inode, lo=
+ff_t offset, loff_t len)
+>         if (ret)
+>                 return ret;
+>
+> +       filemap_invalidate_lock(inode->i_mapping);
+> +       f2fs_zero_post_eof_page(inode, offset + len);
+> +       filemap_invalidate_unlock(inode->i_mapping);
+> +
+>         pg_start =3D ((unsigned long long) offset) >> PAGE_SHIFT;
+>         pg_end =3D ((unsigned long long) offset + len) >> PAGE_SHIFT;
+>
+> @@ -1510,6 +1532,8 @@ static int f2fs_do_collapse(struct inode *inode, lo=
+ff_t offset, loff_t len)
+>         f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>         filemap_invalidate_lock(inode->i_mapping);
+>
+> +       f2fs_zero_post_eof_page(inode, offset + len);
+> +
+>         f2fs_lock_op(sbi);
+>         f2fs_drop_extent_tree(inode);
+>         truncate_pagecache(inode, offset);
+> @@ -1631,6 +1655,10 @@ static int f2fs_zero_range(struct inode *inode, lo=
+ff_t offset, loff_t len,
+>         if (ret)
+>                 return ret;
+>
+> +       filemap_invalidate_lock(mapping);
+> +       f2fs_zero_post_eof_page(inode, offset + len);
+> +       filemap_invalidate_unlock(mapping);
+> +
+>         pg_start =3D ((unsigned long long) offset) >> PAGE_SHIFT;
+>         pg_end =3D ((unsigned long long) offset + len) >> PAGE_SHIFT;
+>
+> @@ -1762,6 +1790,8 @@ static int f2fs_insert_range(struct inode *inode, l=
+off_t offset, loff_t len)
+>         /* avoid gc operation during block exchange */
+>         f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>         filemap_invalidate_lock(mapping);
+> +
+> +       f2fs_zero_post_eof_page(inode, offset + len);
+>         truncate_pagecache(inode, offset);
+>
+>         while (!ret && idx > pg_start) {
+> @@ -1819,6 +1849,10 @@ static int f2fs_expand_inode_data(struct inode *in=
+ode, loff_t offset,
+>         if (err)
+>                 return err;
+>
+> +       filemap_invalidate_lock(inode->i_mapping);
+> +       f2fs_zero_post_eof_page(inode, offset + len);
+> +       filemap_invalidate_unlock(inode->i_mapping);
+> +
+>         f2fs_balance_fs(sbi, true);
+>
+>         pg_start =3D ((unsigned long long)offset) >> PAGE_SHIFT;
+> @@ -4860,6 +4894,10 @@ static ssize_t f2fs_write_checks(struct kiocb *ioc=
+b, struct iov_iter *from)
+>         err =3D file_modified(file);
+>         if (err)
+>                 return err;
+> +
+> +       filemap_invalidate_lock(inode->i_mapping);
+> +       f2fs_zero_post_eof_page(inode, iocb->ki_pos + iov_iter_count(from=
+));
+> +       filemap_invalidate_unlock(inode->i_mapping);
+>         return count;
+>  }
+>
+> --
+> 2.49.0
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
