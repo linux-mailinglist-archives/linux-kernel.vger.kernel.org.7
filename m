@@ -1,331 +1,291 @@
-Return-Path: <linux-kernel+bounces-674810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EFFACF4FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:06:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8461DACF4E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25EAA189D4B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6498D3AD5F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DC5277013;
-	Thu,  5 Jun 2025 17:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1783C275864;
+	Thu,  5 Jun 2025 17:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aax4s851"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gXaFU8lD"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D219276058
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 17:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199AE274FC2;
+	Thu,  5 Jun 2025 17:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749143126; cv=none; b=MmCBYrGO4u4KBc6FCKVsDR2umszvzvADWCazQRLM8VnI46Xt3ILzu/DhqRUmRj7pl5AJ9iQNALRXxaB8KMkXx1HvnCmGESU/qBX9UvLvk8LxFf5IglHS+eSncft7MExMh7EoWyPyW7RweFnlUsdetMPt0d1hX0IBkKplWu4z5T8=
+	t=1749143039; cv=none; b=kOqZbLHLwZNbp1RkhgeAZyRkus+Gif/Rrh0i9jftCPMTEPlpDDfpPy4FhEsGo0TLjzAqRhugqpcWmiYcdxhwOkg4m8tlnWjfFFWReQhpYNHI6DvRX+k8Rv3VT7rDUe+m9TmWk95iPcJoM3xYbjQNs+d7flW0DEC4TAN+4pInVoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749143126; c=relaxed/simple;
-	bh=819nSBPoIuWMydruyeOciA20s0lPu+TSZhECeNKmWZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A++ocl8M11K/A5wMjisazeCy8whSsqXylL0luTw3ywwoIsUbugwNsozvclmW1RV6KHGwaqc9sOcgZehYWPCpjc1qyzF23IqlktPWI4DqFFQAE6P1XALdnaeB1zjpUUMNDr+zcorQVZ32SO1cyEgN+Jd4YZhpoXNDqTDieyerMZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aax4s851; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55598xf2016027
-	for <linux-kernel@vger.kernel.org>; Thu, 5 Jun 2025 17:05:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=EbkEQB58Ld4nL18JV6VryQl6iNajcUl8L84
-	E7nzQctY=; b=aax4s85163gigXOSCZo619XDaKDt2qlpNzNsSo6iIDinkkkA9XR
-	7N0tEUSYs468CyM/SiPAVXrv/8/tFNOW0ua1CKRACVnsO3Jaz08IfJTcJOx4jevv
-	wiLmSUf00tacOdChRGW3NVNOdtRuBOl5EuwdU9kZe3uez0svHNgm+vLi76Jb0yvP
-	EVMgSBLXnftYBeKl2gUzx6uNuhYnSFQ8BjRMfvKbOLewvddx4CJZ+Oc9HVgBcKDR
-	K1ouMASrQxWy8wI3lvYTNqX8AniBEeAIGy3s2M38l3LupsooqHZTVFq0JB5ZA/3S
-	QwQ9vixeP1o31tTmwpgzODijGlgBKJbdabw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 472be85sce-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 17:05:23 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3122368d82bso1860354a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 10:05:23 -0700 (PDT)
+	s=arc-20240116; t=1749143039; c=relaxed/simple;
+	bh=RXJ2bhB++ekpp+g5wU/mlsuiZBxchp5iRzfW6p4lPv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L5ZifV7YfEHTabH9CN9peqjEZeW8+PJCaBzLN/hOEf/SP4JAEuEwhpVN0m4iKfcmOd7MmUxx93Y1InhQdEtgTBRn5GVm7JIw4m0ZlJ80ilE83SbO86yc/m/0lCgmRR04o6mjHi6etB6/fL2DcXy5NqklqF8jOWqq8PvNIFnA+9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gXaFU8lD; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ad93ff9f714so201234966b.2;
+        Thu, 05 Jun 2025 10:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749143035; x=1749747835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vc9h3N4L8wdtAazwz7x66wCAf7y1keOjKnFs7I8c9Y8=;
+        b=gXaFU8lDC+xNiAR488bmjKIJpkFuSqKJdxQQEeEOCXNqz+hrvL8UkzoItu2wWUZwFo
+         E60cbMGhA0Jp9mURgI7IeCnhS+RtN6zTtI16yHLnjEqjlx7721v3n71qlXF9iPqGg1RP
+         I5BisnrCjnDDO7cPQfiU6wugvLOWAiNgrJiO5+5AcGnGwt1PKIzrMh+E4otlZ16X644W
+         HVF8tbfKu1tuicfHiJXqwU1mM8cU3ulxVkRLYfsC5gQRDe6B+jHb86oOvBpwAzc6tgGZ
+         BRbneR0IbfwO/w3jtGGAh4MGo8L7QemnYiNJ4xSCKSzj+p7Bflb8kF0prpaRq39lSYyN
+         scgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749143122; x=1749747922;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EbkEQB58Ld4nL18JV6VryQl6iNajcUl8L84E7nzQctY=;
-        b=XNvfjl/pXymUOB+o5WBtXOZxCpW7R9sA/3/B5LBbWVaC5z2ZnmsxhmWELI4r+Z0c0r
-         fDCA18Svsz1I1uE/C38AaVJolJd9CAnH6iTbC2yTFScVSKw45c99XTF+ZT/wc1p9iQXH
-         N9RZ3rEjnhTshzqOxd5yQ5rrfu3AR21+y2kJAjacV1FP8qd/oqQS7GV93lLp7J01clBz
-         BFl4fdZyBlcIpNNxaT+UXzmK3aK0ncb1xe+9LlBEek/JJriXBMVgSPL2iUm/n+ea7e5T
-         9CeGnPhmc9C13h17g3kcrBNSI9Vsw+ALBQzkQzIhpswp15e7YOm+36Gy1tDOGL4UezWK
-         reNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYaG9thSVdaWols6KLIMAPaHy3vIEqaTgKIPq49Q8Fq12C87ATTaBFTjULRF02jrQsQ9sy9An/wTe+4LU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAeZiof+p4BTXu1in04E7VIXtH9zv/yS0pUvYig0GGuKRee+N1
-	ats/MIxzIeI4Wn/oRJ0g44ERfon6whwsNF+8lvFmHldu5lruHSRDnxvhH8rQKALDYY6pfhLtmAB
-	rYpLCQHB5ki9IdsHPXlBSVR+z/CpscpK+hGzI9409IFsUaoamvtxTlgGImzHsyjtRAWI=
-X-Gm-Gg: ASbGncuCPeus6Kqge+G/QxFGXH7rBF7NgkUAobywdNsiVKq6KmpxbPbD6lE2ReZe83s
-	f/62W6iu8RBUStp6AmHpgkqcyU/n4RSul8piJKpUA865i7s+GPH+XMJznK6/fLoCDGhsgknwk7O
-	kkf3QRw+5LnIzvF8VbykB8wJg3nu8qWprkOV+y/0WVX2dK5DmLj3AEz9MGnOdbsJh2CECuBhMMP
-	ILosDn75aV5j6btN7sruLA2gmJwJHjrAeY9aSBOq+dD4HZYNio6KWdcm9iYTxugApKp3uolTDY/
-	gX/f7F9POc76h0c6WYpsZw==
-X-Received: by 2002:a17:90b:3c8b:b0:311:f99e:7f4a with SMTP id 98e67ed59e1d1-313476822a8mr553655a91.26.1749143122127;
-        Thu, 05 Jun 2025 10:05:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFPJUfGbJeepthRjlidQ5BtvtcAZ1b5FdMU7vtyVPeWNPG8V6k9gBXP8rxjS/GImIe6wJ3m7Q==
-X-Received: by 2002:a17:90b:3c8b:b0:311:f99e:7f4a with SMTP id 98e67ed59e1d1-313476822a8mr553575a91.26.1749143121480;
-        Thu, 05 Jun 2025 10:05:21 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:89fa:e299:1a34:c1f5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313318e6932sm1544185a91.5.2025.06.05.10.05.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 10:05:21 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: robdclark@gmail.com, rob.clark@oss.qualcomm.com
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
-        Eugene Lepshy <fekz115@gmail.com>,
-        freedreno@lists.freedesktop.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>, Jun Nie <jun.nie@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER for Qualcomm Adreno GPUs),
-        linux-kernel@vger.kernel.org (open list),
-        linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maxime Ripard <mripard@kernel.org>, Sean Paul <sean@poorly.run>,
-        Simona Vetter <simona@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v6 00/40] drm/msm: sparse / "VM_BIND" support
-Date: Thu,  5 Jun 2025 10:03:26 -0700
-Message-ID: <20250605170436.158386-1-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1749143035; x=1749747835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vc9h3N4L8wdtAazwz7x66wCAf7y1keOjKnFs7I8c9Y8=;
+        b=Ftd1iNUb2l9saSz2AkIDKQUUswCuqd7RtVyp/6yrRseM6chUtonUFXMH4i8KumG41B
+         95rnxMzKNP/VlYVTf8OU5Q4NDl5gpY5iXoaAnB8bzTjlJKwNv1Hvnn8Z6eejCesbWOph
+         aUM4hT+NWR7mJ29yY8EBuNuPLgMjlbcfd7LTCenMxFUPm4n+7uAnutzmi/BVhkxP2jYb
+         zo8Xk4+aXdcTNOGPu+l5HhENj7dpwKvGHfPzcRDGKQ22vkvYJ4/t0WkltFeVB4tiN4QC
+         83bGXdmVcP6BIWtdJVFqH6rqdUZjn0BrmqxgMZPdH3s8W5vcMJHdZX24wy8hOdsebidH
+         KqYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpS/yjNzuJJAHG0CzlmUso9W113Bwmv6RPHlwIWpjkwFCFCWCp3Dc4y2sk9Oe4w2hB1f+W+q3XaVTJMMBivA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWdtso5CKK1O2AIdVi+XeUOWjZoEjnCsR28gATbJie9EjquSvq
+	0h/RviykypVfqwPaNJhfTSqhjtvLSwz7wTtMR5riQGMTihJVCpWXroAS
+X-Gm-Gg: ASbGncs89PYzYG9ny+Ek8gvwZTufGE1BilHLliHheGNu34TZFLNWXC6THVd9QPMVxoS
+	VHUgu+pgRvuwEpTcRKfzo1GAJApjmZyJozsuktPVibgA6ZrtOtEYEzhCYOhbWlzaMG/nxpR3SFC
+	qXDaG8F+HaY9Jj0PZJu0YQZHSxUe/NV/y3BGio3gO9hO2nrSZKOuOKy09i9frhRROcj7FxgtcAS
+	3h7+NKWMHvY29QvwBULaRtIMDjoVYTJAeeKh+NetKyzEWNoV/rHqebc220jFPHjyxf/oaOXmY31
+	lQuUTQMdwe1XZN5yyaAoKVAS6f0oNoajn59B1udYl5IzUSPKl5W0WRWf8AjmEgTHVFlr/Hk=
+X-Google-Smtp-Source: AGHT+IGrLnLeZBwGuxAvClJF7twaYSOSuOrRWBB4JEpKXwF+Y4tHGOWY+eeHT2vK/tA8JOXrMWFq1Q==
+X-Received: by 2002:a17:906:c113:b0:ad8:adbc:bbf6 with SMTP id a640c23a62f3a-addf8ff6f75mr765904766b.58.1749143025633;
+        Thu, 05 Jun 2025 10:03:45 -0700 (PDT)
+Received: from [10.5.1.144] ([193.170.134.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade0964136fsm157554766b.180.2025.06.05.10.03.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Jun 2025 10:03:45 -0700 (PDT)
+Message-ID: <1553eea9-9ced-410a-b6e7-886e11e2edba@gmail.com>
+Date: Thu, 5 Jun 2025 19:03:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] rust: add UnsafePinned type
+To: Sky <sky@sky9.dev>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250511-rust_unsafe_pinned-v4-0-a86c32e47e3d@gmail.com>
+ <20250511-rust_unsafe_pinned-v4-1-a86c32e47e3d@gmail.com>
+Content-Language: en-US, de-DE
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <20250511-rust_unsafe_pinned-v4-1-a86c32e47e3d@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=bNYWIO+Z c=1 sm=1 tr=0 ts=6841ce53 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
- a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=zBYVM8QCAAAA:8
- a=ajksXRGWIgAGF9WJ9h0A:9 a=eVM1_HBmYRkA:10 a=YgSuLXRpIuYA:10
- a=te1wHPZ5H10A:10 a=rl5im9kqc5Lf4LNbBjHf:22 a=Vxmtnl_E_bksehYqCbjh:22
- a=ArXkYGXkE6hBHcUMFODu:22
-X-Proofpoint-GUID: Gxz8j6aVGeI9UnaFusi3_2YYXjCCD_bT
-X-Proofpoint-ORIG-GUID: Gxz8j6aVGeI9UnaFusi3_2YYXjCCD_bT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE1MSBTYWx0ZWRfXy+oGeP0sjJVr
- 0IDZsrPaWMXMphtmXSJmcT9vsuQKQeNGclYi+PSZqGeZBZzK4GTR8k0j4lbVMXQBuDuO5bAJxER
- pxvf9NTh5NtsmfK9zcXv5/S48anB0OoQ1TWuyTblo9ovxN8FMGDd6ZlIBTZMF7DcV8D3RfIUNUL
- r7qgxidKXoJlRKbeaZCfnhnl5OTmtBpH8zRmo/ulnVh+U1IHtB04XRZ47wDJYeN858kM4ADDCwf
- G12W1pSzk6eNyg0//4a5aJ7uh0RhXX615HdmWXKLZmVCAkWABKhyC1xortzihjW5pjXrmpvlaSK
- m9pkTx9rs9NyGb4r6uA217jMqa52k9p/1mk6ZevDh/FV8yQ/CwFBpf2TlnFDQluHa4+rVVJ8S68
- tcCFmDvtWVR/21IO3pStOh6C2ZETTDLkjok4ei1HXLMuJsJyNnz5Btt2PnzpppO37ijOCNoG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-05_04,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- suspectscore=0 mlxscore=0 impostorscore=0 spamscore=0 clxscore=1011
- mlxlogscore=999 adultscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506050151
 
-Conversion to DRM GPU VA Manager[1], and adding support for Vulkan Sparse
-Memory[2] in the form of:
+On 11.05.25 8:21 PM, Christian Schrefl wrote:
+> `UnsafePinned<T>` is useful for cases where a value might be shared with
+> C code but not directly used by it. In particular this is added for
+> storing additional data in the `MiscDeviceRegistration` which will be
+> shared between `fops->open` and the containing struct.
+> 
+> Similar to `Opaque` but guarantees that the value is always initialized
+> and that the inner value is dropped when `UnsafePinned` is dropped.
+> 
+> This was originally proposed for the IRQ abstractions [0] and is also
+> useful for other where the inner data may be aliased, but is always
+> valid and automatic `Drop` is desired.
+> 
+> Since then the `UnsafePinned` type was added to upstream Rust [1] by Sky
+> as a unstable feature, therefore this patch implements the subset of the
+> upstream API for the `UnsafePinned` type required for additional data in
+> `MiscDeviceRegistration` and in the implementation of the `Opaque` type.
+> 
+> Some differences to the upstream type definition are required in the
+> kernel implementation, because upstream type uses some compiler changes
+> to opt out of certain optimizations, this is documented in the
+> documentation and a comment on the `UnsafePinned` type.
+> 
+> The documentation on is based on the upstream rust documentation with
+> minor modifications for the kernel implementation.
+> 
+> Link: https://lore.kernel.org/rust-for-linux/CAH5fLgiOASgjoYKFz6kWwzLaH07DqP2ph+3YyCDh2+gYqGpABA@mail.gmail.com [0]
+> Link: https://github.com/rust-lang/rust/pull/137043 [1]
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Gerald Wisböck <gerald.wisboeck@feather.ink>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Co-developed-by: Sky <sky@sky9.dev>
+> Signed-off-by: Sky <sky@sky9.dev>
+> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+> ---
+>  rust/kernel/types.rs               |   6 ++
+>  rust/kernel/types/unsafe_pinned.rs | 111 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 117 insertions(+)
+> 
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index 9d0471afc9648f2973235488b441eb109069adb1..705f420fdfbc4a576de1c4546578f2f04cdf615e 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -253,6 +253,9 @@ fn drop(&mut self) {
+>  ///
+>  /// [`Opaque<T>`] is meant to be used with FFI objects that are never interpreted by Rust code.
+>  ///
+> +/// In cases where the contained data is only used by Rust, is not allowed to be
+> +/// uninitialized and automatic [`Drop`] is desired [`UnsafePinned`] should be used instead.
+> +///
+>  /// It is used to wrap structs from the C side, like for example `Opaque<bindings::mutex>`.
+>  /// It gets rid of all the usual assumptions that Rust has for a value:
+>  ///
+> @@ -578,3 +581,6 @@ pub enum Either<L, R> {
+>  /// [`NotThreadSafe`]: type@NotThreadSafe
+>  #[allow(non_upper_case_globals)]
+>  pub const NotThreadSafe: NotThreadSafe = PhantomData;
+> +
+> +mod unsafe_pinned;
+> +pub use unsafe_pinned::UnsafePinned;
+> diff --git a/rust/kernel/types/unsafe_pinned.rs b/rust/kernel/types/unsafe_pinned.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..315248cb88c089239bd672c889b5107060175ec3
+> --- /dev/null
+> +++ b/rust/kernel/types/unsafe_pinned.rs
+> @@ -0,0 +1,111 @@
+> +// SPDX-License-Identifier: Apache-2.0 OR MIT
+> +
+> +//! The contents of this file partially come from the Rust standard library, hosted in
+> +//! the <https://github.com/rust-lang/rust> repository, licensed under
+> +//! "Apache-2.0 OR MIT" and adapted for kernel use. For copyright details,
+> +//! see <https://github.com/rust-lang/rust/blob/master/COPYRIGHT>.
+> +//!
+> +//! This file provides a implementation / polyfill of a subset of the upstream
+> +//! rust `UnsafePinned` type. For details on the difference to the upstream
+> +//! implementation see the comment on the [`UnsafePinned`] struct definition.
+> +
+> +use core::{cell::UnsafeCell, marker::PhantomPinned};
+> +use pin_init::{cast_pin_init, PinInit, Wrapper};
+> +
+> +/// This type provides a way to opt-out of typical aliasing rules;
+> +/// specifically, `&mut UnsafePinned<T>` is not guaranteed to be a unique pointer.
+> +///
+> +/// However, even if you define your type like `pub struct Wrapper(UnsafePinned<...>)`, it is still
+> +/// very risky to have an `&mut Wrapper` that aliases anything else. Many functions that work
+> +/// generically on `&mut T` assume that the memory that stores `T` is uniquely owned (such as
+> +/// `mem::swap`). In other words, while having aliasing with `&mut Wrapper` is not immediate
+> +/// Undefined Behavior, it is still unsound to expose such a mutable reference to code you do not
+> +/// control! Techniques such as pinning via [`Pin`](core::pin::Pin) are needed to ensure soundness.
+> +///
+> +/// Similar to [`UnsafeCell`], [`UnsafePinned`] will not usually show up in
+> +/// the public API of a library. It is an internal implementation detail of libraries that need to
+> +/// support aliasing mutable references.
+> +///
+> +/// Further note that this does *not* lift the requirement that shared references must be read-only!
+> +/// Use [`UnsafeCell`] for that.
 
-1. A new VM_BIND submitqueue type for executing VM MSM_SUBMIT_BO_OP_MAP/
-   MAP_NULL/UNMAP commands
+The upstream rust PR [0] that changes this was just merged. So now `UnsafePinned` includes
+`UnsafeCell` semantics. It's probably best to also change this in the kernel docs.
+Though it's still the case that removing the guarantee is simpler than adding it back later,
+so let me know what you all think.
 
-2. A new VM_BIND ioctl to allow submitting batches of one or more
-   MAP/MAP_NULL/UNMAP commands to a VM_BIND submitqueue
+[0]: https://github.com/rust-lang/rust/pull/140638
 
-I did not implement support for synchronous VM_BIND commands.  Since
-userspace could just immediately wait for the `SUBMIT` to complete, I don't
-think we need this extra complexity in the kernel.  Synchronous/immediate
-VM_BIND operations could be implemented with a 2nd VM_BIND submitqueue.
-
-The corresponding mesa MR: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/32533
-
-Changes in v6:
-- Drop io-pgtable-arm patch as it has already been picked up in the
-  iommu tree.
-- Rework to drop gpuvm changes.  To mitigate the limitation of gpuvm
-  when it comes to lazy unmap (and to avoid ~5ms of unmap per pageflip!)
-  a vma_ref refcount is added.  This refcount is incremented when a BO
-  is pinned for scanout, and for userspace handles and dma-bufs.  The
-  VMA is torn down when this count drops to zero, breaking the reference
-  loop between the VM_BO and BO.  But as long as a pin or userspace
-  handle is keeping a reference to the BO live, we allow the harmless
-  reference loop to live.  (This is only for kernel managed VMs, which
-  includes the kms VM.)  If no userspace process has some sort of
-  handle to the BO, it is unlikely to be reused again.  (The exception
-  is GET_FB, but in that case the vma_ref >= 1 due to pin for scan-
-  out.)
-- Drop gpu sched changes for throttling and move this into the driver.
-  We can re-visit a more generic solution when some other driver
-  realizes they need the same thing.
-- Link to v5: https://lore.kernel.org/all/20250519175348.11924-1-robdclark@gmail.com/
-
-Changes in v5:
-- Improved drm/sched enqueue_credit comments, and better define the
-  return from drm_sched_entity_push_job()
-- Improve DRM_GPUVM_VA_WEAK_REF comments, and additional WARN_ON()s to
-  make it clear that some of the gpuvm functionality is not available
-  in this mode.
-- Link to v4: https://lore.kernel.org/all/20250514175527.42488-1-robdclark@gmail.com/
-
-Changes in v4:
-- Various locking/etc fixes
-- Optimize the pgtable preallocation.  If userspace sorts the VM_BIND ops
-  then the kernel detects ops that fall into the same 2MB last level PTD
-  to avoid duplicate page preallocation.
-- Add way to throttle pushing jobs to the scheduler, to cap the amount of
-  potentially temporary prealloc'd pgtable pages.
-- Add vm_log to devcoredump for debugging.  If the vm_log_shift module
-  param is set, keep a log of the last 1<<vm_log_shift VM updates for
-  easier debugging of faults/crashes.
-- Link to v3: https://lore.kernel.org/all/20250428205619.227835-1-robdclark@gmail.com/
-
-Changes in v3:
-- Switched to seperate VM_BIND ioctl.  This makes the UABI a bit
-  cleaner, but OTOH the userspace code was cleaner when the end result
-  of either type of VkQueue lead to the same ioctl.  So I'm a bit on
-  the fence.
-- Switched to doing the gpuvm bookkeeping synchronously, and only
-  deferring the pgtable updates.  This avoids needing to hold any resv
-  locks in the fence signaling path, resolving the last shrinker related
-  lockdep complaints.  OTOH it means userspace can trigger invalid
-  pgtable updates with multiple VM_BIND queues.  In this case, we ensure
-  that unmaps happen completely (to prevent userspace from using this to
-  access free'd pages), mark the context as unusable, and move on with
-  life.
-- Link to v2: https://lore.kernel.org/all/20250319145425.51935-1-robdclark@gmail.com/
-
-Changes in v2:
-- Dropped Bibek Kumar Patro's arm-smmu patches[3], which have since been
-  merged.
-- Pre-allocate all the things, and drop HACK patch which disabled shrinker.
-  This includes ensuring that vm_bo objects are allocated up front, pre-
-  allocating VMA objects, and pre-allocating pages used for pgtable updates.
-  The latter utilizes io_pgtable_cfg callbacks for pgtable alloc/free, that
-  were initially added for panthor.
-- Add back support for BO dumping for devcoredump.
-- Link to v1 (RFC): https://lore.kernel.org/dri-devel/20241207161651.410556-1-robdclark@gmail.com/T/#t
-
-[1] https://www.kernel.org/doc/html/next/gpu/drm-mm.html#drm-gpuvm
-[2] https://docs.vulkan.org/spec/latest/chapters/sparsemem.html
-[3] https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=909700
-
-Rob Clark (40):
-  drm/gem: Add ww_acquire_ctx support to drm_gem_lru_scan()
-  drm/msm: Rename msm_file_private -> msm_context
-  drm/msm: Improve msm_context comments
-  drm/msm: Rename msm_gem_address_space -> msm_gem_vm
-  drm/msm: Remove vram carveout support
-  drm/msm: Collapse vma allocation and initialization
-  drm/msm: Collapse vma close and delete
-  drm/msm: Don't close VMAs on purge
-  drm/msm: Stop passing vm to msm_framebuffer
-  drm/msm: Refcount framebuffer pins
-  drm/msm: drm_gpuvm conversion
-  drm/msm: Convert vm locking
-  drm/msm: Use drm_gpuvm types more
-  drm/msm: Split out helper to get iommu prot flags
-  drm/msm: Add mmu support for non-zero offset
-  drm/msm: Add PRR support
-  drm/msm: Rename msm_gem_vma_purge() -> _unmap()
-  drm/msm: Drop queued submits on lastclose()
-  drm/msm: Lazily create context VM
-  drm/msm: Add opt-in for VM_BIND
-  drm/msm: Mark VM as unusable on GPU hangs
-  drm/msm: Add _NO_SHARE flag
-  drm/msm: Crashdump prep for sparse mappings
-  drm/msm: rd dumping prep for sparse mappings
-  drm/msm: Crashdump support for sparse
-  drm/msm: rd dumping support for sparse
-  drm/msm: Extract out syncobj helpers
-  drm/msm: Use DMA_RESV_USAGE_BOOKKEEP/KERNEL
-  drm/msm: Add VM_BIND submitqueue
-  drm/msm: Support IO_PGTABLE_QUIRK_NO_WARN_ON
-  drm/msm: Support pgtable preallocation
-  drm/msm: Split out map/unmap ops
-  drm/msm: Add VM_BIND ioctl
-  drm/msm: Add VM logging for VM_BIND updates
-  drm/msm: Add VMA unmap reason
-  drm/msm: Add mmu prealloc tracepoint
-  drm/msm: use trylock for debugfs
-  drm/msm: Bump UAPI version
-  drm/msm: Defer VMA unmap for fb unpins
-  drm/msm: Add VM_BIND throttling
-
- drivers/gpu/drm/drm_gem.c                     |   14 +-
- drivers/gpu/drm/msm/Kconfig                   |    1 +
- drivers/gpu/drm/msm/Makefile                  |    1 +
- drivers/gpu/drm/msm/adreno/a2xx_gpu.c         |   25 +-
- drivers/gpu/drm/msm/adreno/a2xx_gpummu.c      |    5 +-
- drivers/gpu/drm/msm/adreno/a3xx_gpu.c         |   17 +-
- drivers/gpu/drm/msm/adreno/a4xx_gpu.c         |   17 +-
- drivers/gpu/drm/msm/adreno/a5xx_debugfs.c     |    4 +-
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   22 +-
- drivers/gpu/drm/msm/adreno/a5xx_power.c       |    2 +-
- drivers/gpu/drm/msm/adreno/a5xx_preempt.c     |   10 +-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |   32 +-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.h         |    2 +-
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c         |   49 +-
- drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c   |    6 +-
- drivers/gpu/drm/msm/adreno/a6xx_preempt.c     |   10 +-
- drivers/gpu/drm/msm/adreno/adreno_device.c    |    4 -
- drivers/gpu/drm/msm/adreno/adreno_gpu.c       |   99 +-
- drivers/gpu/drm/msm/adreno/adreno_gpu.h       |   23 +-
- .../drm/msm/disp/dpu1/dpu_encoder_phys_wb.c   |   11 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c   |   20 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_formats.h   |    3 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   18 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c     |   22 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h     |    2 -
- drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c     |    6 +-
- drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c      |   28 +-
- drivers/gpu/drm/msm/disp/mdp4/mdp4_plane.c    |   18 +-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c     |    4 +-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c      |   19 +-
- drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c    |   18 +-
- drivers/gpu/drm/msm/dsi/dsi_host.c            |   14 +-
- drivers/gpu/drm/msm/msm_drv.c                 |  184 +-
- drivers/gpu/drm/msm/msm_drv.h                 |   29 +-
- drivers/gpu/drm/msm/msm_fb.c                  |   30 +-
- drivers/gpu/drm/msm/msm_fbdev.c               |    2 +-
- drivers/gpu/drm/msm/msm_gem.c                 |  553 +++---
- drivers/gpu/drm/msm/msm_gem.h                 |  277 ++-
- drivers/gpu/drm/msm/msm_gem_prime.c           |   48 +
- drivers/gpu/drm/msm/msm_gem_shrinker.c        |  104 +-
- drivers/gpu/drm/msm/msm_gem_submit.c          |  306 ++--
- drivers/gpu/drm/msm/msm_gem_vma.c             | 1486 ++++++++++++++++-
- drivers/gpu/drm/msm/msm_gpu.c                 |  211 ++-
- drivers/gpu/drm/msm/msm_gpu.h                 |  147 +-
- drivers/gpu/drm/msm/msm_gpu_trace.h           |   14 +
- drivers/gpu/drm/msm/msm_iommu.c               |  302 +++-
- drivers/gpu/drm/msm/msm_kms.c                 |   18 +-
- drivers/gpu/drm/msm/msm_kms.h                 |    2 +-
- drivers/gpu/drm/msm/msm_mmu.h                 |   38 +-
- drivers/gpu/drm/msm/msm_rd.c                  |   62 +-
- drivers/gpu/drm/msm/msm_ringbuffer.c          |   10 +-
- drivers/gpu/drm/msm/msm_submitqueue.c         |   96 +-
- drivers/gpu/drm/msm/msm_syncobj.c             |  172 ++
- drivers/gpu/drm/msm/msm_syncobj.h             |   37 +
- include/drm/drm_gem.h                         |   10 +-
- include/uapi/drm/msm_drm.h                    |  149 +-
- 56 files changed, 3553 insertions(+), 1260 deletions(-)
- create mode 100644 drivers/gpu/drm/msm/msm_syncobj.c
- create mode 100644 drivers/gpu/drm/msm/msm_syncobj.h
-
--- 
-2.49.0
+> +///
+> +/// This type blocks niches the same way [`UnsafeCell`] does.
+> +///
+> +/// # Kernel implementation notes
+> +///
+> +/// This implementation works because of the "`!Unpin` hack" in rustc, which allows (some kinds of)
+> +/// mutual aliasing of `!Unpin` types. This hack might be removed at some point, after which only
+> +/// the `core::pin::UnsafePinned` type will allow this behavior. In order to simplify the migration
+> +/// to future rust versions only this polyfill of this type should be used when this behavior is
+> +/// required.
+> +//
+> +// As opposed to the upstream Rust type this contains a `PhantomPinned` and `UnsafeCell<T>`
+> +// - `PhantomPinned` to ensure the struct always is `!Unpin` and thus enables the `!Unpin` hack.
+> +//   This causes the LLVM `noalias` and `dereferenceable` attributes to be removed from
+> +//   `&mut !Unpin` types.
+> +// - In order to disable niche optimizations this implementation uses `UnsafeCell` internally,
+> +//   the upstream version however currently does not. This will most likely change in the future
+> +//   but for now we don't expose this in the documentation, since adding the guarantee is simpler
+> +//   than removing it. Meaning that for now the fact that `UnsafePinned` contains an `UnsafeCell`
+> +//   must not be relied on (Other than the niche blocking).
+> +//   See this Rust tracking issue: https://github.com/rust-lang/rust/issues/137750
+> +#[repr(transparent)]
+> +pub struct UnsafePinned<T: ?Sized> {
+> +    _ph: PhantomPinned,
+> +    value: UnsafeCell<T>,
+> +}
+> +
+> +impl<T> UnsafePinned<T> {
+> +    /// Constructs a new instance of [`UnsafePinned`] which will wrap the specified value.
+> +    ///
+> +    /// All access to the inner value through `&UnsafePinned<T>` or `&mut UnsafePinned<T>` or
+> +    /// `Pin<&mut UnsafePinned<T>>` requires `unsafe` code.
+> +    #[inline(always)]
+> +    #[must_use]
+> +    pub const fn new(value: T) -> Self {
+> +        UnsafePinned {
+> +            value: UnsafeCell::new(value),
+> +            _ph: PhantomPinned,
+> +        }
+> +    }
+> +}
+> +impl<T: ?Sized> UnsafePinned<T> {
+> +    /// Get read-only access to the contents of a shared `UnsafePinned`.
+> +    ///
+> +    /// Note that `&UnsafePinned<T>` is read-only if `&T` is read-only. This means that if there is
+> +    /// mutation of the `T`, future reads from the `*const T` returned here are UB! Use
+> +    /// [`UnsafeCell`] if you also need interior mutability.
+> +    ///
+> +    /// [`UnsafeCell`]: core::cell::UnsafeCell
+> +    ///
+> +    /// ```rust,no_run
+> +    /// use kernel::types::UnsafePinned;
+> +    ///
+> +    /// unsafe {
+> +    ///     let mut x = UnsafePinned::new(0);
+> +    ///     let ptr = x.get(); // read-only pointer, assumes immutability
+> +    ///     # // Upstream Rust uses `UnsafePinned::get_mut_unchecked` here.
+> +    ///     UnsafePinned::raw_get_mut(&raw mut x).write(1);
+> +    ///     ptr.read(); // UB!
+> +    /// }
+> +    /// ```
+> +    #[inline(always)]
+> +    #[must_use]
+> +    pub const fn get(&self) -> *const T {
+> +        self.value.get()
+> +    }
+> +
+> +    /// Gets a mutable pointer to the wrapped value.
+> +    #[inline(always)]
+> +    #[must_use]
+> +    pub const fn raw_get_mut(this: *mut Self) -> *mut T {
+> +        this as *mut T
+> +    }
+> +}
+> +
+> +impl<T> Wrapper<T> for UnsafePinned<T> {
+> +    fn pin_init<E>(init: impl PinInit<T, E>) -> impl PinInit<Self, E> {
+> +        // SAFETY: `UnsafePinned<T>` has a compatible layout to `T`.
+> +        unsafe { cast_pin_init(init) }
+> +    }
+> +}
+> 
 
 
