@@ -1,269 +1,233 @@
-Return-Path: <linux-kernel+bounces-674298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A34ACECC1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE4EACECBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 11:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3BD3AB80C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8503AAE02
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17E41FC0E6;
-	Thu,  5 Jun 2025 09:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69CA20C005;
+	Thu,  5 Jun 2025 09:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="rv32Gacw"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="EMfk8Bny"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010019.outbound.protection.outlook.com [52.101.69.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB122566A
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 09:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749115478; cv=none; b=i9/AAS6XuTG0Hypwur70perk/x/ULO59b3+B1VAHzjBJhENo82SIMG2kfdxjhUjIllTR1VpDFAKxZ1h9XLdyO8jlAe+i1EqHAY/wkl2jjgGDDa2+55iWw7zx8i2caIw6ll8SuEF2ln1Pv4HaCENxdEkYfJDS2dqbY1vD64NduW0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749115478; c=relaxed/simple;
-	bh=10+3YgTr1H5Im6QiRgVdfEWo9Vt7IV6mBZC8mBOdBco=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NHClatWwB6Wb3cG6aMM8Q0W6ePAzyKYwdiNu8NoxUcV1ARbWS5Y7SUML+6BCJwWpFAti/iic2XIMiAbmZT9mmWbAQUQxIjkYvFuUnFSI49u+cgswfihIpfookbsteeYK/T8m0ESaD3IiKcm9Sp1DWL0MnKEgQf4XiWe2/IQ8hF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=rv32Gacw; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=QpGV0n6u04ZW1P0zDrdpUx45bUUucEccJqYGRMnCtb8=; t=1749115475; x=1750325075; 
-	b=rv32Gacws2c9vZC28QccsL/ExQUwbpPLzn3jgHjJm2RGYOyQtDkkzHvM/okFJye9GKVI8fsTgC4
-	SgXPoKxRlKMIgU/ML+crAhjWH+TO3LybUNbXxCCdrs878b4TxceycUOUHJ94nK6xDfeem39oOE09q
-	dXhcKkwLWv18mhkNzZdGsyEsDnSIQt9qv4nXEXhh9GEMQc1fRpk4ehpPvwrQKUDUYtKSYvhsz/sCQ
-	HDgfg5TS23a9Ke4h2P47XPNP8B/GoX6Ies7lyA3oWHndIwGJrEwO4bc8hhavtp6UTbVPWO6877kUG
-	rSFRnplevGzkx/exshgm4UUM04+KQT0VjIEg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uN6pn-00000001pmy-0kRw;
-	Thu, 05 Jun 2025 11:24:27 +0200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Subject: [GIT PULL] uml 6.16-rc1
-Date: Thu,  5 Jun 2025 11:20:57 +0200
-Message-ID: <20250605092423.14973-3-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E91E566A
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 09:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749115355; cv=fail; b=JxjyJ04eZevKZS14XZF2gg7QfswJkZyZ4reYv0BSWtKcsJw4zJKpvNmGyqPYUuJo9O4LnqZCVayfxyT5WRY8sWKr91cSgZ56LBdN9wJ6v8HesPn586OrmxnDCaahQOLfpBgvT6XOuc54W+yJOb267wrzAtcjhPNVrPXfmph2K5E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749115355; c=relaxed/simple;
+	bh=k/C97VAs/BYvQFf+kYd1teRfmY3qijH906Y/BHKtuhw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nWYZ3+YmbTvk5zkNQoMVT0QinM4rRVqPDw/Xp4fmIRbD8duKwI4nxbX2co4j4LKKcp9NrPnYxhi6bHZRTG7/ySMpnfCnvC43PR9hGN+bPcrevPm9ufCdc27qbBQkcVE55lpctNLpUbov9QyugkclXpMONtT3P3l1Wjkd+xnDBb0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=EMfk8Bny; arc=fail smtp.client-ip=52.101.69.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MoQaFJO4xzS+wFz8Dfeoz5oWpDARoF9G9vjmWVasnDqlf3t+jxokvUOp/cRVEeZ/P+DPpSZTnLvM47VRFfmw+umWPAHWpt6vR7/IiY/zFJMAif29k3pVjgJnx5zRKjlvPWSp4xgX3NJOHdz9QOmnBeu3h76DohFIzltdjZwuSW5VS+2Mrx11gpEle7gS6ORnQVUZEsN7/x1tBuC2qjp+DCCgG6IY6IBRU8AAY8yILnFoMduKVKCDyS5afLigdxu2mQPb9BBsoOGVMSMjIGyKjjhoqX7mvNjoMofvt+Sj79b3Nm3cAG1EMYVm110V+0qVUEeeyQwCXA0eIOSDhpuhFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nB9KLm1Szno+5xA4SokLhU2/Egrk2cKBGoNKvMk7gIg=;
+ b=ORHfqyuoWwWlUokJAmSbm+AlB7gZHedPHNS0IW9COvJ1RobsidTCIVR0b2R2Vaw5Xg8C99BOACI9Ubw2JISoVPtXZVIskt66zMxcgrR3l9h6oKjMkJRDAiv+EL7BNI/0RYkglMFHEogJolu9PsGMalalgmab34HZx/AWkBiCcu0IxSgYPV1mggo6vd/J2DU3xSk/xhTh3+YgdvO4Ldwg8tLQlLCMnJTU4v5B3pH17faB/kbVLNd6er9/hWWp1tOyLQF3bqMuubEd+fOpahI200ctbnXsfcZTpf9A3sqYaUNiFkg0HhKMTSom87SodKBxdurdoF8BMG0v3r0Skh9YTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nB9KLm1Szno+5xA4SokLhU2/Egrk2cKBGoNKvMk7gIg=;
+ b=EMfk8BnyX2wwfIDrEggZr4Pl5lV6IMigL9TVQXoKbXTjwXC+LvSOGHydJkGexgngOGdVGQ79r9N0C+0Sx8g5WeLGKhoB4cBcWm16ags3CmM5XToN68jqkhnerFWn/weimuAAejUUmuHhWb4ExugzR4EG9EsbHmcUHZM6i3XsvEA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by DBBPR04MB7721.eurprd04.prod.outlook.com (2603:10a6:10:1f6::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Thu, 5 Jun
+ 2025 09:22:27 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%5]) with mapi id 15.20.8813.018; Thu, 5 Jun 2025
+ 09:22:27 +0000
+Message-ID: <b42e28fb-e254-4901-932f-c5282c189dea@cherry.de>
+Date: Thu, 5 Jun 2025 11:22:26 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: add regulator-enable-ramp-delay to
+ RK860-2/-3 regulators
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: jonas@kwiboo.se, dsimic@manjaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250604202425.239924-1-heiko@sntech.de>
+ <e4a1bf0a-0fc5-4c15-96dc-7e9c7ae3ccd5@cherry.de> <49977521.MN2xkq1pzW@diego>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <49977521.MN2xkq1pzW@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0197.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ad::20) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBBPR04MB7721:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab0489fe-3587-4489-0c2b-08dda4127d0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dUZYZG5qaHJQNjFnNndCVUJ2emljN2RhYTZTN1NhcWVrK1B5VWREOWRseUR5?=
+ =?utf-8?B?bGpGRHc2ZnJiT0MzWWZsTmZldGhJWDMwZ0VmQWFyeTM4dlJYN3VrNjc1SVFP?=
+ =?utf-8?B?WldpRGlCb2U2VW95Qm14TE5LTEthNGdaWk9ZdUhYK0l1R1NHek1mNmo3ejJ5?=
+ =?utf-8?B?Q0w3RmxxMDRrcStoaExoUGVkWmpMa2JMVzJLUUJ3MVF4R3QyelFZSStGT3VK?=
+ =?utf-8?B?bDBOcEowaC8vQmk2TFFRMW1mcllHZUJHb2oxdHZ4ekx2NFkycEJXM09Ka3lp?=
+ =?utf-8?B?Y3BNVXpEVzgzNEJHVkRuMnVKbGRXNURVblpOK29BOHdEbzI4YUJHeE5Gb0dK?=
+ =?utf-8?B?OFhKNzFBTXVtSkYwNitBenloM3ViWHAvb0doWDBIa3hzWjdLVDZBYnpYQzdX?=
+ =?utf-8?B?a0UyMDRhRzJ2Y0o5Y05OL1Yzd21hSzdicjNSM0tCZHM5Qk9Fa1lzby8yenFQ?=
+ =?utf-8?B?bW0zSGdhancrUCtLaHVPbnhYRkpHZC8xRlA3bTlWWlU2eG1kYWtURVJuNnNs?=
+ =?utf-8?B?UlB4enpWd1pMMDhLRjFwUnp6RWFJVmxDVDNsajRKSzRjdU1jY0kzU2dTa1BY?=
+ =?utf-8?B?UTFzWGRjQnh5aXkrS3JHcnNiNDhPblRSaENWYlN3Y2c5bTJlVkV3RXdZcGFm?=
+ =?utf-8?B?cWo2M0lrNk5uUmpCclhrTFVodnlMaEJ5MFdtNm41SmtLRU9UWExWVUM1dERv?=
+ =?utf-8?B?cDY2WHZvT0FaWEtxbW9yK0lsdmNpWjJpQjg4N1ZnWVp4eFdCOWQ3ckZpSmxq?=
+ =?utf-8?B?eXU0QUtSWFJmWmNlWVhFbUZsTmsxWUFZeW9RbjBSOE9lem5zUUZveThtWVU1?=
+ =?utf-8?B?T2JuVXZuNnNwSUZlc1lLa1hzVkxaSzM4WjJLRlRHS3hKV2NuM1RKV01rcXBr?=
+ =?utf-8?B?QVhYTDMzQk1reXRCL2U0ZkxWeTNudHBuV2hxVHFJV0R2dlR2VmNxczBnQVlN?=
+ =?utf-8?B?elRYQUNkdEJEQmJGQ0g3cUptemhDN3FFM2hlU3d2U2tVS2tRZXJEcHhoNVZR?=
+ =?utf-8?B?R3BsdjV3cHNpQmVUdHQyWUMxWmdBeHFvb3lVYWpRQmRidVVjR2xGcTl3VWhB?=
+ =?utf-8?B?NVRDK0J4cTRPSW9Hb0lrbmcwVDNmWVhDV3BhcXNUS09HUEpRK3kyK0IzT1Rx?=
+ =?utf-8?B?QzJWMVNNMEVzc1cwSEFkaGJ0eCtZOGdxSVdjZUNyQTAzVUFSZHBTczhJQWVa?=
+ =?utf-8?B?aGZBU1ZjOUtwRi9kS29ZR2YrRmsxTGdGeUdSeDJnMFQ2elhxcHhjdXQ2RTRq?=
+ =?utf-8?B?akt4UmFKRWx5ZHRwMllBUU5naE5CdEdVUzNYY2V6U3NVWkxQSjhmSFhCMDVv?=
+ =?utf-8?B?Z1ZMMXA4YU5LZnYrcnI3SXU4MUFRY3ZDYzZNcEVCNEtxZEI0L04xYmtWTWYr?=
+ =?utf-8?B?NVBaOWgzK29zb01JSUpJMjJjQ2xkSGZ3ak92YWhKMTNIM0V5UjhYc05XVGJh?=
+ =?utf-8?B?OXZCS0dPV0ZWTVBsSGRnTUtiOUY4N3QrOVNzQjd4bEZyaDlDV2VUOUpsUDB1?=
+ =?utf-8?B?UHMxQmRKaGlNa2NLVnhpbUxNeUpnKzFVeTFsV3pGOE1SYk4rT1lucHd4cXd2?=
+ =?utf-8?B?Q0d6V3ZOTVR3eUY4MG4xNnV3TkE5TlBjaVkwNEN0aGlVdloyR3ZoQnR1Vnc1?=
+ =?utf-8?B?V1FBOEVFeVpWcHJFcnVLUWFZSzZYQXc0dE1YWTB6UUFYbFQ1WDcrTGZBQk54?=
+ =?utf-8?B?Y2xvbEhwQ0VMamV6Qk9jWUNsRjVYR0RtRzdpTFBmK3YvejJ4bUV0cEZMTlZM?=
+ =?utf-8?B?S0NFUnJkT2s2TFp5RVZ4d2pMdTNpK1dPMXFSQllQNDFHSDRuNGVMYmNhQ1Nt?=
+ =?utf-8?B?K2p1MkFBSkdtRTNBY0NrVU9VN21xME9VYUxNWlJUcXR1TDhSZ3Fna2Y2clY3?=
+ =?utf-8?B?dkI3bVpNc3VwRHQ1RExMdXM0ODg3VVY5Y05DTXRCT3VwOHBHcWdKckdBREYr?=
+ =?utf-8?Q?ZDinEPqXFuo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VVhEVUIrcW10TG82dVhyUktlNUl0bkFQYjdhK0FhS0hUK0hleHU3dEQvK01O?=
+ =?utf-8?B?YW5oQU1hNkpiTlcvQmoxVHlpT3hmYzhsb3hqNzY2cDVWalVxK1B4MkhLS2VP?=
+ =?utf-8?B?d2lIZi8vM0hhdzhnWU5FeUVTVllHSFI3Q243NldsTGNUL2cxMUFKMU0zSjUz?=
+ =?utf-8?B?VlJlaW9FMXIyNVlTSlNNVFAxU0c1cUhidzlUaEFpKzJEUXdDZnFxSHRIQVdl?=
+ =?utf-8?B?MHZtSkdlWGdrdW05U01ORkZqQkNRVlFVSXZQckhnSVc2c0E3NHpBaCtyK1FZ?=
+ =?utf-8?B?djIvdzN1VWF3NXpFMHAxYTZzU3UxOGlJKzdtOFRPYVJhaHRZYlptQ0ViV1FD?=
+ =?utf-8?B?L1hlT1FRc3QvL0pTY1RBNmsxWnJjYXFobnBWdGUvdVluclVSTzl5ZVBzZVRn?=
+ =?utf-8?B?RkhkM3RETDV6Q05yWWN1Y2Jaa3BURGV0M0pZV0Vlb0YwNWxQNEtZRE8wNHov?=
+ =?utf-8?B?SExhUnNWUUgya2ZjUWpoOGc5azg4TWVpQ2x2dHFUdWdDVG0rNFJVWmxtNHlv?=
+ =?utf-8?B?QUVvNW9qdzVCbE9VN0pySXRsSDNEQ3ZOeldoT05PTUdFcDFaQWdVamExcUJa?=
+ =?utf-8?B?WVdwTFJhMWlLZDJkVkg2NUhxcUN4cTVRRitzWmdnbVZLcjRWb3lTdGNKczd3?=
+ =?utf-8?B?OENibTY2ZFhPa2s2Vml1TDZ0S3FJZ09xWXp2djNFWFNWOUVCZXRPbU9DcXhj?=
+ =?utf-8?B?dDNMZWtEV1RlUjQ2RUNkdzYrNU9iMlpyYTZzYmhFdlFDS3VuSU9OODh1OTNk?=
+ =?utf-8?B?dktHRWVYNW9WQXdUZjBMN1hSeHQ0dVJ4bDIwTEhvVFBMS0NMZFpKVk5iMDY4?=
+ =?utf-8?B?Q1ZDL1c0WTZERk03SzZtNmdadVpUandpMEJWNWYzSzBlbnlYbDdFTTVPd2Jn?=
+ =?utf-8?B?a0FIKzJERGhKQWZ6NzQyUm04Q2hXaGpGazlQN3pkdmtvQnNXZENRaHQ2K0c5?=
+ =?utf-8?B?Y2s5NWJMQlBBUExzWlZVMzU2SER4bDAwWWxqZ1RNTFRUNDVBL2FlY1pnQnhu?=
+ =?utf-8?B?cXBDRGtLUzlIVzdqaUVXMG1rcUQxbVY5MWtrSDRNSytQWk8zaGVtRDRQRHBo?=
+ =?utf-8?B?SXVxMkdMV29IdlZhQ1pnRzhYOGRPbjJYNmlyclJzeVBGV3RnNjYyOVptQ0Ir?=
+ =?utf-8?B?cHpnSVZEWUZ5Z3VoN0FVRjdWeFdHb3NySzMzMFlGS29ndWd5QWt0WjhMdU5n?=
+ =?utf-8?B?THNtSGg1NTNpVjRNWVlIYWZnNnR4RXk5UFMxS3NMTmNoaUkrd3RuY21ZcnVv?=
+ =?utf-8?B?QlJyTHZBbXpRVkhtdXBqK3VIT1cxK0hPUDdtQXJQUWVRT2xwL2ZrYURLbTJr?=
+ =?utf-8?B?R2tSbDNXellsa1ZyUGw1NjdhdDRuV0pXZHp1b2xKcXBXTU0xcEM3SEZJYlpU?=
+ =?utf-8?B?emdoMm1UcVpLQXpkbWxMOWhDdWV1R0trWE5SWmJDeW8rUDVhSzE4NFkzR2ZF?=
+ =?utf-8?B?cFRaT3ZGczRmckNKYVc0K1BOaUhWTWhlU1ZkQ2s0L3Yya2ZxaXlKUXFySVFZ?=
+ =?utf-8?B?NVFzQXdhY1dZOXlzM3JDSzhpenlzOVg3QW9mS3FJSUlFeGQ3VU9iNUZPZlZ2?=
+ =?utf-8?B?Vk41ZHR0Nldzb1hVRHQ1OWVqRXJlYTRkcVR3MzZ1UmV2dDRkd0VBZ2t3ejFl?=
+ =?utf-8?B?TXlsKzNJRDF2ajE5bG5ydVh5WDdEM1dRK0U1NVE4WlZEZ1ozbURmdkxuaGJp?=
+ =?utf-8?B?SUxPUGRuT3A2N2Z5MDNuYlVTRWh1b0xYMGh3dVlqZklCaVZQNTRjbU1nVFM4?=
+ =?utf-8?B?TDRjTEFFVUltZk1JQmxIaU9tQnM5YXdBbzhxR0UweVFYVi9qK1lTVm8ybjhk?=
+ =?utf-8?B?ekJZdXVLT2RkdWtSTEFRWlBlb0JWZzlLSlpkN3cyYUdSRmRjYkdHT3g1Q0JK?=
+ =?utf-8?B?cW44S2tya09lbnVIV2UyUHh5OW9WK0RCUUduSEJUUXk2d09vb1o3Zk9leTd5?=
+ =?utf-8?B?cnh4SVNaSU1OSkZQWVEyelR2WWVXdkJVY0dQdG1ZRlRsUksyaUdhS0JORzRK?=
+ =?utf-8?B?TEJCZjk1WXlDZFhzV0ZhSmdqeGVWWk1obXhiOUYvS2ROZElwWHRQeVFRbHc2?=
+ =?utf-8?B?NzVzYWc0RGRUQ3lNYS9FYVVtcWRLRzg5Z0h6Z3Q2NjBJNklSeDZHc2JzT003?=
+ =?utf-8?B?QnQ3TnBWck5GV3FoZlVTMlBMbVZzM1ZsLzJFN2tCZkJUU2Z6T2V5ckdXUHVQ?=
+ =?utf-8?B?ZWc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab0489fe-3587-4489-0c2b-08dda4127d0a
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2025 09:22:27.1868
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zo1rM8bUMn6dai9OOZHaBy4BtCuNH+RJa6cBMy8sbK0r3TNy8UayxWntdaTdabtqLGLuzCrEWxNVxej6qfds+eDdoXL/i5vKri0+HaPoV8w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7721
 
-Hi Linus,
+Hi Heiko,
 
-Looks like I'm getting into a habit of doing this rather
-than Richard, who has been busy with other things :)
+On 6/5/25 11:09 AM, Heiko Stübner wrote:
+> Am Donnerstag, 5. Juni 2025, 10:57:13 Mitteleuropäische Sommerzeit schrieb Quentin Schulz:
+>> Hi Heiko,
+>>
+>> On 6/4/25 10:24 PM, Heiko Stuebner wrote:
+[...]
+>>> And in fact the datasheet for the regulator defines an "Internal soft-start
+>>> time". For a target output voltage of 1.0V the _typical_ time to reach at
+>>> least 92% of the output is given as 260uS.
+>>>
+>>
+>> Indeed. Now looking at the existing Device Trees, it seems some set the
+>> ramp-up delay already, but to 2300 and not 500 like suggested here.
+>> Maybe it'd be safer to go for 2300 by default then?
+> 
+> enable-ramp-delay is a totally different beast than the ramp-delay.
+> ramp-delay is needed when changing the running voltage and uses a unit
+> of "uV/us", so microvolt per microsecond ... where the enable-ramp-delay
+> is the one for enabling the regulator and uses uS.
 
-The only really new thing is the long-standing seccomp
-work (originally from 2021!), even if it still isn't
-enabled by default due to security concerns it can still
-be used e.g. for tests.
+Thanks for the explanation.
 
-Please pull and let us know if there's any problem.
+[...]
 
-Thanks,
-johannes
+>>> mainline right now. I've chosen 500uS to be on the safe side, as
+>>> 260uS is the "typical" value for 1.0V and sadly no max value is given
+>>> in the datasheet.
+>>>
+>>
+>> Reading the rk808 regulator driver... maybe we should also set the
+>> typical delay as default in the fan53555.c driver? See rk805_reg which
+>> sets the enable_time for some (typically the LDO with 400 and the DCDC
+>> at 0). I assume those can be overridden from the DT anyway, but at least
+>> we would have some decently safe defaults?
+>>
+>> If we do not do this, then we should probably force the presence of
+>> regulator-ramp-delay property for the rk860x DT binding so we don't
+>> forget for future Device Trees?
+> 
+> that is scope-creep (rk808 != rk860) ... but I find the idea of trying to
 
+I was just hinting at the possibility to set a default enable_time if 
+one's missing from the Device Tree because the rk808 driver seems to be 
+doing something like that. rk860-x is indeed supported by a different 
+driver, which doesn't set this by default, hence my suggestion :)
 
+> set the enable-ramp-delay as required for the rk860-x interesting :-) .
+> 
 
-The following changes since commit 92a09c47464d040866cf2b4cd052bc60555185fb:
+But incompatible with the "default in driver" approach :) So one or the 
+other :)
 
-  Linux 6.15-rc5 (2025-05-04 13:55:04 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.16-rc1
-
-for you to fetch changes up to e56a50ff7c12983aba710bd02a2c2ad401379e91:
-
-  um: remove "extern" from implementation of sigchld_handler (2025-06-05 11:12:13 +0200)
-
-----------------------------------------------------------------
-Notable changes:
-
- - remove obsolete network transports
-
- - remove PCI IO port support
-
- - start adding seccomp-based process handling
-   instead of ptrace
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      um: stop using PCI port I/O
-
-Benjamin Berg (12):
-      um: do not send SIGALRM to userspace in time-travel mode
-      um: use proper care when taking mmap lock during segfault
-      um: Move faultinfo extraction into userspace routine
-      um: Add stub side of SECCOMP/futex based process handling
-      um: Add helper functions to get/set state for SECCOMP
-      um: Track userspace children dying in SECCOMP mode
-      um: Implement kernel side of SECCOMP based process handling
-      um: Add SECCOMP support detection and initialization
-      um: pass FD for memory operations when needed
-      um: fix SECCOMP 32bit xstate register restore
-      um: fix unused variable warning
-      um: remove "extern" from implementation of sigchld_handler
-
-Jiapeng Chong (1):
-      um: Remove duplicate arch.h header
-
-Jiri Slaby (SUSE) (1):
-      irqdomain: um: use irq_domain_create_linear() helper
-
-Johannes Berg (1):
-      um: chan_kern: use raw spinlock for irqs_to_free_lock
-
-Lukas Bulwahn (1):
-      MAINTAINERS: remove obsolete file entry in TUN/TAP DRIVER
-
-Sami Tolvanen (1):
-      um: Add cmpxchg8b_emu and checksum functions to asm-prototypes.h
-
-Tiwei Bie (8):
-      um: xterm: Add Wayland support
-      um: xterm: Update options for gnome-terminal
-      um: Add VFIO-based virtual PCI driver
-      um: Remove obsolete legacy network transports
-      um: vector: Eliminate the dependency on uml_net
-      um: Remove legacy network transport infrastructure
-      um: vector: Clean up and modernize log messages
-      um: vector: Use mac_pton() for MAC address parsing
-
-Uros Bizjak (2):
-      um/asm: Rename rep_nop() to native_pause()
-      um/asm: Replace "REP; NOP" with PAUSE mnemonic
-
-Yongting Lin (1):
-      um: Fix tgkill compile error on old host OSes
-
- .../virt/uml/user_mode_linux_howto_v2.rst          |  47 +-
- MAINTAINERS                                        |   3 +-
- arch/um/Kconfig                                    |   6 -
- arch/um/configs/i386_defconfig                     |   7 -
- arch/um/configs/x86_64_defconfig                   |   7 -
- arch/um/drivers/Kconfig                            | 204 +----
- arch/um/drivers/Makefile                           |  22 +-
- arch/um/drivers/chan_kern.c                        |  10 +-
- arch/um/drivers/daemon.h                           |  29 -
- arch/um/drivers/daemon_kern.c                      |  95 ---
- arch/um/drivers/daemon_user.c                      | 194 -----
- arch/um/drivers/net_kern.c                         | 889 ---------------------
- arch/um/drivers/net_user.c                         | 271 -------
- arch/um/drivers/slip.h                             |  21 -
- arch/um/drivers/slip_common.c                      |  55 --
- arch/um/drivers/slip_common.h                      | 106 ---
- arch/um/drivers/slip_kern.c                        |  93 ---
- arch/um/drivers/slip_user.c                        | 252 ------
- arch/um/drivers/slirp.h                            |  34 -
- arch/um/drivers/slirp_kern.c                       | 120 ---
- arch/um/drivers/slirp_user.c                       | 124 ---
- arch/um/drivers/umcast.h                           |  27 -
- arch/um/drivers/umcast_kern.c                      | 188 -----
- arch/um/drivers/umcast_user.c                      | 184 -----
- arch/um/drivers/vde.h                              |  32 -
- arch/um/drivers/vde_kern.c                         | 129 ---
- arch/um/drivers/vde_user.c                         | 125 ---
- arch/um/drivers/vector_kern.c                      |  48 +-
- arch/um/drivers/vfio_kern.c                        | 642 +++++++++++++++
- arch/um/drivers/vfio_user.c                        | 327 ++++++++
- arch/um/drivers/vfio_user.h                        |  44 +
- arch/um/drivers/virt-pci.c                         |  15 +-
- arch/um/drivers/xterm.c                            |  11 +-
- arch/um/include/asm/asm-prototypes.h               |   5 +
- arch/um/include/asm/irq.h                          |   5 +-
- arch/um/include/asm/mmu.h                          |   3 +
- arch/um/include/shared/common-offsets.h            |   4 +
- arch/um/include/shared/irq_user.h                  |   2 +
- arch/um/include/shared/net_kern.h                  |  69 --
- arch/um/include/shared/net_user.h                  |  52 --
- arch/um/include/shared/os.h                        |   4 +-
- arch/um/include/shared/skas/mm_id.h                |   9 +
- arch/um/include/shared/skas/skas.h                 |   1 +
- arch/um/include/shared/skas/stub-data.h            |  20 +-
- arch/um/kernel/Makefile                            |   1 -
- arch/um/kernel/ioport.c                            |  13 -
- arch/um/kernel/irq.c                               |   6 +
- arch/um/kernel/skas/mmu.c                          |  91 ++-
- arch/um/kernel/skas/stub.c                         | 132 ++-
- arch/um/kernel/skas/stub_exe.c                     | 159 +++-
- arch/um/kernel/time.c                              |  13 +-
- arch/um/kernel/trap.c                              | 130 ++-
- arch/um/os-Linux/Makefile                          |   2 +-
- arch/um/os-Linux/drivers/Makefile                  |  13 -
- arch/um/os-Linux/drivers/etap.h                    |  21 -
- arch/um/os-Linux/drivers/ethertap_kern.c           | 100 ---
- arch/um/os-Linux/drivers/ethertap_user.c           | 248 ------
- arch/um/os-Linux/drivers/tuntap.h                  |  21 -
- arch/um/os-Linux/drivers/tuntap_kern.c             |  86 --
- arch/um/os-Linux/drivers/tuntap_user.c             | 215 -----
- arch/um/os-Linux/file.c                            |  15 -
- arch/um/os-Linux/internal.h                        |   5 +-
- arch/um/os-Linux/process.c                         |  31 +
- arch/um/os-Linux/registers.c                       |   4 +-
- arch/um/os-Linux/sigio.c                           |   3 +-
- arch/um/os-Linux/signal.c                          |  19 +-
- arch/um/os-Linux/skas/mem.c                        | 101 ++-
- arch/um/os-Linux/skas/process.c                    | 488 ++++++++---
- arch/um/os-Linux/start_up.c                        | 195 ++++-
- arch/x86/um/asm/checksum.h                         |   3 +
- arch/x86/um/asm/processor.h                        |   8 +-
- arch/x86/um/os-Linux/mcontext.c                    | 218 ++++-
- arch/x86/um/ptrace.c                               |  76 +-
- arch/x86/um/shared/sysdep/kernel-offsets.h         |   2 +
- arch/x86/um/shared/sysdep/mcontext.h               |   9 +
- arch/x86/um/shared/sysdep/stub-data.h              |  23 +
- arch/x86/um/shared/sysdep/stub.h                   |   2 +
- arch/x86/um/shared/sysdep/stub_32.h                |  13 +
- arch/x86/um/shared/sysdep/stub_64.h                |  17 +
- arch/x86/um/tls_32.c                               |  26 +-
- 80 files changed, 2683 insertions(+), 4361 deletions(-)
- delete mode 100644 arch/um/drivers/daemon.h
- delete mode 100644 arch/um/drivers/daemon_kern.c
- delete mode 100644 arch/um/drivers/daemon_user.c
- delete mode 100644 arch/um/drivers/net_kern.c
- delete mode 100644 arch/um/drivers/net_user.c
- delete mode 100644 arch/um/drivers/slip.h
- delete mode 100644 arch/um/drivers/slip_common.c
- delete mode 100644 arch/um/drivers/slip_common.h
- delete mode 100644 arch/um/drivers/slip_kern.c
- delete mode 100644 arch/um/drivers/slip_user.c
- delete mode 100644 arch/um/drivers/slirp.h
- delete mode 100644 arch/um/drivers/slirp_kern.c
- delete mode 100644 arch/um/drivers/slirp_user.c
- delete mode 100644 arch/um/drivers/umcast.h
- delete mode 100644 arch/um/drivers/umcast_kern.c
- delete mode 100644 arch/um/drivers/umcast_user.c
- delete mode 100644 arch/um/drivers/vde.h
- delete mode 100644 arch/um/drivers/vde_kern.c
- delete mode 100644 arch/um/drivers/vde_user.c
- create mode 100644 arch/um/drivers/vfio_kern.c
- create mode 100644 arch/um/drivers/vfio_user.c
- create mode 100644 arch/um/drivers/vfio_user.h
- delete mode 100644 arch/um/include/shared/net_kern.h
- delete mode 100644 arch/um/include/shared/net_user.h
- delete mode 100644 arch/um/kernel/ioport.c
- delete mode 100644 arch/um/os-Linux/drivers/Makefile
- delete mode 100644 arch/um/os-Linux/drivers/etap.h
- delete mode 100644 arch/um/os-Linux/drivers/ethertap_kern.c
- delete mode 100644 arch/um/os-Linux/drivers/ethertap_user.c
- delete mode 100644 arch/um/os-Linux/drivers/tuntap.h
- delete mode 100644 arch/um/os-Linux/drivers/tuntap_kern.c
- delete mode 100644 arch/um/os-Linux/drivers/tuntap_user.c
- create mode 100644 arch/x86/um/shared/sysdep/stub-data.h
+Cheers,
+Quentin
 
