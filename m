@@ -1,186 +1,250 @@
-Return-Path: <linux-kernel+bounces-674491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368A4ACF04B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DF3ACF050
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8333E18868C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:23:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6ABC1892CD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 13:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D62A22FE02;
-	Thu,  5 Jun 2025 13:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D022F76B;
+	Thu,  5 Jun 2025 13:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ef5dZqDj"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUZO36Ai"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A941EDA12;
-	Thu,  5 Jun 2025 13:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3575A1EB5DB;
+	Thu,  5 Jun 2025 13:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749129776; cv=none; b=U9pseO2uBHmuGKb6Y1V1vS2hBWohxYKosUwaZo5gmZvj3SwCFZKTQFpUPfW4tPyqe3gHkCh6oWcd8A4iuc2lWGCmk1o+yhYHX477WQfkTm09NSEeRLUe8i0chfy2NtM2M3vu3b0tvd9xnVcoQ71e3SBirvHOv4k6eKf/rw3ni6U=
+	t=1749129838; cv=none; b=T7XZdo36IXhK0oTRAqFlYsUHb06xk5SSeo76CLKwDcyBw9JUVWupT1iWOnSkRw4x8Lf3aD/0KLeaOAHGZl6oqWDbmzFVXxE08M1NJysaevcKK2/xpmxbxy73PyN+g2UwjFsPnJ5x/nsWqT1fkErsJHvYrTATyUCHfI+PjnGhgjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749129776; c=relaxed/simple;
-	bh=CfFh3w0ThJN+yAH5vQnSPQ1cohCNV0n239N6A/m/PpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LZE27c9AF8UhyjkfMmg3ieZy8DKeznKkL3JQ1lLScgG+YwJJ2dnSQjcP0LEymefi+kg1osgA0544aNXaitVDdaWmpVplLcaxSQFkEWfzkqtm1M1ldRc/KTGwHBFAE023scAU6/RI99uJwNpTugT7tTVxjyI3+ExR1I6Kh/kVTIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ef5dZqDj; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5534edc6493so1206868e87.1;
-        Thu, 05 Jun 2025 06:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749129772; x=1749734572; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I/GGnrCZDhPfrx6amA2Y2XENRlSPIkx2oqNJAJB+2Yg=;
-        b=Ef5dZqDjjSyZlj0zoQHWjHQyGYDYDtjWKzLhjgwRn5+QEASJkZmpEQud/YUlCNdZGh
-         GwoX8kxe8LpPXdJnA4IL2yv38CmKMn4PP8FMyx+6b7FuIQ04MdCPKs91YvzW7C5EVuvV
-         RGouY/IpX+q3CITjagZCTPpaCH0RJF3ehlP2XlIUd3czB7gpvvEtXSRMGR+j93OGT53J
-         RQpJw3txa+RuR+sP7tZdbMR5SWVRzksETHBOFmb+kttIAEqonxCQ3Y0bdTqfY+/PNoqz
-         6ysVQgoK0llzFX7SjvV6jZUR9MOwHdwvvVd+PEG5/YPiOBDVVb6XaaKnft8Hfh4G5McO
-         KEqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749129772; x=1749734572;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I/GGnrCZDhPfrx6amA2Y2XENRlSPIkx2oqNJAJB+2Yg=;
-        b=kUsLq6UUDLB9PvyI9D+HiDRUex11/r2rLbQFzH/PoAYShqsuNUBZCuHba2ATSJTymt
-         WM/y1wVR8L8njsclgSn6VceGMZZkRqkOpfXJAxieSIMYwWn9XDJEbgF62xoUrlwq91ic
-         I+ZGOIxcaVr0X3hUJceld/MDWCiRL7ZR+/w8cJCpL3tXwonsakdtG/jTAsYrR3ZJFp75
-         RoWinAZdvzvf3W9hKb2uJuZ3GLsJco3vo61ch3EsCxzI9jYdqVgIu18kspUamhi5Rn1v
-         +HVuV+iuysbfWyzkrpXe16rlNbpVuzI9Qbz+v1IMGF+noZtRPfgUDawFGJt2jAPVbC1e
-         rbjw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/YGjJSkgtLeQ5elrJwPnBnrN5bVA0cb+8t4/fKsHI0lGJqpR6OrDaNf5FNhFohg9qDfL0r1HeD8wkmtnz3+g=@vger.kernel.org, AJvYcCWjy4JwjfS5V2Flpiq1nghNHpREaMX1vrl/rIkTehVMqvTv/KBFlagfP4218F2kgLoYWOXR8ulC8rC3NAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYBh0QrkVAapoAK9B0yG9z5CGvvSWWRAXf6gByFT7K2G47YF6B
-	Pw7uETEEDomS2dYyHUjS3uxLbLqOIyV7c0VUuvJtiN81CkjzHo6/z4Xt
-X-Gm-Gg: ASbGncsZ4gyVe7Yb6LTGMFNkRtJlhyoAFOgPTRhZPAvmkHB1Y7tXZjyB4OHybNqeQIY
-	nbYQ44X8Gk52ThJezuNO3LwOlgCkQgtN2nFBMAPJmtowdTzhSJl15ZE28zt9vh/mYs6GUT/jz1r
-	bNiVv4LioTVLMV80Pp0UI6JXyjR0KKUO+eHkdzXTwDq1ceVR8sqIbSiQu/IcHPESFThbQ5rePs7
-	EXu6jxPSAyqV4TUFLdtcnnYxta8oOJkmHX5daDT0+s0JqajSwSAW7jiolEBCfm7bBxWT9FcF/6T
-	CPY+qu5WhalqH1nXVWhqCjsGKWfx5spToYVYyHPNDcKcb8VhcKJ1Doqbusx9uNPIMapPrFy/3on
-	vapT4sN1l0OHCU7NdJ25YEEjlC/RO
-X-Google-Smtp-Source: AGHT+IGUkWPUVcTxMOH4yIrjfz5Gt3Qal4jvY6QFmn4eIjhXcLJmVM6uyLDL0ne8sloZ4dGqhpJwAg==
-X-Received: by 2002:a05:6512:12c3:b0:553:35ca:5922 with SMTP id 2adb3069b0e04-55356e04c18mr2010599e87.56.1749129771676;
-        Thu, 05 Jun 2025 06:22:51 -0700 (PDT)
-Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5533791d026sm2640505e87.168.2025.06.05.06.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Jun 2025 06:22:50 -0700 (PDT)
-Message-ID: <5c72682a-ede9-4a48-a214-f1795115816b@gmail.com>
-Date: Thu, 5 Jun 2025 16:22:50 +0300
+	s=arc-20240116; t=1749129838; c=relaxed/simple;
+	bh=5Ed+3SO1+uc7aMnJ5slsCdxvYGy8YBd6ffZjqZg2DeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tn+MG+jVV9br6tylzDTwbszc4P6/mB6G0ci0LKP75/lVSJfENLzFGGRDmMsvVzEX3PipLcI9KCr4cwngyhrpdw3/+APBsj99UTrlEU1zO/Zq2YyDR9uxDMfus571JPuTS5VRoXtJ7xiPiSXqSby77kKoMaj/5lkWwA8J2d9768c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUZO36Ai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DAAC4CEE7;
+	Thu,  5 Jun 2025 13:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749129837;
+	bh=5Ed+3SO1+uc7aMnJ5slsCdxvYGy8YBd6ffZjqZg2DeQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rUZO36AiAXggQ3XWCRMit86mVgif9bQwAc7lu9n/642A/XjsPVcrGS8nkEq6ggtmr
+	 NKVHZGmEumYKwvx0wnLQrbARff+pLOIy0PE5pjf7Gdfw9NhyLoILejjTHhvYeGTEmP
+	 jpJvCUc2shr0kE9XkaqN31BMPPEURFuw9kvoOppXG1HHJFBTvnLRnxJ/bUGOvvqj5K
+	 LEfZjiPzOUyGI3J/cA4K/1tbeq1c1hnmJcvGdZxE0yQ9PFkuknmRJ62uTW8SJt2h6V
+	 blDk0Fl7vSBG3+9g69UI5GZIVSjfIOutOOX2VWynhmO1aX8MXYVtdV/AN13OaWr22L
+	 0wpEG8T4Kbxzw==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>,
+	kees@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@ACULAB.COM>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCHv3 perf/core 00/22] uprobes: Add support to optimize usdt probes on x86_64
+Date: Thu,  5 Jun 2025 15:23:27 +0200
+Message-ID: <20250605132350.1488129-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] rust: add initial scatterlist bindings
-To: Alexandre Courbot <acourbot@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: dakr@kernel.org, lyude@redhat.com, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
- rust-for-linux@vger.kernel.org,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- Petr Tesarik <petr@tesarici.cz>, Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Sui Jingfeng <sui.jingfeng@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
- Michael Kelley <mhklinux@outlook.com>
-References: <20250528221525.1705117-1-abdiel.janulgue@gmail.com>
- <20250528221525.1705117-2-abdiel.janulgue@gmail.com>
- <20250529004550.GB192517@ziepe.ca> <DA9JTYA0EQU8.26M0ZX80FOBWY@nvidia.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <DA9JTYA0EQU8.26M0ZX80FOBWY@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+hi,
+this patchset adds support to optimize usdt probes on top of 5-byte
+nop instruction.
+
+The generic approach (optimize all uprobes) is hard due to emulating
+possible multiple original instructions and its related issues. The
+usdt case, which stores 5-byte nop seems much easier, so starting
+with that.
+
+The basic idea is to replace breakpoint exception with syscall which
+is faster on x86_64. For more details please see changelog of patch 8.
+
+The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
+original instructions) in a loop and counts how many of those happened
+per second (the unit below is million loops).
+
+There's big speed up if you consider current usdt implementation
+(uprobe-nop) compared to proposed usdt (uprobe-nop5):
+
+current:
+        usermode-count :  152.501 ± 0.012M/s
+        syscall-count  :   14.463 ± 0.062M/s
+-->     uprobe-nop     :    3.160 ± 0.005M/s
+        uprobe-push    :    3.003 ± 0.003M/s
+        uprobe-ret     :    1.100 ± 0.003M/s
+        uprobe-nop5    :    3.132 ± 0.012M/s
+        uretprobe-nop  :    2.103 ± 0.002M/s
+        uretprobe-push :    2.027 ± 0.004M/s
+        uretprobe-ret  :    0.914 ± 0.002M/s
+        uretprobe-nop5 :    2.115 ± 0.002M/s
+
+after the change:
+        usermode-count :  152.343 ± 0.400M/s
+        syscall-count  :   14.851 ± 0.033M/s
+        uprobe-nop     :    3.204 ± 0.005M/s
+        uprobe-push    :    3.040 ± 0.005M/s
+        uprobe-ret     :    1.098 ± 0.003M/s
+-->     uprobe-nop5    :    7.286 ± 0.017M/s
+        uretprobe-nop  :    2.144 ± 0.001M/s
+        uretprobe-push :    2.069 ± 0.002M/s
+        uretprobe-ret  :    0.922 ± 0.000M/s
+        uretprobe-nop5 :    3.487 ± 0.001M/s
+
+I see bit more speed up on Intel (above) compared to AMD. The big nop5
+speed up is partly due to emulating nop5 and partly due to optimization.
+
+The key speed up we do this for is the USDT switch from nop to nop5:
+	uprobe-nop     :    3.160 ± 0.005M/s
+	uprobe-nop5    :    7.286 ± 0.017M/s
 
 
-
-On 30/05/2025 17:02, Alexandre Courbot wrote:
-> On Thu May 29, 2025 at 9:45 AM JST, Jason Gunthorpe wrote:
->> On Thu, May 29, 2025 at 01:14:05AM +0300, Abdiel Janulgue wrote:
->>> +impl SGEntry<Unmapped> {
->>> +    /// Set this entry to point at a given page.
->>> +    pub fn set_page(&mut self, page: &Page, length: u32, offset: u32) {
->>> +        let c: *mut bindings::scatterlist = self.0.get();
->>> +        // SAFETY: according to the `SGEntry` invariant, the scatterlist pointer is valid.
->>> +        // `Page` invariant also ensures the pointer is valid.
->>> +        unsafe { bindings::sg_set_page(c, page.as_ptr(), length, offset) };
->>> +    }
->>> +}
->>
->> Wrong safety statement. sg_set_page captures the page.as_ptr() inside
->> the C datastructure so the caller must ensure it holds a reference on
->> the page while it is contained within the scatterlist.
->>
->> Which this API doesn't force to happen.
->>
->> Most likely for this to work for rust you have to take a page
->> reference here and ensure the page reference is put back during sg
->> destruction. A typical normal pattern would 'move' the reference from
->> the caller into the scatterlist.
-> 
-> As Jason mentioned, we need to make sure that the backing pages don't get
-> dropped while the `SGTable` is alive. The example provided unfortunately fails
-> to do that:
-> 
->      let sgt = SGTable::alloc_table(4, GFP_KERNEL)?;
->      let sgt = sgt.init(|iter| {
->          for sg in iter {
->              sg.set_page(&Page::alloc_page(GFP_KERNEL)?, PAGE_SIZE as u32, 0);
->          }
->          Ok(())
->      })?;
-> 
-> Here the allocated `Page`s are dropped immediately after their address is
-> written by `set_page`, giving the device access to memory that may now be used
-> for completely different purposes. As long as the `SGTable` exists, the memory
-> it points to must not be released or reallocated in any way.
+Changes from v2:
+- rebased on top of tip/master + mm/mm-stable + 1 extra change [1]
+- added acks [Oleg,Andrii]
+- more details changelog for patch 1 [Masami]
+- several tests changes [Andrii]
+- add explicit PAGE_SIZE low limit to vm_unmapped_area call [Andrii]
 
 
-Hi just a silly observation while trying to think about other ways to 
-tie the page lifetime to the sgtable. Why can't we just use a lifetime 
-bound annotation?
+This patchset is adding new syscall, here are notes to check list items
+in Documentation/process/adding-syscalls.rst:
 
-It's simpler and it seems to work:
+- System Call Alternatives
+  New syscall seems like the best way in here, because we need
+  just to quickly enter kernel with no extra arguments processing,
+  which we'd need to do if we decided to use another syscall.
+
+- Designing the API: Planning for Extension
+  The uprobe syscall is very specific and most likely won't be
+  extended in the future.
+
+- Designing the API: Other Considerations
+  N/A because uprobe syscall does not return reference to kernel
+  object.
+
+- Proposing the API
+  Wiring up of the uprobe system call is in separate change,
+  selftests and man page changes are part of the patchset.
+
+- Generic System Call Implementation
+  There's no CONFIG option for the new functionality because it
+  keeps the same behaviour from the user POV.
+
+- x86 System Call Implementation
+  It's 64-bit syscall only.
+
+- Compatibility System Calls (Generic)
+  N/A uprobe syscall has no arguments and is not supported
+  for compat processes.
+
+- Compatibility System Calls (x86)
+  N/A uprobe syscall is not supported for compat processes.
+
+- System Calls Returning Elsewhere
+  N/A.
+
+- Other Details
+  N/A.
+
+- Testing
+  Adding new bpf selftests.
+
+- Man Page
+  Attached.
+
+- Do not call System Calls in the Kernel
+  N/A
+
+pending todo (or follow ups):
+- use PROCMAP_QUERY in tests
+- alloc 'struct uprobes_state' for mm_struct only when needed [Andrii]
+- use mm_cpumask(vma->vm_mm) in text_poke_sync
+
+thanks,
+jirka
 
 
-impl<'b> SGEntry<'b, Unmapped> {
-     pub fn set_page<'a: 'b> (&mut self, page: &'a Page, length: u32, 
-offset: u32)
+Cc: Alejandro Colomar <alx@kernel.org>
+Cc: Eyal Birger <eyal.birger@gmail.com>
+Cc: kees@kernel.org
 
-So with this, my erroneous example fails to compile. Here the compiler 
-enforces the use  of the api so that the page of the lifetime is always 
-tied to the sgtable:
+[1] https://lore.kernel.org/linux-trace-kernel/20250514101809.2010193-1-jolsa@kernel.org/T/#u
+---
+Jiri Olsa (21):
+      uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+      uprobes: Rename arch_uretprobe_trampoline function
+      uprobes: Make copy_from_page global
+      uprobes: Add uprobe_write function
+      uprobes: Add nbytes argument to uprobe_write
+      uprobes: Add is_register argument to uprobe_write and uprobe_write_opcode
+      uprobes: Add do_ref_ctr argument to uprobe_write function
+      uprobes/x86: Add mapping for optimized uprobe trampolines
+      uprobes/x86: Add uprobe syscall to speed up uprobe
+      uprobes/x86: Add support to optimize uprobes
+      selftests/bpf: Import usdt.h from libbpf/usdt project
+      selftests/bpf: Reorg the uprobe_syscall test function
+      selftests/bpf: Rename uprobe_syscall_executed prog to test_uretprobe_multi
+      selftests/bpf: Add uprobe/usdt syscall tests
+      selftests/bpf: Add hit/attach/detach race optimized uprobe test
+      selftests/bpf: Add uprobe syscall sigill signal test
+      selftests/bpf: Add optimized usdt variant for basic usdt test
+      selftests/bpf: Add uprobe_regs_equal test
+      selftests/bpf: Change test_uretprobe_regs_change for uprobe and uretprobe
+      seccomp: passthrough uprobe systemcall without filtering
+      selftests/seccomp: validate uprobe syscall passes through seccomp
+
+ arch/arm/probes/uprobes/core.c                              |   2 +-
+ arch/x86/entry/syscalls/syscall_64.tbl                      |   1 +
+ arch/x86/include/asm/uprobes.h                              |   7 ++
+ arch/x86/kernel/uprobes.c                                   | 525 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/syscalls.h                                    |   2 +
+ include/linux/uprobes.h                                     |  20 +++-
+ kernel/events/uprobes.c                                     | 100 ++++++++++++-----
+ kernel/fork.c                                               |   1 +
+ kernel/seccomp.c                                            |  32 ++++--
+ kernel/sys_ni.c                                             |   1 +
+ tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c     | 523 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ tools/testing/selftests/bpf/prog_tests/usdt.c               |  38 ++++---
+ tools/testing/selftests/bpf/progs/uprobe_syscall.c          |   4 +-
+ tools/testing/selftests/bpf/progs/uprobe_syscall_executed.c |  60 +++++++++-
+ tools/testing/selftests/bpf/test_kmods/bpf_testmod.c        |  11 +-
+ tools/testing/selftests/bpf/usdt.h                          | 545 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c               | 107 ++++++++++++++----
+ 17 files changed, 1867 insertions(+), 112 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/usdt.h
 
 
-let sgt = sgt.init(|iter| {
-    |                             ---- has type 
-`kernel::scatterlist::SGTableIterMut<'1>`
-71 |             for sg in iter {
-    |                 -- assignment requires that borrow lasts for `'1`
-72 |                 sg.set_page(&Page::alloc_page(GFP_KERNEL)?, 
-PAGE_SIZE as u32, 0);
-    |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
-              - temporary value is freed at the end of this statement
-    |                              |
-    |                              creates a temporary value which is 
-freed while still in use
+Jiri Olsa (1):
+      man2: Add uprobe syscall page
 
-
-Regards,
-Abdiel
+ man/man2/uprobe.2    |  1 +
+ man/man2/uretprobe.2 | 36 ++++++++++++++++++++++++------------
+ 2 files changed, 25 insertions(+), 12 deletions(-)
+ create mode 100644 man/man2/uprobe.2
 
