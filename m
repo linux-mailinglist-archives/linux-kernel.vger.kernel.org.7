@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-674216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E648ACEB55
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:56:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EC1ACEB5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 09:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE42F178CF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:56:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED707A7F0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 07:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA731FFC49;
-	Thu,  5 Jun 2025 07:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE04420297C;
+	Thu,  5 Jun 2025 07:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YP7M7FMa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+eB6TNeq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YP7M7FMa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+eB6TNeq"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="NXt9gKdx"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FCB1FF1C9
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CAC17548
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 07:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749110161; cv=none; b=rxSUJ2dXD489KdNQTdMl4hoxEoQL5fAawteunzSIV/MzTm5ZhuP48RvCmKFYZNSFAZkw2OrWYiEZM+vHLrz0QV4dpTjRhV1NMCDJH8j4JzbSOoTuIYnlKorbEKkkdazcDSGRvqCVMdidMAoUoBeEBFwHUz3P9bbsj1CBi7+3ZXw=
+	t=1749110267; cv=none; b=FzNdZaQooEf8UNYE+bysk0aNBM3GeFxio0dVrUUJEhP+e7gsFj8UJV0LRc9lkxNWP1qnpXxHk+LkShFdcCTG+6t6VPyNJfnP4Ans3BxG/Fd5wXBjMiVQi2Ypn4bHJ1cuR1pxLFkHFYpj0TrdzqckSqCTgrY4tC1znG4HG+14oNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749110161; c=relaxed/simple;
-	bh=WGdqmRYcIgONgeM3AK7BWmHnn1rBwXkLahoXEQlU0zc=;
+	s=arc-20240116; t=1749110267; c=relaxed/simple;
+	bh=lTA9zjNN3JRVFRXQw/iswVkI+O61SyCDwuvCfwwT6sA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8C0iTtlXeIzfccm+MMk8GKOSRPMXsmKx/6X7ONrNPnZ/q0i+23yvcj6ZDyYfXwZkrb2RiqKRWGVf1vmYiIdY+9JbnEXmg84v/C+1Yfistt4bkS9eUnc5AnVkeoiYUknzwrrR7pQcvMTnpD6NI+jW1+6Xx1FmjwdQQFCktLX7l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YP7M7FMa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+eB6TNeq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YP7M7FMa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+eB6TNeq; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ABFDD34684;
-	Thu,  5 Jun 2025 07:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749110151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
-	b=YP7M7FMa74q59tNGP33U+XFVji+IEYwZmnMR6xahitF1Vndpw/jc2T3fWYWl8S027eW+3p
-	UYOOL0IRbGlqtzyh0OxRqtTsLkmNHb8ubYANvFBvaWCFVWvUoFq9GQmLEtzM2RVSHV9YlV
-	E2He5tgYvn14cR0IzwwTj/Rbszcqa+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749110151;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
-	b=+eB6TNeqZt1/hkbo2PiIRhFrk3iql/AqJneqJ7lA4JvUiytR9pVHgaWVMX6uxomtf8b1ib
-	E2ZGRmXiSM2yxQDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YP7M7FMa;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+eB6TNeq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749110151; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
-	b=YP7M7FMa74q59tNGP33U+XFVji+IEYwZmnMR6xahitF1Vndpw/jc2T3fWYWl8S027eW+3p
-	UYOOL0IRbGlqtzyh0OxRqtTsLkmNHb8ubYANvFBvaWCFVWvUoFq9GQmLEtzM2RVSHV9YlV
-	E2He5tgYvn14cR0IzwwTj/Rbszcqa+M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749110151;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HRd1tEzrVLQHewuIHSVriPCfBV3nNE1DWbs6tm2ALa8=;
-	b=+eB6TNeqZt1/hkbo2PiIRhFrk3iql/AqJneqJ7lA4JvUiytR9pVHgaWVMX6uxomtf8b1ib
-	E2ZGRmXiSM2yxQDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 43E681373E;
-	Thu,  5 Jun 2025 07:55:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id t3UmD4dNQWgYNwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 05 Jun 2025 07:55:51 +0000
-Message-ID: <d7a426b2-a66d-4d65-a9d5-c967b850dad6@suse.de>
-Date: Thu, 5 Jun 2025 09:55:50 +0200
+	 In-Reply-To:Content-Type; b=Pe/crtlVBVl9TFWM5DxqVW5FG/RV49XxfMFZP7HfahPDbJuSdpdiJ5KXErtInAQV8JvTUho+gw/ZCe1HeVdC3GvNT2WZ2qmgkinw2kEDisUMMjeEFHOEEsvdGdJo4POg8UrZsBllk7c8TXEjJoZmavTMxvjLmsyeVkEJQYj6hT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=NXt9gKdx; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-742c3d06de3so880036b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 00:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1749110265; x=1749715065; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+zZl2dXMX0VDVWJAsL+cjXNr7Ok2fg0ZVvzGEGrTbrE=;
+        b=NXt9gKdxkt0smYROeldepk+OBONg+wK+WS6irmFMbuM5Yh956ve7YzQQThj09ZtyLd
+         tC0ohv+QpIcX54RX+u4zxAzBcKY8SCyY+zIDBrh+ArwSMgsS01HIWxXHImNzbSN3MfnN
+         2dLcfDCQIeCETU3DCYbUZjF/0/NEgsTXk6TqYlZuNIxZ42b9lLUEpUnK4nWl9gqY67BC
+         w010AwWppj0xupGkvLBW6P2m4khin3x511BgNQlulo599MxmtuPR73Vwi2tUXeK0tvLF
+         rohAoI9wro61NXLBho8oHW6/Ypts8waiCScBfnfs8jG+TXWqFQSDU3RR1fUJkbaGXkTS
+         +xTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749110265; x=1749715065;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+zZl2dXMX0VDVWJAsL+cjXNr7Ok2fg0ZVvzGEGrTbrE=;
+        b=hP394erY4nAO+APwCzSGqDGDCXCc1/B1uLk64XmzWIFAoobA/mUN+38plSqc8Nz2JE
+         E7z8ISJPnSo4HpvPf1FPxa6E91Z/iGaN5DSpZWi33PsIpfTbg1OQCZqsFmZi/tNsj3t6
+         QI4sl4PbICAP3bG3gy4OeWmHE97ItG17vRFjYvzUBr/k7yciXkXIvWYchXoNiLRPIANj
+         POajWny6eVuBVRnqyNGEkF+FgAeuZgwxnHKAX20ZoVcpZKsGFkZDOYvqN7ewEhkFuSHl
+         qGhjArXHwyVwjXGGRXh0aqOn2b+FUcrxtPhGdMEpAfsuamRLms+mHeftrhi5E11gw6Np
+         gUjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxsLmu4J5+rYo2Edlp3FEv1GCGe+76tw1Vbmv3coF6DmA0dYZilW0ynyaSbDJDCrClZq+6OaOQgbD6LRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXkTcZMCc907QlRjH1+q6AfemnPBx0Ko1c1rZ1UqfPLcV/8+FM
+	VMiiHCTtlkyDz2AVNnP0qZBWRtSNspJUi7+Cl391avni1mr6l9Z2xJrJ1PvgMqNXypM=
+X-Gm-Gg: ASbGncvISpZUVRRIDl/orbJyiR496p7f+p/FTav5N6JpN9xI58ANHtAcSzb83uAukjw
+	RQShJQDi3GsWNOGRx42l7QwKh0HprQ+JrxmW3hbjRVkUJtSX0JsF8IuuII3+cKtfSKF7UWqo0Mo
+	ppCOVZmkT+9PhICiZGfRM2JwMU19PXgBQm3GN5vkMQqwqQGXHFFCQSk5FdBlN68FmRCD3L8Gzuo
+	tzZOueGkemQjhDZWg8iNuNZIbTSIk0ChHnen4dzn5kXwF9YYbgXjNSi9vPftCMiHfuFBKiqNXLc
+	noENHvYP/CHAOwj+DTUrnqxDwqetX9KjycOBET4ilLl7DltdTG9e5v91EFC+2ZYq
+X-Google-Smtp-Source: AGHT+IFSoebIZPWJ4N4NNYcabgJf1nxLz3d3ke91Rf5CUCkTc2VJbpBBnWqg7beTFgdLDU7v3xdgJA==
+X-Received: by 2002:a05:6a00:3d13:b0:742:362c:d2e4 with SMTP id d2e1a72fcca58-7480b226180mr7583905b3a.5.1749110264898;
+        Thu, 05 Jun 2025 00:57:44 -0700 (PDT)
+Received: from [157.82.203.223] ([157.82.203.223])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747affcf703sm12228046b3a.129.2025.06.05.00.57.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Jun 2025 00:57:44 -0700 (PDT)
+Message-ID: <75ef190e-49fc-48aa-abf2-579ea31e4d15@daynix.com>
+Date: Thu, 5 Jun 2025 16:57:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,250 +80,390 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] fbdev/deferred-io: Support contiguous kernel
- memory framebuffers
-To: Michael Kelley <mhklinux@outlook.com>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: David Hildenbrand <david@redhat.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "deller@gmx.de" <deller@gmx.de>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "kys@microsoft.com" <kys@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "weh@microsoft.com" <weh@microsoft.com>, "hch@lst.de" <hch@lst.de>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20250523161522.409504-1-mhklinux@outlook.com>
- <20250523161522.409504-4-mhklinux@outlook.com>
- <de0f2cb8-aed6-436f-b55e-d3f7b3fe6d81@redhat.com>
- <SN6PR02MB41573C075152ECD8428CAF5ED46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <c0b91a50-d3e7-44f9-b9c5-9c3b29639428@suse.de>
- <SN6PR02MB4157871127ED95AD24EDF96DD46DA@SN6PR02MB4157.namprd02.prod.outlook.com>
- <9a93813c-4d7c-45ef-b5a2-0ad37e7a078a@suse.de>
- <aEBcCjMWZJgbsRas@phenom.ffwll.local>
- <SN6PR02MB415702B00D6D52B0EE962C98D46CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Subject: Re: [PATCH net-next v12 01/10] virtio_net: Add functions for hashing
+To: Jason Wang <jasowang@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20250530-rss-v12-0-95d8b348de91@daynix.com>
+ <20250530-rss-v12-1-95d8b348de91@daynix.com>
+ <CACGkMEufffSj1GQMqwf598__-JgNtXRpyvsLtjSbr3angLmJXg@mail.gmail.com>
+ <95cb2640-570d-4f51-8775-af5248c6bc5a@daynix.com>
+ <CACGkMEu6fZaErFEu7_UFsykXRL7Z+CwmkcxmvJHC+eN_j0pQvg@mail.gmail.com>
+ <4eaa7aaa-f677-4a31-bcc2-badcb5e2b9f6@daynix.com>
+ <CACGkMEu3QH+VdHqQEePYz_z+_bNYswpA-KNxzz0edEOSSkJtWw@mail.gmail.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <SN6PR02MB415702B00D6D52B0EE962C98D46CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <CACGkMEu3QH+VdHqQEePYz_z+_bNYswpA-KNxzz0edEOSSkJtWw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FREEMAIL_TO(0.00)[outlook.com,ffwll.ch];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de,outlook.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,ffwll.ch,gmx.de,microsoft.com,kernel.org,linux-foundation.org,lst.de,lists.freedesktop.org,vger.kernel.org,kvack.org];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,suse.com:url,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: ABFDD34684
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
 
-Hi
-
-Am 04.06.25 um 23:43 schrieb Michael Kelley:
-> From: Simona Vetter <simona.vetter@ffwll.ch> Sent: Wednesday, June 4, 2025 7:46 AM
->> On Wed, Jun 04, 2025 at 10:12:45AM +0200, Thomas Zimmermann wrote:
->>> Hi
->>>
->>> Am 03.06.25 um 19:50 schrieb Michael Kelley:
->>>> From: Thomas Zimmermann <tzimmermann@suse.de> Sent: Monday, June 2, 2025 11:25 PM
->>>>> Hi
->>>>>
->>>>> Am 03.06.25 um 03:49 schrieb Michael Kelley:
->>>>> [...]
->>>>> What is the motivation behind this work? The driver or fbdev as a whole
->>>>> does not have much of a future anyway.
->>>>>
->>>>> I'd like to suggest removing hyperv_fb entirely in favor of hypervdrm?
->>>>>
->>>> Yes, I think that's the longer term direction. A couple months ago I had an
->>>> email conversation with Saurabh Sengar from the Microsoft Linux team where
->>>> he raised this idea. I think the Microsoft folks will need to drive the deprecation
->>>> process, as they need to coordinate with the distro vendors who publish
->>>> images for running on local Hyper-V and in the Azure cloud. And my
->>>> understanding is that the Linux kernel process would want the driver to
->>>> be available but marked "deprecated" for a year or so before it actually
->>>> goes away.
->>> We (DRM upstream) recently considered moving some fbdev drivers to
->>> drivers/staging or marking them with !DRM if a DRM driver is available.
->>> Hyverv_fb would be a candidate.
->>>
->>> At least at SUSE, we ship hypervdrm instead of hyperv_fb. This works well on
->>> the various generations of the hyperv system. Much of our userspace would
->>> not be able to use hyperv_fb anyway.
-> Good to know.  Red Hat has made the switch as well. The Ubuntu images
-> in Azure have both hyperv_fb and hyperv_drm. I don't know what other
-> distros have done.
->
->> Yeah investing into fbdev drivers, especially when some mm surgery seems
->> needed, does not sound like a good idea to me overall.
+On 2025/06/05 10:53, Jason Wang wrote:
+> On Wed, Jun 4, 2025 at 3:20 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
 >>
->>>> I do have some concerns about the maturity of the hyperv_drm driver
->>>> "around the edges". For example, somebody just recently submitted a
->>>> patch to flush output on panic. I have less familiarity hyperv_drm vs.
->>>> hyperv_fb, so some of my concern is probably due to that. We might
->>>> need to do review of hyperv_drm and see if there's anything else to
->>>> deal with before hyperv_fb goes away.
->>> The panic output is a feature that we recently added to the kernel. It
->>> allows a DRM driver to display a final error message in the case of a kernel
->>> panic (think of blue screens on Windows). Drivers require a minimum of
->>> support to make it work. That's what the hypervdrm patches were about.
->> I'm also happy to help with any other issues and shortfalls of drm vs
->> fbdev. There are some, but I thought it was mostly around some of the low
->> bit color formats that really old devices want, and not anything that
->> hyperv would need.
-> You've set me up perfectly to raise an issue. :-)  I'm still relatively new
-> to the hyperv_drm driver and DRM in general, compared with hyperv_fb.
-> One capability in fbdev is deferred I/O, which is what this entire patch
-> series is about. The hyperv_drm driver doesn't currently use anything
-> similar to deferred I/O like hyperv_fb. I don't know if that's because
-> hyperv_drm doesn't make use of what DRM has to offer, or if DRM doesn't
-> have a deferred I/O framework like fbdev. Do you know what the situation
-> is? Or could you point me to an example of doing deferred I/O with DRM
-> that hyperv_drm should be following?
+>> On 2025/06/04 10:18, Jason Wang wrote:
+>>> On Tue, Jun 3, 2025 at 1:31 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>
+>>>> On 2025/06/03 12:19, Jason Wang wrote:
+>>>>> On Fri, May 30, 2025 at 12:50 PM Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+>>>>>>
+>>>>>> They are useful to implement VIRTIO_NET_F_RSS and
+>>>>>> VIRTIO_NET_F_HASH_REPORT.
+>>>>>>
+>>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>>>>>> Tested-by: Lei Yang <leiyang@redhat.com>
+>>>>>> ---
+>>>>>>     include/linux/virtio_net.h | 188 +++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>     1 file changed, 188 insertions(+)
+>>>>>>
+>>>>>> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+>>>>>> index 02a9f4dc594d..426f33b4b824 100644
+>>>>>> --- a/include/linux/virtio_net.h
+>>>>>> +++ b/include/linux/virtio_net.h
+>>>>>> @@ -9,6 +9,194 @@
+>>>>>>     #include <uapi/linux/tcp.h>
+>>>>>>     #include <uapi/linux/virtio_net.h>
+>>>>>>
+>>>>>> +struct virtio_net_hash {
+>>>>>> +       u32 value;
+>>>>>> +       u16 report;
+>>>>>> +};
+>>>>>> +
+>>>>>> +struct virtio_net_toeplitz_state {
+>>>>>> +       u32 hash;
+>>>>>> +       const u32 *key;
+>>>>>> +};
+>>>>>> +
+>>>>>> +#define VIRTIO_NET_SUPPORTED_HASH_TYPES (VIRTIO_NET_RSS_HASH_TYPE_IPv4 | \
+>>>>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_TCPv4 | \
+>>>>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_UDPv4 | \
+>>>>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_IPv6 | \
+>>>>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_TCPv6 | \
+>>>>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_UDPv6)
+>>>>>> +
+>>>>>> +#define VIRTIO_NET_RSS_MAX_KEY_SIZE 40
+>>>>>> +
+>>>>>> +static inline void virtio_net_toeplitz_convert_key(u32 *input, size_t len)
+>>>>>> +{
+>>>>>> +       while (len >= sizeof(*input)) {
+>>>>>> +               *input = be32_to_cpu((__force __be32)*input);
+>>>>>> +               input++;
+>>>>>> +               len -= sizeof(*input);
+>>>>>> +       }
+>>>>>> +}
+>>>>>> +
+>>>>>> +static inline void virtio_net_toeplitz_calc(struct virtio_net_toeplitz_state *state,
+>>>>>> +                                           const __be32 *input, size_t len)
+>>>>>> +{
+>>>>>> +       while (len >= sizeof(*input)) {
+>>>>>> +               for (u32 map = be32_to_cpu(*input); map; map &= (map - 1)) {
+>>>>>> +                       u32 i = ffs(map);
+>>>>>> +
+>>>>>> +                       state->hash ^= state->key[0] << (32 - i) |
+>>>>>> +                                      (u32)((u64)state->key[1] >> i);
+>>>>>> +               }
+>>>>>> +
+>>>>>> +               state->key++;
+>>>>>> +               input++;
+>>>>>> +               len -= sizeof(*input);
+>>>>>> +       }
+>>>>>> +}
+>>>>>> +
+>>>>>> +static inline u8 virtio_net_hash_key_length(u32 types)
+>>>>>> +{
+>>>>>> +       size_t len = 0;
+>>>>>> +
+>>>>>> +       if (types & VIRTIO_NET_HASH_REPORT_IPv4)
+>>>>>> +               len = max(len,
+>>>>>> +                         sizeof(struct flow_dissector_key_ipv4_addrs));
+>>>>>> +
+>>>>>> +       if (types &
+>>>>>> +           (VIRTIO_NET_HASH_REPORT_TCPv4 | VIRTIO_NET_HASH_REPORT_UDPv4))
+>>>>>> +               len = max(len,
+>>>>>> +                         sizeof(struct flow_dissector_key_ipv4_addrs) +
+>>>>>> +                         sizeof(struct flow_dissector_key_ports));
+>>>>>> +
+>>>>>> +       if (types & VIRTIO_NET_HASH_REPORT_IPv6)
+>>>>>> +               len = max(len,
+>>>>>> +                         sizeof(struct flow_dissector_key_ipv6_addrs));
+>>>>>> +
+>>>>>> +       if (types &
+>>>>>> +           (VIRTIO_NET_HASH_REPORT_TCPv6 | VIRTIO_NET_HASH_REPORT_UDPv6))
+>>>>>> +               len = max(len,
+>>>>>> +                         sizeof(struct flow_dissector_key_ipv6_addrs) +
+>>>>>> +                         sizeof(struct flow_dissector_key_ports));
+>>>>>> +
+>>>>>> +       return len + sizeof(u32);
+>>>>>> +}
+>>>>>> +
+>>>>>> +static inline u32 virtio_net_hash_report(u32 types,
+>>>>>> +                                        const struct flow_keys_basic *keys)
+>>>>>> +{
+>>>>>> +       switch (keys->basic.n_proto) {
+>>>>>> +       case cpu_to_be16(ETH_P_IP):
+>>>>>> +               if (!(keys->control.flags & FLOW_DIS_IS_FRAGMENT)) {
+>>>>>> +                       if (keys->basic.ip_proto == IPPROTO_TCP &&
+>>>>>> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_TCPv4))
+>>>>>> +                               return VIRTIO_NET_HASH_REPORT_TCPv4;
+>>>>>> +
+>>>>>> +                       if (keys->basic.ip_proto == IPPROTO_UDP &&
+>>>>>> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_UDPv4))
+>>>>>> +                               return VIRTIO_NET_HASH_REPORT_UDPv4;
+>>>>>> +               }
+>>>>>> +
+>>>>>> +               if (types & VIRTIO_NET_RSS_HASH_TYPE_IPv4)
+>>>>>> +                       return VIRTIO_NET_HASH_REPORT_IPv4;
+>>>>>> +
+>>>>>> +               return VIRTIO_NET_HASH_REPORT_NONE;
+>>>>>> +
+>>>>>> +       case cpu_to_be16(ETH_P_IPV6):
+>>>>>> +               if (!(keys->control.flags & FLOW_DIS_IS_FRAGMENT)) {
+>>>>>> +                       if (keys->basic.ip_proto == IPPROTO_TCP &&
+>>>>>> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_TCPv6))
+>>>>>> +                               return VIRTIO_NET_HASH_REPORT_TCPv6;
+>>>>>> +
+>>>>>> +                       if (keys->basic.ip_proto == IPPROTO_UDP &&
+>>>>>> +                           (types & VIRTIO_NET_RSS_HASH_TYPE_UDPv6))
+>>>>>> +                               return VIRTIO_NET_HASH_REPORT_UDPv6;
+>>>>>> +               }
+>>>>>> +
+>>>>>> +               if (types & VIRTIO_NET_RSS_HASH_TYPE_IPv6)
+>>>>>> +                       return VIRTIO_NET_HASH_REPORT_IPv6;
+>>>>>> +
+>>>>>> +               return VIRTIO_NET_HASH_REPORT_NONE;
+>>>>>> +
+>>>>>> +       default:
+>>>>>> +               return VIRTIO_NET_HASH_REPORT_NONE;
+>>>>>> +       }
+>>>>>> +}
+>>>>>> +
+>>>>>> +static inline void virtio_net_hash_rss(const struct sk_buff *skb,
+>>>>>> +                                      u32 types, const u32 *key,
+>>>>>> +                                      struct virtio_net_hash *hash)
+>>>>>> +{
+>>>>>> +       struct virtio_net_toeplitz_state toeplitz_state = { .key = key };
+>>>>>> +       struct flow_keys flow;
+>>>>>> +       struct flow_keys_basic flow_basic;
+>>>>>> +       u16 report;
+>>>>>> +
+>>>>>> +       if (!skb_flow_dissect_flow_keys(skb, &flow, 0)) {
+>>>>>> +               hash->report = VIRTIO_NET_HASH_REPORT_NONE;
+>>>>>> +               return;
+>>>>>> +       }
+>>>>>> +
+>>>>>> +       flow_basic = (struct flow_keys_basic) {
+>>>>>> +               .control = flow.control,
+>>>>>> +               .basic = flow.basic
+>>>>>> +       };
+>>>>>> +
+>>>>>> +       report = virtio_net_hash_report(types, &flow_basic);
+>>>>>> +
+>>>>>> +       switch (report) {
+>>>>>> +       case VIRTIO_NET_HASH_REPORT_IPv4:
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state,
+>>>>>> +                                        (__be32 *)&flow.addrs.v4addrs,
+>>>>>> +                                        sizeof(flow.addrs.v4addrs));
+>>>>>> +               break;
+>>>>>> +
+>>>>>> +       case VIRTIO_NET_HASH_REPORT_TCPv4:
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state,
+>>>>>> +                                        (__be32 *)&flow.addrs.v4addrs,
+>>>>>> +                                        sizeof(flow.addrs.v4addrs));
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
+>>>>>> +                                        sizeof(flow.ports.ports));
+>>>>>> +               break;
+>>>>>> +
+>>>>>> +       case VIRTIO_NET_HASH_REPORT_UDPv4:
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state,
+>>>>>> +                                        (__be32 *)&flow.addrs.v4addrs,
+>>>>>> +                                        sizeof(flow.addrs.v4addrs));
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
+>>>>>> +                                        sizeof(flow.ports.ports));
+>>>>>> +               break;
+>>>>>> +
+>>>>>> +       case VIRTIO_NET_HASH_REPORT_IPv6:
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state,
+>>>>>> +                                        (__be32 *)&flow.addrs.v6addrs,
+>>>>>> +                                        sizeof(flow.addrs.v6addrs));
+>>>>>> +               break;
+>>>>>> +
+>>>>>> +       case VIRTIO_NET_HASH_REPORT_TCPv6:
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state,
+>>>>>> +                                        (__be32 *)&flow.addrs.v6addrs,
+>>>>>> +                                        sizeof(flow.addrs.v6addrs));
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
+>>>>>> +                                        sizeof(flow.ports.ports));
+>>>>>> +               break;
+>>>>>> +
+>>>>>> +       case VIRTIO_NET_HASH_REPORT_UDPv6:
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state,
+>>>>>> +                                        (__be32 *)&flow.addrs.v6addrs,
+>>>>>> +                                        sizeof(flow.addrs.v6addrs));
+>>>>>> +               virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
+>>>>>> +                                        sizeof(flow.ports.ports));
+>>>>>> +               break;
+>>>>>> +
+>>>>>> +       default:
+>>>>>> +               hash->report = VIRTIO_NET_HASH_REPORT_NONE;
+>>>>>> +               return;
+>>>>>
+>>>>> So I still think we need a comment here to explain why this is not an
+>>>>> issue if the device can report HASH_XXX_EX. Or we need to add the
+>>>>> support, since this is the code from the driver side, I don't think we
+>>>>> need to worry about the device implementation issues.
+>>>>
+>>>> This is on the device side, and don't report HASH_TYPE_XXX_EX.
+>>>>
+>>>>>
+>>>>> For the issue of the number of options, does the spec forbid fallback
+>>>>> to VIRTIO_NET_HASH_REPORT_NONE? If not, we can do that.
+>>>>
+>>>> 5.1.6.4.3.4 "IPv6 packets with extension header" says:
+>>>>    > If VIRTIO_NET_HASH_TYPE_TCP_EX is set and the packet has a TCPv6
+>>>>    > header, the hash is calculated over the following fields:
+>>>>    > - Home address from the home address option in the IPv6 destination
+>>>>    >   options header. If the extension header is not present, use the
+>>>>    >   Source IPv6 address.
+>>>>    > - IPv6 address that is contained in the Routing-Header-Type-2 from the
+>>>>    >   associated extension header. If the extension header is not present,
+>>>>    >   use the Destination IPv6 address.
+>>>>    > - Source TCP port
+>>>>    > - Destination TCP port
+>>>>
+>>>> Therefore, if VIRTIO_NET_HASH_TYPE_TCP_EX is set, the packet has a TCPv6
+>>>> and an home address option in the IPv6 destination options header is
+>>>> present, the hash is calculated over the home address. If the hash is
+>>>> not calculated over the home address in such a case, the device is
+>>>> contradicting with this section and violating the spec. The same goes
+>>>> for the other HASH_TYPE_XXX_EX types and Routing-Header-Type-2.
+>>>
+>>> Just to make sure we are one the same page. I meant:
+>>>
+>>> 1) If the hash is not calculated over the home address (in the case of
+>>> IPv6 destination destination), it can still report
+>>> VIRTIO_NET_RSS_HASH_TYPE_IPv6. This is what you implemented in your
+>>> series. So the device can simply fallback to e.g TCPv6 if it can't
+>>> understand all or part of the IPv6 options.
+>>
+>> The spec says it can fallback if "the extension header is not present",
+>> not if the device can't understand the extension header.
+> 
+> I don't think so,
+> 
+> 1) spec had a condition beforehand:
+> 
+> """
+> If VIRTIO_NET_HASH_TYPE_TCP_EX is set and the packet has a TCPv6
+> header, the hash is calculated over the following fields:
+> ...
+> If the extension header is not present ...
+> """
+> 
+> So the device can choose not to set VIRTIO_NET_HASH_TYPE_TCP_EX as
+> spec doesn't say device MUST set VIRTIO_NET_HASH_TYPE_TCP_EX if ...
+> 
+> 2) implementation wise, since device has limited resources, we can't
+> expect the device can parse arbitrary number of ipv6 options
+> 
+> 3) if 1) and 2) not the case, we need fix the spec otherwise implement
+> a spec compliant device is impractical
 
-Fbdev deferred I/O is a workaround for the fact that fbdev does not 
-require a flush operation on its I/O buffers. Writing to an mmaped 
-buffer is expected to go to hardware immediately. On devices where this 
-is not the case, deferred I/O tracks written pages and writes them back 
-to hardware at intervals.
+The statement is preceded by the following:
+ >  The device calculates the hash on IPv4 packets according to
+ > ’Enabled hash types’ bitmask as follows:
 
-For DRM, there's the MODE_DIRTYFB ioctl [1] that all userspace has to 
-call after writing to mmap'ed buffers. So regular DRM doesn't need 
-deferred I/O as userspace triggers writeback explicitly.
+The 'Enabled hash types' bitmask is specified by the device.
 
-[1] 
-https://elixir.bootlin.com/linux/v6.15/source/drivers/gpu/drm/drm_ioctl.c#L686
+I think the spec needs amendment.
 
->
-> I ran a quick performance test comparing hyperv_drm with hyperv_fb.
-> The test does "cat" of a big text file in the Hyper-V graphics console. The
-> file has 1024 * 1024 lines, each with 64 characters, so total file size is
-> 64 MiB.
->
-> With hyperv_fb the test completes in 24 seconds elapsed time, with
-> 24 seconds of system CPU time. With hyperv_drm, it takes 34 seconds
-> elapsed time, but with about the same 24 seconds of system CPU time.
-> Overall this difference isn't huge, and probably isn't that noticeable
-> when doing human-scale work (i.e., 'dmesg' outputting several
-> hundred lines in 0.19 seconds vs. my test doing 1M lines) on the Hyper-V
-> graphics console. To me, the console doesn't feel slow with hyperv_drm
-> compared to hyperv_fb, which is good.
+I wonder if there are any people interested in the feature though. 
+Looking at virtnet_set_hashflow() in drivers/net/virtio_net.c, the 
+driver of Linux does not let users configure HASH_TYPE_XXX_EX. I suppose 
+Windows supports HASH_TYPE_XXX_EX, but those who care network 
+performance most would use Linux so HASH_TYPE_XXX_EX support without 
+Linux driver's support may not be useful.
 
-DRM consoles are technically an fbdev device that operates on a DRM 
-device. Both, DRM and fbdev, have some differences that can make this 
-problematic. I'm not surprised that there are issues.
+> 
+>>
+>>> 2) the VIRTIO_NET_SUPPORTED_HASH_TYPES is not checked against the
+>>> tun_vnet_ioctl_sethash(), so userspace may set
+>>> VIRTIO_NET_HASH_TYPE_TCP_EX regardless of what has been returned by
+>>> tun_vnet_ioctl_gethashtypes(). In this case they won't get
+>>> VIRTIO_NET_HASH_TYPE_TCP_EX.
+>>
+>> That's right. It's the responsibility of the userspace to set only the
+>> supported hash types.
+> 
+> Well, the kernel should filter out the unsupported one to have a
+> robust uAPI. Otherwise, we give green light to the buggy userspace
+> which will have unexpected results.
 
->
-> Nonetheless, there's an underlying issue. A main cause of the difference
-> is the number of messages to Hyper-V to update dirty regions. With
-> hyperv_fb using deferred I/O, the messages are limited 20/second, so
-> the total number of messages to Hyper-V is about 480. But hyperv_drm
-> appears to send 3 messages to Hyper-V for each line of output, or a total of
-> about 3,000,000 messages (~90K/second). That's a lot of additional load
-> on the Hyper-V host, and it adds the 10 seconds of additional elapsed
-> time seen in the guest. There also this ugly output in dmesg because the
-> ring buffer for sending messages to the Hyper-V host gets full -- Hyper-V
-> doesn't always keep up, at least not on my local laptop where I'm
-> testing:
->
-> [12574.327615] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12574.327684] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12574.327760] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12574.327841] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12597.016128] hyperv_sendpacket: 6211 callbacks suppressed
-> [12597.016133] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12597.016172] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12597.016220] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
-> [12597.016267] hyperv_drm 5620e0c7-8062-4dce-aeb7-520c7ef76171: [drm] *ERROR* Unable to send packet via vmbus; error -11
->
-> hyperv_drm could be fixed to not output the ugly messages, but there's
-> still the underlying issue of overrunning the ring buffer, and excessively
-> hammering on the host. If we could get hyperv_drm doing deferred I/O, I
-> would feel much better about going full-on with deprecating hyperv_fb.
+My reasoning was that it may be fine for some use cases other than VM 
+(e.g., DPDK); in such a use case, it is fine as long as the UAPI works 
+in the best-effort basis.
 
-Thanks for debugging this. A number of things are playing into this.
+For example, suppose a userspace program that processes TCP packets; the 
+program can enable: HASH_TYPE_IPv4, HASH_TYPE_TCPv4, HASH_TYPE_IPv6, and 
+HASH_TYPE_TCPv6. Ideally, the kernel should support all the hash types, 
+but, even if e.g., HASH_TYPE_TCPv6 is not available, it will fall back 
+to HASH_TYPE_IPv6, which still does something good and may be acceptable.
 
-- DRM performs display output along vblank IRQs. For example, if the 
-display runs with 60 Hz there should be no more than 60 display updates 
-per second. From what I can tell, there's no IRQ support in hypervdrm 
-(or HyperV in general?). Without IRQ support, drivers output to hardware 
-ASAP, which can result in large numbers of buffer updates per second. 
-I've heard about this problem in other context [2] and you're likely 
-seeing a similar issue.
+That said, for a use case that involves VM and implements virtio-net 
+(e.g., QEMU), setting an unsupported hash type here is definitely a bug. 
+Catching the bug may outweigh the extra trouble for other use cases.
 
-- DRM's console also needs better support for vblank interrupts. It 
-currently sends out updates ASAP as well.
+> 
+>>
+>>> 3) implementing part of the hash types might complicate the migration
+>>> or at least we need to describe the expectations of libvirt or other
+>>> management in this case. For example, do we plan to have a dedicated
+>>> Qemu command line like:
+>>>
+>>> -device virtio-net-pci,hash_report=on,supported_hash_types=X,Y,Z?
+>>
+>> I posted a patch series to implement such a command line for vDPA[1].
+>> The patch series that wires this tuntap feature up[2] reuses the
+>> infrastructure so it doesn't bring additional complexity.
+>>
+>> [1]
+>> https://lore.kernel.org/qemu-devel/20250530-vdpa-v1-0-5af4109b1c19@daynix.com/
+>> [2]
+>> https://lore.kernel.org/qemu-devel/20250530-hash-v5-0-343d7d7a8200@daynix.com/
+> 
+> I meant, if we implement a full hash report feature, it means a single
+> hash cmdline option is more than sufficient and so compatibility code
+> can just turn it off when dealing with machine types. This is much
+> more simpler than
+> 
+> 1) having both hash as well as supported_hash_features
+> 2) dealing both hash as well as supported_hash_features in compatibility codes
+> 3) libvirt will be happy
+> 
+> For [1], it seems it introduces a per has type option, this seems to
+> be a burden to the management layer as it need to learn new option
+> everytime a new hash type is supported
 
-Both points are not much of a problem on most desktop and server 
-systems, but can be an be an issue with virtualization.
+Even with the command line you proposed (supported_hash_types=X,Y,Z), it 
+is still necessary to know the values the supported_hash_types property 
+accepts (X.Y,Z), so I don't think it makes difference.
 
-[2] https://bugzilla.suse.com/show_bug.cgi?id=1189174
+The burden to the management layer is already present for features, so 
+it is an existing problem (or its mere extension).
 
-Best regards
-Thomas
+This problem was discussed in the following thread in the past, but no 
+solution is implemented yet, and probably solving it will be difficult.
+https://lore.kernel.org/qemu-devel/20230731223148.1002258-5-yuri.benditovich@daynix.com/
 
->
-> Michael
->
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Regards,
+Akihiko Odaki
 
