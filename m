@@ -1,196 +1,227 @@
-Return-Path: <linux-kernel+bounces-674003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95016ACE8A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F621ACE8A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162EE3A679C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126B13A6C2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1781F2BAE;
-	Thu,  5 Jun 2025 03:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A151F7060;
+	Thu,  5 Jun 2025 03:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oqx199nB"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bN/afFAj"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D713DF50F
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E4A442C
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749094446; cv=none; b=YKSXznJEuVmnUH0XrdMw3eOopd+eEGNOG1eV3ro0o5gKu2yw9R3IfEeOjosolEfDsHcqBQMe0DEUe8RdpabKo56hZYYCj0ntolk2KrbzlVqqHCnshnHUgmOwbB5vZtgZkKDnQ+TSoSOwTLY1oD4ux6TCEuOISafUHorlbdeRx2E=
+	t=1749094491; cv=none; b=MCFokBbZUViaGBMTkdZD9xMJANDA0eBlRa2H90czrNdFiBihYYu3KJYD90fnJr0MvNbzesMk7FDOQKEBhN4Rn+8joZ7YyRMarj0voMp24KAb6AZwxE9UvzPs98M/8Gr8dWiHPTogOU7U3G5HclIYeyj9UWtLfzmpxEGRb+ZWx90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749094446; c=relaxed/simple;
-	bh=dQqP5Mw9oBgntBuM940PPtoh91B6oGN2B1g372Bat54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gEP+EMeyq0cMA7ertZPVdM3682LgM75MbksHrG7+wTXpyn1okpboz2fk9vlp4CHwnHaZNL7pWKMuDmY1s54DlrxP5vKnWyiBruKR2ys0oBbCmjybK7yJaK0dQkOJj7tFMAHmBD37yyMdRPsfzu8RjPoi/Dfj1651211lykZT63k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oqx199nB; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so4034435e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 20:34:04 -0700 (PDT)
+	s=arc-20240116; t=1749094491; c=relaxed/simple;
+	bh=CODiWunRA93HWXAByr632j1TV29w99tNL1PYUm7r5DY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8ORDOlKT3hiZzXhkSt5CRPAD/eMzf15iG9PGzrGDpSZjPPOBAF1CqRP1snjVB+nArI6Q9Fy82Wi+1z2U8Ez2Sh0/GBo77umd4sDZQRTO3BzY01duCPpKTJHaJFRE7WMUytncrkH8Tx2vjjhzZge7qDzNzL5s6X6CXinsLRzPO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bN/afFAj; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-311a6236effso373597a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 20:34:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749094443; x=1749699243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/vEVlRXJsGRk+CYX2FZa+ooZ3uzbfFEcI/JYbkngtl4=;
-        b=Oqx199nB+2CCtZEngiXHk3kVG5yL5aylJgGuiBMsgiy87aurr/LrZiVj3oMgRyXx/Q
-         Veo2jiEyXCfpOeuU8pDb1wgPqJhD5ZN8n7+c/GU/DGb2iZMsczjgwHA3xRZVb1PgoPNF
-         /DKwM3NQ3/mDV4aOx4yOh8+U0maLmWtTostOPXKguERig2bQQpKM9AeTAotUbwMCB7Jq
-         1IIqUFNJCc3ydc8wiybsDO88Tyc/cvtpaYVZzk+rmttEi0nmBcH7VXnV58NNdgJH7P9y
-         N2Fx+kSLY0ltOF/BYIi6CVxLlZ4QwzJTnFO6SqwZtkz5jLohacdIi17T/cBoMBemZrd5
-         N2Rw==
+        d=bytedance.com; s=google; t=1749094489; x=1749699289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1hNibJxXLnrnySg972N1gYLR6Ade0RiNhcmbxL3rpM=;
+        b=bN/afFAjW1HjGwVcSIBvAT014KbzMQy6D4i7R8WR4RrZoSKDHsRKvN1+Po0Hn4kczo
+         aIdYxuc/ViJ0jAaUN3auaZYOE/cMrDg7yMeWLE18/lPifbNHtM8VUfc2odeADDddLuMt
+         zOAfXavbPJxqC/xMF9/jp3xHhNut8IGdS8bCBT3BqOqHZV6UfkxAOEcqEM+6nm7KXHJ/
+         IH3MoPTYq/As1Nk9Hb5rhj7ngqRuZb35R0CC3/qOt+FcuECCAiM/6OrJFXD7q40z4ZaD
+         BElEu8Poq+8lsfTgqCs3Fx1hxVcY7wdnRvCSfrdrYnZ5CV3QDqSkWyJ300Q8zLj25BS0
+         ILaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749094443; x=1749699243;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/vEVlRXJsGRk+CYX2FZa+ooZ3uzbfFEcI/JYbkngtl4=;
-        b=A83EQdv1Yhqb+wXsFnY1eIWswtbEcs4FnHFDIFo6W4aojlnDiv8aeC9mm8n2HNL7Nn
-         qcKzkhjjjNcu++EmEodAZzz+Zd33fp6JNnwTn1SdLe1l0VD9jZtYY2DzLA2r+6O6C8u4
-         JwQZ5Lc2OIpYfuESusN4C2bFTazLw9fw31pIYtSCe6511mCwkjFDGFz23Q3GnK3u4tV8
-         EJUvz5fgBfTNrynib6vArNfnV+V6oGhx6c5fGfjgPNbv+l9AaExsWf69WtVexNAfctOg
-         Ky2iKyIj4MqVc8VbAQ6CSVSegFAAx0kYUuji03CG+tfNEG+6mgSwya3t94COglTF95GT
-         hucQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5RJFxT8JQCcgNyhzSp/Wq8zPAzn+m4QpER8fZ7QaOaugml4czTnunOTuUQfGf4QIai3u0DeqaZRdTvPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpI3fqsuuLpnvC9Ttgbms6uYRGi0hMfPuMyw2xoryFaweUq0cF
-	lJ0zhMgFsJ0nKm0F1z5BpAOaR93NzIXEaI17eHvWvtfbzEI3WpXPf00q
-X-Gm-Gg: ASbGncsrcCy1bFRIbRPF1Ns9N9XHltVy9v9Bfuo+QadvblLIcdWGB6g4wnEI7rPkksY
-	ydmNZwm9lmweHBCnEZWFZuP+LLJuwq8l6F5ZPSC2jsAvKidCmc7LgE6Zsmsn1pyysU9lJ2zflQH
-	mBnd3xyKdNTszLrefgcpbp1GZiWXJdZLrTrzaqk+RrLIfmt1Gg7EQfKdsX0ah6PA7NNvz2R6vAJ
-	pNiOhIVmea6o/boOMU+EDom4/px10C5weV8hhzj3xhuBWUxBSUChnUj29K9ec7u1kEZYCe3OrTk
-	Hf+ZExaqZ6MXrrEJ7JmRJxwQV5MGsXLNbLrXXpf0QfZG3s8NMe9ncFM+lDqMHLueEXbUnNKjJ+N
-	bDWMuQqW9xwCzORFMNF7eP8uocT5mo0cShKgEGtH62SqRMCnMxjASsCdckRokF1O740g=
-X-Google-Smtp-Source: AGHT+IEZgXvmDKwf9FJeIM45CjWz76tqF1urHtCuuWuqbDzmF4SGEdtCa9SQaWtDO2CfP9KYiUjtrw==
-X-Received: by 2002:a05:600c:3e88:b0:450:d611:eb95 with SMTP id 5b1f17b1804b1-451f0b269a4mr51677185e9.17.1749094442734;
-        Wed, 04 Jun 2025 20:34:02 -0700 (PDT)
-Received: from [26.26.26.1] (ec2-63-177-217-227.eu-central-1.compute.amazonaws.com. [63.177.217.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-451f99198a9sm9586775e9.30.2025.06.04.20.33.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 20:34:01 -0700 (PDT)
-Message-ID: <d30b70da-d06e-4d96-b110-1459533e2943@gmail.com>
-Date: Thu, 5 Jun 2025 11:33:56 +0800
+        d=1e100.net; s=20230601; t=1749094489; x=1749699289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z1hNibJxXLnrnySg972N1gYLR6Ade0RiNhcmbxL3rpM=;
+        b=DM1zUY+m8z6Ks1PM/pNGL/FxClc0WTty2kIKiwZaAdOUHKzaog4RO4CEmYf7radTzF
+         7eWrzLleL449LUOykC1uJQfpJbLFatdWNWLcTqlN0645meNwIWXVTjQvphudKKDh/C4h
+         DMClEu7hyycHJDDXwybn1yYyXqkoWwHNIUqfk4s1NaAupGaxD27d1snkmunLKcTNDKym
+         IO8ea0PDWDQWsleQJfpZS5wzG/NLrWN5P9HfOxPgocZ4M3DQLevKsSSzYAMTr6P9KqFi
+         dIAcn5XXlzgXEqqfGPlVRlrwfOP8BekpP60eqEHLHsC9QRApTkYXuu3pfB/sWjjFFoVy
+         jj2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXs+Qfi9WjyUq1/bvBNHC47Pv59V2HnC6L0MqxbniRuTWM3uUKD4MqfT+WD7ktn9F99NJN6oJIm/AvT4kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQg5qUTMesEPA4qG75zcJ2W5CVsIrEsUFcaFJkneqIPs/69v2j
+	+SeObx0ITUOh7It6Em28CVWjBlFR+s3tjpoXPfRskecaHNo4ZJBK2lPclv+t/6d7p4E=
+X-Gm-Gg: ASbGncuCieS5H4gqWl33giV8j8Q3WZlwCpGJUGAfzegDiSACeho/JfQjxtX525M6sRm
+	9r2DqMVEMdZLME+RUhDXTPawtE8SewqSNO7JkXNrSG3lGyCv/HluML/ntTbVlmnk2sQVEy7WveV
+	z6kIgGqmxvsQE4GC2Kd9xwywb/59uEg6V8c/qBHl88Sf9FAyIIEfJTYCVxjDGFCxCYrq2+oBbkN
+	zzZHuz7DkdFRZKOBq/qpz1M2RhXY0b3U5N34XgxrIl25CnLFsvJZcBw3qr5yk6dX0Z0oOX/TTAG
+	hAZnBQIDxuzXKBzkcymn4ftzoU+BTf5PVT9t2qYcQE8kJS8sv+xEBB+0SrKtCvStFBkuZBFoVg6
+	uJw==
+X-Google-Smtp-Source: AGHT+IHGnu+iP844K4EL2P+B+oOadSdALTlQdx70vlzTI9nd2EUTVvPe3Xkd96F227tbANkJI8VKtw==
+X-Received: by 2002:a17:90b:38c1:b0:313:33ca:3b8b with SMTP id 98e67ed59e1d1-31333ca3d89mr368760a91.9.1749094488438;
+        Wed, 04 Jun 2025 20:34:48 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.8])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-313319f3d86sm200162a91.33.2025.06.04.20.34.44
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 04 Jun 2025 20:34:48 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	jgg@ziepe.ca,
+	jhubbard@nvidia.com,
+	peterx@redhat.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	dev.jain@arm.com,
+	muchun.song@linux.dev,
+	lizhe.67@bytedance.com
+Subject: [PATCH v3] gup: optimize longterm pin_user_pages() for large folio
+Date: Thu,  5 Jun 2025 11:34:30 +0800
+Message-ID: <20250605033430.83142-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] iommu/vt-d: Remove the redundant logic in
- first_level_by_default()
-To: "Wang, Wei W" <wei.w.wang@intel.com>, "Tian, Kevin"
- <kevin.tian@intel.com>, Ethan Zhao <haifeng.zhao@linux.intel.com>,
- "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
- "Liu, Yi L" <yi.l.liu@intel.com>, "dwmw2@infradead.org"
- <dwmw2@infradead.org>, "jroedel@suse.de" <jroedel@suse.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>
-References: <20250523081056.223082-1-wei.w.wang@intel.com>
- <01e5d0a9-715a-48d4-a2a4-2a0b5d99149b@linux.intel.com>
- <BN9PR11MB5276CFBD4CF795CCB3ADCD1B8C66A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <5fed2452-ae2a-4fca-8483-85ecf645ec1b@gmail.com>
- <DS0PR11MB637325E3CD8FECC9A1D1213ADC6FA@DS0PR11MB6373.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <DS0PR11MB637325E3CD8FECC9A1D1213ADC6FA@DS0PR11MB6373.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Li Zhe <lizhe.67@bytedance.com>
 
+In the current implementation of the longterm pin_user_pages() function,
+we invoke the collect_longterm_unpinnable_folios() function. This function
+iterates through the list to check whether each folio belongs to the
+"longterm_unpinnabled" category. The folios in this list essentially
+correspond to a contiguous region of user-space addresses, with each folio
+representing a physical address in increments of PAGESIZE. If this
+user-space address range is mapped with large folio, we can optimize the
+performance of function collect_longterm_unpinnable_folios() by reducing
+the using of READ_ONCE() invoked in
+pofs_get_folio()->page_folio()->_compound_head(). Also, we can simplify
+the logic of collect_longterm_unpinnable_folios(). Instead of comparing
+with prev_folio after calling pofs_get_folio(), we can check whether the
+next page is within the same folio.
 
-On 6/5/2025 9:04 AM, Wang, Wei W wrote:
-> On Wednesday, June 4, 2025 3:26 PM, Ethan Zhao wrote:
->> On 5/29/2025 2:11 PM, Tian, Kevin wrote:
->>>> From: Ethan Zhao <haifeng.zhao@linux.intel.com>
->>>> Sent: Thursday, May 29, 2025 1:48 PM
->>>>
->>>> 在 2025/5/23 16:10, Wei Wang 写道:
->>>>> This original implementation included redundant logic to determine
->>>> whether
->>>>> first-stage translation should be used by default. Simplify it and
->>>>> preserve the original behavior:
->>>>> - Returns false in legacy mode (no scalable mode support).
->>>>> - Defaults to first-level translation when both FLTS and SLTS are
->>>>>      supported.
->>>>>
->>>>> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
->>>>> ---
->>>>>     drivers/iommu/intel/iommu.c | 10 +---------
->>>>>     1 file changed, 1 insertion(+), 9 deletions(-)
->>>>>
->>>>> diff --git a/drivers/iommu/intel/iommu.c
->>>>> b/drivers/iommu/intel/iommu.c index cb0b993bebb4..228da47ab7cd
->>>>> 100644
->>>>> --- a/drivers/iommu/intel/iommu.c
->>>>> +++ b/drivers/iommu/intel/iommu.c
->>>>> @@ -1366,15 +1366,7 @@ static void free_dmar_iommu(struct
->>>> intel_iommu *iommu)
->>>>>      */
->>>>>     static bool first_level_by_default(struct intel_iommu *iommu)
->>>>>     {
->>>>> -	/* Only SL is available in legacy mode */
->>>>> -	if (!sm_supported(iommu))
->>>>> -		return false;
->>>>> -
->>>>> -	/* Only level (either FL or SL) is available, just use it */
->>>>> -	if (ecap_flts(iommu->ecap) ^ ecap_slts(iommu->ecap))
->>>>> -		return ecap_flts(iommu->ecap);
->>>>> -
->>>>> -	return true;
->>>>
->>>> The function works like a digital circurt has 3 single bit inputs
->>>> sm, flts, slts and one bit output ret.
->>>>
->>>> so the true value table of the orignal function looks like
->>>>
->>>>       sm   flts   slts    ret
->>>> a   0     x     x      false
->>>> b   1     1     0      true
->>>> c   1     0     1      false
->>>> d   1     1     1      true
->>>> e   1     0     0      true
->>>
->>> 'e' is actually wrong. We should not return true when the 1st level
->>> cap doesn't exist.
->>
->> If so, this patch should mention it fixes such case with fix tag, not
->>    "removing the redundant logic with the same behavior".
->>
-> 
-> Probably not a fix (just code improvement). Your 'e' above is not possible
-> from the hardware side, and the old implementation doesn't have it too.
-> 
-Is there any items in Intel VT-d spec to say "It is impossible to have 
-both flts and slts to false" or you design code under an assumption that 
-hardware always works perfect ?
+The performance test results, based on v6.15, obtained through the
+gup_test tool from the kernel source tree are as follows. We achieve an
+improvement of over 66% for large folio with pagesize=2M. For small folio,
+we have only observed a very slight degradation in performance.
 
-You made an assumption that the hardware never would reach there and 
-then got a conclusion 'e' doesn't exist ?
+Without this patch:
 
+    [root@localhost ~] ./gup_test -HL -m 8192 -n 512
+    TAP version 13
+    1..1
+    # PIN_LONGTERM_BENCHMARK: Time: get:14391 put:10858 us#
+    ok 1 ioctl status 0
+    # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+    [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
+    TAP version 13
+    1..1
+    # PIN_LONGTERM_BENCHMARK: Time: get:130538 put:31676 us#
+    ok 1 ioctl status 0
+    # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-Thanks,
-Ethan
-> 
->>>
->>>>
->>>>> +	return sm_supported(iommu) && ecap_flts(iommu->ecap);
->>>>
->>>> And the true value table of this new one looks like
->>>>
->>>>       sm  flts slts    ret
->>>>
->>>> f   1     1     x      true
->>>> g   1     0     x      false
->>>>
->>>> h   0     1     x      false
->>>> i    0     0     x      false
->>>
->>> so this table is correct.
-> 
+With this patch:
+
+    [root@localhost ~] ./gup_test -HL -m 8192 -n 512
+    TAP version 13
+    1..1
+    # PIN_LONGTERM_BENCHMARK: Time: get:4867 put:10516 us#
+    ok 1 ioctl status 0
+    # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+    [root@localhost ~]# ./gup_test -LT -m 8192 -n 512
+    TAP version 13
+    1..1
+    # PIN_LONGTERM_BENCHMARK: Time: get:131798 put:31328 us#
+    ok 1 ioctl status 0
+    # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+---
+Changelogs:
+
+v2->v3:
+- Update performance test data based on v6.15.
+- Refine the description of the optimization approach in commit message.
+- Fix some issues of code formatting.
+- Fine-tune the conditions for entering the optimization path.
+
+v1->v2:
+- Modify some unreliable code.
+- Update performance test data.
+
+v2 patch: https://lore.kernel.org/all/20250604031536.9053-1-lizhe.67@bytedance.com/
+v1 patch: https://lore.kernel.org/all/20250530092351.32709-1-lizhe.67@bytedance.com/
+
+ mm/gup.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/mm/gup.c b/mm/gup.c
+index 84461d384ae2..9fbe3592b5fc 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2317,6 +2317,31 @@ static void pofs_unpin(struct pages_or_folios *pofs)
+ 		unpin_user_pages(pofs->pages, pofs->nr_entries);
+ }
+ 
++static struct folio *pofs_next_folio(struct folio *folio,
++				struct pages_or_folios *pofs, long *index_ptr)
++{
++	long i = *index_ptr + 1;
++
++	if (!pofs->has_folios && folio_test_large(folio)) {
++		const unsigned long start_pfn = folio_pfn(folio);
++		const unsigned long end_pfn = start_pfn + folio_nr_pages(folio);
++
++		for (; i < pofs->nr_entries; i++) {
++			unsigned long pfn = page_to_pfn(pofs->pages[i]);
++
++			/* Is this page part of this folio? */
++			if (pfn < start_pfn || pfn >= end_pfn)
++				break;
++		}
++	}
++
++	if (unlikely(i == pofs->nr_entries))
++		return NULL;
++	*index_ptr = i;
++
++	return pofs_get_folio(pofs, i);
++}
++
+ /*
+  * Returns the number of collected folios. Return value is always >= 0.
+  */
+@@ -2324,16 +2349,12 @@ static void collect_longterm_unpinnable_folios(
+ 		struct list_head *movable_folio_list,
+ 		struct pages_or_folios *pofs)
+ {
+-	struct folio *prev_folio = NULL;
+ 	bool drain_allow = true;
+-	unsigned long i;
+-
+-	for (i = 0; i < pofs->nr_entries; i++) {
+-		struct folio *folio = pofs_get_folio(pofs, i);
++	struct folio *folio;
++	long i = 0;
+ 
+-		if (folio == prev_folio)
+-			continue;
+-		prev_folio = folio;
++	for (folio = pofs_get_folio(pofs, i); folio;
++			folio = pofs_next_folio(folio, pofs, &i)) {
+ 
+ 		if (folio_is_longterm_pinnable(folio))
+ 			continue;
+-- 
+2.20.1
 
 
