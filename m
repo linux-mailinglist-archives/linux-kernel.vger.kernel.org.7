@@ -1,125 +1,307 @@
-Return-Path: <linux-kernel+bounces-674790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A34ACF4B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:50:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856F7ACF4BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081F6189C2B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:50:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731B9189C714
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58463275877;
-	Thu,  5 Jun 2025 16:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1CE272E60;
+	Thu,  5 Jun 2025 16:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wAagZnuF"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHJQ6aWL"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABEC272E60
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 16:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5922750F0;
+	Thu,  5 Jun 2025 16:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749142206; cv=none; b=SV6HhbShMtzWe6qOGj4/nnfC2lYfQvgS30zsla0/3rIvuuFkg/Lw4vzrcULOxbcDRT54ifBfOzfek6nFpwuEReSD3JGnjIZ1GxcmtcJZSouE6mjQFFO6QwHjy4tTo2+chP7Xz0qX5JiaoGmOud4fH6NQzUMcQqY4VL4hejLV7ek=
+	t=1749142246; cv=none; b=RCWpeELQ5QL4ipAySmYr8zU9MgmW8YzUBuVziMtvAxn1nH7AGoSYAD6vpNkKPt4kN4X7u2tv7ghpQRroaHaZlmqaM6hHHf7iTTkT0T2bMWl7FlNvRHYdxoCmOLRmjx9RSWSThi31AmDuOZKZS7z3mryXS5YQGbZwcW02Ij/zIL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749142206; c=relaxed/simple;
-	bh=5yD0PvMAQQ3XN8Fa5txtl6/IIVYJpcPJ9bokJkUxS0k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dXZ9kaUZuLw2/2V/d8tX0FW79hst+MtJLwnjMcaPOLB5JbvYg4kRzfbr8lQQrMOJIgsvK+A23cgQCsoGNQl9qlslIGCxxCIt6PjSsopMASfTGdFEecuHj5fgkBb/e0KS1vvpyQ+Q9L17RTZzWR8kVCYLTThLBFliCfCViK2iqjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wAagZnuF; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7480d44e6f9so1191525b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 09:50:05 -0700 (PDT)
+	s=arc-20240116; t=1749142246; c=relaxed/simple;
+	bh=+GYdJToLXMjSHEzFB7UvagWwdjRYvd1Yv3REAIbAAjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FtWU6AN/5V92HeDNrMAVI5f4ktGs56tPqfi/30CbsZLqs/CiNpNhaN0Bv5yfd3vUWxX1YhMH9g6WwlNeOZauDcXkxi6gzNNjdjRnFxkq5WibRwfalbToAlEkbjzGtcuXU6cfQmudxKVsJQgwPlV8f+ZJe6unwZQ9JqWxWalY7Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHJQ6aWL; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-747e41d5469so1427808b3a.3;
+        Thu, 05 Jun 2025 09:50:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749142204; x=1749747004; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WLTPXPCNlsILu6jl+2bKHHB8KGvKcIrJx7gvSPqEvlo=;
-        b=wAagZnuFURQYq7ApcpmZ9gcKqkExals7nfd5BFlgjW4L7V+Bd8aHQXoKOWz8z125Jn
-         pwOjiP2mRC6uqjNxVPttIUION606MU/J5hbi0qzQPN2wR7ld2m7Ei6dolOCnw+k/NgDo
-         N0VpmccV4hIUcySTMjfFEiDFqj4FLmypDZuMKyS3Eq8EiUVFPqa4SFVYnN3/2BLazXSJ
-         6CM2yJCVoeYZjKYyKEkBNz+2Cjmj6Xy8fCIT12qvlG+2rhSKUrDkZc2zbgihRx2njBXF
-         nZlFZ2BIG4wnq4HYwEZA+OPvZbyWD9dvzgOkQih0IdrZa477ujn2w2yIffNwvjTpOtLi
-         aHvA==
+        d=gmail.com; s=20230601; t=1749142244; x=1749747044; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KhW9QPrsGwu26NBYUsMExt8YOvu5jBbvy6pXm9zcT+s=;
+        b=hHJQ6aWLcyMn7sYK4dBYb1IbPGWywgrB5IKpY7XYl2v+9uvTOSihth6VAAma6CPaYc
+         de/87JkqIznK+xA/bLBvTyxZC1JaeH8IXxXW0kHmgqrri2Br6DCfaqqlnf+Tr5kx1JOd
+         YMoBu20/SUuT5d5HsqdyjOq+ESO3M/zh+mTIfnVqps8unjzLaH2WCg9qr/6CiMfDNa+A
+         o/ygYQHhEiB35L8T7gdfj4kOPvauTwigK34CkaCufy6/TffL7OcUYODyvEoGQpBIfKxJ
+         fPjDBJzu6RivTMgA+KS0MYC3MAsQWReGWolcZHmvaYrzt3qCoss7xwH8rwbUTU7KANcv
+         33mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749142204; x=1749747004;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WLTPXPCNlsILu6jl+2bKHHB8KGvKcIrJx7gvSPqEvlo=;
-        b=Apw8Tk7Ayuzfwz2rGSHUG0Q6jNHe9bj7oSRXD7Uhv88Wjj+zw49HVj1k3f8WVOuaeo
-         eIz87JAWzb1TOjlq0H9VBJ//AMzSIn7keh3dUupSdKmnVf9zVEiWE15YnpHGddeQD22E
-         tu7efUfX+F7EK612IqUPJE8zBA5PzH1+dGxBsYOoawin5jTkC9xk1Jyf193roiwpNaHD
-         YiKCiw7mGO4T+NxEv8xtGsY91SZY76AMiRQQC5hu6TQqXbKoCgC35gqgFSjJZGoBwh89
-         OW43fax63uwqW6NF0t1OTivGd1OovJXLNVQBcs6jevymWVEPm29Nh3J+rtR/rBjx/niI
-         msww==
-X-Gm-Message-State: AOJu0YxPJAjN1WCPRpZjh/Ada1yk+xOaU2XlLU+DhSTERVUHr+qEhFxr
-	9jTaED5Yc8QKo6qVPAapVwWNYd5jwj1SjcdoL58nJMC5T+htboq2igcFeJcBi5tMPFrYXbnBPz8
-	FaHG4FQ==
-X-Google-Smtp-Source: AGHT+IHSmz97ipsoKiWytBBdVnEdth+nXlg7KYI1vLpnEw2twPv9cYfqKXfk72Q3vYVaW+m3AQHLiwnbdK4=
-X-Received: from pfst26.prod.google.com ([2002:aa7:8f9a:0:b0:736:47b8:9b88])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3c88:b0:736:5753:12f7
- with SMTP id d2e1a72fcca58-74827e523e7mr699482b3a.3.1749142204576; Thu, 05
- Jun 2025 09:50:04 -0700 (PDT)
-Date: Thu, 5 Jun 2025 09:50:03 -0700
-In-Reply-To: <20250605163544.3852565-1-riel@surriel.com>
+        d=1e100.net; s=20230601; t=1749142244; x=1749747044;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KhW9QPrsGwu26NBYUsMExt8YOvu5jBbvy6pXm9zcT+s=;
+        b=n1gKvu9kr9/fT8lG6sIrEAMrHu6tEFOchWF5+RX0rAB81pqftDhan976hiu3zhIUTa
+         Vp6tnUK3MSKbtLZiMe3qd+y+tsKAYLHiG8wA5dw7GC0b1HNfSarEjg7giv+lFhUt6gGJ
+         saa7YhvW25/9yRGX7a6lpAhA4C6cuS+eUal2Yl8VaxYMSR7Wb5+r7q5KhaMSe8+xteNU
+         FTIep34UYeqpGGfnJPKVXgl3rX2beXpz2mJxAQgqu/wQRe6OeeIkT5SipesfvW+glik4
+         FND/HlL1VJTY+3IxvwQSnPe7xbrLCF8tuBvGyWknlCsj7/R/82zUHS/w8f5U6Cm0RLUz
+         T20g==
+X-Forwarded-Encrypted: i=1; AJvYcCWbGPJntR6ZwSC30PkANA2b9o1b8gsed63wo1qUQXzZP7Fd/0IDomuq/i9FijkjQPS231uesaTgYPsi@vger.kernel.org, AJvYcCX5/37iYMI3LrIh4L/zZTlL2o69h8Ypv9mdcqw14xjpKjYLrsPQqAeiBSu9XfasPUF/FzTffSTQ06tHvdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi6owPFjRddZSL1SRBqN+LBPJlfGVLruAYlgj7Cs+KNJzSUSlm
+	hz12OTeGuWDv4BNDhcCBlsgwggRojGE7+44rV4Ghk3flILW/kv/c+XyY7Oo/MSfo
+X-Gm-Gg: ASbGncsl8xQgAvA48b9LVDzdvFiF0d7MzaSSYDyBjxp72iJsOHTORon+A2TmruWcybl
+	r99QolPk0VKYlt4OAS1wHsWC0ey57sxsL/G4Taakm0e1opAkGub0OWzOotp9mykfNr6gQDlCARs
+	IRZoLrKYxOJeCIBoK+tpliubLzJZWMREb/OGcoYTamWv75Y/UU4L6kIH9dckZA+DFd5y6BXMkEc
+	WRyD02GSWP2lYHckiT3yNX090PjPHwlF54DVC4hcK5IhNvPAW/TWSnHbcQEJXDt8AMXLZmzgHv6
+	luoVFjM4+mlWjd9DhnAJ8rwS3sf+ccZRXeuAF8A=
+X-Google-Smtp-Source: AGHT+IEf+vTfjvGNxCk/OGr6dye7BD0FG8xzE7ZPNv1iKzOBxRcTx9QpwvugHNOmR6rLZSeWU06b8w==
+X-Received: by 2002:a17:903:46cb:b0:235:ea29:28e9 with SMTP id d9443c01a7336-23601dc0189mr1059835ad.38.1749142233132;
+        Thu, 05 Jun 2025 09:50:33 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:110a::dead:c001])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-235f64e05ffsm12463665ad.128.2025.06.05.09.50.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 09:50:32 -0700 (PDT)
+Date: Thu, 5 Jun 2025 13:50:27 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Hugh Cole-Baker <sigmaris@gmail.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RESEND RFC PATCH 1/2] PCI: rockchip-host: Retry link training on
+ failure without PERST#
+Message-ID: <aEHK0yVfSVO84EZE@geday>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250605163544.3852565-1-riel@surriel.com>
-Message-ID: <aEHKu-0g6_MBiAST@google.com>
-Subject: Re: [RFC PATCH v3 0/7] Intel RAR TLB invalidation
-From: Sean Christopherson <seanjc@google.com>
-To: Rik van Riel <riel@surriel.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, 
-	bp@alien8.de, x86@kernel.org, nadav.amit@gmail.com, tglx@linutronix.de
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Jun 05, 2025, Rik van Riel wrote:
-> This patch series adds support for IPI-less TLB invalidation
-> using Intel RAR technology.
-> 
-> Intel RAR differs from AMD INVLPGB in a few ways:
-> - RAR goes through (emulated?) APIC writes, not instructions
-> - RAR flushes go through a memory table with 64 entries
-> - RAR flushes can be targeted to a cpumask
-> - The RAR functionality must be set up at boot time before it can be used
-> 
-> The cpumask targeting has resulted in Intel RAR and AMD INVLPGB having
-> slightly different rules:
-> - Processes with dynamic ASIDs use IPI based shootdowns
-> - INVLPGB: processes with a global ASID 
->    - always have the TLB up to date, on every CPU
->    - never need to flush the TLB at context switch time
-> - RAR: processes with global ASIDs
->    - have the TLB up to date on CPUs in the mm_cpumask
->    - can skip a TLB flush at context switch time if the CPU is in the mm_cpumask
->    - need to flush the TLB when scheduled on a cpu not in the mm_cpumask,
->      in case it used to run there before and the TLB has stale entries
-> 
-> RAR functionality is present on Sapphire Rapids and newer CPUs.
-> 
-> Information about Intel RAR can be found in this whitepaper.
-> 
-> https://www.intel.com/content/dam/develop/external/us/en/documents/341431-remote-action-request-white-paper.pdf
-> 
-> This patch series is based off a 2019 patch series created by Intel
+After almost 30 days of battling with RK3399 buggy PCIe on my Rock Pi
+N10 through trial-and-error debugging, I finally got positive results
+with enumeration on the PCI bus for both a Realtek 8111E NIC and a
+Samsung PM981a SSD.
 
-Do you have performance numbers?  IIRC, the reason that 2019 series never went
-anywhere is because RAR wasn't a win for bare metal.  Though I believe it _was_
-a win for KVM, due to the cost of an IPI being significantly higher (requires a
-VM-Exit => VM-Enter roundtrip).
+The NIC was connected to a M.2->PCIe x4 riser card and it would get
+stuck on Polling.Compliance, without breaking electrical idle on the
+Host RX side. The Samsung PM981a SSD is directly connected to M.2
+connector and that SSD is known to be quirky (OEM... no support)
+and non-functional on the RK3399 platform.
 
-> with patches later in the series modified to fit into
-> the TLB flush code structure we have after AMD INVLPGB functionality
-> was integrated.
+The Samsung SSD was even worse than the NIC - it would get stuck on
+Detect.Active like a bricked card, even though it was fully functional
+via USB adapter.
 
-Please provide diff stats in the cover letter, e.g. so that sub-maintainers like
-myself don't have to scroll through every patch to figure out whether or not there's
-something that requires their review/ack.
+It seems both devices benefit from retrying Link Training if - big if
+here - PERST# is not toggled during retry. This patch does exactly that.
+I find the patch to be ugly as hell but it works - every time.
+
+I added Hugh Cole-Baker to Cc: as he is experienced on RK3399 and
+maybe has faced the non-working SSD experience on RK3399 and
+will be able to test this.
+
+Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+---
+ drivers/pci/controller/pcie-rockchip-host.c | 141 ++++++++++++--------
+ 1 file changed, 87 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+index 6a46be17aa91..6a465f45a09c 100644
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -284,6 +284,53 @@ static void rockchip_pcie_set_power_limit(struct rockchip_pcie *rockchip)
+ 	rockchip_pcie_write(rockchip, status, PCIE_RC_CONFIG_DCR);
+ }
+ 
++static int rockchip_pcie_set_vpcie(struct rockchip_pcie *rockchip)
++{
++	struct device *dev = rockchip->dev;
++	int err;
++
++	if (!IS_ERR(rockchip->vpcie12v)) {
++		err = regulator_enable(rockchip->vpcie12v);
++		if (err) {
++			dev_err(dev, "fail to enable vpcie12v regulator\n");
++			goto err_out;
++		}
++	}
++
++	if (!IS_ERR(rockchip->vpcie3v3)) {
++		err = regulator_enable(rockchip->vpcie3v3);
++		if (err) {
++			dev_err(dev, "fail to enable vpcie3v3 regulator\n");
++			goto err_disable_12v;
++		}
++	}
++
++	err = regulator_enable(rockchip->vpcie1v8);
++	if (err) {
++		dev_err(dev, "fail to enable vpcie1v8 regulator\n");
++		goto err_disable_3v3;
++	}
++
++	err = regulator_enable(rockchip->vpcie0v9);
++	if (err) {
++		dev_err(dev, "fail to enable vpcie0v9 regulator\n");
++		goto err_disable_1v8;
++	}
++
++	return 0;
++
++err_disable_1v8:
++	regulator_disable(rockchip->vpcie1v8);
++err_disable_3v3:
++	if (!IS_ERR(rockchip->vpcie3v3))
++		regulator_disable(rockchip->vpcie3v3);
++err_disable_12v:
++	if (!IS_ERR(rockchip->vpcie12v))
++		regulator_disable(rockchip->vpcie12v);
++err_out:
++	return err;
++}
++
+ /**
+  * rockchip_pcie_host_init_port - Initialize hardware
+  * @rockchip: PCIe port information
+@@ -291,11 +338,14 @@ static void rockchip_pcie_set_power_limit(struct rockchip_pcie *rockchip)
+ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+ {
+ 	struct device *dev = rockchip->dev;
+-	int err, i = MAX_LANE_NUM;
++	int err, i = MAX_LANE_NUM, is_reinit = 0;
+ 	u32 status;
+ 
+-	gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
++	if (!is_reinit) {
++		gpiod_set_value_cansleep(rockchip->perst_gpio, 0);
++	}
+ 
++reinit:
+ 	err = rockchip_pcie_init_port(rockchip);
+ 	if (err)
+ 		return err;
+@@ -322,16 +372,46 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
+ 	rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
+ 			    PCIE_CLIENT_CONFIG);
+ 
+-	msleep(PCIE_T_PVPERL_MS);
+-	gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
+-
+-	msleep(PCIE_T_RRS_READY_MS);
++	if (!is_reinit) {
++		msleep(PCIE_T_PVPERL_MS);
++		gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
++		msleep(PCIE_T_RRS_READY_MS);
++	}
+ 
+ 	/* 500ms timeout value should be enough for Gen1/2 training */
+ 	err = readl_poll_timeout(rockchip->apb_base + PCIE_CLIENT_BASIC_STATUS1,
+ 				 status, PCIE_LINK_UP(status), 20,
+ 				 500 * USEC_PER_MSEC);
+-	if (err) {
++
++	if (err && !is_reinit) {
++		while (i--)
++			phy_power_off(rockchip->phys[i]);
++		i = MAX_LANE_NUM;
++		while (i--)
++			phy_exit(rockchip->phys[i]);
++		i = MAX_LANE_NUM;
++		is_reinit = 1;
++		dev_dbg(dev, "Will reinit PCIe without toggling PERST#");
++		if (!IS_ERR(rockchip->vpcie12v))
++			regulator_disable(rockchip->vpcie12v);
++		if (!IS_ERR(rockchip->vpcie3v3))
++			regulator_disable(rockchip->vpcie3v3);
++		regulator_disable(rockchip->vpcie1v8);
++		regulator_disable(rockchip->vpcie0v9);
++		rockchip_pcie_disable_clocks(rockchip);
++		err = rockchip_pcie_enable_clocks(rockchip);
++		if (err)
++			return err;
++		err = rockchip_pcie_set_vpcie(rockchip);
++		if (err) {
++			dev_err(dev, "failed to set vpcie regulator\n");
++			rockchip_pcie_disable_clocks(rockchip);
++			return err;
++		}
++		goto reinit;
++	}
++
++	else if (err) {
+ 		dev_err(dev, "PCIe link training gen1 timeout!\n");
+ 		goto err_power_off_phy;
+ 	}
+@@ -613,53 +693,6 @@ static int rockchip_pcie_parse_host_dt(struct rockchip_pcie *rockchip)
+ 	return 0;
+ }
+ 
+-static int rockchip_pcie_set_vpcie(struct rockchip_pcie *rockchip)
+-{
+-	struct device *dev = rockchip->dev;
+-	int err;
+-
+-	if (!IS_ERR(rockchip->vpcie12v)) {
+-		err = regulator_enable(rockchip->vpcie12v);
+-		if (err) {
+-			dev_err(dev, "fail to enable vpcie12v regulator\n");
+-			goto err_out;
+-		}
+-	}
+-
+-	if (!IS_ERR(rockchip->vpcie3v3)) {
+-		err = regulator_enable(rockchip->vpcie3v3);
+-		if (err) {
+-			dev_err(dev, "fail to enable vpcie3v3 regulator\n");
+-			goto err_disable_12v;
+-		}
+-	}
+-
+-	err = regulator_enable(rockchip->vpcie1v8);
+-	if (err) {
+-		dev_err(dev, "fail to enable vpcie1v8 regulator\n");
+-		goto err_disable_3v3;
+-	}
+-
+-	err = regulator_enable(rockchip->vpcie0v9);
+-	if (err) {
+-		dev_err(dev, "fail to enable vpcie0v9 regulator\n");
+-		goto err_disable_1v8;
+-	}
+-
+-	return 0;
+-
+-err_disable_1v8:
+-	regulator_disable(rockchip->vpcie1v8);
+-err_disable_3v3:
+-	if (!IS_ERR(rockchip->vpcie3v3))
+-		regulator_disable(rockchip->vpcie3v3);
+-err_disable_12v:
+-	if (!IS_ERR(rockchip->vpcie12v))
+-		regulator_disable(rockchip->vpcie12v);
+-err_out:
+-	return err;
+-}
+-
+ static void rockchip_pcie_enable_interrupts(struct rockchip_pcie *rockchip)
+ {
+ 	rockchip_pcie_write(rockchip, (PCIE_CLIENT_INT_CLI << 16) &
+-- 
+2.49.0
+
 
