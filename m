@@ -1,77 +1,47 @@
-Return-Path: <linux-kernel+bounces-673996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-673998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F70ACE88E
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:07:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C6CACE894
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFAA3AA405
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:06:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D9817AA03D
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3071F7092;
-	Thu,  5 Jun 2025 03:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7141BC07A;
+	Thu,  5 Jun 2025 03:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="G/bOzB0/"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oz9dmKQd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B7D1EEE6
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008E23C2F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749092816; cv=none; b=Wi9bSf+slywV93KntBPVSCzth9/i+npltVHQ+F59jeB85015Wj1fi2AGbZQjWZ6P32JBDvlLyCHqaBOGwaG1/8ioOuPa2+fgBheEhJr4RMOeLyC2fjcXMjlIpE8j+qCRwn+RiY3u0fCn1nSyJHqGUuYDGYYO4AIOT/j9i/t7Vhg=
+	t=1749093368; cv=none; b=Jv0JDnQ9ZUSYTOojfkzbwC0rcWm2g4RvK1L/ElG/hP/ARkmvqru1JGdoZ8CPJyhIpYOfpHxNzSsb2YTIyqGgXaz50M6Y4WMYz7KN51EncUy4YH4wG8xcRnImWX45vMK38E5kXOQZ3QegdXV/Xd3J4DUrcWVHUjo5tOGrBb0n7pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749092816; c=relaxed/simple;
-	bh=O9AwzIwZfHgz6BoydO5kQ/1UHzgPXAQj9YP1fr37OuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pewXicznFKD6Mw7K2jXZDHW+46tHgGMBthVNojiOGLZWBWVZxjHwLCiOuXhAZO5gWQCG85VO7NyKliT2mivjjaCw3odhCogM6dCx6vsUcdWTZKi+yJ8aeIv8AR6U507pOWEzL8RKNl5/yxWupicUkWvEuGRHxAUI/3soGzX3QqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=G/bOzB0/; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22c336fcdaaso3841275ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 20:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1749092814; x=1749697614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4t2UVDwnAHbzrQWdQ39/KzVljZUdzMmdXbawjYiGCWI=;
-        b=G/bOzB0/cqRgxtb5aXuZNvU0w7muNJ6CTa2SKcBYtJcUO1DvdmaFfMLARF3QPHnOH4
-         wU1dIgLE7G9E5S22RzE8OqkTYzAfFRimmGeuBAPqveX7IbBtUq68BG6eM57af1fMZNpX
-         nnRS7IKSDbRYF/a72iuXb1MVE2xIGkSFAqSKA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749092814; x=1749697614;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4t2UVDwnAHbzrQWdQ39/KzVljZUdzMmdXbawjYiGCWI=;
-        b=j5w6wjvyNpv6UjYMx3gIkXy5Gw0HDZo7+FI8qLV5UYoq4+weM4no3J4cE6IF/5TP/4
-         c5tqPLgeY5zL+i7O22JAJF8CjdonZrqTh4nPhEivQ9spt43KwDpyWvHGshJoOeXFgsob
-         nrEgSjCKNv1oUuUciHqKyCpNQnOAb+evZ+zU5JGJxIfGpWuc4cQychpN2s4y81gyyA5Y
-         1Pg9lESOcQScFgza0CHeiCNZ0hzxU3QU0G2WoBeFBvFQ/89+tcRd2vCceOklFJa/J+KY
-         6tm4U8+mxPK9cuizNaxuykC/LmThP6cF5sEHCOiDRh4gE+pGqNm+oqzERA9AEK47NTeh
-         jcew==
-X-Forwarded-Encrypted: i=1; AJvYcCWV4nVtu4gjs/XgB8mvGC0dbfXSEGhvkXnDNAQTyjnxLZuVputVA8QVDlM5NoxE18kOF0dU0zusBqe6vQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU1fXC44pqpJg1UzeIhgL5d9Us2/oSloUiPq84QcLHum8bkuIS
-	n38uf/75njo5ol6H0I4zyB+VEfeVs/J9v4c+WwF79OIWByn/0SZwvqB/YqpWPoh/wQ==
-X-Gm-Gg: ASbGncvZwBNdofeql8tC/N5yID4nzZI6x8uUu9OuFeN7ITHLYIbzgGIgDrJl3K3NEKJ
-	Wgm1pHSH86pP+XwpCijmTInI+aw7ezmW9PG77/mThSAXQIX5OVXTlpazCsOyFMzFFmnRQR+pw+3
-	90s+GOLwLhMwwvhHkVF59Px/irrmDDtGrt64ufjwsFkXsWiXjKEiKmh8L+z1ENsNRMzmfYWQRuL
-	LRiIRFetnu9LYy+9oYbyeZFIpSZfWxkMPLIohUnbk2es8ubqeGMcOYwQaEADPj2Ef3fSv1F+jAr
-	mWGTC7VGuhZdHeb2vhgEnKZgVCPzI62jXozK7tjWxnqrGD+pSXWlj76ec3PLOWxa1YwBx4MnonE
-	m5pVo3H4=
-X-Google-Smtp-Source: AGHT+IEvMfVhgoBZZa5DxQt1cwYrY4cOQYyjIOrj279acAXaj8f7nQ8gMaAuCflTqI5Z+g2uDeGVeA==
-X-Received: by 2002:a17:902:dac3:b0:235:f298:cbb3 with SMTP id d9443c01a7336-235f2a81120mr19047095ad.18.1749092814089;
-        Wed, 04 Jun 2025 20:06:54 -0700 (PDT)
-Received: from [10.230.4.135] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bc8af9sm111024445ad.47.2025.06.04.20.06.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Jun 2025 20:06:53 -0700 (PDT)
-Message-ID: <177ca3fc-dc81-41c7-bfbf-556ef64ff7e8@broadcom.com>
-Date: Wed, 4 Jun 2025 20:06:51 -0700
+	s=arc-20240116; t=1749093368; c=relaxed/simple;
+	bh=+CjIvXaGtuRDG6cMi1GJLC+GDWg0p4LsrvNVFq5f54E=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oX2RAevXuQ01JeuDRN2sRvryiMIvQNiEyKmjt4tMCjaNpxULI98UdV6xX6SP7gUxz7CsRlgFenQ3XgM+N7gWvUb+2fREnb/XnPCb873v43JGoJERtlpVHXxZpwbfSg2quj+ghhPYRcMREN0uB1oxOBC+//pze6ODCuQgbHtOpSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oz9dmKQd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26854C4CEE4;
+	Thu,  5 Jun 2025 03:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749093367;
+	bh=+CjIvXaGtuRDG6cMi1GJLC+GDWg0p4LsrvNVFq5f54E=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=oz9dmKQdCZ2JokklxksMokEVVIIN+3StPWKGMbFe6is+ndKRT0hyol8Zm58cSHQyR
+	 MExoEtTFHeftA/Ba+UTo5FdYeM2InM6TKAYYfWjzUMpYFiVFgej9sXnWprzSssW9Oy
+	 ovSAAPCpwVZFRcZWO00vJ6IxfhZh0ynvzKCmyHji35L1EDX/VteuIC/rUrGVLLRs9V
+	 EwLpLunn7y7OpgcfNyE/eGNMBurXbR5utPrKnS5SUZdahEeHxKmlZ2TScxYXBVrbAc
+	 +s8/jEmwdP+YIdQirVcD7mRTerAdsgTMSU4DqcjPQ+LaALYaVhTqXvdRYAuwMGytNL
+	 TCNjZkxYvVhJA==
+Message-ID: <31d7937f-1d8c-4a28-a0b5-3fb34b695401@kernel.org>
+Date: Thu, 5 Jun 2025 11:16:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,93 +49,203 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the broadcom tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250603122012.4ff9c5ea@canb.auug.org.au>
+Cc: chao@kernel.org, jaegeuk@kernel.org, stable@kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to zero post-eof page
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <20250604085700.2454694-1-chao@kernel.org>
+ <CAHJ8P3JXJfX=YVKGuQzM6n+yRbAh6Kxem+dLqdP_3F_BN=b_+Q@mail.gmail.com>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250603122012.4ff9c5ea@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3JXJfX=YVKGuQzM6n+yRbAh6Kxem+dLqdP_3F_BN=b_+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 6/5/25 09:15, Zhiguo Niu wrote:
+> Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+> 于2025年6月4日周三 17:01写道：
+>>
+>> fstest reports a f2fs bug:
+>>
+>> generic/363 42s ... [failed, exit status 1]- output mismatch (see /share/git/fstests/results//generic/363.out.bad)
+>>     --- tests/generic/363.out   2025-01-12 21:57:40.271440542 +0800
+>>     +++ /share/git/fstests/results//generic/363.out.bad 2025-05-19 19:55:58.000000000 +0800
+>>     @@ -1,2 +1,78 @@
+>>      QA output created by 363
+>>      fsx -q -S 0 -e 1 -N 100000
+>>     +READ BAD DATA: offset = 0xd6fb, size = 0xf044, fname = /mnt/f2fs/junk
+>>     +OFFSET      GOOD    BAD     RANGE
+>>     +0x1540d     0x0000  0x2a25  0x0
+>>     +operation# (mod 256) for the bad data may be 37
+>>     +0x1540e     0x0000  0x2527  0x1
+>>     ...
+>>     (Run 'diff -u /share/git/fstests/tests/generic/363.out /share/git/fstests/results//generic/363.out.bad'  to see the entire diff)
+>> Ran: generic/363
+>> Failures: generic/363
+>> Failed 1 of 1 tests
+>>
+>> The root cause is user can update post-eof page via mmap, however, f2fs missed
+>> to zero post-eof page in below operations, so, once it expands i_size, then it
+>> will include dummy data locates previous post-eof page, so during below
+>> operations, we need to zero post-eof page.
+>>
+>> Operations which can include dummy data after previous i_size after expanding
+>> i_size:
+>> - write
+>> - mapwrite
+>> - truncate
+>> - fallocate
+>>  * preallocate
+>>  * zero_range
+>>  * insert_range
+>>  * collapse_range
+>> - clone_range (doesn’t support in f2fs)
+>> - copy_range (doesn’t support in f2fs)
+>>
+>> Cc: stable@kernel.org
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>> v2:
+>> - cover f2fs_zero_post_eof_page w/ invalidate_lock
+>>  fs/f2fs/file.c | 38 ++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 6bd3de64f2a8..ee5e662d2a4c 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -35,6 +35,17 @@
+>>  #include <trace/events/f2fs.h>
+>>  #include <uapi/linux/f2fs.h>
+>>
+>> +static void f2fs_zero_post_eof_page(struct inode *inode, loff_t new_size)
+>> +{
+>> +       loff_t old_size = i_size_read(inode);
+>> +
+>> +       if (old_size > new_size)
+> Hi Chao,
+> should it be old_size >= new_size?
 
+Zhiguo,
 
-On 6/2/2025 7:20 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the broadcom tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/pinctrl/pinctrl-rp1.c: In function 'rp1_gpio_irq_handler':
-> drivers/pinctrl/pinctrl-rp1.c:385:36: error: implicit declaration of function 'irq_linear_revmap' [-Wimplicit-function-declaration]
->    385 |                 generic_handle_irq(irq_linear_revmap(pc->gpio_chip.irq.domain,
->        |                                    ^~~~~~~~~~~~~~~~~
-> 
-> Caused by commit
-> 
->    f4b3c1c25d39 ("pinctrl: rp1: Implement RaspberryPi RP1 gpio support")
-> 
-> interatcing with commit
-> 
->    14ebb11ba895 ("irqdomain: Drop irq_linear_revmap()")
-> 
-> from Linus' tree.
-> 
-> I have applied the following merge fix patch.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 3 Jun 2025 12:07:49 +1000
-> Subject: [PATCH] fix up for "pinctrl: rp1: Implement RaspberryPi RP1 gpio
->   support"
-> 
-> interacting with commit
-> 
->    14ebb11ba895 ("irqdomain: Drop irq_linear_revmap()")
-> 
-> from Linus' tree.
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Yes, you're right.
 
-Thanks, I have applied your resolution and pushed out an updated branch.
--- 
-Florian
+> 
+>> +               return;
+>> +
+>> +       /* zero or drop pages only in range of [old_size, new_size] */
+>> +       truncate_pagecache(inode, old_size);
+>> +}
+>> +
+>>  static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+>>  {
+>>         struct inode *inode = file_inode(vmf->vma->vm_file);
+>> @@ -103,8 +114,13 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+>>
+>>         f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+>>
+>> +       filemap_invalidate_lock(inode->i_mapping);
+>> +       f2fs_zero_post_eof_page(inode, (folio->index + 1) << PAGE_SHIFT);
+>> +       filemap_invalidate_unlock(inode->i_mapping);
+>> +
+>>         file_update_time(vmf->vma->vm_file);
+>>         filemap_invalidate_lock_shared(inode->i_mapping);
+>> +
+>>         folio_lock(folio);
+>>         if (unlikely(folio->mapping != inode->i_mapping ||
+>>                         folio_pos(folio) > i_size_read(inode) ||
+>> @@ -1109,6 +1125,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>>                 f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
+>>                 filemap_invalidate_lock(inode->i_mapping);
+>>
+>> +               if (attr->ia_size > old_size)
+>> +                       f2fs_zero_post_eof_page(inode, old_size);
+> I'm a little suspicious about the logic here， here old_size is from
+> i_size_read(inode),
+> and it will compare with the "old_size" in f2fs_zero_post_eof_page, it
+> is also from i_size_read(inode),
+> so is this actually meaningless?
+
+Oh, I need to pass attr->ia_size instead of old_size.
+
+Let me revise in v3, anyway, thanks for the review.
+
+Thanks,
+
+> Thanks!
+>>                 truncate_setsize(inode, attr->ia_size);
+>>
+>>                 if (attr->ia_size <= old_size)
+>> @@ -1227,6 +1245,10 @@ static int f2fs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>         if (ret)
+>>                 return ret;
+>>
+>> +       filemap_invalidate_lock(inode->i_mapping);
+>> +       f2fs_zero_post_eof_page(inode, offset + len);
+>> +       filemap_invalidate_unlock(inode->i_mapping);
+>> +
+>>         pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
+>>         pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
+>>
+>> @@ -1510,6 +1532,8 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+>>         f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>>         filemap_invalidate_lock(inode->i_mapping);
+>>
+>> +       f2fs_zero_post_eof_page(inode, offset + len);
+>> +
+>>         f2fs_lock_op(sbi);
+>>         f2fs_drop_extent_tree(inode);
+>>         truncate_pagecache(inode, offset);
+>> @@ -1631,6 +1655,10 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+>>         if (ret)
+>>                 return ret;
+>>
+>> +       filemap_invalidate_lock(mapping);
+>> +       f2fs_zero_post_eof_page(inode, offset + len);
+>> +       filemap_invalidate_unlock(mapping);
+>> +
+>>         pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
+>>         pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
+>>
+>> @@ -1762,6 +1790,8 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+>>         /* avoid gc operation during block exchange */
+>>         f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+>>         filemap_invalidate_lock(mapping);
+>> +
+>> +       f2fs_zero_post_eof_page(inode, offset + len);
+>>         truncate_pagecache(inode, offset);
+>>
+>>         while (!ret && idx > pg_start) {
+>> @@ -1819,6 +1849,10 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+>>         if (err)
+>>                 return err;
+>>
+>> +       filemap_invalidate_lock(inode->i_mapping);
+>> +       f2fs_zero_post_eof_page(inode, offset + len);
+>> +       filemap_invalidate_unlock(inode->i_mapping);
+>> +
+>>         f2fs_balance_fs(sbi, true);
+>>
+>>         pg_start = ((unsigned long long)offset) >> PAGE_SHIFT;
+>> @@ -4860,6 +4894,10 @@ static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
+>>         err = file_modified(file);
+>>         if (err)
+>>                 return err;
+>> +
+>> +       filemap_invalidate_lock(inode->i_mapping);
+>> +       f2fs_zero_post_eof_page(inode, iocb->ki_pos + iov_iter_count(from));
+>> +       filemap_invalidate_unlock(inode->i_mapping);
+>>         return count;
+>>  }
+>>
+>> --
+>> 2.49.0
+>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
