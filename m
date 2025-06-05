@@ -1,188 +1,109 @@
-Return-Path: <linux-kernel+bounces-674002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695E1ACE89D
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A19ACE8A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A7B189858A
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CFE618984C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D3272614;
-	Thu,  5 Jun 2025 03:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A901C5D61;
+	Thu,  5 Jun 2025 03:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0mNAood"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TKcMe0SF"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790D3442C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3851F50F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749094298; cv=none; b=imbpQ6CVEgtcMsCL7bFg91zTqPFZfPRPHYrUhdChSfUoKcGADMJwTy+6g6g4vNTyn1xDM2stJC6peQQxrgGidA/FZlPCINjfDH4R3pshjy4h/A5FgVPfGJvLEuzUi3lbIZ6l3c7R3qTeLAhK33ZAYjtqjjqmb8YyN1V/P6C1xYQ=
+	t=1749094454; cv=none; b=O/KrRJX16vGjFDJWrE2c+C0wCIMCd+tvinBzjJT31PXgyeUIkTjUhsvUMKhp5t/WgrmxK4ieS9VcNGeq7A4FDohrYpJ1wenKnDu1uFSDLrLRV9OaCpPycHalZrieQbFhtnAIVbBDkyKqhZzzTsQW4VACF2ylVsLg9nhJIFkkcbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749094298; c=relaxed/simple;
-	bh=zD9KLdlxoxnlel0R+Dkuhh1beMBQe4Pg1pYX12Fw11w=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fig8b4HHtIkjsjOxJmAusxOnxpn6kNqerI1sXj9sZ7c7fscZjmf0UZ6UfGUjb0kJGX6aMqGpqxVq5vo7EfsXjI6O+2RHP2nUB0ddjLMxI2dEEweLtRBo2GdtYFwl+vfEpwshYjqT5dre3y8dSzwbWBWochx0f4O7BrSkznmT3Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0mNAood; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 058F1C4CEEB;
-	Thu,  5 Jun 2025 03:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749094298;
-	bh=zD9KLdlxoxnlel0R+Dkuhh1beMBQe4Pg1pYX12Fw11w=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=N0mNAoodH8TxwIffoYAp4amYWbVnUShMldcW4shFI9Q/GpK8mGqNUXUYAktsr4ENm
-	 r1JuvnXsClo3jrA+Ytf96oIb9pwpDI3IBMQHKeWUZDKwMfnBmWMvEr2roh/G8XlE+z
-	 p2D1ae2GUomPL+GMpSywOWft13FqwUqVs2wKOUIMH0yPghuaEa6hszSQaA0wNSLYnI
-	 rYyhSUdgkrlgCOm4WcDIMy8QdsslayX00qr+oKJfLkojas6Uceey8+8aKRwhMsUuGZ
-	 53D1yxHwsKlqY5hy+NBVMnR6XV7SrBDmHAjNL+cCGYRlD5NEQwldkdOLu9CMRznpRU
-	 UHEflhRf82O5g==
-Message-ID: <2a387dd6-9c10-478d-aae2-8284ad395944@kernel.org>
-Date: Thu, 5 Jun 2025 11:31:33 +0800
+	s=arc-20240116; t=1749094454; c=relaxed/simple;
+	bh=lJfZHCjTwiwmpOgV9rG7yOZTKtDaemNLPpm5Me68uUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=EzMMNipekoBmfF3mJ+l8Kx0jfA/Xq7F8x7VwXndrBZA3rqkNG7PM0iwjgWYw1xx+zZ5SLkl7w0+G6TrTzHrBsodG/07OIKt5+q7VtvFy0wLeHTlPdmHmSdh5MAhG/tEjGEZTyZjOpfzQQ3Acu15I0Sgusx6bexUlOgAmxhisPxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TKcMe0SF; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250605033403epoutp024ddc9c4ec2d24a8130692f9e3a31fe91~GCCExP_jV3203932039epoutp02H
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:34:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250605033403epoutp024ddc9c4ec2d24a8130692f9e3a31fe91~GCCExP_jV3203932039epoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749094443;
+	bh=hqvoyvvaQ3+MpXNWTvYlgfno/RK24poe88itru5s6bc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=TKcMe0SFBpREpr/XbxPOTNGvGq67x/S7Kwdz90Un6cHBvk35uak9WqvYNnMMKDQ9Z
+	 hwbQl21p4X58ljsYaj+aBY68gLmKhKBOUMIbsrpF5zSeRJ19G3ltYz5u1mQbcq47Ob
+	 /yjuvkWOSSaS8rPUZ0T7HjuW7foQSmJV4aVHrvKk=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250605033402epcas2p3da4aaaca52cd3da2c8ac24cd41d991a4~GCCDWUR9p1118011180epcas2p3Q;
+	Thu,  5 Jun 2025 03:34:02 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.102]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bCVRZ01d4z6B9m9; Thu,  5 Jun
+	2025 03:34:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250605033401epcas2p46651837ba85629a50ed69db9665a52a2~GCCCYKKXZ0772307723epcas2p47;
+	Thu,  5 Jun 2025 03:34:01 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.229.95.142]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250605033401epsmtip114e46e8514ceb9e025eaa40dcda29f19~GCCCSP5LH2772327723epsmtip1W;
+	Thu,  5 Jun 2025 03:34:01 +0000 (GMT)
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: 
+Cc: janghyuck.kim@samsung.com, zhaoyang.huang@unisoc.com,
+	jaewon31.kim@gmail.com, david@redhat.com, Hyesoo Yu <hyesoo.yu@samsung.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] mm: gup: avoid CMA pinning and clean up stale logic 
+Date: Thu,  5 Jun 2025 12:32:05 +0900
+Message-ID: <20250605033210.3184521-1-hyesoo.yu@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com, baocong.liu@unisoc.com
-Subject: Re: [PATCH v2] f2fs: compress: fix UAF of f2fs_inode_info in
- f2fs_free_dic
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <1749037059-4243-1-git-send-email-zhiguo.niu@unisoc.com>
- <76adf905-191d-4415-a584-a79bc502bb87@kernel.org>
- <CAHJ8P3+ygYG=9ZnPY15=L9AwGr9b5_2PkMwT8AXOyE68v6Hg3A@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3+ygYG=9ZnPY15=L9AwGr9b5_2PkMwT8AXOyE68v6Hg3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250605033401epcas2p46651837ba85629a50ed69db9665a52a2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250605033401epcas2p46651837ba85629a50ed69db9665a52a2
+References: <CGME20250605033401epcas2p46651837ba85629a50ed69db9665a52a2@epcas2p4.samsung.com>
 
-On 6/5/25 10:44, Zhiguo Niu wrote:
-> Chao Yu <chao@kernel.org> 于2025年6月5日周四 10:23写道：
->>
->> On 6/4/25 19:37, Zhiguo Niu wrote:
->>> The decompress_io_ctx may be released asynchronously after
->>> I/O completion. If this file is deleted immediately after read,
->>> and the kworker of processing post_read_wq has not been executed yet
->>> due to high workloads, It is possible that the inode(f2fs_inode_info)
->>> is evicted and freed before it is used f2fs_free_dic.
->>>
->>>     The UAF case as below:
->>>     Thread A                                      Thread B
->>>     - f2fs_decompress_end_io
->>>      - f2fs_put_dic
->>>       - queue_work
->>>         add free_dic work to post_read_wq
->>>                                                    - do_unlink
->>>                                                     - iput
->>>                                                      - evict
->>>                                                       - call_rcu
->>>     This file is deleted after read.
->>>
->>>     Thread C                                 kworker to process post_read_wq
->>>     - rcu_do_batch
->>>      - f2fs_free_inode
->>>       - kmem_cache_free
->>>      inode is freed by rcu
->>>                                              - process_scheduled_works
->>>                                               - f2fs_late_free_dic
->>>                                                - f2fs_free_dic
->>>                                                 - f2fs_release_decomp_mem
->>>                                       read (dic->inode)->i_compress_algorithm
->>>
->>> This patch use __iget before f2fs_free_dic and iput after free the dic.
->>>
->>> Cc: Daeho Jeong <daehojeong@google.com>
->>> Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
->>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>> Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
->>> ---
->>> v2: use __iget/iput function
->>> ---
->>>  fs/f2fs/compress.c | 16 +++++++++++-----
->>>  1 file changed, 11 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->>> index b3c1df9..3f0c18d 100644
->>> --- a/fs/f2fs/compress.c
->>> +++ b/fs/f2fs/compress.c
->>> @@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
->>>  }
->>>
->>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
->>> -             bool bypass_destroy_callback);
->>> +             bool bypass_destroy_callback, bool late_free);
->>>
->>>  struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->>>  {
->>> @@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->>>       return dic;
->>>
->>>  out_free:
->>> -     f2fs_free_dic(dic, true);
->>> +     f2fs_free_dic(dic, true, false);
->>>       return ERR_PTR(ret);
->>>  }
->>>
->>>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
->>> -             bool bypass_destroy_callback)
->>> +             bool bypass_destroy_callback, bool late_free)
->>>  {
->>>       int i;
->>>
->>> @@ -1775,6 +1775,8 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
->>>       }
->>>
->>>       page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
->>> +     if (late_free)
->>> +             iput(dic->inode);
->>>       kmem_cache_free(dic_entry_slab, dic);
->>>  }
->>>
->>> @@ -1783,16 +1785,20 @@ static void f2fs_late_free_dic(struct work_struct *work)
->>>       struct decompress_io_ctx *dic =
->>>               container_of(work, struct decompress_io_ctx, free_work);
->>>
->>> -     f2fs_free_dic(dic, false);
->>> +     f2fs_free_dic(dic, false, true);
->>>  }
->>>
->>>  static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
->>>  {
->>>       if (refcount_dec_and_test(&dic->refcnt)) {
->>>               if (in_task) {
->>> -                     f2fs_free_dic(dic, false);
->>> +                     f2fs_free_dic(dic, false, false);
->>>               } else {
->>>                       INIT_WORK(&dic->free_work, f2fs_late_free_dic);
->>> +                     /* to avoid inode is evicted simultaneously */
->>> +                     spin_lock(&dic->inode->i_lock);
->>> +                     __iget(dic->inode);
->>> +                     spin_unlock(&dic->inode->i_lock);
->>
->> Oh, how about using igrab() instead?
-> Hi Chao,
-> after I check igrab, I think it is ok,
-> but here We don't need care about igarb's return value, right?
+This patch series addresses an issue where longterm GUP requests
+could inadvertently pin unpinnable pages (such as CMA) when no
+migratable folios are found. This regression was introduced by
+commit 1aaf8c122918 ("mm: gup: fix infinite loop within __get_longterm_locked").
 
-I guess "return NULL" should be impossible case, but still we can add
-f2fs_bug_on() to detect any potential bug, right?
+The first patch removes stale codes and unnecessary logic left.
 
-Thanks,
+The second patch fixes the logic to return -EAGAIN when unpinnable
+pages are detected but no folios could be collected, allowing
+migration to be retried rather than pinning the page.
 
-> Thanks!
-> 
->>
->>>                       queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
->>>                                       &dic->free_work);
->>>               }
->>
+Hyesoo Yu (2):
+  mm: gup: clean up stale logic in migrate_longterm_unpinnable_folio()
+  mm: gup: avoid CMA page pinning by retrying migration if no migratable
+    page
+
+ mm/gup.c | 58 +++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 32 insertions(+), 26 deletions(-)
+
+-- 
+2.49.0
 
 
