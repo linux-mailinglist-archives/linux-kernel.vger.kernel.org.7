@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-674914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044FCACF6AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:32:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A82ACF6E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BDE13ADC9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:32:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD8B7A52A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 18:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F05227AC4D;
-	Thu,  5 Jun 2025 18:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636E227A445;
+	Thu,  5 Jun 2025 18:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HknfJRJG"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gMeGt6vb"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C883E19F115
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEBC27A105
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 18:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749148333; cv=none; b=OwcECoja5rAQjK9q3P3PSXIyejZEONwpBSmCWSYiU+n7lnVk17Q8ADKMVPbQHtPORXQT+PU5Nq211cYWZPs4TJjj8snsPMUpebM+6XTp8jfi4ls48OUxsVUPTY5fSfgItJowfqbx1jMQfdjrePX4yh/PGq3WLTe1Xr/bLoN+0W4=
+	t=1749148346; cv=none; b=mZtjJrt+KT0ayX12DubbQF5fx4/kSXhofBWWsBADzFS2l/MrkM7ewxc2X2p5K469FlBa77k+0uzCsgVNUvyL6qw7G7RZRQ+ANCfE3TbCkQz3ObelmIU/7pr1lHh/Wh6ADa67a9nFHgc07dKtDF1afJ4k2HUckLUOsM0vMi7PfNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749148333; c=relaxed/simple;
-	bh=zHUtngLVqSEzJxnrFQn9wCmr98Xaj04/ojU983UZOcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nYpznO8N94ZA4sLGJBGoN2MsWpljkJudPKp55J403OHmu2q4tSLyeVhuI7OL8ut+dxO/uHlh7L9hUeARRUGpJdiDRR5xJFvVqkZxCBLBdfFcfseJLvPCRGWYZrd4ZXgg+WYYJh0/a8Os5xfoM32XyuoBDQEdpsJ3uy9Vi/6P/20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HknfJRJG; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F068943A44;
-	Thu,  5 Jun 2025 18:31:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1749148322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zPZNF5bEHba9k6vIOW/VukHg1eq0fNfZYGtVAdLeg+g=;
-	b=HknfJRJGzx8XPl8qn4PYSCthquzFJMwaozl0rT0LwbSM7P0U2fYePSF0VhijC3QRVPEUHD
-	eKd2cwPK9GEVAaQ0WR9JzJbGpIKVx1OibtDrNpdyHoih7jf0S/2Zz33kSUya31mUjOsVW2
-	JQ6yR6gxWkRRlPrRWkYp385G9LEuzF6V2kKCjJfsjtHTnOe2fRj6nGUowDkXY0qcOSUnaI
-	NKq6I6ARt3lfStzlpnvWmyuFQI798gUi2dzAF36P/833U5VEyne8ALgqymJg6woZlEQzFl
-	zpCwX69S1glyfLqkF89B0ZWhzmyqp27JBPJlDpUpvTXbFj07asF6Gbnk8ozWjA==
-Date: Thu, 5 Jun 2025 20:31:58 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Anusha
- Srivatsa <asrivats@redhat.com>, Paul Kocialkowski <paulk@sys-base.io>,
- Dmitry Baryshkov <lumag@kernel.org>, =?UTF-8?B?SGVydsOp?= Codina
- <herve.codina@bootlin.com>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/3] drm/tests: bridge: add KUnit tests for
- devm_drm_bridge_alloc()
-Message-ID: <20250605203158.0846e8de@booty>
-In-Reply-To: <20250527-smiling-peacock-from-uranus-dc032f@houat>
-References: <20250516-drm-bridge-alloc-doc-test-v8-0-7e356fd58ba5@bootlin.com>
-	<20250516-drm-bridge-alloc-doc-test-v8-3-7e356fd58ba5@bootlin.com>
-	<20250527-smiling-peacock-from-uranus-dc032f@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1749148346; c=relaxed/simple;
+	bh=PD7YuSTb/DT/r03vM8ozZQ4W6Ib9zZrSXEzBWlswyd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hsrzyq1MCovUZp9I38tW240EbHR7aGc1xlSD+Q9sPKs69pnmhhgtCr85TWqLtCIXUpTQol7ehaBs1CcQo+eJ1VSx+wz9u2BvrEBwaiPoTC0hD0qkqwj/AKofcx9kQsdHiDLP8j6m1Y0uRLg2y8Wo6OccPY0ZrUhiffLyDGrvIxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gMeGt6vb; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so2030334a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1749148342; x=1749753142; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9urHXe2bN5tHQsZj80Y5j/RW2HoxK004xrWJlKqzeE=;
+        b=gMeGt6vblJ9px6pW61ATZIrAy/44c1yr83/iIhUjGI+Gx0ydQB42dWB1rcV/lRxIg4
+         ZePv57IvZ9RkKPRMszBisdEsd/2xKksqf1wE+TCIVC9shHYzSbmrVzqRQ0nLk3JkPvUZ
+         S9UZ0gbNGpBMJbS2aah5gPtdHNzcXjCmK8drg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749148342; x=1749753142;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y9urHXe2bN5tHQsZj80Y5j/RW2HoxK004xrWJlKqzeE=;
+        b=D6RSxjyThO/BTJyBk4sFt/FlHxypbUZdIwEcPZKRotS4ap9TrS6lfnNZDsw2XtKBCm
+         MZr/3cdm7gVCT1jWeaxhKllBKMBhIcm48PxouU3NYHTXEBMm5kVEhLoXG9har9ysq58L
+         4ca5MqKFFAMkAzN/cvcautnsCj4uyEfAltH81IJ0mAdA1ckaH9g3XoH8psYf+KkDh0Ih
+         K7kGezGp5BxU+isvW5PU+hqldf8EXciwdUoDMvKqoV+pM4lm5YbIom867YKqUyNK8H4r
+         +F4qYGEwMZwdSa/OpQ4oGY8br2ABBDDUP8cGxAbjpsmbmsodyTXiDDQ1J8ILmOOMjq5S
+         IInQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkFC4JAwROBwx1p0/SpsiHzB9K6WfsDclRaNrV34sncgD97cAXYE2l4/pVyux4wqUKJp7GIwm/AF6TDqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGAcQq3LWa7wJDyOwRnqAl84J3CVO8WFF1M1orKEgLjd1xlT4D
+	UWPt88pDvtzFLYJFdzNhzH/2j8CLZKeYBB6xqOaouRD2pV/IiBlmWzOBmo8vpkxrQaG7k+sRwOd
+	jGc1V38g=
+X-Gm-Gg: ASbGncsVk8bzthSYzqSekxTruJSo2NmLpG4A1/zRyF6kT3dq/8iHMkzv1Yxo4pfb1dr
+	RjVkLC1Zh7/Pm+oSeAXfHPGs+bKvbkX7kdxO4+78dssg6tGjXeulwCjNszf6Vxjpz9rYVpfGG/P
+	fZCUIKurMc3HiZWwkoujBnPVZYR4ggaYWUtMzjHR9Hv1I3CYIwCn5NoEVI4vM1lHtAzDz4TgUhH
+	Ez6LjKqVfCJlU/BIQsvOqhPvuN9tPB1biqGpEVRSMPoaallO2LdcLS+Ny7XxH6XOFqHwzWX7GpA
+	SxJPYw8er93i4dQREddoM15dOZi9+4fPmgoxgMCIuq8EiNmNCZ9U+xgA0+AGF73IR5IbfiM90Y2
+	wbXWN03dHegdexiAdpYyygeQeS606gerCRdLV
+X-Google-Smtp-Source: AGHT+IHWN4lVn3gabfN904Bw0oVixiGSeiDXkhXe5YqzYEUKihjTUuMtV4X66cxQR8oe66MWNZALdA==
+X-Received: by 2002:a17:907:7248:b0:ade:403:da4a with SMTP id a640c23a62f3a-ade1aa06c8amr26637666b.45.1749148342112;
+        Thu, 05 Jun 2025 11:32:22 -0700 (PDT)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade125a01c3sm92739266b.95.2025.06.05.11.32.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Jun 2025 11:32:21 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-60477f1a044so2248270a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 11:32:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPcBnsoKunzJyfnQvdGM7FMtAuTTCSRawwT/Relwy7BGX8nchXic7NFA0SOn42TdjWfdip4MLcbyJPbTw=@vger.kernel.org
+X-Received: by 2002:a05:6402:354a:b0:607:2d8a:9b2a with SMTP id
+ 4fb4d7f45d1cf-60774b80025mr197023a12.31.1749148340813; Thu, 05 Jun 2025
+ 11:32:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdegtddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvuddvrddutdehrdduhedtrddvhedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdduvddruddthedrudehtddrvdehvddphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmo
- hhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <20250605164733.737543-1-mjguzik@gmail.com>
+In-Reply-To: <20250605164733.737543-1-mjguzik@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 5 Jun 2025 11:32:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg-+FZTCTBY79UBMc=MT1-t5EWtGOXt=kYySUmqZU4qxQ@mail.gmail.com>
+X-Gm-Features: AX0GCFvnsUSPTdHW9Szh8VgHCVZhhWVCbaenV-8IfvYf0fo5SIV88rLBK3OfZig
+Message-ID: <CAHk-=wg-+FZTCTBY79UBMc=MT1-t5EWtGOXt=kYySUmqZU4qxQ@mail.gmail.com>
+Subject: Re: [PATCH v2] x86: prevent gcc from emitting rep movsq/stosq for
+ inlined ops
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Maxime,
+On Thu, 5 Jun 2025 at 09:47, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> gcc is over eager to use rep movsq/stosq (starts above 40 bytes), which
+> comes with a significant penalty on CPUs without the respective fast
+> short ops bits (FSRM/FSRS).
 
-thanks for reviewing this series.
+I have said this before, and I'll say it again: I do not want random
+crazy internal compiler tuning flags in the kernel sources.
 
-On Tue, 27 May 2025 18:10:31 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+We've had them before with things like inline limits, and it's
+absolutely horrendous.
 
-[...]
+If you believe in this so much, add it to your gcc spec file. Or
+continue to push gcc code improvement.
 
-> > @@ -422,11 +424,93 @@ static struct kunit_suite drm_bridge_helper_reset_crtc_test_suite = {
-> >  	.test_cases = drm_bridge_helper_reset_crtc_tests,
-> >  };
-> >  
-> > +struct drm_bridge_alloc_test_ctx {  
-> 
-> drm_bridge_alloc_priv
-> 
-> > +	struct device *dev;
-> > +	struct dummy_drm_bridge *dummy_br;
-> > +	bool destroyed;  
-> 
-> This can be in drm_bridge_priv
+But this is not in any way kernel-specific, and I do not want to have
+random "compiler internal modification flags" for code generation.
 
-Not really, because drm_bridge_priv will be freed just after calling
-.destroy, and we need .destroyed after the free happened.
+We want to have much higher-level things like "-O2" and "-march=xyz"
+for optimization.
 
-[...]
+Now, for *correctness* issues like instruction choices, we will do odd
+low-level internal flags like "don't use AVX", or
+"-fno-strict-overflow" that are fixing ABI issues or bugs in the
+language definition. So it's not like we don't ever do low-level
+internal implementation compiler flags, but not for random
+microarchitecture tuning.
 
-> > +static const struct drm_bridge_funcs drm_bridge_dummy_funcs = {
-> > +	.destroy = dummy_drm_bridge_destroy,
-> > +};  
-> 
-> And same here, you don't need to create yet another function set, just
-> add it to the existing ones.
-
-OK, but it implies further changes.
-
-In this version of this patch, the alloc tests being introduced use
-drm_bridge_alloc_priv, while the other tests using the existing
-function sets rely on drm_bridge_init_priv which has different fields.
-So if all tests will call .destroy, we always need a valid struct
-pointer for drm_bridge_priv.data.
-
-Based on this, I think the only solution is to not introduce
-drm_bridge_alloc_priv, and instead put its members (struct device *dev and bool
-destroyed) to drm_bridge_init_priv, and then use drm_bridge_init_priv
-for all tests.
-
-The change is not very invasive, and perhaps even a cleanup, thus I'm
-going to send as above in v9.
-
-
-I'm OK with all the other changes you proposed. All queued for v9.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+           Linus
 
