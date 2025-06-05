@@ -1,226 +1,147 @@
-Return-Path: <linux-kernel+bounces-674602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1CBACF1BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:25:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34762ACF1AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D0C1895D2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:26:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 482D07A801F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B0D1DF749;
-	Thu,  5 Jun 2025 14:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lH7Z4DBw"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0292D1CAA82;
+	Thu,  5 Jun 2025 14:23:39 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB40189F5C
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E701BF33F
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133432; cv=none; b=m7sT6w8+j0xy2B00J/LOCxIllHNzy0lx9a41+WXA1zvywWhY3cVVCFz6wCU8YOHAtD1XBx1Ho2rtuu2ITc48wqh93E5pZJQp/2any/eLrXJF8K1W4O+bpMOyGU8uWxQid2WEaHKDoID/DiTDSkdvyncNpMc2dsnaSI29jpEMEfI=
+	t=1749133418; cv=none; b=KUt/e/LTh3gslLs1tvgD0yMqNVIxai2nkDzWM0OdesudaNsLy7z1x7afsvXvHyqoJ4sjDWREh6bM/ZSASbxE8Bf1jFC6/i3DoUhGd2hQw9w16EY10UAE58qiWjnMfQE8Ii1zaW5/9xTs/79Oi6fhCjp2OcXaXQqc2cuSHEKEBW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133432; c=relaxed/simple;
-	bh=TdGonRu2CP9wmNv36VaNXN5SJd7fDe1WKLdw6M4RQcQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GnVOapBGHAm3H5QrJ45JvP5K1OWofjLqVLgeKwr/QGYEb1bFJEAKKaWEVINq4L/xvtC3EyTAgOunO2ogxVtrcGbPVDLnI1xEcJuMTCm9i7++wIjpJRaO64OJsPNKYX/WoFWTvW0xLZOM//AT3WQgF1Rs5PiXG46DuSX7IJFq+BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lH7Z4DBw; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749133418;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TiuGB6Udmi6CtNlTJQ+UzrVJuLBs5/tk4UZYmqS+F4o=;
-	b=lH7Z4DBw1WmJ/FEgE+syjxGOPkMum3fuiB9DTRdt/Ep6G2VTlxcmLBMy4tyHW6pyX8MVdZ
-	s5zkK7KNHtGT+3TpXu5/rV/9JJJBHxsGKzui65rbavdeGIFqzzRt0LOfR0YXYXkYxOe1K7
-	MkW25ahj59xvMSEZiXU5SQvdLfdVtu8=
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-To: mpatocka@redhat.com,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@Huawei.com
-Cc: linux-block@vger.kernel.org,
+	s=arc-20240116; t=1749133418; c=relaxed/simple;
+	bh=MD3aMlFOHJvpDZqHB+YncJLnt3iOZYjJ0u3p2gY2aNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qq4Cp6SY+HIA5IeLHsqD/Bnq3oJppEuTINX487SisJbZ4/k82o8nbdZZzkadnhRjQ1FsMnlrjSnhk4F460qbUOHj24chvJFf3tFicCUEUsrYM5OX7x77k+wGjyrREWNhU4vZBp0vo9taw6kVXw0cYLTIvkO2YPBNxyaBvbNRP5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B2602336C3;
+	Thu,  5 Jun 2025 14:23:17 +0000 (UTC)
+Authentication-Results: smtp-out1.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20D5D137FE;
+	Thu,  5 Jun 2025 14:23:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UF9GBVWoQWipRwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:17 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	dm-devel@lists.linux.dev,
-	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [RFC v2 00/11] dm-pcache – persistent-memory cache for block devices
-Date: Thu,  5 Jun 2025 14:22:55 +0000
-Message-Id: <20250605142306.1930831-1-dongsheng.yang@linux.dev>
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v5 04/10] mm,slub: Use node-notifier instead of memory-notifier
+Date: Thu,  5 Jun 2025 16:22:55 +0200
+Message-ID: <20250605142305.244465-5-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250605142305.244465-1-osalvador@suse.de>
+References: <20250605142305.244465-1-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
+X-Rspamd-Queue-Id: B2602336C3
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.00
 
-Hi Mikulas and all,
+slub is only concerned when a numa node changes its memory state,
+so stop using the memory notifier and use the new numa node notifer
+instead.
 
-This is *RFC v2* of the *pcache* series, a persistent-memory backed cache.
-Compared with *RFC v1* 
-<https://lore.kernel.org/lkml/20250414014505.20477-1-dongsheng.yang@linux.dev/>  
-the most important change is that the whole cache has been *ported to
-the Device-Mapper framework* and is now exposed as a regular DM target.
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ mm/slub.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Code:
-    https://github.com/DataTravelGuide/linux/tree/dm-pcache
-
-Full RFC v2 test results:
-    https://datatravelguide.github.io/dtg-blog/pcache/pcache_rfc_v2_result/results.html
-
-    All 962 xfstests cases passed successfully under four different
-pcache configurations.
-
-    One of the detailed xfstests run:
-        https://datatravelguide.github.io/dtg-blog/pcache/pcache_rfc_v2_result/test-results/02-._pcache.py_PcacheTest.test_run-crc-enable-gc-gc0-test_script-xfstests-a515/debug.log
-
-Below is a quick tour through the three layers of the implementation,
-followed by an example invocation.
-
-----------------------------------------------------------------------
-1. pmem access layer
-----------------------------------------------------------------------
-
-* All reads use *copy_mc_to_kernel()* so that uncorrectable media
-  errors are detected and reported.
-* All writes go through *memcpy_flushcache()* to guarantee durability
-  on real persistent memory.
-
-----------------------------------------------------------------------
-2. cache-logic layer (segments / keys / workers)
-----------------------------------------------------------------------
-
-Main features
-  - 16 MiB pmem segments, log-structured allocation.
-  - Multi-subtree RB-tree index for high parallelism.
-  - Optional per-entry *CRC32* on cached data.
-  - Background *write-back* worker and watermark-driven *GC*.
-  - Crash-safe replay: key-sets are scanned from *key_tail* on start-up.
-
-Current limitations
-  - Only *write-back* mode implemented.
-  - Only FIFO cache invalidate; other (LRU, ARC...) planned.
-
-----------------------------------------------------------------------
-3. dm-pcache target integration
-----------------------------------------------------------------------
-
-* Table line  
-    `pcache <pmem_dev> <origin_dev> writeback <true|false>`
-* Features advertised to DM:
-  - `ti->flush_supported = true`, so *PREFLUSH* and *FUA* are honoured
-    (they force all open key-sets to close and data to be durable).
-* Not yet supported:
-  - Discard / TRIM.
-  - dynamic `dmsetup reload`.
-
-Runtime controls
-  - `dmsetup message <dev> 0 gc_percent <0-90>` adjusts the GC trigger.
-
-Status line reports super-block flags, segment counts, GC threshold and
-the three tail/head pointers (see the RST document for details).
-
-----------------------------------------------------------------------
-Example
-----------------------------------------------------------------------
-# 1. create a pmem and ssd
-pmem=/dev/pmem0
-ssd=/dev/sdb
-
-# 2. map a pcache device in front.
-dmsetup create pcache_sdb --table \
-  "0 $(blockdev --getsz $ssd) pcache $pmem $ssd writeback true"
-
-# 3. format and mount
-mkfs.ext4 /dev/mapper/pcache_sdb
-mount /dev/mapper/pcache_sdb /mnt
-
-# 4. tune GC to 80 %
-dmsetup message pcache_sdb 0 gc_percent 80
-
-# 5. monitor
-watch -n1 'dmsetup status pcache_sdb'
-
-Testing:
-    The test suite for pcache is hosted in the dtg-tests project, built
-on top of the Avocado Framework. It includes currently:
-        - Management-related test cases for pcache devices.
-        - Data verification and validation tests.
-        - Complete execution of xfstests suite under multiple
-          configurations.
-
-Thanx
-Dongsheng
-
-Dongsheng Yang (11):
-  dm-pcache: add pcache_internal.h
-  dm-pcache: add backing device management
-  dm-pcache: add cache device
-  dm-pcache: add segment layer
-  dm-pcache: add cache_segment
-  dm-pcache: add cache_writeback
-  dm-pcache: add cache_gc
-  dm-pcache: add cache_key
-  dm-pcache: add cache_req
-  dm-pcache: add cache core
-  dm-pcache: initial dm-pcache target
-
- .../admin-guide/device-mapper/dm-pcache.rst   | 200 ++++
- MAINTAINERS                                   |   9 +
- drivers/md/Kconfig                            |   2 +
- drivers/md/Makefile                           |   1 +
- drivers/md/dm-pcache/Kconfig                  |  17 +
- drivers/md/dm-pcache/Makefile                 |   3 +
- drivers/md/dm-pcache/backing_dev.c            | 305 ++++++
- drivers/md/dm-pcache/backing_dev.h            |  84 ++
- drivers/md/dm-pcache/cache.c                  | 443 +++++++++
- drivers/md/dm-pcache/cache.h                  | 601 ++++++++++++
- drivers/md/dm-pcache/cache_dev.c              | 310 ++++++
- drivers/md/dm-pcache/cache_dev.h              |  70 ++
- drivers/md/dm-pcache/cache_gc.c               | 170 ++++
- drivers/md/dm-pcache/cache_key.c              | 907 ++++++++++++++++++
- drivers/md/dm-pcache/cache_req.c              | 810 ++++++++++++++++
- drivers/md/dm-pcache/cache_segment.c          | 300 ++++++
- drivers/md/dm-pcache/cache_writeback.c        | 239 +++++
- drivers/md/dm-pcache/dm_pcache.c              | 388 ++++++++
- drivers/md/dm-pcache/dm_pcache.h              |  61 ++
- drivers/md/dm-pcache/pcache_internal.h        | 116 +++
- drivers/md/dm-pcache/segment.c                |  63 ++
- drivers/md/dm-pcache/segment.h                |  74 ++
- 22 files changed, 5173 insertions(+)
- create mode 100644 Documentation/admin-guide/device-mapper/dm-pcache.rst
- create mode 100644 drivers/md/dm-pcache/Kconfig
- create mode 100644 drivers/md/dm-pcache/Makefile
- create mode 100644 drivers/md/dm-pcache/backing_dev.c
- create mode 100644 drivers/md/dm-pcache/backing_dev.h
- create mode 100644 drivers/md/dm-pcache/cache.c
- create mode 100644 drivers/md/dm-pcache/cache.h
- create mode 100644 drivers/md/dm-pcache/cache_dev.c
- create mode 100644 drivers/md/dm-pcache/cache_dev.h
- create mode 100644 drivers/md/dm-pcache/cache_gc.c
- create mode 100644 drivers/md/dm-pcache/cache_key.c
- create mode 100644 drivers/md/dm-pcache/cache_req.c
- create mode 100644 drivers/md/dm-pcache/cache_segment.c
- create mode 100644 drivers/md/dm-pcache/cache_writeback.c
- create mode 100644 drivers/md/dm-pcache/dm_pcache.c
- create mode 100644 drivers/md/dm-pcache/dm_pcache.h
- create mode 100644 drivers/md/dm-pcache/pcache_internal.h
- create mode 100644 drivers/md/dm-pcache/segment.c
- create mode 100644 drivers/md/dm-pcache/segment.h
-
+diff --git a/mm/slub.c b/mm/slub.c
+index f92b43d36adc..b8b5b81bfd1a 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -6164,8 +6164,8 @@ static int slab_mem_going_online_callback(void *arg)
+ {
+ 	struct kmem_cache_node *n;
+ 	struct kmem_cache *s;
+-	struct memory_notify *marg = arg;
+-	int nid = marg->status_change_nid;
++	struct node_notify *narg = arg;
++	int nid = narg->nid;
+ 	int ret = 0;
+ 
+ 	/*
+@@ -6217,15 +6217,12 @@ static int slab_memory_callback(struct notifier_block *self,
+ 	int ret = 0;
+ 
+ 	switch (action) {
+-	case MEM_GOING_ONLINE:
++	case NODE_ADDING_FIRST_MEMORY:
+ 		ret = slab_mem_going_online_callback(arg);
+ 		break;
+-	case MEM_GOING_OFFLINE:
++	case NODE_REMOVING_LAST_MEMORY:
+ 		ret = slab_mem_going_offline_callback(arg);
+ 		break;
+-	case MEM_ONLINE:
+-	case MEM_CANCEL_OFFLINE:
+-		break;
+ 	}
+ 	if (ret)
+ 		ret = notifier_from_errno(ret);
+@@ -6300,7 +6297,7 @@ void __init kmem_cache_init(void)
+ 			sizeof(struct kmem_cache_node),
+ 			SLAB_HWCACHE_ALIGN | SLAB_NO_OBJ_EXT, 0, 0);
+ 
+-	hotplug_memory_notifier(slab_memory_callback, SLAB_CALLBACK_PRI);
++	hotplug_node_notifier(slab_memory_callback, SLAB_CALLBACK_PRI);
+ 
+ 	/* Able to allocate the per node structures */
+ 	slab_state = PARTIAL;
 -- 
-2.34.1
+2.49.0
 
 
