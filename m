@@ -1,69 +1,118 @@
-Return-Path: <linux-kernel+bounces-675060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6310AACF882
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:02:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB32ACF889
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 22:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29338170A59
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E82C188F227
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 20:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489381FDA82;
-	Thu,  5 Jun 2025 20:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE5D202C2A;
+	Thu,  5 Jun 2025 20:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gqiLvvt7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="KI9nhAcI"
+Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD7B17548;
-	Thu,  5 Jun 2025 20:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97EF1F4176
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 20:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749153748; cv=none; b=dZWjsj9j1zm8EXINQkaQXqqQmmr0GxbvnhNg8sGzUwSkXEU5XawK2jJ9TtsoZwEmy3rYtDGM9/JrwqNZWZhc11g2IoJeonAjAgobca0yl9t0aD9jb15Hicg7TMwoX9UT0bZdAf22isO1pqHrsh23EwiwIhMVl221UUz9cF55/4Y=
+	t=1749153840; cv=none; b=uX86Q53zZpN4EgFgSxq06av3FqZiJnuHAIg1zQr5Hwyli4bhQvrycQSzbl2aum9wgo/z/z4sq8CA6VmcPE67s00qYzpWUlbLuTf0QP4u6jDfxlt9A3HcpdkeVpJhhNE7UmeYsr15LGiENSAEmHKo/ODy8IeW35mNbmQWlL0mV7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749153748; c=relaxed/simple;
-	bh=7POy0PwH4blRJ5E1aF7ZF6VZE2R9uGB+oQ4ajtto1xU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iVwBqh7jEwlMqXxlzjFL6LlavgOFevPIqCQ44SJXG7ZVDa2KjylyYs5Mm48H7sqkbknosaMU6PnHqX1Dfo1W8UeV+hiqohzyyuHLopz0vmhY87KnPSn8a9eXO882L5O6xKuz1GbmqrJTTZqXocCrRyrD7/A6dybBb//Sjro4ro4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gqiLvvt7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16542C4CEE7;
-	Thu,  5 Jun 2025 20:02:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749153748;
-	bh=7POy0PwH4blRJ5E1aF7ZF6VZE2R9uGB+oQ4ajtto1xU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gqiLvvt7+M/LbKMv5+JDSwn9E9h/04p9RPnSOU1ir9l4zi2LQYDkDi4dboD1sQLPj
-	 ZmgOjSXyN3gWxVSJiIqZtiuannx9BCweEpn6XqOBntxX+fecPXTqFaoz+/jhhsC1Ga
-	 LP/zlWHqzZfSJRTT5syc7sPqJbJwR/uvYv6z06zs=
-Date: Thu, 5 Jun 2025 13:02:27 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: hughd@google.com, baolin.wang@linux.alibaba.com, willy@infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/7] Some random fixes and cleanups to shmem
-Message-Id: <20250605130227.f06c8ad8cc6517720d7e0db9@linux-foundation.org>
-In-Reply-To: <20250605221037.7872-1-shikemeng@huaweicloud.com>
-References: <20250605221037.7872-1-shikemeng@huaweicloud.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749153840; c=relaxed/simple;
+	bh=o1vWj2peYFzT+9B8W1tqxLwFgYA9lzDCmka4MeMf2gg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D/qRrbo0+9aGCOBxw2f3mAb2jmd9fuwJ2YDAOdzbuPNq0Yv1D9C02t87Sd1dOIKUaTa/NH+SUQbekNdQY8DpSvyiQNDRrgWgw1TdCnAPzBEm9rJCdsKkZEJQqIfqqONlphjmdUJhU6GG2/UCP58OoGqWH4QmNKIb/mAr1BGBVH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=KI9nhAcI; arc=none smtp.client-ip=195.133.245.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
+Received: from mail.nppct.ru (localhost [127.0.0.1])
+	by mail.nppct.ru (Postfix) with ESMTP id 890631C11FF
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 23:03:45 +0300 (MSK)
+Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
+	reason="pass (just generated, assumed good)" header.d=nppct.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:to:from:from; s=dkim; t=1749153825; x=
+	1750017826; bh=o1vWj2peYFzT+9B8W1tqxLwFgYA9lzDCmka4MeMf2gg=; b=K
+	I9nhAcIiu7lrXTn3NaSpYUL8bNKN3JuEZPUAtssONVOxwA0OfQrmMVRtqDrTfQST
+	kfd5pvsOhmYcS89KLUgIxIfiT1B07gzs9+gNkR1YbWtLTB6hmsD1SiWoIZQ8MmcF
+	WObORsAQhNJAosjXCOvEpGDGM+Y6fvXsMWBkPfkouw=
+X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
+Received: from mail.nppct.ru ([127.0.0.1])
+	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FDlrQ0HG8g9m for <linux-kernel@vger.kernel.org>;
+	Thu,  5 Jun 2025 23:03:45 +0300 (MSK)
+Received: from localhost.localdomain (unknown [87.249.24.51])
+	by mail.nppct.ru (Postfix) with ESMTPSA id 786081C0D75;
+	Thu,  5 Jun 2025 23:03:40 +0300 (MSK)
+From: Alexey Nepomnyashih <sdl@nppct.ru>
+To: 
+Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] drm/nouveau/instmem/gk20a: fix overflow in IOVA calculation for iommu_map/unmap
+Date: Thu,  5 Jun 2025 20:03:23 +0000
+Message-ID: <20250605200332.336245-1-sdl@nppct.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri,  6 Jun 2025 06:10:30 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+Fix possible overflow in the address expression used as the second
+argument to iommu_map() and iommu_unmap(). Without an explicit cast,
+this expression may overflow when 'r->offset' or 'i' are large. Cast
+the result to unsigned long before shifting to ensure correct IOVA
+computation and prevent unintended wraparound.
 
-> This series contains more fixes and cleanups which are made during
-> learning shmem. Patch 1-3 are some random fixes; Patch 4-7 are some
-> random cleanups. More details can be found in respective patches. Thanks!
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Thanks.  I'll skip v1, wait to see what reviewers have to say.  Please
-poke me in a week or so if you think I should proceed with the v1 series.
+Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
+index 201022ae9214..17a0e1a46211 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/instmem/gk20a.c
+@@ -334,7 +334,7 @@ gk20a_instobj_dtor_iommu(struct nvkm_memory *memory)
+ 	/* Unmap pages from GPU address space and free them */
+ 	for (i = 0; i < node->base.mn->length; i++) {
+ 		iommu_unmap(imem->domain,
+-			    (r->offset + i) << imem->iommu_pgshift, PAGE_SIZE);
++			    ((unsigned long)r->offset + i) << imem->iommu_pgshift, PAGE_SIZE);
+ 		dma_unmap_page(dev, node->dma_addrs[i], PAGE_SIZE,
+ 			       DMA_BIDIRECTIONAL);
+ 		__free_page(node->pages[i]);
+@@ -472,7 +472,7 @@ gk20a_instobj_ctor_iommu(struct gk20a_instmem *imem, u32 npages, u32 align,
+ 
+ 	/* Map into GPU address space */
+ 	for (i = 0; i < npages; i++) {
+-		u32 offset = (r->offset + i) << imem->iommu_pgshift;
++		unsigned long offset = ((unsigned long)r->offset + i) << imem->iommu_pgshift;
+ 
+ 		ret = iommu_map(imem->domain, offset, node->dma_addrs[i],
+ 				PAGE_SIZE, IOMMU_READ | IOMMU_WRITE,
+-- 
+2.43.0
 
 
