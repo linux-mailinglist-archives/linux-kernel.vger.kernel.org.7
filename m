@@ -1,123 +1,226 @@
-Return-Path: <linux-kernel+bounces-674589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3275ACF1A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:21:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB4FACF1A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 16:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C6E816ED1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC183ADC45
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 14:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685407262F;
-	Thu,  5 Jun 2025 14:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7B913D521;
+	Thu,  5 Jun 2025 14:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DSotHWSY"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GoG3zOdO";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ghfYnGrY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nqHwVfsA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k/V2TP1O"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6619E41C64
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2731A275
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 14:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749133293; cv=none; b=PV2hqnVGEifsvG++5didjntgrv7YSf9ZVej04526hbg67ZotKtFVP0eespaeYvtspCUAyILTQw76VRPeWvDaIitGEA1RI2dLantlOAfDdi4u7TgQa0KP83sg+iTe45LZg6iGSF4IO+FS33kpkdKrSvtR42vB4+wC6x+Zkjq3314=
+	t=1749133399; cv=none; b=OIjDHUo8mkLXBan+OSVFeLzEZuUZY7XXIuRWbu6cli5p8W+YUv2w6R/7K/9LwdyOyPzxwkKeyiYD+lhQTryZSrqa2oNbVA9TWEkvtJPn4KiNrHmZ96dUZgXLPjqplnwxjTFT1g1KvPZ01piKrf7aW7aADYCiyELpyIXnTObkaLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749133293; c=relaxed/simple;
-	bh=E0pSKv+izDzrlBsPHmSxnYo8Z3/s33BmLN66PmHHiFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDcjxJEhQBojNgNp3JNssUDY5oPXvPBEiL2SW1+1qyrDuwVvnV4jO9zmtydKmZBwWsABIWXKkuosE3Eie04UsygP80I/eAcF2spmvYD3tIpqNtfznKBBpDm/6BVP0swTwr/bilyPQwFtunFih/E/eUPpkEaZHY0adicRm2cv8BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DSotHWSY; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0wmHwsuhGSPTxGDnvwdI84SgADDq0c08NA96XNhokDU=; b=DSotHWSYok75xBC5ZWWLAIWP0g
-	LqxbXqO3F9SyhaaokE2o2uMaUmdxMO9G11lKaIDj54vvBRSImWc2ZmNbe+g73Nn7i+ZBoLMM1ARkB
-	lvwpVOp218Jp6ilCKViGrxqVL9sfmRwMBCHykNlZXVak88vd5jc+JoyDcgcTr4ItV0JLee9/8K6oX
-	Y4qvNUayNzunncc9BkuXtD7pRfuMeavpN2zABHNMFSlUOxUnlkN/22pJWA649SzqzAPnY+De0YteA
-	fBXy+4eVGKRxowSH4ZY8mgrO4ssE8rAJMh5BRNvZnwitvjaBAxLzwpTmvajjf7TDzHDg3urGMuZjF
-	O/JjdUzw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uNBTB-00000001Aog-0fDf;
-	Thu, 05 Jun 2025 14:21:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 65FA230057C; Thu,  5 Jun 2025 16:21:24 +0200 (CEST)
-Date: Thu, 5 Jun 2025 16:21:24 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kai Huang <kai.huang@intel.com>
-Cc: dave.hansen@intel.com, tglx@linutronix.de, bp@alien8.de,
-	mingo@redhat.com, hpa@zytor.com, kirill.shutemov@linux.intel.com,
-	rick.p.edgecombe@intel.com, x86@kernel.org, samitolvanen@google.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/virt/tdx: Add ENDBR for low level SEAMCALL assembly
- functions
-Message-ID: <20250605142124.GT39944@noisy.programming.kicks-ass.net>
-References: <20250604003848.13154-1-kai.huang@intel.com>
- <20250605140739.GS39944@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1749133399; c=relaxed/simple;
+	bh=IfDNeHXqfvXJt/9iMiCpVz8pZRKpwbr601yo68izMzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uTNl3S1qlFwAvKE7J47uO1Kz1gv4PI5yuzJ4Hvw7A9BQxKj69ixCurvnxK/LU604hmJJKM9AEswJo1LAh2CSMbxzsADIjkzeuU0zyqkzEQMamEixD/8ugdgOIub4+YfUQ+SAe8UDQPT59cyLhtjCu5X41526MwUy9kNGY/U5DMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GoG3zOdO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ghfYnGrY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nqHwVfsA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k/V2TP1O; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F14F21F78B;
+	Thu,  5 Jun 2025 14:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749133395; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=VGtxkIaHJWSGAzQZ7XrRv13ifuUrPYST8Fb6BTobMyk=;
+	b=GoG3zOdOLCwA5kUzZDKLy6zfW/X5CfuFCrdHUq2Q63tc0onmUlVps9dFdmiFcKgwac4v2i
+	YeKM7y7P7ayFmB6m+x1bOXH3hL/BbzI4su6UcYe3xW3/YnIMfvMiCsBG2gke+Z+FuNmFp+
+	QHod5c9F9OkwEnaAGqD+yPQRK6XnBGA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749133395;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=VGtxkIaHJWSGAzQZ7XrRv13ifuUrPYST8Fb6BTobMyk=;
+	b=ghfYnGrY7MbqeK8JLfpVe93QV3+xDiGdDcHhnf7hNqImAZbiqsAvpdsqT3Y850h9FQyFfZ
+	IVOPrtyEnhIcA3Ag==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749133394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=VGtxkIaHJWSGAzQZ7XrRv13ifuUrPYST8Fb6BTobMyk=;
+	b=nqHwVfsADekQQemLGP480X+Wm/i1jHgCq8KtJka8xqb9boQp2JlgZY4ALaH9IDgf4D2OK0
+	h6iOi3NHmSotWFQCD81SjwNcmbxkDe478N98W/SCARUdU+cm1R6Ux2r2rbb94urYu8JaGJ
+	d88LyZ+wkYiea81UJrcqgac7eTTE8xQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749133394;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=VGtxkIaHJWSGAzQZ7XrRv13ifuUrPYST8Fb6BTobMyk=;
+	b=k/V2TP1Okkx4dc3x1idqdGt5OiDRCJDfV7PhJEGe1/xLunDSoI8tInJlHMvg8z6MtTPVSA
+	5+Goq6CigpS8UMAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 61F1D137FE;
+	Thu,  5 Jun 2025 14:23:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bQ7sFFKoQWipRwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 05 Jun 2025 14:23:14 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v5 00/10] 
+Date: Thu,  5 Jun 2025 16:22:51 +0200
+Message-ID: <20250605142305.244465-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250605140739.GS39944@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -0.80
+X-Spamd-Result: default: False [-0.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	SUBJECT_ENDS_SPACES(0.50)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Level: 
 
-On Thu, Jun 05, 2025 at 04:07:39PM +0200, Peter Zijlstra wrote:
-> On Wed, Jun 04, 2025 at 12:38:48PM +1200, Kai Huang wrote:
-> > Build warnings about missing ENDBR around making SEAMCALLs[*] were
-> > observed when using some randconfig[1] to build today's Linus's tree.
-> > 
-> > In the C code, the low level SEAMCALL assembly functions (__seamcall(),
-> > __seamcall_ret() and __seamcall_saved_ret()) are indirectly called via
-> > the common sc_retry() function:
-> > 
-> >     static inline u64 sc_retry(sc_func_t func, u64 fn,
-> > 		    	       struct tdx_module_args *args)
-> >     { ... }
-> > 
-> >     #define seamcall(_fn, _args) sc_retry(__seamcall, (_fn), (_args))
-> > 
-> > It turns out compilers may not always be smart enough to figure out how
-> > to call those assembly functions directly.
-> 
-> Did you try something like so?
+ v4 -> v5:
+   - Split out conversion for different consumers (per David)
+   - Renamed node-notifier actions (per David)
+   - Added new Documentation for new node-notifier and updated
+     the memory-notifier one to reflect the changes
+   - Make sure we do not trigger anything when !CONFIG_NUMA (per David)
 
-This seems to cure things for me.
+ v3 -> v4:
+   - Fix typos pointed out by Alok Tiwari
+   - Further cleanups suggested by Vlastimil
+   - Add RBs-by from Vlastimil
 
----
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 4a1922ec80cf..e8cd717f4f0f 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -100,8 +100,8 @@ void tdx_init(void);
+ v2 -> v3:
+   - Add Suggested-by (David)
+   - Replace last N_NORMAL_MEMORY mention in slub (David)
+   - Replace the notifier for autoweitght-mempolicy
+   - Fix build on !CONFIG_MEMORY_HOTPLUG
  
- typedef u64 (*sc_func_t)(u64 fn, struct tdx_module_args *args);
- 
--static inline u64 sc_retry(sc_func_t func, u64 fn,
--			   struct tdx_module_args *args)
-+static __always_inline u64 sc_retry(const sc_func_t func, u64 fn,
-+				    struct tdx_module_args *args)
- {
- 	int retry = RDRAND_RETRY_LOOPS;
- 	u64 ret;
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 7fdb37387886..ed87eae7b414 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -69,7 +69,7 @@ static inline void seamcall_err_ret(u64 fn, u64 err,
- 			args->r9, args->r10, args->r11);
- }
- 
--static inline int sc_retry_prerr(sc_func_t func, sc_err_func_t err_func,
-+static __always_inline int sc_retry_prerr(const sc_func_t func, sc_err_func_t err_func,
- 				 u64 fn, struct tdx_module_args *args)
- {
- 	u64 sret = sc_retry(func, fn, args);
+ v1 -> v2:
+   - Remove status_change_nid_normal and the code that
+     deals with it (David & Vlastimil)
+   - Remove slab_mem_offline_callback (David & Vlastimil)
+   - Change the order of canceling the notifiers
+     in {online,offline}_pages (Vlastimil)
+   - Fix up a couple of whitespaces (Jonathan Cameron)
+   - Add RBs-by
+
+Memory notifier is a tool that allow consumers to get notified whenever
+memory gets onlined or offlined in the system.
+Currently, there are 10 consumers of that, but 5 out of those 10 consumers
+are only interested in getting notifications when a numa node changes its
+memory state.
+That means going from memoryless to memory-aware of vice versa.
+
+Which means that for every {online,offline}_pages operation they get
+notified even though the numa node might not have changed its state.
+This is suboptimal, and we want to decouple numa node state changes from
+memory state changes.
+
+While we are doing this, remove status_change_nid_normal, as the only
+current user (slub) does not really need it.
+This allows us to further simplify and clean up the code.
+
+The first patch gets rid of status_change_nid_normal in slub.
+The second patch implements a numa node notifier that does just that, and have
+those consumers register in there, so they get notified only when they are
+interested.
+
+The third patch replaces 'status_change_nid{_normal}' fields within
+memory_notify with a 'nid', as that is only what we need for memory
+notifer and update the only user of it (page_ext).
+
+Consumers that are only interested in numa node states change are:
+
+ - memory-tier
+ - slub
+ - cpuset
+ - hmat
+ - cxl
+ - autoweight-mempolicy
+
+Oscar Salvador (10):
+  mm,slub: Do not special case N_NORMAL nodes for slab_nodes
+  mm,memory_hotplug: Remove status_change_nid_normal and update
+    documentation
+  mm,memory_hotplug: Implement numa node notifier
+  mm,slub: Use node-notifier instead of memory-notifier
+  mm,memory-tiers: Use node-notifier instead of memory-notifier
+  drivers,cxl: Use node-notifier instead of memory-notifier
+  drivers,hmat: Use node-notifier instead of memory-notifier
+  kernel,cpuset: Use node-notifier instead of memory-notifier
+  mm,mempolicy: Use node-notifier instead of memory-notifier
+  mm,memory_hotplug: Rename status_change_nid parameter in memory_notify
+
+ Documentation/core-api/memory-hotplug.rst     |  78 ++++++--
+ .../zh_CN/core-api/memory-hotplug.rst         |   3 -
+ drivers/acpi/numa/hmat.c                      |   8 +-
+ drivers/base/node.c                           |  21 +++
+ drivers/cxl/core/region.c                     |  16 +-
+ drivers/cxl/cxl.h                             |   4 +-
+ include/linux/memory.h                        |   3 +-
+ include/linux/node.h                          |  42 +++++
+ kernel/cgroup/cpuset.c                        |   2 +-
+ mm/memory-tiers.c                             |  14 +-
+ mm/memory_hotplug.c                           | 167 ++++++++----------
+ mm/mempolicy.c                                |  10 +-
+ mm/page_ext.c                                 |  12 +-
+ mm/slub.c                                     |  45 +----
+ 14 files changed, 240 insertions(+), 185 deletions(-)
+
+-- 
+2.49.0
+
 
