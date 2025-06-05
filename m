@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-674697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A25ACF354
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:41:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72940ACF35B
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DED51771AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DC27ABB7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 15:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422FE1E25E1;
-	Thu,  5 Jun 2025 15:41:27 +0000 (UTC)
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCB21DE4D8;
+	Thu,  5 Jun 2025 15:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBqKYBjo"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D8419F11B
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 15:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A29D2FB
+	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 15:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749138086; cv=none; b=bduT5u7OKL5aEnvJSoVAEaHT67nqZqpe73l9To4n3e1k6Xki+X7FjgNabtcKoFWUiqqR0gd5+6b0XFrMzRfqBAqTMUR+2uNwo8nLx9Df01TannRZLRX+1HoEHvKGx6choVB8PtkVOVIjH7doSs9gA+tOS4rSPZFcxz3RpMjAa1M=
+	t=1749138137; cv=none; b=jfQ30gW6EMpkAepyjYPHyqYdGHdWsWBI9V0KS+XGWLHMKZdnTNGBbM0CpEy8IlavnKJUbvdaRuG/OTgtzrdkEoPQCcmxKshLNSHal8U0PRKIx1+AGo7+lqS3Y5XQ3MTKp1a/JNJDOrbUqM2f4Vo7h7twTelUrl1eogaPS17CW7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749138086; c=relaxed/simple;
-	bh=P719VLxHFxERjXUpHSjJfqPi7IZOb95FqVlS6IdDChg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lhOi4tvlByHDf/ZjOqk5TEbRf45Vi03egklMp9jYqdYRtN3MtvM8K7zby0tshMWFqbSQUxXcCLcsdek/Hoh3VhFf8KjJRqVUJWVW2AD/cRY1GcTaOjYVL6N69asxn1wNZ83gRxIlXcVc6Sx3e+FCACYpehcDAO7DbI2Vms6IL5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bCpZp2PGNzrRp;
-	Thu,  5 Jun 2025 17:41:22 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4bCpZn4Vc1zdCl;
-	Thu,  5 Jun 2025 17:41:21 +0200 (CEST)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Thu, 05 Jun 2025 17:41:09 +0200
-Subject: [PATCH v2 4/4] arm64: dts: rockchip: force PMIC reset behavior to
- restart PMU on RK3588 Tiger
+	s=arc-20240116; t=1749138137; c=relaxed/simple;
+	bh=CGZ2voXzpuqv5BDA6GbB9RzudNSofXOj956vYmHtZYU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GOLFoKNPrYOfcUGdYfXDVLRrOV9tViFc8lbrQFff8WYmmRkLbtREBl6+o1DuDFKQ8kbvKgCFUX0WUPJ306tMyMLphaajsFuOkMFCKQ5c+yJwsdJAEgxf1QZY6cNtR8deKDrqpRY9geEFIsTWLO9K3cSNz6ZGxmZZBxPCXKL8knU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBqKYBjo; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4e749d7b2so153299f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 08:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749138134; x=1749742934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVdDAyLthEulzKQwcDXevtinu2TUgGTGa8O6iSAk/yI=;
+        b=WBqKYBjoKZ6wbP17aFmWmgx8zMTXWnESTjM/89uDLglifOpN2xxSJvN3leSrhI8Fvi
+         Sg/lvSuvDdyaGMVGj81WS8BnUxxyUDiMFirq2reIeiPWnuRVS3FOKsyRIJH8DOdLAIE1
+         9CeqJANR3+VXEt4lLJT/CsczV+uMDWO3DNAD6/1gdB3f4xBaAc2t3cjeRADgxfmMFVdX
+         AwZu88jfDfE28IxTlzZOmelAlRwZs2i0HRud/D2ocK+ROzowk9S+2eYifkpy3QQ4UGo5
+         0iuEdtNlvIaY0KpudbTd+9sY+wGJgtSowvQPi4dgyIOn/sPD/TF0IVvwTR9LZW/HPoB2
+         sp6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749138134; x=1749742934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tVdDAyLthEulzKQwcDXevtinu2TUgGTGa8O6iSAk/yI=;
+        b=JZTP+tPGnaZhjFMNYA9vTxxY9jJkcV7XIswQfxJCqOlg46Sm8S3OHS7frP6E9bvRu/
+         EHG6wuaC7CT9pkDafE91vkTFdZxcxXdE9BgNRRjiDx+bJJIAW3BjRBY52YaNRVVR9EOB
+         na5+YpsqVbxND41BylbPwvqzVqdZnWG9uCIb9m0jUWZ+d6Lc90RjDDFZKRyjAm19nb4H
+         IbBrAfcJ/IelqBLRpm9fI2IyRZ1P775rnwBZxLz22EOxvjlHA6lsC8L9lmkZR6HOQpao
+         +qKbwO9kK4czjToT329xCqN23KM6ENEDPKMPWqkcsU/ZfU3OEgsvklpQILgEzZHV/auo
+         8Ikw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz3HB86VWz/ikCic2/yOXljpNM9aUYeJWG6VBZ6TfwBObhj/68fnCdZuKyA0U4QaYeVRoXOLSvraofR6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/6SkLTUxn8DNFwMTpPa9HIAMfnSgwcZcW3ld+38CmDgjbl+Om
+	Pl2wx+XBMhORgO341mKbVX1skSOOgHnDbYKmqGXobr37pV8vsogHb9QGdU5YdPH/GtQ=
+X-Gm-Gg: ASbGncurnRGFaJJqwXdeC6JvxYO2mKFcgfEeJUHyIQ2/Z9cQZFPCNi2ijj9uXwClx5o
+	bzmofvln/zP61mbm/wv5PzKh9gDepizPZ+4+CszIuTRxLGcs+2kETzvuP2TB2OBj48jFYIsph+r
+	vWGeucBbueFRbUUfpcARDeeUf8e/A1p5J//BebuUylkZvo4nm84gIaTkvKTscWrw3sDHtvSsUgE
+	XpLoxEKFm3ASdQUh0Hj9jiA2JKkTBH4mXo/TxouWmii42kMhrWYLiU9SgiaFvbS+aiernF9+PWk
+	gls971JusP3LsXBMFUK1V9kCHdy/CL/4AK05vFADDE4WvXTAz4hd4a2xx9Nqfw==
+X-Google-Smtp-Source: AGHT+IGB8zTp32oYZZKnFR48cFxcYSk+3m3Vnmwti62tsdDjgd7xtVgNTgLfDutXGVzb9zNCCp91Gg==
+X-Received: by 2002:a05:6000:2584:b0:3a3:71fb:7903 with SMTP id ffacd0b85a97d-3a51d96a1c9mr2349476f8f.10.1749138133759;
+        Thu, 05 Jun 2025 08:42:13 -0700 (PDT)
+Received: from kuoka.. ([178.197.223.125])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00971fasm24478343f8f.77.2025.06.05.08.42.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 08:42:13 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] arm64: defconfig: Enable camcc and videocc on Qualcomm SM8450+
+Date: Thu,  5 Jun 2025 17:42:08 +0200
+Message-ID: <20250605154207.141224-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250605-rk8xx-rst-fun-v2-4-143d190596dd@cherry.de>
-References: <20250605-rk8xx-rst-fun-v2-0-143d190596dd@cherry.de>
-In-Reply-To: <20250605-rk8xx-rst-fun-v2-0-143d190596dd@cherry.de>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>, 
- Daniel Semkowicz <dse@thaumatec.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1066; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=CGZ2voXzpuqv5BDA6GbB9RzudNSofXOj956vYmHtZYU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoQbrP0MkLBrJusurDZXu7SzvMY+vWTEKuGU3wz
+ wI+XkSqD7GJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaEG6zwAKCRDBN2bmhouD
+ 17pdD/9V7wk3b2lrT0Qe1evuJIXYVc/IdidpN1nCYzjuzjxPz23EK96jOuuxge/TmZEeXoU3gtJ
+ fyoXZ5D8WwmkRv7xNpVDAvBkXTrKjnRURz1NOdL70YO2X0hSrGKUR8YTJhwP5MVDx2byldP2o18
+ KnpRNx9koqU8ca0JLyilAtN7fdq0W7iGhSbqaIxXDWHud396bYdOjtOhYWAnQWphX4Mym0DGejM
+ X6BotoX/RCWDI5/NrkMyPPmhz+NDe4ubc13/k/IuPrUNO7opSE17lnKsPIO7wV1kbD1AWqkYz/7
+ hLWKdYy1lOXPheyXWW14BFB8JezBH/EWliImfiOgkIkpS0XIXMGIxGtp4OvAABRTtVB3PiaCnQF
+ 6+lVoxNm16MmJabVVVN+QERrQgicvag3fQvPGZKnUM5+e5U55ksfD3+yG+wW7O2lNXw7erHuvHp
+ GrMSTD0bi2hpMaXwhmeCIhNQuCoaWffKY1FKNTaAgt4wS29vgVCmZ38WH5JaQwOg50sszdP4reW
+ xcaLKGfReFY2SA90GP5BI45juioEb5p1H/QJ725wmLPOTjTuSe7ddfRLVGzVqeHA7/jdTq94q1S
+ +WZiqORwCBFWpwK+gTZq4r0/6W4Bc4fOagLuqXTX2PKqi6e5b8qjShL4I40FeEZZZM76FwiPEVX w/Xr1Z2j3a57WCQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+Enable the drivers for camera clock controllers on Qualcomm SM8550 and
+SM8650 SoC (enabled in all DTS files like SM8550-HDK or SM8650-HDK) and
+video clock controllers on Qualcomm SM8450 SoC (enabled in SM8450-HDK
+DTS).
 
-The bootloader for RK3588 Tiger currently forces the PMIC reset behavior
-(stored in RST_FUN bitfield in register SYS_CFG3 of the PMIC) to 0b1X
-which is incorrect for our devices.
-
-It is required to restart the PMU as otherwise the companion
-microcontroller cannot detect the PMIC (and by extension the full
-product and main SoC) being rebooted which is an issue as that is used
-to reset a few things like the PWM beeper and watchdogs.
-
-Let's add the new rockchip,reset-mode property to make sure the PMIC
-reset behavior is the expected one.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/configs/defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-index c4933a08dd1e3c92f3e0747135faf97c5eeca906..4c05603abed2e458e406ed45f1bc7cdb57b42478 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
-+#include <dt-bindings/mfd/rockchip,rk8xx.h>
- #include <dt-bindings/pinctrl/rockchip.h>
- #include "rk3588.dtsi"
- 
-@@ -440,6 +441,7 @@ pmic@0 {
- 		vcc13-supply = <&vcc_1v1_nldo_s3>;
- 		vcc14-supply = <&vcc_1v1_nldo_s3>;
- 		vcca-supply = <&vcc5v0_sys>;
-+		rockchip,reset-mode = <RK806_RESTART>;
- 
- 		rk806_dvs1_null: dvs1-null-pins {
- 			pins = "gpio_pwrctrl1";
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 62d3c87858e1..2ffa590b962f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1404,6 +1404,8 @@ CONFIG_SDM_DISPCC_845=y
+ CONFIG_SDM_LPASSCC_845=m
+ CONFIG_SDX_GCC_75=y
+ CONFIG_SM_CAMCC_8250=m
++CONFIG_SM_CAMCC_8550=m
++CONFIG_SM_CAMCC_8650=m
+ CONFIG_SM_DISPCC_6115=m
+ CONFIG_SM_DISPCC_8250=y
+ CONFIG_SM_DISPCC_8450=m
+@@ -1431,6 +1433,7 @@ CONFIG_SM_VIDEOCC_8250=y
+ CONFIG_SM_VIDEOCC_8550=m
+ CONFIG_QCOM_HFPLL=y
+ CONFIG_CLK_GFM_LPASS_SM8250=m
++CONFIG_SM_VIDEOCC_8450=m
+ CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+ CONFIG_CLK_RENESAS_VBATTB=m
+ CONFIG_HWSPINLOCK=y
 -- 
-2.49.0
+2.45.2
 
 
