@@ -1,131 +1,222 @@
-Return-Path: <linux-kernel+bounces-674856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7FDACF5AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F2CACF59C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8D5016B3FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB9F3AE72F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 17:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA1B2797BA;
-	Thu,  5 Jun 2025 17:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0F3278E7A;
+	Thu,  5 Jun 2025 17:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imag.fr header.i=@imag.fr header.b="K8gyncPr"
-Received: from zm-mta-out-3.u-ga.fr (zm-mta-out-3.u-ga.fr [152.77.200.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6AjniNO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27BC2777E4
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 17:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=152.77.200.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D2733062;
+	Thu,  5 Jun 2025 17:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749145809; cv=none; b=fhEd3CZp4dmpE0cRdnYDZt9Mw9aQsvTJV3+fJBwHu2tXX654I7s2SlZTiCVzIhlgSGVwUa9s+Fa4ovvCJWoy6CEmxdw4oYOM8OpBvrefyCSiuerQkwgm39kJ1YUKGyPkx99HUm8ZrJYeyycy8AhGSVqpl+T9bNjJ42P+TF3AmYw=
+	t=1749145581; cv=none; b=LQ+t0wUySJd5eQpxxr+a3VgIyKhWrFcQrwLHbr/SkXgFT+4LPtEMVjPYpG7KeK+/Hk9SYrzPTXUZtzyjMPm7mV7Z4BXziDopMiAacwqAd80RHOnNcVjdAjkNXPn70Sk+D90jFiC5x1wszbOOqO7+QcLYQnelOd8AlRsGk8lnMQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749145809; c=relaxed/simple;
-	bh=477VCimCiTfccZ61itzmeWM2c2Jc7goY4wvB2OQY1l0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLTH+mO7uojc6c2KShMT3t3DG9M4GqKal79jcLprdP3sPyipltjYRCPgD6sg/7Fk5HmtBxNlTNDvN+nLVF4Gxe60/z4W+F3XGjpJxL1byWTwvg4tS9PBQ6gv/aPjQ5H20nB6FBe/ySk+EcBV1LXEY9vwV1XwcI1c3W8bfWqU4Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=imag.fr; spf=pass smtp.mailfrom=imag.fr; dkim=pass (2048-bit key) header.d=imag.fr header.i=@imag.fr header.b=K8gyncPr; arc=none smtp.client-ip=152.77.200.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=imag.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imag.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=imag.fr; s=2022;
-	t=1749145400; bh=477VCimCiTfccZ61itzmeWM2c2Jc7goY4wvB2OQY1l0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K8gyncPrqZOaj4hsIUmtg0P6S97JUBctmO+QyxeJaiAltO589Sdg4mBrERLp+Cgfc
-	 y829XuKBvHeEJ8RZLEshyWVLqP/hqtoVOYY1ozdPpyUxL5eldWjzopDoDvElsSx7CA
-	 14E/M64xDcI+Xzeha3q5zHDrIolw352D7xIcVH/Ly90sauoOJ0lzemuOgSmBD4zjsH
-	 9CaSHFqZlNhGKy+Qlh1IeeFnkc5fZLUyTUi/X5FKI4YPYu8MoAzVvTgTseb4quh6tV
-	 lBYMjSadeRxHmVupIK6rOPKGhHUPwdWpWOMIkWa0UoXcr1vuCw3J40X/Ce3Gdd6NQp
-	 MT7iIFv+6E59g==
-Received: from mailhub-1.u-ga.fr (mailhub-1.u-ga.fr [129.88.178.98])
-	by zm-mta-out-3.u-ga.fr (Postfix) with ESMTP id A59C94029E;
-	Thu,  5 Jun 2025 19:43:20 +0200 (CEST)
-Received: from smtps.univ-grenoble-alpes.fr (smtps2.u-ga.fr [152.77.18.2])
-	by mailhub-1.u-ga.fr (Postfix) with ESMTP id A2290FF853;
-	Thu,  5 Jun 2025 19:43:20 +0200 (CEST)
-Received: from [192.168.1.87] (unknown [87.89.124.250])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: palixn@univ-grenoble-alpes.fr)
-	by smtps.univ-grenoble-alpes.fr (Postfix) with ESMTPSA id 335B71400A2;
-	Thu,  5 Jun 2025 19:43:20 +0200 (CEST)
-Message-ID: <e8221cc5-cf5b-49f8-871d-e49d6621fc6e@imag.fr>
-Date: Thu, 5 Jun 2025 19:43:15 +0200
+	s=arc-20240116; t=1749145581; c=relaxed/simple;
+	bh=FyoxRjw/jNoDELKF6bzD0gN0GCX6ZoZdESDsckJJuWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzAE+8JejWbNZFyBlPXUOPbs7atpYHNPCEEbTSUbG78/GpSUULyaQ3hlEAIB3Ulxt8zVZuk3VjiRQBPHjf5Wr0WqsCrMiTMu3ZtDRyZqF/PYG3BKNbz+SNPwhnzvgMoY8We6+ujspnadupcHsycjiO9HvBb1vc5cww43M/fbMGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6AjniNO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1861EC4CEE7;
+	Thu,  5 Jun 2025 17:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749145576;
+	bh=FyoxRjw/jNoDELKF6bzD0gN0GCX6ZoZdESDsckJJuWk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T6AjniNOpUoLEFiHTqBAX2t2EtU7bdq/X4latsYT8OwQIlcSwFHSWgOEG+3DAhylO
+	 7e9DGRqhGAra2t3KeBIBnW3TEvldcW5hwyZ/OSEF+3ibV03KMS7309sF9ZVRQ1Mv6b
+	 fr28QLUoLIKH6fQn63ExmB/edBUmcF+KkI1MVUm3JBz4+aievMLFGNgC2RwAUDLuEd
+	 El2kWRm8nfWeQxz+Ax+x0qtYudytgk9yyLbx+HSbw17hUWBSPrQQGI0FmzvgmWoO/n
+	 OeWqSoFtJcNcYO1WaaoS9AVXySdtzbB1nBU+nYE7s5+2IxM6LFx1Q4iE5BmIVvXvfg
+	 TRzN8Qn4cCheQ==
+Date: Thu, 5 Jun 2025 12:46:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: John Ernberg <john.ernberg@actia.se>
+Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <Frank.li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 3/4] dt-bindings: crypto: fsl,sec-v4.0: Add power
+ domains for iMX8QM and iMX8QXP
+Message-ID: <20250605174614.GA2913631-robh@kernel.org>
+References: <20250605132754.1771368-1-john.ernberg@actia.se>
+ <20250605132754.1771368-4-john.ernberg@actia.se>
+ <2bfe7b81-b70e-4882-b1ce-8cbaef24838f@actia.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] scripts: coccicheck: filter *.cocci files by MODE
-To: Songwei Chai <quic_songchai@quicinc.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, cocci@inria.fr
-Cc: linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com,
- quic_jinlmao@quicinc.com
-References: <20250605044405.2057511-1-quic_songchai@quicinc.com>
-Content-Language: en-US, fr
-From: Nicolas Palix <nicolas.palix@imag.fr>
-Organization: LIG
-In-Reply-To: <20250605044405.2057511-1-quic_songchai@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Greylist: Whitelist-UGA SMTP Authentifie (palixn@univ-grenoble-alpes.fr) via submission-587 ACL (41)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2bfe7b81-b70e-4882-b1ce-8cbaef24838f@actia.se>
 
-Hi Songwei,
-
-Le 05/06/2025 à 06:44, Songwei Chai a écrit :
-> Enhance the coccicheck script to filter *.cocci files based on the
-> specified MODE (e.g., report, patch). This ensures that only compatible
-> semantic patch files are executed, preventing errors such as:
+On Thu, Jun 05, 2025 at 01:32:09PM +0000, John Ernberg wrote:
+> Hi,
 > 
->      "virtual rule report not supported"
+> On 6/5/25 3:28 PM, John Ernberg wrote:
+> > NXP SoCs like the iMX8QM, iMX8QXP or iMX8DXP use power domains for
+> > resource management.
+> > 
+> > Add compatible strings for these SoCs (QXP and DXP gets to share as their
+> > only difference is a core-count, Q=Quad core and D=Dual core), and allow
+> > power-domains for them only. Keep the old restriction for others.
+> > 
+> > Signed-off-by: John Ernberg <john.ernberg@actia.se>
+> > 
+> > ---
+> > 
+> > v4:
+> >   - Reword commit message (Frank Li)
+> >   - Add explicit imx8qxp compatible (Frank Li)
+> >   - Move the job-ring constraints back to the job-ring section under an
+> >     'allOf:' to avoid the warning from v2 (Rob Herring)
+> > 
+> > v3:
+> >   - Fix warnings discovered by Rob Herring's bot
+> >   - Declare the compatibles correctly (Krzysztof Kozlowski)
+> > 
+> > v2:
+> >   - Adjust commit message (Frank Li)
+> >   - Only allow power-domains when compatible with imx8qm (Frank Li)
+> > ---
+> >   .../bindings/crypto/fsl,sec-v4.0.yaml         | 41 ++++++++++++++++++-
+> >   1 file changed, 40 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
+> > index 75afa441e019..eab43e7a354c 100644
+> > --- a/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
+> > +++ b/Documentation/devicetree/bindings/crypto/fsl,sec-v4.0.yaml
+> > @@ -46,6 +46,8 @@ properties:
+> >         - items:
+> >             - enum:
+> >                 - fsl,imx6ul-caam
+> > +              - fsl,imx8qm-caam
+> > +              - fsl,imx8qxp-caam
+> >                 - fsl,sec-v5.0
+> >             - const: fsl,sec-v4.0
+> >         - const: fsl,sec-v4.0
+> > @@ -77,6 +79,9 @@ properties:
+> >     interrupts:
+> >       maxItems: 1
+> >   
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> >     fsl,sec-era:
+> >       description: Defines the 'ERA' of the SEC device.
+> >       $ref: /schemas/types.yaml#/definitions/uint32
+> > @@ -106,7 +111,10 @@ patternProperties:
+> >                 - const: fsl,sec-v5.0-job-ring
+> >                 - const: fsl,sec-v4.0-job-ring
+> >             - items:
+> > -              - const: fsl,sec-v5.0-job-ring
+> > +              - enum:
+> > +                - fsl,imx8qm-job-ring
+> > +                - fsl,imx8qxp-job-ring
+> > +                - fsl,sec-v5.0-job-ring
+> >                 - const: fsl,sec-v4.0-job-ring
+> >             - const: fsl,sec-v4.0-job-ring
+> >   
+> > @@ -116,6 +124,9 @@ patternProperties:
+> >         interrupts:
+> >           maxItems: 1
+> >   
+> > +      power-domains:
+> > +        maxItems: 1
+> > +
+> >         fsl,liodn:
+> >           description:
+> >             Specifies the LIODN to be used in conjunction with the ppid-to-liodn
+> > @@ -125,6 +136,20 @@ patternProperties:
+> >           $ref: /schemas/types.yaml#/definitions/uint32-array
+> >           items:
+> >             - maximum: 0xfff
+> > +    allOf:
+> > +      - if:
+> > +          properties:
+> > +            compatible:
+> > +              contains:
+> > +                enum:
+> > +                  - fsl,imx8qm-job-ring
+> > +                  - fsl,imx8qxp-job-ring
+> > +        then:
+> > +          required:
+> > +            - power-domains
+> > +        else:
+> > +          properties:
+> > +            power-domains: false
 > 
-> This error occurs when a .cocci file does not define a 'virtual <MODE>'
-> rule, yet is executed in that mode.
+> To dodge the allOf here I had to make some changes to dt-schema 
+> nodes.yaml. Is the allOf OK or does the changes look like something that 
+> should be submitted formally?
 
-I am fine with the idea even if the orignal idea was to be exhaustive in 
-the implementation of the mode in each SP.
+It's okay, but please send the change below either to devicetree-spec 
+list or as a GH PR.
 
-However, silently discarding the patch is maybe not what one would 
-expect as the considered SP will vary according to the mode.
-
-Hence, could I suggest to add an else branch reporting a warning at least ?
-
-Regards,
+Rob
 
 > 
-> For example:
+> Thanks! // John Ernberg
 > 
->      make coccicheck M=drivers/hwtracing/coresight/ MODE=report
+> ------------------>8------------------
 > 
-> In this case, running "secs_to_jiffies.cocci" would trigger the error
-> because it lacks support for 'report' mode. With this change, such files
-> are skipped automatically, improving robustness and developer experience.
+>  From 39e3c85e53ab570fdd5d5a93156a8a486ef20f0c Mon Sep 17 00:00:00 2001
+> From: John Ernberg <john.ernberg@actia.se>
+> Date: Wed, 4 Jun 2025 15:12:55 +0200
+> Subject: [PATCH] schemas: nodes: Allow if-then-else in patternProperties
+>   objects
 > 
-> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+> Having local if-then-else statements under e.g. a patternProperties object
+> node causes a schema warning about an unexpected statement.
+> 
+> Allow this construct to reduce size of if-then-else blocks that would
+> otherwise need to occur at the top level, making them easier to read,
+> and more localized to what they are controlling.
+> 
+> Signed-off-by: John Ernberg <john.ernberg@actia.se>
 > ---
->   scripts/coccicheck | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+>   dtschema/meta-schemas/nodes.yaml | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> diff --git a/scripts/coccicheck b/scripts/coccicheck
-> index 0e6bc5a10320..18a69edcea66 100755
-> --- a/scripts/coccicheck
-> +++ b/scripts/coccicheck
-> @@ -270,7 +270,9 @@ fi
->   
->   if [ "$COCCI" = "" ] ; then
->       for f in `find $srctree/scripts/coccinelle/ -name '*.cocci' -type f | sort`; do
-> -	coccinelle $f
-> +        if grep -q "virtual[[:space:]]\+$MODE" "$f"; then
-> +	        coccinelle $f
-> +        fi
->       done
->   else
->       coccinelle $COCCI
+> diff --git a/dtschema/meta-schemas/nodes.yaml 
+> b/dtschema/meta-schemas/nodes.yaml
+> index 0b2c8f7..e45cb45 100644
+> --- a/dtschema/meta-schemas/nodes.yaml
+> +++ b/dtschema/meta-schemas/nodes.yaml
+> @@ -27,6 +27,9 @@ propertyNames:
+>       - deprecated
+>       - required
+>       - not
+> +    - if
+> +    - else
+> +    - then
+>       - allOf
+>       - anyOf
+>       - oneOf
 > 
-
+> 
 
