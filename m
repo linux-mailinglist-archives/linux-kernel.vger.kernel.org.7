@@ -1,153 +1,229 @@
-Return-Path: <linux-kernel+bounces-674322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E49ACED39
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:00:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C86ACED40
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207C9177190
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6421189AF87
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB86B213E89;
-	Thu,  5 Jun 2025 10:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2E420B7FC;
+	Thu,  5 Jun 2025 10:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGEXQI/E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="kMVAs/hi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="njNKq3Xe"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492FC1FAC4D;
-	Thu,  5 Jun 2025 10:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC4D1FAC4D;
+	Thu,  5 Jun 2025 10:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749117622; cv=none; b=G95elTSBPRkwFw+H3gCZbxqcRJIk7TCR1oW4TtbvUhzsi7Jgi2SLKrHsWK/is0uhs0zPY112W5CH9Ef3Pugandqps2SGsJI9S5Adr7EnONKzEZF4XitR6EQrdUoSZna5cIyYxpjoMG17hMidFsBOfYnQdrj2+xuP+rgbHuMp2Bs=
+	t=1749117756; cv=none; b=Mk7L3IqKL08dK7JAoh/IWbFm4c/c3N1rUfsPi/nM3ehJe/a/Vn+WO9L6XrBg+GMwL2e5+kqRpRMSh0xkWf7lySwfJ0qzLphgJhwPIWQeWSZf90FUhmX3XvIIFoAfeTZ/uBoUJRYcMaPg9LT/hfNkExRZ7THJQivhJ3dM0Sjudd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749117622; c=relaxed/simple;
-	bh=5Eav7+G7caZZygl7Od69GSqH2G5p51M5I4/DH9iNkvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLttqdmCDpweNrGJzaWA16yDDmVQ14bVvMJYAOBoh2ReAQgzxqij5trWz1FfnJrEKK08GnFi+byYTF2B1RtiEl3IFdgpMWPpd1NPv/Y+1p1gZW5osSblQJRb4csM9fNTxAEmSpzCBwrMwwxTaFtlMhwrNmU8f6wTjcM+qB5xwMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGEXQI/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BCC6C4CEE7;
-	Thu,  5 Jun 2025 10:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749117621;
-	bh=5Eav7+G7caZZygl7Od69GSqH2G5p51M5I4/DH9iNkvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGEXQI/E3ikPG3TMnj3L1o7OQn1gBi8hj6JUx52U/3rlrwN+n7jsg9Iax58rAQVLP
-	 ocQsfyyl0m0VJO+rk+8C4lTmfaa0wMiAs7ZAqrxtbDfhudaGxOKVbAEIH9QqA/ha+5
-	 32ZOCTivQ9iI4ynr0DD6wdYByCfrovJyfu+6tgVWap84kn7sfGQvpIbRoF46CmI4QF
-	 TkDhNr/9Oh/+1LVvxWuIhucjz8Jsr5zZnd+ok+RfUgZox3qBanmRWV/MoTc3Pe/OOc
-	 O/EgOUs5EtI3HavqqB/5Io4BDPcNPZawPoXpJn6lP3IfJ2NHWbZ0OsoUD07k5Pmwy2
-	 vV0uNT6dzLp0w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uN7OU-000000000Zb-1mJ1;
-	Thu, 05 Jun 2025 12:00:19 +0200
-Date: Thu, 5 Jun 2025 12:00:18 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Miaoqing Pan <quic_miaoqing@quicinc.com>,
-	Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] wifi: ath12k: fix dest ring-buffer corruption
-Message-ID: <aEFqsghEuJc3xxlU@hovoldconsulting.com>
-References: <20250604144509.28374-1-johan+linaro@kernel.org>
- <20250604144509.28374-2-johan+linaro@kernel.org>
- <6f3eb9fa-617e-4434-8fc4-33dd92c4bdd2@quicinc.com>
+	s=arc-20240116; t=1749117756; c=relaxed/simple;
+	bh=74r0HmVlWVXDmuzOZHupYV2ZI8xHFRWhMC5v6BeMrLw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cuA/2eV4pZE+mIyKUZ7SpvjF/HkebXatzDMjCxKYaYBvf2zpomtX6yhUhxgvyULxHUd90LBOzw8seq8pwd6kbZbTS5NQMYCuIivGCvE4GJ6rvQtDNIUc1koCF12PSitpNL3bumBjCREtnGxANyazIUPJsXBAXoEQdCTrKURSZbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=kMVAs/hi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=njNKq3Xe; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 69D09138033A;
+	Thu,  5 Jun 2025 06:02:33 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 05 Jun 2025 06:02:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1749117753; x=1749204153; bh=2Q
+	S3N2IlJsd2ScMAzCr4NN3lNuijFKCMGsZLhT+gYiU=; b=kMVAs/hi4jpgHz02Mr
+	iU9WMI/IhL5lI00FGukJsPduaPjA9hsyYDCt3x6mhgdMJofjrT/tLpAntvewG7IT
+	Z9pZGwgjK4cEilvvSveRtqmFnJDevO2kPuCLvkCBmQWPj+kWSpumfOw1ZZMaWFMD
+	YVgbYb6vpBgkKelc214AIGRrNyvvZbljJDSUTTXn1XoEI58v99I8XwsSjR/v7sHs
+	Rem+cSpNzWA2iSCn4xMzic3hBGKrcw1sZGwot+VMkBGieqMLo/DvthQokHH/l9lX
+	THmBLPbpTguaF3UwJzuMh+gexzBYmiL+HPBUZ1NahE+myll1I1WmaDcKPfY9z3di
+	VGDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1749117753; x=1749204153; bh=2QS3N2IlJsd2ScMAzCr4NN3lNuij
+	FKCMGsZLhT+gYiU=; b=njNKq3XeiRQeLr1fdV099IoXd4TiPtav0remmDPUz8We
+	Clo6GNHF/s11dTdBSSR4DdE3TNWKp2mCqREjWELFD5AOYuTIBgeUJLyQ985P1WsD
+	cBat0b0loRS9yq+Li0uziiF1IZtsX/rNtb8WSwtIJZb80qo28Fne5iDizto+29yU
+	fSmVOKE+Yu/ieBIG2CZU9gxKk0OXIL19UaBjYvL/euNaovfN3ykU6vQjd2DoGIV7
+	kcGtKqm4gyS7FBMOrPoKuRgI8r27uo2NUReJz4p1D9UdUOJePa/JX872c3xIrJIg
+	wtIjh185UPTt1WeuuX8EkQoYQM5MFiGdiHw9eORgIg==
+X-ME-Sender: <xms:OGtBaMZYvrCyabB2obIIYcfGQZ656svSLDOsZEnTkybdaTxnzOnsvA>
+    <xme:OGtBaHbMSxcDRwqptQnGlmhONcgRP9gTu-ZcDq9G1Zc9iEqQUnDbO6N75URSpCYh9
+    bvnZYTbmQlMr_sRZPc>
+X-ME-Received: <xmr:OGtBaG9qIM1RXaEac9jvVTzNP7Ui0bMIrwtqoD_3KphtK9DE9NbFHIDOLMAldw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdefgeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecu
+    hfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgoh
+    grthdrtghomheqnecuggftrfgrthhtvghrnhepffetueegkedtgfejveeuvdfghfegtddv
+    gfehudeghfegheetueduheduveejtefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtgho
+    mhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsh
+    htrggslhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmihhpshes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtshgsohhgvghnugesrghl
+    phhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepjhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:OGtBaGp3pBtUCGSYajp-9RwO00G78vP-hE3VMv-UYX8Br-KwCtexCA>
+    <xmx:OGtBaHrYS8Zs1uw_FN05qvDpcAjhBlJGd4z6xm902BbtCTWNzWFzYg>
+    <xmx:OGtBaERkJ3CWbH1j7YCRkQO4-muhPJHsc7HmdZ8rVWzq42FQX8jW3Q>
+    <xmx:OGtBaHpaKP4gmjFBBY0HyMLBpbtbJC1BwDd9VWiSfj9GTLfMy2PHlw>
+    <xmx:OWtBaI4dFB9-cb6gl75q32FKPMny7zyxmAIrRz-1cddug9o_Xxqw-oDk>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Jun 2025 06:02:31 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Thu, 05 Jun 2025 11:02:30 +0100
+Subject: [PATCH] MIPS: mm: tlb-r4k: Uniquify TLB entries on init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f3eb9fa-617e-4434-8fc4-33dd92c4bdd2@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250605-tlb-fix-v1-1-4af496f17b2f@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIADZrQWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMwNT3ZKcJN20zApdU3OLpMRk86RUUxMzJaDqgqJUoDDYpOjY2loA78W
+ 0d1kAAAA=
+X-Change-ID: 20250605-tlb-fix-578bac7be546
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.2
 
-On Thu, Jun 05, 2025 at 04:41:32PM +0800, Baochen Qiang wrote:
-> On 6/4/2025 10:45 PM, Johan Hovold wrote:
-> > Add the missing memory barrier to make sure that destination ring
-> > descriptors are read after the head pointers to avoid using stale data
-> > on weakly ordered architectures like aarch64.
-> > 
-> > The barrier is added to the ath12k_hal_srng_access_begin() helper for
-> > symmetry with follow-on fixes for source ring buffer corruption which
-> > will add barriers to ath12k_hal_srng_access_end().
-> > 
-> > Note that this may fix the empty descriptor issue recently worked around
-> > by commit 51ad34a47e9f ("wifi: ath12k: Add drop descriptor handling for
-> > monitor ring").
-> 
-> why? I would expect drunk cookies are valid in case of HAL_MON_DEST_INFO0_EMPTY_DESC,
-> rather than anything caused by reordering.
+Hardware or bootloader will initialize TLB entries to any value, which
+may collide with kernel's UNIQUE_ENTRYHI value. On MIPS microAptiv/M5150
+family of cores this will trigger machine check exception and cause boot
+failure. On M5150 simulation this could happen 7 times out of 1000 boots.
 
-Based on a quick look it seemed like this could possibly fall in the
-same category as some of the other workarounds I've spotted while
-looking into these ordering issues (e.g. f9fff67d2d7c ("wifi: ath11k:
-Fix SKB corruption in REO destination ring")).
+Replace local_flush_tlb_all() with r4k_tlb_uniquify() which probes each
+TLB ENTRIHI unique value for collisions before it's written and overwrites
+any conflicting entries with safe values before initializing the kernel's
+UNIQUE_ENTRYHI pattern.
 
-If you say this one is clearly unrelated, I'll drop the comment.
+Cc: stable@kernel.org
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ arch/mips/mm/tlb-r4k.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 77 insertions(+), 1 deletion(-)
 
-> > @@ -343,9 +343,6 @@ static int ath12k_ce_completed_recv_next(struct ath12k_ce_pipe *pipe,
-> >  		goto err;
-> >  	}
-> >  
-> > -	/* Make sure descriptor is read after the head pointer. */
-> > -	dma_rmb();
-> > -
-> >  	*nbytes = ath12k_hal_ce_dst_status_get_length(desc);
-> >  
-> >  	*skb = pipe->dest_ring->skb[sw_index];
-> > diff --git a/drivers/net/wireless/ath/ath12k/hal.c b/drivers/net/wireless/ath/ath12k/hal.c
-> > index 91d5126ca149..9eea13ed5565 100644
-> > --- a/drivers/net/wireless/ath/ath12k/hal.c
-> > +++ b/drivers/net/wireless/ath/ath12k/hal.c
-> > @@ -2126,13 +2126,24 @@ void *ath12k_hal_srng_src_get_next_reaped(struct ath12k_base *ab,
-> >  
-> >  void ath12k_hal_srng_access_begin(struct ath12k_base *ab, struct hal_srng *srng)
-> >  {
-> > +	u32 hp;
-> > +
-> >  	lockdep_assert_held(&srng->lock);
-> >  
-> > -	if (srng->ring_dir == HAL_SRNG_DIR_SRC)
-> > +	if (srng->ring_dir == HAL_SRNG_DIR_SRC) {
-> >  		srng->u.src_ring.cached_tp =
-> >  			*(volatile u32 *)srng->u.src_ring.tp_addr;
-> > -	else
-> > -		srng->u.dst_ring.cached_hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
-> > +	} else {
-> > +		hp = READ_ONCE(*srng->u.dst_ring.hp_addr);
-> > +
-> > +		if (hp != srng->u.dst_ring.cached_hp) {
-> 
-> This consumes additional CPU cycles in hot path, which is a concern to me.
-> 
-> Based on that, I prefer the v1 implementation.
-
-The conditional avoids a memory barrier in case the ring is empty, so
-for all callers but ath12k_ce_completed_recv_next() it's an improvement
-over v1 in that sense.
-
-I could make the barrier unconditional, which will only add one barrier
-to ath12k_ce_completed_recv_next() in case the ring is empty compared to
-v1. Perhaps that's a good compromise if you worry about the extra
-comparison?
-
-I very much want to avoid having both explicit barriers in the caller
-and barriers in the hal end() helper. I think it should be either or.
+diff --git a/arch/mips/mm/tlb-r4k.c b/arch/mips/mm/tlb-r4k.c
+index 76f3b9c0a9f0ce60c42e4a9ea8025e1283678bd1..6467d74d2949e98bcc35ab7c368b3c2ea342a6d3 100644
+--- a/arch/mips/mm/tlb-r4k.c
++++ b/arch/mips/mm/tlb-r4k.c
+@@ -508,6 +508,82 @@ static int __init set_ntlb(char *str)
  
-> > +			srng->u.dst_ring.cached_hp = hp;
-> > +			/* Make sure descriptor is read after the head
-> > +			 * pointer.
-> > +			 */
-> > +			dma_rmb();
-> > +		}
-> > +	}
+ __setup("ntlb=", set_ntlb);
+ 
++/*
++ * This is used to set an absolutely safe entryhi value that will not
++ * collide with any existing TLB entries as well as other UNIQUE_ENTRYHI
++ * values.
++ */
++static unsigned long r4k_safe_entryhi(void)
++{
++	int entry = current_cpu_data.tlbsize;
++	int old_index;
++
++	old_index = read_c0_index();
++	while (entry >= 0) {
++		int idx;
++		unsigned long entryhi = UNIQUE_ENTRYHI(entry);
++
++		write_c0_entryhi(entryhi);
++		mtc0_tlbw_hazard();
++		tlb_probe();
++		tlb_probe_hazard();
++		idx = read_c0_index();
++		if (idx < 0) {
++			/* Unused value found */
++			write_c0_index(old_index);
++			mtc0_tlbw_hazard();
++			return entryhi;
++		}
++		entry++;
++	}
++
++	panic("No safe TLB EntryHi value found");
++	return 0;
++}
++
++/*
++ * Initialize all TLB entries with unique values.
++ */
++static void r4k_tlb_uniquify(void)
++{
++	int entry;
++
++	entry = num_wired_entries();
++
++	htw_stop();
++	write_c0_entrylo0(0);
++	write_c0_entrylo1(0);
++	while (entry < current_cpu_data.tlbsize) {
++		unsigned long entryhi;
++		int collision_idx;
++
++		entryhi = UNIQUE_ENTRYHI(entry);
++		write_c0_entryhi(entryhi);
++		mtc0_tlbw_hazard();
++		tlb_probe();
++		tlb_probe_hazard();
++
++		/* Check for possible collision */
++		collision_idx = read_c0_index();
++		if (collision_idx >= 0 && collision_idx != entry) {
++			/* Override collision entry with a safe value */
++			r4k_safe_entryhi();
++			mtc0_tlbw_hazard();
++			tlb_write_indexed();
++			tlbw_use_hazard();
++			/* Recover correputed entryhi */
++			write_c0_entryhi(entryhi);
++		}
++
++		write_c0_index(entry);
++		mtc0_tlbw_hazard();
++		tlb_write_indexed();
++		entry++;
++	}
++	tlbw_use_hazard();
++	htw_start();
++}
++
+ /*
+  * Configure TLB (for init or after a CPU has been powered off).
+  */
+@@ -547,7 +623,7 @@ static void r4k_tlb_configure(void)
+ 	temp_tlb_entry = current_cpu_data.tlbsize - 1;
+ 
+ 	/* From this point on the ARC firmware is dead.	 */
+-	local_flush_tlb_all();
++	r4k_tlb_uniquify();
+ 
+ 	/* Did I tell you that ARC SUCKS?  */
+ }
 
-Johan
+---
+base-commit: 911483b25612c8bc32a706ba940738cc43299496
+change-id: 20250605-tlb-fix-578bac7be546
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+
 
