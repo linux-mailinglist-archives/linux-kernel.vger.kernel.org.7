@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-675031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D676ACF816
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98E1ACF823
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 21:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BDA16D549
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6FE3AEF0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 19:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0585627E7C8;
-	Thu,  5 Jun 2025 19:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2A627B51A;
+	Thu,  5 Jun 2025 19:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tt4jdPqm"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNoFza2W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6A427C873
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 19:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B1F21A454;
+	Thu,  5 Jun 2025 19:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749152093; cv=none; b=CBuMuf3BpEmYIo+scmDvJyub5TQqbHt8TR0uW4X4hydlcJXUiaUktT9Uut8jXcwFPijTxLMqv0gPCUIUUrsWd6fN+N7Yuq71mcSdOvx/YFmyjMjJytMMEbvshQzjC78/bll+W4FGsEPyrevc4Sbo2906vlShqW8rSqHos3CZa6k=
+	t=1749152373; cv=none; b=XVsJJ0cwI59scpYsf7Sgt3YKxLjssg5prZlW8WvVt8VBfJ+Rq0VVFbBC9V54t0EkywqWRQMainNG9fS12T9xWadxX4dDoN6uFkkkaICyr0z8nZ91cA9XohgV/zC0U9sXNEvGWc13avVca8cLbHlLf9dIIooDPD7P5QpKCE1vlOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749152093; c=relaxed/simple;
-	bh=7PG/uj6iX1rDrX3gn8miV3IakCmWHipcoXHozd9kqcU=;
+	s=arc-20240116; t=1749152373; c=relaxed/simple;
+	bh=8kX+0SKha7Pws3nxTa2q2GKi8InvsonHOdQzOKyIg5c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tHT29mRS2ReWXVbp6HWSb1f6/k1eyT/d3d8bsF7YwIAg01GwcFtNkhhpIb4XT3z09bhZSVbB39ypbOQKcyDm4X5ShKEfE6/P/RtHZDM5N+6rxri+G/mTmoQm5+aDjqy84mLyvSoRNNzS1XGfvw5EyS4kYgBHT+Ga1o43sO5ZTVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tt4jdPqm; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2357c61cda7so2735ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 12:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749152091; x=1749756891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7PG/uj6iX1rDrX3gn8miV3IakCmWHipcoXHozd9kqcU=;
-        b=Tt4jdPqmZ6JqWqbh3JIza4eCUhASXygYvp6A0zs3M9YxY9OUKWwddg9pxO5EccfRxk
-         cHQtKGLNErTkzs72VTYMRLRtJYIgoVGVdcpjgFTTQdUsxfmKeM6QisRgRaI3n0nlS58n
-         p8Nb7fbR0kJ5+9JCERA7rXEGlYba9aK4u+EAxQ9BzwXfU69VUvFzTGnhzlvuZQgofBGY
-         AKNBHcUPQWmuy+cs2LAcHmvtaE+WOOS8va4w9+hUcEWeJ5rJjk+Guue8Itf9r2wQTRLu
-         zjqB/02pZv8XK6U5KnkZD3wmHXF1BGDyq+y+ovZRVLj27YWCPpRxElBfFN7xTzsOeI1X
-         T7aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749152091; x=1749756891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7PG/uj6iX1rDrX3gn8miV3IakCmWHipcoXHozd9kqcU=;
-        b=hJsaeeafawxNlehUHv+HCIrYACOBeNFUDYTNlTIi2RmKvjg1HTnmnO0in6uHV6bLrb
-         X2u+K1lJsrA7S0rsF6m4xQnrnR1r4QeMhjPM1GBBpPLcccUmjy0k8VyrPRsM78EJIv4m
-         Cef5Au7Upxe8u/y4Ezea2g8s9XdUQYDDtpAoTpi6Z7ZAd7gSqivA73/so2keDjqNbmJg
-         aE9aS+tMGvxtiLcLTmRXpxWIh5RNB9aXFTYWKwqRFnofHpzoM6aoNwrMEobYSGXARdob
-         Dj8RVEfajl3STL1+CAUqKTD4WTID3y3i/jRvbn91pT83mGon7UeUh1xiVlK2OiS0gKs6
-         TNHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpNAHfpvgntKdu3ybKTjYH/bpjrM/b/09q2bF3uvuVOt6CxnM/5FwQ6soe/asOzHMk4cUkMCPiM478xEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrW/Wnr6Qs/6YpyoUQNJYsiYFR42DGy0wg1oeCSFDt2p4nwyt4
-	UAuQiXLj7XR1HyF2fhqyQVz2UsLcT9pkguT7Lxhx8iwLDIQwIHkfIje0hSfy5ARaNcIENWGjja/
-	KQ61xH6b2U3A6v2BaeAAFnYk2kJYFK4wUJdd8Eagk
-X-Gm-Gg: ASbGncsJZibz+0egmlsDo8wzXykw/TG211acl3uKMP2rK9l/LmIuHfh3eiYF+mKU8fQ
-	7WbrBCECmnbPq6NENyYfSPf5jRUEMQLkEI44Y0tu6UFlDj4zn6X7gABuPXLeFu7oK4ej5ryBP3g
-	01uC3VzR8U0J1m144kc95Vc05v3ir1ipoafWWtNUhxJilN
-X-Google-Smtp-Source: AGHT+IEcBAmcCW7znXUciL7hmQbcQeJyCG9JAAlVkwhKBled24X/+cQ59jEx7pv6dRjISm9NfeEn30rvErYKF5iZoUU=
-X-Received: by 2002:a17:902:d2d1:b0:21f:631c:7fc9 with SMTP id
- d9443c01a7336-23602114453mr554555ad.0.1749152090848; Thu, 05 Jun 2025
- 12:34:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=soxTOE9GaW4JShrn3EGQOq9SsBIfUpN4CQ8ex9QTcT9wgc5qr9R1l5JcYGO8+tezoqTcv7bLxtT3LUfHzqyUlNxTFumNQm1vylqKgY66RKi6QiN3AbtM/W1YcGI6OQRdM6IUjkGHVG0BStNmqjbYnDA3KtyYeRLgOdr+9NTT37U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNoFza2W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27446C4CEF1;
+	Thu,  5 Jun 2025 19:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749152373;
+	bh=8kX+0SKha7Pws3nxTa2q2GKi8InvsonHOdQzOKyIg5c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sNoFza2WKsj59ZBl3LyAwyuvCSQonfD4ecSrSv0VaXOY3dzUibhwa9zE6zg+LxxD/
+	 YSVMpXnm1l5h5te334aTFJAQ7jaM7ToibyjLWWUnG5LgEx+m38qsLI4Yh8c3VpnnCv
+	 zmsAO09bjS4Cgblt10mOjAnsP7X+AHhCEoAVcpi666fiHyXtTE/A4GzDZvmeg0Tpwv
+	 rBQA2qs17HVBPcC1HcnhjfHmKCDNRV3d+Vxzbf+PREf80nh5WNTMs5rtAmJW+KmqNg
+	 T23MyVltYfjCZXQ5cBoFuBAv5BsUamckLeMahq3m+a5eHL6Zl7nxZMjhH3RbYoUnOD
+	 HEJ16LRabBrKw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5534edc6493so1651154e87.1;
+        Thu, 05 Jun 2025 12:39:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWBbUEEWqRF1EILN2Rj/dIEqO7gvdSRtdydfU2/7z8VvFyA32XpKTV4c0TqP34zJjkmvgjns7Vf0sJtk+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1JnKVBO/GA1oeYxLImc7GO9vctV93+NQujCb7BPXuqNHG1paY
+	8gcMmp+EF1r/w4PqTym81AW3Ynmv0T1ARaQMeHDNn5YVcyiXl/zvK/YchhBeR/AAfrD/m3fnA/I
+	ZMIl3zj/0w/fIekuY+yFMCbt3TpAYRRs=
+X-Google-Smtp-Source: AGHT+IGsSiZ3bAmB/88G8wDxNMfEjert3Zql/M99zaJiTWefbqY+2uUyuySefy7f1WLQwJ6fWz5vkqNRoTpjEeyfoFY=
+X-Received: by 2002:ac2:53ac:0:b0:553:20f2:2e77 with SMTP id
+ 2adb3069b0e04-55366e33a1emr80046e87.55.1749152371856; Thu, 05 Jun 2025
+ 12:39:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250604025246.61616-1-byungchul@sk.com> <20250604025246.61616-2-byungchul@sk.com>
-In-Reply-To: <20250604025246.61616-2-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 5 Jun 2025 12:34:38 -0700
-X-Gm-Features: AX0GCFuVFZhT5tvS9UCBRC0N3KvmN43VcGDXR14SnL2gwhMd2wGVYx4daVW9aIw
-Message-ID: <CAHS8izNDmQRNADggyTNsfQHFBnfacK9=sGvC5wx_KvfqwAXZ_g@mail.gmail.com>
-Subject: Re: [RFC v4 01/18] netmem: introduce struct netmem_desc mirroring
- struct page
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+References: <20250526184401.33417-1-khaledelnaggarlinux@gmail.com> <20250526211039.163449-1-khaledelnaggarlinux@gmail.com>
+In-Reply-To: <20250526211039.163449-1-khaledelnaggarlinux@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 6 Jun 2025 04:38:54 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR8ie2VmJ2RiMZaV4MaHi=hGebev7LV+jpD2cNt430aQQ@mail.gmail.com>
+X-Gm-Features: AX0GCFuFmrxL8miWi2wty8frgs2Oth1qCIdZqsrJMDUMEj9DGCIH_tEVwPEpd4k
+Message-ID: <CAK7LNAR8ie2VmJ2RiMZaV4MaHi=hGebev7LV+jpD2cNt430aQQ@mail.gmail.com>
+Subject: Re: [PATCH v2] docs: symbol-namespaces: fix reST warning with literal block
+To: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+Cc: linux-doc@vger.kernel.org, willy@infradead.org, 
+	linux-kernel-mentees@lists.linux.dev, shuah@kernel.org, corbet@lwn.net, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 3, 2025 at 7:53=E2=80=AFPM Byungchul Park <byungchul@sk.com> wr=
-ote:
+On Tue, May 27, 2025 at 6:10=E2=80=AFAM Khaled Elnaggar
+<khaledelnaggarlinux@gmail.com> wrote:
 >
-> To simplify struct page, the page pool members of struct page should be
-> moved to other, allowing these members to be removed from struct page.
+> Use a literal block for the EXPORT_SYMBOL_GPL_FOR_MODULES() example to
+> avoid a Docutils warning about unmatched '*'. This ensures correct render=
+ing
+> and keeps the source readable.
 >
-> Introduce a network memory descriptor to store the members, struct
-> netmem_desc, and make it union'ed with the existing fields in struct
-> net_iov, allowing to organize the fields of struct net_iov.
+> Warning:
+> Documentation/core-api/symbol-namespaces.rst:90: WARNING: Inline emphasis=
+ start-string without end-string. [docutils]
 >
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Signed-off-by: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+> ---
+>
+> Changes in v2:
+> - Use 'For example::' to create a literal block, suggested by Matthew Wil=
+cox.
+>
+> --
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
 
-But, if you want this merged via net-next, follow the netdev rules:
-https://docs.kernel.org/process/maintainer-netdev.html
 
-In particular, the series needs to target the net-next tree via the
-[PATCH net-next ...] prefix. And net-next is currently closed, so
-resend once it reopens as non-RFC.
+Applied to linux-kbuild.
+Thanks.
 
 --=20
-Thanks,
-Mina
+Best Regards
+Masahiro Yamada
 
