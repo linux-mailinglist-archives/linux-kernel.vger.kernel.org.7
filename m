@@ -1,130 +1,182 @@
-Return-Path: <linux-kernel+bounces-674018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7751FACE8CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D380CACE8C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 05:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C9A173352
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:59:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA8B3A83FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 03:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4781F4CB1;
-	Thu,  5 Jun 2025 03:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="GUoaivs9"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8577F1F8724;
+	Thu,  5 Jun 2025 03:55:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01705680
-	for <linux-kernel@vger.kernel.org>; Thu,  5 Jun 2025 03:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6223928E3F;
+	Thu,  5 Jun 2025 03:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749095991; cv=none; b=TEkuSpDpdxcawyxK39eU4YJWpckJDofikKEBoyHb9SHwpq7Vj+2dXtLFQYTC9XXtmAgt0sXj6b13J7yfbobFfXgMAZtfXwYUP504RGY6lvfsn4zCxG/5a3YF8uW0H0flBT4Hqw2AAnRZDURRSumwOy/k236SiSgW5Mh2qOVi564=
+	t=1749095716; cv=none; b=RX+/8kmO0oYUSgxi4v/FVQkZqGiy3foccuI/iuI56LBhsing8q41abjprg4FIxEGpRplrStcBSAs6cHXGiAIXcZwXZ9BXYmXVeUgBzkTAVM4YohJhQEclbrXZFjQsL6JUVQ8PtwXq4Fy6gNwN6A5GCZygBZv7xPmoJVLdQPYEM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749095991; c=relaxed/simple;
-	bh=a99DJB7kgqKr/Mq3XFCGHLdwCFggirioNhGpFPuOmrc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DqLhFsJmxBbZ8XQW+qd9fvumzTCicsW2PoSMTvtTTuAZ7zDQxR+3fGFGPan03dzUaExOFJ1Xf05Sr3j6WcKCwIJcA/RdzcK7Z5Vih9MDBsYm2Gg+zzC3QKMNbUCraRknyfFtpYG8YX63SM3GiOqAwMWhRJr7pvwlUPW811Io5cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=GUoaivs9; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3122368d7cfso474777a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 04 Jun 2025 20:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=inventec.com; s=google; t=1749095988; x=1749700788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SzkZstCCrPCWPsZ455Qf8TsSyXtheVsZkxKhV0y9aO4=;
-        b=GUoaivs9kiZYpzwlYhipgAbl+2mUua5o1Bx68wK1PfOd7ujianyReMF6esYRs6UyXt
-         phfbKOWiKiJhJv8eSneKtwh3fKAp9wC1yvo6Ir75cnqWk8X9mAuwNVNRiLfaiOeGOa9E
-         yxPB/z9q25hVBcHrvcU8LoiTU0jKlr8ICGkeDKnjWTp+pH1gM0yiBadJqPVRrzYK6jzB
-         DYACxj+sGvOME5fED7QuIO+sCrLppUd5IphfwgazXz24kJeHJh0JrWv/aGdIpcApsFl9
-         2oYLknrAwLI5kbrEM2LXOJowH3zFNl5wzw85fqMN6TxJquLmS3WXBUGHGg4FUuKHQsgX
-         Mh6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749095988; x=1749700788;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SzkZstCCrPCWPsZ455Qf8TsSyXtheVsZkxKhV0y9aO4=;
-        b=DedWfJSuMZuAcPDBqFyHgFuCsjVxV1jX7tqtksCE4FX5vGjmzHCjLgxXyrd6jfgy29
-         6RjAstC+uc0N6ak3Z364DaEblCOp1yA+lAbsIbUHvtfwlX4p0v8FWePzcaIgohOMDMtK
-         MUVncmhvpWAK/snz6MsyJ9fwoX0CgYVhQZ/S9SVip8DPGQZPOTYPpRhkbIc1dYA6XWFG
-         OWhuvPpFkDl7yyZmW9wGXe3OqkOMGLSQMs3y53JbDvYqKQWkCCd1rDWf6B2PSg9Y6v/j
-         GC2HGK8O6oL17M7QkatiaHshHb8rAj711YLt1Y5yd3yTnWYzupePdfm3cojU4RpI/aIf
-         bYYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlTCiF7K3GydjCmJKFd+Sd8FEo5+geGLbvy+xEwz9408HEbjSAe7opsxVu6O7/B00vvygELdfHocQ4Rsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz0tywHcyj/tKZckVTkTWkJvCMOST5fNU6mmg3+o8ovr8rP4dn
-	1RZeIsnbWWe66l1QGIvCsV3cmi1j9e/ThsU/DMedA6YmSzRWiGAGFSWJbYBa+KP4FP4=
-X-Gm-Gg: ASbGnct3ZqfURv3tDF7tz9JehznUKcn6cTduidWvfuwrkMJlTSpSU2EwV/wcvAF3g8W
-	7cNCJha4kaFWWX6et1cKXtnmGcDRKV0KbApD/rzr/HveE6THnR8Xn14So2XFz5Q3nOfBEGPVFkT
-	S1OmPDEgbGoETcY1gM2iH6umrvBFSW4TRyXa2hpOKecgmf1pS50t2/AV1hVeTLe+xWlERTjdc4I
-	90/kl5snXCMRCGPLN/9YH0qkDXBTdBiOLT71Z4Utw5iuxrfXuahUcblXdfGvmbDX+LF51nkmxUz
-	QpKPh3dFvPg9xixO4/VryA8LT8PNsq/uXmCvoU6e1YnEnakWIffhTnM/zSfVOlWH/vd9B3mq
-X-Google-Smtp-Source: AGHT+IHwOv1nfgRYxTOZRYlHLTPEDAVKxSayaPRlTfw7ratzj7blGucqQmZiYitkUOV/1EwZKzf8Ew==
-X-Received: by 2002:a17:90b:55c8:b0:313:287e:f1e8 with SMTP id 98e67ed59e1d1-313287ef202mr2764388a91.8.1749095987904;
-        Wed, 04 Jun 2025 20:59:47 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.235.216])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3132bff66d1sm495400a91.7.2025.06.04.20.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 20:59:47 -0700 (PDT)
-From: Chiang Brian <chiang.brian@inventec.com>
-To: krzk@kernel.org
-Cc: chiang.brian@inventec.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	geert+renesas@glider.be,
-	grant.peltier.jg@renesas.com,
-	jdelvare@suse.com,
-	krzk+dt@kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux@roeck-us.net,
-	robh@kernel.org
-Subject: Re: [PATCH v4 2/2] hwmon: (pmbus/isl68137) Add support for RAA229621
-Date: Thu,  5 Jun 2025 11:52:33 +0800
-Message-Id: <20250605035233.3394026-1-chiang.brian@inventec.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250602-elated-aspiring-squid-d27ee4@kuoka>
-References: <20250602-elated-aspiring-squid-d27ee4@kuoka>
+	s=arc-20240116; t=1749095716; c=relaxed/simple;
+	bh=2ob9mLxLPx3nnUzKezqzg9HY+9Zpiv+L6w0YwZrNN/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X93Ad+n/IUOK5MmTQiCrhJvrHKzSVh49qUcII53e6uZ7gqMAvLFTidUmFA1JpJmcD5KCls0KqH0bjQBSef3FxfP1OVadOgWSMWr8s4S3IF5cs5prZA91NVDdAoqb8lRc/MhlW+VPZ1Nw3k5V3zBswbMnCTTYF9O9iSCxgNOOcgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bCVvs71GLzYQv7Y;
+	Thu,  5 Jun 2025 11:55:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 06C351A1530;
+	Thu,  5 Jun 2025 11:55:05 +0800 (CST)
+Received: from [10.67.108.244] (unknown [10.67.108.244])
+	by APP4 (Coremail) with SMTP id gCh0CgAni18XFUFo7SMxOg--.62183S3;
+	Thu, 05 Jun 2025 11:55:04 +0800 (CST)
+Message-ID: <83d9c5e8-9c72-4ab8-a3ac-638e49691694@huaweicloud.com>
+Date: Thu, 5 Jun 2025 11:55:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] perf/core: Fix WARN_ON_ONCE(cpuctx->ctx.nr_cgroups
+ == 0) in perf_cgroup_switch
+Content-Language: en-US
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ davidcc@google.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250604033924.3914647-1-luogengkun@huaweicloud.com>
+ <20250604033924.3914647-3-luogengkun@huaweicloud.com>
+ <20250604100052.GH38114@noisy.programming.kicks-ass.net>
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+In-Reply-To: <20250604100052.GH38114@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAni18XFUFo7SMxOg--.62183S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWryfGrW5Cr45ZryfCF4xtFb_yoW5urW7pF
+	srCF4a9398XFyUXa17tw1vva4Svw4SgaykWw15Kw43CrWUXrn8GF47Ga15AFn8Z3Z7AFWf
+	t390kr13A348ta7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On Mon, Jun 02, 2025 at 07:55:37PM GMT, Krzysztof Kozlowski wrote:
-> 
-> On Mon, Jun 02, 2025 at 01:04:15PM GMT, Chiang Brian wrote:
-> > The RAA229621 is a digital dual output multiphase
-> > (X+Y <= 8) PWM controller designed to be compliant
-> > with AMD SVI3 specifications, targeting
-> > VDDCR_CPU and VDDCR_SOC rails.
-> > Add support for it to the isl68137 driver.
-> 
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-I'll wrap the commit message body at 75 columns.
-Thanks for the pointing out.
+On 2025/6/4 18:00, Peter Zijlstra wrote:
+> On Wed, Jun 04, 2025 at 03:39:24AM +0000, Luo Gengkun wrote:
+>> There may be concurrency between perf_cgroup_switch and
+>> perf_cgroup_event_disable. Consider the following scenario: after a new
+>> perf cgroup event is created on CPU0, the new event may not trigger
+>> a reprogramming, causing ctx->is_active to be 0. In this case, when CPU1
+>> disables this perf event, it executes __perf_remove_from_context->
+>> list _del_event->perf_cgroup_event_disable on CPU1, which causes a race
+>> with perf_cgroup_switch running on CPU0.
+>>
+>> The following describes the details of this concurrency scenario:
+>>
+>> CPU0						CPU1
+>>
+>> perf_cgroup_switch:
+>>     ...
+>>     # cpuctx->cgrp is not NULL here
+>>     if (READ_ONCE(cpuctx->cgrp) == NULL)
+>>     	return;
+>>
+>> 						perf_remove_from_context:
+>> 						   ...
+>> 						   raw_spin_lock_irq(&ctx->lock);
+>> 						   ...
+>> 						   # ctx->is_active == 0 because reprogramm is not
+>> 						   # tigger, so CPU1 can do __perf_remove_from_context
+>> 						   # for CPU0
+>> 						   __perf_remove_from_context:
+>> 						         perf_cgroup_event_disable:
+>> 							    ...
+>> 							    if (--ctx->nr_cgroups)
+>> 							    ...
+>>
+>>     # this warning will happened because CPU1 changed
+>>     # ctx.nr_cgroups to 0.
+>>     WARN_ON_ONCE(cpuctx->ctx.nr_cgroups == 0);
+>>
+>> To fix this problem, expand the lock-holding critical section in
+>> perf_cgroup_switch.
+>>
+>> Fixes: db4a835601b7 ("perf/core: Set cgroup in CPU contexts for new cgroup events")
+>> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+>> ---
+> Right, so how about we simply re-check the condition once we take the
+> lock?
+>
+> Also, take the opportunity to convert to guard instead of adding goto
+> unlock.
+>
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -207,6 +207,19 @@ static void perf_ctx_unlock(struct perf_
+>   	__perf_ctx_unlock(&cpuctx->ctx);
+>   }
+>   
+> +typedef struct {
+> +	struct perf_cpu_context *cpuctx;
+> +	struct perf_event_context *ctx;
+> +} class_perf_ctx_lock_t;
+> +
+> +static inline void class_perf_ctx_lock_destructor(class_perf_ctx_lock_t *_T)
+> +{ perf_ctx_unlock(_T->cpuctx, _T->ctx); }
+> +
+> +static inline class_perf_ctx_lock_t
+> +class_perf_ctx_lock_constructor(struct perf_cpu_context *cpuctx,
+> +				struct perf_event_context *ctx)
+> +{ perf_ctx_lock(cpuctx, ctx); return (class_perf_ctx_lock_t){ cpuctx, ctx }; }
+> +
+>   #define TASK_TOMBSTONE ((void *)-1L)
+>   
+>   static bool is_kernel_event(struct perf_event *event)
+> @@ -944,7 +957,13 @@ static void perf_cgroup_switch(struct ta
+>   	if (READ_ONCE(cpuctx->cgrp) == cgrp)
+>   		return;
+>   
+> -	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
+> +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
+> +	/*
+> +	 * Re-check, could've raced vs perf_remove_from_context().
+> +	 */
+> +	if (READ_ONCE(cpuctx->cgrp) == NULL)
+> +		return;
+> +
+>   	perf_ctx_disable(&cpuctx->ctx, true);
+>   
+>   	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+> @@ -962,7 +981,6 @@ static void perf_cgroup_switch(struct ta
+>   	ctx_sched_in(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+>   
+>   	perf_ctx_enable(&cpuctx->ctx, true);
+> -	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
+>   }
+>   
+>   static int perf_cgroup_ensure_storage(struct perf_event *event,
 
-> > 
-> > this patch depends on patch:
-> > dt-bindings: hwmon: (pmbus/isl68137) Add RAA229621 support
-> 
-> No, it does not, please drop this sentence.
-> 
+Thank for your review, I will make changes based on your suggestions.
 
-I'll remove the incorrect sentence as well.
-Thank you for the patient reviewing.
-
-Best regards,
-Brian Chiang
 
