@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-674143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0297ACEA70
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:49:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FE9ACEA2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 08:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78447188BF69
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 06:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533B83ABC09
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 06:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F941FC0E6;
-	Thu,  5 Jun 2025 06:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2471F1531;
+	Thu,  5 Jun 2025 06:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="LI9scScH"
-Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6FgwEw1"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060571A00F0;
-	Thu,  5 Jun 2025 06:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C311876;
+	Thu,  5 Jun 2025 06:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749106122; cv=none; b=PDDkIVIy7+Ihc18L2T8+Gv450pVK1QXKyEIm/dn9ZF05/KbIW6SGhsiRFnpyJvcCSfR9mxWamQludZrkkTHlkuseFCCAZ5uThiq8XROav/V9vr+8i038eUH3/F/1dC7JvoLHHo9g2Smw9UT4KyXDP7uUXvzIJgTXBXX0MThoGDs=
+	t=1749105147; cv=none; b=NkrVsudIMAdbRs3vt01aJE+8jWM8Hx4bWJ35noeVS2gmTNgwGR3HqhgRO5jDsVszBdWOUAO8u+DaysIaCxrLgb3dudxusgzqc7P+i0+js6Z6sgPESAKrvt73OufRuVNIjEHtGz78lUdXjVXhRbw12rgxHGj8z2BghKJVbyIlU4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749106122; c=relaxed/simple;
-	bh=v1VbwHn9X/vcgpehSlsORSX2h1I1ZC7wmEKLIY4Dtio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y6y3EVDFQbadbw1XuShlyU87tA5XntbN7QmxA3PLbrJWAWjs6CEgc1+wRCftE4eOhj5oAoPrBcVPmWYCi9Te+4TAmOnmo34I6sun+ZZQUmG3Kec609x0rxaHj0b4GngLjh+uLpt/XJIQ4ReuDQpXrldGa27C8IAjZcpekGAjtSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=LI9scScH; arc=none smtp.client-ip=168.119.41.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
-	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
-	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=vw3Uk3105LnqEXM8kkjyZCQuG6ZyTrE+YY65qSzjcI0=; b=LI9scScHpRzQVwEG4A4uDjhr49
-	6LbDw9dbugxOSGcz/8BfYC1xZqGbW8II8ipnio9no12FR8hV8l9NPyW8nxD4pNvPaxFRt9IN9UTE2
-	7uX122hebeivEf4yr/bsLoXxhYxV0VZrMwJkZw1LBOMDUdvINYVQ6A7grHBq5G71yEMw=;
-Received: from 194-208-208-245.tele.net ([194.208.208.245]:62185 helo=[192.168.0.218])
-	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-	(Exim 4.93)
-	(envelope-from <matthias.fend.oss@emfend.at>)
-	id 1uN47t-00BsXS-Cj; Thu, 05 Jun 2025 08:30:57 +0200
-Message-ID: <ea382833-3782-4203-b31c-7f1a364f671d@emfend.at>
-Date: Thu, 5 Jun 2025 08:30:55 +0200
+	s=arc-20240116; t=1749105147; c=relaxed/simple;
+	bh=gB6fIwIufnfLkaIn9IQOpIzAXVJMfLb+nWj7kaZiqFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WRXP900JZFkclE6vM5bbpQZ/4+rTmuwae0HNzbkyAeFtxumdZL1wpWP559zybKxhH0kcdLopQczQJVbogiML74AHAemfaSaTsg8tBcsR6QehCzchKVJNiuKrxkQsrmFXKrnmULAqJhQoFYTVJ8CAcDJhuXE515m2W3RVdqatUK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6FgwEw1; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7481600130eso805747b3a.3;
+        Wed, 04 Jun 2025 23:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749105145; x=1749709945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xVNbV2XHvQT3/8z4B+RVq7tYXw6lKXe0E7JWahAFCMk=;
+        b=F6FgwEw1Rydz9fVqAOvy4qfjLHfZHPt3NE02FdKM54YAxyeh1h20YBBp3vgGnncNK9
+         To+NfCjCDzGamfhZ2ZF0ZVEg9jUjarKbrhVWKa9BrLXWszrsiu91JQYzoNYoSPbEpZFs
+         D0VxtNdaRd+iuDbxgvnD9EwSvlH6aZgMfRKIP79a6wwY+LF+a+h5+geIx/wLXqJflkAV
+         AqxW6+9yD7QlV7IdqvXdJ42vscLZk/VL9XRURMHnnfWb0UmhzT2HGkP1GMSBKnhCA2Fn
+         MEh7HyDayy67zHXuYaDCaOW2XU6WvYwdFsdq4KAGlpe2T4e/yfAZT0NUZYEzPfZp3GkR
+         ne1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749105145; x=1749709945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xVNbV2XHvQT3/8z4B+RVq7tYXw6lKXe0E7JWahAFCMk=;
+        b=Ho8wWgx7KUF5RMeV3nVNZg3Ql++hUk1RWdpSg0tQWiHtaqiPlkOY/W/Mt8k7H7gOoi
+         hBrjFTDbSOpwebqYsNVn4Pvnya9LHXFHnqighYxlsrjmq/NPqVg0CtnlC47P1EVSE1HL
+         lGwTiUIzBGh3zkur4eM32TmX0cmSc1mjBZq4SNAKy6GFvbIXTgitQc4h2nGebe6hjWhK
+         mBICINXLKudRc/zu/Bku5/Lqz/mMhVwwaEO5n5NSDwYDDjVeaiGh/AdLy6vnTjjq0DnH
+         1r1P328DCTMwBr2BvWIu3ZxT1uHKH2DFzNahx628aGgivOyYwEnhS49ftHqY/zbftiov
+         qNaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUljQiDNCRZ2QI8HNEt0QbcO4m7A3t7oKsoWNua0nAKX/iiomZmrkydNIIYYMST/5txsi0giIiqWZN6@vger.kernel.org, AJvYcCXG48lr0MeO2x3rco2d/uEZVs5ymvU9N0SOKVuTnYnWl2vyqeWV/9ckRy/z72Q7INt4zREtdIe1wR8f3fgX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdWnJQLiooLnNlKThdypiKEQkja9TQRXn94PJ0Oz5pVy+BsjGP
+	60PexvBaLUD1KdVpDdzKaZtpGHarfeVGAN2it9bdBeHkATKuDEiwV4P+0mRy2P8dMxiwX6gUObT
+	KfV1FsHstctfZ7RKKFG+23y+iBLWDuSbQyvBAgbnqIdt3
+X-Gm-Gg: ASbGncvlfcQP3tRDNpIsLWEpcNE8a9BsdRcfdRIcehLOAD7xp3dj7O3dm2Bx95T0x0y
+	jNkf8iOheENeNsp/3LqGf079xs/1mX1poskVrU9Ai9W03w5xD13IX078C2JFDZRnSzEsbZV/glW
+	Mm5ZaWGMM+/RwnEjJTK9euoY5dMP/Arp72G2+aA/j4I2fbfZ1tt+G/GrteUBoGfTNPVw==
+X-Google-Smtp-Source: AGHT+IH4DMJVVSc23A8ySI5zWwdnqMPJwI4JcymO9uLuxpbdW2R54hTNG5gzhmW7FhrMsuuLb3uqrUpjAv6uXp6wyzs=
+X-Received: by 2002:a05:622a:578f:b0:4a4:3c3e:5754 with SMTP id
+ d75a77b69052e-4a5a587c45emr97845681cf.32.1749105134671; Wed, 04 Jun 2025
+ 23:32:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in TPS6131X FLASH LED
- DRIVER
-To: Lukas Bulwahn <lbulwahn@redhat.com>,
- Matthias Fend <matthias.fend@emfend.at>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20250527065434.202622-1-lukas.bulwahn@redhat.com>
-Content-Language: de-DE
-From: Matthias Fend <matthias.fend.oss@emfend.at>
-In-Reply-To: <20250527065434.202622-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: 
-X-Spam-Bar: 
-X-Spam-Report: 
+References: <20250603-sige5-updates-v1-0-717e8ce4ab77@gmail.com>
+ <20250603-sige5-updates-v1-3-717e8ce4ab77@gmail.com> <CALWfF7JOJSihtfqrFiZtTxnzvoU6FP3WXuWjYOVaAvjPJZWWgg@mail.gmail.com>
+In-Reply-To: <CALWfF7JOJSihtfqrFiZtTxnzvoU6FP3WXuWjYOVaAvjPJZWWgg@mail.gmail.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Thu, 5 Jun 2025 10:32:06 +0400
+X-Gm-Features: AX0GCFuUQCw_ESq8wm50RxhnfDipXmHgsUt5otEO_3lzHNgvENZEo2Fw1AWJjAY
+Message-ID: <CABjd4Yyw5xStJYU5c5snUGpBjEYL8=qoj=bWYLnuzSWzr8shaA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: enable wifi on ArmSoM Sige5
+To: Jimmy Hon <honyuenkwun@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lukas,
+On Thu, Jun 5, 2025 at 6:43=E2=80=AFAM Jimmy Hon <honyuenkwun@gmail.com> wr=
+ote:
+>
+> >
+> > +&sdio {
+> > +       bus-width =3D <4>;
+> > +       cap-sdio-irq;
+> > +       disable-wp;
+> > +       keep-power-in-suspend;
+> > +       mmc-pwrseq =3D <&sdio_pwrseq>;
+> > +       no-sd;
+> > +       no-mmc;
+> > +       non-removable;
+> > +       sd-uhs-sdr50;
+> > +       sd-uhs-sdr104;
+> > +       vmmc-supply =3D <&vcc_3v3_s3>;
+> > +       vqmmc-supply =3D <&vcc_1v8_s3>;
+> > +       wakeup-source;
+> > +       status =3D "okay";
+> > +};
+>
+> When you enable the sdio node on your v1.2 board with the broadcom
+> chip (using SYN43752), does the btsdio.ko bind to the device and
+> create an extra rfkill bluetooth node?
 
-thanks for the patch!
-The filename changed during the review and I actually forgot to update 
-it at this point.
+Good question, I didn't have it enabled in my build:
 
-Am 27.05.2025 um 08:54 schrieb Lukas Bulwahn:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 0d12bb1a7fb6 ("dt-bindings: leds: Add Texas Instruments TPS6131x
-> flash LED driver") adds the device-tree binding file ti,tps61310.yaml,
-> whereas the commit b338a2ae9b31 ("leds: tps6131x: Add support for Texas
-> Instruments TPS6131X flash LED driver") from the same patch series adds the
-> section TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER in MAINTAINERS,
-> referring to the file ti,tps6131x.yaml. Note the subtle difference between
-> the two file names. Hence, ./scripts/get_maintainer.pl --self-test=patterns
-> complains about a broken reference.
-> 
-> Adjust the file reference to the intended file.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+# CONFIG_BT_HCIBTSDIO is not set
 
-Reviewed-by: Matthias Fend <matthias.fend@emfend.at>
+Let me add it and report back.
 
-Thanks
-  ~Matthias
+> If so, you'll want to blacklist the SYN43752 chip in the btsdio.ko.
+> Similar to https://github.com/jimmyhon/linux/commit/81c14dc2dea2ceaea8d39=
+0188b352d32e278abc8
+> The original logic was introduced in
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/drivers/bluetooth/btsdio.c?id=3Db4cdaba274247c9c841c6a682c08fa91fb3aa549
 
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e20de38ffa54..0c4f0eb7f49c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24518,7 +24518,7 @@ TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER
->   M:	Matthias Fend <matthias.fend@emfend.at>
->   L:	linux-leds@vger.kernel.org
->   S:	Maintained
-> -F:	Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
-> +F:	Documentation/devicetree/bindings/leds/ti,tps61310.yaml
->   F:	drivers/leds/flash/leds-tps6131x.c
->   
->   TEXAS INSTRUMENTS' DAC7612 DAC DRIVER
+I will check, thank you for the pointers!
 
+Best regards,
+Alexey
 
