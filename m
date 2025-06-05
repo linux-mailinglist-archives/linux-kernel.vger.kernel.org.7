@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-674327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-674324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2941ACED4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:04:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81E1ACED3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 12:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1F4168238
-	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:03:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C7E77AABF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  5 Jun 2025 10:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFF92153D3;
-	Thu,  5 Jun 2025 10:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32381214209;
+	Thu,  5 Jun 2025 10:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Xw/U0uZ+"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioZaRDJf"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30463C17;
-	Thu,  5 Jun 2025 10:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070273C17;
+	Thu,  5 Jun 2025 10:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749117815; cv=none; b=Odq/1D9AW5YUhsMSAOkyiSLP27cUHVgD/0mSwt4F3MFq0mO6Kb8Uh9sII/um34l3CtujJrlgCzbL1UuNb/NCirVGlsLWVcyjbK+6GocTlojw1Nm6XEF6OV+hLvpFWrPTJlm18PMzjBsLHOEHazm4/aS810b2PT4+YmxAABIVZ6M=
+	t=1749117735; cv=none; b=ENaM1OFrINsLbhJHpRCp/mBPIZ65rcUM/k2Db4hmxy4COgjNyKRU507Fzl08+ppZVZamgsCIzVyty005Prk8k1gwvQKUCKXdUBGxuhBhY1+qm6qVp3J/Xr42eXsH88KCZBsu2nsNvH4c7ZjZBD03EZMCU1VPkefM+p/ujRW2wOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749117815; c=relaxed/simple;
-	bh=FA/+BHeifIxqogwcWZmS8wqgT9vJObq/p6nrNOEyb80=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r8E0XRs18YQAqjIGWxu6CXD9iLtivbGqyCqxmlCX42fkCQA6jlE7OA9BLpggAp/NWqeEwr773VnYwo6KXfp2QtRUhSnp68nQZpkVwoJUSE1H7Vq/9xe0L8n4rRKhp8VA+vcYphWMXvn/93heEtKGc5hRl+ryEcSD7H3PCzAejSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Xw/U0uZ+; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 28EAD1FD24;
-	Thu,  5 Jun 2025 12:03:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1749117808;
-	bh=iegZH7tcjxXe+6mQln8FYa5oEl858U3Y7zsMG9yiJS0=; h=From:To:Subject;
-	b=Xw/U0uZ+3T939JRocOy6a+7VSv+x8VZEXaLHOkU1e/YA9ciISbUxG5NGRLHkm+pI+
-	 7iKjMqByc2w8S0XIV7RNhM+nw+Xaty8cN5v4ocuqJ85rmunreiSRWEoRDNon1pLImj
-	 ymKg1QBTcSdiHpes92K1L/NnIYPWQu3jTXDfPXxOm+5jSw5pP1nKg2rVUuN+rjPYbQ
-	 NIWTwsnf23fFy5gIl4gc04gqQaJUamNKgvUjGZKUl2t2l2WF6JG8Fh97vZlpIM19fV
-	 h7II2LB0aylJUdxqYp0Ix47vkhOBh1AyAkbEdEvvylPiw5kuWsR7KArUOcICT4A55f
-	 YWJ9LCikEhkSA==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeff Chen <jeff.chen_1@nxp.com>,
-	stable@vger.kernel.org
-Subject: [PATCH wireless v1] Revert "wifi: mwifiex: Fix HT40 bandwidth issue."
-Date: Thu,  5 Jun 2025 12:03:13 +0200
-Message-Id: <20250605100313.34014-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1749117735; c=relaxed/simple;
+	bh=3wIA8FzM28jTAmLDNYzym8PGR5wMdvCsj7ojq/EphCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LtBQ+wbHKow4GUl6DrK+gUCa0zQIk7DZug9KTDNsFiPLHJZVeSnvvKjVtwTdn9DCUZU4cWq/rwoFYbdEeTmx7mfWFAmSu3zI1M0utB0dVo4+wWdoUnBuNM9r2yJSttapj/mkGxbzdw4y6Bcitelsi+kFzDTqnFwgokUr5iEqgos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioZaRDJf; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so1292820a12.2;
+        Thu, 05 Jun 2025 03:02:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749117732; x=1749722532; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=up4swdLNOvslRPxbCj7NvUPbNSrEcnEpawU2SYYjeSs=;
+        b=ioZaRDJfpMfd3CkvenTHALAy6pCLzPvtGJCydBNObncWa9p2S6LR9woZlYHoh6HqIy
+         I2NVwJN2WJhtVjw2dHsmK6lkl8JNW8jv+OywhIsiDH2H/4X0UgUj+UibZwMkvyODXTs4
+         M372Lvz5mvNwO9xh/U5zOl0udkWSN2FHF3Mc71u/shcI7yocGYDmdgzi1UPoyUZJQqha
+         Ykd26/AjtgMPiN/n+dxSzEUtXk2oKrpcGUcQnpbfRogme8sbiLF+e/QYMSvLKM2aiORs
+         T6NmsU0GCLVyGVU59hSbVzjw96PxZeMzLfLNKlxAuuAdrBi8THw/NJBa6Y5ySLBKJVvh
+         ct9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749117732; x=1749722532;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=up4swdLNOvslRPxbCj7NvUPbNSrEcnEpawU2SYYjeSs=;
+        b=gm+DpfZ0kde1DoxPbDGlte7K7edLBUrHRehnqssTdmKep2q+eF+LTf8bj2xU4iFQVd
+         0joNiH89xhBJQgVOxNtpDAcplpSaaDId24IuHFhEMo7ghytq4TCOF7AR0KHdusF6YuPp
+         QyJN2WLYaN/JYBu0DrnAiBfvEu3PWCwYGZo+hctgd692xDaKkzl8WKfti/3pXwB9T5L1
+         Aq5iZqRHHtjumCKCBKNP+SD+rNrYuFJHCTa6cSm1zorqikDhOcxvbcb2RWE6MMGLyvlW
+         DrIQNkltm0dG1qLz6aC+mT1oF6j350uG8D2ihDCgkyI6e9p0YVs4XulUy/cbXRBPhL63
+         CSZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUDaxCLV7JG5SyhoNc2Yn4u+Se9x7hEW2Pgp44GwfqxKqOmX5SoxvMQTdcqQgeTPoqLkvMbvNf5m5p8g==@vger.kernel.org, AJvYcCVyoLwctxUlVxw7nYlUsygPJvNuJGRtO8Mu+Dj8lTrOfCQ4LmKC/3Wn3Abvqk+Csn6EUILjI2+P@vger.kernel.org, AJvYcCX5I3kQp6XLBGv8WRhKJOnri+6iGFXQBPyuNA/jgtHWA1gsubFsKjaC7SsrTPGbl75vLs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCxwY5OoMmmGpf4TQ3H5I4AYtqCJjXMr2ZvO2HfjtMh+RWZx2r
+	8WWSpg4+Nnrc1a87jL7jYQRniuX54WtTxKcLMAMpM2rc5lrDyDiGpVdKrSFcwZVw
+X-Gm-Gg: ASbGncvQ6fHM+0bD1wlO7Cv6cfMYYJoG5p/SaBrTi4E9tyDmAke4vnxOgjUhb1RLs9M
+	YoBfYOB/ASCn13FWAiWLc7E95VAAauDwLyF1ywPfYCpO5oqEChZda2z2pnqAun8zNqDaRBJRvoD
+	Fyt/8nP6W+o+GT4C0dcqfV5eZ5feGMUKzw2m0C8KhCtaz40oY4ZcJz8I4i5VTittiL6ofiktK+H
+	9d1mK0CTmdpZUi9pctQFfhMJwQKu11sCPP0GmVq5O5TqNaAMtj+5HJq4grd4hzLigj4pGD8H8ZB
+	gkD9q3E2wqJQO16L3aIbHPEapeXUkEr27iT5itZUKNu10tgIhc1dE7ZRGTXz6rX529g4gbfG9Vg
+	=
+X-Google-Smtp-Source: AGHT+IEerswt3uaI6aJfTNE+H3AMj09WEw62WDqPCqgipaohetyKETPKo7eDe1WxPbiiU7kRJiNKeA==
+X-Received: by 2002:a05:6402:270e:b0:602:2d06:6b21 with SMTP id 4fb4d7f45d1cf-606e9415e96mr5459962a12.5.1749117731874;
+        Thu, 05 Jun 2025 03:02:11 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::22f? ([2620:10d:c092:600::1:d66f])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-606fe850afasm1809494a12.78.2025.06.05.03.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Jun 2025 03:02:11 -0700 (PDT)
+Message-ID: <37376916-6fd0-4a29-ba40-dec512f9796a@gmail.com>
+Date: Thu, 5 Jun 2025 11:03:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v4 01/18] netmem: introduce struct netmem_desc mirroring
+ struct page
+To: Byungchul Park <byungchul@sk.com>, willy@infradead.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kernel_team@skhynix.com, kuba@kernel.org, almasrymina@google.com,
+ ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
+ akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com,
+ andrew+netdev@lunn.ch, toke@redhat.com, tariqt@nvidia.com,
+ edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, leon@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
+References: <20250604025246.61616-1-byungchul@sk.com>
+ <20250604025246.61616-2-byungchul@sk.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250604025246.61616-2-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On 6/4/25 03:52, Byungchul Park wrote:
+> To simplify struct page, the page pool members of struct page should be
+> moved to other, allowing these members to be removed from struct page.
+> 
+> Introduce a network memory descriptor to store the members, struct
+> netmem_desc, and make it union'ed with the existing fields in struct
+> net_iov, allowing to organize the fields of struct net_iov.
 
-This reverts commit 34253084291cb210b251d64657958b8041ce4ab1.
+Pavel Begunkov <asml.silence@gmail.com>
 
-That commit introduces a regression, when HT40 mode is enabled,
-received packets are lost, this was experience with W8997 with both
-SDIO-UART and SDIO-SDIO variants. From an initial investigation the
-issue solves on its own after some time, but it's not clear what is
-the reason. Given that this was just a performance optimization, let's
-revert it till we have a better understanding of the issue and a proper
-fix.
-
-Cc: Jeff Chen <jeff.chen_1@nxp.com>
-Cc: stable@vger.kernel.org
-Fixes: 34253084291c ("wifi: mwifiex: Fix HT40 bandwidth issue.")
-Closes: https://lore.kernel.org/all/20250603203337.GA109929@francesco-nb/
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- drivers/net/wireless/marvell/mwifiex/11n.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/11n.c b/drivers/net/wireless/marvell/mwifiex/11n.c
-index 738bafc3749b..66f0f5377ac1 100644
---- a/drivers/net/wireless/marvell/mwifiex/11n.c
-+++ b/drivers/net/wireless/marvell/mwifiex/11n.c
-@@ -403,14 +403,12 @@ mwifiex_cmd_append_11n_tlv(struct mwifiex_private *priv,
- 
- 		if (sband->ht_cap.cap & IEEE80211_HT_CAP_SUP_WIDTH_20_40 &&
- 		    bss_desc->bcn_ht_oper->ht_param &
--		    IEEE80211_HT_PARAM_CHAN_WIDTH_ANY) {
--			chan_list->chan_scan_param[0].radio_type |=
--				CHAN_BW_40MHZ << 2;
-+		    IEEE80211_HT_PARAM_CHAN_WIDTH_ANY)
- 			SET_SECONDARYCHAN(chan_list->chan_scan_param[0].
- 					  radio_type,
- 					  (bss_desc->bcn_ht_oper->ht_param &
- 					  IEEE80211_HT_PARAM_CHA_SEC_OFFSET));
--		}
-+
- 		*buffer += struct_size(chan_list, chan_scan_param, 1);
- 		ret_len += struct_size(chan_list, chan_scan_param, 1);
- 	}
 -- 
-2.39.5
+Pavel Begunkov
 
 
