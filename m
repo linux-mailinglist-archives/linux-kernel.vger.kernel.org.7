@@ -1,180 +1,188 @@
-Return-Path: <linux-kernel+bounces-676257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E76EAD0981
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4ADAD0995
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CA47A6EE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB9E7A966F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C456B23ED75;
-	Fri,  6 Jun 2025 21:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BFE239594;
+	Fri,  6 Jun 2025 21:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="r4fUomNF"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Odf1V1xo"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A5A23E34C;
-	Fri,  6 Jun 2025 21:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749245445; cv=none; b=aPWDz8xmgcCPG3jEw7DqhZcmrg+udHAeZq8C4WJloKzS7vV6Bp4V9FUEQ6c9paHMdHQJvwl/xgQk3Czlm/5OmMAVxa98o1CuYmfPBevcCY21SSklCmmrtAvHzZbexuHJOFAKBPVdG5I7BoEMpn3PbJOv78NTevJm1vayxQGBCQU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749245445; c=relaxed/simple;
-	bh=SS4GSe+jGz1c7YxTaBkkzauoL8PE0XuM11Xm2pzctDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6TQDmiXJUNjAHYT8Ir06ddtsV2zxxxIiYnWzSOP8OHeaAEBNuA+qHKO5ZIHIPIH4nQDmgM0H6ADGOduvjDdwv5gNV6KpgZDe/+S720IbU4hTSyb38qT7t6rhE6Orm3E3mRRnBFdox+ynM9qcP3SPda0Ys0CNBaJNOXOOtPkCd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=r4fUomNF; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1749245424; x=1749850224; i=w_armin@gmx.de;
-	bh=SS4GSe+jGz1c7YxTaBkkzauoL8PE0XuM11Xm2pzctDA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=r4fUomNFPJlUVeBTAbl1sSj1bueBru91psWusanmY6sICZ7d2Z+qOZCCBgutVI6t
-	 5sS61SYAGyBLe7mTcozF675SYPm69BcL7M3FO3HGskdZwj2atiopYULvSEpWhlNnv
-	 z8Ics7Nh9NNCusr8bgcMldThG5aewoylQsKN18OCC9/CBFg4pl6PMDniiFg+kwVaB
-	 8SkfVwJLXxFdcFbAWVgsbj09ZdvfcSOk65Ejr36hZtv51rSMZuFDvdlS5kVL/ZDqt
-	 qsr1zyrse5Buvi4rR4Pk2WIEo5AlpsVgGgodSuo53sZvS5WpMirclJFG3/erOA5OF
-	 MYzujW64SVXufxZupA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mlf4c-1v5H7K06pm-00c1st; Fri, 06
- Jun 2025 23:30:24 +0200
-Message-ID: <0a3a06df-5da9-4b39-bf38-0894b8084132@gmx.de>
-Date: Fri, 6 Jun 2025 23:30:22 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6961A76BC;
+	Fri,  6 Jun 2025 21:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749245739; cv=fail; b=ZJ/gAh2pgaM+VErKEn9if1Y1/S1AXimDVr7F4QcxKy9bVvbD6hOY/6zm+OLKaV6eUlOZEtpy+8MGx78m7yMAZ7Ilt/6T0YJ8AKOsr6jV3j0+/3sKkI6qJL0D8qmadPuU1oIB9gDMXXzkNP3feAzSoWUG1O/0H6MpJZKHtNBo/Ac=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749245739; c=relaxed/simple;
+	bh=vtg5b9XFBWIkroApGojeWo4ERPUCVy3Doe5O8edCCkA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZCzVYsnKgxJ570b1aaA+JcbWgqraDorfmVOpFGvoXkOmScSbZragfLe0sDOb/bBdn13ydKtBpMz0JEoH7kU1wfbJ/8hoV7s9Wtt9K2gBWk55GziyVZksG5SFBD/VJe8J5TZZdOKrhjEVuzLm8ibugAK2b+6K6i/Pf217+cyaUT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Odf1V1xo; arc=fail smtp.client-ip=40.107.93.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rdn9OYDeF4+YCEVo2gjJ7JfPf40DSl2Hx1ooPLz48QoVZFyRn006tyNmH5KkuXEx91QhH57fDNO6cjEtQMZ4DRlYJ1OUUoiuUqhD4Ov+hAl03M509VbbX92s+tTI8g7ZsWL25Kq7LeAFRjKmmFo3/rXdzySI9IT35wtMOGRDWMZu2VPH5V9X0ChAjqOjHMlKrl3Nw+G/gwVUYTPu2iJfEzOe0Lca9WGEKzI5MTIdWvoo5JAiyTO1BWDp16fa+M6MiGrbb+zA3p1tt++aR0XsdoljQXQYSMS3qYnxMZksGYQ4M06GDNTn/9/HIZC3kurAjuCgI1bn7rLxN40azzVDEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p4b9Pod96PbYHgFzo9jVXGB1YVqlKfuB2TmroS4jbDg=;
+ b=bvVRmmhDhUcyn1RWXVwYhOptknUsEutMV966wRoG7tNQ8zZvvvTtTdmmR5AcfYA0ZkNeKaUzlrWeZGcHtKyMP796/L5HF6kc724TlVTe2J1eypJSDC+BUQvooWwF/YRDaYKUQU17VWWYpWbYryMvid4+uOcB9LBO/+227EVQRCvTC1khWdMnL8yJVRS/6q7aAUplKUcP9fZbZvwcfIX/wIdAAgNw6FuxDoTdakpc/09dkZBxEHl1lPEG03fO2MwcADfaL3Qua1qiD6+m/KgxhrTcTFXVDNYW+SiDIdZMb4q/vPdMPJ59iiQnV3eiVFPy/2s1SeG1Rhyrh9ZTFp51aA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4b9Pod96PbYHgFzo9jVXGB1YVqlKfuB2TmroS4jbDg=;
+ b=Odf1V1xojkjwwOOddN9IPaf9driLG+prI2m7hIf3z3zJzrcqni1mtLyn5ZzjGby8LRzxhiul/KPtYB3EJvG+tbO/wQgc5yPa1faYbHkPr+AvwR9CuuIp2RTKIwEurxp+7DM5de4b4kldaPxCg93BISVCpDjMvIGL7RRvS34mjYo=
+Received: from CH2PR11CA0017.namprd11.prod.outlook.com (2603:10b6:610:54::27)
+ by LV2PR12MB5749.namprd12.prod.outlook.com (2603:10b6:408:17f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.36; Fri, 6 Jun
+ 2025 21:35:34 +0000
+Received: from CH1PEPF0000AD7F.namprd04.prod.outlook.com
+ (2603:10b6:610:54:cafe::41) by CH2PR11CA0017.outlook.office365.com
+ (2603:10b6:610:54::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.31 via Frontend Transport; Fri,
+ 6 Jun 2025 21:35:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD7F.mail.protection.outlook.com (10.167.244.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8792.29 via Frontend Transport; Fri, 6 Jun 2025 21:35:33 +0000
+Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 6 Jun 2025 16:35:32 -0500
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <andi.shyti@kernel.org>, <rdunlap@infradead.org>, <hdegoede@redhat.com>,
+	<ilpo.jarvinen@linux.intel.com>, <sfr@canb.auug.org.au>,
+	<linux-next@vger.kernel.org>
+CC: <linux-i2c@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <benjamin.chan@amd.com>, <bin.du@amd.com>,
+	<gjorgji.rosikopulos@amd.com>, <king.li@amd.com>, <dantony@amd.com>, "Pratap
+ Nirujogi" <pratap.nirujogi@amd.com>
+Subject: [PATCH v3 0/3] Fix build issue when CONFIG_MODULES is not set
+Date: Fri, 6 Jun 2025 17:31:38 -0400
+Message-ID: <20250606213446.1145099-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] hwmon: Widespread TOCTOU vulnerabilities in the hwmon
- subsystem
-To: Gui-Dong Han <hanguidong02@gmail.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: vt8231@hiddenengine.co.uk, steve.glendinning@shawell.net,
- jdelvare@suse.com, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
-References: <CALbr=LYJ_ehtp53HXEVkSpYoub+XYSTU8Rg=o1xxMJ8=5z8B-g@mail.gmail.com>
- <3f5feb87-330c-4342-88a1-d5076538a86d@roeck-us.net>
- <3401727c-ad93-42df-8130-413eda41ab3a@roeck-us.net>
- <CALbr=LYe3p9GW2Z_RUxKG+w2Q1wfWGRW=dRLoTraS7qJ7imdgw@mail.gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CALbr=LYe3p9GW2Z_RUxKG+w2Q1wfWGRW=dRLoTraS7qJ7imdgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:1xmPSwo0fCqaCoqdIIQHY62NXf3hfCLgjgilXUpYNWlaZhI32xN
- 1npMoBsw/UxMxkC8oTmFBM3omQPXw32i/lSrUSspb4SytqAcfGP80Kj/WVmrMUMcsukyJnG
- tC76vJenSMFN1ZrUaPQ8gjCteoCTvsad5KJNtyhhWFViQ7niDMrQl/SDJX1eF5Q8uUVMBYG
- b46/YPu1bCUh+rlEZZBsw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Vda5T44NeT0=;xgkkiwdrri+54rCks6aazaArMso
- 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
- SoPoWyzQYVfk4UFwZvPdiGR9w
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7F:EE_|LV2PR12MB5749:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3574afd-aa24-4502-008f-08dda542118e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pj5mMUWYbyFbbrWs8dWdb/WE/AOy7KA9xUW32rVIkFTOHJKWSgVPgnEq8WD8?=
+ =?us-ascii?Q?rMpsZTa22DXVoNC6nt3Qgm9XN5WKmYDJ18xaKXG8+nBjBllqURfQI66RvsIh?=
+ =?us-ascii?Q?Mqnad3YA/lNBBIhrAOxrz5lmSmZ2PBuY+rPTF8KjXgWI4ycV8iNGmMHnFsrN?=
+ =?us-ascii?Q?auCowqdp2+WL+/DOYC9JJ+m68B3iWW7PdlqubFK5C0O9xL34yoMvf6hEatJM?=
+ =?us-ascii?Q?oj8TDhYVjUSL+vdBT9Bwa/nh3Pqx8eyuheNohew+cQrLaM8yC9YDWm0anW6M?=
+ =?us-ascii?Q?gAVlj4dz5HB/Z1kgpUOMnLvbx6+zye+2pKFDpCLl8t7MJP2EYUlqldfbawrN?=
+ =?us-ascii?Q?Wz/vJ3H4AxtvBqSfe5h9e1J8dW34szCrBJ87KkdXkJijfM0HbV4KvdTupdP3?=
+ =?us-ascii?Q?Pkz0AQ4Ll4MX4SecxxkAcEFkqIxItXUvnJeTgQHbUG4MY4f6xVR/sSjhlagM?=
+ =?us-ascii?Q?Ux+x2+WEAfcENw946ZzTZl7dUPD9qDU8C/0r8Pi+rcw5M4PbVIbGroGhaAPm?=
+ =?us-ascii?Q?Pdwfxqpe1GKIncGJiSFrBPpLRjXxoGKgGSzFNZUz3VvNHFPJsSwzE0zNEa1+?=
+ =?us-ascii?Q?27FbMM+4/auJ+/9l4xPncTLhdwK7rRuuG5H6rEK2N+iw/klbB+4nkN0uz8Bo?=
+ =?us-ascii?Q?KRa4EztbtWaWIbV7wZjMuZMBfHtJytIMGMoChxBG7bpzWKoAA6nRFmTEIt/m?=
+ =?us-ascii?Q?bBDWA3hsCh0b0TKsvUP0iGcN7AeImIJxkRANWJyGp00FmEEYYueOBuBAUHiS?=
+ =?us-ascii?Q?CXB/kwYljNWFY4QKIfY00AJWGnQvNYswhSvBcYtD+Z9fUrjHj+TIjXWfSY1i?=
+ =?us-ascii?Q?hotdHyoHTVYv+NxWCL1YtJPzciIBn/HFbN+qASFWTp+cuTfnZEGvQPNrc1Qt?=
+ =?us-ascii?Q?pW7vm5W3sBi8TVNW2k/EG7STQq2KkPAv6YZW/FgOI6NepdKWgGQRjzdVVCgj?=
+ =?us-ascii?Q?LALcq+zzJN1UCyWD8LH62AFH080p3lP5VIHuaXcV+56pPAxxsnjJNbdOQsAA?=
+ =?us-ascii?Q?SPrQPhvursbBYyCy1Qi/Nyf3/xBm8LfXHcLM8YOLxwwlW9KMyt1kpR1nxyEH?=
+ =?us-ascii?Q?LlMmvriXTcVNvPfsmxhJ/B3B3J+b/jMVAZCI83o6lxSGLWgRwEee78WXzDdT?=
+ =?us-ascii?Q?42Dt5VcvPBvFWfQAzNlG0smjuI/ncjsRn7a/FpPCJQKjJQYQhYaq7R2bMFx5?=
+ =?us-ascii?Q?CeZ3hOAqV+aSFrz6X/Y9cRgiyzoHNuO/bHycbXclOi8nFtGafQ2Wmc2z/BzP?=
+ =?us-ascii?Q?0LXfqC6IQO29OPBkLErBOcDPczfVwzfIkXhNFK4y+0Jvqh3/9l4R6cAmFFa8?=
+ =?us-ascii?Q?s3BfE3fw8dThczTK+HlGpKx31oKLz3rvwmGFQSSr8DjqEMNxcP2GHkxHDK4R?=
+ =?us-ascii?Q?BrMOlZlQVYS9MkMwRMRJ8CXhuhuqB/87Ni2e3q4yllBTopWmxUcENOjjgisQ?=
+ =?us-ascii?Q?SEiaQQ/PaiTzkR/meL3B+WcB797vOPHdqDTusmkq3WDA6Ho4Y0v/ybISsl+D?=
+ =?us-ascii?Q?YL1zGLnrCzOlYwf0dLBFnbGsxkkrwaoHHpxo?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2025 21:35:33.6868
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3574afd-aa24-4502-008f-08dda542118e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5749
 
-Am 06.06.25 um 09:03 schrieb Gui-Dong Han:
+When CONFIG_MODULES is not defined, 'adap->owner->name' used in amd_isp4 platform
+driver will not be valid and is resulting in build failures.
 
->> On Thu, Jun 05, 2025 at 07:33:24AM -0700, Guenter Roeck wrote:
->>>> I would like to discuss these issues further and collaborate on the
->>>> best way to address them comprehensively.
->>>>
->>> I'd suggest to start submitting patches, with the goal of minimizing
->>> the scope of changes. Sometimes that may mean expanding the scope of
->>> locks, sometimes it may mean converting macros to functions. When
->>> converting to functions, it doesn't have to be inline functions: I'd
->>> leave that up to the compiler to decide. None of that code is performance
->>> critical.
->>>
->> Actualy, that makes me wonder if it would make sense to introduce
->> subsystem-level locking. We could introduce a lock in struct
->> hwmon_device_attribute and lock it whenever a show or store function
->> executes in drivers/hwmon/hwmon.c. That would only help for drivers
->> using the _with_info API, but it would simplify driver code a lot.
->> Any thoughts on that ?
+../drivers/platform/x86/amd/amd_isp4.c: In function 'is_isp_i2c_adapter':
+../drivers/platform/x86/amd/amd_isp4.c:154:35: error: invalid use of undefined type 'struct module'
+  154 |         return !strcmp(adap->owner->name, "i2c_designware_amdisp");
+      |                                   ^~
 
-Hi,
+To fix this issue, need to make changes both in platform and i2c driver modules.
 
-i am against adding a subsystem lock just to work around buggy drivers. Many drivers
-should use fine-grained locking to avoid high latencies when reading a single attribute.
+* In the amd_isp4 x86/platform driver, replace 'adap->owner->name' with 'adap->name', this removes
+the hard dependency on 'struct module'.
+* In i2c amdisp driver, initialize unique name to i2c adapter and also make a change in
+i2c-designware-common to avoid overwriting with generic name when adap->name[] is already set.
 
-Thanks,
-Armin Wolf
+---
 
-> Hi Guenter,
->
-> Thanks for your quick and insightful feedback!
->
-> I agree with your suggestion. Adding a note to
-> Documentation/hwmon/submitting-patches.rst about avoiding calculations
-> in macros is also a great idea to prevent this class of bugs in the
-> future.
->
-> Regarding your thoughts on subsystem-level locking, it sounds like a
-> promising approach to simplify the drivers using the _with_info API.
-> As you mentioned, some drivers don't use this API, so they would still
-> require manual fixes.
->
-> For the subsystem-level lock itself, I was wondering if a read-write
-> semaphore might be more appropriate than a standard mutex. This would
-> prevent a single show operation from blocking other concurrent reads.
-> I'm not entirely sure about all the implications, but it might be
-> worth considering to maintain read performance.
->
-> Thanks again for your guidance.
->
-> Best regards,
-> Gui-Dong Han
->
+Changes v2 -> v3:
+
+* Update commit text for patch 1/3
+
+
+Changes v1 -> v2:
+
+* Replace snprintf with scnprintf
+* Add new isp4 specific misc header file to include the adapter name
+* Remove 'Fixes' and 'Link' tags from i2c patches
+
+---
+
+
+Pratap Nirujogi (3):
+  i2c: designware: Initialize adapter name only when not set
+  i2c: amd-isp: Initialize unique adpater name
+  platform/x86: Use i2c adapter name to fix build errors
+
+ drivers/i2c/busses/i2c-designware-amdisp.c |  2 ++
+ drivers/i2c/busses/i2c-designware-master.c |  5 +++--
+ drivers/platform/x86/amd/amd_isp4.c        |  3 ++-
+ include/linux/soc/amd/isp4_misc.h          | 12 ++++++++++++
+ 4 files changed, 19 insertions(+), 3 deletions(-)
+ create mode 100644 include/linux/soc/amd/isp4_misc.h
+
+-- 
+2.43.0
+
 
