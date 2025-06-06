@@ -1,199 +1,208 @@
-Return-Path: <linux-kernel+bounces-675853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBBCAD03D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:19:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D170BAD03D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A89D53B1215
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA4D3A3D67
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7218645009;
-	Fri,  6 Jun 2025 14:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8C51311AC;
+	Fri,  6 Jun 2025 14:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1iVkK0L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UmOUUv44"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47211863E;
-	Fri,  6 Jun 2025 14:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF0527468
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 14:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749219539; cv=none; b=I+4hp1Zp9o+MQXQL45KNPum1YsytffTkWqhS73HaZDm7NlAZUXgjMyn9n6PBMnzhm8JZkhenFjfzrflEk0Ej5oKNOxGGOy5Kg+qlqOtNEwYqNdrInCIdA4uNhi2ZYDZBKIQfYq+S2t/AxP5EOaMMTrliz00PwgvoM41NMMhzDI0=
+	t=1749219641; cv=none; b=bdy0P7oQ6W1jXSf0Xbvm+y+iMvWQf5YzrK7i7bepdEwV82fsLy1Lx2MDdAb0dI9J7e7x+9qMupPkkqy+zCk8BoUlBWVOb+AGBRTRjDwb3ZHT+WJJJ66cCo2KIf8jkEfp+y+b2yBOTFvCye2MpBNto0wGVQOOP83dpRwozJHGmyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749219539; c=relaxed/simple;
-	bh=pkkL6mHI4nb2yOPPIzaWJ0j+YolfgGRBjMLR/Ejsq4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+VugrtaKAFgzc3sTh0xO2cWFWoIVac7TkBIxGboopEGAMwWmptYC1ydO3XU9iZKvW2FEFo0fd7ENVWAzwmyfo8vmzWiIA3ol3S7AskF75/idkktgcA5nATvP4httrxNbWk2aVpnAQeGod7frj/q82Fm/VkqAcm647y4npdoTqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1iVkK0L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189F6C4CEEB;
-	Fri,  6 Jun 2025 14:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749219539;
-	bh=pkkL6mHI4nb2yOPPIzaWJ0j+YolfgGRBjMLR/Ejsq4c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j1iVkK0L7Ccl0msF0tGTZuRrE0YFQXXe2rKPaZuw5DZ2YNA+a+kUq7Eq8qTdm+mnK
-	 TUDRDRhqGdVRkT/3RGndJ+nau61as9MGRgXpagFiyu0+2LicgiTrZs3nM6GYd5d9rS
-	 JBCIv4OXDINGrbCYKC44oGkzGCewPxGLzi1AfGAdSGS3WPvpeRImIgeJnWkEXoirVW
-	 5djXzYxSQTlNAUt3/60Kg18rYdbzah5FShiuC+RQhD/npg/Uibembo3fxvM7OEVKh+
-	 ucDO4f3PMzVzoPE88njq5syfEKtRFjeePyv1JshnTawAkYDSGkji3qKooQxlwWlGgK
-	 et2VhhKkPV1Zg==
-Date: Fri, 6 Jun 2025 09:18:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-Cc: devicetree@vger.kernel.org, jonathan.cameron@huawei.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxarm@huawei.com, mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com, krzk@kernel.org,
-	dianders@chromium.org, catalin.marinas@arm.com,
-	suzuki.poulose@arm.com, mike.leach@linaro.org,
-	james.clark@linaro.org, linux-perf-users@vger.kernel.org,
-	coresight@lists.linaro.org, gshan@redhat.com, ruanjinjie@huawei.com,
-	saravanak@google.com
-Subject: Re: [PATCH v3 7/7] of: of_cpu_phandle_to_id to support SMT threads
-Message-ID: <20250606141857.GA1476878-robh@kernel.org>
-References: <20250512080715.82-1-alireza.sanaee@huawei.com>
- <20250512080715.82-8-alireza.sanaee@huawei.com>
+	s=arc-20240116; t=1749219641; c=relaxed/simple;
+	bh=OZrzbP1SbRGVb+WCBZuIR/Xx/XISjeOLbhSk+S2W58Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HhMGEgyowVXKFrM2tnqvnGUeCcnrgLG88LrxFUZT1x/yMmLD1nGmlDKVcVd0zGPt+BRP10ZnrSpNufBawFtHbLE66ZJetT6AaQ4BdTT++QS7EJkf5zsktXQaebdNA0ZqneSQOvKpbewrH4LDd/sdifdBYTwp3E7fCuPzRnAWn3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UmOUUv44; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so28022495e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 07:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749219636; x=1749824436; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JjGat8Y0B+/GQXbzYuSVj2PQ8u5SUEo0nANMq38jBNs=;
+        b=UmOUUv449ZyMaqDfiJp/kfQVa3KlZ4Mfm+GHWHmAg5mvwjEj6CPFOMgQ7nwKflJV30
+         nvzy6WzssR+1wytBI9Ox4PH+TT46Ai9Ro7yftLqORivvWTlRW1ne7g+Em6oF2y54weHD
+         124uvlTxfodVPb7kgI2hiISVNd8N6A98OIxnitemKBIztrFQZE3tPrGR2/wqoahSImrL
+         ZgbJ6F/aJvcM5pYGCxooGDfHbRDGm0Bh3IVjhZxGLvFZ9PiIqx9RRl/m4C3/+MwIkooQ
+         cnkPxmLeO37IzQrgUoUrAp4uOpGeuGJHdWNmAeDIrYz6Tus5Mz2fLI1a1lq27YmQsfDG
+         BWpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749219636; x=1749824436;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JjGat8Y0B+/GQXbzYuSVj2PQ8u5SUEo0nANMq38jBNs=;
+        b=b5CupFB7uG/j25p9qIhbgobgSsv+jsf/5LkVsiDrn7LDLAoH6biCFmlujIjcwXfWmV
+         12LlFh0SlPgz0pZziyN59Bu1Uta57NNQh5+54zRi3cvsriPpGkFZL4uvu/efzpZoq0e7
+         hzdBJEuzmU9mSR9QcN6oM+qnn7K5CyM8kZaHc2r/8ZibdAv5QO+baCgeHM653jsaGnMG
+         97oTsqGUwGtta7m5kAYQ859Kw80hZNQCz557rYcSNHXfhKnureTRevb+WA4YL5+CjmYl
+         EhQ8EUfYQywVw4zTn8dwISE3C/+izoUmQYzBOn+Z8fAdP6r4IQkF/OcotbTULwyUsyu+
+         BDJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTJAMp+HIx3QXOhi7sRjr9IIdYrJU+xOio/WT7heLnVB1uz2mB0ZO5ebzBY3TydhfQfJQrefPK7G9GH7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt3zNhiNuB/IDi1AHyvnyIBwJc5U29845OXA1KfABMvcFoddTf
+	c2HCZlHg+LGahDFFgXNmHye7duxaWCGZlgZTf8gviIQK8ZUtpgDV22v6BNtoiUr29ck=
+X-Gm-Gg: ASbGncsU9fO7B49KT/uabI0jC4HU5fCCRwtAMB7BlMXAqZHbr0PnTDquz2mmBETKAuq
+	qH8mGkV4rZf8U35C3Jk7gEDPLogs1XQMPS3q1pK237Rk1wrFEM+y2spAorivAnoMP5xfOvSrBgo
+	UCyIRZ9uttyqF1HRDb5/96xnfhhdY/aW+uwg0R+/jF1rYm49VFXnqGmZhZpLQyyC2xDxg/Co8Ty
+	0gZTYpfztJjzWalWa/rBCaaS27IxTFVcSqXpNPov1t+VhAofhMCJQ/1CJ6Ok77hQ9yiRNXGPATH
+	GsLB724vsLzZWwqo01LCeZuiM8k/aINCGjONoKVtDUDYgyLCm8oVd7Koq27Y1E++XQJnMtRPjj+
+	FIG+QmI8XmYq6c1x6AZo8r4KMI6uIJmMQIJ9Z/ffmjQ==
+X-Google-Smtp-Source: AGHT+IGAmJ6OQn+Rk5+zosv7byWwapXctFy1BWUaDJa55qiK+0N+TiLKkkIXrOnKe/WuXhNlWgKrQQ==
+X-Received: by 2002:a05:600c:3492:b0:440:6852:5b31 with SMTP id 5b1f17b1804b1-45201391186mr44123055e9.10.1749219635948;
+        Fri, 06 Jun 2025 07:20:35 -0700 (PDT)
+Received: from [192.168.0.2] (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45213754973sm25686345e9.35.2025.06.06.07.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 07:20:35 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v9 0/7] iio: adc: add ad7606 calibration support
+Date: Fri, 06 Jun 2025 16:19:15 +0200
+Message-Id: <20250606-wip-bl-ad7606-calibration-v9-0-6e014a1f92a2@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250512080715.82-8-alireza.sanaee@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOP4QmgC/43SwWoDIRAG4FcJnmsZR9fRnPoepQd1tRHSbNgN2
+ 4aQd+9sLlnKIj3+ynzKz9zElMeaJ7Hf3cSY5zrV4cTBv+xEOoTTZ5a15ywQsAODXn7Xs4xHGXq
+ yYGUKxxrHcOEpiRC0t8GC7lDw/HnMpf487PcPzoc6XYbx+nhqVsvpf9RZSZA5mt44VFERvsVwX
+ a7zaxq+xALP+MQ6wBaGjCkysYdQwKm4gek1ZluYZszmSNFmQg20gZk15lqYYcyroAs6Tdlu/ax
+ bYarZWceYgc6URMkX3W9gdoVhszO7YI6iB6N1H2ADozXW7IwYi6wBYsrK+w3MPTHepRbmGENNK
+ pMCV/Tf1bjf779NyXBC4AIAAA==
+X-Change-ID: 20250429-wip-bl-ad7606-calibration-20a396a60352
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4039;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=OZrzbP1SbRGVb+WCBZuIR/Xx/XISjeOLbhSk+S2W58Y=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYshw+vHMaM/+/17cT3Xklqiwa3EGrC55kt28KidmzyQ3I
+ eOcUImsjlIWBjEuBlkxRZa6xAiT0NuhUsoLGGfDzGFlAhnCwMUpABN5uJqRoedd0cojHl2xb8oD
+ zpy4VH7L92pY0lr15JJI98ZoT+nPWYwMpwKDQx4KyniXHuR6eWb9os9lquLnxZ7Mzl3mb3w8Wle
+ XAQA=
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-On Mon, May 12, 2025 at 09:07:15AM +0100, Alireza Sanaee wrote:
-> Enhance the API to support SMT threads, this will allow sharing
-> resources among multiple SMT threads.
-> 
-> Enabled the sharing of resources, such as L1 Cache and clocks, between
-> SMT threads. It introduces a fix that uses thread IDs to match each CPU
-> thread in the register array within the cpu-node. This ensures that the
-> cpu-map or any driver relying on this API is fine even when SMT threads
-> share resources.
-> 
-> Additionally, I have tested this for CPU based on the discussions in
-> [1], I adopted the new cpu-map layout, where the first parameter is a
-> phandle and the second is the local thread index, as shown below:
-> 
->     core0 {
->       thread0 {
->         cpu = <&cpu0 0>;
->       };
->       thread1 {
->         cpu = <&cpu0 1>;
->       };
+Add gain, offset and phase (as a delay) calibration support, for
+ad7606b, ad7606c16 and ad7606c18.
 
-I think the thread nodes should be omitted in this case.
+Calibration is available for devices with software mode capability. 
 
->     };
-> 
-> Also, there are devices such as below that are a bit different.
-> 
->     arm_dsu@0 {
->       compatible = "arm,dsu";
->       cpus = <&cpu0 &cpu1 &cpu2 &cpu3>;
->     }
-> 
-> In these cases, we can also point to a CPU thread as well like the
-> following:
-> 
->     arm_dsu@0 {
->       compatible = "arm,dsu";
->         cpus = <&cpu0 5 &cpu1 9 &cpu2 1 &cpu3 0>;
+Offset and phase calibration is configurable by sysfs attributes, while
+gain calibration value in ohms must match the external RFilter value,
+when an external RFilter is available, so implemented through a specific
+devicetree "adi,rfilter-ohms" property.
 
-The purpose of 'cpus' properties is to define CPU affinity. I don't 
-think the affinity could ever be different for threads in a core.
+This patchset depends on:
+https://lore.kernel.org/linux-iio/20250505131544.0a7477a2@jic23-huawei/
 
-And cpu1 having 10 threads is nonsense.
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+Changes in v9:
+- add patch 6/7 changing chan_scale to a more generic chan_info, 
+- parse gain fdt property in existing function, to reduce code.
+- Link to v8: https://lore.kernel.org/r/20250603-wip-bl-ad7606-calibration-v8-0-2371e7108f32@baylibre.com
 
-Most cases of 'cpus' (and 'affinity') lookups and then callers of 
-of_cpu_node_to_id() ultimately just want to set a cpumask. So we should 
-provide that rather than opencoding the same loop everywhere.
+Changes in v8:
+- fix bug related to wrong calib gain setup,
+- fix return value on wrong "reg" read from fdt on calib setup,
+- fix commit messages/titles,
+- add new function to write calib gain on ADC registers after reset.
+- Link to v7: https://lore.kernel.org/r/20250526-wip-bl-ad7606-calibration-v7-0-b487022ce199@baylibre.com
 
->     }
-> 
-> It should be possible to know how many arguments a phandle might
-> require, and this information is encoded in another variable in the dt
-> called #cpu-cells in cpu node.
-> 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
-> 
-> [1] https://lore.kernel.org/devicetree-spec/CAL_JsqK1yqRLD9B+G7UUp=D8K++mXHq0Rmv=1i6DL_jXyZwXAw@mail.gmail.com/
-> ---
->  drivers/of/cpu.c | 41 +++++++++++++++++++++++++++++++++--------
->  1 file changed, 33 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/of/cpu.c b/drivers/of/cpu.c
-> index fba17994fc20..cf54ef47f029 100644
-> --- a/drivers/of/cpu.c
-> +++ b/drivers/of/cpu.c
-> @@ -189,16 +189,41 @@ int of_cpu_phandle_to_id(const struct device_node *node,
->  			 struct device_node **cpu_np,
->  			 uint8_t cpu_idx)
->  {
-> +	bool found = false;
-> +	int cpu, ret = -1, i, j;
-> +	uint32_t local_thread, thread_index;
-> +	struct device_node *np;
-> +	struct of_phandle_args args;
-> +	static const char * const phandle_names[] = { "cpus", "cpu" };
-> +	static const char * const cpu_cells[] = { "#cpu-cells", NULL };
-> +
->  	if (!node)
-> -		return -1;
-> +		return ret;
->  
-> -	*cpu_np = of_parse_phandle(node, "cpu", 0);
-> -	if (!*cpu_np)
-> -		*cpu_np = of_parse_phandle(node, "cpus", cpu_idx);
-> -			if (!*cpu_np)
-> -				return -ENODEV;
-> +	for (i = 0; i < ARRAY_SIZE(phandle_names); i++) {
-> +		for (j = 0; j < ARRAY_SIZE(cpu_cells); j++) {
-> +			ret = of_parse_phandle_with_args(node, phandle_names[i],
-> +							 cpu_cells[j], cpu_idx,
-> +							 &args);
-> +				if (ret >= 0)
-> +					goto success;
-> +		}
-> +	}
->  
-> -	return of_cpu_node_to_id(*cpu_np);
-> +	if (ret < 0)
-> +		return ret;
-> +success:
-> +	*cpu_np = args.np;
-> +	thread_index = args.args_count == 1 ? args.args[0] : 0;
-> +	for_each_possible_cpu(cpu) {
-> +		np = of_get_cpu_node(cpu, &local_thread);
-> +		found = (*cpu_np == np) && (local_thread == thread_index);
-> +		of_node_put(np);
-> +		if (found)
-> +			return cpu;
-> +	}
-> +
-> +	return -ENODEV;
->  }
->  EXPORT_SYMBOL(of_cpu_phandle_to_id);
->  
-> @@ -206,7 +231,7 @@ EXPORT_SYMBOL(of_cpu_phandle_to_id);
->   * of_get_cpu_state_node - Get CPU's idle state node at the given index
->   *
->   * @cpu_node: The device node for the CPU
-> - * @index: The index in the list of the idle states
-> +g* @index: The index in the list of the idle states
+Changes in v7:
+- Fix each wrong commit desc. occurence related to convdelay.
+- Fix ABI documentation with better words.
+- Fix wrong comments in driver source code.
+- Add r_gain default before reading the fdt value.
+- Link to v6: https://lore.kernel.org/r/20250522-wip-bl-ad7606-calibration-v6-0-487b90433da0@baylibre.com
 
-Oops!
+Changes in v6:
+- exit for error in case of fdt that breaks the dt_schema,
+- add (5/6) patch to fix the above on older code too, 
+- Link to v5: https://lore.kernel.org/r/20250519-wip-bl-ad7606-calibration-v5-0-4054fc7c9f3d@baylibre.com
 
->   *
->   * Two generic methods can be used to describe a CPU's idle states, either via
->   * a flattened description through the "cpu-idle-states" binding or via the
-> -- 
-> 2.34.1
-> 
+Changes in v5:
+- fix tab/spaces wrong formatting on ABI doc (1/5),
+- fix description in ABI doc (1/5),
+- fix code multiline alignments (3/5),
+- fix calibration offset calculation as oneliner expression (3/5), 
+- Link to v4: https://lore.kernel.org/r/20250508-wip-bl-ad7606-calibration-v4-0-91a3f2837e6b@baylibre.com
+
+Changes in v4:
+- fix ad7606_chan_calib_gain_setup appropriately to be called once.
+- Link to v3: https://lore.kernel.org/r/20250506-wip-bl-ad7606-calibration-v3-0-6eb7b6e72307@baylibre.com
+
+Changes in v3:
+- fix dt_bindings,
+- change sysfs calib_delay to convdelay,
+- fix sysfs documentation accordingly,
+- used u32 for reg and r_gain,
+- used DIV_ROUND_CLOSEST for setting r_gain,
+- minor syntax fixes,
+- Link to v2: https://lore.kernel.org/r/20250502-wip-bl-ad7606-calibration-v2-0-174bd0af081b@baylibre.com
+
+Changes in v2:
+- change phase_delay to calib_delay,
+- fix dt_bindings,
+- fix gain calibarion fdt parsing,
+- fix ad7606c-18 calib offset range,
+- fix calib offset calculation,
+- fix calib gain range,
+- Link to v1: https://lore.kernel.org/r/20250429-wip-bl-ad7606-calibration-v1-0-eb4d4821b172@baylibre.com
+
+---
+Angelo Dureghello (7):
+      Documentation: ABI: IIO: add new convdelay documentation
+      iio: core: add ADC delay calibration definition
+      iio: adc: ad7606: add offset and phase calibration support
+      dt-bindings: iio: adc: adi,ad7606: add gain calibration support
+      iio: adc: ad7606: exit for invalid fdt dt_schema properties
+      iio: adc: ad7606: rename chan_scale to a more generic chan_info
+      iio: adc: ad7606: add gain calibration support
+
+ Documentation/ABI/testing/sysfs-bus-iio            |  24 ++
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  29 ++
+ drivers/iio/adc/ad7606.c                           | 351 ++++++++++++++++-----
+ drivers/iio/adc/ad7606.h                           |  22 +-
+ drivers/iio/industrialio-core.c                    |   1 +
+ include/linux/iio/types.h                          |   1 +
+ 6 files changed, 347 insertions(+), 81 deletions(-)
+---
+base-commit: 351e9e8549a49300e674fc562b4b2a7e4bd74a66
+change-id: 20250429-wip-bl-ad7606-calibration-20a396a60352
+
+Best regards,
+-- 
+Angelo Dureghello <adureghello@baylibre.com>
+
 
