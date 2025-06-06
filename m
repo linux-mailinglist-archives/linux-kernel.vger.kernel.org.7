@@ -1,110 +1,145 @@
-Return-Path: <linux-kernel+bounces-675477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB8ACFE47
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:28:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA2EACFE51
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E27CC3A4629
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:28:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6ED7AAF68
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE4A284B53;
-	Fri,  6 Jun 2025 08:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4612857F1;
+	Fri,  6 Jun 2025 08:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlbGiJC9"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmgxgmzJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4999283FE0
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 08:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D832857DE;
+	Fri,  6 Jun 2025 08:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749198527; cv=none; b=eD82P0KC4Q1Z/AkBZXfr8MRTERhWDXzTkHv09Qn9ZpVUYYvkI2SShCLwUCIHUMpPihhVZstx/MrFBrZ9qtgXrSBxzhUD9vFHahDoCAOwmt0cYqyRCNPWJOe0ZyZhyA+JdF5N13NrdMDZy0Wz9LR5jX7o99JTMZxS5z4jFmDH18M=
+	t=1749198590; cv=none; b=VU/BVgvVV7zL1BHrSZef7GsZyS+kqthlqoLxwrF4XZ42FLrrkTXEiCCSi0aNlrAaN2Bt1RoKCyfKz30OwAEvxy485jr0DPtmqXNbRoJ2cqsw7NeLgqGExqg4poXdnbGc/6O5lvMlwg1SHAf9UsK2m0ynJAi7k91nZnPnGI27yp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749198527; c=relaxed/simple;
-	bh=PAaodisFRp8BXNshl8hjloIjaJQDtSt/c9gq0ObNylk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nO4vasQ5ct5/5hAAvDI36phyUCB0YRWkHB/sFym2QMSMw12eqeSYq01ZeEZk430PLs12XUP0+cQecrESBj8XqvqHT8Zmfqssw1EPDZwE5JjZPxjk0ZkdXC/pcwk3fYZySqdlqeZH8dugyZH8bEq36aNgARhJM7qptiyucsfFCE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XlbGiJC9; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=3+Pbk+AMqlQcQg0IkPAdVHTlxrIIFf5Dha1LbvjUbTc=; b=XlbGiJC9RQz1KM7Ij82rDYp0z9
-	LD+AZyjrmmvR+Iw7srmbzOykDg4dmR59qkjiXx1PPtvzGmt8SZiBmcBvPsJG5wTeK2tYYN89l3sG8
-	KNvzYW771h9vCw8GyQrxNBE5uhwloCna//c1+lQcOV3aLi2vozired3CEL2KK0ShK6rscjf2x5OlG
-	JyqAgHATRtsrux9WnKO6RHkQOVsOYSo4UqxQZt9Pvp8mgHyS7IoJQK1csbmZx0PSNJsNr4DQV/DXZ
-	RQFxVxiXwxeaf7C0gTPk3oAn7B+YCGtudDz7/OIjZAW3vKl2jpGHLMZzlyVF7DsA4UBT71yJ9dzMf
-	LogbYWMg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uNSRH-00000001FeD-3qdc;
-	Fri, 06 Jun 2025 08:28:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EF72130078B; Fri,  6 Jun 2025 10:28:34 +0200 (CEST)
-Date: Fri, 6 Jun 2025 10:28:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kuyo Chang <kuyo.chang@mediatek.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/1] sched/core: Fix migrate_swap() vs. hotplug
-Message-ID: <20250606082834.GM30486@noisy.programming.kicks-ass.net>
-References: <20250602072242.1839605-1-kuyo.chang@mediatek.com>
- <20250605100009.GO39944@noisy.programming.kicks-ass.net>
- <8e1018116ad7c5c325eced2cb17b65c73ca2ceca.camel@mediatek.com>
+	s=arc-20240116; t=1749198590; c=relaxed/simple;
+	bh=p58weIsFCfwQqxGp6yxoipCZRt8rQHLF3ZORFLs038A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V09fwCRZDz56j0ImcSFmDpjtAFpINc2lQ1zOqe0SJDi4BJbGCv/VDyGLL2zCdKjQ1fXI02ucOf3DEN6oy08+O+2R9mRpkjOSve75Z8rCYUcDm+YXdLeL2tlJjlx5TE0/2w1bKseTUEgQvmGtrkyV1+A3u5hIkv11G6+HDO1nPek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmgxgmzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DB4C4CEEB;
+	Fri,  6 Jun 2025 08:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749198589;
+	bh=p58weIsFCfwQqxGp6yxoipCZRt8rQHLF3ZORFLs038A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BmgxgmzJMieXblyWPM7AEFO2QKm7H8LwOTVN2wP8L+JXxsv2Gxw4wAkSdxsDgm0oi
+	 OTBkdjktdeTWwds2N7pSMAt0pGeYSujD7jdsOVfY8t1hvXSMaDQ+VdycebFKPVMaPS
+	 T9VGzouWK3obIAaKTaAW7ZtCbTItD4uX4aWnj/PFK+1dncyrq6Gbm++SHu3nIt8sge
+	 6AqnLfHgQ7nic2fMiIexsMlIfCOjmQYt/6ILyRLxborftG3KXqsrYfIGZDZuBahyKR
+	 ZJ9+GuYgO9VXZ/dGDxGfb+PzeXUat9yRlCdCNYGlQ5AbOa4Rj2/HMOGe6fSrPsd0h6
+	 YmfDarRTBtS9A==
+Message-ID: <2b520ae5-eb0d-40eb-ba73-cc18759f33b9@kernel.org>
+Date: Fri, 6 Jun 2025 10:29:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e1018116ad7c5c325eced2cb17b65c73ca2ceca.camel@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: spi: Add VIA/WonderMedia serial flash
+ controller
+To: Alexey Charkov <alchark@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250510-wmt-sflash-v1-0-02a1ac6adf12@gmail.com>
+ <20250510-wmt-sflash-v1-1-02a1ac6adf12@gmail.com>
+ <20250514204159.GA2988411-robh@kernel.org>
+ <CABjd4Yz3w75PtkRk_edzD5yf6b2xPuf20gopbm8ygddgCBfpkw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CABjd4Yz3w75PtkRk_edzD5yf6b2xPuf20gopbm8ygddgCBfpkw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 06, 2025 at 11:46:57AM +0800, Kuyo Chang wrote:
-
-> Thank you for your patch.
-> I believe this patch also effectively addresses this race condition.
-> I will queue it in our test pool for testing.
-
-Thank you; I shall await the results!
-
-
-> > @@ -101,12 +98,12 @@ static bool cpu_stop_queue_work(unsigned int
-> > cpu, struct cpu_stop_work *work)
-> >         raw_spin_lock_irqsave(&stopper->lock, flags);
-> >         enabled = stopper->enabled;
-> >         if (enabled)
-> > -               __cpu_stop_queue_work(stopper, work, &wakeq);
-> > +               __cpu_stop_queue_work(stopper, work);
-> >         else if (work->done)
-> >                 cpu_stop_signal_done(work->done);
-> >         raw_spin_unlock_irqrestore(&stopper->lock, flags);
-> > 
-> > -       wake_up_q(&wakeq);
-> > +       wake_up_process(stopper->thread);
+On 15/05/2025 21:50, Alexey Charkov wrote:
+>>> +
+>>> +  "#address-cells":
+>>> +    const: 1
+>>> +
+>>> +  "#size-cells":
+>>> +    const: 0
+>>
+>> This follows the SPI binding, right? Drop these 2 and add a $ref to
+>> spi-controller.yaml.
 > 
-> BTW, should we add enabled check here?
-> 	if (enabled) 
-> 		wake_up_process(stopper->thread);
+> Need some advice here. While this controller speaks SPI protocol to
+> its connected flash chips, it's a special-purpose thing that doesn't
+> expose much SPI functionality to the outside world, nor can it drive
+> any SPI devices other than SPI NOR flash. Does that still qualify as
+> an SPI controller as far as the bindings are concerned?
+> 
+> Happy to reference the spi-controller.yaml binding if so.
 
-Ah yes. Spuriously waking the stopper thread is harmless, but wasteful.
+SPI NOR flashes are still child devices of an SPI controller. You can
+look at other examples - aren't they all using spi-controller? Why this
+would be different? Unless you found some cases that are different, but
+then which ones?
 
-> >         preempt_enable();
-> > 
-> >         return enabled;
+
+
+Best regards,
+Krzysztof
 
