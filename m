@@ -1,361 +1,181 @@
-Return-Path: <linux-kernel+bounces-676017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE57AD0684
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:19:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CFBAD0688
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36F33B1FF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978F617B36A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFC4289838;
-	Fri,  6 Jun 2025 16:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7747289E0E;
+	Fri,  6 Jun 2025 16:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvfOMurp"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2WbI4JF"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8287628A1CE;
-	Fri,  6 Jun 2025 16:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BF21DE3C7;
+	Fri,  6 Jun 2025 16:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749226742; cv=none; b=Q02eMB5WQN/efE4OvnIR6SUSknxpogN25O/LTGyJRF2VpzShogqHe4jgg+dWTGTPBoTVZWJMaWlzh/VMlfTtSHl0Uqq585T3ct75dNKNss/ZizMd/qghHzhRI8g1FFMDyezgnU+AAzA8KKdfQpW374yMYQX9vQgvYWcl1w+3OOU=
+	t=1749226883; cv=none; b=S2lJiVMbOKv6mTtm5WSfTQBgxbxgLF4i0ZUiUqKbXuqpvdB4ekpwWgKPAsOaHBG1ReLOEi4TL/w9Q+QqwKgNs+eFxVk0ukW74yEcPRuMptv47Vdo05pNP5AFvVCVHkR3zLoSWakkwwyffe5zHnmFMv+oPPi7a19JIBX9HhKUhFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749226742; c=relaxed/simple;
-	bh=lLb+jNOrtfcqwgNscb056qIBxvga8xPQUWy2hvwYULk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kv3YVW3lgYZJoyRLRMTuhllY5n85asDFThUerTbmrK3XJi4l+pSx4jnhC3LEgUnLBOrVwjXpf4Ed/frHCD9IxXlGvHNXLbp3chCswOsrE27Vx9KmgX832ohhJfKxV0xDEZ7T+8xZdg7gvg9CsTgwOgdgAu1RTjU1S6ZazkmGXmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvfOMurp; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1749226883; c=relaxed/simple;
+	bh=SsABznqS+74Ku7nIalgWQ6r5XRamMp7UZkh/psf+9Kw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDYq6o5CmK9pKW6vv35JBBnTBhpVxDlxErkU0QzzRhFyq+orgWNbXtBtwCHrVSLzuqyEjhs5w7E6CkSOaFsqNM79uzyRlUBUarmL9lzpdMWkNd/N9vVO+HwEFEj8MmNSoPcHahRQL4km+nDpZQ4FnOmLya7QWu61WUhaeyoMvJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N2WbI4JF; arc=none smtp.client-ip=209.85.161.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso1912247b3a.2;
-        Fri, 06 Jun 2025 09:19:00 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-60ef6bf2336so1651651eaf.0;
+        Fri, 06 Jun 2025 09:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749226740; x=1749831540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749226881; x=1749831681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WmddC+fvugcNh6NPL5Z6V5D8fMLub+35xnJ4f4NuuCY=;
-        b=JvfOMurpwNZkdo5/SkBpxrhg7n1NReDOujg2lnxmifhJ3zThO6fnSOiZv2L1KmTO13
-         4OLlmAWhz9GmC7T/RRMRQetl5UsWT8G0AGzYDEUAbN5NIqOprard2nTtVVAwvGzU4lFI
-         8q43M5m1jpioPfu0AxgmFmi6ieFiz5aIcBdkiDcbnww7/CO7bA6SPR5gMhO9oaX2DYDf
-         /UXxFwiVSELirSkpMD2oKWdvJDJTZrpOYS3zxbua0mj/SgHKLdkOZhpzU8XmjKd4+7He
-         aVDdo2nHURy7kVVJJpOO4q5hyO/y/oo3Kcfx51jhm5a/CXoi/r6uVfKyFMDxGUtfkyHZ
-         sNgA==
+        bh=0JA6lc95yGfo9qkQDGqCiJRxdLRQP3UK8ri3kJPzAPU=;
+        b=N2WbI4JF3w3EA9UJgkWvMFTQ2bVl8oNgttV8Ej4S5RBZIN2vdhkisTGaty8wngUiY4
+         LHEeAltvtAHfRb570Y4bo9HG5Th3zs6vGtF+imAzVX9RZZ7XATusrcNJykTz8cbhjR0R
+         QzQoyRe0fYHZ4YmMANUUcwX5U+gLdB8Gshd5aNTOIoEqHZwVsoTsaNDZBvXKzewCMyhL
+         DY4a4zWiTXxBBXcHCTBPLQtXqwFdxA+1K1AyUURLgjfSl1RuMo8tvuMJGvMcuqq7Myng
+         YQoGcGikfsUb8VNy+L+QTP0IhEOmGUqyFxqGsA8iRzrX1d/gfkMv55nQqlVSqeS9HXtq
+         NQng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749226740; x=1749831540;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749226881; x=1749831681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WmddC+fvugcNh6NPL5Z6V5D8fMLub+35xnJ4f4NuuCY=;
-        b=Rz4/X62ozB8MM0JudsOZETocJ9I3QgwpMvqS2RBHtUQcozIXaKnark066tZeAoAS/E
-         YLBcQMcw3qfz6Hq4rvki1U5dOQqkanR5Lpc+mSXgkLzbAImLiXR3ydtY00VAORcXhf/L
-         yyxnSVYxSXTbqOfvTni5kvLPe2K5uZrDX0wiJBg1yyh/+o6HwAiNExaYkf7e6G4/Hs0H
-         yWpvgzj38R1IzasSLHe+yTJQfkRd9gfP/C/A167aGwcWS5d3OGqYNJYahyWCeQ5cnIT6
-         gejxIACPKUwpVEXPsQvpbn8/jwoXNWvtSD0xER3d45e3h7bYk1v3+JtaFeu2wcUS2h//
-         oDsg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Gr4k06cbg1Etx70if3399gHw4xwo/W5xdvvGy8dv+6qBIKMfX6RC/qJjfUW2Fma27Di0dtlfXAbBRzUu@vger.kernel.org, AJvYcCWQklR7TqNtjESjFp3v13ZpXkv+EbFOMdLm0izv2L8ihr2fn6CjgqkbkaFZB4DKdtWVgGyZM+s3@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg1LqKXP38TQtVk7RJXjurUEc++RVE+tpVi9ZSmYJ/Iby3Ny0x
-	9lKtwMaYAkpNd5UhvunBwrHVM+Ir97bct4c24tqYHcVMEX+bJTe9wRKd
-X-Gm-Gg: ASbGncvpRSHkXfqav0egCunitZ8nsfOmeCw7T18/CN5/pwe0zkc5a29b9TojNGDTurF
-	3AXj/8TBnV1/aimswrA8NfvhiY4EP6fYB/FtEcgl5YDje6l8Ez3UYh50ekYuwhxN8Ni2CK4Dbi8
-	DTYBKCfuMqwZ6Ud2Hq2eOKXYtrHhP886hhIupbcaQST3yGMxR/zMKW9lrpKq9jPn2m3P4hvXjVM
-	wIaRzvk1zvfBa3BaArhGp7dXAdsACLEPnMDmrqNJ1tAt4aEz+r4/1RoCCoR2/UHibWJbb1c3kug
-	/LDADIhjsmCfkUYfWFXUbeY76gxmDeYTqzWeP6Ae/Fz+bwGYvXK023lTph22cA==
-X-Google-Smtp-Source: AGHT+IFcXtPfFGYXvkgSpvJ7vtSOpxnnhRLikBp1U3gJWE6ad36suuVrBjAV85Ov9GEOGtdfNwEpHg==
-X-Received: by 2002:a05:6a00:4646:b0:73e:1566:5960 with SMTP id d2e1a72fcca58-748280ab71bmr6362559b3a.19.1749226739523;
-        Fri, 06 Jun 2025 09:18:59 -0700 (PDT)
-Received: from jemmy.. ([180.172.46.169])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af38353sm1518675b3a.10.2025.06.06.09.18.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 09:18:59 -0700 (PDT)
-From: Jemmy Wong <jemmywong512@gmail.com>
-To: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Waiman Long <longman@redhat.com>,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] cgroup: add lock guard support for others
-Date: Sat,  7 Jun 2025 00:18:41 +0800
-Message-ID: <20250606161841.44354-4-jemmywong512@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250606161841.44354-1-jemmywong512@gmail.com>
-References: <20250606161841.44354-1-jemmywong512@gmail.com>
+        bh=0JA6lc95yGfo9qkQDGqCiJRxdLRQP3UK8ri3kJPzAPU=;
+        b=rP1vvip3dblsHW6GkUewKmPhisPDkuBvyVUnI3Pmx9Cn9Re6cvd3xX6PKh4CAbKMld
+         h5DqjnC0FT/tJqeYRK/nTCZV0Ld8qwCVtTnn2n9ehEcyvxSuvXxw5Vmv7C7n6iwcmDdD
+         nVL97BS+Wt2F4kkOFCPdMsnXhRgaDlYJeY6XBsISGJ74qcPMJBwfYh2m+GflCvLtvR9I
+         S1cHr++mKTHN+UpN1ioXFisfGkbFwcW747yHgf3amDKRlTTUWVuXd8xhvggwXa4+nA7v
+         jwjPBaPww0YIVDnkX88za7I2GtxKpdlPc+8uuJ64G/DrEnVu4CGySgQZG9x8LgVVcOB8
+         q26w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5s0Eu5dOlJdViK1kzl2omw3YNa2ZIkhb56osdPKFhNxQ3W3YBMONou3aGodp23bsms2FQaK+MloRBTVyR@vger.kernel.org, AJvYcCUXKAkAtfzXq4yGta0nBRTH7cwYFzVQC9Buih0EDx1jr+mt4Q9lg9RZSvIRN5h6QwWXTlQ=@vger.kernel.org, AJvYcCUqB29CaP9qPybkSFYFcRB+vxCz+H54n30VAKQjCzfON2ZSnz1NNP9F3wnuAHs9764paf4ZBqxGA185m3D02PyUTQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcdH2KGDlew4zttOokwb7UrRwh+tVSRrdqPpUhI/P0ECpRLZEl
+	lY8BPWHRlJ3F4bsdKBBDDafuAohKMkMrpyvWdPQFY1MFQGCoWpPCZpsu9rlfBd2GQ7ymNa/Ezfj
+	RlPfbiLmnDqI1tOx+yH7QrTZ8QIsyamWNrJIt
+X-Gm-Gg: ASbGnctweFQIPV66/Ddjum8E0w7JzrJnvqC+MtBnaPAsSYcdtoHWnfH/QI2xlNJFztm
+	wIsDbzbzblShzb9PDmZZm4NcKru3VfyAdkXj5uXTo2ZIXgSb/I1ZPxUKUSX8O+rEjc4G7KpCXfR
+	8h5Wtn/Cu9SUFLD3WukDcpgFGhfnpQZDLlqOAqDjbBQw==
+X-Google-Smtp-Source: AGHT+IGCSqQp15n0QAdFL76AqBOrGxXPE6HwOt3EeXCbeyYM1elDNyrslevOvDrZHELS/En4ToKZPvY/UKYPR7KOVsc=
+X-Received: by 2002:a17:90b:2252:b0:311:f684:d3cd with SMTP id
+ 98e67ed59e1d1-313472fcd3dmr7263430a91.12.1749226869675; Fri, 06 Jun 2025
+ 09:21:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <aEMLU2li1x2bAO4w@x1> <20250606161406.GH8020@e132581.arm.com>
+In-Reply-To: <20250606161406.GH8020@e132581.arm.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 6 Jun 2025 09:20:57 -0700
+X-Gm-Features: AX0GCFuUPtZk0JRK5pyxo55eADkqd6qDCZKEMFWm6cVuCiPqwkVJVPXOPFUNfQc
+Message-ID: <CAEf4BzY2UEe9e53Ums=d-mMVgBdc5JnVAboKz1LLmvKRk5O=jA@mail.gmail.com>
+Subject: Re: BTF loading failing on perf
+To: Leo Yan <leo.yan@arm.com>, Lorenz Bauer <lmb@isovalent.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jemmy Wong <jemmywong512@gmail.com>
+On Fri, Jun 6, 2025 at 9:14=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> Hi Arnaldo,
+>
+> On Fri, Jun 06, 2025 at 12:37:55PM -0300, Arnaldo Carvalho de Melo wrote:
+> > root@number:~# perf trace -e openat --max-events=3D1
+> > libbpf: failed to read kernel BTF from '/sys/kernel/btf/vmlinux': -ENOD=
+EV
+> > libbpf: failed to read kernel BTF from '/sys/kernel/btf/vmlinux': -ENOD=
+EV
+> >      0.000 ( 0.016 ms): ptyxis-agent/4375 openat(dfd: CWD, filename: "/=
+proc/6593/cmdline", flags: RDONLY|CLOEXEC) =3D 13
+> > root@number:~#
+> >
+> > openat(AT_FDCWD, "/sys/kernel/btf/vmlinux", O_RDONLY) =3D 258
+> > mmap(NULL, 6519699, PROT_READ, MAP_PRIVATE, 258, 0) =3D -1 ENODEV (No s=
+uch device)
+> > libbpf: failed to read kernel BTF from '/sys/kernel/btf/vmlinux': -ENOD=
+EV
+>
+> Have you included the commit below in the kernel side?
 
----
- kernel/cgroup/cgroup-internal.h |  8 ++--
- kernel/cgroup/cgroup-v1.c       | 11 +++--
- kernel/cgroup/cgroup.c          | 73 ++++++++++++---------------------
- 3 files changed, 35 insertions(+), 57 deletions(-)
+It doesn't matter, libbpf should silently fallback to non-mmap() way,
+and it clearly doesn't.
 
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index b14e61c64a34..5430454d38ca 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -198,8 +198,6 @@ void put_css_set_locked(struct css_set *cset);
- 
- static inline void put_css_set(struct css_set *cset)
- {
--	unsigned long flags;
--
- 	/*
- 	 * Ensure that the refcount doesn't hit zero while any readers
- 	 * can see it. Similar to atomic_dec_and_lock(), but for an
-@@ -208,9 +206,9 @@ static inline void put_css_set(struct css_set *cset)
- 	if (refcount_dec_not_one(&cset->refcount))
- 		return;
- 
--	spin_lock_irqsave(&css_set_lock, flags);
--	put_css_set_locked(cset);
--	spin_unlock_irqrestore(&css_set_lock, flags);
-+	scoped_guard(spinlock_irqsave, &css_set_lock) {
-+		put_css_set_locked(cset);
-+	}
- }
- 
- /*
-diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-index fcc2d474b470..91c6ba4e441d 100644
---- a/kernel/cgroup/cgroup-v1.c
-+++ b/kernel/cgroup/cgroup-v1.c
-@@ -1291,7 +1291,6 @@ struct cgroup *task_get_cgroup1(struct task_struct *tsk, int hierarchy_id)
- {
- 	struct cgroup *cgrp = ERR_PTR(-ENOENT);
- 	struct cgroup_root *root;
--	unsigned long flags;
- 
- 	guard(rcu)();
- 	for_each_root(root) {
-@@ -1300,11 +1299,11 @@ struct cgroup *task_get_cgroup1(struct task_struct *tsk, int hierarchy_id)
- 			continue;
- 		if (root->hierarchy_id != hierarchy_id)
- 			continue;
--		spin_lock_irqsave(&css_set_lock, flags);
--		cgrp = task_cgroup_from_root(tsk, root);
--		if (!cgrp || !cgroup_tryget(cgrp))
--			cgrp = ERR_PTR(-ENOENT);
--		spin_unlock_irqrestore(&css_set_lock, flags);
-+		scoped_guard(spinlock_irqsave, &css_set_lock) {
-+			cgrp = task_cgroup_from_root(tsk, root);
-+			if (!cgrp || !cgroup_tryget(cgrp))
-+				cgrp = ERR_PTR(-ENOENT);
-+		}
- 		break;
- 	}
- 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 46b677a066d1..ea98679b01e1 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -335,28 +335,23 @@ static int cgroup_idr_alloc(struct idr *idr, void *ptr, int start, int end,
- 	int ret;
- 
- 	idr_preload(gfp_mask);
--	spin_lock_bh(&cgroup_idr_lock);
--	ret = idr_alloc(idr, ptr, start, end, gfp_mask & ~__GFP_DIRECT_RECLAIM);
--	spin_unlock_bh(&cgroup_idr_lock);
-+	scoped_guard(spinlock_bh, &cgroup_idr_lock) {
-+		ret = idr_alloc(idr, ptr, start, end, gfp_mask & ~__GFP_DIRECT_RECLAIM);
-+	}
- 	idr_preload_end();
- 	return ret;
- }
- 
- static void *cgroup_idr_replace(struct idr *idr, void *ptr, int id)
- {
--	void *ret;
--
--	spin_lock_bh(&cgroup_idr_lock);
--	ret = idr_replace(idr, ptr, id);
--	spin_unlock_bh(&cgroup_idr_lock);
--	return ret;
-+	guard(spinlock_bh)(&cgroup_idr_lock);
-+	return idr_replace(idr, ptr, id);
- }
- 
- static void cgroup_idr_remove(struct idr *idr, int id)
- {
--	spin_lock_bh(&cgroup_idr_lock);
-+	guard(spinlock_bh)(&cgroup_idr_lock);
- 	idr_remove(idr, id);
--	spin_unlock_bh(&cgroup_idr_lock);
- }
- 
- static bool cgroup_has_tasks(struct cgroup *cgrp)
-@@ -583,20 +578,19 @@ struct cgroup_subsys_state *cgroup_get_e_css(struct cgroup *cgrp,
- 	if (!CGROUP_HAS_SUBSYS_CONFIG)
- 		return NULL;
- 
--	rcu_read_lock();
-+	guard(rcu)();
- 
- 	do {
- 		css = cgroup_css(cgrp, ss);
- 
- 		if (css && css_tryget_online(css))
--			goto out_unlock;
-+			return css;
- 		cgrp = cgroup_parent(cgrp);
- 	} while (cgrp);
- 
- 	css = init_css_set.subsys[ss->id];
- 	css_get(css);
--out_unlock:
--	rcu_read_unlock();
-+
- 	return css;
- }
- EXPORT_SYMBOL_GPL(cgroup_get_e_css);
-@@ -1691,9 +1685,9 @@ static void cgroup_rm_file(struct cgroup *cgrp, const struct cftype *cft)
- 		struct cgroup_subsys_state *css = cgroup_css(cgrp, cft->ss);
- 		struct cgroup_file *cfile = (void *)css + cft->file_offset;
- 
--		spin_lock_irq(&cgroup_file_kn_lock);
--		cfile->kn = NULL;
--		spin_unlock_irq(&cgroup_file_kn_lock);
-+		scoped_guard(spinlock_irq, &cgroup_file_kn_lock) {
-+			cfile->kn = NULL;
-+		}
- 
- 		timer_delete_sync(&cfile->notify_timer);
- 	}
-@@ -4277,9 +4271,9 @@ static int cgroup_add_file(struct cgroup_subsys_state *css, struct cgroup *cgrp,
- 
- 		timer_setup(&cfile->notify_timer, cgroup_file_notify_timer, 0);
- 
--		spin_lock_irq(&cgroup_file_kn_lock);
--		cfile->kn = kn;
--		spin_unlock_irq(&cgroup_file_kn_lock);
-+		scoped_guard(spinlock_irq, &cgroup_file_kn_lock) {
-+			cfile->kn = kn;
-+		}
- 	}
- 
- 	return 0;
-@@ -4534,9 +4528,7 @@ int cgroup_add_legacy_cftypes(struct cgroup_subsys *ss, struct cftype *cfts)
-  */
- void cgroup_file_notify(struct cgroup_file *cfile)
- {
--	unsigned long flags;
--
--	spin_lock_irqsave(&cgroup_file_kn_lock, flags);
-+	guard(spinlock_irqsave)(&cgroup_file_kn_lock);
- 	if (cfile->kn) {
- 		unsigned long last = cfile->notified_at;
- 		unsigned long next = last + CGROUP_FILE_NOTIFY_MIN_INTV;
-@@ -4548,7 +4540,6 @@ void cgroup_file_notify(struct cgroup_file *cfile)
- 			cfile->notified_at = jiffies;
- 		}
- 	}
--	spin_unlock_irqrestore(&cgroup_file_kn_lock, flags);
- }
- 
- /**
-@@ -4560,10 +4551,10 @@ void cgroup_file_show(struct cgroup_file *cfile, bool show)
- {
- 	struct kernfs_node *kn;
- 
--	spin_lock_irq(&cgroup_file_kn_lock);
--	kn = cfile->kn;
--	kernfs_get(kn);
--	spin_unlock_irq(&cgroup_file_kn_lock);
-+	scoped_guard(spinlock_irq, &cgroup_file_kn_lock) {
-+		kn = cfile->kn;
-+		kernfs_get(kn);
-+	}
- 
- 	if (kn)
- 		kernfs_show(kn, show);
-@@ -4987,11 +4978,10 @@ static void css_task_iter_advance(struct css_task_iter *it)
- void css_task_iter_start(struct cgroup_subsys_state *css, unsigned int flags,
- 			 struct css_task_iter *it)
- {
--	unsigned long irqflags;
- 
- 	memset(it, 0, sizeof(*it));
- 
--	spin_lock_irqsave(&css_set_lock, irqflags);
-+	guard(spinlock_irqsave)(&css_set_lock);
- 
- 	it->ss = css->ss;
- 	it->flags = flags;
-@@ -5004,8 +4994,6 @@ void css_task_iter_start(struct cgroup_subsys_state *css, unsigned int flags,
- 	it->cset_head = it->cset_pos;
- 
- 	css_task_iter_advance(it);
--
--	spin_unlock_irqrestore(&css_set_lock, irqflags);
- }
- 
- /**
-@@ -5018,14 +5006,12 @@ void css_task_iter_start(struct cgroup_subsys_state *css, unsigned int flags,
-  */
- struct task_struct *css_task_iter_next(struct css_task_iter *it)
- {
--	unsigned long irqflags;
--
- 	if (it->cur_task) {
- 		put_task_struct(it->cur_task);
- 		it->cur_task = NULL;
- 	}
- 
--	spin_lock_irqsave(&css_set_lock, irqflags);
-+	guard(spinlock_irqsave)(&css_set_lock);
- 
- 	/* @it may be half-advanced by skips, finish advancing */
- 	if (it->flags & CSS_TASK_ITER_SKIPPED)
-@@ -5038,8 +5024,6 @@ struct task_struct *css_task_iter_next(struct css_task_iter *it)
- 		css_task_iter_advance(it);
- 	}
- 
--	spin_unlock_irqrestore(&css_set_lock, irqflags);
--
- 	return it->cur_task;
- }
- 
-@@ -5051,13 +5035,10 @@ struct task_struct *css_task_iter_next(struct css_task_iter *it)
-  */
- void css_task_iter_end(struct css_task_iter *it)
- {
--	unsigned long irqflags;
--
- 	if (it->cur_cset) {
--		spin_lock_irqsave(&css_set_lock, irqflags);
-+		guard(spinlock_irqsave)(&css_set_lock);
- 		list_del(&it->iters_node);
- 		put_css_set_locked(it->cur_cset);
--		spin_unlock_irqrestore(&css_set_lock, irqflags);
- 	}
- 
- 	if (it->cur_dcset)
-@@ -6737,10 +6718,10 @@ void cgroup_post_fork(struct task_struct *child,
- 				 * too. Let's set the JOBCTL_TRAP_FREEZE jobctl bit to
- 				 * get the task into the frozen state.
- 				 */
--				spin_lock(&child->sighand->siglock);
--				WARN_ON_ONCE(child->frozen);
--				child->jobctl |= JOBCTL_TRAP_FREEZE;
--				spin_unlock(&child->sighand->siglock);
-+				scoped_guard(spinlock, &child->sighand->siglock) {
-+					WARN_ON_ONCE(child->frozen);
-+					child->jobctl |= JOBCTL_TRAP_FREEZE;
-+				}
- 
- 				/*
- 				 * Calling cgroup_update_frozen() isn't required here,
--- 
-2.43.0
+We need something like this:
 
+diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+index f1d495dc66bb..37682908cb0f 100644
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@ -1384,12 +1384,12 @@ static struct btf *btf_parse_raw_mmap(const
+char *path, struct btf *base_btf)
+
+        fd =3D open(path, O_RDONLY);
+        if (fd < 0)
+-               return libbpf_err_ptr(-errno);
++               return ERR_PTR(-errno);
+
+        if (fstat(fd, &st) < 0) {
+                err =3D -errno;
+                close(fd);
+-               return libbpf_err_ptr(err);
++               return ERR_PTR(err);
+        }
+
+        data =3D mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+@@ -1397,7 +1397,7 @@ static struct btf *btf_parse_raw_mmap(const char
+*path, struct btf *base_btf)
+        close(fd);
+
+        if (data =3D=3D MAP_FAILED)
+-               return libbpf_err_ptr(err);
++               return ERR_PTR(err);
+
+        btf =3D btf_new(data, st.st_size, base_btf, true);
+        if (IS_ERR(btf))
+
+libbpf_err_ptr() should be used for user-facing API functions, they
+return NULL on error and set errno, so checking for IS_ERR() is wrong
+here.
+
+Lorenz, can you please test and send a proper fix ASAP?
+
+>
+> commit a539e2a6d51d1c12d89eec149ccc72ec561639bc
+> Author: Lorenz Bauer <lmb@isovalent.com>
+> Date:   Tue May 20 14:01:17 2025 +0100
+>
+>     btf: Allow mmap of vmlinux btf
+>
+>     User space needs access to kernel BTF for many modern features of BPF=
+.
+>     Right now each process needs to read the BTF blob either in pieces or
+>     as a whole. Allow mmaping the sysfs file so that processes can direct=
+ly
+>     access the memory allocated for it in the kernel.
+>
+>     remap_pfn_range is used instead of vm_insert_page due to aarch64
+>     compatibility issues.
+>
+>     Signed-off-by: Lorenz Bauer <lmb@isovalent.com>
+>     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+>     Tested-by: Alan Maguire <alan.maguire@oracle.com>
+>     Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>     Link: https://lore.kernel.org/bpf/20250520-vmlinux-mmap-v5-1-e8c941ac=
+c414@isovalent.com
+>
+> Thanks,
+> Leo
 
