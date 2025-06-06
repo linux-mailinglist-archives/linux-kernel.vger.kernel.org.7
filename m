@@ -1,110 +1,171 @@
-Return-Path: <linux-kernel+bounces-675796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031D6AD0304
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1A5AD030B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543FA3B1D60
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6497F189DD66
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990F8288C80;
-	Fri,  6 Jun 2025 13:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B323288C81;
+	Fri,  6 Jun 2025 13:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qq10DXT2"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ZiTrqzJJ"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7479B20330;
-	Fri,  6 Jun 2025 13:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90A028852E;
+	Fri,  6 Jun 2025 13:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749216062; cv=none; b=V09gYCegjAecAepjZhIgLl9IA/C2TYXNsNsIK1W5Aeq1QV2+gLrGHSncGS77YILZOE74gilfXmljcjTF9ZTyrG19LTDgnhGFrjv0Xmkf6KTdYONzOjmYS5p0L30UwvMn6Jk1fXbSHxclSW/KLvSlQAfmkCAJJVtV6/BSxN2cHYs=
+	t=1749216128; cv=none; b=YZNffPTTlgygDIsw5UY/88DTAkuYQWMQZ2ksOkAIkZWE8PTJKaKQrODgrs0LzwCc1oRmg51TBwamM/R7bLEfrz4/aANjCzgmVPZV9inY5ciVAFIPhwUomKpUxxCYMGlCZgo2jK0p6Juii/iumhO4mtE6GyOzxGlmygvUgi2kU5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749216062; c=relaxed/simple;
-	bh=d5xSSZzjIO6YCeawzr4MdDA5aSt61eXqUJbb64Fk4Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8ATWoagFE9dvp+Y6g7S+LmFowIV/JUS+qnokcWdI2D65TTJwq8vlly6rL+CFBo6kOXWKxcPlr4tMFbBTRC8zq/Zbdb5H7/KFsbvvMdKGM7sQwHlLDZyhENe8xSY+NW+MZ3pmiGFMc2XAlQx/Kc6zF3uVeiy3qmhE0XxXyiFFYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qq10DXT2; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O9FE0uB61EEETNdTWzbNvrnPXytymt6dcwtvq6U/pJk=; b=qq10DXT2GTNSGudV/qtRDEQlfe
-	DhgZVYdDQH26c5BDbUntvNfTk0AMNNN5xGgDlZ9dH/Sx41XiJ1ieT7AYvnTTve4AU4oCBuQF9jyQd
-	q6XWBPwWxAk6Jp0Sp6PI4mM9ZPC+CieoW5igq/3W0LNZBKy6BUG+A95PNvHMSWHffELK0a978C+J/
-	nqtO1ZljIE6SBA8cZM81e+RZb8uENAekGG0Zys36cQxaH9UsaeADuo8flKbNPT55UcykrS1gQsE6q
-	gW+DpATLTNQ1/O3TuETXsIcemTUsKG2hwD0iDrQb0M1yBKIYVRgEX2rAJrMafi4dLeQ5fxbzmu+aG
-	UMnuo7UA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uNX04-00000001HLz-0rSj;
-	Fri, 06 Jun 2025 13:20:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 20C8E3005AF; Fri,  6 Jun 2025 15:20:47 +0200 (CEST)
-Date: Fri, 6 Jun 2025 15:20:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
-	wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	pbonzini@redhat.com, ardb@kernel.org, kees@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-	samitolvanen@google.com, ojeda@kernel.org, xin@zytor.com
-Subject: Re: [PATCH v2 00/13] objtool: Detect and warn about indirect calls
- in __nocfi functions
-Message-ID: <20250606132047.GA39944@noisy.programming.kicks-ass.net>
-References: <vukrlmb4kbpcol6rtest3tsw4y6obopbrwi5hcb5iwzogsopgt@sokysuzxvehi>
- <20250528074452.GU39944@noisy.programming.kicks-ass.net>
- <20250528163035.GH31726@noisy.programming.kicks-ass.net>
- <20250528163557.GI31726@noisy.programming.kicks-ass.net>
- <20250529093017.GJ31726@noisy.programming.kicks-ass.net>
- <fp5amaygv37wxr6bglagljr325rsagllbabb62ow44kl3mznb6@gzk6nuukjgwv>
- <eegs5wq4eoqpu5yqlzug7icptiwzusracrp3nlmjkxwfywzvez@jngbkb3xqj6o>
- <4z4fhaqesjlevwiugiqpnxdths5qkkj7vd4q3wgdosu4p24ppl@nb6c2gybuwe5>
- <20250606104945.GY39944@noisy.programming.kicks-ass.net>
- <aELptV62mbTC3YA9@google.com>
+	s=arc-20240116; t=1749216128; c=relaxed/simple;
+	bh=HXUSPIeGfPlxzaXoYjQ3XjGGPG7eTsTGSFtIt+yUcBg=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=LTD705vI4O4Aa7zDxoYTxEcoZlauepa80N26AE/yMbB3RMaqxWBh8U9Kgfpvw9DVOUXIkyxXyMj57kDyO6TLfOYAulDjQIo2cKFbbWLMX5HGTRXwlyoxt1vx5uZm2k/hmLulhNJI/cC+/kwYgDk1LkD8z64WpQ/7kcb8K4zAXbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ZiTrqzJJ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 556A4CZE023305;
+	Fri, 6 Jun 2025 09:21:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=ey1mPWftpv8vECIwHbLkr5qwFJ1
+	ZZ9u9LuHvS5v4RzA=; b=ZiTrqzJJPsz8/MlMgre7blKD6nn94WSyGU0Iw2Bo+XY
+	Q1pOmH4neC+LvoajNXnBeMxjW3QNu1wV8DBj/WQFJ7WlAg5nZAkimH4eMSCfpbCH
+	n98Vg1JKqsXKpO03CMwIdx60tfqyZh2c1AGvbF3Dmk2qtdcpda4EoGqRGEUAagXs
+	T2X2t5uv6tvMqsVFfQfWwBeO0i8AMjVb4LiLtM/W6kDh16o9q0J3PhGgU8FNgYfO
+	RklbUZS9gdVZhih3UoGHPPYBP0bjigSBcpYUEetJMnRet5zVjqcwCzG6EoFPyQnI
+	EoMUG8r4Fg+f8oou3TBcJTzzb+Bd0/PSr0wNPM0Yh4g==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 472k2ucax2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Jun 2025 09:21:49 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 556DLmlZ020850
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 6 Jun 2025 09:21:48 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 6 Jun 2025 09:21:48 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 6 Jun 2025 09:21:48 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 6 Jun 2025 09:21:47 -0400
+Received: from [127.0.1.1] ([10.44.3.40])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 556DLYfg019626;
+	Fri, 6 Jun 2025 09:21:36 -0400
+From: Jorge Marques <jorge.marques@analog.com>
+Subject: [PATCH v2 0/2] Add ADI I3C Controller
+Date: Fri, 6 Jun 2025 15:21:01 +0200
+Message-ID: <20250606-adi-i3c-master-v2-0-e68b9aad2630@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aELptV62mbTC3YA9@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD3rQmgC/3XMQQrCMBCF4auUWTuSxlSDK+8hXYzJtB2wjSQlK
+ CV3N3bv8n/wvg0SR+EE12aDyFmShKWGPjTgJlpGRvG1QSvdqbMySF5QTg5nSitH1NS1xrrOOnO
+ BenpFHuS9g/e+9iRpDfGz+7n9rX+p3KJCZaxlqzwN7nGjhZ5hPLowQ19K+QLKbL/frQAAAA==
+X-Change-ID: 20250604-adi-i3c-master-2a5148c58c47
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Frank Li
+	<Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-i3c@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jorge Marques <jorge.marques@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749216066; l=1780;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=HXUSPIeGfPlxzaXoYjQ3XjGGPG7eTsTGSFtIt+yUcBg=;
+ b=18wnOy8oGffhLR2PP5h7iu8RmNCmspFkVGdGkjM3ytor09e5nQ26iYmyw1ceIAuiJxhCFdRwX
+ 2lRNxhJKQsaDv+ewrFp2htGW9AM21glRU4bTNsRdPc8LnbBYfXWakEp
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: x2DARNsv_yv-LP4Jh0o8RUl5dYp9tw3y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDEyMSBTYWx0ZWRfX8ylsvDl38fMu
+ IUVhdVcq9bH8rot+FlnsAdoP+JUHVAvFbz9SgvaeeduGfvq8WICvzE1WQEoBBaUPDYALkY49PCE
+ i5CqbJBjYC4ph6MI95shSUBeI1NSE9YaVspY0geQqEEk0w1886ho385XC6QNhesrCxVXhdlwLSd
+ 2Ngf9CHP+Ppoo/6sxiAePw41RTV7DsTlByz48/Bj6S0EP1WzrNqFs0Ptcjmpr9RCwXqX4ge87BV
+ py4yEhc0uBRByQ5Cwzdvrmwaz1dI70AM8j87Z5fQm7dRfc+Wj95W8p4UbICqLQEDem6FLv1TdDx
+ pS+i+xu9urEFV73maDvo3mu+kfcw+FKZxEoWaxRWTBYzLsKRihEUbTXxODfPlaar+HDMYRFLYEt
+ DDbImcjDXD9JwecyqheEDD69a5XanTxf2w3FcPLXJOo+/ewV5ODHVYW0gFT1EuI1wjSUalFI
+X-Proofpoint-ORIG-GUID: x2DARNsv_yv-LP4Jh0o8RUl5dYp9tw3y
+X-Authority-Analysis: v=2.4 cv=Fv4F/3rq c=1 sm=1 tr=0 ts=6842eb6d cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=wI1k2SEZAAAA:8 a=VwQbUJbxAAAA:8
+ a=gAnH3GRIAAAA:8 a=AbWnsF95IPDzd2HxxOMA:9 a=QEXdDO2ut3YA:10
+ a=6HWbV-4b7c7AdzY24d_u:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-06_04,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 suspectscore=0 mlxlogscore=963 spamscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506060121
 
-On Fri, Jun 06, 2025 at 06:15:19AM -0700, Sean Christopherson wrote:
-> On Fri, Jun 06, 2025, Peter Zijlstra wrote:
-> > On Thu, Jun 05, 2025 at 10:19:41AM -0700, Josh Poimboeuf wrote:
-> > > diff --git a/arch/x86/entry/entry_64_fred.S b/arch/x86/entry/entry_64_fred.S
-> > > index 29c5c32c16c3..5d1eef193b79 100644
-> > > --- a/arch/x86/entry/entry_64_fred.S
-> > > +++ b/arch/x86/entry/entry_64_fred.S
-> > > @@ -112,11 +112,12 @@ SYM_FUNC_START(asm_fred_entry_from_kvm)
-> > >  	push %rax				/* Return RIP */
-> > >  	push $0					/* Error code, 0 for IRQ/NMI */
-> > >  
-> > > -	PUSH_AND_CLEAR_REGS clear_bp=0 unwind_hint=0
-> > > +	PUSH_AND_CLEAR_REGS clear_callee=0 unwind_hint=0
-> > >  	movq %rsp, %rdi				/* %rdi -> pt_regs */
-> > >  	call __fred_entry_from_kvm		/* Call the C entry point */
-> > > -	POP_REGS
-> > > -	ERETS
-> > > +	addq $C_PTREGS_SIZE, %rsp
-> > > +
-> > > +	ALTERNATIVE "mov %rbp, %rsp", __stringify(ERETS), X86_FEATURE_FRED
-> > 
-> > So... I was wondering.. do we actually ever need the ERETS?
-> 
-> Yes, to unblock NMIs, because NMIs are blocked on VM-Exit due to NMI.
+I3C Controller is subset of the I3C-basic specification to interface
+peripherals through I3C and I2C. The controller RTL is FPGA
+synthesizable and documentation is provided at
+https://analogdevicesinc.github.io/hdl/library/i3c_controller
 
-Ah, bah, indeed! Shame.
+The main target for the I3C Controller IP is low-cost FPGAs.
+In this version the driver supports IBI (only the MDB), I3C and I2C
+transfers.
+
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+---
+Changes in v2:
+Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
+- Move allof
+- Rename clocks to axi, i3c
+
+adi-i3c-master.c:
+- Update license year
+- Rework regmap to use FIELD_GET, FIELD_PREP
+- Reformat regmap to have FIELDS after REG, prefixed by reg name.
+- Add overflow safeguards to cmd, tx fifos
+- Fix macro related macros (mostly errondeous `| ~BITMASK`
+- Use guard macros, remove goto.
+- Simplify daa logic
+- Replace devm_clk_get with devm_clk_get_enabled
+- Solve 64bit->32bit warnings on x86_64 systems by casting to u32
+- Link to v1: https://lore.kernel.org/r/20250604-adi-i3c-master-v1-0-0488e80dafcb@analog.com
+
+---
+Jorge Marques (2):
+      dt-bindings: i3c: Add adi-i3c-master
+      i3c: master: Add driver for Analog Devices I3C Controller IP
+
+ .../devicetree/bindings/i3c/adi,i3c-master.yaml    |   63 ++
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   11 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/adi-i3c-master.c                | 1037 ++++++++++++++++++++
+ 5 files changed, 1118 insertions(+)
+---
+base-commit: 00286d7d643d3c98e48d9cc3a9f471b37154f462
+change-id: 20250604-adi-i3c-master-2a5148c58c47
+
+Best regards,
+-- 
+Jorge Marques <jorge.marques@analog.com>
+
 
