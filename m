@@ -1,279 +1,169 @@
-Return-Path: <linux-kernel+bounces-675915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24270AD04B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4518AD04DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3F7189E059
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463133ACF52
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F96289E12;
-	Fri,  6 Jun 2025 15:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA8E289356;
+	Fri,  6 Jun 2025 15:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nfvyh27C"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="vy/ub6sv"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D502745009
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 15:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C84289E2A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 15:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749222231; cv=none; b=E8xKf56QhLkOKVNvINtWZSZHM9igfvLt+v/9xrIt9k3Kb0C9IiO0KWsA24RphgPFP2Qa6ZXij2Z6KHgkqA30NAtBiALDKFkH851FXx4bBXB/DrvXltgoG5sLid5irsYRSpTehteIqJl29zA60pXXIM03mpfc3b8XN+i0qMUHvLQ=
+	t=1749222311; cv=none; b=M+9VFgxaWZjojI5Hv/QkPBQs3I0TyQqW06NVW7ML0V1OC+Pm8Kutvo4OezsKEQv8byBVHLsX+WJQsze4FhO0i8fnLBo0D44K2okP8bYd8IhLPr0fhxLAK8QXuNVWJpfrmqQTieMYGSAXcjZtKsIkGWcOCVn6HYvbVJZAvtlDG1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749222231; c=relaxed/simple;
-	bh=MP1DlX3KQk0isYvYsMaQEocILjiYOZ/JELPcnsAuWZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nAHZBIR05f5u9B/7/GkiXs5yVxhuYN/d1DtU4A9puy0LAZMUdGiLstdp5xVxxqkpwsQrMyw685VPZOq1T+XtSoOOAiCN5Hn33/zubGY/2rAb9Xew4RLsP5AO9pLQ363MvWToeQR/zqwsvd6ih9HcNi8tb11BH3O2BUd5YQojYPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nfvyh27C; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-601f278369bso4373581a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 08:03:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749222228; x=1749827028; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LKFTgmexJ2tRnAKnlvK8zPAnKcYjOx7uvqLUInYgAWM=;
-        b=nfvyh27C9fMKooOlxtKM/i2mO2e4IvC6XaZy3tyRtFeiOxXiozM1zf1u5BhgT1JM44
-         DRpcygqh3EVIE2tWmWfVNsTWDLzSAYLYHa0T3fCLMeACHskITPz/UrIpD9UHFssVCF/B
-         RU6wQZc3u1JrRJnkP6eVRHgoC0YVQDQ1IEdAr0M5KX/7R5pwT/zOgAI+XywTcoPTTSfK
-         PgH33L4b2F8iqI2z/JYJ37D3QdghXneH8HRlneNPSFRZQd1uIDU0SXHBMYcMhKSFqsIZ
-         yz3VtsAKESdYn4wBE86WWJUbrleHLYLpzn5J5mfgFD6bAtZ4/839F0cqFPYmPMzI4ZX9
-         Iywg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749222228; x=1749827028;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LKFTgmexJ2tRnAKnlvK8zPAnKcYjOx7uvqLUInYgAWM=;
-        b=bF24ZD1FLTve8vObxj/WsXNCA+FIKxZtxPoKC/lYxsyhI4IOmAPRWVa4rWOTqH0PtI
-         ImMOVzqSS0zUDFsh+gDZMW8jZnyfr9w9+CUoGxbPPcMkjMDMyF+v2m63rEC9RPCqiYwJ
-         cveNY7Boue8qy54rqSqMwkHyEiK4h4lgbQPD9n4d0G42yct7mECIZRzg7lQQC8cszmze
-         hbwQB6gjPeiQr5cQSH12WXciqubdTES1XFSbsFPqlkXhCJ1OwA0AdwRbXDFfvaKzOZHs
-         lygfXW30g0diwmpBybp7fEW54MeMC7IJDp3Fx8fZvR5ScVVB3jJiT3YqpPRFngAsLuZ5
-         gRIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxBqRn29vCYPlwN2RVB2SDJrUfWgD2vP2sADXVTOOQiHhdM9YPloB+TFqdrEoctrHi/dmfQkIcEn6cFsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9scU/cePg3GijU0QoZ2maD3pt14rL/t5ED2+OSePoVXEY8n75
-	yhPyEpYhrCWY2WaaHqFINgmbLjg2IE34pJ/gjOZkYZ7lQcdj7KKYBERoYK7FdUkH0tfnPnUQkx7
-	Jy9fnpEdA5+J0PLsAnqxj+8GBRfogdaGtuxn+FtcxqA==
-X-Gm-Gg: ASbGncuQ0vg+GxKX7TjmlI/QIs7o9hD/BA1tQQkD+f6Ccv2chu7wiV3fGZWm6SaLAp9
-	qvIeG1xQ+EsGjvDeSOe6pg7RWvRrxohXvb8MhP7Tg3OOSeO7tTeckpmQ6RDS4BJgq46cutgW+wd
-	teEuKJDmbmWGzjeJPC6o+L1+D95W4Um/4/mkTSUyYIKr77kDNGHVZ4WNKBsSNtyT059P07wVg8
-X-Google-Smtp-Source: AGHT+IHb+JIgUTS+Jy05lwbJZA4PqXBhKzT+HUFPD4/O0+x0rM7l/7JgkPmvPnA8jVqm7RQCEOc4OaSz79JZUmZz5Ik=
-X-Received: by 2002:a17:907:6d0d:b0:ad5:7732:675b with SMTP id
- a640c23a62f3a-ade1ab2088cmr371102566b.40.1749222228076; Fri, 06 Jun 2025
- 08:03:48 -0700 (PDT)
+	s=arc-20240116; t=1749222311; c=relaxed/simple;
+	bh=X++z+hQYFYN3nw3M+I3vO+WuT+TKLemBGmnnjojb3mM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=oCUlnAd6H46fT6Ngdfri+ANp+enBMVmQg73nrIHOrg2/RChUjrX2NbNzTdSYyCO4h8qeE3fapQuNBiWAFWsQ4OI69rjpkghGkyKv1UWCIgNis1N05GxbGqfNhqwbqEJcsRcHkUoFcu/KUWoE2UIH0B8rAhf93Ds6wHyQLr+pNtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=vy/ub6sv; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5565hD2J006948;
+	Fri, 6 Jun 2025 16:04:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=dk201812; bh=SMsHjoH5Q2nG0ifgBRmmw70
+	aAn/K1FaIdIXnVF9bSm8=; b=vy/ub6svoGkvMYJU5GwFa81XZKREJGkiGofK+XL
+	bmhRbtSlNBhyXA8Ch9gmOqGfuk22RjfZiqIXRjlbzh/p3rKp1qODLmRLrggA9FaR
+	2bM4PNsnTlVL8NyFNnpQ81NVVlaQF3sGTdkCK+xB5/ETL+69u4rEPhWLYE4a203L
+	/voI8GZQe2KrKsOqP0pGTu6Am7dITuArtM2jhS+HtzEt0kMN9juun9N2qLcDiYna
+	qkOU0btTXWOkJ+TT0cBrEIodZgftA7/E8Ztm/yL0X/dN4mrvXm0eRMggdgRmVcMT
+	6Q4i0jMkVIRB0UG9AfqWz5qJG23yNQg+KTMGkPtQtTvmXFw==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 46yr1s63k6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 06 Jun 2025 16:04:44 +0100 (BST)
+Received: from [127.0.1.1] (10.100.108.37) by HHMAIL05.hh.imgtec.org
+ (10.100.10.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Fri, 6 Jun
+ 2025 16:04:43 +0100
+From: Alexandru Dadu <alexandru.dadu@imgtec.com>
+Date: Fri, 6 Jun 2025 16:04:34 +0100
+Subject: [PATCH] drm/imagination: Reasoning code comments for Sparse
+ warnings/errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520094538.086709102@infradead.org> <20250520101727.984171377@infradead.org>
-In-Reply-To: <20250520101727.984171377@infradead.org>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 6 Jun 2025 17:03:36 +0200
-X-Gm-Features: AX0GCFv_fVC0VUzxSff7a-L_s-fxu5T2EqxzSb-EwHgZJZPdeebuweUcX02bGVI
-Message-ID: <CAKfTPtDOQVEMRWaK9xEVqSDKcvUfai4CUck6G=oOdaeRBhZQUw@mail.gmail.com>
-Subject: Re: [RFC][PATCH 5/5] sched: Add ttwu_queue support for delayed tasks
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	clm@meta.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250606-sprase-reasoning-comments-v1-1-433c0ff11a09@imgtec.com>
+X-B4-Tracking: v=1; b=H4sIAIEDQ2gC/x3MywrCQAxG4VcpWRuIYzteXkVcDPW3ZtFMSYoIp
+ e/u4PJbnLNRwBVBt24jx0dDqzUcDx2N72ITWJ/NlCQNkiVzLF4C7ChRTW3isc4zbA1Gf5HcD6d
+ 0liu1fnG89Pt/3x/7/gOOxCkpawAAAA==
+X-Change-ID: 20250606-sprase-reasoning-comments-e48064532709
+To: Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster
+	<matt.coster@imgtec.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Alexandru Dadu <alexandru.dadu@imgtec.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3309;
+ i=alexandru.dadu@imgtec.com; h=from:subject:message-id;
+ bh=X++z+hQYFYN3nw3M+I3vO+WuT+TKLemBGmnnjojb3mM=;
+ b=owEB7QES/pANAwAKARW10uOFNYqiAcsmYgBoQwOKkbBZi/rxufPpXkC9fyJL/1bwCQRSpKVdS
+ a+8gzrCL6mJAbMEAAEKAB0WIQS9+pJTOgt5GeXoStwVtdLjhTWKogUCaEMDigAKCRAVtdLjhTWK
+ ol55C/48yg+Qgz4D9kRy6vfYEv/WDC8kbF01pPaGOOITCi8/0OFVbE/iZ1MZR8QE3ni+bRYXa1F
+ hjW5+smCiN23unWDNI57tY0QpzAU+Q+UgGpDF+MEkuzzNEgNHtoZnxaLBCHvJmCFYqpROLoHDBN
+ ynh43FHaqUl2TpyXDuOBprzX8cwBwD/QPgB6uYe3aZZfrSq7ickkzU7jXfxBK7WmkaSouBjTBll
+ YDiwj9s2j9BrmUEJYLSbbIef0VIE3IB9pS/oTqfNqQeT5lduRvyLNg74k2lE+Q9H3cvBrvljJWy
+ QxHenKbb8D+VpGvOU4CYMQxuLYldBGjDaQq8bQxmeNc4FmarTVRhj6K3saSKpw09ieMBNT/0mIP
+ gR7nvp3KFZPJBmvKefnlL4oWHm7eG6r/G3MUGRIOUGLbuYJhxpiMimW1bHR5R+LpZs42Bbb8QG4
+ JxKQ38PsA8dPWIexGqMStHC45R26keJ1AI8P/fgkT9hc2GuvQem042i8PyJXYsa2rJJGY=
+X-Developer-Key: i=alexandru.dadu@imgtec.com; a=openpgp;
+ fpr=BDFA92533A0B7919E5E84ADC15B5D2E385358AA2
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDEzMyBTYWx0ZWRfX6wFwHCYW2OnI +bGai4RlOcjZxumrnGXQc+kh2O9+/qFI2Wfuzbt3KDViAvc/qb7IazvHLfWF7JMNHHh1fhCLssI LwfSU8zk3/xOqZM1l9hc427JySvJb0Dib4qKcbQDU8kw6oVvqp1MXEleyHTNybZjS7zrzGS/ijZ
+ Fni7aYfZNFvpoik9MeM62aVzdxUnmWE7ALpeIqJ0f+2eNrg5qe7rHq193BBcOwG9HIim6RodaPi jDgW+rxNDlsdArdoxryYxM5tq/V4wOHRSEGrRxeV0D9cFlvrKI6isYB8LiE96RvYt/GY1WPIBEN Djdyc8lcRZTI69xXL2c/yivyXrFvx9EJ0uOM+2hEMKrPe+VikIoLSHunSVUj9y17Ch60Xat7vN8
+ qNm3g2qRrjlYU16pj50JQI4WCV4KxLizfpFf9j4+nZT9V85q9TY31xXUzNrTI5OG3cfokdRl
+X-Proofpoint-GUID: PsfeHOxNl8A2KxD9JuUdMlum11DxwHG8
+X-Proofpoint-ORIG-GUID: PsfeHOxNl8A2KxD9JuUdMlum11DxwHG8
+X-Authority-Analysis: v=2.4 cv=ENAG00ZC c=1 sm=1 tr=0 ts=6843038c cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=WWlI6AgWcwAA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=r_1tXGB3AAAA:8 a=s9JQ9v9PLfxFY4fmZf8A:9 a=QEXdDO2ut3YA:10
+ a=t8nPyN_e6usw4ciXM-Pk:22
 
-On Tue, 20 May 2025 at 12:18, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> One of the things lost with introduction of DELAY_DEQUEUE is the
-> ability of TTWU to move those tasks around on wakeup, since they're
-> on_rq, and as such, need to be woken in-place.
+Added code comments for the lines that might generate Sparse
+warnings/errors.
+The warnings/errors cannot be fixed with refactoring without masively
+impacting the whole code implementation and/or they are incorrectly
+generated by Sparse.
 
-I was thinking that you would call select_task_rq() somewhere in the
-wake up path of delayed entity to get a chance to migrate it which was
-one reason for the perf regression (and which would have also been
-useful for EAS case) but IIUC, the task is still enqueued on the same
-CPU but the target cpu will do the enqueue itself instead on the local
-CPU. Or am I missing something ?
+Signed-off-by: Alexandru Dadu <alexandru.dadu@imgtec.com>
+---
+ drivers/gpu/drm/imagination/pvr_rogue_fwif_check.h | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
->
-> Doing the in-place thing adds quite a bit of cross-cpu latency, add a
-> little something that gets remote CPUs to do their own in-place
-> wakeups, significantly reducing the rq->lock contention.
->
-> Reported-by: Chris Mason <clm@meta.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/sched/core.c     |   74 ++++++++++++++++++++++++++++++++++++++++++------
->  kernel/sched/fair.c     |    5 ++-
->  kernel/sched/features.h |    1
->  kernel/sched/sched.h    |    1
->  4 files changed, 72 insertions(+), 9 deletions(-)
->
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3784,6 +3784,8 @@ static int __ttwu_runnable(struct rq *rq
->         return 1;
->  }
->
-> +static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags);
-> +
->  /*
->   * Consider @p being inside a wait loop:
->   *
-> @@ -3811,6 +3813,33 @@ static int __ttwu_runnable(struct rq *rq
->   */
->  static int ttwu_runnable(struct task_struct *p, int wake_flags)
->  {
-> +#ifdef CONFIG_SMP
-> +       if (sched_feat(TTWU_QUEUE_DELAYED) && READ_ONCE(p->se.sched_delayed)) {
-> +               /*
-> +                * Similar to try_to_block_task():
-> +                *
-> +                * __schedule()                         ttwu()
-> +                *   prev_state = prev->state             if (p->sched_delayed)
-> +                *   if (prev_state)                         smp_acquire__after_ctrl_dep()
-> +                *     try_to_block_task()                   p->state = TASK_WAKING
-> +                *       ... set_delayed()
-> +                *         RELEASE p->sched_delayed = 1
-> +                *
-> +                * __schedule() and ttwu() have matching control dependencies.
-> +                *
-> +                * Notably, once we observe sched_delayed we know the task has
-> +                * passed try_to_block_task() and p->state is ours to modify.
-> +                *
-> +                * TASK_WAKING controls ttwu() concurrency.
-> +                */
-> +               smp_acquire__after_ctrl_dep();
-> +               WRITE_ONCE(p->__state, TASK_WAKING);
-> +
-> +               if (ttwu_queue_wakelist(p, task_cpu(p), wake_flags | WF_DELAYED))
-> +                       return 1;
-> +       }
-> +#endif
-> +
->         CLASS(__task_rq_lock, guard)(p);
->         return __ttwu_runnable(guard.rq, p, wake_flags);
->  }
-> @@ -3830,12 +3859,41 @@ void sched_ttwu_pending(void *arg)
->         update_rq_clock(rq);
->
->         llist_for_each_entry_safe(p, t, llist, wake_entry.llist) {
-> +               struct rq *p_rq = task_rq(p);
-> +               int ret;
-> +
-> +               /*
-> +                * This is the ttwu_runnable() case. Notably it is possible for
-> +                * on-rq entities to get migrated -- even sched_delayed ones.
+diff --git a/drivers/gpu/drm/imagination/pvr_rogue_fwif_check.h b/drivers/gpu/drm/imagination/pvr_rogue_fwif_check.h
+index 51dc37e78f41d7bdf45d1f434dd1aa5b9eca700a..96a423f34c639581a745a7c0498b82d601680ca6 100644
+--- a/drivers/gpu/drm/imagination/pvr_rogue_fwif_check.h
++++ b/drivers/gpu/drm/imagination/pvr_rogue_fwif_check.h
+@@ -157,6 +157,20 @@ OFFSET_CHECK(struct rogue_fwif_frag_ctx_state, frag_reg_pm_deallocated_mask_stat
+ OFFSET_CHECK(struct rogue_fwif_frag_ctx_state, frag_reg_dm_pds_mtilefree_status, 4);
+ OFFSET_CHECK(struct rogue_fwif_frag_ctx_state, ctx_state_flags, 8);
+ OFFSET_CHECK(struct rogue_fwif_frag_ctx_state, frag_reg_isp_store, 12);
++
++/*
++ ******************************************************************************
++ * SPARSE warning reasoning: SIZE_CHECK(struct rogue_fwif_frag_ctx_state, 16)
++ ******************************************************************************
++ *
++ * The structure rogue_fwif_frag_ctx_state contains a flexible size field.
++ * The SIZE_CHECK will run a static_assert function over the structure and it
++ * will use 'sizeof' over a flexible structure.
++ * The implementation of the flexible size field is there by design and cannot
++ * be refactored in a way thet doesn't impact key features.
++ * To avoid having the sparse warning this argument can be used when triggering
++ * the sparse check from the build command "-Wno-sizeof-array-argument"
++ */
+ SIZE_CHECK(struct rogue_fwif_frag_ctx_state, 16);
+ 
+ OFFSET_CHECK(struct rogue_fwif_compute_ctx_state, ctx_state_flags, 0);
+@@ -484,6 +498,20 @@ OFFSET_CHECK(struct rogue_fwif_hwrtdata, rtc_dev_addr, 264);
+ OFFSET_CHECK(struct rogue_fwif_hwrtdata, owner_geom_not_used_by_host, 272);
+ OFFSET_CHECK(struct rogue_fwif_hwrtdata, geom_caches_need_zeroing, 276);
+ OFFSET_CHECK(struct rogue_fwif_hwrtdata, cleanup_state, 320);
++
++/*
++ ******************************************************************************
++ * SPARSE error reasoning: SIZE_CHECK(struct rogue_fwif_hwrtdata, 384)
++ ******************************************************************************
++ *
++ * The structure rogue_fwif_hwrtdata contains different memory alignment
++ * attributes for its fields.
++ * The SIZE_CHECK will run a static_assert function over the structure to check
++ * the size. The compilation will fail if the SIZE_CHECK fails.
++ * SPARSE seems to treat the alignment attributes in a different way than the
++ * compilation does since the compilation is not failing.
++ * This SPARSE error over this line should be ignored if it pops up.
++ */
+ SIZE_CHECK(struct rogue_fwif_hwrtdata, 384);
+ 
+ OFFSET_CHECK(struct rogue_fwif_sync_checkpoint, state, 0);
 
-I haven't found where the sched_delayed task could migrate on another cpu.
+---
+base-commit: 217f80acfcf126b7d7d7b818c9bfea3c96fa85ec
+change-id: 20250606-sprase-reasoning-comments-e48064532709
 
-> +                */
-> +               if (unlikely(p_rq != rq)) {
-> +                       rq_unlock(rq, &rf);
-> +                       p_rq = __task_rq_lock(p, &rf);
-> +               }
-> +
-> +               ret = __ttwu_runnable(p_rq, p, WF_TTWU);
-> +
-> +               if (unlikely(p_rq != rq)) {
-> +                       if (!ret)
-> +                               set_task_cpu(p, cpu_of(rq));
-> +
-> +                       __task_rq_unlock(p_rq, &rf);
-> +                       rq_lock(rq, &rf);
-> +                       update_rq_clock(rq);
-> +               }
-> +
-> +               if (ret) {
-> +                       // XXX ttwu_stat()
-> +                       continue;
-> +               }
-> +
-> +               /*
-> +                * This is the 'normal' case where the task is blocked.
-> +                */
-> +
->                 if (WARN_ON_ONCE(p->on_cpu))
->                         smp_cond_load_acquire(&p->on_cpu, !VAL);
->
-> -               if (WARN_ON_ONCE(task_cpu(p) != cpu_of(rq)))
-> -                       set_task_cpu(p, cpu_of(rq));
-> -
->                 ttwu_do_activate(rq, p, p->sched_remote_wakeup ? WF_MIGRATED : 0, &rf);
->         }
->
-> @@ -3974,7 +4032,7 @@ static inline bool ttwu_queue_cond(struc
->
->  static bool ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
->  {
-> -       bool def = sched_feat(TTWU_QUEUE_DEFAULT);
-> +       bool def = sched_feat(TTWU_QUEUE_DEFAULT) || (wake_flags & WF_DELAYED);
->
->         if (!ttwu_queue_cond(p, cpu, def))
->                 return false;
-> @@ -4269,8 +4327,8 @@ int try_to_wake_up(struct task_struct *p
->                  * __schedule().  See the comment for smp_mb__after_spinlock().
->                  *
->                  * Form a control-dep-acquire with p->on_rq == 0 above, to ensure
-> -                * schedule()'s deactivate_task() has 'happened' and p will no longer
-> -                * care about it's own p->state. See the comment in __schedule().
-> +                * schedule()'s try_to_block_task() has 'happened' and p will no longer
-> +                * care about it's own p->state. See the comment in try_to_block_task().
->                  */
->                 smp_acquire__after_ctrl_dep();
->
-> @@ -6712,8 +6770,8 @@ static void __sched notrace __schedule(i
->         preempt = sched_mode == SM_PREEMPT;
->
->         /*
-> -        * We must load prev->state once (task_struct::state is volatile), such
-> -        * that we form a control dependency vs deactivate_task() below.
-> +        * We must load prev->state once, such that we form a control
-> +        * dependency vs try_to_block_task() below.
->          */
->         prev_state = READ_ONCE(prev->__state);
->         if (sched_mode == SM_IDLE) {
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5395,7 +5395,10 @@ static __always_inline void return_cfs_r
->
->  static void set_delayed(struct sched_entity *se)
->  {
-> -       se->sched_delayed = 1;
-> +       /*
-> +        * See TTWU_QUEUE_DELAYED in ttwu_runnable().
-> +        */
-> +       smp_store_release(&se->sched_delayed, 1);
->
->         /*
->          * Delayed se of cfs_rq have no tasks queued on them.
-> --- a/kernel/sched/features.h
-> +++ b/kernel/sched/features.h
-> @@ -82,6 +82,7 @@ SCHED_FEAT(TTWU_QUEUE, false)
->  SCHED_FEAT(TTWU_QUEUE, true)
->  #endif
->  SCHED_FEAT(TTWU_QUEUE_ON_CPU, true)
-> +SCHED_FEAT(TTWU_QUEUE_DELAYED, false)
+Best regards,
+-- 
+Alexandru Dadu <alexandru.dadu@imgtec.com>
 
-I'm not sure that the feature will be tested as people mainly test
-default config
-
->  SCHED_FEAT(TTWU_QUEUE_DEFAULT, false)
->
->  /*
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2313,6 +2313,7 @@ static inline int task_on_rq_migrating(s
->  #define WF_RQ_SELECTED         0x80 /* ->select_task_rq() was called */
->
->  #define WF_ON_CPU              0x0100
-> +#define WF_DELAYED             0x0200
->
->  #ifdef CONFIG_SMP
->  static_assert(WF_EXEC == SD_BALANCE_EXEC);
->
->
 
