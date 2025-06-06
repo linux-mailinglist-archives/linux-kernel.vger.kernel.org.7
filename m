@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-675818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3784AD0354
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:37:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46181AD0356
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 185973B1657
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C43A163F55
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4EF289356;
-	Fri,  6 Jun 2025 13:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344A8288CB2;
+	Fri,  6 Jun 2025 13:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATqrxo2S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQRlP5B3"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84092288531;
-	Fri,  6 Jun 2025 13:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0195A27FD5A;
+	Fri,  6 Jun 2025 13:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749217050; cv=none; b=XyFKWnV3McynBvCZLRy/xVdu7GK8NZ00WeZSmK+YUWP298UEOZXzxyFzcNp5ltv23+9K7ZsLGmXTsbcNcWcjerrB7G5bCWcphMHoGSlbeNlTY3YvCQ1DVXXtjnaPSQWPjEyA6pjCW39kpQHKfG5I/UUtC9feg2uTI5UXqdJ9NOA=
+	t=1749217131; cv=none; b=kbM6TWIMB8rVdDFQFlbhT46csO7qsc+w7YciNkSIRZYu1cogQqzdNVWEMOKWybmVTxwReZIonsIeb/Rhui1zGGVKyZFeYl9joMXCIjFvfyJ1UmerS9gp9jx/pPRTsYJmbGD4lyW0RHjfWYVDWsoLRiSPU0wApxbFOprI77UOzU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749217050; c=relaxed/simple;
-	bh=j1ZG+UVR+5As58K0nOWtz3Gvux3o3cl7YptKLb923LI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qmKknSxwcHPrm8f3dviazesnTAsno5Ik15QGp8ye4oOB891bKryHK753AsOpI8KlEVqZa5CZLu9GGCZ93mBfv5KL4Vpg0q6z+LtaCGxEigAv3T3imAnmxhjTxetYKM5XezX6ncFbTFiNsi/jIY0S0gUhC0wysC8U/C43NyRTvd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATqrxo2S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29AE1C4CEF2;
-	Fri,  6 Jun 2025 13:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749217050;
-	bh=j1ZG+UVR+5As58K0nOWtz3Gvux3o3cl7YptKLb923LI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ATqrxo2SXxWoHPJer9feNq4yP+txY6GY78Ue+4DmtPi+BM158n6kJOpNA8sbDMD28
-	 k0Z4F+f6+n5+BqmR2b03ONdht8F7kovbP3yGlLebrfT2kHeb/uOX/6avJENZ1CUGUa
-	 zpydLpYdl31qrNvvgL9jMie7T0f/UTx0aapUzelukchP+KMcWLTh1KNx2dABip88J2
-	 eEDpOBYRNg9Xldog4GDEh3HjcqVU+SujNCNTh/NV40xbrg4EM4/ARqjpGMMCHmDVIP
-	 XclNR/bMk9Q1qP/hvbfcB4ztR7SIqvaJCCp6s5l3XHAd/EEMVjL5AF1clcRE3PxmpL
-	 3trmifwV5RyUA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C032C61DB8;
-	Fri,  6 Jun 2025 13:37:30 +0000 (UTC)
-From: =?utf-8?q?F=C3=A9lix_Pi=C3=A9dallu_via_B4_Relay?= <devnull+felix.piedallu.non.se.com@kernel.org>
-Date: Fri, 06 Jun 2025 15:37:25 +0200
-Subject: [PATCH 2/2] spi: omap2-mcspi: Disable multi-mode when the previous
- message kept CS asserted
+	s=arc-20240116; t=1749217131; c=relaxed/simple;
+	bh=i/sMVuO8iNJ8ZhAbZ6eyUTqL1PCfrshV3q08uPOaI8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VMF6Kg80zaidN/GSZcBnZetdZoA5UfhDYuNK71x/+LWT5Ifassfny/Wwpa+uVMyjJOf4d4AncFZ5tn+faQSW0Rk9gcq3yzp20elOJJN4Jn2UgfR2J/7yXpmq6fk6xevyVu2xK7U4om7w1Purd+HcEt4vslfGUkqZ+OHfup5xvfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQRlP5B3; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so18577715e9.3;
+        Fri, 06 Jun 2025 06:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749217128; x=1749821928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UBzs9Ew5KwIBcYOeb4WQWOnLhpy4yI/0V3+nv2AZEbo=;
+        b=dQRlP5B3QXBsTPD9IU2CTjUL+HIy5ms0Twwbrwsgs4/iWvgFd6+enqVjKoU1Y9c4Wa
+         ASWwNTcNp0MCF4ewdTjKb1CNdO4Nqgund+v2MM7wi+OaG1ID/vs2O4tgx1tVkvUWOMSm
+         +KsH+XFSSbLmb0jLNlzPlrkYaUN7ATEvZuxGdma1xfAGL4A1+2c8PBA92jNHdtJZ3oeJ
+         I/rSs8e+qMyaHUYeY+AqVijAuO1Alp2NUA6E1Qb45X2e3pRJ87dJyCqPyDI7oHbEuJWu
+         kGPHjgpQaYan0aiQY095SesPqweNWpZAqMT1UETrm52qNyBU4+V54VuhkTYwnlrD5wCd
+         V+2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749217128; x=1749821928;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UBzs9Ew5KwIBcYOeb4WQWOnLhpy4yI/0V3+nv2AZEbo=;
+        b=kRy95VLqd+NPiXOPCAQ+DzuyCdiFQYTywv4fktSD8lteKQZyCexNd8jaT+2Eop2GMS
+         1FbokJEkuvz1SZq2E31Z/Z0wnfn7cJ43B9Ws4POeD5B0uPENbi6jSy2gZheegtVPc3rL
+         2HV327vG4V/KtYf23QgjEQnbyIZ1Tb7RhA6753Dq420CY9I4HyyqXD7HwmCXwi9DJD00
+         VTtEA4o/FpmXYvx2q3j93hT4IDjLOmCAd+uO36v1Nvp40e6XvuyCqGzJq2JIkpkZSRLl
+         pt04xixXbJfdT8ok1OwTFn4qBgj+P/OciDwWyeDKGptR4WcfmzO6P8g5maGZ9M0dKm+3
+         tGQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnrxNs7VkHgLJv7PaGMBB2BiUwLU3/vR3J3yBq052hGFOuD4qSjoiSItINpbcXikjUuIfPOnZ9GOJv1PCE@vger.kernel.org, AJvYcCXVqJ7xDkO1y5XcCbbx8pLAQI1jBq2rYyQYzNV0pdIMnPAOLLhoGOerYUyfqDkdl2LRTPrOOVb4mGT7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb/nIs53pQ/o+b2WOg9k0jlsYE1ldbRFA16GlweVGJRRI2qGDI
+	VKYvWSGgZHDebpmRtHObWs4mBm5FrnxEmTjc2sCQsGtGEi34SKGeKgAa
+X-Gm-Gg: ASbGncuN3qrWHz3oRFj3bdXmpBC6oT7fE0ssbn7zoLJf7V0hW708sPj2LKAFR6It3er
+	OPuOJI4yQD88+Y32D0+Tj2oYaHJLXs9Ih9atCQ8bYqIoi7I1VT10FyU3fSNiPTd2urnRyKCy/LL
+	FEQuu+3Vr2lzaNh0wgL/Q/YE1na726QA8cTVxRZZn58Veom6JUJd3o/y6Oka5ksfWn/3RBI78Q4
+	P79GXa/4C8tGz5p83jYnVtlO4iCXjQa0kBB92dYmaz/j111pIuxnVeaLdeM+/X74UuuGP0FPzEf
+	VK3jYObj3GP4GSDaJJhMrSInSzoiib2PAtV2yUeHOzl1+hj4MDrjSRTGztBAiy8mCSc3nwcuMYH
+	7WgzJywhhgcO4vQ==
+X-Google-Smtp-Source: AGHT+IGEeYlCUaUS7RpBCRaEkytsgTz8ufVp559clScKzg118VfvwDv+t0Kd/rSexBzezC1CyldiaQ==
+X-Received: by 2002:a05:600c:8b72:b0:43d:9f2:6274 with SMTP id 5b1f17b1804b1-45201360d06mr36840335e9.14.1749217127892;
+        Fri, 06 Jun 2025 06:38:47 -0700 (PDT)
+Received: from masalkhi.. (ip-109-43-113-198.web.vodafone.de. [109.43.113.198])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5324364d4sm1906758f8f.55.2025.06.06.06.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 06:38:47 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: abd.masalkhi@gmail.com,
+	arnd@arndb.de,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v3 2/3] misc: add driver for ST M24LR series RFID/NFC EEPROM chips
+Date: Fri,  6 Jun 2025 13:38:45 +0000
+Message-ID: <20250606133845.3140152-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2025060625-deviate-crummy-2633@gregkh>
+References: <2025060625-deviate-crummy-2633@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250606-cs_change_fix-v1-2-27191a98a2e5@non.se.com>
-References: <20250606-cs_change_fix-v1-0-27191a98a2e5@non.se.com>
-In-Reply-To: <20250606-cs_change_fix-v1-0-27191a98a2e5@non.se.com>
-To: Mark Brown <broonie@kernel.org>, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?F=C3=A9lix_Pi=C3=A9dallu?= <felix.piedallu@non.se.com>, 
- pascal.eberhard@se.com
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749217048; l=2225;
- i=felix.piedallu@non.se.com; s=20250606; h=from:subject:message-id;
- bh=ZfK7KhDeQVloCseH0ix7UHPadZvoLWxPnDeBOqVmuHc=;
- b=zAg37+l7LEpXbrIyD57QaE5LxdWhhzikt5JuQVFnSfTgdNHtR2dlVVo/MIXi+fh9L2k8bNtf+
- Csixkf4Oi5rAxvN/O43I2fBIZ7umaEKjlpquA+0lFQttGho9C/QsuWx
-X-Developer-Key: i=felix.piedallu@non.se.com; a=ed25519;
- pk=Xe1dw6DIV7hmFbzuJfvaioG+S30kGix0QpIi5qPg99w=
-X-Endpoint-Received: by B4 Relay for felix.piedallu@non.se.com/20250606
- with auth_id=427
-X-Original-From: =?utf-8?q?F=C3=A9lix_Pi=C3=A9dallu?= <felix.piedallu@non.se.com>
-Reply-To: felix.piedallu@non.se.com
 
-From: Félix Piédallu <felix.piedallu@non.se.com>
+Hi greg,
 
-When the last transfer of a SPI message has the cs_change flag, the CS is kept
-asserted after the message.
-The next message can't use multi-mode because the CS will be briefly deasserted
-before the first transfer.
+Thanks for the feedback.
 
-Remove the early exit of the list_for_each_entry because the last transfer
-actually needs to be always checked.
+>> adds support for STMicroelectronics M24LRxx devices, which expose
+>> two separate I2C addresses: one for system control and one for EEPROM
+>> access. The driver implements both a sysfs-based interface for control
+>> registers (e.g. UID, password authentication) and an nvmem provider
+>> for EEPROM access.
+>> 
+>> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+>> ---
+>> Changes in v3:
+>>  - Fully support the M24LR chips, including EEPROM access, no need for
+>>    the standard at24 driver to handle EEPROM separately.
+>
+> Why isn't this under drivers/misc/eeprom/ instead?
 
-Fixes: d153ff4056cb ("spi: omap2-mcspi: Add support for MULTI-mode")
-Signed-off-by: Félix Piédallu <felix.piedallu@non.se.com>
----
- drivers/spi/spi-omap2-mcspi.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+The M24LR series is a dual-interface EEPROM with both I2C and ISO/IEC 15693
+RF support. While it is technically an EEPROM, it also exposes a control
+interface over I2C via a seprated address, which is used to manage features
+such as password protection, energy harvesting configuration, and UID access.
+This control interface is not memory-mapped like traditional EEPROMs, which
+is why I did not place it under the eeprom
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 05766b98de36f..4c5f12b76de6a 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -134,6 +134,7 @@ struct omap2_mcspi {
- 	size_t			max_xfer_len;
- 	u32			ref_clk_hz;
- 	bool			use_multi_mode;
-+	bool			last_msg_kept_cs;
- };
- 
- struct omap2_mcspi_cs {
-@@ -1269,6 +1270,10 @@ static int omap2_mcspi_prepare_message(struct spi_controller *ctlr,
- 	 * multi-mode is applicable.
- 	 */
- 	mcspi->use_multi_mode = true;
-+
-+	if (mcspi->last_msg_kept_cs)
-+		mcspi->use_multi_mode = false;
-+
- 	list_for_each_entry(tr, &msg->transfers, transfer_list) {
- 		if (!tr->bits_per_word)
- 			bits_per_word = msg->spi->bits_per_word;
-@@ -1289,22 +1294,17 @@ static int omap2_mcspi_prepare_message(struct spi_controller *ctlr,
- 
- 		if (list_is_last(&tr->transfer_list, &msg->transfers)) {
- 			/* Check if transfer asks to keep the CS status after the whole message */
--			if (tr->cs_change)
-+			if (tr->cs_change) {
- 				mcspi->use_multi_mode = false;
-+				mcspi->last_msg_kept_cs = true;
-+			} else {
-+				mcspi->last_msg_kept_cs = false;
-+			}
- 		} else {
- 			/* Check if transfer asks to change the CS status after the transfer */
- 			if (!tr->cs_change)
- 				mcspi->use_multi_mode = false;
- 		}
--
--		/*
--		 * If at least one message is not compatible, switch back to single mode
--		 *
--		 * The bits_per_word of certain transfer can be different, but it will have no
--		 * impact on the signal itself.
--		 */
--		if (!mcspi->use_multi_mode)
--			break;
- 	}
- 
- 	omap2_mcspi_set_mode(ctlr);
-
--- 
-2.43.0
-
-
+Best regards,
+Abd-Alrhman Masalkhi
 
