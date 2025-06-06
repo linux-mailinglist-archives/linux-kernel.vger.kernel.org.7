@@ -1,150 +1,133 @@
-Return-Path: <linux-kernel+bounces-675505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E84ACFE9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:00:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973BBACFEA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09E21895B8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 511CC1781AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E736B28640F;
-	Fri,  6 Jun 2025 09:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B170283FFA;
+	Fri,  6 Jun 2025 09:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDyefeYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIdt0Sqq"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9CC25F793;
-	Fri,  6 Jun 2025 09:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42FB283FFB;
+	Fri,  6 Jun 2025 09:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749200415; cv=none; b=WyYsWckDQzhFzBDB8iBHFkZlVo9p1zunYZ8ULUBZeup+IbwgdL2Gpy0TTBjIJ2GhDQ3RSziKVXsrltfb4r6sDcbmPygMBoztQk1I6OHttyncHJoxYoEl20qNOjlzwPZUcdmMTEIhejADroYwaK06OzK2sLTr1de2gV6HNH56i00=
+	t=1749200442; cv=none; b=U8JKcdIJ2E6Mxni2rzlicMwzwt0Ug6luqp4sVsD0ybhVSfulf7VICZMFQFRfbLWIY46XtACZY2XkAvKjshdvmHedxP+VgtyWd44LkITMBGGB+ii4ylq3PIinu9SFF2+bRS92+IbQOlK/iLZo3CMm8DvLbRgXpmn5KrncqJeajls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749200415; c=relaxed/simple;
-	bh=xNHwIpVHeWC+mE1P2Ks1p+kDy+CdkMZCOyr72R8daRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtMTsEKtILe4RNXtbcpj77sv2HL7Ca5/EArfagyk6gYm1LFY1s6o68pa1eQC5Ttc0oGaV9IXKsaQHEV31RTKmgNf98LDcTJuKiteeaYX0TnUlxm9L7vMLx8qoGa3VxdWEO2Epf20X+s3sVBAp0CzRVCzPz9xcYWtbunt7yFXcyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDyefeYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DC8C4CEEB;
-	Fri,  6 Jun 2025 09:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749200414;
-	bh=xNHwIpVHeWC+mE1P2Ks1p+kDy+CdkMZCOyr72R8daRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sDyefeYI157FNH1aszpofzkfeeMkkuM1s9Z1o7gBDjducPeG0nAxFkO4y5gunuDG7
-	 ogXA36f7wH53CO3U7nzv1p/9dfz3RiN1o1RgyRpLD/L73poLScECVIfuj8EZCNTv3p
-	 zYOyzqTKKea8twIq/Da9YgjuGt5nSnPPkZFuD4om6yIDPTZyp3fRFgMD6AsIsvjWTu
-	 dVCbMOJ9oBkp3GmQyLFL6x99yU1m3rJfbmy0jXfag/5iGJ7V64SoNs+HG6wljSpqvZ
-	 rx0eF6cFVuTqcsoBBB8RqJWCyTVuxFddCxnZhx/kIijf1Fxe8qGWk+9kgUW7EbXQ0N
-	 GJNEiHv1RT+Fg==
-Date: Fri, 6 Jun 2025 11:00:12 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
-	Alberto Ruiz <aruiz@redhat.com>
-Subject: Re: [PATCH v2 04/10] clk: test: introduce clk_dummy_div for a mock
- divider
-Message-ID: <20250606-screeching-pigeon-of-judgment-dacc1b@houat>
-References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
- <20250528-clk-wip-v2-v2-4-0d2c2f220442@redhat.com>
+	s=arc-20240116; t=1749200442; c=relaxed/simple;
+	bh=hua8O9rgb0Y0B53K2JGIm1JlLWfji5bzqwET3Z3XDks=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=SU03LJGaxtdtsJGOR4JKERRxCDrbV+b9sqbDatYK3OfkXGfmxTqe9+WR8Q1cD840wHV1sE2YLdDnU1fPhrp7ibxep7f/VCSfN9yfkiV19qdfMQAMgOjtAMawG4dhZq8SrDK3Yp+XL7Sw84ZpLe07d+zcmDOAvx9M8P2gqQPyUEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIdt0Sqq; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-22d95f0dda4so24849815ad.2;
+        Fri, 06 Jun 2025 02:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749200440; x=1749805240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Toi2tQAZrviqm160TJzNi/82azbGkUfQEBaQsphdcI=;
+        b=IIdt0SqqIt/s7/umM9OCJ3+oB1/laLIvuCAovgnPt0+pE4SubFDuGYqP31Gxf6wSCN
+         /Wgky6FPtIdpae8TmbLILtZRF1SZvprpYB/xSg8hvyEEuCX/g2YDwSbqRju5GaZowR/w
+         gkymVG1YhFIy+Nw3XqoHSvqyHa4pGLL5JKz9FmpbOas12zCcOzmUZbFf/KmzkOgSDREo
+         EzmYek2cJk5jhJjMIKROeTECzDxIUVKeFr/1q8rfZm9OXdnS4LAk8GHAo9UAEz4IX9/T
+         ePJ2cliWe+0ON+lQWCWSpp1iw5Aq4TYYpyyxoerWkCuYY+1HZ0i+MtmKHunuHn4GHd/y
+         75aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749200440; x=1749805240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Toi2tQAZrviqm160TJzNi/82azbGkUfQEBaQsphdcI=;
+        b=ELuBqS3AC8BudUkJ1iYONs1v63lDEnz1JZDKHJskPuSVWgr4BTBBqyBSTn6R9eOCyc
+         5XvEA+zcwk8vdRGtk5reRyIbGYFw7iVKRqdgjmCkp5z2T+vjK6iU2hRnkBNAgL79iYSZ
+         8vE8Gao6iBZH+mO4B5X0AN3sai7Z6ruZQYgDciDPgbZIthpYMXKfx79EbzY7lQsUB7e/
+         RszlBmbW05qdVaWkA6/hcuXbiQx0nbnghRjmldMDgbtldRUioNve7yf69kDanlBNOZAE
+         bzKZ31G/7lBCE6l764eXP0mrIZYaK2gk9oJRC5p2GJytnqQ3R8mbbU50EDKFEE7RRacy
+         nYNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUzggR0OY36+8VuwAkmrUziiP7wKG/muDVChA+bsWmZkxbNhoFtn1CHC4ieZhiqmlSRCCcPAwqStqxwTU=@vger.kernel.org, AJvYcCWoWfhjVcCl64qdchnHq1Dm/vZAnSEmzGQbZV3xRWasOPdmBIC/r/XqaQR/tyzNIfdFjiEoM27G@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNfaFZAVld8wc4AFO/NJl60p69NE+rv+LxKEz11Tv3pyd8ttpH
+	EAHJK0+hkdNxFMsv1CSzEA56hGQ+bD2ng386t0hZzdXc0C3ihNHRgTs/
+X-Gm-Gg: ASbGnctUSF5SJd36QIKWpfXpgI9SmCDyeHu0lFSwWWkz4KvejO/XGwWOX0iOP4ctrFW
+	0aoZjIJIg3Qwkox3TzfBeOPzaKdareltbR+blPcgDsHcJt0Z7ytnG8k/7DJBQk3ihtIYp8lXs9S
+	NTOtGlvBJImyVlm92oGUB/hBEc5lVkBTgRa182mdjT/5jluBz9D5cQtausFRZpktqs6cMVyiJq+
+	MVA4JM6BQVU8oxFjxINGsEOKxWbuTU5kRlMD9fZbgadoNKnnVDsRF0CIr6FgEiQEATp7tHJ74Qq
+	NFJF3O44SGQ2KHvADWV5pGNSm3KAtZMWfKnr3/PVExceSVu27F2V4sgJR5nU8XmqybIyTg==
+X-Google-Smtp-Source: AGHT+IH15PyfKv8D2hZo4jz4TX/8Ll4a83KhJNiOMLH4+nrqpTtsFeVLOHL/LLeT5zU+0mYoyt7KqQ==
+X-Received: by 2002:a17:902:b18a:b0:234:f1ac:c036 with SMTP id d9443c01a7336-23601dab2ebmr23801085ad.50.1749200439705;
+        Fri, 06 Jun 2025 02:00:39 -0700 (PDT)
+Received: from tom-QiTianM540-A739.. ([124.127.236.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2360340d87csm8140735ad.189.2025.06.06.02.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 02:00:39 -0700 (PDT)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: sean.wang@mediatek.com,
+	vkoul@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	eugen.hristev@linaro.org
+Cc: dmaengine@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] dmaengine: mediatek: Fix a flag reuse error in mtk_cqdma_tx_status()
+Date: Fri,  6 Jun 2025 17:00:17 +0800
+Message-Id: <20250606090017.5436-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="exdw6jl56rzsynhl"
-Content-Disposition: inline
-In-Reply-To: <20250528-clk-wip-v2-v2-4-0d2c2f220442@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Fixed a flag reuse bug in the mtk_cqdma_tx_status() function.
 
---exdw6jl56rzsynhl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 04/10] clk: test: introduce clk_dummy_div for a mock
- divider
-MIME-Version: 1.0
+Fixes: 157ae5ffd76a ("dmaengine: mediatek: Fix a possible deadlock error in mtk_cqdma_tx_status()")
+Cc: stable@vger.kernel.org
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202505270641.MStzJUfU-lkp@intel.com/
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+---
+V2:
+Change the inner vc lock from spin_lock_irqsave() to spin_lock()
+Thanks Eugen Hristev for helpful suggestion.
+---
+ drivers/dma/mediatek/mtk-cqdma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed, May 28, 2025 at 07:16:50PM -0400, Brian Masney wrote:
-> This is used to mock up a divider in the clk kunit tests.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/clk_test.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->=20
-> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index 1b34d54ec9c610ffa3e91b06f5a5180e0395e26f..4908fb9c0c46e34063ecf696e=
-49b48510da44538 100644
-> --- a/drivers/clk/clk_test.c
-> +++ b/drivers/clk/clk_test.c
-> @@ -140,6 +140,47 @@ static const struct clk_ops clk_dummy_single_parent_=
-ops =3D {
->  	.get_parent =3D clk_dummy_single_get_parent,
->  };
-> =20
-> +// 4 ought to be enough for anybody
-> +#define CLK_DUMMY_DIV_WIDTH 4
-> +
-> +struct clk_dummy_div {
-> +	struct clk_hw hw;
-> +	unsigned int div;
-> +};
-> +
-> +static unsigned long clk_dummy_div_recalc_rate(struct clk_hw *hw,
-> +					       unsigned long parent_rate)
-> +{
-> +	struct clk_dummy_div *div =3D container_of(hw, struct clk_dummy_div, hw=
-);
-> +
-> +	return divider_recalc_rate(hw, parent_rate, div->div, NULL,
-> +				   CLK_DIVIDER_ROUND_CLOSEST, CLK_DUMMY_DIV_WIDTH);
-> +}
-> +
-> +static long clk_dummy_div_round_rate(struct clk_hw *hw, unsigned long ra=
-te,
-> +				     unsigned long *parent_rate)
-> +{
-> +	return divider_round_rate(hw, rate, parent_rate, NULL,
-> +				  CLK_DUMMY_DIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
-> +}
-> +
-> +static int clk_dummy_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				  unsigned long parent_rate)
-> +{
-> +	struct clk_dummy_div *div =3D container_of(hw, struct clk_dummy_div, hw=
-);
-> +
-> +	div->div =3D divider_get_val(rate, parent_rate, NULL, CLK_DUMMY_DIV_WID=
-TH,
-> +				   CLK_DIVIDER_ROUND_CLOSEST);
-> +
-> +	return 0;
-> +}
+diff --git a/drivers/dma/mediatek/mtk-cqdma.c b/drivers/dma/mediatek/mtk-cqdma.c
+index 47c8adfdc155..9f0c41ca7770 100644
+--- a/drivers/dma/mediatek/mtk-cqdma.c
++++ b/drivers/dma/mediatek/mtk-cqdma.c
+@@ -449,9 +449,9 @@ static enum dma_status mtk_cqdma_tx_status(struct dma_chan *c,
+ 		return ret;
+ 
+ 	spin_lock_irqsave(&cvc->pc->lock, flags);
+-	spin_lock_irqsave(&cvc->vc.lock, flags);
++	spin_lock(&cvc->vc.lock);
+ 	vd = mtk_cqdma_find_active_desc(c, cookie);
+-	spin_unlock_irqrestore(&cvc->vc.lock, flags);
++	spin_unlock(&cvc->vc.lock);
+ 	spin_unlock_irqrestore(&cvc->pc->lock, flags);
+ 
+ 	if (vd) {
+-- 
+2.34.1
 
-I wonder if we should use CLK_DIVIDER_ONE_BASED too, that way we would
-catch any improperly initialized structure.
-
-Maxime
-
---exdw6jl56rzsynhl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEKuGwAKCRAnX84Zoj2+
-doDPAYDyd2YH/7g4mNgLjfHV9eB9s2Tt0o1q2WR7+GtOlW32oMr2LKAx2/wykc71
-o0VyCsEBfAy/YwfHxrcWAZzNulk/TchV6luX5ADYTKAUrs/CMZzoTSoK8s75HJYa
-KLT0qgmOcw==
-=B35y
------END PGP SIGNATURE-----
-
---exdw6jl56rzsynhl--
 
