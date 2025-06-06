@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-675348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212B6ACFC28
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD41EACFC27
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F261897913
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387FE3A2157
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF741CAA82;
-	Fri,  6 Jun 2025 05:16:31 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D721E5B69;
+	Fri,  6 Jun 2025 05:16:20 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4152125DF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 05:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450A7125DF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 05:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749186991; cv=none; b=C8maBfPba8hUc4CEkSiQjh7Z8vInxsrlVprZo4WR+WhcWXnnj3eLw7ZKNsSpjyg/Z+NFnf5kfXsEqffc0TecTSOyDpy4Om9M/HjnRI79gnw79rcaz7V9mTzVXfbOffOFZbQXW7L4YIr/mdMKHy0DVpt/+X9RyQ4oh2wju2GqRWU=
+	t=1749186979; cv=none; b=n9BXWhdB4f0VKpERwOSq3f78WcIgPauXwLj551w4vhMmoEfwYXx1XY7jHSf7b0zRW3DN+VBMxrcC+RBEXgHmTjqw1Dr7FOCr4Pk39w3OSrmh7dGMLKaE+9zbRekOD/UJebC6+31afQ5xUXCtaq6xNimIsiA62HDKCAhm69pxZMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749186991; c=relaxed/simple;
-	bh=L0hJFyfyZX3FzKinw4N3p4Tp1T8WVYqepfCHeNfvQ9c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p4L0cDQUHAj2oLckHyTfErM+psiEdAKlb6n3dUmY0KxfgLollkK1GfCcNcEYzeeMG8w0PG9Kafk7IlAwGP9jkjIHLoo5Wk0nwQKxA6wH9U12oV6t5cpcBRLSe2ZbYuoxnfaRMMMl64cbF2KWXJX9DnbQ9wOvdysr6GEPe+66EFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5564Nsgi009744;
-	Thu, 5 Jun 2025 22:16:20 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 471g9rvx6y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 05 Jun 2025 22:16:20 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Thu, 5 Jun 2025 22:16:19 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Thu, 5 Jun 2025 22:16:17 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <viro@zeniv.linux.org.uk>
-CC: <almaz.alexandrovich@paragon-software.com>, <linux-kernel@vger.kernel.org>,
-        <lizhi.xu@windriver.com>, <ntfs3@lists.linux.dev>,
-        <syzbot+598057afa0f49e62bd23@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V2] fs/ntfs3: Add sanity check for file name
-Date: Fri, 6 Jun 2025 13:16:16 +0800
-Message-ID: <20250606051616.2578208-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250606042501.GR299672@ZenIV>
-References: <20250606042501.GR299672@ZenIV>
+	s=arc-20240116; t=1749186979; c=relaxed/simple;
+	bh=IxwqCHrACqYgymgSUXeVUNou/uoy837foUaUXgA+0k8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=V9CxZdUvZ19f16ziUdM8KunjwkTZT+DYAFyRfolwQk0MgtR7uvhsj+xN/faojlmGSAPwxjsHWvX8QbMkW7j5Zl4hQ1lznrU0jVjB8HIT8TZIrG/93G/NfqiUmFnQkFhmCWfZkPyvxlwcAkKbwNPQXEOzy3AhM0my1NKyb5ZHP1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddd02c8bffso4232405ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 22:16:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749186977; x=1749791777;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cCYACXMzeBDcelPE4ghIGAS5eRuewYDXuoVSiKWHsIc=;
+        b=hrfGEdthVz36P5SC43T7h6HaoryZrtb/peJBS2dudFXkPBx+2YF78W+sfsJz1U9+xh
+         5WGh7S37/HQq4vF7YjuT+35gNPc8fs5iFxhRUqeLJQpTYsv03qFnxvQ5oCn/A7IkmNVd
+         FPlURPR3pPPNsPU9a/rlPXE55ZwGipG+I01TocFnzUHhKxCnNNVx6Lju0vaVVFLo+Og/
+         rRBsXgy5wnSmnvvJylef0/SwISXl5CNnD7jb1UkAzjuPjUOJC2zjqHELeAJqtSU6dePU
+         HI++DGZqeI5hCoN+nEVg1sPGnnf3ONFODetQdcIrZonPseGYORCQ3PpSqdUxFIk4w+mP
+         YjwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOwr76l6nnsLUNuWQCK9xfUOIkL6Yeta1uJfBhdPdOUzEAO9IjN2h1bGCQ7qCBZXGPWNfSQMIlqlgga2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnMFt4mjJVJ8qO8G0bAtgmL7nEZqAom7x71NgV3xTFyJPngMr2
+	LA4loJfHM4BH9JIYtJeNEb7u0vZWw8oubuONfZ4/eQPXZChfCwobMwpWl3ua0z7WP+m2mZ1n8Yu
+	7A0IF5i/dgAzgKti2u5c1rhTSq90KC5j6CuD98vdLlfAC0+ULIk+R2ax0emM=
+X-Google-Smtp-Source: AGHT+IGhuvLpAqQS7I+2m7Z9XzaPSkpAbybNsBDhKs5bekdBoj/OxhLRNHPqegbI4xxKRxzGwDGBXZgJ2CNvGDnzLy8AZrhAqumS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 4MYwveU8D1-_YS0SPrfol5ZFTO9v0zvx
-X-Authority-Analysis: v=2.4 cv=VIHdn8PX c=1 sm=1 tr=0 ts=684279a4 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=6IFa9wvqVegA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=mp8hP4E6WeWH5piVKYsA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDA0NyBTYWx0ZWRfX7+agaZ4Uubs3 oO6Sbz1N7jaHK2lxXPURYWjHsU4iNFkrUjPp2Qa1/ZE0R2HpMSKX3akczmRs2Y2/GmL3gh8dlTC XNiH0FfW5OIghsDik7QJUGZm7v7dhDrx660VrBmA9ojPE8/kFEJowycHBxY23khq+BijLxQe0DZ
- IG8sSUwfLLbjWVxGRX/tF5/hF8Sq+f3OjS7Zq3TMERhZzqpmqvTca+g87iLvfffGgJqnE0dgZYx lHBNSfPydlE91fkbQZfSf43nQLJu1K/UOS78Ll+MPk95xfbyI69YGnRRR5Fm6hFnFDbiFfECJQF FhTgL1EBSTR+TJVTxR5CX9DN+cgxGRn/d5CsMAku4uYQW0+owxF8CdFRK6Xdm/zdNLUCfKsqLGg
- OuhXvfDp0rTTuRjhl8ig906rrMv1YznTEU7GVvsT05YCrYEMWWdP7B5iUR+WK+KW/PeocMNp
-X-Proofpoint-ORIG-GUID: 4MYwveU8D1-_YS0SPrfol5ZFTO9v0zvx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-06_01,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=785
- adultscore=0 malwarescore=0 spamscore=0 impostorscore=0 mlxscore=0
- priorityscore=1501 clxscore=1015 lowpriorityscore=0 bulkscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2505280000
- definitions=main-2506060047
+X-Received: by 2002:a05:6e02:74a:b0:3dd:cdff:2160 with SMTP id
+ e9e14a558f8ab-3ddce505a66mr23928265ab.17.1749186977327; Thu, 05 Jun 2025
+ 22:16:17 -0700 (PDT)
+Date: Thu, 05 Jun 2025 22:16:17 -0700
+In-Reply-To: <4a7f4d21-8b1c-4616-82bb-210395215035@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <684279a1.050a0220.2461cf.0038.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in raw_event_queue_add
+From: syzbot <syzbot+1e3edf922962b5ea40a4@syzkaller.appspotmail.com>
+To: ipravdin.official@gmail.com
+Cc: ipravdin.official@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The length of the file name should be smaller than the directory entry size.
+> #syz test
 
-Reported-by: syzbot+598057afa0f49e62bd23@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=598057afa0f49e62bd23
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
-V1 -> V2: move sizeof to left
+This crash does not have a reproducer. I cannot test it.
 
- fs/ntfs3/dir.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
-index b6da80c69ca6..b31bc9cbfa35 100644
---- a/fs/ntfs3/dir.c
-+++ b/fs/ntfs3/dir.c
-@@ -304,6 +304,9 @@ static inline bool ntfs_dir_emit(struct ntfs_sb_info *sbi,
- 	if (sbi->options->nohidden && (fname->dup.fa & FILE_ATTRIBUTE_HIDDEN))
- 		return true;
- 
-+	if (fname->name_len + sizeof(struct NTFS_DE) > le16_to_cpu(e->size))
-+		return true;
-+
- 	name_len = ntfs_utf16_to_nls(sbi, fname->name, fname->name_len, name,
- 				     PATH_MAX);
- 	if (name_len <= 0) {
--- 
-2.43.0
-
+>
+> diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+> index 20165e1582d9..d7fca01afbf1 100644
+> --- a/drivers/usb/gadget/legacy/raw_gadget.c
+> +++ b/drivers/usb/gadget/legacy/raw_gadget.c
+> @@ -120,9 +120,13 @@ static struct usb_raw_event *raw_event_queue_fetch(
+>  static void raw_event_queue_destroy(struct raw_event_queue *queue)
+>  {
+>         int i;
+> +       unsigned long flags;
+>  
+> +       spin_lock_irqsave(&queue->lock, flags);
+>         for (i = 0; i < queue->size; i++)
+>                 kfree(queue->events[i]);
+> +       spin_unlock_irqrestore(&queue->lock, flags);
+> +
+>         queue->size = 0;
+>  }
+>
+> Ivan Pravdin
+>
 
