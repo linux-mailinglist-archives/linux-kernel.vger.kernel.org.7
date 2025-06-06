@@ -1,279 +1,290 @@
-Return-Path: <linux-kernel+bounces-676159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F738AD0844
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 20:50:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11238AD07E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 20:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C160118919D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:51:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64A387AACBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB2D1F0994;
-	Fri,  6 Jun 2025 18:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1AD28A1CA;
+	Fri,  6 Jun 2025 18:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="hgva45pU"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eA28uik/"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DAC1E8335
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 18:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E6519DF7A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 18:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749235827; cv=none; b=F/3oGO9HHUDnd8gkT34mWYTOYVvz9NHo99P1qw7pEKYSPgMJ1REaFpub66kovvdiXmIJmOTJJmoz/klkU4dhuQh7v+DfK5nK330X9qW/Gdeogb+Y2T91UHY+HTzw/PogRM585QP/3QGiy8ZRg6JAlsqcOT7QlxbeCA0+w4Ou5xw=
+	t=1749233520; cv=none; b=LIyAHwXG39/yP/IPRR7dwr1843qLFl26JKOO+UVfJktqUlgpkRCAydYKEc2IapIUWveaxnxcn4rJqSW6v/wzec9kEw4Hxu7UCFq1dqRh/9n59tzJulQNfeeimDFpLtJDIgOyltpJgvzOXWhi00v+mpL6ROtkKWVQNzyi5Oc5HFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749235827; c=relaxed/simple;
-	bh=/dqd4gsiXRTcfp+0X9yq9B99EvZcupPMVZfAGuQtBNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=THuSh7X52NyJL9gLUPl3WOqv53p1kXQbBZdE5G5koP6F2/PNQnXLqz2zMvSKxCUoiYPIRWrN8skWWa4BSbmb23bDk+ZjuWB5TO/S+JhSgLPZqrIvbheJaX5PuZnD7x5d73OO1ivtZjX2xhzf5T3LR+feyuToDU67oEYmaMpAqO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=hgva45pU; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23526264386so21034475ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 11:50:25 -0700 (PDT)
+	s=arc-20240116; t=1749233520; c=relaxed/simple;
+	bh=AGMz9ZKOylSWIfehSBLwfJo5U8gevcDw4zx/mHAF+AQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=G0lXaQzrwPpOOyEZ5vw4xQNkLDhqQzTYJOykhpwM2E8H+0pVd4/2FKd1juQPYOcXiCb1AI++TseQ87T7xuwg4XdaOtfsIXZZMSvXVhKKJjtA4A5idJvuz2JhCLeHiAvaKzLUfbgLEx7vaJ9oBTF7b4jvnFmrPiM/u/+vCdYznwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eA28uik/; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-310efe825ccso2525603a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 11:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1749235825; x=1749840625; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zDvQKKxsfWnILy2mH3BQ9U7IfG3DuTu++rNRUJOw37w=;
-        b=hgva45pUHIESQwyjTxWPRV7D6eWOGjPkUhuBheLqEpJbQCHtwSCf6KyyOpqrFasIbK
-         LReRTNAK5m6bJ6v/RNCtY8OlOx1Jpf50lxbqsh3fpA6oLtuw6PTLbqk2rBJJuBzqPh2w
-         oeuIkXU/YUtY2k3jMrxSD8DTu9qmt67q5h4Pr60H86GNf6w4cZ3dh58GGiaNwIHW9wGz
-         aDnredw+MAgKRo8Cl5vD2vB2MHvs1cDuj3iHrV3TtUwr+a98FfFFGnBvLvVCHE/gCiPt
-         41x1RFopobJqDapvQzntpb/BegrEUFKHu8CCGlzQ6izX4b89eoIHs9Yhw+Dd2i9xWN6e
-         N7rQ==
+        d=google.com; s=20230601; t=1749233518; x=1749838318; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=goGsGlGK4aCvgRlt6QQZwnV9SY/etRc0Yb1ngROaDOc=;
+        b=eA28uik/Br9V1/XB+KszSrD+0dhR5algzMcBbryOaz3edrsCUr5avDn5fwuaB2hJ57
+         avlvw15gA1gGun0kXNa83pAeFcgQv38t8KxeP5AKF3i1bAGYIMxp51VTwHPyi3GCYIMQ
+         WNQlknOFAAzxsdSnqbxfttbPCUzIWB78sHCtzQ4Nhp2/sVoVvxkhJ0Kid/Ej0yq7KI9T
+         DACO2fS0Px5gceAybY/T8BHeJKcQS5aZqxq/xlXnkA6mq4LIuAxMzTWB/1XxNDoQZhn9
+         Xup14L84agz5F39sm1dogRgChmqBCnW56xTgGTMvWw4otL6Wf5vQ39XfjGKNgaH+rBas
+         RYoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749235825; x=1749840625;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zDvQKKxsfWnILy2mH3BQ9U7IfG3DuTu++rNRUJOw37w=;
-        b=vMg6/DI9kdykwFw/p+amO3cdt1wj5rnEg0HTm6tH1Q+4dLIap/i1Vq2ReRkNyq4HfQ
-         wuwbNcQ3GMlrEijx2oshXeUylW8VqlLFKt9+hzJwahhaM5EkplkALMzfFhr3DzstRz5v
-         Nn1G94oekoKLHYdf5Ck+cx1RRTgU0Haz9Ofer0SuChRSj/C4EmGPSJFBBghGpT/YqsY5
-         AlIReAxytGzaxWS+9Poj54eg1XuPmj7Vf9yBXJKRe7uwm806tM/MvLiLLCXWMybVxXr0
-         vLCM3J4lme6k6tYfdyuyTzLpuDZUxnGx+grVK/4Pb4nI9E+RrNFwlMwuRV1qfV/qRotK
-         95xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQqsYg8jaeuFO28OifKDoUcwb6W+WVFhNrJ7eH97TC61IrSCmp4kFXKUOfoO24JLSYuI3GdPz8jlUTTNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza3uSM3unPamCCBjjY3tlcYM08F2uuHHbF6OqxylsV3i1TU8g/
-	JJE2uQuXIQXsKUBLWC2fztqlGWoL508QV+N15+ryjfb738d0U9q+Q75Z6fhS3MSGvTc=
-X-Gm-Gg: ASbGncv6IUcz2aT0kzUXMFhPSNsh+KCYItpMQihIQAdgFZQ27dY7PGsBbAVzYaRoiQf
-	63iP3tJ0CRVtLWdOFmo3Pf+2jr2hqmt5mPZkfIaPsaGc5gMVmkHv4jZMc50bwX9uvtKjJIkwHod
-	XpbP9pPTbzCzxUHr9KiHOvIGkFSPyT8pXpFZw8F15sWLE5tNmD79fMBsGdgpbq9quqzeTsnU8C3
-	F0lup+G9i7P8ULiB0zWYeVBipSoYsfLp0Flwr75/t8uJCGXHtichPvkggdtyzRj8CU2JJqhUOP1
-	mjvIpruzg9lVJXILiBV7LejxOnpttNAM6jNfFYMIpiH+YgQzz2zUvOVInmA=
-X-Google-Smtp-Source: AGHT+IHZJuISdaOQA9ORyw2q+y1x20F/e9MNZXHDSrwlivNtd8EgXD7EmYmmTpZQgthCiMV++qIcEQ==
-X-Received: by 2002:a17:902:ce85:b0:235:f078:4733 with SMTP id d9443c01a7336-23601cf6f4bmr58352295ad.8.1749235825082;
-        Fri, 06 Jun 2025 11:50:25 -0700 (PDT)
-Received: from thelio.tailc1103.ts.net ([97.120.245.255])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f782246sm1473617a12.51.2025.06.06.11.50.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 11:50:24 -0700 (PDT)
-From: Drew Fustini <drew@pdp7.com>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	nvdimm@lists.linux.dev
-Cc: Oliver O'Halloran <oohall@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Drew Fustini <drew@pdp7.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3] dt-bindings: pmem: Convert binding to YAML
-Date: Fri,  6 Jun 2025 11:11:17 -0700
-Message-ID: <20250606184405.359812-4-drew@pdp7.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1749233518; x=1749838318;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=goGsGlGK4aCvgRlt6QQZwnV9SY/etRc0Yb1ngROaDOc=;
+        b=uzTbCy/08FTAFYkFfKfT2PNEifo8DZ6iEEhRwj7kbyG8HQALl0EX+tvNyNmcCAQb3J
+         rahVgoTRFePUSCZWsUoswtrLzMJFODy131hArZJWGL+TEV739wtnBlkSfSHPbAQgLS1w
+         2XQNLzsr8XW3lxMl1FAjkXRU44V39aRbmq/Xz+Qxmp3T5fHt7kh77eoDQ4Ip4NvB445d
+         1+G2WU9bVdl+cL7V5Xdm22lCqKrGPqHTA31II+p0rkP1B+iEqDyUdWQKVVwviEPkwHqY
+         Y/u8Rz5XY3aOd4ysMRdJn0YtxzQiJx2pPeF7Ov7WTTo5g3ToxLmS3CYGNwDctguiqSpd
+         RUyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXx/1iOXelG67Vs6rtNmuJYrkDBjhKX8CMWFuauECI2ZouOnRdcq6vxBN6NtwFjtjlgZjWtczw00cjb49c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzlxFdfbvE/osQ6PpQWDkEdCy874L+XeL38SZqlx5pAR5WHMWK
+	OFRuSfqs2D0RjtyDDDzljEPzrnyZf5y4+QFZg+B8SkTXaEtkGwCpmdhbfaFZcZhXGXSujff3fst
+	tSiMjbg==
+X-Google-Smtp-Source: AGHT+IEL48Zr+RVpxcph90N0P9k6HL0QyILrRx6484oP33DwOnxzZeVG7VJ6lc1LW/g9pPx5ZMAaWFJF2Pc=
+X-Received: from pjbqd13.prod.google.com ([2002:a17:90b:3ccd:b0:312:4274:c4ce])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:17c5:b0:313:33ca:3b8b
+ with SMTP id 98e67ed59e1d1-31346b21437mr6696240a91.9.1749233518162; Fri, 06
+ Jun 2025 11:11:58 -0700 (PDT)
+Date: Fri, 6 Jun 2025 11:11:56 -0700
+In-Reply-To: <20250524013943.2832-2-ankita@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250524013943.2832-1-ankita@nvidia.com> <20250524013943.2832-2-ankita@nvidia.com>
+Message-ID: <aEMvbIu530nCqwhG@google.com>
+Subject: Re: [PATCH v6 1/5] KVM: arm64: Block cacheable PFNMAP mapping
+From: Sean Christopherson <seanjc@google.com>
+To: ankita@nvidia.com
+Cc: jgg@nvidia.com, maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
+	will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com, 
+	lpieralisi@kernel.org, david@redhat.com, aniketa@nvidia.com, cjia@nvidia.com, 
+	kwankhede@nvidia.com, kjaju@nvidia.com, targupta@nvidia.com, 
+	vsethi@nvidia.com, acurrid@nvidia.com, apopple@nvidia.com, 
+	jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com, 
+	udhoke@nvidia.com, dnigam@nvidia.com, alex.williamson@redhat.com, 
+	sebastianene@google.com, coltonlewis@google.com, kevin.tian@intel.com, 
+	yi.l.liu@intel.com, ardb@kernel.org, akpm@linux-foundation.org, 
+	gshan@redhat.com, linux-mm@kvack.org, ddutile@redhat.com, tabba@google.com, 
+	qperret@google.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, maobibo@loongson.cn
+Content-Type: text/plain; charset="us-ascii"
 
-Convert the PMEM device tree binding from text to YAML. This will allow
-device trees with pmem-region nodes to pass dtbs_check.
+On Sat, May 24, 2025, ankita@nvidia.com wrote:
+> From: Ankit Agrawal <ankita@nvidia.com>
+> 
+> Fixes a security bug due to mismatched attributes between S1 and
+> S2 mapping.
+> 
+> Currently, it is possible for a region to be cacheable in S1, but mapped
+> non cached in S2. This creates a potential issue where the VMM may
+> sanitize cacheable memory across VMs using cacheable stores, ensuring
+> it is zeroed. However, if KVM subsequently assigns this memory to a VM
+> as uncached, the VM could end up accessing stale, non-zeroed data from
+> a previous VM, leading to unintended data exposure. This is a security
+> risk.
+> 
+> Block such mismatch attributes case by returning EINVAL when userspace
+> try to map PFNMAP cacheable. Only allow NORMAL_NC and DEVICE_*.
+> 
+> CC: Oliver Upton <oliver.upton@linux.dev>
+> CC: Sean Christopherson <seanjc@google.com>
+> CC: Catalin Marinas <catalin.marinas@arm.com>
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
+> ---
+>  arch/arm64/kvm/mmu.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 2feb6c6b63af..305a0e054f81 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1466,6 +1466,18 @@ static bool kvm_vma_mte_allowed(struct vm_area_struct *vma)
+>  	return vma->vm_flags & VM_MTE_ALLOWED;
+>  }
+>  
+> +/*
+> + * Determine the memory region cacheability from VMA's pgprot. This
+> + * is used to set the stage 2 PTEs.
+> + */
+> +static unsigned long mapping_type_noncacheable(pgprot_t page_prot)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Acked-by: Oliver O'Halloran <oohall@gmail.com>
-Signed-off-by: Drew Fustini <drew@pdp7.com>
----
-Dan/Dave/Vishal: does it make sense for this pmem binding patch to go
-through the nvdimm tree?
+Return a bool.  And given that all the usage queries cachaeable, maybe invert
+this predicate?
 
-Note: checkpatch complains about "DT binding docs and includes should
-be a separate patch". Rob told me that this a false positive. I'm hoping
-that I can fix the false positive at some point if I can remember enough
-perl :)
+> +{
+> +	unsigned long mt = FIELD_GET(PTE_ATTRINDX_MASK, pgprot_val(page_prot));
+> +
+> +	return (mt == MT_NORMAL_NC || mt == MT_DEVICE_nGnRnE ||
+> +		mt == MT_DEVICE_nGnRE);
+> +}
 
-v3:
- - no functional changes
- - add Oliver's Acked-by
- - bump version to avoid duplicate message-id mess in v2 and v2 resend:
-   https://lore.kernel.org/all/20250520021440.24324-1-drew@pdp7.com/
+No need for the parantheses.  And since the values are clumped together, maybe
+use a switch statement to let the compiler optimize the checks (though I'm
+guessing modern compilers will optimize either way).
 
-v2 resend:
- - actually put v2 in the Subject
- - add Conor's Acked-by
-   - https://lore.kernel.org/all/20250520-refract-fling-d064e11ddbdf@spud/
+E.g.
 
-v2:
- - remove the txt file to make the conversion complete
- - https://lore.kernel.org/all/20250520021440.24324-1-drew@pdp7.com/
+static bool kvm_vma_is_cacheable(struct vm_area_struct *vma)
+{
+	switch (FIELD_GET(PTE_ATTRINDX_MASK, pgprot_val(vma->vm_page_prot))) {
+	case MT_NORMAL_NC:
+	case MT_DEVICE_nGnRnE:
+	case MT_DEVICE_nGnRE:
+		return false;
+	default:
+		return true;
+	}
+}
 
-v1:
- - https://lore.kernel.org/all/20250518035539.7961-1-drew@pdp7.com/
 
- .../devicetree/bindings/pmem/pmem-region.txt  | 65 -------------------
- .../devicetree/bindings/pmem/pmem-region.yaml | 49 ++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 50 insertions(+), 66 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pmem/pmem-region.txt
- create mode 100644 Documentation/devicetree/bindings/pmem/pmem-region.yaml
+>  static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  			  struct kvm_s2_trans *nested,
+>  			  struct kvm_memory_slot *memslot, unsigned long hva,
+> @@ -1612,6 +1624,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  
+>  	vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
+>  
+> +	if ((vma->vm_flags & VM_PFNMAP) &&
+> +	    !mapping_type_noncacheable(vma->vm_page_prot))
 
-diff --git a/Documentation/devicetree/bindings/pmem/pmem-region.txt b/Documentation/devicetree/bindings/pmem/pmem-region.txt
-deleted file mode 100644
-index cd79975e85ec..000000000000
---- a/Documentation/devicetree/bindings/pmem/pmem-region.txt
-+++ /dev/null
-@@ -1,65 +0,0 @@
--Device-tree bindings for persistent memory regions
-------------------------------------------------------
--
--Persistent memory refers to a class of memory devices that are:
--
--	a) Usable as main system memory (i.e. cacheable), and
--	b) Retain their contents across power failure.
--
--Given b) it is best to think of persistent memory as a kind of memory mapped
--storage device. To ensure data integrity the operating system needs to manage
--persistent regions separately to the normal memory pool. To aid with that this
--binding provides a standardised interface for discovering where persistent
--memory regions exist inside the physical address space.
--
--Bindings for the region nodes:
-------------------------------
--
--Required properties:
--	- compatible = "pmem-region"
--
--	- reg = <base, size>;
--		The reg property should specify an address range that is
--		translatable to a system physical address range. This address
--		range should be mappable as normal system memory would be
--		(i.e cacheable).
--
--		If the reg property contains multiple address ranges
--		each address range will be treated as though it was specified
--		in a separate device node. Having multiple address ranges in a
--		node implies no special relationship between the two ranges.
--
--Optional properties:
--	- Any relevant NUMA associativity properties for the target platform.
--
--	- volatile; This property indicates that this region is actually
--	  backed by non-persistent memory. This lets the OS know that it
--	  may skip the cache flushes required to ensure data is made
--	  persistent after a write.
--
--	  If this property is absent then the OS must assume that the region
--	  is backed by non-volatile memory.
--
--Examples:
----------------------
--
--	/*
--	 * This node specifies one 4KB region spanning from
--	 * 0x5000 to 0x5fff that is backed by non-volatile memory.
--	 */
--	pmem@5000 {
--		compatible = "pmem-region";
--		reg = <0x00005000 0x00001000>;
--	};
--
--	/*
--	 * This node specifies two 4KB regions that are backed by
--	 * volatile (normal) memory.
--	 */
--	pmem@6000 {
--		compatible = "pmem-region";
--		reg = < 0x00006000 0x00001000
--			0x00008000 0x00001000 >;
--		volatile;
--	};
--
-diff --git a/Documentation/devicetree/bindings/pmem/pmem-region.yaml b/Documentation/devicetree/bindings/pmem/pmem-region.yaml
-new file mode 100644
-index 000000000000..a4aa4ce3318b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pmem/pmem-region.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pmem-region.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+maintainers:
-+  - Bjorn Helgaas <bhelgaas@google.com>
-+  - Oliver O'Halloran <oohall@gmail.com>
-+
-+title: Persistent Memory Regions
-+
-+description: |
-+  Persistent memory refers to a class of memory devices that are:
-+
-+    a) Usable as main system memory (i.e. cacheable), and
-+    b) Retain their contents across power failure.
-+
-+  Given b) it is best to think of persistent memory as a kind of memory mapped
-+  storage device. To ensure data integrity the operating system needs to manage
-+  persistent regions separately to the normal memory pool. To aid with that this
-+  binding provides a standardised interface for discovering where persistent
-+  memory regions exist inside the physical address space.
-+
-+properties:
-+  compatible:
-+    const: pmem-region
-+
-+  reg:
-+    maxItems: 1
-+
-+  volatile:
-+    description: |
-+      Indicates the region is volatile (non-persistent) and the OS can skip
-+      cache flushes for writes
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pmem@5000 {
-+        compatible = "pmem-region";
-+        reg = <0x00005000 0x00001000>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ee93363ec2cb..eba2b81ec568 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13798,7 +13798,7 @@ M:	Oliver O'Halloran <oohall@gmail.com>
- L:	nvdimm@lists.linux.dev
- S:	Supported
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
--F:	Documentation/devicetree/bindings/pmem/pmem-region.txt
-+F:	Documentation/devicetree/bindings/pmem/pmem-region.yaml
- F:	drivers/nvdimm/of_pmem.c
+I don't think this is correct, and there's a very real chance this will break
+existing setups.  PFNMAP memory isn't strictly device memory, and IIUC, KVM
+force DEVICE/NORMAL_NC based on kvm_is_device_pfn(), not based on VM_PFNMAP.
+
+	if (kvm_is_device_pfn(pfn)) {
+		/*
+		 * If the page was identified as device early by looking at
+		 * the VMA flags, vma_pagesize is already representing the
+		 * largest quantity we can map.  If instead it was mapped
+		 * via __kvm_faultin_pfn(), vma_pagesize is set to PAGE_SIZE
+		 * and must not be upgraded.
+		 *
+		 * In both cases, we don't let transparent_hugepage_adjust()
+		 * change things at the last minute.
+		 */
+		device = true;
+	}
+
+	if (device) {
+		if (vfio_allow_any_uc)
+			prot |= KVM_PGTABLE_PROT_NORMAL_NC;
+		else
+			prot |= KVM_PGTABLE_PROT_DEVICE;
+	} else if (cpus_have_final_cap(ARM64_HAS_CACHE_DIC) &&
+		   (!nested || kvm_s2_trans_executable(nested))) {
+		prot |= KVM_PGTABLE_PROT_X;
+	}
+
+which gets morphed into the hardware memtype attributes as:
+
+	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
+			KVM_PGTABLE_PROT_NORMAL_NC)) {
+	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
+		return -EINVAL;
+	case KVM_PGTABLE_PROT_DEVICE:
+		if (prot & KVM_PGTABLE_PROT_X)
+			return -EINVAL;
+		attr = KVM_S2_MEMATTR(pgt, DEVICE_nGnRE);
+		break;
+	case KVM_PGTABLE_PROT_NORMAL_NC:
+		if (prot & KVM_PGTABLE_PROT_X)
+			return -EINVAL;
+		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
+		break;
+	default:
+		attr = KVM_S2_MEMATTR(pgt, NORMAL);
+	}
+
+E.g. if the admin hides RAM from the kernel and manages it in userspace via
+/dev/mem, this will break (I think).
+
+So I believe what you want is something like this:
+
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index eeda92330ade..4129ab5ac871 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1466,6 +1466,18 @@ static bool kvm_vma_mte_allowed(struct vm_area_struct *vma)
+        return vma->vm_flags & VM_MTE_ALLOWED;
+ }
  
- LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM
--- 
-2.43.0
++static bool kvm_vma_is_cacheable(struct vm_area_struct *vma)
++{
++       switch (FIELD_GET(PTE_ATTRINDX_MASK, pgprot_val(vma->vm_page_prot))) {
++       case MT_NORMAL_NC:
++       case MT_DEVICE_nGnRnE:
++       case MT_DEVICE_nGnRE:
++               return false;
++       default:
++               return true;
++       }
++}
++
+ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+                          struct kvm_s2_trans *nested,
+                          struct kvm_memory_slot *memslot, unsigned long hva,
+@@ -1473,7 +1485,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ {
+        int ret = 0;
+        bool write_fault, writable, force_pte = false;
+-       bool exec_fault, mte_allowed;
++       bool exec_fault, mte_allowed, is_vma_cacheable;
+        bool device = false, vfio_allow_any_uc = false;
+        unsigned long mmu_seq;
+        phys_addr_t ipa = fault_ipa;
+@@ -1615,6 +1627,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 
+        vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
+ 
++       is_vma_cacheable = kvm_vma_is_cacheable(vma);
++
+        /* Don't use the VMA after the unlock -- it may have vanished */
+        vma = NULL;
+ 
+@@ -1639,6 +1653,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+                return -EFAULT;
+ 
+        if (kvm_is_device_pfn(pfn)) {
++               if (is_vma_cacheable)
++                       return -EINVAL;
++
+                /*
+                 * If the page was identified as device early by looking at
+                 * the VMA flags, vma_pagesize is already representing the
+@@ -1722,6 +1739,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+                prot |= KVM_PGTABLE_PROT_X;
+ 
+        if (device) {
++               if (is_vma_cacheable) {
++                       ret = -EINVAL;
++                       goto out;
++               }
++
+                if (vfio_allow_any_uc)
+                        prot |= KVM_PGTABLE_PROT_NORMAL_NC;
+                else
 
 
