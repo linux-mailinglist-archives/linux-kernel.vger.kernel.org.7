@@ -1,161 +1,134 @@
-Return-Path: <linux-kernel+bounces-675869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF58AD0409
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:29:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1245AD040C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D3C189AC2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0754D1791C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BD313A258;
-	Fri,  6 Jun 2025 14:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A051C84AA;
+	Fri,  6 Jun 2025 14:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gfDu4XLW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mgv5Fpav"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB851339A4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 14:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D069E1534EC;
+	Fri,  6 Jun 2025 14:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749220108; cv=none; b=HLPr8SwL9r4SQaXtgT4k1D6MvSJI5GUG/62C/f0tjFsPXzShPHwm3ywkIoKjAj18Vw+KyJ5LkJG2IoVlsCd/OSdmp6pp7/DsTyEnKWTspLqXsK+3WZOAOqo/iVjA6BudTOPY4x4pI5Jzdiwu7XCGMM4P665AZtpy7G8PYPFS2Ko=
+	t=1749220114; cv=none; b=ZASnx9XHrUNfhUrDNSgHX0JX2OoR0vAWBUBsnOnlo7Ut8hrZFtLYYRBg+aOWjM3wHvbV7IRwRKTcO21aL1WJwTnRsuCwSs9tS8XJYR3Owqx07Tb3wlVVectX9ZLhoqXKhWU7QppEmU0mY1XSIXSQpdJuvLQArhJzGsjO3uYorFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749220108; c=relaxed/simple;
-	bh=Li7ibbFp6IAWaPGC1mntaG/QZQpQuadYqbXM0mDxQQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oh0DHUG6Z/+QkRTGVFwiVrhLK/kE3uAE3LHSGaiwwVW5twS35d04+kwcDYRtNxsTINlB98mQ90VRIUSzVcvxv0gUO6KGEKMITJIv1MM1DSs7aEURVv/PVmo2xoDCKOs1+p4otLQLWnWx5KQgz1WftvpNiFHAabbtjmJfKizEjn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gfDu4XLW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749220105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ALf2A6SSvV1hHGniFOaJAJDOmsxkAraK1tIfpQpNucs=;
-	b=gfDu4XLWLl0z4fMm/klMntI9JPTn/7LBJC6sswgmbonYWTCZytR6apJoYXnIUgpo7s+60r
-	VQTWJVapvsc5ZxoKROOi3mX25UJIt8WB3rkfa+LwmcaFy7QMgvuSsXBUYQ5/f4P4g7imT6
-	0HInieiFxiv4jZTOQNU3VSkeJFGNgKk=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-d35b6AMVObyaxqtBs5WkEQ-1; Fri, 06 Jun 2025 10:28:24 -0400
-X-MC-Unique: d35b6AMVObyaxqtBs5WkEQ-1
-X-Mimecast-MFC-AGG-ID: d35b6AMVObyaxqtBs5WkEQ_1749220103
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47ae87b5182so36990871cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 07:28:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749220103; x=1749824903;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ALf2A6SSvV1hHGniFOaJAJDOmsxkAraK1tIfpQpNucs=;
-        b=vF3HnuB4pN+BgY8jIFj2ciuxQji1s4Gr45t8gocdgF5jmZPBwgD9p00h5Z1BkA4v23
-         mU44P7CHYtUv1j6Nz6mvT5rmfIKIVvpK72Cek4A52i7iboC5/Ni8r4KhIQKdHwzovUjP
-         JV9ZOL2RZRAoVHZoFLSkhr71sQ4U6gOP53OkOVHAN/FdN3nZCqvL7LMgvM8TdXSZjdO5
-         /mEGmT/TGRogG6VmKNwmxX9KwAgH953pV/oLbyG0Wl0K1DkHV2XtIREEVqS9YWiDMVmq
-         kt+vvN+/O974YFYrdMBkNriCZqlAtkxmsuOK1g8q+NIxDs+22PPrxBGFzxk1ERe34EIv
-         NjBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC9BOnyqqT2X6EdgoL7B3rT9xdwRlAEXWgZkVOaKBEddprMWc5qQcVUbhp71pjA7q/RoxIEuOAxvzgBCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz4uGKsNU3jSctcz7IUy9EETS2LjaTCdMfu4TsxyM3nBwtFRjS
-	VI88kA006Oe1UA6A9wjxsssmrzK47O1C99waTLGdzDHKZQ3tx14I/gPPbdeiDyo627Vh114YyTk
-	MlzWypAKKDRPYgZplKhlOoAnDp2SnoLYmBJyPMdjteGrZITuqsvRf2MA5ieza5Vo4Bu8QclRCCg
-	jx
-X-Gm-Gg: ASbGncsegzR0gQPPltRlmeR6cTllYSUE/ag5nv7n+iIEP+on97bTI/0lOD616obd0Qw
-	Mr+XFLfbbKueXr2aedIwHoKPcOF17LDwRpcFhkFxwaoC01P6jf2yh0sbC3X3ltuBb+p0fhcKg/t
-	+7d9L2SW2m4ynKEtIE4tZrqgH1SIymTS5sXi2MFbtanfDTQ0YfQ8wmXv7TNhoqLf764yKgOd2Y5
-	Ajo84jpyNeZ5bC+hgVRLgYk61pjjDPevwtmak38sMAJRgP8o67hGNN9wvPzQy8Aqjgx/bzuorpd
-	Pa1+x/HDJNCL6KPYdEiTl+t0GdEk+CmHnkLWSLqB4GV2Ew==
-X-Received: by 2002:a05:622a:5c95:b0:476:8f75:b885 with SMTP id d75a77b69052e-4a5b9ece0f5mr63062251cf.44.1749220103132;
-        Fri, 06 Jun 2025 07:28:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpf4O45y7/LqbcN4g1foJ8Kzb9sFSBSPTzamnMml1OhKOozVnoN1sS1mY/qb2zqIL8mkLT4Q==
-X-Received: by 2002:a05:622a:5c95:b0:476:8f75:b885 with SMTP id d75a77b69052e-4a5b9ece0f5mr63061841cf.44.1749220102756;
-        Fri, 06 Jun 2025 07:28:22 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a619852fddsm13548021cf.40.2025.06.06.07.28.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 07:28:21 -0700 (PDT)
-Date: Fri, 6 Jun 2025 10:28:19 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alberto Ruiz <aruiz@redhat.com>
-Subject: Re: [PATCH v2 03/10] clk: test: introduce a few specific rate
- constants for mock testing
-Message-ID: <aEL7A_YeC8b4Wj48@x1>
-References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
- <20250528-clk-wip-v2-v2-3-0d2c2f220442@redhat.com>
- <20250606-fabulous-fortunate-chamois-ab4c98@houat>
+	s=arc-20240116; t=1749220114; c=relaxed/simple;
+	bh=53Ex4c46jHWyz2mMEelxLlc4ZhhiL9qpn6AzizAK0oM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ILcAMW59K8Oilvv0/YFYx1GLSZOIkGnV6WlkmUqW6FdoppJ6uc/tXTOb2mOcWRKCxrHTy7SOdyyZLnA4bkV1es4dpB3XuZmEKPifeU2nxWjDmnLP8z0IdsNg1/1Dw32vjRL3PX64ARpHY3L6Sm4dlj0vUYhEOxry622AGmZvrNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mgv5Fpav; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749220113; x=1780756113;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=53Ex4c46jHWyz2mMEelxLlc4ZhhiL9qpn6AzizAK0oM=;
+  b=Mgv5FpavyX0R7X45pnbCUQcgDXy07cK2Fn5r0367De7G1Ib+eLiZCO9o
+   ZvVMMR/We7Fr8y9udDirtMW5zjAtEXlMBkqu0TXVDqKiuW4Ir7DaClAZO
+   Imc7j7NaoM4dcVEEV/jrd0EC5lG4T6XKiIDQt2DvxW1alau7GlHAYA6w6
+   IqXN8igzYZvQ+8I5d0f9wZ4ru4bafOv1qOcv8MYJNlC0TWXfy3vGF2vXd
+   47bUie/X6RrRB6hW9jgsmFFwVaB2vgqTWq/5ovEc4tITXcIn9hGHmjMtM
+   dzhIqIAh+ncyFloQVXb9eT/yrTEzab/SBwZY3IL+jYWRv6VvY3GGOmp0D
+   Q==;
+X-CSE-ConnectionGUID: CzJg8o+IRsC8cuwlGAvSNw==
+X-CSE-MsgGUID: 5aTyCbw8QnOqnKPbKupagw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="51076071"
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
+   d="scan'208";a="51076071"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 07:28:28 -0700
+X-CSE-ConnectionGUID: /NzKoUHWRDua3ANvn/f/1w==
+X-CSE-MsgGUID: wwcVO4s3SNqWDhf7i+2Ymg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
+   d="scan'208";a="150851783"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.124.222.159])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 07:28:28 -0700
+Message-ID: <67fea61ec40d0e54d4674ab83728e84120d9fb9d.camel@linux.intel.com>
+Subject: Re: [PATCH] platform/x86/intel: power-domains: Fix error code in
+ tpmi_init()
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=	
+ <ilpo.jarvinen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH	 <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@kernel.org>, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Fri, 06 Jun 2025 07:28:26 -0700
+In-Reply-To: <aEKvIGCt6d8Gcx4S@stanley.mountain>
+References: <aEKvIGCt6d8Gcx4S@stanley.mountain>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250606-fabulous-fortunate-chamois-ab4c98@houat>
-User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On Fri, Jun 06, 2025 at 10:56:57AM +0200, Maxime Ripard wrote:
-> On Wed, May 28, 2025 at 07:16:49PM -0400, Brian Masney wrote:
-> > Some of the mock tests care about the relationship between two
-> > different rates, and the specific numbers are important, such as for
-> > mocking a divider.
-> > 
-> > Signed-off-by: Brian Masney <bmasney@redhat.com>
-> 
-> It's not obvious to me why they are important, actually. The relation
-> between the two is, but a divider (and our tests) should work with any
-> parent rate, so I guess we can expect it to be opaque.
+On Fri, 2025-06-06 at 12:04 +0300, Dan Carpenter wrote:
+> Return -ENOMEM instead of success if kcalloc() fails.
+>=20
+> Fixes: e37be5d85c60 ("platform/x86/intel: power-domains: Add
+> interface to get Linux die ID")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Acked-by:Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-I agree as well.
 
-> Can you expand on why it's important?
-
-I personally find that having specific numbers in some (but not) of the
-tests make the tests clearer that specific functionality within the clk
-core is exercised. For example, assume we have a parent that can do any
-rate, and two children that are dividers. We could have a test like the
-following:
-
-    clk_set_rate(ctx->child1_clk, DUMMY_CLOCK_RATE_1);
-    clk_set_rate(ctx->child2_clk, DUMMY_CLOCK_RATE_2);
-    KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), DUMMY_CLOCK_RATE_1);
-    KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE_2);
-    /*
-     * Make something to figure out what the ideal parent rate should be
-     * and test that as well?
-     */
-
-So if we set child1 and child2 to 16 MHz and 32 MHz, then that exercises
-one path through the clk core. However, it will currently fail if we set
-the children to 32 MHz and 48 MHz. I have this working on a WIP branch
-and one of my new tests looks similar to:
-
-    clk_set_rate(ctx->child1_clk, DUMMY_CLOCK_RATE_32_MHZ);
-    clk_set_rate(ctx->child2_clk, DUMMY_CLOCK_RATE_48_MHZ);
-    // This should test that it's a multiple of 96 MHz
-    KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->parent_clk), DUMMY_CLOCK_RATE_96_MHZ);
-    KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), DUMMY_CLOCK_RATE_32_MHZ);
-    KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE_48_MHZ);
-
-Based on the work in my WIP branch, I think we need to make some of the
-divider only clk tests parameterized, and have a table with various
-specific frequencies so that various edge cases within the clk core are
-tested by the frequency combinations.
-
-I think that instead of having a list of DUMMY_CLOCK_RATE_XXX_MHZ
-defines, a single define like this will suffice:
-
-#define clk_dummy_rate_mhz(rate)      ((rate) * 1000 * 1000)
-
-Brian
-
+> ---
+> =C2=A0drivers/platform/x86/intel/tpmi_power_domains.c | 4 +++-
+> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c
+> b/drivers/platform/x86/intel/tpmi_power_domains.c
+> index 0c5c88eb7baf..9d8247bb9cfa 100644
+> --- a/drivers/platform/x86/intel/tpmi_power_domains.c
+> +++ b/drivers/platform/x86/intel/tpmi_power_domains.c
+> @@ -228,8 +228,10 @@ static int __init tpmi_init(void)
+> =C2=A0
+> =C2=A0	domain_die_map =3D kcalloc(size_mul(topology_max_packages(),
+> MAX_POWER_DOMAINS),
+> =C2=A0				 sizeof(*domain_die_map),
+> GFP_KERNEL);
+> -	if (!domain_die_map)
+> +	if (!domain_die_map) {
+> +		ret =3D -ENOMEM;
+> =C2=A0		goto free_domain_mask;
+> +	}
+> =C2=A0
+> =C2=A0	ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> =C2=A0				"platform/x86/tpmi_power_domains:onl
+> ine",
 
