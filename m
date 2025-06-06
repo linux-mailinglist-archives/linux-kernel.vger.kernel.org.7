@@ -1,101 +1,149 @@
-Return-Path: <linux-kernel+bounces-675931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA94AD052B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:29:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34B3AD0530
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90F6174C2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1837E3B0B54
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84C328936C;
-	Fri,  6 Jun 2025 15:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88D28980E;
+	Fri,  6 Jun 2025 15:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="guReOcGA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pbmecGN1"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DECF76026;
-	Fri,  6 Jun 2025 15:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B0628540B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 15:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749223756; cv=none; b=kV7CwdrYui4L32ILgJsNq7iiQhbfPOgQYVk2vmU+MDuKCR0VwSifCmsVM6u5sq7FdFgi7mFUdHcnETASTbX2LWGSpaaodfyX7TrC/PBi9947MlOYLZDvim07X8F2XXyBOI2AxyIPvwUcMR+TD+f6Ya8/9+Mj76oXQr7n49mSAu0=
+	t=1749223796; cv=none; b=XP0F5mABf72PAxIXlUxc6+UtVOpeAihLkgHG9Tyb3oh3dfUKff89PQMdWmfvRmWdmVvVZOcKE/ai38+Z5tHal4nL7HYL4iLbwd7BOSAHI40q+B8OZu1PLFBjJXE+X2MNYhSaXCV/e6j7A2R9QFYezRs2Uz9MZIkkFtO0P9j+gwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749223756; c=relaxed/simple;
-	bh=YIkEnsYYTAgzRDQisXl/WSdMTrphUkF1HTvZcQOQYq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oSjKn7uBC3oUquFROpB+OowDe9M+iG/yxn/rfhnlW9qp0skYKJUcEWV37VkkC11rcabmz8aWQ+N5qvl7x+pO3KibkHWn548ywagd6u5DPxJ50474zEpfJUj4v6mGlTUtXQGDuGytEN2PaHda8f7gBPndAZ91klIjHTOFreSUXGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=guReOcGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AEEC4CEEB;
-	Fri,  6 Jun 2025 15:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1749223755;
-	bh=YIkEnsYYTAgzRDQisXl/WSdMTrphUkF1HTvZcQOQYq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=guReOcGAKKw4HD4jeerRrIFyOHMiXU0z9TIQs8uPkmlcV6Mgut3B7/Q3kNTr+TF4S
-	 kOcLJaOeKevDftVnYiOhpJA3fk2Z/auvyc6219Qh9gVutrYzGPT1u4pInE8cHnQgW1
-	 dt8yb3ZKfD9dpROfIMuPoH5MrCjn85IMM9DMcnt8=
-Date: Fri, 6 Jun 2025 17:29:13 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Igor Korotin <igor.korotin.linux@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	Igor Korotin <igor.korotin@yahoo.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Len Brown <lenb@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Hung <alex.hung@amd.com>, Tamir Duberstein <tamird@gmail.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>
-Subject: Re: [PATCH v2 3/5] rust: driver: Add ACPI id table support to
- Adapter trait
-Message-ID: <2025060635-unleveled-drowsily-a192@gregkh>
-References: <20250605161956.3658374-1-igor.korotin.linux@gmail.com>
- <20250605162726.3659792-1-igor.korotin@yahoo.com>
- <aELyEqg0GrkC8oZY@pollux>
- <CAG7QV91AWpOk7VUcE-B1MLkEQPDB0Y=zsBOBf6MhHVYh1aEGQA@mail.gmail.com>
+	s=arc-20240116; t=1749223796; c=relaxed/simple;
+	bh=v7Au4C4CPsHEk+3y2XJCnvtIlU+mBidFXKTov4cpvRU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AqLhMc5LVios4NwfiyWxaz4xsnVlrcvbK86pf5rmzq15qO5TCibzGpV5QYKelvOC9KGALXCOow9PS67zQhHvqYLaxw5kMXcFgKxitSwHcp7OKh+IS0s236KBokA7i8wan7UrcR9Xg0cTRHJSXKnIJY682m5b+4RbXqLKm4Xqf2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pbmecGN1; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad51ef2424bso443395866b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 08:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749223792; x=1749828592; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pHKg9aReCBIhycPzMljP890R0nKClsGn0j0TZZruLEs=;
+        b=pbmecGN1OqgEPpflLsZ6dogyEF3lkXEgtGQaxQLFjznGg7x3l/xQPaFD7/z6uaPZHa
+         RlVxeE0SbmVxT8ACQ+xtW3FvCZQE8+YntL3kCqoBmtGcqg5pb51BSS0RNpEsarjnAGVK
+         mLCDx3HjHR2QrM+NAKgq6JrGMWeJsylP13ZwGbpzWZow0/cP/9pVqZnyI07L/aPlU/Bx
+         IWXvTJDPKkLo+s4fXRqNIMyUTzyF7EwcyG7moiM4NrZy+BXcqJmKpX4z9qYgDHlsHcvo
+         /ik0BQ3ArHKyWkBqepM79Nv54AxgyZJbe4sa8ZXzrj4d0X8348ld/Ddn7v5ujqMO84Fg
+         RY2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749223792; x=1749828592;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pHKg9aReCBIhycPzMljP890R0nKClsGn0j0TZZruLEs=;
+        b=PEcznLo69ixCzy6x+nQjLtuLzMDkV3HZ4DtvndAJvzPXPVN2rt2Nl5qVYmKh+ss3e1
+         RxedK1wa3rJ5HfK3jfaOHhBjuXkSdBzwFRAFp46cqkmQ1r46IIepoy885/gXZPFHG0fz
+         gLl+6/dTolzQVg8TlmA6rwWQ5Mvm/Oj/LAIyWQJPNGBpd33R9UUgPWcZ+BxVJg6hxsQu
+         bAj6y1+PQBhceQAbyS5GIngirbZVyZjtBfZxo5Tp0hIUPMCTCQMVuhoHN2iWYUHujKTv
+         VaGxSJqDANlcI41nyGvFc9l+RGWhqf7p7X7CjU3Uq5JY9H8YhKGSB3ST1p5rKyUzDTjN
+         tu+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ZZl4ojZ5nRDmxwoRb22criQk3fLuSDzYOs28KQ5QmUq78AgnO3PGax2woYgZMg21pZXENf7FQnzukaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMQ/Hj+WtemCq8t+NhA1CiK+p0VUeRIJFNlR9JVu4FkgG8xoHr
+	3lJhx/oHILQbCvCWVpI3uEBn4pRz05rwhbWuzChXdN48uVfBY/1++TahCsMlXdzf0H4=
+X-Gm-Gg: ASbGncsacaWp4AaAUr5oO52nLDFw2IwVAQi5Gj9Jz8h7Qbu2J4LTTj5leE4gDOuF5OW
+	9Abzyp/rOejBR1Eb1/nWfPZ1BtJzMTJb+oEm2jx8uTeAHD5Y3jy3tmv92xzNZb02Bh87P9nuiun
+	kjnuBjBvRqNWlO9oBEtdW7q3Dpn7Phy8A+e6+y3S+JIDm1G2Jcb+ZbRVLbQnJXbP7XDZ4iBoens
+	E0rXwOOxAbBKttzvdtcPkHA5HCXrn7kgzSypuH4n39XieQK50QRm2VmRQ8dEPRHodYqZrBGklhf
+	ql5BzdKeDoH2SzxljJ/OzoiIQ2ZEcgrN3FeKksRifWRqk7JYL0gTZsBB9AUdav2f1pKKAWHcfW9
+	CgPejWIyQTTuWT8dF+9nPOXNHdaT3FAK4RGz5LI7tQA7WWA==
+X-Google-Smtp-Source: AGHT+IFIbqOwQmbDQEe3E/wlxCxAjm4JmZX9I8K8ar5M7fYX/U4wmJP0R3iG9BUeJ0Tu3p9r9nBSjg==
+X-Received: by 2002:a17:906:9fc7:b0:ade:8df:5b4d with SMTP id a640c23a62f3a-ade1a9329dcmr347910366b.15.1749223792241;
+        Fri, 06 Jun 2025 08:29:52 -0700 (PDT)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d754913sm130801166b.4.2025.06.06.08.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 08:29:51 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 06 Jun 2025 16:29:43 +0100
+Subject: [PATCH] scsi: mpt3sas: drop unused variable in
+ mpt3sas_send_mctp_passthru_req()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG7QV91AWpOk7VUcE-B1MLkEQPDB0Y=zsBOBf6MhHVYh1aEGQA@mail.gmail.com>
+Message-Id: <20250606-mpt3sas-v1-1-906ffe49fb6b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGYJQ2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMwMz3dyCEuPixGJdQ1NTM2MLA8s0cwNTJaDqgqLUtMwKsEnRsbW1AGY
+ q/l5ZAAAA
+X-Change-ID: 20250606-mpt3sas-15563809f705
+To: Sathya Prakash <sathya.prakash@broadcom.com>, 
+ Sreekanth Reddy <sreekanth.reddy@broadcom.com>, 
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, MPT-FusionLinux.pdl@broadcom.com, 
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Fri, Jun 06, 2025 at 03:26:13PM +0100, Igor Korotin wrote:
-> On Fri, Jun 6, 2025 at 2:50 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> > However, I don't understand why we need this and the subsequent
-> > is_acpi_device_node() and is_of_node() checks.
-> 
-> The idea is to avoid unnecessary table lookups when both OF and ACPI
-> match tables are present. If we already know the fwnode type, these
-> simple pointer comparisons (is_acpi_device_node() / is_of_node()) let
-> us skip the irrelevant match function.
-> 
-> Those checks are cheap (just pointer comparisons), while
-> acpi_match_device() and of_match_device() iterate over tables.
-> 
-> So yeah, it’s a bit ugly, but it can save some CPU cycles during enumeration.
+With W=1, gcc complains correctly:
 
-You have loads of CPU cycles during enumeration, keep things simple
-first, only attempt to optimize things later on if it is actually
-measureable.
+    mpt3sas_ctl.c: In function ‘mpt3sas_send_mctp_passthru_req’:
+    mpt3sas_ctl.c:2917:29: error: variable ‘mpi_reply’ set but not used [-Werror=unused-but-set-variable]
+     2917 |         MPI2DefaultReply_t *mpi_reply;
+          |                             ^~~~~~~~~
 
-thanks,
+Drop the unused assignment and variable.
 
-greg k-h
+Fixes: c72be4b5bb7c ("scsi: mpt3sas: Add support for MCTP Passthrough commands")
+Cc: stable@vger.kernel.org
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 02fc204b9bf7b276115bf6db52746155381799fd..3b951589feeb6c13094ea44b494ca3050a309b15 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -2914,7 +2914,6 @@ int mpt3sas_send_mctp_passthru_req(struct mpt3_passthru_command *command)
+ {
+ 	struct MPT3SAS_ADAPTER *ioc;
+ 	MPI2RequestHeader_t *mpi_request = NULL, *request;
+-	MPI2DefaultReply_t *mpi_reply;
+ 	Mpi26MctpPassthroughRequest_t *mctp_passthru_req;
+ 	u16 smid;
+ 	unsigned long timeout;
+@@ -3022,8 +3021,6 @@ int mpt3sas_send_mctp_passthru_req(struct mpt3_passthru_command *command)
+ 		goto issue_host_reset;
+ 	}
+ 
+-	mpi_reply = ioc->ctl_cmds.reply;
+-
+ 	/* copy out xdata to user */
+ 	if (data_in_sz)
+ 		memcpy(command->data_in_buf_ptr, data_in, data_in_sz);
+
+---
+base-commit: a0bea9e39035edc56a994630e6048c8a191a99d8
+change-id: 20250606-mpt3sas-15563809f705
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
