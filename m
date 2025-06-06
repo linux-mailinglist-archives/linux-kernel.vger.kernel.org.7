@@ -1,217 +1,159 @@
-Return-Path: <linux-kernel+bounces-675842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80926AD03A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:58:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2BBAD03AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1DC165B95
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F8616BAA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542C728A1F4;
-	Fri,  6 Jun 2025 13:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C533289835;
+	Fri,  6 Jun 2025 13:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnkOUMVy"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boD0tZeV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAAE289E1B;
-	Fri,  6 Jun 2025 13:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D104D1A274;
+	Fri,  6 Jun 2025 13:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749218212; cv=none; b=X9ij/VJ43QFH85MJa42KqbBZyRcFIKnEen4Q7FxSHr+0wZ/42TzIC4fP+H/iGZUoGh5MYmgEntfSiPDERwTOZ2aeQnvAxP3kTZnZO5AEwhjmBC121zuPesggDuXTdVidEtqIBA1IiDXqjlvhqATfKT2xR7f/VAKf6o13a7/4V1g=
+	t=1749218313; cv=none; b=Mhj4gms/BeC6LHl7OSWoP3J+zrkhA4mcz38q/b3Uz2lPrYz7wee/rnjv3CfID2IVuz+PcK//OQ27aJYtyONlpztbGFLLxMjRx8sVLyjPKR59wSswL8PaPsdnQaUrzIHsnUAgxuhOxdLg69+qD9KWrLhiI41J7lWSE5Sr4Lv/qSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749218212; c=relaxed/simple;
-	bh=6XuUXclfgoEKljVaIZCM2rGLK7pYyEG8d9ML+mCyG1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c8sWQeZybx4SgeC5ivSoCFmT0aMIP5mPJ8lJP4NtOuVk5mDkHm3A2D0KOrYhDUzCFV+kPIKWtBrlY/LIB+xzFRJwVZ6Jp9KcuHaEDyR7YHe0RpECUbuyiUSTQgywD3oOY3CvtNYiytiOskKzt51rWB9K0ZgCyftyGl2ibuOVmAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DnkOUMVy; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso342193466b.2;
-        Fri, 06 Jun 2025 06:56:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749218209; x=1749823009; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fvUd63Qr4Uj7TI50ZVFoqkRT4E5BfeemVFyk/+/NcyI=;
-        b=DnkOUMVyYh1qZ84LvYOqpK1J2zChMvMwTvckKYCvF1xYzdk+2FM8KhwbRpmlJ0qWvl
-         Vkj62lwzFc0TLLxgBgc/XTNmwqPPDgLobrQUbX9MqwgLSQeSNN7Sif9VhakHUbxg/lAw
-         iGU43ok02uwgcrehgtbzAUdq6A5u4CdBfYWZGDozPCYG8KfKHUmd+YXQYv3qusnBp8Fj
-         OMlBV6KViefJ4ksoW1xjC41Zq31MRLrNMbRgh35SZVjw1dHac8ixa/ChpyAPVA2XyQpy
-         m7XJtbbxHIk3Hzx2Yz2Flw4WHnjWjJjPDPKAq+InfTR+/FZuiiCX6fNFl0xgyJStSup4
-         Yf+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749218209; x=1749823009;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fvUd63Qr4Uj7TI50ZVFoqkRT4E5BfeemVFyk/+/NcyI=;
-        b=s3KQwRzx5/HLvFYNva5IZQN4dy27quNZojJWY/6XsnpmlhAOJ7UzHlmbI7VVnA1/CV
-         u5euLbPM3qdkMOVPzuRUn2sChmLvJESbPmJEA01eGOmV1yV9qBPqR+THcBMHbDWtc/rS
-         az4c5u3Nk7vqNO38xOOwEM3tl9adC0Luo1iBhU15nC6iCSpKSdppWFNU+Sad9LL8MY1x
-         VupuCgF89K7vdyoTgsRShlmStBqfsUXz83wNNG0guNGYHRqyle7ihXNKK8Y131L5y4N/
-         vleD0czanNdVRHXFG4WtXDAe8sLzDr6SrzPF+IKWT3r0hIvJpGL6m4LqNCN+tL0qmLEW
-         LBfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWr4eHgZFaUGz0CBfI3AQrc7qpbbw2Z64KOJCMI7TbeOZ6X0KSRMyAtcAJv9veUiHxTYe0=@vger.kernel.org, AJvYcCXDX++ZsAA7+Pss/HOnDRSFBjtcHbcwu9fBk/BBfo4T49cH0dLfk2YjcwvIJUhyUd27aKReOVEb7LMzmGwp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ZMCFQ58tiiu9inXW0GsNrzB//gggiClnhDHvtxjfMNhq295a
-	1Sj5wn8ixGQL4Su6cDvbFvJQnxD731ZN4InGr37yF6/ttFjOkZkwghEXpdl65w==
-X-Gm-Gg: ASbGnctKo1l2EziC4vshnllekvOs1TCAgyrUWxWyLTAUhyVlBXa/xx2pRxLlZY1NspR
-	M3tVB3iWKYCQjWW64Ay1/VBuS2ASxo+hI6dX7nNB1N65a7Y5y/a/F8kCXVnG2xMCjNL98vbbsTj
-	laWpZ9EMn+W0ff7dscEWuVM+rcxAWTqGo8DjxjfA5XG0csvds/zQFOLvcSl4QBnVS9X9omz+Yie
-	2ZDqpR+fHiHQhP/7RBSpkjTB1x6vHtwu+Dn9Le+iDwSNS3E5pI7Qvn/0Y4769+n9dUWqdt+2fMv
-	kT0oxZlb+zIcLaPjDlNftwPW62ZhqJ5UY8XxuvwOCSVjyw==
-X-Google-Smtp-Source: AGHT+IEsx3hUnaelYT0aEIVsQCZHO0xm/AdKQqvAEwfCIS6P16J6XswUGs8Rz+chBLEDz7p9hGnd/g==
-X-Received: by 2002:a17:907:5ce:b0:adb:469d:223b with SMTP id a640c23a62f3a-ade1aa469bbmr277091866b.49.1749218208386;
-        Fri, 06 Jun 2025 06:56:48 -0700 (PDT)
-Received: from 127.com ([2620:10d:c092:600::1:a199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc379f6sm118026766b.110.2025.06.06.06.56.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 06:56:47 -0700 (PDT)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: asml.silence@gmail.com,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC v2 5/5] io_uring/bpf: add basic kfunc helpers
-Date: Fri,  6 Jun 2025 14:58:02 +0100
-Message-ID: <c4de7ed6e165f54e2166e84bc88632887d87cfdf.1749214572.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1749214572.git.asml.silence@gmail.com>
-References: <cover.1749214572.git.asml.silence@gmail.com>
+	s=arc-20240116; t=1749218313; c=relaxed/simple;
+	bh=QyO94pd4hlnn9BKqJzgyhfcD8waNKskd+/HKP0CvpQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ww8mU6cV9K1o3AopT1xdtfxLqa/LzXlCfSYy6+BROokUDewQrjyEJcHpFTcxlXJsnUhwD6WcbSfnuh/AdO6NbImBS3VxLTYSeKTLJhZwzB0FFfbtPldyGNh8w5OEENiYXdTR65j4zGXchPV/oMdGRdrPFiE1LdRKMykwBDjaiTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boD0tZeV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC28FC4CEEB;
+	Fri,  6 Jun 2025 13:58:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749218311;
+	bh=QyO94pd4hlnn9BKqJzgyhfcD8waNKskd+/HKP0CvpQg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=boD0tZeVz5UtG9+im6UihIJ+Z3HQVXLzuovQCa76Atf/9RHJd0Xy0unwT4wwKsQ+U
+	 IazlNovBJ4GSG7qM8+lXg86bB8VuD/12OnlxwVm1uCwbqBrW8OttMdBn3MyTyCX/+F
+	 KsHnXp2ftgx8rT65KtGmXpExDfPqjsWx6xc3RgjumuBb/LaoUAk/zru1lJg7Qa6BH+
+	 haVxJHJCz808MLSPhmGUjOeyNUDeirD4ekFhd9PA8NGB7Q8ySMFMP0l+yE63y4hZ92
+	 tw7ECnLbyvsMHl7sAIwFFTQzZXWhDhNbR+/zRiPCYRTyi9x6oOfMNjL1liJCxEvdGs
+	 fkfa4ID5MlTLA==
+Date: Fri, 6 Jun 2025 15:58:24 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Igor Korotin <igor.korotin.linux@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Len Brown <lenb@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Hung <alex.hung@amd.com>, Tamir Duberstein <tamird@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Xiangfei Ding <dingxiangfei2009@gmail.com>
+Subject: Re: [PATCH v2 5/5] samples: rust: add ACPI match table example to
+ platform driver
+Message-ID: <aEL0AGBZqDp1lMFe@pollux>
+References: <20250605161956.3658374-1-igor.korotin.linux@gmail.com>
+ <20250605165231.3663810-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605165231.3663810-1-igor.korotin.linux@gmail.com>
 
-A handle_events program should be able to parse the CQ and submit new
-requests, add kfuncs to cover that. The only essential kfunc here is
-bpf_io_uring_submit_sqes, and the rest are likely be removed in a
-non-RFC version in favour of a more general approach.
+On Thu, Jun 05, 2025 at 05:52:31PM +0100, Igor Korotin wrote:
+> Extend the Rust sample platform driver to probe using device/driver name
+> matching, OF ID table matching, or ACPI ID table matching.
+> 
+> Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+> ---
+>  samples/rust/rust_driver_platform.rs | 40 +++++++++++++++++++++++++++-
+>  1 file changed, 39 insertions(+), 1 deletion(-)
+> 
+> diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
+> index e3992e7a71e9..ee0780c1d6ae 100644
+> --- a/samples/rust/rust_driver_platform.rs
+> +++ b/samples/rust/rust_driver_platform.rs
+> @@ -17,10 +17,48 @@ struct SampleDriver {
+>      [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
+>  );
+>  
+> +kernel::acpi_device_table!(
+> +    ACPI_TABLE,
+> +    MODULE_ACPI_TABLE,
+> +    <SampleDriver as platform::Driver>::IdInfo,
+> +    [(acpi::DeviceId::new(c_str!("TEST4321")), Info(0))]
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/bpf.c | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+Can you please explain add a comment explaining how to make this probe? In the
+cover letter you mention:
 
-diff --git a/io_uring/bpf.c b/io_uring/bpf.c
-index f86b12f280e8..9494e4289605 100644
---- a/io_uring/bpf.c
-+++ b/io_uring/bpf.c
-@@ -1,12 +1,92 @@
- #include <linux/mutex.h>
- #include <linux/bpf_verifier.h>
- 
-+#include "io_uring.h"
- #include "bpf.h"
- #include "register.h"
- 
- static const struct btf_type *loop_state_type;
- DEFINE_MUTEX(io_bpf_ctrl_mutex);
- 
-+__bpf_kfunc_start_defs();
-+
-+__bpf_kfunc int bpf_io_uring_submit_sqes(struct io_ring_ctx *ctx,
-+					 unsigned nr)
-+{
-+	return io_submit_sqes(ctx, nr);
-+}
-+
-+__bpf_kfunc int bpf_io_uring_post_cqe(struct io_ring_ctx *ctx,
-+				      u64 data, u32 res, u32 cflags)
-+{
-+	bool posted;
-+
-+	posted = io_post_aux_cqe(ctx, data, res, cflags);
-+	return posted ? 0 : -ENOMEM;
-+}
-+
-+__bpf_kfunc int bpf_io_uring_queue_sqe(struct io_ring_ctx *ctx,
-+					void *bpf_sqe, int mem__sz)
-+{
-+	unsigned tail = ctx->rings->sq.tail;
-+	struct io_uring_sqe *sqe;
-+
-+	if (mem__sz != sizeof(*sqe))
-+		return -EINVAL;
-+
-+	ctx->rings->sq.tail++;
-+	tail &= (ctx->sq_entries - 1);
-+	/* double index for 128-byte SQEs, twice as long */
-+	if (ctx->flags & IORING_SETUP_SQE128)
-+		tail <<= 1;
-+	sqe = &ctx->sq_sqes[tail];
-+	memcpy(sqe, bpf_sqe, sizeof(*sqe));
-+	return 0;
-+}
-+
-+__bpf_kfunc
-+struct io_uring_cqe *bpf_io_uring_get_cqe(struct io_ring_ctx *ctx, u32 idx)
-+{
-+	unsigned max_entries = ctx->cq_entries;
-+	struct io_uring_cqe *cqe_array = ctx->rings->cqes;
-+
-+	if (ctx->flags & IORING_SETUP_CQE32)
-+		max_entries *= 2;
-+	return &cqe_array[idx & (max_entries - 1)];
-+}
-+
-+__bpf_kfunc
-+struct io_uring_cqe *bpf_io_uring_extract_next_cqe(struct io_ring_ctx *ctx)
-+{
-+	struct io_rings *rings = ctx->rings;
-+	unsigned int mask = ctx->cq_entries - 1;
-+	unsigned head = rings->cq.head;
-+	struct io_uring_cqe *cqe;
-+
-+	/* TODO CQE32 */
-+	if (head == rings->cq.tail)
-+		return NULL;
-+
-+	cqe = &rings->cqes[head & mask];
-+	rings->cq.head++;
-+	return cqe;
-+}
-+
-+__bpf_kfunc_end_defs();
-+
-+BTF_KFUNCS_START(io_uring_kfunc_set)
-+BTF_ID_FLAGS(func, bpf_io_uring_submit_sqes, KF_SLEEPABLE);
-+BTF_ID_FLAGS(func, bpf_io_uring_post_cqe, KF_SLEEPABLE);
-+BTF_ID_FLAGS(func, bpf_io_uring_queue_sqe, KF_SLEEPABLE);
-+BTF_ID_FLAGS(func, bpf_io_uring_get_cqe, 0);
-+BTF_ID_FLAGS(func, bpf_io_uring_extract_next_cqe, KF_RET_NULL);
-+BTF_KFUNCS_END(io_uring_kfunc_set)
-+
-+static const struct btf_kfunc_id_set bpf_io_uring_kfunc_set = {
-+	.owner = THIS_MODULE,
-+	.set = &io_uring_kfunc_set,
-+};
-+
- static int io_bpf_ops__handle_events(struct io_ring_ctx *ctx,
- 				     struct iou_loop_state *state)
- {
-@@ -186,6 +266,12 @@ static int __init io_uring_bpf_init(void)
- 		return ret;
- 	}
- 
-+	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS,
-+					&bpf_io_uring_kfunc_set);
-+	if (ret) {
-+		pr_err("io_uring: Failed to register kfuncs (%d)\n", ret);
-+		return ret;
-+	}
- 	return 0;
- }
- __initcall(io_uring_bpf_init);
--- 
-2.49.0
+"Tested using QEMU with a custom SSDT that creates an ACPI device matching the
+sample Rust platform driver."
 
+> +);
+> +
+> +/// OF/ACPI match tables for Platform Driver implementation
+> +///
+> +/// The platform::Driver requires declaration of both OF_ID_TABLE and
+> +/// ACPI_ID_TABLE, but if driver is not going to use either of them
+> +/// it can implement one of them or both as None.
+> +///
+> +/// # Example:
+> +///
+> +///```
+> +/// impl platform::Driver for SampleDriver {
+> +///     type IdInfo = Info;
+> +///     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
+> +///     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
+> +///
+> +///     fn probe(
+> +///         pdev: &platform::Device<Core>,
+> +///         info: Option<&Self::IdInfo>,
+> +///     ) -> Result<Pin<KBox<Self>>> {
+> +///         dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
+> +///
+> +///         if let Some(info) = info {
+> +///             dev_info!(pdev.as_ref(), "Probed with info: '{}'.\n", info.0);
+> +///         }
+> +///
+> +///         let drvdata = KBox::new(Self { pdev: pdev.into() }, GFP_KERNEL)?;
+> +///
+> +///         Ok(drvdata.into())
+> +///     }
+> +/// }
+> +///```
+
+I assume you want to make clear that both the ACPI and OF table are optional;
+not sure of that's required given their type is Option<...>. But I'm fine having
+this additional comment and example.
+
+Please make sure that it compiles though and remove everything unnecessary from
+probe() please.
+
+> +
+>  impl platform::Driver for SampleDriver {
+>      type IdInfo = Info;
+>      const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
+> -    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
+> +    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = Some(&ACPI_TABLE);
+>  
+>      fn probe(
+>          pdev: &platform::Device<Core>,
+> -- 
+> 2.43.0
+> 
 
