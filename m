@@ -1,265 +1,115 @@
-Return-Path: <linux-kernel+bounces-675861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6857DAD03EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF097AD03ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A7A189A64C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E2E189A3E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B9289367;
-	Fri,  6 Jun 2025 14:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5881448E3;
+	Fri,  6 Jun 2025 14:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UZLVYr9z"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qr1QraNu"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BAE1CEAC2
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 14:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B613A258;
+	Fri,  6 Jun 2025 14:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749219649; cv=none; b=UlcNmd4QY2M8mdzjEhYMiPFYBTOItbJdPtNtywP3Q5TAjNxI8mzTVyf6XYw3hOp416vXk2gbwLSMc1yAtRZ1vWJGdzpP/QwzwxffZLX6Moz1pGfZkEfVVJvFvEhvg5gL2MDPt+VKpl9CYRPISgA5RUIc2yi2rLNMRrUnaRpWo64=
+	t=1749219662; cv=none; b=szEwgja8x8i44iBqOB9icFSGxc1iYcqHSfl52KbETzTmIMzOKqCA+ZhwD7CtMXUZfYaakpx0Au+/3bqTAPk72A4PVDDF792ZbraJLVY9hGohRA+u0Qo6t8v4nIEbaMm486RPe1LZn3CRLb2159l15WBFuCBrXr1fI6MgO5SbWWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749219649; c=relaxed/simple;
-	bh=L/gwxvm6plajhtZUJBhnKB7CkU77xzODIZq6h41Wvi8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XGU+fam037Gs3yEFlhkxPFoQyYJf5/2CEf2YRh8Vd4Bv/2UXZt5zpbqbNdCFbgfm7Ape3NJvqCdK/nNx7G46COK2YN729w/m8YTaNfPqsKvMjlb9Inmz0do0FvtR4rjkn4k4CPy5dupKwdHxrlFpMjMy3IzLJrT6JB1VbazkVbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UZLVYr9z; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450cfb790f7so16998365e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 07:20:47 -0700 (PDT)
+	s=arc-20240116; t=1749219662; c=relaxed/simple;
+	bh=rSP2F/Vp8pAf45QmfKMDtzuSXKBxupSWAhnZGVm31eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q17u/+7kvhY7Vg6/O0PjJ3EIE9HCrDpuhM8Bi7BGvS2W9J1A+/DOdSLnSf0o+Qoo34ewUKm1HWWMKndajTnFxc0XoQWcZ75lmnzIaWTRc82wA4lhFrXW1AYIjWT52HsxSk1bMj8tKI1Mc6BjMtC0zVRkdUOKdIHerNbAf4t4Au0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qr1QraNu; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22c336fcdaaso18812955ad.3;
+        Fri, 06 Jun 2025 07:21:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749219646; x=1749824446; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8HpQeVbRwMAK/HKOtbrEdsV8ikZIsnrbhJJIVEFRiLg=;
-        b=UZLVYr9ztQa6BVFfwr3aiSB10sy0axQE0a3TBQBgJdgvoOT01bcbF9w7lf5YJNChCI
-         94BCa6EsDFNQV5At+nHN9o4ATVXdI+lWKKeNcHchwliO/Gglu35YTAJVxLqnjySFxYiy
-         1q7emvStVxmdRoE0+0duHjKJ3a+Yotyif/yn3SVJoCzEyfN5HO9mdATCDwqJC42hdX0L
-         xMi0X0Z+NmYMVezqyVG0zLF2ZE0Q0DWZEbsUEN14CrMAmYWlhfZweuyNpBBrQqGvnJUB
-         3pIA7+epvNvhfWJWZlzfGlTiP8HH3VolCOsrn27dxWgBF7he3/LsAKt/lRXZU5ERtjjR
-         vQUA==
+        d=gmail.com; s=20230601; t=1749219660; x=1749824460; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7oHF+BaYEidVFkRjLgW1RNqKQ9NAKcb2cnOs0pZlOZI=;
+        b=Qr1QraNuxpm5zmQDlO6oHizRqfeUPmlK+VVtXg8liFA5qQOSKtcKMDRiyVrMPXs4kW
+         F11znNhLYVM/kNh6daLVfgCaqyUFOzi8wfoN4SMubeAS0QGVzc01265hDpWVFW5+evNx
+         CEqkNV5UPxHtc7QJrvxZeeSLajze3EwICA2o7e74+q3nEu1KAvce4B1Ypm4y4U8Nb4yg
+         0fPU43faciW8s/MbMklXf7kZuRAf/DUYk5PqpY+uZaM/eJst87cqGLUy+ZMnVpZhplZl
+         zLJi/J0gF2RiFJcQC2TYbBmiHheoPK6BFrDiMPXUPO5g3ilK8pdH1eaCEZ8/RB1OWa3t
+         GLeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749219646; x=1749824446;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8HpQeVbRwMAK/HKOtbrEdsV8ikZIsnrbhJJIVEFRiLg=;
-        b=aXc3FYZ1O7pDZ1T7r+lhs6Q7gswNGXNBkAVO/+cxQjP7w1t3hzcfORjbEMIlJ0nuH5
-         W29LlKKZ4jczFHUUs8nja0ChH2T2FXlOdrAPT7Ejj2irj16ubVIJhhGUT7J1KiH8kdQu
-         fuVNz9PfF0vRkywAyXthB2s9tuKLUB0rpWu1pf25O8loglAISfDt/Wl0Fs41qurdBItQ
-         YPNiZe5+Udqjp1S1hQqLTFJMbkp9A4I8SVddaIeWpgLlxKvSbZJY4TSC05/TzYDGM9JI
-         Uf2tj/pb4m/l/OF8yWROrAh6Px/N+RyEjPBhNFu+8elRDbcQ8i7JPRB66qcfFjImXsJX
-         HL2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWRqjLrAG16F/GXC8c4wnJeVpuH+K6HBtnKO4+HQvVY+pHcuOxxtEjpxJhpNrL64GbSk1H/t/1k59Sbk8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ45HOF7muS1/mFpPZsCezGSnXImzlYQRLVWlG+yxLrgA8sNkQ
-	nOpH6W4Rj+T4498/gjTr6sUa9321qNqUQumWbdlQUiaMzaEyoF1erGQ2jMCOkxzOGCw=
-X-Gm-Gg: ASbGncstaVH6uCN+gaX30YXvVJAWbl8SK1QsKdG64DvWxFduj0CbLRxlLQ8NM3gwczp
-	1avTH99DVvY1M3cYIQZzKQOSyOzPgF7gLcDKxaWtD/A847ndNCYbc/9jzjktSfJlGW5eFQGlJjv
-	b1FYJF85F6cZkia4W9wDdr1Jm5xGGyNThdEoGvGCeUZwkBmIkU9a8n0q4i+0kAqt+PyeSU+e6ul
-	MyRmqCc0K0HerYnaxGEgvUgxbibuvRtLHmIZMR+A26ztYPT5N6u3munFNgrnpMwK+9vPTD1xBAH
-	6uDLz6CE/hwalmv2AUpU+8wNlwaZbizrAy4e1b9kJ6n/DTTtDraV4PsH/jVMGU7j2T356MrLi2/
-	GSAcMVuNd6iyVpD/67D8yJWdtROGUvq8LYj624gkIIQ==
-X-Google-Smtp-Source: AGHT+IFkrVts+bEEPUp4BBAtLVZPot/aA/9X0oPRBOSSiEtVNiKU2TRV736+tfIKnO29f0u+64AR8w==
-X-Received: by 2002:a05:600c:a08e:b0:43c:fa24:873e with SMTP id 5b1f17b1804b1-45201391375mr39843995e9.13.1749219646003;
-        Fri, 06 Jun 2025 07:20:46 -0700 (PDT)
-Received: from [192.168.0.2] (host-80-116-51-117.retail.telecomitalia.it. [80.116.51.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45213754973sm25686345e9.35.2025.06.06.07.20.44
+        d=1e100.net; s=20230601; t=1749219660; x=1749824460;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7oHF+BaYEidVFkRjLgW1RNqKQ9NAKcb2cnOs0pZlOZI=;
+        b=jfCibSwIRO+/bS79ASDI8Xvd2DIMnTCVEGJ7CFTulxppqNmu0v2PNXPAeQTYDhxBDA
+         uuziAWsNUHXiztWj5EYMdUDnBHysybXpAk83KMUim9pt1IFp70ic37gZpVeJNhLIjfv1
+         kI7/Jhzc6EamkFAGkNdCAkZu53EEqgYCMSQlzxBOt9COvBwxrw6guGCcqzeSrHwythw0
+         jJqYXXtlGLlsgX27/HIagjpNPJtJr2TY4/+VzBbsfCHKb5KjWyUj9EhOwgESdiuyj1tz
+         4/YJ7nuvYWdPnSuaLX0kYPpmaEuVFnrhuof/G2sbTESBL3C+3ixfJBMcCwYBIgPLWOM6
+         KpPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxwdMOJUg6lKYqPa4qRDpgHmg6RBcBmXpRIyX+VdLfeSH5nEiLpCPCZJy0RpphdCmeXacC/LPBuyE13Uk=@vger.kernel.org, AJvYcCWo+ABnrM3dsLtTTCWGubU3Y2S96xBReSwvAOlL5zN6Co/YthV0DlCDpDIzDxCLhsoUWTWLUBbM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgiVXrNStN+68lr9hAdWLcy9y0QCxtycdjXphnC2ORRRujGO+i
+	z1bcX4KU5yQsflZEU3uptUm6/5Shu+s0FLCHnyroIHnWOFv3rtngaL1nLVFyDQ==
+X-Gm-Gg: ASbGncsyCG336FjHkPzcXQ5pb2TEHI0lGpDGWMr5KA5K/mjfPE0ekGs7Hhqj1KeQcuf
+	O+g9F32H0pHAisqpQ6FgHJi+JW6cf159aLxCvyzfWqUArpjOcGD4cVEwGnEPpO1J2yOxFFM0cdk
+	CnQ2mNYiNHSJJToMjW6xVEAWNKm1R3owNnSZrLUbbtAF2oPW4Oizbk0N1L+5bRB+ip/RaFSz81K
+	AnTBCUAj5anLCEiy5nHPpIcHhx4kIwSuRndvOnDT/92nTL6VK7Edqjy/sWC0MdLE9yGY/PGespw
+	VdnW5T35mGvUd3bNVul4jZ5nMLyzoVn9urjSDlXkEG29SPtK0eQ=
+X-Google-Smtp-Source: AGHT+IEV6Xg84XbMRZPliX18VduESPGpoHh056OZEWDuyhWAMYEW6h7oFD9MTeB4Fa5jUSxYd8HJdg==
+X-Received: by 2002:a17:902:d48f:b0:234:b41e:37a4 with SMTP id d9443c01a7336-23601cf5aadmr37529615ad.6.1749219659719;
+        Fri, 06 Jun 2025 07:20:59 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fccc4sm12934765ad.127.2025.06.06.07.20.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 07:20:45 -0700 (PDT)
-From: Angelo Dureghello <adureghello@baylibre.com>
-X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Fri, 06 Jun 2025 16:19:22 +0200
-Subject: [PATCH v9 7/7] iio: adc: ad7606: add gain calibration support
+        Fri, 06 Jun 2025 07:20:59 -0700 (PDT)
+Date: Fri, 6 Jun 2025 10:20:56 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: I Hsin Cheng <richard120310@gmail.com>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] uapi: bitops: use UAPI-safe variant of BITS_PER_LONG
+ again
+Message-ID: <aEL5SIIMxmnrzbDA@yury>
+References: <20250606-uapi-genmask-v1-1-e05cdc2e14c5@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250606-wip-bl-ad7606-calibration-v9-7-6e014a1f92a2@baylibre.com>
-References: <20250606-wip-bl-ad7606-calibration-v9-0-6e014a1f92a2@baylibre.com>
-In-Reply-To: <20250606-wip-bl-ad7606-calibration-v9-0-6e014a1f92a2@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- devicetree@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5283;
- i=adureghello@baylibre.com; h=from:subject:message-id;
- bh=IKWt2EvUAc6fFAR+GqaSzL5Mis4xCa3ugoUhm+8Psbg=;
- b=owGbwMvMwCXGf3bn1e/btlsznlZLYshw+vHs2gXb+MPrOrytJjwNkI28X7Y0uLH1//aN7De9i
- s4JPZvN1VHKwiDGxSArpshSlxhhEno7VEp5AeNsmDmsTCBDGLg4BWAiDy4zMtxgt1teuLT3rqGu
- 9Zrtq5u+T3mRsjCj5NCuAl824/A3Ux4w/NPRap+vuKLnh0zcy9Dv1YZKcTXu/Gdeiqr2VXotf5R
- 2kwMA
-X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
- fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250606-uapi-genmask-v1-1-e05cdc2e14c5@linutronix.de>
 
-From: Angelo Dureghello <adureghello@baylibre.com>
+On Fri, Jun 06, 2025 at 10:23:57AM +0200, Thomas Weiﬂschuh wrote:
+> Commit 1e7933a575ed ("uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"")
+> did not take in account that the usage of BITS_PER_LONG in __GENMASK() was
+> changed to __BITS_PER_LONG for UAPI-safety in
+> commit 3c7a8e190bc5 ("uapi: introduce uapi-friendly macros for GENMASK").
+> BITS_PER_LONG can not be used in UAPI headers as it derives from the kernel
+> configuration and not from the current compiler invocation.
+> When building compat userspace code or a compat vDSO its value will be
+> incorrect.
+> 
+> Switch back to __BITS_PER_LONG.
+> 
+> Fixes: 1e7933a575ed ("uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-Add gain calibration support, using resistor values set on devicetree,
-values to be set accordingly with ADC external RFilter, as explained in
-the ad7606c-16 datasheet, rev0, page 37.
+Thanks Thomas. I applied it in bitmap-for-next. Is that issue critical
+enough for you to send a pull request in -rc2?
 
-Usage example in the fdt yaml documentation.
-
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
- drivers/iio/adc/ad7606.c | 39 +++++++++++++++++++++++++++++++++++++++
- drivers/iio/adc/ad7606.h |  5 +++++
- 2 files changed, 44 insertions(+)
-
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index d19682186e7cd73a60541f62adf08d987ba24ec3..d9271894f091a837d29197f7de892c022b7e4152 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -33,6 +33,10 @@
- 
- #include "ad7606.h"
- 
-+#define AD7606_CALIB_GAIN_MIN	0
-+#define AD7606_CALIB_GAIN_STEP	1024
-+#define AD7606_CALIB_GAIN_MAX	(63 * AD7606_CALIB_GAIN_STEP)
-+
- /*
-  * Scales are computed as 5000/32768 and 10000/32768 respectively,
-  * so that when applied to the raw values they provide mV values.
-@@ -180,6 +184,7 @@ const struct ad7606_chip_info ad7606b_info = {
- 	.scale_setup_cb = ad7606_16bit_chan_scale_setup,
- 	.sw_setup_cb = ad7606b_sw_mode_setup,
- 	.offload_storagebits = 32,
-+	.calib_gain_avail = true,
- 	.calib_offset_avail = ad7606_calib_offset_avail,
- 	.calib_phase_avail = ad7606b_calib_phase_avail,
- };
-@@ -195,6 +200,7 @@ const struct ad7606_chip_info ad7606c_16_info = {
- 	.scale_setup_cb = ad7606c_16bit_chan_scale_setup,
- 	.sw_setup_cb = ad7606b_sw_mode_setup,
- 	.offload_storagebits = 32,
-+	.calib_gain_avail = true,
- 	.calib_offset_avail = ad7606_calib_offset_avail,
- 	.calib_phase_avail = ad7606c_calib_phase_avail,
- };
-@@ -246,6 +252,7 @@ const struct ad7606_chip_info ad7606c_18_info = {
- 	.scale_setup_cb = ad7606c_18bit_chan_scale_setup,
- 	.sw_setup_cb = ad7606b_sw_mode_setup,
- 	.offload_storagebits = 32,
-+	.calib_gain_avail = true,
- 	.calib_offset_avail = ad7606c_18bit_calib_offset_avail,
- 	.calib_phase_avail = ad7606c_calib_phase_avail,
- };
-@@ -306,6 +313,7 @@ static int ad7606_get_chan_config(struct iio_dev *indio_dev, int ch,
- 				  bool *bipolar, bool *differential)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
-+	struct ad7606_chan_info *ci;
- 	unsigned int num_channels = st->chip_info->num_adc_channels;
- 	struct device *dev = st->dev;
- 	int ret;
-@@ -349,6 +357,14 @@ static int ad7606_get_chan_config(struct iio_dev *indio_dev, int ch,
- 			return -EINVAL;
- 		}
- 
-+		ci = &st->chan_info[reg - 1];
-+
-+		ci->r_gain = 0;
-+		ret = fwnode_property_read_u32(child, "adi,rfilter-ohms",
-+					       &ci->r_gain);
-+		if (ret == 0 && ci->r_gain > AD7606_CALIB_GAIN_MAX)
-+			return -EINVAL;
-+
- 		return 0;
- 	}
- 
-@@ -1352,6 +1368,23 @@ static int ad7606b_sw_mode_setup(struct iio_dev *indio_dev)
- 	return st->bops->sw_mode_config(indio_dev);
- }
- 
-+static int ad7606_set_gain_calib(struct ad7606_state *st)
-+{
-+	struct ad7606_chan_info *ci;
-+	int i, ret;
-+
-+	for (i = 0; i < st->chip_info->num_adc_channels; i++) {
-+		ci = &st->chan_info[i];
-+		ret = st->bops->reg_write(st, AD7606_CALIB_GAIN(i),
-+					  DIV_ROUND_CLOSEST(ci->r_gain,
-+						AD7606_CALIB_GAIN_STEP));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int ad7606_probe_channels(struct iio_dev *indio_dev)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
-@@ -1630,6 +1663,12 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
- 		st->chip_info->sw_setup_cb(indio_dev);
- 	}
- 
-+	if (st->sw_mode_en && st->chip_info->calib_gain_avail) {
-+		ret = ad7606_set_gain_calib(st);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return devm_iio_device_register(dev, indio_dev);
- }
- EXPORT_SYMBOL_NS_GPL(ad7606_probe, "IIO_AD7606");
-diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index 26db8e3c724f47f68b7d5323f5d1db75b3334540..2951bb731354d64cbec6e8460b3d841a22bb17ec 100644
---- a/drivers/iio/adc/ad7606.h
-+++ b/drivers/iio/adc/ad7606.h
-@@ -66,6 +66,7 @@ typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
-  * @init_delay_ms:	required delay in milliseconds for initialization
-  *			after a restart
-  * @offload_storagebits: storage bits used by the offload hw implementation
-+ * @calib_gain_avail:   chip supports gain calibration
-  * @calib_offset_avail: pointer to offset calibration range/limits array
-  * @calib_phase_avail:  pointer to phase calibration range/limits array
-  */
-@@ -81,6 +82,7 @@ struct ad7606_chip_info {
- 	bool				os_req_reset;
- 	unsigned long			init_delay_ms;
- 	u8				offload_storagebits;
-+	bool				calib_gain_avail;
- 	const int			*calib_offset_avail;
- 	const int			(*calib_phase_avail)[2];
- };
-@@ -92,6 +94,8 @@ struct ad7606_chip_info {
-  * @range:		voltage range selection, selects which scale to apply
-  * @reg_offset:		offset for the register value, to be applied when
-  *			writing the value of 'range' to the register value
-+ * @r_gain:		gain resistor value in ohms, to be set to match the
-+ *                      external r_filter value
-  */
- struct ad7606_chan_info {
- #define AD760X_MAX_SCALES		16
-@@ -99,6 +103,7 @@ struct ad7606_chan_info {
- 	unsigned int			num_scales;
- 	unsigned int			range;
- 	unsigned int			reg_offset;
-+	unsigned int			r_gain;
- };
- 
- /**
-
--- 
-2.49.0
-
+Thanks,
+Yury
 
