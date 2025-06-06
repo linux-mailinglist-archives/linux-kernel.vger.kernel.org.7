@@ -1,83 +1,139 @@
-Return-Path: <linux-kernel+bounces-675244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6520FACFAC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A45ACFAD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C3F3AC5E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228FB178D38
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B949B433AC;
-	Fri,  6 Jun 2025 01:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQ1AjsLd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015263FBB3;
+	Fri,  6 Jun 2025 01:43:49 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141BFA927;
-	Fri,  6 Jun 2025 01:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DFD2BD1B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 01:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749173725; cv=none; b=coD0hW0bv95baoS4HRgmWjKSYwpkniDSyDwbfoiwY/11WmShaJsQkB0Gr84inXb6N1iF9fI50wbEI4SDxhPDXpvF9i1pBnbqrRYa/6suG7rSV+EWuk60m0hvSjr0hEp5uhqHMPFl7paiCCh5QYGRYzURCGLK856anluEjjwtg2Y=
+	t=1749174228; cv=none; b=pAA9OhE2Pt5QG301W5+ctJUjRCTDJ4/BTO+s+uYwlC6Ibad4fXWCQvgG1om2C2hwFAZAUqcqoIsERBrG/lhPEQZ8xTfrssCUiunyRN8VFQs59g1ted7sA0k7xcE3uNb6UQuc1nCUhMudIlniZ9BoHltXgWZMsJW/dU5d15GSdGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749173725; c=relaxed/simple;
-	bh=fi78G2MH2x9bAllKVHYxWc1xNdcgmxScO+OXg6MdNAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O+cWe3XwWMaX34+uOERzMm6q2CXOeefjcSLlObUqZFA5RpX/FC5gxYHBuCcRTE/ycgTtaMQ88/bNigE26vFWZ/B76Wk2fPRhJaBn8L/O9p0Xw4O1xWn9+Xq7TbvBEyHcRgT+MLDJUfBZwkWQRxtIvNiBfBPAhwTfid4fktU5KxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQ1AjsLd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6BEC4CEE7;
-	Fri,  6 Jun 2025 01:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749173724;
-	bh=fi78G2MH2x9bAllKVHYxWc1xNdcgmxScO+OXg6MdNAo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YQ1AjsLd48A1pDJUj2NxZTVn0p7U2gr8l1/EFjnp9dwdzb0OJathsK6tPhJ+2NALF
-	 EmOOBpIOpJGBU6LmCwvtnDWLwIqn2jvzzB16M9jrv4BA1jlz73OjnbO/mEacGiq55I
-	 jF38OXnNDgkHc1b7IJrELo327/fYT0tvZlxWE3H8o21LKjOF6SQ4c0gvBhdos6cQVs
-	 sI5XjYswbqhNl0UcfsJx7A/r3WFnpZhPSNpfDdYd5itvGjC22tqTCGpYHsrWLx1CDX
-	 T5bNzZ7Lf1dM037y8g5fFYlyotwyzG/uNFbq7kgXjXJz6rkMIRDYD2ODIMr6EvIR3F
-	 y1qGLNrMOxFXA==
-Date: Thu, 5 Jun 2025 18:35:22 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, Oleksij
- Rempel <o.rempel@pengutronix.de>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Donald Hunter <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH net-next v12 00/13] Add support for PSE budget
- evaluation strategy
-Message-ID: <20250605183522.6f16459a@kernel.org>
-In-Reply-To: <20250528151715.59b8f738@kmaincent-XPS-13-7390>
-References: <20250524-feature_poe_port_prio-v12-0-d65fd61df7a7@bootlin.com>
-	<8b3cdc35-8bcc-41f6-84ec-aee50638b929@redhat.com>
-	<20250528151715.59b8f738@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1749174228; c=relaxed/simple;
+	bh=ii5jYjtb+5AFO6rCGQxp4eNJ7KWsgDKj1OPpXDRMRic=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W0+rv6pLHMwqKHAOLutW6NjMMRk+GD8IyiUPBemlhcUQos+zc1i31urbKSW4SVhS7gQObPnM5nj12XUk7W8G/1peAUc+xZ0LWLMQ1L/YjrQn6ZcK6gn2z3Df4WNfj+fZAI9FrlCCTgA/u7c4VZ/Vhr6LyI0sQ0yISnlgalkgAfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bD3yp4Ph6z27hxW;
+	Fri,  6 Jun 2025 09:44:34 +0800 (CST)
+Received: from kwepemg200012.china.huawei.com (unknown [7.202.181.63])
+	by mail.maildlp.com (Postfix) with ESMTPS id 073221A016C;
+	Fri,  6 Jun 2025 09:43:43 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.108.232) by
+ kwepemg200012.china.huawei.com (7.202.181.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 6 Jun 2025 09:43:42 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <linux@armlinux.org.uk>, <rmk+kernel@armlinux.org.uk>, <kees@kernel.org>,
+	<yangyj.ee@gmail.com>, <ardb@kernel.org>, <tony@atomide.com>,
+	<xieyuanbin1@huawei.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<will@kernel.org>, <nixiaoming@huawei.com>, <liaohua4@huawei.com>,
+	<wangbing6@huawei.com>, <lilinjie8@huawei.com>, <wangfangpeng1@huawei.com>
+Subject: [RFC RESEND PATCH] ARM: spectre-v2: fix the spectre operation that may be bypassed
+Date: Fri, 6 Jun 2025 09:43:35 +0800
+Message-ID: <20250606014335.1772-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250424100437.27477-1-xieyuanbin1@huawei.com>
+References: <20250424100437.27477-1-xieyuanbin1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemg200012.china.huawei.com (7.202.181.63)
 
-On Wed, 28 May 2025 15:17:15 +0200 Kory Maincent wrote:
-> Would it be possible to review the netlink part of the series? 
-> (patch 2, 7 and 8) 
+As discussed before, to completely fix this problem, we must do
+the spectre operation after the user mode is trapped in the kernel
+and before the interrupt is enabled.
 
-I'll read the other patches when you repost, but the API in abstract
-LGTM.
+I have tried to add a hook function and it in fsr_info to avoid
+performance deterioration (The preceding example will trigger
+"level 2 permission fault", which is cold code in normal cases).
+However, this does not work. I find that the user program can
+also trigger "translation fault" or "access flag fault"
+when accessing a kernel address.
+
+Therefore, extra performance overhead is inevitable.
+(An if branch needs to be added before the interrupt is enabled.)
+
+I have tried to reduce the impact on performance.
+If the page fault comes from the user mode,
+the interrupt must be enabled. In this case,
+a judgment can be reduced.
+
+Fixes: f5fe12b1eaee ("ARM: spectre-v2: harden user aborts in kernel space")
+
+Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
+---
+ arch/arm/mm/fault.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index ab01b51de559..3425a12a8f52 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -272,25 +272,35 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 	if (kprobe_page_fault(regs, fsr))
+ 		return 0;
+ 
+ 
+ 	/* Enable interrupts if they were enabled in the parent context. */
+-	if (interrupts_enabled(regs))
+-		local_irq_enable();
++	if (likely(user_mode(regs))) {
++		if (IS_ENABLED(CONFIG_PREEMPT) &&
++		    IS_ENABLED(CONFIG_HARDEN_BRANCH_PREDICTOR) &&
++		    unlikely(addr >= TASK_SIZE)) {
++
++			__do_user_fault(addr, fsr, SIGSEGV, SEGV_MAPERR, regs);
++			return 0;
++		}
++
++		flags |= FAULT_FLAG_USER;
++	} else if (!interrupts_enabled(regs))
++		goto irq_disabled;
++
++	local_irq_enable();
++irq_disabled:
+ 
+ 	/*
+ 	 * If we're in an interrupt or have no user
+ 	 * context, we must not take the fault..
+ 	 */
+ 	if (faulthandler_disabled() || !mm)
+ 		goto no_context;
+ 
+-	if (user_mode(regs))
+-		flags |= FAULT_FLAG_USER;
+-
+ 	if (is_write_fault(fsr)) {
+ 		flags |= FAULT_FLAG_WRITE;
+ 		vm_flags = VM_WRITE;
+ 	}
+ 
+ 	if (fsr & FSR_LNX_PF) {
+-- 
+2.48.1
+
 
