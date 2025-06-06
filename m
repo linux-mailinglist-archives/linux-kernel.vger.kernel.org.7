@@ -1,248 +1,177 @@
-Return-Path: <linux-kernel+bounces-675836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA22AD0393
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:56:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7AFAD03AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3DF1891583
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F1A3B2970
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABF4289802;
-	Fri,  6 Jun 2025 13:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJrGDiwm"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46EE288509;
-	Fri,  6 Jun 2025 13:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FDA28981B;
+	Fri,  6 Jun 2025 13:57:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7D52882BE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 13:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749218175; cv=none; b=aKEFGMtmFXm/9qGYyLhXwsWYCyGlLl3c4qCz5f4Zv298wW2W+q9f/Ek5mLi9s79DfjkpDjwdHkhXrC59wKSXGpR2Z5u2LZ8syyyUXKSJqwroes6Bxd+AiyvSk9sC1xiQBEUkpEBQhrKyPKIdHBFRBbaVnpKoWJZvaGACZvYYe1s=
+	t=1749218231; cv=none; b=IYTtWUrqT3Rdcd+CNtFwfDef94GDgYPH9qrL1cJDTHoJJ+3NVIlfTQQay2UvMWR7kBbEENl5FFfCsDxedIpBWUnx3jiClI9fLzxZRcqpzjHqUW6SpzL3c6XS3BxPDlNDoJoGUUSqdiQiRCjZl48/5mMs2cU+dz98daaOVKdmTYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749218175; c=relaxed/simple;
-	bh=qN+pnPVxT4gL2Vpc8rdlce79GZAw4gPEct3l5HddHvM=;
-	h=From:Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:
-	 References:In-Reply-To; b=cPAmAe4ipbr2rN2UOIdHdzml649/yybLKd7x3Dtpx+RgFO0Kl9YJPvTXcrYFf43p+xgQJp0/CLliIjUBl8K16gZmxAsdmemlvQ2g54CniNO96ud+ejyip4FWCJCLp5C8P8qcY7zx2lqd34scxoojFehxp1swuf7nlZtXUbbev0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJrGDiwm; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a522224582so1316835f8f.3;
-        Fri, 06 Jun 2025 06:56:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749218172; x=1749822972; darn=vger.kernel.org;
-        h=in-reply-to:references:to:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D02VVevmOF3cQxFCCzf3uOD2IZ0DFegRFrqZJe6cxu4=;
-        b=GJrGDiwmI/jJFLi2Vx6vPmO6jV9AYnGaSS/6u7GiWShRmEd7quD1EjVbieAg7cM91J
-         p25iNtOeYZpdyOEP7PuDdxtLQ5C0f4nTb++qZInWzo9gvYTtuxiK+cGlP78GFMHXdsi2
-         gnmZsw6jk6UeaI6kCd9PEUPyxBFJVhg//QoD9t1mTYo7NWcpI3/NPtuvfh2MaQO11sp8
-         KeAK7PyeFo7dr5J0Xf5ZNpEsT4swbL+DoAfuSr0lJJ3IWd81EgQS9MNWOYGRfIZfkVf1
-         z4ob/PZnnVBI6cYo79emGsrEnjRqI5pmVQ1FwYow5pX78gK9hy4npLz4EhvyMOeL2DkV
-         WBAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749218172; x=1749822972;
-        h=in-reply-to:references:to:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=D02VVevmOF3cQxFCCzf3uOD2IZ0DFegRFrqZJe6cxu4=;
-        b=TprQoFvNgfcOAfaGyvuF1isCAryoegyUieIuvypfovCECuebTkzIeEcADhSg3SqP3T
-         N4X5b7ZtI8RVXCDtCERus/Om2AOqpHPX830phHrVz4S+qIr6ye+SJs84rzvy4tRzgEr/
-         0iUOq3bLDl7ZDgJPqB04AkfMofXyWiHoqTe35BfyJA/Y9SJ2p1KCLQa2WFszzkbAjSCx
-         prjM3qsLyhV7TR/oiR5I6JEYzqPBSiSSw/4eNEqu2WEhtj1vid5IfbcnTCXHkqyDXrj7
-         1c5jTbrUC90kRZYRqHFJkCj8tJ8gWxQmBwSQjQFjeGjHuKobu3klILcA/0vRh6n/iQpZ
-         JCgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkJQY1iYGIZUkP/43Mv1+48NWo2hlZGRzZqQgT2pe3Q65xh4MeEeasY+uPDIuDRD4C9kIylo155+OrhJw=@vger.kernel.org, AJvYcCV90iGaHxEplrLu74mQoIqvQBCH/foM6MXRORVUEL6JGmc+tly4S+RVuV1nKWkwDGUH1vjGenuL5bxiRoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0vTgM4JWvqUCYgkOczAo+PDp7VhLibbsmdrcncken7/K2xOS3
-	lJPi1FHPDA0kWtkGtDnBRXSw3Q8pk85oV4XRY/P1gron9rg6FCSbTlni
-X-Gm-Gg: ASbGncsdetz/lsCbb5Q33l0zq4OzJn8T4TvkhVMZur6JFEHkd9jxNncpzAjN3VQkrNV
-	adfG/j798kp6mO5XlPoQbsNik3iwkLWDKoVXGEAR0Ed11QnOiqF9vfAx6BBkFNjmoOftujIxwx4
-	rf24v/NblmohDgV6TZcIF8p5gzK6/BmmemObovUq0nHRiw5KjUZ0Z5Q0ZVpw7E2m/jDjpi4lBrI
-	auSPTcUtGyqoXjlKDSbZ89Y+wz7OQp3385Wc7oAH77kSuMile7KyNUPidWFWhG9hJMe7+kQtTNc
-	0XAmFsd571dEQa8OrOuvzUrgxqHAqvbX0Rmmbz/ClFrdNwktNwJTq0Y5wny8xya1DDzMMBUCVzK
-	m4QqlpF9Sbs+IKA==
-X-Google-Smtp-Source: AGHT+IH/4Dz7vdItmgmTlnNXWLY79bYjxG+RnGnF5b/cbxCPhJ2PE6r5VIZGSsEVJ0iX7xCVJcwFng==
-X-Received: by 2002:a05:6000:18ac:b0:3a4:ee40:6c85 with SMTP id ffacd0b85a97d-3a531cba357mr3281306f8f.54.1749218171799;
-        Fri, 06 Jun 2025 06:56:11 -0700 (PDT)
-Received: from localhost (a95-94-245-170.cpe.netcabo.pt. [95.94.245.170])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-452730d161csm21907155e9.37.2025.06.06.06.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 06:56:11 -0700 (PDT)
-From: Rui Miguel Silva <rmfrfs@gmail.com>
-X-Google-Original-From: "Rui Miguel Silva" <rui.silva@linaro.com>
+	s=arc-20240116; t=1749218231; c=relaxed/simple;
+	bh=XB/UgigNUmGAZKktVNs+Fg1uDhJkrQLmbeVDMp4Gve8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uDg4pKR1t4kpxQ0dpr6nF6xkiVNRGxpZNZIZtZY8iGsohzgo6RxPOzwhItCoQYG+kC7SU9xnXiQILE+bZ9vKdabj+a09rzuG6hSJpWEzOeNqGAtqdZetZt9+a9pa/vHQkk6JG2O4xKS4J5I/CA+Jc7UpLDs3hYGHh9BsyO4G3DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA1F9152B;
+	Fri,  6 Jun 2025 06:56:44 -0700 (PDT)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6CDD3F673;
+	Fri,  6 Jun 2025 06:57:01 -0700 (PDT)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
+Date: Fri,  6 Jun 2025 14:56:52 +0100
+Message-ID: <20250606135654.178300-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 06 Jun 2025 14:56:05 +0100
-Message-Id: <DAFI37JD827I.KWPZ7XCTWPBD@linaro.com>
-Cc: <kieran.bingham@ideasonboard.com>, <rmfrfs@gmail.com>,
- <martink@posteo.de>, <kernel@puri.sm>, <mchehab@kernel.org>,
- <shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
- <festevam@gmail.com>, <linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] media: platform: Refactor interrupt status
- registers
-To: "Isaac Scott" <isaac.scott@ideasonboard.com>,
- <laurent.pinchart@ideasonboard.com>
-References: <20250606121403.498153-1-isaac.scott@ideasonboard.com>
- <20250606121403.498153-2-isaac.scott@ideasonboard.com>
-In-Reply-To: <20250606121403.498153-2-isaac.scott@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hey Isaac,
-Thanks for the patch.
+Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
+provided a quick fix to ensure that lazy_mmu_mode continues to work when
+CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
+nest.
 
-On Fri Jun 6, 2025 at 1:14 PM WEST, Isaac Scott wrote:
+The solution in that patch is the make the implementation tolerant to
+nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
+exit becomes a nop. But this sacrifices the optimization opportunity for
+the remainder of the outer user.
 
-> The NXP i.MX 8 MP CSI-2 receiver features multiple interrupt and debug
-> status sources which span multiple registers. The driver currently
-> supports two interrupt source registers, and attributes the
-> mipi_csis_event event entries to those registers through a boolean debug
-> field that indicate if the event relates to the main interrupt status
-> (false) or debug interrupt status (true) register. To make it easier to
-> add new event fields, replace the debug bool with a 'status index'
-> integer than indicates the index of the corresponding status register.
->
-> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 64 +++++++++++-----------
->  1 file changed, 31 insertions(+), 33 deletions(-)
->
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/p=
-latform/nxp/imx-mipi-csis.c
-> index d060eadebc7a..bbc549c22aff 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -249,7 +249,7 @@
->  #define MIPI_CSI2_DATA_TYPE_USER(x)		(0x30 + (x))
-> =20
->  struct mipi_csis_event {
-> -	bool debug;
-> +	unsigned int status_index;
->  	u32 mask;
->  	const char * const name;
->  	unsigned int counter;
-> @@ -257,30 +257,30 @@ struct mipi_csis_event {
-> =20
->  static const struct mipi_csis_event mipi_csis_events[] =3D {
->  	/* Errors */
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_SOT_HS,		"SOT Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_LOST_FS,		"Lost Frame Start Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_LOST_FE,		"Lost Frame End Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_OVER,		"FIFO Overflow Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_WRONG_CFG,	"Wrong Configuration Error" }=
-,
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_ECC,		"ECC Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_CRC,		"CRC Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_UNKNOWN,		"Unknown Error" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_DT_NOT_SUPPORT,	"Data Type Not Supported=
-" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_DT_IGNORE,	"Data Type Ignored" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_ERR_FRAME_SIZE,	"Frame Size Error" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_TRUNCATED_FRAME,	"Truncated Frame" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_EARLY_FE,	"Early Frame End" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_EARLY_FS,	"Early Frame Start" },
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_SOT_HS,		"SOT Error"},
+So let's take a different approach and simply ensure the nesting never
+happens in the first place. The nesting is caused when the page
+allocator calls out to __kernel_map_pages() which then eventually calls
+apply_to_page_range(), which calls arch_enter_lazy_mmu_mode(). So simply
+notice if we are in lazy_mmu_mode in __kernel_map_pages() and
+temporarily exit.
 
-Maybe instead of 0,1,2 (magic indexes)... we could give a meaningful index
-enums names, don't know, like: main, debug, user??? or something that
-you think is better.
+With that approach, we can effectively revert Commit 1ef3095b1405
+("arm64/mm: Permit lazy_mmu_mode to be nested"), re-enabling the VM_WARN
+if we ever detect nesting in future.
 
-Cheers,
-    Rui
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+---
 
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_LOST_FS,		"Lost Frame Start Error"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_LOST_FE,		"Lost Frame End Error"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_OVER,		"FIFO Overflow Error"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_WRONG_CFG,		"Wrong Configuration Error"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_ECC,			"ECC Error"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_CRC,			"CRC Error"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ERR_UNKNOWN,		"Unknown Error"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_DT_NOT_SUPPORT,	"Data Type Not Supported"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_DT_IGNORE,		"Data Type Ignored"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_ERR_FRAME_SIZE,	"Frame Size Error"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_TRUNCATED_FRAME,	"Truncated Frame"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_EARLY_FE,		"Early Frame End"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_EARLY_FS,		"Early Frame Start"},
->  	/* Non-image data receive events */
-> -	{ false, MIPI_CSIS_INT_SRC_EVEN_BEFORE,		"Non-image data before even fr=
-ame" },
-> -	{ false, MIPI_CSIS_INT_SRC_EVEN_AFTER,		"Non-image data after even fram=
-e" },
-> -	{ false, MIPI_CSIS_INT_SRC_ODD_BEFORE,		"Non-image data before odd fram=
-e" },
-> -	{ false, MIPI_CSIS_INT_SRC_ODD_AFTER,		"Non-image data after odd frame"=
- },
-> +	{ 0, MIPI_CSIS_INT_SRC_EVEN_BEFORE,		"Non-image data before even frame"=
-},
-> +	{ 0, MIPI_CSIS_INT_SRC_EVEN_AFTER,		"Non-image data after even frame"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ODD_BEFORE,		"Non-image data before odd frame"},
-> +	{ 0, MIPI_CSIS_INT_SRC_ODD_AFTER,		"Non-image data after odd frame"},
->  	/* Frame start/end */
-> -	{ false, MIPI_CSIS_INT_SRC_FRAME_START,		"Frame Start" },
-> -	{ false, MIPI_CSIS_INT_SRC_FRAME_END,		"Frame End" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_FALL,	"VSYNC Falling Edge" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_RISE,	"VSYNC Rising Edge" },
-> +	{ 0, MIPI_CSIS_INT_SRC_FRAME_START,		"Frame Start"},
-> +	{ 0, MIPI_CSIS_INT_SRC_FRAME_END,		"Frame End"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_FALL,	"VSYNC Falling Edge"},
-> +	{ 1, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_RISE,	"VSYNC Rising Edge"},
->  };
-> =20
->  #define MIPI_CSIS_NUM_EVENTS ARRAY_SIZE(mipi_csis_events)
-> @@ -765,32 +765,30 @@ static irqreturn_t mipi_csis_irq_handler(int irq, v=
-oid *dev_id)
->  	struct mipi_csis_device *csis =3D dev_id;
->  	unsigned long flags;
->  	unsigned int i;
-> -	u32 status;
-> -	u32 dbg_status;
-> +	u32 status[2];
-> =20
-> -	status =3D mipi_csis_read(csis, MIPI_CSIS_INT_SRC);
-> -	dbg_status =3D mipi_csis_read(csis, MIPI_CSIS_DBG_INTR_SRC);
-> +	status[0] =3D mipi_csis_read(csis, MIPI_CSIS_INT_SRC);
-> +	status[1] =3D mipi_csis_read(csis, MIPI_CSIS_DBG_INTR_SRC);
-> =20
->  	spin_lock_irqsave(&csis->slock, flags);
-> =20
->  	/* Update the event/error counters */
-> -	if ((status & MIPI_CSIS_INT_SRC_ERRORS) || csis->debug.enable) {
-> +	if ((status[0] & MIPI_CSIS_INT_SRC_ERRORS) || csis->debug.enable) {
->  		for (i =3D 0; i < MIPI_CSIS_NUM_EVENTS; i++) {
->  			struct mipi_csis_event *event =3D &csis->events[i];
-> =20
-> -			if ((!event->debug && (status & event->mask)) ||
-> -			    (event->debug && (dbg_status & event->mask)))
-> +			if (status[event->status_index] & event->mask)
->  				event->counter++;
->  		}
->  	}
-> =20
-> -	if (status & MIPI_CSIS_INT_SRC_FRAME_START)
-> +	if (status[0] & MIPI_CSIS_INT_SRC_FRAME_START)
->  		mipi_csis_queue_event_sof(csis);
-> =20
->  	spin_unlock_irqrestore(&csis->slock, flags);
-> =20
-> -	mipi_csis_write(csis, MIPI_CSIS_INT_SRC, status);
-> -	mipi_csis_write(csis, MIPI_CSIS_DBG_INTR_SRC, dbg_status);
-> +	mipi_csis_write(csis, MIPI_CSIS_INT_SRC, status[0]);
-> +	mipi_csis_write(csis, MIPI_CSIS_DBG_INTR_SRC, status[1]);
-> =20
->  	return IRQ_HANDLED;
->  }
-> --=20
-> 2.43.0
+I wonder if you might be willing to take this for v6.16? I think its a neater
+solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
+lazy_mmu_mode to be nested") - which is already in Linus's master.
 
+To be clear, the current solution is safe, I just think this is much neater.
 
+Applies on today's master branch (e271ed52b344).
+
+Thanks,
+Ryan
+
+ arch/arm64/include/asm/pgtable.h | 22 ++++++++++------------
+ arch/arm64/mm/pageattr.c         | 23 +++++++++++++++++------
+ 2 files changed, 27 insertions(+), 18 deletions(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 88db8a0c0b37..9f387337ccc3 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -83,21 +83,11 @@ static inline void queue_pte_barriers(void)
+ #define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+ static inline void arch_enter_lazy_mmu_mode(void)
+ {
+-	/*
+-	 * lazy_mmu_mode is not supposed to permit nesting. But in practice this
+-	 * does happen with CONFIG_DEBUG_PAGEALLOC, where a page allocation
+-	 * inside a lazy_mmu_mode section (such as zap_pte_range()) will change
+-	 * permissions on the linear map with apply_to_page_range(), which
+-	 * re-enters lazy_mmu_mode. So we tolerate nesting in our
+-	 * implementation. The first call to arch_leave_lazy_mmu_mode() will
+-	 * flush and clear the flag such that the remainder of the work in the
+-	 * outer nest behaves as if outside of lazy mmu mode. This is safe and
+-	 * keeps tracking simple.
+-	 */
+-
+ 	if (in_interrupt())
+ 		return;
+
++	VM_WARN_ON(test_thread_flag(TIF_LAZY_MMU));
++
+ 	set_thread_flag(TIF_LAZY_MMU);
+ }
+
+@@ -119,6 +109,14 @@ static inline void arch_leave_lazy_mmu_mode(void)
+ 	clear_thread_flag(TIF_LAZY_MMU);
+ }
+
++static inline bool arch_in_lazy_mmu_mode(void)
++{
++	if (in_interrupt())
++		return false;
++
++	return test_thread_flag(TIF_LAZY_MMU);
++}
++
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ #define __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
+
+diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+index 04d4a8f676db..4da7a847d5f3 100644
+--- a/arch/arm64/mm/pageattr.c
++++ b/arch/arm64/mm/pageattr.c
+@@ -293,18 +293,29 @@ int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)
+ }
+
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+-/*
+- * This is - apart from the return value - doing the same
+- * thing as the new set_direct_map_valid_noflush() function.
+- *
+- * Unify? Explain the conceptual differences?
+- */
+ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ {
++	bool lazy_mmu;
++
+ 	if (!can_set_direct_map())
+ 		return;
+
++	/*
++	 * This is called during page alloc or free, and maybe called while in
++	 * lazy mmu mode. Since set_memory_valid() may also enter lazy mmu mode,
++	 * this would cause nesting which is not supported; the inner call to
++	 * exit the mode would exit, meaning that the outer lazy mmu mode is no
++	 * longer benefiting from the optimization. So temporarily leave lazy
++	 * mmu mode for the duration of the call.
++	 */
++	lazy_mmu = arch_in_lazy_mmu_mode();
++	if (lazy_mmu)
++		arch_leave_lazy_mmu_mode();
++
+ 	set_memory_valid((unsigned long)page_address(page), numpages, enable);
++
++	if (lazy_mmu)
++		arch_enter_lazy_mmu_mode();
+ }
+ #endif /* CONFIG_DEBUG_PAGEALLOC */
+
+--
+2.43.0
 
 
