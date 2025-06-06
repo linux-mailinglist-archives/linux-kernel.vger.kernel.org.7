@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-675669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB42AAD015D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:46:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24385AD016D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40FAF7A2D25
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D7D3A203D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87851284B3B;
-	Fri,  6 Jun 2025 11:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9E02874F5;
+	Fri,  6 Jun 2025 11:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CfRhVmI6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VpfbzX+x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525B11E47B3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 11:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E41F1E25ED
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 11:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749210370; cv=none; b=aWVIgesQVXFohx+o/d3yzbwouVOXhG3wNsKVksfj9yGTeI5VkRluw9Qh5Q1ApRZFQeVdUvHFCTLbH/ZdpUmSKvN75/wLBCqvtJSzSri71IHrJqYExmVCDsp4wuprAog3V1RswNqSLkXMLYxbikd3R3E7+Ih+9bMDATGAC3nykPQ=
+	t=1749210545; cv=none; b=Xxps6UQjFY+fSsUSfSmMx91vnGFI6jDBFyCEHxb2cxDDI2Y0GQpqQzWWSi6Y/Uwm2yceh2hw0fahb+2Fya4QST5j2GmH7kh3kTCpZ80w7vmhJXLOBAcUxJayV3UwrwdW45A7tElI7WsFqvIvVLFwT4R/EZEeRGzB3EF+32kMfFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749210370; c=relaxed/simple;
-	bh=J2AWAFUoypdSGO9A68K8w+antOoUBt3RUAaiuzgC+Ik=;
+	s=arc-20240116; t=1749210545; c=relaxed/simple;
+	bh=QSgOuHX+lE3ODZsvtKyyXyB68B5X60hsY4EiVrM8vYE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZ/x0NR0et6gMp3P1cz2HqivxEmnp1ZCB00GnsH9jqtl0Xynx0H+NWXWLDyLXjCL61f6obE7HQDYu1q6WnCCIlnPgiA2X6icii/+jZ8Shv2KLV/BWSTMS6pFb22yETPvboyyLfWnnjFsJqzsqOe9He3k31dy9Uk36aDT2kUFcDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CfRhVmI6; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=CE+CcgaeLppTMo402iP3YyaT5GsCIBXi/B//oRtf+Oy1LetZWkXCclme+23yl/beyjjcIrwD/I/l6451W7ThINJNggW5NiNUVFUDeImqEQbZDoNLeUmJXMpsKMH0B7N5yDM6C5ZPq4mmQ6k+o1dkBghB4zOmh5bPWdwSvmjnXBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VpfbzX+x; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749210368;
+	s=mimecast20190719; t=1749210542;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qwnxzLGuikn5a2Uu1FwM95+rWoyE1NoRjTg6LUKAAow=;
-	b=CfRhVmI6iXD5YacCWICjtsatA4GKinjha2Epk1cadXQK9wPwAsPslVYhznR/Y2G1iyaSgE
-	DP6O4uNanAGNMeF9wtw0Rx4Cs3bCb2LstfneKmCXBpu95qZY0Z2Op5L2WVMBaI0em+H1ps
-	IPzLJwJg+rJesgW+qGcIslyffjTLOQo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=68I4Y0TtXFxCNK2N6e3UcQSOeAu/7hc1LBplwDcwTcE=;
+	b=VpfbzX+xj690SHvo5t/4ZxizXucWqboSSRtEA7Puf45VPWbj/fGIDvdh4wtcaPGtZJw4Ck
+	bz1yMqdkZlMfR0C0sOaBTOfyH6++3XdRY+s0bCmLWnmEP+oARUeXNOOt6fQ0VnSR/jBnGu
+	33LD9pzbybQx2YsV5FNwdD3VdIi22y8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-c3SeHRu7Mbqaq_V5GieGYA-1; Fri, 06 Jun 2025 07:46:07 -0400
-X-MC-Unique: c3SeHRu7Mbqaq_V5GieGYA-1
-X-Mimecast-MFC-AGG-ID: c3SeHRu7Mbqaq_V5GieGYA_1749210366
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-441c122fa56so10148515e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 04:46:06 -0700 (PDT)
+ us-mta-550-1_HFG19fMci0tdrRIEwZ7w-1; Fri, 06 Jun 2025 07:48:59 -0400
+X-MC-Unique: 1_HFG19fMci0tdrRIEwZ7w-1
+X-Mimecast-MFC-AGG-ID: 1_HFG19fMci0tdrRIEwZ7w_1749210538
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450eaae2934so17072385e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 04:48:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749210366; x=1749815166;
+        d=1e100.net; s=20230601; t=1749210538; x=1749815338;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=qwnxzLGuikn5a2Uu1FwM95+rWoyE1NoRjTg6LUKAAow=;
-        b=PcwJ3PzRoF/I1vJxV4jXE2UacbhqsGEBfwat4cr8wXgtYOHbZnkSQsjOzwQ26lEmmS
-         dj02EeExcIUwApwCIxH0pvPB4qgUAuJ9iBCanfBToCAGhX+BzhoaDyJv4zrEUUD85lql
-         7EeKbF/i5F3D9ff+I9akXudRZh3abNsWsUJRNcOM9BElQEHCZvtZxIP2+JI1cQAu9iQv
-         b2rjdcAXCQbNdSYY9yXZXc2QLGPSeESWD+7vEJ0H6WbbRvehGdOPJum8NOqOkkyiLEVf
-         zrVYB+jLWMY9nejJt1Zrm3VuOXVL7PQcTGsZzGfztttdopZEHrslmyd8Tc8C75Nmwm2J
-         cGAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXynh+zdgS1mJVu+fAI9hHOgrsrdgJ30ZBMiUjCsf3A+v1sb6mzAl3FCnfAtEII9hdQVfNRy2a+/GQ3lzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUlDeyWrcLO4fheNVVKCz7Os2W4RBYwf7+bX9X2yTfeMpt+TC2
-	IpWcNhJYz4y1BWC/lXPF//XuiznwllAUBla5+pw54M+/G+3koQh1NhCNqBnOC8Zcy/bpl/DYWjB
-	pXe+4t1/gcB+GegaNGtJBDkj/RgYVeYIvMvJQgjSWaSfpLICMYnTPDGOz2lVYexl6bg==
-X-Gm-Gg: ASbGncuU7L/8coTptdegNTXNN5xSk6mYXEbz1Divq/R7S51oPrTBZBKUD6/hvP48y1J
-	r6ghIWGZ1lCrEgXLHVrUj8EP/plrlopvzF9t/w1x6eE6RN7HRMtaS9cR5DwccGXBCrD8zM4EU8h
-	ZmypBU4HYsGgtvjowPRwaVRv4EPoKxo36+Oi5OGpNpOc7zjegDuJMooR7ZHPr3+x7KnsHExTXHq
-	ZzxXOtZ6pi5IPEo5g8o+9wLs2aTTaJeHTLq8rwGFI7TUEuYc5gXhXnylgY78SZMVdJXEJNVnlql
-	wTBBCIGyCwS9m9KDqcVevzc7IfBKEu+DsaONdo71C3cv3rU2lKFsJNzdVm3eMvWRnfdqXwqMJfR
-	pLrvM/T6Z9QeFOKPt9w59rcUm+S5iJfJg5e+iBkDNNg==
-X-Received: by 2002:a05:600c:83cf:b0:450:6b55:cf91 with SMTP id 5b1f17b1804b1-452013372ddmr32778095e9.6.1749210365910;
-        Fri, 06 Jun 2025 04:46:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjzcs090F8tav40sXaS+Cr9WkEYuBvjbJtxtLvRqkf4lrviPP8mct4QF7+XzINTtttI0W7xg==
-X-Received: by 2002:a05:600c:83cf:b0:450:6b55:cf91 with SMTP id 5b1f17b1804b1-452013372ddmr32777945e9.6.1749210365514;
-        Fri, 06 Jun 2025 04:46:05 -0700 (PDT)
+        bh=68I4Y0TtXFxCNK2N6e3UcQSOeAu/7hc1LBplwDcwTcE=;
+        b=qtsnxVDMLhkfr5V/JpPk20hUgqwMgcESHSHY6B4/aKC2xZyf0ZlE5IuRXu44kE/HcV
+         ea8VwTGnG3wUpdudaSn8JlDag6+xSkc3Yg9xCGlV8ZWb5GYW8WYX7U6A1FmIecqWBkpx
+         YNMNVjiyX5JG6DMsF7EO0zr0b3eP461Xv3NFr9Tlnums5DhevIE+qg8BcCMdmTeZxibb
+         ncy/7yOTc92YGb0xBXws/QOHTw90wzCDMxUSAbDnt/X68yIXV6/dyX4itMWoge7C6AYO
+         CrWdC7RfBxtowA+ougko4TEC+lriGglVzA144CPwv3ynz3NyH5yKbt8Z0U2SU4o0bo1j
+         HZHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVT1X+H5u2CMmOUQqFXUNll4jhGyatBOVMLFiqLu7IciAhiwvKxIdSrny/VawTjaqAzMnUUjWbpVof+H6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCM0yMMjvjjjvTxw2sbWnjI9PZQN9n4824YlUoQR1Am9Wa2zZE
+	5e8X1g5nIzSss+culGofL077D+fYXlx+YdYaS/vaXe2POFQarwiJ1HjQiYRtsjT00h7aF5xHkoj
+	AE8Ctrbs5gRkW0Z8VNImWNuDARR35zw1tsTgwH7RvSDLMG9LyKOPzh7Zswangqq34bA==
+X-Gm-Gg: ASbGncuA+zIWYw4fMR0tZoX1s2cc93pCnLzpdJXBoQRwclwxPw4ZhC0m8b30JKz70Sn
+	4JY/G5FvRfiNgK2GEvCdPNu2XsDzHKNEwDqjk8M4jM2bPf3JdYJDYtK6uSfQbnbF3FEOmVjcYds
+	CJhKzRplBiJ/MnGarYkTyOP7iNoYtppsA84MOHpGSNYAY893c0QQlcAp4LdGcpdkAcYSnxhS1Qb
+	ZDu3HW0R4G+y4aKr02S12IFVoyA/Of8iGTseR6MlxjxEep0QwYJ++ihBsTfmz1ex5nnWq03ii3f
+	H6ETRhc3h19qbsy8y4HKNt00C89ohYDt0/B5NemGrciPySbMMFcybnBghTInRDSm6zIGthytXM+
+	c91DZ5wDd1Qhb43iyGfpws1IvRqEULiw=
+X-Received: by 2002:a05:600c:c491:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-45201458425mr27983495e9.11.1749210538465;
+        Fri, 06 Jun 2025 04:48:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFrdtAx79g1V5j+TxA2nNneOf5lDgPUH5YR6LNlzqQQIXuJ4KSCbPsPVZoiFWxBNVvQB+bDmA==
+X-Received: by 2002:a05:600c:c491:b0:442:f8e7:25ef with SMTP id 5b1f17b1804b1-45201458425mr27983285e9.11.1749210538017;
+        Fri, 06 Jun 2025 04:48:58 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f19:9c00:568:7df7:e1:293d? (p200300d82f199c0005687df700e1293d.dip0.t-ipconnect.de. [2003:d8:2f19:9c00:568:7df7:e1:293d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4521375bca3sm21271175e9.39.2025.06.06.04.46.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53229de70sm1615032f8f.5.2025.06.06.04.48.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jun 2025 04:46:05 -0700 (PDT)
-Message-ID: <1ef7699b-d094-4ade-966f-d17f4d9a3613@redhat.com>
-Date: Fri, 6 Jun 2025 13:46:03 +0200
+        Fri, 06 Jun 2025 04:48:57 -0700 (PDT)
+Message-ID: <70f3fd39-6b78-4b2c-a09f-ec1e7a2c34db@redhat.com>
+Date: Fri, 6 Jun 2025 13:48:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,17 +89,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/10]
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>,
+Subject: Re: [PATCH v5 10/10] mm,memory_hotplug: Rename status_change_nid
+ parameter in memory_notify
+To: Oscar Salvador <osalvador@suse.de>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
  Jonathan Cameron <Jonathan.Cameron@huawei.com>,
  Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
  Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
 References: <20250605142305.244465-1-osalvador@suse.de>
- <c4a96aa2-10ae-4dc1-abd8-be91f7e8b583@lucifer.local>
+ <20250605142305.244465-11-osalvador@suse.de>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -147,27 +147,71 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <c4a96aa2-10ae-4dc1-abd8-be91f7e8b583@lucifer.local>
+In-Reply-To: <20250605142305.244465-11-osalvador@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 06.06.25 13:30, Lorenzo Stoakes wrote:
-> Hi Oscar,
-> 
-> I don't have time to dig into what's broken here, but this series is breaking
-> the mm-new build.
-> 
-> NODE_REMOVED_LAST_MEMORY for instance doesn't seem to be defined, but there's a
-> bunch more errors.
-> 
-> Are you expecting stuff to land from other trees that isn't merged in Andrew's
-> tree yet? Maybe from slab tree?
+>   struct notifier_block;
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 0550f3061fc4..bccbc02ed122 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1186,7 +1186,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+>   
+>   	mem_arg.start_pfn = pfn;
+>   	mem_arg.nr_pages = nr_pages;
+> -	mem_arg.status_change_nid = node_arg.nid;
+> +	mem_arg.nid = node_arg.nid;
+>   	cancel_mem_notifier_on_err = true;
+>   	ret = memory_notify(MEM_GOING_ONLINE, &mem_arg);
+>   	ret = notifier_to_errno(ret);
+> @@ -1987,7 +1987,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+>   
+>   	mem_arg.start_pfn = start_pfn;
+>   	mem_arg.nr_pages = nr_pages;
+> -	mem_arg.status_change_nid = node_arg.nid;
+> +	mem_arg.nid = node_arg.nid;
+>   	cancel_mem_notifier_on_err = true;
+>   	ret = memory_notify(MEM_GOING_OFFLINE, &mem_arg);
+>   	ret = notifier_to_errno(ret);
 
-(David replying)
+Okay, now I realize we should just remove the nid completely, because
 
-no, this is standalone, and probably just an error in the patches.
+> diff --git a/mm/page_ext.c b/mm/page_ext.c
+> index c351fdfe9e9a..477e6f24b7ab 100644
+> --- a/mm/page_ext.c
+> +++ b/mm/page_ext.c
+> @@ -378,16 +378,6 @@ static int __meminit online_page_ext(unsigned long start_pfn,
+>   	start = SECTION_ALIGN_DOWN(start_pfn);
+>   	end = SECTION_ALIGN_UP(start_pfn + nr_pages);
+>   
+> -	if (nid == NUMA_NO_NODE) {
+> -		/*
+> -		 * In this case, "nid" already exists and contains valid memory.
+> -		 * "start_pfn" passed to us is a pfn which is an arg for
+> -		 * online__pages(), and start_pfn should exist.
+> -		 */
+> -		nid = pfn_to_nid(start_pfn);
+> -		VM_BUG_ON(!node_online(nid));
+> -	}
+> -
+>   	for (pfn = start; !fail && pfn < end; pfn += PAGES_PER_SECTION)
+>   		fail = init_section_page_ext(pfn, nid);
+>   	if (!fail)
+> @@ -436,7 +426,7 @@ static int __meminit page_ext_callback(struct notifier_block *self,
+>   	switch (action) {
+>   	case MEM_GOING_ONLINE:
+>   		ret = online_page_ext(mn->start_pfn,
+> -				   mn->nr_pages, mn->status_change_nid);
+> +				   mn->nr_pages, mn->nid);
 
-IIUC, the build bots reported this this night as reply to patch #4.
+Nowadays we call move_pfn_range_to_zone() before MEM_GOING_ONLINE.
+
+So we can simply do the
+
+nid = pfn_to_nid(start_pfn);
+
+unconditionally above.
 
 -- 
 Cheers,
