@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-676035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59FBAD06BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E049AD06C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E48C170B19
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2E03A9B1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B3F28A3F8;
-	Fri,  6 Jun 2025 16:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E9628AAEA;
+	Fri,  6 Jun 2025 16:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="sCv2Rd85"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PzGPpIe9"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B853E289E21;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB52289E26;
 	Fri,  6 Jun 2025 16:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749227705; cv=none; b=UuJ04Z8nYNy7ESd9vlIs7a4OaK2c7PXacSyQgadHMjPFoGbQJ/Bb+oYtZsiupMk4+4XbybhyCXuT8PplezvywmOGHiqNferZ3Equ/PSht8F8P7tkZGTyZPyvEhjqicP8KgWg58bk82aOqimSg+66R+OW6n3dlDo2gcxK31juQw0=
+	t=1749227705; cv=none; b=J5EGEo/hjzDkHMgcWpTM/Fyf6eHDa593I+RpiEButHLs2zMLIgHn9jVCZo7VRK7ThlcZOU4cL1djMDAfEX/PwXjqJiLroE8CCyWnXgQRJDORSBeL2MywJvKa9KyzykH894JR4k16Zk0XH6x4plz1F0x20BvRKATIQJoGhAQZPLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749227705; c=relaxed/simple;
-	bh=4wOhT+ccdmsvlqlGTH/6VXz0OIu+as1y2XRYVinSHrc=;
+	bh=msJBqBHkePeWRZwnfqxFqzb6+do+sSPzY8HstP17mU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WzKw186XYDJC6gNAjB7oicMDLQwep/2uIq+6/kBunGRMpqCvMPuOJLJCFYwV7ZMfB35ibiaojYH5rzqXxIIwI6EBZWzGtezAO1OBeqcEDDqh+39Cvf9hAfHvkGpdS/cUo5NofBy4J9FHckoCUEZ8BwivwIteUWT/CBFK5h2arpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=sCv2Rd85; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=PskTbuIw3gmjOex8cshEc8Dk1TyG4JH805Ept45NZzlvBwyW3rbyhq8U6V0uEW37xePv8SUb52WBwn0T4OmImVFrKe+0XMd7Hv0pJqVTATQKngtOVadXF3+9qjLKmexcsDQDk7EvLbD7/W9wk55ASscJyNT3Pahnw6ijKlua9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PzGPpIe9; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9D8DD41F2F
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2652C41F30
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1749227697; bh=UYcmn4qdwBXvAETOWfKZx/qAHGOt2DuUFA6POj8NZjI=;
+	t=1749227698; bh=Hu5hx8PEIgVdywDy22TCRt/j6m2yo0K5y93HRezRrP8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sCv2Rd85XijSp2BAvJdjVnHYttyKZpyHIV0BUUQixj+LJVfUjLc8bN5ZKeGsYQp/b
-	 ST+9+qEdOBRKZzIF0YjTfaKv8VSWEjORxuTTEjy744TMaTV23S3WToMuH0L4LTnEOe
-	 8GB1Ax7OroSCOfv282dyJsJH85OXjDbYIOozk6RBoIuTsvsPo7x8wCIFRDEZoIBibr
-	 MGGOwFUL7xHyh/u7bKeF1i54QwvkGb5/J9tIVuyfqQO3xJn7RFek51/Vmx2pnpZmdb
-	 qnjYDTgmXXm3qbOIUf6Q+bZpLHH4RiBTBrynr+9lIe/+GYAbiOeYvYfL+f/3e+qFk1
-	 lfHgfMAOJnwEQ==
+	b=PzGPpIe9IF9Jro50VYWitZ5NGcj+QUxDSk9XuRVTnhhV+YbWUfhsHHs7DcYXY5R+Y
+	 51+cDdzI7Ji15S23071HoxOKD+QK7FSivT+sVcmHUvolq3wa0VPJIbq3mcStWTVWuv
+	 ISZgeu9ous3gIDK6dq6OQI8BC8czkOzqT32vg4RAWDTrT0wue3ZqKgskpohZYHb8La
+	 7MYzassQ9uGepWjWh03PWIysnKyfdPlaEtWS/eWirii1pgLXjAtibH+xqfUOpFPQAL
+	 hqP8tb7YVZxC2cN0ctVl5AlOroGx3lOOKr2b4Abqp1WlRdSJ6B7CCrlDtF3K7+58cG
+	 315MCIBrgC4GA==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 9D8DD41F2F;
-	Fri,  6 Jun 2025 16:34:57 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 2652C41F30;
+	Fri,  6 Jun 2025 16:34:58 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 5/9] docs: kdoc: remove the KernelEntry::is_kernel_comment member
-Date: Fri,  6 Jun 2025 10:34:34 -0600
-Message-ID: <20250606163438.229916-6-corbet@lwn.net>
+Subject: [PATCH 6/9] docs: kdoc: remove the KernelEntry::descr pseudo member
+Date: Fri,  6 Jun 2025 10:34:35 -0600
+Message-ID: <20250606163438.229916-7-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250606163438.229916-1-corbet@lwn.net>
 References: <20250606163438.229916-1-corbet@lwn.net>
@@ -62,65 +62,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-entry::is_kernel_comment never had anything to do with the entry itself; it
-is a bit of local state in one branch of process_name().  It can, in fact,
-be removed entirely; rework the code slightly so that it is no longer
-needed.
+The entry.descr value used in process_name() is not actually a member of
+the KernelEntry class; it is a bit of local state.  So just manage it
+locally.
 
-No change in the rendered output.
+A trim_whitespace() helper was added to clean up the code slightly.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 3ea260b423e2..56299695abd1 100644
+index 56299695abd1..7c635000f3de 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -1216,7 +1216,6 @@ class KernelDoc:
+@@ -60,6 +60,13 @@ export_symbol_ns = KernRe(r'^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"
  
-         if doc_decl.search(line):
-             self.entry.identifier = doc_decl.group(1)
--            self.entry.is_kernel_comment = False
+ type_param = KernRe(r"\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
  
-             decl_start = str(doc_com)       # comment block asterisk
-             fn_type = r"(?:\w+\s*\*\s*)?"  # type (for non-functions)
-@@ -1234,14 +1233,20 @@ class KernelDoc:
++#
++# A little helper to get rid of excess white space
++#
++multi_space = KernRe(r'\s\s+')
++def trim_whitespace(s):
++    return multi_space.sub(' ', s.strip())
++
+ class state:
+     """
+     State machine enums
+@@ -1258,12 +1265,7 @@ class KernelDoc:
+ 
+             r = KernRe("[-:](.*)")
              if r.search(line):
-                 self.entry.decl_type = r.group(1)
-                 self.entry.identifier = r.group(2)
--                self.entry.is_kernel_comment = True
-             #
-             # Look for a function description
-             #
-             elif r2.search(line):
-                 self.entry.identifier = r2.group(1)
-                 self.entry.decl_type = "function"
--                self.entry.is_kernel_comment = True
-+            #
-+            # We struck out.
-+            #
-+            else:
-+                self.emit_msg(ln,
-+                              f"This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst\n{line}")
-+                self.state = state.NORMAL
-+                return
- 
-             self.entry.identifier = self.entry.identifier.strip(" ")
- 
-@@ -1263,11 +1268,6 @@ class KernelDoc:
+-                # strip leading/trailing/multiple spaces
+-                self.entry.descr = r.group(1).strip(" ")
+-
+-                r = KernRe(r"\s+")
+-                self.entry.descr = r.sub(" ", self.entry.descr)
+-                self.entry.declaration_purpose = self.entry.descr
++                self.entry.declaration_purpose = trim_whitespace(r.group(1))
+                 self.state = state.BODY_MAYBE
              else:
                  self.entry.declaration_purpose = ""
- 
--            if not self.entry.is_kernel_comment:
--                self.emit_msg(ln,
--                              f"This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst\n{line}")
--                self.state = state.NORMAL
--
-             if not self.entry.declaration_purpose and self.config.wshort_desc:
-                 self.emit_msg(ln,
-                               f"missing initial short description on line:\n{line}")
 -- 
 2.49.0
 
