@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-675468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C424AACFE34
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:24:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41D2ACFE49
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAFD43B0C65
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:24:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251001895956
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DCE284674;
-	Fri,  6 Jun 2025 08:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2203284B41;
+	Fri,  6 Jun 2025 08:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JV5yUvE/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CYcoL7LD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B77189F43;
-	Fri,  6 Jun 2025 08:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="embAW6M2";
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="rDg4xYjw"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DC8284671;
+	Fri,  6 Jun 2025 08:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749198262; cv=none; b=peQ1y/1phxuyVP9J232jO/kvDCr4zu2WLfrDLut8GQ9DH0mXg+jxmYSFcnxEnGlrp5Nc2qpCyNN3RREjHM8ZqLiZrqDz2gtoCh47s+wGZnTRAZyIM5YxdnSqMos4wxJ4smG1TTiORymoSyli+76qZnyV+x7H+N4DfW8tqRajunQ=
+	t=1749198556; cv=none; b=qMMdtmkodhQ4GAHDLWaWRCwk1zidkP1hhvhaW0WNg+gJtWbkx6lfqKp++U8zrw7T0rHCdShriyMqRq+xj+ka/55n0cg3SLX1cVlkBXi5uVBUroomm9Ukti0sKEj5ksaQH1HZ54Z8OTuqsbXdOUu8tEZN9AEguFnYDcmHsV7QjYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749198262; c=relaxed/simple;
-	bh=LXXtQqxnaVnzTr/KeK0hnqR9RwZ7uk+DhzX918qKrDA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NloP6hN0LvkXv0HTifJvJZkDt/nygOq+vAdRq2zob6sGDUXx5OAL/44pi63D0pe9GysS9sqpyoHrXG1CM42Ce85blVPowUvB3wndD6VpWTKrQDWA03SO+AsOAnQD21ISnAMqxS4AMDdj3VfPObNcU89WWcN7y1syZIASNislHE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JV5yUvE/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CYcoL7LD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749198258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3wqR60cXBz22LWPCJXS/Pq30I2q7GeCkOEBk1DVj2mQ=;
-	b=JV5yUvE/luYb5J5qdhM+sVvf9WRrum0LwyZJaWOzUOuH4KkmR+TGiiHdhVM2p0qj4SmGQU
-	rzGeHIlOaxEwkzgomi2LLziy6E7NziDWLYgvw0qBE6lKiTvYWZ1Rwol0drJJS6wiJ6+Lkk
-	wBdTWIdVQDDCF9xZ0OfAMxAvK3KZbEgbUjRFiQVgYg1MPpjILJ0sNn1GwuwB/+Y/mVy8Ti
-	L2E231bNCTgXZwbx23emBO2GukdnaGlXKDx2V6aZo+b7SBV9nqnj0gTn0FfNAaRPKww6Jw
-	x7puHPCAf6n6Oey1QWLStDtpLPbZn+l9y1Q/ApvASTtrAPGrhvu4WAfGtDC8Cw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749198258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3wqR60cXBz22LWPCJXS/Pq30I2q7GeCkOEBk1DVj2mQ=;
-	b=CYcoL7LDzgqBm8Z9MRrqkGWpHVXvMumKO3MNYm8yycR6B70iyEKp6tJsN3Rv6hX17AKEEh
-	9sp8PSyfGSDtuLAA==
-Date: Fri, 06 Jun 2025 10:23:57 +0200
-Subject: [PATCH] uapi: bitops: use UAPI-safe variant of BITS_PER_LONG again
+	s=arc-20240116; t=1749198556; c=relaxed/simple;
+	bh=pblMsJYtxiiZ6yuEH5DaphOkBKMWFKnMY1K9Q8i9KAw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BZDIq657T68NWc31Ngg7u39oxXKMKiPW/kANp4KBnjdjx9rUUuaK2pZ5+I6V4t4n0GFUJymWgD/DOY9q153l8PY7psYPATH0sNRkMdQ7IUs6Ug0b5Q4GPuFT96pA1RaOqVpl2YDar708qn3zdNaOK/DraBCLwZZM7Q6oTr3OV/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=embAW6M2; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=rDg4xYjw; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1749198552;
+	bh=BizGSGq8YkmyrHuFxE0dr4I8x+bWGGHz/dkaj1X3gqA=; l=655;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=embAW6M2thQrhswkGvt0PMOp8HOAMVLmIJHwftJN4TFLy71Vk2AACTnWgfHljRx9q
+	 buC+N/TNv9g5iR1WhCXO74ZT1TmP5uEYyg+6IFyhl25wtzQTw355x7qfetdX564Y9L
+	 m6pz6c2vAaAR1/5eur+/hC4he/EBqrjEtOYPchHp/MFaLzitk8uRzWmiLzfW0MBwNM
+	 YA0QIC7D9dkEvpbZVjPwo0w/vMiapzuj5rLnoTLAThAJASy9XEMvDR+7vQ1JfN9Gy2
+	 wdIKUoQhHHfcNfe0VG0jkKFMOAihqCR7v9/4tWKZJm1l895okHwHeuqT2BLdMHoJhn
+	 /XqpG2TbXipJQ==
+Received: from 192.168.8.21
+	by mg.richtek.com with MailGates ESMTP Server V3.0(1128079:0:AUTH_RELAY)
+	(envelope-from <prvs=1247BEB82F=cy_huang@richtek.com>); Fri, 06 Jun 2025 16:29:11 +0800 (CST)
+X-MailGates: (compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1749198551;
+	bh=BizGSGq8YkmyrHuFxE0dr4I8x+bWGGHz/dkaj1X3gqA=; l=655;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=rDg4xYjwlu+9CuBQ5jRtvIRTOuWuBRf7wmnZiJQPfQ+QfeR69Sd119hOOIsFONCMV
+	 Jm3o3Uy4WUPn+5KETT+SpbWVymcadr8ZONnrJItybDHCAmeq4SVORY6LByHQfPccRB
+	 DJo3PShzeN9rXgvhd6RjtsjrbogMldwMC36TGIevEGIyT6IqHjm9Lf34Ncim8UuxV3
+	 Jx/zRSoIp1FXo40FKEvhydunskyjdg4z81SyFcuXdcOB8+dH9HeL6Oe+7kTPlGAdbJ
+	 TvID2bAQO6Ok1ohAwC99RfXRMXjt7iDYlXj7U0noSCVucqyocF45lmuNNkgF+9bJGF
+	 BY95tfQFz0WAA==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(2288473:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 06 Jun 2025 16:24:25 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Jun
+ 2025 16:24:25 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
+ Transport; Fri, 6 Jun 2025 16:24:25 +0800
+From: <cy_huang@richtek.com>
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, ChiYuan
+ Huang <cy_huang@richtek.com>, Roy Chiu <roy_chiu@richtek.com>,
+	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] ASoC: Add Richtek RTQ9124 support
+Date: Fri, 6 Jun 2025 16:24:33 +0800
+Message-ID: <cover.1749197773.git.cy_huang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250606-uapi-genmask-v1-1-e05cdc2e14c5@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAJylQmgC/x3MQQqAIBBG4avErBNMaKKuEi3E/myILJQiCO+et
- PwW772UEAWJhuqliFuSHKGgqStyqw0eSuZiMtq0mjWry56iPMJu06agO+ZuBvdwVJIzYpHn341
- Tzh/naebgXgAAAA==
-X-Change-ID: 20250606-uapi-genmask-e07667de69ec
-To: Yury Norov <yury.norov@gmail.com>, 
- I Hsin Cheng <richard120310@gmail.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749198256; l=1773;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=LXXtQqxnaVnzTr/KeK0hnqR9RwZ7uk+DhzX918qKrDA=;
- b=7h6a883lKxDrZnBb3StjpyCMgsYfj4+C5c7bXY5pYpF1Kppv7pfamYxpp1Zq3b5yZSy6T+sRT
- GZ9RWKIFVe+DXJilQH+T8jFBwy4Bx5er+e5wz3gpBovA7wFcYOyoRal
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain
 
-Commit 1e7933a575ed ("uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"")
-did not take in account that the usage of BITS_PER_LONG in __GENMASK() was
-changed to __BITS_PER_LONG for UAPI-safety in
-commit 3c7a8e190bc5 ("uapi: introduce uapi-friendly macros for GENMASK").
-BITS_PER_LONG can not be used in UAPI headers as it derives from the kernel
-configuration and not from the current compiler invocation.
-When building compat userspace code or a compat vDSO its value will be
-incorrect.
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-Switch back to __BITS_PER_LONG.
+This patch series adds Richtek RTQ9124 1x30W audio amplifier support.
 
-Fixes: 1e7933a575ed ("uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- include/uapi/linux/bits.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ChiYuan Huang (2):
+  ASoC: dt-bindings: Add Richtek RTQ9124
+  ASoC: codecs: Add support for Richtek RTQ9124
 
-diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
-index 682b406e10679dc8baa188830ab0811e7e3e13e3..a04afef9efca42f062e142fcb33f5d267512b1e5 100644
---- a/include/uapi/linux/bits.h
-+++ b/include/uapi/linux/bits.h
-@@ -4,9 +4,9 @@
- #ifndef _UAPI_LINUX_BITS_H
- #define _UAPI_LINUX_BITS_H
- 
--#define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
-+#define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (__BITS_PER_LONG - 1 - (h))))
- 
--#define __GENMASK_ULL(h, l) (((~_ULL(0)) << (l)) & (~_ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
-+#define __GENMASK_ULL(h, l) (((~_ULL(0)) << (l)) & (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
- 
- #define __GENMASK_U128(h, l) \
- 	((_BIT128((h)) << 1) - (_BIT128(l)))
+ .../bindings/sound/richtek,rtq9124.yaml       |  57 ++
+ sound/soc/codecs/Kconfig                      |   9 +
+ sound/soc/codecs/Makefile                     |   4 +-
+ sound/soc/codecs/rtq9124.c                    | 543 ++++++++++++++++++
+ 4 files changed, 612 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/richtek,rtq9124.yaml
+ create mode 100644 sound/soc/codecs/rtq9124.c
 
----
-base-commit: e271ed52b344ac02d4581286961d0c40acc54c03
-change-id: 20250606-uapi-genmask-e07667de69ec
 
-Best regards,
+base-commit: 61e36be334b06716d81eeafb105bc953bb37f48c
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.34.1
 
 
