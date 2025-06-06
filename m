@@ -1,282 +1,121 @@
-Return-Path: <linux-kernel+bounces-675370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C96ACFC8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:25:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC95ACFC8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FB157A6FA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783BC3B0AD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8FF24EA8F;
-	Fri,  6 Jun 2025 06:25:28 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733802505AA;
+	Fri,  6 Jun 2025 06:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccwLfdR0"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B4A1A275;
-	Fri,  6 Jun 2025 06:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B0324E4A1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 06:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749191127; cv=none; b=naUitZDtN36Ds+xe+YGd8eYEH9Ns2kHFHQmmVsD91wvnzl+Z3SIR8t+zaXraNQ/Qklk2ppWGdH/JVwgUoe02wOk5jK0rKXrZwVcwAot5fP79YIpK4eyDY6pNvqF7zlRjMCSfPYSJP5S+8swAMPjTO+zdZag9ut1sl70jvOQM8MA=
+	t=1749191274; cv=none; b=U85bqmc4NyG31nTFCXIiXsZBJAC3q3XUijZgEJniWtjYvdamjk/8kLFdQhwsHb5do1KGeCawOPuiI7sbmqbs/EIxQXvsI1rx7ZdFd/aUuxK8olhu1skA1HvnJWBsDP1bE6iPBvvM5BOJLcY4A/xlU8VX0lzt1MsSv8Cru3VkQQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749191127; c=relaxed/simple;
-	bh=0LH66iRzEVsVMWZQ16gFXqlqRT/3q47LJ3MHGQz1594=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DstT/CG7RJQMIXyW+rP84PTZLSm/ZLnKW6E7o56EObZw7S78TQGCSVj55vzrXQtqpKilsiP3VVYWn5el0gvq3ihx9KiFWnDc5zLC+dNMoGaKsXmIRtb5R3x05bHWptYP30lI8AvKxV6MhzTBTmQWrr3DLqUVkXb88eWk1ZKhTr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 02d87ffe429f11f0b29709d653e92f7d-20250606
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:6b42408c-7026-429f-9e4d-3d0f5f2d21bc,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:a6a3df80516d00628685e0315a2f7149,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 02d87ffe429f11f0b29709d653e92f7d-20250606
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 855462109; Fri, 06 Jun 2025 14:25:16 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A9EBAE00891C;
-	Fri,  6 Jun 2025 14:25:15 +0800 (CST)
-X-ns-mid: postfix-684289CB-4926953
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 5F529E008900;
-	Fri,  6 Jun 2025 14:25:11 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: rafael@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org,
-	kees@kernel.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [RFC PATCH] PM: Optionally block user fork during freeze to improve performance
-Date: Fri,  6 Jun 2025 14:25:02 +0800
-Message-Id: <20250606062502.19607-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749191274; c=relaxed/simple;
+	bh=/6CeuiLut9XVucvvljmh0853EV7UDDXs/x4UmqOUs3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MvCsvDacjtj+adb3TnN00E3UR6xn+TjuHTO5pc41xrkij7f2A0GZ+z42W3F2ROnBwsiVaktC9QXO/de5phJsOfBz/MWR9uqmtqf59L5+reb1spCNPrGPg6vnBU9hMnAnHDSeWc7+Y6ZvRfNJ+7CdoYRWsxebB6dAwK1F2MDEZL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccwLfdR0; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-551fc6d4a76so1817972e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 23:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749191271; x=1749796071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzDIUNzlZzE8Exp7uJq4kZitY7Z7cIX3lYetygV3xS4=;
+        b=ccwLfdR0IpV1glLUzc1+Xu6FyVNb/ivfzuHJWR5+qGlW24b8FUvS066pHN2aOINM/I
+         QKXLx2d5uOoy9Mc0pYTCeAov5snRps/KgNzYXSBAehKAmgYMYD11z5/Ck3czJRpk0AkU
+         Z3ajccxUdJRmMYOhE4wXETyppgIagL5iFLsKN27xx57bFTgtR8/mZ0cbUWH9Kc9IZHLN
+         E4m0OxR4SrnTjMxk42DUpyxwGcukd1vnXiX+Qux08mHu86xvRgA9V1RrQQGtsyR6jbfx
+         oalKdz7gnj0xUei1pwHlbJS9Ux+OAA60z4lKhHYKzXjaVAv+BQ7Ug6prqT0sohbxRTMF
+         m7lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749191271; x=1749796071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tzDIUNzlZzE8Exp7uJq4kZitY7Z7cIX3lYetygV3xS4=;
+        b=k4qYp0aA38F8XOasPEuGI0NPEGR0rUtu34prnavKqgNSW1hXgTbgsv4s0CadXuRoY0
+         jpaTJCn2Wh6e4ZuoPaFJj5pNcO8hsWwIFA+oOwKRp6oZJk8HCqtWxUjlgCtezfyZ5oR2
+         X6tW25NI3rQpxOqtaHt4rEXOSJ3olhv4pcOBtEPJoXxW752+dJTvybGSjkvLgqHdVycW
+         t2d/487XSLFKPuPsuD5Dqfv6caUWjIbiwUJoetgnnxJ+alfi3Uod4Q0r6gzffZL51fst
+         SZNKvAPyjdcFRX2+X19GaRmARArZjS8B+mA48aGUQJ/dPVfPeY6Eub4nCNVRMHb3/SUw
+         e2lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmrH/iplEwMYuaUBj7Ldk+pAdXQyManKtVEH1NafksVeSXl8l1l1LEt7WjsIMnUU8HhZY3u75d/W7bwp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeIZxrAHnwYfh/6psgFHD2ot8vgVUQb33lhCcguGgJdOY8zLdr
+	SBgnPYCvU2X5nqp6VgJaD/XdfhXsTdPnSpUNXB9/giFg2ZbDjnLSFRSU2xQF0Q6dzAqQXf7uO8t
+	LBf8bjSICFTBSn2lpT4n8l80c9k1QXWy7X1m6zRc=
+X-Gm-Gg: ASbGncvzhL6fXKE2a2brEDaeEifhFDdagkGsC1e5tw4KGkOC1HVLhHE0UGafKwIibym
+	tsoBujvNbhMAXggAQO37d8o6MR21F338Kkyj71O/X97T9Dm3UR67H/9Bi9aRQrP0aD6ex004cYh
+	cAEP0FrWdkz6ctxgYvrfqLcDAVsNZZSUfq
+X-Google-Smtp-Source: AGHT+IGeMMe/IEfSmGHrjkKKtJpK9PNQS0qXxBBszE1Swm/h32AeISc6HAC99hfCMUixWLwv1PU+pXk6joS65XpGV3c=
+X-Received: by 2002:a05:6512:1294:b0:553:543d:d963 with SMTP id
+ 2adb3069b0e04-55366c30244mr466930e87.36.1749191271080; Thu, 05 Jun 2025
+ 23:27:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250605164733.737543-1-mjguzik@gmail.com> <20250605190054.GH30486@noisy.programming.kicks-ass.net>
+ <CAFULd4b1dQO3biWvRoHfpyE-Bot0urmWDzxfO0dEverzuQOpdA@mail.gmail.com>
+In-Reply-To: <CAFULd4b1dQO3biWvRoHfpyE-Bot0urmWDzxfO0dEverzuQOpdA@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Fri, 6 Jun 2025 08:27:39 +0200
+X-Gm-Features: AX0GCFvjfb_7FBAh99GgftH7Lniw5WfTdcvevEmNBvdRrc32to_dxITK1kHneUs
+Message-ID: <CAFULd4Zito-1VasojoL7qZdu_yggDgQL_0qMSv6ZBrtMe3i1zA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86: prevent gcc from emitting rep movsq/stosq for
+ inlined ops
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org, mingo@redhat.com, 
+	x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Currently, the freezer traverses all tasks to freeze them during
-system suspend or hibernation. If a user process forks during this
-window, the new child may escape freezing and require a second
-traversal or retry, adding non-trivial overhead.
+On Fri, Jun 6, 2025 at 8:13=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
+>
+> On Thu, Jun 5, 2025 at 9:00=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+> >
+> > On Thu, Jun 05, 2025 at 06:47:33PM +0200, Mateusz Guzik wrote:
+> > > gcc is over eager to use rep movsq/stosq (starts above 40 bytes), whi=
+ch
+> > > comes with a significant penalty on CPUs without the respective fast
+> > > short ops bits (FSRM/FSRS).
+> >
+> > I don't suppose there's a magic compiler toggle to make it emit prefix
+> > padded 'rep movs'/'rep stos' variants such that they are 5 bytes each,
+> > right?
+> >
+> > Something like:
+> >
+> >    2e 2e 2e f3 a4          cs cs rep movsb %ds:(%rsi),%es:(%rdi)
+>
+> This won't fly, because gas complains:
+>
+> z.s: Assembler messages:
+> z.s:1: Error: same type of prefix used twice
 
-This patch introduces a CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-option. When enabled, it prevents user processes from creating new
-processes (via fork/clone) during the freezing period. This guarantees
-a stable task list and avoids re-traversing the process list due to
-late-created user tasks, thereby improving performance.
+However, it is possible to use " cs ; cs ; cs ; rep movsb". We can add
+a compile flag to the compiler, and it will be able to emit the
+desired sequence.
 
-The restriction is only active during the window when the system is
-freezing user tasks. Once all tasks are frozen, or if the system aborts
-the suspend/hibernate process, the restriction is lifted.
-No kernel threads are affected, and kernel_create_* functions remain
-unrestricted.
-
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- include/linux/suspend.h |  8 ++++++++
- kernel/fork.c           |  6 ++++++
- kernel/power/Kconfig    | 10 ++++++++++
- kernel/power/main.c     | 44 +++++++++++++++++++++++++++++++++++++++++
- kernel/power/power.h    |  4 ++++
- kernel/power/process.c  |  7 +++++++
- 6 files changed, 79 insertions(+)
-
-diff --git a/include/linux/suspend.h b/include/linux/suspend.h
-index b1c76c8f2c82..2dd8b3eb50f0 100644
---- a/include/linux/suspend.h
-+++ b/include/linux/suspend.h
-@@ -591,4 +591,12 @@ enum suspend_stat_step {
- void dpm_save_failed_dev(const char *name);
- void dpm_save_failed_step(enum suspend_stat_step step);
-=20
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+extern bool pm_block_user_fork;
-+bool pm_should_block_fork(void);
-+bool pm_freeze_process_in_progress(void);
-+#else
-+static inline bool pm_should_block_fork(void) { return false; };
-+static inline bool pm_freeze_process_in_progress(void) { return false; }=
-;
-+#endif /* CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE */
- #endif /* _LINUX_SUSPEND_H */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 1ee8eb11f38b..b0bd0206b644 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -105,6 +105,7 @@
- #include <uapi/linux/pidfd.h>
- #include <linux/pidfs.h>
- #include <linux/tick.h>
-+#include <linux/suspend.h>
-=20
- #include <asm/pgalloc.h>
- #include <linux/uaccess.h>
-@@ -2596,6 +2597,11 @@ pid_t kernel_clone(struct kernel_clone_args *args)
- 			trace =3D 0;
- 	}
-=20
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+	if (pm_should_block_fork() && !(current->flags & PF_KTHREAD))
-+		return -EBUSY;
-+#endif
-+
- 	p =3D copy_process(NULL, trace, NUMA_NO_NODE, args);
- 	add_latent_entropy();
-=20
-diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-index 54a623680019..d3d4d23b8f04 100644
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -375,6 +375,16 @@ config PM_GENERIC_DOMAINS_OF
- 	def_bool y
- 	depends on PM_GENERIC_DOMAINS && OF
-=20
-+config PM_DISABLE_USER_FORK_DURING_FREEZE
-+	bool "Disable user fork during process freeze"
-+	depends on PM
-+	default n
-+	help
-+	If enabled, user space processes will be forbidden from creating
-+	new tasks (via fork/clone) during the process freezing stage of
-+	system suspend/hibernate.
-+	This can avoid process list races and reduce retries during suspend.
-+
- config CPU_PM
- 	bool
-=20
-diff --git a/kernel/power/main.c b/kernel/power/main.c
-index 3d484630505a..99f5689dc8ac 100644
---- a/kernel/power/main.c
-+++ b/kernel/power/main.c
-@@ -994,6 +994,47 @@ static ssize_t freeze_filesystems_store(struct kobje=
-ct *kobj,
- power_attr(freeze_filesystems);
- #endif /* CONFIG_SUSPEND || CONFIG_HIBERNATION */
-=20
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+bool strict_fork_enabled;
-+bool pm_block_user_fork;
-+
-+bool pm_freeze_process_in_progress(void)
-+{
-+	return pm_block_user_fork;
-+}
-+
-+bool pm_should_block_fork(void)
-+{
-+	return strict_fork_enabled && pm_freeze_process_in_progress();
-+}
-+EXPORT_SYMBOL_GPL(pm_should_block_fork);
-+
-+static ssize_t strict_fork_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", strict_fork_enabled);
-+}
-+
-+static ssize_t strict_fork_store(struct kobject *kobj,
-+				 struct kobj_attribute *attr,
-+				 const char *buf, size_t n)
-+{
-+	unsigned long val;
-+
-+	if (kstrtoul(buf, 10, &val))
-+		return -EINVAL;
-+
-+	if (val > 1)
-+		return -EINVAL;
-+
-+	strict_fork_enabled =3D !!val;
-+	return n;
-+}
-+
-+power_attr(strict_fork);
-+
-+#endif /* CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE */
-+
- static struct attribute * g[] =3D {
- 	&state_attr.attr,
- #ifdef CONFIG_PM_TRACE
-@@ -1026,6 +1067,9 @@ static struct attribute * g[] =3D {
- #endif
- #if defined(CONFIG_SUSPEND) || defined(CONFIG_HIBERNATION)
- 	&freeze_filesystems_attr.attr,
-+#endif
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+	&strict_fork_attr.attr,
- #endif
- 	NULL,
- };
-diff --git a/kernel/power/power.h b/kernel/power/power.h
-index cb1d71562002..45a52d7b899d 100644
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -22,6 +22,10 @@ struct swsusp_info {
- extern bool filesystem_freeze_enabled;
- #endif
-=20
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+extern bool strict_fork_enabled;
-+#endif
-+
- #ifdef CONFIG_HIBERNATION
- /* kernel/power/snapshot.c */
- extern void __init hibernate_reserved_size_init(void);
-diff --git a/kernel/power/process.c b/kernel/power/process.c
-index dc0dfc349f22..a6f7ba2d283d 100644
---- a/kernel/power/process.c
-+++ b/kernel/power/process.c
-@@ -134,7 +134,14 @@ int freeze_processes(void)
-=20
- 	pm_wakeup_clear(0);
- 	pm_freezing =3D true;
-+
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+	pm_block_user_fork =3D true;
-+#endif
- 	error =3D try_to_freeze_tasks(true);
-+#ifdef CONFIG_PM_DISABLE_USER_FORK_DURING_FREEZE
-+	pm_block_user_fork =3D false;
-+#endif
- 	if (!error)
- 		__usermodehelper_set_disable_depth(UMH_DISABLED);
-=20
---=20
-2.25.1
-
+Uros.
 
