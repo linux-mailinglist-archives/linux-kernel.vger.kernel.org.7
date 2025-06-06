@@ -1,77 +1,95 @@
-Return-Path: <linux-kernel+bounces-675509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD65ACFEA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:01:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106A8ACFEAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8903B0CC2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23E121777F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE8128689A;
-	Fri,  6 Jun 2025 09:00:47 +0000 (UTC)
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674AF286401;
+	Fri,  6 Jun 2025 09:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Ijnjazfg"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE2F286897
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407D22857F5;
+	Fri,  6 Jun 2025 09:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749200446; cv=none; b=PDEqAlfxlxxQ/Drp+giECaz9IMKbRLOeLswWpQcqY4bjMtqL1SE48OqWtF5EJmpldee6T6SL2318+XAXgumGi30wvNsbWNq4I8P5HiGJkLD/GIZIpi2tzxvcvaRtReJxT2ylD5CD7hyT6tEYQ8S2N8OrLxu8uwREpamPfFW+iYE=
+	t=1749200499; cv=none; b=WjncppOy34YbIT43DuA90UJECYh+yjfueFPLjKdSTClPsTySlzT9WnTe5PyT7ertDxs3xhJEsVl0pWKU7Js7zlC6hHoSgj0geEROApPzzBKT8fjDoKHrrFCteIUur5MofKu+E7MIMaThnMk1n5vV3lIoDtsW0xVtkLG/37bQzHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749200446; c=relaxed/simple;
-	bh=yjZz5cqjPxCELpVBkF9BIDvsjB8/4NGvmo0rmXZMq4s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FWPiPE08WSnmR2foTjpepGMZkzfj72+kAmdG0iDdDEwPDpbtHQcOt+tr7MNm7JdGVBsQ9J6N7iInwp5C51Wo/qh/f4Xmwj6Sqm8dXae/6VUNDBFD6hrNEcvJnMcfH2e6fUkrzqcbGnBW2lq307kDvz0BY6zi4EQuufHiIcqFXTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.222.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5bb68b386so540629585a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 02:00:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749200443; x=1749805243;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yjZz5cqjPxCELpVBkF9BIDvsjB8/4NGvmo0rmXZMq4s=;
-        b=MlsduYLqvatMndLy+QP2Hk7pxJ9DUGZN6djxDCgpkuTScgFiHUnCcShZyhui/ed5Cv
-         8w5CeyIGrgI8q6oIAEWXC3RiXTvHTJYhA0dOc2uLhxRob9X0dODLY5sqaRn3ZFWp5ABA
-         urL1gslgu8qUEjSaPJmleHp60Cakp3CTzgwkv0sGSC/TNE1snf4fE1BLB+yOP8QoHwz2
-         Fhn9GwnBQ1/X7G2oW/9OS0PmNAv/z9/32BK0x0m7TMmDjQNtHg8YM8Bem5AjLf/n+bql
-         ZI++WaBD5zohrrcwUdiehtnwAOF3gaqUIcM+HQTs+eLr9Lt5axTgTgMaQRrEkKFk+VsM
-         wyYw==
-X-Gm-Message-State: AOJu0YzI6fVRwOJDb1QHZmPpWQ5N5Uuw5Qyub1BSi8dT3udQy88vaLxQ
-	2ObegHnnS1f5sTGTGaLHMZTwtSoqTaSEfbtDCKe00lstzP4cz4ja1NAYhXKAhJDkhl5gKNIFyQV
-	GDGi8NkGEjMiezee6+q8403OTlULTYk613p7x2WjuV+UlpHILL1gFJDM51ZI=
-X-Google-Smtp-Source: AGHT+IHdtfTf/YQQweWThFDrXf3h20ZP5yrlFxrKlU3g9JMeYriMcK9U8SbaARVfCSyaoOqS9i5Gr6FPByN5VjODN1gd3zuqPbye
+	s=arc-20240116; t=1749200499; c=relaxed/simple;
+	bh=ohL+btFfgpdhtKelY1Y8ebWgP4pB+nV8VoY8zvTjM1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Alm83mBZE2yrgEbLofgJAxcHJXg+y3p2qiAoqM13QlCy0G4UIH83lAYiuoONCjmf5M5FlBaAcCLjWNe8FzhPXWokzagB4VxKDHytcTkiuZ8OxTqkdiA7o7KcLOgqqp073ret6wFRvB0HJ7Nt6nCqB/2wBb4WXTQul0/AFi5EnGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Ijnjazfg; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
+	Resent-Message-ID:In-Reply-To:References;
+	bh=cltWH0Pdf2xnkg0LSwjiml4ayLwECkb1Q68tVB+aZJY=; t=1749200498; x=1750410098; 
+	b=IjnjazfgXC3iIWFioKDEa8fb7Ze0dSZ1uMIrJ7vWtadfUh9NXE1mZprWzCHUPVZZ8dMSWVgmGFx
+	Nu5To6Tu0xIwQfFTQkHg327RLHPmh5AnFDCCCPBwGxCCZMvtxIUi6uv/STUC2+W5Y/g70Pwe9g9iT
+	/M7wbbZ21YH1Xf7ai2CufgEj3MOjbOiCUDS+S3yPnyJYl6/vqCDREyo8+4jjh5cBGZXfGaLL/jegv
+	jXz2UuxBSxhgOCAJvbErgf9luQYd90iTy3FCaAW3Laq3q/hSoZuNcyGzxB2FIKFnnnKUP0EpLRNtn
+	frSObZxP8bMKM7yxRKvNeILVSmwWa/6zovIQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uNSxD-00000007Yht-1Czm;
+	Fri, 06 Jun 2025 11:01:35 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+To: linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ata: pata_cs5536: fix build on 32-bit UML
+Date: Fri,  6 Jun 2025 11:01:11 +0200
+Message-ID: <20250606090110.15784-2-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd8a:0:b0:3dc:7fa4:834 with SMTP id
- e9e14a558f8ab-3ddce448577mr24595035ab.15.1749200431470; Fri, 06 Jun 2025
- 02:00:31 -0700 (PDT)
-Date: Fri, 06 Jun 2025 02:00:31 -0700
-In-Reply-To: <684298d8.050a0220.2461cf.0039.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6842ae2f.050a0220.389efd.0000.GAE@google.com>
-Subject: Re: [syzbot] #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- e271ed52b344ac02d4581286961d0c40acc54c03
-From: syzbot <syzbot+05d673e83ec640f0ced9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+From: Johannes Berg <johannes.berg@intel.com>
 
-***
+On 32-bit ARCH=um, CONFIG_X86_32 is still defined, so it
+doesn't indicate building on real X86 machines. There's
+no MSR on UML though, so add a check for CONFIG_X86.
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git e271ed52b344ac02d4581286961d0c40acc54c03
-Author: dmantipov@yandex.ru
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ drivers/ata/pata_cs5536.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git e271ed52b344ac02d4581286961d0c40acc54c03
+diff --git a/drivers/ata/pata_cs5536.c b/drivers/ata/pata_cs5536.c
+index b811efd2cc34..73e81e160c91 100644
+--- a/drivers/ata/pata_cs5536.c
++++ b/drivers/ata/pata_cs5536.c
+@@ -27,7 +27,7 @@
+ #include <scsi/scsi_host.h>
+ #include <linux/dmi.h>
+ 
+-#ifdef CONFIG_X86_32
++#if defined(CONFIG_X86) && defined(CONFIG_X86_32)
+ #include <asm/msr.h>
+ static int use_msr;
+ module_param_named(msr, use_msr, int, 0644);
+-- 
+2.49.0
+
 
