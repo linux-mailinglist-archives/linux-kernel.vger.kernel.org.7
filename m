@@ -1,154 +1,196 @@
-Return-Path: <linux-kernel+bounces-676195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9B5AD08B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:30:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBA7AD08B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F58616BCB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 19:30:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22ED918908EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 19:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81994214A9E;
-	Fri,  6 Jun 2025 19:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E43214815;
+	Fri,  6 Jun 2025 19:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="R/CZGEpf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ls3Sm07C"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGQGSI4e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8799220FAA4;
-	Fri,  6 Jun 2025 19:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94D71E501C;
+	Fri,  6 Jun 2025 19:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749238246; cv=none; b=UrvDorodLQQB5qAnnRrESj+IIy29oVd/uiAnKJFiEvr2TGn3IQ6r84Z6Cjs7gvJWff0bzZrOUE+QPkJQUbp/Z/1UmBODcs4v9Mow0XnHnSVGtcS4cuC9QgtYFjHFhAtffg82IJ4fiPYORV7JjfjZtkXWMjsgwJQxWrKlYPhbdvE=
+	t=1749238449; cv=none; b=oOSWdNLbd9ETmpW1DBbdP2EHD6Gl3T5eZ+dSlhiniqCaGHmL7gwiQTgl4C5RCbJoM+GG0UnP6BoO2RAmEC0XPWN4btEuwZ2iu523+rxzoaWvyBFHH+gaA9cMacjEpjF7bVAppAcrr4AX6dq9i1VLHW2ehniH1/ACny5Lp9pgpQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749238246; c=relaxed/simple;
-	bh=mop+KlpuK8X386yUkF6VkytkPGwtEzTMMJxWKOhtygo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=iw2Qr7jETCB3lQ1f/Xp7/6pngmQe9RFyJHh0ZIhGZL1hkLy01C4MKdjBbH6kumMXyNmywhZPWoctD1iu+suLFrZAiN1UM7p4fj8+Y8Qf3ySvdbwUIRng/vasBriYuZpMLL170llirUtc3K+UZVXyFYrxItXEwshkKYL9++pfmiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=R/CZGEpf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ls3Sm07C; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8D1301140193;
-	Fri,  6 Jun 2025 15:30:43 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-12.internal (MEProxy); Fri, 06 Jun 2025 15:30:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1749238243;
-	 x=1749324643; bh=lEYf3neoow/7vEvxjuEgRsFKRcKeW6cqpzgTmhNHb2g=; b=
-	R/CZGEpf2uJtX9c5zhVO/wgEY531AM5LvDJrSmDrK3jEQzjTkTMzcjRX187dWR84
-	oIbQD8KXGP6YFK9fYC23LRe49M5teDXkK0Kz7d1KVsrLoPZaXXSuRO5by7URUhJN
-	lDmsEUOkOigp1YI6oTnhyIiVzJO7mPl/eULFOqIHC8v85yCxpCbrOhurSUqR+DaQ
-	jxtJ504ytF76XFsmpCienWJKMYFCl3B3Gy8iBKA6zE9AdW+D1ZxDzxrPKqx5eNWv
-	XMeezlkno9ykDQXuhvmLat4lxi6u0mObQxYc4iVVrgInmEeM2NYXWruCDmoW0umO
-	pP2u54ml6Z1U53fqM8UCzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749238243; x=
-	1749324643; bh=lEYf3neoow/7vEvxjuEgRsFKRcKeW6cqpzgTmhNHb2g=; b=l
-	s3Sm07C1nnR2e9ZaUstuOe39LaA4ILuj5i6IH3wzVdHTi2IaLfZElQ5ssZ8WfQqZ
-	KWosRgmzq2hWEZEj/wjD8GGoMZC/LFUF10n+yLMrRoT7YU5SPNlPDei4/GOYszWL
-	5ex4LXel+75mZdZSLX/L2VdWwvZprLGAWd4y0wNBOKXsho5qSDQVbqMvjf0rbjMt
-	4G1QNaZrTS/8hWtQGnRbOv8xbxVeNndzyU43UN1FphT9p9HhnPoHc3A5tGqEnltC
-	3DffjneC9Mql+t6N0uXSou61iqT2fo8S9fDRn1ABSiAVQB5Bd3a+9nxr64it5oJE
-	vNYJmwuMNFA5c6V43yVYg==
-X-ME-Sender: <xms:4kFDaIxR-T4VMUeCvpyO6b0aNY6mc-cKHTNvPCsAcnYXO97MTjv0tQ>
-    <xme:4kFDaMSccayqbSsT7xH9tiE_xNR1r_maZ-9AHpaTrTTfmElVg5ZrkUQtuS-UPF_pO
-    kMZkGg2lr7GnKFSHXA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdehheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
-    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
-    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
-    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepihhkvghprghnhhgtsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
-    figprghrmhhinhesghhmgidruggvpdhrtghpthhtohephhhmhheshhhmhhdrvghnghdrsg
-    hrpdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopegrnhgurhhi
-    hidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoh
-    epihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphht
-    thhopehovgdqkhgsuhhilhguqdgrlhhlsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtg
-    hpthhtohepihgsmhdqrggtphhiqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhr
-    ghgvrdhnvghtpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvght
-X-ME-Proxy: <xmx:4kFDaKUvSPNU1VHVDoLtZsVeoDlZrIuwcqaUW64hDiY5ihLIY22pxw>
-    <xmx:4kFDaGjzibfTxl3_FCUnSXmYzJKrgoIEJNYTi1bBxdOQkl1z75bDjA>
-    <xmx:4kFDaKDXj-b13AJ8C7SQoQBZPyRQEg6wgtjZydwznk16NGjYmI29ug>
-    <xmx:4kFDaHIrX28gXw3p76CQa6l6t2qX-poMA5iFKfHiiFVqfd7undZuOw>
-    <xmx:40FDaAILvoi3Ti-qur14dEFImeIPFodxm3Q5F2ESeqfvgtfgCTm4u-vx>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2ADB22CE0063; Fri,  6 Jun 2025 15:30:42 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1749238449; c=relaxed/simple;
+	bh=H3LG70DDFkrvPWOnWEJJh55HhE/5hyND70bmc+t70E0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=AdpZqvC+3HI6NoIcsxVt3Rs8NK2S9LU1CBRWD8ywocnI0S8W8wHXIaGLIyh2LYo+ukBenGuqk+pqfbU0tt7TR4cwGYWMWH6Nn3iqG4bdxK0miG7HmV/mVs/IwnW6sfpqp4EgDixUmyQI3611WCDdPO5920VUT8z6KVWzq5+i4qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGQGSI4e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68D4EC4CEEB;
+	Fri,  6 Jun 2025 19:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749238449;
+	bh=H3LG70DDFkrvPWOnWEJJh55HhE/5hyND70bmc+t70E0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=HGQGSI4edQTuDIM8ShM02brnAcb4Zhl+/8yPBdkt5dNWpORwpxKMbpYd4FzA3MsIQ
+	 XWa+rZJem7lHlTNNvQ0zi8hU89b4xz4P+/9gMNJG/ZZ5Wfx8R/TnA2NGssGy9kxPVZ
+	 R1OaF3lfpzxTC6BBRL78W188XvdDndClcaB3HyoEm+RDaDvowc/Dl4d0RAKfgIMOGG
+	 mBjXSMxPygHFjT8jNrtS5BNtNQA0AvI3nhE0BmZ1RRa11ghoPCu+22/ENB7b/4n/+g
+	 Q40ms7sHhyeIqI3AwFPQLua2kTxvM/Gepykk38FUzv5tNRxy02+9yI6ZnAQxiKm3jh
+	 kXdAwknIhhdpg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: T107eb5199b18744c
-Date: Fri, 06 Jun 2025 15:30:21 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "kernel test robot" <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Hans de Goede" <hdegoede@redhat.com>, "Jonathan Corbet" <corbet@lwn.net>,
- ikepanhc@gmail.com, "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
- "Armin Wolf" <W_Armin@gmx.de>, linux-doc@vger.kernel.org,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- ibm-acpi-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Message-Id: <68f7cbc2-f81b-47ff-9dfb-093c54bec760@app.fastmail.com>
-In-Reply-To: <aEM6PTCql7l1n6e0@smile.fi.intel.com>
-References: <20250604173702.3025074-1-mpearson-lenovo@squebb.ca>
- <202506062319.F0IpDxF6-lkp@intel.com>
- <6d17454f-faac-4616-ac2e-7da80feedf2c@app.fastmail.com>
- <aEM6Da6CZ0DI3x8w@smile.fi.intel.com> <aEM6PTCql7l1n6e0@smile.fi.intel.com>
-Subject: Re: [PATCH v2] platform/x86: Move Lenovo files into lenovo subdir
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 06 Jun 2025 21:34:04 +0200
+Message-Id: <DAFP9ZRENV0S.ON0XKIXIAEKY@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>
+Cc: "Viresh Kumar" <viresh.kumar@linaro.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Yury Norov" <yury.norov@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Vincent Guittot"
+ <vincent.guittot@linaro.org>, <linux-pm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH] rust: cpumask: Validate CPU number in set() and clear()
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <8b5fc7889a7aacbd9f1f7412c99f02c736bde190.1749183428.git.viresh.kumar@linaro.org> <aEJwm16HSwCyt7aB@Mac.home> <DAFAR5SUQSU9.OSLB2UAXE9DY@kernel.org> <aELugDefiviXZjx6@Mac.home>
+In-Reply-To: <aELugDefiviXZjx6@Mac.home>
 
-Thanks Andy
-
-On Fri, Jun 6, 2025, at 2:58 PM, Andy Shevchenko wrote:
-> On Fri, Jun 06, 2025 at 09:57:17PM +0300, Andy Shevchenko wrote:
->> On Fri, Jun 06, 2025 at 01:30:25PM -0400, Mark Pearson wrote:
->> > On Fri, Jun 6, 2025, at 11:58 AM, kernel test robot wrote:
+On Fri Jun 6, 2025 at 3:34 PM CEST, Boqun Feng wrote:
+> On Fri, Jun 06, 2025 at 10:11:13AM +0200, Benno Lossin wrote:
+>> On Fri Jun 6, 2025 at 6:37 AM CEST, Boqun Feng wrote:
+>> > On Fri, Jun 06, 2025 at 09:47:28AM +0530, Viresh Kumar wrote:
+>> >> The C `cpumask_{set|clear}_cpu()` APIs emit a warning when given an
+>> >> invalid CPU number - but only if `CONFIG_DEBUG_PER_CPU_MAPS=3Dy` is s=
+et.
+>> >>=20
+>> >> Meanwhile, `cpumask_weight()` only considers CPUs up to `nr_cpu_ids`,
+>> >> which can cause inconsistencies: a CPU number greater than `nr_cpu_id=
+s`
+>> >> may be set in the mask, yet the weight calculation won't reflect it.
+>> >>=20
+>> >> This leads to doctest failures when `nr_cpu_ids < 4`, as the test tri=
+es
+>> >> to set CPUs 2 and 3:
+>> >>=20
+>> >>   rust_doctest_kernel_cpumask_rs_0.location: rust/kernel/cpumask.rs:1=
+80
+>> >>   rust_doctest_kernel_cpumask_rs_0: ASSERTION FAILED at rust/kernel/c=
+pumask.rs:190
+>> >>=20
+>> >> Fix this by validating the CPU number in the Rust `set()` and `clear(=
+)`
+>> >> methods to prevent out-of-bounds modifications.
+>> >>=20
+>> >
+>> > Thanks for the quick fix!
+>> >
+>> > While this can fix the current problem, but it's not a good solution f=
+or
+>> > the long run. Because outside a test, we should never use an arbitrary
+>> > i32 as a cpu number (we usually get it from smp_processor_id(), or
+>> > something else). So the `< nr_cpu_ids` testing is not necessary in
+>> > normal use cases.
+>> >
+>> > We should instead provide a wrapper for cpu id:
+>> >
+>> >     /// # Invariants
+>> >     ///
+>> >     /// The number is always in [0..nr_cpu_ids) range.
+>> >     pub struct CpuId(i32);
+>> >
+>> > and
+>> >
+>> >     impl CpuId {
+>> >         /// # Safety
+>> > 	/// Callers must ensure `i` is a valid cpu id (i.e. 0 <=3D i <
+>> > 	/// nr_cpu_ids).
+>> >         pub unsafe fn from_i32_unchecked(i: i32) -> Self {
+>> > 	    // INVARIANT: The function safety guarantees `i` is a valid
+>> > 	    // cpu id.
+>> > 	    CpuId(id);
+>> > 	}
+>> >
+>> > 	pub fn from_i32(i: i32) -> Option<Self> {
+>> > 	    if i < 0 || i >=3D nr_cpu_ids {
+>> > 	        None
+>> > 	    } else {
+>> > 	        // SAFETY: `i` has just been checked as a valid cpu id.
+>> > 	        Some(unsafe { Self::from_i32_unchecked(i) })
+>> > 	    }
+>> > 	}
+>> >
+>> > 	pub fn current() -> Self {
+>> > 	    // SAFETY: smp_processor_id() always return valid cpu id.
+>> > 	    unsafe { Self::from_i32_unchecked(smp_processor_id()) }
+>> > 	}
+>> >     }
+>> >
+>> > All `Cpumask` functions then take `CpuId` instead of `i32` as the
+>> > parameter. Needless to say if we were to have a cpumask_next() wrapper=
+,
+>> > the return value will be `CpuId` (or `Option<CpuId>`), i.e. if a bit w=
+as
+>> > set in a cpumask, then it must represent a correct cpu id.
+>> >
+>> > Make sense?
+>>=20
+>> Just to make sure, the `nr_cpu_ids` stays constant, right?
+>>=20
 >
-> ...
+> Sort of. I believe the value won't be changed once the kernel boots, in
+> most cases (modulo NR_CPUS=3D1 or CONFIG_FORCE_NR_CPUS=3Dy), it's a
+> read-mostly variable not a constant, and the value gets set by either a
+> kernel command line or how many CPUs the kernel actually detect at boot
+> time. See:
 >
->> > I'm unable to reproduce this issue with a W=1 build
->> 
->> Do you have GCC-12?
+> https://github.com/Rust-for-Linux/linux/blob/rust-next/kernel/smp.c#L995:=
+w
+
+It's allowed to increase, but if it ever decreases, the invariant of
+`CpuId` will be wrong (ie it's not *invariant* :).
+
+>> >> @@ -101,10 +108,16 @@ pub fn set(&mut self, cpu: u32) {
+>> >>      /// This mismatches kernel naming convention and corresponds to =
+the C
+>> >>      /// function `__cpumask_clear_cpu()`.
+>> >>      #[inline]
+>> >> -    pub fn clear(&mut self, cpu: i32) {
+>> >> +    pub fn clear(&mut self, cpu: i32) -> Result {
+>> >> +        // SAFETY: It is safe to read `nr_cpu_ids`.
+>> >> +        if unsafe { cpu as u32 >=3D bindings::nr_cpu_ids } {
+>> >
+>> > You probably want to check whether `bindings::nr_cpu_ids` can be
+>> > accessible if NR_CPUS =3D=3D 1 or CONFIG_FORCE_NR_CPUS=3Dy, because th=
+en
+>> > nr_cpu_ids is a macro definition.
+>>=20
+>> Just define a helper function?
+>>=20
 >
-> To be more precise you need to have a CONFIG_DMI=n.
->
->> > and I think it's a false positive.
->> 
->> I think the problematic line is in certificate_store().
->> You need to check the value of dmi_get_system_info().
->> Or make sure the DMI is always selected (depend on DMI
->> in Kconfig, perhaps).
->> 
+> Maybe, but it is then "a variable read" vs "a FFI function call" if we
+> want to check every time in clear()/set(), of course if we only check it
+> in CpuId::from_i32() mentioned above, the performance impact shouldn't
+> be observable, because we won't call that method often.
 
-I think this is already in place, but it's a bit of a tangled nest of Kconfig options and could depend on the architecture. I can't disable it in my current build anyway.
+Sure, you could also have a rust function that is inlined that does the
+two different checks depending on the config.
 
->> > Am I safe to ignore this report?
->> 
->> Please, try to fix it.
+> Either, I was just pointing out the current fix may cause build errors.
 
-Ack. 
-I'll add in a check for the dmi_get_system_info returning NULL, and add a depends on DMI.
+Yeah that should be fixed.
 
-Thanks for the pointers.
-
-Mark
+---
+Cheers,
+Benno
 
