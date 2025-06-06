@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-676037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8653AD06C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B828AD06B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F6F3A9164
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B673AAB8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198E1289343;
-	Fri,  6 Jun 2025 16:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8829628A3E0;
+	Fri,  6 Jun 2025 16:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="H1xF6vEh"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="mQp/ZkYO"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B60E2853F6;
-	Fri,  6 Jun 2025 16:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93063289E0E;
+	Fri,  6 Jun 2025 16:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749227705; cv=none; b=sboC7ubwH2OIZrZXejwoyhS3xOsKmroRRmuGJ9PXqJq01TgsvQYDko5UbLoSX6ePTfxzQb7SVWm85QSN9it4fPxEP/vYLIXB/yUFSNhq681dlwxVLRtv3QZGzAVhSjrnakHE4StdxEJs9zk25Gu69GmT5YZbAr2U8dTsSEFI+tY=
+	t=1749227704; cv=none; b=EUdvgeGI4HIWZi+wZqbJIg+K5Lwl/1ozxGkumpPexfiYKiBgroeoEvHBYX+39KoqsBcZQ7LMW8+PNw27PFf532VxNSmCG+XbPUxdr+kXLJRDtNY6WjIJVuwJMhUHoNnYDhs9xG8PwIHllmRdzDII0li7B4baBkyLvL2sWYBNR3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749227705; c=relaxed/simple;
-	bh=Xk9ajLZGYrjC8GxOtF2H673cXwx3Vc4L5ZswNgZDV3w=;
+	s=arc-20240116; t=1749227704; c=relaxed/simple;
+	bh=cCX7+iWaJ32ve9qQ3KC+4mD5gRO5zvHS+vb0szaj5U4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CdAVBbzxqu1EcdiuAhmFuVMIGNlYbfzTzRNcUHzvfT6cOA98mugXNqeguRXhuwjLYN0ge00xhbMxDmVGAV2WyVvNWXXkn0hWwnJLyyeIkw4mlFKWDHfkheYB9/G3pTk47IbQEHrNKeI1eWf25XFHFQ5rQ/QkhshtPj5rjngMoKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=H1xF6vEh; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=okUfA3PsDm0WEbKoJPNbY7Syl4yeJWIrIrKdxOMMR7EZph2c01C7HOLBNLWBg2JDZT9jG6QD12FFi1Q2hvOkq2eP61aDSoRcn0Jnk2Hezan0P/2WyZT9xbz0piJz255CDPy3XLnkQjHR0uYTJlb2O+hxGgOfoMOZkGfrKCpOW2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=mQp/ZkYO; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1433541F26
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8B01241F2D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1749227696; bh=k4wWLzw3KH5+stcNScMYwU5UgcBq+X0OjHCe0oISl2s=;
+	t=1749227696; bh=kb0zYT2ntM43Di/wACcwU37EP9pm+N3CV36LcbfUc8o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H1xF6vEhKkve9MVXtJu94HsbQIumFIoSU2FEcFb5iXjDA00SutPir3hSzpQ6ZeRrz
-	 535yNLQZSTBMCqiJ2/cWmea/zXQWVIV2hSu7A4Q3UJvYKq/UW3zur2Z/Mh5V3OzFXs
-	 04pihMcrB1Ha15T41MbLf76NNeQMPxrPc0QxKf8VBdbwdL09SYw12xbXMK0GVfhhDI
-	 dKJv6s22LQPyqnfbQy1LTW5WEtpbhESv+9EfUh5ZujGrFKC0QwoEMDlc9mgasj8+gJ
-	 kMd70nrQ1mvtz1RQspFSLiNknjSoOzkrY0QiTZCN4+KaRX+X0NtUzJyeGtbmelvjSC
-	 2jobPetci4UIw==
+	b=mQp/ZkYOFsY7Xqy23HT/R20g7ZE6o9KfI5D9i3+6GwtAi0u69hCaPW+iWKbw/54IW
+	 duHvkF01168QoqMNYFeWHI/DbkFlTWY5v+p80SjuCM6DXeJoLIW3D9mxveAE5XTbx/
+	 nZqMFLF1VPcYoRV5J4Lxmd1n8OxcPFjCbiOsyJslwq//W71k/4EVSuGiGHs3U0y8Yn
+	 2hey/30Au39GNuuSwTYniINs1AvDlxPXNbwdKSEWFjAU3vUxddWIFOqzSAVAGdk10A
+	 n0as7RGCel3jb+AqHhdggCqD4jIaGdZwD7f6zCTpufa4namzhgpIY3l/1SYbHxnu7y
+	 xb1kCnanpx8EQ==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 1433541F26;
+	by ms.lwn.net (Postfix) with ESMTPA id 8B01241F2D;
 	Fri,  6 Jun 2025 16:34:56 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/9] docs: kdoc: move the core dispatch into a state table
-Date: Fri,  6 Jun 2025 10:34:31 -0600
-Message-ID: <20250606163438.229916-3-corbet@lwn.net>
+Subject: [PATCH 3/9] docs: kdoc: remove the section_intro variable
+Date: Fri,  6 Jun 2025 10:34:32 -0600
+Message-ID: <20250606163438.229916-4-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250606163438.229916-1-corbet@lwn.net>
 References: <20250606163438.229916-1-corbet@lwn.net>
@@ -62,62 +62,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since all of the handlers already nicely have the same prototype, put them
-into a table and call them from there and take out the extended
-if-then-else series.
+It is only used in one place, so just put the constant string
+"Introduction" there so people don't have to go looking for it.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index b193cf9dc0d1..37b7e501af7c 100644
+index 37b7e501af7c..90b53b70cfee 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -1670,6 +1670,21 @@ class KernelDoc:
+@@ -203,7 +203,6 @@ class KernelDoc:
  
-         return export_table
+     # Section names
  
-+    #
-+    # The state/action table telling us which function to invoke in
-+    # each state.
-+    #
-+    state_actions = {
-+        state.NORMAL:			process_normal,
-+        state.NAME:			process_name,
-+        state.BODY:			process_body,
-+        state.BODY_MAYBE:		process_body,
-+        state.BODY_WITH_BLANK_LINE:	process_body,
-+        state.INLINE:			process_inline,
-+        state.PROTO:			process_proto,
-+        state.DOCBLOCK:			process_docblock,
-+        }
-+
-     def parse_kdoc(self):
-         """
-         Open and process each line of a C source file.
-@@ -1721,19 +1736,8 @@ class KernelDoc:
-                     self.process_export(export_table, line)
+-    section_intro = "Introduction"
+     section_context = "Context"
+     section_return = "Return"
  
-                     # Hand this line to the appropriate state handler
--                    if self.state == state.NORMAL:
--                        self.process_normal(ln, line)
--                    elif self.state == state.NAME:
--                        self.process_name(ln, line)
--                    elif self.state in [state.BODY, state.BODY_MAYBE,
--                                        state.BODY_WITH_BLANK_LINE]:
--                        self.process_body(ln, line)
--                    elif self.state == state.INLINE:  # scanning for inline parameters
--                        self.process_inline(ln, line)
--                    elif self.state == state.PROTO:
--                        self.process_proto(ln, line)
--                    elif self.state == state.DOCBLOCK:
--                        self.process_docblock(ln, line)
-+                    self.state_actions[self.state](self, ln, line)
-+
-         except OSError:
-             self.config.log.error(f"Error: Cannot open file {self.fname}")
+@@ -1207,7 +1206,7 @@ class KernelDoc:
+             self.entry.new_start_line = ln
+ 
+             if not doc_block.group(1):
+-                self.entry.section = self.section_intro
++                self.entry.section = "Introduction"
+             else:
+                 self.entry.section = doc_block.group(1)
  
 -- 
 2.49.0
