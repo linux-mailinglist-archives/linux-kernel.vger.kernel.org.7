@@ -1,192 +1,113 @@
-Return-Path: <linux-kernel+bounces-675383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86884ACFCD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76048ACFCD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FE7189C47D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90810189C632
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAA7259CAE;
-	Fri,  6 Jun 2025 06:29:18 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FA426560A;
+	Fri,  6 Jun 2025 06:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tv4TG3un"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAEF258CFA;
-	Fri,  6 Jun 2025 06:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B57264629;
+	Fri,  6 Jun 2025 06:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749191358; cv=none; b=KBGujxJtMXH6O3eSazGKT4dIuRZwCfnaH4GybMUQX0aAO4ZawJxSb3gaL47Wc1wY+Dwyn5Mv0tetm6MyxGQk/OTJ4CD8wef7cNSa0yGUFyaXnDiCogTg9hgao4NBEv6HzuU90M2PxwvTUF1NjAD2gq1b3B075s0wOnsBKCJffns=
+	t=1749191515; cv=none; b=eC6vg9eBST61ve/KTOWcboaf4HuserEzV0Ylk+lTmeAkMZivswOqZeijxS7wwAk0h6IimbpqxOSlKnyh6u1Ba4IH/Rxm84kgk5AT/CaAnoAhaOY6XsS7b6OoIU969WMIEajinenYCdykB7xvNuA1IkYdwa1zIfLsBGVSgd+bavE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749191358; c=relaxed/simple;
-	bh=qcLANFQYB6F1aTadtJclYNPeTflXqceuvsxjG9tl5Gg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UqUqzLEdVS2q1Rv+hMs9o91wIIJ69hp+vytQ699kC5knxCRxGe+BHFG9QSAfn208DrODz4gQyVHhw+SyMmYTdXf7NoiTa6n1dm8oJ80OTke9fEVXzT0F8xnzdUmjqeulFnCQz+cHme5b5VM6W+DUz3wC9GjBlkAA332/Hxk6tNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-604b9c53f6fso3569073a12.2;
-        Thu, 05 Jun 2025 23:29:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749191354; x=1749796154;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=anhtEfC+aYWJeJvUly60jdWH8rm+sVcW8pcF9vb2eMk=;
-        b=W3vCRqnirNsT3umsMTw/mj5V5iWtrD/uBseXACX3CeeyJBkPqWldRBYkH0heEv64jx
-         i3TOZzf10LXmZ0X6SRIqx/ta0Mx5lS6HniHCp2BCRlvc8fxTUO+xae+ic52FuCyU8L7j
-         maXxuME/2/VeoLjpDhIFzH4Du4mITHessTVDuvrWu369xBy7LdIMVuD2HJA979/AVlQE
-         GostxWctYxM1Uwi//5ucCbuJSNU0FvcL5GytB7MVCauEAD2P7AjY4sYI2bO5OOd4Oalr
-         mtMsnbJP3u+yG3Oj5JxPfNLxUEk+XZdrj1OzUCOOkquJiOS8qIv8yinxVSXSFs/CAjr3
-         +pSg==
-X-Forwarded-Encrypted: i=1; AJvYcCU50p100FaiJ42YuHz3xLJiLsTIDyZS0P1kcZsmdKmQQ3GfCfjlKoTJEkzR0EvZzTTnK7k/HgPQKQU=@vger.kernel.org, AJvYcCU8GYGKaJMGPev38HkJQ1+ZiURLq8XVmA+/b9GfeKMOSKqOysPgY/GzMRnn0uzbWv3BcC+5Iekh9DEd8JI=@vger.kernel.org, AJvYcCVFBfEsrCODwoRlxbKeyoviaI4GQs1XjkMgIZ1VmTf+h/5ukaOkS9j/39yRyqfUCNKhL/1ReV/BNUgDzJua@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNOHkmsBvMoVe9EET6GqbDkKD74L5v0K34xYl8KkqYK2rrowWM
-	QNF3eyKg1jjekmw2z1L2WVxq/jwYkxk1o00W1Q/eSbaK219WXjsO93wz
-X-Gm-Gg: ASbGnct5rIOgL6MZS1JIVWArfWRAZ0M4BvWBBAxLgvWEpIXQQzrkR5KA9BO4aAYFDyU
-	0jM0kwBKMR6VA9acKO9+1UovLoZrocwSgp1cZwSFxnnTgR+grGps+sVH6g2p7Bu5EAplC6wv7zI
-	E0Vo8wO5GjTGhgRQBcelsTMleS0iJac45r988FG8U6oXFe9Zjg9CGYLtXjeYQmOp1s/3Gxv6vwV
-	RbwP8KrUFTC3npqbROPmptsQfTLGMcG2noID7/imwk8JusoEkk87E/NldAVvULDcRPbNZo8YoLD
-	+UmBXb6mST+zZx5w7Y3q7G8Jh3yFH8wVWEGxhdluliwXsMo29q1mawM6A3A7lTiswK5j3qRt9+h
-	UwNj3YOfF3jEFu5BJ1Ett
-X-Google-Smtp-Source: AGHT+IEQhHpZGVCxH1ZaUqlfgXtzTnbNuSiyE94GQATLfAusLPGKyuMEVAdsVmPX89pYi5j539z3bQ==
-X-Received: by 2002:a17:907:94c8:b0:ad5:55db:e413 with SMTP id a640c23a62f3a-ade1a9248d4mr174784266b.26.1749191353364;
-        Thu, 05 Jun 2025 23:29:13 -0700 (PDT)
-Received: from [10.42.0.1] (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d754653sm67989966b.20.2025.06.05.23.29.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 23:29:12 -0700 (PDT)
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Fri, 06 Jun 2025 08:28:30 +0200
-Subject: [PATCH v7 10/10] arm64: dts: rockchip: enable NPU on ROCK 5B
+	s=arc-20240116; t=1749191515; c=relaxed/simple;
+	bh=zRwVKxY/ljPw+PWBx03TIerZJoDRcw2Ws1V9+SjbY18=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RZZmygKMzQ0B9JY8830fbJzKRpiG8MVF3pVFVlZLamndlmbI73Fphns2GQ/DH3rXrZydQHD+MVX63RQvkQUIzPW6AHKNlILo6eYJnXavLgkDDOpdwtJEH3UUPNEJiB5+2gUtHRrbeCIBuTG11vLT+d9D9R5JR3WAH7rAc0+F484=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tv4TG3un; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1749191514; x=1780727514;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=zRwVKxY/ljPw+PWBx03TIerZJoDRcw2Ws1V9+SjbY18=;
+  b=tv4TG3unT8fA0jSX2iIol1BCr3TIXTLd+z+kNWUZapAkMdCbsQ5cXh5F
+   6ELPruEvxnQW2aK2CE/qFriWLqQpQUYRM1t0cwEjbj5oQUj/Rzcqn9app
+   XpPPIScpG+0GN1uZZBnLUkdlhSMFT1Rx8NMk8TzXczoo6v3LZuJJ2cwxA
+   uDRVV2Ol6NzWRFFhTIf9/dybCNTojtzh+YvmMwboi2nMw211aeryY4dvM
+   1ZFKEHVTFhHCD26MTknjI4Gco39q2fD1QM3CXnK8nugXzU0lFAT67WiBs
+   ra+c/ui6DEuTJO+X+m1cEGY6YDucPwMFJNIl0z1a9vuEAx/oMt1Wqw6xG
+   A==;
+X-CSE-ConnectionGUID: HiyTZkGJTpSB36KKTlmuzA==
+X-CSE-MsgGUID: 3HVan55pQ52EQ1v26Ftyiw==
+X-IronPort-AV: E=Sophos;i="6.16,214,1744095600"; 
+   d="scan'208";a="43057989"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Jun 2025 23:31:46 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 5 Jun 2025 23:31:18 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Thu, 5 Jun 2025 23:31:09 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux@armlinux.org.uk>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <ebiggers@google.com>,
+	<varshini.rajendran@microchip.com>, <ardb@kernel.org>,
+	<martin.petersen@oracle.com>, <mihai.sain@microchip.com>,
+	<dharma.b@microchip.com>, <dri-devel@lists.freedesktop.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <manikandan.m@microchip.com>
+Subject: [PATCH v6 RESEND 0/4] MIPI DSI Controller support for SAM9X75 series
+Date: Fri, 6 Jun 2025 12:00:51 +0530
+Message-ID: <20250606063055.224159-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250606-6-10-rocket-v7-10-dc16cfe6fe4e@tomeuvizoso.net>
-References: <20250606-6-10-rocket-v7-0-dc16cfe6fe4e@tomeuvizoso.net>
-In-Reply-To: <20250606-6-10-rocket-v7-0-dc16cfe6fe4e@tomeuvizoso.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Kever Yang <kever.yang@rock-chips.com>, Robin Murphy <robin.murphy@arm.com>, 
- Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+This patch series adds support for the Microchip's MIPI DSI Controller
+wrapper driver that uses the Synopsys DesignWare MIPI DSI host controller
+bridge for SAM9X75 SoC series.
 
-The NPU on the ROCK5B uses the same regulator for both the sram-supply
-and the npu's supply. Add this regulator, and enable all the NPU bits.
-Also add the regulator as a domain-supply to the pd_npu power domain.
+Changelogs are available in respective patches.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 56 +++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Manikandan Muralidharan (4):
+  dt-bindings: display: bridge: add sam9x75-mipi-dsi binding
+  drm/bridge: add Microchip DSI controller support for sam9x7 SoC series
+  MAINTAINERS: add SAM9X7 SoC's Microchip's MIPI DSI host wrapper driver
+  ARM: configs: at91: Enable Microchip's MIPI DSI Host Controller
+    support
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index d22068475c5dc6cb885f878f3f527a66edf1ba70..49500f7cbcb14af4919a6c1997e9e53a01d84973 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -316,6 +316,28 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1m2_xfer>;
-+	status = "okay";
-+
-+	vdd_npu_s0: regulator@42 {
-+		compatible = "rockchip,rk8602";
-+		reg = <0x42>;
-+		fcs,suspend-voltage-selector = <1>;
-+		regulator-name = "vdd_npu_s0";
-+		regulator-boot-on;
-+		regulator-min-microvolt = <550000>;
-+		regulator-max-microvolt = <950000>;
-+		regulator-ramp-delay = <2300>;
-+		vin-supply = <&vcc5v0_sys>;
-+
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		};
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -440,6 +462,10 @@ &pd_gpu {
- 	domain-supply = <&vdd_gpu_s0>;
- };
- 
-+&pd_npu {
-+	domain-supply = <&vdd_npu_s0>;
-+};
-+
- &pinctrl {
- 	hdmirx {
- 		hdmirx_hpd: hdmirx-5v-detection {
-@@ -500,6 +526,36 @@ &pwm1 {
- 	status = "okay";
- };
- 
-+&rknn_core_top {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_1 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_2 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_mmu_top {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_1 {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_2 {
-+	status = "okay";
-+};
-+
- &saradc {
- 	vref-supply = <&avcc_1v8_s0>;
- 	status = "okay";
+ .../bridge/microchip,sam9x75-mipi-dsi.yaml    | 109 ++++
+ MAINTAINERS                                   |   7 +
+ arch/arm/configs/at91_dt_defconfig            |   1 +
+ drivers/gpu/drm/bridge/Kconfig                |   8 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ drivers/gpu/drm/bridge/dw-mipi-dsi-mchp.c     | 545 ++++++++++++++++++
+ 6 files changed, 671 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/microchip,sam9x75-mipi-dsi.yaml
+ create mode 100644 drivers/gpu/drm/bridge/dw-mipi-dsi-mchp.c
 
 -- 
-2.49.0
+2.25.1
 
 
