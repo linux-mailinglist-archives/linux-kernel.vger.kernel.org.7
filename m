@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-676260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE53AD0991
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:35:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153F4AD09AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A4E07A91DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:34:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB53617ACD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04A9224AE4;
-	Fri,  6 Jun 2025 21:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C75B23815D;
+	Fri,  6 Jun 2025 21:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5k2leHc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWls2zw1"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340D61A76BC;
-	Fri,  6 Jun 2025 21:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83A51A9B3D;
+	Fri,  6 Jun 2025 21:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749245732; cv=none; b=sveaNQ2zdq4EeGdUhvcZeaYL/5zegNkLT+HMNWVNNQYE+ymKqMV22soALCQyOiosTIGHIcEXhYOz5pDLTsUtJJ43wpTS0rEFUvTmZmWXnEGFPe9JVo4La466EJpzfjwb0CxAuTHDARGFB+Ug/WsjQcmrRhDCt/uSfCPsQGjxUCI=
+	t=1749246242; cv=none; b=utuWhKX/WT4R5m2vuUHsicT290LVFackt7aeK+BcKV56VUAiqWdShE8OmD+537Ez0+7udBqK1c8rSvR7cwETwEwyYHQU9dyPxWSAakpkHs3S4zi8dO4VizM0/Q9T2vVcjz32rcEARligksFmNgSJ8Ob0R9n4N6DV5vwyoP70cHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749245732; c=relaxed/simple;
-	bh=CAdhtjT8y7b+vAf2yOZS0uA+0eCZUhLx9Z0B2yr4rPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvxyewSo9Sg8s4LE7bSpvd6PbEgm1AekMgewJ1CT3L7EKMmWc9+uxALAt0hHEDQ2AwqJu7d+bcAmmPvSDM8yql+3KlIOC1MGQOKhymljafhdGLM2u8xEjzZ00FiSP5BM0L5+l3E9T9ZRGHd7o/r8fZlIUW3G2/1xHj4ARWQijZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5k2leHc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB05C4CEEB;
-	Fri,  6 Jun 2025 21:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749245731;
-	bh=CAdhtjT8y7b+vAf2yOZS0uA+0eCZUhLx9Z0B2yr4rPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l5k2leHcV3h2hOkXYrEwrXBKyrk9Zs93invo6dL39uMVuGDkeHePjMV0qwYEZ8ubM
-	 E4asyzAFJa1vqCE1w1mYOwCJwpAVdui6QoVpnHPE6T+j6LcS3rVLUDjFmZcgCVHQUN
-	 2+5oJe6+NJs9DElc9IFBt8PDCdjtM75vsWE9kTfdIhJTxxR5s9UzPr/Y7vTr1f9jvV
-	 dLZ/i2rIaHxBLK7YnBxSE2dlRNjTq3zMMoNaCzBUI8bX0WY1JwFwEfRAeykVrI5Mvj
-	 Qs/g2nO471i2XkJ/IEaQ2gAWJMt/im49jKxVQ46sPXB+in/losonhXVRhi3Kv/iiDr
-	 HtiYBrzWoolgQ==
-Date: Fri, 6 Jun 2025 14:35:29 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, live-patching@vger.kernel.org, 
-	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
-	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
-	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
-	Puranjay Mohan <puranjay@kernel.org>
-Subject: Re: [PATCH v2 59/62] livepatch/klp-build: Introduce klp-build script
- for generating livepatch modules
-Message-ID: <uxlfn7pqanownop5vbie23np3nxtcr42cxbmczhirjlxiujtdp@dpr7mwr5e3dg>
-References: <cover.1746821544.git.jpoimboe@kernel.org>
- <10ccbeb0f4bcd7d0a10cc9b9bd12fdc4894f83ee.1746821544.git.jpoimboe@kernel.org>
- <07252044-070f-405e-b1fe-ea27da7746e6@redhat.com>
+	s=arc-20240116; t=1749246242; c=relaxed/simple;
+	bh=XhbqZjCFiAW+LxaPQRtxPdm7SGHp04ijULDSqIGPCak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RmAnVwUkGRHGqDSyj72y0QxdMcu3be1ET6SZ26xdF0QK1YQ3JgZvQ+KYV0NGzqnRV5DUEYZcGhfzP04TWGDrcmOQAtr2DLOvOG5cIXOzqRgVXeU98YZJjmPwtG0GfXMmwmI0tzHAL9XqLRHWwutHDrca2Cfg5OR0aSFQzZeFwqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWls2zw1; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3134c67a173so1166980a91.1;
+        Fri, 06 Jun 2025 14:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749246240; x=1749851040; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LgAHkyYsop8vJ98M0EPBu0lyAkiZjwBJ0ZQ13BHKBQI=;
+        b=XWls2zw1zQVhcO+D78GoOwr16pYgWSW5QaP6U1ZhiYmmmE5Ayl7iM+IG6fXFGrm6PU
+         RK6hFKjiYhczmfubBE2vfwTBnrhdIkBmZ/uJ4yH9tf+YoEAMW7BgIbMd6u8UsNM7eq38
+         zx/sLsOgukXlsXiBYGyi9Xvjf7QBqrXbpfsIuMldrJPxixo3h/sbwqYYRuOvl5YaViTH
+         cYVrXpGEV5I1Sm9li5ZCzbMPBEetNm76JlediRSATDRcpUYy2/Np7tMN7bpOyi6sy+OF
+         u2XOW4E3ESwCR3nbQaR03+m4XncIKimpuCedCXjOJnUadBvMN9sUubWZTkocBYRV613K
+         JStw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749246240; x=1749851040;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LgAHkyYsop8vJ98M0EPBu0lyAkiZjwBJ0ZQ13BHKBQI=;
+        b=LytX294CYWno2vo2sUA7JieTmdI1BETlnERnAEJcU1MVvi4Po3cIj3UvqEtw9qN2ZO
+         8XY4SGBv/vXt8BGqwTc008gBW6W4Umv16tarwr8ER9y742cKc9n6DrxGzDdBjneoLiqs
+         xclyde6+iePZYZEh+pRdqtjy5dITvlUxM5iaxnaGnNIzqApf2O542XQCceNAu4RVJAAX
+         b6oDdNwXB2dvCO1jDhQ0Lc0kR2hqe/lOtahf1ZFfm7QoEoX2Ao11bo57a8Dm+87usNaZ
+         wX4su9wSwEXEg5Cu6yzXVbt4DpOV7f1LIQlolTKCJoKks3j71bsi0+lLtW355CzPmi5+
+         GFqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHX3xX3PMrf1SjktkQxsVQML1uNAJRtPs2H/nEiBw81IS8NWOrmcgXiw2WaFmBv4GW/VtJ89oGnyYvj88E@vger.kernel.org, AJvYcCWoSoIV6MpQhsrEU57y+j54FY+OX8tpZujMpqHNFya8SW7sJUims8JY9XadOl0RvrvBU90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPrJ84ytNzg0I8a0o7bmxIVWU7SC7zsgtYV4C+COux3ShdJdZ1
+	NWsSiLwb8x8wTo5oGD6E8FpRL9XGTxGw8oMGxHcJgcU0c4gk4LLBLLwny454kmXLLEiD6zZnKAe
+	ssk/c4+T0vjDkk412n+Ewl5WYKoF9rgYsPg==
+X-Gm-Gg: ASbGncu8IxL12XWnNU7ze5n+X7ePLPLtLgyQ50re/OuKwkP8vl3hK3IS/dKTQsZr8yt
+	3gF1aEEGX0OHfQiz3snldQUMpO6EVykYyq6ERP1p2nK7cn1uUyRrf3H26uvl/pgxZmOBHxdbKK+
+	zdzcv9rPU0pkEJ97fEi5Mm4ix3UjsYbr8=
+X-Google-Smtp-Source: AGHT+IHEwS/PnA5cIuVSoSJzlzQbV9cjpXeVWr1oeLbCoxykZaVIaKVn+8fpqNOcyMMA9Ktn6KrSsiQlH8Gl58T9BP8=
+X-Received: by 2002:a17:90b:1646:b0:311:f05b:869a with SMTP id
+ 98e67ed59e1d1-313472eb280mr7066590a91.8.1749246239799; Fri, 06 Jun 2025
+ 14:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <07252044-070f-405e-b1fe-ea27da7746e6@redhat.com>
+References: <20250605181426.2845741-1-andrii@kernel.org> <CANiq72n0WYLBdBQCZqg04EcdTFG8RvL3fFo4bSeWAWGD1HFG3A@mail.gmail.com>
+In-Reply-To: <CANiq72n0WYLBdBQCZqg04EcdTFG8RvL3fFo4bSeWAWGD1HFG3A@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 6 Jun 2025 14:43:46 -0700
+X-Gm-Features: AX0GCFvdQkIxWG9_JuWoW-KDys1zvdY4BDUL5nT5V6JLvgMOmoJf-mekJ2VcpFs
+Message-ID: <CAEf4BzaeyCfpg_aqs-mEYZ+JMXdeeUUaCBrJFh2TyOfBQqmNmw@mail.gmail.com>
+Subject: Re: [PATCH] .gitignore: ignore compile_commands.json globally
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, masahiroy@kernel.org, 
+	ojeda@kernel.org, nathan@kernel.org, bpf@vger.kernel.org, 
+	kernel-team@meta.com, Eduard Zingerman <eddyz87@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 06, 2025 at 04:58:35PM -0400, Joe Lawrence wrote:
-> On 5/9/25 4:17 PM, Josh Poimboeuf wrote:
-> > +copy_patched_objects() {
-> > +	local found
-> > +	local files=()
-> > +	local opts=()
-> > +
-> > +	rm -rf "$PATCHED_DIR"
-> > +	mkdir -p "$PATCHED_DIR"
-> > +
-> > +	# Note this doesn't work with some configs, thus the 'cmp' below.
-> > +	opts=("-newer")
-> > +	opts+=("$TIMESTAMP")
-> > +
-> > +	find_objects "${opts[@]}" | mapfile -t files
-> > +
-> > +	xtrace_save "processing all objects"
-> > +	for _file in "${files[@]}"; do
-> > +		local rel_file="${_file/.ko/.o}"
-> > +		local file="$OBJ/$rel_file"
-> > +		local orig_file="$ORIG_DIR/$rel_file"
-> > +		local patched_file="$PATCHED_DIR/$rel_file"
-> > +
-> > +		[[ ! -f "$file" ]] && die "missing $(basename "$file") for $_file"
-> > +
-> > +		cmp -s "$orig_file" "$file" && continue
-> > +
-> > +		mkdir -p "$(dirname "$patched_file")"
-> > +		cp -f "$file" "$patched_file"
-> > +		found=1
-> > +	done
-> > +	xtrace_restore
-> > +
-> > +	[[ -n "$found" ]] || die "no changes detected"
-> > +
-> 
-> Minor nit here, I gave it a patch for files that didn't compile and
-> because because files() was presumably empty:
-> 
->   ./scripts/livepatch/klp-build: line 564: found: unbound variable
-> 
-> since found was only declared local, but never set inside the loop.
+On Fri, Jun 6, 2025 at 12:41=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Thu, Jun 5, 2025 at 8:14=E2=80=AFPM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+> >
+> >  # Clang's compilation database file
+> > -/compile_commands.json
+> > +compile_commands.json
+>
+> Should it be removed from `tools/power/cpupower/.gitignore` then?
 
-Thanks, I'm adding the following:
+yep, can do that in the same patch
 
-diff --git a/scripts/livepatch/klp-build b/scripts/livepatch/klp-build
-index 9927d06dfdab..f689a4d143c6 100755
---- a/scripts/livepatch/klp-build
-+++ b/scripts/livepatch/klp-build
-@@ -563,7 +563,7 @@ copy_orig_objects() {
- copy_patched_objects() {
- 	local files=()
- 	local opts=()
--	local found
-+	local found=0
- 
- 	rm -rf "$PATCHED_DIR"
- 	mkdir -p "$PATCHED_DIR"
-@@ -592,7 +592,7 @@ copy_patched_objects() {
- 	done
- 	xtrace_restore
- 
--	[[ -n "$found" ]] || die "no changes detected"
-+	(( found == 0 )) && die "no changes detected"
- 
- 	mv -f "$TMP_DIR/build.log" "$PATCHED_DIR"
- }
+>
+> Thanks!
+>
+> Cheers,
+> Miguel
 
