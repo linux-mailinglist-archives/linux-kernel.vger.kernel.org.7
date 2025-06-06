@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-675422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC4CACFD82
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:29:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9B8ACFD8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1733B0876
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AADE172928
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4113E276051;
-	Fri,  6 Jun 2025 07:29:31 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2180A24EAA3;
+	Fri,  6 Jun 2025 07:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/lufMmZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277BF469D
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 07:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAF13234
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 07:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749194970; cv=none; b=pKh7gkypMHg3n0GotDFVPS2Oc7Gmx+NTr0RRDFFW4meIWVZGLXlAldnN9JoPUYNtF2a0vGQ/9Q8H8uFIunxn10rw2d1cvp1USVhHsHU/QfBsI9e2K4ys5u44S3guxWqILn50D3PMUlR5TUejeuv1zmSIH+kLUwK5xRgS0cK+b4w=
+	t=1749195214; cv=none; b=C8c/SR/vk6mzAQy62krPnXC5J131X9OqwyCu1CHdjc2WZ4ztQuyHwkmrKGvqUHrzg724nQQJMTSl6xai0Wm/lCeFyEvThMVg9OMz2n10qWjcC8QVK6xnlgqGxdo+5gV8fO79T2bqTZCmR/d5ISpjs9bMyojGA3x8aRM3tz8dfSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749194970; c=relaxed/simple;
-	bh=Hx8xg4Q3YZNg+B+YcciN/GqtXAP+VKmU7CPAN+XqUoE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dIB5BZpdiUbSPRM8SaeA9S49YlDB7xoDM0FflEhm8Q+JKNtn4x9IKGIo429qWcLu7IKL8nwR9gssbm/FefxvXLnTYfB8jdAN5qhwYLodtC2SvpCVoqZ+z0+t8j+7+DOWc/Y2Pqx4FFgcrELSI4vCNVQXfLJzx8DtdBHHaUGIa5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so160531239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 00:29:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749194968; x=1749799768;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gkC1CQYhCFxp5umRR9A7rPhWTPMN+brYYVj9zEjlK/E=;
-        b=u0e4A4smFanAoK+pBTb2Mc7DrpuT3ORK1KDcXawhMRnOpWPgdsrbG57mjnufLJcw//
-         SC6Tqj8nZO1yLCcAeMTJP6jekNMhgLRDvrlXW3LwwlQQgvKEIdFXOCLykpr1V673547U
-         LkdPIitjLzunVkO1T5fH6yJpHUou9KuNUgXhXelgyhGJi/ka7hjKUhWN1rb4Rv0eq7H3
-         4qxWG2iRxeWN0dSUPq6CZIDfEGjtX+DxA6daxkHQ/QnizaZYXcg3knExIu0LGClUGWfW
-         eANhYQz7J9LAUknrBuSaa2mMt1i/Z4HzograJtRbzBuLAGdhvjatq10W/Dp0sGD7fVo4
-         EjMQ==
-X-Gm-Message-State: AOJu0YyYUowfX2xHaXm91hF8Mzl8qslT8joMPkrVuMczjCXxLx3uTDf0
-	JurgGcIU0WXKcpPQF+GlBgvr8jsuQJg3ec4VhDWbJ/i1q5k4Kz5g4J45LIwIxI9YvPD6rIlwmqU
-	IwvSN0ZQOvCq4sOiQYCh47SOw4yedRcSfhQp6x2gzeLW8QsfRVNdSt0KKtCq6lA==
-X-Google-Smtp-Source: AGHT+IEE4pL5ZtStkDDa7mNGv2IgZ5NKSK97dVGNiOBCsyWhuONN/TeGZSwK3x2AHFF4EmLvrnSZ7BORYRne0UnJaiCrzEvM3xu6
+	s=arc-20240116; t=1749195214; c=relaxed/simple;
+	bh=GgpsoVc6kfsSKu3xWYJA7jgXEAg40pxLEZStQKU5UU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPlrlAQxn1IFnXh/Ym4xFOA4u2dVzO12bqlan7TA4YyZtrkOtXT/F1eMIcuNOSsowlckh/Fw9bpLeTGu/3w3LsnayxzWDdmuNZkkwO45Ijrx3fu5adsooNZs01CYanLmxXyIIS3OwtgJohApZe3oAlFui8aOGd+PuTEURZ6stPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/lufMmZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9392EC4CEEB;
+	Fri,  6 Jun 2025 07:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749195213;
+	bh=GgpsoVc6kfsSKu3xWYJA7jgXEAg40pxLEZStQKU5UU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H/lufMmZV6xnLzAXFzkNz8IPJRd2Q2kpznY/0otRooxnk9ADP4W3S+1K7WIkBcNxL
+	 1qWh655K7ypWrYZ6+yPWWuW3Weq9zSnZJ+L2rap6Hvpny04qd5clKyFyfKEOc64ooz
+	 1dcKOGm0dw+TZOgCJWkzme59r2N5rewh168FnhBk0eiRZ7CGBFlAPkPXWQoaRe+y7Q
+	 OWnDHV9lF3Ak+Ywx5/zrfd1SH42vuKjxc3K5ALrvC4GHb0O61MUaY9C5B1Wnp60i1v
+	 DhOgjDkDeTN/uU+1oqYZmBDg1TpmDLgHPLnlr+hIczgZ/qcQLF+ottDbtEztyX5o6U
+	 jIPizOP2hyP7g==
+Date: Fri, 6 Jun 2025 09:33:31 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Anusha Srivatsa <asrivats@redhat.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+Message-ID: <20250606-pompous-mellow-guan-1d9ea4@houat>
+References: <CAN9Xe3RLazpAXdxxJmyF2QAShDtMSgdoxMdo6ecdYd7aZiP9kA@mail.gmail.com>
+ <874ixvtbxy.fsf@intel.com>
+ <20250509-rapid-flounder-of-devotion-6b26bb@houat>
+ <87r00yj6kv.fsf@intel.com>
+ <molexnyjkiryvhetfdc66gmzecrf6f7kxl656qn46djdkixrkb@fdgnp5hispbf>
+ <875xi3im1r.fsf@intel.com>
+ <20250519-singing-silent-stingray-fe5c9b@houat>
+ <87sekztwyc.fsf@intel.com>
+ <20250527-winged-prawn-of-virtuosity-d11a47@houat>
+ <4a1c28b2ad4f701b9b2fe363ebf6acbab504e6ad@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2142:b0:3dd:c4ed:39ba with SMTP id
- e9e14a558f8ab-3ddce3ce038mr26780965ab.1.1749194968203; Fri, 06 Jun 2025
- 00:29:28 -0700 (PDT)
-Date: Fri, 06 Jun 2025 00:29:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684298d8.050a0220.2461cf.0039.GAE@google.com>
-Subject: [syzbot] [trace?] BUG: corrupted list in ring_buffer_subbuf_order_set
-From: syzbot <syzbot+05d673e83ec640f0ced9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    cd2e103d57e5 Merge tag 'hardening-v6.16-rc1-fix1-take2' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f0680c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d97b092471e3ab82
-dashboard link: https://syzkaller.appspot.com/bug?extid=05d673e83ec640f0ced9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1795b970580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b281d4580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/14cc036168b8/disk-cd2e103d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1ce688b4cfd5/vmlinux-cd2e103d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/62da26310dac/bzImage-cd2e103d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+05d673e83ec640f0ced9@syzkaller.appspotmail.com
-
- slab kmalloc-1k start ffff88801b488800 pointer offset 576 size 1024
-list_del corruption. prev->next should be ffff88802a7d3180, but was ffff88801b488a40. (prev=ffff88801b488a40)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:62!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5851 Comm: syz-executor420 Not tainted 6.15.0-syzkaller-10820-gcd2e103d57e5 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:__list_del_entry_valid_or_report+0x17a/0x200 lib/list_debug.c:62
-Code: 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 8d 00 00 00 48 8b 55 00 48 89 e9 48 89 de 48 c7 c7 40 33 f5 8b e8 f7 0d be fc 90 <0f> 0b 4c 89 e7 e8 1c aa 21 fd 48 89 ea 48 b8 00 00 00 00 00 fc ff
-RSP: 0018:ffffc9000436fb70 EFLAGS: 00010286
-RAX: 000000000000006d RBX: ffff88802a7d3180 RCX: ffffffff819a75b9
-RDX: 0000000000000000 RSI: ffffffff819af446 RDI: 0000000000000005
-RBP: ffff88801b488a40 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000001 R12: ffff88802a7d3e00
-R13: ffff88802a7d3180 R14: ffff88802a7d3e00 R15: 0000000000000001
-FS:  0000555580420380(0000) GS:ffff888124a75000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1e1bcb9130 CR3: 0000000075590000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del_init include/linux/list.h:287 [inline]
- ring_buffer_subbuf_order_set+0x92e/0x18f0 kernel/trace/ring_buffer.c:6921
- buffer_subbuf_size_write+0x182/0x280 kernel/trace/trace.c:9546
- vfs_write+0x2a0/0x1150 fs/read_write.c:684
- ksys_write+0x12a/0x250 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1e1bc3eca9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffe8f63c48 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1e1bc3eca9
-RDX: 000000000000fdef RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00000000000f4240 R08: 00000000000000a0 R09: 00000000000000a0
-R10: 00000000000000a0 R11: 0000000000000246 R12: 00000000000175b3
-R13: 00007fffe8f63c5c R14: 00007fffe8f63c70 R15: 00007fffe8f63c60
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x17a/0x200 lib/list_debug.c:62
-Code: 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 8d 00 00 00 48 8b 55 00 48 89 e9 48 89 de 48 c7 c7 40 33 f5 8b e8 f7 0d be fc 90 <0f> 0b 4c 89 e7 e8 1c aa 21 fd 48 89 ea 48 b8 00 00 00 00 00 fc ff
-RSP: 0018:ffffc9000436fb70 EFLAGS: 00010286
-RAX: 000000000000006d RBX: ffff88802a7d3180 RCX: ffffffff819a75b9
-RDX: 0000000000000000 RSI: ffffffff819af446 RDI: 0000000000000005
-RBP: ffff88801b488a40 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000001 R12: ffff88802a7d3e00
-R13: ffff88802a7d3180 R14: ffff88802a7d3e00 R15: 0000000000000001
-FS:  0000555580420380(0000) GS:ffff888124a75000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1e1bcb60d0 CR3: 0000000075590000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="67qv6diskukyz3pt"
+Content-Disposition: inline
+In-Reply-To: <4a1c28b2ad4f701b9b2fe363ebf6acbab504e6ad@intel.com>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--67qv6diskukyz3pt
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/4] drm/panel: Add refcount support
+MIME-Version: 1.0
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On Tue, May 27, 2025 at 10:40:49PM +0300, Jani Nikula wrote:
+> On Tue, 27 May 2025, Maxime Ripard <mripard@kernel.org> wrote:
+> > On Tue, May 20, 2025 at 01:09:47PM +0300, Jani Nikula wrote:
+> >>=20
+> >> Maxime -
+> >>=20
+> >> I'm cutting a lot of context here. Not because I don't think it deserv=
+es
+> >> an answer, but because I seem to be failing at communication.
+> >>=20
+> >> On Mon, 19 May 2025, Maxime Ripard <mripard@kernel.org> wrote:
+> >> > You still haven't explained why it would take anything more than
+> >> > registering a dumb device at probe time though.
+> >>=20
+> >> With that, do you mean a dumb struct device, or any struct device with=
+ a
+> >> suitable lifetime, that we'd pass to devm_drm_panel_alloc()?
+> >>=20
+> >> Is using devm_drm_panel_alloc() like that instead of our own allocation
+> >> with drm_panel_init() the main point of contention for you? If yes, we
+> >> can do that.
+> >
+> > Yeah, I was thinking of something along the lines of:
+> >
+> > const struct drm_panel_funcs dummy_funcs =3D {};
+> >
+> > struct drm_panel *register_panel() {
+> >     struct faux_device *faux;
+> >     struct drm_panel *panel;
+> >     int ret;
+> >
+> >     faux =3D faux_device_create(...);
+> >     if IS_ERR(faux)
+> >        return ERR_CAST(faux);
+> >
+> >     return __devm_drm_panel_alloc(&faux->dev, sizeof(*panel), 0, &dummy=
+_funcs, $CONNECTOR_TYPE);
+> > }
+> >
+> > And you have a panel, under your control, with exactly the same
+> > setup than anyone else.
+>=20
+> This [1] is what I'm toying with now, but again, draft stuff. Using
+> __devm_drm_panel_alloc() directly like above does make it cleaner.
+>=20
+> Long term it can be improved, but my first dab at refactoring to make
+> that happen is already like 15-20 patches, and it'll just have to wait
+> until after making stuff work at all first.
+>=20
+> I'm not sure if the ACPI device I'm passing to devm_drm_panel_alloc() is
+> correct, but it'll have to be *some* ACPI device for the lookup to
+> work. I am blissfully ignorant about its lifetime, but as long as
+> drm_panel_add() and drm_panel_remove() remain as they are, I don't think
+> it leaks anything. Fingers crossed.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks for working on that. Your two patches (the one you sent here, and
+the one in the other subthread) look good to me. So if that works, it
+looks like we have a way forward.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks!
+Maxime
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+--67qv6diskukyz3pt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+-----BEGIN PGP SIGNATURE-----
 
-If you want to undo deduplication, reply with:
-#syz undup
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEKZygAKCRAnX84Zoj2+
+dn5cAYCkwOYmJ6UscZiyfFYQtRN968mhhnJoxkK2C1GTH4KOP4Q+W5o6shKCLkDZ
+yH3gStwBfRXpQ9eCilwegVakty+hEFlgKTEXYW3QgkcpX/ElYapqcVoizKdGxDo8
+tPcfqac3Zg==
+=A9mR
+-----END PGP SIGNATURE-----
+
+--67qv6diskukyz3pt--
 
