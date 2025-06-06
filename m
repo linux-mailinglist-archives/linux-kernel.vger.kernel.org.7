@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-675385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8786BACFCD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:32:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4D8ACFC5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F64816DDC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DFE1897FE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18873259C9A;
-	Fri,  6 Jun 2025 06:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="psEsKbkL"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBA42550B4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 06:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1033F1E5B6D;
+	Fri,  6 Jun 2025 06:06:33 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5284736D;
+	Fri,  6 Jun 2025 06:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749191521; cv=none; b=cZXR0GegZgTGW29JrtJFLLpUlj+r3P4t84hWlx27XHe2MZKZNLZPLJEoPFXjOvDmrsnSHgYx8BVAa4Nx8QYM+j5rSs6E/zUY69mrvMnifqGzXpR5FwuIQTTEFYpYgsMCHxwdzUNMH1a1nm5VIFO6N0Ob7x7OK4EDOMtOfu5Zy64=
+	t=1749189992; cv=none; b=UZwOxf6J7HKDc6S2sA/MPQEfJfQ/SMxnqvahzB/fSSA1T/lCQrK5onHQ6rJ4yVFVejq8+Hvel5FkdsJ2XVatzjmVr2P9ezf/Rdv0rea1JVWSe2bhGuH170J7QDphMziryjAmC7OXKukXZrSOpv88+XC6UOKS1b+ZPiRLKXww5rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749191521; c=relaxed/simple;
-	bh=twRi+HAcOCoN8kNjPgqZNRZo3pWlLxYUYgi6AF6k4gM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaRm6bfYTAUHHIDnDYjlgGuLPbqC+38JHKvdOAaxfx6G0yLJzmzFUzQma2VOHyM/jCtn0kXCwgiXycCQGal5tS9pib+sCY33UvkucVbwm65vDO4KusOrWCGQyMEAY+4V03Mc16bxmhgaeCDtSUCho+GVmoiB8uxsgDPEOMTifbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=psEsKbkL; arc=none smtp.client-ip=117.135.210.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=VlkXIqbrHLNm6KB283mzI4Nr/emCcxR2Gwn0N2hg5lw=;
-	b=psEsKbkLFnDrIJ2bRJQpP0KZD8fbbK97QG2hPjjn+DTmY68UBdlBYHe5CYr7RQ
-	4GSwwR2osODvKK0WXu+aUYEGodv48mxz+gq5S4C1y2FMpGZhFHyaMFuzjwiWG+JE
-	nWxOBn/0c2FZV1W3AOAk9R8rCoNPN4ChWqAltmScKbojg=
-Received: from [172.19.20.199] (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PikvCgD3h7iKgEJolGIhBA--.42221S2;
-	Fri, 06 Jun 2025 13:45:47 +0800 (CST)
-Message-ID: <a57a2de7-1b0c-4cc9-a300-02cb46c1f02a@126.com>
-Date: Fri, 6 Jun 2025 13:45:46 +0800
+	s=arc-20240116; t=1749189992; c=relaxed/simple;
+	bh=g6gR5ca2BcNvCtBCVJl2Nd0K2sCgWnyiegUtKp1Ui4w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D1+Co3Oz2d8iPtea/3Z0C9JCLQ1YZ75k2y9LUemQdqqBimYUfscewtCujnnecnBDGsnLR3kZo5R53WgQGabkuh7zla1Gqy75WNMw04DI6jNSYQS91E1IA/gGLNR+sxQTq6XDXuOFPAQR0oMPc3zq6nCVCBpD1XxLj2PColWZuFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5e3284e2429c11f0b29709d653e92f7d-20250606
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:9ca42e9d-a54d-48ca-a2f0-f36b09dcd64e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6493067,CLOUDID:24696fe07121afc78295f14f43985d45,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5e3284e2429c11f0b29709d653e92f7d-20250606
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 417240045; Fri, 06 Jun 2025 14:06:21 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id E7826E00891C;
+	Fri,  6 Jun 2025 14:06:20 +0800 (CST)
+X-ns-mid: postfix-6842855C-7647601
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 0D171E008900;
+	Fri,  6 Jun 2025 14:06:19 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@kernel.org,
+	len.brown@intel.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [RESEND PATCH v2] PM / Freezer: Skip dead/zombie processes
+Date: Fri,  6 Jun 2025 14:06:04 +0800
+Message-Id: <20250606060604.16237-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/hugetlb: remove unnecessary holding of hugetlb_lock
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
- david@redhat.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
- osalvador@suse.de, liuzixing@hygon.cn
-References: <1748317010-16272-1-git-send-email-yangge1116@126.com>
- <20250604154754.a30e327c3f1640173c8b9cb8@linux-foundation.org>
- <c15bfa20-2113-4299-98bf-1865b6b535ef@126.com>
- <20250605181242.54767f38223f9ebd4c379ccb@linux-foundation.org>
-From: Ge Yang <yangge1116@126.com>
-In-Reply-To: <20250605181242.54767f38223f9ebd4c379ccb@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PikvCgD3h7iKgEJolGIhBA--.42221S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKrW5Jw13uF45ury7Gw4rXwb_yoWkKrc_ur
-	1kZ3s7Cw4UW3yqga1ktrZFvrsxK3yxZrZ5Jay0krZ7Aas7XF13WFs3tana9Fs3Wa1kJFnr
-	Wr90gwsIyr4jgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OdbUUUUUU==
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgxkG2hCeNjCwgAAsD
+Content-Transfer-Encoding: quoted-printable
 
+ZOMBIE (exit_state =3D=3D EXIT_ZOMBIE) and DEAD (exit_state =3D=3D EXIT_D=
+EAD)
+processes have already finished execution and will not be scheduled again=
+.
 
+In the context of system suspend (e.g., S3), attempting to freeze such
+processes is unnecessary. Moreover, freezing them can obscure suspend
+diagnostics and delay resume if they appear "stuck" in logs.
 
-在 2025/6/6 9:12, Andrew Morton 写道:
-> On Thu, 5 Jun 2025 08:44:09 +0800 Ge Yang <yangge1116@126.com> wrote:
-> 
->>> This change addresses a possible performance issue which was introduced
->>> by 113ed54ad276 ("mm/hugetlb: fix kernel NULL pointer dereference when
->>> replacing free hugetlb folios").  113ed54ad276 was added recently and
->>> was cc:stable.
->>>
->>> David said:
->>> https://lkml.kernel.org/r/87521d93-cc03-480d-a2ef-3ef8c84481c9@redhat.com
->>>
->>>
->>> Question is, will that bugfix's performance impact be sufficiently
->>> serious for us to also backport this new patch?
->>
->> In some low-probability scenarios, there could be severe impacts. For
->> example, when multiple CPUs execute the replace_free_hugepage_folios()
->> function simultaneously. It seems that we need to backport this new
->> patch. Thank you.
-> 
-> OK, thanks.  I added
-> 
-> Fixes: 113ed54ad276 ("mm/hugetlb: fix kernel NULL pointer dereference when replacing free hugetlb folios")
-> Cc: <stable@vger.kernel.org>
-> 
-> and moved this to the mm-hotfixes pile.  I'll keep it there for a week
-> or two for review/test.  Once it goes upstream, this should propagate
-> into 6.15.x.
+This patch introduces an early check for `p->exit_state !=3D 0` in
+`try_to_freeze_tasks()` and skips freezing for such tasks. This is a safe
+optimization because:
 
-Ok，thanks.
+ - They hold no running resources
+ - Their `task_struct` is only waiting to be collected or freed
+
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+
+Changes in v2:
+- Simplified code, added judgment of dead processes
+- Rewrite changelogs
+---
+ kernel/power/process.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index a6f7ba2d283d..2bbe22610522 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -51,7 +51,7 @@ static int try_to_freeze_tasks(bool user_only)
+ 		todo =3D 0;
+ 		read_lock(&tasklist_lock);
+ 		for_each_process_thread(g, p) {
+-			if (p =3D=3D current || !freeze_task(p))
++			if (p =3D=3D current || p->exit_state || !freeze_task(p))
+ 				continue;
+=20
+ 			todo++;
+--=20
+2.25.1
 
 
