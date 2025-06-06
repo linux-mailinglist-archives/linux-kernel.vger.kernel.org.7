@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-675345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5256CACFC21
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA8DACFC25
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193921730E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2CE1769F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F061E1E04;
-	Fri,  6 Jun 2025 05:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFA41DF24F;
+	Fri,  6 Jun 2025 05:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjEX/Cgk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpvTEYAK"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADB1FAA;
-	Fri,  6 Jun 2025 05:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B1E2CA6;
+	Fri,  6 Jun 2025 05:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749186796; cv=none; b=bTtTpsMrIz59Fucf7YycsUYbVAEAalBxKaLBxTe+tvsH7wYc7/2pVGa+SI8rS7ZIsw1RWCUQ7XM9DAROtLHAsoAqF0kdUwnprCmAXRMzpgltikiz2ihcfk90D3w8pGWjIKFRtqk0WbBoddU9DOYT/taEvy7fpdrI+302+Hxvl2o=
+	t=1749186978; cv=none; b=JAOLfRSob1/TChNPgp+x48KIxsu3q2BCSxt3oykfwiCpQCAg9vvtsVaKif7BUK5A6jEul9S8sPOK9w0cJWeQWYCfevK2kKqeunWwJ+6JeXVCMiwTc9WzExa/7z/A+bEhNGA4JlzhbZouWrXb3ctUs9NFlR6KGXt7aD+/K0na0iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749186796; c=relaxed/simple;
-	bh=AQKFGhsxgo0BIr9xTB/1Yd2Je/V8W3jZBUx3MvDWR8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nddNWa06jRXeGWpYa3C+Ne/jKZYYSBCfBJZX++gdtqQoQg1sEzYRgLIRQUnT8TNS+vW0xDrFpdPcPa3Tm5vZuIZW6KmDwhSbi4pkZ6gbqqrna3gOf0+sil0p3W1l/Ajf7d9XWiNSgiQ4fsJAkrldAsHQdyD2PV7FGRdTcO8ooVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjEX/Cgk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C77C4AF0B;
-	Fri,  6 Jun 2025 05:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749186796;
-	bh=AQKFGhsxgo0BIr9xTB/1Yd2Je/V8W3jZBUx3MvDWR8I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PjEX/Cgk66x0JibO8nGIrIbOeUgD86ou+DoCfXeVEN1GKIxE/4a8C0CdIFdYN50KJ
-	 Ny8RzV1s8Kt7fBRWCdMT0xhauT4I+xw9Xw9sb29A3+DpOr0BtPL7q//9MruZwe0ZvR
-	 Jsz3YcmJai7SOZEEyWUJs0JWfuvRzrPqs86CnlgFjFPYVixzz5byjJSIm5Od0OEirf
-	 VS8VFVwVj0g+TvV4yiU1aCvcZntxoIJcR1pxM8p4Jvv96xl281vlOLqSNuNOneOZc7
-	 mNIxxV7M2MEwbxfY18IdHhUFwzYkSao/MTr8iWLrOJSdnTtWO/llBQAem5bl1DQfVC
-	 iHnLuKFqvMNUA==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32a64f8480eso27527781fa.1;
-        Thu, 05 Jun 2025 22:13:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUS0VtlmOO1tVjg48G4HzaGuEvnhJyWW9mTwb0foiKlj94+HOnuPzdy5J7nCbh7uYlYqKXr+WQDTiKeuA4=@vger.kernel.org, AJvYcCVaT5iotqNhWNUZx4/V4N/OiYBvi+ONH8Wq7fOnWyR9MZhY2ZQeBSb9lBZ95TmVcj2l1scue0W0rk2pzKPn@vger.kernel.org, AJvYcCW8JczYHT5vcWjJK3Y320YVlZLYYSvKKSPO2+rDGRk4U2vikNJMemGLB3N6u911gp+9GeWdidDDIEb2QCCbeA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2i2eH7A5susaeEqXJep1wg7v2RD/EgBIquVDX5qmn79ADeEo3
-	q3c7YDIGGD78q+QC6rhpCsHJFnhgdFCXjOSctb8M1wTXH/ewl2XrEXxqzjGP8fD0/0xZm5k4Cs7
-	BLdHe5fKli+Kj/tgs4Y1VH7MYjy5F2cI=
-X-Google-Smtp-Source: AGHT+IHbkPRvX6Z0dchWkNRtq7wvCU3la1oqMarRLD78GvdVfaGUutRPCMWy2/WoaMOMqE33X1vpr0BK54oeUG/XpCI=
-X-Received: by 2002:a05:6512:3d22:b0:550:e04d:2b66 with SMTP id
- 2adb3069b0e04-55366c3049bmr358074e87.17.1749186794807; Thu, 05 Jun 2025
- 22:13:14 -0700 (PDT)
+	s=arc-20240116; t=1749186978; c=relaxed/simple;
+	bh=+irILc+2nYSszpYh9ApL/OLSuszJVYgcIjfeGD+MLQg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=I/lUQx61yd4tHy4hsAceO6UYJG8GeS9ms9XsXnD8XTBuAM0dtqG8TiczUOkVhRpJyQm979BA52axQub3+0pSwp4HD+bMyqFnGtowx5uoUrqy7MBl6bpJ4IeuV64SYX+Kku/F80YtQ/wAadqPj4yMBYf5yhwa1y3BA2U0MozxMcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpvTEYAK; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7482377b086so621585b3a.1;
+        Thu, 05 Jun 2025 22:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749186976; x=1749791776; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:reply-to:content-language
+         :from:subject:references:cc:to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZX3xmkUdfFteJ2rivFM2ocYLUJSDoSf3f4y8JQQLdoU=;
+        b=mpvTEYAKAzd3TIe5SlJywx5c8tlwCCr/Tk5NqMHWvlhdLs2kDKHl+n4K+dCe2TWGre
+         s38/Q2VirGazQBouT//PP6AnuT/lJk8Mu9iogS5SNJ9EosezkCcjhu5GrV2YNxC77u3/
+         k2/3IRouioRL3y/QuhNYGdpTtr/cNk3pcCFkok3ZMAyP1sEzPPn7tWNSJVWSCy/xyz9J
+         LYTNFAvZbv7QovMQMjsGU5zAKawK4i47fd8Yb3VeOBBALOTelYAPgxNoCbEGGspf9YuS
+         LmM1gVWErN5NG25RpSkARNv5cDdYISQeFf3mylKvSCSGMHBpmKj8JL1MoxcQJFLt7q1Q
+         qG2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749186976; x=1749791776;
+        h=content-transfer-encoding:in-reply-to:reply-to:content-language
+         :from:subject:references:cc:to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZX3xmkUdfFteJ2rivFM2ocYLUJSDoSf3f4y8JQQLdoU=;
+        b=YDWQnAmNhTc+tkMxZ0QNjqpUMf0e28tuysidcCPTDGUm7oOQNYD1fjXYmD7F5GXWp1
+         FLMSrVqNop3dIweuwHLkRxONngjixRWf7q9wYzODdYWuGtBA3ncUu9MV/OYIomjTeE2p
+         CXAJR9MNtP+h3hNbrlwWo9N5KVaXYelV9lrZMaYBivi9x1Qiy6Fau92r7Cw8+Qnyt3WN
+         qJ+IeHGKxN7O8NVy65qOISEL3iX79O4Lnn2m89KsHbr/7pBuikMIXYBUeEj5vm9KQfJz
+         poP7n9aX38N93xU7FAfNegJp1o2MG00wVa55BTSWtQfeSe0v3WuuL8uEJSged8XQRcew
+         IDyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjAsr4Rui+3hYrTgtr/rh5jYSUbQb06G0wDmsc8fq9SqB+qiQ+5nJ34mo7zATAa0EoiJLZedhfMd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwALSrnlHHftwoS0i1zx/38viDEOZYNCey6OuCYsQJS07Frmess
+	KoCXho4Cm2iXyEefIVyPld9olDlFV1AbpSkwZI6Sn2ZUaVqNPaBR2/E6
+X-Gm-Gg: ASbGncs+9QbbRAqwGRrYzUZ8bdD6C9Iy032d4a2I/0fG3N2k4bZBzwMTJXHZdHAjbj4
+	qHmluNjeey74XeVTiWF9oRzXkTcTL5zotLHx6sW5/vZYhYz1JWQekhsqvReSDTVWx/0FyC90Apj
+	BiIVSLhCTmBNBqvo2S38uZyDQ7/ZqbGoLB54sBqt1bljzOJc5UI0btReYd0dZDq/JKfJY5S2ht/
+	6ZVAYHM50jfy2mND06x7NedeZEPt4GQg4G6baDtoNQN4lcRMReNn5k1tvt0mjvJqGZQs61fpGNl
+	D949IxuUZ9auCKSozY13iSP8JNaAoReVsyBXG7jZw70yhP/iXUzhiA7KT1HEwRHVuKc0pHkKWD7
+	TZNeQIDX69jCfRwPHY0Eg3e29YU/F01Oq4Y623oK7rjeO
+X-Google-Smtp-Source: AGHT+IGnz0WO7cFkCLeiJ6kzt2oxFldXQhnc1MTHztAzzaY3L8rPspdl4LAHvxH9iI7Szoy09bMGCw==
+X-Received: by 2002:a05:6a00:993:b0:73e:23be:11fc with SMTP id d2e1a72fcca58-74827f379b0mr3082030b3a.22.1749186976222;
+        Thu, 05 Jun 2025 22:16:16 -0700 (PDT)
+Received: from ?IPV6:2601:646:a000:5fc0:7240:3059:4e87:e658? ([2601:646:a000:5fc0:7240:3059:4e87:e658])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af38404sm496834b3a.35.2025.06.05.22.16.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Jun 2025 22:16:15 -0700 (PDT)
+Message-ID: <4a7f4d21-8b1c-4616-82bb-210395215035@gmail.com>
+Date: Fri, 6 Jun 2025 01:16:15 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1748335606.git.legion@kernel.org> <ecf0ebdda5bcf82464ed1cebbf50afdcd8b5b23a.1748335606.git.legion@kernel.org>
- <CAK7LNARm1+L0CrE8TYrFaipfOX4pjEJ7Uz7dn=3g+26PER6jNg@mail.gmail.com>
- <aD1f0CZfbsMR61OX@example.org> <CAK7LNATt+=k3sYU4FWM22aJzzH_a7_1FkO5S=LW7L-Z7K4CQhQ@mail.gmail.com>
- <aD3xFzKQbxaIo60a@example.org>
-In-Reply-To: <aD3xFzKQbxaIo60a@example.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 6 Jun 2025 14:12:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS-nL--pe98-AUKkdHpd9Ph-A0USUmk7QL7_PtUaqfzvQ@mail.gmail.com>
-X-Gm-Features: AX0GCFs4m3Tl9uhbLkzLOApFdwiFxOWwe5hdViPIxmKzD3M7a8xFttM0u9nkjX8
-Message-ID: <CAK7LNAS-nL--pe98-AUKkdHpd9Ph-A0USUmk7QL7_PtUaqfzvQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] modpost: Make mod_device_table aliases more unique
-To: Alexey Gladkov <legion@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: syzbot+1e3edf922962b5ea40a4@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <683ed7e6.a00a0220.d8eae.006b.GAE@google.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in
+ raw_event_queue_add
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+Content-Language: en-US
+Reply-To: 683ed7e6.a00a0220.d8eae.006b.GAE@google.com
+In-Reply-To: <683ed7e6.a00a0220.d8eae.006b.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 3, 2025 at 3:44=E2=80=AFAM Alexey Gladkov <legion@kernel.org> w=
-rote:
->
-> On Tue, Jun 03, 2025 at 03:00:07AM +0900, Masahiro Yamada wrote:
-> > On Mon, Jun 2, 2025 at 5:24=E2=80=AFPM Alexey Gladkov <legion@kernel.or=
-g> wrote:
-> > >
-> > > On Mon, Jun 02, 2025 at 04:52:36PM +0900, Masahiro Yamada wrote:
-> > > > On Tue, May 27, 2025 at 6:08=E2=80=AFPM Alexey Gladkov <legion@kern=
-el.org> wrote:
-> > > > >
-> > > > > In order to avoid symbol conflicts if they appear in the same bin=
-ary, a
-> > > > > more unique alias identifier can be generated.
-> > > > >
-> > > > > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > > > > Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
-> > > > > ---
-> > > > >  include/linux/module.h   | 14 ++++++++++++--
-> > > > >  scripts/mod/file2alias.c | 18 ++++++++++++++----
-> > > > >  2 files changed, 26 insertions(+), 6 deletions(-)
-> > > > >
-> > > > > diff --git a/include/linux/module.h b/include/linux/module.h
-> > > > > index 88048561360f..e7506684069d 100644
-> > > > > --- a/include/linux/module.h
-> > > > > +++ b/include/linux/module.h
-> > > > > @@ -249,10 +249,20 @@ struct module_kobject *lookup_or_create_mod=
-ule_kobject(const char *name);
-> > > > >  /* What your module does. */
-> > > > >  #define MODULE_DESCRIPTION(_description) MODULE_INFO(description=
-, _description)
-> > > > >
-> > > > > +/* Format: __mod_device_table__<counter>__kmod_<modname>__<type>=
-__<name> */
-> > > >
-> > > > This format relies on module-name mangling, but
-> > > > I hope we will be able to stop doing it some day.
-> > >
-> > > I didn't like this approach either when I found out how it was
-> > > implemented.
-> >
-> > Yeah, I dislike it.
-> >
-> > I hope we can stop this historical mistake:
-> > https://lore.kernel.org/lkml/20250602130609.402581-1-masahiroy@kernel.o=
-rg/
-> >
-> > Once we stop doing that, __KBUILD_MODNAME will not match to KBUILD_MODN=
-AME.
->
-> Do I understand you correctly that I cannot use __KBUILD_MODNAME now ?
+#syz test
 
-Honestly, I dislike __KBUILD_MODNAME, but I know it is more challenging.
+diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+index 20165e1582d9..d7fca01afbf1 100644
+--- a/drivers/usb/gadget/legacy/raw_gadget.c
++++ b/drivers/usb/gadget/legacy/raw_gadget.c
+@@ -120,9 +120,13 @@ static struct usb_raw_event *raw_event_queue_fetch(
+ static void raw_event_queue_destroy(struct raw_event_queue *queue)
+ {
+        int i;
++       unsigned long flags;
+ 
++       spin_lock_irqsave(&queue->lock, flags);
+        for (i = 0; i < queue->size; i++)
+                kfree(queue->events[i]);
++       spin_unlock_irqrestore(&queue->lock, flags);
++
+        queue->size = 0;
+ }
 
-So, at least you need to fix the rust issue.
+Ivan Pravdin
 
-
-
-
-> > Also, you need to be careful about the rust side, as
-> > you did not take care of it.
-> >
-> > https://github.com/torvalds/linux/blob/v6.15/rust/kernel/device_id.rs#L=
-157
->
-> Oh. This will make it much more complicated because I don't know rust
-> well. :(
->
-> I found a few more issues with modules when they compile as part of the
-> kernel, but was hoping to fix them after these patches.
->
-> --
-> Rgrds, legion
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
