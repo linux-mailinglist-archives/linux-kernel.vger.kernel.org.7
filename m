@@ -1,173 +1,101 @@
-Return-Path: <linux-kernel+bounces-675531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FE6ACFF08
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:17:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D1BACFF13
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244BE3AD4F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844AA189211E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A102857C9;
-	Fri,  6 Jun 2025 09:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxKiavON"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E1F286406;
+	Fri,  6 Jun 2025 09:18:48 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B6E1A5BA9;
-	Fri,  6 Jun 2025 09:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4B41A5BA9;
+	Fri,  6 Jun 2025 09:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749201445; cv=none; b=VOJHqOOFBsiFEJIwnML0fl1hTXT7U6EtNR4s5Q04/fPLIDsx9M5C7Xrqu3YV7d7BDGQTYjy3o93xns0HUaeu1odLWNjpbNsdetMB3LC1DGYyL2PYs9U9ML6N+GXGjtA92uTwrzi8+x6rPWufzAHfHeYWPd58MoBZvdvRKm0+9+s=
+	t=1749201527; cv=none; b=poewbzQQp27SYxAZ4s3qxJZU3KYkHLavYB6mT1t7muX2pg0sxxbUtZGPi9AcaRB+lrsIm+ZjW/Mj6wcJj379MzPwzgmvWRmC9dFdAUZSR/oNQb7KSjKlMpUt5F2PVCXrKYAlKS7bpszM+NkSDbIrFV0hsOkBEayJykDzbladKM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749201445; c=relaxed/simple;
-	bh=7cXe2RVI5l+VbEwv6pMU5n7vOdXDTkLOGpmb/XnSvNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npy7FhpRl2v9VovDrshx2f2JZZbeCPFKKs1OGM7rldhc87i8GgTGWm8R6D3/YEvBDw+0NOpcLwN9jWcC3+Is93BDqJL9/qTCSQl8r3VkKqLxqUU1g/59W5vhlnPCoSRlxPRCRrlShCRtlVa9hjkvcFkqgvQT3wXkNq3K2eDRv/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxKiavON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30624C4CEEF;
-	Fri,  6 Jun 2025 09:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749201444;
-	bh=7cXe2RVI5l+VbEwv6pMU5n7vOdXDTkLOGpmb/XnSvNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kxKiavONcB/WIysSRDIfdLKgglvY/RwSo+s6CJdrbUK/bbk/oaklsT/mEShmR63Ae
-	 jypwSf89L/DocrigEErSG9RCm4iyKzMIkOTcOjn9VmxBNHkxzslE7KcC19neaLEDdA
-	 vHrsTPq99j/8SeVfbJvCsLUvZ3+qkX0VDPR8uX0SgG74efyJ8yd9m9cPGUO8lxc/sP
-	 Bk8EX8+GDKhD8oenxrw8o2niISgQWdbijq71omz9zcuzIj96c8wlZRjhEVFpK/exjb
-	 vvmkO9X0wZNSZVMr77t3xA5CwDXPdyabkPu5f78subnYeOjV7kl4Ob6NiRkbgb1/jf
-	 fp6j7jonntr1A==
-Date: Fri, 6 Jun 2025 11:17:21 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Turquette <mturquette@baylibre.com>, 
-	Alberto Ruiz <aruiz@redhat.com>
-Subject: Re: [PATCH v2 01/10] clk: add kernel docs for struct clk_core
-Message-ID: <20250606-fuzzy-hasty-deer-fdcee0@houat>
-References: <20250528-clk-wip-v2-v2-0-0d2c2f220442@redhat.com>
- <20250528-clk-wip-v2-v2-1-0d2c2f220442@redhat.com>
+	s=arc-20240116; t=1749201527; c=relaxed/simple;
+	bh=PUindHAXEQQlbpUG5MYIfwz0e2Z4ol8KN/X7GV15tAU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uDF3kzuMOTUVUSt4igCUMEYHh0IaasmUuGAQPZrOMwswFgxluNbSJ5YtPYQcJfYtjv0TbYDBH/hkfXKGiY26WputZmw8Z4S8IyMUm8iVFfyHK9S1myXtUFoCSUL/ZLssQ4iXnXmUwfrHmIrTKsizjflP1u8z31ty65E+55M72No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 354b21b842b711f0b29709d653e92f7d-20250606
+X-CTIC-Tags:
+	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:0efc04ef-84fe-408f-9e18-ff4cbbc641cc,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-INFO: VERSION:1.1.45,REQID:0efc04ef-84fe-408f-9e18-ff4cbbc641cc,IP:0,URL
+	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:53816a4433045665c159fbe3fa3a4e04,BulkI
+	D:250606171829N6GA982N,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|102,TC:n
+	il,Content:0|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:ni
+	l,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 354b21b842b711f0b29709d653e92f7d-20250606
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 599363329; Fri, 06 Jun 2025 17:18:28 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: nicolas.frattaroli@collabora.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH v2 0/2]  Cleanup in rockchip_sai.c
+Date: Fri,  6 Jun 2025 17:18:20 +0800
+Message-Id: <cover.1749201126.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="nqgulkyw2ns3u2wn"
-Content-Disposition: inline
-In-Reply-To: <20250528-clk-wip-v2-v2-1-0d2c2f220442@redhat.com>
+Content-Transfer-Encoding: 8bit
 
+1.Simplify the condition logic in
+2.Use helper function devm_clk_get_enabled()
+---
+changlog in v2:
+1.fix capture flag in rockchip_sai_xfer_stop
+2.remove err_disable_hclk
+---
 
---nqgulkyw2ns3u2wn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 01/10] clk: add kernel docs for struct clk_core
-MIME-Version: 1.0
+Pei Xiao (2):
+  ASOC: rockchip: fix capture stream handling in rockchip_sai_xfer_stop
+  ASOC: rockchip: Use helper function devm_clk_get_enabled()
 
-On Wed, May 28, 2025 at 07:16:47PM -0400, Brian Masney wrote:
-> Document all of the members of struct clk_core.
->=20
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/clk.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0565c87656cf5c557d8259c71b5d2971a7ac87e8..a130eac9072dc7e71f840a0ed=
-f51c368650f8386 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -57,6 +57,48 @@ struct clk_parent_map {
->  	int			index;
->  };
-> =20
-> +/**
-> + * struct clk_core - This structure represents the internal state of a c=
-lk
-> + * within the kernel's clock tree. Drivers do not interact with this str=
-ucture
-> + * directly. The clk_core is manipulated by the framework to manage clock
-> + * operations, parent/child relationships, rate, and other properties.
-> + *
-> + * @name:              Unique name of the clk for identification.
-> + * @ops:               Pointer to hardware-specific operations for this =
-clk.
-> + * @hw:                Pointer for traversing from a struct clk to its
-> + *                     corresponding hardware-specific structure.
-> + * @owner:             Kernel module owning this clk (for reference coun=
-ting).
-> + * @dev:               Device associated with this clk (optional)
-> + * @rpm_node:          Node for runtime power management list management.
-> + * @of_node:           Device tree node associated with this clk (if app=
-licable)
-> + * @parent:            Pointer to the current parent in the clock tree.
-> + * @parents:           Array of possible parents (for muxes/selectable p=
-arents).
-> + * @num_parents:       Number of possible parents
-> + * @new_parent_index:  Index of the new parent during parent change.
-> + * @rate:              Current clock rate (Hz).
+ sound/soc/rockchip/rockchip_sai.c | 51 ++++++++-----------------------
+ 1 file changed, 13 insertions(+), 38 deletions(-)
 
-I think we should define what current means here. clk_core->rate is
-effectively a cached value of what the hardware has been programmed with.
+-- 
+2.25.1
 
-It's initialized by reading the value at boot time, and will be updated
-every time an operation affecting the rate will be performed.
-
-Clocks the CLK_GET_RATE_NOCACHE flag however should not use this value,
-as its rate is expected to change behind the kernel's back (because the
-firmware might change it, for example).
-
-Also, if the clock is orphan, it's set to 0 and updated when (and if)
-its parent is later loaded, so its content is only ever valid if
-clk_core->orphan is false.
-
-> + * @req_rate:          Requested clock rate (Hz).
-
-and clk_core->req_rate is the last rate requested by a call to
-clk_set_rate. It's initialized to clk_core->rate. It's also updated to
-clk_core->rate every time the clock is reparented, and when we're doing
-the orphan -> !orphan transition.
-
-> + * @new_rate:          New rate to be set during a rate change operation.
-> + * @new_parent:        Pointer to new parent during parent change.
-> + * @new_child:         Pointer to new child during reparenting.
-> + * @flags:             Clock property and capability flags.
-> + * @orphan:            True if this clk is currently orphaned.
-> + * @rpm_enabled:       True if runtime power management is enabled for t=
-his clk.
-> + * @enable_count:      Reference count of enables.
-> + * @prepare_count:     Reference count of prepares.
-> + * @protect_count:     Protection reference count against disable.
-> + * @min_rate:          Minimum supported clock rate (Hz).
-> + * @max_rate:          Maximum supported clock rate (Hz).
-> + * @accuracy:          Accuracy of the clock rate (Hz).
-
-The unit is parts per billion
-
-> + * @phase:             Current phase (degrees or hardware-specific units=
-).
-
-It's degrees, not hardware specific units.
-
-Maxime
-
---nqgulkyw2ns3u2wn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEKyIQAKCRAnX84Zoj2+
-dkyfAYDSVOdlnZmKx2FqnpDkMSE9pm85fEZTb7iWlHewL2hOdF7wOkEGZw5k3Akg
-Xa3G7qMBeQFn5bn+m06N2XT535qmFpoVRzdZIwm8h+7Rvat2YrBvD3CE7wMoq2Zr
-MYcipCUb6w==
-=AOV5
------END PGP SIGNATURE-----
-
---nqgulkyw2ns3u2wn--
 
