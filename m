@@ -1,186 +1,133 @@
-Return-Path: <linux-kernel+bounces-675928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17AFAD0522
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:25:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FE4AD051A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A40C7A84B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:23:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FF3A9DE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B941289820;
-	Fri,  6 Jun 2025 15:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE7228937C;
+	Fri,  6 Jun 2025 15:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QlKmfyvd"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="K2tCnOwG"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49171126C17;
-	Fri,  6 Jun 2025 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B3913D52F;
+	Fri,  6 Jun 2025 15:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749223495; cv=none; b=TffMidNXug4K/Jv6mTdhi63sLsAtqY/IoAjWClozD+7WAssZ2HKDbIC6EsUB6ZNTARbtS9LqfVbYfRrMPdO+Yi6V/KkCve5EY2ubbW+XPdwMjSexBW3sni0wwtGGe7cMoe2JvR8S1FXxSKV8HjsRBFfFP+8M03gI1aAISipA8aY=
+	t=1749223403; cv=none; b=Gi5s3haulA7o89LOrutaPLwppFfAiReh1OTWWSlwRL+9VkvkXKSKddYHE4mjhmbxnM8LVFdEMY7Cq7rtPm1tmMmLNSHejnUT1GgqizVadWyWBoURRqVaPTh65askGv5PsHkhdwBB936QFKqpcRgtdIgd2o++Qocxlws9d4KNQ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749223495; c=relaxed/simple;
-	bh=PGxsIoF6XolSXA0yz6NNwiZhEBrLUkM+cSRlgFa4b6w=;
+	s=arc-20240116; t=1749223403; c=relaxed/simple;
+	bh=YPQHOA5kSqFGUsoQ+jIhAIS36Z4dE20BlDV3jKC+PYI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=evFvnEmpKErByEoxz4dTrFTJX4YWpLF5CpLm+ugJeAnxhDQ8YmCb5VEgx+SzdgNSVa3mtzMd2LP07XOKaGM+4VPEhHew5/zEdmFw1UOsQ3/ZHS5dCvjuwg8NtkCgQEHoALYogGQ0zteTSsZf2aWiBFJ+opMGfSo7DZapgAdBnG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QlKmfyvd; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 556CZAZx030304;
-	Fri, 6 Jun 2025 15:23:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=71jYEz
-	zkLLgoJ5VbvpTNuDtlu7S8OnwL/GqbGzUT0bA=; b=QlKmfyvdBBpIXkO+fbv8Mo
-	J0bAIS6e1OzWCyU/1M9HwXsjCnh17zKX2ajFv4XpfH5cCcpy3myaefUBzboG4wSn
-	XErxht2lDnaMHsSWoQOLlyw2vYkPfCSmSMZoOGijkLyBANQ1x56I9xKhcNJFQq6k
-	NFiTzfQTLU84F5FWYsv8hwL/nt1OG03Adt+L1MgDdKX3qqnEnkNkUqb+17nYgnxF
-	roAo8ss3uOe9fqUBW/jYr4QpchLdd9dTYu2jkOLaYOuruE4mH46TUWosBN40p7fX
-	RzIWp7Qf9RYLgaAEhxZOi7xbQJ3VYtYt9KBW/9oNcD1WlVVI9hXcdbK5L3gPtwmA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 471gf07ahu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Jun 2025 15:23:26 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 556F0mVN024768;
-	Fri, 6 Jun 2025 15:23:25 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 470dkmsyj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Jun 2025 15:23:25 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 556FNOXA26280540
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Jun 2025 15:23:24 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2DFC05805E;
-	Fri,  6 Jun 2025 15:23:24 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F282258059;
-	Fri,  6 Jun 2025 15:23:17 +0000 (GMT)
-Received: from [9.67.149.38] (unknown [9.67.149.38])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  6 Jun 2025 15:23:17 +0000 (GMT)
-Message-ID: <94718ca7-edb8-4e87-9b2d-586dcbd42690@linux.ibm.com>
-Date: Fri, 6 Jun 2025 20:53:16 +0530
+	 In-Reply-To:Content-Type; b=l/ViD0qPFS6J9B2wlLLoZb4RQ1c07LOiXmu0CHmXXbXkAMzNDMAOfEMed9ToWzLcpAgKTGJyqPOaq98ZjHify4imTfLUt/hjUihF6t3mKcNueLdn7jyEET/VcheiRVreHTolb67jsib8dcAFZc7zq+yWCCjMVsG8OeDZLiBURts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=K2tCnOwG; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+Message-ID: <3b461ee7-c3ee-484b-b945-ec6070355bfe@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1749223398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EC5WXwIyePFbi5jc4rzYZSJpl/hestrYvtJLaOCfr/c=;
+	b=K2tCnOwGIIkIFg0EJpp+pfHV2hk6mQ1J5urKlln67Jp5fOG7BkINyAZLmeBP2rChxlDZei
+	7s3I6VKB79cpZhyt1jcb+fqAQ8v7Ctxk08/ZFVXH6AGy+EJZ6hOr4nFbz4eR9VxMNfp5Yn
+	IlUrn/sE5ZbRKNd7wiB96flFIQnU1lE=
+Date: Fri, 6 Jun 2025 18:24:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 4/4] block: use chunk_sectors when evaluating stacked
- atomic write limits
-To: John Garry <john.g.garry@oracle.com>, agk@redhat.com, snitzer@kernel.org,
-        mpatocka@redhat.com, song@kernel.org, yukuai3@huawei.com, hch@lst.de,
-        axboe@kernel.dk
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        ojaswin@linux.ibm.com, martin.petersen@oracle.com
-References: <20250605150857.4061971-1-john.g.garry@oracle.com>
- <20250605150857.4061971-5-john.g.garry@oracle.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update
+ security_inode_listsecurity() interface
 Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250605150857.4061971-5-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Pq2TbxM3 c=1 sm=1 tr=0 ts=684307ee cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=FRLcGKbqzZ5yKL8xwJUA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDEzMiBTYWx0ZWRfXzd0EnRca5xVc 0uGyd1wyuBCUmYmpt3lJF8TqD/n7XVAFr1kakUSre9tzJhRqudUpqHO+5QVDAvNe2hTDshZLEBC UqkWesWm+fWT/FK0H+WAPly3a+73oagO18tDW9PW0MeIkQ30V62RPbkWuxJMwTaLgDTjUc+Cnad
- k+7cpcbuIkklaySQwf9dyyqkVW5vig03DayEyXRm5xP2a75SjyyokLgSScofh5PdoKsnQ0Vj+tW Fy1/QTR3wxfS+6RnbpcjQqAI8+9N4IFvg4iXcbSassLW35fdGusim5vjpiPrwEXCAXYpOa/OZV/ 6wA7JscWzdD1aKzwGbfO9/L64ijPCayCdArfFA1zQ23Dw7IfZjTy3uC06dYFqBNiKIu4Hg72V7a
- uP7/c2FS2oQvvcuL/93L1Vl8LBm+9b74sIT5ybVegVYDSP7exd9mj3uqjm8QjqG89MYlJr63
-X-Proofpoint-GUID: 8j7_MUFoHJHOYQoVUE6ahr8RJfFrSiP3
-X-Proofpoint-ORIG-GUID: 8j7_MUFoHJHOYQoVUE6ahr8RJfFrSiP3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-06_05,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506060132
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ netdev@vger.kernel.org, selinux@vger.kernel.org,
+ Christian Brauner <brauner@kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+ <49730b18-605f-4194-8f93-86f832f4b8f8@swemel.ru>
+ <CAEjxPJ5KoTBB18_7+fWL+GWY4N5Vp2=Kn=9FJR2GewFRcMgzPQ@mail.gmail.com>
+From: Konstantin Andreev <andreev@swemel.ru>
+Disposition-Notification-To: Konstantin Andreev <andreev@swemel.ru>
+In-Reply-To: <CAEjxPJ5KoTBB18_7+fWL+GWY4N5Vp2=Kn=9FJR2GewFRcMgzPQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 06 Jun 2025 15:23:17.0475 (UTC) FILETIME=[EDA31B30:01DBD6F6]
 
+Stephen Smalley, 06/06/2025 10:28 -0400:
+> On Fri, Jun 6, 2025 at 9:38 AM Konstantin Andreev <andreev@swemel.ru> wrote:
+>> Stephen Smalley, 28/04/2025:
+>>> Update the security_inode_listsecurity() interface to allow
+>>> use of the xattr_list_one() helper and update the hook
+>>> implementations.
+>>>
+>>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
+>>
+>> Sorry for being late to the party.
+>>
+>> Your approach assumes that every fs-specific xattr lister
+>> called like
+>>
+>> | vfs_listxattr() {
+>> |    if (inode->i_op->listxattr)
+>> |        error = inode->i_op->listxattr(dentry, list, size)
+>> |   ...
+>>
+>> must call LSM to integrate LSM's xattr(s) into fs-specific list.
+>> You did this for tmpfs:
+>>
+>> | simple_xattr_list() {
+>> |   security_inode_listsecurity()
+>> |   // iterate real xatts list
+>>
+>>
+>> Well, but what about other filesystems in the linux kernel?
+>> Should all of them also modify their xattr listers?
+>>
+>> To me, taking care of security xattrs is improper responsibility
+>> for filesystem code.
+>>
+>> May it be better to merge LSM xattrs
+>> and fs-backed xattrs at the vfs level (vfs_listxattr)?
+> 
+> This patch and the preceding one on which it depends were specifically
+> to address a regression in the handling of listxattr() for tmpfs/shmem
+> and similar filesystems.
+> Originally they had no xattr handler at the filesystem level and
+> vfs_listxattr() already has a fallback to ensure inclusion of the
+> security.* xattr for that case.
 
+Understood
 
-On 6/5/25 8:38 PM, John Garry wrote:
-> The atomic write unit max is limited by any stack device stripe size.
-> 
-> It is required that the atomic write unit is a power-of-2 factor of the
-> stripe size.
-> 
-> Currently we use io_min limit to hold the stripe size, and check for a
-> io_min <= SECTOR_SIZE when deciding if we have a striped stacked device.
-> 
-> Nilay reports that this causes a problem when the physical block size is
-> greater than SECTOR_SIZE [0].
-> 
-> Furthermore, io_min may be mutated when stacking devices, and this makes
-> it a poor candidate to hold the stripe size. Such an example would be
-> when the io_min is less than the physical block size.
-> 
-> Use chunk_sectors to hold the stripe size, which is more appropriate.
-> 
-> [0] https://lore.kernel.org/linux-block/888f3b1d-7817-4007-b3b3-1a2ea04df771@linux.ibm.com/T/#mecca17129f72811137d3c2f1e477634e77f06781
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  block/blk-settings.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/block/blk-settings.c b/block/blk-settings.c
-> index a000daafbfb4..5b0f1a854e81 100644
-> --- a/block/blk-settings.c
-> +++ b/block/blk-settings.c
-> @@ -594,11 +594,13 @@ static bool blk_stack_atomic_writes_boundary_head(struct queue_limits *t,
->  static bool blk_stack_atomic_writes_head(struct queue_limits *t,
->  				struct queue_limits *b)
->  {
-> +	unsigned int chunk_size = t->chunk_sectors << SECTOR_SHIFT;
-> +
->  	if (b->atomic_write_hw_boundary &&
->  	    !blk_stack_atomic_writes_boundary_head(t, b))
->  		return false;
->  
-> -	if (t->io_min <= SECTOR_SIZE) {
-> +	if (!t->chunk_sectors) {
->  		/* No chunk sectors, so use bottom device values directly */
->  		t->atomic_write_hw_unit_max = b->atomic_write_hw_unit_max;
->  		t->atomic_write_hw_unit_min = b->atomic_write_hw_unit_min;
-> @@ -617,12 +619,12 @@ static bool blk_stack_atomic_writes_head(struct queue_limits *t,
->  	 * aligned with both limits, i.e. 8K in this example.
->  	 */
->  	t->atomic_write_hw_unit_max = b->atomic_write_hw_unit_max;
-> -	while (t->io_min % t->atomic_write_hw_unit_max)
-> +	while (chunk_size % t->atomic_write_hw_unit_max)
->  		t->atomic_write_hw_unit_max /= 2;
->  
->  	t->atomic_write_hw_unit_min = min(b->atomic_write_hw_unit_min,
->  					  t->atomic_write_hw_unit_max);
-> -	t->atomic_write_hw_max = min(b->atomic_write_hw_max, t->io_min);
-> +	t->atomic_write_hw_max = min(b->atomic_write_hw_max, chunk_size);
->  
->  	return true;
->  }
+> For filesystems like ext4 that have always (relative to first
+> introduction of security.* xattrs) provided handlers, they already
+> return the fs-backed xattr value and we don't need to ask the LSM for
+> it.
 
-This works well with my NVMe disk which supports atomic writes however the only
-concern is what if in case t->chunk_sectors is also defined for NVMe disk? 
-I see that nvme_set_chunk_sectors() initializes the chunk_sectors for NVMe. 
-The value which is assigned to lim->chunk_sectors in nvme_set_chunk_sectors()
-represents "noiob" (i.e. Namespace Optimal I/O Boundary). My disk has "noiob" 
-set to zero but in case if it's non-zero then would it break the above logic
-for NVMe atomic writes?
+They only return those security.* xattrs that were physically stored
+in the fs permanent storage.
 
-Thanks,
---Nilay
+If LSM's xattrs are not stored they are not listed :(
 
+> That said, you may be correct that it would be better to introduce
+> some additional handling in vfs_listxattr() but I would recommend
+> doing that as a follow-up.
 
+Understood
+
+--
+Konstantin Andreev
 
