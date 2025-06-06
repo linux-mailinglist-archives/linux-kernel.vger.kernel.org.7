@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-675450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1349AACFDE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F30ACFC8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E1E3ABC99
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833E11894074
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA8128468B;
-	Fri,  6 Jun 2025 08:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC29B24EA9D;
+	Fri,  6 Jun 2025 06:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VyHv5TV0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8sxWCEU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745D524EF6B;
-	Fri,  6 Jun 2025 08:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B54C1E1A3B;
+	Fri,  6 Jun 2025 06:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749197137; cv=none; b=qVSYjdwZeqQ4sZ/0pVUrXxd4zhh0tMR8IzHLaoqFHQHZ6mS+I8XUA/Q1R+nN8Pj9v0sFX4ySXAPnVcm5WwYE8jr+oYdbQnEjeY4rZ4d3LHJLqP60PeZOuHmblYJvgMFYO5bDiGMfQ3u+HgLRn2vRfvIjOrZw6Pl91eZQnlo7/nQ=
+	t=1749191195; cv=none; b=Jd3qCeYLVdG9SS91aPyY1QZdFfctNQdFRhQvE+KnGI5t534wUXDi1wx/tMBUCXx7jSsIW/YcPxjQltVbHDQuDDx0xp9vRGZpIzIWWUlya3bT+CvD4CnmE3f+FYng/YS+1n8j9v4OytEPlPjtmKKA2W2CmhkDqKZWSBilXMWltWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749197137; c=relaxed/simple;
-	bh=2+ukVt7ZT/sBmEW2z10tGXejfw+yjMbmy9hjYlP/qvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAvEmJR/1Sb8nBi4ws27JwdniQ3xntJOMLWdPeQvBDmEWD3uDx4HdyofeEmvG0/w3BVORCnL0EsepLLhauk0yMSLy8+6uxFOVVfS05bpsOT/j9xZqSorNn9uwo5PNPVKmhD/+pF6pfUy5Ihc/4h+6DPqWbNCC9lpfzI0mHS44g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VyHv5TV0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811DDC4CEEF;
-	Fri,  6 Jun 2025 08:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749197136;
-	bh=2+ukVt7ZT/sBmEW2z10tGXejfw+yjMbmy9hjYlP/qvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VyHv5TV0fw7A2TwPXdNR3B6gHFyovUH291qD/ftkl1u3S0HRqsDN7A5evqljYQfDR
-	 ddDzLAbEn1SjcHr66kgmq5nHIiY0P1E2Y50dyHR5BHSfIP8OJB3NU++tPtyQHKO9hH
-	 Fwn1gtMPIukScrIn3BPTuzRgaNac1/e4ajeTMLUXfbokpF1uGe7N2s/9TviafBMqkd
-	 7sb6+0IQFIxtx2eZ3yiXaaoB0+ZrPFrZUW+WeKbkeDshbEjRIhPx6Nik0l5G67c0qH
-	 TgOCXcgh3oxiPoTFE+mG4Uyv6bHyMFczt2w9vhr4UqXKZaGokv9+eFs1sVYrfbkG1Y
-	 GH03g4Hd4vxFQ==
-Date: Fri, 6 Jun 2025 10:05:34 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kees Cook <kees@kernel.org>, 
-	Alessandro Carminati <acarmina@redhat.com>, linux-kselftest@vger.kernel.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Daniel Diaz <daniel.diaz@linaro.org>, 
-	David Gow <davidgow@google.com>, Arthur Grillo <arthurgrillo@riseup.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ville Syrjala <ville.syrjala@linux.intel.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Guenter Roeck <linux@roeck-us.net>, 
-	Alessandro Carminati <alessandro.carminati@gmail.com>, Jani Nikula <jani.nikula@intel.com>, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Linux Kernel Functional Testing <lkft@linaro.org>, 
-	dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
- backtraces
-Message-ID: <20250606-fat-optimal-jackrabbit-cdbb9f@houat>
-References: <20250526132755.166150-1-acarmina@redhat.com>
- <20250526132755.166150-2-acarmina@redhat.com>
- <20250529090129.GZ24938@noisy.programming.kicks-ass.net>
- <CAGegRW76X8Fk_5qqOBw_aqBwAkQTsc8kXKHEuu9ECeXzdJwMSw@mail.gmail.com>
- <20250530140140.GE21197@noisy.programming.kicks-ass.net>
- <202505301037.D816A49@keescook>
- <20250531102304.GF21197@noisy.programming.kicks-ass.net>
- <20250602-phenomenal-turkey-of-hurricane-aadcde@houat>
- <20250603122603.GK21197@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1749191195; c=relaxed/simple;
+	bh=JU0mgop2few5Pt6Dq9+ZtVDzm94WKdjmkUHwV6dtdYI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wyt4KHjv2z/x3+fO5F/aojsvC6qVgADsYDmqmxVHYGoPfN3yyh/GmZo75wLZAZj+K6KAyF1QUZoWrTLXG5EG/1s+Gj0AX64Q/QaFYS1S5YVt9z2qEvg5fpW7ubn6ILEjcPuyRLpXEeLB/UyVeXxZJf0tdi4oefDpxaMDV+1OOQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8sxWCEU; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749191193; x=1780727193;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JU0mgop2few5Pt6Dq9+ZtVDzm94WKdjmkUHwV6dtdYI=;
+  b=e8sxWCEUFW5lT5rslrmUtGH7KrVkCmV6KEWiJTBiD1vPA4dJtUoQGdnv
+   bQkMx2QMJMhoMaEiq/dO9CRvTrC1V6SjM+U5XeicGRYHUaVd0Q0TuOL7E
+   2DXpltiUZtoHU+KsAw5iif+bjP7fPOlw92BbTZxJ+DH0zQtd0CyDZl1yh
+   UKWjvLQFNFBBtXmf+Vd/4gH4YcP+3O/jkhPxrTRqViLCh1MJCJXaU30Iu
+   hESO9CzXGF/8VWnkWOflGaRTH//kyAh2V/GS154gNTzo4mqo9z6UHNmes
+   J4qZ6t75t88FpefCzLaUSuSEGGJrpovb02/exwTXW8i7EBF3fROty3ehx
+   A==;
+X-CSE-ConnectionGUID: l6WLGGuXQuKqUstgml7oFQ==
+X-CSE-MsgGUID: AVvvcZ+fR2ujsKDsHilqyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11455"; a="73864453"
+X-IronPort-AV: E=Sophos;i="6.16,214,1744095600"; 
+   d="scan'208";a="73864453"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2025 23:26:33 -0700
+X-CSE-ConnectionGUID: E8/CkPXtQm+K4/yvZjVXYQ==
+X-CSE-MsgGUID: s/578i+CRfmWvgroYersIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,214,1744095600"; 
+   d="scan'208";a="150761251"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by orviesa004.jf.intel.com with ESMTP; 05 Jun 2025 23:26:28 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Andrew Zaborowski <andrew.zaborowski@intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH] perf/x86/intel: Use early_initcall() to hook bts_init()
+Date: Fri,  6 Jun 2025 11:16:06 +0000
+Message-ID: <20250606111606.84350-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="qoe724hz7swoodx2"
-Content-Disposition: inline
-In-Reply-To: <20250603122603.GK21197@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
+After the commit 'd971342d38bf ("perf/x86/intel: Decouple BTS
+ initialization from PEBS initialization")' is introduced, x86_pmu.bts
+would initialized in bts_init() which is hooked by arch_initcall().
 
---qoe724hz7swoodx2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 1/5] bug/kunit: Core support for suppressing warning
- backtraces
-MIME-Version: 1.0
+Whereas init_hw_perf_events() is hooked by early_initcall(). Once the
+core PMU is initialized, nmi watchdog initialization is called
+immediately before bts_init() is called. It leads to the BTS buffer is
+not really initialized since bts_init() is not called and x86_pmu.bts is
+still false at that time. Worse, BTS buffer would never be initialized
+then unless all core PMU events are freed and reserve_ds_buffers()
+is called again.
 
-On Tue, Jun 03, 2025 at 02:26:03PM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 02, 2025 at 01:13:29PM +0200, Maxime Ripard wrote:
->=20
-> > > I can't operate kunit
-> >=20
-> > Why not?
->=20
-> Too complicated. People have even wrecked tools/testing/selftests/ to
-> the point that it is now nearly impossible to run the simple selftests
-> :-(
->=20
-> And while I don't mind tests -- they're quite useful. Kunit just looks
-> to make it all more complicated that it needs to be. Not to mention
-> there seems to be snakes involved -- and I never can remember how that
-> works.
->=20
-> Basically, if the stuff takes more effort to make run, than the time it
-> runs for, its a loss. And in that respect much of the kernel testing
-> stuff is a fail. Just too damn hard to make work.
->=20
-> I want to: make; ./run.sh or something similarly trivial. But clearly
-> that is too much to task these days :-(
+Thus aligning with init_hw_perf_events(), use early_initcall() to hook
+bts_init() to ensure x86_pmu.bts is initialized before nmi watchdog
+initialization.
 
-Are you sure you're not confusing kunit with kselftests?
+Fixes: d971342d38bf ("perf/x86/intel: Decouple BTS initialization from PEBS initialization")
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+ arch/x86/events/intel/bts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You can run all tests in the kernel using:
-=2E/tools/testing/kunit/kunit.py run
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 9560f693fac0..f0d9729ed255 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -642,4 +642,4 @@ static __init int bts_init(void)
+ 
+ 	return perf_pmu_register(&bts_pmu, "intel_bts", -1);
+ }
+-arch_initcall(bts_init);
++early_initcall(bts_init);
 
-Restrict it to a single subsystem with (for DRM for example):
-=2E/tools/testing/kunit/kunit.py run --kunitconfig=3Ddrivers/gpu/drm/tests
+base-commit: e7d952cc39fca34386ec9f15f68cb2eaac01b5ae
+-- 
+2.43.0
 
-Both would compile a UML kernel and run the tests on your workstation,
-but you can also run them in qemu with:
-=2E/tools/testing/kunit/kunit.py run --arch x86_64
-
-So it looks close to what you expect?
-
-Maxime
-
---qoe724hz7swoodx2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaEKhTQAKCRAnX84Zoj2+
-dkuhAX9LyJvmNiSNTxiTi6JgV/sxlSk5sRo97QTw1YnBFIjUT/sl00MRuvKDZFaq
-sKRGjvEBf17xAmxt5cStdYQumenD9U2D4emcx7/aZKS7vfTR34g6tAmFa1ggk8Wc
-ZpbpxDrD5g==
-=TJNi
------END PGP SIGNATURE-----
-
---qoe724hz7swoodx2--
 
