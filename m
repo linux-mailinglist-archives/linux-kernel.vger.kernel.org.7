@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-675302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9486AACFB88
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:14:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B612ACFB8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB32189074B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:14:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D65C3AF473
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9AE1DF75B;
-	Fri,  6 Jun 2025 03:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868FC1E1C22;
+	Fri,  6 Jun 2025 03:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDflqDzc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EPxC2TyW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9C57E107;
-	Fri,  6 Jun 2025 03:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355FC27702
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 03:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749179653; cv=none; b=XznHxYYv+V3ZGkebVgPfhWrbM2vDCzSbstXpJgafdFwHfCIXwW8y09hwGwSQEDaKpTcbHT7Fhl7ypoXKM1QecbWUaMYfF4D8c4KtXH8vnG1Uy0FCKYMuMKLkYPQ8yG7pgSbxSLkSDDzPu16UJOUgFLv78iKdYNr44tI00XUEoHY=
+	t=1749179754; cv=none; b=X9vH+l/hnifpp+xCvNGP1SYTFtcFJ/J8apOJcAyG71tFImz6v+QtXVDYC/hBs6gtGsIgimKXxXb1sOXBB+nS1dgCw05tC4XFOav7qTnWeSpIivYwWN2P0oRUnhKssO8fVbGWAHyi24Bi+08ANVl1AJOC1FVk1r7cwSekBCQkrNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749179653; c=relaxed/simple;
-	bh=YTj89U0usWhIyY3loDz60ed6Le/WvIAdot5I7X+eiLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dSmrjHYcYhKw1uxfnUEMweR/+30dQAexZRl9mOn6UlF/U/uIlmP6q3LOMVsFK0Qm9U1kVYlNx8IauIyRPwDa0nqNB+RpQPJME5DWRW88WlEbsli3BhzlDhFyB4fXfpOrlSl+AnLYuzda1NFWuLwpendIKrm4os6ecY8g7MXU/Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDflqDzc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9386DC4CEE7;
-	Fri,  6 Jun 2025 03:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749179652;
-	bh=YTj89U0usWhIyY3loDz60ed6Le/WvIAdot5I7X+eiLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WDflqDzcb4rwzKzG5GTivK8TEWH6CKQKEGQ4ZGkcbYco8lFGunLZDHQjVFSQ17x/2
-	 BvTW/AyiZKoAUDsiQCU9nWcoynSaRXAoXAFafskhN6PkVIKbs2eMkMcHbnTUGOvS8K
-	 AqybParMoMGmGFEUftFY5wsEXBAUBhb7QaeNlqJzvw1jSNNPnFbW844IEgZgGlxXPy
-	 BKHlA3/JPneD7jDW9el58vPBF9jPc2ooVOUHrEa72JidD2wRIdAm9myq7aV0tCFHSz
-	 3Kml21e/N0oPT6Gerr6Ul2oTTBEVIIrW24+akJD7gFwKFcgdHzlRssld7LkZcn1P83
-	 MiS1Fp0sd+bfQ==
-Date: Thu, 5 Jun 2025 20:14:10 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@kernel.org>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/1] perf top/report TUI: Provide visual cue when
- starting annotation
-Message-ID: <aEJdAs9P8m2ZiY5Y@google.com>
-References: <aEIJJIiuRTVjPaPT@x1>
+	s=arc-20240116; t=1749179754; c=relaxed/simple;
+	bh=eVdzaj18QYFCxY5EsGbmVe25V4XBq21a0HFEteoI+P8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cQiJoaHWKDdiUmpp3ntbmRqX4pfmND9tiHoTAMJggdd2V7YMjbcvfBR1+sOsGXeMUdCnJvFcRSNUKjwUVT4jwB4BgJxbaNSUSuJsSKG72+1+ptjVx9Fv7eyLeA5HKB4CguVPzxGGEvrqbizbrkJOfuWnuUvaIXzN3okv+om9DDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EPxC2TyW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749179751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Scys7hMkkteTMzv5Umuts7bOYaNcjMyUtRoN41Gt8dA=;
+	b=EPxC2TyWT36gyeCOUSCQG6031ZH0aHaJZWbxil7RQC+jlv7XMKKFMz99mkZTRftH4BoCx7
+	JltCcvJEtQbEY5iWoNWHibycEUZ10snXZyvlTA3f2w/sMv3gnpp6VZay7pZu3IRzK74SDO
+	6pEpsGDjWR/rMACyhLfkfaOifbkftXw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-OfhmMxulN0uCO0EW8E43rg-1; Thu,
+ 05 Jun 2025 23:15:47 -0400
+X-MC-Unique: OfhmMxulN0uCO0EW8E43rg-1
+X-Mimecast-MFC-AGG-ID: OfhmMxulN0uCO0EW8E43rg_1749179746
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97BD5180035E;
+	Fri,  6 Jun 2025 03:15:46 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.88])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 96EB4195E74A;
+	Fri,  6 Jun 2025 03:15:44 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2 0/3] timers: Disable memory pre-allocation of timer debug objects
+Date: Thu,  5 Jun 2025 23:15:36 -0400
+Message-ID: <20250606031539.1004644-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aEIJJIiuRTVjPaPT@x1>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Jun 05, 2025 at 06:16:20PM -0300, Arnaldo Carvalho de Melo wrote:
-> Sometimes it takes a while for the annotation to be presented after
-> pressing 'a' in the 'perf top'/'report' TUI, provide a visual cue
-> informing that the annotation has started for that symbol.
+ [v2] Fix a typo in patch 2 that is causing compilation problem as
+      reported by kernel test robot.
 
-It's probably because objdump takes long to process DWARF.  I think I
-need to update this.
+A circular locking dependency was reported by lockdep involving printk()
+called from within the memory allocator, console driver with timeout
+capability and timer code calling debug_object_activate() doing object
+pool refill by allocating memory.
 
-https://lore.kernel.org/linux-perf-users/Z_gunJ9C3H25Uo9Q@google.com/
+One simple way to break this circular locking dependency is to disable
+memory allocation when timer debug objects are being handled which is
+what this series is about. The majority of the changes is in the
+debugobjects code with a one-line change in the timer code.
 
-Thanks,
-Namhyung
+I have also considered updating the console driver to not hold the lock
+when setting up timeout, but many console drivers are using timeout in
+some ways. So this problem may not specific to just a single one.
 
-> 
-> This is the quick and most of the time improvement, but for some cases
-> its better to improve on it by having a cancellable progress bar, which
-> is now in my TODO list.
-> 
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/ui/browsers/annotate.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-> index cd1d452035a265d3..66ffeb96db29532c 100644
-> --- a/tools/perf/ui/browsers/annotate.c
-> +++ b/tools/perf/ui/browsers/annotate.c
-> @@ -2,6 +2,7 @@
->  #include "../browser.h"
->  #include "../helpline.h"
->  #include "../ui.h"
-> +#include "../util.h"
->  #include "../../util/annotate.h"
->  #include "../../util/debug.h"
->  #include "../../util/debuginfo.h"
-> @@ -1016,6 +1017,7 @@ int __hist_entry__tui_annotate(struct hist_entry *he, struct map_symbol *ms,
->  		return -1;
->  
->  	if (not_annotated || !sym->annotate2) {
-> +		ui__info_window("Annotating", sym->name);
->  		err = symbol__annotate2(ms, evsel, &browser.arch);
->  		if (err) {
->  			char msg[BUFSIZ];
-> -- 
-> 2.49.0
-> 
+Waiman Long (3):
+  debugobjects: Add ODEBUG_FLAG_NO_ALLOC to disable memory allocation
+  debugobjects: Show the state of debug_objects_enabled
+  timers: Disable memory pre-allocation of timer debug objects
+
+ include/linux/debugobjects.h |  6 ++++++
+ kernel/time/timer.c          |  1 +
+ lib/debugobjects.c           | 29 +++++++++++++++++------------
+ 3 files changed, 24 insertions(+), 12 deletions(-)
+
+-- 
+2.49.0
+
 
