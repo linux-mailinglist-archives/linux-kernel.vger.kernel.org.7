@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-675359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5A2ACFC5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:05:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8786BACFCD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B0A81891363
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:05:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F64816DDC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 06:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E250F211A28;
-	Fri,  6 Jun 2025 06:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18873259C9A;
+	Fri,  6 Jun 2025 06:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zisg+DrU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3553F1A5BB7;
-	Fri,  6 Jun 2025 06:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="psEsKbkL"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBA42550B4
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 06:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749189911; cv=none; b=PgGBOENFRW+gCC07Snj4ah16lt04dbtoGMCkkaclG/E+ESnxpIF6pmBrkijIk6zMk4n9YWAAL6JNAj6j/o6+kajP+dTx+/ZA14FDDGATvUDQaf5fw7bZKniDGPO/sDh5mG/wFsZ16yYwCMkS2IJSyTT88Zdb+fsO7GseGR8RLOE=
+	t=1749191521; cv=none; b=cZXR0GegZgTGW29JrtJFLLpUlj+r3P4t84hWlx27XHe2MZKZNLZPLJEoPFXjOvDmrsnSHgYx8BVAa4Nx8QYM+j5rSs6E/zUY69mrvMnifqGzXpR5FwuIQTTEFYpYgsMCHxwdzUNMH1a1nm5VIFO6N0Ob7x7OK4EDOMtOfu5Zy64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749189911; c=relaxed/simple;
-	bh=DTzL7DH5w6RieyjzqD07L9LNs315gRs2qw8zCLb94/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoS73HsJScGaK9OSdO12NYWe0K9hVlkWUz4R3V56vqVhleN6D8LdJUjSQg4YTsEMLTCNidcaKc727MGLbH/N4g0+MMYLIPs4nyrkqAWmxcmJTsQgJPfIHPKdSqLIyaydpJJXGKWkoBqzYKDFXqzDVfGJKPgvOmtdNQA6/emyESU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zisg+DrU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2643CC4CEEF;
-	Fri,  6 Jun 2025 06:05:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1749189908;
-	bh=DTzL7DH5w6RieyjzqD07L9LNs315gRs2qw8zCLb94/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zisg+DrUcu+dtFL2LRXv292Qiq5YWXVFY18by/5ETlckTfiAEsP35H4yv5eZxogg/
-	 Tb8L7G6msi6VLJMysGTo5+0TEN2637NOGT3hCKwF6I0yHfm+4VcIjoc4jutZ40LD68
-	 I8LaNQ9Pnq2YSIoH8VUA2i2Gj06n/haivsU1se+E=
-Date: Fri, 6 Jun 2025 08:05:04 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Ian Rogers <irogers@google.com>, ssouhlal@freebsd.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: [RESEND][PATCH] tools/resolve_btfids: Fix build when cross
- compiling kernel with clang.
-Message-ID: <2025060650-detached-boozy-8716@gregkh>
-References: <20250606052301.810338-1-suleiman@google.com>
- <20250606053650.863215-1-suleiman@google.com>
+	s=arc-20240116; t=1749191521; c=relaxed/simple;
+	bh=twRi+HAcOCoN8kNjPgqZNRZo3pWlLxYUYgi6AF6k4gM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XaRm6bfYTAUHHIDnDYjlgGuLPbqC+38JHKvdOAaxfx6G0yLJzmzFUzQma2VOHyM/jCtn0kXCwgiXycCQGal5tS9pib+sCY33UvkucVbwm65vDO4KusOrWCGQyMEAY+4V03Mc16bxmhgaeCDtSUCho+GVmoiB8uxsgDPEOMTifbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=psEsKbkL; arc=none smtp.client-ip=117.135.210.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=VlkXIqbrHLNm6KB283mzI4Nr/emCcxR2Gwn0N2hg5lw=;
+	b=psEsKbkLFnDrIJ2bRJQpP0KZD8fbbK97QG2hPjjn+DTmY68UBdlBYHe5CYr7RQ
+	4GSwwR2osODvKK0WXu+aUYEGodv48mxz+gq5S4C1y2FMpGZhFHyaMFuzjwiWG+JE
+	nWxOBn/0c2FZV1W3AOAk9R8rCoNPN4ChWqAltmScKbojg=
+Received: from [172.19.20.199] (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PikvCgD3h7iKgEJolGIhBA--.42221S2;
+	Fri, 06 Jun 2025 13:45:47 +0800 (CST)
+Message-ID: <a57a2de7-1b0c-4cc9-a300-02cb46c1f02a@126.com>
+Date: Fri, 6 Jun 2025 13:45:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250606053650.863215-1-suleiman@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] mm/hugetlb: remove unnecessary holding of hugetlb_lock
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
+ david@redhat.com, baolin.wang@linux.alibaba.com, muchun.song@linux.dev,
+ osalvador@suse.de, liuzixing@hygon.cn
+References: <1748317010-16272-1-git-send-email-yangge1116@126.com>
+ <20250604154754.a30e327c3f1640173c8b9cb8@linux-foundation.org>
+ <c15bfa20-2113-4299-98bf-1865b6b535ef@126.com>
+ <20250605181242.54767f38223f9ebd4c379ccb@linux-foundation.org>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <20250605181242.54767f38223f9ebd4c379ccb@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PikvCgD3h7iKgEJolGIhBA--.42221S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKrW5Jw13uF45ury7Gw4rXwb_yoWkKrc_ur
+	1kZ3s7Cw4UW3yqga1ktrZFvrsxK3yxZrZ5Jay0krZ7Aas7XF13WFs3tana9Fs3Wa1kJFnr
+	Wr90gwsIyr4jgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8OdbUUUUUU==
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOgxkG2hCeNjCwgAAsD
 
-On Fri, Jun 06, 2025 at 02:36:50PM +0900, Suleiman Souhlal wrote:
-> When cross compiling the kernel with clang, we need to override
-> CLANG_CROSS_FLAGS when preparing the step libraries for
-> resolve_btfids.
-> 
-> Prior to commit d1d096312176 ("tools: fix annoying "mkdir -p ..." logs
-> when building tools in parallel"), MAKEFLAGS would have been set to a
-> value that wouldn't set a value for CLANG_CROSS_FLAGS, hiding the
-> fact that we weren't properly overriding it.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 56a2df7615fa ("tools/resolve_btfids: Compile resolve_btfids as host program")
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> ---
->  tools/bpf/resolve_btfids/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-You forgot to say why this is a resend :(
+
+在 2025/6/6 9:12, Andrew Morton 写道:
+> On Thu, 5 Jun 2025 08:44:09 +0800 Ge Yang <yangge1116@126.com> wrote:
+> 
+>>> This change addresses a possible performance issue which was introduced
+>>> by 113ed54ad276 ("mm/hugetlb: fix kernel NULL pointer dereference when
+>>> replacing free hugetlb folios").  113ed54ad276 was added recently and
+>>> was cc:stable.
+>>>
+>>> David said:
+>>> https://lkml.kernel.org/r/87521d93-cc03-480d-a2ef-3ef8c84481c9@redhat.com
+>>>
+>>>
+>>> Question is, will that bugfix's performance impact be sufficiently
+>>> serious for us to also backport this new patch?
+>>
+>> In some low-probability scenarios, there could be severe impacts. For
+>> example, when multiple CPUs execute the replace_free_hugepage_folios()
+>> function simultaneously. It seems that we need to backport this new
+>> patch. Thank you.
+> 
+> OK, thanks.  I added
+> 
+> Fixes: 113ed54ad276 ("mm/hugetlb: fix kernel NULL pointer dereference when replacing free hugetlb folios")
+> Cc: <stable@vger.kernel.org>
+> 
+> and moved this to the mm-hotfixes pile.  I'll keep it there for a week
+> or two for review/test.  Once it goes upstream, this should propagate
+> into 6.15.x.
+
+Ok，thanks.
 
 
