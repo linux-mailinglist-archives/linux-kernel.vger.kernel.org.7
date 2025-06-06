@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-675650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C029AAD0116
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:11:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A20F0AD011C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883753A9B66
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FDA718995B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D66F2874FE;
-	Fri,  6 Jun 2025 11:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913E32882B8;
+	Fri,  6 Jun 2025 11:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b="MUt5qEbb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Py0JWDlp"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GKuliRjh"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AD6748D;
-	Fri,  6 Jun 2025 11:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7412207A18
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 11:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749208297; cv=none; b=h1ez5b/Mlz7Kqhx9kmL/LOEkBQGK4KXjDUJDcYEGAeMZpC8QQEtBqEM6Ur1bVWk5VF0cX4lLukzAC4pNEWsozD/E0bTMMx8JBDC7Xg/p7E4tlfnekeLSevHLX5XxzObYANUHGfEdjP6qmPSfym9Gs9vhqhlmS3fNzppnSRnqOa8=
+	t=1749208682; cv=none; b=cz3pLooGRajQJlg4gzigbuLeu831sUdG4jaDI+BJ08S2+TCuiV3go7Z/kHi/cP7jQ5n+oa5PF7fjnQ1hPLEkln0gPGyf2IfSPRQ/zdOb11VpyOk9BspviMfYZqG7tkqkqqVYm2KQCXNUkGlTBogvBBmsNBXtQCxwYXeuWONVDU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749208297; c=relaxed/simple;
-	bh=1vgCFAQkENB6Seo2nZE1CTgN18AgUmdUKx/43g0JYuc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LY0KLEZVcQOO+zll6HbuTreNskUy/OFhWr5L5ro0r80E1lSTAk/TZU1yoC9GBAVGC+FkTgAihShBxk1AisXQbv1/D2jcD2PFhqlaeGjhyKr5uRRaNY1Qxx0njPrgMcfLupNMg5hXtIyfYDFP11QvdIrZ97DhFOVxxbaNjana7mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz; spf=pass smtp.mailfrom=stwcx.xyz; dkim=pass (2048-bit key) header.d=stwcx.xyz header.i=@stwcx.xyz header.b=MUt5qEbb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Py0JWDlp; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stwcx.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stwcx.xyz
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 2079B11400CE;
-	Fri,  6 Jun 2025 07:11:33 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 06 Jun 2025 07:11:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwcx.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1749208293; x=1749294693; bh=MqZdJuGN+ob7h1DLTZpfz
-	ebCnXfIj5B9RhXeV6LE7bw=; b=MUt5qEbbe/D180ktxeYtbUO03mwcMMrHN1EHT
-	7g6ONS2KHMn6dQqkLGfkoBp/Msg2wgSlCebO97W1pzyPJqAlIZOE4tUKjLxSQk1z
-	/un0K/8ydsKmf50Lk2LtGcX3RvbMJ+rWUY0T9tCGCtX73fEy/Y/0i7pSnGEMEg/4
-	dmWPvsCcUuWLVViaKtmh+Movv6Phn7HhNiDpHUBvemPYhfm6LuUygkMKdoyi6l0R
-	FSblBtg3kQYshd4azAHN3MnYKQMDaT/qYIUqctooTDV3Qq6sAdkuD/SRiZAg+Aj7
-	9Pul5hk30f26lrYoAL2pxANo3hzl+dVGCppGf6QDES2jFDEQg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1749208293; x=1749294693; bh=MqZdJuGN+ob7h1DLTZpfzebCnXfIj5B9RhX
-	eV6LE7bw=; b=Py0JWDlpR8yV9FKy/0XlLbYj3BuKqRcGtuyVKHSKekDBEd4qacw
-	VlV4OTDDg+TP7jyFUgVhmszcX0tU7+JTiz+AiCP2RJWiXGuFRMpugULmAdyYQQyj
-	GQQy6hZWH3lQN9uXZQ6KCcPNMxSxp3jk9ZsOG9CtsuvQAYummOzNb2ZB2CD2Tyw7
-	ZzMEiiZjz8wq3pVzpLp+ZgyGULC68FBWX+vPo3H700ZV2ylZ6gG/LnaSkTQ/2wc0
-	fv0S1cDH04bOWXFI1m5L+02u+Bx/KHkXrOmG90RelPF8S6Gw7xzQkE5MMhB0VFj1
-	kvd9bBdF30bhRT9cTqPFIgdIRrj8taQZ16A==
-X-ME-Sender: <xms:48xCaJZI7lDSrzoIeSSTKyxB6BRFWze6fIEUuNm0Y1lFftqeq9Xrjg>
-    <xme:48xCaAbI6dB5GvEaaT3Zr8N633n5WY1ndbRC0swQYfr2zwcF_HeGK9f4iuotmPuMa
-    NdsUoAc4XO3mu8a6Wc>
-X-ME-Received: <xmr:48xCaL_mJ47EASejCxDRyUXoK4mJc_ZfW8n_AWrEo38q_5BGPeFqgFuYX4c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdehtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefhvfevufffkffo
-    ggfgsedtkeertdertddtnecuhfhrohhmpefrrghtrhhitghkucghihhllhhirghmshcuoe
-    hprghtrhhitghksehsthiftgigrdighiiiqeenucggtffrrghtthgvrhhnpedttdevtdeg
-    fefggeeuheekgfevkefgteehhedvtdekkeefiedutdfhtdffgffhhfenucffohhmrghinh
-    epghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepphgrthhrihgtkhesshhtfigtgidrgiihiidpnhgspghrtghpthhtoh
-    epuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjkhestghouggvtghonhhs
-    thhruhgtthdrtghomhdrrghupdhrtghpthhtohepmhgrthhtsegtohguvggtohhnshhtrh
-    hutghtrdgtohhmrdgruhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhn
-    vghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvggu
-    hhgrthdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehkuhhnihihuhesrghmrgiiohhnrdgtohhmpdhrtghpthhtohepphgrthhrihgt
-    khesshhtfigtgidrgiihii
-X-ME-Proxy: <xmx:5MxCaHpFRP8iUhvU2xgWyuFW81GqfSFh_dz5bdCN9_joM4MPmq66ZQ>
-    <xmx:5MxCaEr1OBvIl7hl0FQC7EjPN8TLn-nTPTV8DTtw9r38XUplgVVo3w>
-    <xmx:5MxCaNSIv5AAB6qZJy6P0YD60HKOf71rhq_WMOEGVbZRBy5a56eQEg>
-    <xmx:5MxCaMpLiST6EXj65c8y3FIlhQp7j2_94itPrLDxdV8NXYVDDTHgJg>
-    <xmx:5cxCaCDuV2ymvA9CSQr_icCx1UQ5nFOBANOxb_CqZfUAQ7vqATSNL2b9>
-Feedback-ID: i68a1478a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 6 Jun 2025 07:11:31 -0400 (EDT)
-From: Patrick Williams <patrick@stwcx.xyz>
-To: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Patrick Williams <patrick@stwcx.xyz>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: mctp: fix infinite data from mctp_dump_addrinfo
-Date: Fri,  6 Jun 2025 07:11:16 -0400
-Message-ID: <20250606111117.3892625-1-patrick@stwcx.xyz>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749208682; c=relaxed/simple;
+	bh=xqceFklevNKHrB4ZeBPwo3lRayjsO/IEtbJhI2UtAgA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nPH/DqZyHDKg/HFbxahGzIFQbFHF6Eck8+LAlzfdq83U/fBukkQnvzWH49h1t+ovm94Nrfa4AIVjLi2JN3df4hi1Rqhp7Pd6oIw7o/pa9rolQtO96LAdLQj/zxd4NELFPMaT3DS7DTKSv5SeWhyCTu6+J5aZDuIuGu7lr1bOy6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GKuliRjh; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ade326e366dso20982266b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 04:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1749208677; x=1749813477; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Do+QkiJD6NZpQLNVX8MWxR+5B4FmjG9ealql6MxkGsQ=;
+        b=GKuliRjh/3XQYYGRR4O1FIoUa7x4jjtwAglDorwOy/82DyRUFU+vIAL+r/bcUtL7Fn
+         o3xuR1836fE3oss3v/3J1qAJZon4UHZCazi0vfZtRo2C5iYX55uDuV0+2zOX8Y41rKlQ
+         iU7C9VKz1HxQJo3Evfec/iRDbs7RUOkjBr5e9U4+dSgvL2awhD5MIFDcXwIByUshzBVb
+         NrozqBNUi7igNkxzizL3+wOW+uQWlasOeDNG1O6LyaKUUXZoX2DK8+qCMn7CYPFYP6Jt
+         +2U1rIW7Srsjd2HxJmLwzuy+Uzf3//hne1ChpqDtlgXfUryqDp+lFO8Vf756/eM3xKCE
+         ffzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749208677; x=1749813477;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Do+QkiJD6NZpQLNVX8MWxR+5B4FmjG9ealql6MxkGsQ=;
+        b=AmGRMl591L61ma3wHHdQSdcFmd0q+/9aCc5XlmA5AnuLu0Bun2PZGkAGCVzTufT+qM
+         GhxGS21PVPQuTm6YIQAYsGWe/mkPa8aj7FuSUVu7BoWM0ogbM0fgpfxVrYzWiTqTTB5m
+         7j1i1BLgO1nneD0zudcymjBY5GZT6wo0FK3X9mLKx6apAHQ1skzBf57H7VjXTfhUFfqV
+         0ctgQkHS/TiAPbTpW6Sh21hgMZhLzRZsJC095qhSFbownXXqoaEJrR8vMoQuZryUlcxz
+         bG8QpsXQ0dPUn2JwwZBOUEkgsZaVIGokl3mRFYDLvWuNo2pEszHC0tE86yhhgmuoNefQ
+         AJlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsNBPvBLKIQy8DroXL7nyWC1La6SykxgMy+Pi/IT0YVWm8g2JshpjUDid0XWGiKV/dPRbqdAHJKO2lx+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8C1D/ts52lkPP27aKLpvh5FQ/zRGIXuVaG1YBVXvtyOuCCPO9
+	BjW7tYuSSbZqRJzd4+9j8WmUoyXjk2lRAFrmj5Y7pZqGclvlR8wYkdb7yGaiY1+zNSY=
+X-Gm-Gg: ASbGncsbt8ZfDftCgF+Bf6Jf3TDGHg2bmmuhb03ZsnCXRRoYCi8wc+nnOiVvYjYjW0M
+	T/JuoRTI23Pj0etfufiSWMK18sR3AUY4rqrJLKwnZ/wkxyrXnfWNhlKVIizCWww4rqqIETHP2di
+	A6NSkmk2q+HPcKrApINPmqTy2O9caOJ7BNVbwnytdLnPXSTEzZrC8las49eKsy1rYrFZCfbtG3i
+	eTXNcxFegq2EDUVPLTnaGEnv3a5L8z10JGijzseqQBLyz9owzgSk36NL8ZSdFli2EjzvmIzVu0N
+	FAZk42Yg6mRYJvJs5FL20VKoIaJaG8aiO9aBqzKGCuOzwp0sN1JVWs+90zArCpC+SN/SO/L1VV5
+	zxrS096ECST0tzi9D
+X-Google-Smtp-Source: AGHT+IHWDvzZ+cK5XGmhp46aq4fLVkiHMu9QfV5rZevpbF7hqhSG/HrvSR909QCTjWOMJuFnjrtBHw==
+X-Received: by 2002:a17:906:c14f:b0:ad5:55db:e40d with SMTP id a640c23a62f3a-ade1a978c16mr236485566b.34.1749208677061;
+        Fri, 06 Jun 2025 04:17:57 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc7b566sm98704566b.164.2025.06.06.04.17.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 04:17:56 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org,
+	ulf.hansson@linaro.org,
+	jic23@kernel.org,
+	daniel.lezcano@linaro.org,
+	dmitry.torokhov@gmail.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	bhelgaas@google.com,
+	geert@linux-m68k.org,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	fabrizio.castro.jz@renesas.com,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 0/2] PM: domains: add devm_pm_domain_attach()
+Date: Fri,  6 Jun 2025 14:17:47 +0300
+Message-ID: <20250606111749.3142348-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,60 +102,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some mctp configurations result in the userspace application
-`mctp addr show`, which triggers an `mctp_dump_addrinfo`, to
-be given infinite data.  This was introduced by commit 2d20773aec14.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-In `mctp_dump_addrinfo`, when the userspace buffer doesn't hold
-enough space for all of the addresses, the function keeps the current
-index in the netlink_callback so that it can resume on subsequent
-calls.  There are two indexes held: interface and address.  When a
-all the addresses for an interface has been sent, the code reset
-the address to zero and relies on `for_each_netdev_dump` for
-incrementing the index.  However, `for_each_netdev_dump` (which is
-using `xa_for_each_start`) does not set the index for the last
-entry[1].  This can lead to the subsequent userspace request re-sending
-the entire last interface.
+Hi,
 
-Fix this by explicitly setting the index to ULONG_MAX[2] when all of
-the interfaces and addresses have been successfully sent.  This will
-cause subsequent userspace request to be past the last interface in the
-next `for_each_netdev_dump` call.
+As a result of discussion at [1], series adds the devm_pm_domain_attach()
+and uses it in platform bus probe.
 
-The previous failure could be aggravated by on a system using
-aspeed-bmc-facebook-harma.dts by running:
-```
-    mctp addr add 8 dev mctpi2c1
-    mctp addr show
-```
+Please provide your feedback.
 
-[1]: https://github.com/torvalds/linux/blob/e271ed52b344ac02d4581286961d0c40acc54c03/lib/xarray.c#L2261
-[2]: https://github.com/torvalds/linux/blob/e271ed52b344ac02d4581286961d0c40acc54c03/include/linux/xarray.h#L481
+Thank you,
+Claudiu
 
-Fixes: 2d20773aec14 ("mctp: no longer rely on net->dev_index_head[]")
-Signed-off-by: Patrick Williams <patrick@stwcx.xyz>
----
- net/mctp/device.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+[1] https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com
 
-diff --git a/net/mctp/device.c b/net/mctp/device.c
-index 4d404edd7446..a865445234af 100644
---- a/net/mctp/device.c
-+++ b/net/mctp/device.c
-@@ -140,9 +140,11 @@ static int mctp_dump_addrinfo(struct sk_buff *skb, struct netlink_callback *cb)
- 		rc = mctp_dump_dev_addrinfo(mdev, skb, cb);
- 		mctp_dev_put(mdev);
- 		if (rc < 0)
--			break;
-+			goto out;
- 		mcb->a_idx = 0;
- 	}
-+	mcb->ifindex = ULONG_MAX;
-+out:
- 	rcu_read_unlock();
- 
- 	return skb->len;
+Changes in v3:
+- dropped the detach_power_off argument of devm_pm_domain_attach()
+- use a single cleanup function
+- fixed build warning
+
+Changes in v2:
+- add devm_pm_domain_attach()
+- drop the devres grup open/close approach and use the newly added
+  devm_pm_domain_attach()
+
+Claudiu Beznea (2):
+  PM: domains: Add devres variant for dev_pm_domain_attach()
+  driver core: platform: Use devm_pm_domain_attach()
+
+ drivers/base/platform.c     |  8 ++----
+ drivers/base/power/common.c | 50 +++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  6 +++++
+ 3 files changed, 58 insertions(+), 6 deletions(-)
+
 -- 
-2.49.0
+2.43.0
 
 
