@@ -1,106 +1,207 @@
-Return-Path: <linux-kernel+bounces-675779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B12AD02D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:09:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E71AD02DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D23B7A338C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8A91700C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D10288C2E;
-	Fri,  6 Jun 2025 13:09:25 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D7128935E;
+	Fri,  6 Jun 2025 13:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtWe8aeq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D113CF9EC;
-	Fri,  6 Jun 2025 13:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7120330;
+	Fri,  6 Jun 2025 13:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749215364; cv=none; b=pWSaIcSarOr3zT+rTXQvp8uJno6F5RSel1zOYLubRMrKA/vlFBPewslSEuh3ZJFFBuqvX+ercRuYcwBhy9b+1MQV2tefjSTVOp3ZQIF4vyJllUssCOrAvxjdi73ke2Pe67skDAp7j7inJDGrocFOh2IQO2HgXYctm8DXw8E0APM=
+	t=1749215441; cv=none; b=RmLQ+HYmWJZgbhqsw1u95ON7pF9EPpcEccnxHpoQO8usk0JcN1fwwUi7pD6UPVujh6q9/Z9ePvNyq8tmG6Pap0Vk0FQwKaNr8YJBbKjXXughGLlF3vPwG4VeGKEnWxkIyVfP9w/jIi40/MWRHkS2egI6vv6EiRC2CvP92ilnboA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749215364; c=relaxed/simple;
-	bh=p65BgQsXIRell7NjibwP8/nB9rR+PSzRnhPcxgf6bbU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DP6gRyRQ5CxAI1h1lLcO/H3bfByW9vXmZR4oQuRx3w0epLCgTqsDH0lBKH15E9w+KLg03HvVo4Qgg6wE4U16crSk4Ltf6Hr6PkfBYJtqdGQ+lFCKr75dG7Ok42d6Hw96Q72gvczEvcCP82r0SWbO+lU2LMgzJaoUB3dl4Gucyzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshuagrisham.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joshuagrisham.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5532e0ad84aso2240955e87.2;
-        Fri, 06 Jun 2025 06:09:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749215361; x=1749820161;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SDIM4cWaSDVmDW7CZCAy47kSfugePR2in3Baxdfjghc=;
-        b=I3kp007GoIKy7jJoMzWSIKMTSK2z8IIsaNypqiwRaa3DPnJNpNn/gvbOvJrsfPvK3c
-         Of42xFTT+fmKvSM65mJfWFwH0fZxUfyNzD7nFMyT+IubtjUnzU4zR766a46Kff1caIGJ
-         pg7Qjq/EhbwyAd4quSQz4OnTcNm4k0csdjNCOIT0tiHgJv3kgN8Ac2mlr7Zb7KGeELV7
-         OiCsLj1bzmln304+x/76H4pkUn8TmaoyPPWme+0zg/nTn6LTlvFcjsq5a8BvZgPFHQNS
-         puwGeFstElvX9lvbvT6TdpbtwlvCe+Cx9P2iaNcg9ufT1vt6pQZBdlYiAWNteqq+49+7
-         PrAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGPeUvV+PIqOC7pa9A3H4hMjj2PHqyqIRp9COiRYFdxXV9txre9XVXjqcEBTW7c2XOjqwJQtwpQCpjwPVU0risGNhS5A==@vger.kernel.org, AJvYcCX5OWx1HzHm/sXD2VmnmIgIOapVbTy5j6pghNfz7+A2RX1kBvtDOX6gQRM0/52sfboFZXIqaZmcPIuLCkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIc1rmhKJO0mmZTe30wo6MjBXsXJ1kc4Zu3aqqKQWweVG2nDbn
-	k2MLu1BTXn46FIJI5rNAqGl9SZ63RZGO3OC8Ny9YRzz9b/tnMUbXNBJv
-X-Gm-Gg: ASbGncvy7K7dprzk3FVJDd1RPUlwgVgZnECOWqgw0Rf8MFqGdIwxz0ONOkTnupR8ZNF
-	qvKZQjRFmUHOj/JZ2tSCD5pcUuq8p6+H3nBJvkt8cbTwXefNrM2KYvF73z+U+X6HNDHUFODiJu0
-	shaMLyPSD/VX7XraJOxNtwEgUeB0TshKsng1djut3H07Jt/y2iw8KmK5d48NrIDbJy6J5A8+mkD
-	aF8zs+WnVuQ7mikhO6rpRr2jrY2wBjBMxxP4ZjBKPqOdEoqUMBmvTxUn7jAg9hLW2i2yIYMLSX0
-	h4LJTtNsieJMiwb1oblbQn3Tkh/PP6i34MxvZ/n4vvktVD8Rg0qvDNdpVzTANqGV/6eNthJZrg0
-	3WC0F0yHn/m7pshQB4TlA4oefyLc=
-X-Google-Smtp-Source: AGHT+IGOxCjkdUdURCQroxmFj//+lEKQJxyprwe/KzhvvZnQO0JORgBaWN3NUp/eJgzM2lwmEJUGsw==
-X-Received: by 2002:a05:651c:1545:b0:32a:8bb1:d971 with SMTP id 38308e7fff4ca-32adfc290f3mr7905301fa.18.1749215360651;
-        Fri, 06 Jun 2025 06:09:20 -0700 (PDT)
-Received: from galaxybook.local (82-183-24-76.customers.ownit.se. [82.183.24.76])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1cad5c8sm1696921fa.72.2025.06.06.06.09.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 06:09:19 -0700 (PDT)
-From: Joshua Grisham <josh@joshuagrisham.com>
-To: ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	platform-driver-x86@vger.kernel.org,
-	W_Armin@gmx.de,
-	thomas@t-8ch.de,
-	kuurtb@gmail.com,
-	linux-kernel@vger.kernel.org
-Cc: Joshua Grisham <josh@joshuagrisham.com>
-Subject: [PATCH] platform/x86: samsung-galaxybook: Add SAM0426
-Date: Fri,  6 Jun 2025 15:09:08 +0200
-Message-ID: <20250606130909.207047-1-josh@joshuagrisham.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1749215441; c=relaxed/simple;
+	bh=SVug/aqo8cSEHImdiHsS6qvrHQEZSQXQzALJ1QQBjc8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jBL4mr+C00GV8Uv1ozjoN2sUnpk+PITLQrYT86g/d2HCqqKBmqEz1M0P4MhlpvaHZ+rUYjp5oSwaCkL8Plv7pggBQYzBaMinEYb01f7Ex2Fxbd4wTOjgtIF+nnT6hGuuG5TZ1nEcI49RMOyT8dK+w2QAQTvebhWLr2dqLAJ56tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtWe8aeq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70574C4CEEB;
+	Fri,  6 Jun 2025 13:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749215440;
+	bh=SVug/aqo8cSEHImdiHsS6qvrHQEZSQXQzALJ1QQBjc8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LtWe8aeqA1NV6B9qkEA63h4NPUHc/zV0YEvSo3zEq/Dr4Lp5CMm3wtVao65ykvhbI
+	 KCRr2PgypwdAv4ZovXTuAlvcr6yQQEPWmgo3gTEQjxxYNy7nKx+oAypzQmRW1g32PL
+	 KKcQ5umixD5eRohYLr02361sDOhuF9zxNdpciY4F8dFkdSVG10DU1kJRIME9ZXs9Zq
+	 k4UvkdIyRf8qZHPsXef8iSIzBcihT8Hs1ohUjEAQ5cJeRkyDhXpGWCeC6TTBDxL0L2
+	 1FkfYxYDT7xYqvGvqC+33wuTf8ZfXXrqM00CH7fcj4UlNXPJRMDYViJahJhLc3EGwc
+	 cMcLUgrmYxK/A==
+Message-ID: <8ac3c2da-2824-44fe-942c-fceb8b6f5332@kernel.org>
+Date: Fri, 6 Jun 2025 15:10:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: eeprom: Add ST M24LR support
+To: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+References: <20250606120631.3140054-1-abd.masalkhi@gmail.com>
+ <20250606120631.3140054-2-abd.masalkhi@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250606120631.3140054-2-abd.masalkhi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Add device ID SAM0426 (Notebook 9 Pro and similar devices) as reported
-and tested by GitHub user "diego-karsa" [1].
+On 06/06/2025 14:06, Abd-Alrhman Masalkhi wrote:
+> Add support for STMicroelectronics M24LR RFID/NFC EEPROM chips.
+> These devices use two I2C addresses: the primary address provides
+> access to control and system parameter registers, while the
+> secondary address is used for EEPROM access.
+> 
+> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> ---
+> Changes in v3:
+>  - Dropped reference to the i2c-mux binding.
+>  - Added reference to the nvmem binding to reflect EEPROM usage.
+>  - Updated 'reg' property to represent the device using two I2C addresses.
+>  - Fixed DT schema errors and yamllint warnings.
+>  - Removed the unused 'pagesize' property.
+> ---
+>  .../devicetree/bindings/misc/st,m24lr.yaml    | 54 +++++++++++++++++++
 
-[1]: https://github.com/joshuagrisham/samsung-galaxybook-extras/issues/69
 
-Signed-off-by: Joshua Grisham <josh@joshuagrisham.com>
----
- drivers/platform/x86/samsung-galaxybook.c | 1 +
- 1 file changed, 1 insertion(+)
+How did you implement this feedback:
 
-diff --git a/drivers/platform/x86/samsung-galaxybook.c b/drivers/platform/x86/samsung-galaxybook.c
-index 5878a3519..3c13e13d4 100644
---- a/drivers/platform/x86/samsung-galaxybook.c
-+++ b/drivers/platform/x86/samsung-galaxybook.c
-@@ -1403,6 +1403,7 @@ static int galaxybook_probe(struct platform_device *pdev)
- }
- 
- static const struct acpi_device_id galaxybook_device_ids[] = {
-+	{ "SAM0426" },
- 	{ "SAM0427" },
- 	{ "SAM0428" },
- 	{ "SAM0429" },
--- 
-2.45.2
+"That's not a misc device, but eeprom. Place it in appropriate directory."
+?
 
+There is no such device as a misc device.
+
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/st,m24lr.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/st,m24lr.yaml b/Documentation/devicetree/bindings/misc/st,m24lr.yaml
+> new file mode 100644
+> index 000000000000..775d218381b7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/st,m24lr.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/st,m24lr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STMicroelectronics M24LR NFC/RFID EEPROM
+> +
+> +maintainers:
+> +  - Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> +
+> +description:
+> +  STMicroelectronics M24LR series are dual-interface (RF + I2C)
+> +  EEPROM chips. These devices support I2C-based access to both
+> +  memory and a system area that controls authentication and configuration.
+> +  They expose two I2C addresses, one for the system parameter sector and
+> +  one for the EEPROM.
+> +
+> +allOf:
+> +  - $ref: /schemas/nvmem/nvmem.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - st,m24lr04e-r
+> +      - st,m24lr16e-r
+> +      - st,m24lr64e-r
+> +
+> +  reg:
+> +    description:
+> +      Two I2C address, the primary for control registers, the secondary
+> +      for EEPROM access.
+> +    minItems: 2
+> +    maxItems: 2
+
+Replace this all with items and description:
+items:
+  - description: foo
+  - description: bar
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      eeprom@57 {
+> +        compatible = "st,m24lr04e-r";
+> +        reg = <0x57>, /* primary-device */
+> +              <0x53>; /* secondary-device */
+
+Where is the rest of at24 properties? Not relevant? Not correct? I had
+impression this is fully at24 compatible.
+
+
+Best regards,
+Krzysztof
 
