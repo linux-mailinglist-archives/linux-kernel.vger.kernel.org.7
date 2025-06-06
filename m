@@ -1,186 +1,116 @@
-Return-Path: <linux-kernel+bounces-675743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6121BAD0233
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8FFAD0237
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D641B7A2CC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CEE618892E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0BB288C02;
-	Fri,  6 Jun 2025 12:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m0Tqyx7l";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TupEVE61";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m0Tqyx7l";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TupEVE61"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9D828851F;
+	Fri,  6 Jun 2025 12:29:55 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BE0288508
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 12:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051A528750B;
+	Fri,  6 Jun 2025 12:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749212936; cv=none; b=qFYQryX3kmiyMO70Lh6nKsmveDhR1uQVwHAQiyZAGIy3jAHDe8lhyZyfsDpeDzFRoLYFioZdUpVp5zGcBhRcsx/aUFVqn8AKzE5l6cq8i7Mbcbzdn8B3BtFJDgjXE46mqPPgDgGhMkROEakOU1iS1Gab5qBo0PU8W0esfB96Sbw=
+	t=1749212994; cv=none; b=eVPLpGvBd9uJDuiN2inDX8BxlxyXuiSVeE3oEnukqw/vIrpSaxhqttYbt2UynHqUv9ESpBgabmNMwts+IXbJD5mF1zy4tlanxxcIzx0mqKyWcXvDOt7qKLOvIDdOaoOGdROP/U6AyXmpCdxBXlPFUSj+zcqCYef5uV37VknL89Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749212936; c=relaxed/simple;
-	bh=VdugDXsJC+MySYLUkZ+jaVZRS+xfYRsyvBkvIOugRw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUf0KIKxn23h5Wkr2z66x5WqIzPtJj+7Ca6xFIZbvLVzARwZ4t/Khr558s8nqMwZYHsMOugk4sin1d15U8iNMVEKaexepX28A6wsi7ps2QzbQ6cDkx62rOWQp2dcZ9K8UZR2Lqi4S7fqzQ40q1nAjSekyKyPkNmzkOlbJxmtRG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m0Tqyx7l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TupEVE61; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m0Tqyx7l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TupEVE61; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7123321114;
-	Fri,  6 Jun 2025 12:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749212932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqICevuKoP0IJLpCka+29EYHI1p+jaoZS/6X28IIxdU=;
-	b=m0Tqyx7lrrlQgV4nYGpP1zIy5aYr8pdM7BZbJIMBFDW/0ldzBITpicmeCTtoT+wULeWu94
-	LsjTCIfhAF6/IzKqHC5OFGDdeDnSO7qdUCPH04DBgzukifaXTrB4Lyun7eOb3Cf3twLSlU
-	FM+l/7mya7GOStvYJkxM4HwHwov9eqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749212932;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqICevuKoP0IJLpCka+29EYHI1p+jaoZS/6X28IIxdU=;
-	b=TupEVE61L1YpQIEe5C8YHYMwU4SKGD6E0FgkwkiMdTnKNF9+1eDiAjv9oZMVAl6R71fumJ
-	noODCVmyuCdo7jAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749212932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqICevuKoP0IJLpCka+29EYHI1p+jaoZS/6X28IIxdU=;
-	b=m0Tqyx7lrrlQgV4nYGpP1zIy5aYr8pdM7BZbJIMBFDW/0ldzBITpicmeCTtoT+wULeWu94
-	LsjTCIfhAF6/IzKqHC5OFGDdeDnSO7qdUCPH04DBgzukifaXTrB4Lyun7eOb3Cf3twLSlU
-	FM+l/7mya7GOStvYJkxM4HwHwov9eqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749212932;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqICevuKoP0IJLpCka+29EYHI1p+jaoZS/6X28IIxdU=;
-	b=TupEVE61L1YpQIEe5C8YHYMwU4SKGD6E0FgkwkiMdTnKNF9+1eDiAjv9oZMVAl6R71fumJ
-	noODCVmyuCdo7jAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E11E31369F;
-	Fri,  6 Jun 2025 12:28:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ei86NAPfQmicYwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 06 Jun 2025 12:28:51 +0000
-Date: Fri, 6 Jun 2025 14:28:50 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] mm,slub: Use node-notifier instead of
- memory-notifier
-Message-ID: <aELfAo3RgIU0CV-5@localhost.localdomain>
-References: <20250605142305.244465-1-osalvador@suse.de>
- <20250605142305.244465-5-osalvador@suse.de>
- <0ca963af-8dc9-4cb4-9142-04497c359b81@redhat.com>
+	s=arc-20240116; t=1749212994; c=relaxed/simple;
+	bh=Eat/Q7sTNEFbeM+og4RdCseFvpUP6zHJYmzUhvvvbgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FPmGR3wb5cnTO5/sOGplRD6/jampjf9bHL2pl3eLoajs96bWrtTWJILK3QmSkrJow4pGrpPkrUShH1NNn/eArFvvH3SkjxPv6a8roTaOB8hSDVHSybZeJv1sNWNR5MAeq4dtFDYeBXbO+mrkOrCyvn2uxPYC2TB+hhJADFK+ztQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-527a2b89a11so868502e0c.2;
+        Fri, 06 Jun 2025 05:29:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749212991; x=1749817791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GExCOTG1sYNvAgix1/fBXT30B0whNEqEGmqvut8HF5k=;
+        b=GQqE/cAczPiF+LUBY+q0UQQHAM+ok6lJMO8d/TWUo5g3LJlGSnoab8D1i44M/gFmXr
+         ghCoVgDeqFiuQXDhcTIIx3rDZKzNSSt8MKhFbn3OQPlh+KNLuBPDZPAgIGf9rJWj8E2w
+         b9M8v8bSPeupGGIQT4yJ9x/B3XK28nrWQz8uocNvD2kQiAQDLK4wSH+xt9y/pEbHw3GK
+         4hGBjv8qKK4jI9HEGVqMe382iOTNbMGesqK7FVtFNyr+ZlDIyWYAGh6QNPblOotQMEYB
+         PuC83kRgH9XNhUHWRECeQdYQJob/Rry/ZInwzg6RI8TiPRi0vkxakLD9ebqNMME8qEmy
+         77PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGTNX6rX0Y3TvbzumU77Tr6fwv6mLpmvQ1lcG0MfYqZac/Dp4bTM2662i/ECaBSne38FPRqLv7fwxgA41K@vger.kernel.org, AJvYcCV8r+Na3sfbf/XVtlkNh0iuqkKs+7UgMXlcvlPB2XhIZ2iXaV6bneAG/aQJIoVBgVSItodBrZ8MEmJrF+obofm3FZ4=@vger.kernel.org, AJvYcCXZuXuokY7BZAa6Lfk8/QIYN0BWYprnpOIAxR/9/5pPINqoMJVLqYVgonyool46DnU7Su8J4Mhr2ko=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0pv18eDddJJ0+8CgQAy/Tb1Nmix686YxgFHX/T18BgIb2weha
+	Mr2JHBnwsA62aDjTErvctdS4CQuum2Z5tkL/sD/Z2IqGlWoZFc1IRiMEaPXZadk4
+X-Gm-Gg: ASbGncvF//cCIgXapnQTkxCMubP3E4EvQuCX2e6QFJ12UjFYIcLRG6/3OBLGOq8xy2s
+	dkdPAwWiS9JmfHj3J76qPQqz9qVeJD6JhThdse95IxFzw46aO82bTV+XGWj58DFRHQNdVvB3fPt
+	y2QXbCI19kYOyfvLtQAvCsI3G0W7ak0lof1grXLTGuqu4rmqUgFZQBlU7/yTzFnrjXEn1BX5TMY
+	KPHabsZ3gFTjfZvxIwPNlwlwNAXpdvel7Frikp6Oe5sIccr1V+41gYVaecHOUFoJllg/L8y+aw/
+	BGJ3yG6C8h6f9LYOWLmwqOlol7HBmg4Xu+lHSegl9/BE8oMcSldAmjq9NMXDuNem86/g4/SHiQP
+	n1/LWsC/qRteHgw==
+X-Google-Smtp-Source: AGHT+IGhfSSx/FQtz45yoTXzGgleJm98RgxgTpenMFxS2Z6N0clfju7PjagGXadOQ3a2mHz52O8S5w==
+X-Received: by 2002:a05:6122:7d0:b0:520:4996:7d2a with SMTP id 71dfb90a1353d-530e48ca509mr2686435e0c.10.1749212990923;
+        Fri, 06 Jun 2025 05:29:50 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-530e63e4251sm1000242e0c.26.2025.06.06.05.29.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Jun 2025 05:29:50 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4e2b5ffb932so716250137.0;
+        Fri, 06 Jun 2025 05:29:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVsZ3fwe68TxZdEgHgnakMZPHjYTQinTCZs8BWifr/TiDC3vEmouHIIAh8aWRYeFaZ+uZl7hTInnGurTjAS9oXSfBA=@vger.kernel.org, AJvYcCVzgy7ZIb/yNq9OIc2jU+n1H2cMzjt9PpVBwrWqc6ohOvnjQM+lXDdMgvdXvRCJXf4qBiQrAgbdOd8=@vger.kernel.org, AJvYcCXnRWD7I3fMm8hmV/YFeo4V2be01KUEGnQgEoOStRvmMc005KORx+B/mBI77m3NPfk2liW6a3Oy6srviOrw@vger.kernel.org
+X-Received: by 2002:a05:6102:808a:b0:4e5:980a:d164 with SMTP id
+ ada2fe7eead31-4e7726a12fdmr2694286137.0.1749212990462; Fri, 06 Jun 2025
+ 05:29:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ca963af-8dc9-4cb4-9142-04497c359b81@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_CC(0.00)[linux-foundation.org,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+References: <20250528132558.167178-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250528132558.167178-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jun 2025 14:29:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWAnXWbvHXgLDLVxPWiNgWxsNN5Vt0jXGdcCG6_dRphbg@mail.gmail.com>
+X-Gm-Features: AX0GCFuPxJSj36WTA3iqYChcOwBqPHyk3xTsO7DLXF5cvYDJYarSbZFI5q1mA_A
+Message-ID: <CAMuHMdWAnXWbvHXgLDLVxPWiNgWxsNN5Vt0jXGdcCG6_dRphbg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a09g056: Add clock and reset entries for USB2.0
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 06, 2025 at 01:56:15PM +0200, David Hildenbrand wrote:
-> > @@ -6217,15 +6217,12 @@ static int slab_memory_callback(struct notifier_block *self,
-> >   	int ret = 0;
-> >   	switch (action) {
-> > -	case MEM_GOING_ONLINE:
-> > +	case NODE_ADDING_FIRST_MEMORY:
-> >   		ret = slab_mem_going_online_callback(arg);
-> 
-> In slab_mem_going_online_callback we will cast arg to "struct
-> memory_notify", no?
+Hi Prabhakar,
 
-Uhm... not sure if I understood this correctly but slab_mem_going_online_callback looks
-like this:
+On Wed, 28 May 2025 at 15:26, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add clock and reset entries for USB2.0.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
- static int slab_mem_going_online_callback(void *arg)
- {
-         struct kmem_cache_node *n;
-         struct kmem_cache *s;
-         struct node_notify *narg = arg;
-         int nid = narg->nid;
-         int ret = 0;
+Thanks for your patch!
+
+I couldn't review all details due to lack of the Additional Document,
+but I assume it is the same as on RZ/V2H(P), so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
 
+Gr{oetje,eeting}s,
 
-> Probably needs to get fixed.
-> 
-> ... and probably best to pass marg directly.
-
-You mean to cast it directly in slab_memory_callback and pass 'narg'
-to slab_mem_going_online_callback?
-
-
-> >   		break;
-> > -	case MEM_GOING_OFFLINE:
-> > +	case NODE_REMOVING_LAST_MEMORY:
-> >   		ret = slab_mem_going_offline_callback(arg);
-> 
-> slab_mem_going_offline_callback() doesn't even look at arg, so likely we can
-> drop that parameter?
-
-Sure.
-
-Thanks for the feedback!
-
- 
+                        Geert
 
 -- 
-Oscar Salvador
-SUSE Labs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
