@@ -1,244 +1,132 @@
-Return-Path: <linux-kernel+bounces-675461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231D0ACFE21
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:20:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA92DACFE6F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7474B1895213
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:20:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39BFD3AC879
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 08:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51631284670;
-	Fri,  6 Jun 2025 08:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MitPkhnC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pr7ciNVw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MitPkhnC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pr7ciNVw"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6A28541A;
+	Fri,  6 Jun 2025 08:39:29 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D10189F43
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 08:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68599284671
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 08:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749198019; cv=none; b=YjpOGwYZcaXKVFrn5sTIyRuTC4qTvCbJl+kHjQ/ySXzBZapqNYFw/1nHce+oLBa98Orpm1JvbHdwWclsq/N3yVzBs2X9zfomsBrzA/3pgtArn3W8iGOOaRkzywixvThFlZQh3sKG2K370o1pfZOfRLP8w+EhMMe7rS9JyRHc9qg=
+	t=1749199169; cv=none; b=akXLqWFgiSTWRGd4tE10pojcjwd7jDNnlJP6ZfTz4N4cj36x1RxPaERsydgLe0pJgAX+PVGYTudqIOrWwC+tcHDUEbZiv5jwGf+Joc10UIIIa1Qup0Ob08CW1LIm0aEtWbZdyq/EW3G6UZhyqEMxRUf5NI8sLBhidnpQvtCSlME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749198019; c=relaxed/simple;
-	bh=DFK0enjsDPlNXgMmzgeZ/eEpmn1q/94j/EFDqLqDEGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxRXJRFJ1sOdhNSL44wWtAWvuQJG6Ouc7dJ/Fs5xL+/2555ubgQw0agdDF7xb5d1xunTRIckcDqB7jX+lOxJXMxAiYQ347L9HjyofSkwaDc/C5skJedq7mB7e+QisNf2J6vQ5H6Jxdia39qBcfGoyGFit0H0wYVmSOE3GM4U0wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MitPkhnC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pr7ciNVw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MitPkhnC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pr7ciNVw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 12EE91F46E;
-	Fri,  6 Jun 2025 08:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749198016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPPCQgVTU9igB5wVJT7oj3CtdzrH4k5GbPxzRDDz2ws=;
-	b=MitPkhnCE/m1UL+eiwSqT48a8zIh4RmGtHolImnFPG0Y8bwen2/MXzyvn82oZBa+ByhvBF
-	Yc9lgYMCuADcGRTJGmBzFPzQi3Bpn+GWCJqwT928WI9fyN0eybt68nPD6uDm3t16ANUJ1O
-	LYhvc67RpnmSlNbW89XNPzerd22tENA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749198016;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPPCQgVTU9igB5wVJT7oj3CtdzrH4k5GbPxzRDDz2ws=;
-	b=pr7ciNVwces3HHVQ0sy0AjX6ZZBoczoDFUyAmHwDKNxZevZNa0w7ZxkkWv92FCF+9rbTUW
-	WHtHTvD3VAlmbxAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MitPkhnC;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=pr7ciNVw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749198016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPPCQgVTU9igB5wVJT7oj3CtdzrH4k5GbPxzRDDz2ws=;
-	b=MitPkhnCE/m1UL+eiwSqT48a8zIh4RmGtHolImnFPG0Y8bwen2/MXzyvn82oZBa+ByhvBF
-	Yc9lgYMCuADcGRTJGmBzFPzQi3Bpn+GWCJqwT928WI9fyN0eybt68nPD6uDm3t16ANUJ1O
-	LYhvc67RpnmSlNbW89XNPzerd22tENA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749198016;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPPCQgVTU9igB5wVJT7oj3CtdzrH4k5GbPxzRDDz2ws=;
-	b=pr7ciNVwces3HHVQ0sy0AjX6ZZBoczoDFUyAmHwDKNxZevZNa0w7ZxkkWv92FCF+9rbTUW
-	WHtHTvD3VAlmbxAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 105D21369F;
-	Fri,  6 Jun 2025 08:20:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OmoQO76kQmgbBAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 06 Jun 2025 08:20:14 +0000
-Date: Fri, 6 Jun 2025 10:20:13 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v1 1/2] mm/huge_memory: don't mark refcounted pages
- special in vmf_insert_folio_pmd()
-Message-ID: <aEKkvdSAplmukcXz@localhost.localdomain>
-References: <20250603211634.2925015-1-david@redhat.com>
- <20250603211634.2925015-2-david@redhat.com>
+	s=arc-20240116; t=1749199169; c=relaxed/simple;
+	bh=M/HN4ar7wZMBJP/PnDV3kWAxVeZqpHAPjoZZR93JTzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ENtiw0oVeygW9RhWN6lJoeQDcvopk5mPW/Ce3aO0W9Xbr1/Yt+2l3uB0WEuZJrtJ24ShXX+Z3zP8wTFNYviuScedg523NrnmRJGgio3bvF1RDiLpIPbLcXmHuAie+rO2S7mwm4qYrGdS9rJ/yJZCETVhz+gVn07CFM2NNtU09F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bDDlW5Wzgz1R86h;
+	Fri,  6 Jun 2025 16:20:23 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1DAD71A0191;
+	Fri,  6 Jun 2025 16:22:43 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 6 Jun 2025 16:22:39 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 6 Jun 2025 16:22:38 +0800
+Message-ID: <b6b30bdd-7562-4435-a267-2bdafb0dc359@huawei.com>
+Date: Fri, 6 Jun 2025 16:20:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250603211634.2925015-2-david@redhat.com>
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,localhost.localdomain:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 12EE91F46E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-dp 04/10] drm/hisilicon/hibmc: fix the hibmc loaded
+ failed bug
+To: oushixiong <oushixiong1025@163.com>, <xinliang.liu@linaro.org>,
+	<tiantao6@hisilicon.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <libaihan@huawei.com>, <shenjian15@huawei.com>,
+	<shaojijie@huawei.com>, <jani.nikula@linux.intel.com>,
+	<dmitry.baryshkov@oss.qualcomm.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250530095432.1206966-1-shiyongbang@huawei.com>
+ <20250530095432.1206966-5-shiyongbang@huawei.com>
+ <b0587eda-df65-4abc-b2af-c5dcb717c8b6@163.com>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <b0587eda-df65-4abc-b2af-c5dcb717c8b6@163.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Tue, Jun 03, 2025 at 11:16:33PM +0200, David Hildenbrand wrote:
-> Marking PMDs that map a "normal" refcounted folios as special is
-> against our rules documented for vm_normal_page().
-> 
-> Fortunately, there are not that many pmd_special() check that can be
-> mislead, and most vm_normal_page_pmd()/vm_normal_folio_pmd() users that
-> would get this wrong right now are rather harmless: e.g., none so far
-> bases decisions whether to grab a folio reference on that decision.
-> 
-> Well, and GUP-fast will fallback to GUP-slow. All in all, so far no big
-> implications as it seems.
-> 
-> Getting this right will get more important as we use
-> folio_normal_page_pmd() in more places.
-> 
-> Fix it by just inlining the relevant code, making the whole
-> pmd_none() handling cleaner. We can now use folio_mk_pmd().
-> 
-> While at it, make sure that a pmd that is not-none is actually present
-> before comparing PFNs.
-> 
-> Fixes: 6c88f72691f8 ("mm/huge_memory: add vmf_insert_folio_pmd()")
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+>
+>> From: Baihan Li<libaihan@huawei.com>
+>>
+>> When hibmc loaded failed, the driver use hibmc_unload to free the
+>> resource, but the mutexes in mode.config are not init, which will
+>> access an NULL pointer.
+>>
+>> Fixes: b3df5e65cc03 ("drm/hibmc: Drop drm_vblank_cleanup")
+>> Reported-by:oushixiong1025@163.com
+>> Signed-off-by: Baihan Li<libaihan@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> index 4cdcc34070ee..ac552c339671 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+>> @@ -319,13 +319,13 @@ static int hibmc_load(struct drm_device *dev)
+>>   
+>>   	ret = hibmc_hw_init(priv);
+>>   	if (ret)
+>> -		goto err;
+>> +		return ret;
+>>   
+>>   	ret = drmm_vram_helper_init(dev, pci_resource_start(pdev, 0),
+>>   				    pci_resource_len(pdev, 0));
+>>   	if (ret) {
+>>   		drm_err(dev, "Error initializing VRAM MM; %d\n", ret);
+>> -		goto err;
+>> +		return ret;
+>
+> The mutexes in mode.config are initialized when calling hibmc_kms_init(),
+> if calling hibmc_kms_init() failed it also need to return.
+>
+> You may want to look at the following patch:
+> LKML: oushixiong1025@163 ...: [PATCH] drm/hisilicon: Fix a NULL 
+> pointer access when hibmc_load failed 
+> <https://lkml.org/lkml/2025/5/20/331>
+>
+> Reported-by: Shixiong Ou <oushixiong@kylinos.cn>
+>
+> Thanks and Regards,
+> Shixiong Ou.
+>
 
-Hi David,
+Hi Shixiong,
+Thanks for your advice!
+Actually, even if the calling of drmm_mode_config_init() failed, these mutexes are still initialized,
+and it's the same for hibmc_kms_init() failed, so we don't need to change its return.
 
-> ---
->  mm/huge_memory.c | 39 ++++++++++++++++++++++++++++++++-------
->  1 file changed, 32 insertions(+), 7 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index d3e66136e41a3..f9e23dfea76f8 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1474,9 +1474,10 @@ vm_fault_t vmf_insert_folio_pmd(struct vm_fault *vmf, struct folio *folio,
->  	struct vm_area_struct *vma = vmf->vma;
->  	unsigned long addr = vmf->address & PMD_MASK;
->  	struct mm_struct *mm = vma->vm_mm;
-> +	pmd_t *pmd = vmf->pmd;
->  	spinlock_t *ptl;
->  	pgtable_t pgtable = NULL;
-> -	int error;
-> +	pmd_t entry;
->  
->  	if (addr < vma->vm_start || addr >= vma->vm_end)
->  		return VM_FAULT_SIGBUS;
-> @@ -1490,17 +1491,41 @@ vm_fault_t vmf_insert_folio_pmd(struct vm_fault *vmf, struct folio *folio,
->  			return VM_FAULT_OOM;
->  	}
->  
-> -	ptl = pmd_lock(mm, vmf->pmd);
-> -	if (pmd_none(*vmf->pmd)) {
-> +	ptl = pmd_lock(mm, pmd);
-> +	if (pmd_none(*pmd)) {
->  		folio_get(folio);
->  		folio_add_file_rmap_pmd(folio, &folio->page, vma);
->  		add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
-> +
-> +		entry = folio_mk_pmd(folio, vma->vm_page_prot);
-> +		if (write) {
-> +			entry = pmd_mkyoung(pmd_mkdirty(entry));
-> +			entry = maybe_pmd_mkwrite(entry, vma);
-> +		}
-> +		set_pmd_at(mm, addr, pmd, entry);
-> +		update_mmu_cache_pmd(vma, addr, pmd);
-> +
-> +		if (pgtable) {
-> +			pgtable_trans_huge_deposit(mm, pmd, pgtable);
-> +			mm_inc_nr_ptes(mm);
-> +			pgtable = NULL;
-> +		}
-> +	} else if (pmd_present(*pmd) && write) {
-> +		/*
-> +		 * We only allow for upgrading write permissions if the
-> +		 * same folio is already mapped.
-> +		 */
-> +		if (pmd_pfn(*pmd) == folio_pfn(folio)) {
-> +			entry = pmd_mkyoung(*pmd);
-> +			entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
-> +			if (pmdp_set_access_flags(vma, addr, pmd, entry, 1))
-> +				update_mmu_cache_pmd(vma, addr, pmd);
-> +		} else {
-> +			WARN_ON_ONCE(!is_huge_zero_pmd(*pmd));
-> +		}
+Thanks,
+Baihan Li
 
-So, this is pretty much insert_pfn_pmd without pmd_mkdevmap/pmd_mkspecial().
-I guess vmf_inser_folio_pmd() doesn't have to be concerned with devmaps
-either, right?
-
-Looks good to me, just a nit: would it not be better to pass a boolean
-to insert_pfn_pmd() that lets it know whether it "can" create a
-devmap/special entries?
-
-
--- 
-Oscar Salvador
-SUSE Labs
+>>   	}
+>>   
+>>   	ret = hibmc_kms_init(priv);
 
