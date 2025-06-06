@@ -1,150 +1,228 @@
-Return-Path: <linux-kernel+bounces-676045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48348AD06D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:41:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4948CAD06D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63CC7A6CDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842843A8D69
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5C2289E30;
-	Fri,  6 Jun 2025 16:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6806D289E2A;
+	Fri,  6 Jun 2025 16:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XaAYnvb/"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKHVMVYl"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDE03A8C1
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 16:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419393A8C1;
+	Fri,  6 Jun 2025 16:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749228100; cv=none; b=nxpGXDcau4aZOlJCiP+67B+D3JdgoC6A/SE+3wwf2BRQMw1u3ndKyWBGz1CpvDxtMMFQmIWaZjOqp25YCk+qpDitp9zBFBFmknyz7/wTxUZHj8xL0v3z0uZXX3t/AOAXH+aHAuGtE7GZv5qk4rx0FYzhZG+IFbcSKxVlQ6Rh7z0=
+	t=1749228150; cv=none; b=d2HnCtQAOEgQc3aykiIQ5d8bwFfirxsUrVOxSyu7ofNBEmyQRosPH4O6eOxr0q10GToIVNICOCHRSGQCebq3CW34Jz4dI4R3evyaC9f1fKAitwUz3V0n/YY5MmQaxocSLJsPNGnzpgbtxb5Q9cO23apJbQet1ObmGHB941ppXnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749228100; c=relaxed/simple;
-	bh=5FCXapijm9KodVEFRg77aRwYafF4dXn2kDNnFXFe09M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=oeOGXaYZYAaYybMQ5C+lqP8R3tvPTu71tRnATVyibMVZ4BDV/mfT520JePJmjto1aLLEEZzkMjlzK7cWHtfHj5RdqmanvT27kH0iOO1Fjzssuj+cIKdFSi0jzhswOhiaqsOuaoHFyiLeT3t6Wpsw7qJKZ5Sv7WeHqdryqalmxUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XaAYnvb/; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250606164136euoutp02a02791c12b74a3ff851d6d387f6fdee2~Gga_eBfpa0793207932euoutp02k
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 16:41:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250606164136euoutp02a02791c12b74a3ff851d6d387f6fdee2~Gga_eBfpa0793207932euoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749228096;
-	bh=mnJFHA5ulRzhgLwxfNjBRQiUqguX++zUd23VHbe6KTM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=XaAYnvb/Ep9aLxZsG8vG9FWKd4UTZwDZf1KlD/Pz/MnP8g+MH+tQ3RWIybPNDc17x
-	 cV4kFkg8QdTRSB4TmDAdkww0WGdVXvetW13q58BLhKbRcA1JNlwbgDNgGe2q3QmyJL
-	 pZ/4yztur7q3V1D2oQ6uqgl6I7SXwx6b+xd/Z3e8=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250606164134eucas1p1b26805254a1a3e07a7318211bf834e28~Gga89mTvh1202912029eucas1p1J;
-	Fri,  6 Jun 2025 16:41:34 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250606164133eusmtip157467893c23ece40f4eb41f3dd30ea84~Gga74zGnv2294722947eusmtip1l;
-	Fri,  6 Jun 2025 16:41:33 +0000 (GMT)
-Message-ID: <62085c76-7a5e-42f2-acee-138622d7d481@samsung.com>
-Date: Fri, 6 Jun 2025 18:41:33 +0200
+	s=arc-20240116; t=1749228150; c=relaxed/simple;
+	bh=FXCAeqxR1LAON9Pwe6CC8F9hsonCO1tuK/KA9y9w1Ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5gy8DDDLTaJId1nJsc/ldqEQMOUsugc0dOIEqw/J5ekesO+hG502FD0sMeggh7JH8SD+HIhnhXjY92RZc9GJmZ5ahymEj1xy9L/XngsKmVfKmJw4H3Z6fyNvi5JaEG5YByCz4C9NtORaa7IjP9JivLXvRqZDy4iyVQ69dLhs/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKHVMVYl; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3dc729471e3so7945565ab.1;
+        Fri, 06 Jun 2025 09:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749228148; x=1749832948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uMeYsxUgjqxog+Ak4U2urOTlJ0rw3A1XKz5qXAyaQdo=;
+        b=aKHVMVYlZatJdJSjx76k1fkOglZCKURH7L36Xuud9hmjOWAaFS7OwPqfHR/SF58B55
+         4CBHcTAhUiWSqw296weVoBYbJJlkAJKxAim41eqcbG9tF1unn+K2uJLtiapoeUm2tN1c
+         5bR6XN2ktJIle3O2WqxREWp2jclpwChK/WTbFA5f5PqRnr59pXPQwyQcJp3XsSRxg/R4
+         8gdOEYA6RDZ9jDX0WUWNW6cxqYvo4PrRk9znS/urqbprVja1DSVC9/TnoBphi4Sza64T
+         1JiI0bQ/X5uTbtFwhBIbpB2w98lIHQVgslT5v4mPPPynNCh7qBAmjQo8K0YIC6uvLrLB
+         J1GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749228148; x=1749832948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uMeYsxUgjqxog+Ak4U2urOTlJ0rw3A1XKz5qXAyaQdo=;
+        b=eEfMYqboRbulN4JwvjvMVx6dz+Et/fk//Uu+99Py7/YMLo+uqWpXlurl8reY5hkNlf
+         eS9cuBqlL3916gzsP2IGARUwS40+WDDmEz/HHqoxrL7HJr63fb7gcVxcNymG6Ws5LRSJ
+         iRnPGxISXVhN60HoSDsbG2Ygde2jAJ4edYuWLP24bHBnHIp5Wf1AyZX0ZYWkHy8JB7IU
+         A4wcMaszUTn4hjgySNQTcUOjxOOsCrCzXNk6ZCMs/RClIyrKs6CTem5OxVMjGzlcvUmf
+         iBxcCC/367p8tDBhAEi7Zs36dT6gFVg+Kd4RvtO8HkFb4kHkzz3Vo4LI83yQ3mR9qrO6
+         bgMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULR9KLjCewGbHXLfawqT8IzIfTYQ9CKpz7Y81S14JccUXSuXIBDDi3VWQDfVf2ADPnWciJrjU0EQ7E@vger.kernel.org, AJvYcCXMF9PaPtMtSbgTyN2zubWXYeC7AVqDOcYzFZfnTJiiwK3Mf5Vkf87MwzbtydZl+7q7PVOtjv6VngSzg2Jr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqf7AdxOZTeFBMSjcxVeXQV+XUgZ/RqSjnbbKZStrOTnfOCrdJ
+	qK98VPbpER9wKf3rkEc4jtNMw4Y+IjVyENHe+a0mSBVwDcAOco+15MRnqkTVx7ac76VuVfs1sS4
+	zQ4cohT30xaEZEwNM9jvZfYNrmA2wzMSZaSfi
+X-Gm-Gg: ASbGnctMZmNTCl3qOdnypktUDwwsapYJKyGVXqIApj90qCaj0So1SwD6+9UcrOEbAuf
+	1yGjSJQ6+4MRvrseniMKRc4SRg+zeLST9mSMCbMDKBp4r8WLe5YvIrIA+xY8/Md30tEYcZ8dqjO
+	/urZftqGsErz7UuwC3dFE4tYlaqfHQ6HUEgHs7njvL7dKFi+zYmnkb
+X-Google-Smtp-Source: AGHT+IFlV+kTTqKAlFNc6/Q8eaL8fHicj7OQNSk3pESNYyA27MAqC5cCScNwhcB8fj/OsGWlxBp0LvXax4FYxj83epQ=
+X-Received: by 2002:a05:6e02:4518:20b0:3dd:d189:8a6c with SMTP id
+ e9e14a558f8ab-3ddd1898dd9mr19809775ab.4.1749228148149; Fri, 06 Jun 2025
+ 09:42:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/6] pwm: Add Rust driver for T-HEAD TH1520 SoC
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
-	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
-	<benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
-	Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
-	Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
-	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <CANiq72kVvLogBSVKz0eRg6V4LDB1z7b-6y1WPLSQfXXLW7X3cw@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250606164134eucas1p1b26805254a1a3e07a7318211bf834e28
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250524211521eucas1p1929a51901c91d1a37e9f4c2da86ff7b0
-X-EPHeader: CA
-X-CMS-RootMailID: 20250524211521eucas1p1929a51901c91d1a37e9f4c2da86ff7b0
-References: <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
-	<CGME20250524211521eucas1p1929a51901c91d1a37e9f4c2da86ff7b0@eucas1p1.samsung.com>
-	<20250524-rust-next-pwm-working-fan-for-sending-v1-2-bdd2d5094ff7@samsung.com>
-	<q6dkihyfosi3k4mtrvyff54nbsjpovmujdbmoqhapo7daznpja@of2p5gtmcq2m>
-	<b1c4792e-f997-4eba-a8ed-d2e3f76e3fdd@samsung.com>
-	<CANiq72kVvLogBSVKz0eRg6V4LDB1z7b-6y1WPLSQfXXLW7X3cw@mail.gmail.com>
+References: <20250605-rk3588s-cm5-io-dts-upstream-v4-0-8445db5ca6b0@gmail.com>
+ <20250605-rk3588s-cm5-io-dts-upstream-v4-2-8445db5ca6b0@gmail.com> <CALWfF7J-Lygg+N3oH+p7XkPvH_6ZbvTRY6CaZzFqDixzSgDHBA@mail.gmail.com>
+In-Reply-To: <CALWfF7J-Lygg+N3oH+p7XkPvH_6ZbvTRY6CaZzFqDixzSgDHBA@mail.gmail.com>
+From: Joseph Kogut <joseph.kogut@gmail.com>
+Date: Fri, 6 Jun 2025 09:41:52 -0700
+X-Gm-Features: AX0GCFsGQAfqG6AckaE2dzN-sFHMIgG2nS5Dtrqvn7bKG-PkR87MSRPoQm07c1U
+Message-ID: <CAMWSM7gD0Tiu-JOUqyoASHQHrz79rnW3+kfQ4wnRSOx051GB4Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] arm64: dts: rockchip: Add rk3588 based Radxa CM5
+To: Jimmy Hon <honyuenkwun@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Steve deRosier <derosier@cal-sierra.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 5, 2025 at 5:51=E2=80=AFPM Jimmy Hon <honyuenkwun@gmail.com> wr=
+ote:
+>
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi b/arch=
+/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..d7946fe2bb4e721689e3eb4=
+d60d8e9783402f05e
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
+> > @@ -0,0 +1,156 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +/*
+> > + * Copyright (c) 2025 Joseph Kogut <joseph.kogut@gmail.com>
+> > + */
+> > +
+> > +/*
+> > + * CM5 data sheet
+> > + * https://dl.radxa.com/cm5/v2210/radxa_cm5_v2210_schematic.pdf
+> > + */
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/leds/common.h>
+> > +#include <dt-bindings/soc/rockchip,vop2.h>
+> > +#include <dt-bindings/usb/pd.h>
+> > +
+> > +/ {
+> > +       compatible =3D "radxa,cm5", "rockchip,rk3588s";
+> > +
+> > +       aliases {
+> > +               mmc0 =3D &sdmmc;
+> Since the microSD card is on the carrier board, this alias should be
+> moved to the board DTS.
+>
+
+Good point, I'll move this to the board DTS. This is a remnant from
+copying aspects of the downstream DTS, and adapting it for mainline
+conventions.
+
+> > +               mmc1 =3D &sdhci;
+> Most of the other Radxa rk3588 boards have the eMMC alias to mmc0. Why
+> does this use another convention?
+>
+> > +               mmc2 =3D &sdio;
+> The sdio is not enabled. This alias won't be used.
+>
+
+These were copied from the downstream DTS. I'll go ahead and use the
+mainline convention here as well.
+
+> > +       };
+> > +
+> > +       leds {
+> > +               compatible =3D "gpio-leds";
+> > +
+> > +               led_sys: led-0 {
+> > +                       color =3D <LED_COLOR_ID_BLUE>;
+> > +                       default-state =3D "on";
+> > +                       function =3D LED_FUNCTION_HEARTBEAT;
+> > +                       gpios =3D <&gpio4 RK_PB4 GPIO_ACTIVE_HIGH>;
+> > +                       linux,default-trigger =3D "heartbeat";
+> > +               };
+> > +       };
+> > +};
+> > +
+> > +&cpu_b0 {
+> > +       cpu-supply =3D <&vdd_cpu_big0_s0>;
+> > +};
+> > +
+> > +&cpu_b1 {
+> > +       cpu-supply =3D <&vdd_cpu_big0_s0>;
+> > +};
+> > +
+> > +&cpu_b2 {
+> > +       cpu-supply =3D <&vdd_cpu_big1_s0>;
+> > +};
+> > +
+> > +&cpu_b3 {
+> > +       cpu-supply =3D <&vdd_cpu_big1_s0>;
+> > +};
+> > +
+> > +&cpu_l0 {
+> > +       cpu-supply =3D <&vdd_cpu_lit_s0>;
+> > +};
+> > +
+> > +&cpu_l1 {
+> > +       cpu-supply =3D <&vdd_cpu_lit_s0>;
+> > +};
+> > +
+> > +&cpu_l2 {
+> > +       cpu-supply =3D <&vdd_cpu_lit_s0>;
+> > +};
+> > +
+> > +&cpu_l3 {
+> > +       cpu-supply =3D <&vdd_cpu_lit_s0>;
+> > +};
+> > +
+> > +&gmac1 {
+> > +       clock_in_out =3D "output";
+> > +       phy-handle =3D <&rgmii_phy1>;
+> > +       phy-mode =3D "rgmii-id";
+> > +       phy-supply =3D <&vcc_3v3_s0>;
+> > +       pinctrl-names =3D "default";
+> > +       pinctrl-0 =3D <&gmac1_miim
+> > +                    &gmac1_tx_bus2
+> > +                    &gmac1_rx_bus2
+> > +                    &gmac1_rgmii_clk
+> > +                    &gmac1_rgmii_bus
+> > +                    &gmac1_clkinout>;
+> > +       status =3D "okay";
+> > +};
+> Should this be left disabled on the SoM dtsi? And only enabled on the
+> carrier board, if the carrier board has the RJ45 jack?
+> i.e. a handheld using the CM5 may not have ethernet
+> https://github.com/StonedEdge/Retro-Lite-CM5
+>
+
+I think that makes sense, not every carrier is guaranteed to have ethernet.
+
+> > +
+> > +&gpu {
+> > +       mali-supply =3D <&vdd_gpu_s0>;
+> > +       status =3D "okay";
+> > +};
+> > +
+> > +&hdmi0 {
+> > +       status =3D "okay";
+> > +};
+> This should be moved to the carrier board DTS where all the other
+> HDMI0 nodes are.
+>
+
+That makes sense, I'll make this change. Thanks for the feedback, Jimmy.
 
 
-
-On 6/6/25 17:21, Miguel Ojeda wrote:
-> On Fri, Jun 6, 2025 at 4:08 PM Michal Wilczynski
-> <m.wilczynski@samsung.com> wrote:
->>
->> You're right, thank you. The wrapping_mul is unsafe due to the overflow
->> risk you pointed out.
-> 
-> What do you mean by "unsafe"? `wrapping_mul` does not trigger UB and
-> it intentionally provides wrapping arithmetic.
-
-You're right, I should have said "mathematically incorrect" due to the
-overflow, not unsafe
-
-> 
->> The ideal solution would be to use the kernel's own mul_u64_u64_div_u64
->> helper function.
->>
->> Rust maintainers: This binding doesn't seem to be available yet. Would a
->> preparatory patch introducing a minimal rust/kernel/math.rs with  only
->> this binding be the best way to proceed? It seems like a useful utility
->> for more than just this driver.
-> 
-> Sounds good to me. We also recently had related discussions about
-> 64-bit divisions in 32-bit architectures and `const fn`s, you may want
-> to take a look:
-> 
->     https://lore.kernel.org/rust-for-linux/CANiq72ke45eOwckMhWHvmwxc03dxr4rnxxKvx+HvWdBLopZfrQ@mail.gmail.com/
->     https://lore.kernel.org/rust-for-linux/20250502004524.230553-1-fujita.tomonori@gmail.com/
->     https://lore.kernel.org/rust-for-linux/20250501015818.226376-1-fujita.tomonori@gmail.com/
-> 
-> I would also be careful choosing the names: if they are supposed the
-> same behavior, then please pick the same name as C. Otherwise, we
-> should avoid it. Either way, we should document them.
-> 
-> For instance, is this supposed to be `mul_u64_u64_div_u64`? I guess
-> not, given e.g. the `c == 0` case.
-
-Thanks ! Seems like providing a safe Rust wrapper for
-mul_u64_u64_div_u64 is the correct path forward. Since it's a standard
-helper in the PWM subsystem, using it would allow me to remove the
-temporary math implementation from this driver in favor of the kernel's
-optimized version.
-
-> 
-> I hope that helps & thanks!
-> 
-> Cheers,
-> Miguel
-> 
-
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Joseph
 
