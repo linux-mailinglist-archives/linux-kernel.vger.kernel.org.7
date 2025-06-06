@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-675305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963BEACFB8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:16:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6182BACFB8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E281F3AF9DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E51E3B020E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EF71E1C3A;
-	Fri,  6 Jun 2025 03:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CF61E9B3F;
+	Fri,  6 Jun 2025 03:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sn+yeTwm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csZSkkRy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F2729A2
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 03:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3031E5B82
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 03:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749179754; cv=none; b=dDCbTwmB5rIxL8X3ijpfrZDChofp1ETe2jZzvP03CKXSsb8B/7MuUSDtel5KVeAmM+WCyuWgIzezaeaUfYoilucbGtTQ5Koa3vY7nXsHWMe1SFrYtAimFukoY3amFYbFR6wbgEAknFtOEju78AiABEL7IBIyhavVjszvN5HWIlo=
+	t=1749179757; cv=none; b=lbVuh9hIaTZuSvBgjV+zrhl8scJnVNyGbPdyQTNSuvMNxDTEBP/WJLF3VM1Qx5z7KhcV4xMF9Bg/tQAGtc11VtEREZ8+zYozl7iFP0Fs+Yr4e/fkjbHTYcAL/Yvum5U9Qfbj0/xf2lftbZRTe04LCpK8fgQKst1sCudzpNQxIZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749179754; c=relaxed/simple;
-	bh=rFUH/WjWtJsebkZkqHw9z4PKcVgUSgJepocYqPbgZNg=;
+	s=arc-20240116; t=1749179757; c=relaxed/simple;
+	bh=aUrkhYNlXTJCWXCgbtnmm4zqDqOMSYCdnXZD4yzRPj8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ftKnVcMkVgjzjg3n6peYyaLK0VvmVS+/QA1M0f2Qt46vy4ENmbVtltz/mZzGh1g7R3B6nqnW9MsSiVL6fD+JeItNj3xFlIJ3V6YG3gKYpv8cGiQkFFhsZ3LIx/Pi5NBWb+afxygLD7Fpo0GVlqQScRFW/X6B71UgSNQVdgNTda0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sn+yeTwm; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=ujo8VcU2xfotxEPHEsa9Xhh+1igGOOujFzTGgjbi9Re8Sog5Ha0ucauMw3IEJBYVXPUTVMBPwCPkuziiba55ZCT5lmW+5cVe64jUwtmP+R/iZVm4ANRBiExEZGhSDjAcmTuCf/AKwlYsEaDCAm8MHsT+S5stJHVS0wTHhYhIC1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=csZSkkRy; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749179751;
+	s=mimecast20190719; t=1749179754;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w2uXb0O4PrtAILd3wFl5a6hCIiKKPh//OjNLuoh+Rbk=;
-	b=Sn+yeTwmzWgWqx5PvSdm3HOqx3rkwXvgdOQRSDVH8RpzmeIuOOv5VamP3ZoilAojcv/qV4
-	LQbQ+CLq4i+k/CmWupWX+yKeSD0w6vgU8WISfpajiwwE0/Ta7IIfxivuXA6klBTnEXkiFA
-	ISQYthUt3cqPrl+vmvWNj3VhyvvZy+8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=eJAGNO2ZGACYOax/SSfhQsIr4XXMxufpmtTjm3rXVzE=;
+	b=csZSkkRyn109LvnXwZ5j858c4m+uO2ObsMrjPkNcwkW6TpA5yxTLH4+JQyC1nlP84pEHD0
+	Iot4unDJP06fC8ELy8D3fAs5aE3Cs3lu3E3GmdDjxG9ZWbluX5VCe5zt72gDXEz/RfRamy
+	CavfbAuyOyRZ9qV7n9zkdHUD73mJWrQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-391-cbk4EkuZNwCLPYEJJZ4R_g-1; Thu,
- 05 Jun 2025 23:15:49 -0400
-X-MC-Unique: cbk4EkuZNwCLPYEJJZ4R_g-1
-X-Mimecast-MFC-AGG-ID: cbk4EkuZNwCLPYEJJZ4R_g_1749179748
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-m5Ax-cfrNvGUgB8n-0tV9w-1; Thu,
+ 05 Jun 2025 23:15:51 -0400
+X-MC-Unique: m5Ax-cfrNvGUgB8n-0tV9w-1
+X-Mimecast-MFC-AGG-ID: m5Ax-cfrNvGUgB8n-0tV9w_1749179750
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FA3C1956088;
-	Fri,  6 Jun 2025 03:15:48 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2F7E91800345;
+	Fri,  6 Jun 2025 03:15:50 +0000 (UTC)
 Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.88])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F3CF7195E74A;
-	Fri,  6 Jun 2025 03:15:46 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CD0D8195E74A;
+	Fri,  6 Jun 2025 03:15:48 +0000 (UTC)
 From: Waiman Long <longman@redhat.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -63,9 +63,9 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 1/3] debugobjects: Add ODEBUG_FLAG_NO_ALLOC to disable memory allocation
-Date: Thu,  5 Jun 2025 23:15:37 -0400
-Message-ID: <20250606031539.1004644-2-longman@redhat.com>
+Subject: [PATCH v2 2/3] debugobjects: Show the state of debug_objects_enabled
+Date: Thu,  5 Jun 2025 23:15:38 -0400
+Message-ID: <20250606031539.1004644-3-longman@redhat.com>
 In-Reply-To: <20250606031539.1004644-1-longman@redhat.com>
 References: <20250606031539.1004644-1-longman@redhat.com>
 Precedence: bulk
@@ -77,99 +77,74 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Some of the objects associated with debug_obj may be handled
-in a sensitive context that allowing debug_obj pre-allocation
-in debug_objects_fill_pool() may casue deadlock. Add a new flags
-parameter to the debug_obj_descr structure as well as adding the new
-ODEBUG_FLAG_NO_ALLOC flag to enable us to disallow memory allocation
-for those types of objects.
+In the rare case that debug_objects got disabled because we are running
+out of free debug objects, it is not easy to figure this out. Fix that
+by showing the state of "debug_objects_enabled" in the stats debugfs
+file as well as always printing a message in the console log.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/debugobjects.h |  6 ++++++
- lib/debugobjects.c           | 10 +++++-----
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ lib/debugobjects.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/debugobjects.h b/include/linux/debugobjects.h
-index 8b95545e7924..a058c7dba898 100644
---- a/include/linux/debugobjects.h
-+++ b/include/linux/debugobjects.h
-@@ -41,6 +41,7 @@ struct debug_obj {
-  * struct debug_obj_descr - object type specific debug description structure
-  *
-  * @name:		name of the object typee
-+ * @flags:		debug object flags
-  * @debug_hint:		function returning address, which have associated
-  *			kernel symbol, to allow identify the object
-  * @is_static_object:	return true if the obj is static, otherwise return false
-@@ -58,6 +59,7 @@ struct debug_obj {
-  */
- struct debug_obj_descr {
- 	const char		*name;
-+	unsigned long		 flags;
- 	void *(*debug_hint)(void *addr);
- 	bool (*is_static_object)(void *addr);
- 	bool (*fixup_init)(void *addr, enum debug_obj_state state);
-@@ -67,6 +69,10 @@ struct debug_obj_descr {
- 	bool (*fixup_assert_init)(void *addr, enum debug_obj_state state);
- };
- 
-+enum debug_obj_flags {
-+	ODEBUG_FLAG_NO_ALLOC = 0x1,	/* Disallow debug object pre-allocation */
-+};
-+
- #ifdef CONFIG_DEBUG_OBJECTS
- extern void debug_object_init      (void *addr, const struct debug_obj_descr *descr);
- extern void
 diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 7f50c4480a4e..52bc77b41f48 100644
+index 52bc77b41f48..df72bc49cc5d 100644
 --- a/lib/debugobjects.c
 +++ b/lib/debugobjects.c
-@@ -694,7 +694,7 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket
+@@ -125,6 +125,12 @@ static int __init disable_object_debug(char *str)
+ }
+ early_param("no_debug_objects", disable_object_debug);
+ 
++static void debug_objects_disable(const char *msg)
++{
++	debug_objects_enabled = false;
++	pr_warn("debug_objects disabled: %s\n", msg);
++}
++
+ static const char *obj_states[ODEBUG_STATE_MAX] = {
+ 	[ODEBUG_STATE_NONE]		= "none",
+ 	[ODEBUG_STATE_INIT]		= "initialized",
+@@ -690,7 +696,7 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket
+ 	}
+ 
+ 	/* Out of memory. Do the cleanup outside of the locked region */
+-	debug_objects_enabled = false;
++	debug_objects_disable("out of memory");
  	return NULL;
  }
  
--static void debug_objects_fill_pool(void)
-+static void debug_objects_fill_pool(bool no_alloc)
- {
- 	if (!static_branch_likely(&obj_cache_enabled))
- 		return;
-@@ -705,7 +705,7 @@ static void debug_objects_fill_pool(void)
- 	/* Try reusing objects from obj_to_free_list */
- 	fill_pool_from_freelist();
+@@ -1161,6 +1167,8 @@ static int debug_stats_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "on_free_list  : %u\n", pool_count(&pool_to_free));
+ 	seq_printf(m, "objs_allocated: %d\n", debug_objects_allocated);
+ 	seq_printf(m, "objs_freed    : %d\n", debug_objects_freed);
++	seq_printf(m, "debug_objects : %s\n", debug_objects_enabled ? "enabled"
++								    : "disabled");
+ 	return 0;
+ }
+ DEFINE_SHOW_ATTRIBUTE(debug_stats);
+@@ -1314,7 +1322,7 @@ check_results(void *addr, enum debug_obj_state state, int fixups, int warnings)
+ out:
+ 	raw_spin_unlock_irqrestore(&db->lock, flags);
+ 	if (res)
+-		debug_objects_enabled = false;
++		debug_objects_disable("selftest");
+ 	return res;
+ }
  
--	if (likely(!pool_should_refill(&pool_global)))
-+	if (likely(!pool_should_refill(&pool_global) || no_alloc))
- 		return;
+@@ -1486,11 +1494,8 @@ void __init debug_objects_mem_init(void)
+ 	cache = kmem_cache_create("debug_objects_cache", sizeof (struct debug_obj), 0,
+ 				  SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE, NULL);
+ 
+-	if (!cache || !debug_objects_replace_static_objects(cache)) {
+-		debug_objects_enabled = false;
+-		pr_warn("Out of memory.\n");
+-		return;
+-	}
++	if (!cache || !debug_objects_replace_static_objects(cache))
++		debug_objects_disable("out of memory");
  
  	/*
-@@ -734,7 +734,7 @@ __debug_object_init(void *addr, const struct debug_obj_descr *descr, int onstack
- 	struct debug_bucket *db;
- 	unsigned long flags;
- 
--	debug_objects_fill_pool();
-+	debug_objects_fill_pool(descr->flags & ODEBUG_FLAG_NO_ALLOC);
- 
- 	db = get_bucket((unsigned long) addr);
- 
-@@ -811,7 +811,7 @@ int debug_object_activate(void *addr, const struct debug_obj_descr *descr)
- 	if (!debug_objects_enabled)
- 		return 0;
- 
--	debug_objects_fill_pool();
-+	debug_objects_fill_pool(descr->flags & ODEBUG_FLAG_NO_ALLOC);
- 
- 	db = get_bucket((unsigned long) addr);
- 
-@@ -1000,7 +1000,7 @@ void debug_object_assert_init(void *addr, const struct debug_obj_descr *descr)
- 	if (!debug_objects_enabled)
- 		return;
- 
--	debug_objects_fill_pool();
-+	debug_objects_fill_pool(descr->flags & ODEBUG_FLAG_NO_ALLOC);
- 
- 	db = get_bucket((unsigned long) addr);
- 
+ 	 * Adjust the thresholds for allocating and freeing objects
 -- 
 2.49.0
 
