@@ -1,129 +1,164 @@
-Return-Path: <linux-kernel+bounces-675637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A669AD00ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258F7AD00F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE6E189592C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:00:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA32B16C994
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04912882A0;
-	Fri,  6 Jun 2025 10:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437762857CB;
+	Fri,  6 Jun 2025 11:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y7HvIGO6"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mguw66Xl"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C4220F09A
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 10:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464162B9BC;
+	Fri,  6 Jun 2025 11:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749207589; cv=none; b=vFBnGy40KvLzvPXx0NElCxBHMxq2pGmO8Y9nGEJ/glvoMbKipLQsjbPfPQexnqYBBs5F1ZxFdtve9VDorLEBJHii58AybVJ/JhqXlPsdeOoWbEPesYxPoNhaR4dqfgYHcGnp9pG7bVhcQ+jEbiuYK5pmX1qUQOV04BoF63Zyhdw=
+	t=1749207693; cv=none; b=H5qYuU2JVCAdXGAzTEI/r6w9T9+qHtQQO+T1K1qphdtatuIkn1fDrwKdkFkgbiUoB/KEjLaAI+6uTESCCTDKZ23ac2rN049S1I/IVr7qHth+pMceiIie6v4Vo3pWCMzxFewrvj46Ov8TyiGFLxhz35M1rkdXEzYvAMAB4DhwAUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749207589; c=relaxed/simple;
-	bh=eNvJDVx2RVD1ON1QjqqCkfACmTkFJYvAfRFH/oO/c8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKxm7S9z5CnH/1wijqI2KVsKRTyTwHmhfWKX1C87QVzHd7YkvTkIWZx9XnckPTXmibEE3BOnRMjqmHKEaohrumJwvvyC4xmGyC2zOmYpeLa+59IWQHfC0P0/prWankQIEZDjN9USvFDJOBeQHefgskeRU9NJ/D3xTXgqHE9h+1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y7HvIGO6; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55342f0a688so247102e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 03:59:46 -0700 (PDT)
+	s=arc-20240116; t=1749207693; c=relaxed/simple;
+	bh=xT5xCkZ1JFFONaYP0IT32OFGyChvPSzHHY99QK6deuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OeeUP28aK92SeakHYgqeRMdcvshC4d0DuR3ArS1CiaZNodMfgAraCMwaWPo/kkBT1Il0+YBWijZARjb82No4w3hysOE+0FcyFtkjQGh6SVMDzkHMcS2klhuTI4zKUHI8+IqQwt6v5E+FrqPeb8VGWFfAdi9cgcW98ukhnQwbdGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mguw66Xl; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235f9ea8d08so13239515ad.1;
+        Fri, 06 Jun 2025 04:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749207584; x=1749812384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gvqW3AWqkK+q0nQJutHUZ9u8mAXK0/731ZCrAoRGHHE=;
-        b=y7HvIGO6Qgb8Jd6cOhGPeEheZl0oTWJsquM7T8v1Pt4XRmNmpQzdBIKhcEGqV3RoRb
-         JzFKHSYxau83ee0ZkqjtQbQVm2lMOV5CH0r9qb0RaiakGI5CZvlGJANB/fgoswf5hPB6
-         VeHtydAr20LUS7q5LSYkezfHF2DCpH5h/5TglbOrd/BV0sTKZOk+1dpWjR2alnTmL039
-         idYPqOFYnwox9Nm7YaToTgDOwTTz5xf2gZo39GIL+oloHCNX0RrUsnx81FT5t5N5RCx0
-         2MfW2bBWTz0yNH4i5h9KIeYaxrq7qOczOk5bcXd+pd/roKChu/bG3NPMKw34oDIeWur5
-         3bIQ==
+        d=gmail.com; s=20230601; t=1749207690; x=1749812490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UDajbAe57kbFd3lsA+awvfcHj7NkUKCVzc3fJfrdtwM=;
+        b=Mguw66Xl1nByGQFsakpywgxn9pOYoxEp2R+WuBTCKhrR1dW5ZBVeJeEFCthtWjc9WN
+         d7DxT2fn3coYj3IXMChH8JKX33dPiKkPzoC4cJs54MtyBG2ELFkNDdicIthWGyK/FK6Y
+         bTRfNyZjbC+IjPtVNpL/aHY/+5GHv03FYni6H4idlVATX1ltkkTIhZJuc5TVa+r543RK
+         aC+GBQEH3fTMCtO1Xphq5IOfba8v2/p20i3fxRotty4izsdZTSLLZAm/2dkHuwI7hzeN
+         xcqdl8yWEagtXDks+20dq3vUMY8eoRf0WPX7az7d3dyTDvlgHdl3XTlmMF9vWyXxHa3R
+         TbtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749207584; x=1749812384;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gvqW3AWqkK+q0nQJutHUZ9u8mAXK0/731ZCrAoRGHHE=;
-        b=Iny33T7AiAM2hpAulUMYLhPqTxtkVYq7N0CD/SQPcTDK0Z7wSV+BN9t8fSbXKRs+qo
-         onscYwqm6Dv+SbsqwWua8KMEbas6UvZcesF9ECC1QLLFS+p7NRB3NsuHzSokLK1yOTTA
-         EagFa24bnrmAOPagq11K5Csbo6yc7qKYCgZYpiAxs/wq67AHHdEmHuIX6uSy7ucCIJ4t
-         KnifQ9nPjXwbVeO+GF+mP+tAl0jKXv7zr6a5hg8yuO95VmzFvjfAy1NImzNAEAzAuZso
-         IORMXMy9VOuVmCf74kyjTGWA5rvCPgzmbwU5XqZVw5shlkfmWJUBnUbdYLejx4HaXcHP
-         ZC4Q==
-X-Gm-Message-State: AOJu0YxahCynnhT9GS+mbFYnbNZaawC27J2jTzsfdqI5HMCeQs4p96bk
-	p7u4AIYPGoIrULMcblbHbs2szNMWjz5PmpGw9li6N6+VPhgsOcXRuL0NRmd1zSJmONo=
-X-Gm-Gg: ASbGncv1NB719md0qAup39sJXJadeTtNvA4gbyY5zW3uv+B7ZSZ1oL3tl1k9vKyNTS6
-	fquRLnJs89RLMbWdlfQPxd8qkbuD3wF2ykQ7xBQkvgCJW4zHBYCfn7D4Dr0s2TmuIE0c8zll7+f
-	5QvXK2DBPKbxca1+PDSw7XHLw2aDCXO3vnYjGWLcFcHZ0vI4/KPy07SL2urzyNFluDjDbBU9odk
-	98OsPhl/KRgVQvrqz5RfbPXyxuGMC5J5rirHQookAE9PcqdkuKYouziIf35NjAgn2zEdgX2BuSp
-	HwU8wzG1+F5vOv+GKA8s1EotsTbQktSCSWL1fRsamjYKniCJgbjUzHEPV13PC1JYRLWvI4qUiiX
-	FCfCKyj4tcZfcpvriqtOIJGy0vFTBUOa5Z4DZ9omd
-X-Google-Smtp-Source: AGHT+IF6VGZzfzzaonioCVFuOZMDtflg4UEsDYktUq+bINrW6ckDf4AUU0LdM6+SSpNaHgJWBn5jVg==
-X-Received: by 2002:a05:6512:401e:b0:54d:6dd3:614e with SMTP id 2adb3069b0e04-55366bd41d7mr243196e87.1.1749207584314;
-        Fri, 06 Jun 2025 03:59:44 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55367731877sm151482e87.223.2025.06.06.03.59.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jun 2025 03:59:42 -0700 (PDT)
-Message-ID: <877a72fa-cdae-4a66-9991-5ea86ef76aac@linaro.org>
-Date: Fri, 6 Jun 2025 13:59:41 +0300
+        d=1e100.net; s=20230601; t=1749207690; x=1749812490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UDajbAe57kbFd3lsA+awvfcHj7NkUKCVzc3fJfrdtwM=;
+        b=Q3pCZd6RJn+QNsazPTkiCzZ0vENod2zlf0oXQJeY0xTpVjtlQRjx33apDUIbtOh857
+         P/Vj4Fuq3KIjlnGwoNwCmvC1SG86uGIYIOC8n4TvpPLdpEwTCgCvckzjGtQHX0cCH6DO
+         GFK82LbXf7DJhkq1wDkd5rrVnki0LA0Mg1HgBoQ0wob1/yXEFB3tkxGAtXD+9k1Spm4K
+         J8ZcNq/ZiwHUzfrn8sdNTkOdvB1oIC8RrtxQBq9dHZYQpuMvYoaQhppwDTMIpiDJhj2i
+         ffZPV2oQa8cRXiXbQdoHEjLKW2wfWPUz2sRXxS1fC62eJCZLLS4Ftyd1Uh1ksD/xbQTM
+         qqyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1aEE/b/s50WWNisY63jpy4MlQgPSDzpX6SmNnt0Afvjo2Wj/SLLUudwl3TY4b5R76uNZg5LJwhDUGKaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8gycjU5OdXRvYY/XK0cPXZo036fj+hQDuGttxCG5mTpCQjoBO
+	WjHLZCayPoli63UZX+ozDsDhyKquOq85/TFoONwwCyy11ODUlDpGlg8E
+X-Gm-Gg: ASbGncsC6xGVbG3cDhIbj7lPTwyXnmgqlrntLHJKYnpL4rr1oPBtNwnwJUyFmn/tXw3
+	gbSU1LFk8qoLtn8gSiJgsgOuyrA4lNH86ySpDRxf8oM4oLBwMiWcKbHQzSB36qmye0Qgy4/TC6J
+	42M4SmO7/+TKTbhSBHpxITTApUbs/VxaF7viby2n4qPVOFB2fwo0q27sZwgTiN/BsjWhJP0y1df
+	KsKmmwnpz3yFaWV5FgUwOgqYXZmleuKymQmVypqk2DNdh+gh3qOQVa68MlH3kXTdwth6Ur/6GN6
+	vwFDIxHCNFqD5j77lc4Q9zSgM1zA+CxGmUUX1afR3zzRM/uFdBcYZEvv1Uq930i2tGoQCA==
+X-Google-Smtp-Source: AGHT+IEuQ5XKtuQPYr1CK/mvEDG3WWgyFUsrOC+Ax+xUPhXLsT1tDc1xNFSLcRAlbvPTptb4pA5B5g==
+X-Received: by 2002:a17:902:da4b:b0:234:a66d:cce5 with SMTP id d9443c01a7336-23601ed6398mr45797085ad.46.1749207690331;
+        Fri, 06 Jun 2025 04:01:30 -0700 (PDT)
+Received: from victorshih.. ([2402:7500:477:464b:b7fc:d546:e798:4fbc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603406aa9sm10095565ad.188.2025.06.06.04.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 04:01:29 -0700 (PDT)
+From: Victor Shih <victorshihgli@gmail.com>
+To: ulf.hansson@linaro.org,
+	adrian.hunter@intel.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	benchuanggli@gmail.com,
+	ben.chuang@genesyslogic.com.tw,
+	HL.Liu@genesyslogic.com.tw,
+	Greg.tu@genesyslogic.com.tw,
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Subject: [PATCH V3 0/3] Adjust some error messages for SD UHS-II initialization process
+Date: Fri,  6 Jun 2025 19:01:18 +0800
+Message-ID: <20250606110121.96314-1-victorshihgli@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] media: qcom: camss: Add support for MSM8939
-Content-Language: ru-RU
-To: vincent.knecht@mailoo.org, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20250602-camss-8x39-vbif-v4-0-32c277d8f9bf@mailoo.org>
- <20250602-camss-8x39-vbif-v4-2-32c277d8f9bf@mailoo.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250602-camss-8x39-vbif-v4-2-32c277d8f9bf@mailoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello Vincent.
+From: Victor Shih <victor.shih@genesyslogic.com.tw>
 
-On 6/2/25 20:27, Vincent Knecht via B4 Relay wrote:
-> From: Vincent Knecht <vincent.knecht@mailoo.org>
-> 
-> The camera subsystem for the MSM8939 is the same as MSM8916 except with
-> 3 CSID instead of 2, and some higher clock rates.
-> 
-> As a quirk, this SoC needs writing values to 2 VFE VBIF registers
-> (see downstream msm8939-camera.dtsi vbif-{regs,settings} properties).
-> This fixes black stripes across sensor and garbage in CSID TPG outputs.
-> 
-> Add support for the MSM8939 camera subsystem.
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+Summary
+=======
+It is normal that errors will occur when using non-UHS-II card to enter
+the UHS-II card initialization process. We should not be producing error
+messages and register dumps. Therefore, switch the error messages to debug
+mode and register dumps to dynamic debug mode.
 
-There was a preceding and partially reviewed changeset published on
-linux-media [1] before v1 of the MSM8939 platform support in CAMSS,
-due to a merge conflict this platform changeset should be rebased IMHO.
+Patch structure
+===============
+patch#1:    for core
+patch#2-#3: for sdhci
 
-[1] https://lore.kernel.org/all/20250513142353.2572563-4-vladimir.zapolskiy@linaro.org/
+Changes in v3 (June. 06, 2025)
+* Rebase on latest mmc/next.
+* Patch#2: Separate the helper function in V2 patch#2 into V3 patch#2.
 
---
-Best wishes,
-Vladimir
+----------------- original cover letter from v2 -----------------
+Summary
+=======
+It is normal that errors will occur when using non-UHS-II card to enter
+the UHS-II card initialization process. We should not be producing error
+messages and register dumps. Therefore, switch the error messages to debug
+mode and register dumps to dynamic debug mode.
+
+Patch structure
+===============
+patch#1: for core
+patch#2: for sdhci
+
+Changes in v2 (May. 23, 2025)
+* Rebase on latest mmc/next.
+* Patch#1: Drop the use of DBG macro and use pr_debug() instead.
+* Patch#2: Drop the use of DBG macro in some function
+           and use pr_debug() instead.
+
+----------------- original cover letter from v1 -----------------
+Summary
+=======
+It is normal that errors will occur when using non-UHS-II card to enter
+the UHS-II card initialization process. We should not be producing error
+messages and register dumps. Therefore, switch the error messages to debug
+mode and register dumps to dynamic debug mode.
+
+Patch structure
+===============
+patch#1: for core
+patch#2: for sdhci
+
+Changes in v1 (May. 16, 2025)
+* Rebase on latest mmc/next.
+* Patch#1: Adjust some error messages for SD UHS-II cards.
+* Patch#2: Adjust some error messages and register dump for SD UHS-II card
+
+Victor Shih (3):
+  mmc: core: Adjust some error messages for SD UHS-II cards
+  mmc: sdhci: Add a helper function for dump register in dynamic debug
+    mode
+  mmc: sdhci-uhs2: Adjust some error messages and register dump for SD
+    UHS-II card
+
+ drivers/mmc/core/sd_uhs2.c    |  4 ++--
+ drivers/mmc/host/sdhci-uhs2.c | 20 ++++++++++----------
+ drivers/mmc/host/sdhci.h      | 16 ++++++++++++++++
+ 3 files changed, 28 insertions(+), 12 deletions(-)
+
+-- 
+2.43.0
+
 
