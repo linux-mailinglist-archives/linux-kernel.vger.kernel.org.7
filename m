@@ -1,142 +1,191 @@
-Return-Path: <linux-kernel+bounces-675306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C28ACFB8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2833AACFB93
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 05:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 460D63AFC57
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD99F177CCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4424D1E9B2F;
-	Fri,  6 Jun 2025 03:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E453661FCE;
+	Fri,  6 Jun 2025 03:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eVoibdGG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GLK+HJHh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2AB1E5B7B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 03:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4813C465
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 03:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749179757; cv=none; b=Z/hvj1G0Sk+6QsX/16RhXhN+gWoOGzkUHSFb95aWV7SGbIJHUsID/d4nITAmfNbQye2vp/Us4rwxiwr+kWwc2kYpF//1ac3SFYocPkk1T4QI+oE/1XXWIMRllocmy2+E0o+xVSMXRBG2X93VGvpikVCntpfwy+C7igvRSuaVuSA=
+	t=1749179933; cv=none; b=fYdoLRH6mcED/qarBlDncvsg24XgdVtFSvXBD5SsqRPWpo0a/9ERJZj3YVOxRqPqgZPe3/dLmmYhQYiX9QSDPBj+7PkiBY5B8xwrZRj7gpO1GS/DW8uNv/8rkC8UgCBEAoNuY1IGaKoFQCGA0s9H/33HRTUU0axO+kXzalHHa1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749179757; c=relaxed/simple;
-	bh=Lmu043ttmoNqgiYahD+6aywyp8FaBNBKAT+/DxnS4+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UBrJMpkohhT+B1RZnqrTu5fKKkZpySrYC6THywjhhTtobkqiK8GNbBaOjgsYLaf1rspSxuaAL0ythiEVWqcs5mBKGMGm2tL5avYOcv8RJ8r0SkR9wLHi9cf7NOx22fkqUytL3gOTDIP2zc6SSHjW7FD92YcoFO0xYU1s8VcSEvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eVoibdGG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749179754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InNfZwJnSoubR+c9L0hThUN+6+PZmB6lqdOn6p8BxJI=;
-	b=eVoibdGGZysfxSUXz5oeIBV+laYuOZtI39eMBdDeu35tAweUb+exVRKjHD/MbuzerfBgcp
-	i/QXIs1JiwQX2UO2SOvIs/zei7o4gMmhYcFuCrNh5y4CUAnNC4svBZg/UY1+y1F0l4b1Z9
-	Ra9M+ih8BiDqoY+5Z8+cJOSFuT4hgqU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-670-m8Jdkil0NHaXN8Hm38u2rQ-1; Thu,
- 05 Jun 2025 23:15:53 -0400
-X-MC-Unique: m8Jdkil0NHaXN8Hm38u2rQ-1
-X-Mimecast-MFC-AGG-ID: m8Jdkil0NHaXN8Hm38u2rQ_1749179752
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 22ACD1956087;
-	Fri,  6 Jun 2025 03:15:52 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.88])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7CECE195E74A;
-	Fri,  6 Jun 2025 03:15:50 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 3/3] timers: Disable memory pre-allocation of timer debug objects
-Date: Thu,  5 Jun 2025 23:15:39 -0400
-Message-ID: <20250606031539.1004644-4-longman@redhat.com>
-In-Reply-To: <20250606031539.1004644-1-longman@redhat.com>
-References: <20250606031539.1004644-1-longman@redhat.com>
+	s=arc-20240116; t=1749179933; c=relaxed/simple;
+	bh=2i5oAtsOhCfuVkh3RFLLkb69laqFzI3eanFQVkoVsE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzrjrHFkEuPwWOtjrA7dXIO5Z/PQnjgCRYFgg/1mlDQsIjnO2O+rtJZsbAiBWGQij1NQ/8cjAz2arfmkbUwmHaqEKbW8xvu039a51PJLLSkZFM43atO7k4E+8nCF11Vq/VLGK+KZmuVtvQBXGKu8KfEf5b35QAGOfxxNetLiEuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GLK+HJHh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555H1BYC027543
+	for <linux-kernel@vger.kernel.org>; Fri, 6 Jun 2025 03:18:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=3++GTe67hezLZxTd923ZZK6/
+	2HCYgNl/NqmTLv8mn6g=; b=GLK+HJHhTMjunX+8wZrkV1MHVFeOYyzomtY3fzTc
+	YfBbj3zcxQdBiwlYO5lUA/fdID7nv1x9tsBDSySDmgKfPJAUbsW9rnCaGhadcKFm
+	yGriMz10lMh66ygUlLQBhbDVK17ObIzL7/1JPgHoqnqUwizzQRiQzzWQPpFeO76W
+	8iopsW9+hlXG6dqxZUU5ydUcDZJFXZH+4/W7g5LiCbnwQLt9C3bo/+zrXsuV2CH7
+	Y8YE+Ixf4O9KJzfxs15piC5urKt9d8BrBep79bv6u9iDBxbx//2BzvyBl+LFf65r
+	4hfdUZLgWR4aQyDErKIPp4FhAdl4QMUfUtmvvcI08j/I2A==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8tb9tj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 03:18:50 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c760637fe5so272303585a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Jun 2025 20:18:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749179929; x=1749784729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3++GTe67hezLZxTd923ZZK6/2HCYgNl/NqmTLv8mn6g=;
+        b=j6/Blcn52tAMiwuDKPTPTmRwDE6WGVJdS5d553aQrqTojj/hAVza7ubEUlc7g/Vrm2
+         9eWSnyYuWhTLWKUntS6gdClGMpgOrn7Sq00JCqd/oFypwe3u3OGTPmze51nt7hO0apq/
+         v5n0KmSLDd8Hngm9reEuBGFNYXin5fnrDGWgsZELpNpk/fX+PwFWAP7pppMm5DaLUTWb
+         cmJPUwbVhQBed/AVIK87Gt9V5qBa1TFJbB/dovnx8gGBn/O2vHpja7lVKQTq9vPwmSfX
+         dCubeRZDtwZoHWD2eZkLxmYEqus4Agy4JfhX6CYO3I9evGXpEVW68/LDb6F+e72NEBEn
+         pHGg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1cFJJSjDiu+8BrsPZxfHMsxyf7jx9Pg531errbA70zxCwzhLgbX3hSGR1eND2r4i7ZKS/rno6tYPf4RQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/i+9AkqkX1Ww1Z7QDrysBL8i/78Za5tx0MXmauA+two4koT8t
+	y6bUVQWbvsombv0odvx455GcOWr1TmWfZL2Lca+FnJBEZLYe+U0wJYjEeO/hXU5QiB9cSOKUyeO
+	Hg62tdrODsCO6gDfvoKzZLGoFpEkVXgL7FlPOT0IeEJ97HdNfiDGMbHzdkIOUjxIdb7Q=
+X-Gm-Gg: ASbGncuz+ykC0jBHgx2a+DR8Zpi6AiLm6YrWQZV4U2MINVJErMoTrTQCaqiiD+hO1ZD
+	Wr3vFfFOuzAQmPVxo09s2foYgQRz+XZFpFS4lraf3XW/xMwIzyg8HSSKg+WL+0ROpC1SMl6Mz7p
+	ISOLBtx39EegGYW1CwYXpAxOc92HvA9IvAAfFwLAsPtkCy5X3leCMzaa88aY+erawgWKKWtaGtd
+	wxoq9Rd9SXKJ9/8oNNN+PVvMoSNoT7PMG09a8N7rUW7Uy0lakPvgtngcS6B/9Fs8AdccRgXh+P0
+	yePoppHuvmD0/UesoRJir1GQVA89Z+Y2SHuTSSB/cnDqhCQNJEmAuptMwo20m9ly9/QkGVlDL1w
+	=
+X-Received: by 2002:a05:620a:4626:b0:7c3:cd78:df43 with SMTP id af79cd13be357-7d2298e0a5fmr274081685a.58.1749179929193;
+        Thu, 05 Jun 2025 20:18:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8Io/sF3Ee5QrYXTVtaN735LCcylkmkYl4+zwncKIv8c1TCaxXx167NJ16erArYsEsd/Wl+A==
+X-Received: by 2002:a05:620a:4626:b0:7c3:cd78:df43 with SMTP id af79cd13be357-7d2298e0a5fmr274079985a.58.1749179928795;
+        Thu, 05 Jun 2025 20:18:48 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5536772ac21sm74495e87.182.2025.06.05.20.18.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 20:18:46 -0700 (PDT)
+Date: Fri, 6 Jun 2025 06:18:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@foundries.io>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Doug Anderson <dianders@chromium.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] soc: qcom: mdt_loader: Ensure we don't read past the
+ ELF header
+Message-ID: <qnqbc4n2ijjtfim77b32xlz7iz2durauv4h5p5h37gmxfpk3gm@5ijes7mg3ahr>
+References: <20250605-mdt-loader-validation-and-fixes-v1-0-29e22e7a82f4@oss.qualcomm.com>
+ <20250605-mdt-loader-validation-and-fixes-v1-1-29e22e7a82f4@oss.qualcomm.com>
+ <bsnn6xpkubifuwxz4kccvves3ifq4ocp53qmbobv6ilmnfuh7x@eejawp7thorm>
+ <4ruhapzeti5hiufdkws27w2q3h4psfcpmcfsqrhsnyr2u4sktp@5itmiqxydwrj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ruhapzeti5hiufdkws27w2q3h4psfcpmcfsqrhsnyr2u4sktp@5itmiqxydwrj>
+X-Authority-Analysis: v=2.4 cv=eJQTjGp1 c=1 sm=1 tr=0 ts=68425e1a cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8
+ a=6v-l1fwnC9SIymP-7WkA:9 a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: _ZFu-giJ5vRHDMR4CITznJMIqYzPfMSw
+X-Proofpoint-GUID: _ZFu-giJ5vRHDMR4CITznJMIqYzPfMSw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDAzMCBTYWx0ZWRfX2XB+8CoIUcFz
+ BLsZKZ+ypK8zyjeSum3CnhHA0wJK2fqpweeV/Jo3fmlyNFbb4CyZrHV9bPuFAUFzFh601rt473g
+ RnBHG4lv0FUtyLmrRpToWtml+swBRcxsMTKhQg25mf+Lj06PrykEeYw+jtIWA4FoWzMXeoMvAIX
+ A52BLR8YqA9L7SOfXKwlIMe7ZhpX+LEhhUIxoYNnrMCWfmGOCXnPTE9bInL1ueRfegDduFKoclS
+ T9BYfjv2pTyjI0ZgzyUQKF4REc2y7feGZdql1f0CrdSytQ8iLfOGDyGhyPmovU/k4rUViSAByjE
+ tMjJ43Yv9D/WfP452II7jqhrRnazapb8iKHcOBCV/Yp/TtT3VGfxfzuDJgfNaA8w+1HllBlnNr0
+ B67KPg8+64ymN/d9gc+0ps5EplY8X4SVirQjTyDmUhNy9Opf12bjyTQwfWoVi19+uoee+YSg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-06_01,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
+ phishscore=0 mlxscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506060030
 
-A circular locking dependency lockdep splat was hit recently with a
-debug kernel. The dependency chain (in reverse order) is:
+On Thu, Jun 05, 2025 at 02:29:53PM -0500, Bjorn Andersson wrote:
+> On Thu, Jun 05, 2025 at 06:57:41PM +0300, Dmitry Baryshkov wrote:
+> > On Thu, Jun 05, 2025 at 08:43:00AM -0500, Bjorn Andersson wrote:
+> > > When the MDT loader is used in remoteproc, the ELF header is sanitized
+> > > beforehand, but that's not necessary the case for other clients.
+> > > 
+> > > Validate the size of the firmware buffer to ensure that we don't read
+> > > past the end as we iterate over the header.
+> > > 
+> > > Fixes: 2aad40d911ee ("remoteproc: Move qcom_mdt_loader into drivers/soc/qcom")
+> > > Cc: <stable@vger.kernel.org>
+> > > Reported-by: Doug Anderson <dianders@chromium.org>
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> > > ---
+> > >  drivers/soc/qcom/mdt_loader.c | 37 +++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 37 insertions(+)
+> > > 
+> > > diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> > > index b2c0fb55d4ae678ee333f0d6b8b586de319f53b1..1da22b23d19d28678ec78cccdf8c328b50d3ffda 100644
+> > > --- a/drivers/soc/qcom/mdt_loader.c
+> > > +++ b/drivers/soc/qcom/mdt_loader.c
+> > > @@ -18,6 +18,31 @@
+> > >  #include <linux/slab.h>
+> > >  #include <linux/soc/qcom/mdt_loader.h>
+> > >  
+> > > +static bool mdt_header_valid(const struct firmware *fw)
+> > > +{
+> > > +	const struct elf32_hdr *ehdr;
+> > > +	size_t phend;
+> > > +	size_t shend;
+> > > +
+> > > +	if (fw->size < sizeof(*ehdr))
+> > > +		return false;
+> > > +
+> > > +	ehdr = (struct elf32_hdr *)fw->data;
+> > > +
+> > > +	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG))
+> > > +		return false;
+> > > +
+> > > +	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
+> > 
+> > Nit, this should be a max(sizeof() and ehdr->e_phentsize.
+> > 
+> 
+> Hmm, I forgot about e_phentsize.
+> 
+> But the fact is that the check matches what we do below and validates
+> that we won't reach outside the provided buffer.
+> If e_phentsize != sizeof(struct elf32_phdr) we're not going to be able
+> to parse the header.
+> 
+> Not sure if it's worth it, but that would make sense to change
+> separately. In which case ehdr->e_phentsize * ehdr->e_phnum would be the
+> correct thing to check (no max()). Or perhaps just a check to ensure
+> that e_phentsize == sizeof(struct elf32_phdr)?
 
-  -> #3 (&zone->lock){-.-.}-{2:2}:
-  -> #2 (&base->lock){-.-.}-{2:2}:
-  -> #1 (&console_sch_key){-.-.}-{2:2}:
-  -> #0 (console_owner){..-.}-{0:0}:
+I think it's the best option.
 
-The last one is from calling printk() within the rmqueue_bulk() call in
-mm/page_alloc.c. The "base->lock" is from lock_timer_base() and first
-one is due to calling add_timer_on() leading to debug_object_activate()
-doing actual memory allocation acquiring the zone lock.
-
-The console_sch_key comes from a s390 console driver in driver/s390/cio.
-The console_sch_key -> timer dependency happens because the console
-driver is setting a timeout value while holding its lock. Apparently it
-is pretty common for a console driver to use timer for timeout or other
-timing purposes. So this may happen to other console drivers as well.
-
-One way to break this circular locking dependency is to disallow any
-memory allocation when a timer debug object is being handled. Do this by
-setting the ODEBUG_FLAG_NO_ALLOC flag in the timer_debug_descr structure.
-
-The figures below show the number of times the debug_objects_fill_pool()
-function has reached the statement right before and after the no_alloc
-check in initial bootup and after running a parallel kernel build on
-a 2-socket 96-threads x86-64 system.
-
-			 Before      After     non-timer %
-		 	 ------      -----     -----------
-  Initial bootup	  150,730     148,198     98.3%
-  Parallel kernel build 5,974,464   5,893,116     98.6%
-
-So from object pre-allocation perspective, timer debug objects represent
-just a small slice of the total number of debug objects to be processed.
-
-The allocation of debug_object to the global pool happens when its object
-count falls below the (256 + 16 * num_possible_cpus) threshold. Even
-then, there may still be free objects available in the percpu pool. So
-the chance that debug_objects gets disabled because it is running out
-of free debug_object should be minimal.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/time/timer.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 553fa469d7cc..e0be64591e43 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -775,6 +775,7 @@ static bool timer_fixup_assert_init(void *addr, enum debug_obj_state state)
- 
- static const struct debug_obj_descr timer_debug_descr = {
- 	.name			= "timer_list",
-+	.flags			= ODEBUG_FLAG_NO_ALLOC,
- 	.debug_hint		= timer_debug_hint,
- 	.is_static_object	= timer_is_static_object,
- 	.fixup_init		= timer_fixup_init,
 -- 
-2.49.0
-
+With best wishes
+Dmitry
 
