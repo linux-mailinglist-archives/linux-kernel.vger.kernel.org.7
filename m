@@ -1,128 +1,212 @@
-Return-Path: <linux-kernel+bounces-675771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F72AD02BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:04:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71B9AD02C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86F9175BF3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:04:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E7BE7AA5DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DFB2882CA;
-	Fri,  6 Jun 2025 13:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6889289344;
+	Fri,  6 Jun 2025 13:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZmIzByxE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIPZeR4/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F3B3234
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 13:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F90288CA1;
+	Fri,  6 Jun 2025 13:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749215037; cv=none; b=pSrGZiK1aCAhflQEwTaGMp2T2dz98wlsggyvBMLVcsFHs+Zs4/MXkCrAB6Vagypf2xRtYm4cM9baUja1OAiTVm7X4nuS2BDPn27s2SOJ3oZWkVkWcvLKWOVfCVfkPOGK/IDB1Xdh6o8LmrjWoqkNfD7LxFSZqrTC3b1u/C7I7Nw=
+	t=1749215079; cv=none; b=ZJDzk/DPZk4NihEhADrqsEotFxjoWf4nHJ7aePcdfcBqeGymCCATuIJIm4g3d1cjI4TiKDGFVsLsiFZ0OJdJc1L1kfd/V8gGTLjMrom5BUT2fKD4DD9xdGVRoZwzr0quicWcTrrV1zq+cA2SSCxv4E9G4WQHIqluPeQ16OAWimE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749215037; c=relaxed/simple;
-	bh=6jsVoGWo/dSumAGNOxr7UqFGaeO67eYLVmbBwUc5Zos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsXvVxJcqdvbIF9nY1JmAgTWjJXeqPDmIoJmUjqIleUutiEY04+XEyj5ExFOHJPHCk0nQtp6KXz1mog+lv0Gmu/B5UHoekQw65cFxfUJBI9IbOiOwlOeM7ujl+h8mmiX+HB/MttEh2ob3FK30Jtp/qQmFYkYEbTx+n/j70c4vwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZmIzByxE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749215034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HArWEAkGZW4SwR4M4QK2P5FGuqV07y/wP1+Sj+8Jiv8=;
-	b=ZmIzByxEBd9h3xSVfz7lMfcoNvu7mm0WozdKdn5P7/nPuANo3Vq28Y7gSOf8U+K3+dsVS8
-	vLvyQQM4/zq+FoPeAUuLACXO9V/MO16yDqvtKsUB5VvxiTysOhL+jj1OPhsLgIY+/AaWGM
-	ZRAUzfhoSpyDhWLDajtUpfbesmEsPss=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-UhNdEOdCMZ20aWQ4sm_L4w-1; Fri, 06 Jun 2025 09:03:52 -0400
-X-MC-Unique: UhNdEOdCMZ20aWQ4sm_L4w-1
-X-Mimecast-MFC-AGG-ID: UhNdEOdCMZ20aWQ4sm_L4w_1749215032
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6face35aad6so19183236d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 06:03:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749215032; x=1749819832;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HArWEAkGZW4SwR4M4QK2P5FGuqV07y/wP1+Sj+8Jiv8=;
-        b=Q3Z37ncyYgVr9TahVYoByda+LNkGMaJtxXD8u1MGzFJ0U8a2b2J+bEbHVE+L7em5gf
-         gNu5euEBCOuWurUzUrpZMCGZ14hlMQ79KMVHjrpg2KxDA/WuzoesmJH3KEIm518xBOxf
-         P2a0GquuO0ztkpNpzduXIZXoJhxPHfdfKhDqEJomae+/E7jipcZay9n+j17mrqi0hCsd
-         WQlFbAuWk/7WZiTWdSr4W4WnG6zP0yQPfTTe+56t6pm3Gf9IMZymDoJMmjAfjaXWrVxp
-         u69+Pq+H7wm+ikDGStzBkhSmA3aQNY4EVLxsMvF9Gai5JNSoolKob7DOPvHvU1XRG1/z
-         QHxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3z5jcqZyOn13EuMT9i7hAM1huLeH3w8HYoEjPVDD3Gu+roMFaU6NDl4Z2cUJhzTmFGslPJ4TnODmfB2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8zUubHRAJ6ct1H5FtDHULbFwx2QcabGoKo3yOxY77gcwveUBv
-	WTw9xUHaPzKQRmswn4XUEDoDuG9N60e+MGhXUW1sXzkQ0rjyLI8bfjQSdOV/UIhVoDeMSZIOLcr
-	i/Kd0bwMs0aLuxdf+jfX/26QgL1hfTQbbNEtYBqGFFbwMK0iL/gSTBOU3wyO6HrDKcA==
-X-Gm-Gg: ASbGncsK6MDG3oRRcMgXtdk6oLjQaqfQRFlGKtImNn/0Wg9v/mbIYSVcmL8r5gpNLWO
-	T0wFVZhetpL8+ihiQuMBD+6CxSA06lBflD0B0HwmGJew+t1HhgSVDV1IOY6yexrmKuHm4M2kBjM
-	dD5/WTOayhylR6TZLmrKR0JEjqUaxJGzYT+8GoeXQasvQupv/6sdPd3J4Bg2zk1vIba8RdycbjA
-	FHAT9PbShl6Tevi3Ea0EM8nGHY0pmEdiF7dYZOpLh0veGOHkXYIqRsyZnayBcz4K5hv64yVXe83
-	a7c=
-X-Received: by 2002:a05:6214:21ad:b0:6e4:2f7f:d0bb with SMTP id 6a1803df08f44-6fb08f4307amr50047306d6.4.1749215032192;
-        Fri, 06 Jun 2025 06:03:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9BHHM9w2tx8ul52pjQVd+s0UKMZd6LqtfDIdl4wDxhdTCW98c/Y1W4GzTHfIwhEhwfgDeWw==
-X-Received: by 2002:a05:6214:21ad:b0:6e4:2f7f:d0bb with SMTP id 6a1803df08f44-6fb08f4307amr50046486d6.4.1749215031425;
-        Fri, 06 Jun 2025 06:03:51 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ab8a19sm10972746d6.8.2025.06.06.06.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 06:03:50 -0700 (PDT)
-Date: Fri, 6 Jun 2025 09:03:48 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Tal Zussman <tz2294@columbia.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Pavel Emelyanov <xemul@parallels.com>,
-	Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
- different userfaultfd
-Message-ID: <aELnNH5LTFHmtdfQ@x1.local>
-References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
- <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu>
- <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
- <aEBhqz1UgpP8d9hG@x1.local>
- <0a1dab1c-80d2-436f-857f-734d95939aec@redhat.com>
+	s=arc-20240116; t=1749215079; c=relaxed/simple;
+	bh=19Tko733gYHMDfnrQv1Q4FwJ91x3JsEzgx4dOWMr4Bo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YECyscoRwQWMxshUQvXNVVXC7QSBxLd5mAUWpVcN6k+5Db0Y685C9hDC84JI7Mw6iaFFU938LZIU1cZA24a62a7685CCdlhzgN0JcjObzdg+U+yRhmOsTe3JJty65TpA1Vd7miL3YaF8SUt9b3YGp2WWZN8zmsJfMzqLk6QPzfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIPZeR4/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A1EC4CEEB;
+	Fri,  6 Jun 2025 13:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749215077;
+	bh=19Tko733gYHMDfnrQv1Q4FwJ91x3JsEzgx4dOWMr4Bo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cIPZeR4/g3GjWpgZo/HgiJpA4K9hPy1NBzMxnwDnffyXxAtuw9gp/KRgVHUCQkGDj
+	 eryUoDW6DKpA3pK2PTPbZgIRLsgmNcLUli3sC679bCSGVr/JdqK0LZ8/9gPzOoteeV
+	 gOn7FvWKN9THKQZv1xvQENNMzh14SKcitL27l0U0xPGupRi4mFu5dkZHjfQJde5hah
+	 S7CimZ7kQ0Vca7bw2ZjhV7SjbPkI6hP1yZAkGRlON8ETvjVZhJ6pP4WNVk1Kdrj1Ki
+	 CKntD4+Qkouij+dtu66gfhsDBwGQNlmjQETk7OnpTRgpHJAhXMxMMq07eiF6XcZig5
+	 5Kg5WeO9Vc40w==
+Message-ID: <b207cba7-47d3-43f4-8d59-38df9ec4eec2@kernel.org>
+Date: Fri, 6 Jun 2025 15:04:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0a1dab1c-80d2-436f-857f-734d95939aec@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] dt-bindings: crypto: Document support for SPAcc
+To: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, herbert@gondor.apana.org.au, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, Ruud.Derwig@synopsys.com,
+ manjunath.hadli@vayavyalabs.com, adityak@vayavyalabs.com,
+ Bhoomika Kadabi <bhoomikak@vayavyalabs.com>
+References: <20250602053231.403143-1-pavitrakumarm@vayavyalabs.com>
+ <20250602053231.403143-2-pavitrakumarm@vayavyalabs.com>
+ <fae97f84-bdb9-42de-b292-92d2b262f16a@kernel.org>
+ <CALxtO0mpQtqPB0h_Wff2dLGo=Mxk02JJQkK4rn+=TuScNdSfxQ@mail.gmail.com>
+ <3570be5b-cb20-4259-9a9b-959098b902d0@kernel.org>
+ <CALxtO0mH=GwhQxQBsmMQYd+qgAue9WxXN1XWo9BncVJvJk6d8A@mail.gmail.com>
+ <cd6e92af-1304-4078-9ed7-de1cb53c66da@kernel.org>
+ <CALxtO0mVMTWqidSv7LQSQd-rA_TmJy_0xgBSd=mP27kg=AXQRg@mail.gmail.com>
+ <e08b2f76-17b1-4411-a428-b2f0f8a7d7fd@kernel.org>
+ <CALxtO0nReqeGKY+BNCBD10KSGttxxCrFzczxPjfrQM0eXv9Eug@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALxtO0nReqeGKY+BNCBD10KSGttxxCrFzczxPjfrQM0eXv9Eug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 05, 2025 at 11:06:38PM +0200, David Hildenbrand wrote:
-> Not sure if relevant, but consider the following:
+On 06/06/2025 14:58, Pavitrakumar Managutte wrote:
+> On Fri, Jun 6, 2025 at 4:55 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 06/06/2025 13:02, Pavitrakumar Managutte wrote:
+>>> Hi Krzysztof,
+>>>   Appreciate your inputs and feedback. My comments are embedded below.
+>>>
+>>> Warm regards,
+>>> PK
+>>>
+>>> On Wed, Jun 4, 2025 at 7:37 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>> On 04/06/2025 14:20, Pavitrakumar Managutte wrote:
+>>>>>>
+>>>>>>>>> +
+>>>>>>>>> +  snps,vspacc-id:
+>>>>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>>>>> +    description: |
+>>>>>>>>> +      Virtual SPAcc instance identifier.
+>>>>>>>>> +      The SPAcc hardware supports multiple virtual instances (determined by
+>>>>>>>>> +      ELP_SPACC_CONFIG_VSPACC_CNT parameter), and this ID is used to identify
+>>>>>>>>> +      which virtual instance this node represents.
+>>>>>>>>
+>>>>>>>> No, IDs are not accepted.
+>>>>>>>
+>>>>>>> PK: This represents the specific virtual SPAcc that is being used in
+>>>>>>> the current configuration. It is used to index into the register banks
+>>>>>>> and the context memories of the virtual SPAcc that is being used. The
+>>>>>>> SPAcc IP can be configured as dedicated virtual SPAccs in
+>>>>>>> heterogeneous environments.
+>>>>>>
+>>>>>> OK. Why registers are not narrowed to only this instance? It feels like
+>>>>>> you provide here full register space for multiple devices and then
+>>>>>> select the bank with above ID.
+>>>>>
+>>>>> PK: No, we cant narrow the registers to only this instance since its
+>>>>> is just a single SPAcc with multiple virtual SPAcc instances. The same
+>>>>> set of registers(aka register banks) and context memories are
+>>>>> repeated, but sit at different offset addresses (i*4000 +
+>>>>> register-offsets). The crypto hardware engine inside is shared by all
+>>>>> the virtual SPAccs. This is very much for a heterogeneous computing
+>>>>> scenario.
+>>>>
+>>>> Then maybe you have one crypto engine? You ask us to guess all of this,
+>>>> also because you do not upstream the DTS for real product. Any
+>>>> mentioning of "virtual" already raises concerns...
+>>>
+>>> PK: Yes this is a single crypto engine, maybe I should have detailed
+>>> that in the cover letter. I will fix that. And what I have pushed in
+>>
+>> So one node, thus no need for this entire virtual device split.
 > 
-> an app being controlled by another process using userfaultfd.
+> PK: Agreed, its one node for our test case.
+
+We do not talk about test case. We talk about this device.
 > 
-> The app itself can "escape" uffd control of the other process by simply
-> creating a userfaultfd and unregistering VMAs.
+>>
+>>> the patch is my complete DTS. It might need updating depending on the
+>>
+>> If this is complete, then obviously "snps,vspacc-id" is not necessary.
+> 
+> PK: Yes, its one node, to keep things simple. So we pick a virtual
+> spacc with its vspacc-id for testing. That way we could test all the
+> virtual spaccs with a single node, on a need basis.
+> 
+> On the other hand we could create 'n' nodes for 'n' virtual spaccs and
 
-IMHO it's okay if it's intentional by the child. E.g., even after this
-patch, the child, if intentional, can also mmap() a new VMA on top of the
-uffd tracked region to stop being trapped by the parent.  The parent might
-still get a UNMAP event if registered, but it'll not be able to track the
-new VMAs mapped.
+You said it is complete, now you said you have 'n' more.
 
-Thanks,
+> register 'n' vspacc devices with the crypto subsystem. And bind the
+> individual nodes with unique vspacc-ids. That might depend on the
 
--- 
-Peter Xu
+I don't understand what is "binding" here. Use Linux or DT terminology.
 
+> vendor use case, for which we will add incremental support.
+
+You did not get the point but you keep saying "yes". This discussion is
+getting meaningless and you really do not want to listen. You have
+either incomplete picture here or you have only one node. In both cases
+virtual ID is not necessary. If you claim virtual ID is necessary, I
+claim you have here incomplete picture and you are trying to represent
+one device in multiple nodes. No.
+
+Typically one device, one node.
+
+NOT one device and 10 virtual nodes representing virtual devices.
+
+Amount of ping pongs here is way beyond my patience, so before you
+respond read that carefully and come with full and accurate hardware
+description, so we will not have to ping pong trying to get any sort of
+details.
+
+Best regards,
+Krzysztof
 
