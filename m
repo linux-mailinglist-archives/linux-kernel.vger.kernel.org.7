@@ -1,179 +1,147 @@
-Return-Path: <linux-kernel+bounces-675286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7A6ACFB68
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 04:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CC5ACFB6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 04:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39D318996DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 02:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29B8118997F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 02:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84F01DEFE0;
-	Fri,  6 Jun 2025 02:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9911DE8BB;
+	Fri,  6 Jun 2025 02:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZlvN/ilf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwRHr5Bj"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968221DB92A;
-	Fri,  6 Jun 2025 02:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FC62BD1B;
+	Fri,  6 Jun 2025 02:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749178409; cv=none; b=nOHg2HYaZ9okao9rV0fuTG8kg6M26ZbClKNC9qTr/iXSD5mYzivPLIqCCOQndlo9YVPd70yAoumf9O2227/NYiOZk813wV0dpqluxtiZz4y1hmkCB3KFpfqRJPCpF07vw8PnmX01znI9x07RQ++cObuCEquHlTddVmw3QTEyhEo=
+	t=1749178502; cv=none; b=RxYO92xx2lx+DTMReDDEONLs0O3Ws/8XvRGSkWVRXUzlnJXvHWu52QLaW/2ahOwjSQmrT4PN5PuGCOogtRB1l0EfdkVg9Sn6qN0QmC7nECPXMP2qMxMPsdV7HVy24YoejJ0UB4e1iCjGS371Wd56y145//kZGq8XRSf0YGV0dc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749178409; c=relaxed/simple;
-	bh=oKXHt2xNElvdrwLbvuH8zXl/Pm0/yADbiOBihvnREdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OHJ+l4InRgn7LWIo5cQinkac0xdQo4UaM1jTDpvOPAxpw5NR50b1KB7J7xaAXNbjQD4h/iIHyRsLyYBiKbEZON7Us8QCVk09A7psHn4d0uiMgM7McFNordKQO1pSZ4jAZH/Be4VFSuIyrDoa5re7IvNzN64tqljeGYy+3N3BvtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZlvN/ilf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555LxXou015941;
-	Fri, 6 Jun 2025 02:53:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	p4aqS1EcZlPmCBknfbQUQSApoc5YWVK39jjHlnyhtj8=; b=ZlvN/ilfNsgtwLpx
-	tqiyXfmpN40w0IDrvh41FqU+VK4iPMtvSNv1AjQhWl1xwGnz7NtTilulwFoo8D51
-	yfofa6TwzEl6gFU6+pR8TsRNNGiz04Fspirz2Gf92HLTUeKzJg7Y+1aU7Q3nRUA/
-	lPbER7Ylm01P1kHHO9UyPccJOGHYey8grFvwNqOQYe66Fk14GG974tz+tUbe82Ln
-	1+Tsyy54EFs/uN6R/BjFy1R3qoZzD6CcgjuekiNCgSbNIjMW0GnOKv2Mssjfq5fl
-	bXfAF89l2jKibFvlc+ghWmVeaI4N7FpNPdA8nVKa8MaocWtkCuH808UFxzRzPcWW
-	pOu0TA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471sfv25k2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Jun 2025 02:53:05 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5562r4IA003336
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Jun 2025 02:53:04 GMT
-Received: from [10.239.133.242] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Jun 2025
- 19:53:00 -0700
-Message-ID: <4560b19f-f2af-46b5-b49b-50b76853b5aa@quicinc.com>
-Date: Fri, 6 Jun 2025 10:52:30 +0800
+	s=arc-20240116; t=1749178502; c=relaxed/simple;
+	bh=u4nMLpzLMWMlFcA4Pz38X62iia64+9KSBzpJlnBSGKY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ukhMGuPIWpJDzuVsuTAXcpPlN1o70oO+CwB/+52EOm10+bsHDaT/1mzp2Y274Vyd26UEIMVrHbz3xoYEaRVoPf4kGtjmPSMgiI+rTDSBb4UbbFXNSxoGMBb5x9BKg2DReIfJVUfWd78jto8wnUBW7RneU9pPE8c9zTSNiPZ2VX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwRHr5Bj; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso1315195a12.3;
+        Thu, 05 Jun 2025 19:55:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749178499; x=1749783299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JqrGZxZfe4s9xgG/EFT6KkjJVPgG2O2ieIG0K5ZMp14=;
+        b=VwRHr5BjRPFl5ONlySOUXRoRkDSAfT/AzVCdeNhLjk8FtyopY5HgFnGesjqFEfPgKk
+         3eBhyxA8CtBiny1pn5bLpSBgJu1425DyPtb9LYOAps+PhcWuEuglr71EvToWyuP1aF4G
+         uDXM1yFEtA3lro33+2xV851drBBWMzbNV/v1AYGKCjFo5Y9ezofDIwyRhV4eHMx5Okbs
+         IKOn6B95iaswZecLpEc1cl8dvP/E08FuTDTUmpKktNTA4M17ysO1IfXHMVZIr94HEhJa
+         BdwxYyejNfauVEMTrboQtThJ7JLIReYY/X/YWfh01kz7EV4iFU/yByUow4sSS85fg6yh
+         kXLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749178499; x=1749783299;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JqrGZxZfe4s9xgG/EFT6KkjJVPgG2O2ieIG0K5ZMp14=;
+        b=tggYAEIjYja6Tb/oMlJfUzx9dbVnMPhx6X1y1NgTil9m8YfIL7sNpHcI6S0BebUACV
+         FllQK2Uab5deQQvwyVZrrOKtc4UhhTIKZnUZKW7K2PhTFkeJ+dcjYIvz43hSXhKga8sM
+         RrKtQoG9O/rQUVkMAinDxAFoVMfmIzyAcNYxKZRH8h2Cnd4WKppzXbXt8dnEz6xQdIJf
+         KeXYX+G/HS5Oj5vCgFQ3jDpya1/32mn21MMQDCSdAh79T1n075lbzknC5Ae4UO2msueV
+         pMIpHxctL3fof31TplD+vBD63uDZROSG4m40hqYkLce5ElvwBxLnQQtznGtQdj9q/DZP
+         G1Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuWLOMZlgPh8oriwECH9a8SjWHttf8sBPUpSNh/5foKGGfce+CLW9Xk8Cw0hWVbvlKbhIPkJtoWmBq@vger.kernel.org, AJvYcCXVlOsVAOB43Hjw4OualtkCyH28UqsXroOO0UBNqo+j2DkKhNgd8OLZoDSZqjmFBYG3Ml85DVAVXXABsEuR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ2FEUuzEPlV3nvh61Sq6Vl2wW3M+Uceeoa9rn4N8k9BHEZ4Km
+	fbYcHJupivU1akZe1HI729LX3lwvhRPrvsRlANxAsbqI7GyeNNgvNKP0
+X-Gm-Gg: ASbGncvJ2/D0elz/IelwIcRTP2mA6ZDWqpF1J43npd8FhD+5KidtFd3sYyjNskQg+9U
+	Wvp4T3E42P073zYPLI5lRJw0LHH3LM6oule6WHRMCpF8qVWzSU/s64Y6tIHQVTJPQJ95gSOPqWH
+	djSbdCOGOHouh3Jm/K4q8OlMXzxeRFTVrvYBkXN0D+dzrD3PI0Yt2GdLhhmbQQIONtNAPCrTCVY
+	X6tWw5XZ9v0zAV7MOEIOQTDvRrUxS47q/V6jY9Nugxvbsjyf2dHKPGStx3k3k1NbvoxYEeWsBk4
+	7JanMDMx9CBFztbpU5jwxYVH1QERN9lR36D+gEIuOU08kDhEnQN8WUveY5+zwwbD4aLaSRL2dbd
+	vD2P+Qmb0VWDEI6Rj5+5d9wUgE8bc7i0ljLyzf3GhikxpFRqFg+1+Wov25y5oMBUiMTVhivOJsT
+	hhCy8fCJvbUA==
+X-Google-Smtp-Source: AGHT+IHB3aHU7n0uaEQbmWTSYTIEsb/YABqewfurUM9yqVpjSkQhfmqbYeHsudldolnne0QyhmNdrw==
+X-Received: by 2002:a17:903:22c6:b0:234:986c:66bf with SMTP id d9443c01a7336-23601e21e73mr25301895ad.11.1749178499573;
+        Thu, 05 Jun 2025 19:54:59 -0700 (PDT)
+Received: from jason-System-Product-Name.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603077eb7sm2942185ad.39.2025.06.05.19.54.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jun 2025 19:54:59 -0700 (PDT)
+From: Jason Hsu <jasonhell19@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	joel@jms.id.au,
+	andrew@codeconstruct.com.au,
+	patrick@stwcx.xyz,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: yang.chen@quantatw.com,
+	jerry.lin@quantatw.com,
+	Jason Hsu <jasonhell19@gmail.com>
+Subject: [PATCH v7 0/2] Add Meta(Facebook) Ventura BMC(AST2600)
+Date: Fri,  6 Jun 2025 10:52:49 +0800
+Message-Id: <20250606025251.887953-1-jasonhell19@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] coresight-tgu: Add signal priority support
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Alexander
- Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250529081949.26493-1-quic_songchai@quicinc.com>
- <20250529081949.26493-4-quic_songchai@quicinc.com>
- <20250529122950.00001fe6@huawei.com>
-Content-Language: en-US
-From: songchai <quic_songchai@quicinc.com>
-In-Reply-To: <20250529122950.00001fe6@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=CY8I5Krl c=1 sm=1 tr=0 ts=68425811 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=X4TdNiw41qlh8ADdsPYA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: QUUh3cJdNgfQZ4Kz2CjdfCbtrmDPho3c
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDAyNiBTYWx0ZWRfX0P+dFMbD+4Ra
- dynD/rBSJ1XrH7+/tcATqoVPhULSy4eYBgTamX1Xcra35pyQjALYxvOosXq512t/w8FI6YBiGE3
- 4tPTPdFpmr6lly1AlZjesfhfsxr6EGKf7gakFyXBrDPIZd7Zn+yaD9UA6jxzCwiMP3s5nAOhcoI
- 0bq0VW79IcXLi2hK08BzdC+NtNjXNIV+t/7ZN93TlxCn2/tAKwqfFhGayL39u+AVo4plsKESGLX
- a27l7s77tPZEcM+E7qVBVFbMf70XKys+PZqHCc6OHZh3WVr6hJ+QMH/erhTomr6j0Nr5IcIn5io
- VPjPlcQHEVykpsP58QgXl7RI5NcOXZNT4Xe8z5nNtqe2aSX9sHHFKXRAKAxLLOuRLiByMPR/Oak
- 8/DvDJizuvKM/yIlUmc+mILZ3cLuUTzephVMuo3l1HXBsX8VfR3r7ed2hDtkrzQFB7sIQiwe
-X-Proofpoint-GUID: QUUh3cJdNgfQZ4Kz2CjdfCbtrmDPho3c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-06_01,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 impostorscore=0
- phishscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506060026
+Content-Transfer-Encoding: 8bit
 
+Add Linux device tree entry related to Meta(Facebook) Ventura specific
+devices connected to BMC(AST2600) SoC.
 
-On 5/29/2025 7:29 PM, Jonathan Cameron wrote:
-> On Thu, 29 May 2025 16:19:44 +0800
-> Songwei Chai <quic_songchai@quicinc.com> wrote:
->
->> Like circuit of a Logic analyzer, in TGU, the requirement could be
->> configured in each step and the trigger will be created once the
->> requirements are met. Add priority functionality here to sort the
->> signals into different priorities. The signal which is wanted could
->> be configured in each step's priority node, the larger number means
->> the higher priority and the signal with higher priority will be sensed
->> more preferentially.
->>
->> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
->
->> diff --git a/drivers/hwtracing/coresight/coresight-tgu.h b/drivers/hwtracing/coresight/coresight-tgu.h
->> index 6c849a2f78fa..f07ead505365 100644
->> --- a/drivers/hwtracing/coresight/coresight-tgu.h
->> +++ b/drivers/hwtracing/coresight/coresight-tgu.h
->> @@ -13,6 +13,112 @@
->> +enum operation_index {
->> +	TGU_PRIORITY0,
->> +	TGU_PRIORITY1,
->> +	TGU_PRIORITY2,
->> +	TGU_PRIORITY3
-> No blank line.  Also convention on anything other than a terminating entry
-> is to leave the trailing ,
-It will be adopted in the next version.
->> +
->> +};
->> +
->>   /**
->>    * struct tgu_drvdata - Data structure for a TGU (Trigger Generator Unit)
->>    * @base: Memory-mapped base address of the TGU device
->> @@ -20,6 +126,9 @@
->>    * @csdev: Pointer to the associated coresight device
->>    * @spinlock: Spinlock for handling concurrent access
->>    * @enable: Flag indicating whether the TGU device is enabled
->> + * @value_table: Store given value based on relevant parameters.
->> + * @max_reg: Maximum number of registers
->> + * @max_step: Maximum step size
->>    *
->>    * This structure defines the data associated with a TGU device,
->>    * including its base address, device pointers, clock, spinlock for
->> @@ -32,6 +141,9 @@ struct tgu_drvdata {
->>   	struct coresight_device *csdev;
->>   	spinlock_t spinlock;
->>   	bool enable;
->> +	struct value_table *value_table;
->> +	int max_reg;
->> +	int max_step;
-> Ah. Here some of the bits missing in previous patch that make
-> the description make more sense.  Fair enough.
-Thanks.
->
->>   };
->>   
->>   #endif
->>
->>
+---
+v1:
+    1. Create ventura dts file.
+    2. Add commit msg.
+    3. Use format-patch to generate patch.
+    4. Add subject prefixes matching the subsystem.
+---
+v2:
+    1. Modify email content.
+---
+v3:
+    1. Add mail list.
+---
+v4:
+    1. Apply git send-email --thread option.
+    2. Sort nodes in the dts alphanumerically.
+---
+v5:
+    1. Run scripts/checkpatch.pl and fix reported warnings.
+    2. Remove unnecessary 88E6393X CONFIG FRU.
+---
+v6:
+    1. Add a new stage for the DTS change.
+    2. Run scripts/checkpatch.pl and fix reported error.
+    3. Fix the issue in a separate patch.
+---
+v7:
+    1. Fix broken indentation in the device tree file.
+    2. Sort nodes alphabetically, then by address if equal.
+    3. Rename fan sensor nodes from 'hwmon' to 'fan-controller'.
+---
+Jason Hsu (2):
+  ARM: dts: aspeed: ventura: add Meta Ventura BMC
+  dt-bindings: arm: aspeed: add Meta Ventura board
+
+ .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+ arch/arm/boot/dts/aspeed/Makefile             |    1 +
+ .../aspeed/aspeed-bmc-facebook-ventura.dts    | 1481 +++++++++++++++++
+ 3 files changed, 1483 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dts
+
+--
+2.34.1
+
 
