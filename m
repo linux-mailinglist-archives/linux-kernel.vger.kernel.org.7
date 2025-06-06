@@ -1,148 +1,190 @@
-Return-Path: <linux-kernel+bounces-676158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52560AD0842
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 20:50:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E078AD0856
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 20:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D66C3B34F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:50:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD50C3B3D79
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5D51F417B;
-	Fri,  6 Jun 2025 18:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151711F3BA9;
+	Fri,  6 Jun 2025 18:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ILY0reCQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="St6kZK7N"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25E01DDC23
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 18:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F431EDA16;
+	Fri,  6 Jun 2025 18:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749235820; cv=none; b=HvHtQTfK9sGh3fyStGssWG8BnLlQ7IN9m57Mp1sEc08i0ZjWM2kXuOw0M2qplm9JWvuIhDh7i1Uu6HdjWeCayK2K1bCwwxUvH4bNsF0mD9Gx2K0PIfikE9p1gDYwbAu0LA+IN6ojTcYCzGprE7puXHL2ljJjyOWLlPwJ4zY41a4=
+	t=1749236128; cv=none; b=T/YXSrR2DAuEpe61XQL3KJ+8TIvVZltaVJn54ZQnTkmXEVSzvnP5sOhVyuYtHUXaroQLoHvYgeN1zm0RUkFg31rBQgFSAwiMZsBYyUEvYHdsakb5oz1cnTM5n1tvCbV6UfbQIU6UHEHH0c331OitrknohOweh8w4Jo/ht60lTsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749235820; c=relaxed/simple;
-	bh=10JnmucGd6OenkVGt4OG+hqE6x7A45XIqjpDbEqK8Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVzklEcZFIhpWSRLMus0qj9dT1Z5Tzg08xllc1Hy/+q5RR7FZArbb26C42PVlruwqMp9Ug/Tmgx/J+HhK9B1LOG7Gxh7qPietnfEZ+dtgVgcBhUW7qXyLQH3u4e+yD+e2L8XEizaEB8M9wMrVI9r7nwx0OiHbtbloPUYQ+kxeqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ILY0reCQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749235819; x=1780771819;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=10JnmucGd6OenkVGt4OG+hqE6x7A45XIqjpDbEqK8Do=;
-  b=ILY0reCQjhk3fj2OMIYcRsYH9N0+yHFRUmiXHAhV4f5IYftqNBenKXvZ
-   Ywg9D4eES6xYxl1Qg7j0dLDjnESV2mruM8PHJdyg9JYVPxz2TM/Yrd4bI
-   NNvDsCnaulByeDVsySsTxdiIFl1QYKUhwpEoRPdy16J7o148f5D8onDuX
-   bOlHoYrAz73B5dw/vjj/adLEegDdIG9enALT2t0q6Lcr1TS3cHNk4KleB
-   ftEdabuw8CSRV8C7tRFGfTZY036rEpjeUH+K7q9FCvO2m9pnwSue+F1Yo
-   mkDMgylt4/UPaG2CxOo1iM5XnfjORYkBaI3D+2xFZKiNwoyqqfVKFZZ80
-   A==;
-X-CSE-ConnectionGUID: oiIojU7ARgyo25iF3bLxjg==
-X-CSE-MsgGUID: BLFM4d90QbWhYhsqgNytYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="62016098"
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
-   d="scan'208";a="62016098"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 11:50:18 -0700
-X-CSE-ConnectionGUID: rY7FftbMQZKbY4eM/+r7BA==
-X-CSE-MsgGUID: Z/e32k2BQNm5CniNrBZlYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
-   d="scan'208";a="150916214"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.111.31]) ([10.125.111.31])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 11:50:18 -0700
-Message-ID: <1d52eb65-0f16-4086-803a-5add6cd56550@intel.com>
-Date: Fri, 6 Jun 2025 11:50:16 -0700
+	s=arc-20240116; t=1749236128; c=relaxed/simple;
+	bh=IdqCPrXq3+jr02GTO/nLSUv665Ny356ciChyjrXweKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q5vyaPuvb0w9qBlP1CkR1RSJ+0xvrjbA/EtFfH4J18xRza1mwiEZ3G/i8TcL1/YD0KVFxgY6GzW+0gGI8eTa/kLHrp9xie061gfiBK7Si7YTVtTFgTg8ehyAr4tTAhHP0S+kOk7zwpqxgstYRxF9kSqurVgpTopUGxkK8UksBwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=St6kZK7N; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-747fba9f962so2127104b3a.0;
+        Fri, 06 Jun 2025 11:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749236126; x=1749840926; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Es9M+AVV62UY8MMrou2h//EyFErMKtcnspa7i0MthIs=;
+        b=St6kZK7N3MgyBnkDfOupZaTDpvp72Pr91Ufuz51cWAiJ0gGt3xzm3aeLDrt84P+zS/
+         X74PbvpvqUCueWX/++LSjNWt8npOWiEufy7KJO0fMcyNwcAIzVZJ3Ut9AljNW91Q9SV/
+         tDMrcyTQVqr94s+JMDZd8i9ImZXZeMGrkBMKt2DjLpWnhCHj1TWAQfR+Qkxzn3UpJFqn
+         yyFSoIOSDJH/qS2mj5OLaUm5Y5jB/YybXxauxtaiOm17TueSK8xAxGlnnfLunfZ/Pa9r
+         FJhEEtUGw0wYFtuusyrZJQSjrAW6PJSzR+oCOTsjiVbZMHesUsuvF0lm4eNpPdb7F/Ch
+         jFcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749236126; x=1749840926;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Es9M+AVV62UY8MMrou2h//EyFErMKtcnspa7i0MthIs=;
+        b=Qakp4ThzaY3IakWb4F645oMIduvPEhYpnM0uBRDtJbRpoZ+OPRvqHu3VYy8PTzVGUi
+         TyyIJ+gYAC220y/swoL/f2sTc/CaahPSTFpXlHN4VSjQY2nkdnYJY7lPYCT/AUJwzw6u
+         7tFrx1IC+QIU+IF6kZEGD/tqBHZkF7/Nw8LGjnKF/z3WBAdXgygpcMeYWF9wNedVo9Yz
+         l/35HF6RMzwvReuNmZ92Yh8OPUnp0gX4QhKPLc/1c6txci/2fo9lJVjpCHIk18F0fd09
+         HQJwmaeURlBr4Tq6vwbGFKf5+K7hHXBdZPwv3V9kbSa8o5s8MUjPa4yCRG1hNrIe22WE
+         4Udg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYRb5LnderlJyKUfuGRd0GBV76LAJSsqvBrphvOlEzPuMvy50HoAvLXamuMGC0sRSgtg/tQ+gEJoGzqqYSudpijLU=@vger.kernel.org, AJvYcCUk1OzcoOFVVtq8DVHv3UCBKr1DAelkGFbaiEpxr39A9ziUAUQaGSyYJcVIAClzsj9EmcR/0zrlvUs=@vger.kernel.org, AJvYcCWPFssenc5A6uRBOyNQWASImymfhirFvrAKWARKWHX0wFmkQvWvlkiwyXKxOkPIzuLdRs3Lk2DfK3g=@vger.kernel.org, AJvYcCXBOTS6J9O6WsGV9ZHIiUmRxTm9FN2aBeUka4DxuTnlwueenUPgwGztRePICjwnnpVSZPFTKXne/iKe88Tj@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW+5WBEwISpMGm2GWj3e1cdUr1fYUA8bT/dHI9F+Q3/a4LBiPO
+	BaQG8NQ/vPwDGwEjYCBOOlRTCb8eFNJH5gTHY3a+dF+APY+sXSQB8HiZ
+X-Gm-Gg: ASbGncuDdtm8Iof74St3WOiXHJ4QXiNwkwxF6rn1VmZAimyA4v9w+m/UwffbO1o0GTh
+	OWNEUgI2LkA0USJVdfs25Ee8uLdGUML4sLWgPOMrwI1R7SLZJ9YoQDrq5ywVGAlD/KrP3xPSUJR
+	0WjYqaW9blAQBNHkXVRrPIc4m9kqi8AnXYKJN5qYjisBDqVMy5XF74tqwAXNAk6DcShm2IK9DHF
+	DbSB0kISPVb3p6rQCVFjS/YSahwm3cuc9G9xn09rb0nSEZLFYVLxXCxo1p1eIaPfztScO2iXahp
+	4n+Nit5ZWbyUpqEcCvOFUOEfpATx3VdHMyWRkn/t0Bp786AN6yiq
+X-Google-Smtp-Source: AGHT+IHuyoCrI5BcHlICcXmskDkgOBvo79KGR4zs3JSO9ZUGizxOdvPfSccKAax0CmvGcgczb/g54A==
+X-Received: by 2002:a05:6a20:2449:b0:21a:de8e:5c53 with SMTP id adf61e73a8af0-21ee25affa2mr5896945637.12.1749236125912;
+        Fri, 06 Jun 2025 11:55:25 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:b7f5:ce33:d518:3164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0c5f7fsm1593369b3a.116.2025.06.06.11.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 11:55:25 -0700 (PDT)
+Date: Fri, 6 Jun 2025 11:55:21 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, gregkh@linuxfoundation.org, 
+	dakr@kernel.org, len.brown@intel.com, pavel@kernel.org, ulf.hansson@linaro.org, 
+	jic23@kernel.org, daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, bhelgaas@google.com, geert@linux-m68k.org, 
+	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	fabrizio.castro.jz@renesas.com, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 1/2] PM: domains: Add devres variant for
+ dev_pm_domain_attach()
+Message-ID: <zhjytvj35lknj7v3jhva3n3nbv6qctvqgykwyi5huj6omet7lz@wchd7f4p4dpv>
+References: <20250606111749.3142348-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250606111749.3142348-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAJZ5v0i_Ey+OVpSZHXru=tubMaZi=y-uOh_0M6zmWZ2DqqA7Vg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] x86/mm: Fix potential overflow in
- user_pcid_flush_mask
-To: Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com, dave.hansen@linux.intel.com, luto@kernel.org,
- peterz@infradead.org, bp@alien8.de, x86@kernel.org, nadav.amit@gmail.com,
- seanjc@google.com, tglx@linutronix.de, mingo@kernel.org,
- Rik van Riel <riel@meta.com>, stable@kernel.org
-References: <20250606171112.4013261-1-riel@surriel.com>
- <20250606171112.4013261-2-riel@surriel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250606171112.4013261-2-riel@surriel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0i_Ey+OVpSZHXru=tubMaZi=y-uOh_0M6zmWZ2DqqA7Vg@mail.gmail.com>
 
-On 6/6/25 10:10, Rik van Riel wrote:
-> +/*
-> + * With page table isolation, the user_pcid_flush_mask is used to indicate
-> + * that the TLB for a process needs to be flushed when switching to user
-> + * space. Broadcast TLB flushing uses more PCIDs, and a larger bitmap.
-> + */
-> +#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
-> +# ifdef CONFIG_BROADCAST_TLB_FLUSH
-> +#  define CR3_AVAIL_PCID_LONGS ((1 << CR3_AVAIL_PCID_BITS) / BITS_PER_LONG)
-> +# else
-> +#  define CR3_AVAIL_PCID_LONGS 1
-> +# endif
-> +#else
-> +# define CR3_AVAIL_PCID_LONGS 0
-> +#endif
+On Fri, Jun 06, 2025 at 06:00:34PM +0200, Rafael J. Wysocki wrote:
+> On Fri, Jun 6, 2025 at 1:18 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> >
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > The dev_pm_domain_attach() function is typically used in bus code alongside
+> > dev_pm_domain_detach(), often following patterns like:
+> >
+> > static int bus_probe(struct device *_dev)
+> > {
+> >     struct bus_driver *drv = to_bus_driver(dev->driver);
+> >     struct bus_device *dev = to_bus_device(_dev);
+> >     int ret;
+> >
+> >     // ...
+> >
+> >     ret = dev_pm_domain_attach(_dev, true);
+> >     if (ret)
+> >         return ret;
+> >
+> >     if (drv->probe)
+> >         ret = drv->probe(dev);
+> >
+> >     // ...
+> > }
+> >
+> > static void bus_remove(struct device *_dev)
+> > {
+> >     struct bus_driver *drv = to_bus_driver(dev->driver);
+> >     struct bus_device *dev = to_bus_device(_dev);
+> >
+> >     if (drv->remove)
+> >         drv->remove(dev);
+> >     dev_pm_domain_detach(_dev);
+> > }
+> >
+> > When the driver's probe function uses devres-managed resources that depend
+> > on the power domain state, those resources are released later during
+> > device_unbind_cleanup().
+> >
+> > Releasing devres-managed resources that depend on the power domain state
+> > after detaching the device from its PM domain can cause failures.
+> >
+> > For example, if the driver uses devm_pm_runtime_enable() in its probe
+> > function, and the device's clocks are managed by the PM domain, then
+> > during removal the runtime PM is disabled in device_unbind_cleanup() after
+> > the clocks have been removed from the PM domain. It may happen that the
+> > devm_pm_runtime_enable() action causes the device to be runtime-resumed.
+> 
+> Don't use devm_pm_runtime_enable() then.
 
-Just so nobody goes and applies this...
+What about other devm_ APIs? Are you suggesting that platform drivers
+should not be using devm_clk*(), devm_regulator_*(),
+devm_request_*_irq() and devm_add_action_or_reset()? Because again,
+dev_pm_domain_detach() that is called by platform bus_remove() may shut
+off the device too early, before cleanup code has a chance to execute
+proper cleanup.
 
-I don't like how this looks. I'd much rather have the code be
-concentrating on *bits* of ASID space rather than longs. I'm going to
-rework this a bit.
+The issue is not limited to runtime PM.
+
+> 
+> > If the driver specific runtime PM APIs access registers directly, this
+> > will lead to accessing device registers without clocks being enabled.
+> > Similar issues may occur with other devres actions that access device
+> > registers.
+> >
+> > Add devm_pm_domain_attach(). When replacing the dev_pm_domain_attach() and
+> > dev_pm_domain_detach() in bus probe and bus remove, it ensures that the
+> > device is detached from its PM domain in device_unbind_cleanup(), only
+> > after all driver's devres-managed resources have been release.
+> >
+> > For flexibility, the implemented devm_pm_domain_attach() has 2 state
+> > arguments, one for the domain state on attach, one for the domain state on
+> > detach.
+> 
+> dev_pm_domain_attach() is not part driver API and I'm not convinced at
+
+Is the concern that devm_pm_domain_attach() will be [ab]used by drivers?
+In that case we can go back to using devres group to enforce ordering,
+but proper ordering is needed.
+
+> all by the arguments above.
+
+Please reconsider given the fact that issue is not limited to the
+runtime PM.
+
+Thanks.
+
+-- 
+Dmitry
 
