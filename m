@@ -1,108 +1,198 @@
-Return-Path: <linux-kernel+bounces-676068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8197AAD071E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 19:00:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B86BAD0713
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81C3189F38B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1454917B761
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F6F28AB00;
-	Fri,  6 Jun 2025 16:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABED28A1F9;
+	Fri,  6 Jun 2025 16:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pMcwHXVo"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="35ARZ3cW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D/ZzWL1W"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890B28A1C6;
-	Fri,  6 Jun 2025 16:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4264A28A1DC;
+	Fri,  6 Jun 2025 16:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749229144; cv=none; b=i2MPeILpZCy8KPSZN0RVsrk97CqF7RaoUOSQYPOBFlz4s/DdaIFUQW6a5xt/8kJ08ykT5gwORDPYFAyxDkc7zAUcSXvLbH1+UyUIqsQrWXX6C9XFXRxlEg21Ab9HIl+Jz0GbKkoVJVu/CC7YWp8p0m3w1WQQupXocaHWKI5AgLk=
+	t=1749229107; cv=none; b=RaJ5ha+MCs66SwdNJ99bd6JxoJ6UbPkbex7yLE0jao6yQwEQvbiEXnS0VpZILTirIoeQ5Fcy54usXisUN0IIGnM/peio2Le53/VwE60eH3RV5rjWE+pr3VTYUfagKmMRw8w9CS4xpmpZqYTFfmyAT2beTZKblpkvmZEsPFHj5H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749229144; c=relaxed/simple;
-	bh=nyvr1Ps7hfsjB59J+PLls5tm0y5DvhYk5tNGwvjSVIY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l2SavXR/SviyI9twRcXY1xKDdg793xZQhbf1fujqz415NEnyfVr+MhFRu3AH0xQHmkeE7alHs4hPkH1DBUHQwfr22DSuYmD6jkEQAJBXFVg3NPjgVLDlPWOZ/oxVdp83zHFMkc81SZ5cDDhvgYQqrSR8jEQa5aVj48zhHegGFxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pMcwHXVo; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749229140;
+	s=arc-20240116; t=1749229107; c=relaxed/simple;
+	bh=fcglZOKYAlZZOQ2/Dkb0cJsSrYB7P0UhmfoDzTbxPtY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HVvgQhcDp3958A3itbKGh+v9cAFH+rgxQkoB1zEbmWMoq8LArLW3PBVy2Ai9coTqH61iwn5zDcfcF9ZPeCm17xRG1N3niOaBMZ0/BEjb5fDY/ejIQ+nLPWT+AomF2aIZyBrfvijkF89liSjxAzitpP2MD+jplK4Sl4/LRei/Htk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=35ARZ3cW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D/ZzWL1W; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1749229102;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4W6nyxaAuTdUb1jq+F6lNxI7paZc1KWXJrcEaRmIK6k=;
-	b=pMcwHXVoXVPwn9p7Tk0AGT8HutswanrjzBIkr0iTl7ZvbqbD590n9vnBjVcK/3k+B/bonI
-	3zAuj4cIlaXQfTV8p3PkOJjGH2l/Z4tDLSwUK28wfbQK8c5eUOhgwsrLoppWISjsgiYdYD
-	aWDUpM3I2dIkOsPZcp6egNibMxgpz3Q=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	qmo@kernel.org,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next  5/5] bpf: Add cookie in fdinfo for raw_tp
-Date: Sat,  7 Jun 2025 00:58:18 +0800
-Message-Id: <20250606165818.3394397-5-chen.dylane@linux.dev>
-In-Reply-To: <20250606165818.3394397-1-chen.dylane@linux.dev>
-References: <20250606165818.3394397-1-chen.dylane@linux.dev>
+	bh=k95L5dONGc9CGpjQXqAX4pgyDviRC1HRrOs4s2XHP00=;
+	b=35ARZ3cWSCFsiwLfUkdujv+aKxhUsCTUh2IX4MmwT3dO0YvNhz8mxqLjOLSmRedTSFebTq
+	psSABq/JZEzPlaUlHXBoeRc1oUYheu3iQI9vWbhT1AgIwul1wKZhwKSByI/aTYyprU81AP
+	WDs52bDysUvt+72dq1xUeXUJxknI1Zij1y76fKpF69gei+VLeesoQgLgGfI3JlPIW20Cq1
+	yWVwMlT2Kl1M/LZEdGyYhkTBiYx8FuORb+ERVlRo27PChn4RZE5gkqCGWNiTkgqqzzDW7K
+	kgzePptvKAELg7I58UBeLnnPQ9pGPu4PhTNHLy/mdwBh7lGsczKGkYLat+gSUQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1749229102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k95L5dONGc9CGpjQXqAX4pgyDviRC1HRrOs4s2XHP00=;
+	b=D/ZzWL1WLUKSjbYuu1m6EkVXeRSKEWqtK71hgfzILpbVD+lKbq+WraD7rm7MeCUilnhyBo
+	Z/6FCBLz9/2tTICg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: "Toshiyuki Sato (Fujitsu)" <fj6611ie@fujitsu.com>, 'Michael Kelley'
+ <mhklinux@outlook.com>, 'Ryo Takakura' <ryotkkr98@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
+ <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Problem with nbcon console and amba-pl011 serial port
+In-Reply-To: <aEL0tZgSEhsR9qbf@pathway.suse.cz>
+References: <OS7PR01MB13775FE1A20762D1EA4A38D0ED76DA@OS7PR01MB13775.jpnprd01.prod.outlook.com>
+ <84y0u95e0j.fsf@jogness.linutronix.de>
+ <84plfl5bf1.fsf@jogness.linutronix.de>
+ <TY4PR01MB13777674C22721FCD8ACF4FCCD76CA@TY4PR01MB13777.jpnprd01.prod.outlook.com>
+ <aEApOPTqbVOR35F_@pathway.suse.cz> <84o6v3ohdh.fsf@jogness.linutronix.de>
+ <aEBNLMYVUOGzusuR@pathway.suse.cz>
+ <TY4PR01MB13777CC92C858572B9C19394FD76FA@TY4PR01MB13777.jpnprd01.prod.outlook.com>
+ <aEGeARVcCwqcoHb8@pathway.suse.cz> <84frgdcgug.fsf@jogness.linutronix.de>
+ <aEL0tZgSEhsR9qbf@pathway.suse.cz>
+Date: Fri, 06 Jun 2025 19:04:22 +0206
+Message-ID: <84msakdcy9.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-Add cookie in fdinfo for raw_tp, the info as follows:
+On 2025-06-06, Petr Mladek <pmladek@suse.com> wrote:
+>> What if during non-panic-CPU shutdown, we allow reacquires to succeed
+>> only for _direct_ acquires? The below diff shows how this could be
+>> implemented. Since it only supports direct acquires, it does not violate
+>> any state rules. And also, since it only involves the reacquire, there
+>> is no ugly battling for console printing between the panic and non-panic
+>> CPUs.
+>
+> Interesting idea. I thought a lot about it, see below.
+>
+>
+>> diff --git a/include/linux/printk.h b/include/linux/printk.h
+>> index 5b462029d03c1..d58ebdc8170b3 100644
+>> --- a/include/linux/printk.h
+>> +++ b/include/linux/printk.h
+>> diff --git a/kernel/panic.c b/kernel/panic.c
+>> index b0b9a8bf4560d..8f572630c9f7e 100644
+>> --- a/kernel/panic.c
+>> +++ b/kernel/panic.c
+>> @@ -304,6 +310,8 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+>>  		smp_send_stop();
+>>  	else
+>>  		crash_smp_send_stop();
+>> +
+>> +	nbcon_panic_allow_reacquire_set(false);
+>>  }
+>
+> I have two concerns here:
+>
+> 1. I wonder whether this is reliable enough. It seems that
+>    smp_send_stop() waits at least 1 sec until the CPUs
+>    get stopped. But is this enough on virtualized systems?
+>
+> 2. It might increase a risk when CPUs are stopped using NMI.
+>    The change would allow a non-panic CPU to reacquire the ownership
+>    and enter _unsafe_ section right before being stopped by NMI.
+>
+>
+> The 1st problem might be avoided by allowing the reacquire all
+> the time unless an "unsafe" takeover happened.
+>
+> The 2nd problem is worse. But allowing the reacquire all the time
+> might actually help as well.
+>
+> Note that the information about the "unsafe_takeover" is stored
+> in struct console so that we even won't need a new global
+> variable.
 
-link_type:	raw_tracepoint
-link_id:	31
-prog_tag:	9dfdf8ef453843bf
-prog_id:	32
-tp_name:	sys_enter
-cookie:	23925373020405760
+That is a good idea. We should add unsafe_takeover as a condition as
+well. That can only happen way after the smp_send_stop() anyway. But it
+means that only the atomic printing code would ever need to worry about
+unsafe_takeover (assuming a driver were to implement some sort of
+handling of it).
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/bpf/syscall.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+>>  /**
+>> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+>> index d60596777d278..d960cb8a05558 100644
+>> --- a/kernel/printk/nbcon.c
+>> +++ b/kernel/printk/nbcon.c
+>> @@ -235,7 +235,8 @@ static void nbcon_seq_try_update(struct nbcon_context *ctxt, u64 new_seq)
+>>   *			the handover acquire method.
+>>   */
+>>  static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
+>> -					    struct nbcon_state *cur)
+>> +					    struct nbcon_state *cur,
+>> +					    bool ignore_other_cpu_in_panic)
+>>  {
+>>  	unsigned int cpu = smp_processor_id();
+>>  	struct console *con = ctxt->console;
+>> @@ -249,7 +250,7 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
+>>  		 * nbcon_waiter_matches(). In particular, the assumption that
+>>  		 * lower priorities are ignored during panic.
+>>  		 */
+>> -		if (other_cpu_in_panic())
+>> +		if (other_cpu_in_panic() && !ignore_other_cpu_in_panic)
+>
+> If you agree with allowing the reacquire all the time then I would
+> rename the parameter to @is_reacquire and do something like:
+>
+> 	if (other_cpu_in_panic() &&
+> 	   (!is_reacquire || cur->unsafe_takeover))
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index d6eba1339ad..51ba1a7aa43 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3654,8 +3654,10 @@ static void bpf_raw_tp_link_show_fdinfo(const struct bpf_link *link,
- 		container_of(link, struct bpf_raw_tp_link, link);
- 
- 	seq_printf(seq,
--		   "tp_name:\t%s\n",
--		   raw_tp_link->btp->tp->name);
-+		   "tp_name:\t%s\n"
-+		   "cookie:\t%llu\n",
-+		   raw_tp_link->btp->tp->name,
-+		   raw_tp_link->cookie);
- }
- 
- static int bpf_copy_to_user(char __user *ubuf, const char *buf, u32 ulen,
--- 
-2.43.0
+Looks fine to me.
 
+>>  			return -EPERM;
+>>  
+>>  		if (ctxt->prio <= cur->prio || ctxt->prio <= cur->req_prio)
+>> @@ -913,7 +920,7 @@ void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt)
+>>  {
+>>  	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+>>  
+>> -	while (!nbcon_context_try_acquire(ctxt))
+>> +	while (!nbcon_context_try_acquire(ctxt, READ_ONCE(nbcon_panic_allow_reacquire)))
+>
+> And here it would be:
+>
+> 	while (!nbcon_context_try_acquire(ctxt, true))
+
+Right.
+
+>>  		cpu_relax();
+>>  
+>>  	nbcon_write_context_set_buf(wctxt, NULL, 0);
+>
+>
+> Summary:
+>
+> I open to give this alternative approach a chance when we allow the
+> reacquire all the time. It might work well. And it won't require
+> any special "panic" handling in all console drivers.
+
+Agreed. Thanks for being open about this approach. I will put together
+an official patch.
+
+John
 
