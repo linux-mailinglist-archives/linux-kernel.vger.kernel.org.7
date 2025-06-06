@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-675696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6D8AD01A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D2EAD01D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9000C188A7A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078C03A677A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DB128750A;
-	Fri,  6 Jun 2025 12:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E7B1E25ED;
+	Fri,  6 Jun 2025 12:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZejPF38a"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQBauKso"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4262874E7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 12:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F780288C29;
+	Fri,  6 Jun 2025 12:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749211544; cv=none; b=tObzMBlECd7G7fW01IgRkUtOkDDUtZ4ae7tV1GY4lpLiDCKr1f6cupem2Jr85hHKSGjsw4fjaiRZ+vu6ZEAMEedTbYzLeYjlBv+P1DP42cxjfLriYMSJRI6U5wDTY51PVaO3H9+F2H6sNCqA/a1fCnyA4KmhDeJpJRB+PiyWgAg=
+	t=1749211635; cv=none; b=mfxa+sDcnDHJGuRNwE4HFih0smDLMIiZPtPHEpmBs9ka4iayjkMCh0o+RbVdPGOj1QNCBSIHeadI2Q9lMAZulZNTqIU8mlCorJKiuZdaawA+g4jHRy+/k48T4QLo8uBhEAWftb68xmpZica2m3zdMiH2f83VTlDricmJ1cL5zTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749211544; c=relaxed/simple;
-	bh=pw5DxZusOl5EtI/08fej6vFmQVNmSEMstPXZfIOtxuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hhT0yKTotVY4VlBBlvJRYYOtBZ23QTJSkofJBpW6f7Fx5fYrpthJgsMurIaJ8U6gtnyljxSBdsRCM+gWLYSv3cws73d00c+8T7D0twMwF9ldC8dM7iz+YakVeFhu45Zmxr61sjdcKvSLIqruj2kfrGRDsY1G8Rzm9LmrFoqKmSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZejPF38a; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-606b39b19b6so333739a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 05:05:41 -0700 (PDT)
+	s=arc-20240116; t=1749211635; c=relaxed/simple;
+	bh=yLJY0BRHWTXa3UHtKPNGBZr3m05ayE2UCFaKiHPe/T0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tD4BXirxTIADgDfmQSqg+5Y1kvOhej5VPHTEGOSL2NpRemUfM/m7DwS+GfyPbW9JvcbHCncBpipLBeyOYbQkg+hXKoDDS78aZiEg6H/X15kQO+xtXhkimktOC/edMWLekBWLR7X9R8XcfJ5ua05yKhHP4nmXqlLL/BTNOXqi8gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQBauKso; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a5123c1533so1133522f8f.2;
+        Fri, 06 Jun 2025 05:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749211540; x=1749816340; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=blUSLQmy9t7rc+yhzKuamiyJu/iQaaFL9KW6gmT2m2A=;
-        b=ZejPF38a0LqdVW5/zknx/22KqHXfdBq7g//umrB2TA9L5St/eYMe78bXc/x78Xy5N0
-         J16ZJCaK+xqUnmasqNlkiUNswBlzvtpD/qUpWk6bMXNWZLygWOKozueAdGOrqb2CeJdo
-         7h1HNScLvL/yqZACikq/cA/F44dH9Krerw6R23ZrBCugzsOZgzP/uqAglYsa494ohvuL
-         JEjU+ys5rCcDadQUzfdgTQ0vMYCMTgrwY7ggSTLakfMy/lR3NwmXQT/X34EOLvIG7SaQ
-         X5q4ME2BQqBUwd4wXiyrUtqmj1pIcIqdR1+3M9TQQcf7Iu/+rsK/qUZBwKER45/r92Wj
-         cqKw==
+        d=gmail.com; s=20230601; t=1749211631; x=1749816431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gJ95E9EY23axZFcMUppGnCR3XLsVeg2NtUQTaqPaYkE=;
+        b=BQBauKsojKwLtDwte6HuFguys1dKXLg0lwxtqkLYzNtQXn3KM+ih7MUGLA6lo4Su9q
+         UTgW58UrQHhgqx/MT1thaCfNTgxnkFtfCoAUuSvVw04E6Q3g6UdX+fssUyrx6ye1LcB6
+         NsMdwnqQz2LC/mGKb+qsuo1Q6q+NzenE5ISWXLPm7VEwh3SyJa3qOXTNuEBwU/7aztaF
+         PNL0vW1GFvRnOs3lH3C/sFE5JlD9mcVdH20A4xqc/RDp7y3xmEB2/PljMtjOW4FVQh/h
+         t9Z57Otm+6SVDrbdvl/MYBu7sMRyj4XcQANfuHFyNilsb2LfeDx3s8nKHYsr51bq6jA+
+         DK6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749211540; x=1749816340;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=blUSLQmy9t7rc+yhzKuamiyJu/iQaaFL9KW6gmT2m2A=;
-        b=T8qSZmZ302OT3e7BA07XMw5x85ZgNNDqncUHNSYh92sde+QukMsgfNSi3RJbiX9noc
-         sGdpaZfbKM6xG9DwbXMDyZmeEKBrXtv9/wZPoqmKqCMe9neIncUZXcVYoyCCKdm5a1dN
-         WqZpC/ppZjPbA0XeauA9AoK9LwaSsG5+BGeGQH6uEkTbFXtZzcA8YM4TNEVh8ox6+S9y
-         i45C9dOe3VypTeNn1bfp82zSC43r+Qlw/ulAl3jXfOfZmQMIacVQBW1wna6jOFJtUooF
-         F8mMJlF4u22gO0hb676dMcog1RqZ6zvqDhGi8ANeRZa8G7l0W4jAVhwkIX47/lPW7Uj0
-         cUQQ==
-X-Gm-Message-State: AOJu0YwPtClahZSLMgMFdAwMcTeJ14ZErshf1CRCvlGG52uCT/Scj22H
-	wq91YMsuwnL3Uoq+aQ4CyMITTuyd2Hla/3ENtzrWx7Qww4pH9yOujHdAJVAhnh+K4Ms=
-X-Gm-Gg: ASbGncvaCdwt+3nynCNQl+FlnJby59iBqZpxK7c9wkBmGA4PzkAaxWGUDPQ8irtkGVx
-	emqP4H0PnS0ukYuFAhaN05BgKzTpuGpUyblukV1fvntl4rN7RM/IVR5pi2ameHW/UfqZFb9ROWV
-	Jbp0iNZ1r5N4jbSWKOGu073lmC3cmaDKOckePQnxFAmXcgg9Tl31iZWPSCOy6ibq/PiBNdOmDH2
-	Vi7leGkP8icwYR1nPPQCCvUwvWIvzTLTs8M+XKA7fjlDBpsX/nI/BKJFeE/IHnvT3HLagM2Oxzy
-	anK9UvQT7MJlFNdGiGR77KSb85DPR1snu3w6WznWVBaA4lJT4q8XpTN+3gsjKkvABmoAbarhjjL
-	4wOBwHygRHF3Bne8C4FLf6crNsK+Ckzi1/wZWywHzHknGcp7H+l4KqPAB
-X-Google-Smtp-Source: AGHT+IFEWMIzPeLiuWhp169aIeLqFwqJdP4I0BLMQjvCWLHGJqq5NI3ba8l22k9bFyc8ukNwi499Gg==
-X-Received: by 2002:a17:907:3c8c:b0:adb:2dc9:ad4 with SMTP id a640c23a62f3a-ade1ab952f9mr87524366b.14.1749211539636;
-        Fri, 06 Jun 2025 05:05:39 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1db54c3esm106606666b.39.2025.06.06.05.05.39
+        d=1e100.net; s=20230601; t=1749211631; x=1749816431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gJ95E9EY23axZFcMUppGnCR3XLsVeg2NtUQTaqPaYkE=;
+        b=AQwG0LD+kdJa32Uc954uEsRmC4Gd76E0NhZ7slGeZiK2OG7swI8US7fCovMeWOfwBD
+         +8o0lqzBcVTQ3fqulzXcTxEhgRuU8IhHIKhTPTCopt2m+EQF7y7RvHNadTTh/d7cwhIz
+         uO5yisyufNF/nz/Qck0RtudI1fTjV9IlMrZnhbi3ZL3ebSSm0NQQ5BdXWz/lqQu8l8zR
+         6XFUgYYcqDN4c8wCxqmlymHnVCwaW96JsBxnKKX1ojA3OAmLTTT+9269ZgBVMA8BwNFc
+         XkIsCLM7Z2nKWV7FTKwZZdbjMdP0Bu0waUJFfxpsPHk3X0mZ1fdoUZRPSWazmo6uKtlV
+         rkiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPrc7w5e84/qiEkxZZ13XMBfKFQriAOoxmaXqX7ZTHPZyEJHtQnxQyKZPLJOfm+UwzAlFJgv/8IJOA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAtUxDEMBQg6wSvrdLyH4mA3j+oe2XIecHOtJiOdDbPAfv3Jx
+	pvq9OjZWcveBo2SC2SFv3zjb2A4z0bB5yubxaVvTZ0ysIy3wUvOu7+YZnoQn51xI
+X-Gm-Gg: ASbGnctyNnLgBP4Gd2fx+bioZB0nQA08pjB5jAxlG5lOlqcJpcgOikW5bDGy2P0ccwQ
+	yMHzOCk1TviEDPU4OCrDURz5E+ohcyZcNN4gQnrFbk4Ok2Eiq1oicxdnkIbB1ZTnl09ZHQ/lIU0
+	W/O9wGjJbSe7c/5hNXanPraMW5ghPyd4kawzOZnHIl5/kL+Di964484qUjKW3rF43GOMVx0eigp
+	lxEIQm5kaL6Tee8ks9nNKklxbil97/6nXRixPOANiJfzg5qG6SH3mJH6hDcsGAUAj23WPEeHxpR
+	aDR9S8MYkcOv01Gj+N6YkS2qvRp7hU3boTR+vFYSJgKFBG/5stUGecLCOKIXkBXrHLyqhdYdfdn
+	UQAe5zDChQ81uDjeROFeodPSb
+X-Google-Smtp-Source: AGHT+IEOtEM9TP1fLEZNVP7do6r2cKStJcuv9OdTia/zzf1zi2+54zrnJ9cEAcb2CZHeUg90uRNjBQ==
+X-Received: by 2002:a05:6000:22c4:b0:3a5:276b:1ec0 with SMTP id ffacd0b85a97d-3a531ce1597mr2396156f8f.45.1749211631108;
+        Fri, 06 Jun 2025 05:07:11 -0700 (PDT)
+Received: from masalkhi.. (ip-109-43-113-198.web.vodafone.de. [109.43.113.198])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244f516sm1671874f8f.74.2025.06.06.05.07.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 05:05:39 -0700 (PDT)
-Date: Fri, 6 Jun 2025 14:05:28 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] timers/migration: remove an unneeded call to
- find_first_bit()
-Message-ID: <20250606140528.2b17567f@mordecai.tesarici.cz>
-In-Reply-To: <20250530132539.234792-1-ptesarik@suse.com>
-References: <20250530132539.234792-1-ptesarik@suse.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+        Fri, 06 Jun 2025 05:07:10 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	abd.masalkhi@gmail.com
+Subject: [PATCH v3 0/3] Add support for STMicroelectronics M24LR EEPROM/NFC chips
+Date: Fri,  6 Jun 2025 12:06:28 +0000
+Message-ID: <20250606120631.3140054-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 30 May 2025 15:25:39 +0200
-Petr Tesarik <ptesarik@suse.com> wrote:
+This patch series adds support for the STMicroelectronics M24LR series
+RFID/NFC EEPROM devices. These chips expose two I2C addresses: the primary
+one provides access to system control and configuration registers, while
+the secondary address is used for EEPROM access.
 
-> Use simple bit arithmetic to extract the least significant bit from the
-> active bitmask, because the bit position is not needed, only the bit
-> itself.
+The driver implements both functionalities:
+ - A sysfs-based interface for the control and system parameter registers.
+ - EEPROM access via the nvmem subsystem using a secondary I2C dummy client.
 
-There has been no reply here, but I received an out-of-band
-recommendation to wrap this bit-twiddling trick in a macro.
+Brief summary of changes in v3:
+ - Full support for ST M24LR chips, including integrated EEPROM access
+   within the same driver-no need for the at24 driver.
+ - Dropped usage of the I2C mux API.
+ - Switched to using the NVMEM subsystem for EEPROM access.
+ - Removed reference to the i2c-mux binding.
+ - Added reference to the nvmem binding to reflect EEPROM integration.
+ - Updated the reg property to support devices exposing two I2C
+   addresses, one for control and one for EEPROM.
 
-So, you can ignore this patch for now and wait for a respin after I
-add the macro and convert pre-existing uses in the kernel.
+Tested on: M24LR04E-R using Yocto on Raspberry Pi 4
 
-Petr T
+Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
 
-> No functional change.
-> 
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> ---
->  kernel/time/timer_migration.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-> index 2f6330831f08..0f40727b6cac 100644
-> --- a/kernel/time/timer_migration.c
-> +++ b/kernel/time/timer_migration.c
-> @@ -1277,12 +1277,12 @@ static bool tmigr_inactive_up(struct tmigr_group *group,
->  			 * group is idle!
->  			 */
->  			if (!childstate.active) {
-> -				unsigned long new_migr_bit, active = newstate.active;
-> +				u8 active = newstate.active;
->  
-> -				new_migr_bit = find_first_bit(&active, BIT_CNT);
-> +				if (active) {
-> +					u8 lsbit = active & -active;
->  
-> -				if (new_migr_bit != BIT_CNT) {
-> -					newstate.migrator = BIT(new_migr_bit);
-> +					newstate.migrator = lsbit;
->  				} else {
->  					newstate.migrator = TMIGR_NONE;
->  
+Abd-Alrhman Masalkhi (3):
+  dt-bindings: eeprom: Add ST M24LR support
+  misc: add driver for ST M24LR series RFID/NFC EEPROM chips
+  ABI: sysfs: add documentation for ST M24LR EEPROM and control
+    interface
+
+ .../ABI/testing/sysfs-bus-i2c-devices-m24lr   |  96 +++
+ .../devicetree/bindings/misc/st,m24lr.yaml    |  54 ++
+ drivers/misc/Kconfig                          |  17 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/m24lr.c                          | 705 ++++++++++++++++++
+ 5 files changed, 873 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
+ create mode 100644 Documentation/devicetree/bindings/misc/st,m24lr.yaml
+ create mode 100644 drivers/misc/m24lr.c
+
+-- 
+2.43.0
 
 
