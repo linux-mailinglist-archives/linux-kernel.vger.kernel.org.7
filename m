@@ -1,185 +1,118 @@
-Return-Path: <linux-kernel+bounces-675418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23089ACFD78
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C93ACFD7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04071752A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422A0175D91
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 07:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F65284690;
-	Fri,  6 Jun 2025 07:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A7E469D;
+	Fri,  6 Jun 2025 07:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V001zAK/"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="cvmCZpHk"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3101D284669
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 07:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749194843; cv=none; b=JuuHnxh6c77amsT1YDDzDZy6tH5nel3OSX/z6kYzI/wVVy9n6Oye0grzRHcgTmT1CHv13CVz7BmiQoIXnVQQq7yy8zDB04yQSbovggPbJoU0RW2GsbDHcq+cfSOb4PiHazAuxm0fV63bHTV/IYvDWx1uRPms4ttkqYss2ijAKu0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749194843; c=relaxed/simple;
-	bh=UI2I9LoycgSiYOyWi8BqE5aunp/uM8wRrV8+vwUfE4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iQDFuMUsO9k2FyDrkzhQ3WnaRo160X/ZKFtHlVRlTTuhDxDN+eNtjDFwmSJ64dYarTWYBXvCURktrGBKc9XjH+s2Z9KY3jbsXslQm6Q1iIjFUOhknxLQWr1zoK0fOauKgWeQJwHnGuZbkrsKM5CdHNpwTETVLeMzgchNunfnA8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V001zAK/; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-551fe46934eso2007807e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 00:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749194840; x=1749799640; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7/o+qe3wNhym0p9DzNOUXY5xtI2335qhvaIsxmIqtNg=;
-        b=V001zAK/KzwhAjbaUXnsabfDXj93iZmAPlgqBJQrI6c154SXKgy+b/ta08hjUxmwSn
-         ripb+Thbr2boNwEuQWhYvF32VC6S1wWZFsTmTnvxhDanyO9H+KjiRuSJtQMBybbrqxnC
-         bkGt9/EsatT/YExBcJRS/JIR0jO4/koHLbK65yTKrEq/fsofBSqaIDja+acmMWwP6SAq
-         aUEpb9UPsK024skOu/KQLeKqeVN/cSFZNzsr0owQOueZG0xrGX4XprWk5I5O/xDRl7Q6
-         z1e17LXbL3eVIhKoS6A37oBUsravmwWO1fG97sTFEMqOm10XJnB4KzpsTMgbYPLMbYQC
-         Jw5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749194840; x=1749799640;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7/o+qe3wNhym0p9DzNOUXY5xtI2335qhvaIsxmIqtNg=;
-        b=td2IUWvizH5f+xQKrtf2SLcjdkO13oBVnL/72mjr2AaulZGXCYXxoCBMYu1kMgH+JP
-         f24XJId6Av+dTUnWwSCe1l8EmG2Iy6N/mH5pjVzjb1geoL+BG41AgGptKQBkfpjn1wHq
-         DdY/VIFe0s+HBKciRYFqkgi4C91Vujk9taDhmLr6IAoz/xPLnqFUM/2tITEOtajc8JUG
-         nNhR3xSi/t5iFppFn4NY3D4mSRFEkwTjhYTFcc95ULvyEAfU4rRXCFQ8Brcp5s7Utyg8
-         lwwnukmlGuC3iSryykkmlysAnYS/+56R2QQudkphOxOkpr1o8RexlmZfyCIXfCtXUcgP
-         QrzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu+2m4jlwvL/sSQP/XP1qF0GdRJ8T5Bq/n4qd5c55WIje8T5tLL/bV21184pa/QNOBD6z+jngT95MmUAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGKrBZdJVkLbgc+wz3ehBzldZwE//6eE2/ZZ6oAQNc8A4UfWXo
-	GQhQSe6xUFc4qDvarciP85TaU2cS86dvwioPQR0uECiG2tOA4j6gaAw2Y/sK0WkA6eY/n2puyFX
-	Q+6Z0hX0cOjQ0siK762C7ukfG63EWmEM=
-X-Gm-Gg: ASbGncuAL9kjktHd5qzdFNsAkJUnvfZQOOnto6eVDbBq6OUNFK4gES6uSLlK+IAKGa6
-	p6gJI3qDrTYP+EcKWjPK+GPPkhMM6shkly/3SA0KrrFpq3BlDa9q0qSXF1haCpRzbABUc6gEk4O
-	3fGSKA45fDW1lZEPfWWzWG0i1X482bHpvNyPIQ4vcwpFA=
-X-Google-Smtp-Source: AGHT+IGKKoPovUonPGLJigvqNkCK8HnmNGF5bMcozum4VgQxVYy6aWAl4Vwuk2gsQS5hmzRJ+is4k9lXovUjgbzIfDA=
-X-Received: by 2002:a05:6512:220b:b0:550:e50a:bf49 with SMTP id
- 2adb3069b0e04-5535d92b53dmr1895962e87.19.1749194839786; Fri, 06 Jun 2025
- 00:27:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7A2149C7B;
+	Fri,  6 Jun 2025 07:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749194931; cv=pass; b=E/Q7Rydau3jxe548xfIEQSdrZjbqmbsc+fY22gycDt1K4+f4zQbV/KNTMqaPAGU/3QE06f0/mlq6ndm4ySiaDycFTtVrYpqkNBwjidRxiw+XQHzr7lM4aFlhJ5zMpWdVQDZDuicL4eYxlNJ7kGMXxbHi3OWtMfjY3a0wPNlr8Zw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749194931; c=relaxed/simple;
+	bh=JKnkwcSrgs5gO7wyzBEgKh6rE6FuB78ADu5/P8iCndg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=fBH7hJHeC04MPLn9TIUAqWeugxP4WdSn2vDIv72b2MIy9gtTvFg0NVb7jNcg7Vyl5JGabkX1Y7hoxIS8//Vy6P3wMDzooKZ7Ft1dZtav/aLSwnKs1xgxgFcpYeOaQ/gU9RNNbqr4ysWcybURTRRYmKSv15GitoVz3NXER8jRWGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=cvmCZpHk; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1749194895; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nM12F+oVjbDuWMsFKHZ4wuPfqaGvmq7/U8QBvi5BKhJA/Nb1u8fKbgOWZ1FrqwHs0M3Uin4HWBXpokSf1DSz7hsUmgtW7+EB5DbAifepx8odD0dbBGizuXBKy9DOTYVeqFEh9gZeGjSYKpZ1Fcl+4Op1XY3RsdUKSQt/1ubXcqY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749194895; h=Content-Transfer-Encoding:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=tRy24lqfKv3gXyTkphs/dHJ5gyZkpcLuoO/gcsCQCXg=; 
+	b=EpdUcsSPGETB/rsmVUkCK9JUfJmu3V2vvjQvx92FRZYRP2UlP1yDKqdf9sSujOiwp068IG/nSY7WrIj8k7pKN0J/8HwDLRplDpY3r/yo2bTS7cE0Y/gkZAav5+PBYxFJxdwWMziMqvLOpoCYXfo9JzF5K0BBPEkmp45JrXaP8VI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749194895;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=From:From:To:To:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=tRy24lqfKv3gXyTkphs/dHJ5gyZkpcLuoO/gcsCQCXg=;
+	b=cvmCZpHk17i/hxDj0tUQgMU4P11hTY2SUJjRFsgCCLKjHL6PNKbeLBP+pUlG1Wkn
+	TRLvc+xRErmccoC3jCA09lrIpATkKwqNR0f8Oyq9275XqM3Nndz0nz/wgf7JdRByQst
+	nv1sENfqMHN6n9sihdcyb5sfwdgwgP9iSc7vzLf4=
+Received: by mx.zohomail.com with SMTPS id 1749194893001866.070129665492;
+	Fri, 6 Jun 2025 00:28:13 -0700 (PDT)
+From: Li Chen <me@linux.beauty>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Liu Wei <liuwei09@cestc.cn>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Li Chen <chenl311@chinatelecom.cn>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH 0/2] ACPI: Improve SPCR handling and messaging on SPCR-less systems
+Date: Fri,  6 Jun 2025 15:27:43 +0800
+Message-ID: <20250606072802.191580-1-me@linux.beauty>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605164733.737543-1-mjguzik@gmail.com> <20250605190054.GH30486@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250605190054.GH30486@noisy.programming.kicks-ass.net>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Fri, 6 Jun 2025 09:27:07 +0200
-X-Gm-Features: AX0GCFs_MuHJJlyB5w1uRpYA3b1g9De4MxN0yaWM9KiX35Fbz_Bugu6uZjj63vQ
-Message-ID: <CAFULd4Z4SJZErfV1AG_a-+SDd=gnXa88=suRAFN3RHB5M+=bFw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86: prevent gcc from emitting rep movsq/stosq for
- inlined ops
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org, mingo@redhat.com, 
-	x86@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu, Jun 5, 2025 at 9:00=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Thu, Jun 05, 2025 at 06:47:33PM +0200, Mateusz Guzik wrote:
-> > gcc is over eager to use rep movsq/stosq (starts above 40 bytes), which
-> > comes with a significant penalty on CPUs without the respective fast
-> > short ops bits (FSRM/FSRS).
->
-> I don't suppose there's a magic compiler toggle to make it emit prefix
-> padded 'rep movs'/'rep stos' variants such that they are 5 bytes each,
-> right?
->
-> Something like:
->
->    2e 2e 2e f3 a4          cs cs rep movsb %ds:(%rsi),%es:(%rdi)
->
-> because if we can get the compilers to do this; then I can get objtool
-> to collect all these locations and then we can runtime patch them to be:
->
->    call rep_movs_alternative / rep_stos_alternative
->
-> or whatever other crap we want really.
+From: Li Chen <chenl311@chinatelecom.cn>
 
-BTW: You can achieve the same effect by using -mstringop-strategy=3Dlibcall
+This small series improves the kernel behavior and output when the ACPI SPCR
+table is not present or not supported.
 
-Please consider the following testcase:
+Currently, even on systems that completely lack an SPCR table, the kernel prints:
+"Use ACPI SPCR as default console: Yes"
 
---cut here--
-struct a { int r[40]; };
-struct a foo (struct a b) { return b; }
---cut here--
+Or if with acpi=nospcr:
+"Use ACPI SPCR as default console: No"
 
-By default, the compiler emits SSE copy (-O2):
+This may mislead users into thinking an SPCR table exists
+when in fact there is no such table at all. This series addresses this in two steps:
 
-foo:
-.LFB0:
-       .cfi_startproc
-       movdqu  8(%rsp), %xmm0
-       movq    %rdi, %rax
-       movups  %xmm0, (%rdi)
-       movdqu  24(%rsp), %xmm0
-       movups  %xmm0, 16(%rdi)
-       ...
-       movdqu  152(%rsp), %xmm0
-       movups  %xmm0, 144(%rdi)
-       ret
+Patch 1 ensures that acpi_parse_spcr() returns -ENODEV if CONFIG_ACPI_SPCR_TABLE is disabled.
 
-but kernel doesn't enable SSE, so the compiler falls back to (-O2 -mno-sse)=
-:
+Patch 2 updates arm64 acpi_boot_table_init() to only print the SPCR console message
+if acpi_parse_spcr() succeeds.
 
-foo:
-       movq    8(%rsp), %rdx
-       movq    %rdi, %rax
-       leaq    8(%rdi), %rdi
-       leaq    8(%rsp), %rsi
-       movq    %rax, %rcx
-       movq    %rdx, -8(%rdi)
-       movq    160(%rsp), %rdx
-       movq    %rdx, 144(%rdi)
-       andq    $-8, %rdi
-       subq    %rdi, %rcx
-       subq    %rcx, %rsi
-       addl    $160, %ecx
-       shrl    $3, %ecx
-       rep movsq
-       ret
+This results in cleaner and more accurate boot logs on ARM64.
 
-Please note the code that aligns pointers before "rep movsq". You
-don't want this code when "rep movsq" is substituted by a call to some
-optimized "rep movsb" type memcpy.
+Tested on both SPCR-enabled and SPCR-less qemu-system arm64 virt platform. [1]
 
-Let's use "rep movsb" (-O2 -mno-sse -mtune=3Dskylake):
+[1]: https://patchew.org/QEMU/20250528105404.457729-1-me@linux.beauty/
 
-foo:
-       leaq    8(%rsp), %rsi
-       movl    $160, %ecx
-       movq    %rdi, %rax
-       rep movsb
-       ret
+Li Chen (2):
+  ACPI: Return -ENODEV from acpi_parse_spcr() when SPCR support is
+    disabled
+  ACPI: Suppress misleading SPCR console message when SPCR table is
+    absent
 
-much better. Now, to use function call instead of "rep movsb", you can
-use -mstringop-strategy=3Dlibcall instead of some objtool substitution
-(-O2 -mno-sse -mstringop-strategy=3Dlibcall):
+ arch/arm64/kernel/acpi.c | 9 ++++++---
+ include/linux/acpi.h     | 2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-foo:
-       subq    $8, %rsp
-       movl    $160, %edx
-       leaq    16(%rsp), %rsi
-       call    memcpy
-       addq    $8, %rsp
-       ret
+-- 
+2.49.0
 
-Which IMO is what you are looking for.
-
-Uros.
 
