@@ -1,236 +1,182 @@
-Return-Path: <linux-kernel+bounces-676274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E51AD09C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:55:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452AAAD09CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AABF27ABB96
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:53:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB9F77A36F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D7923A993;
-	Fri,  6 Jun 2025 21:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78C9239090;
+	Fri,  6 Jun 2025 21:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vTQqpHtw"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0xdaHdP"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72F2405E4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 21:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099D1A9B3D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 21:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749246782; cv=none; b=ZkEm/yJpi1UIFKrkNcotPkODNTQI9kvw7GIgZeY3F+JJcdGNWIUP839FvaMt5b4j+HB6Ehstkcn5FBsqolmpIst1c4BJfUwutP0582ngDCpgo+YEdk+1h1z961rXXhqM3ZMI7f3cGrTfHauFP9QoSlnN9T6VIIx5c/gmjo56c4E=
+	t=1749247181; cv=none; b=uQd9RnG0SiIk3+WJoxQzRaGUsisz00jTrSuBgtRTrZBxgtkFpEoPJwJYrgZ+Md0gqoAvb0vp077pUx88bamiYzWmRnKZjPW/tkxZm5gSpft6aagMIYj0CbgFcEodNCDzvMsAOJWeljqF/OxLkt5lQbns7Z9ossZHckh16iI498E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749246782; c=relaxed/simple;
-	bh=b5qIz6P3lrcv3sGS7KxAxKzdqooPdqfn8oztpbwmp10=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cJto53BDWW7PnlklSj0+TOjPovwV6uiD3NXExg4hcHlkudck8Cn/ljpLr6Uoik9OAUj1tGS/Gc+7kEjCF3i2WwjV5Nj9JPu82ADaNE5qY6+407YzW9pPZWaaNSr2csBzK1VMPqAbhFaup2IPXG/yEJMDlTGAgSfiJvRwRQenSF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vTQqpHtw; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7377139d8b1so2117771b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 14:53:00 -0700 (PDT)
+	s=arc-20240116; t=1749247181; c=relaxed/simple;
+	bh=YiTEgPLwch4Bs+k/s9/DVupdd2uxEJ58BERhALJ2HC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MJLt6eWiXTUbB4iug0XFI1btNa+9EjW7qi1q/lVpFYzLFh7van2hJjoBoicHocV6sefLLCexGy5sSSJI6EmUk+mIYFuZ8TKDLXJEIEJuGFommThA2Hcp54dHcJ8DczCqzFpPmRgRlLLYZmHeqyb6knHtd4t3hFjVKrnT8WjIjEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0xdaHdP; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-234b440afa7so26629305ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 14:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749246780; x=1749851580; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iFfeaMcLuzx3qT6HoU1lCQOc9APQy0cingwV7epWcY=;
-        b=vTQqpHtwu0I2MBWW74Kg8c1dRSl/Hks2f3rIoPlcGVaQPIDicU5R2YMjvLRuYqpjUE
-         Mc43D/+XV2EV/7XwdH7uswZTHcQDqI8sGYyW4yyrImlZofkNO2A5vQFSvPuoabIrRQwS
-         ggEqqUL/avBfJ9vfKuASpCNmuD/WUdmgC6Yi80KpubFSv/V0Y7zG1MrFl7Gf2F+7nJ/y
-         2k4lGWkhUP7Hcu/ycoGoFBs+Uj1asmwkqJvAKx6fAV8JgOhAmrz36CHTxicv3Sw6Mikb
-         h+OqkURj4pwXOFW3zWL5Sw4CiewZwcm7f96I9G014iMWPEO8BNGyYZGjJc/HotEd2rqD
-         Ov2A==
+        d=gmail.com; s=20230601; t=1749247179; x=1749851979; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3zZWlbsZsWBDzSGqtGht4OhBTNgnXf0xW+1Vj0/hhfI=;
+        b=C0xdaHdPcddW+fLPxMFpdAVqDtK4Y1Rq/43t7+xAl5YSKMrEktt5GZ3F7ieccADSN0
+         zqPTbmiAsx5oNABK+94anlWqWWgQRBULpWSvx/PV6hqP10NfX4+uxCy7NuAy42OD4OKe
+         tMcyI16JU2Yw5cIgFeJv575SEJADsX1sc7n5yDPMgaTjFfhpZQJEggbw6hgePrTK8XZB
+         u2XMEyH8iQj2FqSuzfNNEYc3qnfu1TDeL70lqeZuFTxmNi8EG5gOfUyNA68NRfZNDhwZ
+         sYNR26RdfoU4yovCoQZ/dlrEKMrlWi+1l2L/nvYEIFGqTbw2mps+heAiOpL10KKv8Oa7
+         Pz9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749246780; x=1749851580;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iFfeaMcLuzx3qT6HoU1lCQOc9APQy0cingwV7epWcY=;
-        b=EYDiPLy6ximisszUJjAvO/zmVVYjf19FaKicHDSPD+NeFWDA6trUsexLAfaqrbwzTR
-         cj3vdIUTYU/7mn6yChj7yWRMysff1OoAwp5aOL1tuWtSAA5uGupsYE4kaB1IXRjE23ky
-         a0gEdjQec32UtWHlPH29IeELuNTXVE2Y3hsqG+BFUYWh8ffqv5WKAEJ1ai+98WKqY+8Q
-         aXk3uO/X2Q+BKqmGh8b3fvj2IQMxIHjYmFcQGm7D0MVidg6/5oK+iCIkvyevyyhDTIrS
-         a8DSMaOSy2KnO2qE3Obkjv0Tq5kU5AHTHBR5P2n8CNq/U9GACx36+GiKEJV4kChFE4Eu
-         HehA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyosnvpBhreR7CaMGy5UzNJfSLLa1Gi1FeD7PT5y2D3Ws+oRmSbqLFfP6jwmtuAJ54nRHrrUonrwYYSRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgTQZ8G1QI1G+dUOCHRrl0jg3re0XwbcTSc5FVld3eRN2aePDu
-	qjLsn2aclJHsCO0myCZneZJdO+moNncDNU3GP29jW7B93hRJgA1/btzPJbJkh6u4FegdkzpQ5Pw
-	L3732DDrzd5eFsISpPuaytQ==
-X-Google-Smtp-Source: AGHT+IFWSsiTLCA9zysSvmxqFq5C2iXTQ62Am4lukNek4+xAO1R68sTOy8bTcsuDDhcx31/Pe7r+yAxD6oKYSLrH
-X-Received: from pgbfq11.prod.google.com ([2002:a05:6a02:298b:b0:b2c:4fb0:bc64])
- (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:6009:b0:218:c22:e3e6 with SMTP id adf61e73a8af0-21ee2555021mr6431282637.12.1749246779784;
- Fri, 06 Jun 2025 14:52:59 -0700 (PDT)
-Date: Fri,  6 Jun 2025 14:52:46 -0700
-In-Reply-To: <20250606215246.2419387-1-blakejones@google.com>
+        d=1e100.net; s=20230601; t=1749247179; x=1749851979;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3zZWlbsZsWBDzSGqtGht4OhBTNgnXf0xW+1Vj0/hhfI=;
+        b=v6qwvMpP0FVPOQkK/7DE0hPCwoe9NsuPOVCLqt6pqyRXYEX4Yxv5X7XW5wE+2jdoeD
+         3itPLxZylvDWRCyIAt2cKsxCdDlBqJLX7O9xMXr0PsltXssRxlPfUVMUMf/tzqFjmxSb
+         24y0JREOI68q1ZTsZ2OilnM/0CoLAZ0yDf/h15y3CPGXc88HjIR+t++krjsjcalxIzlp
+         PBpvf4DvvIUgVI8wJ3WRVydbGjoH6OB72Hc7QGXtNTUXmEWxV/3SWdg/84k6xdK4+ENY
+         fmlnenr8U0FYai8mhhrFxJSvQ877ZxE0yLDOq131WsO5XR2HnKkB8suTbFNt/Awyosr/
+         iDxw==
+X-Gm-Message-State: AOJu0YzH4pz1j84SvrD3My/9+zIkVW2AhhDh3nZ0B500KLNT1XN3w/+9
+	QT1ObvFRAZKa+9BcAOZbF7oSClP449ASW0uEdFu5EOhPvz1o4PfuCi+dMjwnXg==
+X-Gm-Gg: ASbGncvRnDqhhTM+3h6vgMGC7yTMBs1l7oIPN6imdhv4bOlEo6xs/85iYvTO82+QzAF
+	ZWUwpNSfSH+q969TGUPZ/4kGnsXfY7en55Do9wcldbmtdydLG7ZNtv9SdtGqRC7z9A3g/xjph5M
+	upafrjUZSSXcdlR3I4xu6jOnjHfZkwEgsOeA1uT2tOnibb79RY3tLEyUr2KIP8YkAcs5iDUYKkB
+	/5jr/Y9ksJ5EPwzT+jgpkGcUaTyuR8EWjVInk+3ZAUs3pcFhB0yaVpFefcFK5lzUiyViUB4ztMA
+	7VcChmL/l8mIYiXOniYBBCySXEb6KJbpenlhlslqeETwkD0N7H4PkKQnTugW5FSr3TAERfS9pXo
+	sWwd8iVVcA6vY99xduBaezrus/DeGKGZhQtrCzLGn2lHd869L+agU
+X-Google-Smtp-Source: AGHT+IGRsYTvhTtG9mBhuM8Z3ZXSmPKu2CNyDifUVuE0zlVIJSCgJ202lfmjd43VebliOXdmMiIbnA==
+X-Received: by 2002:a17:902:e80e:b0:235:c9ef:c9e1 with SMTP id d9443c01a7336-23601cf0b28mr76283335ad.5.1749247178611;
+        Fri, 06 Jun 2025 14:59:38 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:d02c:e22:e5a4:2f84])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236035068f3sm16963425ad.236.2025.06.06.14.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 14:59:38 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: add gc_boost_gc_greedy sysfs node
+Date: Fri,  6 Jun 2025 14:59:32 -0700
+Message-ID: <20250606215932.1226604-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250606215246.2419387-1-blakejones@google.com>
-X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
-Message-ID: <20250606215246.2419387-6-blakejones@google.com>
-Subject: [PATCH v3 5/5] perf: add test for PERF_RECORD_BPF_METADATA collection
-From: Blake Jones <blakejones@google.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tomas Glozar <tglozar@redhat.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Yujie Liu <yujie.liu@intel.com>, 
-	Graham Woodward <graham.woodward@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Ben Gainey <ben.gainey@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Blake Jones <blakejones@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-This is an end-to-end test for the PERF_RECORD_BPF_METADATA support.
-It adds a new "bpf_metadata_perf_version" variable to perf's BPF programs,
-so that when they are loaded, there will be at least one BPF program with
-some metadata to parse. The test invokes "perf record" in a way that loads
-one of those BPF programs, and then sifts through the output to find its
-BPF metadata.
+From: Daeho Jeong <daehojeong@google.com>
 
-Signed-off-by: Blake Jones <blakejones@google.com>
+Add this to control GC algorithm for boost GC.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- tools/perf/Makefile.perf                    |  3 +-
- tools/perf/tests/shell/test_bpf_metadata.sh | 76 +++++++++++++++++++++
- tools/perf/util/bpf_skel/perf_version.h     | 17 +++++
- 3 files changed, 95 insertions(+), 1 deletion(-)
- create mode 100755 tools/perf/tests/shell/test_bpf_metadata.sh
- create mode 100644 tools/perf/util/bpf_skel/perf_version.h
+ Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
+ fs/f2fs/gc.c                            | 3 ++-
+ fs/f2fs/gc.h                            | 1 +
+ fs/f2fs/sysfs.c                         | 7 +++++++
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index d4c7031b01a7..4f292edeca5a 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -1250,8 +1250,9 @@ else
- 	$(Q)cp "$(VMLINUX_H)" $@
- endif
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 931c1f63aa2e..b978d183f5b1 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -869,3 +869,9 @@ Description:	Set a multiplier for the background GC migration window when F2FS G
+ 		boosted.
+ 		Default: 5
  
--$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(LIBBPF) $(SKEL_OUT)/vmlinux.h | $(SKEL_TMP_OUT)
-+$(SKEL_TMP_OUT)/%.bpf.o: util/bpf_skel/%.bpf.c $(OUTPUT)PERF-VERSION-FILE util/bpf_skel/perf_version.h $(LIBBPF) $(SKEL_OUT)/vmlinux.h | $(SKEL_TMP_OUT)
- 	$(QUIET_CLANG)$(CLANG) -g -O2 --target=bpf $(CLANG_OPTIONS) $(BPF_INCLUDE) $(TOOLS_UAPI_INCLUDE) \
-+	  -include $(OUTPUT)PERF-VERSION-FILE -include util/bpf_skel/perf_version.h \
- 	  -c $(filter util/bpf_skel/%.bpf.c,$^) -o $@
++What:		/sys/fs/f2fs/<disk>/gc_boost_gc_greedy
++Date:		June 2025
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	Control GC algorithm for boost GC. 0: cost benefit, 1: greedy
++		Default: 1
++
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index de7e59bc0906..31afee3af1a0 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -141,7 +141,7 @@ static int gc_thread_func(void *data)
+ 					FOREGROUND : BACKGROUND);
  
- $(SKEL_OUT)/%.skel.h: $(SKEL_TMP_OUT)/%.bpf.o | $(BPFTOOL)
-diff --git a/tools/perf/tests/shell/test_bpf_metadata.sh b/tools/perf/tests/shell/test_bpf_metadata.sh
-new file mode 100755
-index 000000000000..11df592fb661
---- /dev/null
-+++ b/tools/perf/tests/shell/test_bpf_metadata.sh
-@@ -0,0 +1,76 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# BPF metadata collection test.
+ 		sync_mode = (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC) ||
+-				gc_control.one_time;
++			(gc_control.one_time && gc_th->boost_gc_greedy);
+ 
+ 		/* foreground GC was been triggered via f2fs_balance_fs() */
+ 		if (foreground)
+@@ -198,6 +198,7 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ 	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
+ 	gc_th->valid_thresh_ratio = DEF_GC_THREAD_VALID_THRESH_RATIO;
+ 	gc_th->boost_gc_multiple = BOOST_GC_MULTIPLE;
++	gc_th->boost_gc_greedy = 1;
+ 
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+ 		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED;
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index efa1968810a0..1a2e7a84b59f 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -69,6 +69,7 @@ struct f2fs_gc_kthread {
+ 	unsigned int boost_zoned_gc_percent;
+ 	unsigned int valid_thresh_ratio;
+ 	unsigned int boost_gc_multiple;
++	unsigned int boost_gc_greedy;
+ };
+ 
+ struct gc_inode_list {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index b0270b1c939c..5de7cd5c4fd8 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -824,6 +824,11 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "gc_boost_gc_greedy")) {
++		if (t > 1)
++			return -EINVAL;
++	}
 +
-+set -e
-+
-+err=0
-+perfdata=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-+
-+cleanup() {
-+	rm -f "${perfdata}"
-+	rm -f "${perfdata}".old
-+	trap - EXIT TERM INT
-+}
-+
-+trap_cleanup() {
-+	cleanup
-+	exit 1
-+}
-+trap trap_cleanup EXIT TERM INT
-+
-+test_bpf_metadata() {
-+	echo "Checking BPF metadata collection"
-+
-+	if ! perf check -q feature libbpf-strings ; then
-+		echo "Basic BPF metadata test [skipping - not supported]"
-+		err=0
-+		return
-+	fi
-+
-+	# This is a basic invocation of perf record
-+	# that invokes the perf_sample_filter BPF program.
-+	if ! perf record -e task-clock --filter 'ip > 0' \
-+			 -o "${perfdata}" sleep 1 2> /dev/null
-+	then
-+		echo "Basic BPF metadata test [Failed record]"
-+		err=1
-+		return
-+	fi
-+
-+	# The BPF programs that ship with "perf" all have the following
-+	# variable defined at compile time:
-+	#
-+	#   const char bpf_metadata_perf_version[] SEC(".rodata") = <...>;
-+	#
-+	# This invocation looks for a PERF_RECORD_BPF_METADATA event,
-+	# and checks that its content contains the string given by
-+	# "perf version".
-+	VERS=$(perf version | awk '{print $NF}')
-+	if ! perf script --show-bpf-events -i "${perfdata}" | awk '
-+		/PERF_RECORD_BPF_METADATA.*perf_sample_filter/ {
-+			header = 1;
-+		}
-+		/^ *entry/ {
-+			if (header) { header = 0; entry = 1; }
-+		}
-+		$0 !~ /^ *entry/ {
-+			entry = 0;
-+		}
-+		/perf_version/ {
-+			if (entry) print $NF;
-+		}
-+	' | egrep "$VERS" > /dev/null
-+	then
-+		echo "Basic BPF metadata test [Failed invalid output]"
-+		err=1
-+		return
-+	fi
-+	echo "Basic BPF metadata test [Success]"
-+}
-+
-+test_bpf_metadata
-+
-+cleanup
-+exit $err
-diff --git a/tools/perf/util/bpf_skel/perf_version.h b/tools/perf/util/bpf_skel/perf_version.h
-new file mode 100644
-index 000000000000..1ed5b2e59bf5
---- /dev/null
-+++ b/tools/perf/util/bpf_skel/perf_version.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+
-+#ifndef __PERF_VERSION_H__
-+#define __PERF_VERSION_H__
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+/*
-+ * This is used by tests/shell/record_bpf_metadata.sh
-+ * to verify that BPF metadata generation works.
-+ *
-+ * PERF_VERSION is defined by a build rule at compile time.
-+ */
-+const char bpf_metadata_perf_version[] SEC(".rodata") = PERF_VERSION;
-+
-+#endif /* __PERF_VERSION_H__ */
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
+@@ -1051,6 +1056,7 @@ GC_THREAD_RW_ATTR(gc_no_zoned_gc_percent, no_zoned_gc_percent);
+ GC_THREAD_RW_ATTR(gc_boost_zoned_gc_percent, boost_zoned_gc_percent);
+ GC_THREAD_RW_ATTR(gc_valid_thresh_ratio, valid_thresh_ratio);
+ GC_THREAD_RW_ATTR(gc_boost_gc_multiple, boost_gc_multiple);
++GC_THREAD_RW_ATTR(gc_boost_gc_greedy, boost_gc_greedy);
+ 
+ /* SM_INFO ATTR */
+ SM_INFO_RW_ATTR(reclaim_segments, rec_prefree_segments);
+@@ -1222,6 +1228,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(gc_boost_zoned_gc_percent),
+ 	ATTR_LIST(gc_valid_thresh_ratio),
+ 	ATTR_LIST(gc_boost_gc_multiple),
++	ATTR_LIST(gc_boost_gc_greedy),
+ 	ATTR_LIST(gc_idle),
+ 	ATTR_LIST(gc_urgent),
+ 	ATTR_LIST(reclaim_segments),
 -- 
 2.50.0.rc0.604.gd4ff7b7c86-goog
 
