@@ -1,85 +1,76 @@
-Return-Path: <linux-kernel+bounces-675706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF75EAD01C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:07:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66698AD01E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FEDC179FE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595CC189DBCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335DC288511;
-	Fri,  6 Jun 2025 12:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8BF288CA6;
+	Fri,  6 Jun 2025 12:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dk1hBAp8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oF1zx9ni"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A672874E7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 12:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C22288502;
+	Fri,  6 Jun 2025 12:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749211623; cv=none; b=naNxftE2SDw8OinPE9fZnsvfqGoLbzuWrcUsSSXP+lOkQmG6pnOtl3OFeZSOzwqRTwZZBK2IkCDljC1VpYJGtkS8d1KgeI+A3vI2SNj+rpSkiz3HndlLl/4Y1fytRV0nhZlUEuKLIZjcBRZhGXcmsO+D9Tudfkklp2l5dgHRQfA=
+	t=1749211687; cv=none; b=GQ4PLVmIVjOiR9JANC0FjvH513E9UpGVJ86LCXU8p562fA15PkBtUYBhE4/+890SMnZGYnQCtw7ZteoswBp1fvVP9CLwa3SQi0XYvZYJLvbz8PeaaursdlB9iHDync+eSAD0H9bYE+/IqZxANQZSmxZEPwHks6iUevrTWq6FJCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749211623; c=relaxed/simple;
-	bh=jZhqw3CFkkpAqCC9nzOWg/77t51D878n8OcC+pjLft4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cau/mVHl1oU/waWKkASXvj06SqT201Pdszz6CRr/w2RscxUNkfMddBSFmnSexyBRugPb81FTIlhqqTKFHS/YUL2cVQ53PBWTUbeSJWqSqj9gLaM9Ih9nJwNP/wAylmNG84c41qXFKZpcFQX1PafQ+wy9DtpwUsC9x7ZQ2f2JnXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dk1hBAp8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749211619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mrjs5eOHCyu5GrbKeIZJ6mBciwCyDUhu9m4iaDSEfRE=;
-	b=dk1hBAp8S+hkCP0lZSn7YvdpdWzdX2JugbeHOVNLs/Dn3cK08b9VCsOig0srjLzzkuTi/6
-	Oraic979uAjJFGWZjE3pz1HDBnuRAUZI0WmpbvPrHMDrWBB2voFllKd+fRINlhGwAdczLV
-	6LZ1DWOxwhL9ycmIThyqaBqzN7mXH9c=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-hhQ4K7OCP1Wb_WyZHMZmRw-1; Fri,
- 06 Jun 2025 08:06:56 -0400
-X-MC-Unique: hhQ4K7OCP1Wb_WyZHMZmRw-1
-X-Mimecast-MFC-AGG-ID: hhQ4K7OCP1Wb_WyZHMZmRw_1749211612
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FBF819560B3;
-	Fri,  6 Jun 2025 12:06:52 +0000 (UTC)
-Received: from hydra.redhat.com (unknown [10.44.33.65])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E186C18003FD;
-	Fri,  6 Jun 2025 12:06:44 +0000 (UTC)
-From: Jocelyn Falempe <jfalempe@redhat.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v8 9/9] drm/i915/psr: Add intel_psr2_panic_force_full_update
-Date: Fri,  6 Jun 2025 13:48:13 +0200
-Message-ID: <20250606120519.753928-10-jfalempe@redhat.com>
-In-Reply-To: <20250606120519.753928-1-jfalempe@redhat.com>
-References: <20250606120519.753928-1-jfalempe@redhat.com>
+	s=arc-20240116; t=1749211687; c=relaxed/simple;
+	bh=d3q5JvP5CcoG8muXKB/9gfTqlcO5qgg99WjINVwWJz4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h3iKCmjJkSbaroso57/nVCWzVohNYcFpNlah4VIOTuPoF8GxPQPsDmRqa5o/VDUjTUCxwt65QWd+aN05SxzeXWBONmODBr5Xl3iWfIGIayTxV07whMos1htjEEKIsGchxJxsJzxpk4FfjGMzOwhk9DDgeZAloavgzT+bmqQbfS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oF1zx9ni; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 556BcwM5021324;
+	Fri, 6 Jun 2025 14:07:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=UT+h5kLe0gqwv1nVudk7GH
+	idNHqmz6ANzbk1keBA7O4=; b=oF1zx9niZ6mEh5eWF24IqFI7G62pHG+IMPrMaL
+	ECDt9F8V47rbveNLoG5p9wzEDsJjjarUyTfYKXX/we2t52DiIKtap4RAWC/T4m3x
+	lBmhjyHbLrKtqgO7RDTOTUuTeIdzhyPv98mi2tVMmQB6AReQnZ2YdvtIXaCwR3gY
+	babOsGHWVS/PjrnbVckZT1KHgGnf90MVHYLfUM1UfbyL+S+t/eGBbDku/Ywgt2Hw
+	HU/vSM5unUOYpJd083Hu+LiEFPDFoyeYg/8Qsz3HeUJ1I8bsDORx05Sfs+q/Ebdl
+	1Cvr5BvwdCbzam6ENdgUMIjeI71SDuJhLcVkhhI3/720sNYQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 471g8tbn36-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Jun 2025 14:07:29 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D5C3E40049;
+	Fri,  6 Jun 2025 14:06:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1D0F3AE88A7;
+	Fri,  6 Jun 2025 14:04:26 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Jun
+ 2025 14:04:25 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <bhelgaas@google.com>,
+        <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <quic_schintav@quicinc.com>,
+        <shradha.t@samsung.com>, <cassel@kernel.org>,
+        <thippeswamy.havalige@amd.com>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v11 0/9] Add STM32MP25 PCIe drivers
+Date: Fri, 6 Jun 2025 14:03:54 +0200
+Message-ID: <20250606120403.2964857-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,100 +78,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-06_04,2025-06-05_01,2025-03-28_01
 
-When the panic handler is called, configure the psr to send the full
-framebuffer to the monitor, otherwise the panic screen is only
-partially visible.
+Changes in v11;
+   Address comments from Manivanna:
+   - RC driver: Do not call pm_runtime_get_noresume in probe
+                More uses of dev_err_probe
+   - EP driver: Use level triggered PERST# irq
 
-Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
----
+Changes in v10;
+   - Update pcie_ep bindings with dbi2 and atu regs,
+     thus remove Reviewed-by and Acked-by.
+   
+Changes in v9:
+   - Describe atu and dbi2 shadowed registers in pcie_ep node
+   Address RC and EP drivers comments from Manivanna:
+   - Use dev_error_probe() for pm_runtime_enable() calls
+   - Reword Kconfig help message
+   - Move pm_runtime_get_noresume() before devm_pm_runtime_enable()
 
-v8:
- * Added in v8
+Changes in v8:
+   - Whitespace in comment
+   
+Changes in v7:
+   - Use device_init_wakeup to enable wakeup
+   - Fix comments (Bjorn)
 
- .../gpu/drm/i915/display/intel_atomic_plane.c |  7 +++++++
- drivers/gpu/drm/i915/display/intel_psr.c      | 20 +++++++++++++++++++
- drivers/gpu/drm/i915/display/intel_psr.h      |  2 ++
- 3 files changed, 29 insertions(+)
+Changes in v6:
+   - Call device_wakeup_enable() to fix WAKE# wakeup.
+   Address comments from Manivanna:
+   - Fix/Add Comments
+   - Fix DT indents
+   - Remove dw_pcie_ep_linkup() in EP start link
+   - Add PCIE_T_PVPERL_MS delay in RC PERST# deassert
+   
+Changes in v5:
+   Address driver comments from Manivanna:
+   - Use dw_pcie_{suspend/resume}_noirq instead of private ones.
+   - Move dw_pcie_host_init() to probe
+   - Add stm32_remove_pcie_port cleanup function
+   - Use of_node_put in stm32_pcie_parse_port
+   - Remove wakeup-source property
+   - Use generic dev_pm_set_dedicated_wake_irq to support wake# irq
+   
+Changes in v4:
+   Address bindings comments Rob Herring
+   - Remove phy property form common yaml
+   - Remove phy-name property
+   - Move wake_gpio and reset_gpio to the host root port
+   
+Changes in v3:
+   Address comments from Manivanna, Rob and Bjorn:
+   - Move host wakeup helper to dwc core (Mani)
+   - Drop num-lanes=<1> from bindings (Rob)
+   - Fix PCI address of I/O region (Mani)
+   - Moved PHY to a RC rootport subsection (Bjorn, Mani)
+   - Replaced dma-limit quirk by dma-ranges property (Bjorn)
+   - Moved out perst assert/deassert from start/stop link (Mani)
+   - Drop link_up test optim (Mani)
+   - DT and comments rephrasing (Bjorn)
+   - Add dts entries now that the combophy entries has landed
+   - Drop delaying Configuration Requests
 
-diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-index 8c422c6a7186..c9a9f0770205 100644
---- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-+++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-@@ -58,6 +58,7 @@
- #include "intel_fb.h"
- #include "intel_fb_pin.h"
- #include "intel_fbdev.h"
-+#include "intel_psr.h"
- #include "skl_scaler.h"
- #include "skl_universal_plane.h"
- #include "skl_watermark.h"
-@@ -1319,6 +1320,7 @@ static unsigned int intel_4tile_get_offset(unsigned int width, unsigned int x, u
- static void intel_panic_flush(struct drm_plane *plane)
- {
- 	struct intel_plane_state *plane_state = to_intel_plane_state(plane->state);
-+	struct intel_crtc_state *crtc_state = to_intel_crtc_state(plane->state->crtc->state);
- 	struct intel_plane *iplane = to_intel_plane(plane);
- 	struct intel_display *display = to_intel_display(iplane);
- 	struct drm_framebuffer *fb = plane_state->hw.fb;
-@@ -1328,6 +1330,11 @@ static void intel_panic_flush(struct drm_plane *plane)
- 
- 	intel_bo_panic_finish(obj);
- 
-+	if (crtc_state->enable_psr2_sel_fetch) {
-+		/* Force a full update for psr2 */
-+		intel_psr2_panic_force_full_update(display, crtc_state);
-+	}
-+
- 	/* Flush the cache and don't disable tiling if it's the fbdev framebuffer.*/
- 	if (to_intel_framebuffer(fb) == intel_fbdev_framebuffer(display->fbdev.fbdev)) {
- 		struct iosys_map map;
-diff --git a/drivers/gpu/drm/i915/display/intel_psr.c b/drivers/gpu/drm/i915/display/intel_psr.c
-index db7111374293..283ac2618ea5 100644
---- a/drivers/gpu/drm/i915/display/intel_psr.c
-+++ b/drivers/gpu/drm/i915/display/intel_psr.c
-@@ -2888,6 +2888,26 @@ int intel_psr2_sel_fetch_update(struct intel_atomic_state *state,
- 	return 0;
- }
- 
-+void intel_psr2_panic_force_full_update(struct intel_display *display,
-+					struct intel_crtc_state *crtc_state)
-+{
-+	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
-+	enum transcoder cpu_transcoder = crtc_state->cpu_transcoder;
-+	u32 val = man_trk_ctl_enable_bit_get(display);
-+
-+	/* SF partial frame enable has to be set even on full update */
-+	val |= man_trk_ctl_partial_frame_bit_get(display);
-+	val |= man_trk_ctl_continuos_full_frame(display);
-+
-+	/* Directly write the register */
-+	intel_de_write_fw(display, PSR2_MAN_TRK_CTL(display, cpu_transcoder), val);
-+
-+	if (!crtc_state->enable_psr2_su_region_et)
-+		return;
-+
-+	intel_de_write_fw(display, PIPE_SRCSZ_ERLY_TPT(crtc->pipe), 0);
-+}
-+
- void intel_psr_pre_plane_update(struct intel_atomic_state *state,
- 				struct intel_crtc *crtc)
- {
-diff --git a/drivers/gpu/drm/i915/display/intel_psr.h b/drivers/gpu/drm/i915/display/intel_psr.h
-index 0cf53184f13f..9b061a22361f 100644
---- a/drivers/gpu/drm/i915/display/intel_psr.h
-+++ b/drivers/gpu/drm/i915/display/intel_psr.h
-@@ -57,6 +57,8 @@ int intel_psr2_sel_fetch_update(struct intel_atomic_state *state,
- 				struct intel_crtc *crtc);
- void intel_psr2_program_trans_man_trk_ctl(struct intel_dsb *dsb,
- 					  const struct intel_crtc_state *crtc_state);
-+void intel_psr2_panic_force_full_update(struct intel_display *display,
-+					struct intel_crtc_state *crtc_state);
- void intel_psr_pause(struct intel_dp *intel_dp);
- void intel_psr_resume(struct intel_dp *intel_dp);
- bool intel_psr_needs_vblank_notification(const struct intel_crtc_state *crtc_state);
+Changes in v2:
+   - Fix st,stm32-pcie-common.yaml dt_binding_check	
+
+Changes in v1:
+   Address comments from Rob Herring and Bjorn Helgaas:
+   - Drop st,limit-mrrs and st,max-payload-size from this patchset
+   - Remove single reset and clocks binding names and misc yaml cleanups
+   - Split RC/EP common bindings to a separate schema file
+   - Use correct PCIE_T_PERST_CLK_US and PCIE_T_RRS_READY_MS defines
+   - Use .remove instead of .remove_new
+   - Fix bar reset sequence in EP driver
+   - Use cleanup blocks for error handling
+   - Cosmetic fixes
+
+Christian Bruel (9):
+  dt-bindings: PCI: Add STM32MP25 PCIe Root Complex bindings
+  PCI: stm32: Add PCIe host support for STM32MP25
+  dt-bindings: PCI: Add STM32MP25 PCIe Endpoint bindings
+  PCI: stm32: Add PCIe Endpoint support for STM32MP25
+  MAINTAINERS: add entry for ST STM32MP25 PCIe drivers
+  arm64: dts: st: add PCIe pinctrl entries in stm32mp25-pinctrl.dtsi
+  arm64: dts: st: Add PCIe Root Complex mode on stm32mp251
+  arm64: dts: st: Add PCIe Endpoint mode on stm32mp251
+  arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
+
+ .../bindings/pci/st,stm32-pcie-common.yaml    |  33 ++
+ .../bindings/pci/st,stm32-pcie-ep.yaml        |  73 ++++
+ .../bindings/pci/st,stm32-pcie-host.yaml      | 112 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi |  20 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |  59 +++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  21 +
+ drivers/pci/controller/dwc/Kconfig            |  24 ++
+ drivers/pci/controller/dwc/Makefile           |   2 +
+ drivers/pci/controller/dwc/pcie-stm32-ep.c    | 384 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.c       | 370 +++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.h       |  16 +
+ 12 files changed, 1121 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
+
+
+base-commit: 911483b25612c8bc32a706ba940738cc43299496
 -- 
-2.49.0
+2.34.1
 
 
