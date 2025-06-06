@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-675570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BA0ACFFA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6DAACFFA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3E63A6F52
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:50:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DF6189BD5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73671286881;
-	Fri,  6 Jun 2025 09:50:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3967013B2A4;
-	Fri,  6 Jun 2025 09:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDBC286425;
+	Fri,  6 Jun 2025 09:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ildp5oto"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CF3191F7E;
+	Fri,  6 Jun 2025 09:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749203438; cv=none; b=AX1IAp1XcAXTxNu+5gWH9SRVPHzZjqRUkgyWWRCch5DrDtZZ8jMiye5RCsxTi4bLE9CcwBNJ2T/LjCtZxar6G4lEsf5KXz8fxAYcPAIqheivaapA25l8QzV0PfXFeQcib3alMXb5R4hbbOukzibqF+gf7Czoodv3h6vVGu4ASkI=
+	t=1749203248; cv=none; b=FKWgyxlFgNCTX/+BT11ptcpqbeP4+krp+rwm+DZIRNPlGRX3kdjMtbPtBKQw7sZYTPC2K62NEUKh0EUtJNMn7z3YYJOUKblYZMoGj4i7vjUjL1uXZ0IwMch2xxsFn84JZAEPVSZyuuxgue9jF/GYaR8QxE4JbWhB7PQHLkiU/jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749203438; c=relaxed/simple;
-	bh=feAQpUfREqIyqaR5jr5Sy0Qgv6IKtyAVXYK+ZWaBKfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z5OBAJJyDVdxjvTM8wbn0YwSaDdlhImF8fyQt8aTN7R0L0WwCPT3cpYB9DAgjxGI3gJ3L3kdYN+CUNVzLh8vlZo824eZU80vXZAXODxrRsxfqfPw2Bldw/pSD3FSQpEW82YNXA2VTUkGu6yXByGUi++A7C+2zSr0HIZ0M0a42AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bDGcJ510Jz9ssb;
-	Fri,  6 Jun 2025 11:44:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id tjurJkmP4Gxb; Fri,  6 Jun 2025 11:44:16 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bDGcJ4C5Wz9srg;
-	Fri,  6 Jun 2025 11:44:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8B59F8B76C;
-	Fri,  6 Jun 2025 11:44:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id skAA1reDtuH6; Fri,  6 Jun 2025 11:44:16 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 18FEE8B763;
-	Fri,  6 Jun 2025 11:44:16 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH] ALSA: pcm: Rewrite recalculate_boundary() to avoid costly loop
-Date: Fri,  6 Jun 2025 11:44:02 +0200
-Message-ID: <4836e2cde653eebaf2709ebe30eec736bb8c67fd.1749202237.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1749203248; c=relaxed/simple;
+	bh=vvY+zy9RAHY5Xv9bdqTJBXFQVoDzhPJHF1eJQ9KYoDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tTv8/yxTKBLsMYGcyPWVh9M8g84/dVHCXOYEa3HPyIvolx9quQrQS3AHvSgfxbsz48W63EI5zOcFEjbLYgor1rwXhPEJ+dP1VQyAB/Cb+l9kupO+CgrV5Pug6IfaOhBoukldKGoSs3Kjv8QD9BJq4EEwXea8fcc0bx44m/azf6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ildp5oto; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206BBC4CEEB;
+	Fri,  6 Jun 2025 09:47:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749203247;
+	bh=vvY+zy9RAHY5Xv9bdqTJBXFQVoDzhPJHF1eJQ9KYoDA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ildp5otoztJksh2Bp1iOkOSirhm5+tezfn0hw/Rw+xybsiVkpMtUl54gFeybakK2A
+	 8RZOGYWAhYSCikgMAbxy2p/8yRm1+AUtktxfoeTjI3vS4jUxcK4lfhX+07ujCkyAFA
+	 nRkbbY6N6WbvUMItJV1PhxzLzLAqKbzMPyuJptfBYQXxJSU3TfMiKjhDurw+OakI3N
+	 ychK01gtpN9frEV4+RqJFC2YNvU2DQmhSxPj5KHTBCbsokkcNALcy8bH1OHvGKgkXI
+	 6mjlXu+mxSSospxpDKx2MeWOfPtTGTXGKcJ/4R6TdZHTO1heZkj5Ra3cJSO52BtlrJ
+	 26JDjpOv836EA==
+Date: Fri, 6 Jun 2025 11:47:24 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Lechner <dlechner@baylibre.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pwm: axi-pwmgen: Fix handling of external clock
+Message-ID: <jzbvo3ranrbpiaox6pzs73jmq5njkkmq7iqnme5z7krcugjdk2@6hy7myyjdji5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749203043; l=3083; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=feAQpUfREqIyqaR5jr5Sy0Qgv6IKtyAVXYK+ZWaBKfw=; b=qB3NAsGq3M8Q0jjRupzKaooojapfHgaxiAqyhkjD/arhMy8Gf84sxuM4dscgA+wlp0eVzGbAl Uzowl9ub5IDDUTT9oWgWbKqtrPkutIIJlPhqgllmPt+YfjtjqxxIzdI
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ixgvzd3utbel5w3b"
+Content-Disposition: inline
 
-At the time being recalculate_boundary() is implemented with a
-loop which shows up as costly in a perf profile, as depicted by
-the annotate below:
 
-    0.00 :   c057e934:       3d 40 7f ff     lis     r10,32767
-    0.03 :   c057e938:       61 4a ff ff     ori     r10,r10,65535
-    0.21 :   c057e93c:       7d 49 50 50     subf    r10,r9,r10
-    5.39 :   c057e940:       7d 3c 4b 78     mr      r28,r9
-    2.11 :   c057e944:       55 29 08 3c     slwi    r9,r9,1
-    3.04 :   c057e948:       7c 09 50 40     cmplw   r9,r10
-    2.47 :   c057e94c:       40 81 ff f4     ble     c057e940 <snd_pcm_ioctl+0xee0>
+--ixgvzd3utbel5w3b
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: [GIT PULL] pwm: axi-pwmgen: Fix handling of external clock
+MIME-Version: 1.0
 
-Total: 13.2% on that simple loop.
+Hello Linus,
 
-But what the loop does is to multiply the boundary by 2 until it is
-over the wanted border. This can be avoided by using fls() to get the
-boundary value order and shift it by the appropriate number of bits at
-once.
+the following changes since commit c0c980f237e822fd9cc6c0ab5b60ce8efe76464e:
 
-This change provides the following profile:
+  dt-bindings: timer: renesas,tpu: remove binding documentation (2025-05-19 18:46:45 +0200)
 
-    0.04 :   c057f6e8:       3d 20 7f ff     lis     r9,32767
-    0.02 :   c057f6ec:       61 29 ff ff     ori     r9,r9,65535
-    0.34 :   c057f6f0:       7d 5a 48 50     subf    r10,r26,r9
-    0.23 :   c057f6f4:       7c 1a 50 40     cmplw   r26,r10
-    0.02 :   c057f6f8:       41 81 00 20     bgt     c057f718 <snd_pcm_ioctl+0xf08>
-    0.26 :   c057f6fc:       7f 47 00 34     cntlzw  r7,r26
-    0.09 :   c057f700:       7d 48 00 34     cntlzw  r8,r10
-    0.22 :   c057f704:       7d 08 38 50     subf    r8,r8,r7
-    0.04 :   c057f708:       7f 5a 40 30     slw     r26,r26,r8
-    0.35 :   c057f70c:       7c 0a d0 40     cmplw   r10,r26
-    0.13 :   c057f710:       40 80 05 f8     bge     c057fd08 <snd_pcm_ioctl+0x14f8>
-    0.00 :   c057f714:       57 5a f8 7e     srwi    r26,r26,1
+(which corresponds to my tag pwm/for-6.16-rc1 that you already pulled
+last week) are available in the Git repository at:
 
-Total: 1.7% with that loopless alternative.
+  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/pwm/for-6.16-rc1-fixes
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- sound/core/pcm_native.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+for you to fetch changes up to a8841dc3dfbf127a19c3612204bd336ee559b9a1:
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index 6c2b6a62d9d2..2b77190a247d 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -24,6 +24,7 @@
- #include <sound/minors.h>
- #include <linux/uio.h>
- #include <linux/delay.h>
-+#include <linux/bitops.h>
- 
- #include "pcm_local.h"
- 
-@@ -3119,13 +3120,23 @@ struct snd_pcm_sync_ptr32 {
- static snd_pcm_uframes_t recalculate_boundary(struct snd_pcm_runtime *runtime)
- {
- 	snd_pcm_uframes_t boundary;
-+	snd_pcm_uframes_t border;
-+	int order;
- 
- 	if (! runtime->buffer_size)
- 		return 0;
--	boundary = runtime->buffer_size;
--	while (boundary * 2 <= 0x7fffffffUL - runtime->buffer_size)
--		boundary *= 2;
--	return boundary;
-+
-+	border = 0x7fffffffUL - runtime->buffer_size;
-+	if (runtime->buffer_size > border)
-+		return runtime->buffer_size;
-+
-+	order = __fls(border) - __fls(runtime->buffer_size);
-+	boundary = runtime->buffer_size << order;
-+
-+	if (boundary <= border)
-+		return boundary;
-+	else
-+		return boundary / 2;
- }
- 
- static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
--- 
-2.47.0
+  pwm: axi-pwmgen: fix missing separate external clock (2025-06-02 18:23:33 +0200)
 
+----------------------------------------------------------------
+pwm: axi-pwmgen: Fix handling of external clock
+
+The pwm-axi-pwmgen device is backed by an FPGA and can be synthesized in
+different ways. Relevant here is that it can use one or two external
+clock signals. The changes included here fix clock handling for the two
+clocks case.
+
+----------------------------------------------------------------
+
+The two commits have been in next since last Tuesday without issues.
+Please pull these two changes for 6.16-rc1.
+
+Thanks
+Uwe
+
+David Lechner (2):
+      dt-bindings: pwm: adi,axi-pwmgen: Fix clocks
+      pwm: axi-pwmgen: fix missing separate external clock
+
+ .../devicetree/bindings/pwm/adi,axi-pwmgen.yaml    | 13 ++++++++++--
+ drivers/pwm/pwm-axi-pwmgen.c                       | 23 +++++++++++++++++++---
+ 2 files changed, 31 insertions(+), 5 deletions(-)
+
+--ixgvzd3utbel5w3b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhCuSkACgkQj4D7WH0S
+/k6vOQf+NCDzm/4JC9KgW9GvFklJ811OhzwGYtDBvTPpOjwI8vU1/d0c+0gffUDx
+BkbuEGS3fTZSURW2uXhP8OiazkVbBCZIJbJVScssNTbskQVDWNSgOojnqQz7uzjK
+oCO8W2uUURBSCdafJ+mRpsRgN0I7YB4Pili0o5QWtjrZ+YU1VYfKZVGlTbl58Dci
+z9QtzZX5uxBNq5FxtSpiPQIWKMGl5HiGaGo4JTI9wwb+tQiFdi843AkpTwhLiAgD
+YjJ91a7wzMgWvOuEmP/8cGyIlJCbN99RLEu0lh2p6UbFxpPS6SWpRj5vJ4HQ69K1
+9AS5znuYDWPT6wbvJ4VtF+Q/IhRkgw==
+=TiO0
+-----END PGP SIGNATURE-----
+
+--ixgvzd3utbel5w3b--
 
