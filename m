@@ -1,244 +1,285 @@
-Return-Path: <linux-kernel+bounces-676060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F48AAD070E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:57:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F43DAD0711
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E733B2AF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CBA3B2C10
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392C7289E2D;
-	Fri,  6 Jun 2025 16:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CE328A1E0;
+	Fri,  6 Jun 2025 16:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hUuSo1YV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WuiprYSp"
+Received: from mail-yb1-f228.google.com (mail-yb1-f228.google.com [209.85.219.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30D02882B6
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 16:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749229035; cv=fail; b=BAOsaIj3hdJHA4HRpSP+zpiYEBQ6Js1SWMpTDkUp6rE3Xy0B86kKtnuxWDHt5vbyBNB14l27ErgFltOPGWMjxBfR+Lli4Rz50iI2UCSas932BDy3QRPmrqccVGn24EdSMaKxljg7YeM5oUoA23qAANNt+cPoSn/Y+/Jeb18fKNI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749229035; c=relaxed/simple;
-	bh=o4ATKNEEQsXjc66L5VCOE5XOBCuJzsa0oY9ZYKJPqIM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fUNq7Mmn2QLQO0mV9PApD9NPhecgxU4DXESIjKAUlSD156lWIpIXWAmaN6B3jfaCyF54ExvhKoO+7X352yFz1IBfo082R6wnIuwZnF7SY7IUwHxowfkt4lPZHUde1k0MHp1BtwhbRDFoS1ktXQQ9niCN5nhUG1RU+UJxFFux0e8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hUuSo1YV; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749229034; x=1780765034;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=o4ATKNEEQsXjc66L5VCOE5XOBCuJzsa0oY9ZYKJPqIM=;
-  b=hUuSo1YVgERP209q6i2/60vw7UhY+1N2Pw3gfsnz7l1UY71HsXFiitZW
-   t4xELLkTsrkubAYHdkIeR7sdwVi35J41w1oRvCERqHU6mkF22yjrlNTq/
-   gYFz3d7WJWzDU9P+vG/ybWpDybKhLsV6FOMXS9tkRize8WUCH3F78OSrl
-   uXEl+WmmpZaNCc97EXSedn8BrrCjSBnVTeZoW38zH9wfCONxatzu272zW
-   FOFH3jtesxNLdsXDt9IhF/P87WAZUqfAj3Nz2eI9WdV1KyMHLHcwmQPKW
-   XahXyH4HT5j/8rjcqC0rs7eS2xlI2G6plEFtLs4PIp4N6LKmo1M/7qVfY
-   w==;
-X-CSE-ConnectionGUID: kQ6F49/gRqGR1si7D4cZYQ==
-X-CSE-MsgGUID: 0r8/0ej8RMmIIC/VccX6UA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="54015379"
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
-   d="scan'208";a="54015379"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 09:56:30 -0700
-X-CSE-ConnectionGUID: C+ojGLRATBSZYcUhnY8CgA==
-X-CSE-MsgGUID: 32SOo4hgRV+T7ze6Yvqi8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
-   d="scan'208";a="146847149"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 09:56:30 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 6 Jun 2025 09:56:29 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 6 Jun 2025 09:56:29 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.65) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Fri, 6 Jun 2025 09:56:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MlFLOk675cJ/XsBzBAN3CluR0mb5kEhWbcc0Wjr8x4Y1L1OZFmDezcpG2I4jQo24Ouur8P9AecRYSW12qBpMHCyzF7jPcx783UFJSDrK7iNS/2MDIrGDzPj4H2ZIC5qm1f0KAOxluFbXOoueEJD4gSYEI8jQGjQzpLfmW8scriHDpGZH5Jd+sUpXk77I4Fl7Uv00pWL/cr62mgwExlYku+N9gStsIAtI6iOLhdzwaaw7aOdXo1Hzzs0GytyXVvyl7ahHk3iGr4tjZ3MhWMwszC+RqNlsG1vwktwoPLXTx9aroS06uqLtM3IKETtawdHeKIC3HVozfAxtFNTKOaHUVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Q8PoeNGh4miPe6R3VYescVYxux58LKeJ+qyT7H5/LU=;
- b=V9a2O0xmb9YmUHr6ODD48UFvZALPeMhjBn3dVxqr2um/ZZI23bt9nsJtPAIf0ezkK/ecK6+4k95D3MxRWxr/5ZEZXb0XnUpY+VdAzA3S74+27uRiDVfQrJbogfnClR5nFWH6amr2rd6lnDBzTRjfUY2KbL2mgOXIax5lIaOl7CL4uUwK3kqVOVlNjS5Td1rOhVAmgH4okTEH8tvwssgw4ijy2/Hi51IRXjNcxn9x2cf36Xlgleo/Q8jaAoujn8XPkCLEc5c5/zX/4MkaTr3a1p+nwiGCoHfSeb9uvxGErpoFW4jvSF82uakAC+9bRoEp2XsdJKp2ucJ8pXDZhXh4Sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SJ5PPF1611BC49E.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::812) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.21; Fri, 6 Jun
- 2025 16:56:27 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8792.034; Fri, 6 Jun 2025
- 16:56:27 +0000
-Message-ID: <7d4c739b-3fe2-43e2-9771-6137f15b42f1@intel.com>
-Date: Fri, 6 Jun 2025 09:56:25 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 14/29] x86,fs/resctrl: Support binary fixed point event
- counters
-To: "Luck, Tony" <tony.luck@intel.com>
-CC: Fenghua Yu <fenghuay@nvidia.com>, Maciej Wieczor-Retman
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, "Anil
- Keshavamurthy" <anil.s.keshavamurthy@intel.com>, Chen Yu
-	<yu.c.chen@intel.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250521225049.132551-1-tony.luck@intel.com>
- <20250521225049.132551-15-tony.luck@intel.com>
- <f368c506-c479-4e8b-a5c6-b9bc5bcd5674@intel.com>
- <aEMWhMbLpImmMBrL@agluck-desk3>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <aEMWhMbLpImmMBrL@agluck-desk3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR04CA0001.namprd04.prod.outlook.com
- (2603:10b6:a03:40::14) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088CA28A1C4
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 16:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.228
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749229104; cv=none; b=SEJTuwA3D5aXNyE6zJj9VUaiEqNAdO+X2YpaqwTpDQdVpTJ5Q+DRe1IOePJqETh9j0E5MMhgTCVIjPmpectFxT1fSiOaXpmAdyqwpsaueHXq1BdDahuZLSL1Z4O/BTg4WFHQJ6uXMR96YhPZrHVnABSMQAKn+F5pqPnW5myFNuE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749229104; c=relaxed/simple;
+	bh=MngIcYiXP6HvUSC5VFe7pMwdihGLWpd5wKPDQNMg174=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Cs/Fyzi894uC1Jx/czcZTAQkjM0/0Q9z+a8jkL8Opdf/tfyC/z5ejXcW42MB1C9wvy2b9vBi210vo63AtydHspmKfX6/DuZN4Yr73KQ+LPoFlr8gIoOV5zqPGn3dlCqfSaIcAXzcKFmzMkAoE5+ES6v2nJ4wuyPT7TSf3gHrfXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WuiprYSp; arc=none smtp.client-ip=209.85.219.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yb1-f228.google.com with SMTP id 3f1490d57ef6-e7dc7245bcdso279168276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 09:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1749229102; x=1749833902; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GcLRRfuesWA0E+vmxrSkcl9ahXGVhzhcFxNoFBkwNY=;
+        b=WuiprYSpPqz8TK+yGX4A3B9jNg45jGs4p0bWOubeRZ0d0iF8kOHa5F1gUsNKwNucAk
+         FLy7mhU0XKKEEXmYMxBsjmPK4syryiepbtQiDKHW4uvRmScZoFbGKZPs3xpu1BtK/RSK
+         T3LMzAFlA9PJ0WZ3p3fKRBI1XnmsqOrB3QiMw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749229102; x=1749833902;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GcLRRfuesWA0E+vmxrSkcl9ahXGVhzhcFxNoFBkwNY=;
+        b=noAmISUcezJOAc2G93hIwyx0IRocCvHEdxqLuq6RaEuyVjcIbjpg9fVTnMRlKW87x/
+         m6OhWJVC+hEeHqKl7EtIFG50GXFiltQAVaTLSnpEYMZ5NMJm1HG75RDjThzmjgKuFO7x
+         tzKFjBGAnHLMcP+noxvMvMyw0kW+RAU9m4C1QMK4WBwAk+loWxpwnPvRksX2230X3gLm
+         DK5iddnSf7qNMEyg5ra8zrIzyOGmFWKUByGHHOQ/h1NFcEpBLAFCXQ0pXFL9CFD76VAl
+         pSC6ULRu99QAKCCP5Hk0e2lesIfPDp/d3F+6WnxS1d2FbdpS0legigDF9hFMq4sv9n9u
+         A7Fg==
+X-Gm-Message-State: AOJu0YzRBl9ec14WFm725bQxi6xWoGIIluOC0gv2wgE3ifO6pGFDITHD
+	e0jOhi14P0oyssjZ/mk20MOpQPWCe7XQoY37MOCWcH20mF2ekMUmhTbS49/kfsXf14SOazEU8UK
+	GAS981ZQPPieeim6ebS9lwGioLQlt48LU7khnHsBn6Wr2dNzR2wAHM8OwMCRwsJltOqMXlT1DqS
+	8RDmuf/Bry1+0QTZdSS3WIPtVz7ljnmuxAMOVZGP3dKysN+CsLSLfLSHzVYb15nk+3cSzeDWzjf
+	qIamBczvMc=
+X-Gm-Gg: ASbGncsthvUWF7xPvN6Y7YHqoI22jOXcEHPhwGI8yG4PrdlBliKRBpS/iLqOGBenK32
+	6P0kst6+2UxVLDxulNBpQJZNd0nWe8nIVV7aDNABCNsQJUC0s1XNIFCu1gXud+qLaRjJMgrXiIi
+	rl8lF3XIQ6XPfD9jY8htPxhDtpwp7H8/rvGfiuk6/Rc+/3vtNa4qoknHM9ikAbsm5yXjAticuOo
+	alOXupG0aKEKHr4LQ0Cy8Kfxv2DFpKw47ePS3a9YrUqEctZ6VFNV5s0Om5HSv9IjMpSRSAjNBqM
+	e1RCuQWVkbKAeEGAC+hJL01KkLKDWUv7mT7hvBxjK8xAEKsn7LiPtG6M9WywcLfabLjs+H9a
+X-Google-Smtp-Source: AGHT+IE4csKqUW2xqcAMljZpXppjshLODmsfBBcw73uSFQY2Nq15v84MAYa5IztjLQctwSQBfK5m+yep/T+D
+X-Received: by 2002:a05:6902:1883:b0:e7d:c8b9:3191 with SMTP id 3f1490d57ef6-e81a97cc997mr1683264276.7.1749229101422;
+        Fri, 06 Jun 2025 09:58:21 -0700 (PDT)
+Received: from bcacpedev-irv-2.lvn.broadcom.net ([192.19.161.250])
+        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-e81a41592fasm120273276.23.2025.06.06.09.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 09:58:21 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+From: David Regan <dregan@broadcom.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	william.zhang@broadcom.com,
+	anand.gore@broadcom.com,
+	florian.fainelli@broadcom.com,
+	kamal.dasu@broadcom.com,
+	dan.beygelman@broadcom.com,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	=?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>,
+	rafal@milecki.pl,
+	computersforpeace@gmail.com,
+	frieder.schrempf@kontron.de,
+	vigneshr@ti.com,
+	richard@nod.at,
+	bbrezillon@kernel.org,
+	kdasu.kdev@gmail.com,
+	jaimeliao.tw@gmail.com,
+	kilobyte@angband.pl,
+	jonas.gorski@gmail.com,
+	dgcbueu@gmail.com,
+	dregan@broadcom.com,
+	dregan@mail.com
+Subject: [PATCH v2] mtd: nand: brcmnand: fix mtd corrected bits stat
+Date: Fri,  6 Jun 2025 09:57:03 -0700
+Message-ID: <20250606165756.1531164-1-dregan@broadcom.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ5PPF1611BC49E:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf9292a4-c76c-4c1c-abcf-08dda51b13d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RFJGV1dmUEJaUEdaZ2hoVHNZVWE2b3Y3UkRBYk1HL0hxM1U0cVBVZVl1VGZl?=
- =?utf-8?B?LzZTVnk2UHZsd2EreU1BTzQ5WGxmTkc2ZVhLODJ1Rm52TmNVclBEbVRlSFdi?=
- =?utf-8?B?MHBuY0lKY1RZdFUyb0s0YTV3S0R3ZTI2VkxYaXh5Nld2bW1ET0VtdlE1eDJw?=
- =?utf-8?B?bTcxWVF4ZE1SZWhaWDdnWWRrSXRKTzVYVVRpTkxJL2xaZ0hRdndyUDJGTE0x?=
- =?utf-8?B?TU5rMllsSmhGN0c1b1BlNTNNeEZacXpNWEVWc2IzdSs1WnMyd1huRmxrQUNU?=
- =?utf-8?B?bk1mOG54QjlmdCtwaGN3K0tNd2hPQ1YwT2dINEpHQ0d2NkltSHJxbHlwRXox?=
- =?utf-8?B?akVGa1ZQcXhyWW9LUjZZZ1dkdjlpb21wamRnWTJ5RmY1WjFpTDhnMUF6TUJC?=
- =?utf-8?B?bGcrOE1SUlA5SnZYQU1uY3dEYkhoQ2hiYlVxZWdvUWEzempaYjJ1K3NyRlha?=
- =?utf-8?B?RjVZUzAzT0R0TDFjZlR0dE9neXEydFYwZzgxSXFSMDlwTVFSOUZZK1dCSG1h?=
- =?utf-8?B?TTlqY212SVdSMVJHTHJPNmJ4M1lCaThFaTIzUzR1ZXE4NDFHZS91Q2hwbWpi?=
- =?utf-8?B?ZXkxbkN1WkhjL3RySHpaSDVyaTdRYWpERnI0N28zQlVDTjFCd2w1bXV5Qmx3?=
- =?utf-8?B?L216MkREWVRxTU9MUFJyQXpBdC95MU94cVdmajVTZDRVUzB3ZmhxTU1FY3k5?=
- =?utf-8?B?R0ZCcUNqRGppUW9xbG1WWlBqeEt5VmdhN0VPTStRNmdUcThNNHhUbnR3YWl1?=
- =?utf-8?B?cU4xcVMzckJPN2hEUE12K1hHREd6Q1FGYlZoeU5KZ2o4U0tYWjhlMm83M094?=
- =?utf-8?B?dGVUSytlcjRxYWV4azh6ZE8weGRheWRHZy94WGErN1gwandzQkoxc0E2NUZL?=
- =?utf-8?B?WTUyUWRmZ3NTUmRjUGMyUGxYS2gxNlFZallIMTN5TnJXZmorLytrSTdaSzZv?=
- =?utf-8?B?TVhBb0Y3K08zK2VrNGIrUS9teTV5VEFobGltbzFuME1aOTY1MXdaS2JjbXlq?=
- =?utf-8?B?ZzhUL2hhTFk2RWwzZ25rbVRxTzNNc2t1eXV4U0VOYkQzUkFwdmE0NWdzOS9X?=
- =?utf-8?B?cmkzM0Z1dVhCV2l5N3gvbEljYWZjLzRvNTQyTk5jR0JCWVIxb1RJTnVucHVG?=
- =?utf-8?B?VEwxWUYzd1BSM00zQUFTQTFEWVNmWDdCQ3R3N21lRnRpZWRYNWxCN0JRc3N2?=
- =?utf-8?B?Sy9TOVFGV0xmcVZNNTFBdVdWN3RkS2tiS1BVR1E5LzNmOG9yUGNINVVrZjFp?=
- =?utf-8?B?NEY1U3Bvd1ZuVWFUbW45VFFSSXhlY3RZMzFzL3BKZ1BBTE9TVWthazlhTVNz?=
- =?utf-8?B?WnBka24ycHlqUXlOK2QvZ2txQUtrNlY1OHdRZ21yNk1pZktsZUxCd1l1RjVV?=
- =?utf-8?B?Tm5aTXhKZ1FUalVCd3dUMzFrSm44cERIUFNzQm9yQVhzRDBkRGtCZ3JsY3Ns?=
- =?utf-8?B?bEhsSlorRGpzcGhDZlE2MzE1MTIxKy9QbmIwdUpSTjFubjgwUWhGYW5wdVpF?=
- =?utf-8?B?V2ZqT1hTVjlTa2dmVlRMaEJya1RjWlpyVVFCeW4vQStBbzdJNjVENkY2WXhm?=
- =?utf-8?B?NjhOWnY1aUs0NHd5Vi8ydERjdG5tOXE3WjFqZWUyUHFJZjM5S3g2ZUZEYjhq?=
- =?utf-8?B?clRDd3ZONUpuV29tREFiVDVPRnI2UUZjOXU3aFdLT2Q3WXBQQWUyTlg2aDNE?=
- =?utf-8?B?Qm1MQTFjTmlSb291V2gxUHRkN0pkUzJFS01pMUlBRWtNNko0LzZnVkFHc0o3?=
- =?utf-8?B?dmRCenF2TG5lRjY2SnhHUkVVSFZiRkNtNWIyQ2ZjS0ZVbTUxU3MzYkY0endr?=
- =?utf-8?B?WlZHNjliaFRIV09LVk1udFNnWlFDb2xKMnZMamJMdkhSeHNvb3RDeGZQeGYr?=
- =?utf-8?B?MkpxTHd2Vk9LOEZhZjVWMnltK3RXYThzcjdueGcyTmlyUVF2ZEV5eUFBRFpF?=
- =?utf-8?Q?1m5+uEAFy8Y=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Uklhb0NLL042SFJ2b0tEc0JUR1lTNUtXL1RZcURna2dsVks0ZkgwTFZQWXhM?=
- =?utf-8?B?K0lWd1JtUmRoYmowcHAwQlliUkF6QlN6MXN1RnJielNnL3JKejFKMEtqY0dp?=
- =?utf-8?B?bFcyeEtES0lMMVY4MzVBNXlsZVZUMk1ZRTFkeFM0czdDR1VBeElNRXVmbHdo?=
- =?utf-8?B?WmNPak0zdFN2VzBHUU1ja2o5MkxKTlJ3NURVS0lIZ1dudnlZNHdUK2lRcDVn?=
- =?utf-8?B?VVNLb3kwOCsxMHJKM0ZhV1RETjlNeTlMMVlxYjREL2lNeHNDSldreCtVUmhq?=
- =?utf-8?B?OHYycGU3UVI5T1JUN05ZTU8vNHBObWZOdlFTbHIyWEtGdG85dUgyN0g1NW9T?=
- =?utf-8?B?WmYzVFZZZlJmSWtpbVRDYm9mSWsxKzd5WDhBK1h0M0w3MEZDZ1UzSUR6T2ZS?=
- =?utf-8?B?RGFYMjF0enJrem9GUHlEVm90VDNGTm1UZHJ3Y2RHRmpnbm9GVTNaSmg5Nmd6?=
- =?utf-8?B?T1doU29HZkxBT05mNzdIQ0pBN3BOUFA1bFhRdndVeUJCWTFBTkdaSFh0UUtw?=
- =?utf-8?B?SmxOQk82WGdDbXVONU5JeWxXa0hOeWxrMFFHSzlkbmUxS2pJSzdBQkpkWHRT?=
- =?utf-8?B?ZzRrQXIrOEZwNDhSY3JUdGRnbXFLZmlqc2UxWkVjcEV6UzVtMWhyQlR2WWF3?=
- =?utf-8?B?YXFYZlh5RWNBZEt3eGwwdFNaNW5wYlVoZ3ljUE5xOXhJQWNFMFlvZVVzNElz?=
- =?utf-8?B?SnUyYW9KYVMraC9DVWUvOEMwKzZGV3FuQzJLa1I0dzl0bE1kdkRoSkxQcXNH?=
- =?utf-8?B?L3NEUjVwSlRWcjBxMjU2SlFWVFBGNHhIQnlrMXZlS0lBclFXQWRDbDJER1lF?=
- =?utf-8?B?N2xPT3RLMnppVEY1Z1VLUHVoNlozUS91Y1JZVnp5ekFpZTl1R0puVHRNKzA5?=
- =?utf-8?B?K1B2NzBpMGd3YXk0T0dVYnV6b0tvamFvTlpmYjRidVAva2QxZGd2MzdVSnRZ?=
- =?utf-8?B?b3o4UGs0NS83MkxLNUJvMkpJNXBzQkhvZlNKcEhFSmJkQmRUOWJCS3kyZ2Ix?=
- =?utf-8?B?L2tGUWZFaFRuWXV0OVNSTmQ1T2VzenJVZEM5eXRkcEdBeGlocFdFMHZwdzcx?=
- =?utf-8?B?eWlaK2taNGNYS0VCREpsT1o2ZVhXRUVVVEVRZ21ySDdFeTZrQjlIU3NSTXF3?=
- =?utf-8?B?bnF3NE5NeEpxdnBsYlVHYmVTb3FUSHV2YXo4VkMvSjIzS3pkbXRENnlUWllR?=
- =?utf-8?B?RHFtV0lSWHByQjlVenFWc0lXeGNZcHZOMUJhZjNBZmg2RXNZeFlPRDZnbWdr?=
- =?utf-8?B?YUxGRlR1RG5sUUFRWDVGc1JvSW0zbkRsSXQvNk0xUmk2cC91Vk1ERlRVQU1W?=
- =?utf-8?B?S1RINWRCak1CZ095cWtTNGdnSEdkWUNZbkthaTE1eS84SFd5QS9KVXVHbDNl?=
- =?utf-8?B?endlMlQ4VGwzdU00cFBEVk5XNGxnaDd2aXBKdFplcVVvQUFXbGxHQTIxYkNP?=
- =?utf-8?B?clQ2Q1dWSEVXNDYzc2NzS0I2NUFYKy9XVE1MYUhYVmpsdkdKNHFyVnA5RWRp?=
- =?utf-8?B?KzRlQ3BVREphTDQyYzBaeXJCaU56SVJnaHd2eW9lNE5ROTNTdXFRUnIxZWVJ?=
- =?utf-8?B?RkhYZ3ZyOWdkOEJTVHdoa3IxSDJXU2RUTUpuRE5qLzI3UjNYL0pMaVJvc1Jn?=
- =?utf-8?B?cmJmeUtubG0rVnVHN01vSmdPK0ljYzhoNGtoWXBSTDdrWFVoQXg3amoxenor?=
- =?utf-8?B?ZEVCMWg3dUoyU25LRDVzYmhRK1hzS0hWai8xbzlsc3lBZmxpSml0cGlrdkZJ?=
- =?utf-8?B?dFBsSjFjOWVaMkNoUGtzRFZ1VU13cENsV0YvQk9qNHd4MlpybjV0QmcyUWN3?=
- =?utf-8?B?aWE4N29kMFVhRGFIc2U0T3U5SlM5KzBOcGlPVlJRSVY0UFVoWnVnaEdDSk9m?=
- =?utf-8?B?YUJoMXRxNnJrNlVjMGtIdnljMlYwZHZFSWNkdVJiUTJuOHFJaFJWVDg3SVBN?=
- =?utf-8?B?MDduQ09odWFtSFNrTXlqNkZGTzB2SjdjUU1CQUhZN3VicVU4VWJJampkaGdG?=
- =?utf-8?B?bU54RW94VWN1VEsxNHo1YStaelh0YzNyRXFDV0lRSU1sdUdWbXZrL0h4NGhE?=
- =?utf-8?B?VEhKY1BNU0kycFg0bHhRaVB2dVJtU0ZZZ3V3RW96ckNoRmNrM0krYllLdzdW?=
- =?utf-8?B?azY2UElPR2h4YXR4TTFOVU55bVgydVRlcUp1b2lWK0VJdk9tUldWZUZsWmh3?=
- =?utf-8?B?d2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf9292a4-c76c-4c1c-abcf-08dda51b13d4
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2025 16:56:27.3055
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h9EPcsMbf//vZqhbPKgHqknNofDfx4WX5imYSUQZPUYzTgFOu7Iw2iTs7h/kOXOijLy1a8vm9yetNfoLmgq7ecq83X++hIebxldDTL/g25M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF1611BC49E
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Hi Tony,
+Currently we attempt to get the amount of flipped bits from a hardware
+location which is reset on every subpage. Instead obtain total flipped
+bits stat from hardware accumulator. In addition identify the correct
+maximum subpage corrected bits.
 
-On 6/6/25 9:25 AM, Luck, Tony wrote:
-> On Tue, Jun 03, 2025 at 08:49:08PM -0700, Reinette Chatre wrote:
->>> +	sprintf(buf, "%0*llu", fp->decplaces, frac);
->>
->> I'm a bit confused here. I see fp->decplaces as the field width and the "0" indicates
->> that the value is zero padded on the _left_. I interpret this to mean that, for example,
->> if the value of frac is 42 then it will be printed as "0042". The fraction's value is modified
->> (it is printed as "0.0042") and there are no trailing zeroes to remove. What am I missing?
-> 
-> An example may help. Suppose architecture is providing 18 binary place
-> numbers, and delivers the value 0x60000 to be displayed. With 18 binary
-> places filesystem chooses 6 decimal places (I'll document the rationale
-> for this choice in comments in next version). In binary the value looks
-> like this:
-> 
-> 	integer	binary_places
-> 	1	100000000000000000
-> 
-> Running through my algorithm will end with "frac" = 500000 (decimal).
-> 
-> Thus there are *trailing* zeroes. The value should be displayed as
-> "1.5" not as "1.500000".
+Signed-off-by: David Regan <dregan@broadcom.com>
+Reviewed-by: William Zhang <william.zhang@broadcom.com>
+---
+ v2: Add >= v4 NAND controller support as requested by Jonas.
+     mtd->ecc_stats.corrected accumulates instead of set to total.
+     Remove DMA specific flipped bits count.
+---
+ drivers/mtd/nand/raw/brcmnand/brcmnand.c | 50 ++++++++++++++++++------
+ 1 file changed, 39 insertions(+), 11 deletions(-)
 
-Instead of a counter example, could you please make it obvious through
-the algorithm description and/or explanation of decimal place choice how
-"frac" is guaranteed to never be smaller than "decplaces"?
+diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+index 62bdda3be92f..c3ed3dcf0871 100644
+--- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
++++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+@@ -359,6 +359,7 @@ enum brcmnand_reg {
+ 	BRCMNAND_CORR_THRESHOLD_EXT,
+ 	BRCMNAND_UNCORR_COUNT,
+ 	BRCMNAND_CORR_COUNT,
++	BRCMNAND_READ_ERROR_COUNT,
+ 	BRCMNAND_CORR_EXT_ADDR,
+ 	BRCMNAND_CORR_ADDR,
+ 	BRCMNAND_UNCORR_EXT_ADDR,
+@@ -389,6 +390,7 @@ static const u16 brcmnand_regs_v21[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=     0,
+ 	[BRCMNAND_UNCORR_COUNT]		=     0,
+ 	[BRCMNAND_CORR_COUNT]		=     0,
++	[BRCMNAND_READ_ERROR_COUNT]	=     0,
+ 	[BRCMNAND_CORR_EXT_ADDR]	=  0x60,
+ 	[BRCMNAND_CORR_ADDR]		=  0x64,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	=  0x68,
+@@ -419,6 +421,7 @@ static const u16 brcmnand_regs_v33[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=     0,
+ 	[BRCMNAND_UNCORR_COUNT]		=     0,
+ 	[BRCMNAND_CORR_COUNT]		=     0,
++	[BRCMNAND_READ_ERROR_COUNT]	=  0x80,
+ 	[BRCMNAND_CORR_EXT_ADDR]	=  0x70,
+ 	[BRCMNAND_CORR_ADDR]		=  0x74,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	=  0x78,
+@@ -449,6 +452,7 @@ static const u16 brcmnand_regs_v50[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=     0,
+ 	[BRCMNAND_UNCORR_COUNT]		=     0,
+ 	[BRCMNAND_CORR_COUNT]		=     0,
++	[BRCMNAND_READ_ERROR_COUNT]	=  0x80,
+ 	[BRCMNAND_CORR_EXT_ADDR]	=  0x70,
+ 	[BRCMNAND_CORR_ADDR]		=  0x74,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	=  0x78,
+@@ -479,6 +483,7 @@ static const u16 brcmnand_regs_v60[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=  0xc4,
+ 	[BRCMNAND_UNCORR_COUNT]		=  0xfc,
+ 	[BRCMNAND_CORR_COUNT]		= 0x100,
++	[BRCMNAND_READ_ERROR_COUNT]	= 0x104,
+ 	[BRCMNAND_CORR_EXT_ADDR]	= 0x10c,
+ 	[BRCMNAND_CORR_ADDR]		= 0x110,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	= 0x114,
+@@ -509,6 +514,7 @@ static const u16 brcmnand_regs_v71[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=  0xe0,
+ 	[BRCMNAND_UNCORR_COUNT]		=  0xfc,
+ 	[BRCMNAND_CORR_COUNT]		= 0x100,
++	[BRCMNAND_READ_ERROR_COUNT]	= 0x104,
+ 	[BRCMNAND_CORR_EXT_ADDR]	= 0x10c,
+ 	[BRCMNAND_CORR_ADDR]		= 0x110,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	= 0x114,
+@@ -539,6 +545,7 @@ static const u16 brcmnand_regs_v72[] = {
+ 	[BRCMNAND_CORR_THRESHOLD_EXT]	=  0xe0,
+ 	[BRCMNAND_UNCORR_COUNT]		=  0xfc,
+ 	[BRCMNAND_CORR_COUNT]		= 0x100,
++	[BRCMNAND_READ_ERROR_COUNT]	= 0x104,
+ 	[BRCMNAND_CORR_EXT_ADDR]	= 0x10c,
+ 	[BRCMNAND_CORR_ADDR]		= 0x110,
+ 	[BRCMNAND_UNCORR_EXT_ADDR]	= 0x114,
+@@ -966,6 +973,13 @@ static inline u32 brcmnand_count_corrected(struct brcmnand_controller *ctrl)
+ 	return brcmnand_read_reg(ctrl, BRCMNAND_CORR_COUNT);
+ }
+ 
++static inline u32 brcmnand_corr_total(struct brcmnand_controller *ctrl)
++{
++	if (ctrl->nand_version < 0x400)
++		return 0;
++	return brcmnand_read_reg(ctrl, BRCMNAND_READ_ERROR_COUNT);
++}
++
+ static void brcmnand_wr_corr_thresh(struct brcmnand_host *host, u8 val)
+ {
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+@@ -2066,12 +2080,15 @@ static int brcmnand_dma_trans(struct brcmnand_host *host, u64 addr, u32 *buf,
+  */
+ static int brcmnand_read_by_pio(struct mtd_info *mtd, struct nand_chip *chip,
+ 				u64 addr, unsigned int trans, u32 *buf,
+-				u8 *oob, u64 *err_addr)
++				u8 *oob, u64 *err_addr, unsigned int *corr)
+ {
+ 	struct brcmnand_host *host = nand_get_controller_data(chip);
+ 	struct brcmnand_controller *ctrl = host->ctrl;
+ 	int i, ret = 0;
+ 
++	if (corr)
++		*corr = 0;
++
+ 	brcmnand_clear_ecc_addr(ctrl);
+ 
+ 	for (i = 0; i < trans; i++, addr += FC_BYTES) {
+@@ -2099,13 +2116,16 @@ static int brcmnand_read_by_pio(struct mtd_info *mtd, struct nand_chip *chip,
+ 
+ 			if (*err_addr)
+ 				ret = -EBADMSG;
+-		}
++			else {
++				*err_addr = brcmnand_get_correcc_addr(ctrl);
+ 
+-		if (!ret) {
+-			*err_addr = brcmnand_get_correcc_addr(ctrl);
++				if (*err_addr) {
++					ret = -EUCLEAN;
+ 
+-			if (*err_addr)
+-				ret = -EUCLEAN;
++					if (corr && brcmnand_count_corrected(ctrl) > *corr)
++						*corr = brcmnand_count_corrected(ctrl);
++				}
++			}
+ 		}
+ 	}
+ 
+@@ -2173,6 +2193,8 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+ 	int err;
+ 	bool retry = true;
+ 	bool edu_err = false;
++	unsigned int corrected = 0; /* max corrected bits per subpage */
++	unsigned int prev_tot = brcmnand_corr_total(ctrl);
+ 
+ 	dev_dbg(ctrl->dev, "read %llx -> %p\n", (unsigned long long)addr, buf);
+ 
+@@ -2200,9 +2222,11 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+ 			memset(oob, 0x99, mtd->oobsize);
+ 
+ 		err = brcmnand_read_by_pio(mtd, chip, addr, trans, buf,
+-					       oob, &err_addr);
++					   oob, &err_addr, &corrected);
+ 	}
+ 
++	mtd->ecc_stats.corrected += brcmnand_corr_total(ctrl) - prev_tot;
++
+ 	if (mtd_is_eccerr(err)) {
+ 		/*
+ 		 * On controller version and 7.0, 7.1 , DMA read after a
+@@ -2240,16 +2264,20 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+ 	}
+ 
+ 	if (mtd_is_bitflip(err)) {
+-		unsigned int corrected = brcmnand_count_corrected(ctrl);
+-
+ 		/* in case of EDU correctable error we read again using PIO */
+ 		if (edu_err)
+ 			err = brcmnand_read_by_pio(mtd, chip, addr, trans, buf,
+-						   oob, &err_addr);
++						   oob, &err_addr, &corrected);
+ 
+ 		dev_dbg(ctrl->dev, "corrected error at 0x%llx\n",
+ 			(unsigned long long)err_addr);
+-		mtd->ecc_stats.corrected += corrected;
++		/*
++		 * if flipped bits accumulator is not supported but we detected
++		 * a correction, increase stat by 1 to match previous behavior.
++		 */
++		if (brcmnand_corr_total(ctrl) == prev_tot)
++			mtd->ecc_stats.corrected++;
++
+ 		/* Always exceed the software-imposed threshold */
+ 		return max(mtd->bitflip_threshold, corrected);
+ 	}
+-- 
+2.43.5
 
-Reinette
 
