@@ -1,275 +1,179 @@
-Return-Path: <linux-kernel+bounces-675258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2C7ACFAFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:58:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E55ACFB00
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 03:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF42C1797B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2FB3AFD6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 01:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F405B136672;
-	Fri,  6 Jun 2025 01:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8C81AA7A6;
+	Fri,  6 Jun 2025 01:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="c451iHvU"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bTm2NzG4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F04199924;
-	Fri,  6 Jun 2025 01:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7702C136672;
+	Fri,  6 Jun 2025 01:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749175072; cv=none; b=tN4r+Xc2pVj6dvL6c2eEEkBXBHtoo+pjiQncBIgcKBB1twQyh4AEy6MHzwF1+HljYl9odukCGPVy0nOAKROj/15VYUhnjR4X+bUCV4tVSlNVvTunpaEGwd7uo6kbWYm9qwNRuaFonmDL4O2r+VjwMAqcrRVE4sc3QsTlLjd/IyU=
+	t=1749175096; cv=none; b=Z67M7Id8ygh8S3YXxaub1e6s/R83W8w4oBHnWSH6iPYlWdksOsbmw2xgmV0WCAmGZ+pssr0xrEGZY3C9Sxjd8K0iZbaGlfZ43Sq/fXhEd+9n/Yz8/XqRwu63DSItDpz/viCz1yzQkB2krQDp508vo+hkOigpgGrB0jkGF4RCDAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749175072; c=relaxed/simple;
-	bh=9A2cIopavtwlQ+4n7uHt1ROc1cBNKluPvLq6PQi2TmY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FGkrQb/mSnlwo29k5L6Sza26xIKw+uPkLi9T7iIwRZX+2jJT5RD/cwr0JGp4xbd41I87Tm1pNWci1za2xKkneGA9a/wMfsYBgZY9fFywEHLz/IdOctHUOKTcC2M+xkZg/DRJXtBAUY9hw7plF8/Y35IkSGqf9fpmUKxu4tsB7z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=c451iHvU; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a1e514c0427911f0b33aeb1e7f16c2b6-20250606
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zvqyrk8kJ2uCb2GN+GGEe5HFwqiqtZruRDoufvNL+rA=;
-	b=c451iHvUFND2MP+owIGUkc9BGH0qXO8kJu99ot/PPbkgqA+FocHFZNG5Dxh8X9vEM8JoRmQ9h8WeJaS+NL+cwwNn6TY96nAmiF2hctt3Fa1dpMIrHj70PvZ6O6Viwmmz3oBxlV4LysFBiBTFyYwstXhwO8OQ0M5HY+G+rtsI1VE=;
-X-CID-CACHE: Type:Local,Time:202506060957+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:ecb30f98-578c-4d17-9181-4e5146851721,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:0ef645f,CLOUDID:1731edf1-fe3f-487e-8db5-d099c876a5c3,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
-X-UUID: a1e514c0427911f0b33aeb1e7f16c2b6-20250606
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1513382290; Fri, 06 Jun 2025 09:57:42 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 6 Jun 2025 09:57:40 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 6 Jun 2025 09:57:40 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: <patches@lists.linux.dev>, <stable@vger.kernel.org>
-CC: Bjorn Helgaas <bhelgaas@google.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Ajay Agarwal
-	<ajayagarwal@google.com>, Daniel Stodden <daniel.stodden@gmail.com>, Macpaul
- Lin <macpaul.lin@mediatek.com>, =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?=
-	<kwilczynski@kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Deren Wu <Deren.Wu@mediatek.com>, Ramax
- Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, MediaTek
- Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Johnny-CC Chang <Johnny-CC.Chang@mediatek.com>
-Subject: [PATCH 6.11 1/1] PCI/ASPM: Disable L1 before disabling L1 PM Substates
-Date: Fri, 6 Jun 2025 09:57:38 +0800
-Message-ID: <20250606015738.2724220-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1749175096; c=relaxed/simple;
+	bh=MkBvdwK6FNaM0fTErE7K1l3fRohr1KqHDqz4JSkiUIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g3QjmdCKT7x4PRVMOa1cR52LCRiOfDEWKpA8U/KbV8ZokTnXZDg0A6BRMyMsAve4Fl9ChSsqT601YLDuQgmmEsdZdTgAgcm/1Z+h6kpSV/MQLBMwY4bXtJDINLGyx7obSSDH5r+aEyA6SIsMK0Mur66ehxAjiXHgwEcmu4Rj16U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bTm2NzG4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555GoJ8L032298;
+	Fri, 6 Jun 2025 01:58:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1eVv25fyJD7fIwowHkr2az93vCNXy8gdcolEbjwyhqE=; b=bTm2NzG48wsYFvrc
+	/VrOAaTxPzQS11NxEZN+EX8FCSOicO5tU1iOLy70wXIs116itFzZ4hNYRTAJJMNW
+	3kyeyVLAKBpt97SrtcJKapBwBNbKVrsoa7vXCynWD+vST6BTCF9luYUAZYQdWiRi
+	oV4QJRi/LunQM7GnhKFPt6Aj2NBkv0zPfvcKqSW8pPiOGAWsyBdAPkUzvnjuebnz
+	+kPiVd6E0B870ll/++Lcd5D54lbV2gh+yACv9wMG2aqmYMfs7kgO9eIdXH4+ZDzf
+	sPUSR41mPPukkDvJxRSuZssgKfnn2eKeLGA07FJ60wWK8+q63TIjxlWe4Vn5uWP8
+	ZqZ1Kg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471sfv2211-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Jun 2025 01:58:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5561wBdv030347
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Jun 2025 01:58:11 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Jun 2025
+ 18:58:09 -0700
+Message-ID: <9ab8e8f8-e176-44ab-b8e5-0c27e5eff30b@quicinc.com>
+Date: Fri, 6 Jun 2025 09:58:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mhi: host: Add standard elf image download
+ functionality
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Qiang Yu
+	<qiang.yu@oss.qualcomm.com>
+CC: <jeff.hugo@oss.qualcomm.com>, <mhi@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <can.guo@oss.qualcomm.com>, Mayank Rana <mayank.rana@oss.qualcomm.com>
+References: <20250603-standard_elf_image_load_support-v2-1-cce97644e99e@oss.qualcomm.com>
+ <sdhop6vyvt4y63tbbtorqfd5xa4ckbiwxdad5g6zzwlljqvd6q@eoaqmairdeey>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <sdhop6vyvt4y63tbbtorqfd5xa4ckbiwxdad5g6zzwlljqvd6q@eoaqmairdeey>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=CY8I5Krl c=1 sm=1 tr=0 ts=68424b34 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=6AU4lJIUDbi98Puw4poA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: Oht6ufUQ6kt8e6WswzDKGONEyKqAEudZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDAxNyBTYWx0ZWRfX8iKnOpL/TbpX
+ 01jU1OPwGfPGSoi/imxTgHxeJxS6Wi3fzi3FzJT3O5txlcr9lXdiWfDuHIAFAjsas2ocBJo4Kec
+ CCYaRy1rkqpqDjrY9dX0vXIwNyIIliM+iCOTc54c64bWYfx2Y5PV+xptc2NEaPS29TdYC5jzUbP
+ bJaMtkiJKF/ZBh9QR2wfJFqGcGtNjYfebuzo+Z4JogKP/7+x2o745h+ctj2hwnQnaseV+teReLf
+ qefS7x4ueQdHSr1Zs2YsTQAlduGDJlGr2xYCTALEA4i8Ohl+pdLmP7s9+rbcXQCrd6zGbhGKntD
+ hx72o00JWwOKT1CBeU82X7Se92JH3sPApaD46xEwamotQu0q2H68/m2j54zG93evp4Hdq4C0aG7
+ n29n8jx9gNjb2itLzKXVIsvw06u92vyoGZuOxBx0UoWDIHQLpo3hBqkmEEm6GLHi4HZJDkOE
+X-Proofpoint-GUID: Oht6ufUQ6kt8e6WswzDKGONEyKqAEudZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_08,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 spamscore=0 impostorscore=0
+ phishscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506060017
 
-From: Ajay Agarwal <ajayagarwal@google.com>
 
-[ Upstream commit 7447990137bf06b2aeecad9c6081e01a9f47f2aa ]
 
-PCIe r6.2, sec 5.5.4, requires that:
+On 6/6/2025 1:04 AM, Manivannan Sadhasivam wrote:
+> On Tue, Jun 03, 2025 at 02:05:44AM -0700, Qiang Yu wrote:
+>> From: Mayank Rana <mayank.rana@oss.qualcomm.com>
+>>
+>> Currently, the FBC image is a non-standard ELF file that contains a single
+>> ELF header, followed by segments for SBL, RDDM, and AMSS. Some devices are
+>> unable to process this non-standard ELF format and therefore require
+>> special handling during image loading.
+>>
+> 
+> What are those "some devices"? Why are they not able to process this format
+> which is used across the rest of the Qcom devices?
+> 
+>> Add standard_elf_image flag to determine whether the device can process
+>> the non-standard ELF format. If this flag is set, a standard ELF image
+>> must be loaded, meaning the first 512 KB of the FBC image should be
+>> skipped when loading the AMSS image over the BHIe interface.
+> 
+> Please explain what is present in the first 512KiB and why skipping that is
+> required.
+> 
+>> Note that
+>> this flag does not affect the SBL image download process.
+>>
+>> Signed-off-by: Mayank Rana <mayank.rana@oss.qualcomm.com>
+>> Co-developed-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+>> Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+>> ---
+>> Changes in v2:
+>> - V1 patch is paused because of no user. WLAN team plan to add support for
+>>   new WLAN chip that requires this patch, so send v2.
+>> - Change author and SOB with new mail address.
+>> - Reword commit message.
+>> - Place standard_elf_image flag after wake_set in struct mhi_controller
+>> - Link to v1: https://lore.kernel.org/mhi/1689907189-21844-1-git-send-email-quic_qianyu@quicinc.com/
+>> ---
+>>  drivers/bus/mhi/host/boot.c | 7 +++++++
+>>  include/linux/mhi.h         | 4 ++++
+>>  2 files changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
+>> index efa3b6dddf4d2f937535243bd8e8ed32109150a4..f1686a8e0681d49f778838820b44f4c845ddbd1f 100644
+>> --- a/drivers/bus/mhi/host/boot.c
+>> +++ b/drivers/bus/mhi/host/boot.c
+>> @@ -584,6 +584,13 @@ void mhi_fw_load_handler(struct mhi_controller *mhi_cntrl)
+>>  	 * device transitioning into MHI READY state
+>>  	 */
+>>  	if (fw_load_type == MHI_FW_LOAD_FBC) {
+>> +		dev_dbg(dev, "standard_elf_image:%s\n",
+>> +			(mhi_cntrl->standard_elf_image ? "True" : "False"));
+> 
+> This print is just a noise even for debug.
+> 
+>> +		if (mhi_cntrl->standard_elf_image) {
+>> +			fw_data += mhi_cntrl->sbl_size;
+>> +			fw_sz -= mhi_cntrl->sbl_size;
+> 
+> Is it possible to detect the image type during runtime instead of using a flag?
+> Also, the flag is currently unused. So it should come along an user.
 
-  If setting either or both of the enable bits for ASPM L1 PM Substates,
-  both ports must be configured as described in this section while ASPM L1
-  is disabled.
+The flag would be used when a new WLAN device getting upstream. So either we merge this
+patch alone, or we get it grouped within the WLAN patches. Kindly share your thoughts?
 
-Previously, pcie_config_aspm_l1ss() assumed that "setting enable bits"
-meant "setting them to 1", and it configured L1SS as follows:
-
-  - Clear L1SS enable bits
-  - Disable L1
-  - Configure L1SS enable bits as required
-  - Enable L1 if required
-
-With this sequence, when disabling L1SS on an ARM A-core with a Synopsys
-DesignWare PCIe core, the CPU occasionally hangs when reading
-PCI_L1SS_CTL1, leading to a reboot when the CPU watchdog expires.
-
-Move the L1 disable to the caller (pcie_config_aspm_link(), where L1 was
-already enabled) so L1 is always disabled while updating the L1SS bits:
-
-  - Disable L1
-  - Clear L1SS enable bits
-  - Configure L1SS enable bits as required
-  - Enable L1 if required
-
-Change pcie_aspm_cap_init() similarly.
-
-Link: https://lore.kernel.org/r/20241007032917.872262-1-ajayagarwal@google.com
-Signed-off-by: Ajay Agarwal <ajayagarwal@google.com>
-[bhelgaas: comments, commit log, compute L1SS setting before config access]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Tested-by: Johnny-CC Chang <Johnny-CC.Chang@mediatek.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- drivers/pci/pcie/aspm.c | 92 ++++++++++++++++++++++-------------------
- 1 file changed, 50 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index cee2365e54b8..e943691bc931 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -805,6 +805,15 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
- 	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &parent_lnkctl);
- 	pcie_capability_read_word(child, PCI_EXP_LNKCTL, &child_lnkctl);
- 
-+	/* Disable L0s/L1 before updating L1SS config */
-+	if (FIELD_GET(PCI_EXP_LNKCTL_ASPMC, child_lnkctl) ||
-+	    FIELD_GET(PCI_EXP_LNKCTL_ASPMC, parent_lnkctl)) {
-+		pcie_capability_write_word(child, PCI_EXP_LNKCTL,
-+					   child_lnkctl & ~PCI_EXP_LNKCTL_ASPMC);
-+		pcie_capability_write_word(parent, PCI_EXP_LNKCTL,
-+					   parent_lnkctl & ~PCI_EXP_LNKCTL_ASPMC);
-+	}
-+
- 	/*
- 	 * Setup L0s state
- 	 *
-@@ -829,6 +838,13 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
- 
- 	aspm_l1ss_init(link);
- 
-+	/* Restore L0s/L1 if they were enabled */
-+	if (FIELD_GET(PCI_EXP_LNKCTL_ASPMC, child_lnkctl) ||
-+	    FIELD_GET(PCI_EXP_LNKCTL_ASPMC, parent_lnkctl)) {
-+		pcie_capability_write_word(parent, PCI_EXP_LNKCTL, parent_lnkctl);
-+		pcie_capability_write_word(child, PCI_EXP_LNKCTL, child_lnkctl);
-+	}
-+
- 	/* Save default state */
- 	link->aspm_default = link->aspm_enabled;
- 
-@@ -845,25 +861,28 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
- 	}
- }
- 
--/* Configure the ASPM L1 substates */
-+/* Configure the ASPM L1 substates. Caller must disable L1 first. */
- static void pcie_config_aspm_l1ss(struct pcie_link_state *link, u32 state)
- {
--	u32 val, enable_req;
-+	u32 val;
- 	struct pci_dev *child = link->downstream, *parent = link->pdev;
- 
--	enable_req = (link->aspm_enabled ^ state) & state;
-+	val = 0;
-+	if (state & PCIE_LINK_STATE_L1_1)
-+		val |= PCI_L1SS_CTL1_ASPM_L1_1;
-+	if (state & PCIE_LINK_STATE_L1_2)
-+		val |= PCI_L1SS_CTL1_ASPM_L1_2;
-+	if (state & PCIE_LINK_STATE_L1_1_PCIPM)
-+		val |= PCI_L1SS_CTL1_PCIPM_L1_1;
-+	if (state & PCIE_LINK_STATE_L1_2_PCIPM)
-+		val |= PCI_L1SS_CTL1_PCIPM_L1_2;
- 
- 	/*
--	 * Here are the rules specified in the PCIe spec for enabling L1SS:
--	 * - When enabling L1.x, enable bit at parent first, then at child
--	 * - When disabling L1.x, disable bit at child first, then at parent
--	 * - When enabling ASPM L1.x, need to disable L1
--	 *   (at child followed by parent).
--	 * - The ASPM/PCIPM L1.2 must be disabled while programming timing
-+	 * PCIe r6.2, sec 5.5.4, rules for enabling L1 PM Substates:
-+	 * - Clear L1.x enable bits at child first, then at parent
-+	 * - Set L1.x enable bits at parent first, then at child
-+	 * - ASPM/PCIPM L1.2 must be disabled while programming timing
- 	 *   parameters
--	 *
--	 * To keep it simple, disable all L1SS bits first, and later enable
--	 * what is needed.
- 	 */
- 
- 	/* Disable all L1 substates */
-@@ -871,26 +890,6 @@ static void pcie_config_aspm_l1ss(struct pcie_link_state *link, u32 state)
- 				       PCI_L1SS_CTL1_L1SS_MASK, 0);
- 	pci_clear_and_set_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1,
- 				       PCI_L1SS_CTL1_L1SS_MASK, 0);
--	/*
--	 * If needed, disable L1, and it gets enabled later
--	 * in pcie_config_aspm_link().
--	 */
--	if (enable_req & (PCIE_LINK_STATE_L1_1 | PCIE_LINK_STATE_L1_2)) {
--		pcie_capability_clear_word(child, PCI_EXP_LNKCTL,
--					   PCI_EXP_LNKCTL_ASPM_L1);
--		pcie_capability_clear_word(parent, PCI_EXP_LNKCTL,
--					   PCI_EXP_LNKCTL_ASPM_L1);
--	}
--
--	val = 0;
--	if (state & PCIE_LINK_STATE_L1_1)
--		val |= PCI_L1SS_CTL1_ASPM_L1_1;
--	if (state & PCIE_LINK_STATE_L1_2)
--		val |= PCI_L1SS_CTL1_ASPM_L1_2;
--	if (state & PCIE_LINK_STATE_L1_1_PCIPM)
--		val |= PCI_L1SS_CTL1_PCIPM_L1_1;
--	if (state & PCIE_LINK_STATE_L1_2_PCIPM)
--		val |= PCI_L1SS_CTL1_PCIPM_L1_2;
- 
- 	/* Enable what we need to enable */
- 	pci_clear_and_set_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1,
-@@ -937,21 +936,30 @@ static void pcie_config_aspm_link(struct pcie_link_state *link, u32 state)
- 		dwstream |= PCI_EXP_LNKCTL_ASPM_L1;
- 	}
- 
-+	/*
-+	 * Per PCIe r6.2, sec 5.5.4, setting either or both of the enable
-+	 * bits for ASPM L1 PM Substates must be done while ASPM L1 is
-+	 * disabled. Disable L1 here and apply new configuration after L1SS
-+	 * configuration has been completed.
-+	 *
-+	 * Per sec 7.5.3.7, when disabling ASPM L1, software must disable
-+	 * it in the Downstream component prior to disabling it in the
-+	 * Upstream component, and ASPM L1 must be enabled in the Upstream
-+	 * component prior to enabling it in the Downstream component.
-+	 *
-+	 * Sec 7.5.3.7 also recommends programming the same ASPM Control
-+	 * value for all functions of a multi-function device.
-+	 */
-+	list_for_each_entry(child, &linkbus->devices, bus_list)
-+		pcie_config_aspm_dev(child, 0);
-+	pcie_config_aspm_dev(parent, 0);
-+
- 	if (link->aspm_capable & PCIE_LINK_STATE_L1SS)
- 		pcie_config_aspm_l1ss(link, state);
- 
--	/*
--	 * Spec 2.0 suggests all functions should be configured the
--	 * same setting for ASPM. Enabling ASPM L1 should be done in
--	 * upstream component first and then downstream, and vice
--	 * versa for disabling ASPM L1. Spec doesn't mention L0S.
--	 */
--	if (state & PCIE_LINK_STATE_L1)
--		pcie_config_aspm_dev(parent, upstream);
-+	pcie_config_aspm_dev(parent, upstream);
- 	list_for_each_entry(child, &linkbus->devices, bus_list)
- 		pcie_config_aspm_dev(child, dwstream);
--	if (!(state & PCIE_LINK_STATE_L1))
--		pcie_config_aspm_dev(parent, upstream);
- 
- 	link->aspm_enabled = state;
- 
--- 
-2.45.2
+> 
+> - Mani
+> 
 
 
