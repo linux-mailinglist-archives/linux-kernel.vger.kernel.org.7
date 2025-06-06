@@ -1,99 +1,158 @@
-Return-Path: <linux-kernel+bounces-675554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DD3ACFF5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED381ACFF62
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D3E1893CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4FC18945AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF112857EE;
-	Fri,  6 Jun 2025 09:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E9D2853F9;
+	Fri,  6 Jun 2025 09:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvAG+tHk"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MRA303t/"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8992191F7E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 09:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C4827468
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 09:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749202436; cv=none; b=B1NJ5RDUK/FR8MWfXkZUINuVC9bUjxK/c3YC4iwkpBWzubr7NTDz6x6OIQBzrCpMrzHBQUiCV+XX3fWNLoibWnsNh/8fijUJhzVsGiDTqD8zCDVBZkpo5ShDzAT+iFWO6vhgqy0HCQlNaDlVGvwyZ9GiAsoL9MZ9f3uk3wmsDL8=
+	t=1749202505; cv=none; b=oJx1idxjCmXhyOJqmNtKlncUeiUw2PV+gQHZr4C4UbhufYhC1VWifekFaYDj+4UwUwYDAxxTLnB3rkHXZT4yNj75jmCFX6xQ4nDeZm4MdLe4e9z2FPOQBkL9r4de2wISt4jJwqV+NiS2xbDUfyISlPfwY1rZp7lRre8saHpspk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749202436; c=relaxed/simple;
-	bh=NCD3FsHqX/tDsdqDrxlXUdzTVx+2sqRGtUtrxLK6jAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTp85mLTHkqC6B/JtzMvMtiZZIpDqHE6qgeZNRCimS3nLfVFQ74IKIsR/jRRdsp86h5/J8nQ3c7eHqB3Oqab27wQrpbEFXr0wwf3+OPuhWcFvGxYFMwjbbQ/dKTFLsZFz+kl6gRdQT874iq9M6we3zAQ3lsFxcaoJUD/wL9X5FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvAG+tHk; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a44b3526e6so23027611cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 02:33:54 -0700 (PDT)
+	s=arc-20240116; t=1749202505; c=relaxed/simple;
+	bh=WgAzWRE7She4otQlVJzaMK08pPPq7NcuL5CVfsMI03w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMdXikOaMsoGgs7X5lMny/JA5PsCCXhKDv7FHc04pIWSaiqLEZDUj+tNrj1btq1HbGwngIJJWpEeCP8Zdf9Lk5Pa5h/FoiNgoZsxxQa37idanb3Ztvw+JsvkZ0GA7bHcOr5y4YFGjhaa7OSZyDo3pQiL+hPxjsRtBqJrWdyXnhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MRA303t/; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cea01b9cso6049145e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 02:35:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1749202433; x=1749807233; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kjjJoIKAqPL4Fi3nMaT3Fad+/StO4aRC+TRTWdCbeTc=;
-        b=lvAG+tHkEIFwrw/yQXFUo0RH+vfERl2p/X23Pzswzv4TaPWDxbepHDZIr3RmqV7aCq
-         eaYotMiBY26iIMwt2AJx45me/PQfzUI+tHBfPK4n3fEhAmGz0+VHSoA3l8qW+pik3ND1
-         xvYFl1SOljGyKrq/Hwp/2q+u8k3l9uDXzQvJ8=
+        d=suse.com; s=google; t=1749202501; x=1749807301; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=16WVU7r379wE285Rct5yNMoMsint6/gzKjFKMpi3cK4=;
+        b=MRA303t/swoE9ZnEjcNKszLUaoKTtTpsMcjuwrh1eTyRuQM9/5DQxrqXzusY5nkSUo
+         aC4F6+mDxqpx/xwFQBnhTYE4+2j7Zluj6mityfUKNvpawAywN/J0vGluT10eRsoD63h1
+         igJ3oNbYznJK0IfYSfyZLzvzFok1+1/ku4Ri6J7SnyWpnsonEgB8vbTJuSs0yShF9k+t
+         QArUuG6Bu0rauzo6OdxTQ623z7wiLnF+ZnN7jdy2VoQ+czBeAyLndH2Y0wfZvhDc0AlL
+         rRKSJp2mvwjp5sgdfgoXzpEjgFSWSpfV0+bBOZA1Q8WXZnHDIG7Az/ThGjiM0bQiY1MY
+         t/zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749202433; x=1749807233;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kjjJoIKAqPL4Fi3nMaT3Fad+/StO4aRC+TRTWdCbeTc=;
-        b=f7iz6cquuscrFtn1bdNvqWpb3JYAgRNPPr3sGNrjtUCpmcJwXHwn9fyqXay2tIqjKC
-         qOYxVMa5RA9YbJY4l1ixUg+82HlurVh8WmGHlJ5V03dRG5bSHa1JHH48li3MJZ7IJpFB
-         7nhFe7mlpixnCHhGNctel40e6yAboLFDTe6YZtDGhGKBfCnJa2Dz1Pa/jAMJGOa+SUTm
-         SH9Pt0vUYcjvHUISMVoJUOURd5/BTZHCXjulc3U25DjuGH7i9WLqxf/NPcMBqrUytl2x
-         8vw+pnffy1gY1/KSPbV9PNjpOr2jbL1u3tlJMPO1TW1gAAKyjw9orWBsrlumqc1I71un
-         a3fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC2LCKAxecIWK3N7Wi2A5gEW5VISi19PEM5wStd3dHI1F1udE3CC7LWqXrDDw1hnezUoOGszZ8hl3SEzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqHUkFEWqHM0LbIHa3oTf1zABGZ03kCaWwsvIqv1MU4e7wMNNX
-	V+kOzvG052iL6t+vNJLyPnte4NuuwRbh9Rn4tpiuWItLG8b77NdH5LAD1xxLUQl+b+ehRFCVJ7Q
-	xL8ACrcIpTtLrCDhg5NjKIbw86pDW0JjmyJ58QWRHjA==
-X-Gm-Gg: ASbGnctFOLjHf1ohEcv8B3r4dLmq9amoc0zZdFKlo7lt/vnvlmwT7flgR+XOfseBUz6
-	smYmlUISA8Bj1K5fuPVMkY2Z/AVQtFCxk/5/MQgs+2BWRhW8+3N9uL2JTJmyHjKydSv8WUZDLHz
-	HvDxxDS9ROU3lptoRKElUFe/KUGYTP6gM=
-X-Google-Smtp-Source: AGHT+IEpD8A+u93yY7dMI4QI7COmSAbaXPHLO6KjHqBSEgUYxk/Jw0ZYl1TrJ9sLHanEFIt9Z9r1xEAOroted7uPQME=
-X-Received: by 2002:a05:622a:428c:b0:48e:1f6c:227b with SMTP id
- d75a77b69052e-4a5b9a47e1amr44216851cf.26.1749202433527; Fri, 06 Jun 2025
- 02:33:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749202501; x=1749807301;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=16WVU7r379wE285Rct5yNMoMsint6/gzKjFKMpi3cK4=;
+        b=iy0psKl55thLziD39OtoZU8tdYTgyzqkN3tJTxEZwzV2vSsO1jWOGsbmiLE9XajjGi
+         VxeiqJLcPYXQGj1HLP9wi18eksQGojAH1+Fp/2LNqQR3tKQJi5aZ/Uz/t1j8KgDCreuu
+         HZuDu3KtPK/W3CYLjsuVY9suTfIQVatn+EkXObHvh1lFyzTZjUZcEpxNWWlebk42Wqoq
+         quMrFKnylUsRkNjqSkC+VVzxwUCg02ntT+ZopddFAkfjC+i/y6J6HYIFOBdlVL0jjWw/
+         BsZ/qlPGlZcrj8FHPOj1/iRPN8DBHcFhTsgGg3yWylpzA/Bfi9VRP28wPD9SfAM0s90f
+         earg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1gus9nVDRV5JR4L79jo7zJuO57vON4pQpgbNImn2DXAVzLRA6MgYTFAKpO6l4/sPt3nplvuImg9eDGdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTJHArgqmu9GBjjP10s6WjKjEcOOlRJj8t8/UDXKM31OgPBzM/
+	vPSwbXtnI7tOIFF5GEcS3x1tpSnbhYU681SMQdGDD4IF/L5tLGiNC2AhpN5xvyYKndU=
+X-Gm-Gg: ASbGncv6FMeyQU/XXfZ3v7I38Hd88Ej6kN8rRg8Ptesqm1A6qCoIG4tQbomP9d/jNj1
+	Dybzc9JsYzKM77rVMs6SKOkB70YO7+P8ji6O3bOK2Qz/w4JNqUyM+S2MurUjfb4XeCWIdlWAdE0
+	XS0MMDwm40QDlLQh5ZW1Y5eEB23ASv5kqhp5t2CMiy8QcfF4+m9cycYXCb9VNwVzDuqugc4VXq5
+	zSEB3TjpuqGNXPRv05dPueCQX0nvAItG7OZLBB2pWYYsPQugp70bSgNGjyE9u1R0jDse/RVAEVE
+	xH4R4NnvQWwxe7xaU7vNS1DViltNYpxvq6/CebEspKZTsGpG36sjrQ==
+X-Google-Smtp-Source: AGHT+IEXrINuMkdEIP9xCA7rioc8ocp0d0MYKrrke+NTaRENXHWiMhnlDpotpkYsrzCiqFR7r81jXg==
+X-Received: by 2002:a05:600c:4f0f:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-452014d74b6mr22334105e9.20.1749202500773;
+        Fri, 06 Jun 2025 02:35:00 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452730b9beasm14825415e9.22.2025.06.06.02.34.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 02:35:00 -0700 (PDT)
+Date: Fri, 6 Jun 2025 11:34:58 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Jemmy Wong <jemmywong512@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v0] cgroup: Add lock guard support
+Message-ID: <fo5le4uonsrv24z5gikojq7hxwaqaidgco25pypnppk5h2czap@egdwx6yte4lf>
+References: <20250605211053.19200-1-jemmywong512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
- <CAHk-=wgH174aR4HnpmV7yVYVjS7VmSRC31md5di7_Cr_v0Afqg@mail.gmail.com>
- <CAOQ4uxjXvcj8Vf3y81KJCbn6W5CSm9fFofV8P5ihtcZ=zYSREA@mail.gmail.com> <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
-In-Reply-To: <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 6 Jun 2025 11:33:42 +0200
-X-Gm-Features: AX0GCFvFo8VWZRAyQvoO_OwOv8y44RwyQfaZo7GsgVMP1nOljN6vif8ZNW5sSOg
-Message-ID: <CAJfpegu1BAVsW5duT-HoMGiSXNvj2VsLNfTuzvF1-RLyVLDdTA@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs update for 6.16
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ua3zb34t3kfdq7gf"
+Content-Disposition: inline
+In-Reply-To: <20250605211053.19200-1-jemmywong512@gmail.com>
 
-On Fri, 6 Jun 2025 at 08:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> I'll redo the PR with your patch.
+--ua3zb34t3kfdq7gf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v0] cgroup: Add lock guard support
+MIME-Version: 1.0
 
-Pushed to #overlayfs-next.
+Hello.
 
-I'll drop this from the PR, since it's just a cleanup.  It still won't
-break anything (and that's what I meant by "trivial"), but it can wait
-a cycle or at least a few rc's.
+On Fri, Jun 06, 2025 at 05:10:53AM +0800, Jemmy Wong <jemmywong512@gmail.co=
+m> wrote:
+> This change replaces manual lock acquisition and release with lock guards
+> to improve code robustness and reduce the risk of lock mismanagement.
+> No functional changes to the cgroup logic are introduced.
+
+I like this.
+Could you possible split it to individual commits to ease the review
+for: cgroup_mutex, css_set_lock, RCU and the rest?
+
+=2E..
+> --- a/include/linux/cgroup.h
+> +++ b/include/linux/cgroup.h
+> @@ -382,6 +382,10 @@ static inline void cgroup_put(struct cgroup *cgrp)
+> =20
+>  extern struct mutex cgroup_mutex;
+> =20
+> +DEFINE_LOCK_GUARD_0(cgroup_mutex,
+> +	mutex_lock(&cgroup_mutex),
+> +	mutex_unlock(&cgroup_mutex))
+> +
+>  static inline void cgroup_lock(void)
+>  {
+>  	mutex_lock(&cgroup_mutex);
+> @@ -656,6 +660,9 @@ struct cgroup *cgroup_get_from_id(u64 id);
+>  struct cgroup_subsys_state;
+>  struct cgroup;
+> =20
+> +extern struct mutex cgroup_mutex;
+
+I assume this was because of the BPF code, which wouldn't be needed in
+the end.
+
+=2E..
 
 Thanks,
-Miklos
+Michal
+
+--ua3zb34t3kfdq7gf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCaEK2NgAKCRAt3Wney77B
+SVT1AQCRa4xOZhTwPK9tNZnPZhJdBQ0U0Y4hWIj1hPsIJzCwcgD3Xdkw3M+MD4HW
+muBCdmP7vHKczXzk4Fal9QO7O72gAg==
+=8HJL
+-----END PGP SIGNATURE-----
+
+--ua3zb34t3kfdq7gf--
 
