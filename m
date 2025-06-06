@@ -1,239 +1,182 @@
-Return-Path: <linux-kernel+bounces-676303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65548AD0A5A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 01:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2ACAD0A31
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 01:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC197A8EBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2B53AF79A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 23:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A523F292;
-	Fri,  6 Jun 2025 23:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B423A9AA;
+	Fri,  6 Jun 2025 23:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codesensesolutions.com header.i=joe.walter@codesensesolutions.com header.b="zjb+416c"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OvW4Ls09"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88BD42A83;
-	Fri,  6 Jun 2025 23:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C72126C17;
+	Fri,  6 Jun 2025 23:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749253337; cv=none; b=PLYIJNxj5LDM8+4oyr2YwQslDYnkgUjPkjkUsN2NsS5JqLZikHTJEGvbFU5c4h6tC6CMpUJ0PQk2RqdNSIuuONygPH4UvshKFurXpRvPpqQYtWNO28/uj/ZCZMesRAcs0gpSpO+cqcxiGwkTCz/RonIdGAGy7Qh9yu0hS5kpF04=
+	t=1749252014; cv=none; b=dYk6kxvu8XSnsia9811LNIqupfKEJns2uTldQAAY9Us+ZSWAPXNQR32BL5iVRdO2HVo3RsRcm4BjnhTZ0qjAXK8qXs3oBExsS3V8A//7E1c7PM+WKeL3+MfYf5Yv9J7SKibAdvGsoofQLqsu9QiFMeqBociCSPbw8J1pKZEnCAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749253337; c=relaxed/simple;
-	bh=C+IR39tUkiTTCkYcCBh9yKbjRvfgTXZzNOf0olfsY2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sMsTREQqlCH0eHvrYclMWm5sOOCdBdQSSsvV+Pa9DcNfi8rFEXewsfeXDW+13/PFy4UiXSJP/WAEexVoWSZbrZ5/NrqFpf6iW6JLWaFYdUN63GfDXizv1ne55JVR/CHy71qwBDMPRnKebiDeMAQyVOIV8lwdWqw1lnPSWLsKNCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=codesensesolutions.com; spf=pass smtp.mailfrom=codesensesolutions.com; dkim=pass (2048-bit key) header.d=codesensesolutions.com header.i=joe.walter@codesensesolutions.com header.b=zjb+416c; arc=none smtp.client-ip=74.208.4.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=codesensesolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codesensesolutions.com
+	s=arc-20240116; t=1749252014; c=relaxed/simple;
+	bh=pylFDSoovx1eheY6L0fuY2PkOFx41ur5gKrOoQv3lNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxgHTSs/zndrGMoODNmg4lsi6qR2VsTrYralLDQ9htkalB5pgEUqqx7jzF2zmbvsL57OwBLx4I5IOJ5fTSfMU8JkGBVkYbI6xbuo/6WzIzA1y6O+zsTelaX3AJECHbG/NtaAbOYWR5IPpB9CWKUsgQxob5BqCZHJDik6QkV87NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OvW4Ls09; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b1ff9b276c2so1346994a12.1;
+        Fri, 06 Jun 2025 16:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codesensesolutions.com; s=s1-ionos; t=1749253333; x=1749858133;
-	i=joe.walter@codesensesolutions.com;
-	bh=pQc42KUwgUGS2WmegoHpY8vL7gP3oEBUaiYeFR/4kEU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=zjb+416cjfA7p7tRTUMQlYA0s6YDBM0i0oqaC8AU2OaWfSflCkguOKKzRlxcAuS6
-	 ICBc7yqG2qeHzlFf3V4kJaSyqmwgbOdEgqTE6cdzthxls0/L8FDDkyGrGRb7UHqCp
-	 9/4bDhDFZgKpZyAREmlRWxqccbAoiOKYubE91ZrtnY1HO500m8SvuMhCiY+Gpqh50
-	 Zvc2Grkvn1Ofvj5yr+YsBndVSnMEEmNdEPEL9q8qZrUAIIaJnUjvyWQZ/y8WSFOUl
-	 fX0F557POdkZhz/9kAvCon2oR6eK57MOSEw3iMudHdl4G2BRttGtb5VZ53DiRAXKI
-	 RwRbU082CwS8KXYRqA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from jennycraig-lappy ([50.225.178.2]) by mrelay.perfora.net
- (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LufTy-1uo75S2j0y-015Ev5;
- Sat, 07 Jun 2025 01:16:46 +0200
-From: Joe Walter <joe.walter@codesensesolutions.com>
-To: srinivas.pandruvada@linux.intel.com,
-	rafael@kernel.org
-Cc: viresh.kumar@linaro.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Joe Walter <joe.walter@codesensesolutions.com>
-Subject: [PATCH] cpufreq: intel_pstate: Add DMI quirk for Dell Inspiron systems
-Date: Fri,  6 Jun 2025 16:15:30 -0700
-Message-ID: <20250606231530.3032-1-joe.walter@codesensesolutions.com>
-X-Mailer: git-send-email 2.48.1
+        d=gmail.com; s=20230601; t=1749252012; x=1749856812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZDG+brYeDJSMPDJyK2aKomnouK2UpyUMRQzFahwJIo=;
+        b=OvW4Ls09OsjYLhT4sBOS+LHpPixgaStOKCZMlr1cayECoAUFfMLdao6K/b7gsay+Nj
+         O2bcHMJfR5d8i5zmn7XCwGkjApPNkcVC5wATPfPl5Ic0Xk3GJOnx6MS0eW0ax484h+NC
+         rM2qFPjDx/EB5Oubm9uOkoguKvuKsLvLJJaMt3Y4eZ40TeJP61c0+uDF04YbKQeyrRam
+         FbPbhjo/IEFvZMX60It4GIYZppypjneTTl6yTHWik/JrWIH2YGMbC9Y0w7C2gG1/g4Ta
+         gzfyHFDswF6/QRzR6IYslie0xmhFw47BWkUaqv4IYm/iQBsh2gQ6wNJtaD/+2kMMfsxu
+         xb/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749252012; x=1749856812;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FZDG+brYeDJSMPDJyK2aKomnouK2UpyUMRQzFahwJIo=;
+        b=cbjxZ+fQbddRDYDMRKW4/xY0vm/AvTiqZjr30nCeoJro/ExbEDUUuW42ZlqYXmUfai
+         9AKiOAcShwxu0f7WQVx9pixgOthCUQkUZk+Jl1729T2ZN6qLinDz7LInSxbjdgh70N7g
+         ev1BijwFWcICSAkOdODYgLCpBF6FTdcCKW40mEIX435b6xDjeUZDOQmXgsKA4ONhRt8P
+         wipBM4Opd6xETJj20JcFrRZogwK44nfxPqEn3BOzdwYLK83CeX3sGofkA6vbXukYwwId
+         26xrb/vYVisru7k/AK9AbrpEqlnHQkD5hc1DM6/Whx0cdlnxLYTDzE2Dj12gJs7DCCaE
+         Oeyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqXyzr7NJkn3qaPwpNJWg1TC7IOskccdPTRqCqCNBSibqTWADuPslanqa4lGhhn6tYfbKnhvBJeGX1y2YS@vger.kernel.org, AJvYcCWbZNJZ7mnDja4YIRAHO3NxZ3HlccHUbsYlfuThdqjnmoHa9WdqwRF/dmeHAdTCFrMPfxD7vUGfmj+8Ew==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/s8cTcUniMwqOoYZ4Esgxz+ErRmnQr2vcrQng2+efS0EpYZGI
+	IyqDIk9Zhvkf+pBTIfuJVdvsZE8J6F/MZxm2dOPipgb28K1yTzhRjeDL
+X-Gm-Gg: ASbGncsO6qMHDyvy7rMnwUSuHqeeuYlZ6aY1DAg/hw0T/nR/W6R4FnYJkf4YiUpKHLG
+	gN3VocvLcGZHk4UQ9fSyRyI8tc2JZYNhZ+83AnQ6Kq+HyXxhazUl1WpHVEIPgWYs12iZGF2F686
+	5H2IAQqUXL+Td5D8M40zXhrD4pXRxAslZVyMssKNzq/kKj1gsswSKgkMzFNks6T4zTvOWA/YUQt
+	MM2fdWNmS7Nc+yZjkJJesx+ofqTloodfo7/GciKFrVzeP5teJ5+f1XWs+tyiRJRQRYWa3moU4/z
+	OsTJX4S8jmwiOc8gD71AJGYZm/NPe1JdUX4Q/pXWpnWDVNZ09ANLQCiyu2pd8M65TviqOw7G5S2
+	6Ban8HiTVWmIIFBRv5LvrMB5f
+X-Google-Smtp-Source: AGHT+IE+FduGJg/M+00PM7BQpb42nYmhb30gyIG51HLSFNqu1KWYb7qAQ9Pf5P4bU8rm6yUVrfjsUA==
+X-Received: by 2002:a17:90b:3b42:b0:312:959:dc42 with SMTP id 98e67ed59e1d1-31347302b63mr7480258a91.11.1749252011919;
+        Fri, 06 Jun 2025 16:20:11 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349fdfe58sm1833405a91.38.2025.06.06.16.20.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Jun 2025 16:20:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <72661c37-c4f4-4265-9fa4-e4b31b43f6df@roeck-us.net>
+Date: Fri, 6 Jun 2025 16:20:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:b7KUDsQQohqjJEPY3hwinrLqrGma3HlyZ//5hJXZdUkCbxMasKf
- tA5PM14YqECe8vVZvIpNJyBqexiAClOqvYSFcmqQVVsdhMW5Og+aDg4/PcQmonElTqKwyJl
- e6pKz4BPZaLwlaHc2eToT+H2e8ywh8AZl2VobclYF+sy1gy07s58FxXPrsGQSPrE3AJEg0x
- XPR7A92SnruTgA+4IakLA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GgFBluPKg9M=;rD/a9TXfcYdxfMvNOJTUkrceQBq
- qWt1ysC7kgkujgoCQYQyZKxLtkR/uNa6C2uTjEcesblAUjeXna64Z8UHNBItKdfKL8Qs1vLNw
- 0gI5DTrwcSJlMqLXTcTBnQ+vVg3Ki8O2nR7+tM+LFhmnCmIKqTLVTUs3Nw+ZTmsyGGDk1A0Jw
- //wmpPX898uhz4662RcFg2J/qyMTnyMrbCrTmKmtZtW6XNA6+3B7O3+9nWvBiNJ/MdwTvJFOL
- fRYGOK4SrHzkG1Z1ai8oUUQFNh7Weit38lVS9QCFyrIGQNivQCJJbhCVmzte/Rrddq4nq3vbe
- zrkUQfx9SDjJka6Iho2FQuDsrpiWDzF9clUkkwY6a6krOd7aklwQFRrZDdc4elu8cotiNN/FM
- mB+8dr3fQWTye1FG38BipHLq6i+1voZrMQp+DH5BVWfXBOEY/CMwJROpCXeNxEIPYqHstZjfV
- lL0/Xa5aemtC9BZkVEszplMeYRuhbdjqJcgYxM1jdOiTywabhs70iMZfc55VRgB3jnYOIFh/Y
- B/JHc0urEyeK7vm4GdP5HVYYP0HtZqNkoN0wEF+rm2e3Mz1JolLlMEPwqyVVgCTDTYnjN3E3N
- Itm0pk4tGJcT8br0P6BHxDvJ+uSM8cQxpzxTTBbYPF5LuKEb6gz4D54yiMeEUqdidQrh652JP
- fEA3wnkb9W55ineoefbKk11iR7KwEeVc0gOXYod5ic3rpvSIrV4rqao1yukmcYBJj3+/REBFd
- Tz1PCA+dvgfd4MbNHVWa0qgkAdu5WXMPqgGlWcEJO2VFKtpV4YJDyA5fFmIo7/ChzRq79bnwZ
- HX4JwjJSXGC1yVs8hCEmz9DBwvtVIZ7jsi8hAQHGqfJLU9OoSNbzNYz2X6bIq+GZYRAHRN+70
- mxJjjPcbH9uJrqrqUzpVxo9xCC/by/At3mD/uD/vmlR0Niog5vZ3FkpyVlDN1neAexIvKowqM
- p4QLqb8rOCRSCo5Vg+6OcBF6q4EOkdxM41zY2D4lrR5vTlmutUtdgiBjnwFpuVo94m9PrYu24
- JYJQ7pV/m/tb2HhMiMwvuVcxHL5+C+eL+L+vJEn0GDWxibDEQNl4NCIZtfnYvR9ns0u3oFRTb
- uMZd82VlG87d4dLPtWXLz9PQzVzU3YnJWH5TfmUUyu+d9UkXLrt2g5csgDNjfaBokFVdmEKUt
- Se/hji7SGPTKeQM00KKK5C31mYWNdyUM/rn/6vG28IPh4qE2boAHhWEMInwpZusBRsd1dGbKD
- bqhrtJ1oAlSOzbJ8Oy/ibTVpqoWz6jspkWNaxiebZhBvT/nLNkUnCEaNSEszvYA5imgEZW5Su
- BOoZeYcPgtD4gl/3sGBYZF4aU916tw5K5frSg01r7NF7+VVTDSvJZuoa+MLKriTgPFIlWGaG2
- j4cq9vsJqZC9H9/T8wdkAHOHIroQU9JhuMiqU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] hwmon: Widespread TOCTOU vulnerabilities in the hwmon
+ subsystem
+To: Armin Wolf <W_Armin@gmx.de>, Gui-Dong Han <hanguidong02@gmail.com>
+Cc: vt8231@hiddenengine.co.uk, steve.glendinning@shawell.net,
+ jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+References: <CALbr=LYJ_ehtp53HXEVkSpYoub+XYSTU8Rg=o1xxMJ8=5z8B-g@mail.gmail.com>
+ <3f5feb87-330c-4342-88a1-d5076538a86d@roeck-us.net>
+ <3401727c-ad93-42df-8130-413eda41ab3a@roeck-us.net>
+ <CALbr=LYe3p9GW2Z_RUxKG+w2Q1wfWGRW=dRLoTraS7qJ7imdgw@mail.gmail.com>
+ <0a3a06df-5da9-4b39-bf38-0894b8084132@gmx.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <0a3a06df-5da9-4b39-bf38-0894b8084132@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Some Dell Inspiron systems experience frequency scaling issues with
-intel_pstate driver where the CPU gets locked at 900MHz after load.
+On 6/6/25 14:30, Armin Wolf wrote:
+> Am 06.06.25 um 09:03 schrieb Gui-Dong Han:
+> 
+>>> On Thu, Jun 05, 2025 at 07:33:24AM -0700, Guenter Roeck wrote:
+>>>>> I would like to discuss these issues further and collaborate on the
+>>>>> best way to address them comprehensively.
+>>>>>
+>>>> I'd suggest to start submitting patches, with the goal of minimizing
+>>>> the scope of changes. Sometimes that may mean expanding the scope of
+>>>> locks, sometimes it may mean converting macros to functions. When
+>>>> converting to functions, it doesn't have to be inline functions: I'd
+>>>> leave that up to the compiler to decide. None of that code is performance
+>>>> critical.
+>>>>
+>>> Actualy, that makes me wonder if it would make sense to introduce
+>>> subsystem-level locking. We could introduce a lock in struct
+>>> hwmon_device_attribute and lock it whenever a show or store function
+>>> executes in drivers/hwmon/hwmon.c. That would only help for drivers
+>>> using the _with_info API, but it would simplify driver code a lot.
+>>> Any thoughts on that ?
+> 
+> Hi,
+> 
+> i am against adding a subsystem lock just to work around buggy drivers. Many drivers
+> should use fine-grained locking to avoid high latencies when reading a single attribute.
+> 
 
-Add DMI quirk table to detect affected Dell Inspiron models and prevent
-intel_pstate from loading, allowing acpi-cpufreq to handle frequency
-scaling instead.
+The point would be driver code simplification and increasing robustness, not
+working around buggy drivers.
 
-Affected models:
-- Dell Inspiron 15 7000 Gaming
-- Dell Inspiron 7567
-- Dell Inspiron 7559
+Anyway, what high latency are you talking about ? Serialization of attribute
+accesses would only increase latency if multiple processes read attributes from
+the same driver at the same time, which is hardly a typical use case.
 
-Tested-by: Joe Walter <joe.walter@codesensesolutions.com>
-Signed-off-by: Joe Walter <joe.walter@codesensesolutions.com>
-=2D--
- drivers/cpufreq/intel_pstate.c | 65 ++++++++++++++++++++++------------
- 1 file changed, 42 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate=
-.c
-index 1b1f62ccec92..3aeb04755afa 100644
-=2D-- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -28,7 +28,6 @@
- #include <linux/pm_qos.h>
- #include <linux/bitfield.h>
- #include <trace/events/power.h>
--#include <linux/dmi.h>
- #include <linux/units.h>
-=20
- #include <asm/cpu.h>
-@@ -48,6 +47,7 @@
- #ifdef CONFIG_ACPI
- #include <acpi/processor.h>
- #include <acpi/cppc_acpi.h>
-+#include <linux/dmi.h>
- #endif
-=20
- #define FRAC_BITS 8
-@@ -299,25 +299,6 @@ struct pstate_funcs {
-=20
- static struct pstate_funcs pstate_funcs __read_mostly;
-=20
--/* DMI quirk table for systems that should prefer acpi-cpufreq over intel=
-_pstate */
--static int intel_pstate_prefer_acpi_cpufreq(const struct dmi_system_id *i=
-d)
--{
--	pr_info("Preferring acpi-cpufreq for %s due to performance issues with i=
-ntel_pstate\n",
--		id->ident);
--	return 1;
--}
--
--static const struct dmi_system_id intel_pstate_acpi_cpufreq_prefer[] =3D =
-{
--	{
--		.callback =3D intel_pstate_prefer_acpi_cpufreq,
--		.ident =3D "Dell Inspiron 15 7000 Gaming",
--		.matches =3D {
--			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
--			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 15 7000 Gaming"),
--		},
--	},
--	{ }
--};
- static bool hwp_active __ro_after_init;
- static int hwp_mode_bdw __ro_after_init;
- static bool per_cpu_limits __ro_after_init;
-@@ -2799,6 +2780,41 @@ static const struct x86_cpu_id intel_pstate_cpu_ids=
-[] =3D {
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_pstate_cpu_ids);
-=20
-+/* DMI quirk table for systems that should prefer acpi-cpufreq over intel=
-_pstate */
-+static int intel_pstate_prefer_acpi_cpufreq(const struct dmi_system_id *i=
-d)
-+{
-+	pr_info("Detected %s, preferring acpi-cpufreq\n", id->ident);
-+	return 0;
-+}
-+
-+static const struct dmi_system_id intel_pstate_acpi_cpufreq_prefer[] =3D =
-{
-+	{
-+		.ident =3D "Dell Inspiron 15 7000 Gaming",
-+		.matches =3D {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 15 7000 Gaming"),
-+		},
-+		.callback =3D intel_pstate_prefer_acpi_cpufreq,
-+	},
-+	{
-+		.ident =3D "Dell Inspiron 7567",
-+		.matches =3D {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 7567"),
-+		},
-+		.callback =3D intel_pstate_prefer_acpi_cpufreq,
-+	},
-+	{
-+		.ident =3D "Dell Inspiron 7559",
-+		.matches =3D {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 7559"),
-+		},
-+		.callback =3D intel_pstate_prefer_acpi_cpufreq,
-+	},
-+	{}
-+};
-+
- #ifdef CONFIG_ACPI
- static const struct x86_cpu_id intel_pstate_cpu_oob_ids[] __initconst =3D=
- {
- 	X86_MATCH(INTEL_BROADWELL_D,		core_funcs),
-@@ -3825,6 +3841,12 @@ static int __init intel_pstate_init(void)
- 	const struct x86_cpu_id *id;
- 	int rc;
-=20
-+
-+	/* Early DMI check - prevent intel_pstate on problematic systems */
-+	if (dmi_check_system(intel_pstate_acpi_cpufreq_prefer)) {
-+		pr_info("intel_pstate: system prefers acpi-cpufreq, not loading\n");
-+		return -ENODEV;
-+	}
- 	if (boot_cpu_data.x86_vendor !=3D X86_VENDOR_INTEL)
- 		return -ENODEV;
-=20
-@@ -3887,9 +3909,6 @@ static int __init intel_pstate_init(void)
- 		pr_info("Invalid MSRs\n");
- 		return -ENODEV;
- 	}
--/* Check for systems that should prefer acpi-cpufreq */
--	if (!default_driver && dmi_check_system(intel_pstate_acpi_cpufreq_prefer=
-))
--		default_driver =3D &intel_cpufreq;
- 	/* Without HWP start in the passive mode. */
- 	if (!default_driver)
- 		default_driver =3D &intel_cpufreq;
-=2D-=20
-2.48.1
+Guenter
 
 
