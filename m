@@ -1,137 +1,156 @@
-Return-Path: <linux-kernel+bounces-675916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126D9AD04CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DB2AD065F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6E13A74AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074913A9C44
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F09289E30;
-	Fri,  6 Jun 2025 15:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE151DF26E;
+	Fri,  6 Jun 2025 16:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpCV2m3l"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfkkAK4D"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C6B288CBA;
-	Fri,  6 Jun 2025 15:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4628082866;
+	Fri,  6 Jun 2025 16:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749222309; cv=none; b=VX08g7VwcDycF7XHI/1uC/i/9ox8ZdDEEyxqG2Ca8+eYo2X/Rpp8toMVxcs2ddZjgWzg4go9ssxIpl/5blvUpLoxC4rB/XfTbRJ3HCpZ9J6n5KzR/okIvL0a9H9tZEMIfamzX4Nb/qTICfIiVOCmX/7e6jlM0O2tJnYacFbsY8Y=
+	t=1749225703; cv=none; b=sw5QkmZfrww3JdmN9rj5wus6FxZIOfHtu/3g06awg8r+6xT5W+8vCVxt5SFH/n45ho2IKRESuzVOAR5Xu4C0XMTyIGSgsgPH8H5JftRbMui8UlKqLNuoi7mZ7WAYLS4fQ68knu/euIyczYnIHhW8iFq9K42802lPjkqvGD0Nmwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749222309; c=relaxed/simple;
-	bh=gJtT0Tn2PpQSNzJ2Th229/jPzi9ZJ2Ls6N/5fNjLzI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y2jyv3Dy4iyS3Sns25AfIGZ3eNQhAt7noExVSe3SolIdJ+znoSw8bRmwHqUIErxCkoHN62wyp92zyyvszmbDRGwIRMsrOrJ4JXON+eY9k5+xxdRgxyy5goXK5pmttGbklnc51c+3LsksPTKZZWWO6t1fbBx+btok4aHwuXLIg/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpCV2m3l; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1749225703; c=relaxed/simple;
+	bh=nm25pcAcVJI0cheKsvQKjVyk6CHa+YZoF+h1z7RNn5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ttn2amiJECnhcBABZAhUwbiGRW2H0McvU+4x6uXDCaxnlZ4R5lw26/Ozl+6ipnD4K5LzqhqT5c+K+PoninmWBIvozRuw3jiB1zt6Z8W5UPw5U4SbJp0/ju6kzwx5kSuX6lPHCKRif+DcnNjt5rSnP4eW59wGQXw0awBAgyKhkf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfkkAK4D; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3105ef2a071so25108781fa.1;
-        Fri, 06 Jun 2025 08:05:06 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a51481a598so1382263f8f.3;
+        Fri, 06 Jun 2025 09:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749222305; x=1749827105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749225700; x=1749830500; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5NhdrlgztzgpE1Xk+Zp4kkuAyeJA1EIIswOLXPfRZyk=;
-        b=YpCV2m3lvJOOefyFXL82qLH4EogGzFVPWK9M8oCN07Fic9U7v1tEDkXt95WXzFVp2q
-         AZDqK0FCG7MzzPHmPUjQPmXUAbZgNouTnIp5tagkakj56oeYlHsiGL+3yo8c79yJE7PO
-         IJFdUCYvA5b4PzBIzpxkhCjNNb3mzTJQceauLyOCTZ1kWVLEzbJ7v5HsxuKcaMGb5ur5
-         ViGhjhBniksIIE0WnkZ0tc7Hs8QS2TL01fzz5Q2a4MYQlb+9CSlU/HkQ7pGFL/s9mzgI
-         lIj8nefnfKImlYYhGGTlYFZDY10CHofyH/hQo1HZe2iMzTHFByKPREy2qo0vhHXmfXNA
-         ZKIg==
+        bh=BUbXR0bwQGiCRtW9GFJ1y1yZl1gXhHCz0DArJw0qNw0=;
+        b=PfkkAK4DI3HQluxkSzfniXwNaIw6cbP93T56+KRPGNca5sryICWEUY8w59lDMXcHGv
+         2nnxLxXGSAWAd4nlYWDthYM3afubzbziPzi1AvCgYYJCY3scYZUgOj8Nv+v1hJJytyu8
+         IZ2WBge1Hx2eTFq/myY/QDyk3uUEyWyWZpA6wMM+uf+WSCaVtxK8vsTEqs8x0IgQq4mA
+         JnSNR6UULOBUsTcf6lwSa1q85oLorgTZZsioAu9mxUY27moawr6fP+txXvN7cPvMSkJT
+         tLdjnYJDMJA2d8jlZrhw3IA9zPJcIeV11ujJV0/knzoitKwOC4z9FiWtoRHsJ6GRGVOj
+         FfsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749222305; x=1749827105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749225700; x=1749830500;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5NhdrlgztzgpE1Xk+Zp4kkuAyeJA1EIIswOLXPfRZyk=;
-        b=D/r0sXxjiDPejZlzps9G3ilCEbEvTYSvDAx64WWhcFDnDrS0S4+TR0d4qY1wB+WiOt
-         4G9NRTP7vg4iAAZqG3Nh6bTi/tmO4iKCgHTU2ygoo2tnqj+ZxrAUY/ut0au5H1OSypXd
-         wWSKyOmGXBBg7dUoMIeXNNckYrgEUw6lSGRinV32nvO1jr4WijaY0+18ThfRb/D5hVsH
-         6lxTvMdDoal+yBKtHmF+cEZXHLKLmhkv4J/ylH7CgWPrmzErv+Rmsn16y2Eq0eBWOnIt
-         Ay9ykoQ09X5qvq/aA76X3phalOS3wqzqwrYChIouR23P0IguNyHJL2XDuzZQlq5BIt2n
-         zPzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpnz/sqc4ziP30JMqf1mF5/86NlBjG9sC5CTwS3dZsxiDCXn/RK/L9LEtFucp2GiNjTPcbCczEbTYo6L8=@vger.kernel.org, AJvYcCXFTPRoCf6NacWolkDBNPEi2swHImLx+ElfCn/cuMSNyCIHDOUiwLNKxBoO97ZoWa+jqzwuQoVK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRkgFQ3toitz6kVAbx6arHiWeQr+PeG0vxFVm3f96g1Ii1M9nA
-	Y7cSSrOaK95eBU4qeEj4qlsNTrdt7iDE8t+yM3MFx4bfXMD2m4Pnv2TXYa4Luxx2ASAvLFdKc1a
-	fG6GYWeXeT85xG2tgKkSA4rpT3y2dVCs=
-X-Gm-Gg: ASbGncs+0PRWoxPzBMHuIrAk596EMmTM5A5+VrS7XNAWkxnCKPtleL/vifMG7a43c46
-	SotbBoho6faYhN140m0Y0JswMrJG7tgVWvcWMTRTMxvza9eYfJ2OS90iz6e9lO83Mv6JIu7el3I
-	id+tEpfZpcNbhbLhE3bQh4+2z6LJ7nRVbLkYNOIXKfFOEn8LKDYnjzpvi2rlnirV86j1AybzAje
-	8INuw==
-X-Google-Smtp-Source: AGHT+IH78G8M0elhu6vNm3wt3JuGbGuw0AvHq4vu10oYAIAXshUAr7D1SoCJMauU898LZIj0vl45j514wQ0JYhgZ68o=
-X-Received: by 2002:a2e:a7ca:0:b0:32a:88b5:7b3e with SMTP id
- 38308e7fff4ca-32adfeec0bemr8720921fa.41.1749222305096; Fri, 06 Jun 2025
- 08:05:05 -0700 (PDT)
+        bh=BUbXR0bwQGiCRtW9GFJ1y1yZl1gXhHCz0DArJw0qNw0=;
+        b=mWvN0stnwmnWF9oLoMeXfTjun1InNJj1eOA4j/+Y3k6dSkrjttuwpgw+OzX3/1++Ge
+         N3TvQzBXfPyiy7w0X/qowwD7MGWe+kmxVxrHJvl0lts0PRpU99TZ8PV4W9KujMOy8+bL
+         X3GW97xvw8azTMRJko+gX4fiLiBmkN3Cr07JOOWQgEG/sI7dBZVWw0VDflZr9UtYqjf+
+         FXWz1cmk7giXVgO9jKD5AuA+HugpEePKxokepCBK/pIgdRae0HSpHzwP9DBNGbiZWH2Q
+         5Tn1aMdijO+lsb7C9GwGQvxKH5IhNpwzpYS0l3SvBYFF5yZw/WAmVsNqyK4t65d/arVY
+         BMjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjAkTXCuXh3vvqvP2V3GFQfSPwGbo3QzMJp2vJUYM5GU3pKF3P+a47dG5OTmsvPh5sb0qOJz6TOmiO@vger.kernel.org, AJvYcCXqwTFzvsKVd3WRCugIX5in/kzvthnv+kaGp/2aStisJzmdHEfKd1xRBq2wAXOgy+8XKWlsmzBeukQ4hiIE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHJr1etv0SVdCseETSc5RIEa88KZIW5vRifENzfcYlH77SqT80
+	coj8P2gh6qwr5lEcshqHrdKU6envWCFk7JPXpKXENAVFLPMwwAzWKXUd
+X-Gm-Gg: ASbGnct+ROyqT+KZOFRd6na8v+kFRA5xUPi1/POIpeYEO5YVntut8447+9+YdmdnmMQ
+	T1bt604DHnJ310izjBoacrj4knC6gW8gNLghW1A6tSK84fWrNmmqsMfLuxanaD0Amf7206nrdpH
+	BN4Mx1UrtxtdbSJShLMyCYv8yIIwCSx/N4IcYxePSWP4wjE7f4nPvAHeN2H67gfBO0YubFidnEk
+	ZRjjpv4+Jb1ZhA89aa/7PU+IUbpIVZGM1J5gjkXYbs9XGH6XfWQXgvBocTT2Ix5pAELESARPXXx
+	Xr5eHTi5GZgayKbt9hST1FHYIOWFeHbEwihqsnYlTXFRNNv10dJrtSXo3A+FbqW5TXiKcylqViB
+	Tf6yxfmungiD8ckzxCLl628cb
+X-Google-Smtp-Source: AGHT+IEmqmuKj6FXn9i/uI9zQy+znVxChGqy5qwFVVuIhtY5rcMLHOtTf0zBBGAfuZkiaQUGnO+8Zg==
+X-Received: by 2002:a5d:4fd1:0:b0:3a5:3930:f57 with SMTP id ffacd0b85a97d-3a539300f8fmr652283f8f.51.1749225700083;
+        Fri, 06 Jun 2025 09:01:40 -0700 (PDT)
+Received: from masalkhi.. (ip-109-43-113-198.web.vodafone.de. [109.43.113.198])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209bc6c6csm29070975e9.2.2025.06.06.09.01.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 09:01:39 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: krzk@kernel.org
+Cc: abd.masalkhi@gmail.com,
+	arnd@arndb.de,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: eeprom: Add ST M24LR support
+Date: Fri,  6 Jun 2025 15:06:41 +0000
+Message-ID: <20250606150641.3140295-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <8ac3c2da-2824-44fe-942c-fceb8b6f5332@kernel.org>
+References: <8ac3c2da-2824-44fe-942c-fceb8b6f5332@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602135932.464194-1-pranav.tyagi03@gmail.com> <2025060239-delirium-nephew-e37c@gregkh>
-In-Reply-To: <2025060239-delirium-nephew-e37c@gregkh>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Fri, 6 Jun 2025 20:34:53 +0530
-X-Gm-Features: AX0GCFvdMphOgp8NP2z6BCJwn33AWaLDf2vr9-l3CqvYDu4QUg76FhA0esJXBe4
-Message-ID: <CAH4c4jKrYsyVi_g=bem2bGmH1Y95mRkKPApqbQbWZXkQuVWtDQ@mail.gmail.com>
-Subject: Re: [PATCH] net: randomize layout of struct net_device
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, keescook@chromium.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 2, 2025 at 8:50=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
->
-> On Mon, Jun 02, 2025 at 07:29:32PM +0530, Pranav Tyagi wrote:
-> > Add __randomize_layout to struct net_device to support structure layout
-> > randomization if CONFIG_RANDSTRUCT is enabled else the macro expands to
-> > do nothing. This enhances kernel protection by making it harder to
-> > predict the memory layout of this structure.
-> >
-> > Link: https://github.com/KSPP/linux/issues/188
-> > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > ---
-> >  include/linux/netdevice.h | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> > index 7ea022750e4e..0caff664ef3a 100644
-> > --- a/include/linux/netdevice.h
-> > +++ b/include/linux/netdevice.h
-> > @@ -2077,7 +2077,11 @@ enum netdev_reg_state {
-> >   *   moves out.
-> >   */
-> >
-> > +#ifdef CONFIG_RANDSTRUCT
-> > +struct __randomize_layout net_device {
-> > +#else
-> >  struct net_device {
-> > +#endif
->
-> Are you sure the #ifdef is needed?
->
-> thanks,
->
-> greg k-h
+Hi Krzysztof,
 
-Hi Greg,
+thank you for the feedback.
 
-No, the #ifdef is not required since __randomize_layout is defined
-as a no-op when CONFIG_RANDSTRUCT is disabled.
-I rechecked the documentation to confirm this.
-Thanks for pointing it out!
-I will remove the #ifdef and update the patch before resending.
+> How did you implement this feedback:
+>
+> "That's not a misc device, but eeprom. Place it in appropriate directory."
+> ?
+>
+> There is no such device as a misc device.
 
-Regards
-Pranav Tyagi
+I will move it to the eeprom dirctory 
+
+>> +  reg:
+>> +    description:
+>> +      Two I2C address, the primary for control registers, the secondary
+>> +      for EEPROM access.
+>> +    minItems: 2
+>> +    maxItems: 2
+>
+> Replace this all with items and description:
+> items:
+>   - description: foo
+>   - description: bar
+
+I will do that.
+
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    i2c {
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +
+>> +      eeprom@57 {
+>> +        compatible = "st,m24lr04e-r";
+>> +        reg = <0x57>, /* primary-device */
+>> +              <0x53>; /* secondary-device */
+>
+> Where is the rest of at24 properties? Not relevant? Not correct? I had
+> impression this is fully at24 compatible.
+
+The driver does not currently accept at24-style configuration properties
+(e.g., pagesize, address-width) because the EEPROM access is handled
+internally using fixed parameters per device variant. Let me know if
+adding support for these via DT is preferred, I'm happy to extend it
+for flexibility.
+
+Best regards,
+Abd-Alrhman Masalkhi
 
