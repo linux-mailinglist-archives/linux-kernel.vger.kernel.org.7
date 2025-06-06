@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-675621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ED7AD00B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:46:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421B6AD00A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CCF67AA16A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F002D17772D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0CC2882B4;
-	Fri,  6 Jun 2025 10:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACFB286885;
+	Fri,  6 Jun 2025 10:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="Xc9ZCPYr"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UMxbp4zu"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D8A28643F;
-	Fri,  6 Jun 2025 10:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB705214209
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 10:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749206767; cv=none; b=KOOt09dkz+XFJoN9ydCn54Pbm40hucp4pUSHlpFZCNSwZ/tC4YHpd612lhbkg0raesApbrazMQyPQ+Dx540lUm0QMfh89UQSmtil42m7kRWAVFP9aadeLNljQzV42DLhwoQuV+N2WsSlZEY89XDr+QRn7g1yCNgcNu/A17aj4+8=
+	t=1749206747; cv=none; b=Oh688pDH26b2/kc5xnlLHvzRDB2s6aoAH+swVy7noYSBr1AmNcOjKT4AHrOOYnrdawf76vWDyeRECPTAZgZaDM7wHG7clJvUY9PTCI7fjj2WVxJPpgo4mXL3yns+1/O/0c040AmeqKEIgQw3LuxdXwEphuzrSS/4YfbV499HcI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749206767; c=relaxed/simple;
-	bh=+723/NY6KvxdN/NVCwc/Xg4at7iqHe19s5FcoIyfirg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fxsq6Qd9RLHu9xuX/h99LAv1YbYcJVn6ySDsncIIfFg58lK6XZ0AFWNlcGRqCRQ8EDbmrYYdEur9ZAMHwiMTGIQovapHHglVsaHgIUe18G6a54pW+ZLCEwtv00cKtyXcglpMB0iqARTZBzcMw0S+3rWw4EhPz/9PAhTE7RG/siw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=Xc9ZCPYr; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 5A3AD6002C18;
-	Fri,  6 Jun 2025 11:45:57 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id DAvTjK_YH0C4; Fri,  6 Jun 2025 11:45:52 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 810AB6003C3B;
-	Fri,  6 Jun 2025 11:45:51 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1749206751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g3RaW7nJDY4u0LgCaykCArI3bAHh2H+SVvOp/hfhgUg=;
-	b=Xc9ZCPYrHFG5E5SkpLETHHz2Kkbzf5BzgsIeC7MhYq8dyOF4d8glxXhgu0rbb3jkMaDiHp
-	8qUTrvEdB9rYPUSBg2WQ88eaDohmZegGtvakWR1o7C+PHYslhg4cONyvF034pdaYhFwc7w
-	9r5nKQnYON05kBIiDk3NF6yInetiMpI=
-Received: from [192.168.1.151] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 5B86336008B;
-	Fri,  6 Jun 2025 11:45:51 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Date: Fri, 06 Jun 2025 11:45:36 +0100
-Subject: [PATCH 3/3] arm64: tegra: Add NVJPG node
+	s=arc-20240116; t=1749206747; c=relaxed/simple;
+	bh=YkGEBOcrE27T8r3ixhzP0IJ28+ma+k+fBnXwC3McJO4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OxZzEcW/QEKF5FbzWHQqxubthY1bailKkOtl97qd5LhpjGaOe82+4e3eAVdMqsZCRhJOEX8p8QtOPXgvqn9Pz/qE2DZKTR5Xl02r/atbYysXSEkwj1j0VaGQCb8b2NK+MJEc4XmVEOhdihdoIyx/jmmr3jXobB5yKKwlrw/vfQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UMxbp4zu; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a3798794d3so1555215f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 03:45:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749206743; x=1749811543; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRFHALx1m3zetPOEUD4i+1o0+6rIFbdrwCz54veiK6s=;
+        b=UMxbp4zuUrI9sk8FEUuDGdtPYJH9WPP5J5PKKhMNv8n2V/ZBaYFbr55YcM/R8KZ0BU
+         IpqWF9fTkgl9lrf6dAOw3jUDFmKj0RX+K0FMxDm/L7tHqS9OUXNnEzNRipASZUJNt6c8
+         wqEB0300TEqNww5/gon7BddbQaSOaRMs7OSvN2r9LbmO5YaxQhRiikrdIDq67tnOJUL0
+         8SJZmq5rIkBRmtya97v1P+cCjKbXlxUwvcm1HEfqvIRdC3DEjVXb36pWlbbXMx2zi7Ir
+         /fic9kl0IZvdwEwdiMJAcTbRSthYfgGKO3NTedw5TdxvXmhKZ44mWrrxPtBYNiQoCRPg
+         5DgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749206743; x=1749811543;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BRFHALx1m3zetPOEUD4i+1o0+6rIFbdrwCz54veiK6s=;
+        b=pHFED+EDbbLGF7FXRvcrVHVMAB0lgL6dzYmCc6pMNywAoNFDLafDgZ0fsjmu7QCiU0
+         PU55ID8lqqUoJXp3nIdCYUu4Kc/6oybkEBjD8o15gXi6oC9TRwhgKfTF5vkjeFez9Egi
+         8fNmS7ucbnuyUwzcxqX+kjrqRE1ZBmZFJASgGtyAdQfbNxG3RGD30J5NPQlPs3ddwktJ
+         lGEoM61MtF8OdqriAYZX38k+dtziJBOvqdbPfszFc4/XxdEYvwPcH4cFvSKlGDjoURYw
+         M5ebs0nHfByhNh3/qD+PfYEb2jtbd7Wuri5q6+1AzZ5Nz0dI/FaNA+WlPB2TNAv9bz4S
+         IvJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvXzJJ3cE99N32Awg7hvj6Yno6zxl0Y820yolFF4P/687+pm7DdEf0NKO5ZKvizqY4yCaYhSP1RWbgw/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxV0VRykrKD/XLHnYODdjYMWB7KD7trU/+CWz7q/VZeOerzy6E
+	GgUa80LIbT30Mk34oZEWOa3BSVs6RUKEAqsVu3mog6cNPW5Up5CbopZ47q0dJvqYYMM=
+X-Gm-Gg: ASbGnct/Yd5bO8p7EawmUsAqTu/Z4RYz00+dAOQX0UNwaB60I3X+QQ07XcZfLoA5kQ2
+	WCXrGb6v7liRtEJ0IEqwGBawpb0hzm6iGTwGJn2OOygxm6ZvvViYpmsFti46M9Nd/WM+QVlzGEm
+	tQaO/PZn6TJTwXYHGSAPx0QmJOo2OG6zfMgQ7tjrzUerdN9E1/aN7L/pXvQ48rVdABXvmw0CQXl
+	YQgs/iRIHg38yhLLSUBUOjJFFPJk4UWZaaBJfb5DsJ1E8fALqfF2LgzSvJn6qeLs/BOaW2vnp5L
+	iBCLWuXXaLyQegNbY3DC92Wup8JhOl1OU4DEHcCqG8slidBQftzlIdlBiKzPOjvcakiVwpBJ/SW
+	gA2gA0bZORIqG/tzszy5f5UBK/l+Nr85/VZaQWqiG1w==
+X-Google-Smtp-Source: AGHT+IG81ROpSS11hYFgizfgeqwfBE+434gV6QInGeIi/uhBiwAIOcylPzJAGiQB9jMO1IoJY5jW7A==
+X-Received: by 2002:a5d:64c7:0:b0:3a4:d0dc:184f with SMTP id ffacd0b85a97d-3a531cdcfa0mr2411229f8f.39.1749206743044;
+        Fri, 06 Jun 2025 03:45:43 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.20.187.35.bc.googleusercontent.com. [35.187.20.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323bee86sm1468810f8f.43.2025.06.06.03.45.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 03:45:42 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Date: Fri, 06 Jun 2025 10:45:37 +0000
+Subject: [PATCH v2] firmware: exynos-acpm: fix timeouts on xfers handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,57 +80,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250606-diogo-nvjpg-v1-3-5f2c36feeb39@tecnico.ulisboa.pt>
-References: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
-In-Reply-To: <20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt>
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250606-acpm-timeout-v2-1-306b1aa07a6c@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANDGQmgC/3WMyw6CMBBFf4XM2prShxpX/IdhUegAk0hL2tpoS
+ P/dyt7c1bnJOTtEDIQR7s0OATNF8q6CODUwLsbNyMhWBsGF5heumRm3lSVa0b8SU1Lp601zbqS
+ CqmwBJ3ofuUdfeaGYfPgc9dz+3j+h3LI6O0x2QJTcmu5JzgR/9mGGvpTyBXlSLqOpAAAA
+X-Change-ID: 20250605-acpm-timeout-434578500a34
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ arm-scmi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749206748; l=1018;
- i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=+723/NY6KvxdN/NVCwc/Xg4at7iqHe19s5FcoIyfirg=;
- b=vLVZFQrZn4UcAC2DS79V2Tka/+rkbmSG2SzFuLdk4ZaguRvAfmXaJBG5imLAXrQZTN3HcBvjK
- 2koOIxwEcb8CUFXkIxVk29ff3avixffo84Bk5LHkmdxtHFSMpUXoJBU
-X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749206742; l=5028;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=YkGEBOcrE27T8r3ixhzP0IJ28+ma+k+fBnXwC3McJO4=;
+ b=/ygRXRUpI7htlMsGDL1WdAqzFsl3yUxqAWzsl8X50cOc+eJBsU4cW6YrAzSyW/kOU4+5Rcj1m
+ 7EAslsdO6LiCG5U41ftFPI1qbJm37L6utdNYTfU8JCZQs6jnxC05Vta
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-The Tegra X1 chip contains a NVJPG accelerator capable of
-encoding/decoding JPEG files in hardware, so add its DT node.
+The mailbox framework has a single inflight request at a time. If
+a request is sent while another is still active, it will be queued
+to the mailbox core ring buffer.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+ACPM protocol did not serialize the calls to the mailbox subsystem so we
+could start the timeout ticks in parallel for multiple requests, while
+just one was being inflight.
+
+Consider a hypothetical case where the xfer timeout is 100ms and an ACPM
+transaction takes 90ms:
+      | 0ms: Message #0 is queued in mailbox layer and sent out, then sits
+      |      at acpm_dequeue_by_polling() with a timeout of 100ms
+      | 1ms: Message #1 is queued in mailbox layer but not sent out yet.
+      |      Since send_message() doesn't block, it also sits at
+      |      acpm_dequeue_by_polling() with a timeout of 100ms
+      |  ...
+      | 90ms: Message #0 is completed, txdone is called and message #1 is sent
+      | 101ms: Message #1 times out since the count started at 1ms. Even though
+      |       it has only been inflight for 11ms.
+
+Fix the problem by moving mbox_send_message() and mbox_client_txdone()
+immediately after the message has been written to the TX queue and while
+still keeping the ACPM TX queue lock. We thus tie together the TX write
+with the doorbell ring and mark the TX as done after the doorbell has
+been rung. This guarantees that the doorbell has been rang before
+starting the timeout ticks. We should also see some performance
+improvement as we no longer wait to receive a response before ringing
+the doorbell for the next request, so the ACPM firmware shall be able to
+drain faster the TX queue. Another benefit is that requests are no
+longer able to ring the doorbell one for the other, so it eases
+debugging. Finally, the mailbox software queue will always contain a
+single doorbell request due to the serialization done at the ACPM TX
+queue level. Protocols like ACPM, that handle their own hardware queues
+need a passthrough mailbox API, where they are able to just ring the
+doorbell or flip a bit directly into the mailbox controller. The mailbox
+software queue mechanism, the locking done into the mailbox core is not
+really needed, so hopefully this lays the foundation for a passthrough
+mailbox API.
+
+Reported-by: André Draszik <andre.draszik@linaro.org>
+Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Changes in v2:
+- update commit message and fix the time shown in the example.
+- pass zero for the second argument of mbox_client_txdone().
+  mbox_send_message() returns a non negative token on success, and
+  mbox_client_txdone() expects the status of last transmission. Doesn't
+  change behavior for ACPM, but fix it for correctness.
+- add to Cc the arm_scmi list, they had a similar fix at:
+  Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=da1642bc97c4e
+- chckpatch complains that Reported-by: shall be followed by Closes:,
+  but the problem was reported offline, so I don't have a Closes: tag.
+- Link to v1: https://lore.kernel.org/r/20250605-acpm-timeout-v1-1-1dbfdbee30da@linaro.org
+---
+ drivers/firmware/samsung/exynos-acpm.c | 25 +++++++++----------------
+ 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 6f8cdf012f0f12a16716e9d479c46b330bbb7dda..087f38256fd40f57c4685e907f9682eb49ee31db 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -253,7 +253,13 @@ vic@54340000 {
- 		nvjpg@54380000 {
- 			compatible = "nvidia,tegra210-nvjpg";
- 			reg = <0x0 0x54380000 0x0 0x00040000>;
--			status = "disabled";
-+			clocks = <&tegra_car TEGRA210_CLK_NVJPG>;
-+			clock-names = "nvjpg";
-+			resets = <&tegra_car 195>;
-+			reset-names = "nvjpg";
-+
-+			iommus = <&mc TEGRA_SWGROUP_NVJPG>;
-+			power-domains = <&pd_nvjpg>;
- 		};
+diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+index e02f14f4bd7c96de6ebb50473005de520aba1c4f..3a69fe3234c75e0b5a93cbea6bb210dc6f69d2a6 100644
+--- a/drivers/firmware/samsung/exynos-acpm.c
++++ b/drivers/firmware/samsung/exynos-acpm.c
+@@ -430,6 +430,9 @@ int acpm_do_xfer(const struct acpm_handle *handle, const struct acpm_xfer *xfer)
+ 		return -EOPNOTSUPP;
+ 	}
  
- 		dsib: dsi@54400000 {
++	msg.chan_id = xfer->acpm_chan_id;
++	msg.chan_type = EXYNOS_MBOX_CHAN_TYPE_DOORBELL;
++
+ 	scoped_guard(mutex, &achan->tx_lock) {
+ 		tx_front = readl(achan->tx.front);
+ 		idx = (tx_front + 1) % achan->qlen;
+@@ -446,25 +449,15 @@ int acpm_do_xfer(const struct acpm_handle *handle, const struct acpm_xfer *xfer)
+ 
+ 		/* Advance TX front. */
+ 		writel(idx, achan->tx.front);
+-	}
+ 
+-	msg.chan_id = xfer->acpm_chan_id;
+-	msg.chan_type = EXYNOS_MBOX_CHAN_TYPE_DOORBELL;
+-	ret = mbox_send_message(achan->chan, (void *)&msg);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = acpm_wait_for_message_response(achan, xfer);
++		ret = mbox_send_message(achan->chan, (void *)&msg);
++		if (ret < 0)
++			return ret;
+ 
+-	/*
+-	 * NOTE: we might prefer not to need the mailbox ticker to manage the
+-	 * transfer queueing since the protocol layer queues things by itself.
+-	 * Unfortunately, we have to kick the mailbox framework after we have
+-	 * received our message.
+-	 */
+-	mbox_client_txdone(achan->chan, ret);
++		mbox_client_txdone(achan->chan, 0);
++	}
+ 
+-	return ret;
++	return acpm_wait_for_message_response(achan, xfer);
+ }
+ 
+ /**
 
+---
+base-commit: a0bea9e39035edc56a994630e6048c8a191a99d8
+change-id: 20250605-acpm-timeout-434578500a34
+
+Best regards,
 -- 
-2.49.0
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
 
