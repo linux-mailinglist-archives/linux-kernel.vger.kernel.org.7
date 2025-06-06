@@ -1,140 +1,281 @@
-Return-Path: <linux-kernel+bounces-675896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0775BAD0473
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:03:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFB4AD04B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE2E17098E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9E03AE673
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7AC289811;
-	Fri,  6 Jun 2025 15:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C741A5B8C;
+	Fri,  6 Jun 2025 15:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEyjJYcC"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u7ARvbu/"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE523158218
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 15:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7F845009
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 15:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749222195; cv=none; b=BiWRFeVc0A3B5fbYufbi3Cgr3qp3AlYWHQBlQ6ECTfVN5vqWGkMzUyFt2+JlyUrl3h4vHjF0hHUpahMOl9kSVVm2SvRknP98mj614igGYU9aLW6qPPocXG97FmeMgQl+mmTk1cwza1oIfe9Xtnh2eZrECyFWzTE1X9Q3fSWx1so=
+	t=1749222225; cv=none; b=EcAsuJTRf5yi+3+FCp6KrNMqVP0uy4q2oz9wtQN3Vid+Pjx6AQ6iTgHqNyfz3Ww6YXHcvtLsNCmhEiJko+P2WqqAfydNIHMwZ81pckzlJcU6o1XmLd4cVwSfxgVfL8e2eCHAH4EMnMohS4Jvo74FQlTjh97rv21w5x2ThReT5pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749222195; c=relaxed/simple;
-	bh=7zSaIBi9uiibHWNuWKSeAbF5KYAWL6vX77slfEv5hbA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V17tB0f4ebTEks5atPaxQ9ViGHu3tX5Wjv2sWoVmEQnpZprui1oQF6ZdRqizsmJO1Wt+a1TVGJFXRzdHWBkYmisSXPblwM6WI+PTRfIGkEmOQ41bKArKHEmZxsyKpJ6/BtJJGg1lixRc363L1YxDIwy80ZR/iXV7D+COs7VI8ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEyjJYcC; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ad891bb0957so354238266b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 08:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749222192; x=1749826992; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RCcZVL4U6ihTDzJ3VSPWudzlRqrxb23wPEKhLKoBA2s=;
-        b=XEyjJYcCTUYSK6t2VRjMkTZj4v/Fg387qtOZ1N0NIpeHij3ULMSdoqfDpS/OxhfY5X
-         crpQrHELA/1N0LZNfPkutklv1QgDvl9qVKupzTTbqV3qppWeWlvMlgnpVGbUvsh/r0Z6
-         9FxjgyyAvdgWIHZ8nZWUVP4HhS2aGiCYUJopyRuSbtW2AL/Sueat+vEkJMQJUj1pYGs7
-         +KT9zkK9pbIYa2oRgC/fcoaX3ty1JClXJPbGCZ658+dFz0xl+1+3RRgZ5eCkfpVu6NW+
-         0WgUcOqLL+sPdZppvBCyH0PQUQOmsMrhy6vQUXcALK+BLb7JpKRCuhFD//QaaRCBX2fY
-         di1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749222192; x=1749826992;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RCcZVL4U6ihTDzJ3VSPWudzlRqrxb23wPEKhLKoBA2s=;
-        b=Q2p9A0m9pzyM654c0EAJdzkaoDFPe0DejFnqohfkT8ktVCkOIpY/ALKnwtvAKdc9uR
-         PmQTqDUW5R6+UcNrD/cQs7nBuyLCoi/yk4hBytPtwOjjNz8B5zQsuCY2yW9hAPl/PkaX
-         jD88l+5uZ+JOzuBn1CEUzLolW2zD0ZYU1aeJxtaTSQ9EFZpy4R2GovxdI38NKJPsvtqV
-         oD/wEBp2AdFzBWZfzahMSsdYnnVReR908yhaaQ4g6eKnsmEA3oyUvql9qa9mscEX4J6o
-         0x8eQoigZIb0DDYlGugF17QwazDETr907skg2q4umfqDslIaQt49emD+pEg99sJ9tGlp
-         bSug==
-X-Forwarded-Encrypted: i=1; AJvYcCW1g0N2GPcKtTCMYITTrS7Dh7y/+XiF8MuBL1FQcEQGEiz/5iui2ibDHlxziSLukBDts1IaHjcohQx6+m0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPM34NU1NsghRxBc3ljNvP59kj7cG9ro3L4bL5JdIYvEsiFME/
-	AxSwQ4cJ9HDVA3782iqstY5NhLW3uKdrSvNtwOBHNkoKWB2G6c9w3k4P0SEQY2e9eBM=
-X-Gm-Gg: ASbGncvTRU1mOWvb43kF64P5BhLGwf/Wtm2IERZZbEAomUc/r8+qPtFSuBjt0KeLY3e
-	1BrE+EfkqzokT5teNch5tZowbO1uLWath1NHC+U2SJeb9Kabx6WNHe9wx/bRYZPLmHucAKcBVtv
-	IhZ+oKRDyN5ZlxIE9UpbseqX8pUpTZEMfOCqvNL76ScXIQdE6KQScoWFK+sPxgWsIcacDfFA0G6
-	+n23ecc7+SqgKoD+FQQkBUojGPcSWKwxAMsrGQ232ORNN8A9JZaKQsD42SLpJA3UrcQMQacvH2e
-	13I5j9bPTvI/IUuczS93GxzNXZEBX0qQ7tUx4BR0Qhzby26lOr6TfdkfCEwOEYLfzAs22rSpBkZ
-	NOpE7FW400GUKWBlh8BSwEcRZdHFTeXPI6FOk/wdz1mhhrQ==
-X-Google-Smtp-Source: AGHT+IF9JL8hjME8iUOhCNN7DFMjh4zd0yx4XgWB3wO5GrjhD+ZZ+DAVbctjpCTTiSCGzDKTRCksCg==
-X-Received: by 2002:a17:906:c113:b0:ad8:8364:d4ab with SMTP id a640c23a62f3a-ade1aaf4eb4mr352597966b.49.1749222192110;
-        Fri, 06 Jun 2025 08:03:12 -0700 (PDT)
-Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc38cf2sm127735066b.121.2025.06.06.08.03.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 08:03:11 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 06 Jun 2025 16:02:57 +0100
-Subject: [PATCH v2 01/17] dt-bindings: firmware: google,gs101-acpm-ipc:
- convert regulators to lowercase
+	s=arc-20240116; t=1749222225; c=relaxed/simple;
+	bh=DRVrh8AqSjSv5TXQJ3G55uv/2k+YOtrWpqdhnHMfGCo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o/0qVxEC1hjzexFrhiOgZji6ul+qJUfnsXmAdU5phc4xgDPJOKhqInCOLejV3yWnZftEoccpOUAwwG/SmwrMZa2dCeZz2IBFlM1A9yQ4rx65evEYRNfUMVwMvUL9gItqEyKGrnY5bXjefMGfK+l0E/WTMDZWhRW+/nMLlVk+I2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u7ARvbu/; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749222210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qAtVAk3ktG/11zUq9KHayxDPp/WA9lPsPFV1ZKBYtiA=;
+	b=u7ARvbu/JzSUVWLY8cd49nFOwDoNbZbc7BxwPr0P/Vu7xmxtyo3bV4YHLYBk01rRT1P7Mz
+	TSW/8A5IJKY0e2c/LtfR8RouSikixGy0ffXl0bAbgpNMCHWfarhMNWdSkzlTrUI/x4//r5
+	xaN896qIkM5mY1zgBKi7zbiLiofnWHs=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v2] bpf: Add show_fdinfo for perf_event
+Date: Fri,  6 Jun 2025 23:02:58 +0800
+Message-Id: <20250606150258.3385166-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250606-s2mpg1x-regulators-v2-1-b03feffd2621@linaro.org>
-References: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-In-Reply-To: <20250606-s2mpg1x-regulators-v2-0-b03feffd2621@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-Migadu-Flow: FLOW_OUT
 
-Using lowercase for the buck and ldo nodenames is preferred, as
-evidenced e.g. in [1].
+After commit 1b715e1b0ec5 ("bpf: Support ->fill_link_info for perf_event") add
+perf_event info, we can also show the info with the method of cat /proc/[fd]/fdinfo.
 
-Convert the example here to lowercase before we add any bindings
-describing the s2mpg1x regulators that will enforce the spelling.
+kprobe fdinfo:
+link_type:	perf
+link_id:	10
+prog_tag:	bcf7977d3b93787c
+prog_id:	20
+name:	bpf_fentry_test1
+offset:	0
+missed:	0
+addr:	ffffffffa28a2904
+event_type:	kprobe
+cookie:	3735928559
 
-Link: https://lore.kernel.org/all/20250223-mysterious-infrared-civet-e5bcbf@krzk-bin/ [1]
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+uprobe fdinfo:
+link_type:	perf
+link_id:	13
+prog_tag:	bcf7977d3b93787c
+prog_id:	21
+name:	/proc/self/exe
+offset:	63dce4
+ref_ctr_offset:	33eee2a
+event_type:	uprobe
+cookie:	3735928559
+
+tracepoint fdinfo:
+link_type:	perf
+link_id:	11
+prog_tag:	bcf7977d3b93787c
+prog_id:	22
+tp_name:	sched_switch
+event_type:	tracepoint
+cookie:	3735928559
+
+perf_event fdinfo:
+link_type:	perf
+link_id:	12
+prog_tag:	bcf7977d3b93787c
+prog_id:	23
+type:	1
+config:	2
+event_type:	event
+cookie:	3735928559
+
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
- Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/bpf/syscall.c | 118 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-index 9785aac3b5f34955bbfe2718eec48581d050954f..62a3a7dac5bd250a7f216c72f3315cd9632d93e1 100644
---- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-+++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.yaml
-@@ -64,7 +64,7 @@ examples:
-             interrupts-extended = <&gpa0 6 IRQ_TYPE_LEVEL_LOW>;
- 
-             regulators {
--                LDO1 {
-+                ldo1m {
-                     regulator-name = "vdd_ldo1";
-                     regulator-min-microvolt = <700000>;
-                     regulator-max-microvolt = <1300000>;
-@@ -73,7 +73,7 @@ examples:
- 
-                 // ...
- 
--                BUCK1 {
-+                buck8m {
-                     regulator-name = "vdd_mif";
-                     regulator-min-microvolt = <450000>;
-                     regulator-max-microvolt = <1300000>;
+Change list:
+- v1 -> v2:
+   - Andrii suggested:
+     1. define event_type with string
+     2. print offset and addr with hex
 
+   - Jiri suggested:
+     1. add ref_ctr_offset for uprobe
+- v1:
+    https://lore.kernel.org/bpf/20250604163723.3175258-1-chen.dylane@linux.dev
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 89d027cd7ca..928ff129087 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3795,6 +3795,31 @@ static int bpf_perf_link_fill_kprobe(const struct perf_event *event,
+ 	info->perf_event.kprobe.cookie = event->bpf_cookie;
+ 	return 0;
+ }
++
++static void bpf_perf_link_fdinfo_kprobe(const struct perf_event *event,
++					struct seq_file *seq)
++{
++	const char *name;
++	int err;
++	u32 prog_id, type;
++	u64 offset, addr;
++	unsigned long missed;
++
++	err = bpf_get_perf_event_info(event, &prog_id, &type, &name,
++				      &offset, &addr, &missed);
++	if (err)
++		return;
++
++	seq_printf(seq,
++		   "name:\t%s\n"
++		   "offset:\t%llx\n"
++		   "missed:\t%lu\n"
++		   "addr:\t%llx\n"
++		   "event_type:\t%s\n"
++		   "cookie:\t%llu\n",
++		   name, offset, missed, addr, type == BPF_FD_TYPE_KRETPROBE ?
++		   "kretprobe" : "kprobe", event->bpf_cookie);
++}
+ #endif
+ 
+ #ifdef CONFIG_UPROBE_EVENTS
+@@ -3823,6 +3848,30 @@ static int bpf_perf_link_fill_uprobe(const struct perf_event *event,
+ 	info->perf_event.uprobe.ref_ctr_offset = ref_ctr_offset;
+ 	return 0;
+ }
++
++static void bpf_perf_link_fdinfo_uprobe(const struct perf_event *event,
++					struct seq_file *seq)
++{
++	const char *name;
++	int err;
++	u32 prog_id, type;
++	u64 offset, ref_ctr_offset;
++	unsigned long missed;
++
++	err = bpf_get_perf_event_info(event, &prog_id, &type, &name,
++				      &offset, &ref_ctr_offset, &missed);
++	if (err)
++		return;
++
++	seq_printf(seq,
++		   "name:\t%s\n"
++		   "offset:\t%llx\n"
++		   "ref_ctr_offset:\t%llx\n"
++		   "event_type:\t%s\n"
++		   "cookie:\t%llu\n",
++		   name, offset, ref_ctr_offset, type == BPF_FD_TYPE_URETPROBE ?
++		   "uretprobe" : "uprobe", event->bpf_cookie);
++}
+ #endif
+ 
+ static int bpf_perf_link_fill_probe(const struct perf_event *event,
+@@ -3891,10 +3940,79 @@ static int bpf_perf_link_fill_link_info(const struct bpf_link *link,
+ 	}
+ }
+ 
++static void bpf_perf_event_link_show_fdinfo(const struct perf_event *event,
++					    struct seq_file *seq)
++{
++	seq_printf(seq,
++		   "type:\t%u\n"
++		   "config:\t%llu\n"
++		   "event_type:\t%s\n"
++		   "cookie:\t%llu\n",
++		   event->attr.type, event->attr.config,
++		   "event", event->bpf_cookie);
++}
++
++static void bpf_tracepoint_link_show_fdinfo(const struct perf_event *event,
++					    struct seq_file *seq)
++{
++	int err;
++	const char *name;
++	u32 prog_id;
++
++	err = bpf_get_perf_event_info(event, &prog_id, NULL, &name, NULL,
++				      NULL, NULL);
++	if (err)
++		return;
++
++	seq_printf(seq,
++		   "tp_name:\t%s\n"
++		   "event_type:\t%s\n"
++		   "cookie:\t%llu\n",
++		   name, "tracepoint", event->bpf_cookie);
++}
++
++static void bpf_probe_link_show_fdinfo(const struct perf_event *event,
++				       struct seq_file *seq)
++{
++#ifdef CONFIG_KPROBE_EVENTS
++	if (event->tp_event->flags & TRACE_EVENT_FL_KPROBE)
++		return bpf_perf_link_fdinfo_kprobe(event, seq);
++#endif
++
++#ifdef CONFIG_UPROBE_EVENTS
++	if (event->tp_event->flags & TRACE_EVENT_FL_UPROBE)
++		return bpf_perf_link_fdinfo_uprobe(event, seq);
++#endif
++}
++
++static void bpf_perf_link_show_fdinfo(const struct bpf_link *link,
++				      struct seq_file *seq)
++{
++	struct bpf_perf_link *perf_link;
++	const struct perf_event *event;
++
++	perf_link = container_of(link, struct bpf_perf_link, link);
++	event = perf_get_event(perf_link->perf_file);
++	if (IS_ERR(event))
++		return;
++
++	switch (event->prog->type) {
++	case BPF_PROG_TYPE_PERF_EVENT:
++		return bpf_perf_event_link_show_fdinfo(event, seq);
++	case BPF_PROG_TYPE_TRACEPOINT:
++		return bpf_tracepoint_link_show_fdinfo(event, seq);
++	case BPF_PROG_TYPE_KPROBE:
++		return bpf_probe_link_show_fdinfo(event, seq);
++	default:
++		return;
++	}
++}
++
+ static const struct bpf_link_ops bpf_perf_link_lops = {
+ 	.release = bpf_perf_link_release,
+ 	.dealloc = bpf_perf_link_dealloc,
+ 	.fill_link_info = bpf_perf_link_fill_link_info,
++	.show_fdinfo = bpf_perf_link_show_fdinfo,
+ };
+ 
+ static int bpf_perf_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
 -- 
-2.50.0.rc0.604.gd4ff7b7c86-goog
+2.43.0
 
 
