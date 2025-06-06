@@ -1,200 +1,175 @@
-Return-Path: <linux-kernel+bounces-675751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BB4AD0246
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B9BAD025B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 14:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9509B3AA93F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:35:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242B31747A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670D5288529;
-	Fri,  6 Jun 2025 12:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C244288C02;
+	Fri,  6 Jun 2025 12:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VdV/OTlJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wUhpu31R"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CEC287513
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 12:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7E328852F
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 12:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749213335; cv=none; b=ICm7YPycLKcs3X8ims7CDSk0YNLh4EmDGpgFSPQpUcdprWMivPl414hKUD5C47kOtLz/Sd8UDWSvmA5r1VHOHYHQmq+fngcIn25dWkfIORoAC6o+xiBoQ04NjAPB2K2FTIrxUfp1aKlWcaXz4uWRTA0IEhstRRX9F5RMjERCW/o=
+	t=1749213492; cv=none; b=aLjgUHkvEHefVRURaNZ+XzN5uNaEwbFxgCX0m7hyIA0Rja5wdGLqknTCTVxWzJcpjXFNLP6kAE9quSfyhinJPxEMauG0y2tLWCyX9vL+0gaZ3VWM60wYELnCV3GitX4mwpFELPs8zb36/kPxiUAsCxRgy5jphGBaNu4OsbcJGT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749213335; c=relaxed/simple;
-	bh=kpRINIUUT3cNR5P8bR7a4qNj9t6jrjVfH1S2gblGSHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VmKIWDQSpwkh8iiETuU+Q3kCd4CE7oa0NCV0wd0v99EFrcAHbj0ZKjkmlrIvQHraSPPVIYYOP1qMoqbsqROGmmjsHb8UBk2wECvYnC/OADJs5MoqhR2/KTvCVT/VhXIAyAl2go8KhVPhlvHuiwONZdR8gOBpiF8hUUaIx5eCHys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VdV/OTlJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749213332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sSb0ikd6dE0bNHJf4fDasJAbxnz21Z9UlDYPOcjiVX4=;
-	b=VdV/OTlJmud2hXMtcpQGU1m6bz/J39Z9DEutp6WbqjNt74cvsTm9ozaKSMUZ+GUeMFskDb
-	v/DoP2rRu7a1RIYBzBDCZOhzQy+YVTMaL7ZJEgU91ggrMtxT0nPrJK4w6PfdhS8uJEPprO
-	xFPG+TqSspMXm1zPoFUzLvvCDw6ee60=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-bi0XcQL4Ot2fNu3OXGir2A-1; Fri, 06 Jun 2025 08:35:31 -0400
-X-MC-Unique: bi0XcQL4Ot2fNu3OXGir2A-1
-X-Mimecast-MFC-AGG-ID: bi0XcQL4Ot2fNu3OXGir2A_1749213330
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-441c122fa56so10407855e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 05:35:31 -0700 (PDT)
+	s=arc-20240116; t=1749213492; c=relaxed/simple;
+	bh=76ceGAtoe6msQi7Co3W0+hpA8OF7n2ceHM3GHX4Q6is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=snwA0ga1t/uJgAWjgbfQrlKUgGdHhRWc1ubRDsT3VyAob1gu7ky/IdRcn9l39Te+lAntV8eVg6QQ7v6Ppfe5jQzlXG2C7Y19cUNkBqBGTTfFR+jR/b4PZzF6awNYsxZZLv+uEUI8NqjzEOzNC/6BgWMUvPg6MYTVBX8njtdJrCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wUhpu31R; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6024087086dso9852a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 05:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749213489; x=1749818289; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FeOQnwFRu1+Kj/2MlWTCn9hMSyDZ7M1MsWilhgviDz8=;
+        b=wUhpu31RUtz1dPzebSVTy51HPG9j7LqL71+XHHkMy+yHxg/W8zYQgKB6yofETPDUim
+         HuQvAWWv6SqdXC/YFAetMG//HLMC5YuusLQ8iDEEKZ/Ysj2n7PQ6JvhNeLA9NHAz4QR1
+         UOt5Wm8sIuqP11m846Gbrga9ocy1cPZQhQqFAryMNqE9wcgA7XaUs53yuUU5mYXZM7Ze
+         WQy1qRiQ7VuCss563lp8CIuKjFLNIUjjkSBh2mDD4xnejoaffMU3rhRuMwvBeN2lPd4t
+         M7JP25cBO+eK5suTBSs+s0lkNVjNvxKUw8e8ooSk//ATpCaEni2RQIZ1TE4xMr3HrZWL
+         LJ1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749213330; x=1749818130;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sSb0ikd6dE0bNHJf4fDasJAbxnz21Z9UlDYPOcjiVX4=;
-        b=IrN4Kr4JYhOAOXu9S2T7t8JPDkv7js4ze/Sb/0fx0sjBZx4dqeov/EJ7jJQ8oQer87
-         bRUXbXPk3ynv6P7rUDryUTdLFcOwob+43F/pmukS2L9gDRnj2elcUYj3EPv5iyw8h2V7
-         c0MP+uUpJsB+xvH5kPFbHdrk2bBDOT+MxTmTkAjiq2fn0QUq526XSgQG4pRXssVbae8i
-         LS4E60w4NyrWVv6P/pjOd/vnkvRqZQKj/dY+o6wHH8BorfULC60mhN8CayuN1VG0Taex
-         TPkZZb5MoZ9CKt5pqchpzRMM/nPUdVT5n1FWueVDI7Ia6ZNfsiNMZBfQd8lxND2pwdRG
-         0oWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbkb2cK1rN2lykOO7F94fJoj4PHXJpNIU4v5XiiGRAMea+VJK7RybdlIJRHyC3U7g8wQf5vwKFU8cZQD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLvzmcrkF1lvR4i7HA8NkxIAHQkakk/+utdw2T8ouACD6dkgox
-	0W2AeUuipnQ3ONEy1vywNlQeAIi6f2y6Camvmng6aoaLBuD8NfmX+Q3DnvFw+6A/Dvi90KMyLce
-	+/kdDoUeIEQNsltbQTlqQ70OUg30IB/Ud3RUPXLYd6eGKWI4+8pRIC+/1DySE8t7D5A==
-X-Gm-Gg: ASbGncsF2PT0meCOJ6DNXYHJgb/0ykl7s1ZGp0EDnHOFbcrLOkdUjj46hVgoKCL4CFx
-	z6KzPgmMlRCpE25G5i/MhjyMcTiHDAzpgN9ukJFM4nY8/GPnZ7lOi92CeV8GwrlFptkVOSQqkE9
-	RRJRkJNxbdgIFXEPCKoeGwvc/2GnFYTRAAAiEGSAsI/+kJTK2sDDXvOuwTdU3RNnAlY3Rt0uvI4
-	S1QZuYQB91k0CwB5kPFspGg7JbPPwbYKLVvkmis56dtzjUQ0LMNkJuzCMLbCwqdOiNMyPJb8E2n
-	gZaLsxtFMxIdBGy0XUkpvfe9b20EdWY0d4scjXwUn9afkVI/FksH8eqT0hdeYThBaF8mF9ngroD
-	oNXUKi/lnlIVp8FOnN840gylKHeLhOMjMprbp73Jpdw==
-X-Received: by 2002:a05:6000:310d:b0:3a5:2beb:747b with SMTP id ffacd0b85a97d-3a5319b592bmr2739322f8f.3.1749213330325;
-        Fri, 06 Jun 2025 05:35:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6Ebolrz1IOoMpW3aYGJSUpFY88OxyWoAs8HB+AGnlcGOsl5vVciX1PlKuEnfQRSWeZP/PAQ==
-X-Received: by 2002:a05:6000:310d:b0:3a5:2beb:747b with SMTP id ffacd0b85a97d-3a5319b592bmr2739302f8f.3.1749213329969;
-        Fri, 06 Jun 2025 05:35:29 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f19:9c00:568:7df7:e1:293d? (p200300d82f199c0005687df700e1293d.dip0.t-ipconnect.de. [2003:d8:2f19:9c00:568:7df7:e1:293d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532436668sm1788926f8f.54.2025.06.06.05.35.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jun 2025 05:35:29 -0700 (PDT)
-Message-ID: <e105ba14-f9f5-4510-bf9d-b65440361f51@redhat.com>
-Date: Fri, 6 Jun 2025 14:35:28 +0200
+        d=1e100.net; s=20230601; t=1749213489; x=1749818289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FeOQnwFRu1+Kj/2MlWTCn9hMSyDZ7M1MsWilhgviDz8=;
+        b=v07qyMLXvSClUcMePEkQnw90rKSgcb2qB4/IWQx5vrf3dVkfL47hMUgohFoqpj0RED
+         dmEpJl00jLYN5eb8sa1db5WiF/CAfNqy3kGN5eJqt7Q0hkm3nsZcIlmLWlKCsShkADe4
+         E6pW26PKaMr1r/YOpzvkI19kgMsFb5lVggSPx5zCWp9W5BQTMQGUekd8VI4MKDNScvwN
+         GAfl5tAPYpylgeUobNH2IABxYNCs8MBI2iVW+SqXplifbpoXBZxoN6LY04m0fXJ5tWCy
+         L4fCuHymx66iDBpWcbj9Hc8UC50+y81ykjOtM7V2dosStivGMoTJtKnLC3Zu8RJDS98I
+         hxTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfSIspsobVE00amSxY4ZV+PZclcUUbW2OJKmmHL+JCcig28xbSPtp/hz9GDMqiS5yaiYK3QrYlMubroZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLM7N1sDRnRIXt9Z40McJUob8uRZdKU+a0wG+4Ka0F5f3fcLcZ
+	zoueHF6FA1kDh2/3cqz7rIvkRABb8HcQGi4l0/iBn14x8K4qLycDasOQYuKWpMJFD62YOc0M3yw
+	sB/toDb4nMENsl8HOwjo0RQfuGCgwwH2BRvJxrbVD
+X-Gm-Gg: ASbGncs/XA5IA1PYsbj7UnB6sB17VHi5OQwqPd42pEya0LIhiq1RM5awQ6n0nY3QbtS
+	AIV2J5QRSZtZHBiOza44uwTYEEqO0Uvwzbc1k5CuA3tQekZlfn2T5PC+Vw+/i5eI7FKIKSWlaz7
+	K/A2+s5gdZVxo/lBR/52uruounMoaL/t4cGdUcFx/mOJU95+p2MNcE6OA/nuzOvIK4RNLN6A==
+X-Google-Smtp-Source: AGHT+IE+fznf396DEdYbm7FDbiMqK8DD7+M7vFeKn4D5k96LIDFgmHNB35OHueWQZma6dil8qwRaIjQmLGcvzLI2aTE=
+X-Received: by 2002:a05:6402:3887:b0:600:9008:4a40 with SMTP id
+ 4fb4d7f45d1cf-6077498ed18mr90476a12.4.1749213488536; Fri, 06 Jun 2025
+ 05:38:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/10] mm,slub: Use node-notifier instead of
- memory-notifier
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Harry Yoo <harry.yoo@oracle.com>, Rakie Kim <rakie.kim@sk.com>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250605142305.244465-1-osalvador@suse.de>
- <20250605142305.244465-5-osalvador@suse.de>
- <0ca963af-8dc9-4cb4-9142-04497c359b81@redhat.com>
- <aELfAo3RgIU0CV-5@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <aELfAo3RgIU0CV-5@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250606092809.4194056-1-ryan.roberts@arm.com>
+In-Reply-To: <20250606092809.4194056-1-ryan.roberts@arm.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 6 Jun 2025 14:37:32 +0200
+X-Gm-Features: AX0GCFvlWBvUofLsMql7uPnqlPQ_I7AwEatSw2rWNXAV8LpXKA2kOKqETQmhfQc
+Message-ID: <CAG48ez1VHfcTJNDLZcoupQBJQ5xpKzEMss8oBhmGYgHFidRU_A@mail.gmail.com>
+Subject: Re: [PATCH v1] mm: Close theoretical race where stale TLB entries
+ could linger
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, David Hildenbrand <david@redhat.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06.06.25 14:28, Oscar Salvador wrote:
-> On Fri, Jun 06, 2025 at 01:56:15PM +0200, David Hildenbrand wrote:
->>> @@ -6217,15 +6217,12 @@ static int slab_memory_callback(struct notifier_block *self,
->>>    	int ret = 0;
->>>    	switch (action) {
->>> -	case MEM_GOING_ONLINE:
->>> +	case NODE_ADDING_FIRST_MEMORY:
->>>    		ret = slab_mem_going_online_callback(arg);
->>
->> In slab_mem_going_online_callback we will cast arg to "struct
->> memory_notify", no?
-> 
-> Uhm... not sure if I understood this correctly but slab_mem_going_online_callback looks
-> like this:
-> 
->   static int slab_mem_going_online_callback(void *arg)
->   {
->           struct kmem_cache_node *n;
->           struct kmem_cache *s;
->           struct node_notify *narg = arg;
->           int nid = narg->nid;
->           int ret = 0;
-> 
+On Fri, Jun 6, 2025 at 11:28=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+> Commit 3ea277194daa ("mm, mprotect: flush TLB if potentially racing with
+> a parallel reclaim leaving stale TLB entries") described a theoretical
+> race as such:
+>
+> """
+> Nadav Amit identified a theoritical race between page reclaim and
+> mprotect due to TLB flushes being batched outside of the PTL being held.
+>
+> He described the race as follows:
+>
+>         CPU0                            CPU1
+>         ----                            ----
+>                                         user accesses memory using RW PTE
+>                                         [PTE now cached in TLB]
+>         try_to_unmap_one()
+>         =3D=3D> ptep_get_and_clear()
+>         =3D=3D> set_tlb_ubc_flush_pending()
+>                                         mprotect(addr, PROT_READ)
+>                                         =3D=3D> change_pte_range()
+>                                         =3D=3D> [ PTE non-present - no fl=
+ush ]
+>
+>                                         user writes using cached RW PTE
+>         ...
+>
+>         try_to_unmap_flush()
+>
+> The same type of race exists for reads when protecting for PROT_NONE and
+> also exists for operations that can leave an old TLB entry behind such
+> as munmap, mremap and madvise.
+> """
+>
+> The solution was to introduce flush_tlb_batched_pending() and call it
+> under the PTL from mprotect/madvise/munmap/mremap to complete any
+> pending tlb flushes.
+>
+> However, while madvise_free_pte_range() and
+> madvise_cold_or_pageout_pte_range() were both retro-fitted to call
+> flush_tlb_batched_pending() immediately after initially acquiring the
+> PTL, they both temporarily release the PTL to split a large folio if
+> they stumble upon one. In this case, where re-acquiring the PTL
+> flush_tlb_batched_pending() must be called again, but it previously was
+> not. Let's fix that.
+>
+> There are 2 Fixes: tags here: the first is the commit that fixed
+> madvise_free_pte_range(). The second is the commit that added
+> madvise_cold_or_pageout_pte_range(), which looks like it copy/pasted the
+> faulty pattern from madvise_free_pte_range().
+>
+> This is a theoretical bug discovered during code review.
 
-I'm stupid and missed that hunk, sorry.
+Yeah, good point. So we could race like this:
 
-> 
-> 
->> Probably needs to get fixed.
->>
->> ... and probably best to pass marg directly.
-> 
-> You mean to cast it directly in slab_memory_callback and pass 'narg'
-> to slab_mem_going_online_callback?
+CPU 0                         CPU 1
+madvise_free_pte_range
+  pte_offset_map_lock
+  flush_tlb_batched_pending
+  pte_unmap_unlock
+                              try_to_unmap_one
+                                get_and_clear_full_ptes
+                                set_tlb_ubc_flush_pending
+  pte_offset_map_lock
+[old PTE still cached in TLB]
 
-Yes :)
+which is not a security problem for the kernel (a TLB flush will
+happen before the page is actually freed) but affects userspace
+correctness.
 
+(Maybe we could at some point refactor this into tlb_finish_mmu(), and
+give tlb_finish_mmu() a boolean parameter for "did we maybe try to
+unmap/protect some range of memory"; just like how tlb_finish_mmu()
+already does the safety flush against concurrent mmu_gather
+operations. Maybe that would make it harder to mess this up?)
 
+> Cc: stable@vger.kernel.org
+> Fixes: 3ea277194daa ("mm, mprotect: flush TLB if potentially racing with =
+a parallel reclaim leaving stale TLB entries")
+> Fixes: 9c276cc65a58 ("mm: introduce MADV_COLD")
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 
--- 
-Cheers,
-
-David / dhildenb
-
+Reviewed-by: Jann Horn <jannh@google.com>
 
