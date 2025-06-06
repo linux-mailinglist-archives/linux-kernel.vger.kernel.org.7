@@ -1,142 +1,211 @@
-Return-Path: <linux-kernel+bounces-676174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7C5AD0875
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:03:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19362AD087C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 21:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492F0163CD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 19:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A4B163E2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 19:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088AD1F09A5;
-	Fri,  6 Jun 2025 19:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C511F17E8;
+	Fri,  6 Jun 2025 19:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipm8VRWa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CZrpXVTE"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FBB2746A;
-	Fri,  6 Jun 2025 19:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52AA1EA7CC
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 19:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749236625; cv=none; b=Y6gkQNsapXPivurT+ppAjUfScaK/LfnE36bzPlU9oHI2bbHyjHv7tcsc0Xx/L4AQx0VvkX83egt4dZR+adNowFcFOkOAmGINPtNo1BiXaeoFuiU3v9/m9GT/xAY90NWEmW8Qa/SSFOPTXuWBneOeFz4+7eenjtktI5HmsornFCY=
+	t=1749236714; cv=none; b=sfOQrnKhLVx9+cuaX0ui/7jwp8jdrYYNNFv7ryM0lv8mHZLEdu99E3bN/alOg4kpxiQPPdeL0yf28epdh0dFeguEgAMSmo97/12BFiHSlU/qWjOFfrGf5/rgoFvqrxJYiJgL+ddL8bQPUdf+OfymiAKxJ5xYsvF1ysNNP7qg1fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749236625; c=relaxed/simple;
-	bh=9tgAyBkUtSwD9VozH5RNCCXHKjCQ8YY2mL/VrG7xqko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5WQ421M95dp8joa9BcEP9iHJZalNOSX+4tSCRFkc2bAaSlRTyiVCPiQmBZU7d/6dF0aeO1oC0KbV79fJwUlEdvDrb4P96Z6WASb26nvs61/0OriuJTXYt5+j0oZEpkFrW12PrKlvqPcrPRqdYTL46/XQ3iThrvlqs6gjmNnOg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipm8VRWa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EF6C4CEEB;
-	Fri,  6 Jun 2025 19:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749236625;
-	bh=9tgAyBkUtSwD9VozH5RNCCXHKjCQ8YY2mL/VrG7xqko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipm8VRWanv8Dxdj800NzO4oHpDbwo8z1MfcU7ESgGA3/yMTJBl6hk17WXR7zSxC0G
-	 Aq2VYWwwnlO8NcJJSK48JQnsqakMuqRCindHES170F1AgfXnR6qs2Jxd2AXYsiAoxZ
-	 PExWPTBqHTj3VjlOjLCdUCetB0/47MkuESDHyYLZmNzYjqqmsKLasiLJbxNcAWSXEM
-	 6scNqSeD5YnrFPPpX1LgMyQtZ1f3gFLV1i+XcYAk4nA/hfeuAwrMvLS+tCCbdX1aBt
-	 V6LfICXhSieRscJMr46/diDBsYlh4pXv8OAEktxcyxr+bh4P4S/v0cwpcvImM8Fuws
-	 eevQnA3cns2hQ==
-Date: Fri, 6 Jun 2025 12:03:42 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, live-patching@vger.kernel.org, 
-	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
-	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
-	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
-	Puranjay Mohan <puranjay@kernel.org>
-Subject: Re: [PATCH v2 59/62] livepatch/klp-build: Introduce klp-build script
- for generating livepatch modules
-Message-ID: <27bkpjpv4lklcxafb4yifrbdjmfxn2sh67lckom2w7hpmgdyxr@zgty22rlp62q>
-References: <cover.1746821544.git.jpoimboe@kernel.org>
- <10ccbeb0f4bcd7d0a10cc9b9bd12fdc4894f83ee.1746821544.git.jpoimboe@kernel.org>
- <f97a2e18-d672-41b1-ac26-4d1201528ed7@redhat.com>
+	s=arc-20240116; t=1749236714; c=relaxed/simple;
+	bh=6H0DwloF7vOEqUU5gLmsPjegYl0CykJEIcaaq36pH1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jtI8AOlEHGjDQnwcHDc8Hw0t3i5XPN9gkQQpLyC3D2Bs3zV36r5uapwCb+yP7rEgIX4zQw4+iyvNzcvv6wGtp87Gu1YhG1eaSfV92p3KoyrM/H46oOrx0q5AL2yJqR8NAW9e7RHTn204u2LQMlM12ceopVzEilbvGsVNwDmGjD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CZrpXVTE; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=dTTSMmd1HyZzX30vPWlv02znwCagkmKHfnpI1QcQGwo=; b=CZrpXVTE0FnsVVm7uXUEYzF6vT
+	qSJpxpOwJO+OTIEXd7HXrWaA+0EQdFcpLY59ywCDaZe1x74hlN4GRFzVkQpebOKnO4zCQLAF6liQO
+	vM2Qn6F/dEVlMBkP0q5PSvx55xrNTezm/CaaG2BvNr4A9Ab/X/KzonvZ1Srt7eVAC8u6ixpOSli4x
+	GdGzcvhFdXz/QZT+5MgtTR3wqNsWllSLSmBkeiZpUvlWyMJJ8622iWIZgLXBj0kWYX4xLeNnre12G
+	m+UlkL+zcQjm6MU1PAqSc8dyczD7P0j0Tk1rYoVE1bFRMtr08pQeXVxpLu9/GVkkuG4idRdeouyBF
+	HF2Y37GQ==;
+Received: from i53875ad6.versanet.de ([83.135.90.214] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uNcNE-0003rs-0W; Fri, 06 Jun 2025 21:05:04 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	wens@kernel.org,
+	quentin.schulz@cherry.de,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH] regulator: fan53555: add enable_time support and soft-start times
+Date: Fri,  6 Jun 2025 21:04:18 +0200
+Message-ID: <20250606190418.478633-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f97a2e18-d672-41b1-ac26-4d1201528ed7@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 06, 2025 at 09:05:59AM -0400, Joe Lawrence wrote:
-> Should the .cmd file copy come from the reference SRC and not original
-> ORIG directory?
-> 
->   cmd_file="$SRC/$(dirname "$rel_file")/.$(basename "$rel_file").cmd"
-> 
-> because I don't see any .cmd files in klp-tmp/orig/
-> 
-> FWIW, I only noticed this after backporting the series to
-> centos-stream-10.  There, I got this build error:
-> 
->   Building original kernel
->   Copying original object files
->   Fixing patches
->   Building patched kernel
->   Copying patched object files
->   Diffing objects
->   vmlinux.o: changed function: cmdline_proc_show
->   Building patch module: livepatch-test.ko
->   <...>/klp-tmp/kmod/.vmlinux.o.cmd: No such file or directory
->   make[2]: *** [scripts/Makefile.modpost:145:
-> <...>/klp-tmp/kmod/Module.symvers] Error 1
->  make[1]: *** [<...>/Makefile:1936: modpost] Error 2
->  make: *** [Makefile:236: __sub-make] Error 2
-> 
-> The above edit worked for both your upstream branch and my downstream
-> backport.
+The datasheets for all the fan53555 variants (and clones using the same
+interface) define so called soft start times, from enabling the regulator
+until at least some percentage of the output (i.e. 92% for the rk860x
+types) are available.
 
-Hm, I broke this in one of my refactorings before posting.
+The regulator framework supports this with the enable_time property
+but currently the fan53555 driver does not define enable_times for any
+variant.
 
-Is this with CONFIG_MODVERSIONS?
+I ran into a problem with this while testing the new driver for the
+Rockchip NPUs (rocket), which does runtime-pm including disabling and
+enabling a rk8602 as needed. When reenabling the regulator while running
+a load, fatal hangs could be observed while enabling the associated
+power-domain, which the regulator supplies.
 
-If you get a chance to test, here's a fix (currently untested):
+Experimentally setting the regulator to always-on, made the issue
+disappear, leading to the missing delay to let power stabilize.
+And as expected, setting the enable-time to a non-zero value
+according to the datasheet also resolved the regulator-issue.
 
-diff --git a/scripts/livepatch/klp-build b/scripts/livepatch/klp-build
-index 277fbe948730..cd6e118da275 100755
---- a/scripts/livepatch/klp-build
-+++ b/scripts/livepatch/klp-build
-@@ -517,16 +517,29 @@ find_objects() {
+The datasheets in nearly all cases only specify "typical" values,
+except for the fan53555 type 08. There both a typical and maximum
+value are listed - 40uS apart.
+
+For all typical values I've added 100uS to be on the safe side.
+Individual details for the relevant regulators below:
+
+- fan53526:
+  The datasheet for all variants lists a typical value of 150uS, so
+  make that 250uS with safety margin.
+- fan53555:
+  types 08 and 18 (unsupported) are given a typical enable time of 135uS
+  but also a maximum of 175uS so use that value. All the other types only
+  have a typical time in the datasheet of 300uS, so give a bit margin by
+  setting it to 400uS.
+- rk8600 + rk8602:
+  Datasheet reports a typical value of 260us, so use 360uS to be safe.
+- syr82x + syr83x:
+  All datasheets report typical soft-start values of 300uS for these
+  regulators, so use 400uS.
+- tcs452x:
+  Datasheet sadly does not report a soft-start time, so I've not set
+  an enable-time
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+I've started with just setting regulator-enable-ramp-delay in devicetree,
+but Chen-Yu suggested [0] that these are characteristics of the regulator
+so possibly should be defined in the driver instead.
+And after thinking about it more, I agree.
+
+[0] https://lore.kernel.org/linux-rockchip/CAGb2v65C0jHsD2HD_AEt+AGqMfWUUwwWV0bXw4i9Hw2tCNHZpA@mail.gmail.com/
+
+ drivers/regulator/fan53555.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/regulator/fan53555.c b/drivers/regulator/fan53555.c
+index bd9447dac596..c282236959b1 100644
+--- a/drivers/regulator/fan53555.c
++++ b/drivers/regulator/fan53555.c
+@@ -147,6 +147,7 @@ struct fan53555_device_info {
+ 	unsigned int slew_mask;
+ 	const unsigned int *ramp_delay_table;
+ 	unsigned int n_ramp_values;
++	unsigned int enable_time;
+ 	unsigned int slew_rate;
+ };
  
- # Copy all objects (.o archives) to $ORIG_DIR
- copy_orig_objects() {
-+	local files=()
+@@ -282,6 +283,7 @@ static int fan53526_voltages_setup_fairchild(struct fan53555_device_info *di)
+ 	di->slew_mask = CTL_SLEW_MASK;
+ 	di->ramp_delay_table = slew_rates;
+ 	di->n_ramp_values = ARRAY_SIZE(slew_rates);
++	di->enable_time = 250;
+ 	di->vsel_count = FAN53526_NVOLTAGES;
  
- 	rm -rf "$ORIG_DIR"
- 	mkdir -p "$ORIG_DIR"
+ 	return 0;
+@@ -296,10 +298,12 @@ static int fan53555_voltages_setup_fairchild(struct fan53555_device_info *di)
+ 		case FAN53555_CHIP_REV_00:
+ 			di->vsel_min = 600000;
+ 			di->vsel_step = 10000;
++			di->enable_time = 400;
+ 			break;
+ 		case FAN53555_CHIP_REV_13:
+ 			di->vsel_min = 800000;
+ 			di->vsel_step = 10000;
++			di->enable_time = 400;
+ 			break;
+ 		default:
+ 			dev_err(di->dev,
+@@ -311,13 +315,19 @@ static int fan53555_voltages_setup_fairchild(struct fan53555_device_info *di)
+ 	case FAN53555_CHIP_ID_01:
+ 	case FAN53555_CHIP_ID_03:
+ 	case FAN53555_CHIP_ID_05:
++		di->vsel_min = 600000;
++		di->vsel_step = 10000;
++		di->enable_time = 400;
++		break;
+ 	case FAN53555_CHIP_ID_08:
+ 		di->vsel_min = 600000;
+ 		di->vsel_step = 10000;
++		di->enable_time = 175;
+ 		break;
+ 	case FAN53555_CHIP_ID_04:
+ 		di->vsel_min = 603000;
+ 		di->vsel_step = 12826;
++		di->enable_time = 400;
+ 		break;
+ 	default:
+ 		dev_err(di->dev,
+@@ -350,6 +360,7 @@ static int fan53555_voltages_setup_rockchip(struct fan53555_device_info *di)
+ 	di->slew_mask = CTL_SLEW_MASK;
+ 	di->ramp_delay_table = slew_rates;
+ 	di->n_ramp_values = ARRAY_SIZE(slew_rates);
++	di->enable_time = 360;
+ 	di->vsel_count = FAN53555_NVOLTAGES;
  
--	(
--		cd "$OBJ"
--		find_objects						\
--			| sed 's/\.ko$/.o/'				\
--			| xargs cp --parents --target-directory="$ORIG_DIR"
--	)
-+	find_objects | mapfile -t files
-+
-+	xtrace_save "copying orig objects"
-+	for _file in "${files[@]}"; do
-+		local rel_file="${_file/.ko/.o}"
-+		local file="$OBJ/$rel_file"
-+		local file_dir="$(dirname "$file")"
-+		local orig_file="$ORIG_DIR/$rel_file"
-+		local orig_dir="$(dirname "$orig_file")"
-+		local cmd_file="$file_dir/.$(basename "$file").cmd"
-+
-+		[[ ! -f "$file" ]] && die "missing $(basename "$file") for $_file"
-+
-+		mkdir -p "$orig_dir"
-+		cp -f "$file" "$orig_dir"
-+		[[ -e "$cmd_file" ]] && cp -f "$cmd_file" "$orig_dir"
-+	done
-+	xtrace_restore
+ 	return 0;
+@@ -372,6 +383,7 @@ static int rk8602_voltages_setup_rockchip(struct fan53555_device_info *di)
+ 	di->slew_mask = CTL_SLEW_MASK;
+ 	di->ramp_delay_table = slew_rates;
+ 	di->n_ramp_values = ARRAY_SIZE(slew_rates);
++	di->enable_time = 360;
+ 	di->vsel_count = RK8602_NVOLTAGES;
  
- 	mv -f "$TMP_DIR/build.log" "$ORIG_DIR"
- 	touch "$TIMESTAMP"
+ 	return 0;
+@@ -395,6 +407,7 @@ static int fan53555_voltages_setup_silergy(struct fan53555_device_info *di)
+ 	di->slew_mask = CTL_SLEW_MASK;
+ 	di->ramp_delay_table = slew_rates;
+ 	di->n_ramp_values = ARRAY_SIZE(slew_rates);
++	di->enable_time = 400;
+ 	di->vsel_count = FAN53555_NVOLTAGES;
+ 
+ 	return 0;
+@@ -594,6 +607,7 @@ static int fan53555_regulator_register(struct fan53555_device_info *di,
+ 	rdesc->ramp_mask = di->slew_mask;
+ 	rdesc->ramp_delay_table = di->ramp_delay_table;
+ 	rdesc->n_ramp_values = di->n_ramp_values;
++	rdesc->enable_time = di->enable_time;
+ 	rdesc->owner = THIS_MODULE;
+ 
+ 	rdev = devm_regulator_register(di->dev, &di->desc, config);
+-- 
+2.47.2
+
 
