@@ -1,178 +1,199 @@
-Return-Path: <linux-kernel+bounces-675535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E55ACFF15
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C631AACFF27
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBB2189305F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61BD3189C0C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 09:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0F286893;
-	Fri,  6 Jun 2025 09:18:48 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9279528688E;
+	Fri,  6 Jun 2025 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FciFhVUQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B0F284B57;
-	Fri,  6 Jun 2025 09:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371E32857CC;
+	Fri,  6 Jun 2025 09:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749201528; cv=none; b=Ndp0+FrXIONqHtumi9qCQqFdPpy3npuZ8LahoZHoX1uDCLLK225ggxpfrSyBTHbhEXDy/aJfpweEahAmkF38RxpivE365pEZ4hE0d/NINOJquw6tDqZ97uy1kyqfpgC9MhaPbJt5LFxZhM6agmbgt6sqDijGxmyGzuhsyd3Xs/U=
+	t=1749201589; cv=none; b=VBxlVuJXRW7vreWPyf62JiNx8y6VdF6ElzGHJuUaHdJj+jAkfcxekLbnC+3rz3kRmf+fY7qBQsOG5N0+VHUNPA2cVumwSuvdiJNa9LyptH1u7oxoecaUjm8vjmviP4oBFiVrDMumiFLA+RDHmxmF1Iw/DvzqDUCicnW5Rb/qefU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749201528; c=relaxed/simple;
-	bh=wDHQfU8+QP37WRswTIYC/zKbarYTIkc8xrZVy166uOo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PRXDQZBPt1fwkC7o8QK4rghUxc33G9mHW4HopH5Zd8Qaslv8PVnJ4Q39meVW2Su+zKA/VFAfVBA0BpFLvmmyWwHaIyEkKYoxpCYT37KKVcT49+TyIgamuSlpMrvFR4A2HNFHZyjgx6WocvP/Hox5J4XSvXjYVvMqHw0xz/E0+Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 384fae7e42b711f0b29709d653e92f7d-20250606
-X-CTIC-Tags:
-	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
-	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:07587476-8ac4-4c73-8c0b-f3e67721b9b3,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-5
-X-CID-INFO: VERSION:1.1.45,REQID:07587476-8ac4-4c73-8c0b-f3e67721b9b3,IP:0,URL
-	:0,TC:0,Content:-25,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:9a30bf3b74591aedaf2c97aae7f9d25f,BulkI
-	D:250606171835ZJIVP55Y,BulkQuantity:0,Recheck:0,SF:17|19|38|66|78|81|82|10
-	2,TC:nil,Content:0|50,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,B
-	EC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
-X-UUID: 384fae7e42b711f0b29709d653e92f7d-20250606
-X-User: xiaopei01@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 774779148; Fri, 06 Jun 2025 17:18:33 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: nicolas.frattaroli@collabora.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	heiko@sntech.de,
-	linux-rockchip@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH v2 2/2] ASOC: rockchip: Use helper function devm_clk_get_enabled()
-Date: Fri,  6 Jun 2025 17:18:22 +0800
-Message-Id: <84bc40641d05596f1edf4f01d1e6aea16bdbeeb5.1749201126.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1749201126.git.xiaopei01@kylinos.cn>
-References: <cover.1749201126.git.xiaopei01@kylinos.cn>
+	s=arc-20240116; t=1749201589; c=relaxed/simple;
+	bh=HCdZXkJVdFAD/787OHeh5y7XaFGKJ1apVCd0Ow6+kLA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=nfPBU5tg+mKYBVfZEq+LiJJzYDrDIdsoVX472d468B06NsOZ95HkNsmlJzCqqoKjKt5hCJ+tKeCaLmDnoWjGdcIPZLz5sBj9eNr3jKhJ5BwXnbAzNHwlEUqYHgSm10Ax878Bvv3izBxeo20Gxup5bzKctE1wQ31Hin5Ypa/pIsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FciFhVUQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55669mgH000728;
+	Fri, 6 Jun 2025 09:19:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Z2uvokoWhArahra63UIONt
+	eoCvhcb0KNHvpujTov/kw=; b=FciFhVUQxIs+I8Av54H7ttcS2mv2kVyqvBRLTm
+	4AZEhzXZMJFPrN/wlzzDHen9WkhU6tvz9GuUUgj3u6c5ZD0GiZPsNMnxD6n4kwq9
+	0wGn6bNuaEgcVlxj9q9tssbfbD+efOSNcbtrwv/p1LrHJSkJFH25XB1mv3ARr4Xb
+	C0u6cWGsFwX2mTQFt7DstD0Y1GVeFFEHRzqyH2RvwrNo1Bo1Frc+oOTqJci5vayH
+	rI8v5MqCVMJa+zhB+AUKoW/gVq3ZLQMBZkVsRRr8vV/sgRZ+FEe0DVERf3KEK8gL
+	/sOJ/XZ+vfI8+wEC1FnvAx8u6YNp9KwOI8HduASTmauqICNA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 471g8qc529-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Jun 2025 09:19:33 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5569JWIF003365
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Jun 2025 09:19:32 GMT
+Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 6 Jun 2025 02:19:29 -0700
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Subject: [PATCH v8 0/2] coresight: Add Coresight Trace Network On Chip
+ driver
+Date: Fri, 6 Jun 2025 17:18:55 +0800
+Message-ID: <20250606-trace-noc-v8-0-833f94712c57@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH+yQmgC/3WSy07DMBBFf6XyukZ+28OK/0As/JihXpCUpESgq
+ v+OW4EISbO8I597RrbPbMSh4sged2c24FTH2ncthP2O5UPsXpHX0jJTQllhhOanIWbkXZ85BRV
+ c0m0akLXzxwGpft66nl9aPtTx1A9ft+pJXqfMOGe0CMBTCIUbKJknFJb7RCIlJSkY//T+UXPt8
+ kPu39i1Z9I39mcDP9tg0lxwaxJQUbFEgn/s/ndrKZeMJAmlkHcAae0zmz7TWAjORMra+BQ2fHb
+ FeAAdCAuVsPbZTZ9trPbktcxkMOFdn5VqyZBCEl6kiGjXPjf3hTnrrvepXHYyKuHJ3fcptWTIR
+ kg5IgjEtc//+aya/6DJN7Y4iyXFpAAWb3+5XL4B4xqJMKACAAA=
+X-Change-ID: 20250403-trace-noc-f8286b30408e
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>
+CC: <kernel@oss.qualcomm.com>, <linux-arm-msm@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yuanfang Zhang
+	<quic_yuanfang@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749201569; l=2842;
+ i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
+ bh=HCdZXkJVdFAD/787OHeh5y7XaFGKJ1apVCd0Ow6+kLA=;
+ b=kDO15x5CkKmyKCUMfen9o6/HDXdyNQ4ZEFEaHZeNEGRDFFDisZXh49se3hRz06Ex8IHM8Tx25
+ Vx7V4Tej6TgByaxzdUTfKhmgzyfdmlD3g1/nZy/iEfah9CDaIxiq/mP
+X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
+ pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nLiWfr9hF0g2ACBS6d2_NNIBJS67AkPp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDA4NCBTYWx0ZWRfX0HWzfIJll2No
+ +u0XoqphwFpFQeKkrz2/tnPiCmd3Hu7kk/lrWY03rGdmJYq9BFZyeh6UaUEo/KluUZdlMirbYNT
+ DtixrdOVS1KEtrX3n4EJW2poYeKtXecFHkMul8l/OVBA8ZnrTL3oT7ya/reLCTyP5gCz8iU3OpR
+ +4IebS6wgHKryjClxYQ3rs3LVNXMs1qnCONG+PW4DU3wl2SQCTV5AzS2c4+2Hsa1SedRYNcFB45
+ Aw7YEKMlOW65ghm6LlePIfc5QII9Bq4IveKzCsn5bGReBLT7cD70DzJg3fvL56nE9sNQSIdl8bH
+ rjWL/xpPkRpHvX9baA0b8FMBo9IBBucKXi+ww+vTHE32VtEH/lmndSSuIMjrTemCNxb63/95WjS
+ pr3Owr41BihoLaDPt/gRSGTkollfaWQu2ij/8RDOjd+UWRbHd2FtjS5UgU6O6AzcMryefHnr
+X-Proofpoint-ORIG-GUID: nLiWfr9hF0g2ACBS6d2_NNIBJS67AkPp
+X-Authority-Analysis: v=2.4 cv=PrmTbxM3 c=1 sm=1 tr=0 ts=6842b2a5 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=mTvmQVt1wvC56TrAcpsA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-06_02,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506060084
 
-Since commit 7ef9651e9792 ("clk: Provide new devm_clk helpers for prepared
-and enabled clocks"), devm_clk_get() and clk_prepare_enable() can now be
-replaced by devm_clk_get_enabled() when driver enables the clocks for the
-whole lifetime of the device. Moreover, it is no longer necessary to
-unprepare and disable the clocks explicitly.
+The Trace Network On Chip (TNOC) is an integration hierarchy which is a
+hardware component that integrates the functionalities of TPDA and
+funnels. It collects trace from subsystems and transfers it to coresight
+sink.
 
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+In addition to the generic TNOC mentioned above, there is also a special type
+of TNOC called Interconnect TNOC. Unlike the generic TNOC, the Interconnect
+TNOC doesn't need ATID. Its primary function is to connect the source of
+subsystems to the Aggregator TNOC. Its driver is different from this patch and
+will describe it and upstream its driver separately.
+
+Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
 ---
- sound/soc/rockchip/rockchip_sai.c | 35 +++++++++----------------------
- 1 file changed, 10 insertions(+), 25 deletions(-)
+Changes in v8:
+- Add sysfs node to expose atid.
+- Link to v7: https://lore.kernel.org/r/20250523-trace-noc-v7-0-d65edbab2997@quicinc.com
 
-diff --git a/sound/soc/rockchip/rockchip_sai.c b/sound/soc/rockchip/rockchip_sai.c
-index 916af63f1c2c..0b9f54102d69 100644
---- a/sound/soc/rockchip/rockchip_sai.c
-+++ b/sound/soc/rockchip/rockchip_sai.c
-@@ -1427,43 +1427,32 @@ static int rockchip_sai_probe(struct platform_device *pdev)
- 	if (irq > 0) {
- 		ret = devm_request_irq(&pdev->dev, irq, rockchip_sai_isr,
- 				       IRQF_SHARED, node->name, sai);
--		if (ret) {
-+		if (ret)
- 			return dev_err_probe(&pdev->dev, ret,
- 					     "Failed to request irq %d\n", irq);
--		}
- 	} else {
- 		dev_dbg(&pdev->dev, "Asked for an IRQ but got %d\n", irq);
- 	}
- 
- 	sai->mclk = devm_clk_get(&pdev->dev, "mclk");
--	if (IS_ERR(sai->mclk)) {
-+	if (IS_ERR(sai->mclk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(sai->mclk),
- 				     "Failed to get mclk\n");
--	}
- 
--	sai->hclk = devm_clk_get(&pdev->dev, "hclk");
--	if (IS_ERR(sai->hclk)) {
-+	sai->hclk = devm_clk_get_enabled(&pdev->dev, "hclk");
-+	if (IS_ERR(sai->hclk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(sai->hclk),
- 				     "Failed to get hclk\n");
--	}
--
--	ret = clk_prepare_enable(sai->hclk);
--	if (ret)
--		return dev_err_probe(&pdev->dev, ret, "Failed to enable hclk\n");
- 
- 	regmap_read(sai->regmap, SAI_VERSION, &sai->version);
- 
- 	ret = rockchip_sai_init_dai(sai, res, &dai);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to initialize DAI: %d\n", ret);
--		goto err_disable_hclk;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to initialize DAI\n");
- 
- 	ret = rockchip_sai_parse_paths(sai, node);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to parse paths: %d\n", ret);
--		goto err_disable_hclk;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to parse paths\n");
- 
- 	/*
- 	 * From here on, all register accesses need to be wrapped in
-@@ -1474,10 +1463,8 @@ static int rockchip_sai_probe(struct platform_device *pdev)
- 	devm_pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_noresume(&pdev->dev);
- 	ret = rockchip_sai_runtime_resume(&pdev->dev);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to resume device: %pe\n", ERR_PTR(ret));
--		goto err_disable_hclk;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to resume device\n");
- 
- 	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
- 	if (ret) {
-@@ -1504,8 +1491,6 @@ static int rockchip_sai_probe(struct platform_device *pdev)
- 	/* If we're !CONFIG_PM, we get -ENOSYS and disable manually */
- 	if (pm_runtime_put(&pdev->dev))
- 		rockchip_sai_runtime_suspend(&pdev->dev);
--err_disable_hclk:
--	clk_disable_unprepare(sai->hclk);
- 
- 	return ret;
- }
+Changes in v7:
+- Move the content in header file into coresight-tnoc.c.
+- Use scoped_guard() to replace spin_lock().
+- Invoke coresight_trace_id_put_system_id() for registration failure.
+- Link to v6: https://lore.kernel.org/r/20250522-trace-noc-v6-0-f5a9bcae90ee@quicinc.com
+
+Changes in v6:
+- Add a newline after return statements.
+- Use 'x &= foo' to replace 'x = x & foo'.
+- Use 'x |= foo' to replace 'x = x | foo'.
+- Link to v5: https://lore.kernel.org/r/20250512-trace-noc-v5-0-f2ef070baee5@quicinc.com
+
+Changes in v5:
+- update cover-letter to describe the Interconnect TNOC.
+- Link to v4: https://lore.kernel.org/r/20250415-trace-noc-v4-0-979938fedfd8@quicinc.com
+
+Changes in v4:
+- Fix dt_binding warning.
+- update mask of trace_noc amba_id.
+- Modify driver comments.
+- rename TRACE_NOC_SYN_VAL to TRACE_NOC_SYNC_INTERVAL.
+- Link to v3: https://lore.kernel.org/r/20250411-trace-noc-v3-0-1f19ddf7699b@quicinc.com
+
+Changes in v3:
+- Remove unnecessary sysfs nodes.
+- update commit messages.
+- Use 'writel' instead of 'write_relaxed' when writing to the register for the last time.
+- Add trace_id ops.
+- Link to v2: https://lore.kernel.org/r/20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com
+
+Changes in v2:
+- Modified the format of DT binging file.
+- Fix compile warnings.
+- Link to v1: https://lore.kernel.org/r/46643089-b88d-49dc-be05-7bf0bb21f847@quicinc.com
+
+---
+Yuanfang Zhang (2):
+      dt-bindings: arm: Add device Trace Network On Chip definition
+      coresight: add coresight Trace Network On Chip driver
+
+ .../bindings/arm/qcom,coresight-tnoc.yaml          | 111 ++++++++++
+ drivers/hwtracing/coresight/Kconfig                |  13 ++
+ drivers/hwtracing/coresight/Makefile               |   1 +
+ drivers/hwtracing/coresight/coresight-tnoc.c       | 242 +++++++++++++++++++++
+ 4 files changed, 367 insertions(+)
+---
+base-commit: a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
+change-id: 20250403-trace-noc-f8286b30408e
+
+Best regards,
 -- 
-2.25.1
+Yuanfang Zhang <quic_yuanfang@quicinc.com>
 
 
