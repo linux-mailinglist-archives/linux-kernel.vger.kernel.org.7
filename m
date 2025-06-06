@@ -1,179 +1,104 @@
-Return-Path: <linux-kernel+bounces-675974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02957AD0609
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40509AD061A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 17:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E0E188E7AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B97B3B4E84
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 15:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02B328D836;
-	Fri,  6 Jun 2025 15:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BFF28DF0C;
+	Fri,  6 Jun 2025 15:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Knytcgqs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L/tWR5mM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D7928CF75;
-	Fri,  6 Jun 2025 15:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C786289E2E;
+	Fri,  6 Jun 2025 15:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749224656; cv=none; b=atQOCYYUFQ3yIEd9w5GctZe9NUzI8haSnW9gVDOhA8Q1nwm4X6Lu4Xl6oVLjnzVwr7ienpgl/GuYX4ebaxPEnfqRR7La7Bc8KBdJTgQRN6qujkeZyD274Af/BqUGx4f9L6XQfXyzr1mibeOQD50Mgcp7cw72Lki4kZoL0DPRyys=
+	t=1749224686; cv=none; b=FTX3EU7TLjeNAVAdZGiHAcIGdpRLyuqr8XQsktCvstNBlL6aNSEC8uL2WOYPWf11sV4lWcsIfPDya0lKFf8mdGCVVDPgDEs+TswuHfTQqQvLwLQqCG9EeIJpoipTDh9ZLNpBDQbJzeZHLvRHXIAU/jOQ/Mp464/AAkDNP1paBbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749224656; c=relaxed/simple;
-	bh=Xe4B3UwB3KrFzWPqln+xwgkGXyE/YS3pctsagI8BKFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=STFa1JDopkMGsoWXs157SwAMKR1HNprxLPdm/ZREO2vuYRNcj+L2UqZfJbPoINlJfptqiNok4GuHbPIdh4NQPH3cUaMcgnmpWM/mA1z7bFpVqQievp8MsUvPLtx/fZSf1J4yOEcR8IQxgNbcekLJEc60b2IRMfYYMkafa//yacw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Knytcgqs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8DBC4CEEB;
-	Fri,  6 Jun 2025 15:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749224655;
-	bh=Xe4B3UwB3KrFzWPqln+xwgkGXyE/YS3pctsagI8BKFs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KnytcgqsmHte2WMMd5oCSNYySJps1Y1bcRr4DUSU70OozisIDeb7JEGoNyaEUz/Ov
-	 DdSLYW2RDoYfaDkvtaqd1PbFKkxhezIbQHotUVrAZdftS1M/jIXTAmxQ0joJ8kUdCO
-	 fz8RiyO5nvB2ejEk2eERtS8Bz3PS4Q5vUEkvPYaWrwXt9st7NXCr9FV/tbBIt7YU7k
-	 aQFkrjxSV+AwB0ggy52N6OyJ0FXauhKvBCUE3gkBbEtTXXeosoKgj3wz5iBs/lMgCt
-	 /ilFAAUKvE78e3QEFSwP48tUiuRBI10fayxQm0DzlLQAyJJVtpkouWIVw19vdHUtLN
-	 lJS7QeD1Nq9lg==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	cw00.choi@samsung.com,
-	krzk@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 5/7] mfd: max14577: Fix wakeup source leaks on device unbind
-Date: Fri,  6 Jun 2025 11:44:05 -0400
-Message-Id: <20250606154408.548320-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250606154408.548320-1-sashal@kernel.org>
-References: <20250606154408.548320-1-sashal@kernel.org>
+	s=arc-20240116; t=1749224686; c=relaxed/simple;
+	bh=7SbusbtCH84+e5OYmyU2EqnTJRP7YU9cbC518hgfyjQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iH4CgfY0h3DiLcN35SC6yadJspAgr4DmihkOilCjttK9qJUKo7sTOhjlkcInnHDwdsn41DFwIbf2h59mUU9jlru8I+4ps/Xb1eEEN+ScRKz9ZfAyL+A3fxQ6D83WVMTLa+SlvZWhJYZOyBiE82qwQAAfBpQm44Cv+yFtpGDWnA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L/tWR5mM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from isaac-ThinkPad-T16-Gen-2.localdomain (cpc90716-aztw32-2-0-cust408.18-1.cable.virginm.net [86.26.101.153])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EA457446;
+	Fri,  6 Jun 2025 17:44:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1749224677;
+	bh=7SbusbtCH84+e5OYmyU2EqnTJRP7YU9cbC518hgfyjQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=L/tWR5mM89JaJkR3vHQ19HSAPwApL8uCIo6+RyKggBWbLW2BChyqxx8XMyLX9uT7H
+	 cYhPxuPaGERpzS/h9tMjr1OSduyHh/Y10gq0FirKNveRogp5PL6VnSYVKC7CUm2u2O
+	 rSfiQ2gQHWiXYEftUuM7SQxw7JrBzfa1ebQoODAU=
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+To: laurent.pinchart@ideasonboard.com
+Cc: kieran.bingham@ideasonboard.com,
+	rmfrfs@gmail.com,
+	martink@posteo.de,
+	kernel@puri.sm,
+	mchehab@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux-media@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Isaac Scott <isaac.scott@ideasonboard.com>
+Subject: [PATCH v2 0/2] media: Add line end IRQ to imx-mipi-csis driver 
+Date: Fri,  6 Jun 2025 16:44:12 +0100
+Message-ID: <20250606154414.540290-1-isaac.scott@ideasonboard.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.185
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Many boards, such as the NXP i.MX 8M Plus, feature multiple interrupt
+registers. This series refactors interrupt status register debug handling to make
+it more intuitive to add other registers such as LINE_END, which has an
+entire register containing only one interrupt. Previously, the
+mipi_csi_events[] list contained a debug enable field, and this replaces
+that with a status_index, which indicates which status register contains
+the mask for the interrupt.
 
-[ Upstream commit d905d06e64b0eb3da43af6186c132f5282197998 ]
+The second patch adds the user line interrupt, which is useful for
+debugging, as it allows a user to trigger an interrupt after the MIPI
+CSI receiver has counted a configurable number of lines. This can make
+it possible to discern the true resolution of the image stream reaching
+the CSI receiver. It adds an entry to debugfs which lets users choose
+how many lines are needed to trigger the interrupt, and can be disabled
+both within and outside streaming by setting the value to 0.
 
-Device can be unbound, so driver must also release memory for the wakeup
-source.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/r/20250406-mfd-device-wakekup-leak-v1-3-318e14bdba0a@linaro.org
-Signed-off-by: Lee Jones <lee@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
-Now let me understand the difference between the fixes - the historical
-commits show two patterns:
-1. Using `devm_device_init_wakeup()` - automatically handles cleanup
-2. Manual cleanup by calling `device_init_wakeup(dev, false)` in remove
-   functions
+Changes since v1:
+- Moved from magic number to enum in status_index
+- Clear INT_MSK_1 in enable_interrupts() when on == false
+- use local variable in set_params() as in the interrupt handler
+- move interrupt handling code outside of spinlock
 
-Let me check if this specific commit has `Cc: stable@vger.kernel.org` in
-the message:
+Isaac Scott (2):
+  media: platform: Refactor interrupt status registers
+  media: platform: Add user line interrupt to imx-mipi-csis driver
 
-Based on my analysis of this commit and comparison with the similar
-historical commits, here is my assessment:
+ drivers/media/platform/nxp/imx-mipi-csis.c | 107 ++++++++++++++-------
+ 1 file changed, 74 insertions(+), 33 deletions(-)
 
-**YES**
-
-This commit should be backported to stable kernel trees for the
-following reasons:
-
-## Analysis
-
-### **Code Change Analysis**
-The commit adds a single line in the `max14577_i2c_remove()` function:
-```c
-+       device_init_wakeup(max14577->dev, false);
-```
-
-This addition occurs at drivers/mfd/max14577.c:459, right before
-`mfd_remove_devices()` is called.
-
-### **Bug Fix Characteristics**
-1. **Memory Leak Fix**: The commit fixes a wakeup source memory leak
-   that occurs when the device is unbound. When `device_init_wakeup(dev,
-   true)` is called during probe (line 442), it allocates memory for
-   wakeup source structures. Without the corresponding cleanup call,
-   this memory is leaked on device removal.
-
-2. **Small and Contained**: The fix is minimal - a single line addition
-   that mirrors the cleanup pattern used throughout the kernel.
-
-3. **Low Risk**: The change has extremely low regression risk since it
-   only adds proper cleanup that should have been there originally.
-
-### **Comparison with Historical Similar Commits**
-Looking at the provided historical commits, there are two categories:
-
-**YES commits (backported)**:
-- `gpio: mpc8xxx: Fix wakeup source leaks on device unbind` - Same exact
-  pattern and includes `Cc: stable@vger.kernel.org`
-- `gpio: zynq: Fix wakeup source leaks on device unbind` - Same exact
-  pattern and includes `Cc: stable@vger.kernel.org`
-
-**NO commits (not backported)**:
-- IIO driver commits that use `devm_device_init_wakeup()` instead of
-  manual cleanup
-
-The key difference is that the YES commits use the same fix pattern as
-this MFD commit - manual cleanup in the remove function, while the NO
-commits use the `devm_` managed approach that automatically handles
-cleanup.
-
-### **Impact Assessment**
-- **User Impact**: Memory leaks on device unbind affect systems where
-  MFD devices are frequently bound/unbound
-- **Subsystem**: MFD (Multi-Function Device) is a core kernel subsystem
-  used by many embedded systems
-- **Regression Risk**: Minimal - adding proper cleanup cannot cause
-  functional regression
-
-### **Stable Tree Criteria Met**
-1. ✅ Fixes an important bug (memory leak)
-2. ✅ Small and contained change
-3. ✅ No architectural changes
-4. ✅ Minimal risk of regression
-5. ✅ Follows established patterns seen in other backported commits
-
-The commit follows the exact same pattern as the GPIO driver commits
-that were successfully backported to stable trees (commits #1 and #2 in
-the historical examples), making it a clear candidate for backporting.
-
- drivers/mfd/max14577.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mfd/max14577.c b/drivers/mfd/max14577.c
-index be185e9d5f16b..c9e56145b08bd 100644
---- a/drivers/mfd/max14577.c
-+++ b/drivers/mfd/max14577.c
-@@ -467,6 +467,7 @@ static int max14577_i2c_remove(struct i2c_client *i2c)
- {
- 	struct max14577 *max14577 = i2c_get_clientdata(i2c);
- 
-+	device_init_wakeup(max14577->dev, false);
- 	mfd_remove_devices(max14577->dev);
- 	regmap_del_irq_chip(max14577->irq, max14577->irq_data);
- 	if (max14577->dev_type == MAXIM_DEVICE_TYPE_MAX77836)
 -- 
-2.39.5
+2.43.0
 
 
