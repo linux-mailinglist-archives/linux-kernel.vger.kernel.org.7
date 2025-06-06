@@ -1,170 +1,189 @@
-Return-Path: <linux-kernel+bounces-675607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2491AD0067
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:30:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6EBAD006B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 12:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14EA1783FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:30:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7F8189C8EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 10:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0297F2874F4;
-	Fri,  6 Jun 2025 10:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8552868A2;
+	Fri,  6 Jun 2025 10:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LyobtJeS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dITYTa3j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57B42882DF;
-	Fri,  6 Jun 2025 10:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FB7253355
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 10:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749205781; cv=none; b=HARJtwyhYyEwvqr+VJDGf2WEpObqoNryIBD/k+vrpp3YIo0uSrQy0RslWSq/oRCVXAaADnttIBb78QC0irvKXK4DmY8LKJxrpOVHJIYboxGHr1OagwMlBRRMotS7f4R4U1Q1Kf0BU2pIqg0n2cJhT4pvGw9oB/KfK2QptGsYyps=
+	t=1749205838; cv=none; b=QJp1MBclFWv5YJd/Kz4pNlgeGIG6ODtIwO4kWBfi4ZrTDkbIyZr0oov5NxVfq4FpITs00cheb5ZvlkfofGe9pxnaKrY4bFDAY1xtAce2XhFOV2HwQl8gr88fiQUVDnTrXcxVpqdLgWrSHI9MaOt1DOUkC5wD2VxwueV/OdQyAUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749205781; c=relaxed/simple;
-	bh=V+Ek8KvYXVxMnGDCEA+ZZupIN9VfOzRn2A+zOM1rIFI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oEszg5AlObZLJjADxDWAg0DiKw0+I1UdEYlM9pMZHxwu1HmJEuRXqqts3IcBzhsy2syQVgany+TnJJmLkcU9TSX5JHCRhqWHfbsysxu3tH4dVL+G47CEJZO3GDzemFxHcaUIxzi51MuTW9zDXg4hqRST4TXBwHxBFXsLvGKhcFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LyobtJeS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.102] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 910C31648;
-	Fri,  6 Jun 2025 12:29:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1749205770;
-	bh=V+Ek8KvYXVxMnGDCEA+ZZupIN9VfOzRn2A+zOM1rIFI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LyobtJeSR70kPu/NJewF6WvjT8KSCw1gBtLv2N60eJvVep1KxdIMKo+yJFYWyLxLI
-	 a/C3EctwsYf1Tl0hOPeG0s4X7T4UckFvl716UipY5Rjm9MQKVK3ssUBgVnK6l6RNVj
-	 jMGOzQZDvQXnGUwkQ50NLofmFC+Q7ausn4aZS0Y8=
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Date: Fri, 06 Jun 2025 12:29:24 +0200
-Subject: [PATCH v7 4/4] media: pisp_be: Fix pm_runtime underrun in probe
+	s=arc-20240116; t=1749205838; c=relaxed/simple;
+	bh=3Z5xaT5zKkEE4PAdWP7WsmhS5IlnEFQjdxzTWBMpMTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h0UmX16Ryiyo7sS50a4R7ijw2U2TkfknjYivO5+EwlT9QPiyPHrzMQV4Aekr8CVN4Zboy7a6AAW0oQ0pku03NvXOFpsXrwBjtjC75BXCC0ebn7KawPMlVWZlJff6URILzJ/hLMdHI5wB1x01tBUWAZZ79f06y9yiUE8Mz2QGzxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dITYTa3j; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749205835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2bTEZ1vLd2ySBvqwuRAeBvN6sKQAY124DUV80JjBS0w=;
+	b=dITYTa3jlqQ82cagOCgc0FdmFaWKP4S8/NlqBwEf1HisfGwO1cWrmtI/02fvx+vFZUKP8n
+	AbsetQK9EsDgb8XLTz4/lzk0NOpJQYEHXmguMo5Eaq53udo2B2QH9RWfBn1R00A2RzfA5K
+	ZD1r5Gu9s/vALF9GMe/bDWN9Faf/zJw=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-UCWrq5oTMJCjN6uROokifA-1; Fri, 06 Jun 2025 06:30:34 -0400
+X-MC-Unique: UCWrq5oTMJCjN6uROokifA-1
+X-Mimecast-MFC-AGG-ID: UCWrq5oTMJCjN6uROokifA_1749205833
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a5058f9ef4so1052745f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 03:30:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749205833; x=1749810633;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2bTEZ1vLd2ySBvqwuRAeBvN6sKQAY124DUV80JjBS0w=;
+        b=DxNxtH+QljUcaVfeZLm5vCHOXkOVUIDrzJCcaQSADP7cULpxtM9WJrnpLSdbtoJPJX
+         K2gQwqozCD3XAXfZ0vDuqy3LxIr8O+ifOqrUeOeDD00wZXFt7UWnvYrEwXpL+dQAPdYa
+         th7vG9HX8oAjZXYosizuRNWdfT4/DAJUOowaI9hZR+gly5A/Vncfykw5c+eAub1CVawQ
+         I0bCHCTaMgDdQP3StQ/0cHrbMHYY9zCeCRzf9823v4Bbuc6sHgNEhqLoWZQU1prqkvSv
+         IBa2ZOm48sr5tWaLHLl3NpNS/hgyK0OZYPzWUDyOKkHSRyJsq074zvhtgzxeQtRrL5i+
+         6L4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV4BXJW74P28OwIfXRuCU6UYellssBxQznaewYbXn1aIBeQOvB8kNfAGO99NtjUnyHRmcrQZ2FhEJ1zP2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTC2yfFoaRSM2eDLrNrkx4JcwNWVN3vgA7q2fviYypOcnmtb97
+	yqgm0ixV277hlHH55ScstZ70QjMUVHyQKiubNp8Gq4qomq2CtJt7RUU32BGkYB0cG6iW9yuIF04
+	Rz1siO0REggsYbG6qI1e/0DMQxQStp1YXF0SjiCKEli0JMe91DW6bOqZzYwT4aUdi1w==
+X-Gm-Gg: ASbGncvZm0G0R/i6DmUObCdEoZyK3u0SNtlb72OA4SChFEX0L9pyQwrXFnUfbzlvxpU
+	0VJrucZJQCvD0ayDTP3RoqUwXCUvYaV1XYT1qP9NDffZc1ZCs/kvPcqnwsDVDwL3a8/gE6hbAeP
+	4rS0x48h6ZvP+4uftlUGn29wjx7mlHMF85CZvhkGIZN4DLbYcI8fmjXioWtix6Ntz19VCCbsmX/
+	2NeG6DA6jaS0rjVqbPI9pBkXGHWFf1yP4MmCrneWYxMg7GVXwL1Qe9hCgDlsBczXC7rRqDLMPlK
+	hHgFL7QX+7cOXU14V8eW+l5Flr/tYR/XekhNIGmDPdsKb5nDaZaGP8971ixkbw8Ed1sHLiUkXdE
+	KttIyr6JMy6kNaBnvLTNwIBMfJF5reUvKhalCD4kCjw==
+X-Received: by 2002:a5d:5c84:0:b0:3a5:2182:bd11 with SMTP id ffacd0b85a97d-3a53189b6d1mr2385096f8f.20.1749205832822;
+        Fri, 06 Jun 2025 03:30:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZ8zn1DJwYaoBTRpNkad0mZiAjY2iLHqkNZy1mWBuUYEv02AEOeaCRfW88O1wnKzjCVIId1A==
+X-Received: by 2002:a5d:5c84:0:b0:3a5:2182:bd11 with SMTP id ffacd0b85a97d-3a53189b6d1mr2385070f8f.20.1749205832424;
+        Fri, 06 Jun 2025 03:30:32 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f19:9c00:568:7df7:e1:293d? (p200300d82f199c0005687df700e1293d.dip0.t-ipconnect.de. [2003:d8:2f19:9c00:568:7df7:e1:293d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532463905sm1468475f8f.92.2025.06.06.03.30.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Jun 2025 03:30:31 -0700 (PDT)
+Message-ID: <59559bf8-fded-458d-9e6e-5bdfd5cbd816@redhat.com>
+Date: Fri, 6 Jun 2025 12:30:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: Skip failed memfd setups in gup_longterm
+To: Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250605-selftest-mm-gup-longterm-tweaks-v1-1-2fae34b05958@kernel.org>
+ <20250605180421.c8d8c48f3e340f9488937ab7@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250605180421.c8d8c48f3e340f9488937ab7@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250606-pispbe-mainline-split-jobs-handling-v6-v7-4-46169f0622b7@ideasonboard.com>
-References: <20250606-pispbe-mainline-split-jobs-handling-v6-v7-0-46169f0622b7@ideasonboard.com>
-In-Reply-To: <20250606-pispbe-mainline-split-jobs-handling-v6-v7-0-46169f0622b7@ideasonboard.com>
-To: Naushir Patuck <naush@raspberrypi.com>, 
- Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>, 
- David Plowman <david.plowman@raspberrypi.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3094;
- i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
- bh=V+Ek8KvYXVxMnGDCEA+ZZupIN9VfOzRn2A+zOM1rIFI=;
- b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBoQsMJy30vmgezVQQsGohmNhEl7scj92nRO6VT+
- 83ukN8V4LqJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaELDCQAKCRByNAaPFqFW
- PLwBD/4jPLV38ukgCPlmkOKp/S5DffYm09zKURW5qlvF2508WzIcSyvSUqDlH0oc1+OzTnU6uaA
- tvkt8OjmyqHCJQGsWQ/K2OSTvs/Q++BngwUkyduUk180Xc3qlpZlI9Qt9QHpsI5imCxa0vFZWzB
- 7pcP9r2+k/2Npa37fxuS23zrwG9UGcwcHlZAummjU2z4eLQMHfSNgnvUJdwNcOSJMxtjCKxMAtS
- p1XUvMATHwzi2DZss2yj/PBjwQv07zIXi+oJAuaaC1vVd9lKlAT55DbxewopHQnTXsJLj52iHqd
- tVYHeuuzAuk0ACtEqEkXhJnvI77s8KbWQa0FHEvNfR2UK4TSDrIJqbE74COoyJKSJLQkS/1+x2B
- 3Oo3AV6uIYMg22nFy5opWcjeDROQJkrSVJNWO4TOAFZ83lsmySSUtxFyY8JH21aLgkYQxMVaZUd
- 26p6NYdGlMI0Kl9IbwefIuD9UVY62zmVmw5KoOvI8DnGcxGpLQyedyxSyLyAindzmt89jq6ilZ6
- 8SOpvj/908p9v3uJem0eNt0Ow/ZrhW4PvVAtyw4QBZiAKNjPmPmjc9epAUCLR51ZGdrlIgYrcw9
- UEC7p5Q7ks5Pxm7sRpScEDFzqYqN+Nv5tk3mUzog08SKZQpGU/RFDCYAwPFMEd4ourQvHMDCMsW
- EIlxkCnCrIBAM4Q==
-X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-During the probe() routine, the PiSP BE driver needs to power up the
-interface in order to identify and initialize the hardware.
+On 06.06.25 03:04, Andrew Morton wrote:
+> On Thu, 05 Jun 2025 22:34:31 +0100 Mark Brown <broonie@kernel.org> wrote:
+> 
+>> Unlike the other cases gup_longterm's memfd tests previously skipped the
+>> test when failing to set up the file descriptor to test, restore this
+>> behaviour.
+>>
+>> Signed-off-by: Mark Brown <broonie@kernel.org>
+> 
+> I added a bunch of stuff to this.  Please check?
+> 
+> 
+> From: Mark Brown <broonie@kernel.org>
+> Subject: selftests/mm: skip failed memfd setups in gup_longterm
+> Date: Thu, 05 Jun 2025 22:34:31 +0100
+> 
+> Unlike the other cases gup_longterm's memfd tests previously skipped the
+> test when failing to set up the file descriptor to test.  Restore this
+> behavior to avoid hitting failures when hugetlb isn't configured.
+> 
+> Link: https://lkml.kernel.org/r/20250605-selftest-mm-gup-longterm-tweaks-v1-1-2fae34b05958@kernel.org
+> Fies: 66bce7afbaca ("selftests/mm: fix test result reporting in gup_longterm")
 
-The driver resumes the interface by calling the
-pispbe_runtime_resume() function directly, without going
-through the pm_runtime helpers, but later suspends it by calling
-pm_runtime_put_autosuspend().
+"Fixes:"
 
-This causes a PM usage count imbalance at probe time, notified by the
-runtime_pm framework with the below message in the system log:
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Reported-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Closes: https://lkml.kernel.org/r/a76fc252-0fe3-4d4b-a9a1-4a2895c2680d@lucifer.local
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> 
 
- pispbe 1000880000.pisp_be: Runtime PM usage count underflow!
-
-Fix this by resuming the interface using the pm runtime helpers instead
-of calling the resume function directly and use the pm_runtime framework
-in the probe() error path. While at it, remove manual suspend of the
-interface in the remove() function. The driver cannot be unloaded if in
-use, so simply disable runtime pm.
-
-To simplify the implementation, make the driver depend on PM as the
-RPI5 platform where the ISP is integrated in uses the PM framework by
-default.
-
-Fixes: 12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
-Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
---
-
-Cc: stable@vger.kernel.org
----
- drivers/media/platform/raspberrypi/pisp_be/Kconfig   | 1 +
- drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 5 ++---
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/Kconfig b/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-index 46765a2e4c4d..a9e51fd94aad 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-+++ b/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-@@ -3,6 +3,7 @@ config VIDEO_RASPBERRYPI_PISP_BE
- 	depends on V4L_PLATFORM_DRIVERS
- 	depends on VIDEO_DEV
- 	depends on ARCH_BCM2835 || COMPILE_TEST
-+	depends on PM
- 	select VIDEO_V4L2_SUBDEV_API
- 	select MEDIA_CONTROLLER
- 	select VIDEOBUF2_DMA_CONTIG
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-index c25f7d9b404c..e49e4cc322db 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-+++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-@@ -1718,7 +1718,7 @@ static int pispbe_probe(struct platform_device *pdev)
- 	pm_runtime_use_autosuspend(pispbe->dev);
- 	pm_runtime_enable(pispbe->dev);
- 
--	ret = pispbe_runtime_resume(pispbe->dev);
-+	ret = pm_runtime_resume_and_get(pispbe->dev);
- 	if (ret)
- 		goto pm_runtime_disable_err;
- 
-@@ -1740,7 +1740,7 @@ static int pispbe_probe(struct platform_device *pdev)
- disable_devs_err:
- 	pispbe_destroy_devices(pispbe);
- pm_runtime_suspend_err:
--	pispbe_runtime_suspend(pispbe->dev);
-+	pm_runtime_put(pispbe->dev);
- pm_runtime_disable_err:
- 	pm_runtime_dont_use_autosuspend(pispbe->dev);
- 	pm_runtime_disable(pispbe->dev);
-@@ -1754,7 +1754,6 @@ static void pispbe_remove(struct platform_device *pdev)
- 
- 	pispbe_destroy_devices(pispbe);
- 
--	pispbe_runtime_suspend(pispbe->dev);
- 	pm_runtime_dont_use_autosuspend(pispbe->dev);
- 	pm_runtime_disable(pispbe->dev);
- }
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-2.49.0
+Cheers,
+
+David / dhildenb
 
 
