@@ -1,159 +1,162 @@
-Return-Path: <linux-kernel+bounces-676041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F91AD06C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7047AD06CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADD33A1CDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84783A6A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDFF289E21;
-	Fri,  6 Jun 2025 16:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298B1289E30;
+	Fri,  6 Jun 2025 16:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UNWxfO22"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m87KKs5V"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078B970823
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 16:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEB670823;
+	Fri,  6 Jun 2025 16:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749227888; cv=none; b=sLFHlhISj4hbR7rqmKTbL+UlGFxCFqk6JqyplgvLRc7wA/MrXmOIhhSCA7FkTw0IZny/54/KwJJBxmte+V2h8JzODeLd4hmNlxxg5PdnWabgKkSIwEflKKB/XR262bah4Vc4ZoDiiuaJsAGzerwNauf1rD31OfLZ00S1Lypz0ag=
+	t=1749227969; cv=none; b=aZbHItjI1Qus5bbrJEm9wgFm2XVYMauGjBr/wI/ATh7dDdaThw5bSiR/yTctuqj5tP1Yto/NsUycGdZSPQBtHLeXIxNEMKWKor5pUtwJ++ZTT1IZTVoBZF2ldakAXeCWHWHy0j4G6wKvrgnD7NSEUCKKFGNoN0bUzlnQ0nuyH38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749227888; c=relaxed/simple;
-	bh=QrbtuDMMlfo+hBepFmzEgOKu5bVEHlmY04wQwSs1g6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PcgY1abs9AY52f+XdzGfl/AQyjp9cV+zp3cD8eJGyz9Wnugnvx5XtTGJY6ciG9+ohnKTJqjIImoVj4ppjkl6iXsft0Tl2LJ/hSs7BRtYRrg2koxYcl9DLHrZv+qyjXQyWtESqwR12SpFD0GBSEPa6wLZ8iEF/eY2nj3THqCLhP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UNWxfO22; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749227886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Dl57DhiFOMo8GkH+ogQuHIs3xd9CNb2ax4ce20G2fls=;
-	b=UNWxfO22A2m0p6o4n8J+0T5MhXpI2tJFFkWqF7wCTQ9oKVWztUPUTG17AamO+zBxDGYazB
-	reBQutbFKKZaXzsLIDKNFVK/y0zhWdpyDbiXRhASXLz6WWweOIgPaXXv0EOSgIj/mQr59O
-	4hVZHg9i/zB4mZfTIeMJIRf6JMHCJHs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-i74rOOAWPfi5L83VIpXkwg-1; Fri, 06 Jun 2025 12:38:04 -0400
-X-MC-Unique: i74rOOAWPfi5L83VIpXkwg-1
-X-Mimecast-MFC-AGG-ID: i74rOOAWPfi5L83VIpXkwg_1749227884
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f3796779so1661368f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 09:38:04 -0700 (PDT)
+	s=arc-20240116; t=1749227969; c=relaxed/simple;
+	bh=xG9ePX+hhlM2ioCU4Dn4OhL+GFgr0KjnNhY43k95Q7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gwe6HqeWETRH8wYmzzyFEqZh4x4Nh7kQb4K3PcVuiW9QHFVuwpLDaiKrr/3eKbYy8ytoId09D+z6FnW8ONtImclJzf4T78aDgjKX6xJiLdVKnY9XigRQRY8P3Ft3MAnf35yTgFVYZiYuma+QJfrJSYl6R0ye+Oj+8uD8C/s30XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m87KKs5V; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a0ac853894so2062239f8f.3;
+        Fri, 06 Jun 2025 09:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749227966; x=1749832766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xG9ePX+hhlM2ioCU4Dn4OhL+GFgr0KjnNhY43k95Q7M=;
+        b=m87KKs5Vry+d9Y+FpXYqRrMdBtkwFJsbNDoWUnGYZ4AW8La+bGQkoYzt4Ws2L7D3iy
+         6KFSLXtHk6XqFt0qC9QKfL52Yw6s+/3GiYuHjZbVtRlsylfvAdUcasiq3UV0TH8SftEo
+         kyjMY/Zceozcc6/tiNfthy0f4PcDWvlEhqAZLW7F6bBG0b96Qq0WjwlSz4n6GPg13NBs
+         X35tL3PlFgG2kJK2yMATXRbHyTVZy+7IqFOR/BdNeyq4+Pzgth1Ut/nFk6ADzb6Kf634
+         uSgh7zbFjLNU4J7dksyYX2llsSm0WS/9phWq4kKsIAGr2Mu9aFE+TTptyMXYHEhfFPJ/
+         kb+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749227884; x=1749832684;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dl57DhiFOMo8GkH+ogQuHIs3xd9CNb2ax4ce20G2fls=;
-        b=QVSkE7GJE3Daytn8LC1NgXox9BcITNj7/nrASOrTOzgiXvRmz2JKXFRQ+WlqTNthLi
-         VprUuuO+VabATUJmNty/tRZA1kMJnt4NISmsbIdX/Ua+b+Gz3DA3NQGNDGBJYWR4Q1jT
-         22fKrAzM6TJYmOc2MSpyXQg2ctZC9ItQpoQTEYe7LfgvvELRsnQf0FHaJSwk9wq3RTn9
-         Q1H8BQdDdMAB1PpkPsTmnyMD3hO2gdqnxUv4xQb561P0pgaaNv9x8ZGhQ66nVrkQyv4H
-         dDzIt1Z0eNCM8cXhb/NlzaiSrLFrxgTyRWr/Z6wTUcOeQzgwt+GnaMsnvEpEpqj8b3RH
-         xo6Q==
-X-Gm-Message-State: AOJu0YxTm2cD/kvdL0FQcI1K/Jxx0Fs4lesxs+x/M07IcOLnfV0e9fvp
-	yFa2jqzlyium072s/H9s716byyJ9yyPog5eCnQFMS3lbOAApqAEQmNNFM3VYG53GWtfcStC0Bf0
-	f19QzcMB7tJBigp3pE34Xg/xhcsE7b+NZ8oxvA2zcSYMRKHKbFSqXecUR0Yw39z07bA==
-X-Gm-Gg: ASbGncskdz7NB+ap+iM9Fno6FjD4OssYZeVLGvBopzeSwQ8tUgIUKOM7nrCspn1grp6
-	jWUVKHRxbeB8t57wV2WijIM/XjkMJ6EnaVik6m7jhcVliendeam2ymkeGjgqPa3E7LrF5XqbKQb
-	9ayWX9QqnsGYi4B2X5ITpktMWfDQNiI4s2flqRZzU0YDNUscG78CGy9xmkuxnHQOuiWkQig+l21
-	0/xJKrSq/atvS08YDO86X+ZgthuwabhkEI6FwDBvgyGZEF7PRfBZBU9l2zYDb9PSUaln2qM+1+4
-	sSR0a9e0+k/PbdsT++m+KhN0
-X-Received: by 2002:a05:6000:1a8f:b0:3a1:fe77:9e1d with SMTP id ffacd0b85a97d-3a53189ef17mr3476964f8f.16.1749227883682;
-        Fri, 06 Jun 2025 09:38:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNKzC3mqWUAPIgFlamw5SfU5I0d4hNXj2UIm4VZTEITVURrNiwn6xofps9u77e0T4I4TQ3vw==
-X-Received: by 2002:a05:6000:1a8f:b0:3a1:fe77:9e1d with SMTP id ffacd0b85a97d-3a53189ef17mr3476940f8f.16.1749227883282;
-        Fri, 06 Jun 2025 09:38:03 -0700 (PDT)
-Received: from [192.168.10.81] ([151.49.64.79])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a5324364c9sm2410666f8f.51.2025.06.06.09.38.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Jun 2025 09:38:02 -0700 (PDT)
-Message-ID: <a0e2c1a2-23a1-4527-b638-b06df3fc5fc6@redhat.com>
-Date: Fri, 6 Jun 2025 18:38:00 +0200
+        d=1e100.net; s=20230601; t=1749227966; x=1749832766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xG9ePX+hhlM2ioCU4Dn4OhL+GFgr0KjnNhY43k95Q7M=;
+        b=lV/OMB2sWScDWTsY5N7mDQPDXr1QAeHgQQuTyQJ6McBAHsDFBBeAHtf/zm3Hrojjyq
+         dhU78mGHODPjYHpMtbzxsdrevLcrEpTf1/9E8hnxx7uEHFi4WSFHGgH0wvcGqPCoA+bT
+         ONsaKYKuyiq1Zf0WOFRatX+pOHk8idneME+vgySfG+g6oNoF/CrKyCQS3uufxKhZqDAs
+         BTRCSG35EoxhobIGOduJoTM+ACICKyVig2HCQ+FjvT2U0VePkl+BRHr479OY2Og81psJ
+         yLVhKP/j4qrKrN+EHRLN6hia6a5890/bY5RWM5PcESRG0VicyMbTWMyyZZ1RbZkfZfHC
+         /w9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUd445Lmg+/2nbnCNdfHqJg9EHA1aSfrl8NbiEq+1N4oPeYWjtexR6Q13wMOnDnLz1t8clUiZZ1OxR0XpyK+zA=@vger.kernel.org, AJvYcCVIUhCkCwi3fzz8JRH2ukuM+8IedW5MAXlBR6aP8D1NmJjDuGAiJ0A4vL6zY9vA0vTYQVQqQW5h@vger.kernel.org, AJvYcCVa36Hfqf7qsJFHPfE04DIaGpaVQp2gP1rfJfeniWDI44/AWDgchaMl9+3rVPlYcoij2rqKK6zLbdrU@vger.kernel.org, AJvYcCWW/tgPQ3/jOemcsey2Rg1AmsgdBfI3FWhcKab4nS4E5IEtz8fdPEWSm1lH+BNB+bdjFU6wYP1G+wYMZoX/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvMGCx5lxL6xP6S74xjdOKBIRQRlGILFzYMtbGl1HlaMkr76sQ
+	3zldnvzY5eqatLSykYi7tt70bSKtfoSBTzHmav7S8Tomg/0vvw7Ur+IssewtGPSqH2/FNmey0AB
+	zac/gWINXJJytJLBKKMmidZsJ/o7JnU8=
+X-Gm-Gg: ASbGncuuoFKM6sVTwbB4w69lm1d1TfiGoq6UKD8Y79/fS+61HQFqyEoC5IcJAS8gF1k
+	Pujsv7OLSE1n9rFvjzoADGe8TbVIQ0SKXxWHKQ255v33XYuoEJBMkASD4W/r9Enq/ulCtJ+gkpT
+	MXb0Lh2qto5NgWvVdRDbPE8Q/L/qiNPt0UCJm0Xd1hMSJW+yMHSUgbkg2yy2rGKvxUgvbQ5g6R
+X-Google-Smtp-Source: AGHT+IHq3315Dn9d+hwBUjw+Kg7LXaNHoxU48aZvD/S6yAkrZn0JTcP080HQQ7KB6Kt2s68Ve/l1xGCfwKScVzLRx+U=
+X-Received: by 2002:a05:6000:250f:b0:3a4:e7b7:3851 with SMTP id
+ ffacd0b85a97d-3a531cf3622mr3440431f8f.58.1749227965553; Fri, 06 Jun 2025
+ 09:39:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/29] KVM: x86: add planes support for interrupt delivery
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, roy.hopkins@suse.com,
- thomas.lendacky@amd.com, ashish.kalra@amd.com, michael.roth@amd.com,
- jroedel@suse.de, nsaenz@amazon.com, anelkz@amazon.de,
- James.Bottomley@hansenpartnership.com
-References: <20250401161106.790710-1-pbonzini@redhat.com>
- <20250401161106.790710-21-pbonzini@redhat.com> <aEMXrbWBRkfeJPi7@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <aEMXrbWBRkfeJPi7@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250127160709.80604-1-ubizjak@gmail.com> <20250127160709.80604-7-ubizjak@gmail.com>
+ <02c00acd-9518-4371-be2c-eb63e5d11d9c@kernel.org> <b27d96fc-b234-4406-8d6e-885cd97a87f3@intel.com>
+ <CAFULd4Ygz8p8rD1=c-S2MjJniP6vjVNMsWG_B=OjCVpthk0fBg@mail.gmail.com>
+ <9767d411-81dc-491b-b6da-419240065ffe@kernel.org> <CAFULd4Zf4FOP-h0GVYo=frJ90tF07yvbuLbngnqUwyx9x+qz6w@mail.gmail.com>
+In-Reply-To: <CAFULd4Zf4FOP-h0GVYo=frJ90tF07yvbuLbngnqUwyx9x+qz6w@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 6 Jun 2025 09:39:13 -0700
+X-Gm-Features: AX0GCFvJ_YDCqF1cB2ZxZ3E0i0bq9e0VCZSctUZEDeWlAKAIlg-aO97Jeml91Fg
+Message-ID: <CAADnVQ+FG9BH=FrgPctQfC+cSMoP2rZwR1d8cHVqn28xv-Uc1Q@mail.gmail.com>
+Subject: Re: Large modules with 6.15 [was: [PATCH v4 6/6] percpu/x86: Enable
+ strict percpu checks via named AS qualifiers]
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-bcachefs@vger.kernel.org, linux-arch <linux-arch@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, Nadav Amit <nadav.amit@gmail.com>, 
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	Brian Gerst <brgerst@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/25 18:30, Sean Christopherson wrote:
-> On Tue, Apr 01, 2025, Paolo Bonzini wrote:
->> Plumb the destination plane into struct kvm_lapic_irq and propagate it
->> everywhere.  The in-kernel IOAPIC only targets plane 0.
-> 
-> Can we get more aggressive and make KVM_CREATE_IRQCHIP mutually exclusive with
-> planes?  AIUI, literally every use case for planes is for folks that run split
-> IRQ chips.
+On Fri, Jun 6, 2025 at 2:27=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
+>
+> On Fri, Jun 6, 2025 at 11:17=E2=80=AFAM Jiri Slaby <jirislaby@kernel.org>=
+ wrote:
+> >
+> > On 05. 06. 25, 19:31, Uros Bizjak wrote:
+> > > On Thu, Jun 5, 2025 at 7:15=E2=80=AFPM Dave Hansen <dave.hansen@intel=
+.com> wrote:
+> > >>
+> > >> On 6/5/25 07:27, Jiri Slaby wrote:
+> > >>> Reverting this gives me back to normal sizes.
+> > >>>
+> > >>> Any ideas?
+> > >>
+> > >> I don't see any reason not to revert it. The benefits weren't exactl=
+y
+> > >> clear from the changelogs or cover letter. Enabling "various compile=
+r
+> > >> checks" doesn't exactly scream that this is critical to end users in
+> > >> some way.
+> > >>
+> > >> The only question is if we revert just this last patch or the whole =
+series.
+> > >>
+> > >> Uros, is there an alternative to reverting?
+> > >
+> > > This functionality can easily be disabled in include/linux/compiler.h
+> > > by not defining USE_TYPEOF_UNQUAL:
+> > >
+> > > #if CC_HAS_TYPEOF_UNQUAL && !defined(__CHECKER__)
+> > > # define USE_TYPEOF_UNQUAL 1
+> > > #endif
+> > >
+> > > (support for typeof_unqual keyword is required to handle __seg_gs
+> > > qualifiers), but ...
+> > >
+> > > ... the issue is reportedly fixed, please see [1], and ...
+> >
+> > Confirmed, I need a patched userspace (libbpf).
+> >
+> > > ... you will disable much sought of feature, just ask tglx (and pleas=
+e
+> > > read his rant at [2]):
+> >
+> > Given this is the second time I hit a bug with this, perhaps introduce
+> > an EXPERIMENTAL CONFIG option, so that random users can simply disable
+> > it if an issue occurs? Without the need of patching random userspace an=
+d
+> > changing random kernel headers?
+>
+> In both cases, the patch *exposed* a bug in a related utility
+> software, it is not that the patch itself is buggy. IMO, waving off
+> the issue by disabling the feature you just risk the bug in the
+> related software to hit even harder in some not too distant future.
 
-Maybe, but is there any added complexity other than the "= {0}" to 
-initialize the new field.  Ready to be proven wrong but I do think 
-that's one thing that just works.
-
-> And we should require an in-kernel local APIC to create a plane.
-
-I don't think it's needed either; if anything the complexity of patch 25 
-isn't needed with userspace local APIC.
-
-Paolo
-
+The typeof_unqual exposed the issue in the way GCC generates dwarf.
+The libbpf/pahole is a workaround for incorrect dwarf.
+The compiler shouldn't emit two identical dwarf definition for
+one underlying type within one compilation unit. In this case
+typeof_unqual somehow confused gcc.
 
