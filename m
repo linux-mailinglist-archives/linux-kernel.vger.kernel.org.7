@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-676025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C20AD069B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:24:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706EDAD0695
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 18:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14A31887DF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:25:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B6E3B2136
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 16:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62EE28A1C6;
-	Fri,  6 Jun 2025 16:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OU290Q0G"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3F7289E04;
+	Fri,  6 Jun 2025 16:23:57 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7A678F2F;
-	Fri,  6 Jun 2025 16:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EE21A38F9
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 16:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749227081; cv=none; b=M5MryAdyhWAbvClFwBqee9TywImvcDx41SP2HCjrWjpaTBggbOMMlyQm4qw8VFbqua8ozqZNx0nyieuZ+14E9CkdmWE397XPF6ZMJ+dwisS4kswCq8a6QwoVNgikqXKmpy7CpPzV5kWrglDtpmz36pSRlalDY7CPTyqKOhYUNDI=
+	t=1749227037; cv=none; b=CnVjwDKR9kK9xU4rw+F7ZdZ6CnuZSNE/QJu/4CCq5/+L5h3dl7UnZjOGUfFx8bUOucbLJtGQjrS+dfSsF+xYIlKrDGgKH92rYDLaL4qILIohiQA3HbL94im1LzS6U/mZYT8AOkwbotjnsBmTpZyW1hysuGracrWildeUdGfFZi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749227081; c=relaxed/simple;
-	bh=Xf9kmEEuLAigJEs+1EdF+1tvIYHiWd48C3uxpyoKTI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WtH234RBBnrNdiBPz7WAx4yayM0OWIbrk9fshh6aSo7Fm2RYaDs47oI801eH1jr0JY5WJUDr52FORZDgTAG9EIftgPbjjLMpbJ3pWGEUtoPXRE/PsIN8EfZoXFIBtntqx1wjOXoMfjv8EM60JRRL7gswgx0xJuzr/antzxUME9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OU290Q0G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE14C4CEEB;
-	Fri,  6 Jun 2025 16:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749227080;
-	bh=Xf9kmEEuLAigJEs+1EdF+1tvIYHiWd48C3uxpyoKTI8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OU290Q0G/h5Ed78E2BzJTMwLLTvS4tqe7v5CG0thtqv7Yfx7q4mYtW5sGJkyjYs5/
-	 JAPYqfOZ+C+VtX6ixRzidSzk9Mt5VINGk1FJW6Req27BNa8L1YiKaTrqUPDGvcRXWE
-	 /lPUt9ck1HBSovEfqVylPgIyjRIZPpH5HD9BBoXwBvTXJLGswfK+XQaIjanjQcjFP+
-	 WHzdTzQIlOa/PLFjLsDD93vzppJN1o6+nQsVREJEYSh6PYRe86z1+PVMv4TKSRBiTr
-	 mdVhKhTaXvNuUOz2T8hMyszteh4+m0Ka8aJ9skrCjmy1kqttmkMiL93n8nebgqlpoD
-	 xCDk29IQqdjZw==
-Date: Fri, 6 Jun 2025 17:24:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: marius.cristea@microchip.com
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, broonie@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: adding support for PAC194X
-Message-ID: <20250606-olympics-limeade-fcf2421950d0@spud>
-References: <20250606093929.100118-1-marius.cristea@microchip.com>
- <20250606093929.100118-2-marius.cristea@microchip.com>
+	s=arc-20240116; t=1749227037; c=relaxed/simple;
+	bh=0stof6QFOE46hLM2pFqm0Nm4BC/nkP/IjekkdZqIOGU=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=VO/HuNIHGHmFMz8OHFfHh6ZFBya17mr6lZzXMEeNFWjwUKiOAUj92DDl4c9bIe+3Kg0CWe6rGDmPyboQvCE+RxZG2hagtcDqNQ4EZbZoDZx0nxLd5wUSl/BXunPFE497M0EULtejwtsJ7PMmHdg16Uf+AXUaNMGbBaEBkUqsWCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07654C4CEEB;
+	Fri,  6 Jun 2025 16:23:57 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uNZsc-0000000Fwfp-2IPP;
+	Fri, 06 Jun 2025 12:25:18 -0400
+Message-ID: <20250606162457.314220565@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 06 Jun 2025 12:24:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/3] tracing: Fixes for 6.16
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lAMn5b7hs5L2diVG"
-Content-Disposition: inline
-In-Reply-To: <20250606093929.100118-2-marius.cristea@microchip.com>
 
 
---lAMn5b7hs5L2diVG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+tracing fixes:
 
-On Fri, Jun 06, 2025 at 12:39:28PM +0300, marius.cristea@microchip.com wrote:
+- Fix regression of waiting a long time on updating trace event filters
 
-David had a bunch of comments, so much to say, but..
+  When the faultable trace points were added, it needed task trace RCU
+  synchronization. This was added to the tracepoint_synchronize_unregister()
+  function. The filter logic always called this function whenever it
+  updated the trace event filters before freeing the old filters.
+  This increased the time of "trace-cmd record" from taking 13 seconds
+  to running over 2 minutes to complete.
 
-> +  interrupt-names:
-> +    description:
-> +      alert1 indicates a HIGH or LOW limit was exceeded.
-> +      alert2 indicates a THERM limit was exceeded.
+  Move the freeing of the filters to call_rcu*() logic, which brings the
+  time back down to 13 seconds.
 
-You should be able to merge this description into the items list,
+- Fix ring_buffer_subbuf_order_set() error path lock protection
 
-> +    items:
-> +      - const: alert1
+  The error path of the ring_buffer_subbuf_order_set() released the
+  mutex too early and allowed subsequent accesses to setting the
+  subbuffer size to corrupt the data and cause a bug.
 
-by adding description: into these
+  By moving the mutex locking to the end of the error path, it prevents
+  the reentrant access to the critical data and also allows the function
+  to convert the taking of the mutex over to the guard() logic.
 
-> +      - const: alert2
+- Remove unused power management clock events
 
-e.g.
- items:
-   - const: sdmmc-3v3
-     description: pad configuration for 3.3 V
-   - const: sdmmc-1v8
-     description: pad configuration for 1.8 V
-   - const: sdmmc-3v3-drv
-     description: pull-up/down configuration for 3.3 V
-   - const: sdmmc-1v8-drv
-     description: pull-up/down configuration for 1.8 V
+  The clock events were added in 2010 for power management. In 2011
+  arm used them. In 2013 the code they were used in was removed.
+  These events have been wasting memory since then.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/fixes
+
+Head SHA1: 28e6aecb1a79e178d870aee0b71f97cca669fd9b
 
 
---lAMn5b7hs5L2diVG
-Content-Type: application/pgp-signature; name="signature.asc"
+Dmitry Antipov (1):
+      ring-buffer: Fix buffer locking in ring_buffer_subbuf_order_set()
 
------BEGIN PGP SIGNATURE-----
+Steven Rostedt (2):
+      tracing: Fix regression of filter waiting a long time on RCU synchronization
+      tracing: PM: Remove unused clock events
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEMWRAAKCRB4tDGHoIJi
-0jnNAQCd79bl5UCEVJAis5y+8/ZqK2oNBPKpx0uJBqWl6FPJsQD/SqITyMib8f/4
-N6lHcU6V3hbqjSWReVFsE635OzZ5QwA=
-=P++d
------END PGP SIGNATURE-----
-
---lAMn5b7hs5L2diVG--
+----
+ include/trace/events/power.h       |  47 -----------
+ kernel/trace/ring_buffer.c         |   4 +-
+ kernel/trace/trace_events_filter.c | 164 ++++++++++++++++++++++++++++---------
+ 3 files changed, 128 insertions(+), 87 deletions(-)
 
