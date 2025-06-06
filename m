@@ -1,230 +1,141 @@
-Return-Path: <linux-kernel+bounces-675653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-675655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D51AD0122
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C544EAD0125
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 13:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A159318996DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AD8A7A711A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Jun 2025 11:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE384288504;
-	Fri,  6 Jun 2025 11:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4E62874ED;
+	Fri,  6 Jun 2025 11:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZFUs0uXl"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="u0CDmtcy"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483FE2882AF
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 11:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F7E19D880
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Jun 2025 11:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749208684; cv=none; b=X4/OpPGOOCwa6AhgmM179O0rD/d49n/6kvmUv3WLKWWZ6pG7zJPw/UIBL4uzdRpExKQpzH903u29qHGzKQz/xjXuUSoHNLPkBkrUXWpZFg+Mhafi6ipw7t6CTOO8CrZtP4eOhsSkvSQZO8Y4RYq3Pa2DGFJAMRN6h6UkaD4uNq0=
+	t=1749208805; cv=none; b=OfsVp8wT5h8oYOhrjvhXlXJaCwxfc7FpWv0pixiOJc5dFz6tYF1Qf+hF6dCuHiBjIRY3wprLjLIXk0mraMBwD/h+hfrf3xITCGo8YskP7h9eeXpNfw68VtZnaiXNHjsPg93JqNN98JZLg0pxCCkuk2eRHS18onoLXUcxcHy2f00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749208684; c=relaxed/simple;
-	bh=uRPwSngvxa5YmiEZyOy6L4x+QQSwB1jVFtkOLYxQM9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i4pT5+edcxqVG9o5YthKPCB4UJqEviWb5ZCMw7FRwkO5PxN+EnOhEEd1PBye6gtSLhmeghMIEPDWWQHG/JEXURN8CspIjlnLGZh9o7HGDSnOR27+y+oMj2vCGpBmA7cg6Teafv1If+JmROj4WWh9E7IhWonTTc5ANUxBhb4xEnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZFUs0uXl; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad51ba0af48so589404666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 04:18:01 -0700 (PDT)
+	s=arc-20240116; t=1749208805; c=relaxed/simple;
+	bh=USdClpSVqld8qSLsJmF5UBqX++/lI09ziLNHsV+mc0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=naUxyhanSdvWih4Oc8k5P0xIfi3bWzYXMDClqdh0WVzag20b/KXySw6LFcmCLZT0ZXLTATybLF51TIrpiXjcmwbN5GWEP07DllWHxWNeuoWleInSDbVka4BiYENu5IRREQe7Rk+kxfCf8kvDqvbfqjxF73FfoT8Zk3rIncOmFFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=u0CDmtcy; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-442f9043f56so10948855e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Jun 2025 04:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749208680; x=1749813480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5DPDo39+4uWiuTs/5TrsHwfdO+Ybs2XhzP0BRvioGpc=;
-        b=ZFUs0uXligE5kIFoSIBF3oqhHcZVTIMSAl9M2ZmSrLuQHvztcz5FAF0rEaskinQaI+
-         YhxYRW9OnY0tDCVHpHcIt7mlYH/pq9CFT9BOlOvz7AHsYVoXeTBpJS2oQfUsGRXWYyG6
-         b8M+FG+IWLhF/hwUAk50Y+ZXv+9HVqY2/hNY/CkHQE9BNkrGy8nW1rSpzxt0ZZAq6tQR
-         PFdlYvYoGhZBKrX8Ae5ErMneueeLRg3NozGxVGnf4QJXVhElZfmsF+UPM9Toyb4amw21
-         xDXYeIBzuzL7ZHzecoNP6vmzaLuN1SWHs2hEqJIi2kKYgtKtwR99Uk7pVlpFR3jcE9AJ
-         jORw==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1749208799; x=1749813599; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MuQ7ElMFujECmYhgfOt92ztzf79cPNjqJC1YxZVfkjk=;
+        b=u0CDmtcyJQO2+isOBmvt98vI8uIspiM4cTPZwGOvfWsegbf32lu/gjt16nz6BGq2ko
+         mLk0oG3tn79OfjdaA0ts9QSuhYPsR/T7APcj4Mk7mxNDUv5zSuKuPagRDb9Ku9oo2waF
+         afEJ1qOGZnjwo9cw86cz8hA+MB7X+vUr+jNXPa7aij4WIRswv2FTnY0CiMIRyw8JSpic
+         6TMvKIdmN5PFqwNqdvX8K6A3n7RO2QVxzkYpw1ys2LlOJzA9bDcY3Z9gUtZO1RfZn/mD
+         0iy4vzXKCi58AHhghJO9UsxhmfRWoFzd7jn7SBU3KFp6n/eaNw9ApwvVh2AfQOWnl68L
+         198Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749208680; x=1749813480;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5DPDo39+4uWiuTs/5TrsHwfdO+Ybs2XhzP0BRvioGpc=;
-        b=xABEhKlWdO6dDEVMF+MDsl21rzRS01x40NbHi1F302QoO5RJVSSAR81xbBeQo5ZBrF
-         kfPsPKzrqV4L1Dh6FkQoX0RTP9vjNGEGesG3jIUi+1GxCxNu94745y0REVzjpLhFuRuz
-         tDGHfDaHy/gPbDeH5fdUirK+QeEFrRT2zk6Rc+i/x/AdCJPyF3nx9cQG6E+7FF9a/PaM
-         LlVr9NWteJ/6eI3RsghBfNvFDQ7eQWjvBggtNOG+ozWx4UvIowMwIPSpCOsIPULV7FzT
-         HnNimQXKk1EyViHI3PHDRuuKllT39ZpM4shbgeWQEWNof7fgvPDtMJNdw0uI2PKxwDA/
-         GZsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfRBF0MnsQsbUx0ImqNHIc9DuHYvHEjzmbopWdkhShpDsEJK8jm6+pquk9I85pd9BUBJ8MEtWzz5CXNw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbo7yVWyUcH4saQpC3Dsc10jeSbVISk/8IjbLOydqF+tEov8wM
-	9HqgURd9ZH9kZSvwbD5tB/QzLUP5n5OqyqVSpLN5QZdHKNllxxPkEFp39wpq0USfx90=
-X-Gm-Gg: ASbGncsbLkyWpEcJcacObuJ4YFnPW3EhLKS0mfAknO7I16inch6nIdKhl1YZosTrVsA
-	YSIiEC8pZFrUgFKDHbeSVjpAWAFjHhACTlBBOr2YMH76BAoMdDUU6Ss5uysWuEtZeDkPJeZITdG
-	mHN4qkdPRUUxLxSgvI/Wxup5rREyPVq1WIK4slYyT8sRum+VE2MNzzz9cOxea3UW9ZTFbJSKSz/
-	wBc88y7C8ePkbb8+WyEYO4XiZIHmszfko3Dy1Z8X01lI26Cuy1x2KoMbHIkBYGvWSpUxRxstSqf
-	C+/EtEAUhjHqI7pIcr8qcTprZVJ5PedzlrsywJIylkce2LaiwGItgL97EhjFkQOG2a+qGRfM2nn
-	7IqgE3w==
-X-Google-Smtp-Source: AGHT+IHEl1tPJoKtHBu3HfHQ16gw36K9TO7lnz3CJzribBe1iqtYzLhJA23YP6zOaAWmytoJBYRbqg==
-X-Received: by 2002:a17:907:3f9f:b0:ad5:6622:114e with SMTP id a640c23a62f3a-ade079048b4mr586268866b.30.1749208680261;
-        Fri, 06 Jun 2025 04:18:00 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc7b566sm98704566b.164.2025.06.06.04.17.58
+        d=1e100.net; s=20230601; t=1749208799; x=1749813599;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MuQ7ElMFujECmYhgfOt92ztzf79cPNjqJC1YxZVfkjk=;
+        b=OwvLhau4KOi54LQAui5Huv1LPC3RcSxo5sB3e0iQ/gkbgNcwVH431wS7kZf/EzZnD3
+         xxwZfaBJKoqN9F8BLGupUd0YPXAGbdszvSLJ8uMVKpoVU4j+i/AAAGdplTHzqydAbvMX
+         eV/nwEKERzvM2M0gjMte+F2Uc8JuIqygVd0LHUo8Vffs0xFuJizh9wqLQQBUCFl+ar4z
+         zV6oaG3UCLMQB4hhKOjey3+JfyDV3dH5CamSzFpAGugqjIMokyg8IzeD8XSkoVNkHUwg
+         tKRRn1T+xkMbJf1DEBZ89WiBTM/Eq8p09T2vwLwNuw++DrmpDiSCo3vw4FAjHdGubabF
+         SxIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgVqDP+bhGcL1CmC2GDKnSyMslODtx6aXsOPqBpu2kCS/PUulvaWF+jGyZ0YwUXVt6rXuigPkU1f6VKtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxODMpRjK2KdqDZTxMwq0DAdyNbFRPAfEcW+I9UnuwewXk85RKS
+	GKuEF5W77hVhwey4GI6vcjTdZhDEZykivybJQuGobQ8QZRQpZ9/GYZu/i5b4ka9pcVQ=
+X-Gm-Gg: ASbGncs3WxK/rqzsHwFuJ1Expkq1PNocyq2KmGR6Ls8UUEgDdtAs0s1snlm3ZqZ1LTw
+	eRTNMf18riznDMl5Xq++KsTmWIp3+Dj9MzVEXdYUbDNpBfrdrK5YG773fHjc7RzBi9SBAwQEW5R
+	LnEnrgLQmXgabLxl+RRfpzsUkcR6J8CLHyboxVyj+taEYb90TxaWX19uFyzqV31FqEoKARmlqg8
+	SQMX4LIlR4YI9lF5wrJicWFoakEvGO8QdaT3TN6Wjsdiw25t0NL26vQ40A4W/9ga83tnRVudbMM
+	ofeV8fMQJXKf93YQ0E9r57TOJ4LYmMHK0tj+6k71WBdKCEbFIaDoDTmezyIwkES60IIA5w==
+X-Google-Smtp-Source: AGHT+IH2MrdFxFyb1RgZrJq3QgVItnUJDGd7Nbi2wT4HljZC4pDIqfq4GTUxdydboY7ZnYyQOl6GGg==
+X-Received: by 2002:a05:600c:3e10:b0:450:d204:34ca with SMTP id 5b1f17b1804b1-452013bb9a4mr33700405e9.18.1749208799424;
+        Fri, 06 Jun 2025 04:19:59 -0700 (PDT)
+Received: from localhost ([2a02:8071:6401:180:da11:6260:39d6:12c])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4526e056138sm18262385e9.5.2025.06.06.04.19.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 04:17:59 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	len.brown@intel.com,
-	pavel@kernel.org,
-	ulf.hansson@linaro.org,
-	jic23@kernel.org,
-	daniel.lezcano@linaro.org,
-	dmitry.torokhov@gmail.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	bhelgaas@google.com,
-	geert@linux-m68k.org,
-	linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	fabrizio.castro.jz@renesas.com,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 2/2] driver core: platform: Use devm_pm_domain_attach()
-Date: Fri,  6 Jun 2025 14:17:49 +0300
-Message-ID: <20250606111749.3142348-3-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250606111749.3142348-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250606111749.3142348-1-claudiu.beznea.uj@bp.renesas.com>
+        Fri, 06 Jun 2025 04:19:58 -0700 (PDT)
+Date: Fri, 6 Jun 2025 13:19:53 +0200
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Wupeng Ma <mawupeng1@huawei.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, surenb@google.com,
+	jackmanb@google.com, ziy@nvidia.com, wangkefeng.wang@huawei.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: Drain PCP during direct reclaim
+Message-ID: <20250606111953.GB1118@cmpxchg.org>
+References: <20250606065930.3535912-1-mawupeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606065930.3535912-1-mawupeng1@huawei.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, Jun 06, 2025 at 02:59:30PM +0800, Wupeng Ma wrote:
+> Memory retained in Per-CPU Pages (PCP) caches can prevent hugepage
+> allocations from succeeding despite sufficient free system memory. This
+> occurs because:
+> 1. Hugepage allocations don't actively trigger PCP draining
+> 2. Direct reclaim path fails to trigger drain_all_pages() when:
+>    a) All zone pages are free/hugetlb (!did_some_progress)
+>    b) Compaction skips due to costly order watermarks (COMPACT_SKIPPED)
 
-On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
-clocks are managed through PM domains. These PM domains, registered on
-behalf of the clock controller driver, are configured with
-GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
-clocks are enabled/disabled using runtime PM APIs. The power domains may
-also have power_on/power_off support implemented. After the device PM
-domain is powered off any CPU accesses to these domains leads to system
-aborts.
+This doesn't sound quite right. Direct reclaim skips when compaction
+is suitable. Compaction says COMPACT_SKIPPED when it *isn't* suitable.
 
-During probe, devices are attached to the PM domain controlling their
-clocks and power. Similarly, during removal, devices are detached from the
-PM domain.
+So if direct reclaim didn't drain, presumably compaction ran but
+returned COMPLETE or PARTIAL_SKIPPED because the freelist checks in
+__compact_finished() never succeed due to the pcp?
 
-The detachment call stack is as follows:
+> @@ -4137,28 +4137,22 @@ __alloc_pages_direct_reclaim(gfp_t gfp_mask, unsigned int order,
+>  {
+>  	struct page *page = NULL;
+>  	unsigned long pflags;
+> -	bool drained = false;
+>  
+>  	psi_memstall_enter(&pflags);
+>  	*did_some_progress = __perform_reclaim(gfp_mask, order, ac);
+> -	if (unlikely(!(*did_some_progress)))
+> -		goto out;
+> -
+> -retry:
+> -	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
+> +	if (likely(*did_some_progress))
+> +		page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
+>  
+>  	/*
+>  	 * If an allocation failed after direct reclaim, it could be because
+>  	 * pages are pinned on the per-cpu lists or in high alloc reserves.
+>  	 * Shrink them and try again
+>  	 */
+> -	if (!page && !drained) {
+> +	if (!page) {
+>  		unreserve_highatomic_pageblock(ac, false);
+>  		drain_all_pages(NULL);
+> -		drained = true;
+> -		goto retry;
+> +		page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
 
-device_driver_detach() ->
-  device_release_driver_internal() ->
-    __device_release_driver() ->
-      device_remove() ->
-        platform_remove() ->
-	  dev_pm_domain_detach()
+This seems like the wrong place to fix the issue.
 
-During driver unbind, after the device is detached from its PM domain,
-the device_unbind_cleanup() function is called, which subsequently invokes
-devres_release_all(). This function handles devres resource cleanup.
-
-If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
-cleanup process triggers the action or reset function for disabling runtime
-PM. This function is pm_runtime_disable_action(), which leads to the
-following call stack of interest when called:
-
-pm_runtime_disable_action() ->
-  pm_runtime_dont_use_autosuspend() ->
-    __pm_runtime_use_autosuspend() ->
-      update_autosuspend() ->
-        rpm_idle()
-
-The rpm_idle() function attempts to resume the device at runtime. However,
-at the point it is called, the device is no longer part of a PM domain
-(which manages clocks and power states). If the driver implements its own
-runtime PM APIs for specific functionalities - such as the rzg2l_adc
-driver - while also relying on the power domain subsystem for power
-management, rpm_idle() will invoke the driver's runtime PM API. However,
-since the device is no longer part of a PM domain at this point, the PM
-domain's runtime PM APIs will not be called. This leads to system aborts on
-Renesas SoCs.
-
-Another identified case is when a subsystem performs various cleanups
-using device_unbind_cleanup(), calling driver-specific APIs in the process.
-A known example is the thermal subsystem, which may call driver-specific
-APIs to disable the thermal device. The relevant call stack in this case
-is:
-
-device_driver_detach() ->
-  device_release_driver_internal() ->
-    device_unbind_cleanup() ->
-      devres_release_all() ->
-        devm_thermal_of_zone_release() ->
-	  thermal_zone_device_disable() ->
-	    thermal_zone_device_set_mode() ->
-	      struct thermal_zone_device_ops::change_mode()
-
-At the moment the driver-specific change_mode() API is called, the device
-is no longer part of its PM domain. Accessing its registers without proper
-power management leads to system aborts.
-
-Use devm_pm_domain_attach(). This ensures that driver-specific devm actions
-or reset functions are executed in sequence with PM domain attach
-action or reset and the driver will not end up runtime resuming the device
-when it is not anymore managed by it's PM domain.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v3:
-- adjusted the call to devm_pm_domain_attach() as it now gets
-  2 parameters
-
-Changes in v2:
-- dropped the devres group open/close approach and use
-  devm_pm_domain_attach()
-- adjusted patch description to reflect the new approach
-
- drivers/base/platform.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 075ec1d1b73a..c39d21fc1793 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1396,15 +1396,12 @@ static int platform_probe(struct device *_dev)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = dev_pm_domain_attach(_dev, true);
-+	ret = devm_pm_domain_attach(_dev, true);
- 	if (ret)
- 		goto out;
- 
--	if (drv->probe) {
-+	if (drv->probe)
- 		ret = drv->probe(dev);
--		if (ret)
--			dev_pm_domain_detach(_dev, true);
--	}
- 
- out:
- 	if (drv->prevent_deferred_probe && ret == -EPROBE_DEFER) {
-@@ -1422,7 +1419,6 @@ static void platform_remove(struct device *_dev)
- 
- 	if (drv->remove)
- 		drv->remove(dev);
--	dev_pm_domain_detach(_dev, true);
- }
- 
- static void platform_shutdown(struct device *_dev)
--- 
-2.43.0
-
+Kcompactd has a drain_all_pages() call. Move that to compact_zone(),
+so that it also applies to the try_to_compact_pages() path?
 
