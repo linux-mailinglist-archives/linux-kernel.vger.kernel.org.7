@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-676454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93EDAD0CBC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:11:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08347AD0CCD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABE71895584
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA39D1709C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C107217F29;
-	Sat,  7 Jun 2025 10:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCB820F090;
+	Sat,  7 Jun 2025 10:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBo+O3oS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pa7/j0dd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9965F1F4CB8;
-	Sat,  7 Jun 2025 10:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C61317BA9;
+	Sat,  7 Jun 2025 10:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749291083; cv=none; b=ETMuFjP+iOMkzDaPSc/AlBuU6DgO7F4tpxnGPruSiiAqw4iu2DafI+hVNnqJxsj/WBg1StFVYN9509V6Zre/pvo15WHoxd9nFrDjzAOdCDODVTunecKJmuOYQL82ysRwh6k289SZeIOnPLxEWyNu4rphnFy2Cpsw3RIpTLV+3D8=
+	t=1749291197; cv=none; b=BssfL4GOMjZYov7dJQYSZ6DbKKjIBCY+R3T1Xrek0CvTAapZvyu4DybCV0yATJZDZsWkeFq79T5SArPs/yPn2zKJTvHsLfQv+8i3/ZzORl48GDbX/Mv7nZJQukxoAuacMiWk8FMAH7qeHN/ihRThtqvA363IuA9PiE9irS88o2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749291083; c=relaxed/simple;
-	bh=fXsO+sY1TQdxuHjZ7D/ldPyUI6Eq5DROOCyo6WXcORY=;
+	s=arc-20240116; t=1749291197; c=relaxed/simple;
+	bh=tQ0PPfxfsC6VJq8L61IYitT0si7iO7YI036iLWsgbl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m9BTobGcbAfQth/QBVCrCGkOq4Flrgxnz+4na6hDp+ShIvVJhXiYnBSBKC6EKQ3drvvsNxXkf7gkLX6bQi49iFTrOBuDyqi1fgpLCNZzPgsFbcNTwP7bUfx+IArE0W5RmCq8ivt6r8E+aizlMDeEVomA4Y1amhB5W2lKIQXju9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBo+O3oS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADBEC4CEF2;
-	Sat,  7 Jun 2025 10:11:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=uHMnMf3ak22gX6B/dqyUOzLFP+0HHNmoGr70pL/i50Wp8aOPv6C8vTZwK9uvO67OIBJwqq2a8nYqdA4G35qwDf3ZmIziuVuXiAcLVqk5S+0C+o/2qRggDZJ3Nj5bJZa45d9EzWNrPnj7XpsPKXl6Vt6JSV99dV8umdMq3kSfSi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pa7/j0dd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BF2C4CEE4;
+	Sat,  7 Jun 2025 10:13:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749291083;
-	bh=fXsO+sY1TQdxuHjZ7D/ldPyUI6Eq5DROOCyo6WXcORY=;
+	s=k20201202; t=1749291197;
+	bh=tQ0PPfxfsC6VJq8L61IYitT0si7iO7YI036iLWsgbl0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jBo+O3oSyaGh84xg52kSNj+uGbO/hd6yy3yq7W3xs0Pp+5gKQadLJrk9CHNckCn4N
-	 00NasTHujgFdLabdqLQ7WYha33FZQPPJV0hrunA+JdTx9xo/E6pNAHtMb7yBTNCac3
-	 xAJnkiDOT3vZQ+KvkqU9s7EYvd2vsa6TkCeMo+zJMK8srC8vZjK0pzKC7OKn1+GNTO
-	 vmD48QGWQNklVGfhkKLN+X0GCwzdnhy++MLe89VKCppktGsRluAiI9L62N8+cQpaFJ
-	 mhQxZdZyyK8fGlHgycDDRUdkPJhR2adKNbzCAZqwv9TSmZfDaO8Ezi+cQdUInJ+kIA
-	 q8RGrYCjhDHbw==
-Date: Sat, 7 Jun 2025 12:11:19 +0200
+	b=Pa7/j0dd6i3AKzS09zlu+cv/jxJ8nnydTdnBEox2JBdCCE9e9/lc9xNRnOq257GNT
+	 pdeU/2FfcItX3ZmOM04lh7eyaghkKUZjaJLPmdlh8f+bjiE4LvKLc8Pi0KYY3z6iGm
+	 QxGGZjyr3N8MysuPqjjo8WJzA25B3Gcsf10c1yTsdZm7IFxCTM3hGhETXjU7xIyVQJ
+	 oj5Pqy29jBJA4zZam+jyv+DTd5xM32zsh/FYPmnPis1yLkE1Yfgeh7oDdWtU5z3aU5
+	 trFb+5KrX8n/GhFelzXsLfkE2SxjnrcCGIfB9q8YDJiOwQMURcIqfjXzqAvTbXzjpb
+	 bFGjHn5EDrDGw==
+Date: Sat, 7 Jun 2025 12:13:13 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 8/9] docs: kdoc: move the declaration regexes out of
- process_name()
-Message-ID: <20250607121119.0025047a@foz.lan>
-In-Reply-To: <20250606163438.229916-9-corbet@lwn.net>
+Subject: Re: [PATCH 9/9] docs: kdoc: some final touches for process_name()
+Message-ID: <20250607121313.0edc0a3d@foz.lan>
+In-Reply-To: <20250606163438.229916-10-corbet@lwn.net>
 References: <20250606163438.229916-1-corbet@lwn.net>
-	<20250606163438.229916-9-corbet@lwn.net>
+	<20250606163438.229916-10-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,81 +59,93 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Fri,  6 Jun 2025 10:34:37 -0600
+Em Fri,  6 Jun 2025 10:34:38 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> Move two complex regexes up with the other patterns, decluttering this
-> function and allowing the compilation to be done once rather than for every
-> kerneldoc comment.
+> Add some comments to process_name() to cover its broad phases of operation,
+> and slightly restructure the if/then/else structure to remove some early
+> returns.
 > 
 > Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 
-LGTM.
+More comments describing the parse steps are always welcomed!
+
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
 > ---
->  scripts/lib/kdoc/kdoc_parser.py | 30 +++++++++++++++++-------------
->  1 file changed, 17 insertions(+), 13 deletions(-)
+>  scripts/lib/kdoc/kdoc_parser.py | 33 ++++++++++++++++++++-------------
+>  1 file changed, 20 insertions(+), 13 deletions(-)
 > 
 > diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index 4e1ab28ff7cc..55f38240d4e5 100644
+> index 55f38240d4e5..9a1ce6ed8605 100644
 > --- a/scripts/lib/kdoc/kdoc_parser.py
 > +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -47,7 +47,6 @@ doc_sect = doc_com + \
->                  flags=re.I, cache=False)
+> @@ -1219,7 +1219,9 @@ class KernelDoc:
+>          """
+>          STATE_NAME: Looking for the "name - description" line
+>          """
+> -
+> +        #
+> +        # Check for a DOC: block and handle them specially.
+> +        #
+>          if doc_block.search(line):
+>              self.entry.new_start_line = ln
 >  
->  doc_content = doc_com_body + KernRe(r'(.*)', cache=False)
-> -doc_block = doc_com + KernRe(r'DOC:\s*(.*)?', cache=False)
->  doc_inline_start = KernRe(r'^\s*/\*\*\s*$', cache=False)
->  doc_inline_sect = KernRe(r'\s*\*\s*(@\s*[\w][\w\.]*\s*):(.*)', cache=False)
->  doc_inline_end = KernRe(r'^\s*\*/\s*$', cache=False)
-> @@ -60,6 +59,18 @@ export_symbol_ns = KernRe(r'^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"
+> @@ -1230,9 +1232,10 @@ class KernelDoc:
 >  
->  type_param = KernRe(r"\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
->  
-> +#
-> +# Tests for the beginning of a kerneldoc block in its various forms.
-> +#
-> +doc_block = doc_com + KernRe(r'DOC:\s*(.*)?', cache=False)
-> +doc_begin_data = KernRe(r"^\s*\*?\s*(struct|union|enum|typedef)\b\s*(\w*)", cache = False)
-> +doc_begin_func = KernRe(str(doc_com) +			# initial " * '
-> +                        r"(?:\w+\s*\*\s*)?" + 		# type (not captured)
-> +                        r'(?:define\s+)?' + 		# possible "define" (not captured)
-> +                        r'(\w+)\s*(?:\(\w*\))?\s*' +	# name and optional "(...)"
-> +                        r'(?:[-:].*)?$',		# description (not captured)
-> +                        cache = False)
-> +
->  #
->  # A little helper to get rid of excess white space
->  #
-> @@ -1224,22 +1235,15 @@ class KernelDoc:
->          if doc_decl.search(line):
+>              self.entry.identifier = self.entry.section
+>              self.state = state.DOCBLOCK
+> -            return
+> -
+> -        if doc_decl.search(line):
+> +        #
+> +        # Otherwise we're looking for a normal kerneldoc declaration line.
+> +        #
+> +        elif doc_decl.search(line):
 >              self.entry.identifier = doc_decl.group(1)
 >  
-> -            decl_start = str(doc_com)       # comment block asterisk
-> -            fn_type = r"(?:\w+\s*\*\s*)?"  # type (for non-functions)
-> -            parenthesis = r"(?:\(\w*\))?"   # optional parenthesis on function
-> -            decl_end = r"(?:[-:].*)"         # end of the name part
-> -
 >              # Test for data declaration
-> -            r = KernRe(r"^\s*\*?\s*(struct|union|enum|typedef)\b\s*(\w*)")
-> -            r2 = KernRe(fr"^{decl_start}{fn_type}(?:define\s+)?(\w+)\s*{parenthesis}\s*{decl_end}?$")
-> -            if r.search(line):
-> -                self.entry.decl_type = r.group(1)
-> -                self.entry.identifier = r.group(2)
-> +            if doc_begin_data.search(line):
-> +                self.entry.decl_type = doc_begin_data.group(1)
-> +                self.entry.identifier = doc_begin_data.group(2)
->              #
->              # Look for a function description
->              #
-> -            elif r2.search(line):
-> -                self.entry.identifier = r2.group(1)
-> +            elif doc_begin_func.search(line):
-> +                self.entry.identifier = doc_begin_func.group(1)
->                  self.entry.decl_type = "function"
->              #
->              # We struck out.
+> @@ -1253,15 +1256,19 @@ class KernelDoc:
+>                                f"This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst\n{line}")
+>                  self.state = state.NORMAL
+>                  return
+> -
+> -            self.entry.identifier = self.entry.identifier.strip(" ")
+> -
+> +            #
+> +            # OK, set up for a new kerneldoc entry.
+> +            #
+>              self.state = state.BODY
+> -
+> +            self.entry.identifier = self.entry.identifier.strip(" ")
+>              # if there's no @param blocks need to set up default section here
+>              self.entry.section = SECTION_DEFAULT
+>              self.entry.new_start_line = ln + 1
+> -
+> +            #
+> +            # Find the description portion, which *should* be there but
+> +            # isn't always.
+> +            # (We should be able to capture this from the previous parsing - someday)
+> +            #
+>              r = KernRe("[-:](.*)")
+>              if r.search(line):
+>                  self.entry.declaration_purpose = trim_whitespace(r.group(1))
+> @@ -1282,11 +1289,11 @@ class KernelDoc:
+>                  self.emit_msg(ln,
+>                                f"Scanning doc for {self.entry.decl_type} {self.entry.identifier}",
+>                                    warning=False)
+> -
+> -            return
+> -
+> +        #
+>          # Failed to find an identifier. Emit a warning
+> -        self.emit_msg(ln, f"Cannot find identifier on line:\n{line}")
+> +        #
+> +        else:
+> +            self.emit_msg(ln, f"Cannot find identifier on line:\n{line}")
+>  
+>      def process_body(self, ln, line):
+>          """
 
 
 
