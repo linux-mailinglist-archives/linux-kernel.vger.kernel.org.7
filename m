@@ -1,260 +1,171 @@
-Return-Path: <linux-kernel+bounces-676692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71281AD0FBD
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 22:22:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383F2AD0FC2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 22:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81C1188E5C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 20:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0483AF4E3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 20:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899851F1505;
-	Sat,  7 Jun 2025 20:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1A21FAC59;
+	Sat,  7 Jun 2025 20:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GbFN71i8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="AsrJ72WN"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2862E18DB01
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 20:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7900C1F0E25
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 20:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749327766; cv=none; b=WLshRlAMBmaqqCrWtQnO0e+n/fQIV+xi2/r0/WCSX67jzk35fcu0DfQX/7HZCNMpFt2hopCBQAZ2AchkQVRfL3fzE9mbL0jirOStRhCAItYCLRaQy2S49ncNgHhhhaR21xNtjSxx+kCPt/DCppY7fsmfIwoA5roGXfXu+U4+Mzg=
+	t=1749328086; cv=none; b=Id2c0zT9eT/SLgZAcPMZN0mwvWYm5mi5KGtjqqRXC5skFCSn6RWqv0LuZ9yI8l8Qvb2h5IOYD45VpKNY4+WtHjLOYL7i6NPvZyvqAd9yup/c16T/vo6JuK3wpTnbuAy0aFYjVRVl3ifUalFmLUfqbgfvYiPWl9UQMlZ2qCzzeBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749327766; c=relaxed/simple;
-	bh=AiZtyPMh8GiT5mWCJrUirjBFy0Orj4P67aITlzgsZwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6rtfOQ6da75CS1IvdfmHqF4y2LSbLoqc4x7ju54yCvpP52peutP4Ax+scrh9y/pjhAQTLDxh7aG4l3HuGVvZ5GkETUlXYbkaK6uyw46KOC23dybq2xxZkypBEorAscVtbHRrZGmFKujbAMjkhOV6Tb/LBw+RPFJNhXgY6zebkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GbFN71i8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 557JqSP3000358
-	for <linux-kernel@vger.kernel.org>; Sat, 7 Jun 2025 20:22:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=9fQ3VYWbG/BAlQYpAZbVI/9a
-	TrC0Es4DqbImtN5V4o8=; b=GbFN71i8pj5WsNn36/7wqa6F/WJHtKw+lb9gseEj
-	X1/7nVmS/faKqnMZMM5Ruz5ZJB42Xb0xKmu2BJ/9NM0FJa4fQKscZXDQKfRD98AN
-	WjRAOKuynpFQQN+QQgwZ7T3rmLQhk09e/uNKc04Y7TKHyJ8lr00DJWj4AbtlKJBk
-	1UTCTiIMWdPkR4+njEmUhOBNe2NPu2K5Q82UwSiMYxQ5AZcfyq//pJC3y8rXVhEK
-	MGkHVA6VUTfD84wZ0brbX3J8WulBfMuDAAdK232OEm8WpCdHvabPDDnL1260pjZ/
-	NUBbQu3/Y1xAVa1ZxQYLVAHOkXaU506ynu43FED9JOSHsg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ce9h3cs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 20:22:43 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c955be751aso507198385a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 13:22:43 -0700 (PDT)
+	s=arc-20240116; t=1749328086; c=relaxed/simple;
+	bh=7neKK/LUxYPlYgKjRN/Lyrv3ugJoj6FkgGZxKg3h/qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sOTgDVcsBZX5y5dVGlJls/9TC8aa4Za/+GZQSKXpD2tx0r6vT4ykUETlGt6bRfcA42XFsHfQ+d5WnJ4vU6KwoXDOEIqe5WvHHaDDVmZIfC+dVhwF7Lcr48JehiPdqGxOgJeJNHJyp5vpg+bR5gb9ZBXPdF9yCNL8olm2lSK3Y9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=AsrJ72WN; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2da73155e91so1308914fac.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 13:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749328083; x=1749932883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+L1F7WN7oNU4Rha4L1L/e482m8K2Vmc2Laqvym1FnH4=;
+        b=AsrJ72WNerF5tbq7x4oi8Nlc9KOyvOHacdJ4vNFR8BS6AQv5zVggzrLQ5D4HG1KHAx
+         OjJBUhh+CJMdGn5jV06hLC9RgMqoaSWE3Iv/7fdVuJohhSc4nrvlsItT3Rt6zNku9TKl
+         n932V1FNBKHgNnXOpXhMzSFE1FmMksNMJfUEPG3Qd48VDDkgv02e+fY5jEwbYKAcv4Z+
+         +WjTq1uIPDk6X7sTmnn3HyMk30uV1kx27KCvBt0GnuQYjB6tFsucjSdpxLH2ZUzsWGZy
+         /9Vxe5i57K6RRPGjaRGZBcfy7jhy9fwW6s95YcU1ap0qMzRdLP6zvIaPRUeRZ6A4BXTQ
+         a70g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749327763; x=1749932563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9fQ3VYWbG/BAlQYpAZbVI/9aTrC0Es4DqbImtN5V4o8=;
-        b=PbHBTmx2L16A8983Kfpfh0yTLcEk9NPa97MXgcHdnxJNiEX3gb/de26Lb6C5fLB8uc
-         t7o82tUbFZonMFV9bMd99IkFCa/D72NlggVdpWLhbenqM7wNWr+CQza8XC41i9P81UkV
-         F88xxi2qJoViq1mjculdg8L5kMeYKQCmCelit57LFFaY4+gwIETGzBAPLDmGMb4HVtfl
-         C4w3Qv70xybQHWMqM6LeyBfYkaApL0GZ50AlIJaSJtSsc2/YAztmbL+T0LtHspMavJjw
-         nznOSL3j3pbpURoj8J6vmWNjvxfqz6Vi8oGfSPo2b6Qu6rDLYbXmqvKBWnvkA1oBaGo3
-         rsig==
-X-Forwarded-Encrypted: i=1; AJvYcCWZe/7r6zGwDP63eJrh4ksqKrsTmTjQKBuowqAGhfElESCkuelfUQKwOL4u1UH7j6yan9YiOauiTRSj9Tk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1w8wA159/q4yFwKey27iehgePblKaZGzVzHgAH76FrHbk4LIx
-	AMv5ocKEAYZTodELD0C6VjYOQb/97IJS3XWvrQ49PiB9bNfAT6KfA4TTMKHIHniZ8pNq65jRmon
-	whbkAJQw5xyFmixWKDYldjvc8yLo/SnYUZCuMq3YfJw/0iXKSyv6yKuBQUuesYPVzlr8=
-X-Gm-Gg: ASbGncvb3XWOz5I1bVFaDNlcICPN94ryK8HhKpapnoOT9yu4TXmUUuXX8fehV+hdeQ7
-	bP1qReK1M6vO0qJw9GucKPtszb7HV9Vm/uLf5xweiOvQzGaWBlkhvMBWNGbvXOWYtCLBwbo37jG
-	gkoLNlkAhz2EjJdMAhsEu05vKFLam2IGNr/Ge4uOnowX6REmBvQUH1lG5k+Qa+RHIuy2dagS/YP
-	q6tJKjSXBlb8soFEkc89co7F9hwuu3dffxmmSmlmMK5bpZ2OYCleGB8A3A4fdXqd6vGU7zORBOp
-	LTGTbuw1uNE+7En5IefUe9tOmR0X4WUGir5BNrTcsbuajLwbpfUmD3HZPI0lupqqi+Fo/0L06Iz
-	/Rid952xD3w==
-X-Received: by 2002:a05:620a:29c9:b0:7c7:694e:1ba0 with SMTP id af79cd13be357-7d2298d6f08mr1252521385a.44.1749327763038;
-        Sat, 07 Jun 2025 13:22:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOXMP12xf26oWOoo8b6leKG3z/1PZIJuLYN/LTC+bX+rKHsCW3vr6YCquXQWmxLXKmHYFGRA==
-X-Received: by 2002:a05:620a:29c9:b0:7c7:694e:1ba0 with SMTP id af79cd13be357-7d2298d6f08mr1252518385a.44.1749327762649;
-        Sat, 07 Jun 2025 13:22:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55367731a17sm603347e87.231.2025.06.07.13.22.40
+        d=1e100.net; s=20230601; t=1749328083; x=1749932883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+L1F7WN7oNU4Rha4L1L/e482m8K2Vmc2Laqvym1FnH4=;
+        b=wW1NIDcLoW9kcYgSb5lZKJhkiQ7/2XhfTXohZ94e3uJBVyuRr/2a1ZXkw0uspzDluR
+         WLufY9A1rzU82mOBTlonPTRlVdAwf8vBDJedJBOaw2bJ0AfvJgJJZ6sqGDCK/DzZ8GpF
+         iAne3c69Zic1chFtVxEa4dlpeHK4slE3P8QRjBuDFwVgSyNc7Ct9mJQrpE6jMrTDyvaI
+         N7QZaFy36lXfnnScgcpxb8LmWK12WP0o9y9W27ZEhRNU/2EJonyh0Z67YYCTv+p2GV3X
+         R73drYmNCvK7A2Ej66eYTfUYD2pmbX6l1tubFRescPzTxDY89cGCnxuDcb/Ps9ghg9J4
+         8Ewg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUkOleHlhdrxWPZ7r1JNjK1ShznSSdKVqNBrATolgBkP/ZcFKk/4Pi+I45Oalm6e6vw4uvo1lcd/2MRx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP3VG5PUcLFdKe67tK9r67F+HSgKrdkArIpR7eD18mc7D+h2VW
+	fN3XkpAtb4Gu6iJ2t/SHA4pjsgComjsEFzQ2q2RZv6eERxoGFkcrJGmFWZHxTXaE1Po=
+X-Gm-Gg: ASbGncu/yobPesgDPaLq3/+rqEKvrFHc5YCuQLUczipVryRkJaK3Ekh1xZi7Mp1UBQE
+	FIWKJmZM9RPpfAYJt+Pv7HGA5ZK4VdLPMUeZqv7d4gyWKfWjreqxJOIevdpS2Hf7+EvFEvfyY9c
+	eBXj/5UVo/kOiw6o/cHRUsnnohBhaZ1tQNpbc1GO7f1/k1049b/JWHJ30QO2ESsT+f0yz8ag2Bp
+	QINPASJY71yHFeUFdniD638/EXlx3FJi1b8xdBhFgFLLzwWNedAWa5JxFd6sS+QifNEN1wYhJOW
+	Zcs77tmgAxtevEOJz3WufB7eFopTuxB9kNs6ugBw3LJbXMT9rZuU7/Mvpr1IhFSxi/80iKvlVs5
+	c/xYXSv4xIcJ3CfonbHEOE4kJ5OiPrY8=
+X-Google-Smtp-Source: AGHT+IEvPgGJvDGOrI6eAu5IXXdeG5KtOXQ02AqjXd9yxzuhdNHpWFjKBYNJ0mWoWzWzeLONozHNTA==
+X-Received: by 2002:a05:6870:818f:b0:2e8:ff0e:17d3 with SMTP id 586e51a60fabf-2ea009b7c99mr4489727fac.21.1749328083498;
+        Sat, 07 Jun 2025 13:28:03 -0700 (PDT)
+Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-60f3e46bc17sm747593eaf.0.2025.06.07.13.28.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Jun 2025 13:22:40 -0700 (PDT)
-Date: Sat, 7 Jun 2025 23:22:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@quicinc.com, kernel@oss.qualcomm.com,
-        Pratyush Brahma <quic_pbrahma@quicinc.com>,
-        Prakash Gupta <quic_guptap@quicinc.com>
-Subject: Re: [PATCH v9 2/4] arm64: dts: qcom: iq9: Introduce new memory map
- for qcs9100/qcs9075
-Message-ID: <n3et5jemuiin5c5pwi3r5gycnicxdhrwbmxapnsg2arlwabxcv@7b734qnxwaof>
-References: <20250530092850.631831-1-quic_wasimn@quicinc.com>
- <20250530092850.631831-3-quic_wasimn@quicinc.com>
- <ss3xhat6v3s4ivcypw6fqcmblqait56pqhzwuhzyfhevp4kzlr@5e3f5nwb6lhb>
- <aEATe3pi1SsfZVI3@hu-wasimn-hyd.qualcomm.com>
- <q3hzryk4s7jd4kyavcg7s6d3oyzfpnjy4jhpeluvnikiglbeng@r4ydugwidgv7>
- <aEBzNnnyqt/aZ35r@hu-wasimn-hyd.qualcomm.com>
- <aEKnstzguH7f0A92@hu-wasimn-hyd.qualcomm.com>
+        Sat, 07 Jun 2025 13:28:02 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dlan@gentoo.org,
+	heylenay@4d2.org,
+	inochiama@outlook.com,
+	elder@riscstar.com,
+	linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Guodong Xu <guodong@riscstar.com>
+Subject: [PATCH] clk: spacemit: mark K1 pll1_d8 as critical
+Date: Sat,  7 Jun 2025 15:27:58 -0500
+Message-ID: <20250607202759.4180579-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEKnstzguH7f0A92@hu-wasimn-hyd.qualcomm.com>
-X-Proofpoint-GUID: RWZ2qHRfqyfxMElE1Lm4CQLOdI_SZFzz
-X-Authority-Analysis: v=2.4 cv=drjbC0g4 c=1 sm=1 tr=0 ts=68449f93 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=75EJ9CGrmiedGd2GwnIA:9
- a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: RWZ2qHRfqyfxMElE1Lm4CQLOdI_SZFzz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA3MDE0OCBTYWx0ZWRfX9no7mUQOpCYb
- ODkweUG0KChJ4W52IJhmgWPHur9JMagNkkrrqmI2tJNEdVX6ZZ45mmBkC2l9m3I9QGX54njevCN
- tWvttIp1EcSbz5r+oD2Vh/911Mx7vckXHfwViC1MZNjxhg9ivB/vf/JDjtQCx0zNhw+FMd9fYiC
- /OltTHPlbUIgWqY76U71wtgvuLKHeSrPd3t2iWpXqRE5SLmU/K2zFoaHn0PLxTvrh5xZRh4n1oI
- OEXoWGMYFv6mrFZ54Mm5XqRnX3EMVfgaNSWA6a+whpfBtylDxE3KjZNRR6UIJf8EOablxZyuoIY
- 7R/JV2l14joosu9IGiozAkD0r9JmU2JfvA9ydOqK/YElJmzLKyfuFH9c8CXAeJKRSCoutqTbb+w
- c9kEyg9HkNNzqKKGU6f3P4oZxOBBLu3Yu3o8CCjLyFIhxelAaA9HR5aUp0gARG/hFR0Y2+Xv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-07_09,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506070148
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 06, 2025 at 02:02:50PM +0530, Wasim Nazir wrote:
-> On Wed, Jun 04, 2025 at 09:54:38PM +0530, Wasim Nazir wrote:
-> > On Wed, Jun 04, 2025 at 04:21:46PM +0300, Dmitry Baryshkov wrote:
-> > > On Wed, Jun 04, 2025 at 03:05:55PM +0530, Wasim Nazir wrote:
-> > > > On Mon, Jun 02, 2025 at 10:41:39AM -0500, Bjorn Andersson wrote:
-> > > > > On Fri, May 30, 2025 at 02:58:45PM +0530, Wasim Nazir wrote:
-> > > > > > From: Pratyush Brahma <quic_pbrahma@quicinc.com>
-> > > > > > 
-> > > > > > SA8775P has a memory map which caters to the auto specific requirements.
-> > > > > 
-> > > > > I thought SA8775P was the IoT platform and SA8255P was the automotive
-> > > > > one. Has this changed?
-> > > > 
-> > > > Both SA8775P & SA8255P is for auto but former one is non-SCMI based while
-> > > > the later one is SCMI based chip.
-> > > > 
-> > > > Only IQ9 series of chips (QCS9100 & QCS9075) are for IOT.
-> > > > 
-> > > > > 
-> > > > > > QCS9100 & QCS9075 are its IOT variants (with marketing name as IQ9) which
-> > > > > > inherit the memory map of SA8775P require a slightly different memory
-> > > > > > map as compared to SA8775P auto parts.
-> > > > > > This new memory map is applicable for all the IoT boards which inherit
-> > > > > > the initial SA8775P memory map. This is not applicable for non-IoT
-> > > > > 
-> > > > > Is there are platform out there that actually uses the "initial SA8775P
-> > > > > memory map"?
-> > > > 
-> > > > Yes currently sa8775p-ride and sa8775p-ride-r3 are using initial memory
-> > > > map.
-> > > > 
-> > > > > 
-> > > > > > boards.
-> > > > > > 
-> > > > > > Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
-> > > > > > introduced as part of firmware updates for IoT. The size and base address
-> > > > > > have been updated for video PIL carveout compared to SA8775P since it is
-> > > > > > being brought up for the first time on IoT boards. The base addresses
-> > > > > > of the rest of the PIL carveouts have been updated to accommodate the
-> > > > > > change in size of video since PIL regions are relocatable and their
-> > > > > > functionality is not impacted due to this change. The size of camera
-> > > > > > pil has also been increased without breaking any feature.
-> > > > > > 
-> > > > > > The size of trusted apps carveout has also been reduced since it is
-> > > > > > sufficient to meet IoT requirements. Also, audio_mdf_mem & tz_ffi_mem
-> > > > > > carveout and its corresponding scm reference has been removed as these
-> > > > > > are not required for IoT parts.
-> > > > > > 
-> > > > > > Incorporate these changes in the updated memory map.
-> > > > > > 
-> > > > > > Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
-> > > > > > Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
-> > > > > > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> > > > > > ---
-> > > > > >  .../boot/dts/qcom/iq9-reserved-memory.dtsi    | 113 ++++++++++++++++++
-> > > > > >  1 file changed, 113 insertions(+)
-> > > > > >  create mode 100644 arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
-> > > > > > 
-> > > > > > diff --git a/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi b/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..ff2600eb5e3d
-> > > > > > --- /dev/null
-> > > > > > +++ b/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
-> > > > > 
-> > > > > The naming convention is <soc>-<something>.dtsi and I don't see any
-> > > > > other uses of the "iq9" naming.
-> > > > 
-> > > > As this new memory map is common for IQ9 series of SoC (QCS9100 &
-> > > > QCS9075), so we have used its common name.
-> > > 
-> > > IQ9 name is not known or visible outside of this commit.
-> > 
-> > Are you referring to add the same in cover-letter?
-> > 
-> > > 
-> > > > Once the DT structure for QCS9100 is refactored, we would update this
-> > > > common file there.
-> > > 
-> > > Can you refactor it first?
-> > 
-> > This refactoring involves changes in all the ride/ride-r3 boards which
-> > are based on sa8775p & qcs9100. Even though we had sent v0[1] but we still
-> > need to conclude on the final structure. Since, ethernet is broken in upstream,
-> > we are working on its fix before sending another series.
-> > 
-> > Hence, we want to proceed for iq9075-evk for now and once qcs9100 is
-> > finalized, we can use the memory-map there.
-> > 
-> > But to avoid this dependency and to proceed with iq9075-evk alone,
-> > I can rename it to qcs9075-reserved-memory.dtsi.
-> > 
-> > Let me know if that works here.
-> > 
-> > [1] https://lore.kernel.org/all/20250507065116.353114-1-quic_wasimn@quicinc.com/
-> 
-> Hi Dmitry,
-> 
-> Shall I proceed with qcs9075-reserved-memory.dtsi or do you have any
-> other suggestion that we should discuss?
-> 
-> Aparently, this series is for qcs9075 only so using exact (not common)
-> name also aligns the naming format.
+The pll1_d8 clock is enabled by the boot loader, and is ultimately a
+parent for numerous clocks.  Guodong Xu was recently testing DMA,
+adding a reset property, and discovered that the needed reset was
+not yet ready during initial probe.  It dropped its clock reference,
+which dropped parent references, and along the way it dropped the sole
+reference to pll1_d8 (from its prior clk_get()).  Clock pll1_d8 got
+disabled, which resulted in a non-functioning system.
 
-Squash it into qcs9075.dtsi.
+Mark that clock critical so it doesn't get turned off in this case.
+We might be able to turn this flag off someday, but for now it
+resolves the problem Guodong encountered.
 
-> 
-> > 
-> > > 
-> > > > 
-> > > > > 
-> > > 
-> > > -- 
-> > > With best wishes
-> > > Dmitry
-> > 
-> > Regards,
-> > Wasim
-> 
-> -- 
-> Regards,
-> Wasim
+Define a new macro CCU_FACTOR_GATE_DEFINE() to allow clock flags to
+be supplied for a CCU_FACTOR_GATE clock.
 
+Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
+Signed-off-by: Alex Elder <elder@riscstar.com>
+Tested-by: Guodong Xu <guodong@riscstar.com>
+---
+ drivers/clk/spacemit/ccu-k1.c  |  3 ++-
+ drivers/clk/spacemit/ccu_mix.h | 21 +++++++++++++--------
+ 2 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+index cdde37a052353..df65009a07bb1 100644
+--- a/drivers/clk/spacemit/ccu-k1.c
++++ b/drivers/clk/spacemit/ccu-k1.c
+@@ -170,7 +170,8 @@ CCU_FACTOR_GATE_DEFINE(pll1_d4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(3), 4,
+ CCU_FACTOR_GATE_DEFINE(pll1_d5, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(4), 5, 1);
+ CCU_FACTOR_GATE_DEFINE(pll1_d6, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(5), 6, 1);
+ CCU_FACTOR_GATE_DEFINE(pll1_d7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(6), 7, 1);
+-CCU_FACTOR_GATE_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1);
++CCU_FACTOR_GATE_FLAGS_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1,
++		CLK_IS_CRITICAL);
+ CCU_FACTOR_GATE_DEFINE(pll1_d11_223p4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(15), 11, 1);
+ CCU_FACTOR_GATE_DEFINE(pll1_d13_189, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(16), 13, 1);
+ CCU_FACTOR_GATE_DEFINE(pll1_d23_106p8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(20), 23, 1);
+diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
+index 51d19f5d6aacb..668c8139339e1 100644
+--- a/drivers/clk/spacemit/ccu_mix.h
++++ b/drivers/clk/spacemit/ccu_mix.h
+@@ -101,16 +101,21 @@ static struct ccu_mix _name = {							\
+ 	}									\
+ }
+ 
++#define CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
++			       _mul, _flags)					\
++struct ccu_mix _name = {							\
++	.gate	= CCU_GATE_INIT(_mask_gate),					\
++	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
++	.common = {								\
++		.reg_ctrl	= _reg_ctrl,					\
++		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, _flags)	\
++	}									\
++}
++
+ #define CCU_FACTOR_GATE_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
+ 			       _mul)						\
+-static struct ccu_mix _name = {							\
+-	.gate	= CCU_GATE_INIT(_mask_gate),					\
+-	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
+-	.common = {								\
+-		.reg_ctrl	= _reg_ctrl,					\
+-		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, 0)	\
+-	}									\
+-}
++	CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
++			       _mul, 0)
+ 
+ #define CCU_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl, _shift, _width,		\
+ 			    _mask_gate, _flags)					\
 -- 
-With best wishes
-Dmitry
+2.45.2
+
 
