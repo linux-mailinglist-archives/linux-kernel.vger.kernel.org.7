@@ -1,218 +1,217 @@
-Return-Path: <linux-kernel+bounces-676642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933E2AD0EDE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 20:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93F5AD0EEF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 20:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5427316B61B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 18:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A18A188FCC5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 18:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D870C207DE2;
-	Sat,  7 Jun 2025 18:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAE2219302;
+	Sat,  7 Jun 2025 18:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HK0/gP6x"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pROam3FP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7167D1D5CE8;
-	Sat,  7 Jun 2025 18:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8785202960;
+	Sat,  7 Jun 2025 18:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749321543; cv=none; b=LFPEjskIMEl3eqmISgcxgkZM03hHdJVGQlPsLSuITV0edQin2r6DQ/oKgwvPWDdKq+EQcOk7fYQipqUyKRD3sdeus0/Wi0NoHaYxHpfnSrizsqcvJ/1xj37LxpaikSTjttj81pKJyGGwYiB7q7VnAQfiM2gMp8Cz5YjBBR6Doek=
+	t=1749321734; cv=none; b=UofjH4JerhUsdCXCQlXNrHFOInWIjT9GOnoxkMAFRIl4oPtfefIlf3ljzQMCGX+vxGC0o0s7du4N2JHxoCLg7OjCRMD+OL67mIPUJzAfhbno4+1kGCD0bATFizhZUhopkmz4oS1A5g2RTtQqFz0WGryC+DOfJHInGWgjiPzL8gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749321543; c=relaxed/simple;
-	bh=gSJpUsaZYlEbICcWfKc4Nz/rYj0X8kE4NZyIticpvMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwTfTYeIksi2vv5cUGjTp6/xcEZn5GsGeVF8XqtBtxNfFLYPWkpmDrbvu/D82Rq128CHju3f9stS+b39i+XMDGo7bFAVOvWTKZBKfaiujTgrHBDWBieLvjlLRe4J6QhlRxjCHlvOKMwa7E6mk4J0PCGist4fqpW5Ooz8ixm1l7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HK0/gP6x; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9CFB12EC;
-	Sat,  7 Jun 2025 20:38:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1749321533;
-	bh=gSJpUsaZYlEbICcWfKc4Nz/rYj0X8kE4NZyIticpvMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HK0/gP6xNlwxEzUAEJK0KnSCuB9Ukggj8xI2stI3WPTtR//EQuwQpZsFRr4odrDjg
-	 dP9H5D3l+cL0aYoNN1bs/R0r6G5cV+2mCm5sOthKynOdb2RpAgaqHSF+ujPudVtR5Y
-	 YbTXzqFOothqzGP96AVDBqiVkQUgvEVq3Z2XsU5Q=
-Date: Sat, 7 Jun 2025 21:38:47 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: kieran.bingham@ideasonboard.com, rmfrfs@gmail.com, martink@posteo.de,
-	kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] media: platform: Refactor interrupt status
- registers
-Message-ID: <20250607183847.GD27510@pendragon.ideasonboard.com>
-References: <20250606154414.540290-1-isaac.scott@ideasonboard.com>
- <20250606154414.540290-2-isaac.scott@ideasonboard.com>
+	s=arc-20240116; t=1749321734; c=relaxed/simple;
+	bh=/bdP5Y4XIkeFFzTKAV1RK/3leIObSWu65+5yj+3skYA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WAGUFXmHzOkE3zEGPgYN7F+pGqOh7/rxHTq0Xngt3RDxkv+U1XL4vbBm049q84bRK9nMdUOFrl3wHNHU2lK3a6EK68uOuo+KBFuCrRoAdDKEN65Gbn0Vp38C37byT3/QmUdPVPD2nNI2S1956bX3T3+Fzeznyw7FofwfXM3jU68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pROam3FP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 24832C4CEE4;
+	Sat,  7 Jun 2025 18:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749321734;
+	bh=/bdP5Y4XIkeFFzTKAV1RK/3leIObSWu65+5yj+3skYA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=pROam3FPpojQo9hU28/X3W/rbHg5YVhVQRsUUqSOwC0Ot5OYSPP1/++1MY4XR+xrS
+	 4+rG4S161f28LVH3cKBKHEKvG0reOhoGEhr64r8M7+lDh/7ufkcYC+/ABE/QnCMxX8
+	 sHkiKJufIar98I60q9cSi+LQNBctxc6EUTJBR8tYFo6Y+sRfMlVxeBIvB8RQsEq51r
+	 33d4AN6GDTU/ghDlCuXbLv8BOL22K9lPpR5pHq0/Y4+WmscKrQtagGWULWkboDU16X
+	 oL5TNCahsjePhQH0hN0X42r+N+K5SsvZ58Mn4+QFb0v2E7foSU76ilwtMd/kIMQ9KR
+	 bZujgXvC+Kf5g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1232BC61CE8;
+	Sat,  7 Jun 2025 18:42:14 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v5 0/4] arm64: dts: qcom: Add Lenovo ThinkBook 16 device
+ tree
+Date: Sat, 07 Jun 2025 20:41:58 +0200
+Message-Id: <20250607-tb16-dt-v5-0-ae493364f525@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250606154414.540290-2-isaac.scott@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPaHRGgC/33OywrCMBCF4VeRrI1kcmvqyvcQFzYztYFipKnFC
+ 313Y0HbjS7/w/AxT5aoC5TYdvVkHQ0hhXjOYdYr5pvj+UQ8YG4mhTTCAPC+Asux5+S010qhKyp
+ g+frSUR1uk7Q/5G5C6mN3n+AB3uvHMF9jAC44euO0PUrjtdvFFpNvYmxTbK99/iVtqvBgb3CQS
+ 8TOiMxI4XVZWjSO0P5F1AKRekZURqAgabFUhgr1F9E/EJ0R6YGsAIeqFj+RcRxfra9QAnoBAAA
+ =
+X-Change-ID: 20250511-tb16-dt-e84c433d87b1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749321732; l=5507;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=/bdP5Y4XIkeFFzTKAV1RK/3leIObSWu65+5yj+3skYA=;
+ b=qu7Mu3ZpUTkmFFfiYvRG/H02cRBGAxbtrro34NWY+SJNzN8u3TPWLlhM/DwNOvg8RkPEcTd6H
+ G71iwbbsh/+B/sOx40Dgb4inmrESsjccHknfn7tQn/7UaU/PH4OOmOz
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-Hi Isaac,
+Device tree for the Lenovo Thinkbook 16 G7 QOY
 
-Thank you for the patch.
+The Laptop is a Snapdragon X1 / X1 Plus (Purwa) based device [1].
 
-The subject line should start with "media: imx-mipi-csis: ".
+Supported features:
 
-On Fri, Jun 06, 2025 at 04:44:13PM +0100, Isaac Scott wrote:
-> The NXP i.MX 8 MP CSI-2 receiver features multiple interrupt and debug
-> status sources which span multiple registers. The driver currently
-> supports two interrupt source registers, and attributes the
-> mipi_csis_event event entries to those registers through a boolean debug
-> field that indicate if the event relates to the main interrupt status
-> (false) or debug interrupt status (true) register. To make it easier to
-> add new event fields, replace the debug bool with a 'status index'
-> integer than indicates the index of the corresponding status register.
-> 
-> Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> ---
-> 
-> Changes since v1:
-> - Switched from magic numbers to enum.
-> ---
->  drivers/media/platform/nxp/imx-mipi-csis.c | 69 +++++++++++-----------
->  1 file changed, 36 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-> index d060eadebc7a..394987d72c64 100644
-> --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> @@ -248,8 +248,13 @@
->  #define MIPI_CSI2_DATA_TYPE_RAW14		0x2d
->  #define MIPI_CSI2_DATA_TYPE_USER(x)		(0x30 + (x))
->  
-> +enum mipi_csis_event_type {
-> +	MAIN = 0,
-> +	DEBUG = 1,
+- USB type-c and type-a ports
+- Keyboard
+- Touchpad (all that are described in the dsdt)
+- Touchscreen (described in the dsdt, no known SKUss)
+- Display including PWM backlight control
+- PCIe devices
+- nvme
+- SDHC card reader
+- ath12k WCN7850 Wifi and Bluetooth
+- ADSP and CDSP
+- GPIO keys (Lid switch)
+- Sound via internal speakers / DMIC / USB / headphone jack
+- DP Altmode with 2 lanes (as all of these still do)
+- Integrated fingerprint reader (FPC)
+- Integrated UVC camera
 
-Those names are too generic and prone to namespace clashes.
-MIPI_CSIS_EVENT_TYPE_MAIN and MIPI_CSIS_EVENT_TYPE_DEBUG would be
-better.
+Not supported yet:
 
-No need to resubmit for this, I'll update the code when applying.
+- HDMI port.
+- EC and some fn hotkeys.
 
-> +};
-> +
->  struct mipi_csis_event {
-> -	bool debug;
-> +	enum mipi_csis_event_type status_index;
->  	u32 mask;
->  	const char * const name;
->  	unsigned int counter;
-> @@ -257,30 +262,30 @@ struct mipi_csis_event {
->  
->  static const struct mipi_csis_event mipi_csis_events[] = {
->  	/* Errors */
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_SOT_HS,		"SOT Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_LOST_FS,		"Lost Frame Start Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_LOST_FE,		"Lost Frame End Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_OVER,		"FIFO Overflow Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_WRONG_CFG,	"Wrong Configuration Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_ECC,		"ECC Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_CRC,		"CRC Error" },
-> -	{ false, MIPI_CSIS_INT_SRC_ERR_UNKNOWN,		"Unknown Error" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_DT_NOT_SUPPORT,	"Data Type Not Supported" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_DT_IGNORE,	"Data Type Ignored" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_ERR_FRAME_SIZE,	"Frame Size Error" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_TRUNCATED_FRAME,	"Truncated Frame" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_EARLY_FE,	"Early Frame End" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_EARLY_FS,	"Early Frame Start" },
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_SOT_HS,			"SOT Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_LOST_FS,			"Lost Frame Start Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_LOST_FE,			"Lost Frame End Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_OVER,			"FIFO Overflow Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_WRONG_CFG,		"Wrong Configuration Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_ECC,			"ECC Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_CRC,			"CRC Error"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ERR_UNKNOWN,			"Unknown Error"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_DT_NOT_SUPPORT,		"Data Type Not Supported"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_DT_IGNORE,		"Data Type Ignored"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_ERR_FRAME_SIZE,		"Frame Size Error"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_TRUNCATED_FRAME,	"Truncated Frame"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_EARLY_FE,		"Early Frame End"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_EARLY_FS,		"Early Frame Start"},
->  	/* Non-image data receive events */
-> -	{ false, MIPI_CSIS_INT_SRC_EVEN_BEFORE,		"Non-image data before even frame" },
-> -	{ false, MIPI_CSIS_INT_SRC_EVEN_AFTER,		"Non-image data after even frame" },
-> -	{ false, MIPI_CSIS_INT_SRC_ODD_BEFORE,		"Non-image data before odd frame" },
-> -	{ false, MIPI_CSIS_INT_SRC_ODD_AFTER,		"Non-image data after odd frame" },
-> +	{ MAIN, MIPI_CSIS_INT_SRC_EVEN_BEFORE,			"Non-image data before even frame"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_EVEN_AFTER,			"Non-image data after even frame"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ODD_BEFORE,			"Non-image data before odd frame"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_ODD_AFTER,			"Non-image data after odd frame"},
->  	/* Frame start/end */
-> -	{ false, MIPI_CSIS_INT_SRC_FRAME_START,		"Frame Start" },
-> -	{ false, MIPI_CSIS_INT_SRC_FRAME_END,		"Frame End" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_FALL,	"VSYNC Falling Edge" },
-> -	{ true, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_RISE,	"VSYNC Rising Edge" },
-> +	{ MAIN, MIPI_CSIS_INT_SRC_FRAME_START,			"Frame Start"},
-> +	{ MAIN, MIPI_CSIS_INT_SRC_FRAME_END,			"Frame End"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_FALL,		"VSYNC Falling Edge"},
-> +	{ DEBUG, MIPI_CSIS_DBG_INTR_SRC_CAM_VSYNC_RISE,		"VSYNC Rising Edge"},
->  };
->  
->  #define MIPI_CSIS_NUM_EVENTS ARRAY_SIZE(mipi_csis_events)
-> @@ -765,32 +770,30 @@ static irqreturn_t mipi_csis_irq_handler(int irq, void *dev_id)
->  	struct mipi_csis_device *csis = dev_id;
->  	unsigned long flags;
->  	unsigned int i;
-> -	u32 status;
-> -	u32 dbg_status;
-> +	u32 status[2];
->  
-> -	status = mipi_csis_read(csis, MIPI_CSIS_INT_SRC);
-> -	dbg_status = mipi_csis_read(csis, MIPI_CSIS_DBG_INTR_SRC);
-> +	status[MAIN] = mipi_csis_read(csis, MIPI_CSIS_INT_SRC);
-> +	status[DEBUG] = mipi_csis_read(csis, MIPI_CSIS_DBG_INTR_SRC);
->  
->  	spin_lock_irqsave(&csis->slock, flags);
->  
->  	/* Update the event/error counters */
-> -	if ((status & MIPI_CSIS_INT_SRC_ERRORS) || csis->debug.enable) {
-> +	if ((status[MAIN] & MIPI_CSIS_INT_SRC_ERRORS) || csis->debug.enable) {
->  		for (i = 0; i < MIPI_CSIS_NUM_EVENTS; i++) {
->  			struct mipi_csis_event *event = &csis->events[i];
->  
-> -			if ((!event->debug && (status & event->mask)) ||
-> -			    (event->debug && (dbg_status & event->mask)))
-> +			if (status[event->status_index] & event->mask)
->  				event->counter++;
->  		}
->  	}
->  
-> -	if (status & MIPI_CSIS_INT_SRC_FRAME_START)
-> +	if (status[MAIN] & MIPI_CSIS_INT_SRC_FRAME_START)
->  		mipi_csis_queue_event_sof(csis);
->  
->  	spin_unlock_irqrestore(&csis->slock, flags);
->  
-> -	mipi_csis_write(csis, MIPI_CSIS_INT_SRC, status);
-> -	mipi_csis_write(csis, MIPI_CSIS_DBG_INTR_SRC, dbg_status);
-> +	mipi_csis_write(csis, MIPI_CSIS_INT_SRC, status[MAIN]);
-> +	mipi_csis_write(csis, MIPI_CSIS_DBG_INTR_SRC, status[DEBUG]);
->  
->  	return IRQ_HANDLED;
->  }
+Limited support yet:
 
+- SDHC card reader is based on the on-chip sdhc_2 controller, but the driver from
+the Snapdragon Dev Kit is only a partial match. It can do normal slow sd cards,
+but not UHS-I (SD104) and UHS-II.
+
+- The GPU is not yet supported. Graphics is only software rendered. However, the 
+node is defined and active since the available of the X1-45 support is soon-ish
+and the Laptop boots with it enabled, too.
+
+Notes:
+
+- Putting the camera behind usb_2_dwc3 results in the camera switched of after 30 
+seconds. With the stand-alone node as previously defined it stays usable and 
+suspends, as intended. Sincethe sole reason for the USB camera to be in the 
+devicetree is the required extra supply (which is guessed, as mentioned), and
+its handling by power management, I would propose to keep it this way.
+
+- The gpi_dma nodes appear to be implicitly enabled when a serial device is used.
+I added them, no change in behaviour, though. Since this would be the only X1 
+device adding them afaik, I left them out.
+
+- The cma-memory is removed, it is not on all x1 devices as I assumed. 
+Haven't found a case where it is required.
+
+- i2c2 defines the keyboard and 4 different touchpad interfaces. With the bundling
+of the pinctrl it seems to work better. I've had issues with only clock and touchpad
+pinctrl on the i2c2 node, and not keyboard.
+
+This work was done without any schematics or non-public knowledge of the device.
+So, it is based on the existing x1 device trees, dsdt analysis, using HWInfo
+ARM64, and pure guesswork. It has been confirmed, however, that the device really
+has 4 NXP PTN3222 eUSB2 repeaters, one of which doesn't have a reset GPIO (eusb5
+@43).
+
+I have brought up the Thinkbook over the last 4 months since the x1p42100-crd
+patches were available. The laptop is very usable now, and quite solid as a dev/
+test platform. GPU support would be nice, though :)
+
+Big thanks to Aleksandrs Vinarskis for helping (and sort of persisting) on the
+fingerprint, camera and HDMI issues.
+
+[1]: https://psref.lenovo.com/syspool/Sys/PDF/ThinkBook/ThinkBook_16_G7_QOY/ThinkBook_16_G7_QOY_Spec.pdf
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v5:
+- removed patch for the CMN N160JCE-ELL panel, got reviewed
+- re-ordered code in onboard_usb_dev as requested by Dmitry Baryshkov
+- amended device tree with review notes from Dmitry Baryshkov where possible
+  and resuting in a working laptop - added notes section
+- Link to v4: https://lore.kernel.org/r/20250524-tb16-dt-v4-0-2c1e6018d3f0@oldschoolsolutions.biz
+
+Changes in v4:
+- squashed Makefile and dts commits to one
+- picked up r-b from Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+- Link to v3: https://lore.kernel.org/r/20250524-tb16-dt-v3-0-17e26d935e73@oldschoolsolutions.biz
+
+Changes in v3:
+- removed changes in x1e80100.dtsi and x1p42100.dtsi - resolved with [2]
+- fixed schema errors with correct compatible string for the model
+- added power management for the camera via onboard_usb_dev.c
+- amended node ordering
+- changed the panel driver used to edp-panel, added panel in the driver
+- amended x1e80100.dtsi for exposing PM8010: This one is not present in the design, 
+  added /delete-node/ for it.
+- removed commented-out lines for sdhc, specified which don't work.
+- corrected ZAP shader firmware name
+- Link to v2: https://lore.kernel.org/r/20250516-tb16-dt-v2-0-7c4996d58ed6@oldschoolsolutions.biz
+
+Changes in v2:
+- removed nodes that gave DTC compile errors (pm8010_thermal, edp0_hpd_active)
+- amended qcom.yaml
+- shortened the commit titles to fit 75 chars
+- Link to v1: https://lore.kernel.org/r/20250515-tb16-dt-v1-0-dc5846a25c48@oldschoolsolutions.biz
+
+[2]: 20250520-topic-x1p4_tsens-v2-1-9687b789a4fb@oss.qualcomm.com
+
+---
+Jens Glathe (4):
+      dt-bindings: arm: qcom: Add Lenovo TB16 support
+      usb: misc: onboard_usb_dev: Add Bison Electronics Inc. Integrated Camera
+      firmware: qcom: scm: Allow QSEECOM on Lenovo Thinkbook 16
+      arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY device tree
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |    2 +-
+ .../boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts | 1648 ++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |    1 +
+ drivers/usb/misc/onboard_usb_dev.c                 |    2 +
+ drivers/usb/misc/onboard_usb_dev.h                 |    8 +
+ 7 files changed, 1663 insertions(+), 1 deletion(-)
+---
+base-commit: 475c850a7fdd0915b856173186d5922899d65686
+change-id: 20250511-tb16-dt-e84c433d87b1
+
+Best regards,
 -- 
-Regards,
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-Laurent Pinchart
+
 
