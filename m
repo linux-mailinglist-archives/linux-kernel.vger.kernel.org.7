@@ -1,231 +1,163 @@
-Return-Path: <linux-kernel+bounces-676313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E1DAD0AB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 02:47:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749EFAD0AC8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 03:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2E51682C8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 00:47:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 496107A977F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 01:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94A01EB2F;
-	Sat,  7 Jun 2025 00:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF224241698;
+	Sat,  7 Jun 2025 01:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqqlxsc3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="X8LQuLNX"
+Received: from sonic310-31.consmr.mail.ne1.yahoo.com (sonic310-31.consmr.mail.ne1.yahoo.com [66.163.186.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E98D2FF
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 00:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749257266; cv=fail; b=TZkDDmFyFbNLmb6SbVgWd5B6V8nXnOjtq0gtshPinmqRd0CAx850N0XKDegJQcjLG+xJuW6cVEkuipp8C85HhLPnlbMWWcZ3A+4i1Z6ddGOAEXjfF3XuiwYXVC7b2+UscB2+oLwoyYotclYkOiy1YTBnSVqRKvbJ8mRr7lT64bo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749257266; c=relaxed/simple;
-	bh=2va6wLJ8Y+EiOi/kbzBfJzrAD5FD6snlIpF4efYUpLE=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=eFjnH/ckRaB4lr/YjvzTkIBGwEFQQIrV8fFIrYx+FLmq+W9MhEjR/4jpcbxTo2sGKvuJvUmMaPynBAdSB/GTxu5sZZoggRuPkzX3TRoDMY46V9GNHR2+P+CIlyA8mjqlxKYpgh3VwvEDfw/KJWQW2LF5DwjbMOkShP2sTTTTdnk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqqlxsc3; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749257264; x=1780793264;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=2va6wLJ8Y+EiOi/kbzBfJzrAD5FD6snlIpF4efYUpLE=;
-  b=dqqlxsc32YHsjUjReEdj4b9AyftR5s6n7idIGap/h5UySI8JPlzqxvGl
-   l4hHD8Ah4gyxpzJHoC5giOqfh4OEPiBEwBXCtukENl28hR5bKW1uqkGGg
-   3Be2OCgfxmY0QGmsaSyJl0rG6tCv+mLM6YERuqBK17pYwJIxzSvbjL1zy
-   ANw3xIipVViTjQv4Wv6cIdMNR0AvQdGcb9DAGwZabRFHrX4dw81f+9l1+
-   fKtbalYIoSaPQdgy3vFwzOvN3UYxbeJQwO6TviLRw85ZfWJaxKVNG0XR3
-   YKwMYQ3XW3cAL4nJeHDpsT/JfAWtd/BraGzA+q8DfrIA9BCWppKbNHphq
-   w==;
-X-CSE-ConnectionGUID: QrT2ptirRcm2VjXOoqKHkg==
-X-CSE-MsgGUID: HAH74+0PTY+pVXqiL8cqeg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="54044363"
-X-IronPort-AV: E=Sophos;i="6.16,216,1744095600"; 
-   d="scan'208";a="54044363"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 17:47:43 -0700
-X-CSE-ConnectionGUID: zCy/WvJoRZinbT3TaosUEg==
-X-CSE-MsgGUID: Nj/fHiplRFGbAvnEq3FccQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,216,1744095600"; 
-   d="scan'208";a="146911678"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 17:47:43 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 6 Jun 2025 17:47:42 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 6 Jun 2025 17:47:42 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.70)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Fri, 6 Jun 2025 17:47:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I/hNbkeqo5d3rDhGtC3NBCUbhc75p0OurJY7b1vsccW/y9Aq0wPjs9+x1bdMXXjyx10VhxGOLvFLUPJDe6SrP1az9HIZjHybWVJNg2cnYvXZ+HOz2eScSbW6cATrSgb9fgt56wMCDOLHwh6IYrAC4CUl5KdorM7/1H6mctOtS5GTlHYOaJPMCzN9hNEH/ZyKZtUZ+ZTb0gQMMljSb3AwHWptKOISw01jtuELcb6NvfHo1trONwYVoeYIybTwW6KyJEamb6fqACacUjoUEjHkhA8Mpi/1CFaoSE0RDJM1jvN9m4/vh7d9vE8zOwxytuQ2U+5gpY/u1Mc4/yiAOsHC0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FlgGA3N6PCyuprIlyboELsvuUAYzHOJKTtwVfkhwb3o=;
- b=d4AJt808tDJogWzpeqfJE8+6mTh+Bcs9M8HogDzGhNWkzCTFkQgs1R3eoZbtEK2flVR80oyvXflv/Aoo8lOQ9lqU1jQ9L5Q1YW3YFog4wKor3dT0qQuvlnEWg8P4RKWHNUT3ykJj/TWGnA1QNpOmbwf6haqIrvRdeXs3/wvYS9020M7P9rKxS4qDBHPmIp15d0LtSv6I6yxYhYchBoYOmvCm6zQxJNu7mO5P4u5Ddd6DVRLlKkvMTdxz/IMPhwgM/ok221aqrKAPy1vy7AE4Rm5E1anCbzOf80XX8rZec5sMrUL/0aw1TsCG1UZ0eZbOuFGLsioHnEg80KjVlMT6pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB5674.namprd11.prod.outlook.com (2603:10b6:510:ec::10)
- by MN6PR11MB8193.namprd11.prod.outlook.com (2603:10b6:208:47a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Sat, 7 Jun
- 2025 00:47:32 +0000
-Received: from PH0PR11MB5674.namprd11.prod.outlook.com
- ([fe80::77d3:dfb2:3bd:e02a]) by PH0PR11MB5674.namprd11.prod.outlook.com
- ([fe80::77d3:dfb2:3bd:e02a%4]) with mapi id 15.20.8813.021; Sat, 7 Jun 2025
- 00:47:32 +0000
-Date: Sat, 7 Jun 2025 08:47:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: ld.lld: error: Function Import: link error: linking module flags
- 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at
- 870780), and 'i32 1' from vmlinux.a(mballoc.o at 901800)
-Message-ID: <aEOMHCHD62EaNZb5@rli9-mobl>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2PR04CA0157.apcprd04.prod.outlook.com (2603:1096:4::19)
- To PH0PR11MB5674.namprd11.prod.outlook.com (2603:10b6:510:ec::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D7822F759
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 01:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.212
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749258719; cv=none; b=jKn/Ikx56oUNxMr/ZAiP+l8qn0gSlWxr+gZzbCJ2xvtDeT/lvtLfz3jLENid7xKWZ+bw6ObLxi0heTIlTS5/ROUGWnriz9ygQ6zVdgeRFPap3i9KZK9hyWZx1BXKMyg4mcDkkufhV6XjQpJF4srlWTe6GFD9M1SZ3yhSx47bJ3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749258719; c=relaxed/simple;
+	bh=35O3bnvh5n4X7Z+GZimBknXeddsK3bvrowCSOAosKEQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=dLQ/KJoJG3ePJMclEDhB+rOGivccOV2SGwkmuRuZPib0PA3QvWoVx08RZ4BpKZOV7HQQG59mqRw5T1bWQpi6zVC6ANaJbL3ybo+o4/kBNeK1umjURwS9vO8lSoS1dPaSBQKK418pGf6HY8ntQl4/Alc7rq/VzCQASFka9P7h/Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=X8LQuLNX; arc=none smtp.client-ip=66.163.186.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749258715; bh=HwtOuxPXkaV/TM2242shxO68DjffLsvsEmfEB27DYkg=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=X8LQuLNX6Ph6gwcZArOI1JvzsRa0BSDauSyUDiU/fL7unqqkYsOw4Jw+C9eOmIwjNqEuoqAduKLEVj6tiA4wbwFbq7KhLATnFjworPr3Hnb9vALrP9zPkaQaaNdZWpfy3TdFtSInpPH+21aFEUO77wreaxnz3rMbNw0wZg9k3IkLpnw50Fdf/DgBU5TeTTr4Lb6m0kYZTA6PacSebD7FUK12X8iqRsHOhE5iQxyhkHQ2A+a3B0SaxaxAeVzp9Yxcn7wvmJ7FXKV5/UyvyJtGaIdypzQBM39qfN3qnZEZoJrl0Pb5xb+k18GZ8IbN5mAwDf+QcOXexe6jqFbSL4SGHQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1749258715; bh=jELRAThWNpiL45XHmUd14TcQzuLvn+o/1Mwue3en9Yl=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qDtNhPL4C0YP4+YlzFj1pAM/mxYNLMKaRZBMzVrsr8AVhgynxnI7ebnULOgZ6V7nJ3J+UvvvxUtTTgE9lmksZavc0C3KaORKhBKrP77up5X0/Q5hEJBfYFt8Ewb9CPXaYrwXJWM588pcISZaidhxyoiv9eYw3D/z0jzFntj/UmobubD+1bYkM5yklppfj9GK+kQIngp2B3EPRkhhaBEnaw23QZ1WGaQnXowI2GF4HH53ZsMz8czQjH4x5orgA/rkCeVGXnwqimXj96azxu8h4athH2QzgrXoA5iGOp0xx7C+LufK/qWEQyjsA0qCPBxnsEqIteNG403YFoNj6LJqQA==
+X-YMail-OSG: t_GdkHkVM1kSZv1FgANrhhX_HY_7cbs5uXKukcJ4EqkZpoTjNGSJMwiqKNSOeWP
+ kIr6ZaNO8f6.cWpG6Aa0Q4QiNashurIEunM3I1D4d0zlzeGoGhxgDY4ndRvla_Spl7jcwaaEPh2O
+ bBFfdSssZGswB3KL7_NCV8iBHFslewHvTsI0OkbKQTyU06nV4WYBpM1wM9mJvBhdGAxEorgIZ2WC
+ _xVboA2IKU7JLSwEzAZ2z1KsVp.RvzwvjOmGpVHkbuJmjeCpDQ0fWkevSICOf7VqbdL3N7k0lrHu
+ Uk6z3Q.eWqioqiP.mojswzZdqYgHLWz2NAKNjLCp_8CPvGwduqvVU7vzoVbQ_iGcHAf.PL7pWJ_3
+ WOB5rX.kENeu5fkim7zgMO03ocneyfIh9c4mEVgMIPM0IL4oaWJ0WvRRT3NWztgvmZZ3I.d80vDd
+ 02cxXT8UsKRpBBmQvAiDJrngbCrHDh3E0uTinfU7NnxHlYr1I6P1Hi_gbvDbP8DANINy4wFulCe1
+ pYQQ1JJa9AUeftFUJRLu4kUhw_Lmow5quq38m0iFQNlIOQmkvUh42rZjZnhkoEEU4mGvNMSi8OmQ
+ Hj70CX7gwwUyudmlUeEi3v4xi.qp1ji0JE9XDuvBNISlFsic_oSvcx5MvjY_cKG8qsLYwYBZJ8BO
+ UkODPJ3JoqmEiItBLTcGgF1OPK7viW3rvrSAvmD8EfEe10H1ioiXs2wMN6q3kqD7skwLR6ZbijMD
+ 6g8kDnwGoSkj2qx37r.SSC.H0Gamn4Ry4euioM908q7U8UsnzAuEKJ12pkL81mFIAn7TalZqZnvU
+ GgE36EJfE0BFkXOhSd52Yc2D6ftSvXBCCfMkmRrtZgyuiYlXVOdA81_RmOGDw4DI_LJJCW4pvVHF
+ 3iVsVb6nclL1PijKA17dLaDT7Z8mqr.CArWS0bCG7esQAY9vndXak.nRP1J2P7i1W7maZdJ6j5He
+ 7FT_cY8ohPaYTqxk6amH9p93E6uAHwP9J2F_QrwqRjN3jXSwwX7eUNArpr92rV0W79xraWLBuoHR
+ LlehxRN9NW_tDdaQhGtnXO6H__zVtop_xocxyN29S0e4V12mffqr_.rX3SZAszZbi2BTr92I6C.2
+ koSKasyYygAD25BCZmftBz0E6jc1H1x2JodIoY4l19afOjr0yqJu_aOM4bIkngozQkv2c5KJv8au
+ 5gahevqdAv0VinphxVN6rlGyQz7KbLFuwReadbqPs3tv5LoTFBFMA8KvlypTipD1RjA8mkG7_oQg
+ ANupQFV2qR9ng57sc97kIwsIrCNPTgN8z8Qh9ToKbqBi2wd2YHJXmj4asPJ9BrJ8blUxroi33kPv
+ zPR8HmJL2l6wpgIPwyAt7.oYS8s.I3ZqiDXbja_spdwWyRwYociZPBMUbz6Bul9tloNCDKqtaeVQ
+ P9ZO20d9X6aYtfOr9PSw1wGxstjWYUcpMcjDgzHEKTaDDiinJ1zHhUS4KSvcLqIXhku3PiTrXDzD
+ sZjEap_84mvRw5sdqzh.1MxRxn6lWliLNXKpj.1mvMJW9sW7sibrkMffpSeGtrK2TTAA6HtQzhuF
+ o7yGhm_QnhEpJ6_BKb.GY4UyNbAUBaJDrWRoZmT3.SR6YVlfXQIy5P_V_18ftuyLA_k0qDcJV8W7
+ No1e1_nGXE7Xu.H7eA51D94Vdxj1MtVTR243w7NsWWrNFPFy8tksAvZKTZH_fmcaJ5Avj8k24Q4j
+ wdyzAPFCX9IQJu2nHU40a3NHMPcxvpGZKlUWuay27Hi4JLF1aIHx3ZmQB67Wl56BtPc94e2e63eY
+ UZefpl9bgxy.ktAGEjb79.QS_JDYu7tdUuDTjvUs76bLrdM4mbAo4kgb55DIoWdS.2kbaZYoksi1
+ xnGEoTxnfFps_aFespY.dteVjSRoRZhS97Yl2tWE9ImH4a_XZrKLijnze.XHvgK36a2E.Mz3bnom
+ JptF5ImsLwJpj0FGtO1zieaoRT7RuvEwwrkPH8ATtigNpzJtZYEF5GrNBOA4yvATx6KSl0B7uuIR
+ SB.EajGU_x5sIv68v28raJhwd2PZsZP.MXk9oeF6fft668ripdf9SvzmP75P3yREZhzFjCNvaGYQ
+ _4GHFCN4fJSRmcSSLB7ZbWg4OeP79v0f9VIi0Dq0k.WjUm0hz7fZRd4kxwHLk1RpZt2dxDac5I61
+ TPJtsnxsySds4nX_qN.DLrLbUJH0fHGuEXMtLxvUAJLO1I7OJu0WgnKBMx2v.lIU3MHFeEmlR_bk
+ SkK_HyPGvfRCwZWMEtRWZTa5Jf9VM0SSz4TYe9n8d7.Qu2YH6EO.FEKmXyXlbUArdZHvbDYf2QNj
+ 8VhIdluHQPSlJvCyH8rEteWQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: b9ab1a19-93bb-4016-adc2-9fecbd8da5fb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Sat, 7 Jun 2025 01:11:55 +0000
+Received: by hermes--production-gq1-74d64bb7d7-5qmwx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7461f2feac0d1a8decd03521522bae75;
+          Sat, 07 Jun 2025 00:51:38 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v4 0/4] Audit: Records for multiple security contexts
+Date: Fri,  6 Jun 2025 17:51:30 -0700
+Message-ID: <20250607005134.10488-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB5674:EE_|MN6PR11MB8193:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1cb2dc9a-88fa-4acc-8620-08dda55ce320
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?oFtW26fk8tvVElm4eCkHBZXL+3u+qi0Aj3NAkv8PChahecKn3+3gn0G0Jrd8?=
- =?us-ascii?Q?Hmt87zv3EQAGb6wFN94vDQuvB4+iGdSRwHAr2mCKlWwY0FB8g442NWG46Di1?=
- =?us-ascii?Q?RNeO5Aqag/KWFNgtNCND7rcejI4CkACR+Ov7OdjOlsVhDgfnHXbwwreLpleP?=
- =?us-ascii?Q?tXOy6eMKpLj7TrorloWui8kSdyh4dGtTy+mUtIkaEJs1zlSxHyXKDM9vH1vh?=
- =?us-ascii?Q?nOV7tSL3iPrAf6JVnLb5dZjjGmqeu04SVx4kfl/XhrTkifQ8kU/D/8ek1AAS?=
- =?us-ascii?Q?ZBVAGGfeKba5+QSI8ppvU3OzQPm3xPEQPHLa8L8zd6jhJHTmlFnMgD7yUDof?=
- =?us-ascii?Q?7/TtSW3eViIs+e4UgOuJ0DYGeNPLRxiKalFOxJjjeWEnnz0houMtyRwrQc2s?=
- =?us-ascii?Q?LRUMgbZw24AOr99pDwQX5SgMQNc8gpToQP0959LnhUi67I3AUiqkwkrvSfp6?=
- =?us-ascii?Q?HnSgw6spsVZjaGZF7fOdej2DD4MA7LPVksvYdy9y7eAvlAODkTSEC1Et5sTW?=
- =?us-ascii?Q?9yp5AYkfz3wf5ELD2U/ekWRA7UXdyGXNL8SpnHyGzLVds6QJZ2u/5sNTOtSg?=
- =?us-ascii?Q?LgUtXju1vjPFygl4prt9GtI8SJpnlR0TpgJoo/WMPEMZ39iYMRJYZGaKGkwB?=
- =?us-ascii?Q?iTifFQC/uf67m1W+OD6laEf+utNYY1Cibpz9jV8WJLiEW4NpKidewtt0bIdc?=
- =?us-ascii?Q?QKkmTMOQbaoz3bWACZ0Vp7hB/9pQyLAe75rKacwFySYLtB/vO/Yn2SZhNLW3?=
- =?us-ascii?Q?evTu0LY2ex6uiAFs3iPgJRqhlj0y9QvaqATkGwHvdBbKXL6NKWzdDKWbc/D9?=
- =?us-ascii?Q?xB+Ivamj6tr2sml/VW3J6eOMXoXEiPWDhtYz8h4BbpH/wao1GPkLaDUJM1f2?=
- =?us-ascii?Q?9kJz9Wx465CWxZZ9h2BN/SOWdMBayn+k4jbd+SAmXChKFV8r4zEs8v+qWS+D?=
- =?us-ascii?Q?8btAW/WPY6/BNmZ2fKW8cuT0y1nYnU+zHPthOKcyo/lIwFI6g7sl8O+dIcJ4?=
- =?us-ascii?Q?kM6ak9y4dGHjm/b5SmDkLb8VF/kkXDE6nVbw7tc6zrwpmnL/L1lrl3bln0dv?=
- =?us-ascii?Q?HeCIWAdAYNE9PdAAF5DiHq1UFQY6rmcYDer821jkPXWtbSjG+KLhUqqbnoRv?=
- =?us-ascii?Q?aRG61We/HPPB5KBpNPfuP4XwxSDo15ST52Pm3q7gwbZ/MbWKscxnXwJ9pXnY?=
- =?us-ascii?Q?+rEGL3ZvM9Jgf1e+qPHKN6z3eMb4D7oUMVNxuxzbNdMDhE8DYt1MH3/byJ2x?=
- =?us-ascii?Q?wMCCEf4jHRJv04vsQ8Zyu/ooVYwf/PoCuqzDmljLIzCEcb/8QPiO+RwMgVdJ?=
- =?us-ascii?Q?BXkB8VXpgHOhXdPZZiYHsR0Y4jpTUcVaR5iNZuUZPQ+mrVm1R7OGzxpG9Bt8?=
- =?us-ascii?Q?k2us7FxPEH2Jd+X+3vzjULI4+6hE?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5674.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BF/FZOotXUpP2xqoTU2KZXCmVKPOWF1bSFQuVCz0vGUxQWEYFhtjgpVwUMBq?=
- =?us-ascii?Q?hC+jXmtcTp/Wgn4TX36/rQj94XdrlQHlPeCg0n3GM+banPoowy+A2xJsELsr?=
- =?us-ascii?Q?SfIEbRSqknmflhwmi5b4AMkfcDanCtVuyAp85p0FUIOiQIu+aDu+bIV9Px4H?=
- =?us-ascii?Q?jGAlHP568m4C53jlmxoqufEnuENpiSaZbZCd0rbLoUrFhDQwP69kl+6Ao/YY?=
- =?us-ascii?Q?L4UyBCCz47xNoIAPgW579L3BqeNbM+PgHsNcoigNZEpgS0zukgWZZ28y2fGn?=
- =?us-ascii?Q?o+W1nPIZRd6D3JnQ9UrOYL7vR6hdcTjMSrEkSB4quHG03UsAkpf5aswAB6WQ?=
- =?us-ascii?Q?GluykrgfIeS8j/jcm5dnkKhb/2EnbqufUbKCtNvrj1IS/G4Gru49ahWM7Zvk?=
- =?us-ascii?Q?TFkxpFKkGoljo7eZXHS/7CwcpH6nAQZ/qmUqtgMqBHV8I8RlZu4kfXozuCeP?=
- =?us-ascii?Q?p+/ljVlkNKP1/SVq5e0iBh90jdInRWLP8217idgSxSne9YfQVPf2ZzWdegaN?=
- =?us-ascii?Q?HjRxMGSqOehUDSC/mpyO0vXMycFOWXSX5oDJbEXzLzCVEicSp9S4Tz89Nqq0?=
- =?us-ascii?Q?rBzbWdBu2MGdloQZ8CoZ8ojEG4ymGG4w05TllaK2eNFY0Td5jUv5s5Rvw7C1?=
- =?us-ascii?Q?NtWfhcpaBy3rpI2JaqVAYMz6e0oeUz95v35ieU6w3BORb5kvEtC0BoDViPvM?=
- =?us-ascii?Q?wZKEAnzPRTMzcd8OCIc6U4bBA3P+Z6DqwpVlzkrUsLQHNMk2puS0wZFLyXjx?=
- =?us-ascii?Q?5YQhbeicxwRdoNBEqMyIWXUoHgIMPJVDHuwjC3G7U57E4eDBEuiyox65D0d5?=
- =?us-ascii?Q?tiR1InqF7xy3akxYYwkSuFAjWAYFBLstfG9BjgV7m+umT+bvNLhy4X8ZqcM6?=
- =?us-ascii?Q?IaCn8Y8tSscsdVTec6O+EJelBO2x8zgh4JSuiLdWtSc8EudCSKuowxCX45ha?=
- =?us-ascii?Q?7HoXHz3zRy51pDkkd3uh03vvzkE8BAs4gVwnKwhGeG2uVmBeSyxFE7SR0iSK?=
- =?us-ascii?Q?MIstqfki/EKyggZQsMNF1c8D/5zbUvR0inGB3iXCKpfz/Os5n6dt2WX0UeMW?=
- =?us-ascii?Q?lyDFk35RyvT/F4tCRMRKZ6dJPF8vnkw9Zf4E8l/0EJ9cU6T30VXYd5K5FWkI?=
- =?us-ascii?Q?SS0RR15tbG+5afz9Xdxj69sq7wHxJxi0/sdLIGI/u50v7CEHspzhVlU2iA/t?=
- =?us-ascii?Q?dmDCdyYouNEIHTyxX5xwUTlr52J3VHc7FPnpkwjG0jnHTH7oFp8AGIHGUK7P?=
- =?us-ascii?Q?f+qMVR+tjrX9yESOfA/27L24I+FMERZqkbGiJJT9oLHr21HOcLayLWqS2gag?=
- =?us-ascii?Q?lbSzvWAfVxitBdnsCoCN+DmrEYqvphXXem3fuYLh/t3g3GEUBX27CKITrZKB?=
- =?us-ascii?Q?mivw34SzfR5sSZ1/Io6xGKZonfkSB1deULfQqP+BDW6cjz7XCpaTLrtEKrlU?=
- =?us-ascii?Q?NwQQDlHgsKZj9bWIa9U4y9IujLek/MbPLkCyR49jz5jiSFi8UipsfLjBX/MF?=
- =?us-ascii?Q?ZLykoyLblvBW5ZGYQqNLGELzotnj4x+2f4cytAa9skl65s+4yBKRauSl2bgy?=
- =?us-ascii?Q?IVegj5UeaqWYuAjBJ4OF5If3Vj9bYUkb0pqMHuux6wulPHmEGHcb1GQ16XnA?=
- =?us-ascii?Q?fw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cb2dc9a-88fa-4acc-8620-08dda55ce320
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5674.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2025 00:47:32.6313
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R4XdR9K71RMj/w9FaOB6dohTicZu9HTwHQvZvABPNPYLiztWZfGHMrBUlr+MpgFnw2qJnm9XoOTelprlBqUimA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8193
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+References: <20250607005134.10488-1-casey.ref@schaufler-ca.com>
 
-Hi Masahiro,
+The Linux audit system includes LSM based security "context" information
+in its events. Historically, only one LSM that uses security contexts can
+be active on a system. One of the few obsticles to allowing multiple LSM
+support is the inability to report more than one security context in an
+audit event. This patchset provides a mechanism to provide supplimental
+records containing more than one security context for subjects and
+objects.
 
-FYI, the error/warning still remains.
+The mechanism for reporting multiple security contexts inspired
+considerable discussion. It would have been possible to add multiple
+contexts to existing records using sophisticated formatting. This would
+have significant backward compatibility issues, and require additional
+parsing in user space code. Adding new records for an event that contain
+the contexts is more in keeping with the way audit events have been
+constructed in the past.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c0c9379f235df33a12ceae94370ad80c5278324d
-commit: 695ed93bb30e03e9f826ee70abdd83f970741a37 kbuild: fix Clang LTO with CONFIG_OBJTOOL=n
-date:   4 months ago
-:::::: branch date: 3 hours ago
-:::::: commit date: 4 months ago
-config: riscv-randconfig-001-20250607 (https://download.01.org/0day-ci/archive/20250607/202506070617.O7yPB5MW-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250607/202506070617.O7yPB5MW-lkp@intel.com/reproduce)
+Only audit events associated with system calls have required multiple
+records prior to this. Mechanism has been added allowing any event
+to be composed of multiple records. This should make it easier to
+add information to existing audit events without breaking backward
+compatability.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/r/202506070617.O7yPB5MW-lkp@intel.com/
+v4:
+Use LSM_ID_UNDEF when checking for valid LSM IDs in
+security_lsmprop_to_secctx().
+Fix the object record to include only those for LSMs that use them.
+Squash the two patches dealing with subject contexts.
+Base the patches on Paul Moore's LSM initialization patchset.
+https://lore.kernel.org/all/20250409185019.238841-31-paul@paul-moore.com/
+v3:
+Rework how security modules identify that they provide security
+contexts to the audit system. Maintain a list within the audit
+system of the security modules that provide security contexts.
+Revert the separate counts of subject and object contexts.
+v2:
+Maintain separate counts for LSMs using subject contexts and object
+contexts. AppArmor uses the former but not the latter.
+Correct error handling in object record creation.
 
-All errors (new ones prefixed by >>):
+https://github.com/cschaufler/lsm-stacking#audit-6.14-rc1-v4
 
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(e1000_main.o at 975540)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(net-traces.o at 999960)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(hugetlb.o at 890520)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(trace.o at 881700)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(tcp.o at 1003740)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(skbuff.o at 997800)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(core.o at 973860)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(syscall.o at 883920)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(slub.o at 890400)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(super.o at 912660)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(filter.o at 998880)
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(mballoc.o at 901800)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(page_alloc.o at 890100)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(core.o at 886860)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(vmscan.o at 888060)
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(volumes.o at 913800)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(af_packet.o at 1009260)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(ring_buffer.o at 881640)
->> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(inode.o at 913260)
-   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 870780), and 'i32 1' from vmlinux.a(core.o at 883860)
-   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+Casey Schaufler (4):
+  Audit: Create audit_stamp structure
+  LSM: security_lsmblob_to_secctx module selection
+  Audit: Add record for multiple task security contexts
+  Audit: Add record for multiple object contexts
+
+ include/linux/audit.h        |  23 +++
+ include/linux/security.h     |   6 +-
+ include/uapi/linux/audit.h   |   2 +
+ kernel/audit.c               | 274 ++++++++++++++++++++++++++++++-----
+ kernel/audit.h               |  13 +-
+ kernel/auditsc.c             |  65 +++------
+ net/netlabel/netlabel_user.c |   8 +-
+ security/apparmor/lsm.c      |   3 +
+ security/lsm.h               |   4 -
+ security/lsm_init.c          |   5 -
+ security/security.c          |  16 +-
+ security/selinux/hooks.c     |   4 +
+ security/smack/smack_lsm.c   |   4 +
+ 13 files changed, 318 insertions(+), 109 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
 
 
