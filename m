@@ -1,225 +1,181 @@
-Return-Path: <linux-kernel+bounces-676426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52007AD0C44
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D92AAD0C59
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6176188F3A1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 09:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DFA33B1443
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1E020B218;
-	Sat,  7 Jun 2025 09:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NqXND6CX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A7320A5F1;
+	Sat,  7 Jun 2025 10:01:06 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4539184F
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 09:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D723E15D1
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 10:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749289416; cv=none; b=dpiYtKdP9ufZmGgoaq41eBVNjIGN7lmB/O3eWRb3qz87ZzRNHHDQDn5rta5N2meh6DCWNoXBvo9eDmKXn3+p2Dl0jv437tXeUz3ncX53ZLFls9QIGONTDGruiA+Yas7IiHI1MBqwraFTROt9McD4AwTtYfSu7Rc51fhetIGj18k=
+	t=1749290465; cv=none; b=ANUPqQ6xvTSYDNugHcBQXvMjsKbg8UxgttNtlBr1cc5nszt+Qrn7JJwRZ5VGVkar0cOZkRA0I5EH80dYXKuERZOsNZ7arPNaA1XJ7gKXn1fzwYnqRNwi0URwm1xtbNmbhskXuFSGSJEw+o0MYVyvU4bspH7ltaApDHDtaKyjwAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749289416; c=relaxed/simple;
-	bh=F4CLySCe72VjhODpiBPegOC0jFoe+Qn2cElqYZDHF+U=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=jFGk5OpjFPs/41AhVPGnCYPJb8CmAGP1JQgLh3I6wV9lc1g5/2iaOF6ZiuPwxkp8/S6g0ZavBQxokxYKRnBHnHBBjvQxr+ecX9leU2q/w5OvjeDJKtqYLoi/p7r4BZcEDTo4Z9Mace5XgZkWPgES0CIKkEN0rziL4be5v1C+5Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NqXND6CX; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749289415; x=1780825415;
-  h=date:from:to:cc:subject:message-id;
-  bh=F4CLySCe72VjhODpiBPegOC0jFoe+Qn2cElqYZDHF+U=;
-  b=NqXND6CXSD8OLllUum9DP/19/gH82ehw/gvahRNfKjubyCVmi7uy03Rg
-   5s3//5m4/9JCRaHTlEwZDJsomQhf/kc0U1RHUiNGDp7Kk0N2wXpEN40Yz
-   G2SCjRw2rp1Nyy7+CofW39ISTfTjJl9NkihGtVbNpdVOcbVDaZPVTYbyd
-   TRRK3lFguenvBDz34rbbkb5tFIzZCYKK8FiSZq+aYtB1LRGkjn3RM67L4
-   A1pdc/NzHnIzP1tshqgA2chqiDSsFRKns35ewi6wBqWaKs9S7VLKxYuX+
-   cXU8AW0KTLrsSHcvSTFZcc4xsyzCvUwE0m+X7+11fg7TqyoEu0Xq3r5ZS
-   g==;
-X-CSE-ConnectionGUID: harADQKNT+OQ72sPTFfKEQ==
-X-CSE-MsgGUID: s3S+EZfITMGvwuvGcGdg2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="51338284"
-X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
-   d="scan'208";a="51338284"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2025 02:43:34 -0700
-X-CSE-ConnectionGUID: wu4g0dQwTFy+lt6ZjiPEjg==
-X-CSE-MsgGUID: h7QINZqBQ822+smjJ6uHig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
-   d="scan'208";a="151296112"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 07 Jun 2025 02:43:33 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uNq5K-0005bM-0C;
-	Sat, 07 Jun 2025 09:43:30 +0000
-Date: Sat, 07 Jun 2025 17:43:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250606] BUILD REGRESSION
- 2aebeb5c325881159c6896f61fa4b16f2af46067
-Message-ID: <202506071707.qcXI9GGS-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1749290465; c=relaxed/simple;
+	bh=haXDDy0jhSubRISAwi0kW5POr2APZOU+vOXOdU7Lg7A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ek0q9vAzdnMmRFZUvAT/Kz5cZdTj0CwnW7KzgywSViYq0vq3rYgOxpC5KA2oizvQW/vs2sLzkQnR/ULUl0dU9Pp5Gcq+uY6wh6WGIRxgZSGk41R/DWRNHuUuB4viPZw8s6xzwiqaWzjd49bRqvvqkIOhNulE+Yfk2pEFvbH3SGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bDtcX6GHbz27hct;
+	Sat,  7 Jun 2025 17:46:36 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0875718005F;
+	Sat,  7 Jun 2025 17:45:45 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 7 Jun 2025 17:45:44 +0800
+From: Lifeng Zheng <zhenglifeng1@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <viresh.kumar@linaro.org>,
+	<yangyicong@hisilicon.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
+	<yubowen8@huawei.com>, <zhenglifeng1@huawei.com>
+Subject: [PATCH] arm64: topology: Setup amu fie when cpu hotplugging
+Date: Sat, 7 Jun 2025 17:45:33 +0800
+Message-ID: <20250607094533.416368-1-zhenglifeng1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250606
-branch HEAD: 2aebeb5c325881159c6896f61fa4b16f2af46067  cgroup: Avoid -Wflex-array-member-not-at-end warnings
+Amu fie was set up by a cpufreq policy notifier after the policy was
+created. This caused some problems:
 
-Error/Warning (recently discovered and may have been fixed):
+1. The cpus related to the same policy would all fail to set up amu fie if
+one of them couldn't pass the freq_counters_valid() check.
 
-    https://lore.kernel.org/oe-kbuild-all/202506070954.D6Eg0juq-lkp@intel.com
+2. The cpus fail to set up amu fie would never have a chance to set up
+again.
 
-    kernel/sched/ext.c:3748:24: error: returning 'struct cgroup_hdr *' from a function with incompatible return type 'struct cgroup *' [-Werror=incompatible-pointer-types]
-    kernel/sched/ext.c:7445:31: error: initialization of 'struct cgroup *' from incompatible pointer type 'struct cgroup_hdr *' [-Werror=incompatible-pointer-types]
+When boot with maxcpu=1 restrict, the support amu flags of the offline cpus
+would never be setup. After that, when cpufreq policy was being created,
+the online cpu might set up amu fie fail because the other cpus related to
+the same policy couldn't pass the freq_counters_valid() check. Hotplug the
+offline cpus, since the policy was already created, amu_fie_setup() would
+never be called again. All cpus couldn't setup amu fie in this situation.
 
-Error/Warning ids grouped by kconfigs:
+After commit 1f023007f5e7 ("arm64/amu: Use capacity_ref_freq() to set AMU
+ratio"), the max_freq stores in policy data is never needed when setting up
+amu fie.  This indicates that the setting up of amu fie does not depend on
+the policy any more. So each cpu can set up amu fie separately during
+hotplug and the problems above will be solved.
 
-recent_errors
-`-- x86_64-buildonly-randconfig-006-20250607
-    |-- kernel-sched-ext.c:error:initialization-of-struct-cgroup-from-incompatible-pointer-type-struct-cgroup_hdr
-    `-- kernel-sched-ext.c:error:returning-struct-cgroup_hdr-from-a-function-with-incompatible-return-type-struct-cgroup
+Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+---
+ arch/arm64/kernel/topology.c | 56 ++++++++++++++----------------------
+ 1 file changed, 21 insertions(+), 35 deletions(-)
 
-elapsed time: 729m
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 5d07ee85bdae..207eab4fa31f 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -351,63 +351,49 @@ int arch_freq_get_on_cpu(int cpu)
+ 	return freq;
+ }
+ 
+-static void amu_fie_setup(const struct cpumask *cpus)
++static void amu_fie_setup(unsigned int cpu)
+ {
+-	int cpu;
+-
+-	/* We are already set since the last insmod of cpufreq driver */
+ 	if (cpumask_available(amu_fie_cpus) &&
+-	    unlikely(cpumask_subset(cpus, amu_fie_cpus)))
++	    cpumask_test_cpu(cpu, amu_fie_cpus))
+ 		return;
+ 
+-	for_each_cpu(cpu, cpus)
+-		if (!freq_counters_valid(cpu))
+-			return;
++	if (!freq_counters_valid(cpu))
++		return;
+ 
+ 	if (!cpumask_available(amu_fie_cpus) &&
+ 	    !zalloc_cpumask_var(&amu_fie_cpus, GFP_KERNEL)) {
+-		WARN_ONCE(1, "Failed to allocate FIE cpumask for CPUs[%*pbl]\n",
+-			  cpumask_pr_args(cpus));
++		WARN_ONCE(1, "Failed to allocate FIE cpumask for CPUs[%u]\n",
++			  cpu);
+ 		return;
+ 	}
+ 
+-	cpumask_or(amu_fie_cpus, amu_fie_cpus, cpus);
++	cpumask_set_cpu(cpu, amu_fie_cpus);
+ 
+ 	topology_set_scale_freq_source(&amu_sfd, amu_fie_cpus);
+ 
+-	pr_debug("CPUs[%*pbl]: counters will be used for FIE.",
+-		 cpumask_pr_args(cpus));
++	pr_debug("CPUs[%u]: counters will be used for FIE.", cpu);
+ }
+ 
+-static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
+-				 void *data)
++static int cpuhp_topology_online(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy = data;
+-
+-	if (val == CPUFREQ_CREATE_POLICY)
+-		amu_fie_setup(policy->related_cpus);
+-
+-	/*
+-	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
+-	 * counters don't have any dependency on cpufreq driver once we have
+-	 * initialized AMU support and enabled invariance. The AMU counters will
+-	 * keep on working just fine in the absence of the cpufreq driver, and
+-	 * for the CPUs for which there are no counters available, the last set
+-	 * value of arch_freq_scale will remain valid as that is the frequency
+-	 * those CPUs are running at.
+-	 */
++	amu_fie_setup(cpu);
+ 
+ 	return 0;
+ }
+ 
+-static struct notifier_block init_amu_fie_notifier = {
+-	.notifier_call = init_amu_fie_callback,
+-};
+-
+ static int __init init_amu_fie(void)
+ {
+-	return cpufreq_register_notifier(&init_amu_fie_notifier,
+-					CPUFREQ_POLICY_NOTIFIER);
++	int ret;
++
++	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
++				"arm64/topology:online",
++				cpuhp_topology_online,
++				NULL);
++
++	if (ret < 0)
++		return ret;
++
++	return 0;
+ }
+ core_initcall(init_amu_fie);
+ 
+-- 
+2.33.0
 
-configs tested: 122
-configs skipped: 1
-
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                        nsim_700_defconfig    gcc-15.1.0
-arc                 nsimosci_hs_smp_defconfig    gcc-15.1.0
-arc                   randconfig-001-20250607    gcc-15.1.0
-arc                   randconfig-002-20250607    gcc-15.1.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-15.1.0
-arm                         bcm2835_defconfig    clang-21
-arm                       netwinder_defconfig    gcc-15.1.0
-arm                   randconfig-001-20250607    clang-21
-arm                   randconfig-002-20250607    gcc-13.3.0
-arm                   randconfig-003-20250607    gcc-15.1.0
-arm                   randconfig-004-20250607    gcc-14.3.0
-arm                        spear3xx_defconfig    clang-17
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250607    clang-21
-arm64                 randconfig-002-20250607    clang-21
-arm64                 randconfig-003-20250607    clang-21
-arm64                 randconfig-004-20250607    clang-21
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250607    gcc-12.4.0
-csky                  randconfig-002-20250607    gcc-9.3.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250607    clang-21
-hexagon               randconfig-002-20250607    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250607    clang-20
-i386        buildonly-randconfig-002-20250607    gcc-12
-i386        buildonly-randconfig-003-20250607    gcc-12
-i386        buildonly-randconfig-004-20250607    gcc-12
-i386        buildonly-randconfig-005-20250607    clang-20
-i386        buildonly-randconfig-006-20250607    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-15.1.0
-loongarch                         allnoconfig    gcc-15.1.0
-loongarch             randconfig-001-20250607    gcc-13.3.0
-loongarch             randconfig-002-20250607    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250607    gcc-10.5.0
-nios2                 randconfig-002-20250607    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                randconfig-001-20250607    gcc-12.4.0
-parisc                randconfig-002-20250607    gcc-12.4.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-21
-powerpc                   bluestone_defconfig    clang-21
-powerpc                       eiger_defconfig    clang-21
-powerpc               randconfig-001-20250607    gcc-10.5.0
-powerpc               randconfig-002-20250607    clang-21
-powerpc               randconfig-003-20250607    clang-21
-powerpc                    socrates_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20250607    clang-19
-powerpc64             randconfig-002-20250607    clang-21
-powerpc64             randconfig-003-20250607    gcc-8.5.0
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                 randconfig-001-20250607    clang-21
-riscv                 randconfig-002-20250607    clang-16
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250607    clang-16
-s390                  randconfig-002-20250607    gcc-14.3.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                        dreamcast_defconfig    gcc-15.1.0
-sh                         ecovec24_defconfig    gcc-15.1.0
-sh                             espt_defconfig    gcc-15.1.0
-sh                            hp6xx_defconfig    gcc-15.1.0
-sh                            migor_defconfig    gcc-15.1.0
-sh                    randconfig-001-20250607    gcc-14.3.0
-sh                    randconfig-002-20250607    gcc-9.3.0
-sparc                            alldefconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20250607    gcc-10.3.0
-sparc                 randconfig-002-20250607    gcc-12.4.0
-sparc64               randconfig-001-20250607    gcc-9.3.0
-sparc64               randconfig-002-20250607    gcc-13.3.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250607    clang-21
-um                    randconfig-002-20250607    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250607    clang-20
-x86_64      buildonly-randconfig-002-20250607    clang-20
-x86_64      buildonly-randconfig-003-20250607    clang-20
-x86_64      buildonly-randconfig-004-20250607    gcc-12
-x86_64      buildonly-randconfig-005-20250607    gcc-12
-x86_64      buildonly-randconfig-006-20250607    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-18
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250607    gcc-10.5.0
-xtensa                randconfig-002-20250607    gcc-8.5.0
-xtensa                    smp_lx200_defconfig    gcc-15.1.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
