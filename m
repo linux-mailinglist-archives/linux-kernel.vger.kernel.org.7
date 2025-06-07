@@ -1,180 +1,91 @@
-Return-Path: <linux-kernel+bounces-676597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96335AD0E5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 18:03:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9E2AD0E62
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 18:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 171577A666C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 16:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453033ACAE5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 16:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43793207DF7;
-	Sat,  7 Jun 2025 16:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663BC1DDC2A;
+	Sat,  7 Jun 2025 16:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiKeD4+c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CCE202F8F;
-	Sat,  7 Jun 2025 16:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Bd7bhc4U"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36800184F;
+	Sat,  7 Jun 2025 16:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749312165; cv=none; b=fmC6ZhtTckQKRiyFsX+fFref4cOweTeVeM4t5lc1VzFxl2CRFrPDCLMq6jRuLzD+G6IfA43K+4PDIDO7uV5WoFtRJb+YfBo94bw0x2Pgqh3VxFynR0xy6SjpzHer4ZyBW1L6UoKUOyu6CEaJFbdsbDSuXPRzvmddb1tYETDuuqA=
+	t=1749312310; cv=none; b=U37k1ECCN3VdOZr+mmt2lMHQ8vk9MUjQTUaWN+E42GQj62nTAbIoPunkZswljaspqSR3+gMzEnncS0WoB6e4PenZ82XN3bE1QWXDHyPtbPsjdKIXql5BzyiZ6rs4cszC71PpK6Ry7sC3djBlpnLxCe+XCdsP5XWSOEaB0pBUkdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749312165; c=relaxed/simple;
-	bh=OIs4yv+URHEOWO1meZP7I71WqUgcXFUai9rr8syXNkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VhaSe4BDhkhyKjKrD/Yv04mkAcNfJ1vWoAHsCaszoVHbpCpDAJGFZM4z18K6CKvXTODa72NUba8gzI6/A/PxWR1u5n1yS3j6XQMlhaAWWpEkGNkWHtT0FXX0q4fHGRyzwWKgN4FKZ2Ko2GVlUmJYoOtGrx7b9HnJ3xNhdWLY45s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiKeD4+c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C59A4C4CEE4;
-	Sat,  7 Jun 2025 16:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749312165;
-	bh=OIs4yv+URHEOWO1meZP7I71WqUgcXFUai9rr8syXNkY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GiKeD4+c4JLCQSHu4mq91nPonMRk6gDQI0lhbjQwXtPnRdOZ88Fp5Oi0cGdw6bnAV
-	 /gPSTgs3qqEmhbfAIiySate0ZQNIYX9dM11tbkmxwHTqPE7py6QpWMzcYu/W6jXh8v
-	 nhPK89qyDkpQD6RTmEf7gup+CGP6v+M8RMOBpcW/KJ9yJPLgzVHTmJIujeMahTBiyn
-	 lQsMgGh6TSsc5JkTdLe8jAWlTOBfhCi6jEDYBIbZq+0N17d/Pl6lEihKDcHMntJe+u
-	 nRrE1i5H/LC16CGKIi+Hh60wtvnXhxa649g+UHGzMXAXgrYmseaW3t+FdbzkpMnuF3
-	 AmJOSVbxCcfug==
-Date: Sat, 7 Jun 2025 17:02:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
-Subject: Re: [PATCH v2 3/3] iio: imu: bmi270: add support for motion events
-Message-ID: <20250607170237.77601f20@jic23-huawei>
-In-Reply-To: <20250605-bmi270-events-v2-3-8b2c07d0c213@gmail.com>
-References: <20250605-bmi270-events-v2-0-8b2c07d0c213@gmail.com>
-	<20250605-bmi270-events-v2-3-8b2c07d0c213@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749312310; c=relaxed/simple;
+	bh=6leJmzYy9qYX+PS1PoEw39SWzakrUethGO16mt5pYaU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=entvfs0iBVQ9Xns2shyCQRMvIYe78UoPuvGpmKtHM9Mpqs0eKu2EQ6p0eTvsf0Q8LrBnHEi1ExSUCE34+uZtJEqaqXu3khPnkFsMu3EP7uGkp0jiviJ+mXBLleRzpGZbFlP3mnz+24W8bqij3wCJ/zbqEcQDMowZIc6zvTBV8Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Bd7bhc4U; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=k0
+	A/8eOa3/qxuN6ibHKqnIXti28+I3rQhaeeIBTeaok=; b=Bd7bhc4UH4kUYHYnrT
+	xuxQYoU8OouzKeeiwGx8rhHFRdD7g1HX+EW0UAnO6tWcDaTrk80HEEpOcv5jl8TC
+	WhhoX+arHMFZaav1G7KREzvM1WyFYzcNR3bPYWrHCremOblaqZmYTMdks8q4FwI6
+	jL2mQNq2ZPjrJRK65HRbJQ2qM=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDnzz17X0RoTZo8Gw--.4221S2;
+	Sat, 07 Jun 2025 23:49:15 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	bhelgaas@google.com,
+	kwilczynski@kernel.org,
+	shawn.lin@rock-chips.com,
+	heiko@sntech.de
+Cc: robh@kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH 0/2] PCI: Consolidate PCIe message routing definitions and remove driver-specific duplicates
+Date: Sat,  7 Jun 2025 23:49:11 +0800
+Message-Id: <20250607154913.805027-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnzz17X0RoTZo8Gw--.4221S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Jry7Wr1xuF4fWF1fCF4xtFb_yoWfArcE9F
+	y8Xa9FvF1UGryayr4YyrW3JF95Z3yUZrn8Gan5tF45AFyfArn5XF98CrW8XFyrWF4rtF13
+	Kr1DZw13CF4xAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRZNVkUUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhNlo2hEXNoO6QABsj
 
-On Thu, 05 Jun 2025 19:05:03 -0300
-Gustavo Silva <gustavograzs@gmail.com> wrote:
+This series consolidates PCIe message routing definitions into the common
+PCI core header, eliminating redundant enums in the Cadence and Rockchip
+drivers. By using standardized macros (PCIE_MSG_TYPE_R_* and
+PCIE_MSG_CODE_*) from drivers/pci/pci.h, we ensure alignment with the PCIe
+r6.0 specification, reduce code duplication, and improve maintainability
+across the PCI subsystem.
 
-> Any-motion event can be enabled on a per-axis basis and triggers a
-> combined event when motion is detected on any axis.
-> 
-> No-motion event is triggered if the rate of change on all axes falls
-> below a specified threshold for a configurable duration. A fake channel
-> is used to report this event.
-> 
-> Threshold and duration can be configured from userspace.
-> 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-Hi Gustavo,
+Hans Zhang (2):
+  PCI: cadence: Replace private message routing enums with PCI core
+    definitions
+  PCI: rockchip: Remove redundant PCIe message routing definitions
 
-A few minor comments inline.  +CC Lothar given they have been doing a lot of
-work with similar events recently and might have time to take a look at this
-and see if I'm missing anything wrt to consistency with our recent discussions.
-
-> ---
->  drivers/iio/imu/bmi270/bmi270_core.c | 318 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 309 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> index 0798eb1da3ecc3cecaf7d7d47214bb07f4ec294f..eb0cada50087ccecfd5624a531692873e396deb6 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_core.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-
-...
+ .../pci/controller/cadence/pcie-cadence-ep.c  |  2 +-
+ drivers/pci/controller/cadence/pcie-cadence.h | 20 -------------------
+ drivers/pci/controller/pcie-rockchip.h        | 14 -------------
+ 3 files changed, 1 insertion(+), 35 deletions(-)
 
 
-> @@ -881,10 +1086,17 @@ static int bmi270_write_event_value(struct iio_dev *indio_dev,
->  {
->  	struct bmi270_data *data = iio_priv(indio_dev);
->  	unsigned int raw;
-> +	int reg;
->  
->  	guard(mutex)(&data->mutex);
->  
->  	switch (type) {
-> +	case IIO_EV_TYPE_MAG_ADAPTIVE:
-> +		reg = BMI270_ANYMO1_REG;
-> +		break;
-> +	case IIO_EV_TYPE_ROC:
-> +		reg = BMI270_NOMO1_REG;
-> +		break;
->  	case IIO_EV_TYPE_CHANGE:
->  		if (!in_range(val, 0, BMI270_STEP_COUNTER_MAX + 1))
->  			return -EINVAL;
-> @@ -897,6 +1109,31 @@ static int bmi270_write_event_value(struct iio_dev *indio_dev,
->  	default:
->  		return -EINVAL;
->  	}
-> +
-> +	switch (info) {
-> +	case IIO_EV_INFO_VALUE:
-> +		if (!in_range(val, 0, 1))
-> +			return -EINVAL;
-> +
-> +		raw = BMI270_INT_MICRO_TO_RAW(val, val2,
-> +					      BMI270_MOTION_THRES_SCALE);
-> +		return bmi270_update_feature_reg(data, reg,
-> +					 BMI270_FEAT_MOTION_THRESHOLD_MSK,
-> +				FIELD_PREP(BMI270_FEAT_MOTION_THRESHOLD_MSK,
-> +					raw));
-
-This is some usual indenting.   Use a local variable for the value and
-maybe the mask as well just to keep it readable.
-
-
-> +	case IIO_EV_INFO_PERIOD:
-> +		if (!in_range(val, 0, BMI270_MOTION_DURAT_MAX + 1))
-> +			return -EINVAL;
-> +
-> +		raw = BMI270_INT_MICRO_TO_RAW(val, val2,
-> +					BMI270_MOTION_DURAT_SCALE);
-Align after (
-
-> +		return bmi270_update_feature_reg(data, reg,
-> +						BMI270_FEAT_MOTION_DURATION_MSK,
-> +				FIELD_PREP(BMI270_FEAT_MOTION_DURATION_MSK,
-> +					raw));
-As above.
-
-> +	default:
-> +		return -EINVAL;
-> +	}
->  }
-
->  
->  static const struct iio_event_spec bmi270_step_wtrmrk_event = {
-> @@ -934,6 +1200,22 @@ static const struct iio_event_spec bmi270_step_wtrmrk_event = {
->  			       BIT(IIO_EV_INFO_VALUE),
->  };
->  
-> +static const struct iio_event_spec bmi270_anymotion_event = {
-> +	.type = IIO_EV_TYPE_MAG_ADAPTIVE,
-> +	.dir = IIO_EV_DIR_RISING,
-> +	.mask_separate = BIT(IIO_EV_INFO_ENABLE),
-> +	.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE) |
-> +			       BIT(IIO_EV_INFO_PERIOD),
-As below.
-> +};
-> +
-> +static const struct iio_event_spec bmi270_nomotion_event = {
-> +	.type = IIO_EV_TYPE_ROC,
-> +	.dir = IIO_EV_DIR_RISING,
-> +	.mask_separate = BIT(IIO_EV_INFO_ENABLE),
-> +	.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE) |
-> +			       BIT(IIO_EV_INFO_PERIOD),
-Could make that one line as I think it's 80 chars exactly.
-I don't mind that much though.
-
-
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
+-- 
+2.25.1
 
 
