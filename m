@@ -1,126 +1,241 @@
-Return-Path: <linux-kernel+bounces-676395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813E7AD0B9D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 09:33:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E27AD0BBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 09:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B93423AC983
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 07:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3104171D40
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 07:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FCD1F4C9F;
-	Sat,  7 Jun 2025 07:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FF518FDDB;
+	Sat,  7 Jun 2025 07:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nmQnTRQz"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RooDthtE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1B32746A;
-	Sat,  7 Jun 2025 07:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5951A239F
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 07:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749281586; cv=none; b=pm/bDOlaqzM0iFJNiy5zYLyiO3u5lHqojSwSAG1gi0AGzZTs/MQjGov7GlhNIr5xnaNj6Hsxfa3VeFr9AC4JhfpJVn3nfqnZAWcoYkKl73bf0CWnU+u3A8Ougm65jXr1ufRZaa+HREHNBYwVCx/cameOPrjX/S74DihGGVG1zhQ=
+	t=1749282445; cv=none; b=jec5QIhVFEoEeNuHVCvG+VOq3AO5xRw+hdGzT6QtghG9FUkk6hNm8O+Ky/QTc/dLK9RRuhrYwL+0HtYpVajmxnzE9BSqHg4vbgnEAWCKOfp0dlttXlAO6WzVmB4XZP8uLoDACIvf6GuNyfTPwDel2+jjwZuaIazenE6VYgmeMW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749281586; c=relaxed/simple;
-	bh=4ojtFF5ydY7GePXSuRDH+3gG5quKRHpnhQew3pMwLiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s07dTSsw6t5JOVdJ6cut8sSVu0noJTF23qtwNymQGOTfDXyBsldbSvuIJrclFUyhgBjKIlBnccjvSi1d2DxHa3wpYxd0DDma31Qvy5kLg3+quooyy/Ysgti/nAGf7O8XwDPScPlkY4OB4HPzOsa5FlCMOgDGVgFkWmyRLKgM6VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nmQnTRQz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lLaVWBfYr4bHWWchHu2peBzXsqMla/2LK31cTUrka3I=; b=nmQnTRQzji183HY/+GPjhjlzFn
-	9fiVPBsdleUBYnSr8Yc98Ep2NfLx3XKwriLPpfGlh2InipZPc70aLx93IF+h7pJyynSPh5s9EGlCy
-	96beVdPqHkUyXesh9e/l+KpM+6uAPU36C9FgwPbo1ZJMBhv14kyGira47OId50E9CbqFgs+W/h6yr
-	UhSv29CFKzyTx9ra5IGfKp5HwqBaJ8UhweT05yNKq3Ms99/69mXlHXDYC0qaUHLUh+RjQXRcUMrWE
-	zQfyj0KJL6G/neGgNhag/39KZfZ6Ijz4jF5G6o+Ez1kJTnnJDh77zQ2P0cqRluZK16oLeTmcrcybc
-	/A8gLIzg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43464)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uNo2p-0001YP-2I;
-	Sat, 07 Jun 2025 08:32:47 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uNo2m-00045f-14;
-	Sat, 07 Jun 2025 08:32:44 +0100
-Date: Sat, 7 Jun 2025 08:32:44 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: George Moussalem <george.moussalem@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] dt-bindings: net: qca,ar803x: Add IPQ5018
- Internal GE PHY support
-Message-ID: <aEPrHCf55eMwJXiL@shell.armlinux.org.uk>
-References: <20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com>
- <20250602-ipq5018-ge-phy-v3-2-421337a031b2@outlook.com>
- <20250605181453.GA2946252-robh@kernel.org>
- <DS7PR19MB8883E074E64AC6FCAB1B1DE69D6EA@DS7PR19MB8883.namprd19.prod.outlook.com>
- <23b92ed3-7788-4675-8f80-590e4337025c@lunn.ch>
+	s=arc-20240116; t=1749282445; c=relaxed/simple;
+	bh=q27D0Nw7AMugEJavgBZp0IhMA+H5dvm9UGg/+lO+opg=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=kOj+vLU1ql0LQ5p8INTGQSS/iWgltKCuWZLayo3VNX+VGoAivf8LnuoH8qiFT0wHJoKuZfeVXgPTbKv6OW46vvXTbLTTsxHQ5lBSTgObdYJin9BuYMO4GFBH2oeRWJKp9UGZfWjm+eWl8J0ZbLPL0gi/bSuW4skmdwSoOKvGssA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RooDthtE; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749282443; x=1780818443;
+  h=date:from:to:cc:subject:message-id;
+  bh=q27D0Nw7AMugEJavgBZp0IhMA+H5dvm9UGg/+lO+opg=;
+  b=RooDthtERe4Dd8HaRDeHtF5rt1I7pI3PIC1NLX/MYYCKc6DJj4I3hqmx
+   Jcp8/Fg7Zf63i33nLW9KMLkgmZXqleR44kC27RX7g5cU9FZDqz+T4i4Yp
+   WeTob07h8tN6AVL2bfqGDmnIe+Jv+aZqb/TzQN3etUHnIX52FpcLilhUa
+   tQfVawHkHM1L7Qv8n7E9ePxnsLKX3Y/lAdbu2KeNsGo8fM9saZhxgy4Wc
+   Ndnb1rWp6rUbP2y4vw7RW+W8nceRmGYxS/5Y4YjBPZmPOHbE/Xjd0RTDV
+   bXQ7q/9qtz+7gHCuLwWzlpZ/FqaOjyar6kmp3jkgtxd1RCCED5m+d3QDr
+   Q==;
+X-CSE-ConnectionGUID: u550hv5/QY6NJgBJnPgwyg==
+X-CSE-MsgGUID: LAnPlgt2TUyYVlXYSL8fLg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="76822454"
+X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
+   d="scan'208";a="76822454"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2025 00:47:22 -0700
+X-CSE-ConnectionGUID: NWbPtGaPQTOfF7EQ/HhPVQ==
+X-CSE-MsgGUID: Xbhfo5uST6yCW7iKjcZWCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,217,1744095600"; 
+   d="scan'208";a="146989548"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 07 Jun 2025 00:47:21 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uNoGt-0005XN-0m;
+	Sat, 07 Jun 2025 07:47:19 +0000
+Date: Sat, 07 Jun 2025 15:46:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev] BUILD SUCCESS
+ cf2c03bb6d69f54288e6146d08afeb349ce397fa
+Message-ID: <202506071509.IYZo8hm9-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23b92ed3-7788-4675-8f80-590e4337025c@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Jun 06, 2025 at 03:01:26PM +0200, Andrew Lunn wrote:
-> > Under 'properties' node:
-> >   compatible:
-> >     enum:
-> >       - ethernet-phy-id004d.d0c0
-> > 
-> > Q: do I need to add the PHY IDs of all PHYs that the qca803x driver covers
-> > or will this one suffice?
-> 
-> The history is complicated, because PHYs can be enumerated
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+branch HEAD: cf2c03bb6d69f54288e6146d08afeb349ce397fa  rcutorture: Make BUSTED scenario check and log readers
 
-... provided one doesn't wire up the reset pin to a GPIO and then
-declare that in DT as a reset pin for the PHY, thus holding the PHY
-in reset while we try to probe what's on the bus, making the ID
-unreadable.
+elapsed time: 985m
 
-The down-side to providing the ID in the compatible is we lose the
-revision, so if a new revision of the PHY ends up being fitted
-part way through production, the kernel has no way to know.
+configs tested: 149
+configs skipped: 1
 
-Sadly, we can't just read the PHY ID when we've released reset
-because the ID may be provided in DT because the one in the device
-is not reliable / wrong.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-What's done on SolidRun platforms is that the PHY reset is connected
-to a GPIO, but that is controlled by the boot loader and not by the
-kernel. All PHY resets are deasserted before the kernel is entered,
-and the reset GPIOs are in DT as "hogged" GPIOs. This allows phylib
-to operate normally without any of this faff.
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    clang-19
+arc                              allmodconfig    clang-19
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    clang-19
+arc                   randconfig-001-20250607    gcc-15.1.0
+arc                   randconfig-002-20250607    gcc-15.1.0
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    gcc-15.1.0
+arm                              allyesconfig    clang-19
+arm                   randconfig-001-20250607    clang-21
+arm                   randconfig-003-20250607    gcc-15.1.0
+arm                   randconfig-004-20250607    gcc-14.3.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250607    clang-21
+csky                  randconfig-001-20250607    gcc-12.4.0
+csky                  randconfig-002-20250607    clang-21
+csky                  randconfig-002-20250607    gcc-9.3.0
+hexagon                          allmodconfig    clang-19
+hexagon                           allnoconfig    gcc-15.1.0
+hexagon                          allyesconfig    clang-19
+hexagon               randconfig-001-20250607    clang-21
+hexagon               randconfig-002-20250607    clang-21
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250607    clang-20
+i386        buildonly-randconfig-002-20250607    gcc-12
+i386        buildonly-randconfig-003-20250607    gcc-12
+i386        buildonly-randconfig-004-20250607    gcc-12
+i386        buildonly-randconfig-005-20250607    clang-20
+i386        buildonly-randconfig-006-20250607    clang-20
+i386                                defconfig    clang-20
+i386                  randconfig-011-20250607    gcc-12
+i386                  randconfig-012-20250607    gcc-12
+i386                  randconfig-013-20250607    gcc-12
+i386                  randconfig-014-20250607    gcc-12
+i386                  randconfig-015-20250607    gcc-12
+i386                  randconfig-016-20250607    gcc-12
+i386                  randconfig-017-20250607    gcc-12
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+loongarch             randconfig-001-20250607    clang-21
+loongarch             randconfig-001-20250607    gcc-13.3.0
+loongarch             randconfig-002-20250607    clang-21
+loongarch             randconfig-002-20250607    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+mips                  decstation_64_defconfig    gcc-15.1.0
+mips                      maltasmvp_defconfig    gcc-15.1.0
+mips                           mtx1_defconfig    gcc-15.1.0
+mips                           rs90_defconfig    gcc-15.1.0
+nios2                 randconfig-001-20250607    clang-21
+nios2                 randconfig-001-20250607    gcc-10.5.0
+nios2                 randconfig-002-20250607    clang-21
+nios2                 randconfig-002-20250607    gcc-5.5.0
+openrisc                          allnoconfig    clang-21
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-21
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                randconfig-001-20250607    clang-21
+parisc                randconfig-002-20250607    clang-21
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-21
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc               randconfig-001-20250607    clang-21
+powerpc               randconfig-002-20250607    clang-21
+powerpc               randconfig-003-20250607    clang-21
+powerpc                     tqm5200_defconfig    gcc-15.1.0
+powerpc                      tqm8xx_defconfig    gcc-15.1.0
+powerpc64             randconfig-001-20250607    clang-19
+powerpc64             randconfig-001-20250607    clang-21
+powerpc64             randconfig-002-20250607    clang-21
+powerpc64             randconfig-003-20250607    clang-21
+powerpc64             randconfig-003-20250607    gcc-7.5.0
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    gcc-15.1.0
+riscv                 randconfig-001-20250607    clang-21
+riscv                 randconfig-001-20250607    gcc-12
+riscv                 randconfig-002-20250607    clang-16
+riscv                 randconfig-002-20250607    gcc-12
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250607    clang-16
+s390                  randconfig-001-20250607    gcc-12
+s390                  randconfig-002-20250607    gcc-12
+s390                  randconfig-002-20250607    gcc-14.3.0
+sh                               allmodconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                          r7785rp_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250607    gcc-12
+sh                    randconfig-001-20250607    gcc-14.3.0
+sh                    randconfig-002-20250607    gcc-12
+sh                    randconfig-002-20250607    gcc-9.3.0
+sh                          rsk7264_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                 randconfig-001-20250607    gcc-10.3.0
+sparc                 randconfig-001-20250607    gcc-12
+sparc                 randconfig-002-20250607    gcc-12
+sparc                 randconfig-002-20250607    gcc-12.4.0
+sparc64               randconfig-001-20250607    gcc-12
+sparc64               randconfig-001-20250607    gcc-9.3.0
+sparc64               randconfig-002-20250607    gcc-12
+sparc64               randconfig-002-20250607    gcc-13.3.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    clang-19
+um                    randconfig-001-20250607    clang-21
+um                    randconfig-001-20250607    gcc-12
+um                    randconfig-002-20250607    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250607    clang-20
+x86_64      buildonly-randconfig-002-20250607    clang-20
+x86_64      buildonly-randconfig-003-20250607    clang-20
+x86_64      buildonly-randconfig-004-20250607    gcc-12
+x86_64      buildonly-randconfig-005-20250607    gcc-12
+x86_64      buildonly-randconfig-006-20250607    gcc-12
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250607    clang-20
+x86_64                randconfig-002-20250607    clang-20
+x86_64                randconfig-003-20250607    clang-20
+x86_64                randconfig-004-20250607    clang-20
+x86_64                randconfig-005-20250607    clang-20
+x86_64                randconfig-006-20250607    clang-20
+x86_64                randconfig-007-20250607    clang-20
+x86_64                randconfig-008-20250607    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-12
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-12
+x86_64                           rhel-9.4-ltp    gcc-12
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                randconfig-001-20250607    gcc-10.5.0
+xtensa                randconfig-001-20250607    gcc-12
+xtensa                randconfig-002-20250607    gcc-12
+xtensa                randconfig-002-20250607    gcc-15.1.0
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
