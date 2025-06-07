@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-676475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2040AAD0CFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:06:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F101AD0D02
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72DB3A42E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:06:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99DBF170685
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A5FEC4;
-	Sat,  7 Jun 2025 11:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79C6215F6C;
+	Sat,  7 Jun 2025 11:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dU9LX0QW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jZ3fB/R0"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BF51F8AF8
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 11:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454FFEC4
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 11:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749294380; cv=none; b=Yk/JLLQ18qbtU7A4l05EcNko00gEPSFaSrFuX4tuCCzDavFVQKETmxGySwM97Cw4xs7a8sC0suCQVhg98/ngxiu/KQiRkZRK9oUfyStUj7WbDvagB2XKJ66A3AnUWyhT99P2u0AQtgd4RIZRQpYCiM3VjMkB3zPL0MV22XCcg4A=
+	t=1749294392; cv=none; b=ths/mNG87Jw5g6e2KrtSj6CADg5bOilSpPh71/LSj2H7jFvkt5I9+k4w79/bv3lQZQzMic1afHw38vBAAXhejf+sV1hKXzTWUHE2NzZk7zHtCU3ZIJdoPRvMt7In+osqJ4n+i5S6af5btsWfRAXDo+BPqj9ehtg6do+gXEnByWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749294380; c=relaxed/simple;
-	bh=5ldzH4ZNYIWtvnwYYCHyuHTiMOfJNsRN3aVHEUUXdu4=;
+	s=arc-20240116; t=1749294392; c=relaxed/simple;
+	bh=kmTQB+yMiFcHzCHY1trlsiEJR2icsWBguc+W8zpcLcQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eeuSemX2AA8Xnpw5oiUNBxg4RkZV8CMHiV5dhEEkNzRECycH6vwwkj7tdBesnkDRldyFlRMeTONOq9IvUajMB/3hKIRUpI0pkUfhItS8HNI5gUXeOlsJ3WU4H2Bcxqe0YDln3DP5dkRZDRBySCA+XLC+vcQDAknsH1swZhOyJW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dU9LX0QW; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:Content-Type; b=JjmM2rA1fwHdX3+nV+Yk4dytNgZ8rcy96mVWJkgutN66yyYp8pXytRbXYY8uo0T8C7G6vTtCkCsFS5saMaWEChvj35ojo9LS1oGi/FKmQMalnxnTZc6yh/KhbxwvZ4rEOWc8l3HxYmi3yKUz2+d8bQNt9FhV72EiyWrCvPiZWsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jZ3fB/R0; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad89333d603so511833266b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 04:06:18 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-604f26055c6so7889906a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 04:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749294377; x=1749899177; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1749294388; x=1749899188; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:to:subject:user-agent:mime-version:date:message-id:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Lt3KSgBpR6WlPCg8kfTF1qJDUFvaJVzc7YWDJmWgEtQ=;
-        b=dU9LX0QWyJ4s3EolXehZbmmvpkryvPktlzW0INEC3j68qmcGyz3AXiLaaCA2iblFtb
-         4O0A6q+9bKOwDyA6z/YHnbydOIlFVMQbzsmjZLnONnkAWdNEaUq6Wwk53ulbhd25027g
-         +Mz+Oh1CLj4nUqAmAQk8JQD3RcMhSdMmUqrxVnYAbDrCCnSmCAIZMEuzKlp+EzzVLnPM
-         sSAK85pkHRP8YhkRryZl+NijaTWMfspmtuVAWEkw5LXH76+8TIQ4Vclywhi98fJ6qCFh
-         kblrBknP+xNe334sztxAz4Waxk2uYk1nJvc2UfRG42MDdNwWjw7gQa4ZioPnwSu6FSoR
-         Rq8w==
+        bh=wX5KfR9MOdyE8SuFH1WwTnQT5xWHkVGETwnX9lS5vz8=;
+        b=jZ3fB/R075s+xWvhzcLNCOqRWPyYWSjvQae1SdkVuENt/lZrOcmGXWO7tPdRWUjW1e
+         y/Xhii0B3bTvy19A+3CvTL8cusSflEurX/Hk5zci4Aj6RNe5oyfQMYNXGuxCyYcWk9eV
+         p7OSkjYke/QkLzw6iNkGaIJWj0eEgqRn1Qi3eu4p1sRaVOOAAgGzABW93a8xCyN0jTY/
+         ESKQP+91KIlEbGjGkcZlD7KZO4j3Xy8VSPhv5dVwULe1RrBL7NxfGu6zu33X76Isecw/
+         f9XXGV93qOsRHKz7D35yFN9XyrsWNR8ywJ23oEgls71v1xBBMhPP4FhR3bFdQgc1c8Ya
+         7IkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749294377; x=1749899177;
+        d=1e100.net; s=20230601; t=1749294388; x=1749899188;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lt3KSgBpR6WlPCg8kfTF1qJDUFvaJVzc7YWDJmWgEtQ=;
-        b=hMLSLKB6g3+5qq/IFmM7n3cQ84rEBj8X9lWVvouNcu6jogWReL3Dgs5aUYgZUMqliB
-         YQJlwfFoozFM2cBlmf9qOwVfqjH3dFe0hfCPleVBzIDjVij41oic1VwnHHVXZV95mn3g
-         Xbk6ORC7Wh2vS/VZyPSeodFJAHqS5/fZHzUONq9DpjDF9bG1RbQitRac6tRPQm86FqCr
-         ct8sr/cRfZRqZod4bjN9PkAetUcO6H4CzZXt7CbAKhcPaWz5SIVNw5tlBSXGkG3pdYiu
-         zE4v1sqXqRwD3U1MKL0xFq4LhZByB8SNLyd6szgBGhJid5MJdwCkpTa1i8XVjAKTRveO
-         djkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY0kvY8k1XRFli6wqzWgG//Y1DFq9OFme8y+VHPVFElpIPyv3ITxpndD4vm23DK8jw+2/UjFvx/p8H3WU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD4nqrEqYdQ2F2rwyefgNVYoKlp2uYHLyzuLfdiWHZscnon4sQ
-	Sc/MBrpA8+0dWhaoBYszvVOhadalmdXaaqouW8OdGCdJRkRlEDhx/bZU+g2knrq7HddB8upPtm5
-	kEgmf
-X-Gm-Gg: ASbGncsHltI0DPYT5IxnBd0hixpNu/mNn9t1JtPvOkwDah6+SoYTw/LkCNyB3iIEqXM
-	NYGo9P/qMKaCkIc6GPvpVFmUqJ5+uRbYy8+lR7wqOa+tsu9Ti3C2SaUdtdm053ftoCzdlCe1lBy
-	UuF90v1Z202xA/dc3SODoogvSzEsvsIjzhHyVJVqvXytl6p7e2CxPrN66d7wve4+SytiIg1GC9W
-	PeAjPkT8s9jgzaSSj8G+CWeE45iiSSFTAGRgihkuJXOjmFIzyHFio2OQcw8LqIwCdkV+sslaoH1
-	DaHqf60N4jDpff05Nuglfd/WAgzIN3Spu360u25xExz1ehHfcnaPBtVpDQPBzD8+LlUzHRQ=
-X-Google-Smtp-Source: AGHT+IFSdfYKiUl2BcWvfS2STzA+hJhoZRwqIV3NcFsc20+0JtxX/iLZTbnRW+MTzqjMbWbFfUkh9w==
-X-Received: by 2002:a17:907:2d92:b0:ad2:4b0c:ee8c with SMTP id a640c23a62f3a-ade1a92d206mr578163266b.35.1749294377136;
-        Sat, 07 Jun 2025 04:06:17 -0700 (PDT)
+        bh=wX5KfR9MOdyE8SuFH1WwTnQT5xWHkVGETwnX9lS5vz8=;
+        b=KhyLuKssEpkZSpl5xEpt5vt08k0fKD0uzn+/HxKxvJj5DW4cfYF7UyI/WwtxZAvd5P
+         +1kZaFHecIS30ZEdX4wUiMeUUDIOk7ev8cm5dHYR/th5c39MgywPQTZounqWoaEvd20S
+         pmYq6egNPX67Ax6eqXtNY1k0pyRqTe25EvpWUXjte+57HxoPForzzB8l42CxDBNQrKKR
+         zprmsCFCZYu6kuPaXrvXoLXxg+Hfodx5i2VNWy+sB+daSYN5KfUEoNQKz3H0s8gdR0pi
+         OA0RliqLf/89ddh1R8JTMymV+V3B9G1aP2EcZH4sBv/NZzLl+iQLcBeOwKBYIcyu3mWL
+         hwcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSu3+KvcQefgPXf/oLbya/vZR8JpNHv3QRgIvhg1075dElFTekRaWd+BkGYCC+UBeWlBnEM7VbTs+D33w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5PjZeXYQbSDDQGNxfQp1HVgowQTtc+jrGXZWLnTpASZjiTcFp
+	HtvYPf/fQoFD6d1vd2oLLkPat5HjOl85KNFo8bgL6J4evgCRbJeNMm192c6e2wROa7o=
+X-Gm-Gg: ASbGnctc/tZiYdZ/tiGXLSk7B6mzd2jGY0Eg3Joz1DjZKYYQ5Jt7jviGoJCPpY6gTDL
+	Lca4awUCmzrnTJj+1qG2QevD+WTlpCznLZI9UpzyXEzXxMTsnklfbyHKHZvHs6iRHiMGl4Ijx7L
+	xWv5Jmm7SOW1mBwddpJywz3UFTWHETb63smYBaH+tpDnmwTaDrpicZEEPbM4+R5BE2WkQshnPsi
+	V1FwN3Ui7cIkbrULVsLNLyIkGGgIO0lmHm6tBgwHRyIXivtWoh5JJ4V07fHhBMkm6AP0xvCZJOl
+	Ci6M82+Ej28Ggg+1Wx0RWrH34uVth1scnjGoH7wskQoM+fPqUd8fUXFHyW/OHft7SCQwy44=
+X-Google-Smtp-Source: AGHT+IE+q4EZEeGcYbHs9Cr6SWwfg3TvuJIon+Nk+US7johX0he69tUZyS1HyJZxxpkozjkb+cd2AQ==
+X-Received: by 2002:a17:906:6a27:b0:ad5:2d5d:2069 with SMTP id a640c23a62f3a-ade1a9da675mr665733666b.13.1749294387390;
+        Sat, 07 Jun 2025 04:06:27 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1db5572csm257834366b.38.2025.06.07.04.06.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d75467fsm263858366b.14.2025.06.07.04.06.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Jun 2025 04:06:16 -0700 (PDT)
-Message-ID: <b9921d00-399c-4b4d-a880-320607b7d041@tuxon.dev>
-Date: Sat, 7 Jun 2025 14:06:14 +0300
+        Sat, 07 Jun 2025 04:06:26 -0700 (PDT)
+Message-ID: <62e644dd-e193-4375-8d05-82b51a8cf0a4@tuxon.dev>
+Date: Sat, 7 Jun 2025 14:06:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +80,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] ARM: dts: microchip: sama5d27_som1: rename
+Subject: Re: [PATCH v2 3/4] ARM: dts: microchip: sama5d27_wlsom1: rename
  spi-cs-setup-ns property to spi-cs-setup-delay-ns
 To: Manikandan Muralidharan <manikandan.m@microchip.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
@@ -89,10 +88,10 @@ To: Manikandan Muralidharan <manikandan.m@microchip.com>, robh@kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20250521054309.361894-1-manikandan.m@microchip.com>
- <20250521054309.361894-2-manikandan.m@microchip.com>
+ <20250521054309.361894-3-manikandan.m@microchip.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <20250521054309.361894-2-manikandan.m@microchip.com>
+In-Reply-To: <20250521054309.361894-3-manikandan.m@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -102,30 +101,31 @@ On 21.05.2025 08:43, Manikandan Muralidharan wrote:
 > The naming scheme for delay properties includes "delay" in the name,
 > so renaming spi-cs-setup-ns property to spi-cs-setup-delay-ns.
 > 
-> Fixes: 09ce8651229b ("ARM: dts: at91-sama5d27_som1: Set sst26vf064b SPI NOR flash at its maximum frequency")
+> Fixes: 417e58ea41ab ("ARM: dts: at91-sama5d27_wlsom1: Set sst26vf064b SPI NOR flash at its maximum frequency")
 > Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 
 Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+
 
 > ---
 > changes in v2:
 > - add fixes tag
 > ---
->  arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi | 2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi b/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
-> index 8ac85dac5a96..13c28e92b17e 100644
-> --- a/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
-> +++ b/arch/arm/boot/dts/microchip/at91-sama5d27_som1.dtsi
-> @@ -44,7 +44,7 @@ flash@0 {
->  					compatible = "jedec,spi-nor";
->  					reg = <0>;
->  					spi-max-frequency = <104000000>;
-> -					spi-cs-setup-ns = <7>;
-> +					spi-cs-setup-delay-ns = <7>;
->  					spi-tx-bus-width = <4>;
->  					spi-rx-bus-width = <4>;
->  					m25p,fast-read;
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
+> index ef11606a82b3..9543214adc9f 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
+> +++ b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1.dtsi
+> @@ -234,7 +234,7 @@ qspi1_flash: flash@0 {
+>  		compatible = "jedec,spi-nor";
+>  		reg = <0>;
+>  		spi-max-frequency = <104000000>;
+> -		spi-cs-setup-ns = <7>;
+> +		spi-cs-setup-delay-ns = <7>;
+>  		spi-rx-bus-width = <4>;
+>  		spi-tx-bus-width = <4>;
+>  		m25p,fast-read;
 
 
