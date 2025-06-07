@@ -1,181 +1,171 @@
-Return-Path: <linux-kernel+bounces-676433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D92AAD0C59
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D06AD0C46
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DFA33B1443
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:00:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78BF16F914
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 09:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A7320A5F1;
-	Sat,  7 Jun 2025 10:01:06 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A1320D51E;
+	Sat,  7 Jun 2025 09:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T7lx1wwo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D723E15D1
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 10:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DE61FBEA4
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 09:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749290465; cv=none; b=ANUPqQ6xvTSYDNugHcBQXvMjsKbg8UxgttNtlBr1cc5nszt+Qrn7JJwRZ5VGVkar0cOZkRA0I5EH80dYXKuERZOsNZ7arPNaA1XJ7gKXn1fzwYnqRNwi0URwm1xtbNmbhskXuFSGSJEw+o0MYVyvU4bspH7ltaApDHDtaKyjwAs=
+	t=1749289578; cv=none; b=TLSHnmi1omEVDn/6f3CCe9LvAJFEogqFKxK6mLZad4B9qpTvv/OYZ/1qlrYPyWYNUI9N0K4fInq9XdCu0IG4uMKE21P6VX4twXEepZYO3ZshqMPxjuUAUqotB24KoAOibZKN4rR0FsLmr/RdWRT4xxmtxi/goolh8+oJ7SdDtuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749290465; c=relaxed/simple;
-	bh=haXDDy0jhSubRISAwi0kW5POr2APZOU+vOXOdU7Lg7A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ek0q9vAzdnMmRFZUvAT/Kz5cZdTj0CwnW7KzgywSViYq0vq3rYgOxpC5KA2oizvQW/vs2sLzkQnR/ULUl0dU9Pp5Gcq+uY6wh6WGIRxgZSGk41R/DWRNHuUuB4viPZw8s6xzwiqaWzjd49bRqvvqkIOhNulE+Yfk2pEFvbH3SGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bDtcX6GHbz27hct;
-	Sat,  7 Jun 2025 17:46:36 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0875718005F;
-	Sat,  7 Jun 2025 17:45:45 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 7 Jun 2025 17:45:44 +0800
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <viresh.kumar@linaro.org>,
-	<yangyicong@hisilicon.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
-	<yubowen8@huawei.com>, <zhenglifeng1@huawei.com>
-Subject: [PATCH] arm64: topology: Setup amu fie when cpu hotplugging
-Date: Sat, 7 Jun 2025 17:45:33 +0800
-Message-ID: <20250607094533.416368-1-zhenglifeng1@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1749289578; c=relaxed/simple;
+	bh=RTIekZYMXT1HPwL+6JH2s6iXA9/KsXv5nouYl86M74U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Id4z3HGaZ4g9GtmKtxgfWD6MEma89x/LLWeVAs05CpPj6kY4FjKAor79kvXZYaoT5bjD4UFh+6HT+En8abEeJK8zqfOigtKDj3ZNIk+XnGs1ZW7142CFjoN1JEXik1Le7hnRjrN8ze0sDspn9/+BMn68cIgmPvGkVNZtdtLZjLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T7lx1wwo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5577lGNV017533
+	for <linux-kernel@vger.kernel.org>; Sat, 7 Jun 2025 09:46:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hOT1OH7Zs3RcqZzob/2wXtn6yUgIoxAj6wC5h6Z407U=; b=T7lx1wwoaYXYXFZu
+	PWnTFfTJK53Q6R96BuWU/Vh70ppOHy0+pWHqAhGzxsvO0xQuCRKh/W4x+77rE0e7
+	5KQfB9DiuhUKr2lxytKI3eP6fbnU/din7Ia8xVTf1l2il4BcF3JL2hT2X2PTNRYM
+	X3kk7PUddjajdjxFZbwTRidUWCOb4ZyhecP1W0dz8xAv79OgM5GKK1V/HAcUsdnl
+	pgvBpl8ilmWnew9u6KHuRjKJZzahyBUwCos3eAD0+7NDYEk8FCO/tJ/+QfxWJKo1
+	NN+wmNmm3MKaGSxq+hH8N5WoTiL7HqQZgs5IYjUAuWNQMS0IsoYhY9o/f3gJsggo
+	i8YnWA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474crkrf53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 09:46:15 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d094e04aa4so57391185a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 02:46:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749289574; x=1749894374;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hOT1OH7Zs3RcqZzob/2wXtn6yUgIoxAj6wC5h6Z407U=;
+        b=WKTcnKteg6mNCAaQzLFP9dcRchq/T0CDrS+RuGMpZ548TqdhZVHnFkbiRLl8FPIYFR
+         RXz09+Gjc+nUwauwJohlNacvWfhdKgRI13/bEFErzGkRUYbGdu6hwO6TPYvWTS0kCd83
+         Eej+LSsZgkY5VjQMTqkcRXBHo+sXGYjegxNzyQaAQWmWgSZvW81SYEHyyImk8oI6Hx5U
+         OLYX/6se7p2extuy5Cdn/nyf/2Uet2tSU3cV4zwAoHvdLy/AsbshYeaybhBV8jM/at/P
+         4M0p69/XeLjRQGwk/+XNuEEh56ilzHGM6qg03YGH+bPJzxMH+yfTIFATQgFar9lTNAll
+         YK2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWx9Wl3gie9G08VvA8l9jxcRfQvX767cbipWEPO/508Vc3ceAsMb4kRfDsA7s6ClrsQborUNCyDy3pqBec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt2XRLsEx/Xv4O/nuCV+jk42raSkSaWv/vU2oJ1d4ZNKaPUp5x
+	zNftyw9PJrmqXhOnQR1k6T29ubyrEvO3+8ocBh06XHpNrwTknXv5MhPxcW0noWHZTCWGjfnrlPd
+	mTC1woWpxWWSsBWWxg3x8zhWkcLQPlfjXndemZyvgWOWFEhCrzNW3mYze+/rcfILMwCI=
+X-Gm-Gg: ASbGncuoMq0Wy9QO6Dil8QZ8YDrMEpZJ1acnydb0x/T4JAxpIyr8We+78QBEDVJpOxN
+	woJoMTHMOWRJmRxcfjd6qnGD/VsRY5WWiBXUNByJ7zk5EPvzOk3tn/h9gQ0Ec9dywiZa4GSY6aN
+	cWqsnFBYSsGm5kWZ6MFsLIDVdC6nUoTql2j8jCau4HpuLUbK2G7mOwT8A98vJ+zxiCAp4lJs/Yu
+	qkz31Bz6LP+d33pm7YJAVeCRw9YBTSzlh95OfxpWedsuk6vc+osCXPoZ41SB2okv7b4aGB6bXc3
+	gfw3fatO9c7e/I5E+H4xwZzHBrBifXwE2c5rleucc1IHG45B1S4K3cKF2RfgFIq/wQ==
+X-Received: by 2002:a05:622a:ca:b0:494:b4c4:8d7e with SMTP id d75a77b69052e-4a6691b6c5emr32043781cf.12.1749289574324;
+        Sat, 07 Jun 2025 02:46:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwWPtI2+ioHKumywO8IMNaOAQ5iYNQdemythHKIGMF/B1bpE+Qxn0ZZITwuEqzQ+j9BmQlPQ==
+X-Received: by 2002:a05:622a:ca:b0:494:b4c4:8d7e with SMTP id d75a77b69052e-4a6691b6c5emr32043651cf.12.1749289573920;
+        Sat, 07 Jun 2025 02:46:13 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-607783c0581sm2174164a12.51.2025.06.07.02.46.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Jun 2025 02:46:13 -0700 (PDT)
+Message-ID: <219a46d0-446c-4eed-8809-4f2400de0ef9@oss.qualcomm.com>
+Date: Sat, 7 Jun 2025 11:46:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/8] power: supply: qcom_battmgr: Add charge control
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Cc: =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+        David Collins <david.collins@oss.qualcomm.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
+ <20250530-qcom_battmgr_update-v2-5-9e377193a656@oss.qualcomm.com>
+ <f2e0f1da-c626-4cf0-8158-8a5805138871@kuruczgy.com>
+ <8bb3a056-c00f-4ae0-a790-d742d31f229a@oss.qualcomm.com>
+ <5knsdgk7o5zifkvzlrqiplmhztnsyhlxnqiuikqf4l7wkx2qvh@s3vzkiezw2bc>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <5knsdgk7o5zifkvzlrqiplmhztnsyhlxnqiuikqf4l7wkx2qvh@s3vzkiezw2bc>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+X-Authority-Analysis: v=2.4 cv=dsLbC0g4 c=1 sm=1 tr=0 ts=68440a67 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=j_8uj707ZTFaWRZCUGIA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-GUID: 5iy_YLQI_0g-PH_XOoqXJixj8_FbH2IT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA3MDA2OSBTYWx0ZWRfXyovC0YRhwqIG
+ zwzdqGSSgDf3VglgBkG7m+M+Vt0Wbtm9WvuAatlU6uAOE852nwtX9exVgu8j65mfJdF17nFB3+v
+ nRGMwD8BjMilJpwBW8b5csMKMmbkIOs1deXtp6X7eS3LAV3ZrsdT4PfHi5fESTAogPKpME0XX7+
+ yktpdNSfOri1sMwH5rzflJHjZ5qNlDseJVxBKztHnIJYSu4bW6Alu8KJWl44upMiDYF1b4u/cYo
+ NSg4fSmlFB6at04YzJYCVaO5yXuV0N80WrVvox9ovuNk8Zh0fA4e3bLAMFhwKd4HVzDfke/HqXk
+ eYyv09hKssekfmjd0g5TAMKrFFMgPlYGU8zO22D80pGnS37oo9vO0qRYjBfYraoxaawn+HYfl6W
+ nL7/kvbNt/vNzPkjcGi9rTkvJpc+tOTf+dOXZS/s+CMmXqldbBjbUGSHOebYB+18f0AWDSkj
+X-Proofpoint-ORIG-GUID: 5iy_YLQI_0g-PH_XOoqXJixj8_FbH2IT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-07_04,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 mlxlogscore=700 bulkscore=0 adultscore=0 phishscore=0
+ suspectscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506070069
 
-Amu fie was set up by a cpufreq policy notifier after the policy was
-created. This caused some problems:
+On 6/3/25 12:37 PM, Dmitry Baryshkov wrote:
+> On Tue, Jun 03, 2025 at 01:48:11PM +0800, Fenglin Wu wrote:
+>>
+>> On 5/31/2025 6:36 PM, György Kurucz wrote:
+>>>> Add charge control support for SM8550 and X1E80100.
+>>>
+>>> Thank you for this, tested on my Lenovo Yoga Slim 7x, the limiting works
+>>> well, I finally don't have to worry about leaving my laptop plugged in
+>>> for too long.
+>>>
+>>> One small thing I noticed is that after setting the sysfs values and
+>>> rebooting, they report 0 again. The limiting appears to stay in effect
+>>> though, so it seems that the firmware does keep the values, but Linux
+>>> does not read them back. Indeed, looking at the code, it seems that
+>>> actually reading back the values is only implemented for the SM8550.
+>>
+>> Right.
+>>
+>> Based on offline information, X1E80100 doesn't support reading back those
+>> threshold values in battery management firmware, so I can only use the
+>> cached values for sysfs read.
+> 
+> Which limits usablity of the attribute, it is now impossible to identify
+> whether it is enabled or disabled. Is there a chance of fixing that for
+> the X1E80100 platform?
 
-1. The cpus related to the same policy would all fail to set up amu fie if
-one of them couldn't pass the freq_counters_valid() check.
+Is there a chance we store that value in SDAM and can read it back?
 
-2. The cpus fail to set up amu fie would never have a chance to set up
-again.
-
-When boot with maxcpu=1 restrict, the support amu flags of the offline cpus
-would never be setup. After that, when cpufreq policy was being created,
-the online cpu might set up amu fie fail because the other cpus related to
-the same policy couldn't pass the freq_counters_valid() check. Hotplug the
-offline cpus, since the policy was already created, amu_fie_setup() would
-never be called again. All cpus couldn't setup amu fie in this situation.
-
-After commit 1f023007f5e7 ("arm64/amu: Use capacity_ref_freq() to set AMU
-ratio"), the max_freq stores in policy data is never needed when setting up
-amu fie.  This indicates that the setting up of amu fie does not depend on
-the policy any more. So each cpu can set up amu fie separately during
-hotplug and the problems above will be solved.
-
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
----
- arch/arm64/kernel/topology.c | 56 ++++++++++++++----------------------
- 1 file changed, 21 insertions(+), 35 deletions(-)
-
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 5d07ee85bdae..207eab4fa31f 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -351,63 +351,49 @@ int arch_freq_get_on_cpu(int cpu)
- 	return freq;
- }
- 
--static void amu_fie_setup(const struct cpumask *cpus)
-+static void amu_fie_setup(unsigned int cpu)
- {
--	int cpu;
--
--	/* We are already set since the last insmod of cpufreq driver */
- 	if (cpumask_available(amu_fie_cpus) &&
--	    unlikely(cpumask_subset(cpus, amu_fie_cpus)))
-+	    cpumask_test_cpu(cpu, amu_fie_cpus))
- 		return;
- 
--	for_each_cpu(cpu, cpus)
--		if (!freq_counters_valid(cpu))
--			return;
-+	if (!freq_counters_valid(cpu))
-+		return;
- 
- 	if (!cpumask_available(amu_fie_cpus) &&
- 	    !zalloc_cpumask_var(&amu_fie_cpus, GFP_KERNEL)) {
--		WARN_ONCE(1, "Failed to allocate FIE cpumask for CPUs[%*pbl]\n",
--			  cpumask_pr_args(cpus));
-+		WARN_ONCE(1, "Failed to allocate FIE cpumask for CPUs[%u]\n",
-+			  cpu);
- 		return;
- 	}
- 
--	cpumask_or(amu_fie_cpus, amu_fie_cpus, cpus);
-+	cpumask_set_cpu(cpu, amu_fie_cpus);
- 
- 	topology_set_scale_freq_source(&amu_sfd, amu_fie_cpus);
- 
--	pr_debug("CPUs[%*pbl]: counters will be used for FIE.",
--		 cpumask_pr_args(cpus));
-+	pr_debug("CPUs[%u]: counters will be used for FIE.", cpu);
- }
- 
--static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
--				 void *data)
-+static int cpuhp_topology_online(unsigned int cpu)
- {
--	struct cpufreq_policy *policy = data;
--
--	if (val == CPUFREQ_CREATE_POLICY)
--		amu_fie_setup(policy->related_cpus);
--
--	/*
--	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
--	 * counters don't have any dependency on cpufreq driver once we have
--	 * initialized AMU support and enabled invariance. The AMU counters will
--	 * keep on working just fine in the absence of the cpufreq driver, and
--	 * for the CPUs for which there are no counters available, the last set
--	 * value of arch_freq_scale will remain valid as that is the frequency
--	 * those CPUs are running at.
--	 */
-+	amu_fie_setup(cpu);
- 
- 	return 0;
- }
- 
--static struct notifier_block init_amu_fie_notifier = {
--	.notifier_call = init_amu_fie_callback,
--};
--
- static int __init init_amu_fie(void)
- {
--	return cpufreq_register_notifier(&init_amu_fie_notifier,
--					CPUFREQ_POLICY_NOTIFIER);
-+	int ret;
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+				"arm64/topology:online",
-+				cpuhp_topology_online,
-+				NULL);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
- }
- core_initcall(init_amu_fie);
- 
--- 
-2.33.0
-
+Konrad
 
