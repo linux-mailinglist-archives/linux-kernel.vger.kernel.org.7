@@ -1,57 +1,89 @@
-Return-Path: <linux-kernel+bounces-676707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA0EAD0FFA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 23:26:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B9EAD1022
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 23:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC533AFA4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 21:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DFCB16CA33
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 21:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D251821C19E;
-	Sat,  7 Jun 2025 21:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AD5217F33;
+	Sat,  7 Jun 2025 21:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiVYTStC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QliP0p+G"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06335215798;
-	Sat,  7 Jun 2025 21:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA33F21ABC2;
+	Sat,  7 Jun 2025 21:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749331540; cv=none; b=nqOtUlhh/YBDMgWOK+k2frmsBleNm/Kz8xRqr3N08ENMddKhTrBvlbqUcBTM0zBeeuWKUKR+UOvM84220NAut4Y5uyNz8b67jEUpZMUCuadSEUUCquiPBwSbbeXBFuP71BKxjnWssslzQTJE02gZzqgjUXI4pbn9C+yOrM6cnbU=
+	t=1749331621; cv=none; b=l+2Eqe6dZJbYmrBE/m0WKwoVM8Ff7tv4Sir2JWiJzSfmy3FcWfxkZIrdQ+CJw6JlQjP9Kr66SZl1WJjba3LtulSsCSFRQ9O8h/cXK7I9QtyW7XGmjd1DpCRcRnvrNUWp92ujyV6Rm7CtaRXcQIlDh6exCUWnsDYcTEkB22gh7dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749331540; c=relaxed/simple;
-	bh=lDutR/OkZJ8kejemD+ev3cJGgma3EktDwsICk0qZi/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LOaiejjdEN5rSyDfYKeNHY0kiGU24/sbwRpAvPpLBNpz+rkjeS6Nv953lbtYAnV3QS9TUQvkVH7rJYCbu6r8M08fc5C47IFPCiac+rIGlvnRTPSECYUjYp5VTED8EqT/ofOvGebOhFQVZhY64yYdU3fANeZE6jgXaEN3zNunoMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiVYTStC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6770EC4CEF2;
-	Sat,  7 Jun 2025 21:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749331539;
-	bh=lDutR/OkZJ8kejemD+ev3cJGgma3EktDwsICk0qZi/c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QiVYTStC0tCKCpWkxIXZjo51dquboWRkaSsp9XUW3T6nGrRTiI1b3gcFjshihMhkn
-	 gc3j/YqolsyW8TRo24Y7YaZmkfOckgbgms1HEAmMDUyUQ6LUepPZBe4TM/6uoXE4cc
-	 jQ4AWh/i9e25i624WS3WVuMctwJOSNgdUos0/l2+kTqDJRoybJHjDvD68eDjCH38cd
-	 cQfdMHgQobnfJ6H0DqsWmYsl1CfGpMIeBJVHmeEuar5y7oh3b2hXQ1icvwdQdPkiMG
-	 C1CThrSJ9UFWvJVKCrwD6CmQZ/yLKV2HjrQodtoxCEtgaCoR7fK6SG6eDAjVoKkWYC
-	 9ao94dAP1hC5A==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
+	s=arc-20240116; t=1749331621; c=relaxed/simple;
+	bh=zlfJ9MFXhBJox/V315hfuNb1xbGA2xxs6JAlZwQ6Gvw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gYbk4uGmDnlAM8MnK5CXZwv5QOZj9obdZ0Hft/DR0iGSu49oPi2s0JFibcEZPvzhn1DjbvPy92+rp5JcKsOs43VWAGBWG47vCLgbBUMJ3C29aXaAqZ3rYGwuOgFBTX0bRXRzaj8rFSrHXjuDJd8ukXAVBBLYuSFbZY7hP/aks/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QliP0p+G; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso20111565e9.1;
+        Sat, 07 Jun 2025 14:26:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749331618; x=1749936418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W38WbDZxYH8R3C3FoSWr6WuJZqRkttgyfM9+3TrtsDk=;
+        b=QliP0p+GtkZ05nKy6BckTT496A0HWC4yCVT4VUuM/ifHVwBOUEpL8RfUk9hH7ytx/M
+         2k8Dg7TcmdAl4pJVIk0GZaxGbcUuzHswTr3Fl+d8IzXt+3nZEnVIdqk/1yvZ8ufjKZnO
+         yd5nya1u74fQBKreGlqAVJErA0Gpku7aB/FhHxx0fhXrMGFwpPF6KkTxu8TU+vOT8jcX
+         MmhEmKppB43Ja9NwyA7MwS5xSVq9OJyl+me3HzMjbglVdKGWZcbiXDchZXJG3Mmfp9kA
+         0JvD+9guVNSBvSv/0LoLAQ+7HMt8n1uiIxEii8rl5DagTBqwWjamsijtShCPdPDQSGkc
+         m3vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749331618; x=1749936418;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W38WbDZxYH8R3C3FoSWr6WuJZqRkttgyfM9+3TrtsDk=;
+        b=uaQlyoPJVv4xM3a6vAQ8jHqWkKZblYvhT/SqF+/YmneNE/ccPB19/2sSm7Gpb9i7O2
+         IFfng6U7WDX2GJ6GVHJyAK6LjQlZYAepmTSHVd2UdCwjayDPdEUlR9VrIhgYmTohkhhx
+         eCsRRJK9FBCvk2A1j9iEZdYByj5Psv/qalo3qxMH6czTrnSEO6q7sk3r8YptCkr7dTHm
+         WpRVLfZio27k5quKcZOYP+QCaEavzeIzQVWO5c6tnqGfBp8+hyKBrs8JmPciZPjV4B6k
+         SeSvYjOJhHDBIKZWqy9Xfljpp6iAjmYGkskxwoaTKKvCDduAnMayaAcXuG6Ro9P8vzl8
+         tiMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU7sxogiBJTFOvbyWiTOBwt+bOHCy+ch9MlJjdPVqvL9SA6z+Q/+FuCBtUbCt/T5yb9uQovGksE79HFO75@vger.kernel.org, AJvYcCVvfKzdsKe2awPexkg9shEe37V6H2yjfaGii5+/iilykyyRoHaHnhJ4xQV7CrIgpe/2Tc3iUDt9se7A@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU+UlVm+Yg5UfcOCc2kTjEDseBBozpRB7AVGxN4pawYHYZ3bHE
+	4tmJQT6PKVpT9FKe+UADcAY8z45C0tgr1bUaU2hRNmfdnCE0DHQk30w=
+X-Gm-Gg: ASbGncvKxHOPTUxuj/+C/iHqqwtQAHIv9wZp4oTv6h86Orw09HsZrmaBsKbIpNyr25r
+	oJXNGmzyCUbfau185bcb8Xg/lA/OOFXCg1nZfjUjjb6RheVfu+FipgNPpUUvisPODbhARH6XKSk
+	4b7iKZqSUlazOjKTFjFk60o9buGcgj+8mLBnCwVAVDnZH7u7KBCDRRIlRzZKQKaI0vpFvRbDsw9
+	7x83poz1cb/eKo2G1PKanXImSt3yjR0OTD6DrA+R2LW5wD46UzhdlQX8y9Kn8xSpQt/yK/tbnOj
+	wzjOUTO8SyAgexlsJuBNTD+UnzvH7q/KvvIRwWBjUXguVVAJfneZaOeeqot/BWwlypmx
+X-Google-Smtp-Source: AGHT+IGeRa7dua7uSLyCyRrVm3+JRcC4ZtZmkzR5yMhTJMxUZbBE2l0bZHD3VhYoUgre0uLvU7l88g==
+X-Received: by 2002:a05:600c:1e8a:b0:450:d37d:7c with SMTP id 5b1f17b1804b1-452014976b1mr65517015e9.21.1749331617631;
+        Sat, 07 Jun 2025 14:26:57 -0700 (PDT)
+Received: from alex-x1.lan ([84.226.118.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244fd02sm5449632f8f.75.2025.06.07.14.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Jun 2025 14:26:57 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Hauke Mehrtens <hauke@hauke-m.de>
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: phy: Convert lantiq,ase-usb2-phy to DT schema
-Date: Sat,  7 Jun 2025 16:25:36 -0500
-Message-ID: <20250607212537.742287-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	jens.glathe@oldschoolsolutions.biz,
+	konrad.dybcio@oss.qualcomm.com
+Subject: [RFC PATCH v1 0/2] Introduce dummy regulator consumer
+Date: Sat,  7 Jun 2025 23:25:37 +0200
+Message-ID: <20250607212654.126412-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,141 +92,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert the Lantiq XWAY USB PHY binding to DT schema format. It's a
-straight forward conversion.
+Introduce a very simple dummy consumer driver. Designed to consume
+a single regulator 'vdd', the driver will power-on on probe and PM
+suspend (if supported), power-off on remove and PM resume (if enabled).
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/phy/lantiq,ase-usb2-phy.yaml     | 71 +++++++++++++++++++
- .../bindings/phy/phy-lantiq-rcu-usb2.txt      | 40 -----------
- 2 files changed, 71 insertions(+), 40 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/lantiq,ase-usb2-phy.yaml
- delete mode 100644 Documentation/devicetree/bindings/phy/phy-lantiq-rcu-usb2.txt
+There are two main reasons for this driver:
+1. Create a pseudo-consumer in place of real devices which are not or
+   cannot be described in the device-tree. Examples would be integrated
+   USB UVC camera (present on some arm64 laptops) or dedicated keyboard
+   backlight regulator (hypothetical). Instead of leaving regulator
+   without consumer and `regulator-always-on` property, one could bind
+   to dummy consumer to save some power during suspend.
+2. A great development tool.
 
-diff --git a/Documentation/devicetree/bindings/phy/lantiq,ase-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/lantiq,ase-usb2-phy.yaml
-new file mode 100644
-index 000000000000..99b5da705ca4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/lantiq,ase-usb2-phy.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/lantiq,ase-usb2-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Lantiq XWAY SoC RCU USB 1.1/2.0 PHY
-+
-+maintainers:
-+  - Hauke Mehrtens <hauke@hauke-m.de>
-+
-+description:
-+  This node has to be a sub node of the Lantiq RCU block.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - lantiq,ase-usb2-phy
-+          - lantiq,danube-usb2-phy
-+          - lantiq,xrx100-usb2-phy
-+          - lantiq,xrx200-usb2-phy
-+          - lantiq,xrx300-usb2-phy
-+
-+  reg:
-+    items:
-+      - description: Offset of the USB PHY configuration register
-+      - description: Offset of the USB Analog configuration register
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: phy
-+
-+  resets:
-+    minItems: 1
-+    maxItems: 2
-+
-+  reset-names:
-+    minItems: 1
-+    items:
-+      - enum: [ phy, ctrl ]
-+      - const: ctrl
-+
-+  '#phy-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - '#phy-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    usb2-phy@18 {
-+        compatible = "lantiq,xrx200-usb2-phy";
-+        reg = <0x18 4>, <0x38 4>;
-+        clocks = <&pmu 1>;
-+        clock-names = "phy";
-+        resets = <&reset1 4 4>, <&reset0 4 4>;
-+        reset-names = "phy", "ctrl";
-+        #phy-cells = <0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/phy/phy-lantiq-rcu-usb2.txt b/Documentation/devicetree/bindings/phy/phy-lantiq-rcu-usb2.txt
-deleted file mode 100644
-index 643948b6b576..000000000000
---- a/Documentation/devicetree/bindings/phy/phy-lantiq-rcu-usb2.txt
-+++ /dev/null
-@@ -1,40 +0,0 @@
--Lantiq XWAY SoC RCU USB 1.1/2.0 PHY binding
--===========================================
--
--This binding describes the USB PHY hardware provided by the RCU module on the
--Lantiq XWAY SoCs.
--
--This node has to be a sub node of the Lantiq RCU block.
--
---------------------------------------------------------------------------------
--Required properties (controller (parent) node):
--- compatible	: Should be one of
--			"lantiq,ase-usb2-phy"
--			"lantiq,danube-usb2-phy"
--			"lantiq,xrx100-usb2-phy"
--			"lantiq,xrx200-usb2-phy"
--			"lantiq,xrx300-usb2-phy"
--- reg		: Defines the following sets of registers in the parent
--		  syscon device
--			- Offset of the USB PHY configuration register
--			- Offset of the USB Analog configuration
--			  register (only for xrx200 and xrx200)
--- clocks	: References to the (PMU) "phy" clk gate.
--- clock-names	: Must be "phy"
--- resets	: References to the RCU USB configuration reset bits.
--- reset-names	: Must be one of the following:
--			"phy" (optional)
--			"ctrl" (shared)
--
---------------------------------------------------------------------------------
--Example for the USB PHYs on an xRX200 SoC:
--	usb_phy0: usb2-phy@18 {
--		compatible = "lantiq,xrx200-usb2-phy";
--		reg = <0x18 4>, <0x38 4>;
--
--		clocks = <&pmu PMU_GATE_USB0_PHY>;
--		clock-names = "phy";
--		resets = <&reset1 4 4>, <&reset0 4 4>;
--		reset-names = "phy", "ctrl";
--		#phy-cells = <0>;
--	};
+Tested on Asus Zenbook A14 with webcamera indicator LED imitating vreg
+enable pin.
+
+Aleksandrs Vinarskis (2):
+  regulator: Add dummy regulator consumer binding
+  regulator: Introduce dummy regulator consumer driver
+
+ .../bindings/regulator/dummy-consumer.yaml    | 39 +++++++++
+ drivers/regulator/Kconfig                     |  9 ++
+ drivers/regulator/Makefile                    |  1 +
+ drivers/regulator/dummy-consumer.c            | 85 +++++++++++++++++++
+ 4 files changed, 134 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/dummy-consumer.yaml
+ create mode 100644 drivers/regulator/dummy-consumer.c
+
 -- 
-2.47.2
+2.45.2
 
 
