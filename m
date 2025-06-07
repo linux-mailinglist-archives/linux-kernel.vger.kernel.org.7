@@ -1,86 +1,176 @@
-Return-Path: <linux-kernel+bounces-676699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ECEAD0FEB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 23:25:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5B1AD0FEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 23:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D6907A6CD0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 21:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B4B16C5FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 21:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96550215798;
-	Sat,  7 Jun 2025 21:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3938921A455;
+	Sat,  7 Jun 2025 21:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BHMVYdYU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPhiHrbH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AF12F3E;
-	Sat,  7 Jun 2025 21:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973DB1EA7F4;
+	Sat,  7 Jun 2025 21:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749331507; cv=none; b=IOc2XrVQYJ80GYBY4jdIIvj6QTKtyjRtUps6nCGaYSUEpLmfCgVyWtYFoTv4L9hrm66zr35a9O1dnOIU+bBM0TqLMCBnN1E/W0YU/OBUPXSG4p9LmwAYZzzgAntIq1k8vl4QfaUaimFwx2cvWa3RdBRhhllh5GjsteQrkNlK3o0=
+	t=1749331513; cv=none; b=R0lilapFdQiHJ0ymmD9IZrEvGlj1YZwYKVzbNs8vXFP0bJO8NQJkkVFsWzOI1J2rFg3ubATOtdWi/QXmT1FfHykXDu/5AMwCIzrFBBUfwCFvfvNlZwUdIrBcXTybIbu+/ltxf9FL7cAVJNYD1TGQvXlQDdW6w4T8DC46zYhn1+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749331507; c=relaxed/simple;
-	bh=PYoPnw5ejgALW0suoy2NdoxfVJO7YAi9yZCyKK5g6ro=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=POenFUN2jE1e9sweejsEA8YkQWk5V0T9++gUc13fqoMpGk8nW9tvIEtE5flqTGAHiK2nQznNOeghOEAOBpeGT+9KTEb2aW0C/+SrnMDtQx6ru2dnaTdZm4LWLFQSOL3canmTSitwKK/STM1zZvHlAPDhNWCVmnZ/vQIaEc9Gzqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BHMVYdYU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 263EDC4CEE4;
-	Sat,  7 Jun 2025 21:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749331506;
-	bh=PYoPnw5ejgALW0suoy2NdoxfVJO7YAi9yZCyKK5g6ro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BHMVYdYU6Set/xLh+GyImSxwTjT0heDDceYtBW6ZUlLMo5yIrtYnPluQxfGf3ZQXM
-	 UO8SSCzbB7tN8NuuubXUJ33Vch/bALN0qx2O6ICpqyXp60M6KclptduddUmM8eFtUi
-	 FAYUpt7krEOZPk/0/iiK4MOPjBI2rctU2AOuExIY=
-Date: Sat, 7 Jun 2025 14:25:05 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tal Zussman <tz2294@columbia.edu>
-Cc: wangfushuai <wangfushuai@baidu.com>, corbet@lwn.net, david@redhat.com,
- andrii@kernel.org, npache@redhat.com, catalin.marinas@arm.com,
- xu.xin16@zte.com.cn, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: proc: update VmFlags documentation in smaps
-Message-Id: <20250607142505.e58fda734ce54167724705a3@linux-foundation.org>
-In-Reply-To: <CAKha_so-2Z+4rAKezv1peeWdkOKoMMvuLqq7dhOmbeeAGxHF5Q@mail.gmail.com>
-References: <20250607153614.81914-1-wangfushuai@baidu.com>
-	<CAKha_so-2Z+4rAKezv1peeWdkOKoMMvuLqq7dhOmbeeAGxHF5Q@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749331513; c=relaxed/simple;
+	bh=qx2zwBcl3wNpob4mAq9+wFt2npdqpRCKjBcRH1CJvIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ryvtQtWAQjqQ8JWrCTbs3ORINapqPIJbhWM1y8RCo+YWvw618E2BW0mr0MNAmcNUmJZEV/u5FaT4lxEfn2QElSnqJvvFF9OI5NGp7g0mXXwxGQtZmM12T5WCXjAIKED9iIkO08Yd6VOeqXZq5SwSrmPAQAFZZUDwMeKBosRRMFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPhiHrbH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04F46C4CEE4;
+	Sat,  7 Jun 2025 21:25:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749331513;
+	bh=qx2zwBcl3wNpob4mAq9+wFt2npdqpRCKjBcRH1CJvIA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IPhiHrbH5f8+A5NmvaBnF/m7CUnZogDiCEHj3to5pHvZ4G0bABPm3a4zVBwHosSv5
+	 JtSCG1UbWjhWxWbYRfagN+KJFNN3sOu/JOMHB/UJ0Pe7VZOkZCln0VlIH5c8LKvD1S
+	 PCyPezXgfuTtyj3QEwj3rPRQZqJA/bxBZEFvxRvUsQySO0whZkkqacWwbYQ7n6NYjg
+	 zCdE3LoOyxidwqS2aWVBLFDzjrgvQkJxBgWmrrFJcVW5KAg6wMyZdgxdEQf1gWvRau
+	 p4Qw3CO4uPqio7q3RpCQdDH+LrL498gaaS2kuFDHEEHDtIHpj3Sm0fVGEe6CS9R7jA
+	 Bquw7I1HhMVJA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ray Jui <ray.jui@broadcom.com>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: phy: Convert brcm,sr-pcie-phy to DT schema
+Date: Sat,  7 Jun 2025 16:25:07 -0500
+Message-ID: <20250607212508.741193-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 7 Jun 2025 13:03:30 -0400 Tal Zussman <tz2294@columbia.edu> wrote:
+Convert the Broadcom Stingray PCIe PHY binding to DT schema format. It's
+a straight forward conversion.
 
-> On Sat, Jun 7, 2025 at 11:36 AM wangfushuai <wangfushuai@baidu.com> wrote:
-> > Remove outdated VM_DENYWRITE("dw") reference and add missing
-> > VM_LOCKONFAULT("lf") and VM_UFFD_MINOR("ui") flags.
-> 
-> VM_DROPPABLE ("dp") is also missing, would be nice to add it as well.
-> 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/phy/brcm,sr-pcie-phy.txt         | 41 -----------------
+ .../bindings/phy/brcm,sr-pcie-phy.yaml        | 46 +++++++++++++++++++
+ 2 files changed, 46 insertions(+), 41 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+ create mode 100644 Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.yaml
 
-Thanks.  How's this?
-
-
---- a/Documentation/filesystems/proc.rst~docs-proc-update-vmflags-documentation-in-smaps-fix
-+++ a/Documentation/filesystems/proc.rst
-@@ -610,6 +610,7 @@ encoded manner. The codes are the follow
-     ss    shadow/guarded control stack page
-     sl    sealed
-     lf    lock on fault pages
-+    dp    always lazily freeable mapping
-     ==    =======================================
- 
- Note that there is no guarantee that every flag and associated mnemonic will
-_
+diff --git a/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
+deleted file mode 100644
+index e8d82286beb9..000000000000
+--- a/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
++++ /dev/null
+@@ -1,41 +0,0 @@
+-Broadcom Stingray PCIe PHY
+-
+-Required properties:
+-- compatible: must be "brcm,sr-pcie-phy"
+-- reg: base address and length of the PCIe SS register space
+-- brcm,sr-cdru: phandle to the CDRU syscon node
+-- brcm,sr-mhb: phandle to the MHB syscon node
+-- #phy-cells: Must be 1, denotes the PHY index
+-
+-For PAXB based root complex, one can have a configuration of up to 8 PHYs
+-PHY index goes from 0 to 7
+-
+-For the internal PAXC based root complex, PHY index is always 8
+-
+-Example:
+-	mhb: syscon@60401000 {
+-		compatible = "brcm,sr-mhb", "syscon";
+-		reg = <0 0x60401000 0 0x38c>;
+-	};
+-
+-	cdru: syscon@6641d000 {
+-		compatible = "brcm,sr-cdru", "syscon";
+-		reg = <0 0x6641d000 0 0x400>;
+-	};
+-
+-	pcie_phy: phy@40000000 {
+-		compatible = "brcm,sr-pcie-phy";
+-		reg = <0 0x40000000 0 0x800>;
+-		brcm,sr-cdru = <&cdru>;
+-		brcm,sr-mhb = <&mhb>;
+-		#phy-cells = <1>;
+-	};
+-
+-	/* users of the PCIe PHY */
+-
+-	pcie0: pcie@48000000 {
+-		...
+-		...
+-		phys = <&pcie_phy 0>;
+-		phy-names = "pcie-phy";
+-	};
+diff --git a/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.yaml
+new file mode 100644
+index 000000000000..60ccc0813ed5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/brcm,sr-pcie-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom Stingray PCIe PHY
++
++maintainers:
++  - Ray Jui <ray.jui@broadcom.com>
++
++description: >
++  For PAXB based root complex, one can have a configuration of up to 8 PHYs.
++  PHY index goes from 0 to 7.
++
++  For the internal PAXC based root complex, PHY index is always 8.
++
++properties:
++  compatible:
++    const: brcm,sr-pcie-phy
++
++  reg:
++    maxItems: 1
++
++  '#phy-cells':
++    const: 1
++
++  brcm,sr-cdru:
++    description: phandle to the CDRU syscon node
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  brcm,sr-mhb:
++    description: phandle to the MHB syscon node
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++additionalProperties: false
++
++examples:
++  - |
++    phy@40000000 {
++        compatible = "brcm,sr-pcie-phy";
++        reg = <0x40000000 0x800>;
++        brcm,sr-cdru = <&cdru>;
++        brcm,sr-mhb = <&mhb>;
++        #phy-cells = <1>;
++    };
+-- 
+2.47.2
 
 
