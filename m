@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-676529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2F8AD0D8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 15:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D227AAD0D94
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 15:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B371F1894F8B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:08:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1E33A7A9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4966223DF0;
-	Sat,  7 Jun 2025 13:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtJFaQc8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12A8224AE4;
+	Sat,  7 Jun 2025 13:10:34 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443FECA5A;
-	Sat,  7 Jun 2025 13:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCDACA5A;
+	Sat,  7 Jun 2025 13:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749301702; cv=none; b=sKB+zDHvGPu6BDD2k3XBChrtRgAJnDiLw7gZU8Wvip79zn/Kui0qvcskO4YDpBk+l3ylQfYouRk6wLsUjAzoCsy1/Qe1pM243djsP+NJtRtn7eBEq8BEKo2aBUBkDFNKiQ2yumrmpQoOt/Swvfy+k6WYm7nsub9rB76tmUZ2EpQ=
+	t=1749301834; cv=none; b=eVIm6B9YwUekJWrqot4CjfUuzLJmjfnFxCjYbJ5Wb0iaNwAlM+8Xo3BerCRcNSnjBtsF4Q+TzXeLuxPJxjpxMZcG10p5sDfwO4jJv8ktNU8pDnAWgDMZ4TMCl3KIoyQF2k2hfb/SnsE6D0yaYbjbGx4nUeSAAxMv7h+zd29ghqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749301702; c=relaxed/simple;
-	bh=yhoju7r33G8rTolP8uGuqI1d8kbL53ldIMQ+cw+zaBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QEyP4GlFulS58ZUe7KO8pvFu/DYxCV2mAIlg2Uwq+IZ/as5bCoKoAJrOSxsdpKKXpdmTUhqBAKONT5SAN9es4JVhyxE6sQXbTI8sDVMl9608HBlNf54XSJj/OlcH+vd9791c6dafb5Vu12w4eRoErg2o4zY96qN0czX3Y1V6NwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtJFaQc8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58DCDC4CEE4;
-	Sat,  7 Jun 2025 13:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749301701;
-	bh=yhoju7r33G8rTolP8uGuqI1d8kbL53ldIMQ+cw+zaBU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BtJFaQc8n6srES9D67KgwVj0HeR2/pM79QAXzEkcUTCTcExCEN5WXA9hIVWNEeH80
-	 gUqOvruxNxYncVEAPcDcqh5Mu3zyYhlNjDEv8KzChQVHUS0h3Z7K7yh4WwZ2KBSINn
-	 nSejnzW23RS4BR8Y2aQtOVI4Ei5NDyuvRsciEW0s87sEKlDOiKpgy5zwIClmMMqc0M
-	 EEgqwjh7XYx2kPu6WobG1Ovxg2qQPNZirS3H/RNeBlSky3waoclnMEKpNSIiDonXl2
-	 fzbTQ+ov4NqXjpWw2DIbmNvuUeURvkj3p/M322rdQagZEiWWGt8EZFMOlMLHwhsbIh
-	 C/Rq5WJramDTw==
-Date: Sat, 7 Jun 2025 14:08:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Angelo Dureghello <adureghello@baylibre.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v9 0/7] iio: adc: add ad7606 calibration support
-Message-ID: <20250607140811.4bff9232@jic23-huawei>
-In-Reply-To: <aEM-C0HHPcYTTpBd@smile.fi.intel.com>
-References: <20250606-wip-bl-ad7606-calibration-v9-0-6e014a1f92a2@baylibre.com>
-	<aEM-C0HHPcYTTpBd@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749301834; c=relaxed/simple;
+	bh=WOYQ6xWwJEuJwlVoF7FZKQNdjh/wOaLF4xZxjrOdDT8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jfdil4QgDp+6KALE37O3peghWS16XTUj/CFBf6HwAfuJbqcoXAYA+8u6YpwPIQP1dGC4cM2dtE7oJPZ31bsSJz9tQ7U6bnWLzGM3MrhcD04IKIhPpHxwMjSv8bMMy+ZlVgqtYvM5TbrP8tnwtwfYzEYEJHF820OlAjLt9TBFVyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: wangfushuai <wangfushuai@baidu.com>
+To: <wangfushuai@baidu.com>
+CC: <Liam.Howlett@Oracle.com>, <akpm@linux-foundation.org>,
+	<andrii@kernel.org>, <christophe.leroy@csgroup.eu>, <david@redhat.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<osalvador@suse.de>
+Subject: Re: [PATCH] fs/proc/task_mmu: add VM_SHADOW_STACK for arm64 when support GCS
+Date: Sat, 7 Jun 2025 21:08:38 +0800
+Message-ID: <20250607130838.76035-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <20250607060741.69902-1-wangfushuai@baidu.com>
+References: <20250607060741.69902-1-wangfushuai@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc4.internal.baidu.com (172.31.50.48) To
+ bjkjy-mail-ex22.internal.baidu.com (172.31.50.16)
+X-FEAS-Client-IP: 172.31.50.16
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Fri, 6 Jun 2025 22:14:19 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> On Fri, Jun 06, 2025 at 04:19:15PM +0200, Angelo Dureghello wrote:
-> > Add gain, offset and phase (as a delay) calibration support, for
-> > ad7606b, ad7606c16 and ad7606c18.
-> > 
-> > Calibration is available for devices with software mode capability. 
-> > 
-> > Offset and phase calibration is configurable by sysfs attributes, while
-> > gain calibration value in ohms must match the external RFilter value,
-> > when an external RFilter is available, so implemented through a specific
-> > devicetree "adi,rfilter-ohms" property.  
+> The recent commit adding VM_SHADOW_STACK for arm64 GCS did not update
+> the /proc/[pid]/smaps display logic to show the "ss" flag for GCS pages.
+> This patch adds the necessary condition to display "ss" flag.
+>  
+> Fixes: ae80e1629aea ("mm: Define VM_SHADOW_STACK for arm64 when we support GCS")
+> Signed-off-by: wangfushuai <wangfushuai@baidu.com>
+> ---
+>  fs/proc/task_mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index 27972c0749e7..c4c942cc6e72 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -991,7 +991,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+>  #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+>  		[ilog2(VM_UFFD_MINOR)]	= "ui",
+>  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+> -#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
+> +#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK || defined(CONFIG_ARM64_GCS)
+>  		[ilog2(VM_SHADOW_STACK)] = "ss",
+>  #endif
+>  #if defined(CONFIG_64BIT) || defined(CONFIG_PPC32)
+> -- 
+Hi Maintainers,
 
-Applied to the testing branch of iio.git.  I'll rebase that on rc1
-shortly and push out as togreg.
+Please disregard this patch. I accidentally uploaded the wrong version of the code.
+I will send the corrected patch shortly. Apologies for the confusion.
 
 Thanks,
-
-Jonathan
 
