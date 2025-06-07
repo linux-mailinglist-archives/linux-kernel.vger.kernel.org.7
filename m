@@ -1,241 +1,667 @@
-Return-Path: <linux-kernel+bounces-676485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFD9AD0D19
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB34AAD0D36
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF3B170360
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6598218956B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58922221278;
-	Sat,  7 Jun 2025 11:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAQkVMTE"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B581B20AF9A;
-	Sat,  7 Jun 2025 11:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04098220F54;
+	Sat,  7 Jun 2025 11:50:39 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EE51E2853;
+	Sat,  7 Jun 2025 11:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749296058; cv=none; b=X3mcGR4MPgGQbGJ9n5b60qXDudUaXIAOBgCCNWMrFyNed9ZA7o8i6wdz7rOsjIg6/n1p2VcU175VvW4FNtXjxiaWVeU2C0eQJfqeM3UIcAxw/mANuJSpj5e5FKwoZ5y1b3ukLoDoP5gduJLBb5wFFZx2Yfi3QG5A3gY16nMQlws=
+	t=1749297038; cv=none; b=nLAxKcxg4YX5foJBn498U6UHc5CQCjm+iUzU9xz1/JfzJBToVeWOQPzaUez/32mt1luA/J+KiqWdYQreCR/vcvm8mIGSSKnRLyA+EVqvQTTjbbolOonxjdgY34jINEhpLUlgyL2mWRSHSFiiouNnTtyTt3IcdmpXWDQc+QCKm34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749296058; c=relaxed/simple;
-	bh=2iEX22Qgeeywv6X8vOQY2z7W6RgQbsq70uFOkSFJIdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aT1UldTQ4NMKRpCSJ0SW5O+srOat5x6JtRYNheeSGXXldI/RRbS7cn05q0/uX98mopax8sXTH56r1EOMVTagM50g61f3tsYoOjVGJwn4hpCRHOY4xExNiDvTCMMecF8dcV0m0LIqAZ3O3TBkm1GsMwE75XbI67uCrpSV6+gEk+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAQkVMTE; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a36e090102so1778371f8f.2;
-        Sat, 07 Jun 2025 04:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749296055; x=1749900855; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vboVAmpFsqg3CGAMmqx8CAfmn1Bpd6R599tczZBOFyk=;
-        b=EAQkVMTEmMCkDn7/lRkkmlh4Jjzcw5mWFui7ejx8sWWvt8w5Pi6TXz2yP/oxYSZZfU
-         S6PhVjCIBiRPBzZ4VQh5Ra2ptqqTyfI/nIFIX64XG972qovJQVgtRXvGWfmrb0xP00/U
-         zS/f/5/DjUU9JyNyEKK/vnGGc0i2EfuDhUlmb7NpAdZm7+bNQAUgnigJMAhH2EPy5EEH
-         6CHjo5b7LeigvjkLgioz0ckNcLEtxsWZ4G7Yx8Oa+kFwJUeESTNrM6c8AUwWnKoxfh8A
-         +up0pUK0rohEWDL/p3oCNqqtMKvaRyho/m01Ye0KuH3FehkyiG0chjQKlrSNlqFfjv+T
-         xSjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749296055; x=1749900855;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vboVAmpFsqg3CGAMmqx8CAfmn1Bpd6R599tczZBOFyk=;
-        b=NE9AxGWUkiI5gtBrzYP06EoQn7ZeK8adYOwyOzql3y9LhE3RxxS42difbcwsM4ZtMU
-         EaV5+Tztn+ZsOMaxUZW/xGbcN1HMGeshfZYWFE1vcMBBQkvaEQDLFhRjG8zPotDLLGUU
-         sQdMVDtWXh7JRdzvVtGuR0q468LfZ3vo6qcMmaILvdhJZrA8hA610Uos49TcScP/mbuO
-         vSQLetzgBGceO5c1IVL4CHjpY4iKtyLiix1tdj7nxff8Vy+aLFdv9ERFqWNZE76YTx2w
-         ehS6ajlqFUv50mZNy6P5WWtaYbcZbPK5DgA2lOYa9pcSZ5JZ4NkQMzL91n3YKdw5KVlp
-         PVqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlfRvFKmHoiAoY0g6sJCTYg/4SHKlEMbOgsVH5cIjvMp5h+IrIv8WA4zw2HduootTBh4AB/Bw5KPQ2AfI=@vger.kernel.org, AJvYcCXD1CYewksEwFhx4e5C2mlHEKDwIRcg9N79kmLu8I9XoKLpWDm5wRiNG4IbN0AkIv+fLUhlNyefkU+F7W7qxII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUG/rIq5qDJVXV9/rueTtsipO+HUY0EzMONHzQ/bjHxM0Rchsz
-	3DBq2lRcMM3o9KaNXASI2gUgsj3qLdB4gRBCytS+5Xb60v9jgFTTNx2U
-X-Gm-Gg: ASbGnctvomQvmsDI+2dsfzJI96Eht7WgIQvDndRZxotWVz5bZd+ADwCaOkJd13KzjS0
-	d8O85eQsvxUtkQ0uOwTa5fQ+Mt6X/Y32wf6RKtnNuX9blks0c1Dj7hRIub3zg0ni4EqTnU2iEt/
-	yf1y80zc+3v7Msxz9H86ykMt3n0w46NC8F+KHDLAkHYwFZuk79nPKRRl6WgOPoKm/c41daUy3Yj
-	kHqHt2Ua89Hc930oCZnVIRP8TVzIC1f77Yw+fvxm/iJqWaaaIf/mHkq0Gjvol0b/SXHSZm/RjzW
-	IrTlDnTXmSr305vpgr6hyQ0QvfjS/nOqnQwDNoXrnyZnPTGbED3CgtV1w0WX0eXvAoNSLJlpUCM
-	=
-X-Google-Smtp-Source: AGHT+IFW/e2Vsa8uYU1XGeXMAiZFne8VpCCuWVnRQ/dhAWqmLX5rT5lvPEvMzYy/ZeWNnMVF5FbDxg==
-X-Received: by 2002:a05:6000:2305:b0:3a4:f722:f00b with SMTP id ffacd0b85a97d-3a53188a524mr5548011f8f.11.1749296054728;
-        Sat, 07 Jun 2025 04:34:14 -0700 (PDT)
-Received: from ?IPV6:2001:871:22a:3372::171c? ([2001:871:22a:3372::171c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452137290b9sm54356135e9.34.2025.06.07.04.34.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Jun 2025 04:34:14 -0700 (PDT)
-Message-ID: <8f491c61-e7b2-4a1f-b4f8-8ff691015655@gmail.com>
-Date: Sat, 7 Jun 2025 13:34:11 +0200
+	s=arc-20240116; t=1749297038; c=relaxed/simple;
+	bh=D0vB3JuiVZyZ/h2XRkuAJ5fZsQWSkGEyasc+HwSX1C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M6UstvvxfyfsElfRWJlV7sDF+LGSXGeLfmvSZZ8F5wwIgknysvRe2nZfvwMjL0ev3e7sSJv22KOsRJ+dQqaQrQIsrqxZ1QDtIO/LW3h0VJ9nsUvCs678R502qrUP9x5CR15AVRxfQ7SlG5h5hwaDNgzcsrrOJ5X6BejFoaBvrlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bDx4r2nCSz9sWd;
+	Sat,  7 Jun 2025 13:37:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 6SYBhWXyDkjB; Sat,  7 Jun 2025 13:37:48 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bDx4r1ZcVz9sWb;
+	Sat,  7 Jun 2025 13:37:48 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D6FB8B764;
+	Sat,  7 Jun 2025 13:37:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 065fHlfX2kKy; Sat,  7 Jun 2025 13:37:48 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8D5C18B763;
+	Sat,  7 Jun 2025 13:37:47 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH] ALSA: pcm: Convert multiple {get/put}_user to user_access_begin/user_access_end()
+Date: Sat,  7 Jun 2025 13:37:42 +0200
+Message-ID: <bf9288392b1d4b9e92fe29212d9cb933c5b3fbae.1749296015.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] rust: miscdevice: add additional data to
- MiscDeviceRegistration
-To: Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee@kernel.org>,
- Daniel Almeida <daniel.almeida@collabora.com>
-Cc: =?UTF-8?Q?Gerald_Wisb=C3=B6ck?= <gerald.wisboeck@feather.ink>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250530-b4-rust_miscdevice_registrationdata-v4-0-d313aafd7e59@gmail.com>
- <20250530-b4-rust_miscdevice_registrationdata-v4-2-d313aafd7e59@gmail.com>
- <DAACCYW3QRQE.1O75L2SHJYVPM@kernel.org>
- <3eef5777-9190-4782-8433-7b6ad4b9acd3@gmail.com>
- <DADAEIT9E1R8.1J69W5DKYAQGY@kernel.org>
- <3c1c0563-7f48-4222-a28d-316f885bcad4@gmail.com>
- <DAEQ7VRHEP4W.4O0KV31IPJFG@kernel.org>
- <89066f83-db7f-405c-b3b5-ce553f8e6b48@gmail.com>
- <DAERY78ROO76.2WSPPIC01XQ5H@kernel.org>
-Content-Language: en-US, de-DE
-From: Christian Schrefl <chrisi.schrefl@gmail.com>
-In-Reply-To: <DAERY78ROO76.2WSPPIC01XQ5H@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749296262; l=21635; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=D0vB3JuiVZyZ/h2XRkuAJ5fZsQWSkGEyasc+HwSX1C0=; b=KoQE3zAzxPP5Ii0dLzWuR8gIUuB+6hugpihuB09M18pflxlQjj5DCV/tc7KRCtda1+3Ky+msu DCzy3WkQOXiDBuwNiFShiwV+tsamXlY+7GmH12WJfWb7+PWfY6JK8QT
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On 05.06.25 7:27 PM, Benno Lossin wrote:
-> On Thu Jun 5, 2025 at 6:52 PM CEST, Christian Schrefl wrote:
->> On 05.06.25 6:05 PM, Benno Lossin wrote:
->>> On Thu Jun 5, 2025 at 4:57 PM CEST, Christian Schrefl wrote:
->>>> On 04.06.25 1:29 AM, Benno Lossin wrote:
->>>>> On Mon Jun 2, 2025 at 11:16 PM CEST, Christian Schrefl wrote:
->>>>>> On 31.05.25 2:23 PM, Benno Lossin wrote:
->>>>>>> On Fri May 30, 2025 at 10:46 PM CEST, Christian Schrefl wrote:
->>>>>>>>  #[pinned_drop]
->>>>>>>> -impl<T> PinnedDrop for MiscDeviceRegistration<T> {
->>>>>>>> +impl<T: MiscDevice> PinnedDrop for MiscDeviceRegistration<T> {
->>>>>>>>      fn drop(self: Pin<&mut Self>) {
->>>>>>>>          // SAFETY: We know that the device is registered by the type invariants.
->>>>>>>>          unsafe { bindings::misc_deregister(self.inner.get()) };
->>>>>>>> +
->>>>>>>> +        // SAFETY: `self.data` is valid for dropping and nothing uses it anymore.
->>>>>>>
->>>>>>> Ditto.
->>>>>>
->>>>>> I'm not quite sure how to formulate these, what do you think of:
->>>>>>
->>>>>> /// - `inner` is a registered misc device.
->>>>>
->>>>> This doesn't really mean something to me, maybe it's better to reference
->>>>> the registering function?
->>>>
->>>> That is from previous code so this should probably not be changed
->>>> in this series.
->>>
->>> I personally wouldn't mind a commit that fixes this up, but if you don't
->>> want to do it, let me know then we can make this a good-first-issue.
->>
->> I can do it, but I think it would make a good-first-issue so lets go
->> with that for now.
-> 
-> Feel free to open the issue :)
+With user access protection (Called SMAP on x86 or KUAP on powerpc)
+each and every call to get_user() or put_user() performs heavy
+operations to unlock and lock kernel access to userspace.
 
-I've opened [0]. I don't have the permissions to add tags for that.
-[0]: https://github.com/Rust-for-Linux/linux/issues/1168
+To avoid that, perform user accesses by blocks using
+user_access_begin/user_access_end() and unsafe_get_user()/
+unsafe_put_user() and alike.
 
-> 
->>>>>> /// - `data` contains a valid `T::RegistrationData` for the whole lifetime of [`MiscDeviceRegistration`]
->>>>>
->>>>> This sounds good. But help me understand, why do we need `Opaque` /
->>>>> `UnsafePinned` again? If we're only using shared references, then we
->>>>> could also just store the object by value?
->>>>
->>>> Since the Module owns the `MiscDeviceRegistration` it may create `&mut MiscDeviceRegistration`,
->>>> so from what I understand having a `& RegistrationData` reference into that is UB without
->>>> `UnsafePinned` (or `Opaque` since that includes `UnsafePinned` semantics).
->>>
->>> And the stored `T::RegistrationData` is shared as read-only with the C
->>> side? Yes in that case we want `UnsafePinned<UnsafeCell<>>` (or for the
->>> moment `Opaque`).
->>
->> Not really shared with the C side, but with the `open` implementation in
->> `MiscDevice` that is (indirectly) called by C. (`UnsafeCell` will probably not be
->> needed, as `UnsafePinned` will almost certainly have `UnsafeCell` semantics in upstream).
-> 
-> Ah yes, I meant "shared with other Rust code through the C side" ie the
-> pointer round-trips through C (that isn't actually relevant, but that's
-> why I mentioned C).
-> 
->> Thinking about this has made me realize that the current code already is a bit
->> iffy, since `MiscDevice::open` gets `&MiscDeviceRegistration<Self>` as an argument. (It
->> should be fine since `UnsafeCell` and `UnsafePinned` semantics also apply to "parrent" types
->> i.e. `&MiscDeviceRegistration` also has the semantics of `Opaque`).
-> 
-> It's fine, since all non-ZST fields are `Opaque`. Otherwise we'd need to
-> wrap all fields with that.
+As an exemple, before the patch the 9 calls to put_user() at the
+end of snd_pcm_ioctl_sync_ptr_compat() imply the following set of
+instructions about 9 times (access_ok - enable user - write - disable
+user):
+    0.00 :   c057f858:       3d 20 7f ff     lis     r9,32767
+    0.29 :   c057f85c:       39 5e 00 14     addi    r10,r30,20
+    0.77 :   c057f860:       61 29 ff fc     ori     r9,r9,65532
+    0.32 :   c057f864:       7c 0a 48 40     cmplw   r10,r9
+    0.36 :   c057f868:       41 a1 fb 58     bgt     c057f3c0 <snd_pcm_ioctl+0xbb0>
+    0.30 :   c057f86c:       3d 20 dc 00     lis     r9,-9216
+    1.95 :   c057f870:       7d 3a c3 a6     mtspr   794,r9
+    0.33 :   c057f874:       92 8a 00 00     stw     r20,0(r10)
+    0.27 :   c057f878:       3d 20 de 00     lis     r9,-8704
+    0.28 :   c057f87c:       7d 3a c3 a6     mtspr   794,r9
+...
 
-Yeah I understand that its not UB, but to me it seems a bit fragile and opaque why it is allowed.
-That's what I meant by "a bit iffy".
+A perf profile shows that in total the 9 put_user() represent 36% of
+the time spent in snd_pcm_ioctl() and about 80 instructions.
 
-> 
->>>>>> /// - no mutable references to `data` may be created.
->>>>>
->>>>>>>> +        unsafe { core::ptr::drop_in_place(self.data.get()) };
->>>>>>>>      }
->>>>>>>>  }
->>>>>>>>  
->>>>>>>> @@ -109,6 +135,13 @@ pub trait MiscDevice: Sized {
->>>>>>>>      /// What kind of pointer should `Self` be wrapped in.
->>>>>>>>      type Ptr: ForeignOwnable + Send + Sync;
->>>>>>>>  
->>>>>>>> +    /// The additional data carried by the [`MiscDeviceRegistration`] for this [`MiscDevice`].
->>>>>>>> +    /// If no additional data is required than the unit type `()` should be used.
->>>>>>>> +    ///
->>>>>>>> +    /// This data can be accessed in [`MiscDevice::open()`] using
->>>>>>>> +    /// [`MiscDeviceRegistration::data()`].
->>>>>>>> +    type RegistrationData: Sync;
->>>>>>>
->>>>>>> Why do we require `Sync` here?
->>>>>>
->>>>>> Needed for `MiscDeviceRegistration` to be `Send`, see response above.
->>>>>
->>>>> You could also just ask the type there to be `Sync`, then users will get
->>>>> an error when they try to use `MiscDevice` in a way where
->>>>> `RegistrationData` is required to be `Sync`.
->>>>
->>>> I don't think there is any point to allow defining a `MiscDevice` implementation
->>>> that cant actually be used/registered.
->>>
->>> Sure, but the bound asserting that it is `Sync` doesn't need to be here,
->>> having it just on the `impl Sync for MiscDeviceRegistration` is good
->>> enough. (though one could argue that people would get an earlier error
->>> if it is already asserted here. I think we should have some general
->>> guidelines here :)
->>
->> That would require a `Send` bound in the `register` function,
->> since a `MiscDevice` with `!Sync` `Data` would be valid now
->> (meaning that `MiscDeviceRegistration` may also be `!Sync`).
->>
->> If you want I can go with that. I'm not really sure if its
->> really better (tough I don't feel that strongly either
->> way).
-> 
-> We don't lose anything by doing this, so I think we should do it.
-> If in the future someone invents a way `MiscDevice` that's only in the
-> current thread and it can be registered (so like a "thread-local"
-> `MiscDevice` :), then this will be less painful to change.
+With this patch everything is done in 13 instructions and represent
+only 15% of the time spent in snd_pcm_ioctl():
 
-Alright but I doubt that realistic, since the `Data` would always at
-least be shared between the owner of `MiscDeviceRegistration` and the
-`fops` implementation. Meaning its always shared with syscall context
-and I don't think it makes sense to have a registration owed in 
-that context.
+    0.57 :   c057f5dc:       3d 20 dc 00     lis     r9,-9216
+    0.98 :   c057f5e0:       7d 3a c3 a6     mtspr   794,r9
+    0.16 :   c057f5e4:       92 7f 00 04     stw     r19,4(r31)
+    0.63 :   c057f5e8:       93 df 00 0c     stw     r30,12(r31)
+    0.16 :   c057f5ec:       93 9f 00 10     stw     r28,16(r31)
+    4.95 :   c057f5f0:       92 9f 00 14     stw     r20,20(r31)
+    0.19 :   c057f5f4:       92 5f 00 18     stw     r18,24(r31)
+    0.49 :   c057f5f8:       92 bf 00 1c     stw     r21,28(r31)
+    0.27 :   c057f5fc:       93 7f 00 20     stw     r27,32(r31)
+    5.88 :   c057f600:       93 36 00 00     stw     r25,0(r22)
+    0.11 :   c057f604:       93 17 00 00     stw     r24,0(r23)
+    0.00 :   c057f608:       3d 20 de 00     lis     r9,-8704
+    0.79 :   c057f60c:       7d 3a c3 a6     mtspr   794,r9
 
-Cheers
-Christian
+Note that here the access_ok() in user_write_access_begin() is skipped
+because the exact same verification has already been performed at the
+beginning of the fonction with the call to user_read_access_begin().
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ sound/core/pcm.c        |  24 ++++--
+ sound/core/pcm_compat.c | 162 +++++++++++++++++++++++++++++-----------
+ sound/core/pcm_lib.c    |  35 +++++----
+ sound/core/pcm_native.c |  81 ++++++++++++++------
+ 4 files changed, 219 insertions(+), 83 deletions(-)
+
+diff --git a/sound/core/pcm.c b/sound/core/pcm.c
+index 283aac441fa0..b5821d2506b6 100644
+--- a/sound/core/pcm.c
++++ b/sound/core/pcm.c
+@@ -107,15 +107,17 @@ static int snd_pcm_control_ioctl(struct snd_card *card,
+ 			struct snd_pcm_substream *substream;
+ 
+ 			info = (struct snd_pcm_info __user *)arg;
+-			if (get_user(device, &info->device))
+-				return -EFAULT;
+-			if (get_user(stream, &info->stream))
++
++			if (!user_read_access_begin(info, sizeof(*info)))
+ 				return -EFAULT;
++			unsafe_get_user(device, &info->device, Efault);
++			unsafe_get_user(stream, &info->stream, Efault);
+ 			if (stream < 0 || stream > 1)
+-				return -EINVAL;
++				goto Einval;
+ 			stream = array_index_nospec(stream, 2);
+-			if (get_user(subdevice, &info->subdevice))
+-				return -EFAULT;
++			unsafe_get_user(subdevice, &info->subdevice, Efault);
++			user_read_access_end();
++
+ 			guard(mutex)(&register_mutex);
+ 			pcm = snd_pcm_get(card, device);
+ 			if (pcm == NULL)
+@@ -145,6 +147,16 @@ static int snd_pcm_control_ioctl(struct snd_card *card,
+ 		}
+ 	}
+ 	return -ENOIOCTLCMD;
++
++Einval:
++	user_read_access_end();
++
++	return -EINVAL;
++
++Efault:
++	user_read_access_end();
++
++	return -EFAULT;
+ }
+ 
+ #define FORMAT(v) [SNDRV_PCM_FORMAT_##v] = #v
+diff --git a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
+index a42ec7f5a1da..5286a6a13d7e 100644
+--- a/sound/core/pcm_compat.c
++++ b/sound/core/pcm_compat.c
+@@ -91,18 +91,22 @@ static int snd_pcm_ioctl_sw_params_compat(struct snd_pcm_substream *substream,
+ 	int err;
+ 
+ 	memset(&params, 0, sizeof(params));
+-	if (get_user(params.tstamp_mode, &src->tstamp_mode) ||
+-	    get_user(params.period_step, &src->period_step) ||
+-	    get_user(params.sleep_min, &src->sleep_min) ||
+-	    get_user(params.avail_min, &src->avail_min) ||
+-	    get_user(params.xfer_align, &src->xfer_align) ||
+-	    get_user(params.start_threshold, &src->start_threshold) ||
+-	    get_user(params.stop_threshold, &src->stop_threshold) ||
+-	    get_user(params.silence_threshold, &src->silence_threshold) ||
+-	    get_user(params.silence_size, &src->silence_size) ||
+-	    get_user(params.tstamp_type, &src->tstamp_type) ||
+-	    get_user(params.proto, &src->proto))
++
++	if (!user_read_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_get_user(params.tstamp_mode, &src->tstamp_mode, Efault);
++	unsafe_get_user(params.period_step, &src->period_step, Efault);
++	unsafe_get_user(params.sleep_min, &src->sleep_min, Efault);
++	unsafe_get_user(params.avail_min, &src->avail_min, Efault);
++	unsafe_get_user(params.xfer_align, &src->xfer_align, Efault);
++	unsafe_get_user(params.start_threshold, &src->start_threshold, Efault);
++	unsafe_get_user(params.stop_threshold, &src->stop_threshold, Efault);
++	unsafe_get_user(params.silence_threshold, &src->silence_threshold, Efault);
++	unsafe_get_user(params.silence_size, &src->silence_size, Efault);
++	unsafe_get_user(params.tstamp_type, &src->tstamp_type, Efault);
++	unsafe_get_user(params.proto, &src->proto, Efault);
++	user_read_access_end();
++
+ 	/*
+ 	 * Check silent_size parameter.  Since we have 64bit boundary,
+ 	 * silence_size must be compared with the 32bit boundary.
+@@ -116,6 +120,11 @@ static int snd_pcm_ioctl_sw_params_compat(struct snd_pcm_substream *substream,
+ 	if (boundary && put_user(boundary, &src->boundary))
+ 		return -EFAULT;
+ 	return err;
++
++Efault:
++	user_read_access_end();
++
++	return -EFAULT;
+ }
+ 
+ struct snd_pcm_channel_info32 {
+@@ -131,20 +140,37 @@ static int snd_pcm_ioctl_channel_info_compat(struct snd_pcm_substream *substream
+ 	struct snd_pcm_channel_info info;
+ 	int err;
+ 
+-	if (get_user(info.channel, &src->channel) ||
+-	    get_user(info.offset, &src->offset) ||
+-	    get_user(info.first, &src->first) ||
+-	    get_user(info.step, &src->step))
++	if (!user_read_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_get_user(info.channel, &src->channel, Efault_rd);
++	unsafe_get_user(info.offset, &src->offset, Efault_rd);
++	unsafe_get_user(info.first, &src->first, Efault_rd);
++	unsafe_get_user(info.step, &src->step, Efault_rd);
++	user_read_access_end();
++
+ 	err = snd_pcm_channel_info(substream, &info);
+ 	if (err < 0)
+ 		return err;
+-	if (put_user(info.channel, &src->channel) ||
+-	    put_user(info.offset, &src->offset) ||
+-	    put_user(info.first, &src->first) ||
+-	    put_user(info.step, &src->step))
++
++	if (!user_write_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_put_user(info.channel, &src->channel, Efault_wr);
++	unsafe_put_user(info.offset, &src->offset, Efault_wr);
++	unsafe_put_user(info.first, &src->first, Efault_wr);
++	unsafe_put_user(info.step, &src->step, Efault_wr);
++	user_write_access_end();
++
+ 	return err;
++
++Efault_rd:
++	user_read_access_end();
++
++	return -EFAULT;
++
++Efault_wr:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ 
+ #ifdef CONFIG_X86_X32_ABI
+@@ -261,9 +287,12 @@ static int snd_pcm_ioctl_hw_params_compat(struct snd_pcm_substream *substream,
+ 	}
+ 	if (err < 0)
+ 		return err;
+-	if (copy_to_user(data32, data, sizeof(*data32)) ||
+-	    put_user(data->fifo_size, &data32->fifo_size))
++
++	if (!user_write_access_begin(data32, sizeof(*data32)))
+ 		return -EFAULT;
++	unsafe_copy_to_user(data32, data, sizeof(*data32), Efault);
++	unsafe_put_user(data->fifo_size, &data32->fifo_size, Efault);
++	user_write_access_end();
+ 
+ 	if (! refine) {
+ 		unsigned int new_boundary = recalculate_boundary(runtime);
+@@ -271,6 +300,11 @@ static int snd_pcm_ioctl_hw_params_compat(struct snd_pcm_substream *substream,
+ 			runtime->boundary = new_boundary;
+ 	}
+ 	return err;
++
++Efault:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ 
+ 
+@@ -296,9 +330,11 @@ static int snd_pcm_ioctl_xferi_compat(struct snd_pcm_substream *substream,
+ 	if (substream->runtime->state == SNDRV_PCM_STATE_OPEN)
+ 		return -EBADFD;
+ 
+-	if (get_user(buf, &data32->buf) ||
+-	    get_user(frames, &data32->frames))
++	if (!user_read_access_begin(data32, sizeof(*data32)))
+ 		return -EFAULT;
++	unsafe_get_user(buf, &data32->buf, Efault);
++	unsafe_get_user(frames, &data32->frames, Efault);
++	user_read_access_end();
+ 
+ 	if (dir == SNDRV_PCM_STREAM_PLAYBACK)
+ 		err = snd_pcm_lib_write(substream, compat_ptr(buf), frames);
+@@ -310,6 +346,11 @@ static int snd_pcm_ioctl_xferi_compat(struct snd_pcm_substream *substream,
+ 	if (put_user(err, &data32->result))
+ 		return -EFAULT;
+ 	return 0;
++
++Efault:
++	user_read_access_end();
++
++	return -EFAULT;
+ }
+ 
+ 
+@@ -345,20 +386,28 @@ static int snd_pcm_ioctl_xfern_compat(struct snd_pcm_substream *substream,
+ 	ch = substream->runtime->channels;
+ 	if (ch > 128)
+ 		return -EINVAL;
+-	if (get_user(buf, &data32->bufs) ||
+-	    get_user(frames, &data32->frames))
++
++	if (!user_read_access_begin(data32, sizeof(*data32)))
+ 		return -EFAULT;
++	unsafe_get_user(buf, &data32->bufs, Efault);
++	unsafe_get_user(frames, &data32->frames, Efault);
++	user_read_access_end();
++
+ 	bufptr = compat_ptr(buf);
+ 	bufs = kmalloc_array(ch, sizeof(void __user *), GFP_KERNEL);
+ 	if (bufs == NULL)
+ 		return -ENOMEM;
++
++	if (!user_read_access_begin(bufptr, sizeof(*bufptr) * ch))
++		return -EFAULT;
+ 	for (i = 0; i < ch; i++) {
+ 		u32 ptr;
+-		if (get_user(ptr, bufptr))
+-			return -EFAULT;
++		unsafe_get_user(ptr, bufptr, Efault);
+ 		bufs[i] = compat_ptr(ptr);
+ 		bufptr++;
+ 	}
++	user_read_access_end();
++
+ 	if (dir == SNDRV_PCM_STREAM_PLAYBACK)
+ 		err = snd_pcm_lib_writev(substream, bufs, frames);
+ 	else
+@@ -368,6 +417,11 @@ static int snd_pcm_ioctl_xfern_compat(struct snd_pcm_substream *substream,
+ 			return -EFAULT;
+ 	}
+ 	return err;
++
++Efault:
++	user_read_access_end();
++
++	return -EFAULT;
+ }
+ 
+ #ifdef CONFIG_X86_X32_ABI
+@@ -418,10 +472,13 @@ static int snd_pcm_ioctl_sync_ptr_x32(struct snd_pcm_substream *substream,
+ 	if (snd_BUG_ON(!runtime))
+ 		return -EINVAL;
+ 
+-	if (get_user(sflags, &src->flags) ||
+-	    get_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    get_user(scontrol.avail_min, &src->c.control.avail_min))
++	if (!user_read_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_get_user(sflags, &src->flags, Efault_rd);
++	unsafe_get_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_rd);
++	unsafe_get_user(scontrol.avail_min, &src->c.control.avail_min, Efault_rd);
++	user_read_access_end();
++
+ 	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
+ 		err = snd_pcm_hwsync(substream);
+ 		if (err < 0)
+@@ -450,18 +507,31 @@ static int snd_pcm_ioctl_sync_ptr_x32(struct snd_pcm_substream *substream,
+ 	}
+ 	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
+ 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
+-	if (put_user(sstatus.state, &src->s.status.state) ||
+-	    put_user(sstatus.hw_ptr, &src->s.status.hw_ptr) ||
+-	    put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec) ||
+-	    put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec) ||
+-	    put_user(sstatus.suspended_state, &src->s.status.suspended_state) ||
+-	    put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec) ||
+-	    put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec) ||
+-	    put_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    put_user(scontrol.avail_min, &src->c.control.avail_min))
++
++	if (!user_write_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_put_user(sstatus.state, &src->s.status.state, Efault_wr);
++	unsafe_put_user(sstatus.hw_ptr, &src->s.status.hw_ptr, Efault_wr);
++	unsafe_put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec, Efault_wr);
++	unsafe_put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec, Efault_wr);
++	unsafe_put_user(sstatus.suspended_state, &src->s.status.suspended_state, Efault_wr);
++	unsafe_put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec, Efault_wr);
++	unsafe_put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec, Efault_wr);
++	unsafe_put_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_wr);
++	unsafe_put_user(scontrol.avail_min, &src->c.control.avail_min), Efault_wr);
++	user_write_access_end();
+ 
+ 	return 0;
++
++Efault_rd:
++	user_read_access_end();
++
++	return -EFAULT;
++
++Efault_wr:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ #endif /* CONFIG_X86_X32_ABI */
+ 
+@@ -499,10 +569,13 @@ static int snd_pcm_ioctl_sync_ptr_buggy(struct snd_pcm_substream *substream,
+ 
+ 	memset(&sync_ptr, 0, sizeof(sync_ptr));
+ 	sync_cp = (struct __snd_pcm_mmap_control64_buggy *)&sync_ptr.c.control;
+-	if (get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags)))
+-		return -EFAULT;
+-	if (copy_from_user(sync_cp, &(_sync_ptr->c.control), sizeof(*sync_cp)))
++
++	if (!user_read_access_begin(_sync_ptr, sizeof(*_sync_ptr)))
+ 		return -EFAULT;
++	unsafe_get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags), Efault);
++	unsafe_copy_from_user(sync_cp, &(_sync_ptr->c.control), sizeof(*sync_cp), Efault);
++	user_read_access_end();
++
+ 	status = runtime->status;
+ 	control = runtime->control;
+ 	if (sync_ptr.flags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
+@@ -533,6 +606,11 @@ static int snd_pcm_ioctl_sync_ptr_buggy(struct snd_pcm_substream *substream,
+ 	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
+ 		return -EFAULT;
+ 	return 0;
++
++Efault:
++	user_read_access_end();
++
++	return -EFAULT;
+ }
+ 
+ /*
+diff --git a/sound/core/pcm_lib.c b/sound/core/pcm_lib.c
+index 6eaa950504cf..3b9ba078594e 100644
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -2464,7 +2464,7 @@ const struct snd_pcm_chmap_elem snd_pcm_alt_chmaps[] = {
+ };
+ EXPORT_SYMBOL_GPL(snd_pcm_alt_chmaps);
+ 
+-static bool valid_chmap_channels(const struct snd_pcm_chmap *info, int ch)
++static __always_inline bool valid_chmap_channels(const struct snd_pcm_chmap *info, int ch)
+ {
+ 	if (ch > info->max_channels)
+ 		return false;
+@@ -2530,8 +2530,9 @@ static int pcm_chmap_ctl_tlv(struct snd_kcontrol *kcontrol, int op_flag,
+ 		return -EINVAL;
+ 	if (size < 8)
+ 		return -ENOMEM;
+-	if (put_user(SNDRV_CTL_TLVT_CONTAINER, tlv))
++	if (!user_write_access_begin(tlv, size))
+ 		return -EFAULT;
++	unsafe_put_user(SNDRV_CTL_TLVT_CONTAINER, tlv, Efault);
+ 	size -= 8;
+ 	dst = tlv + 2;
+ 	for (map = info->chmap; map->channels; map++) {
+@@ -2539,26 +2540,32 @@ static int pcm_chmap_ctl_tlv(struct snd_kcontrol *kcontrol, int op_flag,
+ 		if (!valid_chmap_channels(info, map->channels))
+ 			continue;
+ 		if (size < 8)
+-			return -ENOMEM;
+-		if (put_user(SNDRV_CTL_TLVT_CHMAP_FIXED, dst) ||
+-		    put_user(chs_bytes, dst + 1))
+-			return -EFAULT;
++			goto Enomem;
++		unsafe_put_user(SNDRV_CTL_TLVT_CHMAP_FIXED, dst, Efault);
++		unsafe_put_user(chs_bytes, dst + 1, Efault);
+ 		dst += 2;
+ 		size -= 8;
+ 		count += 8;
+ 		if (size < chs_bytes)
+-			return -ENOMEM;
++			goto Enomem;
+ 		size -= chs_bytes;
+ 		count += chs_bytes;
+-		for (c = 0; c < map->channels; c++) {
+-			if (put_user(map->map[c], dst))
+-				return -EFAULT;
+-			dst++;
+-		}
++		for (c = 0; c < map->channels; c++)
++			unsafe_put_user(map->map[c], dst++, Efault);
+ 	}
+-	if (put_user(count, tlv + 1))
+-		return -EFAULT;
++	unsafe_put_user(count, tlv + 1, Efault);
++	user_write_access_end();
+ 	return 0;
++
++Enomem:
++	user_write_access_end();
++
++	return -ENOMEM;
++
++Efault:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ 
+ static void pcm_chmap_ctl_private_free(struct snd_kcontrol *kcontrol)
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 2b77190a247d..34c4fe801e53 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -3051,10 +3051,14 @@ static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
+ 	int err;
+ 
+ 	memset(&sync_ptr, 0, sizeof(sync_ptr));
+-	if (get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags)))
++
++	if (!user_read_access_begin(_sync_ptr, sizeof(*_sync_ptr)))
+ 		return -EFAULT;
+-	if (copy_from_user(&sync_ptr.c.control, &(_sync_ptr->c.control), sizeof(struct snd_pcm_mmap_control)))
+-		return -EFAULT;	
++	unsafe_get_user(sync_ptr.flags, (unsigned __user *)&(_sync_ptr->flags), Efault);
++	unsafe_copy_from_user(&sync_ptr.c.control, &(_sync_ptr->c.control),
++			      sizeof(struct snd_pcm_mmap_control), Efault);
++	user_read_access_end();
++
+ 	status = runtime->status;
+ 	control = runtime->control;
+ 	if (sync_ptr.flags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
+@@ -3086,6 +3090,11 @@ static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
+ 	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
+ 		return -EFAULT;
+ 	return 0;
++
++Efault:
++	user_read_access_end();
++
++	return -EFAULT;
+ }
+ 
+ struct snd_pcm_mmap_status32 {
+@@ -3154,10 +3163,13 @@ static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
+ 	if (snd_BUG_ON(!runtime))
+ 		return -EINVAL;
+ 
+-	if (get_user(sflags, &src->flags) ||
+-	    get_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    get_user(scontrol.avail_min, &src->c.control.avail_min))
++	if (!user_read_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_get_user(sflags, &src->flags, Efault_rd);
++	unsafe_get_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_rd);
++	unsafe_get_user(scontrol.avail_min, &src->c.control.avail_min, Efault_rd);
++	user_read_access_end();
++
+ 	if (sflags & SNDRV_PCM_SYNC_PTR_HWSYNC) {
+ 		err = snd_pcm_hwsync(substream);
+ 		if (err < 0)
+@@ -3189,18 +3201,31 @@ static int snd_pcm_ioctl_sync_ptr_compat(struct snd_pcm_substream *substream,
+ 	}
+ 	if (!(sflags & SNDRV_PCM_SYNC_PTR_APPL))
+ 		snd_pcm_dma_buffer_sync(substream, SNDRV_DMA_SYNC_DEVICE);
+-	if (put_user(sstatus.state, &src->s.status.state) ||
+-	    put_user(sstatus.hw_ptr, &src->s.status.hw_ptr) ||
+-	    put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec) ||
+-	    put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec) ||
+-	    put_user(sstatus.suspended_state, &src->s.status.suspended_state) ||
+-	    put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec) ||
+-	    put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec) ||
+-	    put_user(scontrol.appl_ptr, &src->c.control.appl_ptr) ||
+-	    put_user(scontrol.avail_min, &src->c.control.avail_min))
++
++	if (!user_write_access_begin(src, sizeof(*src)))
+ 		return -EFAULT;
++	unsafe_put_user(sstatus.state, &src->s.status.state, Efault_wr);
++	unsafe_put_user(sstatus.hw_ptr, &src->s.status.hw_ptr, Efault_wr);
++	unsafe_put_user(sstatus.tstamp.tv_sec, &src->s.status.tstamp_sec, Efault_wr);
++	unsafe_put_user(sstatus.tstamp.tv_nsec, &src->s.status.tstamp_nsec, Efault_wr);
++	unsafe_put_user(sstatus.suspended_state, &src->s.status.suspended_state, Efault_wr);
++	unsafe_put_user(sstatus.audio_tstamp.tv_sec, &src->s.status.audio_tstamp_sec, Efault_wr);
++	unsafe_put_user(sstatus.audio_tstamp.tv_nsec, &src->s.status.audio_tstamp_nsec, Efault_wr);
++	unsafe_put_user(scontrol.appl_ptr, &src->c.control.appl_ptr, Efault_wr);
++	unsafe_put_user(scontrol.avail_min, &src->c.control.avail_min, Efault_wr);
++	user_write_access_end();
+ 
+ 	return 0;
++
++Efault_rd:
++	user_read_access_end();
++
++	return -EFAULT;
++
++Efault_wr:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ #define __SNDRV_PCM_IOCTL_SYNC_PTR32 _IOWR('A', 0x23, struct snd_pcm_sync_ptr32)
+ 
+@@ -3274,14 +3299,21 @@ static int snd_pcm_rewind_ioctl(struct snd_pcm_substream *substream,
+ 	snd_pcm_uframes_t frames;
+ 	snd_pcm_sframes_t result;
+ 
+-	if (get_user(frames, _frames))
+-		return -EFAULT;
+-	if (put_user(0, _frames))
++	if (!user_access_begin(_frames, sizeof(*_frames)))
+ 		return -EFAULT;
++	unsafe_get_user(frames, _frames, Efault);
++	unsafe_put_user(0, _frames, Efault);
++	user_access_end();
++
+ 	result = snd_pcm_rewind(substream, frames);
+ 	if (put_user(result, _frames))
+ 		return -EFAULT;
+ 	return result < 0 ? result : 0;
++
++Efault:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ 
+ static int snd_pcm_forward_ioctl(struct snd_pcm_substream *substream,
+@@ -3290,14 +3322,21 @@ static int snd_pcm_forward_ioctl(struct snd_pcm_substream *substream,
+ 	snd_pcm_uframes_t frames;
+ 	snd_pcm_sframes_t result;
+ 
+-	if (get_user(frames, _frames))
+-		return -EFAULT;
+-	if (put_user(0, _frames))
++	if (!user_access_begin(_frames, sizeof(*_frames)))
+ 		return -EFAULT;
++	unsafe_get_user(frames, _frames, Efault);
++	unsafe_put_user(0, _frames, Efault);
++	user_access_end();
++
+ 	result = snd_pcm_forward(substream, frames);
+ 	if (put_user(result, _frames))
+ 		return -EFAULT;
+ 	return result < 0 ? result : 0;
++
++Efault:
++	user_write_access_end();
++
++	return -EFAULT;
+ }
+ 
+ static int snd_pcm_common_ioctl(struct file *file,
+-- 
+2.47.0
+
 
