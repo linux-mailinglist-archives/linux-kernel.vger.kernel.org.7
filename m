@@ -1,78 +1,53 @@
-Return-Path: <linux-kernel+bounces-676500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229BAAD0D3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:58:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E388AD0D58
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 14:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C103B3C24
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:57:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C421726F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9191C221296;
-	Sat,  7 Jun 2025 11:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rQbpI33c"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B91F151C
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 11:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4164121B91D;
+	Sat,  7 Jun 2025 12:20:41 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB74C8F
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 12:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749297482; cv=none; b=lmS6jGkukK2Q5sq4V8pE9FoJuwXTf/Ce1E22Cm5KhpRqN9HDhII+erzYfGFs/SdZdlIcOZ1AfbdTc69dwyjXqeVjIFB5V+OD7uIcpueZskj+aLuNWbzUaXvX4prsFkks6PefCy+5Th63YOroxp5c3/V0AgzXWi/aO9yXKKjuz8g=
+	t=1749298840; cv=none; b=TSrJQTL8TIFOHXHHyf9vmRbCDf4XkzG6kkQhCadwMIkfAwDHGBMhJ/XFJGLasVGsvV7f++oU7lFLGpwRALovoCbBVbpORii9h7FXTThjeZH2xjzzQvfwgqY74DjZ34SmOvd5ElI8Tr640seIvZ/a+tMa0IGaJXXRmmxmE5Be+OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749297482; c=relaxed/simple;
-	bh=HjORKnsvUUZkmeS4m9i6hlDxgW0zhF2sxcOgY+rNoeU=;
+	s=arc-20240116; t=1749298840; c=relaxed/simple;
+	bh=6yIyHvRp/1FaQ4jrUwGgmv8Co/tA7GZq3G5uLUMi2xo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZWUWDiU7mRX8fZx+LkHtNsWDsr69kuq7EcAuzbkurVybUKBae5XFHBZSjgSSLVLaMkcgwKezz58oHTm3Q5L/bufIHn1VJx4UbdsVdQQKaqXjzX/YK//lzRwADHJKcZue04nf7S6mg+VULgAWCzcv3JdH7XJSgPwYmg5XGbOuDow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rQbpI33c; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6077e0f2697so2946116a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 04:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749297479; x=1749902279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yPCdCVNPh60CQIkFZngFhiCNDUpIdQrQuGF9ErPiZBI=;
-        b=rQbpI33cfI/ipR6UKilhbtmd/ia1z9sbOOMcClWBp3iLYctL7appWyYYzkCYzAWyvF
-         nttlO/K1EdffIf7TQ7pjLDOTV2pEqC/LelOL1iUdJIIsHkW8nIvw7v2+kbBwMxa2dJxh
-         vSF5SphFjcg3T/Lc+X6gd/4Au/XUv7op3K2KqpPo3VzepX9GK1OC1OELvsuAE8LfTm66
-         uvp9xXZoTBSpTnoqAC2DTpdsuPHIVKfVmC5OkgRgR0h3B713wBph1Y3x0vEt9EiW0G4f
-         IAEMBCwhdny5BHsOKEFeaFgg+m9zr3QnDFoG998bOi0ecOsg6TO3kTYclcbNYx8bF7CI
-         YDDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749297479; x=1749902279;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yPCdCVNPh60CQIkFZngFhiCNDUpIdQrQuGF9ErPiZBI=;
-        b=lVnkvtF38c/0+e8+SB0wCaiCUDjYXGP/uoHLpC39C8SNYqWA2nA7k2Lrmyn9cnrkdT
-         YK6WbEQS1TuMjoNXFRS/pf0okhPaVff0MU/TbS/qwHb+EKohwpWQUadY1+38XVS+0+wi
-         L8yQsqgQQuyWy0KYcdq1twx1nhff0He5U2LWFwDLwFghv5Y2v3eV0cPMLGwbVaj0ABeW
-         swC7vUeofbU+0KxCO6gqaw8EfswwkiPriZIEk5u3CIA3JMhbHt8HYMgCuE3zIXPl2Sz6
-         uVLvJvjBunNFfd/kb18m5yovdGnYlZGqDlNsdW/gkrSQ0lc+gLBVARs88SxEi7exGHCQ
-         1qpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhitGkv+4ru+YDLkQy5fCgXueXlzsrn4f4vDDpIRhYB6vI34RYIfboG7n0JRhUn49nuR4MtiEYmChrw6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLN8d50F8S1WNaS1mk/SKJpGrSxH+7pbSHryEZZHvKk7VVgR16
-	AkaFbG7vOHKHr0gK3ogOUIFkdlNTOnqvByR865MZ6owL1Iy0vxG5Dm1iox02AGlqnaE=
-X-Gm-Gg: ASbGncth4EnImKqJXKEtyIlfJNaZBYIJEGF7b3zYRc3xLevilAeGIvc9F4agWgOlnNE
-	UeDe1WETKe05ts5TWN2ZFUKCW+SCl/ocEh3vAlSzoRARqrw6v/bSOS7dB8IhQTEx61n9/D43VHY
-	Jcp/pe2ZJdGd/Qfv5OZAWTGsb0OeUoJw7U9rYUpi44y07+/z5yuLzClva1oPrJotvZJ0+Ch/6e0
-	AGgDNLHm89Mjvztmuj7wxU5Vmao+PA2LfJJk7D6wnTpWMbc3DlOKWdTp6mDm8DTt78eULsdv/LO
-	tuWqDFexMErzmMh2C11IU4DapI2au1z4JMRzhiluzH0h9z0rObrHnax+dmOFToJSW2NGZLo=
-X-Google-Smtp-Source: AGHT+IERrOwE41W6Vc1R8qsjoPAiIrdHWQSf8w1zwFS94QITX4oTtjAckH9gOjzfGmcTrsxtMCJSgw==
-X-Received: by 2002:a05:6402:27d2:b0:602:17a1:c672 with SMTP id 4fb4d7f45d1cf-60773ec86a5mr5416133a12.8.1749297478809;
-        Sat, 07 Jun 2025 04:57:58 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6077812571dsm2334797a12.0.2025.06.07.04.57.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Jun 2025 04:57:58 -0700 (PDT)
-Message-ID: <dc0c2777-ed5b-4729-8ae3-6563d8996e2e@tuxon.dev>
-Date: Sat, 7 Jun 2025 14:57:57 +0300
+	 In-Reply-To:Content-Type; b=QnMTB2Fc2kkUnyL6MrkB5FeTDSJyI/utxy+aG4ye1scX5asQs0zmZMOr2/fVo40bsU/kUwr5SsSNcrjCYCyEajjx6TCYr1zgCXwPtgFfGJfBz8wnyXdXf+cegoghoOiUSZ0F2l7mT+z7oq5pijU/TyN+G2Dv5f0DSliD0LXLpUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bDxHn11l0z9sYQ;
+	Sat,  7 Jun 2025 13:47:17 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Jq2Gnj8iY67x; Sat,  7 Jun 2025 13:47:17 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bDxHm7448z9sXD;
+	Sat,  7 Jun 2025 13:47:16 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E0D6A8B764;
+	Sat,  7 Jun 2025 13:47:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id xHP-SzKNoyYf; Sat,  7 Jun 2025 13:47:16 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7810E8B763;
+	Sat,  7 Jun 2025 13:47:16 +0200 (CEST)
+Message-ID: <6205828d-34ef-445d-8117-71a5269dc22f@csgroup.eu>
+Date: Sat, 7 Jun 2025 13:47:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,62 +55,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] ARM: dts: microchip: sama7d65: Add clock name
- property
-To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1748030737.git.Ryan.Wanner@microchip.com>
- <f6ae8a38a005e1a4e025b25ddb29113c5e65dead.1748030737.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <f6ae8a38a005e1a4e025b25ddb29113c5e65dead.1748030737.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] powerpc: unify two CONFIG_POWERPC64_CPU entries in the
+ same choice block
+To: Masahiro Yamada <masahiroy@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+References: <20250607102005.1965409-1-masahiroy@kernel.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250607102005.1965409-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, Ryan,
 
-On 23.05.2025 23:24, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+
+Le 07/06/2025 à 12:13, Masahiro Yamada a écrit :
+> There are two CONFIG_POWERPC64_CPU entries in the "CPU selection"
+> choice block.
 > 
-> Add clock-output-names to the xtal nodes, so the driver can correctly
-> register the main and slow xtal.
+> I guess the intent is to display a different prompt depending on
+> CPU_LITTLE_ENDIAN: "Generic (POWER5 and PowerPC 970 and above)" for big
+> endian, and "Generic (POWER8 and above)" for little endian.
 > 
-> This fixes the issue of the SoC clock driver not being able to find
-> the main xtal and slow xtal correctly causing a bad clock tree.
+> I stumbled on this tricky use case, and worked around it on Kconfig with
+> commit 4d46b5b623e0 ("kconfig: fix infinite loop in sym_calc_choice()").
+> However, I doubt that supporting multiple entries with the same symbol
+> in a choice block is worth the complexity - this is the only such case
+> in the kernel tree.
 > 
-> Fixes: 261dcfad1b59 ("ARM: dts: microchip: add sama7d65 SoC DT")
+> This commit merges the two entries. Once this cleanup is accepted in
+> the powerpc subsystem, I will proceed to refactor the Kconfig parser.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Can you please prepare a similar fix for sam9x7. It is also affected by
-this, right?
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Thank you,
-Claudiu
-
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
->  arch/arm/boot/dts/microchip/sama7d65.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/microchip/sama7d65.dtsi b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-> index b6710ccd4c36..7b1dd28a2cfa 100644
-> --- a/arch/arm/boot/dts/microchip/sama7d65.dtsi
-> +++ b/arch/arm/boot/dts/microchip/sama7d65.dtsi
-> @@ -38,11 +38,13 @@ cpu0: cpu@0 {
->  	clocks {
->  		main_xtal: clock-mainxtal {
->  			compatible = "fixed-clock";
-> +			clock-output-names = "main_xtal";
->  			#clock-cells = <0>;
->  		};
->  
->  		slow_xtal: clock-slowxtal {
->  			compatible = "fixed-clock";
-> +			clock-output-names = "slow_xtal";
->  			#clock-cells = <0>;
->  		};
->  	};
+>   arch/powerpc/platforms/Kconfig.cputype | 13 ++++---------
+>   1 file changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+> index 613b383ed8b3..7b527d18aa5e 100644
+> --- a/arch/powerpc/platforms/Kconfig.cputype
+> +++ b/arch/powerpc/platforms/Kconfig.cputype
+> @@ -122,16 +122,11 @@ choice
+>   	  If unsure, select Generic.
+>   
+>   config POWERPC64_CPU
+> -	bool "Generic (POWER5 and PowerPC 970 and above)"
+> -	depends on PPC_BOOK3S_64 && !CPU_LITTLE_ENDIAN
+> +	bool "Generic 64 bits powerpc"
+> +	depends on PPC_BOOK3S_64
+> +	select ARCH_HAS_FAST_MULTIPLIER if CPU_LITTLE_ENDIAN
+>   	select PPC_64S_HASH_MMU
+> -
+> -config POWERPC64_CPU
+> -	bool "Generic (POWER8 and above)"
+> -	depends on PPC_BOOK3S_64 && CPU_LITTLE_ENDIAN
+> -	select ARCH_HAS_FAST_MULTIPLIER
+> -	select PPC_64S_HASH_MMU
+> -	select PPC_HAS_LBARX_LHARX
+> +	select PPC_HAS_LBARX_LHARX if CPU_LITTLE_ENDIAN
+>   
+>   config POWERPC_CPU
+>   	bool "Generic 32 bits powerpc"
 
 
