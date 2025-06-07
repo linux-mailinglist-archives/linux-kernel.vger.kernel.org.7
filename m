@@ -1,122 +1,94 @@
-Return-Path: <linux-kernel+bounces-676614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBC1AD0E87
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 18:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C203FAD0E81
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 18:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25433AA6EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 16:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9189916BB35
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 16:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE4820F087;
-	Sat,  7 Jun 2025 16:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77161EF389;
+	Sat,  7 Jun 2025 16:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KruhDqfK"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZBiEfQq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10940204680
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 16:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD1E2F3E;
+	Sat,  7 Jun 2025 16:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749313283; cv=none; b=QGmbxC1+sTVx8CG/VvfgYupqRX6TFWykadKx/IJQwcJZTA8cJBh4o7j8I88W+M+FXmlDDhJ48vzmpXSzDIx9vtcHgVFoQzwM/QYODklwj7sHSihIcpU0oxO0bn6LmuFL1IVltwXJaLD0Tt/6UxDOHvkCqke2NJzAdQeXHlfAzxU=
+	t=1749313276; cv=none; b=I9fHi9nC2ys7A+6jtopEJziLRWuEoKxuLYBf/08ddL6QNnkM+ESR4UA0mWn5bCgIhCN3kbrDciVeHOgXdDwqikAyWi/yqbOyEYapQp3PFhrvkUITti5SNm2b3Jd0iu3sdkoTQ5YThcHqsPRiSmUKxJ3NKwCY4SOfYJR3qCbXlX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749313283; c=relaxed/simple;
-	bh=xEf5YgI028rHADc5kVooZ5wADbUeVnr/T/EysAZOuoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ptdnlA8S0DX/kW4prj/5h14xS9Joy7DvwSf+1GFi9xFsq+zW8Q5uJidncFK9NLmfhQfllR+pzI0fe8rb+iBcltmp5jWNPT9gdPSgbYf5vujdpW+rk1l/p5jjHpkNwvCtRkK/CgqBvk9sTubUq2uAybkY/JuvsSl+K2A3nV7sMtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KruhDqfK; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4e742dc97so2695859f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 09:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749313278; x=1749918078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wTAHuwi5ob7zHOE4R3BZu1de8+m0yqDLb9Txz10vj3c=;
-        b=KruhDqfKjuoCoG93AI7MYS6UXocAm2J3uAo/F5TvoTqlBFFQu5TkwXxkvEd0gNZ4UD
-         qSMeTzoVlclPWwvi8sAoicbiRbckMo8ycj9pB4ByvDYwZFkyweBdolnCbxBi+nhAPdVU
-         F4ud+B/qEt03bCKU9QAMRQgmwB6TT3mXMUnE5tCzpIkxrYbjnoUndskZb/6hVvo9gz9Q
-         D4qVD/3z9uIOG1L+Q8+H/2cmeXzDxLSf/bkBrlUmYGzPeniR8BbI96o6HYRzlQosj4TZ
-         gzO8BRpAzILoxwu/OsW0RkJL952uXLWNgVtKotheMzF1/37WKaxY2ZnmRYxhAcqcNFXs
-         IQIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749313278; x=1749918078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wTAHuwi5ob7zHOE4R3BZu1de8+m0yqDLb9Txz10vj3c=;
-        b=QdDPVugvBa8ibJ6fXBG/jotckIr7pVAwFeY2Ta4YlV/YeKU8yIk8neo9KEKIVrs+Va
-         lsW1EarSG/wbET/jQ0BGvPMWSUHu/NBMyDgYRJqj4AR6Dzh5bNtggBBOyjwGwW9O99d4
-         zjJS1reNcOD1G8wQaWiW/H5qYl0YObnJishQ+c+OEc5EQiR0Z/n/AxogiYOs+ZiekA0V
-         Y+XCa3nt3WRdhaUNIJAgyIfWgvQcbnkj/wlyEWiQf9yRSfR93nvHZKcG2kh67nWz4Wc2
-         Lt/YznyXqYtUl6FQZ4rQymJkAto1N8phibvnfcgem/qUfdU9blz01SegD2ncm7dCZUjJ
-         cIQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPJpYVYh1KQVkuvZCbpNr3P2Zb2RhYofBagTPG1hCRldZYENpi4bfEa0LgMqQK9FJg2BLNjRINWJHbb7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfbQvd3MDHBOt8wNR7TwwLkTRTQE5feRdmQmiF9rVu90GfP39z
-	n8Q3qDSXtRhQ49mR1zCBx9n7G1IAvsrwVwbdaD6Du/hhTvTCxzFnNFoMpp/qZo2wvzw=
-X-Gm-Gg: ASbGnctx/cfs63IJogvB46JO/jwiF05WSGX95y4UxZLj2OsDf5C2qh+f7dXqDxtu9bQ
-	wlxkomk3djsuznvdEWaVcScLz7YmCeHJQxE1uEMc6/2Quko1L2Djh2ef6JjBgyWenPu7HkRuJYx
-	ot/qSmirqmv2QrV7Ci6j4AHgqTdEsmkjppD99eGBUWIyCX30oDCnbYL/j5hhCGCfNwyuGGjdssd
-	w4vKJqv8CJeOfsYUt8eOq1yJ/n60EDlx7w7DhoT3e9Z2jTAt9mRuKtCqKknqKzDH5bJkQy6oas6
-	jK6qXwcWApp70td0BWgNSwspJZUFKANaWIcFZXGNaaCeMNj42EAfUzr2GlcbMt7BK8ucqhA=
-X-Google-Smtp-Source: AGHT+IFDb592g0JwsMPxNtq/1ZdQXyvAnSTz4sLNKzI67/x8qJu7TqoYK9PnNj7U4LmghIJiySpvmA==
-X-Received: by 2002:a05:6000:2511:b0:3a4:f7e7:3630 with SMTP id ffacd0b85a97d-3a531327cb9mr6993813f8f.15.1749313278470;
-        Sat, 07 Jun 2025 09:21:18 -0700 (PDT)
-Received: from zovi.suse.cz (109-81-1-248.rct.o2.cz. [109.81.1.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5324364f1sm5088096f8f.58.2025.06.07.09.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Jun 2025 09:21:18 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] module: Avoid unnecessary return value initialization in move_module()
-Date: Sat,  7 Jun 2025 18:16:28 +0200
-Message-ID: <20250607161823.409691-3-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250607161823.409691-1-petr.pavlu@suse.com>
-References: <20250607161823.409691-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1749313276; c=relaxed/simple;
+	bh=oiI/UBIp22xDHCckuTpupPI1ZnNEyqHPaX1KMdJp0rE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1apQ/scL4ADvViLxFyjoQYFv/Xno3PSeyoBMbdcMfjhvwDyzF23C4s4/TYo561gywMIYOeTGHU+WUv+9pSm2c/T55pVFHw5WEshQoIMdmhYhj/MKzwurGXqodLFCVBqeEq6JztQu4n+38qR0CyimZgO1jlvkZ6p3f0xYDvuYoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZBiEfQq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD844C4CEE4;
+	Sat,  7 Jun 2025 16:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749313275;
+	bh=oiI/UBIp22xDHCckuTpupPI1ZnNEyqHPaX1KMdJp0rE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PZBiEfQqujGjVpyqz8adTEM705B7KVMUfSgJlzeViiwwh4N+aqa5a/Z44MmIE5W/c
+	 wu1MduHg0/1b7KSea1myrHVzzyPHQ5ZSySxT0Qf7fDH8lfLwlKEpXpPrGtHEud1EPO
+	 guAcoYvH5Fa/yuDMFv9ek+dAsNZdp/xrS6YSf2cdWM64frwnZ6DBmIINsbfaCLKVKt
+	 qO33LH1aLdDgTMg/RzSXy+nOWBfZidZqCmunLrDXxD2Q5ldmLYD7Py7kpBWjRJ1ggg
+	 2KXkk44C1BfY2FX0FFQRfUiDcpdyI9wL3kt7G7wiAGoRKnS+0wr+dI0SqwWpLHlp3e
+	 6clzCiH8rFyug==
+Date: Sat, 7 Jun 2025 17:21:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bartlomiej Dziag <bartlomiejdziag@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: Change the busy-wait loops timing
+Message-ID: <20250607162110.GB197663@horms.kernel.org>
+References: <20250606102100.12576-1-bartlomiejdziag@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606102100.12576-1-bartlomiejdziag@gmail.com>
 
-All error conditions in move_module() set the return value by updating the
-ret variable. Therefore, it is not necessary to the initialize the variable
-when declaring it.
+On Fri, Jun 06, 2025 at 12:19:49PM +0200, Bartlomiej Dziag wrote:
+> After writing a new value to the PTP_TAR or PTP_STSUR registers,
+> the driver waits for the addend/adjust operations to complete.
+> Sometimes, the first check operation fails, resulting in
+> a 10 milliseconds busy-loop before performing the next check.
+> Since updating the registers takes much less than 10 milliseconds,
+> the kernel gets stuck unnecessarily. This may increase the CPU usage.
+> Fix that with changing the busy-loop interval to 5 microseconds.
+> The registers will be checked more often.
 
-Remove the unnecessary initialization.
+Hi Bartlomiej,
 
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
- kernel/module/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am curious.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 322b38c0a782..06511607075c 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2615,7 +2615,7 @@ static int move_module(struct module *mod, struct load_info *info)
- {
- 	int i;
- 	enum mod_mem_type t;
--	int ret = -ENOMEM;
-+	int ret;
- 	bool codetag_section_found = false;
- 
- 	for_each_mod_mem_type(type) {
--- 
-2.49.0
+Does it always take much less than 10ms, or is that usually so.
+If it is the former, then do we need to wait for in the order of
+10000 x 5us = 50ms before giving up?
 
+> 
+> Signed-off-by: Bartlomiej Dziag <bartlomiejdziag@gmail.com>
+
+...
 
