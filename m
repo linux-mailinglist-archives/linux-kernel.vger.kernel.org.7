@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-676430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A29AD0C53
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E368DAD0C55
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB333AE563
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 09:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFC973B1596
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 09:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB636217F23;
-	Sat,  7 Jun 2025 09:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE0B217F23;
+	Sat,  7 Jun 2025 09:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ID4sVFmM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQ5hm63b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D38E1C7009;
-	Sat,  7 Jun 2025 09:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B1D1C7009;
+	Sat,  7 Jun 2025 09:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749290287; cv=none; b=NV4PRXM3XP2GaBBD9UvwA+GysoOePHA5eu+WRCKrPmShN9HpPGqao9a6l0zr2PPk7mKdeeolhwCWnhZveFBjXs2+oEql1nRUn/LAUtoPrboasjp+ymToT2e4/JRlTIFaXzXuFpqdSzV5/IDAOjbUtSKktTQRI2jcTRRhLqXmdtc=
+	t=1749290359; cv=none; b=h8V3sIJFW/x7yoZ/Wz+VcDxzTbUrJXgQXceaGrzocAK/xKjh+tZGskaAzf4DYQUtWWzpj8Zo1uLZbsDnyRrJ5HMN1e3UfZkMimr4IPJMor2iyDvRVaPiABI44KDwM3T5qIYvvATbVDzP03Qg5gFbfnxto4P8HFl+AwJkF26SoUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749290287; c=relaxed/simple;
-	bh=lSpSS0EzOkBuVxvWvFJ1gqXaLx6zLSewgz/9e/JU9HM=;
+	s=arc-20240116; t=1749290359; c=relaxed/simple;
+	bh=9J1B1gTTSmnk03y4Wf7Nt+d05rnS5/cDlUL84h1ML/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LgMjLer4SMTIzDjbb/+QPaFdMeUrOvH9XHKGQ4QBv6Cwk1RCIpVqSkhzyXW4F8T9YySQUWobEh06vQ7vAAQ3bLcuOSo5xoOFdoPiIfTwQAkzIHJAcaKQ3vHTwG4AqrfX6sAdtFU5tbcf7ui9uogqU53wButchVKjLL6y5Ocns34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ID4sVFmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CADAC4CEE4;
-	Sat,  7 Jun 2025 09:58:05 +0000 (UTC)
+	 MIME-Version:Content-Type; b=S5x+kxaBLDrckz+fOPz0hj4FUkey790QGG5jVD/cCJwbeTjZCMwjOWnr6K3rdzdOjKlhQHr/OF0gR30hGdHXnCL6UJDRddJZMDdT1+rjA5JaLDQzxKnzd0blX4+txSXb6X+m0hGfw5IvduzaxuwsFfefDEymtokZLuMVZB35HH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQ5hm63b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5393DC4CEE4;
+	Sat,  7 Jun 2025 09:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749290286;
-	bh=lSpSS0EzOkBuVxvWvFJ1gqXaLx6zLSewgz/9e/JU9HM=;
+	s=k20201202; t=1749290358;
+	bh=9J1B1gTTSmnk03y4Wf7Nt+d05rnS5/cDlUL84h1ML/k=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ID4sVFmMe9+1Phqgim3HmjHXhhNNgOCypLNwC0r1OtIZ+bT4QqnOPYXweMAQfe0JO
-	 albcSHDVhJwdBlqPTT/OUcDPqYD0SYLlfQqpjFlHsbanm1LgOuE4qOJSxEc49N6FIW
-	 9CdnGVNBeu6GsQEMRkT82H6X4JZyXn61tUh1fKYhB85dZ/NJM2ugXCgEMFMA23DPvr
-	 Lfo6Mq/p7vC8bTIMwNbDQJ0P0FqtIDAVr3YEkQ2z3u+Xp4zRVRnc1uSEtLL6s9fHAi
-	 YLV73htQt9QDJ16sxhIynUqQwUpIaViLqDcULRLQCtctJm4MzzGBhujvGCkLSreaQr
-	 DXHtHAXAEdncw==
-Date: Sat, 7 Jun 2025 11:58:02 +0200
+	b=pQ5hm63bwLVne3k56D22cmjOM4nxR7P2+98V0Cfi7uKFSsKHYKe4yotjl1KD91TdT
+	 uBhFmV64TZSbG6xN+8W6LxobsgNt4//PH8KiHeuuqUAWJeSGdxiyLRoVrRKIaJWTX2
+	 G++ACfWFRJvsIFgVXsEnQtoUEGRyKhEuafs9Wt0pQr2oigaNI5vnROEsSuW/ylPB0A
+	 QY9iOv6HoWX34sTGbRp1U66R0iTjkRjR7hHx+BxV5PXgEWnfqWngRt1nymqedL7Vvq
+	 wFbv/HCopSCdaRNzlDcfEQrW4e+uC7zdzzZqdL/oEpq9nJ7X085KxKdu2CEWW3f6fM
+	 GiAMUaLXQ5o7Q==
+Date: Sat, 7 Jun 2025 11:59:14 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] A series of kernel-doc tweaks
-Message-ID: <20250607115802.0ce61a17@foz.lan>
-In-Reply-To: <20250606163438.229916-1-corbet@lwn.net>
+Subject: Re: [PATCH 1/9] docs: kdoc: simplify the PROTO continuation logic
+Message-ID: <20250607115914.20e897e2@foz.lan>
+In-Reply-To: <20250606163438.229916-2-corbet@lwn.net>
 References: <20250606163438.229916-1-corbet@lwn.net>
+	<20250606163438.229916-2-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,49 +59,52 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Fri,  6 Jun 2025 10:34:29 -0600
+Em Fri,  6 Jun 2025 10:34:30 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> I will freely confess that I merged the kernel-doc Python rewrite without
-> fully understanding the code; at the time, the fact that it worked as
-> advertised sufficed.  I *do* feel the need to understand this code, though,
-> going forward, so I've dedicated some time to digging through it.
+> Remove the unneeded "cont" variable and tighten up the code slightly.
 > 
-> In the process, I've been making some adjustments to the code that, IMO,
-> make it a bit more approachable - for myself and, hopefully, for others.
-> The goal is to try to get functions to the point where people of limited
-> mind (like me) can soak them up, make the code slightly more Pythonic, and
-> removing redundant code.
-> 
-> Here is the first set of tweaks.  The output from "make htmldocs" remains
-> entirely unchanged throughout the series.  The docs build is slightly
-> faster afterward - but that's not the point.
-> 
-> Mauro, the more I dig into this the happier I am that you pushed this
-> change through - it was far overdue.  Hopefully you don't mind me sweeping
-> up a bit around the edges...
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 
-Sure, feel free to help improving it! The main goal of the conversion
-was to make it as close as possible to the Perl version, being
-bug-compatible. Due to that, there are several places where it can
-(and should) be improved. It is now time to clean it up and improve
-it ;-)
+LGTM.
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 > 
-> Jonathan Corbet (9):
->   docs: kdoc: simplify the PROTO continuation logic
->   docs: kdoc: move the core dispatch into a state table
->   docs: kdoc: remove the section_intro variable
->   docs: kdoc: simplify the kerneldoc recognition code
->   docs: kdoc: remove the KernelEntry::is_kernel_comment member
->   docs: kdoc: remove the KernelEntry::descr pseudo member
->   docs: kdoc: remove some ineffective code
->   docs: kdoc: move the declaration regexes out of process_name()
->   docs: kdoc: some final touches for process_name()
-> 
->  scripts/lib/kdoc/kdoc_parser.py | 152 ++++++++++++++++----------------
->  1 file changed, 75 insertions(+), 77 deletions(-)
-> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 062453eefc7a..b193cf9dc0d1 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -1680,7 +1680,6 @@ class KernelDoc:
+>          Besides parsing kernel-doc tags, it also parses export symbols.
+>          """
+>  
+> -        cont = False
+>          prev = ""
+>          prev_ln = None
+>          export_table = set()
+> @@ -1696,18 +1695,14 @@ class KernelDoc:
+>                      if self.state == state.PROTO:
+>                          if line.endswith("\\"):
+>                              prev += line.rstrip("\\")
+> -                            cont = True
+> -
+>                              if not prev_ln:
+>                                  prev_ln = ln
+> -
+>                              continue
+>  
+> -                        if cont:
+> +                        if prev:
+>                              ln = prev_ln
+>                              line = prev + line
+>                              prev = ""
+> -                            cont = False
+>                              prev_ln = None
+>  
+>                      self.config.log.debug("%d %s%s: %s",
 
 
 
