@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-676434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8BC8AD0C5B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:03:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB77AD0C68
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AD53B156D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3C237A91B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E8D20E03F;
-	Sat,  7 Jun 2025 10:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D12420A5F2;
+	Sat,  7 Jun 2025 10:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtAOfB6d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4AurPLO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB291FF5F9;
-	Sat,  7 Jun 2025 10:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6580D1FF5F9;
+	Sat,  7 Jun 2025 10:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749290593; cv=none; b=hGAa8sfSbuex6NXbGQjGhJqZmzqi0An/Bp/eLTmQK9trsC6EzsXaJgV9aAh3v5inb+W9TQAiYBayghVqoyYSKPfvW/x/8aLgH1RcItLgmJNSy0/EXnPUppzJujUJzxCTcxyyUVpHMXYIQ6MxTsNWCKaS/BlmgdJvKrqyMYKnIAI=
+	t=1749290707; cv=none; b=CNovWjeEpCIfHIYrMUHIhf+fQxSyECG5V6/KIXeeLtg+JXDdjS+CLPngPYvMuRbyrjag609N760sIykTTRfKIpdKqujCw8wXW6kO0jNJR+lY7cM9QLuRs/4xoYTgpEP8XT2prWTAMdViy9bTzbKTPYHkdd3R5OEBieEHQzTJcU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749290593; c=relaxed/simple;
-	bh=TjqtwdGdxzNWfLUDz+pZIG+8/P6ay02SYV7Z2iY07TY=;
+	s=arc-20240116; t=1749290707; c=relaxed/simple;
+	bh=y25H9gTnu6can1B4hFv7RYzYXD+Im5faAmp1z5goPmE=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rlz3eKSzlttVGsDp6QvZ3+kT2lJXd4bTPOtCaRQJtcB9BRvtASs5E2vfeK59UVWuWNW/zrdxgQ/T1+qRw/7rovpEgeeomr3rGlnK8wautm6RnzE+x5g4MXL57gS5YgRMInvzilyytte4CX8OsODzrqL1N99RdtMyzJtYwKO/mto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtAOfB6d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275D4C4CEE4;
-	Sat,  7 Jun 2025 10:03:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=BYr3OwW98b+vCZoFpXwcO0qnHXHfZaAWEjzO5VeaO0EpMjTOxE6AxeGew0WGcqujfC7pUicJo3x4TSxWqZ3Kc/ZCaHhqugIWyC9lhxH1hiBJmCvn9c1Cac8Uf1ANQglvbwNPj3OapntWSu66wZSnD4smtPgr8G87Q34V5HDA9XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4AurPLO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06ECDC4CEE4;
+	Sat,  7 Jun 2025 10:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749290593;
-	bh=TjqtwdGdxzNWfLUDz+pZIG+8/P6ay02SYV7Z2iY07TY=;
+	s=k20201202; t=1749290705;
+	bh=y25H9gTnu6can1B4hFv7RYzYXD+Im5faAmp1z5goPmE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PtAOfB6dedxEw5rmAdnBZsaE2H+2mXD7p6a5NdZPiKm1zGxoPbn9fzfuHfdFugCQo
-	 I6YuGJIr2/j/XpISnnlW6caGu7i2/nO4gPHn8i8bwiFvautOKqHoiXGT09KQDUMz7C
-	 nCAX+y0Ou9d9kbdQL3iGmXm658vspkd+VmJrmrNLQiGUps/dVCTi3fuAEdDan7NDi3
-	 nXjd7WhlO0HySDrU03YdMMqaiG4GQwhEfJNE5Ge5X/AxM89FoI5WDRDjz06t8qBsud
-	 +SxyVEAsa9x9pFLSndUiLXVWzI5UjeuupI0r4+/b48DzoV7fbMHdGG3XMOuUqESUUR
-	 tCcIga0pjVFzg==
-Date: Sat, 7 Jun 2025 12:03:08 +0200
+	b=F4AurPLOaU6jiScFZEOtJap34OiXqa96yP2Ts2D2LKexqcfFe2K4tltuAubETXmoK
+	 Km7TKwGWX2Ur7SFUG4ROyFhCVs1FUzVZNIcbwoMV3RyXrwI1Gxg+pzkvyxh3m4lC3W
+	 UlnuKqLAtmAhCspyCoUyP/cxt5S99gfJlCs8p4RiW2qZiLrVsJCpm8nGOG9T+MiFAf
+	 AH3vQjp3K7EBsIqiuEpPhM8EsRwSzgHMnndICIRocdzuImAlBAwdGrbytVod79zZOg
+	 UHa0kLn0U/e2dpJN33BibPRGQtNltvJVTD3CaY32Zrq+tNO+dlFTdU5Aa06ihqt4N6
+	 0yAoM3oeFKp4A==
+Date: Sat, 7 Jun 2025 12:05:01 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/9] docs: kdoc: remove the section_intro variable
-Message-ID: <20250607120308.21d03438@foz.lan>
-In-Reply-To: <20250606163438.229916-4-corbet@lwn.net>
+Subject: Re: [PATCH 4/9] docs: kdoc: simplify the kerneldoc recognition code
+Message-ID: <20250607120501.7a0db912@foz.lan>
+In-Reply-To: <20250606163438.229916-5-corbet@lwn.net>
 References: <20250606163438.229916-1-corbet@lwn.net>
-	<20250606163438.229916-4-corbet@lwn.net>
+	<20250606163438.229916-5-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,43 +59,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Fri,  6 Jun 2025 10:34:32 -0600
+Em Fri,  6 Jun 2025 10:34:33 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> It is only used in one place, so just put the constant string
-> "Introduction" there so people don't have to go looking for it.
+> process_name() looks for the first line of a kerneldoc comment.  It
+> contains two nearly identical regular expressions, the second of which only
+> catches six cases in the kernel, all of the form:
+> 
+>   define SOME_MACRO_NAME - description
+> 
+> Simply put the "define" into the regex and discard it, eliminating the loop
+> and the code to remove it specially.
+> 
+> Note that this still treats these defines as if they were functions, but
+> that's a separate issue.
+> 
+> There is no change in the generated output.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 
-Good catch! There were other places using it, but it sounds I
-already cleanup its redundancy.
+Nice cleanup!
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-> 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 > ---
->  scripts/lib/kdoc/kdoc_parser.py | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  scripts/lib/kdoc/kdoc_parser.py | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
 > 
 > diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index 37b7e501af7c..90b53b70cfee 100644
+> index 90b53b70cfee..3ea260b423e2 100644
 > --- a/scripts/lib/kdoc/kdoc_parser.py
 > +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -203,7 +203,6 @@ class KernelDoc:
+> @@ -1230,26 +1230,18 @@ class KernelDoc:
 >  
->      # Section names
+>              # Test for data declaration
+>              r = KernRe(r"^\s*\*?\s*(struct|union|enum|typedef)\b\s*(\w*)")
+> +            r2 = KernRe(fr"^{decl_start}{fn_type}(?:define\s+)?(\w+)\s*{parenthesis}\s*{decl_end}?$")
+>              if r.search(line):
+>                  self.entry.decl_type = r.group(1)
+>                  self.entry.identifier = r.group(2)
+>                  self.entry.is_kernel_comment = True
+> -            else:
+> -                # Look for foo() or static void foo() - description;
+> -                # or misspelt identifier
+> -
+> -                r1 = KernRe(fr"^{decl_start}{fn_type}(\w+)\s*{parenthesis}\s*{decl_end}?$")
+> -                r2 = KernRe(fr"^{decl_start}{fn_type}(\w+[^-:]*){parenthesis}\s*{decl_end}$")
+> -
+> -                for r in [r1, r2]:
+> -                    if r.search(line):
+> -                        self.entry.identifier = r.group(1)
+> -                        self.entry.decl_type = "function"
+> -
+> -                        r = KernRe(r"define\s+")
+> -                        self.entry.identifier = r.sub("", self.entry.identifier)
+> -                        self.entry.is_kernel_comment = True
+> -                        break
+> +            #
+> +            # Look for a function description
+> +            #
+> +            elif r2.search(line):
+> +                self.entry.identifier = r2.group(1)
+> +                self.entry.decl_type = "function"
+> +                self.entry.is_kernel_comment = True
 >  
-> -    section_intro = "Introduction"
->      section_context = "Context"
->      section_return = "Return"
->  
-> @@ -1207,7 +1206,7 @@ class KernelDoc:
->              self.entry.new_start_line = ln
->  
->              if not doc_block.group(1):
-> -                self.entry.section = self.section_intro
-> +                self.entry.section = "Introduction"
->              else:
->                  self.entry.section = doc_block.group(1)
+>              self.entry.identifier = self.entry.identifier.strip(" ")
 >  
 
 
