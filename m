@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-676437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8BCAD0C5D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E803AD0C63
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F0C170C28
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52307170FE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BB321B908;
-	Sat,  7 Jun 2025 10:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DF7217F26;
+	Sat,  7 Jun 2025 10:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IgbMJ8t/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TOGJsj3H"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5979A20A5F2
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 10:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717A9221D92
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 10:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749290622; cv=none; b=afJaSZDDSawLiJqCGTdg7tQM0zmZ7HEbeoJ1FdXOASqeURVVeMw2/zpwCBaNeR91g5reuUWQs+v+fJEiDdLeBIUgpwFch+wzgfMCxh87sEHL/QzFFB7TeRK8gbXc5WprNcfkSpmf3anX6bRq2oSEm5imiQoU+gFrbak29aNW2rU=
+	t=1749290627; cv=none; b=BwF2yeROch5x+FNC+Ux/wcHFyXDQ6uUhvMuBPJ8Ho8bSWEC/oc3m2wz6gpkR3AQ7xKA8VrFf9jJqAxjcDPqhZS3SlfaKRoCZs/cjg5SDgTwLp5qT2/yydCDnQXtcofouQCgW6AjJIQyWCKxHzwohHgSwWeTM+HvxIn56k7Etad4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749290622; c=relaxed/simple;
-	bh=ZBz5QvEz+12dQjO6oD9ugRiWPAe9RqXA9VqmCk3NIZA=;
+	s=arc-20240116; t=1749290627; c=relaxed/simple;
+	bh=v8zMrrx+Vd9rz29sYzyrTFcl+yNwirp1jzZuIPvgIiA=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Wvs1oP6vTE8EIVSmGR+JJRu8KIuGZp3/j4khxdN/kRbE8a1ENFRBmYZbwGDnlI+gpgPGkZJ67oyhTCMJqhdYRt6ixNpDrpNqGOP2gOBEvbfTawL4QYmxVR+ExRsdSA7KagAC/5iGoMtYnYW2Ja4WbVi+92YNTJEOqjU8hT05Sxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IgbMJ8t/; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=B1mXz21dNASSL35Fax9YD1PD+tTAMYC4lUUPFsfHRiUDIVBVr3w3EYvJHpTbJK36qm3OuyaFis7Juon7YbZt+xkWVvGjHWybVnNN4aw0NvYye+vT6kBO1ln55xM6sN43aetHnV8Ws1OuBQ9C6N0UevzTzHcjvlE55Qgzr8MT4lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TOGJsj3H; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=/BnzbZewuJowStjNBBWDV4qAQq+n+zc+/95pnGIzIL0=; b=IgbMJ8t/Knibv7fPlZsAKW0LCY
-	cnSv4xH7O2tTUWoFoRhDmc+ggXjSRSR6U76yXEL5nO4TgeD5eFwNNJ6lUDr045qcCx2+SJPDObkDd
-	yZGCmapkotYl62WkvpoveKtIFOV/yeM9C6Ahm6QSany8+nQUCWaSclgIjFy3ulCACcZbtfEgMUXHo
-	sHGfjrZxSmW1KYP0zOM0xfnK85QfbbmA6Q1B9NOwuVkCNsM8MSR6wXbDkEHX4XaP4O/no2e3N/Pc6
-	TVBgIJZqMQuEdwDYkOA1SXjKudRExauG/KTEanCvaT0tvzmg0DL7dH/EuqH+T8kGD2s2SiS047q/I
-	hratTBcA==;
+	bh=43gEQOf5Sh+lovVXtaC9R0dz67eHKXNxBmPliUUAKWs=; b=TOGJsj3H7YZ5jRZHTNAbkry/3a
+	lT23fbL24SYbhDlIBqComY6cRuvcDpue0l8AS95tE3jnHkadKWJ6xBXwmUHlyHH6c7jxPAcMgm+8m
+	uAnN91fhSWXd/gClYm2yIYrCi+umci4ACkWoyoq/vjhCYdjB6u/CY4Kbf4VTyRrVy4vGrY/80NybD
+	thar5WJQna3/eVQjRTCcR56c+VfU/uDMG35tC8c3YDhqlqBRzUyi551sO1r2y1tWHEaGKNMW8aELS
+	n2y1bKy+IY2w8lqnhC0TnECThMaILP66J8NmYPRUF/5phBXiOm9jhCXJOCgfUz3GSJBrFnLw45yyX
+	CdWnFPdg==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uNqOm-00000006HYM-3w6z;
-	Sat, 07 Jun 2025 10:03:37 +0000
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uNqOm-00000001N8k-20SA;
+	Sat, 07 Jun 2025 10:03:36 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 55A0B301C9B; Sat,  7 Jun 2025 12:03:35 +0200 (CEST)
-Message-ID: <20250607095618.117023224@infradead.org>
+	id 597AB301CEB; Sat,  7 Jun 2025 12:03:35 +0200 (CEST)
+Message-ID: <20250607095618.242161830@infradead.org>
 User-Agent: quilt/0.66
-Date: Sat, 07 Jun 2025 11:42:25 +0200
+Date: Sat, 07 Jun 2025 11:42:26 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -58,7 +58,7 @@ Cc: linux-kernel@vger.kernel.org,
  jpoimboe@kernel.org,
  mark.rutland@arm.com,
  torvalds@linuxfoundation.org
-Subject: [PATCH 01/11] x86: Provide assembly __bug_table helpers
+Subject: [PATCH 02/11] bug: Add BUG_FORMAT infrastructure
 References: <20250607094224.104791182@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,87 +68,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Rework the __bug_table helpers such that usage from assembly becomes
-possible.
+Add BUG_FORMAT; an architecture opt-in feature that allows adding the
+WARN_printf() format string to the bug_entry table.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/bug.h |   54 ++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 30 deletions(-)
+ include/asm-generic/bug.h |    7 +++++++
+ lib/bug.c                 |   39 ++++++++++++++++++++++++++++++++-------
+ 2 files changed, 39 insertions(+), 7 deletions(-)
 
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -32,46 +32,40 @@
- #ifdef CONFIG_GENERIC_BUG
- 
- #ifdef CONFIG_X86_32
--# define __BUG_REL(val)	".long " __stringify(val)
-+#define ASM_BUG_REL(val)	.long val
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -36,6 +36,13 @@ struct bug_entry {
  #else
--# define __BUG_REL(val)	".long " __stringify(val) " - ."
-+#define ASM_BUG_REL(val)	.long val - .
+ 	signed int	bug_addr_disp;
  #endif
- 
- #ifdef CONFIG_DEBUG_BUGVERBOSE
-+#define ASM_BUGTABLE_VERBOSE(file, line)				\
-+	ASM_BUG_REL(file) ;						\
-+	.word line
-+#define ASM_BUGTABLE_VERBOSE_SIZE	6 /* sizeof(file) + sizeof(line) */
++#ifdef HAVE_ARCH_BUG_FORMAT
++#ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
++	const char	*format;
 +#else
-+#define ASM_BUGTABLE_VERBOSE(file, line)
-+#define ASM_BUGTABLE_VERBOSE_SIZE	0
++	signed int	format_disp;
 +#endif
++#endif
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+ #ifndef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
+ 	const char	*file;
+--- a/lib/bug.c
++++ b/lib/bug.c
+@@ -139,6 +139,19 @@ void bug_get_file_line(struct bug_entry
+ #endif
+ }
  
--#define _BUG_FLAGS(ins, flags, extra)					\
--do {									\
--	asm_inline volatile("1:\t" ins "\n"				\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
--		     "\t.word %c1"        "\t# bug_entry::line\n"	\
--		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c3\n"					\
--		     ".popsection\n"					\
--		     extra						\
--		     : : "i" (__FILE__), "i" (__LINE__),		\
--			 "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
--} while (0)
-+#define ASM_BUGTABLE_BASE_SIZE		6 /* sizeof(bug_addr) + sizeof(flags) */
++static const char *bug_get_format(struct bug_entry *bug)
++{
++	const char *format = NULL;
++#ifdef HAVE_ARCH_BUG_FORMAT
++#ifdef CONFIG_GENERIC_BUG_RELATIVE_POINTERS
++	format = (const char *)&bug->format_disp + bug->format_disp;
++#else
++	format = bug->format;
++#endif
++#endif
++	return format;
++}
++
+ struct bug_entry *find_bug(unsigned long bugaddr)
+ {
+ 	struct bug_entry *bug;
+@@ -150,11 +163,19 @@ struct bug_entry *find_bug(unsigned long
+ 	return module_find_bug(bugaddr);
+ }
  
--#else /* !CONFIG_DEBUG_BUGVERBOSE */
-+#define ASM_BUGTABLE_FLAGS(at, file, line, flags)			\
-+	.pushsection __bug_table, "aw" ;				\
-+	123:	ASM_BUG_REL(at) ;					\
-+	ASM_BUGTABLE_VERBOSE(file, line) ;				\
-+	.word	flags ;							\
-+	.org 123b + ASM_BUGTABLE_BASE_SIZE + ASM_BUGTABLE_VERBOSE_SIZE ;\
-+	.popsection
++static void __warn_printf(const char *fmt)
++{
++	if (!fmt)
++		return;
++
++	printk("%s", fmt);
++}
++
+ static enum bug_trap_type __report_bug(unsigned long bugaddr, struct pt_regs *regs)
+ {
+-	struct bug_entry *bug;
+-	const char *file;
+-	unsigned line, warning, once, done;
++	bool warning, once, done, no_cut, has_args;
++	const char *file, *fmt;
++	unsigned line;
  
--#define _BUG_FLAGS(ins, flags, extra)					\
-+#define _BUG_FLAGS(insn, flags, extra)					\
- do {									\
--	asm_inline volatile("1:\t" ins "\n"				\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c1\n"					\
--		     ".popsection\n"					\
--		     extra						\
--		     : : "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
-+	asm_inline volatile("1:\t" insn "\n"				\
-+	    __stringify(ASM_BUGTABLE_FLAGS(1b, %c[file], %c[line], %c[fl])) "\n" \
-+			    extra					\
-+		     : : [file] "i" (__FILE__), [line] "i" (__LINE__),	\
-+			 [fl] "i" (flags));				\
- } while (0)
+ 	if (!is_valid_bugaddr(bugaddr))
+ 		return BUG_TRAP_TYPE_NONE;
+@@ -166,10 +187,12 @@ static enum bug_trap_type __report_bug(u
+ 	disable_trace_on_warning();
  
--#endif /* CONFIG_DEBUG_BUGVERBOSE */
--
- #else
+ 	bug_get_file_line(bug, &file, &line);
++	fmt = bug_get_format(bug);
  
- #define _BUG_FLAGS(ins, flags, extra)  asm volatile(ins)
+-	warning = (bug->flags & BUGFLAG_WARNING) != 0;
+-	once = (bug->flags & BUGFLAG_ONCE) != 0;
+-	done = (bug->flags & BUGFLAG_DONE) != 0;
++	warning  = bug->flags & BUGFLAG_WARNING;
++	once     = bug->flags & BUGFLAG_ONCE;
++	done     = bug->flags & BUGFLAG_DONE;
++	no_cut   = bug->flags & BUGFLAG_NO_CUT_HERE;
+ 
+ 	if (warning && once) {
+ 		if (done)
+@@ -187,8 +210,10 @@ static enum bug_trap_type __report_bug(u
+ 	 * "cut here" line now. WARN() issues its own "cut here" before the
+ 	 * extra debugging message it writes before triggering the handler.
+ 	 */
+-	if ((bug->flags & BUGFLAG_NO_CUT_HERE) == 0)
++	if (!no_cut) {
+ 		printk(KERN_DEFAULT CUT_HERE);
++		__warn_printf(fmt);
++	}
+ 
+ 	if (warning) {
+ 		/* this is a WARN_ON rather than BUG/BUG_ON */
 
 
 
