@@ -1,93 +1,58 @@
-Return-Path: <linux-kernel+bounces-676723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0D4AD1019
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 23:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4306AD0FFC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 23:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8AA16E10C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 21:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BECB916D440
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 21:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DD72248A8;
-	Sat,  7 Jun 2025 21:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5D021CC6A;
+	Sat,  7 Jun 2025 21:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMIcw+9Q"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opIVyA5/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A2C21883F;
-	Sat,  7 Jun 2025 21:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7172165E9;
+	Sat,  7 Jun 2025 21:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749331623; cv=none; b=et/SW9pHy3En5XcRySJvUmdlgWG3V1JSe5k9C+wnIBFGHYTsjwHIz2htYLn6O6dW6uGaTkxUOIV/2RSAEYtbytZs4BehA4Yfjer8ztwDoPCOJkCFfe0QkdUNvl0pQ23bMtVXX673SNWS53UlRm4fWbhJzpJYdXRLcVo+0nMuXFY=
+	t=1749331544; cv=none; b=nc8C6wIjBMMBYSS7A1+FjNmM+JkcdbmQfCERzz6G7bsgkp2LZqhq4q021Mxv1ZI+CiXWzcMQ1zbu36i6b6AsC7S1XYprZrimE3ZU/AhFmUisYm6bBE+Zs+Js9f8Dfi6t0l+y3XXXTFEFsRDFROAyi0mRcVbxrtIRqPy2AX6YSk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749331623; c=relaxed/simple;
-	bh=l3+AQp3YMdQmo/F9Pvjy8CZvN/WHlsa66euqNGZMEXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XnumNWI1Vzj2deYXyc4dQYBNV+v3FXdGtgCCn8BdzlJpKbekFsTK15/N68EfZVMyK7abBKzHHNdLX3j6umFFPGGWKdw1wKQOE1ldwUeWDJ1StQxXyL6HFZd2ltGGOVQpueyZuACmrm6bFtu8FshNmiBAgswY9pz1TC1EQoNETO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMIcw+9Q; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-442fda876a6so27405705e9.0;
-        Sat, 07 Jun 2025 14:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749331619; x=1749936419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zi9gf/v9L57jqniopRTs+c4G172xVpuXft/oJYVknwc=;
-        b=AMIcw+9Qba8YiHJXUpMTjgHgbrDrGtJ0ZjAvP0FBAeglp/u3n5fjhGTNFW8nbpI660
-         f0OZg4+VWVQzttuEKpmQbGNYI2tjBRcMYq+HXEATp95RN3WAfS3ojlN/zNDTl7C0R69O
-         etmbcit1YBIexsz51wgLW4lzBPJ7pp/e5FN2hpRlPVIVaosOdap0IU0TyeWZTeLOCWH6
-         Ay/3/prci4vpjnjrY+I39rr67ctyutDeRUEJAdq7N7pHpmtYfJWQctVWA5muzK6s/QK2
-         /N20eOUFG4NJtajHrLdVW9VzR0OP6xmENHMBCR5eHI+4j8xfAr+wHg5/Gx4hyadJc3TK
-         YPqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749331619; x=1749936419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zi9gf/v9L57jqniopRTs+c4G172xVpuXft/oJYVknwc=;
-        b=EmuqnTywHm2cLNTx+aZmzqU+db0/WIgbHEHUhoHtRikONQdTdRH75v4+IUGtUQ1ka2
-         S9SC1xrt6BLHxmGgYe8B60nqjP19s0MSdpn1AEYyl6tOfkEx2SqUQPI3WiB+ql+/jxrS
-         f9CLPahZ272HNeVpE6hkzM6hOap6w2wCzTT0W/Lg3sIGvWHw79Gj6uZATCyU+t7xz3PJ
-         qR/2Wuq/dt/E+u2WK6Vy/3eojHEDk5Bs2ZV10yFV/VR2Yowd+N4ZzEclrF3qkM6ye9FZ
-         7p8JR2uzEL56IkVYQSCi3LlrVvuGzDEa1wTYV/ZOVRL+ScCqJBLT583H5knzSMWNaLWQ
-         bG1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVenoRlZiaRd+tadgQQomMn0ADsCJfI51q4IZzLo+nDpi50oIG4ctNZHFxrCsxTT5yPmWmeoDeN67ogdrJj@vger.kernel.org, AJvYcCXzCSMy03UzOqf9FwiMQLMz7baMtg2t01cir1OJU8qoqLa5L7EqdMKk0cLn/L3cQvH1nz1DuWueDekV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLSqMAa+JviA9d623gcTLJMfSbMddD3EftZGnooHjwxbtZ7HES
-	gI34hNvSZB2S7YANkMN769aTpHstiW2u1hzhSpsSYq1LC6loJqsZW3FfnCgaoBg=
-X-Gm-Gg: ASbGncu3H9OFl8iMbOHKdQ0qEfkdSkRC/GlWmf5nmH2OGoD7cJ/d4w01jjj7HHMjXW1
-	PHF00PUuwUvgdmxnjrgJHhds1Kl0tE4JZl2QdG11gE8PX+xRK3CNUrsLujEljEdXa2dpbJWJPcI
-	z+Pztmyk9i1TjZ+G/nSnIrt3tDdnWbGJFWVb8qYV6I05p31zXezafhhEh9gaXXCeQXNtpDL5Uk9
-	fNFUT+cPZXEaiSwLgXETc4zZVg/H6eMN9lkZH5tV8v30PLSXG92pJil1y36Yj6pTk/4DVWAhJ7X
-	9q7K49UmfB3sRpOeKWofMjWVBWI3jHwjfHg5zsSg2V9UgFnUMFhr+G84yw==
-X-Google-Smtp-Source: AGHT+IEXsZglgrYysNJKuFsVpLjtOLOyovzfbGPTyqbi+yPegOOhLeDurGeG566vPnfh/wOzUotnbQ==
-X-Received: by 2002:a05:6000:250f:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a531cf3622mr6517007f8f.58.1749331618970;
-        Sat, 07 Jun 2025 14:26:58 -0700 (PDT)
-Received: from alex-x1.lan ([84.226.118.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244fd02sm5449632f8f.75.2025.06.07.14.26.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Jun 2025 14:26:58 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1749331544; c=relaxed/simple;
+	bh=j1/lkJgtqy4+16mK/gyMR0VMNIfeyeJnF3QBrtQixPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mRGsqYJ8lpQ0/UfL7gtEzFWif91xkTEEM+N6gqsstZ9Lqgp2H9d++gGEqzbqLR+RVaqiZXsfWP7b0uDa5M8RJk27vmVHABKVCChCPkegxAz5yFe3q0MiA+lEaWY1wJVRVJzyqSSEwpZCYzEXVjOK9h6dJ5k2yvuqcwf5OuIrwjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opIVyA5/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F96FC4CEE4;
+	Sat,  7 Jun 2025 21:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749331543;
+	bh=j1/lkJgtqy4+16mK/gyMR0VMNIfeyeJnF3QBrtQixPs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=opIVyA5/vgjtAQC0y8vRkUfTuiwiCbucZJ86OmP1L+apjv67v9wLw95EP/VfBLJnb
+	 AAia9zkhxq7RVdLrdy1RM/ZNDuWkT+4ejWyhg0OXhNSjc+Nw4YCBWFe0ngxObN6U7K
+	 hnE+q/qV5eAznRCKpFp0TaCS2Mg+v2NECUvyhmTJv8JsPFB9hDxDJdZkDCngebWcbF
+	 6p8p7FpGyHxKPOudNm0oJ89uDh5OQRjkmzU5itfU+W/e2ElzBoWy6fmua1UsnJtZN/
+	 ZaJ0UylnbnaeHyvqS5hUqkoB9ET/a5KfyFZX2we/T4URF3wSNa7SXnnWtafG7lERe4
+	 eBwR3pO6fdOIg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	jens.glathe@oldschoolsolutions.biz,
-	konrad.dybcio@oss.qualcomm.com
-Subject: [RFC PATCH v1 2/2] regulator: Introduce dummy regulator consumer driver
-Date: Sat,  7 Jun 2025 23:25:39 +0200
-Message-ID: <20250607212654.126412-3-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250607212654.126412-1-alex.vinarskis@gmail.com>
-References: <20250607212654.126412-1-alex.vinarskis@gmail.com>
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: phy: Convert marvell,armada-380-comphy to DT schema
+Date: Sat,  7 Jun 2025 16:25:40 -0500
+Message-ID: <20250607212541.742427-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,142 +61,161 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a very simple dummy consumer driver. Designed to consume
-a single regulator 'vdd', the driver will power-on on probe and PM
-suspend (if supported), power-off on remove and PM resume (if enabled).
+Convert the Marvell Armada 38x combo PHY binding to DT schema format.
+It's a straight forward conversion.
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/regulator/Kconfig          |  9 ++++
- drivers/regulator/Makefile         |  1 +
- drivers/regulator/dummy-consumer.c | 85 ++++++++++++++++++++++++++++++
- 3 files changed, 95 insertions(+)
- create mode 100644 drivers/regulator/dummy-consumer.c
+ .../phy/marvell,armada-380-comphy.yaml        | 83 +++++++++++++++++++
+ .../bindings/phy/phy-armada38x-comphy.txt     | 48 -----------
+ 2 files changed, 83 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/marvell,armada-380-comphy.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/phy-armada38x-comphy.txt
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 6d8988387da4..eb907ecbcbe8 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -30,6 +30,15 @@ config REGULATOR_DEBUG
- 	help
- 	  Say yes here to enable debugging support.
- 
-+config REGULATOR_DUMMY_CONSUMER
-+	tristate "Dummy regulator consumer support"
-+	help
-+	  This driver provides a dummy consumer for a device behind an
-+	  USB phy (for example) that needs power supplies, but has no
-+	  own device node since it's enumerated by USB.
-+
-+	  If unsure, say no.
-+
- config REGULATOR_FIXED_VOLTAGE
- 	tristate "Fixed voltage regulator support"
- 	help
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index c0bc7a0f4e67..e1d1029fd87a 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -5,6 +5,7 @@
- 
- 
- obj-$(CONFIG_REGULATOR) += core.o dummy.o fixed-helper.o helpers.o devres.o irq_helpers.o
-+obj-$(CONFIG_REGULATOR_DUMMY_CONSUMER) += dummy-consumer.o
- obj-$(CONFIG_REGULATOR_NETLINK_EVENTS) += event.o
- obj-$(CONFIG_OF) += of_regulator.o
- obj-$(CONFIG_REGULATOR_FIXED_VOLTAGE) += fixed.o
-diff --git a/drivers/regulator/dummy-consumer.c b/drivers/regulator/dummy-consumer.c
+diff --git a/Documentation/devicetree/bindings/phy/marvell,armada-380-comphy.yaml b/Documentation/devicetree/bindings/phy/marvell,armada-380-comphy.yaml
 new file mode 100644
-index 000000000000..813c7abce660
+index 000000000000..dcb4c0007832
 --- /dev/null
-+++ b/drivers/regulator/dummy-consumer.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025, Aleksandrs Vinarskis
-+ */
++++ b/Documentation/devicetree/bindings/phy/marvell,armada-380-comphy.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/marvell,armada-380-comphy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm.h>
-+#include <linux/regulator/consumer.h>
++title: Marvell Armada 38x COMPHY controller
 +
-+struct dummy_consumer_data {
-+	struct regulator *regulator;
-+};
++maintainers:
++  - Andrew Lunn <andrew@lunn.ch>
++  - Gregory Clement <gregory.clement@bootlin.com>
 +
-+static int dummy_consumer_probe(struct platform_device *pdev)
-+{
-+	struct dummy_consumer_data *data;
-+	int ret;
++description:
++  This comphy controller can be found on Marvell Armada 38x. It provides a
++  number of shared PHYs used by various interfaces (network, sata, usb,
++  PCIe...).
 +
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
++properties:
++  compatible:
++    items:
++      - const: marvell,armada-380-comphy
 +
-+	data->regulator = devm_regulator_get(&pdev->dev, "vdd");
-+	if (IS_ERR(data->regulator)) {
-+		dev_err(&pdev->dev, "Failed to get regulator\n");
-+		return PTR_ERR(data->regulator);
-+	}
++  reg:
++    items:
++      - description: COMPHY register location and length
++      - description: Configuration register location and length
 +
-+	ret = regulator_enable(data->regulator);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to enable regulator: %d\n", ret);
-+		return ret;
-+	}
++  reg-names:
++    items:
++      - const: comphy
++      - const: conf
 +
-+	platform_set_drvdata(pdev, data);
++  '#address-cells':
++    const: 1
 +
-+	dev_dbg(&pdev->dev, "Dummy regulator consumer initialized\n");
-+	return 0;
-+}
++  '#size-cells':
++    const: 0
 +
-+static void dummy_consumer_remove(struct platform_device *pdev)
-+{
-+	struct dummy_consumer_data *data = platform_get_drvdata(pdev);
++patternProperties:
++  '^phy@[0-5]$':
++    description: A COMPHY lane
++    type: object
++    additionalProperties: false
 +
-+	regulator_disable(data->regulator);
-+}
++    properties:
++      reg:
++        maximum: 1
 +
-+static int dummy_consumer_resume(struct device *dev)
-+{
-+	struct dummy_consumer_data *data = dev_get_drvdata(dev);
++      '#phy-cells':
++        description: Input port index for the PHY lane
++        const: 1
 +
-+	return regulator_enable(data->regulator);
-+}
++    required:
++      - reg
++      - '#phy-cells'
 +
-+static int dummy_consumer_suspend(struct device *dev)
-+{
-+	struct dummy_consumer_data *data = dev_get_drvdata(dev);
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
 +
-+	return regulator_disable(data->regulator);
-+}
++additionalProperties: false
 +
-+static DEFINE_SIMPLE_DEV_PM_OPS(dummy_consumer_pm, dummy_consumer_suspend, dummy_consumer_resume);
++examples:
++  - |
++    comphy: phy@18300 {
++        compatible = "marvell,armada-380-comphy";
++        reg = <0x18300 0x100>, <0x18460 4>;
++        reg-names = "comphy", "conf";
++        #address-cells = <1>;
++        #size-cells = <0>;
 +
-+static const struct of_device_id dummy_consumer_of_match[] = {
-+	{ .compatible = "regulator-dummy-consumer", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, dummy_consumer_of_match);
++        cpm_comphy0: phy@0 {
++            reg = <0>;
++            #phy-cells = <1>;
++        };
 +
-+static struct platform_driver dummy_consumer_driver = {
-+	.driver = {
-+		.name = "regulator-dummy-consumer",
-+		.of_match_table = dummy_consumer_of_match,
-+		.pm = pm_sleep_ptr(&dummy_consumer_pm),
-+	},
-+	.probe = dummy_consumer_probe,
-+	.remove = dummy_consumer_remove,
-+};
-+module_platform_driver(dummy_consumer_driver);
-+
-+MODULE_AUTHOR("Aleksandrs Vinarskis <alex.vinarskis@gmail.com>");
-+MODULE_DESCRIPTION("Dummy regulator consumer driver");
-+MODULE_LICENSE("GPL");
++        cpm_comphy1: phy@1 {
++            reg = <1>;
++            #phy-cells = <1>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/phy/phy-armada38x-comphy.txt b/Documentation/devicetree/bindings/phy/phy-armada38x-comphy.txt
+deleted file mode 100644
+index 8b5a7a28a35b..000000000000
+--- a/Documentation/devicetree/bindings/phy/phy-armada38x-comphy.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-mvebu armada 38x comphy driver
+-------------------------------
+-
+-This comphy controller can be found on Marvell Armada 38x. It provides a
+-number of shared PHYs used by various interfaces (network, sata, usb,
+-PCIe...).
+-
+-Required properties:
+-
+-- compatible: should be "marvell,armada-380-comphy"
+-- reg: should contain the comphy register location and length.
+-- #address-cells: should be 1.
+-- #size-cells: should be 0.
+-
+-Optional properties:
+-
+-- reg-names: must be "comphy" as the first name, and "conf".
+-- reg: must contain the comphy register location and length as the first
+-    pair, followed by an optional configuration register address and
+-    length pair.
+-
+-A sub-node is required for each comphy lane provided by the comphy.
+-
+-Required properties (child nodes):
+-
+-- reg: comphy lane number.
+-- #phy-cells : from the generic phy bindings, must be 1. Defines the
+-               input port to use for a given comphy lane.
+-
+-Example:
+-
+-	comphy: phy@18300 {
+-		compatible = "marvell,armada-380-comphy";
+-		reg-names = "comphy", "conf";
+-		reg = <0x18300 0x100>, <0x18460 4>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		cpm_comphy0: phy@0 {
+-			reg = <0>;
+-			#phy-cells = <1>;
+-		};
+-
+-		cpm_comphy1: phy@1 {
+-			reg = <1>;
+-			#phy-cells = <1>;
+-		};
+-	};
 -- 
-2.45.2
+2.47.2
 
 
