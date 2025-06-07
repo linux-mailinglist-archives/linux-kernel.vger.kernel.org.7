@@ -1,480 +1,343 @@
-Return-Path: <linux-kernel+bounces-676505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA66CAD0D4B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 14:09:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6DBAD0D4F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 14:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B5753B36DF
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60E716FF79
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F75221FD3;
-	Sat,  7 Jun 2025 12:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B2C21B91D;
+	Sat,  7 Jun 2025 12:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Z9msa4X7"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fSz5w2ul";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="d8J0WSVO"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A54821FF37;
-	Sat,  7 Jun 2025 12:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749298118; cv=none; b=ELq7ZlF3x8BWE5u0Ah26um+LqSb6ZzL3ohLVVSsYqdt/ip2Z54JEezQEjgBk7kpYyCxTZBZAGftd1EvUJd0GlqUOaYG1nbvJSJE7+MBDryBzWPSk/JI4yPuMaNEcHCKNdRmklyop2mqkWXnZMfW2TI1KppgdJR/k8iDaORPpxa8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749298118; c=relaxed/simple;
-	bh=iaef8qmXNAq5l/9As63qndXfRVPmWNwMOYaxinGhHS8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WlVvuprmTNTzZ7WKtiYwogqTrhEGxUK0Esm5dquCatfczMNsg/3SLKU+8UhWUvE1Jb65MAXl2qglrRDz2ujQuIN4c1/xvB60xOPI2rpkSi+sXDhzOOUGWoWXq1UxzcpHSpLUnCD0ZIq5YE2LY+B/gyfwlJUByN2u1U+k+bgu36c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Z9msa4X7; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FwM4OXMNxwD5om0/o3Aytg0dRVg/tzG+D8QfcuPysvA=; t=1749298114; x=1749902914; 
-	b=Z9msa4X7Y0nywltDrIQ3GIsTB8mZKkxvf0fl4IZLo/wb5FbGGHHftNtYJG/kB5vJ8bb5Cod3e+5
-	KPDn1S/Lzz12Z2VsXOt1WxmKEh7bMkMevfUPGdYB/1jMvycQqMcRYV8K68FoIAquUQSeMOvMiheGD
-	AEjXUFtTCN7WNgfpN2/OiQDWHTKrnJfob+v/+/sSkftKMFKzMr04d2xH1cD1BdJXvd29sVw9pmGFy
-	2eQkngIt7VDHuxa9qwsVWj1z7I8pmJKFDwz7s+0zpAbz8fzRW5xR6FG9R4BdRMTkrZ4CG38OGNNko
-	3to80Wg17JkVqQB0WEuls5+Ihvstb3KJwMJw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uNsLc-00000001cxo-1xRw; Sat, 07 Jun 2025 14:08:28 +0200
-Received: from p5b13afe4.dip0.t-ipconnect.de ([91.19.175.228] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uNsLc-00000003H4l-0SRQ; Sat, 07 Jun 2025 14:08:28 +0200
-Message-ID: <6c7770dd1c216410fcff3bf0758a45d5afcb5444.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 2/6] sh: remove duplicate ioread/iowrite helpers
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Arnd Bergmann <arnd@kernel.org>, linux-arch@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Richard Henderson	
- <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>,
- Thomas Bogendoerfer	 <tsbogend@alpha.franken.de>, "James E.J. Bottomley"	
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
- Madhavan Srinivasan	 <maddy@linux.ibm.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin	 <npiggin@gmail.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker	
- <dalias@libc.org>, Julian Vetter <julian@outer-limits.org>, Bjorn Helgaas	
- <bhelgaas@google.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
-Date: Sat, 07 Jun 2025 14:08:26 +0200
-In-Reply-To: <20250315105907.1275012-3-arnd@kernel.org>
-References: <20250315105907.1275012-1-arnd@kernel.org>
-	 <20250315105907.1275012-3-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECCD21B9DE
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 12:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749298511; cv=fail; b=cpekOQISnIV0MbOhZ44IaaRlCauEjPx0NptEXJHk263fzYUkgNOv+XpQjx5eKM46tZVnMKFpbrkzVFhs0ZQyWDwa4BR4pTPTmsB+OE+EOeM1M0QRQpBu9i91xAfhCkBxgW4/VKCOEsY7Yqis22e8cUwzNoLlZsPNk3i8VV27AQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749298511; c=relaxed/simple;
+	bh=ht0O5Iu3n5XM5sMmOIeDdLhwf+lQ9rIkkOEmof0gJ4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Qcmqi90HV04uX93w/5mQooZQBRXcUuyy03akHrOlaIy+3rGG83OwLYcF7mZhNh57/9ZUueNLiOy+CFb98Lj5t0F8GS/99QSLbMdWMu05x9sIMVs08zLnfeL0rPWquU3q71o/m4J0Dt+fq4h3hHS0ovRnqOpggbHdP7WFLURQcY8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fSz5w2ul; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=d8J0WSVO; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55772xb9017219;
+	Sat, 7 Jun 2025 12:14:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=2ZfCgFzuPsoSMKXri78JTpC5z4fhshPNPJXBBScIbGo=; b=
+	fSz5w2ul82RNgWmZhQfgk1TdqIybSNMGrRIbQ1MVUnYJE7IisllUWwjqUDrZT4uk
+	jW4THfhWlDPueAyLBbO6LgotwphU7dSvjNmVydADBYvBVXLgw2pEMAMwefxmfMmH
+	s2GVONzd9TkeJSd9UcSYFBuA8tZ7HzZO7q/m8C4ulq7hM41yn+xKLXQd7guserHR
+	hzJ1Gy5u59LUbaNnQeUkO442GjTijJTM532PyUJ4ztL4bUzg5Dq2GIvjpAv3OHCJ
+	XDEdvrmQMKQxoJnzuJDLqFJoGBKBxrqqTKaQi7PTaYLQzRGaoM6ockslWhhfmebY
+	p8Z2Wh0UVBWf87Zx1p+HXw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474buf08we-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 07 Jun 2025 12:14:46 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5576jq44007375;
+	Sat, 7 Jun 2025 12:14:46 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv5rmfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 07 Jun 2025 12:14:45 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z0XxSZQkwQhUt2be+JjFentEbHJfuqBTxFz1B8PB2VPyOegJYSBa69S9YDXbMmjdbsuY1xYz5o7TV0JjICZaNBCM7OR1Oblhhf1mFmTEBkMSqshnKb3hk/ITvXC3C9O2kbUo+U6QCP4A5jjOUBnjrAhPc/rVzH3mts2OBIoUV1TqY+v//fwpv1ZF9sUv8OBiMTxui7ECLKGf+JRWLlN8h4Hj7FkrjO9oGFr6FXaELF/MDIuAuC6xWTZZSNXhBY2RIMhqL3rbiZSoHXAyyyzwdU8ZVVdpM14+4ysHaonhIlvHiyKTTtEZsfKsSYkYx1ssUv/qo9L89KaToby0hbQJyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2ZfCgFzuPsoSMKXri78JTpC5z4fhshPNPJXBBScIbGo=;
+ b=a4DBhCN8GtZtdp/RDw3LutftpN8RBhCDb7N8l22X6Grpu2Ep7V2ztuBjiy6NYHlQE0HIXmpe3pCeoJgIjnCARz5lYuSLv5CZGR48UkzbYdTlrSuobiCLyc06eFBNO7+ENua2txnv99Zr8MdBvr0k303nA9wALp8FMT9ZPZUZQLVrAYyyu1XECh6fSujSGTevXNq6GjAnHXSpcW88IlPfmRxGG4MBMN0rMLQKpC8wja2gLqNwAfULDn+xHnkRB1pr7fJIIZ+rqUXgYiT1Jn0fYeBB84piP2mNQt7+pB7Ci6UQ+H8zc+G2x6Eq5/9yoeP0O28rV8AtOmOmzeUEDQWaAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2ZfCgFzuPsoSMKXri78JTpC5z4fhshPNPJXBBScIbGo=;
+ b=d8J0WSVOcx8tq4S21VJ3/Jw4QdXyD55JvEvs3JJlYJ1eFxWv0K0OP5AAceLDjxDUK4xCZi8IUPaEsGJSeIXv6ARyT4A7KLuToViuq6T4VNQyNdCTvPEIE7RoSfBYIgZOmU1jTeqOC7tgSNfwIZ4OTA2egc7ytIXnKbIHLTUzmhw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by BLAPR10MB4881.namprd10.prod.outlook.com (2603:10b6:208:327::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Sat, 7 Jun
+ 2025 12:14:43 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8813.022; Sat, 7 Jun 2025
+ 12:14:43 +0000
+Date: Sat, 7 Jun 2025 13:14:41 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+        Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+        dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mm: shmem: disallow hugepages if the system-wide
+ shmem THP sysfs settings are disabled
+Message-ID: <b6ae32e5-60e0-44dd-a1e8-37c162d04ed3@lucifer.local>
+References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
+ <39d7617a6142c6091f233357171c5793e0992d36.1749109709.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39d7617a6142c6091f233357171c5793e0992d36.1749109709.git.baolin.wang@linux.alibaba.com>
+X-ClientProxiedBy: LO2P265CA0501.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13b::8) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BLAPR10MB4881:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ac62809-1460-403b-47d1-08dda5bce2a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZjZPYjQzNzJhRzJQWUh1L2NQL0RzK3FhSzI5aXIrQmQ5N2FlSzBNUnZWa3hD?=
+ =?utf-8?B?UlBTbkRLSnlXWjA5aUs4UzFkU00zV2w4REppUkFGSzE2TDRkdmxxWlJ2RVpX?=
+ =?utf-8?B?b0hpOTVSOGNVVVBsOFlJeWVOdEFsaGlRblRFcXl3aE9PWjhMMGZOV0dMMEtY?=
+ =?utf-8?B?TXBnNnZpa0xUcUdjaElUdU9xclAyK1d3ZHM0T1psSzRHaUltTG9jRVB2cWZJ?=
+ =?utf-8?B?T1NiMnh1ZkQvazJDSFhSVHMzeXJqNHROTkhRL3g5bWdIeW5KODhCdDBicW5I?=
+ =?utf-8?B?M0cxcHlWbVJTUmkrRTFwa1JSWWhYOUp5dHBNQnVlN3o4a2g4Q3RVTTZ1dTFl?=
+ =?utf-8?B?ZGd6LzBoZkF4b2d1cklpYmVpQ0dNZGhpMzlKRU5UZnlmclgrU2ppN3hWUjFn?=
+ =?utf-8?B?RHdXVXE3VXplOTcxS1BRcHA0WGpEbWhobTM0U3ByZXMyL21xaklqNllUVUo5?=
+ =?utf-8?B?cGlVRUFENC9UcEFBNnI4K0FMVW9RblZLYmFiMk94YW81R3VVc0pmRTNiWndC?=
+ =?utf-8?B?L0JHQ0pDYVZJMFNVSGZMUFRaZWdBMzNPbzhzdGtWbmt1K004M2c2M3NPWE84?=
+ =?utf-8?B?MkxjNkJ0VDRFMjZrM2pVK1hadXhBRUhRc0dIQlVxK2c4bUw2MCtUL3g2Y3Fh?=
+ =?utf-8?B?YnBVUHJJd2lNRytVZXRNcjZMaXRnOFhJVmFINi9DOTYvVXVldExGZGtOZk5w?=
+ =?utf-8?B?b0pobzJVd2x4VEp1ZXI3N3p4RTloV2xjOGFCTUdDQjRiZ1ZNbHlrTStKSHZX?=
+ =?utf-8?B?N1EvQzVoRTd5cUp6bFdnOVZhMmhBWjFRZkVMSCttYmFPOXptVDN0RDlVQUFL?=
+ =?utf-8?B?aW9aSW5uQjF1QW9qUzNwTnB3UjlNd2g2S04reGlES1JDbldQelZ1R0tldUFw?=
+ =?utf-8?B?YUZMVjBLdUI3emp3WDJlTyt0ZExqc0tZL0Rvbi9wSmI0d2ROZTlDdmgzQkFP?=
+ =?utf-8?B?YXdOT1pOMUtCV1Z3KzEvZGZrZmphZWxBREszQktzYy9VNE5VbngraW00YnZC?=
+ =?utf-8?B?UkJpQlNtOTczU1VFWjFiMVBYYVN1QVMzRCtxZCtIZU9scnVHMU5RY1ZubDA1?=
+ =?utf-8?B?cFFKeXlwMFI0RnhmVTFTNXVYbjQxb0F5VkZjemZ5NnRjWC9lRzRWZXNUczFZ?=
+ =?utf-8?B?SG1MOEExUjl4ZlZYWnRrY2pRYUNIalVtVFM0cVJ2ZXhVUURFTFZLbU43b05R?=
+ =?utf-8?B?cGRueUJ3Mk5NWWp1ejhTcWx1U0xEUUlsQUt3dUxlQWRxWUdld0FmS0lWbXNj?=
+ =?utf-8?B?c2RYUTVSUW5PeGE2RmdxS2VhRmFITHUzbnJYTisxbjVkUk1sakZNQ3d6MUJP?=
+ =?utf-8?B?blExdkJLaWZ1L2FReTJUWXlaanZmYmVpQWNZS3JXdkxVMTQxYlZnSGFnMjBH?=
+ =?utf-8?B?cXBUQTdKMTFFOFdrSWNZMHNEaDR3VTh4WG1OSm1XVk9hS01SWTRxR0ltOEgy?=
+ =?utf-8?B?clhCRXpiUlpTQjExM1NMUDJqTFlTVWJPVnl4aWxMV0NCTmsrbDFOZFZhSEVM?=
+ =?utf-8?B?ME9NaWR5ZE8zcDhwT0pKcXl4WkROVzRKZTd1TGhWVm1sUFAyRVdFZTlOdTdF?=
+ =?utf-8?B?aUlSR09weEhRdFN3THh0Y1NZbitDRTNXNFpkSFcvUjFoNXB6MGMyZ3RyVUxO?=
+ =?utf-8?B?VUw5eHJZRkZZQkR4UEVlc0dxbkRzNVlpbWZxL3RCSEFTajh1YnlnSzBPbzcx?=
+ =?utf-8?B?aGljSGdtSFFTYU9QTElIRUR0U2VXenlTbjlXcjBJd0ZtenVqd3RzbVprYS9R?=
+ =?utf-8?B?aVRUY1BRYmxLRFBPNUhLS3dRZmcybDBoZWFseXZpKzNQdm52OFdzUFJQR092?=
+ =?utf-8?B?MHhEdjBpRy9BczYvN1ZjT2RBYXo4NUtoWllKMXlrQXIvUjZ3M1U5bmVTMXBQ?=
+ =?utf-8?B?bjJ1b1pDbHZpcURGbk5oZ0x6SnJKVDFSdDM4RHBKdjAwMkY3QnJPUTFzTWZu?=
+ =?utf-8?Q?KldKTpRH4N0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MHVSZW5zTVFpcGFIYzFQYnh5dFlOREtOeUd5bGp5SW0rUjZ5dG5ZeEZLemdT?=
+ =?utf-8?B?N1A5OXZyMFprZ3pRT3NUaHZjUUR2Y29sQkNnVU9vSHVBTHMxWWJ5Z1pQR2Vr?=
+ =?utf-8?B?eVZuR3JyTFRKUmZtOXhrTXI0NnhvRDdHdWp0bjBWUGszcERPK28vTWZvMk5K?=
+ =?utf-8?B?Tk5MZGhkRWhtL1RNYmlRTDNtaVVteG5tOGZTSkhYVGNtdGxhTGJvZk9FRGVJ?=
+ =?utf-8?B?QkpVQlV5aXFMdWM4TnJEUnZPL1hyTHgrK3ZySmx4cTBjTG1nWXNISjF5T1hv?=
+ =?utf-8?B?bitGbm5TNC9aV1dRdUtaZzR3dXVyLy9qNWIwd1ZiUFZaaG1QSVhpc1B0YjA2?=
+ =?utf-8?B?MDdka1d1Q3hsYXk1U3ltdTFYdkxaakZDaTdQSWZSWVQ5QmFKQ2laVkNLWVZI?=
+ =?utf-8?B?a2Y4SXNRakk5SjFpazkzMzJENFN5UEFCdTFEVHhObkNDQWpodWVnL3AvenRs?=
+ =?utf-8?B?QTRKY2ZudmtlSjJwWGhIUnlZQWo3bCtiSVJ3eXBRdUpxWDUxdlFVOVJQY3JN?=
+ =?utf-8?B?T3FPbEUyUjd1K2czUFZBWDJVdFZzTEZMbVJ5WnVFWE84SUYrNmhOQWtLN2hV?=
+ =?utf-8?B?M1JVdVNadWlNZ250NXBDN2pBOE5IZWgzeTJudjBDeElsV2dBcHJNT3AvQlNu?=
+ =?utf-8?B?OVVtd1NUVWVYRm9BYk5jVlZ6Ty8vV3E0a1RHVVZTbVd6OGY4UlNTaTZRSXVv?=
+ =?utf-8?B?ZDVDQkxxeFk3SkN5Z2dIMnlmWlRmQVRVak1tSXQwZXVLclFSZ1FLVi8zcmFT?=
+ =?utf-8?B?Zyt4QkhSMUtLYlF4UkNTcTBHR1pWL2JoVTFEb29pZFUxQmQ5NmlnVVdzT3By?=
+ =?utf-8?B?eGJSbHNVV1IxcGtxUmtjR1M0NzV4RUplTmhaY1crM1JsMWd4ZjRRNGcrYlNv?=
+ =?utf-8?B?VUJWWHptWVl5eE02NlhYcmNieTltSVFBN2EwWmx1UDJWZGZFZHg0Y0pmNHNh?=
+ =?utf-8?B?TEJDMFYvN0cxaUVHNDVEbWRheGxjdmp2VjRTd1pzd2owS2p6MVdqQnlXOVVR?=
+ =?utf-8?B?RjlraEc1czFxbll4Tjh1b2JuYkJvTnFOWGNtMzdlRFNZbyt1cSszVE5temlE?=
+ =?utf-8?B?aTBPanQ3bkJqZHQycVd1eWJVQWo5VzdTVmlhK1VqU0dsN2IwMGR6SGpHMHl3?=
+ =?utf-8?B?a3h3d0hsa2dJRU8rcU5wYzhJTXFVZk5sUGlqSWlZRE84RHd1eHI1VzliVlMw?=
+ =?utf-8?B?TXVjaVBVazUwUGtxNTFHdVlXLzczL3RUQytBRlY1RGQzcmx3QnE1YWVSUFZS?=
+ =?utf-8?B?VXBmdjJHL1NKZU5pYy9hMHdIZCtOUXJ5NHdtcUxpbExPeFg0R0JOb3RlbjUv?=
+ =?utf-8?B?cjVDNUZYSUlheE13b3AzY2diUlQvcXhaM0F0K3BzR01vZDZKYjJpNjFoUGR1?=
+ =?utf-8?B?bEg0RjVRRG9lNFlFMDE1RXJuVFFFQVlxMlJ2dHdleHZXMlFHL1F3MHBrcTQy?=
+ =?utf-8?B?K3gvamFnb0c2VTR6Qml4dDZXRlFJTWlQelFlS0VlQlk3Y2hUSk42WXp2UHJQ?=
+ =?utf-8?B?TFY4eXVnZ3ZGZGFEbjd3RkZkMHU1anczdUx6NGdDMDFURThha3A5ZC90NVEw?=
+ =?utf-8?B?ZDcyQTJFdkVzZzMwcjBZZ1VzVXg4WWppUnFJOSszcWsxc3hSN3V5RDB0aWJZ?=
+ =?utf-8?B?RmdycE9VUHdXOXc5ZnRlR1MyOHJ1NGdnSzFkdWtBQ3ZIb0RzdzVBb0dmaTJw?=
+ =?utf-8?B?ZU1HZFlmN0E0NGh2US85a0VEczFHbCtEcVVGZVBrOHBYeTlnenJweXhJUG1W?=
+ =?utf-8?B?dnFCN0hZc0w2OVcvZ2J2MzdQY3JNKzVPM3FQTVR6Yi95bTlKeURvNkhKcDBI?=
+ =?utf-8?B?ZWlYbW5qU1VON2krd2hnOE9COVBOUWc1NjRselJabTd2TlYvVWh6VkhDeWxP?=
+ =?utf-8?B?WFZqeE9paXY5Yll5bjdOSzhRYzBlZnQwNWRCTys4aDlGRExXRnJ6SVo0cDFH?=
+ =?utf-8?B?aGhweUx5MFFDNVhuZ28xc21mMDV1UDNXd3hJZmhqeTMrNjhSYUhFMXdxTzNF?=
+ =?utf-8?B?T0hjVWVpakJUL1lWWVBCRGZEdzBHa29vZW05WktDbGN3ZS82czB1ZlVIbmhS?=
+ =?utf-8?B?aGxiNFRsSVpvZnR6Uk5CeEJWRS9vZDh6S0hRbFhzaHlBZ1hFTDlqL0JSY2FR?=
+ =?utf-8?B?a0pyQVFkS2VUV2pUMWczMGpLbVNvQ2tWcUpvU0F5dlFtZFl1RmE5eFFPQnh2?=
+ =?utf-8?B?U2c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	LnXIi6Ekgfp8kRzkh73bz2JzYetU2Bq46o7ryTaww7xN0nNwK7pVVL0ij/Kd3GVweRlqL+owvY+IzFOFlqcFTEXznSBd0O2jciTuSX+DAbOS+jsF+xgZ/a8BkKAV/Sa3quKiE6EIEHPGk83VTmmuWTufAfWU2+OqRtjdJbyBZue8Mkkrrz8m+zIwy+urthEXZHky3hUpQzaCiKcQIPb6feG6adzqaqf2oZLFU6aK4niSDoZdNLZMpDcWXulwjN2u6xoHQo5+ZPwVg/iyROaTOAy8j2V6IQRe8YIGIGch8SwCGNO962crj89q8tGR7rar0rpxwdDPpPKWQxNxJ93zVtF3j1WbdkwF3v11VfDH2H3bVBqRJanKHJPFgxLRohDuVozaDoGlkQD7fovk6FAEpIgk7QPacWUDOQYa7fsdLg2wQsmBlzEXqVuyMRHXK0+uqv5Z3mz/cbiVWpWQR5UpAqgtGGUZgl9Km9+fVEQa8TVcTjnFQ9FhIO/VuCxWQSnf3XJDcJGT54RwuwQbqaUzA/PKARf81fWgCgA+N61NInj8hs2r1Xdd5nkWXzhXmk5hO7yg1sbVaJIcyTdttwz3dWPz/z+pNOqibZ3FLWVOBoc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ac62809-1460-403b-47d1-08dda5bce2a1
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2025 12:14:43.1964
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TM5nffM5pbJJxIhcGZLPDRU4OOS/ZutNd3yhmHs8C5Mmu3PxVv3luyroEQvUfq7gpaE4JUfxd5qgvW2ggmV5s/One20AEs5zSiKdbR3yf1Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4881
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-07_04,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506070087
+X-Authority-Analysis: v=2.4 cv=RZGQC0tv c=1 sm=1 tr=0 ts=68442d37 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=SRrdq9N9AAAA:8 a=h08ATKPx_57Ha0vpD2kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: GjcNfmF4z68DDHDWmXmZJl9sWlRKwcSS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA3MDA4NyBTYWx0ZWRfX8SSWU2wukONp Ll5HfrhX8J4FQ0UW6AA+pgOLdDgpksbSgAU6zGnxxi6iMTdTmxQwuyzJjnFmbOfDZ0eTRplNqPV NPnGJBg3ZzMo/ofiTF6EdK4y66+4LtoUXFJ6blv0V0XhMCyqmFMXoKj+Sbd0Z0Oj8eDUTvfUkX1
+ IQtQH+A4WDEjeczC/aPHmp12gmxQS3ZQuGoxkR7CCIF77kuR7KyLl7bxKFnaoxSH4SB+uRMouNB +TTGuKLWc0N4KI/PTyuk16AqIN3I1grAcRhhFQ45M/d7RxcxggDsQqsO8X2+tivlKCgqIobZQAY /7aI8BvDFODWByKlBizMxiQyzTvXKrscmbpLAxT94Zt/b64TFJRXrLcEcB9Vu4n/Ed6lkRaJJxG
+ dx4TwYnaQX1p/NkUcvpd/GUAL+iz3xTmDU6Nmv3AWF6b/E2z5CN0w5PDhi8Tp/MudaQFsYT3
+X-Proofpoint-ORIG-GUID: GjcNfmF4z68DDHDWmXmZJl9sWlRKwcSS
 
-Hi Arnd,
+On Thu, Jun 05, 2025 at 04:00:59PM +0800, Baolin Wang wrote:
+> The MADV_COLLAPSE will ignore the system-wide shmem THP sysfs settings, which
+> means that even though we have disabled the shmem THP configuration, MADV_COLLAPSE
+> will still attempt to collapse into a shmem THP. This violates the rule we have
+> agreed upon: never means never.
 
-On Sat, 2025-03-15 at 11:59 +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> The ioread/iowrite functions on sh only do memory mapped I/O like the
-> generic verion, and never map onto non-MMIO inb/outb variants, so they
-> just add complexity. In particular, the use of asm-generic/iomap.h
-> ties the declaration to the x86 implementation.
->=20
-> Remove the custom versions and use the architecture-independent fallback
-> code instead. Some of the calling conventions on sh are different here,
-> so fix that by adding 'volatile' keywords where required by the generic
-> implementation and change the cpg clock driver to no longer depend on
-> the interesting choice of return types for ioread8/ioread16/ioread32.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Ugh that we have separate shmem logic. And split between huge_memory.c and
+shmem.c too :)) Again, not your fault, just a general moan about existing
+stuff :P
+
+>
+> Another rule for madvise, referring to David's suggestion: “allowing for collapsing
+> in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+
+Hm I'm not sure if this is enforced is it? I may have missed something here
+however.
+
+>
+> Then the current strategy is:
+>
+> For shmem, if none of always, madvise, within_size, and inherit have enabled
+> PMD-sized THP, then MADV_COLLAPSE will be prohibited from collapsing PMD-sized THP.
+
+Again, is this just MADV_COLLAPSE? Surely this is a general change?
+
+We should be clear that we are not explicitly limiting ourselves to
+MADV_COLLAPSE here.
+
+You shoudl clearly indicate that the MADV_COLLAPSE case DOESN'T set
+TVA_ENFORCE_SYSFS and that's the key difference here.
+
+>
+> For tmpfs, if the mount option is set with the 'huge=never' parameter, then
+> MADV_COLLAPSE will be prohibited from collapsing PMD-sized THP.
+>
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 > ---
->  arch/sh/include/asm/io.h |  30 ++------
->  arch/sh/kernel/Makefile  |   3 -
->  arch/sh/kernel/iomap.c   | 162 ---------------------------------------
->  arch/sh/kernel/ioport.c  |   5 --
->  arch/sh/lib/io.c         |   4 +-
->  drivers/sh/clk/cpg.c     |  25 +++---
->  6 files changed, 21 insertions(+), 208 deletions(-)
->  delete mode 100644 arch/sh/kernel/iomap.c
->=20
-> diff --git a/arch/sh/include/asm/io.h b/arch/sh/include/asm/io.h
-> index cf5eab840d57..0f663ebec700 100644
-> --- a/arch/sh/include/asm/io.h
-> +++ b/arch/sh/include/asm/io.h
-> @@ -19,7 +19,6 @@
->  #include <asm/machvec.h>
->  #include <asm/page.h>
->  #include <linux/pgtable.h>
-> -#include <asm-generic/iomap.h>
-> =20
->  #define __IO_PREFIX     generic
->  #include <asm/io_generic.h>
-> @@ -100,7 +99,7 @@ pfx##writes##bwlq(volatile void __iomem *mem, const vo=
-id *addr,		\
->  	}								\
->  }									\
->  									\
-> -static inline void pfx##reads##bwlq(volatile void __iomem *mem,		\
-> +static inline void pfx##reads##bwlq(const volatile void __iomem *mem,	\
->  				    void *addr, unsigned int count)	\
->  {									\
->  	volatile type *__addr =3D addr;					\
-> @@ -114,37 +113,18 @@ static inline void pfx##reads##bwlq(volatile void _=
-_iomem *mem,		\
->  __BUILD_MEMORY_STRING(__raw_, b, u8)
->  __BUILD_MEMORY_STRING(__raw_, w, u16)
-> =20
-> -void __raw_writesl(void __iomem *addr, const void *data, int longlen);
-> -void __raw_readsl(const void __iomem *addr, void *data, int longlen);
-> +void __raw_writesl(void volatile __iomem *addr, const void *data, int lo=
-nglen);
-> +void __raw_readsl(const volatile void __iomem *addr, void *data, int lon=
-glen);
-> =20
->  __BUILD_MEMORY_STRING(__raw_, q, u64)
-> =20
->  #define ioport_map ioport_map
-> -#define ioport_unmap ioport_unmap
->  #define pci_iounmap pci_iounmap
-> =20
-> -#define ioread8 ioread8
-> -#define ioread16 ioread16
-> -#define ioread16be ioread16be
-> -#define ioread32 ioread32
-> -#define ioread32be ioread32be
-> -
-> -#define iowrite8 iowrite8
-> -#define iowrite16 iowrite16
-> -#define iowrite16be iowrite16be
-> -#define iowrite32 iowrite32
-> -#define iowrite32be iowrite32be
-> -
-> -#define ioread8_rep ioread8_rep
-> -#define ioread16_rep ioread16_rep
-> -#define ioread32_rep ioread32_rep
-> -
-> -#define iowrite8_rep iowrite8_rep
-> -#define iowrite16_rep iowrite16_rep
-> -#define iowrite32_rep iowrite32_rep
-> -
->  #ifdef CONFIG_HAS_IOPORT_MAP
-> =20
-> +extern void __iomem *ioport_map(unsigned long port, unsigned int nr);
-> +
->  /*
->   * Slowdown I/O port space accesses for antique hardware.
->   */
-> diff --git a/arch/sh/kernel/Makefile b/arch/sh/kernel/Makefile
-> index ba917008d63e..7b453592adaf 100644
-> --- a/arch/sh/kernel/Makefile
-> +++ b/arch/sh/kernel/Makefile
-> @@ -21,10 +21,7 @@ obj-y	:=3D head_32.o debugtraps.o dumpstack.o				\
->  	   syscalls_32.o time.o topology.o traps.o			\
->  	   traps_32.o unwinder.o
-> =20
-> -ifndef CONFIG_GENERIC_IOMAP
-> -obj-y				+=3D iomap.o
->  obj-$(CONFIG_HAS_IOPORT_MAP)	+=3D ioport.o
-> -endif
-> =20
->  obj-y				+=3D sys_sh32.o
->  obj-y				+=3D cpu/
-> diff --git a/arch/sh/kernel/iomap.c b/arch/sh/kernel/iomap.c
-> deleted file mode 100644
-> index 0a0dff4e66de..000000000000
-> --- a/arch/sh/kernel/iomap.c
-> +++ /dev/null
-> @@ -1,162 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * arch/sh/kernel/iomap.c
-> - *
-> - * Copyright (C) 2000  Niibe Yutaka
-> - * Copyright (C) 2005 - 2007 Paul Mundt
-> - */
-> -#include <linux/module.h>
-> -#include <linux/io.h>
-> -
-> -unsigned int ioread8(const void __iomem *addr)
-> -{
-> -	return readb(addr);
-> -}
-> -EXPORT_SYMBOL(ioread8);
-> -
-> -unsigned int ioread16(const void __iomem *addr)
-> -{
-> -	return readw(addr);
-> -}
-> -EXPORT_SYMBOL(ioread16);
-> -
-> -unsigned int ioread16be(const void __iomem *addr)
-> -{
-> -	return be16_to_cpu(__raw_readw(addr));
-> -}
-> -EXPORT_SYMBOL(ioread16be);
-> -
-> -unsigned int ioread32(const void __iomem *addr)
-> -{
-> -	return readl(addr);
-> -}
-> -EXPORT_SYMBOL(ioread32);
-> -
-> -unsigned int ioread32be(const void __iomem *addr)
-> -{
-> -	return be32_to_cpu(__raw_readl(addr));
-> -}
-> -EXPORT_SYMBOL(ioread32be);
-> -
-> -void iowrite8(u8 val, void __iomem *addr)
-> -{
-> -	writeb(val, addr);
-> -}
-> -EXPORT_SYMBOL(iowrite8);
-> -
-> -void iowrite16(u16 val, void __iomem *addr)
-> -{
-> -	writew(val, addr);
-> -}
-> -EXPORT_SYMBOL(iowrite16);
-> -
-> -void iowrite16be(u16 val, void __iomem *addr)
-> -{
-> -	__raw_writew(cpu_to_be16(val), addr);
-> -}
-> -EXPORT_SYMBOL(iowrite16be);
-> -
-> -void iowrite32(u32 val, void __iomem *addr)
-> -{
-> -	writel(val, addr);
-> -}
-> -EXPORT_SYMBOL(iowrite32);
-> -
-> -void iowrite32be(u32 val, void __iomem *addr)
-> -{
-> -	__raw_writel(cpu_to_be32(val), addr);
-> -}
-> -EXPORT_SYMBOL(iowrite32be);
-> -
-> -/*
-> - * These are the "repeat MMIO read/write" functions.
-> - * Note the "__raw" accesses, since we don't want to
-> - * convert to CPU byte order. We write in "IO byte
-> - * order" (we also don't have IO barriers).
-> - */
-> -static inline void mmio_insb(const void __iomem *addr, u8 *dst, int coun=
-t)
-> -{
-> -	while (--count >=3D 0) {
-> -		u8 data =3D __raw_readb(addr);
-> -		*dst =3D data;
-> -		dst++;
-> -	}
-> -}
-> -
-> -static inline void mmio_insw(const void __iomem *addr, u16 *dst, int cou=
-nt)
-> -{
-> -	while (--count >=3D 0) {
-> -		u16 data =3D __raw_readw(addr);
-> -		*dst =3D data;
-> -		dst++;
-> -	}
-> -}
-> -
-> -static inline void mmio_insl(const void __iomem *addr, u32 *dst, int cou=
-nt)
-> -{
-> -	while (--count >=3D 0) {
-> -		u32 data =3D __raw_readl(addr);
-> -		*dst =3D data;
-> -		dst++;
-> -	}
-> -}
-> -
-> -static inline void mmio_outsb(void __iomem *addr, const u8 *src, int cou=
-nt)
-> -{
-> -	while (--count >=3D 0) {
-> -		__raw_writeb(*src, addr);
-> -		src++;
-> -	}
-> -}
-> -
-> -static inline void mmio_outsw(void __iomem *addr, const u16 *src, int co=
-unt)
-> -{
-> -	while (--count >=3D 0) {
-> -		__raw_writew(*src, addr);
-> -		src++;
-> -	}
-> -}
-> -
-> -static inline void mmio_outsl(void __iomem *addr, const u32 *src, int co=
-unt)
-> -{
-> -	while (--count >=3D 0) {
-> -		__raw_writel(*src, addr);
-> -		src++;
-> -	}
-> -}
-> -
-> -void ioread8_rep(const void __iomem *addr, void *dst, unsigned long coun=
-t)
-> -{
-> -	mmio_insb(addr, dst, count);
-> -}
-> -EXPORT_SYMBOL(ioread8_rep);
-> -
-> -void ioread16_rep(const void __iomem *addr, void *dst, unsigned long cou=
-nt)
-> -{
-> -	mmio_insw(addr, dst, count);
-> -}
-> -EXPORT_SYMBOL(ioread16_rep);
-> -
-> -void ioread32_rep(const void __iomem *addr, void *dst, unsigned long cou=
-nt)
-> -{
-> -	mmio_insl(addr, dst, count);
-> -}
-> -EXPORT_SYMBOL(ioread32_rep);
-> -
-> -void iowrite8_rep(void __iomem *addr, const void *src, unsigned long cou=
-nt)
-> -{
-> -	mmio_outsb(addr, src, count);
-> -}
-> -EXPORT_SYMBOL(iowrite8_rep);
-> -
-> -void iowrite16_rep(void __iomem *addr, const void *src, unsigned long co=
-unt)
-> -{
-> -	mmio_outsw(addr, src, count);
-> -}
-> -EXPORT_SYMBOL(iowrite16_rep);
-> -
-> -void iowrite32_rep(void __iomem *addr, const void *src, unsigned long co=
-unt)
-> -{
-> -	mmio_outsl(addr, src, count);
-> -}
-> -EXPORT_SYMBOL(iowrite32_rep);
-> diff --git a/arch/sh/kernel/ioport.c b/arch/sh/kernel/ioport.c
-> index c8aff8a20164..915a3dfd9f02 100644
-> --- a/arch/sh/kernel/ioport.c
-> +++ b/arch/sh/kernel/ioport.c
-> @@ -23,8 +23,3 @@ void __iomem *ioport_map(unsigned long port, unsigned i=
-nt nr)
->  	return (void __iomem *)(port + sh_io_port_base);
->  }
->  EXPORT_SYMBOL(ioport_map);
-> -
-> -void ioport_unmap(void __iomem *addr)
-> -{
-> -}
-> -EXPORT_SYMBOL(ioport_unmap);
-> diff --git a/arch/sh/lib/io.c b/arch/sh/lib/io.c
-> index ebcf7c0a7335..dc6345e4c53b 100644
-> --- a/arch/sh/lib/io.c
-> +++ b/arch/sh/lib/io.c
-> @@ -11,7 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/io.h>
-> =20
-> -void __raw_readsl(const void __iomem *addr, void *datap, int len)
-> +void __raw_readsl(const volatile void __iomem *addr, void *datap, int le=
-n)
->  {
->  	u32 *data;
-> =20
-> @@ -60,7 +60,7 @@ void __raw_readsl(const void __iomem *addr, void *datap=
-, int len)
->  }
->  EXPORT_SYMBOL(__raw_readsl);
-> =20
-> -void __raw_writesl(void __iomem *addr, const void *data, int len)
-> +void __raw_writesl(volatile void __iomem *addr, const void *data, int le=
-n)
->  {
->  	if (likely(len !=3D 0)) {
->  		int tmp1;
-> diff --git a/drivers/sh/clk/cpg.c b/drivers/sh/clk/cpg.c
-> index fd72d9088bdc..64ed7d64458a 100644
-> --- a/drivers/sh/clk/cpg.c
-> +++ b/drivers/sh/clk/cpg.c
-> @@ -26,6 +26,19 @@ static unsigned int sh_clk_read(struct clk *clk)
->  	return ioread32(clk->mapped_reg);
->  }
-> =20
-> +static unsigned int sh_clk_read_status(struct clk *clk)
-> +{
-> +	void __iomem *mapped_status =3D (phys_addr_t)clk->status_reg -
-> +		(phys_addr_t)clk->enable_reg + clk->mapped_reg;
-> +
-> +	if (clk->flags & CLK_ENABLE_REG_8BIT)
-> +		return ioread8(mapped_status);
-> +	else if (clk->flags & CLK_ENABLE_REG_16BIT)
-> +		return ioread16(mapped_status);
-> +
-> +	return ioread32(mapped_status);
-> +}
-> +
->  static void sh_clk_write(int value, struct clk *clk)
->  {
->  	if (clk->flags & CLK_ENABLE_REG_8BIT)
-> @@ -40,20 +53,10 @@ static int sh_clk_mstp_enable(struct clk *clk)
->  {
->  	sh_clk_write(sh_clk_read(clk) & ~(1 << clk->enable_bit), clk);
->  	if (clk->status_reg) {
-> -		unsigned int (*read)(const void __iomem *addr);
->  		int i;
-> -		void __iomem *mapped_status =3D (phys_addr_t)clk->status_reg -
-> -			(phys_addr_t)clk->enable_reg + clk->mapped_reg;
-> -
-> -		if (clk->flags & CLK_ENABLE_REG_8BIT)
-> -			read =3D ioread8;
-> -		else if (clk->flags & CLK_ENABLE_REG_16BIT)
-> -			read =3D ioread16;
-> -		else
-> -			read =3D ioread32;
-> =20
->  		for (i =3D 1000;
-> -		     (read(mapped_status) & (1 << clk->enable_bit)) && i;
-> +		     (sh_clk_read_status(clk) & (1 << clk->enable_bit)) && i;
->  		     i--)
->  			cpu_relax();
->  		if (!i) {
+>  mm/huge_memory.c | 2 +-
+>  mm/shmem.c       | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index d3e66136e41a..a8cfa37cae72 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -166,7 +166,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>  	 * own flags.
+>  	 */
+>  	if (!in_pf && shmem_file(vma->vm_file))
+> -		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
+> +		return orders & shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>  						   vma, vma->vm_pgoff, 0,
+>  						   !enforce_sysfs);
 
-Those are quite a number of changes that I would like to test on real hardw=
-are
-first before merging them into the kernel.
+Did you mean to do &&?
 
-@Geert: Could you test it on your SH-7751 LANDISK board as well?
+Also, is this achieving what you want to achieve? Is it necessary? The
+changes in patch 1/2 enforce the global settings and before this code in
+__thp_vma_allowable_orders():
 
-Thanks,
-Adrian
+unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+					 unsigned long vm_flags,
+					 unsigned long tva_flags,
+					 unsigned long orders)
+{
+	... (no early exits) ...
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+	orders &= supported_orders;
+	if (!orders)
+		return 0;
+
+	...
+}
+
+So if orders == 0 due to the changes in thp_vma_allowable_orders(), which
+is the only caller of __thp_vma_allowable_orders() then we _always_ exit
+early here before we get to this shmem_allowable_huge_orders() code.
+
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 4b42419ce6b2..9af45d4e27e6 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -625,7 +625,7 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
+>  		return 0;
+>  	if (shmem_huge == SHMEM_HUGE_DENY)
+>  		return 0;
+> -	if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
+> +	if (shmem_huge == SHMEM_HUGE_FORCE)
+>  		return maybe_pmd_order;
+>
+>  	/*
+> @@ -660,7 +660,7 @@ static unsigned int shmem_huge_global_enabled(struct inode *inode, pgoff_t index
+>
+>  		fallthrough;
+>  	case SHMEM_HUGE_ADVISE:
+> -		if (vm_flags & VM_HUGEPAGE)
+> +		if (shmem_huge_force || (vm_flags & VM_HUGEPAGE))
+>  			return maybe_pmd_order;
+>  		fallthrough;
+>  	default:
+> @@ -1790,7 +1790,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>  	/* Allow mTHP that will be fully within i_size. */
+>  	mask |= shmem_get_orders_within_size(inode, within_size_orders, index, 0);
+>
+> -	if (vm_flags & VM_HUGEPAGE)
+> +	if (shmem_huge_force || (vm_flags & VM_HUGEPAGE))
+>  		mask |= READ_ONCE(huge_shmem_orders_madvise);
+
+I'm also not sure these are necessary:
+
+The only path that can set shmem_huge_force is __thp_vma_allowable_orders()
+-> shmem_allowable_huge_orders() -> shmem_huge_global_enabled() and then
+only if !(tva_flags & TVA_ENFORCE_SYSFS) and as stated above we already
+cover off this case by early exiting __thp_vma_allowable_orders() if orders
+== 0 as established in patch 1/2.
+
+
+
+>
+>  	if (global_orders > 0)
+> --
+> 2.43.5
+>
 
