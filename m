@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-676438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3754EAD0C5F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:04:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D35FAD0C5E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 12:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07C5170C2A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:04:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E503D3B15AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 10:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6932321D00A;
-	Sat,  7 Jun 2025 10:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F3B21B196;
+	Sat,  7 Jun 2025 10:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RQIvIcmE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kg+8tAMh"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597EF20B808
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598B420D4E3
 	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 10:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749290622; cv=none; b=PtsnPAF0PoA5zXQZBK11x7O7YzXPy/t3xatKlX+f2M1E/vy2oF/IaSA7STDTkYdJ53joMszq5Goitz2sbF5FN1WtL70KBOb8mYuvYZ7rpY/GgLwMoohKL2aWmRG78aDBkLW/nPbOBEoo5wT6w5P9vY/KCLVTkmmj6GobAunDkdc=
+	t=1749290622; cv=none; b=lTdG+mpvM2l0pAqEAJN3N7uTgFf0tLQAqoYgpLs1Dc1YVkJLQpaTqBucKtILZao18ZWQF10mgaBubIBZuFwEjv7YVA+PHUiEs87U94787u3dnz8s1seJEabthUDskmEznN85N+C4r2B9buOxPQZDSIjWE6Ifl5LpCdCM0a6fk6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749290622; c=relaxed/simple;
-	bh=T+JvWQ7WmFVrrgrlaW8MxVqV6Y+CruIRIU2dHq7dkiA=;
+	bh=i+OfsPwLoK5azu0EdY+IsK9gunqujhn7UxYgkkXzcKc=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=LqFQ9iGc9+lIPuQSflQ/qQGf1FcDoD1xTEF0VoGHuarGB0l4ls6oJ5yTR5slASgq6WU+tYpq5eT2AYw734Wb53NvwFqMZBjK2YdohQ6YZqAeRdbPYa9cHvfcq48dhmjWtNuDkFQQFwO3Lo3luZhGdQv4H2rWj4BweTLoCcNRw54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RQIvIcmE; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=QMEiY+OtzLsfaY60wsTmCkdJKlLxKzEgJX/NOBqZui/EwyJ0P54sjiFmGUuT0Abe+di0crPqir4WCSDioGo8KSJ53dAuyOQRkUBaWb4lufvw53LbEkaS9uwA/4DLv1th52Z0lmKu72LfiT8CSkeGDaqL6W2emt9UvJqfI9GdiK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kg+8tAMh; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=edbwZNaA+PdxQdP5/vR9WRKtGIl8nSjLytqfD3kWk4U=; b=RQIvIcmE4j7lMOw4h1jA5bl8EO
-	f0bynYEarV+Th6B/8KP7dLPM4H+uf+V6l3xslklpc2wOxtae0aB8TnArJ9TDAJ4M1zhctLfhMpCm3
-	pXkGyo0R6GbmuGXPVMsOzunZYmKkcn9iHEXGzArS2xF6DTXQRQm6rlx5KrEOge4z4ZEfTlj/dcaoR
-	I1/MaGWfBNV4I3SVmaWMlMujUrkKGyxjf2IU3oxsaRfKoQuyVsozqPfx3JZguhmFoXdyQFyB+KUBQ
-	2xwT/6Br2h5pCSKmZBglB6nwtFkCyBtmLq+NKn/HgMYHQQ4JIL18CP1WY9UMsHh/gwVB2APAwHJa/
-	x/M2m7NQ==;
+	bh=H5XuaI4M2quwYMvzlGKb3RXWYbNYp0xBI+Jvaliu4Hk=; b=kg+8tAMhRDRepDJJe3NguKC4MA
+	SuAVdrmB2OpQduG/bvgOHAqT23Nc5L1mVeLavVpGAyRsVMJwI+sH4cpGOzQzCbfI9jGr0r6WBeve0
+	z2NBROlec14JJWCLiPq+PE23iivHFZI7SNU8bpp/OKM6jJEPOEF81HILX0nuE+QsoqDlfVh2waLJa
+	aqOaLBrW1wqqLNn+SXNwl0e99YoTHRzMGAYh5Nn4M38VDRwYksHT7kPsdusxs8Ozh5S23TzUR/Wsf
+	rhvWABdo6bpccauhfBD+B2ReCg6sEQGcFTbVQVgA/3LqkP8W7P+t/0WzOLL0kPdMoq2UBkmIy6w+z
+	+a9/rruA==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
 	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uNqOn-00000006HYU-2COt;
+	id 1uNqOn-00000006HYV-2HhU;
 	Sat, 07 Jun 2025 10:03:37 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 771CE308630; Sat,  7 Jun 2025 12:03:35 +0200 (CEST)
-Message-ID: <20250607095619.043649140@infradead.org>
+	id A14EB308637; Sat,  7 Jun 2025 12:03:35 +0200 (CEST)
+Message-ID: <20250607095619.149445852@infradead.org>
 User-Agent: quilt/0.66
-Date: Sat, 07 Jun 2025 11:42:33 +0200
+Date: Sat, 07 Jun 2025 11:42:34 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -58,7 +58,7 @@ Cc: linux-kernel@vger.kernel.org,
  jpoimboe@kernel.org,
  mark.rutland@arm.com,
  torvalds@linuxfoundation.org
-Subject: [PATCH 09/11] x86/bug: Implement WARN_ONCE()
+Subject: [PATCH 10/11] x86: Clean up default rethunk warning
 References: <20250607094224.104791182@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,50 +68,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Implement WARN_ONCE like WARN using BUGFLAG_ONCE.
+Replace the funny __warn_thunk thing with a more regular WARN_ONCE()
+and simplify the ifdeffery.
+
+Notably this avoids RET from having recursive RETs (once from the
+thunk and once from the C function) -- recurive RET makes my head hurt
+for no good reason.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/bug.h |   14 ++++++++++++++
- include/asm-generic/bug.h  |    2 ++
- 2 files changed, 16 insertions(+)
+ arch/x86/entry/entry.S               |    4 ----
+ arch/x86/include/asm/nospec-branch.h |    2 --
+ arch/x86/kernel/cpu/bugs.c           |    5 -----
+ arch/x86/lib/retpoline.S             |   22 +++++++++++++++-------
+ 4 files changed, 15 insertions(+), 18 deletions(-)
 
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -152,6 +152,20 @@ do {									\
- #define __WARN_printf(taint, fmt, arg...) \
- 	__WARN_print_arg(BUGFLAG_TAINT(taint), fmt, ## arg)
+--- a/arch/x86/entry/entry.S
++++ b/arch/x86/entry/entry.S
+@@ -13,8 +13,6 @@
+ #include <asm/cpufeatures.h>
+ #include <asm/nospec-branch.h>
  
-+#define __WARN_ONCE(cond, format, arg...) ({				\
-+	int __ret_warn_on = !!(cond);					\
-+	if (unlikely(__ret_warn_on)) {					\
-+		__WARN_print_arg(BUGFLAG_ONCE|BUGFLAG_TAINT(TAINT_WARN),\
-+				format, ## arg);			\
-+	}								\
-+	__ret_warn_on;							\
-+})
+-#include "calling.h"
+-
+ .pushsection .noinstr.text, "ax"
+ 
+ /* Clobbers AX, CX, DX */
+@@ -61,8 +59,6 @@ EXPORT_SYMBOL_GPL(mds_verw_sel);
+ 
+ .popsection
+ 
+-THUNK warn_thunk_thunk, __warn_thunk
+-
+ /*
+  * Clang's implementation of TLS stack cookies requires the variable in
+  * question to be a TLS variable. If the variable happens to be defined as an
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -386,8 +386,6 @@ extern void clear_bhb_loop(void);
+ 
+ extern void (*x86_return_thunk)(void);
+ 
+-extern void __warn_thunk(void);
+-
+ #ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
+ extern void call_depth_return_thunk(void);
+ 
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -3415,8 +3415,3 @@ ssize_t cpu_show_indirect_target_selecti
+ 	return cpu_show_common(dev, attr, buf, X86_BUG_ITS);
+ }
+ #endif
+-
+-void __warn_thunk(void)
+-{
+-	WARN_ONCE(1, "Unpatched return thunk in use. This should not happen!\n");
+-}
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -12,6 +12,7 @@
+ #include <asm/percpu.h>
+ #include <asm/frame.h>
+ #include <asm/nops.h>
++#include <asm/bug.h>
+ 
+ 	.section .text..__x86.indirect_thunk
+ 
+@@ -416,6 +417,19 @@ EXPORT_SYMBOL(its_return_thunk)
+ 
+ #endif /* CONFIG_MITIGATION_ITS */
+ 
++        .pushsection        .rodata.str1.1
++.Lwarn:
++        .string "Unpatched return thunk in use.\n"
++	.popsection
 +
 +/*
-+ * Make sure WARN_ONCE() arguments get expanded before trying to count them.
++ * Helper that will trip WARN_ONCE() after alternatives have ran.
 + */
-+#define WARN_ONCE(cond, format...) __WARN_ONCE(cond, format)
++#define ALT_WARN_RETHUNK						\
++	ANNOTATE_REACHABLE ;						\
++	1: ALTERNATIVE "", "ud2", X86_FEATURE_ALWAYS ;			\
++	ASM_BUGTABLE_FLAGS(1b, .Lwarn, 0, 0, BUGFLAG_WARNING | BUGFLAG_ONCE )
 +
- #endif /* HAVE_ARCH_BUG_FORMAT */
- 
- #include <asm-generic/bug.h>
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -155,8 +155,10 @@ extern __printf(1, 2) void __warn_printk
- 	DO_ONCE_LITE_IF(condition, WARN_ON, 1)
- #endif
- 
-+#ifndef WARN_ONCE
- #define WARN_ONCE(condition, format...)				\
- 	DO_ONCE_LITE_IF(condition, WARN, 1, format)
-+#endif
- 
- #define WARN_TAINT_ONCE(condition, taint, format...)		\
- 	DO_ONCE_LITE_IF(condition, WARN_TAINT, 1, taint, format)
+ /*
+  * This function name is magical and is used by -mfunction-return=thunk-extern
+  * for the compiler to generate JMPs to it.
+@@ -432,15 +446,9 @@ EXPORT_SYMBOL(its_return_thunk)
+ SYM_CODE_START(__x86_return_thunk)
+ 	UNWIND_HINT_FUNC
+ 	ANNOTATE_NOENDBR
+-#if defined(CONFIG_MITIGATION_UNRET_ENTRY) || \
+-    defined(CONFIG_MITIGATION_SRSO) || \
+-    defined(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)
+-	ALTERNATIVE __stringify(ANNOTATE_UNRET_SAFE; ret), \
+-		   "jmp warn_thunk_thunk", X86_FEATURE_ALWAYS
+-#else
++	ALT_WARN_RETHUNK
+ 	ANNOTATE_UNRET_SAFE
+ 	ret
+-#endif
+ 	int3
+ SYM_CODE_END(__x86_return_thunk)
+ SYM_PIC_ALIAS(__x86_return_thunk)
 
 
 
