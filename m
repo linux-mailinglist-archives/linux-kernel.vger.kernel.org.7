@@ -1,55 +1,78 @@
-Return-Path: <linux-kernel+bounces-676496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B56F5AD0D35
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:50:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A424AD0D3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 13:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58EAA1895803
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 326C1172969
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Jun 2025 11:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73F3220F54;
-	Sat,  7 Jun 2025 11:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995D0221554;
+	Sat,  7 Jun 2025 11:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="ZfBdfdmJ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XA/jAUSX"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FF21E2853;
-	Sat,  7 Jun 2025 11:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459291F151C
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Jun 2025 11:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749297025; cv=none; b=hbh4RnFt9uWnaaLNcXbyzWdGkrR9XfNaXCIjzttk9S76UDthIK8WQJnaUOY0atg3Ae+5dCfNy22X9iqs23uAvDjPehVc6nTIT5C8MBxh27IOO1YkNER8bYkI5GmOcB8vrWAMEeE9fgoA6vahee3UVKl3OXqdOTsGuHSLYSvSjCU=
+	t=1749297229; cv=none; b=rwnGMn50jVqr62Ltc8pWcsOYiFftEiixvB4QOd3Gug9NT0Ozp0Ec0QckNjtQEgU2VynOKXDlspEMsPnENCZV/Hr5S11rxo8qIa1YNJ7WRlzT9thu4QCELtLN/tWxa2PSOeiRyLbVNsJ9LUX5KlglvYSKur9tYg02o0pRmSSnVQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749297025; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	s=arc-20240116; t=1749297229; c=relaxed/simple;
+	bh=cp3+wkd9Hpa8eQl7ggQCHHzlYrcncTVdbZUFHWH1E5A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Znx8TEhvLHBanXkgsbn7xgSnXYaa9lx5JfbfOFIWYAzdXqtUlKJxEn639gJvdXLwq5qQF35Df5zP/6NP05gLNvLjODTJQWiW4y1CPqd3nIPbTD4X3Nt6UAR3S3GjhHa4AZokSjK/+Z5P1fmKmoIloboQH9aLC4iclBErYBJYSB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=ZfBdfdmJ; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1749297012; x=1749901812; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZfBdfdmJiaaSkvldJcyify+LUjRoKkZ7SLsy4nriapQ4osiyfSlnBsPZM/BJTHQ+
-	 VevNz2uFcTlTqa+gfTMY6lmK/CSTYSlxs6WE37VP53rdqnLomH3gCxvkbTPGtKbgz
-	 Dj0NqgdwEP6/chqR1NIQUVLvWJEcqPTmDTyo64Ju2Hk8SEBOim5WTeTxHAByouWjP
-	 AzF6QIfSx2A1hv2oO93oYH8n35ck0s2OlCnv00vhvQ6IMWDJ9lMIjfH0hQj4d45pv
-	 XdWMOz71Pj3xPPzTVvHEBNjfJNRSoL54FfcufTJSAwWMClg8ij+T5gHXyg42obxKQ
-	 K69QBXhAL7HWFDFFHw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.34.40]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N6KUT-1uvLAr0DW5-00vTlc; Sat, 07
- Jun 2025 13:50:12 +0200
-Message-ID: <7fb63be6-8c3c-4f8a-8a34-9a6772c7ede5@gmx.de>
-Date: Sat, 7 Jun 2025 13:50:10 +0200
+	 In-Reply-To:Content-Type; b=omPcIFWppjd0zf32/xC5qE+19T2T+7MlZKYC8yOwxqxrNRmf8uM4Xnz0LJjAMFHh38JTBJ1xvW48GVpMZoBfouE9ZlfD7ZXakwIH1NO3yj4b6oy4VQhcluBLKt626SGkTslFKhfwxsOq5ACS5LjCdr2Duur7/2bEMFTM9/Kh4AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XA/jAUSX; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-606c5c9438fso5575166a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 04:53:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1749297226; x=1749902026; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j6NM0r2GKpKHtz5Be10A+IWfM525/OoNZ5yJnNFLV3s=;
+        b=XA/jAUSXkfpqJ9U0tXz6zII3LmmsDnxz/HwA/79wdYj5cpGNFPedH8U+/vWPf6KkKk
+         rvOVEH8ZE237lJrhdZqz3Co9AmoWuglltNjP2HyDO5tFAOAjslKMvAxBioDOpAtlsvWQ
+         LcHcp6HsDUrVndyAVIh4qDsxTCsOwWMgkem8Ztoutdpz4GxOV1/NegJUjyngnZgPWSyy
+         tMRxKYEveId7AzZ41oAdOBB1TnhgsrbjILsTMOlxAxlaC+FOGeW0PoGF6k+6WfnT3p+P
+         kr5E3JhkhAqQbiHYBfokdmWTgZpBTmXAkcWIqzeFNDRQl+FsHa087tmxDq8AdvZjIfBl
+         symA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749297226; x=1749902026;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j6NM0r2GKpKHtz5Be10A+IWfM525/OoNZ5yJnNFLV3s=;
+        b=bCyfW+2DD5oRAV0YPJ+CeHE1h4mGsu9Sd6kRxUeoasQVJOlRJKKDCOh4Qd1X22T8EB
+         YU9PmwmiuknyLG7JQt8nEKHM/qQh7tz0HZBjmnAGY8sa6ZSspp+Nl9+la6uWJ73yFeWY
+         kghCYpRBwW5m2Dn1qptZ1rfHxzh1tr5vKAJG6FXzhOV4dIMrC2XnWYxykDVPQLlgEcrb
+         UdFMn2TG+62NxbVTFePoJNh6LKcpTT8khyRAHNShMgu+LQnKxFmxYsu0K3Hhh34WD6b0
+         PN2JxiLAoA9BezKdE+gNs2ibK/xk5+V/3Xqvdw/U95acyUKsOFBXayEWiQMJfvVbFMUP
+         ROCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNdKufVuuL4WL4W0YfLDIv8a2Apb7ufA4F/h+kX7Ij2/3ixHbj5SgWJzWTZZ1t4ky8dago0RaPpXKkWQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykQYPSv60kiSeA5/V5/hWGv9bR2wOIM96at3jLPyZkVGYSav/q
+	X/A7K5vsASahyAtwWCGNW41jf/5gk53ZmIxsnBUNKwihRTDJqqUT/QpX6av/VKhPjQE=
+X-Gm-Gg: ASbGnctTIdoIN2JBLHhMGhiZyEk6vQeoh5HrMXZXvwTnNK66qqCpPyrS4oGRWhYqecB
+	RDXYFjax20/2Q+C0C+sZbnxbvSrX5MAwbqxAUcvHIFTpqu897nkWxXaWmtseY8lLEisBYLC8vkF
+	Ppm4Fg/rW0+yDm4EGfAG88fZ5FQoFzqSU/VUK5duh4ZJihYcvV8F/NCkp6KPG40Yt6ZHeulMCrY
+	GAtr2MZ4sTjqjg/zvGnYeXcIzsar/wwF9d03slvpRZgxuoUGMu5bTgn98uYzlwEy4Tm4+JDQonu
+	DxxpRxUiSdqT589wxMETPoaRaRF2cerzcnLh5CfzJEonRMomsAjfVVyAU8ht
+X-Google-Smtp-Source: AGHT+IGv3DrJQc4+ybtE0JmCBcsdqL7KbDx6979eNC8Qxq/j+eIgzAGuXvZa0SEaHvSSsMoEslL4Sw==
+X-Received: by 2002:a05:6402:1ed0:b0:606:c48c:fb91 with SMTP id 4fb4d7f45d1cf-60773ecd3a6mr6255248a12.17.1749297225668;
+        Sat, 07 Jun 2025 04:53:45 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.126])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6077836ffe2sm2265535a12.4.2025.06.07.04.53.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Jun 2025 04:53:45 -0700 (PDT)
+Message-ID: <96de4b6c-0e17-44c7-9cf7-832a97a24c2b@tuxon.dev>
+Date: Sat, 7 Jun 2025 14:53:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,77 +80,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 00/34] 6.15.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250607100719.711372213@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20250607100719.711372213@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v4 1/2] ARM: dts: microchip: sama7g5: Adjust clock xtal
+ phandle
+To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1748030737.git.Ryan.Wanner@microchip.com>
+ <569e194346975ac3bb5786c02dc6681625771c00.1748030737.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <569e194346975ac3bb5786c02dc6681625771c00.1748030737.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:J773HgHQekuxhQxkPhTl0XHY3CbtlyMysiOHuVuGA1yqkk+yGkT
- BzD+WZ/m44LXXFyEEI4brXDBTNjav1hDCNri8yGMoPtQSm1hff+hDGe2p9L78FO1oq2fonZ
- ZCWxpmsxGfMyjl31xUAfjL8zCT4niZQvl2bakKLzUGfJryT7f1uTCuqS5Ks1i+R5ZVQoOgT
- MxcgM4mmu/BZDktA5BSBg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yI0Wr2w2SXI=;humUEjXPbniw2DeaO59veWhA/ag
- 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
- UD1VLXOw/+7ys=
 
-Hi Greg
+Hi, Ryan,
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+On 23.05.2025 23:24, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+> 
+> Adjust clock xtal phandles to match the new xtal phandle formatting.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  arch/arm/boot/dts/microchip/at91-sama7g5ek.dts | 18 ++++++++----------
+>  arch/arm/boot/dts/microchip/sama7g5.dtsi       |  6 ++++--
+>  2 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+> index 2543599013b1..79bf58f8c02e 100644
+> --- a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+> @@ -35,16 +35,6 @@ aliases {
+>  		i2c2 = &i2c9;
+>  	};
+>  
+> -	clocks {
+> -		slow_xtal {
+> -			clock-frequency = <32768>;
+> -		};
+> -
+> -		main_xtal {
+> -			clock-frequency = <24000000>;
+> -		};
+> -	};
+> -
+>  	gpio-keys {
+>  		compatible = "gpio-keys";
+>  
+> @@ -512,6 +502,10 @@ spi11: spi@400 {
+>  	};
+>  };
+>  
+> +&main_xtal {
+> +	clock-frequency = <24000000>;
+> +};
+> +
 
-Thanks
+Please keep it alphanumerically sorted.
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+>  &gmac0 {
+>  	#address-cells = <1>;
+>  	#size-cells = <0>;
+> @@ -917,3 +911,7 @@ &vddout25 {
+>  	vin-supply = <&vdd_3v3>;
+>  	status = "okay";
+>  };
+> +
+> +&slow_xtal {
+> +	clock-frequency = <32768>;
+> +};
+
+Same for this one.
+
+> diff --git a/arch/arm/boot/dts/microchip/sama7g5.dtsi b/arch/arm/boot/dts/microchip/sama7g5.dtsi
+> index 17bcdcf0cf4a..411db7e375a6 100644
+> --- a/arch/arm/boot/dts/microchip/sama7g5.dtsi
+> +++ b/arch/arm/boot/dts/microchip/sama7g5.dtsi
+> @@ -117,13 +117,15 @@ map1 {
+>  	};
+>  
+>  	clocks {
+> -		slow_xtal: slow_xtal {
+> +		slow_xtal: clock-slowxtal {
+>  			compatible = "fixed-clock";
+> +			clock-output-names = "slow_xtal";
+>  			#clock-cells = <0>;
+>  		};
+>  
+> -		main_xtal: main_xtal {
+> +		main_xtal: clock-mainxtal {
+>  			compatible = "fixed-clock";
+> +			clock-output-names = "main_xtal";
+>  			#clock-cells = <0>;
+>  		};
+
+While at it, can you please also address usb_clk ?
+
+Thank you,
+Claudiu
 
 
