@@ -1,241 +1,98 @@
-Return-Path: <linux-kernel+bounces-676954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD004AD1399
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:35:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1036AD1391
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3571696C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:35:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB9D16971A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CEE1AA1D2;
-	Sun,  8 Jun 2025 17:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="TbbuAvWU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E/hURk7E"
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474351B040B;
+	Sun,  8 Jun 2025 17:33:27 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302801401C;
-	Sun,  8 Jun 2025 17:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6834614A4DB
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 17:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749404126; cv=none; b=qOs8xwJsfBdBjAm3RQk/IhdqpEZYtoTR8CyM7S08TMtd/8yNwZi8q/3NPZCwgGP+s1zsyfVMkn3iHGuGVIXmqfAJGqYGYArY3+LyOJ6hCJadh1diSxmr3MhzIHhVPv+1a1ycafPxQNeDXl10tUsGGyHjRGdhWp7f8ngrAa1ixh4=
+	t=1749404006; cv=none; b=JAG6cqe3Njl8oqx9uaF/IWR0XeGAvpDl4U2cDxuh0BfABbFRv9MfevaJqDUAfVuuLsgsIYKP/C8+RHzI1XZQD9EsBssO5TS2YPg7C1P74hp/ekAcAvFi5LMetFXmDZhqpaAZPUaffvTv0dPhveJvACOAvttsG9EtVQ4V/sGNaKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749404126; c=relaxed/simple;
-	bh=s+ZZ9XEgFAo4sFhNg0qJu9lkS3Q1APFw5rpz16qZeF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QmIifwXMB2Q6C++YBrxnNEYZLdRMc/lX7tYZm+pJn+7wUYzbBIyqsO/VpHBsb4TxfI8gwU9RqqCpkWi+YsfKiJbgVggvpT+WIURO8mjC39WFEkg0om6wUy6MCcLZYA7mHAINfpODo3yyDOEmi3IbY/ggXn+IxzCI1szMjbisjXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=TbbuAvWU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E/hURk7E; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailflow.phl.internal (Postfix) with ESMTP id 21CC920034A;
-	Sun,  8 Jun 2025 13:35:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Sun, 08 Jun 2025 13:35:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1749404123; x=
-	1749411323; bh=wh/MxpBJZ3+0ErayESGRZXiw/uDy6OAY57TTmqYgFes=; b=T
-	bbuAvWUN4u5IElYw6mkYrVTrVw7UwfnSPylRRh5kCktfpoYxMb8jYioA3fWME9WK
-	7rOqWW7dLoVA+pNAwj6y6f3Fx6PZntvr1yksxY5DUWAOWO/x+ZeM8wcCdSnMQyV5
-	AnRSb9NslblN3ColrXzSCHcoMZLAZ5cq5VYmUyq4+bzM6xIH1SXUwxujp1hHI67h
-	b6o/ictI7hN+7PPD3o0La7CCUXAq4/gaLxhwkxpWo3iUULBCDHljzntKNNaIt44z
-	IB7tYOVziLCgR2+oXtpq/5a0tT5IAQMUPPxKYy+bVDbbvngLQuokbvCqAr+JLUSm
-	6A3lsR6/WKLzfHYLUYsXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1749404123; x=1749411323; bh=w
-	h/MxpBJZ3+0ErayESGRZXiw/uDy6OAY57TTmqYgFes=; b=E/hURk7Ek7ZG1YOYp
-	XOGb+ParWaSBzYwoENwrai9M/iUqh16vt7IL8oJ0fTlTMb+K4q/q00Zlh7zWXqRc
-	hvT4US/ratmskkX6a4Qn78pEo1d7qyMDGstcONGbCstOHPYliGfE37dUl9CMTVif
-	mh9rGQ6jJSb6bt3vbqE+rh3x39GCHHlze6z53+IPDXGEMfl7+fmix+X5DK9rwRzs
-	1ZLpZhbmqm/w5DKK/5d6jx2v4Lo4NSwl+93P2ESZqpt6sn3/QA/u3XD6HRaH5b+u
-	wmwAhJyY6wfEp6ifNUng6NMqxfNjbKCrWNt1XJtzzL8bPExeGNCGdIT8hXAdDMYY
-	p1/gQ==
-X-ME-Sender: <xms:2slFaJiALuZN4h5yMoQfq9rB_NixL987P2aL8lQKsEgY2gainnT1ig>
-    <xme:2slFaOBsa219Hw3lKt3JgLK3tCNipunAzfQOraataPEKr4G2Ea7OAXB-gQkA3RfeH
-    ljMVYuF2Aks06AYK8Y>
-X-ME-Received: <xmr:2slFaJHzbrBEqdorF7C2ID5eC3pqrlGivbW5r4CavYUmPv3ukbXps6Zu6kb6PqWW6ZoymbFVBuRo-Ep70dRrsJsPOzi6PeQ4-2czqod-0kFJdaQI7hgvC7UfCobd_1Ja>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
-    ucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpeeuuddthefhhefhvdejteevvddvteefffegteetueegueeljeef
-    ueekjeetieeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohepvdefpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehvihhrohesiigvnhhi
-    vhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhesmhgrohifthhmrdhorhhgpdhrtghpthhtoheprghm
-    ihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:2slFaORmoVpxBka7gamkFUSQf03ThYXcLTC1MVqr9fjgvIRP4NvVhg>
-    <xmx:2slFaGxrnWckiQvJlxLcKVTH9SSC5M83DSrq3R5bfoPNMPga1Rxfcw>
-    <xmx:2slFaE5hAL3oYD2Ex9lyL3xbyWq_vD9V_1kwBNhd_lG4UcO8E2DnTA>
-    <xmx:2slFaLwTG5teBm-lbBp4lAyNgAeE0vILVYc4ct-iJg_qjQdjfOIV5w>
-    <xmx:28lFaJKM3TiOZZAfLjua0Fcgi2HSyPXoAT2TTgFhZKD3dN_tHyGRvazF>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Jun 2025 13:35:18 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: Song Liu <song@kernel.org>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Tingmao Wang <m@maowtm.org>,
-	amir73il@gmail.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	gnoack@google.com,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	kernel-team@meta.com,
-	kpsingh@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	martin.lau@linux.dev,
-	mattbobrowski@google.com,
-	repnop@google.com
-Subject: Re: [PATCH v3 bpf-next 0/5] bpf path iterator
-Date: Sun,  8 Jun 2025 18:32:56 +0100
-Message-ID: <20250608173437.73874-1-m@maowtm.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>
-References: <dbc7ee0f1f483b7bc2ec9757672a38d99015e9ae.1749402769@maowtm.org>, <20250606213015.255134-1-song@kernel.org>
+	s=arc-20240116; t=1749404006; c=relaxed/simple;
+	bh=5bAIMo5449Y2Zsk7C/nk7K3d2lZ2pHmlhbszdjHS2Fk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k+btcOKzWJjXdqiDIsHuRl2tJPIAh3vohpFXx6RvHhZMYffkBonWsIFi1rxjdsmwBtPk7HLqkg15acYIep43qQ2XzJssUmCpy68OC7HXTZe1ausLE1zBYKQmp7KTyXn9NOFAOD9Y7LZBPZgZ3wQOAjHteQBKWWRRUaO3V1LwOgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddc147611fso82948395ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 10:33:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749404004; x=1750008804;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+jIBUgKfo1s7YvNdeDIUYV5LKf2tqtfkNThcYR4lhL4=;
+        b=ZTYHQKxXdYhYLPKoDSAzqR7MZZDQRTfQXr4RtDz6sdTU/J7yOPaViB9gdYCa6EzZ6A
+         op71T4f9XZx9+KHGrFdB4cqxK2TJGckhP113ux0VAmHdp9HEiDV3NzVtUWv2F0jNH0H8
+         1vg7noDjQdr6GpBLvX0QKXCeVXs9ePcvYBtZ5AY2jvQZP2gPA63eBkpmcN7X8JrBwDwP
+         uPWeviqL2H0TZL5nE2GxKO9Gq3F5GH6JeGch/aEsoDx26vz2H1y+OB80BMBINvEJtVX4
+         9//HSMZWMG48gwL+6GnNqv6F9odTQ3rpYCae95Q33IbQH18sj/z9BQRuBpNTjhGLIHTU
+         hjpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxns9HXvzHfZpBJR7zaZ8nloErsz1oMbWdxwEZyr/1cXrJIurP+479ve0i7U5R7wcuvssWbcbouwoFy3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB9odPkysAICywPwv1+9Su9qTm+DHu9vYelQxkvjhCqyfO1u/v
+	wu1vi0Wj+Sd2mjXRHEQ8rGVhFeX8PQVurbr0AmDEozTDepLqRb051pcfhwLc45IRixw8+BGKY2j
+	saX+62s/jOhRtApueo+RBurPOpwbQ74kRvxO/0BZjMkR++zFeBwvPoZUJo7w=
+X-Google-Smtp-Source: AGHT+IFoy4TaPwn8E6wr/Kz7niH6YlVpH16ANSJ65jY+XgtoMNn2+9E+sZaiizIt9EUQD0OYvF9pEU7imDP+5bSfO1TCja2+GWz7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2701:b0:3dc:87c7:a5b9 with SMTP id
+ e9e14a558f8ab-3ddce426531mr109203445ab.10.1749404004600; Sun, 08 Jun 2025
+ 10:33:24 -0700 (PDT)
+Date: Sun, 08 Jun 2025 10:33:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6845c964.050a0220.daf97.0af3.GAE@google.com>
+Subject: [syzbot] Monthly nfc report (Jun 2025)
+From: syzbot <syzbot+listac4fa3bbb63e8b6699d9@syzkaller.appspotmail.com>
+To: krzk@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Update bpf_fs_kfuncs to match path_walk_parent changes.
+Hello nfc maintainers/developers,
 
-It compiles, but I've not tested this yet.
+This is a 31-day syzbot report for the nfc subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nfc
 
-Signed-off-by: Tingmao Wang <m@maowtm.org>
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 6 issues are still open and 27 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 430     Yes   INFO: task hung in nfc_rfkill_set_block
+                  https://syzkaller.appspot.com/bug?extid=3e3c2f8ca188e30b1427
+<2> 308     Yes   INFO: task hung in rfkill_unregister (3)
+                  https://syzkaller.appspot.com/bug?extid=bb540a4bbfb4ae3b425d
+<3> 50      Yes   KMSAN: uninit-value in nci_ntf_packet (3)
+                  https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
+
 ---
- fs/bpf_fs_kfuncs.c | 55 +++++++++++++++++++++++-----------------------
- 1 file changed, 28 insertions(+), 27 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-index 8c618154df0a..6599342dd0de 100644
---- a/fs/bpf_fs_kfuncs.c
-+++ b/fs/bpf_fs_kfuncs.c
-@@ -327,23 +327,18 @@ __bpf_kfunc_end_defs();
- 
- /* open-coded path iterator */
- struct bpf_iter_path {
--	__u64 __opaque[2];
--} __aligned(8);
--
--struct bpf_iter_path_kern {
--	struct path path;
-+	__u64 __opaque[sizeof(struct parent_iterator) / sizeof(__u64)];
- } __aligned(8);
- 
- __bpf_kfunc_start_defs();
- 
--__bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it,
--				  struct path *start,
-+__bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it, struct path *start,
- 				  __u64 flags)
- {
--	struct bpf_iter_path_kern *kit = (void *)it;
-+	struct parent_iterator *pit = (void *)it;
- 
--	BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
--	BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
-+	BUILD_BUG_ON(sizeof(*pit) > sizeof(*it));
-+	BUILD_BUG_ON(__alignof__(*pit) != __alignof__(*it));
- 
- 	if (flags) {
- 		/*
-@@ -351,45 +346,51 @@ __bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it,
- 		 * kit->path so that it be passed to path_put() safely.
- 		 * Note: path_put() is no-op for zero'ed path.
- 		 */
--		memset(&kit->path, 0, sizeof(struct path));
-+		memset(pit, 0, sizeof(*pit));
- 		return -EINVAL;
- 	}
- 
--	kit->path = *start;
--	path_get(&kit->path);
--
--	return 0;
--}
--
--__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *it)
--{
--	struct bpf_iter_path_kern *kit = (void *)it;
--	struct path root = {};
--
- 	/*
--	 * "root" is zero'ed. Therefore, unless the loop is explicitly
-+	 * "root" is NULL. Therefore, unless the loop is explicitly
- 	 * terminated, bpf_iter_path_next() will continue looping until
- 	 * we've reached the global root of the VFS.
- 	 *
- 	 * If a root of walk is needed, the user can check "path" against
- 	 * that root on each iteration.
- 	 */
--	if (!path_walk_parent(&kit->path, &root)) {
-+	path_walk_parent_start(pit, start, NULL, false);
-+
-+	return 0;
-+}
-+
-+__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *it)
-+{
-+	struct parent_iterator *pit = (void *)it;
-+	struct path p;
-+
-+	switch (path_walk_parent(pit, &p)) {
-+	case PATH_WALK_PARENT_UPDATED:
-+		return &pit->path;
-+	case PATH_WALK_PARENT_ALREADY_ROOT:
- 		/*
- 		 * Return NULL, but keep valid kit->path. _destroy() will
- 		 * always path_put(&kit->path).
- 		 */
- 		return NULL;
-+	default:
-+		WARN_ONCE(
-+			1,
-+			"did not expect any other return from path_walk_parent");
- 	}
- 
--	return &kit->path;
-+	return &pit->path;
- }
- 
- __bpf_kfunc void bpf_iter_path_destroy(struct bpf_iter_path *it)
- {
--	struct bpf_iter_path_kern *kit = (void *)it;
-+	struct parent_iterator *pit = (void *)it;
- 
--	path_put(&kit->path);
-+	path_walk_parent_end(pit);
- }
- 
- __bpf_kfunc_end_defs();
--- 
-2.49.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
