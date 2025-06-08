@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-676951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD772AD138F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B4CAD139B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B13188B562
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360B21886CAF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACD61A5B91;
-	Sun,  8 Jun 2025 17:33:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3E61A3BD7;
+	Sun,  8 Jun 2025 17:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="S2m1kAyM"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7E413CF9C
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 17:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6507D54673;
+	Sun,  8 Jun 2025 17:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749404006; cv=none; b=nktb8ZkRDFJOeJxjU6Zi34SDkPv9x0Hb2jJZUtdfg9ZXagYbUyE9QMSJ7RJsP9q33VTzvfGLUEMY/nl4xJJS9uFOppqP9K25H15W/Cz2sWp3gXFlZ8g7g/MoBnExOxszq/xd+rUkdmMFGUBZz+UGQsbKHz0TPhZ5OZERccC/JLY=
+	t=1749404460; cv=none; b=ozrITUPAdLHxCmt+47dN080Y8nKeyIhqVEJnDU1SzU7tN61gLhd+0vR82f4oZUHDxLKGMDH2ki5tXt7aHyoqfYGsX6aKH4VEfw3DzJ8Z3N2oQniq5mNG8UKRCV7O1GG4jeJimNE5L2ipfVL30nkzXRqi0aXxOGnULQN4AEr8qhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749404006; c=relaxed/simple;
-	bh=1dcZaILzSakXHRsTkrO9kppM/tZMtQJf+QX2iJF1Fxw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PhLXWct3KBiAefF9mMmC6HnClUKU5QcHCcz3pnmxQXBqHo9NTUE/et3MLM6eTkH+qaE6Rd0cy1LmBnJpKXR9fktLeoDSePymWMTe0vmrGW8n0tJQ3UPPMXU3eCu+gFJq7joSyltWdEMe+7DpZVFaKSvoxPNejdrMhpasS5erlYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddc4908c4dso51374165ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 10:33:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749404004; x=1750008804;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1749404460; c=relaxed/simple;
+	bh=tNa7t++GLpb5XVp7b/gfkdm8zfOa/b9SJSrTVO5CBW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uxQARyjuBKwSEAGefo7gOvSSB1PzmZ51DL9QzLtQ20UqJHhykbXN8Py8rC1TLv6QC2Qe8cb5H4oaAv0QUiTYUCrjmpQrF8Ns6MUT09jsPTXp40auEQohCBQLRTXiPR27HnlnQz4PB0T/Ii0tzChsoU6tAVWS9j/jRK2/wAME+sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=S2m1kAyM; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so346551f8f.0;
+        Sun, 08 Jun 2025 10:40:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1749404457; x=1750009257; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oFW/NuTEn5TNLyBWHCBQOAd2Uud9j7JfPOBL+FUkB7A=;
-        b=YYkvkXob+sZUtFYlUMI31bDZ/f+SyCXW4xXuybx4w4f5G/q6Bz6TDujM/zSkfAxPDw
-         ruy6FBgN3b7marQWx2hi9PhsC6lo+YspP66HSryWE9oAdXmJ2KRChkxmNDAKCo+3so5g
-         j5pnjZckfrUyNFZc+sl9Ebs22c7v+9IDtr50TQxnrNvvNe4AUF7H8sDLy3jRs6ZxeP92
-         SXcqo7L/iq9sfKo8lrJldNpJlUf/hEnlOOg4ibDuwmMqmamRCCxEI4/EJc2ewmQLxyAs
-         +vhPUvkxzUCtzVW31NYvBhjwOP5jJVbwRYTurJ8Az9Sb5cFmTYqtLJ7ujH85hl2uaxPs
-         ldcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcWf1ZsMU+P2HtbxNU5/KBAC+KVTmbzUL+zBzkKlWQiJaJrVekAO2ohVNT+uiTY0Sp9wM6IqnezypsNBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuajwc4Q7l6RYSA3iK2ZwGLFMI/Wfmb/C241J6cB274h+m59pJ
-	43JeDcI8M6TbTcpM9ZNahxVJQPO0L7MGTQ7pmzjT+U5Gl7UQmiZgcZdc0lqgGSVzr0T6XQfa76X
-	/h2XChO80ZiKleIYI/3erP9Ct1dijSS7dk1svVB0SIxRxPj8JeDBWVZY+eQA=
-X-Google-Smtp-Source: AGHT+IF0lc9ABofCUqs/RisGvJeLynT7Jt763hXtaN8l8QPAdT4+vCu+y3llhHTSImkSLUsFk4KE5uQJZ/N4Vl8hJase3ANmr23G
+        bh=V298GByS0UihQqnZbWCQzM9pjzFH0uvqjj1S1drsO9Y=;
+        b=S2m1kAyMi7TEQNxt14rX7zNjeT5SKz05ivyS86hay/sZt8nJ3sfV3F56l4sWkcuDOu
+         NCy57P//D40ijs27cJ+n5TDvnjjiHOmAMhWQc0SRxc0lo0QPN1NxAjfvcgrwwUM3wzjX
+         X0LTfiCAIFzeUinziibUabEzx2WFpqia22vNgnMZuW87G/lmgtH1Jq0FSkJiNgiwXFrU
+         C/koXrcZRTFLz26OZSVGS5smLcWhUg78VNwzx3Nqr2K2o7z0EceCmknidVfoWMroHE0P
+         7sDAB/2Lq+TL7rRkx5kzEYvDMisKAUw/U1qastsduISRvH5sHmqqrl+pBXCH4sNp35pU
+         Odzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749404457; x=1750009257;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V298GByS0UihQqnZbWCQzM9pjzFH0uvqjj1S1drsO9Y=;
+        b=FQVDWwe0hgCrilC28KkPAM5tNIdjTYwn6YYJbq59vOeu/nWBCFyQgaAw0kaFOasoDW
+         S8ICzNldqx90gHplO58oTgmR3HZcgGVyrRT5eL4mzefKE3FVqMhwYYDgxxZzpbDWM+dK
+         g4PPrlbb3yhE+Xf8rdVkG6YSHbR6tf6Rjmbt68qZRmZDTJf/IF7pfdPEPAkJO/uF0wTw
+         LWfN+6NYpR3kaOFuWEjuJ1h5AO/WPdPXWCV5jZTnlRPcTm/ZOkjetOC/QtZxxfKUmVeC
+         NeQUWDXlFaomSNvjXdcZpAEqiAIefjxruoQ1XU7V3+C3l78Dy0JFY8KDKNlcbF8g7Dln
+         EazQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7k51UYGwEX9s352XvUstI6sv4JgYedolMavj1cIhrYp2TxaONVhyEgV1Darg9BjF/ZpM6O2JOTLUL4qw=@vger.kernel.org, AJvYcCWllNXfoudTQV7fgV73W46EifiKq6WLfhgvMs2VlUR6gfuBiGxGjXR1F33+SdFVyQqbVZ37Mnz9@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhNOkbu8/OcqaQfUJ4MLKEFTFI7FNlU6sak8r1xTmsDJc3/oQG
+	PxNfBvuQn5l+kUtfIysWG37NStvnBkdfkrlgmumApYNacAokRtSrsRs=
+X-Gm-Gg: ASbGncsFUNgWRRKxtmn/y4/WH4hpLvpHYgzfMjzXyEshm/8oVnqvhEDmqAO1V68ARjJ
+	MpWuSc2dWTsjNo6j8zHL7gcCPhK+mzKr5Six66+sE88tt26Xxbh3Xlusg74DEiudykR06DYxvEX
+	s73p3dqqrjhGm1Lh7FO7G6Psiel/PBTSHyc0d6PrPToRu6AlswPJ7SQWrvSusFjQFxoTQPmzinl
+	I8Mq5rNaYHwLGOiDsHK/fZeoGQm4XjZgUWdOCG1ZCEv9YX/YAqkfrDflDMylyZFwUow7oSDeeKU
+	T+EIhJ/RfF491+asdQVzFNv5AM4ZZYrJ5B5R8/nHh5cAVHnx3Tk0yo7n3zJQAsoZ7MLZVm65WSu
+	+Snv1+duFIGlcgOYH72KXU2mVfUc=
+X-Google-Smtp-Source: AGHT+IHnN4ArvaernVN0i2Q3r5CdugEYMRzyU+aoqQurZJvd+6mjnN24e9YgyDP9K/6+UPyhBfAazw==
+X-Received: by 2002:a05:6000:2585:b0:39f:175b:a68d with SMTP id ffacd0b85a97d-3a53188da55mr8344003f8f.11.1749404456378;
+        Sun, 08 Jun 2025 10:40:56 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ace02.dip0.t-ipconnect.de. [91.42.206.2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323ae18esm7821035f8f.33.2025.06.08.10.40.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Jun 2025 10:40:55 -0700 (PDT)
+Message-ID: <79767ec6-14cd-4fdc-975d-e303d3d2fd78@googlemail.com>
+Date: Sun, 8 Jun 2025 19:40:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8a:b0:3dd:a4f0:8339 with SMTP id
- e9e14a558f8ab-3ddce3fe9damr119300195ab.8.1749404004336; Sun, 08 Jun 2025
- 10:33:24 -0700 (PDT)
-Date: Sun, 08 Jun 2025 10:33:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6845c964.050a0220.daf97.0af2.GAE@google.com>
-Subject: [syzbot] Monthly kvm-x86 report (Jun 2025)
-From: syzbot <syzbot+list7793d6728ee703d6cd2d@syzkaller.appspotmail.com>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com, 
-	seanjc@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.15 00/34] 6.15.2-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250607100719.711372213@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250607100719.711372213@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello kvm-x86 maintainers/developers,
+Am 07.06.2025 um 12:07 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.15.2 release.
+> There are 34 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-This is a 31-day syzbot report for the kvm-x86 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kvm-x86
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 2 have already been fixed.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Some of the still happening issues:
 
-Ref Crashes Repro Title
-<1> 585     Yes   WARNING: locking bug in kvm_xen_set_evtchn_fast
-                  https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-<2> 147     Yes   WARNING in handle_exception_nmi (2)
-                  https://syzkaller.appspot.com/bug?extid=4688c50a9c8e68e7aaa1
-<3> 6       Yes   WARNING in vcpu_run
-                  https://syzkaller.appspot.com/bug?extid=1522459a74d26b0ac33a
+Beste Grüße,
+Peter Schneider
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
