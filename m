@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-676962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC26AD13BD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 20:24:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9AD2AD13D5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 20:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F891688D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D245E7A4C8F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F5A1C5D5A;
-	Sun,  8 Jun 2025 18:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6335C1AAE28;
+	Sun,  8 Jun 2025 18:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8BN9oJM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqPQASrM"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD585191F66;
-	Sun,  8 Jun 2025 18:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377301373;
+	Sun,  8 Jun 2025 18:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749407036; cv=none; b=FLvkr9emyE0mQPKh52LApIVer2j1HBA83wTzzzRAkju88Kfj1hjazIoJAw56cyXwpGTBfp640nvwupa3NRUmxiVwiczil4spgNJmogN3Iqj7z64/1N5hCLnS/tv+u80+TeR/Fx4ylV516dzTua9faUDiMEYxpgwnr+GFrDJnpto=
+	t=1749408365; cv=none; b=RvKnljOeFGJOqoi4y/YaI9QB40cv2cceD15TuKPM7Je5R3W7PKMvg101wnMkX/2z8JUSz97ZZBoiyVnJMY4mbdt0/zukzO6Hb7akWSVaxgPqAQfOiws3SQkAKRiF4EixOYwQpOXv587SNLrUcuInjwrTjkahOoZkJhGbZ8fNPKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749407036; c=relaxed/simple;
-	bh=DBJ8R+2fo/qT97sNm/n8vppoQeD7u3dmalSYk9+3nNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PahC1L+0XbO38m42SEN3zg71bzomBPr6hNpxDaO17GgXXAHbDjoZoAjIPnkM6b16iVXykwCZDLEoFYjurjFz/kxMQtXGztPd1mrv+FXLE4QaauxG/xJNRODgqgnANNIHjHYSN4Jmewf6dQj5lXT1hPhLQ6rZFs6RNw4Nx1wMnms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8BN9oJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C1AC4CEEE;
-	Sun,  8 Jun 2025 18:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749407036;
-	bh=DBJ8R+2fo/qT97sNm/n8vppoQeD7u3dmalSYk9+3nNU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n8BN9oJM/1Tn5r+9fYeLCUCA5t/xRQKW/mS3foLhLcfUDmpMC9eS+h1qIfnu8eScn
-	 N/zL3kQ2ZNgEQldTjNciAZ4zP6d/sjRgzUUTimNhj3mj9ZfFTw71abW5PcIkUk1EIu
-	 79Ye0QRzvO2DQRi+PUskGW1yqpLme8eWxrteNYPTp81esCq+3eYu5ADQGxoRewqflE
-	 r2iA6Hxj8bkKwbQTWF56NH8QD4lYldBZ2L0VFRnFjMQrG0SDSjif7zv+lJcpxTDebP
-	 hAsagaJVaEJEmysUwU+KiuuKfbc1Qb4LuIkSO/EFOVKI2bkBXBk9u3/NtQwqeU7N8Q
-	 05qWyBXHI25bQ==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-60657f417c4so1644723eaf.0;
-        Sun, 08 Jun 2025 11:23:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVF39E4Q8gzeiW9oH8uYsNNrfmYXL04RJT3KcRPIbRM0SvG5px7S7iWnBqKZqpIwIukpUqFt1omTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYBbEv01sywtdMOiXX5XiPzUm6tMQ4TYTKYOsuGnxJK8oKHsb3
-	7Pde/xiU5rfjYi+HggaQjq4ZmPVwBPFLsEq8VcxycxJO3ZRYBYA0GrUFCj6YmHqE73W3BwcWODx
-	D21SLgHGFh7x8LPIXH1ilPke6DAorQtg=
-X-Google-Smtp-Source: AGHT+IEGIZl4Mi0OO01RfgmKmP4T0SfenKlij1MqAUoNsAS6oJA52KObH9TM9Nx6KfabW1jyAxruVovjd7NYDXu1C+M=
-X-Received: by 2002:a05:6870:1996:b0:2d5:2955:aa57 with SMTP id
- 586e51a60fabf-2e9ffd8a37bmr6341720fac.0.1749407036035; Sun, 08 Jun 2025
- 11:23:56 -0700 (PDT)
+	s=arc-20240116; t=1749408365; c=relaxed/simple;
+	bh=Qs6+HE89AUgmyAavkV7HuAS3JlNL54D/qBhAGlU+hDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u0rK8Z8/IR/8ulCFmKOFloZOIhReZ0IHnlqLY32m2ekOf8jJiP1QnxWgL9kZmLwVaiWUq8VtiEzXHAGKb8hzEu78h6PloxeS8LNZNJmBFHwqvaVxkQ793as4QM9aFKqdlDPSZ4yD49V65zuIuwaAdDb04q5GzXG/A+KrG3mUHpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqPQASrM; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4ef2c2ef3so3077661f8f.2;
+        Sun, 08 Jun 2025 11:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749408362; x=1750013162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CDenIljNSTVSHWuGkdw4tF8oL0H0P+4SvxvPT0+Mmn8=;
+        b=mqPQASrMn0oDfkpbxi3mkxvMmOwcBlq/Lpo2jS2Wb28NDRS3ff15byZWO+HBGeL+Vr
+         5iNM3gU0nzEiqdOW618NCJR3XuBgm5XggyQ0zn9SGJEG69sdLQl9+ikDxFeLPu9oRGnL
+         m4usTtZHmoRugQtkxIKdrCj3Em0PK2wn4w8FEeicJdCCn4tH97kmBoCTD+FFiEzCXrWc
+         Gge8XEhBtK23tUnDKy55T8xSUoaJPoDyR8EBw/fOxKNUm5Y/i2v8PZORxg9ymTL0B8pz
+         KaXZsaTnjdrLMtIyhmvaZ2X+Cub70wxadEonN9koCGz4tSZrCVi46vqHchTRuKCNXjel
+         375w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749408362; x=1750013162;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CDenIljNSTVSHWuGkdw4tF8oL0H0P+4SvxvPT0+Mmn8=;
+        b=MvrAlpY5Ibhk78i5UalBlxnyIyCrVfquhvo/OVdz4qMvuaixWX8rkGywETjrT+ddru
+         r8FuBofUnPVVWxnE38T67eEVdGZx8aw8iIE5O5KWnZgbzFqGWUrt4TfzB0W7mneJEiTH
+         tqXGIU9vAgwf4xy4hh3k+6I/fpMnpxloiAHlPLCfwe33TGL9T+3lwWBu39UNCMWsBvCO
+         JlT9kOddC0oxIyxJQwwaMLXNgeCG0I9pG3BL2oU+U+aiZb0LsCMC8X+hwCANwWeKBLTr
+         Jq7MacfHhTyo7/zBCUzEZ6RQtP3fc84eta+ozY7/tOPXnYrOLU4sQPO39a/s9kFzIe+x
+         ymbw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+1PvsH7PD7WAGwTbwtqOFjgrhpWy/spauNy2Odkc8LE0iTJ4jdwbUjI7m2U/f8N31diwofN3+Vlyq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDNJFLUMgDHGGxLZ5DqzNcA+9UMvYQ4VIHhAUYZZgzN60BpX/r
+	NhLtKmOzD3ZKSUz0mZfIRY8gUkCGZgmzow5GHoT2n3JrDVBmxs8y20FoeC/1o5zc
+X-Gm-Gg: ASbGncv20Z125uSXCSp4/vyQNMuipaQz+jPrgv3Y1awShB5D//gOknnj1DQVwu/vXur
+	lAMHRm8an0K+mr7E2H+nRLWZS7M4fnARlNgDgGGBDg440h2n4KKQOsbifj0knrZV2r6q6MnHQ4K
+	cE9HN0plCJnAplRo37ET17zK1Teuxb4IppzM0s6dd67tZRtU495w+kLKr8Qq7GnPShUUuAcVOgT
+	rLP4b0NSlPP0me3QghDgGe4iRQ3qtBUAxMyDOhAuRIE7lovdioX1AF8QpG+7TVJ8s2d/8iuencj
+	Cq3zJvupn8xGM8ga3+Uk3jtdiZ/1t8weLeXjIxhNiWBN46E5rdzAXjOyOfGz6yXffYZlsQ8Lwhm
+	Xja0IpJZEHq4R0ZWf+czdDTEX
+X-Google-Smtp-Source: AGHT+IHCtGPfKczA/GlmJA89eJ/9KAvZ/o+z5gIzz0lAOOr8ivEFbvRnTl6W8h/FpOszEGG+Dg9xVw==
+X-Received: by 2002:a5d:5f4e:0:b0:3a5:1c0d:85e8 with SMTP id ffacd0b85a97d-3a531ca9955mr8566031f8f.22.1749408362143;
+        Sun, 08 Jun 2025 11:46:02 -0700 (PDT)
+Received: from masalkhi.. (ip-109-43-113-112.web.vodafone.de. [109.43.113.112])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5324361ffsm7621418f8f.47.2025.06.08.11.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jun 2025 11:46:01 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	W_Armin@gmx.de,
+	luoyifan@cmss.chinamobile.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	abd.masalkhi@gmail.com
+Subject: [PATCH v4 0/3] Add support for STMicroelectronics M24LR EEPROM/NFC chips
+Date: Sun,  8 Jun 2025 18:27:11 +0000
+Message-ID: <20250608182714.3359441-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJvTdK=9R+A=b=NY5OM2jiSupofrnJOKXrFCGeXfAfN57VhE_g@mail.gmail.com>
-In-Reply-To: <CAJvTdK=9R+A=b=NY5OM2jiSupofrnJOKXrFCGeXfAfN57VhE_g@mail.gmail.com>
-From: Len Brown <lenb@kernel.org>
-Date: Sun, 8 Jun 2025 14:23:44 -0400
-X-Gmail-Original-Message-ID: <CAJvTdKkpMWWtfSFqEqzjSxcvSqUjjcTC6+Yub8Q+Twu+PM99mQ@mail.gmail.com>
-X-Gm-Features: AX0GCFs4KLBkdaC0tFEpuG7djQ1MopgRJr-NzEqRxK7UAO4wEXEUYPFL9sUzVRs
-Message-ID: <CAJvTdKkpMWWtfSFqEqzjSxcvSqUjjcTC6+Yub8Q+Twu+PM99mQ@mail.gmail.com>
-Subject: Fwd: [GIT PULL] turbostat 2025.06.08
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+This patch series adds support for the STMicroelectronics M24LR series
+RFID/NFC EEPROM devices. These chips expose two I2C addresses: the primary
+one provides access to system control and configuration registers, while
+the secondary address is used for EEPROM access.
 
-Please pull these turbostat patches.
-(same as previous message, but added list cc's)
+The driver implements both functionalities:
+ - A sysfs-based interface for the control and system parameter registers.
+ - EEPROM access via the nvmem subsystem using a secondary I2C dummy
+   client.
 
-thanks!
-Len Brown, Intel Open Source Technology Center
+Tested on: M24LR04E-R using Yocto on Raspberry Pi 4
 
-The following changes since commit 0ff41df1cb268fc69e703a08a57ee14ae967d0ca:
+Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
 
-  Linux 6.15 (2025-05-25 16:09:23 -0700)
+Abd-Alrhman Masalkhi (3):
+  dt-bindings: eeprom: Add ST M24LR support
+  eeprom: add driver for ST M24LR series RFID/NFC EEPROM chips
+  ABI: sysfs: add documentation for ST M24LR EEPROM and control
+    interface
 
-are available in the Git repository at:
+ .../ABI/testing/sysfs-bus-i2c-devices-m24lr   | 100 +++
+ .../devicetree/bindings/eeprom/st,m24lr.yaml  |  52 ++
+ drivers/misc/eeprom/Kconfig                   |  18 +
+ drivers/misc/eeprom/Makefile                  |   1 +
+ drivers/misc/eeprom/m24lr.c                   | 653 ++++++++++++++++++
+ 5 files changed, 824 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
+ create mode 100644 Documentation/devicetree/bindings/eeprom/st,m24lr.yaml
+ create mode 100644 drivers/misc/eeprom/m24lr.c
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
-tags/turbostat-2025.06.08
+-- 
+2.43.0
 
-for you to fetch changes up to 42fd37dcc432df1ea1987232d41bb84fcb7e150c:
-
-  tools/power turbostat: version 2025.06.08 (2025-06-08 14:10:17 -0400)
-
-----------------------------------------------------------------
-turbostat v2025.06.08
-
-Add initial DMR support, which required smarter RAPL probe
-Fix AMD MSR RAPL energy reporting
-Add RAPL power limit configuration output
-Minor fixes
-
-----------------------------------------------------------------
-Gautham R. Shenoy (1):
-      tools/power turbostat: Fix AMD package-energy reporting
-
-Kaushlendra Kumar (2):
-      tools/power turbostat: Add Android support for MSR device handling
-      tools/power turbostat: Fix RAPL_GFX_ALL typo
-
-Len Brown (3):
-      tools/power turbostat.8: fix typo: idle_pct should be pct_idle
-      tools/power turbostat.8: pm_domain wording fix
-      tools/power turbostat: version 2025.06.08
-
-Zhang Rui (12):
-      tools/power turbostat: Always check rapl_joules flag
-      tools/power turbostat: Quit early for unsupported RAPL counters
-      tools/power turbostat: Remove add_rapl_perf_counter_()
-      tools/power turbostat: Remove add_cstate_perf_counter_()
-      tools/power turbostat: Remove add_msr_perf_counter_()
-      tools/power turbostat: Introduce add_msr_counter()
-      tools/power turbostat: Clean up add perf/msr counter logic
-      tools/power turbostat: Allow probing RAPL with
-platform_features->rapl_msrs cleared
-      tools/power turbostat: Avoid probing the same perf counters
-      tools/power turbostat: Dump RAPL sysfs info
-      tools/power turbostat: Add initial support for DMR
-      tools/power turbostat: Add initial support for BartlettLake
-
- tools/power/x86/turbostat/turbostat.8 |   6 +-
- tools/power/x86/turbostat/turbostat.c | 468 ++++++++++++++++++++++++++--------
- 2 files changed, 364 insertions(+), 110 deletions(-)
 
