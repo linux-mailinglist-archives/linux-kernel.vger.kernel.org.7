@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-676943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37E2AD137A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:02:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C79AD1385
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1287D188BA42
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1772316921D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A0C1B85FD;
-	Sun,  8 Jun 2025 17:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2135199947;
+	Sun,  8 Jun 2025 17:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tA1gI075"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCbswJDq"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9C419ADBA;
-	Sun,  8 Jun 2025 17:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C925613CF9C
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 17:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749402102; cv=none; b=Znq7D09rZMFPejZ9Bz4QFXpJYDxJdtxsaewZW1kYKPyaf3sc/SYc4zPm145//00TtsTxKKRibmJjz1tM1DLeuE7ElHlKF1+yxTw+0pxIkuEpHE4oXlTJZe6/gUQb7xpmkcq1RMI/JOtVzRQKPwAQR++FBjUCSxf57M6cLry4jPI=
+	t=1749402636; cv=none; b=KuZyx3E2LB9DSbGdIXBEReyGW3mDALcqubgOXVd+tKg7Ix8FTyfv49ZJWTUFmK7FtgleT8Alswz+cvTajH8S95Brc6NlaRAR4/kivk1uZv8FGuaWEJsyqd8FHk3YVjTkSl5j0fWP213p3+JeSXXkwY59vkPYvl9TEFuGx0aRZR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749402102; c=relaxed/simple;
-	bh=x1z4UyxTCtVi8S4w/KToWuSTzpJrpetpz98Zlw0Ewhs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YbAVq5wUr68NacoDvM55FAHH7ijvjym6ZmwhPiG8horQChKaGpww2teasbtWUq24WFg0bnx4wCSgPVA2U1vlIl+4ISQ2P0u03czzS2a/Usrw+dcItPLQg7MuU4OHIdYyxgq6652I51+YGiVtpdDqa+Ockmx8tTiiHROiB2VYgfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tA1gI075; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2C3C4CEF6;
-	Sun,  8 Jun 2025 17:01:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749402101;
-	bh=x1z4UyxTCtVi8S4w/KToWuSTzpJrpetpz98Zlw0Ewhs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tA1gI075IIeFWFRj7/qf6+iXfGXlmPYxxCZCKXkOw24TOjBmB2dxx9nqNIXtxRNKs
-	 S5bCv9m3dYvnHscTg1pNA3HN+1hZvYSvhR4Dh/lQfhUUqtoh+LB87HUk0eaPoZzUuF
-	 uqTnNPlKcHIc1fPTf2e/SHOnZcLIsVqku7+DEjvmUyC0MW+Gk75SfTdZ2mzilxQBNe
-	 L+ArvrGQL5pRkGA5GX0FY4P4w2Lvn4DYuO8AJ+W6IZpU9nNCBCzq3NvHDPhTHe9uGU
-	 SwlU66I1vkA7BXVD1ncwViVnNBRsnpRh0yqCgz2YnsQgNjoj25z7xYGHBo307tYyJZ
-	 nwvw0C4nGhN6w==
-Received: by pali.im (Postfix)
-	id 2172C12DA; Sun,  8 Jun 2025 19:01:39 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] cifs: Validate presence of EA $LXMOD for WSL reparse points
-Date: Sun,  8 Jun 2025 19:01:19 +0200
-Message-Id: <20250608170119.6813-6-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250608170119.6813-1-pali@kernel.org>
-References: <20250608170119.6813-1-pali@kernel.org>
+	s=arc-20240116; t=1749402636; c=relaxed/simple;
+	bh=AV/4+MnVBVsPbWACgTfTE2rp31DkL/Ozd9nIj9gNI60=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AC7b/oIwwO4Sa1NVuQrPMe2mYnMkDbyQmiCmpwnTiBK3+qC7baG1epv2AXUDNNkKQa6WbaABpiFMcCG8OHO65+RW8GlHdpD+UUIZQqeE1giMXFrttgmn8YKGmVAjACFUIqANZe5b2HJRJj+FJ2kpehz8DK/m+TRuLpeLIiJUfPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCbswJDq; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-451dbe494d6so45212575e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 10:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749402633; x=1750007433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MFSTL7eGs6OXg4Ss6Ww7Bg0XbEMi8+OcWq/O40mgWYw=;
+        b=cCbswJDqEjanAQQSj3OT76uxDVFAYpKZN02xrjkBVPWN2OLybZa/4wDUb4AC7Jh6TP
+         pnbCigQEkd7eGzUX3pw7mJOv4HbTa83joLrtek5Nml3bUq6+qReBDgUhZ68bYg/WX9YA
+         k+TS3T62Y6azEiOIeLv3YalGWWXXBvEBsgong9vs8hhJ1Sp7ODc51q3o71it+9PDNVrR
+         7QRt6nODtoscdfU9XkgtKC5/yCt4D1vazUV6bu73ZOd5g40e2iaCHgjExJ5lORpPKGYB
+         3RPLjIQhZqYTYFwHKM5RX4g3E90Ro3hMTANyxLmb+H3ZAA/eKkVx5FsgVObVtEzEClnZ
+         gZEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749402633; x=1750007433;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MFSTL7eGs6OXg4Ss6Ww7Bg0XbEMi8+OcWq/O40mgWYw=;
+        b=sxmYYarJeksnXXcT3X+QaGur+QdacnrUyUSNKri3pUCslvGg+v969Jwei66FD6g4Th
+         Ngy/fDi1+meh8htTokpYSA6nwlpE7YTKaoGlv6RRo+KEz0yv7xNJaamqaIMP5EpMRjpP
+         Wj2wMXoiPSa+jEgcn19O/zTB5a6FCYybgrdlZ5npvtsWE5uvUr8ckFedshQmKM7HCGwa
+         iuIcqbKapmG6Y4+yDEVbuc/cTLsrsoXgcXnSwuMCmDqk6pcSpzmNYu9c1cugbTizq7/z
+         3g15k8c+AndoSwVkicCdQzgGl34BVcBbZCfWFn2hMS+W5naPJaRsopbnVsIifOXcyj2w
+         PDAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIWZDQsKkif/NMxJk/2jObXCfJr6xrLkiTFWLNvBOAAAFHcPTIIHQKu+8mRF5DtrpbxzX/g687lHEy9AQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/nUMmLf7BEtqK4hbxZRQjoEVUBzW2VXPuBBwJ5rhHHnzv0GOO
+	TgB37qMvq0Ilol6lQmQY+oC6sLtthqvZ8rr467uYD33rEmz5j3lmlLRyjWmZvQ==
+X-Gm-Gg: ASbGncsVfwq6jlPAp/Rd83Uis6q7NhIuF833IYxb/ZXGkPYtshj2ED/ZMpeI9QWg3S1
+	IG90Xqbco6PVbcJRob04fSW9QOwpmcNUyN5WVqNBf/wX+Cjt2UH1wfZS/q64tRbQ6MejwFI//AM
+	M4HAV7C5x2jMa3GbpqlfoK5UDhKPXPlFtOIKSijF1WgITLLHWSwNEm2Hy31bjkMpEaGWjK2HqaT
+	YBqVdMcoQN6fRjod16174f5jbCG8kGqMpJR+apdrDhP68K30DQ9stYcevwaX/OrJWG1xhuuheNJ
+	jiJFuK8R5rTqbznzxbFgLCFJ6hcgHofI2RP+5GTC/NRW+XoJ4CeLZUjAM8jOYke7RKFGpYVwWx+
+	7UloYst6HP296CQHM9gjLek6v
+X-Google-Smtp-Source: AGHT+IGB2W7rBEJhc9lsd74+MvtUod/ZOo3q6kM5X8xylBnc+7d/6WK5AGrTESPvH7AA0N7LGV9+fA==
+X-Received: by 2002:a05:600c:c166:b0:43c:f895:cb4e with SMTP id 5b1f17b1804b1-452013ab4b2mr108370195e9.17.1749402632853;
+        Sun, 08 Jun 2025 10:10:32 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452730b9b33sm85698495e9.26.2025.06.08.10.10.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jun 2025 10:10:32 -0700 (PDT)
+Date: Sun, 8 Jun 2025 18:10:30 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: lizhe.67@bytedance.com, akpm@linux-foundation.org, jgg@ziepe.ca,
+ jhubbard@nvidia.com, peterx@redhat.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, muchun.song@linux.dev, dev.jain@arm.com
+Subject: Re: [PATCH v4] gup: optimize longterm pin_user_pages() for large
+ folio
+Message-ID: <20250608181030.20741f9b@pumpkin>
+In-Reply-To: <8b68e7f0-46b8-4814-99a2-02f0044cda9c@redhat.com>
+References: <20250606023742.58344-1-lizhe.67@bytedance.com>
+	<8b68e7f0-46b8-4814-99a2-02f0044cda9c@redhat.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-S_DT part of EA $LXMOD is mandatory for all WSL reparse points except the
-WSL symlink and Win32 socket. Microsoft WSL subsystem does not recognize
-them without EA $LXMOD too, and treat such inodes as regular files.
+On Fri, 6 Jun 2025 09:21:25 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-Fixes: ef201e8759d2 ("cifs: Validate EAs for WSL reparse points")
-Fixes: 78e26bec4d6d ("smb: client: parse uid, gid, mode and dev from WSL reparse points")
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/reparse.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> >    * Returns the number of collected folios. Return value is always >= 0.
+> >    */
+> > @@ -2324,16 +2349,12 @@ static void collect_longterm_unpinnable_folios(
+> >   		struct list_head *movable_folio_list,
+> >   		struct pages_or_folios *pofs)
+> >   {
+> > -	struct folio *prev_folio = NULL;
+> >   	bool drain_allow = true;
+> > -	unsigned long i;
+> > -
+> > -	for (i = 0; i < pofs->nr_entries; i++) {
+> > -		struct folio *folio = pofs_get_folio(pofs, i);
+> > +	struct folio *folio;
+> > +	long i = 0;
+> >   
+> > -		if (folio == prev_folio)
+> > -			continue;
+> > -		prev_folio = folio;
+> > +	for (folio = pofs_get_folio(pofs, i); folio;
+> > +		 folio = pofs_next_folio(folio, pofs, &i)) {  
+> 
+> Nit: indentation is still off?
 
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 8d989e436517..3dffd5f0dc07 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -1118,6 +1118,7 @@ static bool wsl_to_fattr(struct cifs_open_info_data *data,
- {
- 	struct smb2_file_full_ea_info *ea;
- 	bool ignore_missing_eas = false;
-+	bool have_xattr_mode = false;
- 	bool have_xattr_dev = false;
- 	umode_t reparse_mode_type = 0;
- 	u32 next = 0;
-@@ -1177,6 +1178,7 @@ static bool wsl_to_fattr(struct cifs_open_info_data *data,
- 			if (S_DT(reparse_mode_type) != S_DT(le32_to_cpu(*(__le32 *)v)))
- 				return false;
- 			fattr->cf_mode = (umode_t)le32_to_cpu(*(__le32 *)v);
-+			have_xattr_mode = true;
- 		} else if (!strncmp(name, SMB2_WSL_XATTR_DEV, nlen)) {
- 			fattr->cf_rdev = reparse_mkdev(v);
- 			have_xattr_dev = true;
-@@ -1188,6 +1190,16 @@ static bool wsl_to_fattr(struct cifs_open_info_data *data,
- 	if (!have_xattr_dev && (tag == IO_REPARSE_TAG_LX_CHR || tag == IO_REPARSE_TAG_LX_BLK))
- 		return ignore_missing_eas;
- 
-+	/*
-+	 * S_DT part of xattr MODE is mandatory for all WSL reparse points except the WSL symlink.
-+	 * Microsoft WSL does not recognize them without xattr MODE too (except the WSL symlink).
-+	 * IO_REPARSE_TAG_AF_UNIX is here an exception because this reparse point is used by both
-+	 * WSL subsystem and native NT/WinAPI subsystems. And NT/WinAPI creates AF UNIX socket
-+	 * without the xattr MODE and recognize it also without the xattr MODE.
-+	 */
-+	if (!have_xattr_mode && (tag != IO_REPARSE_TAG_AF_UNIX && tag != IO_REPARSE_TAG_LX_SYMLINK))
-+		return ignore_missing_eas;
-+
- 	fattr->cf_mode |= reparse_mode_type;
- 	return true;
- }
--- 
-2.20.1
+I tend to move the 'initialisation' to the line above:
+	folio = pofs_get_folio(pofs, i);
+	for (; folio; folio = pofs_next_folio(folio, pofs, &i)) {
+		code...
+For 'search' loops you don't always want the conditional, so:
+	folio = pofs_get_folio(pofs, i);
+	for (;; folio = pofs_next_folio(folio, pofs, &i)) {
+		if (!folio)
+			return -ENOENT;
+		code...
+
+The 'really useful (tm)' part of a 'for' loop is the statement
+executed by 'continue'.
+
+:-)
+
+	David
 
 
