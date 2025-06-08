@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-676994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBCDAD140B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 21:46:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DB9AD140E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 21:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902BB168EBE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:46:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3151690AC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1531F1527;
-	Sun,  8 Jun 2025 19:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91F31A23AA;
+	Sun,  8 Jun 2025 19:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2MVTRFP"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgcVgAcX"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1521EEA40
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 19:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8433881E
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 19:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749411948; cv=none; b=YGT1M4TtG/PY0XfrBIORCpKVyUoYtrBqyxQp6crT9GcUG7YU8sn19gPKERyeRYziCmhTJCWggAosBfE1wO2M4NKibMX3qlaM4tdHlz5Hxr5moKuyY8A9N1HstiKQTI7TSUUAG781p+3cXaR+SfGEObFFV0cgT7OeFq3kZ7MznUY=
+	t=1749412305; cv=none; b=ESKfqg3TBhgTzlGwoJrLka9mCvyrdgcvmwSyo5SvbASdm4zdxQ/UOH98eVxTUhfFtPsy0u696GW77HpCuJbn61DhqAmlwIdZW770fUyho3mjFnYd6Qy/cVCm1CRIuWqWJwUfy7tjQYI9zVcuCBrBvpd+DEnGGunlukwq1MYEX10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749411948; c=relaxed/simple;
-	bh=0z0z7BEAOwGXGFZrG5T/T3uQfwCpzUKGWzDdv99j4io=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=peT3wTUT0ndKBjnuaotLCJj/evjNW7lIkpHoA5YxaZBVhjvDdILv14nffAJ7iidbt7JA50Izh+Jl5x1H6Ve8+0uoouz/m+ABzgsFaMlA9+ChY8EeAQagWqpiFpP9/c9sJ8huMMuqreGMxfAYOb3PcyvDPICx5PIgb8Vc/uHpWc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2MVTRFP; arc=none smtp.client-ip=209.85.128.182
+	s=arc-20240116; t=1749412305; c=relaxed/simple;
+	bh=s9mp59SqflPWtnt6+O62T+c4ZK0qqvkd2xUxnMiiRtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nh1QHTTWWPFWfRsBungjLyZEkai/8F4fvwwjfWoCgQXfcYFnIGamIsZgUVKpHJxYcQgVbsQxywEtybU7/NSrxaW19ZXABcWtYR2cGbpzqzC086fUVsndQVPl1MogtKdJUd0P/s94DuvGaSq5HINBziidW49cENa+KIbgER6rvq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mgcVgAcX; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-70dd2d35449so27601787b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 12:45:44 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4f71831abso3541007f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 12:51:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749411944; x=1750016744; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pdmjI2ThvlwaXhc0+WRx0izpT37E64MmtJ5nQi6GWpw=;
-        b=Z2MVTRFPmnfB80wZZTtckN+G2TAFtbtVT6fHH0ggJtEXufVscdd+5zJYCA0+4vX3pV
-         pi4EgIvEz45TmvitBGYE5llJMSVcL2Zd3fskI6+m0qxH7nrUmgGoYFrchO1lcOe+XK2j
-         bV2Hz2EpqdLirMzV2aW5HL9L9w1Cz9I2R96xDG2HIpesAGvtfg6jywibXtWYRT6gVFee
-         +lr2yDCqgOW7ppVtjIZQkSNoSLCNKzlBSOhe2MnRVEvNIfo3vTrDmeGsL3sRIQyfzr3U
-         nnAfmGKt0J752kTbTlDrWCAfRGLVcfI1zkWj3OtP2xR1yQgn5t4Ja16KhJMXWjTSBblI
-         hgMA==
+        d=gmail.com; s=20230601; t=1749412302; x=1750017102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3buj1uGk7nA1sbnFPGaNKPyBQQZpEjYya4Iym7PNjUc=;
+        b=mgcVgAcXjT7GuzbrFBUU8smccWe6oRXN0UAeHDKvfmqc99o7XIRk/aDX118UWik0mj
+         a3sfR/GerXq3FpBKivv36grvuPutcTpqllBM9dvS0I3sJLTvr2ZmqHPknpKKFMIRCSPc
+         AGkjs+J8LiSDka0Mhh/1ZoKt3/gEQbjf6OGJ1y3Ome9B+vchaez86D7lLc/40tlXHXx8
+         SCb2StFjPgvOTjR0ZUZyBt6GraRU1hLzLNafcHc3/piIBhLDkHqFQuNUGS/0PvXXlJYp
+         MH8UCR64NjP5P0K8DHjiJY9/tECUvszz9+Cl5x3mulx82sm8cBp9Bi2v6SgsRB5c8KYl
+         OSeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749411944; x=1750016744;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pdmjI2ThvlwaXhc0+WRx0izpT37E64MmtJ5nQi6GWpw=;
-        b=wGoH7oDk1w56ci6SublbOVcP0bq7JKvY+w8YlTcZeJvaHYTW1iW7/mU+CXnObKMkdF
-         NinrhwNNvGhQdmQCL61Tcg5wszJp3NO8PuGyldTEknf+n9fI7ntJPJ6/mPU4jrWy/u8t
-         FUTRJzDBz1q31pi7xGXfoLrwArQUjzvts8JKe915TY1vIRdCABDZ1vtQ3OHFoK9lNuMW
-         c5fmm7CyotQIA6NGT8n97gieTtZEplSY1WXvh+/M47fsm4PFVmTrNAb0OkKr0oBRLqBO
-         UYHktMOu4NHgpZw8MHSRLCeeAZzY4q1m3bSSYRNEMMq1ZCP1gJhYQCa26RKMGWuyFyC/
-         QFnQ==
-X-Gm-Message-State: AOJu0Yzk73ouCgBk1yzjImepkxrYipFokO7LGbMaBQd9dd3YRkAryUyc
-	yJwun3c072DQjd5T8bGoF0bXknHf2HzoVxZbkmbTduJ8yqJu+RLb3doQZIXWrQ==
-X-Gm-Gg: ASbGnctHq6cry9R5NbiRA9XfCq1XuHS17nZjtMIvQQ42CFbDG7+7zxwlZBSqpHooR5+
-	wz462VmPi6I99RYOA9IKkabK4Y8jV4dzRqvt7SLzJV6JSW9Vwr3NgDS02ORlF2Bas2s/ZBn7dQi
-	pc+FezFChsH3Gk+Gpe1SFnKXsZfxBqQWql2KzphwTc9co0db3P5xol6XO1JY38tQbBiF07iy4bO
-	RCVl3yNzLbxysAzic6md77ObBxcL13b9R7ZOKF4UFvmU3L6Dku0J4km4DEAgvxMuGwZMj5fRjB8
-	V4O+ecokTxLKvwVga7Qjzt5Q1A+yU7wdfPQyK0uMJoBUGv9rOkObEuYcjUTcCSz8+gW4Ywcz/Z2
-	Jet3oyStMy3Nsdqsl6mgOxwrGO8F1IeVQ
-X-Google-Smtp-Source: AGHT+IG26jQrOUA1nsvWxPnchEGSBRX1882EKZVs2X+/4JcMjJI81Q1X/Xxc3iVECqZZloTddp0MEQ==
-X-Received: by 2002:a05:690c:4b0d:b0:710:f39f:a2bc with SMTP id 00721157ae682-710f763eb83mr142692157b3.8.1749411943911;
-        Sun, 08 Jun 2025 12:45:43 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e81a41575casm1850732276.32.2025.06.08.12.45.43
+        d=1e100.net; s=20230601; t=1749412302; x=1750017102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3buj1uGk7nA1sbnFPGaNKPyBQQZpEjYya4Iym7PNjUc=;
+        b=R/4fs8XQqd/5pfq3liNOv2YHDARmBgQNkaa3eiB+BqwMNTrxCIqCTzewJM7bSaWGiq
+         lY9FJGLBamkBPEDbswchhAmRf7hcRwlVsh6PearRObAbCyrGvvbaWln9dFzo02lXQ30B
+         cuHaZLviC3QI4k+NpkQYN5Sl9Q1+t/WZGuRyTqWlJqWTiu77XG5wiL5d1hTke5p4dQog
+         DoSSuGqTk9f3DBeK3yKs7Y/ckRO8dh/CYu/fW40KFdckDrAjSTpgtja2W9rdgeMoge1Y
+         cv26EJI8WmWCsP6C5kGSPdeJ5L5Np9Ep6uKaPfY5mM8FvZnaIbSiaf5prjKPRfL6SqeT
+         DCtg==
+X-Gm-Message-State: AOJu0YwOV2bWtKhkYVBOHC8Vp3eMzVpuypltyFBwIQkGrxlJwKDqvORS
+	kJHraOA+YitFg4QVPvmp+W+O5cugbQljLi0WAA6aaJFi2zxN4T8rBEi/
+X-Gm-Gg: ASbGncsEEyoTYqwMEzS0/FTWPqRcFUveaDOAxvankonKUIX5TQMFSSKHVC+2PReau3w
+	wwRqB4CLReILW8xJsSrV1RJPoJtvElKFJF3DkKVc4ViKbXp/rbFyVAKX49XyK718JuqWBlXbJfh
+	92v674AA3Wvhl8rvSWy6O+aoTlOQyPPAh7jQBQvIm30jbtKKwuT5SZSBoixDW17NCUcj2/B26Rk
+	uLHSl+1iRynW+0Lj1qCSQt1wAT9rjQvFdGL6HzpsQPRF+uLwV0jV1z2Qx0JOaOW9RxS7cFhYfPH
+	14eBGBzeWY7gkhmxPX5EAni/fSUB1TEj+pB4MRDPT1cHZw8DKRolhey2e/sdwlBI9g==
+X-Google-Smtp-Source: AGHT+IHL/eEjyR7e2in9gBG9vqLEx1HNJ7KANIMdSu7i1O10ca+Q81dsnnIu79iU2uuYZV94YGbd2A==
+X-Received: by 2002:a05:6000:2dc7:b0:3a5:2465:c0a4 with SMTP id ffacd0b85a97d-3a53188dca5mr8284789f8f.20.1749412301713;
+        Sun, 08 Jun 2025 12:51:41 -0700 (PDT)
+Received: from localhost.localdomain ([41.79.198.22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532468360sm7746034f8f.100.2025.06.08.12.51.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 12:45:43 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 3/3] clocksource: Improve randomness in clocksource_verify_choose_cpus()
-Date: Sun,  8 Jun 2025 15:45:35 -0400
-Message-ID: <20250608194536.28130-4-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250608194536.28130-1-yury.norov@gmail.com>
-References: <20250608194536.28130-1-yury.norov@gmail.com>
+        Sun, 08 Jun 2025 12:51:41 -0700 (PDT)
+From: Khalid Ali <khaliidcaliy@gmail.com>
+X-Google-Original-From: Khalid Ali <khaliidcaliy@gmail.com
+To: tglx@linutronix.de,
+	peterz@infradead.org,
+	luto@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Khalid Ali <khaliidcaliy@gmail.com>
+Subject: [PATCH] include/linux: Fix outdated comment on entry-common.h
+Date: Sun,  8 Jun 2025 19:48:28 +0000
+Message-ID: <20250608195043.4953-1-khaliidcaliy@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,43 +87,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Yury Norov [NVIDIA]" <yury.norov@gmail.com>
+From: Khalid Ali <khaliidcaliy@gmail.com>
 
-The current algorithm of picking a random CPU works OK for dense online
-cpumask, but if cpumask is non-dense, the distribution of picked CPUs
-is skewed.
+On most calls to this function, syscall_enter_from_user_mode_prepare()
+never get called as the comment indicates.
 
-For example, on 8-CPU board with CPUs 4-7 offlined, the probability of
-selecting CPU 0 is 5/8. Accordingly, cpus 1, 2 and 3 are chosen with
-probability 1/8 each. The proper algorithm should pick each online CPU
-with probability 1/4.
+Privious kernel version i used to see things happen as the function documentation
+indicated (syscall_enter_from_user_mode_prepare() called before
+syscall_enter_from_user_mode_work), however it seems now some things
+have changed which makes that point irrevelant. Most preparations that
+function does is handled manually by enter_from_user_mode() and
+some other places. So this makes it misleading.
 
-Switch it to cpumask_random(), which has better statistical
-characteristics.
+The point is remove strict function call indication on documentation as might be outdated
+one day in the future. There multiple places currently called
+syscall_enter_from_user_mode_work() without
+syscall_enter_from_user_mode_prepare() get called so that will make it
+condition not met.
 
-Acked-by: John Stultz <jstultz@google.com>
-Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+Signed-off-by: Khalid Ali <khaliidcaliy@gmail.com>
 ---
- kernel/time/clocksource.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ include/linux/entry-common.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 6a8bc7da9062..4b005b2f3ef5 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -342,10 +342,7 @@ static void clocksource_verify_choose_cpus(void)
- 	 * CPUs that are currently online.
- 	 */
- 	for (i = 1; i < n; i++) {
--		cpu = get_random_u32_below(nr_cpu_ids);
--		cpu = cpumask_next(cpu - 1, cpu_online_mask);
--		if (cpu >= nr_cpu_ids)
--			cpu = cpumask_first(cpu_online_mask);
-+		cpu = cpumask_random(cpu_online_mask);
- 		if (!WARN_ON_ONCE(cpu >= nr_cpu_ids))
- 			cpumask_set_cpu(cpu, &cpus_chosen);
- 	}
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index f94f3fdf15fc..8b52551600cf 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -146,8 +146,7 @@ long syscall_trace_enter(struct pt_regs *regs, long syscall,
+  * @syscall:	The syscall number
+  *
+  * Invoked from architecture specific syscall entry code with interrupts
+- * enabled after invoking syscall_enter_from_user_mode_prepare() and extra
+- * architecture specific work.
++ * enabled and extra architecture specific work.
+  *
+  * Returns: The original or a modified syscall number
+  *
 -- 
-2.43.0
+2.49.0
 
 
