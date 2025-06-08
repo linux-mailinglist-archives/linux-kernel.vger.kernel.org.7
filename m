@@ -1,188 +1,122 @@
-Return-Path: <linux-kernel+bounces-677008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B944AD143A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 22:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD2DAD1451
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 22:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 950111889051
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 20:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021FD188A3B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 20:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD63253F2D;
-	Sun,  8 Jun 2025 20:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307A7254AFE;
+	Sun,  8 Jun 2025 20:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrTR4ANk"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbATWU2c"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551891372;
-	Sun,  8 Jun 2025 20:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E429BA45;
+	Sun,  8 Jun 2025 20:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749414658; cv=none; b=rDew2abIO4voEMQ53k3+EJyp3tOomUpoesReHW+6x8+B3099pW2eil54C67iqNG1DgHsKeV/nho9awqs0LFqolRR8fVhSk1HgPYlYyYIeczDal7IbCRzSEqjOCAIS/SEspdIRKqrZ90uyA//ZnF3qdPl89T4gSvFJQFhoOjUWqk=
+	t=1749415674; cv=none; b=f3SPR3jhFKq08vJ1e+S+g9qnwYRUI9xmrULTYqJGWj8Df1ukyvd6j6NTACGWR9AyK6Yc0CtM526WIibs1jiSs/WbELNuCI3d7Z59NLGZ/Dfs0EWUxY2FNjneTlJgZfLD61sDkbBVN96K086Vj7M8uhpV1XGyH61E38I5gN2RA54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749414658; c=relaxed/simple;
-	bh=paJQsm8VjqkQeElUHQdhqGI3+WnM0KsTXGD75t0j5tE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LEKTmgO/jsnAoIPfHjcCMeacfAv0hWXe93y2puoOVKXOyqsUXQWZtqh02tSm/nkFj9M42sh+Bw+EmsMWvqDOzZ7g+bhT+CSBrKvgJlA8A7o/t4Na1bNZJLPLqQ7MRc9g7+YGH3Not89J8VGX1r7XkZNWOwtxsEX86gZCAt+4Qc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrTR4ANk; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1749415674; c=relaxed/simple;
+	bh=ebF6L3yW+3ohMAChacTbx/9GAwBaMrhyLwIY4VviJvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILSqCOJfMrw8AtpB77K1lQsKNcx4QWP1SGCWroHUyOpLZX2rhTatZMQ2woHPU1pZNpqCqqXfGw1O9NXgX9eZCbqBdwzL/2SQpdhScdMfs0tsrbztWwYqzQLpkVnu80Tt4gvbVCbscyFe3qKJWQ+gD/4A2NyxCV+Ime0Br/z+jWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PbATWU2c; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235e1d4cba0so27768715ad.2;
-        Sun, 08 Jun 2025 13:30:57 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b1276984386so453254a12.0;
+        Sun, 08 Jun 2025 13:47:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749414656; x=1750019456; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1749415672; x=1750020472; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j9aCplgkp0V+7+yNOgN7cid7kDTOh/cSiZAss2NRX2s=;
-        b=ZrTR4ANkvt3rlwAkuKBxXX/WJZW3DiFa4jb052y4JWa7l6oMbz7FSQePXn8mICEjpB
-         Yi3761wt63Uyky3n22z8mg3+A4NYNZOLhJFJydLQccBKHPPZFbot7g90m8NZKxGe4W1y
-         trZs1zJCEMq+Y5R2T1LnZ0ZielbhBAW97C8w9mFqe2nkl74lwlMBwaWgj6mBGPbyVZlS
-         OaeQy1KVgwDsIDCbDlnfY2LMJ3Gx/CbaTK5D9hJs6SBWucts8V9sV7HFv3nothihl9W0
-         /6YCL/UF3c/OyBYmhTRhPz/GXumlgtgL4AIJGRAuSb6xSfGSuKpsy5wBj5kEkTSAUmks
-         zAxQ==
+        bh=e/NepSzNK7cHJVdKlMHYuPZmDL7EOzwuHy5xSr7Gp+s=;
+        b=PbATWU2cnA/SJSTcjsUFNYFRMnJxXPBSZ9jq4nykcGbBITiMTZICtDAAWGE9hbLc74
+         +r2aQEVQ1OPQTcC3XK3JtT9QGcemkMUOB/21Z3jn5CNgt2dlHajC0mqv/5z++UlKFTy1
+         DdJX0UjyPk32tsmb5Gyv/l1No5mHlhyWe7R6aBV1Hg7+mLOoSxiWlxS4PAwUmLa1aleo
+         4/SpROQjze/BRCflv4H2DBJzwAdVkZDoMMBqgtIdN8d8jTyheDtlp13NTPnxWgDbIRpb
+         NXMxgTF0o+ZbovwKO9cWOndgFOGJed/oaDAXgPdNqVE6ZnaxqssW9rd0zP0kY2jjt3CW
+         fpzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749414656; x=1750019456;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749415672; x=1750020472;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j9aCplgkp0V+7+yNOgN7cid7kDTOh/cSiZAss2NRX2s=;
-        b=KaQPCkgOvCPc03l1LtV5YtJSEMTwkA722knU2vFtg8SP0LLbdAuBZeBDWVw3m+cIjw
-         Errcw3sOf+QDKMVLq6yIjJ7z/HMBnwPsK0keElfsOnGod22EdbzYLUPQGS5XUZNAyQzo
-         t3OJFzpoNAj3HDNy8anOkgGhx4MRH7toyEJUs8LKuOUInIxRU2eYskBo0vmAZAAcFDdM
-         0KkxjLDTWxSzISzc3FdAzIl0cgzFO0LobkfeATKblzRaR0vWr4/lCWhirmCAmYCQvZ6j
-         OcJXvuQdj4E4nrcYpRsE7IZjmg1h4j7TcSNyG7/2+50Z4LeVNzxGCFPGeK+82WxDfqbW
-         ATZw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7h7Kw+J/OuNdCBufTxtkbeTHGdSuNyqa1DNAnq7jB3MJJS7Ws/9kP5SEwIG+qNWlPEyZBv2ve@vger.kernel.org, AJvYcCX+bi7wf62Gdhcu+PlYuDK71Q1LwUNrUY5WdSm3tzBOwZCMpUxU38netW/nhvDx3NGUFmE59wBE61ZKlew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfCksmlhASbfeKG3YvgBPmcLixO7GnofomTFRmYAHQwVUAx8w3
-	v3bd9PnyjEZoLYdIoKhej9hvgsSoNYGuly7LR6igcFiuVFY4svL/gfY=
-X-Gm-Gg: ASbGnctz6uJTYd9w6CQOabShPoHZBV6JWClooUwKdtjPxDBbUiTmC7Fu5sEEE7K5h3O
-	zUZL76d/QaR8kKhwRliXgCLpKGYWvdxpWIQoTHjJWz14mKKvGj0FNGMxgCxE7biOV4sls7FGCUr
-	N3+kTZPyC8tbsVwZOkpBzkPTdCyQdmn6E1fGnkuLPGq2ZuGiIqxVDcfGqeqbdYhZblRze6ukBBN
-	VdCwuH7x2ULSn05/e/ImaVWtC3YU+KDZM7L6Cl0e1N/1BFbM8p2PI6G7qRlJlU+i5uSBX4I0Z3N
-	USSWQJJA9/NSpESeMVKssdMFcwZ5H9D+19ac5so=
-X-Google-Smtp-Source: AGHT+IFc0GXXFM0S7BM66k77mQmeDxGNeGyEjOIpwCp2uK7mlnuXSQ+Nl2QHhuJl0ddM21M0YVbyzw==
-X-Received: by 2002:a17:902:d48f:b0:234:b41e:37a4 with SMTP id d9443c01a7336-23601cf5aadmr113552755ad.6.1749414656594;
-        Sun, 08 Jun 2025 13:30:56 -0700 (PDT)
-Received: from fedora.. ([2601:647:6700:3390::c8d1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236030789c2sm42380285ad.29.2025.06.08.13.30.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 13:30:56 -0700 (PDT)
-From: Kuniyuki Iwashima <kuni1840@gmail.com>
-To: kuni1840@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	farbere@amazon.com,
-	kuba@kernel.org,
-	kuniyu@amazon.com,
-	kuznet@ms2.inr.ac.ru,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	sashal@kernel.org,
-	yoshfuji@linux-ipv6.org
-Subject: Re: [PATCH] net/ipv4: fix type mismatch in inet_ehash_locks_alloc() causing build failure
-Date: Sun,  8 Jun 2025 13:30:18 -0700
-Message-ID: <20250608203054.3982608-1-kuni1840@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250608201227.3970666-1-kuni1840@gmail.com>
-References: <20250608201227.3970666-1-kuni1840@gmail.com>
+        bh=e/NepSzNK7cHJVdKlMHYuPZmDL7EOzwuHy5xSr7Gp+s=;
+        b=IckfEKyFQxNLYBh9Wv417YZZ6bst92mdKyBtY0VyGWGGO+9fAl8BQE19xH1c3FTFM9
+         PvOhR4Zo40fNHSPsLe6Abf/Mx4vpcfzi4ylEcSRN1vjAo/65fv024djde+IL3KIZ4LHR
+         k2C6BilEDOrPruYHCvMcHzSJ1VcK7iwqg+Ci+t66GTWUz3ALfcwkYabU89kzIuijb2Y1
+         hJK4H88EGa2JJpDF/K8bs+xLTSVGn4Tj9R4ZiiCME4fVPr8AUgjwhZGoDaaboSVEr6vJ
+         CeBfO7IyugGlt3/lP+DPz6d4M/y72EpuxUPT1XeI36cFunupsXss35z9Ch/gmwBeZUR+
+         r45A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ye9+OTO9RFOUjNXWkjxyzMzOZgyFAiCbE1rFkXeq3XRcZ1IeV74xjQ2OgjJR4HLfUx74cZkzHNeY3tBc@vger.kernel.org, AJvYcCWGbObFsCsw7vXZ04+vHgoKa7BkTwsK5wiAvpjE2xL/SRHb3BsNpExZI04ogaj7hKyaS1iVvVdrkb9Z@vger.kernel.org, AJvYcCX/uRfVnHGduK49IT2AmXlRs2HmLZxFWHsSHgz7ePUuvMS5JMJ5YlkRsQPOg/4JCq2dIeg70onVUuZd1PwR618=@vger.kernel.org, AJvYcCX0dNziQ/0bDSQRDd3Lnw3OiW88ooslvWM7r5PgEwuF/TK85DNTsGbBR+7CE69ZcUmvg990LiQdYFGU@vger.kernel.org
+X-Gm-Message-State: AOJu0YycDja4eIm0aEUIBvwLTVKu5nVRBUWzE2mVhhuxTllmFvMnlO5R
+	PLwT9sSsOFh06FI5gLtc87/2GZp8cL0LW+CDKKxWCwt40lYvNRDz3QfSaGygtDGPfahYHrWgPIz
+	wuM/sW13ymyI7GyGDFE8LVI9CQFzWzB0=
+X-Gm-Gg: ASbGncv/aVpDtkeUT0Jn3ZIrJc4PQNnxrp0NFNTkS38e40AIjEGFAHc3Hx9WPaLSTBN
+	PIRIu9MsqRvv3y09Oih00gFWphXd3z8OD6fyfo8n/MX4/r21gM0ybnSsIeUX+LeZuZuiTUYuI8u
+	5kvW0lUazJzTZKM0M+eeaCk0uP6CQI1VSi
+X-Google-Smtp-Source: AGHT+IGMuXINEZm4WUqJIT66MF2vg+ybkmXgawlTKOKqE5f3w0CWVXxYZlA0lxfrGl70z+aRQlCRwjGEVMSn8hyBYU4=
+X-Received: by 2002:a17:90b:4b85:b0:313:2bfc:94c with SMTP id
+ 98e67ed59e1d1-3134e43144amr5309627a91.8.1749415672501; Sun, 08 Jun 2025
+ 13:47:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20250524211519eucas1p218997c69b98b14d3af2eb6bf4e9d3187@eucas1p2.samsung.com>
+ <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
+ <aDJGgLZ9tITwGBxq@x1> <b5f4af17-05ef-453d-8f04-283590ae5b87@samsung.com>
+ <DA5YY0YF28GO.3DONTQDLY6VBD@kernel.org> <aEXBH5r05FkTxpV+@x1>
+ <CANiq72k-FmZe3P_y6FjmiqXViqLKXkDqHY1-KLfmgwAe98oBAQ@mail.gmail.com> <aEXrZvpTD30a5OhT@x1>
+In-Reply-To: <aEXrZvpTD30a5OhT@x1>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 8 Jun 2025 22:47:40 +0200
+X-Gm-Features: AX0GCFtkgb9NQ12mbcXrlhdSwOY0B7uS6yd2CXG1hnJnfVtwyAWwRJ7-DZ7mFxY
+Message-ID: <CANiq72mn4sRzmkFAJ0fKhwZMLUi33DBLNzyEF2BTPML_4Ya+Bg@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/6] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+To: Drew Fustini <drew@pdp7.com>
+Cc: Benno Lossin <lossin@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kuniyuki Iwashima <kuni1840@gmail.com>
-Date: Sun,  8 Jun 2025 13:11:51 -0700
-> From: Eliav Farber <farbere@amazon.com>
-> Date: Sun, 8 Jun 2025 06:07:26 +0000
-> > Fix compilation warning:
-> > 
-> > In file included from ./include/linux/kernel.h:15,
-> >                  from ./include/linux/list.h:9,
-> >                  from ./include/linux/module.h:12,
-> >                  from net/ipv4/inet_hashtables.c:12:
-> > net/ipv4/inet_hashtables.c: In function ‘inet_ehash_locks_alloc’:
-> > ./include/linux/minmax.h:20:35: warning: comparison of distinct pointer types lacks a cast
-> >    20 |         (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-> >       |                                   ^~
-> > ./include/linux/minmax.h:26:18: note: in expansion of macro ‘__typecheck’
-> >    26 |                 (__typecheck(x, y) && __no_side_effects(x, y))
-> >       |                  ^~~~~~~~~~~
-> > ./include/linux/minmax.h:36:31: note: in expansion of macro ‘__safe_cmp’
-> >    36 |         __builtin_choose_expr(__safe_cmp(x, y), \
-> >       |                               ^~~~~~~~~~
-> > ./include/linux/minmax.h:52:25: note: in expansion of macro ‘__careful_cmp’
-> >    52 | #define max(x, y)       __careful_cmp(x, y, >)
-> >       |                         ^~~~~~~~~~~~~
-> > net/ipv4/inet_hashtables.c:946:19: note: in expansion of macro ‘max’
-> >   946 |         nblocks = max(nblocks, num_online_nodes() * PAGE_SIZE / locksz);
-> >       |                   ^~~
-> >   CC      block/badblocks.o
-> > 
-> > When warnings are treated as errors, this causes the build to fail.
-> > 
-> > The issue is a type mismatch between the operands passed to the max()
-> > macro. Here, nblocks is an unsigned int, while the expression
-> > num_online_nodes() * PAGE_SIZE / locksz is promoted to unsigned long.
-> > 
-> > This happens because:
-> >  - num_online_nodes() returns int
-> >  - PAGE_SIZE is typically defined as an unsigned long (depending on the
-> >    architecture)
-> >  - locksz is unsigned int
-> > 
-> > The resulting arithmetic expression is promoted to unsigned long.
-> > 
-> > Thus, the max() macro compares values of different types: unsigned int
-> > vs unsigned long.
-> > 
-> > This issue was introduced in commit b53d6e9525af ("tcp: bring back NUMA
-> > dispersion in inet_ehash_locks_alloc()") during the update from kernel
-> > v5.10.237 to v5.10.238.
-> 
-> Please use the upstream SHA1, f8ece40786c9.
-> 
-> > 
-> > It does not exist in newer kernel branches (e.g., v5.15.185 and all 6.x
-> > branches), because they include commit d53b5d862acd ("minmax: allow
-> 
-> Same here, d03eba99f5bf.
-> 
-> But why not backport it to stable instead ?
+On Sun, Jun 8, 2025 at 9:58=E2=80=AFPM Drew Fustini <drew@pdp7.com> wrote:
+>
+> Thanks for the quick response. I seemed to have updated it with:
+>
+>  cargo install bindgen-cli
+>
+> And it seems Linux is now happy :)
 
-I just checked the 5.10.238 thread.
-https://lore.kernel.org/stable/2025060412-cursor-navigate-126d@gregkh/
+You're welcome!
 
----8<---
-> > For both of these, I'll just let them be as they are ok, it's just the
-> > mess of our min/max macro unwinding causes these issues.
-> > 
-> > Unless they really bother someone, and in that case, a patch to add the
-> > correct type to the backport to make the noise go away would be greatly
-> > appreciated.
-> 
-> Yeah that's a reasonable resolution, I will try to track down the missing
-> patches for minmax.h so we are warning free for the stable kernels.
+(By the way, I always recommend passing `--locked` to `cargo install`
+unless there is a good reason not to -- sadly it is not the default
+for that subcommand)
 
-I tried in the past, it's non-trivial.  What would be easier is to just
-properly cast the variables in the places where this warning is showing
-up to get rid of that warning.  We've done that in some backports in the
-past as well.
----8<---
-
-So this should be fixed up in the backport, and I guess this patch
-targeted the stable trees ?
-
-If so, please clarify that by specifying the stable version in the
-subject and CCing the stable mainling list:
-
-  Subject: [PATCH 5.10.y] tcp: ...
-  Cc: stable@vger.kernel.org, ...
+Cheers,
+Miguel
 
