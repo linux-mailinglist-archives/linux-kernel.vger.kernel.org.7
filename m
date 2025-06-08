@@ -1,178 +1,292 @@
-Return-Path: <linux-kernel+bounces-676937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C60AD136C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:58:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E90AD137F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 19:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042661688BE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 16:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 682D8169153
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 17:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF847081A;
-	Sun,  8 Jun 2025 16:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9074E199947;
+	Sun,  8 Jun 2025 17:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="ubv0t9Ts"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDkDfv3w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2088633F
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 16:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD36818786A;
+	Sun,  8 Jun 2025 17:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749401891; cv=none; b=HltGD5sGMD4FgoHl2mUFGmPH9sPYrVWMwSX9x/ulYlJykkbGvp43ft6f8wrSZfcDSJ6tOyAg+Zm2t7FFKl5Y1HUFCd5P+OoyNHpBBa7lg0SNQA0Tfvsz1fL37YiUR9um1GT7vfDS17kkctdrLsIEPoM1YARxfef3vgcin9U07yc=
+	t=1749402472; cv=none; b=MVPGhm4pnAh1LWnuFitO5He499aO5UgW+5kOlpuBALxwnP9RY1FhcGrnHNYj5+BbNKwJrAzSSHN7TDHLoPhhGw3nB5k8sEWAiHTAsIgV97ItcHp+b+/xvFCgACTopxpeE6VHrGL2PnADswx+VvJlCApl9vHUoAnrmCTt34je3uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749401891; c=relaxed/simple;
-	bh=u4wQyLjJp+430rQ0oMLZAAtB4ucOgT4UzH6dUPzhvIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQvUvUBHA85CTx1HwrhXqQYWaczAyYNgkRSbFG1D0/UTBjBCDm/CuyX0c3N8zYpOLIKeFtyP3qZkmLhdVxtTwOl8o+JHV0uYj1baLV5TOLNSkcPSo/kZKkncfsO6mKQs1XyVvQvAxtXaseGs7ejXJQcrx/ab7BL6RoctDgJ3Iys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=ubv0t9Ts; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-235f9ea8d08so26896225ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 09:58:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1749401889; x=1750006689; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nuldK7MCvX30cQFzWuI0PzalznhEarc6NW9MP8uHyXE=;
-        b=ubv0t9TsGF7bJ5L5UAGBLT7VVfzMwkPEMnxeVbIs7hUxjNkeyvA/nXZHIGBSWR1QXW
-         RrpuBIdAVpulaKdt663KHjNI0k8k1x23mLTWtyZvk503HnaUsyIG4BNvdjSxKiuGixaY
-         zhFy+sPmiCDbmZTU3qZmxIVHs5ULE29mroS/N8nc3fp80eZfwnnRxEnIe+rpAh1xyhUj
-         OqIKuO1Iigagd7Ikd0LfyHYGORKNCFUjubUeMPyzjBwwrNyTT8aHn7EG5axb2LpnFwmN
-         Rz4/0CKTeICF2HsIWcMzd8Ekpp13T5JmT3e9otw6k6j23UuPBY9ctO6yYzyjaYC5ayWh
-         qnQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749401889; x=1750006689;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nuldK7MCvX30cQFzWuI0PzalznhEarc6NW9MP8uHyXE=;
-        b=Y376duKFnQLQMT8zA/A2c7/fTt10n/cSg3pP/WWRsysCwt+TGDXUIS7VHGRDs3WDCw
-         CObtv4FnhZD8jlOywx7clj99m0q8hvPNe82jQYgwubYqVl5rjMZowk8Get8bfSlJlV5f
-         QL9cI5nsW/huElRngilrYb9CpIHi2ai08x4mLOu0lXIlZ/C8yX+yVIsuPqk4l91LdReG
-         Hfn/wJcsIb/wDrJ07YmNs6V2jOnb5N3OqRQZ/pb8rUK0hTuCvBLxMKVH0vJavypMINAP
-         qTloTc5L56xnBKYM/mVgWYpbedEyaHWE428tJCMEki5001frnKNSyIcgYu8OWSygTwO+
-         dxtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVc5MK+ZDGiKsSIyfPO/JzDwhiTPRvgyNM8+vlBQIE03OD1T2/8y02Bbvl6iZUU0GCwcxRQS4tzmzaYAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXnHPJnpQZKEmqCZrbvI7+iJneTbE0p0VB/maahA2roGhRH8Lz
-	Ie9v4idsxND8rrKdkemr6MqQYwq+0/xXYld+bUgmYg4jxI7XNM7rzMQMqG6PHTSRCGw=
-X-Gm-Gg: ASbGncsURdsM9r3q5uKmTutZ/HOns/Nz+eSJOIeS6wqPgG0OoYZfID6atTe++N8h9Tu
-	BLPAAYmPkmP1u3ysZuaScsaTuNlw8jhLT8AAJZWMrOEsxxyNEFZy7VypkqRWRhFogZmoC4XWmMP
-	DOcwQZWPw3i0t/dL2MJLfJmlCpRovsy5lQgfl/HI0TuB2zcSpYYAD26dYuRRGYGuq8P7thYN2ma
-	zATLpyuY7+4+V+/lz3+K/qlqL1zAPY/+oosbsQTopdmUcaj/lctY0iLEaruvkFY1XKmuHfP5itu
-	zS3FnG+/uw2uu4oGVQxyznX5HPLqJ5sEDnPKyRGxyPgNWfabymRTgg==
-X-Google-Smtp-Source: AGHT+IHP9TwOiQS18SeLvT6WZ+KAoJi7YVDOIp4T0wyLfQJcuq/fKfkoNHs572ijakJZtNeFSPJvBA==
-X-Received: by 2002:a17:902:cf01:b0:234:ef42:5d6d with SMTP id d9443c01a7336-23601e78185mr142424575ad.23.1749401889406;
-        Sun, 08 Jun 2025 09:58:09 -0700 (PDT)
-Received: from x1 ([97.120.245.255])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236034056f8sm40902275ad.161.2025.06.08.09.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 09:58:08 -0700 (PDT)
-Date: Sun, 8 Jun 2025 09:58:07 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Benno Lossin <lossin@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 0/6] Rust Abstractions for PWM subsystem with TH1520
- PWM driver
-Message-ID: <aEXBH5r05FkTxpV+@x1>
-References: <CGME20250524211519eucas1p218997c69b98b14d3af2eb6bf4e9d3187@eucas1p2.samsung.com>
- <20250524-rust-next-pwm-working-fan-for-sending-v1-0-bdd2d5094ff7@samsung.com>
- <aDJGgLZ9tITwGBxq@x1>
- <b5f4af17-05ef-453d-8f04-283590ae5b87@samsung.com>
- <DA5YY0YF28GO.3DONTQDLY6VBD@kernel.org>
+	s=arc-20240116; t=1749402472; c=relaxed/simple;
+	bh=M5lbAQD+3t/dvGeFh0k07xz23ulsbUK5mMp8gEEaZ64=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gNb1BQYNEXObKeyPLVgjY/4Wxm3zBl5/LsPpiZVW/K4SNSid/ecQcxG4k0CX7/QmVUkont5F9ZVYIxMOIDqo/OZoZJJ4o8S3MwdSOmp8clUtUsGtar0E6S4kTpsFqe06BgJigEZQNDLDUAQTi2fb8gEyF12OhzpFKX/WXnyRWr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDkDfv3w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713C3C4CEEE;
+	Sun,  8 Jun 2025 17:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749402472;
+	bh=M5lbAQD+3t/dvGeFh0k07xz23ulsbUK5mMp8gEEaZ64=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LDkDfv3w5BE5NnTrrNWth/bIiPxDfUYCsLn8uu2GdTnU1q7GZLIFxHYIRp8nfGkrM
+	 iij2QkIBinTD79EUBObQoL7bN7BvtO4gREqMe2zqwIEJJhXHU3FnCAJh/gD05sd6oc
+	 KgThwJ1yOVQTB23Y/UY1cwz/1HzdIrrL3I+firfDHiRT1GAvHwJWnXy1t3HXbg5bD5
+	 YWr7fSZjXJ4f9Nla5ogrpoXMkBCT2vfkFwBiqAsNk1VwPOEYc/4+A91U4JKoqrsghU
+	 R00RwRZfWXPTGNmFxrvfqptSTp32PzjW4i0EXYRSLX05uTsX4Gi+Tiby9kg5anweR4
+	 qePzcrHMnYPlw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kheaders: rebuild kheaders_data.tar.xz when a file is modified within a minute
+Date: Mon,  9 Jun 2025 01:59:55 +0900
+Message-ID: <20250608170746.3480391-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DA5YY0YF28GO.3DONTQDLY6VBD@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 26, 2025 at 11:01:58AM +0200, Benno Lossin wrote:
-> On Mon May 26, 2025 at 10:22 AM CEST, Michal Wilczynski wrote:
-> > On 5/25/25 00:21, Drew Fustini wrote:
-> >> Thanks for the patch series. It will be great to have PWM working
-> >> upstream.
-> >> 
-> >> I've not built Linux with Rust before, so I'm going through the quick
-> >> start [1]. I've also never built Linux with LLVM before but clang seems
-> >> like the best compiler to use for Rust. Are you using LLVM?
-> >
-> > Hi Drew,
-> > You're correct, Clang is the way to go for Rust in the kernel. I also
-> > followed the official quick start guide. To answer your question
-> > directly: yes, I'm using LLVM.
-> 
-> Just to let you know, there is an effort to get rustc to work with a gcc
-> backend rustc_gcc_codegen [1]. And there also is the gccrs project [2]
-> trying to create a gnu Rust compiler.
-> 
-> [1]: https://rust-for-linux.com/rustc_codegen_gcc
-> [2]: https://rust-for-linux.com/gccrs
-> 
-> They have made a lot of progress over the last year, so we're hopeful
-> that they become usable in the near future. But for the moment,
-> Clang/LLVM is the way to go.
-> 
-> Hope this helps!
-> 
-> ---
-> Cheers,
-> Benno
+When a header file is changed, kernel/gen_kheaders.sh may fail to update
+kernel/kheaders_data.tar.xz.
 
-Thanks for letting me know about gccrs.
+[steps to reproduce]
 
-I was able to build linux okay with clang:
+[1] Build kernel/kheaders_data.tar.xz
 
-make LLVM=1 ARCH=riscv -j16
+  $ make -j$(nproc) kernel/kheaders.o
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CALL    scripts/checksyscalls.sh
+    CHK     kernel/kheaders_data.tar.xz
+    GEN     kernel/kheaders_data.tar.xz
+    CC      kernel/kheaders.o
 
-It booted okay on the lpi4a:
+[2] Modify a header without changing the file size
 
-Linux version 6.15.0-next-20250606 (pdp7@thelio) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) 
+  $ sed -i s/0xdeadbeef/0xfeedbeef/ include/linux/elfnote.h
 
-I installed rust with:
+[3] Rebuild kernel/kheaders_data.tar.xz
 
- rustup default beta
- rustup component add rust-src
+  $ make -j$(nproc) kernel/kheaders.o
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CALL    scripts/checksyscalls.sh
+    CHK     kernel/kheaders_data.tar.xz
 
- $ make LLVM=1 rustavailable
- ***
- *** Rust bindings generator 'bindgen' versions 0.66.0 and 0.66.1 may not
- *** work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/2567),
- *** unless patched (like Debian's).
- ***   Your version:     0.66.1
- ***
- ***
- *** Please see Documentation/rust/quick-start.rst for details
- *** on how to set up the Rust support.
- ***
- Rust is available!
+kernel/kheaders_data.tar.xz is not updated if steps [1] - [3] are run
+within the same minute.
 
-I'm not sure if that bindgen warning matters?
+The headers_md5 variable stores the MD5 hash of the 'ls -l' output
+for all header files. This hash value is used to determine whether
+kheaders_data.tar.xz needs to be rebuilt. However, 'ls -l' prints the
+modification times with minute-level granularity. If a file is modified
+within the same minute and its size remains the same, the MD5 hash does
+not change.
 
-Thanks,
-Drew
+To reliably detect file modifications, this commit rewrites
+kernel/gen_kheaders.sh to output header dependencies to
+kernel/.kheaders_data.tar.xz.cmd. Then, Make compares the timestamps
+and reruns kernel/gen_kheaders.sh when necessary. This is the standard
+mechanism used by Make and Kbuild.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ kernel/.gitignore      |  2 +
+ kernel/Makefile        | 47 +++++++++++++++++++---
+ kernel/gen_kheaders.sh | 88 +++++++++---------------------------------
+ 3 files changed, 63 insertions(+), 74 deletions(-)
+
+diff --git a/kernel/.gitignore b/kernel/.gitignore
+index c6b299a6b786..a501bfc80694 100644
+--- a/kernel/.gitignore
++++ b/kernel/.gitignore
+@@ -1,3 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ /config_data
+ /kheaders.md5
++/kheaders-objlist
++/kheaders-srclist
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 32e80dd626af..9a9ff405ea89 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -158,11 +158,48 @@ filechk_cat = cat $<
+ $(obj)/config_data: $(KCONFIG_CONFIG) FORCE
+ 	$(call filechk,cat)
+ 
++# kheaders_data.tar.xz
+ $(obj)/kheaders.o: $(obj)/kheaders_data.tar.xz
+ 
+-quiet_cmd_genikh = CHK     $(obj)/kheaders_data.tar.xz
+-      cmd_genikh = $(CONFIG_SHELL) $(srctree)/kernel/gen_kheaders.sh $@
+-$(obj)/kheaders_data.tar.xz: FORCE
+-	$(call cmd,genikh)
++quiet_cmd_kheaders_data = GEN     $@
++      cmd_kheaders_data = "$<" "$@" "$(obj)/kheaders-srclist" "$(obj)/kheaders-objlist"
++      cmd_kheaders_data_dep = cat $(depfile) >> $(dot-target).cmd; rm -f $(depfile)
+ 
+-clean-files := kheaders_data.tar.xz kheaders.md5
++define rule_kheaders_data
++	$(call cmd_and_savecmd,kheaders_data)
++	$(call cmd,kheaders_data_dep)
++endef
++
++targets += kheaders_data.tar.xz
++$(obj)/kheaders_data.tar.xz: $(src)/gen_kheaders.sh $(obj)/kheaders-srclist $(obj)/kheaders-objlist $(obj)/kheaders.md5 FORCE
++	$(call if_changed_rule,kheaders_data)
++
++# generated headers in objtree
++#
++# include/generated/utsversion.h is ignored because it is generated
++# after gen_kheaders.sh is executed. (utsversion.h is unneeded for kheaders)
++filechk_kheaders_objlist = \
++	for d in include "arch/$(SRCARCH)/include"; do \
++		find "$${d}/generated" ! -path "include/generated/utsversion.h" -a -name "*.h" -print; \
++	done
++
++$(obj)/kheaders-objlist: FORCE
++	$(call filechk,kheaders_objlist)
++
++# non-generated headers in srctree
++filechk_kheaders_srclist = \
++	for d in include "arch/$(SRCARCH)/include"; do \
++		find "$(srctree)/$${d}" -path "$(srctree)/$${d}/generated" -prune -o -name "*.h" -print; \
++	done
++
++$(obj)/kheaders-srclist: FORCE
++	$(call filechk,kheaders_srclist)
++
++# Some files are symlinks. If symlinks are changed, kheaders_data.tar.xz should
++# be rebuilt.
++filechk_kheaders_md5sum = xargs -r -a $< stat -c %N | md5sum
++
++$(obj)/kheaders.md5: $(obj)/kheaders-srclist FORCE
++	$(call filechk,kheaders_md5sum)
++
++clean-files := kheaders.md5 kheaders-srclist kheaders-objlist
+diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+index c9e5dc068e85..0ff7beabb21a 100755
+--- a/kernel/gen_kheaders.sh
++++ b/kernel/gen_kheaders.sh
+@@ -4,79 +4,33 @@
+ # This script generates an archive consisting of kernel headers
+ # for CONFIG_IKHEADERS.
+ set -e
+-sfile="$(readlink -f "$0")"
+-outdir="$(pwd)"
+ tarfile=$1
+-tmpdir=$outdir/${tarfile%/*}/.tmp_dir
++srclist=$2
++objlist=$3
+ 
+-dir_list="
+-include/
+-arch/$SRCARCH/include/
+-"
++dir=$(dirname "${tarfile}")
++tmpdir=${dir}/.tmp_dir
++depfile=${dir}/.$(basename "${tarfile}").d
+ 
+-# Support incremental builds by skipping archive generation
+-# if timestamps of files being archived are not changed.
++# generate dependency list.
++{
++	echo
++	echo "deps_${tarfile} := \\"
++	sed 's:\(.*\):  \1 \\:' "${srclist}"
++	sed -n '/^include\/generated\/autoconf\.h$/!s:\(.*\):  \1 \\:p' "${objlist}"
++	echo
++	echo "${tarfile}: \$(deps_${tarfile})"
++	echo
++	echo "\$(deps_${tarfile}):"
+ 
+-# This block is useful for debugging the incremental builds.
+-# Uncomment it for debugging.
+-# if [ ! -f /tmp/iter ]; then iter=1; echo 1 > /tmp/iter;
+-# else iter=$(($(cat /tmp/iter) + 1)); echo $iter > /tmp/iter; fi
+-# find $all_dirs -name "*.h" | xargs ls -l > /tmp/ls-$iter
+-
+-all_dirs=
+-if [ "$building_out_of_srctree" ]; then
+-	for d in $dir_list; do
+-		all_dirs="$all_dirs $srctree/$d"
+-	done
+-fi
+-all_dirs="$all_dirs $dir_list"
+-
+-# include/generated/utsversion.h is ignored because it is generated after this
+-# script is executed. (utsversion.h is unneeded for kheaders)
+-#
+-# When Kconfig regenerates include/generated/autoconf.h, its timestamp is
+-# updated, but the contents might be still the same. When any CONFIG option is
+-# changed, Kconfig touches the corresponding timestamp file include/config/*.
+-# Hence, the md5sum detects the configuration change anyway. We do not need to
+-# check include/generated/autoconf.h explicitly.
+-#
+-# Ignore them for md5 calculation to avoid pointless regeneration.
+-headers_md5="$(find $all_dirs -name "*.h" -a			\
+-		! -path include/generated/utsversion.h -a	\
+-		! -path include/generated/autoconf.h		|
+-		xargs ls -l | md5sum | cut -d ' ' -f1)"
+-
+-# Any changes to this script will also cause a rebuild of the archive.
+-this_file_md5="$(ls -l $sfile | md5sum | cut -d ' ' -f1)"
+-if [ -f $tarfile ]; then tarfile_md5="$(md5sum $tarfile | cut -d ' ' -f1)"; fi
+-if [ -f kernel/kheaders.md5 ] &&
+-	[ "$(head -n 1 kernel/kheaders.md5)" = "$headers_md5" ] &&
+-	[ "$(head -n 2 kernel/kheaders.md5 | tail -n 1)" = "$this_file_md5" ] &&
+-	[ "$(tail -n 1 kernel/kheaders.md5)" = "$tarfile_md5" ]; then
+-		exit
+-fi
+-
+-echo "  GEN     $tarfile"
++} > "${depfile}"
+ 
+ rm -rf "${tmpdir}"
+ mkdir "${tmpdir}"
+ 
+-if [ "$building_out_of_srctree" ]; then
+-	(
+-		cd $srctree
+-		for f in $dir_list
+-			do find "$f" -name "*.h";
+-		done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
+-	)
+-fi
+-
+-for f in $dir_list;
+-	do find "$f" -name "*.h";
+-done | tar -c -f - -T - | tar -xf - -C "${tmpdir}"
+-
+-# Always exclude include/generated/utsversion.h
+-# Otherwise, the contents of the tarball may vary depending on the build steps.
+-rm -f "${tmpdir}/include/generated/utsversion.h"
++# shellcheck disable=SC2154 # srctree is passed as an env variable
++sed "s:^${srctree}/::" "${srclist}" | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${tmpdir}"
++tar -c -f - -T "${objlist}" | tar -xf - -C "${tmpdir}"
+ 
+ # Remove comments except SDPX lines
+ # Use a temporary file to store directory contents to prevent find/xargs from
+@@ -92,8 +46,4 @@ tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=$KBUILD_BUILD_TIMESTAMP}" \
+     --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
+     -I $XZ -cf $tarfile -C "${tmpdir}/" . > /dev/null
+ 
+-echo $headers_md5 > kernel/kheaders.md5
+-echo "$this_file_md5" >> kernel/kheaders.md5
+-echo "$(md5sum $tarfile | cut -d ' ' -f1)" >> kernel/kheaders.md5
+-
+ rm -rf "${tmpdir}"
+-- 
+2.43.0
+
 
