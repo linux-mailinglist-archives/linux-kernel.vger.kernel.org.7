@@ -1,127 +1,135 @@
-Return-Path: <linux-kernel+bounces-676922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B349AD133B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB84AD133F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121E63AB5BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 16:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0703AB614
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 16:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860F419DF41;
-	Sun,  8 Jun 2025 16:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05821A262A;
+	Sun,  8 Jun 2025 16:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uwtdajuw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="g8aLhamM"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AE22629C;
-	Sun,  8 Jun 2025 16:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CA52AE6D
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 16:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749399276; cv=none; b=c+dsgDIiLZgBk3lIvJ1iyUP4icvObz85kgLTG2WA3vTdsCqXMYXq+4ZAyR61PW+9sNTzsnR/y1a7n0eaGQUryYxOgR/8HQKc2oyZ6EZiVslR9xE6kMcgqbS//Ux8ch3iNHzuyFBkujOfbHZLTTmZifbLdA9Ay6PsTyPRtodDuE4=
+	t=1749399358; cv=none; b=kJSJonxEqFbexlhAdPOxRGz/Sa8f8Fr396dwWQi9dPnmtAZIxezoNfdFu6GOcgeqQQGnIUsP7gGmzfo1GNZuy2nAV2oWF4qRbuCguFmZByQM7hhv6R5R21gzj2TTZx6/6vqrhsi7qEoDRyuJEtEkDWUfscn4hg/ODVl4JcRREPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749399276; c=relaxed/simple;
-	bh=gbZO/RRvz3Ja0dEvss2KALNwk3mqOXhlGeAl034WO7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fS6AhFQ7gCVTphD1E8x+OpLZgQ0QykdkjqADcLp1ybeUvhDPipMWYesU8XHC4BkVugvuIC5HXjNy9j6e3zJBtqmfS99pOQpp2gEJnKgpW3r8ZdoPaE7vGzL3c5FxzMXvw/eGaKxkc76+JlKZfF8xR6uF01aBfatPHkUNqBJmGMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uwtdajuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB48C4CEEE;
-	Sun,  8 Jun 2025 16:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749399275;
-	bh=gbZO/RRvz3Ja0dEvss2KALNwk3mqOXhlGeAl034WO7w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UwtdajuwLY/SrQIi6bStqlTXrcdvvlolmbjmF5l6vyopKDERgz58edKhBF/8A39KD
-	 S31LjtffNtnSYFNdA2QcSMsR56J3kZDrJXY4t0VpRuf4K3CX152lVEsf714bxUFhDZ
-	 poP0DwF2Cm5P2PX1nGjhTUww2nWPdTBt5yjS7PWaTge2nWV3Ky8nESMnyYGfAC8rug
-	 Nt42MXA29Q9D9+QmyZZEFcywb7rAXlLrSj0T2OlNuK7qIvSGPS7MbwjK+JU0WRDfZ8
-	 ZvTxJ4nxZNIzYEEqbj4X7riythbwEmmxkgagmT0AWKT6eTUHsyL6RiLRH1O17Rsr2x
-	 REr1vBVo+0/zQ==
-Date: Sun, 8 Jun 2025 17:14:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
- Michael.Hennerich@analog.com, bagasdotme@gmail.com,
- linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/11] iio: accel: adxl313: add inactivity sensing
-Message-ID: <20250608171425.11269bf0@jic23-huawei>
-In-Reply-To: <20250601172139.59156-9-l.rubusch@gmail.com>
-References: <20250601172139.59156-1-l.rubusch@gmail.com>
-	<20250601172139.59156-9-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749399358; c=relaxed/simple;
+	bh=+TMXY3PgyOmmro5hM3GVH6HvB10aNdJaPdpBwKz/48w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sfBfLJ/4MpiAnQzhQO6SUW5fJ9wufdu77eJNBMC/bBZYC8CC2TpMNKWZ3FqQPi9SeTdTYqtVMVv2bovXSoNKkFgcb3PKBmN//B+aUVDSxHdCavCtn6/rx7Jl0x9eeIKowz7In3ioQQ3mqOqxKtX3WupLxVBJC9FMfLw8L8CEC3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=g8aLhamM; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=zJRQ3uMzczhw8zoS9UEtZ+ccogb2vXX4Opul1mk0vkk=; b=g8aLhamMQG8FXYMv
+	1SQ4ZwRPE1V9j2pvNlDyOCRVs754GLZL43v4ICmC00e6gbx9prjvTJMNDzJW33IZaIkKyG6nqOfCJ
+	ql8JinlHq7guNl01fQRbkMjcSpIlQa9TgtYLtdMVguhJqXDpjq450AMXELotre9deLytNp985hA7h
+	vD9LDAa6HSFHZaU11xVl4MioTLvb26dPaQgE+hBcHStLoDBz1MUmtzQdHH3E0pXg+gWO2CmQeqtS4
+	D1Futbv60MRufbnJvIpofHrahsXvg/j08rnn1lt23/EU4k+/wgVUGRO2bqbhj9shgdacaOB9N+rAj
+	BNm4JMsV6l9NVANqYQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uOIgJ-008Gsb-2B;
+	Sun, 08 Jun 2025 16:15:35 +0000
+From: linux@treblig.org
+To: richard@nod.at,
+	chengzhihao1@huawei.com,
+	miquel.raynal@bootlin.com,
+	vigneshr@ti.com
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] mtd: ubi: Remove unused ubi_flush
+Date: Sun,  8 Jun 2025 17:15:35 +0100
+Message-ID: <20250608161535.90030-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun,  1 Jun 2025 17:21:36 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> Extend the interrupt handler to process interrupts as inactivity events.
-> Add functions to set threshold and period registers for inactivity. Add
-> functions to enable / disable inactivity. Extend the fake iio channel to
-> deal with inactivity events on x, y and z combined with AND.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+ubi_flush() was added in 2012 as part of
+commit 62f384552b67 ("UBI: modify ubi_wl_flush function to clear work queue
+for a lnum")
+but has remained unused.
 
-> @@ -555,16 +621,30 @@ static int adxl313_write_event_value(struct iio_dev *indio_dev,
->  	if (type != IIO_EV_TYPE_MAG)
->  		return -EINVAL;
->  
-> -	if (info != IIO_EV_INFO_VALUE)
-> -		return -EINVAL;
-> -
-> -	/* Scale factor 15.625 mg/LSB */
-> -	regval = DIV_ROUND_CLOSEST(MICRO * val + val2, 15625);
-> -	switch (dir) {
-> -	case IIO_EV_DIR_RISING:
-> -		ret = regmap_write(data->regmap,
-> -				   adxl313_act_thresh_reg[ADXL313_ACTIVITY],
-> -				   regval);
-> +	switch (info) {
-> +	case IIO_EV_INFO_VALUE:
-> +		/* Scale factor 15.625 mg/LSB */
-> +		regval = DIV_ROUND_CLOSEST(MICRO * val + val2, 15625);
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			ret = regmap_write(data->regmap,
-> +					   adxl313_act_thresh_reg[ADXL313_ACTIVITY],
-> +					   regval);
-> +			if (ret)
-> +				return ret;
-> +			return adxl313_set_measure_en(data, true);
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = regmap_write(data->regmap,
-> +					   adxl313_act_thresh_reg[ADXL313_INACTIVITY],
-> +					   regval);
-> +			if (ret)
-> +				return ret;
-> +			return adxl313_set_measure_en(data, true);
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_EV_INFO_PERIOD:
-> +		ret = adxl313_set_inact_time_s(data, val);
->  		if (ret)
->  			return ret;
->  		return adxl313_set_measure_en(data, true);
+(It's friend ubi_wl_flush() is still used)
 
-Having the enable in the case statement but he disable outside is misbalanced.
-Do it one way or the other (either always disable / enable outside, or both
-inside each relevant case statement.   If we need to do this, I'd have
-a helper function do_adxl313_write_event_value() or similar that is called
-between disabling and enabling measurement mode and contains all the other
-stuff in this function (or along those lines anyway).  You can chose
-whether or not to reenable measurement mode depending on what is returned
-by the helper function.
+Remove it.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/mtd/ubi/kapi.c  | 27 ---------------------------
+ include/linux/mtd/ubi.h |  1 -
+ 2 files changed, 28 deletions(-)
+
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index f1ea8677467f..df0a5a57b072 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -791,33 +791,6 @@ int ubi_sync(int ubi_num)
+ }
+ EXPORT_SYMBOL_GPL(ubi_sync);
+ 
+-/**
+- * ubi_flush - flush UBI work queue.
+- * @ubi_num: UBI device to flush work queue
+- * @vol_id: volume id to flush for
+- * @lnum: logical eraseblock number to flush for
+- *
+- * This function executes all pending works for a particular volume id / logical
+- * eraseblock number pair. If either value is set to %UBI_ALL, then it acts as
+- * a wildcard for all of the corresponding volume numbers or logical
+- * eraseblock numbers. It returns zero in case of success and a negative error
+- * code in case of failure.
+- */
+-int ubi_flush(int ubi_num, int vol_id, int lnum)
+-{
+-	struct ubi_device *ubi;
+-	int err = 0;
+-
+-	ubi = ubi_get_device(ubi_num);
+-	if (!ubi)
+-		return -ENODEV;
+-
+-	err = ubi_wl_flush(ubi, vol_id, lnum);
+-	ubi_put_device(ubi);
+-	return err;
+-}
+-EXPORT_SYMBOL_GPL(ubi_flush);
+-
+ BLOCKING_NOTIFIER_HEAD(ubi_notifiers);
+ 
+ /**
+diff --git a/include/linux/mtd/ubi.h b/include/linux/mtd/ubi.h
+index 562f92504f2b..c3f79c4be1cc 100644
+--- a/include/linux/mtd/ubi.h
++++ b/include/linux/mtd/ubi.h
+@@ -250,7 +250,6 @@ int ubi_leb_unmap(struct ubi_volume_desc *desc, int lnum);
+ int ubi_leb_map(struct ubi_volume_desc *desc, int lnum);
+ int ubi_is_mapped(struct ubi_volume_desc *desc, int lnum);
+ int ubi_sync(int ubi_num);
+-int ubi_flush(int ubi_num, int vol_id, int lnum);
+ 
+ /*
+  * This function is the same as the 'ubi_leb_read()' function, but it does not
+-- 
+2.49.0
 
 
