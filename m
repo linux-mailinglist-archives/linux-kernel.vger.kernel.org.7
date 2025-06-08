@@ -1,129 +1,188 @@
-Return-Path: <linux-kernel+bounces-676789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1C3AD1111
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 07:50:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0584CAD1114
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 07:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FC927A4E37
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 05:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD99B16B763
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 05:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41031EF09C;
-	Sun,  8 Jun 2025 05:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="cDk9ImqY"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043BE1F417E;
+	Sun,  8 Jun 2025 05:52:30 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB88148857
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 05:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDB11372
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 05:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749361841; cv=none; b=fCGLL/EvQf+bZuBWwzgmTOBnarDz/5o5O/EUyY2xMrICPXHrNZl0i1CM9/VG9/9XwjIPAMPOQlwYYSPVn1tkUtSP7VmR+h7o8bWGT8WApZyiKwxYrLsByzezu8WnSLR69eKEjiUTI6iMpcNZZZwSaL1Yl8O+z64rRSeKXqnuisI=
+	t=1749361949; cv=none; b=szbH3qyNtPudzjdtviaiNTSkIWrbVUUWf4freU09c+8edpP9O/o271WjwaHeU2KCkPtID36E2LMDWphN+Fs/LFxMeX0WpaTe4IutIbro+v31cE3GjFgENzz5HTeEE+LI6bC6GQgtIuuDqk0KBZYeiuErSEbm6d54dkYq1dVRyA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749361841; c=relaxed/simple;
-	bh=TlOIMpuuoAyKGk9gjg8G/OAZyZmpaD/ZxYdYhrdhNdk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OZe5IQoOuH/JF5LhQjWpsiaitqxgX0qwO9O9U0diw3gIooIVa6CfXBRsuu1q8Y4uKRG7gwkNyIbxPcX5WebA1pX/BBiQWt+b0vnfxr2rCNzq7+k5yIQ6kzalQsqJixIEaJjU1Jyi5ngM76aGQWTB/iBtEX7+BDXDhS2WNXo5gGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=cDk9ImqY; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
-	by cmsmtp with ESMTPS
-	id O88aupd6WWuHKO8vWulCk8; Sun, 08 Jun 2025 05:50:39 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id O8vWuUSJArsgDO8vWucIaM; Sun, 08 Jun 2025 05:50:38 +0000
-X-Authority-Analysis: v=2.4 cv=TNGOSEla c=1 sm=1 tr=0 ts=684524ae
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lUHmgINEyCFmmkEtF4jfi7/biy8jznJWVAGipEhPEvM=; b=cDk9ImqYc2NN9gjE8g0lgZPuxB
-	axIpbJ3bye0M/5qZHW+18czKia1gtD53IbqrD6/19nbNoYmnN9z/HSh+ngMFHSEgU3pFUMelZPVqQ
-	3HfZzrKrNulDfux/Z7OxzRpdZ8KHE5A9uFGXioY754HYWv+4tnwLEAALfKjJ9TBNQvymwbSYa4Mo2
-	lTsqRDndfGKrY3eSQ0kHT2wyenq30NJyoAo+aSP0fodwF3LG+gtyw0eLOtrhyrCaTQd6MdNGC+Cvu
-	QeDEXd4U6kEFf4PQ2l0+/r8+hbsSAu5ltrsmjl82ljBqbKJ9HtJOmAyce00Y3h+hm9LdW7c8PUKp4
-	amGnhX9g==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:50976 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uO8vU-00000003U2C-1YPz;
-	Sat, 07 Jun 2025 23:50:36 -0600
-Message-ID: <3491ec91-fc3a-49b7-abf7-3f5c8e227d93@w6rz.net>
-Date: Sat, 7 Jun 2025 22:50:33 -0700
+	s=arc-20240116; t=1749361949; c=relaxed/simple;
+	bh=qKfRNG4CDlfDLTDcwYrI3sQenEFSFY+8eszH/djEgpw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LSBWXUFl6Y/DzL+7Cb+CJMIZxETeyec/Nhv9+A+3WAltyZ42d4Og/dljEIByJSbU/6VW1vYCm+2VIXIqNlo+sgAbnFbAiC7g2f5OXFZZgzwH9as4dbRtScCi0pZdqNxzlIw8cmaUGKQs6WyAt2At99oaXrMInLSZBV/qb1Pn/1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddbfe1fc8fso88103805ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 22:52:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749361947; x=1749966747;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jcpD0WAjPXInoYOjIEM2gCgbdLZHAzXILaKBUQO5vQI=;
+        b=ebP4jtTL6D/eTHwgKhafKNn3EsTBlkIaz0BUOkHJECykyW85WQiQAsilZPYlr0Fzh4
+         V/wjFv6/kb88oKnw1jFxiHvSgRlfBEybMQeyl1UAv2HK14xUvQpNy5D9wi8cYkPnNatH
+         bQcP8TWQm6I/wNlCNyhBpJBZDyNOpSseK0lVHGng60Xnh15JjCBgMp62ERSrLdef+dkY
+         bG4yNfYj5BZc4qy4ZnWKjxV0Il2ZiOyfiWGDLeEuVo+HS6qKsAGpk9+fHKa54u3Yt/d9
+         e8sU+BYDc9PwPe3/xDzUTMPPEZPAe3kLR2VDaI3ZLgYKrOLbA1fHxtffiZLdnVBbGzYJ
+         toVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHr/HGXCDfFis6YN8b3fS2GjC4DMBxVuIL4MyT+8kEzheg83KDDVLWzLOhqKJneyZZuKIvTvG8vJHUUQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiqfQ9iHZ9orX88MN1mIf5D/lVmI+XE2SU3GWs9IC4u1ZcbZ1B
+	zEUWeQ+6I9DTCFYLGRluNlQROt/+xkllZs7JsSt+rI/0gr9oxfrAzOTf1FwZtAfzVlWidivvTu3
+	mm/kYuJrXCbuiyXlTzPcpoJi7dhLt+wyddeXnV4CbpSJAaLasF/Zuzs1WBT4=
+X-Google-Smtp-Source: AGHT+IGxpDaJrmlySBLqlw/KI8UBV6V43VtsKHhfdAabbQN0gual+U7s2e4m87WT1EHQ12tptZaJOSaZvnkhB+iBsY25DpGpBVEc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 00/24] 6.12.33-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250607100717.910797456@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250607100717.910797456@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1uO8vU-00000003U2C-1YPz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:50976
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 54
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJUxtziQy3k3Mm89uyfyVMeQFF2KdhrFDu82wt2Vg+3VxWm4f3mvgKXkG7p6PjvN/ZQiGjsf+Fjv4PMrLHByH5fENzviLRIYhvF5Hkwoa3mxIyuLlsPH
- OXpH8cYQyifdFjszdk003Zn1YOD8UiL2GRdSFQ8qEk7okruXFdz6xPrXRbfSu84cN+Dv03YInCYWcymrHX2XPVZ5kQLpEqRLCDQ=
+X-Received: by 2002:a05:6e02:1521:b0:3dc:7f17:72e6 with SMTP id
+ e9e14a558f8ab-3ddce461b22mr106219555ab.5.1749361947068; Sat, 07 Jun 2025
+ 22:52:27 -0700 (PDT)
+Date: Sat, 07 Jun 2025 22:52:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6845251b.050a0220.daf97.0aed.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in vfs_get_tree (2)
+From: syzbot <syzbot+10a214d962941493d1dd@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/7/25 03:07, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.33 release.
-> There are 24 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Mon, 09 Jun 2025 10:07:05 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.33-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hello,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+syzbot found the following issue on:
 
-Tested-by: Ron Economos <re@w6rz.net>
+HEAD commit:    911483b25612 Add linux-next specific files for 20250604
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=161761d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28859360c84ac63d
+dashboard link: https://syzkaller.appspot.com/bug?extid=10a214d962941493d1dd
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1106940c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ce7c82580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1067df4a0ae9/disk-911483b2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1ec468cccc74/vmlinux-911483b2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/02250b138a0f/bzImage-911483b2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ac45824a405f/mount_0.gz
+
+The issue was bisected to:
+
+commit ad7a2ae339342ce4721993e637ecd9f7dc654f3b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Mon Jun 2 00:22:17 2025 +0000
+
+    bcachefs: Add missing restart handling to check_topology()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=162c2c0c580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=152c2c0c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=112c2c0c580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+10a214d962941493d1dd@syzkaller.appspotmail.com
+Fixes: ad7a2ae33934 ("bcachefs: Add missing restart handling to check_topology()")
+
+bcachefs (loop0): error in recovery: ENOMEMemergency read only at seq 10
+bcachefs (loop0): bch2_fs_start(): error starting filesystem ENOMEM
+bcachefs (loop0): shutting down
+bcachefs (loop0): shutdown complete
+bcachefs: bch2_fs_get_tree() error: ENOMEM
+Filesystem bcachefs get_tree() didn't set fc->root, returned 12
+------------[ cut here ]------------
+kernel BUG at fs/super.c:1812!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5842 Comm: syz-executor187 Not tainted 6.15.0-next-20250604-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:vfs_get_tree+0x29f/0x2b0 fs/super.c:1812
+Code: 1b 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 14 8b ee ff 48 8b 33 48 c7 c7 00 31 99 8b 44 89 f2 e8 d2 42 f2 fe 90 <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000437fd58 EFLAGS: 00010246
+RAX: 000000000000003f RBX: ffffffff8e7829a0 RCX: ad6f5de195933e00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa9ec R12: 1ffff1100ea3c216
+R13: dffffc0000000000 R14: 000000000000000c R15: 0000000000000000
+FS:  000055558ea4c380(0000) GS:ffff888125c4d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005620027d9f60 CR3: 0000000075234000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_new_mount+0x24a/0xa40 fs/namespace.c:3874
+ do_mount fs/namespace.c:4211 [inline]
+ __do_sys_mount fs/namespace.c:4422 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4399
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff57623fe2a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffda26af7f8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffda26af810 RCX: 00007ff57623fe2a
+RDX: 00002000000000c0 RSI: 0000200000000000 RDI: 00007ffda26af810
+RBP: 0000200000000000 R08: 00007ffda26af850 R09: 0000000000005972
+R10: 0000000000800000 R11: 0000000000000282 R12: 00002000000000c0
+R13: 00007ffda26af850 R14: 0000000000000003 R15: 0000000000800000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:vfs_get_tree+0x29f/0x2b0 fs/super.c:1812
+Code: 1b 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 14 8b ee ff 48 8b 33 48 c7 c7 00 31 99 8b 44 89 f2 e8 d2 42 f2 fe 90 <0f> 0b 66 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000437fd58 EFLAGS: 00010246
+RAX: 000000000000003f RBX: ffffffff8e7829a0 RCX: ad6f5de195933e00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa9ec R12: 1ffff1100ea3c216
+R13: dffffc0000000000 R14: 000000000000000c R15: 0000000000000000
+FS:  000055558ea4c380(0000) GS:ffff888125c4d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe40667f19 CR3: 0000000075234000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
