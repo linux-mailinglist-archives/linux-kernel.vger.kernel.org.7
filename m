@@ -1,220 +1,159 @@
-Return-Path: <linux-kernel+bounces-676757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A20EAD10A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 02:46:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BC8AD10A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 03:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1398E16B832
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 00:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20000188D6E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 01:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600BD1EA91;
-	Sun,  8 Jun 2025 00:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8FBBA3F;
+	Sun,  8 Jun 2025 01:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMLxrRdw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V31ppRS+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ADD4C8E;
-	Sun,  8 Jun 2025 00:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218CBEEDE
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 01:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749343586; cv=none; b=Y2Qm2/ydT94i1Gze7iac2zUBXQbpwX2kfTk7eLKLJ9LTZ2qI8OG/B4dL3ivoxdp76MF59VlqxWp6iuTS4ks+OTshniIGqzbAokzc3/iTzL9vwyzdJ6Jueqek4J+oM3rkynFrjBtn/nKegGyvG2DUmqKVU+CZmLqmnVFz+fCpKI4=
+	t=1749344638; cv=none; b=cAZ9NkfSDHtoXBnHFpI4ILNkg9uqOaWDaIukcWFl5ahbjD1d9+8/03pGRC3+BGWgx9Ls7A4F4oyTdw/ovI01D9OfQtl2P6Mq/vg4czByyw72OYrfwAuHN0/j6DLDXzmwv/vdkZP9CP7FT61mOYlrJNk088IafFhbbpAntbEtOqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749343586; c=relaxed/simple;
-	bh=Fp7T3V/QSAricMxCzvCPDfiMJjRar1Zwu6b6fSOeInE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C3g8Pi+hZF5idrO+CB9IuUPTAy+8UhIPkzX9hs8oQsxJWzV6IegrqPh5KmJazUZlcDDsESAlGshqxJ8KZqOPG2hPdbqL5tY+gtZ3sTzXKZBpRdurv+qQ6ZTvlqpkPh5eDlkhbAiyQM014leCHsYPwk73fCj/K6wQ3DNuU/W7DJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMLxrRdw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1E90C4CEE4;
-	Sun,  8 Jun 2025 00:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749343586;
-	bh=Fp7T3V/QSAricMxCzvCPDfiMJjRar1Zwu6b6fSOeInE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RMLxrRdwxkJ3P0hiHPjpoOgS0QC2Y4bOP0+IQwqpA10UhKE1y6Y1G988rYn4sO2vu
-	 aCYMjnCFU7eC4T4J+RS8xeigASplqVcijOowS3qjRb5YGLPuiLBqDW9yuhn1OEyAj/
-	 14Vw582VeyU4qZSUGw8XsmDUlocuc6hx9RK6O2HAy7QKAwtRoflc1w3KdFE8Myvd74
-	 V0X6DNSN4RsDW1yiRHNHMwkD4bfNX4ZuLP5+iqwH4O0JNYvba+s9/BqTHGVIh2ac0m
-	 SN16mzqaU4pGjaIlU0qtNl6hUSykQidgAfT2WsLOdG4595NayI2xIjYudUJ8RkFa15
-	 Eyi8r5lJbGP0A==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v2] perf annotate: Fix source code annotate with objdump
-Date: Sat,  7 Jun 2025 17:46:13 -0700
-Message-ID: <20250608004613.238291-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749344638; c=relaxed/simple;
+	bh=NRIa/LbPRW8mOnkqUqqn0cCDl9cTBkCpVjOIQ50QLw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rSyBvPD3th2DcKim1W4DpJzc+I6RIPXuI4T7imqXrBpkZ6ySPFpatv4aavgwTHD93pv9BRvwA3BPkEoqHHeLd/lUMiyR9beKcaZDLO7A1jwkWhnR3VHdc14j4YB+LPbrG8te6A4BJ5N8b+oQC4/tvcYSGcvzsLPIc1MMPgNvntg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V31ppRS+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749344636; x=1780880636;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=NRIa/LbPRW8mOnkqUqqn0cCDl9cTBkCpVjOIQ50QLw4=;
+  b=V31ppRS+q2T2PYZHXXlfjgYrei7S0yD0fQ5KmZPBVk6VNZGeho3DsHp3
+   afaQorM9Vx6tHoEGJ33OaG6E6gnvLyJoSmY/BXxONysrMw+bS6+iU+NFQ
+   Cw+ZO9et6KnsAew64UN20zRHXSr7tet+TU09a0EP9998q43RH+33HFTZt
+   M8zx1bSALzkhSbUlLQsax8lGLH/Vx9ASzHtC12iP45duwc/Z2Va78cmgf
+   bk+viBVjSCejJ6FlnvPWLWx4Wgs4zXDE7Li6Pzr+0+yAaqfTvQDF5Bv4g
+   zHAE7Jf8wj6VL/nkqUyg+O5By2SukwmDPDZltQ5p/moViwmK0BGs5ZVKh
+   Q==;
+X-CSE-ConnectionGUID: FPB4kZH9QlKxp0m1DL2oXw==
+X-CSE-MsgGUID: 5KOoaB/6TdWqn4M/PCPKiQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11457"; a="51454100"
+X-IronPort-AV: E=Sophos;i="6.16,219,1744095600"; 
+   d="scan'208";a="51454100"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2025 18:03:55 -0700
+X-CSE-ConnectionGUID: XhHHoTbwSsCozvp03qM4Dg==
+X-CSE-MsgGUID: kq7BfiU2TWCfK98SK065rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,219,1744095600"; 
+   d="scan'208";a="150990374"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 07 Jun 2025 18:03:54 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uO4Rz-00066f-2p;
+	Sun, 08 Jun 2025 01:03:51 +0000
+Date: Sun, 8 Jun 2025 09:03:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Wei Liu <wei.liu@kernel.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>
+Subject: screen_info_pci.c:undefined reference to `screen_info'
+Message-ID: <202506080820.1wmkQufc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Recently it uses llvm and capstone to speed up annotation or disassembly
-of instructions.  But they don't support source code view yet.  Until it
-fixed, we can force to use objdump for source code annotation.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   8630c59e99363c4b655788fd01134aef9bcd9264
+commit: 96959283a58d91ae20d025546f00e16f0a555208 Drivers: hv: Always select CONFIG_SYSFB for Hyper-V guests
+date:   2 weeks ago
+config: arm64-randconfig-r113-20250607 (https://download.01.org/0day-ci/archive/20250608/202506080820.1wmkQufc-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250608/202506080820.1wmkQufc-lkp@intel.com/reproduce)
 
-To prevent performance loss, it's disabled by default and turned it on
-when user requests it in TUI by pressing 's' key.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506080820.1wmkQufc-lkp@intel.com/
 
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
-v2)
- * fix build error  (Arnaldo)
- * move to the first line when new asm line isn't found  (Arnaldo)
+All errors (new ones prefixed by >>):
 
- tools/perf/ui/browsers/annotate.c | 51 +++++++++++++++++++++++++++++--
- tools/perf/util/annotate.c        |  2 ++
- tools/perf/util/annotate.h        |  1 +
- tools/perf/util/disasm.c          |  7 +++++
- 4 files changed, 59 insertions(+), 2 deletions(-)
+   aarch64-linux-ld: aarch64-linux-ld: DWARF error: could not find abbrev number 50
+   drivers/video/screen_info_pci.o: in function `screen_info_fixup_lfb':
+>> screen_info_pci.c:(.text+0x1b4): undefined reference to `screen_info'
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+>> screen_info_pci.c:(.text+0x1b4): dangerous relocation: unsupported relocation
+>> aarch64-linux-ld: screen_info_pci.c:(.text+0x1b8): undefined reference to `screen_info'
+   aarch64-linux-ld: screen_info_pci.c:(.text+0x1bc): undefined reference to `screen_info'
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x1bc): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: screen_info_pci.c:(.text+0x1c0): undefined reference to `screen_info'
+   aarch64-linux-ld: screen_info_pci.c:(.text+0x248): undefined reference to `screen_info'
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x248): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o:screen_info_pci.c:(.text+0x24c): more undefined references to `screen_info' follow
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   drivers/video/screen_info_pci.o: in function `screen_info_fixup_lfb':
+   screen_info_pci.c:(.text+0x25c): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   drivers/video/screen_info_pci.o: in function `screen_info_apply_fixups':
+   screen_info_pci.c:(.text+0x3e8): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x3f0): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x404): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x498): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x4ac): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x4c0): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x4cc): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x520): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x538): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/video/screen_info_pci.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   screen_info_pci.c:(.text+0x54c): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   aarch64-linux-ld: DWARF error: could not find abbrev number 4733
+   drivers/firmware/sysfb.o: in function `sysfb_parent_dev.constprop.3':
+>> sysfb.c:(.text+0x60): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   drivers/firmware/sysfb.o: in function `sysfb_handles_screen_info':
+   sysfb.c:(.text+0x170): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   sysfb.c:(.text+0x180): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   sysfb.c:(.text+0x20c): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   sysfb.c:(.text+0x224): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   sysfb.c:(.text+0x238): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   sysfb.c:(.text+0x248): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   drivers/firmware/sysfb.o: in function `sysfb_init':
+>> sysfb.c:(.init.text+0x50): dangerous relocation: unsupported relocation
+   aarch64-linux-ld: drivers/firmware/sysfb.o: relocation R_AARCH64_ADR_PREL_PG_HI21 against symbol `screen_info' which may bind externally can not be used when making a shared object; recompile with -fPIC
+   sysfb.c:(.init.text+0x58): dangerous relocation: unsupported relocation
 
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index ab776b1ed2d5b4ba..df518ca1117d2498 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -345,6 +345,23 @@ static void annotate_browser__calc_percent(struct annotate_browser *browser,
- 	browser->curr_hot = rb_last(&browser->entries);
- }
- 
-+static struct annotation_line *annotate_browser__find_new_asm_line(
-+					struct annotate_browser *browser,
-+					int idx_asm)
-+{
-+	struct annotation_line *al;
-+	struct list_head *head = browser->b.entries;
-+
-+	/* find an annotation line in the new list with the same idx_asm */
-+	list_for_each_entry(al, head, node) {
-+		if (al->idx_asm == idx_asm)
-+			return al;
-+	}
-+
-+	/* There are no asm lines */
-+	return NULL;
-+}
-+
- static struct annotation_line *annotate_browser__find_next_asm_line(
- 					struct annotate_browser *browser,
- 					struct annotation_line *al)
-@@ -368,7 +385,8 @@ static struct annotation_line *annotate_browser__find_next_asm_line(
- 	return NULL;
- }
- 
--static bool annotate_browser__toggle_source(struct annotate_browser *browser)
-+static bool annotate_browser__toggle_source(struct annotate_browser *browser,
-+					    struct evsel *evsel)
- {
- 	struct annotation *notes = browser__annotation(&browser->b);
- 	struct annotation_line *al;
-@@ -377,6 +395,35 @@ static bool annotate_browser__toggle_source(struct annotate_browser *browser)
- 	browser->b.seek(&browser->b, offset, SEEK_CUR);
- 	al = list_entry(browser->b.top, struct annotation_line, node);
- 
-+	if (!annotate_opts.annotate_src)
-+		annotate_opts.annotate_src = true;
-+
-+	/*
-+	 * It's about to get source code annotation for the first time.
-+	 * Drop the existing annotation_lines and get the new one with source.
-+	 * And then move to the original line at the same asm index.
-+	 */
-+	if (annotate_opts.hide_src_code && !notes->src->tried_source) {
-+		struct map_symbol *ms = browser->b.priv;
-+		int orig_idx_asm = al->idx_asm;
-+
-+		notes->src->tried_source = true;
-+
-+		/* annotate again with source code info */
-+		annotate_opts.hide_src_code = false;
-+		annotated_source__purge(notes->src);
-+		symbol__annotate2(ms, evsel, &browser->arch);
-+		annotate_opts.hide_src_code = true;
-+
-+		browser->b.entries = &notes->src->source;
-+		al = annotate_browser__find_new_asm_line(browser, orig_idx_asm);
-+		if (unlikely(al == NULL)) {
-+			al = list_first_entry(&notes->src->source,
-+					      struct annotation_line, node);
-+		}
-+		browser->b.seek(&browser->b, al->idx_asm, SEEK_SET);
-+	}
-+
- 	if (annotate_opts.hide_src_code) {
- 		if (al->idx_asm < offset)
- 			offset = al->idx;
-@@ -833,7 +880,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 			nd = browser->curr_hot;
- 			break;
- 		case 's':
--			if (annotate_browser__toggle_source(browser))
-+			if (annotate_browser__toggle_source(browser, evsel))
- 				ui_helpline__puts(help);
- 			annotate__scnprintf_title(hists, title, sizeof(title));
- 			annotate_browser__show(&browser->b, title, help);
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 264a212b47df850c..0dd475a744b6dfac 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1451,6 +1451,7 @@ void annotated_source__purge(struct annotated_source *as)
- 		list_del_init(&al->node);
- 		disasm_line__free(disasm_line(al));
- 	}
-+	as->tried_source = false;
- }
- 
- static size_t disasm_line__fprintf(struct disasm_line *dl, FILE *fp)
-@@ -2280,6 +2281,7 @@ void annotation_options__init(void)
- 	opt->annotate_src = true;
- 	opt->offset_level = ANNOTATION__OFFSET_JUMP_TARGETS;
- 	opt->percent_type = PERCENT_PERIOD_LOCAL;
-+	opt->hide_src_code = true;
- 	opt->hide_src_code_on_title = true;
- }
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index bbb89b32f398b3c9..8b5131d257b01e3e 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -294,6 +294,7 @@ struct annotated_source {
- 	int			nr_entries;
- 	int			nr_asm_entries;
- 	int			max_jump_sources;
-+	bool			tried_source;
- 	u64			start;
- 	struct {
- 		u8		addr;
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index 8f0eb56c6fc66a96..ff475a239f4b0db4 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -2284,6 +2284,13 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
- 		}
- 	}
- 
-+	/* FIXME: LLVM and CAPSTONE should support source code */
-+	if (options->annotate_src && !options->hide_src_code) {
-+		err = symbol__disassemble_objdump(symfs_filename, sym, args);
-+		if (err == 0)
-+			goto out_remove_tmp;
-+	}
-+
- 	err = -1;
- 	for (u8 i = 0; i < ARRAY_SIZE(options->disassemblers) && err != 0; i++) {
- 		enum perf_disassembler dis = options->disassemblers[i];
 -- 
-2.49.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
