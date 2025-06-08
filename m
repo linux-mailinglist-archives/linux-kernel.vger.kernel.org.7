@@ -1,154 +1,90 @@
-Return-Path: <linux-kernel+bounces-676811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B018AD116F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 09:35:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961FFAD1179
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 09:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877FE3AC726
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 07:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4747A188B44D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 07:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA2D1D9A54;
-	Sun,  8 Jun 2025 07:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A9D1FBEBE;
+	Sun,  8 Jun 2025 07:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYVdAu0J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFrXyjgh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2AF15D1
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 07:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A811367;
+	Sun,  8 Jun 2025 07:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749368131; cv=none; b=V3wW0bZREAluqTVVT5KSeZGQ73KvpXQ+OlMIbN/vWm/6jfcfijftctUcNsO+Mhc6lH8AAvvRc83XAehGWvcgpeERQbo6nBRN8C+7GoG09xoXelikkobH+ufWiJxFS5VYcpdKHNIV18B58nQKpkzEDqGw2GgE2rFP+yt2ZmR/So8=
+	t=1749368480; cv=none; b=afLDjjGToBearoiZqQc4e54JRC3+R8jx2jVIRCy27tNhBTAWT8tYP2loPQvkKMTwDhg+4eGBpbqTcW+fvYWYqwumx9ykZJMYNRY/ZWUDzUswOmMu81ttCjiMsdOkhQzhMLzZ8TSRDCYIjBpEFPNp3Cc5y/2bGj0/vp4ke2pkB3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749368131; c=relaxed/simple;
-	bh=kFOysKXG8GqTo4p3fFuz9+4KW4EIctx32RHzxS6qN+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uqu/c1bDTYoB92laVcvT6aMX9u83hJ4uWQhPyfRLWrIQoO1l4oSCWeQl7a78umvx8GLHhtTh231gWQwkOyy5irKO2FKhXMeZprCKjlQPQtc3D6Hr+yZcNglMDYAMJD9phaGG5JHab48ZBlt8Xb1Un481VXxndwoNDbdwVTCPrlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYVdAu0J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CFF1C4AF0B
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 07:35:30 +0000 (UTC)
+	s=arc-20240116; t=1749368480; c=relaxed/simple;
+	bh=Ae/Eq0mvumW6wbNzTIN5amb/zidt0s9bSkgBMomJ9fc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=scDP3AIok83Yv0gsmcHV3VbybgYjxLaT2iUc4B1H7+8uQpZaRk5bbFV/u5xyZv0Ax4jDk/t6i/m9aMqSrOXd/OOwdhM+Ph3OAeTRxkuhFyJTxRdJ8pV5pGrQoEUMdO2N0QrOVhYj6gE3V57BxtfcxIqLTlmn7yYvFhHVSVfj0Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFrXyjgh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4995C4CEEF;
+	Sun,  8 Jun 2025 07:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749368130;
-	bh=kFOysKXG8GqTo4p3fFuz9+4KW4EIctx32RHzxS6qN+U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pYVdAu0JAuSLlkJBhgrHfhWdCkEE2K8yKsOkDOUTTil+d96yCCvSa+IX7+EqOOY+C
-	 zQRDypLyMfBgrToqv3etEFhsriXjkSbqSllccnRBkiBeasWVMdO5t7g9DHHafQdmSA
-	 BxxiEfSQ3sYZgBYhuFDXMCVYe+bpP4i1S4YYxIQFP84AxnfovXFOs4dE+OPi4M58tt
-	 cKaAnpqiCC6oPmArMgRKsRkiCFwL2gDkhoFuFjSQVpZhwIbOV+HZcfFJ76I5SQDLOd
-	 tweXFFnoNDTxgVhIUY7CHeocA+Zg3DWGjVtTaO3foYePZLoHCBIR/M0cqUyyed1dvG
-	 gPOFg9/CcJ29g==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-606c5c9438fso6509171a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 00:35:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXt3vGh1Iv6DDKaiSl7rIEQopQqJyB+J6iBaU0aiEgC+8dEOjg1hGWfZR9n45sUj0Umxyh4eanVXGcHC3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvCvdaACVxdoYJhqeDOOtwGGGT/F66cMMtEHyo2bnjlNSYqnrb
-	TCGSTBwUOJgSEoICmQ8TKvQa4epcI8ubRds4URLWFWMpGR7njSfm6K44uCU0Z0wMWBznOoKKu5f
-	xv+MhyZJrsAShff5MF36Q12hV2p/z6ic=
-X-Google-Smtp-Source: AGHT+IGXHk1U6rfYExFO/mc0/QqUnhoSlT+XQ9nCDnVpXOz/KSZJJ+E759KnH9foQHa4JG334VcHcgsqPOhLN7knhkg=
-X-Received: by 2002:a05:6402:174d:b0:607:783e:5970 with SMTP id
- 4fb4d7f45d1cf-607783e61fdmr5725488a12.8.1749368129125; Sun, 08 Jun 2025
- 00:35:29 -0700 (PDT)
+	s=k20201202; t=1749368480;
+	bh=Ae/Eq0mvumW6wbNzTIN5amb/zidt0s9bSkgBMomJ9fc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=dFrXyjghQ8Gq3gCZBdUIL1+0FoPdUQU0/OwG5RMjMlths9AEONwAwKSa00Y4Ok9lr
+	 RXdjvV0u8mw57ddmOWl0iNBTD9hwPqQu56ZMTSudSP68NhF9qot9ncC0zLhOEVJX0a
+	 4qDpdz0JLvGDQ7XjP4KdRgSjaen6HBF6H8RtxWqJVadjfdmDEn7fTlTCN2F4NRiVtY
+	 Pv9wgT0u2a9rTl0NrLEBmRdxTVHadzxAd5DrKOtWO7qWy3n9MFayjiaEgwY7PQYbpn
+	 raQCU0pReC2s+8ZndaNQQuimTD8jqAq18LSOsUAXZx5/rLS+NWguhvQptX3O92e99l
+	 j/jjbGPmnoPFw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1747276047.git.zhoubinbin@loongson.cn>
-In-Reply-To: <cover.1747276047.git.zhoubinbin@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 8 Jun 2025 15:35:18 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7kbuJfoUbD3XJVwpBZjcYtHZ6kWhFwu4HGjno6gkmSYA@mail.gmail.com>
-X-Gm-Features: AX0GCFtdqkmwOqP8bVELz2Njdxh0gmwMM1ltahpWIc_beMymoC73koIQh5ivYvo
-Message-ID: <CAAhV-H7kbuJfoUbD3XJVwpBZjcYtHZ6kWhFwu4HGjno6gkmSYA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] LoongArch: Add Loongson-2K0500 BMC support
-To: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Huacai Chen <chenhuacai@loongson.cn>, 
-	Lee Jones <lee@kernel.org>, Corey Minyard <minyard@acm.org>, Xuerui Wang <kernel@xen0n.name>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 08 Jun 2025 09:41:15 +0200
+Message-Id: <DAGZDB274O7S.1WW1Y530WRYVY@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH] rust: add `assert_sync` function
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Christian Schrefl" <chrisi.schrefl@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250607-assert_sync-v1-1-b18261da83e2@gmail.com>
+ <DAGEZCRR61A0.30H1MJQXW4CV5@kernel.org>
+ <2531463d-fa6e-430c-a3a6-b179654cfbbe@gmail.com>
+ <DAGI57J7WBD0.2BOT553TRIXH8@kernel.org>
+ <407f04ff-b313-4629-bbdd-f25df14f44da@gmail.com>
+ <DAGNOQOY3B3X.MQD616P04I3U@kernel.org>
+ <eba1cfdd-3756-4f8e-a2b2-e15b8b8b4a18@gmail.com>
+In-Reply-To: <eba1cfdd-3756-4f8e-a2b2-e15b8b8b4a18@gmail.com>
 
-Hi, Binbin,
+On Sun Jun 8, 2025 at 1:38 AM CEST, Christian Schrefl wrote:
+> I don't see any point in paying the compile time hit for a proc macro.
+>
+> The Error is not that bad, just a bit worse. I just don't really see the
+> point since this is only really need for marker traits and realistically
+> only for `Send` and `Sync`. Also the macro would create a function
+> definition for every invocation which would be a (very) small compile tim=
+e
+> hit. So I think that we should just add the `Send` and `Sync` functions f=
+or
+> now and reconsider changing to a macro once/if more than these two is
+> actually needed.=20
 
-I have some small comments, you can add "Reviewed-by: Huacai Chen
-<chenhuacai@loongson.cn>" after you make changes.
+Sounds good.
 
-Huacai
-
-On Thu, May 15, 2025 at 10:32=E2=80=AFAM Binbin Zhou <zhoubinbin@loongson.c=
-n> wrote:
->
-> Hi all:
->
-> This patch set introduces the Loongson-2K0500 BMC.
->
-> It is a PCIe device present on servers similar to the Loongson-3C6000.
-> And it is a multifunctional device (MFD), such as display as a sub-functi=
-on
-> of it.
->
-> For IPMI, according to the existing design, we use software simulation to
-> implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
->
-> Also since both host side and BMC side read and write kcs status, we use
-> fifo pointer to ensure data consistency.
->
-> For the display, based on simpledrm, the resolution is read from a fixed
-> position in the BMC since the hardware does not support auto-detection
-> of the resolution. Of course, we will try to support multiple
-> resolutions later, through a vbios-like approach.
->
-> Especially, for the BMC reset function, since the display will be
-> disconnected when BMC reset, we made a special treatment of re-push.
->
-> Based on this, I will present it in four patches:
-> patch-1: BMC device PCI resource allocation.
-> patch-2: IPMI implementation
-> patch-3: display, based on simpledrm
-> patch-4: BMC reboot support
->
-> Thanks.
->
-> -------
-> V2:
-> - Drop ls2kdrm, use simpledrm instead.
-> Patch (1/3):
->  - Use DEFINE_RES_MEM_NAMED/MFD_CELL_RES simplified code;
->  - Add resolution fetching due to replacing the original display
->    solution with simpledrm;
->  - Add aperture_remove_conflicting_devices() to avoid efifb
->    conflict with simpledrm.
-> Patch (3/3):
->  - This part of the function, moved from the original ls2kdrm to mfd;
->  - Use set_console to implement the Re-push display function.
->
-> Link to V1:
-> https://lore.kernel.org/all/cover.1735550269.git.zhoubinbin@loongson.cn/
->
-> Binbin Zhou (3):
->   mfd: ls2kbmc: Introduce Loongson-2K BMC MFD Core driver
->   ipmi: Add Loongson-2K BMC support
->   mfd: ls2kbmc: Add Loongson-2K BMC reset function support
->
->  drivers/char/ipmi/Makefile       |   1 +
->  drivers/char/ipmi/ipmi_si.h      |   7 +
->  drivers/char/ipmi/ipmi_si_intf.c |   3 +
->  drivers/char/ipmi/ipmi_si_ls2k.c | 250 +++++++++++++++++++
->  drivers/mfd/Kconfig              |  13 +
->  drivers/mfd/Makefile             |   2 +
->  drivers/mfd/ls2kbmc-mfd.c        | 398 +++++++++++++++++++++++++++++++
->  7 files changed, 674 insertions(+)
->  create mode 100644 drivers/char/ipmi/ipmi_si_ls2k.c
->  create mode 100644 drivers/mfd/ls2kbmc-mfd.c
->
->
-> base-commit: 9f2b0c15b752bb940e2eb6737bee30fff96d96b6
-> --
-> 2.47.1
->
->
+---
+Cheers,
+Benno
 
