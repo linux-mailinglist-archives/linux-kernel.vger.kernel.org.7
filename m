@@ -1,129 +1,167 @@
-Return-Path: <linux-kernel+bounces-676965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03E4AD13D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 20:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5093AD13DF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 20:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD294188B141
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D153A4A35
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 18:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF77D1CD1E4;
-	Sun,  8 Jun 2025 18:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEB31D5CF2;
+	Sun,  8 Jun 2025 18:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="kMUkXmV8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SB20Qrrq"
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GA5Z/oZT"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43B1373;
-	Sun,  8 Jun 2025 18:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954B38633F;
+	Sun,  8 Jun 2025 18:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749408322; cv=none; b=HDn1YDT5S4xCrGa/vcTu9wPYGUtiP5Gmwb3fwJYl+K+f4YJq6dEDg6xBrNSK7sgX2p+MQU5Kyc+ei/IX/NG4/vY0qAzxklqhuyJr8bqIgo4FfiRNUMl19BBrB7BkrL0bDFp2qxIvH+m5KJz6W6H873u/Q2xx5vQNhLe2sgkpICQ=
+	t=1749408658; cv=none; b=dp8gqus3GalyL2KFfxrUtknrjHZBjD0GpidCxjusQ97Dz8JYBK8F4K21CBoPTDFMuLgNikPBx2QeF8HMZNZNIiKrnvobdVyYmg2/CDnT5rnl5xbwgDd9kSbeVecEK+Py42WqxcqOfe7fhT7DByVRixVcuCez/eFR0PjmU2v9wCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749408322; c=relaxed/simple;
-	bh=jpY6WF/tyt8ZsPJiNzCryKKly+ppwn8MYx1ZpTHcCgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AesIm6umFBGxn+2gH1iw5/1poIuSiPY5cY20RS9klLAsFcOnFi32mnftAqjziVTe1sBF+cIzeTrXOSIDdt+g88NSiGgsmGa+BwTLuoZYAxN4m/FsONazfHQPkWf3rxTMOP0K0QN8Rhpw/I0Jv6n9eAGSYBDcEYyt6Ei4fkV3vYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=kMUkXmV8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SB20Qrrq; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id B0C602001E3;
-	Sun,  8 Jun 2025 14:45:17 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 08 Jun 2025 14:45:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1749408317;
-	 x=1749415517; bh=pyrxZyuzA0cB9TzK2o1GmFpNIisvskLmghcpCRapKuw=; b=
-	kMUkXmV8EzPikhkBJFVGnuS2wjWadeQwnEeO8kvDsxqi1B3KOiEmaCMg8Na/AyDY
-	O2WTnl0Jk2J/jEU+O+6wh0ZEaQAs/ozWfCMvy8q7QWlrbpIbG5XRgt79h5Q8ay2W
-	6SxSUbcv9H8UeMJeBC4ruQXNvgtx37voEedgebrNaIgyjD+xnik2rtywBsMqf4o6
-	qY26eFDPG8SMurYooUA73L3m8BPwAK3+oYwCU820KpHaaMls5gi4H1l3gTHgRgLu
-	ccHRt72DxBAyGdX+yBaV5lRfOKgmtJ1jg31NJBVGmF4n2HfH/C4etpp19GF3Sk6P
-	pNbKDCs/Yv26hg6/vl1s8w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749408317; x=
-	1749415517; bh=pyrxZyuzA0cB9TzK2o1GmFpNIisvskLmghcpCRapKuw=; b=S
-	B20Qrrql1HNlKE1ptu8rl23aoSFI6mz0aVxTbs4CVsBgaDV2SohoAV+10qivzr7e
-	r1O+psm6WbxtSCY1VNQYODT0sZwl20ZVKVlhAe904CgutowEqCPUayuu/0ghy06h
-	dwdCRAw1wS+7BKynxI96fQfosh0UZVV4ef8PBlZFuqSMyX2V11zOdbfCUNaafUOq
-	ZRbuyqSoQzB4E5NHVuzZu8oo0yAimfOITw8KwY+W4eslcF/pQhU5tTHdiZoEk5m8
-	atuzBHe8bnvBFLVrUoX3Ldhr+gGMmK+KdSvtiG7HVLe8RL7NvqPdlgK6sYTkH9hw
-	WjhmTD7d2mM2ty8LVvd/Q==
-X-ME-Sender: <xms:PNpFaHYshTA3LU5gNz43Nj_WBEJrsG8Iwd3h7mEg3mm6WYYNOzvQpA>
-    <xme:PNpFaGYOZOf4xu9iTv7sKvajyvvha3dPrAOkz7cj48MdK2tdJHDv2N_I6STGnCoZG
-    nkgpBnDkp2dLA-E_GQ>
-X-ME-Received: <xmr:PNpFaJ8d8htT03ZwUBUKVK6O6wK4_nm4XFMVxB1WnpY2XKYF9Berg4vzYRNx0ZaVNqVf7d5TCFRFY7ec3p2J-jfU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdekvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepfedvheeluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdt
-    feeilefhudetgfdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopedvvddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepsghpfhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhith
-    ihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghr
-    nhgvlhdqthgvrghmsehmvghtrgdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:PNpFaNriKuIzFK9kRzEYtsir3VqqWPxxbJAXix0gL3l9wlgw6H8p2Q>
-    <xmx:PNpFaCo3Tj1OngIRGlU5jI42t42-BKAHBV1mwdF2b1mFETNrCMGd6g>
-    <xmx:PNpFaDTVeydiphFBsN45HGYRHj8wYJDT_pSsmIzdor-LIQzeZtEOuw>
-    <xmx:PNpFaKoQ1CeYbxcFjmLZCflVjLepySL-h7GNqXzx4sba9V5LsoSllA>
-    <xmx:PdpFaJJUm4zDI-kB9H60bpmvYQeK62y7VYsXeJIBn_ZUolts2aQ6k6s6>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 8 Jun 2025 14:45:14 -0400 (EDT)
-Message-ID: <7e457120-6c9e-4318-9f92-e794223bfce6@maowtm.org>
-Date: Sun, 8 Jun 2025 19:45:12 +0100
+	s=arc-20240116; t=1749408658; c=relaxed/simple;
+	bh=i7jidX805ido27bLSUjvsY/4xQhzmHpuM2DFF8z+37g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oP3csaxAe7RSotEBQX8C76NYiIYjWc0Q+LqbggUplC/c5rheT9PW38kXp1ufV9ZAGrxcs4ksie3WC6LkfYV2n5FCwAKh+ztgFyP0Gy3eVMwmg7171bIbDprZ1iZZsjE5bwMZvhkOpqgu+F2q5Xt23dbfJByPITkabXlZrosKiek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GA5Z/oZT; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-74800b81f1bso2740281b3a.1;
+        Sun, 08 Jun 2025 11:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749408656; x=1750013456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4FkQOjW0dEQldWqVQqpMRcOS3E+ncteqKD5m7Do0e/E=;
+        b=GA5Z/oZTY1kKrbhB4bRfY/SHHmJe4h43+wV0mdEqfV+h82tOwiSyuYaH/XRiG5N4GE
+         ZParffbXqFHFOh6YUdQmPILrE9mSfrAZa4/gd9awDvdGRfG8udwUNSc4dAMObgeBO1ou
+         hNkhcx/uLYfPDEWeov2EHn+NYE0W8yDiNmvtcnZxBaAZ9bDhFx+NZDf5f2pzOtZdo48b
+         UnG3jneKI87MMJ4BGcC6G3QIQB5j2fBJRfyFjoyWyxW4cr3+Tyb8+XNTJqHpvyalmU7w
+         fyTJ0rlaAGfDD8YsuxJb4fn0BgpQcRAU5QrtDok6/hYncfiXH/gViEJfb4lPlMTQZv1n
+         Ljuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749408656; x=1750013456;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4FkQOjW0dEQldWqVQqpMRcOS3E+ncteqKD5m7Do0e/E=;
+        b=gemYf0ALUwBW43n8h/vqwAIK7ZFHiAUJf8dspggySCP3ZX18PgLYzvt769iyZIt0yb
+         NZyiJPunlpIPFlqicDr0vcRCCCuQ/sJCqXRytX3wkeOqC8511hzvkZYF6vMDguWzjXeo
+         eUNwbVtOUeae65fT9etf25dgTObLVUxMHQ3TzZNDz7M+DyHe+9GrstzF9YwL2FyrjiKY
+         T7zHxkylLNIqnXfi8nCEJRdcPGV7l3/Zj8/nJUXmks19mxYNPNxl2/j+hc77s5IwnhWW
+         v5lem//6XDDwTc9klz9tz9XxBFF92xPYjKogA++LxOZv7wJ8sjpQrX8xWgYII2xbchEs
+         Ti7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUMzHtIoGFSoPidp7iZw1UaqaKQQkW8QaFu0LbmOduQ9CJAwP1Czy4/f/9JTyIp5K9wv0LObc2z@vger.kernel.org, AJvYcCUqK7h1VnX/xRfdg8xT7PqEbBzNOVXaYnHJSkktxDsgpA23h9sMM1GCvTypM1GPYVwD1Jb45JX4JCA=@vger.kernel.org, AJvYcCV33jG9NBEpYL0+1O3QPjUgJnTtQcSuODkxPGfHhOnSdplYnvPPbSBlF57QGCbq7Cg3LjlmiIT1DZMoTXgo@vger.kernel.org, AJvYcCVN6/TrvNGIz+XUhffzHQxyQq7vr4S2Jmzai4/tnOwXK0HpYMABLeTh7ZbhW6JGH+IMVUPHSFVOD649@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1D+W0nDP4niWScHQWkN26rhkQTYpQ3gIM2aUDvu2/xN+ECdgI
+	FxD9afG3Sa20d3mzs8osFN/NXIwSWMg4Wvh5zE/Zd/jX21br4nJex1sC
+X-Gm-Gg: ASbGncv+iBSQ98995ti2wJtLrVVSyxd6qwxWgouiTW1+D8lvDdSk4HTmh/Wo4KDB/xd
+	7FxqzXTuNZ5hg0+d/m+s5P/akVh3xqveXE/FlvA4oq4h1u75b3kj1lF5h5Ur8cxaklqMRaWTgDt
+	cHTgl/+V1MMw/QhUo7k8XnaFe/HHxZJHRNqHsvW6HYBNJNIEqWLTiIyzdPCTy4k1Oec6Wj35zcK
+	AFE/e7T8OC1AfCVUSutOGnhHhqmx3SPdCB7+DqVWiITHHbA5CDKodpL3Rg2ugS66W6lUIJ3gjgA
+	XkN9hbI1f+2gNWgYKzpSdSzBIQCaAEJQ8P8zSiBDh9vSUAXfSZHyHqLl8JNBfqU=
+X-Google-Smtp-Source: AGHT+IFmkmDN5HJMtOVAkQ+D2VV/D9Hx1lj1672INza519ZQEJaZQhN5dtNTS2zy37PO0ZFmNvX1dw==
+X-Received: by 2002:a05:6a00:22c7:b0:748:3485:b99d with SMTP id d2e1a72fcca58-7483485d9d4mr10823644b3a.18.1749408655711;
+        Sun, 08 Jun 2025 11:50:55 -0700 (PDT)
+Received: from celestia.turtle.lan ([2601:1c2:c184:dc00:21ba:8ec7:ee03:e8ae])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af3824fsm4493278b3a.19.2025.06.08.11.50.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jun 2025 11:50:55 -0700 (PDT)
+From: Sam Edwards <cfsworks@gmail.com>
+X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Mark Brown <broonie@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	=?UTF-8?q?Adri=C3=A1n=20Mart=C3=ADnez=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Vignesh Raman <vignesh.raman@collabora.com>,
+	=?UTF-8?q?Daniel=20Kukie=C5=82a?= <daniel@kukiela.pl>,
+	Sven Rademakers <sven.rademakers@gmail.com>,
+	Joshua Riek <jjriek@verizon.net>,
+	Sam Edwards <CFSworks@gmail.com>,
+	stable@vger.kernel.org
+Subject: [RESEND PATCH] arm64: dts: rockchip: Remove workaround that prevented Turing RK1 GPU power regulator control
+Date: Sun,  8 Jun 2025 11:48:55 -0700
+Message-ID: <20250608184855.130206-1-CFSworks@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 bpf-next 2/5] landlock: Use path_walk_parent()
-To: Song Liu <song@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
- mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
- jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
-References: <20250606213015.255134-1-song@kernel.org>
- <20250606213015.255134-3-song@kernel.org>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250606213015.255134-3-song@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/6/25 22:30, Song Liu wrote:
-> Use path_walk_parent() to walk a path up to its parent.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
+The RK3588 GPU power domain cannot be activated unless the external
+power regulator is already on. When GPU support was added to this DT,
+we had no way to represent this requirement, so `regulator-always-on`
+was added to the `vdd_gpu_s0` regulator in order to ensure stability.
+A later patch series (see "Fixes:" commit) resolved this shortcoming,
+but that commit left the workaround -- and rendered the comment above
+it no longer correct.
 
-There is also path walk code in collect_domain_accesses even though that
-one doesn't walk pass mount points.  Not sure if that one should be
-updated to use this helper as well, or maybe fine to keep using
-dget_parent.
+Remove the workaround to allow the GPU power regulator to power off, now
+that the DT includes the necessary information to power it back on
+correctly.
+
+Fixes: f94500eb7328b ("arm64: dts: rockchip: Add GPU power domain regulator dependency for RK3588")
+Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+Cc: <stable@vger.kernel.org>
+---
+
+Hi friends,
+
+This is a patch from about two weeks ago that I failed to address to all
+relevant recipients, so I'm resending it with the recipients of the "Fixes:"
+commit included, as I should have done originally.
+
+The original thread had no discussion.
+
+Well wishes,
+Sam
+
+---
+ arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+index 60ad272982ad..6daea8961fdd 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+@@ -398,17 +398,6 @@ rk806_dvs3_null: dvs3-null-pins {
+ 
+ 		regulators {
+ 			vdd_gpu_s0: vdd_gpu_mem_s0: dcdc-reg1 {
+-				/*
+-				 * RK3588's GPU power domain cannot be enabled
+-				 * without this regulator active, but it
+-				 * doesn't have to be on when the GPU PD is
+-				 * disabled.  Because the PD binding does not
+-				 * currently allow us to express this
+-				 * relationship, we have no choice but to do
+-				 * this instead:
+-				 */
+-				regulator-always-on;
+-
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <550000>;
+ 				regulator-max-microvolt = <950000>;
+-- 
+2.48.1
+
 
