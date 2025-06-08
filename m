@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-677095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B987AD15DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 01:33:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6A6AD15E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 01:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C171518854F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 23:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD0D3A40F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 23:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77142594AA;
-	Sun,  8 Jun 2025 23:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665AD267AEC;
+	Sun,  8 Jun 2025 23:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="bMqJ2Pc/"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qxPC5wev"
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7591F4C85;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6D3209F56;
 	Sun,  8 Jun 2025 23:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749425623; cv=none; b=HfvyoWzer8wOhMhtTNa1MZP2ptXQppvBpxJ0471DyiXmQWw4UyI3R+ce+6D6qwPHcbZ4tZa8V+U3wm7fjK17bM78mBHFiYhEzoqbtMbeNzpmh5qXeabe4FXLlW0RHqJcWKCP7mLVfH90UcEg3tgXi12CsvwenkMQMnj/evnl+xM=
+	t=1749425624; cv=none; b=GSvDuc7UNSwB0pMFbIjJgvDXVTe9d8zNjpLzop6ziisyn1MKlR6XBHUb4h6bw1KA5ch1kVNsJkPqmDX0hL5qw6j/nlLpTq9rhj0gJXjeA4fZKW/QblJ/A1eoT6qYhFKAAaotFoCSonPshdHxj/h7VFc0CxJKhza4VQYc4NGrSn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749425623; c=relaxed/simple;
-	bh=Hu01lxNpqUpXxTdPaEzFHiFpfa2CuI0Opq/59m1Xhzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QYuSnqak9ZS550J1xaEIBYM6Syn4a8YCbCyzOuNlYmnxGwIL/mYtHK8nijBNmKOM2QzkpD/vcKE+dBxwGHGUVH90hhigVxflDzn8Xg20dbTdf83ZZqahZrP8A2mx43+cZHzviBFBzKJqlYuE4A8BDuwTrY+5wZc6lR8wgnjSjBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=bMqJ2Pc/; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1749425624; c=relaxed/simple;
+	bh=/cvVKyHzhQoI48LJcgkMrdv6qtdw4CLFdD26xKbOEl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZUs2q9nxW9f5p8LrFQxeMgde0bj4VLxZCL74tk9OuHKO+imQrtVbt1K1d3MyW4N/oTkG+F8FN/PDw2fEjulULm9FuRlN2imiKmvZ4WOOiZdUy4ueOj4Qr2opcELldLnxqzAOFR9+Nhjd0CssRFvKoHxeyXeEgSBe70umbqrtkgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qxPC5wev; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
 	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=enryPIMFrHBrZtvCmuSU21zt9Yit9gyzryViMNGzoyk=; b=bMqJ2Pc/oq18EoUi
-	Ikw/aThdwt+9uA+owtcXXtAVnqZL4KTo9dMO39+pL/gB9ve61q8U0HHOo4Fb0PsyV0lXmTKEOksGm
-	Wdpa/SBU2PLjprvU9fvaUHJI1SLuV9qi8bEalBZbaRpHC5041DoE2FeT5NO5z1R5iiYq+4O2gwT9/
-	6aX8r1O23A+vzWCf5zq0u44gbMdssd8sDSyQ1g/uknDUOPjk4wChkDUfl1PZtxr8EAR5CIfKn8evE
-	9hxyq62A1YMFutL7LnXb342euuqWMe33InENQabIAGbbWuoxi5IUeAHNTBgUc/RovlYRDMWtojZr7
-	A59pNwksnY9i4AVGig==;
+	:Subject; bh=P1RZtMesjHHey3Igxou9b7mtw18agArL8q30UcPKfGU=; b=qxPC5wevDeeW6+N8
+	ihWwDIk+yKwxKP1b39etRXnRrAHqoTwSuvlgyaaLbopvXQbill4R1Pn2I9F9BvhCizxnMv+qRZMzN
+	R4bXkFH2hXO3LmnuznJ/N+or4BNMrOmlI79vK8p7rdzK75AMcPYoaBkUEE8kkn9qEoYZiTEklblOO
+	f5CkN1lTOyrDsw6H5nt0m9tgf+JsVx+brb1FwHjgnhLNN/v7nVkSs8TNwqlpjlymUpOFZZGFTklHT
+	+atfG3sC0cPlzTaMPgUrxifL0mtiytPnQPL3m6ei4adZBlZlQQnUbPVVdfF8YYigd4JxDIXV3G/Kb
+	hqNHt/UuMMMcr3pGrA==;
 Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
 	by mx.treblig.org with esmtp (Exim 4.96)
 	(envelope-from <linux@treblig.org>)
-	id 1uOPWF-008IvT-02;
+	id 1uOPWF-008IvT-23;
 	Sun, 08 Jun 2025 23:33:39 +0000
 From: linux@treblig.org
 To: gregkh@linuxfoundation.org,
 	linux-usb@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 0/2] usb: gadget: A couple of dead functions
-Date: Mon,  9 Jun 2025 00:33:36 +0100
-Message-ID: <20250608233338.179894-1-linux@treblig.org>
+Subject: [PATCH 1/2] usb: gadget: config: Remove unused usb_gadget_config_buf
+Date: Mon,  9 Jun 2025 00:33:37 +0100
+Message-ID: <20250608233338.179894-2-linux@treblig.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250608233338.179894-1-linux@treblig.org>
+References: <20250608233338.179894-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,21 +64,97 @@ Content-Transfer-Encoding: 8bit
 
 From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This removed a couple of long dead functions in the gadget code.
+usb_gadget_config_buf() has been unused since 2012's
+commit fa06920a3ece ("usb: gadget: Remove File-backed Storage Gadget
+(g_file_storage).")
+
+Remove it.
 
 Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/usb/gadget/config.c | 53 -------------------------------------
+ include/linux/usb/gadget.h  |  4 ---
+ 2 files changed, 57 deletions(-)
 
-
-Dr. David Alan Gilbert (2):
-  usb: gadget: config: Remove unused usb_gadget_config_buf
-  usb: gadget: Remove unused usb_remove_config
-
- drivers/usb/gadget/composite.c | 24 ---------------
- drivers/usb/gadget/config.c    | 53 ----------------------------------
- include/linux/usb/composite.h  |  3 --
- include/linux/usb/gadget.h     |  4 ---
- 4 files changed, 84 deletions(-)
-
+diff --git a/drivers/usb/gadget/config.c b/drivers/usb/gadget/config.c
+index 95f144a54ed9..256364d4b941 100644
+--- a/drivers/usb/gadget/config.c
++++ b/drivers/usb/gadget/config.c
+@@ -53,59 +53,6 @@ usb_descriptor_fillbuf(void *buf, unsigned buflen,
+ }
+ EXPORT_SYMBOL_GPL(usb_descriptor_fillbuf);
+ 
+-/**
+- * usb_gadget_config_buf - builts a complete configuration descriptor
+- * @config: Header for the descriptor, including characteristics such
+- *	as power requirements and number of interfaces.
+- * @buf: Buffer for the resulting configuration descriptor.
+- * @length: Length of buffer.  If this is not big enough to hold the
+- *	entire configuration descriptor, an error code will be returned.
+- * @desc: Null-terminated vector of pointers to the descriptors (interface,
+- *	endpoint, etc) defining all functions in this device configuration.
+- *
+- * This copies descriptors into the response buffer, building a descriptor
+- * for that configuration.  It returns the buffer length or a negative
+- * status code.  The config.wTotalLength field is set to match the length
+- * of the result, but other descriptor fields (including power usage and
+- * interface count) must be set by the caller.
+- *
+- * Gadget drivers could use this when constructing a config descriptor
+- * in response to USB_REQ_GET_DESCRIPTOR.  They will need to patch the
+- * resulting bDescriptorType value if USB_DT_OTHER_SPEED_CONFIG is needed.
+- */
+-int usb_gadget_config_buf(
+-	const struct usb_config_descriptor	*config,
+-	void					*buf,
+-	unsigned				length,
+-	const struct usb_descriptor_header	**desc
+-)
+-{
+-	struct usb_config_descriptor		*cp = buf;
+-	int					len;
+-
+-	/* config descriptor first */
+-	if (length < USB_DT_CONFIG_SIZE || !desc)
+-		return -EINVAL;
+-	*cp = *config;
+-
+-	/* then interface/endpoint/class/vendor/... */
+-	len = usb_descriptor_fillbuf(USB_DT_CONFIG_SIZE + (u8 *)buf,
+-			length - USB_DT_CONFIG_SIZE, desc);
+-	if (len < 0)
+-		return len;
+-	len += USB_DT_CONFIG_SIZE;
+-	if (len > 0xffff)
+-		return -EINVAL;
+-
+-	/* patch up the config descriptor */
+-	cp->bLength = USB_DT_CONFIG_SIZE;
+-	cp->bDescriptorType = USB_DT_CONFIG;
+-	cp->wTotalLength = cpu_to_le16(len);
+-	cp->bmAttributes |= USB_CONFIG_ATT_ONE;
+-	return len;
+-}
+-EXPORT_SYMBOL_GPL(usb_gadget_config_buf);
+-
+ /**
+  * usb_copy_descriptors - copy a vector of USB descriptors
+  * @src: null-terminated vector to copy
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index df33333650a0..0f28c5512fcb 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -860,10 +860,6 @@ container_of(str_item, struct gadget_string, item)
+ int usb_descriptor_fillbuf(void *, unsigned,
+ 		const struct usb_descriptor_header **);
+ 
+-/* build config descriptor from single descriptor vector */
+-int usb_gadget_config_buf(const struct usb_config_descriptor *config,
+-	void *buf, unsigned buflen, const struct usb_descriptor_header **desc);
+-
+ /* copy a NULL-terminated vector of descriptors */
+ struct usb_descriptor_header **usb_copy_descriptors(
+ 		struct usb_descriptor_header **);
 -- 
 2.49.0
 
