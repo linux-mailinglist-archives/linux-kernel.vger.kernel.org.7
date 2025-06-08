@@ -1,139 +1,133 @@
-Return-Path: <linux-kernel+bounces-676761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7E5AD10AD
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 03:25:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2139AD10B6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 03:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB223AC466
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 01:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14D416A049
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 01:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EE56F099;
-	Sun,  8 Jun 2025 01:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622F033987;
+	Sun,  8 Jun 2025 01:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="YyXBIX0N"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YXxA2AoJ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03789BA27;
-	Sun,  8 Jun 2025 01:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2708E1DA5F
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 01:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749345940; cv=none; b=u6qhPBzJD+shJ/UaAH4PbE4dNSaVknCXecV+ipi3fEkyys+nC1uSDuTeip1xZODv+SlwzMeWNEq5Kw+UN+Q3w3iJOhoZ6lcelpUW9nLQq9tTLDydMuegDTqYGCztdGFpx7IV6vV6T/wPsmwV7Ko+uxwEhULajBeTz+wdDKaz0Tk=
+	t=1749346656; cv=none; b=eKezdWN79pI11FDv7MuuZ1ujuNfLWPgCYtEsbny1egxm00yOZPMFT7oSgVvF+agLu9378hWLYZHrUd0usMuuOp0ID4OTd6W03en121JR6x2KGpqrAN/+tBWUiBgWxRy4Cgc/pa6GPUwUnld2m5in4NkoDhDtY6HHpEX2osdAJEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749345940; c=relaxed/simple;
-	bh=0YUKrUynV6vU5tGY0vHhfX7mN3CW+H3YNEBxP3RjGk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YE6Mi+mXz52mWMwH2S39dddbAJ6/2FqrLR1QHAfYrIMYt/bXdpxb8COGfdavxMzxuguCML72UCiIRxqy+4w8xfxlOjjJA01MfLNvThw3FUyQu2pIIVt8xnUmGuDIrGV/ZiycjBj/l/JWkNKonhPFGJfn9Egrl3sQCWtNMY+cbj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=YyXBIX0N; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=lsYaog1HzQES+8YAX8AuY2m8sh1Bobp+Ncwbdrkz51g=; b=YyXBIX0N03HIb8uZ
-	FgzNyAcxcqjmsGSNjnQkbvHpxezVpktnysxauri9PRTthKHgvAhVXSmdITDrg4wnzG1GONRSssAy1
-	csGdTWNky8hiI9DFTHcHW5vXamwmnva/jk4sXGgb+J94i4VVnPq8izQHc7facn6P4WXQbRaP8+PKA
-	Y7zDE3pHucKibJtvQXReocU++Kb5h0c83vYwF1Klrz756TfSzHxsZe9GMGHUpZBfnBAXtHxFFkTKE
-	JvS83ew9EeuiFYDmwbLk0oxE1CUE2FaXba1TYzbyvhZXndCn8cMQnd9/ddhHz6DMXMAlKFSmnHjYe
-	sIN61RD7V0BeBh0OTg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1uO4mg-008Dyl-2E;
-	Sun, 08 Jun 2025 01:25:14 +0000
-From: linux@treblig.org
-To: irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	hpa@zytor.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 3/3] platform/x86: intel_telemetry: Remove unused telemetry_raw_read_events
-Date: Sun,  8 Jun 2025 02:25:12 +0100
-Message-ID: <20250608012512.377134-4-linux@treblig.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250608012512.377134-1-linux@treblig.org>
-References: <20250608012512.377134-1-linux@treblig.org>
+	s=arc-20240116; t=1749346656; c=relaxed/simple;
+	bh=gLa4wgs5SImvG9PqO0QQOO0v3MU7f3m9/nhn8/KYkdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQ4RGoHVMKuxADgZr/hxPFFOcPADqu+Wh1JOqBftF4GTK6NGkMuegPDp25N8mYMXvO0K7KWu6R1RezielT+aJWDEpmYM3v4YTNdn78xLNb7QNkmZsFd/srmd1tzPy9nx2t7OQB1MPYqwhQrMKHVngFK5g7NsIee7CE785ZN89ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YXxA2AoJ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235e1d4cba0so25626105ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 18:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749346654; x=1749951454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2sqvYpLGb/0ZKu/5EGoiw9KApDKUisG2VJYva5h7mD0=;
+        b=YXxA2AoJm+2UOlOM5ZPC7/JSl9HL8A8BkduOv5A1zAlgZDtnsYTqEmPSvIb1i/+9aX
+         5fhFSWkd0jxu5z+V7DgkpgMs/UWWZI9OL3rG3Jo8tOhPc/aX5XSFo+Gvamdc98BXmwZl
+         iCx6tDIMdYyQz5wZRvf2DpxD0XZRUZdhH/oF8GK7b9LboxQqxTwVzUXOyLivn6TTZztW
+         RlWdeBJX6s0LdXU7V+iL+xe4+vIfu1JW+CrupyM+dB7zf/z3h7vV34oqwSeI9JtaBLYY
+         Bt1xawu4LQyw9DaGKkLqontKcWrgSr5wNYnSjz9/MMWvwVbXwJ3RKrfKx+U8jwrogavT
+         +xTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749346654; x=1749951454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2sqvYpLGb/0ZKu/5EGoiw9KApDKUisG2VJYva5h7mD0=;
+        b=K57TUAx0WfNSWKCfS4D7iX6bM7ddExSjLS2YCfB2hiROyaPShSyIlGdLzs31/4iLX5
+         AnFHcKSCZ5PTOyrvAgoZWEP5N3rYRiyr0vfk8bfYB50zKmAwyDFaG9BfmRwJuAwVfI08
+         dpfxyALfOF+P+szMJ4VOXR1j8NviN6NQxGfJfPfmYX0Bv5nlx+cXwTZjVpfoo3XDpxOb
+         7ava07IThrgTzODI/f7uiwItdvWvABhRsnmHKfMK0PN7dd/4ZVfXMlQqne06Jckoij4M
+         Wf/xxutrsFotd5KN+TbjjRUkIUPQOe+pXT8wyO0gt8y2gRsp5is8vL0GYr8ylQKqi7qv
+         CszA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxXNxcS8xgoHLZQtLZrPF608J1i592Vy+jF4unRMkkYellS5tQ8soRStvFLbE+Vn6xjXMAyiNr6JRyATg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy997stO/6x/ZESzuqPftg5d7MnmKTnVNKaQ/Ic4UvfuaSojPTq
+	AdeP0dWelnPSCTu4/O5h3bORZZF3zBJuStyhVKxY2EJkJzhMK7D4yrCI
+X-Gm-Gg: ASbGncsxtJmcDJRaIQGhAozO4/fAh/WbYUI3fl0g0dLY2gNHwHjkHTkk0neZAz2I7JZ
+	TYxNWq/wdwVW5FDdlkx4eVUvrcbibNzPbBg01FBgH8v33zO2QfJf/cRktFEx39GmJhUnZyNdjyI
+	wWO1GgbliGEoQOf5mEIh1pD2lseWJ+XFiC9ezE9cpMlt4UwHHoM87PT3IjXIfT3TKEU8/eQyrC5
+	mQdoFDjmBVxIOBifRH9BP4nxJTgSftLKxT3W+q7HOK41OuXNjRIajuMnHUBekjRccF7n6QD2pqx
+	3ZPMul8g1dYYWm+jSU28k42ou0e21vRLWD2jqXGD1fA9mXtfkP7wPKy1/aPp8KNZkkcaQKjSpQ8
+	=
+X-Google-Smtp-Source: AGHT+IEjsGLQhbeTJWsjluro9ebaeJGp9VHRlZ28GkxruIzIQd9kN018WpRicQMyZGKUiyZa1MSGIA==
+X-Received: by 2002:a17:902:d484:b0:235:eb71:a37b with SMTP id d9443c01a7336-23601dce87dmr124564185ad.46.1749346654313;
+        Sat, 07 Jun 2025 18:37:34 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2360340f945sm32484705ad.192.2025.06.07.18.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Jun 2025 18:37:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sat, 7 Jun 2025 18:37:33 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Karthik Poosa <karthik.poosa@intel.com>,
+	Reuven Abliyev <reuven.abliyev@intel.com>,
+	Oren Weil <oren.jer.weil@intel.com>, linux-mtd@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/11] mtd: core: always create master device
+Message-ID: <9dfb2954-fc3e-464c-a4fd-8c1a4dffa327@roeck-us.net>
+References: <20250302140921.504304-1-alexander.usyskin@intel.com>
+ <20250302140921.504304-2-alexander.usyskin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250302140921.504304-2-alexander.usyskin@intel.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi,
 
-telemetry_raw_read_events() was added in 2016's
-commit 378f956e3f93 ("platform/x86: Add Intel Telemetry Core Driver")
-but have remained unused.
+On Sun, Mar 02, 2025 at 04:09:11PM +0200, Alexander Usyskin wrote:
+> Create master device without partition when
+> CONFIG_MTD_PARTITIONED_MASTER flag is unset.
+> 
+> This streamlines device tree and allows to anchor
+> runtime power management on master device in all cases.
+> 
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 
-Unlike the others in this set, it's wrapper calls into a pointer
-also used by another entry, so it's only the entry wrapper that's
-unused.
+Several of my qemu boot tests fail to boot from mtd devices with this patch
+in the mainline kernel. Reverting it fixes the problem. As far as I can
+see this affects configurations with CONFIG_MTD_PARTITIONED_MASTER=y when
+trying to boot from an mtd partition other than mtdblock0, with the
+mtd partition data in devicetree (.../aspeed/openbmc-flash-layout.dtsi).
+Is there a guidance describing the changed behavior, by any chance,
+and how the boot command line now needs to look like when using one of
+the flash partitions as root file system ?
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- arch/x86/include/asm/intel_telemetry.h      |  3 ---
- drivers/platform/x86/intel/telemetry/core.c | 19 -------------------
- 2 files changed, 22 deletions(-)
-
-diff --git a/arch/x86/include/asm/intel_telemetry.h b/arch/x86/include/asm/intel_telemetry.h
-index e7fb005ac8d8..944637a4e6de 100644
---- a/arch/x86/include/asm/intel_telemetry.h
-+++ b/arch/x86/include/asm/intel_telemetry.h
-@@ -87,9 +87,6 @@ int telemetry_get_evtname(enum telemetry_unit telem_unit,
- int telemetry_read_events(enum telemetry_unit telem_unit,
- 			  struct telemetry_evtlog *evtlog, int len);
- 
--int telemetry_raw_read_events(enum telemetry_unit telem_unit,
--			      struct telemetry_evtlog *evtlog, int len);
--
- int telemetry_read_eventlog(enum telemetry_unit telem_unit,
- 			    struct telemetry_evtlog *evtlog, int len);
- 
-diff --git a/drivers/platform/x86/intel/telemetry/core.c b/drivers/platform/x86/intel/telemetry/core.c
-index fe9e8580a8f5..f312864b8d07 100644
---- a/drivers/platform/x86/intel/telemetry/core.c
-+++ b/drivers/platform/x86/intel/telemetry/core.c
-@@ -72,25 +72,6 @@ int telemetry_read_events(enum telemetry_unit telem_unit,
- }
- EXPORT_SYMBOL_GPL(telemetry_read_events);
- 
--/**
-- * telemetry_raw_read_events() - Fetch samples specified by evtlog.telem_evt_id
-- * @telem_unit: Specify whether IOSS or PSS Read
-- * @evtlog:	Array of telemetry_evtlog structs to fill data
-- *		evtlog.telem_evt_id specifies the ids to read
-- * @len:	Length of array of evtlog
-- *
-- * The caller must take care of locking in this case.
-- *
-- * Return: number of eventlogs read for success, < 0 for failure
-- */
--int telemetry_raw_read_events(enum telemetry_unit telem_unit,
--			      struct telemetry_evtlog *evtlog, int len)
--{
--	return telm_core_conf.telem_ops->raw_read_eventlog(telem_unit, evtlog,
--							   len, 0);
--}
--EXPORT_SYMBOL_GPL(telemetry_raw_read_events);
--
- /**
-  * telemetry_read_eventlog() - Fetch the Telemetry log from PSS or IOSS
-  * @telem_unit: Specify whether IOSS or PSS Read
--- 
-2.49.0
-
+Thanks,
+Guenter
 
