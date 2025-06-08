@@ -1,122 +1,93 @@
-Return-Path: <linux-kernel+bounces-676760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-676763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4295AD10A9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 03:04:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 652C2AD10B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 03:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99863188DC4E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 01:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E923AC419
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Jun 2025 01:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5932CCC5;
-	Sun,  8 Jun 2025 01:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB34C13E898;
+	Sun,  8 Jun 2025 01:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzQSchI3"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="pCK5EJVZ"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F53BA3F
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Jun 2025 01:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2631B7F4;
+	Sun,  8 Jun 2025 01:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749344673; cv=none; b=Pt7nTXfZlVyeWJRxhF/ODi6pvbJ5/kxMuxcq+KdGb2L2zKX7HFlbhS90NHywIXkmMbgjg2zDybZz8QN8++JQwOqAwzRARWsvt6tny6Tqr+OL8fAeowQBYp4TYGWec1IQaSEdg1CdUmuPax1BaUw4WjEfkNIQjKiCYZNtjqfDNZQ=
+	t=1749345942; cv=none; b=pnXKcXwbbCQGzGYD9mcCBSnem0Y2plBSBLXvXAXbjTpSLGpgVhyEk8w6xPD9dpag7fjV9xQoWwKKa5/Psa15IjC28EZjfdaxykBGoSZ9Z1ixv0zOz5NiV4EV+ic/FcgLRHZNcLCJjPFjt5h3MCJzbkOoM5Xsr2hmGOnmVNnXrM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749344673; c=relaxed/simple;
-	bh=JO9cJwyQv1zCD2lXY3XoP4YZa+lf2r7pezb6iG6l8/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hd+xFAg1J7vX1D2SBjGYxLFZDalQ3BNIjQmQ/D9sENpsmKAqpqz11gk6R65I/6qQFfQh2tKHF7EspjzrU7i5qI72tI8OOM/7+dx9iSiZ4sXjqSu4InSxhQtfrW7gcR3cYStLB/bcFLZAJJbdM36huTi3vwqyz9SbToWS+4ECZuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzQSchI3; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-742c73f82dfso2575547b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Jun 2025 18:04:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749344670; x=1749949470; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=san6EgIA1IstcXSeExt9z2VEoKgDpmi06XvXrnY50cw=;
-        b=XzQSchI3AHqhqTxe1Rsu6J0eriezjTypgtexc/o/PGa4HtHOSxckLACFoms0Mj+glK
-         +Nez0ywDh1do+qygMJy6bQ8KWz5Ed3L3cXLmZr5djwBMir2Jjh9Hd1+vGK+RSn7FzIxh
-         4EaMhk/X6NnLmb7wRu1I2/oR/hd7Ek6+PG4QUSXk8eFACahkK0SzD3Y9uEo/a/zivLXo
-         v2uyc9EiTZWUVDtzu6qdHCPUJ9w5mtLqFQ31Sq6WRNeO8xJObN4/6LfpgmWyjQKtxugO
-         /DwiVu4aIIDAP21l4d1nAwQ75+iD5iquDtZspt2z1KiWxJBB5TjSdqXXRlC8Pjo+Oji0
-         ZqFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749344670; x=1749949470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=san6EgIA1IstcXSeExt9z2VEoKgDpmi06XvXrnY50cw=;
-        b=ZKKkwV+ClB6YvD/MjQOUiEKiPWAlbzKgCupm6LFPACsHy1meFnJYtdbjd6eSqVuX82
-         owKibfV9IXXe+oqDr25Dhouk6hWTjmSI9g92VNF2jfNzzySi6va3vNKtFGoklwuE2huY
-         uM8Q8/m8oj/natLOmt17ULFrdZOGyQ8E/FIlNeAJL0ttJR6171mOyTFC87tb9Q58Up0a
-         FuKjImrO2ko2QNipn7QV76vBnlu23xiqd+4jVX3oOtr8w2ZdSOTQ5UKsMZdqEydhl1m8
-         Cq7O/1rYR/cwAg6R+bGdhzJCZXyo92xGtQmBc3VYaWV0kwAuUz7Gu+2TJoIZtkkNFNxg
-         gf9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrjRZPjuNQZ30vwB7s5O8L9RbWJv+xAWYmkzwibQXt357tKllSc0xSYVmEIy6WdsiU5fINRSLcc2YapFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP4rT5GgJ8eDU4pqS/qJUQpplLbggtcOb7m6Xbx6M7KPP8Zj/y
-	byCt/AXW5zM4N+mMkRUBDr/eShtMrVmCmtHIWu4NrfjPFpT2LzbGgop1
-X-Gm-Gg: ASbGncvp+oPC9sS4HdL7ndRx7rDoY7Bq37kgfoZilH+fX/jYm04hl4a7eSRwwp/nwx5
-	H4xCMy3vFj3QflTAMaSUm3drqxXBW/1NjLsHqcWO6VXN47E3yX42M8oineCC/xzhah0qvO83mNN
-	6D9ayxkC+dAijzBBNuAkZkpByoNUqqZd6jdmRinB/G/mHo7N5weU4K3VDihkPMtTSWo5RgwU/0D
-	ZMuEGnr5xrfcwkx4qruVELjg46s9XOFl3a3xGxJ0BetsUgTnuMHGY6q3hiz/kKqXV+QFsEKTG/w
-	ZAj2fRl0G5bQQ3taQZHlB7/cNdCarCVGNZhV8nZ+zzD+XkvMIZdIqWBYdMhVIDWpIv8kSDMk4tk
-	=
-X-Google-Smtp-Source: AGHT+IHT+bqzJmd9l7kKFwCcX3st0MUeXc3AL4tTu8d426WHVHLBuWjnNHUStZbNmErFqYlMkXFepA==
-X-Received: by 2002:a05:6a21:6da4:b0:21a:d1fe:9e82 with SMTP id adf61e73a8af0-21ee2628a02mr12992970637.30.1749344670486;
-        Sat, 07 Jun 2025 18:04:30 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0c00d5sm3298054b3a.120.2025.06.07.18.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Jun 2025 18:04:29 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 7 Jun 2025 18:04:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: tudor.ambarus@linaro.org, pratyush@kernel.org, mwalle@kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	alvinzhou@mxic.com.tw, leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH v2 1/3] mtd: spi-nor: macronix: Drop the redundant flash
- info fields
-Message-ID: <d98f6eee-d5f7-43b7-bbc8-d6e7e274723a@roeck-us.net>
-References: <20250407075400.1113177-1-linchengming884@gmail.com>
- <20250407075400.1113177-2-linchengming884@gmail.com>
+	s=arc-20240116; t=1749345942; c=relaxed/simple;
+	bh=wiLoNr62lhql6KkB7rFFjIF+gL/V91maXzW+648yZVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aiw2+ZKa936Z/9rKX+PpFFwYpu2oNJOAFiDnPSi6vGUNYC5mOxV58B7fUox0biCdIrV5j9hyzfzYnaETHa44cD4ZVCUAwlMpS0uVlttVFljIw/rVsW7NshPCqxeOULx99uqfO5iKw+vVEnciaGOLHI5/ut1iK6H4qBqEgFILn9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=pCK5EJVZ; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=+6qOvWF6Mpa8klvQfXLJySHSpyDAqvql3J1sc1qy8UE=; b=pCK5EJVZ2lzj8sj/
+	cQiXmnDfPDtcAYQ61YSnULBCPEMKXA7MO48atJwW692BZTymH9z8/MQ/BhCZDu51z6ZstmMjXfroh
+	hsgnc/U80I2qLPK2wvh2XkmzOK+s5LZieW3qQ+ciwW63f6h2ZpbRB8U24cBUwm6wbPRxQpF7VpeHJ
+	UzttknRDoJS0i6GgdV5RlsvYrIwWnpIFfy5McqofIpH6a59J9RdMWMyoX+jUeb7cSVzR/gj1C4z8A
+	6exXcEreWN0EDTFGXn+MnERezumMIRvRaXb9nRqauImNBR05wGsHI0Rfu1BHp4a7Cpcq6WmW5f2T6
+	/gUTKKxYal9bdRS5Hw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uO4mf-008Dyl-0m;
+	Sun, 08 Jun 2025 01:25:13 +0000
+From: linux@treblig.org
+To: irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	hpa@zytor.com,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/3] platform/x86: intel_telemetry: Remove deadcode
+Date: Sun,  8 Jun 2025 02:25:09 +0100
+Message-ID: <20250608012512.377134-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407075400.1113177-2-linchengming884@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On Mon, Apr 07, 2025 at 03:53:58PM +0800, Cheng Ming Lin wrote:
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> 
-> Many flash devices share the same ID but have different part numbers.
-> To avoid confusion, the part number field is removed.
-> 
-> Additionally, since SFDP already provides size information and
-> functionality covered by no_sfdp_flags, these fields are also removed.
-> 
-> Furthermore, when 4-byte address instruction table is available,
-> the SPI_NOR_4B_OPCODES flag is no longer needed and is removed.
-> 
-> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Many of the entries in the Telemetry core driver are not called
+anywhere, and haven't been since they were originally added in 2016.
 
-With this patch in place, some of my qemu tests no longer recognize the
-flash chips (MX25L25635E/F). Do you have a suggestion on how to handle
-this other than avoiding Macronix flash chips when working with qemu ?
+Remove them.
 
-Thanks,
-Guenter
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+Dr. David Alan Gilbert (3):
+  platform/x86: intel_telemetry: Remove unused telemetry_*_events
+  platform/x86: intel_telemetry: Remove unused [gs]et_sampling_period
+  platform/x86: intel_telemetry: Remove unused telemetry_raw_read_events
+
+ arch/x86/include/asm/intel_telemetry.h        |  37 ---
+ drivers/platform/x86/intel/telemetry/core.c   | 177 --------------
+ drivers/platform/x86/intel/telemetry/pltdrv.c | 231 ------------------
+ 3 files changed, 445 deletions(-)
+
+-- 
+2.49.0
+
 
