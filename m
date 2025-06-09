@@ -1,101 +1,127 @@
-Return-Path: <linux-kernel+bounces-677252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4F1AD185F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:35:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E4BAD1863
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03BE16858A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BF8188B981
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55C2280334;
-	Mon,  9 Jun 2025 05:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D390280031;
+	Mon,  9 Jun 2025 05:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Gpi8SoMr"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qr+ubNrO"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4DC17BD3;
-	Mon,  9 Jun 2025 05:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B17F17BD3;
+	Mon,  9 Jun 2025 05:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749447294; cv=none; b=mZ977pmNzMBUgriYI8/WVnYzOaxFIKNpROQB58ZwDBe6Cg0rHZDil4m/id1cOtZ1g8j0BNcA/NiwKPtpEBnbt0LMxZPIw1+8l6KXyyOhY5Ki1ak9Gh22M4qSqTVaF8LSkogBeJXoRhSinwYcFeWbq0Tei6kAHTcVwM4MVmVWWYQ=
+	t=1749447504; cv=none; b=aSRG5R0TMI0vxCX4zYU0tkDiclV9lWK+1DaX3/HakDTj+Ah1Lhycj+hyd/L9UkWNPxiS4wwbphxE/oBmX6aFGAygQwXHryL2Yc0o45M/ju0l519yZJOk8uz52vrW0HQOJlstTNTVGqo0TXiSK3f6F5TpMxJxQhDfc90sxqjfe4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749447294; c=relaxed/simple;
-	bh=uwxa5npzdokndbCpN5yU7uplXOuCnvLiH5v8BmUtBz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLiiCgVoOii1WySFKTB/qOy3/p7HKWn+8VdAJ2q+ie56r63h1BVbtfjTPwvI9RNFFwKPZzXM1caYrvQXeQtOa99jXO+X+3QP685W6sHtUzCIzev169+a8jMzSuZS6aDGcbImGqCV8C6p5V3RArs4ayjXwfA8eD75xZUcgktppMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Gpi8SoMr; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dkLL/eLFQ+sNI47KAXAvlP2XsLUmCy2MqXXx7+2KD6I=; b=Gpi8SoMrJAabIz21fHEErY778Y
-	1XnDwty0mXeTZmvRbqate1rLoP8K9aaYl4ZgGfTZasMRHyJwzdVFKqx/OSj3D8r5w2xHaR3/v3CDP
-	Wzf84eJ4XASt8QVP65M/0cEtArCvO27ap2Jbx73sjTEEKGOZNbx60WrMMtqNN9glE7LP8LqrMUDsu
-	mIXK9TEJn3RNquJBBfjDjp+aULXXwDebU1Xjub6J3ON8LN/uJSr5lbwRO9xeDmbosyKb1y9SIapdQ
-	COUWwVMFrAohO8ls9FQAeRhy54fPYrls/pxkbo1fdxN8ztPQyGQIki/7WwF/JUsRagCgLCDpoTs4s
-	ze6p+h3g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uOV9e-00000008Whi-3LPI;
-	Mon, 09 Jun 2025 05:34:42 +0000
-Date: Mon, 9 Jun 2025 06:34:42 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>,
-	David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
-	linux-nfs@vger.kernel.org, netfs@lists.linux.dev,
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] Change vfs_mkdir() to unlock on failure.
-Message-ID: <20250609053442.GC299672@ZenIV>
-References: <>
- <20250609005009.GB299672@ZenIV>
- <174944652013.608730.3439111222517126345@noble.neil.brown.name>
+	s=arc-20240116; t=1749447504; c=relaxed/simple;
+	bh=E7t4ziTT3wF/689+gwT++HqhjP1/cK2PxAJ+YqFkDgQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PVEHNHCrdA3cQAcOOpCrecLDtHbIA/YMszKo6njruYDOjW/i5qEDsAm4oZ3F2P33s7GV5vOAyoTrD94ItT6dM6i8jk3PLzTMy2TYgD4X0Nj+TmQGH6MCxXWzY+lw7BZaoLHvwNg10Nx87X8c45PtSQ9TpXt5bGpaNv2q/h+IhrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qr+ubNrO; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7304efb4b3bso2431314a34.0;
+        Sun, 08 Jun 2025 22:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749447501; x=1750052301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wECMIUhZX+RAEutiSlsIQW+PxVMgIoUiBXiClAXqQgA=;
+        b=Qr+ubNrOLrFP/PftEWMJN4EUdVxIZB43Mh56iD+7O0/JNt560JAnYzDC+32bmgmvzs
+         n8QDnvlg1Niky+QsMThp5hwXWYai15IOGuEzJKl8M3705Ogu7OOlthHX/DfRgVcl8hRQ
+         RIGfv8srfFQBkSIGIcxmg+wkCNshxEKPD///i+sbMbi3P9XBnNnHlN68Kug1o6didsnG
+         oTQKj7jnzepsPl1FpqVdHqjK9/f83oWqnC0RbUl26l4KN5++se+EqfOP9swyPb/zHO6w
+         p21PAN9kzKzX5CEew6o5tNhElyv6hOV6ccb6EcF8h/f0/uZ9Keb5xeGn+6UZfakHzWnH
+         3eUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749447501; x=1750052301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wECMIUhZX+RAEutiSlsIQW+PxVMgIoUiBXiClAXqQgA=;
+        b=skES91IqoM+A8l/XQxzD97ERkuRkqM21ZrkBqJDoj5OYpNLqm6Fr4emNdgCSxONhIU
+         TIOZ0pUnG7q8KYYwqQULRq6DQOTJAPmmJyJwE0o9SaORvTTJg7uoXutdrZulzU1J75JY
+         OhOHUQIF2ikM2oOkdfVmyO3M2c5+mUWUSdyGuSauD3RV4yH03M3yf2/YUwm67AZxae4x
+         /PDA1n2O86FTMAxEmifphAuQ7krqcEU133CZNDiZFyzTyBiR+zjZnnr/RU5WJpx90Rw6
+         jCvG6bQofUpjmQGYBFEf2CXbtk9C9K1A2YewmuQYhmaEkAdJs5s1IDc4DgD0by80ekmw
+         4/CA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjtlVbOTfBQia2sz5C09FV/l+eQGiUXCGKTVxU8+g0j9m9D8AR49VHzn18uqFmw0IPz92GNA+lr3cvXBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu0khjFwBRO8Z8n/A834BCzHcHFsxv4f6UmQBU3C+rZ1pJucRj
+	6UHtc/n8E0Ip5iHMiepDZxUKhb6uO2rfCQhAAfHseBOIgmmCDEfjzdPCUYlLiwuhCzo=
+X-Gm-Gg: ASbGncsGgJ4wE51plD7fauozJJoRCy4VHOxxXtZMdLLgbuRy1SYLvj0hcjY/Xucy2fN
+	amVGoeHo/R3g7CoUOyRnjp3cvIJaU2Qd+hQ6GTzxswnSCJwbDumY/qt2XvM2I35qX/mCV7XnFG/
+	gzxNGofILvXfauHay0uU+wwY8GJkXX+N9ZfEEi0srpzoNkivL0aN0Ycm4q7Sp0VgidDrgulu2pf
+	OFlODG/t5S8+LgNMJvX1pbY/Ejv3QwLfZUBu7UIJLEv3UL8A/goW3X0rds7tI/4nU0FE942uRkA
+	kd1IDX9yyefr9amn62TNOtk2orDOjvuoJUToCMFtlABJq+dtTBg3uE7QtBt/G4yl
+X-Google-Smtp-Source: AGHT+IHEPMW4QL4R4mIdsXB9cYzCYRxWgcw8Mv10xqxysGpCwOek+8N7wQFeVEF5+DwJeA8kLp1PwA==
+X-Received: by 2002:a17:902:d4cb:b0:234:ba37:87b2 with SMTP id d9443c01a7336-23601cf094amr176200675ad.10.1749447491085;
+        Sun, 08 Jun 2025 22:38:11 -0700 (PDT)
+Received: from pop-os.. ([2401:4900:1c97:ddea:418d:d481:617b:9b03])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f895274sm4545659a12.68.2025.06.08.22.38.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jun 2025 22:38:10 -0700 (PDT)
+From: Abhinav Ananthu <abhinav.ogl@gmail.com>
+To: wsa+renesas@sang-engineering.com
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com,
+	Abhinav Ananthu <abhinav.ogl@gmail.com>
+Subject: [PATCH] i2c: core: Fix uninit-value in i2c_smbus_xfer_emulated
+Date: Mon,  9 Jun 2025 11:05:08 +0530
+Message-Id: <20250609053507.10628-1-abhinav.ogl@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174944652013.608730.3439111222517126345@noble.neil.brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 09, 2025 at 03:22:00PM +1000, NeilBrown wrote:
-> On Mon, 09 Jun 2025, Al Viro wrote:
-> > On Mon, Jun 09, 2025 at 09:09:37AM +1000, NeilBrown wrote:
-> > > Proposed changes to directory-op locking will lock the dentry rather
-> > > than the whole directory.  So the dentry will need to be unlocked.
-> > 
-> > Please, repost your current proposal _before_ that one goes anywhere.
-> > 
-> 
-> I've posted my proposal for the new API.  This makes the value of the
-> vfs_mkdir() change clear (I hope).
-> 
-> Would you also like me to post the patches which introduce the new
-> locking scheme?
+BUG: KMSAN: uninit-value in i2c_smbus_xfer_emulated drivers/i2c/i2c-core-smbus.c:481 [inline]
+BUG: KMSAN: uninit-value in __i2c_smbus_xfer+0x23e7/0x2f60
 
-Yes, seeing that the rest does not make much sense without that.
+KMSAN reported an uninitialized value access in i2c_smbus_xfer_emulated at
+drivers/i2c/i2c-core-smbus.c:481, triggered during an SMBus transfer via
+i2cdev_ioctl_smbus. The issue occurs because the local buffers msgbuf0 and
+msgbuf1 are not initialized before use, leading to potential undefined
+behavior when their contents are accessed.
 
-I would really like a description of that locking scheme as well,
-TBH, but if you prefer to start with the patches, then so be it.
+Initialize msgbuf0 and msgbuf1 with zeros using memset to ensure all buffer
+contents are defined before they are used in the SMBus transfer. This
+prevents the uninitialized value access reported by KMSAN.
 
-I can't promise a response tonight - going down in an hour or so
-and I'd like to do enough reordering of #work.mount to be able
-to post the initial variant of at least some of that in the
-morning...
+Reported-by: syzbot+0a36c1fec090c67a9885@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=0a36c1fec090c67a9885
+Fixes: 02ddfb981de8 ("KMSAN : Fix uninit-value in i2c_smbus_xfer_emulated")
+Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+---
+ drivers/i2c/i2c-core-smbus.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index e73afbefe222..a3ee30b72f75 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -332,6 +332,8 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+ 	 */
+ 	unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
+ 	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
++	memset(msgbuf0, 0, sizeof(msgbuf0));
++	memset(msgbuf1, 0, sizeof(msgbuf1));
+ 	int nmsgs = read_write == I2C_SMBUS_READ ? 2 : 1;
+ 	u8 partial_pec = 0;
+ 	int status;
+-- 
+2.34.1
+
 
