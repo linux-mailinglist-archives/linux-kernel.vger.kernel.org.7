@@ -1,84 +1,71 @@
-Return-Path: <linux-kernel+bounces-677343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE74AD196B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:57:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3F9AD1985
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1B51882C74
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:57:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667631640D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C13281361;
-	Mon,  9 Jun 2025 07:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C1628136C;
+	Mon,  9 Jun 2025 08:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emnHqe1E"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="pyF1bXyn";
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="S/5Sq+gx"
+Received: from e3i282.smtp2go.com (e3i282.smtp2go.com [158.120.85.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA7A8BFF;
-	Mon,  9 Jun 2025 07:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA99D2459D1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749455823; cv=none; b=W+v9yFH07xz6EI7YEKa+4mQU4Mxwyl+mgQV8Nghl7H829XvXqTrpQocq0e2MG/7Q8r1Aeyy76TPA79Y+lOfMBVn2nX+VUw9yzOoYaXtSd93vGNXjTiOJbOL7uvgRWFOQwK7bL/Oxaj6jzJ3mxxjc7vC0wlOvuQdl9g3VTvOX8Jc=
+	t=1749456253; cv=none; b=GcQ1RQczV/TbI8xts8GnCe463enqlr3vAW0nE7AagOCOGpPC2zFlEHiBwtbKR5HkJT+CKiWXmL2PEmj9LK7gZXmbnBz8iA0dxWkeSQYDUhS7a3ll2eTOHqYiy6C771PJlCavwUnzsSV23Cv6RBH/hAvHECPNdlTkn8nLiwKBuEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749455823; c=relaxed/simple;
-	bh=p49F4iVDjLolb18i6c/cgcidS0xjY2Cgu6gC5AOYAnI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J4KmFCXhcu4QloqBCGRCaE0NIHRZ6YE68UN3LaqajZkE7rgihlWZfy66eGwQuHKo/ew1jcODEEuFtFonLLxjpUP/oRBOeCfugwJtpP7IbxJ1HpdjxYKcXQEYU56ao15c/V7p5bKElW3PEaz7NS0QGZr1amN11TgHgZb2MrzIVgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emnHqe1E; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-742c73f82dfso3115366b3a.2;
-        Mon, 09 Jun 2025 00:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749455822; x=1750060622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9xCRdGyFV/qmREjSzVYn1llBGMmzLISDBHN00C5YP4U=;
-        b=emnHqe1EQuP98GYQSXl2r6uB8TIDjuh9yqM/fwDm0PTcmVFij201BPzWQFmB/iSJXQ
-         v+ccSRDyKUcdeK9zbUlNwKXpnehDGJ7C2cpssV41/G25ILn8HyWRU3DT+/eBJ7otmP3K
-         Zzn90rRSI4UFyhXiFtWMyJe1oYd+f2HeBNX38D82iiLwLYZM2cMwyi16iwEnh8Rt8J1m
-         V3vCCTZ+X65EtaRKibBOk7t2lqVKliLnGiGWM3CRxoFLeqcMI6K/R3tNJSEHnDVI89Zr
-         youHYE1j7OiUfkSlFLej957zXG5JYUzSHcS2Cwk05tyQFBuk3/LRV9tjBPffS4Cps1rr
-         sauw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749455822; x=1750060622;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9xCRdGyFV/qmREjSzVYn1llBGMmzLISDBHN00C5YP4U=;
-        b=WI5sYMyCItVUg+BIP9X9eXHez67ZfE5PjeHsBdxFFDxfw+VkalPlTwuRzTyLTeB7K+
-         F5u6iESo3mnCUJ3hheNFfVdDynZmi1vIqOeRGLHWKyVbtdshA02MD4gjNFuDOpmb/KOc
-         835HsgPQRJLD0MW/v4lLEl0kgSuFPPMTfKzF1JfZrUbNtiqUrJ0uCiwlaz7HrTNigoEB
-         sqqSYcpsCx8iN+ckI7zL6KscmtbQMDY+Blouo4YWUOF/UbXTk3ZmN5uEkL6qMAs8O561
-         NnWDoP9e9vqW5qK78S6k2ktmB1iVr7y5JIsXgWl054yW68PFFd6l/xTHkDgr2kY0rtLX
-         CLzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG3rFqXgbJmL8GEaO/PG0wE7eWNar8jXLaO6a8E8X7hen1QVtHgrXkXL1L2v+82nPJ5ktaL2tTCbdfztE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM5XVpyzDI9PnmhmPE0JP00+0lU5MLcklVLUN+4+FHlo/iFrsT
-	/9b0fRW9HX4mEit7g+4XBwYy/GLI7nuDO2c1uBFli+BudMgoBpKDyOvn
-X-Gm-Gg: ASbGncsZV0cKbRtWtPIqw3ThX6hSpAHz24grw+3LWlzKkBEgHhAMJDSEs1YLaV0k/4V
-	5eG7notojwazL5yobaxWN7LeGZHkBA4FYjSr28W0Wqdh1vqMDqAIOfTI8nJgZPu8VTaAUOdSO1u
-	ZNB4usp4gz5A+SC5QQLZlCX+4Pv7q/LJOpObCDLjRDPZiMNhOR6HHVzaPl9tIouuql9rKvIyc3S
-	qGnF+yMLRYOSzREFWT6i/+H5JrZ9uUpnxuTVYn1cxvDRXRFxSn3rsb7GOKdfeYZnEjvQYQuUDoR
-	UjxRanLG2+rCN2Yg/NOozhRW6NlMmny247ABIzYXsh0v/3zPisQZyQ==
-X-Google-Smtp-Source: AGHT+IFR+PbBitilbpBp7iEMdJfwlPWMhDklOZRnpHUxMAixPokz0lWagcCbzlcwioBQCxH5sPfs/g==
-X-Received: by 2002:a05:6a00:22d1:b0:742:3cc1:9485 with SMTP id d2e1a72fcca58-74827e9c914mr15067788b3a.12.1749455821518;
-        Mon, 09 Jun 2025 00:57:01 -0700 (PDT)
-Received: from pop-os.. ([2401:4900:1c97:ddea:418d:d481:617b:9b03])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0c0138sm5146568b3a.110.2025.06.09.00.56.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 00:57:01 -0700 (PDT)
-From: Abhinav Ananthu <abhinav.ogl@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
+	s=arc-20240116; t=1749456253; c=relaxed/simple;
+	bh=7VIXiVnLp6xUMZfeU9BYhxVdq25YMhx1Vl2EPXeFzSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZD+kHukKcftkufYGesWq2GSc8qfKAu6bpnD/d1+21WZ+ad9CIqy+R01GCssTTliq1CTCA0S6y2LkWJTqJikKt2rQRs4TZEW0IfsWoiILym0hxOpGTvEj/WvUI6A5tpd1CKWECplu4cNZOs020XVBiLJJTtzVSnJMZd0VL1UewY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=pyF1bXyn; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=S/5Sq+gx; arc=none smtp.client-ip=158.120.85.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1749456242; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=OAD1I4lKD9GurTiefje3GPSgP3drA15uqZbSTFtnYlY=;
+ b=pyF1bXyn0nD2/TKm3d72U4PLMotNYyu/4qIqWpy3s1GL/TS7wt3OArBSeax63Wbyu5vNs
+ 0+rVPSbFMyTvDkIXDLaNtWfhIj8n2+jIwf60A1Xyvao24evohkMUkjAhhnGJEzkwjjyKhnl
+ WFXMz45DoxdSsr8PlBq/Cz/Nf5RW8vHw2ukPrncEGbbJMT0r/eQDchOm45jCbUc1BeMBK+V
+ S/OWGoNgUGp90XSBbeIPx7yyBBdm4tHGwAKo9QrxD1vymJwb9dydHhkb36i3ezHAu1l6nzD
+ GDip9Zw1RKzIBkO5e6RjjUFqy7kQrEVQiy685TJ/HOvjooItHDi9PAGW8XaA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1749456242; h=from : subject :
+ to : message-id : date;
+ bh=OAD1I4lKD9GurTiefje3GPSgP3drA15uqZbSTFtnYlY=;
+ b=S/5Sq+gxzB8SV88a2vfKN8KLrwv/CQg2WWsxX/zGT3QzZrSHUSPallGHYsJRVsivqPg9U
+ LObu9G78bCB8frSf3RJZ9Gp+PYUwCRAuhPhN0w1XrtK1Tm04FFO/R1I/I97/RXodPoYWZv9
+ TqC0HQEEkKZN829XcZxxleGswJ+PKx9NwhXlmMDGrODG5aSDVxugZbfTHb/9sK6z7BI4ob3
+ BYXBE0Rnzf+ei5dxvYZ4kMnnOFwb0KVrTrMAGWfLc4GrlA/430AatsTDa8wscQPHD6stmpo
+ F9qYIeN3eiKTZAoSLZlicdVf0apJAb6LIWusB8fbYKBrAxKagwsO3aRXjRMQ==
+Received: from [10.152.250.198] (helo=localhost.localdomain)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1uOXU0-FnQW0hPmmyb-hAwU;
+	Mon, 09 Jun 2025 08:03:52 +0000
+From: edip@medip.dev
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Abhinav Ananthu <abhinav.ogl@gmail.com>,
-	syzbot+5138f00559ffb3cb3610@syzkaller.appspotmail.com
-Subject: [PATCH] fix : slab-out-of-bounds Read in bch2_sb_members_v2_to_text
-Date: Mon,  9 Jun 2025 13:26:14 +0530
-Message-Id: <20250609075613.27146-1-abhinav.ogl@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Edip Hazuri <edip@medip.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] ALSA: hda/realtek - Add mute LED support for HP Victus 16-s1xxx and HP Victus 15-fa1xxx
+Date: Mon,  9 Jun 2025 10:59:44 +0300
+Message-ID: <20250609075943.13934-2-edip@medip.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,52 +73,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854sVoHSOn4rB
+X-smtpcorp-track: sQwNTq7w3mzQ.WTbJk_JeEHmK.2nWZlwyMyRs
 
-BUG: KASAN: slab-out-of-bounds in members_v2_get fs/bcachefs/sb-members.c:68 [inline]
-BUG: KASAN: slab-out-of-bounds in bch2_sb_members_v2_to_text+0x1ae/0x310 fs/bcachefs/sb-members.c:347
+From: Edip Hazuri <edip@medip.dev>
 
-bcachefs: fix slab-out-of-bounds read in bch2_sb_members_v2_to_text
+The mute led on those laptops is using ALC245 but requires a quirk to work
+This patch enables the existing quirk for the devices.
 
-syzbot reported a slab-out-of-bounds read in bch2_sb_members_v2_to_text().
-This function parses superblock member entries from a serialized array,
-but did not properly validate the bounds of each entry before accessing it.
+Tested on my Victus 16-s1011nt Laptop and my friend's Victus 15-fa1xxx. The LED behaviour works as intended.
 
-When the function iterated over v->entries[], it assumed each
-bch_sb_field_members_v2_entry was fully contained within the buffer.
-However, if the structure was truncated or malformed, this could lead to
-reads beyond the end of the allocated slab, triggering memory safety bugs
-under KASAN and potentially leading to undefined behavior.
+v2:
+- add new entries according to (PCI) SSID order
+- link to v1: https://lore.kernel.org/linux-sound/20250607105051.41162-1-edip@medip.dev/#R
 
-This patch adds a bounds check to ensure the offset does not exceed the
-total size of the entries buffer before accessing each entry. This
-prevents out-of-bounds access and resolves the bug.
 
-Reported-by: syzbot+5138f00559ffb3cb3610@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=<5138f00559ffb3cb3610>
-Fixes: 1c8dfd7ba50dbbb72113caf4fa7868512cdad2f4("KASAN: slab-out-of-bounds Read in bch2_sb_members_v2_to_text")
-Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Edip Hazuri <edip@medip.dev>
 ---
- fs/bcachefs/sb-members.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/pci/hda/patch_realtek.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
-index 77809ee23c45..9f137cf7d33e 100644
---- a/fs/bcachefs/sb-members.c
-+++ b/fs/bcachefs/sb-members.c
-@@ -64,6 +64,12 @@ struct bch_member *bch2_members_v2_get_mut(struct bch_sb *sb, int i)
- static struct bch_member members_v2_get(struct bch_sb_field_members_v2 *mi, int i)
- {
- 	struct bch_member ret, *p = __bch2_members_v2_get_mut(mi, i);
-+	size_t array_size = le32_to_cpu(mi->field.u64s)*8-16;
-+	size_t member_bytes = le16_to_cpu(mi->member_bytes);
-+	if (i < 0 || (member_bytes && i >= array_size / member_bytes)) {
-+		memset(&ret, 0, sizeof(ret));
-+		return ret;
-+	}
- 	memset(&ret, 0, sizeof(ret));
- 	memcpy(&ret, p, min_t(size_t, le16_to_cpu(mi->member_bytes), sizeof(ret)));
- 	return ret;
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index cd0d7ba73..c70bee626 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10787,6 +10787,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8b97, "HP", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
+ 	SND_PCI_QUIRK(0x103c, 0x8bb3, "HP Slim OMEN", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8bb4, "HP Slim OMEN", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x103c, 0x8bc8, "HP Victus 15-fa1xxx", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bcd, "HP Omen 16-xd0xxx", ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bdd, "HP Envy 17", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8bde, "HP Envy 17", ALC287_FIXUP_CS35L41_I2C_2),
+@@ -10840,6 +10841,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8c91, "HP EliteBook 660", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8c96, "HP", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
+ 	SND_PCI_QUIRK(0x103c, 0x8c97, "HP ZBook", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
++	SND_PCI_QUIRK(0x103c, 0x8c9c, "HP Victus 16-s1xxx (MB 8C9C)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8ca1, "HP ZBook Power", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8ca2, "HP ZBook Power", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8ca4, "HP ZBook Fury", ALC245_FIXUP_CS35L41_SPI_2_HP_GPIO_LED),
 -- 
-2.34.1
+2.49.0
 
 
