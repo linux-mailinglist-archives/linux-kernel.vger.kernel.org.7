@@ -1,185 +1,270 @@
-Return-Path: <linux-kernel+bounces-677645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD362AD1D14
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:21:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DBEAAD1D31
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4C8D3A4561
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1901C3A3FBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E42561A3;
-	Mon,  9 Jun 2025 12:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6780C2571BF;
+	Mon,  9 Jun 2025 12:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FfqKaodg"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2079.outbound.protection.outlook.com [40.107.244.79])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TGjlwwm1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6665F7FD;
-	Mon,  9 Jun 2025 12:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471676; cv=fail; b=bxN98qGlI47DY2iDUsdzQK5dMpLd+puJjewiW1e/3Zj+GLkJQVYt22dc5VXqTKdUqQEZol4+ZndGQJmW0N3wXJPwxglX5FmGRaCr46prHWtqxQ6JRqiO+yk25gkNv8eYl7SXCxDYbNhpfECltdRm1LvG6R0XBarWw28nbaz72GM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471676; c=relaxed/simple;
-	bh=AvkYcloWMSnNO+GXlJeZASS8aPlGiVr/y/GLqswHrBg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tDZtIX3ib+9YCxOdaSqD6RpN9vLHEXTba5BcqyPedagFquBYrwBOeO3pHfWFlqW7/QtDfvlI6Dw0PxIHN+w8sFPGaK0ELC0nTcb/E/70b7gHfoMNu4WEBUktkxwrxhbhCJSVeGvD256DSFrCv4djgMSW40XComDSTj1R64pCL6I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FfqKaodg; arc=fail smtp.client-ip=40.107.244.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=beI1RJocirv/hfuKOlpVTQFTKX8ieyIRnSRna4Hz9MpvJAJ/W9ivSeKWxLjTZckAYLyQ5TTw3U67mU215yARF0sQkN8PIaAd8Crwnw1YoaYnV5ualH5PJAgcErcSxTADg9Qyv5Loo1bLe6ipv7L5pO97eIt9/ZIcErvN4KZvZdD/Yt6As1uOes7pcy7sNtvnDiSX6k1S+iu2T7/WXthXR13DMtDTcyn8oVhMo7Lsp8v1ah56BVelbGW/GHKtXmLJmc0Zt5IRdq98YluFB865uMJ7LVfIPYv8QcHf2rYJZ2gz8Awz8NSZbmnzQkr3CV9TtcT6VlNK1jU4ndOsY+iBxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7z1iDID1a6Qs4yJ3gZd6GcK43HtJ7WanN8DBoFodzkM=;
- b=KFzxg8nLnW+k2cI8F5wrmEWysy7KH2MNuEqb0yTJI74w9YTbbrd6IE3KJyAfcx1n0Cb1wXTj1hd72GlsnVxnJTVYjfuoM1btoSXS7TMF8r0QzJimGwtZ1jxHlSaqs1BPATxR0ERxbO8xoteKobReEDuCc6Nz33JuGqgPZKJwdWGCBNJzVv6n6qQcstSuaBAzpD3Y1qHZxnbU5V4q5MwuOeDypMUOVk4IR6QZ4gouizGbLOtjMAEvc3ENCEK/CFUVJWdhRneZRDtHTJc9+P/EPYfRAZfVzdFB/RaidFbpUga8R32nTdrHFEHawt2qyd7BVQLH1buN4y4AIE+p6aRYgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7z1iDID1a6Qs4yJ3gZd6GcK43HtJ7WanN8DBoFodzkM=;
- b=FfqKaodg4ryrq4RD58J8Kzw0rBB+UbXd1CTFbp/97rt5XV68vJeVYNDXaRMCFzvKQqwSPlIOu67dNfQD9QmSEaa5Fp9s1o3NFCpdR1/9tqddHAra8Dlo6x5Aa29WTArUdcKqKlj6fBlln7Yzf/S6IG0jkNmnJTnT/XjKYxkovUw=
-Received: from BY5PR03CA0012.namprd03.prod.outlook.com (2603:10b6:a03:1e0::22)
- by DS0PR12MB8219.namprd12.prod.outlook.com (2603:10b6:8:de::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.38; Mon, 9 Jun
- 2025 12:21:13 +0000
-Received: from MWH0EPF000971E4.namprd02.prod.outlook.com
- (2603:10b6:a03:1e0:cafe::aa) by BY5PR03CA0012.outlook.office365.com
- (2603:10b6:a03:1e0::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.32 via Frontend Transport; Mon,
- 9 Jun 2025 12:21:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000971E4.mail.protection.outlook.com (10.167.243.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Mon, 9 Jun 2025 12:21:12 +0000
-Received: from BLR-L1-SARUNKOD.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 07:21:07 -0500
-From: Sairaj Kodilkar <sarunkod@amd.com>
-To: <seanjc@google.com>
-CC: <baolu.lu@linux.intel.com>, <dmatlack@google.com>, <dwmw2@infradead.org>,
-	<francescolavra.fl@gmail.com>, <iommu@lists.linux.dev>,
-	<joao.m.martins@oracle.com>, <joro@8bytes.org>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mlevitsk@redhat.com>, <pbonzini@redhat.com>,
-	<sarunkod@amd.com>, <vasant.hegde@amd.com>
-Subject: Re:[PATCH v2 00/59] KVM: iommu: Overhaul device posted IRQs support
-Date: Mon, 9 Jun 2025 17:50:50 +0530
-Message-ID: <20250609122050.28499-1-sarunkod@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250523010004.3240643-1-seanjc@google.com>
-References: <20250523010004.3240643-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F101E98FB;
+	Mon,  9 Jun 2025 12:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749471787; cv=none; b=QRoeR/FKENibJaMLByHJVG6lBNUKGMak4eVxA+QYkfrZXot2jdrhblwiJp81BI39hF/h6nqsejqGAD8MfK/26IB9Pe8JoxA5qZIPHwO4hG2jjyYNZSi1N/pRzoRiHIa0jlAVLuiEdsmNMNWukTC/IDdRiU2eP9Ci2tOLEHFjeOQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749471787; c=relaxed/simple;
+	bh=A5qRACEaDI3+dHgRmevQrg1z9WAxcwVDEjJ4ASjh5PY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=tkTYrR79YsaHyGi2lMcgey6ZrZl8OWEn0Hnf75gilA5AeoaK3krZZKs+i+ZCZQBstMEePrfcUrbBpVfUTF6uuZ8v2E7pXuPKv5+wtzAVCq9mCJSwQdjzQ/dnlrTEyPRbeqfxTb5eSxf+XU0h2zBveTeX+6JVrL802qfgtw+70PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TGjlwwm1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55995Y2b007016;
+	Mon, 9 Jun 2025 12:22:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+M3zDYod/I0/cVrEUO3FpZ
+	mCIltzgKKZxFM19UJBOq4=; b=TGjlwwm1YMdrZF0XS96uDc9gwd0Al9D0VISsHk
+	gFW3mNPcJavgHAXAOTqqgjWSf0IPe/Hv5+lEmm3/CBrLx2mJHGtxQXQacLde6y/o
+	3kR+Cz7eFrPFIDf82euYtyiX5lUVLygG/ibVgo/53sAwvw7qz9OWBM2KLhTMB2vR
+	XiJ/fXON4dENQ+cOb/NwKOtlYZGzbkruITUWTZYmFXtlja19xEE4P0Wux8YXIFR0
+	ohRBdYeXuRYmqnFqufaqQTlqGLClDQ9u3lOTZs4cxfeKLjtFxnPcNfEU0Uf8+/2k
+	qKuraWvoMBx/0+I+lXI+CTMnF634bdJ0Ok5/uzM//K05QRbA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn65vqy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Jun 2025 12:22:50 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 559CMoeT014949
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Jun 2025 12:22:50 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Jun 2025 05:22:46 -0700
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+Subject: [PATCH v2 00/38] drm/msm/dp: Add MST support for MSM chipsets
+Date: Mon, 9 Jun 2025 20:21:19 +0800
+Message-ID: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E4:EE_|DS0PR12MB8219:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f93b16f-abe3-4415-5971-08dda7501f6b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PyTcCbqcjwIhyEVMoDa48GkO9JnuH9pRvl1Rzthd523UNkObXy1TNignEd7T?=
- =?us-ascii?Q?DFzfrsQ1BIXVYpTBTW74kVZfJiq1URggin0mKk++Gab4W7WzE/NYoPdKDMbT?=
- =?us-ascii?Q?pp9F3dnj16tFzGtX3d0efC2IXPANk7PI7gclYImiJD30D9Y6si7X81hO+9h6?=
- =?us-ascii?Q?43Z9mQsPQaKe4+RjUPKR1Iiwt5qn09Kfm29N0Z35NBti4UdlsbPU09pqNZ5E?=
- =?us-ascii?Q?ROIFP+eftGO7J1RKwMe4JhukCYXj5N4YtLRFHfcsVVDLATIanJG09CqOz+He?=
- =?us-ascii?Q?OufQBSXck9J6JBTrC0IikMfAfAsQDvDlYaBpqdUmjrC/ni6K5NDSb8i8uYEh?=
- =?us-ascii?Q?lmpqw5mauX7Eo8ynyu5zdd0tCiQ7dW4AaEvN66huMTBj8wIYE5QKY65SZMVE?=
- =?us-ascii?Q?ojoI9RFuRA/KdA6bPTyPlQ7ymsKL+FJfa5oArQT3vBm9OxDj237A/J6aj1HU?=
- =?us-ascii?Q?LuQX35SmUamF5RyeI5Y2RrBxlObLEnLcU1PVcYbt49ZluDvfpS65Ek0MIWvC?=
- =?us-ascii?Q?zV4iW0PeIYLZUrcOJYyBDaqpt8POpFwFGUljNxkZBc9ptZ06C60Tmapq8KQE?=
- =?us-ascii?Q?Iy8oWb1Y+ywbNqux3qqkEptN7MqlRauEoSMhOIUNUCdKIJh0rocFlBpUdZ03?=
- =?us-ascii?Q?BYHu662pHekdU/RZQFV/HjHQhjw1uPhwHZ4EfBq+oVRXIcxRx2O7Nwir2eag?=
- =?us-ascii?Q?D+NkZjaCnI/0Kh60tKtxmaGJZgF3fbeGhkho63bsWep0UFKDAAoWjOy3wi4Z?=
- =?us-ascii?Q?N/uUDTbiNsSF0oyRcS5O/BmwbVuSNIAoA+/eU7ELjEbD91J+YoPrxS1T1B/S?=
- =?us-ascii?Q?qRC5jLNMd//vRDy3mIS7KQ6ayzU1vKMKd9lgdYgnZNiGPcl65FCG4GJVfuUg?=
- =?us-ascii?Q?NGa9bLuFdy+GodSMN24raIM5JcuGdacke6YtuyOJ4tYteP+eiLyC7Jm+1K9U?=
- =?us-ascii?Q?h5sGOe1NU0rgK5PXyvBZN6ZW9C0bAG9BMQIOeGvk1QRapr794eNAcYJzncfi?=
- =?us-ascii?Q?zBD0RJ8bBG8ncLxMBZJxAtemqINNVy4msuGJYRRM0Ai695RzgmQkalGgJ3Z3?=
- =?us-ascii?Q?0jXkHID3MZKhSe1+7aZGLfDy6TdVJBBP8Bn0Ys1MQTkjaiE6EHZGV0jToEAB?=
- =?us-ascii?Q?Ab8yMSgXwDlF1R6kF66sunbkIIhybmeTKHOTnpir5n9bQmiAlugwEQ/FZ8lJ?=
- =?us-ascii?Q?9U7L5hFe0aQwNK6YZkrimUvtwgPWieluNqXnFzICd5SdKbgiHPui89QCxxcC?=
- =?us-ascii?Q?hLeietiSfIxoFYWSPziCHJwPG7PSop/4p2YuGTzC5LAB6mrakUydAGyYkJHp?=
- =?us-ascii?Q?S8P5qmeEu0DUE3qeoIj7WuvWf97c++lWFEjHt/GbewCq4lqyIJ9tVqYifpNP?=
- =?us-ascii?Q?bQ32eHnCAoBtRyyatFPX5ky8VKLPiGt0cFdNEaFoUQdeCEtvwU5ecMy5XKqn?=
- =?us-ascii?Q?P+o0WW08d0HKE3KGHr92NZxOBtBBL3iwML0uXw4FTHfmnaAgk97/NHN+Vq1r?=
- =?us-ascii?Q?wPYHHrXmA5O+FDhBawm7ED8g346UUZ3z1cDY?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 12:21:12.1372
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f93b16f-abe3-4415-5971-08dda7501f6b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E4.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8219
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN7RRmgC/22O3WrDMAxGXyX4ei6OEjt2GGPvMUpwLLk1ND+N0
+ rBR+u5z09veSJwPdPTdBdOSiEVb3MVCW+I0jRngoxDh7McTyYSZBSjQyignBx4kznmtMiAGiKZ
+ ETyTywbxQTL+77Of44oWut+xcX6EYiNnvzrb43JUanDzP2GHi+eL/uilGuZVSyUBV1fsAzjbhe
+ 2I+XG/+EqZhOOTx9Xz3Rlap3K3L3bo+jZjGE8sNsiw60LWpsQJv38t6zySfSVrbom50sFr5JiI
+ qV+realM2VWkNagdgnUOjjTXi+Hj8A67FbPZCAQAA
+X-Change-ID: 20250609-msm-dp-mst-cddc2f61daee
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Yongxing
+ Mou" <quic_yongmou@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749471752; l=7498;
+ i=quic_yongmou@quicinc.com; s=20241121; h=from:subject:message-id;
+ bh=A5qRACEaDI3+dHgRmevQrg1z9WAxcwVDEjJ4ASjh5PY=;
+ b=7v9zJgSmgQu3fwWYhshgA7aU73DmzOZur3MgJhSvRJA0EzW8LVU1yfoGTT53nvHGrCdU/5eN5
+ Y1O44Vdf30QDUIiEaBoB+ceYwP/KQVmMufmNuCOjHn6LO5or9AYsou+
+X-Developer-Key: i=quic_yongmou@quicinc.com; a=ed25519;
+ pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA5MiBTYWx0ZWRfXyjlBysWNjbCD
+ mI6KlqPtVG1dnc3K416f65yQhidjSB+yy5Fd8Rn3TvQ/SyEIFJK2trMRH1O+kzFoW8N0thzMnHb
+ 70pOr8zoahhaObybFGzHP+MkkGTMm4iE5KI3NxyuFWPop5sh/fHCDJnfnswVr0BJAQcvSuws2yE
+ YRb3ZEzrHoSwrM8z6YgrJxwZm8nzcNmTPFTnIIMByOfu4tSz6qndJYQGQo86jgDvqzs6J1oRBcg
+ vTSKv34kJcfY82K8ZjwnedgGHtp2opbjUX1Vn7XPW3tlT+KT5XweSVPpMTCJbt4sV9waEjCqTzE
+ K0Av88uSBwdYH4ZqQJC7BaDmDDuL63zdR/D2DcnukraNUX42R6u0Fd6EhP7yb4TzLszCS+7u6Ek
+ J2THzqFe8JDdf+donRXVm+JCvXFVu3lbGbcC15M7rk5ftV1k+m3D0R3Q5JCGAsaf8IQP7rRg
+X-Proofpoint-GUID: pQM50mLLGdNJCYKHzyO2PTrnuHcHD5dK
+X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=6846d21a cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=e5mUnYsNAAAA:8
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=tVI0ZWmoAAAA:8 a=pGLkceISAAAA:8
+ a=COk6AnOGAAAA:8 a=YMXe98Iws-CsfG9zhHUA:9 a=QEXdDO2ut3YA:10
+ a=Vxmtnl_E_bksehYqCbjh:22 a=-BPWgnxRz2uhmvdm1NTO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: pQM50mLLGdNJCYKHzyO2PTrnuHcHD5dK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_05,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1011 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506090092
 
-Hi Sean,
+Add support for Multi-stream transport for MSM chipsets that allow
+a single instance of DP controller to send multiple streams. 
 
-Sorry for the delay in testing. All sanity tests are OK. I reran the performance 
-test on the V2 and noticed that V2 has significantly more GALOG entries than V1
-for all three cases. I also noticed that the Guest Nvme interrupt rate has
-dropped for the 192 VCPUS.
+This series has been validated on sa8775p ride platform using multiple
+MST dongles and also daisy chain method on both DP0 and DP1 upto 1080P.
 
-I haven't figured out what is causing this. I will continue my investigation
-further.
+With 4x4K monitors, due to lack of layer mixers that combination will not
+work but this can be supported as well after some rework on the DPU side.
 
-                          VCPUS = 32, Jobs per NVME = 8
-==============================================================================================
-                                         V2                         V1          Percent change
-----------------------------------------------------------------------------------------------
-Guest Nvme interrupts               124,260,796                 124,559,110             -0.20%
-IOPS (in kilo)                            4,790                       4,796             -0.01%
-GALOG entries                              8117                         169              4702%
-----------------------------------------------------------------------------------------------
+In addition, SST was re-validated with all these changes to ensure there
+were no regressions.
 
+This patch series was made on top of:
 
-                          VCPUS = 64, Jobs per NVME = 16
-==============================================================================================
-                                         V2                         V1          Percent change
-----------------------------------------------------------------------------------------------
-Guest Nvme interrupts              102,394,358                   99,800,056             2.00% 
-IOPS (in kilo)                           4,796                        4,798            -0.04% 
-GALOG entries                           19,057                       11,923            59.83%
-----------------------------------------------------------------------------------------------
+[1] : https://patchwork.freedesktop.org/seriedds/142010/ (v2 to fix up HPD)
 
+Bindings for the pixel clock for additional stream is available at :
 
-                         VCPUS = 192, Jobs per NVME = 48
-==============================================================================================
-                                         V2                         V1          Percent change
-----------------------------------------------------------------------------------------------
-Guest Nvme interrupts               68,363,232                  78,066,512             -12.42%
-IOPS (in kilo)                           4,751                       4,749              -0.04%
-GALOG entries                           62,768                      56,215              11.66%
-----------------------------------------------------------------------------------------------
+[2] : https://patchwork.freedesktop.org/series/142016/
 
-Thanks
-Sairaj
+Overall, the patch series has been organized in the following way:
+
+1) First set are a couple of fixes made while debugging MST but applicable
+to SST as well so go ahead of everything else
+2) Prepare the DP driver to get ready to handle multiple streams. This is the bulk
+of the work as current DP driver design had to be adjusted to make this happen.
+3) Finally, new files to handle MST related operations
+
+Validation was done on the latest linux-next on top of above changes and
+both FB console and weston compositors were validated with these changes.
+
+To: Rob Clark <robin.clark@oss.qualcomm.com>
+To: Dmitry Baryshkov <lumag@kernel.org>
+To: Abhinav Kumar <abhinav.kumar@linux.dev>
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+---
+Changes in v2: Fixed review comments from Dmitry
+- Rebase on top of next-20250606
+- Add all 4 streams pixel clks support and MST2/MST3 Link clk support
+- Address the formatting issues mentioned in the review comments
+- Drop the cache of msm_dp_panel->drm_edid cached
+- Remove the one-line wrapper funtion and redundant conditional check
+- Fixed the commit messgae descriptions of some patches
+- Reordered the patches and renamed some functions and variables
+- Link to v1: https://lore.kernel.org/all/20241205-dp_mst-v1-0-f
+8618d42a99a@quicinc.com/
+
+---
+Abhinav Kumar (35):
+      drm/msm/dp: split msm_dp_panel_read_sink_caps() into two parts and drop panel drm_edid
+      drm/msm/dp: remove dp_display's dp_mode and use dp_panel's instead
+      drm/msm/dp: break up dp_display_enable into two parts
+      drm/msm/dp: re-arrange dp_display_disable() into functional parts
+      drm/msm/dp: allow dp_ctrl stream APIs to use any panel passed to it
+      drm/msm/dp: move the pixel clock control to its own API
+      drm/msm/dp: split dp_ctrl_off() into stream and link parts
+      drm/msm/dp: make bridge helpers use dp_display to allow re-use
+      drm/msm/dp: separate dp_display_prepare() into its own API
+      drm/msm/dp: introduce the max_streams for dp controller
+      drm/msm/dp: introduce stream_id for each DP panel
+      drm/msm/dp: add support for programming p1/p2/p3 register block
+      drm/msm/dp: use stream_id to change offsets in dp_catalog
+      drm/msm/dp: add support to send ACT packets for MST
+      drm/msm/dp: add support to program mst support in mainlink
+      drm/msm/dp: no need to update tu calculation for mst
+      drm/msm/dp: add support for mst channel slot allocation
+      drm/msm/dp: add support to send vcpf packets in dp controller
+      drm/msm/dp: always program MST_FIFO_CONSTANT_FILL for MST
+      drm/msm/dp: abstract out the dp_display stream helpers to accept a panel
+      drm/msm/dp: move link related operations to dp_display_unprepare()
+      drm/msm/dp: replace power_on with active_stream_cnt for dp_display
+      drm/msm/dp: make the SST bridge disconnected when mst is active
+      drm/msm/dp: add an API to initialize MST on sink side
+      drm/msm/dp: skip reading the EDID for MST cases
+      drm/msm/dp: add dp_display_get_panel() to initialize DP panel
+      drm/msm/dp: add dp_mst_drm to manage DP MST bridge operations
+      drm/msm/dp: add connector abstraction for DP MST
+      drm/msm/dp: add HPD callback for dp MST
+      drm/msm: add support for non-blocking commits
+      drm/msm: initialize DRM MST encoders for DP controllers
+      drm/msm/dp: initialize dp_mst module for each DP MST controller
+      drm/msm/dpu: use msm_dp_get_mst_intf_id() to get the intf id
+      drm/msm/dp: mark ST_DISCONNECTED only if all streams are disabled
+      drm/msm/dp: fix the intf_type of MST interfaces
+
+Yongxing Mou (3):
+      drm/msm/dp: Add catalog support for 3rd/4th stream MST
+      drm/msm/dp: propagate MST state changes to dp mst module
+      drm/msm/dp: Add MST stream support for SA8775P DP controller 0 and 1
+
+ drivers/gpu/drm/msm/Makefile                       |    3 +-
+ .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    |    8 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |   21 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h        |    2 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   72 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h            |    2 +-
+ drivers/gpu/drm/msm/dp/dp_audio.c                  |    2 +-
+ drivers/gpu/drm/msm/dp/dp_catalog.c                |  558 ++++++++--
+ drivers/gpu/drm/msm/dp/dp_catalog.h                |   64 +-
+ drivers/gpu/drm/msm/dp/dp_ctrl.c                   |  474 ++++++---
+ drivers/gpu/drm/msm/dp/dp_ctrl.h                   |   22 +-
+ drivers/gpu/drm/msm/dp/dp_display.c                |  510 +++++++---
+ drivers/gpu/drm/msm/dp/dp_display.h                |   33 +-
+ drivers/gpu/drm/msm/dp/dp_drm.c                    |   53 +-
+ drivers/gpu/drm/msm/dp/dp_drm.h                    |   12 -
+ drivers/gpu/drm/msm/dp/dp_mst_drm.c                | 1065 ++++++++++++++++++++
+ drivers/gpu/drm/msm/dp/dp_mst_drm.h                |  106 ++
+ drivers/gpu/drm/msm/dp/dp_panel.c                  |   66 +-
+ drivers/gpu/drm/msm/dp/dp_panel.h                  |   10 +-
+ drivers/gpu/drm/msm/dp/dp_reg.h                    |   46 +-
+ drivers/gpu/drm/msm/msm_atomic.c                   |    3 +
+ drivers/gpu/drm/msm/msm_drv.h                      |   19 +
+ drivers/gpu/drm/msm/msm_kms.c                      |    2 +
+ 23 files changed, 2725 insertions(+), 428 deletions(-)
+---
+base-commit: 475c850a7fdd0915b856173186d5922899d65686
+change-id: 20250609-msm-dp-mst-cddc2f61daee
+prerequisite-message-id: <20250529-hpd_display_off-v1-0-ce33bac2987c@oss.qualcomm.com>
+prerequisite-patch-id: a1f426b99b4a99d63daa9902cde9ee38ae1128d1
+prerequisite-patch-id: ae9e0a0db8edd05da06f9673e9de56761654ed3c
+prerequisite-patch-id: 7cb84491c6c3cf73480343218c543d090f8cb5e2
+prerequisite-patch-id: f32638e79dd498db2075735392e85729b1b691fc
+prerequisite-message-id: <20250530-dp_mst_bindings-v2-0-f925464d32a8@oss.qualcomm.com>
+prerequisite-patch-id: e505c21f653c8e18ce83cad1fc787c13a6c8ed12
+prerequisite-patch-id: cfdd5c37d38b2a4f1386af4021ba3920c6d8dcf8
+prerequisite-patch-id: f4abdddcb90c8203044395f4768d794214fe3225
+prerequisite-patch-id: 45013dfaf34856422b7b6b3d2ee42d81a917177b
+prerequisite-patch-id: 2f35bedb0410bead1b66cbfaf51984fc7016828f
+
+Best regards,
+-- 
+Yongxing Mou <quic_yongmou@quicinc.com>
+
 
