@@ -1,162 +1,157 @@
-Return-Path: <linux-kernel+bounces-677340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB15AD1966
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:54:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C99AD1967
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2C23AD427
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:53:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5EB97A4713
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3900C2820C9;
-	Mon,  9 Jun 2025 07:53:35 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A3328137D;
-	Mon,  9 Jun 2025 07:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E392820C2;
+	Mon,  9 Jun 2025 07:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mMs16IB8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h+QaP8jC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mMs16IB8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h+QaP8jC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F600283140
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 07:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749455614; cv=none; b=EdHydjxHVoTbWYWxuamN/Q5CKYlXH5YGSa1Nz7ypP3H2j1DlIX15axlPcLQIZ6Zv+kuU22uEGYeutcg90K2bsiOmzW6aok26r2mlhkOOQKvlmOXiRRIoBMQW9crbsRVXoxMyEKp8Icfw21uSd/ui/jLkCYMnQPvsBWSe201byIY=
+	t=1749455626; cv=none; b=SudvlBQvelhtsxYcKpj5OLSvRPua4nEt3aUWZbHOzfDqzYGn++jVximO6oz3YdhYCeQPT2zjlwBRxB12tBISg55B4RYSQGu+AMcSEVVEEnZegnZwKd94AzrdzWMZNwp2L/TZAm3Q2lXQZrZk8OF+HIFqFeOLVcyG2bSYidVvPQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749455614; c=relaxed/simple;
-	bh=FGBwJPh8pEHfaqPxdlLTmzyyX6UN9HsTGGpe/TwGMbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyjrvyO1zYKmovHRQnZJVthz9hg49pzv8onaxOzUzyocGPzIggvnZUhfT4lM/jThfwGzDx079b2zcNvF6sEU7uARcSYQLE26n+VWoelMuKMWE2LrRpZVjAGA4OtxrqUigD7Y58gevcGX3GbdelX8PhiAcZR4SrjZbjmIXuN6a6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-da-684692f6e63c
-Date: Mon, 9 Jun 2025 16:53:21 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: willy@infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, kuba@kernel.org,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net,
-	john.fastabend@gmail.com, andrew+netdev@lunn.ch,
-	asml.silence@gmail.com, toke@redhat.com, tariqt@nvidia.com,
-	edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com,
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-	david@redhat.com, lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, horms@kernel.org,
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com, netdev@vger.kernel.org
-Subject: Re: [RFC v4 00/18] Split netmem from struct page
-Message-ID: <20250609075321.GA59170@system.software.com>
-References: <20250604025246.61616-1-byungchul@sk.com>
- <20250604032319.GA69870@system.software.com>
- <CAHS8izPNKe+3A9HAk13idouEzvePnp5Tih0GmSQNzEcsxuvoPA@mail.gmail.com>
- <20250609042255.GA43325@system.software.com>
+	s=arc-20240116; t=1749455626; c=relaxed/simple;
+	bh=9GsLZ+EFoPG+goqQ3sE/qhPuBXkojCUutJAXDaX3vM8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sk7ssFAjhhaQZ5BJjyqdJEX70MhVChFrDd85zfTRq3o1RT+vknJnZVrshoPMSll2cSS72rqXJoDjXnQWNGYxKuKMVS2jCADPa4kik/0Hvck5eTyf3izmrkp0bRhSt5gZ7gVWM/gvnb1KE8S3Oauac1iiP2/l/LoK4OprAMc8/g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mMs16IB8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h+QaP8jC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mMs16IB8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h+QaP8jC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7F95921190;
+	Mon,  9 Jun 2025 07:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749455623; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=quxSoYRKJuTpSqofCNGtGpcfbsATU0SNQEOAN/2/ZKE=;
+	b=mMs16IB8gOL5mRqGaf/nxmurQp1risj63aEfT3kSlnEhYPh1emxJRqdPAc6QNW44+5P8bt
+	s15z/1beGJw/77msfRP40m7WUwDJdhjSh/8QOIF+Mx4s4FSWrSIuz/yTX05JSpCqj0l0Om
+	FNao9ONk0K8BabeSoW5EC+Xzed/4agk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749455623;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=quxSoYRKJuTpSqofCNGtGpcfbsATU0SNQEOAN/2/ZKE=;
+	b=h+QaP8jC0rC1NNNpOCHE7ZzLndSXilHxqzxU8Yb4kfF7gnrVBD5/sm12P7ZoQp58FHjWSs
+	mug58aUBIdnhzzBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mMs16IB8;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=h+QaP8jC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1749455623; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=quxSoYRKJuTpSqofCNGtGpcfbsATU0SNQEOAN/2/ZKE=;
+	b=mMs16IB8gOL5mRqGaf/nxmurQp1risj63aEfT3kSlnEhYPh1emxJRqdPAc6QNW44+5P8bt
+	s15z/1beGJw/77msfRP40m7WUwDJdhjSh/8QOIF+Mx4s4FSWrSIuz/yTX05JSpCqj0l0Om
+	FNao9ONk0K8BabeSoW5EC+Xzed/4agk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1749455623;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=quxSoYRKJuTpSqofCNGtGpcfbsATU0SNQEOAN/2/ZKE=;
+	b=h+QaP8jC0rC1NNNpOCHE7ZzLndSXilHxqzxU8Yb4kfF7gnrVBD5/sm12P7ZoQp58FHjWSs
+	mug58aUBIdnhzzBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5297113A1D;
+	Mon,  9 Jun 2025 07:53:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uprtEgeTRmjKfgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 09 Jun 2025 07:53:43 +0000
+Date: Mon, 09 Jun 2025 09:53:42 +0200
+Message-ID: <8734c98i61.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Brahmajit Das <listout@listout.xyz>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	wychay@ctl.creative.com,
+	tiwai@suse.com,
+	perex@perex.cz
+Subject: Re: [PATCH 1/1] ALSA: ctxfi: Replace deprecated strcpy() with strscpy()
+In-Reply-To: <20250606204000.8156-1-listout@listout.xyz>
+References: <20250606204000.8156-1-listout@listout.xyz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609042255.GA43325@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUzMcRzHfe/3cL9u3fw6xTeZONGY52U+DMuMfY2Zp5mh6Ue/uZuu2vWg
-	GJI2RIdqHu4OJ6qr5HRUx6xSN0RIJqfU9aBsSBQ3PZBOM/332ufp9f7jw1GKTGY8p46IEbUR
-	QriSldGyTs/MWa60Vaq5dbYJYLTcYCH/ZzzkNNsYMOYVI/je2yCFHvsjFq5ddVFgfJFMww9L
-	HwXtD1ul4MzuoOH+sRIKWk8/ZiE1uZ+CJJtZAjXFOgYy+rIoKElslsKre0YWmm4MMtBRkUpD
-	lT6XBqcuGB6axoLr6WcEdkuJBFynLrGQXmtioS3ZiaC2spUGwxEdAkupg4H+n0Y2eDK5k/tW
-	Qu7qG6XEZI0lt80zSIqjliLWvBMssXanScm7uvsseXyhnyZ3bT0Sknr0C0u+tdfTpKv0NUss
-	d17TpNpkl5Ie68T1/DbZkjAxXB0naucsC5WpnEmVVFSDT7zF8pFNROV8CvLgMB+EP/w4yf7j
-	NPtTJgVxHM0H4PQm5C6zfCB2OHopN3vz0/H10rOMmym+kcF9WRvdPIZfhJ/lF0jdLOcB13ce
-	p1OQjFPw9QjffGKihhteuOrie3p4ORAPXK6l3C6K98M5v7nhsj8+WmT4O+4xdNORVvY3mg8/
-	BZcXP5K4b2LexuFCXR0znNkXPzA76DPISz9CoR+h0P9X6EcoTIjOQwp1RJxGUIcHzVYlRKjj
-	Z++O1FjR0OdkHxzYbkPdNZsqEM8hpac89PxKlYIR4qITNBUIc5TSW847V6gU8jAhYb+ojdyp
-	jQ0XoyuQH0crx8nnu/aFKfg9Qoy4VxSjRO2/roTzGJ+IyLOpRdkLt+zICAz+8qvNO6o65PBc
-	xtzp46ddfP5QbthEg6Z39Tyhxc8/ZPHhkzBQWVn06VxS061TrnUtoTL784E1W/NnHnhwxWwo
-	1E0u2NyVdWbXgYBpq1Df6AUuTfaowUlvXrR0a8a+tPWKXWWC76iG5b5xa9tzp26oKkj+ujTB
-	P1ZJR6uEeTMobbTwB0SKrhM1AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXcuO46tjkvzoB/EKVRSWVHwRCGBVK9FESFZfShHntpQZ2wq
-	KgTmhVLSzO6nWZNy6rQGVnNWWG3i3S6aNjWdaUpkXjIznVK5JPLbj///eX7Pl4ch5FmUL6PW
-	JPBajTJWQUtIyf5tGeumC3apNnTYpaA3V9BQPpMMJf1WCvQmC4Kp2R4xfK+tp+Fu0TQB+teZ
-	JPwwuwgYqhsQg9M4TMKzc1UEDFxsoCE3c46AdGupCOyFjRS8seRRcMVVTEBVWr8Y2p/oaeir
-	+E3BsC2XhEahjARn3g6oM6yE6eavCGrNVSKYvlBIw+U2Aw2DmU4EbfYBEm6dzUNgrnFQMDej
-	p3co8KOyLhGuFnrF2FCZiB+WBuMcRxuBK03ZNK6cLBDjD53PaNxwY47E1dbvIpybMUbjb0Pd
-	JB6v6aDx3c8TImx+1EHiFkOt+IDnUcn2aD5WncRrQ0KjJCpnup043eOdbDZ/odPQCzYHeTAc
-	u5krqG2mchDDkGwQd7kPuWOaXcU5HLOEm73YNdy9mkuUmwm2l+JcxQfdvILdyrWW3xe7WcYC
-	1z16nsxBEkbOdiPuQZOBWCw8ucabn8jF5VXc/O02wn2LYP24kl/MYuzPZTy+9XfcY8HpKHhO
-	u9mbDeReWOpF+WiZsMQkLDEJ/03CEpMBkSbkpdYkxSnVsVvW62JUKRp18voT8XGVaOE5jGfm
-	L1nRVPtuG2IZpJDKoq7vVMkpZZIuJc6GOIZQeMlYZ5hKLotWpqTy2vjj2sRYXmdDfgyp8JHt
-	ieSj5OwpZQIfw/Onee2/VsR4+KahcK3nE0n0PW5sdl/45CY6ddRV1C+zvBpFg2O6zDhZ6bv8
-	kyOdRx5ryIDUMOncxGqftc9b8P4gufHl9b3HuupaQyvehr9Xh5lafCM/isZTRgIM2UN26YDu
-	sHDHFBwi2NqtV20/r7kOjW0uzxJbRq9V+8sDhWajqenpuuUREdIiBalTKTcGE1qd8g+uJydF
-	GAMAAA==
-X-CFilter-Loop: Reflected
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 7F95921190
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,listout.xyz:email];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
+X-Spam-Level: 
 
-On Mon, Jun 09, 2025 at 01:22:55PM +0900, Byungchul Park wrote:
-> On Thu, Jun 05, 2025 at 12:55:30PM -0700, Mina Almasry wrote:
-> > On Tue, Jun 3, 2025 at 8:23 PM Byungchul Park <byungchul@sk.com> wrote:
-> > >
-> > > On Wed, Jun 04, 2025 at 11:52:28AM +0900, Byungchul Park wrote:
-> > > > The MM subsystem is trying to reduce struct page to a single pointer.
-> > > > The first step towards that is splitting struct page by its individual
-> > > > users, as has already been done with folio and slab.  This patchset does
-> > > > that for netmem which is used for page pools.
-> > > >
-> > > > Matthew Wilcox tried and stopped the same work, you can see in:
-> > > >
-> > > >    https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
-> > > >
-> > > > Mina Almasry already has done a lot fo prerequisite works by luck.  I
-> > > > stacked my patches on the top of his work e.i. netmem.
-> > > >
-> > > > I focused on removing the page pool members in struct page this time,
-> > > > not moving the allocation code of page pool from net to mm.  It can be
-> > > > done later if needed.
-> > > >
-> > > > The final patch removing the page pool fields will be submitted once
-> > > > all the converting work of page to netmem are done:
-> > > >
-> > > >    1. converting of libeth_fqe by Tony Nguyen.
-> > > >    2. converting of mlx5 by Tariq Toukan.
-> > > >    3. converting of prueth_swdata (on me).
-> > > >    4. converting of freescale driver (on me).
-> > > >
-> > > > For our discussion, I'm sharing what the final patch looks like the
-> > > > following.
-> > >
-> > > To Willy and Mina,
-> > >
-> > > I believe this version might be the final version.  Please check the
-> > > direction if it's going as you meant so as to go ahead convinced.
-> > >
-> > > As I mentioned above, the final patch should be submitted later once all
-> > > the required works on drivers are done, but you can check what it looks
-> > > like, in the following embedded patch in this cover letter.
-> > >
-> > 
-> > We need this tested with at least 1 of devmem TCP and io_uring zc to
-> > make sure the net_iov stuff isn't broken (I'll get to that when I have
-> > time).
-> > 
-> > And we need page_pool benchmark numbers before/after this series,
-> > please run those yourself, if at all possible:
+On Fri, 06 Jun 2025 22:40:00 +0200,
+Brahmajit Das wrote:
 > 
-> I'm trying but it keeps conflicting on several steps..  Please share a
-> better manual.
+> strcpy() is deprecated; use strscpy() instead. Use strscpy() to copy the
+> long name because there's no string to format with sprintf().
 > 
-> 	Byungchul
+> No functional changes intended.
 > 
-> > https://lore.kernel.org/netdev/20250525034354.258247-1-almasrymina@google.com/
+> Link: https://github.com/KSPP/linux/issues/88
+> 
+> Signed-off-by: Brahmajit Das <listout@listout.xyz>
 
-I will try this guide again with some adjusted.. Thanks anyway.
+Applied now.  Thanks.
 
-	Byungchul
 
-> > 
-> > This series adds a bunch of netmem/page casts. I expect them not to
-> > affect fast-path perf, but making sure would be nice.
-> > 
-> > -- 
-> > Thanks,
-> > Mina
+Takashi
 
