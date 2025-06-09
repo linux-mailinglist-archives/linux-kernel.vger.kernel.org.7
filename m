@@ -1,264 +1,215 @@
-Return-Path: <linux-kernel+bounces-677605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FEBAD1C81
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:34:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4ACAD1C84
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7A2B166F45
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:34:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BD43AAEB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C3A1F37D3;
-	Mon,  9 Jun 2025 11:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21863256C61;
+	Mon,  9 Jun 2025 11:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pd+r8CfH"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WApBON9+"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC854A3C;
-	Mon,  9 Jun 2025 11:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749468870; cv=none; b=WUbbduowlDtKTSosjKN0zSDCjMx35oU8SrCeuTuAZMBKKffUAkH49mfAhZ5xruVwmFsUKT97cUw3aQZ7LbfFSa+qJOcq+oOKnRxcC88qJlfg8Kr5qJdj6BV2G5ucKev4jUX8PTmEjnshpgwJwcL/FqSeOqnx3tUBhAfQvrjKKFI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749468870; c=relaxed/simple;
-	bh=0IJBW8K+peopy2wk5BcVvEo1rjg8kgaWPUDz78nBcp4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oa6rBrk8RMsCmNHpC5HWi8X2V2ofGCh4P/bc0zoZRjUQCUMnMUrsl8EkV3UDXQTOCpP74e+wwD1ptWAu2ZWB4NxbhVDxmFCchNyg4pTjS03niJvLC093m7EhdlaE8v511257BNRyIvw44GhdrAM+OFwoa4GnNwtgCvvSBATuJGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pd+r8CfH; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4508287895dso32100405e9.1;
-        Mon, 09 Jun 2025 04:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749468867; x=1750073667; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y+ipcKqABSb+lKkWdrUxsmQBri1lQ1CzkeGIMLOQuDs=;
-        b=Pd+r8CfHN1I9JElEZi1+aFr0AxFmLl94PZSzyxhf8tNz+jUFiNJNF8ywe+dc6U6f++
-         e8R4vXQ9N6ECzCoTGLm/+BedP8lYdy3PA65+WN2fgetwJizUoSREf2saUz3B9EHJ/ukQ
-         1Wfv2SFQSyR/W2MkFj/m9ZP23bUFf/7zoXMebnDIHw77wRHj8qMby4dg8+LgYyWx7M3q
-         Ccoijd2WoioMWcPvZN3em1r6jfrZbdPCx6OmKI4J682171+bwOlBkSFWUcCMIcXz+Rtz
-         3PHM5p6Nnwc9nMNF2bBT0XcjWTJK6nGcFkEcNg2xVWZKeZ+azBoSM3yvERXCDd9isdtR
-         47rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749468867; x=1750073667;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+ipcKqABSb+lKkWdrUxsmQBri1lQ1CzkeGIMLOQuDs=;
-        b=IDfb5/sWBVkOqpDCkzRlChSKdtY0ZUtWLUFDVDT9kP8HrZ8nc8l1MEHH1ETl6ryYUH
-         ZzowQbLP96W7DlKHyiSc0qr3DgnAY00USa/fvBI1/ivtMsW9h57uKWPkgntwdDrnP9Ho
-         qWNDrIwyrYt6hGpC4e8RMnBtyq8zp3KD9C8k6lq/nKS7VDmIKlnT2+FVGBugKXGfeIIH
-         njh8bWtK+0ONWqkPy48t0FFW1oR8YIDgzoyUSBrFYP660T/OLVl/SUFeaXXq9iljqTB3
-         PFIZGFpalAx5st6wKimdzuRfWAEZhkwFTbzaklrrbnkZALcdM1ZsBAAxtuRiz5rbC3ze
-         HE5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUs9lJpqvBG1KLIADRmGNgG9MPdUcYOU1ZmJcAveur/vtTS/B1CbAUZpX5sNA0q9MKU1kFmRbXvu9VtSErB@vger.kernel.org, AJvYcCVXUXCeZFB5yBtD0bG+pcjkgRjnsAqLxM3f70JXPr6WBRM2qk2OZcI9/jqPcOCBqqkYiBjjjLF4nX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdGCfOp4B7zw4qlRjvPm6XYr3nHtas34Ls9hy7FDw5gaS/k7SL
-	hdpevg5I2Uul9ds1FDlRMAn/RvYyJfnklesSwY6ItYuIw40PAoyqeN7mzwUbcg==
-X-Gm-Gg: ASbGncsqTLMQ6VaOZfAO87aglWppkzr6R8sqlJh0fsVe0KCgBtiLKXFmsKGd9pMbqY/
-	V+NtQRhfXWGHUXSoc5aXwxP+0cRPaLlqqKlVrqzO21mtSVkfux8wRiVS0Zzqu1zhwtmW7IN0q/2
-	LTvn4yjUbdgFzfXZWksj4fZI7nXas6x7vvVuzlzxPRhJda5813ti9iEyFavpnCgiSCBhFErKPIw
-	W6IWzeJyZUXchUV5ue4Acn2VU79byNWHBLj7A5yJZ14xscKyUTNieKo3qnNI+yw7hsho+0h7Vjo
-	3BlBlsGXL1GONEv1xKNGzoCp1+MEkQGu20VUlmjbBQA4td6yEJsuo85YCmeMRmq/l3sarLsFg5M
-	nXr9Qwh7tcn1Po61KamuncPV/N8k0qG+wTlFf0wRgitjz8hs+DhFA
-X-Google-Smtp-Source: AGHT+IHTYTxaJmzwLMVIsTAJwEV4y9pfUGpoQtN410+8NUHonS9MSn/rjc7YIQvaHPllT/zGNuwLeA==
-X-Received: by 2002:a5d:5f96:0:b0:3a4:d685:3de7 with SMTP id ffacd0b85a97d-3a526dcdd91mr13416592f8f.8.1749468866721;
-        Mon, 09 Jun 2025 04:34:26 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e750:f900:146f:2c4f:d96e:4241? ([2a02:6b6f:e750:f900:146f:2c4f:d96e:4241])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532464e3csm9469713f8f.99.2025.06.09.04.34.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 04:34:26 -0700 (PDT)
-Message-ID: <4adf1f8b-781d-4ab0-b82e-49795ad712cb@gmail.com>
-Date: Mon, 9 Jun 2025 12:34:25 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BCF2566D2
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 11:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749468951; cv=fail; b=bQyGzWyyo5Sw9JM0+PDeaSLuRGlCVEUkSL4Opw8OiYSm9yGeMImIwmemHERDwW6IofXx7hmGfhX9rc3qExYX6ONIch5tP5HuMdYfOa0M263hmFO0t1ED29Fa6SrDbXwGQPpvcT9/9EWwagrpmNJXnXlxmUo6psl6NpvoLAh6tBw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749468951; c=relaxed/simple;
+	bh=ZZ7x1VZFOcO4JYlC4JnJ4GQ5g13cetqgzL7sn9VwL2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Pk+q857SsTuTyRhbBYbGuBz8a+3RLo305jkgJBD42KKeFj/GAH16c2tWAdLYPzQBVCLEtgWqkYWFKGnko7e3y1gPiUZCeqN1/kfZBJkpFBzYuiyyKQpL51Azpkj8SwK1CHC5ssjIZNGkbufQdOuLo9buvJEJAw/BWib44arMZto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WApBON9+; arc=fail smtp.client-ip=40.107.93.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EkYmQGuV6v9ffMY7V/Rwua2R8ANi8uUSgPPi79D/cdJndV4IK9QNTuHY11wPEG7me9PQ4TmsW/nonL9Uj4VpN6BbSOWzxuGePCEVK7pDFWS/JPuqZfI+sPCaIYPErJg3DWw7Y6Oly01aFKiAnfExdKJilYJQUbiGw3X+YYdjfo1gUKr+IhFpuLfKEhfuSA20KJpinvpY/AX5s4YBD8cc5ErRnKfJf/AEhfKv/twOEhDhXYhXmj8OVQeTiDjtjRocMcqvAH+BfAQ1iDS37SFLMIfpqz1c03Wm5e7i+Yxga0ghJsre11Ell9AbWxfv2Eu403J4yB3I8m78ZZeJwFIwKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CPiDbhtsjpuC6cqciYztOPzwGfZiMrDldeiCoRuGyUo=;
+ b=knnf/zEj7U2yzVJiXZgPgDZ2NroQklOzjHg+jD2TWMgnVTKAB6yM6tpTRJ+KEGGFSzTnZ+uFIArRWL89FTaqFIdDcsJDjYpepJSd5m01PaClP17zGNgtAdlj1Flw48JlLqIQhQtT7vWUVAjvaUZIJVm19SYP5EBFC2BxWjhxs2bTsrI/HInFiiqWLJCkJ/zeae+F35/wKNHsjNEZSlo9A63L1xF07ATiyjCWr8Cn4gL6+HRlPmKd0AzN7FgyXWzX8B2m+yNVZQNnWTY4tOJthKptQpVxZp84yftUPi3yDVmh2q1aqUzrWPJH7dFhVxEgw2HDGKH15n3Ed7DeiAyyHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CPiDbhtsjpuC6cqciYztOPzwGfZiMrDldeiCoRuGyUo=;
+ b=WApBON9+faX92BAlzDcnvOwrvhzOALzgSJUqowMgLA0u42H9d82seTWd9Rg+OBw70BD44TWYsIDnG33JycNv1z+1MSu86wTFRRPbJcO2Zvx/b+yz4+78xfSrQlYHvurdNYC5X1cfvN+/a8t6KyCK5Ynd6o5smXIVgXUjsfKwVrxNEWbgz3JuRhM0afTRZAvmm3YNCDP6bekonyD4yNbuPlh1OUaaQ7vP2uF3T2l6iX/FQkZ/7NNnNpA2Dv6NZa1DNorubhSwZ6QJoxVPPNOf7XiAX0MS4ptv1CvgwTQp/45XAOUwpEpr7Fbl5w3fT3A3l6i5lGuix2bil3BNtBoDTA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by BL3PR12MB9051.namprd12.prod.outlook.com (2603:10b6:208:3ba::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 9 Jun
+ 2025 11:35:46 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8792.039; Mon, 9 Jun 2025
+ 11:35:46 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] sched/topology: Fix for_each_node_numadist() lockup with !CONFIG_NUMA
+Date: Mon,  9 Jun 2025 13:35:36 +0200
+Message-ID: <20250609113536.29743-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI1P293CA0007.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:2::18) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] mm: khugepaged: use largest enabled hugepage order for
- min_free_kbytes
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: hannes@cmpxchg.org, shakeel.butt@linux.dev, riel@surriel.com,
- ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, hughd@google.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com,
- Matthew Wilcox <willy@infradead.org>
-References: <20250606143700.3256414-1-usamaarif642@gmail.com>
- <4c1d5033-0c90-4672-84a1-15978ced245d@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <4c1d5033-0c90-4672-84a1-15978ced245d@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|BL3PR12MB9051:EE_
+X-MS-Office365-Filtering-Correlation-Id: aade88d5-0cd5-4939-901c-08dda749c6cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xqRTlYNeM2mHdRGdFKq7FnBzmmOjw2aVOMUv98Uh5E0S+OUsqkrJEy3QjCFX?=
+ =?us-ascii?Q?/oY+Iu1TDgrERmht6O7VJzOueHjJ6Ulpm3RAoeHho8DrJyzyFPJH/i8cv/nd?=
+ =?us-ascii?Q?hUe0vP7gh6XYXz/yXw0i63ymILWaibWd8LeuUYpaNCRP3Eqm0S82DtUrWUdv?=
+ =?us-ascii?Q?8K0JooEHFGRAM1uBJ0oKmBeq7zW63Mgrf3eUjlvZuJi29ExD6WYnKNElEXmk?=
+ =?us-ascii?Q?4FVAdlkbQzdLbDGHFkfLpJIN6XBGYRm/vV7HZqAJVcrseuyXIzE7t5pHjF5o?=
+ =?us-ascii?Q?azClbhhsSClYIgLKN+XjS6uwtyEnajhAsyK0hjawd+8OxfQ5gx47EFRXewnv?=
+ =?us-ascii?Q?cM3ZEbzIaHABNS4kYMWpqZz9FkB5zNlXBeufbUfaTv18nTXa3ppmpdWLNfE4?=
+ =?us-ascii?Q?olRWAXw9+UNSak3qHIEaX7TJc/IYK4JUCbSdF9MxWFJ6UoCwocm11OGj0HM/?=
+ =?us-ascii?Q?As4534NYHmswIt/+SqZdCq7/s2kO7RewS0n8lg+kU4QjgbYY3EXPu+Nsd5r5?=
+ =?us-ascii?Q?vpTNfbO/cAmn9g5sQbecMMsDRogv08mBu0kWuZN/5yEaZBVZFufMuuK/XfAa?=
+ =?us-ascii?Q?b8UWrQK8g+T5MFxLw+m+IjKDj+hlvPnvI06YfvDo7v2YqT1p2fPVncqM5fx7?=
+ =?us-ascii?Q?CXpb4kTd7MtKunA9CBMPUiTd2rRJDmK3rlMoHwi+j690LZQjvst9cTNvCrFT?=
+ =?us-ascii?Q?PHp4AxzRNOypqYWLrqw7PzKrf0G6unnzH46ty/C7JR0ipJmdsVtxEPlkWFVn?=
+ =?us-ascii?Q?cWSlWgzTcoTHZEnrtHn3iZhWmxzIok9ryB8QKrru1KJT0PRzThHEJqca9z/j?=
+ =?us-ascii?Q?R9xy94QJOy9xmLzMzUhoBx25Y7UF2i1CNRL+/tsd6NJo3s4bB8ZVhk3aXMDX?=
+ =?us-ascii?Q?uK/QVbwVnDTFBQdI5+GBuVSX9M6p573RbIlWQnRMtEf4akUgug9BK6g5ohSF?=
+ =?us-ascii?Q?6m1FW7t8A200TkCf2sN+w256o82r8rcJFtZGzinrfgN+3mPDdGDYlx93YxM6?=
+ =?us-ascii?Q?YwGa+bgMK8+ppmLv+6VrH2C4RssV61nmpm70scxd13ySMM23CwaXK88v1TuA?=
+ =?us-ascii?Q?zYdsWtAptFffdRzZvNEWS/BHpDxqWEKr3/2K3ZmdWhTxvearXvM5XD8SsGYd?=
+ =?us-ascii?Q?UbLUZKZw/FmaSji6j06xpYjw0HN+6QK/lGlldJo9zAKNdeWep7haSMnyczON?=
+ =?us-ascii?Q?QhGoWAw/2zUYkIuPxcX7YEQ9m3GXBpa0LjXv1fCrX0hWMZvXRSwbadxxq44Z?=
+ =?us-ascii?Q?KEbrG7j1Q6aBY79jscqFurI68K+u/HwgfPe1Yrr01ALMD2vuuiAfwJvUx2/j?=
+ =?us-ascii?Q?03fg49+8s617UKWIU/7wR4kEBvqZ5+GYuGvhAy3F27Ps9wSG0RZbyoVATGK4?=
+ =?us-ascii?Q?kadVpPYkThK6mHWImOnI4HOT1k0XZ9Q2yBqot384QTOFac6NWsTs8LTHwUg+?=
+ =?us-ascii?Q?BjPRniHWdUk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aJsaIdoQfmSoNL0cky09xgZppKnfJaAmpzAXv74GJ7n9nhWQ7o2nr90kgt+7?=
+ =?us-ascii?Q?alWcMrUwIMiuWeVu0dFDcFIIJh7e+3BDbZ76cfCzYYGfWmnoW8aw/pkksrRF?=
+ =?us-ascii?Q?xzYpNSrxq7zJ0Hn40io03/mdT0Xx68IWF+hVj+03NUsokrVGWMHt9OudyJsX?=
+ =?us-ascii?Q?SiTknhHcpKDbBIf0XE1t4qKPhunPztfFOdSCVwjdcdmMOGyT5L8AWoZCMVZL?=
+ =?us-ascii?Q?0ON3Xm4jNLkT1iw4WwPFIA7VDZXNEs0I7OKYgm4PzabpLtqdOVrTJH/9B92K?=
+ =?us-ascii?Q?lUeKdDSacQuvcodDelF3ZlGdnCA1mklH55WF20lXlmRG5otFibfiL/VtdInG?=
+ =?us-ascii?Q?iz0BL6emZ1Zz1IkvcBfyVVPPW2AUCCQHH/WRAVJBLNei5Tk+aBjfVDIClqbY?=
+ =?us-ascii?Q?YEo4Htfas41I0NER+qdeuihSquqn+imjfeY0APL3+/CwFqReaI1U7cDZ8UI8?=
+ =?us-ascii?Q?4PG5d9OUZtqww9FsCfhv54n2A3D8kGfeBI9nnrD3Ukhlc7uM48y0GUsvpYdg?=
+ =?us-ascii?Q?ZKsuDiz2DwxioR5fzYRy/9enomKm0MCxoLSSJiI+GLI11WFWOMU5EckrWMby?=
+ =?us-ascii?Q?xP3nb21FPK5syoaz6iY26z8iwP0cdWO0BRKrlBSlfD1Ks5mFDmkIjSxj/EiP?=
+ =?us-ascii?Q?44hLu0+t4Czw5Pa3DksNqPk9GxVLnVq6gvqOffp2wh0WYU/u/uNKndjlRZxM?=
+ =?us-ascii?Q?NASCUmyjY6IkE23afpoxPogy9IQ0mUbV+p/ApGpYZ8rzZApB1j70XwoQlmbU?=
+ =?us-ascii?Q?GPxt6CjIbdFaf30e09QeEKyOre7DWM5t+uIObsjGm0jnnASdOSzpFv8vksp5?=
+ =?us-ascii?Q?vttidT6avs98C79exOgpCJFyI/k+ceRveaDZB0DE4UEed8vrZ7yxmeFtf11I?=
+ =?us-ascii?Q?jNkkm8PZDn+5/uiLuo/amBM+znJ4+1ip7FzelEMzW/N5k3UrDEY9assCI+Ng?=
+ =?us-ascii?Q?EshhGIbe3HoysDmZ5RPNAOdFEU7GunP3iSzdcoZUD+At756GNSgX9RHeKquD?=
+ =?us-ascii?Q?Cq5MAEH3egX5o/7eDg5wZFtqPx5LpDAUNgLOGTj3F6i5g4ZS785lbF0SDVsL?=
+ =?us-ascii?Q?enxsP9NUlhP83fqh1AYvKnBTAkZ/D5PwmxpTmJI1wINJEIDAZHATCScsJgcB?=
+ =?us-ascii?Q?Gg8nsTt+nMkVcgoLBuqmw8dVYEZSuppdopeglEJTIslocj2j1/Zb+8PdsoBp?=
+ =?us-ascii?Q?aFQNQIxlyq9CkdN3Pd5GTHfyIbm1keSFDxvka+VahVYy3zhLRELgYu05n1Us?=
+ =?us-ascii?Q?8chNsWPMXBffX/44qj5+eM688wg7Z8qBGw8rFNx+/8MyqLRPHTU7djyc+7S6?=
+ =?us-ascii?Q?m8TJUDbbtCSbKa6W7ZD8LS3cRzKdwS8ikr6TtZ5bZ2vdk597lKQ++YGzFtr3?=
+ =?us-ascii?Q?qMzj7P+p2EudsutGCInzRFsnRzH8vsWIm6/x/WQ9DCYT5vDg5h4zfzkd62Z/?=
+ =?us-ascii?Q?B5xMWBPPYxmFmqB8AIUKHgdvmM0v+UAoLzos9uL3JBCplK0jd/XSa+fk4rZK?=
+ =?us-ascii?Q?YHEEyuAqzvfoX7YsaAurz/kHhbcI5dhyt1nGHJbyeA8kYXPBfJWH8+eSzRba?=
+ =?us-ascii?Q?/BNoK5XSJeFUJWsR3R1AHgqMniYuqeaJ8YSnbOF1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aade88d5-0cd5-4939-901c-08dda749c6cd
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 11:35:46.7832
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JiLuvXlt8Lv/kBeijtSGXdODePMHDOH3LlvYHsxNJE+XVcpB+Zw+TKJSxf5Vfx43CGtUcv5LWtmDwV8sNrU5SA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB9051
 
+for_each_node_numadist() can lead to hard lockups on kernels built
+without CONFIG_NUMA. For instance, the following was triggered by
+sched_ext:
 
+  watchdog: CPU5: Watchdog detected hard LOCKUP on cpu 5
+  ...
+  RIP: 0010:_find_first_and_bit+0x8/0x60
+  ...
+  Call Trace:
+  <TASK>
+   cpumask_any_and_distribute+0x49/0x80
+   pick_idle_cpu_in_node+0xcf/0x140
+   scx_bpf_pick_idle_cpu_node+0xaa/0x110
+   bpf_prog_16ee5b1f077af006_pick_idle_cpu+0x57f/0x5de
+   bpf_prog_df2ce5cfac58ce09_bpfland_select_cpu+0x37/0xf4
+   bpf__sched_ext_ops_select_cpu+0x4b/0xb3
 
-On 06/06/2025 18:37, David Hildenbrand wrote:
-> On 06.06.25 16:37, Usama Arif wrote:
->> On arm64 machines with 64K PAGE_SIZE, the min_free_kbytes and hence the
->> watermarks are evaluated to extremely high values, for e.g. a server with
->> 480G of memory, only 2M mTHP hugepage size set to madvise, with the rest
->> of the sizes set to never, the min, low and high watermarks evaluate to
->> 11.2G, 14G and 16.8G respectively.
->> In contrast for 4K PAGE_SIZE of the same machine, with only 2M THP hugepage
->> size set to madvise, the min, low and high watermarks evaluate to 86M, 566M
->> and 1G respectively.
->> This is because set_recommended_min_free_kbytes is designed for PMD
->> hugepages (pageblock_order = min(HPAGE_PMD_ORDER, PAGE_BLOCK_ORDER)).
->> Such high watermark values can cause performance and latency issues in
->> memory bound applications on arm servers that use 64K PAGE_SIZE, eventhough
->> most of them would never actually use a 512M PMD THP.
->>
->> Instead of using HPAGE_PMD_ORDER for pageblock_order use the highest large
->> folio order enabled in set_recommended_min_free_kbytes.
->> With this patch, when only 2M THP hugepage size is set to madvise for the
->> same machine with 64K page size, with the rest of the sizes set to never,
->> the min, low and high watermarks evaluate to 2.08G, 2.6G and 3.1G
->> respectively. When 512M THP hugepage size is set to madvise for the same
->> machine with 64K page size, the min, low and high watermarks evaluate to
->> 11.2G, 14G and 16.8G respectively, the same as without this patch.
->>
->> An alternative solution would be to change PAGE_BLOCK_ORDER by changing
->> ARCH_FORCE_MAX_ORDER to a lower value for ARM64_64K_PAGES. However, this
->> is not dynamic with hugepage size, will need different kernel builds for
->> different hugepage sizes and most users won't know that this needs to be
->> done as it can be difficult to detmermine that the performance and latency
->> issues are coming from the high watermark values.
->>
->> All watermark numbers are for zones of nodes that had the highest number
->> of pages, i.e. the value for min size for 4K is obtained using:
->> cat /proc/zoneinfo  | grep -i min | awk '{print $2}' | sort -n  | tail -n 1 | awk '{print $1 * 4096 / 1024 / 1024}';
->> and for 64K using:
->> cat /proc/zoneinfo  | grep -i min | awk '{print $2}' | sort -n  | tail -n 1 | awk '{print $1 * 65536 / 1024 / 1024}';
->>
->> An arbirtary min of 128 pages is used for when no hugepage sizes are set
->> enabled.
->>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> ---
->>   include/linux/huge_mm.h | 25 +++++++++++++++++++++++++
->>   mm/khugepaged.c         | 32 ++++++++++++++++++++++++++++----
->>   mm/shmem.c              | 29 +++++------------------------
->>   3 files changed, 58 insertions(+), 28 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 2f190c90192d..fb4e51ef0acb 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -170,6 +170,25 @@ static inline void count_mthp_stat(int order, enum mthp_stat_item item)
->>   }
->>   #endif
->>   +/*
->> + * Definitions for "huge tmpfs": tmpfs mounted with the huge= option
->> + *
->> + * SHMEM_HUGE_NEVER:
->> + *    disables huge pages for the mount;
->> + * SHMEM_HUGE_ALWAYS:
->> + *    enables huge pages for the mount;
->> + * SHMEM_HUGE_WITHIN_SIZE:
->> + *    only allocate huge pages if the page will be fully within i_size,
->> + *    also respect madvise() hints;
->> + * SHMEM_HUGE_ADVISE:
->> + *    only allocate huge pages if requested with madvise();
->> + */
->> +
->> + #define SHMEM_HUGE_NEVER    0
->> + #define SHMEM_HUGE_ALWAYS    1
->> + #define SHMEM_HUGE_WITHIN_SIZE    2
->> + #define SHMEM_HUGE_ADVISE    3
->> +
->>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>     extern unsigned long transparent_hugepage_flags;
->> @@ -177,6 +196,12 @@ extern unsigned long huge_anon_orders_always;
->>   extern unsigned long huge_anon_orders_madvise;
->>   extern unsigned long huge_anon_orders_inherit;
->>   +extern int shmem_huge __read_mostly;
->> +extern unsigned long huge_shmem_orders_always;
->> +extern unsigned long huge_shmem_orders_madvise;
->> +extern unsigned long huge_shmem_orders_inherit;
->> +extern unsigned long huge_shmem_orders_within_size;
-> 
-> Do really all of these have to be exported?
-> 
+This happens because nearest_node_nodemask() always returns NUMA_NO_NODE
+(-1) when CONFIG_NUMA is disabled, causing the loop to never terminate,
+as the condition node >= MAX_NUMNODES is never satisfied.
 
-Hi David,
+Prevent this by providing a stub implementation based on
+for_each_node_mask() when CONFIG_NUMA is disabled, which can safely
+processes the single available node while still honoring the unvisited
+nodemask.
 
-Thanks for the review!
+Fixes: f09177ca5f242 ("sched/topology: Introduce for_each_node_numadist() iterator")
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
+---
+ include/linux/topology.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-For the RFC, I just did it similar to the anon ones when I got the build error
-trying to use these, but yeah a much better approach would be to just have a
-function in shmem that would return the largest shmem thp allowable order.
+Changes in v2:
+ - Provide a stub implementation for the !CONFIG_NUMA case
+ - Link to v1: https://lore.kernel.org/all/20250603080402.170601-1-arighi@nvidia.com/
 
->> +
->>   static inline bool hugepage_global_enabled(void)
->>   {
->>       return transparent_hugepage_flags &
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 15203ea7d007..e64cba74eb2a 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -2607,6 +2607,26 @@ static int khugepaged(void *none)
->>       return 0;
->>   }
->>   +static int thp_highest_allowable_order(void)
-> 
-> Did you mean "largest" ?
-
-Yes
-
-> 
->> +{
->> +    unsigned long orders = READ_ONCE(huge_anon_orders_always)
->> +                   | READ_ONCE(huge_anon_orders_madvise)
->> +                   | READ_ONCE(huge_shmem_orders_always)
->> +                   | READ_ONCE(huge_shmem_orders_madvise)
->> +                   | READ_ONCE(huge_shmem_orders_within_size);
->> +    if (hugepage_global_enabled())
->> +        orders |= READ_ONCE(huge_anon_orders_inherit);
->> +    if (shmem_huge != SHMEM_HUGE_NEVER)
->> +        orders |= READ_ONCE(huge_shmem_orders_inherit);
->> +
->> +    return orders == 0 ? 0 : fls(orders) - 1;
->> +}
-> 
-> But how does this interact with large folios / THPs in the page cache?
-> 
-
-Yes this will be a problem.
-
-From what I see, there doesn't seem to be a max order for pagecache, only
-mapping_set_folio_min_order for the min.
-Does this mean that pagecache can fault in 128M, 256M, 512M large folios?
-
-I think this could increase the OOM rate significantly when ARM64 servers
-are used with filesystems that support large folios..
-
-Should there be an upper limit for pagecache? If so, it would either be a new
-sysfs entry (which I dont like :( ) or just try and reuse the existing entries
-with something like thp_highest_allowable_order?
+diff --git a/include/linux/topology.h b/include/linux/topology.h
+index 33b7fda97d390..97c4f5fc75038 100644
+--- a/include/linux/topology.h
++++ b/include/linux/topology.h
+@@ -304,12 +304,17 @@ sched_numa_hop_mask(unsigned int node, unsigned int hops)
+  *
+  * Requires rcu_lock to be held.
+  */
++#ifdef CONFIG_NUMA
+ #define for_each_node_numadist(node, unvisited)					\
+ 	for (int __start = (node),						\
+ 	     (node) = nearest_node_nodemask((__start), &(unvisited));		\
+ 	     (node) < MAX_NUMNODES;						\
+ 	     node_clear((node), (unvisited)),					\
+ 	     (node) = nearest_node_nodemask((__start), &(unvisited)))
++#else
++#define for_each_node_numadist(node, unvisited)					\
++	for_each_node_mask((node), (unvisited))
++#endif
  
-
->> +
->> +static unsigned long min_thp_pageblock_nr_pages(void)
-> 
-> Reading the function name, I have no idea what this function is supposed to do.
-> 
-> 
-Yeah sorry about that. I knew even before sending the RFC that this was a bad name :(
-
-I think an issue is that pageblock_nr_pages is not really 1 << PAGE_BLOCK_ORDER but is
-1 << min(HPAGE_PMD_ORDER, PAGE_BLOCK_ORDER) when THP is enabled.
-
-I wanted to highlight with the name that it will use the minimum of the max THP order that
-is enabled and PAGE_BLOCK_ORDER when calculating the number of pages..
-
+ /**
+  * for_each_numa_hop_mask - iterate over cpumasks of increasing NUMA distance
+-- 
+2.49.0
 
 
