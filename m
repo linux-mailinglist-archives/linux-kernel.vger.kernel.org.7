@@ -1,223 +1,121 @@
-Return-Path: <linux-kernel+bounces-677991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68AF5AD22BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:45:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5069BAD22C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 270F83AA6E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:43:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113697A2CB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0327A21421F;
-	Mon,  9 Jun 2025 15:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3FA2144C9;
+	Mon,  9 Jun 2025 15:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uo8Lm+vi"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2077.outbound.protection.outlook.com [40.107.212.77])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q1xfhvoZ"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBDF20FABA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749483813; cv=fail; b=Xye/v4auwDb5w672yuSWHm6sAwU2Gn+j32c1AgZuHUuxTus1Pja8j9VdI5lmqkk8D+V06XYoRcTsHAYX6VQgJq71UqR7Y1EFi07aZWpsS3532lqwtuSToIzPT2Evky5Mix3Fq83zxW30c9/n7rC2z76bn92qLQYDTzGJg0KNRj8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749483813; c=relaxed/simple;
-	bh=+xzFD/k/TQYQZWS1lgzRmvcKL6ZV7AqElNRb3sFOkGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Z2l2Mq50p0prn12XqMpiygoIXXu6eLwTG69x/aLevLIRv4U1QxmctyNPmj99mq1KRf3FDtcnN3WcOGuMXsy9lxpUJ/YWdErmVQEBavWIVvbwcGtz68AVFX8FNnFMfsA2JKpl1ruguF9uLxsHaeAsM3CYbMbkqkzVRQ0EjTP8Nbo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uo8Lm+vi; arc=fail smtp.client-ip=40.107.212.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sZ1xryRxl9xSfNWGsbiJW8LPKpMYDF5kMPrlek6Abwjf6Sov+lQaHrWmWatotjoNxILHD/5C2qIuPnWGKskm02ERQ0l+9Iyq9mNiZsQIhBLLS7Bg9nx2u3/su040JoxlU2HTmmF2obO2EqzLEutz04nQcpuwVvbzgiRgUyzS6WLuMeoboEe51pfjLQQSbpChwppZn+2AQN5Qu/HZ1d8DPDFAMR6J363TYVtoB+pHjGSPiATAe2iTh27u1C/mDENDmFdnlBfg/sSwA3yawiECHDUtP3NS5OqynWBsqOl36tKKmPCsEIaWKaGzi2SLjPOeRvAa0wlIX6UxN/62gjtqJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/EBhsvSHIvePLMsj/CltPK2FSsqchgD3d7pvzQ1bgwA=;
- b=pfrt1LJ34Z+pD8+ozoyBVp9wmzRtmeItwQQOTRWOReK/OcqDRqpWU2s5oK/QU125mkur03rg26tvROp2cIsg5AzIyUhe82k5JESR6wMORvBMWWhx+ISBGPGgy0yyhWcEQjQCFDPHRa5wIJNv0DhQFuMacv061KC9XwgoFJk8qoWmTIK+cIZY5YonPqmkeuxlbSw5NaWhXi8OnQaeXckIhjMVI02h2XdowCeG4UTnTQ3zYoEx0GPO0/FclhNhIIqvNNzBAdUYMGARtwuMXrrxoAkPwg2elSrEa/Py2Z6FrUQ8SaY+SSXSgCDFCPPk0eGc6AN5uwBIiHfUphKVKZKVyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/EBhsvSHIvePLMsj/CltPK2FSsqchgD3d7pvzQ1bgwA=;
- b=uo8Lm+vij1jU9bGZ1f+G73ZG8NqY/mRWHzGrAOEJzY6rZasaKXHhvYW/paiTL0ZMEeRueZ+DAZvfxe7uA7rzJaqqPSB7QbmDoVl/6i0AoaQ0dtbMnUfuukgfb+ywP3cewgWcpTXZL5D/xBDNVTuBMArTmSXZ+PE2CVdy8t7L0gGCRbkKksU7wFRg3O4giALEKBXjdZhiTRsERRBasQL+CETtc6KG070FqzXb5epJZnXFo7Arix/zMZn2FrO/Ix1Dxv4doWw01I8xdujyRLRGf3Pt+uH/x/srLjXyOaqioWHZExpWFJgpluUrChXU2LVDVIGqbWJStNO9mdOLd2OyYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DS0PR12MB7779.namprd12.prod.outlook.com (2603:10b6:8:150::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.35; Mon, 9 Jun
- 2025 15:43:28 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8792.039; Mon, 9 Jun 2025
- 15:43:27 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] sched/topology: Fix for_each_node_numadist() lockup with !CONFIG_NUMA
-Date: Mon,  9 Jun 2025 17:43:20 +0200
-Message-ID: <20250609154320.15732-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MI1P293CA0019.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:3::16) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4131D63F5;
+	Mon,  9 Jun 2025 15:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749483929; cv=none; b=PEujV7cwqYD+OYaNel9lHoK/zPYlaOc7T6cYttzu5WdijrWsngpSHSF+iWxevD78wFXLUAJqaoYqx9SCKyKwffjKZ75RVbSIf00yzG27QtXELZNILEIQPNBi1FRo+cLBWDR9gSQ/SSQPtIyMu4VU6FSnHeJRk+CkAkAqCblEIZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749483929; c=relaxed/simple;
+	bh=6PjEAD3RDNws1qU7noPgM8k6oU9CmCMLwJ2Py+MuuYM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jYydHG1/QQYPhkDWrGeqh5lC9Qb77gbjttBw3ZQixu0a0c9IueUjia5UaiK17S9+z5K3QuTicGxcUnQyLnjJnDrg+WI5TMxIdCU4pFqdovnj0Q999Njl1gsuk7Hig5nn3UpUP6GLrsWSPyaho484G0Lxr++pNjqku9YE8JVIRZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q1xfhvoZ; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BAF461F65B;
+	Mon,  9 Jun 2025 15:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749483924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dlGWUhva3kGs1RISxq/rd4pyC6pmuyqH7UPyu/eBX5c=;
+	b=Q1xfhvoZ8rA/smOkbSOAIh7DQTHIBcSCZnvb2wZBDuYUiLJMo+tWWVQvepnf/92ocriULE
+	4ETt1WPgrZJ6TSCZrJD8IQKeBXJY9l7k8WNOK97vDmWNLpkvjBbZ6jyhMkp/9z3msaHeCp
+	1n71iZxTpar0LbHtJ7DHAbKMQzm//vmM0dGnVLZ5XbVCzkdSx7kjK3AbhSVV5cU0qtu6jM
+	ewqiGIaZZNHbpFh4psTkuCT6Mw86KKrwNFg/Nl5u9n6pgffY8Zxw+ElhLQaG4IurDREfo5
+	qKiYq2PyGj/o1JDYs7aFmxTb8lJxk6Bu8itNvjmPVE5l+I5qMGhjm6sqSopyPg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH v2 0/5] Add support for BeagleBone Green Eco board
+Date: Mon, 09 Jun 2025 17:43:50 +0200
+Message-Id: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB7779:EE_
-X-MS-Office365-Filtering-Correlation-Id: e040df34-204b-40e0-9a5a-08dda76c6098
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hp5lOClsDuYpPlcPnbLlPN6AsbPdk+GbEQEfcVmi/noq7bnINkeiT8qTGvrC?=
- =?us-ascii?Q?4IUA4V3GbCQOLndDyuHScg3ZvTyHW0OkIUON48SYy80TJH8hU6D563XlqZgq?=
- =?us-ascii?Q?Kw/o4bCWYxeNOgNs23A6YuU6KIdRNQzorrsdqy2ukM3l1nohJHJKR9bEVHzt?=
- =?us-ascii?Q?7agYQVpU1ODl6BeJF1BcE8izQtFK6O4UBBBxhcn1aycc/oUEhW6CTx/TnEFQ?=
- =?us-ascii?Q?1mxZtUx9dBIm2812ZRwC8+Woas6s5NYney1uYImFbxuFfgWB0duSj2n/r8PB?=
- =?us-ascii?Q?gRvRPeL54ivonxRGeOt2qFWJN4Qjx6AvpVw+TRHK7AKe3oN74K1qocYnkCGT?=
- =?us-ascii?Q?8YoQ0cgXtoVLlQ0oTL38+Ms9raeaGnS+EIBfkvqaV4CRJomIPQZNVrRpJ4Pl?=
- =?us-ascii?Q?qUzQdfQ+NywWYlBKFWWMmbNujfWh4aypJYw/Uwm0S4npSPMeWSFHGaS8r7tl?=
- =?us-ascii?Q?z3sboiv8p3F7eVqphzWIJDOm5X86gGU0+GtMmRjy3TZmZ5GgmU4Gf/cKR9OA?=
- =?us-ascii?Q?XzzaR2DM3kDH2ym2mR0FC0hGjDz9/GTg1E5dI6sCHGZzNH0rUikVWkOckVa9?=
- =?us-ascii?Q?orm9rBCrhVC/GGRHbqrA5pHFOr04h9KGfzxywIPRAtAM/JA4ynGDggLLeFuB?=
- =?us-ascii?Q?OdtJg9oQ9mv5G8XSutkHYydTLV/R/cDFM641ROYF2LvpSlGk/1jUwehCdlt+?=
- =?us-ascii?Q?dRKjeKaYNAfYKG++XfxSS4KJ/uwubOW1bBkisi12AZ2+13j/CDmw514J9cyV?=
- =?us-ascii?Q?sPRqcFl2uWIR89R7IEamnPNC1aQuppTg1pXIUBpUBSGfZD5yu3vxvaOdivwQ?=
- =?us-ascii?Q?osXnILamdSdAACTgVD+gtMW66fvw5jdShRWAB1df4Y8Dnf4wGoUDYTIcx1OY?=
- =?us-ascii?Q?Lo8ck79fy40wYU82WyNWI81vF+BCeWCPgsPRcWh+nqvpSWytAZPpIH+Kpvlm?=
- =?us-ascii?Q?KFYKhF+Hyk4j4qud4fZLCCKrQ1bGUi2YkifB6geZWS1L7SmDGGPniKMcb5hV?=
- =?us-ascii?Q?jZalTegCPFRoYxnUbXNb1cKoPoiE3O4RgAF3yqFt6N5tNjyf1+VeSp9PPWhG?=
- =?us-ascii?Q?OxndXKnGa6i3ReJN3pDa8R2YbF7flkHpkfHn+MQVerdqGJ/xNx28dXbcosVl?=
- =?us-ascii?Q?/0lplkDJfCPVXhrXFTVerm4FoU5SnqYlnF/ma53rGnDs99/Os/KHPhI3NW1r?=
- =?us-ascii?Q?7wYRuKrZbP29K/QGvvCI04A8/3SZU+0RQJbv90+cfLEifWy6QiYFMNMZb4wt?=
- =?us-ascii?Q?Wq9CCrWfLtyKudjFOL/xWoN2Cy7zgNnP/uCXACYvNcsUANsVX14+shLQr8X/?=
- =?us-ascii?Q?uPKR6gMllXMuDMAnkgJdEBW01AVYJe5kKp3RTFRMkRub7NNWUTkMdv7uhxuj?=
- =?us-ascii?Q?QiUyughiqdGYekvJxv0in+zpXrsoH/cSWEAlHbvtWBs6BWKsaUrsCm6vCJva?=
- =?us-ascii?Q?WTWwW1c4BDs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3pSDzIlDYhyIco5bpsSnQqDih8OGAKelSw5blEtaPVM/BmSGTYtdX+QFL5it?=
- =?us-ascii?Q?Z9ZlNYdBYuEVfzESs0c3ZkmvM1Qa4/Y4+FHST/uzZwTo7l2M2OXWx5fX0MjX?=
- =?us-ascii?Q?rm3NnnzCyrSyT2urzqWm3U5ZYdeL0hVgzAP2Akbw90Dswpt6fO4lqn3SZgzg?=
- =?us-ascii?Q?0Z7vAzoERsHlktuGLahZf8QUhiwBEEfIdTUC/pC51sFL5GnFqSIWhPRb5dpX?=
- =?us-ascii?Q?Epx8zrYRWkSphqqe4W/lDEdj0RjX8KPOAw18rq2HuwIqy6LKhOKEGtWj+Fai?=
- =?us-ascii?Q?aBdhQKDMC+HRJISeDRoyfXp0JIrBd9CsiKvHo4wUliVaq+K6K9+H8aJ/fiq4?=
- =?us-ascii?Q?/sy2zbg5k21mRVnzUNhbWvBAmG1EhJ2vmCtesHiLsBS35wnlMdPfxbbibItU?=
- =?us-ascii?Q?31ygX7/ktHnwPybiPOD3LAyf6rGoDB1yaW3r6qX5zdMK2Q6c/9Xw6pOS0sdx?=
- =?us-ascii?Q?yHFGcCxZjsWZd6IHBvX2ZnkLJDOB+ijbVivpJ54Wm0k0RfnH3HOHWKelhV8o?=
- =?us-ascii?Q?Jz1Ky8UdNbAZjIrzGqH6WJs/MKRbTQRDfYe1LzO/juhVWwmKtJVlajdXhRg1?=
- =?us-ascii?Q?YSFJVAPTFtPE8BEHs8io6ri/SU9CUozXQ6EknzJl7nsNUlLxw0NeUY2wjGZm?=
- =?us-ascii?Q?RQ0RXprYJYMvLFOswYGDMfoj1MrcfwxTQdEyectJDlVWC7cK8OvuqhuoMcVv?=
- =?us-ascii?Q?+R1qs3HIgos2HACQSIKaIgkafQa5oRluAD/g8PPcSctGYuEmZZVnA4bZ7o9L?=
- =?us-ascii?Q?RHMnR1NSRrQKC+JeC/nbr1eV/4NOBwZ+JnjuwJVHU8Tr/WJPjcsasa5CItxH?=
- =?us-ascii?Q?bX8iADtYMfaMeyi7kpZ6uR2XNNwwr+WTrm0+PmxlnNtYTSRx/8rbio90aZh7?=
- =?us-ascii?Q?iecs8r5apoTlLq7v+zh36Rp7vO3ONRt2KLUfCB3/PdjiT2/fQjm7NRpENz36?=
- =?us-ascii?Q?476RyDYoQvOAATE5yAw2+WADfAg7OfKvC3Rjh81Pm+IiNkvjAK4H06Qz2UjH?=
- =?us-ascii?Q?9/ZerrPq4aGRx5fcMgktCrUBR9xoS62HjYo5QwNO3mH2g177jiCQ2uBzoMfu?=
- =?us-ascii?Q?KAip7g9Y+dplYkWLobKMX2WZox+VHSFgrTMtsyDd3KgIQEY3omnX97zRvpWl?=
- =?us-ascii?Q?khEmR6R/7fYIKuZD7vtlVZ+SIGbK2pWVKMBizvW6mKyYo1vndplOZOwUkGvn?=
- =?us-ascii?Q?T3L6zhmLCZDHyhI4H0T9NUEN9gFH0vodhaLpNQ37DHeVJeAoeD50RMtpTrKT?=
- =?us-ascii?Q?e7Rru40ttwErPBMtbvZMSOYRyO6XqvyUuJrh9g1f60ZuKaRu2n8PVp81obaK?=
- =?us-ascii?Q?N/SLLy+IVu+3vzWtQ6LMrKN2IEdcnWA6nHTrwoVh3PwDNO2u3JOVHB6pT0ZC?=
- =?us-ascii?Q?9EA4Lb3tSx0h1CcEXbjt6+sAkILG17RPmJEAodD+6c4+vJNwZTMVQB9aERp+?=
- =?us-ascii?Q?1u0HuGzzkv4+PkD/0oGsXh+UOWWL3dS8eZsZ9oqoSp9J53hCY+X89tlsrCBx?=
- =?us-ascii?Q?Qf9WIbd3idWwt+VhZAN5y+kN+vwhPKqXqz6pXXErqYLSajWNswEAVqfs7pRD?=
- =?us-ascii?Q?5EKbkl0Ywrmtdk+8Ez7rVy7I9uknX9fmSeSRAGw7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e040df34-204b-40e0-9a5a-08dda76c6098
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 15:43:27.6994
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7abkh1tfnLRBKdizI8cya0O58b7pMd1dznZJIWkns5IPwbKuJyOy3gXBQJTqchwY8y10F0kQ8ilOIBmzySKh1Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7779
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADYBR2gC/1WMQQ7CIBREr9L8tRigItaV9zBdQPtpf6LQQENsG
+ u4udufs3mTm7ZAwEia4NztEzJQo+Ary1MAwGz8ho7EySC4VV7Jl1k5MXzsubqNw0mioyyWio89
+ hefaVZ0priNshzeLX/v+zYJyhu5gOlcaahw1hfZE/D+ENfSnlCxzCmgeYAAAA
+To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduhfevudetfffgkedvhfevheeghedtleeghfffudeiffefvdehfeegieeivdekteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtoheprhhoghgvrhhqsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhugidqohhmrghpsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhto
+ heprggrrhhordhkohhskhhinhgvnhesihhkihdrfhhipdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-for_each_node_numadist() can lead to hard lockups on kernels built
-without CONFIG_NUMA. For instance, the following was triggered by
-sched_ext:
+SeeedStudio BeagleBone Green Eco (BBGE) is a clone of the BeagleBone Green
+(BBG). It has minor differences from the BBG, such as a different PMIC,
+a different Ethernet PHY, and a larger eMMC.
 
-  watchdog: CPU5: Watchdog detected hard LOCKUP on cpu 5
-  ...
-  RIP: 0010:_find_first_and_bit+0x8/0x60
-  ...
-  Call Trace:
-  <TASK>
-   cpumask_any_and_distribute+0x49/0x80
-   pick_idle_cpu_in_node+0xcf/0x140
-   scx_bpf_pick_idle_cpu_node+0xaa/0x110
-   bpf_prog_16ee5b1f077af006_pick_idle_cpu+0x57f/0x5de
-   bpf_prog_df2ce5cfac58ce09_bpfland_select_cpu+0x37/0xf4
-   bpf__sched_ext_ops_select_cpu+0x4b/0xb3
+Also update the omap.yaml binding to include missing compatible strings
+that were previously undocumented.
 
-This happens because nearest_node_nodemask() always returns NUMA_NO_NODE
-(-1) when CONFIG_NUMA is disabled, causing the loop to never terminate,
-as the condition node >= MAX_NUMNODES is never satisfied.
-
-Prevent this by providing a stub implementation based on
-for_each_node_mask() when CONFIG_NUMA is disabled, which safely
-processes the single available node while still honoring the unvisited
-nodemask.
-
-Also extend this optimization to the case where MAX_NUMNODES == 1, as
-suggested by Yury.
-
-Fixes: f09177ca5f242 ("sched/topology: Introduce for_each_node_numadist() iterator")
-Acked-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
- include/linux/topology.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-Changes in v3:
- - Extend optimization to MAX_NUMNODES == 1, as per Yury
- - Link to v2: https://lore.kernel.org/all/20250609113536.29743-1-arighi@nvidia.com/
-
 Changes in v2:
- - Provide a stub implementation for the !CONFIG_NUMA case
- - Link to v1: https://lore.kernel.org/all/20250603080402.170601-1-arighi@nvidia.com/
+- Add patch 1 to 3 to fix binding and devicetree inconsistencies.
+- Rename tps node name to generic pmic node name in am335x-bone-common.
+- Link to v1: https://lore.kernel.org/r/20250523-bbg-v1-0-ef4a9e57eeee@bootlin.com
 
-diff --git a/include/linux/topology.h b/include/linux/topology.h
-index 33b7fda97d390..64b81a0aaf449 100644
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -304,12 +304,17 @@ sched_numa_hop_mask(unsigned int node, unsigned int hops)
-  *
-  * Requires rcu_lock to be held.
-  */
-+#if defined(CONFIG_NUMA) && (MAX_NUMNODES > 1)
- #define for_each_node_numadist(node, unvisited)					\
- 	for (int __start = (node),						\
- 	     (node) = nearest_node_nodemask((__start), &(unvisited));		\
- 	     (node) < MAX_NUMNODES;						\
- 	     node_clear((node), (unvisited)),					\
- 	     (node) = nearest_node_nodemask((__start), &(unvisited)))
-+#else
-+#define for_each_node_numadist(node, unvisited)					\
-+	for_each_node_mask((node), (unvisited))
-+#endif
- 
- /**
-  * for_each_numa_hop_mask - iterate over cpumasks of increasing NUMA distance
+---
+Kory Maincent (5):
+      arm: dts: omap: Remove incorrect compatible strings from device trees
+      binding: omap: Add lots of missing omap AM33 compatibles
+      arm: dts: omap: am335x-bone-common: Rename tps to generic pmic node
+      arm: dts: omap: Add support for BeagleBone Green Eco board
+      arm: omap2plus_defconfig: Enable TPS65219 regulator
+
+ Documentation/devicetree/bindings/arm/ti/omap.yaml |  39 +++++
+ arch/arm/boot/dts/ti/omap/Makefile                 |   1 +
+ arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi  |   2 +-
+ arch/arm/boot/dts/ti/omap/am335x-bonegreen-eco.dts | 170 +++++++++++++++++++++
+ .../boot/dts/ti/omap/am335x-bonegreen-wireless.dts |   2 +-
+ arch/arm/boot/dts/ti/omap/am335x-bonegreen.dts     |   2 +-
+ .../arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts |   2 +-
+ arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts  |   2 +-
+ arch/arm/boot/dts/ti/omap/am335x-shc.dts           |   2 +-
+ arch/arm/configs/omap2plus_defconfig               |   3 +
+ 10 files changed, 219 insertions(+), 6 deletions(-)
+---
+base-commit: e22b9ddaf3afd031abc350c303c7c07a51c569d8
+change-id: 20250523-bbg-769018d1f2a7
+
+Best regards,
 -- 
-2.49.0
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
 
