@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-678297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5A1AD26ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:41:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2524FAD26F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CDD16E48B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94813AB37E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9073B21FF20;
-	Mon,  9 Jun 2025 19:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C66321FF2C;
+	Mon,  9 Jun 2025 19:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WXqGoqY0";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="QoBpC0Qz"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ktVHEGlA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9308235963;
-	Mon,  9 Jun 2025 19:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481A4155A25;
+	Mon,  9 Jun 2025 19:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749498095; cv=fail; b=j5dJrkmZqFrN0rxMQ6tMUXcEWaGN3tjGf3q8xtiTi0MQJ6TAXs67iGfYnVuSKV9PjNoSbsiFw3AHgHNJXqrXyiBX0M10Zi8HDOWr96IwOnH9SQlP8C8ZLdkRmlArmMGHdyKXEFyLYn481rQB1vHqiSa4ec63QU//yitoLu5ArgI=
+	t=1749498136; cv=fail; b=VRF9tL9Qe4131/ZAj/jSfFsHlB448fegBtaCkIH3OvI6NkcMgrvGZVvUZVhgtOREF62u38gjp0LvL7y8SxtH/aXz3TZQZEW0RkPVTL3tk9/NIoTs0+U+Gen+KGkhoWwHf0B49BFJ4CQ4c4l2iwVtDQkCfZ2291xPoAh202esKBg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749498095; c=relaxed/simple;
-	bh=OSpihlKWROC+ChvSkZlBzN+zy/D0ZsF+d/h4JA59Avc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eelbF4l4weNd4/+CJypUPj2N49XwniVAWNdexYzFzKaqxSJmty3y7wp0XPR0hIS8Lil0FxEZTMzd/9XS+K0jU6Q080baksF0OAvmVKDOgSS05floPfSjQtVfsXIP+54VJeTCH6A0g8eXPQPCJ4N8sdHIOP7mla9ysFFsmKnXfn8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WXqGoqY0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=QoBpC0Qz; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559FeEKG010478;
-	Mon, 9 Jun 2025 19:40:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=rSUs2A3yyfqxVmUwSKsgHBqnoxpHEnnd/l48vAZ70og=; b=
-	WXqGoqY0zdpEaEXMBzDw/QfFkU/WZHlHpCyEfXV2y+gYAp8eUPDWLMvOHrARCwDk
-	pAvp0AgSlsWeeMnoxyVoc3ehU8keZL8/WCHWE6jht7podhO4lWwXFdjlmK8DRPfC
-	QAGGhal6Pd00bgFVEln2KFFuJHvk3uoWw1A/xYX0DxGaTz8USWtKzEeMjulLSoda
-	SZTxgoHPhm/rpx2o9QvrIFpTAkYHWLr7MqmSZTR393/MD6L783+OPRf7P/zccylm
-	+q2a2XwT609pb3LRF8PidV8eXxUxfH0DgUu8aegrYVYSRM7EJzfHOGFQWMTshPTX
-	F+YBcwDtEJ11E9Hsg0g7bw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474cbeauys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Jun 2025 19:40:42 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 559I49Hk031946;
-	Mon, 9 Jun 2025 19:40:41 GMT
-Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013014.outbound.protection.outlook.com [40.107.201.14])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv7u9xk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Jun 2025 19:40:41 +0000
+	s=arc-20240116; t=1749498136; c=relaxed/simple;
+	bh=s7XoIAMOkBhMaSHCqtTUtQ2RWDG1BUcl/sobWvCCRrM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mKct+aKWhUSukJUzgxfXXjliLTyqbuUOG88WT9Zu1amj2PJUpl9jZmOeXNRluGuBKCnNo7Wwu8nqGayQGBN7rvnYn/KSTb6bQMb+cr4HT09oiAX1bXmHyM4/FHP7dcSofqelDbUAM99ome4gJdpbc6KXto8VsDOXDCeQh9+EvJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ktVHEGlA; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749498134; x=1781034134;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=s7XoIAMOkBhMaSHCqtTUtQ2RWDG1BUcl/sobWvCCRrM=;
+  b=ktVHEGlAiWg4cFmdcSz3N7Djhkfbhus5VcoB7uY0uU4TSZZ0sPRAhNu/
+   aOvPpcXGqoDNbPNPi2/Zszn12bwMq1hW0l/Y+qhYjmZ96tlqp17UMqq5D
+   DXLJxhR6RGC2KXKTfqsRSAageKjTUNIsKBwqoJQwGbFNZWrhc76O/36lE
+   a45V/B/wajD7bkwXePWLCI63ipiaY8MaAjiTkbTgpIk9ZSqvP7VC4F4v6
+   RuyYFeh2pW3x3RLFbE6WOBGTqTS7R0LQmb4miOaT0QtRv6PcozNe6L/ze
+   CjvSybXSgZuvMaalWvQi3zEdPtgMW01kRRgutpwlyCt0RGQr0z9h3bMRI
+   A==;
+X-CSE-ConnectionGUID: xi7zvsIDSDKUZK/JKmtQHA==
+X-CSE-MsgGUID: fEeMKMPaSUmWu899Gy7BgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="50697423"
+X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
+   d="scan'208";a="50697423"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 12:42:13 -0700
+X-CSE-ConnectionGUID: LWqi37i8QcGIKOAaUR3HSw==
+X-CSE-MsgGUID: Kd39HX0gRuGQNjL33ADAIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
+   d="scan'208";a="151859725"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 12:42:13 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 9 Jun 2025 12:42:12 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Mon, 9 Jun 2025 12:42:12 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.73)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.55; Mon, 9 Jun 2025 12:42:12 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D/ylodtJmTauOzWmtzzlf/gK8bk+Xz5tKzNySmfbDm/dh6IN3i3WPIOLtXc7+H3wqkiy49IwBKmfjTPU5luxFef/u+bh9mtKme20GzIUFdEUQ732KL6Ng/Df8kxeojX2do/Ceao+WNEmV3PW5Sx/55gXvXH9KH/ueQBaKZzUbqkdArW40d2mrS5SCHne4qI/qK1sw7dt0M4EtUTaMtgxs1/NHXq59yyE/ZWWoYlP+8kb/yIADfScts0JU6fjoqXoSGSZ6RCvhPbNaMrYfCbslEnhRQjcASe8wZocB+eSzNvvjebMUyMJfYe6dEKpZUH6YI/XpR9ynRsjxo8Q9Y+2aA==
+ b=fkyzEOXYgw7eXDrRg9fJqIvTlJ/MDwBFi6aDKhg8GQjkKWPjZ3PaE9NCVY8AmM9wgRvDFfzngXuE5Bcs9iRtk2qOIECWtC3ncpXl5oRLBUwP5BPQg1ARSPZqWCGYorEbCmYsk01zmfHEhdb3PRMkmtCE/Axr6lXihH2g3zXEEKk2mHNMKgc0ymQriMsmiJASJfDv/BKS4200q8lMSn3nddFYVPZHSwKJLbdubt3ESMiSDuTl3pZg7HzqrP4EP97YzpOSCj03wukBq7K+xBCwARtSqwVnexLAYwpsGuq41Rn2bSFTGsBvU54SoZCOUaGKuq+FaQMYaOXbldOay7ZIVw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rSUs2A3yyfqxVmUwSKsgHBqnoxpHEnnd/l48vAZ70og=;
- b=fy+9fCvW29KV/XepJoAPDCAGwFBpilRBdBMPFQFkBb4co1ezJrXAMvxExtEAkVGvPJqUPkA1m7Dp6flECEmF9nZOgwZl80Xdu97G48H+t0c6WhSbeMl3FOL0tXCFlJqiaK/RH7AWo/fwV1b3CafpbZ8GPR2XPyXFc8suE/QSc4u5DpwbShqyrRIMLgf23a2OpXznA5al8iqzpjvup5lhTaALGXbzq+GBlC0XktSfRNqQFtYiLb/wNT7GEN1kUfZmdzjQt8yn+Cs2qV/028p4lyGJnq/UGxIOcIAYMV5jCA8d68ea/IzbgVarjngsomz3zPPL0uEd/GDcoPIndjHTQQ==
+ bh=2K443UxllDneiPLBJLmI/HZcdsD5J4Isk9k6bOjOxd0=;
+ b=tTeoyQwtVpp4IoRGakJ2Pel7I/0woCmw3AcQXjEzBGqtk4ky1CD7dYaSyeWG0VSMxl4H2YlN6yrKXKJyI/6c83LMT/eu5rToukYPu/chzhNb0E6uHf7Dxzeb9zKxU4nAMiyUr7O9Zms2VoAu9TMOKc95h5FSvGQ7B8A9QNY3VO9eOC8to6e2ZEtUc96e1vCxx3LLP6goVFZzU6q7Xzv39m0xLyxXd3IEskPG49mvlIAscpzq8Pxx/EOD6eKk58RHGRgWVRS5Fj254wenQAy65y9nUrD2+dddpcdB5jri5NPrtpnC5qVvKdiBvNd8glzldFPk5me8KJrb+OhZIYNbnA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rSUs2A3yyfqxVmUwSKsgHBqnoxpHEnnd/l48vAZ70og=;
- b=QoBpC0QzfZLovhwzL7j7qsLrmjdfOqBXUwDNHmqVzMPg/uRFCSnPa8XjYYlyXinAsFUWdpRg+WF8faXsybZGyeNvijRIHaKDpZaI7ZCxr4OoTyx2p0fxEi9xT2tUgm2E785rjbwthO97d438zNV89xz25vnAWFnNl5QG4XK1kow=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by SA2PR10MB4761.namprd10.prod.outlook.com (2603:10b6:806:112::13) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
+ IA3PR11MB9133.namprd11.prod.outlook.com (2603:10b6:208:572::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.31; Mon, 9 Jun
- 2025 19:40:37 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
- 19:40:37 +0000
-Date: Mon, 9 Jun 2025 20:40:36 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, david@redhat.com,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        hannes@cmpxchg.org, shakeel.butt@linux.dev, riel@surriel.com,
-        baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-        hughd@google.com, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@meta.com,
-        Juan Yescas <jyescas@google.com>, Breno Leitao <leitao@debian.org>
-Subject: Re: [RFC] mm: khugepaged: use largest enabled hugepage order for
- min_free_kbytes
-Message-ID: <f980e652-8e2a-41da-af9b-39fdd439fefc@lucifer.local>
-References: <A409F7B3-A901-40F9-A694-DC3FB00B57FE@nvidia.com>
- <b807deec-99a9-4691-9001-c2f3adf586b9@gmail.com>
- <35A3819F-C8EE-48DB-8EB4-093C04DEF504@nvidia.com>
- <c600a6c0-aa59-4896-9e0d-3649a32d1771@gmail.com>
- <18BEDC9A-77D2-4E9B-BF5A-90F7C789D535@nvidia.com>
- <5bd47006-a38f-4451-8a74-467ddc5f61e1@gmail.com>
- <0a746461-16f3-4cfb-b1a0-5146c808e354@lucifer.local>
- <B2F966F0-8F5F-43AB-BA33-BD3E65504F4F@nvidia.com>
- <61da7d25-f115-4be3-a09f-7696efe7f0ec@lucifer.local>
- <AA2C4D68-B1DC-48A6-A807-56516067B9C7@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.26; Mon, 9 Jun
+ 2025 19:42:10 +0000
+Received: from DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
+ ([fe80::d19:56fe:5841:77ca%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
+ 19:42:09 +0000
+Date: Mon, 9 Jun 2025 21:41:57 +0200
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+To: Eryk Kubanski <e.kubanski@partner.samsung.com>
+CC: Stanislav Fomichev <stfomichev@gmail.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bjorn@kernel.org" <bjorn@kernel.org>,
+	"magnus.karlsson@intel.com" <magnus.karlsson@intel.com>,
+	"jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>
+Subject: Re: Re: Re: Re: [PATCH bpf v2] xsk: Fix out of order segment free in
+ __xsk_generic_xmit()
+Message-ID: <aEc5BVcUJyb+qlg7@boxer>
+References: <aEBPF5wkOqYIUhOl@boxer>
+ <aD3LNcG0qHHwPbiw@boxer>
+ <aDnX3FVPZ3AIZDGg@mini-arch>
+ <20250530103456.53564-1-e.kubanski@partner.samsung.com>
+ <20250602092754eucms1p1b99e467d1483531491c5b43b23495e14@eucms1p1>
+ <aD3DM4elo_Xt82LE@mini-arch>
+ <20250602161857eucms1p2fb159a3058fd7bf2b668282529226830@eucms1p2>
+ <CGME20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009@eucms1p2>
+ <20250604141521eucms1p26b794744fb73f84f223927c36ade7239@eucms1p2>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <AA2C4D68-B1DC-48A6-A807-56516067B9C7@nvidia.com>
-X-ClientProxiedBy: LO4P123CA0008.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:150::13) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+In-Reply-To: <20250604141521eucms1p26b794744fb73f84f223927c36ade7239@eucms1p2>
+X-ClientProxiedBy: VI1PR07CA0269.eurprd07.prod.outlook.com
+ (2603:10a6:803:b4::36) To DM4PR11MB6117.namprd11.prod.outlook.com
+ (2603:10b6:8:b3::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,287 +124,259 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|SA2PR10MB4761:EE_
-X-MS-Office365-Filtering-Correlation-Id: 250cca6f-7a75-495c-ae4e-08dda78d8274
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|IA3PR11MB9133:EE_
+X-MS-Office365-Filtering-Correlation-Id: f498e36f-d038-4807-7007-08dda78db909
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VTd2OEY4L3ZWcHFIMXViZFE3ek5UVnFwYVVFVi9vRTJtZW5yL29tQzdPb09h?=
- =?utf-8?B?c3dxKzVDZU52WTZ3UFBkUmJYeWJZMjlmS2UyZWQySll3WXRUUjBhaWMvVnd2?=
- =?utf-8?B?YW1KdnZzcDZQczVVV3F4RFZrZXpKdjZ2aWlTUmpsaDdua2tFRThLMkZza3Fm?=
- =?utf-8?B?S2JiZ09sWnFoVktieHkwNGNnZlJZdTRNVkJ4eVBqV1NqNVd1RVVwS1VnVzVl?=
- =?utf-8?B?SkpENnRKM1Rnc21GMlFhbEtxeGtxaENnL1UvRGVIbDJOMkNLR1BSU250bDhZ?=
- =?utf-8?B?ODZBQ2ZWc0FXMmpzd3kvYzZrT0V3S2w1MThIYkNkTitPaXhKVXRuTlBiUC9Y?=
- =?utf-8?B?ZG1ud2FHRFE5RXorUHI5S2oyUDk1aURUOFZvaWYvbVlKcDByQmVXQmpmOThz?=
- =?utf-8?B?TUQ1WTZKQm9MRUlmOFgxWE9DWmRIWVhGVDdua1BUMVc1azBFK2dhMHJReEhE?=
- =?utf-8?B?M2N3bHk1MU83UjJMYlo0RVUrbUthdWNNM01nUElQcURYSmQ5eVRtek9WUjE2?=
- =?utf-8?B?a3hvbTVhRVdTNEdNbWhTeWE3OUZXTTV1a25SYjAzMUowS3NtSGIxU2FLeWZR?=
- =?utf-8?B?QldiNzNLZ2tLQmNGT0xYY1Z1TVdaMDNINFNWb1RITEJBUVY4VStwSXJnUUc0?=
- =?utf-8?B?aTg5VjdjZ1FwbExkdzZFbWRnMzc0UHpHUVpqV2wwajJ6eHRXb29hd1ZJSEdV?=
- =?utf-8?B?MnJZNXdBRzNZNnU1MHQzL0hPdFNMUE5yeDkzaGpOUVlDQXdrT1JSV21ocGRF?=
- =?utf-8?B?VWlIZzROT3J1Wk4xd05NSjZIYjY3dTdCNWlnbEw4REhqMTNsVnUzQWNFOVVP?=
- =?utf-8?B?ZFByL2FFZmhBZzcrUFhRMG1KL2FrWE9mbzhBVGRsNDJrUVYzQ1NxS0dxbmRB?=
- =?utf-8?B?UEg0Sk1XVDJoUkUrcGJ0aHY3SmloWDlhN2M5b0FSNyt2eFN4TEZxOCs3a1Bh?=
- =?utf-8?B?NzNBWE1Dd3I0bk90dkNvSlZ5QndKU1czRkQzUWhHZTZpK2NIdm5IMFlJVjJH?=
- =?utf-8?B?K3JKSmZ5WHhvV3NxYWR5R3RyRnBPMVVNOXRBb1VLMVZ5Mzg0clppblp6MGZn?=
- =?utf-8?B?WmY5RmltTVdNbUY2UTF4ampSNjBrZDZVcGpJTmdkMC9yb0t6WDVmTTRPcUVR?=
- =?utf-8?B?SXJObTNpd3EwOVlhL0VaY2gvcmc0Y3JCbFpyUDVHcG5scHNJWUsyc29mWnRW?=
- =?utf-8?B?emxYK0RscUNwajZJNkw3UnNCOVBMQ1AwbVN1SVcrQUdjV3ZKZEVBTDZhVGdJ?=
- =?utf-8?B?OGhKVXRwZEtSSGRqTVVSRE9vVlhnWmJqVzBJTHJpR3NHR3lrZkpZMUMvV2tu?=
- =?utf-8?B?RzVGaGdLL2Q5eTNiWThESVQ5OVM1RDBVWnRQZFEyZEpGdllkMkFQYTFBM3ZD?=
- =?utf-8?B?dEZEUHJDOHpKZ0ZyT09zc2NONVFzY2wyNU5RSmd3QldNRGlnOTU2bUVPbmo1?=
- =?utf-8?B?d0dBMG1Bd1UwNm9lT1Z6T2d3MzFYZVoyNDN1TFl1SmtMY0V0ajlETUFPZE9H?=
- =?utf-8?B?R1RzWWhCbFV5ZENCcGNCZlJLQWNVbW1kRS9NODlBTGpjbU40bjRMS3BscDc0?=
- =?utf-8?B?V3JyWlNZMFNDdHpWWGZNTTRGUm5Pd2M0N1RrbnloMGRMaGJmM2NMK21COE52?=
- =?utf-8?B?N0w2TzZRbkM1MG9IYVJQM1Z0UVQwR0dvYktzUmVwZjBiQjhYNklPTkhnbDRk?=
- =?utf-8?B?anhRMzY3WGQzSlVLUmhTc1gxSy9kNm5hTWZINU1VWCtXTmdrbFM1QTNHYmgy?=
- =?utf-8?B?Y3NnWUV6cmF2KzUvdVJHTHdiWUIzbG44cjFyeUhYeFhQbTZmQ09KcTM4aVZp?=
- =?utf-8?B?MkIva1FDaU8zNEI0a0czUm4veXN6RGpacFlCcUFwMnlKME1IWFA4dzIyd0Rq?=
- =?utf-8?B?YXR4ZWZBSDUrWHZxMnA0WFV1OXFpbm5LMGZiaVAyM2ZuVkZDVnlETkVQdGFt?=
- =?utf-8?Q?JXdqhITBVu8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?PhbMo050BzXKd4HLbROxGolU+UK7XoWYj8yQP2e2dCRL7ypPkxoFpILoBf?=
+ =?iso-8859-1?Q?vLF+4bVkdQdFT5WOuwKcraZfKRUjujduViF3olkamVIuWH4w6xFAa7u77V?=
+ =?iso-8859-1?Q?YwYcvce7qANFVGbXMRYVRGHijtPW94om7S+lP1oPJNN0C9aaGETE1zq2sb?=
+ =?iso-8859-1?Q?Dcc9t58DCTvslQLCH7S8KHQyU2V+JaFCyGpN4QMSvQ4ThQTd+E6H/lbJ6U?=
+ =?iso-8859-1?Q?6ZWIBnFQ7bEBKnOfeA+p7O/nc4JGI1DfZ0NHsSIlnWQLgD6No+53aWmpBn?=
+ =?iso-8859-1?Q?XzjWIuZL0eo4hWXBQyZH3b8nZKOyD9GWxUKC0hyERBN7rjXxKnodb4hr8S?=
+ =?iso-8859-1?Q?ezyNwUY8akEJzuLJxaK+payzH58B4fitOQe3nZ1ahETkYvaAouMxtY50ZD?=
+ =?iso-8859-1?Q?tD+i5Q4+c1RctZscVm5xZ5KqHNy8QNuu9nsWW2x/seI1JDrRvzfZJBxMiO?=
+ =?iso-8859-1?Q?5kkf/EgS/uFKghdGAKyWMNtSrLPWQ2e5Y2MyXsp7YiXsC+N7kTA2pczKSF?=
+ =?iso-8859-1?Q?zbqB30W+yHiETGyUqiW1A+B5+SvFnSHouTPbMdsaW0nasuAMv0Cu6hNwWl?=
+ =?iso-8859-1?Q?Ww/dPGUQQD+9e5LVltP+W37Qc/ZoEqNkJML0+KiPQmR0jdkE4M/Nx2pZuA?=
+ =?iso-8859-1?Q?efmBafVHJNxkg5WD8zI5blJKlQjXU+Ltqvp5LhZNo85Uc9w5q4R1HBjJ1p?=
+ =?iso-8859-1?Q?3OSv8ADydFSkls6Ia6N/GYMwR8Xm/IL9iW1X8W+svlopIIP+PyOMM/QlBz?=
+ =?iso-8859-1?Q?rm50136pn5K9DjoXG46zHwtjNPtClMAV1hClHgAGHm8cNk0L66HlPYh3Ky?=
+ =?iso-8859-1?Q?X/Uzje0bEUmzJMQjfN6Gf3sOPVmx0NCeDwyhCRXJBBvNMtztlAkptYY1aS?=
+ =?iso-8859-1?Q?jgmxpNdE4QZzBKhgkFt5PoSmi7/xyTjMgmkVS6TjCGC+udUjdB391owDGo?=
+ =?iso-8859-1?Q?AxGU0D621StMcl9eudgX4mYyNbECw2nWKLPH6eko3+3pwpt44tHOA2lUVx?=
+ =?iso-8859-1?Q?HQdDiRwn2jLg2GbIlr+NrrPZRIfvilk4GswUakck5Z+cWuXPljq3egsJYu?=
+ =?iso-8859-1?Q?zgvZ5uO3GjpC05Uji8ohpHPXo16QB3KwvNnSp8Bydh9+TOOtjXavqlQtb0?=
+ =?iso-8859-1?Q?59QbE4pD/FxsCgICZUG9KijjlzmuYBJoGgHoIUkISVP35w4ZtayO2NHgYj?=
+ =?iso-8859-1?Q?5MtrnIh/49ckpXvnezudrg8hn0XpKI31yjENe+KtSXHMBcU6/u2LUDKthN?=
+ =?iso-8859-1?Q?srYf2nBbVoXWSIdfnzM7da7ZoKklEwb6TVCPWDfa6PZMg4WVw5Z4lo9HJO?=
+ =?iso-8859-1?Q?E4qgCkdIXwPErScFU9cDu+CacXYt0RvlT/2hYoH38heHxF7/7Y3a7gZ4dM?=
+ =?iso-8859-1?Q?zeR+gMOCxdUBcBv1N5BoU0ZRFGKJlOIfLC4UZ24/ttGyZFcSMySmPU0vcI?=
+ =?iso-8859-1?Q?YdPSG+ULjsw0txXSGngrZSxPu9887Lv4WFbkA5IZKYwzRYoXa0eWbBm/LF?=
+ =?iso-8859-1?Q?w=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bnZZMTVqQVBYbFBVWGxRU3lpbDh2blNHQ3U0VUdCUWtpZDlSV1RMMXIrZ0dO?=
- =?utf-8?B?aWtpMEo0YWFyTU9ZNTFnZlV6WWdhMC8remQrN040SVpKWm5MUEZEYUtCOFNs?=
- =?utf-8?B?elpZbjhxdVlsTFlmbEJGL2RZdGppODl6Uk1PQVRVR0kxYWlQc2NKRmVudXVl?=
- =?utf-8?B?VXRQelMvWTdZdWVNS2tiNjNnWDduMEpPaEkwYVIzQVd6RHlHYkQ2bmt6RTdo?=
- =?utf-8?B?d01GRFZWWjh2U1czQTF4dnpkOG00RFIyOGxaRGtyWDUveUowMVFjRmVtQkt0?=
- =?utf-8?B?clllT1Fuc1NhZWFFQmZtYXBjMVNIRXUwd3lMMHB0TE5TbFdPcC93eThZN0VP?=
- =?utf-8?B?V1F6OGRwVTBQQ3phYlBlNnMwWjk4aE5kVlJUMnh4TndmaXhEQ1NObVpQUVlX?=
- =?utf-8?B?UHd6SUpuczdpYStTMEZoUGhsOWtXYk5BMHRVd3NCOUp0UDh6bmNEQVcwTjRz?=
- =?utf-8?B?UWNIQUlrM3BQTmoxUFlTdTFpRThIb05wRHc0RXJRT0lrVXJwOTJucVVrMGNO?=
- =?utf-8?B?R2xTeDZSUUN4YTBYWUpOanhRT0FRYnB1dVc3Yk92eTh1QmpQbnViLzZ2YnBH?=
- =?utf-8?B?TlRoUUpUeHhrTWgzV0sycEJXQzUyMU03MEFJMmkySDRzazZkcmtrZ2tncW1E?=
- =?utf-8?B?a2JZcFVKZ1VTeEtZQ0R3eFYza3RIVVhHVkhWUkptb3VSSXVTY0xBU0phL3ND?=
- =?utf-8?B?enowWXYrbkNDQ2FzRnNhMGZPZHgyRFVJQmRNS2ZEaG8xNnJSRHBmazdNSmxX?=
- =?utf-8?B?T2kxd2JWUWltNHE4Z1BnUzNEOG0vakJZTHlCUGQ3YXNaWU95VkNNSitEd3k3?=
- =?utf-8?B?RVo3TzlZaE53dHZyT1JFVWtRN0ZYM0dNdFp5N1c1WndyL1d6aGxsU3ByMUZM?=
- =?utf-8?B?VStpcnRmK2tkU2dXOGE5cXY1OE5hR05QTWxTb3BjT3JwejZMSE13UGxOenlZ?=
- =?utf-8?B?UURtWFhPaElkTDI3NENOMGs1dSs0WmdjaDNuTGhGWkRZc3NoWW1RZ245TStD?=
- =?utf-8?B?SmZpTk9zSUhaMjQvemFXZEw1NUZCYnpNTXZRWklzWEtZMFNlNDlLR3dNUFJz?=
- =?utf-8?B?MDJOZTZ0djJvanA2SEZvbDJNbmRCV2U0Nm9TWkVGVkFubTdKVVhRK2pHWXR2?=
- =?utf-8?B?Qnlpb1VDbFdBTTZNYW5sS1FnK3B6aDlIRFViUHI4YXN4T2dpSnF3QW1ZN3oy?=
- =?utf-8?B?UEx4RTNKSlJSQXR5ZTdOTWM5UzgySVhqZXNIWjJCV0Y1dnZzSE1HQkhXbGZv?=
- =?utf-8?B?TXlDcS9uTGF6M3RrT1RtL1JRWmZxSjRjeVUwbjMvOURKWG1HT3ZjbEg0MDdl?=
- =?utf-8?B?cHNEeGVjQ1ByVkVLZXd0SHVBU2JOTXRoUVJQTzh6eDkxVWZwOW1hQWVSN2Zk?=
- =?utf-8?B?VTg0NE5UdXFmMnJJMHdlZllYYW9wODFJQ1ZNNkhGcGNWc0l0ZFE5eGtERzZZ?=
- =?utf-8?B?ZmJPdXgxQXExM1pXRzJpdTRmVzV2KzJpdFhTQUEwbUpHRW1oTWM5NUpJRytn?=
- =?utf-8?B?U0Z0N2RXLzczcWZEK2lRSHBmQ0wzSFFxMTJjVGptZ1pOSHIyM1A2KzF4amJB?=
- =?utf-8?B?MXBNTUFBclVoekgrbHRmNm5hWm1CalVPTDc3eVlkTXViVXAweHh3N2xsVVkv?=
- =?utf-8?B?b29YUFNqMlQ1dGZoakRkQkFtcUZ6dHNSMkRtLzBFTmFjc2xUanB0Lzg5N0JO?=
- =?utf-8?B?STRuVUx4by92UWhyeGpoY0tnTWh6M0FINlVENnZHanJ1YktPWWZQelZxcUkv?=
- =?utf-8?B?YjhuRk1DSXhWZXp2dmlNRktxOVlkblRIbURuQWhJYXN3THRWZkdGMXJTSXF1?=
- =?utf-8?B?NmlzcmdMQ2NLeFFXRzlsQTZ1T2xEdWpvWmVzOHZIWU56UlRuamR2b0hBdjBx?=
- =?utf-8?B?NjhWRmRBWUdqdjBsVW1pUVR4c2gvT2RqamNMa3FvVEdPYTUvbXRFR0pNQjhG?=
- =?utf-8?B?UytSRng1aWpPeWtnUWg0NWxXdklMbFdSaFVVaWNCcVRNUzYybG9EM2R6VDZ6?=
- =?utf-8?B?N3FxNDZibFUrVW9zMlZpeERML0RQUEc5QlVQUlBVZGdPR0tVcnAyaHpVcGVY?=
- =?utf-8?B?Y2FFeUFsd3FrcG1pVDhBcVpSaDJOaFBoc2hvZWpGWXQ4OXhXSFNKczZOOVpU?=
- =?utf-8?B?MUkvcE9LcU9LbDVpNTk3ZDZpR0ZKbm9mcEdhV09UNWxDblRCMWpGWC9tWk5O?=
- =?utf-8?B?RVE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	8uomvFhagFd0GGPLlB9GMWclL0ZV8EzkmFh3xiF2R8tiaTpmguXIPqQMBfleBzUwj2wxbIoxz/k/qxEXJJpX8AUXpJq7B//ondPb56UaP6u+RuMenMUdnlLq9ptDcG95BLmQu6ZhOwLFKMhc1icWBy7KxUuXcwbIgxUtJECBFPma5ZZAdTrkxPsa25SGZgMBV7b+N1tDA2uH/bpEfbZDdner6UfXXhGBRT2eqRCwfMe4w+cpSnMzcRrHhFe3OHhwxGqPT8WN2akGG0otEJJkBiQkJcktOCjUszc8/8Hgq7TTFfQdSIJI8ybe/uxSzU4FwOLZSWL4QQdgqB2UdvSAcFsYR5WFGx36O2fdH27bWrOB/9r4UgQYm9VSnd38HhFq3HCwL3538jX4KpDjsIQ1we9uB96xw6H8cIZCVqHWCOlEFUMl2Ovap4hzQtTvDg1DDfeL3fDFfGjpIjnZL0aLyI8o0eF/l05Ryr585txcLAKKp1Bf2Q7KvgwV3iJMdESakUL88EToZ8iPiJ1GjFcjsSXLaLm9THBGDL/mlo2zl7NOcR4Pt4M4sJ9jjLb3HJ0GfmygeBqLlJWterjnHmZSynVr4KB6WMgTDXXvQo+G6bU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 250cca6f-7a75-495c-ae4e-08dda78d8274
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?gGep2vibgtx+7xUjwet9uRWkrU5Q5ZfCk1aDjRQpoiSNA01CuNLo/5hoWQ?=
+ =?iso-8859-1?Q?oxUpXYnkcJa9ep3jsqBEZVykiyte8iOkuLiVd0zc6gM7Q0LHHmv/Rl0FUP?=
+ =?iso-8859-1?Q?UYuIOU77CCXh/SWswzOVmXaB7Ri0a2ouJInlV+lBBF/xnvEvoisTbD7qwW?=
+ =?iso-8859-1?Q?nj9o5aJOFmb7EhDDaO1INwNOOna889LS0AuVGx/pBI0P4hv2p74px2xhCo?=
+ =?iso-8859-1?Q?OPn1JkgL/aUpx1HPTNsSaPmFQgMG8XRLWRLyRPa1prFdQ0vokc0ESjr+s6?=
+ =?iso-8859-1?Q?uXhNxZEO6+nJ/zSq1nA/+xpDwIxTGdQoahYzyFAaIhz+UOoZeTRrqBp8Ja?=
+ =?iso-8859-1?Q?LfLFboDJoGGOMNrEgLZJTVJm7GDkF75PBODRXNeyLyUgGvkYHqEIvrvxe/?=
+ =?iso-8859-1?Q?fJB6ZS6IYL0wQXgmoewxjuLgb/eKeiXsFHWQhXTMMTrtCwnG/rKAW6TtlD?=
+ =?iso-8859-1?Q?LetnDuVIKE9Sa/WnlSp3R4BHUxeuxFdr42AKRzg2omPpS535czo0jbj8KP?=
+ =?iso-8859-1?Q?cV+yOh/JPk4nxCu2I4TZRU9azvm+MeEMPLcaJYJAZInAo82GmJcjHx1tOY?=
+ =?iso-8859-1?Q?OxQ97fGZ9nvegr/aKohj+NowUCEmzOsvuWkmdkmVwiGk2AkYWWEFnX1eTQ?=
+ =?iso-8859-1?Q?DyUqabTqYXrSE6MF/opWt3+0n/QzeRN1uh8KJ+s2/47EOzWlH4CQ28Bn+K?=
+ =?iso-8859-1?Q?7ErhoQUL8/0gmOXrnk1RTjOWFzbGxhMHNdaQbO+EFcwpwhCkoz6oRNhIhn?=
+ =?iso-8859-1?Q?ghTopcPwtzVUAyLLxwOc4oTKCVWtoDTL+aMfHN3Cw18BBR67Uk7rQei0MA?=
+ =?iso-8859-1?Q?E6tR+NtvQCExjTs5as0sqFpDPFRH8ASiIVDqVU9Cs38b8aefwc//NdC6NH?=
+ =?iso-8859-1?Q?LTizwyM0a9z4LnFCw4VHH/TEdD+FcjdvDsMlRp1Nkh6dRJylh766BflQUB?=
+ =?iso-8859-1?Q?MTbP7lm6+CyolKe4Zy5Yy8hafu9WsbC3Epc9RzOaQ/YMQug6AfUjOBnJEY?=
+ =?iso-8859-1?Q?BWkB+qobgHyCD8VjAishNyqMEhMVipmI0WDTpyimlSyANIE0D9HYQucNHn?=
+ =?iso-8859-1?Q?JIKufN9c0giBArWLqUwqq/gz63M0Rq+xvS49EeoIQd6iPBjlv6yabVk9ub?=
+ =?iso-8859-1?Q?10b2Q7tIjfksRiu/o0f+/Ypx+a1hJEeXaKe39LsrQSyp6n/mejBA+sW6Gr?=
+ =?iso-8859-1?Q?Quoks0uRR6XwQ8kDYeI/QYejH/YPq4vu3xdgfLk8hnSIwABM7c2t6TFod2?=
+ =?iso-8859-1?Q?9TOjsxvC9zvccVWJzhgl3xs0Utm36TpqKZrll7nurnJBJ/fsa4KSncuS1e?=
+ =?iso-8859-1?Q?khE5xNzX/58ujrDiCpEi73+3qqTH2KqQ1J1YB/crCHpjZGSG253skAhgBs?=
+ =?iso-8859-1?Q?aVJy2doJX9O4QVnzhbFnvFkxjfgburIVh/67AdyWUQU2hHJU1WCkmcX6uX?=
+ =?iso-8859-1?Q?fKVSbk/XfI83Azfk+VN9JOM06OAAGnDRyVN042D2t48rIOERZgmGrNneJ5?=
+ =?iso-8859-1?Q?DrfSGDEI/MfpFJHqDAfGulN2kQkIoBNLh6jWxn7x+2DNRf0mMivwOtE0tN?=
+ =?iso-8859-1?Q?y0bwIWcmqaQEJ1eSWJ1xgl9qODThXWKYJMAs9JehI7wPYW6hR7fzHwsdln?=
+ =?iso-8859-1?Q?U5ZHZ5Za0egNV8S/dGxC9BW9hPE/IiIn1bFg3nacmMB3ph8QAFjRPtsA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f498e36f-d038-4807-7007-08dda78db909
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 19:40:37.8350
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 19:42:09.5193
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qReo5atb3pWd3v8W9oNNvEQkmQTSXh3QkYG+SGKUdcXB6NpfUW+xIsuPSUpEStjyChriTVCJ5coND1EhYi9WwTs3H5fuNDnKXnLxwL3xzo4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4761
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_08,2025-06-09_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 suspectscore=0
- phishscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506090149
-X-Proofpoint-GUID: HZ2E2OEvqYQsRQP4AQOBLEAlOQyatPAG
-X-Authority-Analysis: v=2.4 cv=BffY0qt2 c=1 sm=1 tr=0 ts=684738ba cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=vKqikLxY70d6_XfIc5UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: HZ2E2OEvqYQsRQP4AQOBLEAlOQyatPAG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDE0OSBTYWx0ZWRfX54Q20VSPWf1a CXDCc9K5EjdG5LtSh9ry8r+0cKcYUIImfrWsDSc/rVz3+LDGskePUGkpk5F8xyf/4q+f7r66PBg lVs95UdlwMa+a+jytIo0+e7WNbwx1/i8NVKS98WZ6i2MNEU08uj+AMPJyy16t500N9M48/DVCoT
- tjWdMPiN13Q11OazGM9bldLWdNiDrhO4br6HiujD4hY1QQ8cDeRmWAlm4IqFDcxB398JuqFcBOY g/2erzgayhXlCvmflnUIb6+UbnkYG4e+hJmBywP5Igr+lLKy9yhfyIuJCLArckyrPLDCR0tgMxp oyd/8xNelYzhuRHophXO7VsqbHV+T/Bl6zznEyQYzUmBrV30484CyZ6iymgt9hW3e7VQq2/h7tX
- +XJSXaTGxqYVImkeRoZahs+RL+CtS8D/bB8M4Cods8LPvXQiRbZSWDnK2KNH7f0H/Pg5J3U7
+X-MS-Exchange-CrossTenant-UserPrincipalName: wEtRM5Fe+ZzCKxb/z5MgUOWbmy0tioPN29UftGeaCWtopMOYb/WbSoj2kk9HNGIF0rzrzRRB3zSOTLNDFEc0VjQ78n9HmlYIiOSdlCP6f7o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9133
+X-OriginatorOrg: intel.com
 
-On Mon, Jun 09, 2025 at 11:20:04AM -0400, Zi Yan wrote:
-> On 9 Jun 2025, at 10:50, Lorenzo Stoakes wrote:
->
-> > On Mon, Jun 09, 2025 at 10:37:26AM -0400, Zi Yan wrote:
-> >> On 9 Jun 2025, at 10:16, Lorenzo Stoakes wrote:
-> >>
-> >>> On Mon, Jun 09, 2025 at 03:11:27PM +0100, Usama Arif wrote:
-> >
-> > [snip]
-> >
-> >>>> So I guess the question is what should be the next step? The following has been discussed:
-> >>>>
-> >>>> - Changing pageblock_order at runtime: This seems unreasonable after Zi's explanation above
-> >>>>   and might have unintended consequences if done at runtime, so a no go?
-> >>>> - Decouple only watermark calculation and defrag granularity from pageblock order (also from Zi).
-> >>>>   The decoupling can be done separately. Watermark calculation can be decoupled using the
-> >>>>   approach taken in this RFC. Although max order used by pagecache needs to be addressed.
-> >>>>
-> >>>
-> >>> I need to catch up with the thread (workload crazy atm), but why isn't it
-> >>> feasible to simply statically adjust the pageblock size?
-> >>>
-> >>> The whole point of 'defragmentation' is to _heuristically_ make it less
-> >>> likely there'll be fragmentation when requesting page blocks.
-> >>>
-> >>> And the watermark code is explicitly about providing reserves at a
-> >>> _pageblock granularity_.
-> >>>
-> >>> Why would we want to 'defragment' to 512MB physically contiguous chunks
-> >>> that we rarely use?
-> >>>
-> >>> Since it's all heuristic, it seems reasonable to me to cap it at a sensible
-> >>> level no?
-> >>
-> >> What is a sensible level? 2MB is a good starting point. If we cap pageblock
-> >> at 2MB, everyone should be happy at the moment. But if one user wants to
-> >> allocate 4MB mTHP, they will most likely fail miserably, because pageblock
-> >> is 2MB, kernel is OK to have a 2MB MIGRATE_MOVABLE pageblock next to a 2MB
-> >> MGIRATE_UNMOVABLE one, making defragmenting 4MB an impossible job.
-> >>
-> >> Defragmentation has two components: 1) pageblock, which has migratetypes
-> >> to prevent mixing movable and unmovable pages, as a single unmovable page
-> >> blocks large free pages from being created; 2) memory compaction granularity,
-> >> which is the actual work to move pages around and form a large free pages.
-> >> Currently, kernel assumes pageblock size = defragmentation granularity,
-> >> but in reality, as long as pageblock size >= defragmentation granularity,
-> >> memory compaction would still work, but not the other way around. So we
-> >> need to choose pageblock size carefully to not break memory compaction.
-> >
-> > OK I get it - the issue is that compaction itself operations at a pageblock
-> > granularity, and once you get so fragmented that compaction is critical to
-> > defragmentation, you are stuck if the pageblock is not big enough.
->
-> Right.
->
-> >
-> > Thing is, 512MB pageblock size for compaction seems insanely inefficient in
-> > itself, and if we're complaining about issues with unavailable reserved
-> > memory due to crazy PMD size, surely one will encounter the compaction
-> > process simply failing to succeed/taking forever/causing issues with
-> > reclaim/higher order folio allocation.
->
-> Yep. Initially, we probably never thought PMD THP would be as large as
-> 512MB.
+On Wed, Jun 04, 2025 at 04:15:21PM +0200, Eryk Kubanski wrote:
+> >�Thanks for shedding a bit more light on it. In the future it would be nice
+> > if you would be able to come up with a reproducer of a bug that others
+> > could use on their side. Plus the overview of your deployment from the
+> > beginning would also help with people understanding the issue :)
+> 
+> Sure, sorry for not giving that in advance, I found this issue
+> during code analysis, not during deployment.
+> It's not that simple to catch.
+> I thought that in finite time we will agree :D.
+> Next patchsets from me will have more information up-front.
+> 
+> > I'm looking into it, bottom line is that we discussed it with Magnus and
+> > agree that issue you're reporting needs to be addressed.
+> > I'll get back to you to discuss potential way of attacking it.
+> > Thanks!
+> 
+> Thank you.
+> Will this be discussed in the same mailing chain?
 
-Of course, such is the 'organic' nature of kernel development :)
+I've come with something as below. Idea is to embed addr at the end of
+linear part of skb/at the end of page frag. For first case we account 8
+more bytes when calling sock_alloc_send_skb(), for the latter we alloc
+whole page anyways so we can just use the last 8 bytes. then in destructor
+we have access to addrs used during xmit descriptor production. This
+solution is free of additional struct members so performance-wise it
+should not be as impactful as previous approach.
 
->
-> >
-> > I mean, I don't really know the compaction code _at all_ (ran out of time
-> > to cover in book ;), but is it all or-nothing? Does it grab a pageblock or
-> > gives up?
->
-> compaction works on one pageblock at a time, trying to migrate in-use pages
-> within the pageblock away to create a free page for THP allocation.
-> It assumes PMD THP size is equal to pageblock size. It will keep working
-> until a PMD THP size free page is created. This is a very high level
-> description, omitting a lot of details like how to avoid excessive compaction
-> work, how to reduce compaction latency.
+---
+ net/xdp/xsk.c       | 37 ++++++++++++++++++++++++++++++-------
+ net/xdp/xsk_queue.h |  8 ++++++++
+ 2 files changed, 38 insertions(+), 7 deletions(-)
 
-Yeah this matches my assumptions.
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index 72c000c0ae5f..22f314ea9dc2 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -528,24 +528,39 @@ static int xsk_wakeup(struct xdp_sock *xs, u8 flags)
+ 	return dev->netdev_ops->ndo_xsk_wakeup(dev, xs->queue_id, flags);
+ }
+ 
+-static int xsk_cq_reserve_addr_locked(struct xsk_buff_pool *pool, u64 addr)
++static int xsk_cq_reserve_locked(struct xsk_buff_pool *pool)
+ {
+ 	unsigned long flags;
+ 	int ret;
+ 
+ 	spin_lock_irqsave(&pool->cq_lock, flags);
+-	ret = xskq_prod_reserve_addr(pool->cq, addr);
++	ret = xskq_prod_reserve(pool->cq);
+ 	spin_unlock_irqrestore(&pool->cq_lock, flags);
+ 
+ 	return ret;
+ }
+ 
+-static void xsk_cq_submit_locked(struct xsk_buff_pool *pool, u32 n)
++static void xsk_cq_submit_locked(struct xsk_buff_pool *pool, struct sk_buff *skb)
+ {
++	size_t addr_sz = sizeof(((struct xdp_desc *)0)->addr);
+ 	unsigned long flags;
++	int nr_frags, i;
++	u64 addr;
+ 
+ 	spin_lock_irqsave(&pool->cq_lock, flags);
+-	xskq_prod_submit_n(pool->cq, n);
++
++	addr = *(u64 *)(skb->head + skb->end - addr_sz);
++	xskq_prod_write_addr(pool->cq, addr);
++
++	nr_frags = skb_shinfo(skb)->nr_frags;
++
++	for (i = 0; i < nr_frags; i++) {
++		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
++
++		addr = *(u64 *)(skb_frag_address(frag) + PAGE_SIZE - addr_sz);
++		xskq_prod_write_addr(pool->cq, addr);
++	}
++
+ 	spin_unlock_irqrestore(&pool->cq_lock, flags);
+ }
+ 
+@@ -572,7 +587,7 @@ static void xsk_destruct_skb(struct sk_buff *skb)
+ 		*compl->tx_timestamp = ktime_get_tai_fast_ns();
+ 	}
+ 
+-	xsk_cq_submit_locked(xdp_sk(skb->sk)->pool, xsk_get_num_desc(skb));
++	xsk_cq_submit_locked(xdp_sk(skb->sk)->pool, skb);
+ 	sock_wfree(skb);
+ }
+ 
+@@ -656,6 +671,7 @@ static struct sk_buff *xsk_build_skb_zerocopy(struct xdp_sock *xs,
+ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
+ 				     struct xdp_desc *desc)
+ {
++	size_t addr_sz = sizeof(desc->addr);
+ 	struct xsk_tx_metadata *meta = NULL;
+ 	struct net_device *dev = xs->dev;
+ 	struct sk_buff *skb = xs->skb;
+@@ -671,6 +687,7 @@ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
+ 	} else {
+ 		u32 hr, tr, len;
+ 		void *buffer;
++		u8 *trailer;
+ 
+ 		buffer = xsk_buff_raw_get_data(xs->pool, desc->addr);
+ 		len = desc->len;
+@@ -680,7 +697,9 @@ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
+ 
+ 			hr = max(NET_SKB_PAD, L1_CACHE_ALIGN(dev->needed_headroom));
+ 			tr = dev->needed_tailroom;
+-			skb = sock_alloc_send_skb(&xs->sk, hr + len + tr, 1, &err);
++			skb = sock_alloc_send_skb(&xs->sk,
++						  hr + len + tr + addr_sz,
++						  1, &err);
+ 			if (unlikely(!skb))
+ 				goto free_err;
+ 
+@@ -690,6 +709,9 @@ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
+ 			err = skb_store_bits(skb, 0, buffer, len);
+ 			if (unlikely(err))
+ 				goto free_err;
++			trailer = skb->head + skb->end - addr_sz;
++			memcpy(trailer, &desc->addr, addr_sz);
++
+ 		} else {
+ 			int nr_frags = skb_shinfo(skb)->nr_frags;
+ 			struct page *page;
+@@ -708,6 +730,7 @@ static struct sk_buff *xsk_build_skb(struct xdp_sock *xs,
+ 
+ 			vaddr = kmap_local_page(page);
+ 			memcpy(vaddr, buffer, len);
++			memcpy(vaddr + PAGE_SIZE - addr_sz, &desc->addr, addr_sz);
+ 			kunmap_local(vaddr);
+ 
+ 			skb_add_rx_frag(skb, nr_frags, page, 0, len, PAGE_SIZE);
+@@ -807,7 +830,7 @@ static int __xsk_generic_xmit(struct sock *sk)
+ 		 * if there is space in it. This avoids having to implement
+ 		 * any buffering in the Tx path.
+ 		 */
+-		err = xsk_cq_reserve_addr_locked(xs->pool, desc.addr);
++		err = xsk_cq_reserve_locked(xs->pool);
+ 		if (err) {
+ 			err = -EAGAIN;
+ 			goto out;
+diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
+index 46d87e961ad6..9cd65d1bc81b 100644
+--- a/net/xdp/xsk_queue.h
++++ b/net/xdp/xsk_queue.h
+@@ -390,6 +390,14 @@ static inline int xskq_prod_reserve_addr(struct xsk_queue *q, u64 addr)
+ 	return 0;
+ }
+ 
++static inline void xskq_prod_write_addr(struct xsk_queue *q, u64 addr)
++{
++	struct xdp_umem_ring *ring = (struct xdp_umem_ring *)q->ring;
++
++	/* A, matches D */
++	ring->desc[q->ring->producer++ & q->ring_mask] = addr;
++}
++
+ static inline void xskq_prod_write_addr_batch(struct xsk_queue *q, struct xdp_desc *descs,
+ 					      u32 nb_entries)
+ {
 
->
-> >
-> > Because it strikes me that a crazy pageblock size would cause really
-> > serious system issues on that basis alone if that's the case.
-> >
-> > And again this leads me back to thinking it should just be the page block
-> > size _as a whole_ that should be adjusted.
-> >
-> > Keep in mind a user can literally reduce the page block size already via
-> > CONFIG_PAGE_BLOCK_MAX_ORDER.
-> >
-> > To me it seems that we should cap it at the highest _reasonable_ mTHP size
-> > you can get on a 64KB (i.e. maximum right? RIGHT? :P) base page size
-> > system.
-> >
-> > That way, people _can still get_ super huge PMD sized huge folios up to the
-> > point of fragmentation.
-> >
-> > If we do reduce things this way we should give a config option to allow
-> > users who truly want collosal PMD sizes with associated
-> > watermarks/compaction to be able to still have it.
-> >
-> > CONFIG_PAGE_BLOCK_HARD_LIMIT_MB or something?
->
-> I agree with capping pageblock size at a highest reasonable mTHP size.
-> In case there is some user relying on this huge PMD THP, making
-> pageblock a boot time variable might be a little better, since
-> they do not need to recompile the kernel for their need, assuming
-> distros will pick something like 2MB as the default pageblock size.
 
-Right, this seems sensible, as long as we set a _default_ that limits to
-whatever it would be, 2MB or such.
-
-I don't think it's unreasonable to make that change since this 512 MB thing
-is so entirely unexpected and unusual.
-
-I think Usama said it would be a pain it working this way if it had to be
-explicitly set as a boot time variable without defaulting like this.
-
->
-> >
-> > I also question this de-coupling in general (I may be missing somethig
-> > however!) - the watermark code _very explicitly_ refers to providing
-> > _pageblocks_ in order to ensure _defragmentation_ right?
->
-> Yes. Since without enough free memory (bigger than a PMD THP),
-> memory compaction will just do useless work.
-
-Yeah right, so this is a key thing and why we need to rework the current
-state of the patch.
-
->
-> >
-> > We would need to absolutely justify why it's suddenly ok to not provide
-> > page blocks here.
-> >
-> > This is very very delicate code we have to be SO careful about.
-> >
-> > This is why I am being cautious here :)
->
-> Understood. In theory, we can associate watermarks with THP allowed orders
-> the other way around too, meaning if user lowers vm.min_free_kbytes,
-> all THP/mTHP sizes bigger than the watermark threshold are disabled
-> automatically. This could fix the memory compaction issues, but
-> that might also drive user crazy as they cannot use the THP sizes
-> they want.
-
-Yeah that's interesting but I think that's just far too subtle and people will
-have no idea what's going on.
-
-I really think a hard cap, expressed in KB/MB, on pageblock size is the way to
-go (but overrideable for people crazy enough to truly want 512 MB pages - and
-who cannot then complain about watermarks).
-
->
-> Often, user just ask for an impossible combination: they
-> want to use all free memory, because they paid for it, and they
-> want THPs, because they want max performance. When PMD THP is
-> small like 2MB, the “unusable” free memory is not that noticeable,
-> but when PMD THP is as large as 512MB, user just cannot unsee it. :)
-
-Well, users asking for crazy things then being surprised when they get them
-is nothing new :P
-
->
->
-> Best Regards,
-> Yan, Zi
-
-Thanks for your input!
-
-Cheers, Lorenzo
+> 
+> Technically we need to tie descriptor write-back
+> with skb lifetime.
+> xsk_build_skb() function builds skb for TX,
+> if i understand correctly this can work both ways
+> either we perform zero-copy, so specific buffer
+> page is attached to skb with given offset and size.
+> OR perform the copy.
+> 
+> If there was no zerocopy case, we could store it
+> on stack array and simply recycle descriptor back
+> right away without waiting for SKB completion.
+> 
+> This zero-copy case makes it impossible right?
+> We need to store these descriptors somewhere else
+> and tie it to SKB destruction :(.
 
