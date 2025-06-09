@@ -1,75 +1,93 @@
-Return-Path: <linux-kernel+bounces-678141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D2BAD24CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:12:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1599CAD24D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413343A80C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33BF17A5423
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E09821B9F4;
-	Mon,  9 Jun 2025 17:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D81021D3C6;
+	Mon,  9 Jun 2025 17:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ly5d4Rfd"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aAAK230f"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222C15B102;
-	Mon,  9 Jun 2025 17:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749489110; cv=none; b=MqpKCY78TdczQ5H0z5X2uB6xto9IGqhJuPriUySlaG6d/0NhV+mjZkhEc29P6Gz1hzQ+FV2DkChnykMxpb164lp8Yfxh2siFHqNGOQWpL8G4/CTmeNHIVaPyWpTzP/QPq+kpkWrzzeUPVgA4fTpwWRKWx2O/Sh/aVzReN4FAZ6E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749489110; c=relaxed/simple;
-	bh=Zc9k0GvsLHQBb6pSqv2De889TV9l2b1pkVelPJAzcYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFpQfhBSmiFUJHXNtwT35+hrqwZjefYutKdna+xc5wSNY+SpyNsgNZG7Lr5tCGpGYUtW2BpFpHpGhD0nBFl9FTzOO1kezzVLqvYWmI9r3fMIV3n0fxWgVDYqbsBAS9SiIDqUaqtyn+NKvH0nAg1ckzA2Y/o2aAIzyPFo4btHCyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ly5d4Rfd; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559Fdb21006154;
-	Mon, 9 Jun 2025 17:11:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=4kkB0pdhy4LtB2d8Dt+x/uRpKX3b9
-	Z4Xiq1VjlCZHRg=; b=ly5d4RfdfDmLVJNNcHifjQ4uwd6MNy/mzpZ+9RagY/pC2
-	OuDYVOY8UEDsveGObfirUCvH6iC520c1T5tOtawJcdNPab49aXf7AoxS5MtIyRHf
-	QjcLUJF6UStGh2VyvU8Oj0W5g+ctIebxCV1LtaEOdj75m/aVuzMIfNO0glv30MNR
-	J2aXpkHXlxu+bHzdTHI0ujGb77Cz/dJ2owX3vr9Fcc0Gvi3XgbJkjqkcAIvHywPB
-	bpIZbWHiqaWYtw3hMIyniiJ1HjMJmpYuztDIb3J/LBkjUZEgqLuH2LrMo7hShPx0
-	J/MwKjfRYpXXz19Hyu2HdilBanwI87LDgsm3A4WZw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4752xjsxj9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Jun 2025 17:11:35 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 559FTrha031326;
-	Mon, 9 Jun 2025 17:11:34 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv7pkfr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Jun 2025 17:11:34 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 559HBXpA035634;
-	Mon, 9 Jun 2025 17:11:33 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 474bv7pkf4-1;
-	Mon, 09 Jun 2025 17:11:33 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: gourry@gourry.net, rdunlap@infradead.org, dave@stgolabs.net,
-        jonathan.cameron@huawei.com, dave.jiang@intel.com,
-        alison.schofield@intel.com, vishal.l.verma@intel.com,
-        ira.weiny@intel.com, dan.j.williams@intel.com, corbet@lwn.net,
-        linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org,
-        darren.kenny@oracle.com
-Subject: [PATCH v3] Documentation: cxl: fix typos and improve clarity in memory-devices.rst
-Date: Mon,  9 Jun 2025 10:10:48 -0700
-Message-ID: <20250609171130.2375901-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.47.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325C221B9D6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 17:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749489243; cv=fail; b=Jitw+BO849dy1RTagwSrwFFzwfoGjeW1kVC72Szu042vukc1rvCWeMMkO0XQRwTjkwyJ/x6EwQCyUpUfNt0fxKIVq8U1u5W+qRcOi/yfllrFyL8na/+aySeA+5wuZsSXUMB1We7noUOZNeoqu+awuGnwzeN5uDST8zEO3XfV0s4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749489243; c=relaxed/simple;
+	bh=pLIqQymyBLXykF8rThO0A7FsOOhlpxORjt8yKIbL74g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UflvtaLPxidfTWpZDFaDIrQlvPFWCyPzWcJ81v4XY/HfNXfV/K9+waIQEDovVtCAibuW+lplfNY1KzpIlxeY6XG8NymBF2g7TN8vEet/nYvgtjLOXGebiJF2ktPYsIYtI+ZcSjzaMFxjobM9AC9+B49IdOXkeE4GPONcYXVf2bo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aAAK230f; arc=fail smtp.client-ip=40.107.244.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OzLEMq4g5UqbzndcpcxDF19NB0wApeID2tMnmbDAuxJOHNBQ5nhPlTfy634BHZCTvXwo8V6D89zBtaBtAnFFcQs4pxvFPKkDUq0VkubpKKz2F80as5XDwwElKQvXG7tP00rYsfMVzp9MH/LscvOTjz0h0qiR4upkuz38wCuaS1QzT0R+T3uWAPdUb1Bo353HufMRiS1wI+H6CySegalnQZCb3s/kgmiS2yWyHDsfUDnUfgNykfBcxhmdWduML4p1FFRrVnFeu4jwAB2WrU462KEHeLjGW8BIRgRbui9DKfp+PrkbqOdtkNYohFxCe7cxrLD9XXw3vC5M/69eO869yQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uxlPOBa1//M+NZrPDf8z0eSnrNudRx2kGs7Bya9Bb5s=;
+ b=MRhPDzFnEYnqGk8tXWUT4HNZCf4DypYLXf43qdQWTfWuqXNE9CB+31LOTSeDCj5s7+fIg3t8tw1SgNzhkWNyr5sT/sMximOskQzg+rF0Sagfss3A91Okolu+RbTEpISSJGIdQ6FXkU6zdFZZ7BqHZzPU/mTO5NX+Fw42QmrznzEFv8j8I+eDQevaaUr5z4ftpg1p7R2HTCCA0S2sTTOJGHpc8zYj70/ICSQb3CdiinI1uwrYuoUnyLLzGRb7tkDj/wZzBi/osW6NQq3qgrgGmYnUD4SQZ+wqU0S7boHrq9s65tLQkiHcOtAJJdb6qZ2Vp9UdQlBu4YzXWUZ1o8P6pQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uxlPOBa1//M+NZrPDf8z0eSnrNudRx2kGs7Bya9Bb5s=;
+ b=aAAK230fCAgsJHm1VhuPDOe8QZiwCGsjZ4YDgoH3/FeYx83UlwL5tYOx/jAVUNu3kJ4p+RsMkWUapYhPq0DL2qPvBsMtCYIu26zgB6MfD2DqNx2uAnCUfIxz6P7C3sNT1qTgqS1VpiBMtAwDXfF+KARY7+2TeUSd0oxv9P5VG/QshR8qbRExr/ecERPyQM0szwj6YsKlc8kkq3i8diKS/T+38+tpvimbuPX3GXgz22klrGe4df8rF4c9RIfcjHPAitaYL4Wl3zTulhglN/nkqgPyL1bNe2UA0WwM1CbWb3URafd+jN5ocwnMw4/azQcDavsvOnGbH6R844e6x5ZH+w==
+Received: from BN9PR03CA0845.namprd03.prod.outlook.com (2603:10b6:408:13d::10)
+ by DM4PR12MB6302.namprd12.prod.outlook.com (2603:10b6:8:a4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 9 Jun
+ 2025 17:13:59 +0000
+Received: from MN1PEPF0000F0E2.namprd04.prod.outlook.com
+ (2603:10b6:408:13d:cafe::14) by BN9PR03CA0845.outlook.office365.com
+ (2603:10b6:408:13d::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.23 via Frontend Transport; Mon,
+ 9 Jun 2025 17:13:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0E2.mail.protection.outlook.com (10.167.242.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.15 via Frontend Transport; Mon, 9 Jun 2025 17:13:57 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 9 Jun 2025
+ 10:13:40 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 9 Jun
+ 2025 10:13:39 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 9 Jun 2025 10:13:38 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<ddutile@redhat.com>, <yi.l.liu@intel.com>, <peterz@infradead.org>,
+	<jsnitsel@redhat.com>, <praan@google.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>,
+	<baolu.lu@linux.intel.com>
+Subject: [PATCH v1 00/12] iommufd: Repare for IOMMUFD_OBJ_HW_QUEUE
+Date: Mon, 9 Jun 2025 10:13:23 -0700
+Message-ID: <cover.1749488870.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,93 +95,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_06,2025-06-09_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 suspectscore=0
- phishscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506090129
-X-Authority-Analysis: v=2.4 cv=K4AiHzWI c=1 sm=1 tr=0 ts=684715c7 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=JfrnYn6hAAAA:8 a=tHa68p0SAAAA:8 a=i0EeH86SAAAA:8 a=_IABl59LKn_a5T-pKP4A:9
- a=1CNFftbPRP8L7MoqJWF3:22 a=ufIsyHvWW7FwcMbVRpPq:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDEyOSBTYWx0ZWRfX1E/LEju1K3wP P3UO6o4gAaplyTJJABd7/cA0FhzBqyrMD0I5aaI+sDfukqZN8HYfRpHOJJE2lmVdFBaYLSIo1s8 x4YH8HlFdVdjw0J56joStYutUKTMUiJR6SON4EPeFRXUMvPqY/9ReqPuM1mtrtonGjzoy/8bGzu
- 7xSm0bmLdIxXP6I5bxGRxPxiIVCkLit8xIZSYdgcVxwinKTsH1n69tdyMlFIvjn/Vr08+YpwE2E DGN7zX9AlBAkYRLPOq/FSFn+pIUkMepeiLG8ATuiiNC2D1zeWhaHDuS8GutrFHt/gXAr1OEzXaW qFg3t/sXf7ZDTKIFnI0aKaPyEgxRAqvY0whOr+UgRu00FHH87aT+q79ZdQ4vIMolTWm5bJ/SSj/
- qkgdLBnG6GBRWvmnSdrW9DrYiLxG0+VVgvS9gKTgZrar8DFbVVc33LXtjBx3UsJ5DDgsekAs
-X-Proofpoint-ORIG-GUID: 4gj9Jimbai6MOpAkM8QuaubgsazdzVZm
-X-Proofpoint-GUID: 4gj9Jimbai6MOpAkM8QuaubgsazdzVZm
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E2:EE_|DM4PR12MB6302:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d28b695-c017-49e8-6588-08dda779055a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vaEHVK4Shqhxvzg7VFsM24gnpJccI16qYrq3rVZFHYqSvOr4KLjm75Qa9KzR?=
+ =?us-ascii?Q?huqnJ/+rQmKn7nV1qCWUq+jn3HS2l9l7YSHJldR2shMnJqJSz2uq9nND7WW1?=
+ =?us-ascii?Q?iicdJEabiJHhyQpxTJNQ+5fMJoItzJ0T3wEcVarLr7gpQA1drYluB42yxo8B?=
+ =?us-ascii?Q?OE3EXp5p0puldRhbGhJsPd2U7li3kOvrUnamUqE4yeKNTJcxkVuEDCOK2XWY?=
+ =?us-ascii?Q?MlX3bW/RUvQ+aMC/oWdp+6W0Qzg8v2EdpupNyP2cltBR4/FG/chuQNflV+Po?=
+ =?us-ascii?Q?rsy88HRXtN3qCormKtYqUu1Ts/CT07BxMG9taCWd7RJxzhE1iQYNlqfVtjih?=
+ =?us-ascii?Q?MxGnivMzN+3lqwQ/wPqh013iP90HZJgvSRMYMnbEznI4YwNI0+X8MAMgaU37?=
+ =?us-ascii?Q?iTWQpuUIgvHltoXA4Qbadz2s1Mddy0mkX9uxpQak/6IEWLfvP+s1YzmsV8HC?=
+ =?us-ascii?Q?GvT1yxOXPy1WGILJBqDe5NUVWvg5O2k4Txd+TolIcndPGMKSwnST8iGuvhIJ?=
+ =?us-ascii?Q?oDcxVqZ6Tsmsv+Yg0PrvB0WRKxqh+Wva2MjGOxqu5/YkUi/i6aoPgVzqknOs?=
+ =?us-ascii?Q?p+B8owc5dHHFpevbd+BJDHYg8IAjTLygHp/wsQkClnUUsozuI3NqLlglz+ne?=
+ =?us-ascii?Q?j8FFw9MBb5sEsC9YRO16qBzzeVevMNKKiT50puOns+H15ekPRpPU8Ma8CtX5?=
+ =?us-ascii?Q?rjOmnlc3CbP62idVbR1nccags8G8LwfbsCtuaB4T5hcP1B3u9nFMJOCH7oaP?=
+ =?us-ascii?Q?G5ddHobJhoKftHPlIi9eUoD4oGqlweaycRRTpzm0FQksW5PAyOPDnhXuYoyJ?=
+ =?us-ascii?Q?wfUgeNvwfko32Kb/OE4AZAx6yQ3h+VUxiXusN0cBBLK4b2NbIRxREYGeli+1?=
+ =?us-ascii?Q?j39gJTGJSMDivm2+NBw0vVKsZypFMusVboLRG0fNbJVXNof8ZEr8KUYUuEgw?=
+ =?us-ascii?Q?tczzmmRqvz8hFM0Eo6iLKD4e7uS5n++ArF13SXo59xgj9zpZuYiD+zwSKdJg?=
+ =?us-ascii?Q?gFdN/IL/tb3ww09aDfOnWRawwsrCbEl/m8FsdBYjGqXDa4oskiy+3NUveHuj?=
+ =?us-ascii?Q?uw62sd6GP6xD2+Bq2yoihFfMhUHoeRLcR1HUXb75DcpS7RjUHqHdvwrTM3lL?=
+ =?us-ascii?Q?QAw9P61mSWPObLvaUwXjr8xAS0k9YWF26KslVv58CPlJ+jcbgNRg3ucbezj7?=
+ =?us-ascii?Q?CSzFKrS27JgFPoUQdQMl4RZ+0LTFVq9vn7wqvIS5+aIGKDhgcCSTLvOrqmzI?=
+ =?us-ascii?Q?jb+5+uz8+1PtnYYh3ZgzzzkOCZL9OJ7KnVI4ykbHcm8gDOm4hgF6IN+w6bYL?=
+ =?us-ascii?Q?5SioEVVDCI50D+gcCLfrdsl5C/oedOYaPJCGvBjNlBxVtqz3m8OepcglcCUK?=
+ =?us-ascii?Q?nZbU6NsGeLMMfeFoG24UsYgMTHr+wweK3roJIku0wDhVyjudjnW/ZBZ3wrow?=
+ =?us-ascii?Q?gj68cfQoPLKL7C7Vpr+4F68UdligvTJN3LMz2VsJdQiQWMhcZu8PHBNGWnP4?=
+ =?us-ascii?Q?SITynIY/5PMJoH3Wc1YExXKn8GWagnlxfBZm62sA2oxnbsDSEaZN2yh8gw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 17:13:57.7053
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d28b695-c017-49e8-6588-08dda779055a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E2.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6302
 
-This patch corrects several typographical issues and improves phrasing
-in memory-devices.rst:
+The new HW Queue object will require more interactions with IOMMU drivers,
+with a few more for-driver APIs. This will complicate the driver-allocated
+structure design like the viommu_alloc op: since the core structure is not
+initialized during the driver allocation stage, a new for-driver API can't
+reference any member in the core vIOMMU structure.
 
-- Fixes duplicate word ("1 one") and adjusts phrasing for clarity.
-- Adds missing hyphen in "on-device".
-- Corrects "a give memory device" to "a given memory device".
-- fix singular/plural "decoder resource" -> "decoder resources".
-- Clarifies "spans to Host Bridges" -> "spans two Host Bridges".
-- change "at a" -> "a"
+Make a preparatory series doing:
+ - Cosmetic fixes and clean ups
+ - Replace viommu_alloc design with get_viommu_size + viommu_init
+ - Add a new iommufd_object_alloc_ucmd
 
-These changes improve readability and accuracy of the documentation.
+Some of the patches are included from:
+[PATCH v5 00/29] iommufd: Add vIOMMU infrastructure (Part-4 HW QUEUE)
+https://lore.kernel.org/all/cover.1747537752.git.nicolinc@nvidia.com/
 
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Gregory Price <gourry@gourry.net>
-Reviewed-by: Jonathan Cameron<jonathan.cameron@huawei.com>
----
-v2->v3
-rebase to v6.16-rc1
-added Reviewed-by: Jonathan Cameron
-v1->v2
-added Reviewed-by Randy Dunlap and Gregory Price
-change "at a" -> "a
----
- Documentation/driver-api/cxl/theory-of-operation.rst | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+This is on Github:
+https://github.com/nicolinc/iommufd/commits/iommufd_hw_queue-prep-v1
 
-diff --git a/Documentation/driver-api/cxl/theory-of-operation.rst b/Documentation/driver-api/cxl/theory-of-operation.rst
-index 40793dad3630..257f513e320c 100644
---- a/Documentation/driver-api/cxl/theory-of-operation.rst
-+++ b/Documentation/driver-api/cxl/theory-of-operation.rst
-@@ -29,8 +29,8 @@ Platform firmware enumerates a menu of interleave options at the "CXL root port"
- (Linux term for the top of the CXL decode topology). From there, PCIe topology
- dictates which endpoints can participate in which Host Bridge decode regimes.
- Each PCIe Switch in the path between the root and an endpoint introduces a point
--at which the interleave can be split. For example platform firmware may say at a
--given range only decodes to 1 one Host Bridge, but that Host Bridge may in turn
-+at which the interleave can be split. For example, platform firmware may say a
-+given range only decodes to one Host Bridge, but that Host Bridge may in turn
- interleave cycles across multiple Root Ports. An intervening Switch between a
- port and an endpoint may interleave cycles across multiple Downstream Switch
- Ports, etc.
-@@ -187,7 +187,7 @@ decodes them to "ports", "ports" decode to "endpoints", and "endpoints"
- represent the decode from SPA (System Physical Address) to DPA (Device Physical
- Address).
- 
--Continuing the RAID analogy, disks have both topology metadata and on device
-+Continuing the RAID analogy, disks have both topology metadata and on-device
- metadata that determine RAID set assembly. CXL Port topology and CXL Port link
- status is metadata for CXL.mem set assembly. The CXL Port topology is enumerated
- by the arrival of a CXL.mem device. I.e. unless and until the PCIe core attaches
-@@ -197,7 +197,7 @@ the Linux PCI core to tear down switch-level CXL resources because the endpoint
- ->remove() event cleans up the port data that was established to support that
- Memory Expander.
- 
--The port metadata and potential decode schemes that a give memory device may
-+The port metadata and potential decode schemes that a given memory device may
- participate can be determined via a command like::
- 
-     # cxl list -BDMu -d root -m mem3
-@@ -249,8 +249,8 @@ participate can be determined via a command like::
- ...which queries the CXL topology to ask "given CXL Memory Expander with a kernel
- device name of 'mem3' which platform level decode ranges may this device
- participate". A given expander can participate in multiple CXL.mem interleave
--sets simultaneously depending on how many decoder resource it has. In this
--example mem3 can participate in one or more of a PMEM interleave that spans to
-+sets simultaneously depending on how many decoder resources it has. In this
-+example mem3 can participate in one or more of a PMEM interleave that spans two
- Host Bridges, a PMEM interleave that targets a single Host Bridge, a Volatile
- memory interleave that spans 2 Host Bridges, and a Volatile memory interleave
- that only targets a single Host Bridge.
+Thanks
+Nicolin
+
+Nicolin Chen (12):
+  iommufd: Apply obvious cosmetic fixes
+  iommufd: Drop unused ictx in struct iommufd_vdevice
+  iommufd: Use enum iommu_viommu_type for type in struct iommufd_viommu
+  iommufd: Use enum iommu_veventq_type for type in struct
+    iommufd_veventq
+  iommu: Introduce get_viommu_size and viommu_init ops
+  iommufd/selftest: Implement mock_get_viommu_size and mock_viommu_init
+  iommu/arm-smmu-v3: Implement arm_smmu_get_viommu_size and
+    arm_vsmmu_init
+  iommufd/viommu: Replace ops->viommu_alloc with ops->viommu_init
+  iommu: Deprecate viommu_alloc op
+  iommufd: Move _iommufd_object_alloc out of driver.c
+  iommufd: Introduce iommufd_object_alloc_ucmd helper
+  iommufd: Apply the new iommufd_object_alloc_ucmd helper
+
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 11 ++--
+ drivers/iommu/iommufd/io_pagetable.h          |  2 +-
+ drivers/iommu/iommufd/iommufd_private.h       | 33 +++++++---
+ include/linux/iommu.h                         | 26 ++++----
+ include/linux/iommufd.h                       | 39 +++---------
+ .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 47 +++++++-------
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  3 +-
+ drivers/iommu/iommufd/device.c                |  3 +-
+ drivers/iommu/iommufd/driver.c                | 33 ----------
+ drivers/iommu/iommufd/eventq.c                | 14 ++---
+ drivers/iommu/iommufd/hw_pagetable.c          |  6 +-
+ drivers/iommu/iommufd/io_pagetable.c          |  3 +-
+ drivers/iommu/iommufd/iova_bitmap.c           |  1 -
+ drivers/iommu/iommufd/main.c                  | 62 +++++++++++++++++--
+ drivers/iommu/iommufd/pages.c                 |  9 ++-
+ drivers/iommu/iommufd/selftest.c              | 57 ++++++++---------
+ drivers/iommu/iommufd/viommu.c                | 46 +++++++++-----
+ 17 files changed, 212 insertions(+), 183 deletions(-)
+
 -- 
-2.47.1
+2.43.0
 
 
