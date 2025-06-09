@@ -1,235 +1,382 @@
-Return-Path: <linux-kernel+bounces-677882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8F7AD2151
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:49:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1FFAD215E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73CB83AC55E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE653ACB5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FB21DC9A3;
-	Mon,  9 Jun 2025 14:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB019F41C;
+	Mon,  9 Jun 2025 14:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UNsasPs2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEBAMZ4L"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD8F1B4244
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC5219D093;
+	Mon,  9 Jun 2025 14:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749480550; cv=none; b=YYM77cct/UnJrHGmnUgYbBUsL15Mmg7HgsOLolczMc1DIAq6QXMtnXSWecRMCWEJw7Y1UbWszb/zSSlwpc6YHFVt5IsSflnpmC7LbTtL4YyOFgVNtp8Awwa7E980wb1EIQaGeUH0V+BCsl++9noDcDYrnZLGnOWTdnfgrG5xdDg=
+	t=1749480571; cv=none; b=mjHxZ7vM0/cpo6VQOpI6gRJcfC3yYsFoS2/msAnHurGHY1tbg+hVQDLcoDiK6bg6MQyJ3puwoUjbziu8a7pvVTyp4a6pW1nZ4eCgIeYkxHS3xaFsDjx67BWzGvEGZ2BEWBK5YfUwxrR7N0XP+JbIQCraM0TAALQ9QTYQsldg0EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749480550; c=relaxed/simple;
-	bh=G8qpyyzWSOMMZu0hYs11zRMCbRZM22No2TExpHUKOPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g5x19iSPkvJXyS9bNW8TaHl7RvnUYh6o5Y4aghLoLHCmEnLobxNc0eGVJ/FU7MIdc8AcKVb5mwM1cz0pRwcRD4RaSJBITrrlvivnlW7e8z0HufKv2fmMnnLeY6mb4EQH7P0QTzO+1WoaTICYBs0MuRdz+2ZRRASbJYZHl9CM/fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UNsasPs2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599vrSJ023336
-	for <linux-kernel@vger.kernel.org>; Mon, 9 Jun 2025 14:49:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qS0L5+ztUyOjrccHMk5jM0O+5pKXdrN0GpTwu6YIyPw=; b=UNsasPs2+kY4jZeZ
-	PrnkpRGZxMgc5kHv1qUL8uhwwDkGyQwyN0oi4TbxPC5bgk0oe15C5njn4e6E6P1l
-	ppDTiwl5SJpJIvJCwg5ZWIuD9B/jaYEOHedsnp50Z8fX0W4vrqhXog3HJgyfXtMv
-	gTeeOa4Q/+zqm2+21CNs71WJdFiiPRI4+qIxmZWZOUD80o18ddUJ3Wl2T7VxSt/z
-	XqS/HAqtfILFS7AWGXhlXr+2cbRhsRQEpwMCUSSqvI0dOlGqYYzSSsr28cUzYyzF
-	OXg2O5NEwcCjI/r+BBjVpbB5/DgrBjMtKSKeM+GA4oMKxa4KOhixU4d+DTRhXqls
-	d7YG4Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474e6je5pr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 14:49:07 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d38fe2eff2so253013385a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:49:07 -0700 (PDT)
+	s=arc-20240116; t=1749480571; c=relaxed/simple;
+	bh=N2hGCKcDh6Xpz7j/msHBJtSOvhiYQg5u/JmVQ9+iXpc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMxoExY64aTqoKp4x4VKrQg0LRUl/fg/9No+DKD4b9+xKEQOgvAdJZXSoTeQHwOTfJE87s95lyesYJHsNKPgXVvZzC17YUYKmCjztQQo3LLR1thYWIRQRjfgP8BS2uT0zsI/Wrpu9aRx7HCs6p0LsFqcs64N6gOPn1GZDBZyHyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEBAMZ4L; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-234c5b57557so40023965ad.3;
+        Mon, 09 Jun 2025 07:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749480569; x=1750085369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VDQ70N0apsO9qdPmuXxM1Y0/xVvdzg0zBWkIx78RQC4=;
+        b=KEBAMZ4Ld9jd7B13Hj9YQXaUe3fArul3ZsCJFGyUA5A4u2a+WPAXpfdsm6/wIB+GyR
+         plZRixzUuX3CFYaZMP3ueA146Dy5G4w5cUWpcJQ7pCLr72rDVJQodNNEPzFaIg6Gk0e+
+         ThBMtoZF/6qENJphq6bt3YG5GGVQWOdqxY9+xm93BsOiXyJLtP+iT8kztcHP+1EedGnb
+         sL/8w2PpvN5jc0s/pJE71zDGg0wEUAAd6s9uSD3JojAwv3AL6H5YQcuoLtXZgcr09cqz
+         g6r1A1eUP5nLXCJ+bVDtvnBuBBPu+fV+cO79T4co2qddd6SLBcIKmbenjdkeVgup/fcv
+         bgZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749480546; x=1750085346;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qS0L5+ztUyOjrccHMk5jM0O+5pKXdrN0GpTwu6YIyPw=;
-        b=m5CLwJPweHqnyTXIICEkmtYDqGhXJcgm8BwjKWFYCNv+Hi5lxe6/no/pZisrmaSgNw
-         grpnjnv4i1hXNvusgCj5+JUYiepdgls0twHWEoKeVGvH/X/naqvsDBOiN6aJtPvSq9uO
-         fzyFWGVlkgB/H1uTeHLTpR+iwxGSQIrUG41Qzzgwo3v08LCFhZW2n0z6JzS6eSNvrI79
-         0qDhgAeIhIXMOfLwxIfSK6CPGCh+dFMciHccqmZKtBjX2PY42A1a+YoZdTrEZPYzrABC
-         Vcp3DD4zH1a0chYCDmidNzDyZm9T1A19loV7aRAx8Ge8TJNoaju3b/0KJCMuWwzRC1GH
-         B8Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXntR8TIEeJlLaHO123tN5c5wSIhaqjJzU0oDsyIJU7DldkNX847Ec1pWLeUzXSDHeClEjTRi6eCBefT5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4qOnxQQG3akRAMs4ipurO0hvHX09plUewgUBFQ8ne3OqMulCc
-	P76jSIoobU0a4MnopgTZkrCqyYN9+UBY4QIXyzbZLWfRGPFZ0I5hCxvmKDNBIie5AXaZFISlcur
-	k4wiVuQaj6mo2G9P8MhM8ZTZPmX4YqrTLMlWRZUb6oXPIxrmNifJTx9EEVZ1Ode1zIc0=
-X-Gm-Gg: ASbGncupLsFec6h7jQAi+o0x1IT+EHVALio5ydlGmgC4AYjt0yxkdob0elufbOV7jDB
-	G1famLzbJP7P2UtP4mr6bP20qdovw7w9vEcBIzcAFk6c4Qhta4fkE6XW71wTduTmK8hTMmw2a0F
-	Uxm+a9Ah7ulARx9meKwlnHM/VfeeE/cFD3NpN54lUBMufnUI37gRo0yc464mMsbNuZ6guz+qjO5
-	4HBZuFJ6KKPZahK3Jngaz08ENRsw9UqGMwW9QVwGB6C/UOVqUan/SHe5QwsNM8rytbMprtJwkpC
-	si2ZyZIuL9eIdqd8o5oUYJPgH0nfcNP7hBADzSbRI16PNM8h4Ivmq6XIRMttMss5TCSo79SjAiT
-	Qr6ctYTIQZlsQ/A==
-X-Received: by 2002:a05:620a:f14:b0:7d0:9782:9b05 with SMTP id af79cd13be357-7d2298a5ae7mr2100152985a.25.1749480546275;
-        Mon, 09 Jun 2025 07:49:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZydpzOZycKwmqVFImLxZKSm4rvhjZsM5wfbZNpXpun6vcU1GTiITZnca9s4SYvdqIACYnvg==
-X-Received: by 2002:a05:620a:f14:b0:7d0:9782:9b05 with SMTP id af79cd13be357-7d2298a5ae7mr2100149885a.25.1749480545864;
-        Mon, 09 Jun 2025 07:49:05 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0c3:3a00::4c9? (2001-14ba-a0c3-3a00--4c9.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::4c9])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553677310dbsm1195186e87.193.2025.06.09.07.49.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 07:49:05 -0700 (PDT)
-Message-ID: <a5658165-9e8a-49e6-b2ed-75b25c074b87@oss.qualcomm.com>
-Date: Mon, 9 Jun 2025 17:49:04 +0300
+        d=1e100.net; s=20230601; t=1749480569; x=1750085369;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VDQ70N0apsO9qdPmuXxM1Y0/xVvdzg0zBWkIx78RQC4=;
+        b=XhaxfiHVxuCmpuS3ViDzxrwBcqbd84Wr508W8Ef7XUS8d7KFMAMCgzZeMx49hrwE+o
+         CejN7cSGOcZ/qt0w8cI4I6V59Uw4E1AHA3YBCTG/HI380FPUbYc7EpR83RZ6PaudoKmP
+         /qkO037DilW1EOQl+tp424Wk2rLLtclV2Nj3rzWd5Qxo57s87CR0E89NF5f614z93MyX
+         WnP5ZfyLQ/ZARR2mUW/moLCi4mZLq0/F8yqt+UyZOWCirgpAmKDN+FkEdknW9hTHGljJ
+         9F2Qug0kUfXIns10XCXtzbNdYbhKmCSHLaDJCs3PU1UWiPom8Cm97cj55yaEcA0/3Zft
+         jnBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdwbh86J46bhcCfNVytv+C1tgy4xxe2c1pTBEqy0JyZkBR7ZHwj20LA42Snk0UlZ1pa4bePpx8mnyzCxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8KkoMEh+aoja1r6qWKhKVgiZzVrz7xdli/lUXF10yT3+m6fEJ
+	T6BxiKmuVZG4Pm28eo4AuFJB6cLmUH0uWeOz1xQ0y+cJFqP+s0YuaEoI
+X-Gm-Gg: ASbGnct3HM+1FkZCdGqlPfjTF4YGSbWppKeyEP8IYXS9WnBZOUGkw4BRqgmYdhTPVlz
+	C3Fs7TodiRBZegX9KEc3GfNcdV69dVmFZP5ycCwW7MxuOmyaUMECKXUJnn+9T0nLSZ8ltstYxHB
+	rmOYrT7u4TvTVQbNrZUqZwQTJEowe7KQJzlo6HZrsmoSVYRsLCCkN2xF7n9MnPDsG45CePAZ8cy
+	BKxJTZfGbNTxhIJsXUyV9aN/DGqv+HdawKE0JVsc/STdogVyJc8hXStBxxOViLCMhxbcPhr0att
+	oqMbC9Z1slXEoIh7iny2NuhXst6fRrXAiFXpGfBKtOnQnHiiGcD6UYIoTj+934mWY6WTuHcoKQ3
+	i82pF0pb3y60TZceIqL7d
+X-Google-Smtp-Source: AGHT+IGh7IxC0gxR92VaO3pJATFB7kZhChhV4DQACNpg/Bn2At+RqcEukNET3ao+hdzNQYXuwV3U2Q==
+X-Received: by 2002:a17:902:d4cd:b0:229:1619:ab58 with SMTP id d9443c01a7336-23601dc4419mr200497475ad.43.1749480568711;
+        Mon, 09 Jun 2025 07:49:28 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40c2:30ac:7971:9724:5a2d:e1ce:3f3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236030925e3sm55499015ad.53.2025.06.09.07.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 07:49:28 -0700 (PDT)
+From: Rohan Lambture <rohanlambture13@gmail.com>
+To: trenn@suse.com,
+	shuah@kernel.org,
+	jwyatt@redhat.com,
+	jkacur@redhat.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rohan Lambture <rohanlambture13@gmail.com>
+Subject: [PATCH] cpupower: Add cpu_start()/cpu_stop() callbacks for monitors
+Date: Mon,  9 Jun 2025 20:19:12 +0530
+Message-ID: <94c3faee898b5436cc0b837c6778011a060b8468.1749480264.git.rohanlambture13@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH drm-dp 02/10] drm/hisilicon/hibmc: fix dp probabilistical
- detect errors after HPD irq
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
-        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
-        chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com,
-        shenjian15@huawei.com, shaojijie@huawei.com,
-        jani.nikula@linux.intel.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20250530095432.1206966-1-shiyongbang@huawei.com>
- <20250530095432.1206966-3-shiyongbang@huawei.com>
- <r3tnmjl5bnlyhgblhfqwouu57oh5tfpmfsrx5xczzmsovalvse@mujphkc4mv5k>
- <49a4644d-0e73-419a-aa53-0db69bd00833@huawei.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <49a4644d-0e73-419a-aa53-0db69bd00833@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=Id6HWXqa c=1 sm=1 tr=0 ts=6846f463 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6IFa9wvqVegA:10 a=i0EeH86SAAAA:8 a=OEN_xTaWeFM-_vMy9bsA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: ZuEPaMeQhDCdHC9KIfS2JyWUO7VAJqJa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDEwOSBTYWx0ZWRfX15AfbakJNw4e
- 9adwwkNeZEg0FlueMgxei8RieEvTHj3mDDebkqRaU0H+4XcA3jSbXv6Um2f/+ZPltIirlG2Rgwv
- n8LhFQKg+4AICqWgBQIDIVEFPL2ln6vfmOc3+xpooh81f0rmLIXSrLsxqglVv74ZpdfCYUcrSrq
- h8Engq+WkWEV8dBtdXdNlARd58tUqIaSd8YSMohNDR9cPmd9+bozV1965Yxqs9GSo2snWD+Y30x
- fvY7cWAh5R2CPkUk1OGeoqZiV1K8/gkgT0BMJx+Ybeq3mQfxDMfz5k4PBT7MOfxOsdgmuMPu3xR
- 6X4kZnxaTuOLaYs0YFHNNM37FYgH3NxSO+I4pHfdAQfqTSZUd0pZ0bvTT1qC+zrzcRjdujwjfZo
- Q5I5I9vZRXCvxeWWi0jsCPTgmMAadHcRe5LEnC71vHmfc39Ljf1M/QKATOwlYW4cUblM5MC5
-X-Proofpoint-GUID: ZuEPaMeQhDCdHC9KIfS2JyWUO7VAJqJa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- clxscore=1015 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506090109
 
-On 09/06/2025 17:47, Yongbang Shi wrote:
-> 
->> On Fri, May 30, 2025 at 05:54:24PM +0800, Yongbang Shi wrote:
->>> From: Baihan Li <libaihan@huawei.com>
->>>
->>> The debouncing when HPD pulled out still remains sometimes, 200ms 
->>> still can
->>> not ensure helper_detect() is correct. So add a flag to hold the sink
->>> status, and changed detect_ctx() functions by using flag to check 
->>> status.
->>>
->>> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug 
->>> detect of irq feature")
->>> Signed-off-by: Baihan Li <libaihan@huawei.com>
->>> ---
->>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  1 +
->>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 38 +++++++++++++------
->>>   2 files changed, 28 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/ 
->>> gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->>> index 665f5b166dfb..68867475508c 100644
->>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->>> @@ -50,6 +50,7 @@ struct hibmc_dp {
->>>       struct drm_dp_aux aux;
->>>       struct hibmc_dp_cbar_cfg cfg;
->>>       u32 irq_status;
->>> +    int hpd_status;
->>>   };
->>>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
->>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/ 
->>> drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>> index d06832e62e96..191fb434baa7 100644
->>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>> @@ -13,7 +13,8 @@
->>>   #include "hibmc_drm_drv.h"
->>>   #include "dp/dp_hw.h"
->>> -#define DP_MASKED_SINK_HPD_PLUG_INT    BIT(2)
->>> +#define HIBMC_DP_MASKED_SINK_HPD_PLUG_INT    BIT(2)
->>> +#define HIBMC_DP_MASKED_SINK_HPD_UNPLUG_INT    BIT(3)
->>>   static int hibmc_dp_connector_get_modes(struct drm_connector 
->>> *connector)
->>>   {
->>> @@ -34,9 +35,12 @@ static int hibmc_dp_connector_get_modes(struct 
->>> drm_connector *connector)
->>>   static int hibmc_dp_detect(struct drm_connector *connector,
->>>                  struct drm_modeset_acquire_ctx *ctx, bool force)
->>>   {
->>> -    mdelay(200);
->>> +    struct hibmc_dp *dp = to_hibmc_dp(connector);
->>> -    return drm_connector_helper_detect_from_ddc(connector, ctx, force);
->>> +    if (dp->hpd_status)
->>> +        return connector_status_connected;
->>> +    else
->>> +        return connector_status_disconnected;
->>>   }
->>>   static const struct drm_connector_helper_funcs 
->>> hibmc_dp_conn_helper_funcs = {
->>> @@ -115,22 +119,34 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
->>>   {
->>>       struct drm_device *dev = (struct drm_device *)arg;
->>>       struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
->>> +    struct hibmc_dp *dp = &priv->dp;
->>>       int idx;
->>>       if (!drm_dev_enter(dev, &idx))
->>>           return -ENODEV;
->>> -    if (priv->dp.irq_status & DP_MASKED_SINK_HPD_PLUG_INT) {
->>> -        drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
->>> -        hibmc_dp_hpd_cfg(&priv->dp);
->>> +    if (dp->hpd_status) { /* only check unplug int when the last 
->>> status is HPD in */
->> I think this way you'll ignore HPD short pulses. Could you possibly
->> clarify whether it is the case or not?
-> 
-> We actually doesn't enable short HPD here, this feature just used in our 
-> electrical tests.
-> 
-> 
->>> +        if ((dp->irq_status & HIBMC_DP_MASKED_SINK_HPD_UNPLUG_INT)) {
->>> +            drm_dbg_dp(dev, "HPD OUT isr occur.");
->>> +            hibmc_dp_reset_link(dp);
->>> +            dp->hpd_status = 0;
->>> +            if (dev->registered)
->>> +                drm_connector_helper_hpd_irq_event(&dp->connector);
->>> +        } else {
->>> +            drm_warn(dev, "HPD OUT occurs, irq status err: %u", dp- 
->>> >irq_status);
->> These should be ratelimited.
-> 
-> Sorry, I didn't get it. Do you mean I need print the link rate here?
-> 
+Move per-CPU logic from inside individual monitors to the main
+monitoring framework by adding cpu_start() and cpu_stop() callback
+functions to the cpuidle_monitor structure.
 
-No, I was thinking about drm_err_ratelimited() in case something gets 
-stuck in the hw.
+This refactoring allows the framework to handle per-CPU scheduling
+and gives higher priority to fork_it operations as mentioned in
+the TODO. Individual monitors now only need to implement per-CPU
+initialization and cleanup logic without managing the CPU iteration
+themselves.
 
+Changes made:
+- Add cpu_start()/cpu_stop() function pointers to cpuidle_monitor struct
+- Update monitoring framework to call per-CPU callbacks for each CPU
+- Refactor cpuidle_sysfs and mperf monitors to use new callback pattern
+- Maintain backward compatibility for monitors without per-CPU callbacks
+
+This addresses the TODO item: "Add cpu_start()/cpu_stop() callbacks
+for monitor -> This is to move the per_cpu logic from inside the
+monitor to outside it."
+
+Signed-off-by: Rohan Lambture <rohanlambture13@gmail.com>
+---
+ .../utils/idle_monitor/cpuidle_sysfs.c        | 44 ++++++-----
+ .../utils/idle_monitor/cpupower-monitor.c     | 78 +++++++++++++++++--
+ .../utils/idle_monitor/cpupower-monitor.h     |  2 +
+ .../utils/idle_monitor/mperf_monitor.c        | 30 +++----
+ 4 files changed, 114 insertions(+), 40 deletions(-)
+
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+index 8b42c2f0a5b0..01b1de04e03b 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+@@ -43,35 +43,39 @@ static int cpuidle_get_count_percent(unsigned int id, double *percent,
+ 
+ static int cpuidle_start(void)
+ {
+-	int cpu, state;
+ 	clock_gettime(CLOCK_REALTIME, &start_time);
+-	for (cpu = 0; cpu < cpu_count; cpu++) {
+-		for (state = 0; state < cpuidle_sysfs_monitor.hw_states_num;
+-		     state++) {
+-			previous_count[cpu][state] =
+-				cpuidle_state_time(cpu, state);
+-			dprint("CPU %d - State: %d - Val: %llu\n",
+-			       cpu, state, previous_count[cpu][state]);
+-		}
+-	}
+ 	return 0;
+ }
+ 
+ static int cpuidle_stop(void)
+ {
+-	int cpu, state;
+ 	struct timespec end_time;
++
+ 	clock_gettime(CLOCK_REALTIME, &end_time);
+ 	timediff = timespec_diff_us(start_time, end_time);
++	return 0;
++}
+ 
+-	for (cpu = 0; cpu < cpu_count; cpu++) {
+-		for (state = 0; state < cpuidle_sysfs_monitor.hw_states_num;
+-		     state++) {
+-			current_count[cpu][state] =
+-				cpuidle_state_time(cpu, state);
+-			dprint("CPU %d - State: %d - Val: %llu\n",
+-			       cpu, state, previous_count[cpu][state]);
+-		}
++static int cpuidle_cpu_start(unsigned int cpu)
++{
++	int state;
++
++	for (state = 0; state < cpuidle_sysfs_monitor.hw_states_num; state++) {
++		previous_count[cpu][state] = cpuidle_state_time(cpu, state);
++		dprint("CPU %d - State: %d - Val: %llu\n",
++		       cpu, state, previous_count[cpu][state]);
++	}
++	return 0;
++}
++
++static int cpuidle_cpu_stop(unsigned int cpu)
++{
++	int state;
++
++	for (state = 0; state < cpuidle_sysfs_monitor.hw_states_num; state++) {
++		current_count[cpu][state] = cpuidle_state_time(cpu, state);
++		dprint("CPU %d - State: %d - Val: %llu\n",
++		       cpu, state, current_count[cpu][state]);
+ 	}
+ 	return 0;
+ }
+@@ -205,6 +209,8 @@ struct cpuidle_monitor cpuidle_sysfs_monitor = {
+ 	.hw_states		= cpuidle_cstates,
+ 	.start			= cpuidle_start,
+ 	.stop			= cpuidle_stop,
++	.cpu_start		= cpuidle_cpu_start,
++	.cpu_stop		= cpuidle_cpu_stop,
+ 	.do_register		= cpuidle_register,
+ 	.unregister		= cpuidle_unregister,
+ 	.flags.needs_root	= 0,
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+index ad493157f826..096e3cf35eb3 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+@@ -304,12 +304,29 @@ int fork_it(char **argv)
+ 	unsigned long long timediff;
+ 	pid_t child_pid;
+ 	struct timespec start, end;
++	int cpu;
+ 
+ 	child_pid = fork();
+ 	clock_gettime(CLOCK_REALTIME, &start);
+ 
+-	for (num = 0; num < avail_monitors; num++)
+-		monitors[num]->start();
++	/* Call global start callbacks first */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->start)
++			monitors[num]->start();
++	}
++
++	/* Call per-CPU start callbacks */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->cpu_start) {
++			for (cpu = 0; cpu < cpu_count; cpu++) {
++				if (monitors[num]->flags.per_cpu_schedule) {
++					if (bind_cpu(cpu))
++						continue;
++				}
++				monitors[num]->cpu_start(cpu);
++			}
++		}
++	}
+ 
+ 	if (!child_pid) {
+ 		/* child */
+@@ -332,8 +349,25 @@ int fork_it(char **argv)
+ 		}
+ 	}
+ 	clock_gettime(CLOCK_REALTIME, &end);
+-	for (num = 0; num < avail_monitors; num++)
+-		monitors[num]->stop();
++
++	/* Call per-CPU stop callbacks */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->cpu_stop) {
++			for (cpu = 0; cpu < cpu_count; cpu++) {
++				if (monitors[num]->flags.per_cpu_schedule) {
++					if (bind_cpu(cpu))
++						continue;
++				}
++				monitors[num]->cpu_stop(cpu);
++			}
++		}
++	}
++
++	/* Call global stop callbacks */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->stop)
++			monitors[num]->stop();
++	}
+ 
+ 	timediff = timespec_diff_us(start, end);
+ 	if (WIFEXITED(status))
+@@ -352,10 +386,25 @@ int do_interval_measure(int i)
+ 		for (cpu = 0; cpu < cpu_count; cpu++)
+ 			bind_cpu(cpu);
+ 
++	/* Call global start callbacks first */
+ 	for (num = 0; num < avail_monitors; num++) {
+ 		dprint("HW C-state residency monitor: %s - States: %d\n",
+ 		       monitors[num]->name, monitors[num]->hw_states_num);
+-		monitors[num]->start();
++		if (monitors[num]->start)
++			monitors[num]->start();
++	}
++
++	/* Call per-CPU start callbacks */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->cpu_start) {
++			for (cpu = 0; cpu < cpu_count; cpu++) {
++				if (monitors[num]->flags.per_cpu_schedule) {
++					if (bind_cpu(cpu))
++						continue;
++				}
++				monitors[num]->cpu_start(cpu);
++			}
++		}
+ 	}
+ 
+ 	sleep(i);
+@@ -364,9 +413,24 @@ int do_interval_measure(int i)
+ 		for (cpu = 0; cpu < cpu_count; cpu++)
+ 			bind_cpu(cpu);
+ 
+-	for (num = 0; num < avail_monitors; num++)
+-		monitors[num]->stop();
++	/* Call per-CPU stop callbacks */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->cpu_stop) {
++			for (cpu = 0; cpu < cpu_count; cpu++) {
++				if (monitors[num]->flags.per_cpu_schedule) {
++					if (bind_cpu(cpu))
++						continue;
++				}
++				monitors[num]->cpu_stop(cpu);
++			}
++		}
++	}
+ 
++	/* Call global stop callbacks */
++	for (num = 0; num < avail_monitors; num++) {
++		if (monitors[num]->stop)
++			monitors[num]->stop();
++	}
+ 
+ 	return 0;
+ }
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+index c559d3115330..830ad5ee68d6 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+@@ -57,6 +57,8 @@ struct cpuidle_monitor {
+ 	cstate_t *hw_states;
+ 	int (*start) (void);
+ 	int (*stop) (void);
++	int (*cpu_start) (unsigned int cpu);
++	int (*cpu_stop) (unsigned int cpu);
+ 	struct cpuidle_monitor* (*do_register) (void);
+ 	void (*unregister)(void);
+ 	unsigned int overflow_s;
+diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
+index 73b6b10cbdd2..6340f5d771b6 100644
+--- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
+@@ -224,27 +224,27 @@ static int mperf_get_count_freq(unsigned int id, unsigned long long *count,
+ 
+ static int mperf_start(void)
+ {
+-	int cpu;
+-
+-	for (cpu = 0; cpu < cpu_count; cpu++) {
+-		clock_gettime(CLOCK_REALTIME, &time_start[cpu]);
+-		mperf_get_tsc(&tsc_at_measure_start[cpu]);
+-		mperf_init_stats(cpu);
+-	}
+-
+ 	return 0;
+ }
+ 
+ static int mperf_stop(void)
+ {
+-	int cpu;
++	return 0;
++}
+ 
+-	for (cpu = 0; cpu < cpu_count; cpu++) {
+-		mperf_measure_stats(cpu);
+-		mperf_get_tsc(&tsc_at_measure_end[cpu]);
+-		clock_gettime(CLOCK_REALTIME, &time_end[cpu]);
+-	}
++static int mperf_cpu_start(unsigned int cpu)
++{
++	clock_gettime(CLOCK_REALTIME, &time_start[cpu]);
++	mperf_get_tsc(&tsc_at_measure_start[cpu]);
++	mperf_init_stats(cpu);
++	return 0;
++}
+ 
++static int mperf_cpu_stop(unsigned int cpu)
++{
++	mperf_measure_stats(cpu);
++	mperf_get_tsc(&tsc_at_measure_end[cpu]);
++	clock_gettime(CLOCK_REALTIME, &time_end[cpu]);
+ 	return 0;
+ }
+ 
+@@ -373,6 +373,8 @@ struct cpuidle_monitor mperf_monitor = {
+ 	.hw_states		= mperf_cstates,
+ 	.start			= mperf_start,
+ 	.stop			= mperf_stop,
++	.cpu_start		= mperf_cpu_start,
++	.cpu_stop		= mperf_cpu_stop,
+ 	.do_register		= mperf_register,
+ 	.unregister		= mperf_unregister,
+ 	.flags.needs_root	= 1,
 -- 
-With best wishes
-Dmitry
+2.49.0
+
 
