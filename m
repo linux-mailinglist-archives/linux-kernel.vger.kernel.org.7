@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-677531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D513AD1B86
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:24:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E12AD1B79
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31ED188DDDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEECB3A628A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAF225393B;
-	Mon,  9 Jun 2025 10:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069A5253B40;
+	Mon,  9 Jun 2025 10:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xQTOOOFm"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PkGkF+fe"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF60343ABC;
-	Mon,  9 Jun 2025 10:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27FD2F37;
+	Mon,  9 Jun 2025 10:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464629; cv=none; b=ggcUGRZd9KM1oufb50UtHdLCpdtvcuw1wdodMjQMzF973X8xd+goEOeB+vdIX1iPJ83SvCOcVAOSJsqFwbXgWFaeokdhfSUPBv6NyST2ZTyLZ1km+h8Pam6OVpluWOZY9MnQNHn/3NpE533gwI+7LkHNniYwozHUHYARNifiJA0=
+	t=1749464621; cv=none; b=Dos8VemM3POIUYwVoCe4SsczDiU5VsXRXfy6QMA0zXrClXl88S92TsvbXcnPF/u3eIYO0PsgOv2y5njMeb7hFbFRJEiwx2Hug9Q8PaLOWWybbEQitvY1idRjleWNbprwmXlM8zo15lIkzss7Fkq6AKHsPCyUfwSyCFjs5cBMx7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464629; c=relaxed/simple;
-	bh=S+5kY6sZ+JqRLkDv5nWmHUKJsyCslFIPHz3pnLMKqaE=;
+	s=arc-20240116; t=1749464621; c=relaxed/simple;
+	bh=IqIATT8ehLSCHyHPHIK0aeC0vBn26wKL58mOSzv+1aM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fxyleiveMsmSGP8JaOqGRwOj/l010dgOHSM/RNYrfZ/kPcXWa02/GaDu/KbsOhYkVmvrh4dF1kOSMZm1L/8a6E0ZmtjWaqaKQw9U2iZONlVZ8HdFgg2X3LeAmgm5qcKlnPCXzXpDN9z6SPirbMDbi/VigQqKZPcnCg4bgauBUBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xQTOOOFm; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=Wrh0mHkfsPSVR5oOroI6RHBeIN8ZcGLJN7bpcHbFdFlEbUkVkuNb0V1JviCnk9ZXuwmXDPEHPQYf+Bo+MLMadzfP3qY2jtq+VbOAa6Esd/s460dbP8MnOtGxRJqa0tYcb0/PNNIj7VyCUFfKdDPCq/kNe5TIJHHkt4ZvS6kZ7mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PkGkF+fe; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,38 +35,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=9DZZBoO1L1NubxqwTsP9P0S1RvNFFvaVbeuY8SW7vA0=; b=xQTOOOFmh/dtLrEjDsctBH7j/y
-	pD1laDGhi64UEgCCd9fITSym0B9M9yimLcFc1LEoy1qGYhgP7yMkdpwnXJfjFIiE0DjlRszbv4/BP
-	V06HVi1GaisKeh60uyJpgvd7WR1zKyKUfAvxkl2do4AafBOnMX8c+1oLoFsGXChYxhUiw8ymWDHZy
-	Exv1L9b5/96KAjNZisfLiNVMHZ3yE6ks6/3D75ZvGSszuMw+orc1BoycDlV+3+IUC5a9nt34p5Cdi
-	1qYrGRQRQZg8M6A6KxA4E5kvlU8HGrGgayBC2cleBva57EM+vpR5lDuKCbyQ1F29VHY04joEE1zXQ
-	ry9np+Fw==;
+	bh=MUho5YhueRpwOnAS8bp4/Ag/zAqHZPytVl1yhId01gk=; b=PkGkF+fewiq5/dyr93FzNBw2Bb
+	VY70GVmhv2OmZBYisNs/ayTNEhe5evbu2m4uDutCQFwVZEEo6LuQw/XBpHC23HIvCLlWmJevTSNF1
+	7dyPf4yetY/JM4x5EQV364s7XZhVNlOHzX/uWRz77p8UTyALEIXbQvmQIwIFkVEG8WdKrzEEMJFQ7
+	0YoVN+YKMe0ErJZgK3A35yna88uz32a4TiaA+h18TLE2VQIE1n1PphbPbhsaxa/29yu1WJON3sp5+
+	wwQyjHeNOUH/VK0IEgC1/ymA5koHoa80ReGUB8gblVR67KibcHFj3GztxNGMFF6/fdjYayb3zsa92
+	xfoBKT8w==;
 Received: from i53875b1c.versanet.de ([83.135.91.28] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uOZfC-0006Av-Qe; Mon, 09 Jun 2025 12:23:34 +0200
+	id 1uOZfD-0006Av-9L; Mon, 09 Jun 2025 12:23:35 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Diederik de Haas <didi.debian@cknow.org>
+	Quentin Schulz <foss+kernel@0leil.net>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Maximilian Weigand <mweigand@mweigand.net>,
-	Marek Kraus <gamiee@pine64.org>,
+	Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	hrdl <git@hrdl.eu>,
-	phantomas <phantomas@phantomas.xyz>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix cover detection on PineNote
-Date: Mon,  9 Jun 2025 12:22:59 +0200
-Message-ID: <174946455537.762051.11927121098980951801.b4-ty@sntech.de>
+	Quentin Schulz <quentin.schulz@cherry.de>
+Subject: Re: [PATCH v3] arm64: dts: rockchip: support Ethernet Switch adapter for RK3588 Jaguar
+Date: Mon,  9 Jun 2025 12:23:00 +0200
+Message-ID: <174946455533.762051.10949954779035634818.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250526161506.139028-1-didi.debian@cknow.org>
-References: <20250526161506.139028-1-didi.debian@cknow.org>
+In-Reply-To: <20250604-jaguar-mezz-eth-switch-v3-1-c68123240f9e@cherry.de>
+References: <20250604-jaguar-mezz-eth-switch-v3-1-c68123240f9e@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,20 +74,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 26 May 2025 18:14:47 +0200, Diederik de Haas wrote:
-> The SW_MACHINE_COVER switch event was added to input event codes to
-> detect the removal of the back cover of the N900.
-> But on the PineNote its purpose is to detect when the front cover gets
-> closed, just like when a laptop lid is closed. Therefore SW_LID is the
-> appropriate linux code and not SW_MACHINE_COVER.
+On Wed, 04 Jun 2025 18:18:08 +0200, Quentin Schulz wrote:
+> This adds support for the Ethernet Switch adapter connected to the
+> mezzanine connector on RK3588 Jaguar.
 > 
+> This adapter has a KSZ9896 Ethernet Switch with 4 1GbE Ethernet
+> connectors, two user controllable LEDs, and an M12 12-pin connector
+> which exposes the following signals:
+>  - RS232/RS485 (max 250Kbps/500Kbps, RX pin1, TX pin2)
+>  - two digital inputs (pin4 routed to GPIO3_C5 on SoC, pin5 to GPIO4_B4)
+>  - two digital outputs (pin7 routed to GPIO3_D3 on SoC, pin8 to
+>    GPIO3_D1)
+>  - two analog inputs (pin10 to channel1 of ADS1015, pin11 to channel2)
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: rockchip: Fix cover detection on PineNote
-      commit: 3f391123e2bc88c570f148cc01e923e4740c5173
+[1/1] arm64: dts: rockchip: support Ethernet Switch adapter for RK3588 Jaguar
+      commit: 8674f059750571f168db9f43d3c02f1975debcc9
 
 Best regards,
 -- 
