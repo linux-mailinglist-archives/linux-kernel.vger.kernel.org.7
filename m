@@ -1,232 +1,123 @@
-Return-Path: <linux-kernel+bounces-678017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFBBAD232C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:01:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97D3AD233C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8BF3A29D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C7F18912F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A9C217648;
-	Mon,  9 Jun 2025 16:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279DF218ADD;
+	Mon,  9 Jun 2025 16:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwLoh8ju"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/cSCSxv"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4E07E9;
-	Mon,  9 Jun 2025 16:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4AD215F7D;
+	Mon,  9 Jun 2025 16:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749484869; cv=none; b=pcfZb0/9ovh0QJnCJtksolv9+jwcDoU+Y77ryrrNRNjPIlm7mMRgFfo95u0hV853aNWbrY06XMD/Vg9PR+C1gf2VHIN8a7xQ5fhLrlx7AzbZp8u/a1K/qVprQRoRvcAM64M4eWbIwKX6sycALf6PlMM7H2gJPwnNnYyEGGkkpjs=
+	t=1749485004; cv=none; b=GZHyhp2JFBy+YyuHDSG57LS3+SUQ8Hd3fPHZW8YgtxkUpiJZjb9T4kIZydmnweEiRtY/f5rKtWdo/wcssOp/6yNCcXh10jMFhZ5X4GpC0ZC4a4ZGQ7UYAYcTV/v3rOVQbihcCTiG0v8zPuYazZ9NnV2980W7kZ8KNbnh2dfBmIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749484869; c=relaxed/simple;
-	bh=4UANBXEFzzWNDjzkZyhCusk/3Ln3IBad0owyMaZA9s8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0nOtuqdoOHuw7u26W5ztbzVtnVKach459pWwZYprHhWNLQWI0tU3n2usjQbKJrvQA0rnFNIJ/RoDYQkmk+W8/ER9wzIAgOIhyiU9OqVru/3uxnOxZOVhawvvLvH/CFopEiQjiOYiP/HPlXOgCJV+NpWl363wIlqPQ+vrLJg9E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwLoh8ju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215E7C4CEEF;
-	Mon,  9 Jun 2025 16:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749484868;
-	bh=4UANBXEFzzWNDjzkZyhCusk/3Ln3IBad0owyMaZA9s8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BwLoh8juJpB1j2JIPMu6yve9smAo41URpJXx8TMaktX+DpqaR3bMltvW/NELsNxaq
-	 /mOBn3syLkiglEqEFPXGQMRzsZ/M06DsQHc8b9Ui2VopZpmtcZ17jIccv0bkmr3khZ
-	 0Uye/8ScstG1DK4cE4r6vXnzrRRdBsxpcSJB9JFtk8LdTjBHfNw+qjEkkkTP9gk4ww
-	 23hgllO3bCkLvr5N5rIDf3HC3kKju/R9jmEydgiKNdGuhd0jSDCSSZ4k1Ucb751j2t
-	 XXBHgain3C8Z+mHZHr5kZcQomNJ8940/QnTIpHW+jUx4wapbkMTnNQVpQy3Wugsr4d
-	 bk2BHaMbaKVww==
-Date: Mon, 9 Jun 2025 17:01:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Anup Patel <anup@brainfault.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Ryo Takakura <takakura@valinux.co.jp>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev
-Subject: Re: [PATCH v1 3/7] dt-bindings: interrupt-controller: add generic
- Risc-v aclint-sswi
-Message-ID: <20250609-rejoice-disclose-b677f617f2de@spud>
-References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
- <20250609134749.1453835-4-vladimir.kondratiev@mobileye.com>
+	s=arc-20240116; t=1749485004; c=relaxed/simple;
+	bh=gV9OvN7Z/m7lwoJ68cb0bTusXwgD5lGYRItsGb9vMb4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tTgm5Mdl+BYo656R/wLAbW3N8c7N1g9y/IiiimCOY/CkqalGERpjjBp8nUFKnMaFB+ml/K2ZhLWYj4ICnJtJUCNJBuFbkZJPzL6CfYt0+G5CfVwCyI+L6Fpkdpx007Vn4SQ7gxDe6UYzTUJLvINOEwpDI2B6MG9DkFRPjK+bCu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/cSCSxv; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e81877c1ed6so3850577276.0;
+        Mon, 09 Jun 2025 09:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749485002; x=1750089802; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JLWa8pfmRBA0MCYaPm56slHNdbjbr5WNg/DtpiVizww=;
+        b=e/cSCSxvMbpHvxGk7wJXzmbc/GyzLKX32ghE/t8U34qGJue+ab7KZZ4ZAEyEym+bAj
+         BlZT9d2Ob0Cujz2mtd6bV+oLpfUaX+JOI5JXD6lesbujs8BlDQNblVq6uK1p8FCcUW7G
+         FRzPvHUv33b4ccRXIMP1VUfOKWrPCjlRZxPQVWFbTLyCBtaQ+ruibbUYryHFgdlJjXHa
+         S2EhWV59jMCOZlmfHqxNS1sBSmSmLSt3Fjji+xTi96Mk/DmxfyAJupHfEUy8rVqJLEAF
+         D3LCtRYsImIuGpqGYmTCTeETlWVS9QPelllJC0PSxkg0sggH6g7ZFfhH93zK8ptB7enj
+         P7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749485002; x=1750089802;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JLWa8pfmRBA0MCYaPm56slHNdbjbr5WNg/DtpiVizww=;
+        b=n1BWWF/ogm+30SQyN5KeAL+LEIjjcezohqFOXsZGqlM+Ay4AqGYG9Xbnn8MY64ABx3
+         uxgw2h5UZijd57pLf/aDVqEejhwZnNiyg4x1/wd69B/Jv2txERoZXmEUPtdry743FwoP
+         OxI3vwqmGeTPA/LguVNaoEolMGCrfttpSv7rm8Ol61eQVtL2bEvUNnLkpSc5m4nyxPAf
+         TvD4GQuy8wAROQiLuTNRVn6E3XOxlLTRyKpRziJ3mFzEFID3goDHdBmY4jzZvIw/xGS7
+         G5vxzOHXYYXWdvqlm7xiNz7FkglEXIoBp71I0rfe+JIiGFWrUw4rGJtDHTc0ENB8zq+h
+         M9Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGgjhG/xDm7k6CjGAlkF/oDzaEcnEJ5hBjcBGkEWETeEzGq1Ns/LES8vShHl+f3pe9InadCifiC64n00Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPQcsBQDg5i6qW36zbxww7s83OXm2GjM/SK6/F2c0Ml7Q5drwj
+	ckfqXQqB5GUwqcU+hgcMceBAGTjVfrHtDqbD+Ouh2+uZHp6YqO+cDwChd2M9Eb567uL+qZYnenv
+	ZkEWopVdgJiNXY2fX9ja3I/HnNSHX5bs=
+X-Gm-Gg: ASbGncu8i+UldTdoPoB8T18yk9h1vZ8mMYokHQTelqFZQnxH908cfjbEdL8aRZPvil1
+	tLHZXd/i7otpQLUUhIe0alM08bEH3jzO9524fjb4U7GUqely/ub+JT0S0s5y3Hvv/60HOH8I6wY
+	eeNTE8pUc7eFoBBU+agV/ijTDoCwcLU2k=
+X-Google-Smtp-Source: AGHT+IF8YB2n9mCmYPR48pr+o1aUFiaTFY5AD9mJhNaEKQ1/FqOU/CjUow2q+WRwE9E4U1hY1d1vM5OnXCj2EM4U9jY=
+X-Received: by 2002:a05:6902:1005:b0:e81:d2c6:814e with SMTP id
+ 3f1490d57ef6-e81f077a159mr173187276.8.1749485001629; Mon, 09 Jun 2025
+ 09:03:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0bO5XdsS6ddgc29+"
-Content-Disposition: inline
-In-Reply-To: <20250609134749.1453835-4-vladimir.kondratiev@mobileye.com>
+References: <20250609140643.26270-1-stefano.radaelli21@gmail.com> <ca71a8b8-88b8-4d81-a17d-1b46e10e55a9@lunn.ch>
+In-Reply-To: <ca71a8b8-88b8-4d81-a17d-1b46e10e55a9@lunn.ch>
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Date: Mon, 9 Jun 2025 18:03:04 +0200
+X-Gm-Features: AX0GCFuCh9zaVJsj5GtkuGSyeDwmhGTIAn0kUEeZIZink-bLJ3BuuR0gMcCu7GA
+Message-ID: <CAK+owog8_f=s24NCbasLiNZw_zErqNpozU8uQvKdYbi=FKcVTA@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: freescale: imx8mp-var-som: Add EQoS
+ support with MaxLinear PHY
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Andrew,
 
---0bO5XdsS6ddgc29+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +                     at803x,eee-disabled;
+> +                     eee-broken-1000t;
+> The commit message says it is a Maxlinear. So at803x vendor properties
+> are not relevant here.
 
-On Mon, Jun 09, 2025 at 04:47:45PM +0300, Vladimir Kondratiev wrote:
-> Add generic, Risc-V spec compliant (see [1]) aclint-sswi binding
->=20
-> Thead specific binding preserved, and converted to variant of the
-> generic aclint-sswi
->=20
-> Link: https://github.com/riscvarchive/riscv-aclint [1]
+You're absolutely correct.
+The at803x,eee-disabled property is specific to other PHYs and has no meaning
+for the Maxlinear MXL86110.
+I mistakenly copied this from another configuration without considering the
+vendor-specific nature of the property.
 
-What is the ratification status of this spec?
+Thanks for pointing this out!
 
->=20
-> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-> ---
->  .../riscv,aclint-sswi.yaml                    | 89 +++++++++++++++++++
->  .../thead,c900-aclint-sswi.yaml               | 58 ------------
->  2 files changed, 89 insertions(+), 58 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controlle=
-r/riscv,aclint-sswi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/interrupt-controlle=
-r/thead,c900-aclint-sswi.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv=
-,aclint-sswi.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
-riscv,aclint-sswi.yaml
-> new file mode 100644
-> index 000000000000..cffddfcfcfea
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,aclint=
--sswi.yaml
-> @@ -0,0 +1,89 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/riscv,aclint-ssw=
-i.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Risc-V ACLINT Supervisor-level Software Interrupt Device
-
-s/Risc-V/RISC-V/g
-
-> +
-> +maintainers:
-> +  - Inochi Amaoto <inochiama@outlook.com>
-> +
-> +description:
-> +  The SSWI device is a part of the Risc-V ACLINT device. It provides
-> +  supervisor-level IPI functionality for a set of HARTs on a THEAD
-> +  platform. It provides a register to set an IPI (SETSSIP) for each
-> +  HART connected to the SSWI device. See specification
-> +  https://github.com/riscvarchive/riscv-aclint
-> +
-> +  T-HEAD C900 ACLINT is a variant of the ACLINT, using dedicated
-> +  compatible string
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - sophgo,sg2044-aclint-sswi
-> +          - const: thead,c900-aclint-sswi
-> +      - items:
-> +          - const: riscv,aclint-sswi
-
-You need a specific compatible for your implementation.
-Whether or not this compatible is viable depends on the answer to the
-ratification status and/or plan for the spec.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#interrupt-cells":
-> +    const: 0
-> +
-> +  interrupt-controller: true
-> +
-> +  interrupts-extended:
-> +    minItems: 1
-> +    maxItems: 4095
-> +
-> +  riscv,hart-indexes:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 16384
-
-maxItems is 4x what is allowed for interrupts-extended. Why?
-
-> +    description:
-> +      A list of hart indexes that APLIC should use to address each hart
-> +      that is mentioned in the "interrupts-extended"
-
-Please constrain this property to only be permitted on !thead.
-
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#interrupt-cells"
-> +  - interrupt-controller
-> +  - interrupts-extended
-> +
-> +examples:
-> +  - |
-> +    //Example 1
-> +    interrupt-controller@94000000 {
-> +      compatible =3D "sophgo,sg2044-aclint-sswi", "thead,c900-aclint-ssw=
-i";
-> +      reg =3D <0x94000000 0x00004000>;
-> +      #interrupt-cells =3D <0>;
-> +      interrupt-controller;
-> +      interrupts-extended =3D <&cpu1intc 1>,
-> +                            <&cpu2intc 1>,
-> +                            <&cpu3intc 1>,
-> +                            <&cpu4intc 1>;
-> +    };
-> +
-> +  - |
-> +    //Example 2
-> +    interrupt-controller@94000000 {
-> +      compatible =3D "riscv,aclint-sswi";
-> +      reg =3D <0x94000000 0x00004000>;
-> +      #interrupt-cells =3D <0>;
-> +      interrupt-controller;
-> +      interrupts-extended =3D <&cpu1intc 1>,
-> +                            <&cpu2intc 1>,
-> +                            <&cpu3intc 1>,
-> +                            <&cpu4intc 1>;
-> +      riscv,hart-indexes =3D <0 1 0x10 0x11>;
-
-Please be consistent. Hex or decimal, but not both.
-
-Cheers,
-Conor.
-
---0bO5XdsS6ddgc29+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEcFPgAKCRB4tDGHoIJi
-0syLAQCKcAg5MoUg65x8c8wmRQ4jrRHsbMrQwMf6m1ZzX/hBTQEA1/TVJcYfSH3+
-tw9Ntl2G7mMGqeR1bjZWhBGDnH0mxgE=
-=zT3n
------END PGP SIGNATURE-----
-
---0bO5XdsS6ddgc29+--
+Il giorno lun 9 giu 2025 alle ore 17:17 Andrew Lunn <andrew@lunn.ch> ha scritto:
+>
+> On Mon, Jun 09, 2025 at 04:06:42PM +0200, Stefano Radaelli wrote:
+> > Enable the EQoS Ethernet controller on the i.MX8MP VAR-SOM with the
+> > integrated Maxlinear MXL86110 PHY. The PHY is connected to the EQOS
+> > MDIO bus at address 4.
+>
+> > +             ethphy0: ethernet-phy@4 {
+> > +                     compatible = "ethernet-phy-ieee802.3-c22";
+> > +                     reg = <4>;
+> > +                     at803x,eee-disabled;
+> > +                     eee-broken-1000t;
+>
+> The commit message says it is a Maxlinear. So at803x vendor properties
+> are not relevant here.
+>
+>     Andrew
 
