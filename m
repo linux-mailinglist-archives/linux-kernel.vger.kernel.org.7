@@ -1,201 +1,95 @@
-Return-Path: <linux-kernel+bounces-678318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5813EAD2724
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:04:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B46AD2772
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F94D3B0D92
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FCD3B239A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E933220F33;
-	Mon,  9 Jun 2025 20:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC06221278;
+	Mon,  9 Jun 2025 20:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XJqCxF2i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="MPW2cK/a"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024DE1F3BB0;
-	Mon,  9 Jun 2025 20:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668D21CF7AF;
+	Mon,  9 Jun 2025 20:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749499476; cv=none; b=TDkt567hlzDFu4qXXLctf2+S7snCPU+T9ZxVAw0oSUYUU8TJC2Ziu2u6RIw7GelW/Z5oXECNUQkaGXp7Wq0bLwxaiAAeqFPZ5wNTorzLBfKZ2/Rb3FHylWeRRLAItLi4gU5QwKTI4nZXsoNMfChER3azvj9PmgwDvHMtKwM2N4Q=
+	t=1749500101; cv=none; b=cIwM0UFbmy5hw2sJ9f7gO2ZjWPiBc/ydb/m1+2oXsRtnA1optY3LWsq43f4F7Vzp3N9lm9SDCEs44N/xBby2BOlCDmP4iv4j1GXob10nAwkkZMxJi94+jMuCBlGQwtWNS1aGx6W6/GU1PgMW/TWDlfcQXNvHSsErKXJnWLiRpBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749499476; c=relaxed/simple;
-	bh=yUuvb828aWvLH8lzzQnIsJ5D980USIpuviHfRjTllQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FWo+v3uCVDs24bS9fPGX0Cyqx3YLc3OHUeaMYJuPzOrX9nEleQ3ZTwhbXKM8alve2Dacb1Om4Tu+YXs35M81vJAG+34YSmwrW1F27JJDOUDtKeL2Ve5u3Lw8n7NBUMloBUhcz3PEOreRCfSQJGoVut1x/wLCQQzIVZQ6j4fmn2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XJqCxF2i; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749499475; x=1781035475;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yUuvb828aWvLH8lzzQnIsJ5D980USIpuviHfRjTllQ0=;
-  b=XJqCxF2i4yOqJ+Sp79NNTRL+meiLk1U8Qigndz7/0WIwTNOTLjQyfPVh
-   /9hz0dQ3o4Ujc4UEGOdvzfKGCA9Ew6M6GKJAoN+p0x9bV0pkERAiOY4ZX
-   3vIHZUY5QXgc4z+kYBP6TM/DTM3qnRd1SIm/VlK12QeYrqOWs5Y532AFf
-   h4rg+FGvRQx21mCaeKpFq1tLHJWfI8G3EZdmFcKv2eQOoN/d6V4ZCW8eJ
-   v7e/OQDmiaBVegpDgMavdaLLu6hpMXUaSOfM5Owv1gzyCU73iawoQsOwQ
-   njks8u7g0ldywYUuzhtAGhhU+RqVcboCjheLaqtdSrhmaGLtYQlLc8I1J
-   g==;
-X-CSE-ConnectionGUID: Vpr6emWZSqmCWKHQt054RA==
-X-CSE-MsgGUID: XxLqTnDkT3Sj0ggxTIKWOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="62626255"
-X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
-   d="scan'208";a="62626255"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 13:04:34 -0700
-X-CSE-ConnectionGUID: MxTEgy0kRCSr/efLPe7Dlw==
-X-CSE-MsgGUID: pSrDO/9FQgO05dfgzHptsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
-   d="scan'208";a="151489909"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 13:04:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uOijI-000000059OT-2Hi4;
-	Mon, 09 Jun 2025 23:04:24 +0300
-Date: Mon, 9 Jun 2025 23:04:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 07/23] mailbox: Add RISC-V SBI message proxy (MPXY)
- based mailbox driver
-Message-ID: <aEc-SHvL187xdj-m@smile.fi.intel.com>
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-8-apatel@ventanamicro.com>
- <aDbrBFcgaJxgBRVZ@smile.fi.intel.com>
- <CAK9=C2XJwgsC5AK-eVOHQqN1tPxtrsTjVoKdHgALbREv=sb8zQ@mail.gmail.com>
+	s=arc-20240116; t=1749500101; c=relaxed/simple;
+	bh=kgrnDOGQDmclaNhJePtCHT7yqFnabWOEr9ZX+kemgVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HzGha61mJF7Hs+oPsrZ+x9NTofXn3CdGhIT5XPImxLdzjP8+7ppuGQTqyy/17C5F0WBOBNSbwZB8J8qLu5wTVpp8zsS4YSGrV4nLaSSCNlD3Z5Zrg6/Jd9hu4IPEYruE1LrXEkJkfIFPJuYSneEosz2nX64YPiaKbDiyGn9tsfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=MPW2cK/a; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=R3yQ0tJ0CBdLt3HO3JHLYhAu43xMtm6smkUOzO9SHfM=; b=MPW2cK/a3Cr/+tQ6wajfTf0PH0
+	32PLU9fyua87i8J/ZhOi6jJcfaFRzoWwHFhYBqnQY176/VsX11xPNdq5rOxApMq7gS5oPfRLwfSWa
+	DyVwB7nZIsljFHXjFB2m7v3l7K8Hu7f6VkvnxgqQmf76/aU5zDmtJiklVBsA77fUpwzxly1HOo0sY
+	NQc6GApVgJfKRHtdYFOo5e2CwLdKPx2PMUN6nKC+sxm4AHRCFcVa5XDbevXUYFsdZ1ojt+odcCVX5
+	+ruLuHh2ptiJDRbBhX9n4bLP/L5wtYDgQucPc+lLCgLGSr0TkyEMxJ38j5Ehwni/FLzOcPAbLemio
+	XEiFTVHw==;
+Date: Mon, 9 Jun 2025 21:50:44 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Conor Dooley <conor@kernel.org>
+Cc: Kory Maincent <kory.maincent@bootlin.com>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>, Roger Quadros
+ <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, Bajjuri Praneeth
+ <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/5] binding: omap: Add lots of missing omap AM33
+ compatibles
+Message-ID: <20250609215044.33ef6b52@akair>
+In-Reply-To: <20250609-hacking-corporate-d53531577680@spud>
+References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
+	<20250609-bbg-v2-2-5278026b7498@bootlin.com>
+	<20250609-hacking-corporate-d53531577680@spud>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK9=C2XJwgsC5AK-eVOHQqN1tPxtrsTjVoKdHgALbREv=sb8zQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 09, 2025 at 05:59:40PM +0530, Anup Patel wrote:
-> On Wed, May 28, 2025 at 4:23 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sun, May 25, 2025 at 02:16:54PM +0530, Anup Patel wrote:
+Am Mon, 9 Jun 2025 18:03:05 +0100
+schrieb Conor Dooley <conor@kernel.org>:
 
-...
-
-> > > +#include <asm/sbi.h>
-> >
-> > asm/* usually goes after generic linux/* ones. Why here?
+> > +      - description: TI bone variants based on TI AM335  
 > 
-> I am not aware of any such convention but I will update anyway.
-
-It's just a common sense. We include most generic first and most custom at
-last.
-
-...
-
-> > > +static int mpxy_write_attrs(u32 channel_id, u32 base_attrid, u32 attr_count,
-> > > +                         u32 *attrs_buf)
-> > > +{
-> > > +     struct mpxy_local *mpxy = this_cpu_ptr(&mpxy_local);
-> > > +     struct sbiret sret;
-> > > +     u32 i;
-> > > +
-> > > +     if (!mpxy->shmem_active)
-> > > +             return -ENODEV;
-> > > +     if (!attr_count || !attrs_buf)
-> > > +             return -EINVAL;
-> > > +
-> > > +     get_cpu();
-> > > +
-> > > +     for (i = 0; i < attr_count; i++)
-> > > +             ((__le32 *)mpxy->shmem)[i] = cpu_to_le32(attrs_buf[i]);
-> >
-> > Don't we have helpers for this? They are suffixed with _array.
-> > https://elixir.bootlin.com/linux/v6.15-rc6/source/include/linux/byteorder/generic.h#L168
-> > Don't forget to have asm/byteorder.h being included.
-> >
-> > Ditto for the similar case(s).
+> "bone variant" sounds like some shortand or nickname. Are the boards not
+> called "beaglebone green" and "beaglebone black"? Whatever about the
+> compatible, the description should use the full name I think.
 > 
-> The cpu_to_le32_array() and le32_to_cpu_array() helpers update data
-> in-place but over here we have separate source and destination.
+we have an enum below it listing all those variants. So "variants"
+makes sense here, but better "TI Beaglebone variants"
 
-Fair enough. Perhaps add something like memcpy_to_le32() / memcpy_from_le32()
-or alike for your case?
+> > +        items:
+> > +          - enum:
+> > +              - ti,am335x-bone-black
+> > +              - ti,am335x-bone-green
+> > +              - ti,am335x-pocketbeagle
+> > +          - const: ti,am335x-bone
+> > +          - const: ti,am33xx
+> > +
 
-> > > +     sret = sbi_ecall(SBI_EXT_MPXY, SBI_EXT_MPXY_WRITE_ATTRS,
-> > > +                      channel_id, base_attrid, attr_count, 0, 0, 0);
-> > > +
-> > > +     put_cpu();
-> > > +     return sbi_err_map_linux_errno(sret.error);
-> > > +}
-
-...
-
-> > > +                            sizeof(mchan->rpmi_attrs) / sizeof(u32),
-> > > +                            (u32 *)&mchan->rpmi_attrs);
-> >
-> > Why casting? What about alignment?
-> 
-> The RPMI attributes (aka struct sbi_mpxy_rpmi_channel_attrs) are
-> a collection of u32 attributes hence we can also treat rpmi_attrs
-> as a u32 array. Further, the rpmi_attrs is XLEN aligned within the
-> struct mpxy_mbox_channel so no alignment issue with the casting
-> on both RV32 and RV64.
-> 
-> If we want to avoid the casting then we will have to use a temporary
-> u32 array plus additional memcpy().
-
-OK.
-
-...
-
-> > > +     if (mbox->msi_count)
-> >
-> > Is this check really needed?
-> 
-> MSIs are optional for the SBI MPXY mailbox so we should only use
-> platform_device_msi_xyz() APIs only when MSIs are available.
-
-> > > +             platform_device_msi_free_irqs_all(mbox->dev);
-
-Hmm... I am not sure why. Do you have any Oops or warnings if the check
-is not there and no MSI provided?
-
-> > > +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Andreas
 
