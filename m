@@ -1,93 +1,95 @@
-Return-Path: <linux-kernel+bounces-677597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76019AD1C5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:17:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B324AD1C5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAB9188C23B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:17:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0E61615ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0697255F25;
-	Mon,  9 Jun 2025 11:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E162255F59;
+	Mon,  9 Jun 2025 11:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMQeG99z"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cYVgTyLk"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781CF28F3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 11:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295FA24C09E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 11:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749467844; cv=none; b=LeRQyUxrb1EXOC+t2BOap/vw02AdSbjPkShsjhjKd6R7RhroanpEh3XWSm0OLpcns8LjBa/Z4F7ypYWTRKV4kSv5Cn+o1Hpw4WkaqA22MZO896BcrkZ2uEeiCDb4WGCT4VTDZMaU+HdwJzvh9MCA/hVYhZBn0YRX6qlTuAPHSOk=
+	t=1749467942; cv=none; b=I1ObFNhwp6rZIOlw5u2UbjGpVBRpLWtBG/LnbamCK1G5uxV6LBk0mI4a8gh8UTY9/urYbeB4rNWtBTv4htDlMBTyPdL7vSMr0QDYG1s3WNbPVEyy0CCvbC/6vgdi22OnvY8fPLsGbBUIOoGkiFprR20yOfflWgODvO+uhEot4RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749467844; c=relaxed/simple;
-	bh=1rf4k3D4qfLQox3AK7UIIbUKUE/1gntkD5UCAGbx2u0=;
+	s=arc-20240116; t=1749467942; c=relaxed/simple;
+	bh=7dJNhIAlm6Mfp4Lc5SIAFLEuSWj3N1nwqD7MqG6nlVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+LAJJ4iLDwySyNAmbd2L38/8iBOGA8AD3yO65Nb2dSM4IOuhVDAZ6JH+TI1AcatIOV2aLQaj48k0M6AMKQE2VtKbpwwmyfwdV0Zf8x5QA1rMIvsc2IqQ3en/FwYSn0qMO08Cl2Hf40nAWuZq/mI+ccVO7nypbgDlCickKk+aPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fMQeG99z; arc=none smtp.client-ip=209.85.210.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=usicYIMAzmBn1GHH9nFkBXqNLyKD7r5fP/4KB638WvzTQGoWq9gEQwKpGqVo2STU0p/gRu+Y8Ms8R/QJgsWmc22tgL+CsBni4001/05zO5FohQez9Wev443jbf3MGlDyKsK2LAgPha6pgabx+L6FNbJtzu0qbamvt5h//cuDKDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cYVgTyLk; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-747c2cc3419so2813364b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 04:17:22 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-742c3d06de3so4720011b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 04:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749467842; x=1750072642; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749467940; x=1750072740; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3jmcmYhpSc0FqNNEiRx4dLKTU/hJsjGZ9t0Q+PDFigY=;
-        b=fMQeG99z3RP37VErZF4qBvYuv9ljrKs2oiihvq5I1j84xL+Tysuymn6ATaf0v4QIq8
-         +5JD/ztWl/3cw5P+hupm7OsL17/YV/wsBmvxpv+ogZqDTAW06RFt7qcc+ghs0yCR6trj
-         cDuY+ZDIkWqHhcPiJeoZ1Q18D+/+xzXdQQ3wbw34REQtXuPoMiSHQy4x9ggDK+aWnyVq
-         W5tytAMTXKKVdVvJyHOTYnHN2uug4fW4Ux6Dj9IAMCwYs/8sDI59KMSIlQNileuHgYw1
-         eX3f15cXxybID/eFKvhzMSO1p2bfZ7grLQs/BNA0LsfJDdjKaELDbjvk+2Kgu+PTTTIS
-         TN6A==
+        bh=uJTBDYi3mfhW0vSHbVTVLXWBoTdoqifrr26dHjhiXOY=;
+        b=cYVgTyLkAWRFeEv8oS0hly4+o3FYqaf3atkTQSJVuoLGU5D/pCFrwpC1rHakhnj7He
+         y3N1hbU+f2bYWsLZdFdm1f7+Gw3WpRYDpc2g/rnu4q13W0IPkUCMNqTjWIeFPd6jlw6l
+         ztrzh7guz1XuBnZSxhJOY+KZnj02Tc0p6HFHgb2daqXhVpgmKQB7MgII4sp/9lKaapsS
+         uz0Ny9dAWRXYx7sS6TZ8szojUfxi/Upmd4I6/tc7WR8h/9Hf0mQWxGXn2mzxgGczxfSn
+         UkPqXXNgzUkCgWabq+yXBOIeq80v69ccInLyvP9l+CA26CR48bY6ZSX/WSVU33mz9nkC
+         4Pug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749467842; x=1750072642;
+        d=1e100.net; s=20230601; t=1749467940; x=1750072740;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3jmcmYhpSc0FqNNEiRx4dLKTU/hJsjGZ9t0Q+PDFigY=;
-        b=XYLxBMANVu+9TnNz/zCylTmftFlkxfyGC7QC0vHHyirxCmljZ0bc5PfTfVFoBIi4sn
-         LYBZQ+tjK4Jx9bizQVZ0D06jVdRWelYXlOIRZoU0MUTB51O4EUVKA4SPuO+HsmyiXnd5
-         zvr3jrjw7zkm9YdxNIP+ftlBPs2HVrQv2BX/vUz3vVzVXRlqpuLMAe9wZGvX2Ztmrq2/
-         uv0Vph3JXOSwVF9pC1asvjSej9qHDFXIR49OSEqXMJbXNBn19NxeFpwlNurRP9sOWmaC
-         fyZAbEDOTcb2cJt0NVC8H7l8zviAm9AVu32hlDQ0HGQLcubL03XLSBy3Q4Afyp1c0RJB
-         2sYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEcfMuyAXMaXKjheejjBU5nANpH1T1v+vO8xFp3y3JTiQ6ZwiuXJVnhytc6zBiqOqQxFu6X5BBAd1YD7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFbxW8KD96nkZX9+pCPpgXQvIUfPrbV7gu+LQfkDUwgxiBw5up
-	8TsuqjwF0gUuBB74APw3PiMq4fKby8QG5VQGcc56IX9T0mTjBVCBcfLm3IYj7IJgT/Q=
-X-Gm-Gg: ASbGncvA+ZvCA36eQSjOi87OubJ41597UHlp3EeaFCjuYHdDx5/yJuZlXAenu6CYxS4
-	LbEdJz8yQKf805u4r/D0mSPY8zmbBjGYxwFUQv7/Vb0JkqaZLA6SfA+UHZTH9VCpPsK68kbB0lr
-	5xO64/u6wtCQq9aUMLwO2FtQJFI5G/cAMoKkZnz0Jz9PiSgDGC9YbZVu/UWFibJG5GJ0LmwDht1
-	CKa3Lu9+qFuEbdpN6q3cS7ikEpzf4eADgDqRrspaijqnKZZgFSzd1oy8/LDg7tU+WfTpvQd7aCN
-	bY4UNQ3zvObXS5fiQwcuHK25I1l80a15g/yAy+n+6KU1/cOQ1WBQ
-X-Google-Smtp-Source: AGHT+IEWqD5LrlH9rkiU0S5rSFvCTOABuN2T34dBr5ro8m9I229gWJ2E8+H+/Lj8DYJDHkqAZ13+KA==
-X-Received: by 2002:a05:6a20:12c5:b0:1f5:9016:3594 with SMTP id adf61e73a8af0-21ee255c80cmr20215648637.18.1749467841762;
-        Mon, 09 Jun 2025 04:17:21 -0700 (PDT)
+        bh=uJTBDYi3mfhW0vSHbVTVLXWBoTdoqifrr26dHjhiXOY=;
+        b=VxncQIZ2FWoY6IMhgphPbLWpaSMHQat5ySloqRpHIzsp6Uc+qqvR8W664gKrLBWPbY
+         r1Y1xN4hOauSXOEc37sonBCmFDOHjnmimoGjlp5pIeHN28bJjEkGvP9xV/fnh4xmqa75
+         mQd/2IzfEXylxN8itlDR7LeZJEieS2n4TLuKJNJ+p+46zb3gIytAMwt3MjVVxqgA+Wcl
+         hXGpeftp4ILpO8lkX3CsEaj2x/oUGQbGYnUm4kNkrcBz7RjUsdQp4DrTIKUryoGLKY+a
+         jEyDIxjPgM5FgJ1L+4KxWwwiO9Nsyq5kzecbVM8HG/O8cycYEHyiF75NIEtcGMtppLcl
+         m2PA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPT/FyfpidKlWKuHPuIe3NGTbic5K+jZ70iVPPjAyuF8MRQawhsiKMOOcBW5sedWDnUuFubFQnM583Gfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU21Q8znnlL+lBllmXBEWwrOPAnrzhVyN5mkk+n15ljnqvJCyQ
+	EnDBZGxRTCoQjnIVoVYCCbtVtiyuUM6C5+2Ppo1dMOmBGwHVTBWpKotAoXaLgSm1vFY=
+X-Gm-Gg: ASbGncstZ6sxP88ZtTUTnEKQrMl3N0A0pip+Tc7kU+lFEv8D997K/v531DDQUcBCbE+
+	fVm46KsTC5fbViAxfx2c+FpBmVc0OffEDY+2VkdO6Nw6a2zVLgmLl/kl8y/AescQjFqkiEDLnD7
+	RXaoxugTqpWq068RvxEgn7w1uJdzpWjv/T7yKxrV0ex6F2/kD8Xbz24SdjHqJFwc/NLxb34VrYG
+	J3mOg1yQgg5itoP24Jv8KHrqLycOyD3Vru8GzyiluQauafR51Jlgqx8u63XLwFfitA0FA22IrLk
+	wMfiYuTYJyOSHlw/gF6I1IMsHd/sMSBmBva19HUUjyrnO+E5zW5l
+X-Google-Smtp-Source: AGHT+IFhybAqxujM1b9MvWlhlvkWqi5+9H9O5A+kb+hxy81eoKki3xjJHw6zvFwLj8OPRGAC3kwPHQ==
+X-Received: by 2002:a05:6a21:6da8:b0:209:251d:47d2 with SMTP id adf61e73a8af0-21ee689ffd5mr15835949637.11.1749467940462;
+        Mon, 09 Jun 2025 04:19:00 -0700 (PDT)
 Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b08571dsm5502621b3a.84.2025.06.09.04.17.20
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f66a96csm5105536a12.47.2025.06.09.04.18.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 04:17:21 -0700 (PDT)
-Date: Mon, 9 Jun 2025 16:47:19 +0530
+        Mon, 09 Jun 2025 04:18:59 -0700 (PDT)
+Date: Mon, 9 Jun 2025 16:48:57 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+To: Boqun Feng <boqun.feng@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
 	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
 	Benno Lossin <lossin@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: cpumask: Validate CPU number in set() and clear()
-Message-ID: <20250609111719.gne4mhchivobyv3y@vireshk-i7>
-References: <8b5fc7889a7aacbd9f1f7412c99f02c736bde190.1749183428.git.viresh.kumar@linaro.org>
- <aEJwm16HSwCyt7aB@Mac.home>
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Yury Norov <yury.norov@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] rust: cpu: Introduce CpuId abstraction
+Message-ID: <20250609111857.ijvagblorxtq7d2n@vireshk-i7>
+References: <cover.1749463570.git.viresh.kumar@linaro.org>
+ <f10910c7585f5556869ea6f34b64d4136b8d5581.1749463570.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,21 +98,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aEJwm16HSwCyt7aB@Mac.home>
+In-Reply-To: <f10910c7585f5556869ea6f34b64d4136b8d5581.1749463570.git.viresh.kumar@linaro.org>
 
-On 05-06-25, 21:37, Boqun Feng wrote:
-> While this can fix the current problem, but it's not a good solution for
-> the long run. Because outside a test, we should never use an arbitrary
-> i32 as a cpu number (we usually get it from smp_processor_id(), or
-> something else). So the `< nr_cpu_ids` testing is not necessary in
-> normal use cases.
+On 09-06-25, 16:21, Viresh Kumar wrote:
+> This adds abstraction for representing a CPU identifier.
+> 
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  rust/kernel/cpu.rs | 102 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 102 insertions(+)
 
-Thanks for the feedback Boqun.
+Boqun,
 
-I have sent a new version and hopefully took care of all the review
-comments:
+Should I implement CpuId::current() like this ? Will fold this into
+1/2, if it looks okay.
 
-https://lore.kernel.org/all/cover.1749463570.git.viresh.kumar@linaro.org/
+diff --git a/rust/helpers/cpu.c b/rust/helpers/cpu.c
+new file mode 100644
+index 000000000000..61d0387c8cf3
+--- /dev/null
++++ b/rust/helpers/cpu.c
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/smp.h>
++
++unsigned int rust_helper_smp_processor_id(void)
++{
++       return smp_processor_id();
++}
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 0f1b5d115985..16fa9bca5949 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -13,6 +13,7 @@
+ #include "build_assert.c"
+ #include "build_bug.c"
+ #include "clk.c"
++#include "cpu.c"
+ #include "cpufreq.c"
+ #include "cpumask.c"
+ #include "cred.c"
+diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
+index da53f04da495..b093d22ccbd9 100644
+--- a/rust/kernel/cpu.rs
++++ b/rust/kernel/cpu.rs
+@@ -94,6 +94,12 @@ pub fn from_u32(id: u32) -> Option<Self> {
+     pub fn as_u32(&self) -> u32 {
+         self.0
+     }
++
++    /// Returns the ID of the CPU this code is currently running on.
++    pub fn current() -> Self {
++        // SAFETY: smp_processor_id() always return valid cpu id.
++        unsafe { Self::from_u32_unchecked(bindings::smp_processor_id()) }
++    }
+ }
+
+ impl From<CpuId> for u32 {
 
 -- 
 viresh
