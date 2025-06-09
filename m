@@ -1,494 +1,343 @@
-Return-Path: <linux-kernel+bounces-677646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AD8AD1D16
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B534DAD1D43
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDE7C188CA46
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DD037A367F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4A42571BF;
-	Mon,  9 Jun 2025 12:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6278A2580C7;
+	Mon,  9 Jun 2025 12:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2vNb/nk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UyrWcnFk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF142571A2;
-	Mon,  9 Jun 2025 12:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C792E255F3C;
+	Mon,  9 Jun 2025 12:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471680; cv=none; b=rJBVQb0fNhLJkdVHKdJOTHqXmd29Yn2mIpiID4CVmPLo9YWGGXaNslR4wEj3CApclo5v2JdS7ZlDGR5pDJ6uOs+qxHUL9J+CJmk8Ym+sJFYPyeYiHmj9/2hw+XMv50gY5ZaH94bEc8OWUoiR2GBWsBfbyZR0rY/sXp7i/tfMl18=
+	t=1749471798; cv=none; b=Zotn5LZo84Jn1DEfXh+lSsRDBPL+AyfwJpx7H98sfVXwggzxiN79suvOS/+wV81e05RB+shNPQtPxOQwgmCqleo5K/NAq+tZsNGKgcic0TsH1tXiPFWTaTPjCjuNtiJum5IXbM4+wllXhtvmbMy9I0UUuviTxoR81zBsZ2Egong=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471680; c=relaxed/simple;
-	bh=AZB1OZFZxYUvXl5ut3W63UUUIRkqlcSAxhLmulnAKoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7wYYbAr/J/U3LzIEiZplUpDPDebDm73vniZWv/R9KGMJk6BZM4UTd92d/NEnDiPBvkfP+wE6RZGf32kx3jn1mfaPrfbJQGhuEGqRXqt1PMwlpcTypwhLHobsAD7mOFJm6ltipDEiboS1PXFkvncDYh5CuNAPT7lwWC6fAT9Uww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2vNb/nk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 939FDC4CEED;
-	Mon,  9 Jun 2025 12:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749471679;
-	bh=AZB1OZFZxYUvXl5ut3W63UUUIRkqlcSAxhLmulnAKoM=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=n2vNb/nk04ZSPMsH7o3sbJKuhVIW9On/l4qzD38hEAdyjrCuOav38far+SkoGHgKh
-	 sDM8PVBJncURRkSL4IcNYPaAZGfdobbP8WGV7FbwUoetMxNAaHlDaVkm6LzwCeY+VO
-	 gEr3IR7gxwHqIyyvKugkUP1MNNfxj7JlEwKj8jg1D3SI35lro0Kafll61g0o4C86Wk
-	 QVj4N5crPDC6vQiXu9UQPXt8ANN8I/f1webzIUWsR+trKsrADHIMPc60igCy8kpVv3
-	 9RuNH31Xu9k3bt4+aJ+ThHJbx9fYXCPUSX52KHktWFiujWgYV7CbEvRsIl2yAsUPer
-	 hCmBlqKG+L6bg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3085ACE0B6C; Mon,  9 Jun 2025 05:21:19 -0700 (PDT)
-Date: Mon, 9 Jun 2025 05:21:19 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Andreas Ziegler <ziegler.andreas@siemens.com>,
-	Felix MOESSBAUER <felix.moessbauer@siemens.com>,
-	Julien Flot <julien.flot@siemens.com>
-Subject: Re: [PATCH v2] tracing: Fix regression of filter waiting a long time
- on RCU synchronization
-Message-ID: <9a2f0cd0-1561-4206-8966-f93ccd25927f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250606201936.1e3d09a9@batman.local.home>
+	s=arc-20240116; t=1749471798; c=relaxed/simple;
+	bh=4I6/L5vs1iyIfzEeYvmfE1qCwTig2Q/jjnN4+24S5V4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=Ly42Xv2i0J7UyCdPsKoqD6IoDjSkFGN1fm/h5m2frKM5QMDII8UtiqDzTBkc0XMwqpiaoTOnuhsc4g/rURTHwB5DqpZi17g1WmYrGseajLM6Y6Y5kvc0cTLUUv6n5tUuj+RVf2txOYKtCUdmESW56a2hDVnEXJWWcdN/oxg5AdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UyrWcnFk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599S2cG013230;
+	Mon, 9 Jun 2025 12:22:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jN4rcY7ob1YYvd800m+XjERPKBHDFxeUK9mvDsw+FMc=; b=UyrWcnFkYBQnOz93
+	OZJeG7dV3nmr4LZPqQkZvEt14wuG4gO/ex8g11eY8PEVIDMCOQwD5foJFk2vHEi6
+	Wv48czCejFD/OTiG1MsX/0zm9Z5gI4k/RwbvY9zRdcJET0RvORSBM7LAXmp0Jo9F
+	HcUMG6h04UTQO8K8BgJKbMpTAIULEWK0XMUi972+iL+mp1dZsbRdcxLvNHCe4mB3
+	2UQOyQqGk1tyEN2LRzLaBQ6emgsdQTJnF+zuCDlZELX3RG0DGJ8/cfxKMuu0OhMd
+	w8iLFjEM31lfNrakiGdLCtw6ALmov2oq53c2/N6UVVjeXA7vznIXWqIDjPyoRvd/
+	I+mDaQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d11x5j8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Jun 2025 12:22:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 559CMrFR002102
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Jun 2025 12:22:53 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Jun 2025 05:22:50 -0700
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+Date: Mon, 9 Jun 2025 20:21:20 +0800
+Subject: [PATCH v2 01/38] drm/msm/dp: split msm_dp_panel_read_sink_caps()
+ into two parts and drop panel drm_edid
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250606201936.1e3d09a9@batman.local.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250609-msm-dp-mst-v2-1-a54d8902a23d@quicinc.com>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+In-Reply-To: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Yongxing
+ Mou" <quic_yongmou@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749471752; l=7757;
+ i=quic_yongmou@quicinc.com; s=20241121; h=from:subject:message-id;
+ bh=ygoFNMo3xoq5TdCviG51U1xDkpQZuti/woVERBfEbI0=;
+ b=1AhBEGPKeQJDNuRFTREPibYjtn3VbQSiGfOeEHffsKlkdjUDhfh/WJyOJZcUGxGkg8MuBO2xF
+ 1w5uhH1k8YBB5bX7ri9eQLg+iPlnPhIqHEjvhWshbdzmDwtHf+yaViZ
+X-Developer-Key: i=quic_yongmou@quicinc.com; a=ed25519;
+ pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: a_NFKb14Pod5UooQebPLG5cIdlnQp1Tq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA5MiBTYWx0ZWRfX6E9SsDCPI4Sy
+ M8gplRwMAVkwqpnCd6OxDcenMs2YL7df/i6BRPfPspLRUKkMA4iBfBi+kVR2PpUIAGYR6w/Cmlb
+ vKPExJubrSb92krlQLb63LjfP6zmi9IVezNWk2lXF3YqarmtFolGhcePrIhPY7zOAgoEnPklV03
+ z9TyVGb54Tlld96dps42Vo+xHGzGAXJsY9nXinDnG2S07KSMlkeuyt+iGUe6BQklsefgBSwK+ge
+ XzmoEoqH2vnJDlMIhDBxFrlNX6pvFKqGOC7BEABvDHUEjysHcuhiL79ZGXtutDimaMP3/sYScu2
+ oiqObWZwweWuvaRqs7lKSUg456E4ki/GO/0rcASTrzVMUOQHJr6uiWuua6SwKmSZZuAwQJiO/Pp
+ y6eFbl5DjCN6EZpjvQEg2vuihGQTIY/RJjGcmPM96+1vSkPya4wYe2bRxwKOjgikErv3Ilmr
+X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=6846d21e cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
+ a=QRlpv4jMYbM0ErC57hgA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: a_NFKb14Pod5UooQebPLG5cIdlnQp1Tq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_05,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=905 bulkscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506090092
 
-On Fri, Jun 06, 2025 at 08:20:20PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> When faultable trace events were added, a trace event may no longer use
-> normal RCU to synchronize but instead used synchronize_rcu_tasks_trace().
-> This synchronization takes a much longer time to synchronize.
-> 
-> The filter logic would free the filters by calling
-> tracepoint_synchronize_unregister() after it unhooked the filter strings
-> and before freeing them. With this function now calling
-> synchronize_rcu_tasks_trace() this increased the time to free a filter
-> tremendously. On a PREEMPT_RT system, it was even more noticeable.
-> 
->  # time trace-cmd record -p function sleep 1
->  [..]
->  real	2m29.052s
->  user	0m0.244s
->  sys	0m20.136s
-> 
-> As trace-cmd would clear out all the filters before recording, it could
-> take up to 2 minutes to do a recording of "sleep 1".
-> 
-> To find out where the issues was:
-> 
->  ~# trace-cmd sqlhist -e -n sched_stack  select start.prev_state as state, end.next_comm as comm, TIMESTAMP_DELTA_USECS as delta,  start.STACKTRACE as stack from sched_switch as start join sched_switch as end on start.prev_pid = end.next_pid
-> 
-> Which will produce the following commands (and -e will also execute them):
-> 
->  echo 's:sched_stack s64 state; char comm[16]; u64 delta; unsigned long stack[];' >> /sys/kernel/tracing/dynamic_events
->  echo 'hist:keys=prev_pid:__arg_18057_2=prev_state,__arg_18057_4=common_timestamp.usecs,__arg_18057_7=common_stacktrace' >> /sys/kernel/tracing/events/sched/sched_switch/trigger
->  echo 'hist:keys=next_pid:__state_18057_1=$__arg_18057_2,__comm_18057_3=next_comm,__delta_18057_5=common_timestamp.usecs-$__arg_18057_4,__stack_18057_6=$__arg_18057_7:onmatch(sched.sched_switch).trace(sched_stack,$__state_18057_1,$__comm_18057_3,$__delta_18057_5,$__stack_18057_6)' >> /sys/kernel/tracing/events/sched/sched_switch/trigger
-> 
-> The above creates a synthetic event that creates a stack trace when a task
-> schedules out and records it with the time it scheduled back in. Basically
-> the time a task is off the CPU. It also records the state of the task when
-> it left the CPU (running, blocked, sleeping, etc). It also saves the comm
-> of the task as "comm" (needed for the next command).
-> 
-> ~# echo 'hist:keys=state,stack.stacktrace:vals=delta:sort=state,delta if comm == "trace-cmd" &&  state & 3' > /sys/kernel/tracing/events/synthetic/sched_stack/trigger
-> 
-> The above creates a histogram with buckets per state, per stack, and the
-> value of the total time it was off the CPU for that stack trace. It filters
-> on tasks with "comm == trace-cmd" and only the sleeping and blocked states
-> (1 - sleeping, 2 - blocked).
-> 
-> ~# trace-cmd record -p function sleep 1
-> 
-> ~# cat /sys/kernel/tracing/events/synthetic/sched_stack/hist | tail -18
-> { state:          2, stack.stacktrace         __schedule+0x1545/0x3700
->          schedule+0xe2/0x390
->          schedule_timeout+0x175/0x200
->          wait_for_completion_state+0x294/0x440
->          __wait_rcu_gp+0x247/0x4f0
->          synchronize_rcu_tasks_generic+0x151/0x230
->          apply_subsystem_event_filter+0xa2b/0x1300
->          subsystem_filter_write+0x67/0xc0
->          vfs_write+0x1e2/0xeb0
->          ksys_write+0xff/0x1d0
->          do_syscall_64+0x7b/0x420
->          entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> } hitcount:        237  delta:   99756288  <<--------------- Delta is 99 seconds!
-> 
-> Totals:
->     Hits: 525
->     Entries: 21
->     Dropped: 0
-> 
-> This shows that this particular trace waited for 99 seconds on
-> synchronize_rcu_tasks() in apply_subsystem_event_filter().
-> 
-> In fact, there's a lot of places in the filter code that spends a lot of
-> time waiting for synchronize_rcu_tasks_trace() in order to free the
-> filters.
-> 
-> Add helper functions that will use call_rcu*() variants to asynchronously
-> free the filters. This brings the timings back to normal:
-> 
->  # time trace-cmd record -p function sleep 1
->  [..]
->  real	0m14.681s
->  user	0m0.335s
->  sys	0m28.616s
-> 
-> And the histogram also shows this:
-> 
-> ~# cat /sys/kernel/tracing/events/synthetic/sched_stack/hist | tail -21
-> { state:          2, stack.stacktrace         __schedule+0x1545/0x3700
->          schedule+0xe2/0x390
->          schedule_timeout+0x175/0x200
->          wait_for_completion_state+0x294/0x440
->          __wait_rcu_gp+0x247/0x4f0
->          synchronize_rcu_normal+0x3db/0x5c0
->          tracing_reset_online_cpus+0x8f/0x1e0
->          tracing_open+0x335/0x440
->          do_dentry_open+0x4c6/0x17a0
->          vfs_open+0x82/0x360
->          path_openat+0x1a36/0x2990
->          do_filp_open+0x1c5/0x420
->          do_sys_openat2+0xed/0x180
->          __x64_sys_openat+0x108/0x1d0
->          do_syscall_64+0x7b/0x420
-> } hitcount:          2  delta:      77044
-> 
-> Totals:
->     Hits: 55
->     Entries: 28
->     Dropped: 0
-> 
-> Where the total waiting time of synchronize_rcu_tasks_trace() is 77
-> milliseconds.
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-Nice!!!
+In preparation of DP MST where link caps are read for the
+immediate downstream device and the edid is read through
+sideband messaging, split the msm_dp_panel_read_sink_caps() into
+two parts which read the link parameters and the edid parts
+respectively. Also drop the panel drm_edid cached as we actually
+don't need it.
 
-One concern below.
+Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+---
+ drivers/gpu/drm/msm/dp/dp_display.c | 13 +++++----
+ drivers/gpu/drm/msm/dp/dp_panel.c   | 55 ++++++++++++++++++++-----------------
+ drivers/gpu/drm/msm/dp/dp_panel.h   |  6 ++--
+ 3 files changed, 40 insertions(+), 34 deletions(-)
 
-> Cc: stable@vger.kernel.org
-> Reported-by: "Flot, Julien" <julien.flot@siemens.com>
-> Tested-by: Julien Flot <julien.flot@siemens.com>
-> Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to handle page faults")
-> Closes: https://lore.kernel.org/all/240017f656631c7dd4017aa93d91f41f653788ea.camel@siemens.com/
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v1: https://lore.kernel.org/20250605161701.35f7989a@gandalf.local.home
-> 
-> - Fix accessing file->filter as it is tagged as __rcu.
->   https://lore.kernel.org/all/202506070406.BQGH3VyM-lkp@intel.com/
-> 
->  kernel/trace/trace_events_filter.c | 186 +++++++++++++++++++++--------
->  1 file changed, 138 insertions(+), 48 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-> index 2048560264bb..711520081741 100644
-> --- a/kernel/trace/trace_events_filter.c
-> +++ b/kernel/trace/trace_events_filter.c
-> @@ -1335,22 +1335,139 @@ static void filter_free_subsystem_preds(struct trace_subsystem_dir *dir,
->  	}
->  }
->  
-> +struct filter_list {
-> +	struct list_head	list;
-> +	struct event_filter	*filter;
-> +};
-> +
-> +struct filter_head {
-> +	struct list_head	list;
-> +	struct rcu_head		rcu;
-> +};
-> +
-> +
-> +static void free_filter_list(struct rcu_head *rhp)
-> +{
-> +	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
-> +	struct filter_list *filter_item, *tmp;
-> +
-> +	list_for_each_entry_safe(filter_item, tmp, &filter_list->list, list) {
-> +		__free_filter(filter_item->filter);
-> +		list_del(&filter_item->list);
-> +		kfree(filter_item);
-> +	}
+diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+index 6f05a939ce9e648e9601597155999b6f85adfcff..4a9b65647cdef1ed6c3bb851f93df0db8be977af 100644
+--- a/drivers/gpu/drm/msm/dp/dp_display.c
++++ b/drivers/gpu/drm/msm/dp/dp_display.c
+@@ -389,7 +389,11 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+ 
+ 	dp->link->lttpr_count = msm_dp_display_lttpr_init(dp, dpcd);
+ 
+-	rc = msm_dp_panel_read_sink_caps(dp->panel, connector);
++	rc = msm_dp_panel_read_link_caps(dp->panel);
++	if (rc)
++		goto end;
++
++	rc = msm_dp_panel_read_edid(dp->panel, connector);
+ 	if (rc)
+ 		goto end;
+ 
+@@ -720,7 +724,6 @@ static int msm_dp_irq_hpd_handle(struct msm_dp_display_private *dp, u32 data)
+ static void msm_dp_display_deinit_sub_modules(struct msm_dp_display_private *dp)
+ {
+ 	msm_dp_audio_put(dp->audio);
+-	msm_dp_panel_put(dp->panel);
+ 	msm_dp_aux_put(dp->aux);
+ }
+ 
+@@ -783,7 +786,7 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
+ 		rc = PTR_ERR(dp->ctrl);
+ 		DRM_ERROR("failed to initialize ctrl, rc = %d\n", rc);
+ 		dp->ctrl = NULL;
+-		goto error_ctrl;
++		goto error_link;
+ 	}
+ 
+ 	dp->audio = msm_dp_audio_get(dp->msm_dp_display.pdev, dp->catalog);
+@@ -791,13 +794,11 @@ static int msm_dp_init_sub_modules(struct msm_dp_display_private *dp)
+ 		rc = PTR_ERR(dp->audio);
+ 		pr_err("failed to initialize audio, rc = %d\n", rc);
+ 		dp->audio = NULL;
+-		goto error_ctrl;
++		goto error_link;
+ 	}
+ 
+ 	return rc;
+ 
+-error_ctrl:
+-	msm_dp_panel_put(dp->panel);
+ error_link:
+ 	msm_dp_aux_put(dp->aux);
+ error:
+diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+index 4e8ab75c771b1e3a2d62f75e9993e1062118482b..d9041e235104a74b3cc50ff2e307eae0c4301ef3 100644
+--- a/drivers/gpu/drm/msm/dp/dp_panel.c
++++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+@@ -118,14 +118,13 @@ static u32 msm_dp_panel_get_supported_bpp(struct msm_dp_panel *msm_dp_panel,
+ 	return min_supported_bpp;
+ }
+ 
+-int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+-	struct drm_connector *connector)
++int msm_dp_panel_read_link_caps(struct msm_dp_panel *msm_dp_panel)
+ {
+ 	int rc, bw_code;
+ 	int count;
+ 	struct msm_dp_panel_private *panel;
+ 
+-	if (!msm_dp_panel || !connector) {
++	if (!msm_dp_panel) {
+ 		DRM_ERROR("invalid input\n");
+ 		return -EINVAL;
+ 	}
+@@ -160,26 +159,29 @@ int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+ 
+ 	rc = drm_dp_read_downstream_info(panel->aux, msm_dp_panel->dpcd,
+ 					 msm_dp_panel->downstream_ports);
+-	if (rc)
+-		return rc;
++	return rc;
++}
+ 
+-	drm_edid_free(msm_dp_panel->drm_edid);
++int msm_dp_panel_read_edid(struct msm_dp_panel *msm_dp_panel, struct drm_connector *connector)
++{
++	struct msm_dp_panel_private *panel;
++	const struct drm_edid *drm_edid;
++
++	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+ 
+-	msm_dp_panel->drm_edid = drm_edid_read_ddc(connector, &panel->aux->ddc);
++	drm_edid = drm_edid_read_ddc(connector, &panel->aux->ddc);
+ 
+-	drm_edid_connector_update(connector, msm_dp_panel->drm_edid);
++	drm_edid_connector_update(connector, drm_edid);
+ 
+-	if (!msm_dp_panel->drm_edid) {
++	if (!drm_edid) {
+ 		DRM_ERROR("panel edid read failed\n");
+ 		/* check edid read fail is due to unplug */
+ 		if (!msm_dp_catalog_link_is_connected(panel->catalog)) {
+-			rc = -ETIMEDOUT;
+-			goto end;
++			return -ETIMEDOUT;
+ 		}
+ 	}
+ 
+-end:
+-	return rc;
++	return 0;
+ }
+ 
+ u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel,
+@@ -208,15 +210,20 @@ u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel,
+ int msm_dp_panel_get_modes(struct msm_dp_panel *msm_dp_panel,
+ 	struct drm_connector *connector)
+ {
++	struct msm_dp_panel_private *panel;
++	const struct drm_edid *drm_edid;
++
+ 	if (!msm_dp_panel) {
+ 		DRM_ERROR("invalid input\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (msm_dp_panel->drm_edid)
+-		return drm_edid_connector_add_modes(connector);
++	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
++
++	drm_edid = drm_edid_read_ddc(connector, &panel->aux->ddc);
++	drm_edid_connector_update(connector, drm_edid);
+ 
+-	return 0;
++	return drm_edid_connector_add_modes(connector);
+ }
+ 
+ static u8 msm_dp_panel_get_edid_checksum(const struct edid *edid)
+@@ -229,6 +236,7 @@ static u8 msm_dp_panel_get_edid_checksum(const struct edid *edid)
+ void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel)
+ {
+ 	struct msm_dp_panel_private *panel;
++	const struct drm_edid *drm_edid;
+ 
+ 	if (!msm_dp_panel) {
+ 		DRM_ERROR("invalid input\n");
+@@ -238,8 +246,13 @@ void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel)
+ 	panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+ 
+ 	if (panel->link->sink_request & DP_TEST_LINK_EDID_READ) {
++		drm_edid = drm_edid_read_ddc(msm_dp_panel->connector, &panel->aux->ddc);
++
++		if (!drm_edid)
++			return;
++
+ 		/* FIXME: get rid of drm_edid_raw() */
+-		const struct edid *edid = drm_edid_raw(msm_dp_panel->drm_edid);
++		const struct edid *edid = drm_edid_raw(drm_edid);
+ 		u8 checksum;
+ 
+ 		if (edid)
+@@ -515,11 +528,3 @@ struct msm_dp_panel *msm_dp_panel_get(struct device *dev, struct drm_dp_aux *aux
+ 
+ 	return msm_dp_panel;
+ }
+-
+-void msm_dp_panel_put(struct msm_dp_panel *msm_dp_panel)
+-{
+-	if (!msm_dp_panel)
+-		return;
+-
+-	drm_edid_free(msm_dp_panel->drm_edid);
+-}
+diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+index 4906f4f09f2451cfed3c1007f38b4db7dfdb1d90..7f139478e1012d5b8f1f745f0de5fc3943745428 100644
+--- a/drivers/gpu/drm/msm/dp/dp_panel.h
++++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+@@ -32,7 +32,6 @@ struct msm_dp_panel {
+ 	u8 downstream_ports[DP_MAX_DOWNSTREAM_PORTS];
+ 
+ 	struct msm_dp_link_info link_info;
+-	const struct drm_edid *drm_edid;
+ 	struct drm_connector *connector;
+ 	struct msm_dp_display_mode msm_dp_mode;
+ 	struct msm_dp_panel_psr psr_cap;
+@@ -51,7 +50,9 @@ int msm_dp_panel_timing_cfg(struct msm_dp_panel *msm_dp_panel);
+ int msm_dp_panel_read_sink_caps(struct msm_dp_panel *msm_dp_panel,
+ 		struct drm_connector *connector);
+ u32 msm_dp_panel_get_mode_bpp(struct msm_dp_panel *msm_dp_panel, u32 mode_max_bpp,
+-			u32 mode_pclk_khz);
++			      u32 mode_pclk_khz);
++int msm_dp_panel_read_link_caps(struct msm_dp_panel *dp_panel);
++int msm_dp_panel_read_edid(struct msm_dp_panel *dp_panel, struct drm_connector *connector);
+ int msm_dp_panel_get_modes(struct msm_dp_panel *msm_dp_panel,
+ 		struct drm_connector *connector);
+ void msm_dp_panel_handle_sink_request(struct msm_dp_panel *msm_dp_panel);
+@@ -86,5 +87,4 @@ static inline bool is_lane_count_valid(u32 lane_count)
+ 
+ struct msm_dp_panel *msm_dp_panel_get(struct device *dev, struct drm_dp_aux *aux,
+ 			      struct msm_dp_link *link, struct msm_dp_catalog *catalog);
+-void msm_dp_panel_put(struct msm_dp_panel *msm_dp_panel);
+ #endif /* _DP_PANEL_H_ */
 
-If the series of synchronize_rcu() calls was taking 99 seconds,
-we might well be going through the above loop quite a few times, all
-within a bh-disabled region of code.  For example, the calls from both
-filter_free_subsystem_filters() and process_system_preds() look like
-they can queue a very large number of entries.
+-- 
+2.34.1
 
-So...
-
-> +	kfree(filter_list);
-> +}
-> +
-> +static void free_filter_list_tasks(struct rcu_head *rhp)
-> +{
-> +	call_rcu(rhp, free_filter_list);
-
-...why not use queue_rcu_work() in place of call_rcu() here, thus avoiding
-possible response-time issues?
-
-Or is there something that I am missing that limits the length of the
-list passed to free_filter_list()?
-
-							Thanx, Paul
-
-> +}
-> +
-> +/*
-> + * The tracepoint_synchronize_unregister() is a double rcu call.
-> + * It calls synchronize_rcu_tasks_trace() followed by synchronize_rcu().
-> + * Instead of waiting for it, simply call these via the call_rcu*()
-> + * variants.
-> + */
-> +static void delay_free_filter(struct filter_head *head)
-> +{
-> +	call_rcu_tasks_trace(&head->rcu, free_filter_list_tasks);
-> +}
-> +
-> +static void try_delay_free_filter(struct event_filter *filter)
-> +{
-> +	struct filter_head *head;
-> +	struct filter_list *item;
-> +
-> +	head = kmalloc(sizeof(*head), GFP_KERNEL);
-> +	if (!head)
-> +		goto free_now;
-> +
-> +	INIT_LIST_HEAD(&head->list);
-> +
-> +	item = kmalloc(sizeof(*item), GFP_KERNEL);
-> +	if (!item) {
-> +		kfree(head);
-> +		goto free_now;
-> +	}
-> +
-> +	item->filter = filter;
-> +	list_add_tail(&item->list, &head->list);
-> +	delay_free_filter(head);
-> +	return;
-> +
-> + free_now:
-> +	/* Make sure the filter is not being used */
-> +	tracepoint_synchronize_unregister();
-> +	__free_filter(filter);
-> +}
-> +
->  static inline void __free_subsystem_filter(struct trace_event_file *file)
->  {
->  	__free_filter(file->filter);
->  	file->filter = NULL;
->  }
->  
-> +static inline void event_set_filter(struct trace_event_file *file,
-> +				    struct event_filter *filter)
-> +{
-> +	rcu_assign_pointer(file->filter, filter);
-> +}
-> +
-> +static inline void event_clear_filter(struct trace_event_file *file)
-> +{
-> +	RCU_INIT_POINTER(file->filter, NULL);
-> +}
-> +
->  static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
-> -					  struct trace_array *tr)
-> +					  struct trace_array *tr,
-> +					  struct event_filter *filter)
->  {
->  	struct trace_event_file *file;
-> +	struct filter_head *head;
-> +	struct filter_list *item;
-> +
-> +	head = kmalloc(sizeof(*head), GFP_KERNEL);
-> +	if (!head)
-> +		goto free_now;
-> +
-> +	INIT_LIST_HEAD(&head->list);
-> +
-> +	item = kmalloc(sizeof(*item), GFP_KERNEL);
-> +	if (!item) {
-> +		kfree(head);
-> +		goto free_now;
-> +	}
-> +
-> +	item->filter = filter;
-> +	list_add_tail(&item->list, &head->list);
->  
->  	list_for_each_entry(file, &tr->events, list) {
->  		if (file->system != dir)
->  			continue;
-> -		__free_subsystem_filter(file);
-> +		item = kmalloc(sizeof(*item), GFP_KERNEL);
-> +		if (!item)
-> +			goto free_now;
-> +		item->filter = event_filter(file);
-> +		list_add_tail(&item->list, &head->list);
-> +		event_clear_filter(file);
->  	}
-> +
-> +	delay_free_filter(head);
-> +	return;
-> + free_now:
-> +	tracepoint_synchronize_unregister();
-> +
-> +	if (head)
-> +		free_filter_list(&head->rcu);
-> +
-> +	list_for_each_entry(file, &tr->events, list) {
-> +		if (file->system != dir || !file->filter)
-> +			continue;
-> +		__free_filter(file->filter);
-> +	}
-> +	__free_filter(filter);
->  }
->  
->  int filter_assign_type(const char *type)
-> @@ -2120,22 +2237,6 @@ static inline void event_set_filtered_flag(struct trace_event_file *file)
->  		trace_buffered_event_enable();
->  }
->  
-> -static inline void event_set_filter(struct trace_event_file *file,
-> -				    struct event_filter *filter)
-> -{
-> -	rcu_assign_pointer(file->filter, filter);
-> -}
-> -
-> -static inline void event_clear_filter(struct trace_event_file *file)
-> -{
-> -	RCU_INIT_POINTER(file->filter, NULL);
-> -}
-> -
-> -struct filter_list {
-> -	struct list_head	list;
-> -	struct event_filter	*filter;
-> -};
-> -
->  static int process_system_preds(struct trace_subsystem_dir *dir,
->  				struct trace_array *tr,
->  				struct filter_parse_error *pe,
-> @@ -2144,11 +2245,16 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
->  	struct trace_event_file *file;
->  	struct filter_list *filter_item;
->  	struct event_filter *filter = NULL;
-> -	struct filter_list *tmp;
-> -	LIST_HEAD(filter_list);
-> +	struct filter_head *filter_list;
->  	bool fail = true;
->  	int err;
->  
-> +	filter_list = kmalloc(sizeof(*filter_list), GFP_KERNEL);
-> +	if (!filter_list)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(&filter_list->list);
-> +
->  	list_for_each_entry(file, &tr->events, list) {
->  
->  		if (file->system != dir)
-> @@ -2175,7 +2281,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
->  		if (!filter_item)
->  			goto fail_mem;
->  
-> -		list_add_tail(&filter_item->list, &filter_list);
-> +		list_add_tail(&filter_item->list, &filter_list->list);
->  		/*
->  		 * Regardless of if this returned an error, we still
->  		 * replace the filter for the call.
-> @@ -2195,31 +2301,22 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
->  	 * Do a synchronize_rcu() and to ensure all calls are
->  	 * done with them before we free them.
->  	 */
-> -	tracepoint_synchronize_unregister();
-> -	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
-> -		__free_filter(filter_item->filter);
-> -		list_del(&filter_item->list);
-> -		kfree(filter_item);
-> -	}
-> +	delay_free_filter(filter_list);
->  	return 0;
->   fail:
->  	/* No call succeeded */
-> -	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
-> -		list_del(&filter_item->list);
-> -		kfree(filter_item);
-> -	}
-> +	free_filter_list(&filter_list->rcu);
->  	parse_error(pe, FILT_ERR_BAD_SUBSYS_FILTER, 0);
->  	return -EINVAL;
->   fail_mem:
->  	__free_filter(filter);
-> +
->  	/* If any call succeeded, we still need to sync */
->  	if (!fail)
-> -		tracepoint_synchronize_unregister();
-> -	list_for_each_entry_safe(filter_item, tmp, &filter_list, list) {
-> -		__free_filter(filter_item->filter);
-> -		list_del(&filter_item->list);
-> -		kfree(filter_item);
-> -	}
-> +		delay_free_filter(filter_list);
-> +	else
-> +		free_filter_list(&filter_list->rcu);
-> +
->  	return -ENOMEM;
->  }
->  
-> @@ -2361,9 +2458,7 @@ int apply_event_filter(struct trace_event_file *file, char *filter_string)
->  
->  		event_clear_filter(file);
->  
-> -		/* Make sure the filter is not being used */
-> -		tracepoint_synchronize_unregister();
-> -		__free_filter(filter);
-> +		try_delay_free_filter(filter);
->  
->  		return 0;
->  	}
-> @@ -2387,11 +2482,8 @@ int apply_event_filter(struct trace_event_file *file, char *filter_string)
->  
->  		event_set_filter(file, filter);
->  
-> -		if (tmp) {
-> -			/* Make sure the call is done with the filter */
-> -			tracepoint_synchronize_unregister();
-> -			__free_filter(tmp);
-> -		}
-> +		if (tmp)
-> +			try_delay_free_filter(tmp);
->  	}
->  
->  	return err;
-> @@ -2417,9 +2509,7 @@ int apply_subsystem_event_filter(struct trace_subsystem_dir *dir,
->  		filter = system->filter;
->  		system->filter = NULL;
->  		/* Ensure all filters are no longer used */
-> -		tracepoint_synchronize_unregister();
-> -		filter_free_subsystem_filters(dir, tr);
-> -		__free_filter(filter);
-> +		filter_free_subsystem_filters(dir, tr, filter);
->  		return 0;
->  	}
->  
-> -- 
-> 2.47.2
-> 
 
