@@ -1,113 +1,164 @@
-Return-Path: <linux-kernel+bounces-678161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96394AD24E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C37AD24F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F4F188A098
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152CD189067E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760C721CC5A;
-	Mon,  9 Jun 2025 17:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D4EKxbVB"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6DF21A426;
+	Mon,  9 Jun 2025 17:25:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B62E21CC71
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 17:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E824A3C;
+	Mon,  9 Jun 2025 17:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749489427; cv=none; b=fwBrRK8nlw4d3iyhsV1RHmqLh9rUQi9noOCcptzordD3wytHZIOKcuvAjyZsVFzmraXaPy/r6M3MISdF/Yp0IzH9LCKWmxGDbkvOawdmEiG2yVWv3FETUC4VR9miaBP5D2lwaywxWY5uYh0PLLB9MWsd9uOJ1rC560+liTn4+bs=
+	t=1749489903; cv=none; b=YZjjnk76c7QsWag/QhIreeq4QIkCPL/0BGQZImI6Rikt9Qx2GzM1HiCz3jCopb8y3rnMpD3urvtmjAvrSiXtktp9UORGFFJ1j9KGWXFbpR//XKagEKoI/RpwnDUYPyNAzLTB5yumHsOIiWNSUW7m04eyLblvE2lmzFpvK0h0m0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749489427; c=relaxed/simple;
-	bh=5oGTiqZZ307BYUtl7pSWk3mn+buTV5YFy2oIxQ/JqhA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uLIG2nfjix12byZcPWJxOU/gxHoVhlLh/7DFJ0YOQreK2uT51wCw+GAx9xSoFwj9lTwclXBW5G4IbRQNPbEH+BH8xO19fxXw60KiHx3c/dlRr8UlY+9fRXaZ4bkzCCcOOrx3z05xJqrz/bTiUzcNAA3fo7t+lh/Tdbjj+DRP9Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D4EKxbVB; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2345c60507bso32154655ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 10:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749489425; x=1750094225; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/2NxgbZkE/fQYT/wKRne1lqFrqdcfx1xvEW+2vsryw=;
-        b=D4EKxbVB+kv4BEjwt7W8dMhCB7rqpYpGWoyzL/SlSIp+K010+QhYMeHWh45s8ARPjY
-         cxxMtidtcRyoAPKTDJIlScF9+/Xk2wUQbkPNK3d7vLSFdnA2jpv3GPC6T6CwlliUKezb
-         59WKMHO2pQN24hVnFgSs/VMH9krDsGvGMdOcg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749489425; x=1750094225;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/2NxgbZkE/fQYT/wKRne1lqFrqdcfx1xvEW+2vsryw=;
-        b=Gl+wiNIWMin1Up62SgzsiTXOBcuFXXSet8hfCY+auWhzcpY24KEsSAsVVX5C0QZ4qZ
-         +0geQvnOxp+9YRPKTP/85t4TtaiHQMPFtf7eWPk2NdJh18JOgZHRr1aMWOJ+KWbb0UAF
-         A2I4eY1I7tR9sGLwkynTq7oG9NC/1apTBVgPOHGbvtpabK4Bz+MKYxv6VBqsCF5JeQFv
-         YP0ye3xIeWsZrFK2WGaJEon7wsIYAgGxmqV619wDzJwoWEcUHKXhRlXMICH3D9/S1nI3
-         l2aEb5NTf77q7qmkA8lXR0840wdaMdhLZpiw03p+1m7E7hLr0qdbD32jWb4uIAG08F0e
-         kaAA==
-X-Gm-Message-State: AOJu0YxpdsWKzGHILqkhSEYNCsebgvhHHXlT5gxInGcOV5FwfTmLqdZh
-	iYZ9iwxv7Hn3YnV+2Qa9aYG7N3VYIt4VjEsceVNWNKDzd3yiZfoqURU++m864hu0p3gCBs1xQ42
-	FZWc=
-X-Gm-Gg: ASbGncugoH9zZbDQ3ebl+61/aqOaJ/sGejAeLuJQXoDzs7I118Fv49c3k0JCGoTMbAD
-	9kYORRncBzxwxPorgdvon84mX229CMzeKiUnXbRyl48qInLGTLrbQROP88qozfkJMzfpud9z2iM
-	c4cnrNPj15rysHDNAWEQUVbSfWpF52CTGTuxn1vg1Bkb2QGtyQWdMAX0ZeDBRz+ZP2WxFhb50Ea
-	a7oSlZNllLVS1GGTcio8VbGz7VR+R6eRjhCGHJNRjsTG5PgdLVGl1cwoNT7aeKm3h/afOINgt14
-	fDHTvo3Bok+vmklWGZQrEN6TCIG8B4GxJb7+/9fnETlgVNpC5EfgYx0BIIAQID4ty6AuweR0k3K
-	HqEF7Pn+YOSQYSWnvwdI5Y9DsbUJBWg==
-X-Google-Smtp-Source: AGHT+IHEnqJo2dUDRhKiuFBkqhLnx3tbrZzXNU3LDPR106ISirZuxtHvjib/RX4GZEMQs3K9/qrfcA==
-X-Received: by 2002:a17:903:230e:b0:235:eb71:a386 with SMTP id d9443c01a7336-23601dd7c06mr175103965ad.50.1749489425086;
-        Mon, 09 Jun 2025 10:17:05 -0700 (PDT)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com. [209.85.215.171])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236030780bcsm57272615ad.15.2025.06.09.10.17.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 10:17:04 -0700 (PDT)
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b2c384b2945so3440823a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 10:17:04 -0700 (PDT)
-X-Received: by 2002:a17:90b:2d4e:b0:30c:540b:9ba with SMTP id
- 98e67ed59e1d1-313472e6282mr19857290a91.10.1749489423504; Mon, 09 Jun 2025
- 10:17:03 -0700 (PDT)
+	s=arc-20240116; t=1749489903; c=relaxed/simple;
+	bh=u8Q4VBy21QNllu02EWfp1To+h1q7k65+Y8ZMOX6IbBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GDcmlMJ5RZUgR/LtpQSrboclLmeAUd6+5lD0SeheiwnCdGEPLh60Ii4eyeg0jJMOtrw/utuQx8RIYrcj9MASnix5xo8XVUx7KgP/YKITaIE4Qx+xX++jkOazOMgPlE3ejsCYtbEo1IpbpSFhM+zY6o4Uea+4M7+YXTorp8QW6c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 568ADBD357;
+	Mon,  9 Jun 2025 17:16:06 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id B47172D;
+	Mon,  9 Jun 2025 17:16:04 +0000 (UTC)
+Date: Mon, 9 Jun 2025 13:17:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH] tracing: Use queue_rcu_work() to free filters
+Message-ID: <20250609131732.04fd303b@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605001253.46084-1-yury.norov@gmail.com>
-In-Reply-To: <20250605001253.46084-1-yury.norov@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 9 Jun 2025 10:16:51 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VzTK517-JMRNBQ6_YtOQKqQEfO_7-pt5H+w1jsUtpqGg@mail.gmail.com>
-X-Gm-Features: AX0GCFtnGtBi1pan1Rdck-YO4C7qI04Np6hcULyTpq9k9UKcZzyHeJeS_jIpHyw
-Message-ID: <CAD=FV=VzTK517-JMRNBQ6_YtOQKqQEfO_7-pt5H+w1jsUtpqGg@mail.gmail.com>
-Subject: Re: [PATCH] watchdog: fix opencoded cpumask_next_wrap() in watchdog_next_cpu()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B47172D
+X-Stat-Signature: 8g1ezoxdzbyxr89zqtnzib3z8hyt6nkx
+X-Rspamd-Server: rspamout05
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+n2ThMA2oOBbuZkjIUEaqh0CKb4hyi+IM=
+X-HE-Tag: 1749489364-656785
+X-HE-Meta: U2FsdGVkX1/ReBRy8BMyom0XNTxN9K3srsKnlJmKpoQ80igGHg0Oce/SWaQl3dZyxZrn2ukFCAjK6jrWhItVs82AjKQIPZm/ter3Amnwvasx3qtTX5sqByIU3Jmw31aIDO1mUerxHaY2fkNyUb7BZvWqq0QoX6qbN5Kf0txmT5x+QkpWBfFYJ4tAh3uVwHSpHEqZFTwmrEi0YVxtV3e9MbkQM3k3iIXxD4rTZ/SZ+2/RDFEDjbVgWTYnK0DiJdICwF5WnjaDVTBjs0aTzwYR0UXY1Qpg2hRCoV8M7siuhlXZQm0mksyrMGN6KuZPdsRB/nIsE7agCoVv7F+PuAa1o9sCC+RFaJjKzZjDvUIoUSOBBAPCsB9UThcdsSYUBiPQQneU/PwN8KlOd3h5gDthkA==
 
-Hi,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-On Wed, Jun 4, 2025 at 5:12=E2=80=AFPM Yury Norov <yury.norov@gmail.com> wr=
-ote:
->
-> From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
->
-> The dedicated helper is more verbose and efficient comparing to
-> cpumask_next() followed by cpumask_first().
->
-> Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
-> ---
->  kernel/watchdog_buddy.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+Freeing of filters requires to wait for both an RCU grace period as well as
+a RCU task trace wait period after they have been detached from their
+lists. The trace task period can be quite large so the freeing of the
+filters was moved to use the call_rcu*() routines. The problem with that is
+that the callback functions of call_rcu*() is done from a soft irq and can
+cause latencies if the callback takes a bit of time.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+The filters are freed per event in a system and the syscalls system
+contains an event per system call, which can be over 700 events. Freeing 700
+filters in a bottom half is undesirable.
+
+Instead, move the freeing to use queue_rcu_work() which is done in task
+context.
+
+Link: https://lore.kernel.org/all/9a2f0cd0-1561-4206-8966-f93ccd25927f@paulmck-laptop/
+
+Fixes: a9d0aab5eb33 ("tracing: Fix regression of filter waiting a long time on RCU synchronization")
+Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Note, I added a Fixes tag but not a stable tag as this is a nice-to-have
+but doesn't hit the level of critical fix to backport or add to an rc
+release. If someone wants to back port it, feel free.
+
+ kernel/trace/trace_events_filter.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index ea8b364b6818..b6fe8167ef01 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1344,13 +1344,14 @@ struct filter_list {
+ 
+ struct filter_head {
+ 	struct list_head	list;
+-	struct rcu_head		rcu;
++	union {
++		struct rcu_head		rcu;
++		struct rcu_work		rwork;
++	};
+ };
+ 
+-
+-static void free_filter_list(struct rcu_head *rhp)
++static void free_filter_list(struct filter_head *filter_list)
+ {
+-	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
+ 	struct filter_list *filter_item, *tmp;
+ 
+ 	list_for_each_entry_safe(filter_item, tmp, &filter_list->list, list) {
+@@ -1361,9 +1362,20 @@ static void free_filter_list(struct rcu_head *rhp)
+ 	kfree(filter_list);
+ }
+ 
++static void free_filter_list_work(struct work_struct *work)
++{
++	struct filter_head *filter_list;
++
++	filter_list = container_of(to_rcu_work(work), struct filter_head, rwork);
++	free_filter_list(filter_list);
++}
++
+ static void free_filter_list_tasks(struct rcu_head *rhp)
+ {
+-	call_rcu(rhp, free_filter_list);
++	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
++
++	INIT_RCU_WORK(&filter_list->rwork, free_filter_list_work);
++	queue_rcu_work(system_wq, &filter_list->rwork);
+ }
+ 
+ /*
+@@ -1462,7 +1474,7 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 	tracepoint_synchronize_unregister();
+ 
+ 	if (head)
+-		free_filter_list(&head->rcu);
++		free_filter_list(head);
+ 
+ 	list_for_each_entry(file, &tr->events, list) {
+ 		if (file->system != dir || !file->filter)
+@@ -2307,7 +2319,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+ 	return 0;
+  fail:
+ 	/* No call succeeded */
+-	free_filter_list(&filter_list->rcu);
++	free_filter_list(filter_list);
+ 	parse_error(pe, FILT_ERR_BAD_SUBSYS_FILTER, 0);
+ 	return -EINVAL;
+  fail_mem:
+@@ -2317,7 +2329,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+ 	if (!fail)
+ 		delay_free_filter(filter_list);
+ 	else
+-		free_filter_list(&filter_list->rcu);
++		free_filter_list(filter_list);
+ 
+ 	return -ENOMEM;
+ }
+-- 
+2.47.2
+
 
