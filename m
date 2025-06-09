@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-678239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379CCAD260C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:50:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EE5AD2611
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9B03AB1D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:50:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 836917A7B39
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743CA21D3E1;
-	Mon,  9 Jun 2025 18:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F72C21FF30;
+	Mon,  9 Jun 2025 18:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etBGLdGU"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuKWOM2a"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ACC1B4121;
-	Mon,  9 Jun 2025 18:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C7921D00D;
+	Mon,  9 Jun 2025 18:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749495040; cv=none; b=ThcSbMZk6hXhOJs85vjCRkD4vN4QjdakYfukC9WrdkxWYB4QHLjo6coWdwu0be7WDU9fEYGThVrmaaU2Fz/PQB/SU5t4H0CBQYjdP4pkWlWRZVgZF0ShSslyUeSTZd86nhWNipq/vMSOvgYEBD1wm5Gga4I7mUSTH/EEkmg9PfM=
+	t=1749495043; cv=none; b=NdweMWs0NPU7WQlUjAWGdMzYb2HrMM5REC71XaF7MCh4tu+rhX0S+ARFtJPXA+5TfmOp252fNbXzfHfmbJOVgk9xX0S6u9CHMYialZ4LimwmWTx88XJx0BgdvLB2sFp39U4RHchDH5yK5Ua1SZ1quoju/79Zh1sS6Icr93LnKg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749495040; c=relaxed/simple;
-	bh=4D/QkaIrvIGoz7Dmk8fY0fnPMKOpONTp0mZAjMTzHg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jBjToxZgvmH457DSHG4ehd1+tzUx+hetcjji1o8kmeLa0nXwPguQURjzO183UPw0wpPuU1w886J5R47lkdi+CuWmtce67Zo8WOS4R88M0E7Td0AxAoVVszvXjnrm2Lvrn3rk3t+003wnNAqNYjVTaKKJUEZlcCFE1Rm9j/nk5kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etBGLdGU; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1749495043; c=relaxed/simple;
+	bh=cKmivEuR5J9P5S5skPBp0N0ymVTtvAGum9su9Ir5lWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rFhntr3M3xCf9LyK5GfeJMmiMGWswkDo0bPnJCdR+zBfw9vDo2wFL/yuhgUlOJc97Q17u1AknTmVxe94qm2de9/azAbhUZEEg++o2JXDhQMBsV2UK2fDBKEkzUzAYAemmBwYE/wlfdkzrERUDKJ1voBlebzLUaek9uL9Gx8bbsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuKWOM2a; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7426c44e014so3986756b3a.3;
-        Mon, 09 Jun 2025 11:50:39 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-747ef5996edso3531765b3a.0;
+        Mon, 09 Jun 2025 11:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749495039; x=1750099839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VVD9bSDa4wDIKvOapX6GB2hIY+Ptj8Km8QIbnx4Kaso=;
-        b=etBGLdGUiZw26b5BDISPTVg5DGKCOpzYbzHgLyQ513pOx5NZRFb70BhH6L0cTKpq3i
-         Ws1bdUcipINbSaJUrak+X8UTLHIkrMj7dpjBvbNsw/880JhMSgD82Lv/tRckjukwLosi
-         KqUncECuCqdlb/wS9JnL7Tj/9podWfhxHDWNXSWk96k7QeCJikb+Op0Hby7jjw1jOt44
-         //WwPuQpVqrE5EPckgN5jfZK7+3EWq1QbaGhWVR2WiGuuFAe5NK6R33SewSpeoFatPEq
-         twEwx4KjBexO0Qo7K7vOTrRQXZ16D3h7BFhwBftjPrjODU98HMU4PX3TFz3jPqlhsX/q
-         l9dg==
+        d=gmail.com; s=20230601; t=1749495040; x=1750099840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F/C2M8wRNNG4+fJ24bX4dF9mC98V7bFcCISVE8uOUNI=;
+        b=BuKWOM2a1Apcf/E5eHz05jmFhuwtjo05L07i2ghbN4V3UN6wvgfp8Wzoh9aYltGm1p
+         77DCme28T3dtGC30+80gsuWRq/6+5amKabgbm3ijVp2hdpPailqXoNAHsBs19i8xhh9V
+         uM8Xk5HIXUTe8xRXDtkt3qGAXtJeb2vC2Fiq0jI3rLkmEt49SFFmmRBJPrkfWPY2/48s
+         x5yR1cJ5Njm874GuU3DI6kED8FBcw5ECPNfDWz5Rg8+2ndfszsofpj6zUtLmnZD/qv08
+         S8N1QoS4vt3HTUBssCShIcM6OJExglhJQ9GMtWWtQVF6Wsv5wIxVg3SLxMz+Sv3fUa2g
+         IUdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749495039; x=1750099839;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VVD9bSDa4wDIKvOapX6GB2hIY+Ptj8Km8QIbnx4Kaso=;
-        b=SOXsIixB7FCJDfmgMlDkZ854oV7V08JSFmnzfY+fQ911QPBynUf15iU3Q3kzELfO/L
-         bnmYSq5x7+4iNYi/tbVEXPAeZjk99YSQStMrGWaW/di2E3nCvD4J42HA4UE+0kw2wsTn
-         t+D4thi3Hkme1N+/Yz9HfNlba+fmwjLofQFhQuURvRmI1M3WQdgGKWHYiLtw5rawLctd
-         yybv+zT+DuLoeQLQ+KblVSuWVvJobOGuE0ITrwEfZTujcGEVVRr1SAoMYcpOUpTID3tR
-         OEhOgM2yFpOWrB+PtYsMmMJUguwysXdq1/U4G5p9qdAmoKR5cz9sR12BtOhh4jJ1IlvP
-         ru9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJu5Vk2FeD+wAggD+ybQs/8vtJlUWnDgO1p4T0vFxSya2wwLHJSqZbnPTiovET7KdGP7tJ+GyNMrFKFD7@vger.kernel.org, AJvYcCXHAWelyokopAXhGIi1gCo+VYjPmvxS8I5x/y7T+IZbotaaNOv8CStpLG3wXAUxUFJSeQ9T9Debum4=@vger.kernel.org, AJvYcCXWsTHRWCnoUfYiPfKrz1X5Gf8JDrQVKe+JRf6ZT754rVpJdA94Jswf4EjVevRi8czhHGZMOU98g4N8vkgKz4yKHzTpmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJYp7T3nHJG3xRCfYUYMPdUhCOGFBI9j1PwO/l4btrGK4WjVqT
-	iWkuAjKcUqQ/VcRtMsjiO/yBsJybmt0+orXvaA7ZVbqQ2hzmP1eySWIR
-X-Gm-Gg: ASbGncvUc8T8Vu6olQfmBgW/s8l9OhE3iqvYYI7CVjx/OBPpqiPq+pZyCyoJJ5hgxhY
-	0lRvW2b6FBFogx8Z162oFT+aRZYm4MdtLSbayhfwyatTTiJIo5mMs+E9/3JaEiTKoh4dWqLOIzd
-	DOVu3EZIAGwHt2zGlwbeklpscj8ZboCvbwlCEFYtp3v0LEauul0Bu7kbYwjRW2xn4FFjO305kbe
-	+qxpFzepKy1ElWeHqVSkirzQ4q8p9174lFpGPJW7zZmxOVjIJJcsHTjBuR7f8chgz84CiuEqRoV
-	Whel02TwBhJnH9UgXhukQplwHijqHUJlxXAmGcmh1KJuA+E4/gF1cezMnQozucZADQz6/BC/9Qq
-	y5WODrxQnIaP8xAKQdN/GShX2XHIHqYejPOiDV9xOaUWCF5oqSw==
-X-Google-Smtp-Source: AGHT+IHTzo61VPYPo6yS1mpw2YckgV6ImrNivcBE+B58c9Hm3g//WaGGNbLBJMKeCeYaZxwTNOSl/A==
-X-Received: by 2002:a05:6a21:339f:b0:1f5:9961:c44 with SMTP id adf61e73a8af0-21ee257b9ffmr21862920637.3.1749495038585;
-        Mon, 09 Jun 2025 11:50:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749495040; x=1750099840;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F/C2M8wRNNG4+fJ24bX4dF9mC98V7bFcCISVE8uOUNI=;
+        b=rzotyUNLEzB+3p8xz6e23bW9exIfTBEOyOj5Cc97F0FbUCBN2XdusKHbCXRL4rH2++
+         Zpqs6L3xKsjTt8e/ezZY3KgvgRfYoGQyJdwiLswSKjsQEW7ISZd9GwNKE9FCH7orVDWv
+         2mY+jvF4PgsvNTbl8aq11WjqLrvgR1n7y+rAgnhzboByjtTMaNMzZ1UVz7M1uD4wGIX0
+         pVOqJ1rawDBk2MfhhpFSaCc9qqu57R7IrcXBdj9xcUfHhHmWBpc29plvsqmjqnw0v7me
+         p2rghQPe0UDTo9fTM1BxIK5qkb960Vr7SRqxkLJG+Ii8+7OGAVTFHG7ko0S8Gi829Grs
+         bSbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBQR2ELabgdRrJxJ5cayUFLxmna+Er5mys8RZ7COaPqp7T9l9OtZCpK5B8DOzExdRoYdcxo0EjvsY=@vger.kernel.org, AJvYcCWyD6EracXQUlXMgHTi31JyCXFm2gmG6VDIuC1q+ETLagzvOhit6BxIPN7iCO9IqCz3KNt+2cOLxwsYFUtG@vger.kernel.org, AJvYcCXf3xfZ1WWN1iXd9DNRHlN2rZICJn5iezJZcEK5Aieg2tpNrX0zM3qJnNlyXkv/iS9JZVMAcO3QLlJHAHc1Sw0wkRGrcA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB8FH3FlCFpjNuQQtTnupaVSYhdlObeGH9g0le9UMwMXGDraUy
+	5xJP+ZLFUkENSvCB3u0BnNwsybRzYcZpj66hnp6AloZ5CuuDal+BU4na
+X-Gm-Gg: ASbGnctWAP9Tsp6P0wsDu3luog7XoBYPTRcOhJudw206mJSvjYSwVEgxlUBGf/73wAP
+	anHU94YujW+ghXK5Dr9lqzKkUBzG7kRpYyyCLHZjy+Dd3EphEIeqnrQZLaUz+NJQIl/6BaAcelv
+	Ywdm7AJvee2Zmwr0MlUKy2gU39MaeDWojq7eFdkT/u7g83fKtY38+b8a+vsdet6ommwsMsg7qFl
+	4lxSEJIVxd30JH4NCU6DOSx0LzZ4P5wU2pD0UpWKtGor8tlW/0yQM+JWlchKOkE/AdUbqdJsyVn
+	tXcuCw62WjCjPZe2UkqLYJ09EYu7PNzp4uDhps8HfxbKo9Tilc4YkKO9EcGrehiuqHYZ9hJa36J
+	GdUPaoY1oNrKaavQHTeHz7FoxJ8e9zhu6WoRv0zOb3mtNZLXaJw==
+X-Google-Smtp-Source: AGHT+IEUFQyGmqBRnem6G+yZbsOuYCy1ese3lIupaES1UAwTYQSEYDzMImsjn+7puVfyWiQxyCoqdQ==
+X-Received: by 2002:a05:6a21:4cc7:b0:21d:a9d:ba3b with SMTP id adf61e73a8af0-21ee26447e9mr19072411637.39.1749495040213;
+        Mon, 09 Jun 2025 11:50:40 -0700 (PDT)
 Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ed58e9bsm5625461a12.10.2025.06.09.11.50.37
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ed58e9bsm5625461a12.10.2025.06.09.11.50.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 11:50:38 -0700 (PDT)
+        Mon, 09 Jun 2025 11:50:39 -0700 (PDT)
 From: "Derek J. Clark" <derekjohn.clark@gmail.com>
 To: Hans de Goede <hdegoede@redhat.com>,
 	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
@@ -88,11 +90,15 @@ Cc: Armin Wolf <W_Armin@gmx.de>,
 	"Derek J . Clark" <derekjohn.clark@gmail.com>,
 	platform-driver-x86@vger.kernel.org,
 	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v12 0/6] platform/x86: Add Lenovo WMI Gaming Series Drivers
-Date: Mon,  9 Jun 2025 11:50:21 -0700
-Message-ID: <20250609185027.7378-1-derekjohn.clark@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v12 1/6] platform/x86: Add lenovo-wmi-* driver Documentation
+Date: Mon,  9 Jun 2025 11:50:22 -0700
+Message-ID: <20250609185027.7378-2-derekjohn.clark@gmail.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250609185027.7378-1-derekjohn.clark@gmail.com>
+References: <20250609185027.7378-1-derekjohn.clark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,88 +107,391 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds support for the Lenovo "Gaming Series" of laptop hardware that use
-WMI interfaces that control various power settings. There are multiple WMI
-interfaces that work in concert to provide getting and setting values as
-well as validation of input. Currently only the "Gamezone", "Other
-Mode", and "LENOVO_CAPABILITY_DATA_01" interfaces are implemented, but
-I attempted to structure the driver so that adding the "Custom Mode",
-"Lighting", and other data block interfaces would be trivial in later
-patches.
+Adds documentation for new lenovo-wmi drivers.
 
-This driver attempts to standardize the exposed sysfs by mirroring the
-asus-armoury driver currently under review. As such, a lot of
-inspiration has been drawn from that driver.
-https://lore.kernel.org/platform-driver-x86/20250319065827.53478-1-luke@ljones.dev/#t
-
-The drivers have been tested by me on the Lenovo Legion Go and Legion Go
-S.
-
-Suggested-by: Mario Limonciello <superm1@kernel.org>
+Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
 Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
 ---
-v12:
- - Fix warnings from make W=1
-v11:
-v10:
-https://lore.kernel.org/platform-driver-x86/20250515182224.8277-1-derekjohn.clark@gmail.com/
-v9:
-https://lore.kernel.org/platform-driver-x86/20250508235217.12256-1-derekjohn.clark@gmail.com/
-v8:
-https://lore.kernel.org/platform-driver-x86/20250505010659.1450984-1-derekjohn.clark@gmail.com/
-v7:
-https://lore.kernel.org/platform-driver-x86/20250503000142.1190354-1-derekjohn.clark@gmail.com/
+v12: No change
+v11: No change
+v10: No change
+v9: No change
+v8: No change
+v7: No change
 v6:
-https://lore.kernel.org/platform-driver-x86/20250428012029.970017-1-derekjohn.clark@gmail.com/
+ - Fix typos and requested rewordings from v5 review.
+ - Rename lenovo-wmi-other-method.rst to lenovo-wmi-other.rst, fixes
+   warining and aligns documentation with driver name.
 v5:
-https://lore.kernel.org/platform-driver-x86/20250408012815.1032357-1-derekjohn.clark@gmail.com/
+ - Fix extra spaces in lenovo-wmi-gamezone.rst.
+ - Fix monospace for GUID's.
 v4:
-https://lore.kernel.org/platform-driver-x86/20250317144326.5850-1-derekjohn.clark@gmail.com/
+ - Fixed MOF formatting issues.
+ - Fixed spelling mistakes.
+ - Updated description of balanced-performance profile for Gamezone.
+ - Updated description of thermal mode event GUID for Gamezone.
 v3:
-https://lore.kernel.org/platform-driver-x86/20250225220037.16073-1-derekjohn.clark@gmail.com/
+- Split documentation into multiple files, one for each parent
+  driver for the Gamezone and Other Mode WMI interfaces.
+- Add MOF data for all parent and child interfaces.
+- Remove lenovo-wmi-camera.c driver from v2 documentation.
 v2:
-https://lore.kernel.org/platform-driver-x86/20250102004854.14874-1-derekjohn.clark@gmail.com/
-v1:
-https://lore.kernel.org/platform-driver-x86/20241217230645.15027-1-derekjohn.clark@gmail.com/
-
-Derek J. Clark (6):
-  platform/x86: Add lenovo-wmi-* driver Documentation
-  platform/x86: Add lenovo-wmi-helpers
-  platform/x86: Add Lenovo WMI Events Driver
-  platform/x86: Add Lenovo Capability Data 01 WMI Driver
-  platform/x86: Add Lenovo Gamezone WMI Driver
-  platform/x86: Add Lenovo Other Mode WMI Driver
-
- .../wmi/devices/lenovo-wmi-gamezone.rst       | 203 ++++++
- .../wmi/devices/lenovo-wmi-other.rst          | 108 +++
- MAINTAINERS                                   |  12 +
- drivers/platform/x86/Kconfig                  |  41 ++
- drivers/platform/x86/Makefile                 |   5 +
- drivers/platform/x86/lenovo-wmi-capdata01.c   | 302 ++++++++
- drivers/platform/x86/lenovo-wmi-capdata01.h   |  25 +
- drivers/platform/x86/lenovo-wmi-events.c      | 196 ++++++
- drivers/platform/x86/lenovo-wmi-events.h      |  20 +
- drivers/platform/x86/lenovo-wmi-gamezone.c    | 409 +++++++++++
- drivers/platform/x86/lenovo-wmi-gamezone.h    |  20 +
- drivers/platform/x86/lenovo-wmi-helpers.c     |  74 ++
- drivers/platform/x86/lenovo-wmi-helpers.h     |  20 +
- drivers/platform/x86/lenovo-wmi-other.c       | 665 ++++++++++++++++++
- drivers/platform/x86/lenovo-wmi-other.h       |  16 +
- 15 files changed, 2116 insertions(+)
+- Update description of Custom Profile to include the need to manually
+  set it.
+- Remove all references to Legion hardware.
+- Add section for lenovo-wmi-camera.c driver as it follows the same
+  naming convention.
+---
+ .../wmi/devices/lenovo-wmi-gamezone.rst       | 203 ++++++++++++++++++
+ .../wmi/devices/lenovo-wmi-other.rst          | 108 ++++++++++
+ MAINTAINERS                                   |   7 +
+ 3 files changed, 318 insertions(+)
  create mode 100644 Documentation/wmi/devices/lenovo-wmi-gamezone.rst
  create mode 100644 Documentation/wmi/devices/lenovo-wmi-other.rst
- create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.h
- create mode 100644 drivers/platform/x86/lenovo-wmi-events.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-events.h
- create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.h
- create mode 100644 drivers/platform/x86/lenovo-wmi-helpers.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-helpers.h
- create mode 100644 drivers/platform/x86/lenovo-wmi-other.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-other.h
 
+diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+new file mode 100644
+index 000000000000..997263e51a7d
+--- /dev/null
++++ b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+@@ -0,0 +1,203 @@
++.. SPDX-License-Identifier: GPL-2.0-or-later
++
++==========================================================
++Lenovo WMI Interface Gamezone Driver (lenovo-wmi-gamezone)
++==========================================================
++
++Introduction
++============
++The Lenovo WMI gamezone interface is broken up into multiple GUIDs,
++The primary "Gamezone" GUID provides advanced features such as fan
++profiles and overclocking. It is paired with multiple event GUIDs
++and data block GUIDs that provide context for the various methods.
++
++Gamezone Data
++-------------
++
++WMI GUID ``887B54E3-DDDC-4B2C-8B88-68A26A8835D0``
++
++The Gamezone Data WMI interface provides platform-profile and fan curve
++settings for devices that fall under the "Gaming Series" of Lenovo devices.
++It uses a notifier chain to inform other Lenovo WMI interface drivers of the
++current platform profile when it changes.
++
++The following platform profiles are supported:
++ - low-power
++ - balanced
++ - balanced-performance
++ - performance
++ - custom
++
++Balanced-Performance
++~~~~~~~~~~~~~~~~~~~~
++Some newer Lenovo "Gaming Series" laptops have an "Extreme Mode" profile
++enabled in their BIOS. For these devices, the performance platform profile
++corresponds to the BIOS Extreme Mode, while the balanced-performance
++platform profile corresponds to the BIOS Performance mode. For legacy
++devices, the performance platform profile will correspond with the BIOS
++Performance mode.
++
++For some newer devices the "Extreme Mode" profile is incomplete in the BIOS
++and setting it will cause undefined behavior. A BIOS bug quirk table is
++provided to ensure these devices cannot set "Extreme Mode" from the driver.
++
++Custom Profile
++~~~~~~~~~~~~~~
++The custom profile represents a hardware mode on Lenovo devices that enables
++user modifications to Package Power Tracking (PPT) and fan curve settings.
++When an attribute exposed by the Other Mode WMI interface is to be modified,
++the Gamezone driver must first be switched to the "custom" profile manually,
++or the setting will have no effect. If another profile is set from the list
++of supported profiles, the BIOS will override any user PPT settings when
++switching to that profile.
++
++Gamezone Thermal Mode Event
++---------------------------
++
++WMI GUID ``D320289E-8FEA-41E0-86F9-911D83151B5F``
++
++The Gamezone Thermal Mode Event interface notifies the system when the platform
++profile has changed, either through the hardware event (Fn+Q for laptops or
++Legion + Y for Go Series), or through the Gamezone WMI interface. This event is
++implemented in the Lenovo WMI Events driver (lenovo-wmi-events).
++
++
++WMI interface description
++=========================
++
++The WMI interface description can be decoded from the embedded binary MOF (bmof)
++data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
++
++::
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("LENOVO_GAMEZONE_DATA class"), guid("{887B54E3-DDDC-4B2C-8B88-68A26A8835D0}")]
++  class LENOVO_GAMEZONE_DATA {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiMethodId(4), Implemented, Description("Is SupportGpu OverClock")] void IsSupportGpuOC([out, Description("Is SupportGpu OverClock")] uint32 Data);
++    [WmiMethodId(11), Implemented, Description("Get AslCode Version")] void GetVersion ([out, Description("AslCode version")] UINT32 Data);
++    [WmiMethodId(12), Implemented, Description("Fan cooling capability")] void IsSupportFanCooling([out, Description("Fan cooling capability")] UINT32 Data);
++    [WmiMethodId(13), Implemented, Description("Set Fan cooling on/off")] void SetFanCooling ([in, Description("Set Fan cooling on/off")] UINT32 Data);
++    [WmiMethodId(14), Implemented, Description("cpu oc capability")] void IsSupportCpuOC ([out, Description("cpu oc capability")] UINT32 Data);
++    [WmiMethodId(15), Implemented, Description("bios has overclock capability")] void IsBIOSSupportOC ([out, Description("bios has overclock capability")] UINT32 Data);
++    [WmiMethodId(16), Implemented, Description("enable or disable overclock in bios")] void SetBIOSOC ([in, Description("enable or disable overclock in bios")] UINT32 Data);
++    [WmiMethodId(18), Implemented, Description("Get CPU temperature")] void GetCPUTemp ([out, Description("Get CPU temperature")] UINT32 Data);
++    [WmiMethodId(19), Implemented, Description("Get GPU temperature")] void GetGPUTemp ([out, Description("Get GPU temperature")] UINT32 Data);
++    [WmiMethodId(20), Implemented, Description("Get Fan cooling on/off status")] void GetFanCoolingStatus ([out, Description("Get Fan cooling on/off status")] UINT32 Data);
++    [WmiMethodId(21), Implemented, Description("EC support disable windows key capability")] void IsSupportDisableWinKey ([out, Description("EC support disable windows key capability")] UINT32 Data);
++    [WmiMethodId(22), Implemented, Description("Set windows key disable/enable")] void SetWinKeyStatus ([in, Description("Set windows key disable/enable")] UINT32 Data);
++    [WmiMethodId(23), Implemented, Description("Get windows key disable/enable status")] void GetWinKeyStatus ([out, Description("Get windows key disable/enable status")] UINT32 Data);
++    [WmiMethodId(24), Implemented, Description("EC support disable touchpad capability")] void IsSupportDisableTP ([out, Description("EC support disable touchpad capability")] UINT32 Data);
++    [WmiMethodId(25), Implemented, Description("Set touchpad disable/enable")] void SetTPStatus ([in, Description("Set touchpad disable/enable")] UINT32 Data);
++    [WmiMethodId(26), Implemented, Description("Get touchpad disable/enable status")] void GetTPStatus ([out, Description("Get touchpad disable/enable status")] UINT32 Data);
++    [WmiMethodId(30), Implemented, Description("Get Keyboard feature list")] void GetKeyboardfeaturelist ([out, Description("Get Keyboard feature list")] UINT32 Data);
++    [WmiMethodId(31), Implemented, Description("Get Memory OC Information")] void GetMemoryOCInfo ([out, Description("Get Memory OC Information")] UINT32 Data);
++    [WmiMethodId(32), Implemented, Description("Water Cooling feature capability")] void IsSupportWaterCooling ([out, Description("Water Cooling feature capability")] UINT32 Data);
++    [WmiMethodId(33), Implemented, Description("Set Water Cooling status")] void SetWaterCoolingStatus ([in, Description("Set Water Cooling status")] UINT32 Data);
++    [WmiMethodId(34), Implemented, Description("Get Water Cooling status")] void GetWaterCoolingStatus ([out, Description("Get Water Cooling status")] UINT32 Data);
++    [WmiMethodId(35), Implemented, Description("Lighting feature capability")] void IsSupportLightingFeature ([out, Description("Lighting feature capability")] UINT32 Data);
++    [WmiMethodId(36), Implemented, Description("Set keyboard light off or on to max")] void SetKeyboardLight ([in, Description("keyboard light off or on switch")] UINT32 Data);
++    [WmiMethodId(37), Implemented, Description("Get keyboard light on/off status")] void GetKeyboardLight ([out, Description("Get keyboard light on/off status")] UINT32 Data);
++    [WmiMethodId(38), Implemented, Description("Get Macrokey scan code")] void GetMacrokeyScancode ([in, Description("Macrokey index")] UINT32 idx, [out, Description("Scan code")] UINT32 scancode);
++    [WmiMethodId(39), Implemented, Description("Get Macrokey count")] void GetMacrokeyCount ([out, Description("Macrokey count")] UINT32 Data);
++    [WmiMethodId(40), Implemented, Description("Support G-Sync feature")] void IsSupportGSync ([out, Description("Support G-Sync feature")] UINT32 Data);
++    [WmiMethodId(41), Implemented, Description("Get G-Sync Status")] void GetGSyncStatus ([out, Description("Get G-Sync Status")] UINT32 Data);
++    [WmiMethodId(42), Implemented, Description("Set G-Sync Status")] void SetGSyncStatus ([in, Description("Set G-Sync Status")] UINT32 Data);
++    [WmiMethodId(43), Implemented, Description("Support Smart Fan feature")] void IsSupportSmartFan ([out, Description("Support Smart Fan feature")] UINT32 Data);
++    [WmiMethodId(44), Implemented, Description("Set Smart Fan Mode")] void SetSmartFanMode ([in, Description("Set Smart Fan Mode")] UINT32 Data);
++    [WmiMethodId(45), Implemented, Description("Get Smart Fan Mode")] void GetSmartFanMode ([out, Description("Get Smart Fan Mode")] UINT32 Data);
++    [WmiMethodId(46), Implemented, Description("Get Smart Fan Setting Mode")] void GetSmartFanSetting ([out, Description("Get Smart Setting Mode")] UINT32 Data);
++    [WmiMethodId(47), Implemented, Description("Get Power Charge Mode")] void GetPowerChargeMode ([out, Description("Get Power Charge Mode")] UINT32 Data);
++    [WmiMethodId(48), Implemented, Description("Get Gaming Product Info")] void GetProductInfo ([out, Description("Get Gaming Product Info")] UINT32 Data);
++    [WmiMethodId(49), Implemented, Description("Over Drive feature capability")] void IsSupportOD ([out, Description("Over Drive feature capability")] UINT32 Data);
++    [WmiMethodId(50), Implemented, Description("Get Over Drive status")] void GetODStatus ([out, Description("Get Over Drive status")] UINT32 Data);
++    [WmiMethodId(51), Implemented, Description("Set Over Drive status")] void SetODStatus ([in, Description("Set Over Drive status")] UINT32 Data);
++    [WmiMethodId(52), Implemented, Description("Set Light Control Owner")] void SetLightControlOwner ([in, Description("Set Light Control Owner")] UINT32 Data);
++    [WmiMethodId(53), Implemented, Description("Set DDS Control Owner")] void SetDDSControlOwner ([in, Description("Set DDS Control Owner")] UINT32 Data);
++    [WmiMethodId(54), Implemented, Description("Get the flag of restore OC value")] void IsRestoreOCValue ([in, Description("Clean this flag")] UINT32 idx, [out, Description("Restore oc value flag")] UINT32 Data);
++    [WmiMethodId(55), Implemented, Description("Get Real Thremal Mode")] void GetThermalMode ([out, Description("Real Thremal Mode")] UINT32 Data);
++    [WmiMethodId(56), Implemented, Description("Get the OC switch status in BIOS")] void GetBIOSOCMode ([out, Description("OC Mode")] UINT32 Data);
++    [WmiMethodId(59), Implemented, Description("Get hardware info support version")] void GetHardwareInfoSupportVersion ([out, Description("version")] UINT32 Data);
++    [WmiMethodId(60), Implemented, Description("Get Cpu core 0 max frequency")] void GetCpuFrequency ([out, Description("frequency")] UINT32 Data);
++    [WmiMethodId(62), Implemented, Description("Check the Adapter type fit for OC")] void IsACFitForOC ([out, Description("AC check result")] UINT32 Data);
++    [WmiMethodId(63), Implemented, Description("Is support IGPU mode")] void IsSupportIGPUMode ([out, Description("IGPU modes")] UINT32 Data);
++    [WmiMethodId(64), Implemented, Description("Get IGPU Mode Status")] void GetIGPUModeStatus([out, Description("IGPU Mode Status")] UINT32 Data);
++    [WmiMethodId(65), Implemented, Description("Set IGPU Mode")] void SetIGPUModeStatus([in, Description("IGPU Mode")] UINT32 mode, [out, Description("return code")] UINT32 Data);
++    [WmiMethodId(66), Implemented, Description("Notify DGPU Status")] void NotifyDGPUStatus([in, Description("DGPU status")] UINT32 status, [out, Description("return code")] UINT32 Data);
++    [WmiMethodId(67), Implemented, Description("Is changed Y log")] void IsChangedYLog([out, Description("Is changed Y Log")] UINT32 Data);
++    [WmiMethodId(68), Implemented, Description("Get DGPU Hardwawre ID")] void GetDGPUHWId([out, Description("Get DGPU Hardware ID")] string Data);
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("Definition of CPU OC parameter list"), guid("{B7F3CA0A-ACDC-42D2-9217-77C6C628FBD2}")]
++  class LENOVO_GAMEZONE_CPU_OC_DATA {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("OC tune id.")] uint32 Tuneid;
++    [WmiDataId(2), read, Description("Default value.")] uint32 DefaultValue;
++    [WmiDataId(3), read, Description("OC Value.")] uint32 OCValue;
++    [WmiDataId(4), read, Description("Min Value.")] uint32 MinValue;
++    [WmiDataId(5), read, Description("Max Value.")] uint32 MaxValue;
++    [WmiDataId(6), read, Description("Scale Value.")] uint32 ScaleValue;
++    [WmiDataId(7), read, Description("OC Order id.")] uint32 OCOrderid;
++    [WmiDataId(8), read, Description("NON-OC Order id.")] uint32 NOCOrderid;
++    [WmiDataId(9), read, Description("Delay time in ms.")] uint32 Interval;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("Definition of GPU OC parameter list"), guid("{887B54E2-DDDC-4B2C-8B88-68A26A8835D0}")]
++  class LENOVO_GAMEZONE_GPU_OC_DATA {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("P-State ID.")] uint32 PStateID;
++    [WmiDataId(2), read, Description("CLOCK ID.")] uint32 ClockID;
++    [WmiDataId(3), read, Description("Default value.")] uint32 defaultvalue;
++    [WmiDataId(4), read, Description("OC Offset freqency.")] uint32 OCOffsetFreq;
++    [WmiDataId(5), read, Description("OC Min offset value.")] uint32 OCMinOffset;
++    [WmiDataId(6), read, Description("OC Max offset value.")] uint32 OCMaxOffset;
++    [WmiDataId(7), read, Description("OC Offset Scale.")] uint32 OCOffsetScale;
++    [WmiDataId(8), read, Description("OC Order id.")] uint32 OCOrderid;
++    [WmiDataId(9), read, Description("NON-OC Order id.")] uint32 NOCOrderid;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("Fancooling finish event"), guid("{BC72A435-E8C1-4275-B3E2-D8B8074ABA59}")]
++  class LENOVO_GAMEZONE_FAN_COOLING_EVENT: WMIEvent {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("Fancooling clean finish event")] uint32 EventId;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("Smart Fan mode change event"), guid("{D320289E-8FEA-41E0-86F9-611D83151B5F}")]
++  class LENOVO_GAMEZONE_SMART_FAN_MODE_EVENT: WMIEvent {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("Smart Fan Mode change event")] uint32 mode;
++    [WmiDataId(2), read, Description("version of FN+Q")] uint32 version;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("Smart Fan setting mode change event"), guid("{D320289E-8FEA-41E1-86F9-611D83151B5F}")]
++  class LENOVO_GAMEZONE_SMART_FAN_SETTING_EVENT: WMIEvent {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("Smart Fan Setting mode change event")] uint32 mode;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("POWER CHARGE MODE Change EVENT"), guid("{D320289E-8FEA-41E0-86F9-711D83151B5F}")]
++  class LENOVO_GAMEZONE_POWER_CHARGE_MODE_EVENT: WMIEvent {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("POWER CHARGE MODE Change EVENT")] uint32 mode;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("Thermal Mode Real Mode change event"), guid("{D320289E-8FEA-41E0-86F9-911D83151B5F}")]
++  class LENOVO_GAMEZONE_THERMAL_MODE_EVENT: WMIEvent {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description("Thermal Mode Real Mode")] uint32 mode;
++  };
+diff --git a/Documentation/wmi/devices/lenovo-wmi-other.rst b/Documentation/wmi/devices/lenovo-wmi-other.rst
+new file mode 100644
+index 000000000000..d7928b8dfb4b
+--- /dev/null
++++ b/Documentation/wmi/devices/lenovo-wmi-other.rst
+@@ -0,0 +1,108 @@
++.. SPDX-License-Identifier: GPL-2.0-or-later
++
++===========================================================
++Lenovo WMI Interface Other Mode Driver (lenovo-wmi-other)
++===========================================================
++
++Introduction
++============
++Lenovo WMI Other Mode interface is broken up into multiple GUIDs,
++The primary Other Mode interface provides advanced power tuning features
++such as Package Power Tracking (PPT). It is paired with multiple data block
++GUIDs that provide context for the various methods.
++
++
++Other Mode
++----------
++
++WMI GUID ``DC2A8805-3A8C-41BA-A6F7-092E0089CD3B``
++
++The Other Mode WMI interface uses the firmware_attributes class to expose
++various WMI attributes provided by the interface in the sysfs. This enables
++CPU and GPU power limit tuning as well as various other attributes for
++devices that fall under the "Gaming Series" of Lenovo devices. Each
++attribute exposed by the Other Mode interface has corresponding
++capability data blocks which allow the driver to probe details about the
++attribute. Each attribute has multiple pages, one for each of the platform
++profiles managed by the Gamezone interface. Attributes are exposed in sysfs
++under the following path:
++
++::
++
++  /sys/class/firmware-attributes/lenovo-wmi-other/attributes/<attribute>/
++
++LENOVO_CAPABILITY_DATA_01
++-------------------------
++
++WMI GUID ``7A8F5407-CB67-4D6E-B547-39B3BE018154``
++
++The LENOVO_CAPABILITY_DATA_01 interface provides information on various
++power limits of integrated CPU and GPU components.
++
++Each attribute has the following properties:
++ - current_value
++ - default_value
++ - display_name
++ - max_value
++ - min_value
++ - scalar_increment
++ - type
++
++The following attributes are implemented:
++ - ppt_pl1_spl: Platform Profile Tracking Sustained Power Limit
++ - ppt_pl2_sppt: Platform Profile Tracking Slow Package Power Tracking
++ - ppt_pl3_fppt: Platform Profile Tracking Fast Package Power Tracking
++
++
++WMI interface description
++=========================
++
++The WMI interface description can be decoded from the embedded binary MOF (bmof)
++data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
++
++::
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("LENOVO_OTHER_METHOD class"), guid("{dc2a8805-3a8c-41ba-a6f7-092e0089cd3b}")]
++  class LENOVO_OTHER_METHOD {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiMethodId(17), Implemented, Description("Get Feature Value ")] void GetFeatureValue([in] uint32 IDs, [out] uint32 value);
++    [WmiMethodId(18), Implemented, Description("Set Feature Value ")] void SetFeatureValue([in] uint32 IDs, [in] uint32 value);
++    [WmiMethodId(19), Implemented, Description("Get Data By Command ")] void GetDataByCommand([in] uint32 IDs, [in] uint32 Command, [out] uint32 DataSize, [out, WmiSizeIs("DataSize")] uint32 Data[]);
++    [WmiMethodId(99), Implemented, Description("Get Data By Package for TAC")] void GetDataByPackage([in, Max(40)] uint8 Input[], [out] uint32 DataSize, [out, WmiSizeIs("DataSize")] uint8 Data[]);
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("LENOVO CAPABILITY DATA 00"), guid("{362a3afe-3d96-4665-8530-96dad5bb300e}")]
++  class LENOVO_CAPABILITY_DATA_00 {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description(" IDs.")] uint32 IDs;
++    [WmiDataId(2), read, Description("Capability.")] uint32 Capability;
++    [WmiDataId(3), read, Description("Capability Default Value.")] uint32 DefaultValue;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("LENOVO CAPABILITY DATA 01"), guid("{7a8f5407-cb67-4d6e-b547-39b3be018154}")]
++  class LENOVO_CAPABILITY_DATA_01 {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description(" IDs.")] uint32 IDs;
++    [WmiDataId(2), read, Description("Capability.")] uint32 Capability;
++    [WmiDataId(3), read, Description("Default Value.")] uint32 DefaultValue;
++    [WmiDataId(4), read, Description("Step.")] uint32 Step;
++    [WmiDataId(5), read, Description("Minimum Value.")] uint32 MinValue;
++    [WmiDataId(6), read, Description("Maximum Value.")] uint32 MaxValue;
++  };
++
++  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("LENOVO CAPABILITY DATA 02"), guid("{bbf1f790-6c2f-422b-bc8c-4e7369c7f6ab}")]
++  class LENOVO_CAPABILITY_DATA_02 {
++    [key, read] string InstanceName;
++    [read] boolean Active;
++
++    [WmiDataId(1), read, Description(" IDs.")] uint32 IDs;
++    [WmiDataId(2), read, Description("Capability.")] uint32 Capability;
++    [WmiDataId(3), read, Description("Data Size.")] uint32 DataSize;
++    [WmiDataId(4), read, Description("Default Value"), WmiSizeIs("DataSize")] uint8 DefaultValue[];
++  };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfb3b51cec83..36bd0fb5d982 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13447,6 +13447,13 @@ S:	Maintained
+ W:	http://legousb.sourceforge.net/
+ F:	drivers/usb/misc/legousbtower.c
+ 
++LENOVO WMI DRIVERS
++M:	Derek J. Clark <derekjohn.clark@gmail.com>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	Documentation/wmi/devices/lenovo-wmi-gamezone.rst
++F:	Documentation/wmi/devices/lenovo-wmi-other.rst
++
+ LENOVO WMI HOTKEY UTILITIES DRIVER
+ M:	Jackie Dong <xy-jackie@139.com>
+ L:	platform-driver-x86@vger.kernel.org
 -- 
 2.49.0
 
