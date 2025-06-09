@@ -1,177 +1,120 @@
-Return-Path: <linux-kernel+bounces-677845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F08AD20C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020A6AD20CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19469188A600
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:23:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680E018865D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D006725C835;
-	Mon,  9 Jun 2025 14:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E4A25C81C;
+	Mon,  9 Jun 2025 14:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ix7v20EQ"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MpNQqY+0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B1A2459FF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0A625A62B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749478990; cv=none; b=jtWOWO6P20Yk0XHC4sqkDr4HYowZuaxVmINoDvNyOyvoeQCHFZ1DGTNzniBCioKMg72NXWbWfmrL2Z89E+5d6v6+gZpSf1TeodewthumcQZkvjJt23PlwNPFJLrHWd0Dem7UAyeJL5iUgFzuNUD7Q5tLaaHfIJmiAUkr1H750bw=
+	t=1749479012; cv=none; b=ION/K6hlY1nDHVwu+4szBnlsPqRJwSon3tHPVetfA3RqnHt2tueDq6XirE8CgX+sXjEekhipPIOfBNv9XPSbc/mx955QWLKISeJCHIlsjC0Ts9WefxRESKxTLRcW8jjjg7llm0M5jTyPy1/xCMfTShdNCs1dGghLMh4CsmryBLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749478990; c=relaxed/simple;
-	bh=Jj+Yt9zXtcRCfSDm7whUQ4ZIZ5JHddO5KlLP+fvfba4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AQGNFcQJtpSdtPe+UMmKjVxBW4G6OCOgRZ5QRgZ+f9dixcuXUAIGz46HvFnDA7InHxKMKoFjUF23Fozl9vmEtlP2eeLVQUl/7kriEdDip1D4ncdZl0GetXz8ZYdewyMTNzI5XH+TmpaciPm0mipUKJwLj1lEySoLevGK5q2Tb8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ix7v20EQ; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2c38df7ed2so3133858a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749478988; x=1750083788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7lLdTQdrM0ytHOS+CAmb5K/o5KQV3Zi0TqZM7kL4ZL0=;
-        b=Ix7v20EQCfltUmRpI92FuSjgKVl5h/4BCa1w5LbO4E0rgxLmFWkosid6fR3GrVQNMw
-         RS63T+ia7uv8xbcGvqglfCT/B2llC0OodQhdhBRJ/M9w1M7QLg2JJ3HBw/XKZsNVLTkB
-         OpzQ37+0M4mX2jRiCe1COGqXnBjHIUJo/slqYGWZeiX4J4diRJ5TuhiX3YPTGnLApK78
-         Qvl/LA/RlE3lz7o/duivPunW3TtyZebIvHenfFGSdwvjhHifrjRcRXBkyCqDr4bZiZI+
-         BCwYn7DekeGjzLc9DVZRdopPgWtSdFyH6+bluN2AdSWy3tLeLFKmA5yZut4LV7KKu7KO
-         BuMQ==
+	s=arc-20240116; t=1749479012; c=relaxed/simple;
+	bh=8EcgqC560eYHVLzzIVnGqJOfxiE1usTuKVMr5c5j3O8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jB9PQdID4bSgXBCqrfVNQcuKwYgV4dhu8DCpSb3uqMdqX9Kl/MACr4s2kT2IP3R6PxTiC8/1gKtSxZNoDlTVvfOMnCfCtQJas4A6+i7l84uoE+tU2HcyfmksDV4dp9nwgiKS+Q0nbEFaKCHOR55Wx856KaMD7+/qgYxFqswNKps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MpNQqY+0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749479009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bu95bqt5fllwDHdUjFRYtS/5XzWEF81181iRUHtLAbM=;
+	b=MpNQqY+0wnVLVxZVdPnhHJ9TxvvheI1eYL9P6t++aSow+kkSibsVtqEXYLJPvLArn6/C8M
+	1YM/9TOQqGFmyItg9/cIqw+PwYAT7L3rBzbcdW1csMchjRKT/SqGw/csJllXSpEIIYIOOY
+	lyGHdFcnxmpVId64AWYfvoQg6R0zkh8=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-rS85Egf-OIq4TMzuW1hTrw-1; Mon, 09 Jun 2025 10:23:28 -0400
+X-MC-Unique: rS85Egf-OIq4TMzuW1hTrw-1
+X-Mimecast-MFC-AGG-ID: rS85Egf-OIq4TMzuW1hTrw_1749479008
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-601df3b434cso4965070a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:23:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749478988; x=1750083788;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7lLdTQdrM0ytHOS+CAmb5K/o5KQV3Zi0TqZM7kL4ZL0=;
-        b=D/STd1u9Er5X55vjpAEqCuIgE0NZgUtza2pvmultPXAGtSo73N+wbO2BuqJGDYtdId
-         DgdBEi3i5NrBJuIkG4rBijFsX1boazxV0K8eJdY34bcyuMDzXFQkAkNtq/MLtukSHO6K
-         Cq+UbAgemqDlzXVxhZ+oVBWUja7rHtmGsM1KuEjpIH20dyCqyE5+1T+4UP7Z29onwNje
-         n4WFuvidAz7WK5H+NP3IbhAQjKG8oL76kM7+bDaDjWsKkeopmJCkXLXXhFnxNoa1KKLd
-         K5pUWW/jHjdy6DnKEq2DS14xT5hFI1XeXCbt35qaAx6xcAAp9RUifMyHpaSmBE7T+n6x
-         wDhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKOIWasHzy2x7eL9Q+0xnCtkczNh8uOlWqIhT4ljDotLe3YRgqxlDJWSEhjpZprA6xVseDlkE5TZ40EpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyeo+Zx7z/uy39vZvdX0lWDIpISgCc4gTN30k8zrv0bqySQ49h0
-	77rZ6q2BsBiEz/uNU9jkajwMrxUSEv0Dh8XMqvFZbxh2bXrzj0InzPT8vXDPiFFfk5jZnQgjBwy
-	HZY6SSQ==
-X-Google-Smtp-Source: AGHT+IEXWjGA+7EHOmgVdxQCVZsaeyZ/Yk7vf9FpuYgFPmjBt1Dx/ah2+gxQKH2vNCJYIKyguPOQGlf/Vfs=
-X-Received: from pjuj14.prod.google.com ([2002:a17:90a:d00e:b0:311:485b:d057])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5345:b0:311:ffe8:20e9
- with SMTP id 98e67ed59e1d1-31347308c79mr21849041a91.17.1749478988192; Mon, 09
- Jun 2025 07:23:08 -0700 (PDT)
-Date: Mon, 9 Jun 2025 07:23:06 -0700
-In-Reply-To: <4a66adfa-fc10-4668-9986-55f6cf231988@zytor.com>
+        d=1e100.net; s=20230601; t=1749479007; x=1750083807;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bu95bqt5fllwDHdUjFRYtS/5XzWEF81181iRUHtLAbM=;
+        b=NeB/rKpIjhJhfApy6pqCa6W5JG7t/6CWlDYCrOp35Z9zIDuXFF4YwZ1F++/ubnmxJZ
+         kG1h37h/12mq/qGRG83gzV4oRchfNwAQfJekHm4CizMbgFGiB4+Me5o4GZQuypkqxfFL
+         IBZPEhk8FE/GzrRyM7aBuml46TF2JZuU9ENSGtNegO7IEuNTF0TeW5CAuuui7jc1ypKJ
+         uC4U4GJYZ1h9CFakfjHbFHLoO6W7A4vhqbrTd+FPUl0rQp9zkcdBgfgaQ5/zoQpYVDmI
+         pFJnbbeF/3/XCnJUZzACZM4undQLbjclEhzKWE2u7ctj4IWx5ZNzAi6COPsLQJPtzOXv
+         zyIQ==
+X-Gm-Message-State: AOJu0YyQq57mLMifw3DRDiFMx8SenunRfIfP3XPGbMML6GCKxMe1sTgi
+	tmznI8i5ueQYk8dWYkd74HTNNB5x7srhu/MvkQGq9u8eKjDDV6R9jH2+kZEefVquDX9KmvQjKIL
+	HH1r3zmrQlZ6XBW0ERUB+/z7Gri/Ce6C9138xDeuRaXh6/KRs+4G4avcoDAGxUt7aUI85kQhnmc
+	a4pioZ/UZstpCWQ0EBY1Q/sxcao0BGAU5Wj3fl/6XohhshS37n
+X-Gm-Gg: ASbGncs12pG9FCyD5sKp9y1ioxuksTj+U32nmcFM5F3Dj+geT8YC863ayOS0ffcT3bM
+	enCQDdoR2SPd8duYn6SsLi040Otxd54YJvO4WEP6Zv6wbJodYWVILajZ63kqroVaFol4fDMDPd1
+	t0YdwounD1j+RuqPW1KRj+J6A5MrRLWn4F6Sw=
+X-Received: by 2002:a17:907:7250:b0:ad8:959c:c567 with SMTP id a640c23a62f3a-ade75fc357dmr5540166b.10.1749479007499;
+        Mon, 09 Jun 2025 07:23:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFdFm50ZqTrtiAaeCZxzMTOJGmQspyn0ugpdOkFaeB92pob/RBEpCC1LY+p1SzFJRFwG9ViOjpKT8qUbWccq3U=
+X-Received: by 2002:a17:907:7250:b0:ad8:959c:c567 with SMTP id
+ a640c23a62f3a-ade75fc357dmr5538366b.10.1749479007066; Mon, 09 Jun 2025
+ 07:23:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20211207095230.53437-1-jiangshanlai@gmail.com>
- <51bb6e75-4f0a-e544-d2e4-ff23c5aa2f49@redhat.com> <4a66adfa-fc10-4668-9986-55f6cf231988@zytor.com>
-Message-ID: <aEbuSmAf4aAHztwC@google.com>
-Subject: Re: [PATCH] KVM: X86: Raise #GP when clearing CR0_PG in 64 bit mode
-From: Sean Christopherson <seanjc@google.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Lai Jiangshan <laijs@linux.alibaba.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
-	Wanpeng Li <wanpengli@tencent.com>, Jim Mattson <jmattson@google.com>, 
-	Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250530200305.85319-2-jsavitz@redhat.com>
+In-Reply-To: <20250530200305.85319-2-jsavitz@redhat.com>
+From: Joel Savitz <jsavitz@redhat.com>
+Date: Mon, 9 Jun 2025 10:23:11 -0400
+X-Gm-Features: AX0GCFstG9gKn9d8F0xmlxeWHmxs0iVZJEdQNQ8-CUXHyj5wlOfl7zEH5cLtapA
+Message-ID: <CAL1p7m53yJ-dpg6L2QVQM7bshWYXAxOJjrVGdTG8cDMEhNogyA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] kernel/nsproxy: Minor nsproxy code simplification
+To: linux-kernel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 06, 2025, H. Peter Anvin wrote:
-> On 2021-12-09 09:55, Paolo Bonzini wrote:
-> > On 12/7/21 10:52, Lai Jiangshan wrote:
-> > > From: Lai Jiangshan <laijs@linux.alibaba.com>
-> > >=20
-> > > In the SDM:
-> > > If the logical processor is in 64-bit mode or if CR4.PCIDE =3D 1, an
-> > > attempt to clear CR0.PG causes a general-protection exception (#GP).
-> > > Software should transition to compatibility mode and clear CR4.PCIDE
-> > > before attempting to disable paging.
-> > >=20
-> > > Signed-off-by: Lai Jiangshan <laijs@linux.alibaba.com>
-> > > ---
-> > > =C2=A0 arch/x86/kvm/x86.c | 3 ++-
-> > > =C2=A0 1 file changed, 2 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > index 00f5b2b82909..78c40ac3b197 100644
-> > > --- a/arch/x86/kvm/x86.c
-> > > +++ b/arch/x86/kvm/x86.c
-> > > @@ -906,7 +906,8 @@ int kvm_set_cr0(struct kvm_vcpu *vcpu, unsigned
-> > > long cr0)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !load_pdptrs(v=
-cpu, kvm_read_cr3(vcpu)))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 1;
-> > > -=C2=A0=C2=A0=C2=A0 if (!(cr0 & X86_CR0_PG) && kvm_read_cr4_bits(vcpu=
-, X86_CR4_PCIDE))
-> > > +=C2=A0=C2=A0=C2=A0 if (!(cr0 & X86_CR0_PG) &&
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (is_64_bit_mode(vcpu) || =
-kvm_read_cr4_bits(vcpu,
-> > > X86_CR4_PCIDE)))
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 1;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 static_call(kvm_x86_set_cr0)(vcpu, cr0=
-);
-> > >=20
-> >=20
-> > Queued, thanks.
-> >=20
->=20
-> Have you actually checked to see what real CPUs do in this case?
+On Fri, May 30, 2025 at 4:03=E2=80=AFPM Joel Savitz <jsavitz@redhat.com> wr=
+ote:
+>
+> The first patch removes an unnecessary guard by the same logic as
+> commit 5caa2d89b7f1 ("kernel/nsproxy: remove unnecessary guards").
+>
+> The second patch fixes the total ordering of resource acquisition
+> in validate_nsset().
+>
+> The third patch implements usage of the cleanup helper added by commit
+> d057c108155a ("nsproxy: add a cleanup helper for nsproxy").
+>
+> Joel Savitz (3):
+>   kernel/nsproxy: remove unnecessary guard in validate_nsset()
+>   kernel/nsproxy: fix put_*() call ordering in validate_nsset()
+>   kernel/nsproxy: utilize cleanup helper for nsproxy references
+>
+>  kernel/nsproxy.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> --
+> 2.45.2
+>
 
-I have now, and EMR at least behaves as the SDM describes.  Why do you ask?
-
-
-kvm_intel: Clearing CR0.PG faulted (vector =3D 13)
-
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f79604bc0127..f90ad464ab7e 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -8637,6 +8637,23 @@ void vmx_exit(void)
-        kvm_x86_vendor_exit();
- }
-=20
-+static noinline void vmx_disable_paging(void)
-+{
-+       unsigned long cr0 =3D native_read_cr0();
-+       long vector =3D -1;
-+
-+       asm volatile("1: mov %1, %%cr0\n\t"
-+                    "   mov %2, %%cr0\n\t"
-+                    "2:"
-+                    _ASM_EXTABLE_FAULT(1b, 2b)
-+                    : "+a" (vector)
-+                    : "r" (cr0 & ~X86_CR0_PG), "r" (cr0)
-+                    : "cc", "memory" );
-+
-+       pr_warn("Clearing CR0.PG %s (vector =3D %ld)\n",
-+               vector < 0 ? "succeeded" : "faulted", vector);
-+}
-+
- int __init vmx_init(void)
- {
-        int r, cpu;
-@@ -8644,6 +8661,8 @@ int __init vmx_init(void)
-        if (!kvm_is_vmx_supported())
-                return -EOPNOTSUPP;
-=20
-+       vmx_disable_paging();
-+
-        /*
-         * Note, hv_init_evmcs() touches only VMX knobs, i.e. there's nothi=
-ng
-         * to unwind if a later step fails.
+ping
 
 
