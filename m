@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-677528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B919FAD1B7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 353A4AD1B76
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915923A8D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE2D3A5CE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9412550B3;
-	Mon,  9 Jun 2025 10:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8137C253938;
+	Mon,  9 Jun 2025 10:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="X3aQk6g9"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="fODl7cRe"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6AF253954;
-	Mon,  9 Jun 2025 10:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBA5252299;
+	Mon,  9 Jun 2025 10:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464623; cv=none; b=FWJe3QiXx/OFCfPhx1G/yp9f7Hhc7qKce0I+DQ0rAINo4JUIbxZJR3LahaA6w7ESXViWlcHQsrXXY+M1C2XZbs9dYUD+/qjfdcwqSLaeddtSjBVDJPdcHpyZISLJWUl7GfJT4qzz/IqpR/KzljrNr6ZsNha+bc018Gl78Nas7Bk=
+	t=1749464621; cv=none; b=mI54zAlVzhVdjafQvSX0x8pEoBJh5WpR4wNlSEsi33zkGTexzmKaSrGXvGHkAscNh1grKArQmEMxxKCDwJZW3My0PVkRToUPtqVmpe/6Rgp9iFdO0mDVf1uorJkVnwElyv3BWwm3wUuPD7XMX8NFGLQIf3Qs7WrH+BG6bdd1DLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464623; c=relaxed/simple;
-	bh=QLKevxjgpLuMuZS/j47Bya3QvOELVxCtvO5e5Jg3Cf4=;
+	s=arc-20240116; t=1749464621; c=relaxed/simple;
+	bh=3xjVvWH3Ewn0OW5P95TcqTdOFuhEAnjIunVMbwFren8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z7Hge/JjU7HHpcM7PixguvdAxupTygn1M709SBt3RCwUQzCa3c625q/D1xTDoctbzJMnxfqBmDpIl18veAjtZ3SpWQt/GpJ611q4IpI/hVRxl4VdNdSmqpNXCTXBLXC5qXXo8wgb1S94Crh03auUxX4W/03/IMveClAq6WvoGzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=X3aQk6g9; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=lrANaTBW2QuHiLrobwpaMgATYS+IapYfiO7tDzOFHUbzygPayK36J99XKS7OzzT4kO5K+Oyuc3p73kEKh35h0Y4EE87fWR/eGj7cFd7Li3COywJMSEniOa48U54jT6QgKkY8m+hGFhSb6T3436Y81mSS5O2+lQQTxagqyp1CYpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=fODl7cRe; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,37 +35,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=daOC+vKgljGGAi24/WQBuWAe1UD9I//0tA3pjxmN7ro=; b=X3aQk6g97/OfFKGH+TrgrKp7+9
-	XphR7NRaWmB8Ir2rLPm9OgPt5xHBAz7e/yweXDZq0rU3NJEzCvMXzq0QUa3N4tTM0gTJutwAm4Hw8
-	ZZyxTLkzjfuFQWVDl/zx7qxMvhIIv7PzL2ChCmmEx80YEaHj8pL+QAIyK71dpHGGdQjEo94vLUJ+v
-	IXjWyW3fsIQSVPwGdBj5Lwzca1kOCT1gtKV7uXr3M93azRn8U97uqWU4qhEdd+UNErDvz+YeoekI8
-	JJkSbAeQhifiOPtGDVjndTyaOwZOiS1L5VIHLkRDXy6GCa9DEUGjKz9w7l+e6M8Mw+lW+jLAtu/dK
-	XUHRhAFg==;
+	bh=xEZECS6vbso0nmjjQa/VPYjFi0sU5YUT4fgKEZQNaBU=; b=fODl7cRehmK4ybPZIIU1U4jMKE
+	dPgLtOuOCi5cqZojh60rej7k5NPL0tStWG7D7HbcTAvBOSPx75B209oeP+3R/C9xiUQbioCLAMZ4V
+	Zl0oKlcj7Ayafdx9aAz7rE52pUr+G7B/8A+A7LF4+rC+HVYz3JgTV8K/wi/YTZSXNZB3NlN+MfFdo
+	UoyDRdX3d9wT/nJCM4E7j++YDXkkFHee2KERGEKMBXReMes3RG7P/JLpXSU3uOCZDXxB1/AjJiODG
+	4G7XcJjTVB5OIdXdh7zSoWpDaczZyMak3YU5F3SnxlfThwJncTfrLnTzJ8NegrrdOOhXUnRX45WDj
+	ai11mSdw==;
 Received: from i53875b1c.versanet.de ([83.135.91.28] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uOZfB-0006Av-AU; Mon, 09 Jun 2025 12:23:33 +0200
+	id 1uOZfB-0006Av-PN; Mon, 09 Jun 2025 12:23:33 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Chukun Pan <amadeus@jmu.edu.cn>
+To: Andy Yan <andyshrk@163.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	Yao Zi <ziyao@disroot.org>,
-	Rob Herring <robh@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	sebastian.reichel@collabora.com,
 	devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/2] arm64: dts: rockchip: Add spi nodes for RK3528
-Date: Mon,  9 Jun 2025 12:22:56 +0200
-Message-ID: <174946455541.762051.5287964403437718499.b4-ty@sntech.de>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	conor+dt@kernel.org,
+	jbx6244@gmail.com
+Subject: Re: [PATCH 1/2] arm64: dts: rockchip: Add cd-gpios for sdcard detect on Cool Pi CM5
+Date: Mon,  9 Jun 2025 12:22:57 +0200
+Message-ID: <174946455537.762051.5518711921835874992.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250520100102.1226725-1-amadeus@jmu.edu.cn>
-References: <20250520100102.1226725-1-amadeus@jmu.edu.cn>
+In-Reply-To: <20250524064223.5741-1-andyshrk@163.com>
+References: <20250524064223.5741-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,20 +74,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 20 May 2025 18:01:00 +0800, Chukun Pan wrote:
-> There are 2 SPI controllers on the RK3528 SoC, describe it.
-> Tested using st7789v chip with spi-cpha and spi-cpol properties.
+On Sat, 24 May 2025 14:42:12 +0800, Andy Yan wrote:
+> cd-gpios is used for sdcard detects for sdmmc.
 > 
-> [   10.831306] fb_st7789v spi0.0: fbtft_property_value: buswidth = 8
-> [   11.042915] graphics fb0: fb_st7789v frame buffer, 240x320, 150 KiB
->  video memory, 4 KiB buffer memory, fps=20, spi0.0 at 15 MHz
 > 
-> [...]
 
 Applied, thanks!
 
-[2/2] arm64: dts: rockchip: Add spi nodes for RK3528
-      commit: 2783335329e5762deb0dc5b6d634225d8613af16
+[1/2] arm64: dts: rockchip: Add cd-gpios for sdcard detect on Cool Pi CM5
+      commit: e625e284172d235be5cd906a98c6c91c365bb9b1
+[2/2] arm64: dts: rockchip: Add cd-gpios for sdcard detect on Cool Pi 4B
+      commit: 98570e8cb8b0c0893810f285b4a3b1a3ab81a556
 
 Best regards,
 -- 
