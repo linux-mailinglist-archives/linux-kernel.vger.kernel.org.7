@@ -1,205 +1,191 @@
-Return-Path: <linux-kernel+bounces-677935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868CAAD220B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:13:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F2AAD2205
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1BA3170E61
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016801892704
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FF51DD9D3;
-	Mon,  9 Jun 2025 15:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17331DE2A8;
+	Mon,  9 Jun 2025 15:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="zbUEhb1w"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="MGoQBXIz"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A37B1DED4C;
-	Mon,  9 Jun 2025 15:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7314E19F41C;
+	Mon,  9 Jun 2025 15:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749481712; cv=none; b=NaKv2M3yprolmWChIkfhWYM8j3jFxBxeCYqfrNI8tVl6w05znQD+3/WJwhHh9erC4rBpOQFc0avDCy1OQSf6qe7uC0Ezs2Ly3FCUJBim9yEipnh87aEUklauY2WyOb8axNZn6yWjk6ITvJ0eceIjgDIH1LniY0jhs2m1780kZYs=
+	t=1749481624; cv=none; b=fZBpQH835vvzSx8v8wrDKC2pAmjsZ/L1CLXpvvdUT7jKcI+AGrV9TlzzvwXLvuWrN0TxKyUGNH3v58PGe+GpFtKGClUS4e/Xm3sch4+kfS+MA9aPiouhgLDlSygSdAPCfmHoUD0nyK8gOuiTW3LBuH8gPyLbfd8zAvR8ERAUpVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749481712; c=relaxed/simple;
-	bh=6RlQJGYc3cQByqEQ5UnVltcdkYr558XiHh/+3IPkFFk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=EUHiYu/MdCIw5EL68v7NnWPAzbyu9uSfsd89W2KIj/4OoRHNa5i2RaLTX5XzdiuLaKCbnZjafUSi0E/NV4iRl5vqKN0XafMN2bIzXjSnF75oxwzrjZbPZi1UCrK5YmbQjfqaOGtR/MTXC8FaNkoqLyzIgbFKw10NdMypimW/Do4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=zbUEhb1w; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559Dtxkd009830;
-	Mon, 9 Jun 2025 17:08:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=RHEwRJAXNMJDW0r76HBXTU
-	vBrd9il/gic2C2Cm/Al7k=; b=zbUEhb1wGJdOJ/EdOcGNg/EOItH3HgAucyc4iH
-	H/6bHmOMVjo3nWzrkxzox/38KHwSZ+84vdNY809jnf2dK4lDD3UzxWuzjbAyJrcR
-	jQHGkOKT6wRfkj3EDEwcYq97C7wgngpdL+FMcHE2fjRmSW/DOqghihikjknX6e6o
-	jYOEiH7+sQRRK4TDHyZO7gBXxCHRfbclXgOhcr1ENV+uC+pCEqTNkh/M1RDCWUwt
-	hkuPcQsuw3iJwYRhV4yTFELIrzn+Xy90Gw5J2J4q5rPRr0R0wrgtjHn38FS8VL/R
-	ZnObw8yfEN8Q6S8TJlcuQeL7jEEEc62pS/qwG2aEYPIsZeGg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs2g878-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Jun 2025 17:08:12 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 01A8B4004B;
-	Mon,  9 Jun 2025 17:06:53 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 18427BCE4C4;
-	Mon,  9 Jun 2025 17:05:05 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 17:05:04 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Mon, 9 Jun 2025 17:05:04 +0200
-Subject: [PATCH v6] spi: stm32-ospi: Make usage of
- reset_control_acquire/release() API
+	s=arc-20240116; t=1749481624; c=relaxed/simple;
+	bh=LOaEDRQ4kYrwi4Xn/mnj3m+pzhRaACbyXtEqKfL92Yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c/ETga7oSA/fjsoZvVBkTBQDVf0btQ6qQyYHDQjOAHW9giqjMEilrevaxhIxBhYJCGStuyHXf/RjWNeo+WwMxYNXdfhBXJ3gMQGRArquUK0YvOpnfqqRVBhEa1ih55GF8Jbm8Z+yH6heHrP3sN2DPqX7PxIRLSFiQdep4oLJMks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=MGoQBXIz; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1749481618; x=1750086418; i=w_armin@gmx.de;
+	bh=LOaEDRQ4kYrwi4Xn/mnj3m+pzhRaACbyXtEqKfL92Yg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MGoQBXIz5mmdHjbAmMo3uGXNLq5YMACJbK/KBOz+wdVCHJiIKz/RpNZPRIPiC1Ro
+	 KC9OQpjbAafRoZX8ABuB7FFMMfge+xp/hBwPzMW6WANyomZTan7ZrLcPbhNo5k3AA
+	 UdxJNGBHJOP9ZH4SjeABtznE/bu9AKnOT2LBKeKkVdfK2hb979PK0GP7SVh84U4ws
+	 HJNlZl60UVRR89jFR/BpQgmE0CBU15FOfRD4nkhXPbOpOun95Yn+ltA2R7oPPJ1Ww
+	 L5W788GYgsKAYxxE1oAzYrFSG+yjPUravj0AtS7D6fh0CAqKeeeEQvbhzNogXf6iF
+	 2J6vzCbRwDLFfuI+2g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MtOGU-1ugaNg0OtS-00xMg8; Mon, 09
+ Jun 2025 17:06:58 +0200
+Message-ID: <474af450-fe05-46d6-90d6-d5ac3408cf68@gmx.de>
+Date: Mon, 9 Jun 2025 17:06:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250609-b4-upstream_ospi_reset_update-v6-1-5b602b567e8a@foss.st.com>
-X-B4-Tracking: v=1; b=H4sIAB/4RmgC/43OsW7DIBDG8VeJmEsEhAPcqe9RVRaBo2FIsDhit
- Yr87sVZmiqDO/5v+H13Y4Q1I7HX3Y1VnDPlculhXnYsnPzlE3mOvZkSCoSWkh81v07UKvrzWGj
- KY0XCNl6n6BtyGExApcFHL1k3poopf93994/ep0yt1O/73KzW63/lWXHBdUSbIEblB/mWCtGe2
- j6UM1vt+fDrgbBb3oFLblEb7+xgwapnTz94Um15unuDU8Ek65zB9OzBo6e3PFj/O0JEAaCCC3+
- 9ZVl+AH+8dva8AQAA
-X-Change-ID: 20250411-b4-upstream_ospi_reset_update-596ce245ada1
-To: Philipp Zabel <p.zabel@pengutronix.de>, Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] hwmon: Widespread TOCTOU vulnerabilities in the hwmon
+ subsystem
+To: Guenter Roeck <linux@roeck-us.net>, Gui-Dong Han <hanguidong02@gmail.com>
+Cc: vt8231@hiddenengine.co.uk, steve.glendinning@shawell.net,
+ jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+References: <CALbr=LYJ_ehtp53HXEVkSpYoub+XYSTU8Rg=o1xxMJ8=5z8B-g@mail.gmail.com>
+ <3f5feb87-330c-4342-88a1-d5076538a86d@roeck-us.net>
+ <3401727c-ad93-42df-8130-413eda41ab3a@roeck-us.net>
+ <CALbr=LYe3p9GW2Z_RUxKG+w2Q1wfWGRW=dRLoTraS7qJ7imdgw@mail.gmail.com>
+ <3f56be7b-d5b4-4753-8649-62ee21d2c6bd@roeck-us.net>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <3f56be7b-d5b4-4753-8649-62ee21d2c6bd@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xsgQzJV4+yM2+gisrx6ewIahjPqv4GmwxppmExVkL0RmeiYsQhw
+ A2QGDrccch6X2QhUCJnqpsT8XzlLCrEWbHcs4cmQ5wl9G9oyB7GirdJcBo8q8KI2rY7aPZk
+ sWcXZbT5QWESpBDMND2HBOIeacDyOJ1fuM58YG1GUJAJim9eGpvgdVuXsaYlu1iZiJ63iyJ
+ Zgjj5SVSogvfb29tYl7Ew==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lqURk9qVMWk=;IK90yXlHprrrLWOEcGtOsyZ5KG9
+ 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
+ PitI=
 
-As ospi reset is consumed by both OMM and OSPI drivers, use the reset
-acquire/release mechanism which ensure exclusive reset usage.
+Am 07.06.25 um 01:22 schrieb Guenter Roeck:
 
-This avoid to call reset_control_get/put() in OMM driver each time
-we need to reset OSPI children and guarantee the reset line stays
-deasserted.
+> On 6/6/25 00:03, Gui-Dong Han wrote:
+>>> On Thu, Jun 05, 2025 at 07:33:24AM -0700, Guenter Roeck wrote:
+>>>>>
+>>>>> I would like to discuss these issues further and collaborate on the
+>>>>> best way to address them comprehensively.
+>>>>>
+>>>>
+>>>> I'd suggest to start submitting patches, with the goal of minimizing
+>>>> the scope of changes. Sometimes that may mean expanding the scope of
+>>>> locks, sometimes it may mean converting macros to functions. When
+>>>> converting to functions, it doesn't have to be inline functions: I'd
+>>>> leave that up to the compiler to decide. None of that code is=20
+>>>> performance
+>>>> critical.
+>>>>
+>>> Actualy, that makes me wonder if it would make sense to introduce
+>>> subsystem-level locking. We could introduce a lock in struct
+>>> hwmon_device_attribute and lock it whenever a show or store function
+>>> executes in drivers/hwmon/hwmon.c. That would only help for drivers
+>>> using the _with_info API, but it would simplify driver code a lot.
+>>> Any thoughts on that ?
+>>
+>> Hi Guenter,
+>>
+>> Thanks for your quick and insightful feedback!
+>>
+>> I agree with your suggestion. Adding a note to
+>> Documentation/hwmon/submitting-patches.rst about avoiding calculations
+>> in macros is also a great idea to prevent this class of bugs in the
+>> future.
+>>
+>> Regarding your thoughts on subsystem-level locking, it sounds like a
+>> promising approach to simplify the drivers using the _with_info API.
+>> As you mentioned, some drivers don't use this API, so they would still
+>> require manual fixes.
+>>
+>> For the subsystem-level lock itself, I was wondering if a read-write
+>> semaphore might be more appropriate than a standard mutex. This would
+>> prevent a single show operation from blocking other concurrent reads.
+>> I'm not entirely sure about all the implications, but it might be
+>> worth considering to maintain read performance.
+>>
+>
+> Various drivers need write locks when reading attributes, so that=20
+> would not
+> work well. We'd need some flag indicating "this driver needs write locks
+> when reading data", and then things become complicated again,=20
+> defeating the
+> benefit.
+>
+> Guenter
 
-During resume, OMM driver takes temporarily control of reset.
+I agree, different drivers need different locks. From my point of view dri=
+vers using the
+with_info-API can easily implement such a global lock themself by using gu=
+ard(). This also
+allows them to choose the type of lock to use.
 
-Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
-Changes in v6:
-- Add Fixes tag.
-- Rebase on top of v6.16-rc1
-- Link to v5: https://lore.kernel.org/r/20250514-b4-upstream_ospi_reset_update-v5-1-7b5de0552c8c@foss.st.com
-
-Changes in v5:
-  - Add dependency with commit 6b3754009f87 ("reset: Add devm_reset_control_array_get_exclusive_released()")
-    in commit message.
-  - Link to v4: https://lore.kernel.org/r/20250512-b4-upstream_ospi_reset_update-v4-1-982c6f7886ef@foss.st.com
-
-Changes in v4:
-  - Add a comment about reset sharing between OSPI and OMM drivers durig resume.
-  - Link to v3: https://lore.kernel.org/r/20250507-b4-upstream_ospi_reset_update-v3-1-7e46a8797572@foss.st.com
-
-Changes in v3:
-  - Remove previous patch 1/2 as already merged.
-  - Keep the reset control acquired from probe() to remove().
-  - Link to v2: https://lore.kernel.org/r/20250411-b4-upstream_ospi_reset_update-v2-0-4de7f5dd2a91@foss.st.com
-
-Changes in v2:
-  - Rebased on spi/for-next (7a978d8fcf57).
-  - Remove useless check on reset.
-  - Add error handling on reset_control_acquire().
-  - Link to v1: https://lore.kernel.org/all/20250410-b4-upstream_ospi_reset_update-v1-0-74126a8ceb9c@foss.st.com/
----
- drivers/spi/spi-stm32-ospi.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-index 7c1fa55fbc4726d2f3c5516245ccd81f59c3c44d..db6b1cfc970f6c80515a39073e2389311796da8f 100644
---- a/drivers/spi/spi-stm32-ospi.c
-+++ b/drivers/spi/spi-stm32-ospi.c
-@@ -804,7 +804,7 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ospi->rstc = devm_reset_control_array_get_exclusive(dev);
-+	ospi->rstc = devm_reset_control_array_get_exclusive_released(dev);
- 	if (IS_ERR(ospi->rstc))
- 		return dev_err_probe(dev, PTR_ERR(ospi->rstc),
- 				     "Can't get reset\n");
-@@ -936,11 +936,13 @@ static int stm32_ospi_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_pm_enable;
- 
--	if (ospi->rstc) {
--		reset_control_assert(ospi->rstc);
--		udelay(2);
--		reset_control_deassert(ospi->rstc);
--	}
-+	ret = reset_control_acquire(ospi->rstc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Can not acquire reset %d\n", ret);
-+
-+	reset_control_assert(ospi->rstc);
-+	udelay(2);
-+	reset_control_deassert(ospi->rstc);
- 
- 	ret = spi_register_controller(ctrl);
- 	if (ret) {
-@@ -987,6 +989,8 @@ static void stm32_ospi_remove(struct platform_device *pdev)
- 	if (ospi->dma_chrx)
- 		dma_release_channel(ospi->dma_chrx);
- 
-+	reset_control_release(ospi->rstc);
-+
- 	pm_runtime_put_sync_suspend(ospi->dev);
- 	pm_runtime_force_suspend(ospi->dev);
- }
-@@ -997,6 +1001,8 @@ static int __maybe_unused stm32_ospi_suspend(struct device *dev)
- 
- 	pinctrl_pm_select_sleep_state(dev);
- 
-+	reset_control_release(ospi->rstc);
-+
- 	return pm_runtime_force_suspend(ospi->dev);
- }
- 
-@@ -1016,6 +1022,12 @@ static int __maybe_unused stm32_ospi_resume(struct device *dev)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = reset_control_acquire(ospi->rstc);
-+	if (ret) {
-+		dev_err(dev, "Can not acquire reset\n");
-+		return ret;
-+	}
-+
- 	writel_relaxed(ospi->cr_reg, regs_base + OSPI_CR);
- 	writel_relaxed(ospi->dcr_reg, regs_base + OSPI_DCR1);
- 	pm_runtime_mark_last_busy(ospi->dev);
-
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250411-b4-upstream_ospi_reset_update-596ce245ada1
-
-Best regards,
--- 
-Patrice Chotard <patrice.chotard@foss.st.com>
+Thanks,
+Armin Wolf
 
 
