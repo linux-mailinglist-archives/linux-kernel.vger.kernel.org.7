@@ -1,153 +1,257 @@
-Return-Path: <linux-kernel+bounces-677692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E726AD1DCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346E7AD1D18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E805D16C361
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED22E3A4EEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1438526658F;
-	Mon,  9 Jun 2025 12:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C90A2561CC;
+	Mon,  9 Jun 2025 12:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j7E3WAVA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAz8l2W/"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21090265CDE;
-	Mon,  9 Jun 2025 12:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A8C12E7E;
+	Mon,  9 Jun 2025 12:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471924; cv=none; b=Rea0fs4pHRE3GflFZ5IKIQAwhZRxP67dJGw/CY/kjw2+7AnItRVkVSyjatrtrLuYMDMk+XICoToqLULLU6Ljp1knCVsTxqaWouuP+B1QTv3qPwi1BW7+OM0Cp/j1rRM33gp6UdXccc6+TNNM6lfAC06Ah08w3DZ52XGKkIcIVcg=
+	t=1749471748; cv=none; b=njdeXtuVaxRbycSqa/xMLawnpqjyZJqYwgj8htPDH+5K2VtF76qN+FCJX63jFmIjh9hDfM0FgNtZ91uWLSY0RZLSXFgLnQsvll/jdBwIfJZrrWdZAwHrveRixRHEQ8FvEGS2U9jwdYezo33PAvDAp33KjaB103zJHZZXCoLy+ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471924; c=relaxed/simple;
-	bh=Q1WNKF0a8xaJ38B3avtHB3P2sjCax+Cgv0PQTqcGPds=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=MOSiZxof/i38baDt9v67jHjuCH3E+vH79fNwnuQbVRf65F2Uw286h80+7Fb9lvDZJPmt69zPtmpPDQgFOjMsgIomrod3SX/0JeR2J4ur+njKAhLO3Cm1PDAC29TMTj2a1FhuPNLGW2aGnApRC0RqzziuIYR7Eehm+kRmgCnJ1RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j7E3WAVA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55993tbs031949;
-	Mon, 9 Jun 2025 12:25:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vXeFn+D102T3ulUO61dxyo0RH4duqBu7n593qCJenQY=; b=j7E3WAVAxDiJJXfl
-	BYMu28osSeEwDwESnUlDf8kI8xmmGTDgAe4wjBN2TS72MmIJpfFPSXY85/9pM7kg
-	FZj8IFSrwV08sj0+gL3P0rcMj3axN4OC4bV3q5aTPyUm1jOd57/otl//0njGKV24
-	BmsUkLeLps9rleZUUK8XgD/wvoPEYLNlbYYy9o1VVr8uptt65wGW03oTWZdBi47G
-	riwxZpfBUnMd9lZtBsqH8IYK4R0VG3G2ElGkF3ADRhZl4uAH2MbAVtWaZxwmAovj
-	/MoeW5gWxZvVOxdhZcE9pAvz2UUx0+ypm/6IHDk6NrjpPSzMZkERGvOFDdXmKctK
-	QIceDg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474eqcdrx1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Jun 2025 12:25:13 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 559CPCV1015627
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Jun 2025 12:25:12 GMT
-Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Jun 2025 05:25:09 -0700
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-Date: Mon, 9 Jun 2025 20:21:57 +0800
-Subject: [PATCH v2 38/38] drm/msm/dp: Add MST stream support for SA8775P DP
- controller 0 and 1
+	s=arc-20240116; t=1749471748; c=relaxed/simple;
+	bh=FhUb+ZXql8dArcka8IrDv/E1OATdkq2BGb4ry+i1JHI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NCK2Z2uknNQqkTNykPhhiKeTq0NXJDG4K5Dog0fLTqyqGDMAxH9BU9D7yNnG1BHNOIvDXyg7KQaIxPlJZ86U/XMSnmTYtC2EJ8/1Hc/OWboiTw8554GiQhPnQPT5DMjAv3fLd/rbaR4UXeBHVNN5RFCv3/Z2ofnyGw9zi1bZM18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAz8l2W/; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-742c73f82dfso3290758b3a.2;
+        Mon, 09 Jun 2025 05:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749471747; x=1750076547; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YBch+ffur1O0Rgja7qluq4MVSQH3W827o3L8nkl80n0=;
+        b=SAz8l2W/P47BMU9FJxDsE51sBska+Ba/5HFbVW3fqGXTur4aoCl20ZpSoxNakGkIXb
+         +V8vb2A/phyHCFqQLt8Deqjun5s7VNEyVLlbrF8IHVpN9ZHqW7KVVcpElZgYBM+CDFqB
+         1dinPfqoJlqE2RGmOiHxUPFuc+JLeH37KaLPwaJt2MwMvQhMoHpAW0cnyAM4ZqiopL/o
+         VFtsVQc+cS5d8o2+SqzwqxuAJJmROs9YpOjPU+rQ+VO0mBY9WF4bCnzM8uCASVniH4Qz
+         lFcuGB2z5ti6+b7AwKeK/mcOmnFj6D0vNXky9aiydKJUYOtiVFTcvuNJi1pRvVRMKpMv
+         NUDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749471747; x=1750076547;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YBch+ffur1O0Rgja7qluq4MVSQH3W827o3L8nkl80n0=;
+        b=CPzimJW8/oT3J76d+WQTsPJj0/PMUVfUjzmiq4FgEmOlyHhjASuwyIy6xQPjIRk/ub
+         ifVPeooAizcumzckhrDIq8IhvFlcxzniuZyY6jgdcOf2UEGGcW9ZHWzsJQQASwWGhqOn
+         h96pcItcXxBoSzCt4ek/MhXw3mt0/du/kgBwbeY+SNA3YdN92DbEyCxigfZx7RDT56YM
+         sLZqVyroAl9iHy2TpjObFxbvngOElEUzlIhTVwskzKNGSWwGqs9H21NUbGCrD9I/N6Kz
+         hh+yQ7FBQBAB/SZ0PeTPvQpbKX8bmCiTFqLGFB9itOi/CbJbEY9/Dmk1xXXAuwLPFOAZ
+         2pPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2qEYFtXaF12HmpqmZswq10Galj21tL7Dqwp2LYX98u9CBMnI58wVvBN0/endXk7ArAGk5kJieHCyoaPw=@vger.kernel.org, AJvYcCX7Tk2jn5RnJPC+NhGijemn+D3AszblPBzdybUgoNRD3Veo81N0chHTCLxvCAg+GUP7ClwnJAv9FdVrIyejsIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuufwIrNJl1xZbXv5TD+tN7PS7gucYQ32F0+cwin9HaMe4rppd
+	S37aZJ3feOX+X/0NVZLycMLQkXtQtJz3rfgs3DZa8k1jzipnxq18nrIo
+X-Gm-Gg: ASbGncsKWPLaT7gM+3jDhXKXQox29OCd212csZKYJYcrSbwd9uITrrSHJiei5VLIZxi
+	arBI++m0bk5HjehuBnTu7m57kSzXaZDbgg9C6dGh+M0HIn1JU8xKvRZGNCXtdAe4H+8+B8KCjAF
+	KrpO/6CAfWFvPPZ2Qh2IHaMOI46WSV1a4KoQb91tuugOvb8GQHU+mF9Co1GBHjs7I4ne0jJI71K
+	6rP52YgOUY2kk0UefqkiFmTeSntYIFZXvirWn4phkWVTMxH/61YKu5INju9kIoEojiPwzE0tk88
+	YiPDJ3JxYqeho6miA83ZmDVw+qdhbf9a1jBfWwVpZmnknocT+lYJSoa2Ffwvznyl4kKjaSj8
+X-Google-Smtp-Source: AGHT+IFN/6jpjwnUWAnmieziowXquVGyIPIEOCFl8zdXOz/2r+NiQoJ5BLmsN49W1/EDBbcGUv3y0g==
+X-Received: by 2002:a05:6a21:6e41:b0:21f:62e7:cd08 with SMTP id adf61e73a8af0-21f62e7ce8dmr5864666637.8.1749471746484;
+        Mon, 09 Jun 2025 05:22:26 -0700 (PDT)
+Received: from pop-os.. ([201.49.69.163])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f7827c0sm5170285a12.62.2025.06.09.05.22.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 05:22:26 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	dakr@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	mcgrof@kernel.org,
+	russ.weight@linux.dev,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	leitao@debian.org,
+	gregkh@linuxfoundation.org,
+	david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	leon@kernel.org,
+	fujita.tomonori@gmail.com,
+	tamird@gmail.com,
+	igor.korotin.linux@gmail.com,
+	walmeida@microsoft.com,
+	anisse@astier.eu
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	trintaeoitogc@gmail.com
+Subject: [PATCH] rust: module: remove deprecated author key
+Date: Mon,  9 Jun 2025 09:22:00 -0300
+Message-Id: <20250609122200.179307-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250609-msm-dp-mst-v2-38-a54d8902a23d@quicinc.com>
-References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
-In-Reply-To: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
-	<lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang
-	<jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Yongxing
- Mou" <quic_yongmou@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749471766; l=1356;
- i=quic_yongmou@quicinc.com; s=20241121; h=from:subject:message-id;
- bh=Q1WNKF0a8xaJ38B3avtHB3P2sjCax+Cgv0PQTqcGPds=;
- b=L2fWxjBVk8HhImBlhhEaU7oOR40NV8zennU2pmSzsN5lc5IiXgT2mr3IdlW8O2yUgmpDY1fWC
- Mr0T8+4AKBqCTYaqBpjF/El8cBVYpNdBdUR1CnrvbesaAFbQwilL04q
-X-Developer-Key: i=quic_yongmou@quicinc.com; a=ed25519;
- pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA5MyBTYWx0ZWRfXyyJA9zc0LIMM
- 8JV38O308nZJ55901LBbNQQBoKERAqFJ+XiMYEQ53I7Q/9JsVg/7HK9f3e4AJrrzawslrJQ7M4J
- LAmcKfz9Laf+7i2syB2C5W7Z9OOcjRPkBYKjLXuSoyXsA8YOmZP57An20zWoZJ37HeYHnjVIvP3
- e+0zidj+6mBWopfTfE84mJI5KTMkNjjZRbDeV4ZIwNIflETBnRZAvCs04Heu/2ntRPaiQ5T66dy
- h3EEFnHL/b2PS+2UG3WSnnx531ZrCmsIo2nbNwXizshu/kSE1eZA6hhaJg3cbNTuchDr02JLevi
- CVFi+Y7RCocJ5fKZVjLW85yb/s5Xe0ZEr3+Jm9NhsQtaaZec4F1rfqij6Mk6ktJ5kt1fipAWoqi
- 38mdHWG0AZC+oGS306mted0y6udivODbVg6Ot5Jw5MZ34E9Ury1RW/LWu7FRyu3b6WyDmZRf
-X-Authority-Analysis: v=2.4 cv=Q7TS452a c=1 sm=1 tr=0 ts=6846d2a9 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=qZBeK32WA6mflFYdqoAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Q3M8DP2xG_LiEcNNFmCNy46YybZereCC
-X-Proofpoint-ORIG-GUID: Q3M8DP2xG_LiEcNNFmCNy46YybZereCC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_05,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- bulkscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506090093
+Content-Transfer-Encoding: 8bit
 
-This change enables support for Multi-Stream Transport (MST), allowing
-each controller to handle up to two DisplayPort streams. As all
-necessary code for MST support was already implemented in the previous
-series of patches.
+Commit 38559da6afb2 ("rust: module: introduce `authors` key") introduced
+a new `authors` key to support multiple module authors, while keeping
+the old `author` key for backward compatibility.
 
-Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+Now that all in-tree modules have migrated to `authors`, remove:
+1. The deprecated `author` key support from the module macro
+2. Legacy `author` entries from remaining modules
+
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 ---
- drivers/gpu/drm/msm/dp/dp_display.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/cpufreq/rcpufreq_dt.rs        | 2 +-
+ drivers/gpu/drm/nova/nova.rs          | 2 +-
+ drivers/gpu/nova-core/nova_core.rs    | 2 +-
+ rust/kernel/firmware.rs               | 2 +-
+ rust/macros/module.rs                 | 6 ------
+ samples/rust/rust_configfs.rs         | 2 +-
+ samples/rust/rust_driver_auxiliary.rs | 2 +-
+ 7 files changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index 75f2fd7c75eae81e5c843f8ae2d1ce12ad0cad7e..16196dcc9ff4ac6a35b6bcd8d433b08f7d18fe5b 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -127,8 +127,10 @@ struct msm_dp_desc {
- };
- 
- static const struct msm_dp_desc msm_dp_desc_sa8775p[] = {
--	{ .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
--	{ .io_start = 0x0af5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
-+	{ .io_start = 0x0af54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true,
-+	  .mst_streams = 2},
-+	{ .io_start = 0x0af5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true,
-+	  .mst_streams = 2},
- 	{ .io_start = 0x22154000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
- 	{ .io_start = 0x2215c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported = true },
- 	{}
-
+diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
+index 94ed81644fe1..bdf4b844de42 100644
+--- a/drivers/cpufreq/rcpufreq_dt.rs
++++ b/drivers/cpufreq/rcpufreq_dt.rs
+@@ -220,7 +220,7 @@ fn probe(
+ module_platform_driver! {
+     type: CPUFreqDTDriver,
+     name: "cpufreq-dt",
+-    author: "Viresh Kumar <viresh.kumar@linaro.org>",
++    authors: ["Viresh Kumar <viresh.kumar@linaro.org>"],
+     description: "Generic CPUFreq DT driver",
+     license: "GPL v2",
+ }
+diff --git a/drivers/gpu/drm/nova/nova.rs b/drivers/gpu/drm/nova/nova.rs
+index 902876aa14d1..64fd670e99e1 100644
+--- a/drivers/gpu/drm/nova/nova.rs
++++ b/drivers/gpu/drm/nova/nova.rs
+@@ -12,7 +12,7 @@
+ kernel::module_auxiliary_driver! {
+     type: NovaDriver,
+     name: "Nova",
+-    author: "Danilo Krummrich",
++    authors: ["Danilo Krummrich"],
+     description: "Nova GPU driver",
+     license: "GPL v2",
+ }
+diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
+index 618632f0abcc..f405d7a99c28 100644
+--- a/drivers/gpu/nova-core/nova_core.rs
++++ b/drivers/gpu/nova-core/nova_core.rs
+@@ -13,7 +13,7 @@
+ kernel::module_pci_driver! {
+     type: driver::NovaCore,
+     name: "NovaCore",
+-    author: "Danilo Krummrich",
++    authors: ["Danilo Krummrich"],
+     description: "Nova Core GPU driver",
+     license: "GPL v2",
+     firmware: [],
+diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+index 2494c96e105f..ed2fc20cba9b 100644
+--- a/rust/kernel/firmware.rs
++++ b/rust/kernel/firmware.rs
+@@ -181,7 +181,7 @@ unsafe impl Sync for Firmware {}
+ /// module! {
+ ///    type: MyModule,
+ ///    name: "module_firmware_test",
+-///    author: "Rust for Linux",
++///    authors: ["Rust for Linux"],
+ ///    description: "module_firmware! test module",
+ ///    license: "GPL",
+ /// }
+diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+index 2ddd2eeb2852..5dd276a2e5cb 100644
+--- a/rust/macros/module.rs
++++ b/rust/macros/module.rs
+@@ -94,7 +94,6 @@ struct ModuleInfo {
+     type_: String,
+     license: String,
+     name: String,
+-    author: Option<String>,
+     authors: Option<Vec<String>>,
+     description: Option<String>,
+     alias: Option<Vec<String>>,
+@@ -108,7 +107,6 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
+         const EXPECTED_KEYS: &[&str] = &[
+             "type",
+             "name",
+-            "author",
+             "authors",
+             "description",
+             "license",
+@@ -134,7 +132,6 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
+             match key.as_str() {
+                 "type" => info.type_ = expect_ident(it),
+                 "name" => info.name = expect_string_ascii(it),
+-                "author" => info.author = Some(expect_string(it)),
+                 "authors" => info.authors = Some(expect_string_array(it)),
+                 "description" => info.description = Some(expect_string(it)),
+                 "license" => info.license = expect_string_ascii(it),
+@@ -179,9 +176,6 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
+     // Rust does not allow hyphens in identifiers, use underscore instead.
+     let ident = info.name.replace('-', "_");
+     let mut modinfo = ModInfoBuilder::new(ident.as_ref());
+-    if let Some(author) = info.author {
+-        modinfo.emit("author", &author);
+-    }
+     if let Some(authors) = info.authors {
+         for author in authors {
+             modinfo.emit("author", &author);
+diff --git a/samples/rust/rust_configfs.rs b/samples/rust/rust_configfs.rs
+index 60ddbe62cda3..af04bfa35cb2 100644
+--- a/samples/rust/rust_configfs.rs
++++ b/samples/rust/rust_configfs.rs
+@@ -14,7 +14,7 @@
+ module! {
+     type: RustConfigfs,
+     name: "rust_configfs",
+-    author: "Rust for Linux Contributors",
++    authors: ["Rust for Linux Contributors"],
+     description: "Rust configfs sample",
+     license: "GPL",
+ }
+diff --git a/samples/rust/rust_driver_auxiliary.rs b/samples/rust/rust_driver_auxiliary.rs
+index 3e15e6d002bb..abf3d55ed249 100644
+--- a/samples/rust/rust_driver_auxiliary.rs
++++ b/samples/rust/rust_driver_auxiliary.rs
+@@ -114,7 +114,7 @@ fn init(module: &'static kernel::ThisModule) -> impl PinInit<Self, Error> {
+ module! {
+     type: SampleModule,
+     name: "rust_driver_auxiliary",
+-    author: "Danilo Krummrich",
++    authors: ["Danilo Krummrich"],
+     description: "Rust auxiliary driver",
+     license: "GPL v2",
+ }
 -- 
 2.34.1
 
