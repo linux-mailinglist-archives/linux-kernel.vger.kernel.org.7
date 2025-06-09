@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-677390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E4EAD1A04
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D11AD1A09
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081A33ABDC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A86188CAED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC8020FA97;
-	Mon,  9 Jun 2025 08:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D66E1E412A;
+	Mon,  9 Jun 2025 08:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y1XlUgia"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1R6ba9wk"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18EB1E412A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05B1202F8F;
+	Mon,  9 Jun 2025 08:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749459046; cv=none; b=HBM/bITWlQetAegHSKBTh6ydpV9oNmHS//fl3Y5elgUeoU//n382nzCd8KVKji80JBRMKg4p84f+HM+XnD9SK6lHt5AYPi62q1tVD55OTdzT/fJsEaG4bazs04xfsUkZ19x60oQkDvSFWTCme4OGVne6hqJsH080jUgMwI7nuXk=
+	t=1749459070; cv=none; b=P5W1vP8xB8TVEEjiK7McuI5TJ+TuDZme9/6N6HQzDy5xZXWIb/1IMecR2D0wdeYUre9YlfQ+0nzmjOYjFdRqAfxJml0Hg3TBY/H90ALxb7VlDbROjj/f3TcjZ+E0+nkdx0/JSJ0kIcyS4YCVHp7puhyUvKwnXSs+96doZHmIykk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749459046; c=relaxed/simple;
-	bh=8Dwhd/J+dmuQBssTcKZQrL4FyPv/Aj0cHtKmkvHkQEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WsCRYlufyDuZ4q3c2/kmD+31z1+vkifWcHelphUf3gaPHNBzYN5XQtKuZxANk1ywyxJ02X/4Fcfb0fCz1VYxi53y2Q9tYq3OH8afMXQhZxiYdpLBEYk1drgmPWNRRFR4kl3fvZy5pHEyXOCCtZUGrtN6w1hsngcZYOFdvABhbrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y1XlUgia; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749459044; x=1780995044;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=8Dwhd/J+dmuQBssTcKZQrL4FyPv/Aj0cHtKmkvHkQEA=;
-  b=Y1XlUgia7DEkkStOS1BwEYFfPnqc+tysv9bgqf0mfWzg4Z4ed/iQH2lj
-   3DRQOME+1zKChyRCdDyyxpg6oeVDRa5BbsgvxkEO0fbBRwMxpJj6+7trb
-   OYZ4MsPl3vfOEG6sjJWGIOjLgN5WWpBkY3s6JjE7Pqv9FCKoNskpcsPTi
-   YqSXh3sFkVWxf9BLQNO0XI0wYuCW0qFSNkB3mE/XCsilT6WLFfshcBGMo
-   mSJ2Ck7tiCJS03+YMtRuy3oc1aM3IV/9Y8INgeWTkRn9a9wBa4lQmMwCD
-   Up68/z09bcrXLxe7mGlSaxHJaeq3ws92wFLH5Gndm+Gbtszn3F9dgfU0F
-   g==;
-X-CSE-ConnectionGUID: ocvKLe6vQ+C4qUIfQAbXWA==
-X-CSE-MsgGUID: fO1xF22zSCO8dFKh9mknFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="51439684"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
-   d="scan'208";a="51439684"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 01:50:43 -0700
-X-CSE-ConnectionGUID: o3qOqBDvRjOyREi1powz4w==
-X-CSE-MsgGUID: 4I93LLx4T6Knaqz4UwKK+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
-   d="scan'208";a="151324237"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Jun 2025 01:50:41 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uOYDG-0006tZ-0b;
-	Mon, 09 Jun 2025 08:50:38 +0000
-Date: Mon, 9 Jun 2025 16:50:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: include/linux/kvm_host.h:1908:24: warning: field 'desc' with
- variable sized type 'struct kvm_stats_desc' not at the end of a struct or
- class is a GNU extension
-Message-ID: <202506091622.dOo1Na3X-lkp@intel.com>
+	s=arc-20240116; t=1749459070; c=relaxed/simple;
+	bh=vARZ2HXvra+7FQMDYg1A9+OYwBUND+ICkiWTD4qm3rA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N7gNGQbsDpChL83IIdskOGgXmTj75mx8r2AuFcHuAR7W328bvay+VRqIPhf7mks3gL+DKV2uiYLglJQXSaoHbwgepazcHMaHoEJLHrgFotey9Rdd6ixwbwBTe4Kj8P4BvLSAJIjYsltnAK/5oX4vPIvV/lzQeIFtTFezBrXi9gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1R6ba9wk; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=FOHakUk5xT1fcNi+NPqv3HQ+xAZj2Oji/+RFN8IiveA=; b=1R6ba9wkp1ZO9GSRWkwczG90ui
+	Uifd7T3spP4VYBkQjasbFUAKxrlDFyusDdhK2NPoVCW0proWCH2OYPyuUu4gv4UTbwY0iVbtDdzuu
+	tMS15zAP236F4PI8tZoP56ZLHKX6S2dcsLrHtVTNgs4fwmVg9TAvq/Ves07/fwp2Dd8mG6QNfhy3q
+	KIVKTs+fh4/qAdV3DZsn6cPHwyq6v2F5lNpj7jdJqxDuuTlIJs4EzVH7U8Vsx+vZklAwigAffvq1o
+	t8HAaZ+BT76JWnkFFEQJIKDhGsOhtAIVhzyeWlc2rhEB9Y0RJRpOlIjOz5CMhBC4EZwQ02NIor6bD
+	GDd/kYnw==;
+Received: from i53875b1c.versanet.de ([83.135.91.28] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uOYDP-0005cP-0b; Mon, 09 Jun 2025 10:50:47 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org,
+ Geraldo Nascimento <geraldogabriel@gmail.com>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Quality Improvements for Rockchip-IP PCIe
+Date: Mon, 09 Jun 2025 10:50:45 +0200
+Message-ID: <2266650.atdPhlSkOF@phil>
+In-Reply-To: <aEQbx0Qu-2UKhV1y@geday>
+References: <aEQbx0Qu-2UKhV1y@geday>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Sami,
+Hi Geraldo,
 
-FYI, the error/warning still remains.
+Am Samstag, 7. Juni 2025, 13:00:23 Mitteleurop=C3=A4ische Sommerzeit schrie=
+b Geraldo Nascimento:
+> During a 30-day debugging-run fighting quirky PCIe devices on RK3399
+> some quality improvements began to take form and this is my attempt
+> at upstreaming it. It will ensure maximum chance of retraining to Gen2
+> 5.0GT/s, on all four lanes and plus if anybody is debugging the PHY
+> they'll now get real values from TEST_I[3:0] for every TEST_ADDR[4:0]
+> without risk of locking up kernel like with present broken async
+> strobe TEST_WRITE.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-commit: 9c3681f9b9fd12cdbc4a542df599f1837512f3d5 kbuild: Add gendwarfksyms as an alternative to genksyms
-date:   5 months ago
-config: s390-randconfig-r132-20250609 (https://download.01.org/0day-ci/archive/20250609/202506091622.dOo1Na3X-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce: (https://download.01.org/0day-ci/archive/20250609/202506091622.dOo1Na3X-lkp@intel.com/reproduce)
+could you check your settings for sending patches please?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506091622.dOo1Na3X-lkp@intel.com/
+The individual patches of this series did not get "in-reply-to" headers
+that would point to this cover-letter. Instead each mail of this
+series stands on its own, preventing mail clients from creating a
+threaded display of the series.
 
-All warnings (new ones prefixed by >>):
+git-send-email normally does create these needed headers on its own,
+so could you check if you have some option enabled that prevents this?
 
-   In file included from <stdin>:3:
-   In file included from arch/s390/include/asm/asm-prototypes.h:4:
->> include/linux/kvm_host.h:1908:24: warning: field 'desc' with variable sized type 'struct kvm_stats_desc' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
-    1908 |         struct kvm_stats_desc desc;
-         |                               ^
-   1 warning generated.
-   error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
+Thanks a lot
+Heiko
 
 
-vim +1908 include/linux/kvm_host.h
+>=20
+> Geraldo Nascimento (4):
+>   PCI: pcie-rockchip: add bits for Target Link Speed in LCS_2
+>   PCI: rockchip-host: Set Target Link Speed before retraining
+>   phy: rockchip-pcie: enable all four lanes
+>   phy: rockchip-pcie: adjust read mask and write strobe disable
+>=20
+>  drivers/pci/controller/pcie-rockchip-host.c |  4 ++++
+>  drivers/pci/controller/pcie-rockchip.h      |  3 +++
+>  drivers/phy/rockchip/phy-rockchip-pcie.c    | 16 +++++++++-------
+>  3 files changed, 16 insertions(+), 7 deletions(-)
+>=20
+>=20
 
-09cbcef6c60e77 Milan Pandurov 2019-12-13  1906  
-cb082bfab59a22 Jing Zhang     2021-06-18  1907  struct _kvm_stats_desc {
-cb082bfab59a22 Jing Zhang     2021-06-18 @1908  	struct kvm_stats_desc desc;
-cb082bfab59a22 Jing Zhang     2021-06-18  1909  	char name[KVM_STATS_NAME_SIZE];
-cb082bfab59a22 Jing Zhang     2021-06-18  1910  };
-cb082bfab59a22 Jing Zhang     2021-06-18  1911  
 
-:::::: The code at line 1908 was first introduced by commit
-:::::: cb082bfab59a224a49ae803fed52cd03e8d6b5e0 KVM: stats: Add fd-based API to read binary stats data
 
-:::::: TO: Jing Zhang <jingzhangos@google.com>
-:::::: CC: Paolo Bonzini <pbonzini@redhat.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
