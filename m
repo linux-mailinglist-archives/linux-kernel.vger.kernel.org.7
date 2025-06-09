@@ -1,137 +1,103 @@
-Return-Path: <linux-kernel+bounces-677187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5C0AD1758
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44E6AD173F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE3F3A9AB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7437318894B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093E2248F64;
-	Mon,  9 Jun 2025 03:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E8E22A7EC;
+	Mon,  9 Jun 2025 03:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iIs9s9nS"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j9J9K057"
+Received: from out199-17.us.a.mail.aliyun.com (out199-17.us.a.mail.aliyun.com [47.90.199.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68E2248F5B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 03:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC3E146A60
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 03:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438556; cv=none; b=X0oqZa2pgKpPzUQadTR3t1G6dnA3YX1vIlcYr1NbWG64JAptmFKKO/jt71FDTx5oFoUkZymN79BVDpv7xp0/7oYDh+fOsY8mJKxtvpwbidoyuLhcRBWg7WxLd9CLooekhvByRzroj3lrlG9b4DYaRiOEIGIt8ymfgyVa3QeAAJA=
+	t=1749438530; cv=none; b=Ue8uvqlWeOp4BEcnM4GHeS/Fif7Ph7jwAM4kMCsAX6RBQb5gMfTsWqWjmacwFCzgH9uOdyT8W98WK+vjvGg0vap8FTgzL6LKq1fLX1yC4Y+tTvmpIvuHRN4pt6pW6L9iG4vQJV1NFN43LPtBi+TEz2axay+uMM6ymkD79e2fZVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438556; c=relaxed/simple;
-	bh=+aCBd2ghwW/klUL9zxXGFrDo3NyzpBmQuv2HbBfHcbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lr1n3K5+QDCaEwKeT6xJ+BrbW+Fy+Spsp3VgarUD3kizjbQPOIfXJhfxLTdpPQKTt6iFM4ImbRfYTzIDMwDBCMBAnC7DUtHzm1YrjCPQ0a20upIzM0+qDQb0u9QK/A6bJMXvLHS1R7jTtLbL/xUO4aHA4VuF6KoYGE4vXBWX+CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iIs9s9nS; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-231e8553248so38018425ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 20:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749438554; x=1750043354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D7CXEUIqwkwbaC9WL4kfbAYO9r9qnWAQ32Tn1bWOs0k=;
-        b=iIs9s9nS4Eya2LU6cU9CgPrVN7L97Ys7O2xg+SJJPoySvOIkSVVuWeTLsdXTt7sAqi
-         DLXA3shE1t9BYZDCDYZY7lz+JfJ3yBLZmeyTpwH9LluEJTeaAZIaZKBmrTorUZ2eJCm3
-         CteWo6POVViKTNuTZBoXxMTh4fWO+pK6kdKM0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749438554; x=1750043354;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D7CXEUIqwkwbaC9WL4kfbAYO9r9qnWAQ32Tn1bWOs0k=;
-        b=mqB9HWpJhoSVV3Lbc7SVVfaeLynlpydWaXFfNUcZuTV1XSjl9SNg9igYjKrFvKs6MG
-         09uJwWxjbEQc87KCLsQyqh6u7sSTJPrfDFqbup/kik0gjzf7JN2kE8j1m3VqUhLdLseu
-         ChmUpWcoMzyV0mwsXtn8RNe0A9V3xLuxeifWI0qFbpKvPQ7bNqbMOuNM5F6VcfPwrGlT
-         CT4vHnjlcphQHbGyBcTHXwArhfcNB+KvSCqq8x9SkxY8IID6wIACBwcaCLYr0xjtlV3m
-         ItshfoDT7T1LxhgtwOuvlHpXHjFbyYBCVPnuV4VvPAbzjPyMbUF71nS2G3NIkAX7QN1V
-         55gw==
-X-Forwarded-Encrypted: i=1; AJvYcCU77No2NI2QkhGH1KlztKMriH/iJmmJbRxKbLkfDjEJpnioj41kMb+qpdEBSYN6bJkrddnzTZeLCmVVD9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFoh5tAQ4sNwLqIX+gfYYnPikoQoZhg9kzF9IkL8LwgPeMVd34
-	NbtVnSdPOVMbMLBlZ3BZ9Gn8HSzN3rxi2VFinhr/vdxxxoUUHtTyJ43p1u3Cdb09PA==
-X-Gm-Gg: ASbGnctkIo+JlbbERJ5qAIPVKcge+lzdGfuomlTXdSf/BChW4YsyiepL7xpdhGcvWN0
-	2QBA3hjGvdTyuUlwhkA13RoyV+Uq19C8NmLdlLlTwCo2emp83HfQ+IX7n2AUTEp3/dHBad5tBvJ
-	NtBM7b/dGrtH79fdMf/tQEsgIaqwoEhIz89v9rXWAvfdzmdUSd9LQF0YRMqDqOSK+cAQh1+YSCK
-	58RJRGBNbWWmuKpUk1ti0/PQevzMRs528bOvFqygb461bpPeLGC4AvEnrxhy4tyvb1B54ySF1Ns
-	+Lbk2PRn9h4dp06OxbAfLlo8Z+4070upKVYLYtTIPMctgJP6HvIOBE1f80mYi56Sx55QDHhd8NG
-	DtaUztncisc9X
-X-Google-Smtp-Source: AGHT+IF9SqoM0enwHHeEeJDm6HNEPI1J9jfQ2jOvh5ECV8YfsU6gawfWVryQ79XsWdg7P2+sC2CUgA==
-X-Received: by 2002:a17:902:d48d:b0:234:a139:120d with SMTP id d9443c01a7336-23601cf1e13mr147061665ad.7.1749438554311;
-        Sun, 08 Jun 2025 20:09:14 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:eb64:2cdb:5573:f6f1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603410716sm44649645ad.199.2025.06.08.20.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 20:09:13 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Miklos Szeredi <miklos@szeredi.hu>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Tomasz Figa <tfiga@chromium.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH 2/2] fuse: use freezable wait in fuse_get_req()
-Date: Mon,  9 Jun 2025 12:07:39 +0900
-Message-ID: <20250609030759.3576335-4-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-In-Reply-To: <20250609030759.3576335-1-senozhatsky@chromium.org>
-References: <20250609030759.3576335-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1749438530; c=relaxed/simple;
+	bh=hmRzEbXG2kzWtHkhRA1TrR7/X0WUqUuAh3KDnu5ZpmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GzouX7UCwSxFXr4t2hjEHhyXHSuMvljDVC29mNGUc0qSSTwq07AU08GZBkbd+Mp2aFzbHvzgLKh3SzjGOvea/9JddVVpMLmciFunMfN0t2k/w3Ujk4sHtXRo2tAzfJqJRvBe8zRgXYW4mjWmi7TyAA1VYIHoY45ztqIbUG84LKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j9J9K057; arc=none smtp.client-ip=47.90.199.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749438515; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=SvSgVLN1gXlZ/uDePszzNnA/Qx6F3kvF2qgKUMgBs4A=;
+	b=j9J9K057MLLt7ejPRc1IKoKKJHxf9+WKp2ghIdqmQLtTD9OCjWRujfagVbalvJ5PIXvF8XtRPm+a4cgs7OSDEDmRampgo2PZ1//tqzL1OUTiNHPCoOxadcg/qOi+4GNWFhUmgp9FdwWCE+JyuRi1fCWK31kVcFSMEojTk1vU1xs=
+Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdK.gHk_1749438514 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Jun 2025 11:08:35 +0800
+Message-ID: <48d9e462-5ec5-4b37-a485-d86118d1bc53@linux.alibaba.com>
+Date: Mon, 9 Jun 2025 11:08:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: add myself as a THP reviewer
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Barry Song <baohua@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>
+References: <20250609002442.1856-1-21cnbao@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250609002442.1856-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use freezable wait in fuse_get_req() so that it won't block
-the system from entering suspend in some situations:
 
- Freezing user space processes failed after 20.009 seconds
- Call trace:
-  __switch_to+0xcc/0x168
-  schedule+0x57c/0x1138
-  fuse_get_req+0xd0/0x2b0
-  fuse_simple_request+0x120/0x620
-  fuse_getxattr+0xe4/0x158
-  fuse_xattr_get+0x2c/0x48
-  __vfs_getxattr+0x160/0x1d8
-  get_vfs_caps_from_disk+0x74/0x1a8
-  __audit_inode+0x244/0x4d8
-  user_path_at_empty+0x2e0/0x390
-  __arm64_sys_faccessat+0xdc/0x260
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2025/6/9 08:24, Barry Song wrote:
+> From: Barry Song <baohua@kernel.org>
+> 
+> I have been actively contributing to mTHP and reviewing related patches
+> for an extended period, and I would like to continue supporting patch
+> reviews.
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Zi Yan <ziy@nvidia.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Cc: Nico Pache <npache@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Dev Jain <dev.jain@arm.com>
+> Signed-off-by: Barry Song <baohua@kernel.org>
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index e80cd8f2c049..3792ca26c42f 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -207,7 +207,7 @@ static struct fuse_req *fuse_get_req(struct mnt_idmap *idmap,
- 
- 	if (fuse_block_alloc(fc, for_background)) {
- 		err = -EINTR;
--		if (wait_event_killable_exclusive(fc->blocked_waitq,
-+		if (wait_event_freezable_killable_exclusive(fc->blocked_waitq,
- 				!fuse_block_alloc(fc, for_background)))
- 			goto out;
- 	}
--- 
-2.50.0.rc1.591.g9c95f17f64-goog
+Thanks.
+Acked-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 99dcf9036b9d..c6770ebe2927 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15845,6 +15845,7 @@ R:	Liam R. Howlett <Liam.Howlett@oracle.com>
+>   R:	Nico Pache <npache@redhat.com>
+>   R:	Ryan Roberts <ryan.roberts@arm.com>
+>   R:	Dev Jain <dev.jain@arm.com>
+> +R:	Barry Song <baohua@kernel.org>
+>   L:	linux-mm@kvack.org
+>   S:	Maintained
+>   W:	http://www.linux-mm.org
 
