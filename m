@@ -1,177 +1,127 @@
-Return-Path: <linux-kernel+bounces-678335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D481AD2764
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:09:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BF2AD2769
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B182B16D1D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2833E3AC931
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FC322129B;
-	Mon,  9 Jun 2025 20:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24275220F59;
+	Mon,  9 Jun 2025 20:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="I6/RN80N"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SCgo9+6R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B717F221296
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 20:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3799C1EB9E1;
+	Mon,  9 Jun 2025 20:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749499708; cv=none; b=LHa4nRUJBStcpX2tqYUlE1x3qO47hJ8QADi986vt5cyNYwim/rhiu2yLdUSSy/lJjB5LMVbuqrdFaZAkX2+LvkWm3gYeIHEpJZG4ti74REw7+PmO3zyX7lcoPFlVjSNl7w7YJEcMK8ZCJZ1MzSLRtu293tqsnNLpmXcyfpfp7CE=
+	t=1749499972; cv=none; b=eOTCPsdPvfYsTsXufiypuagVC0kQkWym2dMeo2peZ1y7skgyeAF1mb1UakPGEi8rqYoDq+CWAqE2jSkCSZ2L/BHXjcltHtRtYQ0F7WHYe8TMMzDGXQUHXEoTWHHg5NT/LWw01Y/T+0f5Kf/sjyq2hRbHPAIciYlakDnnXsB5epQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749499708; c=relaxed/simple;
-	bh=5col7cyjORVDpBjeMZhgvIznfmZtb6RKuoV4CGQF4zE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7aTacsVWfobacKqdONEBf82ucBU9YAxvXzbfGRFI6VjdJ93intJx/uBaM5mqzLCnHvi0cvv60PaHiBoQpvPbtACxzpg6BiP97B7THA3ZTI0MRaGcq45cZkh8cUWuOVs7jnAwXUAKMl32r3akkif4XgqgWY6TzgsifuroCafqpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=I6/RN80N; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c5b8d13f73so513064685a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 13:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1749499705; x=1750104505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXZOtes7v+x/7Gb9DsK5r+A9Wyuu/k4Jt+Vsyyna0xw=;
-        b=I6/RN80NIGi8CPVRwC/5D9jheBPErZlMPpVvB2vdY8O/tsYYwfnGgr++ikeHNBitKt
-         RAwH0ywScSF/zto3WXoo7zjqKbWdWyfE/7v3O4TFpC8gzHG5SqW1mjZwlN3Esv2BSOcr
-         oB1TppqaDrRrFvFfwaMKsjs2lvzfwJqPqfE31cu93drnwRiA2sB5IZAfK/KkSFxVVsBy
-         rHfaJrWMEas5ios2FMxi+RvrqiG1tD3wFt3P/VLVprzS/RlmLYG9HX9kKHLs5Zj/WzEl
-         Y4l8/bqO3OW/Pa94gkuCcIkCYcAfnzw3WexjVpDfJUycbVYCCAu+OCHgDHjhRsrgDyXK
-         mhkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749499706; x=1750104506;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hXZOtes7v+x/7Gb9DsK5r+A9Wyuu/k4Jt+Vsyyna0xw=;
-        b=LrZCJDalf6tBmiZlzlbOxJhxcqUAbGfgYA68gpUw/VpK3X/twziprHccKDqDik/B8d
-         WZGQPvfEcAryEi5w4pRAXlsLb9giU71uSbx93SOREY5taLaw+K/FmMhnP5+CyEjYRyJQ
-         gLCe/ESVNCfKWkwBk+wKf9/epK3RNC+h1lJjAVwCelUuwo2o5CxoWbKBOHbvnfCVv4qu
-         3+vjvY/1TRy1KtbjjRYSWXtqQJ3u9UXaWXyi3Eu9PalJ0Bf71PsBFTBeSmTEA/SCVpMu
-         nQoXMiVGGzAZtcdrw5NZT0SbnaphMrTebGJ8snQ2Z+JTLXe1Q7bI98n74d2G3aSHsfcO
-         yqKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWg+h2aU1dVGWOg5wtIg6xgGPcaKj1R0kMO3paLgR37Otufvqzv+fTpTSPmNnE4xKw+FBB7fNOWheFiMVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ/Q5XgddCNofebv4+2ueviv/RCwf2L6SL5BnidDvuanRZJZXF
-	kW2Aq4ka2EZ/81sCeB3RqOTZom0AUv7rI9UF2sLd/NAtquj6OM1o6okeUtBaonopxH0=
-X-Gm-Gg: ASbGncsGOC3awJhdYIBcXi0b3mKUQ6FgdmnV2PQaHOJvvxInxLMjPLrLxAqmbUhwoEe
-	qdG3ql2HHS4uDoQJPKB/OsE+zN2UdTnnltsCp0rf89TDkAt2oVrKzhQ6KVZEQWMTwViAq16ZQoy
-	76swaNyDmh2UOiYG8Y5NU/01gH82oNihrhB+J98yChX7U0UG/kJ+Ophj7D6/HvGKVeufLRPmZKr
-	Dr/dT59tR0aqI944yMlwA58ozoHlrPwQfaKX3cyQOUUu7LvX2sckCB49Xtp3A8Rab9rjbSJIE+N
-	zbDai0yOqmslUK7Guf/8/ylmgoqChF0dP5I9i151iKe99Fz3ewVHFkPoxiZwzCnP6rtXe7Ia14v
-	x3ACZrw+d1B7AGuuacA+8
-X-Google-Smtp-Source: AGHT+IGQOWA/DdgNdcF0vOFp4bfRniwjEhSufXRdrgu6ZhEZb9CO/nMVcj463R4KXqdEUZZrqIYgZw==
-X-Received: by 2002:a05:620a:28d0:b0:7c3:d7ef:f7f5 with SMTP id af79cd13be357-7d2298b164fmr2068749685a.18.1749499705469;
-        Mon, 09 Jun 2025 13:08:25 -0700 (PDT)
-Received: from presto.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09b2a021sm55869336d6.83.2025.06.09.13.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 13:08:25 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dlan@gentoo.org,
-	heylenay@4d2.org,
-	inochiama@outlook.com,
-	elder@riscstar.com,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Guodong Xu <guodong@riscstar.com>
-Subject: [PATCH] clk: spacemit: mark K1 pll1_d8 as critical
-Date: Mon,  9 Jun 2025 15:08:21 -0500
-Message-ID: <20250609200822.468482-1-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1749499972; c=relaxed/simple;
+	bh=LJ/uZDXg4Dz+jNqe8xKGNosRt70el7DilOa/Q+s44xQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfZAjbsPp8HUExtHvcs05G0lrrODVzkchdfumreyYile9gfqsh2EaiS2jAAbIUoEzwj86AvlkS10yobVDNac1NX+g9MNMl/eYOB4O1bs+cckZDBvBAsPcMlVVlo7dkExleqa7NpOKbKTB7EJvQBckHbeyfAQnoIMfxyjkiZUGq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SCgo9+6R; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749499972; x=1781035972;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LJ/uZDXg4Dz+jNqe8xKGNosRt70el7DilOa/Q+s44xQ=;
+  b=SCgo9+6RTQAEQGbo1p7wLW9MaFAD0iC0EMpdrAQWEeL6wLttW5BcMtUE
+   djC2Q9hhoI9xETJxGDkbFzZLNslqYkajKqbh2tal22WsGUX2pVVJZopmi
+   jXDHeqwbTlgokzyb7dIVd5Rc/32sAr0lh1+r2+i9tUNDplHcmLnyal38z
+   Dhg/vAZc3NUAXVlO1Av000W1BBKstmgb5C6jr4rU9+8ZYsxM4I1BPvDIb
+   sse/gbrYXXhrcVOU5o/qmr0IUAKiJXsIzdeDdGQet/QsfMkSf58Q3vOe+
+   XxgPJrbUotMvzw9AouaL3Ud3S32lmcZwz5Xze8lVqG/ir3hL7A8NV/xMc
+   Q==;
+X-CSE-ConnectionGUID: 9ZAOTH3/TJqW0nN8XK+gkg==
+X-CSE-MsgGUID: /G/ORU5TQhaDTaEfodPc9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="51677175"
+X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
+   d="scan'208";a="51677175"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 13:12:50 -0700
+X-CSE-ConnectionGUID: JgUShucbQ3mQBwHf/RSvig==
+X-CSE-MsgGUID: MCcgyiSGT0aLouJwJOiQ5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
+   d="scan'208";a="147188410"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 13:12:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uOirG-000000059XK-27RQ;
+	Mon, 09 Jun 2025 23:12:38 +0300
+Date: Mon, 9 Jun 2025 23:12:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Sergio Perez Gonzalez <sperezglz@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Rientjes <rientjes@google.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	Thomas Huth <thuth@redhat.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] slab: Decouple slab_debug and no_hash_pointers
+Message-ID: <aEdANsGsQHqVQ9Wy@smile.fi.intel.com>
+References: <20250415170232.it.467-kees@kernel.org>
+ <Z_-dPcdiGW0fo8Ji@pathway.suse.cz>
+ <202506051314.D6EDFA91D@keescook>
+ <aEbyHeG8qh8GChTh@pathway.suse.cz>
+ <202506090823.33ED63C@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202506090823.33ED63C@keescook>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The pll1_d8 clock is enabled by the boot loader, and is ultimately a
-parent for numerous clocks, including those used by APB and AXI buses.
-Guodong Xu discovered that this clock got disabled while responding to
-getting -EPROBE_DEFER when requesting a reset controller.
+On Mon, Jun 09, 2025 at 08:24:47AM -0700, Kees Cook wrote:
+> On Mon, Jun 09, 2025 at 04:39:25PM +0200, Petr Mladek wrote:
 
-The needed clock (CLK_DMA, along with its parents) had already been
-enabled.  To respond to the probe deferral return, the CLK_DMA clock
-was disabled, and this led to parent clocks also reducing their enable
-count.  When the enable count for pll1_d8 was decremented it became 0,
-which caused it to be disabled.  This led to a system hang.
+...
 
-Marking that clock critical resolves this by preventing it from being
-disabled.
+> As long as it's in -next and scheduled to land, I'm happy. I'd always
+> like it earlier, but the less workflow disruption the better! :)
 
-Define a new macro CCU_FACTOR_GATE_DEFINE() to allow clock flags to
-be supplied for a CCU_FACTOR_GATE clock.
+Hmm... The __diag patch series were in Linux Next for a few weeks and did not
+land in v6.16-rc1. Just saying that there is always chance to go into cracks.
 
-Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
-Signed-off-by: Alex Elder <elder@riscstar.com>
-Tested-by: Guodong Xu <guodong@riscstar.com>
----
-v2: Reworded the description to provide better detail
-
- drivers/clk/spacemit/ccu-k1.c  |  3 ++-
- drivers/clk/spacemit/ccu_mix.h | 21 +++++++++++++--------
- 2 files changed, 15 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-index cdde37a052353..df65009a07bb1 100644
---- a/drivers/clk/spacemit/ccu-k1.c
-+++ b/drivers/clk/spacemit/ccu-k1.c
-@@ -170,7 +170,8 @@ CCU_FACTOR_GATE_DEFINE(pll1_d4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(3), 4,
- CCU_FACTOR_GATE_DEFINE(pll1_d5, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(4), 5, 1);
- CCU_FACTOR_GATE_DEFINE(pll1_d6, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(5), 6, 1);
- CCU_FACTOR_GATE_DEFINE(pll1_d7, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(6), 7, 1);
--CCU_FACTOR_GATE_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1);
-+CCU_FACTOR_GATE_FLAGS_DEFINE(pll1_d8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(7), 8, 1,
-+		CLK_IS_CRITICAL);
- CCU_FACTOR_GATE_DEFINE(pll1_d11_223p4, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(15), 11, 1);
- CCU_FACTOR_GATE_DEFINE(pll1_d13_189, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(16), 13, 1);
- CCU_FACTOR_GATE_DEFINE(pll1_d23_106p8, CCU_PARENT_HW(pll1), APBS_PLL1_SWCR2, BIT(20), 23, 1);
-diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-index 51d19f5d6aacb..668c8139339e1 100644
---- a/drivers/clk/spacemit/ccu_mix.h
-+++ b/drivers/clk/spacemit/ccu_mix.h
-@@ -101,16 +101,21 @@ static struct ccu_mix _name = {							\
- 	}									\
- }
- 
-+#define CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-+			       _mul, _flags)					\
-+struct ccu_mix _name = {							\
-+	.gate	= CCU_GATE_INIT(_mask_gate),					\
-+	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
-+	.common = {								\
-+		.reg_ctrl	= _reg_ctrl,					\
-+		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, _flags)	\
-+	}									\
-+}
-+
- #define CCU_FACTOR_GATE_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
- 			       _mul)						\
--static struct ccu_mix _name = {							\
--	.gate	= CCU_GATE_INIT(_mask_gate),					\
--	.factor	= CCU_FACTOR_INIT(_div, _mul),					\
--	.common = {								\
--		.reg_ctrl	= _reg_ctrl,					\
--		CCU_MIX_INITHW(_name, _parent, spacemit_ccu_factor_gate_ops, 0)	\
--	}									\
--}
-+	CCU_FACTOR_GATE_FLAGS_DEFINE(_name, _parent, _reg_ctrl, _mask_gate, _div,	\
-+			       _mul, 0)
- 
- #define CCU_MUX_GATE_DEFINE(_name, _parents, _reg_ctrl, _shift, _width,		\
- 			    _mask_gate, _flags)					\
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.45.2
+With Best Regards,
+Andy Shevchenko
+
 
 
