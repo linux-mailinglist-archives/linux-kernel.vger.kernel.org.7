@@ -1,109 +1,192 @@
-Return-Path: <linux-kernel+bounces-677639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F37AD1CF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7C9AD1D03
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70D73AC8B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51C2168038
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A4F1DD9AD;
-	Mon,  9 Jun 2025 12:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16D3255F55;
+	Mon,  9 Jun 2025 12:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G57svMu4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsbG24QB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D8F36B;
-	Mon,  9 Jun 2025 12:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB21CA84;
+	Mon,  9 Jun 2025 12:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471384; cv=none; b=WLjhYOFZmlZb4Jz+48G6eIHCwGQ6cVo5mS5qvEyrqcc8iVSkvx0UMqIZirbShOmcH1/ZCfku+kLTi43XWjeOjfNdWsYf6KQ6lM+xaZoMN537yU2j+JXPmKhct4ox9iMMG1wq3b91K6/1Jc1BSB5DgsrWGeJDwsBqu5/myMrTfkE=
+	t=1749471440; cv=none; b=Sy+rJXTUmVUdQ0tpnEwFVraaR3hLO/W18O+HYn2AU2dLcy7L8euJq3allQt6IufYlEAtDHs0/1jSsKxBQgjYVoPAOXR4I3FmdDmokh9y3XpzBpdXrK/VcAm3sXwwB4JfTEE17j5fYos0Y5lE5B91Pnqxzq7xyibVs5TLRnoVHmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471384; c=relaxed/simple;
-	bh=6Kag9Ku/q13qtFPk6HDqeKqGdosUpBqql0sD8SctYbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwcSTEn2wdvm4lV3Xjma4fba5GR8CAL8kIOG+mfVVhh1rcGrqMkEDJUbsOTsuIBFHuMhtu4RiJSbLGUz557HbrMP0DmKHFUC8GTatizEStEoKMYKPvbS4YKNhjJ4Kko9nkKk80fRuKEARMpxsmGDHkQRX/E3bZCjDNhXlgpLu7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G57svMu4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D2BC4CEEB;
-	Mon,  9 Jun 2025 12:16:21 +0000 (UTC)
+	s=arc-20240116; t=1749471440; c=relaxed/simple;
+	bh=t4Ns67I0l9BtCEC5Z+RlqtdiVKUzKYkJXEsOKVCKcSA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hJE1L+ImElk9KBuDJ8NnNn1WGt5/cox9WaRcYARk2YSIutbdeQZXZMQ1sfFx7ddJfYuuVgtu4cp5VwUupk0CUZ4DpY5x8djJsDeLxAAz9ZkyKCOdd9Zac/eJyToC6XavLqAf1Uc1XsP/cYRLgfPc87xP1RLWgO5Q7Di5uUSHQ3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsbG24QB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D77C4CEEB;
+	Mon,  9 Jun 2025 12:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749471384;
-	bh=6Kag9Ku/q13qtFPk6HDqeKqGdosUpBqql0sD8SctYbE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G57svMu4nbKd4CGPIIngocdVOTrkAUN2YwFX8F7ErGjGJ8ZHbdF6YLpEBbRafVySE
-	 QJ28QcahJxmJViIkpS4bBaHTvuwzt4EQsONnjWd0J32GVZdWjf3ufqgYsb/Koy7qux
-	 qPEAdlhB6Js9aUsZV/Du0Jjsgo4PpFKlL4nWoKB07pwH9gSMvED+M7UM9u/ekH9mvE
-	 GjK326HVS2aWOc/Ar8Hp2dAU10K2/p6+5HoWQJcQ5FRrANjqh9By7gtenAkHKRXyLr
-	 XVkI5BvlbINBDQncumjMjY7oRtv653X32dLdSeYBCHTAtmCtuf/oklydofgageUk/w
-	 xRU+iG/mejHPQ==
-Date: Mon, 9 Jun 2025 13:16:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-Cc: alsa-devel@alsa-project.org, Vijendar.Mukunda@amd.com,
-	Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
-	syed.sabakareem@amd.com, mario.limonciello@amd.com,
-	yung-chuan.liao@linux.intel.com,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: amd: acp: Fix pointer assignments for
- snd_soc_acpi_mach structures
-Message-ID: <ea8fa344-0429-4dca-80a2-aa792128576d@sirena.org.uk>
-References: <20250609121251.639080-1-venkataprasad.potturu@amd.com>
+	s=k20201202; t=1749471438;
+	bh=t4Ns67I0l9BtCEC5Z+RlqtdiVKUzKYkJXEsOKVCKcSA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=HsbG24QBfXBTuMr8lpsMJuG4uQ0xCMCoQUtehIirPQ2QTlH54wiWjK6wC75m8K/ou
+	 ODZNYj+CIMgfO4+cvXersD6q2CxWhkJf+MZmTZ+IQ937I4ZG9sPGR6TF+sOTJQUKPB
+	 2C50zvZXfWzXxHlLNfEvbk5ggLKiHMAli8lcIEyEeG1bke55E9HLCRRZS+VryhzUyi
+	 n5S8N4cfIAm3AxBQIMelp9PpcyQZuda1bSjHmnQlpOu1qiBfJs2dc6+5/RTrBWx0fY
+	 mlRezWRKeibHRNqEQARHgB4M8QRbgn2UUdgq8gpcFp5zrmAyg4MR/m/9TrfwrhvDAc
+	 c0UMe3kkW4vjw==
+Message-ID: <8f2bf3aed5d7bd005adcdeaa51c02c7aa9ca14ba.camel@kernel.org>
+Subject: Re: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner
+	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever
+	 <chuck.lever@oracle.com>, Amir Goldstein <amir73il@gmail.com>, Jan Harkes
+	 <jaharkes@cs.cmu.edu>, David Howells <dhowells@redhat.com>, Tyler Hicks
+	 <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, Carlos Maiolino
+	 <cem@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, coda@cs.cmu.edu,
+ codalist@coda.cs.cmu.edu, 	linux-nfs@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 09 Jun 2025 08:17:15 -0400
+In-Reply-To: <20250608230952.20539-4-neil@brown.name>
+References: <20250608230952.20539-1-neil@brown.name>
+	 <20250608230952.20539-4-neil@brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HYjgf6wuR0aqqtNh"
-Content-Disposition: inline
-In-Reply-To: <20250609121251.639080-1-venkataprasad.potturu@amd.com>
-X-Cookie: Restaurant package, not for resale.
 
-
---HYjgf6wuR0aqqtNh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 09, 2025 at 05:42:32PM +0530, Venkata Prasad Potturu wrote:
-> This patch modifies the assignment of machine structure pointers in the
-> acp_pci_probe function. Previously, the machine pointers were assigned
-> using the address-of operator (&), which caused incompatibility issues
-> in type assignments.
+On Mon, 2025-06-09 at 09:09 +1000, NeilBrown wrote:
+> The code in coda_readdir() is nearly identical to iterate_dir().
+> Differences are:
+>  - iterate_dir() is killable
+>  - iterate_dir() adds permission checking and accessing notifications
 >=20
-> Additionally, the declarations of the machine arrays in amd.h have been
-> updated to reflect that they are indeed arrays (`[]`). The code is
-> further cleaned up by declaring the codec structures in
-> amd-acpi-mach.c as static, reflecting their intended usage.
+> I believe these are not harmful for coda so it is best to use
+> iterate_dir() directly.  This will allow locking changes without
+> touching the code in coda.
 >=20
-> error: symbol 'amp_rt1019' was not declared. Should it be static?
-> error: symbol 'amp_max' was not declared. Should it be static?
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/coda/dir.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/fs/coda/dir.c b/fs/coda/dir.c
+> index ab69d8f0cec2..ca9990017265 100644
+> --- a/fs/coda/dir.c
+> +++ b/fs/coda/dir.c
+> @@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, stru=
+ct dir_context *ctx)
+>  	cfi =3D coda_ftoc(coda_file);
+>  	host_file =3D cfi->cfi_container;
+> =20
+> -	if (host_file->f_op->iterate_shared) {
+> -		struct inode *host_inode =3D file_inode(host_file);
+> -		ret =3D -ENOENT;
+> -		if (!IS_DEADDIR(host_inode)) {
+> -			inode_lock_shared(host_inode);
+> -			ret =3D host_file->f_op->iterate_shared(host_file, ctx);
+> -			file_accessed(host_file);
+> -			inode_unlock_shared(host_inode);
+> -		}
+> +	ret =3D iterate_dir(host_file, ctx);
+> +	if (ret !=3D -ENOTDIR)
+>  		return ret;
+> -	}
+>  	/* Venus: we must read Venus dirents from a file */
+>  	return coda_venus_readdir(coda_file, ctx);
+>  }
 
-It's fine this time but these staticisiations should have been a
-separate commit since there's no overlap.
 
---HYjgf6wuR0aqqtNh
-Content-Type: application/pgp-signature; name="signature.asc"
+Is it already time for my annual ask of "Who the heck is using coda
+these days?" Anyway, this patch looks fine to me.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhG0JIACgkQJNaLcl1U
-h9Cbnwf+LTWqBSmB2IAuSm6C+Tsj8O1H9Sjadg20290UFCx8Xw5HsOaBhAcGHs4Y
-78jk6uWG6cPTWhqcC2gKp6PZIEkxL7tgQfuuHpsCkuaMXvmRt5v/tCGBUGDb8nkH
-o3+NGhmw/iZeRb7rsTKXez69JMd0sMjiVy/z63mV5YsSa5dWKkFGo6p8yIgkP8i/
-8oHNww9aPdRjT95ytzs/4QZjUYdq0LV79UXoMBy+TmmNwwMM4516fAzLNI6DRaw8
-oJAAwtcXdVUikL8NqtGBUruAov/QN7+IkrDNF//U8k1C4dRkCsb3+QsD0ppGRmjQ
-catCRSaVvm5EUuEyIpcpCfYdCE5mGA==
-=Ko9S
------END PGP SIGNATURE-----
-
---HYjgf6wuR0aqqtNh--
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
