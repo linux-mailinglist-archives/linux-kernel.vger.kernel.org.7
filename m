@@ -1,305 +1,258 @@
-Return-Path: <linux-kernel+bounces-678163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7A0AD24F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B263BAD24F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F2177A3646
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DD93A8A2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF8A21A426;
-	Mon,  9 Jun 2025 17:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2FB19F137;
+	Mon,  9 Jun 2025 17:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8i1ehvK"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L8jgiQPy";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wFH8kEWt"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5884A3C;
-	Mon,  9 Jun 2025 17:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749489874; cv=none; b=fe7xWe1gfEuLn47arU5jtFcSpCfZlrTDOYu970l6miLv7xoNsf1qLYgnbxRemRDjyPeg+PuxI6D8YVQzpMhW8e0U15cQj8AiYcxncej1/7EUQ8CdDJ7v3vQ49EioYuqfOJ85cfxH8zw7a8XI/NxevhuaDy+hrzdDnfcxjvpomKw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749489874; c=relaxed/simple;
-	bh=h6bj8cVdChPXIebQFRKMr2JXuU4E9lSx8FDSHkPf8wk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SCeMgzqcKciRVY1aU7JR1VszRaa33IMZMG5ozuoAgb4XvWsc8w9MjNDV3hgRj9NV5H4aLvddvHsgoTr5617YgNlxZ9LhXpfJUHjW4VeJ7/m3XpzrGuepvoD8f3VTxSKFn83T1RnATAVsmp0bHDnHQ7MImKJODbjEIHoMEhaB7iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8i1ehvK; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32ade3723adso33756051fa.0;
-        Mon, 09 Jun 2025 10:24:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE00A4A3C;
+	Mon,  9 Jun 2025 17:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749490020; cv=fail; b=YlPzf8VmIDItmPICN+ZC8PVuhVUFQMgMM5OJazSSmo5DYltWcu0YY7Q5uJ3qqGDhd4wGZTICM3+Hm8cwzbjuvuLA48BZg9xyERYUe0j4DPyXF0xzY9Q70Ut14bvf7qfLs23LRX5jYON7uAskON4/YZJDo58r/eLVqRSYu0uPhtU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749490020; c=relaxed/simple;
+	bh=n93ryYOZ4X5W+jNB7Y5OZYzg0zWRr/M6TYtZUanVbdY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=TwUrC7pxMq90oUZge1LOy0liVVIx2kXeu0j4T0LTj8fgV7NnW5k63x7pjf+6TuKZY+gpvy9MqMGL/ZBpfOGm81t2ogjX6/kIGlBj80j7fDIA1YcppJD4dZPFXRmpr1iupfT41W7G7H8AcMw900jYPyqt3usn3crneDxf8DQd/hU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=L8jgiQPy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wFH8kEWt; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559Fdioq005981;
+	Mon, 9 Jun 2025 17:26:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=n93ryYOZ4X5W+jNB7Y5OZYzg0zWRr/M6TYtZUanVbdY=; b=
+	L8jgiQPy1lUMKLbHi3GsNJHFRw8g9J6hV0c1eVx7deI1qmiQuRxQ1zeRj848pNys
+	XI0Im85x0aeT/j8jj5ZY61/YUR9HaYpO37+ViBeCuDPo6NN2ikKF7EO1YugbOVPL
+	lOXiQb7HlVkVWN7kOJH23ZKyMIYISn0g87Db/3io4WLn4FJLbZk6VMhbebgvZMIm
+	mFrykrpNkzqKGr0ghILjQUTzFI1CdSjdElRUR+xHgcEHhEokUFDPG9IOp2D2WVEc
+	WZMEFJP7OXQ29SeVrVaH9V8DtUlVJQsMzX6+ZekmmjSp8vHatXYWTivz683B3oyG
+	0vTksJJKg9Bdzk32BUDEew==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474dad2k3v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Jun 2025 17:26:38 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 559Fb497007427;
+	Mon, 9 Jun 2025 17:26:37 GMT
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazon11011039.outbound.protection.outlook.com [52.101.62.39])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv7f9x0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Jun 2025 17:26:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tzq7xK/p7YGKoagpJF2LDXvjFEWt7q0+fEKFlBlvpCm5ceB5gqU/FHIKBaDsV61AZNYlcpm14OAK3TUmFjwFp0S6O0CbygHN94eUAV6q1CHlR4Hh0nNQ4qheLkh0vm5pn6NDak8iSAQxwksI0X3ZEeYqp+EevYLjnLjbaGv/jifzdd3DLwICWiaRriQ7f1vwFxEXuVIEVihIxNberlDfqAA7ywrSOqSH1KoQ0khA2SJxG+oIUzZunQeKOSU3LFMwpNBa9CG1XH54AG1gfSecVWiF4G4XfiTu/dAnFrF0Yha+ymNEAsXtMs6M2QX+zqwiu7g+Vd0PZ7wF8PEv0IihmA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n93ryYOZ4X5W+jNB7Y5OZYzg0zWRr/M6TYtZUanVbdY=;
+ b=I2wrHNXnbExQGhBQ788tqbCFbHkWcMZ1Tl/zlmg7ajkn8ecJodCGKqDeuyoLjXiO1436i2E7CcD72P/t5T/ar0+igkUvBdSJ3SJDCeT3OE+neP8/cZR7pkwFP9RcEauRy4olGcw/ta4I/bNMwEF26NBcsqYbIpZzjJoZsxX3C/wr7mzjWF5fbbS/8lcFcMf9wJGb8HHLW0nFeO81O6nP6r9SptVgtVYc4M9lOeduR5T+F/jMy8gdgUgv/0Fl+r22YrL0QBH24a59gvXkx9K+ZplZoloZhlh213jSMz2m9C4h5ZZnG19Q3eGsIhG/pNy+LtJC4ejvVyhDUkLCqE4xjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749489871; x=1750094671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gS5h1Ie0tgERrl+nIzXO9eaCUYI3r/JKh27WNUnM0Dg=;
-        b=W8i1ehvKxHlvfrQQmBYjmLiPDLAwUtMItgtSUVyIkINxNKZvII8HN2Zh4iWdztFMR4
-         TAtj9d7+ymZTbBp9ENH0MB++kWTlqi4AEppXO2xMdMoaCmvoIB4hYrzrlrUX3Vms8lLk
-         FPiFyl0Yc5Qprm7W0aNRUIDaaC33vpfo2grJ+E99EBfmjq3QGvc62JsgBPtpsKBFvWGN
-         7+5u/qTYcd+OWvt2aKA7YKcoxhh+z5KLVUZ7b1Coww89N4iUgoNRGs4a7Jt0dFw/Vttz
-         J+mhhrgBvNt8ACwIVGv/NKY/3AB2Z/dMgrN3a3TYd5pR8X66kY6DCR0W5/8LuvdcJJHX
-         NKgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749489871; x=1750094671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gS5h1Ie0tgERrl+nIzXO9eaCUYI3r/JKh27WNUnM0Dg=;
-        b=ofhCPL+pkcqHE5Gd8ir7M2jYop/3XdHmWXeW5nrVwXZPhfnn5XleJ96dd2JwlIv6Ji
-         WUIMRXCupu35YN/1bkNWA5cm/oxNQ/Bpdnae7tP5uKfEmsGs6MnEzq2qYt5H8mFWHgXw
-         psFfW55698GWXbThphqeJAzUa8XxTsM37tKSZN9VBCf3NJX2pVjHquSgGlTVfA7jjcOL
-         Rizj+b0GTbtQd4Z0TA60MNYYghN2VLDfvQhBhITus3r1TwjxbtT0rKOCiv1kgKG4MCzC
-         hH5oZ6hMEciV01UaT4PEozfRhr+K2GLifSlQWppnNv040x6a+n7TWrjG77SXXk6y0M1v
-         Y8Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUa1xbW0snCdVMRfjrvVArm8uAcg9EOXDssHf7BvJBi7e79GiZKTqjQ1lJGDst9Z4cOSVmmSUR40lhY4I4=@vger.kernel.org, AJvYcCUcYkTfu3syAsC5TrHL01NJxM6Ajuslru4reGyURgR2HzwwMuCkzhiWm6N4fwod7+qKWts3sTz/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtpbRplpHqbp8bs5utssLXsbKVJliOBrG/hYdSyrjtsZ49gjac
-	iRT8tF9xBS1/wmUUG83DzyUc4R0bxA7UY+tR25KoJSfaKQPKJsoF2PPOFk+d4ov9g94tHoEeJVl
-	gr2cqE62p30CPJc21WxN8e2PgFuoVuj0=
-X-Gm-Gg: ASbGncu/f6JYihgL8u5UsBECy7htU/z0zFaxL1bYkrGRNxS/9q3BRAhfl3tH79fDvH9
-	8pKa/P7iw4/XQtetVN8hT0xoyfIbqbezS8UBBnWDsuPhOxMFme9Op3r8QTL1v/APY2iPf22oTVv
-	a+i5p9QE24d/lTjsSRwLdrw0TwmSb/F0Rd
-X-Google-Smtp-Source: AGHT+IGh0KA+fGHr2H+2Jp/BnYa7lpx49d2kmZmN36sDroN9zo1IL+JjcscoHWhhH3gN1YBNeSmz+MKNR3CsoRj1tQI=
-X-Received: by 2002:a2e:a595:0:b0:32a:6e20:7cdb with SMTP id
- 38308e7fff4ca-32adfcc5cd4mr29740751fa.17.1749489870182; Mon, 09 Jun 2025
- 10:24:30 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n93ryYOZ4X5W+jNB7Y5OZYzg0zWRr/M6TYtZUanVbdY=;
+ b=wFH8kEWtxSOESNtZ/tohZXzt/ZiMb2w3NcmR2C9FdYYR/xLbccXgmWCRFUgavEtQrqdBNy4d78yj70i9c5oV7sWbjyR5TEf9wx9PmouVHOE2vnQhy/Vr7YVdVy1t/xEPazB5KTN1LkrN/Xb2o37ACC95MvJ2ksmBa8IDxZhN/4A=
+Received: from CO6PR10MB5426.namprd10.prod.outlook.com (2603:10b6:5:35e::22)
+ by PH7PR10MB7783.namprd10.prod.outlook.com (2603:10b6:510:2ff::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.30; Mon, 9 Jun
+ 2025 17:26:35 +0000
+Received: from CO6PR10MB5426.namprd10.prod.outlook.com
+ ([fe80::7845:9ba4:7ad2:374]) by CO6PR10MB5426.namprd10.prod.outlook.com
+ ([fe80::7845:9ba4:7ad2:374%3]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
+ 17:26:35 +0000
+From: Miguel Luis <miguel.luis@oracle.com>
+To: Sebastian Ott <sebott@redhat.com>
+CC: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+        Colton Lewis <coltonlewis@google.com>,
+        Ricardo Koller <ricarkol@google.com>, Joey Gouly <joey.gouly@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>, Shuah Khan <shuah@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "kvmarm@lists.linux.dev"
+	<kvmarm@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v3 0/4] KVM: arm64: selftests: arch_timer_edge_cases fixes
+Thread-Topic: [PATCH v3 0/4] KVM: arm64: selftests: arch_timer_edge_cases
+ fixes
+Thread-Index: AQHb1gXQUi/kh5tGIUGVLYOISj2taLP7GzMA
+Date: Mon, 9 Jun 2025 17:26:35 +0000
+Message-ID: <B77F70F2-EECA-4E10-9F00-972F6AE27831@oracle.com>
+References: <20250605103613.14544-1-sebott@redhat.com>
+In-Reply-To: <20250605103613.14544-1-sebott@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO6PR10MB5426:EE_|PH7PR10MB7783:EE_
+x-ms-office365-filtering-correlation-id: 89107cdf-b582-4610-f7a1-08dda77ac8b1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?OU5BcnpOK2I3emt5dnpMbTRGSjdOQ2xCd3ZqeTA1T20zYU8rSFJiTlJ4TGVN?=
+ =?utf-8?B?aG0vOENmNGlMTndyTXpsZENEaVNvcExZd3orenFzNUY1bVc0QUdOYTFWNzli?=
+ =?utf-8?B?bDBUenpXS2hZRzBVQklCR2QwMWdneENEQ2E1WVlXdURVbjkyRXBzNHZLeDBS?=
+ =?utf-8?B?MjkydUEzNFBPQ2lpb0JINTRFWm1lZk5XcERacnVZL3Q3OEF5cExENTFIK3hV?=
+ =?utf-8?B?MnlhbVRZYjcyZEdWdHZLdUY1VWoxMlpJYjhaelAvdTBrREd6UHBKZE5yZ1hC?=
+ =?utf-8?B?UXBFY3d1WHhVTGtpM0o2MUdyWkhzczJYWlZwVXJoTEpBWGlHYlpDZGhvZE9j?=
+ =?utf-8?B?cCtkZVZ4eFpwN00rSzlOUE5JbXFoaTROeG5zSzZiNWFyTVdWcUFYdnVKVGRz?=
+ =?utf-8?B?UDdPMEtndmtHVmp3cGxJaFN3V3ExN0ZJd3kxSFc0Y2NDMHlmeG5oa2J3dmNF?=
+ =?utf-8?B?NEVhM01Bcnl0SzViaCs0WHBsRExGZ0VqRThwdmNVWUJEOUYvbjlTVnlXWGw5?=
+ =?utf-8?B?cXM2S2Rqa3NqVEx6YzUrdDlyck1hZldwSXBPdHJzbGt2NU9QV1hCUUZTRkNj?=
+ =?utf-8?B?TkE2bEtEQXllRU5sbnNwcWltRjVWTWU4OWNwU0E5TnVIcUUwUERuenY1TnE4?=
+ =?utf-8?B?UktXaDFER3pMaXBpRGcvL3h6dTUyRHRoWEluOTNQcnJYUEVPcEVPd3ZsOW9O?=
+ =?utf-8?B?UTg1YUdVMXFGY3lMcVVzOUx5ZE1QNUNKWXdidzVTTnJ5UHdXUUUxZE9tQi9n?=
+ =?utf-8?B?dlYrem03SE1PU2IvbUxUcWVRZngxZkV0U1lMaiticUFPcWNuVkVISjRabFpm?=
+ =?utf-8?B?NHN0bTlKUm1JaDJ0a0tBaG0zNUQ2Q2E1QitseDNZb0NEUUlVR0dGbUduWmtK?=
+ =?utf-8?B?UFlXQ29nK0d0dk1wVzBwcytZdDFhSlFxa3hHNHNYS0tDNGhMaExxZlZZaFVL?=
+ =?utf-8?B?K2tERzVKbkZSQjIxcVlkZFc3TFp1alRHakk5dk9sUWZnVmpGcjdhN0pDdUxo?=
+ =?utf-8?B?K1p4U1ZJYXBES2JhQ24vd2dsZHpBWTdFMGs1QjlPOE95TmEwVW9SNklnL3Zu?=
+ =?utf-8?B?VzMyNkRvbDlWVlV5dzNUL0dKNEo0bzEycWFIdGVlZldqRmY1Ym9qTUtzQUhV?=
+ =?utf-8?B?ZE1mSkZMMEFYS21Pem40a2M4cExGM0V4bkdLQURCcWU5YjAzcDZrTDZhekc4?=
+ =?utf-8?B?VFF1bENRVEI2dVJXdjlkcUg1UFRMd2V0eHdVQlJoYkxxdUpsNmZqUzRmM3V5?=
+ =?utf-8?B?Q1VydWNvYkNFR0c1QzAyZXkvOXhWcGdYVkdKaTMzMmpTY1ppd3hUQkswN2Mr?=
+ =?utf-8?B?OHpqWG1lM0ZGNHdYaU9nNEtzWnNITXZTa3c5NHU2Q3NmVlk2azJ3WnJjMGM3?=
+ =?utf-8?B?NkY4enhqMjZaYVlXT29QdTg1Qm9XUHFCQS9wWU11R2JPRDJ0UDZwenJkakta?=
+ =?utf-8?B?MmFobUpFZkFFYU93bzFieGlJZk1qQWFEeXZxa3hmWlRmOUNnMEVEaG9DZFdD?=
+ =?utf-8?B?MnJPQ2RlcnF0ZGJnM2hKRnNldkduVFV0dHd5TEh2YXRLdDhXZFYySWlxbTV1?=
+ =?utf-8?B?NVNMazNkck9vejlSZ05CY0ozNXo0SStoTmdIUVltZmZ0enFVT3F4ekF2bUUv?=
+ =?utf-8?B?aGJJTWlWTldKUlFXVDFmSlBONjFjcmlzb0ZvMUpabEZJa3IzT1A1MWgxZXpM?=
+ =?utf-8?B?emlNSW12VUhKNXcwZnF5emltZ2d5SGNma3BqT2ovdEt4UEJGeVBSc2pNcE92?=
+ =?utf-8?B?V3IzSHBDWWN1VDNsMkI0VjFuOGxwc2Rra3FMcExMc3gyWGdlUlZOakRRTzN2?=
+ =?utf-8?B?b2tMVVEwTVdLVlh4U1hubnhFQnZSaGZEUVFoQjdSOG5ERjdWUzk4dmtybzJM?=
+ =?utf-8?B?N2tyRmpUclRXc2ZmY3NHcW1YZUVpcFkxeXNUTlRLNWdJdWNtRUJySXFDd2tr?=
+ =?utf-8?B?eVZDYVh5cmk2NHZ5b21uM0xhSys5UkZNekh3YW4zdHpsVWw2MG85MU5RMm9U?=
+ =?utf-8?Q?EPAsnVM5P3gLFF0zMU8NCxB0XDgfUg=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5426.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YllUWlNzczJzZ1pCbnpOb2JlMGd5dVlvTFl5cHFwQzRJT21veFFqS1VPVEJu?=
+ =?utf-8?B?a20rSW5XRGQrNS9jTnR6c2JoT0cvVGg2VnJ2TUQrYlh5dEhhTWRGdnVuaGU2?=
+ =?utf-8?B?b004YWIzQWVLSzM2SER1amtyMzhYRUVLclJ6QWxnUXJZaG1OUUpPQmtFdXZS?=
+ =?utf-8?B?SFplREo0c3RhQTVOL1d5THBNTCtlYWFDd2JobFR2UnM2RWs3WVZiWmtQTlpF?=
+ =?utf-8?B?TGg5b1A1L2VTRjVPR1piUWtBYXZqdURoWWJiMFh3V3c1Ymt6WVVDMGlWMGEr?=
+ =?utf-8?B?eHdwUnVkZzZnZlpvbzgra1hFdFZmZVVscTZiWUZGTkZWQkRsVkxOVkpqUDBI?=
+ =?utf-8?B?bFpVMGxad3drREVGN0NVUjBnV2dvaEU0V0tna2RXc1JLajkyNVZrbHg3S1BM?=
+ =?utf-8?B?ZUlpajNtbHU2VHBsUjQ0MklqMjVuYXNEN0hIWUY1YXVFZzBsMVNiYitUN1po?=
+ =?utf-8?B?amxLUkVKUXBIanBwMXFTY25oZ3huRXdZdU1ybzJaVlFvZm5KaldQaVJQb3V4?=
+ =?utf-8?B?enZRZ3d2U1c1ZU1qNm9GOVpuSVJEZWtrUWdiWE5tYWNWWlNNUG8wcDVUZSth?=
+ =?utf-8?B?QjRodkhuUmxFb0dwU3lxY2oxTjJOZ0NtZUIzcHUyL3dOMnlhSWF2K0FYQXM0?=
+ =?utf-8?B?YXVwdDNDeTVNU3JwMmY2Qk81aklTNmRXVmM1aWxwaWRCQ20wS3ZMUmVIN1Bz?=
+ =?utf-8?B?Qnlhc2NsMFhhOTVDdWxLdWVNejhHQnZlaTU0aWhyM3JaSENDdWNOc1pVVkZk?=
+ =?utf-8?B?TE1oZVBXOGZJdCtUSXpsZDN4ZC9kb2NnZGFjZFcrc2N5dVMxVHVqQzVWZHVm?=
+ =?utf-8?B?emVzT2xSUnhKU29yYi85YWxZQ1JVMjVYTmVSUmJVRXR4Zis2OWc5akpsamJM?=
+ =?utf-8?B?Y0tGR3Jjd29rZk1DcTN3Rk1JcVgxaXJ3WG5ZcklCQXNmN1JQU21TS1lmOHFJ?=
+ =?utf-8?B?Vk9MZy9Lc1pIeXdxcEJDVXhHd1JnTURLMFdaVEFnVUV4NUNkQUt5VzZkdGtI?=
+ =?utf-8?B?c2dGVGZnUThuRjFrVzZWMjhtek5WdFhQYTFvQ0F6SUM0ZTMyVS9vTGU5TVdy?=
+ =?utf-8?B?aHZNU3FwWGRQTENTUVp5TTFjT0E0ZDhxQlo5aUNTNFNrTWJLNU9icE9LWTBQ?=
+ =?utf-8?B?NnVuVFVZZUxxazcrNHZsVnJUamRVK1ZEd21DTElENmVNQ2ZOMGVNOEl2T1li?=
+ =?utf-8?B?MHBvOFBGMkpORHFOUzd0b1N6VTZNbEQzMGM5am5LRnVTUGxqV25JZ0dVVXBG?=
+ =?utf-8?B?T05GdnZLNzE5V2pCQ25YMkNZQjJJTTZpUHFrVHR2Z2NUSkI3U2VUWjRSSS9s?=
+ =?utf-8?B?b0FLVkprZkZKYklKL3ZZcFFuUFFqcEN3bDRFN0ZCVG5SckRkYXUrd1F4azJv?=
+ =?utf-8?B?RXFzMkNKYmNqYS9sSzlRL0dTeXZuWEpCaktrY0VkSU9sdlNHa0pjc1FJczZN?=
+ =?utf-8?B?REFkRFZSbGFCaHpERytZUk5ZOUhUVEY5VVl1MngvaU5pV1ZBUG1WeWM3dXVm?=
+ =?utf-8?B?WGhYeHlRZUd3cTEvQ2tGVHZNNWJGdzg1ekdHVUxQQlJRdWZYZmc3UU5lZTE3?=
+ =?utf-8?B?aXhxRGhHUlNVV1oySDU5NGlsTzRqR1FUd3B4WkZmUWZzVzk5Z3h1SWVlSTJ0?=
+ =?utf-8?B?Q3pucVlxWGJwdTc0SzVNV2MwcFBYMEpFbHlvMDVCN3FTUlRzbWhFRFFmV05w?=
+ =?utf-8?B?eHNIcm1NRHVqNURKdUZFeFo3OU1OZmhQbEV0aEhwWEppdDdGeWZDbHFLdjJJ?=
+ =?utf-8?B?UWwvMjRPS2FURFNkMFhhTWUvU0dZYUl3QnJ3TW9JTE5Yem43NDRpUXIzNXIy?=
+ =?utf-8?B?bFlKQWsyRjI1d3hMd2tNUzNCZ285NzVlajdDWjh5bExxbWdLN0JTZDlKc2tS?=
+ =?utf-8?B?cXkzMVQxQjJXVTllYlF3VWptdkVENWwwbnhJT013SmFlT00zNzZodEl2L3Nj?=
+ =?utf-8?B?M2w3VzFjSFNmYjVVdXZvcFBSbGE5cXhWdFRqa3RncVJac0RiSE5Na3VZLzhR?=
+ =?utf-8?B?eEF2cy9HaktGa2VGUmUzMlpHZjV6WXZGZkFFRGwzOThScXc3MFJxaTF1Z0lT?=
+ =?utf-8?B?RUVNZzlDN21ZaDFwTlgwbEVUL0NMOExSRldtZVgyRHBSQVQ4QzFxVXUwbkYx?=
+ =?utf-8?B?WmIwRURBRGVBaGZKeTVuaEc2elRBbk5wZ212T1hpeklTQ2kzWGRDNVVzUEpF?=
+ =?utf-8?B?bWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7A6E9E92AA9D074DB8E37D87C28CB045@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609171751.36305-1-ryncsn@gmail.com>
-In-Reply-To: <20250609171751.36305-1-ryncsn@gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 10 Jun 2025 01:24:12 +0800
-X-Gm-Features: AX0GCFvXp8Z9b7xzJaO49rmXecnUchAIEdcdnv0ahpVgg0lak-hlmevqgvMLCEE
-Message-ID: <CAMgjq7C-71z3w1Tf2eMwLvpi2Nt5md8z43jtM4o_L35F82uCVA@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/shmem, swap: fix softlockup with mTHP swapin
-To: linux-mm@kvack.org, stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	Barry Song <baohua@kernel.org>, Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ZAV1Zs+bfdJuT15i5NWeMlhAIogx+mZMw+M7tUzGIXsgs2vpeSZGqWKXWHxtI40oaaU1X5ouZQKGb80GwDjLeksSpZ1Is9fx+dSd3c5SBgvGzHXp+Qe4dWXl4YT1ZFB0Me3nXXzZ4gDMq0ncEb4rYvlM8njimw4Tw52elp59p6B52bHWMq+wKTRYWr3dpIyJb2TLy5cb7VHxn+SiQTvrIgyVMedE5Q5QYs6xzpL+Xm014+uMZ3ki2uW+pqEeP2KSjAYIq3aGJXRziK1xOUCciIGe0bNDMiW/BECK82GCtRCiYL4pDhAJRsTqDe3xQR0ZHJ73bfhcTIxDkMy22M2DcA1/fn8aBjOt8yoylUsNJXQut5P8mWJfliF1S3bMdRjg0vtGPZRXmGDS6m6F1OrGjtebK1ievvdkt4VJbnu4mQWKcanQQc/d/4nWguRtSifABH36Om2mQYwiDlqCkDsVF1B++LLwGTvR8C1jJYr04PuDhlzmNyajOZv9qcs+rOtzmys2vm/209CPf5jlG/ZwiDbmbaVqe7yUAgbst/In8u86xet/FycoJAcpUEfO/IOoUin/lCvCOM3IHhOEcw9GGa4rX/UpYDyt1Uq7sW8lRCo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5426.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89107cdf-b582-4610-f7a1-08dda77ac8b1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2025 17:26:35.1104
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dFwdKvse80oC7jJXLBBs9KdwyMIM2RwWEYcyB9yhKZLon0pKVTHjitIYnYVSdmF0cROT2ZbR6IE04NqNyRQN7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7783
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_06,2025-06-09_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506090131
+X-Proofpoint-ORIG-GUID: zL3ox9r1y5OVi7ZGkfSjv78DOhN57XSc
+X-Authority-Analysis: v=2.4 cv=EJwG00ZC c=1 sm=1 tr=0 ts=6847194e cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=nQstowge16nhZK8uYrUA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDEzMSBTYWx0ZWRfX9qiiQJsl5xIw H3BLmN5bi3OrSaIMtCTz7jxxVKF55lr85Wsz2ykNDwZx20xlUO89GIaxspDTDX6r/5djWunjYZf tXMzFpR0b/T4r7V00l7Ww4Ew8NRNrlMGngAQbMeoAV5Z1XlbaMUohMDl1KtcNoj9Jq8agS6rmWw
+ 1SAeIUm8k9gHgTLvYQfhVwBqcRNMl1nYyfxOg/xBgcAzeJCCsqSqONLhAkiZE/g8RdpYUYFKIBJ e3Zq8O7ay9kEx63VM00qaxfzZr67KP0evwuHy/3G9Z3aoE2YY550McihXcSqmXQwj0OeWqtHUHd t87u0veGbz9GWykd4eJWSf20PbOnUbQrnnYeyjuf3uM21iVNWoBRvQLMJJ2VRrS/ilWXECXTiJh
+ ONz5z02QA6FDiu8bZtXJi9xcES85j+Lg2I7/VsNTxJU8OE7FRM9Rs4Yco4NKc2fOMbkB3d1e
+X-Proofpoint-GUID: zL3ox9r1y5OVi7ZGkfSjv78DOhN57XSc
 
-On Tue, Jun 10, 2025 at 1:18=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Following softlockup can be easily reproduced on my test machine with:
->
-> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
-> swapon /dev/zram0 # zram0 is a 48G swap device
-> mkdir -p /sys/fs/cgroup/memory/test
-> echo 1G > /sys/fs/cgroup/test/memory.max
-> echo $BASHPID > /sys/fs/cgroup/test/cgroup.procs
-> while true; do
->     dd if=3D/dev/zero of=3D/tmp/test.img bs=3D1M count=3D5120
->     cat /tmp/test.img > /dev/null
->     rm /tmp/test.img
-> done
->
-> Then after a while:
-> watchdog: BUG: soft lockup - CPU#0 stuck for 763s! [cat:5787]
-> Modules linked in: zram virtiofs
-> CPU: 0 UID: 0 PID: 5787 Comm: cat Kdump: loaded Tainted: G             L =
-     6.15.0.orig-gf3021d9246bc-dirty #118 PREEMPT(voluntary)=C2=B7
-> Tainted: [L]=3DSOFTLOCKUP
-> Hardware name: Red Hat KVM/RHEL-AV, BIOS 0.0.0 02/06/2015
-> RIP: 0010:mpol_shared_policy_lookup+0xd/0x70
-> Code: e9 b8 b4 ff ff 31 c0 c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 9=
-0 90 90 90 90 90 90 66 0f 1f 00 0f 1f 44 00 00 41 54 55 53 <48> 8b 1f 48 85=
- db 74 41 4c 8d 67 08 48 89 fb 48 89 f5 4c 89 e7 e8
-> RSP: 0018:ffffc90002b1fc28 EFLAGS: 00000202
-> RAX: 00000000001c20ca RBX: 0000000000724e1e RCX: 0000000000000001
-> RDX: ffff888118e214c8 RSI: 0000000000057d42 RDI: ffff888118e21518
-> RBP: 000000000002bec8 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000bf4 R11: 0000000000000000 R12: 0000000000000001
-> R13: 00000000001c20ca R14: 00000000001c20ca R15: 0000000000000000
-> FS:  00007f03f995c740(0000) GS:ffff88a07ad9a000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f03f98f1000 CR3: 0000000144626004 CR4: 0000000000770eb0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  shmem_alloc_folio+0x31/0xc0
->  shmem_swapin_folio+0x309/0xcf0
->  ? filemap_get_entry+0x117/0x1e0
->  ? xas_load+0xd/0xb0
->  ? filemap_get_entry+0x101/0x1e0
->  shmem_get_folio_gfp+0x2ed/0x5b0
->  shmem_file_read_iter+0x7f/0x2e0
->  vfs_read+0x252/0x330
->  ksys_read+0x68/0xf0
->  do_syscall_64+0x4c/0x1c0
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7f03f9a46991
-> Code: 00 48 8b 15 81 14 10 00 f7 d8 64 89 02 b8 ff ff ff ff eb bd e8 20 a=
-d 01 00 f3 0f 1e fa 80 3d 35 97 10 00 00 74 13 31 c0 0f 05 <48> 3d 00 f0 ff=
- ff 77 4f c3 66 0f 1f 44 00 00 55 48 89 e5 48 83 ec
-> RSP: 002b:00007fff3c52bd28 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 0000000000040000 RCX: 00007f03f9a46991
-> RDX: 0000000000040000 RSI: 00007f03f98ba000 RDI: 0000000000000003
-> RBP: 00007fff3c52bd50 R08: 0000000000000000 R09: 00007f03f9b9a380
-> R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000040000
-> R13: 00007f03f98ba000 R14: 0000000000000003 R15: 0000000000000000
->  </TASK>
->
-> The reason is simple, readahead brought some order 0 folio in swap
-> cache, and the swapin mTHP folio being allocated is in confict with it,
-> so swapcache_prepare fails and causes shmem_swap_alloc_folio to return
-> -EEXIST, and shmem simply retries again and again causing this loop.
->
-> Fix it by applying a similar fix for anon mTHP swapin.
->
-> The performance change is very slight, time of swapin 10g zero folios
-> with shmem (test for 12 times):
-> Before:  2.47s
-> After:   2.48s
->
-> Fixes: 1dd44c0af4fa1 ("mm: shmem: skip swapcache for swapin of synchronou=
-s swap device")
-> Signed-off-by: Kairui Song <kasong@tencent.com>
->
-> ---
->
-> V1: https://lore.kernel.org/linux-mm/20250608192713.95875-1-ryncsn@gmail.=
-com/
-> Updates:
-> - Move non_swapcache_batch check before swapcache_prepare, I was
->   expecting this could improve the performance, turns out it barely
->   helps and may even cause more overhead in some cases. [ Barry Song ]
-> - Remove zero map check, no need to do that for shmem [ Barry Song,
->   Baolin Wang ]
-> - Fix build bot error.
->
->  mm/memory.c | 20 --------------------
->  mm/shmem.c  |  4 +++-
->  mm/swap.h   | 23 +++++++++++++++++++++++
->  3 files changed, 26 insertions(+), 21 deletions(-)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 9ead7ab07e8e..3845ed068d74 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4313,26 +4313,6 @@ static struct folio *__alloc_swap_folio(struct vm_=
-fault *vmf)
->  }
->
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
-> -{
-> -       struct swap_info_struct *si =3D swp_swap_info(entry);
-> -       pgoff_t offset =3D swp_offset(entry);
-> -       int i;
-> -
-> -       /*
-> -        * While allocating a large folio and doing swap_read_folio, whic=
-h is
-> -        * the case the being faulted pte doesn't have swapcache. We need=
- to
-> -        * ensure all PTEs have no cache as well, otherwise, we might go =
-to
-> -        * swap devices while the content is in swapcache.
-> -        */
-> -       for (i =3D 0; i < max_nr; i++) {
-> -               if ((si->swap_map[offset + i] & SWAP_HAS_CACHE))
-> -                       return i;
-> -       }
-> -
-> -       return i;
-> -}
-> -
->  /*
->   * Check if the PTEs within a range are contiguous swap entries
->   * and have consistent swapcache, zeromap.
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 73182e904f9c..a4fdfbd086f1 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2256,6 +2256,7 @@ static int shmem_swapin_folio(struct inode *inode, =
-pgoff_t index,
->         folio =3D swap_cache_get_folio(swap, NULL, 0);
->         order =3D xa_get_order(&mapping->i_pages, index);
->         if (!folio) {
-> +               int nr_pages =3D 1 << order;
->                 bool fallback_order0 =3D false;
->
->                 /* Or update major stats only when swapin succeeds?? */
-> @@ -2271,7 +2272,8 @@ static int shmem_swapin_folio(struct inode *inode, =
-pgoff_t index,
->                  * to swapin order-0 folio, as well as for zswap case.
->                  */
->                 if (order > 0 && ((vma && unlikely(userfaultfd_armed(vma)=
-)) ||
-> -                                 !zswap_never_enabled()))
-> +                                 !zswap_never_enabled() ||
-> +                                 non_swapcache_batch(swap, nr_pages) !=
-=3D nr_pages))
->                         fallback_order0 =3D true;
->
->                 /* Skip swapcache for synchronous device. */
-> diff --git a/mm/swap.h b/mm/swap.h
-> index e87a0f19a0ee..911ad5ff0f89 100644
-> --- a/mm/swap.h
-> +++ b/mm/swap.h
-> @@ -108,6 +108,25 @@ static inline int swap_zeromap_batch(swp_entry_t ent=
-ry, int max_nr,
->                 return find_next_bit(sis->zeromap, end, start) - start;
->  }
->
-> +static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
-> +{
-> +       struct swap_info_struct *si =3D swp_swap_info(entry);
-> +       pgoff_t offset =3D swp_offset(entry);
-> +       int i;
-> +
-> +       /*
-> +        * While allocating a large folio and doing mTHP swapin, we need =
-to
-> +        * ensure all entries are not cached, otherwise, the mTHP folio w=
-ill
-> +        * be in conflict with the folio in swap cache.
-> +        */
-> +       for (i =3D 0; i < max_nr; i++) {
-> +               if ((si->swap_map[offset + i] & SWAP_HAS_CACHE))
-> +                       return i;
-> +       }
-> +
-> +       return i;
-> +}
-> +
->  #else /* CONFIG_SWAP */
->  struct swap_iocb;
->  static inline void swap_read_folio(struct folio *folio, struct swap_iocb=
- **plug)
-> @@ -202,6 +221,10 @@ static inline int swap_zeromap_batch(swp_entry_t ent=
-ry, int max_nr,
->         return 0;
->  }
->
-> +static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
-> +{
-> +       return 0;
-> +}
->  #endif /* CONFIG_SWAP */
->
->  /**
-> --
-> 2.49.0
->
-
-I really should Cc stable for this, sorry I forgot it.
-
-Cc: stable@vger.kernel.org # 6.14
+SGkgU2ViYXN0aWFuLA0KDQpUaGFua3MgaW4gYWR2YW5jZS4NCg0KPiBPbiA1IEp1biAyMDI1LCBh
+dCAxMDozNiwgU2ViYXN0aWFuIE90dCA8c2Vib3R0QHJlZGhhdC5jb20+IHdyb3RlOg0KPiANCj4g
+U29tZSBzbWFsbCBmaXhlcyBmb3IgYXJjaF90aW1lcl9lZGdlX2Nhc2VzIHRoYXQgSSBzdHVtYmxl
+ZCB1cG9uDQo+IHdoaWxlIGRlYnVnZ2luZyBmYWlsdXJlcyBmb3IgdGhpcyBzZWxmdGVzdCBvbiBh
+bXBlcmUtb25lLg0KPiANCg0KSeKAmXZlIHRlc3RlZCB0aGlzIHRlc3QgdW5kZXIgdGhyZWUgY2ly
+Y3Vtc3RhbmNlczoNCg0KMSkgT3JpZ2luYWwgKCFIQVNfRUwyICYmICFIQVNfRUwyX0UySDApDQoN
+CjIpIEhBU19FTDIgJiYgSEFTX0VMMl9FMkgwDQoNCjMpIEhBU19FTDIgJiYgIUhBU19FTDJfRTJI
+MA0KDQoNClRlc3RzIDEpIGFuZCAyKSByZXR1cm5lZCBpbiBhcHByb3guIHRoZSBzYW1lIGFtb3Vu
+dCBvZiByZWFsIHRpbWUgKGFib3V0IDEycykgYWx0aG91Z2ggMykgZG9lc27igJl0DQpzZWVtIHRv
+IHJldHVybiBhdCBhbGwuDQoNCknigJl2ZSB0ZXN0ZWQgaXQgb24gYW1wZXJlLW9uZS4NCg0KTWln
+dWVsDQoNCj4gQ2hhbmdlcyBzaW5jZSB2MToNCj4gKiBkZXRlcm1pbmUgZWZmZWN0aXZlIGNvdW50
+ZXIgd2lkdGggYmFzZWQgb24gc3VnZ2VzdGlvbnMgZnJvbSBNYXJjDQo+IENoYW5nZXMgc2luY2Ug
+djI6DQo+ICogbmV3IHBhdGNoIHRvIGZpeCB4dmFsIGluaXRpYWxpemF0aW9uDQo+IA0KPiBJJ3Zl
+IGRvbmUgdGVzdHMgd2l0aCB0aGlzIG9uIHZhcmlvdXMgbWFjaGluZXMgLSBubyBpc3N1ZXMgZHVy
+aW5nDQo+IHNldmVyYWwgaHVuZHJlZHMgb2YgdGVzdCBydW5zLg0KPiANCj4gdjE6IGh0dHBzOi8v
+bG9yZS5rZXJuZWwub3JnL2t2bWFybS8yMDI1MDUwOTE0MzMxMi4zNDIyNC0xLXNlYm90dEByZWRo
+YXQuY29tLw0KPiB2MjogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcva3ZtYXJtLzIwMjUwNTI3MTQy
+NDM0LjI1MjA5LTEtc2Vib3R0QHJlZGhhdC5jb20vDQo+IA0KPiBTZWJhc3RpYW4gT3R0ICg0KToN
+Cj4gIEtWTTogYXJtNjQ6IHNlbGZ0ZXN0czogZml4IGhlbHAgdGV4dCBmb3IgYXJjaF90aW1lcl9l
+ZGdlX2Nhc2VzDQo+ICBLVk06IGFybTY0OiBzZWxmdGVzdHM6IGZpeCB0aHJlYWQgbWlncmF0aW9u
+IGluIGFyY2hfdGltZXJfZWRnZV9jYXNlcw0KPiAgS1ZNOiBhcm02NDogc2VsZnRlc3RzOiBhcmNo
+X3RpbWVyX2VkZ2VfY2FzZXMgLSBmaXggeHZhbCBpbml0DQo+ICBLVk06IGFybTY0OiBzZWxmdGVz
+dHM6IGFyY2hfdGltZXJfZWRnZV9jYXNlcyAtIGRldGVybWluZSBlZmZlY3RpdmUgY291bnRlciB3
+aWR0aA0KPiANCj4gLi4uL2t2bS9hcm02NC9hcmNoX3RpbWVyX2VkZ2VfY2FzZXMuYyAgICAgICAg
+IHwgMzkgKysrKysrKysrKysrLS0tLS0tLQ0KPiAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9u
+cygrKSwgMTQgZGVsZXRpb25zKC0pDQo+IA0KPiANCj4gYmFzZS1jb21taXQ6IDBmZjQxZGYxY2Iy
+NjhmYzY5ZTcwM2EwOGE1N2VlMTRhZTk2N2QwY2ENCj4gLS0gDQo+IDIuNDkuMA0KPiANCj4gDQoN
+Cg==
 
