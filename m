@@ -1,84 +1,55 @@
-Return-Path: <linux-kernel+bounces-677281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0877AD18AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA57AD18AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D30DC1660C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317B1188A110
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE9A28030B;
-	Mon,  9 Jun 2025 06:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804FB280305;
+	Mon,  9 Jun 2025 06:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6zdAB+j"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6D525487D;
-	Mon,  9 Jun 2025 06:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="afp0TTIs"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A86C2AD14
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 06:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749451362; cv=none; b=QmY0H+DTptfPvvMD4IVrw7UQmswTqhHIl4ikXHrR2NEjF9b4F6vl6pRvfj7hwU82OPBBBY6eJSCKRGQdh592yUARaOcsyu2jZI5Y6E1CdpJIX+jS0ecI9XFXMvq6fG3Dk9o1yle8abnzX2EkRoliUtBgajvmM8oeasju6k37Ujs=
+	t=1749451500; cv=none; b=ZsqcCmFJbDyJjJ0LoL42LZIXJ+yPMNwARQ+SzcS7ZyqOZNxvmgNP4PgmBwu8BXhVQODN0dMIkgvp+pHQU87tUBNbBWHr2fBXBfrZjZHKCApCR/a5RwM9VPkwLWSMftxTNJo/1GHpQ/hIt7F+pUPwF1bfaPQ2kvB04sHSvrid35E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749451362; c=relaxed/simple;
-	bh=2XdTmYQJi0Dve/gohPb33702aqfKwBa5HtvprFQQu1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uxxfO8nNA7izsiZuIn3Bi4H1sT0kdRdkj6SPLVoAoCkz+6yyzA1btLXXBzcPEMBHmZoEtf2W0RgnMewaJc7q3tptm70+GXEp8j802x2HONBPqn0ZCwjE4CqU2w4OHQsksG7fM6wvJZ4JQPdOfHIrSjJCQEiH1MddSX5ALELrA0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6zdAB+j; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad51ba0af48so946977966b.0;
-        Sun, 08 Jun 2025 23:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749451359; x=1750056159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZeBBqy6v2UZFNklROzVxIjgbTRxIdySSihaP3aLIF5A=;
-        b=i6zdAB+jx7FD+QfjT2TkRlg6uKhzyk4ZQJlk7nQwv7nSy7NaOF332zVbdCB8YP1qxz
-         k8MKEX0Eg/qOwXSZGwoSSXk7jg2JHhmGiHgGMoxc8kLDXdC1rsgzX1qafnkFqQj/VY3e
-         lWPW51N4MsR47MnJ/9Cl2rm5iKxhRa+qx1mw9l7dJJou3igLW87EOgEXLZf+55ke4bc5
-         2Wv6Nrb1lORz2yXc1rcdfctXw9s8WXvcqHlOzu2gH4avcBZlkC83gxiymd4hMo1LsGHr
-         xyQPxXn3c877nBH1WQEMJL9CR6OYGSpLmuDAHpewm8anOuY6wt5lj14XtfxqqwS15F/f
-         PgKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749451359; x=1750056159;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZeBBqy6v2UZFNklROzVxIjgbTRxIdySSihaP3aLIF5A=;
-        b=aJSwk87C23DPKXp3Ksj84P0to8B+5o+IuILHK/6UAOMGUn7yl+XJCb/4auIL1qqTTx
-         4pXZo0n/usPZjGjUfbPq+BEjJxSi7dmL7YmCYUQnM7ulmSlPm+RK956f4nvpw4CNmPIb
-         /E0MM8e0q1OnAoQtFOzbzjaw/jPPGxfAs9IYkcJaTudKe7TEVkGE30KY7+RpJrfc0QCw
-         2PoEgtAKPHRKPwhVQfoNjbjMwEsBgOrChSIwd4mvwcp79rau7tTxfV62Knm5WnPCoJty
-         02T559mH+XMStemryCoZjdpo4GfYL940nfuBLscbJ6wCtS47sEq1tPhBLpo5LmhKAXSe
-         0eHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU97IgrAaB214Ox16sj4mNnf6qPkUyOU+qcVC5OU5MWeGqGrCERFf+s7SWqHTL7aXuWUSUtyEd+A6aPswY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM5ztLmiiDb832iqgNcD4tYcgUyXhk/7Hc9m/drpJrWWsuZJIT
-	mQ9tt6eWSfhU3eixnIp6ZfpMB4QkGmizywhyT3d5vvjxhxNTwtMRXP4ol4WQwg==
-X-Gm-Gg: ASbGncsADCgJQMv0M6W3UfW5TrcGZp7IzKdMB1aa2eIXCVHMfMGg6nQn3uEMFwN/nrj
-	+dHrNyXs2wbt2SwR5UKnSByXQMJogxoyVwYLC01IoM/kiO3tzLfZpgbooGgKhmINXvwLHW0ibDU
-	Ph86CKJD+WMANZMhCL2MVs6g6Fv6GU4prRmtAZM3ZtqKliOGHjWYtbGzKNhUGal7XrSS1319+dC
-	3/AA9KS+Na3fzpwdSRwAEz9KPtr0oAD+LbAPl4VugYOG2DorZSfD87jcu1U6gmJwNTL79xwj3/Z
-	/V/FtsbcZUMTiQe0ufG4B4C+ASX9hQLnyNIhK7NVuKSnPr3Vcswy+yQLEg23YF4S
-X-Google-Smtp-Source: AGHT+IFmOMa/7gbKwA455ikZjHXKCcGC8wUocGzkIVxvO6+ix8dguCuIMmEGRWk+GFKZEBELG6zNXg==
-X-Received: by 2002:a17:906:ef0a:b0:add:fb1c:a9c3 with SMTP id a640c23a62f3a-ade1aaad9cbmr1108343666b.28.1749451358859;
-        Sun, 08 Jun 2025 23:42:38 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d754896sm502881266b.36.2025.06.08.23.42.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 23:42:38 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Subject: [PATCH] ACPI: acpi_pad: Update arguments of mwait_idle_with_hints()
-Date: Mon,  9 Jun 2025 08:42:06 +0200
-Message-ID: <20250609064235.49146-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1749451500; c=relaxed/simple;
+	bh=wE2j26rQsWzCV/CI9aX5cBigniSM7EhhkFPbJ9xwQe4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TnM3AbDVK6SklyjbONxlrGX1KhNDl/nFIvhWv37eHYOsa5ksPaXsIsvXH7SkzqC0ASgDmJk7yysdGrChU3TTPVCAPx/Hzc4ghc33znYSmUfw3Ue1/Rf6TXTgfoqdY0oRLMz/hVv2gjt1o7eIOH+W4NfJdrINyLmx5DRM7xpsE0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=afp0TTIs; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Nt
+	vTdpGq4cK/AGPSUfzlsigYkbELU/HQBy1Zz8L3loY=; b=afp0TTIsYo/kz/OwpR
+	bg4Ie2kGRk40jWlHDiARVLTDFc6EqGxLEc6kk6hE+z88S/rmpZDm1e4JHDCzwYxq
+	+KkDW83S2OBGdoZlVFheH3wqmFcOux50xI0nvoWv7cV3+ad78pBcR+e6dIxMljx/
+	Et3MBwZCG59oYK4+FYebo62NQ=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDnV8S5gkZo60cLHQ--.18568S4;
+	Mon, 09 Jun 2025 14:44:17 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: surenb@google.com
+Cc: tim.c.chen@linux.intel.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH v3 2/2] alloc_tag: keep codetag iterator active between read()
+Date: Mon,  9 Jun 2025 14:44:08 +0800
+Message-Id: <20250609064408.112783-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <CAJuCfpE670s5=QAbuqCLB3XuOkfL=L44r93cwJdrhHn=bYNd-Q@mail.gmail.com>
+References: <CAJuCfpE670s5=QAbuqCLB3XuOkfL=L44r93cwJdrhHn=bYNd-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,33 +57,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnV8S5gkZo60cLHQ--.18568S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFWUWw1UXF18ZrWDXF47Jwb_yoWruw1fpa
+	13ua4YkF4rJr1UuF4rJw4IgFW5tw1kta18XF42qr4SvFn0vrs8uF98Jryj9Fy3AFy8Kan0
+	va90k34UJr9rZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p__-BDUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqBpnqmhGgbUsJgAAsv
 
-Commit a17b37a3f416 ("x86/idle: Change arguments of mwait_idle_with_hints() to u32")
-changed the type of arguments of mwait_idle_with_hints() from unsigned
-long to u32. Change the type of variables in the call to
-mwait_idle_with_hints() to unsigned int to follow the change.
+When reading /proc/allocinfo, for each read syscall, seq_file would
+invoke start/stop callbacks. In start callback, a memory is alloced
+to store iterator and the iterator would start from beginning to
+walk linearly to current read position.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>
+seq_file read() takes at most 4096 bytes, even if read with a larger
+user space buffer, meaning read out all of /proc/allocinfo, tens of read
+syscalls are needed. For example, a 306036 bytes allocinfo files need
+76 reads:
+
+ $ sudo cat /proc/allocinfo  | wc
+    3964   16678  306036
+ $ sudo strace -T -e read cat /proc/allocinfo
+ ...
+ read(3, "        4096        1 arch/x86/k"..., 131072) = 4063 <0.000062>
+ ...
+ read(3, "           0        0 sound/core"..., 131072) = 4021 <0.000150>
+ ...
+For those n=3964 lines, each read takes about m=3964/76=52 lines,
+since iterator restart from beginning for each read(),
+it would move forward
+   m  steps on 1st read
+ 2*m  steps on 2nd read
+ 3*m  steps on 3rd read
+ ...
+   n  steps on last read
+As read() along, those linear seek steps make read() calls slower and
+slower.  Adding those up, codetag iterator moves about O(n*n/m) steps,
+making data structure traversal take significant part of the whole reading.
+Profiling when stress reading /proc/allocinfo confirms it:
+
+ vfs_read(99.959% 1677299/1677995)
+     proc_reg_read_iter(99.856% 1674881/1677299)
+         seq_read_iter(99.959% 1674191/1674881)
+             allocinfo_start(75.664% 1266755/1674191)
+                 codetag_next_ct(79.217% 1003487/1266755)  <---
+                 srso_return_thunk(1.264% 16011/1266755)
+                 __kmalloc_cache_noprof(0.102% 1296/1266755)
+                 ...
+             allocinfo_show(21.287% 356378/1674191)
+             allocinfo_next(1.530% 25621/1674191)
+codetag_next_ct() takes major part.
+
+A private data alloced at open() time can be used to carry iterator
+alive across read() calls, and avoid the memory allocation and
+iterator reset for each read(). This way, only O(1) memory allocation
+and O(n) steps iterating, and `time` shows performance improvement
+from ~7ms to ~4ms.
+Profiling with the change:
+
+ vfs_read(99.865% 1581073/1583214)
+     proc_reg_read_iter(99.485% 1572934/1581073)
+         seq_read_iter(99.846% 1570519/1572934)
+             allocinfo_show(87.428% 1373074/1570519)
+                 seq_buf_printf(83.695% 1149196/1373074)
+                 seq_buf_putc(1.917% 26321/1373074)
+                 _find_next_bit(1.531% 21023/1373074)
+                 ...
+                 codetag_to_text(0.490% 6727/1373074)
+                 ...
+             allocinfo_next(6.275% 98543/1570519)
+             ...
+             allocinfo_start(0.369% 5790/1570519)
+             ...
+Now seq_buf_printf() takes major part.
+
+Signed-off-by: David Wang <00107082@163.com>
 ---
- drivers/acpi/acpi_pad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v2:
+Rebase to 6.16-rc1, resolve conflicts.
+---
+ lib/alloc_tag.c | 29 ++++++++++-------------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
-index 6f8bbe1247a5..c9a0bcaba2e4 100644
---- a/drivers/acpi/acpi_pad.c
-+++ b/drivers/acpi/acpi_pad.c
-@@ -33,7 +33,7 @@
- static DEFINE_MUTEX(isolated_cpus_lock);
- static DEFINE_MUTEX(round_robin_lock);
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index d48b80f3f007..ac7e50b41b6a 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -45,21 +45,16 @@ struct allocinfo_private {
+ static void *allocinfo_start(struct seq_file *m, loff_t *pos)
+ {
+ 	struct allocinfo_private *priv;
+-	struct codetag *ct;
+ 	loff_t node = *pos;
  
--static unsigned long power_saving_mwait_eax;
-+static unsigned int power_saving_mwait_eax;
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	m->private = priv;
+-	if (!priv)
+-		return NULL;
+-
+-	priv->print_header = (node == 0);
++	priv = (struct allocinfo_private *)m->private;
+ 	codetag_lock_module_list(alloc_tag_cttype, true);
+-	priv->iter = codetag_get_ct_iter(alloc_tag_cttype);
+-	while ((ct = codetag_next_ct(&priv->iter)) != NULL && node)
+-		node--;
+-
+-	return ct ? priv : NULL;
++	if (node == 0) {
++		priv->print_header = true;
++		priv->iter = codetag_get_ct_iter(alloc_tag_cttype);
++		codetag_next_ct(&priv->iter);
++	}
++	return priv->iter.ct ? priv : NULL;
+ }
  
- static unsigned char tsc_detected_unstable;
- static unsigned char tsc_marked_unstable;
+ static void *allocinfo_next(struct seq_file *m, void *arg, loff_t *pos)
+@@ -76,12 +71,7 @@ static void *allocinfo_next(struct seq_file *m, void *arg, loff_t *pos)
+ 
+ static void allocinfo_stop(struct seq_file *m, void *arg)
+ {
+-	struct allocinfo_private *priv = (struct allocinfo_private *)m->private;
+-
+-	if (priv) {
+-		codetag_lock_module_list(alloc_tag_cttype, false);
+-		kfree(priv);
+-	}
++	codetag_lock_module_list(alloc_tag_cttype, false);
+ }
+ 
+ static void print_allocinfo_header(struct seq_buf *buf)
+@@ -811,7 +801,8 @@ static int __init alloc_tag_init(void)
+ 		return 0;
+ 	}
+ 
+-	if (!proc_create_seq(ALLOCINFO_FILE_NAME, 0400, NULL, &allocinfo_seq_op)) {
++	if (!proc_create_seq_private(ALLOCINFO_FILE_NAME, 0400, NULL, &allocinfo_seq_op,
++				     sizeof(struct allocinfo_private), NULL)) {
+ 		pr_err("Failed to create %s file\n", ALLOCINFO_FILE_NAME);
+ 		shutdown_mem_profiling(false);
+ 		return -ENOMEM;
 -- 
-2.49.0
+2.39.2
 
 
