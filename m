@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-677428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377C0AD1A74
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74223AD1A70
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76331886416
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1771D1888C3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0DD251795;
-	Mon,  9 Jun 2025 09:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BE82522A2;
+	Mon,  9 Jun 2025 09:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dphPm5Ve";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1jkqvrzD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dphPm5Ve";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1jkqvrzD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FI5xKMr1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="f2xe4kLd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FI5xKMr1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="f2xe4kLd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C3925178A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 09:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35C22512D1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 09:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749460959; cv=none; b=sr87Q+4s7EfF4iOnkEw/7rrEJ1Qi7dNP2kgJSeO6so1/QVOCwn+BfH7536jGAegYE1a6weY9/Swv2NLoGFCgGAbG+Q0as8FCPB+qzdIYI12xny7E9rDVGBrFmoYICMyhbOhhefsfrgzPTzJm4sjW54K+UpAyexWA5P2+xyozVNA=
+	t=1749460938; cv=none; b=JgVcJuIGMLLaenOF/eNW1wDBP0nsggQvECFpbjKNYN2nbnWjINCPMZgs6GiQ6msKUhKlM5fGzmAO2WSVUxmzOI499y7x56dcBpZ/WZbLZElKxcxq8kBhhJUbAhJmKxvzK19kislsPIhYUal9pMody57uO7mqpHNmXypC9/SibmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749460959; c=relaxed/simple;
-	bh=aDHZGCoJiHyp3jxl4K0MZaDrD0CZIIq0FYEsnaGQJXA=;
+	s=arc-20240116; t=1749460938; c=relaxed/simple;
+	bh=NpeCk/V7ZJT9DnClrRCw74KEKLlav5Whx9GB8qZR4Yg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cog54AElAyKODjMpHUVZG8rHzh16/pxuwdjRKGroeDRuOhO0xXPL0cAjjamfPV695L3ZNRbD8Fcw8I8QV8tufBIdisv9DNbinQcIwwEKPxyTKmn4aDVaeYt3elWBTILMIeFcFkwXPeEhB1M81zUM+pIYJC+F3uj1awYr29ZwTTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dphPm5Ve; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1jkqvrzD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dphPm5Ve; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1jkqvrzD; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=nPLrOzKZj2PsyQujBC4ThtyteDJoQkVD0S4WJcZAdKpvNsj8G/H9kYT1+qTQld+0BI7nMp3d+jyYiPbpw5nfrQXcV42NSWVefChbVV1G2bdYP4V3CXc+uxIiC5qAKIJ5S/FF05Pq3Yojtw29+hUgfKBpTxkdW53SKZCJiQCYNcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FI5xKMr1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=f2xe4kLd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FI5xKMr1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=f2xe4kLd; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ABB35211A8;
-	Mon,  9 Jun 2025 09:22:04 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 633BC1F458;
+	Mon,  9 Jun 2025 09:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749460924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1749460925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=irK4Xm+Xq2AmoeMvzYUf2UTVfjZ7E7Dj7dx6W2eeCT8=;
-	b=dphPm5VeHY++2TNbYBnilhg6njbfqa6FHMqbgSg1xpdwBUf7yXnjbPBMp6c1JCyoCAu0O9
-	kILPQjcb0x/K9PpyJbvwMpTK5zdfVLklVKyChu3IJEM8SQVWURpiAcq/7ohs0sORb7eU3o
-	5oJcsKQEM2TA/UltSrbO4FrFS93ibhM=
+	bh=4Wb8BVZ4TFRrjZdkLso+L1NavvczMsY6uusB63S+JT0=;
+	b=FI5xKMr1xYLxgE4S1BTNS6vMqN3WLmHt2i0nrMNQuxnk59HdB6WvgJBjX9uI58jIcztpOP
+	dyTiWbUIoa2zaBEM4HJjhty2dD2D8xTQ61aH22M+aO7/1MMvcqNfq69oTAMsap8lXBfk0f
+	4g7WkX8p+8gpz/FMOnMMTBUBbQ80N88=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749460924;
+	s=susede2_ed25519; t=1749460925;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=irK4Xm+Xq2AmoeMvzYUf2UTVfjZ7E7Dj7dx6W2eeCT8=;
-	b=1jkqvrzDvuOglOaoFZSqYiU/nILIxh8DCvyJDChiMNgacWNTS+qlI924Pc0b+4SJyEdK6V
-	oiHduuIG6MlByoAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dphPm5Ve;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1jkqvrzD
+	bh=4Wb8BVZ4TFRrjZdkLso+L1NavvczMsY6uusB63S+JT0=;
+	b=f2xe4kLdUWQkjPO8c/xeO3qboObVxciI+KZG3raozSNzrqZ5p6IsLPki2srVbdivkut8Jm
+	djLYh8jepCiJEOCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749460924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1749460925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=irK4Xm+Xq2AmoeMvzYUf2UTVfjZ7E7Dj7dx6W2eeCT8=;
-	b=dphPm5VeHY++2TNbYBnilhg6njbfqa6FHMqbgSg1xpdwBUf7yXnjbPBMp6c1JCyoCAu0O9
-	kILPQjcb0x/K9PpyJbvwMpTK5zdfVLklVKyChu3IJEM8SQVWURpiAcq/7ohs0sORb7eU3o
-	5oJcsKQEM2TA/UltSrbO4FrFS93ibhM=
+	bh=4Wb8BVZ4TFRrjZdkLso+L1NavvczMsY6uusB63S+JT0=;
+	b=FI5xKMr1xYLxgE4S1BTNS6vMqN3WLmHt2i0nrMNQuxnk59HdB6WvgJBjX9uI58jIcztpOP
+	dyTiWbUIoa2zaBEM4HJjhty2dD2D8xTQ61aH22M+aO7/1MMvcqNfq69oTAMsap8lXBfk0f
+	4g7WkX8p+8gpz/FMOnMMTBUBbQ80N88=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749460924;
+	s=susede2_ed25519; t=1749460925;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=irK4Xm+Xq2AmoeMvzYUf2UTVfjZ7E7Dj7dx6W2eeCT8=;
-	b=1jkqvrzDvuOglOaoFZSqYiU/nILIxh8DCvyJDChiMNgacWNTS+qlI924Pc0b+4SJyEdK6V
-	oiHduuIG6MlByoAA==
+	bh=4Wb8BVZ4TFRrjZdkLso+L1NavvczMsY6uusB63S+JT0=;
+	b=f2xe4kLdUWQkjPO8c/xeO3qboObVxciI+KZG3raozSNzrqZ5p6IsLPki2srVbdivkut8Jm
+	djLYh8jepCiJEOCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 15E26137FE;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF96213A85;
 	Mon,  9 Jun 2025 09:22:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +OW6ArynRmjJGAAAD6G6ig
+	id 8HgBLLynRmjJGAAAD6G6ig
 	(envelope-from <osalvador@suse.de>); Mon, 09 Jun 2025 09:22:04 +0000
 From: Oscar Salvador <osalvador@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>
@@ -100,9 +99,9 @@ Cc: David Hildenbrand <david@redhat.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v6 06/10] drivers,cxl: Use node-notifier instead of memory-notifier
-Date: Mon,  9 Jun 2025 11:21:43 +0200
-Message-ID: <20250609092149.312114-7-osalvador@suse.de>
+Subject: [PATCH v6 07/10] drivers,hmat: Use node-notifier instead of memory-notifier
+Date: Mon,  9 Jun 2025 11:21:44 +0200
+Message-ID: <20250609092149.312114-8-osalvador@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250609092149.312114-1-osalvador@suse.de>
 References: <20250609092149.312114-1-osalvador@suse.de>
@@ -113,49 +112,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.51 / 50.00];
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FREEMAIL_CC(0.00)[redhat.com,suse.cz,huawei.com,oracle.com,sk.com,gmail.com,kvack.org,vger.kernel.org,suse.de];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[to_ip_from(RL13d73xi3shrbuzu7ftfs459h)];
 	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLsc83pr41xu6y1i6mw9yajrf5)];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com]
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: ABB35211A8
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -1.51
 
-memory-tier is only concerned when a numa node changes its memory state,
+hmat driver is only concerned when a numa node changes its memory state,
 specifically when a numa node with memory comes into play for the first
-time, because it needs to get its performance attributes to build a proper
-demotion chain.
+time, because it will register the memory_targets belonging to that numa
+node.
 So stop using the memory notifier and use the new numa node notifer
 instead.
 
@@ -164,75 +153,36 @@ Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- drivers/cxl/core/region.c | 16 ++++++++--------
- drivers/cxl/cxl.h         |  4 ++--
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/acpi/numa/hmat.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index c3f4dc244df7..261e07302ca4 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -2432,12 +2432,12 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
- 					  unsigned long action, void *arg)
+diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+index 9d9052258e92..4958301f5417 100644
+--- a/drivers/acpi/numa/hmat.c
++++ b/drivers/acpi/numa/hmat.c
+@@ -962,10 +962,10 @@ static int hmat_callback(struct notifier_block *self,
+ 			 unsigned long action, void *arg)
  {
- 	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
--					       memory_notifier);
+ 	struct memory_target *target;
 -	struct memory_notify *mnb = arg;
--	int nid = mnb->status_change_nid;
-+					       node_notifier);
+-	int pxm, nid = mnb->status_change_nid;
 +	struct node_notify *nn = arg;
-+	int nid = nn->nid;
- 	int region_nid;
++	int pxm, nid = nn->nid;
  
 -	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
 +	if (action != NODE_ADDED_FIRST_MEMORY)
- 		return NOTIFY_DONE;
+ 		return NOTIFY_OK;
  
- 	/*
-@@ -3484,7 +3484,7 @@ static void shutdown_notifiers(void *_cxlr)
- {
- 	struct cxl_region *cxlr = _cxlr;
+ 	pxm = node_to_pxm(nid);
+@@ -1118,7 +1118,7 @@ static __init int hmat_init(void)
+ 	hmat_register_targets();
  
--	unregister_memory_notifier(&cxlr->memory_notifier);
-+	unregister_node_notifier(&cxlr->node_notifier);
- 	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
- }
+ 	/* Keep the table and structures if the notifier may use them */
+-	if (hotplug_memory_notifier(hmat_callback, HMAT_CALLBACK_PRI))
++	if (hotplug_node_notifier(hmat_callback, HMAT_CALLBACK_PRI))
+ 		goto out_put;
  
-@@ -3523,9 +3523,9 @@ static int cxl_region_probe(struct device *dev)
- 	if (rc)
- 		return rc;
- 
--	cxlr->memory_notifier.notifier_call = cxl_region_perf_attrs_callback;
--	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
--	register_memory_notifier(&cxlr->memory_notifier);
-+	cxlr->node_notifier.notifier_call = cxl_region_perf_attrs_callback;
-+	cxlr->node_notifier.priority = CXL_CALLBACK_PRI;
-+	register_node_notifier(&cxlr->node_notifier);
- 
- 	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
- 	cxlr->adist_notifier.priority = 100;
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index a9ab46eb0610..48ac02dee881 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -513,7 +513,7 @@ enum cxl_partition_mode {
-  * @flags: Region state flags
-  * @params: active + config params for the region
-  * @coord: QoS access coordinates for the region
-- * @memory_notifier: notifier for setting the access coordinates to node
-+ * @node_notifier: notifier for setting the access coordinates to node
-  * @adist_notifier: notifier for calculating the abstract distance of node
-  */
- struct cxl_region {
-@@ -526,7 +526,7 @@ struct cxl_region {
- 	unsigned long flags;
- 	struct cxl_region_params params;
- 	struct access_coordinate coord[ACCESS_COORDINATE_MAX];
--	struct notifier_block memory_notifier;
-+	struct notifier_block node_notifier;
- 	struct notifier_block adist_notifier;
- };
- 
+ 	if (!hmat_set_default_dram_perf())
 -- 
 2.49.0
 
