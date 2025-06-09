@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-677373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2242AD19DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:33:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54932AD19DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E88E97A1DE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BDA63A9974
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EE024DD11;
-	Mon,  9 Jun 2025 08:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GOoEi8dn"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFFB20C469;
+	Mon,  9 Jun 2025 08:35:24 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81966210F5D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F5513B58B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749457980; cv=none; b=rk5eR759E4GOxIS0m0ZrhGUIA7Dh4qsYDrSpjOWfCR8JVmDL2OhobA4hISoQQbbWF9fYFLzMAXwprZNNPHAcabZFnsmOEgmevqDuejkKD9E4yC/L5koiaXN/cZx5b+LABwUY0nWhfHkxzC/rAXh2Lpt/5c27B3ClLzojGI7EZ6Q=
+	t=1749458123; cv=none; b=F/1Cgx4Pf/ckymUEUNJO9jAU8GlgT3zfWAwkgkOGysy8o9TsWQ0U7Gl3tUskfHvgd2pi+/sZcn1p9QdNGLiuojLcHwDJSNkXqmW7KIBjjw5u9O0Tw5G8kCU6hBgL6fEJzjhD7Go/RWYPGQVALOrsdbkLz5wHizN1DYHvLly53rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749457980; c=relaxed/simple;
-	bh=YvbeRS0CNwTQZDVWn3o5Ny73fqKXWOdsBfUGNRzl0Jw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ZgF37sC3LA2MMZotrpe0hgzdWrnXAJe4Pavua/8j/afSw5qpv/xCci4Ggn4FTEVMuwEH2aZ3YK41cT5p5WJapur6skTQRjkJTNodm6KFYd8Fr5rVLn2kyXEQvPJ9twZ2uZkEvdCCQS5OiTOFvkCx7DWHWC25aFLAx+5hi2NZrU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GOoEi8dn; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250609083255epoutp02f45c5ceabd58325adfac7423791d8ae5~HUsJ1KqGg0385803858epoutp02h
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:32:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250609083255epoutp02f45c5ceabd58325adfac7423791d8ae5~HUsJ1KqGg0385803858epoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749457975;
-	bh=raYhcpxvaUZ+U3DFFXokA1FxIAXMkZbDHQQsHnlKWKI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=GOoEi8dngFVNeJONQ9mfq/T09fwR7WYEGOMbyQK+/rtoK0dGisjvx6pEr8hFVh6At
-	 ZfK9QzcjKwu+ZraOf0+tatFdzdLep5bvLjWdCBJlcycDJocNu+xUafHoNDqc2Y42Vu
-	 xv6kbPMU863HBsH29OktGcSRHPjWjLGG+hVYZ8j0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250609083254epcas5p4582a8ece71f15b0d09c96fde109aabc7~HUsJBovem0515605156epcas5p49;
-	Mon,  9 Jun 2025 08:32:54 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bG4tX4gGSz6B9m9; Mon,  9 Jun
-	2025 08:32:52 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250609083251epcas5p1380bd5ffe9b5b91f776a1c7f48b317df~HUsGa3UxF3208532085epcas5p1d;
-	Mon,  9 Jun 2025 08:32:51 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250609083249epsmtip1185a8a7cdb024a1a522bad1061beae6f~HUsEApVOx2620026200epsmtip1X;
-	Mon,  9 Jun 2025 08:32:49 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<sunyeal.hong@samsung.com>, <shin.son@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<chandan.vn@samsung.com>, <karthik.sun@samsung.com>,
-	<dev.tailor@samsung.com>
-In-Reply-To: <20250529112640.1646740-5-raghav.s@samsung.com>
-Subject: RE: [PATCH v3 4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock
- DT nodes
-Date: Mon, 9 Jun 2025 14:02:47 +0530
-Message-ID: <047901dbd919$16a39270$43eab750$@samsung.com>
+	s=arc-20240116; t=1749458123; c=relaxed/simple;
+	bh=jnqIPgvRATxnHw8EUp2b9+O3+XSfTcQ7H972nxHNt0g=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ayiTkgPu4nU8iR1Zgl9+Wo0UWULrLVWwStKVhV7LnE/8oyrhtIm812MsLNCZKv52ejJQ11rsUawZRt9IqXZGB70ey6ni+0cang2cLmz6IJj3jbjnh2own/Suz6UJ3vhCa/aJTj81Cwziixx7SRAiBHUrq7s3B/p5JDC4YeyJmc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bG4rQ4GPbzRk5X;
+	Mon,  9 Jun 2025 16:31:02 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id DC5201402DA;
+	Mon,  9 Jun 2025 16:35:14 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Jun 2025 16:35:10 +0800
+Received: from [10.173.125.236] (10.173.125.236) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Jun 2025 16:35:09 +0800
+Subject: Re: [syzbot] [mm?] kernel BUG in try_to_unmap_one (2)
+To: Jinjiang Tu <tujinjiang@huawei.com>, David Hildenbrand <david@redhat.com>
+References: <68412d57.050a0220.2461cf.000e.GAE@google.com>
+ <4fc2c008-2384-4d94-b1bf-f0a076585a4a@redhat.com>
+ <fda7a3e3-1711-4f1b-a0bb-6a4369aa80ab@redhat.com>
+ <b9a43f6d-1865-4074-b91c-a5bd7e10f2a9@redhat.com>
+ <d1e1896b-8685-fd7c-d17d-f4328939b96f@huawei.com>
+ <02fd89c3-d0f9-412c-8f31-d343803c0982@redhat.com>
+ <3c56a8ba-235b-3fe9-d988-dd750bc0feaa@huawei.com>
+CC: syzbot <syzbot+3b220254df55d8ca8a61@syzkaller.appspotmail.com>,
+	<Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>,
+	<harry.yoo@oracle.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<lorenzo.stoakes@oracle.com>, <riel@surriel.com>,
+	<syzkaller-bugs@googlegroups.com>, <vbabka@suse.cz>, Jens Axboe
+	<axboe@kernel.dk>, Catalin Marinas <catalin.marinas@arm.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <0eb768f1-03fc-7cfd-6e1b-594f76a830b3@huawei.com>
+Date: Mon, 9 Jun 2025 16:35:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRyuXPQglR2pg1tLiplohNF2WAzQHWb0Q+AhHSDDezb1SDcA==
-Content-Language: en-us
-X-CMS-MailID: 20250609083251epcas5p1380bd5ffe9b5b91f776a1c7f48b317df
-X-Msg-Generator: CA
+In-Reply-To: <3c56a8ba-235b-3fe9-d988-dd750bc0feaa@huawei.com>
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef
-References: <20250529112640.1646740-1-raghav.s@samsung.com>
-	<CGME20250529111718epcas5p4572d6aa7ae959b585b658d5a94f2b4ef@epcas5p4.samsung.com>
-	<20250529112640.1646740-5-raghav.s@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-Hi Raghav
-
-> -----Original Message-----
-> From: Raghav Sharma <raghav.s@samsung.com>
-> Sent: Thursday, May 29, 2025 4:57 PM
-> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; conor+dt@kernel.org; richardcochran@gmail.com;
-> sunyeal.hong@samsung.com; shin.son@samsung.com
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; netdev@vger.kernel.org;
-> chandan.vn@samsung.com; karthik.sun@samsung.com;
-> dev.tailor@samsung.com; Raghav Sharma <raghav.s@samsung.com>
-> Subject: [PATCH v3 4/4] arm64: dts: exynosautov920: add CMU_HSI2 clock DT
-> nodes
+On 2025/6/7 9:29, Jinjiang Tu wrote:
 > 
-> Add required dt node for CMU_HSI2 block, which provides clocks to ufs and
-> ethernet IPs
+> 在 2025/6/6 15:56, David Hildenbrand 写道:
+>> On 05.06.25 09:18, Jinjiang Tu wrote:
+>>>
+>>> 在 2025/6/5 14:37, David Hildenbrand 写道:
+>>>> On 05.06.25 08:27, David Hildenbrand wrote:
+>>>>> On 05.06.25 08:11, David Hildenbrand wrote:
+>>>>>> On 05.06.25 07:38, syzbot wrote:
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> syzbot found the following issue on:
+>>>>>>>
+>>>>>>> HEAD commit:    d7fa1af5b33e Merge branch 'for-next/core' into
+>>>>>>> for-kernelci
+>>>>>>
+>>>>>> Hmmm, another very odd page-table mapping related problem on that tree
+>>>>>> found on arm64 only:
+>>>>>
+>>>>> In this particular reproducer we seem to be having MADV_HUGEPAGE and
+>>>>> io_uring_setup() be racing with MADV_HWPOISON, MADV_PAGEOUT and
+>>>>> io_uring_register(IORING_REGISTER_BUFFERS).
+>>>>>
+>>>>> I assume the issue is related to MADV_HWPOISON, MADV_PAGEOUT and
+>>>>> io_uring_register racing, only. I suspect MADV_HWPOISON is trying to
+>>>>> split a THP, while MADV_PAGEOUT tries paging it out.
+>>>>>
+>>>>> IORING_REGISTER_BUFFERS ends up in
+>>>>> io_sqe_buffers_register->io_sqe_buffer_register where we GUP-fast and
+>>>>> try coalescing buffers.
+>>>>>
+>>>>> And something about THPs is not particularly happy :)
+>>>>>
+>>>>
+>>>> Not sure if realted to io_uring.
+>>>>
+>>>> unmap_poisoned_folio() calls try_to_unmap() without TTU_SPLIT_HUGE_PMD.
+>>>>
+>>>> When called from memory_failure(), we make sure to never call it on a
+>>>> large folio: WARN_ON(folio_test_large(folio));
+>>>>
+>>>> However, from shrink_folio_list() we might call unmap_poisoned_folio()
+>>>> on a large folio, which doesn't work if it is still PMD-mapped. Maybe
+>>>> passing TTU_SPLIT_HUGE_PMD would fix it.
+>>>>
+>>> TTU_SPLIT_HUGE_PMD only converts the PMD-mapped THP to PTE-mapped THP, and may trigger the below WARN_ON_ONCE in try_to_unmap_one.
+>>>
+>>>     if (PageHWPoison(subpage) && (flags & TTU_HWPOISON)) {
+>>>         ...
+>>>     } else if (likely(pte_present(pteval)) && pte_unused(pteval) &&
+>>>         !userfaultfd_armed(vma)) {
+>>>          ....
+>>>     } else if (folio_test_anon(folio)) {
+>>>         swp_entry_t entry = page_swap_entry(subpage);
+>>>         pte_t swp_pte;
+>>>         /*
+>>>          * Store the swap location in the pte.
+>>>          * See handle_pte_fault() ...
+>>>         */
+>>>         if (unlikely(folio_test_swapbacked(folio) !=
+>>>             folio_test_swapcache(folio))) {
+>>>             WARN_ON_ONCE(1);          // here. if the subpage isn't hwposioned, and we hasn't call add_to_swap() for the THP
+>>>             goto walk_abort;
+>>>          }
+>>
+>> This makes me wonder if we should start splitting up try_to_unmap(), to handle the individual cases more cleanly at some point ...
+>>
+>> Maybe for now something like:
+>>
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index b91a33fb6c694..995486a3ff4d2 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -1566,6 +1566,14 @@ int unmap_poisoned_folio(struct folio *folio, unsigned long pfn, bool must_kill)
+>>         enum ttu_flags ttu = TTU_IGNORE_MLOCK | TTU_SYNC | TTU_HWPOISON;
+>>         struct address_space *mapping;
+>>
+>> +       /*
+>> +        * try_to_unmap() cannot deal with some subpages of an anon folio
+>> +        * not being hwpoisoned: we cannot unmap them without swap.
+>> +        */
+>> +       if (folio_test_large(folio) && !folio_test_hugetlb(folio) &&
+>> +           folio_test_anon(folio) && !folio_test_swapcache(folio))
+>> +               return -EBUSY;
+>> +
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> ---
-
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->  arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 17
-> +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> If the THP is in swapcache, we also have to split PMD-mapped to PTE-mapped first.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> index 2cb8041c8a9f..7890373f5da0 100644
-> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-> @@ -1048,6 +1048,23 @@ pinctrl_hsi1: pinctrl@16450000 {
->  			interrupts = <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>;
->  		};
+>> if (folio_test_swapcache(folio)) {
+>>                 pr_err("%#lx: keeping poisoned page in swap cache\n", pfn);
+>>                 ttu &= ~TTU_HWPOISON;
+>>
+>>
+>>
+>>>
+>>> If we want to unmap in shrink_folio_list, we have to try_to_split_thp_page() like memory_failure(). But it't too complicated, maybe just skip the
+>>> hwpoisoned folio is enough? If the folio is accessed again, memory_failure will be trigerred again and kill the accessing process since the folio
+>>> has be hwpoisoned.
+>>
+>>
+>> Maybe we should try splitting in there? But staring at shrink_folio_list(), not that easy.
+>>
+>> We could return -E2BIG and let the caller try splitting, to then retry.
 > 
-> +		cmu_hsi2: clock-controller@16b00000 {
-> +			compatible = "samsung,exynosautov920-cmu-hsi2";
-> +			reg = <0x16b00000 0x8000>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&xtcxo>,
-> +				 <&cmu_top DOUT_CLKCMU_HSI2_NOC>,
-> +				 <&cmu_top
-> DOUT_CLKCMU_HSI2_NOC_UFS>,
-> +				 <&cmu_top
-> DOUT_CLKCMU_HSI2_UFS_EMBD>,
-> +				 <&cmu_top
-> DOUT_CLKCMU_HSI2_ETHERNET>;
-> +			clock-names = "oscclk",
-> +				      "noc",
-> +				      "ufs",
-> +				      "embd",
-> +				      "ethernet";
-> +		};
-> +
->  		pinctrl_hsi2: pinctrl@16c10000 {
->  			compatible = "samsung,exynosautov920-pinctrl";
->  			reg = <0x16c10000 0x10000>;
-> --
-> 2.34.1
+> Since UCE is rare in real world, and could race with any subsystem, which is more race. Taking too much time to handle UCE in other subsystem is
+> meaningless and complicated. Just skipping is enough. memory_failure() will handle it if the UCE is trigerred again.
 
+IMHO, unmap_poisoned_folio() is designed for basic pages only, not for large folios. And above race should be really rare in real world,
+so it might be better to ignore large folios in unmap_poisoned_folio() and memory_failure will handle all of these when UCE is re-triggered.
 
+Thanks both.
+.
 
