@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-677627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED90AD1CCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A341AD1D1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED383A22DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26ED1188DF71
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE33253B42;
-	Mon,  9 Jun 2025 12:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791D12561BB;
+	Mon,  9 Jun 2025 12:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfSgQNGa"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ljoFAD+3"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E37382;
-	Mon,  9 Jun 2025 12:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0061E98FB;
+	Mon,  9 Jun 2025 12:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749470559; cv=none; b=FAekalHaiDplBXE2uWIUsYEBekHOxzPaJpeoIuqlGNTTt26BVZiRXCUsFsjrxs0pIuaRAn7uES7zra4c4+jLgbHCw69XaWgDe7aS6Dlquya7Jx3+JMfxOsQN4VgOEOBuZ2yZ7Z/v99jT6bGKn/6NUE9LW9dAIolCET8TiKZ86Yw=
+	t=1749471767; cv=none; b=nVF3PFJRcaQVNpyO4jkpM3KQZc2BOFf6CxApvIdGdQmeI0jWlg9m4ytgMuD484u+rJM2YVAz4GSJvDdZdtQ6mnmTBKsiV7LBZckL37wQX69wZRkvSDffFY4DmiehRjj3wGmpaI6k1VA/5/Y4ppVXff4zHcBlSpp3gAMrDPGkpgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749470559; c=relaxed/simple;
-	bh=hUI/7vtyq7Bx1Dgc9vhQlu8w98j7gJVUQLJ+EYtLyqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X3YmQM54WerpmT+C+d6ixOPRkRfrzg6G5FbjSXQgUVauL2l59AD+jnIfs+4a0YzrySXyePpIG/rPJwt5vBGzPHprxrwUcAUx+B3l8Uz2G6aZCmJaTzd+dhtyxud56GfkPnPgBvBTtm6F+RUxZm/zxhO26LwlkDZW8N25grIFTGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfSgQNGa; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-879d2e419b9so3524043a12.2;
-        Mon, 09 Jun 2025 05:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749470556; x=1750075356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gfd3Li4EbMS7Htafu1RturGqSahq6wn8ijbS0IChQm0=;
-        b=XfSgQNGaDxeDong58Vk3XLFt44wmsnZiKZCwUgHzn87RTgqtuli1GIj4OiunT7jiSE
-         5Mj63b13F01gCkWxKdefsAigWjhA6S4Vs2jijrXyltg12XK0QNFVugurOgbDGJ2+R9fJ
-         6vMradn5ikyCL7JooaFpBPIzjh8bd3u+UXgJ67QnoX5rFE8bRRDOuL4zu9pqHeVcbqve
-         6t0S6ImoLGkjMliGhO5QYUe43uH6/y4SV8ku/TaGdF4e92RAdRNsJN+gtP7inMEPGQ0j
-         tdIdM/jZeLgjUrtugduq5by7KsVpL49iDKnr6PhwM2owVFcoT3YDHxtYEOqWzAfdupsg
-         5qzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749470556; x=1750075356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gfd3Li4EbMS7Htafu1RturGqSahq6wn8ijbS0IChQm0=;
-        b=Nbq0q+J83PEb3c4apOQfEO1SzbkbNngDWxyq4k4lof6CHEeh1C006yRtC5XPogF1ri
-         X1us9lTMgHg3IgXLnL3E/0JMa5oUgizsPdeXjHTPXNZEIcv3BGwszRdYFGsoNYBIt+8M
-         gnhDNQIkf5pyofrHd32Guuk85P/XfxFeEx90GQGeTuWhvvAfCepM6lHI2JpPcwwg0/4V
-         /31+6Q3DVhPPBSKLZ1HjSYDIt+0R01W/OJkFSNX0w9OEAsiDpXqrrELoNITyjpV/f3BP
-         6BGthwBES7/bCsfRzJuc9tDnnPCO3tAzJHCInFDMBvMBoN4bkAlxFw46Tm3uH3BsmPHz
-         HRSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqnQyHItYikdR0QDwQqI6cxwiqFcac0+fD53vw+EV/FfdubaL9MivgIvrI3vzE8zX0GlUGbXACq0m0V5U=@vger.kernel.org, AJvYcCW05NDKijoFkrshK5bQQj3ZO3l3xBRnF3tbDCEaWRc7Nnomp/zpwGqzDW3vKBzTfsCPmCyfABvS/v4HqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjSCQmUTYPVl3jq+qZLLg0+MjAm8sOh8cYugoJiEYRpZljWTSB
-	ZH5++vVYRav9WDSBQHSD9aeCgVpYEVtUJ5ghbsqVdMHSAb4feFEoZxxRFEVBT6El1TQ=
-X-Gm-Gg: ASbGncuSTu9mnULrScw+0uLC1pwPog/NOXDFDpltxqqQ07bmNAMnLX7kyMIjr/ftGhB
-	C14FK8DD0wZmpHkptSzbb9zez7UM/xobjP9RP4gz56Ks565pj830xbZDlROlrnwOiU9ECSGET4O
-	1W4X1vLL9Add86FAppYe2+FhMWmGFkLKFRfYMcrKPSmwlt0VJ1nLH0Ae/T8NShc4lURr4b+c1zn
-	+LcGxMRIxTvBmDre5KWOJ4BUr33EqcLaBDtV6hjA4KKzTivPt7ksEfqv2WVKGnz16VMZ4z8azMl
-	qvy+rltj3iyZAp9N5qgf6f2nMjQjV7B5xc0My5fpqokrq1LN+XXGf+zEx7x+rfNxAPua1asnAtr
-	nhVIa788=
-X-Google-Smtp-Source: AGHT+IEL7tIHavCXzwAN3npH/Dc4rjqnXrWw/qvTQbZU2xqJ8J9G8DBDEoGT8ZllwA5A3oPN7XrgPQ==
-X-Received: by 2002:a17:90b:3b46:b0:312:29e:9ed5 with SMTP id 98e67ed59e1d1-3134705cdc1mr15610180a91.23.1749470556327;
-        Mon, 09 Jun 2025 05:02:36 -0700 (PDT)
-Received: from localhost.localdomain ([103.169.92.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349fdf5adsm5524780a91.34.2025.06.09.05.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 05:02:36 -0700 (PDT)
-From: Wang Jinchao <wangjinchao600@gmail.com>
-To: Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>
-Cc: Wang Jinchao <wangjinchao600@gmail.com>,
-	linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] md/raid1: Fix use-after-free in reshape pool wait queue
-Date: Mon,  9 Jun 2025 20:01:33 +0800
-Message-ID: <20250609120155.204802-1-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749471767; c=relaxed/simple;
+	bh=6l8ZTjY0d0DnRF5BA8fJMCrXwBY8OOHKBBbx8rUjqyc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A7fHjBpyHlk3FfU+d7dKThH6hi9B0WZ69ZemQTIMuTKM5x3BuVvTH8+ZSh+pTU7aJJjO+s1Bea22wkh7bLvz8fWJrQm/+NcudtIrafe7R8OSYyRcL4hnbk/rmWgReB6xxCkp7YnfIpWBpOi5naZIMGjr0NVfKr9cz6pK+ckZjgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ljoFAD+3; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 95E9E58052E;
+	Mon,  9 Jun 2025 12:02:51 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A901243280;
+	Mon,  9 Jun 2025 12:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749470564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hfNgM/UwK9Bgs6Z72i34/JIUtkeJLfZjGuO9+tnxnH0=;
+	b=ljoFAD+30tSZSx407+2w+YNK1fKSnD3cdTADkIFdznx6Rt/JlyhivF0fVhvp2IPAfRttnx
+	4XMFp8fcOrGTdM/valSvUkptmZH4+/E2gWu6M10YK2vX7bQztIc+WLyMJjhBMe/mMH8FwC
+	BcyNvFdPsVHWLxxArDn+0i5sVArRnHEfsr3Sm23MyzqZoTBme1lzWFHSSQsZd5YY4Owr6a
+	rZ4nlIJ1ye7QGZ4cEonhqEZvyVzZ/OiSCkLu6xJdgzSLwdI3wH1u0KlQbnTC39B/lasPAP
+	CHLZ/MpJy/VFzNgHfqV/3+T1Z4pBc9FBIqErUz5FBSawySGjltulFdGgXedaeQ==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Mon, 09 Jun 2025 14:02:34 +0200
+Subject: [PATCH v3] arm64: dts: imx8qm: add system controller watchdog
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250609-imx8qm-watchdog-v3-1-5c22618606c8@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAFnNRmgC/2XNQQ6CMBCF4auQrq1ppwXBlfcwLkpbYBKh2pKKI
+ dzdghsNy/8l881MgvVoAzlnM/E2YkA3pBCHjOhODa2laFITYJAzYIJiP5XPnr7UqDvjWlqXohB
+ CQinBknT18LbBaROvt9QdhtH59/Yg8nX9WpKddlbklFFgGnhV87wxcKmdG+84HLXryapF+BG43
+ AuQBCkrKHJVGSXtv7AsywcuBI9e8gAAAA==
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Oliver Graute <oliver.graute@kococonnector.com>, 
+ Frank Li <Frank.Li@nxp.com>, Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiveefueeiveffvedvfeetvdfhkeeuudefkeeuffefgfekudelheeiffduveeikeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgdphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopefhrhgrnhhkrdfnihesnhigphdrtghomhdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnv
+ ghlrdhorhhgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpthhtohepfihimheslhhinhhugidqfigrthgthhguohhgrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thomas.richard@bootlin.com
 
-During raid1 reshape operations, a use-after-free can occur in the mempool
-wait queue when r1bio_pool->curr_nr drops below min_nr. This happens
-because:
+Add system controller watchdog support for i.MX8QM.
 
-1. mempool_init() initializes wait queue head on stack
-2. The stack-allocated wait queue is copied to conf->r1bio_pool through
-   structure assignment
-3. wake_up() on this invalid wait queue causes panic when accessing the
-   stack memory that no longer exists
-
-Fix this by properly reinitializing the mempool's wait queue using
-init_waitqueue_head(), ensuring the wait queue structure remains valid
-throughout the reshape operation.
-
-Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
+Acked-by: Oliver Graute <oliver.graute@kococonnector.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
- drivers/md/raid1.c | 1 +
- 1 file changed, 1 insertion(+)
+Third version of this series. I just rebased it on v6.16-rc1, dropped the
+binding patch (already applied upstream) and took RB/AB tags for the
+devicetree patch.
+---
+Changes in v3:
+- all: rebase on v6.16-rc1
+- bindings: remove patch
+- devicetree: take "Acked-by: Oliver Graute <oliver.graute@kococonnector.com>"
+- devicetree: take "Reviewed-by: Frank Li <Frank.Li@nxp.com>"
+- Link to v2: https://lore.kernel.org/r/20250414-imx8qm-watchdog-v2-0-449265a9da4e@bootlin.com
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 19c5a0ce5a40..fd4ce2a4136f 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3428,6 +3428,7 @@ static int raid1_reshape(struct mddev *mddev)
- 	/* ok, everything is stopped */
- 	oldpool = conf->r1bio_pool;
- 	conf->r1bio_pool = newpool;
-+	init_waitqueue_head(&conf->r1bio_pool.wait);
+Changes in v2:
+- bindings: take "Acked-by: Rob Herring (Arm) <robh@kernel.org>"
+- bindings: take "Reviewed-by: Frank Li <Frank.Li@nxp.com>"
+- devicetree: move the watchdog node just after thermal-sensor
+- Link to v1: https://lore.kernel.org/r/20250407-imx8qm-watchdog-v1-0-20c219b15fd2@bootlin.com
+---
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+index 6fa31bc9ece8..11527050ac8b 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+@@ -356,6 +356,11 @@ tsens: thermal-sensor {
+ 			compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
+ 			#thermal-sensor-cells = <1>;
+ 		};
++
++		watchdog {
++			compatible = "fsl,imx8qm-sc-wdt", "fsl,imx-sc-wdt";
++			timeout-sec = <60>;
++		};
+ 	};
  
- 	for (d = d2 = 0; d < conf->raid_disks; d++) {
- 		struct md_rdev *rdev = conf->mirrors[d].rdev;
+ 	thermal-zones {
+
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250203-imx8qm-watchdog-b8363342842e
+
+Best regards,
 -- 
-2.43.0
+Thomas Richard <thomas.richard@bootlin.com>
 
 
