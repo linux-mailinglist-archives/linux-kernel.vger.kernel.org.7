@@ -1,231 +1,91 @@
-Return-Path: <linux-kernel+bounces-677184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29502AD174F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:09:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E95AD175B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE031699D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B4C3A8E1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D262472BE;
-	Mon,  9 Jun 2025 03:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcZ+Rhfw"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AE8246761;
+	Mon,  9 Jun 2025 03:11:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ECF24728F;
-	Mon,  9 Jun 2025 03:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C06622A811
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 03:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438544; cv=none; b=DSo1dTqVT4Ya++Ry4pgMhR2UrpH7oXbOZ5rx/hCYjJ2ZMt8HOwygwk/KavTuuca6oDRsljVWwIHnJD3w2IYXZKlXQKVcf4j4AzHV9VFIgvnrYBFN335qfYuMPOctDmgyMehNErb7SCertlAmjAsEj8aeWaXNVGySK/jdB6z6/fk=
+	t=1749438664; cv=none; b=dSQVyvtNmnlul8Kk7jgBO9/wRYbKplyKIz8n4q3HKg25pEY/oOQojPyjJ4IpUvwrOEzif1mSE1wsC1CN68ZN9UPUnr7booU2Je3aiKPGfQLA+kKsKqk78r7P4h2VTx8nhZKcfLu1kQzIzKZpouIVG21rubAbVhA1+kEyb+l7teA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438544; c=relaxed/simple;
-	bh=BOVfDJPoCfFFtY+XodlIWmpn3idqQljzMhAS6uW6lpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FenRRaw276/DLxaT90BvSky28J0lE1UpElMqsDONo0iuJcYoeT2m1bYMLg/DxFo4GorO9rssNhVm9rqdi92JNkUCFrhSVInuBbPklvKonJGVnjKAqkDqZqvekf9ZbH6EbXkcnMdFzD6ScKsyR20zO0MaAfLSQvUC1Tg3bfgnqQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcZ+Rhfw; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23508d30142so51124825ad.0;
-        Sun, 08 Jun 2025 20:09:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749438542; x=1750043342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GzSU8nsATIo9zu1PVccgBXCtIIymE8GQqXt996enmbg=;
-        b=ZcZ+RhfwyxLogDF6dakibOKm8uraa9b1W9j7PqerxV1iga8okZwIBlp4+WV6/nJ/Iw
-         CUvm7EIzwUzPvc7AZK6N0Brx+sb9Hbn82/gNO5Faxoc9uVu/Y6xebDmf7TQNpon3TcqQ
-         mXsf7dxH7ZAJIXJcCstyuGZc2AjdbW5eczM56znmKx5WoRRHP4+32evZHFHPo6sNK1gs
-         4RZWXvYDToXALeICBJqEtguHfizW6gC7smMQLrudX4uEqFku/dCPCL+p2stMTMsHTlyx
-         zzujT0XGuYon3+XJ80Efjrda12b2YTeGhHRrb9Tn9+J8EYMx8tFeReLkX0AQALveuUa/
-         QAlQ==
+	s=arc-20240116; t=1749438664; c=relaxed/simple;
+	bh=XqX8W0WXjmvJmcTYPtm3CDkoRO35HGBnjqGMJwyZerM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SZdXywH9jQMrgG43xy0fYSk6zzjsLaikce/mI+9ixrmFHIUVoWW+QxkUe2bxC+TVYYY47bSAB3g07gYi1HR51AjXqCu0F0H0saiUmyszVuhqwqf9QDksd2gzDDhlscr/W5U+RejpA0o+oBDSD0WoLlaNtp92GJJbyxMM+l3FvTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-869e9667f58so696339239f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 20:11:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749438542; x=1750043342;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GzSU8nsATIo9zu1PVccgBXCtIIymE8GQqXt996enmbg=;
-        b=DuLEYU/wUkFtc/oQZjylWmT6z2pOr1sWrxkB31xnOQqOsXK+Y2v+Ijf8kdraPBdEpr
-         8U7FsA0ncoi4vxljr7SzN//ZVM+gKLXtgJSJr+09iXN8wPCFWno7sgMsLt+uyZ6zv2ya
-         EV9cJyq8B8ltuvOFYBQfFjKoS5wufBZQ1VRqTPSOBqcf3oHHImyMIot+cDgvsOxJLjPd
-         5qFcBh5EBGLurT2bf3t4+aWW8Im+7Y0swajvxGA2IDgIGgji7PwsjKEagmN/WRcGGQmi
-         xy4/qeWeP2t0804RskN7b5W/IBxUd60qSLYxe4XjmCVC6HR4sUEDifHFDBn5WnyJrAQN
-         B9vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyG7aeAf4UqH4TrYClLM4x1R4IE8nROlVfU+T7iisctTNF9K9w98lsJEp1b+MqXOqCqr/kjbE4fjR8a7GG@vger.kernel.org, AJvYcCX2OA6ehrCawO27P6/0Q2mJ1I7G/EPVoP/HS/jfkekFZkayib5fd2csPqceEvVZc8/W+AIHEmjRYi5q@vger.kernel.org, AJvYcCXg1urTUM4IpPuISQL/Vz5b6PslQM+ZfBbQp4ASnNc2NCTzvwTU5idDbZcuyIuKWh8FGwOY0Dqk7OSe9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPiUratYwuDJo4bKqGJz2hMsiY/C8Djkaa+10iS5J76MIw3S3O
-	dPgIatlk8d6D0dcfaz+p1335nLoQesmdrM6uKirIP3mY6BvP6t8fCoZ6iNoTcg==
-X-Gm-Gg: ASbGnctISmT0e4BkWZK4se7GGV+eWPjPQgaJSS81nmYtCxsvCDEKa6AK9d88Ijt3GqJ
-	epjxcX65R9QWfVOA7lZPfQh8WvzPQ6PwqLVagmaqU/lnoVdPXD0YZFjymLdC6574Mf73JRp9ONX
-	630VNihAUJYd+MbCSyDGUqgKeIWbajZeUoAndWOn/F8Tsbs8+JQ1vnqNPDtJE/yBbCPseHDGkqX
-	NTyfO1VAMoBd4wbfW6jQOw0EfGzowgDaZGn6au4YdjM41KtOS3zPwMAyv115Ms0HDQ5KMpAH0O/
-	ILngP4v4djJmaj4ol0PwnRTw0hmp17fhZ4TOHiNodMssJNr0
-X-Google-Smtp-Source: AGHT+IGHL5aLMq8WMEThtj+mFhhQMR1hxx1t6f+c9SokKwf0WduO1eynoUgZEr31jrm5I3oukdtciA==
-X-Received: by 2002:a17:903:22c7:b0:234:bfcb:5c1d with SMTP id d9443c01a7336-23601d71207mr171637415ad.40.1749438541938;
-        Sun, 08 Jun 2025 20:09:01 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fccd6sm45310125ad.134.2025.06.08.20.09.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 20:09:01 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	nbd@nbd.name,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-mips@vger.kernel.org (open list:MIPS)
-Subject: [PATCHv5 5/5] mips: dts: qca: add wmac support
-Date: Sun,  8 Jun 2025 20:08:51 -0700
-Message-ID: <20250609030851.17739-6-rosenp@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250609030851.17739-1-rosenp@gmail.com>
-References: <20250609030851.17739-1-rosenp@gmail.com>
+        d=1e100.net; s=20230601; t=1749438662; x=1750043462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wo7UpV8gmOqqjSSyDcx4sdLxk2Thz6qXIr6g3frrVp8=;
+        b=u1O0U/s/pG6GCD838T0tQkve4ORhILs4xRLWEfb0UKm9Cqu6UOz4RdiEFb49toq9U2
+         BPgz2Chre/TBDRNLwJlRJZknbU51bIXS+jhL3qYG+1B+oh/OneqnH626+UcPL/lzBU8Y
+         qVrj/QOZERPe/K9lCUErLFRzLc5gh8x6ucJSFHtqFA8efCfFxfdytoEY1v9jFsZF3BZn
+         JOHUHRL40iqfjiR/bRXNmzwi8iZ6vmCuRVNdBLyb6i2WYa6fZ44B2Hm9CdMzuuuayRNi
+         NKozXbjKsfyh2EFtalueiMKHJxos3bLjYk8IM8nf2CvRFki5utw1+a1SiilKM3IZTqme
+         nCuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXx55/Ewees06qFRCGssyCPCOHjPZSAHZe+VK+BpFIcTHLib0Mv/xwisNj+ef998iU4MU6tHbFyzR0qkHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG6oiY2FBQzp3Y/412OVCsAkOJqVM0o3qjrYX7m8hhkHt6hees
+	cunHL9V2hD9wlzfRkjz6goHliRGDcsqOZKIhAggVH6eg7FuIX7WEwMAqijBG3AjjWMquVdSq/pp
+	BH41/L+JPmQYhU6qMKakNmjNKyjzlCeb5w2GDrJANhgswCIHmQBPrSZhP2wI=
+X-Google-Smtp-Source: AGHT+IEpUfLTrGAb9S5XjnQfzSLe9AUGAJcv3mfxO7vTH7UhO3BuyGZJcFzIEYx7ZuJlkvXzjBZ3b7JZGRRDDZiZx0cs0Ss6h8uI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:188a:b0:3dd:b7da:5256 with SMTP id
+ e9e14a558f8ab-3ddce48b1efmr123961825ab.19.1749438662672; Sun, 08 Jun 2025
+ 20:11:02 -0700 (PDT)
+Date: Sun, 08 Jun 2025 20:11:02 -0700
+In-Reply-To: <6745a8df.050a0220.1286eb.0015.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <684650c6.050a0220.d8705.0018.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] general protection fault in kernfs_dop_revalidate
+From: syzbot <syzbot+e37a1730d63d207fe403@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Now that OF ahb support was added to the ath9k driver, we can use it to
-enable and use the SoC wireless found in these chipsets.
+syzbot has bisected this issue to:
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/mips/boot/dts/qca/ar9132.dtsi                       | 9 +++++++++
- arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts         | 4 ++++
- arch/mips/boot/dts/qca/ar9331.dtsi                       | 9 +++++++++
- arch/mips/boot/dts/qca/ar9331_dpt_module.dts             | 4 ++++
- arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts           | 4 ++++
- arch/mips/boot/dts/qca/ar9331_omega.dts                  | 4 ++++
- .../mips/boot/dts/qca/ar9331_openembed_som9331_board.dts | 4 ++++
- arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts              | 4 ++++
- 8 files changed, 42 insertions(+)
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-diff --git a/arch/mips/boot/dts/qca/ar9132.dtsi b/arch/mips/boot/dts/qca/ar9132.dtsi
-index aa148d51ab68..682072371bd3 100644
---- a/arch/mips/boot/dts/qca/ar9132.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9132.dtsi
-@@ -155,6 +155,15 @@ spi: spi@1f000000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+
-+		wifi: wifi@180c0000 {
-+			compatible = "qca,ar9130-wifi";
-+			reg = <0x180c0000 0x230000>;
-+
-+			interrupts = <2>;
-+
-+			status = "disabled";
-+		};
- 	};
- 
- 	usb_phy: usb-phy {
-diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-index f894fe17816b..a7901bb040ce 100644
---- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-+++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-@@ -108,3 +108,7 @@ partition@2 {
- 		};
- 	};
- };
-+
-+&wifi {
-+	status = "okay";
-+};
-diff --git a/arch/mips/boot/dts/qca/ar9331.dtsi b/arch/mips/boot/dts/qca/ar9331.dtsi
-index 768ac0f869b1..6eb84a26a20f 100644
---- a/arch/mips/boot/dts/qca/ar9331.dtsi
-+++ b/arch/mips/boot/dts/qca/ar9331.dtsi
-@@ -285,6 +285,15 @@ spi: spi@1f000000 {
- 
- 			status = "disabled";
- 		};
-+
-+		wifi: wifi@18100000 {
-+			compatible = "qca,ar9330-wifi";
-+			reg = <0x18100000 0x20000>;
-+
-+			interrupts = <2>;
-+
-+			status = "disabled";
-+		};
- 	};
- 
- 	usb_phy: usb-phy {
-diff --git a/arch/mips/boot/dts/qca/ar9331_dpt_module.dts b/arch/mips/boot/dts/qca/ar9331_dpt_module.dts
-index c857cd22f7db..08e728b8ced8 100644
---- a/arch/mips/boot/dts/qca/ar9331_dpt_module.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_dpt_module.dts
-@@ -97,3 +97,7 @@ &phy_port0 {
- &phy_port4 {
- 	status = "okay";
- };
-+
-+&wifi {
-+	status = "okay";
-+};
-diff --git a/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts b/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-index 7affa58d4fa6..37a74aabe4b4 100644
---- a/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-@@ -98,3 +98,7 @@ spiflash: w25q128@0 {
- 		reg = <0>;
- 	};
- };
-+
-+&wifi {
-+	status = "okay";
-+};
-diff --git a/arch/mips/boot/dts/qca/ar9331_omega.dts b/arch/mips/boot/dts/qca/ar9331_omega.dts
-index 8904aa917a6e..1450419024cb 100644
---- a/arch/mips/boot/dts/qca/ar9331_omega.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_omega.dts
-@@ -74,3 +74,7 @@ spiflash: w25q128@0 {
- 		reg = <0>;
- 	};
- };
-+
-+&wifi {
-+	status = "okay";
-+};
-diff --git a/arch/mips/boot/dts/qca/ar9331_openembed_som9331_board.dts b/arch/mips/boot/dts/qca/ar9331_openembed_som9331_board.dts
-index dc65ebd60bbc..5786a827c000 100644
---- a/arch/mips/boot/dts/qca/ar9331_openembed_som9331_board.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_openembed_som9331_board.dts
-@@ -106,3 +106,7 @@ &phy_port2 {
- &phy_port4 {
- 	status = "okay";
- };
-+
-+&wifi {
-+	status = "okay";
-+};
-diff --git a/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts b/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-index 10b9759228b7..a7108c803eb3 100644
---- a/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-@@ -114,3 +114,7 @@ spiflash: s25sl032p@0 {
- 		reg = <0>;
- 	};
- };
-+
-+&wifi {
-+	status = "okay";
-+};
--- 
-2.49.0
+    bcachefs: make btree read errors silent during scan
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17abb20c580000
+start commit:   28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=146bb20c580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=106bb20c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=e37a1730d63d207fe403
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163706e8580000
+
+Reported-by: syzbot+e37a1730d63d207fe403@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
