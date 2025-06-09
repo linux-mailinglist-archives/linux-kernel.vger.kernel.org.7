@@ -1,182 +1,234 @@
-Return-Path: <linux-kernel+bounces-677844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C83C1AD20C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:21:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09A4AD20C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 806EA7A598B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:20:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDFC516AB08
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E3D25B67C;
-	Mon,  9 Jun 2025 14:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1555A25D1F5;
+	Mon,  9 Jun 2025 14:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xp2jduyh"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=r26.me header.i=@r26.me header.b="XQAIh+u2"
+Received: from mail-10627.protonmail.ch (mail-10627.protonmail.ch [79.135.106.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B178137C2A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F338258CCE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749478879; cv=none; b=QxjZGBA2flUC1ZE6hey/Klm4McX18Xc6e3MNajbC13krBnhhIfS7Axx3kJVbqp17JH2BjKdbG5qqI9t3r+X85s2Ir+OffuUaDyLz3W0gPAvO4RW+VvohlkCpLpQL0peJsrI9nndDtF5Fatrnds4s9Ru9eSjucNUbyifBAPfVPNs=
+	t=1749478992; cv=none; b=iVhwlwqw1OZrA0kEaXVuPbDnSq2IOrXiM+QZnZa2xYZQgS6Jlo2cVNAqKpIgkxTaXmnYIe3TmTsxsz7gLtgd3/SB7VY2HW8dN7QTrgy9LK8ZdMfxUMmhRnrWxF/zyNX6vMJQnRSNIQWYZcgkWSPi3zUzGSMmpfDSDzpRoLmFql8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749478879; c=relaxed/simple;
-	bh=wNCK673TSNOcz+SGKsVUt9JPBx+XFVGFRTrhCpLO0Lk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ILmzeViI3OS1eGrkZO6w7aqnfiZ3Ago1XmuOH+j3o4xXMyEK0WRKoxpBxNL3ka6dXf5MHEdmEkC/JwcZP0pzw6N8NolDBrOogP+X0IW7EbP32FmoADhkXWl/171413juVfRdsOwPphXJ503laipzXzV1uVKFH3bjFOYc/qF7gF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xp2jduyh; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-231d13ac4d4so67424415ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749478877; x=1750083677; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSIEw/2MydfV3kI4WHDS//5IkvGuSP6WLCIhrE/jR14=;
-        b=xp2jduyhZG2gfbxaw4yLcKowZ2UC2RJUYojgGAVf2xwmIrfAmkQlyZj8lU2dHf43ss
-         jo4gncmRkHF0chkH0ftgkob6oStyvq8DllB6ns/kj8l6qAHUi5ZJU751u8t/ep0sAyTa
-         1hep9IOU8Dc/n6F37W8TUqziMxiUeu8YyuJ333dKYbMhM/TYf/GSGpnwJ+xDH1dzLVS9
-         wt19GsaOMicRe/RDN4sbabU4E0iDzQI0W0v9T7Kp46WDIP9AuhVmDMtsRC5OyW+6H+bS
-         JlzDm+Lo103JdWt1htKc6TSWzg615p2l/CgJSMwA4pe4r49txxN7NtKoGrKOP/AJUjjR
-         4yHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749478877; x=1750083677;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSIEw/2MydfV3kI4WHDS//5IkvGuSP6WLCIhrE/jR14=;
-        b=nLH2gM1zFbqLr8c2QWxQVB84Z8a6nJCrvEXGQF7PBgbQBb+ul37NsT+2MC2UkxSMIA
-         FdD8ax3Jry/oTLpjho73fp667B1iz8p2VfxT9KEm3KhQ3jgHkSuzjf2W9gsprRpMwfCS
-         vC774OfYStlyY89n7j+qE+5/bSzzKn7DeNtZSN1m32EKqgWqlwqW6tzdXmc6T8pyE7xH
-         GPUWZkfGkTN5Qp6IG0lPk0JziTS1mSAYxwK4S0Wt2cOpGoNyV/ieJLZ4vHPT7paLjonH
-         PnE6MxP6Hah71hhsfn9VC4Njpu2qcHKJjDaoPWW4j40KkR+Hr7/PjQWIvFmV5fteNAOg
-         M4Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBkaUJ6qjIm7tjKzFLdxT1uK78n55/gFJn5rXj3PbnLVnqBj4dHu/T1Ogrfkv+WztGkA8cGRo1II32Ymg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw5mIrUAIVWluPhnb6r2zOQvUWRAHK235E+P1QOZEiJ0wvJuNI
-	2w2Wjy0jqvL2fSqnbjfbmPUEJH4fkQxMbQoTvG6du+SUBQoQhKZKGYD5uHeCyXxFTBDMSrvPGIn
-	+qxUglw==
-X-Google-Smtp-Source: AGHT+IERysFaxhAHifqxHTi2VcbI8oY5rYOLco6ZrI9WGaP0rXEe5OjT6M/29a/9l0QmkI+VOJHg1ucx2CE=
-X-Received: from plbju5.prod.google.com ([2002:a17:903:4285:b0:234:45eb:5e18])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f544:b0:235:f3e6:467f
- with SMTP id d9443c01a7336-23601cf6bd8mr192715225ad.2.1749478877172; Mon, 09
- Jun 2025 07:21:17 -0700 (PDT)
-Date: Mon, 9 Jun 2025 07:21:16 -0700
-In-Reply-To: <20250609122402.GM19710@nvidia.com>
+	s=arc-20240116; t=1749478992; c=relaxed/simple;
+	bh=JQSxPuSgebu8ngU9w0fbtaPNsN1gzZlPt15SLF4hvf4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cVTx2GUxdjVqIt46pKV/C9MXLjsDUu81Pa0IvrStABwlR5rURXQsJRpwyJVws7ViLIKkdoan8VuiN0bB2/MKAVp8obCVBXs1lAdC/3Vt69MbhCSl9k05iGFoqc/DIjNAunZwIOKVTlbgZrU0/5pbgL62Wduia9ajMM5Blp1PzGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=r26.me; spf=pass smtp.mailfrom=r26.me; dkim=pass (2048-bit key) header.d=r26.me header.i=@r26.me header.b=XQAIh+u2; arc=none smtp.client-ip=79.135.106.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=r26.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=r26.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=r26.me;
+	s=protonmail3; t=1749478981; x=1749738181;
+	bh=JQSxPuSgebu8ngU9w0fbtaPNsN1gzZlPt15SLF4hvf4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=XQAIh+u2WdmTWrdVozzGrqHM0fzEeqw3KYJcnwJOqCl9oit4MkOjRsfZ/ZlmmPSEb
+	 B2rsNhQsOYpc4P6b7htniepsKAGvdHS7JKFrBs8VkQMrEtZ7Gxb/DsnjijvccwJGmU
+	 joOaaJlA6o8pejq8QE0SWVh22W5TB3kc8zyEdVPMX0Re7H5L+iV7HR2tlWXwUt4I96
+	 WLnfgkQ7h2Cko+TVb+F1apq2iIQKEQqX1CKX0Y7r43H+9TVCNR4AVPYLJMWVVn67p2
+	 YAnhuUIauz5ZLH1SFVMy6M4IZ103fw8QyveXPVX8vnIKcrAkHtiGSKMvHoMgL/jA1y
+	 VedWy3z4w1bMg==
+Date: Mon, 09 Jun 2025 14:22:55 +0000
+To: =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+From: Rio Liu <rio@r26.me>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "regressions@lists.linux.dev" <regressions@lists.linux.dev>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+Subject: Re: [REGRESSION] amdgpu fails to load external RX 580 since PCI: Allow relaxed bridge window tail sizing for optional resources
+Message-ID: <w3gGcmhWNmeGetzLnhgkjfx0JTEyIOKN5sDu-uShZ_7JWthMgGP6plgDuhDbkYyaA7vtGbdl1WbMTZ5zM80OyJoqUa69krqDpuhqDangkLY=@r26.me>
+In-Reply-To: <7a7a3619-902c-06ee-6171-6d8ec2107f97@linux.intel.com>
+References: <o2bL8MtD_40-lf8GlslTw-AZpUPzm8nmfCnJKvS8RQ3NOzOW1uq1dVCEfRpUjJ2i7G2WjfQhk2IWZ7oGp-7G-jXN4qOdtnyOcjRR0PZWK5I=@r26.me> <7a7a3619-902c-06ee-6171-6d8ec2107f97@linux.intel.com>
+Feedback-ID: 77429777:user:proton
+X-Pm-Message-ID: 9e591caaea3c8cdf34da3a0674d87646d7d67758
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250524013943.2832-1-ankita@nvidia.com> <20250524013943.2832-2-ankita@nvidia.com>
- <aEMvbIu530nCqwhG@google.com> <20250609122402.GM19710@nvidia.com>
-Message-ID: <aEbm64VUr_GmBFzI@google.com>
-Subject: Re: [PATCH v6 1/5] KVM: arm64: Block cacheable PFNMAP mapping
-From: Sean Christopherson <seanjc@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: ankita@nvidia.com, maz@kernel.org, oliver.upton@linux.dev, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, ryan.roberts@arm.com, 
-	shahuang@redhat.com, lpieralisi@kernel.org, david@redhat.com, 
-	aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com, kjaju@nvidia.com, 
-	targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com, 
-	apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com, 
-	mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com, 
-	alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com, 
-	kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org, 
-	akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org, 
-	ddutile@redhat.com, tabba@google.com, qperret@google.com, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, maobibo@loongson.cn
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 09, 2025, Jason Gunthorpe wrote:
-> On Fri, Jun 06, 2025 at 11:11:56AM -0700, Sean Christopherson wrote:
-> > > @@ -1612,6 +1624,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> > >  
-> > >  	vfio_allow_any_uc = vma->vm_flags & VM_ALLOW_ANY_UNCACHED;
-> > >  
-> > > +	if ((vma->vm_flags & VM_PFNMAP) &&
-> > > +	    !mapping_type_noncacheable(vma->vm_page_prot))
-> > 
-> > I don't think this is correct, and there's a very real chance this will break
-> > existing setups.  PFNMAP memory isn't strictly device memory, and IIUC, KVM
-> > force DEVICE/NORMAL_NC based on kvm_is_device_pfn(), not based on VM_PFNMAP.
-> 
-> kvm_is_device_pfn() effecitvely means KVM can't use CMOs on that
-> PFN. It doesn't really mean anything more..
+On Monday, June 9th, 2025 at AM 5:09, Ilpo J=C3=A4rvinen <ilpo.jarvinen@lin=
+ux.intel.com> wrote:
 
-Ah, kvm_is_device_pfn() isn't actually detecting device memory, it's simply
-detecting memory that isn't in the direct map.
+>=20
+>=20
+> On Mon, 9 Jun 2025, rio@r26.me wrote:
+>=20
+> > Hello,
+> >=20
+> > I have an external Radeon RX580 on my machine connected via Thunderbolt=
+, and
+> > since upgrading from 6.14.1 the setup stopped working. Dmesg showed war=
+ning from
+> > resource sanity check, followed by a stack trace https://pastebin.com/n=
+jR55rQW.
+> > Relevant snippet:
+> >=20
+> > [ 12.134907] amdgpu 0000:06:00.0: BAR 2 [mem 0x6000000000-0x60001fffff =
+64bit pref]: releasing
+> > [ 12.134910] [drm:amdgpu_device_resize_fb_bar [amdgpu]] ERROR Problem r=
+esizing BAR0 (-16).
+> > [ 12.135456] amdgpu 0000:06:00.0: BAR 2 [mem 0x6000000000-0x60001fffff =
+64bit pref]: assigned
+> > [ 12.135524] amdgpu 0000:06:00.0: amdgpu: VRAM: 8192M 0x000000F40000000=
+0 - 0x000000F5FFFFFFFF (8192M used)
+> > [ 12.135527] amdgpu 0000:06:00.0: amdgpu: GART: 256M 0x000000FF00000000=
+ - 0x000000FF0FFFFFFF
+> > [ 12.135536] resource: resource sanity check: requesting [mem 0x0000000=
+000000000-0xffffffffffffffff], which spans more than PCI Bus 0000:00 [mem 0=
+x000a0000-0x000bffff window]
+> > [ 12.135542] ------------[ cut here ]------------
+> > [ 12.135543] WARNING: CPU: 6 PID: 599 at arch/x86/mm/pat/memtype.c:721 =
+memtype_reserve_io+0xfc/0x110
+> > [ 12.135551] Modules linked in: ccm amdgpu(+) snd_hda_codec_realtek ...
+> > [ 12.135652] CPU: 6 UID: 0 PID: 599 Comm: (udev-worker) Tainted: G S 6.=
+15.0-13743-g8630c59e9936 #16 PREEMPT(full) 3b462c924b3ffd8156fc3b77bcc8ddbf=
+7257fa57
+> > [ 12.135654] Tainted: [S]=3DCPU_OUT_OF_SPEC
+> > [ 12.135655] Hardware name: COPELION INTERNATIONAL INC. ZX Series/ZX Se=
+ries, BIOS 1.07.08TCOP3 03/27/2020
+> > [ 12.135656] RIP: 0010:memtype_reserve_io+0xfc/0x110
+> > [ 12.135659] Code: aa fb ff ff b8 f0 ff ff ff eb 88 8b 54 24 04 4c 89 e=
+e 48 89 df e8 04 fe ff ff 85 c0 75 db 8b 54 24 04 41 89 16 e9 69 ff ff ff <=
+0f> 0b e9 4b ff ff ff e8 b8 5c fc 00 0f 1f 84 00 00 00 00 00 90 90
+> >=20
+> > Bisecting the stable branch pointed me to the following commit:
+> >=20
+> > commit 22df32c984be9e9145978acf011642da042a2af3 (HEAD)
+> > Author: Ilpo J=C3=A4rvinen ilpo.jarvinen@linux.intel.com
+> > Date: Mon Dec 16 19:56:11 2024 +0200
+> >=20
+> > PCI: Allow relaxed bridge window tail sizing for optional resources
+> >=20
+> > [ Upstream commit 67f9085596ee55dd27b540ca6088ba0717ee511c ]
+> >=20
+> > I've tested on stable (as of now 8630c59e99363c4b655788fd01134aef9bcd92=
+64), and
+> > the issue persists. Reverting the offending commit via `git revert -n 2=
+2df32c984be9e9145978acf011642da042a2af3` allowed amdgpu to load again.
+> > Dmesg: https://pastebin.com/xd76rDsW.
+> >=20
+> > Additional information
+> > - Distribution: Artix
+> > - Arch: x86_64
+> > - Kernel config: https://pastebin.com/DWSERJL5
+> > - eGPU adapter: https://www.adt.link/product/R43SG-TB3.html
+> > - Booting with pci=3Drealloc,hpbussize=3D0x33,hpmmiosize=3D256M,hpmmiop=
+refsize=3D1G
+> >=20
+> > I'm reporting here as these are the contacts from the commit message.
+> > Please let me know if there's a more appropriate place for this, as wel=
+l
+> > as any more information I can provide.
+>=20
+>=20
+> Hi Rio,
+>=20
+> Thanks for the report and I'm sorry about causing this issue. Could you
+> please try if the patch below solves the issue.
+>=20
+> --
+> From b94823a193032b5f87114cff9e8edc5c67e4ef40 Mon Sep 17 00:00:00 2001
+> From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D ilpo.jarvinen@linux.inte=
+l.com
+>=20
+> Date: Mon, 9 Jun 2025 12:05:20 +0300
+> Subject: [PATCH 1/1] PCI: Relaxed alignment should never increase min_ali=
+gn
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>=20
+> When using relaxed tail alignment for the bridge window,
+> pbus_size_mem() also tries to minimize min_align, which can under
+> certain scenarios end up increasing min_align from that found by
+> calculate_mem_align().
+>=20
+> Ensure min_align is not increased by the relaxed tail alignment.
+>=20
+> Eventually, it would be better to add calculate_relaxed_head_align()
+> similar to calculate_mem_align() which finds out what alignment can be
+> used for the head without introducing any gaps into the bridge window
+> to give flexibility on head address too. But that looks relatively
+> complex algorithm so it requires much more testing than fixing the
+> immediate problem causing a regression.
+>=20
+> Reported-by: Rio rio@r26.me
+>=20
+> Signed-off-by: Ilpo J=C3=A4rvinen ilpo.jarvinen@linux.intel.com
+>=20
+> ---
+> drivers/pci/setup-bus.c | 11 +++++++----
+> 1 file changed, 7 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index 07c3d021a47e..f90d49cd07da 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -1169,6 +1169,7 @@ static int pbus_size_mem(struct pci_bus *bus, unsig=
+ned long mask,
+> resource_size_t children_add_size =3D 0;
+> resource_size_t children_add_align =3D 0;
+> resource_size_t add_align =3D 0;
+> + resource_size_t relaxed_align;
+>=20
+> if (!b_res)
+> return -ENOSPC;
+> @@ -1246,8 +1247,9 @@ static int pbus_size_mem(struct pci_bus *bus, unsig=
+ned long mask,
+> if (bus->self && size0 &&
+>=20
+> !pbus_upstream_space_available(bus, mask | IORESOURCE_PREFETCH, type,
+> size0, min_align)) {
+> - min_align =3D 1ULL << (max_order + __ffs(SZ_1M));
+> - min_align =3D max(min_align, win_align);
+> + relaxed_align =3D 1ULL << (max_order + __ffs(SZ_1M));
+> + relaxed_align =3D max(relaxed_align, win_align);
+> + min_align =3D min(min_align, relaxed_align);
+> size0 =3D calculate_memsize(size, min_size, 0, 0, resource_size(b_res), w=
+in_align);
+> pci_info(bus->self, "bridge window %pR to %pR requires relaxed alignment =
+rules\n",
+>=20
+> b_res, &bus->busn_res);
+>=20
+> @@ -1261,8 +1263,9 @@ static int pbus_size_mem(struct pci_bus *bus, unsig=
+ned long mask,
+> if (bus->self && size1 &&
+>=20
+> !pbus_upstream_space_available(bus, mask | IORESOURCE_PREFETCH, type,
+> size1, add_align)) {
+> - min_align =3D 1ULL << (max_order + __ffs(SZ_1M));
+> - min_align =3D max(min_align, win_align);
+> + relaxed_align =3D 1ULL << (max_order + __ffs(SZ_1M));
+> + relaxed_align =3D max(min_align, win_align);
+> + min_align =3D min(min_align, relaxed_align);
+> size1 =3D calculate_memsize(size, min_size, add_size, children_add_size,
+> resource_size(b_res), win_align);
+> pci_info(bus->self,
+>=20
+>=20
+> base-commit: 3719a04a80caf660f899a462cd8f3973bcfa676e
+> --
+> 2.39.5
 
-> PFNMAP says the same thing, or at least from a mm perspective we don't
-> want drivers taking PFNMAP memory and then trying to guess if there
-> are struct pages/KVAs for it. PFNMAP memory is supposed to be fully
-> opaque.
-> 
-> Though that confusion seems to be a separate issue from this patch.
-> 
-> > 	if (kvm_is_device_pfn(pfn)) {
-> > 		/*
-> > 		 * If the page was identified as device early by looking at
-> > 		 * the VMA flags, vma_pagesize is already representing the
-> > 		 * largest quantity we can map.  If instead it was mapped
-> > 		 * via __kvm_faultin_pfn(), vma_pagesize is set to PAGE_SIZE
-> > 		 * and must not be upgraded.
-> > 		 *
-> > 		 * In both cases, we don't let transparent_hugepage_adjust()
-> > 		 * change things at the last minute.
-> > 		 */
-> > 		device = true;
-> 
-> "device" here is sort of a mis-nomer, it is really just trying to
-> setup the S2 so that CMOs are not going go to be done.
-> 
-> Calling it 'disable_cmo' would sure make this code clearer..
-> 
-> > @@ -1639,6 +1653,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >                 return -EFAULT;
-> >  
-> >         if (kvm_is_device_pfn(pfn)) {
-> > +               if (is_vma_cacheable)
-> > +                       return -EINVAL;
-> > +
-> 
-> eg
-> 
-> if (!kvm_can_use_cmo_pfn(pfn)) {
->                if (is_vma_cacheable)
->                        return -EINVAL;
-> 
-> >                  * If the page was identified as device early by looking at
-> >                  * the VMA flags, vma_pagesize is already representing the
-> > @@ -1722,6 +1739,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >                 prot |= KVM_PGTABLE_PROT_X;
-> >  
-> >         if (device) {
-> > +               if (is_vma_cacheable) {
-> > +                       ret = -EINVAL;
-> > +                       goto out;
-> > +               }
-> 
-> if (disable_cmo) {
->                if (is_vma_cacheable)
->                        return -EINVAL;
-> 
-> Makes alot more sense, right? If KVM can't do CMOs then it should not
-> attempt to use memory mapped into the VMA as cachable.
+Hello Ilpo,
 
-Yes, for sure.
+I've tested the patch and it seems to fix the issue. Thank you!
 
-> >                 if (vfio_allow_any_uc)
-> >                         prot |= KVM_PGTABLE_PROT_NORMAL_NC;
-> >                 else
-> > 
-> 
-> Regardless, this seems good for this patch at least.
-> 
-> Jason
+Rio Liu
 
