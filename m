@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-677189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5125AD175D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E797AD173D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCE63A91C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:12:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D86C3A9A0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2692E270542;
-	Mon,  9 Jun 2025 03:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC4822A81E;
+	Mon,  9 Jun 2025 03:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hbain1Vd"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wse6I/X9"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEBF2701C8;
-	Mon,  9 Jun 2025 03:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE343F9C5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 03:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438740; cv=none; b=uMgRaizXnuSUrIFSLkwI/bmQJT0VriItncs4lsk2urS/TsoXudlQBQX72wU5t/pEW7Tph8aWzXDutm+VkIAMG4aAfAt6ZFO2eIIF+Iui1jzEIseqQZWN2RXYm6nBA5sW3Oymdx/SwSE+qReHsGoNRCde6HlTIJKD2fKIxQkacsk=
+	t=1749438504; cv=none; b=OzG99G0FgmOWRKITBHu7zFNu8JlC9AruudpZd0rWJ9jA0y0A27sDv+g9Cds19kJlb1tNZ1SPudm6yPJrU+xQKpIaBIvmEa5WXxtvoFuFORyFShF4qsun47hSnfvyP91E+K8OTwbxLW+M5e1r3HT6CAehUeiTavuo0bjyru8EL3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438740; c=relaxed/simple;
-	bh=dDrMQ92LuLGu55pFGVPF5AMJ71MKlzo/xb2Mi66ibTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ebsWsQIHgyOpmoZjLZCsJaz5S6XZoAgEDg/7btKdft9BBo7nlWReNuuyICzfiO3GeP+fMaPAHdKVVJioDyK+D7Gjl7YDt6uDbgSCc+c65uuyMV4DA+OSoi4WGxUkQglYB9h6zJ1vn5jNVR/YJudUnD1NUPUg+xx+fgukOv7X5nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hbain1Vd; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749438728; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=D4pMAoDuYGVY/y/srg/WEDjx+BfgvSMCUgZlsMgt/Ck=;
-	b=hbain1Vdj7xorIGvIBqBRxwg0OMHYcQrJsEpzIi3BWXQAMAs1jak91L3bybDxVuKY3Kr7M1VvfeX8inQt8uJGGKM2n3zg0GcFy1qp6zWzMKuP6IGDg6c5sZiBeMlPQWIoR+N4H2SepO+enz0agItrjQmQqgMuME9gmzovH/GdWE=
-Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdK.fGG_1749438403 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Jun 2025 11:06:44 +0800
-Message-ID: <4a2c359e-79d9-447b-a43e-164333d08319@linux.alibaba.com>
-Date: Mon, 9 Jun 2025 11:06:42 +0800
+	s=arc-20240116; t=1749438504; c=relaxed/simple;
+	bh=Dz4BZOwoG735qXr2NNfV+1SB9IWMabweHe1jjafLKJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k1tdmk+kYXYPhWg0CAm0dtQCu4/WLSkcdRR6jE30uxdRuEitCNpAD0QfV3bWDOLiaLkBe1Fq3sMHlEUdospn5NdmDiZ5ucUmI5myxiw4dzwLHj6ZrM1h/Oqn0mVnoxBXpx8Wghyi7oxv362CUxecgb1TRUxwnGHzMjZHA9x4ObA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wse6I/X9; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-747ef5996edso2832676b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 20:08:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749438502; x=1750043302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yJ5ljUqUtBgUphPBwqwQSdecLwZyYNnXtwMirJ7OhPU=;
+        b=Wse6I/X9xYMqeixoJ4K8q+Iay7y9BU/jgq7klubxhKbW9OLhyTehUqB0Fqj8EDKK2c
+         DQi8RxDnU0dA7GJcOFcIANKwzs2upQLVW89jSZvazsjZEzFdZ7sbObBIJKJysPouR7f7
+         qkF0bX0PHuva7GYu/+dLuUDTsoFIYqHXfkHIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749438502; x=1750043302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yJ5ljUqUtBgUphPBwqwQSdecLwZyYNnXtwMirJ7OhPU=;
+        b=uPwnv0MADY+SbB1cgPWvPlpqfxVTTQew7GByDUrwY6pkNJYlrJ/VvJB0axr8TrtozT
+         QuMTaPwmsObQcTuQUqKAjNQft0TFFfrRBx2PbaWDjsgB0CmEyzsKGTWQbceFk+frsNQZ
+         D8T+3cS1f9msS7oy6TRImbbtrTljGwDW1CIxzSKoea1M/GgAmJPeLJiLO/6AkIsNr2CD
+         ZTgVP213QKYHVoqHUnNBAjFnMZDTa2CBGUNHOKsTgtqm6A8NlcNDgFGQMq8n9IUFJAGQ
+         nWLgu85HDcz9g7qgtr/6AqNlO5/fUBIIzsuny0KhSQtioVKuRXKIrLObyT5PYzJXZWzx
+         Pkag==
+X-Forwarded-Encrypted: i=1; AJvYcCWgSK01fB6ni+kJNihfCGH55q/zlGIVhHQ2xkV1D0EfZ0qzgDgJItg/2UOj/sVvnb4CrnvrShyWocxIxG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr65J7HScY049KJRmns3SVFaVgTvX2W9n14gE4EwOAgks+6soI
+	fiLYNrEeOCLaW2XP0t8Vw6NzhKKENz0/jF6ZxTjyzPSVv/4H4162wW4QBhVkheDwAw==
+X-Gm-Gg: ASbGncvIaJ2QtqMeGWF3dP+ZHf2njRzfGcj85N1bCJIxoUX8NOw00i0YSx/EkucxNZx
+	Cbu06mDcsYl1Yb2V/8WmweKzl5ZBbeu/95OwUqV3IQTOehvwxmtFsCQFznlElQB79yhu6hEHgAT
+	BVSCTshU7p0E+cUIDlmC1hH426RCNQGIDUMjrjXfnOZkvbh9+gKXHTlyLTcw/lfbPr4gmWiWNPv
+	bQ7nZOb5G3mxmttIv+h08saK+xzIEEnyp/FW21KmcRLO03YFT4thXxY0GD/zGtYASUKKerQPujZ
+	71BuPckO9Ka7EeXQZZ9bOMfe3OvMbNq6Zr47Ct6icz50aSfr6LE9dM+ZzorrYtg3g9KaEHoBpU6
+	4OA==
+X-Google-Smtp-Source: AGHT+IEZ/QggHpe+SjR545m8B1DjwJ23ZRKmlr+YvhhI7qVFUYft9GGSA1OnQ2N5skZa75gmHXfC2w==
+X-Received: by 2002:a17:902:db07:b0:234:a139:1203 with SMTP id d9443c01a7336-23601d82d1bmr183050245ad.32.1749438502124;
+        Sun, 08 Jun 2025 20:08:22 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:eb64:2cdb:5573:f6f1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603410716sm44649645ad.199.2025.06.08.20.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jun 2025 20:08:21 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Miklos Szeredi <miklos@szeredi.hu>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Tomasz Figa <tfiga@chromium.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH 1/2] wait: add wait_event_freezable_killable_exclusive
+Date: Mon,  9 Jun 2025 12:07:36 +0900
+Message-ID: <20250609030759.3576335-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 12/12] Documentation: mm: update the admin guide for
- mTHP collapse
-To: Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, ryan.roberts@arm.com, corbet@lwn.net,
- rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20250515032226.128900-1-npache@redhat.com>
- <20250515032226.128900-13-npache@redhat.com>
- <bc8f72f3-01d9-43db-a632-1f4b9a1d5276@arm.com>
- <CAA1CXcDOEdJRvZMu2Fyy4wsdy8k8nj4c45s4JanO9HzyJgyXOw@mail.gmail.com>
- <b09d7553-c3c6-453a-8e3a-86dc4caeb431@arm.com>
- <CAA1CXcB-A9U8GEodPrm3QdndzB2MY7eZHnoojVYU5fi_DJBbcw@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAA1CXcB-A9U8GEodPrm3QdndzB2MY7eZHnoojVYU5fi_DJBbcw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Add a freezable variant of exclusive wait.  This can be useful
+in, for example, FUSE when system suspend occurs while FUSE is
+blocked on requests (which prevents system suspend.)
 
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ include/linux/wait.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On 2025/6/9 03:50, Nico Pache wrote:
-> On Sat, Jun 7, 2025 at 8:35 AM Dev Jain <dev.jain@arm.com> wrote:
->>
->>
->> On 07/06/25 6:27 pm, Nico Pache wrote:
->>> On Sat, Jun 7, 2025 at 12:45 AM Dev Jain <dev.jain@arm.com> wrote:
->>>>
->>>> On 15/05/25 8:52 am, Nico Pache wrote:
->>>>
->>>> Now that we can collapse to mTHPs lets update the admin guide to
->>>> reflect these changes and provide proper guidence on how to utilize it.
->>>>
->>>> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
->>>> Signed-off-by: Nico Pache <npache@redhat.com>
->>>> ---
->>>>    Documentation/admin-guide/mm/transhuge.rst | 14 +++++++++++++-
->>>>    1 file changed, 13 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>>> index dff8d5985f0f..5c63fe51b3ad 100644
->>>> --- a/Documentation/admin-guide/mm/transhuge.rst
->>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
->>>>
->>>>
->>>> We need to modify/remove the following paragraph:
->>>>
->>>> khugepaged currently only searches for opportunities to collapse to
->>>> PMD-sized THP and no attempt is made to collapse to other THP
->>>> sizes.
->>> On this version this is currently still true, but once I add Baolin's
->>> patch it will not be true. Thanks for the reminder :)
->>
->> You referenced Baolin's patch in the other email too, can you send the link,
->> or the patch?
-> 
-> He didn't send it to the mailing list, but rather off chain to all the
-> recipients of this series. You should have it in your email look for
-> 
-> Subject: "mm: khugepaged: allow khugepaged to check all anonymous mTHP
-> orders" and "mm: khugepaged: kick khugepaged for enabling
-> none-PMD-sized mTHPs"
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 327894f022cf..b98cfd094543 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -657,6 +657,20 @@ do {										\
+ 	__ret;									\
+ })
+ 
++#define __wait_event_freezable_killable_exclusive(wq, condition)		\
++	___wait_event(wq, condition, (TASK_KILLABLE|TASK_FREEZABLE), 1, 0,	\
++		      schedule())
++
++#define wait_event_freezable_killable_exclusive(wq, condition)			\
++({										\
++	int __ret = 0;								\
++	might_sleep();								\
++	if (!(condition))							\
++		__ret = __wait_event_freezable_killable_exclusive(wq,		\
++								  condition);	\
++	__ret;									\
++})
++
+ /**
+  * wait_event_idle - wait for a condition without contributing to system load
+  * @wq_head: the waitqueue to wait on
+-- 
+2.50.0.rc1.591.g9c95f17f64-goog
 
-You can find them at the following link:
-https://lore.kernel.org/all/ac9ed6d71b439611f9c94b3506a8ce975d4636e9.1748435162.git.baolin.wang@linux.alibaba.com/
 
