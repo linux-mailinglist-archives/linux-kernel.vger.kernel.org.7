@@ -1,122 +1,242 @@
-Return-Path: <linux-kernel+bounces-677833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C930AD208A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:06:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4451AD208F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 101227A4A48
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:05:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C75B18878E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B413825CC73;
-	Mon,  9 Jun 2025 14:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4263E13C918;
+	Mon,  9 Jun 2025 14:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GclB97S4"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTjl0zAZ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B534A25C834;
-	Mon,  9 Jun 2025 14:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33221547D2;
+	Mon,  9 Jun 2025 14:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749477983; cv=none; b=ZmS+IeV1y6MMTIC32PhAE9MqqcLk1uPrX/JAqXZinH7N2EQqGu7QcDYuZpuN/7q59vWjsNIPOh+1uAbcPXGF7c3MIItt7chktsuS9oqZyVJ59FO6neIh4Dl5/wdH46VU3xf/LbNqaA29gBkYnoiyKugDIvNhpmWWwb+B5By6jaE=
+	t=1749478049; cv=none; b=U4N2OAjI2Y/HbIopfTZ1xH7hHVP3n2EPbb5NzJ6xH6Zpyk6tJMeyI2OHkg1Ts19ecJIxdnAz5fIWArEPfFXAvaPk48YNK/QZZ170QyWyw3UEO/x1xHrjIAs9G+eusIR3uWin7B1NW/xFNo8+3Q6JY3mas/XkAd5SN7Kmpq44R60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749477983; c=relaxed/simple;
-	bh=3lOJgnhrpQkPu25jDi+5V6s0BfBYYwj8jM4H4EhVCZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fm4+6j/Q2nvdUsKnxRDJEy6+PNSu+CXfdsf/vOsic/yHf3zrAMcD3n7HIahsvBDb0FwqnWeiS/dPDJEcPD0UVrBx9zVHK84PMlZzCPUOGqdvPbQHLFIenxzlILZ2mAd2g9LtLTpKOD1y9LkT7Qfs4S4w9QkoenWXUwhWWhaWyTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GclB97S4; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3DCF143B16;
-	Mon,  9 Jun 2025 14:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1749477979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zn7wuquz4DmlIJeSlveu8NxjTLD/+5rvhB4h/bX2BVM=;
-	b=GclB97S4y4Jr4l7SuD1EVFc6EXjzEUhlJx7X6R+GF/Gf9CePGKDtGcO4p5rVnhoB8Nh9i0
-	p87KVyZv63vJmN8GERsQm9Y90cdXF3dtmMICIUvLnkVOs0Bu2wDVbi4AAQw21gbOrRDwwh
-	rr2m64lN9SWQED3zlmDlqO40A+mDLou43L9vLgTEOq0Mh+90GSupKJJaZn2XriJyghVAUo
-	YQeogCebledYjtdxstqiaKDetfc64B8kJhC6jntslj7p84JQg6rEHioDPR2mpUifT0vUhz
-	OvJoBSO3v2cho5lcVdgOPmmM33JT4rdh8xOZXfO0Q3rtVJ20Ja3JPLMxS6CClg==
-Date: Mon, 9 Jun 2025 16:06:16 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Gal Pressman <gal@nvidia.com>
-Cc: patchwork-bot+netdevbpf@kernel.org, andrew@lunn.ch, kuba@kernel.org,
- donald.hunter@gmail.com, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, horms@kernel.org, willemdebruijn.kernel@gmail.com,
- kernelxing@tencent.com, richardcochran@gmail.com,
- thomas.petazzoni@bootlin.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com,
- linux@armlinux.org.uk
-Subject: Re: [PATCH net-next v4] net: Add support for providing the PTP
- hardware source in tsinfo
-Message-ID: <20250609160616.3afc8acd@kmaincent-XPS-13-7390>
-In-Reply-To: <fd48f64f-dec2-489b-a9b9-dc1aa38ca61d@nvidia.com>
-References: <20250519-feature_ptp_source-v4-1-5d10e19a0265@bootlin.com>
-	<174792123749.2878676.12488958833707087703.git-patchwork-notify@kernel.org>
-	<fd48f64f-dec2-489b-a9b9-dc1aa38ca61d@nvidia.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749478049; c=relaxed/simple;
+	bh=wAAJY/HrK/nuKtAaod/22OhduwbiOhuK1jiKS/alY2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LgF+IQxZeV7pzF8CHIqjTE4JOeQsuDpT+U7H/E73KhOutcoMWT3B7mZWVpjcvrI03y3o+n0s37jTTfxOXASmCHHQYQgKKgzWNiwBlitglLb/HCBt9+R5lxt2VTVVnC/RGdoNIwtr72DgoSKXq5kp0TaLDw9HAGvbiUFW/bvmdhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTjl0zAZ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so3628336f8f.1;
+        Mon, 09 Jun 2025 07:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749478046; x=1750082846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wp465GBd29bhYSADM6T0VGSuzx4l+sqGwpURc4OujX4=;
+        b=TTjl0zAZKkCDAs6YO47kAl569t1b7RnhXlM3cqYZ8NqThu7ysKACbHM54pd4uhgLMs
+         RjiJl6gahVeLgARev80xjSXZYAZUsZczNQl0kGmlZtdLaK8hdio1Haif5ml8fDJfCI08
+         l45/HwvcgO9/KZJ2vnCh8MKDEMPwux5hRqjsDVrVnhGBTuyY3GPhIwZ3V2sZDn3EkdEE
+         uJbZ2xoYgjW/iMZqfPMylkGfiofGv703jfAn5lD9y+t3nxztrH/HzwliVEuiwiAv7rxw
+         /S5G9lqiiJnwvCOANKyH34YudyqfD3e8BYUBEfQp1KDJUbU3+WiBqPSm9t/ql/URzWj5
+         w3VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749478046; x=1750082846;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wp465GBd29bhYSADM6T0VGSuzx4l+sqGwpURc4OujX4=;
+        b=Qbjqdo3hEdNfPa8kVUbbAEmrcOh8GOFUgG6pJO70RyV2K/Zib1cUnlDnBP12Gsgvk8
+         e89vqbYCuqvz3x5EIg+dR9ctvLS6VF9ThGUMQQ1m/Gj9/pQNojhuN2NE/mNB8Bqpo0uq
+         J5TayiFxCAuPi+ZJtopPRFnh2RKpFauDZtB8f5ffHXL+BWUulP0FRYPbGIEpXLCXpWUv
+         HZ0QcHxYf+DKjwJ2jcRBuHwflHzP3pPH7Zub4fwusNqhrcim9Qhe5Sld+Z1dbac6drBG
+         jyv5lm2woarajvfmkM0aqGB3tUKzt9Kk+/v4F3OWbdYqXSjqJVrwcfw2S40epIvwazJI
+         HuEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV5jMPznKGVA124rKnbvYl92E50mwfZrOVV5AKHAuAO9tzowhimYaFJY5jSjOm3MBbW0pVaNUtdTZwUng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/HSy83FTTf0/ZuQSmuvv7wj6zFSYlTseQSTl3mVBHMADrjUDY
+	13wHWhzHgmKmiHj2WnSIDI5QBX6AN+ihcJJ11tl65y49HDm9WwlTw/DNsrs2pYH/
+X-Gm-Gg: ASbGncvbqauxxMh0RbZ990JXy//qf5mLU0WEvNT9/0PtShtxo4sc6jtG/HDKQar/Qf1
+	OHuToKQGC1AFik6MEOFeR+ZDOj4rR2modtgZ2Q1FGqje5QZFlGDOCnAcQJfyoQFWhed6fsEAN2E
+	i319s8rZom/KtsZodDuYh0FkVI3HGPnI80H+mKe1EKq5kbyHVTze2SCcg6e0H1ctSXT9MhJqS3n
+	vQVL7uy7VdXfHkdYkGgyqaoaet+M3+QUqyIpFXbNG9l60GW/RyV/Ic1eu5C8EEDP/a6k7kXPFeo
+	tobG1NgGQ9kXdzYSRIEjZQm246XaOKefoJ5Nw1WDM2keqQHQGIYMazkyljdvYIct8jmyaDJAQjG
+	JINugHlPYZPfYKG02Axa3t2VHrP4spGRYgkQ=
+X-Google-Smtp-Source: AGHT+IG0REgGH1fHd+dkuiR3Fo6WREiMEfAZe6OZVVichjBI/5GBIj0dx+h9EBokmXQjt5fQUEHrXA==
+X-Received: by 2002:a05:6000:401e:b0:3a4:fb33:85ce with SMTP id ffacd0b85a97d-3a531caf7f1mr11598279f8f.46.1749478045626;
+        Mon, 09 Jun 2025 07:07:25 -0700 (PDT)
+Received: from Lord-Beerus.station (net-93-70-53-177.cust.vodafonedsl.it. [93.70.53.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53229d9e9sm9803060f8f.13.2025.06.09.07.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 07:07:25 -0700 (PDT)
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: andrew@lunn.ch,
+	Stefano Radaelli <stefano.radaelli21@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1] arm64: dts: freescale: imx8mp-var-som: Add EQoS support with MaxLinear PHY
+Date: Mon,  9 Jun 2025 16:06:42 +0200
+Message-ID: <20250609140643.26270-1-stefano.radaelli21@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelfeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhudevkeeutddvieffudeltedvgeetteevtedvleethefhuefhgedvueeutdelgeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepghgrlhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepphgrthgthhifohhrkhdqsghothdonhgvthguvghvsghpfheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguohhnrghlugdrhhhun
- hhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Le Mon, 9 Jun 2025 15:18:49 +0300,
-Gal Pressman <gal@nvidia.com> a =C3=A9crit :
+Enable the EQoS Ethernet controller on the i.MX8MP VAR-SOM with the
+integrated Maxlinear MXL86110 PHY. The PHY is connected to the EQOS
+MDIO bus at address 4.
 
-> On 22/05/2025 16:40, patchwork-bot+netdevbpf@kernel.org wrote:
-> > Hello:
-> >=20
-> > This patch was applied to netdev/net-next.git (main)
-> > by Paolo Abeni <pabeni@redhat.com>:
-> >=20
-> > On Mon, 19 May 2025 10:45:05 +0200 you wrote: =20
-> >> Multi-PTP source support within a network topology has been merged,
-> >> but the hardware timestamp source is not yet exposed to users.
-> >> Currently, users only see the PTP index, which does not indicate
-> >> whether the timestamp comes from a PHY or a MAC.
-> >>
-> >> Add support for reporting the hwtstamp source using a
-> >> hwtstamp-source field, alongside hwtstamp-phyindex, to describe
-> >> the origin of the hardware timestamp.
-> >>
-> >> [...] =20
-> >=20
-> > Here is the summary with links:
-> >   - [net-next,v4] net: Add support for providing the PTP hardware sourc=
-e in
-> > tsinfo https://git.kernel.org/netdev/net-next/c/4ff4d86f6cce
-> >=20
-> > You are awesome, thank you! =20
->=20
-> Netdev maintainers,
->=20
-> Was there a discussion about merging this without a selftest that covers
-> this uapi extension? Is this considered an exception?
+This patch adds:
+- EQOS controller configuration with RGMII interface.
+- Proper reset timings.
+- PHY power supply regulators.
+- RGMII pinmux configuration for all data, control and clock signals.
+- LED configuration for link status indication via the LED subsystem
+  under /sys/class/leds/, leveraging the support implemented in the.
+  mxl86110 PHY driver (drivers/net/phy/mxl-86110.c).
+  Two LEDs are defined to match the LED configuration on the Variscite
+  VAR-SOM Carrier Boards:
+    * LED@0: Yellow, netdev trigger.
+    * LED@1: Green, netdev trigger.
 
-Not that I know of.
-Indeed I will update tools/testing/selftests/net/hwtstamp_config.c following
-the new uAPI using netlink instead of ioctl.
+The RGMII TX/RX delays are implemented in SOM via PCB passive
+delays, so no software delay configuration is required.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
+---
+ .../boot/dts/freescale/imx8mp-var-som.dtsi    | 87 +++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
+index b59da91fdd04..3be59692849f 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
+@@ -55,6 +55,24 @@ reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
+ 		states = <3300000 0x0 1800000 0x1>;
+ 		vin-supply = <&ldo5>;
+ 	};
++
++	reg_phy_supply: regulator-phy-supply {
++		compatible = "regulator-fixed";
++		regulator-name = "phy-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-enable-ramp-delay = <20000>;
++		gpio = <&gpio2 20 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++	};
++
++	reg_phy_vddio: regulator-phy-vddio {
++		compatible = "regulator-fixed";
++		regulator-name = "vddio-1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
+ };
+ 
+ &A53_0 {
+@@ -73,6 +91,54 @@ &A53_3 {
+ 	cpu-supply = <&buck2>;
+ };
+ 
++&eqos {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_eqos>;
++	/*
++	 * The required RGMII TX and RX 2ns delays are implemented directly
++	 * in hardware via passive delay elements on the SOM PCB.
++	 * No delay configuration is needed in software via PHY driver.
++	 */
++	phy-mode = "rgmii";
++	phy-handle = <&ethphy0>;
++	status = "okay";
++
++	mdio {
++		compatible = "snps,dwmac-mdio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy0: ethernet-phy@4 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <4>;
++			at803x,eee-disabled;
++			eee-broken-1000t;
++			reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
++			reset-assert-us = <10000>;
++			reset-deassert-us = <100000>;
++			vddio-supply = <&reg_phy_vddio>;
++			leds {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				led@0 {
++					reg = <0>;
++					color = <LED_COLOR_ID_YELLOW>;
++					function = LED_FUNCTION_LAN;
++					linux,default-trigger = "netdev";
++				};
++
++				led@1 {
++					reg = <1>;
++					color = <LED_COLOR_ID_GREEN>;
++					function = LED_FUNCTION_LAN;
++					linux,default-trigger = "netdev";
++				};
++			};
++		};
++	};
++};
++
+ &i2c1 {
+ 	clock-frequency = <400000>;
+ 	pinctrl-names = "default";
+@@ -239,6 +305,27 @@ &wdog1 {
+ 
+ &iomuxc {
+ 
++	pinctrl_eqos: eqosgrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC				0x2
++			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO				0x2
++			MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0			0x90
++			MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1			0x90
++			MX8MP_IOMUXC_ENET_RD2__ENET_QOS_RGMII_RD2			0x90
++			MX8MP_IOMUXC_ENET_RD3__ENET_QOS_RGMII_RD3			0x90
++			MX8MP_IOMUXC_ENET_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x90
++			MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL			0x90
++			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0			0x16
++			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1			0x16
++			MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2			0x16
++			MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3			0x16
++			MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL			0x16
++			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x16
++			MX8MP_IOMUXC_SD2_WP__GPIO2_IO20					0x10
++			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10				0x150
++		>;
++	};
++
+ 	pinctrl_i2c1: i2c1grp {
+ 		fsl,pins = <
+ 			MX8MP_IOMUXC_SD1_DATA4__I2C1_SCL				0x400001c2
+
+base-commit: e271ed52b344ac02d4581286961d0c40acc54c03
+prerequisite-patch-id: 2335ebcc90360b008c840e7edf7e34a595880edf
+-- 
+2.43.0
+
 
