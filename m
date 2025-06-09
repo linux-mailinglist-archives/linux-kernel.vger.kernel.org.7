@@ -1,159 +1,131 @@
-Return-Path: <linux-kernel+bounces-677253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB725AD1861
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F0BAD1857
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C95373AAF84
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192A73A50EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D39528030D;
-	Mon,  9 Jun 2025 05:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCC428030B;
+	Mon,  9 Jun 2025 05:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bvyqXMbJ"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="OP+3WZHn"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4233C38DEC;
-	Mon,  9 Jun 2025 05:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A8E280031;
+	Mon,  9 Jun 2025 05:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749447323; cv=none; b=WHS0f+m9WwlGhpMreC/ZRomHo6X2rSMs5+dLZR1xlGOm0PnkaoODR28uSwJGCvUM1Be02pYsnZpuX39olyCf+XXrVPwiXU16KDpOcxmdm0NHd8NWKXjGZ73vjS7OvCUXY2SV5e1/8XWl3X7vzeCPX2ol5wRy3hWiweX8AI+yWxk=
+	t=1749447114; cv=none; b=JHk4q24GWkXasc1/Q8PoDgP53wxoObxcg0Rj3fRd55M48IE/V9XE4npZ/8UksOmKQ9GJn2qO2KBOjgA9Toq9GEIOimmHIrEyQjrMIsmGFx49KB8dmLDuPO7B1KD147G8q4n7DiV1FeiD9c50s4PrwZ+xFtWTPElqCaF6FdTu2fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749447323; c=relaxed/simple;
-	bh=uMAALVz42MSAbN8QVIhZtacVHnYUUP3+rMUoCdj3S2g=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=ltv7zHIMi8BrxmM/SI/hU7G3GaDzAGsNsYhFIUtB4hiGBxUxJiQnBVQSEx9ola/UXTv2BRbmeR0SNn2HyEcP1ikpU7KLzdpUiVVS71jI4ugKGSUyFb5x+x7k9JYbrPwLUkLsqp/ViuhQUpHL1tOFNYokq6RFdadA8b8Scs/m3Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bvyqXMbJ; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-312e747d2d8so3505608a91.0;
-        Sun, 08 Jun 2025 22:35:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749447320; x=1750052120; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tkg9IMCTu6TKB1rVl4zEog0FDDNMrzDftkEt+V/q1Ho=;
-        b=bvyqXMbJiU/u9Ueg3VLGql6x3CjZGkjFTSQT5+X9yzvwMM//z2otmk25ZLrwy3mX3d
-         8lvAaQhWVI8ljrrT/j5rJqTeUPT09Qk2zDzK3KTdQXx99MtbpCkyT2HU00Gx5s6lLMkn
-         902I8llGkCnKD5y2C9V/U3OZTUVwwNdyewLyCQEOYAygVkXajMFQY3fXYCs5vfwphrY6
-         lGUJoP/2mWy0wFtzkaHdoFpH0TQf1PmosfcGTQCZmoCBuYJlESTzn6WLSXTAOPrEyiSQ
-         RxnJXPf1h9UKyWig+MJ2TqBKwbGMqyvXCHl37sPwQp5yjKmhlUsU7aS4cjYVbFDOmSxP
-         ID4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749447320; x=1750052120;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkg9IMCTu6TKB1rVl4zEog0FDDNMrzDftkEt+V/q1Ho=;
-        b=QuYZSRzttF7cgQwWphQYriaKcyDkWO0oIKngUzV2GIilMKlXp9lnNv94w/6LO3cjDD
-         lbzDInH7Z4L7q4FuDcHRIG/XRawLMib9TAfLIjKZXL/d58PM/ChdXGSj8Wj8UYxx6FoM
-         fRm5riDsoxva+DCA1yLVhvsmXToQRRZvAQ2qE6cv01ROdMSgHCi/y8eVdYGERWPY6fZo
-         aqvrgl3pACQkrZApFFx/+PwONuYsli4MzpvQ2kUMTYd+oxktDfBdy3TUU4P+6hy92PdJ
-         GQ2fbJZBIScJBvD7dHckIgRSM7z3VWCAYNDgc/yRplHhfbcStZ4KSjcez2jgib9WNt8D
-         gzsw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4+nlcTIA+IGyC4i09+BdSa/TIci5ai/3bXEkpAsJtCGsNqVMaS0xuNuoCTYffo4nH7f/HYNpwvMr0h2L3@vger.kernel.org, AJvYcCUZkdqm+C6J8uPbxxa5yfSwH9PWsU6dz20Z80TWL1eASdc1PZMvKAMckbCZCWY6hDGXXipxRB5pmJOIvSmb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8hH1MIvs+BOAYZ4rGiQ5QXruxMwscCcUqGyq06dmlFDNnot9G
-	L0GJj3CY4mZtkAqRu8yWK+lM0ZKVlEjzM6q3nZQ7mQZ2EXwTgzsZa/xyafmvew==
-X-Gm-Gg: ASbGncvqAe21pSJnWfD4qj0JJagRuIsxF+kfG1okyOlUiCRjfCz0XsT4xoJAu9dGETF
-	aIcd4pjB5WhnnAXSrm0Uk432crIP09HTwwe6rNi+CRe4Ga9Ytwc1chVWdy6ygaJroEmL1Bu558P
-	OC7OcNUG/ukswiRnhkmfsv2kmwlV3Dr9g8vaMHV32H9kkJKxQDpHc60Y1t8D/fWkYtNWAIOyj2i
-	eYFogv46kHQHzYQ0Qywq30qUnVuli8hnbIKPqTa/g1B51oe3tHWpK0uWsmMKIK188r71RvHWO1o
-	R0NkKrYkmme4Vcwbhnw6fI9g9jN33uIfLDLUm00AylAjLg1siyzm4g==
-X-Google-Smtp-Source: AGHT+IHbXNWjLe2scKNmHHh2XXD2X5FEQWghFG6+O13KNwkyiPgSiq0hAShH7180cL2YHTstjE9a3w==
-X-Received: by 2002:a17:90b:5291:b0:2ff:556f:bf9 with SMTP id 98e67ed59e1d1-31349f2eacfmr15726530a91.4.1749447320031;
-        Sun, 08 Jun 2025 22:35:20 -0700 (PDT)
-Received: from dw-tp ([171.76.83.10])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349ffc151sm4843135a91.48.2025.06.08.22.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 22:35:18 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org, david@redhat.com, shakeel.butt@linux.dev
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, donettom@linux.ibm.com, aboorvad@linux.ibm.com, sj@kernel.org, baolin.wang@linux.alibaba.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for users
-In-Reply-To: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
-Date: Mon, 09 Jun 2025 10:57:41 +0530
-Message-ID: <87bjqx4h82.fsf@gmail.com>
-References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1749447114; c=relaxed/simple;
+	bh=xwHgyoHajGhFY1G2n44w1WEmYaier/b42ADmqkITLwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YSgn1KJwVo0Rn4WlcGrc/2Q4iDRxFodSUm+XYYQzo694t+qhO/kTWlaZx6+fQaYKTb4Jq4mP5ZBSOPwjU4O1vir/P2f1A3uNZ7FjIJbR0sxmP7pvUjzocbFJjw2Qr9mlpk7nOPQIDOAYKeivV02hfVnfv94FwuFE7wBuyiHIX14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=OP+3WZHn; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=AvQOg1tPoDT2meHewRVvm4BILZo75QenErRGTw3BX5U=;
+	b=OP+3WZHnqjLcnJefGNCXPvOIJyNhaV/AI6aKi6ETAnFOWcnwXt4JmA+G6Vvx4o
+	mJBMvduyWSxhAiH5OqvrzgFfTZgrDT08wtWzEptDF9Plbr4UHoVL7b463733ZhOl
+	CSu0fUEjEu1UulZudSBk1Q8LczQx9oWkDafIoIm331Nwg=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD33+yacUZoxUA_AA--.25782S3;
+	Mon, 09 Jun 2025 13:31:08 +0800 (CST)
+Date: Mon, 9 Jun 2025 13:31:06 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Xu Yang <xu.yang_2@nxp.com>, Peter Chen <peter.chen@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: i.MX kernel hangup caused by chipidea USB gadget driver
+Message-ID: <aEZxmlHmjeWcXiF3@dragon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-CM-TRANSID:Ms8vCgD33+yacUZoxUA_AA--.25782S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tr47JF43WrW5AF13WFy7GFg_yoW8Zw47pa
+	13Aw17CrnxJFyxKF4Iy34jkFZ8Aa95JryqgF13X3y8Z3W5Cr9xCr4UKFyfXasFvF95Ca1q
+	yr4UW34xGFy8WF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jTT5QUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIBwvlGhGcZz+bAAA3W
 
-Baolin Wang <baolin.wang@linux.alibaba.com> writes:
+Hi Xu, Peter,
 
-> On some large machines with a high number of CPUs running a 64K pagesize
-> kernel, we found that the 'RES' field is always 0 displayed by the top
-> command for some processes, which will cause a lot of confusion for users.
->
->     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
->  875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
->       1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
->
-> The main reason is that the batch size of the percpu counter is quite large
-> on these machines, caching a significant percpu value, since converting mm's
-> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
-> stats into percpu_counter"). Intuitively, the batch number should be optimized,
-> but on some paths, performance may take precedence over statistical accuracy.
-> Therefore, introducing a new interface to add the percpu statistical count
-> and display it to users, which can remove the confusion. In addition, this
-> change is not expected to be on a performance-critical path, so the modification
-> should be acceptable.
->
-> In addition, the 'mm->rss_stat' is updated by using add_mm_counter() and
-> dec/inc_mm_counter(), which are all wrappers around percpu_counter_add_batch().
-> In percpu_counter_add_batch(), there is percpu batch caching to avoid 'fbc->lock'
-> contention. This patch changes task_mem() and task_statm() to get the accurate
-> mm counters under the 'fbc->lock', but this should not exacerbate kernel
-> 'mm->rss_stat' lock contention due to the percpu batch caching of the mm
-> counters. The following test also confirm the theoretical analysis.
->
-> I run the stress-ng that stresses anon page faults in 32 threads on my 32 cores
-> machine, while simultaneously running a script that starts 32 threads to
-> busy-loop pread each stress-ng thread's /proc/pid/status interface. From the
-> following data, I did not observe any obvious impact of this patch on the
-> stress-ng tests.
->
-> w/o patch:
-> stress-ng: info:  [6848]          4,399,219,085,152 CPU Cycles          67.327 B/sec
-> stress-ng: info:  [6848]          1,616,524,844,832 Instructions          24.740 B/sec (0.367 instr. per cycle)
-> stress-ng: info:  [6848]          39,529,792 Page Faults Total           0.605 M/sec
-> stress-ng: info:  [6848]          39,529,792 Page Faults Minor           0.605 M/sec
->
-> w/patch:
-> stress-ng: info:  [2485]          4,462,440,381,856 CPU Cycles          68.382 B/sec
-> stress-ng: info:  [2485]          1,615,101,503,296 Instructions          24.750 B/sec (0.362 instr. per cycle)
-> stress-ng: info:  [2485]          39,439,232 Page Faults Total           0.604 M/sec
-> stress-ng: info:  [2485]          39,439,232 Page Faults Minor           0.604 M/sec
->
-> Tested-by Donet Tom <donettom@linux.ibm.com>
-> Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Acked-by: SeongJae Park <sj@kernel.org>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
-> Changes from v1:
->  - Update the commit message to add some measurements.
->  - Add acked tag from Michal. Thanks.
->  - Drop the Fixes tag.
+I'm seeing a kernel hangup on imx8mm-evk board.  It happens when:
 
-Any reason why we dropped the Fixes tag? I see there were a series of
-discussion on v1 and it got concluded that the fix was correct, then why
-drop the fixes tag? 
+ - USB gadget is enabled as Ethernet
+ - There is data transfer over USB Ethernet
+ - Device is going in/out suspend
 
-Background: Recently few folks internally reported this issue on Power
-too. e.g. 
+A simple way to reproduce the issue could be:
 
-$ ps -o rss $$
-  RSS
-    0
+ 1. Copy a big file (like 500MB) from host PC to device with scp
 
-So it would be nice if we had fixes tag so that it gets backported
-to all stable release. Does anybody sees any concern with that?
+ 2. While the file copy is ongoing, suspend & resume the device like:
 
--ritesh
+    $ echo +3 > /sys/class/rtc/rtc0/wakealarm; echo mem > /sys/power/state
+
+ 3. The device will hang up there
+
+I reproduced on the following kernels:
+
+ - Mainline kernel
+ - NXP kernel lf-6.6.y
+ - NXP kernel lf-6.12.y
+
+But NXP kernel lf-6.1.y doesn't have this problem.  I tracked it down to
+Peter's commit [1] on lf-6.1.y, and found that the gadget disconnect &
+connect calls got lost from suspend & resume hooks, when the commit were
+split and pushed upstream.  I confirm that adding the calls back fixes
+the hangup.
+
+---8<--------------------
+
+diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
+index 8a9b31fd5c89..72329a7eac4d 100644
+--- a/drivers/usb/chipidea/udc.c
++++ b/drivers/usb/chipidea/udc.c
+@@ -2374,6 +2374,9 @@ static void udc_suspend(struct ci_hdrc *ci)
+         */
+        if (hw_read(ci, OP_ENDPTLISTADDR, ~0) == 0)
+                hw_write(ci, OP_ENDPTLISTADDR, ~0, ~0);
++
++       if (ci->driver && ci->vbus_active && (ci->gadget.state != USB_STATE_SUSPENDED))
++               usb_gadget_disconnect(&ci->gadget);
+ }
+ 
+ static void udc_resume(struct ci_hdrc *ci, bool power_lost)
+@@ -2384,6 +2387,9 @@ static void udc_resume(struct ci_hdrc *ci, bool power_lost)
+                                        OTGSC_BSVIS | OTGSC_BSVIE);
+                if (ci->vbus_active)
+                        usb_gadget_vbus_disconnect(&ci->gadget);
++       } else {
++               if (ci->driver && ci->vbus_active)
++                       usb_gadget_connect(&ci->gadget);
+        }
+ 
+        /* Restore value 0 if it was set for power lost check */
+
+---->8------------------
+
+But it's unclear to me why the hangup happens and how the change above
+fix the problem.  Do you guys have any insight here?
+
+Shawn
+
+[1] https://github.com/reMarkable/linux-imx/commit/0791d25578cb0e46fd93ae7a3c36ff7a424f3547
+
 
