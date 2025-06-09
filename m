@@ -1,175 +1,244 @@
-Return-Path: <linux-kernel+bounces-678471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454FCAD2981
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:45:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D78FAD298C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8B297A5C5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41B816FEFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5DD22539F;
-	Mon,  9 Jun 2025 22:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E332253E8;
+	Mon,  9 Jun 2025 22:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UZhS2BAg"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnMMdYtQ"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349B4223DC5
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 22:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E674454652;
+	Mon,  9 Jun 2025 22:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749509124; cv=none; b=ehjvHGD465TtXJHU7JDGAib3obkQlDisvL/W5qqZItYjVOJ0LWvzhBiK+sX7iTca6oCiXmENYViYz1QUFSzUp7lF0fcMmCH8RTrjOgH28sXBB20perMLh5A6sAorxr7Ju5uvsRGspj4pwcxVc6bRMJ6nuG2f9hOjL3nCFydVL8o=
+	t=1749509195; cv=none; b=XxZZMq4Msn7LaMbSasmyJzYe2V3Fzi3ZfSRrFYzuj3B5ek3BeWuI8lh3PVqGoe/pOvDXbNW7NWt1n8I+GbROX9MFbd5MV4q6hsEQuA4ih5gb39E4HzXVuArwP3wQ5rPQwa1keUs9kXzeQ0gbE8AdRhmhoA1knk2Qtongam5cS8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749509124; c=relaxed/simple;
-	bh=Iq0x5q2nwlvRMcB2qn2pumIsm+x63752VXEgXOhaJCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rGBJn/Xk8I4IAxJ3bIGjzRmx9/Rca393MCGMaPkCzfBV78kzOt/OXQhFMnwmRjEY2KCrjyg+3nIsy42wPcb9PppDTx+cozLnLHuXL6/2SSNsKUu2980I1Ha5rA5fkLu8Ec2iRAgwOzK7OhiB95VhowH/u/EbfqMgL/eBG/iEY6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UZhS2BAg; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235e1d710d8so58659425ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 15:45:22 -0700 (PDT)
+	s=arc-20240116; t=1749509195; c=relaxed/simple;
+	bh=IEqm1JdCJmQGuOAMdzOGJLauECy2w663mdnt4zkoHAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RlbhkyJB7tpdjgEM8M2Ya2HTCSDo8J/2B3Xae9WlcUpX1iwbg5RB4ybtcfBIhxHKLjLnwim3yC7N/vPfAHLIV9WLogHHfRuxSkF8DD2ckRKbu5g3lZUje0k+aCd5Q+p2EHQUZ72T18WzgnarUxmMx4C4gwqv3sm4fZDutwESnQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnMMdYtQ; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7d098f7bd77so549518285a.0;
+        Mon, 09 Jun 2025 15:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749509117; x=1750113917; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a/LCGkPSUi11y6YDbtw03gAAN8X0aMlNFtkYip4Smws=;
-        b=UZhS2BAgdnWp2y1MrJb8Abl6UkXMp18Aqa+ZxZDs4FVnOjlJSEqaeRidRe+OUnZe+r
-         u0JvcT4rNrekQy8kpFnX+dzOj27lUNEcw3TfkX+5lOlV8SDYdniWNvW6541wQTxQKVwT
-         Xpd8/63mVT95n+4IPRt4hHzLl1sIL11dJ0G9s=
+        d=gmail.com; s=20230601; t=1749509193; x=1750113993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=V5UGBtq13GxPtnNntFLWLuUNWSuRazB9K2mUu5fyq/A=;
+        b=EnMMdYtQzyrGIkXfAjksPNVV58qWUhO/HQH33C+ukjy79/M/Ibu8ieDNix8OIO/bmP
+         1jC83hij98FekEJ3hNiTdZuht5iNKgSgQVKRTyiPTJ6F9CRUOoI1tGPh3cLtoWqwQkbj
+         V7rMf7eJ6xJW0a5zopMZusgB3ad38igPBmh5BASveYUDWVKKWfvji6TB6JCD8mHNw98M
+         A2BJw5RfFgjBXZOqhhWimO0ekaQygaP0KzcOrFA4Z5L8rn1juEXRcV86MgUP8pvn6q5G
+         xnoPXiMX4yyKlXtkY1hke5+1ZZmpfibngBCMeuS9+EaJxoqkgEeszmV3gK804yKvEte1
+         S9xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749509117; x=1750113917;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a/LCGkPSUi11y6YDbtw03gAAN8X0aMlNFtkYip4Smws=;
-        b=YaaZ2ojGdIEICARcfmJiABUGFTCsUEtwZwf+8jMWJqNp7UyBrvIvx736NiJ5cFSEud
-         X/IMoupaT3kUJcTWrdn9cOcugC+PjNgg+zbW3Ao2+7SOGDUvLRxUaZleXRzXStpfues3
-         TiJXsSd40BFynZXK2dvayZrEHHKVoXjRffiMsnkftoXLhWHFse4KZvjz/q34eP8Aolpw
-         UKoCI+TeVTu1BMds2GR9u3xae7XLCggoCsnR50vDkHk+zd7GlhMtSFA9v+tyFu7m0hbI
-         n/Etsrudc5ZndK30dLzu8emXocuG7XNxy6Tfu5S8wPvCUpvUbVNO39hEh3cKxX749eS9
-         Z3Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUggI+ZC5Vio97W9RKd17+aJdcjKY31AShFvjYVGDXBA4laK0FL6kc8LsIchdMQxHQdl/qARJAsVvJISyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlfnQLMJTZJ8ijbb+8KnyL46kruHtw1qscwRsqrwaR7ZbfmqLi
-	4tlnEHJ5u4IqL8Y9vgRqNvgMDO+4xZWeQq4XoLIFm1JE3REpwAtTpkSaTNt2twdMvmMoj9mDIGV
-	ywYhs4A==
-X-Gm-Gg: ASbGncsXsDQ4EThbyEjvc1FhHbSlNNAMeU2TgMTnJlo7CC1z4eg742mNS+RKdDcRLlj
-	THQjFew93BhH6ADuZGWn7xFXKIKlLXmjGc+SEe/5D1sCh31t9RH0zSbqjAgenhUQjyrQ/biqLAR
-	YX35lUYXp6rJsX2epgppWpDMBGh7P73Yr8GUYCethw3ZbZLdbYTx3YxKFWIopwaP6HHBipEMd6q
-	SZGlxmm6uEIxA62BYFiW3xKCkAjKh6Qj4f0FOy29uHUfVBfNlLRl9Wgx6vAaNfDgALjq07cJdHt
-	Mj+zzaWDwBQwOg+jmycBCOuZco0UKvgGU1hiljtZuH1UWAvmdAKJ7Lzq06fzwd8zjJSycOqtwiv
-	1wpqnUU8JVWn99xH5qQbhxyLM1g==
-X-Google-Smtp-Source: AGHT+IE6K+6ijPE+dksXxp7Oqdxs4k0Q0R0oq4emwgDjccyvb5sKZeMABB3ISbsVabxpNJjW6a5Rcg==
-X-Received: by 2002:a17:902:e889:b0:234:d292:be7a with SMTP id d9443c01a7336-2363818a23amr4285065ad.1.1749509117532;
-        Mon, 09 Jun 2025 15:45:17 -0700 (PDT)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com. [209.85.216.51])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603078175sm58915215ad.9.2025.06.09.15.45.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 15:45:15 -0700 (PDT)
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso1261142a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 15:45:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV6i+SSdRAoI7hPjB8MNGW1FJTJ2RdMl7Esq9ddpMN17bngDc0gkP/XCsTwS6ZAl7Gq5yIO57VgqrgoKJc=@vger.kernel.org
-X-Received: by 2002:a17:90b:6c7:b0:313:1a8c:c2c6 with SMTP id
- 98e67ed59e1d1-313a1695527mr399198a91.16.1749509115055; Mon, 09 Jun 2025
- 15:45:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749509193; x=1750113993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V5UGBtq13GxPtnNntFLWLuUNWSuRazB9K2mUu5fyq/A=;
+        b=r+Ai3Y5527IcrqSIzvGYqVzNqMbsfL1cOMa7w2UCiQiD+0Vef0RUpqeWQYbsA2TTif
+         8/2GN/R6Cq98pwsl+iUEeqj/YojV71b8WXoGli/lkqmmUwa6TOj63rV1FP5ZthqqlSh9
+         y2jQGnRgpNLwjWz4540wnFu6iADrl7qSvBvTZss1e3PreBW8O19YNY80r/AgptcaJSgg
+         bT/kjTf3obLPgTYvaRJDvw4Y1GiqXAXN1x8gGS2+TqWXRITJjFyBB9NrrCLxa8bLB5N7
+         Ef50qsmEkGxR8Upe/ll/s3tDZZ1OcQtv27lNost3dndX6jqcY6A2dVG0GAj2wGnstNW3
+         qVWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE1KlHjE7sjcNlZ5SVO2v/bkgFQwcRc6LFJNdgMQp6Ju4zE9EEguVZyEQqCDWnZ04fBgtAC4EpeHV+@vger.kernel.org, AJvYcCWE/cPPoUPwNq30Wodp700dOHU+ynuUc/VSMKo0xRS+6Gnz8JUw6h/6c8aZCqIub3b3mhEfpTspnqckzsXgcME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqiACz5JreikEulMJ5RxbK/2JoSP5/BvMpNPqfK+WXX310nFFg
+	gGnzwe3KFErWCy7ThY9n89nRXTEFJszfCMEaBK6HecuVkisA4IZYHP9D
+X-Gm-Gg: ASbGncu5xGVv1WfS6VI4J6ucxfqeRgL3wv7cFFak6E7PlNzloAy7GvRyK8ur2m75S+1
+	HStqYd/xHh6+KBFjXfJuYu6EcgWT3T4lLRKva50sLMQ+ikGZmwxRcJsJjLxGN7nYCQJfuUujal8
+	8i/w/lX3V2mA239xv3xg1NclyNR1e9jZRqcAa7SzmVwXpSfK8osc0djaw9X0m0PA+qB9VwxhKVt
+	fcnO9qN7P5k6FWdorlm1ufdDacP5/0pho5bn3S/v7kEZkvX9bZ3OZP+BMtkJgvazPw7HEROAjlE
+	1I1JgREv+ZVzIK/satqPEfKC7oLuL/XkxZSMWVsU4FhP+2rQ519W2fcn2C9detxr0SCAFXax8Tu
+	f85RAOUJBMGknfIGFbt84mqIQ4f7din1XPMYzfa2cNMGTB1Voyw96
+X-Google-Smtp-Source: AGHT+IENOpjPB1yljzfiMwwSApPRUkLli1+qtSLEn+wxBrXU5IyRAiAyOKuFF67UnXoHNcSDCEwJLg==
+X-Received: by 2002:a05:620a:4405:b0:7ce:ed0e:423c with SMTP id af79cd13be357-7d39d8a98c1mr206503185a.9.1749509192780;
+        Mon, 09 Jun 2025 15:46:32 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d250f64b80sm600930285a.23.2025.06.09.15.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 15:46:32 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9CB111200043;
+	Mon,  9 Jun 2025 18:46:31 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 09 Jun 2025 18:46:31 -0400
+X-ME-Sender: <xms:R2RHaDFX-ayTKY_XEAtPlRZLaUJcmcTzMNqXxYt5tMIOMw2ZbL2Qhw>
+    <xme:R2RHaAVCotEba3hJ6wiE7eELRHOlN9cNpkq0idcja6IhRYZ5l-G79l5j5_Y7grJlA
+    AmDgu-D6WnfWHcCSA>
+X-ME-Received: <xmr:R2RHaFLyYjOrAK9AajBPQlvBK38jrTtlHgECn4abbmDU9j_ozl9mBvgLZI8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelleduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpeeggeeukeeghfevudektdevjeehhfekffevueefudei
+    vdelteeltdekheejgfeiveenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
+    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
+    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
+    pdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    rhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhkmhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhu
+    gidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurg
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghi
+    lhdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprh
+    gtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhn
+    fegpghhhsehprhhothhonhhmrghilhdrtghomh
+X-ME-Proxy: <xmx:R2RHaBFFUoumlD9FVwR97VsnRb_VGE5ZjMU2O_H7o1alcLDtmh6-Tw>
+    <xmx:R2RHaJVyBOKURSgIPW_MM4HpqdtbuOrjj2f8vRhRXqQz_Bz6n5bsfQ>
+    <xmx:R2RHaMNDGZOUKtvkKEOaibtuuXJlhTBJb_R3RMYe2Rna5oYj4Dvm_A>
+    <xmx:R2RHaI2dBFkwHzWUnlTwZ93d9ieuVEvXRJI2eOsDr0qkFL8cJraYOA>
+    <xmx:R2RHaOWPMJkRRQo2mlVml8cuv0Ggdgy91zrVbjFfdtJApm9qDyX-HE-k>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Jun 2025 18:46:31 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>
+Subject: [PATCH v4 00/10] LKMM generic atomics in Rust 
+Date: Mon,  9 Jun 2025 15:46:05 -0700
+Message-Id: <20250609224615.27061-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506125133.108786-1-nicolescu.roxana@protonmail.com> <20250506125133.108786-3-nicolescu.roxana@protonmail.com>
-In-Reply-To: <20250506125133.108786-3-nicolescu.roxana@protonmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 9 Jun 2025 15:45:02 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V2PSoakXH0_nKx1MkjPGXrHkFbPyMR=om9efW7LPn-dw@mail.gmail.com>
-X-Gm-Features: AX0GCFvms_bTeu1m1tYJFabPtpRa0hg1AcW21wJUDi4AC8ourQTRpSPGDqEtFkQ
-Message-ID: <CAD=FV=V2PSoakXH0_nKx1MkjPGXrHkFbPyMR=om9efW7LPn-dw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] serial: kgdboc: convert to use faux_device
-To: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	jason.wessel@windriver.com, danielt@kernel.org, jirislaby@kernel.org, 
-	kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
 Hi,
 
-On Tue, May 6, 2025 at 5:51=E2=80=AFAM Roxana Nicolescu
-<nicolescu.roxana@protonmail.com> wrote:
->
-> The kgdboc uses a "fake" platform device to handle tty drivers showing
-> up late. In case the tty device is not detected during probe, it will
-> return EPROBE_DEFER which means the probe will be called later when the
-> tty device might be there. Before this, the kgdboc driver
-> would be initialized early in the process (useful for early boot
-> debugging) but then the tty device wouldn't be there, and retry wouldn't =
-be
-> done later. For a better explanation, see commit
-> '68e55f61c138: ("kgdboc: Use a platform device to handle tty drivers
-> showing up late")'.
->
-> This replaces the platform_device usage with faux_device which was
-> introduced recently for scenarios like this, where there is not real
-> platform device needed. Moreover, it makes the code cleaner than before.
->
-> Signed-off-by: Roxana Nicolescu <nicolescu.roxana@protonmail.com>
-> ---
->  drivers/tty/serial/kgdboc.c | 50 +++++++++++--------------------------
->  1 file changed, 14 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-> index 85f6c5a76e0f..d1ffe6186685 100644
-> --- a/drivers/tty/serial/kgdboc.c
-> +++ b/drivers/tty/serial/kgdboc.c
-> @@ -21,7 +21,7 @@
->  #include <linux/input.h>
->  #include <linux/irq_work.h>
->  #include <linux/module.h>
-> -#include <linux/platform_device.h>
-> +#include <linux/device/faux.h>
->  #include <linux/serial_core.h>
->
->  #define MAX_CONFIG_LEN         40
-> @@ -42,7 +42,7 @@ static int kgdboc_use_kms;  /* 1 if we use kernel mode =
-switching */
->  static struct tty_driver       *kgdb_tty_driver;
->  static int                     kgdb_tty_line;
->
-> -static struct platform_device *kgdboc_pdev;
-> +static struct faux_device *kgdboc_fdev;
->
->  #if IS_BUILTIN(CONFIG_KGDB_SERIAL_CONSOLE)
->  static struct kgdb_io          kgdboc_earlycon_io_ops;
-> @@ -259,7 +259,7 @@ static int configure_kgdboc(void)
->         return err;
->  }
->
-> -static int kgdboc_probe(struct platform_device *pdev)
-> +static int kgdboc_probe(struct faux_device *fdev)
->  {
->         int ret =3D 0;
->
-> @@ -276,47 +276,26 @@ static int kgdboc_probe(struct platform_device *pde=
-v)
->         return ret;
->  }
->
-> -static struct platform_driver kgdboc_platform_driver =3D {
-> +struct faux_device_ops kgdboc_driver =3D {
+v4 for LKMM atomics in Rust, you can find the previous versions:
 
-nit: s/kgdboc_driver/kgdboc_faux_ops/ ?
+v3: https://lore.kernel.org/rust-for-linux/20250421164221.1121805-1-boqun.feng@gmail.com/
+v2: https://lore.kernel.org/rust-for-linux/20241101060237.1185533-1-boqun.feng@gmail.com/
+v1: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/
+wip: https://lore.kernel.org/rust-for-linux/20240322233838.868874-1-boqun.feng@gmail.com/
 
-Other than that, this seems reasonable to me. I guess I'd assume that
-Greg would chime in at some point since patch #1 in this series would
-need to go through him.
+The reason of providing our own LKMM atomics is because memory model
+wise Rust native memory model is not guaranteed to work with LKMM and
+having only one memory model throughout the kernel is always better for
+reasoning.
 
--Doug
+
+I haven't gotten any review from last version but I got a few feedbacks
+during Rust-for-Linux weekly meeting. I trimmed two more patches to make
+the current series easier to review, the current version includes:
+
+* Generic atomic support of i32, i64, u32, u64, isize and usize on:
+  * load() and store()
+  * xchg() and cmpxchg()
+  * add() and fetch_add()
+
+* Atomic pointer support on:
+  * load() and store()
+  * xchg() and cmpxchg()
+
+* Barrier and ordering support.
+
+Any missing functionality can of course be added in a later patch. There
+are some use cases based on these API can be found at:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git rust-atomic-dev
+
+for example, RCU protected pointers and AtomicFlag.
+
+I think the current version is ready to merge (modulo some documentation
+improvement), and I would like to postpone small implementation
+improvement because we are seeing growing usages of atomics in Rust
+side. It's better to merge the API first so that we can clean up and
+help new users.
+
+But I do have one question about how to route the patch, basically I
+have three options:
+
+* via tip, I can send a pull request to Ingo at -rc4 or -rc5.
+
+* via rust-next, I can send a pull request to Miguel at -rc4 or -rc5.
+
+* via my own tree or atomic (Peter if you remember, we do have an atomic
+  group in kernel.org and I can create a shared tree under that group),
+  I can send a pull request to Linus for 6.17 merge window.
+
+Please advise.
+
+Regards,
+Boqun
+
+Boqun Feng (10):
+  rust: Introduce atomic API helpers
+  rust: sync: Add basic atomic operation mapping framework
+  rust: sync: atomic: Add ordering annotation types
+  rust: sync: atomic: Add generic atomics
+  rust: sync: atomic: Add atomic {cmp,}xchg operations
+  rust: sync: atomic: Add the framework of arithmetic operations
+  rust: sync: atomic: Add Atomic<u{32,64}>
+  rust: sync: atomic: Add Atomic<{usize,isize}>
+  rust: sync: atomic: Add Atomic<*mut T>
+  rust: sync: Add memory barriers
+
+ MAINTAINERS                               |    4 +-
+ rust/helpers/atomic.c                     | 1038 +++++++++++++++++++++
+ rust/helpers/barrier.c                    |   18 +
+ rust/helpers/helpers.c                    |    2 +
+ rust/kernel/sync.rs                       |    2 +
+ rust/kernel/sync/atomic.rs                |  176 ++++
+ rust/kernel/sync/atomic/generic.rs        |  524 +++++++++++
+ rust/kernel/sync/atomic/ops.rs            |  199 ++++
+ rust/kernel/sync/atomic/ordering.rs       |   94 ++
+ rust/kernel/sync/barrier.rs               |   67 ++
+ scripts/atomic/gen-atomics.sh             |    1 +
+ scripts/atomic/gen-rust-atomic-helpers.sh |   65 ++
+ 12 files changed, 2189 insertions(+), 1 deletion(-)
+ create mode 100644 rust/helpers/atomic.c
+ create mode 100644 rust/helpers/barrier.c
+ create mode 100644 rust/kernel/sync/atomic.rs
+ create mode 100644 rust/kernel/sync/atomic/generic.rs
+ create mode 100644 rust/kernel/sync/atomic/ops.rs
+ create mode 100644 rust/kernel/sync/atomic/ordering.rs
+ create mode 100644 rust/kernel/sync/barrier.rs
+ create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
+
+-- 
+2.39.5 (Apple Git-154)
+
 
