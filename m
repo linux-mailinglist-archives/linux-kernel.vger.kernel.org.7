@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-678219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A247AD25DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:43:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50ED0AD25C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41043A3A21
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F7618919F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D51122259D;
-	Mon,  9 Jun 2025 18:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC1721FF54;
+	Mon,  9 Jun 2025 18:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wYBFK5FC"
-Received: from mail-oi1-f202.google.com (mail-oi1-f202.google.com [209.85.167.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLESQLN7"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D052222A0
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 18:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A4621FF23
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 18:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749494451; cv=none; b=mwLmSn0aflHhwT64o6eoOqTf7vDLJcdbPQMplFTjoDUGYSRC+gQxvlY7t1WVol/+8mTCkKk0GA0+IbpDeR2NTEiEwP1DXLf6+6TJP3hEVpWXUAKg0XZ+dpJ/bVLq3yardQ+Hq65fIgoVzGDhhdULmTiHlfxFZPEEFEk+QikFE9E=
+	t=1749494440; cv=none; b=G+xRBRMasXsfnguKUOOs4uUsXt7jdcnN1s+5fUQVqizFt7jKN5W+vu10DSlAqEvCCmYy4WznAoGxp0eSma4Cz4+YNyHzXQ3+J9L4Ej38emartW+/voXW9PEC6AHDIkL3PT80nYFOYmGzGv9YRv769lOhUcehQuXfsF1pfVGPTbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749494451; c=relaxed/simple;
-	bh=rKjUKQfc4OMKlUXFxIl6D9srGX57cWCr2GmRAt5oFXY=;
+	s=arc-20240116; t=1749494440; c=relaxed/simple;
+	bh=p2+++y3iHclFNlQ927Q3Se5dn3Uyz9UkBJ7sepJ6Fqk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PCErSRLtf4XwYKu+7m5+pyNm3N0b3VJCv00ixfI8b8HGDvnCjtEEQ7OM/3gMcUrU3gMB01IpwOD/jkhevnOGb5t31aLJm6f+iYdPJXTjlV1LCDmqs0xt5MN+0lQnsLsR7npFF3zYBWkbxWSAx+B2BrYiL945I15njSdUK3blqw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wYBFK5FC; arc=none smtp.client-ip=209.85.167.202
+	 To:Cc:Content-Type; b=FLGwRPqweHar/BvQCXwomdoC7p4y5tA8twrhZCNF83/PRG8nPjHk8i7nq8ggZsGy7Vk+Gq2NTPxTa8YfnDYpk3PnA5JAyaRTrloX7Zhfibi7MRxERPxbr+PVBrOoSDAfuGh2B4FJP1bG5t/UrkdlhcvIsABXWOzYpkc8Xzd5m/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FLESQLN7; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--hramamurthy.bounces.google.com
-Received: by mail-oi1-f202.google.com with SMTP id 5614622812f47-4066a79eaddso4433424b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 11:40:49 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-235e3f93687so72335945ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 11:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749494449; x=1750099249; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1749494438; x=1750099238; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SIFIP7KP90Ct5yuguqMb9VIz9B7n2uUQGQjuUEHD2gw=;
-        b=wYBFK5FCkoC4VXprUPbGUAU8fQUUTNKAXznB3DMyoJy3X0ePx5y4TJcdG+Jxd6Dpby
-         2qx4HXk6ToMvRBkn1FqEcsT8uGAPvgQaN8S70URS1PUJVugjIe286cirtUw4YNPRbSgx
-         EMHn/32o9I5AK/2iUReh2s90zHa29495AIA5MGZFAfyq7dwpv7lpQ8OiFy7n01MzyeXj
-         ocwHQVBIn0ZsL1gk5bZX1qBfjfcM45uD5TZRzAM5REbbgdRSy8l+XSfzgKK2mI7avyvU
-         l+v9+7u1uMORXKPIdmktR6RdiLNl4nfdmFUbxrPnjGLnnufy3cStI69XicfbbyWn6CIj
-         bgaQ==
+        bh=5dRqLM3ld49DYouGOATOb6C0m+lQfx0X1CvE19/m2NQ=;
+        b=FLESQLN7yJTMr+Gwphg6474oe1wc8CXM2KxOZl1ccn83q0zgZxXf85Mo60Q+DUT3v6
+         CXmGL6svLtRP/1X0uLbyehdTMZqQN+OAKBImn5+cw6Sam/iaI77K4s3qnVW2loF/f1At
+         VlRJSkjWGhH/Uz9Ygu9v+q5KPvO73HrDlzxR8PhunWHEiQ565X4VPE/te/qAnWHF6L5j
+         9ngT0fhOvyxLBw//qhOhKI2zDdjNYw1zlAuHwORKEdb82FOJinQkxOep8xhqZDHJFnfr
+         J6uzOcevWSHjs4VWJvmPfEfPRCZSt2lAjLRM34mUc2jdOZCl+NZOT/JIO9VHoQKOLWgt
+         QE+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749494449; x=1750099249;
+        d=1e100.net; s=20230601; t=1749494438; x=1750099238;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SIFIP7KP90Ct5yuguqMb9VIz9B7n2uUQGQjuUEHD2gw=;
-        b=RB33hsECXJoxZLnGgmJcWSsMbQssmVM6LIttApnnfLJ14xXyB8QwL0BZ/KOldwu5Y5
-         pnSsAYH0rxDIFchETGhEqQY8flhE6woclKuX/EnQbm6RXWRNj/jN9crjSlOl+JME/R4N
-         +n2C+u2CgHx8G90dn7ERHT2oDlDu7Fm4uM+f3NplXT+vGXrmLokCPQ8Sf7h/bgs1bsYY
-         LUUfegJTnKYYNJwhsHDkpfnEUZGtPQBVMDAFvZLo4yws1G/2bqfxXag7XPS3yxuLZoer
-         FZaNCEHJl8Rs4f2VP5eG9tdFxNwd+eZRDJ0xF+bdD0XrRMY+cE0sFKNiwiDXPbx/Ls5P
-         4GMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLP8kh9Z6MuyEHp2jf/ZHgt7SHH7TiX8PrNuG0fpXNJrkjh30cWYQllZkJsDhvuRvMd8iW/dAS63UapY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2/93zMpi9RpdkAkGssW3lBUjDBCtwjYrzFcUTrUdp0HZfD7x/
-	amD4kldOaxDyHQ0qn+869jXHlEF2jooXkXGdK6B/P4X/Tpa1EhcRsomnkcxon7q0BEZa1NFr3ho
-	mtwHqpH8rIH7yNAmkHIl8XBK0fw==
-X-Google-Smtp-Source: AGHT+IEwklIgKgfYBJsH2x38K6nG02IxhjEjNUnIs10WtpsPz1pYiv3+lkfIu6mQB40WFiX+sfUnOaWLNWjyaGgSMw==
-X-Received: from plje13.prod.google.com ([2002:a17:902:ed8d:b0:234:d00c:b347])
+        bh=5dRqLM3ld49DYouGOATOb6C0m+lQfx0X1CvE19/m2NQ=;
+        b=BQFWkh4HzQ8g5tUnVr0nNZKahvzOTxZcNaPy6onreUquhOU/tich5a0Waqm12rt7Js
+         0wYjtnK8/8K2z7ticI5RcN2YG6eMgSHO60uKybeaffsrDDa65vL3QsWTP+Mkjpyr17yS
+         b9Zj1nefKYQxXuDz2B6CuAKrCKNhPV07spqbFJD0VYtSb7Z9D/b/Khf0Fui+P0kSQj5v
+         mAwX124zXUImuzzVqNgYG2yyT8YDSvdr8A/dq9fK0cSR86iK9WXSU3jQI49YE/Z7Zz8d
+         opKUOIepH5JPKovrxiBRv1cfs7WbbkUimQD1HSF/s3hmjnGJ0q2onzmWAgnLUTdkmcLD
+         HP4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWTrk3A+x+XHC73+obIhEZGd1m5g2i1v7TCHGIFFPHjyfkkBs8pMW+U4sO2fVeaC3Xn9wDtERyvB3EZQW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4KbYbMrG2TUdwwyPVrLsr3gxrOFno0Gt9S4kyPkFZ5CeZZeqa
+	d5jjl+etuc08bWHXbMqLfM6Ov7QA3MjW/jRYx7RPRqZJAj+A8BuktqdIGECP+m6C9A+yr3ArftP
+	HuYQ7tLGcvbodAM+a2y3T2+PmqQ==
+X-Google-Smtp-Source: AGHT+IH3t6UcJaY69UpI3hQC8DzIL6jD4ZPwkG36z/REKzJQsYF9rtLf9JyfsEDKsI6POhmWpw2dmjk0HWy4p2exfA==
+X-Received: from plpj8.prod.google.com ([2002:a17:903:3d88:b0:234:9673:1d13])
  (user=hramamurthy job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:c94f:b0:235:caf9:8b08 with SMTP id d9443c01a7336-23601d14ecamr213792115ad.23.1749494436659;
- Mon, 09 Jun 2025 11:40:36 -0700 (PDT)
-Date: Mon,  9 Jun 2025 18:40:23 +0000
+ 2002:a17:902:ce05:b0:235:ef67:b595 with SMTP id d9443c01a7336-23601d710bamr231474245ad.35.1749494438080;
+ Mon, 09 Jun 2025 11:40:38 -0700 (PDT)
+Date: Mon,  9 Jun 2025 18:40:24 +0000
 In-Reply-To: <20250609184029.2634345-1-hramamurthy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250609184029.2634345-1-hramamurthy@google.com>
 X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
-Message-ID: <20250609184029.2634345-3-hramamurthy@google.com>
-Subject: [PATCH net-next v4 2/8] gve: Add adminq command to report nic timestamp
+Message-ID: <20250609184029.2634345-4-hramamurthy@google.com>
+Subject: [PATCH net-next v4 3/8] gve: Add initial PTP device support
 From: Harshitha Ramamurthy <hramamurthy@google.com>
 To: netdev@vger.kernel.org
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
@@ -83,162 +83,146 @@ Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
 	pkaligineedi@google.com, yyd@google.com, joshwash@google.com, 
 	shailend@google.com, linux@treblig.org, thostet@google.com, 
 	jfraker@google.com, richardcochran@gmail.com, jdamato@fastly.com, 
-	vadim.fedorenko@linux.dev, horms@kernel.org, linux-kernel@vger.kernel.org, 
-	Jeff Rogers <jefrogers@google.com>
+	vadim.fedorenko@linux.dev, horms@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-From: John Fraker <jfraker@google.com>
+If the device supports reading of the nic clock, add support
+to initialize and register the PTP clock.
 
-Add an adminq command to read NIC's hardware clock. The driver
-allocates dma memory and passes that dma memory address to the device.
-The device then writes the clock to the given address.
-
-Signed-off-by: Jeff Rogers <jefrogers@google.com>
-Signed-off-by: John Fraker <jfraker@google.com>
 Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
 Reviewed-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
 ---
- Changes in v4:
- - add two more reserved fields in gve_nic_ts_report, anticipating
-   upcoming use, to align size expectations with the device from the
-   start (team internal review, Shachar Raindel)
----
- drivers/net/ethernet/google/gve/gve.h         |  1 +
- drivers/net/ethernet/google/gve/gve_adminq.c  | 20 +++++++++++++++++++
- drivers/net/ethernet/google/gve/gve_adminq.h  | 19 ++++++++++++++++++
- drivers/net/ethernet/google/gve/gve_ethtool.c |  3 ++-
- 4 files changed, 42 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/google/Kconfig       |  1 +
+ drivers/net/ethernet/google/gve/Makefile  |  4 +-
+ drivers/net/ethernet/google/gve/gve.h     |  8 +++
+ drivers/net/ethernet/google/gve/gve_ptp.c | 59 +++++++++++++++++++++++
+ 4 files changed, 71 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/google/gve/gve_ptp.c
 
+diff --git a/drivers/net/ethernet/google/Kconfig b/drivers/net/ethernet/google/Kconfig
+index 564862a57124..14c9431e15e5 100644
+--- a/drivers/net/ethernet/google/Kconfig
++++ b/drivers/net/ethernet/google/Kconfig
+@@ -18,6 +18,7 @@ if NET_VENDOR_GOOGLE
+ config GVE
+ 	tristate "Google Virtual NIC (gVNIC) support"
+ 	depends on (PCI_MSI && (X86 || CPU_LITTLE_ENDIAN))
++	depends on PTP_1588_CLOCK_OPTIONAL
+ 	select PAGE_POOL
+ 	help
+ 	  This driver supports Google Virtual NIC (gVNIC)"
+diff --git a/drivers/net/ethernet/google/gve/Makefile b/drivers/net/ethernet/google/gve/Makefile
+index 4520f1c07a63..e0ec227a50f7 100644
+--- a/drivers/net/ethernet/google/gve/Makefile
++++ b/drivers/net/ethernet/google/gve/Makefile
+@@ -1,5 +1,7 @@
+ # Makefile for the Google virtual Ethernet (gve) driver
+ 
+ obj-$(CONFIG_GVE) += gve.o
+-gve-objs := gve_main.o gve_tx.o gve_tx_dqo.o gve_rx.o gve_rx_dqo.o gve_ethtool.o gve_adminq.o gve_utils.o gve_flow_rule.o \
++gve-y := gve_main.o gve_tx.o gve_tx_dqo.o gve_rx.o gve_rx_dqo.o gve_ethtool.o gve_adminq.o gve_utils.o gve_flow_rule.o \
+ 	    gve_buffer_mgmt_dqo.o
++
++gve-$(CONFIG_PTP_1588_CLOCK) += gve_ptp.o
 diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
-index e9b2c1394b1f..cf6947731a9b 100644
+index cf6947731a9b..8d2aa654fd4c 100644
 --- a/drivers/net/ethernet/google/gve/gve.h
 +++ b/drivers/net/ethernet/google/gve/gve.h
-@@ -813,6 +813,7 @@ struct gve_priv {
- 	u32 adminq_set_driver_parameter_cnt;
- 	u32 adminq_report_stats_cnt;
- 	u32 adminq_report_link_speed_cnt;
-+	u32 adminq_report_nic_timestamp_cnt;
- 	u32 adminq_get_ptype_map_cnt;
- 	u32 adminq_verify_driver_compatibility_cnt;
- 	u32 adminq_query_flow_rules_cnt;
-diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
-index ae20d2f7e6e1..f57913a673b4 100644
---- a/drivers/net/ethernet/google/gve/gve_adminq.c
-+++ b/drivers/net/ethernet/google/gve/gve_adminq.c
-@@ -326,6 +326,7 @@ int gve_adminq_alloc(struct device *dev, struct gve_priv *priv)
- 	priv->adminq_set_driver_parameter_cnt = 0;
- 	priv->adminq_report_stats_cnt = 0;
- 	priv->adminq_report_link_speed_cnt = 0;
-+	priv->adminq_report_nic_timestamp_cnt = 0;
- 	priv->adminq_get_ptype_map_cnt = 0;
- 	priv->adminq_query_flow_rules_cnt = 0;
- 	priv->adminq_cfg_flow_rule_cnt = 0;
-@@ -564,6 +565,9 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
- 	case GVE_ADMINQ_REPORT_LINK_SPEED:
- 		priv->adminq_report_link_speed_cnt++;
- 		break;
-+	case GVE_ADMINQ_REPORT_NIC_TIMESTAMP:
-+		priv->adminq_report_nic_timestamp_cnt++;
-+		break;
- 	case GVE_ADMINQ_GET_PTYPE_MAP:
- 		priv->adminq_get_ptype_map_cnt++;
- 		break;
-@@ -1229,6 +1233,22 @@ int gve_adminq_report_link_speed(struct gve_priv *priv)
- 	return err;
- }
- 
-+int gve_adminq_report_nic_ts(struct gve_priv *priv,
-+			     dma_addr_t nic_ts_report_addr)
-+{
-+	union gve_adminq_command cmd;
-+
-+	memset(&cmd, 0, sizeof(cmd));
-+	cmd.opcode = cpu_to_be32(GVE_ADMINQ_REPORT_NIC_TIMESTAMP);
-+	cmd.report_nic_ts = (struct gve_adminq_report_nic_ts) {
-+		.nic_ts_report_len =
-+			cpu_to_be64(sizeof(struct gve_nic_ts_report)),
-+		.nic_ts_report_addr = cpu_to_be64(nic_ts_report_addr),
-+	};
-+
-+	return gve_adminq_execute_cmd(priv, &cmd);
-+}
-+
- int gve_adminq_get_ptype_map_dqo(struct gve_priv *priv,
- 				 struct gve_ptype_lut *ptype_lut)
- {
-diff --git a/drivers/net/ethernet/google/gve/gve_adminq.h b/drivers/net/ethernet/google/gve/gve_adminq.h
-index 42466ee640f1..f9f19e135790 100644
---- a/drivers/net/ethernet/google/gve/gve_adminq.h
-+++ b/drivers/net/ethernet/google/gve/gve_adminq.h
-@@ -27,6 +27,7 @@ enum gve_adminq_opcodes {
- 	GVE_ADMINQ_GET_PTYPE_MAP		= 0xE,
- 	GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY	= 0xF,
- 	GVE_ADMINQ_QUERY_FLOW_RULES		= 0x10,
-+	GVE_ADMINQ_REPORT_NIC_TIMESTAMP		= 0x11,
- 	GVE_ADMINQ_QUERY_RSS			= 0x12,
- 
- 	/* For commands that are larger than 56 bytes */
-@@ -401,6 +402,21 @@ struct gve_adminq_report_link_speed {
- 
- static_assert(sizeof(struct gve_adminq_report_link_speed) == 8);
- 
-+struct gve_adminq_report_nic_ts {
-+	__be64 nic_ts_report_len;
-+	__be64 nic_ts_report_addr;
-+};
-+
-+static_assert(sizeof(struct gve_adminq_report_nic_ts) == 16);
-+
-+struct gve_nic_ts_report {
-+	__be64 nic_timestamp; /* NIC clock in nanoseconds */
-+	__be64 reserved1;
-+	__be64 reserved2;
-+	__be64 reserved3;
-+	__be64 reserved4;
-+};
-+
- struct stats {
- 	__be32 stat_name;
- 	__be32 queue_id;
-@@ -594,6 +610,7 @@ union gve_adminq_command {
- 			struct gve_adminq_query_flow_rules query_flow_rules;
- 			struct gve_adminq_configure_rss configure_rss;
- 			struct gve_adminq_query_rss query_rss;
-+			struct gve_adminq_report_nic_ts report_nic_ts;
- 			struct gve_adminq_extended_command extended_command;
- 		};
- 	};
-@@ -633,6 +650,8 @@ int gve_adminq_reset_flow_rules(struct gve_priv *priv);
- int gve_adminq_query_flow_rules(struct gve_priv *priv, u16 query_opcode, u32 starting_loc);
- int gve_adminq_configure_rss(struct gve_priv *priv, struct ethtool_rxfh_param *rxfh);
- int gve_adminq_query_rss_config(struct gve_priv *priv, struct ethtool_rxfh_param *rxfh);
-+int gve_adminq_report_nic_ts(struct gve_priv *priv,
-+			     dma_addr_t nic_ts_report_addr);
- 
- struct gve_ptype_lut;
- int gve_adminq_get_ptype_map_dqo(struct gve_priv *priv,
-diff --git a/drivers/net/ethernet/google/gve/gve_ethtool.c b/drivers/net/ethernet/google/gve/gve_ethtool.c
-index 3c1da0cf3f61..d0628e25a82d 100644
---- a/drivers/net/ethernet/google/gve/gve_ethtool.c
-+++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-@@ -76,7 +76,7 @@ static const char gve_gstrings_adminq_stats[][ETH_GSTRING_LEN] __nonstring_array
- 	"adminq_dcfg_device_resources_cnt", "adminq_set_driver_parameter_cnt",
- 	"adminq_report_stats_cnt", "adminq_report_link_speed_cnt", "adminq_get_ptype_map_cnt",
- 	"adminq_query_flow_rules", "adminq_cfg_flow_rule", "adminq_cfg_rss_cnt",
--	"adminq_query_rss_cnt",
-+	"adminq_query_rss_cnt", "adminq_report_nic_timestamp_cnt",
+@@ -12,6 +12,7 @@
+ #include <linux/ethtool_netlink.h>
+ #include <linux/netdevice.h>
+ #include <linux/pci.h>
++#include <linux/ptp_clock_kernel.h>
+ #include <linux/u64_stats_sync.h>
+ #include <net/page_pool/helpers.h>
+ #include <net/xdp.h>
+@@ -750,6 +751,12 @@ struct gve_rss_config {
+ 	u32 *hash_lut;
  };
  
- static const char gve_gstrings_priv_flags[][ETH_GSTRING_LEN] = {
-@@ -456,6 +456,7 @@ gve_get_ethtool_stats(struct net_device *netdev,
- 	data[i++] = priv->adminq_cfg_flow_rule_cnt;
- 	data[i++] = priv->adminq_cfg_rss_cnt;
- 	data[i++] = priv->adminq_query_rss_cnt;
-+	data[i++] = priv->adminq_report_nic_timestamp_cnt;
- }
++struct gve_ptp {
++	struct ptp_clock_info info;
++	struct ptp_clock *clock;
++	struct gve_priv *priv;
++};
++
+ struct gve_priv {
+ 	struct net_device *dev;
+ 	struct gve_tx_ring *tx; /* array of tx_cfg.num_queues */
+@@ -874,6 +881,7 @@ struct gve_priv {
  
- static void gve_get_channels(struct net_device *netdev,
+ 	/* True if the device supports reading the nic clock */
+ 	bool nic_timestamp_supported;
++	struct gve_ptp *ptp;
+ };
+ 
+ enum gve_service_task_flags_bit {
+diff --git a/drivers/net/ethernet/google/gve/gve_ptp.c b/drivers/net/ethernet/google/gve/gve_ptp.c
+new file mode 100644
+index 000000000000..293f8dd49afe
+--- /dev/null
++++ b/drivers/net/ethernet/google/gve/gve_ptp.c
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/* Google virtual Ethernet (gve) driver
++ *
++ * Copyright (C) 2025 Google LLC
++ */
++
++#include "gve.h"
++
++static const struct ptp_clock_info gve_ptp_caps = {
++	.owner          = THIS_MODULE,
++	.name		= "gve clock",
++};
++
++static int __maybe_unused gve_ptp_init(struct gve_priv *priv)
++{
++	struct gve_ptp *ptp;
++	int err;
++
++	if (!priv->nic_timestamp_supported) {
++		dev_dbg(&priv->pdev->dev, "Device does not support PTP\n");
++		return -EOPNOTSUPP;
++	}
++
++	priv->ptp = kzalloc(sizeof(*priv->ptp), GFP_KERNEL);
++	if (!priv->ptp)
++		return -ENOMEM;
++
++	ptp = priv->ptp;
++	ptp->info = gve_ptp_caps;
++	ptp->clock = ptp_clock_register(&ptp->info, &priv->pdev->dev);
++
++	if (IS_ERR(ptp->clock)) {
++		dev_err(&priv->pdev->dev, "PTP clock registration failed\n");
++		err  = PTR_ERR(ptp->clock);
++		goto free_ptp;
++	}
++
++	ptp->priv = priv;
++	return 0;
++
++free_ptp:
++	kfree(ptp);
++	priv->ptp = NULL;
++	return err;
++}
++
++static void __maybe_unused gve_ptp_release(struct gve_priv *priv)
++{
++	struct gve_ptp *ptp = priv->ptp;
++
++	if (!ptp)
++		return;
++
++	if (ptp->clock)
++		ptp_clock_unregister(ptp->clock);
++
++	kfree(ptp);
++	priv->ptp = NULL;
++}
 -- 
 2.50.0.rc0.604.gd4ff7b7c86-goog
 
