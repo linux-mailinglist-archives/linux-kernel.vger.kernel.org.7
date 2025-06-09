@@ -1,143 +1,112 @@
-Return-Path: <linux-kernel+bounces-678397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34AA2AD2866
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:02:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F559AD2857
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A971893200
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:03:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 305107A608B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290EF229B38;
-	Mon,  9 Jun 2025 21:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09925222597;
+	Mon,  9 Jun 2025 21:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LN/K8y/2"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pv/uXhpu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D64227BA1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 21:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60062222598;
+	Mon,  9 Jun 2025 21:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749502863; cv=none; b=VDJtoRDQVqeyXq/xTLW+U8uK+XYTKskAVddsDIme1eRXHlXPCprNZ7bhoucdiwaLV3s2v3+Udj+EdOyDeAIIXtGaJ8GynfgGgacCnC4jo+n7bWKNak56k2QdV7sipWz2cnFc9klwSM4nzLPCO6JOP+27JU9RYhK8Fzxs5EZ3A2A=
+	t=1749502852; cv=none; b=NyQhC81KbUWAxF/zQEz/k/uD5QRRxKk2CY9bQ5hgwKDw31bfsjia56frwZS2vr9Y+hi/QOAcgq37yPyAXZf+FW4NL/UUQkJaJirIuEgxAYSAmuXymal03pHhiGEj9dd1lDnb/aG5jbZ47Mz+kiHARhajuu582qk0+AkerNRTd1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749502863; c=relaxed/simple;
-	bh=eyd7dkYdmo76NiWyqd8qco4AxCsmAyol0TU7H7ybWZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k08lX4KYu7jDoLQ8cQADz7yJN3LqElgRsdtmXbZTHXtFXj2wAFaH0MIANE8EebF7uRCRCC6V8chp7PNx4jKvMb8jHLjEm/gRDuy1X+1VhUfWmaSVzn8iz9O9fE/vLIF8BwZsUOas4AQ+4DHgLmYOBLysw63yYv2gjEIXMFlu+FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LN/K8y/2; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2357c61cda7so4415ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 14:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749502861; x=1750107661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fp1HLmID6Po0ISnRZLWOoZOSkshz6QhojcHHKeJ34Ns=;
-        b=LN/K8y/27AM9H4hzMzRkQYqiKDUj1tn/AaaCflq0A0tUX9mXsxRWe4Kao/DX1Kjai5
-         qYLP5Es955opVSI2ZJNAABf5twsj4Oa+j2TgZ1TYSDX9U7n4xXNpXvJLXRJM6qpMCfxA
-         PovGyZIj1T7xOumAH/GhdplLub8mDMdfQ6pgq/oVdzdH6GgHI7qQitW7n0O0vKMhKhHx
-         8hNON85wrOiu88I63Inz2pia+EQ9JDVm3kbtgBUh+1b0kX4vjHqnkibzfGHU6jZPDkMy
-         XkQ0cj8JBmBLbqyuIMZIJiSaIKQHQHOkNCC7LoBg3jNUJHq2/YnTUxZIlWA/91LImMQK
-         3M2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749502861; x=1750107661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fp1HLmID6Po0ISnRZLWOoZOSkshz6QhojcHHKeJ34Ns=;
-        b=wTJyQN6BcjmyC7dGq+8GJtL9H30WgBtSdj0kDcP1zc02GaTzrOJREhw0sR9ztVHKId
-         eel6S2YeaT32WQl0+hNbK7YHut7uBhVB5MAZ/616Wz2X83ALyRKxQ12UzMoxGUPFHsSB
-         A+qcCPMZ96IlG9UTq/TIb3AOysUflvb0vaDzhpX9doTTbVwjjdKAxjx3Pabo7jw1Kvzy
-         TVXgK2wmM0EJfQ/E/MYM8J3cdQm2L3fPdZbzFE+vZZacYpJqLx9/MKQepV4kZEsSO+9U
-         5Lts8VykrhFrekT+doVOAseyGynlaLu+hGp18pjMB6cFY14zaBs9VFcouXWAh4Cwx3QA
-         Nf3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUXhfCdhx6wFuFXfvrEqdDmXtYEDHPtytjMXJKhFhI/7Lo8EmOuDUX74+5sp5L1UY2ZgfefMVRlsepkKDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMSVmJj7YggxG5bDCn6g78M1UAdAvURclRSZpyyOzXc1vGvf68
-	f5WwTfjU32i0PpQLU/V583is8tHzbHJK4YeTPmezsMuU5c2v1uK4ZtbLYtjrkz3Qrc0BOkvJ+J7
-	sue8wrmRE+BuETxuRXe/A/ArH7SEtcrJdSoVJVx6l
-X-Gm-Gg: ASbGncsLh2zPABMW5fLUPKOewwCmPD2mho0/s1mHVv+FC8En6QIcjUX9FQzlsm24t1H
-	Xn5T4bzZELq0efZMcR8VldMcZ/s30EFZWo7AWGzNb3FgraoqbkxynsFHswIS4K+T0DnhdutynMm
-	hMpGzUFe+5/e8bSgHKzeT9GjH9xwgNFSw3WfYxK+Gm0LfUxiDPYokkFcoAqwfNi3lC7xmShitdJ
-	A==
-X-Google-Smtp-Source: AGHT+IG6N3NUPJBNAz8TsmsFXeRPi1cuCX22IbhMPJCSWiBMY1aDF54kxjYnyw1Y7GWByXZ5qflX3DqDd9s37j5ptwI=
-X-Received: by 2002:a17:903:1a4e:b0:234:1073:5b85 with SMTP id
- d9443c01a7336-23613cab9c8mr5630515ad.1.1749502859032; Mon, 09 Jun 2025
- 14:00:59 -0700 (PDT)
+	s=arc-20240116; t=1749502852; c=relaxed/simple;
+	bh=4kqJW1ciMSPYKms3Y+JdGC7f/q+aGKCLpMKAts86L60=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=A3mcWssdBIH3WzJNM+khUew62WerBRDg5zhHRzq63KH88Ib29lVMDoD8ZvN8DGrQApbLDlxkUg0fE6rME6XdlODyc0Icva64Qgl7E8oaBOcHZ4ktifeGySdKqJi6vwwvbYvsmrh4MdMIZ0zG0HEuOquW461oT9qKA7VVAno5+uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pv/uXhpu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4ABC4CEEF;
+	Mon,  9 Jun 2025 21:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749502851;
+	bh=4kqJW1ciMSPYKms3Y+JdGC7f/q+aGKCLpMKAts86L60=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pv/uXhpuR9ZUpJOCDfH4EtcgNdI2KVijdLyoVEFoklMIpiFMXuyX2w2RiUjll+Dvc
+	 epnH1q4y5U/p9R7+bGNyVh3F+MQdhXLSQZ+x8o5rRx0qDW4PUatpKOyj3U0dFTYMJT
+	 zqx5VSP9aGlyp5iR9xCEgkHn/GpMkIoyljRmwtR1iAgR3Smy3VySb50Wb92eHG8abT
+	 M6byrRuwZZwueXNpDOnevEJgZrHZGA1ohfpmhNVUsgbIfbl5Sr9ukuT9thIptFp/Fb
+	 mcuG/xJHfU6Rn/kmzdUWD+JvTaKi6qqhiQFtv9v6qVCMXsUJFal50MzDGwuhHcyAL3
+	 ugxLnp5j/933A==
+From: Mark Brown <broonie@kernel.org>
+To: perex@perex.cz, tiwai@suse.com, kuninori.morimoto.gx@renesas.com, 
+ lgirdwood@gmail.com, jbrunet@baylibre.com, neil.armstrong@linaro.org, 
+ khilman@baylibre.com, martin.blumenstingl@googlemail.com, 
+ shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+ kernel@pengutronix.de, Ai Chao <aichao@kylinos.cn>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org
+In-Reply-To: <20250603055109.3154061-1-aichao@kylinos.cn>
+References: <20250603055109.3154061-1-aichao@kylinos.cn>
+Subject: Re: (subset) [PATCH v4 0/4] Use helper function
+ for_each_child_of_node_scoped()
+Message-Id: <174950284791.277844.12094958567890827693.b4-ty@kernel.org>
+Date: Mon, 09 Jun 2025 22:00:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250530162353.541882-1-den@valinux.co.jp>
-In-Reply-To: <20250530162353.541882-1-den@valinux.co.jp>
-From: Yuanchu Xie <yuanchu@google.com>
-Date: Mon, 9 Jun 2025 14:00:42 -0700
-X-Gm-Features: AX0GCFvi4bmJzefOCchySkDZ9yW59quhp2Ry0TqIK1IoccCC_Koa-wNcf5Bulk0
-Message-ID: <CAJj2-QHU9q_xi4+Z_JrPCgm2DXuRWTj2rpL5pGRDoNV5yZF_og@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: vmscan: apply proportional reclaim pressure for
- memcg when MGLRU is enabled
-To: Koichiro Den <den@valinux.co.jp>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, yuzhao@google.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On Fri, May 30, 2025 at 9:24=E2=80=AFAM Koichiro Den <den@valinux.co.jp> wr=
-ote:
->
-> From: Koichiro Den <koichiro.den@canonical.com>
->
-> The scan implementation for MGLRU was missing proportional reclaim
-> pressure for memcg, which contradicts the description in
-> Documentation/admin-guide/cgroup-v2.rst (memory.{low,min} section).
->
-> This issue can be observed in kselftest cgroup:test_memcontrol
-> (specifically test_memcg_min and test_memcg_low). The following table
-> shows the actual values observed in my local test env (on xfs) and the
-> error "e", which is the symmetric absolute percentage error from the idea=
-l
-> values of 29M for c[0] and 21M for c[1].
->
->   test_memcg_min
->
->          | MGLRU enabled   | MGLRU enabled   | MGLRU disabled
->          | Without patch   | With patch      |
->     -----|-----------------|-----------------|---------------
->     c[0] | 25964544 (e=3D8%) | 28770304 (e=3D3%) | 27820032 (e=3D4%)
->     c[1] | 26214400 (e=3D9%) | 23998464 (e=3D4%) | 24776704 (e=3D6%)
->
->   test_memcg_low
->
->          | MGLRU enabled   | MGLRU enabled   | MGLRU disabled
->          | Without patch   | With patch      |
->     -----|-----------------|-----------------|---------------
->     c[0] | 26214400 (e=3D7%) | 27930624 (e=3D4%) | 27688960 (e=3D5%)
->     c[1] | 26214400 (e=3D9%) | 24764416 (e=3D6%) | 24920064 (e=3D6%)
->
-> Factor out the proportioning logic to a new function and have MGLRU
-> reuse it. While at it, update the eviction behavior via debugfs
-> 'lru_gen' interface ('-' command with an explicit 'nr_to_reclaim'
-> parameter) to ensure eviction is limited to the specified number.
->
-> Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
-> ---
-> Changes in v2:
-> - Leverage the new evict_folios() parameter to ensure correct eviction
->   limitation via debugfs
-> - Update the commit message to use the latest upstream kselftest instead
->   of LTP memcontrol03.
->
-> v1: https://lore.kernel.org/all/20250404141118.3895592-1-koichiro.den@can=
-onical.com/
-> ---
-Thanks for the update. It seems like Andrew already pulled the patch
-into mm-new.
+On Tue, 03 Jun 2025 13:51:05 +0800, Ai Chao wrote:
+> This patch series introduces wrapper functions for_each_child_of_node_scoped().
+> 
+> The for_each_child_of_node_scoped() helper provides a scope-based clean-up
+> functionality to put the device_node automatically, and as such, there is
+> no need to call of_node_put() directly.
+> 
+> Summary:
+> 
+> [...]
 
-Reviewed-by: Yuanchu Xie <yuanchu@google.com>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[2/4] ASoC: renesas: Use helper function for_each_child_of_node_scoped()
+      commit: 077caf1d1763e069239101b4a72351fb38d37f13
+[3/4] ASoC: meson: Use helper function for_each_child_of_node_scoped()
+      commit: 618abc785e0cbe9993f7217c9f8ecb1cd2478e4f
+[4/4] ASoC: imx-card: Use helper function for_each_child_of_node_scoped()
+      commit: 111a2c8ab462d77d1519b71b46f13ae1b46920b4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
