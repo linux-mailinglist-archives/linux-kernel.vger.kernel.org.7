@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-677188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E95AD175B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:11:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7B6AD1761
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B4C3A8E1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54283168E25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AE8246761;
-	Mon,  9 Jun 2025 03:11:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14303270542;
+	Mon,  9 Jun 2025 03:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ad1yNjNU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C06622A811
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 03:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711187DA6D;
+	Mon,  9 Jun 2025 03:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438664; cv=none; b=dSQVyvtNmnlul8Kk7jgBO9/wRYbKplyKIz8n4q3HKg25pEY/oOQojPyjJ4IpUvwrOEzif1mSE1wsC1CN68ZN9UPUnr7booU2Je3aiKPGfQLA+kKsKqk78r7P4h2VTx8nhZKcfLu1kQzIzKZpouIVG21rubAbVhA1+kEyb+l7teA=
+	t=1749438790; cv=none; b=rgW615bAlQkFlog3UCDWM7gkfoMR+2im9a3sHtXhFtm3gu7OADQsFWf6sUUk1bgFn/vbyXROIxQIhoUho3xg2VJ2iLSZ8rn9rI2dgXru3cq+Ice2WiZ+RLkCjYxTWUKsC/lhL+o1MkO97R8RpW5qENkuJiNyOpGjCZbcrvTro7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438664; c=relaxed/simple;
-	bh=XqX8W0WXjmvJmcTYPtm3CDkoRO35HGBnjqGMJwyZerM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SZdXywH9jQMrgG43xy0fYSk6zzjsLaikce/mI+9ixrmFHIUVoWW+QxkUe2bxC+TVYYY47bSAB3g07gYi1HR51AjXqCu0F0H0saiUmyszVuhqwqf9QDksd2gzDDhlscr/W5U+RejpA0o+oBDSD0WoLlaNtp92GJJbyxMM+l3FvTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-869e9667f58so696339239f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 20:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749438662; x=1750043462;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wo7UpV8gmOqqjSSyDcx4sdLxk2Thz6qXIr6g3frrVp8=;
-        b=u1O0U/s/pG6GCD838T0tQkve4ORhILs4xRLWEfb0UKm9Cqu6UOz4RdiEFb49toq9U2
-         BPgz2Chre/TBDRNLwJlRJZknbU51bIXS+jhL3qYG+1B+oh/OneqnH626+UcPL/lzBU8Y
-         qVrj/QOZERPe/K9lCUErLFRzLc5gh8x6ucJSFHtqFA8efCfFxfdytoEY1v9jFsZF3BZn
-         JOHUHRL40iqfjiR/bRXNmzwi8iZ6vmCuRVNdBLyb6i2WYa6fZ44B2Hm9CdMzuuuayRNi
-         NKozXbjKsfyh2EFtalueiMKHJxos3bLjYk8IM8nf2CvRFki5utw1+a1SiilKM3IZTqme
-         nCuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx55/Ewees06qFRCGssyCPCOHjPZSAHZe+VK+BpFIcTHLib0Mv/xwisNj+ef998iU4MU6tHbFyzR0qkHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG6oiY2FBQzp3Y/412OVCsAkOJqVM0o3qjrYX7m8hhkHt6hees
-	cunHL9V2hD9wlzfRkjz6goHliRGDcsqOZKIhAggVH6eg7FuIX7WEwMAqijBG3AjjWMquVdSq/pp
-	BH41/L+JPmQYhU6qMKakNmjNKyjzlCeb5w2GDrJANhgswCIHmQBPrSZhP2wI=
-X-Google-Smtp-Source: AGHT+IEpUfLTrGAb9S5XjnQfzSLe9AUGAJcv3mfxO7vTH7UhO3BuyGZJcFzIEYx7ZuJlkvXzjBZ3b7JZGRRDDZiZx0cs0Ss6h8uI
+	s=arc-20240116; t=1749438790; c=relaxed/simple;
+	bh=K4hlRrQnQJCWwJYZciXsYQ+Uhs0lDRqIdB00BdRadwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2JLHGzxPyR/agATP+zCbUIGK8AXKrhR1Rg2fYqG32ECatYdENA2JZYn0QqiapLGNExebQyCqbXugwq9zGHADEze9lZYygD5UqgWTeru5YgaYCsBCpPE4bH2s1NNyc83BJvv1NRbyR3M9MF6swprNW93nEInHlD9dqAxwWc31vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ad1yNjNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03071C4CEEE;
+	Mon,  9 Jun 2025 03:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749438790;
+	bh=K4hlRrQnQJCWwJYZciXsYQ+Uhs0lDRqIdB00BdRadwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ad1yNjNUKDCtv0Ln0TE6oLLSgw4lne/KoZK+lhfFLnzyQMt/Y4ez4BnQ1RNQ2zWF6
+	 m2l9bLC8QQuiiWIeBhKwDYyUciOjePlBkteV6Gq6/rYMlv2tosdosSl511zvxVr8kp
+	 5esf1ejT6cZ3bq3BjRSweTZYH70JtZpflNRaVbomuYy6ZDutcBagoV6IKaOjvhXL4x
+	 2AXJjEJsqpLFESaMPJWyH3kF6hYz0FWlUldbv1AkrnI/utSj5zAgfhBi65M5Tv1XIS
+	 ED9ph3UgVOCoijac7XceGafOkK3PQAGx47X9yz9XGWR20mbFmVT0cr5OvrUdfvvj17
+	 SlDK6sC77pxaA==
+Date: Mon, 9 Jun 2025 08:43:03 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	bhelgaas@google.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/PTM: Build debugfs code only if CONFIG_DEBUG_FS is
+ enabled
+Message-ID: <aoqcrof6edexuem4b2xtboiiwwihyolkfpwj7pchy32mgp2o4r@ib5rlna4z2v7>
+References: <20250608033305.15214-1-manivannan.sadhasivam@linaro.org>
+ <20250609000809.GH1259@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188a:b0:3dd:b7da:5256 with SMTP id
- e9e14a558f8ab-3ddce48b1efmr123961825ab.19.1749438662672; Sun, 08 Jun 2025
- 20:11:02 -0700 (PDT)
-Date: Sun, 08 Jun 2025 20:11:02 -0700
-In-Reply-To: <6745a8df.050a0220.1286eb.0015.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <684650c6.050a0220.d8705.0018.GAE@google.com>
-Subject: Re: [syzbot] [kernfs?] general protection fault in kernfs_dop_revalidate
-From: syzbot <syzbot+e37a1730d63d207fe403@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250609000809.GH1259@sol>
 
-syzbot has bisected this issue to:
+On Sun, Jun 08, 2025 at 05:08:09PM -0700, Eric Biggers wrote:
+> On Sun, Jun 08, 2025 at 09:03:05AM +0530, Manivannan Sadhasivam wrote:
+> > Otherwise, the following build error will happen for CONFIG_DEBUG_FS=n &&
+> > CONFIG_PCIE_PTM=y.
+> > 
+> >     drivers/pci/pcie/ptm.c:498:25: error: redefinition of 'pcie_ptm_create_debugfs'
+> >       498 | struct pci_ptm_debugfs *pcie_ptm_create_debugfs(struct device *dev, void *pdata,
+> >           |                         ^
+> >     ./include/linux/pci.h:1915:2: note: previous definition is here
+> >      1915 | *pcie_ptm_create_debugfs(struct device *dev, void *pdata,
+> >           |  ^
+> >     drivers/pci/pcie/ptm.c:546:6: error: redefinition of 'pcie_ptm_destroy_debugfs'
+> >       546 | void pcie_ptm_destroy_debugfs(struct pci_ptm_debugfs *ptm_debugfs)
+> >           |      ^
+> >     ./include/linux/pci.h:1918:1: note: previous definition is here
+> >      1918 | pcie_ptm_destroy_debugfs(struct pci_ptm_debugfs *ptm_debugfs) { }
+> >           |
+> > 
+> > Fixes: 132833405e61 ("PCI: Add debugfs support for exposing PTM context")
+> > Reported-by: Eric Biggers <ebiggers@kernel.org>
+> > Closes: https://lore.kernel.org/linux-pci/20250607025506.GA16607@sol
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/pcie/ptm.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/pci/pcie/ptm.c b/drivers/pci/pcie/ptm.c
+> > index ee5f615a9023..4bd73f038ffb 100644
+> > --- a/drivers/pci/pcie/ptm.c
+> > +++ b/drivers/pci/pcie/ptm.c
+> > @@ -254,6 +254,7 @@ bool pcie_ptm_enabled(struct pci_dev *dev)
+> >  }
+> >  EXPORT_SYMBOL(pcie_ptm_enabled);
+> >  
+> > +#if IS_ENABLED(CONFIG_DEBUG_FS)
+> >  static ssize_t context_update_write(struct file *file, const char __user *ubuf,
+> >  			     size_t count, loff_t *ppos)
+> >  {
+> > @@ -552,3 +553,4 @@ void pcie_ptm_destroy_debugfs(struct pci_ptm_debugfs *ptm_debugfs)
+> >  	debugfs_remove_recursive(ptm_debugfs->debugfs);
+> >  }
+> >  EXPORT_SYMBOL_GPL(pcie_ptm_destroy_debugfs);
+> > +#endif
+> 
+> Tested-by: Eric Biggers <ebiggers@kernel.org>
+> 
+> DEBUG_FS is a bool, not a tristate.  It would be more conventional to write
+> '#ifdef CONFIG_DEBUG_FS' instead of '#if IS_ENABLED(CONFIG_DEBUG_FS)'.
+> 
 
-commit f7643bc9749f270d487c32dc35b578575bf1adb0
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Apr 17 05:26:02 2024 +0000
+I intentionally wanted to avoid using '#ifdef' since mixing both '#ifdef' and
+'#if IS_ENABLED' always create issues when one mistakenly uses the former for
+tristate symbols. So I always prefer using '#if IS_ENABLED'.
 
-    bcachefs: make btree read errors silent during scan
+> Also, the #if guards 300 lines of code.  Perhaps they belong in a separate .c
+> file?
+> 
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17abb20c580000
-start commit:   28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=146bb20c580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=106bb20c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
-dashboard link: https://syzkaller.appspot.com/bug?extid=e37a1730d63d207fe403
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163706e8580000
+Perhaps, but not for this fix patch.
 
-Reported-by: syzbot+e37a1730d63d207fe403@syzkaller.appspotmail.com
-Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
+- Mani
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-- 
+மணிவண்ணன் சதாசிவம்
 
