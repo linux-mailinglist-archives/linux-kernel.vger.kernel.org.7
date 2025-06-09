@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-677275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DF2AD189F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:35:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325CCAD18A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8819F3A6385
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:35:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 981667A2181
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCBC27FD41;
-	Mon,  9 Jun 2025 06:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC28280305;
+	Mon,  9 Jun 2025 06:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BR7ywKbf"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBWkMh4O"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A153610D;
-	Mon,  9 Jun 2025 06:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EDD2459F9;
+	Mon,  9 Jun 2025 06:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749450935; cv=none; b=BaxZpHp6CjDID3OTjsUwqPVaablDO1as4w/oTnIsLEabViMTLrXM3/c18EqfcP5GfEeeUn+4jL/KrVAxRdU8XCgPIiwPzmpd2cAjbLiqYjHD0nOifnxikSPzkkgA05zo6FdBtY8g1mBpZ4IJz973Ed4KKgXCRMzVq0tJCn2IMXo=
+	t=1749450984; cv=none; b=T1YJsglfaQoIJCzwDRsWT7kpBk1Vwq6UoP2CPuaMaV1aUY7uUXeVbnajWJ58/VU5iAqjmuhhzcOWcO5yQFsIPy0eF80VRnRMkYDIYtyftJgvFUBpImT/FoSRpGcddRTswpKv4FRhpUYkiCad+WxyLUDURx5lfwLtgpOcmvL89DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749450935; c=relaxed/simple;
-	bh=eLeuTaQZ+mEjmhuaoA3ei0mbiUMW1mObJTYwjfYNIWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y1/4lAj4OemardP8eww4YYFcVqmQacZzvZ1cGr5MpMmcIcPx9L/nGdFNKQ8xxV7zyPeTYywMzIdcSEVNnqxJRNmGIVn640MrewVKbfwxZ1By94LA/6QH0pzBCP1g8m6VFmQW1kJz0R8cHWCMFnNP/B3gSL/ezpFM/5GTI8OraKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BR7ywKbf; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1749450984; c=relaxed/simple;
+	bh=bQgR2qHC11zuqIG01E8qJWkBL1w+nt/76di6qyxrPAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kvlGXgVQsZQQ5xfMRNaya5IVim69vKph7Ps2fpTsPgmmSAC4QqU4qjVj7cOAVcw4zKYxJ8lsuCK0NzI0AO7xsr1/eYPk6mK2HxN5tz+ZPJSRMAlVrcPeNy5zGZ1xEgeZmy5oRUdRIOTeTV7jH2za/juf3m0E00toHSZ7kWZ0QQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBWkMh4O; arc=none smtp.client-ip=209.85.216.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60700a745e5so5029772a12.3;
-        Sun, 08 Jun 2025 23:35:33 -0700 (PDT)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so3284169a91.1;
+        Sun, 08 Jun 2025 23:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749450932; x=1750055732; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D5QjZTzRsvth07TwPIj9Bqpfw7PuFxeIFc4P3or3VHQ=;
-        b=BR7ywKbfoT9gBA/ruItom26URDTalhJdJ0xsXsxpOCbthmkenCDDHgxwhXfgzzjnHn
-         UVUeWkxSKHvWNjW6mOQhbwp+wCTjr/ziKLo/5/IaJN8enJJHqy+/6lzd5FFcSIMLErbD
-         SAzyydYxbM8NghiLNU/8uNaqxclH7LcNkl3A/ldUPUtVbTl5zYQdfzoujZPHBA0BnCwM
-         Bb15mJ3xHruJ7c+zAw5HP8nSLydSt+r7UnIyvDq/jleJz/CGCUUePF0or6fdElRRxyzS
-         LX8VL0TJx7vRJY5+38waXPmj4ej4bHlfbU+82t/T2+SaSe9t4sPVXEzAUTao7Q8tLfJ6
-         nbPQ==
+        d=gmail.com; s=20230601; t=1749450983; x=1750055783; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bQgR2qHC11zuqIG01E8qJWkBL1w+nt/76di6qyxrPAk=;
+        b=BBWkMh4OHXqT6Gj5VEo1pkAOy53uMO0HLz7QmyKk/CCiPjo8IqebwHDtVDQf47M5pb
+         u/RzFKQHHmxkw+T/vFWzDcDnLu7FtObrzsaEy2tzpG05MFcG06IQMx68LjMdKpI6kyfu
+         55eaxLcDxKvusYk0Q49piUs9cp1nfC47n2sHnPqqAw1dWA92Bcsl81GEwpcT3rtsxmLb
+         lYJ/lFD+MgB+gKdW0HhASX2UfGk05Kuyfag0J9ZWaiSNmOBkD/w56H2bW+DMaxWANqJ+
+         yviJvAbcvPrAxhPUYwWODGDcdCMSgbr38WN0oskCyMBbeJGeq4EEDPpVjKnXa/iePO3S
+         UGLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749450932; x=1750055732;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D5QjZTzRsvth07TwPIj9Bqpfw7PuFxeIFc4P3or3VHQ=;
-        b=NaRBMH/pR3Y+mh5aXc/tBICDErbOSIRQI0sqiTtHSe5PHUf7nreMrXz3CaHUh37z58
-         cY2/wkZrnm3PN9Zx+1fEHmDg3ePFNkZXEB7rMWJqv2iuBoB/1l8nettaul5tbQE3RvBM
-         k9qxT95u9DqhadDVVS4J4mxAOSqF0Gg1/jIi0TVQb1TikIZV7z4NNYeMBGpkAW9YN3U8
-         m/+wGmhut8uDr99qms4qGLFJriX4sOYNTq4bRKmfMnaYihoyUIUUX9cZPqlAqBV7vzZ+
-         S5Je+hfppi85vRlRZbDbK0SNU5rELztpQfNApSJyc3ZvOKZeuqMcLmnOiReMWDqA7/id
-         RlBg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/NcJRzLLSIiOVYHJhUBWHwI7fyxzPq/OuLeqcfTksLrTuRmszsRyVIMw68NmCi0Bt87tv4tBEUdMNvlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzJ2RXdpisjDUMLduZF2I3xECWj7KrUlll0YDC+8BkoKTurDUN
-	uKiKrqsPCQlYHOLSpbi91kkitBIp1VXAStwb7H9wJ7iN1QUvhg7GizIVey5fvQ==
-X-Gm-Gg: ASbGncutCXK9dOKHVcLbIIW6qRqn1ic+ZIL2OE84X4pXgibRxdmMS2gbtpqdDYl38Dx
-	+ue3minrpiRnokMHcHfjEvSpl4hc6+uy/z3+MAvYuFyw/OJHChecQ5PuN4bY3gsYc/7XIkH6CKZ
-	TgGr1T/7kWyfD4a6iPOOLWVvFXkljcckqOBo9U7NHLv6KRIRnpIHB7uBG3TMeXYuwXTgdpF/2Ik
-	6CC18yuylT4mwG91+hJEXxrBFbGNnRIO7BYENd0YgQAU8jQ+3OoNdlao5pkl/rdDkPGN/b2d6bP
-	nk9aGqqdBXQwHHNw+58wbV1D+P4YdUi+d9JAB7mOVrOlfyBnAr5Idw==
-X-Google-Smtp-Source: AGHT+IGXZra7Xr70TDC239IEydaDWpezL0pc8rf8jjOV14kiuQEftAI3djMfCzXCg27Br/+QvUSdyA==
-X-Received: by 2002:a05:6402:1e92:b0:607:2417:6d04 with SMTP id 4fb4d7f45d1cf-6077351442cmr10350880a12.14.1749450932025;
-        Sun, 08 Jun 2025 23:35:32 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-607783c0620sm4394270a12.49.2025.06.08.23.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jun 2025 23:35:31 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Len Brown <lenb@kernel.org>
-Subject: [PATCH] intel_idle: Update arguments of mwait_idle_with_hints()
-Date: Mon,  9 Jun 2025 08:35:01 +0200
-Message-ID: <20250609063528.48715-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1749450983; x=1750055783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bQgR2qHC11zuqIG01E8qJWkBL1w+nt/76di6qyxrPAk=;
+        b=s2uF4D2378KrOsizRe5t7cBdGZjQt7xscoDaVtlGoB7JXn3dvXx6lHFVP/0p3PkWml
+         uE3dNi+LT936G34Xiy9Nw+7bjZOaatDeI2880QDeVh3gw7TFT9D0SEuSLZyE2SgoW3vD
+         YsTA373Yl3gpdPX2t9jlH5n1EFELOJVdNCNJXthqgWIltKZovoKbCRpIPHANesGw4J+j
+         tu3SLH2xwn/lnWlYCxi2pOMRuHwjqAcVNEbFsiZ5wX3swnhY2EjI9iYWOGPC5jGctLg5
+         D/hj9mBhtFMZiob3nsFZWP3dUU2JQqpy38qKCZtiyRK/V3W3KkCbydi5EbId9uNfaNxS
+         78ag==
+X-Forwarded-Encrypted: i=1; AJvYcCV5FrE4Ng9XFwjgavvBcjZOvjSFYpp9s7kPqUHdF/eH3+bSjRkZcWNNbbXoLzca+ek7cnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7LiOqdYOyzR5D2e75L/Jx/ntSMOjv/QTZKC+X1ZYHyYEdXMkS
+	18Ff4Jy1RhBmoQCvtIFHHLxG5R0XVpIEEyU0qvvKcoNhttqGcVvcFcFiN4EgM+NuRfkz1GTYYNA
+	4fZcgjKGb4p7A/rmzK9wI3znZZPqO3nw=
+X-Gm-Gg: ASbGncuDDifqhgxBrJnOB9hh36WuORw218oAHCDHace8/DnvmKLun5lRmdrYbA9QJHB
+	zSHLrzwp0ry8lX/KEDGWLkWHB2KQ8dZk+I0fXh9DCf1E1U7JSdhZKfrint21FPklfrcqpmZ5pB+
+	woYCaNojYbW4n6H+ki/XUpyly/Wtsq4XzEYrn4b5iKytZ1L4aAejfqjmPWOjIlQw==
+X-Google-Smtp-Source: AGHT+IEGpAaKrYchHV6Xkg3MH6wD1n4OHQHppWkVrFsI7AL45gMZKDLHyubRtISR6Lk3mUUky01NFZ9EA0Yxb3/UAVA=
+X-Received: by 2002:a17:90b:4b46:b0:312:b4a:6342 with SMTP id
+ 98e67ed59e1d1-3134788faefmr17249740a91.33.1749450982775; Sun, 08 Jun 2025
+ 23:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250514071803.209166-1-Neeraj.Upadhyay@amd.com> <20250514071803.209166-10-Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20250514071803.209166-10-Neeraj.Upadhyay@amd.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 9 Jun 2025 14:35:46 +0800
+X-Gm-Features: AX0GCFso8zKgugi5MDGk-VUWQw1D_bArK162jwiFvFrRqJCA3za2FZ7DUrgOEtI
+Message-ID: <CAMvTesChrj1gDMTBUZ83oVA0WqjY9jE9dRU2f8QBdSGO+ahXAg@mail.gmail.com>
+Subject: Re: [RFC PATCH v6 09/32] x86/apic: Rename 'reg_off' to 'reg'
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com, 
+	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com, 
+	naveen.rao@amd.com, francescolavra.fl@gmail.com, tiala@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit a17b37a3f416 ("x86/idle: Change arguments of mwait_idle_with_hints() to u32")
-changed the type of arguments of mwait_idle_with_hints() from unsigned
-long to u32. Change the type of variables in the call to
-mwait_idle_with_hints() to unsigned int to follow the change.
+On Wed, May 14, 2025 at 3:23=E2=80=AFPM Neeraj Upadhyay <Neeraj.Upadhyay@am=
+d.com> wrote:
+>
+> Rename the 'reg_off' parameter of apic_{set|get}_reg() to 'reg' to
+> match other usages in apic.h.
+>
+> No functional changes intended.
+>
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Cc: Len Brown <lenb@kernel.org>
----
- drivers/idle/intel_idle.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index 8ccb483204fa..f3ab1d6e3276 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -152,8 +152,8 @@ static __always_inline int __intel_idle(struct cpuidle_device *dev,
- 					int index, bool irqoff)
- {
- 	struct cpuidle_state *state = &drv->states[index];
--	unsigned long eax = flg2MWAIT(state->flags);
--	unsigned long ecx = 1*irqoff; /* break on interrupt flag */
-+	unsigned int eax = flg2MWAIT(state->flags);
-+	unsigned int ecx = 1*irqoff; /* break on interrupt flag */
- 
- 	mwait_idle_with_hints(eax, ecx);
- 
-@@ -226,9 +226,9 @@ static __cpuidle int intel_idle_xstate(struct cpuidle_device *dev,
- static __cpuidle int intel_idle_s2idle(struct cpuidle_device *dev,
- 				       struct cpuidle_driver *drv, int index)
- {
--	unsigned long ecx = 1; /* break on interrupt flag */
- 	struct cpuidle_state *state = &drv->states[index];
--	unsigned long eax = flg2MWAIT(state->flags);
-+	unsigned int eax = flg2MWAIT(state->flags);
-+	unsigned int ecx = 1; /* break on interrupt flag */
- 
- 	if (state->flags & CPUIDLE_FLAG_INIT_XSTATE)
- 		fpu_idle_fpregs();
--- 
-2.49.0
-
+--=20
+Thanks
+Tianyu Lan
 
