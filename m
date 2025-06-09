@@ -1,179 +1,127 @@
-Return-Path: <linux-kernel+bounces-677399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D0CAD1A21
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:58:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8963AD1A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9104A3A64E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DEC17A5AD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7407724DFE6;
-	Mon,  9 Jun 2025 08:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C4E1C8630;
+	Mon,  9 Jun 2025 09:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cKsRQe6d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yk+DxNrT"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C61202F8F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9748238385;
+	Mon,  9 Jun 2025 09:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749459488; cv=none; b=cvBftIz7bB8IfuvoRGiv7GQkx5mFpw5VSFTLJNpHDwQGyvsHc1myYsSSW4fKegfhtaZhGzGUHT0NmiVN9HKUrK/AgQgs7Ptox94KH+/ScypodZKbhOW3Rd056sY34ccQ+W49PUIJR+5jczZgtMIiu0x2Vvr52wGoiv3DU+k1gFY=
+	t=1749459707; cv=none; b=VKTvA5/2AxfFGJ5lv5kTRGQHs9rgSnrjEG5rPtGEWzNzBkOBzvzL/LemwrcmQFQVJm+OcnZo+yNmnKo08xVPwMA4WSidE/2tbqzUymv1VFgLPap7FgY3/4yfZ2RcqMoPKsB0AleWjSasBAhxnPaPVj+zNcbvgDjobugZa8llVtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749459488; c=relaxed/simple;
-	bh=tObexuNu5puy0S/zrHD6bJ96PlTpeqIfPPG17mA0siE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=en1nLGI7TO3ogIH6baki/746aGf51r0+ukW9SoTeOrHeJGDmvmJloDLgV7uzLHk5aaWF5lrLsIG9sPjTlBxwAtvZGbmC1dPi3XCbvPomVm8qCMjLSKo6aWT5jwSkdit0PAh+uqze+iTy1Xv3JKhBzhTq59LF+qozYEmcHxi9GpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cKsRQe6d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749459486;
+	s=arc-20240116; t=1749459707; c=relaxed/simple;
+	bh=/cIaxeqw/uIFx9EFsl7xwKrl2aCOVbcL+LtzSQ69mXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b22FfBS7yxwms3ckZGtdr8vTpbRMVL64v70x/8ywNnonW4OuQUvjieoLXYo2GMqFHP3CA1aqIZBrM+WY8U7Vr4iIruys8uU4RE639MAuh1OGCy3I9KOZBid2hO3LIR1o6mfrKjT0jwE3D9No22d4brT/rjpwsY5fH6CV6hRu7Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yk+DxNrT; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0B3741FCEF;
+	Mon,  9 Jun 2025 09:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749459702;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EAX9gR6Ry+BCiLbmBNWFHsPfQj/lBkDp4XOdgquTNsY=;
-	b=cKsRQe6dUTDzZ/u7ywx5Hh+KHOVIw4dLuQUWZkZXaJkI7I4nggKjmF+i2W/Aq8TPbHAA/J
-	87Q25IWnG06oCMKbXQK3JqP0pNvUkIXXXjncduR8aXvUSaWLrzgsWHs/YRqj9THmOqha+C
-	4qua3RKkow0D6VoTV0sVEBT1ML61GRU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-yCHtWgj3PX-LPK5bBwDUXQ-1; Mon, 09 Jun 2025 04:58:04 -0400
-X-MC-Unique: yCHtWgj3PX-LPK5bBwDUXQ-1
-X-Mimecast-MFC-AGG-ID: yCHtWgj3PX-LPK5bBwDUXQ_1749459483
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f8fd1847so1388758f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 01:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749459483; x=1750064283;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EAX9gR6Ry+BCiLbmBNWFHsPfQj/lBkDp4XOdgquTNsY=;
-        b=RrYrorPxlS+TZkmDYjgA6EAi8aROGSz129RQhYt1lUNEPsYB7SdqWp3QHWuEK7daqW
-         U9DTEmzRL8giYOX0Ua3hFHjfoYXqgLPbl3TusYwJ1J4R8N7B4j5rkpyLO2ITvmV+R/js
-         keR/iwj4VMbcluNw0y7reZEE9uOLvFWq5WiXulJbVlDvfWN2JiRiWwLaT9BHyAetEN+z
-         FhJWjkuSDhLo0S/rSqO8zC5YghXS4pBwTYmo25UzH9XS35YClU4hCtJr2VYvsi/uNWe6
-         pBYZpR0pVqzOD5hFR/wOJBouH5xxXqCAmKjgYuB7fzfjn4Jim5QqpO+yJE8ZMzspqCWA
-         sQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTNgdO3Ryfu4mSCmvzYldDXeuq8z1KxvUmP6mMlPMVhU0Ygr2uqASoitCItcRA4u9rFNONti53yXjsegU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0xx9DmzQTTCAu3FnHEmwH77HIGqOakPRBzmux1yNdxcjEglUS
-	KITLfr5GxUnIHlvMsUZKtCuHj31Cc61N7KGiWpstif5Mg2MlY/t/Cbun1Q1IFyeMeSfnieeSqla
-	jCU3OwJhRw9qX0eXGh+F0q8wkq3BKDy0eDTceRnUxaBKSH+SET6QgqpTRjdoGomPENQ==
-X-Gm-Gg: ASbGnct+JkRiNqf5ZQJgQSb5xLiLVKkLtzNmijUQKXL/QuFgGGRU9l2EBpaix4APDfR
-	6PZHRjq3LJjYXo81ITPryYlDPMdn3r84UUOpWVHmRuJ0rN4Trtw7N+rjoCE1kUZ4obNUClSe/Vm
-	lta9hnmecEuMHdzIAOIc0ja78wP/03WImzuUgYRawZdO6Otz7kGoUNmgYTVl7QSssuCddrI52hI
-	4MOKuTEavnGwvm2tBSobxZiejnv+bWQz07Kf9NMSj8Vbs31gC440AapjUrYpaS6hmiXxytWc+js
-	2SVRLCZYsgGAwu3hpQ==
-X-Received: by 2002:a05:6000:420a:b0:3a4:fc37:70e4 with SMTP id ffacd0b85a97d-3a531cf5be1mr8000739f8f.58.1749459483396;
-        Mon, 09 Jun 2025 01:58:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGKstU+gvDYJRoCuhWj9Uy3B0R5FuTJdpuAKJpWIzyKGQze6gxwv3jbQl0SI7KqRYCXE0l/g==
-X-Received: by 2002:a05:6000:420a:b0:3a4:fc37:70e4 with SMTP id ffacd0b85a97d-3a531cf5be1mr8000722f8f.58.1749459483016;
-        Mon, 09 Jun 2025 01:58:03 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323be604sm8881091f8f.42.2025.06.09.01.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 01:58:02 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Peter Jones <pjones@redhat.com>
-Cc: "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, David Howells <dhowells@redhat.com>, David
- Woodhouse <dwmw2@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Luis
- Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
- E. Hallyn" <serge@hallyn.com>, Robert Holmes <robeholmes@gmail.com>,
- Jeremy Cline <jcline@redhat.com>, Coiby Xu <coxu@redhat.com>, Gerd
- Hoffmann <kraxel@redhat.com>
-Subject: Re: [PATCH RFC 0/1] module: Optionally use .platform keyring for
- signatures verification
-In-Reply-To: <a9bb8b0cfd1af85443ff8ee615b3be0fc705ce02.camel@HansenPartnership.com>
-References: <20250602132535.897944-1-vkuznets@redhat.com>
- <0FD18D05-6114-4A25-BD77-C32C1D706CC3@oracle.com>
- <f0b37bc55ed3c02569c74f0fbdb6afa8efd329e2.camel@HansenPartnership.com>
- <87zfemoc76.fsf@redhat.com>
- <e4e838d03b3619df5523d429e0cd8160a8aef9f8.camel@HansenPartnership.com>
- <87tt4unw1w.fsf@redhat.com>
- <a9bb8b0cfd1af85443ff8ee615b3be0fc705ce02.camel@HansenPartnership.com>
-Date: Mon, 09 Jun 2025 10:58:01 +0200
-Message-ID: <87ldq1nvfq.fsf@redhat.com>
+	bh=v6COVbmLFII/PGVnRIn0cQFTY2M/cpHl8qq/PR3IIZQ=;
+	b=Yk+DxNrTE675k1beTWKb0SQuKds48L/2lDtwaQ+WOt18+cAKKXF2Wv7Z7VifuNGxQnnHUi
+	VXzHvQCWnffhMWACCP9bEnuGRvWn4yKL50DE9zOxVk2j0Uk5dTQfAlxJwAc6vBi4lIHrkS
+	j0dZYKuupOo/UJYiAmbIVjE9a9MnsJdhWybpgZ/VZXZvggA75MMO1SeTiaXHntdnIKuGD2
+	N+yJbZ8BBJ/MUbL755+Cgf5Xq9p1r2OQCnTQ5AMBximjuMb15rV93jCueJ8F1TqLiMJB2v
+	xWmyLk9v58DFiUlspjhiTpsKUzY/dQbtmpmQE/NMku11Rc29bWUdKip9ylHnPA==
+Message-ID: <1031395a-f662-4c24-897f-85ef854060b2@bootlin.com>
+Date: Mon, 9 Jun 2025 11:01:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 12/12] pinctrl: Add pin controller driver for AAEON UP
+ boards
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Kees Cook <kees@kernel.org>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw,
+ linux-hardening@vger.kernel.org
+References: <20250520-aaeon-up-board-pinctrl-support-v6-0-dcb3756be3c6@bootlin.com>
+ <20250520-aaeon-up-board-pinctrl-support-v6-12-dcb3756be3c6@bootlin.com>
+ <aC3yKaCNZA8H2KPt@smile.fi.intel.com>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <aC3yKaCNZA8H2KPt@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdeltdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegteekfeevudduvdduveehgeejuefgieeitdeuvdekgfdvgefhjedtffdufeegheenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrpdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemheehieemjegrtddtmegutgekudemrggrugdtmehfuggtrgemtggtudgrngdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjs
+ ehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: thomas.richard@bootlin.com
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+Hi Andy,
 
-> On Thu, 2025-06-05 at 15:43 +0200, Vitaly Kuznetsov wrote:
->> James Bottomley <James.Bottomley@HansenPartnership.com> writes:
->> 
->> > On Thu, 2025-06-05 at 09:54 +0200, Vitaly Kuznetsov wrote:
->> 
->> So far, I got two 'runtime' ideas:
->> - Observe MokListTrustedRT and distrust .platform when it is
->> non-empty. This can, of course, be combine with a Kconfig for those,
->> who do not want it at all.
->
-> Well, not sure about that specific variable.  It seems to be set but
-> not used by shim (however it is used in the kernel to decide whether to
-> import the MoK list), so how would someone with a current distrusted db
-> get it set?  But there's also MokIgnoreDB (which is actually a RT
-> import of MokDBState) which is used to prevent importing the db certs
-> into the platform keyring in the first place.
->
-> I think the reason this is so fragmented is because we didn't really
-> co-ordinate with shim when all the variables and switches were added. 
-> Perhaps we should document all the variables and expectations before
-> deciding on a mechanism? 
+Thanks for the review.
 
-I was hoping Peter (pjones@) can help us here) Generally, I agree that
-as these variables originate in shim, we should describe them there and
-not try to give them some potentially undesired meaning in kernel.
+On 5/21/25 17:32, Andy Shevchenko wrote:
+>> +static void upboard_pinctrl_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
+>> +				     unsigned int offset)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = upboard_pinctrl_pin_get_mode(pctldev, offset);
+>> +	if (ret == UPBOARD_PIN_MODE_FUNCTION)
+>> +		seq_puts(s, "mode function ");
+>> +	else if (ret == UPBOARD_PIN_MODE_DISABLED)
+>> +		seq_puts(s, "HIGH-Z ");
+> 
+>> +	else
+>> +		seq_printf(s, "GPIO (%s) ", str_input_output(ret == UPBOARD_PIN_MODE_GPIO_IN));
+> 
+> Actually this should be
+> 
+> 	else if (ret < 0)
+> 		seq_printf(s, "N/A "); // or similar text
+> 	else
+> 		seq_printf(s, "GPIO (%s) ", str_input_output(ret == UPBOARD_PIN_MODE_GPIO_IN));
+> 
+> as the above may return a negative error code which is not listed here.
+> 
+>> +}
+> 
+> With the above being addressed,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> ...
+> 
+> Thanks for doing this driver, eventually we will have it working
+> out-of-the-box. Do you have any plans for enabling HSI and SIM card
+> slot on UP Squared 7000?
 
->
-> The one thing we can guarantee is if the cloud use case is booting
-> without shim (is it?) then none of the RT variables will get created,
-> so checking any (or a set) of them would work.
+My scope is limited to the FPGA support, and I don't know the status of
+HSI and SIM card slot.
 
-Personally, I always advocate for injecting shim in the boot chain at
-least when distro kernels are used: shim provides SBAT revocation
-mechanism which is likely going to be used when a new secureboot related
-vulnerability is discovered. SBAT was used for UKIs only but a mechanism
-for embedding it into the Linux kernel itself is coming (already merged
-for 'zboot' arches, pending for x86). If, however, someone is signing
-his own kernels and can use 'dbx' or even revoke the cert in case of a
-problem, then I guess shim can be avoided.
+But it is planned to add UP Squared 7000 support in the pinctrl driver.
 
->> and/or
->> - Sysctl toggle. Keep things as they are by default but make
->> .platform trusted (either for modules or for everything) when
->> switched 'on'. This can (optionally) by combined with a previous idea
->> and have e.g. an 'auto' state for the toggle which follows
->> MokListTrustedRT.
->
-> I'm less keen on user specifiable runtime because the security policy
-> of the system using a lockdown to make root less privileged than ring 0
-> can't allow a malicious root to weaken it.  However, let's see if we
-> can get a proposal that would mitigate that concern.
->
-> Ideally, if we can get to something that works for everyone at runtime,
-> we can remove the current Kconfig explosion which is definitely adding
-> to the confusion (as shown in the Debian bug reports).
+Best Regards,
 
--- 
-Vitaly
+Thomas
 
 
