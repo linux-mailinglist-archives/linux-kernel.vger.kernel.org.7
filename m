@@ -1,163 +1,246 @@
-Return-Path: <linux-kernel+bounces-678037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6E9AD2371
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:11:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FECAD2377
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25C218897C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516611889586
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67953217736;
-	Mon,  9 Jun 2025 16:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4149218AB3;
+	Mon,  9 Jun 2025 16:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9cQL6df"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHy3Evux"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15642AEE1;
-	Mon,  9 Jun 2025 16:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F3D1FF5F9;
+	Mon,  9 Jun 2025 16:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749485376; cv=none; b=LyV2WWRyT9/2VIkIRerMy8aAsZD9xVyCsES22KeUit+HPsYxUVxH0ebXAGeGYzSVy4/AExovcuY1p0K4jXm7iRMsfj6G3YoBlI1PK4HLVQZbeGKGKX72k3G4LC9i66Px4DxAwFkEvr5CAn02yP3lGFUnzNc4Mu3ege5CloSDw8I=
+	t=1749485469; cv=none; b=mpX+u+IbmEVkj6GvG2/EuJjCCkoqWhXNMcDol2mYgyKGc8nkjbniQY7KWaosj0DcbBoThZr7djrLy+/GMHsT3yj4cnD536+91k6hY6nmhgmdhuurxRIVojRk2NbUvJjGQuKjfben3Zevx+dW/6ClF7J3V0onmbpZgDwch506PVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749485376; c=relaxed/simple;
-	bh=TiigtRyHfh+ozHmASsxB2P7lifgezeH21jFNozNtlYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ITHbLqlIYDXAqurnstnWCspeAbPmlOHUszYzDABv+ImUbZTi0VXjyBd7sVFitOQUJP1++ivPvlJ2dwdcJrXwANJbJAxFgU7fAL8VysH7W7w/7HGKALQgrLcvEd90gDpmrwDsGw7iRrLouQYBsDvSaGHJLguwCsLY+1AMl6fCsUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9cQL6df; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53497C4CEEB;
-	Mon,  9 Jun 2025 16:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749485376;
-	bh=TiigtRyHfh+ozHmASsxB2P7lifgezeH21jFNozNtlYw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=n9cQL6dfGtAM23AKcrGnHK8w57zfe8yZsQa6YUCZ+QKXqJ/pWZzhsTO87/Iy8jwbJ
-	 qDAlomy96cPP+lqLZ1ADXff8ly6bBQrTLsqjxXtZD/3qoQxqozMSoDB8gAqZFo06Hw
-	 qsYpANKXK7S/a1DKqUDJDN2Ug3X3M6mp2fb7BbF/zvZNdYBk/FG+6Ql+rJTYo9j8r8
-	 vPNNzK9quenpjTtXeJG+a/cOxUUdj+5smpPaCp2nS80dgn4PSFvH8GLA/QYQxCNp/I
-	 DfNVMxbzV0jeKkQZtjAKfeWK9u0Qqkt/nV6k1zoP3fbKMKzO2lkLmIfE4mVWEDyrdZ
-	 aFHH/Xm3yLoaw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id ED284CE0B6C; Mon,  9 Jun 2025 09:09:35 -0700 (PDT)
-Date: Mon, 9 Jun 2025 09:09:35 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Andreas Ziegler <ziegler.andreas@siemens.com>,
-	Felix MOESSBAUER <felix.moessbauer@siemens.com>,
-	Julien Flot <julien.flot@siemens.com>
-Subject: Re: [PATCH v2] tracing: Fix regression of filter waiting a long time
- on RCU synchronization
-Message-ID: <7468e7a2-e5f9-498c-a985-a1584969719b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250606201936.1e3d09a9@batman.local.home>
- <9a2f0cd0-1561-4206-8966-f93ccd25927f@paulmck-laptop>
- <20250609113955.47a2f44c@gandalf.local.home>
+	s=arc-20240116; t=1749485469; c=relaxed/simple;
+	bh=wiyfyKZkAvjiIH0sQ6CKhOpwqQ5AbUsck26jxZvg1i0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iVuo1nUtl0Bs3zPVqaZH8kuEqGddYNW1Ehmmsnjukhea5YHuh1Nmx+fpWym3uqHM9v080/wvFOxCkkSsD+d4+ffB29ZTGWJ6DlY/1cA+10bj3UUJZQWJrVnk434l5BwNVV853HG/6xLAg3Vg0dcEkAgKADalNoxyPmLyzjWU8gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHy3Evux; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-450cf2291bbso16536685e9.0;
+        Mon, 09 Jun 2025 09:11:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749485466; x=1750090266; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TzSqzq1VrgA990PGl630TsjWDpOUagJtIkeks6UeTe4=;
+        b=fHy3Evuxlscp3e+u7wd78nhRFt8XSiEjJlhwNx+glY0T6dHNZmXvNPdfy1xFWA5jdL
+         lajsVrFTbc6QmzRxcjg8XnF69/RY6LAS8c2fjWYYzx/0cJC1wlfQDI+ajXZtsleooB+6
+         rfrU+rM/XfH7/H53QWXfAT2D9+XcDE9/QKy9JCsvLsX3zWPahpS2hM0pyZXTZqazw0bO
+         Md2g7UPHX32SaSEFKpLDg1+xR+9uTtZJbqvzVQ0Px/rTQGcIwNvrE2fjtQC92SIFPhfW
+         5Sd1OwwEj4ECv8k4SVvJoBFaP1VlNp4GRdNYPoNGJtmogEq/3GIKzKtibwYRu8xvEVYw
+         EQxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749485466; x=1750090266;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TzSqzq1VrgA990PGl630TsjWDpOUagJtIkeks6UeTe4=;
+        b=ZoXV3D5eBbrCesn1swZZsN2gReDEvQAt8DOQ4DLyK36oKSE1kK/+sE/1Y4kAb0TiEg
+         HViWTb8+10sQikprUbKqypho0k98tfB0SSvBmWWxsDE+QvDe6fszvfSqCEckafWoMP2P
+         XCRsse0ji3OwHhu8/qhTR9gvr0DsUvHyBDa5+WW25fc/xdU8qNqC/+OUssV3YUTMkHYl
+         +MpecZlqAAsl9cWOFSvVy0fnNJf6gqJGD3veNC5xMRVlt0AqriyQk7D7ocmmHX4gCMed
+         xgMYItZ4KqHoU72RvQkHZ9TUMno3+fYhZQe6uhCm5RIOoNrokZ9YWS3LOFWW8gHQWfYh
+         yD5g==
+X-Forwarded-Encrypted: i=1; AJvYcCW8xeFGx0nwFPgzTNYoG6r3LJiYHlHyLBUrrxUTtF9cIK2tRHMcIxn6rqfA1dnTk4XFm3uigvVJ0DhGpfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiD59BI3t+YAWcgtpHeq7yVhwqutOPGCxRyDizz3VlinJspc1F
+	w7X3sdMUWv/l7kRf585rItXFtDWbze0rcHZlLKqGkSFFkCQoHfRbiBf9fKR4+wBx
+X-Gm-Gg: ASbGncvD1gSkix+ucO2mIU6TWm16hpduk57ULEX9G6npkwuF6HX6wvIxxdEUjNYWqED
+	9bn4BEkjPX+axjQ3FmcK613Xg/eMkHLSO0lgrLOzsZtEyuv+sPJiMK0YmUnGlTsvj8OMGUxZ81a
+	5dVxcWONK/c/Yey5AKlD7F5oFomO7ZhEhqSPJk4uHqlNVS5fc8SAJCvovCvbOcF1d2WPD0cAYbu
+	6xAEJZfsRD//OGr9snG6/g2UDCSF+KEt6L6n0PiLI1bY5SrKOSLL6oYcxy+AnkHomai1wsMI2ZL
+	zXmxc8YP93dUP6+tvxuLSbNlKZ1h7RbN82aTHcfzMXfN3RsLeDx+iwFgAdxYH13Avu1oPK9G5DG
+	DGxqhSVOSAmuMjm3SyXoP3GIwMZUaUOi+7xLqMspyv85RuQ==
+X-Google-Smtp-Source: AGHT+IHtIAm+CgeogJ80QF3mkNurNdrFEg3E5GnfvWjyLoDvXRNtPRfHKHTN4qOmq57RWOY/L62rDQ==
+X-Received: by 2002:a05:600c:4e09:b0:442:c993:6f94 with SMTP id 5b1f17b1804b1-452013510famr130923885e9.12.1749485465033;
+        Mon, 09 Jun 2025 09:11:05 -0700 (PDT)
+Received: from Lord-Beerus.station (net-93-70-53-177.cust.vodafonedsl.it. [93.70.53.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209bc6d3esm115098115e9.6.2025.06.09.09.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 09:11:04 -0700 (PDT)
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: andrew@lunn.ch,
+	Stefano Radaelli <stefano.radaelli21@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] arm64: dts: freescale: imx8mp-var-som: Add EQoS support with MaxLinear PHY
+Date: Mon,  9 Jun 2025 18:09:48 +0200
+Message-ID: <20250609160949.35654-1-stefano.radaelli21@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609113955.47a2f44c@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 09, 2025 at 11:39:55AM -0400, Steven Rostedt wrote:
-> On Mon, 9 Jun 2025 05:21:19 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
-> 
-> > > +static void free_filter_list(struct rcu_head *rhp)
-> > > +{
-> > > +	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
-> > > +	struct filter_list *filter_item, *tmp;
-> > > +
-> > > +	list_for_each_entry_safe(filter_item, tmp, &filter_list->list, list) {
-> > > +		__free_filter(filter_item->filter);
-> > > +		list_del(&filter_item->list);
-> > > +		kfree(filter_item);
-> > > +	}  
-> > 
-> > If the series of synchronize_rcu() calls was taking 99 seconds,
-> > we might well be going through the above loop quite a few times, all
-> > within a bh-disabled region of code.  For example, the calls from both
-> > filter_free_subsystem_filters() and process_system_preds() look like
-> > they can queue a very large number of entries.
-> 
-> The iteration is for each event in a subsystem.
-> 
-> Seeing what that is:
-> 
-> ~# for sys in /sys/kernel/tracing/events/* ; do cnt=`ls -F $sys |grep '/$' | wc -l`; echo $cnt $sys; done | sort -n | tail
-> 24 /sys/kernel/tracing/events/tcp
-> 26 /sys/kernel/tracing/events/xen
-> 28 /sys/kernel/tracing/events/sched
-> 32 /sys/kernel/tracing/events/writeback
-> 33 /sys/kernel/tracing/events/libata
-> 34 /sys/kernel/tracing/events/irq_vectors
-> 55 /sys/kernel/tracing/events/xhci-hcd
-> 92 /sys/kernel/tracing/events/kvm
-> 113 /sys/kernel/tracing/events/ext4
-> 724 /sys/kernel/tracing/events/syscalls
-> 
-> So the most loops that can happen is 724 on the syscalls plus the system
-> filter. And adding in printks to count the loops, I verified that:
-> 
-> [..]
-> [  100.019209] LOOPED 4 times
-> [  100.020033] LOOPED 5 times
-> [  100.020791] LOOPED 8 times
-> [  100.021583] LOOPED 10 times
-> [  100.022239] LOOPED 2 times
-> [  100.110515] LOOPED 725 times
-> [  100.111520] LOOPED 4 times
-> [  100.112889] LOOPED 25 times
-> [  100.114416] LOOPED 6 times
-> [  100.115950] LOOPED 4 times
-> [  100.117557] LOOPED 7 times
-> [..]
-> 
-> (724 event filters and one system event filter = 725 filters).
-> 
-> If you feel that's too big, we could move it to a work queue.
+Enable the EQoS Ethernet controller on the i.MX8MP VAR-SOM with the
+integrated Maxlinear MXL86110 PHY. The PHY is connected to the EQOS
+MDIO bus at address 4.
 
-That does sound like a bit more than would be good.
+This patch adds:
+- EQOS controller configuration with RGMII interface.
+- Proper reset timings.
+- PHY power supply regulators.
+- RGMII pinmux configuration for all data, control and clock signals.
+- LED configuration for link status indication via the LED subsystem
+  under /sys/class/leds/, leveraging the support implemented in the.
+  mxl86110 PHY driver (drivers/net/phy/mxl-86110.c).
+  Two LEDs are defined to match the LED configuration on the Variscite
+  VAR-SOM Carrier Boards:
+    * LED@0: Yellow, netdev trigger.
+    * LED@1: Green, netdev trigger.
 
-> As more system calls get added, that number will grow. But it is limited to
-> the number of system calls.
-> 
-> All the event systems are way fewer than that.
-> 
-> > 
-> > So...
-> > 
-> > > +	kfree(filter_list);
-> > > +}
-> > > +
-> > > +static void free_filter_list_tasks(struct rcu_head *rhp)
-> > > +{
-> > > +	call_rcu(rhp, free_filter_list);  
-> > 
-> > ...why not use queue_rcu_work() in place of call_rcu() here, thus avoiding
-> > possible response-time issues?
-> > 
-> > Or is there something that I am missing that limits the length of the
-> > list passed to free_filter_list()?
-> 
-> Just the number of events in a system.
-> 
-> I could switch to a work queue but I don't think it needs to go as a fix,
-> do you? That is, it can wait till the next merge window. Or is this going
-> to affect things now?
+The RGMII TX/RX delays are implemented in SOM via PCB passive
+delays, so no software delay configuration is required.
 
-Thank youi, and the next merge window should be fine.
+Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
+---
+v2:
+  - Removed 'eee' properties.
 
-							Thanx, Paul
+v1: https://lore.kernel.org/imx/20250609140643.26270-1-stefano.radaelli21@gmail.com/
+
+ .../boot/dts/freescale/imx8mp-var-som.dtsi    | 86 +++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
+index b59da91fdd04..29f080904482 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
+@@ -55,6 +55,24 @@ reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
+ 		states = <3300000 0x0 1800000 0x1>;
+ 		vin-supply = <&ldo5>;
+ 	};
++
++	reg_phy_supply: regulator-phy-supply {
++		compatible = "regulator-fixed";
++		regulator-name = "phy-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-enable-ramp-delay = <20000>;
++		gpio = <&gpio2 20 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++	};
++
++	reg_phy_vddio: regulator-phy-vddio {
++		compatible = "regulator-fixed";
++		regulator-name = "vddio-1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
+ };
+ 
+ &A53_0 {
+@@ -73,6 +91,53 @@ &A53_3 {
+ 	cpu-supply = <&buck2>;
+ };
+ 
++&eqos {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_eqos>;
++	/*
++	 * The required RGMII TX and RX 2ns delays are implemented directly
++	 * in hardware via passive delay elements on the SOM PCB.
++	 * No delay configuration is needed in software via PHY driver.
++	 */
++	phy-mode = "rgmii";
++	phy-handle = <&ethphy0>;
++	status = "okay";
++
++	mdio {
++		compatible = "snps,dwmac-mdio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ethphy0: ethernet-phy@4 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			reg = <4>;
++			reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
++			reset-assert-us = <10000>;
++			reset-deassert-us = <100000>;
++			vddio-supply = <&reg_phy_vddio>;
++
++			leds {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				led@0 {
++					reg = <0>;
++					color = <LED_COLOR_ID_YELLOW>;
++					function = LED_FUNCTION_LAN;
++					linux,default-trigger = "netdev";
++				};
++
++				led@1 {
++					reg = <1>;
++					color = <LED_COLOR_ID_GREEN>;
++					function = LED_FUNCTION_LAN;
++					linux,default-trigger = "netdev";
++				};
++			};
++		};
++	};
++};
++
+ &i2c1 {
+ 	clock-frequency = <400000>;
+ 	pinctrl-names = "default";
+@@ -239,6 +304,27 @@ &wdog1 {
+ 
+ &iomuxc {
+ 
++	pinctrl_eqos: eqosgrp {
++		fsl,pins = <
++			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC				0x2
++			MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO				0x2
++			MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0			0x90
++			MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1			0x90
++			MX8MP_IOMUXC_ENET_RD2__ENET_QOS_RGMII_RD2			0x90
++			MX8MP_IOMUXC_ENET_RD3__ENET_QOS_RGMII_RD3			0x90
++			MX8MP_IOMUXC_ENET_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x90
++			MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL			0x90
++			MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0			0x16
++			MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1			0x16
++			MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2			0x16
++			MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3			0x16
++			MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL			0x16
++			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x16
++			MX8MP_IOMUXC_SD2_WP__GPIO2_IO20					0x10
++			MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10				0x150
++		>;
++	};
++
+ 	pinctrl_i2c1: i2c1grp {
+ 		fsl,pins = <
+ 			MX8MP_IOMUXC_SD1_DATA4__I2C1_SCL				0x400001c2
+
+base-commit: e271ed52b344ac02d4581286961d0c40acc54c03
+prerequisite-patch-id: 2335ebcc90360b008c840e7edf7e34a595880edf
+-- 
+2.43.0
+
 
