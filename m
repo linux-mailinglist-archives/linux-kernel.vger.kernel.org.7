@@ -1,231 +1,222 @@
-Return-Path: <linux-kernel+bounces-677384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7ACEAD19F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DDF0AD19FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E248188C241
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07CAB3AA9E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C683024DCF0;
-	Mon,  9 Jun 2025 08:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E95202F8F;
+	Mon,  9 Jun 2025 08:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AbzWx8Fv"
-Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="fFa0jeQp"
+Received: from SE2P216CU007.outbound.protection.outlook.com (mail-koreacentralazon11021124.outbound.protection.outlook.com [40.107.42.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB0D1E832A;
-	Mon,  9 Jun 2025 08:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749458687; cv=none; b=kyL1kaXSy/ewiuCDRPMwstPVz0IFzzCtHD9jVIfMHuNo6VLhQhDEGcdOeFGxASDCW/iKW8qtvo5mcD5iGzNX84cJbkoR2H77SZS8saFubeOpzwXOFAoQ/RgJp8kTGf0mYVfNbgHUJ32Iou7UjnPotuUnN7BE8H1uBDAMOCNGAAc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749458687; c=relaxed/simple;
-	bh=CByUBOS0MBmmNMegB/+6lX7pJRvkfT954wBkluc+45o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X1epkVEDsLpnZ/rzbAd3qF9GNOLEemsIItTSP7YzkLSLixcPIcms+y7X3F9LUbUqK65l7VLaj1Wt8qgu9SzT/6O4qbw8dCH4sGgog78lfGUwrBEnjZj78ZPoCQQBQ2ssOSg7QZOnWk5DUeoAIIJro8As7s0J6mNmpCZgcEzoRC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AbzWx8Fv; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5598etjY2083203
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Mon, 9 Jun 2025 01:41:00 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5598etjY2083203
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025052101; t=1749458461;
-	bh=6/ZBNndjXX8DFqqBm4MVFtkldgTvHA01dVD0CKp8O6U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AbzWx8FvOp8tj7jZxacME/ujTLvaMAf8hpft+jbUjQh+FjSUsziLpf/ds7KBnf1FG
-	 Mc8xahmuus64jiuJ+CPIyyqAAKPfc5V7HjSYtPxYgXH0SQoRn4F4hYkvRVbMpGy59o
-	 qLdyhtEC1QZ2UAEHv7mpauqgaE41Cf/XQ3s3Mbb9/T488d1T4ytcLmynF7j2EQDpRv
-	 qKipgUnx8EraMr+2paPYXIu0fkfYeK9RKZlqAyV54oET1RBInGNWdyu1lafq57/Kyz
-	 SDisfqGYv9J8VaqVOTnCUB3moQdg7u7yfHNbvMMniowqdtqqQtmZABzfgdKkz10KT4
-	 JANRLWOiOyGog==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        shuah@kernel.org, andrew.cooper3@citrix.com, sohil.mehta@intel.com,
-        stable@vger.kernel.org
-Subject: [PATCH v6 2/2] selftests/x86: Add a test to detect infinite SIGTRAP handler loop
-Date: Mon,  9 Jun 2025 01:40:54 -0700
-Message-ID: <20250609084054.2083189-3-xin@zytor.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250609084054.2083189-1-xin@zytor.com>
-References: <20250609084054.2083189-1-xin@zytor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52B31459F6;
+	Mon,  9 Jun 2025 08:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.42.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749458879; cv=fail; b=sPhyB/sPAXT5C8LOiN1lqb5kRzfmimrTQM5++d5d5acBi0uTAxFv++0E7ipdTqpwwq8+lsz0t27i1rzakzmZzwJAy6eRhFuNTKyjCgG5FVAtLLEYqnFuBW6QL4NreCPfmCa8AaRGwGwLggOkpyoY3TbeWa5QFRu4KxH1wLhqVPU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749458879; c=relaxed/simple;
+	bh=fTFplFhNEB7UmTbJ1axJF305/QMCni3l82EgZztqlzM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oz1ACXyYBLu4C7KhJObuUoDNvGR1hjU9UHLjkYVdy8u2+JVHDld0L86PO0Il1PK6CExD5ryuiMi9U8FxMQiGLsc4f+4d2ul3xZjaUIQpEiSyUdvYBi5nCeOnj+OWNodyYBnKIGEChjEjVJQgqMO2K5S1BnJAIqKG/aU1Kx20ZBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=fail smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=fFa0jeQp; arc=fail smtp.client-ip=40.107.42.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g50oL8+FEonjHg5pvWA+GtJnziuBHUz9FSkcevsFNxiP6NC64essua5SZGS1vxoXbFegehzxh9Bn+3GUd8GuF7Hakr6ZMcXO5sxV5Hgm/GDNGVuVdQAwiGPsD1siWuhejvga28EdJ13dURjXot041bW/SBfyZcyk1bIt7rennuuJ1MwqjGItZ1uwdBL1iikYeZxrgmC+z2AoDXptQB2Nonq3XjXwDZjyj4hSqNbyHePYCx4PNDPvoQEaRkBMSLA1eu2VuLgn+/JFBgWDjRJbdLvqQB5G8BH8o4WY+IW/vLUMjnFzwdtlRQk2z1F2nwatBN7mOK4fAMKQIoxjb3LBmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fTFplFhNEB7UmTbJ1axJF305/QMCni3l82EgZztqlzM=;
+ b=B64PzSOvesAPKhuTMZj74BPDExgQ0fdPVIhpEsuYW0+ddaWLrfVGS4ycUzrzfC+fKqgUpGrq++fxc+0NHResjFnxeZwO6VlZIObUXs2IhvXXkDdaoweFRxmByS5LNw6pT0S3WmJAi2+mBlQ/M62J/sexdOqVqCksjQZofK9BFAkWy/6DrLd9SjdUHS2KRSjqLDqiOHXHxAeeGn5ArJteacfYmKZs8k2z5/vI7rrlAJIpMs8id9I7+hwKEDP5WqkCdWfbx2i3yA45szorlA3yUx72XnOsyCBAlWOoLDo90KLzxtrh0z9eo0IZd+0zzZfgrPdMn3r36maiwd7696R21w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fTFplFhNEB7UmTbJ1axJF305/QMCni3l82EgZztqlzM=;
+ b=fFa0jeQpq4vY3aCoFy8ghGx8XFYwHWtJeM+ulqDyNuQKvGKcr4cvJWIcvNuaN6fxcp5BDHhiblEYiodYRQvFShLNoCtQACPyLSqBMO8HznCkh6DXfwLqit2vr5BZ0uAPrjQyrO+6xOz+wqHVfYqcg6jqvAgyJ3l0BBw8ZN4S0+0=
+Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15::5) by
+ SEWP216MB3009.KORP216.PROD.OUTLOOK.COM (2603:1096:101:293::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8813.30; Mon, 9 Jun 2025 08:47:53 +0000
+Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+ ([fe80::b711:5ab1:b5a4:d01b]) by SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+ ([fe80::b711:5ab1:b5a4:d01b%5]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
+ 08:47:53 +0000
+From: jackson.lee <jackson.lee@chipsnmedia.com>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
+	"bob.beckett@collabora.com" <bob.beckett@collabora.com>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, lafley.kim
+	<lafley.kim@chipsnmedia.com>, "b-brnich@ti.com" <b-brnich@ti.com>,
+	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, Nas Chung
+	<nas.chung@chipsnmedia.com>
+Subject: RE: [PATCH v2 2/7] media: chips-media: wave5: Improve performance of
+ decoder
+Thread-Topic: [PATCH v2 2/7] media: chips-media: wave5: Improve performance of
+ decoder
+Thread-Index:
+ AQHbyurOkmkh1DQff0CeTO0j+fdx8bPgfWOAgAVz/yCAAiaxgIAKXsPwgAChxwCAAPwu8IAAkNuAgAX6iRA=
+Date: Mon, 9 Jun 2025 08:47:53 +0000
+Message-ID:
+ <SE1P216MB1303BED1AD4E7C782BA14E66ED6BA@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+References: <20250522072606.51-1-jackson.lee@chipsnmedia.com>
+				 <20250522072606.51-3-jackson.lee@chipsnmedia.com>
+			 <3afbd0253fabcf9f8795ab2231107e2e9da012cc.camel@collabora.com>
+			 <SE1P216MB1303C1D1C2A9FA165A01B71AED64A@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+		 <03a87e1c9e8f77887c2457b9c3fcbf0c6a6cf287.camel@collabora.com>
+		 <SE1P216MB13033207BDFE2A6BCC48999EED6CA@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+	 <1318bd68f2d60b9d44cb22bd90b92399311f0b00.camel@collabora.com>
+	 <SE1P216MB1303F7ADAC83F6CE312C5CA3ED6FA@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+ <8c6316d2d00287e96bc2ad5d27c8de37f990b7e5.camel@collabora.com>
+In-Reply-To: <8c6316d2d00287e96bc2ad5d27c8de37f990b7e5.camel@collabora.com>
+Accept-Language: ko-KR, en-US
+Content-Language: ko-KR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SE1P216MB1303:EE_|SEWP216MB3009:EE_
+x-ms-office365-filtering-correlation-id: 7072c17f-dd25-4fd6-2874-08dda73252b0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dldOamhSM1hmS1pISVkyRlphMmRRY0JNSWwvR09DV0VYWjgwdUQ2SkdiMkhD?=
+ =?utf-8?B?ZERnUmxSNTl6OVFoT0I0cGRJN0RjOFdZOHdmMHFPUkFlK0hmdksrUXY3bjJK?=
+ =?utf-8?B?WjlrT2FQVmpkeHhkNHVvNmZ5WkluSE1BV0RGNXVDWVZyYXFHYlMrVmRmdC9o?=
+ =?utf-8?B?TUprOE8wZlhrMGVxTFYyMm5ZVThkM0t1SlhETmRvelhKaElEc2dLTDQwMEtq?=
+ =?utf-8?B?cXRXZEpmU2ZTODdidDhZeVdqcUpHVjRlVjJKUFVOZjdPN1l3M0YzK053OHl5?=
+ =?utf-8?B?RElLaklwUHhYSDUxUDNiOERCam1ZaDVnYTNRVzhWY1RLS3NScmpwUGJJbTFN?=
+ =?utf-8?B?YVFBQmc5Vm9DRDdsSC83emZFM1pST013c1lRMXhNaVJKN1ZBM3E3TG44K3Jw?=
+ =?utf-8?B?alg4K0wycWMxRDRpRmxwKzBmV0YwTjhkM0NOSWc4cUpEcG95Zm9ZNG83aVpZ?=
+ =?utf-8?B?VFdGTTFBNVdSNTBOWm5hNzI3NEI0aGYwTkloUms5eVhabFByd0RmNW9GQVNk?=
+ =?utf-8?B?MS9tZnVsOFhFb3hRcVh3MUMyTE1BblZCeTlnbWdUTlVmOU1uWGVxV1ZZT1JC?=
+ =?utf-8?B?T2lrbVh2YnZFNmhiSnBnSERKRmx0a21ocm05Z1lhS0tTM1NZcU9EKzdwYW9N?=
+ =?utf-8?B?UFRPMDNEK1ZTSTRtS1J2c09ZUHZnN0dBTS9zZzNWYmxEWEhQNCtLK1daRmxh?=
+ =?utf-8?B?QWhUenZNMDN0TktKS0ZpSEtJMGFDaDlDTEJoUmtxL0UrOENxNjdRSnpsMC9Q?=
+ =?utf-8?B?dG5xei9yVUt1U0tWd1lMaVRUbE5rVFBmMzNUemhxVER5SjdmWlJDZkJBejRB?=
+ =?utf-8?B?bFo5L045dTl5c3czMDBiUXROZE5QeEtPMm0rWC96eXdMalJuWFMzYlRQQjJW?=
+ =?utf-8?B?NTJGUkFORDIvZklycWl3V0x6dVI3dUxFMWk0dTZ5c2ZjeG5hcnlPcVpKL1JY?=
+ =?utf-8?B?blZVWWttd2p3QU9pcEZMQWJGb2wyTVJ1aEVXbW5Xb2dOR2owQzhmNUExSjlj?=
+ =?utf-8?B?MUNsRnN0YWFuYVV3eXFEMDlnVHRZMVBneUhkYXFFOEdiMjhwbStrb1dDbkNs?=
+ =?utf-8?B?ejE1eTJpZ1NaWGdUNW5RTUJhblZhUFpFekJoOEZnb00zbEtLdlUrcWxUdTZ4?=
+ =?utf-8?B?MTYzMjc0Z1QwcUVXNWZ2eXk0anZMYVA5dHA3WVdBUGw2cDhZUGxNbXFRclI0?=
+ =?utf-8?B?RmV1WnRsUUh3bW16a3ZwMzNQQjcrTkVVQ3FIVWdOM1RwbFdZMmdQUzk0N3FP?=
+ =?utf-8?B?bDVseTd1SitDVHkrSGI2MkYxalBRYThuWWE5WERRVjBpaGc1VHViYVpSWmhv?=
+ =?utf-8?B?Zmo4RGVzd3hDNGRLM0VYUGkzakJQTHNCOGFpQnhyVzk0SWdMWDVmalF6RjFY?=
+ =?utf-8?B?RW1GU1FsUEZXZFFBeUFLK0JZdWdmS0krMlFodVl3bVdOKzcwYmsyMkVBWUtK?=
+ =?utf-8?B?cFJZNSt5TU94RHpzRXBNbllHcGNuV3JHZjVaT0piR2FRUSt5cDlvQ2JMTnBi?=
+ =?utf-8?B?cTFsVjhKV2lLVVZZdGk4KzVqS1BEUk9JeTdBTm9EOFo2Qy9qSGorZFRKdGpo?=
+ =?utf-8?B?K2JaVVJUUlBhQldvc0RhVVVsblFOejN4a1hoRFp6T0xsK2luYW1vNDJUWDlZ?=
+ =?utf-8?B?N1RRa2lVby9KdHU0WWplUVBkSUN3VTgxcTdFTXlSa2FRYXh1RkJZT1hodzNv?=
+ =?utf-8?B?M3ZuWkd4M3Nnc3NTQlY0eHQzOW5ob3NMS0lHdis1WFMwYXMzcFhNSDRTOU9I?=
+ =?utf-8?B?ZFRuMEVrOUZheDRpb3hTTzMrRDYyTEsxNjhnaXNScWVoRi92OGpiNVZhS2Ro?=
+ =?utf-8?B?NnRNZTMzRGpHSldZZGJ0VGdWaWhqK1ZSaXNIamFsRmdwazgwWUxQb1V6akhG?=
+ =?utf-8?B?T3Z2VjVudXJvSEpMVDJJcFkrREtTa2ZJVmwwMkltVC85NEY4L25qZFErMmxO?=
+ =?utf-8?B?R3BDOVpQWmNSNkxxUmVBb2JIS09ubFpIcXNybzI3TGdRZklTU3psUmNkajZD?=
+ =?utf-8?B?TkFycGNkZWNnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ko;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1P216MB1303.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eitxUkNIdElDdkpNaGJkTWpIMnU0TDJacVVLRDlxRnZYSUhJV21wV2hPUHhk?=
+ =?utf-8?B?ZWlyZzM1WFliWENKZmZkQUYveXhScU1UQTlDenBMeEo3ZlJ5OHY0RGtrTkxO?=
+ =?utf-8?B?WWRtUFR0RzJsU0pHNkovYTNzdVFtMHFTQjZyeGFHVTU0dEVoR3YvcWpzdStC?=
+ =?utf-8?B?VG43dGNvSXNFelp0VTBvbS9zT2dTVnN5N1MxMnBwZUdHNW84VkNjMndXeFYv?=
+ =?utf-8?B?bkY4aVU0bnk3Y2VJK1R0OHVyd1lBYkJBTDgyUklkSHkra0RocjZDZG5aZGlI?=
+ =?utf-8?B?QmtQUUxxRWdvZ0NCVGZmRFVyZmp4RHNxTE1rdVpXMFlMSVVyVW41bkYzUVdD?=
+ =?utf-8?B?ak9jOUZ2Zmx5TldtdHVRU2xsejNhRkwwb2RDOWswSVJmdkMyL3ZlOTdHRlBl?=
+ =?utf-8?B?T1JCNG01SXFqamd5eTlvSUYvUExIemdNZ1Y2SEQzWXVjZHZYeGpVTGFOU2x0?=
+ =?utf-8?B?SzJUZVUyMzZTMStxVnNjVkU0SVVwZzY0ZllnakhLUmdTdklsZGlHTU8vd09o?=
+ =?utf-8?B?ZkdLMTJPUmVrMkxRZUYveEwrb3ZmaUFsVXg5V0o4S24xWUJxYXN1ZHJudFpX?=
+ =?utf-8?B?S092aWVMekFVSmFuWlJNVEFZQUN5emdmaFNzeXpGbmlQYnBQUis1dmNnVmxS?=
+ =?utf-8?B?Z3g2aWkxODZ0NDFDa2JGLzFaTU4vb2NnU3ZnWllqbGg5M3JuTGZOMGIyS1pK?=
+ =?utf-8?B?SzNEYjFjbGlvb21lMXY0akRJL1N3ZzY5Ym8xRUs4YStVODd4ZHpBQkllZy9i?=
+ =?utf-8?B?Z1F2VTFWbENuQjlTK0Y0amNELzlzSDhSV1dTR0xIalhXa1JGUm80UVYweVFt?=
+ =?utf-8?B?dkNlVVM2YjBSR2FJZUw5K2E0dXNCM0g4TWtuTzlWQk85T21HcktqL3ZXZFhJ?=
+ =?utf-8?B?RWZwbFA0UnVVdXlXelhWRmY0NEw0alYyckw5ejB2eUVVS2dIZHRKRk5UdFhO?=
+ =?utf-8?B?TUd3QjVyRDYzcGtHL1FxbERTRGU0a3hITTRuall6NEY5bnJqbitHZnFOUnJu?=
+ =?utf-8?B?RTFvUERQR2drNmdtK3hRamR2TDR1Q1NlanNaK05keHcrZHFRUDdkaWd3WFVE?=
+ =?utf-8?B?OU1mUkJvNHllS0swSnlXWTc1VmNsMk56THhyWDRuMFQ1V2ZxMTZzM3AyNVUx?=
+ =?utf-8?B?ODVFUjJVWTJpTEtQZVpGUGxHZk1EVkpsNTJQV0cxUUxLUVA0d3ErT2xMelJO?=
+ =?utf-8?B?Y1FwOHZ5NFlQeVJPRkdnb3c1NVgweUE2OVFpRVQ5WnRPMUZYdzZlRFlPNnJI?=
+ =?utf-8?B?TXpLcmtHRjRWaEoxUUJZTFpzdGpIVzJhc2dGS0lLUUh3OFphWXNEeFdFMUc5?=
+ =?utf-8?B?TGZ6YlJsUGRVUURuSjlKeXAyeVBJemJHNFZWSS96OFBqUlJINEN6YTRmdTg1?=
+ =?utf-8?B?NEt1eVBPaXpnaEFBTXdxcHppYkl6TExtVzlxS3laaURVMW1lY3ZGT0Y2c01j?=
+ =?utf-8?B?OGU0QTRrRHJaTEgzUXYyN3docStFRTlVOERsZ2NJMkZUZi9VVkRuYURiZkxJ?=
+ =?utf-8?B?c0JBZy9abFRES2wrWkV4akt4NWoxVW4zbW13REVkRFRnWStGWDc4TnBobDUy?=
+ =?utf-8?B?S3Nwa0IxTmxIYUFRTDR4K1I3c3VLTmsxVHBEMEthVnVnZWpuMG9jRW81ajJ3?=
+ =?utf-8?B?ZzhURGJBRE80d1lkdGlkL1d4dHlzRFh5TWlTUVZGL0JKWnNmRXlYeXpJTE03?=
+ =?utf-8?B?L09FSzdDVGczTk53empQeDVXL3pQZjJ2bHJHcVdNcExFVm1wdXBLNDFnc3Vw?=
+ =?utf-8?B?ZEp0MEN4YWlvVkNYeTAxMHFmSkw5emJ0SzA5b2gzclEwYVNmUjF5WXBONGhM?=
+ =?utf-8?B?ZW9UNnRpeCtWZmxkcVhaaXRNZTh2VUEzblhuR3Y4RUNPQmY5RzdSUzIrMWF3?=
+ =?utf-8?B?T0VYLzk3VXozRFN4cjl3QzdodkJpLzJDY0JhcFhhNE1VTElqbW40SEMxdVNF?=
+ =?utf-8?B?c2JCQnZNTHVKTXByUm1VUnVIdEdNcnFBM2hDdE9FZjE4UEJGN2tFU01Pamx2?=
+ =?utf-8?B?MHE1dnhFNVZmYUJ1SG9OU0lQcGdYWldMS2dyd1hJbVp2eWJOTGMyQ2RoaVlU?=
+ =?utf-8?B?YzhxNVc2SCs2T2ZRVFFVVGdGaVJnVEovbndaMXVMTW42ZVE4L2ttY0d0eDBj?=
+ =?utf-8?B?VVo0ZnMwT2src3QyNzBjOG9ZTjg4R0pWZVJLMmNuYUFqNkdQUVBZY2dhQlZS?=
+ =?utf-8?B?aWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7072c17f-dd25-4fd6-2874-08dda73252b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2025 08:47:53.3503
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: c7DtThFU1sZec3/DuR/lzPsItDx1xAaikMSpbFl/aJhPD90p41QZBQf/SM01ISqZNwSIwiaDjlsM1SZeTepXTH49xhviwrUFu+z4LrcTFI8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEWP216MB3009
 
-When FRED is enabled, if the Trap Flag (TF) is set without an external
-debugger attached, it can lead to an infinite loop in the SIGTRAP
-handler.  To avoid this, the software event flag in the augmented SS
-must be cleared, ensuring that no single-step trap remains pending when
-ERETU completes.
-
-This test checks for that specific scenario—verifying whether the kernel
-correctly prevents an infinite SIGTRAP loop in this edge case when FRED
-is enabled.
-
-The test should _always_ pass with IDT event delivery, thus no need to
-disable the test even when FRED is not enabled.
-
-Tested-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Cc: stable@vger.kernel.org
----
-
-Changes in v6:
-*) Replace a "sub $128, %rsp" with "add $-128, %rsp" (hpa).
-*) Declared loop_count_on_same_ip inside sigtrap() (Sohil).
-*) s/sigtrap/SIGTRAP (Sohil).
-
-Changes in v5:
-*) Do "sub $-128, %rsp" rather than "add $128, %rsp", which is more
-   efficient in code size (hpa).
-*) Add TB from Sohil.
-*) Add Cc: stable@vger.kernel.org.
-
-Changes in v4:
-*) merge this selftest with its bug fix patch set (Dave Hansen).
-*) Address review comments from Sohil.
----
- tools/testing/selftests/x86/Makefile       |   2 +-
- tools/testing/selftests/x86/sigtrap_loop.c | 101 +++++++++++++++++++++
- 2 files changed, 102 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/x86/sigtrap_loop.c
-
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index f703fcfe9f7c..83148875a12c 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -12,7 +12,7 @@ CAN_BUILD_WITH_NOPIE := $(shell ./check_cc.sh "$(CC)" trivial_program.c -no-pie)
- 
- TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
- 			check_initial_reg_state sigreturn iopl ioperm \
--			test_vsyscall mov_ss_trap \
-+			test_vsyscall mov_ss_trap sigtrap_loop \
- 			syscall_arg_fault fsgsbase_restore sigaltstack
- TARGETS_C_BOTHBITS += nx_stack
- TARGETS_C_32BIT_ONLY := entry_from_vm86 test_syscall_vdso unwind_vdso \
-diff --git a/tools/testing/selftests/x86/sigtrap_loop.c b/tools/testing/selftests/x86/sigtrap_loop.c
-new file mode 100644
-index 000000000000..9d065479e89f
---- /dev/null
-+++ b/tools/testing/selftests/x86/sigtrap_loop.c
-@@ -0,0 +1,101 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 Intel Corporation
-+ */
-+#define _GNU_SOURCE
-+
-+#include <err.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ucontext.h>
-+
-+#ifdef __x86_64__
-+# define REG_IP REG_RIP
-+#else
-+# define REG_IP REG_EIP
-+#endif
-+
-+static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *), int flags)
-+{
-+	struct sigaction sa;
-+
-+	memset(&sa, 0, sizeof(sa));
-+	sa.sa_sigaction = handler;
-+	sa.sa_flags = SA_SIGINFO | flags;
-+	sigemptyset(&sa.sa_mask);
-+
-+	if (sigaction(sig, &sa, 0))
-+		err(1, "sigaction");
-+
-+	return;
-+}
-+
-+static void sigtrap(int sig, siginfo_t *info, void *ctx_void)
-+{
-+	ucontext_t *ctx = (ucontext_t *)ctx_void;
-+	static unsigned int loop_count_on_same_ip;
-+	static unsigned long last_trap_ip;
-+
-+	if (last_trap_ip == ctx->uc_mcontext.gregs[REG_IP]) {
-+		printf("\tTrapped at %016lx\n", last_trap_ip);
-+
-+		/*
-+		 * If the same IP is hit more than 10 times in a row, it is
-+		 * _considered_ an infinite loop.
-+		 */
-+		if (++loop_count_on_same_ip > 10) {
-+			printf("[FAIL]\tDetected SIGTRAP infinite loop\n");
-+			exit(1);
-+		}
-+
-+		return;
-+	}
-+
-+	loop_count_on_same_ip = 0;
-+	last_trap_ip = ctx->uc_mcontext.gregs[REG_IP];
-+	printf("\tTrapped at %016lx\n", last_trap_ip);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	sethandler(SIGTRAP, sigtrap, 0);
-+
-+	/*
-+	 * Set the Trap Flag (TF) to single-step the test code, therefore to
-+	 * trigger a SIGTRAP signal after each instruction until the TF is
-+	 * cleared.
-+	 *
-+	 * Because the arithmetic flags are not significant here, the TF is
-+	 * set by pushing 0x302 onto the stack and then popping it into the
-+	 * flags register.
-+	 *
-+	 * Four instructions in the following asm code are executed with the
-+	 * TF set, thus the SIGTRAP handler is expected to run four times.
-+	 */
-+	printf("[RUN]\tSIGTRAP infinite loop detection\n");
-+	asm volatile(
-+#ifdef __x86_64__
-+		/*
-+		 * Avoid clobbering the redzone
-+		 *
-+		 * Equivalent to "sub $128, %rsp", however -128 can be encoded
-+		 * in a single byte immediate while 128 uses 4 bytes.
-+		 */
-+		"add $-128, %rsp\n\t"
-+#endif
-+		"push $0x302\n\t"
-+		"popf\n\t"
-+		"nop\n\t"
-+		"nop\n\t"
-+		"push $0x202\n\t"
-+		"popf\n\t"
-+#ifdef __x86_64__
-+		"sub $-128, %rsp\n\t"
-+#endif
-+	);
-+
-+	printf("[OK]\tNo SIGTRAP infinite loop detected\n");
-+	return 0;
-+}
--- 
-2.49.0
-
+SGkgTmljb2xhcw0KDQpJIHdpbGwgZmluZCB0aGUgd2F5IHRvIHJlZHVjZSBvdmVyaGVhZCBhZnRl
+ciByZWNlaXZpbmcgdGhlIFNUT1BfQ01ELg0KDQp0aGFua3MNCg0KPiAtLS0tLU9yaWdpbmFsIE1l
+c3NhZ2UtLS0tLQ0KPiBGcm9tOiBOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1ZnJlc25lQGNv
+bGxhYm9yYS5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDUsIDIwMjUgMTA6MjkgUE0NCj4g
+VG86IGphY2tzb24ubGVlIDxqYWNrc29uLmxlZUBjaGlwc25tZWRpYS5jb20+OyBtY2hlaGFiQGtl
+cm5lbC5vcmc7DQo+IGh2ZXJrdWlsLWNpc2NvQHhzNGFsbC5ubDsgYm9iLmJlY2tldHRAY29sbGFi
+b3JhLmNvbQ0KPiBDYzogbGludXgtbWVkaWFAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnOyBsYWZsZXkua2ltDQo+IDxsYWZsZXkua2ltQGNoaXBzbm1lZGlhLmNv
+bT47IGItYnJuaWNoQHRpLmNvbTsgaHZlcmt1aWxAeHM0YWxsLm5sOyBOYXMNCj4gQ2h1bmcgPG5h
+cy5jaHVuZ0BjaGlwc25tZWRpYS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIgMi83XSBt
+ZWRpYTogY2hpcHMtbWVkaWE6IHdhdmU1OiBJbXByb3ZlIHBlcmZvcm1hbmNlDQo+IG9mIGRlY29k
+ZXINCj4gDQo+IEhpLA0KPiANCj4gTGUgamV1ZGkgMDUganVpbiAyMDI1IMOgIDA0OjUwICswMDAw
+LCBqYWNrc29uLmxlZSBhIMOpY3JpdMKgOg0KPiA+ID4gU28gbXkgcXVlc3Rpb24gaXMsIGlzIHRo
+ZXJlIGEgd2F5IHRvIGtub3csIGF0IENNRF9TVE9QIGNhbGwsIHRoYXQNCj4gPiA+IHRoZSBIVyBo
+YXMgZ29uZSBpZGxlLCBhbmQgdGhhdCBubyBtb3JlIGV2ZW50cyB3aWxsIGFsbG93IGhhbmRsaW5n
+IHRoZQ0KPiBFT1MgY2FzZT8NCj4gPiA+DQo+ID4gPiBOaWNvbGFzDQo+ID4NCj4gPg0KPiA+IFRo
+YW5rcyBmb3IgeW91ciByZXBseS4NCj4gPg0KPiA+IE5vdyB0aGVyZSBpcyBvbmx5IG9uZSB0aGlu
+ZyB0byBrbm93IGlmIHRoZXJlIGlzIG1vcmUgZXZlbnRzIG9yIG5vdCB0bw0KPiBoYW5kbGUgdGhl
+IEVPUyBjYXNlLg0KPiA+IEl0IGlzIHRoYXQgZHJpdmVyIHNlbmRzIERFQ19QSUMgY29tbWFuZCB0
+byBWUFUgY29udGludW91c2x5IHVudGlsDQo+IGRpc3BsYXkgaW5kZXggaXMgLTIoaXQgbWVhbnMg
+RU9TKSBmcm9tIFZQVS4NCj4gPiBWUFUgc2hvdWxkIHRyaWdnZXIgaW50ZXJydXB0cyB0byBnZXQg
+ZGlzcGxheSBpbmRleCBmcm9tIHRoZQ0KPiBmaW5pc2hfZGVjb2RlIGZ1bmN0aW9uLg0KPiA+IFNv
+IHdlIGhhdmUgdG8gcnVuIGRldmljZV9ydW4gdG8gc2VuZCBERUNfUElDIGNvbW1hbmQuDQo+IA0K
+PiBXaGF0IGRvbid0IHdhbnQgdG8gc2VlIGlzIGEgbG9vcCB3aGVyZSB3ZSBkbzoNCj4gDQo+IAlk
+ZXZpY2VfcnVuKCkNCj4gCQlmaW5pc2hfam9iKCkNCj4gCQkJZGV2aWNlX3J1bigpDQo+IAkJCQlm
+aW5pc2hfam9iKCkNCj4gCQkJCQkuLi4uDQo+IA0KPiBXaGF0IEkgc2VlIG5vdywgaXMgdGhhdCB3
+ZSBzaW1wbHkgYmFuZyBvbiB0aGUgdHJpZ2dlciB1bnRpbCBpdCBjb21wbGV0ZXMsDQo+IHdoaWNo
+IGlzIHZlcnkgd2FzdGVmdWwgaW4gcG93ZXIgYW5kIENQVSB0aW1lLiBJbiB5b3VyIG5leHQgdmVy
+c2lvbiwgbWFrZQ0KPiBzdXJlIHRvIGZpbmQgYSBtaXRpZ2F0aW9uIHRvIHRoYXQgYWN0aXZlIGxv
+b3AsIGFuZCBkb2N1bWVudCBpdCBwbGVhc2UuDQo+IA0KPiBOaWNvbGFzDQo=
 
