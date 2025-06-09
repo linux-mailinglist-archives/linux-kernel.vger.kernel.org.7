@@ -1,769 +1,427 @@
-Return-Path: <linux-kernel+bounces-677993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D229AAD22BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71967AD22C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B002A16272D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:44:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F411622E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFAD215779;
-	Mon,  9 Jun 2025 15:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136F4217736;
+	Mon,  9 Jun 2025 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JthWLZEQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MAWTZ8/q";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XcT2aWPZ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAF820F081
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749483860; cv=none; b=fNPREp9bhq3hcMRan8z194/V4nwhXR56Lm0dfni/o1O60jx7Zz7s7zmv829u/23rUsV1dAYWBVZ7vBzVET/+JYvsuAMn3/RoQCADqstEHOc7NFXwNQTta4O8TMxkI8sJhNSKwuWX0xtYIrhBmN7aljYrm6VUGKG6eIxV0XrQwwM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749483860; c=relaxed/simple;
-	bh=UJ9Wimh60BNbLM5V4TruAbTp7ovimukUw/QMNIDk+6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7QKfx9LtRTySnPr3MDYTvJAXMY4vpg8Anp62dH0BG2pDDeg0fIM7TDzHR2zkPhyKM/z7a2Ya1P2THvr9jFU0CHSpw4bsP+BayH+PhAEwetwueqMqNRL/QLPMqsrZ/pc6Y1hSCimeDEiV5eLg30cBTF+iVbpWMMniPuaG+bsd9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JthWLZEQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599KCsP011947
-	for <linux-kernel@vger.kernel.org>; Mon, 9 Jun 2025 15:44:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=X7KLN/lr64MhkIB60SnnLp/s
-	ugM4QAYOYeScpe8ybOk=; b=JthWLZEQmKmaKw3Lt39FbU6l3q7C8enI6RolY7gV
-	lk9W+bGsTiSyHSATnxqqt6nskjrws2Wl5JSP3HidrW8kiraai2lNFWFcVNPAGWma
-	a9UyYw0ERySEGRwrs1mqp3jGiIq7Z+jptTG0WQSUrgkvccl4uNcFxlPyRsfIRLV2
-	XSSqMiKxyvi6jEeCb900TS3sq6g1PX2scn3hdIBJyMR6OMIWwvtWHeZe6EQp7lNt
-	KBUGOisg20Qlr2UMuEw9B2Jx87mQXHAoBx0sxQLS8UUaScwdsRZyVJJlPX9s0Z8E
-	XJ5FTzZ54WzxQUXRG8lE77S00uEbClUmQPt3Hu0z5HelJg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ce9pnbs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 15:44:16 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6face1d593bso87660106d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 08:44:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749483856; x=1750088656;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X7KLN/lr64MhkIB60SnnLp/sugM4QAYOYeScpe8ybOk=;
-        b=wjZOzQ8IPr41uu5MgMi3+VM+q1hj0shAiHpg5GnqMkqBhowE3H3aDCJm+XvgAdW34i
-         8OCmQWy8sRZMVHW40s3Y2pJd3oxu09qcicn33FL19GigYnV9urr/aNSnQGxmGyURwmRG
-         Wf5WcqmpLD5TrXgHENyhGCnK4mNhYZZhClVWVe4cIL1V0Rh6qEAI0CAs+USNANMxjbwF
-         a28ypemFYPtCcRsNmjhGRo6sz4RT22eKOqH+jI6fh66Hi3jWwsuQeNnGjesLihyHdKBW
-         MXcka+9vBcc+k5Q1DRIRp/yY47Zp3uuRmJGGeLT9Y3cGpv9aKM+B079teBsnfqLe9L7g
-         CS0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUfw/ek/mnrrKTgTYCAT81TDSvFAjkR2m5YZgzVwNtu4fdUVTSSoWvALgcakZeoShbjMEpzZNEhOBtYAIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgxJ24G7PTyh2spgUAR/KxFAZmJYbbZA+ANNVenlk9vfzZnRBY
-	WbXUlf99isr0xhHwFgIQc4K4ayVEYMrO2743C+x97Oe/cj/qdlb0KvT+8bGvuVJuXD+7TIZ3KR+
-	OZAi0r3OFhGN0DvkLHaPOul5NtCvS09OGoJRBHClcLOxa1Y/grBmBaaVX1BFsHk6hf9Y=
-X-Gm-Gg: ASbGncuWAChHPAyQw9KCHCW/fpnVYorhPZw10+WgdYNKeZkSegLVS33KWJpVTBN6lmi
-	7/mLWv2eW4o79Y5WDmNcqhL7/yAh/Ri+BZl/v6HIghoW/aHyY/UCZUZhchPHQSDInYaocQmrAJu
-	BvKVneAvWvpbCAMks+HYGlVTHPJjoxIEnfd0MiGF407c37IF5AYl1zNx8PhkP0c6M8VCVxqSAtk
-	RGfdsdBTbCJxeK5VROE6gLmDZwdAeGTdHzyeVJhjQLObKRT/GdCJDdG5Cxigr77+25K6iGjJC6l
-	QLFbzcvzcQhZTFAiH8BhQnUUWje6RZyvvKBo0816JGvf3LFy3YbJghiSMHVYVDLO0rJtZRQGez4
-	=
-X-Received: by 2002:a05:6214:2a88:b0:6fa:a0ac:8d46 with SMTP id 6a1803df08f44-6fb08f69f85mr207189246d6.2.1749483855371;
-        Mon, 09 Jun 2025 08:44:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGRj9ZQC4oCBy8Xb7d6S4oRZREoyfjMoijzFK6qJ+ZBbvSLGWSVsbP6Kl/mlvhj7T2w66jEFg==
-X-Received: by 2002:a05:6214:2a88:b0:6fa:a0ac:8d46 with SMTP id 6a1803df08f44-6fb08f69f85mr207188566d6.2.1749483854711;
-        Mon, 09 Jun 2025 08:44:14 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1b55fb3sm11741521fa.49.2025.06.09.08.44.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 08:44:13 -0700 (PDT)
-Date: Mon, 9 Jun 2025 18:44:12 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH v2 29/38] drm/msm/dp: add connector abstraction for DP MST
-Message-ID: <bmzte2ywtlygl4rru73efnfb4vpi3vkveeq32jhonrmxbogp5h@kqaukhzvcxx3>
-References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
- <20250609-msm-dp-mst-v2-29-a54d8902a23d@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86082116F4;
+	Mon,  9 Jun 2025 15:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749483879; cv=fail; b=JIE4+tGG4BOM8xg3FLSX/16t1hRsw6ArhJFAWbfafYc5q71SUcmBPMQZi/YdgsXWOo98XizZZChML/nxNXNWKyWRRx5r33lL2p4E50fQoLqTJSHZRhJnt++NXrO0IaGucQQ3SMK7ZdABv2m3pmONnTjPxRPgre47tXB0/yRgN2g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749483879; c=relaxed/simple;
+	bh=3/JBvWyId3Yvir6nQhc7Q/DbaaK5oixA6qk0sG1H3Nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=a6D+7Lw7H+CSwNzKuk5FkTIyhYPx5v5sAD8S1mnGQZ7d0R9GDmfP2CTaZTKrUE2DKkmQ3mjS+WwFwk5iTSwOvQpqXMpf+dOq/kut6y+aFmBhffAUChNXf0zW0WFwHhiM1/hBMIGQvC2LZEZnqSb11e9xKJrszLVvvk5fHuZguEI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MAWTZ8/q; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XcT2aWPZ; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559FYbKw006885;
+	Mon, 9 Jun 2025 15:44:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=MkYMxIu/KPWapgg/3k
+	L9bRR5uViaPCysA0RnOhGmIz8=; b=MAWTZ8/qDvsjlRnv9VqG6o3EHBqN2Jo0kT
+	uYS/q1dFdCdYf9i5a/wKjASapbcFhxJR2YEq183lh0iJYgxzT6fZ4XyE7cj146p0
+	i30HLJSeuEAdzfd1jXfsUt4kwHhlS1/Kb81OcRQs4xgd9L0CVbzsmLzJUUVJv68b
+	amrGhz651ku5CSnj7qnxlmtwIuOuAfuWNrARERnZlYfvDe5Pw3I6x5H5Qs6E9STK
+	ZVw7bRDgc7l8flEhtmkEC3bWz8iQCZAeYtHn1Tl8eafWBGXo95UUS1isFxx0x8cc
+	NwEhwmRr2oMm31T9YyonXsJVVLZsiiHgkteGUXc9g4WgU0vBn+5A==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4752xjsrpu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Jun 2025 15:44:21 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 559FXMdv007366;
+	Mon, 9 Jun 2025 15:44:20 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 474bv7bp0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Jun 2025 15:44:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M4KyKZ9/Rdum5BZqDDqV60QhcpMxxuYzOxsFgSCTPXUQUeyBg5UccQRiLjK+ej3ViJpSjwYhQTONYE/9e8Zf37+1ZMuw8kajHxk6RmF/JwAvr+KoELA8qm960863cfjiZUjEb53f26M+GtE/Hrs7N9KODgkfUNP55GGdOSKau4dp1OoHVQfNie0Q3aK/9WJQuleq0512sAj64xSbAzyzDt0hyjoB8usTV+JSW8gtKKRvQ7Uvi71I+F5cK2NksxcD9YpaYVPClCbgXaJiM4xtEsIKXcQUvw9uEwnPHevGf1Xwk3BajPjlF5ymp0wcY49wkHrHy7RwFMkWjPEjykN6Fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MkYMxIu/KPWapgg/3kL9bRR5uViaPCysA0RnOhGmIz8=;
+ b=RwYQZ+NXdQ5Ncwb+/fAnOXIjFq8/zj5k+WuUm0eW4TD6p9r6qPVbW2HsswIaOBdAsod8jsVYuhT6XzL5y/58J0bzHAav5PwWFv3Qb43QSXMg5OAr2QCi/TtEGWzMzyvFYGjCJSU9w4eau3FRW7uUxzeRffh/44L+RG1NvQyy1shBnR1ysKDBlg/hWvrOsjvSiq11CbE9ZN5Y4dbsZ16rpt7fpvQBBozzNf0VoUXGlFvNiWPHgOfhxP1fPVYxQhCYmoSA+eAAGx6evcLeFzZROVxFR8mht9QIAHsXPMfCP/nF7wVnvfpe0PN41TlPPGTz+tuTLA5oEUMFnCfLi2HFnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MkYMxIu/KPWapgg/3kL9bRR5uViaPCysA0RnOhGmIz8=;
+ b=XcT2aWPZDfeJezyHzoVdmKnvfxoicCd9vv1lkmukzdaHUllKdMb+jFdFweogSEWQjy/u9TRCIpX1qgkCHhA6WDpc/rvTTBZ1AeHBVKWlqvD+n5HJOMBihz4sqbc962LLG5kvmg3rrnh4s0ZrN1CjeonpHHCAde8+4J7wTQfUV5s=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by PH0PR10MB7008.namprd10.prod.outlook.com (2603:10b6:510:287::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.25; Mon, 9 Jun
+ 2025 15:44:18 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
+ 15:44:18 +0000
+Date: Mon, 9 Jun 2025 16:44:15 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: add mmap_prepare() compatibility layer for nested
+ file systems
+Message-ID: <dddd402f-1705-41a2-8806-543d0bfff5bc@lucifer.local>
+References: <20250609092413.45435-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609092413.45435-1-lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: LO2P265CA0113.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:c::29) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609-msm-dp-mst-v2-29-a54d8902a23d@quicinc.com>
-X-Proofpoint-GUID: WM4F6g4dm6f4joZx1IjFMmPkbWkqgkDV
-X-Authority-Analysis: v=2.4 cv=drjbC0g4 c=1 sm=1 tr=0 ts=68470150 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=cixbH43K_2EJUWrG8isA:9 a=CjuIK1q_8ugA:10
- a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: WM4F6g4dm6f4joZx1IjFMmPkbWkqgkDV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDExNyBTYWx0ZWRfX9QGzmSlAEvmt
- GOsuGN2foqJikzXiANj6vN98ha0rLu4ZhC7xjJ5+L5m7mfwnS6RZhGIecikQTBo5S4iFVjyFY76
- 6/yzumb2BtEbE82nKU+ymWeLfY086NrGANx1lm2BXIOiO+5rkDmVMVV41N8dIX2ssROXGK1i6PI
- ANJZ+7Rcv+X0PQmxsHUXa6ew7HFb4XhhY23nmRbH+LND3mz0GT2OKXHF1ByUo/7mYDLlGW3LvaZ
- 9dH7cei7iU3a7J36o3zqTiX9JDN4ut+jYwhjJHmaPuhQfLeAwnDBM5etu+FSjWM+eC5oRkxDQXX
- s6kumAsnNqwKBxSItW3w77WJS+uqlf0lqYVAgfNOLR8gdAkSxplCCmQ9DwgI8fCcQWWxEKtiYVv
- M4XugE71Jz50q8xgY/knzJUvhzuQQpkJ8IpDDJ3OA9HAvgAhYUDW/WhCe+P6qFJoIE1mgcF+
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|PH0PR10MB7008:EE_
+X-MS-Office365-Filtering-Correlation-Id: f7e6babb-6195-438d-9b0e-08dda76c7e87
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oPC5ODJgo8o2vQKuua69iNbqfY87Ys8usuTOEZMuw6hHAECAxtmJQrdnCcEZ?=
+ =?us-ascii?Q?HqrvcvMoae4OzRTvkwtIJ0RpVAGamL8vWxiEgM5PvuIgDuZI21IIpnQrj5IY?=
+ =?us-ascii?Q?DIeWfpg/ZZ7ThYdRXI8Sna3TuXo0V0ggmZgcOHa0bMB55WrKYr/a+CN8BBxs?=
+ =?us-ascii?Q?9jufynYvUm9M/sIlgxvcDg9cIHkmp29PgTJtsw7dD07e5Q+28mp3zfH4WI/6?=
+ =?us-ascii?Q?KqovYZFpUItf0eLZSEowuiPpdVI+dJmUQgsFsrvuSwd42IkBzRHo+0XvzejE?=
+ =?us-ascii?Q?4JZlnJrHsTVCR5kXWfrBN6ntEuUrK9f0UiVasnQV67pANoYcY242rDKW4rwp?=
+ =?us-ascii?Q?d3MbCtJEwi6h/jmgGadczqW+KMqcxlnUz6V7+dc2GXMUKLffqz/nvZLSwqZ0?=
+ =?us-ascii?Q?YP/XJN5FV1uQ3eOoK+DbF1QYTs8SNzYHLjeO9ur91r2MCa7zlARP80iXlpvA?=
+ =?us-ascii?Q?2eKxAUgQ0sRlr5o1+xsCgUx6k1D3ZuDEmszUiMEMLHpNOlg7U/lNdYn9P/Ys?=
+ =?us-ascii?Q?EIoKvixpJn6FhsdbkF85yqBPNwOQpbAzaITjGJAluFm1DrpucSKC+U3o70Wy?=
+ =?us-ascii?Q?GxLD4ich3GAklG5BJ96ukBIyFhlkjM3RoCpGjLHPrtW/r23I3Z2eNIaZKD2W?=
+ =?us-ascii?Q?dQR1/WhM8T+JNhpAVsRx10UdIXcFqfr6xDGFRif39P2ehU/IsHVOkvRuvl/Y?=
+ =?us-ascii?Q?+TWn49qoNGtXYn+jr+9n6JYPhvULJfDuq3ks+wVEQUGqJmcRf/hFs0Cq7Vj1?=
+ =?us-ascii?Q?4/QNW7lQ86dRbwpHJDXRSeOl7kZFwpkIKBleck45yQSepGA21WzPx8GUpsHi?=
+ =?us-ascii?Q?JFPWHHHklgpkdUghbl3K1T6W5oQaXUJ8ITYY2fcNS3Pv3jdIjA4lku3i+RzI?=
+ =?us-ascii?Q?njO5urc4lmSGp6i5bTxGFnM3GeA07DJF7BdHNJisSjG1EmtqnPeg5i1KWIhF?=
+ =?us-ascii?Q?0dyxHKRMSG51Xa4XibeapJETLz2aPIZOn+5sB2ad76j8H1GSf4VjgKG7WrBr?=
+ =?us-ascii?Q?/JOWpk/JKfMcm3tRtCtspAkOi24vX/UJZc5afyEJ9R9lp4/4MiQJiqgxhD7x?=
+ =?us-ascii?Q?Bf+n/IaYivyJHBN1kJu65iPVl5u3AlJlXbxACc+NjU5WG4hQvoP9OlBL3ceo?=
+ =?us-ascii?Q?0Tshdz98/Ftdb+5olj6D1XqMq6E+/tlccTGGHMp5MRQO0ehokGLipsQn0/2G?=
+ =?us-ascii?Q?yYFWqhPHpzW76qs66J4je1GrIgbQwxGVeDKfhhog0szUlX2QZye+K/y5swEL?=
+ =?us-ascii?Q?ZpE828GvKRhCeSI+/aiJ8DewKHYePJleao9T/4SP+jpVBCPWn/1+aqsAgw9B?=
+ =?us-ascii?Q?tceaRYn+wbtZEGVqI+vjpd8OwRkzB+pgk4c1GbdeR6a9z5X4UATquk/Mi/aq?=
+ =?us-ascii?Q?6hP9tzVMiFwMMqUkFXHWB0j4kr8eW651rdsMDQKBTE1aVMHt1WsXJT1vq3SB?=
+ =?us-ascii?Q?9yucRM8Pq4w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XX/t/iHXvBU0DqYFgsSP+Rm5ejXrGL7tHoyqgozHAM1QpYT0VbNE6J4N0taN?=
+ =?us-ascii?Q?jIf/a4Lk65OPQPOMhdT8EiSLUGOPrp5VZJu6HL23DJDeh0qwNpt2gJnRIpk5?=
+ =?us-ascii?Q?5vkeKQ8F+UoL7rADrx4TtiRoR/iincknlcb8hWzHSfOJqPhTbExGjbycftC1?=
+ =?us-ascii?Q?ACH9o++4dQDCRtpr7PO6KOiDRwA5LJPo+vx1MfpOUz/hk6kg7rsv/G2V+r/g?=
+ =?us-ascii?Q?jEMnEmjXl75QKZdnKcKMPdCBYq4tHrCDSpoxwUMkK712YxQwF8cOma55f9Qc?=
+ =?us-ascii?Q?O7d8ytsDx3SUdFx+JbRhqjL3UJu++MUMrFxQ8+hkI7ovSxp1HSYIB+JhzWJu?=
+ =?us-ascii?Q?xSL5rFHF98jsKpUgfTJDRxzkJy4E6MXuvfILJeHzpHorRqz4i+uUlinSeGws?=
+ =?us-ascii?Q?uBHOKGLUqDdv8OdjXk35z7wKDnPEQPgLcfCiKqFs0Wn5q8BcvD/zfMJuOd01?=
+ =?us-ascii?Q?tcJw5hTvP82rh+kUb+Th9Rsx38/hrD2r19iisDUHt+1Bg9QvJgcpVOMf34d2?=
+ =?us-ascii?Q?FSOLiui0Ucrhi0kGHk0NvdATaml/g4m5neWLNczNsW+Omiwl6bwjAm8U15yP?=
+ =?us-ascii?Q?UrakIKo8J8fKrNj0BQP6kBdiyuvUMAjFZaVvBOoac3qm2FtoQqLiMyure0zH?=
+ =?us-ascii?Q?nYYuLj3eztQAzVdcGG1JBjX0JFHbNo2eLqtrvIXf1Fg2FY7STx+wYWXaTIBF?=
+ =?us-ascii?Q?3S4vDAlHCVS+udHQnJoipeuWEA18gm/IxyA9S5Bh/lOpbp+mFksQbbgJ+c9F?=
+ =?us-ascii?Q?DLvJ6pPjcyky/VlW/LND3/7FjKlgB+W/sXvE2Gc1+C6p4LodJtiLZ/pG6y9q?=
+ =?us-ascii?Q?es1gPaXpiyFXQtA4ObKBxrwUAvQqzeOgGvzzspjj1DI257NJ/uY9DaeIOKL+?=
+ =?us-ascii?Q?lcCUkLNntDbkF46Lg1pOpGbedM+SpW+iMIQAAtHL6dHYlRJdxlpfvFyniHS7?=
+ =?us-ascii?Q?/53eXyXL8/RE9CrWMXubiY3cpLN93fgt0opydWjnowZYcUHIECPa4suVhcuE?=
+ =?us-ascii?Q?1DBKXRuPvNBhnHcQ/MjpMo8OGu6jevANgZTh+q7lJ6Ge7j0mByIHFOieRmKA?=
+ =?us-ascii?Q?74bqL1A8XwTtGNV6j+PHP/yXCRA9MDFxlVPPtiUlIya0+h+4FqZz+mnSjIZo?=
+ =?us-ascii?Q?nVZWs/4EA5/Euwel8S16zpaEga2XuUbjCEUAgVk/u2F4eBmqua4KGzhZKNiG?=
+ =?us-ascii?Q?7TnrLRJQFvfEPXag3+K0m8+qprl+NisXoHZz8yDXdqt1j0wJs+nnQSMgF2jS?=
+ =?us-ascii?Q?6kPo6vuSdSbKEDxFdnZCulNn9HSpKK4A7NW7ktMpmH476TvdScrN+YvZRvUd?=
+ =?us-ascii?Q?Xb0gjyNKGgbi6wXyd7eyvfseQP1qExwvUdpC2GEaZGK8ReSxxL3NDEEdUcLt?=
+ =?us-ascii?Q?xXeSp9K2pxyo/21JBQXuRZ0RawMSMTUzWbeuJFBixIkJbPWeX9P/07BnyCUS?=
+ =?us-ascii?Q?YFpfBwoYLlcEPLc4kyC3I/pCwOy53Qrz+ZNl0sgqb7gaV1EBAdEgesyYfOvo?=
+ =?us-ascii?Q?54ppHVk0VcOJNwjZXn4tyr/5ExRJb8lTve5wGou8mEz+QrlWw2E1+mEqH3xr?=
+ =?us-ascii?Q?GNDnkMlkMOWL2svhdqT4TclLjDqWbkLe3yLPYdPB0woGfBkQvJqVVFFG4gZE?=
+ =?us-ascii?Q?Zg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ieWOOOs43JDFP2FKwoYp6/2JywkN60eMRlFUlsxjtyAMkruIOgpNM7mCKC6+o/Q07VKuxQSYtUSR5MoQk7yXEHJm7E/lyUMUBl3bt97R/PrPf97zBVkupUf7f76T31OE0rtkka8ZQSIbMKM2RBB1VrwNQ4P8mhHAeeHpa0Bl0tnMz9knB/8izGOyLDCvhI258+dj+bTNXbLEDh5zWkJVG6BrmTWVDe9j4D4n3SjLSSKPNcYeZOQ7pv7nNL8J5hRXMyAaNJm3NBe8T2+vIbwW862oC+J0i0Ysj3lrm424ZZSENWWKowSDJG9G3BIBlHb41tTitD+pKDrJH1l8vk6rYEtJ4KO3zWNnhS/XOCuWO5Lip+vO/gthXZF2bocoCteScoZkUx478GHiSP+NyKEdM9sf2V+zxje9Z5hM52Nlgl975EJ0HwbUQ6PhkXwzkmPabS5pJCV78G0vGNtAJwShmw1/l7b/wrXTS9QlsMaE2PGR9nWevwfm6suHM/Mn6XBLClv2R1BRVND+hkT3XC6DR3IoH8OsMbH6u++LQ3b/FUjea0e5109ufQ3xef72/eIeuMCCu9lTwYWxgHWB24wq6yDnk3TWI9sodz/BQ3PHc0E=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7e6babb-6195-438d-9b0e-08dda76c7e87
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 15:44:17.8161
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: arySyHlFafXcPrtdOk4VwQGcbFmRZu1HtdcLusIn8EwMedP7Dd3JaL1SjoF1heDFAdrt1rDadZyycrZqnhinYys3cpHF/eEQ7Fl99fptdYQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB7008
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-09_06,2025-06-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506090117
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506090116
+X-Authority-Analysis: v=2.4 cv=K4AiHzWI c=1 sm=1 tr=0 ts=68470155 cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=1XWaLZrsAAAA:8 a=HNhzTM14WF-LhxQSznQA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDExNyBTYWx0ZWRfX84L73bbLManv WLAXnHjqh2AbU3FPUQtF5h/Jv/33Reqzy6OWuw/UHANqOajOz/QelpDMerZE5lXhorcWWgUikek SLpK4UDosErtxXmCGpAgEPAXSD12I4lwDrmSK+n0MUhjSRPjz68FlYmCc2qgEs07h8rTKoRGDI/
+ aB1e/9t9fA7fIzmmsLfUVT19uzkShXeIH/8UQ8zaxrH3dZLuQBCCmS3MIrF8hlW9zsxxBuUztBx q2+2FfiV4uTlKJAdnvNth8pzvNnnBe21Lhe95wW+rC2qyc7v0k8+ojTCHdgd/ZNC0LE1MOSHQ7W EOsW4qTU8TKaPG3feZBaORQ4Nqe1CKIui4TrVqk2N3ozrNnF8pF8fZndKwUo3/xK+64kzgoji7e
+ 7xnNHQGdlduKbK0pDgM56BJr4t3OYtsfTpLhs+bZ8XVUnMfiWoAT0Ttj1Yyn5xhvn0vVQKcb
+X-Proofpoint-ORIG-GUID: 99jdfEHLIWNPX8OdfE-IcsuyQ7Ub6ybc
+X-Proofpoint-GUID: 99jdfEHLIWNPX8OdfE-IcsuyQ7Ub6ybc
 
-On Mon, Jun 09, 2025 at 08:21:48PM +0800, Yongxing Mou wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> Add connector abstraction for the DP MST. Each MST encoder
-> is connected through a DRM bridge to a MST connector and each
-> MST connector has a DP panel abstraction attached to it.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+Andrew - I typo'd a ';' when there should be a ':' below, could you fix
+that up or would you want a fix-patch for that?
+
+I highlight where the issue is below.
+
+Thanks!
+
+On Mon, Jun 09, 2025 at 10:24:13AM +0100, Lorenzo Stoakes wrote:
+> Nested file systems, that is those which invoke call_mmap() within their
+> own f_op->mmap() handlers, may encounter underlying file systems which
+> provide the f_op->mmap_prepare() hook introduced by commit
+> c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file callback").
+>
+> We have a chicken-and-egg scenario here - until all file systems are
+> converted to using .mmap_prepare(), we cannot convert these nested
+> handlers, as we can't call f_op->mmap from an .mmap_prepare() hook.
+>
+> So we have to do it the other way round - invoke the .mmap_prepare() hook
+> from an .mmap() one.
+>
+> in order to do so, we need to convert VMA state into a struct vm_area_desc
+> descriptor, invoking the underlying file system's f_op->mmap_prepare()
+> callback passing a pointer to this, and then setting VMA state accordingly
+> and safely.
+>
+> This patch achieves this via the compat_vma_mmap_prepare() function, which
+> we invoke from call_mmap() if f_op->mmap_prepare() is specified in the
+> passed in file pointer.
+>
+> We place the fundamental logic into mm/vma.c where VMA manipulation
+> belongs. We also update the VMA userland tests to accommodate the changes.
+>
+> The compat_vma_mmap_prepare() function and its associated machinery is
+> temporary, and will be removed once the conversion of file systems is
+> complete.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reported-by: Jann Horn <jannh@google.com>
+> Closes: https://lore.kernel.org/linux-mm/CAG48ez04yOEVx1ekzOChARDDBZzAKwet8PEoPM4Ln3_rk91AzQ@mail.gmail.com/
+> Fixes: c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file callback").
 > ---
->  drivers/gpu/drm/msm/dp/dp_mst_drm.c | 515 ++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_mst_drm.h |   3 +
->  2 files changed, 518 insertions(+)
-
-It generally feels liks 80% of this patch is a generic code. Please
-extract generic DP MST connector and push it under drm/display. Other DP
-MST drivers should be able to use it.
-
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_mst_drm.c b/drivers/gpu/drm/msm/dp/dp_mst_drm.c
-> index a3ea34ae63511db0ac920cbeebe30c4e2320b8c4..489fa46aa518ff1cc5f4769b2153fc5153c4cb41 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_mst_drm.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_mst_drm.c
-> @@ -25,8 +25,12 @@
->   * OF THIS SOFTWARE.
->   */
->  
-> +#include <drm/drm_edid.h>
-> +#include <drm/drm_managed.h>
->  #include "dp_mst_drm.h"
->  
-> +#define MAX_DPCD_TRANSACTION_BYTES 16
+>  include/linux/fs.h               |  6 +++--
+>  mm/mmap.c                        | 39 +++++++++++++++++++++++++++
+>  mm/vma.c                         | 46 +++++++++++++++++++++++++++++++-
+>  mm/vma.h                         |  4 +++
+>  tools/testing/vma/vma_internal.h | 16 +++++++++++
+>  5 files changed, 108 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 05abdabe9db7..8fe41a2b7527 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2274,10 +2274,12 @@ static inline bool file_has_valid_mmap_hooks(struct file *file)
+>  	return true;
+>  }
+>
+> +int compat_vma_mmap_prepare(struct file *file, struct vm_area_struct *vma);
 > +
->  static struct drm_private_state *msm_dp_mst_duplicate_bridge_state(struct drm_private_obj *obj)
+>  static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
 >  {
->  	struct msm_dp_mst_bridge_state *state;
-> @@ -79,6 +83,61 @@ static int msm_dp_mst_find_vcpi_slots(struct drm_dp_mst_topology_mgr *mgr, int p
->  	return num_slots;
+> -	if (WARN_ON_ONCE(file->f_op->mmap_prepare))
+> -		return -EINVAL;
+> +	if (file->f_op->mmap_prepare)
+> +		return compat_vma_mmap_prepare(file, vma);
+>
+>  	return file->f_op->mmap(file, vma);
 >  }
->  
-> +static int msm_dp_mst_get_mst_pbn_div(struct msm_dp_panel *msm_dp_panel)
-> +{
-> +	struct msm_dp_link_info *link_info;
-> +
-> +	link_info = &msm_dp_panel->link_info;
-> +
-> +	return link_info->rate * link_info->num_lanes / 54000;
-> +}
-> +
-> +static int msm_dp_mst_compute_config(struct drm_atomic_state *state,
-> +				      struct msm_dp_mst *mst, struct drm_connector *connector,
-> +				      struct drm_display_mode *mode)
-> +{
-> +	int slots = 0, pbn;
-> +	struct msm_dp_mst_connector *mst_conn = to_msm_dp_mst_connector(connector);
-> +	int rc = 0;
-> +	struct drm_dp_mst_topology_state *mst_state;
-> +	int pbn_div;
-> +	struct msm_dp *dp_display = mst->msm_dp;
-> +	u32 bpp;
-> +
-> +	bpp = connector->display_info.bpc * 3;
-> +
-> +	pbn = drm_dp_calc_pbn_mode(mode->clock, bpp << 4);
-
-Is this going to change if DSC is in place? Will it bring fractional BPP
-here?
-
-> +
-> +	mst_state = to_drm_dp_mst_topology_state(mst->mst_mgr.base.state);
-> +
-> +	if (!dfixed_trunc(mst_state->pbn_div)) {
-> +		pbn_div = msm_dp_mst_get_mst_pbn_div(mst_conn->dp_panel);
-> +		mst_state->pbn_div.full = dfixed_const(pbn_div);
-
-It looks like this should be using drm_dp_get_vc_payload_bw() (i915,
-nouveau). Any reason not to do so?
-
-> +	}
-> +
-> +	rc = drm_dp_atomic_find_time_slots(state, &mst->mst_mgr, mst_conn->mst_port, pbn);
-> +	if (rc < 0) {
-> +		DRM_ERROR("conn:%d failed to find vcpi slots. pbn:%d, rc:%d\n",
-> +			  connector->base.id, pbn, rc);
-> +		goto end;
-> +	}
-> +
-> +	slots = rc;
-> +
-> +	rc = drm_dp_mst_atomic_check(state);
-> +	if (rc) {
-> +		DRM_ERROR("conn:%d mst atomic check failed: rc=%d\n", connector->base.id, rc);
-> +		slots = 0;
-
-no need to
-
-> +		goto end;
-> +	}
-> +
-> +	drm_dbg_dp(dp_display->drm_dev, "conn:%d pbn:%d slots:%d rc:%d\n",
-> +		   connector->base.id, pbn, slots, rc);
-> +
-> +end:
-> +	return (rc < 0 ? rc : slots);
-> +}
-> +
->  static void _msm_dp_mst_update_timeslots(struct msm_dp_mst *mst,
->  					 struct msm_dp_mst_bridge *mst_bridge,
->  					 struct drm_dp_mst_port *port)
-> @@ -499,3 +558,459 @@ int msm_dp_mst_drm_bridge_init(struct msm_dp *dp, struct drm_encoder *encoder)
->  end:
->  	return rc;
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 09c563c95112..0755cb5d89d1 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1891,3 +1891,42 @@ __latent_entropy int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
+>  	vm_unacct_memory(charge);
+>  	goto loop_out;
 >  }
 > +
-> +static struct msm_dp_mst_bridge_state *msm_dp_mst_br_priv_state(struct drm_atomic_state *st,
-> +								struct msm_dp_mst_bridge *bridge)
+> +/**
+> + * compat_vma_mmap_prepare() - Apply the file's .mmap_prepare() hook to an
+> + * existing VMA
+> + * @file: The file which possesss an f_op->mmap_prepare() hook
+> + * @vma; The VMA to apply the .mmap_prepare() hook to.
+          ^
+          |---- should be a :
+
+:)
+
+> + *
+> + * Ordinarily, .mmap_prepare() is invoked directly upon mmap(). However, certain
+> + * 'wrapper' file systems invoke a nested mmap hook of an underlying file.
+> + *
+> + * Until all filesystems are converted to use .mmap_prepare(), we must be
+> + * conservative and continue to invoke these 'wrapper' filesystems using the
+> + * deprecated .mmap() hook.
+> + *
+> + * However we have a problem if the underlying file system possesses an
+> + * .mmap_prepare() hook, as we are in a different context when we invoke the
+> + * .mmap() hook, already having a VMA to deal with.
+> + *
+> + * compat_vma_mmap_prepare() is a compatibility function that takes VMA state,
+> + * establishes a struct vm_area_desc descriptor, passes to the underlying
+> + * .mmap_prepare() hook and applies any changes performed by it.
+> + *
+> + * Once the conversion of filesystems is complete this function will no longer
+> + * be required and will be removed.
+> + *
+> + * Returns: 0 on success or error.
+> + */
+> +int compat_vma_mmap_prepare(struct file *file, struct vm_area_struct *vma)
 > +{
-> +	struct drm_device *dev = bridge->base.dev;
+> +	struct vm_area_desc desc;
+> +	int err;
 > +
-> +	WARN_ON(!drm_modeset_is_locked(&dev->mode_config.connection_mutex));
+> +	err = file->f_op->mmap_prepare(vma_to_desc(vma, &desc));
+> +	if (err)
+> +		return err;
+> +	set_vma_from_desc(vma, &desc);
 > +
-> +	return to_msm_dp_mst_bridge_priv_state(drm_atomic_get_private_obj_state(st,
-> +										&bridge->obj));
-
-Save drm_atomic_get_private_obj_state() result to a variable. It will
-make it readable.
-
+> +	return 0;
+> +}
+> diff --git a/mm/vma.c b/mm/vma.c
+> index 01b1d26d87b4..d771750f8f76 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -3153,7 +3153,6 @@ int __vm_munmap(unsigned long start, size_t len, bool unlock)
+>  	return ret;
+>  }
+>
+> -
+>  /* Insert vm structure into process list sorted by address
+>   * and into the inode's i_mmap tree.  If vm_file is non-NULL
+>   * then i_mmap_rwsem is taken here.
+> @@ -3195,3 +3194,48 @@ int insert_vm_struct(struct mm_struct *mm, struct vm_area_struct *vma)
+>
+>  	return 0;
+>  }
+> +
+> +/*
+> + * Temporary helper functions for file systems which wrap an invocation of
+> + * f_op->mmap() but which might have an underlying file system which implements
+> + * f_op->mmap_prepare().
+> + */
+> +
+> +struct vm_area_desc *vma_to_desc(struct vm_area_struct *vma,
+> +		struct vm_area_desc *desc)
+> +{
+> +	desc->mm = vma->vm_mm;
+> +	desc->start = vma->vm_start;
+> +	desc->end = vma->vm_end;
+> +
+> +	desc->pgoff = vma->vm_pgoff;
+> +	desc->file = vma->vm_file;
+> +	desc->vm_flags = vma->vm_flags;
+> +	desc->page_prot = vma->vm_page_prot;
+> +
+> +	desc->vm_ops = NULL;
+> +	desc->private_data = NULL;
+> +
+> +	return desc;
 > +}
 > +
-> +/* DP MST Connector OPs */
-> +static int
-> +msm_dp_mst_connector_detect(struct drm_connector *connector,
-> +			    struct drm_modeset_acquire_ctx *ctx,
-> +			    bool force)
+> +void set_vma_from_desc(struct vm_area_struct *vma, struct vm_area_desc *desc)
 > +{
-> +	struct msm_dp_mst_connector *mst_conn = to_msm_dp_mst_connector(connector);
-> +	struct msm_dp *dp_display = mst_conn->msm_dp;
-> +	struct msm_dp_mst *mst = dp_display->msm_dp_mst;
-> +	enum drm_connector_status status = connector_status_disconnected;
+> +	/*
+> +	 * Since we're invoking .mmap_prepare() despite having a partially
+> +	 * established VMA, we must take care to handle setting fields
+> +	 * correctly.
+> +	 */
 > +
-> +	if (drm_connector_is_unregistered(&mst_conn->connector))
-> +		return status;
+> +	/* Mutable fields. Populated with initial state. */
+> +	vma->vm_pgoff = desc->pgoff;
+> +	if (vma->vm_file != desc->file)
+> +		vma_set_file(vma, desc->file);
+> +	if (vma->vm_flags != desc->vm_flags)
+> +		vm_flags_set(vma, desc->vm_flags);
+> +	vma->vm_page_prot = desc->page_prot;
 > +
-> +	if (dp_display->link_ready && dp_display->mst_active)
-> +		status = drm_dp_mst_detect_port(connector,
-> +						ctx, &mst->mst_mgr, mst_conn->mst_port);
-> +
-> +	drm_dbg_dp(dp_display->drm_dev, "conn:%d status:%d\n", connector->base.id, status);
-> +
-> +	return status;
+> +	/* User-defined fields. */
+> +	vma->vm_ops = desc->vm_ops;
+> +	vma->vm_private_data = desc->private_data;
 > +}
-> +
-> +static int msm_dp_mst_connector_get_modes(struct drm_connector *connector)
-> +{
-> +	struct msm_dp_mst_connector *mst_conn = to_msm_dp_mst_connector(connector);
-> +	struct msm_dp *dp_display = mst_conn->msm_dp;
-> +	struct msm_dp_mst *mst = dp_display->msm_dp_mst;
-> +	const struct drm_edid *drm_edid;
-> +	int ret;
-> +
-> +	if (drm_connector_is_unregistered(&mst_conn->connector))
-> +		return drm_edid_connector_update(connector, NULL);
-> +
-> +	drm_edid = drm_dp_mst_edid_read(connector, &mst->mst_mgr, mst_conn->mst_port);
-> +	drm_edid_connector_update(connector, drm_edid);
-> +	ret = drm_edid_connector_add_modes(connector);
-> +	drm_edid_free(drm_edid);
-> +
-> +	return ret;
-
-return drm_edid_connector_add_modes(connector)
-
-> +}
-> +
-> +static enum drm_mode_status msm_dp_mst_connector_mode_valid(struct drm_connector *connector,
-> +							    const struct drm_display_mode *mode)
-> +{
-> +	struct msm_dp_mst_connector *mst_conn;
-> +	struct msm_dp *dp_display;
-> +	struct drm_dp_mst_port *mst_port;
-> +	struct msm_dp_panel *dp_panel;
-> +	struct msm_dp_mst *mst;
-> +	u16 full_pbn, required_pbn;
-> +	int available_slots, required_slots;
-> +	struct msm_dp_mst_bridge_state *dp_bridge_state;
-> +	int i, slots_in_use = 0, active_enc_cnt = 0;
-> +	const u32 tot_slots = 63;
-> +
-> +	if (drm_connector_is_unregistered(connector))
-> +		return 0;
-> +
-> +	mst_conn = to_msm_dp_mst_connector(connector);
-> +	dp_display = mst_conn->msm_dp;
-> +	mst = dp_display->msm_dp_mst;
-> +	mst_port = mst_conn->mst_port;
-> +	dp_panel = mst_conn->dp_panel;
-> +
-> +	if (!dp_panel || !mst_port)
-> +		return MODE_ERROR;
-> +
-> +	for (i = 0; i < mst->max_streams; i++) {
-> +		dp_bridge_state = to_msm_dp_mst_bridge_state(&mst->mst_bridge[i]);
-> +		if (dp_bridge_state->connector &&
-> +		    dp_bridge_state->connector != connector) {
-> +			active_enc_cnt++;
-> +			slots_in_use += dp_bridge_state->num_slots;
-> +		}
-> +	}
-> +
-> +	if (active_enc_cnt < DP_STREAM_MAX) {
-> +		full_pbn = mst_port->full_pbn;
-> +		available_slots = tot_slots - slots_in_use;
-> +	} else {
-> +		DRM_ERROR("all mst streams are active\n");
-> +		return MODE_BAD;
-> +	}
-> +
-> +	required_pbn = drm_dp_calc_pbn_mode(mode->clock, (connector->display_info.bpc * 3) << 4);
-> +
-> +	required_slots = msm_dp_mst_find_vcpi_slots(&mst->mst_mgr, required_pbn);
-> +
-> +	if (required_pbn > full_pbn || required_slots > available_slots) {
-> +		drm_dbg_dp(dp_display->drm_dev,
-> +			   "mode:%s not supported. pbn %d vs %d slots %d vs %d\n",
-> +			   mode->name, required_pbn, full_pbn,
-> +			   required_slots, available_slots);
-> +		return MODE_BAD;
-> +	}
-> +
-> +	return msm_dp_display_mode_valid(dp_display, &dp_display->connector->display_info, mode);
-> +}
-> +
-> +static struct drm_encoder *
-> +msm_dp_mst_atomic_best_encoder(struct drm_connector *connector, struct drm_atomic_state *state)
-
-Do we need this callback? Don't we have a fixed relationship between
-connectors and encoders?
-
-> +{
-> +	struct msm_dp_mst_connector *mst_conn = to_msm_dp_mst_connector(connector);
-> +	struct msm_dp *dp_display = mst_conn->msm_dp;
-> +	struct msm_dp_mst *mst = dp_display->msm_dp_mst;
-> +	struct drm_encoder *enc = NULL;
-> +	struct msm_dp_mst_bridge_state *bridge_state;
-> +	u32 i;
-> +	struct drm_connector_state *conn_state = drm_atomic_get_new_connector_state(state,
-> +										    connector);
-> +
-> +	if (conn_state && conn_state->best_encoder)
-> +		return conn_state->best_encoder;
-> +
-> +	for (i = 0; i < mst->max_streams; i++) {
-> +		bridge_state = msm_dp_mst_br_priv_state(state, &mst->mst_bridge[i]);
-> +		if (IS_ERR(bridge_state))
-> +			goto end;
-> +
-> +		if (bridge_state->connector == connector) {
-> +			enc = mst->mst_bridge[i].encoder;
-> +			goto end;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < mst->max_streams; i++) {
-> +		bridge_state = msm_dp_mst_br_priv_state(state, &mst->mst_bridge[i]);
-> +
-> +		if (!bridge_state->connector) {
-> +			bridge_state->connector = connector;
-> +			bridge_state->msm_dp_panel = mst_conn->dp_panel;
-> +			enc = mst->mst_bridge[i].encoder;
-> +			break;
-> +		}
-> +	}
-> +
-> +end:
-> +	if (enc)
-> +		drm_dbg_dp(dp_display->drm_dev, "mst connector:%d atomic best encoder:%d\n",
-> +			   connector->base.id, i);
-> +	else
-> +		drm_dbg_dp(dp_display->drm_dev, "mst connector:%d atomic best encoder failed\n",
-> +			   connector->base.id);
-> +
-> +	return enc;
-> +}
-> +
-> +static int msm_dp_mst_connector_atomic_check(struct drm_connector *connector,
-> +					     struct drm_atomic_state *state)
-> +{
-> +	int rc = 0, slots, i;
-> +	bool vcpi_released = false;
-> +	struct drm_connector_state *old_conn_state;
-> +	struct drm_connector_state *new_conn_state;
-> +	struct drm_crtc *old_crtc;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct msm_dp_mst_bridge *bridge;
-> +	struct msm_dp_mst_bridge_state *bridge_state;
-> +	struct drm_bridge *drm_bridge;
-> +	struct msm_dp_mst_connector *mst_conn = to_msm_dp_mst_connector(connector);
-> +	struct msm_dp *dp_display = mst_conn->msm_dp;
-> +	struct msm_dp_mst *mst = dp_display->msm_dp_mst;
-> +
-> +	if (!state)
-> +		return rc;
-> +
-> +	new_conn_state = drm_atomic_get_new_connector_state(state, connector);
-> +	if (!new_conn_state)
-> +		return rc;
-> +
-> +	old_conn_state = drm_atomic_get_old_connector_state(state, connector);
-> +	if (!old_conn_state)
-> +		goto mode_set;
-> +
-> +	old_crtc = old_conn_state->crtc;
-> +	if (!old_crtc)
-> +		goto mode_set;
-> +
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, old_crtc);
-> +
-> +	for (i = 0; i < mst->max_streams; i++) {
-> +		bridge = &mst->mst_bridge[i];
-> +		drm_dbg_dp(dp_display->drm_dev, "bridge id:%d, vcpi:%d, pbn:%d, slots:%d\n",
-> +			   bridge->id, bridge->vcpi, bridge->pbn,
-> +			   bridge->num_slots);
-> +	}
-> +
-> +	/*attempt to release vcpi slots on a modeset change for crtc state*/
-
-missing spaces in the block comment
-
-> +	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
-> +		if (WARN_ON(!old_conn_state->best_encoder)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-> +
-> +		drm_bridge = drm_bridge_chain_get_first_bridge(old_conn_state->best_encoder);
-
-This really looks like this should be a bridge's callback.
-
-> +		if (WARN_ON(!drm_bridge)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-> +		bridge = to_msm_dp_mst_bridge(drm_bridge);
-> +
-> +		bridge_state = msm_dp_mst_br_priv_state(state, bridge);
-> +		if (IS_ERR(bridge_state)) {
-> +			rc = PTR_ERR(bridge_state);
-> +			goto end;
-> +		}
-> +
-> +		if (WARN_ON(bridge_state->connector != connector)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-> +
-> +		slots = bridge_state->num_slots;
-> +		if (slots > 0) {
-> +			rc = drm_dp_atomic_release_time_slots(state,
-> +							      &mst->mst_mgr,
-> +							      mst_conn->mst_port);
-> +			if (rc) {
-> +				DRM_ERROR("failed releasing %d vcpi slots %d\n", slots, rc);
-> +				goto end;
-> +			}
-> +			vcpi_released = true;
-> +		}
-> +
-> +		if (!new_conn_state->crtc) {
-> +			/* for cases where crtc is not disabled the slots are not
-> +			 * freed by drm_dp_atomic_release_time_slots. this results
-> +			 * in subsequent atomic_check failing since internal slots
-> +			 * were freed but not the dp mst mgr's
-> +			 */
-> +			bridge_state->num_slots = 0;
-> +			bridge_state->connector = NULL;
-> +			bridge_state->msm_dp_panel = NULL;
-> +
-> +			drm_dbg_dp(dp_display->drm_dev, "clear best encoder: %d\n", bridge->id);
-> +		}
-> +	}
-
-This looks like there are several functions fused together. Please
-unfuse those into small and neat code blocks.
-
-> +
-> +mode_set:
-> +	if (!new_conn_state->crtc)
-> +		goto end;
-> +
-> +	crtc_state = drm_atomic_get_new_crtc_state(state, new_conn_state->crtc);
-> +
-> +	if (drm_atomic_crtc_needs_modeset(crtc_state) && crtc_state->active) {
-
-Use of crtc_state->active doesn't look correct.
-
-> +		if (WARN_ON(!new_conn_state->best_encoder)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-> +
-> +		drm_bridge = drm_bridge_chain_get_first_bridge(new_conn_state->best_encoder);
-> +		if (WARN_ON(!drm_bridge)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-> +		bridge = to_msm_dp_mst_bridge(drm_bridge);
-> +
-> +		bridge_state = msm_dp_mst_br_priv_state(state, bridge);
-> +		if (IS_ERR(bridge_state)) {
-> +			rc = PTR_ERR(bridge_state);
-> +			goto end;
-> +		}
-> +
-> +		if (WARN_ON(bridge_state->connector != connector)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-
-Can all of this actually happen?
-
-> +
-> +		/*
-> +		 * check if vcpi slots are trying to get allocated in same phase
-> +		 * as deallocation. If so, go to end to avoid allocation.
-> +		 */
-> +		if (vcpi_released) {
-> +			drm_dbg_dp(dp_display->drm_dev,
-> +				   "skipping allocation since vcpi was released in the same state\n");
-> +			goto end;
-> +		}
-> +
-> +		if (WARN_ON(bridge_state->num_slots)) {
-> +			rc = -EINVAL;
-> +			goto end;
-> +		}
-> +
-> +		slots = msm_dp_mst_compute_config(state, mst, connector, &crtc_state->mode);
-> +		if (slots < 0) {
-> +			rc = slots;
-> +			goto end;
-> +		}
-> +
-> +		bridge_state->num_slots = slots;
-> +	}
-> +
-> +end:
-> +	drm_dbg_dp(dp_display->drm_dev, "mst connector:%d atomic check ret %d\n",
-> +		   connector->base.id, rc);
-> +	return rc;
-> +}
-> +
-> +static void dp_mst_connector_destroy(struct drm_connector *connector)
-> +{
-> +	struct msm_dp_mst_connector *mst_conn = to_msm_dp_mst_connector(connector);
-> +
-> +	drm_connector_cleanup(connector);
-> +	drm_dp_mst_put_port_malloc(mst_conn->mst_port);
-> +}
-> +
-> +/* DRM MST callbacks */
-> +static const struct drm_connector_helper_funcs msm_dp_drm_mst_connector_helper_funcs = {
-> +	.get_modes =    msm_dp_mst_connector_get_modes,
-> +	.detect_ctx =   msm_dp_mst_connector_detect,
-> +	.mode_valid =   msm_dp_mst_connector_mode_valid,
-> +	.atomic_best_encoder = msm_dp_mst_atomic_best_encoder,
-> +	.atomic_check = msm_dp_mst_connector_atomic_check,
-> +};
-> +
-> +static const struct drm_connector_funcs msm_dp_drm_mst_connector_funcs = {
-> +	.reset = drm_atomic_helper_connector_reset,
-> +	.destroy = dp_mst_connector_destroy,
-> +	.fill_modes = drm_helper_probe_single_connector_modes,
-> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> +};
-> +
-> +static struct drm_connector *
-> +msm_dp_mst_add_connector(struct drm_dp_mst_topology_mgr *mgr,
-> +			 struct drm_dp_mst_port *port, const char *pathprop)
-> +{
-> +	struct msm_dp_mst *dp_mst;
-> +	struct drm_device *dev;
-> +	struct msm_dp *dp_display;
-> +	struct msm_dp_mst_connector *mst_connector;
-> +	struct drm_connector *connector;
-> +	int rc, i;
-> +
-> +	dp_mst = container_of(mgr, struct msm_dp_mst, mst_mgr);
-> +
-> +	dp_display = dp_mst->msm_dp;
-> +	dev = dp_display->drm_dev;
-> +
-> +	mst_connector = devm_kzalloc(dev->dev, sizeof(*mst_connector), GFP_KERNEL);
-
-This shows that somebody doesn't understand the reason for drmm and the
-difference between devm and drmm and the lifetime of the objects. Do you
-see two issues in this line?
-
-Let me help you. Please use normal (non-managed) memory here. It is the
-only correct way to allocate memory for MST connectors.
-
-> +
-> +	drm_modeset_lock_all(dev);
-> +
-> +	rc = drm_connector_dynamic_init(dev, &mst_connector->connector,
-> +					&msm_dp_drm_mst_connector_funcs,
-> +					DRM_MODE_CONNECTOR_DisplayPort, NULL);
-> +	if (rc) {
-> +		drm_modeset_unlock_all(dev);
-> +		return NULL;
-> +	}
-> +
-> +	mst_connector->dp_panel = msm_dp_display_get_panel(dp_display);
-> +	if (!mst_connector->dp_panel) {
-> +		DRM_ERROR("failed to get dp_panel for connector\n");
-> +		drm_modeset_unlock_all(dev);
-> +		return NULL;
-> +	}
-> +
-> +	mst_connector->dp_panel->connector = &mst_connector->connector;
-> +	mst_connector->msm_dp = dp_display;
-> +	connector = &mst_connector->connector;
-> +	drm_connector_helper_add(&mst_connector->connector, &msm_dp_drm_mst_connector_helper_funcs);
-> +
-> +	if (connector->funcs->reset)
-> +		connector->funcs->reset(connector);
-> +
-> +	/* add all encoders as possible encoders */
-> +	for (i = 0; i < dp_mst->max_streams; i++) {
-> +		rc = drm_connector_attach_encoder(&mst_connector->connector,
-> +						  dp_mst->mst_bridge[i].encoder);
-> +		if (rc) {
-> +			DRM_ERROR("failed to attach encoder to connector, %d\n", rc);
-> +			drm_modeset_unlock_all(dev);
-> +			return NULL;
-> +		}
-> +	}
-> +
-> +	mst_connector->mst_port = port;
-> +	drm_dp_mst_get_port_malloc(mst_connector->mst_port);
-> +
-> +	drm_object_attach_property(&mst_connector->connector.base,
-> +				   dev->mode_config.path_property, 0);
-> +	drm_object_attach_property(&mst_connector->connector.base,
-> +				   dev->mode_config.tile_property, 0);
-
-subconnector? Or do we report the subconnector only for the main DP
-port?
-
-> +
-> +	drm_modeset_unlock_all(dev);
-> +
-> +	drm_dbg_dp(dp_display->drm_dev, "add mst connector id:%d\n",
-
-Each time I see "mst" in the text message, I feel a bit sad. It's MST
-(or SST).
-
-> +		   mst_connector->connector.base.id);
-> +
-> +	return &mst_connector->connector;
-> +}
-> +
-> +static const struct drm_dp_mst_topology_cbs msm_dp_mst_drm_cbs = {
-> +	.add_connector = msm_dp_mst_add_connector,
-> +};
-> +
-> +int msm_dp_mst_init(struct msm_dp *dp_display, u32 max_streams, struct drm_dp_aux *drm_aux)
-> +{
-> +	struct drm_device *dev;
-> +	int conn_base_id = 0;
-> +	int ret;
-> +	struct msm_dp_mst *msm_dp_mst;
-> +
-> +	if (!dp_display) {
-> +		DRM_ERROR("invalid params\n");
-> +		return 0;
-> +	}
-> +
-> +	dev = dp_display->drm_dev;
-> +
-> +	msm_dp_mst = devm_kzalloc(dev->dev, sizeof(*msm_dp_mst), GFP_KERNEL);
-> +	if (!msm_dp_mst)
-> +		return -ENOMEM;
-> +
-> +	memset(&msm_dp_mst->mst_mgr, 0, sizeof(msm_dp_mst->mst_mgr));
-> +	msm_dp_mst->mst_mgr.cbs = &msm_dp_mst_drm_cbs;
-> +	conn_base_id = dp_display->connector->base.id;
-> +	msm_dp_mst->msm_dp = dp_display;
-> +	msm_dp_mst->max_streams = max_streams;
-> +
-> +	msm_dp_mst->mst_bridge = drmm_kzalloc(dev, max_streams * sizeof(struct msm_dp_mst_bridge),
-> +					      GFP_KERNEL);
-> +
-> +	msm_dp_mst->dp_aux = drm_aux;
-> +
-> +	ret = drm_dp_mst_topology_mgr_init(&msm_dp_mst->mst_mgr, dev,
-> +					   drm_aux,
-> +					   MAX_DPCD_TRANSACTION_BYTES,
-> +					   max_streams,
-> +					   conn_base_id);
-> +	if (ret) {
-> +		DRM_ERROR("dp drm mst topology manager init failed\n");
-> +		return ret;
-> +	}
-> +
-> +	dp_display->msm_dp_mst = msm_dp_mst;
-> +
-> +	mutex_init(&msm_dp_mst->mst_lock);
-> +
-> +	drm_dbg_dp(dp_display->drm_dev, "dp drm mst topology manager init completed\n");
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/msm/dp/dp_mst_drm.h b/drivers/gpu/drm/msm/dp/dp_mst_drm.h
-> index cdde59da7bb937ad67fa818a728082f8fd43a3a6..7b08346e0bb9189009c02745c243722c01d79493 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_mst_drm.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_mst_drm.h
-> @@ -75,6 +75,7 @@ struct msm_dp_mst {
->  	struct drm_dp_mst_topology_mgr mst_mgr;
->  	struct msm_dp_mst_bridge *mst_bridge;
->  	struct msm_dp *msm_dp;
-> +	struct drm_dp_aux *dp_aux;
->  	u32 max_streams;
->  	struct mutex mst_lock;
+> diff --git a/mm/vma.h b/mm/vma.h
+> index 0db066e7a45d..afd6cc026658 100644
+> --- a/mm/vma.h
+> +++ b/mm/vma.h
+> @@ -570,4 +570,8 @@ int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+>  int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift);
+>  #endif
+>
+> +struct vm_area_desc *vma_to_desc(struct vm_area_struct *vma,
+> +		struct vm_area_desc *desc);
+> +void set_vma_from_desc(struct vm_area_struct *vma, struct vm_area_desc *desc);
+> +
+>  #endif	/* __MM_VMA_H */
+> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
+> index 77b2949d874a..675a55216607 100644
+> --- a/tools/testing/vma/vma_internal.h
+> +++ b/tools/testing/vma/vma_internal.h
+> @@ -159,6 +159,14 @@ typedef __bitwise unsigned int vm_fault_t;
+>
+>  #define ASSERT_EXCLUSIVE_WRITER(x)
+>
+> +/**
+> + * swap - swap values of @a and @b
+> + * @a: first value
+> + * @b: second value
+> + */
+> +#define swap(a, b) \
+> +	do { typeof(a) __tmp = (a); (a) = (b); (b) = __tmp; } while (0)
+> +
+>  struct kref {
+>  	refcount_t refcount;
 >  };
-> @@ -97,4 +98,6 @@ struct msm_dp_mst_connector {
->  		container_of((x), struct msm_dp_mst_connector, connector)
->  int msm_dp_mst_drm_bridge_init(struct msm_dp *dp, struct drm_encoder *encoder);
->  
-> +int msm_dp_mst_init(struct msm_dp *dp_display, u32 max_streams, struct drm_dp_aux *drm_aux);
+> @@ -1479,4 +1487,12 @@ static inline vm_flags_t ksm_vma_flags(const struct mm_struct *, const struct fi
+>  	return vm_flags;
+>  }
+>
+> +static inline void vma_set_file(struct vm_area_struct *vma, struct file *file)
+> +{
+> +	/* Changing an anonymous vma with this is illegal */
+> +	get_file(file);
+> +	swap(vma->vm_file, file);
+> +	fput(file);
+> +}
 > +
->  #endif /* _DP_MST_DRM_H_ */
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+>  #endif	/* __MM_VMA_INTERNAL_H */
+> --
+> 2.49.0
+>
 
