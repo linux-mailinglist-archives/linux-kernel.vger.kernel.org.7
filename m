@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-677798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C1DAD1FFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:51:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15086AD2041
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC39A188F009
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:49:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EDF16D49D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78B025D54A;
-	Mon,  9 Jun 2025 13:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1318E25C6FC;
+	Mon,  9 Jun 2025 13:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Da2ESV3w"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="ot3iqr1X"
+Received: from esa4.hc555-34.eu.iphmx.com (esa4.hc555-34.eu.iphmx.com [207.54.77.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA0B25D20A;
-	Mon,  9 Jun 2025 13:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0682550C2;
+	Mon,  9 Jun 2025 13:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.77.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476908; cv=none; b=c1RIFitbXLyjE04L9tZ0xGMA10C7MHl/tIzbQ3pygCBvp9WO1snOZBT4Jg6dL9D7S1WgTnE+5QbCB0rkDJpnONKaJ9qXUn9fDw7mZg9b1cmLGvyPrkftiXzLS6p9znbE0oCgJInPwVEtxhlLjmX5PxH2zW1cgcuJ+NfDXKCthhE=
+	t=1749477074; cv=none; b=IovrmByX4rqBtedpTuiVjeYG8voUX2D8yo//GTAv5rOZjc32yUiVzVAqnjxDrWZukOV8ti76tmXfxr/6YAMKEA+75drqZ5kp0o3UCzWzJbU8niPFXp4jSn8PFuVi88Rl63uzaZIU/ETp0f+EIn7jNPd8BRnkOHIE6kbH9tOD07o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476908; c=relaxed/simple;
-	bh=tToi8tfhAwhbg8M9op98TVL8Co/zc0UThzZIsHoprw0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=uXiLFoyUR5N4ZYHMKNJ8X+ePbRIhIF1YPD+CbwU45/TrfB+sifFhdpOzj36jYCp3CV0MiGoq3QLecSeFNfn4CRXrC5VwD1/VOE95CX5tYv5YejOBm8a+CDGWTQ/oq7as30h0vWUOwt3acj68dCUjR+hES8wzVQ+jACmXwmOM74o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Da2ESV3w; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559D7mBl023584;
-	Mon, 9 Jun 2025 15:48:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ZPw43GyUj1rBJP84OCQo1msrNqbW6/iMIuz9l5cgfso=; b=Da2ESV3wDgMuxbze
-	YdxFyNKei6Y3UtR+PJG4y5K3Yd+ssCiWIV4oJdpHfyEqfZKtsIfIkBEBq0D56dL3
-	H67LkWp+nfFIvh23EQA5ySqQLU0DuVQW60Y4qLOeXYnI+knjmDE6ABAQmMKuLMYu
-	t+yQi0iP5xYnQSUn99W3of3me9+5VbsjNoEKURzRe6jJp+xkB2Sisw11SQqkx+xk
-	i6D3HkEMmsSEz+SBQa0PepRJXpdSQ0s98CCMus/V7SBH7eoKNFX6JXmnIqHH2n0x
-	/hLfMbnNDDct1GVm/MFizuoQPDPIl8lW7ZfdSbRNS7S3/GeWUijljIDsZMo743kD
-	OeuU1A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs2fxvj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Jun 2025 15:48:13 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 29892400CB;
-	Mon,  9 Jun 2025 15:47:23 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 708B7BA62B4;
-	Mon,  9 Jun 2025 15:46:32 +0200 (CEST)
-Received: from localhost (10.130.73.167) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 15:46:32 +0200
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Date: Mon, 9 Jun 2025 15:46:24 +0200
-Subject: [PATCH 4/4] media: i2c: vd55g1: Use first index of mbus codes
- array as default
+	s=arc-20240116; t=1749477074; c=relaxed/simple;
+	bh=401u0OSH88qHCJmEZO9VJhc7zw1kY/ESQqzyFm/CmVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RP5EtA9uv37l/rybAgt/VH9/NCXFuXARusjh81GPId4/FVS6GhUlqzXZ7QGIaAsnF/mi4g10O3yvN0qlYnuCq4QFxrd7WkEPMlyjxG1VbvTj1ee0L58WkN6gwlp12Fd0ir8UPkQaqJRQGMVf+CMWxHZplWNTFStqyZ4zL/VLzT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=ot3iqr1X reason="key not found in DNS"; arc=none smtp.client-ip=207.54.77.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobileye.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=mobileye.com; i=@mobileye.com; q=dns/txt; s=MoEyIP;
+  t=1749477072; x=1781013072;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=401u0OSH88qHCJmEZO9VJhc7zw1kY/ESQqzyFm/CmVo=;
+  b=ot3iqr1XErXffu3neJRM79Gz6C/Yyd7VI5GozhyQFYLTuGmLaY4ERpi3
+   z99+6nMwy44oNsoMWWRnG7/5QdUs6uzzDQ/B9FvUaHFya9n/KaGbfbtIw
+   z5LDo/a9nIRJGVOYnE86gjeLfQbQULfl84/KFYS2mjhgcXNw+SPsPJLRb
+   iwNY1/hxRbgPRLfsLyfCrAmjEk6Jxxq+uKDgyrX32EQFKTH5KEfW8Mf10
+   re0DDUfZ/A7oyduRu4sUpz4dwwIbQloNE/MR+TPA2W6WkGd60UlMuHHQQ
+   xkCdhjh7Hjr/6EaVLkjn28wYOTymQkG3VsxkgBgwFMLKIHHIJAHuAOrU4
+   A==;
+X-CSE-ConnectionGUID: yn9h3P1jRZ2wK6r2MNhrWg==
+X-CSE-MsgGUID: WIpOfn1KQWWaJrqXMXSUPA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from unknown (HELO ces01_data.me-corp.lan) ([146.255.191.134])
+  by esa4.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 16:47:58 +0300
+X-CSE-ConnectionGUID: fNBtzWk5Tyilkr2G/AR+EQ==
+X-CSE-MsgGUID: MUc4K3FVQWSfV2at324pHw==
+Received: from unknown (HELO epgd071.me-corp.lan) ([10.154.54.1])
+  by ces01_data.me-corp.lan with SMTP; 09 Jun 2025 16:47:56 +0300
+Received: by epgd071.me-corp.lan (sSMTP sendmail emulation); Mon, 09 Jun 2025 16:47:56 +0300
+From: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Anup Patel <anup@brainfault.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Ryo Takakura <takakura@valinux.co.jp>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Subject: [PATCH v1 0/7] Risc-V ACLINT IPI controller
+Date: Mon,  9 Jun 2025 16:47:42 +0300
+Message-ID: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250609-fix_vd55g1-v1-4-594f1134e3fb@foss.st.com>
-References: <20250609-fix_vd55g1-v1-0-594f1134e3fb@foss.st.com>
-In-Reply-To: <20250609-fix_vd55g1-v1-0-594f1134e3fb@foss.st.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Sylvain Petinot
-	<sylvain.petinot@foss.st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin
- Mugnier <benjamin.mugnier@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Factorize code and prevent future erros in case of media bus codes
-change.
-Rename VD55G1_DEFAULT_MODE to VD55G1_MODE_DEF to mimic other macros
-while at it.
+Risc-V specification for the ACLINT IPI controller
+describes an "SSWI" device that allows to send IPI by
+writing register from the S-mode (Linux kernel),
+as opposed to the "MSWI" device that does the same from
+the M-mode. Sending IPI through the M-mode requires
+extra SBI call, SSWI is much faster. Support for the
+SSWI exists for the Thead board, it is almost as by
+specification save for reading one custom CSR.
 
-Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
----
- drivers/media/i2c/vd55g1.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Soon to be released Mobileye SoC based on the MIPS
+P8700 Risc-v CPU has pristine ACLINT SSWI.
 
-diff --git a/drivers/media/i2c/vd55g1.c b/drivers/media/i2c/vd55g1.c
-index dec6e3e231d54a742bdd08ff2a506c152bb89429..177caa5470cfcf49e0ae2fb568d7872a5608a11f 100644
---- a/drivers/media/i2c/vd55g1.c
-+++ b/drivers/media/i2c/vd55g1.c
-@@ -111,9 +111,9 @@
- 
- #define VD55G1_WIDTH					804
- #define VD55G1_HEIGHT					704
--#define VD55G1_DEFAULT_MODE				0
-+#define VD55G1_MODE_DEF					0
- #define VD55G1_NB_GPIOS					4
--#define VD55G1_MEDIA_BUS_FMT_DEF			MEDIA_BUS_FMT_Y8_1X8
-+#define VD55G1_MBUS_CODE_DEF				0
- #define VD55G1_DGAIN_DEF				256
- #define VD55G1_AGAIN_DEF				19
- #define VD55G1_EXPO_MAX_TERM				64
-@@ -1260,7 +1260,8 @@ static int vd55g1_set_pad_fmt(struct v4l2_subdev *sd,
- static int vd55g1_init_state(struct v4l2_subdev *sd,
- 			     struct v4l2_subdev_state *sd_state)
- {
--	unsigned int def_mode = VD55G1_DEFAULT_MODE;
-+	unsigned int def_mode = VD55G1_MODE_DEF;
-+	unsigned int def_mbus_code = VD55G1_MBUS_CODE_DEF;
- 	struct vd55g1 *sensor = to_vd55g1(sd);
- 	struct v4l2_subdev_format fmt = { 0 };
- 	struct v4l2_subdev_route routes[] = {
-@@ -1278,7 +1279,8 @@ static int vd55g1_init_state(struct v4l2_subdev *sd,
- 		return ret;
- 
- 	vd55g1_update_img_pad_format(sensor, &vd55g1_supported_modes[def_mode],
--				     VD55G1_MEDIA_BUS_FMT_DEF, &fmt.format);
-+				     vd55g1_mbus_codes[def_mbus_code].code,
-+				     &fmt.format);
- 
- 	return vd55g1_set_pad_fmt(sd, sd_state, &fmt);
- }
+To support P8700, refactor Thead implementation -
+provide generic one while keeping Thead-specific variant.
 
+In addition, support Risc-v "hart index" - it is
+required for the MIPS P8700 chip to be released soon
+
+Patches 1 and 2 refactor "hart index" support, replacing
+APLIC specific implementation with generic helper
+
+Patch 3 documents generic "riscv,aclint-sswi" and optional
+property "riscv,hart-indexes", same as for ACLINT.
+
+Patch 4 promotes Thead-specific SSWI to generic one
+
+Patch 5 adds "riscv,hart-indexes" support
+
+Patches 6 and 7 do some minor improvements for the SSWI
+
+Vladimir Kondratiev (7):
+  riscv: helper to parse hart index
+  irqchip: riscv aplic: use riscv_get_hart_index()
+  dt-bindings: interrupt-controller: add generic Risc-v aclint-sswi
+  irqchip: introduce generic Risc-V aclint-sswi
+  irqchip: aslint-sswi: resolve hart index
+  irqchip: aclint-sswi: reduce data scope
+  irqchip: aclint-sswi: remove extra includes
+
+ .../riscv,aclint-sswi.yaml                    |  89 ++++++++++++++
+ .../thead,c900-aclint-sswi.yaml               |  58 ---------
+ arch/riscv/include/asm/irq.h                  |   2 +
+ arch/riscv/kernel/irq.c                       |  34 ++++++
+ drivers/irqchip/Kconfig                       |  12 ++
+ drivers/irqchip/Makefile                      |   2 +-
+ ...d-c900-aclint-sswi.c => irq-aclint-sswi.c} | 114 ++++++++++++------
+ drivers/irqchip/irq-riscv-aplic-direct.c      |  16 +--
+ 8 files changed, 214 insertions(+), 113 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,aclint-sswi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
+ rename drivers/irqchip/{irq-thead-c900-aclint-sswi.c => irq-aclint-sswi.c} (63%)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.25.1
+2.43.0
 
 
