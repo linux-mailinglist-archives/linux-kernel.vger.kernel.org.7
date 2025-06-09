@@ -1,144 +1,145 @@
-Return-Path: <linux-kernel+bounces-678200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB35AD2591
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:26:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412E6AD2587
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E7EB3AB9B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015517A74AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B1D18DB34;
-	Mon,  9 Jun 2025 18:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B58D21CFF7;
+	Mon,  9 Jun 2025 18:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwWu2FKH"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m4EfG6uN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B25027718;
-	Mon,  9 Jun 2025 18:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4CD18DB1E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 18:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749493511; cv=none; b=a3vTrhk7c4aRjVFxJ1xXS3b+j+5v85D8zJbdrX3UqXXDNcrZpO9sohJysqTmHdbPpjlRiaTGwuF/XhHCpKSWyOeuFUVUzmJUGranQiCKcwcokJRPbciFvmVsCXDlLhkSvtpBIlKe/2Xt9grUyWUImw/f3K/7sllnsD6LpptXByY=
+	t=1749493486; cv=none; b=Ho0CVPPMcqAWBsa4zZnmQPqU0bSclstZyXP/Si+/OH1neETAV0/K7RWCWsDZd+W8ahkABwpfjlnFfmQ7mUoiFjyT2UzW4moyVQzxTVrSk/JZOgbwboYA2pB4IqKJ7qH5gDra1FlDbIWGz+xnjdNnsDXBNNofEhieTzvyZVHezY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749493511; c=relaxed/simple;
-	bh=4DkztlDi1UNKjvC8sNIo+PdaedvC1flGUNrquVWOQ70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DnOjZUUwdO1i7zu2xw3hbnk9eKY6Z7vSPJhIRT4waW2FGflkqo1UjQ+EjtNF6owj+ydLm+L0KH5Ph+k/i711hWNXj0Qn1CpydT65lSrO8VukvnsYKfch+IC2l8AgEKsWQSi81iwf+BEyFD8U1FwOkw8B3mqvqKEFcCll+30fsao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwWu2FKH; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a42c40a04aso4137241cf.1;
-        Mon, 09 Jun 2025 11:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749493509; x=1750098309; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=14XQS0XBZACKYALkCZYiuHCbPa67r7U2WahK9NJpgLw=;
-        b=HwWu2FKH4B0wBw5sNnojg1fo3WSOS2vO06ypHY71+/l8h6ogKXvsM3bEB64IvOWQZv
-         9ppjdoZd3fw1WlWvqVInKuKR1jmlM2XoAcDZJuR29OIohY3ln/4ydeHswYhmZ/0dUu6n
-         ba2fwFibA7Lm+Ayf9Y/yvWF6P/7xEjDMfXXsPAy7zeOdypuDidxtTWd0tGObBkButnOQ
-         lNaweYBKfC0boJv9hcptgjqVs6600HiMiW+Oxj8hdo2/iJ6Jk5OnsrKhWVxhD+wVNYoF
-         L9SXYypCa3WRnTY3cjHQuylhiVikAR0n244IsU3QNXr2fk7WskTyJ6GGl9EAoKjzM/pW
-         UgaA==
+	s=arc-20240116; t=1749493486; c=relaxed/simple;
+	bh=d6cdoCj31eUk5F3VCUY2T8KQ/6Vk+ixc0GLCsL0N170=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gxHTx8sJUKx9564FvQ9bXUxrogS3G0HsOT9SnB/wA4oF5OHUMj+N/PZmmKqpRzP/r9ZDLT1O6V3tRsZLtJVDhudUMEZN0puPeLhVHt8WBwPwuea/hPUmvHPRTFfvXfEkK0BOJZ/PG9KXgX3FdAYbiqZCywIPmvopJf5CcvNYfa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m4EfG6uN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559G4uYe026905
+	for <linux-kernel@vger.kernel.org>; Mon, 9 Jun 2025 18:24:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=T6/1awyVf7eqR9AU36g9BD93UGKtinLFAqS
+	HdRSlSds=; b=m4EfG6uNLOS3in7c9iB3D9yYaSBHOYE1bNwECfdGZ9rDht/MgGa
+	BubiCZDzL3eHEL3wp40+CVWshA+T6MPwauhU1o89c2Aav+SmAb+vV7v2QjGi0kQq
+	hbZF2muokddtS+Yt+YBQCymPWgUKnt5Q1YQ+3cvEufdgUSG+xwIBkfbroo7UGZQE
+	AsJFQGIqNAaHl7GvgibvzHhnv3hPXPUhd4VZKoDDqDOMyAZWt5MgfiYuSbu7+jyy
+	jXB0TUgxxPZoZaA7cAmfUbcMmTYaa5R1IV17OxOgdWADH35bL0glScLXihZP744+
+	dS7aNzzfmsxgXSBqjk0L5/AR1geg9r0s/zQ==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4762tg0ahe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 18:24:44 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2fa1a84565so1227115a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 11:24:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749493509; x=1750098309;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1749493483; x=1750098283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=14XQS0XBZACKYALkCZYiuHCbPa67r7U2WahK9NJpgLw=;
-        b=Q8cY0inyEkNEFCFldulBJmrf0RUjhZVIP/6B8c4naPJwece+gto5E3e42dtVn/Gbm3
-         9i0cqPPgYwOdrcQjayJDmvrhGk9sRubKEoOgORqnFD8ZhAS+z/HkFFXm3pXJOpPeOezV
-         zViqoevPGBfxa5OVC1xyPyjrF0D20i7cHtEGDILyfyQgcIV6ZVtFX5cF3HvJF1kFSwkj
-         +jm47XVYxkO5iDySJcVlieSasxhIPxkLTL5K+lizqrcL7JVmb/62E9DJzMYBU0Tiytrg
-         XSjSkusNFXgAHM4oaqg3NK5VofnDs709MHDyFX5sIi/2PIXjOkaOTcDjhmQkwPdPJS2p
-         sZCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNjePUp7shbanrip+4zcmDjyL90qk4itoiL2DvCKorJNIKkgd1QIR+Fb1kkhviPm7AVs8Y3JVzC5VADVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHzAX8pXspYk3pLAmG024GSiQFmf7o67SqrCx7uk/vOWaACWei
-	PSBwTxZ87IQgWyMgKhcN9ZsAPMGS0kyasUZznppUVSu6twuH+JbWwWlV
-X-Gm-Gg: ASbGnctTWBdlC76WENnqg5HrzNMUBX6dR4DQ6BqBfcRv1ojNMC1fM2vAO7PLY39qBbK
-	943wSsmBKdx7rBq9GS4w6QLU9aAXgxVTZ9hIWsdNfJsV8aMgqjjjG889WycIYdQmWhxSvK/vn+z
-	J6U4Aa9dkLdneSAK/Z/mqC2M2eJE3Pyml8gv33LNVpDS9XDZB3xwg5W5u8hMXi0DhqOXXEQN416
-	lmlTG28cUd2dxygJFYtzbnTpJUIvvKVO3eKF+Ti7s+Qa/5RA5B/NLIimgzajT0gz/IMmStsySpE
-	kwjFYy3SVEKPzm/LVFAAAvFh9sXXH9nr9JsGuMR98hhMuy9XZpGIDRw=
-X-Google-Smtp-Source: AGHT+IGa1nqbrTKr83Evut9BiPTX252PXv/6X8BGyhlP7UQZT4G241QVKYBpK5WIPPrTd1ucQK1X5g==
-X-Received: by 2002:ac8:570e:0:b0:4a4:3cac:2c7a with SMTP id d75a77b69052e-4a6690acf56mr73423911cf.11.1749493508697;
-        Mon, 09 Jun 2025 11:25:08 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:2::])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a61116be2dsm59387521cf.29.2025.06.09.11.25.07
+        bh=T6/1awyVf7eqR9AU36g9BD93UGKtinLFAqSHdRSlSds=;
+        b=kggir4/W/YEZ/p2jervyG5UzT4nfNUTJ8CVMIntgKQzQoKks+osJc/O7Q4t5RIroPP
+         yYyWaU3G67+LtHHwF1+1Q8Nebfnt7ZlIAN1nzQ0hlcHjsM3SmqHUbZ38/xLTEOEnqa3I
+         wTPO1LT8yNXqKtF4HIzQ7g9Y8Ovfb7JT+KFVSiW1hIqdmRKmbDAawV9MrxKvvBZP6rnF
+         2fL9Eu296Eyq2urVqZ2/6Ki+YHSUba51BRHhpajvCD0P0aw2t0rGSUIgxqgU2LFP+gF7
+         DTZ002CFqQZTN3ZzwtDo4FdGaA1gB3eIQPimzY/p92gxjZmihtUL9ET1ND7r3TybCsoM
+         8eZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbj1VxzuKQR3o+Sh4uyBHEeW/bMv9EGe94IlsAFH+SVjm6tGqdCcHAHX1pSfudY26WeFSDJL4p7TkJXcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtPk4m9DzpWQw00uVHH+1bDZ2aB7ZOk5YgJMhTWUCGRZTQIvfP
+	zTg5K17Pv0eBrQrW/HLiMbU6vUdVz7MP31Iu7TNQypREKdxgot8GgHGxeAJgsXpWHSIUsKvclDG
+	tu5Il48eNettzMhz41Jb+WmQ7oDRG7wasCOQ3g3tYoiT6yuGpjyVACVsFvu1EQyZ85hE=
+X-Gm-Gg: ASbGncu8EEUtiqchAxnPAtmrtXO1F5lkdP7HN7dCSpxuSIBM9LYbdKi6JyKA+9Je9Dy
+	7XTPmFonhlW0hQ6IIEnhZHnmmXcpsS9l+vsOjIyDxfI8wQ0BbnRj2zMb3YCNXNFmMw+rvShj98d
+	hNW0Fi/ACRP7G9pLA0GpB72FHm5wZdJR7AAR91jVUkBWdkMqFgqYF3MahS7x/caSDqMPW3qGXt/
+	jVJgYBb4YcfuajQ9b9WsHiT88PqmfwFvqS8/GcAKKW3S7HCGya65tMO72G6uDfnW+6I4OQFB4lz
+	3zOHhbuFPiClkix9a8JCLQ==
+X-Received: by 2002:a17:90a:dfcb:b0:311:a314:c2dc with SMTP id 98e67ed59e1d1-313472eb25cmr23479191a91.14.1749493482778;
+        Mon, 09 Jun 2025 11:24:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAvo/tjXFuiSwnF2ZVZMq2U5wnwRopkRd0199rUIbodRRW1lfymiGSTQN+R3i5xVj07EsO2g==
+X-Received: by 2002:a17:90a:dfcb:b0:311:a314:c2dc with SMTP id 98e67ed59e1d1-313472eb25cmr23479155a91.14.1749493482379;
+        Mon, 09 Jun 2025 11:24:42 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603092640sm57210175ad.54.2025.06.09.11.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 11:25:07 -0700 (PDT)
-From: Gustavo Luiz Duarte <gustavold@gmail.com>
-Date: Mon, 09 Jun 2025 11:24:20 -0700
-Subject: [PATCH net] netconsole: fix appending sysdata when sysdata_fields
- == SYSDATA_RELEASE
+        Mon, 09 Jun 2025 11:24:42 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        linux-kernel@vger.kernel.org (open list),
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH v2 0/3] drm/msm: Better unknown GPU handling
+Date: Mon,  9 Jun 2025 11:24:34 -0700
+Message-ID: <20250609182439.28432-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250609-netconsole-fix-v1-1-17543611ae31@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANMmR2gC/x2MUQqAIBAFrxL7nWCWUl0l+ohcayE03IhAuntLn
- /OYNwUYMyHDWBXIeBNTigJNXcG6L3FDRV4YjDZWOz2oiNeaIqcDVaBH2c5ZNMH3oW9BTmdGmf/
- gBOLC/L4fpA4xRWUAAAA=
-To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gustavo Luiz Duarte <gustavold@gmail.com>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=OqZPyz/t c=1 sm=1 tr=0 ts=684726ec cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
+ a=JEju956KdHHbcqjs2oUA:9 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDE0MCBTYWx0ZWRfX9sttk+JLVzoN
+ XHC1GcYvJfoGvpqV6qmPH3Gwm8qq87dO8kw92P8gbgiF+9ktuV3021oGXDa1YRABMT6uvMFnAov
+ PDDQ6CDofJ9HqExAJMnUTXG/f7jXjoZ8cl+6nPiND6vKHa9tGYktKJlEV5bDn3o1qAPVoIt6q83
+ p1cmMuS9FGd7aCyCKE1+cOOij9xK3EERgFigxpRXH8jwQowaG4J1aOOUYd5b5IqgfccmPf5aq2W
+ i211n6arFGTJi73Ift8CIriQu9Tb8UR3XIvJllDgdvh3DcRUfaGsmnAORy6vilRQIpkhtRcHrVE
+ fCnJJgU3qJN9C7CXHFrDHKWLxE6wWpGNKCVznACv1xyoLgdcBKF8P44N7TL8+2uWQg1HZmCIWmS
+ Q+tPkYSSSSidK7srRheYZjNMKbkJ8GJ/Ls0TRDBk5RmIduR5nryVUPFStsKaVhJM+p9UYeAi
+X-Proofpoint-ORIG-GUID: -6okooTlTrDU2ZcD8lOG2vcI9qRIQcX8
+X-Proofpoint-GUID: -6okooTlTrDU2ZcD8lOG2vcI9qRIQcX8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_07,2025-06-09_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ phishscore=0 bulkscore=0 mlxlogscore=705 suspectscore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506090140
 
-Before appending sysdata, prepare_extradata() checks if any feature is
-enabled in sysdata_fields (and exits early if none is enabled).
+Detect earlier if the GPU is supported, and skip binding the GPU
+sub-component if not.  This way the rest of the driver can still
+probe and get working display if the only thing unsupported is
+the GPU.
 
-When SYSDATA_RELEASE was introduced, we missed adding it to the list of
-features being checked against sysdata_fields in prepare_extradata().
-The result was that, if only SYSDATA_RELEASE is enabled in
-sysdata_fields, we incorreclty exit early and fail to append the
-release.
+v2: use %pOF [Dmitry]
 
-Instead of checking specific bits in sysdata_fields, check if
-sysdata_fields has ALL bit zeroed and exit early if true. This fixes
-case when only SYSDATA_RELEASE enabled and makes the code more general /
-less error prone in future feature implementation.
+Rob Clark (3):
+  drm/msm: Rename add_components_mdp()
+  drm/msm/adreno: Pass device_node to find_chipid()
+  drm/msm/adreno: Check for recognized GPU before bind
 
-Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
----
- drivers/net/netconsole.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/msm/adreno/adreno_device.c | 39 ++++++++++++++++------
+ drivers/gpu/drm/msm/msm_drv.c              |  6 ++--
+ drivers/gpu/drm/msm/msm_gpu.h              |  1 +
+ 3 files changed, 33 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 4289ccd3e41b..176935a8645f 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1252,7 +1252,6 @@ static int sysdata_append_release(struct netconsole_target *nt, int offset)
-  */
- static int prepare_extradata(struct netconsole_target *nt)
- {
--	u32 fields = SYSDATA_CPU_NR | SYSDATA_TASKNAME;
- 	int extradata_len;
- 
- 	/* userdata was appended when configfs write helper was called
-@@ -1260,7 +1259,7 @@ static int prepare_extradata(struct netconsole_target *nt)
- 	 */
- 	extradata_len = nt->userdata_length;
- 
--	if (!(nt->sysdata_fields & fields))
-+	if (!nt->sysdata_fields)
- 		goto out;
- 
- 	if (nt->sysdata_fields & SYSDATA_CPU_NR)
-
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250609-netconsole-fix-5465e2fd8f83
-
-Best regards,
 -- 
-Gustavo Luiz Duarte <gustavold@gmail.com>
+2.49.0
 
 
