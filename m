@@ -1,152 +1,104 @@
-Return-Path: <linux-kernel+bounces-677523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F286AD1B6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A94AD1B33
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046BC16486D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB3D3ACEF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518A725290E;
-	Mon,  9 Jun 2025 10:20:41 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE9F18035;
-	Mon,  9 Jun 2025 10:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90362512FD;
+	Mon,  9 Jun 2025 10:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="cL1OvQ+7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FD143ABC;
+	Mon,  9 Jun 2025 10:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464441; cv=none; b=SMt4632qbop0j1grP88Qq5Fm90XF22lmRBIwzea4BYFUgVGEsKmwWJS26ZlmVnRTL6pp/DkW1x8WcsF8ALx8LFqZquTOOzMrcuIukYOZkbyndNLrOlTvJvTYm4IraAmq/NRC/fpdOLV4/v4ihxxpKXUUBJqk+N79kIdeEwyOBm0=
+	t=1749463523; cv=none; b=hVv2ItOj3b1Kc1ljnQ9EmG0kWRH7t+GQS3iVgGGAV7D8I9/Zyv8cUthwMlP8FgeO/RiXyG1nYdLuKlVfDGwMxT6IZtfrgMs7wqpW5RT0NWSf75ntuWTRQl/w6y8Lv2Re+ItjykZ4mmIrGFsIUuiPxYmtbmbwGIdx6wVKd44aQuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464441; c=relaxed/simple;
-	bh=ArEQ/2nsEBAtXmpn4zBP2QfXDUFWWBM+qfF11borbxI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pO9uB+d3v3Oi2WuinH6dzc0MIdepbTg/RtRGl2PVXrIp1f2oTrZhf4Y6E/4AilQ7xqspNcY6swX5NXUMSUpHeEQ59/nwTSQtrJVAX46KM+6+eR7itbScBY6G/hXUOxinABaUkirJo76r3/R8ftsW/mDaw85DqaDcBDFyzgCHTwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bG6sP4M6zz9sTD;
-	Mon,  9 Jun 2025 12:02:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 9TNlJkUIjdtp; Mon,  9 Jun 2025 12:02:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bG6sP3W12z9sN6;
-	Mon,  9 Jun 2025 12:02:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 725B08B764;
-	Mon,  9 Jun 2025 12:02:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id M0XrWoJzsNRE; Mon,  9 Jun 2025 12:02:01 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EBC588B763;
-	Mon,  9 Jun 2025 12:02:00 +0200 (CEST)
-Message-ID: <6fbbb13e-aedd-47ad-a58b-cc00e9ea138c@csgroup.eu>
-Date: Mon, 9 Jun 2025 12:02:00 +0200
+	s=arc-20240116; t=1749463523; c=relaxed/simple;
+	bh=LIaYfTdy4VX2SijSB1fsERZSR/2FSunWOglQaGexf38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZ/iIKWS5tue13YnRsOeAfcywbH9hndGxrH+kKTMRyYxvQoc/hWmJfC+VBjY5Yy0ertGtMMoiTwGn+TNofVgxxXgu5YHmxN2Tuld+H3nn+TQh9ItrT1n09vT+wF67YMlYsLtRL0FyrxBvp7A7Kun4HrTjl1IGIjQ1L9m/15XhAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=cL1OvQ+7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1749463518;
+	bh=LIaYfTdy4VX2SijSB1fsERZSR/2FSunWOglQaGexf38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cL1OvQ+7LsfOUWE3rHXhvHPEooM2uTSuf9JmQZBP4cMkLtVfP5lxnRYlps6BLkWpy
+	 UZNls2o1oZoFErLIvQnIjlSfRjLhtg+obZx/kPsuFWK/qlxy8IB1b5O7+jkXYhLHew
+	 21zgt0otmTBl/5DHfU9yKpOcmjRhLWdpmAQpNP7w=
+Date: Mon, 9 Jun 2025 12:05:18 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
+	linux-sh@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH 0/3] tools/nolibc: add support for SuperH
+Message-ID: <66678d81-b1ac-48de-be82-1c82ca1c3e31@t-8ch.de>
+References: <20250609-nolibc-sh-v1-0-9dcdb1b66bb5@weissschuh.net>
+ <0bd3da32be2d82f8ee6f6a544d9d8f8b48b02cd0.camel@physik.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ALSA: pcm: Convert multiple {get/put}_user to
- user_access_begin/user_access_end()
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-sound@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>,
- Mark Brown <broonie@kernel.org>
-References: <d2609397eafc2b55ec1f44a3f30ccec00e0c7f6e.1749455639.git.christophe.leroy@csgroup.eu>
- <87zfeh72sz.wl-tiwai@suse.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <87zfeh72sz.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <0bd3da32be2d82f8ee6f6a544d9d8f8b48b02cd0.camel@physik.fu-berlin.de>
 
+Hi Adrian,
 
-
-Le 09/06/2025 à 10:10, Takashi Iwai a écrit :
-> On Mon, 09 Jun 2025 10:00:38 +0200,
-> Christophe Leroy wrote:
->>
->> With user access protection (Called SMAP on x86 or KUAP on powerpc)
->> each and every call to get_user() or put_user() performs heavy
->> operations to unlock and lock kernel access to userspace.
->>
->> To avoid that, perform user accesses by blocks using
->> user_access_begin/user_access_end() and unsafe_get_user()/
->> unsafe_put_user() and alike.
->>
->> As an exemple, before the patch the 9 calls to put_user() at the
->> end of snd_pcm_ioctl_sync_ptr_compat() imply the following set of
->> instructions about 9 times (access_ok - enable user - write - disable
->> user):
->>      0.00 :   c057f858:       3d 20 7f ff     lis     r9,32767
->>      0.29 :   c057f85c:       39 5e 00 14     addi    r10,r30,20
->>      0.77 :   c057f860:       61 29 ff fc     ori     r9,r9,65532
->>      0.32 :   c057f864:       7c 0a 48 40     cmplw   r10,r9
->>      0.36 :   c057f868:       41 a1 fb 58     bgt     c057f3c0 <snd_pcm_ioctl+0xbb0>
->>      0.30 :   c057f86c:       3d 20 dc 00     lis     r9,-9216
->>      1.95 :   c057f870:       7d 3a c3 a6     mtspr   794,r9
->>      0.33 :   c057f874:       92 8a 00 00     stw     r20,0(r10)
->>      0.27 :   c057f878:       3d 20 de 00     lis     r9,-8704
->>      0.28 :   c057f87c:       7d 3a c3 a6     mtspr   794,r9
->> ...
->>
->> A perf profile shows that in total the 9 put_user() represent 36% of
->> the time spent in snd_pcm_ioctl() and about 80 instructions.
->>
->> With this patch everything is done in 13 instructions and represent
->> only 15% of the time spent in snd_pcm_ioctl():
->>
->>      0.57 :   c057f5dc:       3d 20 dc 00     lis     r9,-9216
->>      0.98 :   c057f5e0:       7d 3a c3 a6     mtspr   794,r9
->>      0.16 :   c057f5e4:       92 7f 00 04     stw     r19,4(r31)
->>      0.63 :   c057f5e8:       93 df 00 0c     stw     r30,12(r31)
->>      0.16 :   c057f5ec:       93 9f 00 10     stw     r28,16(r31)
->>      4.95 :   c057f5f0:       92 9f 00 14     stw     r20,20(r31)
->>      0.19 :   c057f5f4:       92 5f 00 18     stw     r18,24(r31)
->>      0.49 :   c057f5f8:       92 bf 00 1c     stw     r21,28(r31)
->>      0.27 :   c057f5fc:       93 7f 00 20     stw     r27,32(r31)
->>      5.88 :   c057f600:       93 36 00 00     stw     r25,0(r22)
->>      0.11 :   c057f604:       93 17 00 00     stw     r24,0(r23)
->>      0.00 :   c057f608:       3d 20 de 00     lis     r9,-8704
->>      0.79 :   c057f60c:       7d 3a c3 a6     mtspr   794,r9
->>
->> Note that here the access_ok() in user_write_access_begin() is skipped
->> because the exact same verification has already been performed at the
->> beginning of the fonction with the call to user_read_access_begin().
->>
->> A couple more can be converted as well but require
->> unsafe_copy_from_user() which is not defined on x86 and arm64, so
->> those are left aside for the time being and will be handled in a
->> separate patch.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->> ---
->> v2: Split out the two hunks using copy_from_user() as unsafe_copy_from_user() is not implemented on x86 and arm64 yet.
+On 2025-06-09 11:53:25+0200, John Paul Adrian Glaubitz wrote:
+> On Mon, 2025-06-09 at 11:28 +0200, Thomas Weißschuh wrote:
+> > Add support for SuperH/"sh" to nolibc.
+> > Only sh4 is tested for now.
+> > 
+> > This is only tested on QEMU so far.
+> > Additional testing would be very welcome.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > Thomas Weißschuh (3):
+> >       selftests/nolibc: fix EXTRACONFIG variables ordering
+> >       selftests/nolibc: use file driver for QEMU serial
+> >       tools/nolibc: add support for SuperH
+> > 
+> >  tools/include/nolibc/arch-sh.h              | 162 ++++++++++++++++++++++++++++
+> >  tools/include/nolibc/arch.h                 |   2 +
+> >  tools/testing/selftests/nolibc/Makefile     |  15 ++-
+> >  tools/testing/selftests/nolibc/run-tests.sh |   3 +-
+> >  4 files changed, 177 insertions(+), 5 deletions(-)
+> > ---
+> > base-commit: 6275a61db2f0586b8a5d651dfc7b4aacf9d0b2d6
+> > change-id: 20250528-nolibc-sh-8b4e3bb8efcb
 > 
-> Thanks for the patch.
-> 
-> The idea looks interesting, but the implementations with
-> unsafe_get_user() leads to very ugly goto lines, and that's too bad;
-> it makes the code flow much more difficult to follow.
-> 
-> I guess that, in most cases this patch tries to cover, we just use
-> another temporary variable for compat struct, copy fields locally,
-> then run copy_to_user() in a shot instead.
+> I have no experience with the selftest code but I can definitely test
+> on real hardware if you can point me to some instructions on how to
+> run the tests.
 
-Thanks for looking.
+That would be much appreciated.
+You can compile the selftests like this:
 
-I'll give it a try but I think going through a local intermediate will 
-be less performant than direct copy with unsafe_get/put_user().
+$ cd tools/testing/selftests/nolibc
+$ make [CC= CFLAGS_EXTRA=] nolibc-test
+$ ./nolibc-test
 
-Christophe
+The test executable is fully self-contained, you can also cross-compile
+it and copy it around.
+
+
+Thomas
 
