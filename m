@@ -1,98 +1,107 @@
-Return-Path: <linux-kernel+bounces-678394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6065AD2858
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:02:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EF0AD2865
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F79E16E3A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F230D188703E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385F2226D17;
-	Mon,  9 Jun 2025 21:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B60229B10;
+	Mon,  9 Jun 2025 21:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9QA/gu0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="MBKhHuMk"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F0622259C;
-	Mon,  9 Jun 2025 21:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF575227599;
+	Mon,  9 Jun 2025 21:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749502854; cv=none; b=c0NV6S602nx+GUVXEZNSkls5XTkZx7FEIfAgjUtvEyMl/MBknIYIAqgVjZ4syjPKZPFoVKHYdkaEttLzRTqLJWeUHQyT/aTdLfy3YQdiyPRMiF5Gp8v5h1DLPH5z0lU08zp2079NC8PHgbL3AONfNHJzjvlcKCkg/3dEErvAHmc=
+	t=1749502860; cv=none; b=Qo78I3w5XhUN1zdQzyt0PLzL3ZPZRrTUSjaVYsZLZTQ3eXQyvCQVTYDge8x/adlFxkem4mnkGLD0LRJOIvXI5jx+FvFDyLl3oSTWcRiRydUpfQzZ/LAEnAJj+fninhHznAGrFl4tS49XCNLqI25IFkoCJbSrToEqIVczZAIDJoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749502854; c=relaxed/simple;
-	bh=onXfm+HG8EeIacsf9JPvIQnWVREodwC8+l7WQ/tZOlY=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O8w86epaPbbNFLIEHU+sdzugy9aI337iiNJM5U7Qh7ezg9HTaBcKDtptk5izMwQyOMLZlDegCdtW5xE6y8cPOM5L/SxU01i6HQyeDjLKwgc7zmYrQ+5K3tPQyUQX8IRi4kJIyuXN0iE1KHU9Y1rIhH1GEzCRlrEucAD4Z7EOCfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9QA/gu0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57120C4CEEB;
-	Mon,  9 Jun 2025 21:00:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749502854;
-	bh=onXfm+HG8EeIacsf9JPvIQnWVREodwC8+l7WQ/tZOlY=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=P9QA/gu0FG0+X+fmbsDzXIaBuw+zTT3NYhPaqqYLmhODf2akCMrf/6WCj1wEpc9wV
-	 kNyCbtLCX2Bf+Y+wuFP6JBbsFXX9Teyf0f5p4Wmjq7MsCM1FY8fy4hfPTf/MGfz6tC
-	 RbqA8B8y31xio/hBOi651/cho+rtnqwBhVjx/L8+DL18m3Dzt6Xq89RxqZ6zIvkRTg
-	 SWWVhZ0igQ9q7wZmkYpEYrjVlqAWBaj+Nj0oGQQ3M9BN5Md4ErYGdn5RzRqP4dukvL
-	 ur6XJlxRilSXTMBmKaq4UotpKP5x85iObLlXyGYsnZNVWzdkIsBkmYt/5cMNGHHVFR
-	 c5Tk9MXWLBnPw==
-From: Mark Brown <broonie@kernel.org>
-To: nicolas.frattaroli@collabora.com, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, heiko@sntech.de, linux-rockchip@lists.infradead.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Pei Xiao <xiaopei01@kylinos.cn>
-In-Reply-To: <cover.1749201126.git.xiaopei01@kylinos.cn>
-References: <cover.1749201126.git.xiaopei01@kylinos.cn>
-Subject: Re: [PATCH v2 0/2] Cleanup in rockchip_sai.c
-Message-Id: <174950285209.277844.16538402979333131018.b4-ty@kernel.org>
-Date: Mon, 09 Jun 2025 22:00:52 +0100
+	s=arc-20240116; t=1749502860; c=relaxed/simple;
+	bh=XzCQb2hs95nRYm8RcK32DtG5sjazppbKMDyZ0t0F2xU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PkN3CgCrluj37UbNjarAMv87qEVfGxGtdLrsUGP4MMzhMx5qaOPvOzIZ1X1acRwqDSu2lTfi7WOdJXGHbfbc1wgipYNuXMUQyD5OPg2/e3J1OuAO3owTWC+WCMEUlIqA3qwIWP+TyHCfIH1/MNZK3ld30x6LRKp1hNkg8+OwRVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=MBKhHuMk; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A8BDE41AA1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1749502854; bh=Byi6ZbZeSTJ4d0f4c+Txg+G1R737uVa/AC1DuFNbhjQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=MBKhHuMk27quWMUCqecP/2rE811WfvZ88RlmLggZ67jpwR0HL4WAIxKp7uRQ7/iwM
+	 wyoR83XEcQ6mPbBK0KcOb2Meua26eLYs1XOP+KGTaDEOtrjKhu+mg510aOFJByDZwJ
+	 HtAEwskVmRqFe1WLiVLC5Poc4QTa0OHVzTL6hpCk/AIkNHYGWyWd2+P7GhBishdD7T
+	 VBCwPji2GhB1AIULsTADjNtpFeaEIm9gnk6f5uhYuDvZa2q1VW2BBlWxxagCb7jc/W
+	 bjNjvINyD8AFwiLK1bUBPv1qEbycLxyi/iy1eSvgKTaeLv0scXI+1mqbMwbxfrF2GE
+	 GB1caN+/OV3iA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id A8BDE41AA1;
+	Mon,  9 Jun 2025 21:00:54 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Brigham Campbell <me@brighamcampbell.com>, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, Madhavan Srinivasan
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Athira Rajeev <atrajeev@linux.ibm.com>,
+ "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+ <linuxppc-dev@lists.ozlabs.org>, "open list:DOCUMENTATION"
+ <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: Brigham Campbell <me@brighamcampbell.com>, Randy Dunlap
+ <rdunlap@infradead.org>
+Subject: Re: [PATCH v3] docs: powerpc: Add htm.rst to table of contents
+In-Reply-To: <20250528054146.2658537-2-me@brighamcampbell.com>
+References: <20250528054146.2658537-2-me@brighamcampbell.com>
+Date: Mon, 09 Jun 2025 15:00:53 -0600
+Message-ID: <87ldq0aauy.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain
 
-On Fri, 06 Jun 2025 17:18:20 +0800, Pei Xiao wrote:
-> 1.Simplify the condition logic in
-> 2.Use helper function devm_clk_get_enabled()
-> 
+Brigham Campbell <me@brighamcampbell.com> writes:
 
-Applied to
+> Fix the following documentation build error, which was introduced when
+> Documentation/arch/powerpc/htm.rst was added to the repository without
+> any reference to the document.
+>
+> Documentation/arch/powerpc/htm.rst: WARNING: document isn't included in any toctree [toc.not_included]
+>
+> Fixes: ab1456c5aa7a ("powerpc/pseries/htmdump: Add documentation for H_HTM debugfs interface")
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+> ---
+> Changes in v3:
+>  - Edit commit message to conform better to de facto kernel development style.
+>  - No changes to the diff.
+>
+>  Documentation/arch/powerpc/index.rst | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
+> index 0560cbae5fa1..53fc9f89f3e4 100644
+> --- a/Documentation/arch/powerpc/index.rst
+> +++ b/Documentation/arch/powerpc/index.rst
+> @@ -19,6 +19,7 @@ powerpc
+>      elf_hwcaps
+>      elfnote
+>      firmware-assisted-dump
+> +    htm
+>      hvcs
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Applied, thanks.
 
-Thanks!
-
-[1/2] ASOC: rockchip: fix capture stream handling in rockchip_sai_xfer_stop
-      commit: 5dc302d00807b8916992dd25a7a22b78d07dcd03
-[2/2] ASOC: rockchip: Use helper function devm_clk_get_enabled()
-      commit: 03b778d1994827ea5cc971dbdfbb457bbb7bfa5d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+jon
 
