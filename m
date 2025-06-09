@@ -1,164 +1,286 @@
-Return-Path: <linux-kernel+bounces-678164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C37AD24F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:25:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5200BAD24EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152CD189067E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2E43A3265
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6DF21A426;
-	Mon,  9 Jun 2025 17:25:04 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7671B20A5F1;
+	Mon,  9 Jun 2025 17:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOA2tUbb"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E824A3C;
-	Mon,  9 Jun 2025 17:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E91328F1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 17:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749489903; cv=none; b=YZjjnk76c7QsWag/QhIreeq4QIkCPL/0BGQZImI6Rikt9Qx2GzM1HiCz3jCopb8y3rnMpD3urvtmjAvrSiXtktp9UORGFFJ1j9KGWXFbpR//XKagEKoI/RpwnDUYPyNAzLTB5yumHsOIiWNSUW7m04eyLblvE2lmzFpvK0h0m0I=
+	t=1749489486; cv=none; b=L5jzpBv/7xLfBi7fjfSClVgo+m5qyWfgDiFA9qR+AgFBLWxE+XYfCP6BlDKmy1JoCq6CsTcksOtObw2QHzXAlmDyqvaiiQ4eoS1Zfpo15DVSR4RUqxZnwPeMOsO4B1WAVHu0J4pkrjunZh+yQEND7RdmjBz8uxesbHGjXWMSjtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749489903; c=relaxed/simple;
-	bh=u8Q4VBy21QNllu02EWfp1To+h1q7k65+Y8ZMOX6IbBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GDcmlMJ5RZUgR/LtpQSrboclLmeAUd6+5lD0SeheiwnCdGEPLh60Ii4eyeg0jJMOtrw/utuQx8RIYrcj9MASnix5xo8XVUx7KgP/YKITaIE4Qx+xX++jkOazOMgPlE3ejsCYtbEo1IpbpSFhM+zY6o4Uea+4M7+YXTorp8QW6c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 568ADBD357;
-	Mon,  9 Jun 2025 17:16:06 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id B47172D;
-	Mon,  9 Jun 2025 17:16:04 +0000 (UTC)
-Date: Mon, 9 Jun 2025 13:17:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH] tracing: Use queue_rcu_work() to free filters
-Message-ID: <20250609131732.04fd303b@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749489486; c=relaxed/simple;
+	bh=s6NOV/mhpV2LMJfm5N2WTi3a4AVJpusZgJsdYvuDioE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pRMREki2/oeb7QE60m0BkGypFg2Jc3bhYuBMFx+GoCQR+6W1glpXJDdCh7AKfaYo/etAVajJ1KH+yXJent3Ft2F9im+us9OgLxYJunSdVZz45vuLgQ79CvpaCN52J0bU5T4CwVm6gb3DOjkiDIXEiu72kpqquAuC5bk/2A290hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOA2tUbb; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7d0a47f6692so472427885a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 10:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749489484; x=1750094284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TuBH0kW1mGv5AvaA37P6jbIihS1u1hg1W3AQWK2Hcgg=;
+        b=BOA2tUbb+Y57Z8vHtH7oB4j03GZa/hi0Je2KxDUOxpo6DmeO86uHrRsA1mQ3QF8vHO
+         pPAMHeoWstMfGyYIIn1KRqbdmgGbBVYwam13zcR1Nm8nHPtFyYzw+wHtQ9zbtSfCnZBz
+         rAq2pUo0ns9NrRbG/wCwj0hQxiUrP1rA5hkfKR8wW1z8OXU8ZXM+5BmyLktqFuKVwWA7
+         JPLYZQxW7u71VScuQ9uhIXVmhXH3w9VgRJPqsCvpNrSsvEE9KCaneM9Jf6+GSlN0y98U
+         svEtuYn3fpxn5sR5UP5KAwKaTPE2FUBv6ONMqhxCFHsD3p9Bat7LavyYvsNjvoXTakry
+         lM+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749489484; x=1750094284;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TuBH0kW1mGv5AvaA37P6jbIihS1u1hg1W3AQWK2Hcgg=;
+        b=VWtcGORFai7Eqo0cD7plqF6ur3Y5wZ0HJ6dz1WQrBlUwtBgAhj5x0WsgWzv6SXeuHI
+         8SnNVDHaBc4kFzhU6JaSR3lZPYPxa7jRGKqhRhPPcnAEsRb2naBD5cQbih317pGpUTrb
+         RvLVI0Frq3aYAJP2itPPKYs8ixEDwMj49v/u134+FzwEdPvtwEz2w/UT2S+SnzFh7/Kb
+         bN/HI7FTu42P/QXfK/HkvB+ZPDYGy3WiuugPax2afYAdplt4KoFWNGRyGKDXxvFPz17H
+         aN+w4aihUqMDxn1igD/Q1rfZJmlSVpyGAEQJzyXHD+I22w7QWAo7bGdfILXvsj15dNBb
+         sx0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVS6yVbfQySpMsIo0kQGxSF7o0ky0IETyPfP+CVX4mKogHhzk9VDOu/Ljk7+I/cKrAcOW+NTBaA50Y8qjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm7YbxuxxqeMAEdvaC01wZIUDvEPHNgXb7JXJu+nvZ6nyQuVCw
+	Aspj4kQBnavxCrG/tHXfGjwq1oZEbQTgWWYGQhvHhoiqBym3LhmsPowV
+X-Gm-Gg: ASbGncufDBqBTR3NL6uS7MTX2kwXRULnHp0mf5u47NfmYDJqKUTlO55Y8x+32snF0zO
+	BJIjb9af0Wu3Vh7shQrO0qyN92JG/K+PBztqxwDVeXo9dG1DOlh8aw4XXmT5O6bcFRxug+fq6vL
+	WXatfMbQ/2z/mPOcY3Zm22JB+ZWHdwWgm5tRQxhQOEgSdiQV/e9GYBS83UnN2PDK4pfmql/WZ7C
+	JcE8QxG2aSN75/kpskSJYsnTbbB27LwmgaMVbAMQvaXX/L4tEYsx8mPR4jr1zfgzEd90GbDWAXM
+	6VbBGbC11e96/+NxX5PkVfU7v+5+Kv8eIFx+8tTIJIGUdJ2vaGy0/OiH2gU0L2VuJ/SpCPF3DLy
+	svyP8Auc=
+X-Google-Smtp-Source: AGHT+IGfJeq3h8K7rlOuPYAtly/3iJyNvT88y7dQq80574EeG6/ODFgxUyIVyxX17BKFV4lIfvOcKQ==
+X-Received: by 2002:a05:620a:2411:b0:7c5:5585:6c8b with SMTP id af79cd13be357-7d2298eb361mr2005674685a.50.1749489483575;
+        Mon, 09 Jun 2025 10:18:03 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d390d4115asm240821785a.95.2025.06.09.10.17.59
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 09 Jun 2025 10:18:02 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Chris Li <chrisl@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v2] mm/shmem, swap: fix softlockup with mTHP swapin
+Date: Tue, 10 Jun 2025 01:17:51 +0800
+Message-ID: <20250609171751.36305-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.49.0
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: B47172D
-X-Stat-Signature: 8g1ezoxdzbyxr89zqtnzib3z8hyt6nkx
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+n2ThMA2oOBbuZkjIUEaqh0CKb4hyi+IM=
-X-HE-Tag: 1749489364-656785
-X-HE-Meta: U2FsdGVkX1/ReBRy8BMyom0XNTxN9K3srsKnlJmKpoQ80igGHg0Oce/SWaQl3dZyxZrn2ukFCAjK6jrWhItVs82AjKQIPZm/ter3Amnwvasx3qtTX5sqByIU3Jmw31aIDO1mUerxHaY2fkNyUb7BZvWqq0QoX6qbN5Kf0txmT5x+QkpWBfFYJ4tAh3uVwHSpHEqZFTwmrEi0YVxtV3e9MbkQM3k3iIXxD4rTZ/SZ+2/RDFEDjbVgWTYnK0DiJdICwF5WnjaDVTBjs0aTzwYR0UXY1Qpg2hRCoV8M7siuhlXZQm0mksyrMGN6KuZPdsRB/nIsE7agCoVv7F+PuAa1o9sCC+RFaJjKzZjDvUIoUSOBBAPCsB9UThcdsSYUBiPQQneU/PwN8KlOd3h5gDthkA==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: Kairui Song <kasong@tencent.com>
 
-Freeing of filters requires to wait for both an RCU grace period as well as
-a RCU task trace wait period after they have been detached from their
-lists. The trace task period can be quite large so the freeing of the
-filters was moved to use the call_rcu*() routines. The problem with that is
-that the callback functions of call_rcu*() is done from a soft irq and can
-cause latencies if the callback takes a bit of time.
+Following softlockup can be easily reproduced on my test machine with:
 
-The filters are freed per event in a system and the syscalls system
-contains an event per system call, which can be over 700 events. Freeing 700
-filters in a bottom half is undesirable.
+echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
+swapon /dev/zram0 # zram0 is a 48G swap device
+mkdir -p /sys/fs/cgroup/memory/test
+echo 1G > /sys/fs/cgroup/test/memory.max
+echo $BASHPID > /sys/fs/cgroup/test/cgroup.procs
+while true; do
+    dd if=/dev/zero of=/tmp/test.img bs=1M count=5120
+    cat /tmp/test.img > /dev/null
+    rm /tmp/test.img
+done
 
-Instead, move the freeing to use queue_rcu_work() which is done in task
-context.
+Then after a while:
+watchdog: BUG: soft lockup - CPU#0 stuck for 763s! [cat:5787]
+Modules linked in: zram virtiofs
+CPU: 0 UID: 0 PID: 5787 Comm: cat Kdump: loaded Tainted: G             L      6.15.0.orig-gf3021d9246bc-dirty #118 PREEMPT(voluntary)·
+Tainted: [L]=SOFTLOCKUP
+Hardware name: Red Hat KVM/RHEL-AV, BIOS 0.0.0 02/06/2015
+RIP: 0010:mpol_shared_policy_lookup+0xd/0x70
+Code: e9 b8 b4 ff ff 31 c0 c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 0f 1f 44 00 00 41 54 55 53 <48> 8b 1f 48 85 db 74 41 4c 8d 67 08 48 89 fb 48 89 f5 4c 89 e7 e8
+RSP: 0018:ffffc90002b1fc28 EFLAGS: 00000202
+RAX: 00000000001c20ca RBX: 0000000000724e1e RCX: 0000000000000001
+RDX: ffff888118e214c8 RSI: 0000000000057d42 RDI: ffff888118e21518
+RBP: 000000000002bec8 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000bf4 R11: 0000000000000000 R12: 0000000000000001
+R13: 00000000001c20ca R14: 00000000001c20ca R15: 0000000000000000
+FS:  00007f03f995c740(0000) GS:ffff88a07ad9a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f03f98f1000 CR3: 0000000144626004 CR4: 0000000000770eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ shmem_alloc_folio+0x31/0xc0
+ shmem_swapin_folio+0x309/0xcf0
+ ? filemap_get_entry+0x117/0x1e0
+ ? xas_load+0xd/0xb0
+ ? filemap_get_entry+0x101/0x1e0
+ shmem_get_folio_gfp+0x2ed/0x5b0
+ shmem_file_read_iter+0x7f/0x2e0
+ vfs_read+0x252/0x330
+ ksys_read+0x68/0xf0
+ do_syscall_64+0x4c/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f03f9a46991
+Code: 00 48 8b 15 81 14 10 00 f7 d8 64 89 02 b8 ff ff ff ff eb bd e8 20 ad 01 00 f3 0f 1e fa 80 3d 35 97 10 00 00 74 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 4f c3 66 0f 1f 44 00 00 55 48 89 e5 48 83 ec
+RSP: 002b:00007fff3c52bd28 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000000000040000 RCX: 00007f03f9a46991
+RDX: 0000000000040000 RSI: 00007f03f98ba000 RDI: 0000000000000003
+RBP: 00007fff3c52bd50 R08: 0000000000000000 R09: 00007f03f9b9a380
+R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000040000
+R13: 00007f03f98ba000 R14: 0000000000000003 R15: 0000000000000000
+ </TASK>
 
-Link: https://lore.kernel.org/all/9a2f0cd0-1561-4206-8966-f93ccd25927f@paulmck-laptop/
+The reason is simple, readahead brought some order 0 folio in swap
+cache, and the swapin mTHP folio being allocated is in confict with it,
+so swapcache_prepare fails and causes shmem_swap_alloc_folio to return
+-EEXIST, and shmem simply retries again and again causing this loop.
 
-Fixes: a9d0aab5eb33 ("tracing: Fix regression of filter waiting a long time on RCU synchronization")
-Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Fix it by applying a similar fix for anon mTHP swapin.
+
+The performance change is very slight, time of swapin 10g zero folios
+with shmem (test for 12 times):
+Before:  2.47s
+After:   2.48s
+
+Fixes: 1dd44c0af4fa1 ("mm: shmem: skip swapcache for swapin of synchronous swap device")
+Signed-off-by: Kairui Song <kasong@tencent.com>
+
 ---
-Note, I added a Fixes tag but not a stable tag as this is a nice-to-have
-but doesn't hit the level of critical fix to backport or add to an rc
-release. If someone wants to back port it, feel free.
 
- kernel/trace/trace_events_filter.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+V1: https://lore.kernel.org/linux-mm/20250608192713.95875-1-ryncsn@gmail.com/
+Updates:
+- Move non_swapcache_batch check before swapcache_prepare, I was
+  expecting this could improve the performance, turns out it barely
+  helps and may even cause more overhead in some cases. [ Barry Song ]
+- Remove zero map check, no need to do that for shmem [ Barry Song,
+  Baolin Wang ]
+- Fix build bot error.
 
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index ea8b364b6818..b6fe8167ef01 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -1344,13 +1344,14 @@ struct filter_list {
- 
- struct filter_head {
- 	struct list_head	list;
--	struct rcu_head		rcu;
-+	union {
-+		struct rcu_head		rcu;
-+		struct rcu_work		rwork;
-+	};
- };
- 
--
--static void free_filter_list(struct rcu_head *rhp)
-+static void free_filter_list(struct filter_head *filter_list)
- {
--	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
- 	struct filter_list *filter_item, *tmp;
- 
- 	list_for_each_entry_safe(filter_item, tmp, &filter_list->list, list) {
-@@ -1361,9 +1362,20 @@ static void free_filter_list(struct rcu_head *rhp)
- 	kfree(filter_list);
+ mm/memory.c | 20 --------------------
+ mm/shmem.c  |  4 +++-
+ mm/swap.h   | 23 +++++++++++++++++++++++
+ 3 files changed, 26 insertions(+), 21 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 9ead7ab07e8e..3845ed068d74 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4313,26 +4313,6 @@ static struct folio *__alloc_swap_folio(struct vm_fault *vmf)
  }
  
-+static void free_filter_list_work(struct work_struct *work)
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
+-{
+-	struct swap_info_struct *si = swp_swap_info(entry);
+-	pgoff_t offset = swp_offset(entry);
+-	int i;
+-
+-	/*
+-	 * While allocating a large folio and doing swap_read_folio, which is
+-	 * the case the being faulted pte doesn't have swapcache. We need to
+-	 * ensure all PTEs have no cache as well, otherwise, we might go to
+-	 * swap devices while the content is in swapcache.
+-	 */
+-	for (i = 0; i < max_nr; i++) {
+-		if ((si->swap_map[offset + i] & SWAP_HAS_CACHE))
+-			return i;
+-	}
+-
+-	return i;
+-}
+-
+ /*
+  * Check if the PTEs within a range are contiguous swap entries
+  * and have consistent swapcache, zeromap.
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 73182e904f9c..a4fdfbd086f1 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2256,6 +2256,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+ 	folio = swap_cache_get_folio(swap, NULL, 0);
+ 	order = xa_get_order(&mapping->i_pages, index);
+ 	if (!folio) {
++		int nr_pages = 1 << order;
+ 		bool fallback_order0 = false;
+ 
+ 		/* Or update major stats only when swapin succeeds?? */
+@@ -2271,7 +2272,8 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+ 		 * to swapin order-0 folio, as well as for zswap case.
+ 		 */
+ 		if (order > 0 && ((vma && unlikely(userfaultfd_armed(vma))) ||
+-				  !zswap_never_enabled()))
++				  !zswap_never_enabled() ||
++				  non_swapcache_batch(swap, nr_pages) != nr_pages))
+ 			fallback_order0 = true;
+ 
+ 		/* Skip swapcache for synchronous device. */
+diff --git a/mm/swap.h b/mm/swap.h
+index e87a0f19a0ee..911ad5ff0f89 100644
+--- a/mm/swap.h
++++ b/mm/swap.h
+@@ -108,6 +108,25 @@ static inline int swap_zeromap_batch(swp_entry_t entry, int max_nr,
+ 		return find_next_bit(sis->zeromap, end, start) - start;
+ }
+ 
++static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
 +{
-+	struct filter_head *filter_list;
++	struct swap_info_struct *si = swp_swap_info(entry);
++	pgoff_t offset = swp_offset(entry);
++	int i;
 +
-+	filter_list = container_of(to_rcu_work(work), struct filter_head, rwork);
-+	free_filter_list(filter_list);
++	/*
++	 * While allocating a large folio and doing mTHP swapin, we need to
++	 * ensure all entries are not cached, otherwise, the mTHP folio will
++	 * be in conflict with the folio in swap cache.
++	 */
++	for (i = 0; i < max_nr; i++) {
++		if ((si->swap_map[offset + i] & SWAP_HAS_CACHE))
++			return i;
++	}
++
++	return i;
 +}
 +
- static void free_filter_list_tasks(struct rcu_head *rhp)
- {
--	call_rcu(rhp, free_filter_list);
-+	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
-+
-+	INIT_RCU_WORK(&filter_list->rwork, free_filter_list_work);
-+	queue_rcu_work(system_wq, &filter_list->rwork);
- }
- 
- /*
-@@ -1462,7 +1474,7 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
- 	tracepoint_synchronize_unregister();
- 
- 	if (head)
--		free_filter_list(&head->rcu);
-+		free_filter_list(head);
- 
- 	list_for_each_entry(file, &tr->events, list) {
- 		if (file->system != dir || !file->filter)
-@@ -2307,7 +2319,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+ #else /* CONFIG_SWAP */
+ struct swap_iocb;
+ static inline void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+@@ -202,6 +221,10 @@ static inline int swap_zeromap_batch(swp_entry_t entry, int max_nr,
  	return 0;
-  fail:
- 	/* No call succeeded */
--	free_filter_list(&filter_list->rcu);
-+	free_filter_list(filter_list);
- 	parse_error(pe, FILT_ERR_BAD_SUBSYS_FILTER, 0);
- 	return -EINVAL;
-  fail_mem:
-@@ -2317,7 +2329,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
- 	if (!fail)
- 		delay_free_filter(filter_list);
- 	else
--		free_filter_list(&filter_list->rcu);
-+		free_filter_list(filter_list);
- 
- 	return -ENOMEM;
  }
+ 
++static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
++{
++	return 0;
++}
+ #endif /* CONFIG_SWAP */
+ 
+ /**
 -- 
-2.47.2
+2.49.0
 
 
