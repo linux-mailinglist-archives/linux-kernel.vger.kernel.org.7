@@ -1,218 +1,183 @@
-Return-Path: <linux-kernel+bounces-677902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3315CAD2199
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:00:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15407AD2179
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E4C16D555
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:00:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08D816C2A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9CF217736;
-	Mon,  9 Jun 2025 14:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC6E19E992;
+	Mon,  9 Jun 2025 14:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8ZmAiB7"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YDNPH2Cp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA316215F53;
-	Mon,  9 Jun 2025 14:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3D7199EAD
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749481131; cv=none; b=bseVEc9mtc00BdFgZmBxB/+/0TxPUf5ZWq3KQ7i+u+7A7faXEdQ2CWaly8AafnJiXYwaGHg9Bl0YgOclCSfRZKBfvQFpfxm7HVeVHXjidKUO5K1h5vJdMqzlaRkW1DQOEvYxB8V5+HXEILCyFGgM/rxuagEl67ngR8W4CIbRAbo=
+	t=1749481025; cv=none; b=Ngn8aNpBDLulvmwZytzWJv60iZNqcb36w9fq9jHMdXPmmmwqaYDsSPWj1gHcOMwO+ZrGNFgnbd62k1h1EYNsvoPVBAhm18nFNql/5HqSqP5+aK2UVVdJR0asX3xS2GzeXyorp52krU99jbjzsa/3mTezxUU0qdwTlAV4HFeDGzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749481131; c=relaxed/simple;
-	bh=onusbAGTeKZDibm8BvV42Zc7VsUIDMtHO+9C2/7TIY4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n+oNDsrIOlB6hZ73buWCggs9OrDFr5oAAUzlrGf1HKIvfixxQrnHzc09xQrqyjZ4Fq9LWQJuF1eexIzxWlU0JqZqGFU6OxqBmyoAtLw6vwqMPil9Pw7aZz++KUWmQPQ2PE8qJgT/8ENsSTanlcV+AMN66NzVDLXJscJ2lejPPYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8ZmAiB7; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7426c44e014so3705924b3a.3;
-        Mon, 09 Jun 2025 07:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749481129; x=1750085929; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DRQckTsTT83xbLwigtiX4m5LksrcbOPbtVMh/FhriaY=;
-        b=S8ZmAiB7HhihkaSWLlE0RQfAJVQVFHro1SlKPAuJIRV72AZ6/y8CFg543GIPY5CGcp
-         7KYOVpUiMdtzB0EebpDFvoNflInkrbzR4fHxbqsTwB5UuPhjnMhsz59h+KOs6xwCMT18
-         /JHGTPrWAnVNvERS9d3jkPOO+0nQKrEKaEK8MynuJOJ9bjR3yshIra39eIq4jycVSPqE
-         rqBtoZhXIg+5ce/kalHyS+sXbQex/bKd0dW7PQdE9DWw2wI9aau82tUcQeU3U9ffMYT5
-         bsX5mgG9dThNvCbh/SHVoGThjNBehAdgAfL889Ou7/cplqOHzFq62eABmveQuZfrYjjY
-         AWkQ==
+	s=arc-20240116; t=1749481025; c=relaxed/simple;
+	bh=LP1HLuoXtoCGQb2udgcbm0cAC6ByWX+Cw/vEV8LuYJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbYuN7mK401BMKyYztHOotWXa/oAkFbfjpkYVQ/SwSeEOEyVrXsS4R3KZJrSSBA0AOxg7Cl7an7opdu4NHEZ+fKVL/ezkTjvPGC+ftPErCCpt2gyX8t8nl70VgBu5J2JSwrXjUPlIml6qxbNyG5JmOG5M7Td1tlMjN8UGbwysD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YDNPH2Cp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599cvp2007717
+	for <linux-kernel@vger.kernel.org>; Mon, 9 Jun 2025 14:57:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=K8r802PenSGXPrkZXgxFoete
+	wp971X+pPQskH5G0jbk=; b=YDNPH2CpZZgplNKrxTcITlOUEPl9X7J9WlI6s7oc
+	tKFSZL/Q6UGPuy0udoq5iLtlEmu5jQKGVbq8Bieu5ntI9VahAj9SPOcVGyM1T3Wt
+	zE64JavD/0VGnHLbOvMUTT6AJIYMROkZdevMny0945sGZhlZzsu5IcwzG7j+F92u
+	QZX6xyFBnovv21jKEa6kqrNSzgpAAcwJzZc0gRolaCl/GG6QfrziUncGFn0w8q+9
+	T30YAgSUZQMzEZkBZD86Iu/sXTDT2D0gW7DWul9o9+yCYGRQxpVBRkKlwOjNVpOZ
+	14bXY0WVO4x4GBv1p31yJf4TD8mW1+iHchFv5GlZVEgLNg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ekpp4c1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 14:57:03 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d22790afd2so581342485a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749481129; x=1750085929;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DRQckTsTT83xbLwigtiX4m5LksrcbOPbtVMh/FhriaY=;
-        b=PIho97y80HWSN5aE+D0YBjncskUScmsAUAy9wqf0h3F7sNbqZbQU3TQNMNn6gWfsCr
-         lPgS4ozdxDr17CIszpbSP4xuk/ATOiXL3REnt/dyQuhvmnS+YoTEhzTF4JZ1+PB54P0w
-         rmJ0nkab3nQk0H+uc4Jpq5kB+wO6MkttcfLGlR5YW9H+4OZ1nzbzOxv3itKwl0Myxppb
-         osUUqd9oM7ltWoKB6A/mZ4SIbNE5Bc99BvENTkP7RYubmdm/2xEa83uy4eX5pN5bLR+7
-         VpevftnrjEaaZEoNEeQzVhTSlEywsZJZechHPWM87qrPi7h32SrIdN7vyQWgX5FUnUky
-         kHpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV949go9YfgeU5yYxkDJF2Y6+AbilRuevekYsmsF2Jif4eXkom0ILgYARX3o0ri6ej0dF/M9Hd1OB58@vger.kernel.org, AJvYcCW3/blDs1JPLzMqREG5tjb/mzUov+Dl2waZszvh4o67VWdhOL93mGR1zzKUCF7ZQ5/8L6wJxhS2RqO3@vger.kernel.org, AJvYcCXTOKUsYddeNSuCfajlEgmLA+hYKF3t2hia8h/c81AcYMFC+rJwe9ROU9cb1P/PEp4sgioy0ji1w7qGARxv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydxt7zpf9wTsmVZJXU4mrjCW75zwDEQpk2UBHllyAJ5ScbEv6Z
-	8QBreMz12R0NSTnThR7HSRpng1TdrgbNswg1qtFTmGjCCK20MCOAEsoz
-X-Gm-Gg: ASbGnctPrT0eWGdN45Kx8YIyin/wAZplPeQ0jE1k/AjLFODCkJAxgwyQj5X3Mv1+mhq
-	NBVbc9/Qest6Y8cvyX1Y5kQG0JRYtWAoTxmYxKv0NIc3jTbLO3ozS65hyW3kujkhl2Tz6UlTgJz
-	PujMljYH0Cvj5SJqQxQiQ+IHTKiJbynz3V5Cymnf2UxzULvZ38Uztx85KcAsutVtulVftwBsDs6
-	4TNeKXriEWUlaKllmVZOQx5MVYJ8bByvVcrwTFtURoG7PQtFhA4fWP7HTULZ2yP+wsEAowWP3CU
-	8hSyxwMq9BaI7EThvpIZemR/FweCFPkgIEdkTZUnXdgTuv+JZMOhJTTuOh+UPN4l
-X-Google-Smtp-Source: AGHT+IEwCZJue9fwcjQonzqN1xhP8vKvIQlVQWXej/FdfQzVhn5ZWjVS9YMp6WNHGbn4p1YNlDhZfA==
-X-Received: by 2002:a05:6a20:a108:b0:1f5:6abb:7cbb with SMTP id adf61e73a8af0-21ee25ed279mr16540950637.23.1749481129278;
-        Mon, 09 Jun 2025 07:58:49 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b2f5ed593ebsm5414182a12.6.2025.06.09.07.58.46
+        d=1e100.net; s=20230601; t=1749481022; x=1750085822;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K8r802PenSGXPrkZXgxFoetewp971X+pPQskH5G0jbk=;
+        b=Me0GUSvtMA6b4GCsCwm1TJ+0Lq2NACbmWzuWZbBuhMtGtlq5podubADwQTq2rw7Vv/
+         2lVhw4/3Pc/M3ZW4mV6Zui2kHQKaZVxZAYlHM3v958V59qgm44rsecnbCaCV74No7pMv
+         HRzqXU1t+ihZZNX8bIDXxBqd86LRmffzNR1Ecl05hbXXL2+s2yWxfB7N0Igpvm3p7POw
+         8FLLE4lIUb+34gBeoi6uioIWD5QdR4mNgpAJqf5P/qgOY67TLpgyoc5ybsmZ6duKc/mR
+         qdi1Q0x669j8JafyyrzucKztWLyif36gZ9VTF+On0As4BszroM6pVRc99dseSEhVZs3o
+         lLTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEFT5CbnBEzV9N5zZhbtfCN6nUZ9IGy02Zavr3YnwvaDKqmOp0It691JhP9Uhx39N6nybCOIXOh19ijCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0qbgWYLVAQi3CEwdWw1EdiRu/wjRJA0KeY80pgvB4UQND9Y/s
+	eRXjHCpYd1veKUhdh2heC3BF8ffow2P7Sx6mHTsHt2eidfRUoHADohJeojVZhK+hPtWZQDBS7Us
+	r+WU1MGaok+pN8OpzkorVtz/T8xwMP/lxsgOLjsMn7p57wPuIage4GkNQjkhKOUb/6SQ=
+X-Gm-Gg: ASbGncvIm9vmuTbxDAqeQ34Dg9hEo4xC8vgQdU2obGs0Hk/TOJEdO+CWUAeBZLfLIan
+	2WtYpt0munzMqpJLtO3h14gPdXLjid88Zk1Cg2sxTP2B2sPtUudSKx+R4hXHYkeTOs+D8QW1HUO
+	sdlI0FEvzY72I0O62UU5f8HM4VITeREMef7FGRu4mnNSNDizJo9PnF6jEIa5Ge8f1bXia5FOV0w
+	OwYRnU2XBoSjpLKKKOW3wRy7Dc7uYj9wYRi1S8WJvZCyeT9AJyv5FAP67H7pjUv9Tz8v43AWrg3
+	g+lUEZhdorcABezkmc+8dPA4GPuzDg50TI+mHnqdbkLoPqt/6DMJICxC8ONVvXYg3S9k+EtOzHW
+	HqLP2eTqj1w==
+X-Received: by 2002:a05:620a:2495:b0:7c5:99a6:a1ae with SMTP id af79cd13be357-7d2297b0605mr1872284485a.0.1749481021908;
+        Mon, 09 Jun 2025 07:57:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG7bagCShzpFotGW6Mdie/zxiNFAxlZeqZ3FisYsgQ5S/g+ilyc8bP5T8FnUSbm8hPil7YMIw==
+X-Received: by 2002:a05:620a:2495:b0:7c5:99a6:a1ae with SMTP id af79cd13be357-7d2297b0605mr1872282285a.0.1749481021528;
+        Mon, 09 Jun 2025 07:57:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1b347afsm10911921fa.34.2025.06.09.07.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 07:58:48 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Mon, 09 Jun 2025 22:56:25 +0800
-Subject: [PATCH 8/8] arm64: dts: apple: t8015: Add I2C nodes
+        Mon, 09 Jun 2025 07:57:00 -0700 (PDT)
+Date: Mon, 9 Jun 2025 17:56:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH v2 31/38] drm/msm/dp: propagate MST state changes to dp
+ mst module
+Message-ID: <4w6rtzhetxrco5ncynr52qeveypfpqkclh24kcdpfcn5u3v5at@evxsz3xdxfio>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <20250609-msm-dp-mst-v2-31-a54d8902a23d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250609-i2c-no-t2-v1-8-789c4693106f@gmail.com>
-References: <20250609-i2c-no-t2-v1-0-789c4693106f@gmail.com>
-In-Reply-To: <20250609-i2c-no-t2-v1-0-789c4693106f@gmail.com>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Andi Shyti <andi.shyti@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3029; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=onusbAGTeKZDibm8BvV42Zc7VsUIDMtHO+9C2/7TIY4=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBoRvaO8SGlIc2XSE9/A37sHSQIj212EpJz4zTMi
- VwBw/QSObSJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaEb2jgAKCRABygi3psUI
- JHD6D/9dYZa9dMbZdgIf9ev4sHn254ePe0v0emWfbCY+2jG4gIQOekixwqsIptjddnqFB8nsOwb
- 8i2Bk5DS+DV1n32sdO1+XyCbMTVj4JrLxuyl/kvIE+vE5C7mtREuojjDEIZnkF+TGuxXn3dOpxr
- 0Pt8RozEg8JwhkE/p9ZOH9zkqf6U1LmXEUPclnHMBr4F0cGXcWp7DTEk2Mx+Ne8P7QHMZyMraun
- ch+itHCrFsKNIifBY563o+z+Bi300HbeeEp32plusfU1ITJYIqzTvQWHn1gpG3AJ/u0F3ZUUZPp
- 6DwMjUDrE+DfN8H4Dih6VD6sPuUYj2XEbLvtjQdhIKz93+mFDl8V1yziDlSgY/z39kYyTq3NhQ9
- LfJQ/99OH0s8dHzNGURS9yLjiYx4u/6VKjCIs9ZNhkywekDRi53f6EOD5pBQ4eWyyN+tempF+Lk
- hrev0lB9UICGBbA6sDiLLEDiQe3Qp/X1r4wRk1VrXVAnZkn+6k1pmox4aoSvHR8M/yhdIIUViAt
- L1u2ZQf8D7x9DbXjM0uideOf5mpvS29ES2nrYHJZQ2FiDgbWHfGnkUzVqs789stBdhUZUhjhkUW
- KQMh5BTyf1SD3L5DCvuAu3T8eudi3GARzVKqfdk9xJtaDTpSgKwl7jWdwEXh9D/I9WtMEMyJPsp
- yZ3mXkRSBcRlxmQ==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609-msm-dp-mst-v2-31-a54d8902a23d@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=JcO8rVKV c=1 sm=1 tr=0 ts=6846f63f cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=dJ-eneoFgqejyoFL2bkA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDExMCBTYWx0ZWRfX/RziiSuL0rDV
+ Zptgw8y5XrqFYiCaXh+6MDL4orA437iyE19FsAvZJaplz+YY5lg6tDVxbNJbQhE9cuviYKLZxze
+ 8/ptMRB+jMIeCozc7tvDm2LJOIqBCF6U2R7r88hmoT2H1CZiWW0U45PeD81tg1l6x/ATUHfjujh
+ S4ebMhaLbFH8oadAeTpkZiZWKzpOeXX8ZWPXMVWkGOLwKU/Fzjv3G2NzXTwN8yNGqq87xAnfWbz
+ fJrX4vHawwgygG3ffMnyoeAbrRdEhisE2aDm4vbOACXk0PmfXhpS1zErFUwFRK4eeXp9WzPwiz1
+ j+9lp8z5O9ylWicb6QBTH10zowigdlkHPJnPF/Bh+//yynqpVG2CafIcqLO8Z/iYMeuEqx/Z2pm
+ VdbE5FBwYIJezzZPdAzGR4UyMYUfwoABrkrzacs/AkxH2FjU11HhTnuxPubnNNaUhyFyPb2D
+X-Proofpoint-GUID: XXVJCvGpjP-Dnac3w1ihrSTCC-9vRNWp
+X-Proofpoint-ORIG-GUID: XXVJCvGpjP-Dnac3w1ihrSTCC-9vRNWp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506090110
 
-Add I2C nodes for Apple A11 SoC.
+On Mon, Jun 09, 2025 at 08:21:50PM +0800, Yongxing Mou wrote:
+> Introduce APIs to update the MST state change to MST framework when
+> device is plugged/unplugged.
+> 
+> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/boot/dts/apple/t8015.dtsi | 76 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+Hmm, who is the author of the patch?
 
-diff --git a/arch/arm64/boot/dts/apple/t8015.dtsi b/arch/arm64/boot/dts/apple/t8015.dtsi
-index 12acf8fc8bc6bcde6b11773cadd97e9ee115f510..e002ecee339013194537910db2168c143ab3d00a 100644
---- a/arch/arm64/boot/dts/apple/t8015.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015.dtsi
-@@ -265,6 +265,62 @@ cpufreq_p: performance-controller@208ea0000 {
- 			#performance-domain-cells = <0>;
- 		};
- 
-+		i2c0: i2c@22e200000 {
-+			compatible = "apple,t8015-i2c", "apple,i2c";
-+			reg = <0x2 0x2e200000 0x0 0x1000>;
-+			clocks = <&clkref>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 304 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&i2c0_pins>;
-+			pinctrl-names = "default";
-+			power-domains = <&ps_i2c0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@22e204000 {
-+			compatible = "apple,t8015-i2c", "apple,i2c";
-+			reg = <0x2 0x2e204000 0x0 0x1000>;
-+			clocks = <&clkref>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 305 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&i2c1_pins>;
-+			pinctrl-names = "default";
-+			power-domains = <&ps_i2c1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@22e208000 {
-+			compatible = "apple,t8015-i2c", "apple,i2c";
-+			reg = <0x2 0x2e208000 0x0 0x1000>;
-+			clocks = <&clkref>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 306 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&i2c2_pins>;
-+			pinctrl-names = "default";
-+			power-domains = <&ps_i2c2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@22e20c000 {
-+			compatible = "apple,t8015-i2c", "apple,i2c";
-+			reg = <0x2 0x2e20c000 0x0 0x1000>;
-+			clocks = <&clkref>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 307 IRQ_TYPE_LEVEL_HIGH>;
-+			pinctrl-0 = <&i2c3_pins>;
-+			pinctrl-names = "default";
-+			power-domains = <&ps_i2c3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		serial0: serial@22e600000 {
- 			compatible = "apple,s5l-uart";
- 			reg = <0x2 0x2e600000 0x0 0x4000>;
-@@ -321,6 +377,26 @@ pinctrl_ap: pinctrl@233100000 {
- 				     <AIC_IRQ 54 IRQ_TYPE_LEVEL_HIGH>,
- 				     <AIC_IRQ 55 IRQ_TYPE_LEVEL_HIGH>,
- 				     <AIC_IRQ 56 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			i2c0_pins: i2c0-pins {
-+				pinmux = <APPLE_PINMUX(73, 1)>,
-+					 <APPLE_PINMUX(72, 1)>;
-+			};
-+
-+			i2c1_pins: i2c1-pins {
-+				pinmux = <APPLE_PINMUX(182, 1)>,
-+					 <APPLE_PINMUX(181, 1)>;
-+			};
-+
-+			i2c2_pins: i2c2-pins {
-+				pinmux = <APPLE_PINMUX(4, 1)>,
-+					 <APPLE_PINMUX(3, 1)>;
-+			};
-+
-+			i2c3_pins: i2c3-pins {
-+				pinmux = <APPLE_PINMUX(184, 1)>,
-+					 <APPLE_PINMUX(183, 1)>;
-+			};
- 		};
- 
- 		pinctrl_aop: pinctrl@2340f0000 {
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 20 ++++++++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_mst_drm.c | 15 +++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_mst_drm.h |  1 +
+>  3 files changed, 36 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index 323d1c0a9efa4fa30ce97317e873607c54409a11..9dbcf4553cad70c9e3722160a87403fc815765d7 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -29,6 +29,7 @@
+>  #include "dp_drm.h"
+>  #include "dp_audio.h"
+>  #include "dp_debug.h"
+> +#include "dp_mst_drm.h"
+>  
+>  static bool psr_enabled = false;
+>  module_param(psr_enabled, bool, 0);
+> @@ -420,6 +421,17 @@ static void msm_dp_display_mst_init(struct msm_dp_display_private *dp)
+>  	msm_dp->mst_active = true;
+>  }
+>  
+> +static void msm_dp_display_set_mst_mgr_state(struct msm_dp_display_private *dp,
+> +					     bool state)
+> +{
+> +	if (!dp->msm_dp_display.mst_active)
+> +		return;
+> +
+> +	msm_dp_mst_display_set_mgr_state(&dp->msm_dp_display, state);
+> +
+> +	drm_dbg_dp(dp->drm_dev, "mst_mgr_state: %d\n", state);
+
+Yet-another-oneliner? Noooo. Really, no.
+
+> +}
+> +
+>  static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>  {
+>  	struct drm_connector *connector = dp->msm_dp_display.connector;
 
 -- 
-2.49.0
-
+With best wishes
+Dmitry
 
