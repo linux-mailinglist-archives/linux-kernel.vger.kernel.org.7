@@ -1,140 +1,104 @@
-Return-Path: <linux-kernel+bounces-678118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5319DAD2482
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F018FAD248A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E99188F023
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8609F1890587
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A006221931B;
-	Mon,  9 Jun 2025 16:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09EA21CA0A;
+	Mon,  9 Jun 2025 16:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkLViPEH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olFgYI+X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79561624CE;
-	Mon,  9 Jun 2025 16:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279D921ABD5;
+	Mon,  9 Jun 2025 16:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749488295; cv=none; b=O4SHXWk/MMCn+T08zGbgSCyNpjiymia6U16wY2hN+tz6wCIgyHQ8VZq3SV38u2nSjjaigsnDIrrnfg90U6LlUcyEPRx4kGOV5nvvz9xcTB94OhgZCWMsrDEgVB0PGng03anRPpvstqkgzy80RlOgN4zc3jYqWEo2XC2JGEQ/D6Y=
+	t=1749488306; cv=none; b=VV3y7rXEKccpqLMJJyoukmghXpvY/1qI+GxfA/GcgyWxad7MMxxPYmHujSXV4LgFu2h2UxlOZrPtRgsgWNdKWQOy201Jo4256nS2pW803bMcPtjMf0lk5fsR2YErUqEnyFDvVAiTBm6JH5B/YDWuUUhvYL35bMyrSgC5CP98u+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749488295; c=relaxed/simple;
-	bh=dvLQWopZLx4yj+2d43xvqT4CLcTXZhfOrVd200EwOGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MvgnSjyrG8KOArWf14TF2zHi6lhYYFBLZ8zLb0Q6fFJ286anxrRkpN6ZpI7EUp2B2lP0wxeRKpEBGEgc6B/wDZ6RgeWN4fidxwF9TX8XiNphPapxTpsF/O3NJDzXT0eKU7tnpC67Ov9J/Cq1CVCtrFYf7ujY99Vcpsk2iLsqB2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkLViPEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2318CC4CEEB;
-	Mon,  9 Jun 2025 16:58:14 +0000 (UTC)
+	s=arc-20240116; t=1749488306; c=relaxed/simple;
+	bh=7/+fV92PI7N/anDBZpoLsl+SgkUsOs/cO+aD/zBKOxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JlqrH/xdrK8hrG9AJKrrl3smKXr52TNYnPIMquQQi8SORKXl7CmLgZXUvfKRGuG+/3x6CmiBTuJpfD1Rbz1Gzg8NpwfvIVoUbRF1+Adujad65w4RmRNwXgUnYflLy6no29J53xIxxc+80K/jGCiHzsLRtCTFroTuv/wVlp/+gZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olFgYI+X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34523C4CEEF;
+	Mon,  9 Jun 2025 16:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749488294;
-	bh=dvLQWopZLx4yj+2d43xvqT4CLcTXZhfOrVd200EwOGY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UkLViPEHbn3F+IUOZEjdRwjyj+Ni9YwaR7c3OItVzyezQmyzLmoMCln9HtkM2jTHy
-	 LP78Bx8p+X7NzjLH088lwzJZEXn1nccftTSnO04m6ARfzurh5qwwx7C5ypEhkXXE1B
-	 doFZOf/0Gmg0osVdM05bH4Oia2AtBm2FhI6H1xWX4oZ2tEMECqtTYIQalbz7Kx6xCW
-	 PLIPhifbAP/Alkx8x315u3hPbgWvkmVAZzH58+N55cmhe/qvJC//f5p3/Wi4zGfjsM
-	 WkDRIJCeJ48OtNgpCmGLxSurce6v8+11StjlfFWkAjchILi0UmcIDO5Hf2CA15O1lJ
-	 KrJoSCxaktJOQ==
-Message-ID: <447f265b-c7e2-49df-bd1a-76292e92cb0a@kernel.org>
-Date: Mon, 9 Jun 2025 10:58:13 -0600
+	s=k20201202; t=1749488305;
+	bh=7/+fV92PI7N/anDBZpoLsl+SgkUsOs/cO+aD/zBKOxo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=olFgYI+Xa7Iccb/yQOL5irrKAL5EBQwtXKpB0/zVT+oIWHVwVTJFP1ZzS3p/xuWgc
+	 fMn/NEPGDYyrPLKJwj8kM/JZiJuo6o54VGkkytyvsMYzPSnTG7mE26GwHPRJYmHnuf
+	 H3llsd5tecQJUoLJNwnS1vzPJCO1pxZmlrV2RRlmD7tDzpXW7vlAxN0TGigQKemRWt
+	 izEsmZ4ZRc2DjafRVcO8s7zcEpf9w1XofUU5g2yXZQngsOYu/j+UHhfPHzQqEd9fra
+	 CkalzekrVkDXZx4bRy7QNymi14ZnJ2DgnjOSUxiYqfn64VdEpT2wyIpUNAbDE454fs
+	 oWLCCnKo33bVQ==
+Date: Mon, 9 Jun 2025 09:58:24 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, "Michael S.
+ Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Eugenio =?UTF-8?B?UMOpcmV6?=
+ <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] virtio-net: drop the multi-buffer XDP packet in
+ zerocopy
+Message-ID: <20250609095824.414cffa1@kernel.org>
+In-Reply-To: <f073b150-b2e9-43db-aa61-87eee4755a2f@gmail.com>
+References: <20250603150613.83802-1-minhquangbui99@gmail.com>
+	<dd087fdf-5d6c-4015-bed3-29760002f859@redhat.com>
+	<f6d7610b-abfe-415d-adf8-08ce791e4e72@gmail.com>
+	<20250605074810.2b3b2637@kernel.org>
+	<f073b150-b2e9-43db-aa61-87eee4755a2f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: ir_decoder: Convert header comment to
- proper multi-line block
-To: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>,
- skhan@linuxfoundation.org
-Cc: linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <65743e71-fc2c-4a04-b7f1-b977031a4fb8@linuxfoundation.org>
- <20250606223914.117449-1-abdelrahmanfekry375@gmail.com>
-Content-Language: en-US
-From: Shuah <shuah@kernel.org>
-In-Reply-To: <20250606223914.117449-1-abdelrahmanfekry375@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 6/6/25 16:39, Abdelrahman Fekry wrote:
-> So, this is an updated version following
-> the right way of writing change logs while
-> making sure the signed-off-by mismatch is fixed.
-
-The above doesn't belong in the change log
-
+On Fri, 6 Jun 2025 22:48:53 +0700 Bui Quang Minh wrote:
+> >> But currently, if a multi-buffer packet arrives, it will not go through
+> >> XDP program so it doesn't increase the stats but still goes to network
+> >> stack. So I think it's not a correct behavior.  
+> > Sounds fair, but at a glance the normal XDP path seems to be trying to
+> > linearize the frame. Can we not try to flatten the frame here?
+> > If it's simply to long for the chunk size that's a frame length error,
+> > right?  
 > 
-> The test file for the IR decoder used single-line comments
-> at the top to document its purpose and licensing,
-> which is inconsistent with the style used throughout the
-> Linux kernel.
-> 
-> In this patch i converted the file header to
-> a proper multi-line comment block
-> (/*) that aligns with standard kernel practices.
-> This improves readability, consistency across selftests,
-> and ensures the license and documentation are
-> clearly visible in a familiar format.
+> Here we are in the zerocopy path, so the buffers for the frame to fill 
+> in are allocated from XDP socket's umem. And if the frame spans across 
+> multiple buffers then the total frame size is larger than the chunk 
+> size.
 
-Refer to the submitting patches document for details on imperative
-mood.
+Is that always the case? Can the multi-buf not be due to header-data
+split of the incoming frame? (I'm not familiar with the virtio spec)
 
-> 
-> No functional changes have been made.
-> 
-> Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-> ---
-> Changes in v2:
-> - Fixed multiple trailing whitespace errors
-> - Fixed Signed-off-by mismatch
-> - Appropriate change log
->   tools/testing/selftests/ir/ir_loopback.c | 23 +++++++++++++----------
->   1 file changed, 13 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/ir/ir_loopback.c b/tools/testing/selftests/ir/ir_loopback.c
-> index f4a15cbdd5ea..c94faa975630 100644
-> --- a/tools/testing/selftests/ir/ir_loopback.c
-> +++ b/tools/testing/selftests/ir/ir_loopback.c
-> @@ -1,14 +1,17 @@
->   // SPDX-License-Identifier: GPL-2.0
-> -// test ir decoder
-> -//
-> -// Copyright (C) 2018 Sean Young <sean@mess.org>
-> -
-> -// When sending LIRC_MODE_SCANCODE, the IR will be encoded. rc-loopback
-> -// will send this IR to the receiver side, where we try to read the decoded
-> -// IR. Decoding happens in a separate kernel thread, so we will need to
-> -// wait until that is scheduled, hence we use poll to check for read
-> -// readiness.
-> -
-> +/* Copyright (C) 2018 Sean Young <sean@mess.org>
-> + *
-> + * Selftest for IR decoder
-> + *
-> + *
-> + * When sending LIRC_MODE_SCANCODE, the IR will be encoded.
-> + * rc-loopback will send this IR to the receiver side,
-> + * where we try to read the decoded IR.
-> + * Decoding happens in a separate kernel thread,
-> + * so we will need to wait until that is scheduled,
-> + * hence we use poll to check for read
-> + * readiness.
-> + */
->   #include <linux/lirc.h>
->   #include <errno.h>
->   #include <stdio.h>
+> Furthermore, we are in the zerocopy so we cannot linearize by 
+> allocating a large enough buffer to cover the whole frame then copy the 
+> frame data to it. That's not zerocopy anymore. Also, XDP socket zerocopy 
+> receive has assumption that the packet it receives must from the umem 
+> pool. AFAIK, the generic XDP path is for copy mode only.
 
+Generic XDP == do_xdp_generic(), here I think you mean the normal XDP
+patch in the virtio driver? If so then no, XDP is very much not
+expected to copy each frame before processing.
 
-I don't think this patch is necessary. We have files that use // style
-comments. How did you find this issue.
-
-thanks,
--- Shuah
+This is only slightly related to you patch but while we talk about
+multi-buf - in the netdev CI the test which sends ping while XDP
+multi-buf program is attached is really flaky :(
+https://netdev.bots.linux.dev/contest.html?executor=vmksft-drv-hw&test=ping-py.ping-test-xdp-native-mb&ld-cases=1
 
