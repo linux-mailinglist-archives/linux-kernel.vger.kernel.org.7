@@ -1,83 +1,146 @@
-Return-Path: <linux-kernel+bounces-678472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7480EAD298A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:46:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1EAD299D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F66616FBED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C4217035F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC61422370F;
-	Mon,  9 Jun 2025 22:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894B122B5B6;
+	Mon,  9 Jun 2025 22:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="epEE18qP"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2077.outbound.protection.outlook.com [40.107.212.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fF6BRhOc"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DA154652;
-	Mon,  9 Jun 2025 22:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749509180; cv=fail; b=C5zkl9aG+Hsj3lHVSEoZTPH0cc+LBbOqsW/JtXRlo1/ChNmB0cs2SyXla1dM+x5FFmeVpw8vrOUU8gG9vyuiksrJiczhmv+U5gASQkYXS+U+SXYqwDtewpOspwhVxAH8f0rjTDyl+yRF8YTI8AKOYdrBB46H0nJu9U7EWGGbdV8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749509180; c=relaxed/simple;
-	bh=TV6241gsF6LJ4bx/DnjORA+W3f151hCz4aH6vgI4rCw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X1v1Lqqg4I6uqD7hfUW6AQL1YJQ3odh2mpguCpws8AiUtecf5ksZjtVY82nlYIGXJETOY4NyMGxSB8NVth7Ihjl3q6jZerhn6QDpjK/SVhoU6oAfSylYy5Wjhmy5p6oTKjGaG/VRSBiNdsj9moCHm5NUq0Rdip70/p1AqieQhFk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=epEE18qP; arc=fail smtp.client-ip=40.107.212.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nSouoRosMxTvQ/PKF0ynkplNsBpe4uyHvVMzjH6Ql9diQAMuXtNaPkz5jn4fTKitvRSxrl/HDH11xXs84bUp8vHz/hPcMvea1RPPISZY1B/gdT1O/Goc67+/XrwbS6fEz2IMOusGE8w83xm4wNZV7wrAjWHmOVdCTBPwi1Dky9/euMZUEbpnwUbEPGOsJCFYjk8SJQgOvU22W8QmuM998zsHGVaF5+j19+7ySjCm9USOp2/qfrxsvAwJSGIx3vP4fu7Rw25GHvdk6Lw3d6cvhO6dGU54Rc7lBJlXqsOsFMmLIjYbIo7MK1sTpQnJvn6iC+bF/zNUb+0CNC+S+vx1Kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HzsKF1bUsA3DQtAMce0eY8vqhL7S2G9HaCm/h7sqN4E=;
- b=U5HIaYIXyB6VE4lhrxcDaptydTfzypqayDwHEjIpuZaVbrumO0LaFyC0uHthnJBmGy9d0OpDtxh+cXhbN6VwMBleQrlGaowx0YDeSH2M0/ine7pyuN8eRTl5bsD3TcsRUDRk45TBxmQpuTECKOYAorF5qyhH1Csw/KeiFghMiSh/LIE/dYZq7+8BzmaETapHOMn140I92JtM9wpg4QYgElpbsftt8wxBVFRwE7PKkHPEHjanPNri6nHAJKBaNGfaqXbUSegdvdz2FPvYUwX9e2/0TGeddZyN6vj8XIkxhNceGipC1rCrjKRBnDGqDUOd1S37Pl6xCWfK2FoB4XcHhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HzsKF1bUsA3DQtAMce0eY8vqhL7S2G9HaCm/h7sqN4E=;
- b=epEE18qPpp6Ar6xBgF+xBVQDkq0TTL7sQR/FXy6a5oB6SHFiMNV4UaetndRkUv1n5t38LugVI0eC5XM6UmJlSXgayTim8mFQCYmDf+a5oPZcy8X2We+uWR4ADbiG3yIC3Tq5ylkQ+W9ZXaGX24Ylxo1vgHBE89pfRWoInMP0Wcg=
-Received: from SN1PR12CA0081.namprd12.prod.outlook.com (2603:10b6:802:21::16)
- by DM4PR12MB6638.namprd12.prod.outlook.com (2603:10b6:8:b5::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8792.34; Mon, 9 Jun 2025 22:46:15 +0000
-Received: from SA2PEPF00003AEB.namprd02.prod.outlook.com
- (2603:10b6:802:21:cafe::2f) by SN1PR12CA0081.outlook.office365.com
- (2603:10b6:802:21::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Mon,
- 9 Jun 2025 22:46:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003AEB.mail.protection.outlook.com (10.167.248.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8835.15 via Frontend Transport; Mon, 9 Jun 2025 22:46:15 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 17:46:14 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 9 Jun 2025 17:46:13 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH] remoteproc: xlnx: allow single core use in split mode
-Date: Mon, 9 Jun 2025 15:46:12 -0700
-Message-ID: <20250609224612.2428151-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588F3227BA5;
+	Mon,  9 Jun 2025 22:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749509205; cv=none; b=T9h2xzfBPe1B6e9CLtMR/hNS+1yDr9dwI8NRbOiyIOj9dMaYIXK/wF7FbBS1uUQYXCcbwO5aM/6Foqw46b968IsEIBXEcmQC9YVImU7NbX+/koINozFCveMDNb9Yc53M+9cYmgAj5HfWeYatkrMZZCU+zRVQEXuyZuKFcHueBNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749509205; c=relaxed/simple;
+	bh=3t90svxWEHL37ohE0fJHFmRBiBXjgm3lFXGoX5OddKc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=srSiVJX09EzJbHbMZgSB64ZAU0s+pxqPLdlEm8Bc1NNbuBDaeyoVNQXJbDbPb8Lie17aI3AxW4cGP+IEmsXaWqBvW2Ua3bdZ30gAxTFXpIvT9FaUcJQYFTvCAUnAq+Wbx2+6q+4fCqwZ7sTY3/zhOOoiTSgSulWx4VoncQDwNow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fF6BRhOc; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d09f11657cso457383285a.0;
+        Mon, 09 Jun 2025 15:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749509202; x=1750114002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ykfv0JUDwfNHM9Hye+0iZ2AUZ2hpC7+5v9dE8kxQRZU=;
+        b=fF6BRhOcC/eDx6KPpd7jMxDCCcrVboMTEO17iUgrOU3hiTxapAmBHgzkEFRMvOxQjd
+         q2RNaxXDS9AxQQdUwUESzVu9LUXIUATBSgfWnO1qXaFKaJ49BQ8GfQ6UX3rmeZw+TyE3
+         H+cf92B51C5dtUCFfrldkzY5J9e5+ok6M/T+wxmmOZo11a2gg1vH1RXI1IT8t3NVEsrM
+         Es44lL4UEQd8WdzlRRoruTFW1rnqHY/xzm8zO6mMexXMa/AF9M8S3Pah/aDNkIOrHcza
+         jwGCVMlFZQ4F4Lw8VDDjArWZ76HcCVmdadfbsAmiZEpPeyyox6CsuKnZKoVFM02rnJvF
+         c7ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749509202; x=1750114002;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ykfv0JUDwfNHM9Hye+0iZ2AUZ2hpC7+5v9dE8kxQRZU=;
+        b=QUdu6VP6EiT/kgyPRneGQ84z6pA/XBvURHOaAWqkL22kuMshoaFiczTfSn5WzZpiSl
+         c2Y9j6aAES8aA/ES/guOuvq5KdsGpNBBQ0LXBwrTtbsCODe+3yccY/puAOvxxxo4Uwxo
+         aY60xeTZJDMHhIo1w+gE1L2zJR8Uq5KiJifKnCnpo7DLYaxYbiyxZRYtSH7UeB6U8Zs9
+         sZAfl2tzBdJbVZU1v8fb6UEwKcjf+/ADbr3OJTd9PG1hHyHZcTaK+ZrLbITqf//HIPK3
+         c+XIoctHCdXwbJ38HSyHNkFB/x17F9Wj1lxsVHJ/GkiIWVv6iHbZhNFrPK44W6q7X2oj
+         Bozw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUGiYs1+ihpwzESi+yio4lrWr7ICL4XJiuHBr/TtLNJtkGkA7o8Oty67Ah0G91dS1vfcOCYgJ9aJ2x1ndo1og=@vger.kernel.org, AJvYcCWjVHEjhoLQsaDY5V8WZRZm634RXrIciZmBVmEFWWEgDNV3fo/I5MWhUONJ43okwHIR3T+WEzmhgStU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYGiHXF2EKYd+a1vbKpBqYiIZT5EDg6fWXLwSgaEDMBA+aW+Iu
+	vJPfhhA53CuHSbYIVO4qEVf55xvtmOwVIFx4VK0Nyl1w+S2bixi6Mxvz
+X-Gm-Gg: ASbGnctNbxQkW9CYS0GpAKoP6vc1fHorI0HWDYI9AKSj5Exqfzs3gLup60bz1OF5qRY
+	FOJ9T9oHjL2RuKKgTUd7TD8H0jdrLAgXanK9G90/DSWQWj9uO4UwOl5Q944P6P9o03UAV3pyBT/
+	2Gbl6Avj/U0FukCJsmnd9f/H3k+mS6foatk3lNtVub1n6TzochRFTOlH79eXTJM+qBmpcv6RI5M
+	Prx4VGv4n3aBDv/mz7i1cY/E0otbbfPQvW5xq7ht63SyCK+mft9K8UwFE+gmASb4Tp+EOonVzEZ
+	j36h1jUwhWd3w8JJTjBHgzYE2t3qPj31famG0/Ks3jvBRSM2MLsEvv+pSo91odpbPGbRVj2oNTJ
+	nllL7wgjMmkD12iC6r3hSD1z9bSiWfME0lZaPajUhrtTGZuKINrbb
+X-Google-Smtp-Source: AGHT+IFUi/CH1qbuTMavhtVevTlVgWxfuQBtFoEfwJqR6HTbU+n+FxJv1MMM0BL61L4p6Kak/iTk1Q==
+X-Received: by 2002:a05:620a:29c9:b0:7c7:694e:1ba0 with SMTP id af79cd13be357-7d2298d6f08mr2328173785a.44.1749509202149;
+        Mon, 09 Jun 2025 15:46:42 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09aba071sm57749346d6.24.2025.06.09.15.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 15:46:41 -0700 (PDT)
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 459101200043;
+	Mon,  9 Jun 2025 18:46:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Mon, 09 Jun 2025 18:46:41 -0400
+X-ME-Sender: <xms:UWRHaGlNxKmD3s9WeTH-uG3XfN8hfANDj7H6wlTEQvsrRSc8jpqGDQ>
+    <xme:UWRHaN1n41g_8UlK46Y5jEN6oLciXfno3fIz8tRxpNiuck0TuyHuOZLm7vYQDKxt3
+    jkaMtK3wq65-C_kxg>
+X-ME-Received: <xmr:UWRHaEofQIWNayLYRE7Jb_1eRZuXsHW0qEzw7biyjeWU_0_JlI1NwnFJc34>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelleduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeegleejiedthedvheeggfejveefjeejkefgveff
+    ieeujefhueeigfegueehgeeggfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdeipdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinh
+    hugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghoqhhu
+    nhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguh
+    hordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgt
+    ohhm
+X-ME-Proxy: <xmx:UWRHaKk6haGCIigi3EELRmLFej66hn1_ihcuNAYKuIA1eo2HZAG8Rg>
+    <xmx:UWRHaE2UfVbFnVIjfSZs3c3sFcGJXx3bBMRR4gN-DnZG1VnkYVIuMQ>
+    <xmx:UWRHaBvvl6TM8sVMF065ZNSZuqm5RTCQXETlZnzU0WsigMPWVY49NQ>
+    <xmx:UWRHaAWiBN_Fq0G-qpXZRJgO6br-Rv_ng_zbIlo5p9FCyYjbdDtfhg>
+    <xmx:UWRHaP1G1tkUWfB4TMGfsb_HZOYFh2xW4vt0k6P_yt8x5cTiGsC0lbNa>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Jun 2025 18:46:40 -0400 (EDT)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	lkmm@lists.linux.dev,
+	linux-arch@vger.kernel.org
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Lyude Paul <lyude@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>
+Subject: [PATCH v4 07/10] rust: sync: atomic: Add Atomic<u{32,64}>
+Date: Mon,  9 Jun 2025 15:46:12 -0700
+Message-Id: <20250609224615.27061-8-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250609224615.27061-1-boqun.feng@gmail.com>
+References: <20250609224615.27061-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,83 +148,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AEB:EE_|DM4PR12MB6638:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65690aee-516c-4634-3621-08dda7a77117
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LS489Dqud8/RHu/n28D+a4cmpAUij7w5XKNJZ9GDFAx5jHs23BaC0MxPMFk7?=
- =?us-ascii?Q?zFl9va340i3C0cCCm7pxGeCSMA2C60sBxMwYH3U0GE+vrnDLmX9kDw2VAsoF?=
- =?us-ascii?Q?yrJSEfRq/HPT7LoOD7pDVMWzGWT25ygWV+bqqqOaXme0ZzM+V/UKGLDEnsun?=
- =?us-ascii?Q?gB5qN4lartu5smXYiuP5xhZ/vjsij4iuPR516fKL2v6WYa6hw5VGu4cSGZbv?=
- =?us-ascii?Q?zSpcyT6tPUqO5QALvv76JpsjWEbA3w+EGOo1OW5dLlSNTQqu/CxI1jdKteti?=
- =?us-ascii?Q?+rIISh154J+0TIt2C8oteMaKbcgTfhxm2evPqBDpIZYjw8I0lRSJlKtlmZcm?=
- =?us-ascii?Q?LIJS/mT3S5e2JOEIiDVRhdHj+5Aa7S9wLmJjQjycHP0hcO23OekodXnTY4x9?=
- =?us-ascii?Q?kkCRYrvnnPzXEVJ7qkMiM/tsO6jZbOmctHiVW0+ZQSkh1gq6cqelfDgCwHHl?=
- =?us-ascii?Q?07TZ/b+M9O4/Cu2K9fnYMioFaoRIkQ/J/2p2nWsmnsVhM+oHXYhFQTuMbWsb?=
- =?us-ascii?Q?zSq+tHepUfONnkwi4NhOT+gKhM8AgDjJn08G/JOEhsiEwLsr5+HXV5cQ0nvs?=
- =?us-ascii?Q?SXoDbqdDK6k8ZSGH5NRQF6Ak05XJssOquBeWTUsdEYSo/8xl6j+bWRr9sr/W?=
- =?us-ascii?Q?HI9UWn5cFy+zWn/KVBDPUghCotGEZOkyj1I3oO4Bkboom2Op3g0hwW0BB1AJ?=
- =?us-ascii?Q?gP8oCoxMOlRHw6quZsrXYhxeG0W5wy1r6SFGBEyasLAr0BHo/lNWGXJXmHLf?=
- =?us-ascii?Q?lB7ik954XijiKIjIrpmWLHA5CN5Iw7kNbKJ24HWTy/Al0Je8j65VigU7zL8s?=
- =?us-ascii?Q?Xq211dWl22ojG51M9o3v5UueSqzvFDOEv5H+NSpEBjtkuNUp7rdxmP6E7qV5?=
- =?us-ascii?Q?nOVbpvvG7JrHvlWR6R/Xx4qJvvG4HIl/y8ZIv+kG95M6tceag6T0sWOZoD1f?=
- =?us-ascii?Q?NtwArET/sCIY0wyGqlZM+YioE4dhCw/ULBnTlGMnuV5qtzKdiiPXZcvBhRyq?=
- =?us-ascii?Q?NLLf2h2QauoywcSWe9D9bgz7yBt1K0VkMs2xUf1KIL661pyMCvLarBOQPVBi?=
- =?us-ascii?Q?y1jQYc3PP1bKSj6bmE3kDvrfSQOnRxoZ6UkNDDmmNdhhNxwrmZG25PPJG3d2?=
- =?us-ascii?Q?manjQ389iq16G9vRG8sO7c15Y04jSgJWk7e6tZg/ZgmYpMC+NRmnxC0VXXee?=
- =?us-ascii?Q?RY8misE9j2wJbczOmqYSHd5QZ5OGnKZU0khKHUqjFoD13xUc2QnB0li59XMJ?=
- =?us-ascii?Q?F8fJkbOF6fIudr6WIZJBBXgZMtJNgvI44q+hh7vEAmLA8xUcdGhA0+MNtido?=
- =?us-ascii?Q?2PikQvgrKOgZGsp5BH8KpNf7LKtXYx7LStwbuieX5oztYZb/XKvMyYM4pJxl?=
- =?us-ascii?Q?lfX4FLnlTOO9x8mpKZvehot097oPVP3yhNTujMTAZSS4aQGtm0CvsW69ujLa?=
- =?us-ascii?Q?BGWKci+hM104hHXCMA1lCC3jDRtRNNxETBV8j6XW3qXnCG2S8OQH7z81dFgz?=
- =?us-ascii?Q?M5LV6BXTUtzgtAL4l7VN6MYKzpQCOcO87qDR?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 22:46:15.4466
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65690aee-516c-4634-3621-08dda7a77117
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AEB.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6638
 
-It's a valid use case to have only one core enabled in cluster in split
-mode. Remove exact core count expecatation from the driver.
+Add generic atomic support for basic unsigned types that have an
+`AtomicImpl` with the same size and alignment.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Unit tests are added including Atomic<i32> and Atomic<i64>.
+
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ rust/kernel/sync/atomic.rs | 83 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 1af89782e116..f314dd5bdb26 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -1339,9 +1339,6 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 	if (core_count == 0) {
- 		dev_err(dev, "Invalid number of r5 cores %d", core_count);
- 		return -EINVAL;
--	} else if (cluster_mode == SPLIT_MODE && core_count != 2) {
--		dev_err(dev, "Invalid number of r5 cores for split mode\n");
--		return -EINVAL;
- 	} else if (cluster_mode == LOCKSTEP_MODE && core_count == 2) {
- 		dev_warn(dev, "Only r5 core0 will be used\n");
- 		core_count = 1;
-
-base-commit: dc8417021bcd01914a416bf8bab811a6c5e7d99a
+diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
+index a01e44eec380..9039591b4d46 100644
+--- a/rust/kernel/sync/atomic.rs
++++ b/rust/kernel/sync/atomic.rs
+@@ -22,3 +22,86 @@
+ 
+ pub use generic::Atomic;
+ pub use ordering::{Acquire, Full, Relaxed, Release};
++
++// SAFETY: `u64` and `i64` has the same size and alignment.
++unsafe impl generic::AllowAtomic for u64 {
++    type Repr = i64;
++
++    fn into_repr(self) -> Self::Repr {
++        self as _
++    }
++
++    fn from_repr(repr: Self::Repr) -> Self {
++        repr as _
++    }
++}
++
++impl generic::AllowAtomicArithmetic for u64 {
++    type Delta = u64;
++
++    fn delta_into_repr(d: Self::Delta) -> Self::Repr {
++        d as _
++    }
++}
++
++// SAFETY: `u32` and `i32` has the same size and alignment.
++unsafe impl generic::AllowAtomic for u32 {
++    type Repr = i32;
++
++    fn into_repr(self) -> Self::Repr {
++        self as _
++    }
++
++    fn from_repr(repr: Self::Repr) -> Self {
++        repr as _
++    }
++}
++
++impl generic::AllowAtomicArithmetic for u32 {
++    type Delta = u32;
++
++    fn delta_into_repr(d: Self::Delta) -> Self::Repr {
++        d as _
++    }
++}
++
++use crate::macros::kunit_tests;
++
++#[kunit_tests(rust_atomics)]
++mod tests {
++    use super::*;
++
++    // Call $fn($val) with each $type of $val.
++    macro_rules! for_each_type {
++        ($val:literal in [$($type:ty),*] $fn:expr) => {
++            $({
++                let v: $type = $val;
++
++                $fn(v);
++            })*
++        }
++    }
++
++    #[test]
++    fn atomic_basic_tests() {
++        for_each_type!(42 in [i32, i64, u32, u64] |v| {
++            let x = Atomic::new(v);
++
++            assert_eq!(v, x.load(Relaxed));
++        });
++    }
++
++    #[test]
++    fn atomic_arithmetic_tests() {
++        for_each_type!(42 in [i32, i64, u32, u64] |v| {
++            let x = Atomic::new(v);
++
++            assert_eq!(v, x.fetch_add(12, Full));
++            assert_eq!(v + 12, x.load(Relaxed));
++
++            x.add(13, Relaxed);
++
++            assert_eq!(v + 25, x.load(Relaxed));
++        });
++    }
++}
 -- 
-2.34.1
+2.39.5 (Apple Git-154)
 
 
