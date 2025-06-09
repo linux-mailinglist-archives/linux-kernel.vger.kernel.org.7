@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-677532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E11AD1B83
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2401AD1B7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F0916B92A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2AF16B08F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B6A2571C5;
-	Mon,  9 Jun 2025 10:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741B0255E4E;
+	Mon,  9 Jun 2025 10:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="fj0L94Pz"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PycMHKuU"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754FD2571B8;
-	Mon,  9 Jun 2025 10:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73771253F07;
+	Mon,  9 Jun 2025 10:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464633; cv=none; b=qAEwPJwzwX0keksX+OpKBN0al2ONHnPcm8g4lhye7ZiNELA2vhpDA/ubyimM9IYu/4qtxD5LVks2N9ZVlHwzRM7SykZGdHLBMVW5MSaiheR4Hd6p9u4+ks9mwcadzwFivHssalWNNexILASdq4hWuBDnAtIsdWsh8vNATIGiBV4=
+	t=1749464623; cv=none; b=eaE/uC0EANKurhZ+8j5G5XeYNKtu/yddNIQRCW+mbnmCe26DOEiBnQGlwZ2pVK1ZhhuQxktVWduesd870VF4HKJO4gPcrOz3OH1L5bIXMujnqb3rnpy46rBqrIQ4Uu7fj8mwAIUrfoGrB34O74EebUgL45GsOQtzPTiAYVtK7P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464633; c=relaxed/simple;
-	bh=bUFHrN+kYoh9Jw74vJgnwI32cWP3sCcpAQjhYR2YSxk=;
+	s=arc-20240116; t=1749464623; c=relaxed/simple;
+	bh=akIpDlWFQIzVchHSCAdAYH59RCG3cU1p17WoozIyBKI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qaenkpoI2auiMmB6OSPhDMtbEGC4Xwe78JOQB9iv0isVcgrDlsi4D8ZhexlMUfvsf/8NjzDHii3XkK0nXdTLjhYa7C8bPZKzZj9Utxp7eqJxMlCtyDZplOfAzSc0DU2+51w/flDUcWNyOGSWreXodq1O14huxauXyYiewDDqRsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=fj0L94Pz; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=VWKJ8StU23CZNpZuc4TDD9y7gvs2nnoys8iOMwwz1cfK3UBzAQKuqHQywYMs4bmzNTI50W7//370w+RY6t30bXbBZkzmnGrhcU8HHPM10X1z5Y7I3n5vBBeHgt1WW1bkc0TeG/+/ap5IghRXsmvVLiMSDts9CcJFyGOMqG3AIok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PycMHKuU; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,40 +35,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=6nx3PTDw7aNdyY1bOCfE7raQ5NlwbfEpTbQqELls0VU=; b=fj0L94Pz6IA1q1yJ+28NspxjCs
-	ss1vG+22sASQArb7JSFLEnxY/jVr67CtMuOJZRUABz5fvlceMwxW2xPgtz2y+f2kRs6PlAjRdsPz0
-	v5ZONxp1/7KKopnI7TtLcAvKf44ub0Vy0aYwjMyVKXx9T049grUC0HLmdDlYSCZBSCbezy4MzNt4x
-	kxaCSIlNy1D6b6CydVDjoRROmrglRUQZTqSOHPrmJ3PBLqLEPpdZFn0aqIsF1O15Jro41kmr0XRj4
-	UL/Gvje8ypA9twUDbmSHdWtCWz44EBX3dBHQz/muixaqI4UgjB6W+nn3IqsNLydaFMEOt3ZiW8uCD
-	HIE7JkHQ==;
+	bh=ZZM08u/ZwFdSTLKGSi2Lr532AuxtYKdqYqXMoYpFYrU=; b=PycMHKuUPgOEgJCKL6ls2H7MMb
+	rFe3QS4Z21notXgNism+v5+qdJPdizCMa7FofzODGvhHdB4XbpNzdu91gnZHJRQs5frKHloSmm0I3
+	pQwDwQJnfpMhsKklchVEZ21asy4okOXYqAz9mO9cEa+3PQeWKynJhCRxjZFRW8zX5m+aKJ7Ctkwke
+	aJN/Wqxjk6d3atC2mbVGNrGH4Sh8yk/WRj2/ALmsGgSj4jqU5xbXMahdMuJv1k+D7kH/oy+PAikgN
+	bOvoKteO7rEn/zCTDmrIsbPTGPQnDqEFM07tgNIbMJKElXbliYBcVfvmbPAHL+CShMMfqOCDH8kkx
+	MaG929PA==;
 Received: from i53875b1c.versanet.de ([83.135.91.28] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uOZfD-0006Av-TH; Mon, 09 Jun 2025 12:23:35 +0200
+	id 1uOZfF-0006Av-R4; Mon, 09 Jun 2025 12:23:37 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Hsun Lai <i@chainsx.cn>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	andrew@lunn.ch,
-	inindev@gmail.com,
-	quentin.schulz@cherry.de,
-	jonas@kwiboo.se,
-	sfr@canb.auug.org.au,
-	nicolas.frattaroli@collabora.com,
+	kernel@collabora.com,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 0/3] Add support for Sakura Pi RK3308B
-Date: Mon,  9 Jun 2025 12:23:01 +0200
-Message-ID: <174946455539.762051.14386974894605199498.b4-ty@sntech.de>
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 0/4] Add RADXA ROCK 5T support
+Date: Mon,  9 Jun 2025 12:23:05 +0200
+Message-ID: <174946455542.762051.4819735721903497474.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250521131108.5710-1-i@chainsx.cn>
-References: <20250521131108.5710-1-i@chainsx.cn>
+In-Reply-To: <20250520-add-rock5t-v2-0-1f1971850a20@collabora.com>
+References: <20250520-add-rock5t-v2-0-1f1971850a20@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,25 +75,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 21 May 2025 21:11:05 +0800, Hsun Lai wrote:
-> This series add support for Sakura Pi RK3308B.
+On Tue, 20 May 2025 20:50:07 +0200, Nicolas Frattaroli wrote:
+> The ROCK 5T is quite similar to the ROCK 5B+ and the ROCK 5B, so to
+> share as much DT boilerplate between them as we can, this series
+> reorganises things a bit and then adds the ROCK 5T .dts.
 > 
-> Info of device can be found at:
-> https://docs.sakurapi.org/article/sakurapi-rk3308b/introduce
 > 
-> Changes in v4:
-> - Fix vendor prefixes error (Krzysztof Kozlowski v2)
-> 
-> [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: vendor-prefixes: Add SakuraPi prefix
-      commit: 281bf6e619fc637282288a3a087e2b2ed3150cd5
-[2/3] dt-bindings: arm: rockchip: Add Sakura Pi RK3308B
-      commit: bc099a4f5b7d08d97684648abe58d236cb7afa4f
-[3/3] arm64: dts: rockchip: add DTs for Sakura Pi RK3308B
-      commit: 79f2a17024412fd6f62208ab3fd6814e52588a31
+[1/4] dt-bindings: arm: rockchip: add RADXA ROCK 5T
+      commit: ecf7114f818148df10f4e13b5e1087de2f5d687e
+[2/4] arm64: dts: rockchip: rename rk3588-rock-5b.dtsi
+      commit: 8b76abf78321ea3361c01e849c8dc3a6793c05d6
+[3/4] arm64: dts: rockchip: move common ROCK 5B/+ nodes into own tree
+      commit: 988035f152709549a095b12fcdcb3cf26cbad63f
+[4/4] arm64: dts: rockchip: add ROCK 5T device tree
+      commit: 0ea651de9b79a17cbe410a69399877805c136b76
 
 Best regards,
 -- 
