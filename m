@@ -1,235 +1,156 @@
-Return-Path: <linux-kernel+bounces-678078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB7AAD23F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1F0AD23F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B98C16B09F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3B2188B1A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C9D219EA5;
-	Mon,  9 Jun 2025 16:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661E521ABDD;
+	Mon,  9 Jun 2025 16:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="l5x8CTLt"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FBtE61Lo"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950343A1B6;
-	Mon,  9 Jun 2025 16:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249B33A1B6;
+	Mon,  9 Jun 2025 16:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749486843; cv=none; b=lWblVKsrzm9C+NNOG1dXkBIuh5lA1jn/PBmbjMuCRVzw/NmQbJM+UxlmTqPAOAplqBHIH8F5fRLqsPo7ErbqnRbHzeMTgKYNnguo9UmhJINyyGLF8oiLC/c4NJIdy050VFKmiqn9zDGWJDd2VGEtZt5JQmVKBeQEO8F38CZg5kY=
+	t=1749486645; cv=none; b=AQvkb1GrOKjc0PiDU/D7X8K0rDfNfOz+gOAmhqzPsUgKGyyRaoft89bGGjRguJc4hCfAxJ3kMJoW1PlMHYtohYyuuL77BelKUCQSw57AYRKC2TkqnGhLkDuLB6HI+gR5HFCx/PoReuUGDXCYoizChLxaA6sP5Uuon59oAObyLzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749486843; c=relaxed/simple;
-	bh=GTnFfGyaol0WHB79nJS8vHJ5V67NBcsQeSu7yPvQUIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LuKRHxbqzHI9v31neKUtX3euiausaFgPBNCPa/uCct3B44LPJNAh3L6IX99VvInQLwtUND6PbuT0UVFC7DZYQwLIYnNtVl7+wXIptTaM2g/lsZ5jQ677AKgXWWDnOjqxbx/uiaO42IEjvDsqS5Ye/N4BCTlOGODuxLdSIU/+Uc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=l5x8CTLt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559Fxc8D010757;
-	Mon, 9 Jun 2025 18:33:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	XdsCmzlviAN7D8zW7RN1bkzetwH59L+fJQ05vlqmlxk=; b=l5x8CTLtU5RADRo6
-	SxU13ZIwSRejlojuW9TaZ6uGJVu49k/9cAUsTCzU6JM1hW+eEUkHZOmqDCmbDvW/
-	Rlgk3Q1Qw0Ec6ZUMpHN3ajvuStAjAiSDldeDTaB80zeSD8ZjKgXncHounqKYRxlq
-	KYsC5TyOe6AsBUlnqsXBz8lAdCYM3qZbLL99yUJrs1vEkXngi73WG39pYvYnWVSC
-	O1sUpZeXV3Q2exKZD7j1bWn2VF37XEfHzvFOqHeo7H0zl8vcv1KHTks1Z7m61pn7
-	pQTUsZLgeyVgnJLFNYeuKhcmQs37PTvi932ECEProqA/gJ1Oc0yytWrPqRNHkIdS
-	61sKNQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cahfx2q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Jun 2025 18:33:40 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 26A7D400CF;
-	Mon,  9 Jun 2025 18:32:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 70948BF25F3;
-	Mon,  9 Jun 2025 18:30:09 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 18:30:09 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
- 2025 18:30:08 +0200
-Message-ID: <7850c6f4-6a6f-4934-895d-9ec0688cda2a@foss.st.com>
-Date: Mon, 9 Jun 2025 18:30:07 +0200
+	s=arc-20240116; t=1749486645; c=relaxed/simple;
+	bh=V+MaTXDIBtZO+gC5Vxx97B2/xpKwM81wJPYoo0ifIqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GUywfSX4MpmaDXTswoKDv4x2DiOtDpAkpS2ca4Ukm23TWoSug9V0O/7LlwVWs1ulFMdD0UTAkuVhBU+tiNEoFxX+DOS0E9fcQL8M+FZP+F1R1jd7+QajxNcfX3KCJgUibUJpOHvpNjDMSQzr05FLT0b6DSXDBvskxHRSE1hLBKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FBtE61Lo; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so3035711f8f.0;
+        Mon, 09 Jun 2025 09:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749486642; x=1750091442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W/0iQvu+cvXD/i+mJVAh6RlBPbjrVmW5Jj0JE1c6SSw=;
+        b=FBtE61LozQfS3ti/jX/6irm1g35OlHQx/ax8sze1K83gnokkrDV/7EWcz8h9270FUb
+         V0GI+9QAWcLkdKethn1ql6uYK+QVjNyWmwfDbfx97qrdpmVKlzE5l0IlUeJCDhJrjBvC
+         oMdqbLZxBL+rWXkNEOmwNy8cCJYGAlv03Z2LrLUiTylgX/snVfJNPtaEgQFSuRWSEOMJ
+         a46uIsyHIj7GPdn6/T1RXL/v9m8cYH9/5pP/qtY/GlFmhW56pV0smgtCXDYmIQLOXLCz
+         nv1r4/gokyN1ytytUjs8pup1K/MoElksihOw+fD9k6ATKfcweftDvu2sbWMONAtCiVKM
+         M6CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749486642; x=1750091442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W/0iQvu+cvXD/i+mJVAh6RlBPbjrVmW5Jj0JE1c6SSw=;
+        b=fI/ijdh6PvnM0Y5A0CwQ2i2+b4I6nooqx8apIVgXBd9YjL19MbzJrTxz19+YpeEPfZ
+         T65n8JOYv+7d+f9NvkQBrdm0EDzWuDCaa4txQApdhIUTOySd417x3BPLrmomRcUW6QiM
+         +U5Giwn4xdIzDp5EM7fvUYQgLayyEDYjbV+Bix/3OCbzT11LIiZ7g+RzFYZsT1U0bS9K
+         JTtc8VfL25VQXC+o4qjoDrLpzZl8DDdHPOLszE0yzHKlrfj+HNjoSK4VH4sCf0b819r2
+         7A/ESwSVoB6vtgtLgAlH1CakEgFxqNHhX5VF0TToUlAGBOmMth4PKZkd0ZWWTB8B4Aab
+         xDqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhz24umgmWsfmE0tutuoQEfA7nXuzsD9Wmc1PW5kwFMqqRfIdaOnJ9GdddVQ+1whcssv7+31Sir7ch@vger.kernel.org, AJvYcCX2FOq8jQKOb8npr2BshY57YJUo/x6sOxcZrFEM6jUhoNtW09cYslhmnbJDOWjd8RfRdL78uWMAfajRCPkA858ZCQc=@vger.kernel.org, AJvYcCXCb+Twk6bH7X2hg6qc0XB85lrVqOnuX+ZakH73dXj8baLrAencEEAkdakZHfrPIWO/K0Z9QW2cFTb0@vger.kernel.org, AJvYcCXwrF6s6hInS/0JQHttTeMKV9/wmgSqcQmnXhnZc1hT8ZHo//AIwn99zO7ZrqqFdXEfUJLHBZeSecNWpcI7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJAHSFAHlCyMYYyYvFDSEyGBoS7xzImbZrynpHhEndT2ujAIgI
+	9zrPDwK+tOft5v+iP6HGy9Pdi6gKdx9yuwAL6/Aw/DNuqsNu7kp9dK0tuM6a0n7TVnbXpqYlYck
+	cLAY2JGnxS0+Ze+IR+RdlGg4LoJ7pLYo=
+X-Gm-Gg: ASbGncvPlBirQBmX0/9n1odfZIALn4Cu0NHP13759yGtbo7ygx1dlaSqzEwjPyxHxRh
+	opH2IRxWaaSPzJEJ0SvoybtUtJTJ1AKTjVo8xwOXoWzVu1Xn4enaJ91mgSbeUKzCMq1YHwOrvw+
+	RSd+aKzUBnJ6dEXn6vQ2sCJhM0cnSikOe1oyTUvilt3e7Gh0xxhHi5Ob8AfJQunL+xK2LAE8oJs
+	TCvZ6B+VWQ+/w==
+X-Google-Smtp-Source: AGHT+IGXAIQdE1nRJZmi3jEWcnBZPUZA+Z97ehAjUaK/t9ksInwV3DWMm5/fBKUnqkXbWGVfdlw5oL/ODL8sC+zRY64=
+X-Received: by 2002:a05:6000:110d:b0:3a4:eee4:f73a with SMTP id
+ ffacd0b85a97d-3a551403297mr154077f8f.22.1749486642265; Mon, 09 Jun 2025
+ 09:30:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v16 0/6] Introduction of a remoteproc tee to load
- signed firmware
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20250603100808.1074812-1-arnaud.pouliquen@foss.st.com>
- <aEb8XbhY5dR__GM-@p14s>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <aEb8XbhY5dR__GM-@p14s>
+References: <20250530143135.366417-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250530143135.366417-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWeBa2fzSKL1Q9jgr3NgoDuQZsGnZbu42cnEoEJSoiNEQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWeBa2fzSKL1Q9jgr3NgoDuQZsGnZbu42cnEoEJSoiNEQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 9 Jun 2025 17:30:16 +0100
+X-Gm-Features: AX0GCFv9sC0xEmVpjwgec5NeYMQ8oeaNBeATkzGKmkHKjxLQqVmPDyDvC8comuc
+Message-ID: <CA+V-a8tPAg5BQFJVcLsHOzgp4eLBK2w-OJ+G4gsv4911WLhJzw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] i2c: riic: Pass IRQ desc array as part of OF data
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_06,2025-06-09_02,2025-03-28_01
+Content-Transfer-Encoding: quoted-printable
 
-Hello Mathieu,
+Hi Geert,
 
-On 6/9/25 17:23, Mathieu Poirier wrote:
-> On Tue, Jun 03, 2025 at 12:08:02PM +0200, Arnaud Pouliquen wrote:
->> Hello Bjorn and Mathieu,
->>
->> I am resending this series after waiting for over two months for Bjorn's
->> feedback, despite a prior reminder.
->>
->> Please could you coordinate between yourselves to determine who will continue
->> reviewing this series? It would be greatly appreciated if the review could
->> proceed within a more reasonable timeframe.
->>
->> Thanks in advance and best regards,
->> Arnaud
->>
->>
->> Main updates from version V15[1]:
->> - Removed the rproc_ops:load_fw() operation introduced in the previous version.
->> - Returned to managing the remoteproc firmware loading in rproc_tee_parse_fw to
->>   load and authenticate the firmware before getting the resource table.
->> - Added spinlock and dev_link mechanisms in remoteproc TEE to better manage
->>   bind/unbind.
->>
-> 
-> Have all pending issues been resolved or is there still questions about some
-> aspects of the design?
->  
+Thank you for the review.
 
-No pending issues on my side.
+On Fri, Jun 6, 2025 at 2:26=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, 30 May 2025 at 16:31, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > In preparation for adding support for Renesas RZ/T2H and RZ/N2H SoCs,
+> > which feature a combined error interrupt instead of individual error
+> > interrupts per condition, update the driver to support configurable IRQ
+> > layouts via OF data.
+> >
+> > Introduce a new `irqs` field and `num_irqs` count in `riic_of_data` to
+> > allow future SoCs to provide a custom IRQ layout. This patch is a
+> > non-functional change for existing SoCs and maintains compatibility wit=
+h
+> > the current `riic_irqs` array.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/i2c/busses/i2c-riic.c | 22 ++++++++++++++++------
+> >  1 file changed, 16 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-rii=
+c.c
+> > index 23375f7fe3ad..4950b790cfe7 100644
+> > --- a/drivers/i2c/busses/i2c-riic.c
+> > +++ b/drivers/i2c/busses/i2c-riic.c
+> > @@ -102,6 +102,8 @@ enum riic_reg_list {
+> >
+> >  struct riic_of_data {
+> >         const u8 *regs;
+> > +       const struct riic_irq_desc *irqs;
+> > +       u8 num_irqs;
+> >         bool fast_mode_plus;
+> >  };
+> >
+>
+> > @@ -607,10 +611,14 @@ static const u8 riic_rz_a_regs[RIIC_REG_END] =3D =
+{
+> >  static const struct riic_of_data riic_rz_a_info =3D {
+> >         .regs =3D riic_rz_a_regs,
+> >         .fast_mode_plus =3D true,
+> > +       .irqs =3D riic_irqs,
+> > +       .num_irqs =3D ARRAY_SIZE(riic_irqs),
+>
+> Nit: Perhaps initialize the members in the order of declaration?
+>
+Ok, I will fix this in the next version (and below too).
 
-In terms of design, I resend an equivalent of the V13 design incorporating
-Bjorn's comments on V15.
-The pending questions are:
-- is that V13/V16 is aligned with Bjorn's expectations[1].
-- are you also aligned on this design even if you proposed an alternative that
-  implemented in V14 and V15
-Few details on the V13/V16 design:
-
-The main point of discussion is the rproc_tee_parse_fw() implementation.
-In V13, this function loaded the firmware and then parses the resource table.
-
-You proposed an alternative, to add a new rproc->load ops
-in the remoteproc core instead (implemented in V14 and V15).
-Bjorn expressed concerns about this and proposed a solution that, from my
-understanding, is equivalent to the V13 implementation.
-
-Thanks,
-Arnaud
-
-
-[1] https://lkml.org/lkml/2025/3/5/906
-
->> More details are available in each patch commit message.
->>
->> [1] https://lore.kernel.org/linux-remoteproc/20241128084219.2159197-7-arnaud.pouliquen@foss.st.com/T/
->>
->> Tested-on: commit 0ff41df1cb26 ("Linux 6.15")
->>
->> Description of the feature:
->> --------------------------
->> This series proposes the implementation of a remoteproc tee driver to
->> communicate with a TEE trusted application responsible for authenticating
->> and loading the remoteproc firmware image in an Arm secure context.
->>
->> 1) Principle:
->>
->> The remoteproc tee driver provides services to communicate with the OP-TEE
->> trusted application running on the Trusted Execution Context (TEE).
->> The trusted application in TEE manages the remote processor lifecycle:
->>
->> - authenticating and loading firmware images,
->> - isolating and securing the remote processor memories,
->> - supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
->> - managing the start and stop of the firmware by the TEE.
->>
->> 2) Format of the signed image:
->>
->> Refer to:
->> https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
->>
->> 3) OP-TEE trusted application API:
->>
->> Refer to:
->> https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
->>
->> 4) OP-TEE signature script
->>
->> Refer to:
->> https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
->>
->> Example of usage:
->> sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
->>
->>
->> 5) Impact on User space Application
->>
->> No sysfs impact. The user only needs to provide the signed firmware image
->> instead of the ELF image.
->>
->>
->> For more information about the implementation, a presentation is available here
->> (note that the format of the signed image has evolved between the presentation
->> and the integration in OP-TEE).
->>
->> https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
->>
->> Arnaud Pouliquen (6):
->>   remoteproc: core: Introduce rproc_pa_to_va helper
->>   remoteproc: Add TEE support
->>   remoteproc: Introduce release_fw optional operation
->>   dt-bindings: remoteproc: Add compatibility for TEE support
->>   remoteproc: stm32: Create sub-functions to request shutdown and
->>     release
->>   remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
->>
->>  .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
->>  drivers/remoteproc/Kconfig                    |  10 +
->>  drivers/remoteproc/Makefile                   |   1 +
->>  drivers/remoteproc/remoteproc_core.c          |  52 ++
->>  drivers/remoteproc/remoteproc_internal.h      |   6 +
->>  drivers/remoteproc/remoteproc_tee.c           | 619 ++++++++++++++++++
->>  drivers/remoteproc/stm32_rproc.c              | 139 +++-
->>  include/linux/remoteproc.h                    |   4 +
->>  include/linux/remoteproc_tee.h                |  90 +++
->>  9 files changed, 935 insertions(+), 44 deletions(-)
->>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
->>  create mode 100644 include/linux/remoteproc_tee.h
->>
->>
->> base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
->> -- 
->> 2.25.1
->>
+Cheers,
+Prabhakar
 
