@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-677552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C32AD1BA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:36:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B4CAD1BA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C32347A2511
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C13816C280
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736FD253F3B;
-	Mon,  9 Jun 2025 10:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02C8254B03;
+	Mon,  9 Jun 2025 10:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aB90Lkp0"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b="stIN5OWO"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E3C253F1A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 10:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F70825392E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749465358; cv=none; b=MVE7af1ohlP8EL7aJln7eXRgclpHGH4w6Ey73464zEaJEgI/354ZMZrKBGdkCYgfh1isR9H2RTCsHPKDqr6oBJarlppt1cGHSEhraZcqqAMvb1nkKlsdP03ryo3c+23MyvEHmBPF1fPFPWYwtBLD0g1LvazoeeIpExwModfZ26c=
+	t=1749465394; cv=none; b=I4g0wS6TS0sYrzYOSbe+O6QTCbOxdcugQikmqcYHwLAM86SG79jUhUFDI6P90w7umD33sakxX9G8vOmG1kiwB8/SbDn34nlllnhrse3am/pEwAKLcCzd+giemzs3diBgq+SG7BdXfbNdvVjURd5j9UTYJZgBQGbTYgRF0stPZCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749465358; c=relaxed/simple;
-	bh=tLbPoPnRW0rdPQUBzg2TyznGxUv67v8X6d5+AGG7jj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=No2WTW/XE4zXsnO4PF3bShOpBSsJHXDxNeLKkb5iuZFc5O/eqR1sSLQ8p057U3JYrSdSZHeweRKHF1iAN6MLgEBcmKusAu0yWNzNU1svcQpxo4bp88JGH0prHTv514LtBNy6n8YcZFgn0R5w8vZYUdBhW+Ln6nCoeJZqm+0qpUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aB90Lkp0; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so3533105f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 03:35:56 -0700 (PDT)
+	s=arc-20240116; t=1749465394; c=relaxed/simple;
+	bh=pdmxugmhakuArB92BuyMupAJAEVurSaI9XZc0MfxAuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rrkil1rV00FNCNtn89XLh4Fkh+9I6w7JaJFYVMrcyJTpY7TC6k9nB6I26rMlNdNMbUxz/K95ODp0M8uV9JlTzuoBeuO656FuhQFtRhnvQhKKcORybwYy+YwDWHqRvCz53ugg/UlcNeVzIV1wCSj9mtiUD2+IXaBkIEIf6imleYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech; spf=pass smtp.mailfrom=neon.tech; dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b=stIN5OWO; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neon.tech
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad93ff9f714so746675066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 03:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749465355; x=1750070155; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lPUZPI4tBuk4J3QMbJJf2HlNXfqlGDxMUfNoYa/lU9E=;
-        b=aB90Lkp04YtqzwXUFA4UTv0ufuIW1jRzPsmbdM+JR1y4TeeIVrv8gAt0q0FgMSWi8a
-         75IMAxh165ev3ZIEdNBMbO8jGKOZzywiz6Kd4dapWI10g4ZHp0qDJi5NFT3VdCToqP7W
-         I5SuyAqKP31h9bvMz5D97UWOGQVhI/B2eBUR3dEWoMLUErplhaEe0bPEKwFo7ahdVQyb
-         tK8teeI7JNGmx7vwzb84BJ8QE7F13cU68i6yE++msIWP91onV9qcWs55o6SvlUJ/iLaf
-         PaS9rMNhovqfqG9EPmX/kIbq4YLtwnro3P0dcxoEo+Nx7oudSKNnuMxK0lWPvcvHMJmM
-         jE8g==
+        d=neon.tech; s=google; t=1749465391; x=1750070191; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vpaFRUPan5/TpiEHmRBhmrQ93XppgJeF5Z1cXdjt+MA=;
+        b=stIN5OWOEd2pbME+4WjaVJg9DfLU3l8j1D0bU3DYbbjdNcF2QsAaQTj9aT6Iqrmkvg
+         /gKBeT6mrTItrX8sV8gyZCkna2FLA8kgEDUkxQLiIJkeQi8XOJTnSZA0a/of2iG0lwcN
+         Jcyt9BM2kHNEswTygBAaAHfuQKt7uxEP5AJo0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749465355; x=1750070155;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lPUZPI4tBuk4J3QMbJJf2HlNXfqlGDxMUfNoYa/lU9E=;
-        b=gyq2HyD+Zn+N6HWKXFKng0OBEK+oXhgDh8yyt3tkNOdVVFJifP28p7XDlx+rMIGJxN
-         ra+fP4dpHFv1pVOF7dmt1K//E97Sz7yEO8GKkuEpClsHVKI6b/9uK0hVcUiXeZmFVasD
-         JydfnYHS5eFfOCzDWtW0mgkPxu6uCUbD8o5anQVxF//fK5tyM6dpoMtJpZ7iWbXZTknK
-         BT1OCh2rAepatdKLP4KMI7M6Csk2VIXWRa+C4lmzAFEgyVGRcHaJry14rBw+1QiotscT
-         qXrx/0TqT7y6aX2Wy96/EmTV465vj7t4Z9C6CKjb2i9ZwXr6swov1XX4iHfU+VH+5L6/
-         /zBA==
-X-Gm-Message-State: AOJu0YyrI4iGwCr7/9S702B5f6dCYUjPqdzD032oT3VBc8FQPEU/1anp
-	mPbI4wEwDDdt+UMkD3RcPE/p1li8630e6vOK7fkJcmMwHPKxG3NWLCMibul8kEuVUGvLypy3YV9
-	GJGUccVw=
-X-Gm-Gg: ASbGncvWjSnpgrQNAFT3eJdHte+arVSMDugW8lbq7QcUW2D1JYvVoe/oCh0uj47zWOE
-	v7nJR2VaO/c7Elhj6S90RR2p/tQcOKL4ds1dk6HloORQU6LDr5zefdaG0JyhI3XWC5fFhkERHVf
-	jHGqt+EAoshxE3aTPKlGL94qvF2I/zxDC1YwWLmOus9IWjqeKJd5gM2EIE3pl7NnwjZIzT4Ku1s
-	oGbRpD3IdFOlUDvSn0rrxsOuC+am1yrhq3xX7sZ3Pbrs/DkkxvP9mONJBXoYB4oLPvVXLZj0u7j
-	q9YUPQQla3o/89FMIjr10UBWidQwGuqHWJ8Dh8NeRHiPOzt4tVR5Z0VUF00+d28OBI6cHEfD9Hb
-	mqI/2KN2jEA==
-X-Google-Smtp-Source: AGHT+IH+qyAOPpqfgWf5wK5tns5lzd/nbirfiuSOr/950cYVt/dHv3ucAiabSliSI8j7fmVc2oJkAQ==
-X-Received: by 2002:a05:6000:144e:b0:3a4:f607:a5ad with SMTP id ffacd0b85a97d-3a526e0cc7bmr15042032f8f.19.1749465354938;
-        Mon, 09 Jun 2025 03:35:54 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45306f76ab3sm59306405e9.14.2025.06.09.03.35.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 03:35:54 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v2 4/4] [Doc] Workqueue: add WQ_PERCPU
-Date: Mon,  9 Jun 2025 12:35:35 +0200
-Message-ID: <20250609103535.780069-5-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250609103535.780069-1-marco.crivellari@suse.com>
-References: <20250609103535.780069-1-marco.crivellari@suse.com>
+        d=1e100.net; s=20230601; t=1749465391; x=1750070191;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vpaFRUPan5/TpiEHmRBhmrQ93XppgJeF5Z1cXdjt+MA=;
+        b=gxDWYN6Uf7vNRlhPOT4rrhtB1taEOwY4J8wcODE/Qhi/eTiQcg/AcCE4RRX3vgdQW5
+         QGfGJxytZbQUmY1e1NM0tOefXNzYvtkrCn9GUzA8oLMC1bhRqbjgUUIK3LHvD0y/yg3o
+         OvSToubNv8WkqBz2ApdFSyW/bO3Tjwrd/1OiEPJMwmKGm8OJig7fyUPiROWAd51XdBEZ
+         Lory0yv7Jgn8DjJI6DOW9RfTaSGalekDZVBqvMd05muEVtANSaCo01ausolhJTWXQk02
+         9+fsjK5J+XRXMA9+TANpOVMSqbzB/wweE+ao4Fows9a15ar2yhHtHepQY6/W0mLLQMMF
+         P5mA==
+X-Gm-Message-State: AOJu0YxRamRPxgMy0URaqRpqTMVDO2/VIGuNfbpjFoqLvgRV8rCgjGCH
+	M1L5ZNv9kBDJx5skHaK4+Aq+MDzizCMsV98GtCvdIYmBlK7Lmgqknigv9hVVUyzEWb0=
+X-Gm-Gg: ASbGncuab7ePqtM0Y13Cvs/q0dBoMklUndlsJQ+C3hjINcXRdlGE+qD9PtinqGT1ntY
+	X533b2l01I4WpqDbNlDJbYjEtJ7czrZ2Daq6n26X3Qii28JOjNuj7GHtjN1gmETqeB0O6tPvMnS
+	UJWejVMjKIjilNJiEXAVbTQy7qLv20U9cqo/gumfb40ZLOyPU44yBF1vLR5OgLhzB8hn8oyZPl5
+	cAfmNiQJGp8ZugkuUEos+xvFCiaVVe8P+ufOs82KcnGm55Jqq7+WIym6WEL9Bhm+BzJFJ5MU9QM
+	GE8TXTt3sUW/GcHEMIYyuHnywRHCCthUY1lRWa0zktM9r+23YAPXhcMa0VqYahwYd62QFRGZMgK
+	a
+X-Google-Smtp-Source: AGHT+IFXxtx2CSlXJ3Top/v168+U7HayyPAa5xv6S3DVOLuAfynTta6qZG5cPMeCleB7WFl6HYOs4g==
+X-Received: by 2002:a17:906:f58c:b0:ad4:d00f:b4ca with SMTP id a640c23a62f3a-ade1ab3259dmr1092384366b.50.1749465390746;
+        Mon, 09 Jun 2025 03:36:30 -0700 (PDT)
+Received: from [192.168.86.142] ([84.65.228.220])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade465b243csm321502666b.88.2025.06.09.03.36.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Jun 2025 03:36:30 -0700 (PDT)
+Message-ID: <decb3327-f47e-4ef2-8fd1-027acc6038d0@neon.tech>
+Date: Mon, 9 Jun 2025 11:36:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/mm: Handle alloc failure in phys_*_init()
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ Oleg Vasilev <oleg@neon.tech>, Arthur Petukhovsky <arthur@neon.tech>,
+ Stefan Radig <stefan@neon.tech>, Misha Sakhnov <misha@neon.tech>
+References: <9f4c0972-a123-4cc3-89f2-ed3490371e65@neon.tech>
+ <aEE6_S2a-1tk1dtI@gmail.com>
+Content-Language: en-US
+From: Em Sharnoff <sharnoff@neon.tech>
+In-Reply-To: <aEE6_S2a-1tk1dtI@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Workqueue documentation upgraded with the description
-of the new added flag, WQ_PERCPU.
-
-Also the WQ_UNBOUND flag documentation has been integrated
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- Documentation/core-api/workqueue.rst | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/Documentation/core-api/workqueue.rst b/Documentation/core-api/workqueue.rst
-index e295835fc116..ae63a648a51b 100644
---- a/Documentation/core-api/workqueue.rst
-+++ b/Documentation/core-api/workqueue.rst
-@@ -183,6 +183,12 @@ resources, scheduled and executed.
-   BH work items cannot sleep. All other features such as delayed queueing,
-   flushing and canceling are supported.
+On 2025-06-05 07:36, Ingo Molnar wrote:
  
-+``WQ_PERCPU``
-+  Work items queued to a per-cpu wq are bound to that specific CPU.
-+  This flag it's the right choice when cpu locality is important.
-+
-+  This flag is the complement of ``WQ_UNBOUND``.
-+
- ``WQ_UNBOUND``
-   Work items queued to an unbound wq are served by the special
-   worker-pools which host workers which are not bound to any
-@@ -200,6 +206,10 @@ resources, scheduled and executed.
-   * Long running CPU intensive workloads which can be better
-     managed by the system scheduler.
- 
-+  **Note:** This flag will be removed in future and all the work
-+  items that dosen't need to be bound to a specific CPU, should not
-+  use this flags.
-+
- ``WQ_FREEZABLE``
-   A freezable wq participates in the freeze phase of the system
-   suspend operations.  Work items on the wq are drained and no
--- 
-2.49.0
+> I agree that it makes total sense to fix all this (especially since you 
+> are actively triggering it), but have you tried also changing it away 
+> from GFP_ATOMIC? There's no real reason why it should be GFP_ATOMIC 
+> AFAICS, other than some historic inertia that nobody bothered to fix.
 
+Fair enough, yeah. We hadn't tried that, no
+
+> Finally, could you make this a 2-patch fix series: first one to fix the 
+> error return path to not crash, and the second one to change it away 
+> from GFP_ATOMIC?
+
+Sounds good -- thanks for the feedback!
+
+Sent a new patch set with those changes. For posterity, v2 is here:
+https://lore.kernel.org/all/0ce5e150-19e0-457f-bec3-ee031c0be7e7@neon.tech/
+
+Thanks,
+Em
 
