@@ -1,131 +1,141 @@
-Return-Path: <linux-kernel+bounces-677517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75DF2AD1B5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:18:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB877AD1B4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5CAE188D110
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B33E16B8C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0102580D7;
-	Mon,  9 Jun 2025 10:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDB2246763;
+	Mon,  9 Jun 2025 10:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PzBYyc+s"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8JKJCfo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F142571CD
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 10:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BA23A9;
+	Mon,  9 Jun 2025 10:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464222; cv=none; b=gS5iR6i8vTYLoTvQMOstjDdDudzMlXeRtnrkFm42l5Ugn/p5hHI6CiZstrScXgfawdoBGAl4Z5qlK/fLbynSlgYtPnxOJbulNZu+6PWAu33JC+ekendpdqQuQvu15G/l0E8QvsuBvmB4Xp6J+cWllLaUP5bEt3TSHk4GwSsqQBE=
+	t=1749464176; cv=none; b=iX/J5wcgxuUUC6VhmRY+hnSMielGkrD5CAVEXiOle3B5TC61+/dHPiabnMC6LdwCbkK2XaAJDdcpDVn6MpOazaxYiQMGLxgzIh4Y5jWnoN6dwZt4C00UsoPlnF1hrjLXu67cO8HB6V4xC6Mt1Rcv7XZu7ipiT4DW8Ve+h80GppQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464222; c=relaxed/simple;
-	bh=DOJVEz79hyx4B5UpuGMdFTop/BzR1Uh0haptnlOJ+7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZOYR5wupzslo5BWRqjl+WN5KrQmj2GSmVvDYP2SQ9akIWGlYD64UitfAuIUHNswtR75ztjYEk0htCQRLA1CJ7ZnJYsi/5qOmeEuFs57RJSontKh1nfEny6JLF86gnQHgwiXIbit18M4+VUuw0Fgqch+GC2s14UVKg3Y5krqicno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=PzBYyc+s; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-acb5ec407b1so739991166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 03:17:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1749464219; x=1750069019; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xtWnccZdwmekAeiqyQYk4mGsFpJfFAArYZd8KxoueRo=;
-        b=PzBYyc+s7kxLNAy/Mg/jfhEE3J2VG4ByUtYeDD/xWelX9EmcHr0nsxMzzCDSoSdjw+
-         csD17h2P2koSIxb+Wknkj0ylQ8brGTbvjZjRkM9tFdteK3qPOVydmZOshx7P7Gtysgbp
-         kxBpZLSPe8m2BPSvQ3agaChmnhww5KDTvmDIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749464219; x=1750069019;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xtWnccZdwmekAeiqyQYk4mGsFpJfFAArYZd8KxoueRo=;
-        b=Wgwiw24KT1G810RgjY+kymJuxRg6rbPPbPrnxGRM9fNgswhKOKXmnFdNJyuL1e7BtJ
-         O7vnTHh0IFADlIDZwQCxy/57jisE7udkg2naiZQhWFda2qLoSoNO0QCPL0IJ4B8csxqC
-         X+UlOYPyNTrQ86lOfE4tT46ZrAI7p4/6FDRuSybtVYMIj16MP7U4M2XKYnr0IbbT/H1j
-         uqCQH1NhkmCruxkHbGPHqyMu7fJ8mOaW1Kgwl4Bn1tk9r/hSuYVcTzE7uglQ6gNfwwdP
-         hbjcGL8pKIKPr5IMZOmqd3yc6nrhBLh3h7eSXoCH4samn7DYjrtMH+0HuH6EuBI/1xaB
-         J7bg==
-X-Gm-Message-State: AOJu0YwoYX8Ex+T4OvKw4cyEFqu4nZdgozlFNPKvKPiGBjQWHs29wKyv
-	pHx29TWxa8StUes6gC60u3BPZHaDz+c7iifP5UMPlxLqHNey7Y9SxrA/P9f1vzhFPHh8F/97csT
-	PEPBf
-X-Gm-Gg: ASbGncvq9gwaLRBLSeShhg7w82m5izFz6Ybh3doTVRvemzw61twfkMqr/3kaLFW8OvI
-	nfNrlM1NEMy3Kcu0a4jfLQuNj2oeS+XZL9j/0Am2T1Sz2hQs3/WabsmUpboY7q+6s0m+GH0Jn6i
-	63zXhbaFsnD0IaYbi1LmdyGV1UtVTkILSQ0OnRFqql4VOFEKNbQnWi8zHVnTuQyJorfbELvg93c
-	I0Q4rEegdbpDFCifPaVXpWTi5ielDy+OBiV50uu7nvc7n5FGMAkM9aT7h6Yp5Q1PEuyZ6SKFf+m
-	Kq6txcz3StkQV8VgpMQcb+Yp+LRrWAec9Ohcwt8byHzR0MA7j3+v061nIFy/S+6OSata+B9khfV
-	KBX2C9bX5kHQzM0yD409Up0/amAngo/dzILEvL9WulAZ0d7kWb4M=
-X-Google-Smtp-Source: AGHT+IH3gsxVUUgw8pn7niv+7bX9R//knvGpYp8ip0Yy0FzSdBl9gPYD+Rs9VowG2jDeFdePscxQDw==
-X-Received: by 2002:a17:907:d02:b0:ad8:9b5d:2c23 with SMTP id a640c23a62f3a-ade1aa5d45emr1170457766b.10.1749464219247;
-        Mon, 09 Jun 2025 03:16:59 -0700 (PDT)
-Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.40.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1db55c7esm529257066b.49.2025.06.09.03.16.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 03:16:58 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Matteo Lisi <matteo.lisi@engicam.com>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 10/10] ARM: imx_v6_v7_defconfig: select CONFIG_USB_HSIC_USB3503
-Date: Mon,  9 Jun 2025 12:15:43 +0200
-Message-ID: <20250609101637.2322809-11-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250609101637.2322809-1-dario.binacchi@amarulasolutions.com>
-References: <20250609101637.2322809-1-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1749464176; c=relaxed/simple;
+	bh=O+bBROqKabz2CTBu7yCmVbU0VYYotr7u/Co52EE2nRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1BAIkwgXivDiuAjyw8kX/1L8W8MaJCgX8VpMpjdLBeLII+OUnQEY8NTBpAWUo15Yz8stVQMCazWFzfR0lA39i1rrvyMi4QZsEQx1BkxxtaQJ+sVqp8wnP0VJA5bZk3nOfz/SC/CPtaWdoq7v9o57TjzYkuKYUOiQkstHEkuRsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8JKJCfo; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749464175; x=1781000175;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O+bBROqKabz2CTBu7yCmVbU0VYYotr7u/Co52EE2nRE=;
+  b=e8JKJCfo1Rxm50e/mQywoNCnXLgOtOsPbswfHuwTvJUUZMgMLGT0qGat
+   pp2pEbIlkZqcOlieFidH8+yKuNZbmDDmBNSZx4S7gXFcLGcyIbtZcw9at
+   xfJEKHU4fGnDtGpERry1LTkJG6Ln8uMFptBMOWcojxfpvqM6xu+9Ar9dX
+   tZkPSlX8Sx6c14oXZkz8aIR4ZxItcTNpoml43hH3L+SNF1UnlBSbRLsT1
+   C43eBEsL9nkMJhiiGQt01Y32t7JBDwe8S6cxKIuF3bJ0iQZBsnolx2ma5
+   h7GBTPNrWeR+wZMcZejxue1MkL4CRMMZu5FUo+TcxlO39mve6t63cTc4f
+   g==;
+X-CSE-ConnectionGUID: JjVvG96nTBe+/QIWUc/Ktg==
+X-CSE-MsgGUID: TvYSt3sBSvOR+GpFEkGDeA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="51413977"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
+   d="scan'208";a="51413977"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 03:16:14 -0700
+X-CSE-ConnectionGUID: 6jH5CW9iTEmgrisEa5mwTw==
+X-CSE-MsgGUID: 8GvoBy6NQQeAFJKh+hEsIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
+   d="scan'208";a="183657815"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa001.jf.intel.com with SMTP; 09 Jun 2025 03:16:12 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 09 Jun 2025 13:16:11 +0300
+Date: Mon, 9 Jun 2025 13:16:11 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: linux@treblig.org
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: Remove unused ucsi_cci_str
+Message-ID: <aEa0ayPAAqgjprEm@kuha.fi.intel.com>
+References: <20250609004319.209143-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609004319.209143-1-linux@treblig.org>
 
-The driver is required by the Engicam MicroGEA GTW board.
+On Mon, Jun 09, 2025 at 01:43:19AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> ucsi_cci_str() last use was removed in 2019 by
+> commit 2ede55468ca8 ("usb: typec: ucsi: Remove the old API")
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
----
+> ---
+>  drivers/usb/typec/ucsi/trace.c | 17 -----------------
+>  drivers/usb/typec/ucsi/trace.h |  1 -
+>  2 files changed, 18 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/trace.c b/drivers/usb/typec/ucsi/trace.c
+> index 596a9542d401..13a38422743a 100644
+> --- a/drivers/usb/typec/ucsi/trace.c
+> +++ b/drivers/usb/typec/ucsi/trace.c
+> @@ -33,23 +33,6 @@ const char *ucsi_cmd_str(u64 raw_cmd)
+>  	return ucsi_cmd_strs[(cmd >= ARRAY_SIZE(ucsi_cmd_strs)) ? 0 : cmd];
+>  }
+>  
+> -const char *ucsi_cci_str(u32 cci)
+> -{
+> -	if (UCSI_CCI_CONNECTOR(cci)) {
+> -		if (cci & UCSI_CCI_ACK_COMPLETE)
+> -			return "Event pending (ACK completed)";
+> -		if (cci & UCSI_CCI_COMMAND_COMPLETE)
+> -			return "Event pending (command completed)";
+> -		return "Connector Change";
+> -	}
+> -	if (cci & UCSI_CCI_ACK_COMPLETE)
+> -		return "ACK completed";
+> -	if (cci & UCSI_CCI_COMMAND_COMPLETE)
+> -		return "Command completed";
+> -
+> -	return "";
+> -}
+> -
+>  static const char * const ucsi_recipient_strs[] = {
+>  	[UCSI_RECIPIENT_CON]		= "port",
+>  	[UCSI_RECIPIENT_SOP]		= "partner",
+> diff --git a/drivers/usb/typec/ucsi/trace.h b/drivers/usb/typec/ucsi/trace.h
+> index 41701dee7056..9554a0207276 100644
+> --- a/drivers/usb/typec/ucsi/trace.h
+> +++ b/drivers/usb/typec/ucsi/trace.h
+> @@ -10,7 +10,6 @@
+>  #include <linux/usb/typec_altmode.h>
+>  
+>  const char *ucsi_cmd_str(u64 raw_cmd);
+> -const char *ucsi_cci_str(u32 cci);
+>  const char *ucsi_recipient_str(u8 recipient);
+>  
+>  DECLARE_EVENT_CLASS(ucsi_log_command,
+> -- 
+> 2.49.0
 
-(no changes since v1)
-
- arch/arm/configs/imx_v6_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 917bc8a27794..3181775a214d 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -335,6 +335,7 @@ CONFIG_USB_SERIAL_FTDI_SIO=m
- CONFIG_USB_SERIAL_OPTION=m
- CONFIG_USB_TEST=m
- CONFIG_USB_EHSET_TEST_FIXTURE=m
-+CONFIG_USB_HSIC_USB3503=y
- CONFIG_USB_ONBOARD_DEV=y
- CONFIG_NOP_USB_XCEIV=y
- CONFIG_USB_MXS_PHY=y
 -- 
-2.43.0
-
+heikki
 
