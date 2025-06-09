@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-677314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB45AD191C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F958AD1925
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65AB167A49
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 029F93A8EF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A392280A5C;
-	Mon,  9 Jun 2025 07:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3380E280CF0;
+	Mon,  9 Jun 2025 07:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nqV36Ytf"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVi284ls"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D93155342;
-	Mon,  9 Jun 2025 07:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4D4155342;
+	Mon,  9 Jun 2025 07:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749454767; cv=none; b=LDNr3uZcqQQDqLmecDTXf6Zcj0+DW4AYEd7G3B/ykBRS+pfXznCzQLFaOck2u50bctsFqavnVhyPCWxBzKCUWxjojRhgL7CyxlaLu7WKSxx2fXU8Y67UDRg7Hyi0+hvSW3slJfO0gXOyqae6S0U9hHSKybvdfjZdrm9OBD27gRU=
+	t=1749454857; cv=none; b=UDOrlf8JzPeimxjfg0ai27/iOtSibJtWz3by/ZuHH8zd1TpuHUoRZ+vWldL7MFAOhG1s2JWewFRRKvu5GXjuT1roSjdq2nlycLlno97xx4VwzT490KE8q6/CZJTcGOM0nurNN8TvpCUnCkZOXrfncKoFOfu1WhaxWKugjBmbFm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749454767; c=relaxed/simple;
-	bh=H7hDZq77HAh1Y55r0jDQ6rp5vMmxTjQKStTpiBMCdPc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tKO1c2ap2mdENq5BTUQYIL+EqajSKwxP7KJ+t+mXKRBIis5zBQZD4rgGOLECck+ql1FWE8+ThwJQL0Uxv9yMYqkO8oSvHonjgs6FjcMucnFeiAx5q4A7AViYKwJjdzZoS04ABj22gD92ylO6iGyvUzButhE7hMvKVKJXfUhL4JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=nqV36Ytf; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1749454762;
-	bh=H7hDZq77HAh1Y55r0jDQ6rp5vMmxTjQKStTpiBMCdPc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=nqV36Ytf4vYzOiVhWKmmuhvEV47uDitWQakTjpPOVUgmIjyrNqw8ZQ+97J7ryDtMz
-	 SJXD0Rv9nlpmMwV5XUYY3cJnFGU8glpYmQQrBmcSr1IZR1emyURq95rnpvOyL3pAvQ
-	 0TMrQSAlZO2PEOALcHfxo0Na5AssuQULgDlUYC5E=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 09 Jun 2025 09:39:16 +0200
-Subject: [PATCH] selftests/nolibc: make stackprotector probing more robust
+	s=arc-20240116; t=1749454857; c=relaxed/simple;
+	bh=KqiCwPI+FSPcNo01A6kecalaBBX0hvVlFdxywS3rLdU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YXgskU+hu/2Bmbveh4x4MDQTN4D0MiiXEphmgZpG4MtmW9ZXzBRrYOZGwyM2zN3xCPFtRflp5hn/4ArcPGekIWvUtuHyN9E1hmbMkpPalpgvxOvkB29OWl6q0EONjak7kjfbUZ2E+DNtao2Zwhe7Ia8/ihGpt6O8ps7/sPPMTfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVi284ls; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so3682165a12.0;
+        Mon, 09 Jun 2025 00:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749454855; x=1750059655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KqiCwPI+FSPcNo01A6kecalaBBX0hvVlFdxywS3rLdU=;
+        b=mVi284lsoKwheGKBwMEyP/vwa/6SIQGl7nfQgPZD1KQjTmMuqjSylmFzkk96uTAfGc
+         paUHxjESqggW1HqXGzvmt/iip4SZBfa4cAR9ix+cZ/QtfPozUz77XJYVFfCcQuCV06WY
+         YujuQV3q2vvDi66hH2/V+jBVZ7p6f3PnPKUneQSQYpTnOMmTgWqab72mlmzAQ0FBHha6
+         EBbSmmydOtNns91UhTIsq59zalLkAco9DGGgtBhR6LZRBC+bf1gUuftSODybtyWY1m1a
+         hjNujy1jEZkjNj6U3c8X/hc0VWbmwpb4PK71vgbxNOGqN3y0UtTH+3xbAB4qiqxOY9Mq
+         b4XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749454855; x=1750059655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KqiCwPI+FSPcNo01A6kecalaBBX0hvVlFdxywS3rLdU=;
+        b=cYP8QG6wqh5HbeNBUzUYxelxmyzz6l8J+l38tBDlh+zbhN9vrbWY69eEjd/HbnFzcQ
+         tluf54KC+BZmxfCw7ToyrRadc7sdX40D2pmCbiekWUh7GymIwyzvAYDU+hjy48joqtMf
+         7wplasU3X6rBeL6DBXubNqfo6TKWPpIxThrfxbZHMaNd06lBtn+fU25gYmWqVpvGeU5e
+         gHO4lxZUtBYBRjDaUt5Tn8SH/OpyXsbo4jPxnquBkg1On8VwMpdie9mPQO2HCkGrBU1j
+         yio+J7P//rHZfyaykrwRTDireGb0kFiXv5vf8TXBgxU4tRylI4y2TmDtSawx6yM2rYDc
+         G5aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcA8wDGVnHdqJi2GXqeRGJZjnSX3m+o1ARYu1nK5YWo0YvvV5tHQuWRaYONQc12kYVR2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP0gKPKrvzkHTTYr8v9V4SjyjwKkRSEkV9VrRSDXOusYa9n8wP
+	fUk/Wiv80MTeq2yz9wV9Ap5DnPXu2KB+KGT26DPDU8Em5/FpByy/HDu3+uF3Z9kazb/sOO9/C0y
+	hAHOlU1dd/rocu6WLkYrgL89CO9lubsk=
+X-Gm-Gg: ASbGncvTTVBKsphzFokg7PNlSWsi5aZv0d9IqP1Kli/didSZ0UeR+Bir1TaffpOo/ow
+	dqiJhQSUL8KQzaG/FSZ3HN+XOwMH2OkXz4v8UwQ8paKfXk8ykvhJIYgAuAj5PCslJ6lKiAKnWv2
+	hQxR6pp4pUHYCZ1BzHnCMOjivyQmxrRWRvwLPl+268TnUFBA8Oiqh73cumFqLIXQ==
+X-Google-Smtp-Source: AGHT+IGbFNXPkYqjZQqn09iVOchn6k5QUdAnNSlPs/XMUCroRdwdeP0hZZnbbuyNPdHKkr8WmeI3Qu5L264jB2MsXOA=
+X-Received: by 2002:a17:90b:2ecc:b0:311:e5b2:356b with SMTP id
+ 98e67ed59e1d1-313472e9005mr18838455a91.11.1749454855433; Mon, 09 Jun 2025
+ 00:40:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250609-nolibc-stackprotector-robust-v1-1-a1cfc92a568a@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAKOPRmgC/x3MwQqDMAwA0F+RnBeolSLuV8YONYsaNhpJujEQ/
- 31lx3d5BzibsMO1O8D4Iy5aGvpLB7TlsjLKoxliiCmkIWDRl8yEXjM9d9PKVNXQdH57xXGkaUk
- pD1PsoRW78SLff3+7n+cPlhqsF24AAAA=
-X-Change-ID: 20250530-nolibc-stackprotector-robust-77c9f55a3921
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749454762; l=2141;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=H7hDZq77HAh1Y55r0jDQ6rp5vMmxTjQKStTpiBMCdPc=;
- b=q5L+PaMurUR4F/A+zymz8S43QNVgEvP0TFCeq3erVVR/uzBgpqgBj2X5l0O+Lmb+mLkGP9te0
- 0N/VgFJuZIgCWwlhJGWQGmtjbgCy9tLuKvwsR9PzhIbtlGsMVIKRE8i
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20250514071803.209166-1-Neeraj.Upadhyay@amd.com> <20250514071803.209166-32-Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20250514071803.209166-32-Neeraj.Upadhyay@amd.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Mon, 9 Jun 2025 15:40:19 +0800
+X-Gm-Features: AX0GCFuisu29_xcex8CdM2Yk411ctfB6p7VWrMziyFkU93Q6Yrxgj1z1d3n-g9A
+Message-ID: <CAMvTesCSX1g8Ttzjn4PhfcWSYUdAcCUV9hfJd_TPQzek24K1LA@mail.gmail.com>
+Subject: Re: [RFC PATCH v6 31/32] x86/sev: Prevent SECURE_AVIC_CONTROL MSR
+ interception for Secure AVIC guests
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, 
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, 
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org, 
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com, 
+	kvm@vger.kernel.org, kirill.shutemov@linux.intel.com, huibo.wang@amd.com, 
+	naveen.rao@amd.com, francescolavra.fl@gmail.com, tiala@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-nolibc only supports symbol-based stackprotectors, based on the global
-variable __stack_chk_guard. Support for this differs between
-architectures and toolchains. Some use the symbol mode by default, some
-require a flag to enable it and some don't support it at all.
+On Wed, May 14, 2025 at 3:33=E2=80=AFPM Neeraj Upadhyay <Neeraj.Upadhyay@am=
+d.com> wrote:
+>
+> The SECURE_AVIC_CONTROL MSR holds the GPA of the guest APIC backing
+> page and bitfields to control enablement of Secure AVIC and NMI by
+> guest vCPUs. This MSR is populated by the guest and the hypervisor
+> should not intercept it. A #VC exception will be generated otherwise.
+> If this occurs and Secure AVIC is enabled, terminate guest execution.
+>
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
 
-Before the nolibc test Makefile required the availability of
-"-mstack-protector-guard=global" to enable stackprotectors.
-While this flag makes sure that the correct mode is available it doesn't
-work where the correct mode is the only supported one and therefore the
-flag is not implemented.
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
-Switch to a more dynamic probing mechanism.
-This correctly enables stack protectors for mips, loongarch and m68k.
-
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/testing/selftests/nolibc/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/nolibc/Makefile b/tools/testing/selftests/nolibc/Makefile
-index 94176ffe46463548cc9bc787933b6cefa83d6502..853f3a846d4c0fb187922d3063ec3d1a9a30ae46 100644
---- a/tools/testing/selftests/nolibc/Makefile
-+++ b/tools/testing/selftests/nolibc/Makefile
-@@ -195,7 +195,10 @@ CFLAGS_sparc32 = $(call cc-option,-m32)
- ifeq ($(origin XARCH),command line)
- CFLAGS_XARCH = $(CFLAGS_$(XARCH))
- endif
--CFLAGS_STACKPROTECTOR ?= $(call cc-option,-mstack-protector-guard=global $(call cc-option,-fstack-protector-all))
-+_CFLAGS_STACKPROTECTOR = $(call cc-option,-fstack-protector-all) $(call cc-option,-mstack-protector-guard=global)
-+CFLAGS_STACKPROTECTOR ?= $(call try-run, \
-+	echo 'void foo(void) {}' | $(CC) -x c - -o - -S $(_CFLAGS_STACKPROTECTOR) | grep -q __stack_chk_guard, \
-+	$(_CFLAGS_STACKPROTECTOR))
- CFLAGS_SANITIZER ?= $(call cc-option,-fsanitize=undefined -fsanitize-trap=all)
- CFLAGS  ?= -Os -fno-ident -fno-asynchronous-unwind-tables -std=c89 -W -Wall -Wextra \
- 		$(call cc-option,-fno-stack-protector) $(call cc-option,-Wmissing-prototypes) \
-
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250530-nolibc-stackprotector-robust-77c9f55a3921
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+--=20
+Thanks
+Tianyu Lan
 
