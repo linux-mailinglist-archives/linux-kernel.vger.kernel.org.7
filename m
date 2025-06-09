@@ -1,195 +1,176 @@
-Return-Path: <linux-kernel+bounces-678172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF07AD251B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9526AD2520
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 19:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F111890D6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33BF3B0779
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574AE21CA0D;
-	Mon,  9 Jun 2025 17:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E6221C19F;
+	Mon,  9 Jun 2025 17:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UxFchhEB"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs0frPTP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2578021B8E7
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 17:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EBE215766;
+	Mon,  9 Jun 2025 17:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749490761; cv=none; b=fjoeikzX8tEjTthmC3Q8SwQZmPNqXyoDneupSmDiBHYgBizGd0dKRG4NmHhzee8IOdVW6cUhVLBHKCPEEHYTPlLkyukpm2PZjdxUvMHo4M2bSysbVEIU1Bj+UJ0IMZqyNGKAwU7c3HAP4S70NZn1RcoDovRguXv4QUlQMKRtdnM=
+	t=1749490793; cv=none; b=c2w80bz9Jpg5TPyBYyRGFBsC9ZRgxJZMNxFjo3poevE9RXrt2/qyU6lTpo+DN3PbGUgsXgdcgM651mf87+2RAXr+ObY/DczII+wvFo+kNZIoRCI9rakjkPARgH68I6bqYUsjq6xZF5ZNaEV+ZGpATiX89ZnXCpmEaE4Q7K+4ty8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749490761; c=relaxed/simple;
-	bh=vDEZLmFiWUgAEhhMnpPxC2x5ptegpxqcBtIXF4EgUvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sTt2fEwU9ZtuxdgJnCZAnA83f9BZuE6SBYXJUCwdtGEwtdtFsYAuW6HyIRwcS+dk9U4C8QUcy9aKuvzXfYDCj/prWg4NwC04EhUP4Qn9Gxrsai+/yzZjIi214lkojGtRlGSJ9yfex1nDx1fzx1hPqExZRfYV3R+Sz31bDpVH3o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UxFchhEB; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2357c61cda7so13225ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 10:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749490759; x=1750095559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9RRpRkvuNJy3cXkOhH8biChoDOFuxh8lZ/u2fpQqLzg=;
-        b=UxFchhEB/EOTc0w70KhZaY15W09uYu6jXZOdr2ase+hIfTCPnYc/ZCm8tpKuJPWiOY
-         xZJfxn+61Ida+6G3EvB/BAOPBOyt9hI4GgbeyzuBG9TCxdpv0yWiNx+10mK38OG8e0YT
-         njTgmMc4zguYLqaxNenGblIq6z0Z8wqh9hm59Kfbjy+dkQUMe6KED7usY9RvlBxgF+3i
-         pCE1id1SQeHxgEQygp3chDNtfyiTg+MIK2RFk9nxvVh6TbdJiCQv8iz16M15ZPipF32q
-         Gs6Q9ysEJjPpaVmI39FOiyCGGRz2hKEMgb7wWg+9x67ahJ6X0DcMqFebPc/FxvZhcJM1
-         zfTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749490759; x=1750095559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9RRpRkvuNJy3cXkOhH8biChoDOFuxh8lZ/u2fpQqLzg=;
-        b=b3fKU55QXDBySJFLos30gLXPHTD4DAhx2le+Ey166KeqyJonWUwDt03FmTIl8t2P/h
-         CUlsHaibYJfWjexuPQKzJytxymLxo6TzCCpSJWuLdv1BULHco8NsTjXNeyN6rYVluUl4
-         3pvVEr8n3G6mjCRH8wYcyE/n7TSWeLPHvAlnFcc4YEv1CTz6LXQOz/1eCBz2swgA5zwg
-         XQ4oB6cJyWhIj/4A0T3k9zzCsd3qjjDwZ4DNcWWQKH3pP0mT7NER3meY0/PhHinLTLD0
-         mt3pjqbqsFCqmBKF6iL5FUacz/CZuxbA0hxnycFxkcv3P+uSeeOq/lfwj7NgO3lv+c7J
-         rkuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF+F7T5nFdjFI5dbuNfiJSn61o6L9ai8QMidymw0V2SRtR+J2mf5b6T8rw0KGjesgffm8tLVv7VNdWZaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIEIzKsrImM8RJCFjgQskt8kYpi+xXDcUXZmj61SvUGSCI+qgA
-	AAfGy4DSQ28GGZF1vdsdwTA5aOneuQOd5wwX5D+FuWRK6WyiRNwEc2NnQzMtknwj6ngek0Yz7aP
-	JxbmlHWUwQtVI7Re8WzFhteKgtW5dG1KCUPXwD5ejgyQlBdrjj/Q9SCbM
-X-Gm-Gg: ASbGncsacfkj53t8QrBpaUPiQI0wsfeuO6r3zRke6f0S0bnClYxv+OvnL5QQf461t+Q
-	44h/b9tVeN0EnHa8zl5McCAI8x3D1Rol/OgPBwhswYhV3qs87s+L5RTw3/GZtCXKs/KcP8j6/w8
-	PWEdMUHPte/endgoFMasB6Dz547o6xxVbVjfcMyiXjGjrIyK7zuNe0qpt5yppT6tJmdkQHCTK8u
-	Q==
-X-Google-Smtp-Source: AGHT+IEvrq24XpltBFWvdSIlKpCIc8JCZdMNJ6F/M800m9IOuRhKavTYagOECC3DsNK5G3lKUSM8nYe/B6o3T3jdn9Q=
-X-Received: by 2002:a17:902:e745:b0:231:ed22:e230 with SMTP id
- d9443c01a7336-23613de3742mr5147245ad.15.1749490759104; Mon, 09 Jun 2025
- 10:39:19 -0700 (PDT)
+	s=arc-20240116; t=1749490793; c=relaxed/simple;
+	bh=4abGnwIone7ePw6F2MTDhlNwDOoT+2r0m9g9eAvFQjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mu8M8Fc+e986vdX881akn7hHTL6IwmHo89ykGFL/75kwcZbMIl/drMYw3nAeq6SHLizS0QNFImB+HXm1odCUsk1VyhOicE7NmPysDjidnxLB/YDQiNxemfmDDC2SIdnE2P/iaqhFZw10HTl6cE1TNZz0Ruh1Ewfz8L7deePzEHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs0frPTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D174C4CEEB;
+	Mon,  9 Jun 2025 17:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749490793;
+	bh=4abGnwIone7ePw6F2MTDhlNwDOoT+2r0m9g9eAvFQjM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Bs0frPTPUzeZhB7xcJqML+/23l1Ul7E/PDG+1Q/XInOXY7+kxsojg4yN4/y/+mD+U
+	 H4qUTUVk8JnAUF4DNo8sc37HhatzjVAzUfl+mD750DVNwouUjaj1X1BPDAMQbR2HOr
+	 0Z+GtLzlqH4SNdDn1inSP68Siu4fsQs4lmWsqdsQtiEftPu1c3I0MI5FLdkmTPhu6f
+	 vX7dZamIC90ys2XNVKRk1Uy5V0mcy2+3Zn76texuh2+ZSXMyMkwPMFwg5KDXC0wTaJ
+	 EZHvznruqVgLLmKA6tASDKl8on4Tk35ZkXnMk23cX37E71LjryUJxOiV2EeSG9unf5
+	 SzIVw0PcUHiGQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id E5CB8CE0B6C; Mon,  9 Jun 2025 10:39:52 -0700 (PDT)
+Date: Mon, 9 Jun 2025 10:39:52 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] tracing: Use queue_rcu_work() to free filters
+Message-ID: <0ee99715-7877-4d94-9ae5-5b0e23f34aae@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250609131732.04fd303b@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609043225.77229-1-byungchul@sk.com> <20250609043225.77229-10-byungchul@sk.com>
-In-Reply-To: <20250609043225.77229-10-byungchul@sk.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 9 Jun 2025 10:39:06 -0700
-X-Gm-Features: AX0GCFuAdxMyfuOpDJOl1NBEK5X2zXvXF5ManUgjd3SO6IAFQ752DFSmiJ8__HE
-Message-ID: <CAHS8izMLnyJNnK-K-kR1cSt0LOaZ5iGSYsM2R=QhTQDSjCm8pg@mail.gmail.com>
-Subject: Re: [PATCH net-next 9/9] page_pool: access ->pp_magic through struct
- netmem_desc in page_pool_page_is_pp()
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609131732.04fd303b@gandalf.local.home>
 
-On Sun, Jun 8, 2025 at 9:32=E2=80=AFPM Byungchul Park <byungchul@sk.com> wr=
-ote:
->
-> To simplify struct page, the effort to separate its own descriptor from
-> struct page is required and the work for page pool is on going.
->
-> To achieve that, all the code should avoid directly accessing page pool
-> members of struct page.
->
-> Access ->pp_magic through struct netmem_desc instead of directly
-> accessing it through struct page in page_pool_page_is_pp().  Plus, move
-> page_pool_page_is_pp() from mm.h to netmem.h to use struct netmem_desc
-> without header dependency issue.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+On Mon, Jun 09, 2025 at 01:17:32PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Freeing of filters requires to wait for both an RCU grace period as well as
+> a RCU task trace wait period after they have been detached from their
+> lists. The trace task period can be quite large so the freeing of the
+> filters was moved to use the call_rcu*() routines. The problem with that is
+> that the callback functions of call_rcu*() is done from a soft irq and can
+> cause latencies if the callback takes a bit of time.
+> 
+> The filters are freed per event in a system and the syscalls system
+> contains an event per system call, which can be over 700 events. Freeing 700
+> filters in a bottom half is undesirable.
+> 
+> Instead, move the freeing to use queue_rcu_work() which is done in task
+> context.
+> 
+> Link: https://lore.kernel.org/all/9a2f0cd0-1561-4206-8966-f93ccd25927f@paulmck-laptop/
+> 
+> Fixes: a9d0aab5eb33 ("tracing: Fix regression of filter waiting a long time on RCU synchronization")
+> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+Thank you, and looks good to me.
+
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+
 > ---
->  include/linux/mm.h   | 12 ------------
->  include/net/netmem.h | 14 ++++++++++++++
->  mm/page_alloc.c      |  1 +
->  3 files changed, 15 insertions(+), 12 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index e51dba8398f7..f23560853447 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4311,16 +4311,4 @@ int arch_lock_shadow_stack_status(struct task_stru=
-ct *t, unsigned long status);
->   */
->  #define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
->
-> -#ifdef CONFIG_PAGE_POOL
-> -static inline bool page_pool_page_is_pp(struct page *page)
-> -{
-> -       return (page->pp_magic & PP_MAGIC_MASK) =3D=3D PP_SIGNATURE;
-> -}
-> -#else
-> -static inline bool page_pool_page_is_pp(struct page *page)
-> -{
-> -       return false;
-> -}
-> -#endif
+> Note, I added a Fixes tag but not a stable tag as this is a nice-to-have
+> but doesn't hit the level of critical fix to backport or add to an rc
+> release. If someone wants to back port it, feel free.
+> 
+>  kernel/trace/trace_events_filter.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+> index ea8b364b6818..b6fe8167ef01 100644
+> --- a/kernel/trace/trace_events_filter.c
+> +++ b/kernel/trace/trace_events_filter.c
+> @@ -1344,13 +1344,14 @@ struct filter_list {
+>  
+>  struct filter_head {
+>  	struct list_head	list;
+> -	struct rcu_head		rcu;
+> +	union {
+> +		struct rcu_head		rcu;
+> +		struct rcu_work		rwork;
+> +	};
+>  };
+>  
 > -
->  #endif /* _LINUX_MM_H */
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index d84ab624b489..8f354ae7d5c3 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -56,6 +56,20 @@ NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
->   */
->  static_assert(sizeof(struct netmem_desc) <=3D offsetof(struct page, _ref=
-count));
->
-> +#ifdef CONFIG_PAGE_POOL
-> +static inline bool page_pool_page_is_pp(struct page *page)
+> -static void free_filter_list(struct rcu_head *rhp)
+> +static void free_filter_list(struct filter_head *filter_list)
+>  {
+> -	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
+>  	struct filter_list *filter_item, *tmp;
+>  
+>  	list_for_each_entry_safe(filter_item, tmp, &filter_list->list, list) {
+> @@ -1361,9 +1362,20 @@ static void free_filter_list(struct rcu_head *rhp)
+>  	kfree(filter_list);
+>  }
+>  
+> +static void free_filter_list_work(struct work_struct *work)
 > +{
-> +       struct netmem_desc *desc =3D (struct netmem_desc *)page;
+> +	struct filter_head *filter_list;
 > +
-> +       return (desc->pp_magic & PP_MAGIC_MASK) =3D=3D PP_SIGNATURE;
+> +	filter_list = container_of(to_rcu_work(work), struct filter_head, rwork);
+> +	free_filter_list(filter_list);
 > +}
-> +#else
-> +static inline bool page_pool_page_is_pp(struct page *page)
-> +{
-> +       return false;
-> +}
-> +#endif
 > +
->  /* net_iov */
->
->  DECLARE_STATIC_KEY_FALSE(page_pool_mem_providers);
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 4f29e393f6af..be0752c0ac92 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -55,6 +55,7 @@
->  #include <linux/delayacct.h>
->  #include <linux/cacheinfo.h>
->  #include <linux/pgalloc_tag.h>
-> +#include <net/netmem.h>
-
-mm files starting to include netmem.h is a bit interesting. I did not
-expect/want dependencies outside of net. If anything the netmem stuff
-include linux/mm.h
-
-But I don't have a butter suggestion here and I don't see any huge
-problems with this off the top of my head, so
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-
-Lets see if Jakub objects though. To be fair, we did put the netmem
-private stuff in net/core/netmem_priv.h, so technically
-include/net/netmem.h should be exportable indeed.
-
---=20
-Thanks,
-Mina
+>  static void free_filter_list_tasks(struct rcu_head *rhp)
+>  {
+> -	call_rcu(rhp, free_filter_list);
+> +	struct filter_head *filter_list = container_of(rhp, struct filter_head, rcu);
+> +
+> +	INIT_RCU_WORK(&filter_list->rwork, free_filter_list_work);
+> +	queue_rcu_work(system_wq, &filter_list->rwork);
+>  }
+>  
+>  /*
+> @@ -1462,7 +1474,7 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+>  	tracepoint_synchronize_unregister();
+>  
+>  	if (head)
+> -		free_filter_list(&head->rcu);
+> +		free_filter_list(head);
+>  
+>  	list_for_each_entry(file, &tr->events, list) {
+>  		if (file->system != dir || !file->filter)
+> @@ -2307,7 +2319,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+>  	return 0;
+>   fail:
+>  	/* No call succeeded */
+> -	free_filter_list(&filter_list->rcu);
+> +	free_filter_list(filter_list);
+>  	parse_error(pe, FILT_ERR_BAD_SUBSYS_FILTER, 0);
+>  	return -EINVAL;
+>   fail_mem:
+> @@ -2317,7 +2329,7 @@ static int process_system_preds(struct trace_subsystem_dir *dir,
+>  	if (!fail)
+>  		delay_free_filter(filter_list);
+>  	else
+> -		free_filter_list(&filter_list->rcu);
+> +		free_filter_list(filter_list);
+>  
+>  	return -ENOMEM;
+>  }
+> -- 
+> 2.47.2
+> 
 
