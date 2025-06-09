@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-677795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DB1AD1F4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19930AD2027
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B1543AE98A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216613B0008
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E178A254AF0;
-	Mon,  9 Jun 2025 13:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED4A25DAFC;
+	Mon,  9 Jun 2025 13:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Zf1/luDr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Lt5N6aut"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A1613B788;
-	Mon,  9 Jun 2025 13:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405CF25D213;
+	Mon,  9 Jun 2025 13:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476670; cv=none; b=nZflIgvxg21xMtZFB8sXLFYDviMF3XJ0gHGhiN4fYhkQepYCucbJqSFczaOmqE4kCB5hWhvREfJhnxtWksaYib9+9mhUaktIbZYF0xrAqEhLfzuJ/6lzDqkWjRl/P8P5LhjfbrRvwM8RcJE8xbKoCgxKfUrgpScBiZwTDQRLcoQ=
+	t=1749476909; cv=none; b=TK67SVwesOgivKws6Z4nlBvw1Mehh/uFWgRLhsMRuBKOFGCkfYIMNwsUd4xxU9Tv2JHgf97k47CL5Sd06m7RMJ/O1a8lC7gTtDLNEJlShX5+hpwmh0nwBdpFEQrFDQvjq+T2Ti2JeMsA+0GZngSomE+/+n+0N4BA7yPgB4L8DWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476670; c=relaxed/simple;
-	bh=5BuPaG5TR3ib8h0lahXBVyhI0uc/Ra4ZLBsfgLQLIkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6lBaCZxnkECwoC9p0CfSH4Vw8wM4dVZ7uk2tTQuXUmr3mc7uno0CbDsWq6MhjA5LoFkUjjWrwMPIFV2VjbZwC5ZPFKTXa53ho8RtMkQgDP9YZ+/L3uaJZQIchySBKJ98EGRKovFmOeth0wv3YdOAcmKcQ0W+sPreaqCm9n3psY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Zf1/luDr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A99C4CEF2;
-	Mon,  9 Jun 2025 13:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1749476669;
-	bh=5BuPaG5TR3ib8h0lahXBVyhI0uc/Ra4ZLBsfgLQLIkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zf1/luDrz2L0Gyf0p39lf0hyPc98ionSghj2F7/wzJRtJA/lP9+VeIx/AtSLbnpuP
-	 u+ccMeJumCkrFDcuSLIGwNk8PP/wgmL123ity58fns9iLPbNw28rdNsoOakmpiT+9k
-	 QaHHuNQye61PTjp/00Tmk1mVAGN0wvB8tIujW2sg=
-Date: Mon, 9 Jun 2025 15:44:19 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: arnd@arndb.de, andriy.shevchenko@linux.intel.com,
-	benjamin.larsson@genexis.eu, heikki.krogerus@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org,
-	jkeeping@inmusicbrands.com, john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	markus.mayer@linaro.org, matt.porter@linaro.org,
-	namcao@linutronix.de, paulmck@kernel.org, pmladek@suse.com,
-	schnelle@linux.ibm.com, sunilvl@ventanamicro.com,
-	tim.kryger@linaro.org, stable@vger.kernel.org
-Subject: Re: [External] Re: [PATCH v8 1/4] serial: 8250: fix panic due to
- PSLVERR
-Message-ID: <2025060925-curator-stubbed-bfb4@gregkh>
-References: <20250609074348.54899-1-cuiyunhui@bytedance.com>
- <2025060913-suave-riveter-66d0@gregkh>
- <CAEEQ3wmaiwd4TZfTa0YrLcKui9fSNJT0fR3j1=H1EK0T3npfyw@mail.gmail.com>
+	s=arc-20240116; t=1749476909; c=relaxed/simple;
+	bh=4qugy7Gy5U65rUpSrg/izCrdxe0g4Ueqlc2us62UIBk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=nqI44uIy1AGYP42ts+/E8XN7udp6IbDaw2j2RGab3N32u49+F91l+0rT133rwC2lnMgNBGwsfqQ/OMNsf1DzSp1EX8Iq+Xd/qlU25wOGKh3CkN6xFBzOjOKMiQg551LUkMJJxFPEF2E6ffxSBd4fiWAnv34w6uYpVavdUs1uce8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Lt5N6aut; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559COvv8017946;
+	Mon, 9 Jun 2025 15:48:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=AtOGsJ73mV0jL0X8jvB+hS
+	JgoFR3MN4h96wOeayj0zU=; b=Lt5N6autJxn0o+t4AIRdriYKSZT8Ppeh7f0hWf
+	rn6hLFPvGMjs49Ie8DPpvSqhfrrmfJ3IB1QyLcoWm45ka9UeM4u+U3EePCcTlKXM
+	GsBnHJRQevAbr4qXZKm5Sbdo0xMCLjMI6Q/BLh5HXRlClDoM/YKy/kQxdAKM8qRp
+	CoEMnyNi0BFad9BjxU9Uhd2M3wfELn+shwUbnCNemgPtOe/2k6H9U8Tx20gTxjhg
+	VYCma3D4Jum0cg8xEUQsxRJyDQ0no6fE/zlWJFUMGxflNvjY8xdDKnn4jtA1cRUq
+	iFQexnz684Fb8QiZ/E4SragB85HeRADjQtOxs/opH53zWDPg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs2fxvn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Jun 2025 15:48:13 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 246A8400CA;
+	Mon,  9 Jun 2025 15:47:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1E628A55953;
+	Mon,  9 Jun 2025 15:46:30 +0200 (CEST)
+Received: from localhost (10.130.73.167) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Jun
+ 2025 15:46:29 +0200
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Subject: [PATCH 0/4] media: i2c: vd55g1: Miscellaneous fixes
+Date: Mon, 9 Jun 2025 15:46:20 +0200
+Message-ID: <20250609-fix_vd55g1-v1-0-594f1134e3fb@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEEQ3wmaiwd4TZfTa0YrLcKui9fSNJT0fR3j1=H1EK0T3npfyw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKzlRmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMwNL3bTMiviyFFPTdENdC+NUSyMTMxOLFAtTJaCGgqJUoCzYsOjY2lo
+ Az5h8plwAAAA=
+X-Change-ID: 20250609-fix_vd55g1-83e924648d85
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Sylvain Petinot
+	<sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin
+ Mugnier <benjamin.mugnier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
 
-On Mon, Jun 09, 2025 at 09:18:02PM +0800, yunhui cui wrote:
-> Hi Greg,
-> 
-> On Mon, Jun 9, 2025 at 6:10 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Jun 09, 2025 at 03:43:45PM +0800, Yunhui Cui wrote:
-> > > When the PSLVERR_RESP_EN parameter is set to 1, the device generates
-> > > an error response if an attempt is made to read an empty RBR (Receive
-> > > Buffer Register) while the FIFO is enabled.
-> > >
-> > > In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
-> > > UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
-> > > dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
-> > > function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
-> > > Execution proceeds to the serial_port_in(port, UART_RX).
-> > > This satisfies the PSLVERR trigger condition.
-> > >
-> > > When another CPU (e.g., using printk()) is accessing the UART (UART
-> > > is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) ==
-> > > (lcr & ~UART_LCR_SPAR) in dw8250_check_lcr(), causing it to enter
-> > > dw8250_force_idle().
-> > >
-> > > Put serial_port_out(port, UART_LCR, UART_LCR_WLEN8) under the port->lock
-> > > to fix this issue.
-> > >
-> > > Panic backtrace:
-> > > [    0.442336] Oops - unknown exception [#1]
-> > > [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
-> > > [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
-> > > ...
-> > > [    0.442416] console_on_rootfs+0x26/0x70
-> > >
-> > > Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaround")
-> > > Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/T/
-> > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > Cc: stable@vger.kernel.org
-> > > ---
-> > >  drivers/tty/serial/8250/8250_port.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> > > index 6d7b8c4667c9c..07fe818dffa34 100644
-> > > --- a/drivers/tty/serial/8250/8250_port.c
-> > > +++ b/drivers/tty/serial/8250/8250_port.c
-> > > @@ -2376,9 +2376,10 @@ int serial8250_do_startup(struct uart_port *port)
-> > >       /*
-> > >        * Now, initialize the UART
-> > >        */
-> > > -     serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> > >
-> > >       uart_port_lock_irqsave(port, &flags);
-> > > +     serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> > > +
-> > >       if (up->port.flags & UPF_FOURPORT) {
-> > >               if (!up->port.irq)
-> > >                       up->port.mctrl |= TIOCM_OUT1;
-> > > --
-> > > 2.39.5
-> > >
-> > >
-> >
-> > Hi,
-> >
-> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> > a patch that has triggered this response.  He used to manually respond
-> > to these common problems, but in order to save his sanity (he kept
-> > writing the same thing over and over, yet to different people), I was
-> > created.  Hopefully you will not take offence and will fix the problem
-> > in your patch and resubmit it so that it can be accepted into the Linux
-> > kernel tree.
-> >
-> > You are receiving this message because of the following common error(s)
-> > as indicated below:
-> >
-> > - This looks like a new version of a previously submitted patch, but you
-> >   did not list below the --- line any changes from the previous version.
-> >   Please read the section entitled "The canonical patch format" in the
-> >   kernel file, Documentation/process/submitting-patches.rst for what
-> >   needs to be done here to properly describe this.
-> 
-> Can this issue reported by the bot be ignored?
+This series provides small fixes and style improvements to the vd55g1
+driver.
+Nothing fancy really, just to keep everything up to date.
 
-No, why?  How do we know what changed from previous versions?  Otherwise
-we assume you just ignored previous review comments?
+Signed-off-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+---
+Benjamin Mugnier (4):
+      media: i2c: vd55g1: Fix RATE macros not being expressed in bps
+      media: i2c: vd55g1: Fix return code in vd55g1_enable_streams error path
+      media: i2c: vd55g1: Setup sensor external clock before patching
+      media: i2c: vd55g1: Use first index of mbus codes array as default
 
-This series took at least 8 tries for some reason, might as well
-document it, right?  :)
+ drivers/media/i2c/vd55g1.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+---
+base-commit: 5e1ff2314797bf53636468a97719a8222deca9ae
+change-id: 20250609-fix_vd55g1-83e924648d85
 
-thanks,
+Best regards,
+-- 
+Benjamin Mugnier <benjamin.mugnier@foss.st.com>
 
-greg k-h
 
