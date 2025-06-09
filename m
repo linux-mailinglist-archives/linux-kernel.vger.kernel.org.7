@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-677814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE7CAD202B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:54:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730D7AD202E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEC397A71A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:53:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D6218903E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3844E25E44B;
-	Mon,  9 Jun 2025 13:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CADE2609C4;
+	Mon,  9 Jun 2025 13:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="gKkTIuC7"
-Received: from esa4.hc555-34.eu.iphmx.com (esa4.hc555-34.eu.iphmx.com [207.54.77.171])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="TSRcAYQC"
+Received: from esa3.hc555-34.eu.iphmx.com (esa3.hc555-34.eu.iphmx.com [207.54.77.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F71125A626;
-	Mon,  9 Jun 2025 13:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.77.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7C1253944;
+	Mon,  9 Jun 2025 13:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.77.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749477076; cv=none; b=N3wmU0WrJWAdkESEmYngcnGOqI+1t45cW7Jswz4hjTmx1oHQ0EqA43nM1gWlKaLIyKmI/uGQLWHhmb6LxAaDCXFVJdgCxpal1LCIWO0UVIwCsTXym2KwcJL2bLcDN7Noo0KVQy4Ulnj/sEdtpX7JQgKpJ04+4MuuGUynNMOqEkM=
+	t=1749476953; cv=none; b=j4vAcAodbfIwxRWcutBxQ9Hql9TedKuls9fYC8e7/PASsB+nbEWW8v1bPT/Q5IewxUYGWB2p2UNuwhQDTc5OT9NLfkbkxlEtXljYiN4rHScKp6RvaYK2Z613oSGFTCc/4A2Rus0V+KuDqWUO2RZ6dj7aN5jsboYepp0/U3aAptQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749477076; c=relaxed/simple;
-	bh=quT+zdVX2EifVoeKNBY4FQXcJ7pHShHmcCxaW2+fMIg=;
+	s=arc-20240116; t=1749476953; c=relaxed/simple;
+	bh=S4SlciKZEDkvxxA53sOZjgI7BGGyzxMFgS4kqW029qc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hh6oBkMtxoM2iaBx6/JrKWrHEza/jr3axzI5CTEKAmhTeEj7zC1cFjJkBhJ8lWND9He/tx8Z6iBStJ/xtWttADxhOWYz7qtDxGY5Rr24GgZRafp9d0EGhAmBJxQgkM1VWCuMaCUqb/pHU9K2zDCyKhimX9LssAww0pTY2puOL6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=gKkTIuC7 reason="key not found in DNS"; arc=none smtp.client-ip=207.54.77.171
+	 MIME-Version; b=QU/YcWNeYwwtIFMAkMcz5L+qnpE5l6luvj7E7PP/HzmBjwIf3utMCOdLV5Vzqe0XrfXgI9WxlxHXkBhiBxn3jXmOZm4UnfW24XOKUfvt/2vxAvKlt4GF8s/TpQgCRnFgrpt1m+iCtDwLH4X9wm+55ne77vWkHOtbZQLePUnA7GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=TSRcAYQC reason="key not found in DNS"; arc=none smtp.client-ip=207.54.77.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobileye.com
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=mobileye.com; i=@mobileye.com; q=dns/txt; s=MoEyIP;
-  t=1749477074; x=1781013074;
+  t=1749476950; x=1781012950;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=quT+zdVX2EifVoeKNBY4FQXcJ7pHShHmcCxaW2+fMIg=;
-  b=gKkTIuC7nHddJTAyAQTrdqLlckfMfr7hifQqXbgvu68YuHDA2xFbb3pW
-   wmoUAOGTvLUZMUwJNwbeCneVbg9X1aCc/l4HiE4E0Uga4b0RzuuhYbdrB
-   IhRRu/OomoyZ7vPansPr8YPhoPB6iVvKe6S2PuLCOujPuFveHNwpQMKXa
-   qlex7PwdPI9e7XFiEOKCHQOP92+20SKOc1fRTsl9dNlw2NmiJswTG8oAT
-   0cAB9OFxnnikneF6IhJyOhuhxAlZ6l2tj+GpIWfTustzIuwoyTK9lLlCB
-   YA1Tb/0Qzh2+8BRTyaNnOwFRlwcfVWlHH2EsJOj96VRjK9BP9I+BAdPCk
-   g==;
-X-CSE-ConnectionGUID: jiJ3+IoTQGWyA+Syk7PYXA==
-X-CSE-MsgGUID: F2xqNTbSSsqvt5IFS6szQQ==
+  bh=S4SlciKZEDkvxxA53sOZjgI7BGGyzxMFgS4kqW029qc=;
+  b=TSRcAYQCbruyGjMvgPbs7oeI31Qs2ScB6v4ZI9I/YM4u9gT2N/ZejgVS
+   lbe+1bUpCSTu8IOeEiUvu6L6TIuboS9iAkI48sGRRnx38ZSyaJ3Gq4HnT
+   CTETh2A06uRGH7fg6ZXUvPeJ0zpEMW+xBaKg+sufXhpnzqPYnIDvt7xmU
+   wcTDvBzUXi3kpU50wcRZZpWux5FSp8XBlt1roIRTdrFy/lL4Rjhgloay6
+   YMWdbw9GPf6Zd8a1wrHYihrkbmDp81H8ypNEA9sKWK6otjOcXJHMxUo/D
+   VpbnNNvKiLDHekCp3jzSDkT4vTq4nIQuw/vo6xxK37n96x+B46OuBzVmG
+   A==;
+X-CSE-ConnectionGUID: 77rEMxDSR6CSt0vSI5PimA==
+X-CSE-MsgGUID: qFo4EjTmT9uLjsefXHmH7Q==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from unknown (HELO ces03_data.me-corp.lan) ([146.255.191.134])
-  by esa4.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 16:47:59 +0300
-X-CSE-ConnectionGUID: A36+pBebRuCoXNOEMTYJuQ==
-X-CSE-MsgGUID: lxlF6r/DTae52yps/JiiTg==
+Received: from unknown (HELO ces02_data.me-corp.lan) ([146.255.191.134])
+  by esa3.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 16:48:00 +0300
+X-CSE-ConnectionGUID: MmBbESj0RKu5qeYrABKKYA==
+X-CSE-MsgGUID: sLOGAL7lTY+pxthLsT5BwQ==
 Received: from unknown (HELO epgd071.me-corp.lan) ([10.154.54.6])
-  by ces03_data.me-corp.lan with SMTP; 09 Jun 2025 16:47:56 +0300
-Received: by epgd071.me-corp.lan (sSMTP sendmail emulation); Mon, 09 Jun 2025 16:47:57 +0300
+  by ces02_data.me-corp.lan with SMTP; 09 Jun 2025 16:47:57 +0300
+Received: by epgd071.me-corp.lan (sSMTP sendmail emulation); Mon, 09 Jun 2025 16:47:58 +0300
 From: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Rob Herring <robh@kernel.org>,
@@ -74,9 +74,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	sophgo@lists.linux.dev,
 	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Subject: [PATCH v1 1/7] riscv: helper to parse hart index
-Date: Mon,  9 Jun 2025 16:47:43 +0300
-Message-ID: <20250609134749.1453835-2-vladimir.kondratiev@mobileye.com>
+Subject: [PATCH v1 2/7] irqchip: riscv aplic: use riscv_get_hart_index()
+Date: Mon,  9 Jun 2025 16:47:44 +0300
+Message-ID: <20250609134749.1453835-3-vladimir.kondratiev@mobileye.com>
 In-Reply-To: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
 References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
 Precedence: bulk
@@ -85,103 +85,50 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-RISC-V APLIC specification defines "hart index" in [1]
-And similar definitions found for ACLINT in [2]
+Use global helper function instead of the local
+implementation
 
-Quote from [1]:
-
-Within a given interrupt domain, each of the domain’s harts has a unique
-index number in the range 0 to 2^14 − 1 (= 16,383). The index number a
-domain associates with a hart may or may not have any relationship to the
-unique hart identifier (“hart ID”) that the RISC-V Privileged
-Architecture assigns to the hart. Two different interrupt domains may
-employ entirely different index numbers for the same set of harts.
-
-Further, [1] says in "4.5 Memory-mapped control region for an
-interrupt domain":
-
-The array of IDC structures may include some for potential hart index
-numbers that are not actual hart index numbers in the domain.
-For example, the first IDC structure is always for hart index 0, but 0 is
-not necessarily a valid index number for any hart in the domain.
-
-Support arbitrary hart indices specified in an optional property
-"riscv,hart-indexes" which is specified as an array of u32 elements, one
-per interrupt target, listing hart indexes in the same order as in
-"interrupts-extended". If this property is not specified, fallback to use
-logical hart indices within the domain.
-
-If property not exist, fall back to logical hart indexes
-
-Link: https://github.com/riscv/riscv-aia [1]
-Link: https://github.com/riscvarchive/riscv-aclint [2]
 Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
 ---
- arch/riscv/include/asm/irq.h |  2 ++
- arch/riscv/kernel/irq.c      | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ drivers/irqchip/irq-riscv-aplic-direct.c | 16 +---------------
+ 1 file changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
-index 7b038f3b7cb0..59c975f750c9 100644
---- a/arch/riscv/include/asm/irq.h
-+++ b/arch/riscv/include/asm/irq.h
-@@ -22,6 +22,8 @@ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu);
- void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
- 
- struct fwnode_handle *riscv_get_intc_hwnode(void);
-+int riscv_get_hart_index(struct fwnode_handle *fwnode, u32 logical_index,
-+			 u32 *hart_index);
- 
- #ifdef CONFIG_ACPI
- 
-diff --git a/arch/riscv/kernel/irq.c b/arch/riscv/kernel/irq.c
-index 9ceda02507ca..efdf505bb776 100644
---- a/arch/riscv/kernel/irq.c
-+++ b/arch/riscv/kernel/irq.c
-@@ -32,6 +32,40 @@ struct fwnode_handle *riscv_get_intc_hwnode(void)
+diff --git a/drivers/irqchip/irq-riscv-aplic-direct.c b/drivers/irqchip/irq-riscv-aplic-direct.c
+index 205ad61d15e4..c2a75bf3d20c 100644
+--- a/drivers/irqchip/irq-riscv-aplic-direct.c
++++ b/drivers/irqchip/irq-riscv-aplic-direct.c
+@@ -219,20 +219,6 @@ static int aplic_direct_parse_parent_hwirq(struct device *dev, u32 index,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(riscv_get_intc_hwnode);
  
-+/**
-+ * riscv_get_hart_index() - get hart index for interrupt delivery
-+ * @fwnode: interrupt controller node
-+ * @logical_index: index within the "interrupts-extended" property
-+ * @hart_index: filled with the hart index to use
-+ *
-+ * Risc-V uses term "hart index" for its interrupt controllers, for the
-+ * purpose of the interrupt routing to destination harts.
-+ * It may be arbitrary numbers assigned to each destination hart in context
-+ * of the particular interrupt domain.
-+ *
-+ * These numbers encoded in the optional property "riscv,hart-indexes"
-+ * that should contain hart index for each interrupt destination in the same
-+ * order as in the "interrupts-extended" property. If this property
-+ * not exist, it assumed equal to the logical index, i.e. index within the
-+ * "interrupts-extended" property.
-+ *
-+ * Return: error code
-+ */
-+int riscv_get_hart_index(struct fwnode_handle *fwnode, u32 logical_index,
-+			 u32 *hart_index)
-+{
-+	static const char *prop_hart_index = "riscv,hart-indexes";
-+	struct device_node *np = to_of_node(fwnode);
-+
-+	if (!np || !of_property_present(np, prop_hart_index)) {
-+		*hart_index = logical_index;
-+		return 0;
-+	}
-+
-+	return of_property_read_u32_index(np, prop_hart_index,
-+					  logical_index, hart_index);
-+}
-+
- #ifdef CONFIG_IRQ_STACKS
- #include <asm/irq_stack.h>
+-static int aplic_direct_get_hart_index(struct device *dev, u32 logical_index,
+-				       u32 *hart_index)
+-{
+-	const char *prop_hart_index = "riscv,hart-indexes";
+-	struct device_node *np = to_of_node(dev->fwnode);
+-
+-	if (!np || !of_property_present(np, prop_hart_index)) {
+-		*hart_index = logical_index;
+-		return 0;
+-	}
+-
+-	return of_property_read_u32_index(np, prop_hart_index, logical_index, hart_index);
+-}
+-
+ int aplic_direct_setup(struct device *dev, void __iomem *regs)
+ {
+ 	int i, j, rc, cpu, current_cpu, setup_count = 0;
+@@ -279,7 +265,7 @@ int aplic_direct_setup(struct device *dev, void __iomem *regs)
+ 		cpumask_set_cpu(cpu, &direct->lmask);
  
+ 		idc = per_cpu_ptr(&aplic_idcs, cpu);
+-		rc = aplic_direct_get_hart_index(dev, i, &idc->hart_index);
++		rc = riscv_get_hart_index(dev->fwnode, i, &idc->hart_index);
+ 		if (rc) {
+ 			dev_warn(dev, "hart index not found for IDC%d\n", i);
+ 			continue;
 -- 
 2.43.0
 
