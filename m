@@ -1,124 +1,172 @@
-Return-Path: <linux-kernel+bounces-677458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04F0AD1AD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:42:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3427AD1AC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9800188CEE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D743A2A74
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740BD2512C8;
-	Mon,  9 Jun 2025 09:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE6C24EF88;
+	Mon,  9 Jun 2025 09:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="awaiqv0L"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgOAmjTI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B591A9B4A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 09:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F726C133;
+	Mon,  9 Jun 2025 09:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749462139; cv=none; b=oFbOHGOiJj/AATcwZVG0P9JiaZpj7owiqbuGnKMmEsF3YJl2mJzhsGQRjEg2mG2rc7oGftk9CdrOVzYF26LR+Eots9GC182xapFZ3lOmgY4XIgKhB/bA/PpKGnaXDfXaVo7LxZqOm+4kfY8SRpSRLKXATg+0q6lgcYHLOjV+28E=
+	t=1749461864; cv=none; b=IS5OSWhUChuSTwIdzMn14QhLnIDgOWnOX8Bp/6ue804+vSi1VObYp1hqTgcxuj/MywzyUCVCu2KLHbymxOBdqjryUTiWR2XzYmtY8X6yYnSq9HZz/MHBaSC4kNbs0raUhjQuvotJ14z/5u587uWgEUDsXEVuISge9Bu2efJyuZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749462139; c=relaxed/simple;
-	bh=J7mLoh1aLU4DUG0BRSUYMk8gBlLVQrv2yNV/Kzdr28w=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=LatJszqJPUuDdkip+vTK2jwxyovBUV2MDuDfxdjGCjD/ocebZJmTunFwITvOMuvK9BpAVeIIUz/b37HDl04bjXXrXT0IfV6rNbBqb0xUDnoMmRK8K7qcsuopyhybzYNq3nCLout52kWCB2lmWxXlDGGKV8/Wb/386BEtqQUt0Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=awaiqv0L; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1749461825;
-	bh=SmniMHqvZWFuqEmiIWWjPLL01AF0Q8ESLGE7t/Sogxg=;
-	h=From:To:Cc:Subject:Date;
-	b=awaiqv0LLkoQMVxGIPZOZdnh5znT+4wJqhNruWBIyHrgjAzIy3oaeNj1X/Ng2Qpp0
-	 6N4SHKgpeERHGraE2hmtfUSPkkdHcUQT2bENF6dD3F02p4O/9BZslwJ634Fa+5D25Z
-	 TBjzM6EcvTprcbYSRSZXSKw+N4zP3ytyAgdB6mZY=
-Received: from localhost.localdomain ([58.208.27.5])
-	by newxmesmtplogicsvrszgpuc5-0.qq.com (NewEsmtp) with SMTP
-	id 927B7009; Mon, 09 Jun 2025 17:36:39 +0800
-X-QQ-mid: xmsmtpt1749461799troe02dud
-Message-ID: <tencent_03FB073FD3015AE02485DD6839D6571EBC06@qq.com>
-X-QQ-XMAILINFO: OQac6g2KrvnW0ceRmcxfNhsHzSagz0pC/3jPClfdEiuQtKjOS6oANK6zvhUWk/
-	 LLSKJVCrZ6/6JoYrzqUQeapXBgQRtSEOJ6n45Jx7YyP1M2C5E/7JeofNz2sOtaZwV04TUaN34dl1
-	 gs7YJ1SxiXd0FKjsIv/8XY3oziX7d1P3ByA8jdrvS+wKwdkX+A4HwhtO0mhyJK75pJzUxKAHbOsE
-	 0YaZIctyDxYHbpUezRVLEX976dZbq1+8z4Z9ZfaOrU5CwRYW6Y0x8C1gLw4Wou+QT4MU/szYo2WT
-	 4Vtl66SEGapUzYSrBhN35ilWNFyUrFYYUHLrK1YAd7EMJP7tk9LazG4vg8aBUOoHOIg0dYmkbaWt
-	 B//3HxX469PmAp7bdKXNsfkin02icxGi0NT/ySA2P9LOEHSaPl0HA71DCw+wVj/bq6RhP5408HkN
-	 tPkIUnbs6Y3uyYEPvceq0gs9MGbx+vgcaeehpLPTfz0i6fyfJy67TAEex0FX1KVvjiAzewc8uztW
-	 HbvGV4h90ENMNrgHgW/jmVIyZcKmOSCalS1KNQTT90g10AIKgPILhom8RqD8cJM99rB3Vrh80bRo
-	 UaZFxe2IlZWf4BoWhNic8SFxEwZntV7GZMQncsSbz83XAZW6vtkd71rCHXOzzCmL24kTfcG7eTC4
-	 PKl29XLCBgf81ERGjSss78Gtl31WN60s2tRNNv+9Hfzbmng5ef8Pa+ZpqhUkV66l3uRxSJY+6g7j
-	 IBJmdDYjWasW6LbzngAnBib234Tr5S+0cOWOBB7R9dmy6rxgPSLaeRoNsU2ARay2DG9CrxDtIynt
-	 8YIPRhrjYJz5zez1snIO+Oxm9+3tlnLuSkKnXswad8cOm6gf3woJvsNXC0HFu+r2RSJlfJaGEy/Z
-	 EJ1LOi2wJmFlzSj4s3ETCPDDDZBbXHcf23zBoSRb+Moftn386HhN26AXN1d++kHhgzZkgEXrgZ3d
-	 V1EHKU3BZj4yAD5vLus8dHJ4GkEmzgaMBK+fB1TZVmvdtnbxbAW12FMJXB25QV6JrBb5MtiSAkJ1
-	 kBuMO/nBcORzUtCWnlS/SOtofPEhJ6/5yXcJgXPn6Psd3OSmnB
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: francisco_flynn <francisco_flynn@foxmail.com>
-To: Felix.Kuehling@amd.com
-Cc: alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	francisco_flynn <francisco_flynn@foxmail.com>
-Subject: [PATCH] drm/amdkfd: register HMM dev memory to DMA-able range first
-Date: Mon,  9 Jun 2025 17:36:23 +0800
-X-OQ-MSGID: <20250609093623.964017-1-francisco_flynn@foxmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749461864; c=relaxed/simple;
+	bh=XwpFufb+SDXSj2ejHO2odwMZAl/fSCLYz1xkpvW9CS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxalHECEsmoYGq2phVJYHE907YiINBk25Ogs5Q7hqiHe9lt3uL1JuV7joYU/YP/sFOA9bpEAwLqpCpCTwEx3Kv0Hbb9u+EGWUZGBqCzZ1BLbRS7awtWUf+/4CIf4u97kt/UfGJcMHZKa9KxmKJGtEVhM9r2Qq/13Wxsc1VQLu5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgOAmjTI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19326C4CEEB;
+	Mon,  9 Jun 2025 09:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749461864;
+	bh=XwpFufb+SDXSj2ejHO2odwMZAl/fSCLYz1xkpvW9CS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KgOAmjTIuN6UDbFDyVwRuMVof2MC3ON+k5R3Yqnh40cpJ3nkD2XVrkJntiNv9YmzJ
+	 9kDAMpwInUY/N7A37y/mMxx7gjqxmsJ8Gy7v0grPtUhFZfDg22/GE2y+Dwgb33ZcRy
+	 711dsrI9/RLdx9T3sOcVfCHcUZzO8v2Y2TcuN9jDAUC2Au5pdXJFHXatqJTUpbIxYV
+	 xs13XYTM9GIVsUjZFX2Eou3ZRZX5ILI4HCHLHRoLIHATyLgeP24YGZ8Kc/dqCOnTFy
+	 bXwaccwBvbU8I0ynwq51zYs4e9tgJbHTLRpkQzoDqL1tR7C5V6z82X8/GB8ygw/3ni
+	 YDsRgb8QoCYag==
+Date: Mon, 9 Jun 2025 11:37:38 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] modules: Add macros to specify modinfo prefix
+Message-ID: <aEarYndP4uo-a0eL@example.org>
+References: <cover.1748335606.git.legion@kernel.org>
+ <5cd53f6a4bca5186d3c9c47c070883131826c5eb.1748335606.git.legion@kernel.org>
+ <CAK7LNATkXFqKLPcHFg-WDynRrVy3BRs6twvcyo2YJQqZBy9xsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATkXFqKLPcHFg-WDynRrVy3BRs6twvcyo2YJQqZBy9xsQ@mail.gmail.com>
 
-HMM device memory is allocated at the top of
-iomem_resource, when iomem_resource is larger than
-GPU device's dma mask, after devm_memremap_pages,
-max_pfn will also be update and exceed device's
-dma mask, when there are multiple card on system
-need to be init, ttm_device_init would be called
-with use_dma32=true, and this is not necessary at
-all. let's request dev memory region at DMA-able
-range first.
+On Mon, Jun 02, 2025 at 04:49:24PM +0900, Masahiro Yamada wrote:
+> On Tue, May 27, 2025 at 6:08 PM Alexey Gladkov <legion@kernel.org> wrote:
+> >
+> > The __MODULE_INFO macros always use __MODULE_INFO_PREFIX. The only way
+> > to use a different prefix is to override __MODULE_INFO_PREFIX, which is
+> > not very useful.
+> 
+> Not necessarily.
+> This would be a very special case only used in modpost,
+> and modpost can use MODULE_INFO() instead.
+> 
+> 
+>         list_for_each_entry_safe(alias, next, &mod->aliases, node) {
+> -               buf_printf(&buf, "MODULE_ALIAS_MODNAME(\"%s\", \"%s\");\n",
+> +               buf_printf(&buf, "MODULE_INFO(\"%s\".alias, \"%s\");\n",
+>                            alias->builtin_modname, alias->str);
+>                 list_del(&alias->node);
+>                 free(alias->builtin_modname);
 
-Signed-off-by: francisco_flynn <francisco_flynn@foxmail.com>
----
- drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+You can't do that because a character can't contain quotation marks
+and periods.
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-index 79251f22b702..3856b9fd2a70 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
-@@ -1020,6 +1020,7 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *adev)
- 	struct amdgpu_kfd_dev *kfddev = &adev->kfd;
- 	struct dev_pagemap *pgmap;
- 	struct resource *res = NULL;
-+	struct resource temp_res = iomem_resource;
- 	unsigned long size;
- 	void *r;
- 
-@@ -1042,7 +1043,10 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *adev)
- 		pgmap->range.end = adev->gmc.aper_base + adev->gmc.aper_size - 1;
- 		pgmap->type = MEMORY_DEVICE_COHERENT;
- 	} else {
--		res = devm_request_free_mem_region(adev->dev, &iomem_resource, size);
-+		temp_res.end = dma_get_mask(adev->dev);
-+		res = devm_request_free_mem_region(adev->dev, &temp_res, size);
-+		if (IS_ERR(res))
-+			res = devm_request_free_mem_region(adev->dev, &iomem_resource, size);
- 		if (IS_ERR(res))
- 			return PTR_ERR(res);
- 		pgmap->range.start = res->start;
+.vmlinux.export.c:16163:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘.’ token
+16163 | MODULE_INFO(ahci.alias, "pci:v*d*sv*sd*bc01sc06i01*");
+      |                 ^
+././include/linux/compiler_types.h:83:23: note: in definition of macro ‘___PASTE’
+   83 | #define ___PASTE(a,b) a##b
+      |                       ^
+
+The same thing for variant with quotes:
+
+.vmlinux.export.c:16163:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before string constant
+16163 | MODULE_INFO("ahci".alias, "pci:v*d*sv*sd*bc01sc06i01*");
+      |             ^~~~~~
+
+But I can do something like this to make it work:
+
+	buf_printf(&buf,
+		   "#undef __MODULE_INFO_PREFIX\n"
+		   "#define __MODULE_INFO_PREFIX\n");
+
+	list_for_each_entry_safe(alias, next, &mod->aliases, node) {
+		buf_printf(&buf, "__MODULE_INFO(%s.alias, unused, \"%s\");\n",
+			   alias->builtin_modname, alias->str);
+
+> 
+> > The new macro will be used in file2alias.c to generate modalias for
+> > builtin modules.
+> >
+> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> > Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+> > ---
+> >  include/linux/module.h      | 3 +++
+> >  include/linux/moduleparam.h | 7 +++++--
+> >  2 files changed, 8 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/module.h b/include/linux/module.h
+> > index 8050f77c3b64..88048561360f 100644
+> > --- a/include/linux/module.h
+> > +++ b/include/linux/module.h
+> > @@ -170,6 +170,9 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
+> >  /* For userspace: you can also call me... */
+> >  #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)
+> >
+> > +#define MODULE_ALIAS_MODNAME(_modname, _alias) \
+> > +       __MODULE_INFO_WITH_PREFIX(_modname ".", alias, alias, _alias)
+> > +
+> >  /* Soft module dependencies. See man modprobe.d for details.
+> >   * Example: MODULE_SOFTDEP("pre: module-foo module-bar post: module-baz")
+> >   */
+> > diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
+> > index bfb85fd13e1f..3f819fc67c43 100644
+> > --- a/include/linux/moduleparam.h
+> > +++ b/include/linux/moduleparam.h
+> > @@ -20,10 +20,13 @@
+> >  /* Chosen so that structs with an unsigned long line up. */
+> >  #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
+> >
+> > -#define __MODULE_INFO(tag, name, info)                                   \
+> > +#define __MODULE_INFO_WITH_PREFIX(prefix, tag, name, info)               \
+> >         static const char __UNIQUE_ID(name)[]                             \
+> >                 __used __section(".modinfo") __aligned(1)                 \
+> > -               = __MODULE_INFO_PREFIX __stringify(tag) "=" info
+> > +               = prefix __stringify(tag) "=" info
+> > +
+> > +#define __MODULE_INFO(tag, name, info)                                   \
+> > +       __MODULE_INFO_WITH_PREFIX(__MODULE_INFO_PREFIX, tag, name, info)
+> >
+> >  #define __MODULE_PARM_TYPE(name, _type)                                          \
+> >         __MODULE_INFO(parmtype, name##type, #name ":" _type)
+> > --
+> > 2.49.0
+> >
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
+> 
+
 -- 
-2.25.1
+Rgrds, legion
 
 
