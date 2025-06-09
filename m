@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-677685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF345AD1DC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:31:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6473AD1DCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C136188E9F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4C9167785
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA641263F5E;
-	Mon,  9 Jun 2025 12:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AB625B67D;
+	Mon,  9 Jun 2025 12:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="V5cLRIk1"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g14+ZF8l"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E22263C8F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 12:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC17F25A35E;
+	Mon,  9 Jun 2025 12:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471901; cv=none; b=WhzCCEto41eVdBc/4xQDuFjKlGY+A6LvOI+dQpZ/y5ni1HZf/gyG6bAose2cpPtPT6y9OpFtLDM+331dTmG77qETS6jjjU8OF1kiMzVFH/tIAzkle0FcCFpJkrKRJXzeuufD/3/TcuRyH2/umYqKTC9HOyHW6JvxBKNHJ3iJQ1A=
+	t=1749471940; cv=none; b=gx9WUxjcuiwGn2vJRoz/TRNA4ckXvfpEzQ1OSpYHK27Q4LijDANpfov2+RBGJJ3bjWVPOsaP6ZPf0gWWxkFpojmLMb7wLgEzZkMqzjfbl4sRprlIvETFcQfYbFRg2LQKzwXniWpnQp5l91D4nlfJ8JRzfkhnvcnesvZf5z0PsSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471901; c=relaxed/simple;
-	bh=eksIelLw5t+E1FpqLZamAqzDKsCM5SrUfrB2AptJFZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qe//o7WFyS+RM+9i+s2+GM91w+JNA4mbQX5Ter2PnIsmbwFrlo7eHBwKIREiPq/wXtdjz5IFUtcBEEQEoobrXVHE1VdgoKctTDIKyXUKk1Z4Ne/rWq30pcEWCOnrWKHJwOXCW+fdCZ0AIy2Ts6pfHpIEEThvyXpeOxACePotx7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=V5cLRIk1; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=PRs8wlybJcPuh1a0Mj96EqtdKYAqzvngsmkwDOEMFaQ=; b=V5cLRIk1J1jTVQQc
-	1DSfpubgbtaa4YxEOeHhpvV5q/vdhPbrGgc6I+jIBHDP47ZCKj5/wojYci1SO01jK8/iQJLUrlmJX
-	Az1n79jmZnSqt8URb2yIoTT9UAEMxVyN7Y2BWo2roLFpWDX2KxtrR+DmEztdrtUoiThjVS3yIhdRB
-	sc9BzxSmeCG1ZyrAQ/d1Ap+G/6Jl8I5Q5ixxKKbrhA5yL8avtwjRrPlwwJXLYR1VvmyLGfYEB1rJP
-	sd7FQ+4sSk3zlfm/qBZObCX/JNjiq4ZtZxWrXuJvRV+MV6hNTT5pTNgmWGqnoUTTlLpQG5EzWtUB0
-	ZxVI8UwTh9OJyieeWA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1uObYa-008Nmb-2c;
-	Mon, 09 Jun 2025 12:24:52 +0000
-Date: Mon, 9 Jun 2025 12:24:52 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>, rafael@kernel.org
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] reboot: Remove unused unregister_platform_power_off
-Message-ID: <aEbSlN7BYT5qVlyb@gallifrey>
-References: <20250608174235.116424-1-linux@treblig.org>
- <582f86fb-bcf1-4b58-ad54-acacf4326dd1@collabora.com>
+	s=arc-20240116; t=1749471940; c=relaxed/simple;
+	bh=l0eq9z+bwI2/6pPSlEWgKnX9533DmDLPCwHP+/s/+eA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=REzXLS85K23NKHgE3q8dhHNknnc7Ucw3vIUeVFgqiFPbgw6ICJboyj55PtTwRpJKekUysvDcs926r03m0ZISTRQklCmqWYlDOH+2//I7bDj5SNa6MCjKuuACSgaxq7IiwNbIor9qg6ZCD/HsIM2OW04uGncwo6sFrnCRQtAbomc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g14+ZF8l; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-607b59b447bso3293357a12.1;
+        Mon, 09 Jun 2025 05:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749471937; x=1750076737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lm8+J8LO9pTzE/AcmxF5BhTmx/0SQO6Kz6Y+OF2wnic=;
+        b=g14+ZF8lnpQiTJ/o/BNDAtjyYyZal468gXyaLyRppI+mObyIX2S+g1TaDiJrMR5xTa
+         wFqpAE0UWq1MSou9vuGJywCSz0m1S4HDhSjlHIfhshWWCnDmRsegacv6Ifx4/1TALpLN
+         FUMVTsgrSSRNz7kajqxow4GIbToAjAF4gHL6LHfwcpbb0gQDhjTy0r/+Aor1n1iLTjAI
+         SvMeu0/wiZSe1UTBYr3oheyiVVUviCe58wRUkSA01cOXXdOHLlAu71yZLFfN5SAEMj0i
+         gRFk++wkEQpUo3EPm4pJrCq0IrnsFug6P4USL4/VOdL7kvACoRNM3Uswy80Coo+NwhrY
+         V7vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749471937; x=1750076737;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lm8+J8LO9pTzE/AcmxF5BhTmx/0SQO6Kz6Y+OF2wnic=;
+        b=m0ZEjGtSFZa4ntQDyudQjSGmLDyHaLz++1zZ3bluNVgHkbljqFxeTnBPW1sbuyerDG
+         C1Y72F+8zVAd6LJNVPlBHIrISGHbB+xnxAhwtb9aWiw6tprFTNARiprJLgJy/+mYzBl4
+         yOPT7FpGLL6MIEJqvbJzoD2AyLWT6R7D3XAJqLIhHI9Wgz7ay3RTP9fDZ+m5MhoYK0Ab
+         jKqJJsxS8OB4VnpLZDd9TS8VscqTOhragVPWVfqzzxx5yOPRep1ExyqEr19+MiaTJ75s
+         umo342wGmQPLJuApUyvyE+wxbdR1xsPxYZr5K1hoVwBRzMp1JlFy1lDrb0SFLCxvZTC4
+         BS9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOCFWIerusLodEXyEMAqmaDpPFdViulXwm+1THyNEG0cdeowvs0/lC4EBw8yx8WiKOhRwjaV4Kprptp8GI@vger.kernel.org, AJvYcCXuTXUFHPGdCmquylitkAKqfncUAji4cPMYMYJwNuQAzm/zHhsp9Dit8ZHwKpd3cRABXjv7wot116BQDg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywry+8g0Rql5GmcednJzqPgUf7pPteKeX7vQsxlF0SCFvt1xmR8
+	skfIW229w0FvEwXcxaQ22riYXIDnDvrgQMm8BN6KFbOMkukLChn0YirX
+X-Gm-Gg: ASbGncuRMiBKx/7KLvt2smx2UKF21dTkQtPM2TzMDx8YCNkVeEOal4zDuCBk5MCbneR
+	tBuxz2cf9WFpJZ8P+8WKs3wT1VTnKY54faGX9zjd27dWHy8nbEUtmV59Cpj9VK/Td4kF2KwcZ45
+	5jp9p6KIYhazDMCM4I2/LlHXaBx203r1wXQ/3iPUcXqQVaGv909c09Z8LwBRx1uBU2dflMZ/vUz
+	TSj6lln3RNYFfyvS1YjcfDekhgz3VMQS8R2zourPjzfs8KZSHE35Y1O2EBFVD9/ezNPAJupmDpS
+	Ap6pWG/QKGgzhKrYj1eo3Vttx9y+3ao/gSM2TfKuX2oUzn/rsPpiFmpO7Vc0iKKqgJ+7uJAASEC
+	s3Ij4yQ2XUpV0
+X-Google-Smtp-Source: AGHT+IFYv4rUYkaPQ9Vg+6CHFrzjuBMHZ3ntWNeCEBbU9TrLLDM5BfrvME31JEIqv1Zdo0LxsEGSlQ==
+X-Received: by 2002:a05:6402:5256:b0:602:1b8b:2902 with SMTP id 4fb4d7f45d1cf-607743a5bc0mr11884785a12.15.1749471937031;
+        Mon, 09 Jun 2025 05:25:37 -0700 (PDT)
+Received: from [192.168.32.20] (public-gprs400974.centertel.pl. [37.47.197.143])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60804dfb96fsm675481a12.65.2025.06.09.05.25.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Jun 2025 05:25:36 -0700 (PDT)
+Message-ID: <7a6083df-9060-4d07-8293-304a3f5f6cdd@gmail.com>
+Date: Mon, 9 Jun 2025 14:25:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <582f86fb-bcf1-4b58-ad54-acacf4326dd1@collabora.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 12:21:56 up 42 days, 20:35,  1 user,  load average: 0.08, 0.06, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] HID: playstation: DS4: Add BT poll interval adjustment
+To: Roderick Colenbrander <thunderbird2k@gmail.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
+ Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+References: <20250508210148.799578-1-titanv3585@gmail.com>
+ <20250508214305.836406-1-titanv3585@gmail.com>
+ <CAEc3jaCEENSMbWFcQyjWLP+4UPv3_2inARZLJsmXYF7zVbhkug@mail.gmail.com>
+Content-Language: en-US
+From: Vadym Tytan <titanv3585@gmail.com>
+In-Reply-To: <CAEc3jaCEENSMbWFcQyjWLP+4UPv3_2inARZLJsmXYF7zVbhkug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-* Dmitry Osipenko (dmitry.osipenko@collabora.com) wrote:
-> Hi,
-> 
-> On 6/8/25 20:42, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > unregister_platform_power_off() was added as part of 2022's
-> > commit fb61375ecfba ("kernel/reboot: Add register_platform_power_off()")
-> > but has remained unused.
-> > 
-> > Remove it.
-> > 
-> > Note it's a pair with register_platform_power_off() so
-> > seems symmetric; however, I think platforms are chosen
-> > and then stay that way for the boot - so don't
-> > get unregistered.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > ---
-> >  include/linux/reboot.h |  1 -
-> >  kernel/reboot.c        | 16 ----------------
-> >  2 files changed, 17 deletions(-)
-> 
-> The patches converting those platform drivers to use
-> register[un]_platform_power_off() haven't been sent to ML. This is the
-> reason this func is unused.
+> Do you have a strong use case or reason to add it back?
 
-Ah
+I wouldn't say *strong* per se, but if something:
+- Can be adjustable
+   - I think if hardware is capable of such thing it's better to have 
+adjustment of it available to user.
+   - It's better to have an option then no option at all, let the user 
+decide.
+- Doesn't break the hardware nor software
+   - When decreasing polling interval
+     - Battery impact is just faster discharging, it doesn't "breaks" it
+     - Bluetooth stack won't break, it could be just "overwhelmed"
+   - When increasing polling interval
+     - No negative impact at all (if we wouldn't count the user who can 
+set polling interval to like 63, and have choppy controls, that's why 
+defaults exists)
+- Have benefits
+   - PI can be decreased for smoother controls in cost of battery life
+   - PI can be also increased to save battery in cost of smooth controls
+- Doesn't impact anything nor anybody on defaults.
 
-> There were apm_32 [1], platform/iris [2], mcu_mpc8349emitx [3],
-> olpc-xo1-pm [4] and sgy_cts1000 [5] drivers that I had patches prepared
-> to convert them to new power-off API. They weren't sent out back then in
-> 2022 because of a nontrivial dependencies between drivers. At least some
-> of those deps has been resolved by now and potentially the API
-> conversion may continue. Currently other things keep me busy and don't
-> have immediate plans to continue the conversion work, maybe sometime later.
+> The not adjustable referred to USB, which is not adjustable. So keep
+> that one the way it is.
 
-Yeh that's life!
-Of course if you could upstream one to get it rolling that would
-be great, but I understand.
-Most of those seem pretty old platforms, what makes those
-different?
+Oh, OK, I understood this in another way, but that make sense too.
 
-> Leaving it up to Rafael to decide whether to keep this func unused or
-> re-add later, once it actually will become needed.
-
-I've copied Rafael into the thread.
-
-Dave
-> [1]
-> https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commit/e42f1264161085f01fed16986a23592519d9f49e
-> [2]
-> https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commit/24cd048ad801aab6221f2b0bb4576dfc2fe25faa
-> [3]
-> https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commit/486b69b43c47d85a0f292dca127f0b9063443a54
-> [4]
-> https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commit/fe5344b3f8a8e1c52e1cd7108aa7e615123be4b2
-> [5]
-> https://gitlab.collabora.com/dmitry.osipenko/linux-kernel-rd/-/commit/0d761d6139c9dacbbda9f2e095577b084685603f
-> 
-> -- 
-> Best regards,
-> Dmitry
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
