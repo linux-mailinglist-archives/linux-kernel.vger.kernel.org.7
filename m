@@ -1,195 +1,268 @@
-Return-Path: <linux-kernel+bounces-677752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27106AD1E9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ACEAD1EAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4799168959
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD95169287
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6723A2580EC;
-	Mon,  9 Jun 2025 13:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55D825A323;
+	Mon,  9 Jun 2025 13:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="X1gdliuB"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fL4N0VX4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F68F2571C5
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 13:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5F925A2CF;
+	Mon,  9 Jun 2025 13:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749475095; cv=none; b=UUFpu4EwpqLustAAGk2CYfL4D1CW2xMHWBwbwT/NHSVXURCsH1yOAqGxY47C88gTB0cQeCk67e1e2hsuZi+IDDI9MlvPrcaHOj5rHPAgVQqxFoj8y5/URQupKOBr410y6Ap+nrV/bj/JeysB7Kr1W3nnVT4clWS1SkVADXABXpc=
+	t=1749475165; cv=none; b=T5f8MQEOf4PJbIq8Iq12Qp8yqIo5Xu15adOwzpisrb2rgVH3laswR5ncSz05kWI9DjvZzb2kfTGwQENArVlOCWCzEil/7f7w9EtPrbUTRgn+E1c+qoh6itFY9/WH3QA97Wqe4eEMMKay/+iBf2im8xuey+IjCyiNau0h+hI+YfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749475095; c=relaxed/simple;
-	bh=e0q6T0QkTmeXc+vAS5F97W8/LNcSjIH6NHd7gh+89lo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYP/lBHkfBP4FwePOg7js0OQSQVhp8KtfD0hIjlHoX7lOyRp+3ca4yn8c/pQy8D+PuWgJZPw0tK4GFO85034p1zc6xPGI8ON7vwkrr34k4dp5zSZFa0nMHiLWxeQ9NOkU3hJ5hnfXAbfVwZrllAzQ2lcKjX61HWA+GwilCewoCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=X1gdliuB; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-72c13802133so1335514a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 06:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1749475093; x=1750079893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jv0owSPwU0jkBHLRXq8flwNs9bitEruDQmiiy552H28=;
-        b=X1gdliuBHmHFdMA1qA8VZOSozeqa8vubtpsoM3RKcPNJJipKIoRe6Gx+z2aEzGi1Pj
-         fZD/g5OsO4qAfMTKn3gtkQ/v2fNsJGl1fvDBTIWulHQprgMoBspZJ2ky0J5YQK8z3aoB
-         93d6gsJxiNCyynSbiINKc3yyWwLxg3GRNAexuTkD6kYlo7q81IwguESDBqeRAIQYGxDn
-         EdGTPNbNx4ilmmIeT+8/7lT51cKl2yaBrqub+TCKMDaYMUai/bqpzZVdglu5t4xC6uJL
-         Lipk8erf8Fk0eFR6dUEV6uaochZn/fMGfmLFGj5JfNnPDyXudAf5Ttya1z69tZv3hORZ
-         tLJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749475093; x=1750079893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jv0owSPwU0jkBHLRXq8flwNs9bitEruDQmiiy552H28=;
-        b=XkpaPbf+AFt8HcgPBT4o2saOQwK6PnsJYL1yLho6H5C3EgUUCUMpfhDQI8nEf/i37y
-         netrWDjDohK82NVXdHOyEsxH23Q9gLuwrTXpQ1WAiTMdEME5gvTOnSML9HO6soEHYIBT
-         Ulm2GtMAuYpOhwnnmbcCkZlWjH+HrQGzw7zVX5SVFbHmLXWEYCBJrLeO6hY+PhpJqg8g
-         vrcRU8C16KqyTFc+tchUR0ONJPnBCFVrbQcJ9M73qfe2F3CSFCKzcm6MgxhxRz3bsvqB
-         wE0U1vrgofjCZSTtaadBLY2qAQzZdOGoOwld7yb9damGeCTBhpGCkDKgZLkUPmVG7dnz
-         oE9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWmCo8C57i2lfNr3tFHwUPvdDBZ7GKDjCDYB7C2slG89Z9xbTW17rGfncn+4klanFeIqvGMNvf1B1u/sjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTxy+7SRaxdk6+7gWEzQj9GbBTeQU3Z3PqOt+fo0scVH9IJG9C
-	FBByvcBYSWkVKxQ637mVcGR7128whsfxNSFKy3zn2UytvcLXlyxbFmrrg992Fh3feGSldKTIqN7
-	OgE87jBNgo91PViOMeoUnhjqVjwA+f9AOM5rwOUs2EwohonUwR/AVffKi9g==
-X-Gm-Gg: ASbGncvvpo22QmDErrSbAwqd7XUl5w63f7AFrzUMQwe2rdsKX7CZL314VpPUHnBqrq6
-	9v89HY4TYu8c5bvCswyrmf5ot72T7TDdm1PDugCReaFoODvfijAs5I/tBvlHGzyissbfiEno8Ix
-	RgGc7n42dUY3dnlhBHNWWhMBz6K0a/lPYmOsBUVrlo/TUomA==
-X-Google-Smtp-Source: AGHT+IF0KOMyJZ6Vv91d/Z//v27FuUU/3hsPVN/MSlwF4F2JnhJZzleGAcCuAZkISqlZvJcoudRUbxeC4l1TDqzZFNI=
-X-Received: by 2002:a05:6870:328f:b0:29e:43ce:a172 with SMTP id
- 586e51a60fabf-2ea012f0b9dmr7698264fac.28.1749475093002; Mon, 09 Jun 2025
- 06:18:13 -0700 (PDT)
+	s=arc-20240116; t=1749475165; c=relaxed/simple;
+	bh=Z2932OZyveK0+Uk61aLzEQ44aEOFqJ0e6p8TWd4Yka0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oPfxYIXmK0jKn3/vuRo9dyBc4JAE1uaoftvkQdsFeWwzql23TOE/0G3kxZ23oRFJWdR7QZ1eMZ83dIAD/OlvMS2WlI+YmNisZJRXWtY9kXORnt3am74l1CnJyEFfYFY6B1QqPei0MeTUVLK2tDEJINwruJWWXMqSjVTXnFebFnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fL4N0VX4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599gUfi021017;
+	Mon, 9 Jun 2025 13:19:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=wf+0jqAv8Wsqf1LsxHnd2k+B
+	8yrYVSDIpG3ltaNDxcw=; b=fL4N0VX4fk+AAP2NGA86hPMYC5VAYDReNx/RaEBR
+	6f/4iE8yxhx/eBBQYfN5ogd+3S4MdOO/yn3zimSn6rmzieDejUexGIjiYcYx/gnF
+	Cadu+23eTfDwEBmjGQ4uv1MW4Y8XxwnuBsoaVQUoPcLB4dyYXZw5QKP/NVQnELL5
+	ZqmAVBObEZc7E+B0F5nFc6diHOuPItMaEmRxZ83LCOjLEjiWvs+3xTt2ErHm/v3A
+	1G7oghH+QKu5guza1yvSmV7bCfsRH8Coxr5SxT0FVA2D21fdmVAMvqSSlx5VECSF
+	9iZBpwaDP7130srLEAy7vxBg6ENPnFs4cxhZEbecd/TsiQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ekpnuns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Jun 2025 13:19:19 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 559DJI58017893
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Jun 2025 13:19:18 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Jun 2025 06:19:11 -0700
+Date: Mon, 9 Jun 2025 18:49:02 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, <kernel@oss.qualcomm.com>,
+        Pratyush Brahma <quic_pbrahma@quicinc.com>,
+        Prakash Gupta <quic_guptap@quicinc.com>
+Subject: Re: [PATCH v9 2/4] arm64: dts: qcom: iq9: Introduce new memory map
+ for qcs9100/qcs9075
+Message-ID: <aEbfRoSbJgKmVYZe@hu-wasimn-hyd.qualcomm.com>
+References: <20250530092850.631831-1-quic_wasimn@quicinc.com>
+ <20250530092850.631831-3-quic_wasimn@quicinc.com>
+ <ss3xhat6v3s4ivcypw6fqcmblqait56pqhzwuhzyfhevp4kzlr@5e3f5nwb6lhb>
+ <aEATe3pi1SsfZVI3@hu-wasimn-hyd.qualcomm.com>
+ <q3hzryk4s7jd4kyavcg7s6d3oyzfpnjy4jhpeluvnikiglbeng@r4ydugwidgv7>
+ <aEBzNnnyqt/aZ35r@hu-wasimn-hyd.qualcomm.com>
+ <aEKnstzguH7f0A92@hu-wasimn-hyd.qualcomm.com>
+ <n3et5jemuiin5c5pwi3r5gycnicxdhrwbmxapnsg2arlwabxcv@7b734qnxwaof>
+ <aEavSv3VWuMvzyBw@hu-wasimn-hyd.qualcomm.com>
+ <84f4dedd-fe3a-452f-93f7-b20e0bda9951@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609074348.54899-1-cuiyunhui@bytedance.com> <2025060913-suave-riveter-66d0@gregkh>
-In-Reply-To: <2025060913-suave-riveter-66d0@gregkh>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 9 Jun 2025 21:18:02 +0800
-X-Gm-Features: AX0GCFuD_Ncyifb6hxmcNxLcNfN0XY3J_XS8dc3_tcj7hBcJ0mwvbtYo_IujCWA
-Message-ID: <CAEEQ3wmaiwd4TZfTa0YrLcKui9fSNJT0fR3j1=H1EK0T3npfyw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v8 1/4] serial: 8250: fix panic due to PSLVERR
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: arnd@arndb.de, andriy.shevchenko@linux.intel.com, 
-	benjamin.larsson@genexis.eu, heikki.krogerus@linux.intel.com, 
-	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org, 
-	jkeeping@inmusicbrands.com, john.ogness@linutronix.de, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	markus.mayer@linaro.org, matt.porter@linaro.org, namcao@linutronix.de, 
-	paulmck@kernel.org, pmladek@suse.com, schnelle@linux.ibm.com, 
-	sunilvl@ventanamicro.com, tim.kryger@linaro.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <84f4dedd-fe3a-452f-93f7-b20e0bda9951@oss.qualcomm.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=JcO8rVKV c=1 sm=1 tr=0 ts=6846df57 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=1J-_arqMHHhWf6i7UV4A:9 a=CjuIK1q_8ugA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDA5NyBTYWx0ZWRfX8EI3raYXGx+Z
+ 9kEvnEffpy7MiMcnpXMQ/5V8V6nTe93JuLbgi7OFQQOZXPh0o8wDMiXYlxXbHzpk/z//MmQ+IIb
+ pd83B7vwc0HLHDH+TyhfOHz4R4L4pJMEFCY/Gww8D5rY6aWyLHEXmk2/O51VCUxLkX0QHukUijs
+ 3T3heNLgYUwX0VhYNZRbnAVrmZTRrzffquEr1z2IXpNa72rZRRYeAdHp4ncu1pQlZmFCYr5eDkj
+ 6qJyMZ6Ofc02zCMwvEiF2ui9QipdfzXw3KNyOf7/3fHjWSqlEQqlmQI2eQqN4RNRb10Blkpt+9x
+ pSzxM+aonjHNFxFtGdi9dngjXyaUUNSmps3dzcnA6/1+h9z+7c3YoywqYQHiijMvooE7YqbXE4I
+ K9KLJ7YpDrtMoHNZ0bZyrtYddwuBiM7GbMRBEnPzvuwkN0JpGe47PoZhTrQJ+JB/LUYxY7Ml
+X-Proofpoint-GUID: XwIvaZ5hT7WsiD3_MhVqIMQRPDRU5Uuh
+X-Proofpoint-ORIG-GUID: XwIvaZ5hT7WsiD3_MhVqIMQRPDRU5Uuh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_05,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506090097
 
-Hi Greg,
+On Mon, Jun 09, 2025 at 01:03:02PM +0300, Dmitry Baryshkov wrote:
+> On 09/06/2025 12:54, Wasim Nazir wrote:
+> > On Sat, Jun 07, 2025 at 11:22:39PM +0300, Dmitry Baryshkov wrote:
+> > > On Fri, Jun 06, 2025 at 02:02:50PM +0530, Wasim Nazir wrote:
+> > > > On Wed, Jun 04, 2025 at 09:54:38PM +0530, Wasim Nazir wrote:
+> > > > > On Wed, Jun 04, 2025 at 04:21:46PM +0300, Dmitry Baryshkov wrote:
+> > > > > > On Wed, Jun 04, 2025 at 03:05:55PM +0530, Wasim Nazir wrote:
+> > > > > > > On Mon, Jun 02, 2025 at 10:41:39AM -0500, Bjorn Andersson wrote:
+> > > > > > > > On Fri, May 30, 2025 at 02:58:45PM +0530, Wasim Nazir wrote:
+> > > > > > > > > From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+> > > > > > > > > 
+> > > > > > > > > SA8775P has a memory map which caters to the auto specific requirements.
+> > > > > > > > 
+> > > > > > > > I thought SA8775P was the IoT platform and SA8255P was the automotive
+> > > > > > > > one. Has this changed?
+> > > > > > > 
+> > > > > > > Both SA8775P & SA8255P is for auto but former one is non-SCMI based while
+> > > > > > > the later one is SCMI based chip.
+> > > > > > > 
+> > > > > > > Only IQ9 series of chips (QCS9100 & QCS9075) are for IOT.
+> > > > > > > 
+> > > > > > > > 
+> > > > > > > > > QCS9100 & QCS9075 are its IOT variants (with marketing name as IQ9) which
+> > > > > > > > > inherit the memory map of SA8775P require a slightly different memory
+> > > > > > > > > map as compared to SA8775P auto parts.
+> > > > > > > > > This new memory map is applicable for all the IoT boards which inherit
+> > > > > > > > > the initial SA8775P memory map. This is not applicable for non-IoT
+> > > > > > > > 
+> > > > > > > > Is there are platform out there that actually uses the "initial SA8775P
+> > > > > > > > memory map"?
+> > > > > > > 
+> > > > > > > Yes currently sa8775p-ride and sa8775p-ride-r3 are using initial memory
+> > > > > > > map.
+> > > > > > > 
+> > > > > > > > 
+> > > > > > > > > boards.
+> > > > > > > > > 
+> > > > > > > > > Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
+> > > > > > > > > introduced as part of firmware updates for IoT. The size and base address
+> > > > > > > > > have been updated for video PIL carveout compared to SA8775P since it is
+> > > > > > > > > being brought up for the first time on IoT boards. The base addresses
+> > > > > > > > > of the rest of the PIL carveouts have been updated to accommodate the
+> > > > > > > > > change in size of video since PIL regions are relocatable and their
+> > > > > > > > > functionality is not impacted due to this change. The size of camera
+> > > > > > > > > pil has also been increased without breaking any feature.
+> > > > > > > > > 
+> > > > > > > > > The size of trusted apps carveout has also been reduced since it is
+> > > > > > > > > sufficient to meet IoT requirements. Also, audio_mdf_mem & tz_ffi_mem
+> > > > > > > > > carveout and its corresponding scm reference has been removed as these
+> > > > > > > > > are not required for IoT parts.
+> > > > > > > > > 
+> > > > > > > > > Incorporate these changes in the updated memory map.
+> > > > > > > > > 
+> > > > > > > > > Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+> > > > > > > > > Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
+> > > > > > > > > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> > > > > > > > > ---
+> > > > > > > > >   .../boot/dts/qcom/iq9-reserved-memory.dtsi    | 113 ++++++++++++++++++
+> > > > > > > > >   1 file changed, 113 insertions(+)
+> > > > > > > > >   create mode 100644 arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+> > > > > > > > > 
+> > > > > > > > > diff --git a/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi b/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+> > > > > > > > > new file mode 100644
+> > > > > > > > > index 000000000000..ff2600eb5e3d
+> > > > > > > > > --- /dev/null
+> > > > > > > > > +++ b/arch/arm64/boot/dts/qcom/iq9-reserved-memory.dtsi
+> > > > > > > > 
+> > > > > > > > The naming convention is <soc>-<something>.dtsi and I don't see any
+> > > > > > > > other uses of the "iq9" naming.
+> > > > > > > 
+> > > > > > > As this new memory map is common for IQ9 series of SoC (QCS9100 &
+> > > > > > > QCS9075), so we have used its common name.
+> > > > > > 
+> > > > > > IQ9 name is not known or visible outside of this commit.
+> > > > > 
+> > > > > Are you referring to add the same in cover-letter?
+> > > > > 
+> > > > > > 
+> > > > > > > Once the DT structure for QCS9100 is refactored, we would update this
+> > > > > > > common file there.
+> > > > > > 
+> > > > > > Can you refactor it first?
+> > > > > 
+> > > > > This refactoring involves changes in all the ride/ride-r3 boards which
+> > > > > are based on sa8775p & qcs9100. Even though we had sent v0[1] but we still
+> > > > > need to conclude on the final structure. Since, ethernet is broken in upstream,
+> > > > > we are working on its fix before sending another series.
+> > > > > 
+> > > > > Hence, we want to proceed for iq9075-evk for now and once qcs9100 is
+> > > > > finalized, we can use the memory-map there.
+> > > > > 
+> > > > > But to avoid this dependency and to proceed with iq9075-evk alone,
+> > > > > I can rename it to qcs9075-reserved-memory.dtsi.
+> > > > > 
+> > > > > Let me know if that works here.
+> > > > > 
+> > > > > [1] https://lore.kernel.org/all/20250507065116.353114-1-quic_wasimn@quicinc.com/
+> > > > 
+> > > > Hi Dmitry,
+> > > > 
+> > > > Shall I proceed with qcs9075-reserved-memory.dtsi or do you have any
+> > > > other suggestion that we should discuss?
+> > > > 
+> > > > Aparently, this series is for qcs9075 only so using exact (not common)
+> > > > name also aligns the naming format.
+> > > 
+> > > Squash it into qcs9075.dtsi.
+> > 
+> > We don't have qcs9075.dtsi.
+> > Is it ok to squash it into qcs9075-som.dtsi ?
+> 
+> Is the memory map specific to SoM or to the SoC?
 
-On Mon, Jun 9, 2025 at 6:10=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
->
-> On Mon, Jun 09, 2025 at 03:43:45PM +0800, Yunhui Cui wrote:
-> > When the PSLVERR_RESP_EN parameter is set to 1, the device generates
-> > an error response if an attempt is made to read an empty RBR (Receive
-> > Buffer Register) while the FIFO is enabled.
-> >
-> > In serial8250_do_startup(), calling serial_port_out(port, UART_LCR,
-> > UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
-> > dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latter
-> > function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
-> > Execution proceeds to the serial_port_in(port, UART_RX).
-> > This satisfies the PSLVERR trigger condition.
-> >
-> > When another CPU (e.g., using printk()) is accessing the UART (UART
-> > is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) =3D=
-=3D
-> > (lcr & ~UART_LCR_SPAR) in dw8250_check_lcr(), causing it to enter
-> > dw8250_force_idle().
-> >
-> > Put serial_port_out(port, UART_LCR, UART_LCR_WLEN8) under the port->loc=
-k
-> > to fix this issue.
-> >
-> > Panic backtrace:
-> > [    0.442336] Oops - unknown exception [#1]
-> > [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
-> > [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
-> > ...
-> > [    0.442416] console_on_rootfs+0x26/0x70
-> >
-> > Fixes: c49436b657d0 ("serial: 8250_dw: Improve unwritable LCR workaroun=
-d")
-> > Link: https://lore.kernel.org/all/84cydt5peu.fsf@jogness.linutronix.de/=
-T/
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  drivers/tty/serial/8250/8250_port.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8=
-250/8250_port.c
-> > index 6d7b8c4667c9c..07fe818dffa34 100644
-> > --- a/drivers/tty/serial/8250/8250_port.c
-> > +++ b/drivers/tty/serial/8250/8250_port.c
-> > @@ -2376,9 +2376,10 @@ int serial8250_do_startup(struct uart_port *port=
-)
-> >       /*
-> >        * Now, initialize the UART
-> >        */
-> > -     serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> >
-> >       uart_port_lock_irqsave(port, &flags);
-> > +     serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
-> > +
-> >       if (up->port.flags & UPF_FOURPORT) {
-> >               if (!up->port.irq)
-> >                       up->port.mctrl |=3D TIOCM_OUT1;
-> > --
-> > 2.39.5
-> >
-> >
->
-> Hi,
->
-> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> a patch that has triggered this response.  He used to manually respond
-> to these common problems, but in order to save his sanity (he kept
-> writing the same thing over and over, yet to different people), I was
-> created.  Hopefully you will not take offence and will fix the problem
-> in your patch and resubmit it so that it can be accepted into the Linux
-> kernel tree.
->
-> You are receiving this message because of the following common error(s)
-> as indicated below:
->
-> - This looks like a new version of a previously submitted patch, but you
->   did not list below the --- line any changes from the previous version.
->   Please read the section entitled "The canonical patch format" in the
->   kernel file, Documentation/process/submitting-patches.rst for what
->   needs to be done here to properly describe this.
+Understood, will create soc file and add the memory map changes.
 
-Can this issue reported by the bot be ignored?
+> 
+> > 
+> > > 
+> > > > 
+> > > > > 
+> > > > > > 
+> > > > > > > 
+> > > > > > > > 
+> > > > > > 
+> > > > > > -- 
+> > > > > > With best wishes
+> > > > > > Dmitry
+> > > > > 
+> > > > > Regards,
+> > > > > Wasim
+> > > > 
+> > > > -- 
+> > > > Regards,
+> > > > Wasim
+> > > 
+> > > -- 
+> > > With best wishes
+> > > Dmitry
+> > 
+> 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
->
-> If you wish to discuss this problem further, or you have questions about
-> how to resolve this issue, please feel free to respond to this email and
-> Greg will reply once he has dug out from the pending patches received
-> from other developers.
->
-> thanks,
->
-> greg k-h's patch email bot
-
-Thanks,
-Yunhui
+-- 
+Regards,
+Wasim
 
