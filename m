@@ -1,189 +1,144 @@
-Return-Path: <linux-kernel+bounces-677859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41A0AD20EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AB8AD20EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B18169A8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011C41685CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC73325CC40;
-	Mon,  9 Jun 2025 14:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43CE25CC75;
+	Mon,  9 Jun 2025 14:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="mFIGm8cz"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNGVlTLA"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F50D259CAB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC49725D20A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749479632; cv=none; b=TKUYG27jfqn+jsDERQmFRF+PsIhJ+aCat5XR9KL619lcsX2ZY8NZoiaWW4xiWmJx4RbyCa4wAXZUFpo6ijpUTyWgKIrC4z6Qdes8qkNPL3Weou+P1Zr3I60A922cLWS+ZqGDX+c+VlWpiqa13dwMmReX3+IzDx9o8C1zTlYTemI=
+	t=1749479647; cv=none; b=omitYNsVAZQj/VL5C8YnWxFxBprLSZNUu8c256ezYqVWXyfyROAD93qwaV0oDhd1FaMG3T0Nhv6vGRbyhlBA1AXbvYZTD17sWrltmSMuFDzhRF1ezTkNDJUpqL3/QbRR7nQ0FPkb+jfe5PjPWaTnLY9GUW8ajo1J5AfljhGNxwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749479632; c=relaxed/simple;
-	bh=i3wBGBn4gVrChGX5tMas+8u9RupFJTSeeGp5dq6Xf24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WdtDjlkosQoVYfrQTKMTDagh17a8xbqYNPf6Oxf2upzMfvn16Oh4cmLQpahTiMtr99whImDSuscAKOrYT4pSL3kYjaXUt0KqakewPeNxtuxNu22fO29djkTMht+fY/C9oMVFGxDCORCDIHoR1DsvorFPa+pRNSWqtxqZyJ46RfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=mFIGm8cz; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e7d8eb10c06so3206578276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:33:50 -0700 (PDT)
+	s=arc-20240116; t=1749479647; c=relaxed/simple;
+	bh=RncucRipf1cYTuMs00M4ActoK6bvKzfNJNtvT9JpgjU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DkyMZTiIyzox37V7GkaXBz8rRK7CwPWW0ntxHkocDXFlvz2iNUTAM5dz1FlUTHy0KzvyFc0u8cIoeKqg0v92kO9S+VwTICCecYwBXnqch7rkEdw/527jVtJJ5SBzaAiv99TvFsbhjcrr8owPIEpiO/icZb9Jqx70ERCQb1oWR/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tNGVlTLA; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23507382e64so42485255ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1749479629; x=1750084429; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRem6DUXALCMBVMdkPkqunnXTIQihy9/t+dbXKMENhA=;
-        b=mFIGm8cz1X+IgEcioS0MntgCwtbTXK7W/A3QVjOsP+vVG6dC4L066d9k9DP84ilClA
-         NJ6GZQm4Cs+wb2Zx/MOtRk6+b8Ysg0t/m+1QwF84Y2Ixvol3foR9B8u+xr+qwDKpwYrh
-         792TP+jQRDi80Z5uFZCXjBcyTTiTz9/i07nJq/07Ztko2gxPdCMkfb3NbS2Un4n0mG0D
-         sfxRF2IKDqjyDqYsh40RwjURQGMM6u/34YrgcY0ikcDI4ARqgRVFmzVz7ZRWjV3kqbBU
-         PB+FB2utVyMD6po7LNAZ7fEDh54ybatStyHCjSM5pw46SzJrulXvxRn70KkzWCI4KnZ3
-         TEzA==
+        d=google.com; s=20230601; t=1749479645; x=1750084445; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=skrVgnKxd0KDctgtNsrczTFq3oqZuzABurM/ZDk3Ink=;
+        b=tNGVlTLAOWVhh49MatYphHt8c38PXeIXC/VlqluEaGDCaoyMJqVzC66HbKX7dnIciH
+         0PGoW11+LTlJaPuNgr72xM74cHpJJlgoUrAhEKIDBHCNDumx7T3cqAAkYiYSz9umdvd6
+         kmZNaJ5To8WX0ozlVBlRWrfhJ3a92+7UAlxZr/NJzam14jVHklQ532oHIGlYi0Ok/Mzs
+         Nq4VrgdsXK1fLnnkmsPK8l1DyGNrromCWfsrO934lBnczO0qHs3RFnoFkz8pNDt4nbMC
+         ZONo2klPV1pEDG0x5E7WXJXaakcJM99AclD53gZJ24apACkzx17/9LVDmGt7crsgw3Du
+         yLBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749479629; x=1750084429;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sRem6DUXALCMBVMdkPkqunnXTIQihy9/t+dbXKMENhA=;
-        b=HwUnj9P45J1g95MGGebmze/5avydFiM9B08XD5k9n3U+Z2f5M7DfnPRBOr9P1u8bho
-         roLdnA2YTliU4arl4ZL783N6zS6CCxjHD1FTMipmZL42IX+n1luEjLVxl6QBwIPfNRY5
-         ngHKKmAtC8RYvKVrv+kmfJBy+l36FOEgZ8MG4UcSvZDYIIJB2y5K1sQRyLecnyLBrS6+
-         W94Q9Eq/y8vMaEJHhD8QLUJuaymJBXkLW0Y0bR/fCa7C+enBd+ixo5FBsJMUxuFLP1E7
-         qbu8cx+tvGXV+4BpAJCvTcWMO56iPmZz5/mVpoWizRr7pWCZx8c73RSq6llSjYoaEMpT
-         kjpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVznBMQt5lnL3Aa17a5Fck/OareoxQgRcYmy1VHFw7M8xZDIRlSVb75Ejf8VhQ/3YW/CIYqSBeK8vq2Hkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCybSh0J3byu128bBSImpM9iey6p2T5Fp1FVImt0GUa0lrniQk
-	S1LyhpNuDMQcVZ5q7a7rVxLG073o8/3vhwwD/N4SWsPebFRIvshdNzQykzvMJ3w9BARMZ6icN7D
-	Xw7ADZDG98eOYJVHKOoNK3qFmQQU9ZKdaU7UaS5DFgg==
-X-Gm-Gg: ASbGncsr+TEO1plwPBCOMRQ3XSxekRn0iEWjnmXwBrKwEtk6s4XWxVC8OCBsefRawDo
-	mRUJmni/Np9RJRVy4WA8oVkXtUq6KTde2zP/AfUdDLph7Ef2l0xkoqCzpZ8pY4NGO1Qvnj3pyqQ
-	g/yqmvzYKQid7ywYeC8xFd6UNItv1OXN2ELiXKihPQdVW9vncw++eW1qQB815a49vr
-X-Google-Smtp-Source: AGHT+IG1XJVR1tbSdYVEWb4FS9GgmPTyeQbC5abWxdU05n6qKza4L8IcMKs32v/CHUtfg34znpezTvSPYt1ejigyCiQ=
-X-Received: by 2002:a05:6902:100a:b0:e7d:c56f:a871 with SMTP id
- 3f1490d57ef6-e81a21ee9f8mr16917604276.31.1749479629037; Mon, 09 Jun 2025
- 07:33:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749479645; x=1750084445;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=skrVgnKxd0KDctgtNsrczTFq3oqZuzABurM/ZDk3Ink=;
+        b=fMAB/XFbzvFAsqU0g6GH7pWFZkmQ2zD1FcE93Q+rf7tpwlRI9KRfMJEQycqCORBP+o
+         FjHPtDsnCCneWYu/PCNs2k03jCc6JHQjHdKnrFJPe2G8BCTo8VFBz/dMPsKPelkXhZwr
+         3fhfresSpN6rjguV1RjIIXhfCSS96aZpjm+SdQzxPVwQPemaObCkXVAY+MbgjbwWASHQ
+         caTqeus5J+pZw14jHq8SA19evpoB21gZX85tocFL+gMpfwxQYrDrj1+3FHZ8FN2n9T3W
+         O0fmqROBz7ZfAfBbLIGk+YRHMleY6+N7IimNC1hc4viuvzq16WNl4S/gSi/QSZGmxZHf
+         rOBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYB+vE8M4dN3N3bkUod3rIDW++jRtFcpkL8g5lxWAvCy4f3J9J6SF32ffIca2QY34QwKPiNB4rCgqJfe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbZGxDccEJ6cU6VCp7NDtcAnmhPSacmopfSL/MTIcWmAl2Yzhp
+	ZZJnCXkQsAyWLW1YDSe14LTMEa7sRJYbSpK/WLzEJLAwS2d3wdWVD4xUbCdDkAESfTZ3ALPVK86
+	2tgYYzg==
+X-Google-Smtp-Source: AGHT+IG0JGW+2ERvh9VAKD2SYT7EuVC5l/3/Q6a8vdYy73LZU6rmVVJeO2/2xeSR1j2Z/GlfjJU6yRXE7Fs=
+X-Received: from pjbsg3.prod.google.com ([2002:a17:90b:5203:b0:30e:6bb2:6855])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c950:b0:234:b430:cea7
+ with SMTP id d9443c01a7336-23601cff140mr191326735ad.22.1749479645053; Mon, 09
+ Jun 2025 07:34:05 -0700 (PDT)
+Date: Mon, 9 Jun 2025 07:34:03 -0700
+In-Reply-To: <20250609122050.28499-1-sarunkod@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250606-rpi-unicam-rgb-bgr-fix-v1-1-9930b963f3eb@kernel.org> <20250609003751.GD14545@pendragon.ideasonboard.com>
-In-Reply-To: <20250609003751.GD14545@pendragon.ideasonboard.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 9 Jun 2025 15:33:29 +0100
-X-Gm-Features: AX0GCFtDywSf6GaR04ACAWb_r7XEMRsKC-bKUld6TILW38C8e_WYvs7YAoWpTFY
-Message-ID: <CAPY8ntCnz6nkJSredd-sgMr87=0vuZ0OtfiMoPOfCZisKkzTHg@mail.gmail.com>
-Subject: Re: [PATCH] media: bcm2835-unicam: Remove RGB24 support
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Maxime Ripard <mripard@kernel.org>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>, 
-	Naushir Patuck <naush@raspberrypi.com>, linux-media@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250523010004.3240643-1-seanjc@google.com> <20250609122050.28499-1-sarunkod@amd.com>
+Message-ID: <aEbw2zBUQwJZ3D98@google.com>
+Subject: Re: [PATCH v2 00/59] KVM: iommu: Overhaul device posted IRQs support
+From: Sean Christopherson <seanjc@google.com>
+To: Sairaj Kodilkar <sarunkod@amd.com>
+Cc: baolu.lu@linux.intel.com, dmatlack@google.com, dwmw2@infradead.org, 
+	francescolavra.fl@gmail.com, iommu@lists.linux.dev, joao.m.martins@oracle.com, 
+	joro@8bytes.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mlevitsk@redhat.com, pbonzini@redhat.com, vasant.hegde@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Laurent & Maxime
+On Mon, Jun 09, 2025, Sairaj Kodilkar wrote:
+> Hi Sean,
+> 
+> Sorry for the delay in testing. All sanity tests are OK. I reran the performance 
+> test on the V2 and noticed that V2 has significantly more GALOG entries than V1
+> for all three cases. I also noticed that the Guest Nvme interrupt rate has
+> dropped for the 192 VCPUS.
 
-On Mon, 9 Jun 2025 at 01:38, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Maxime,
->
-> Thank you for the patch.
->
-> On Fri, Jun 06, 2025 at 04:53:03PM +0200, Maxime Ripard wrote:
-> > The RGB24 V4L2 format is defined as a pixel format with 8 bits per
-> > components, with the components being in the red, green, and blue order
-> > from left to right.
-> >
-> > The RGB MIPI-CSI2 is defined in the specification (Section 11.3.1,
-> > RGB888) with blue coming first, then green, then red. So the opposite of
-> > what V4L2 means by RGB.
-> >
-> > Since the hardware cannot reorder the components, this means that when
-> > selecting the RGB24 format, you get inverted red and blue components
-> > compared to what you'd expect.
-> >
-> > The driver already supports BGR24, so we can simply remove the RGB24
-> > format from the driver.
->
-> The only reason I could think of to explain why the driver exposes
-> V4L2_PIX_FMT_RGB24 is to support CSI-2 sources that transfer RGB888 data
-> with a non-standard order. I don't know what hardware would do that.
-> Dave, Naush, do you recall why this pixel format is supported by the
-> unicam driver ?
+Hmm, I don't see any obvious bugs or differences (based on a code diffed between
+v1 and v2).  I'll poke at the GALogIntr behavior just to double check, but my
+guess is that the differences are due to exernal factors, e.g. guest behavior,
+timing, scheduling, etc.
 
-I've lost track of exactly what gets validated along the pipeline.
-unicam_video_link_validate [1] looks to ensure that the V4L2 pixel
-format and media bus codes match as listed in the table.
+IOPS are all nearly identical, so I'm not terribly concerned.
+ 
+> I haven't figured out what is causing this.
 
-tc358743, adv7604, adv7511, and adv748x are all saying they produce
-MEDIA_BUS_FMT_RGB888_1X24
-ov5640 says it produces MEDIA_BUS_FMT_BGR888_1X24.
+Might just be slight differences in guest behavior?  E.g. did you change the guest
+kernel?  
 
-Is that an error in the ov5640 driver? If not, then both entries have
-to be in the table to support all those drivers.
+> I will continue my investigation further.
+> 
+>                           VCPUS = 32, Jobs per NVME = 8
+> ==============================================================================================
+>                                          V2                         V1          Percent change
+> ----------------------------------------------------------------------------------------------
+> Guest Nvme interrupts               124,260,796                 124,559,110             -0.20%
+> IOPS (in kilo)                            4,790                       4,796             -0.01%
 
-Looking at alvium-csi2.c and st-mipid02.c, both mappings are included
-there (and RBG888 in the case of alvium).
-Unicam's hardware doesn't care about the ordering as it just writes
-the incoming data to memory, so having all the sensible mappings
-between MEDIA_BUS_FMT_* and V4L2_PIX_FMT_* values makes sense.
+Uber nit, the percent change should be -0.10%
 
+> GALOG entries                              8117                         169              4702%
+> ----------------------------------------------------------------------------------------------
+> 
+> 
+>                           VCPUS = 64, Jobs per NVME = 16
+> ==============================================================================================
+>                                          V2                         V1          Percent change
+> ----------------------------------------------------------------------------------------------
+> Guest Nvme interrupts              102,394,358                   99,800,056             2.00% 
+> IOPS (in kilo)                           4,796                        4,798            -0.04% 
+> GALOG entries                           19,057                       11,923            59.83%
+> ----------------------------------------------------------------------------------------------
+> 
+> 
+>                          VCPUS = 192, Jobs per NVME = 48
+> ==============================================================================================
+>                                          V2                         V1          Percent change
+> ----------------------------------------------------------------------------------------------
+> Guest Nvme interrupts               68,363,232                  78,066,512             -12.42%
+> IOPS (in kilo)                           4,751                       4,749              -0.04%
 
-My initial reaction though is that simply removing the entry won't
-solve the problem anyway. You won't get a match between the
-MEDIA_BUS_FMT_RGB888_1X24 requested by tc358743 and a supported V4L2
-pixel format, so the link_validate will fail.
-Swapping either fourcc or code between the two entries would be the
-fix I was expecting.
+Uber nit #2, percent change should be postive 0.04%?  4,751 > 4,749.
 
-  Dave
-
-[1] https://github.com/torvalds/linux/blob/master/drivers/media/platform/broadcom/bcm2835-unicam.c#L2151-L2169
-
-> > Fixes: 392cd78d495f ("media: bcm2835-unicam: Add support for CCP2/CSI2 camera interface")
-> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > ---
-> >  drivers/media/platform/broadcom/bcm2835-unicam.c | 5 -----
-> >  1 file changed, 5 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > index f10064107d543caf867249d0566a0f42d6d8c4c6..1f549019efd53c9aae83193e74f1a3601ebf274d 100644
-> > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > @@ -338,15 +338,10 @@ static const struct unicam_format_info unicam_image_formats[] = {
-> >       /* RGB Formats */
-> >               .fourcc         = V4L2_PIX_FMT_RGB565, /* gggbbbbb rrrrrggg */
-> >               .code           = MEDIA_BUS_FMT_RGB565_1X16,
-> >               .depth          = 16,
-> >               .csi_dt         = MIPI_CSI2_DT_RGB565,
-> > -     }, {
-> > -             .fourcc         = V4L2_PIX_FMT_RGB24, /* rgb */
-> > -             .code           = MEDIA_BUS_FMT_RGB888_1X24,
-> > -             .depth          = 24,
-> > -             .csi_dt         = MIPI_CSI2_DT_RGB888,
-> >       }, {
-> >               .fourcc         = V4L2_PIX_FMT_BGR24, /* bgr */
-> >               .code           = MEDIA_BUS_FMT_BGR888_1X24,
-> >               .depth          = 24,
-> >               .csi_dt         = MIPI_CSI2_DT_RGB888,
-> >
-> > ---
-> > base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
-> > change-id: 20250606-rpi-unicam-rgb-bgr-fix-d1b6f46a75ad
->
-> --
-> Regards,
->
-> Laurent Pinchart
+> GALOG entries                           62,768                      56,215              11.66%
+> ----------------------------------------------------------------------------------------------
+> 
+> Thanks
+> Sairaj
 
