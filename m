@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-677178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C76AD1739
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:02:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CAEAD1798
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7D8188ABA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A74B1889D9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 04:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DDC15B102;
-	Mon,  9 Jun 2025 03:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oBUKEM08"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7B325C813;
+	Mon,  9 Jun 2025 04:05:30 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450A828F3;
-	Mon,  9 Jun 2025 03:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221D622339;
+	Mon,  9 Jun 2025 04:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749438167; cv=none; b=LTjyMAvm0ijmu2EATPzlUWaqBiH5iXpqWxYEHvZsa7QKtEjL98IUBXzm7/QMFRdvDRQOM2rczQ82eTxE1KVuyGe1wt5Qrs/pAikFEu2S+CxfRfbghzYv7DDjBajdUnqdIR0Ylfw0cn3WNaI/xx2TLZklD5O95cyT2k2Q+KooMaI=
+	t=1749441930; cv=none; b=HVjdQLWdG4p7DH0o2rn4ZtUc2z8+kNSulqnm1B49VKNpuSPoUODXtkOy/d/bs8XxxwGMkNyJaSUcDuA1WQAELiHMUWau/55uXoCjQeaSzDxnz0Uv8jiwVOOwpkhDUPM3yzBiqnuQ/Q3Vk/8uxWPa9pZ82vX04IdLShX9gYPNK00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749438167; c=relaxed/simple;
-	bh=jg7j9SVjkwhaFfew7XZU/yjaLCTPaTUg2beG4A3fT60=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fjY5rE9cwZDES7M2oSQ1DGgvqNkp2LfeXziE+KUFmb3WOPFqxrpozaKoxK6e2JcYTEUUnJvVla2ZOXCJY6E8Lf+E76SY6QPUScS69mgPXMi7sZ6OH3jtNB5AngYa3nrQvx8nzegpd0JmegkCmk5jHYzuhkG0pKfAHdjJ2ormM0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oBUKEM08; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749438165; x=1780974165;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=jg7j9SVjkwhaFfew7XZU/yjaLCTPaTUg2beG4A3fT60=;
-  b=oBUKEM08+IqjXCd/UtV5nj0+WrbY756EW4j7hhKHgiXS6jbxlVbtR/96
-   GZpyTj30wuPJOzi2o6nGdy4mCfvKXDNmEBtoWqx8Tn5+wUesd2j5sQf2F
-   x+1bqDmiXt8CHlHlaNyf0f7SMJNl78HJGTByeocgCQfc2cV3HpMAEfr/9
-   umFUmVeAUgbXFSecggnDkp7zubrwSRpIb0F3bVtbd3CxeEeEcGLnDrnAy
-   K0Zwd0pT/WyBTX11hfUJi08JLKXf5uz8Z71HBHUDOyia+54iFryfL7poV
-   /fV9/3G9giZSNiRhIZLUJyDMomHdVt9AL8SKTXHmcKmssULR6v/OJBgek
-   g==;
-X-CSE-ConnectionGUID: sU5noGdtSLylx9mkdlNx6g==
-X-CSE-MsgGUID: gRIwQmnUQ0WOOX5LFVAEKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="51604226"
-X-IronPort-AV: E=Sophos;i="6.16,221,1744095600"; 
-   d="scan'208";a="51604226"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2025 20:02:44 -0700
-X-CSE-ConnectionGUID: Tf38NmHZQ0yJXOoSrg5Xyg==
-X-CSE-MsgGUID: BiwuJCe+QmqcbGXZUjxfPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,221,1744095600"; 
-   d="scan'208";a="169562812"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Jun 2025 20:02:41 -0700
-From: Tianyou Li <tianyou.li@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	tianyou.li@intel.com,
-	wangyang.guo@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Add --buildids-blacklist option to perf archive command
-Date: Mon,  9 Jun 2025 11:55:42 +0800
-Message-ID: <20250609035542.2364525-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1749441930; c=relaxed/simple;
+	bh=SR1lkzbZ7sW0vxs7n8MlXWnQR+u4npJ+xZrJWtOep24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cCFMf1b608KVcuyvNfrINL178a5Rma9sd25JLxbdNT8WdVbeflfq2SNWWknkkMRSCcDvXRjMAXdH+hk7HJbNb8KX9Jnvkrt3MzpfoEV7b/OxP/71p/VJaEW3ZmK3xtswbri62DBzjGASYOuX+T0TXOh0G2mcHBvVmx9jEb/s7QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f4f5d3d844e611f0b29709d653e92f7d-20250609
+X-CID-CACHE: Type:Local,Time:202506091146+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:e53a8877-982c-42b4-b057-1024c2ff2634,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:9e483725f417c604585cbed8794d6973,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f4f5d3d844e611f0b29709d653e92f7d-20250609
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1579250139; Mon, 09 Jun 2025 12:05:19 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id B998BE00891C;
+	Mon,  9 Jun 2025 12:05:18 +0800 (CST)
+X-ns-mid: postfix-68465D7E-5632772
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 94065E008900;
+	Mon,  9 Jun 2025 12:05:15 +0800 (CST)
+Message-ID: <83513599-e007-4d07-ac28-386bc5c7552d@kylinos.cn>
+Date: Mon, 9 Jun 2025 12:05:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] PM: Optionally block user fork during freeze to
+ improve performance
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: rafael@kernel.org, len.brown@intel.com, pavel@kernel.org,
+ kees@kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250606062502.19607-1-zhangzihuan@kylinos.cn>
+ <20250606082244.GL30486@noisy.programming.kicks-ass.net>
+From: zhangzihuan <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250606082244.GL30486@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-When make a perf archive, it may contains the binaries that user did not want to ship with,
-add --buildids-blacklist option to specify a backlist file which contains the buildids need
-to be excluded. The blacklist file can be generated from command:
+Hi Peter,
+Thanks a lot for the feedback!
 
-  perf buildid-list -i perf.data --with-hits | grep -v "^ " > buildids_blacklist.txt
-
-Then remove the lines from the buildids_blacklist.txt for buildids should be included.
-
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
----
- tools/perf/perf-archive.sh | 35 ++++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/perf-archive.sh b/tools/perf/perf-archive.sh
-index 6ed7e52ab881..e5ff840ac6b4 100755
---- a/tools/perf/perf-archive.sh
-+++ b/tools/perf/perf-archive.sh
-@@ -16,6 +16,13 @@ while [ $# -gt 0 ] ; do
- 	elif [ $1 == "--unpack" ]; then
- 		UNPACK=1
- 		shift
-+	elif [ $1 == "--buildids-blacklist" ]; then
-+		BUILDIDS_BLACKLIST="$2"
-+		if [ ! -e "$BUILDIDS_BLACKLIST" ]; then
-+			echo "Provided buildids blacklist file $BUILDIDS_BLACKLIST does not exist"
-+			exit 1
-+		fi
-+		shift 2
- 	else
- 		PERF_DATA=$1
- 		UNPACK_TAR=$1
-@@ -86,11 +93,29 @@ fi
- 
- BUILDIDS=$(mktemp /tmp/perf-archive-buildids.XXXXXX)
- 
--perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " > $BUILDIDS
--if [ ! -s $BUILDIDS ] ; then
--	echo "perf archive: no build-ids found"
--	rm $BUILDIDS || true
--	exit 1
-+#
-+# BUILDIDS_BLACKLIST is an optional file that contains build-ids to be excluded from the
-+# archive. It is a list of build-ids, one per line, without any leading or trailing spaces.
-+# If the file is empty, all build-ids will be included in the archive. To create a blacklist
-+# file, you can use the following command:
-+# 	perf buildid-list -i perf.data --with-hits | grep -v "^ " > buildids_blacklist.txt
-+# You can edit the file to remove the lines that you want to keep in the archive, then:
-+# 	perf archive --buildids-blacklist buildids_blacklist.txt
-+#
-+if [ ! -s $BUILDIDS_BLACKLIST ]; then
-+	perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " > $BUILDIDS
-+	if [ ! -s $BUILDIDS ] ; then
-+		echo "perf archive: no build-ids found"
-+		rm $BUILDIDS || true
-+		exit 1
-+	fi
-+else
-+	perf buildid-list -i $PERF_DATA --with-hits | grep -v "^ " | grep -Fv -f $BUILDIDS_BLACKLIST > $BUILDIDS
-+	if [ ! -s $BUILDIDS ] ; then
-+		echo "perf archive: no build-ids found after applying blacklist"
-+		rm $BUILDIDS || true
-+		exit 1
-+	fi
- fi
- 
- MANIFEST=$(mktemp /tmp/perf-archive-manifest.XXXXXX)
--- 
-2.47.1
-
+=E5=9C=A8 2025/6/6 16:22, Peter Zijlstra =E5=86=99=E9=81=93:
+> This isn't blocking fork(), this is failing fork(). Huge difference.
+> Also problematic, because -EBUSY is not a recognised return value of
+> fork(). As such, no existing software will adequately handle it.
+> =C2=A0I completely agree there's a significant difference between faili=
+ng=20
+> and blocking fork().
+The intent was to prevent late-created user tasks from interfering with=20
+the freezing process, but you're right: returning -EBUSY is not valid=20
+for fork(), and existing user-space programs wouldn't expect or handle=20
+that properly.
+As a next step, I'm considering switching to a blocking mechanism=20
+instead =E2=80=94 that is, have user fork() temporarily sleep if it's att=
+empted=20
+during the freeze window. That should avoid breaking user-space=20
+expectations while still helping maintain freeze stability.
+Would that be more acceptable?
+Thanks again for the insight,
+Zihuan Zhang
 
