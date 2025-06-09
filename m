@@ -1,95 +1,146 @@
-Return-Path: <linux-kernel+bounces-678341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B46AD2772
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8A7AD2728
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FCD3B239A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:14:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987B4188FCA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC06221278;
-	Mon,  9 Jun 2025 20:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5BF220F43;
+	Mon,  9 Jun 2025 20:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="MPW2cK/a"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Flvd0MCk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668D21CF7AF;
-	Mon,  9 Jun 2025 20:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75441F3BB0;
+	Mon,  9 Jun 2025 20:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749500101; cv=none; b=cIwM0UFbmy5hw2sJ9f7gO2ZjWPiBc/ydb/m1+2oXsRtnA1optY3LWsq43f4F7Vzp3N9lm9SDCEs44N/xBby2BOlCDmP4iv4j1GXob10nAwkkZMxJi94+jMuCBlGQwtWNS1aGx6W6/GU1PgMW/TWDlfcQXNvHSsErKXJnWLiRpBo=
+	t=1749499526; cv=none; b=BNDRIwTLSuQVvvs8tj0opSmrolfIcWh0RjF2QMOSxkL8AMRp4zUk9AxuA791oEMduM0SFuqCLJ1Kcr3D1EBASLnbtx15tiitA3xwQLn7eIp1xYftHSD36krBFJ3GZLZSsA4oXxJuQYnTcXrzT1YnSIT3Ebbxt/Pwi9EKdEdSqjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749500101; c=relaxed/simple;
-	bh=kgrnDOGQDmclaNhJePtCHT7yqFnabWOEr9ZX+kemgVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HzGha61mJF7Hs+oPsrZ+x9NTofXn3CdGhIT5XPImxLdzjP8+7ppuGQTqyy/17C5F0WBOBNSbwZB8J8qLu5wTVpp8zsS4YSGrV4nLaSSCNlD3Z5Zrg6/Jd9hu4IPEYruE1LrXEkJkfIFPJuYSneEosz2nX64YPiaKbDiyGn9tsfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=MPW2cK/a; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=R3yQ0tJ0CBdLt3HO3JHLYhAu43xMtm6smkUOzO9SHfM=; b=MPW2cK/a3Cr/+tQ6wajfTf0PH0
-	32PLU9fyua87i8J/ZhOi6jJcfaFRzoWwHFhYBqnQY176/VsX11xPNdq5rOxApMq7gS5oPfRLwfSWa
-	DyVwB7nZIsljFHXjFB2m7v3l7K8Hu7f6VkvnxgqQmf76/aU5zDmtJiklVBsA77fUpwzxly1HOo0sY
-	NQc6GApVgJfKRHtdYFOo5e2CwLdKPx2PMUN6nKC+sxm4AHRCFcVa5XDbevXUYFsdZ1ojt+odcCVX5
-	+ruLuHh2ptiJDRbBhX9n4bLP/L5wtYDgQucPc+lLCgLGSr0TkyEMxJ38j5Ehwni/FLzOcPAbLemio
-	XEiFTVHw==;
-Date: Mon, 9 Jun 2025 21:50:44 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Conor Dooley <conor@kernel.org>
-Cc: Kory Maincent <kory.maincent@bootlin.com>, Tony Lindgren
- <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen
- <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>, Roger Quadros
- <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>, Bajjuri Praneeth
- <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
- <broonie@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] binding: omap: Add lots of missing omap AM33
- compatibles
-Message-ID: <20250609215044.33ef6b52@akair>
-In-Reply-To: <20250609-hacking-corporate-d53531577680@spud>
-References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
-	<20250609-bbg-v2-2-5278026b7498@bootlin.com>
-	<20250609-hacking-corporate-d53531577680@spud>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749499526; c=relaxed/simple;
+	bh=K1VwXTUztkatZ1a//3npskpLt0l90xtkJZUgIPEdnGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sXimMwed0wC/MdRiN7bdoN9CS1lnBxe1GkRp1/FV3Pib2zRIwai9FkEx7F3rTVdT9T/GtDWPQzOC4zenslX3Id6Jzv4I6aaGaWW2D8CFw2mcJLZtlWme/WGvgO/JZz1mrDO3j4+Ldki7AhiyiHR74nUgEfM2kvxd3xCa3PJ7uzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Flvd0MCk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D03BDC4CEEF;
+	Mon,  9 Jun 2025 20:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749499526;
+	bh=K1VwXTUztkatZ1a//3npskpLt0l90xtkJZUgIPEdnGE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Flvd0MCklqqmksqeMaI334ngLSuiw8gJ0v8n+8w6JxbDpnhJfZZqBJI/sm5HLtd5Y
+	 MO/LduBuL+mczBidY0sG3TaPExawf/ee00BoLJgH4OCdIBCbxxWRCKQKyn0xS0M8N1
+	 kCJSHnwNFUtt7E3EVbbiPyTMBM5PTuYx6xFWFgLtySjrR3b/+kh54NwrBFvYRhI7FG
+	 2n9PdRRLr1a/E1cJNmHlsSk2gsnpi9/Dfe1kvujEeXHj8cS8lKKH3c8vi8lbQYMdoL
+	 diCffKaQt1aVVWNr7gEm7wCpPznxBgY46SoG5kgpGf50ULvvBuPdoW5nkNnmiG7NIn
+	 KVMvFtU5THwjA==
+From: Mario Limonciello <superm1@kernel.org>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Huang Rui <ray.huang@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	platform-driver-x86@vger.kernel.org (open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER),
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-pm@vger.kernel.org (open list:AMD PSTATE DRIVER)
+Subject: [PATCH v11 00/13] Add support for AMD hardware feedback interface
+Date: Mon,  9 Jun 2025 15:05:05 -0500
+Message-ID: <20250609200518.3616080-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am Mon, 9 Jun 2025 18:03:05 +0100
-schrieb Conor Dooley <conor@kernel.org>:
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-> > +      - description: TI bone variants based on TI AM335  
-> 
-> "bone variant" sounds like some shortand or nickname. Are the boards not
-> called "beaglebone green" and "beaglebone black"? Whatever about the
-> compatible, the description should use the full name I think.
-> 
-we have an enum below it listing all those variants. So "variants"
-makes sense here, but better "TI Beaglebone variants"
+The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+provide behavioral classification of tasks.
 
-> > +        items:
-> > +          - enum:
-> > +              - ti,am335x-bone-black
-> > +              - ti,am335x-bone-green
-> > +              - ti,am335x-pocketbeagle
-> > +          - const: ti,am335x-bone
-> > +          - const: ti,am33xx
-> > +
+Threads are classified during runtime into enumerated classes.
+Currently, the driver supports 3 classes (0 through 2). These classes
+represent thread performance/power characteristics that may benefit from
+special scheduling behaviors. The real-time thread classification is
+consumed by the operating system and is intended to be used to inform the scheduler
+of where the thread should be placed for optimal performance or energy efficiency.
 
-Regards,
-Andreas
+The thread classification can be used to helps to select CPU from a ranking table
+that describes an efficiency and performance ranking for each classification from
+two dimensions. This is not currently done in this series, but is intended for future
+follow ups after the plumbing is laid down.
+
+The ranking data provided by the ranking table are numbers ranging from 0 to 255,
+where a higher performance value indicates higher performance capability and a higher
+efficiency value indicates greater efficiency. All the CPU cores are ranked into
+different class IDs. Within each class ranking, the cores may have different ranking
+values. Therefore, picking from each classification ID will later allow the scheduler
+to select the best core while threads are classified into the specified workload class.
+
+This series was originally submitted by Perry Yuan [1] but he is now doing a different
+role and he asked me to take over.
+
+Link: https://lore.kernel.org/all/cover.1724748733.git.perry.yuan@amd.com/
+
+v10->v11:
+ * rebase on v6.16-rc1
+ * Adjust for Randy's and Ingo's feedback
+
+Mario Limonciello (5):
+  MAINTAINERS: Add maintainer entry for AMD Hardware Feedback Driver
+  cpufreq/amd-pstate: Disable preferred cores on designs with workload
+    classification
+  platform/x86/amd: hfi: Set ITMT priority from ranking data
+  platform/x86/amd: hfi: Add debugfs support
+  x86/itmt: Add debugfs file to show core priorities
+
+Perry Yuan (8):
+  Documentation: x86: Add AMD Hardware Feedback Interface documentation
+  x86/msr-index: define AMD heterogeneous CPU related MSR
+  platform/x86: hfi: Introduce AMD Hardware Feedback Interface Driver
+  platform/x86: hfi: parse CPU core ranking data from shared memory
+  platform/x86: hfi: init per-cpu scores for each class
+  platform/x86: hfi: add online and offline callback support
+  platform/x86: hfi: add power management callback
+  x86/process: Clear hardware feedback history for AMD processors
+
+ Documentation/arch/x86/amd-hfi.rst    | 133 +++++++
+ Documentation/arch/x86/index.rst      |   1 +
+ MAINTAINERS                           |   9 +
+ arch/x86/include/asm/msr-index.h      |   5 +
+ arch/x86/kernel/itmt.c                |  23 ++
+ arch/x86/kernel/process_64.c          |   4 +
+ drivers/cpufreq/amd-pstate.c          |   6 +
+ drivers/platform/x86/amd/Kconfig      |   1 +
+ drivers/platform/x86/amd/Makefile     |   1 +
+ drivers/platform/x86/amd/hfi/Kconfig  |  18 +
+ drivers/platform/x86/amd/hfi/Makefile |   7 +
+ drivers/platform/x86/amd/hfi/hfi.c    | 551 ++++++++++++++++++++++++++
+ 12 files changed, 759 insertions(+)
+ create mode 100644 Documentation/arch/x86/amd-hfi.rst
+ create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
+ create mode 100644 drivers/platform/x86/amd/hfi/Makefile
+ create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
+
+-- 
+2.43.0
+
 
