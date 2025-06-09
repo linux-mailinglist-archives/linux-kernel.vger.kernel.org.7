@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-677527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E12AD1B79
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E11AD1B83
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEECB3A628A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F0916B92A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069A5253B40;
-	Mon,  9 Jun 2025 10:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B6A2571C5;
+	Mon,  9 Jun 2025 10:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PkGkF+fe"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="fj0L94Pz"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27FD2F37;
-	Mon,  9 Jun 2025 10:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754FD2571B8;
+	Mon,  9 Jun 2025 10:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464621; cv=none; b=Dos8VemM3POIUYwVoCe4SsczDiU5VsXRXfy6QMA0zXrClXl88S92TsvbXcnPF/u3eIYO0PsgOv2y5njMeb7hFbFRJEiwx2Hug9Q8PaLOWWybbEQitvY1idRjleWNbprwmXlM8zo15lIkzss7Fkq6AKHsPCyUfwSyCFjs5cBMx7A=
+	t=1749464633; cv=none; b=qAEwPJwzwX0keksX+OpKBN0al2ONHnPcm8g4lhye7ZiNELA2vhpDA/ubyimM9IYu/4qtxD5LVks2N9ZVlHwzRM7SykZGdHLBMVW5MSaiheR4Hd6p9u4+ks9mwcadzwFivHssalWNNexILASdq4hWuBDnAtIsdWsh8vNATIGiBV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464621; c=relaxed/simple;
-	bh=IqIATT8ehLSCHyHPHIK0aeC0vBn26wKL58mOSzv+1aM=;
+	s=arc-20240116; t=1749464633; c=relaxed/simple;
+	bh=bUFHrN+kYoh9Jw74vJgnwI32cWP3sCcpAQjhYR2YSxk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wrh0mHkfsPSVR5oOroI6RHBeIN8ZcGLJN7bpcHbFdFlEbUkVkuNb0V1JviCnk9ZXuwmXDPEHPQYf+Bo+MLMadzfP3qY2jtq+VbOAa6Esd/s460dbP8MnOtGxRJqa0tYcb0/PNNIj7VyCUFfKdDPCq/kNe5TIJHHkt4ZvS6kZ7mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PkGkF+fe; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=qaenkpoI2auiMmB6OSPhDMtbEGC4Xwe78JOQB9iv0isVcgrDlsi4D8ZhexlMUfvsf/8NjzDHii3XkK0nXdTLjhYa7C8bPZKzZj9Utxp7eqJxMlCtyDZplOfAzSc0DU2+51w/flDUcWNyOGSWreXodq1O14huxauXyYiewDDqRsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=fj0L94Pz; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,35 +35,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=MUho5YhueRpwOnAS8bp4/Ag/zAqHZPytVl1yhId01gk=; b=PkGkF+fewiq5/dyr93FzNBw2Bb
-	VY70GVmhv2OmZBYisNs/ayTNEhe5evbu2m4uDutCQFwVZEEo6LuQw/XBpHC23HIvCLlWmJevTSNF1
-	7dyPf4yetY/JM4x5EQV364s7XZhVNlOHzX/uWRz77p8UTyALEIXbQvmQIwIFkVEG8WdKrzEEMJFQ7
-	0YoVN+YKMe0ErJZgK3A35yna88uz32a4TiaA+h18TLE2VQIE1n1PphbPbhsaxa/29yu1WJON3sp5+
-	wwQyjHeNOUH/VK0IEgC1/ymA5koHoa80ReGUB8gblVR67KibcHFj3GztxNGMFF6/fdjYayb3zsa92
-	xfoBKT8w==;
+	bh=6nx3PTDw7aNdyY1bOCfE7raQ5NlwbfEpTbQqELls0VU=; b=fj0L94Pz6IA1q1yJ+28NspxjCs
+	ss1vG+22sASQArb7JSFLEnxY/jVr67CtMuOJZRUABz5fvlceMwxW2xPgtz2y+f2kRs6PlAjRdsPz0
+	v5ZONxp1/7KKopnI7TtLcAvKf44ub0Vy0aYwjMyVKXx9T049grUC0HLmdDlYSCZBSCbezy4MzNt4x
+	kxaCSIlNy1D6b6CydVDjoRROmrglRUQZTqSOHPrmJ3PBLqLEPpdZFn0aqIsF1O15Jro41kmr0XRj4
+	UL/Gvje8ypA9twUDbmSHdWtCWz44EBX3dBHQz/muixaqI4UgjB6W+nn3IqsNLydaFMEOt3ZiW8uCD
+	HIE7JkHQ==;
 Received: from i53875b1c.versanet.de ([83.135.91.28] helo=phil.fritz.box)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uOZfD-0006Av-9L; Mon, 09 Jun 2025 12:23:35 +0200
+	id 1uOZfD-0006Av-TH; Mon, 09 Jun 2025 12:23:35 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quentin Schulz <foss+kernel@0leil.net>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Hsun Lai <i@chainsx.cn>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	Jakob Unterwurzacher <jakob.unterwurzacher@cherry.de>,
+	andrew@lunn.ch,
+	inindev@gmail.com,
+	quentin.schulz@cherry.de,
+	jonas@kwiboo.se,
+	sfr@canb.auug.org.au,
+	nicolas.frattaroli@collabora.com,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [PATCH v3] arm64: dts: rockchip: support Ethernet Switch adapter for RK3588 Jaguar
-Date: Mon,  9 Jun 2025 12:23:00 +0200
-Message-ID: <174946455533.762051.10949954779035634818.b4-ty@sntech.de>
+	krzysztof.kozlowski@linaro.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 0/3] Add support for Sakura Pi RK3308B
+Date: Mon,  9 Jun 2025 12:23:01 +0200
+Message-ID: <174946455539.762051.14386974894605199498.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250604-jaguar-mezz-eth-switch-v3-1-c68123240f9e@cherry.de>
-References: <20250604-jaguar-mezz-eth-switch-v3-1-c68123240f9e@cherry.de>
+In-Reply-To: <20250521131108.5710-1-i@chainsx.cn>
+References: <20250521131108.5710-1-i@chainsx.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,25 +79,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 04 Jun 2025 18:18:08 +0200, Quentin Schulz wrote:
-> This adds support for the Ethernet Switch adapter connected to the
-> mezzanine connector on RK3588 Jaguar.
+On Wed, 21 May 2025 21:11:05 +0800, Hsun Lai wrote:
+> This series add support for Sakura Pi RK3308B.
 > 
-> This adapter has a KSZ9896 Ethernet Switch with 4 1GbE Ethernet
-> connectors, two user controllable LEDs, and an M12 12-pin connector
-> which exposes the following signals:
->  - RS232/RS485 (max 250Kbps/500Kbps, RX pin1, TX pin2)
->  - two digital inputs (pin4 routed to GPIO3_C5 on SoC, pin5 to GPIO4_B4)
->  - two digital outputs (pin7 routed to GPIO3_D3 on SoC, pin8 to
->    GPIO3_D1)
->  - two analog inputs (pin10 to channel1 of ADS1015, pin11 to channel2)
+> Info of device can be found at:
+> https://docs.sakurapi.org/article/sakurapi-rk3308b/introduce
+> 
+> Changes in v4:
+> - Fix vendor prefixes error (Krzysztof Kozlowski v2)
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: rockchip: support Ethernet Switch adapter for RK3588 Jaguar
-      commit: 8674f059750571f168db9f43d3c02f1975debcc9
+[1/3] dt-bindings: vendor-prefixes: Add SakuraPi prefix
+      commit: 281bf6e619fc637282288a3a087e2b2ed3150cd5
+[2/3] dt-bindings: arm: rockchip: Add Sakura Pi RK3308B
+      commit: bc099a4f5b7d08d97684648abe58d236cb7afa4f
+[3/3] arm64: dts: rockchip: add DTs for Sakura Pi RK3308B
+      commit: 79f2a17024412fd6f62208ab3fd6814e52588a31
 
 Best regards,
 -- 
