@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-677862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AB8AD20EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D90AD20F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011C41685CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B8016AE57
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43CE25CC75;
-	Mon,  9 Jun 2025 14:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNGVlTLA"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CCE25CC73;
+	Mon,  9 Jun 2025 14:35:50 +0000 (UTC)
+Received: from tempest.elijah.cs.cmu.edu (tempest.elijah.cs.cmu.edu [128.2.210.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC49725D20A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25452F37;
+	Mon,  9 Jun 2025 14:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.2.210.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749479647; cv=none; b=omitYNsVAZQj/VL5C8YnWxFxBprLSZNUu8c256ezYqVWXyfyROAD93qwaV0oDhd1FaMG3T0Nhv6vGRbyhlBA1AXbvYZTD17sWrltmSMuFDzhRF1ezTkNDJUpqL3/QbRR7nQ0FPkb+jfe5PjPWaTnLY9GUW8ajo1J5AfljhGNxwA=
+	t=1749479749; cv=none; b=Hhz5Nh4bIDnYm7JVnudl/E6zBvTsgPCxPPjyjgnN2Iw3Wi2aG5vZAONjHymnwDzjszD3i8ia38OLo1Zy18136+t0H0ly449JJXQBXyblzQ8cAlFzd77OqbE1LcoT1wdVDq850fBLSXu8MzNfBMnWix7w8KWb2aC8IQAd5EFKoLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749479647; c=relaxed/simple;
-	bh=RncucRipf1cYTuMs00M4ActoK6bvKzfNJNtvT9JpgjU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DkyMZTiIyzox37V7GkaXBz8rRK7CwPWW0ntxHkocDXFlvz2iNUTAM5dz1FlUTHy0KzvyFc0u8cIoeKqg0v92kO9S+VwTICCecYwBXnqch7rkEdw/527jVtJJ5SBzaAiv99TvFsbhjcrr8owPIEpiO/icZb9Jqx70ERCQb1oWR/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tNGVlTLA; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-23507382e64so42485255ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 07:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749479645; x=1750084445; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=skrVgnKxd0KDctgtNsrczTFq3oqZuzABurM/ZDk3Ink=;
-        b=tNGVlTLAOWVhh49MatYphHt8c38PXeIXC/VlqluEaGDCaoyMJqVzC66HbKX7dnIciH
-         0PGoW11+LTlJaPuNgr72xM74cHpJJlgoUrAhEKIDBHCNDumx7T3cqAAkYiYSz9umdvd6
-         kmZNaJ5To8WX0ozlVBlRWrfhJ3a92+7UAlxZr/NJzam14jVHklQ532oHIGlYi0Ok/Mzs
-         Nq4VrgdsXK1fLnnkmsPK8l1DyGNrromCWfsrO934lBnczO0qHs3RFnoFkz8pNDt4nbMC
-         ZONo2klPV1pEDG0x5E7WXJXaakcJM99AclD53gZJ24apACkzx17/9LVDmGt7crsgw3Du
-         yLBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749479645; x=1750084445;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=skrVgnKxd0KDctgtNsrczTFq3oqZuzABurM/ZDk3Ink=;
-        b=fMAB/XFbzvFAsqU0g6GH7pWFZkmQ2zD1FcE93Q+rf7tpwlRI9KRfMJEQycqCORBP+o
-         FjHPtDsnCCneWYu/PCNs2k03jCc6JHQjHdKnrFJPe2G8BCTo8VFBz/dMPsKPelkXhZwr
-         3fhfresSpN6rjguV1RjIIXhfCSS96aZpjm+SdQzxPVwQPemaObCkXVAY+MbgjbwWASHQ
-         caTqeus5J+pZw14jHq8SA19evpoB21gZX85tocFL+gMpfwxQYrDrj1+3FHZ8FN2n9T3W
-         O0fmqROBz7ZfAfBbLIGk+YRHMleY6+N7IimNC1hc4viuvzq16WNl4S/gSi/QSZGmxZHf
-         rOBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYB+vE8M4dN3N3bkUod3rIDW++jRtFcpkL8g5lxWAvCy4f3J9J6SF32ffIca2QY34QwKPiNB4rCgqJfe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbZGxDccEJ6cU6VCp7NDtcAnmhPSacmopfSL/MTIcWmAl2Yzhp
-	ZZJnCXkQsAyWLW1YDSe14LTMEa7sRJYbSpK/WLzEJLAwS2d3wdWVD4xUbCdDkAESfTZ3ALPVK86
-	2tgYYzg==
-X-Google-Smtp-Source: AGHT+IG0JGW+2ERvh9VAKD2SYT7EuVC5l/3/Q6a8vdYy73LZU6rmVVJeO2/2xeSR1j2Z/GlfjJU6yRXE7Fs=
-X-Received: from pjbsg3.prod.google.com ([2002:a17:90b:5203:b0:30e:6bb2:6855])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:c950:b0:234:b430:cea7
- with SMTP id d9443c01a7336-23601cff140mr191326735ad.22.1749479645053; Mon, 09
- Jun 2025 07:34:05 -0700 (PDT)
-Date: Mon, 9 Jun 2025 07:34:03 -0700
-In-Reply-To: <20250609122050.28499-1-sarunkod@amd.com>
+	s=arc-20240116; t=1749479749; c=relaxed/simple;
+	bh=jqGRLWTTrqw42sFBNIxIr68z0GOeWt6gFzTavBE/PGk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=aRE7nec2RCuts617N9nu4XWl68gBcIc7XlhKE9NQIaWMighr2aC+WjnwdzS5OpxltX436EaHc3Xc0pSXuqRepTG3TGny45hEaNIeANzRBe5ktqEiTGuRAxlWslrVDvj+SXk9KposMO4CKGRASFteY4lEr61mDAWLxmCCX9FN2cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu; spf=pass smtp.mailfrom=cs.cmu.edu; arc=none smtp.client-ip=128.2.210.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.cmu.edu
+Received: from [127.0.0.1] (unknown [172.26.8.30])
+	by tempest.elijah.cs.cmu.edu (Postfix) with ESMTPSA id F0F5A180130C;
+	Mon,  9 Jun 2025 10:35:44 -0400 (EDT)
+Date: Mon, 09 Jun 2025 10:35:36 -0400
+From: Jan Harkes <jaharkes@cs.cmu.edu>
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, David Howells <dhowells@redhat.com>,
+ Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Carlos Maiolino <cem@kernel.org>
+CC: linux-fsdevel@vger.kernel.org, coda@cs.cmu.edu, linux-nfs@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
+In-Reply-To: <20250608230952.20539-4-neil@brown.name>
+References: <20250608230952.20539-1-neil@brown.name> <20250608230952.20539-4-neil@brown.name>
+Message-ID: <7DCEE406-F27B-4120-BD7A-B0A5E9028FAF@cs.cmu.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250523010004.3240643-1-seanjc@google.com> <20250609122050.28499-1-sarunkod@amd.com>
-Message-ID: <aEbw2zBUQwJZ3D98@google.com>
-Subject: Re: [PATCH v2 00/59] KVM: iommu: Overhaul device posted IRQs support
-From: Sean Christopherson <seanjc@google.com>
-To: Sairaj Kodilkar <sarunkod@amd.com>
-Cc: baolu.lu@linux.intel.com, dmatlack@google.com, dwmw2@infradead.org, 
-	francescolavra.fl@gmail.com, iommu@lists.linux.dev, joao.m.martins@oracle.com, 
-	joro@8bytes.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mlevitsk@redhat.com, pbonzini@redhat.com, vasant.hegde@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 09, 2025, Sairaj Kodilkar wrote:
-> Hi Sean,
-> 
-> Sorry for the delay in testing. All sanity tests are OK. I reran the performance 
-> test on the V2 and noticed that V2 has significantly more GALOG entries than V1
-> for all three cases. I also noticed that the Guest Nvme interrupt rate has
-> dropped for the 192 VCPUS.
+That change is probably good=2E
 
-Hmm, I don't see any obvious bugs or differences (based on a code diffed between
-v1 and v2).  I'll poke at the GALogIntr behavior just to double check, but my
-guess is that the differences are due to exernal factors, e.g. guest behavior,
-timing, scheduling, etc.
+The Coda user space always writes directory data to a file, so the normal =
+path always uses coda_venus_readdir=2E
 
-IOPS are all nearly identical, so I'm not terribly concerned.
- 
-> I haven't figured out what is causing this.
+The iterate_dir code was afaik mostly used while developing the original k=
+ernel module during the Linux-2=2E1 era=2E It was using a trivial user spac=
+e helper that would simply re-export an existing filesystem subtree=2E Sort=
+ of like a bind mount before bind mounts existed=2E
 
-Might just be slight differences in guest behavior?  E.g. did you change the guest
-kernel?  
+Jan
 
-> I will continue my investigation further.
-> 
->                           VCPUS = 32, Jobs per NVME = 8
-> ==============================================================================================
->                                          V2                         V1          Percent change
-> ----------------------------------------------------------------------------------------------
-> Guest Nvme interrupts               124,260,796                 124,559,110             -0.20%
-> IOPS (in kilo)                            4,790                       4,796             -0.01%
-
-Uber nit, the percent change should be -0.10%
-
-> GALOG entries                              8117                         169              4702%
-> ----------------------------------------------------------------------------------------------
-> 
-> 
->                           VCPUS = 64, Jobs per NVME = 16
-> ==============================================================================================
->                                          V2                         V1          Percent change
-> ----------------------------------------------------------------------------------------------
-> Guest Nvme interrupts              102,394,358                   99,800,056             2.00% 
-> IOPS (in kilo)                           4,796                        4,798            -0.04% 
-> GALOG entries                           19,057                       11,923            59.83%
-> ----------------------------------------------------------------------------------------------
-> 
-> 
->                          VCPUS = 192, Jobs per NVME = 48
-> ==============================================================================================
->                                          V2                         V1          Percent change
-> ----------------------------------------------------------------------------------------------
-> Guest Nvme interrupts               68,363,232                  78,066,512             -12.42%
-> IOPS (in kilo)                           4,751                       4,749              -0.04%
-
-Uber nit #2, percent change should be postive 0.04%?  4,751 > 4,749.
-
-> GALOG entries                           62,768                      56,215              11.66%
-> ----------------------------------------------------------------------------------------------
-> 
-> Thanks
-> Sairaj
+On June 8, 2025 7:37:25 PM EDT, NeilBrown <neil@brown=2Ename> wrote:
+>The code in coda_readdir() is nearly identical to iterate_dir()=2E
+>Differences are:
+> - iterate_dir() is killable
+> - iterate_dir() adds permission checking and accessing notifications
+>
+>I believe these are not harmful for coda so it is best to use
+>iterate_dir() directly=2E  This will allow locking changes without
+>touching the code in coda=2E
+>
+>Signed-off-by: NeilBrown <neil@brown=2Ename>
+>---
+> fs/coda/dir=2Ec | 12 ++----------
+> 1 file changed, 2 insertions(+), 10 deletions(-)
+>
+>diff --git a/fs/coda/dir=2Ec b/fs/coda/dir=2Ec
+>index ab69d8f0cec2=2E=2Eca9990017265 100644
+>--- a/fs/coda/dir=2Ec
+>+++ b/fs/coda/dir=2Ec
+>@@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file, stru=
+ct dir_context *ctx)
+> 	cfi =3D coda_ftoc(coda_file);
+> 	host_file =3D cfi->cfi_container;
+>=20
+>-	if (host_file->f_op->iterate_shared) {
+>-		struct inode *host_inode =3D file_inode(host_file);
+>-		ret =3D -ENOENT;
+>-		if (!IS_DEADDIR(host_inode)) {
+>-			inode_lock_shared(host_inode);
+>-			ret =3D host_file->f_op->iterate_shared(host_file, ctx);
+>-			file_accessed(host_file);
+>-			inode_unlock_shared(host_inode);
+>-		}
+>+	ret =3D iterate_dir(host_file, ctx);
+>+	if (ret !=3D -ENOTDIR)
+> 		return ret;
+>-	}
+> 	/* Venus: we must read Venus dirents from a file */
+> 	return coda_venus_readdir(coda_file, ctx);
+> }
 
