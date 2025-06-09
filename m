@@ -1,204 +1,127 @@
-Return-Path: <linux-kernel+bounces-677388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB84AD1A00
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E4EAD1A04
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95733AB85D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081A33ABDC9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C81B1FA178;
-	Mon,  9 Jun 2025 08:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC8020FA97;
+	Mon,  9 Jun 2025 08:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AiL+YaRO"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y1XlUgia"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168B419DFA2
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18EB1E412A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749458973; cv=none; b=AcNIRhlNovpmZa2SvIWqak+qif7xg/sjnLFuY99Yd0SAJHHFxT3IMgTl4aK6x5tAew2utZmXC19NoxMiP/9Lc+wMwzmCkEcOQFoNdEFV3HBr5hQq1S+TY7pwnnV9w39nxMDDSZGVj4UN24GOd8LATteUKUJpeCTrs3GGNUwEb0g=
+	t=1749459046; cv=none; b=HBM/bITWlQetAegHSKBTh6ydpV9oNmHS//fl3Y5elgUeoU//n382nzCd8KVKji80JBRMKg4p84f+HM+XnD9SK6lHt5AYPi62q1tVD55OTdzT/fJsEaG4bazs04xfsUkZ19x60oQkDvSFWTCme4OGVne6hqJsH080jUgMwI7nuXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749458973; c=relaxed/simple;
-	bh=QquhVEUPYxZYLS2Wb/Gjw9Sy4Y0OOjtcFGnZEhBuUbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=joMxl65iAx/txhTLkQF4xGN2/4QUYv9u53+HA58xBX5RfALXpPyp+bFr39I01uje7Rencd8zals8NVMKCH2I0FKH6HjPYzBXxG2cS1dXsm+JqidD5ArP4YbuIS9XR7vhDt5Hxdo9hrsW653UJyN1UJywcGnVxqo3U2GShvzZwT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AiL+YaRO; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1749458966; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=5bJmfGljLGyk00an7Cg65VH+uCqXVJGk/LoQfeiR5C8=;
-	b=AiL+YaRODxz3NY5V8VbaHcxiXTpIp/W9aGtQsinDJIHQBAflC38d+uoi5dPd+VnJ4SwGfHq0ivsb9wN67TADHi15iRKPh06YuOavAaV52u1qHuM6sEZ4CZoRTXBhPdpoWWKKR9A8U5aLGmHBK9OKo70fFdEtGbUzqmQ+211YHvA=
-Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdO7Itq_1749458964 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Jun 2025 16:49:25 +0800
-Message-ID: <1452d0c6-50ab-4680-9aa9-13290d51177d@linux.alibaba.com>
-Date: Mon, 9 Jun 2025 16:49:24 +0800
+	s=arc-20240116; t=1749459046; c=relaxed/simple;
+	bh=8Dwhd/J+dmuQBssTcKZQrL4FyPv/Aj0cHtKmkvHkQEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WsCRYlufyDuZ4q3c2/kmD+31z1+vkifWcHelphUf3gaPHNBzYN5XQtKuZxANk1ywyxJ02X/4Fcfb0fCz1VYxi53y2Q9tYq3OH8afMXQhZxiYdpLBEYk1drgmPWNRRFR4kl3fvZy5pHEyXOCCtZUGrtN6w1hsngcZYOFdvABhbrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y1XlUgia; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749459044; x=1780995044;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8Dwhd/J+dmuQBssTcKZQrL4FyPv/Aj0cHtKmkvHkQEA=;
+  b=Y1XlUgia7DEkkStOS1BwEYFfPnqc+tysv9bgqf0mfWzg4Z4ed/iQH2lj
+   3DRQOME+1zKChyRCdDyyxpg6oeVDRa5BbsgvxkEO0fbBRwMxpJj6+7trb
+   OYZ4MsPl3vfOEG6sjJWGIOjLgN5WWpBkY3s6JjE7Pqv9FCKoNskpcsPTi
+   YqSXh3sFkVWxf9BLQNO0XI0wYuCW0qFSNkB3mE/XCsilT6WLFfshcBGMo
+   mSJ2Ck7tiCJS03+YMtRuy3oc1aM3IV/9Y8INgeWTkRn9a9wBa4lQmMwCD
+   Up68/z09bcrXLxe7mGlSaxHJaeq3ws92wFLH5Gndm+Gbtszn3F9dgfU0F
+   g==;
+X-CSE-ConnectionGUID: ocvKLe6vQ+C4qUIfQAbXWA==
+X-CSE-MsgGUID: fO1xF22zSCO8dFKh9mknFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="51439684"
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
+   d="scan'208";a="51439684"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 01:50:43 -0700
+X-CSE-ConnectionGUID: o3qOqBDvRjOyREi1powz4w==
+X-CSE-MsgGUID: 4I93LLx4T6Knaqz4UwKK+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
+   d="scan'208";a="151324237"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 09 Jun 2025 01:50:41 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uOYDG-0006tZ-0b;
+	Mon, 09 Jun 2025 08:50:38 +0000
+Date: Mon, 9 Jun 2025 16:50:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: include/linux/kvm_host.h:1908:24: warning: field 'desc' with
+ variable sized type 'struct kvm_stats_desc' not at the end of a struct or
+ class is a GNU extension
+Message-ID: <202506091622.dOo1Na3X-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/shmem, swap: fix softlockup with mTHP swapin
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
- Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
- Usama Arif <usamaarif642@gmail.com>, linux-kernel@vger.kernel.org
-References: <20250608192713.95875-1-ryncsn@gmail.com>
- <36f52466-071a-4efb-adc2-8514b11f120c@linux.alibaba.com>
- <CAMgjq7AawxHKX8TRnshZzzUznCZbdfncThyLmA5URKBGq3r4Hw@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAMgjq7AawxHKX8TRnshZzzUznCZbdfncThyLmA5URKBGq3r4Hw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Sami,
+
+FYI, the error/warning still remains.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+commit: 9c3681f9b9fd12cdbc4a542df599f1837512f3d5 kbuild: Add gendwarfksyms as an alternative to genksyms
+date:   5 months ago
+config: s390-randconfig-r132-20250609 (https://download.01.org/0day-ci/archive/20250609/202506091622.dOo1Na3X-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
+reproduce: (https://download.01.org/0day-ci/archive/20250609/202506091622.dOo1Na3X-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506091622.dOo1Na3X-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from <stdin>:3:
+   In file included from arch/s390/include/asm/asm-prototypes.h:4:
+>> include/linux/kvm_host.h:1908:24: warning: field 'desc' with variable sized type 'struct kvm_stats_desc' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
+    1908 |         struct kvm_stats_desc desc;
+         |                               ^
+   1 warning generated.
+   error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
 
 
+vim +1908 include/linux/kvm_host.h
 
-On 2025/6/9 16:36, Kairui Song wrote:
-> On Mon, Jun 9, 2025 at 4:27 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->> On 2025/6/9 03:27, Kairui Song wrote:
->>> From: Kairui Song <kasong@tencent.com>
->>>
->>> Following softlockup can be easily reproduced on my test machine with:
->>>
->>> echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
->>> swapon /dev/zram0 # zram0 is a 48G swap device
->>> mkdir -p /sys/fs/cgroup/memory/test
->>> echo 1G > /sys/fs/cgroup/test/memory.max
->>> echo $BASHPID > /sys/fs/cgroup/test/cgroup.procs
->>> while true; do
->>>       dd if=/dev/zero of=/tmp/test.img bs=1M count=5120
->>>       cat /tmp/test.img > /dev/null
->>>       rm /tmp/test.img
->>> done
->>>
->>> Then after a while:
->>> watchdog: BUG: soft lockup - CPU#0 stuck for 763s! [cat:5787]
->>> Modules linked in: zram virtiofs
->>> CPU: 0 UID: 0 PID: 5787 Comm: cat Kdump: loaded Tainted: G             L      6.15.0.orig-gf3021d9246bc-dirty #118 PREEMPT(voluntary)·
->>> Tainted: [L]=SOFTLOCKUP
->>> Hardware name: Red Hat KVM/RHEL-AV, BIOS 0.0.0 02/06/2015
->>> RIP: 0010:mpol_shared_policy_lookup+0xd/0x70
->>> Code: e9 b8 b4 ff ff 31 c0 c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 0f 1f 44 00 00 41 54 55 53 <48> 8b 1f 48 85 db 74 41 4c 8d 67 08 48 89 fb 48 89 f5 4c 89 e7 e8
->>> RSP: 0018:ffffc90002b1fc28 EFLAGS: 00000202
->>> RAX: 00000000001c20ca RBX: 0000000000724e1e RCX: 0000000000000001
->>> RDX: ffff888118e214c8 RSI: 0000000000057d42 RDI: ffff888118e21518
->>> RBP: 000000000002bec8 R08: 0000000000000001 R09: 0000000000000000
->>> R10: 0000000000000bf4 R11: 0000000000000000 R12: 0000000000000001
->>> R13: 00000000001c20ca R14: 00000000001c20ca R15: 0000000000000000
->>> FS:  00007f03f995c740(0000) GS:ffff88a07ad9a000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 00007f03f98f1000 CR3: 0000000144626004 CR4: 0000000000770eb0
->>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> PKRU: 55555554
->>> Call Trace:
->>>    <TASK>
->>>    shmem_alloc_folio+0x31/0xc0
->>>    shmem_swapin_folio+0x309/0xcf0
->>>    ? filemap_get_entry+0x117/0x1e0
->>>    ? xas_load+0xd/0xb0
->>>    ? filemap_get_entry+0x101/0x1e0
->>>    shmem_get_folio_gfp+0x2ed/0x5b0
->>>    shmem_file_read_iter+0x7f/0x2e0
->>>    vfs_read+0x252/0x330
->>>    ksys_read+0x68/0xf0
->>>    do_syscall_64+0x4c/0x1c0
->>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>> RIP: 0033:0x7f03f9a46991
->>> Code: 00 48 8b 15 81 14 10 00 f7 d8 64 89 02 b8 ff ff ff ff eb bd e8 20 ad 01 00 f3 0f 1e fa 80 3d 35 97 10 00 00 74 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 4f c3 66 0f 1f 44 00 00 55 48 89 e5 48 83 ec
->>> RSP: 002b:00007fff3c52bd28 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->>> RAX: ffffffffffffffda RBX: 0000000000040000 RCX: 00007f03f9a46991
->>> RDX: 0000000000040000 RSI: 00007f03f98ba000 RDI: 0000000000000003
->>> RBP: 00007fff3c52bd50 R08: 0000000000000000 R09: 00007f03f9b9a380
->>> R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000040000
->>> R13: 00007f03f98ba000 R14: 0000000000000003 R15: 0000000000000000
->>>    </TASK>
->>>
->>> The reason is simple, readahead brought some order 0 folio in swap
->>> cache, and the swapin mTHP folio being allocated is in confict with it,
->>> so swapcache_prepare fails and causes shmem_swap_alloc_folio to return
->>> -EEXIST, and shmem simply retries again and again causing this loop.
->>
->> If swapcache_prepare() fails and retries, the folio's order (order 0)
->> getting from swapcache will be different from the order stored in the
->> shmem mapping, so we will split the large swap entry by the following
->> logic in shmem_swapin_folio(). So I am not sure why causing a softlockup?
->>
->>          } else if (order != folio_order(folio)) {
->>                  /*
->>                   * Swap readahead may swap in order 0 folios into swapcache
->>                   * asynchronously, while the shmem mapping can still stores
->>                   * large swap entries. In such cases, we should split the
->>                   * large swap entry to prevent possible data corruption.
->>                   */
->>                  split_order = shmem_split_large_entry(inode, index, swap, gfp);
->>                  if (split_order < 0) {
->>                          error = split_order;
->>                          goto failed;
->>                  }
->>
->>                  /*
->>                   * If the large swap entry has already been split, it is
->>                   * necessary to recalculate the new swap entry based on
->>                   * the old order alignment.
->>                   */
->>                  if (split_order > 0) {
->>                          pgoff_t offset = index - round_down(index, 1 << split_order);
->>
->>                          swap = swp_entry(swp_type(swap), swp_offset(swap) + offset);
->>                  }
->>          }
-> 
-> For example if the swap entry is 0x0 in shmem with order 4 (so it
-> corresponds to swap entries 0x0 - 0x10), and a order 0 folio is
-> currently cached with swap entry 0xa, then shmem swapin will try to
-> use a folio with order 4, that will always fails swapcache_prepare,
-> but filemap/swapcache lookup use entry 0x0 will return NULL, causing a
-> loop.
+09cbcef6c60e77 Milan Pandurov 2019-12-13  1906  
+cb082bfab59a22 Jing Zhang     2021-06-18  1907  struct _kvm_stats_desc {
+cb082bfab59a22 Jing Zhang     2021-06-18 @1908  	struct kvm_stats_desc desc;
+cb082bfab59a22 Jing Zhang     2021-06-18  1909  	char name[KVM_STATS_NAME_SIZE];
+cb082bfab59a22 Jing Zhang     2021-06-18  1910  };
+cb082bfab59a22 Jing Zhang     2021-06-18  1911  
 
-OK. Thanks for the explanation.
+:::::: The code at line 1908 was first introduced by commit
+:::::: cb082bfab59a224a49ae803fed52cd03e8d6b5e0 KVM: stats: Add fd-based API to read binary stats data
 
->>> Fix it by applying a similar fix for anon mTHP swapin.
->>>
->>> The performance change is very slight, time of swapin 10g zero folios
->>> (test for 12 times):
->>> Before:  2.49s
->>> After:   2.52s
->>>
->>> Fixes: 1dd44c0af4fa1 ("mm: shmem: skip swapcache for swapin of synchronous swap device")
->>> Signed-off-by: Kairui Song <kasong@tencent.com>
->>>
->>> ---
->>>
->>> I found this issue while doing a performance comparing of mm-new with
->>> swap table series [1] on top of mm-new. This issue no longer exists
->>> if the swap table series is applied, because it elimated both
->>> SWAP_HAS_CACHE and SWP_SYNCHRONOUS_IO swapin completely while improving
->>> the performance and simplify the code, and the race swapin is solved
->>> differently by then.
->>>
->>> (The zero map fix might still need to stay for a while, but could be
->>> optimized too later with swap table).
->>
->> I don't understand why adding zeromap changes, and should explain this
->> explicitly.
-> 
-> To stay in consistency with anon mTHP swapin, swap_zeromap_batch have
-> it's own comments that a hybird folio with zero and non-zero pages
-> can't be brought back as a whole. I can mention that in the commit
-> message.
+:::::: TO: Jing Zhang <jingzhangos@google.com>
+:::::: CC: Paolo Bonzini <pbonzini@redhat.com>
 
-Yes. Thanks.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
