@@ -1,95 +1,109 @@
-Return-Path: <linux-kernel+bounces-677640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AC1AD1CFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F37AD1CF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456ED188DA11
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70D73AC8B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2FF2571A2;
-	Mon,  9 Jun 2025 12:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A4F1DD9AD;
+	Mon,  9 Jun 2025 12:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="O8DCTvUA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G57svMu4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8ED253F1E;
-	Mon,  9 Jun 2025 12:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D8F36B;
+	Mon,  9 Jun 2025 12:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749471388; cv=none; b=I4zDgBQ3Io4EEv2zVuPmh3QzKaOmU//vuOmRs+PViEfDCMfy9edaSYoqdLAui5Fh11Aq7bN99da0nbk1k2vfnjLbV0j+DG1bl0wz2eOIqPik36XUDrf/qD7uJGaVP+kA2djB5tczOQhcqns7VoNMuscX4xwv9ok0c7n/PC3yF7k=
+	t=1749471384; cv=none; b=WLjhYOFZmlZb4Jz+48G6eIHCwGQ6cVo5mS5qvEyrqcc8iVSkvx0UMqIZirbShOmcH1/ZCfku+kLTi43XWjeOjfNdWsYf6KQ6lM+xaZoMN537yU2j+JXPmKhct4ox9iMMG1wq3b91K6/1Jc1BSB5DgsrWGeJDwsBqu5/myMrTfkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749471388; c=relaxed/simple;
-	bh=zlhMzS1dNDm4+twZV8FdiFuIsRgvrGoLgdUTyedqKYo=;
+	s=arc-20240116; t=1749471384; c=relaxed/simple;
+	bh=6Kag9Ku/q13qtFPk6HDqeKqGdosUpBqql0sD8SctYbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXE8YVj8l+xpMFYl+91eQsdAxzcbLLiDHFN9wdqhYWyLHocXy2rdnZVRSx6dwk6BAYK+5RIW8jBmepOWwNoaJA84dKyMiR8hbVgC0WikiBKMLlAETj0zhseNGJzzb/M94Asn+kQsE1Ey1HSL+O2PD7Cg/iz6v0PMreGjpndhDFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=O8DCTvUA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xZ8VkTY6ypJSXCk+Hz7uCo3eSGgDAR8exyMJTsBLtnU=; b=O8DCTvUApTGLf07xMb/apcXz+a
-	aAVMaJDmyTfy7vxzmsf5d5O9R1gfDj4FeOQica38teS7riBpoSlZSvmAZgAzosAFSozB0JW1nlfEE
-	tgsa9saywwKybrYFyIXIB0FQTg40KFJ96rIl9plZw+u4PGmJ00Y43uLJJDeBJ6Abk/bM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uObQF-00F9EB-Hy; Mon, 09 Jun 2025 14:16:15 +0200
-Date: Mon, 9 Jun 2025 14:16:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: george.moussalem@outlook.com
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] dt-bindings: net: qca,ar803x: Add IPQ5018
- Internal GE PHY support
-Message-ID: <6bf839e4-e208-458c-a3d1-f03b47597347@lunn.ch>
-References: <20250609-ipq5018-ge-phy-v4-0-1d3a125282c3@outlook.com>
- <20250609-ipq5018-ge-phy-v4-2-1d3a125282c3@outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwcSTEn2wdvm4lV3Xjma4fba5GR8CAL8kIOG+mfVVhh1rcGrqMkEDJUbsOTsuIBFHuMhtu4RiJSbLGUz557HbrMP0DmKHFUC8GTatizEStEoKMYKPvbS4YKNhjJ4Kko9nkKk80fRuKEARMpxsmGDHkQRX/E3bZCjDNhXlgpLu7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G57svMu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D2BC4CEEB;
+	Mon,  9 Jun 2025 12:16:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749471384;
+	bh=6Kag9Ku/q13qtFPk6HDqeKqGdosUpBqql0sD8SctYbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G57svMu4nbKd4CGPIIngocdVOTrkAUN2YwFX8F7ErGjGJ8ZHbdF6YLpEBbRafVySE
+	 QJ28QcahJxmJViIkpS4bBaHTvuwzt4EQsONnjWd0J32GVZdWjf3ufqgYsb/Koy7qux
+	 qPEAdlhB6Js9aUsZV/Du0Jjsgo4PpFKlL4nWoKB07pwH9gSMvED+M7UM9u/ekH9mvE
+	 GjK326HVS2aWOc/Ar8Hp2dAU10K2/p6+5HoWQJcQ5FRrANjqh9By7gtenAkHKRXyLr
+	 XVkI5BvlbINBDQncumjMjY7oRtv653X32dLdSeYBCHTAtmCtuf/oklydofgageUk/w
+	 xRU+iG/mejHPQ==
+Date: Mon, 9 Jun 2025 13:16:19 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+Cc: alsa-devel@alsa-project.org, Vijendar.Mukunda@amd.com,
+	Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+	syed.sabakareem@amd.com, mario.limonciello@amd.com,
+	yung-chuan.liao@linux.intel.com,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: amd: acp: Fix pointer assignments for
+ snd_soc_acpi_mach structures
+Message-ID: <ea8fa344-0429-4dca-80a2-aa792128576d@sirena.org.uk>
+References: <20250609121251.639080-1-venkataprasad.potturu@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HYjgf6wuR0aqqtNh"
+Content-Disposition: inline
+In-Reply-To: <20250609121251.639080-1-venkataprasad.potturu@amd.com>
+X-Cookie: Restaurant package, not for resale.
+
+
+--HYjgf6wuR0aqqtNh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250609-ipq5018-ge-phy-v4-2-1d3a125282c3@outlook.com>
+Content-Transfer-Encoding: quoted-printable
 
-> +  - |
-> +    #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
-> +
-> +    mdio {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        /* add alias to set qcom,dac-preset-short-cable on boards that need it */
-> +        ge_phy: ethernet-phy@7 {
-> +            compatible = "ethernet-phy-id004d.d0c0";
-> +            reg = <7>;
-> +
-> +            resets = <&gcc GCC_GEPHY_MISC_ARES>;
+On Mon, Jun 09, 2025 at 05:42:32PM +0530, Venkata Prasad Potturu wrote:
+> This patch modifies the assignment of machine structure pointers in the
+> acp_pci_probe function. Previously, the machine pointers were assigned
+> using the address-of operator (&), which caused incompatibility issues
+> in type assignments.
+>=20
+> Additionally, the declarations of the machine arrays in amd.h have been
+> updated to reflect that they are indeed arrays (`[]`). The code is
+> further cleaned up by declaring the codec structures in
+> amd-acpi-mach.c as static, reflecting their intended usage.
+>=20
+> error: symbol 'amp_rt1019' was not declared. Should it be static?
+> error: symbol 'amp_max' was not declared. Should it be static?
 
-What do you mean by 'alias' here?
+It's fine this time but these staticisiations should have been a
+separate commit since there's no overlap.
 
-	Andrew
+--HYjgf6wuR0aqqtNh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhG0JIACgkQJNaLcl1U
+h9Cbnwf+LTWqBSmB2IAuSm6C+Tsj8O1H9Sjadg20290UFCx8Xw5HsOaBhAcGHs4Y
+78jk6uWG6cPTWhqcC2gKp6PZIEkxL7tgQfuuHpsCkuaMXvmRt5v/tCGBUGDb8nkH
+o3+NGhmw/iZeRb7rsTKXez69JMd0sMjiVy/z63mV5YsSa5dWKkFGo6p8yIgkP8i/
+8oHNww9aPdRjT95ytzs/4QZjUYdq0LV79UXoMBy+TmmNwwMM4516fAzLNI6DRaw8
+oJAAwtcXdVUikL8NqtGBUruAov/QN7+IkrDNF//U8k1C4dRkCsb3+QsD0ppGRmjQ
+catCRSaVvm5EUuEyIpcpCfYdCE5mGA==
+=Ko9S
+-----END PGP SIGNATURE-----
+
+--HYjgf6wuR0aqqtNh--
 
