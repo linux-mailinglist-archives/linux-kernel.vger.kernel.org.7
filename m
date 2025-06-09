@@ -1,172 +1,105 @@
-Return-Path: <linux-kernel+bounces-677394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFA4AD1A10
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA13AD1A13
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE353A296E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A5EC3A2818
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005E924E4BD;
-	Mon,  9 Jun 2025 08:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9DF22AE75;
+	Mon,  9 Jun 2025 08:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0BjHCyEH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U/kMv1nz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HWGQ3IT2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cGqP0nJH"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eqbp3nyA"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97751F4C9F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 08:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229861F8AC5;
+	Mon,  9 Jun 2025 08:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749459101; cv=none; b=TdH64oxVUH+7Z+GPYQKof9mkS60v0UoK95BzWa6KGNzzCKsAuB+njbPC65mYx+VYRthcjKiwfXwKvRVyqSE7xD/hQJE0NB0GhqUJvGsdlhuTHLeiaf32nPPCM8S+eNHePLpymuyEtnb7XXm54sB5BZ1DBSXpSRgdlw5OTlzgrCc=
+	t=1749459297; cv=none; b=L5nCyEpq7fhNnh5nbuipYUVgA5NCwi7mDQvajP1GOwOh6gQjHq7cEblBa8vWBwVcXNQHvc4GVqecn4Vomuz0ZjxNNkz+yiXe1aeLNZhvAR0yyVWFBfAhJjAQkOrdY0HXKKFYNyGSASSVRblRG9Xm+VcXUUMedDlRhRr8yeroqQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749459101; c=relaxed/simple;
-	bh=BSgUDmJHtvbnj7e/USJVPC50HyAIZQPsIFsKd/DGRrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XpEgtXMMKVBr+BDcH5VccmzbajUx8I3ixQyiQ4J/IEm311rqrzLlUN6cIrc8AwEACEFql2Afb7Bi0ur1qJeEZWw160b82nJ6UePM52h2MAoKOShVXiuBCB8GTMBGPK7yto5HqnY6XcA8tePGmWLrXMCD81/pvcjBn19t/25kogA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0BjHCyEH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U/kMv1nz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HWGQ3IT2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cGqP0nJH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D7EE01F38F;
-	Mon,  9 Jun 2025 08:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749459098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
-	b=0BjHCyEHWe9OphSDAUw3zUMcCQhODaUpjZRbQLJ7R6VHHb9CYmSeCQ69vW/GnaCYPV8ChU
-	3Z6hd2SLY+PaF4SL95wp6p83fiCqOMtfw0MxY3tN8SGJ4bWtcGWabDcOME7pwRXG7SkBo5
-	L6XsMgpfwHDuzV7H25iTlcugX3RAReU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749459098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
-	b=U/kMv1nzhTVmWT1NWjxIKr4qzABlwt2g22K43X3St5430+8BzM43mMZZB1ngSfcAHSTr65
-	vuTvToK4FJJxPZCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749459097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
-	b=HWGQ3IT2OCeR+46Hax1CirA8yPt6lNr0WdYuwYqbX5wZsiuUvVrejoBgLqpVCob9Kj9fRr
-	HYUspybKxESUC7NAYmSIo0ssmgyNHn6/VV4W6fUxDxV56MGQ7uRiXv5Ec0S4Sxssz9N4UL
-	g/KVFT50LUnXQZXSkXhp2N1Xhf+aDx0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749459097;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgR2BzCbct66ZHEIawKMv8NgM12xLoogIKYqWadljGQ=;
-	b=cGqP0nJHBvx3bgozqQtTnF7pYQtDMGpN3zhgVg6aJI0LEsOBju18B+57KsS8bv9MvnH2/W
-	7alVDx/pOB0pAXAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A6BFC137FE;
-	Mon,  9 Jun 2025 08:51:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x0kdKJmgRmieEAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 09 Jun 2025 08:51:37 +0000
-Message-ID: <4c113d58-c858-4ef8-a7f1-bae05c293edf@suse.cz>
-Date: Mon, 9 Jun 2025 10:52:41 +0200
+	s=arc-20240116; t=1749459297; c=relaxed/simple;
+	bh=C51/7vaB9OCZ1AukCQuPqIi38RMlWpr/hcjbdRh7rU0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kpqwh7+nMmxWg5ggw6aW5OIWC6sG+/Usgu9vaoV7bBqdkwqQTwSEFZMX5UrQcGDqonZyc/BQdafFyG/fb+ttv3dJ7j6ts4l9J26w/KQP+bdd20SauIdHn+LEC4NbWlb51k0DG8bvALrfiZ6p+iYwX7wqkMVG3VK22+gbJI83lhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eqbp3nyA; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5598sYhh723398;
+	Mon, 9 Jun 2025 03:54:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749459274;
+	bh=D3AW8Z2GaXCnvayX3h6iYYRk4HsizirZYceih+sKzFI=;
+	h=From:To:CC:Subject:Date;
+	b=eqbp3nyAe/EaVd8yge9lYWCGvjgXz6w1NmkIT4l4/6H+TWfBYeZaWzY64zk588VfI
+	 48PjphRpRxbJgCdvhnJCWR2o5NpaKAs5MGzJy0VQKum0pcDcQ3Z6SaDnIcDkDdSgt4
+	 yUYxTEjS1FjGB9+d/WjU/Wk1TzmbPrdFDgoudG2w=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5598sYuN4149176
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 9 Jun 2025 03:54:34 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
+ Jun 2025 03:54:34 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 9 Jun 2025 03:54:34 -0500
+Received: from hp-z2-tower.dhcp.ti.com (hp-z2-tower.dhcp.ti.com [172.24.227.4])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5598sTbD1008464;
+	Mon, 9 Jun 2025 03:54:30 -0500
+From: Hrushikesh Salunke <h-salunke@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <s-vadapalli@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <h-salunke@ti.com>, <danishanwar@ti.com>, <srk@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am642-evm-pcie0-ep: Add boot phase tag to "pcie0_ep"
+Date: Mon, 9 Jun 2025 14:24:29 +0530
+Message-ID: <20250609085429.2334652-1-h-salunke@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for
- users
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Michal Hocko <mhocko@suse.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, shakeel.butt@linux.dev,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, donettom@linux.ibm.com, aboorvad@linux.ibm.com,
- sj@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
- <87bjqx4h82.fsf@gmail.com> <aEaOzpQElnG2I3Tz@tiehlicka>
- <890b825e-b3b1-4d32-83ec-662495e35023@linux.alibaba.com>
- <87a56h48ow.fsf@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <87a56h48ow.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com,linux.alibaba.com,suse.com];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,alibaba.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 6/9/25 10:31 AM, Ritesh Harjani (IBM) wrote:
-> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
-> 
->> On 2025/6/9 15:35, Michal Hocko wrote:
->>> On Mon 09-06-25 10:57:41, Ritesh Harjani wrote:
->>>>
->>>> Any reason why we dropped the Fixes tag? I see there were a series of
->>>> discussion on v1 and it got concluded that the fix was correct, then why
->>>> drop the fixes tag?
->>>
->>> This seems more like an improvement than a bug fix.
->>
->> Yes. I don't have a strong opinion on this, but we (Alibaba) will 
->> backport it manually,
->>
->> because some of user-space monitoring tools depend 
->> on these statistics.
-> 
-> That sounds like a regression then, isn't it?
+AM64X SoC has one instance of PCIe PCIe0. To support PCIe boot on
+AM64X SoC PCIe0 instance needs to be in endpoint mode and it needs to
+be functional at all stages of PCIe boot process. Thus add the
+"bootph-all" boot phase tag to "pcie0_ep" device tree node.
 
-Hm if counters were accurate before f1a7941243c1 and not afterwards, and
-this is making them accurate again, and some userspace depends on it,
-then Fixes: and stable is probably warranted then. If this was just a
-perf improvement, then not. But AFAIU f1a7941243c1 was the perf
-improvement...
+Signed-off-by: Hrushikesh Salunke <h-salunke@ti.com>
+---
+This patch is based on commit
+475c850a7fdd Add linux-next specific files for 20250606
 
-> -ritesh
+ arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
+index 432751774853..268a3183753e 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm-pcie0-ep.dtso
+@@ -30,6 +30,7 @@ &cbass_main {
+ 	interrupt-parent = <&gic500>;
+ 
+ 	pcie0_ep: pcie-ep@f102000 {
++		bootph-all;
+ 		compatible = "ti,am64-pcie-ep", "ti,j721e-pcie-ep";
+ 		reg = <0x00 0x0f102000 0x00 0x1000>,
+ 		      <0x00 0x0f100000 0x00 0x400>,
+-- 
+2.34.1
 
 
