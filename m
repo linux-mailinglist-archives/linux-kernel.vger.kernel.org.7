@@ -1,334 +1,228 @@
-Return-Path: <linux-kernel+bounces-677753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC85AD1EA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:19:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597E5AD1EC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D2487A2051
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE1A3AB458
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECAF258CDC;
-	Mon,  9 Jun 2025 13:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A66259C82;
+	Mon,  9 Jun 2025 13:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GiIf66ic"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2041.outbound.protection.outlook.com [40.107.220.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sc4jz1xX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DFA25392E;
-	Mon,  9 Jun 2025 13:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749475158; cv=fail; b=lqgqcv/5rKbvmYYaS9Af3kt+tUtSVT8nw6EbxdN4nt6WlTu51SpK+kevx+5c6fUAoHqc8hS5vkmmR9dm/CWf5G+m9XD7zjXVkwbT/LbW121OrNEX3fPVJqsRCRLIvG7uvJwie8uv5SDXih4ky2TXTmiea1B9C60c5pcuCmgiOoI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749475158; c=relaxed/simple;
-	bh=QL6q2ygJ5ukKlIrdJP8yQc2sB9JmA9/TYKaDw/zjXA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=odHhYwJLCpDj3/rYH+FZre/DNLnIAjyzXeQuP+dv9XkHb1xRwcU+nxxmoTsbUKDWidwREVVMDxCZfSAOAO1XWRGgG46t6EjJtYPycJx2rqniaYmqcewW7YKifsY1/EU6yoQCc+trHuuKVeRgpCgFaIHZq2z2vRINaSGIovogHi0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GiIf66ic; arc=fail smtp.client-ip=40.107.220.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xTEBV+ih9XJtHtvcCV2I+sfiSpKRVo4J6RUg50CLuuZpVNGoeYaHBYivCeFOwyi4Vz11KURvdkg2pF0uZKkZ7QM+QWZVsmOqTokQGR9y2nBcvwigObOvri3DgLEIvZdoYFFO5LR7xVeT6M56Are2wIpOGYEt9VQNeVvWw7GRJdd2jeH3rg2CaEh/j5lkc0qNFBov0an4jns3OAO7ArxXZcLqZyS73a4ud3SJetl9carankEIziMAUIiJcyUb2AEGzaYuTV0IJzXnsKho65gUfdjENnuH2o38XsjDLAjtGCTOPyWU/S5NuR3fqnB3kb6yrKCYF5IxTZySi/XNcgZEGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EQJEW5ZmIWl1ScSDscRnJdD9pgmv7U0K4M5LuXQXIBM=;
- b=NaBCD2GNepL/u9oe9yl53j46MFM8e7pgwayypjIwWUuXYr/cn3DXkTUYYCUryeqXS5xhYcJXYVPUr9OdMTscDbgD4SzbZ9E7h/t+kfsRU77/P2zLQd1BaqDbwm+ZH/CB9/RD+s7HShzwXQ5kKOFEZdChHkxPWsZ0mlpvn+fNPtwY1ARKkaFEUKVsHmbpQSg0Bswekvl/bBYhwDw1/pSiRWutwpnyK49cnWzKkQqEvhtay/LdrgaADtV/WLR0NkXk/hGx2xqk5cNV0xSmlFnYNqBuKOh1ceKx6dLvyamHZZlllhiMoAwzqmWeF97VT/Kx8KchhsyM1Q7vTRSWfnDfsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EQJEW5ZmIWl1ScSDscRnJdD9pgmv7U0K4M5LuXQXIBM=;
- b=GiIf66ickoxIHHVQiVu3pQFRBjN8ubP7JgSTvh0pcHJkCebz8gzgizwHtqx1I9/hOR+nd1dju3Y+uKM800URFyUR+6kCPBn0AFbYBN9uFntdDEB4HvBBKScb+EwV8gCg+uBCF/6m8PpKf0ZpPnmj1mo2kRyUqJM3yRkibM+zZt3X5b2iGfGY5yYd9qIrWWMV+liEQGAYQs8b1M1/RynPQvaJ4sHYyDJlA7lUgR+KkVdOj61eDK+dMaDK9duoJCPE0/MTR+7uJajYYOZ6dK0MrExVMWGQ5lWvlVQOto3RPyR0CIdKy5u3MXTGez0C0amZivXEg5c5QZfYW1UmTXiM8A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SA1PR12MB8643.namprd12.prod.outlook.com (2603:10b6:806:387::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8792.35; Mon, 9 Jun 2025 13:19:11 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8792.038; Mon, 9 Jun 2025
- 13:19:11 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, hannes@cmpxchg.org, shakeel.butt@linux.dev,
- riel@surriel.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, hughd@google.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com,
- Juan Yescas <jyescas@google.com>, Breno Leitao <leitao@debian.org>
-Subject: Re: [RFC] mm: khugepaged: use largest enabled hugepage order for
- min_free_kbytes
-Date: Mon, 09 Jun 2025 09:19:08 -0400
-X-Mailer: MailMate (2.0r6263)
-Message-ID: <18BEDC9A-77D2-4E9B-BF5A-90F7C789D535@nvidia.com>
-In-Reply-To: <c600a6c0-aa59-4896-9e0d-3649a32d1771@gmail.com>
-References: <20250606143700.3256414-1-usamaarif642@gmail.com>
- <A409F7B3-A901-40F9-A694-DC3FB00B57FE@nvidia.com>
- <b807deec-99a9-4691-9001-c2f3adf586b9@gmail.com>
- <35A3819F-C8EE-48DB-8EB4-093C04DEF504@nvidia.com>
- <c600a6c0-aa59-4896-9e0d-3649a32d1771@gmail.com>
-Content-Type: text/plain
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34D1254AF0;
+	Mon,  9 Jun 2025 13:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749475283; cv=none; b=fQGYSkhvW9YugAYTKEkufZqKmWzWL8qCA7bX93pDZnDaw2OKTI5rJYTGm+in96dCKqElmSZRg+xg4o1hduiDoYoj2vvsqijZqfHxrouuUd8199S6AcRp4Tizzb0qv2fy8yxd4LihgQ+Dag2rOnubOwV8Xr78TMTIB451f9ECXig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749475283; c=relaxed/simple;
+	bh=LGL6lMiRoy1C3r6cGW8Ct+d61FuhityEEXU/wWP08ZM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GKsRyiGlyLn5mLko0PMbbIub5T7OelvduoOeq+3SOFhzmy1eFs5p3Z43TWJf0pVjBGqAjAjZj8w408Q5itAIhxKkgdwciwieSez5+fQlEjq2H4KDucycCxiC88xpPkKZAhSibb4LT2FsRoGbTpbHQ7fN/B4oWWBiwLHxoVuPhBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sc4jz1xX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F35AC4CEEB;
+	Mon,  9 Jun 2025 13:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749475282;
+	bh=LGL6lMiRoy1C3r6cGW8Ct+d61FuhityEEXU/wWP08ZM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Sc4jz1xXyP3jz5eQLV049uceTTx03om/OMqT7PN9vxR/wp5lrGX/VvAQI1GZxRpGu
+	 giKaa9j9QsOmIeTFlm71QV9BqE8Dvut67LbWPk3nAIIsSXwcDT63YMpwVR1ZUG++IK
+	 ge4CJIEwbDx5Q8cITBNhSQWnb7x6zs20FfcrYvQKOXjcUENmPxwnrN8K4t9OhVA0MJ
+	 YWYNQEurAMP0D3Vzig45u9nO9cl54wArsGXIWylZkBBWNLPrMDrN4LAwhK8Gq+exE9
+	 OTpgsyGIfoxjmj++EG7fEpGWG0+prYra35kVaniQ65T/gAxDIr+FghqTliSmtMQV1d
+	 dFgzns762DF0Q==
+Message-ID: <33c80551bb7e0ac26ef00fe14aa9550df68ed120.camel@kernel.org>
+Subject: Re: [PATCH 3/5] coda: use iterate_dir() in coda_readdir()
+From: Jeff Layton <jlayton@kernel.org>
+To: Jan Harkes <jaharkes@cs.cmu.edu>, Jan Kara <jack@suse.cz>
+Cc: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner	 <brauner@kernel.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Amir Goldstein	 <amir73il@gmail.com>, David
+ Howells <dhowells@redhat.com>, Tyler Hicks	 <code@tyhicks.com>, Miklos
+ Szeredi <miklos@szeredi.hu>, Carlos Maiolino	 <cem@kernel.org>,
+ linux-fsdevel@vger.kernel.org, coda@cs.cmu.edu, 	linux-nfs@vger.kernel.org,
+ netfs@lists.linux.dev, ecryptfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 09 Jun 2025 09:21:20 -0400
+In-Reply-To: <A70CCC08-E8BE-4655-9158-81754F4F6B35@cs.cmu.edu>
+References: <20250608230952.20539-1-neil@brown.name>
+	 <20250608230952.20539-4-neil@brown.name>
+	 <8f2bf3aed5d7bd005adcdeaa51c02c7aa9ca14ba.camel@kernel.org>
+	 <6zirxkpkdrtpcoewopaaotmw4jpjvjmqq4tijudvrpeo4227pi@hyljuie6ngem>
+	 <A70CCC08-E8BE-4655-9158-81754F4F6B35@cs.cmu.edu>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0265.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::30) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SA1PR12MB8643:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cd31207-ad5c-459d-1f4a-08dda75838e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pzQcHGzqZoFTdB9P4UFj9AwzyUtM0M6Yv64R8AXAnrbP1ESxuP0VINbGkbI6?=
- =?us-ascii?Q?JLXnT+z6VNH+DHTAlnnKBa9UxF9+h0hkIHE97NsAhcgEBZgoHsoj6HuU+O7Z?=
- =?us-ascii?Q?k4fb6GG8gImoGK45PmalAPWmwHcLZROvHFLVWBvHBrMEfVqZAUTUcdq8V8FI?=
- =?us-ascii?Q?cULjU+hFflSYYGVHuf5l4n97ALgu/e16B0t+1A/5x8m2M3uHaw3Ez7UhF7j0?=
- =?us-ascii?Q?HhcxguVqxH61vSSFzWXeiu0gJPmrvD0ffpu4Aa0Fe1ts0Ds+MtMPTJk+atu3?=
- =?us-ascii?Q?adQD8TWF7+y4wUUzHL0nfpGEDz6y1R3MNHTqnXTotxutbTUD6/0lRuI7f/PL?=
- =?us-ascii?Q?kY/Meaquxclq+WV6H8k0Im5hlXH5ankDUqSuDsGmnJhAcFjAWsuIL103NW8a?=
- =?us-ascii?Q?lTMIkp2edRArCTZUdnEtokEW5ClnXWm6+nhnt6RCWkFo2QGFGzG0S6IznNv2?=
- =?us-ascii?Q?L7PvM6Jui5dRlyZiC5Bkqz+9kx/uQye2NnfjHeYa69D+9S1oDhcrFFD0CeYr?=
- =?us-ascii?Q?QL8D8IsQNzbE3KZCOHqriUv8FaVJ1DRdJ4bRTiY2NyIa8TnvqbKBrwlxdWlH?=
- =?us-ascii?Q?jWHjHfhxDmCx+jZO8gXOVg5ldCY7pj0N2vas9VIaSzki+pJWL3J/ipJ1ZviT?=
- =?us-ascii?Q?EdGnOu0kCRtdg1HRi8YvamII4lj7X1FlQe8MfBSiI9jnjRufv9zbZbUyp41g?=
- =?us-ascii?Q?lDK4+hskWRaDTTOMQhaOHR9q1O4p33mx4WtAlEttFLyx/8mVRzVisfDjSv8y?=
- =?us-ascii?Q?kzTeHsIadE5h5UBDQETpyn9Ma3F1GxjK1z93PNJ3Dp66VcAZcvZXRjh1ryQW?=
- =?us-ascii?Q?Af+yqIeznDDqI9rR+6qqVX/lpScwy4w9oRcvyn5wsEPJMFmT8iDyRLUdW9Z6?=
- =?us-ascii?Q?7yoNFfs8RRpQxwYEuo0SM82C/pX4naAsRfrrsQBb6m8nxAhc6OIiU5jOlPgI?=
- =?us-ascii?Q?WiV0gK6pSEhJHYHCx8Vzq611JuYu7TzKdic8UUDPkwQrlNI2nNEZlmLTl264?=
- =?us-ascii?Q?VXC4G7vT0th5Tz640wzOfPoyAlhzGTTnyc9EilgM4682HhQOzFsL+kCFSer/?=
- =?us-ascii?Q?bmCTy9RjSyLrb2IjnwVwinwkzoI2sr/xQPzl32bGPc3XZ4TXh2DuQOPQp/X/?=
- =?us-ascii?Q?kvxMrmDjjjxP32BAXitI4niM8Ye2FralDbhAO8SYcKXGggvgVagFpNQKPkeb?=
- =?us-ascii?Q?0Esrk6ZuGKWMIBxiXGstEz64bRKBptPH33eyTztRMh8hYbLiWeJPdY8iurv2?=
- =?us-ascii?Q?/tLiJTBq58iMTwyWN9ZQY6QY5o+7LcVZN+asoyUOZLM5b3ZZVaiar3UpeZuw?=
- =?us-ascii?Q?ySVt4IqbhNYhQBAQ/uE0jbDCmcoo89uHmEbu+lXrklxDdlKy9ngSMaXRs6us?=
- =?us-ascii?Q?wHoAt+SnRtpqbwEvejwx7bHeel+GU4lSmCA736SHWiuIJcyGLlimNj08tA7J?=
- =?us-ascii?Q?8mMNbFuQZoM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6B4TjNwIXJYxuhljEGJ9tX3oZvCtfZSlfnFBgQ2in+pvECWvhq6/sGt0aKdr?=
- =?us-ascii?Q?o6nBcgWYS/BMTfK9zN2ypdzFQfRkrLXdwWaoARvYBzJ4mumhyWemBk9kl8c5?=
- =?us-ascii?Q?hyyC2OjzIeRV2NU2N5bKQ3WkhYzpWYLrostMyDxrN+ONbnATux/amrB3FjZv?=
- =?us-ascii?Q?fUvY3WIblhYYqmLnAOKjj7YqWb3uVOKZxcF6lKVAZrRLu+93qR78JaxgAVSk?=
- =?us-ascii?Q?49HYFwNKDGbVdcREpf0znXnilqkA2S30zLpUxkg14eaYKPHSPt5SQXWghCHJ?=
- =?us-ascii?Q?9F3wX2asF9arnVdk9viEmglQpw0vcg1GIa5NjqpY20QJb2/ECaSVC/PmPYCc?=
- =?us-ascii?Q?7RoQtd6Wb/iZsb04TcEpGBTtiKUY/LaGGMv3kHUmDOG2gm+InR+JmvvF5CJI?=
- =?us-ascii?Q?snNd3FD4J42ctrcx8ja0LTWKin+FgOb8q3dZs1Sa5YAhIEFwpKRuhhIKeBaj?=
- =?us-ascii?Q?EKkenAVLG1i1esoMcX8RFn2pOJbOBuqL65OeB3jP8TYK07yeLVYAJ1zEl3oI?=
- =?us-ascii?Q?El8zgcNoJ2F6/20gZGcZzfGdXNZoBv3AjUE9onhGW9prwViYzwBraTMaP7Mu?=
- =?us-ascii?Q?+GL+uy3RJOSOzZ9Ic+1R5dOH6Qru7WklKJc+O/Cl6h08Ox+OMi4NdYfPi2tK?=
- =?us-ascii?Q?t4LAzL3dxZo0EvBCShqQ/IWOvc5B1qey3g+Hnjigf5l1F7UfrK4NdhqTdXSR?=
- =?us-ascii?Q?BVrTeJUXVCzglKJNBZdWm61XqR03pb3c2JtorJGXBSl+DHXP+QggTRACWHal?=
- =?us-ascii?Q?Lolm/D1WgYCefVRUHRS+2R10861/Z8DkSW+8kEPMyijuQq/7L4yhOxXKG1cg?=
- =?us-ascii?Q?ynjZd2LeXnjnXC9wgGzZoGpTluhuFm6n3Xqvs+A37V1JOqfwSoiibvI/2q90?=
- =?us-ascii?Q?OuNbTadp/53kl2fnyn8HPhdil0Ym6FkjMeGjy8cBM5UgdgK/MVtXDxzJ4A1R?=
- =?us-ascii?Q?/bz+szzVLQDsORDKwrsdlkyi49QmX5+4jNBAMDIWII5WyIAxGnYgHAOIh5nb?=
- =?us-ascii?Q?5aP0QvZKIDwvzbjIg4URjzI4rlCMNc1iSj8WA1NcZVLcYTkgMSp7TZJwRKLn?=
- =?us-ascii?Q?d3wdb27YrvBxjzjDpzn5PRE88c/0b3w7n2YkL6XPg4KmwIxeov+F2BOD6Ec7?=
- =?us-ascii?Q?3LKbEWn1byKzh9+2F1Pdi1xn7qLAoxPn1wnlRQ2CY4KN9H0+SH1xr6bd+9VZ?=
- =?us-ascii?Q?/5VBTNFtf71uvr6MBfxxvP7QO8Tcd7H6B7UyCj2CqYa6v35u3DiWSKkkSCig?=
- =?us-ascii?Q?HsmDCuLX/kwVVwaPrUdcxQwtA4OEnorCl9NwVfcvk9GSPjU5Ci9LN+KoUj8i?=
- =?us-ascii?Q?tsPnwahtnY/uJsa//LV39cd7psyWnFWV8ynEgNamDDCsLjJhqETHaW2QYZ2J?=
- =?us-ascii?Q?TXR6sZKYWvxyFoYcUEN3SGJEIGm13uorkVuxrng/p57NJCHQ3wk3l3zvo+/j?=
- =?us-ascii?Q?Xp8eF8YfPIkZxNX4VjvhVDb6UeyPOKkB7h5BKHk5Vc+nVLIEeYBBb3okd5Q9?=
- =?us-ascii?Q?YVnIWTIuNL0xbEaXlE2gL8wtec8TKwvKw5nym6w7JGykU0QKlsYIxC6Jm1Zk?=
- =?us-ascii?Q?tUYt6FwortLkgg59e15m2vfPOugG+2oYZHnlxrdC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cd31207-ad5c-459d-1f4a-08dda75838e4
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 13:19:11.1007
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mxPP7ibX4GNxBx55P12h9f5rshOuBBMuypyznr+n8816WDjRRflfSHTg9VdxLvdz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8643
 
-On 9 Jun 2025, at 7:13, Usama Arif wrote:
+On Mon, 2025-06-09 at 09:12 -0400, Jan Harkes wrote:
+> There are definitely still users of Coda at CMU, I don't track who else u=
+ses it, but it cannot be too many for sure.
+>=20
+> At this point it mostly keeps you honest about little locking details in =
+the vfs. There are some tricky details in how the inode mappings are access=
+ed and such. I think that  is helpful for overlay and user filesystems like=
+ fuse, overlayfs, etc. but Coda is quite small so it is easy to reason abou=
+t how it uses these features.
+>=20
+>=20
 
-> On 06/06/2025 17:10, Zi Yan wrote:
->> On 6 Jun 2025, at 11:38, Usama Arif wrote:
->>
->>> On 06/06/2025 16:18, Zi Yan wrote:
->>>> On 6 Jun 2025, at 10:37, Usama Arif wrote:
->>>>
->>>>> On arm64 machines with 64K PAGE_SIZE, the min_free_kbytes and hence=
- the
->>>>> watermarks are evaluated to extremely high values, for e.g. a serve=
-r with
->>>>> 480G of memory, only 2M mTHP hugepage size set to madvise, with the=
- rest
->>>>> of the sizes set to never, the min, low and high watermarks evaluat=
-e to
->>>>> 11.2G, 14G and 16.8G respectively.
->>>>> In contrast for 4K PAGE_SIZE of the same machine, with only 2M THP =
-hugepage
->>>>> size set to madvise, the min, low and high watermarks evaluate to 8=
-6M, 566M
->>>>> and 1G respectively.
->>>>> This is because set_recommended_min_free_kbytes is designed for PMD=
+The reason I ask is that it's one of the places that we often have to
+do odd fixups like this when making changes to core VFS APIs. It's also
+not seen any non-collateral changes since 2021. I'm just wondering
+whether it's worth it to keep coda in-tree for so few users.
 
->>>>> hugepages (pageblock_order =3D min(HPAGE_PMD_ORDER, PAGE_BLOCK_ORDE=
-R)).
->>>>> Such high watermark values can cause performance and latency issues=
- in
->>>>> memory bound applications on arm servers that use 64K PAGE_SIZE, ev=
-enthough
->>>>> most of them would never actually use a 512M PMD THP.
->>>>>
->>>>> Instead of using HPAGE_PMD_ORDER for pageblock_order use the highes=
-t large
->>>>> folio order enabled in set_recommended_min_free_kbytes.
->>>>> With this patch, when only 2M THP hugepage size is set to madvise f=
-or the
->>>>> same machine with 64K page size, with the rest of the sizes set to =
-never,
->>>>> the min, low and high watermarks evaluate to 2.08G, 2.6G and 3.1G
->>>>> respectively. When 512M THP hugepage size is set to madvise for the=
- same
->>>>> machine with 64K page size, the min, low and high watermarks evalua=
-te to
->>>>> 11.2G, 14G and 16.8G respectively, the same as without this patch.
->>>>
->>>> Getting pageblock_order involved here might be confusing. I think yo=
-u just
->>>> want to adjust min, low and high watermarks to reasonable values.
->>>> Is it OK to rename min_thp_pageblock_nr_pages to min_nr_free_pages_p=
-er_zone
->>>> and move MIGRATE_PCPTYPES * MIGRATE_PCPTYPES inside? Otherwise, the =
-changes
->>>> look reasonable to me.
->>>
->>> Hi Zi,
->>>
->>> Thanks for the review!
->>>
->>> I forgot to change it in another place, sorry about that! So can't mo=
-ve
->>> MIGRATE_PCPTYPES * MIGRATE_PCPTYPES into the combined function.
->>> Have added the additional place where min_thp_pageblock_nr_pages() is=
- called
->>> as a fixlet here:
->>> https://lore.kernel.org/all/a179fd65-dc3f-4769-9916-3033497188ba@gmai=
-l.com/
->>>
->>> I think atleast in this context the orginal name pageblock_nr_pages i=
-sn't
->>> correct as its min(HPAGE_PMD_ORDER, PAGE_BLOCK_ORDER).
->>> The new name min_thp_pageblock_nr_pages is also not really good, so h=
-appy
->>> to change it to something appropriate.
->>
->> Got it. pageblock is the defragmentation granularity. If user only wan=
-ts
->> 2MB mTHP, maybe pageblock order should be adjusted. Otherwise,
->> kernel will defragment at 512MB granularity, which might not be effici=
-ent.
->> Maybe make pageblock_order a boot time parameter?
->>
->> In addition, we are mixing two things together:
->> 1. min, low, and high watermarks: they affect when memory reclaim and =
-compaction
->>    will be triggered;
->> 2. pageblock order: it is the granularity of defragmentation for creat=
+IIRC, it's also the only fs in the kernel that changes its
+inode->i_mapping pointer after inode instantiation. If not for coda, we
+could probably replace the i_mapping pointer with some macro wizardry
+and shrink struct inode by 8 bytes.
+
+
+> On June 9, 2025 9:00:31 AM EDT, Jan Kara <jack@suse.cz> wrote:
+> > On Mon 09-06-25 08:17:15, Jeff Layton wrote:
+> > > On Mon, 2025-06-09 at 09:09 +1000, NeilBrown wrote:
+> > > > The code in coda_readdir() is nearly identical to iterate_dir().
+> > > > Differences are:
+> > > >  - iterate_dir() is killable
+> > > >  - iterate_dir() adds permission checking and accessing notificatio=
+ns
+> > > >=20
+> > > > I believe these are not harmful for coda so it is best to use
+> > > > iterate_dir() directly.  This will allow locking changes without
+> > > > touching the code in coda.
+> > > >=20
+> > > > Signed-off-by: NeilBrown <neil@brown.name>
+> > > > ---
+> > > >  fs/coda/dir.c | 12 ++----------
+> > > >  1 file changed, 2 insertions(+), 10 deletions(-)
+> > > >=20
+> > > > diff --git a/fs/coda/dir.c b/fs/coda/dir.c
+> > > > index ab69d8f0cec2..ca9990017265 100644
+> > > > --- a/fs/coda/dir.c
+> > > > +++ b/fs/coda/dir.c
+> > > > @@ -429,17 +429,9 @@ static int coda_readdir(struct file *coda_file=
+, struct dir_context *ctx)
+> > > >  	cfi =3D coda_ftoc(coda_file);
+> > > >  	host_file =3D cfi->cfi_container;
+> > > > =20
+> > > > -	if (host_file->f_op->iterate_shared) {
+> > > > -		struct inode *host_inode =3D file_inode(host_file);
+> > > > -		ret =3D -ENOENT;
+> > > > -		if (!IS_DEADDIR(host_inode)) {
+> > > > -			inode_lock_shared(host_inode);
+> > > > -			ret =3D host_file->f_op->iterate_shared(host_file, ctx);
+> > > > -			file_accessed(host_file);
+> > > > -			inode_unlock_shared(host_inode);
+> > > > -		}
+> > > > +	ret =3D iterate_dir(host_file, ctx);
+> > > > +	if (ret !=3D -ENOTDIR)
+> > > >  		return ret;
+> > > > -	}
+> > > >  	/* Venus: we must read Venus dirents from a file */
+> > > >  	return coda_venus_readdir(coda_file, ctx);
+> > > >  }
+> > >=20
+> > >=20
+> > > Is it already time for my annual ask of "Who the heck is using coda
+> > > these days?" Anyway, this patch looks fine to me.
+> > >=20
+> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> >=20
+> > Send a patch proposing deprecating it and we might learn that :) Search=
 ing
->>    mTHP/THP.
->>
->> In your use case, you want to lower watermarks, right? Considering wha=
-t you
->> said below, I wonder if we want a way of enforcing vm.min_free_kbytes,=
+> > the web seems to suggest it is indeed pretty close to dead.
+> >=20
+> > 								Honza
 
->> like a new sysctl knob, vm.force_min_free_kbytes (yeah the suggestion
->> is lame, sorry).
->>
->> I think for 2, we might want to decouple pageblock order from defragme=
-ntation
->> granularity.
->>
->
-> This is a good point. I only did it for the watermarks in the RFC, but =
-there
-> is no reason that the defrag granularity is done in 512M chunks and is =
-probably
-> very inefficient to do so?
->
-> Instead of replacing the pageblock_nr_pages for just set_recommended_mi=
-n_free_kbytes,
-> maybe we just need to change the definition of pageblock_order in [1] t=
-o take into
-> account the highest large folio order enabled instead of HPAGE_PMD_ORDE=
-R?
-
-Ideally, yes. But pageblock migratetypes are stored in a fixed size array=
-
-determined by pageblock_order at boot time (see usemap_size() in mm/mm_in=
-it.c).
-Changing pageblock_order at runtime means we will need to resize pagebloc=
-k
-migratetypes array, which is a little unrealistic. In a system with GBs o=
-r TBs
-memory, reducing pageblock_order by 1 means doubling pageblock migratetyp=
-es
-array and replicating one pageblock migratetypes to two; increasing pageb=
-lock
-order by 1 means halving the array and splitting a pageblock into two.
-The former, if memory is enough, might be easy, but the latter is a littl=
-e
-involved, since for a pageblock with both movable and unmovable pages,
-you will need to check all pages to decide the migratetypes of the after-=
-split
-pageblocks to make sure pageblock migratetype matches the pages inside th=
-at
-pageblock.
-
-
->
-> [1] https://elixir.bootlin.com/linux/v6.15.1/source/include/linux/pageb=
-lock-flags.h#L50
->
-> I really want to avoid coming up with a solution that requires changing=
- a Kconfig or needs
-> kernel commandline to change. It would mean a reboot whenever a differe=
-nt workload
-> runs on a server that works optimally with a different THP size, and th=
-at would make
-> workload orchestration a nightmare.
->
-
-As I said above, changing pageblock order at runtime might not be easy. B=
-ut
-changing defragmentation granularity should be fine, since it just change=
-s
-the range of memory compaction. That is the reason of my proposal,
-decoupling pageblock order from defragmentation granularity. We probably
-need to do some experiments to see the impact of the decoupling, as I
-imagine defragmenting a range smaller than pageblock order is fine, but
-defragmenting a range larger than pageblock order might cause issues
-if there is any unmovable pageblock within that range. Since it is very l=
-ikely
-unmovable pages reside in an unmovable pageblock and lead to a defragment=
-ation
-failure.
-
-
---
-Best Regards,
-Yan, Zi
+--=20
+Jeff Layton <jlayton@kernel.org>
 
