@@ -1,316 +1,194 @@
-Return-Path: <linux-kernel+bounces-678007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9FDAD2301
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:53:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5BBAD230E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02B061886FDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C21C3AAB96
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A6E2116F2;
-	Mon,  9 Jun 2025 15:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8202E20FABA;
+	Mon,  9 Jun 2025 15:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XrL5p9iT"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Pigw/33h"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2085.outbound.protection.outlook.com [40.107.244.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32AE2AEE1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749484389; cv=none; b=KCT7b/L10tyGNx29I8BV2T6bcfMGlmNoRmyqtLNBpBTvtrP2vmuNKx7UMI/UZpkLyMT+0CFKBMEhlCaYD1W5/MWROIXQ4wwpUlcgyC7XSzxDY9txKe/kyCx6BWxbOkfIxJXzC+gyQWmhtIcTtlGzu/eRWjO6zCcqOBJ2FsKFMyE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749484389; c=relaxed/simple;
-	bh=/oSnwgNh5DjpLBnq8ldjGYSo2huRjkulgXxOyX+eVuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QpsWVZxe9KMaAj4uQ1va+WxzdpWWaGyjQgw26+oLsUdmQ1YVm63eqtEub78zilmmekMYSPvtJn5+npeeqTVOlAS6vDGr3cwiOM4XF2PMBIoxvc//RQdDJtkP3NzsH2DO8vlK1E71GNODUKp6IK8Q1o+oPa4X7+8YJ5M0oVb67qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XrL5p9iT; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b1fde81de05so2284161a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 08:53:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749484387; x=1750089187; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9k5+Ykngl8b7HVjIc8RfX/THRGAxyweF7cixLGl/oLQ=;
-        b=XrL5p9iT+rBOEBpBPKtVMtS3vExBdAbIsc+0uHUwhAQchvASy9z1+MrqhBeJad578f
-         UjYaL0QAZ8+ervymgEEmHUOpbxHKTYWLTc/LX2OxPGMdk64+UglVSPS3d/hUD22vaP8m
-         q0r/Hp9SYZR23ZEPdoKU1oL8TcuLtbY9SGwc3Um1jG+xiOHm0ZqbdBt8rxSfMXBkUdlw
-         uZpE0r0DGYj/QvCSNF+b55gOflVRWI+mnG6fRp3JXHHWlU/QmhSK75dLc62MVmAhGprF
-         ruEMaUw22L/7FSWpa+UUaIx3ubk6P8phoU8o+aktfKTCNWZ5qTf2At2uaeGZE211mNpq
-         nlbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749484387; x=1750089187;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9k5+Ykngl8b7HVjIc8RfX/THRGAxyweF7cixLGl/oLQ=;
-        b=KbCVm/twgxvMXHeIyypXqCdukpcOpvnRTcEFwTpIFsESXWBCHV5qEpRazB2O+JfxWG
-         TlM/w7Q7LVZ1hTT80BdOCMDtRI228FY7QbHX+JjDZDK2gxtwBrRb7OWFxTrAgteqPwph
-         LR+mg9TLBgwb3rl/uAzfCWutKlTkTxYlAYxKh9DpQ9xhSBX3wjalYlu23Rv1TrzCBsPm
-         6P+vCNjhyO/Hb9iCA1gRF5wbvBuX5rlSd/SpbVKkZQpqHHhANaOzLJMTtAMg9pu9MNcp
-         Yq4zEWWZ4txzP8C/fO2ZUh/UGKQN2SmRR4Sg0ZnS20PiP9KhsB1WKg3nzuVDEH8mCcfc
-         AlDg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5FXuFxzpAg5lc56elxqR6QY8WmZzoBmGSoVxi7c30ayY6GU/08UKziNg+jIFbXN9CwOSihkvAlg9rpx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIinrSEE7kti3P7TSer4TGN+k7c6zYxFdBXMDUJ0cYALyqiDtc
-	nEXQBdWJgEHAVYMod2rTsyo1NYeoUgdDMGhAuRr7TpZcppV7i5/OWbCa
-X-Gm-Gg: ASbGncvNYjy4eKA6TVEaub16RKBoc3Z26LiqcA6eoyyolRgMrhdBwVM0m7hfO9hYyJu
-	k+3gu0PbpJBk907WRVCwXFkB5D+x/AD44fV7QN0c+fpTFTJRj9lFzPNRheg5iZ5sW4Q15kILsnY
-	w7xh7F00F9m3YfF3xmBKJv0aL8VcBTS0ySj+ZFzLYqdHrW6HlypkGrX2LteewIH4dbxCsraG7m7
-	U7liwJafUQMX/ovzN9sy4KVXCmduKp3LDq7lprbpHgaY6b6JJMJR7Vo0IuBJjJ/7t3QgTKDJvu4
-	UwuoQk+bghjyi2Is4ek+/jf7yD3arH5hHJqcm+zw2OHWTqBhdFkvFVUeUGeRL+oNDVnzG9E+Xjg
-	Itzo+7+tc3rbphx8YnMIRm2WHeRQTDFhZdbc=
-X-Google-Smtp-Source: AGHT+IHn6XGqRb0r+PScKvY1/LXjodqC4uuhJh/N8+E16Q0KZPbEdLymBASG89/eXT0jhBGc4IFnsQ==
-X-Received: by 2002:a05:6a21:6009:b0:21c:fa68:b47c with SMTP id adf61e73a8af0-21ee25b3bb4mr21289655637.18.1749484386972;
-        Mon, 09 Jun 2025 08:53:06 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f66a88dsm5448241a12.40.2025.06.09.08.53.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 08:53:06 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2e5ebbdd-2a57-4f1f-85c6-7c2dff127b50@roeck-us.net>
-Date: Mon, 9 Jun 2025 08:53:04 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBC541C69;
+	Mon,  9 Jun 2025 15:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749484591; cv=fail; b=XjQhY3on3g6lrRd2kizxJALPSYMnOX6eb260Mbu8bl8pweGXaTqFalqiRY8RPyhfkGchltRcjw1y+xA3/rU30OD5+hyCcqL6kuriP5wNA9dc4Pvnp2Dwp8ECMBJl4ZgjmJsUGLVJXHMEp1GwGNPQ3t/rY8ooq0nkX5WcysZFTxo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749484591; c=relaxed/simple;
+	bh=d0sKiADcnlAo14rTobngqe8/8Ak8hig0XhpQPa4hmWw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o9eOEmQ0dWuJw/gsXidbXV5xawbKvYdl4AiIINJmVMfbaPE7xoOs+eeTSeQVVEvQ0MJ1sgiwHYIffHgzCijC6G1pMdPkQiAvx5MSKxwb8KpYSBlyHznv8BiBJhQvsHCHLTnpGdWBkxRQ9yCrXov/1Fxh+ScpvnoYXRymBNCFVOY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Pigw/33h; arc=fail smtp.client-ip=40.107.244.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OzfbxhM7uMfAT58aknck5ow+Ncs4EXqb3nfhtJztzjRGGcqr5aJ4KluV0wM1tlE9QiGNxvwtUpF8B+rHFc9qEoqrze6PR9Mv4sFsawckUQ3QsQL3Cj1PunfuP1lve5MJ3m/q0H0YOHJ6bI39F+0/DSCWgW2oglqHrQKm7OreudAo+Fx5gZJ+Yf98rMFu+8BsJrXuS6Ts9WMvlY3U6IKEgVW6/31cAA2KOc2iuku/s58lyPZRYjJO5spfbY9akpYllVONWsmoKkjlC33FJWa/wpd3MsQiYsyWfPHs78cmQz309ILFldcDT3pmTCw/HMYHl2cMiHk8H2eiczYHDLufRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GbW30tIl+bf5iuR5TOGQ4uIXPNH0d6FIGodWpWMqEEA=;
+ b=hwr0BjzH1H83GXE+tDy9xXriibsm0eSCmVS5a3Z0k7/vwJtOMlzw+uAVFk5TG1gGCPMlLk2Aoc9yY9ThYAfkZ/DOrd10l+pu/XyAbZF8OSphJOkHISjZo9JZRqidpR4oQp2LAcTf7vQCVsbXfNgd3Wvn3b1APMBylz99lrvtSKMzenYsg5jMLzs2f3NItzYTM0Q0CKp0vdZUjE0gnpmuKuMfB7Y6f0rfKzThmIpO36Q78QLMRs64r+YFboO/n9vmTXyWy80DENXbwEvCXodmcI/U07rOH/LbPt+/PL6DPCFSuLO7qP9LbKETONqQdAnn/iYqVYVYRc5LCHp6CmxvZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GbW30tIl+bf5iuR5TOGQ4uIXPNH0d6FIGodWpWMqEEA=;
+ b=Pigw/33ho33T9nQbFg2Oca+ykTa+uKGl73t3unhUgt1gLsKyonTYPrzEL+rR1nQJuZNS3mKW24Q8HayH7NJeEXIqkPTYX7BuOZEy1vzSBVO6auVthV8B6DcxuxfzDnUoh38zrLY8n8t4eArvVwyRHwRZn1rp3ck8QBS7TjvlXFY=
+Received: from BN9P220CA0014.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:13e::19)
+ by SA3PR12MB7860.namprd12.prod.outlook.com (2603:10b6:806:307::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 9 Jun
+ 2025 15:56:28 +0000
+Received: from BL02EPF0001A102.namprd05.prod.outlook.com
+ (2603:10b6:408:13e:cafe::e3) by BN9P220CA0014.outlook.office365.com
+ (2603:10b6:408:13e::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29 via Frontend Transport; Mon,
+ 9 Jun 2025 15:56:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0001A102.mail.protection.outlook.com (10.167.241.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8835.15 via Frontend Transport; Mon, 9 Jun 2025 15:56:27 +0000
+Received: from maple-stxh-linux-10.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 9 Jun 2025 10:56:15 -0500
+From: Pratap Nirujogi <pratap.nirujogi@amd.com>
+To: <andi.shyti@kernel.org>, <ilpo.jarvinen@linux.intel.com>,
+	<rdunlap@infradead.org>, <hdegoede@redhat.com>, <sfr@canb.auug.org.au>,
+	<linux-next@vger.kernel.org>
+CC: <linux-i2c@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <benjamin.chan@amd.com>, <bin.du@amd.com>,
+	<gjorgji.rosikopulos@amd.com>, <king.li@amd.com>, <dantony@amd.com>, "Pratap
+ Nirujogi" <pratap.nirujogi@amd.com>
+Subject: [PATCH v4 0/3] Fix build issue when CONFIG_MODULES is not set
+Date: Mon, 9 Jun 2025 11:53:54 -0400
+Message-ID: <20250609155601.1477055-1-pratap.nirujogi@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/11] mtd: core: always create master device
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, "De Marchi, Lucas" <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>,
- "Poosa, Karthik" <karthik.poosa@intel.com>,
- "Abliyev, Reuven" <reuven.abliyev@intel.com>,
- "Weil, Oren jer" <oren.jer.weil@intel.com>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250302140921.504304-1-alexander.usyskin@intel.com>
- <20250302140921.504304-2-alexander.usyskin@intel.com>
- <9dfb2954-fc3e-464c-a4fd-8c1a4dffa327@roeck-us.net>
- <CY5PR11MB63666AE267B9F1609213D93CED68A@CY5PR11MB6366.namprd11.prod.outlook.com>
- <87bjqyja7o.fsf@bootlin.com>
- <2f3d3ff9-e483-42cc-aaed-f376d46a6701@roeck-us.net>
- <87ikl5xnbc.fsf@bootlin.com>
- <CY5PR11MB63660CFA966BCA1B44528BB1ED6BA@CY5PR11MB6366.namprd11.prod.outlook.com>
- <4d55ac06-c357-4d78-b8b8-5b26486ce529@roeck-us.net>
- <CY5PR11MB63662D21B2C7B1A1C2E6BC4BED6BA@CY5PR11MB6366.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <CY5PR11MB63662D21B2C7B1A1C2E6BC4BED6BA@CY5PR11MB6366.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A102:EE_|SA3PR12MB7860:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2280706d-40fe-402c-47aa-08dda76e31b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ttq0KDSjnTboMFvJX6WcvGkNmtx22WFYLxBuRx2oKj1VY2xSYfwtJqsRTh9n?=
+ =?us-ascii?Q?GTPipNi3ISzRL7hmC4TfmeaczRBT/fSe8YlS7K90V2p3LE/85D4gAFf2rJkO?=
+ =?us-ascii?Q?YcjF8PeREWBmmZnHGp8LvtNsIwrufvG4ic/4yINEpSE0truuHc1gjh9MLCfY?=
+ =?us-ascii?Q?qR4XuCmmipZlIReCpvSZXTgrFZDdfZN7rbyFQ0q381SoFTWUYGOk3uAJqeG/?=
+ =?us-ascii?Q?i33AFbj1ECuVcS5/W1WvGA3ngakSmOa+notKLU6CVL8l+pnmFNePYntNP5j4?=
+ =?us-ascii?Q?ZGmOZv8SNxbKSDKd4spYOEqHhKQRLLAKft+KI7iOQrV058dA5tbBw33sKfao?=
+ =?us-ascii?Q?gzMbWCpjXnlhenTL+zFS+fWpDL4knGjqWqkO1CwqLQP4JJrCKqs/vNcVb2Oq?=
+ =?us-ascii?Q?/O1ZwPoHk6tmUguxzYa5Lf0p2xwKRpl0nJWVCSMZNdeCWIiUT2yiSQt03BwM?=
+ =?us-ascii?Q?bPngpQ98+ddHHPdm72v7mguKz3ucT1zxi9kKmkpIc7ZpZbq1mjrrjCG2naUe?=
+ =?us-ascii?Q?o014EChhdIpVQ+a7AjBTu9fKO5d36gl2dNKCQmhG1RpCA3xizQy5HXN1qN76?=
+ =?us-ascii?Q?7Kc5lTsH+8Jd3jrvjUVaZzgg1uPPH3oEzBoDerz97si0g525J7SzNOS9C0Ub?=
+ =?us-ascii?Q?nwA4HzX2YHqa0aHnc5uXwGrMKpo3YUv1wwJl+ZC9Vxoa/QhZVDmXSMp1844K?=
+ =?us-ascii?Q?fWNzEc4N0idaA+FFhp83E/qH7SFASPvMJnIUYyBTkOruRf3YKkf5ft8O19b5?=
+ =?us-ascii?Q?dbBZyc+znIFL0IQklVsmIaESeU+SB9aGQ370ZXPRft7SSYvw+TeILHqk3cOs?=
+ =?us-ascii?Q?+GuT5FfmO7uC/a98j7HSUYpUf5C+wExtI2Ekm+GGqQ2+tzW+HQyHRwkDdOJa?=
+ =?us-ascii?Q?UQSgaXgjtRNkH/px68dwscxsIfeWUx/jK55bxj28yNFDBrhJWl7dBGyYQELf?=
+ =?us-ascii?Q?4jxaM2JAaML64JWF3vMr1g6FMsgvAEPNr9AzHrYxz3+hpqMPHyI4auIY4HVK?=
+ =?us-ascii?Q?xaRTPt+UCADTS5W/LSj12kBe7D0B+vqfaWy6uzX6a2WAEy428iEZxfgAOZpc?=
+ =?us-ascii?Q?SJhxFQYIfS/0fTVYpxYAgNErZFyuUaHLkZMafCP6kPiyA5hdfbzR3g0bGgCc?=
+ =?us-ascii?Q?Lm/2HXwwEjwbMtDdA7lK7fP2ByUoXC7LCMQixG/SoNdHAK5U06aYY+vvQ2XM?=
+ =?us-ascii?Q?LpQobeU5nJecXP+w+ph1Nzy2lw6Q6NOnNYatCXZ4qSs4bo4OIxIa0M12AxWE?=
+ =?us-ascii?Q?ZzlL0RJrgIEpMAv+KHNsZkWVNZcTp9z6C/V13sdHHYDsOme6yfbNp85FpTe6?=
+ =?us-ascii?Q?B0eRXVtaLLMsPjlXVWj5mFsqIJQOIYDvA7V8VKfiRL8k8sCvwogvTK9QUojd?=
+ =?us-ascii?Q?yyRNPJWNa1SPQNDb8+Z4AarWVg4q8Qe+ASj/DnEB9Z1kWcrmUbJQFglRf3/K?=
+ =?us-ascii?Q?901fOZLoNV/NQwtwGCIwI9Q1V1JVtlUTrIV/4nKuek2eeuMgOZJeyX/tpdhe?=
+ =?us-ascii?Q?pRv6sY84SP9V6V/Mb88UsTNiRKU7WN6K1FV1?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 15:56:27.8168
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2280706d-40fe-402c-47aa-08dda76e31b4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A102.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7860
 
-On 6/9/25 08:16, Usyskin, Alexander wrote:
->> Subject: Re: [PATCH v6 01/11] mtd: core: always create master device
->>
->> On 6/9/25 05:23, Usyskin, Alexander wrote:
->>>> Subject: Re: [PATCH v6 01/11] mtd: core: always create master device
->>>>
->>>>
->>>>>>>> Several of my qemu boot tests fail to boot from mtd devices with this
->>>> patch
->>>>>>>> in the mainline kernel. Reverting it fixes the problem. As far as I can
->>>>>>>> see this affects configurations with
->>>> CONFIG_MTD_PARTITIONED_MASTER=y
->>>>>>>> when
->>>>>>>> trying to boot from an mtd partition other than mtdblock0, with the
->>>>>>>> mtd partition data in devicetree (.../aspeed/openbmc-flash-
->> layout.dtsi).
->>>>>>>> Is there a guidance describing the changed behavior, by any chance,
->>>>>>>> and how the boot command line now needs to look like when using
->> one
->>>> of
->>>>>>>> the flash partitions as root file system ?
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>> Guenter
->>>>>>>
->>>>>>> I've tried to make is as transparent as possible for the existing users.
->>>>>>> Only change is that now every partition has master that is not
->> partitioned.
->>>>>>> Is the CONFIG_MTD_PARTITIONED_MASTER=n fixed the problem for
->> you?
->>>>>> No change is expected, can you please describe the devices that you
->>>>>> observe with and without the patch? Maybe there is something wrong in
->>>>>> the core logic.
->>>>>>
->>>>>
->>>>> I am trying to boot supermicro-x11spi-bmc in qemu from flash partition 6.
->>>>> The qemu command line is something like
->>>>>
->>>>>       qemu-system-arm -M supermicro-x11spi-bmc,fmc-
->>>> model=n25q256a13,spi-model=n25q256a13 \
->>>>> 	-kernel arch/arm/boot/zImage -no-reboot -snapshot \
->>>>> 	-audio none \
->>>>> 	-drive file=/tmp/flash,format=raw,if=mtd,index=1 \
->>>>> 	-nic user \
->>>>> 	--append "root=/dev/mtdblock6 rootwait console=ttyS4,115200
->>>> earlycon=uart8250,mmio32,0x1e784000,115200n8" \
->>>>> 	-dtb arch/arm/boot/dts/aspeed/aspeed-bmc-supermicro-x11spi.dtb
->>>> \
->>>>> 	-nographic -monitor null -serial stdio
->>>>>
->>>>> This is with aspeed_g5_defconfig. Note that the flash models need to be
->>>> specified.
->>>>> The default flashes are no longer recognized when booting from qemu
->> since
->>>> commit
->>>>> 947c86e481a0 ("mtd: spi-nor: macronix: Drop the redundant flash info
->>>> fields").
->>>>>
->>>>> The above only works with this patch reverted (or with v6.15 and older, of
->>>> course).
->>>>>
->>>>> Guenter
->>>>
->>>> Alexander, can you please investigate? We need a fix because Guenter
->>>> might not be the only affecter user. Otherwise this patch can't stand,
->>>> unfortunately.
->>>>
->>>> Thanks,
->>>> Miquèl
->>>
->>> Maybe something is moved, and it is not /dev/mtdblock6 now.
->>>
->>
->> With this patch:
->>
->> # ls -l /dev/*mtd*
->> crw-------    1 root     root       90,   0 Jan  1 00:00 /dev/mtd0
->> crw-------    1 root     root       90,   1 Jan  1 00:00 /dev/mtd0ro
->> crw-------    1 root     root       90,   2 Jan  1 00:00 /dev/mtd1
->> crw-------    1 root     root       90,   3 Jan  1 00:00 /dev/mtd1ro
->> crw-------    1 root     root      244,   0 Jan  1 00:00 /dev/mtd_master0
->> crw-------    1 root     root      244,   1 Jan  1 00:00 /dev/mtd_master1
->> brw-------    1 root     root       31,   0 Jan  1 00:00 /dev/mtdblock0
->> brw-------    1 root     root       31,   1 Jan  1 00:00 /dev/mtdblock1
->> ~ # ls /proc/mtd
->> /proc/mtd
->> ~ # cat /proc/mtd
->> dev:    size   erasesize  name
->> mtd0: 02000000 00010000 "bmc"
->> mtd1: 02000000 00010000 "pnor"
->>
->> After reverting it:
->>
->> # ls -l /dev/mtd*
->> crw-------    1 root     root       90,   0 Jan  1 00:00 /dev/mtd0
->> crw-------    1 root     root       90,   1 Jan  1 00:00 /dev/mtd0ro
->> crw-------    1 root     root       90,   2 Jan  1 00:00 /dev/mtd1
->> crw-------    1 root     root       90,   3 Jan  1 00:00 /dev/mtd1ro
->> crw-------    1 root     root       90,   4 Jan  1 00:00 /dev/mtd2
->> crw-------    1 root     root       90,   5 Jan  1 00:00 /dev/mtd2ro
->> crw-------    1 root     root       90,   6 Jan  1 00:00 /dev/mtd3
->> crw-------    1 root     root       90,   7 Jan  1 00:00 /dev/mtd3ro
->> crw-------    1 root     root       90,   8 Jan  1 00:00 /dev/mtd4
->> crw-------    1 root     root       90,   9 Jan  1 00:00 /dev/mtd4ro
->> crw-------    1 root     root       90,  10 Jan  1 00:00 /dev/mtd5
->> crw-------    1 root     root       90,  11 Jan  1 00:00 /dev/mtd5ro
->> crw-------    1 root     root       90,  12 Jan  1 00:00 /dev/mtd6
->> crw-------    1 root     root       90,  13 Jan  1 00:00 /dev/mtd6ro
->> brw-------    1 root     root       31,   0 Jan  1 00:00 /dev/mtdblock0
->> brw-------    1 root     root       31,   1 Jan  1 00:00 /dev/mtdblock1
->> brw-------    1 root     root       31,   2 Jan  1 00:00 /dev/mtdblock2
->> brw-------    1 root     root       31,   3 Jan  1 00:00 /dev/mtdblock3
->> brw-------    1 root     root       31,   4 Jan  1 00:00 /dev/mtdblock4
->> brw-------    1 root     root       31,   5 Jan  1 00:00 /dev/mtdblock5
->> brw-------    1 root     root       31,   6 Jan  1 00:00 /dev/mtdblock6
->> ~ # cat /proc/mtd
->> dev:    size   erasesize  name
->> mtd0: 02000000 00010000 "bmc"
->> mtd1: 00060000 00010000 "u-boot"
->> mtd2: 00020000 00010000 "u-boot-env"
->> mtd3: 00440000 00010000 "kernel"
->> mtd4: 01740000 00010000 "rofs"
->> mtd5: 00400000 00010000 "rwfs"
->> mtd6: 02000000 00010000 "pnor"
->>
->> I am trying to boot from "pnor". It looks like the partition data (from
->> devicetree)
->> is now ignored. mtdblock6 used to be the second flash.
->>
->> Guenter
-> 
-> Is this with CONFIG_MTD_PARTITIONED_MASTER?
-> 
+When CONFIG_MODULES is not defined, 'adap->owner->name' used in amd_isp4 platform
+driver will not be valid and is resulting in build failures.
 
-Yes
+../drivers/platform/x86/amd/amd_isp4.c: In function 'is_isp_i2c_adapter':
+../drivers/platform/x86/amd/amd_isp4.c:154:35: error: invalid use of undefined type 'struct module'
+  154 |         return !strcmp(adap->owner->name, "i2c_designware_amdisp");
+      |                                   ^~
 
-> I think that mtd_is_partition is ambiguous now.
-> We always have master partition when CONFIG_MTD_PARTITIONED_MASTER
-> is enabled and parent check is useless.
-> We must check grandparent in this case.
-> Miquel, am I right?
-> 
-> We can return to older patch version that have created partition
-> instead of the master device.
-> Or try to fix mtd_is_partition, like below.
-> Guenter, is below patch helps?
-> 
-No, it does not make a difference. Partitions are still not created.
+To fix this issue, need to make changes both in platform and i2c driver modules.
 
-Guenter
+* In the amd_isp4 x86/platform driver, replace 'adap->owner->name' with 'adap->name', this removes
+the hard dependency on 'struct module'.
+* In i2c amdisp driver, initialize unique name to i2c adapter and also make a change in
+i2c-designware-common to avoid overwriting with generic name when adap->name[] is already set.
+
+---
+
+Changes v3 -> v4:
+
+* Update MAINTAINERS file with the new isp4_misc.h added
+* Fix typo error
+
+Changes v2 -> v3:
+
+* Update commit text for patch 1/3
+
+
+Changes v1 -> v2:
+
+* Replace snprintf with scnprintf
+* Add new isp4 specific misc header file to include the adapter name
+* Remove 'Fixes' and 'Link' tags from i2c patches
+
+---
+
+
+Pratap Nirujogi (3):
+  i2c: designware: Initialize adapter name only when not set
+  i2c: amd-isp: Initialize unique adapter name
+  platform/x86: Use i2c adapter name to fix build errors
+
+ MAINTAINERS                                |  1 +
+ drivers/i2c/busses/i2c-designware-amdisp.c |  2 ++
+ drivers/i2c/busses/i2c-designware-master.c |  5 +++--
+ drivers/platform/x86/amd/amd_isp4.c        |  3 ++-
+ include/linux/soc/amd/isp4_misc.h          | 12 ++++++++++++
+ 5 files changed, 20 insertions(+), 3 deletions(-)
+ create mode 100644 include/linux/soc/amd/isp4_misc.h
+
+-- 
+2.43.0
 
 
