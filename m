@@ -1,527 +1,177 @@
-Return-Path: <linux-kernel+bounces-678440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E4EAD28F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C599BAD2901
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2BA1892561
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09873B35DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 21:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4B121FF49;
-	Mon,  9 Jun 2025 21:51:33 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F05223716;
+	Mon,  9 Jun 2025 21:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tnFFEMCg"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D321E1401C
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 21:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8B72236E9
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 21:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749505892; cv=none; b=TvR3jOy6vFoOLV9DA9FKYh0RNtF6kHd5KbvTHV7h2KHJzI4wEM4CQVCf620nLHiJRts+2HBjTWwh6Wd4g5IBw9CzlI9/jknWAHSa5uqBmJJhWjQ9xhQBjeo6JffiOca6aKHg80DKgZ8g+0U7/j+WPJ5TFMzsauUCtlzM8CItWHE=
+	t=1749506128; cv=none; b=duQ5gaXAvLnvEzFWR6tu4U/ZPpeCew8dsMM9Utar4wPgsJ6KMGLhuoNMgewsQw6Wnz8ZYdLEMmWhQAqOXSsPMkgF34fL25OZRbmjsCfJf9z/Lz5YOiw1DcSAwHb95I07wjFXlQTl4lncQG/S0hvO01tjNXk68f4pDoBFV39mEE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749505892; c=relaxed/simple;
-	bh=1XejrdKzfG+S+dKLoMUktsIfTpGHbkAmCsku48IhsjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dg5tCn8C1SrN8CSwlNdq33EOow9LmkWWx/7T9VbrgnSGGptVTeLFMVULUtjkUswZwciVCBm3V6BXaTzjnmc4yxvHD7BnulgOx6P1kvQOhew3PI0vj9JD4TfZ0ksLg84ef1ZhZSTqW5eCcOaVbkLxupjJBHMBN6YV+Dr5K5od5wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id EC7A712043D;
-	Mon,  9 Jun 2025 21:51:24 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id D856C2000D;
-	Mon,  9 Jun 2025 21:51:22 +0000 (UTC)
-Date: Mon, 9 Jun 2025 17:52:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "kprateek.nayak@amd.com"
- <kprateek.nayak@amd.com>, "vineethr@linux.ibm.com" <vineethr@linux.ibm.com>
-Subject: Re: [PATCH V5 1/6] Sched: Scheduler time slice extension
-Message-ID: <20250609175251.1fc90ca5@gandalf.local.home>
-In-Reply-To: <20250609165532.3265e142@gandalf.local.home>
-References: <20250603233654.1838967-1-prakash.sangappa@oracle.com>
-	<20250603233654.1838967-2-prakash.sangappa@oracle.com>
-	<20250604103106.1465f847@gandalf.local.home>
-	<20250604145433.KCPMF8zm@linutronix.de>
-	<80120491-7F90-4171-9FB8-9FE89B09F728@oracle.com>
-	<20250604192327.sVjt6c4u@linutronix.de>
-	<20250609165532.3265e142@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749506128; c=relaxed/simple;
+	bh=90T6ejJVsDBvxIbRYg9P0PhiOGWoRm1F4hXTbYJcEBo=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To:Cc:Content-Type:
+	 References; b=C9T0n4NrPr8PsICSNcQ7/D23NzsGXPpsyUKu9JNGIZj7sJP+DSVyw7CcTnBm9Nox7EQHzZCFtWQmedcEyee/y6y2NZQTNgh6XSpVM28pnEyDLwYwB6eTn9/xicd59V1xf74WiZAWgZtlqwsX0hjafP2vxHdkTj3uldpgcjyG44A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tnFFEMCg; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250609215524euoutp0286389ec992f8c3c2acb982f9a11cf40e~Hfo0LAsBm0630506305euoutp02n
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 21:55:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250609215524euoutp0286389ec992f8c3c2acb982f9a11cf40e~Hfo0LAsBm0630506305euoutp02n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749506124;
+	bh=6FDigIrzvT9N27pIlfQrnhaWXpE1+J7Dii4QKfGowac=;
+	h=From:Date:Subject:To:Cc:References:From;
+	b=tnFFEMCgSqvFuTxqBx/lY7egFQTq6LvfnB8BBbuJutlSIveTzKUZQAG1eOXcSB4kl
+	 cVnyUiNsoEVtyQQ9ujD93s2cSXejnNZzdHAzKlVGRQ1x01QerDcVBWReFvxApzVqIU
+	 dTygi89ikLezO+oTCA2dXbhz861cEbfGsF6cQaHM=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250609215523eucas1p22f6d7d84b403badfb77af7df973b97a9~HfozB2_zh0459404594eucas1p2N;
+	Mon,  9 Jun 2025 21:55:23 +0000 (GMT)
+Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
+	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250609215522eusmtip243b4c206faaf6705a2082bfe335359c7~HfoyeJlhe2095520955eusmtip2Y;
+	Mon,  9 Jun 2025 21:55:22 +0000 (GMT)
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+Date: Mon, 09 Jun 2025 23:53:19 +0200
+Subject: [PATCH] rust: math: Add KernelMathExt trait with a mul_div helper
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="MP_/4U9gXFqnKprDQBn=dzk5+MO"
-X-Rspamd-Queue-Id: D856C2000D
-X-Stat-Signature: 1q57xdt95r7sguupnawzesakmbfx4p4b
-X-Rspamd-Server: rspamout05
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19dDbLr4Wpdafp3ubvrWL9m3iUhBDWHwcA=
-X-HE-Tag: 1749505882-498941
-X-HE-Meta: U2FsdGVkX19k9+wEgzLh+B0lgzCdTRA175NSqbtei7CDNSk8lJDMLp5bbXaQ4xukJbiZr1DuXQJ6UOLFxjAF+cDCvyxWKkftUsasKLQhE6JbN47/L96Z8cDzIXUuHIjApWWadJf2M0+GziNpg+9y7U2FWASvai8Jsx4eONUPL44NltUuqtuXj5t3iSWWuZRVoageDf2+jSCm+k/oigHZ7iBmuh0e7Ms66C66yfW7iG64MidJ0bVqguzEOtNVA3lNp2JN6wtAgdhV65VCKmzafkbcnuyCAFa/xukI17ZlFjKIH1nXZ0tL9w+zz9P9oGNglW8At7pw5BNyDNh5uNQ9eMS3VizB+OsVQ2QZOTjv7XPThC66Knh+fzIyuLp8aso/u5UpZlYhmMc=
-
---MP_/4U9gXFqnKprDQBn=dzk5+MO
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Message-Id: <20250609-math-rust-v1-v1-1-285fac00031f@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAM5XR2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+	vPSU3UzU4B8JSMDI1MDMwNL3dzEkgzdotLiEt0yQ90UY0sLS1ND01Rjo1QloJaCotS0zAqwcdG
+	xtbUA8S9/B14AAAA=
+X-Change-ID: 20250609-math-rust-v1-d3989515e32e
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,  Benno Lossin
+	<lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,  Alice Ryhl
+	<aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,  Danilo Krummrich
+	<dakr@kernel.org>,  Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,  Michal
+	Wilczynski <m.wilczynski@samsung.com>
+X-Mailer: b4 0.15-dev
+X-CMS-MailID: 20250609215523eucas1p22f6d7d84b403badfb77af7df973b97a9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250609215523eucas1p22f6d7d84b403badfb77af7df973b97a9
+X-EPHeader: CA
+X-CMS-RootMailID: 20250609215523eucas1p22f6d7d84b403badfb77af7df973b97a9
+References: <CGME20250609215523eucas1p22f6d7d84b403badfb77af7df973b97a9@eucas1p2.samsung.com>
+
+The PWM subsystem and other kernel modules often need to perform a
+64 by 64-bit multiplication followed by a 64-bit division. Performing
+this naively in Rust risks overflow on the intermediate multiplication.
+The kernel provides the C helper 'mul_u64_u64_div_u64' for this exact
+purpose.
+
+Introduce a safe Rust wrapper for this function to make it available to
+Rust drivers.
+
+Following feedback from the mailing list [1], this functionality is
+provided via a 'KernelMathExt' extension trait. This allows for
+idiomatic, method style calls (e.g. val.mul_div()) and provides a
+scalable pattern for adding helpers for other integer types in the
+future.
+
+The safe wrapper is named 'mul_div' and not 'mul_u64_u64_div_u64' [2]
+because its behavior differs from the underlying C function. The C
+helper traps on a division by zero, whereas this safe wrapper returns
+`None`, thus exhibiting different and safer behavior.
+
+This is required for the Rust PWM TH1520 driver [3].
+
+[1] - https://lore.kernel.org/all/DAFQ19RBBSQL.3OGUXOQ0PA9YH@kernel.org/
+[2] - https://lore.kernel.org/all/CANiq72kVvLogBSVKz0eRg6V4LDB1z7b-6y1WPLSQfXXLW7X3cw@mail.gmail.com/
+[3] - https://lore.kernel.org/all/20250524-rust-next-pwm-working-fan-for-sending-v1-2-bdd2d5094ff7@samsung.com/
+
+Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+---
+ rust/kernel/lib.rs  |  1 +
+ rust/kernel/math.rs | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 6b4774b2b1c37f4da1866e993be6230bc6715841..d652c92633b82525f37e5cd8a040d268e0c191d1 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -85,6 +85,7 @@
+ #[cfg(CONFIG_KUNIT)]
+ pub mod kunit;
+ pub mod list;
++pub mod math;
+ pub mod miscdevice;
+ pub mod mm;
+ #[cfg(CONFIG_NET)]
+diff --git a/rust/kernel/math.rs b/rust/kernel/math.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..b89e23f9266117dcf96561fbf13b1c66a4851b48
+--- /dev/null
++++ b/rust/kernel/math.rs
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2025 Samsung Electronics Co., Ltd.
++// Author: Michal Wilczynski <m.wilczynski@samsung.com>
++
++//! Safe wrappers for kernel math helpers.
++//!
++//! This module provides safe, idiomatic Rust wrappers for C functions, whose
++//! FFI bindings are auto-generated in the `bindings` crate.
++
++use crate::bindings;
++
++/// An extension trait that provides access to kernel math helpers on primitive integer types.
++pub trait KernelMathExt: Sized {
++    /// Multiplies self by `multiplier and divides by divisor.
++    ///
++    /// This wrapper around the kernel's `mul_u64_u64_div_u64` C helper ensures that no
++    /// overflow occurs during the intermediate multiplication.
++    ///
++    /// # Returns
++    /// * Some(result) if the division is successful.
++    /// * None if the divisor is zero.
++    fn mul_div(self, multiplier: Self, divisor: Self) -> Option<Self>;
++}
++
++impl KernelMathExt for u64 {
++    fn mul_div(self, multiplier: u64, divisor: u64) -> Option<u64> {
++        if divisor == 0 {
++            return None;
++        }
++        // SAFETY: The C function `mul_u64_u64_div_u64` is safe to call because the divisor
++        // is guaranteed to be non-zero. The FFI bindings use `u64`, matching our types.
++        Some(unsafe { bindings::mul_u64_u64_div_u64(self, multiplier, divisor) })
++    }
++}
+
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250609-math-rust-v1-d3989515e32e
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
-On Mon, 9 Jun 2025 16:55:32 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> So I applied your patches and fixed up my "extend-sched.c" program to use
-> your method. I booted on bare-metal PREEMPT_RT and ran:
-
-In case anyone else wants to play, I'm attaching the source of extend-sched.c
-
-I ran it with: sleep 5; ./extend-sched
-
-Then switched over to cyclic test, counted to five and it was pretty
-noticeable when it triggered.
-
-To build, simply do:
-
-  $ cd linux.git
-  $ mkdir /tmp/extend
-  $ cp tools/testing/selftests/rseq/rseq-abi.h /tmp/extend
-  $ cd /tmp/extend
-
-  [ download extend-sched.c here ]
-
-  $ gcc extend-sched.c -o extend-sched
-
-
--- Steve
-
---MP_/4U9gXFqnKprDQBn=dzk5+MO
-Content-Type: text/x-c++src
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=extend-sched.c
-
-
-// Run with: GLIBC_TUNABLES=glibc.pthread.rseq=0 
-
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <sys/time.h>
-
-#ifdef ENABLE_TRACEFS
-#include <tracefs.h>
-#else
-static inline void tracefs_printf(void *inst, const char *fmt, ...) { }
-static inline void tracefs_print_init(void *inst) { }
-#endif
-
-#include <sys/rseq.h>
-#include "rseq-abi.h"
-
-static bool no_rseq;
-static bool extend_wait;
-
-/* In case we want to play with priorities */
-static int busy_prio = 0;
-static int lock_prio = 0;
-
-static int loop_spin = 15000;
-
-//#define barrier() asm volatile ("" ::: "memory")
-#define rmb() asm volatile ("lfence" ::: "memory")
-#define wmb() asm volatile ("sfence" ::: "memory")
-
-#define NR_BUSY_THREADS 5
-
-static pthread_barrier_t pbarrier;
-
-static __thread struct rseq_abi *rseq_map;
-
-static void init_extend_map(void)
-{
-	if (no_rseq)
-		return;
-
-	rseq_map = (void *)__builtin_thread_pointer() + __rseq_offset;
-}
-
-struct data;
-
-struct thread_data {
-	unsigned long long			x_count;
-	unsigned long long			total;
-	unsigned long long			max;
-	unsigned long long			min;
-	unsigned long long			total_wait;
-	unsigned long long			max_wait;
-	unsigned long long			min_wait;
-	unsigned long long			contention;
-	unsigned long long			extended;
-	struct data				*data;
-	int					cpu;
-};
-
-struct data {
-	unsigned long long		x;
-	unsigned long			lock;
-	struct thread_data		*tdata;
-	bool				done;
-};
-
-static inline unsigned long
-cmpxchg(volatile unsigned long *ptr, unsigned long old, unsigned long new)
-{
-        unsigned long prev;
-
-	asm volatile("lock; cmpxchg %b1,%2"
-		     : "=a"(prev)
-		     : "q"(new), "m"(*(ptr)), "0"(old)
-		     : "memory");
-        return prev;
-}
-
-static void extend(void)
-{
-	if (no_rseq)
-		return;
-
-	rseq_map->flags |= 1 << 3;
-}
-
-static int unextend(void)
-{
-	int flags;
-	if (no_rseq)
-		return 0;
-
-	flags = rseq_map->flags;
-	rseq_map->flags &= ~((1 << 3) | (1 << 4));
-	if (!(flags & (1 << 4)))
-		return 0;
-
-	tracefs_printf(NULL, "Yield!\n");
-	sched_yield();
-		return 1;
-}
-
-#define sec2usec(sec) (sec * 1000000ULL)
-#define usec2sec(usec) (usec / 1000000ULL)
-
-static unsigned long long get_time(void)
-{
-	struct timeval tv;
-	unsigned long long time;
-
-	gettimeofday(&tv, NULL);
-
-	time = sec2usec(tv.tv_sec);
-	time += tv.tv_usec;
-
-	return time;
-}
-
-static void do_sleep(unsigned usecs)
-{
-	struct timespec ts;
-
-	ts.tv_sec = 0;
-	ts.tv_nsec = usecs * 1000;
-	nanosleep(&ts, NULL);
-}
-
-static void grab_lock(struct thread_data *tdata, struct data *data)
-{
-	unsigned long long start_wait, start, end, delta;
-	unsigned long long end_wait;
-	unsigned long prev;
-	bool contention = false;
-
-	start_wait = get_time();
-
-	rmb();
-	while (data->lock && !data->done) {
-		contention = true;
-		rmb();
-	}
-
-	tracefs_printf(NULL, "Grab lock\n");
-	if (extend_wait)
-		extend();
-	do {
-		if (!extend_wait)
-			extend();
-		start = get_time();
-		prev = cmpxchg(&data->lock, 0, 1);
-		if (prev) {
-			contention = true;
-			if (!extend_wait && unextend())
-				tdata->extended++;
-			while (data->lock && !data->done)
-				rmb();
-		}
-	} while (prev && !data->done);
-
-	if (contention)
-		tdata->contention++;
-
-	if (data->done)
-		return;
-
-	end_wait = get_time();
-
-	tracefs_printf(NULL, "Have lock!\n");
-
-	delta = end_wait - start_wait;
-	if (!tdata->total_wait || tdata->max_wait < delta)
-		tdata->max_wait = delta;
-	if (!tdata->total_wait || tdata->min_wait > delta)
-		tdata->min_wait = delta;
-	tdata->total_wait += delta;
-
-	data->x++;
-
-	if (data->lock != 1) {
-		printf("Failed locking\n");
-		exit(-1);
-	}
-
-	/* Loop */
-	for (int i = 0; i < loop_spin; i++)
-		wmb();
-
-	prev = cmpxchg(&data->lock, 1, 0);
-	end = get_time();
-	tracefs_printf(NULL, "released lock!\n");
-	if (unextend())
-		tdata->extended++;
-	if (prev != 1) {
-		printf("Failed unlocking\n");
-		exit(-1);
-	}
-
-	delta = end - start;
-	if (!tdata->total || tdata->max < delta) {
-		tracefs_printf(NULL, "New max: %lld\n", delta);
-		tdata->max = delta;
-	}
-
-	if (!tdata->total || tdata->min > delta)
-		tdata->min = delta;
-
-	tdata->total += delta;
-	tdata->x_count++;
-}
-
-static void *busy_thread(void *d)
-{
-	struct data *data = d;
-	int i;
-
-	nice(busy_prio);
-
-	while (!data->done) {
-		for (i = 0; i < 100; i++)
-			wmb();
-		do_sleep(10);
-		rmb();
-	}
-	return NULL;
-}
-
-static void *run_thread(void *d)
-{
-	struct thread_data *tdata = d;
-	struct data *data = tdata->data;
-
-	init_extend_map();
-
-	nice(lock_prio);
-
-	pthread_barrier_wait(&pbarrier);
-
-	while (!data->done) {
-		grab_lock(tdata, data);
-		/* Make slighty different waits */
-		/* 100us + cpu * 27us */
-		do_sleep(100 + tdata->cpu * 27);
-		rmb();
-	}
-	return NULL;
-}
-
-int main (int argc, char **argv)
-{
-	unsigned long long total_wait = 0;
-	unsigned long long total_held = 0;
-	unsigned long long total_contention = 0;
-	unsigned long long total_extended = 0;
-	unsigned long long max_wait = 0;
-	unsigned long long max = 0;
-	unsigned long long secs;
-	unsigned long long avg_wait;
-	unsigned long long avg_secs;
-	unsigned long long avg_held;
-	unsigned long long avg_held_secs;
-	unsigned long long total_count = 0;
-	bool verbose = false;
-	pthread_t *threads;
-	cpu_set_t *save_affinity;
-	cpu_set_t *set_affinity;
-	size_t cpu_size;
-	struct data data;
-	int cpus;
-	int ch;
-	int i;
-
-	while ((ch = getopt(argc, argv, "dwv")) >= 0) {
-		switch (ch) {
-			case 'd':
-				no_rseq = true;
-				break;
-			case 'w':
-				extend_wait = true;
-				break;
-			case 'v':
-				verbose = true;
-				break;
-			default:
-				fprintf(stderr, "usage: extend-sched [-d|-w|-v]\n"
-						"  -d: disable rseq\n"
-						"  -w: extend while trying to get lock\n"
-						"  -v: verbose output\n");
-				exit(-1);
-		}
-	}
-	memset(&data, 0, sizeof(data));
-
-	cpus = sysconf(_SC_NPROCESSORS_CONF);
-
-	cpu_size = CPU_ALLOC_SIZE(cpus);
-	save_affinity = CPU_ALLOC(cpus);
-	set_affinity = CPU_ALLOC(cpus);
-	if (!save_affinity || !set_affinity) {
-		perror("Allocating CPU sets");
-		exit(-1);
-	}
-	if (sched_getaffinity(0, cpu_size, save_affinity) < 0) {
-		perror("Getting affinity");
-		exit(-1);
-	}
-
-	/* Create two threads for ever CPU. One grabbing the lock, and a busy task */
-	threads = calloc(cpus * (NR_BUSY_THREADS + 1), sizeof(*threads));
-	if (!threads) {
-		perror("threads");
-		exit(-1);
-	}
-
-	/* Allocate the data for the lock grabbers */
-	data.tdata = calloc(cpus, sizeof(*data.tdata));
-	if (!data.tdata) {
-		perror("Allocating tdata");
-		exit(-1);
-	}
-
-	tracefs_print_init(NULL);
-	pthread_barrier_init(&pbarrier, NULL, cpus + 1);
-
-	/* Save current affinity */
-	for (i = 0; i < cpus; i++) {
-		int ret;
-
-		/* Set the affinity to this CPU as threads will inherit it */
-		CPU_ZERO_S(cpu_size, set_affinity);
-		CPU_SET_S(i, cpu_size, set_affinity);
-		if (sched_setaffinity(0, cpu_size, set_affinity) < 0) {
-			perror("Setting affinity");
-			fprintf(stderr, " Setting cpu %d\n", i);
-			exit(-1);
-		}
-
-		data.tdata[i].data = &data;
-		data.tdata[i].cpu = i;
-
-		ret = pthread_create(&threads[i], NULL, run_thread, &data.tdata[i]);
-		if (ret < 0) {
-			perror("creating lock threads");
-			exit(-1);
-		}
-
-		for (int n = 1; n <= NR_BUSY_THREADS; n++) {
-			ret = pthread_create(&threads[i + cpus * n], NULL, busy_thread, &data);
-			if (ret < 0) {
-				perror("creating busy threads");
-				exit(-1);
-			}
-		}
-	}
-
-	if (sched_setaffinity(0, cpu_size, save_affinity) < 0) {
-		perror("Setting saved affinity");
-		exit(-1);
-	}
-
-	pthread_barrier_wait(&pbarrier);
-	sleep(5);
-
-	printf("Finish up\n");
-	data.done = true;
-	wmb();
-
-	for (i = 0; i < cpus; i++) {
-		for (int n = 1; n <= NR_BUSY_THREADS; n++)
-			pthread_join(threads[i + cpus * n], NULL);
-	}
-
-	for (i = 0; i < cpus; i++) {
-		pthread_join(threads[i], NULL);
-		if (verbose) {
-			printf("thread %i:\n", i);
-			printf("   count:\t%lld\n", data.tdata[i].x_count);
-			printf("   total:\t%lld\n", data.tdata[i].total);
-			printf("     max:\t%lld\n", data.tdata[i].max);
-			printf("     min:\t%lld\n", data.tdata[i].min);
-			printf("   total wait:\t%lld\n", data.tdata[i].total_wait);
-			printf("     max wait:\t%lld\n", data.tdata[i].max_wait);
-			printf("     min wait:\t%lld\n", data.tdata[i].min_wait);
-			printf("   contention:\t%lld\n", data.tdata[i].contention);
-			printf("     extended:\t%lld\n", data.tdata[i].extended);
-		}
-		total_count += data.tdata[i].x_count;
-		total_wait += data.tdata[i].total_wait;
-		total_contention += data.tdata[i].contention;
-		total_held += data.tdata[i].total;
-		total_extended += data.tdata[i].extended;
-		if (data.tdata[i].max_wait > max_wait)
-			max_wait = data.tdata[i].max_wait;
-		if (data.tdata[i].max > max)
-			max = data.tdata[i].max;
-	}
-
-	secs = usec2sec(total_wait);
-	avg_wait = total_count ? total_wait / total_count : 0;
-	avg_secs = usec2sec(avg_wait);
-	avg_held = total_count ? total_held / total_count : 0;
-	avg_held_secs = usec2sec(avg_held);
-
-	printf("Ran for %lld times\n", data.x);
-	printf("Total wait time: %llu.%06llu  (avg: %llu.%06llu)\n", secs, total_wait - sec2usec(secs),
-				avg_secs, avg_wait - sec2usec(avg_secs));
-	printf("Total contetion: %lld\n", total_contention);
-	printf("Total extended: %lld\n", total_extended);
-	printf("      max wait: %lld\n", max_wait);
-	printf("           max: %lld (avg: %llu.%06llu)\n", max, avg_held_secs, avg_held - sec2usec(avg_held_secs));
-	return 0;
-}
-
---MP_/4U9gXFqnKprDQBn=dzk5+MO--
 
