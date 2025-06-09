@@ -1,185 +1,110 @@
-Return-Path: <linux-kernel+bounces-678336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2362AAD2765
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:09:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17596AD2763
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C302A1884C57
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4CB188562A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4366221F21;
-	Mon,  9 Jun 2025 20:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7E3221270;
+	Mon,  9 Jun 2025 20:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="dGIjGiG0"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="sX454X3b"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D614221DAA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 20:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658872206B3;
+	Mon,  9 Jun 2025 20:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749499710; cv=none; b=sPMNfiVLfWc+WD74rMFOy4VmIBPGWUZnQxF+wMQHAWXbvIT+vYMmPwJd44idJ3p5hTMaWEGU/rbBiImYS9cz/heIqbtNhTO3Wkh9kKAu7/cNLOa5xtweYO/9tCezdhs41DnqI74/yg+LBKJSBCWpjEsy956/xgFI9X51fhIlA+8=
+	t=1749499705; cv=none; b=Ga7YcZ7FVATLHNu0rodegvOBx6/HEhvsOHnTBp0ft711bA/yRsXTwNjEc1yZlC9SBz2tvXKiKuYVaQooIf+EJ5/N1gu2Kf8oOAMkPrg5qvkOthiazCtvZiGJiMa5FblT+059UiEzFFUY6eywQBsjoE9Oy4bSyOsufUKhHfsh3v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749499710; c=relaxed/simple;
-	bh=umiaGrTQFN8YrJ2B1vEBadeKNw103ZzdSr4SlLfT4W4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hiQMVD1kan/xH1me5q1Khk/o/T2HJqLFWL8EwXriqUu7bx4Ny49j1U5MNt8cvu4wRCQdESHZY4OjtU7MFCDrol5bvKBqv535geU/ZqkdEfJ35Td0oqlzevtN4gyo4IpX6JW8QOaSbYWEOKSqwI7pI6oMzb/OAzzC4RX+FYLUg/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=dGIjGiG0; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4a5840ec53dso58294331cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 13:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1749499707; x=1750104507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q1DFQw67oYiMjYNfjgsljBrJ/qGcx57WY9wqDizp8tM=;
-        b=dGIjGiG0U0z4315u00YwvUODrl/HyieERjmfiCzrdxZez9SZcN5owWqVyH/U9YMGpq
-         JILObxDsiejysMXjsWEEPFVX9e9sm7BcsOiDyzyEjtyZlu2AnrcQUgZW8IMgVb9qnaxi
-         CjFYUTShqzgALmKjNxWhLWqGWFE7m56rYY84v9inWpbHBEUxvOrAAgMFb5LIj6Sga1g8
-         9AC8m7gozN340sY4RWOvI82L0UfQLNpFE48YIc75zyArfxBd4rXEoy2UZLtxNWsW4g5Z
-         AyWLcS3dXwF2VOceybAOgZP+DfZs9tuNmMFCbUGunfWj+qRuhr+NfMoHfA0inxq4lnd/
-         ZvIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749499707; x=1750104507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q1DFQw67oYiMjYNfjgsljBrJ/qGcx57WY9wqDizp8tM=;
-        b=jruXM2AE0BQepg+5Hxv9xG079gFHum4XePw2qHxRmVeVrFqQHSah57ZivzxDb8Fpbi
-         jVWmIoF4PHMwoRLj077bjFyfdLLXG18VhEIDYAjviwDQdN2jA1djqGpn5wsDUnCfxPGQ
-         fD2Uo4kZjBO5FOfzW1KcGoapWxXC36OCqrOzss9izJx+yBxWZHEYaaMxFoERDfbGPpbE
-         XwK3ZFC/xvUABE8iw56HHPFojcG9AD/G1j5EsIRekAIrg4AabJ2sO4vkqZPWJJsPL9md
-         jB8sFwBUIyZdBwZkfYAX6UAW+t8PehqL4xpdbVG+xEXzvQ0dOBQAcAXDzWLScxeqI4Fk
-         FNFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ylyFAgudtcSSr+0O1N8gh902/o9z2zqWpAHRnbpOGegMObHvRTVKRAhLwD9SL5Pqbapp/v0hFQZfPOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqJleX73Rhf6eYODScGl57nR+tXfSmsfrIQbsWWFavy7sRaBhL
-	nYzGaBmkfrrr5danAHPgTgu/zGJZNJNyTpwW02RcGFZvtL5XwNmhjhnFiQy9t/ne8Iyh9l7lgvi
-	crrRZ0njOW/zMMnYNdFuHnKgg65NZUuK5M3l9XTIpGBFCzyL/RduW3FI=
-X-Gm-Gg: ASbGncsF445BroMNy6T4egA3cQaSiFftDZsOALIh369VRV3sJ1WndsnxL5+jgM+4EE2
-	MMHuuw8/nnHaVYfnVUmAbqmnfsOXoNkz39nwrXfBctTixuQqRxMKfIMDR8BvVy+Vyp9j4JTFdwH
-	E4GMFeXncv5zUVx9bU9l1aUcYVIzEcBlkKxR4WhUhD
-X-Google-Smtp-Source: AGHT+IHwZ8xxwy1rbJ2XYzDgbb0cvWkJy5FW984f0Zrhq4kdp7mC5bx3gPRzk5/yaIfN5T8ydPXCdjKttoq3lg7ewfM=
-X-Received: by 2002:a05:622a:4d94:b0:48c:54ad:c409 with SMTP id
- d75a77b69052e-4a5b9e00aacmr196256071cf.10.1749499706847; Mon, 09 Jun 2025
- 13:08:26 -0700 (PDT)
+	s=arc-20240116; t=1749499705; c=relaxed/simple;
+	bh=bISZ39T7g33UOVTUn90Qhg8Z3LoOJf8gq665Zv3e/UE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KUCZGee9OmUc7GGManPQDttgB/O/44p+DcAgo/7JhkUCL5/dzmn2Hx+VFV5cZftWsYP3iqeTIjfGe61FsDMVxF7GeooQmjRhIvAyWxOXM/BWO1bAZpsDqasrXmNwnWGB4Dr/1NwZ6M9Px89lBX8/+So+RLJ9l9fK99M1GHZTVZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=sX454X3b; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Ye5wQq/17F3f3Ad7df566VpkbCoCxX5baHaNJBzH+k8=; b=sX454X3bGLYVmDpUq9WP/jZM9w
+	vyuwNPHZ0rObBf78uOjcS0m9EHGJe2PL6UsbQgQXW2bqOUVTOXVX5QCnRXwikjEcUH7ci17fFTfYq
+	hkvc8KyIxlzBkcVKq+uWr7f1zOiu7rpIz7Iqze4x0snHkD48+WMgmWgv36Zrw+AnW41tviibuWzJ4
+	MsBQ7vIfB8YtK4aWc4hX9Uhth4oNidMlEZwLO6ywkijr6hPb2XN8d7R6EBBUwiUfezCjM8rwoMfGG
+	xViMHFrLJaJfgXPjCAhOzckKCfZ4J+WGh0mKAndOJDtTaPVdHF8a9uZQHET5shOTJ3Zj4rdnnBXa9
+	p/glL+SA==;
+Date: Mon, 9 Jun 2025 22:08:09 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman
+ <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, Russell King
+ <linux@armlinux.org.uk>, Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/5] arm: dts: omap: Remove incorrect compatible
+ strings from device trees
+Message-ID: <20250609220809.3a488972@akair>
+In-Reply-To: <20250609-bbg-v2-1-5278026b7498@bootlin.com>
+References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
+	<20250609-bbg-v2-1-5278026b7498@bootlin.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605171143.76963-1-pratyush@kernel.org> <aEKhF3HcrvG77Ogb@kernel.org>
- <mafs0jz5osutx.fsf@kernel.org> <aEc30BoLE9HRxiZm@kernel.org>
-In-Reply-To: <aEc30BoLE9HRxiZm@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 9 Jun 2025 16:07:50 -0400
-X-Gm-Features: AX0GCFtEuDZaSUxyvgIQvzavhtS0Upun00DQmQthsZKvdGuGbBntdnwQlmoxuqE
-Message-ID: <CA+CK2bAAbZjS2Og79xxLcDtNf-eM0up-8fwhd4fg_dp0j_TahA@mail.gmail.com>
-Subject: Re: [PATCH] kho: initialize tail pages for higher order folios properly
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Alexander Graf <graf@amazon.com>, 
-	Changyuan Lyu <changyuanl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 9, 2025 at 3:36=E2=80=AFPM Mike Rapoport <rppt@kernel.org> wrot=
-e:
->
-> Hi Pratyush,
->
-> On Fri, Jun 06, 2025 at 06:23:06PM +0200, Pratyush Yadav wrote:
-> > Hi Mike,
-> >
-> > On Fri, Jun 06 2025, Mike Rapoport wrote:
-> >
-> > > On Thu, Jun 05, 2025 at 07:11:41PM +0200, Pratyush Yadav wrote:
-> > >> From: Pratyush Yadav <ptyadav@amazon.de>
-> > >>
-> > >> --- a/kernel/kexec_handover.c
-> > >> +++ b/kernel/kexec_handover.c
-> > >> @@ -157,11 +157,21 @@ static int __kho_preserve_order(struct kho_mem=
-_track *track, unsigned long pfn,
-> > >>  }
-> > >>
-> > >>  /* almost as free_reserved_page(), just don't free the page */
-> > >> -static void kho_restore_page(struct page *page)
-> > >> +static void kho_restore_page(struct page *page, unsigned int order)
-> > >>  {
-> > >> -  ClearPageReserved(page);
-> > >
-> > > So now we don't clear PG_Reserved even on order-0 pages? ;-)
-> >
-> > We don't need to. As I mentioned in the commit message as well,
-> > PG_Reserved is never set for KHO pages since they are reserved with
-> > MEMBLOCK_RSRV_NOINIT, so memmap_init_reserved_pages() skips over them.
->
-> You are right, I missed it.
->
-> > That said, while reading through some of the code, I noticed another
-> > bug: because KHO reserves the preserved pages as NOINIT, with
-> > CONFIG_DEFERRED_STRUCT_PAGE_INIT =3D=3D n, all the pages get initialize=
-d
-> > when memmap_init_range() is called from setup_arch (paging_init() on
-> > x86). This happens before kho_memory_init(), so the KHO-preserved pages
-> > are not marked as reserved to memblock yet.
-> >
-> > With deferred page init, some pages might not get initialized early, an=
-d
-> > get initialized after kho_memory_init(), by which time the KHO-preserve=
-d
-> > pages are marked as reserved. So, deferred_init_maxorder() will skip
-> > over those pages and leave them uninitialized.
-> >
-> > So we need to either also call init_deferred_page(), or remove the
-> > memblock_reserved_mark_noinit() call in deserialize_bitmap(). And TBH, =
-I
-> > am not sure why KHO pages even need to be marked noinit in the first
-> > place. Probably the only benefit would be if a large chunk of memory is
-> > KHO-preserved, the pages can be initialized later on-demand, reducing
-> > bootup time a bit.
->
-> One benefit is performance indeed, because in not deferred case the
-> initialization of reserved pages in memmap_init_reserved_pages() is reall=
-y
-> excessive.
->
-> But more importantly, if we remove memblock_reserved_mark_noinit(), with
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT we'd loose page->private because the
-> struct page will be cleared after kho_mem_deserialize().
->
-> > What do you think? Should we drop noinit or call init_deferred_page()?
-> > FWIW, my preference is to drop noinit, since init_deferred_page() is
-> > __meminit and we would have to make sure it doesn't go away after boot.
->
-> We can't drop noinit and calling init_deferred_page() after boot just won=
-'t
-> work because it uses memblock to find the page's node and memblock is gon=
-e
-> after init.
->
-> The simplest short-term solution is to disable KHO when
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT is set and then find an efficient way to
-> make it all work together.
+Am Mon, 09 Jun 2025 17:43:51 +0200
+schrieb Kory Maincent <kory.maincent@bootlin.com>:
 
-This is what I've done in LUOv3 WIP:
-https://github.com/soleen/linux/commit/3059f38ac0a39a397873759fb429bd5d1f8e=
-a681
+> Several device trees incorrectly included ti,am335x-bone-black or
+> ti,am335x-bone in their compatible lists without including the
+> corresponding bone-black-common or bone-common device tree files.
+> Remove these incompatible strings to fix the inconsistency.
+> 
+thanks for cleaning up some mess.
 
-We will need to teah KHO to work with deferred struct page init. I
-suspect, we could init preserved struct pages and then skip over them
-during deferred init.
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
+> 
+> Change in v2:
+> - New patch
+> ---
+>  arch/arm/boot/dts/ti/omap/am335x-bonegreen-wireless.dts | 2 +-
+>  arch/arm/boot/dts/ti/omap/am335x-bonegreen.dts          | 2 +-
+>  arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts     | 2 +-
+>  arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts       | 2 +-
+>  arch/arm/boot/dts/ti/omap/am335x-shc.dts                | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/ti/omap/am335x-bonegreen-wireless.dts b/arch/arm/boot/dts/ti/omap/am335x-bonegreen-wireless.dts
+> index a4f5b5262645..fb88eebb8c5d 100644
+> --- a/arch/arm/boot/dts/ti/omap/am335x-bonegreen-wireless.dts
+> +++ b/arch/arm/boot/dts/ti/omap/am335x-bonegreen-wireless.dts
+> @@ -11,7 +11,7 @@
+>  
+>  / {
+>  	model = "TI AM335x BeagleBone Green Wireless";
+> -	compatible = "ti,am335x-bone-green-wireless", "ti,am335x-bone-green", "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+> +	compatible = "ti,am335x-bone-green-wireless", "ti,am335x-bone", "ti,am33xx";
+>  
+this looks like too much cleanup, also according your omap.yaml stuff,
+ti,am335x-bone-green should still be included.
 
-Pasha
-
->
-> --
-> Sincerely yours,
-> Mike.
+Regards,
+Andreas
 
