@@ -1,172 +1,182 @@
-Return-Path: <linux-kernel+bounces-677454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3427AD1AC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 11:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA8AAD19C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D743A2A74
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A133A55EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE6C24EF88;
-	Mon,  9 Jun 2025 09:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E291EBA09;
+	Mon,  9 Jun 2025 08:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgOAmjTI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="cVt9GWpc"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010025.outbound.protection.outlook.com [52.101.84.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F726C133;
-	Mon,  9 Jun 2025 09:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749461864; cv=none; b=IS5OSWhUChuSTwIdzMn14QhLnIDgOWnOX8Bp/6ue804+vSi1VObYp1hqTgcxuj/MywzyUCVCu2KLHbymxOBdqjryUTiWR2XzYmtY8X6yYnSq9HZz/MHBaSC4kNbs0raUhjQuvotJ14z/5u587uWgEUDsXEVuISge9Bu2efJyuZ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749461864; c=relaxed/simple;
-	bh=XwpFufb+SDXSj2ejHO2odwMZAl/fSCLYz1xkpvW9CS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TxalHECEsmoYGq2phVJYHE907YiINBk25Ogs5Q7hqiHe9lt3uL1JuV7joYU/YP/sFOA9bpEAwLqpCpCTwEx3Kv0Hbb9u+EGWUZGBqCzZ1BLbRS7awtWUf+/4CIf4u97kt/UfGJcMHZKa9KxmKJGtEVhM9r2Qq/13Wxsc1VQLu5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgOAmjTI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19326C4CEEB;
-	Mon,  9 Jun 2025 09:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749461864;
-	bh=XwpFufb+SDXSj2ejHO2odwMZAl/fSCLYz1xkpvW9CS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KgOAmjTIuN6UDbFDyVwRuMVof2MC3ON+k5R3Yqnh40cpJ3nkD2XVrkJntiNv9YmzJ
-	 9kDAMpwInUY/N7A37y/mMxx7gjqxmsJ8Gy7v0grPtUhFZfDg22/GE2y+Dwgb33ZcRy
-	 711dsrI9/RLdx9T3sOcVfCHcUZzO8v2Y2TcuN9jDAUC2Au5pdXJFHXatqJTUpbIxYV
-	 xs13XYTM9GIVsUjZFX2Eou3ZRZX5ILI4HCHLHRoLIHATyLgeP24YGZ8Kc/dqCOnTFy
-	 bXwaccwBvbU8I0ynwq51zYs4e9tgJbHTLRpkQzoDqL1tR7C5V6z82X8/GB8ygw/3ni
-	 YDsRgb8QoCYag==
-Date: Mon, 9 Jun 2025 11:37:38 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] modules: Add macros to specify modinfo prefix
-Message-ID: <aEarYndP4uo-a0eL@example.org>
-References: <cover.1748335606.git.legion@kernel.org>
- <5cd53f6a4bca5186d3c9c47c070883131826c5eb.1748335606.git.legion@kernel.org>
- <CAK7LNATkXFqKLPcHFg-WDynRrVy3BRs6twvcyo2YJQqZBy9xsQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8F68BFF;
+	Mon,  9 Jun 2025 08:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749457718; cv=fail; b=GKgW2UVgtGiQQGYjCMfUhq+JNHLtwvgOwqTu3wGw21Fge1zkVNwGvGdAJ9rMdoJhy97m00BmWawt2J/WDGAq44ZKJHFHmoAJdk/RPhim2qeHexvZGqlm4zkjOGj8YUrQ3+MYu6gbX0N4GXsdX6ZPfnJ2Sc60BFM4WJWYm9idxlA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749457718; c=relaxed/simple;
+	bh=dxH8nkj1Rz+G1cx5NPBEqnafd6wK7A8OWk3Q9AToeXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=u7GQorXJ1lu5OFYpKNNi3R2Yto1W4PHpVMGId/44t4UMf+qP2JKxm0Ql+5utieEa7Ql0BlGgBPT4xMLUdcK9N4h79++lk3Y0B+11B4cVBE9HQUYeDcbuJmFIrCE8Uzfo6BZ5ptAYIRh8jKktWVxZhfgPoggevKYp5Kaexeafrko=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=cVt9GWpc; arc=fail smtp.client-ip=52.101.84.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gnsLGX2+j4JT3ulAqgGXbiceO4FXJMJxklpL/yNgg89MCVmXnFJK1Bw555KfEN5juKSaA7y/xjcZNo69RbILYfpGEQUD4Se/pK/DNaBSgKB88qdfilL562x1f0tRmV7ZvCHANCg2515u0Sm9CfA3hfriu2z/BoBsBrodMZg+YS6jmcmCO2zWjpa93Tv6J8g7cKvIplssFG7WG0n6Z7Ozr5TBBlhrzMutGzAVm80bQH2pkL5C9frTLl5KuNbVpWR3NOhnwsWzSv3yIdnTfWWU4JDL32zkFlCOOLR8s3jJXGMcgI8li5YqoxFYCnCOWUPMAAocCOcySyvolZ4lsC58IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dxH8nkj1Rz+G1cx5NPBEqnafd6wK7A8OWk3Q9AToeXg=;
+ b=oZPAuaLw+dKUsGu9nvVNyMKkSfsgsASI7jzUEC9rk4OMFjYW+wL7Zh7xV3jL1Fp8bXumFL/kSgcKo73CjJw+kHKVbY5pAF0djMZdn8t2gsfGgDr2lv10DWgQkV8c8+BEqPzOIPzxTYbwKnQkGK+TBK1rUXe93Lc+Bbai/zcS/0wOvI5ILmcwcW8mVhXU+QunutgPHrTjAJA4ajPE1Oqt4fxsCbk2846IVuWpGtqodZA/OYubODsC14igcyOMTX+QIV+wpIsrk25v+4xwZUbE8dYOi0HoSHlwbg6ZEFFgOCWwzJpgB/eB77JLi1ozoV9GGMdgjg1wMNYekVcjO7pTzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dxH8nkj1Rz+G1cx5NPBEqnafd6wK7A8OWk3Q9AToeXg=;
+ b=cVt9GWpc1FL7SAhWp3dfYo3RMM0h5buHYyeR+LHFKJ71NWpL3VSDcUrhJsHOex2vsp5/sPTYNUKfNKloFaKZYIq87axKl96Td6Tocr2F6Fp2IhlXvpa9Mv9c7o/s1KQ29bXT8PtcT/QghCQnp1N0xToFqgS4VG7Hrinbu1zDPSSSJe9n7U5ZQox6x9/mwOHJFRoJo6nDswfxItkPUYeGqvv4Fi1b0iNRo/4gigTi/Pe7R8Lnzo1lWBinoUPiMm4J5NVq5Ren58/rxnTOiwtSqePMNgpC6fQvfJ8yu/4C6gECK+Et9UNtHLzvYnnKkjU8ZubUkK0Dp4lOOGXz47w3oQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS8PR04MB8037.eurprd04.prod.outlook.com (2603:10a6:20b:2ac::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.26; Mon, 9 Jun
+ 2025 08:28:31 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%3]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
+ 08:28:31 +0000
+Date: Mon, 9 Jun 2025 17:38:37 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Matteo Lisi <matteo.lisi@engicam.com>,
+	linux-amarula@amarulasolutions.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 03/10] ARM: dts: imx6ul: support Engicam MicroGEA BMM
+ board
+Message-ID: <20250609093837.GB13113@nxa18884-linux>
+References: <20250607093342.2248695-1-dario.binacchi@amarulasolutions.com>
+ <20250607093342.2248695-4-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250607093342.2248695-4-dario.binacchi@amarulasolutions.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2P153CA0002.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATkXFqKLPcHFg-WDynRrVy3BRs6twvcyo2YJQqZBy9xsQ@mail.gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS8PR04MB8037:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4470274-dbf1-4622-9301-08dda72f9dc6
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?FI+glytG8+IkBhc5Jg9D1pA73IyNUYoGR+O1ev/YtT8ecqg7StmVC3ieaqys?=
+ =?us-ascii?Q?t3NEwtPm6UvKnBkgVKTnRsBPti6DSdBPOkl9TK3bLKHaUe2VB1525hb9Y+fe?=
+ =?us-ascii?Q?33ZQrq5G2C+nsUIb1HaaRBIsXmJaC7EzuxsEbt+Mac+UXuQyzxQ2Hl1w18Ly?=
+ =?us-ascii?Q?W3KoUTjstQCWDmh3DP/V1N8imDbbq9g3FH6yDDR4V2BJOjA/N4KQm6W5H7hb?=
+ =?us-ascii?Q?+p7H18mQmdn3j0PLJeir8XCNhytpWRvW2wbvFw3eengobgkZvx10MnMpQJy8?=
+ =?us-ascii?Q?QI7U60hEPNchbVUb6pbP3lsvXlGqLXEEURx8TWf5lZRAyoUcjsd0b9k/4R09?=
+ =?us-ascii?Q?/mDGD3rkoyb5b6DqVFuQVrf9QeVKkJP55DJQ8DFoPjuSab8cyyCl9wtbjboJ?=
+ =?us-ascii?Q?cRMmyt3/JjGwC9obmPkGv+Q+L2R4yQpyupZjzME/HCX1sUkEJmSAr4DHhMPQ?=
+ =?us-ascii?Q?vmZ1H+eXcmCle27L9CH9PoL8e/xj4UCWpF9nCzR1HZblklI7mcXP0J+fO/Ze?=
+ =?us-ascii?Q?Sw88dJDq1Knp9P4Heoc6eytW33UEpLFu9ZEk40Z/JUCSAnWT0JlRevzuQcTC?=
+ =?us-ascii?Q?ROeYE+JNIXmrqm+R0FTTUNwrIKkEz0uaXZ6eko8CKWXUq77BWUjCnzXh2JfL?=
+ =?us-ascii?Q?O7c/O/JutB4XIS3KUxs/ilToEkkge9754BCZcyVU4qEeJ6dO7NtrWwxtE448?=
+ =?us-ascii?Q?1zWu2JjznK3IClijFreP1phJwSQCWzWIHmH4J5CV6XZMgB2B90iYIT4QRGEB?=
+ =?us-ascii?Q?cSZR9iDLIUnFWxiT9MuIxleG1sHgRq+vAIMjy+UiTLtchKjpi+Hiwf0JlioK?=
+ =?us-ascii?Q?lHdtF0eugUpKlHb2bcRpp5BDm0T/c5+MUd0HWQT8WdxHGf2EEbwF86csqtuy?=
+ =?us-ascii?Q?05AKt2GcW/m8fymzSzrBeG95YBSQquz32Rj6Kl8ujND+4S1nPgRM8il7rTXg?=
+ =?us-ascii?Q?qamWBtCBWr8+tiQbLbgDQ+5TYDwLMFHdRY15+9jhDVRzclGx01w/uscRwwbS?=
+ =?us-ascii?Q?cGu4utOVAgiSO4XiqLifm0JRWkh4oj/L2/UfGYWg8+x5qim2JitcrqQJoNNp?=
+ =?us-ascii?Q?b1G1zyNfSwk2tdgO4u6fAYQDgxQtEsjN8OywvaBxwMk0qHl58xTN9UW0P5lH?=
+ =?us-ascii?Q?VDwetE3HxZlrA04IsjXTf/nKNaU0+ZBWbVYdNJAFWaCsj+Avl1eo0nF7/6Sx?=
+ =?us-ascii?Q?H1hLM6UjFs1FJhNldfK1+hgi4PP0kS9BumlNJCyK3VD9ime1yQQdxd1v776G?=
+ =?us-ascii?Q?G6fyY281SheF4EoY9P5PBvOuQnqhIdHf+YrkZE1NVe5KQnKLe6T+pIqjk6VA?=
+ =?us-ascii?Q?vJqNY3jsKbSNs+DQhSX6mTPX0qoJS7R3cmGSvZVkR5nN/+0OIvt/1mLK3gBg?=
+ =?us-ascii?Q?Yd+eXqrtJSUJgOW+StuDVfQ/UmSDorLuouUioJ/6hUr+1EEQKCiNigoId+zJ?=
+ =?us-ascii?Q?M5l5+sCqbLxIoBXe4t6m8H1agOr6CS+JyAc1KADMnhC0y5w55sIX8w=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?O/5/Unp25/dN5aj4Ec8zR4YWuEafnbivilDoYY9jZA2IPpUrPeQ6BhhJQnbD?=
+ =?us-ascii?Q?eK9K7DQPvnkTcw/VcwZETT0WkNwB7tfs/Al5xkl6+XmpahABhgfxU0nnw1TT?=
+ =?us-ascii?Q?09EPy7HvMdkzJWbHQXmVqRtba2pT4xDFjYSvuNxfxDnmxzxRt8hvwfFABDuE?=
+ =?us-ascii?Q?UwsUGOj6CS3JUpv1eSFzmgXp3Ztj2ULHE9bTMcX/4g9smwjdxWYU4mntkaUr?=
+ =?us-ascii?Q?gE1BZQ+XaLJ3YQB5+hlLrdHCZ1l8yC26Po89wipPN25LOLaJWcG6unzIUsPK?=
+ =?us-ascii?Q?a9yvuu8Iqgi2ZnyrYeucN+xQfazcBziX6367VbduTtuElGTgNkyuRe20XQ08?=
+ =?us-ascii?Q?psIPLxqEm9JCulFbv939kI3oqwMIfHZ8qSxSWZSQZODwAQO03aqayrbBsY8v?=
+ =?us-ascii?Q?ACkF+lm0Ry3MJBb52j0+v6Be3I24b1I6sucMKUlUEp3AQmdnGE8Bg4w3PQqk?=
+ =?us-ascii?Q?sXE7ksqxIYBk6raOABA7gP1lv+ZUYh3cW4kGkb5nEsWm8wZXjMAHSK3B15u9?=
+ =?us-ascii?Q?kO+MCsUhVrGNQ/+OtTY0mV7uqcgmqjxolu00gYu5LiqQJoEZFIa3//WAX2l7?=
+ =?us-ascii?Q?jyB3EjHIPmN0NFFfPyC4SOWZZ7+vCWmYckbPTcdrMAUb1QZ/dzUUduofn5ts?=
+ =?us-ascii?Q?B9mzVA/Zo9bZ/XJr2KVIg7mVD81Yd+gFwL8bQR9CTBzte6TrJ4HNqVdLQAKd?=
+ =?us-ascii?Q?KtzHven+dwZuXmC+xtschHXP7oQalj8jvhKvCN4IInKUxie7VQ1ln2n9I33u?=
+ =?us-ascii?Q?hpSVtGlPqoeK8e6Gq43wYTblEL9QL/PXFg1E/6lTpH7Xf3adFUlqeqsRyqWq?=
+ =?us-ascii?Q?YsFM9+M8dPYkIHdIsNrXk50+Sj5Emhq4ozbYGn9PygLToPiMIW3jLnjugcRp?=
+ =?us-ascii?Q?IYVv2c/DdMUn0tki8kOmtwH2MWJQwvIH9FghVS3XnbUdyi9ietAhMs7sfXO0?=
+ =?us-ascii?Q?wrc334HiksZ5hkwhV5hFLeO/Gqfohl57QKv+oc+owM514DSils/EAtSLy015?=
+ =?us-ascii?Q?X07XbcjK55S3HqCGHUEi2luQAgL5XPgty5d3WJMmmoquINXVP3V6BRb2ox2C?=
+ =?us-ascii?Q?k+P03AYa+HDurY6qIm1D+MJHQBbA38AAeUK9Ii7n0LilH24A56FnT4umQksf?=
+ =?us-ascii?Q?HAC5ModkPX4zJCu03tHJWK4t2rWmwwIhBHzuxkGW5VYzp3QYWn6T13lTsTwi?=
+ =?us-ascii?Q?DicHzhD0cnTf/JSLaqmN2LEmGAB74beTpfOB/h5zmrprQBxt+/FCXTI2wKPq?=
+ =?us-ascii?Q?njRSGJVvEaPHSv3Y2Xzt9EJnDQbAUZpmNHcX9m8PuFoKTbCwomL1yQcnbxrZ?=
+ =?us-ascii?Q?ZhKpNQLEeku7TVetvpdDk884D+x9T/U2WYJnITaYFpg4rMX/lm46ZuG0kAD4?=
+ =?us-ascii?Q?SAN1psAUuvhpMOFyFxdWtwc+FdmsqXjz3coJPN6uqY1AW53iiYMRgk5VXbeF?=
+ =?us-ascii?Q?LOw7lajXdVwIOHhNZ6x1i77RioigyIO8p7RUeXfUFUkAvpNTVOLzyHl6ZOwK?=
+ =?us-ascii?Q?pvySVy3/xboNwJckJQrmpacBcqnottLTCGyUwcxFVtjMD6OpHApMj0+HDPTq?=
+ =?us-ascii?Q?KI2UFVvTQ/uzQXvrx9/otTWDb0MPhAumNgsCde4o?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4470274-dbf1-4622-9301-08dda72f9dc6
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 08:28:31.1915
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +UolsIDETRaC2OhmoZLI73mAmVzM7pHNeZODY8O2dCF1U3gTQi+bCsTdk60D+MnM1zwSF2Eldw78D+MRs7bdkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8037
 
-On Mon, Jun 02, 2025 at 04:49:24PM +0900, Masahiro Yamada wrote:
-> On Tue, May 27, 2025 at 6:08 PM Alexey Gladkov <legion@kernel.org> wrote:
-> >
-> > The __MODULE_INFO macros always use __MODULE_INFO_PREFIX. The only way
-> > to use a different prefix is to override __MODULE_INFO_PREFIX, which is
-> > not very useful.
-> 
-> Not necessarily.
-> This would be a very special case only used in modpost,
-> and modpost can use MODULE_INFO() instead.
-> 
-> 
->         list_for_each_entry_safe(alias, next, &mod->aliases, node) {
-> -               buf_printf(&buf, "MODULE_ALIAS_MODNAME(\"%s\", \"%s\");\n",
-> +               buf_printf(&buf, "MODULE_INFO(\"%s\".alias, \"%s\");\n",
->                            alias->builtin_modname, alias->str);
->                 list_del(&alias->node);
->                 free(alias->builtin_modname);
+On Sat, Jun 07, 2025 at 11:33:15AM +0200, Dario Binacchi wrote:
+>Support Engicam MicroGEA BMM board with:
+>
+>- 256 Mbytes NAND Flash
+>- 512 Mbytes DRAM DDR2
+>- CAN
+>- Micro SD card connector
+>- USB 2.0 high-speed/full-speed
+>- Ethernet MAC
+>
+>Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-You can't do that because a character can't contain quotation marks
-and periods.
-
-.vmlinux.export.c:16163:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘.’ token
-16163 | MODULE_INFO(ahci.alias, "pci:v*d*sv*sd*bc01sc06i01*");
-      |                 ^
-././include/linux/compiler_types.h:83:23: note: in definition of macro ‘___PASTE’
-   83 | #define ___PASTE(a,b) a##b
-      |                       ^
-
-The same thing for variant with quotes:
-
-.vmlinux.export.c:16163:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before string constant
-16163 | MODULE_INFO("ahci".alias, "pci:v*d*sv*sd*bc01sc06i01*");
-      |             ^~~~~~
-
-But I can do something like this to make it work:
-
-	buf_printf(&buf,
-		   "#undef __MODULE_INFO_PREFIX\n"
-		   "#define __MODULE_INFO_PREFIX\n");
-
-	list_for_each_entry_safe(alias, next, &mod->aliases, node) {
-		buf_printf(&buf, "__MODULE_INFO(%s.alias, unused, \"%s\");\n",
-			   alias->builtin_modname, alias->str);
-
-> 
-> > The new macro will be used in file2alias.c to generate modalias for
-> > builtin modules.
-> >
-> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
-> > ---
-> >  include/linux/module.h      | 3 +++
-> >  include/linux/moduleparam.h | 7 +++++--
-> >  2 files changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/module.h b/include/linux/module.h
-> > index 8050f77c3b64..88048561360f 100644
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@ -170,6 +170,9 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
-> >  /* For userspace: you can also call me... */
-> >  #define MODULE_ALIAS(_alias) MODULE_INFO(alias, _alias)
-> >
-> > +#define MODULE_ALIAS_MODNAME(_modname, _alias) \
-> > +       __MODULE_INFO_WITH_PREFIX(_modname ".", alias, alias, _alias)
-> > +
-> >  /* Soft module dependencies. See man modprobe.d for details.
-> >   * Example: MODULE_SOFTDEP("pre: module-foo module-bar post: module-baz")
-> >   */
-> > diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-> > index bfb85fd13e1f..3f819fc67c43 100644
-> > --- a/include/linux/moduleparam.h
-> > +++ b/include/linux/moduleparam.h
-> > @@ -20,10 +20,13 @@
-> >  /* Chosen so that structs with an unsigned long line up. */
-> >  #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
-> >
-> > -#define __MODULE_INFO(tag, name, info)                                   \
-> > +#define __MODULE_INFO_WITH_PREFIX(prefix, tag, name, info)               \
-> >         static const char __UNIQUE_ID(name)[]                             \
-> >                 __used __section(".modinfo") __aligned(1)                 \
-> > -               = __MODULE_INFO_PREFIX __stringify(tag) "=" info
-> > +               = prefix __stringify(tag) "=" info
-> > +
-> > +#define __MODULE_INFO(tag, name, info)                                   \
-> > +       __MODULE_INFO_WITH_PREFIX(__MODULE_INFO_PREFIX, tag, name, info)
-> >
-> >  #define __MODULE_PARM_TYPE(name, _type)                                          \
-> >         __MODULE_INFO(parmtype, name##type, #name ":" _type)
-> > --
-> > 2.49.0
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
-> 
-
--- 
-Rgrds, legion
-
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
