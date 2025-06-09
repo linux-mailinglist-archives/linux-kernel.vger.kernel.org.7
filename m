@@ -1,141 +1,141 @@
-Return-Path: <linux-kernel+bounces-677506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB877AD1B4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:16:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242CDAD1B63
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B33E16B8C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:16:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D5616C425
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 10:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDB2246763;
-	Mon,  9 Jun 2025 10:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8JKJCfo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2C425394C;
+	Mon,  9 Jun 2025 10:18:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BA23A9;
-	Mon,  9 Jun 2025 10:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23CB2522A2;
+	Mon,  9 Jun 2025 10:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749464176; cv=none; b=iX/J5wcgxuUUC6VhmRY+hnSMielGkrD5CAVEXiOle3B5TC61+/dHPiabnMC6LdwCbkK2XaAJDdcpDVn6MpOazaxYiQMGLxgzIh4Y5jWnoN6dwZt4C00UsoPlnF1hrjLXu67cO8HB6V4xC6Mt1Rcv7XZu7ipiT4DW8Ve+h80GppQ=
+	t=1749464287; cv=none; b=J7vSih2pMJO2XEG6gHeBa3Nm3C/QAF+SvCdfqzpWme5SXR7BT6Rtk9q5DfZ1Z4e0QgS3OnIq1f5R3pmwhJaS4ax976WLbCSPieT3k9LtUJRhxAkt6IN3JmRfCNCvYAUWfAUvKFeLrhU0QgyGrU6UuvG3Kk051ErdnoANWni1spM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749464176; c=relaxed/simple;
-	bh=O+bBROqKabz2CTBu7yCmVbU0VYYotr7u/Co52EE2nRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1BAIkwgXivDiuAjyw8kX/1L8W8MaJCgX8VpMpjdLBeLII+OUnQEY8NTBpAWUo15Yz8stVQMCazWFzfR0lA39i1rrvyMi4QZsEQx1BkxxtaQJ+sVqp8wnP0VJA5bZk3nOfz/SC/CPtaWdoq7v9o57TjzYkuKYUOiQkstHEkuRsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8JKJCfo; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749464175; x=1781000175;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O+bBROqKabz2CTBu7yCmVbU0VYYotr7u/Co52EE2nRE=;
-  b=e8JKJCfo1Rxm50e/mQywoNCnXLgOtOsPbswfHuwTvJUUZMgMLGT0qGat
-   pp2pEbIlkZqcOlieFidH8+yKuNZbmDDmBNSZx4S7gXFcLGcyIbtZcw9at
-   xfJEKHU4fGnDtGpERry1LTkJG6Ln8uMFptBMOWcojxfpvqM6xu+9Ar9dX
-   tZkPSlX8Sx6c14oXZkz8aIR4ZxItcTNpoml43hH3L+SNF1UnlBSbRLsT1
-   C43eBEsL9nkMJhiiGQt01Y32t7JBDwe8S6cxKIuF3bJ0iQZBsnolx2ma5
-   h7GBTPNrWeR+wZMcZejxue1MkL4CRMMZu5FUo+TcxlO39mve6t63cTc4f
-   g==;
-X-CSE-ConnectionGUID: JjVvG96nTBe+/QIWUc/Ktg==
-X-CSE-MsgGUID: TvYSt3sBSvOR+GpFEkGDeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11458"; a="51413977"
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
-   d="scan'208";a="51413977"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 03:16:14 -0700
-X-CSE-ConnectionGUID: 6jH5CW9iTEmgrisEa5mwTw==
-X-CSE-MsgGUID: 8GvoBy6NQQeAFJKh+hEsIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,222,1744095600"; 
-   d="scan'208";a="183657815"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa001.jf.intel.com with SMTP; 09 Jun 2025 03:16:12 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 09 Jun 2025 13:16:11 +0300
-Date: Mon, 9 Jun 2025 13:16:11 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: linux@treblig.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: Remove unused ucsi_cci_str
-Message-ID: <aEa0ayPAAqgjprEm@kuha.fi.intel.com>
-References: <20250609004319.209143-1-linux@treblig.org>
+	s=arc-20240116; t=1749464287; c=relaxed/simple;
+	bh=f+5PnMziq+6s9kssIcPM7wytiBpCtOd4FLLaGGt+BEw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KnmutVKWJkAmEGEz2o1jKPXJlPtoBtfevqLoFYZNRs+cdhL1dRtyGeO1RfociRlgoRTCzFTniICGaMdh/+x3VLBPIqvRTDd2hoikfdTWQ3tCr+zqvA9DBj0n+ehBCP/R6cRPtVB2zYbYGAHDD1BLh7u9Jbl3l3esnfE3JIrWC/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bG79p2Jp4z6L4sF;
+	Mon,  9 Jun 2025 18:16:14 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E613A1404C5;
+	Mon,  9 Jun 2025 18:18:00 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 9 Jun
+ 2025 12:18:00 +0200
+Date: Mon, 9 Jun 2025 11:17:58 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: <gregkh@linuxfoundation.org>, <rafael.j.wysocki@intel.com>,
+	<linux-cxl@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, Ben Cheatham <Benjamin.Cheatham@amd.com>
+Subject: Re: [PATCH 3/3] ACPI: APEI: EINJ: Do not fail einj_init() on
+ faux_device_create() failure
+Message-ID: <20250609111758.0000258d@huawei.com>
+In-Reply-To: <20250607033228.1475625-4-dan.j.williams@intel.com>
+References: <20250607033228.1475625-1-dan.j.williams@intel.com>
+	<20250607033228.1475625-4-dan.j.williams@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609004319.209143-1-linux@treblig.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Jun 09, 2025 at 01:43:19AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> ucsi_cci_str() last use was removed in 2019 by
-> commit 2ede55468ca8 ("usb: typec: ucsi: Remove the old API")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Fri, 6 Jun 2025 20:32:28 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> CXL has a symbol dependency on einj_core.ko, so if einj_init() fails then
+> cxl_core.ko fails to load. Prior to the faux_device_create() conversion,
+> einj_probe() failures were tracked by the einj_initialized flag without
+> failing einj_init().
+> 
+> Revert to that behavior and always succeed einj_init() given there is no
+> way, and no pressing need, to discern faux device-create vs device-probe
+> failures.
+> 
+> This situation arose because CXL knows proper kernel named objects to
+> trigger errors against, but acpi-einj knows how to perform the error
+> injection. The injection mechanism is shared with non-CXL use cases. The
+> result is CXL now has a module dependency on einj-core.ko, and init/probe
+> failures are handled at runtime.
+> 
+> Fixes: 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device interface")
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Ben Cheatham <Benjamin.Cheatham@amd.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 > ---
->  drivers/usb/typec/ucsi/trace.c | 17 -----------------
->  drivers/usb/typec/ucsi/trace.h |  1 -
->  2 files changed, 18 deletions(-)
+>  drivers/acpi/apei/einj-core.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/usb/typec/ucsi/trace.c b/drivers/usb/typec/ucsi/trace.c
-> index 596a9542d401..13a38422743a 100644
-> --- a/drivers/usb/typec/ucsi/trace.c
-> +++ b/drivers/usb/typec/ucsi/trace.c
-> @@ -33,23 +33,6 @@ const char *ucsi_cmd_str(u64 raw_cmd)
->  	return ucsi_cmd_strs[(cmd >= ARRAY_SIZE(ucsi_cmd_strs)) ? 0 : cmd];
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index fea11a35eea3..9b041415a9d0 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -883,19 +883,16 @@ static int __init einj_init(void)
+>  	}
+>  
+>  	einj_dev = faux_device_create("acpi-einj", NULL, &einj_device_ops);
+> -	if (!einj_dev)
+> -		return -ENODEV;
+>  
+> -	einj_initialized = true;
+> +	if (einj_dev)
+> +		einj_initialized = true;
+>  
+>  	return 0;
 >  }
 >  
-> -const char *ucsi_cci_str(u32 cci)
-> -{
-> -	if (UCSI_CCI_CONNECTOR(cci)) {
-> -		if (cci & UCSI_CCI_ACK_COMPLETE)
-> -			return "Event pending (ACK completed)";
-> -		if (cci & UCSI_CCI_COMMAND_COMPLETE)
-> -			return "Event pending (command completed)";
-> -		return "Connector Change";
-> -	}
-> -	if (cci & UCSI_CCI_ACK_COMPLETE)
-> -		return "ACK completed";
-> -	if (cci & UCSI_CCI_COMMAND_COMPLETE)
-> -		return "Command completed";
+>  static void __exit einj_exit(void)
+>  {
+> -	if (einj_initialized)
+> -		faux_device_destroy(einj_dev);
 > -
-> -	return "";
-> -}
-> -
->  static const char * const ucsi_recipient_strs[] = {
->  	[UCSI_RECIPIENT_CON]		= "port",
->  	[UCSI_RECIPIENT_SOP]		= "partner",
-> diff --git a/drivers/usb/typec/ucsi/trace.h b/drivers/usb/typec/ucsi/trace.h
-> index 41701dee7056..9554a0207276 100644
-> --- a/drivers/usb/typec/ucsi/trace.h
-> +++ b/drivers/usb/typec/ucsi/trace.h
-> @@ -10,7 +10,6 @@
->  #include <linux/usb/typec_altmode.h>
->  
->  const char *ucsi_cmd_str(u64 raw_cmd);
-> -const char *ucsi_cci_str(u32 cci);
->  const char *ucsi_recipient_str(u8 recipient);
->  
->  DECLARE_EVENT_CLASS(ucsi_log_command,
-> -- 
-> 2.49.0
+> +	faux_device_destroy(einj_dev);
 
--- 
-heikki
+Hi Dan,
+
+Thi bit is sort of fine though not really related, because
+faux_device_destroy() checks
+
+void faux_device_destroy(struct faux_device *faux_dev)
+{
+	struct device *dev = &faux_dev->dev;
+
+	if (!faux_dev)
+		return;
+
+Though that check is after a dereference of faux_dev
+which doesn't look right to me.  Might be fine because
+of how the kernel is built (I can't remember where we ended
+up on topic of compilers making undefined behavior based
+optimizations).  Still not that nice from a logical point of view!
+
+>  }
+>  
+>  module_init(einj_init);
+
 
