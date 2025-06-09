@@ -1,76 +1,125 @@
-Return-Path: <linux-kernel+bounces-677977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F86AD2278
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7110AAD2283
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22D47A3106
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92F5164D98
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A921D5CD1;
-	Mon,  9 Jun 2025 15:31:43 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEF5207DF7;
+	Mon,  9 Jun 2025 15:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NDO9dFl4"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40591F4717
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2857ADF59
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749483103; cv=none; b=YZIDotLvMX6pRk2zj1Ip+sMW5GcQ/7mdoWEtwq5NkJnUsO2plIcSfQ1ExFk5wgPDZXv64WoeDzypcajvTTqPWi0lvAOqHvsbEKTeQsW+SwiGTlHUrHWV5m6/awIjN5sVeCBJVsMKYvW+ZvE+FKstYnQsAjbSB6AT9SGMQNpussw=
+	t=1749483221; cv=none; b=B9/u4ZRpryFfUuJ+ggSsFhDTu4k53b249xx8xER+lFgVQin9SdLvpEDaU0awzw8eNMiDvybs72WHQW2EfKAG47fM6Y+RCO1MPjTdSlTUf7NrOb1OLFTFDjPqW/NtdqbReLcO1ahQOL5IzVNzFGm6ADOSsTa4tSlkeQoWqYSGqRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749483103; c=relaxed/simple;
-	bh=zBYGvX52BxLQ4GUMUxG0DeMTjGwYb+sctll/J9DgxZ0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dc15yMewibXUYA37eR4B/kYbPGKd4wzWvDmtGPH5F71TXUviDOHhxwthqu4GBj+PY6qzlec2WKwk82i4Bt964GaksyJ/rNLzDRD/PO1rkEU0zaEYGDxD8/BKLJpDG5Jc5w+/sEvvLHQ1C9Fax1QInGevdwC3vII08+R8UrWJVS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddd01c6f9bso28557075ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 08:31:41 -0700 (PDT)
+	s=arc-20240116; t=1749483221; c=relaxed/simple;
+	bh=Ey72OPsSmpUH6hcCG9cbHDrh6u+W0gYAKs5MnbTd5ew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pveNGvvleljuG0t4lBZOf0YrwxxlbW9QrpwN7M/OS0GEzCvPl1qykFrWG/rhv72dPkbq360ptSGbTwrOwgfsgsEIhzVLjRDLNtSHbwjKAfHZ3W1tkgHvAjPWPS4YKc0Tg65Lbaf3Or8PZiG95zBDkSvz391x3sTBCMzO+3rLvas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NDO9dFl4; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-441d437cfaaso28027075e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 08:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749483217; x=1750088017; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvtGT/gXZy9G0z7KUPcczavaKT2KAY8YSEGerfvgk+k=;
+        b=NDO9dFl4z+KZi900V6b+cczdI2ZKvmKWavUCpktm2ILbc+6nvWc3k4uyuU4g0PFGP8
+         DvtK+RFqlT8C7HjVvLo+6Wo3/bpx0NtBzcDPuXl0v9aMFLgRaBwWUlyL/29DjgisTBVP
+         uVWGUDwSvQ2Ftqclg/fzN45pcvAaXHfbpPaxnP3M1BZBWhgG1FfBcEl5kIT0vlexDVFW
+         kCzVV8y6DhmurVmD8WxX2MwtH0FYS000EqPF9gD84b6Z87nLn+RbIIU6VGARzPTHA2fu
+         2yzClwfpFOA/LGk/1X1lAQEfzi9ptMSygVcgvG0j89bmcCPKU7i0JfbgREpZGquskFsx
+         eC3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749483101; x=1750087901;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zBYGvX52BxLQ4GUMUxG0DeMTjGwYb+sctll/J9DgxZ0=;
-        b=aqZU10dnptOyJZts4cbBGaWN1vu0TePr6bK2f9bUEicIryVgJZqRdMwaKlf7ApyTIf
-         FxQkoPa/fmGwTyAp945F53wkTDFEBH7gjIsqQIfUzGAaW+OmOOCTp6+wLFO6Nu6DHmnL
-         cJLoR38R1ciiZuMG1FlqygjVnu+OMZB/qAAImcNDSCnrx44q2qew07oRdnyFjyvHnoX8
-         X+SmTN/5VWfCHeQi2hWQzrZuUV5+uiaSe8ZVQivGsCaE1X/W/YqdOYynDvMu3AUNf/hf
-         K0OUacp14Zex5jfcjvFE4X7Twb+dWD9EKaG5M/zmeRP2YDNYZrSLG3yHa/IazPHPCmAK
-         +e9A==
-X-Gm-Message-State: AOJu0YzubHyZslLaFHvf9lVP92Dr0TT8acv2TUWTFpMeSZ/3RrBzAExX
-	NJhOBNCbRFdAOPye3O+Wn4MwXHA0uqRUJR4LBVptx1gDG3zlFKKE8mn3pOfLFQhAYc5OvXA+yVy
-	pcPrNm2B63/4QWBfZ0Xp9cXOIisbHV67B+JhYEfJJoFoXuUQx7eE8uGDIGTM=
-X-Google-Smtp-Source: AGHT+IElAY8fyI7dmClijje1Nag7bzwCdrGNHMSTY52QbOAscFH3QjCug3yRkeP5vol6+M+DVMf9+t4pCvNezV5v+bEY4dNaAPev
+        d=1e100.net; s=20230601; t=1749483217; x=1750088017;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PvtGT/gXZy9G0z7KUPcczavaKT2KAY8YSEGerfvgk+k=;
+        b=Mp45/mzxAcFhqzUwWHgTJzxApkN70WoCFaiS6lxE3YhRfIzn/l9FBF0gDiiaJP1YCD
+         Ev0/j59x/RejuHMru/s+4xih960f1G2Mi+gkZ9Y4Yd8N9FGv9kNUBAb2PAGnatINTskP
+         UU9YvlV9+mBZdF6ACubHJHJdcf1hccUX4ugvhGQVlKspgP2W4Tk9kfab0cZvoJknbo9+
+         D0UPGlNZzSTpFaEnqYemUxr6a6xl8vJASDjGoETXHPkX1cxiApUQyerndziYE9kH6q/1
+         ZbIh5G3R25qJUbVEWLEakbl310vjEW3rGVKVIbbdTRKfbXUy3EmrEJThA3fwtPEI+aK6
+         mTjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcoS+b3twhUXFRNJm5B2foyXwD6QcVC/bKorGyV4ozKYACOijahq8vEb5B5eJ/jIu+Br46Jbv06y6nr7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXCvXmPCaxaFM4tcTKFNSFyqhdxkGY2+bUccjrmdO0OQ1S4EqX
+	rzOp0C4c5kWJOdVrelKgYX9YzEiTAnYvLUIjCT7suAbR9C8/9ctWMETiYMgMtxZL+eE=
+X-Gm-Gg: ASbGncsKqLTve+HUAllftRLj1sj3ARWHxZfltJLGtGyCrM0UIwFwup9XvlYiIHNYNXf
+	Z+HLsmtESO8uC+0PgFQ6P9G8UYqbkc6e1FGTQf61MNXwCXN73Dc4IhT7QfsbxsSnJRQcvZhV8p5
+	nd9T9WCXAnFvu3dApSOczYkbjFHwgsayIYXgYNefJv3dm4Xv5Lm7zVI5xiqHI7hW+5U12uHNbo+
+	CrzE83vkOQbhyXYygiKJBQONO0jys8j+LowOlNympmKJUZM0ZiyxZDc4dyRQyEaKQva6gOMwBHE
+	u0ivJsFIiyDhu/HF1BC9aFTY3pkZTqRjWtMeeHmoydHSxQa9viIh+dT2iVRu6Y/oJihlTVQ=
+X-Google-Smtp-Source: AGHT+IGUecRwAIMHRhZ9jzGvMSqw8sw1BbFuESQIxyKOrlJ4Q6pTMh4lszRudkvpP6BGsmhYVVJ00A==
+X-Received: by 2002:a05:600c:8212:b0:450:cd50:3c66 with SMTP id 5b1f17b1804b1-452014b39dfmr121204185e9.29.1749483217347;
+        Mon, 09 Jun 2025 08:33:37 -0700 (PDT)
+Received: from ho-tower-lan.lan ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452137277basm115728695e9.32.2025.06.09.08.33.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 08:33:36 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH 0/4] spi: spi-fsl-dspi: Target mode improvements
+Date: Mon, 09 Jun 2025 16:32:37 +0100
+Message-Id: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1747:b0:3dd:6696:2da7 with SMTP id
- e9e14a558f8ab-3ddec093931mr4370475ab.1.1749483100768; Mon, 09 Jun 2025
- 08:31:40 -0700 (PDT)
-Date: Mon, 09 Jun 2025 08:31:40 -0700
-In-Reply-To: <68344557.a70a0220.1765ec.0165.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6846fe5c.050a0220.daf97.0afe.GAE@google.com>
-Subject: Re: [syzbot] #syz test
-From: syzbot <syzbot+5138f00559ffb3cb3610@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJX+RmgC/22NQQ6CMBBFr0Jm7Zi2hgquuIdh0cIUxkhLWkMwh
+ LtbSdy5fC/572+QKDIluBUbRFo4cfAZ5KmAbjR+IOQ+MyihSlEqhQ8zUUK/zphmxn4yaOr6Spa
+ ss9pC3s2RHK9H895mHjm9QnwfF4v82l+t+lNbJAqUQlekLiQ6p5snexPDOcQB2n3fP+qH+z+zA
+ AAA
+To: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, linux-spi@vger.kernel.org, 
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ James Clark <james.clark@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Larisa Grigore <larisa.grigore@nxp.com>
+X-Mailer: b4 0.14.0
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Improve usability of target mode by reporting FIFO errors and increasing
+the buffer size when DMA is used. While we're touching DMA stuff also
+switch to non-coherent memory, although this is unrelated to target
+mode.
 
-***
+The first commit is marked as a fix because it can fix intermittent
+issues with existing transfers, rather than the later fixes which
+improve larger than FIFO target mode transfers which would have never
+worked.
 
-Subject: #syz test
-Author: abhinav.ogl@gmail.com
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+James Clark (3):
+      spi: spi-fsl-dspi: Clear completion counter before initiating transfer
+      spi: spi-fsl-dspi: Use non-coherent memory for DMA
+      spi: spi-fsl-dspi: Report FIFO overflows as errors
 
+Larisa Grigore (1):
+      spi: spi-fsl-dspi: Increase DMA buffer size
+
+ drivers/spi/spi-fsl-dspi.c | 128 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 102 insertions(+), 26 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250522-james-nxp-spi-dma-a997ebebfb6b
+
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
 
 
