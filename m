@@ -1,182 +1,243 @@
-Return-Path: <linux-kernel+bounces-677323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22DEAAD193D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DB1AD1946
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 09:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF1F1887C28
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322EC1885585
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 07:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC3280CD1;
-	Mon,  9 Jun 2025 07:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D645928030C;
+	Mon,  9 Jun 2025 07:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BrPXUiE2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LL4ukOCX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BrPXUiE2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LL4ukOCX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXf+KT54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD7B1D6194
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 07:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E1511185;
+	Mon,  9 Jun 2025 07:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749455275; cv=none; b=p7YnmxR28ohcsLa8u2CmjJs1sjtC2LirrAJAR0eLF51DfnnXSWomda8I1cYFcvJ73CPHEnLD5byIYe6M7IOIXT7w8FFcM8ixAzhl22cOt3iLBmcKM/yKYo0M/efEZ2mNq8QW2/3F50phjWo0OOUIAK+OojvaR1PCvrHe9aVlOxI=
+	t=1749455340; cv=none; b=I5B6j0nP7ZcobZdcnCOxC+QVTVfiQ0dCr+F9PZuC4gpKOG4D0C9IJP5SXB8Et64lkzFHmePBk2IFXIC1fqf9BXZzup4rHMuLK372C7/jZ7rMAEc8+SGkUCGoslG4DuGCal8MfE9K57085dv37MSEJe6EkPmME9t8sQjWX2e1SSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749455275; c=relaxed/simple;
-	bh=DVZmFDRN34wedu9EopZdzBpF92Y8lkbGctIbaZuk0UM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lu8/TsfSa7+lf4V3Z9oBDBxSmRrbaet874yy9RXjbrZuyOn+m1QG2+DpvXkWTH9QWeNfmrDJ8Fsh7b6Hi8Ytcbb+kvyEniEOZ9rq9AReaO95w2LZ6ITmv/ynSUSlxt+WxPpAJI9BTonQ47t90CyBqj9AM1cYx4A/f1k54Cn1R+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BrPXUiE2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LL4ukOCX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BrPXUiE2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LL4ukOCX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 77ED81F38D;
-	Mon,  9 Jun 2025 07:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749455270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8qKTHDnHNUm56SfYdpRWGsl0y8TWAmzpz6qTvuBz+E8=;
-	b=BrPXUiE2ZDlzzcO8GIfGdgRktHmmm4U95gf5NNNebOERxII3YYYtFeN6+puyLkTZjB9ref
-	PEB6ihKicW8ZVxMWofPN9QY5VprICkLbXfZzVbxeU+Zo7iO+c0sVkQFBLKak5p6k/3I12J
-	skgmO/P4H/V57Rvp9UCT9INLoTGWMkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749455270;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8qKTHDnHNUm56SfYdpRWGsl0y8TWAmzpz6qTvuBz+E8=;
-	b=LL4ukOCXDCfg4mu6OsN7GaZ25PI7qrDMaE3vhNcAsGgaTy3SkSjBtvFDYepNvLWLZU1keT
-	lFULLJa2qPBHf4Dw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=BrPXUiE2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=LL4ukOCX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749455270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8qKTHDnHNUm56SfYdpRWGsl0y8TWAmzpz6qTvuBz+E8=;
-	b=BrPXUiE2ZDlzzcO8GIfGdgRktHmmm4U95gf5NNNebOERxII3YYYtFeN6+puyLkTZjB9ref
-	PEB6ihKicW8ZVxMWofPN9QY5VprICkLbXfZzVbxeU+Zo7iO+c0sVkQFBLKak5p6k/3I12J
-	skgmO/P4H/V57Rvp9UCT9INLoTGWMkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749455270;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8qKTHDnHNUm56SfYdpRWGsl0y8TWAmzpz6qTvuBz+E8=;
-	b=LL4ukOCXDCfg4mu6OsN7GaZ25PI7qrDMaE3vhNcAsGgaTy3SkSjBtvFDYepNvLWLZU1keT
-	lFULLJa2qPBHf4Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 450C913A1D;
-	Mon,  9 Jun 2025 07:47:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sTwLD6aRRmhCfQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 09 Jun 2025 07:47:50 +0000
-Date: Mon, 09 Jun 2025 09:47:49 +0200
-Message-ID: <87bjqx8ifu.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: edip@medip.dev
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek - Add mute LED support for HP Victus 16-s1xxx and HP Victus 15-fa1xxx
-In-Reply-To: <20250607105051.41162-1-edip@medip.dev>
-References: <20250607105051.41162-1-edip@medip.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1749455340; c=relaxed/simple;
+	bh=MfXFjxrBzTof+d+yK1Q+a+zQOzKcP3+f+P3hYnAry5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwdgJJerC3jd5OmZOjR0ehZ9gcg9dvfsIA4nTfZUNsPqmmfoWa2AHi/ci+VWCdS19k9hHlWBsvS1FYor1UZmVGhBDUcKOuoKPAChfxaKJhOZPZ9bjMy7F0wPqEkqbbMb+NikXx3c68ooEKwtae1dswMXb5j79u5IdwphtAwaBqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXf+KT54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75EADC4CEEB;
+	Mon,  9 Jun 2025 07:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749455339;
+	bh=MfXFjxrBzTof+d+yK1Q+a+zQOzKcP3+f+P3hYnAry5I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QXf+KT54DdqtqutcXoYOkkEka5sL25QPGDie958NNcHENr0/TGOIU5tH5GUfx8fUM
+	 +UgAJcP60JL3GKCfYcN3P8yUCLg6aH5TlcjizxdlToSGXZ/O87c2+WZF6W7ERNW08p
+	 vvGgSB58mwIxImvFZF6f6Cz69jwDlsucuAjzBziA03HivxAz1ZIbn9G8q3HBzUGqUc
+	 p+WBIP2TW4MpRE/ZaPMVBlz9E8dl217FuU5U1GzoyIipjVsW41ZFa2cg6QpNhPGRUx
+	 vNiH0v2xaz60T9g0tht7nPJmcWgtyTg4vBCSvvugDKSphQN0CZUvMz/g2YbsSid/ll
+	 wzkrrHLS+DA4g==
+Message-ID: <d50ec9ca-2a43-4300-856a-087d97fd8239@kernel.org>
+Date: Mon, 9 Jun 2025 09:48:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 77ED81F38D
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: sysrq: Introduce compile-time crash-only mode
+To: Marwan Seliem <marwanmhks@gmail.com>, gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250607151957.222347-1-marwanmhks@gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250607151957.222347-1-marwanmhks@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, 07 Jun 2025 12:50:51 +0200,
-edip@medip.dev wrote:
+On 07. 06. 25, 17:19, Marwan Seliem wrote:
+> This commit introduces a new Kconfig option, CONFIG_MAGIC_SYSRQ_CRASH_ONLY,
+> which allows for a significant hardening of the system by restricting
+> the Magic SysRq functionality at compile time.
 > 
-> From: Edip Hazuri <edip@medip.dev>
+> Security Impact:
+> - Reduces attack surface by disabling non-essential SysRq commands
+> - Maintains critical crash-dump capability required for debugging
+> - Eliminates runtime configuration vulnerabilities
 > 
-> The mute led on those laptops is using ALC245 but requires a quirk to work
-> This patch enables the existing quirk for the devices.
+> When CONFIG_MAGIC_SYSRQ_CRASH_ONLY is enabled:
 > 
-> Tested on my Victus 16-s1011nt Laptop and my friend's Victus 15-fa1xxx. The LED behaviour works as intended.
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Edip Hazuri <edip@medip.dev>
-> ---
->  sound/pci/hda/patch_realtek.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index cd0d7ba73..1e07da9c6 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -10733,6 +10733,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
->  	SND_PCI_QUIRK(0x103c, 0x8a0f, "HP Pavilion 14-ec1xxx", ALC287_FIXUP_HP_GPIO_LED),
->  	SND_PCI_QUIRK(0x103c, 0x8a20, "HP Laptop 15s-fq5xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
->  	SND_PCI_QUIRK(0x103c, 0x8a25, "HP Victus 16-d1xxx (MB 8A25)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
-> +	SND_PCI_QUIRK(0x103c, 0x8c9c, "HP Victus 16-s1xxx (MB 8C9C)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
->  	SND_PCI_QUIRK(0x103c, 0x8a28, "HP Envy 13", ALC287_FIXUP_CS35L41_I2C_2),
->  	SND_PCI_QUIRK(0x103c, 0x8a29, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
->  	SND_PCI_QUIRK(0x103c, 0x8a2a, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
+> 1.  Restricted Commands: Only the 'c' (trigger a system crash/dump)
+>      SysRq command remains operational. All other built-in SysRq commands
+>      (e.g., reboot, sync, show-memory, SAK) are disabled.
 
-The table entries are sorted in (PCI) SSID order.
-Could you try to put the new item at the right position?
+I must admit I don't much understand the purpose of this. It can be 
+spelled as: you can crash the system only by sysrq-c from now on. Don't 
+use sysrq-r or others. Who did ask for this?
 
+...
 
-> @@ -10805,6 +10806,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
->  	SND_PCI_QUIRK(0x103c, 0x8c16, "HP Spectre x360 2-in-1 Laptop 16-aa0xxx", ALC245_FIXUP_HP_SPECTRE_X360_16_AA0XXX),
->  	SND_PCI_QUIRK(0x103c, 0x8c17, "HP Spectre 16", ALC287_FIXUP_CS35L41_I2C_2),
->  	SND_PCI_QUIRK(0x103c, 0x8c21, "HP Pavilion Plus Laptop 14-ey0XXX", ALC245_FIXUP_HP_X360_MUTE_LEDS),
-> +	SND_PCI_QUIRK(0x103c, 0x8bc8, "HP Victus 15-fa1xxx", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+> --- a/drivers/tty/sysrq.c
+> +++ b/drivers/tty/sysrq.c
 
-Ditto.
+> @@ -584,7 +620,6 @@ void __handle_sysrq(u8 key, bool check_mask)
+>   {
+>   	const struct sysrq_key_op *op_p;
+>   	int orig_suppress_printk;
+> -	int i;
+>   
+>   	orig_suppress_printk = suppress_printk;
+>   	suppress_printk = 0;
+> @@ -599,7 +634,15 @@ void __handle_sysrq(u8 key, bool check_mask)
+>   	 */
+>   	printk_force_console_enter();
+>   
+> +#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+> +	if (key != 'c') { /* In CRASH_ONLY mode, only 'c' is considered */
+> +		op_p = NULL;
+> +	} else {
+> +		op_p = __sysrq_get_key_op(key);
+> +	}
+> +#else
+>   	op_p = __sysrq_get_key_op(key);
+> +#endif
 
+These inline #ifdefs are horrid.
+
+>   	if (op_p) {
+>   		/*
+>   		 * Should we check for enabled operations (/proc/sysrq-trigger
+...
+> @@ -1104,6 +1157,10 @@ static inline void sysrq_unregister_handler(void)
+>   
+>   int sysrq_toggle_support(int enable_mask)
+>   {
+> +#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+> +	pr_warn("SysRq: CONFIG_MAGIC_SYSRQ_CRASH_ONLY is set. Runtime toggle is not allowed.\n");
+
+This can be invoked from userspace. So you can nicely DoS the machine by 
+the added warn, right? Hint: use ratelimiting.
+
+> +	return -EPERM;
+> +#else
+>   	bool was_enabled = sysrq_on();
+>   
+>   	sysrq_enabled = enable_mask;
+...
+> @@ -1145,12 +1203,30 @@ static int __sysrq_swap_key_ops(u8 key, const struct sysrq_key_op *insert_op_p,
+>   
+>   int register_sysrq_key(u8 key, const struct sysrq_key_op *op_p)
+>   {
+> +#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+> +	/*
+> +	 * In CRASH_ONLY mode, do not allow registering new SysRq ops.
+> +	 */
+> +	pr_warn("SysRq: CONFIG_MAGIC_SYSRQ_CRASH_ONLY is set. Cannot register new SysRq key '%c'.\n", key);
+> +	return -EPERM;
+> +#endif
+>   	return __sysrq_swap_key_ops(key, op_p, NULL);
+>   }
+>   EXPORT_SYMBOL(register_sysrq_key);
+>   
+>   int unregister_sysrq_key(u8 key, const struct sysrq_key_op *op_p)
+>   {
+> +#ifdef CONFIG_MAGIC_SYSRQ_CRASH_ONLY
+> +	/*
+> +	 * In CRASH_ONLY mode, do not allow unregistering the crash op.
+> +	 * Other ops should be NULL anyway due to sysrq_init_crash_only_table.
+> +	 */
+> +	if (op_p == &sysrq_crash_op) {
+> +		pr_warn("SysRq: CONFIG_MAGIC_SYSRQ_CRASH_ONLY is set. Cannot unregister the crash SysRq key '%c'.\n", key);
+> +		return -EPERM;
+
+No need for this return ^^.
+
+> +	}
+> +	return -EPERM; /* Attempt to unregister anything else is also an error */
+> +#endif
+>   	return __sysrq_swap_key_ops(key, NULL, op_p);
+>   }
+>   EXPORT_SYMBOL(unregister_sysrq_key);
+> @@ -1209,6 +1285,7 @@ static inline void sysrq_init_procfs(void)
+>   static int __init sysrq_init(void)
+>   {
+>   	sysrq_init_procfs();
+> +	sysrq_init_crash_only_table();
+>   
+>   	if (sysrq_on())
+>   		sysrq_register_handler();
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index ebe33181b6e6..c05b80cfb8aa 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -640,6 +640,19 @@ config MAGIC_SYSRQ_DEFAULT_ENABLE
+>   	  This may be set to 1 or 0 to enable or disable them all, or
+>   	  to a bitmask as described in Documentation/admin-guide/sysrq.rst.
+>   
+> +config MAGIC_SYSRQ_CRASH_ONLY
+> +	bool "Restrict Magic SysRq to crash command only"
+> +	depends on MAGIC_SYSRQ
+> +	default n
+> +	help
+> +	  If you say Y here, the Magic SysRq key functionality will be
+> +	  severely restricted at compile time. Only the 'c' command (trigger
+> +	  a system crash) will be available. All other SysRq commands will be
+> +	  disabled, and no new SysRq commands can be registered at runtime.
+> +	  The /proc/sys/kernel/sysrq setting will be ineffective for
+> +	  non-crash commands, and attempts to change it may be blocked.
+> +	  This is a security hardening option.
+
+Is it for real?
 
 thanks,
-
-Takashi
+-- 
+js
+suse labs
 
