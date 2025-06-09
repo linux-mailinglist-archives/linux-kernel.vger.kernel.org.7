@@ -1,118 +1,214 @@
-Return-Path: <linux-kernel+bounces-678344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AA5AD277C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:19:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3817AD2783
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE31894E87
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:19:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B026E3B4DD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670CD220F59;
-	Mon,  9 Jun 2025 20:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A7D220F5C;
+	Mon,  9 Jun 2025 20:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cZ+z6DR3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Xf0gOY8A"
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C94C8E;
-	Mon,  9 Jun 2025 20:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AE74C8E;
+	Mon,  9 Jun 2025 20:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749500372; cv=none; b=ALWw03egjmBVDlESdiSQs8Ti68K+xtZyLdQ8cLENcy5D5oTD4mdIBBTtXM9DOEjpWK39DhpKPGptrXnDHk+LH8ZyIe9Xr0DB6aafDDZdzX/t9gWcHqzqki/WXgX66CkjBgR5dwlIzbJvLRTfvK5n29u0+r3jSFzHo3WJMnEVI3Q=
+	t=1749500738; cv=none; b=ZWDWyJIiaIyn2stcRzcENgv4pO6xlMMLmEDnqURp3b6g/fD7EYSwqkIqC6pwSUql3E5rD3QEFghvpx02maFP/LX2pX/holi6L054nVoozRuaG0Bm3sAMAxLZCq3cQgsKqRsVV/XYTCRcQjj9MEv+MOcN64l4wUhGHZM2pk6Lj4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749500372; c=relaxed/simple;
-	bh=xHki770puYpEzm3QMVlBGE3HdQKNbbHjet2ZCnU39dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gh7iB9QoFHCQhKm6m89ff8uxcooih+eoBUfbgFiu1AxTgFHlEaZE0uLmlN7rObjVuh0hncjMv4oa956Hn2kUP52ABJxg83QEuti6RWyXZ/hIP66rnHzO3YZcfKUeONF10+tX9jNpCqSlOaQmJqFSdci6Q6UxjbMyMDCsQfzoQmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cZ+z6DR3; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749500372; x=1781036372;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xHki770puYpEzm3QMVlBGE3HdQKNbbHjet2ZCnU39dg=;
-  b=cZ+z6DR3hOYZKjMV81kYGYYtRaMmVuGwMD6MD+7Al9v+CmDMNmtMLMVY
-   Tzsz7mYliDLJCmVmUAGyMjINAG8CE/YqQw7AO+5IFbjNxjsQZwofCrk3i
-   xgFbtUDucQNPO5z8C2E9Vt01kib+3jmukA/C0UqXkcuLu13hRlWAs+H0t
-   RC4rXBAWkrsfJoUMl2aCiHAP070cmEawVMHl/KA+keV9adAdxR95gR7Kc
-   VC67PxEtPCmBxRbhDPiKl1femtSDTtbDlkdCtWWeEMkwNNp+rbVU8B0m8
-   OBcPt52pMJ9ERHuoZZ6WgVEWbGfe8j9rOag03ElGHKvDv1Vkm7gain9vt
-   g==;
-X-CSE-ConnectionGUID: udx6JnAdQueiteYDntjsfw==
-X-CSE-MsgGUID: FIhDey8HS5Sb7B8OPCVPmQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="74126652"
-X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
-   d="scan'208";a="74126652"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 13:19:31 -0700
-X-CSE-ConnectionGUID: vCR4LmqaSFOMbLacU69nbw==
-X-CSE-MsgGUID: GHyQfBRVRnCO/63aM5EzCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
-   d="scan'208";a="151867743"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 13:19:27 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uOixo-000000059d8-0Xwz;
-	Mon, 09 Jun 2025 23:19:24 +0300
-Date: Mon, 9 Jun 2025 23:19:23 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, corbet@lwn.net,
-	ikepanhc@gmail.com, hmh@hmh.eng.br, W_Armin@gmx.de,
-	linux-doc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	ibm-acpi-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 2/2] platform/x86: thinklmi: improved DMI handling
-Message-ID: <aEdBy6m_6aQr8l41@smile.fi.intel.com>
-References: <mpearson-lenovo@squebb.ca>
- <20250609122736.3373471-1-mpearson-lenovo@squebb.ca>
- <20250609122736.3373471-2-mpearson-lenovo@squebb.ca>
+	s=arc-20240116; t=1749500738; c=relaxed/simple;
+	bh=neykw9liQVytRoGZuEEGHa4BpafwF9rx47dmoEYCesI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gjw3OJYW5ICtbTRI56jGyvmHxWI9OZ0kuA5NEmMUzNT4GzXV0B4oKLscdyyIT+N31dQlKD77Wl5NszRWjatCx1YQOrA9jC6B5TRhbrU6b0nfgVq06i/E3BSGjxYVegdqDJ8555X+sQZb1SDP6tsbQ0dnQ05Y1BzGWGYAVdlATO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Xf0gOY8A; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id Oj2futxgVlRx3Oj2fuiTz9; Mon, 09 Jun 2025 22:24:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1749500665;
+	bh=IQIuJHfs8taCs8zFUj6uvvuirzSgRKqYrdzbN1Y9r10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Xf0gOY8AveQEznRRYCwXk4iA9aD6K/5QpsvUyg1C+9a43t8k2ZYvrEJg4vX+HT8Pq
+	 rNmwRT5BUoDlvvj/p8On1kHATvwTQ7jgRlTT/Ei72d1SHe3PuCAJtwx2NFd4kKNbZn
+	 jic1anXo5GsUT20ckZbcIxKuulTJemqhKdPQg6wctyVuiw4UjsRHf1UkHu70Dg+T+9
+	 4gaDTRuT/6t0BkciwI1/Su4uGENXPBoa0gsCixD0oBCZqC1W+5pv1BkULq2VRAMQNK
+	 mHKqNs4OBFFpUpcrCgFW1xuGfTbBcbgHjC0BfDU56jWsvPzzvh17HJfEF4kTmM74Pq
+	 sIVo54hFldMWA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 09 Jun 2025 22:24:25 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <321eceac-3862-4c50-bcbc-84e74514f2a2@wanadoo.fr>
+Date: Mon, 9 Jun 2025 22:24:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609122736.3373471-2-mpearson-lenovo@squebb.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] leds: as3668: Driver for the ams Osram 4-channel
+ i2c LED driver
+To: Lukas Timmermann <linux@timmermann.space>, lee@kernel.org,
+ pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250608231854.75668-1-linux@timmermann.space>
+ <20250608231854.75668-3-linux@timmermann.space>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250608231854.75668-3-linux@timmermann.space>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 09, 2025 at 08:27:25AM -0400, Mark Pearson wrote:
-> Fix issues reported by kernel test robot.
->  - Require DMI for think-lmi.
->  - Check return from getting serial string
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506062319.F0IpDxF6-lkp@intel.com/
+Le 09/06/2025 à 01:18, Lukas Timmermann a écrit :
+> Since there were no existing drivers for the AS3668 or related devices,
+> a new driver was introduced in a separate file. Similar devices were
+> reviewed, but none shared enough characteristics to justify code reuse.
+> As a result, this driver is written specifically for the AS3668.
 
-> 
-
-No blank line in tag block.
-
-> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-
->  - New patch added to series.
-
-Shouldn't it be the first one in the series? It seems to me that this is the
-fix of the original code as well.
+Hi
 
 ...
 
-> +++ b/drivers/platform/x86/lenovo/think-lmi.c
+> +static int as3668_write_value(struct i2c_client *client, u8 reg, u8 value)
+> +{
+> +	int err = i2c_smbus_write_byte_data(client, reg, value);
+> +
+> +	if (err)
+> +		dev_err(&client->dev, "error writing to reg 0x%02x, returned %d", reg, err);
 
-My understanding is that you need either Kconfig or changing C file.
+Missing \n.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +
+> +	return err;
+> +}
+
+...
+
+> +static int as3668_dt_init(struct as3668 *as3668)
+> +{
+> +	struct device *dev = &as3668->client->dev;
+> +	struct as3668_led *led;
+> +	struct led_init_data init_data = {};
+> +	int err;
+> +	u32 reg;
+> +	int i = 0;
+
+Unneeded init.
+
+> +
+> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
+> +		err = of_property_read_u32(child, "reg", &reg);
+> +		if (err)
+> +			dev_err(dev, "unable to read device tree led reg, err %d", err);
+
+Missing \n.
+
+In this case, we still go on? This looks strange.
+What is the value of 'reg' in the later code?
+
+> +
+> +		i = reg;
+> +
+> +		if (i < 0 || i > AS3668_MAX_LEDS) {
+> +			dev_err(dev, "unsupported led reg %d\n", i);
+> +			return -EOPNOTSUPP;
+> +		}
+> +
+> +		led = &as3668->leds[i];
+> +		led->fwnode = of_fwnode_handle(child);
+> +
+> +		led->num = i;
+> +		led->chip = as3668;
+> +
+> +		led->cdev.max_brightness = U8_MAX;
+> +		led->cdev.brightness_get = as3668_brightness_get;
+> +		led->cdev.brightness_set = as3668_brightness_set;
+> +
+> +		init_data.fwnode = led->fwnode;
+> +		init_data.default_label = ":";
+> +
+> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
+> +		if (err) {
+> +			dev_err(dev, "failed to register %d LED\n", i);
+> +			return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int as3668_probe(struct i2c_client *client)
+> +{
+> +	u8 chip_id1, chip_id2, chip_serial, chip_rev;
+> +	struct as3668 *as3668;
+> +
+> +	/* Check for sensible i2c address */
+> +	if (client->addr != 0x42)
+> +		return dev_err_probe(&client->dev, -EFAULT,
+> +				     "unexpected address for as3668 device\n");
+> +
+> +	/* Read identifier from chip */
+> +	chip_id1 = as3668_read_value(client, AS3668_CHIP_ID1);
+> +
+> +	if (chip_id1 != AS3668_CHIP_IDENT)
+> +		return dev_err_probe(&client->dev, -ENODEV,
+> +				"chip reported wrong id: 0x%02x\n", chip_id1);
+> +
+> +	/* Check the revision*/
+
+Missing space before */
+
+> +	chip_id2 = as3668_read_value(client, AS3668_CHIP_ID2);
+> +	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_id2);
+> +	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_id2);
+> +
+> +	if (chip_rev != AS3668_CHIP_REV1)
+> +		dev_warn(&client->dev, "unexpected chip revision\n");
+> +
+> +	/* Print out information about the chip */
+> +	dev_dbg(&client->dev,
+> +		"chip_id: 0x%02x | chip_id2: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
+> +		chip_id1, chip_id2, chip_serial, chip_rev);
+> +
+> +	as3668 = devm_kzalloc(&client->dev, struct_size(as3668, leds, AS3668_MAX_LEDS), GFP_KERNEL);
+
+Why using struct_size()?
+as3668 has no flexible array at its end.
+
+Also error handling is missing if the allocation fails.
 
 
+> +	as3668->client = client;
+> +
+> +	as3668_dt_init(as3668);
+
+as3668_dt_init() may return an error.
+Missing error handling?
+
+> +
+> +	/* Initialize the chip */
+> +	as3668_write_value(client, AS3668_CURRX_CONTROL, 0x55);
+> +	as3668_write_value(client, AS3668_CURR1, 0x00);
+> +	as3668_write_value(client, AS3668_CURR2, 0x00);
+> +	as3668_write_value(client, AS3668_CURR3, 0x00);
+> +	as3668_write_value(client, AS3668_CURR4, 0x00);
+> +
+> +	return 0;
+> +}
+
+...
+
+CJ
 
