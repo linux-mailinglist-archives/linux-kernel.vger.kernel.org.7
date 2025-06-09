@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-677890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C88BAD2175
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A3DAD2214
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0931816C1B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D059161348
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D66C19E98C;
-	Mon,  9 Jun 2025 14:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXv0l26b"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B431A257D;
+	Mon,  9 Jun 2025 15:13:01 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD0172606;
-	Mon,  9 Jun 2025 14:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E4619F41C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749481000; cv=none; b=LMGEzcBkTOJrPyQbr+sinYfdSyOHVbUCS5Xk+seF0SfBwlXl24s6Gs/7wAQJou8KqdhJX6A2FHTnq2tyqersv/CZdKXQ3xOBQ/hykfjTFIH7xppIf/y8gfSUIYhV1jvehTCUi3oLP0KhOPChh1egdRpcTB42l3i08Kawn11sF+Y=
+	t=1749481981; cv=none; b=DXNTTsPY4WhspEF5TpYY8++cBWNbSA9/dtdQtzT+U4mhMl2+8cxefg+ngzPPbcBzVoVs1PtfSnXLR7Ie8Vml7PnpMp4tZ79n33dDgcqwBLJZcJ2NwtvFEXIzKfvj+9S8y+IA+4evLh6HiT+I16quD+otzXTKj6jjIM9/SAd6ueY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749481000; c=relaxed/simple;
-	bh=L2+6Eah1O8TlZJlFrgG8KAyfFea7SFLLoPZ6PJdG/Lk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B6SvqWYy9eFy8C+jTikF/2WuChFrcqeIvZEuiobqfFniaZ86La5ssYhrzf9ZQPqbKoT6rA245O+iQI9OwdZJt+KW3NjJWQ2iBG57I2rZdvj6Rk8KaG+v2ewbaoLsepjOtp9bwF0xL68UGsdXjN0WY7qtGOm1RRAdEnnzRpg1A78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lXv0l26b; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a3798794d3so3743112f8f.1;
-        Mon, 09 Jun 2025 07:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749480996; x=1750085796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AD8CdEe2djCXyzMtatbTa8JQVgDN2iS28PWMu7pGIKg=;
-        b=lXv0l26bxoVH8jLz0F/d/WaeUfKQ1PnoiwKXEgaxuEzYulo6wj5URbnswaj+cOqjFe
-         81qZ2NiGTNg18xYzRg0u1yz2lXlzz3cgENx62w8DBX4SCuO/hyZIH2Nbfan6BXHbdGVL
-         yGfnjqQ5y5D8KYQeo9+KVuawQuQISAcS7IrpyXrFG/E3Du8urnSIXoO5HKI/+eDJ/9Yi
-         wcbAzvbX9ZMgyvJeGrT13Nik78kHi/NCK/Vvqt6QzX8NBdUYZ2Cn8+Fcm/5pnyWMlb+f
-         O2erMNNodNmvNviQ11pyGYJ58ydKv7CsYpE+RctFQjNG71thf/JxLJraDBnV6cvXvQUV
-         /iVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749480996; x=1750085796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AD8CdEe2djCXyzMtatbTa8JQVgDN2iS28PWMu7pGIKg=;
-        b=YaYdl7WWw/y15URMZysZA+9zx0nA9OIABqD8ONlMtlSWkVCH7bZBl5S1/lHEa2/G84
-         aNzMc0j1dGNqxvtDV+iIx7NnpEzCtBLzZyleP88BnIZypmnv/Of+74qw5Z0DJzTw7Xji
-         dK1hWkw32Tvc2m+5Em3z8HHxD3eo5NiueIxraALr3261okgSksByg5j8itvzR6+D/nAF
-         Uw2wx7E2jrk4UcDjq3y9SZUAToETXW1S+mOdRsW3+y+gLeDvinO9VpL+ayMuAOUUoSgr
-         2Prf6guc87D4uzzAL1tHWIJRgT93iXrsKlOtKyf4FFJc5P7ocn3PnxsrW2zrvxxTeSPT
-         LzXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI6JQw2AOCtTVfA/v9G0ZKbJgbgz0QoiCVegHYWzCiWtYKzwY6cbJDFT8v+w0bLcuzem6SdnO6v/XRv7o=@vger.kernel.org, AJvYcCVU/+ZV+9iDhPHemQc1/SARGMorVzs2D/lAj5SYTOlnKJXp5w0n4qabHZx3oo10EpngUeCIv3ZS7DVn@vger.kernel.org, AJvYcCVxdgI2KAk8sI3FirzWKcwQXrkbF2xbgRvtFUiYgI4+hf38zUlyImbo9ceCbVUcJGB7URrMrgg7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlk784eUAb+a5tS8CfLe3Fpn4ensLmkwvtSOM4Kbov7nzbL9j1
-	FEvNkG1Eoh/J8n4/Jojx0MqRBXR9u0tGS6UOkYxv9vWiW+hnVMux5sIz
-X-Gm-Gg: ASbGnctdTkDSv2mi7R/7tfsr6pnYKIjYUzJyjzM6Sqxv4gcnIALiudE+QnXbNcpcszp
-	p2ICy97q7lSaBkrKtUj40PxOvP+C75kQvjgIwtxnD5KQkEXoVpGVRqZuWSh3vvf6OKSACRTCi26
-	rHMSzLKWB1gfbCD+MdGTyxvAxDqBqtZ20fyVyGOsNKWtEm38UByjh45gC9sPqV+nB7j9eqJrN0j
-	CGioH5D9MPRMZqWkT8fPRwvJLpZPxR4HfO9p2hKx04kBqox3Gw0NeHJe0OxM0YNsXlVhnlCW38Y
-	ODsJBrndGLtsn9lrncz245vLXEpop5282be8KhB1C7pcayxOt36vGQaby91ZOGPUGeu33H/qH4u
-	D7UWzJwQ=
-X-Google-Smtp-Source: AGHT+IGX2Bg9tpEHhKD1YfVaIZemrvrQcBkDBqvQcEA5ekwjfXwM5An+osvXDtZHbYPcteYXA6aidw==
-X-Received: by 2002:a05:6000:250e:b0:3a5:2670:e220 with SMTP id ffacd0b85a97d-3a531cb01b7mr10249454f8f.32.1749480995918;
-        Mon, 09 Jun 2025 07:56:35 -0700 (PDT)
-Received: from lucas-OptiPlex-755.. ([79.117.136.19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5322a9bbdsm9553024f8f.21.2025.06.09.07.56.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 07:56:35 -0700 (PDT)
-From: Lucas Sanchez Sagrado <lucsansag@gmail.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: Lucas Sanchez Sagrado <lucsansag@gmail.com>,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: usb: r8152: Add device ID for TP-Link UE200
-Date: Mon,  9 Jun 2025 16:55:36 +0200
-Message-Id: <20250609145536.26648-1-lucsansag@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1749481981; c=relaxed/simple;
+	bh=qNArU2Vc44maup3ccsJRzzB+PISgJBFgqC9aDifnE40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iChHlVwkbqUOhDlyutnpXpGnss56zjlP8j3uRIlRrOJ9ZadMk+4IuIQaIQohYgh46MP4MCr1yU5DqTIC42ETWUfhko8u2FDRHe7mziF/TuY8aKXmsUG4arY1D88MQL737+Eun2F3uhNb88bOqIUidzUKvj34WCA4IS/s3R5MHoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bGFLZ5ks4z1d1Ny;
+	Mon,  9 Jun 2025 22:54:14 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id D501A180B43;
+	Mon,  9 Jun 2025 22:56:14 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Jun 2025 22:56:14 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Jun 2025 22:56:13 +0800
+Message-ID: <28d7d9c2-8498-41a7-ab37-821d574fbb2a@huawei.com>
+Date: Mon, 9 Jun 2025 22:56:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-dp 05/10] drm/hisilicon/hibmc: fix rare monitors
+ cannot display problem
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
+References: <20250530095432.1206966-1-shiyongbang@huawei.com>
+ <20250530095432.1206966-6-shiyongbang@huawei.com>
+ <j23q7vjp2s2gfautba7hcbvd5vrrycr5akl3m24eu4nlvy65s7@5uytzwucogxw>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <j23q7vjp2s2gfautba7hcbvd5vrrycr5akl3m24eu4nlvy65s7@5uytzwucogxw>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-The TP-Link UE200 is a RTL8152B based USB 2.0 Fast Ethernet adapter. This 
-patch adds its device ID. It has been tested on Ubuntu 22.04.5.
 
-Signed-off-by: Lucas Sanchez Sagrado <lucsansag@gmail.com>
----
- drivers/net/usb/r8152.c | 1 +
- 1 file changed, 1 insertion(+)
+> On Fri, May 30, 2025 at 05:54:27PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> DP Link training successful at 8.1Gbps with some monitors' max link rate
+>> are 2.7Gbps. So change the default 8.1Gbps link rate to the rate that reads
+>> from devices' capabilities.
+> I've hard time understanding this message.
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index d6589b24c68d..44cba7acfe7d 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -10054,6 +10054,7 @@ static const struct usb_device_id rtl8152_table[] = {
- 	{ USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041) },
- 	{ USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff) },
- 	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0601) },
-+	{ USB_DEVICE(VENDOR_ID_TPLINK,  0x0602) },
- 	{ USB_DEVICE(VENDOR_ID_DLINK,   0xb301) },
- 	{ USB_DEVICE(VENDOR_ID_DELL,    0xb097) },
- 	{ USB_DEVICE(VENDOR_ID_ASUS,    0x1976) },
+Sorry for misunderstanding. The problem is that dp link training success at 8.1Gbps, however,
 
-base-commit: 2c7e4a2663a1ab5a740c59c31991579b6b865a26
--- 
-2.34.1
+the sink 's maximum supported rate is less than 8.1G.
 
+
+>> Fixes: f9698f802e50 ("drm/hisilicon/hibmc: Restructuring the header dp_reg.h")
+> No, the tag is incorrect. Mentioned commit is not related.
+
+Ok.
+
+
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 ++-
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  6 +---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 +++++++++++++------
+>>   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 12 -------
+>>   4 files changed, 27 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
+>> index 676059d4c1e6..8191233aa965 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
+>> @@ -57,15 +57,3 @@ int hibmc_dp_serdes_rate_switch(u8 rate, struct hibmc_dp_dev *dp)
+>>   
+>>   	return 0;
+>>   }
+>> -
+>> -int hibmc_dp_serdes_init(struct hibmc_dp_dev *dp)
+>> -{
+>> -	dp->serdes_base = dp->base + HIBMC_DP_HOST_OFFSET;
+>> -
+>> -	writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, DP_SERDES_VOL0_PRE0),
+>> -	       dp->serdes_base + HIBMC_DP_PMA_LANE0_OFFSET);
+>> -	writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, DP_SERDES_VOL0_PRE0),
+>> -	       dp->serdes_base + HIBMC_DP_PMA_LANE1_OFFSET);
+> Where did these two writes go?
+
+It's the same as the cfg in hibmc_dp_serdes_set_tx_cfg(), and this function will be called certainly.
+
+
+>> -
+>> -	return hibmc_dp_serdes_rate_switch(DP_SERDES_BW_8_1, dp);
+>> -}
+>> -- 
+>> 2.33.0
+>>
 
