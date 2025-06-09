@@ -1,247 +1,132 @@
-Return-Path: <linux-kernel+bounces-677780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13482AD1F05
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44132AD1F09
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A83FC188DA95
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17C616A559
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7027F258CF9;
-	Mon,  9 Jun 2025 13:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A4825A32C;
+	Mon,  9 Jun 2025 13:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T2r0IA93"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Laf5E0Vx"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C171F258CF8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 13:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243DB25A2A2;
+	Mon,  9 Jun 2025 13:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476391; cv=none; b=IosNicOskxXz7Ph2/u34EZsG8LDnfr5sLjNTpi1EWd6D1GjJTLmhih+r1DfgDFdI4bsQ8SOTzcvDONgykvIjB/ajQ7oL5al5qSTEJxkqQ69zaEpN/2TBpNlW1MDEobDc6e4RofAp5Zp+kPZM5bnSB1qzdFBaskmfakmDkwGR++M=
+	t=1749476413; cv=none; b=HLhIB88l1CTSts9MPrPTceYfh32DPh+qRnkCq02nNsj+oHjd9eunw4pRaJIG4qw5ncw+9h7UYSA8OHDM0DMUnp0Az3mPVZAGxB2WPOERXiXHskzHsuC47LVKTMNEn0Q7HdqQioIRwYDFtkASgnC+p1YEXJ2ZzyxBiB57LbiC49U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476391; c=relaxed/simple;
-	bh=ngc4rDKAh1mJeAbKY/C4Jd8mMnmeejZ3wzvJXkR2sEY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g+Ngy3o/Q1iqXWOKNbP+8iHfhDGCGD6Xk4jFWwVSq+m1TjKtWeT/DKbGPJ5HTkhCGRg6YP4SQjo4wyn0yg/CNIlTRGArw3LmxvapMEGusuwgP+ENUa5AxPwQnf2qI3aKiADP9Z6vmoNryybKQ7YLSvCAKAflMDxGvpZbyNY5w+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T2r0IA93; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AE66F433CF;
-	Mon,  9 Jun 2025 13:39:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1749476380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OaVYv2J/xWS/XzgCfKUvOQYxhSGuMuw0rL15cJiAaBU=;
-	b=T2r0IA93jbDSwUPPEKJvBhjN0/S8am2u+6+3dEsCM2xzUA/TD/RKd+wue7hPwC2bizr94A
-	hD4RJfjN0TII59Yup76TXjpF/hkAB1BlcK0Iupa12yxCUv+TaiCXFDtbXG4VabXxbXPbJE
-	sEZLds834bC35Sv/N7zfgQ8rbChC3F1+VpN+hPk2HaiwHzr/pw02BGmPyXwDKdjK6JjX4c
-	akQ2O8KHS6zKL8Jd2F2Y3KldElFbnXWJuzz93RwYUrOtFz//X/Y408YdrB9t4lvFQmjgI8
-	9BbvacLKDrp0K4IZjW+I0PfdyNKlW1zFU+KfigWGt7zo50ktlQlFkZm7CLgz5Q==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Mon, 09 Jun 2025 15:39:35 +0200
-Subject: [PATCH v4] mux: mmio: Add suspend and resume support
+	s=arc-20240116; t=1749476413; c=relaxed/simple;
+	bh=cY4xKlehVdvlZ3NiQzDRzQlO9jXyfXVG9+zrEpxgDxs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ETEeHsEtTbojDUKF3GifyKc9TgilQ+mps8SF8ZlgWKhe7092tqIpKyuSZA//WTaHk8cKicY+2KKWVPoV/CXkF6kAG/sd+P5YhWzCSFOdKCeFqbCtR2xVDtPz3vnPpHhxm1LBFlogsnXJItCY9fTLx9L9S7fajnCdykmDybYo1ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Laf5E0Vx; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-53090b347dfso1410532e0c.0;
+        Mon, 09 Jun 2025 06:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749476411; x=1750081211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cY4xKlehVdvlZ3NiQzDRzQlO9jXyfXVG9+zrEpxgDxs=;
+        b=Laf5E0VxclgjwUI34BI36dDqNDdq7UQOm+xEhbO2mgRNf/JH8biWWxMbti5TOulf8Q
+         GKJ+ewYIW41AAuBo4QkEY6076zTLryGTrt2wEYJ50FwP9UYsDyVcvG+uQXDKNgpkztve
+         7UNc1Omj/1oKSPNU8O3c614TJrMV6mv6F1+l/e7IXXUYcjNGaZdEMFmSfFwXZNf41lJZ
+         MRjMM0ZOcxpElPop3jW+TSwHYBmHg2SRAOZ1TdmTWVjw8UHgF0YtT4BcunLKGvFULkh7
+         FDCCa6a01iQLzBZILcdUbWVYqOu1gutBz4bWpo7g8nAZs5Nd/K0wMXFWrauk4RA9cMDx
+         yYLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749476411; x=1750081211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cY4xKlehVdvlZ3NiQzDRzQlO9jXyfXVG9+zrEpxgDxs=;
+        b=CqGvGPrSyUY/wieA2qU+G0By/3zdAjUxmUWdmOvUq9Ec520Q8Awcs1eO8scgvL4z1W
+         bu8e1Au5jbzUqCynE6Fp5p14EzjYBQ7mqWR+tUJRuO4GhX+RB7Qb5KuOuuHw49Al1Bnh
+         rq2yft5q+W2bLv0084lPo9ATPskI4RlV6pSp7IX9HNZfUrsBg19FUj9glhVI0c2HGowE
+         n4ZrQSciqcgRlaSHTFW12XdaaYf/Yazod8WjGdUHZ59h7jmaZMYDw/wRFRk7OiFHL7Dk
+         jMPwkqfhcJ7LfLClOJWdZ8I1/yPa2+zBMglN4sdvyZGZpiGRwj1QVxKlwZd+PtT4kMO8
+         RvUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0yLMDS+u6lBIYA34WFqYX/k/L0ru0/Byk9iUv4zlt3xjD9IneVN9Hxkzn/U4OMlELtIKWs+Cy@vger.kernel.org, AJvYcCXvfeLdxBDag2EwGb+p8xLH8XXJ/b4fmadNTAx5yvH2fshX/61cndgBAJxLFKpcplq5KDJZP+697N74Aqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb2RVm36PS1YrIlWqQNPLaZ8nR1EGHZFJbWqZLv0nfagyhMRnJ
+	VKUZtVKjpnb7Wm9fDP59sM0gRmcQXIigGSjccxkKc2xZdRg+8BfK45OZu8x4gL/3qKzVJw3fivU
+	4fGoGUlvl1vLOKT2c1PHMKFV9RhPso/E=
+X-Gm-Gg: ASbGnctiI8dw1sYED5gzduQydLcmdrzcsBe4SbacFQHr9TfJZ9kA8KUzN2jehNMBIsS
+	7DlLFe7OIjYUNqsCJSDgOQod44/TW01/N1fOhLQGOerpW99DuXR4Gh9ADntVq58wkhG/OSnTpqF
+	1GJeaUk9y3hpjlX6E+AxqKfdFKXt1/3pV2cP0kO/pXoKeL
+X-Google-Smtp-Source: AGHT+IGY6fU6lJ8V5VjYmrvOBlPolfPyq3XHCfqRqIx9PvrE87W7ON5Flq55XC+vB3tO7sziS7pDRkGERLXIw/X3o/Y=
+X-Received: by 2002:a05:6122:201f:b0:526:2210:5b64 with SMTP id
+ 71dfb90a1353d-530e48b54efmr10496314e0c.9.1749476410937; Mon, 09 Jun 2025
+ 06:40:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250609-mux-mmio-resume-support-v4-1-6096277f660e@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIABbkRmgC/42OwW7CMBBEfwX53EWOvQlJT/0PxMFrNo2lOo7sJ
- AKh/Ds2EgeEqvY4sztv5iYSR8dJfO5uIvLqkgtjFvixE3Yw4zeDO2ctlFQom0qDXy7gvQsQOS2
- eIS3TFOIM2GtSRqPRyoicJpMYKJrRDiWfVIRildMUuXeXR+nxlPXg0hzi9bFhrYr7d91agQSsV
- U193eRn80UhzD9u3NvgRaGu6p8kBRVwi10ju46kxneSfpJqifLwO0lnkqW2NWQlnunwStq27Q4
- DRtVtbwEAAA==
-To: gregkh@linuxfoundation.org, Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com, 
- richard.genoud@bootlin.com, u-kumar1@ti.com, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelfeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiveefueeiveffvedvfeetvdfhkeeuudefkeeuffefgfekudelheeiffduveeikeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemuggtkedumegrrggutdemfhgutggrmegttgdurgdphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehpvggur
- gesrgigvghnthhirgdrshgvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrghgvnhhouhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuhdqkhhumhgrrhdusehtihdrtghomh
-X-GND-Sasl: thomas.richard@bootlin.com
+From: Xianying Wang <wangxianying546@gmail.com>
+Date: Mon, 9 Jun 2025 21:39:59 +0800
+X-Gm-Features: AX0GCFvxspkhrn78Sa-QcFbj3ft8P-CqaA5D2axID067xmJTtU7TPXtPy7th6SA
+Message-ID: <CAOU40uC6U3PS3cu7RmK71DPA_jbW_ZY0FBkBjCdjVArCiZO-fA@mail.gmail.com>
+Subject: [BUG] WARNING in sendmsg
+To: davem@davemloft.net
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The status of each mux is read during suspend and stored in the private
-memory of the mux_chip.
-Then the state is restored during the resume.
+Hi,
 
-Reviewed-by: Andrew Davis <afd@ti.com>
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
-This is the fourth version of this series, I just rebased it on v6.16-rc1.
----
-Changes in v4:
-- rebased on v6.16-rc1
-- Link to v3: https://lore.kernel.org/r/20250407-mux-mmio-resume-support-v3-1-cb88abc04db7@bootlin.com
+I discovered a kernel WARNING described as "WARNING in sendmsg"when
+fuzzing the Linux 6.8 kernel using Syzkaller. This issue occurs in the
+memory allocation path within the sendmsg system call, specifically in
+the __alloc_pages function at mm/page_alloc.c:4545. The warning is
+triggered by a WARN_ON_ONCE assertion in the page allocator during an
+attempt to allocate memory via kmalloc from the socket layer.
 
-Changes in v3:
-- rebased on v6.14-rc1.
-- Take Reviewed-by: Andrew Davis. 
-- Link to v2: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v2-1-e8496099b034@bootlin.com
+This occurs when invoking sendmsg, which internally attempts to
+allocate memory for socket buffers via sock_kmalloc(net/core/sock.c).
+The allocation triggers a warning due to either an invalid allocation
+context (e.g., atomic context with GFP_KERNEL) or memory pressure
+conditions that violate allocation constraints.
 
-Changes in v2:
-- Remove all modifications done in the mux subsystem
-- Add a mux_mmio_set()
-- Read the status of muxes during suspend and store in the private memory
-  of the mux_chip.
-- Use this status to restore muxes during resume.
-- Link to v1: https://lore.kernel.org/r/20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com
----
- drivers/mux/mmio.c | 82 ++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 73 insertions(+), 9 deletions(-)
+This may be triggered by an unusual runtime state induced by the
+fuzzing program =E2=80=94 such as mounting a compressed ext4 filesystem via
+loop device, performing ptrace and socket operations, and using
+certain sysctl interfaces. This combination may have placed the system
+in a constrained memory context, causing __alloc_pages to emit a
+warning.
 
-diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
-index 9993ce38a818..e4ddb1e61923 100644
---- a/drivers/mux/mmio.c
-+++ b/drivers/mux/mmio.c
-@@ -15,11 +15,25 @@
- #include <linux/property.h>
- #include <linux/regmap.h>
- 
-+struct mux_mmio {
-+	struct regmap_field **fields;
-+	unsigned int *hardware_states;
-+};
-+
-+static int mux_mmio_get(struct mux_control *mux, int *state)
-+{
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-+	unsigned int index = mux_control_get_index(mux);
-+
-+	return regmap_field_read(mux_mmio->fields[index], state);
-+}
-+
- static int mux_mmio_set(struct mux_control *mux, int state)
- {
--	struct regmap_field **fields = mux_chip_priv(mux->chip);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux->chip);
-+	unsigned int index = mux_control_get_index(mux);
- 
--	return regmap_field_write(fields[mux_control_get_index(mux)], state);
-+	return regmap_field_write(mux_mmio->fields[index], state);
- }
- 
- static const struct mux_control_ops mux_mmio_ops = {
-@@ -43,8 +57,8 @@ static int mux_mmio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct regmap_field **fields;
- 	struct mux_chip *mux_chip;
-+	struct mux_mmio *mux_mmio;
- 	struct regmap *regmap;
- 	void __iomem *base;
- 	int num_fields;
-@@ -80,12 +94,20 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 	}
- 	num_fields = ret / 2;
- 
--	mux_chip = devm_mux_chip_alloc(dev, num_fields, num_fields *
--				       sizeof(*fields));
-+	mux_chip = devm_mux_chip_alloc(dev, num_fields, sizeof(struct mux_mmio));
- 	if (IS_ERR(mux_chip))
- 		return PTR_ERR(mux_chip);
- 
--	fields = mux_chip_priv(mux_chip);
-+	mux_mmio = mux_chip_priv(mux_chip);
-+
-+	mux_mmio->fields = devm_kmalloc(dev, num_fields * sizeof(*mux_mmio->fields), GFP_KERNEL);
-+	if (IS_ERR(mux_mmio->fields))
-+		return PTR_ERR(mux_mmio->fields);
-+
-+	mux_mmio->hardware_states = devm_kmalloc(dev, num_fields *
-+						 sizeof(*mux_mmio->hardware_states), GFP_KERNEL);
-+	if (IS_ERR(mux_mmio->hardware_states))
-+		return PTR_ERR(mux_mmio->hardware_states);
- 
- 	for (i = 0; i < num_fields; i++) {
- 		struct mux_control *mux = &mux_chip->mux[i];
-@@ -115,9 +137,9 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 			return -EINVAL;
- 		}
- 
--		fields[i] = devm_regmap_field_alloc(dev, regmap, field);
--		if (IS_ERR(fields[i])) {
--			ret = PTR_ERR(fields[i]);
-+		mux_mmio->fields[i] = devm_regmap_field_alloc(dev, regmap, field);
-+		if (IS_ERR(mux_mmio->fields[i])) {
-+			ret = PTR_ERR(mux_mmio->fields[i]);
- 			dev_err(dev, "bitfield %d: failed to allocate: %d\n",
- 				i, ret);
- 			return ret;
-@@ -141,13 +163,55 @@ static int mux_mmio_probe(struct platform_device *pdev)
- 
- 	mux_chip->ops = &mux_mmio_ops;
- 
-+	dev_set_drvdata(dev, mux_chip);
-+
- 	return devm_mux_chip_register(dev, mux_chip);
- }
- 
-+static int mux_mmio_suspend_noirq(struct device *dev)
-+{
-+	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-+	unsigned int state;
-+	int ret, i;
-+
-+	for (i = 0; i < mux_chip->controllers; i++) {
-+		ret = mux_mmio_get(&mux_chip->mux[i], &state);
-+		if (ret) {
-+			dev_err(dev, "control %u: error saving mux: %d\n", i, ret);
-+			return ret;
-+		}
-+
-+		mux_mmio->hardware_states[i] = state;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mux_mmio_resume_noirq(struct device *dev)
-+{
-+	struct mux_chip *mux_chip = dev_get_drvdata(dev);
-+	struct mux_mmio *mux_mmio = mux_chip_priv(mux_chip);
-+	int ret, i;
-+
-+	for (i = 0; i < mux_chip->controllers; i++) {
-+		ret = mux_mmio_set(&mux_chip->mux[i], mux_mmio->hardware_states[i]);
-+		if (ret) {
-+			dev_err(dev, "control %u: error restoring mux: %d\n", i, ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, mux_mmio_suspend_noirq, mux_mmio_resume_noirq);
-+
- static struct platform_driver mux_mmio_driver = {
- 	.driver = {
- 		.name = "mmio-mux",
- 		.of_match_table	= mux_mmio_dt_ids,
-+		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
- 	},
- 	.probe = mux_mmio_probe,
- };
+I recommend reviewing the use of kmalloc in sock_kmalloc, particularly
+the GFP flags used under socket send operations, and whether the call
+can occur in atomic or memory-constrained contexts. It may be
+necessary to guard such allocations or use GFP_ATOMIC where
+appropriate.
 
----
-base-commit: bab9b91113672440b9b634c1fadabfd017babe07
-change-id: 20240613-mux-mmio-resume-support-4f3b2a34a32a
+This can be reproduced on:
+
+HEAD commit:
+
+e8f897f4afef0031fe618a8e94127a0934896aba
+
+report: https://pastebin.com/raw/DJLgSX8N
+
+console output : https://pastebin.com/raw/DLirgK1i
+
+kernel config : https://pastebin.com/raw/aJ9rUnhG
+
+C reproducer : https://pastebin.com/raw/EXf8Gc4A
+
+Let me know if you need more details or testing.
 
 Best regards,
--- 
-Thomas Richard <thomas.richard@bootlin.com>
 
+Xianying
 
