@@ -1,75 +1,89 @@
-Return-Path: <linux-kernel+bounces-678541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BBA9AD2AB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 01:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3193BAD2ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 01:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479423AED96
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0C916F7AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 23:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234AF22FE10;
-	Mon,  9 Jun 2025 23:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05F522FE10;
+	Mon,  9 Jun 2025 23:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Vm0YQP52"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="K472MJD9"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E1121ADBA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 23:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2541DF25A;
+	Mon,  9 Jun 2025 23:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749513135; cv=none; b=OTOR/PEwOpTJnveh/e4YYJeWt9gNs9S3JObqC1R+Zgvub/sRsExIuSRxQgAVPSfngq6UnrS+s2jeKOWPBS4RltLzaFZAA+r5y/W2HKwkEA5Sdctn992Os2ffbZkdClk/QqvjmEeq8adA0R3LyU5QpkPAe/hFcuuggpUcC6Nc1lY=
+	t=1749513393; cv=none; b=A23n2MkTDnVBxRFO0V8WTy1p+Ub8xysxqyynTBHp+Ne9jKDlz3bST9DDlTr4rVRiK6aAhg6YZpQccON0h9A0dKpc7bjXhAPX2xARHaW4c2GP+A60NEk1myXSEBHu+4UY04XldGdfCC7NJTf/s7+dYyKm/A4Am/MKewbCfXhIjrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749513135; c=relaxed/simple;
-	bh=mEQDo6j5H8oPDQlg77ExKhoywTKS+C3u5qkNoQL4GOw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=H353c7Y92Vbfpok3JbiDk4p5YSFUgC0s5xg0/9kCK1/EtxSBwmlHz6GPi3i0aY8IykX3WxTGvZamxKFive2cJWYOCPhjiwqjdn7iaT1mEA49YyOO+fWU4xcP87ASIAKCobVQYLRedC3RRXAYq5jZE1ZU2GXCE90oAVVBiQHLpHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Vm0YQP52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE900C4CEEB;
-	Mon,  9 Jun 2025 23:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749513135;
-	bh=mEQDo6j5H8oPDQlg77ExKhoywTKS+C3u5qkNoQL4GOw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vm0YQP52BaTmcI7ScfKdnqnVriGiQ0Tuq2wIsqkE1WHaVP9BS8jzZJ1hwlqptBDxA
-	 ElAnZJT4po+DqwkuZLvzwe+QP6oV+GQ9fHMrFA1Sdagsa6yxXmUWdaCYaA9wyC9FSL
-	 aJZGme5/MVAa14X4MQ8BeBM3N5EdavQzOJLRJCqs=
-Date: Mon, 9 Jun 2025 16:52:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexander Graf <graf@amazon.com>
-Cc: <kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Pasha
- Tatashin <pasha.tatashin@soleen.com>, <nh-open-source@amazon.com>, Baoquan
- He <bhe@redhat.com>, Zhongkun He <hezhongkun.hzk@bytedance.com>
-Subject: Re: [PATCH v4] kexec: Enable CMA based contiguous allocation
-Message-Id: <20250609165214.784b399237d37b3e6fd97f4c@linux-foundation.org>
-In-Reply-To: <f609d5a0-99d5-4328-8a18-00f6a9e1a48c@amazon.com>
-References: <20250521152934.48841-1-graf@amazon.com>
-	<f609d5a0-99d5-4328-8a18-00f6a9e1a48c@amazon.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749513393; c=relaxed/simple;
+	bh=KSjEolPVe5dvnnsbVZqlsdVH46zQi+4/hbX6+f8Dy+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K52DaSEW0utQV2KOZ11kqOigrPcF5uimU5SxQD6C8rMEh+aBgEb0mSjdYonHSPQbzksyZDeF577xFeC28pMKH3Q0Ae3DufzWcZ/2pBlk3A5EKSWrQm4tdjPErWoPBQYElNYxnbfvq9KsrL4sS+odGwLy/ZYNFIVCYWcXlYIRims=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=K472MJD9; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bGTN83r7FzlgqyR;
+	Mon,  9 Jun 2025 23:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1749513383; x=1752105384; bh=KYCXaUY9ndNL8OgV5qFsqIP2
+	lhBk9b/78jW3INTU7XQ=; b=K472MJD9q6eQSV2yMg5Xkz/cxsGKzy9818VA8ASW
+	OPqsYuNIJrMvNZsufihh6HXt1+27cX8Jn7yFTyx/VekkaK3kIhjSNzcdDXUgImyT
+	y57foXKClO4b+6kbx/11N/63gf/ItxAIjlyjByzRoK+FhX4mAAw6+TzaB1nuTta3
+	JM011xICvezk77plh64/SLIUjsnXfrRWqUyTLj6Oe8vXWhpFPoKy+lygxtCRJ9Lz
+	YOB+JVNnq3dBJkTSduG1laiCT5Rn5+4dIxF5vnxtkxX5fFpMAlETtGx/UbBff6x9
+	bnD+yjVtOByPO9iLfBZe0ZLm8XZJWQ3ioW61iJQoIs3mIQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id lOStajVoL0oe; Mon,  9 Jun 2025 23:56:23 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bGTN32MHnzlgqyD;
+	Mon,  9 Jun 2025 23:56:18 +0000 (UTC)
+Message-ID: <7cfda015-75df-4ac9-897a-41cfc6338046@acm.org>
+Date: Mon, 9 Jun 2025 16:56:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: scsi_devinfo: remove redundant 'found'
+To: mrigendrachaubey <mrigendra.chaubey@gmail.com>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250531054638.46256-1-mrigendra.chaubey@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250531054638.46256-1-mrigendra.chaubey@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 9 Jun 2025 09:03:10 +0200 Alexander Graf <graf@amazon.com> wrote:
+On 5/30/25 10:46 PM, mrigendrachaubey wrote:
+> +	list_for_each_entry(devinfo_table, &scsi_dev_info_list, node) {
+> +		if (devinfo_table->key == key)
+> +			return devinfo_table;
+> +	}
 
-> > Signed-off-by: Alexander Graf <graf@amazon.com>
-> 
-> 
-> Ping? Not seeing this patch in Linus' master tree :)
-> 
+The braces around the loop body are not necessary. Please remove these.
 
-Sorry, I parked this because of messy cross-tree dependencies and by
-the time I could bring it back, it was too late to get decent -next
-testing.
+Thanks,
 
-And now arch/riscv/kernel/elf_kexec.c has disappeared.  So can you
-please redo and resend?
+Bart.
 
