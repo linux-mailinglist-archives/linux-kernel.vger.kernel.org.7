@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-677992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7596AD22C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2584DAD22E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710BB3B007E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3DB3B2D34
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED6420FABA;
-	Mon,  9 Jun 2025 15:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EEE1B6D06;
+	Mon,  9 Jun 2025 15:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lk7f97wK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FRjW8vF5"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382E0207DF7;
-	Mon,  9 Jun 2025 15:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AE4218AD4;
+	Mon,  9 Jun 2025 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749483840; cv=none; b=Jcd24fB8l+dLFhf6BaY6q7Z8b97Hgb0VSs62qrpbcfLC611N+UZ2dw+rAalIroqLi2Ubu3NxBEZqBdVLbyR7Keel7/juaD+7MKlsZtrsT/wFH9QwxHdT4DqFhS4MYwFlRKLkN942dFbdtczdpfRHmcdQYVa8iSWnSHq7raLbceU=
+	t=1749483934; cv=none; b=QwgmAN4zK2jkrfQ0kVmK9hi+jNJ0OR+h+kNFrv8BlHVvi3QiDHzWugcPUf1KoHXQqyq+d+VD6n7fUs90ElmGQz0vNn1nHphr5Ef/D6/UBLILR8Ha/CX72gJJO5AZhZuLfhjXmGmwpSV141Tc9EPJpWrk7NgCxm41F5kN6pLSBRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749483840; c=relaxed/simple;
-	bh=dUr9fbBYnK9U//jQ+GxgQ2ptP0b04ydOP1yvclyTkg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atvTVhsT9wnyuUNVYhH4axPF7ug/xrIZryM/yaiOPefRK1iIOKMzuRVXLd6RDWe+cf0X8UyFE8JhlzgSWD3hp2jBKWCf31s6jtMLJjscNDg6c7Djxn/Oop0kSUd76ZL8Sq2pitOCtzhUCkMCN+zGo5fD3ZXoU4UPe33wTtYXuGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lk7f97wK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C83AC4CEEB;
-	Mon,  9 Jun 2025 15:43:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749483840;
-	bh=dUr9fbBYnK9U//jQ+GxgQ2ptP0b04ydOP1yvclyTkg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lk7f97wKxu94/wlyuKasXM1hTREHKY/GkC5ULdl3pQ1Wvrco6Pj2hMrEmZXuJfoGy
-	 txUYIIRp7oWe339UGVzYmv/L8hkzWAo2Z9iKZN9pHaD6hSL7ud6E1PBgQby7DktJz3
-	 /ZT8pRi+rVcuvkoE7kmJr7Yy37fnunMrTkPXKADoKXH2JhI6k/AdtGz99iBMzFqHyz
-	 ss6TqnIK4eqPcnpcVciW8v4C9X1XfI/paZlmqaQzAU9SV0rJhJ0V36KHmZAxA3wHkm
-	 HNGz/oAbjfoh1piQ8LTsWBXw6QNPS1yAMaPHo7D4/A9qcnMmwFsJnu8VyZp3ttT7O5
-	 m9eRW1FEtcQ2A==
-Date: Mon, 9 Jun 2025 16:43:55 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Willy Tarreau <w@1wt.eu>, Christian Brauner <brauner@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] tools/nolibc: Provide vfork()
-Message-ID: <4a4ef323-25e9-4bb5-bde4-9ad740693246@sirena.org.uk>
-References: <20250609-arm64-gcs-vfork-exit-v1-0-baad0f085747@kernel.org>
- <20250609-arm64-gcs-vfork-exit-v1-1-baad0f085747@kernel.org>
- <df6f5620-5986-4080-bb00-c7bee856bf66@t-8ch.de>
+	s=arc-20240116; t=1749483934; c=relaxed/simple;
+	bh=xdCDFsY7fHfgyuBIW40huzR//1ytnbFa21uQW+dNB+4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FcBTvdIn4Rs0HikvZBgv7gc5Q4aP6RloyWNvS4yK/mqkyoI35T+U7hrxYpTCp71cKrPwxCLjAGb36b7U/QOdvkBbeqPq1FpJ3NpuDvIS54HCkYDDGsUcDLSdueL0lGPL5xl6BmXsBcOjyxO+SmxjUkzu0Eb49Cu9YmCTYZczMCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FRjW8vF5; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A3CC220597;
+	Mon,  9 Jun 2025 15:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1749483930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v1FemFSObCbEVYAn/hTqf4EyYMN6hadEZQLG7F20BzM=;
+	b=FRjW8vF5AcIIzbCC7XRcdDpcJFUJm6p8SmaGyUDwjPoKk8ljtvfddcvcziEQ3xzOz8wfVf
+	UuEJ3vqldWRWuKmFU4h8NQZ+la6Csift1rnodqlVEnEfluKM9IQ5ooAmDL9LPDlQNv4ml8
+	+NXMb1vb8RTEmPy4RmKJQ/T6Gz9Gs8HUDr+HV1w/26OO06DRyxc+ic/15YdVc4kEEvJlFk
+	NyfSh+JkJGRZxembU5VoCXv7eaj7sXXzs5x32JZHZxjEuMAd8av8/IhFAFoEykc4n+oWGp
+	Fje5zvLMA54TYuTF3laVhGXqN/W48f76HuxsVGM3WBKMkNJbcHakvndiEzHBJQ==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Date: Mon, 09 Jun 2025 17:43:55 +0200
+Subject: [PATCH v2 5/5] arm: omap2plus_defconfig: Enable TPS65219 regulator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="W3PoFoJBg17Z0HiP"
-Content-Disposition: inline
-In-Reply-To: <df6f5620-5986-4080-bb00-c7bee856bf66@t-8ch.de>
-X-Cookie: Restaurant package, not for resale.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250609-bbg-v2-5-5278026b7498@bootlin.com>
+References: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
+In-Reply-To: <20250609-bbg-v2-0-5278026b7498@bootlin.com>
+To: Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: Bajjuri Praneeth <praneeth@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-omap@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugdelgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgfdvgfektefgfefggeekudfggffhtdfffedtueetheejtddvledvvdelhedtveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopehrohhgvghrqheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehlihhnuhigqdhomhgrphesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrghrohdrkhhoshhkihhnvghnsehikhhirdhfihdprhgtphhtthhop
+ ehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: kory.maincent@bootlin.com
 
+Enable the TPS65219 regulator in the defconfig, as the TPS65214
+variant is used by the newly introduced BeagleBoard Green Eco board.
 
---W3PoFoJBg17Z0HiP
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+ arch/arm/configs/omap2plus_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On Mon, Jun 09, 2025 at 05:34:33PM +0200, Thomas Wei=DFschuh wrote:
-> On 2025-06-09 16:08:56+0100, Mark Brown wrote:
+diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+index 9f9780c8e62a..2ad669f7b202 100644
+--- a/arch/arm/configs/omap2plus_defconfig
++++ b/arch/arm/configs/omap2plus_defconfig
+@@ -385,6 +385,7 @@ CONFIG_TOUCHSCREEN_TSC2007=m
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_CPCAP_PWRBUTTON=m
+ CONFIG_INPUT_TPS65218_PWRBUTTON=m
++CONFIG_INPUT_TPS65219_PWRBUTTON=m
+ CONFIG_INPUT_TWL4030_PWRBUTTON=m
+ CONFIG_INPUT_UINPUT=m
+ CONFIG_INPUT_PALMAS_PWRBUTTON=m
+@@ -454,6 +455,7 @@ CONFIG_MFD_TPS65217=y
+ CONFIG_MFD_TI_LP873X=y
+ CONFIG_MFD_TI_LP87565=y
+ CONFIG_MFD_TPS65218=y
++CONFIG_MFD_TPS65219=y
+ CONFIG_MFD_TPS65910=y
+ CONFIG_TWL6040_CORE=y
+ CONFIG_REGULATOR_CPCAP=y
+@@ -470,6 +472,7 @@ CONFIG_REGULATOR_TPS65023=y
+ CONFIG_REGULATOR_TPS6507X=y
+ CONFIG_REGULATOR_TPS65217=y
+ CONFIG_REGULATOR_TPS65218=y
++CONFIG_REGULATOR_TPS65219=y
+ CONFIG_REGULATOR_TPS65910=y
+ CONFIG_REGULATOR_TWL4030=y
+ CONFIG_RC_CORE=m
 
-> > +#ifndef sys_vfork
+-- 
+2.43.0
 
-> This ifndef is not necessary here.
-> No architecture has a special version.
-
-Ah, I was adding it defensively in case it was needed in future.
-
-> > +static __attribute__((unused))
-> > +pid_t sys_vfork(void)
-> > +{
-> > +#ifdef __NR_vfork
-
-> For consistency:
-> #if defined(__NR_vfork)
-
-Are you sure?  I'm seeing an awful lot of #ifdef __NR_foo instances in
-sys.h - it looks like the idiom is to use that unless it either needs an
-additional condition (with || or &&) or is an elif.
-
---W3PoFoJBg17Z0HiP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhHAToACgkQJNaLcl1U
-h9Cb1gf/aGZPrO5RgRNjsY5LMdV3U7tfXkLGGF5tbdPIvxxy9J+B+H8Lr/OKF+QA
-juIPb1wUYZ0eojfiI9JfA+jSuNBpnYxdjMBQkWxDeRHj+ilkNbA6jCDUQjCQJqxq
-r+rBnVw0PxbXBqRZYuMISUZo3eiaK3sTeeD+nVe6UmUiOGFHnIqnJP0/iiMUobtw
-exIZ4tQXGAttFhHv0yZhlkZ87miA3dA2amH63gC3ekoJUZXjIFx5bs/30c6oAMJD
-NhicK4OfDsRIZ7d4OxKmw5cn40qXvaWwKcWg2ZvEov7suuLiyl4pwY8hP9kIYs4G
-eSXUXn5w6QbJKzZYdkpmeaM07D5D7A==
-=un9N
------END PGP SIGNATURE-----
-
---W3PoFoJBg17Z0HiP--
 
