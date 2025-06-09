@@ -1,169 +1,81 @@
-Return-Path: <linux-kernel+bounces-678467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FB2AD296E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:37:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F6DAD2975
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F50616F0B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B4623A2F18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 22:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309A122127D;
-	Mon,  9 Jun 2025 22:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C75225390;
+	Mon,  9 Jun 2025 22:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WrJD5m+i"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxifVN7F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C243597B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 22:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E951FECC3;
+	Mon,  9 Jun 2025 22:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749508651; cv=none; b=iY5RH303WuttrH9pXO9Uq1+IrOQJgv9t7W/CIhnvjsp/fYxzyeqCbBz6NUkrxoaSx7gV6IBOCi0wK3MMD6nQFgSOC4qyLURrwismaNdwoH6xDoIXDfXgqZrqWWtxTyEG/xpANdDhNoBUu0lBoDIhDM9/eAr9dKh4zhhPDJrPmUY=
+	t=1749508699; cv=none; b=Jva16E6POSNdyIEzazbxinSgejY1iaUkUI3II0hAQdb8VNt2lZZmwK8KJoaM2CaTjefStdMNQ/e090Mlk/gbMze923D+uCG0rLvmcGXjwvTXg6L/O2kjWkRNS+tTssuSdAa6wqWKw8x4JTNDZsokKS1m/RpekCdXFgHk6gObziQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749508651; c=relaxed/simple;
-	bh=CVcNhkCzVJXNxsfjcFB0uximKknWhCLAWZi2qsiuWmE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lbTnPnQu+Y1UnUbkbeIPhRMNDP9Gdj2GrAOTmZaUzni3AZJbaqExnFEEkUCFpCxYB8r7z9bLyF8RENLTtyj/rTzsXK9an0big2W7lPeDl5DdGVz3vyiIq/1fsursRdxXft+AVkAAo/nVHhZp1jmDQfqI3kqB6O41yXn4qWjRiag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WrJD5m+i; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1749508640; x=1749767840;
-	bh=ePwAWTLBP0goybEt9LUIGj7rug40FGOIf/8aHv/KjBQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=WrJD5m+ipdpSFadzxKB0513AbmaX9XQq4ZXwkX0b9R5PNLMlLgSklRsCqnqGmCz+B
-	 l/FvELmUNanPkE9pn6163SFxF58VU5ztnU1KpG0xLGC3385+Q7m9SH5zr7D/HFHHCc
-	 Hr99Mx7Xm01Q8YuABJDhPPpeg/4FrmCcSFX2sDdc9K7VEHcWkhXhZv/pqjtN9M3QqL
-	 k2kvPFMdeb8ZTlmssngBovN8oQ11PhLI2Ibe1GUtTRmXzHwaY5+pbW77WPMvsnupJ2
-	 4udTcopn6ZWkYH0TrRXqiZb55EFInMJVJOkBtEGvuRyjE1en5IXcVW4J0bR2hMawtS
-	 QTjYTQ9YtZUXA==
-Date: Mon, 09 Jun 2025 22:37:13 +0000
-To: Diederik de Haas <didi.debian@cknow.org>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, Dang Huynh <danct12@riseup.net>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH drm-misc-next] rockchip/drm: vop2: don't check color_mgmt_changed in atomic_enable
-Message-ID: <4z0y_F1ZT_xfO0-DwU-D5NwL3t3wHuGmivOB3QFjDsn0hzpz_hOeU63pRVBIgSU1j89jmYPq-TJHPqMCj3fAygwwX6IaPoVsqKqVi2jxmCc=@proton.me>
-In-Reply-To: <DAH3S8O66J47.3NT18EJCXWKL9@cknow.org>
-References: <20241206192013.342692-3-pZ010001011111@proton.me> <DAEVDSTMWI1E.J454VZN0R9MA@cknow.org> <mArHDRo5bhIAjG8sDOR-kM7DsVdbXxxcC8hfuEEPfUWIdMwNnSUy8ZFoLis66DFSuIEq8TrnAxUGkyo5IUTGw3AG4k3vuVVz0fsoI27BAms=@proton.me> <DAH3S8O66J47.3NT18EJCXWKL9@cknow.org>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 21961013ddd1adef816f64a8c4bc9f75454c6cf5
+	s=arc-20240116; t=1749508699; c=relaxed/simple;
+	bh=JBXmNJeT/xZX3RurxwwkpLVdwAYpNQhCQiA1mKMKOUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kFeY6yxTfGIPhnPYRvbD6kQjxqhmYTRhvUY3Pv8sT9Kbwta4DBrk3f2B5F/nPX6RG+/43XQgZtuXUTq+24YmeEdJpoxNQ9uBxZKi8bnSBW2bVKeRgZVwo378u7HtbdWHPT5nKSj3kKSNkNJ7fmP96SNdtTmDddZuHrVGaLmqT0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxifVN7F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19131C4CEEB;
+	Mon,  9 Jun 2025 22:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749508699;
+	bh=JBXmNJeT/xZX3RurxwwkpLVdwAYpNQhCQiA1mKMKOUs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AxifVN7FeC65QCVf7TUYkIjnE/rIZ52inY/Wee1YAJ7ODWu66fPTScZ/3VoyrdBMm
+	 Upw846Twc/EGGPQSKiwLiME9e2F7IaHSVtpwNlvIAhOSgNfk+NTI7xtpHmJzuolqC8
+	 HVkTxCvhR5A5wEh3eoMUqg0zNDUx7L3L3NDeuLfFLzCRpGTsgek0eGEUJ9WZewwxF4
+	 xlbzpl6iNxR3OcduOF+Wqzotm6AyXM3v1OEg/MPHN6FSvPedw2Y1527H4G0VS+r3W1
+	 VUJNtPtDPN1hRI8W+MyuR5AFTmAoQ9ybpBhcd1EBdYrjaxXnrajNr8m6kyaQY9hv44
+	 XNHBAk/TtwWwg==
+Date: Mon, 9 Jun 2025 15:38:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, skalluru@marvell.com, manishc@marvell.com,
+ andrew+netdev@lunn.ch, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, ajit.khaparde@broadcom.com,
+ sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
+ anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+ tariqt@nvidia.com, saeedm@nvidia.com, louis.peens@corigine.com,
+ shshaikh@marvell.com, GR-Linux-NIC-Dev@marvell.com, ecree.xilinx@gmail.com,
+ horms@kernel.org, dsahern@kernel.org, shuah@kernel.org, mheib@redhat.com,
+ ruanjinjie@huawei.com, linux-kernel@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+ oss-drivers@corigine.com, linux-net-drivers@amd.com,
+ linux-kselftest@vger.kernel.org, leon@kernel.org
+Subject: Re: [PATCH net-next v2 0/4] udp_tunnel: remove rtnl_lock dependency
+Message-ID: <20250609153817.14d7e762@kernel.org>
+In-Reply-To: <20250609162541.1230022-1-stfomichev@gmail.com>
+References: <20250609162541.1230022-1-stfomichev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Diederik, sorry for late response
+On Mon,  9 Jun 2025 09:25:37 -0700 Stanislav Fomichev wrote:
+> Recently bnxt had to grow back a bunch of rtnl dependencies because
+> of udp_tunnel's infra. Add separate (global) mutext to protect
+> udp_tunnel state.
 
-> Interesting that it also happened with drm=3Dy.
-
-I actually checked now and i don't have the issue with drm=3Dy, sorry for=
-=20
-misinforming you all, hopefully no one's time was wasted.
-
-> As you're more knowledgeable then I am with this, maybe look through
-> https://lists.sr.ht/~diederik/pine64-discuss/D9AM2OOLREO0.2JMAI42J06TW0@c=
-know.org
->=20
-> to see if you may spot something relevant?
-
-Heh, I'm not that knowledgeable but I will look through it.
-
-> > happened twice and at short interval and since this patch allows for ga=
-mma
-> > LUT update regardless of color_mgmt_changed state this makes DSP CTRL G=
-AMMA
-> > LUT EN bit to be unset twice too. It seems that VOP does not like it. I
->=20
->=20
-> Happy to see you found the cause :-)
-> Do you happen to know why it was unset twice? That sounds suboptimal.
-
-It is due to DRM modeset which can happens when CRTC (display) config chang=
-es=20
-"significantly". AFAIK modeset happens def. when you go out of suspend or
-display timings change. I might have been fooled by serial console last tim=
-e
-as it does not appear to happen twice in short interval when i review the=
-=20
-journal entries.
-
-> But (IIUC) setting a bit to a value it already has causing issues,
-> sounds surprising as well.
-
-Depends on what hardware does, when you write to a register it might cause
-many other things to happen and seems like for vop2 it messes something up.
-
-I made a second patch so that the first write is not permitted but all=20
-subsequent are permitted (regardless of lut en state) - issue disappeared=
-=20
-too. So it might be that very first write to dsp lut disable happens too=20
-fast (in relation to something else)?. It is not intuitive because when drm=
- is
-a module it happens usually like ~second later.
-
-part of the log with drm=3Dy
-```
-[    6.543099] rockchip-drm display-subsystem: [drm] GAMMA LUT DISABLE
-```
-
-part of the log with drm=3Dm
-```
-[    7.944120] rockchip-drm display-subsystem: [drm] GAMMA LUT DISABLE
-```
-
-> > patched vop2_vp_dsp_lut_disable function so that dsp_ctrl is set only i=
-f
-> > GAMMA LUT EN bit is set. I checked that this also does not break the ga=
-mma
-> > lut functionality with emphasis on out-of/into suspend behavior.
-> >=20
-> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu=
-/drm/rockchip/rockchip_drm_vop2.c
-> > index d0f5fea15e21..7ddf311b38c6 100644
-> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> > @@ -897,6 +897,9 @@ static void vop2_vp_dsp_lut_disable(struct vop2_vid=
-eo_port *vp)
-> > {
-> > u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-> >=20
-> > + if ((dsp_ctrl & RK3568_VP_DSP_CTRL__DSP_LUT_EN) =3D=3D 0)
-> > + return;
-> > +
-> > dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-> > vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-> > }
->=20
->=20
-> I built a kernel with 6.14-rc1 + this patch and can confirm the screen
-> has output again :-)
-
-cool :)
-=20
-> > I will wait with sending a patch because maybe Andy has something to ad=
-d
-> > to this.
->=20
->=20
-> Sounds like a plan. It could be that this issue surfaced an underlaying
-> issue and if so, fixing that would be even better.
-
-When i have time this week I will check on what version of the kernel i=20
-tested gamma lut when i sent the patches and test there.
-
-> Thanks a lot!
->=20
-
-Thank _you_ for taking your time to do all the bisecting.
-
-Best regards, Piotr Zalewski
+Appears to break the selftest, unfortunately:
+https://netdev.bots.linux.dev/contest.html?test=udp-tunnel-nic-sh&branch=net-next-2025-06-09--21-00
+-- 
+pw-bot: cr
 
