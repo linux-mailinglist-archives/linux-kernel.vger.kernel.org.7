@@ -1,142 +1,168 @@
-Return-Path: <linux-kernel+bounces-677267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E78AD1886
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921D0AD1899
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 08:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFFD161270
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098DB3A54B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95020254AF4;
-	Mon,  9 Jun 2025 06:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAB2254AF4;
+	Mon,  9 Jun 2025 06:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HkI0tmDf"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dQq1rv2z"
+Received: from out199-1.us.a.mail.aliyun.com (out199-1.us.a.mail.aliyun.com [47.90.199.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D49FC2EF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 06:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD12F610D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 06:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749449559; cv=none; b=BZiFbVckd5jAO5yLWytg4mxzq7X0BeYRmw7/Ob0KTi0SNu1+KOb6g/ib5Y5kpRzwWz9kqzkesBpX7NZKQLM33IQgVy3gUnnoLrAhLfEBjgdhaa+Ci129jStalpWitHGnB9fN21g7c05gQTxd1uEBwaB/tJep0QWJgAVu1tAmXKU=
+	t=1749450835; cv=none; b=i4dIai3R0czdFGQO9I65Seu1FAgDKxCCeceboLi+jdem85nHRIiOgXy+G89PR6xUupX+6IR6hSfFnGvg0c+JwdVGg+GZ0d0mz9YLVlozccqO0slBUn4NLQ6xDoljwdF61Zez419zGOKi63lpmKlhb0RDYwfysBLfIHVn8/pKSKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749449559; c=relaxed/simple;
-	bh=hC7sYjRTRprvhqWeyddKYr1R75JwHa16GRXz1WGFPCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MVjjZM3861NK1SRAya7+QU2vJ2BLQedlzDLrwAY7G6Snp8nv/ekKcIiYqVmau0G8WivJi7EllW1q8pmsM9bBTHp27ZtdjsipImLYVu8CWG1iazAVkeAGst1bDUzZgGH4nTDa18bXBSCjfD/lJ+/gnQGnUUf9BRUyBqIUMp5mIpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HkI0tmDf; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5532f9ac219so4629321e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 23:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749449555; x=1750054355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QrTT2Ug0zbdaKyRxl6jBbSEjhgl8N2Elyqr8mo3YZs8=;
-        b=HkI0tmDf1zaAwVk2tV5DEWzZwI0X8AHf6QTikEWF+Im4kHdBPc0S7MghSGPMR8xoZF
-         62OQb+BcXlLmIMgPqGyNczQPs+BBLbWqJagIeECqHHYLiSKir7rCD/eg6vcAL3JoGRXw
-         cWhlupyCD31F5fNgfsTorQOdKg3nA9TkDfDht6YfaYVP8OYkMQmy8uaHoxONMQuMTZvf
-         X9ypvYIF4TuizkElbgOKINgqv8aNoYfcTRqgkCHzsvKknEuSGqfp641F9E09Lt+FHRzf
-         2DPKPcqU44NOaX/eyg+dLZiX+9+U2MDKiudcdxG4T8RRsfWdR8P6LYhWe/FXvSohtqCQ
-         q33Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749449555; x=1750054355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QrTT2Ug0zbdaKyRxl6jBbSEjhgl8N2Elyqr8mo3YZs8=;
-        b=ZFIlMq8nPSTgAUu/KjY8JRO85wQbvU+aR2b8KvKEqW3njEY1uQgkPJ/+B2wxBnNcaO
-         UHmby2/qAoXw5Fgbf2F11C0YAVDz2YFPAhuKEzMuPlHvJLVGKSRzBEdGyxVWCH7qiRQA
-         JxD6smDQ8iTR6ZQ795dPeTRSUsOHn0jjbB4M5LYig4Uc7pmwbgShOs7I5vhckHdt4RHF
-         Zs0+rqvPYnY1uiDC7sux7aRRxAaBA4+EsiZ7pX+j+rbpTT99GGKunICK/f/yevj/UIV1
-         z2uVw6+y/PkNKyhceU6UPFYeS7iJZih3lQ3u34b2YeH24AQvF4XSB6YW6XiBTPic6IYd
-         eNyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWe3WMqsp/7I/6ekjfJokCpp+aBr7C1ymhscO/nW+bmCI6RXZAUV58a1qnswu2l97/Xm8SB7bg1cYqa5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww30SMG3weAZSP0JUukOTTo5iHC+18vMpVH6oT73eqUa7Cy6yJ
-	EryaxKEQH5cpVghgWXMRkATymRn2aKH+JI4YESoLMdR14P36Joc8s5LQ0+nSUZRDGMwdNU0kcqR
-	xMlddcnAtsqZ9PYiRsf5tTjw9t4bifxruycrnAdLoCA==
-X-Gm-Gg: ASbGnctcZkFq32oQw+2yFXvDKXZocVQt2N7MwAiO/mNsVSD+H5t6eZkynksmpbaI76M
-	kudTrxDxHaJtl6VKmMOQyGInA+nI931jsHj+gN1CDlOhBENCSQFhKb7bzk7knAPdnwDBaQ7dt/H
-	y8Uqo9Mgd3sHNS62f/Z79u+1znZmPqpUFgxg==
-X-Google-Smtp-Source: AGHT+IEECTtnbfpfpm1PCJ+0qNEPhUm+SPgQTf/zlmkXsjTkZrawcTxrDJFp5prLSUOiP9b4jKSeL0mzxrsjJjV1G9g=
-X-Received: by 2002:a05:6512:3e14:b0:553:2633:8a64 with SMTP id
- 2adb3069b0e04-55366bee0a6mr3224048e87.23.1749449555474; Sun, 08 Jun 2025
- 23:12:35 -0700 (PDT)
+	s=arc-20240116; t=1749450835; c=relaxed/simple;
+	bh=95XhVdvdvwfnK3Q3EIhyop4BB3CMyZHeuS3pt+zfn2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3kgyGcdDtc6AbW1YkguBOUcu7n0YfTyDrxUh5tg/vAuT0CfdLRDo1QDhjNvHZc77t8p2BHZGraYRFwMlX2DWCr3hcxOHDPE0tiJ09P8vEHk0tx+4PnbUKOD+CwnvzqDUmg4Waq2NGA8OywoiQ3/LjcetBiPU+MFMca5noNucMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dQq1rv2z; arc=none smtp.client-ip=47.90.199.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749450820; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=zQzeG0vNP0zhacH+0iF/2q6/uDdbQXYDFVGJBkyJQos=;
+	b=dQq1rv2zXCYm+z9c5PSjvCqQARmSlA0lBh4oko8743GUCZCORER9+0s9vrIYAA2GQDJeTuhTGFIO/WgQnTulGFGcpG/EQ+Tf3mxmAkKFOjs9TwTO6pRdjAcItwAbXHkgmPr3QBpmWpIx5QeppDjIglEgknaNB2qYUjWrcP2lSnM=
+Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdLPzMy_1749449887 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Jun 2025 14:18:08 +0800
+Message-ID: <43872045-518a-4690-acf2-a0eb4362ca1c@linux.alibaba.com>
+Date: Mon, 9 Jun 2025 14:18:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525084710.1665648-1-apatel@ventanamicro.com>
- <20250525084710.1665648-5-apatel@ventanamicro.com> <aDV8E0TF_cYuoQ4A@smile.fi.intel.com>
-In-Reply-To: <aDV8E0TF_cYuoQ4A@smile.fi.intel.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 9 Jun 2025 11:42:23 +0530
-X-Gm-Features: AX0GCFvPnCJfNRo5uBNaPo8NZXrvaeCQeQ6i_dUaHiR22KPdWkZ9co7wy5KHhiQ
-Message-ID: <CAK9=C2XJ7+homTqdiYvYRv6J+4-gEM3jLmi3EpMDn=wZjkMOqA@mail.gmail.com>
-Subject: Re: [PATCH v4 04/23] RISC-V: Add defines for the SBI message proxy extension
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
+ <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
+ <998a069c-9be5-4a10-888c-ba8269eaa333@lucifer.local>
+ <381ca19f-4b62-41b8-9883-f233b50d6521@lucifer.local>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <381ca19f-4b62-41b8-9883-f233b50d6521@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 27, 2025 at 2:17=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Sun, May 25, 2025 at 02:16:51PM +0530, Anup Patel wrote:
-> > Add defines for the new SBI message proxy extension which is part
-> > of the SBI v3.0 specification.
->
-> ...
->
-> > +/** RPMI message protocol specific MPXY attributes */
->
-> If you do a kernel-doc, do it properly.
 
-Okay, I will update.
 
->
-> > +enum sbi_mpxy_rpmi_attribute_id {
-> > +     SBI_MPXY_RPMI_ATTR_SERVICEGROUP_ID =3D SBI_MPXY_ATTR_MSGPROTO_ATT=
-R_START,
-> > +     SBI_MPXY_RPMI_ATTR_SERVICEGROUP_VERSION,
->
-> > +     SBI_MPXY_RPMI_ATTR_MAX_ID,
->
-> Remove trailing comma for the terminator.
+On 2025/6/7 20:21, Lorenzo Stoakes wrote:
+> A couple follow up points that occurred to me:
+> 
+> On Sat, Jun 07, 2025 at 12:55:19PM +0100, Lorenzo Stoakes wrote:
+>> Not related to your patch at all, but man this whole thing (thp allowed orders)
+>> needs significant improvement, it seems always perversely complicated for a
+>> relatively simple operation.
+>>
+>> Overall I LOVE what you're doing here, but I feel we can clarify things a
+>> little while we're at it to make it clear exactly what we're doing.
+>>
+>> This is a very important change so forgive my fiddling about here but I'm
+>> hoping we can take the opportunity to make things a little simpler!
+>>
+>> On Thu, Jun 05, 2025 at 04:00:58PM +0800, Baolin Wang wrote:
+>>> The MADV_COLLAPSE will ignore the system-wide Anon THP sysfs settings, which
+>>> means that even though we have disabled the Anon THP configuration, MADV_COLLAPSE
+>>> will still attempt to collapse into a Anon THP. This violates the rule we have
+>>> agreed upon: never means never.
+>>>
+>>> Another rule for madvise, referring to David's suggestion: “allowing for collapsing
+>>> in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+>>
+>> I'm generally not sure it's worth talking only about MADV_COLLAPSE here when
+>> you're changing what THP is permitted across the board, I may have missed some
+>> discussion and forgive me if so, but what is special about MADV_COLLAPSE's use
+>> of thp_vma_allowable_orders() that makes it ignore 'never's moreso than other
+>> users?
+> 
+> I'd mention that MADV_COLLAPSE is special because of not specifying
+> TVA_ENFORCE_SYSFS but you are making this change across the board for all
+> callers who do not specify this.
 
-Okay, I will update.
+Currently, besides MADV_COLLAPSE not setting TVA_ENFORCE_SYSFS, there is 
+only one other instance where TVA_ENFORCE_SYSFS is not set, which is in 
+the collapse_pte_mapped_thp() function, but I believe this is reasonable 
+from the comments:
 
->
-> > +};
-> > +
-> > +/* Encoding of MSG_PROT_VER attribute */
-> > +#define SBI_MPXY_MSG_PROT_VER_MAJOR(__ver)   (((__ver) >> 16) & 0xffff=
-)
-> > +#define SBI_MPXY_MSG_PROT_VER_MINOR(__ver)   ((__ver) & 0xffff)
->
-> This can utilise GENAMSK() or even upper_16_bits()/lower_16_bits().
+         /*
+          * If we are here, we've succeeded in replacing all the native 
+pages
+          * in the page cache with a single hugepage. If a mm were to 
+fault-in
+          * this memory (mapped by a suitably aligned VMA), we'd get the 
+hugepage
+          * and map it by a PMD, regardless of sysfs THP settings. As 
+such, let's
+          * analogously elide sysfs THP settings here.
+          */
+         if (!thp_vma_allowable_order(vma, vma->vm_flags, 0, PMD_ORDER))
+                 return SCAN_VMA_CHECK;
 
-Okay, I will update.
+> 
+> I'd also CLEARLY mention that you handle David's request re: madvise by
+> restricting yourself to checking only for NEVER and retaining the existing logic
+> of not enforcing sysfs settings when TVA_ENFORCE_SYSFS, which includes not
+> checking the VMA for VM_HUGEPAGE if the madvise mode is enabled.
 
-Regards,
-Anup
+Sure.
+
+> 
+> (i.e. addressing David's request).
+> 
+> [snip]
+> 
+>> I feel this is compressing a lot of logic in a way that took me several
+>> readings to understand (hey I might not be the smartest cookie in the jar,
+>> but we need to account for all levels of kernel developer ;)
+>>
+>> I feel like we can make things a lot clearer here by separating out with a
+>> helper function (means we can drop some indentation too), and also take
+>> advantage of the fact that, if orders == 0, __thp_vma_allowable_orders()
+>> exits with 0 early so no need for us to do so ourselves:
+>>
+>> /* Strictly mask requested anonymous orders according to sysfs settings. */
+>> static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
+>> 		unsigned long tva_flags, unsigned long orders)
+>> {
+>> 	unsigned long always = READ_ONCE(huge_anon_orders_always);
+>> 	unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+>> 	unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);;
+>> 	bool inherit_enabled = hugepage_global_enabled();
+>> 	bool has_madvise =  vm_flags & VM_HUGEPAGE;
+>> 	unsigned long mask = always | madvise;
+>>
+>> 	mask = always | madvise;
+>> 	if (inherit_enabled)
+>> 		mask |= inherit;
+>>
+>> 	/* All set to/inherit NEVER - never means never globally, abort. */
+>> 	if (!(mask & orders))
+>> 		return 0;
+>>
+>> 	/* Otherwise, we only enforce sysfs settings if asked. */
+> 
+> Perhaps worth adding a comment here noting that, if the user sets a sysfs mode
+> of madvise and if TVA_ENFORCE_SYSFS is not set, we don't bother checking whether
+> the VMA has VM_HUGEPAGE set.
+
+Sure, will do. Thanks for reviewing.
 
