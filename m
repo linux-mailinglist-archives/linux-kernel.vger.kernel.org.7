@@ -1,225 +1,75 @@
-Return-Path: <linux-kernel+bounces-678199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE24AAD258D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:25:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694C4AD2593
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 20:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A538D16DFBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A768D189170F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9117421FF55;
-	Mon,  9 Jun 2025 18:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A5321CC47;
+	Mon,  9 Jun 2025 18:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fMl/ATCo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8X0ydzm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FCC21D581
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 18:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9525E21B9CF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 18:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749493491; cv=none; b=lX/XmT0+Z4UrP19Ipp6hgU1DXFw+rn9mCNXGchKUKpnVDyblmCDjiPdDINYyM+iPTqzlnTdskX0nJNAQ/PnZ1C6leQnCETs/28v5UGy3D3dqOjYDlJnzVfQLMcIcMGAh+0ChtnJiY9TXRG/FOHIHsY+LsgTNnYFeCTFHbKx1cWE=
+	t=1749493570; cv=none; b=e+6uIkOByUEZxkJpKAGL8TCrQUNbEX0+CqC0o/xDfWNu/4Z8NRTw46jZGPBFlnlsxeVTM/qjFBSTcy2sUcpdYqjbIsWELQhT0X57eh+6a7vjFFrRxqM3e3GkR6uJzuXSRSCrYJBcKZF29CIzWmjt+r7a3lG9jgsA0m+qgzo3dD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749493491; c=relaxed/simple;
-	bh=2Yz04CrS4eDfH+osQ1AYNYmCh+wB/WulKnvayV3buXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GGmA8waGGx4O7vD8Zlp32npfLuZwVQIov5sjhs1X0F86WO1M92MJaZmQ1Z6zh5LBxWoT94PNeZIyX7ps0i2kLdXEvLgAnrSkc7Ey/Y9wKwOpO/CB/eF2qFhhGhDDXZGsSQ5XymEqEuQCa3Y/JCP8A/l0RKOXfS4Uma4JHyYFe8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fMl/ATCo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5599WeH7002402
-	for <linux-kernel@vger.kernel.org>; Mon, 9 Jun 2025 18:24:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ecf/gs5q5Dw
-	zFWtmUtIrh+h+5TTwNY0t6ORkyO3PRW0=; b=fMl/ATCopv81RuOcttIfLT3RGCV
-	f2aFpC33dDon0kLyS+40JQ4W5Pm2bdSaCyaSfeO9ej6Q5a/5VZIxHJuEVE2pZAHx
-	7fOEASnEIUe4EYRLaPVXWGZB2Nauq9gBZBfCoVlbceuikUOLy6EkajeRQmeXwXue
-	qLnoGqBfkKECKtUtakL//L6/ak2etxDOwEPtxJhUDc2Poi9/Y6CvkSk60tq0rrnx
-	c3bJ9JoRKMgsUss2RGWYKm/eLDxF6B3PoeJg1owl1ALvplNrQXnYIMmXLRlR90JQ
-	ZDYoGJVWI6Tzvp23vkPEXxQpD0UJzxEs3HlxlTZyWKH91YENvDWwykoKyDw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn66t7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 18:24:47 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so6533538a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 11:24:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749493486; x=1750098286;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ecf/gs5q5DwzFWtmUtIrh+h+5TTwNY0t6ORkyO3PRW0=;
-        b=Ec7sF1/pRGdLx38+iubmCdLDaYi0PE0aDN9P8APEUehhw7LaZdP5Fbtfyq2KT7jJcy
-         DgGfukM8T1LpHczH/mIedR4jXRWnhVA3uXMiW7ANyNFM+tWs+aWuePBDCNZcm7/+ZiHa
-         hi4NNtWoEB3hdBSm+5EKpICzyJrsfsETq6U2vsRVCyhCYVHixFP7HuZ57y1U2Xr+zBiz
-         Ig58QdRxmwkNZCRwotIfJNPH23dtqhHGmJG1c/t0HXnQ9pOXp6HVhweK+/Z3tgfmEKJX
-         dx7+WR+dkyZpTbzwYW/zGrUMtX6mjBp35oojX4+D70GWlRhypAV2VtcdRaPitSWx5lMX
-         sQ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVsaa0ki/AYG+7btOES1KyeAAUBrxITmlWF71u2OH3ioJcne3X4qpaijigpmWlQ+ETzR8F1RyUNxSl+7wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRUgVaboXSuMXnpA6HJKMXTqrHEU+kJ2biCNzkanWqgCD5d5O1
-	ArYlQYy/YCtMa72R1avZf1nHQjiRj4iRRdBnSOXfgFC/9dFr5yrFthRYbfTy1r8RNtEW5MVCVIE
-	yjxI5kfGQqG4rCamYI5a/BmXYzUMJqP8W4HflM4yTJDdAXJ09p7Wa+TPctBr8LI/D3oQ=
-X-Gm-Gg: ASbGncu7Rb56a6O+74l5wOyyzdP68Zh5pUUAnE2NAYBjobhavS4r5lTKIHXkabMuApl
-	PhRezQhLSacL3bXutT+3LVJsJYRlcj96VQ3pSDEobVZBFM6BmvTxj6+C/1vyZGZgTiIanbMvR6t
-	ojWmEB9elhxx1sezWPKZNcumPJ4I52XodZI/lHEsvmEfdhh7hY/mQadAnB4+JFNomgIsrNRc9/n
-	t3On2Inlq60C8FhrZVy92hwqgxleQ7ed2hBoQ0GMxu5/Ddxt2OpIUXaEkHyE/rn7UlmHYBQLJ31
-	VTkK4AjsS+QYCLQ4PQwCIg==
-X-Received: by 2002:a17:90b:3c52:b0:311:ffe8:20e2 with SMTP id 98e67ed59e1d1-313472d4297mr20221926a91.4.1749493486580;
-        Mon, 09 Jun 2025 11:24:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEigB0QkFd2i+DltDS7spF4Aiz+S0w1cLE1zE97QoFV7hOhFnk6CT2wbS3XvV3KokxiU/HvdA==
-X-Received: by 2002:a17:90b:3c52:b0:311:ffe8:20e2 with SMTP id 98e67ed59e1d1-313472d4297mr20221906a91.4.1749493486236;
-        Mon, 09 Jun 2025 11:24:46 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349f32c96sm6630688a91.12.2025.06.09.11.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 11:24:45 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/3] drm/msm/adreno: Check for recognized GPU before bind
-Date: Mon,  9 Jun 2025 11:24:37 -0700
-Message-ID: <20250609182439.28432-4-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250609182439.28432-1-robin.clark@oss.qualcomm.com>
-References: <20250609182439.28432-1-robin.clark@oss.qualcomm.com>
+	s=arc-20240116; t=1749493570; c=relaxed/simple;
+	bh=tL9R02ldAUSNG9dn8dvHZp9439IzJZ8R9LrzxvELkcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA3d3zuX6OTm1PaROyJ17n19WO9G0iJb29c1CnccGnmP7Ms/t9nlviHItLHagLVTAElpipJ1Fj0EfyT7ctaUQH4ScdFTkpSmC0nfi74r825gT7Cai9mIaiMEgxToc/uU6ZKIGtgek9KAGKJaZTU98f9I2hdktmB6QwhtUtKT0os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8X0ydzm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF1EC4CEEB;
+	Mon,  9 Jun 2025 18:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749493570;
+	bh=tL9R02ldAUSNG9dn8dvHZp9439IzJZ8R9LrzxvELkcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o8X0ydzmMHmfYRhKHhJcMUC1yXoMzjvwDvFY4IGL+bfd8xxvDL8Ol7a8PlP7kQeJU
+	 E8o8mtpl72nTCgxMQfLaQr35a5yF7Ol4bbPUc/m24TKiCg0bjYbme6lqpKf18X2qbe
+	 Uluzyzfi3WNvr8P4XmM9xO/q8Zyb0fU+5HFuFIVjXAzjaXRnpgATSf1zLJ3ghl7sz5
+	 xBulVJu6lV7ErjwqlfGXcUiNmA7wlhB6cIL98zy9YTd1n6W0R13tyOMxXA2DbWZNix
+	 VvKfxVXbsLR+b1RMy0FmBNWJEqXDu0N9hZaD1Cqtj6i5N5IW0mYbm/2YKhTz2gIDe6
+	 y29sG/dKTSUKQ==
+Date: Mon, 9 Jun 2025 08:26:09 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] workque: fix opencoded cpumask_next_and_wrap() in
+ wq_select_unbound_cpu()
+Message-ID: <aEcnQfdZj7j5Ydcc@slm.duckdns.org>
+References: <20250605002138.47124-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDE0MCBTYWx0ZWRfXzia7DF8GyTnU
- TdBiQcDMqaHIO2fCpVX7MI2mPaMMTeRLeHgfbHdHQjhycb914ypC3QHurhkYbvHrlEero4s6cHd
- cKv7PXJRn8hvyScYH7P1yhYOjYDGq72XUGrlES8n9+Dnzl73fBqmbBPS3HxoUGVD6TMs9Hw332h
- tSK+G99ETt3HJW5H8uyaVDZtS92GQh5HUum2K4NoUUrAy+cm5xrtAvy5Hq5aK74+8PeukXXgQjL
- zqfVxjeyXBq5rYid5RCsLXDCKZqnGIr02CkKtjs2vNiY3b7+5uuZ+MoS6J/Mj2l1T4qqLPmEwZ0
- ILsQMZZCCmUwNEFCygJR6Ixkoa+7/50G9GqqkuLI3SuFzwJi8PTv5Y7U9UxM8ibvlOdrSNWUaF/
- 1YXyhZeuX4jaxhBNVB53FVZV0WY7JFLuy4TgLjogFcWhs8xcQ7gKCWapmIVAA01V5GvkgxNw
-X-Proofpoint-GUID: enAbKuCxS9x-EivhnInJYXzDDE2mM0GY
-X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=684726ef cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
- a=EUspDBNiAAAA:8 a=4MAclHcQAAAA:8 a=KW-EWzdukDj2kg_Rd5wA:9
- a=mQ_c8vxmzFEMiUWkPHU9:22 a=6vtlOZhwcO7ZS_iRoh4Z:22
-X-Proofpoint-ORIG-GUID: enAbKuCxS9x-EivhnInJYXzDDE2mM0GY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_07,2025-06-09_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506090140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605002138.47124-1-yury.norov@gmail.com>
 
-If we have a newer dtb than kernel, we could end up in a situation where
-the GPU device is present in the dtb, but not in the drivers device
-table.  We don't want this to prevent the display from probing.  So
-check that we recognize the GPU before adding the GPU component.
+On Wed, Jun 04, 2025 at 08:21:37PM -0400, Yury Norov wrote:
+> From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+> 
+> The dedicated helper is more verbose and effective comparing to
+> cpumask_first() followed by cpumask_next().
+> 
+> Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 
-v2: use %pOF
+Applied to wq/for-6.17 w/ subsystem name fixed.
 
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/adreno/adreno_device.c | 29 ++++++++++++++++++----
- drivers/gpu/drm/msm/msm_drv.c              |  2 +-
- drivers/gpu/drm/msm/msm_gpu.h              |  1 +
- 3 files changed, 26 insertions(+), 6 deletions(-)
+Thanks.
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-index 778e6ae7f137..0d12454b1f2e 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -178,6 +178,26 @@ static int find_chipid(struct device_node *node, uint32_t *chipid)
- 	return 0;
- }
- 
-+bool adreno_has_gpu(struct device_node *node)
-+{
-+	const struct adreno_info *info;
-+	uint32_t chip_id;
-+	int ret;
-+
-+	ret = find_chipid(node, &chip_id);
-+	if (ret)
-+		return false;
-+
-+	info = adreno_info(chip_id);
-+	if (!info) {
-+		pr_warn("%pOF: Unknown GPU revision: %"ADRENO_CHIPID_FMT"\n",
-+			node, ADRENO_CHIPID_ARGS(chip_id));
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static int adreno_bind(struct device *dev, struct device *master, void *data)
- {
- 	static struct adreno_platform_config config = {};
-@@ -188,18 +208,17 @@ static int adreno_bind(struct device *dev, struct device *master, void *data)
- 	int ret;
- 
- 	ret = find_chipid(dev->of_node, &config.chip_id);
--	if (ret)
-+	/* We shouldn't have gotten this far if we can't parse the chip_id */
-+	if (WARN_ON(ret))
- 		return ret;
- 
- 	dev->platform_data = &config;
- 	priv->gpu_pdev = to_platform_device(dev);
- 
- 	info = adreno_info(config.chip_id);
--	if (!info) {
--		dev_warn(drm->dev, "Unknown GPU revision: %"ADRENO_CHIPID_FMT"\n",
--			ADRENO_CHIPID_ARGS(config.chip_id));
-+	/* We shouldn't have gotten this far if we don't recognize the GPU: */
-+	if (!WARN_ON(info))
- 		return -ENXIO;
--	}
- 
- 	config.info = info;
- 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 87ee9839ca4a..40eb04bab35e 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -956,7 +956,7 @@ static int add_gpu_components(struct device *dev,
- 	if (!np)
- 		return 0;
- 
--	if (of_device_is_available(np))
-+	if (of_device_is_available(np) && adreno_has_gpu(np))
- 		drm_of_component_match_add(dev, matchptr, component_compare_of, np);
- 
- 	of_node_put(np);
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index 5508885d865f..56bd1a646b83 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -729,6 +729,7 @@ msm_gpu_create_private_vm(struct msm_gpu *gpu, struct task_struct *task,
- void msm_gpu_cleanup(struct msm_gpu *gpu);
- 
- struct msm_gpu *adreno_load_gpu(struct drm_device *dev);
-+bool adreno_has_gpu(struct device_node *node);
- void __init adreno_register(void);
- void __exit adreno_unregister(void);
- 
 -- 
-2.49.0
-
+tejun
 
