@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-677153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67229AD16C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 04:13:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28F4AD16C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 04:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A26F3AA6B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 02:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F96318838B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 02:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2AE19F135;
-	Mon,  9 Jun 2025 02:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D9519F135;
+	Mon,  9 Jun 2025 02:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPohAdal"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWx7O1rV"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4556214A4E0;
-	Mon,  9 Jun 2025 02:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24DA19ABD8;
+	Mon,  9 Jun 2025 02:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749435200; cv=none; b=L0zuNQieauc4HZaRsH2PUxG92jWb6T1AaYcn7WdBbiECss/3CAEAYL6rf7pf0I+6TIwz5DgmUVkZBF8moPj2XMkHIyou2rM9h4qfz394xx+dmjg5ZdPRLnP9kKggCT2uVMHOj4L0KWNfGMZ++d94cNwBr1Y1rMiRk2/vFXmy2fs=
+	t=1749435233; cv=none; b=oydbNf7s80irWzh9qRL4wXHN3U97GpwUoR0ijBch2dduKt8MhQ/l5DCg4QZgWc5AqJtPpIG31O61aqFYKuUNtV9A3Jzkz43PTdM3lX8j7gY5/GByYwlA0AXko7sl4zRYbPaaC6nYkOa6iKogezduuHFG79EX2m9mErS29dR0kuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749435200; c=relaxed/simple;
-	bh=0rpEzz/v1CfVYba26K16aMDV31aQNWIxOKlLp+nm/uY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E9i4LclvAf1hnEjxlPLIL3gati6x6olKaIe6x7bzDr10a+tTU93pf+zZpGZHnMPXQ2wuLvNtVxbm9ML5XGsXDVCqZalspEW8svy1/HTXDsVYOrYhXu7eurzSOpnx+hCFc7wexcp3ESTAYh7DsftxhpIaCjyVkBB6Le4H5gNNofg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LPohAdal; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DE222C4CEF4;
-	Mon,  9 Jun 2025 02:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749435199;
-	bh=0rpEzz/v1CfVYba26K16aMDV31aQNWIxOKlLp+nm/uY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LPohAdalPaGBwMWUFw22h+DlSHi8kQVN5Wk/KWdR+7tKUKP++9ebspkQ2ekU+Jm6T
-	 LAMIGzcsn+EcF7lEE6skIMrLzhatJmsmZMChuwVvUYe8r6LlNlAxMup5cBW/PwsRTU
-	 K08faOvKGTNO2bhpMdsCiqJxyhsrKVMc33P9ylsKBlfGo/V2o6a+QusL8/xZ7kOkcG
-	 uWZXPQoy7+FrhlSFSCFjxZSgz+rzj8lJcTR0GDi+8GNvSvOA5bQLregkElj4x1DINe
-	 //uFqtAxYmuaIHrtBsYpFcvZ7JOjSCxubCXYVBQXqNJrAuA7SRXqOVonc5Yj/NQYVv
-	 7Fv9sMDZp/pLQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1606C61CE7;
-	Mon,  9 Jun 2025 02:13:19 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 08 Jun 2025 21:13:15 -0500
-Subject: [PATCH v2 3/3] arm64: tegra: Add Tegra186 pin controllers
+	s=arc-20240116; t=1749435233; c=relaxed/simple;
+	bh=pKI7PDJDDIBqjgERXsXsauxic7BaA/Too5aSv2HsggU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V5hnLUhiC3WDVcCFL2GeRWfJ/j0c37RJ6L3GN2n4AoBftsuJ7YihrL2An08evLacsgsKq5/A98pqbSz/3mB6hOaEzYZOTCHkydMHEacn90LCx8q+IkQY/53Lh/N4dk0PcvwUSLk38786exyPSC9ML2enznlSqDqWnCR++94cFq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWx7O1rV; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-742c2ed0fe1so3994843b3a.1;
+        Sun, 08 Jun 2025 19:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749435231; x=1750040031; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6z8EhSmpBxYVZeDxPrGmj000mL8LzmqeVT/fjQjyJgw=;
+        b=LWx7O1rVrgAh4IwW5NOMn2wKsVDgQ896YZRorl9NRNR/9gNT3iyMTozXjJmGLBtpX2
+         yoWjNaOYnKDOBfPqpO/23aHktwIBBteIH2kKhBhgn8/068S4rowNPLEiLZQAHd5B9Wpt
+         WMjpFhiyAI9uuPbJXvGo7R1TAQ8hefIQsNx3tC+9j3/FTjQ40hxALvC7I3mwwbdGL8QU
+         /DiacyR/hJ5aWXpzEqAY9n4VZ+7buCCthpha96CzRrsK8wupANDudwgnS/SAuKdXRp25
+         ezklqNex4h1r0fVJ9/pq6eg8IpGmqRVTKUkQiI//gakiJ+L7OhfQZvi4Vj+oeQP2Om9r
+         r/AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749435231; x=1750040031;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6z8EhSmpBxYVZeDxPrGmj000mL8LzmqeVT/fjQjyJgw=;
+        b=biuHFpvXwALKjVOWPoV+y4kM2PE6x4RYTitBCeGxf3cSY+CVsEmVIyfgNhu2YlZQlk
+         DgoJZuxm4sz4BdLuUyNUEqfe7x+JLGpXd3RyXML4qbk3GNGPhPgQ5hcAsemLqfbrbW1a
+         M5Dw3bXDLYw/CK5xPsc6QQw6Hf8MFFFHKXu+XJor7hE0u47F3PD47IkLRk2oFsT0UR0p
+         v7cxtzBe+3g3pBe/GzKDA2fJd4jCh7RDfGtKOgt/53qRGWUvstCPup1MS68Lp/PncGtB
+         pZGWo5S7M0yrbPFIy9l5kZDampt/9xPONu86HOV1fgRVCMfnz3PdG24gjxalYzRTyif5
+         F6fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVC+3DKXATpRymTYSYy1HpnrJCuNDXPcBI9eBKcJNVRoLNCbEDKbndEENmjcL/ezEySdRThfumLG+c=@vger.kernel.org, AJvYcCXm/t6tOpblUdisxaPmkSffJ2kYJxDY1sxZoyyFqnG7p2S890VTVrvZa48nf14mos+Mo1FsJBnng2C9t5aG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWVpeZ3UwVSCxofDdeMrx6zhFFh43TEQfDrLUxhJ9yXrC3sYFK
+	yznEzvulaNdPJ3W55iNhTkexnNH1AebOpShC95ISZXi+3g6KmZTL5/ts8bZw5Q==
+X-Gm-Gg: ASbGnct/Nj9ds06meSB4q15P9QZcavlR9qLxhCXoUQEhvA7emePSRFVdAzSAdKYWMJ/
+	mrnzohW94SLGMmDgoD3FwUtU6QQ9KIdo3UfvN1VSWwEWRj4pa4Q+iUwioppI7JbHhZ3oCRjbMTQ
+	CdNwoHMMZPPpMOdVqErqQuabcGuVk8+bQe4rgrs+AbGOryjPN18kAmFEnOIN+Z1cHA8AkhdOLDv
+	tHVskLsxFa2LNno4CDStnaPPXWXF8g263VfRFh749R0L5xRX2gDT1FBWWTg+L8HABpswTfDBS+A
+	ILyqjKo04PEbGXjalm0Dhv2pdhzUiIMf3J1fcCfTZYIU
+X-Google-Smtp-Source: AGHT+IGvA/02yp0vD1aNE7i4OxB7xo4YBi2vBKNkuRZdXgojOa+m7Bh5C8nm1uDK7BXrPsafSk+eMA==
+X-Received: by 2002:a05:6a20:1584:b0:21f:5674:3dda with SMTP id adf61e73a8af0-21f56744088mr6492468637.34.1749435231088;
+        Sun, 08 Jun 2025 19:13:51 -0700 (PDT)
+Received: from fedora.. ([2601:646:8081:3770::889])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5f899b35sm3687406a12.71.2025.06.08.19.13.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Jun 2025 19:13:50 -0700 (PDT)
+From: Collin Funk <collin.funk1@gmail.com>
+To: olteanv@gmail.com,
+	corbet@lwn.net
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Collin Funk <collin.funk1@gmail.com>
+Subject: [PATCH] docs: packing: Fix a typo in example code.
+Date: Sun,  8 Jun 2025 19:13:30 -0700
+Message-ID: <e532b992a79999d3405a363db4b2bd4504fed592.1749434907.git.collin.funk1@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250608-tegra186-pinctrl-v2-3-502d41f3eedd@gmail.com>
-References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
-In-Reply-To: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749435198; l=1340;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=1JAwIG9i/gx1bp4uk2zCtsxyPH2y6m8LXFiEHc/zVnU=;
- b=Fb4k7zdnYSXGic/5FkRBWBZQfZRDhktanmDvTe8y9oceFS5gvfM9V152csEoqB1bcrrE/zgGP
- X4cl6Un/Nq7DaCGe53Y95p0i7t1QNGLEvF75UZt5RolfRpZMIXbyQlj
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
 
-From: Aaron Kling <webgeek1234@gmail.com>
+Fix misspelling of "typedef".
 
-Add the device tree nodes for the MAIN and AON pin controllers found on
-the Tegra186 family of SoCs.
-
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: Collin Funk <collin.funk1@gmail.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ Documentation/core-api/packing.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 5778c93af3e6e72f5f14a9fcee1e7abf80d2d2c5..66fdcec17073a0954b3bf600588324e4c047d0bf 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -36,6 +36,12 @@ gpio: gpio@2200000 {
- 		interrupt-controller;
- 		#gpio-cells = <2>;
- 		gpio-controller;
-+		gpio-ranges = <&pinmux 0 0 140>;
-+	};
-+
-+	pinmux: pinmux@2430000 {
-+		compatible = "nvidia,tegra186-pinmux";
-+		reg = <0x0 0x2430000 0x0 0x15000>;
- 	};
+diff --git a/Documentation/core-api/packing.rst b/Documentation/core-api/packing.rst
+index 0ce2078c8e13..f68f1e08fef9 100644
+--- a/Documentation/core-api/packing.rst
++++ b/Documentation/core-api/packing.rst
+@@ -319,7 +319,7 @@ Here is an example of how to use the fields APIs:
  
- 	ethernet@2490000 {
-@@ -1274,10 +1280,16 @@ gpio_aon: gpio@c2f0000 {
- 		interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
- 		gpio-controller;
- 		#gpio-cells = <2>;
-+		gpio-ranges = <&pinmux_aon 0 0 47>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 	};
+    #define SIZE 13
  
-+	pinmux_aon: pinmux@c300000 {
-+		compatible = "nvidia,tegra186-pinmux-aon";
-+		reg = <0x0 0xc300000 0x0 0x4000>;
-+	};
-+
- 	pwm4: pwm@c340000 {
- 		compatible = "nvidia,tegra186-pwm";
- 		reg = <0x0 0xc340000 0x0 0x10000>;
-
+-   typdef struct __packed { u8 buf[SIZE]; } packed_buf_t;
++   typedef struct __packed { u8 buf[SIZE]; } packed_buf_t;
+ 
+    static const struct packed_field_u8 fields[] = {
+            PACKED_FIELD(100, 90, struct data, field1),
 -- 
 2.49.0
-
 
 
