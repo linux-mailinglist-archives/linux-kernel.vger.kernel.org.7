@@ -1,265 +1,197 @@
-Return-Path: <linux-kernel+bounces-677696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F38AD1DD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6365AAD1DDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E371B16641A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADAB18864FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCAE2586E8;
-	Mon,  9 Jun 2025 12:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6919B25A2A5;
+	Mon,  9 Jun 2025 12:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEZuzpCB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="n6tK6pfM"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2047.outbound.protection.outlook.com [40.107.236.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3390257AF2;
-	Mon,  9 Jun 2025 12:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749472066; cv=none; b=tOoPdpBrZI+/+Bwr2z+o+3DpKd884cuhfIwC/Fk5fT41402lVfBvpGpVWwCHc0nlDhAwLqmebmVwCkd6bJuDIa0amQxuugW/KbRI3fcTK6s/MrcOMC9xSxYwaWcSDOECkRyTa52NmunccgwKHhE0pjw8CRUxqG+223jBxINq0iI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749472066; c=relaxed/simple;
-	bh=TF0Lt8AnKHFIOMaW6x2e/lAW4/Cndmz2TrxEid2Il2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qn0ffQzUKHpGeAfYkmcK5SbuuqpUCD2Itkus2kjV1E+rNRh51DJ+F1Ev5H+L40YP4uub4E5NX/pUiErkqIIWZa2/W3k0x5W0/2dIwDGZA0WlugCc2vU9JfQrCML9uY1x+FLJxdJPnKvN3o4PC0a+GqIyw1c4GBPIeyHHuBk/sT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEZuzpCB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F41C4CEEB;
-	Mon,  9 Jun 2025 12:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749472065;
-	bh=TF0Lt8AnKHFIOMaW6x2e/lAW4/Cndmz2TrxEid2Il2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DEZuzpCBafD0g9kI5LVLV4dVO6iVQUURLLUZwqRWGNmODmzdRM8Cjf9mywTsT8edf
-	 bz7Yl9rKwR2Cm4wr7gUG+dTuqQmBmjBLDYlv4yUDFga//1BxFIkNIBefPFmqVn7dl5
-	 FW1xRGuHOe6vfQg7dY6fIfAcpBo5cNbsdY99vOj87QhBCZDqHDd2yH6XdMdjWbbQyk
-	 HErRmDRrPAZfmbykXON4zUOyY2EDBCokY8R1V8JITv5x94/gxeu0Ln8VItC5aWDCzz
-	 gDFknVcavuXjp8TuqvE7T8+sxTlgJiumJ+4TOnuK73Ya/TEXCsUT7wJyXLRau9ruaX
-	 K/Ci5wstAormg==
-Date: Mon, 9 Jun 2025 14:27:38 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Benno Lossin <lossin@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] rust: irq: add support for threaded IRQs and
- handlers
-Message-ID: <aEbTOhdfmYmhPiiS@pollux>
-References: <20250608-topics-tyr-request_irq-v4-0-81cb81fb8073@collabora.com>
- <20250608-topics-tyr-request_irq-v4-4-81cb81fb8073@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D4B259CA5;
+	Mon,  9 Jun 2025 12:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749472201; cv=fail; b=OHWelET83iG7DSt13jsFWnfb/22nOqgaowkSfbUVis+MKh662/nuqFt4gjRXqRoVFVBAc47/RCcvFEb5k3aTxlrqiK0W1+gZMpFj9YcB37qxXl237sLY18JO/jW9iv3mCpqclcBvPOuDd/ydxagAX7A63qeki5v08QsDm7SHrrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749472201; c=relaxed/simple;
+	bh=Id58G2GnL3umRvxU9Iufqjg1hXQDv7/rrc8DHLW1u1E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XZ87URjjxjPH0CpwE3BZcc7cLia+ZflIbxMf6f3Mj1NexLfSAxE3xHpGu1zTjQuF0B71T8ZhxEfmmo1ulZfhZPKziEIrsM6aDVxAE6WRLACVq4oordRMKdV7Shnxc/zEwl0j783QSOEQqbAtlQ6xdRiVkQReL00sMgP2XAXp4t0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=n6tK6pfM; arc=fail smtp.client-ip=40.107.236.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pAssVroHqQR1KWV4BxqhNU3RD4pu82MDZU+Hfcz0x1Z62ALn31Sb5OpPPoyhRjSDDWTGdPVvvXtz5NkPCbmWfHuK6hKxkJFYkKU+aOmVWHoQM/LRzVZ/5+YMrzCQkFEDOrq2OxlVuT28liJZ5reaDy7UVRvySJyui8glEycgiOMVFG+19xDnXrqvgNM8MjSFiF/Ea1LaEEnRhPwovTq3tSMSR+O7dATvGhQ5kT8waCuOSPT4PyMiOy8XfsI0YkzibYN0+FkBbmD22cOhWnDsgMSgXa148X6sRwkgtxmlOx2DWT6dRFoD7j1SDAmVe25zSdItvp+cR+EGJ7ynJSqIyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Id58G2GnL3umRvxU9Iufqjg1hXQDv7/rrc8DHLW1u1E=;
+ b=mdig+6rI4xcL1QP0BwG54kTtZ+Tid/IPyyV8vjozLwqkCL0wnjTL0G9UfImG2UlN8+8naJ3660p9LpjLxybKGz55bDykJt5vTnO1aR0HISUfjuq8YxnEbm+dcU9YVKYzUyLe49xlTqOt2F4PAmy8BBr26Bz5EWGU1IpOMD1rTBUXfMNJ1xsE+znX5rnJGPeXuyBIeB2U1jqrLrO+vbo5paRO8KzDN+VzesQNTzFCF62SOXetLM1H36fU4EE6T0PEFDSeVyU73RuozIfEYEAdJ24xC5H9dAxC2+a56YFEXA+5jxthQq1M7xjdkwn/G4PCdruFWlioHmjkAgbGCKI2Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Id58G2GnL3umRvxU9Iufqjg1hXQDv7/rrc8DHLW1u1E=;
+ b=n6tK6pfM1hcG6cKT5P+Xj7xopIWLqhxUi0YVVeYcJNRKNAe5MoC10G89nbrYQvCehTKo+sJRb3hDPGbQISPvAeMI+FBQVhSmZsY/i2a/Fy00ezDM5dgIae/pi24viMSr6F9sIPrm/KRkGlyfwbzl9y4zmosQOfJFQ90mF3SrLUg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5951.namprd12.prod.outlook.com (2603:10b6:510:1da::16)
+ by DM4PR12MB5842.namprd12.prod.outlook.com (2603:10b6:8:65::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Mon, 9 Jun
+ 2025 12:29:56 +0000
+Received: from PH7PR12MB5951.namprd12.prod.outlook.com
+ ([fe80::df88:d99:3cf3:dec0]) by PH7PR12MB5951.namprd12.prod.outlook.com
+ ([fe80::df88:d99:3cf3:dec0%6]) with mapi id 15.20.8792.035; Mon, 9 Jun 2025
+ 12:29:56 +0000
+Message-ID: <cc92a3de-0d90-42eb-95a7-a9638eecfc65@amd.com>
+Date: Mon, 9 Jun 2025 17:59:24 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: amd: acp: Fix pointer assignments for
+ snd_soc_acpi_mach structures
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, Vijendar.Mukunda@amd.com,
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+ syed.sabakareem@amd.com, mario.limonciello@amd.com,
+ yung-chuan.liao@linux.intel.com, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
+ <linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250609121251.639080-1-venkataprasad.potturu@amd.com>
+ <ea8fa344-0429-4dca-80a2-aa792128576d@sirena.org.uk>
+Content-Language: en-US
+From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+In-Reply-To: <ea8fa344-0429-4dca-80a2-aa792128576d@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BMXPR01CA0080.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:54::20) To PH7PR12MB5951.namprd12.prod.outlook.com
+ (2603:10b6:510:1da::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250608-topics-tyr-request_irq-v4-4-81cb81fb8073@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5951:EE_|DM4PR12MB5842:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30f649e3-a180-409c-2272-08dda75157d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y2hLRG9MOXJpeWRyRENKL0hwL1NUK1RBdVYxbTdRall4TFhUdUUzQ29lWWY3?=
+ =?utf-8?B?ZnZDODNncXp4R0VOdDM4ZWttaEx5eGpSZWVzVFFkTVQxUEFldGFOSXpya2lT?=
+ =?utf-8?B?dTczMUhiZW4wYWVzVXVrdCtVQVdEaXNYOUcxME5FQXlIR0ZyV05KUlZLaVRa?=
+ =?utf-8?B?S1YzanJpL3Nlb3NKNC9pdnhhK1hQOGxyOVpLeE5XV1E1Z01iL1d1QUZDZGlP?=
+ =?utf-8?B?UlFnRVEvOVFJRklkYU45dVZxL2Uza0ZOOWFid2hRZ21RUDRYQ21ZVy9IV1NN?=
+ =?utf-8?B?TSs4TkU1eW5aWmVZOUkxVCt6ZFJFTVlCSmMyS1BkZXk5RkpDQUZja1RvZE1S?=
+ =?utf-8?B?OGkrWjk3elZ3QlpVSW9BbFlPWTh3UlJHQWgwUEVzNVBFekp6RU1hdGZGSmIx?=
+ =?utf-8?B?SWk0TnluZUZ1WnVjb3FqclUxSVA1VU5aQi91SXZ0aUlaWkMwWDY3VG5BYm0r?=
+ =?utf-8?B?eFl2WHZha0JBeDIrTnltY1pCTEVDSFFYVDAvbXE3UytFSTd2WUZXV1ZLMWMv?=
+ =?utf-8?B?TTQranRkOEczRjB2UkJaTjN2U0tGa25yb25GR3lnS1lINmhMK0RncmhQY1hj?=
+ =?utf-8?B?MGhjOWphR1ZLQUVyUjdGZDJ3RDFONXlseHhxNklxWHRnMTBRRVZpWUJOVG80?=
+ =?utf-8?B?LzQyTWRzY3lieGRlbHdHN2JiRldQYnQzRFhNK3FRWVNiUWlvRlFiYlNKejhG?=
+ =?utf-8?B?K3JTcGNXbEJ6WURJQlMyTHNKc1dmS3NIbTZ2ZG5mQUlvdUUyT3IrQmozbUhw?=
+ =?utf-8?B?Nm1yOVZHbkVtbFFnTk1mNEU2c2tkcWF4cjNKdWFSQmkwNUhIVHhGUXR1TEpk?=
+ =?utf-8?B?TTJpdktYUU1qZ3VOV2dhTkVaQVJ0WERTTUxoRUJ1NWx5L3pSdTYrVFErSDdz?=
+ =?utf-8?B?bTMvZzQ2MXptcjVUNWhDNER4WS91SWJJYmo1aGg3dTdSNVF5cE8yWEU2cmZx?=
+ =?utf-8?B?S2R0M0dYaHFENEJmeGlvM0dralFrRi9lS2RacG1VU25xekN6ZmllbGl1OWFm?=
+ =?utf-8?B?Y29NQ2wvRkd6U3p4Z3BkdkFqTFZKRGRpWHIvYzFwR2J1K2d5NjM4d1hwYzFq?=
+ =?utf-8?B?ai9COW5ycCtnUTJjNmFtOFI2UjBacTdvYUVyQzVla2VFMWJYbWR4WGRObGp5?=
+ =?utf-8?B?QUJrNTVHcW0rcG9RU21RbjREd1Z6SXA3MU9VSnlBbXZkc0NqK1BhQzQrMXU3?=
+ =?utf-8?B?ODVLeFpvVjNVWGo2S25YN1VLREtpZzF1T21iSUlNenkvUGxBYWRDV3NrU3NR?=
+ =?utf-8?B?TjZXQXZ6bE5haHJnY21Kc0V0WGFWM0J3azdyNTFGMDJWbXluM1JPdzZud2dC?=
+ =?utf-8?B?WmU3SlpwUzVFaCs4akp3eFAvYkNsemNlRkxDL1VUTDdFTi8xNDhwTDF6aDZW?=
+ =?utf-8?B?NDB0Nm4rWkpnSlludVdPZmpoZTBBazJFQU45ZGlWQlFPTGM0MWl5MFBueFdm?=
+ =?utf-8?B?VWViSFZHSVRBMjVob3dVKzE2QTU1Q3NoZWI1YTVObFNYajR3dzIydGY4WE0x?=
+ =?utf-8?B?czluK0I5N3hUL3Y2dENUTmM3NVl1QXJjQ0Z1TkFhVHBXcjZBYVRCcG1MNTRr?=
+ =?utf-8?B?SVY2bCs4ek9rYUNoUElOcG82Ymh5ZTRFdVlQV3NTZ2hsWklrdGxPVnBmRlhG?=
+ =?utf-8?B?RzRjLzBVZXloUXBQRXptaUZZSEdnN0dQSHM5S0oraHlOR3kyUlJORFhYOUhW?=
+ =?utf-8?B?Mkt3N1BSczlGaXBaMmFZOXpEVnA0blZFY0lIbGxnUnNtdHovZW5RY3FtNTFO?=
+ =?utf-8?B?clpzOWRXWTdhQnVMWll1bUZoWTlweXQ3RG5NL1pRRlA5ZTUvY3d1bmE3Q1A4?=
+ =?utf-8?B?RjZSVWpmZmxZbExlSktlSjF6UzN3TE0ycFlaSEgzRkd2UGJqQ1JzZFV2TkRL?=
+ =?utf-8?B?aEpkUitVaFpMSlpwR2VNNWpSK0k3clJBOXU0RUNsWHBQTVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5951.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y2Exa3o4RVgydGZiMGpwZ2Z0eG1YeEUwYjZPTm9xaTlqVk9TMHVpaWVWMmxL?=
+ =?utf-8?B?Z2ZTM0VMeTV5ZGc4S3V3dHFaczBBOWJlWEF0TXBXTVlYTkcwcy96a1d0bURG?=
+ =?utf-8?B?U0FpL00zRnNYbkVkbmNzTDgzY1M4bVNGSm53RWNKa1pQdTRXbTg0bTNPT3Az?=
+ =?utf-8?B?WEVyTS8xcnllTjljTFNkSUEzZDRnWGh2bVFWM091S1RVeGw4N01VWXlVd0tM?=
+ =?utf-8?B?U2JzV2hzSU1zTTdldXZiTlkyb01NTUVnSmtra2crT0hlTllSQmRkQ3dGTlFX?=
+ =?utf-8?B?TitDZFN4RHdoaXkyR1VXMW0vSWNZVXBHMU9xOE8zTis0c0JJMzFqWmVhMUVx?=
+ =?utf-8?B?T2oxZFpWaFBTSWkwcHhFbEdCK0k5NzI2NU5HRklCOVlGT21CWnY5N2xtbHBu?=
+ =?utf-8?B?aVdiTWVhSE1PNS9BWEVmQ0M3M09uRk1JMmRSeThhM292ck1USEYxM2FvRUdV?=
+ =?utf-8?B?N1oxNTgwbWRrZXZRK3VYUUw5WE1JdzhtS285WERhcDVPa2pmODNvbThYMFBu?=
+ =?utf-8?B?S3hnV0Q1M0daR2kzcDRqS01mNWU4ekpmN0hnTTVPSDUwTnhlODJkdXRCVGRt?=
+ =?utf-8?B?OVpDTHlSUVcrQVhQd1plNEJtcTU1R2NscjhPemx0VDU3YWJnNlBHei8rbVFN?=
+ =?utf-8?B?QVpqNnpSYW1vZnNMeGhIQmRVWGNzK2RNekpvcEpCMC90RW9KQ3lTS1BoelRZ?=
+ =?utf-8?B?c0NZL0I5YkxoR2hiZnRRektmWU9QVURJNlo3dWlxUENXb0RxZE1rRlVZNnRk?=
+ =?utf-8?B?VlJ6cDA5ZStGOTdpRE15YnJicGxIY3BZbWRsQ0VSMFdQRWIyOXptcmJtaXlS?=
+ =?utf-8?B?Q05xTEprMEw0aThNSFZxYlRIcm5DZ2FybXVKL1dVZDBTK2twVW5kMGdrSnhx?=
+ =?utf-8?B?Z1l3NmxUaGk1VXBUUithamF1L3ljK3pMaUFuZU9rZ0RPN0hwVkJta1gvOTdn?=
+ =?utf-8?B?MmhPZ1B0cmRLdjFwOHh3cVBFaG9OSHRuaUs3VGZ0TVhNSGZIL3hCbWl4c1NP?=
+ =?utf-8?B?WlUwNHZ5U1ZJeEdoTTFQdGl5OUY3WE10bUhQSGd5WjNQckRHUmtmbEpjYzlN?=
+ =?utf-8?B?OG96NHB6S3ZkS01ZbXgzOFdGUTNrMTUzNXJLUGIyUHZRN2VsRXhqeWFRZ0Zn?=
+ =?utf-8?B?OERIWkVhOFdSbGZRZ3NPSGgzeUlHZXV6R2dWdHZzekJrbWpqOVJlMmdmazdi?=
+ =?utf-8?B?aElITVdENHpxdWRkSWlSSER6Snd1blpmMHJGdWx5UmZXeURnS3NSRzdUWHM0?=
+ =?utf-8?B?V3o3M2N5aDFPazVTNTh5QVJuNkk1cjhIMHZWUDJuazhISzg5YVZsQUxwelgx?=
+ =?utf-8?B?TDBYT2FGRlV5amdrQXhSd2k1bUpSNldER0xtNndSVVRLMFhTMDFFeWhSSjJZ?=
+ =?utf-8?B?V0d6NUhveTBNbFB5TUlxdjV6UWJmdzFQSkZMZDBmWkN6NGZDR3NzckRMY2RM?=
+ =?utf-8?B?cGhhb2x6SlArbmVtNzVkd1hxZzNKVjQ4eEFwMUp6S2hOM0N0emRiM2JPWndR?=
+ =?utf-8?B?Z1J6eFhnK01zc1ZvNU5LNmx4MC9NNldzR1JRVnlQK0s2RzZ5YVUyVHVORFor?=
+ =?utf-8?B?dUI1R3VaMktSM0tSeFplS3JZWTI1c3hqSmZHQnRYVjNBSnlyYTQ3cUFOcEhQ?=
+ =?utf-8?B?ZFNPUmNkOUVocEc1MUQwWk11U1JodDFIVEJKeGIvZVUxTkRhY29Ga0U5ZG1V?=
+ =?utf-8?B?MGZlTm93S25rQ1FRUkZCYzc5anB1cERKUXU3SGVrSEc5WXhNVzR5c2oydUxL?=
+ =?utf-8?B?RVM2MmNxcmhlL3EwWlpScUljN3hyenhDSVpuRXg0RTNKa3BSQlNwZEc1TmZM?=
+ =?utf-8?B?Y1Z1ZmM1V3QzVDFmSkZQVXFkR015RnA5QUxuWFB2UUFuU0liZVNxR0E2em9I?=
+ =?utf-8?B?czFxUkVONnhnd2Fqek00Rlhyb3lzQmd0SjZRT1cwYUppU1I4Z3VDQThsMFhX?=
+ =?utf-8?B?czF6S2hmdzh0MGNCV0tyb2VrS0dVUlpsMTMxVjZ5WHA5SUM0ZC8zUStKaE13?=
+ =?utf-8?B?VENrb1N1d24yWitNMFIrSjFoKytrVmhsREFQR0g3cStxRTk3S1E3UCtaTkZT?=
+ =?utf-8?B?SlZCVnlsUVI2cUhCZHNzekI5LzhDWFlTZXZzSkduWW54eGhDbUxBNmgxSG11?=
+ =?utf-8?Q?LllMrU/8ptbBiu/Lgwxqsc/cP?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30f649e3-a180-409c-2272-08dda75157d4
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5951.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 12:29:56.8281
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2w2DdbBk60sdI5O/3dKBFHVe2IMFUmo8FzslJuzfwu46T5FtQnGn5SAeAmSp/ieGPfd9uQrcw6OUgn4Ur2i6pA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5842
 
-On Sun, Jun 08, 2025 at 07:51:09PM -0300, Daniel Almeida wrote:
-> +/// Callbacks for a threaded IRQ handler.
-> +pub trait ThreadedHandler: Sync {
-> +    /// The actual handler function. As usual, sleeps are not allowed in IRQ
-> +    /// context.
-> +    fn handle_irq(&self) -> ThreadedIrqReturn;
-> +
-> +    /// The threaded handler function. This function is called from the irq
-> +    /// handler thread, which is automatically created by the system.
-> +    fn thread_fn(&self) -> IrqReturn;
-> +}
-> +
-> +impl<T: ?Sized + ThreadedHandler + Send> ThreadedHandler for Arc<T> {
-> +    fn handle_irq(&self) -> ThreadedIrqReturn {
-> +        T::handle_irq(self)
-> +    }
-> +
-> +    fn thread_fn(&self) -> IrqReturn {
-> +        T::thread_fn(self)
-> +    }
-> +}
 
-In case you intend to be consistent with the function pointer names in
-request_threaded_irq(), it'd need to be handler() and thread_fn(). But I don't
-think there's a need for that, both aren't really nice for names of trait
-methods.
-
-What about irq::Handler::handle() and irq::Handler::handle_threaded() for
-instance?
-
-Alternatively, why not just
-
-	trait Handler {
-	   fn handle(&self);
-	}
-	
-	trait ThreadedHandler {
-	   fn handle(&self);
-	}
-
-and then we ask for `T: Handler + ThreadedHandler`.
-
-> +
-> +impl<T: ?Sized + ThreadedHandler, A: Allocator> ThreadedHandler for Box<T, A> {
-> +    fn handle_irq(&self) -> ThreadedIrqReturn {
-> +        T::handle_irq(self)
-> +    }
-> +
-> +    fn thread_fn(&self) -> IrqReturn {
-> +        T::thread_fn(self)
-> +    }
-> +}
-> +
-> +/// A registration of a threaded IRQ handler for a given IRQ line.
-> +///
-> +/// Two callbacks are required: one to handle the IRQ, and one to handle any
-> +/// other work in a separate thread.
-> +///
-> +/// The thread handler is only called if the IRQ handler returns `WakeThread`.
-> +///
-> +/// # Examples
-> +///
-> +/// The following is an example of using `ThreadedRegistration`. It uses a
-> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior mutability.
-> +///
-> +/// ```
-> +/// use core::sync::atomic::AtomicU32;
-> +/// use core::sync::atomic::Ordering;
-> +///
-> +/// use kernel::prelude::*;
-> +/// use kernel::device::Bound;
-> +/// use kernel::irq::flags;
-> +/// use kernel::irq::ThreadedIrqReturn;
-> +/// use kernel::irq::ThreadedRegistration;
-> +/// use kernel::irq::IrqReturn;
-> +/// use kernel::platform;
-> +/// use kernel::sync::Arc;
-> +/// use kernel::sync::SpinLock;
-> +/// use kernel::alloc::flags::GFP_KERNEL;
-> +/// use kernel::c_str;
-> +///
-> +/// // Declare a struct that will be passed in when the interrupt fires. The u32
-> +/// // merely serves as an example of some internal data.
-> +/// struct Data(AtomicU32);
-> +///
-> +/// // [`handle_irq`] takes &self. This example illustrates interior
-> +/// // mutability can be used when share the data between process context and IRQ
-> +/// // context.
-> +///
-> +/// type Handler = Data;
-> +///
-> +/// impl kernel::irq::request::ThreadedHandler for Handler {
-> +///     // This is executing in IRQ context in some CPU. Other CPUs can still
-> +///     // try to access to data.
-> +///     fn handle_irq(&self) -> ThreadedIrqReturn {
-> +///         self.0.fetch_add(1, Ordering::Relaxed);
-> +///
-> +///         // By returning `WakeThread`, we indicate to the system that the
-> +///         // thread function should be called. Otherwise, return
-> +///         // ThreadedIrqReturn::Handled.
-> +///         ThreadedIrqReturn::WakeThread
-> +///     }
-> +///
-> +///     // This will run (in a separate kthread) if and only if `handle_irq`
-> +///     // returns `WakeThread`.
-> +///     fn thread_fn(&self) -> IrqReturn {
-> +///         self.0.fetch_add(1, Ordering::Relaxed);
-> +///
-> +///         IrqReturn::Handled
-> +///     }
-> +/// }
-> +///
-> +/// // This is running in process context.
-> +/// fn register_threaded_irq(handler: Handler, dev: &platform::Device<Bound>) -> Result<Arc<ThreadedRegistration<Handler>>> {
-> +///     let registration = dev.threaded_irq_by_index(0, flags::SHARED, c_str!("my-device"), handler)?;
-
-This doesn't compile (yet). I think this should be a "raw" example, i.e. the
-function should take an IRQ number.
-
-The example you sketch up here is for platform::Device::threaded_irq_by_index().
-
-> +///
-> +///     // You can have as many references to the registration as you want, so
-> +///     // multiple parts of the driver can access it.
-> +///     let registration = Arc::pin_init(registration, GFP_KERNEL)?;
-> +///
-> +///     // The handler may be called immediately after the function above
-> +///     // returns, possibly in a different CPU.
-> +///
-> +///     {
-> +///         // The data can be accessed from the process context too.
-> +///         registration.handler().0.fetch_add(1, Ordering::Relaxed);
-> +///     }
-
-Why the extra scope?
-
-> +///
-> +///     Ok(registration)
-> +/// }
-> +///
-> +///
-> +/// # Ok::<(), Error>(())
-> +///```
-> +///
-> +/// # Invariants
-> +///
-> +/// * We own an irq handler using `&self` as its private data.
-> +///
-> +#[pin_data]
-> +pub struct ThreadedRegistration<T: ThreadedHandler + 'static> {
-> +    inner: Devres<RegistrationInner>,
-> +
-> +    #[pin]
-> +    handler: T,
-> +
-> +    /// Pinned because we need address stability so that we can pass a pointer
-> +    /// to the callback.
-> +    #[pin]
-> +    _pin: PhantomPinned,
-> +}
-
-Most of the code in this file is a duplicate of the non-threaded registration.
-
-I think this would greatly generalize with specialization and an HandlerInternal
-trait.
-
-Without specialization I think we could use enums to generalize.
-
-The most trivial solution would be to define the Handler trait as
-
-	trait Handler {
-	   fn handle(&self);
-	   fn handle_threaded(&self) {};
-	}
-
-but that's pretty dodgy.
-
-> +impl<T: ThreadedHandler + 'static> ThreadedRegistration<T> {
-> +    /// Registers the IRQ handler with the system for the given IRQ number.
-> +    pub(crate) fn register<'a>(
-> +        dev: &'a Device<Bound>,
-> +        irq: u32,
-> +        flags: Flags,
-> +        name: &'static CStr,
-> +        handler: T,
-> +    ) -> impl PinInit<Self, Error> + 'a {
-
-What happens if `dev`  does not match `irq`? The caller is responsible to only
-provide an IRQ number that was obtained from this device.
-
-This should be a safety requirement and a type invariant.
+On 6/9/25 17:46, Mark Brown wrote:
+> On Mon, Jun 09, 2025 at 05:42:32PM +0530, Venkata Prasad Potturu wrote:
+>> This patch modifies the assignment of machine structure pointers in the
+>> acp_pci_probe function. Previously, the machine pointers were assigned
+>> using the address-of operator (&), which caused incompatibility issues
+>> in type assignments.
+>>
+>> Additionally, the declarations of the machine arrays in amd.h have been
+>> updated to reflect that they are indeed arrays (`[]`). The code is
+>> further cleaned up by declaring the codec structures in
+>> amd-acpi-mach.c as static, reflecting their intended usage.
+>>
+>> error: symbol 'amp_rt1019' was not declared. Should it be static?
+>> error: symbol 'amp_max' was not declared. Should it be static?
+> It's fine this time but these staticisiations should have been a
+> separate commit since there's no overlap.
+Okay, Thanks Mark :).
+I will take care next time onwards.
 
