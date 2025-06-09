@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-677781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62781AD1F07
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:40:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C276AD1F0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2709E16A1E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4734416AB0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DCD259C93;
-	Mon,  9 Jun 2025 13:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED607258CEC;
+	Mon,  9 Jun 2025 13:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFGu8TNQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBm62lse"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241CA257AF4;
-	Mon,  9 Jun 2025 13:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F89525A352;
+	Mon,  9 Jun 2025 13:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476411; cv=none; b=DpefmESRwpHK1uCcTiw8Dz99x9uqjjTV5fOKrPvtrJs1s0Z6sfE/U9n0Cg/7amYdSAH9cY/NUWnKw7bXRpbGRaENf3xmtmai3c4lKL/jbznHMeG3rHqOLxVQ3FwunuPmjOQa+9Z+wljYX7qgP0J4lkFur4CGdJmTY+wZv13480E=
+	t=1749476416; cv=none; b=l4tgi90gWy6f0X7akoEH3779olHHwhGd8cAg+fFL8XSeAKuyfCJpGiEfL52NoYoxUeNksVCY4noo96+K5OnczeFyuvFpqeCB8LmWZn5IGv/TBa7M7hEp8+57vyGwGJ5Whbm2orr8xHU8f78s0x0e6u88K5syFQJm1gcM7moFL3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476411; c=relaxed/simple;
-	bh=btPt4PnoHqgf6jzLcbEkymMlePrHj9/nbbiIeJEqU2Q=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ILiA7EdY+uGVE+QINctn5/RcgRXE7CLI85FCE4XhRwtA2QBb09F7ePAK5dbjBPImsnSisxklWZZ+2VPLgbbfTrS5ywXdf43MAEsgKrnXB6iiAMCRAS4lfScaGXuDwdAB6k4llgah6QYOXVy/BZN1ttGXMXp62HWbD3VHCqN2IWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFGu8TNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 405DEC4CEEB;
-	Mon,  9 Jun 2025 13:40:09 +0000 (UTC)
+	s=arc-20240116; t=1749476416; c=relaxed/simple;
+	bh=X9XD4EFOdykRcFhrxrtSRa7vv6d3l9lZP9aiuTUFF+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oH39N1S/B3FCgaLzVXV1ahHfnYybuoHHtd3lOmQWpZFriBfFioQkQPVtKXwmkskB/D/OqwHo8mMjZPbCbJsLxmPLl9cOP++PbGow0PpxAPfM/LuR51NOtwKqO014YH/9KO2l9uh9omf9LjiWT8jjCiwv3uaz1sr1EDKtBPbM810=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBm62lse; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F713C4CEEB;
+	Mon,  9 Jun 2025 13:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749476410;
-	bh=btPt4PnoHqgf6jzLcbEkymMlePrHj9/nbbiIeJEqU2Q=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=CFGu8TNQw8k0ASy1ZRiR2LrPsgmHnuSe1JUowx8+7PJZ39l1+fE6DB1ju6C+CT0XI
-	 HrLAKAo3d949GZq0+f1kta9XB6zTMem67HS021gmOdtLpl5hJPrqxFKBccpo8t8DPv
-	 kTWwJWxvdHlNh9VCr0+YwWobQBEFYlYedgo3D9/c81dFYw9c9mDavh8/UZ+U0BSmS4
-	 0cBaBQj3x7Zq2alzyaGg3qXO1MUR9wQOLPA8QHrXXm7Pd4lt1b4RP/eVe694FEskG/
-	 v2+d0vfD+4IKPK7uRs0tnScggG4n/E0k2Xc83f9EE20Wp/41pIMIpqziLe89C4jJm7
-	 pceUD2r2lixEA==
+	s=k20201202; t=1749476414;
+	bh=X9XD4EFOdykRcFhrxrtSRa7vv6d3l9lZP9aiuTUFF+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=IBm62lseXrAlWxrhAiW5V4GsDw9OWbep6hi0qSwy7hMU8L0y9sFm2mNVPJSqfNIu2
+	 FmRSnRVZ2JKvG+eYRI9yB6GgxbjEY/Jiq4dhVpkgC/JskwlexcfDS8Lt+2uT36Rjgl
+	 3nLHq7xZQWdwK1Cj6cttY1TF2xXjbdsmHOikKKrycR2VogzQZXI7D246l9ulu073VT
+	 tM5hnn//H22CIl/VuPYpoMpQMI2u2hww13RV8z1KRqIuzkaYTP/TGnCayiQea9eKeX
+	 Zu3Fr51dmUIafNMl4/YOLMd4/n0tDikElp5el1fB3qqSV5roL6LV+qFVSIdq9RieAN
+	 hXDK6kKbaApgA==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
+To: David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250523121811.380045-2-krzysztof.kozlowski@linaro.org>
-References: <20250523121811.380045-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ASoC: codecs: lpass: Drop unused AIF_INVALID first DAI
- identifier
-Message-Id: <174947640900.126747.17690897321632994593.b4-ty@kernel.org>
-Date: Mon, 09 Jun 2025 14:40:09 +0100
+ Takashi Iwai <tiwai@suse.com>, 
+ Stuart Henderson <stuarth@opensource.cirrus.com>, 
+ Piotr Stankiewicz <piotrs@opensource.cirrus.com>, 
+ Qi Zhou <qi.zhou@cirrus.com>, linux-sound@vger.kernel.org, 
+ patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
+ error27@gmail.com
+In-Reply-To: <20250603214813.197346-1-harshit.m.mogalapalli@oracle.com>
+References: <20250603214813.197346-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH] ASoC: cs48l32: Fix a signedness bug in
+ cs48l32_hw_params()
+Message-Id: <174947641193.126747.915802797193162530.b4-ty@kernel.org>
+Date: Mon, 09 Jun 2025 14:40:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,13 +68,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Fri, 23 May 2025 14:18:12 +0200, Krzysztof Kozlowski wrote:
-> All four Qualcomm SoC macro codecs define DAI IDs in an enum starting
-> with AIF_INVALID=0, which is nowhere used in the code thus actual DAI
-> IDs start from 1.  Drivers do not have their own of_xlate_dai_name(),
-> thus snd_soc_get_dlc() expects the DTS to start numbering DAIs from 0,
-> which creates confusing debugging scenario, e.g. DTS should use
-> <&lpass_wsamacro 2> for WSA_MACRO_AIF_VI with dai->id=3.
+On Tue, 03 Jun 2025 14:48:13 -0700, Harshit Mogalapalli wrote:
+> There is a type promotion that can happen when freq(u32) variable is
+> comapared with sclk_target(integer), when sclk_target is a negative
+> value it promotes to a large postive integer which might not be a
+> problem in this particular case as the condition evaluates to false
+> when that happens, but bail out early when sclk_target has negative
+> error codes.
 > 
 > [...]
 
@@ -78,8 +84,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: lpass: Drop unused AIF_INVALID first DAI identifier
-      commit: bb4a0f497bc19558ba7fe9feac814286fc7ebe85
+[1/1] ASoC: cs48l32: Fix a signedness bug in cs48l32_hw_params()
+      commit: 22188b9df60dde48eaba276da22062aaf8e12dfe
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
