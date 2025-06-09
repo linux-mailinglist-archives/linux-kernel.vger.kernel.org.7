@@ -1,115 +1,208 @@
-Return-Path: <linux-kernel+bounces-677706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BE2AD1DFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 841CDAD1DFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 14:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C18AF3A3085
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC953A26EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 12:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B05257429;
-	Mon,  9 Jun 2025 12:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="vLMW9n5W"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAFA1487D1;
-	Mon,  9 Jun 2025 12:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6B112E7E;
+	Mon,  9 Jun 2025 12:39:57 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333F017C21C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 12:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749472758; cv=none; b=udi4BGh0U5nT2/sVw0lFI5mu5RW8s0cN8+EDwoYnISdeODCuIVnsiAsJvRH771yFe7KyzKTrqDW1LrjzVrmGkUcM4Y5eZmuuuv4KwnoZtMHB5eaRoItBBlJjjc6wxvvOQezfKk5X1y9ecpmWNc78+cXU1+F/88teZ7YEAI5cxvM=
+	t=1749472797; cv=none; b=R7mNxWr1ngwqRRIn+WtfGYiDGSfXAfRfux0KZZivGZ1sreWFN2oGJB+JOFME+859Ab1DPqkFRGRetrDwoi37j2O0EhhuFYl1FHttlJ1mTMsyyJlyoYNGb0DqxK82rieTnhhi3kAl3DM9FEb2Afboc41/xQk/tfc2BG7Hh5xtuLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749472758; c=relaxed/simple;
-	bh=bBK+fw1Pb3Rb0q/iEK29jV7iVAI/EBRtGoYRmC74JFg=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=mg5hA98MLOxna1KAkPdXosXRUJKTPFzkhVkWdRFTat4ht8N/2x2+/kNqPYgDG8mJSSrYVPy8ThS+FaWdEChZwnIi5kAolB1p/DQOXBOBzJL/kVW5EWjGa8AYNzfc0kivUf8dpm32t9FU8ij8N+pevOsFLAI9yKHhVqOIk4y0lRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=vLMW9n5W; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=e5FqJHW2gfLCv1rYVjg7825Aoec+97DH4gBEZutMljw=; b=vLMW9n5W87oxtql+bhbf8rfzdH
-	rjPD5d9pd2ZOa/zLYrYgje0FnCZn1pDPKVOhLUbJAk1YElQst8u9gJpR72SXr072sFjV35KebsOXa
-	TDVCgDtF8M7bJ7DxKBJHt+8rrFKC2sLC3jMI4KVZ2lixzJrWWVYt8m6nwQ8dJfsmCokQ=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:38760 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1uObmN-00071a-A1; Mon, 09 Jun 2025 08:39:07 -0400
-Date: Mon, 9 Jun 2025 08:39:06 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: shanmukh.iyer@gmail.com
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- trivial@kernel.org, Shanmukh Iyer <shanmukh.iyer@polymtl.ca>
-Message-Id: <20250609083906.2612e881444ee04360715aed@hugovil.com>
-In-Reply-To: <20250605000903.74242-1-shanmukh.iyer@polymtl.ca>
-References: <20250605000903.74242-1-shanmukh.iyer@polymtl.ca>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749472797; c=relaxed/simple;
+	bh=+VVH0BT2UtobRbMKs1mWx4K6nmkRc6PMAGV9twqtCpQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LxqL+bXrRwTLNOKq1oPppw2WpCeEhWaqxrR8HTgqtZtcesIM1mLpCwT4vsRU7zQ7I7A0uSD7MmTx7ecaNVhdY8QcyWkN/e12J+dDCd6knG+Ef/E+wCap+a1KqIKKrsyWwkBnz4wKBhB9PYavyecM8aZ1ag4YPVpdOUtKEt1HsMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-9c-6846d6161ec1
+Message-ID: <c75e8237-1411-4ac6-8def-f20c255f7e06@sk.com>
+Date: Mon, 9 Jun 2025 21:39:50 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -1.9 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH] drivers/tty/moxa: Fix spelling mistake in comment
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+ "david@redhat.com" <david@redhat.com>, "mhocko@kernel.org"
+ <mhocko@kernel.org>, "zhengqi.arch@bytedance.com"
+ <zhengqi.arch@bytedance.com>, "shakeel.butt@linux.dev"
+ <shakeel.butt@linux.dev>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "damon@lists.linux.dev" <damon@lists.linux.dev>
+Subject: Re: [PATCH 2/2] mm/damon/sysfs-schemes: add use_nodes_of_tier on
+ sysfs-schemes
+To: SeongJae Park <sj@kernel.org>, Simon Wang <wangchuanguo@inspur.com>
+References: <20250530194016.51798-1-sj@kernel.org>
+Content-Language: ko
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <20250530194016.51798-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsXC9ZZnoa74NbcMgydXGC3mrF/DZvHk/29W
+	i6/rfzFbrN7ka3F51xw2i3tr/rNanJy1ksXi9bdlzBbPZ81lsjj89Q2TxfHPz5ktPl05wO7A
+	4/HvxBo2j8Nv3jN7nNixgdlj06pONo9Nnyaxe5yY8ZvFY2HDVGaPF5tnMnp8fHqLxeP9vqts
+	Hp83yQVwR3HZpKTmZJalFunbJXBl3G3YxFQwWbNi58S3bA2MVxW7GDk5JARMJG6vamKBsXfP
+	a2EEsXkFLCXuXG5lBrFZBFQk5vT8h4oLSpyc+QSsXlRAXuL+rRnsXYxcHMwCy1kkls9cANYg
+	LBApseJWPxuILSLgLrHx/h2wuJCAkUTLvhtgzcwCIhKzO9vA4mwCahJXXk5iArE5BYwlbjVc
+	YYeoMZPo2trFCGHLSzRvnc0MskxCoJ1dYsq0XiaIqyUlDq64wTKBUXAWkgNnIdkxC8msWUhm
+	LWBkWcUolJlXlpuYmWOil1GZl1mhl5yfu4kRGH3Lav9E72D8dCH4EKMAB6MSD++Jy24ZQqyJ
+	ZcWVuYcYJTiYlUR4V4KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xp9K08REkhPLEnNTk0tSC2C
+	yTJxcEo1MIZtO573/LHsrl+fl5+2DRTxYV45/3P5+yNPF+b73J17/spShVlv55Z/5DDLd3h0
+	Oi98zbUnz7+tufbX/u5mlThG2z6bA4v8pdS6bCaHnsvNWvgsYzr3tccrXSM6q3YIfrlyf2JG
+	lP0bI88Ec89Ltz1WH/2ycK6R2Lyi73vtJtlkh9f/nCwcZcCvxFKckWioxVxUnAgAZ1OzrroC
+	AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjkeLIzCtJLcpLzFFi42LhmqGlpyt2zS3D4NEyA4s569ewWTz5/5vV
+	4uv6X8wWqzf5Whyee5LV4vKuOWwW99b8Z7U4OWsli8Xrb8uYLZ7PmstkcfjrGyaL45+fM1t8
+	unKA3YHX49+JNWweh9+8Z/Y4sWMDs8emVZ1sHps+TWL3ODHjN4vHwoapzB4vNs9k9Pj49BaL
+	x/t9V9k8Fr/4wOTxeZNcAE8Ul01Kak5mWWqRvl0CV8bdhk1MBZM1K3ZOfMvWwHhVsYuRk0NC
+	wERi97wWRhCbV8BS4s7lVmYQm0VARWJOz3+ouKDEyZlPWEBsUQF5ifu3ZrB3MXJxMAssZ5FY
+	PnMBWIOwQKTEilv9bCC2iIC7xMb7d8DiQgJGEi37boA1MwuISMzubAOLswmoSVx5OYkJxOYU
+	MJa41XCFHaLGTKJraxcjhC0v0bx1NvMERr5ZSO6YhWTULCQts5C0LGBkWcUokplXlpuYmWOq
+	V5ydUZmXWaGXnJ+7iREYS8tq/0zcwfjlsvshRgEORiUe3hOX3TKEWBPLiitzDzFKcDArifCu
+	BAnxpiRWVqUW5ccXleakFh9ilOZgURLn9QpPTRASSE8sSc1OTS1ILYLJMnFwSjUwJpgtvFar
+	I/R5okZ1aItKpvvzp7ZaHEt3d+68HRAhKMhxJ+HlqatvP+mYvD9t1cV5MLON2ebGRdEFCd+c
+	pZR0T84Mezzto1n0mb0KfzZE7ZkX5lbZJmTw7nt34nOhnzfrlu5+c9FHhvvkRZFvvXabbu5T
+	WZ+6038h+8rf/5bUBpSwCi+bu4WPRYmlOCPRUIu5qDgRAKYd8QihAgAA
+X-CFilter-Loop: Reflected
 
-On Wed,  4 Jun 2025 20:09:03 -0400
-shanmukh.iyer@gmail.com wrote:
+Hi SeongJae and Simon,
 
-Hi Shanmukh,
-
-> From: Shanmukh Iyer <shanmukh.iyer@polymtl.ca>
+On 5/31/2025 4:40 AM, SeongJae Park wrote:
+> Hi Simon,
 > 
-> Corrected to "maximum" as my very first patch to the kernel.
-> Just to get used to the contribution workflow.
 > 
-> Signed-off-by: Shanmukh Iyer <shanmukh.iyer@polymtl.ca>
-> ---
->  drivers/tty/moxa.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Thank you for continuing this important discussion.
 > 
-> diff --git a/drivers/tty/moxa.c b/drivers/tty/moxa.c
-> index 329b30fac8fc..d32fb37e2e1c 100644
-> --- a/drivers/tty/moxa.c
-> +++ b/drivers/tty/moxa.c
-> @@ -1628,9 +1628,9 @@ static void MoxaPortFlushData(struct moxa_port *port, int mode)
->   *
->   *           return:    0       : this port is invalid or baud < 50
->   *                      50 - 115200 : the real baud rate set to the port, if
-> - *                                    the argument baud is large than maximun
-> + *                                    the argument baud is large than maximum
+> Before starting, though, seems your mail client is not setting 'In-Reply-To'
+> field of your mails.  For people who uses 'In-Reply-To' field based threads
+> displaying tools, ths thread could be difficult to read the whole contents.
+> Please consider using tools that set the field correctly if possible.
 
-while at it:
+Sorry for the late response, I also had some difficulty to find its original
+patch and I just found it and replied at the following links.
+https://lore.kernel.org/linux-mm/20250528111038.18378-3-wangchuanguo@inspur.com
+https://lore.kernel.org/linux-mm/74a7db85-8fcc-4bd5-8656-0f4d0670f205@sk.com
 
-s/large/larger
+> 
+> You could get more information about available mailing tools from
+> https://docs.kernel.org/process/email-clients.html
+> 
+> Btw, I use hkml
+> (https://docs.kernel.org/process/email-clients.html#hackermail-tui) ;)
+> 
+> On Fri, 30 May 2025 08:04:42 +0000 Simon Wang (王传国) <wangchuanguo@inspur.com> wrote:
+> 
+> [...]
+>> Your concern is that adding the bool use_nodes_of_tier variable and introducing
+>> an additional parameter to multiple functions would cause ABI changes, correct?​​
+> 
+> You are correct.
+> 
+>>
+>> ​​I propose avoiding the creation of the 'use_nodes_of_tier' sysfs
+>> file. Instead, we can modify the __damon_pa_migrate_folio_list() function to
+>> change the allowed_mask from NODE_MASK_NONE to the full node mask of the
+>> entire tier where the target_nid resides.  This approach would be similar to
+>> the implementation in commit 320080272892 ('mm/demotion: demote pages
+>> according to allocation fallback order').
+> 
+> Then, this causes a behavior change, which we should not allow if it can be
+> considered a regression.  In other words, we could do this if it is a clear
+> improvement.
 
->   *                                    available baud rate, the real setting
-> - *                                    baud rate will be the maximun baud rate.
-> + *                                    baud rate will be the maximum baud rate.
->   *
->   *
->   *      Function 12:    Configure the port.
-> -- 
-> 2.34.1
+I agree this is a behavior change.
+
+> So, let's think about if your proposed change is an improvement.  As the commit
+> 320080272892 is nicely explaining, I think that it is an improved behavior for
+> demotion.  Actually it seems good behavior for promotion, too.  But, the
+> behavior we are discussing here is not for the demotion but general migration
+> (specifically, DAMOS_MIGRATE_{HOT,COLD}).
+> 
+> In my opinion, DAMOS_MIGRATE_{HOT,COLD} behavior should be somewhat similar to
+> that of move_pages() syscall, to make its behavior easy to expect.  So I think
+> having commit 320080272892's behavior improvement to DAMOS_MIGRATE_{HOT,COLD}
+> is not a right thing to do.
+> 
+> And this asks me a question.  Is current DAMOS_MIGRATE_{HOT,COLD} behavior
+> similar to move_pages() syscall?  Not really, since do_move_pages_to_node(),
+> which is called from move_pages() syscall and calls migrate_pages() is setting
+> mtc->nmask as NULL, while DAMOS_MIGRATE_{HOT,COLD} set it as NODE_MASK_NONE.
+ >
+> Also, do_move_pages_to_node() uses alloc_migration_target() while
+> DAMOS_MIGRATE_{HOT,COLD} uses alloc_migrate_folio().
+
+I can see alloc_migrate_folio() also calls alloc_migration_target(), but do you
+mean alloc_migrate_folio() setting mtc->nmask to NULL is the difference?
+
+> 
+> I overlooked this different behavior while reviewing this code, sorry.  And I
+> don't think this difference is what we need to keep, unless there are good
+> rasons that well documented.  Thank you for let us find this, Simon.
+> 
+> So I suggest to set mtc->nmask as NULL, and use alloc_migration_target() from
+> __damon_pa_migrate_folio_list(), same to move_pages() system call.  To use
+> alloc_migrate_folio() from __damon_pa_migrate_folio_list(), we renamed it from
+> alloc_demote_folio(), and made it none-static.  If we use
+> alloc_migration_target() from __damon_pa_migrate_folio_list(), there is no
+> reason to keep the changes.  Let's revert those too.
+> 
+> Cc-ing Honggyu, who originally implemented the current behavior of
+> __damon_pa_migrate().  Honggyu, could you please let us know if the above
+> suggested changes are not ok for you?
+> 
+> If Honggyu has no problem at the suggested change, Simon, would you mind doing
+> that?  I can also make the patches.  I don't really care who do that.  I just
+> think someone should do that.  This shouldn't be urgent real issue, in my
+> opinion, though.
+> 
+>>
+>> I'd like to confirm two modification points with you:
+>> ​​1.Regarding alloc_migrate_folio()​​:
+>> Restoring the original nodemask and gfp_mask in this function is the correct approach, correct?
+
+I also think restoring the both mtc->nmask and mtc->gfp_mask are needed.
+
+> I think that's correct, but let's discuss about the patch on the patch's
+> thread.
+> 
+>> ​​2.Regarding DAMON's migration logic​​:
+>> The target scope should be expanded from a single specified node to the entire memory tier
+>>   (where the target node resides), correct?
+> 
+> I don't think so, as abovely explained.
+
+I also think this makes our use case unexpected and cannot prevent migration is
+done beyond other side of socket.
+
+> 
+>> ​​Can we confirm these two points are agreed upon?​
+> 
+> I believe hope this is answered above.
 > 
 > 
+> Thanks,
+> SJ
+> 
+> [...]
 
-
--- 
-Hugo Villeneuve
+Thanks,
+Honggyu
 
