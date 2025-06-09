@@ -1,266 +1,232 @@
-Return-Path: <linux-kernel+bounces-678018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19724AD232E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:01:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFBBAD232C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 18:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA203A315D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8BF3A29D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 16:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114A9217723;
-	Mon,  9 Jun 2025 16:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A9C217648;
+	Mon,  9 Jun 2025 16:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xthttr2N"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwLoh8ju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC9A7E9;
-	Mon,  9 Jun 2025 16:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4E07E9;
+	Mon,  9 Jun 2025 16:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749484877; cv=none; b=cvsjoGB459yjgmlfYS8vXkCzMtIxV6vZn6wFm+J1bxQaM32mYgyu3u//nxMbuOsipUb2ovtK3nfVgHbEi6JcvuAUBmXTNvHiPp+TtM5OaM1Q/kFujpckCq5vYjxvKxIxoKnQaGsgZvyXC2Sy9JMrH3Pp4EldFK9NoETQsi76VsU=
+	t=1749484869; cv=none; b=pcfZb0/9ovh0QJnCJtksolv9+jwcDoU+Y77ryrrNRNjPIlm7mMRgFfo95u0hV853aNWbrY06XMD/Vg9PR+C1gf2VHIN8a7xQ5fhLrlx7AzbZp8u/a1K/qVprQRoRvcAM64M4eWbIwKX6sycALf6PlMM7H2gJPwnNnYyEGGkkpjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749484877; c=relaxed/simple;
-	bh=oZ2eFoC+V5lXSs62YPNGeUBebnPSxj7VP91pS1H4+Qo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMyW3BNgO/6TeauKyn3pmUc/7jvg2VKKv+sqyqpWGBSQEHqiCaWyW2JVDuDhNDVaDdapdWBckA+GqBgV5q9VyPdW2pD0RsBnE9UqxrNHr1ftttYqac+2qUevl5UNqhP9NzujfYxSYq93LUvvQiACYggcCiKWEfEULa86JdgfWow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xthttr2N; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso3977188276.2;
-        Mon, 09 Jun 2025 09:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749484874; x=1750089674; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6fBa/D7ZSdkp1CcirJkKYMOK5Z9MjA4EI8lgY6/+9GI=;
-        b=Xthttr2NhdDyVpGuga9EcQQaxw/rgvpJIQTjHa4aJKGsWbtm5u0i4y0lkD2Fd2Gmno
-         LgybhzE5qPnfsm5kTxT2E7MCzk7QXzX/fH3HN1sJOdGNU3C8cQ9gl5JxpjOvz5k537z+
-         0/0TowCJKOJu2tZ+6aid3xjggM/wCyo8JTLRhqp6RRnP9qYRBqpDkbxGw7tbBe0waPmT
-         EQu5TQ9BSAcYgDheFE+89/baVBXsf+NpX7T/jemaD4yinTaAV0yX35U81mHq2/eyuw3n
-         As4xroNWJ7GgAF33KS9sV0mrrQqmUf+gIL4CSfEkL1gREmprkQnKTIhlIErxu2Bxbb9G
-         Q9HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749484874; x=1750089674;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6fBa/D7ZSdkp1CcirJkKYMOK5Z9MjA4EI8lgY6/+9GI=;
-        b=AOus5Ul8rq/XCO34/a34ER75P0ZoyMolO9S8UGdVfHdN47Z78PgomZeMDgTjlb/iQR
-         42IXA1SS1lGuBhGkzMxbxE/xpB4E/a8GiVk40BbR2w8TvCwCza2n8hbnZMXe6a0rR7p/
-         dqgGklKjrUSWOkuhenKIEYVVS+9Mixm3i+HBHD+uXz2mHenFs34c+vOLGelSPqEL+PEW
-         3Y1025LWUa4KLgc9QAK/IdYWf1Lcc7U8ASUzsqssD4MbnoFKHv66qGBbaG6nWx+C/aGN
-         H3HK41I5V0pJqpbEbwG+5uWe0zZvHDeNtazmWThBfHo+NbjAjrfFKLxOCd/wMTrLlJgU
-         H2jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqCBXk++p1dEQi37gS+LFASFVOn6XabyC7gQbT29H94OOUUbDhNnXi6v7gT0nTpzA5xBE11xB+WiUT2bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyShWMwgYLBcMYLO5UQwmB007M0VWbDmDa6LGdWWybEqRcUp468
-	Rs9zcYPQY57DqcWqmmVr11W9nwcmnkuYDCAmrVtkKyko718wiZvy6ho47gSa8DFa1yUvEarx+b0
-	FmxrMzGhkonp938EuPBKBwSP9ME9cHt4=
-X-Gm-Gg: ASbGnctJ0CWmwMIGua8nILlaImZ1xfKwWxM+4nPBWbvN0t7M3ZzYZPs2gu0g+8M4OWg
-	V9En6ay/g/otekRaJ03IgQF0jdkfzIsSfWPh6HunkKVH5rsuY9pYccnxXxDQRPT/ioZudRDLazC
-	FVRa/tvPNMGg7smaBIk+9n6q32s9Fe97myL2J1r5B5sw==
-X-Google-Smtp-Source: AGHT+IEIB8zpDCWcvtBAEzi9NFpxDUdLEsuaA1XVK7qwbkI8oYOnzL1Es6VPcyxBlIwHUkvGkUTGO5iDPTFdkAt7y3Y=
-X-Received: by 2002:a05:6902:4911:b0:e81:992c:944d with SMTP id
- 3f1490d57ef6-e81a214a687mr19372674276.29.1749484874113; Mon, 09 Jun 2025
- 09:01:14 -0700 (PDT)
+	s=arc-20240116; t=1749484869; c=relaxed/simple;
+	bh=4UANBXEFzzWNDjzkZyhCusk/3Ln3IBad0owyMaZA9s8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0nOtuqdoOHuw7u26W5ztbzVtnVKach459pWwZYprHhWNLQWI0tU3n2usjQbKJrvQA0rnFNIJ/RoDYQkmk+W8/ER9wzIAgOIhyiU9OqVru/3uxnOxZOVhawvvLvH/CFopEiQjiOYiP/HPlXOgCJV+NpWl363wIlqPQ+vrLJg9E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwLoh8ju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215E7C4CEEF;
+	Mon,  9 Jun 2025 16:01:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749484868;
+	bh=4UANBXEFzzWNDjzkZyhCusk/3Ln3IBad0owyMaZA9s8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BwLoh8juJpB1j2JIPMu6yve9smAo41URpJXx8TMaktX+DpqaR3bMltvW/NELsNxaq
+	 /mOBn3syLkiglEqEFPXGQMRzsZ/M06DsQHc8b9Ui2VopZpmtcZ17jIccv0bkmr3khZ
+	 0Uye/8ScstG1DK4cE4r6vXnzrRRdBsxpcSJB9JFtk8LdTjBHfNw+qjEkkkTP9gk4ww
+	 23hgllO3bCkLvr5N5rIDf3HC3kKju/R9jmEydgiKNdGuhd0jSDCSSZ4k1Ucb751j2t
+	 XXBHgain3C8Z+mHZHr5kZcQomNJ8940/QnTIpHW+jUx4wapbkMTnNQVpQy3Wugsr4d
+	 bk2BHaMbaKVww==
+Date: Mon, 9 Jun 2025 17:01:02 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Anup Patel <anup@brainfault.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Ryo Takakura <takakura@valinux.co.jp>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev
+Subject: Re: [PATCH v1 3/7] dt-bindings: interrupt-controller: add generic
+ Risc-v aclint-sswi
+Message-ID: <20250609-rejoice-disclose-b677f617f2de@spud>
+References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
+ <20250609134749.1453835-4-vladimir.kondratiev@mobileye.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609140643.26270-1-stefano.radaelli21@gmail.com> <aEb5PHawmlhXs0xs@lizhi-Precision-Tower-5810>
-In-Reply-To: <aEb5PHawmlhXs0xs@lizhi-Precision-Tower-5810>
-From: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Date: Mon, 9 Jun 2025 18:00:56 +0200
-X-Gm-Features: AX0GCFvjgcJAA-64XgvWKGj9tzVUxKIm25Rq28d_hMMp4iijhQyDQKRcAqF3GIk
-Message-ID: <CAK+owoidpKXje+vbCSKRbHMZfiWUkp9oO=JDfe7UOoYu=jz+tQ@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: freescale: imx8mp-var-som: Add EQoS
- support with MaxLinear PHY
-To: Frank Li <Frank.li@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0bO5XdsS6ddgc29+"
+Content-Disposition: inline
+In-Reply-To: <20250609134749.1453835-4-vladimir.kondratiev@mobileye.com>
 
-Hi Frank,
 
-> +                     reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-> +                     reset-assert-us = <10000>;
-> +                     reset-deassert-us = <100000>;
-> +                     vddio-supply = <&reg_phy_vddio>;
-> extra empty line here.
+--0bO5XdsS6ddgc29+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ack, will add the empty line before the leds block.
+On Mon, Jun 09, 2025 at 04:47:45PM +0300, Vladimir Kondratiev wrote:
+> Add generic, Risc-V spec compliant (see [1]) aclint-sswi binding
+>=20
+> Thead specific binding preserved, and converted to variant of the
+> generic aclint-sswi
+>=20
+> Link: https://github.com/riscvarchive/riscv-aclint [1]
 
-> +                     at803x,eee-disabled;
-> +                     eee-broken-1000t;
-> are you sure eee broken? recently we found it wrong copy from fec.
+What is the ratification status of this spec?
 
-You're absolutely right. I checked the MXL86110 datasheet and it clearly states
-that EEE is properly supported for both 100BASE-TX and 1000BASE-T operations.
-These properties were indeed copied incorrectly from other configurations.
-I'll remove both at803x,eee-disabled and eee-broken-1000t properties in v2.
+>=20
+> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> ---
+>  .../riscv,aclint-sswi.yaml                    | 89 +++++++++++++++++++
+>  .../thead,c900-aclint-sswi.yaml               | 58 ------------
+>  2 files changed, 89 insertions(+), 58 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controlle=
+r/riscv,aclint-sswi.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/interrupt-controlle=
+r/thead,c900-aclint-sswi.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv=
+,aclint-sswi.yaml b/Documentation/devicetree/bindings/interrupt-controller/=
+riscv,aclint-sswi.yaml
+> new file mode 100644
+> index 000000000000..cffddfcfcfea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,aclint=
+-sswi.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/riscv,aclint-ssw=
+i.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Risc-V ACLINT Supervisor-level Software Interrupt Device
 
-Thanks for catching this!
+s/Risc-V/RISC-V/g
 
-Il giorno lun 9 giu 2025 alle ore 17:10 Frank Li <Frank.li@nxp.com> ha scritto:
->
-> On Mon, Jun 09, 2025 at 04:06:42PM +0200, Stefano Radaelli wrote:
-> > Enable the EQoS Ethernet controller on the i.MX8MP VAR-SOM with the
-> > integrated Maxlinear MXL86110 PHY. The PHY is connected to the EQOS
-> > MDIO bus at address 4.
-> >
-> > This patch adds:
-> > - EQOS controller configuration with RGMII interface.
-> > - Proper reset timings.
-> > - PHY power supply regulators.
-> > - RGMII pinmux configuration for all data, control and clock signals.
-> > - LED configuration for link status indication via the LED subsystem
-> >   under /sys/class/leds/, leveraging the support implemented in the.
-> >   mxl86110 PHY driver (drivers/net/phy/mxl-86110.c).
-> >   Two LEDs are defined to match the LED configuration on the Variscite
-> >   VAR-SOM Carrier Boards:
-> >     * LED@0: Yellow, netdev trigger.
-> >     * LED@1: Green, netdev trigger.
-> >
-> > The RGMII TX/RX delays are implemented in SOM via PCB passive
-> > delays, so no software delay configuration is required.
-> >
-> > Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
-> > ---
-> >  .../boot/dts/freescale/imx8mp-var-som.dtsi    | 87 +++++++++++++++++++
-> >  1 file changed, 87 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
-> > index b59da91fdd04..3be59692849f 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mp-var-som.dtsi
-> > @@ -55,6 +55,24 @@ reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
-> >               states = <3300000 0x0 1800000 0x1>;
-> >               vin-supply = <&ldo5>;
-> >       };
-> > +
-> > +     reg_phy_supply: regulator-phy-supply {
-> > +             compatible = "regulator-fixed";
-> > +             regulator-name = "phy-supply";
-> > +             regulator-min-microvolt = <3300000>;
-> > +             regulator-max-microvolt = <3300000>;
-> > +             regulator-enable-ramp-delay = <20000>;
-> > +             gpio = <&gpio2 20 GPIO_ACTIVE_HIGH>;
-> > +             enable-active-high;
-> > +             regulator-always-on;
-> > +     };
-> > +
-> > +     reg_phy_vddio: regulator-phy-vddio {
-> > +             compatible = "regulator-fixed";
-> > +             regulator-name = "vddio-1v8";
-> > +             regulator-min-microvolt = <1800000>;
-> > +             regulator-max-microvolt = <1800000>;
-> > +     };
-> >  };
-> >
-> >  &A53_0 {
-> > @@ -73,6 +91,54 @@ &A53_3 {
-> >       cpu-supply = <&buck2>;
-> >  };
-> >
-> > +&eqos {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&pinctrl_eqos>;
-> > +     /*
-> > +      * The required RGMII TX and RX 2ns delays are implemented directly
-> > +      * in hardware via passive delay elements on the SOM PCB.
-> > +      * No delay configuration is needed in software via PHY driver.
-> > +      */
-> > +     phy-mode = "rgmii";
-> > +     phy-handle = <&ethphy0>;
-> > +     status = "okay";
-> > +
-> > +     mdio {
-> > +             compatible = "snps,dwmac-mdio";
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +
-> > +             ethphy0: ethernet-phy@4 {
-> > +                     compatible = "ethernet-phy-ieee802.3-c22";
-> > +                     reg = <4>;
-> > +                     at803x,eee-disabled;
-> > +                     eee-broken-1000t;
->
-> are you sure eee broken? recently we found it wrong copy from fec.
->
->
-> > +                     reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-> > +                     reset-assert-us = <10000>;
-> > +                     reset-deassert-us = <100000>;
-> > +                     vddio-supply = <&reg_phy_vddio>;
->
-> extra empty line here.
->
-> Frank
-> > +                     leds {
-> > +                             #address-cells = <1>;
-> > +                             #size-cells = <0>;
-> > +
-> > +                             led@0 {
-> > +                                     reg = <0>;
-> > +                                     color = <LED_COLOR_ID_YELLOW>;
-> > +                                     function = LED_FUNCTION_LAN;
-> > +                                     linux,default-trigger = "netdev";
-> > +                             };
-> > +
-> > +                             led@1 {
-> > +                                     reg = <1>;
-> > +                                     color = <LED_COLOR_ID_GREEN>;
-> > +                                     function = LED_FUNCTION_LAN;
-> > +                                     linux,default-trigger = "netdev";
-> > +                             };
-> > +                     };
-> > +             };
-> > +     };
-> > +};
-> > +
-> >  &i2c1 {
-> >       clock-frequency = <400000>;
-> >       pinctrl-names = "default";
-> > @@ -239,6 +305,27 @@ &wdog1 {
-> >
-> >  &iomuxc {
-> >
-> > +     pinctrl_eqos: eqosgrp {
-> > +             fsl,pins = <
-> > +                     MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC                             0x2
-> > +                     MX8MP_IOMUXC_ENET_MDIO__ENET_QOS_MDIO                           0x2
-> > +                     MX8MP_IOMUXC_ENET_RD0__ENET_QOS_RGMII_RD0                       0x90
-> > +                     MX8MP_IOMUXC_ENET_RD1__ENET_QOS_RGMII_RD1                       0x90
-> > +                     MX8MP_IOMUXC_ENET_RD2__ENET_QOS_RGMII_RD2                       0x90
-> > +                     MX8MP_IOMUXC_ENET_RD3__ENET_QOS_RGMII_RD3                       0x90
-> > +                     MX8MP_IOMUXC_ENET_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK       0x90
-> > +                     MX8MP_IOMUXC_ENET_RX_CTL__ENET_QOS_RGMII_RX_CTL                 0x90
-> > +                     MX8MP_IOMUXC_ENET_TD0__ENET_QOS_RGMII_TD0                       0x16
-> > +                     MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1                       0x16
-> > +                     MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2                       0x16
-> > +                     MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3                       0x16
-> > +                     MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL                 0x16
-> > +                     MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK       0x16
-> > +                     MX8MP_IOMUXC_SD2_WP__GPIO2_IO20                                 0x10
-> > +                     MX8MP_IOMUXC_GPIO1_IO10__GPIO1_IO10                             0x150
-> > +             >;
-> > +     };
-> > +
-> >       pinctrl_i2c1: i2c1grp {
-> >               fsl,pins = <
-> >                       MX8MP_IOMUXC_SD1_DATA4__I2C1_SCL                                0x400001c2
-> >
-> > base-commit: e271ed52b344ac02d4581286961d0c40acc54c03
-> > prerequisite-patch-id: 2335ebcc90360b008c840e7edf7e34a595880edf
-> > --
-> > 2.43.0
-> >
+> +
+> +maintainers:
+> +  - Inochi Amaoto <inochiama@outlook.com>
+> +
+> +description:
+> +  The SSWI device is a part of the Risc-V ACLINT device. It provides
+> +  supervisor-level IPI functionality for a set of HARTs on a THEAD
+> +  platform. It provides a register to set an IPI (SETSSIP) for each
+> +  HART connected to the SSWI device. See specification
+> +  https://github.com/riscvarchive/riscv-aclint
+> +
+> +  T-HEAD C900 ACLINT is a variant of the ACLINT, using dedicated
+> +  compatible string
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - sophgo,sg2044-aclint-sswi
+> +          - const: thead,c900-aclint-sswi
+> +      - items:
+> +          - const: riscv,aclint-sswi
+
+You need a specific compatible for your implementation.
+Whether or not this compatible is viable depends on the answer to the
+ratification status and/or plan for the spec.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#interrupt-cells":
+> +    const: 0
+> +
+> +  interrupt-controller: true
+> +
+> +  interrupts-extended:
+> +    minItems: 1
+> +    maxItems: 4095
+> +
+> +  riscv,hart-indexes:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 1
+> +    maxItems: 16384
+
+maxItems is 4x what is allowed for interrupts-extended. Why?
+
+> +    description:
+> +      A list of hart indexes that APLIC should use to address each hart
+> +      that is mentioned in the "interrupts-extended"
+
+Please constrain this property to only be permitted on !thead.
+
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#interrupt-cells"
+> +  - interrupt-controller
+> +  - interrupts-extended
+> +
+> +examples:
+> +  - |
+> +    //Example 1
+> +    interrupt-controller@94000000 {
+> +      compatible =3D "sophgo,sg2044-aclint-sswi", "thead,c900-aclint-ssw=
+i";
+> +      reg =3D <0x94000000 0x00004000>;
+> +      #interrupt-cells =3D <0>;
+> +      interrupt-controller;
+> +      interrupts-extended =3D <&cpu1intc 1>,
+> +                            <&cpu2intc 1>,
+> +                            <&cpu3intc 1>,
+> +                            <&cpu4intc 1>;
+> +    };
+> +
+> +  - |
+> +    //Example 2
+> +    interrupt-controller@94000000 {
+> +      compatible =3D "riscv,aclint-sswi";
+> +      reg =3D <0x94000000 0x00004000>;
+> +      #interrupt-cells =3D <0>;
+> +      interrupt-controller;
+> +      interrupts-extended =3D <&cpu1intc 1>,
+> +                            <&cpu2intc 1>,
+> +                            <&cpu3intc 1>,
+> +                            <&cpu4intc 1>;
+> +      riscv,hart-indexes =3D <0 1 0x10 0x11>;
+
+Please be consistent. Hex or decimal, but not both.
+
+Cheers,
+Conor.
+
+--0bO5XdsS6ddgc29+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEcFPgAKCRB4tDGHoIJi
+0syLAQCKcAg5MoUg65x8c8wmRQ4jrRHsbMrQwMf6m1ZzX/hBTQEA1/TVJcYfSH3+
+tw9Ntl2G7mMGqeR1bjZWhBGDnH0mxgE=
+=zT3n
+-----END PGP SIGNATURE-----
+
+--0bO5XdsS6ddgc29+--
 
