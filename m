@@ -1,156 +1,156 @@
-Return-Path: <linux-kernel+bounces-677743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2F2AD1E7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9331AD1E82
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D40C816444E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739AB16887A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 13:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDE025742C;
-	Mon,  9 Jun 2025 13:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9202580C7;
+	Mon,  9 Jun 2025 13:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ts5evttV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bypAm1PR"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C22C148;
-	Mon,  9 Jun 2025 13:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0DA257429
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 13:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749474578; cv=none; b=qUWsGC7NVdBhrJqq1IK3Gtfn3z9GFK59HW4AHNfqFreC+oJVauLk0Vsiwq0XqA2bQUdmmFVhwtVPv85ggq0RpDG4hM6/Mx/n0WfkIUFwSJ0lKuOz3d0Xm+u2Pu9zAmZznFOCLQ1nmIiwNu6arc6GdCFZDIW/kC5w0sXOMXCSq+s=
+	t=1749474721; cv=none; b=nj91A3qEgUuMyVaQgndIkpguMfVC182lfErj7zGeUtyLKIw3d+mwvDTEHrMMPwwiQ1dg8Cn4nvQ2ttpv2uawYS0qofBnY5uDbT61JL+/fWqNYLHCBQ6f5joK5CsYXR0/c4ucO6h670FlmUjuvWrfvs5dubdaeevUfChJz3M2DT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749474578; c=relaxed/simple;
-	bh=4+Ui+usxTxJK18Xq3BV53Smdklq7y5SfpjQZgrYAuoU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ORyjaSBEUtLu1Ty31QAJtov/TtC1ZdS/cE0yv1rc0fE9YHV23pNIwKnKB8YBBCwF1YRJaf+EjrjS1IPMwpr6GG6XydnvnBUUkhH6nceJfT32yObCaQODXIOh6xbCbmY45KdAa3Rm6Kt2YbE/DzkFp+a9LNN9SLXAcs6cOTRiIkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ts5evttV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2EDC4CEEB;
-	Mon,  9 Jun 2025 13:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749474577;
-	bh=4+Ui+usxTxJK18Xq3BV53Smdklq7y5SfpjQZgrYAuoU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ts5evttVzrFEX7uzNIR7Z7nlPqZbIAUOHntxGulKHP/7cWs4nwmQMZlwPYpnaC5+y
-	 tgK0D1rghkP87vJopGbpUJ7yBwXiNdWUaq1jKE6FS3cPY2VmPzImWh9VvnS4TzAI3t
-	 6JamzwrRopy9LbVU2htJi+k1mmr5KRnhRFsgcslTOVGiS+dqT8l17MD4nlVaXHV/GR
-	 dO2zreX0Cr2sgrgls3kgMK+lTpsTYxL3hSv/UbQy33HO0xhVi9Ag5A8ZJn2ElYb2FO
-	 c0A/cv25DTlYt8UwTl/KS1INpHB1YE0Ch6LNThUewShpUpGcd2eYSyZ1aaalXadZVH
-	 dNI0bg0hH8jAw==
-Date: Mon, 9 Jun 2025 22:09:34 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Stephen
- Rothwell <sfr@canb.auug.org.au>, Masami Hiramatsu <mhiramat@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
- Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: next-20250605: Test regression: qemu-x86_64-compat mode ltp
- tracing Oops int3 kernel panic
-Message-Id: <20250609220934.2c3ed98ba8c624fc7cb45172@kernel.org>
-In-Reply-To: <CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com>
-References: <CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749474721; c=relaxed/simple;
+	bh=HemcbqMmgRHK16eJTLxADLZuI4x27GbGQS2CfbnVQpU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Sw+lo3sbUSsJVM5cuQb5RV6fwHuxH1VZgUQVzATgmvKdkJ3ankjgo3rQfAJP5i5i8TEhCDb80aKHJJhJ6UPqpiXim64DRavjZRyT7Efj3LIYOZK38wjvjDX09W3ZrPtPOjUC0XUPbEFCYqhjbC5bwpc/3ymzv69F6gfyeyy411I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bypAm1PR; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so1536189f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 06:11:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749474718; x=1750079518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIDEZTcLMIX8NSBMninMC+pCHmUrBf8fr/oqws99Skw=;
+        b=bypAm1PR8FOT4zciR0lACcksq/CnauXGx7j/7SNtaz5r+AL6xTPM7rVR9Vz1Z4cEno
+         rDUvkBetVPMPKGuefIYt3zc7ukv12HkaGLpd660hiPAutAczrTutUuOVZLPyATe92cw1
+         Cmu+kiDhCBpmAs7cEe4egaos3gTmmboNAPOy5uEgHR2SjVLcntYYrmZhE5gY6Erm1A5s
+         CSNWZaAznW3dVSB8Npj1bdcpDc/FQ9dX418veI7twjlnWSVMbFS9Ibi1UxTYaE5NaCyq
+         TeUJQolUv2UTOeqb4pWRokVSEJkgNraLKG1k77ewJe2ol653O2+QNufpMViAKRNzFUvv
+         UvEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749474718; x=1750079518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YIDEZTcLMIX8NSBMninMC+pCHmUrBf8fr/oqws99Skw=;
+        b=xM0wv2IvrCID82VpWnrSBHCP4P2QTVMU9PtHXOh4MIX8CSp1fc8u4jU19pwLIGIuoA
+         9lN6ApZYxnNe5pEPe7vVIISNU2fJeQSAF/JOpCAvmZ6izqdjXJuIQrc0XEXjCFQggv6v
+         6AnYtGpl7lDoZDloiAvtTOu75HZNwzV6A4VzeqqcVYWTPYImUvxOrQgL+PcQvFm++VwI
+         H8noA501n45mKKaDhoVcva5K7OpuOx1DyAtOv6z/8fesMSi7ss5PLov4UDEzktyJ3a0p
+         Ohf2ESKaHedWm0tanlzu4y0sgWRqaBit1GIommoqn1Xev0/WythUtMVk9IJP/ZBjtptI
+         FOlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlubq5eQq8vQ1KpEBtx0pNVNgo10SROiTTv8xrVpeyIUNw88Ci/9nDd0jC37OWqAS7mXKTx12AsO7X5w4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuLIjXGOZt8WiyxuvAkLzBo3nNYPHcwxeZ2aYEw6M+Q1Y+WUvc
+	YAOYdRm9T8OwcxiuodtRKxiTeeY22gpmhN0scGnmSHQV6/82Xn3rnhVQYfnbuNtSHas=
+X-Gm-Gg: ASbGncvLeJz8JBz5lY3+ZzTzO++GqEag9ygK7MY3vlY+P8JBrwUjFK8uMFfcRu5syzE
+	58SqphsK7IHX8S/p25gB6FWbsnMKjJSQ3EfKkVafgaNyTLPe592aj2Z0LTjky3azHntK0rOooe/
+	x06JUM3VlHtYxgqUJ5mtRJc4Tvf7YmzSoaq6Z+qyL4+C7dkGoPU05piv1PqexJen8vRzbHK2oG1
+	eVHAxjQJMPkPt4lwzv5L00mYsB8UyLNro9Ph2T6eiIe8UwMcc/TYjjD8MeYejxXsAHpuKSSlEqm
+	ftfKkhXzXHZSsrY9CnhMJz2Rt+vVVS6D/Q+f90s79fzfofgnl6QjyBq4bH9/rEkKOKasmeicOo9
+	kgiwizXZsJgmwJdVu45Z9LFQdW8B3XZsH41odtC9Jb6bV9vGTRdyEWwL3oWYm
+X-Google-Smtp-Source: AGHT+IGcP9WDP2sOnDqdsr1hUuGAfaqNH9xtyLz55f2uKfpJWh0O5VielrBpshkl/5AnNTfQlngdEg==
+X-Received: by 2002:a05:6000:2dc9:b0:3a4:da87:3a73 with SMTP id ffacd0b85a97d-3a531ce16b6mr9212551f8f.42.1749474718219;
+        Mon, 09 Jun 2025 06:11:58 -0700 (PDT)
+Received: from green.cable.virginm.net (nail-04-b2-v4wan-166353-cust693.vm26.cable.virginm.net. [82.35.130.182])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323c0819sm9396058f8f.45.2025.06.09.06.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 06:11:57 -0700 (PDT)
+From: Terry Tritton <terry.tritton@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Shuah Khan <shuah@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Wei Gao <wegao@suse.com>
+Cc: ttritton@google.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Terry Tritton <terry.tritton@linaro.org>
+Subject: [PATCH] selftests/futex: Convert 32bit timespec struct to 64bit version for 32bit compatibility mode
+Date: Mon,  9 Jun 2025 14:10:55 +0100
+Message-Id: <20250609131055.84547-1-terry.tritton@linaro.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 5 Jun 2025 17:12:10 +0530
-Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+Futex_waitv can not accept old_timespec32 struct, so userspace should
+convert it from 32bit to 64bit before syscall in 32bit compatible mode.
 
-> Regressions found on qemu-x86_64 with compat mode (64-bit kernel
-> running on 32-bit userspace) while running LTP tracing test suite
-> on Linux next-20250605 tag kernel.
-> 
-> Regressions found on
->  - LTP tracing
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducible? Intermittent
-> 
-> Test regression: qemu-x86_64-compat mode ltp tracing Oops int3 kernel panic
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Test log
-> ftrace-stress-test: <12>[   21.971153] /usr/local/bin/kirk[277]:
-> starting test ftrace-stress-test (ftrace_stress_test.sh 90)
-> <4>[   58.997439] Oops: int3: 0000 [#1] SMP PTI
-> <4>[   58.998089] CPU: 0 UID: 0 PID: 323 Comm: sh Not tainted
-> 6.15.0-next-20250605 #1 PREEMPT(voluntary)
-> <4>[   58.998152] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-> BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> <4>[   58.998260] RIP: 0010:_raw_spin_lock+0x5/0x50
+This fix is based off [1] 
 
-Interesting. This hits a stray int3 for ftrace on _raw_spin_lock.
+Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
 
-Here is the compiled code of _raw_spin_lock.
+Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
+Signed-off-by: Wei Gao <wegao@suse.com>
+---
 
-ffffffff825daa00 <_raw_spin_lock>:
-ffffffff825daa00:       f3 0f 1e fa             endbr64
-ffffffff825daa04:       e8 47 a6 d5 fe          call   ffffffff81335050 <__fentry__>
+The original patch is for an identically named file and function in ltp
+and we need the same fix in kselftest. The patch is near identical with
+only a slight change to `syscall` instead of `tst_syscall`.
 
-Since int3 exception happens after decoded int3 (1 byte), the RIP
-`_raw_spin_lock+0x05` is not an instruction boundary.
-
-> <4>[   58.998563] Code: 5d e9 ff 12 00 00 66 66 2e 0f 1f 84 00 00 00
-> 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
-> 0f 1e fa 0f <1f> 44 00 00 55 48 89 e5 53 48 89 fb bf 01 00 00 00 e8 15
-> 12 e4 fe
-
-And the call is already modified back to a 5-bytes nop when we
-dump the code. Thus it may hit the intermediate int3 for transforming
-code.
-
-e8 47 a6 d5 fe
- (first step)
-cc 47 a6 d5 fe
- (second step)
-cc 1f 44 00 00 <- hit?
- (third step)
-0f 1f 44 00 00 <- handle int3
-
-It is very unlikely scenario (and I'm not sure qemu can correctly
-emulate it.) But if a CPU hits the int3 (cc) on _raw_spin_lock()+0x4
-before anoter CPU' runs third step in smp_text_poke_batch_finish(),
-and before the CPU runs smp_text_poke_int3_handler(), the CPU' runs
-the thrid step and sets text_poke_array_refs 0, 
-the smp_text_poke_int3_handler() returns 0 and causes the same
-problem. 
-
-<CPU0>					<CPU1>
-					Start smp_text_poke_batch_finish().
-					Finish second step.
-Hit int3 (*)
-					Finish third step.
-					Run smp_text_poke_sync_each_cpu().(**)
-					Clear text_poke_array_refs[cpu0]
-Start smp_text_poke_int3_handler()
-Failed to get text_poke_array_refs[cpu0]
-Oops: int3
+Is the way I have tagged this appropriate?
 
 
-But as I said it is very unlikely, because as far as I know;
+ .../testing/selftests/futex/include/futex2test.h  | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-(*) smp_text_poke_int3_handler() is called directly from exc_int3()
-   which is a kind of NMI, so other interrupt should not run.
-(**) In the third step, smp_text_poke_batch_finish() sends IPI for
-   sync core after removing int3. Thus any int3 exception handling
-   should be finished.
-
-Is this bug reproducible easier recently?
-
-Thanks,
-
+diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
+index ea79662405bc..6780e51eb2d6 100644
+--- a/tools/testing/selftests/futex/include/futex2test.h
++++ b/tools/testing/selftests/futex/include/futex2test.h
+@@ -55,6 +55,13 @@ struct futex32_numa {
+ 	futex_t numa;
+ };
+ 
++#if !defined(__LP64__)
++struct timespec64 {
++	int64_t tv_sec;
++	int64_t tv_nsec;
++};
++#endif
++
+ /**
+  * futex_waitv - Wait at multiple futexes, wake on any
+  * @waiters:    Array of waiters
+@@ -65,7 +72,15 @@ struct futex32_numa {
+ static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
+ 			      unsigned long flags, struct timespec *timo, clockid_t clockid)
+ {
++#if !defined(__LP64__)
++	struct timespec64 timo64 = {0};
++
++	timo64.tv_sec = timo->tv_sec;
++	timo64.tv_nsec = timo->tv_nsec;
++	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, &timo64, clockid);
++#else
+ 	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
++#endif
+ }
+ 
+ /*
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.39.5
+
 
