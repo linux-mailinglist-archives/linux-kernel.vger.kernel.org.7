@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-677177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B56AD1737
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 04:59:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5125AD175D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 05:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496C03A83E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 02:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCE63A91C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 03:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE8024676B;
-	Mon,  9 Jun 2025 02:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2692E270542;
+	Mon,  9 Jun 2025 03:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tWyQrXWg"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hbain1Vd"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDCB2F3E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 02:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEBF2701C8;
+	Mon,  9 Jun 2025 03:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749437977; cv=none; b=FnbDs5Fim4nIpxCcpfgF0725pUHnoq1l8/T/LB0a8eitlMeh1Jtu3sMcVl8kPxamQbYNM/D+/CXiZsJlVPsBYRht6UBDW4ryRVoXTF3vlNG9GjBMDuPDP2/Y8xWiYcbICsCqOiiNsGlNkfui+31HLuEF6Z/DRY36sGn65NRzxjQ=
+	t=1749438740; cv=none; b=uMgRaizXnuSUrIFSLkwI/bmQJT0VriItncs4lsk2urS/TsoXudlQBQX72wU5t/pEW7Tph8aWzXDutm+VkIAMG4aAfAt6ZFO2eIIF+Iui1jzEIseqQZWN2RXYm6nBA5sW3Oymdx/SwSE+qReHsGoNRCde6HlTIJKD2fKIxQkacsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749437977; c=relaxed/simple;
-	bh=UQElxAqGxBmUymstBZ/Dk/1nzyfCRHDk4FZj9475Mnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cvSIF5FEgOGZfMpGv581C4PR1ZyIq4ydNPf8u2B932RsDZ/t/0HtZVC5o6Cjm+Vdek8HfqhYVlDsTLGKrbJFzRCeQ+8Ji/XmjELTCvk3LasgYjTozCic+RHSNg6MPODBhMGOoBiS3krQik/Wtvki3O5X0N+qFq4wcnv2HpCKeD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tWyQrXWg; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749437960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=K0E0j2BlPBhEZVL7ok/0anTaOlpOqXA2NyI5PTiVfMY=;
-	b=tWyQrXWguA+ancsJD83ufgUvjOSaZJM8GQUgWmiCpxfkAPoFtrldct233g2dm09zrZEWqr
-	dTNiLK6Hqupx/HlzQhgZvBbgoe2MQE3DSHV0Jf4aGbJ13/0POOQD7Rn/4GT76imbEQWGvr
-	IC6o3BtFXr5ZDS6pz2xprufyGVjLKvo=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: bpf@vger.kernel.org
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Jakub Sitnicki <jakub@cloudflare.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2] bpf, sockmap: Fix psock incorrectly pointing to sk
-Date: Mon,  9 Jun 2025 10:59:08 +0800
-Message-ID: <20250609025908.79331-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1749438740; c=relaxed/simple;
+	bh=dDrMQ92LuLGu55pFGVPF5AMJ71MKlzo/xb2Mi66ibTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ebsWsQIHgyOpmoZjLZCsJaz5S6XZoAgEDg/7btKdft9BBo7nlWReNuuyICzfiO3GeP+fMaPAHdKVVJioDyK+D7Gjl7YDt6uDbgSCc+c65uuyMV4DA+OSoi4WGxUkQglYB9h6zJ1vn5jNVR/YJudUnD1NUPUg+xx+fgukOv7X5nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hbain1Vd; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749438728; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=D4pMAoDuYGVY/y/srg/WEDjx+BfgvSMCUgZlsMgt/Ck=;
+	b=hbain1Vdj7xorIGvIBqBRxwg0OMHYcQrJsEpzIi3BWXQAMAs1jak91L3bybDxVuKY3Kr7M1VvfeX8inQt8uJGGKM2n3zg0GcFy1qp6zWzMKuP6IGDg6c5sZiBeMlPQWIoR+N4H2SepO+enz0agItrjQmQqgMuME9gmzovH/GdWE=
+Received: from 30.74.144.144(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WdK.fGG_1749438403 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 09 Jun 2025 11:06:44 +0800
+Message-ID: <4a2c359e-79d9-447b-a43e-164333d08319@linux.alibaba.com>
+Date: Mon, 9 Jun 2025 11:06:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 12/12] Documentation: mm: update the admin guide for
+ mTHP collapse
+To: Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, ryan.roberts@arm.com, corbet@lwn.net,
+ rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20250515032226.128900-1-npache@redhat.com>
+ <20250515032226.128900-13-npache@redhat.com>
+ <bc8f72f3-01d9-43db-a632-1f4b9a1d5276@arm.com>
+ <CAA1CXcDOEdJRvZMu2Fyy4wsdy8k8nj4c45s4JanO9HzyJgyXOw@mail.gmail.com>
+ <b09d7553-c3c6-453a-8e3a-86dc4caeb431@arm.com>
+ <CAA1CXcB-A9U8GEodPrm3QdndzB2MY7eZHnoojVYU5fi_DJBbcw@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAA1CXcB-A9U8GEodPrm3QdndzB2MY7eZHnoojVYU5fi_DJBbcw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-We observed an issue from the latest selftest: sockmap_redir where
-sk_psock(psock->sk) != psock in the backlog. The root cause is the special
-behavior in sockmap_redir - it frequently performs map_update() and
-map_delete() on the same socket. During map_update(), we create a new
-psock and during map_delete(), we eventually free the psock via rcu_work
-in sk_psock_drop(). However, pending workqueues might still exist and not
-be processed yet. If users immediately perform another map_update(), a new
-psock will be allocated for the same sk, resulting in two psocks pointing
-to the same sk.
 
-When the pending workqueue is later triggered, it uses the old psock to
-access sk for I/O operations, which is incorrect.
 
-Timing Diagram:
+On 2025/6/9 03:50, Nico Pache wrote:
+> On Sat, Jun 7, 2025 at 8:35 AM Dev Jain <dev.jain@arm.com> wrote:
+>>
+>>
+>> On 07/06/25 6:27 pm, Nico Pache wrote:
+>>> On Sat, Jun 7, 2025 at 12:45 AM Dev Jain <dev.jain@arm.com> wrote:
+>>>>
+>>>> On 15/05/25 8:52 am, Nico Pache wrote:
+>>>>
+>>>> Now that we can collapse to mTHPs lets update the admin guide to
+>>>> reflect these changes and provide proper guidence on how to utilize it.
+>>>>
+>>>> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+>>>> Signed-off-by: Nico Pache <npache@redhat.com>
+>>>> ---
+>>>>    Documentation/admin-guide/mm/transhuge.rst | 14 +++++++++++++-
+>>>>    1 file changed, 13 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>>> index dff8d5985f0f..5c63fe51b3ad 100644
+>>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>>>
+>>>>
+>>>> We need to modify/remove the following paragraph:
+>>>>
+>>>> khugepaged currently only searches for opportunities to collapse to
+>>>> PMD-sized THP and no attempt is made to collapse to other THP
+>>>> sizes.
+>>> On this version this is currently still true, but once I add Baolin's
+>>> patch it will not be true. Thanks for the reminder :)
+>>
+>> You referenced Baolin's patch in the other email too, can you send the link,
+>> or the patch?
+> 
+> He didn't send it to the mailing list, but rather off chain to all the
+> recipients of this series. You should have it in your email look for
+> 
+> Subject: "mm: khugepaged: allow khugepaged to check all anonymous mTHP
+> orders" and "mm: khugepaged: kick khugepaged for enabling
+> none-PMD-sized mTHPs"
 
-cpu0                        cpu1
-
-map_update(sk):
-    sk->psock = psock1
-    psock1->sk = sk
-map_delete(sk):
-   rcu_work_free(psock1)
-
-map_update(sk):
-    sk->psock = psock2
-    psock2->sk = sk
-                            workqueue:
-                                wakeup with psock1, but the sk of psock1
-                                doesn't belong to psock1
-rcu_handler:
-    clean psock1
-    free(psock1)
-
-Previously, we used reference counting to address the concurrency issue
-between backlog and sock_map_close(). This logic remains necessary as it
-prevents the sk from being freed while processing the backlog. But this
-patch prevents pending backlogs from using a psock after it has been
-stopped.
-
-Note: We cannot call cancel_delayed_work_sync() in map_delete() since this
-might be invoked in BPF context by BPF helper, and the function may sleep.
-
-Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-
----
-V1->V2: Use existing flag instead of adding new one.
-https://lore.kernel.org/bpf/20250605142448.3llri3w7wbclfxwc@gmail.com/
-
-Thanks to Michal Luczaj for providing the sockmap_redir test case, which
-indeed covers almost all sockmap forwarding paths.
----
- net/core/skmsg.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/net/core/skmsg.c b/net/core/skmsg.c
-index 34c51eb1a14f..83c78379932e 100644
---- a/net/core/skmsg.c
-+++ b/net/core/skmsg.c
-@@ -656,6 +656,13 @@ static void sk_psock_backlog(struct work_struct *work)
- 	bool ingress;
- 	int ret;
- 
-+	/* If sk is quickly removed from the map and then added back, the old
-+	 * psock should not be scheduled, because there are now two psocks
-+	 * pointing to the same sk.
-+	 */
-+	if (!sk_psock_test_state(psock, SK_PSOCK_TX_ENABLED))
-+		return;
-+
- 	/* Increment the psock refcnt to synchronize with close(fd) path in
- 	 * sock_map_close(), ensuring we wait for backlog thread completion
- 	 * before sk_socket freed. If refcnt increment fails, it indicates
--- 
-2.47.1
-
+You can find them at the following link:
+https://lore.kernel.org/all/ac9ed6d71b439611f9c94b3506a8ce975d4636e9.1748435162.git.baolin.wang@linux.alibaba.com/
 
