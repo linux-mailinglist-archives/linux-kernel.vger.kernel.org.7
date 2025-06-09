@@ -1,377 +1,423 @@
-Return-Path: <linux-kernel+bounces-677952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853BFAD2229
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:17:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36755AD2232
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 17:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42367162007
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:17:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E86018860B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 15:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3EA1DA5F;
-	Mon,  9 Jun 2025 15:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4098019E83C;
+	Mon,  9 Jun 2025 15:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p+w5GYlz"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TbDsAyLx";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vyrvqySt"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4246C126C1E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749482254; cv=none; b=AsNpcy2ZpKQXhUUCoYRlSLEC9yIoDgV9yq7ilChW3SKfDVQvR8l9vlYFDnua/g91Lx3OA13qSFtPkM8VQ2iMD0/9MEkI8hONsjxn6mQ2SNj8l5kcUgU7PseRsi6jF0ASLLWlEZWuzVQLAh0M27+vqbI+PWFeOE45i2c7j91qNyI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749482254; c=relaxed/simple;
-	bh=c5Gt0Vtn4kjwuSa2XkI8uVm8JcnmxhYa5s1PdMl9B50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pz0mklwPXqckzFkTUjgWIo+Hjf29Dz3hwMRoBWe8sLo2LmW/BQRKQ7A/BW5s34Kizyq8p8LD6gbye7p3R4R7ftl7/QAjBJ66Keb9LhGEAjTkSNRWG9+C+x60hvSCuB1G+dWoGDnjIiUIC3GwGbnrSha05JP/LDl33hAnzbrsDU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p+w5GYlz; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-747abb3cd0bso3851211b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 08:17:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F5B3398B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 15:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749482301; cv=fail; b=YV8TaOLhO0h41HcRMt0oxrAgfMYx+3knUqUul6cI8bIEJgMzcnU+uhSWCArSZJM5xvayAhIAG/1aHzdjv/+5Ts4I81LCI31N7+F7QbQc4t3r0HWpw9JITd5l8YPBvDXNwOOjo0Azx6AMQ/jTxnt3Nz53ikKXiGxNoEblRNg9HuM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749482301; c=relaxed/simple;
+	bh=wpchv2QM0k/bFhIVwyJ0Hc8KV5i8MTre2Dlc6FXvMOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MpYJk5E/dQJoXHG3/ka17YW153MYYPCOdJipFx2KEzQFbTzxOOqEQwBczghSZQ7PtEKTIz6jrRQzaCE40GDR+9lpEqA2tqOetwTOtbqytnbPJjWVjHLkpx/0gzGJvgB5oK/37jed/hAoTpi5mJrZt2yqqhufyos20rR98TxBWa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TbDsAyLx; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vyrvqySt; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5593fZnw010478;
+	Mon, 9 Jun 2025 15:17:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=cI9yordqEqYAc9k5FirN7GPOjP7IxKY/y5x82up9/Ok=; b=
+	TbDsAyLxF9lBqO4KQxkbAzDspJMvW36CSDhUs6jmpLq3L7srA/qWGCr12Fe2Vhti
+	aUe9EI6dgOfoBtsphdcPQ4hRBqNVQxSkP3Y1xcvS2CJgQLQySsoZrGoyXXMnLUuw
+	a5KwzlSF5kVn2ufvq6B1lUo6RtwgsWnh6OgrdyYg3fkhdXKipa+qJFYsc1lKlzvX
+	Ifyz+ANPum1Uz3ynnphaofS2MLXU7kWflomoaaH1y2KHT93HF9rweQ3QCeQx/c24
+	j39QdkrTLigTFFhUB8DtImgJ6I/zgDEco+A4qBeY/+raisHML6dsRN4aOuJf6pBH
+	uDTtrRUrLake29HZj5WQCg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 474cbeacfm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Jun 2025 15:17:53 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 559E66GS004011;
+	Mon, 9 Jun 2025 15:17:52 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02on2071.outbound.protection.outlook.com [40.107.96.71])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 474bv7jd7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Jun 2025 15:17:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cxGJvTvBb5bP4lgnYBw8xMQocWUf3wtYbfkvxN8/pKY5e/6QBaU4372ujs6CfpcyX1JuQGko9g0fYrSYR8Yxe3jNARBXyocBzxR4zih4n5P8eXE2b/SMbTZe3m9isfvhqZt9qzVEtuKy7inKeyxNBVvCqoEmKydpd5ni5MyMLKiZEpJzCQmtgj3MCpy+rZerUwOSzx2kunR/MDt3auB0RM3ZfYEhY46nrfEk9jSgv7RnJE4/2lhrNnD16NRlxamciaYchV/x0EZJ8XQ7p7XOoVbIOXoDFFDaXy8103q6rVaDEAw2X5ZYJBTl8PIFi2CfQElVk37mAOsnQH302GttOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cI9yordqEqYAc9k5FirN7GPOjP7IxKY/y5x82up9/Ok=;
+ b=HZHhpE6HcURjhCjaEB1nX1qZ89U6D5AVCNdciQH0mxOAejzb0mQwz+NvfSJOM2a2zQEJamVFxzLjdQ0K13KYL8nRAHZlDKvYv+vw7aFH9Kw/zFiIlLno4ox2iojBu7fmmfqzXLCsASxNm/M4zjDnRnpds9+XqUwpSbUQOI1WvPOh1SzfSohVgyvjQCOSiFgJgK/cIiiNo6EJPNEbSynwTzvt5iJIo18rcTtfU4QfLXcSwsiurxSHsnf8XHQ51LEKSmgWrT76aglclxy1rePBKgEdmQ9kdJU7zfmbkY9ziN9BO5Ji4ceN8wK3Q/7sWniz8e2Gz5iV6qbqKEOLicDF/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749482251; x=1750087051; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0wgi4l9pB+k6eYqsObcJMKbBiV/az9m6d/4vGJ5hPSY=;
-        b=p+w5GYlzHIH9qUO/oD/OFzmngf6WjdC5am0OeqED+pWy3Q1PzERK89WcWVscFdvNUk
-         QyACu0RQDMP0N2wsBN9Kt8WM6RY5TZt37aOLXtyfRH2qrvq01gb0Cvcvv81d/VKBBGZM
-         XuGv5lWEG+XolAHrrWaRIevGMOhY72GufbDTcg0hJyJSscgz5arAQC2VEhwmZeKsq8zo
-         iNlA8DJNAP7ZVWxEQHcHpRL5oD5kqUKIbXe8UDnftnlBiT+nsrbRqb/uPvh+HwNmdZDv
-         wneYEqvqjnf4gbjT6LkFah0+d05BLlN6fXw8D0YiI5Hbn9DN90j0XtF8bve5eSuCGPu9
-         yvmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749482251; x=1750087051;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wgi4l9pB+k6eYqsObcJMKbBiV/az9m6d/4vGJ5hPSY=;
-        b=QtA7wtXxO5veEVYfWyWaKmmM2y31oeHHCkJSaNNG5opPi4v2eHiiPH86+3dQKD9AxK
-         eJCXOHZIpMHxpjUSPKEZ2Y3nFoQczHzO41fEM1tky4YBWE3pIaEnvJxMZwv7ZqdfTXAK
-         z4aBaxXHAdF+x4JpWHaMFdnEaut+LCrDuXK0RFMOPVG0D3w8Te2szAUMAieoAOgrq/xN
-         80YwBUv5wKM82XqidXPBM8MxPTt/jPGXsDSVVnz0FJzRXAeZeZ3KxdMLSirgZg/5+G1y
-         hm5iQvy1tNfCaZjteZxaPrV+rr9uUMdX+guZGSA73K8JGkbken2qd9K/XqFc2EUBtVKI
-         mS5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWzaiZWYAGn5GAzqhzBQYdNDfKE9A42STLYqZRmxxHOcCnuKcrDKf/fZ5iTA291ta3pSMP8TtJY76arUf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6HFDZLTemgn4XWgQ3MArxExD8LUxvbwO2N7pzg6NERiQohqf5
-	02yozBTOkLsAcwjjLNThl0UUqz8cjmU164qLchQo3bOdIj7sitZa1ax1aVmdp3ieNKU=
-X-Gm-Gg: ASbGncsxX5jKsqvq/Qkm4Aj/qRFOzrKSZYNPIX0LAsqqyuA6F4VxrStCF0ED0OYJR+K
-	09uNJsX/G/LosdZVFBeuXyzWmfEf5Ju7pXTMklXISYct5A5vMSqyTD3JZ05Eqm6hfwgJv+ioe6k
-	mmjg4SC2A45Yv5RbK3wp+TuuVvwEf6qASuLrnr/GAWiIa9tE7joVjyOAkduG+uJMWykN2MzSebo
-	QfKlBulL81z10FKwOXhihQ2j7vZzWNu1yESJMiOpqncv9+zOVTfXI3jzwNNjKmPDSTcY4chx2yV
-	BGYFBqczI/VS80dRPz7I08Os8ykVryyGnx7zdw+Rf4e8dS0tgwLQPfE=
-X-Google-Smtp-Source: AGHT+IG+8DMWeioystMlYoPtUrhRgiquzNvnRe0fXwZg1slBlCk+KnQoms7/UocPVMMtvBlqNfImuw==
-X-Received: by 2002:a05:6a21:8cca:b0:21f:52ed:23cc with SMTP id adf61e73a8af0-21f75c8fb52mr289826637.15.1749482251479;
-        Mon, 09 Jun 2025 08:17:31 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1329:68ff:ffeb:cd9c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af38378sm6095758b3a.16.2025.06.09.08.17.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 08:17:30 -0700 (PDT)
-Date: Mon, 9 Jun 2025 09:17:28 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Add support for System
- Manager API
-Message-ID: <aEb7CCkr0unZppvn@p14s>
-References: <20250606-imx95-rproc-1-v2-0-a2bd64438be9@nxp.com>
- <20250606-imx95-rproc-1-v2-2-a2bd64438be9@nxp.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cI9yordqEqYAc9k5FirN7GPOjP7IxKY/y5x82up9/Ok=;
+ b=vyrvqySt/P8cu9M9NcqXl1df6WA1gge+mhB3cSHwtoTH3bgjizJrBbVBeKt2FCi1IC8kovVY8CGnV2/TpU8I17FjnfN9ydXncmR4Z9kJkG63J2svG4lZZ3+Bl+lNZP24suwSWr3p5FDm3tOZBq3hbsdNRcqIbF4X2wxWFZ4ptE4=
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
+ by SJ0PR10MB5598.namprd10.prod.outlook.com (2603:10b6:a03:3d9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.21; Mon, 9 Jun
+ 2025 15:17:47 +0000
+Received: from BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
+ ([fe80::552b:16d2:af:c582%4]) with mapi id 15.20.8813.024; Mon, 9 Jun 2025
+ 15:17:47 +0000
+Date: Mon, 9 Jun 2025 16:17:45 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
+        Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+        dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: huge_memory: disallow hugepages if the
+ system-wide THP sysfs settings are disabled
+Message-ID: <cd357496-34f4-4d87-90f5-acfc55ca5995@lucifer.local>
+References: <cover.1749109709.git.baolin.wang@linux.alibaba.com>
+ <8eefb0809c598fadaa4a022634fba5689a4f3257.1749109709.git.baolin.wang@linux.alibaba.com>
+ <998a069c-9be5-4a10-888c-ba8269eaa333@lucifer.local>
+ <a30660e1-f366-4b0c-846e-986067931c7c@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a30660e1-f366-4b0c-846e-986067931c7c@linux.alibaba.com>
+X-ClientProxiedBy: LO4P265CA0306.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:391::11) To BL4PR10MB8229.namprd10.prod.outlook.com
+ (2603:10b6:208:4e6::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250606-imx95-rproc-1-v2-2-a2bd64438be9@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|SJ0PR10MB5598:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e8033f2-c298-4fdb-0d94-08dda768ca70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TEprYk9BWTJORWRjdFhaOWZXZlJsbkwrWEFncE9pcDlLTVlIVnZOT3Z3TEo5?=
+ =?utf-8?B?U0NmY3J0UCtDbFVyUnE4MzI3YktqdU9Bam1lb2tJU2d0TzhWSjJkVG5Ydnlr?=
+ =?utf-8?B?NEFoOVVSd3pDRDZCTHEvTmEzWVhUaStWOXdpZ3lHdzI0NmRUWlZUWndObUgx?=
+ =?utf-8?B?M0p3ZW1UY3MrUXNwb1VpZEx6bVZOQnlyeVQrUkFyRGMrMTloK3ZrRFg3TmdM?=
+ =?utf-8?B?cGtCM0tubEdIMHkvY2dSRytBYkx3NVpFR2h5cUxJOWxvWTBpdmhsQ2FCVHZl?=
+ =?utf-8?B?U3dJbm91cVg3MTRUN1ZGcXcwZHNoeW81MmdENlRnTHhzMGhDeVoySWJJUU5Y?=
+ =?utf-8?B?NHVMQ2xzWnpKNWVtbTRoTXNveW56R3YreWRLbVZhdUlDS29jcXM3QUNWZWZr?=
+ =?utf-8?B?MjFuZ2U3dTBjRG0vZFcvWjBmSDNBQ0xYYnVwdnZ0SzU5ak1hb2RzYnhhUnNQ?=
+ =?utf-8?B?QUh1MzFxNmFBa2hMejJlNnUwNTNaT1NENHhWS2E2UWtYWWVhTFBYYkpNVkM0?=
+ =?utf-8?B?Y2YyNDFtWTQrdEdhZTRoVncrNU9XNXhGeXBsWUZXeFdieERIRXFMelJSUjRS?=
+ =?utf-8?B?enlNRWZ6blZoS1lWbkxVSmdnM1JJWUd1VVNUWWtBZ3Z5S3U3emVQdWtYaFZa?=
+ =?utf-8?B?Q3k5RmlzSDJGR05uem5IYVFscG5KSkFGQWRuVGZNbFMrSG9ESDc4aXdVTzFw?=
+ =?utf-8?B?UGo3eldhY2xlRW9jNUpHMEw2dWtweFppazgyMEtsQmx6c3VOSk44emhmQjMy?=
+ =?utf-8?B?UHdabjFlYWlWNWpIOE02cnM3WEJCWG52QjYxK2ZxK0VKd0cvbFBweTlVYkNY?=
+ =?utf-8?B?TFFFLzJUUmw5WmtnLzFPRDgrL2o0SW1VQm9wN1BsQy9TYWVjandVam9LaitG?=
+ =?utf-8?B?cDNEek5hWTYwbXRMQzFiRlp1VnJDb0M4WlZrM3Rqd2MwUGVxSWwvblpMcWhL?=
+ =?utf-8?B?MWZqRndibEFqSUJQMnhFaE5ubzZUU2dYMHVaU2NYMnpKU2FLZDFzdXhnVWpw?=
+ =?utf-8?B?cVpZWVRLMVY3ZzB3NS8xeGhLczBlVzAwVzVvU0RBMUdZMUtqSUk3OExLT2JJ?=
+ =?utf-8?B?bEwwYXlEakFHY2pvcWJzblR4Nk5sSDlpVERadlZMWWFXTHdUMTcvelVuaURL?=
+ =?utf-8?B?NHUzVDdvZ2kzRnJYNVgza1MvanFJenBta1ptcnVpSkVIVGF2NDBRMENWcnFR?=
+ =?utf-8?B?N1J0aWJPSFBBQzhranI5TmtWSFpMeFgwNEZLL1g4OTVTTHpia1NWbnNSMytT?=
+ =?utf-8?B?bTdLdFJ2TGMwR0o1WCtsdXp5aVU3blREVXMwRnlVWXBhaENtdndTSk5MRVNF?=
+ =?utf-8?B?cWtVcFRzdzhJTUYvNW9xRjFrMGhHNlg4TWZrTjFYV2haRHRxbDd3OFJiN0h1?=
+ =?utf-8?B?eGJVblhDUStOV2tSSzJiNHhGTHZha3VRUFdyYWhBMXlpMDI4WU40WGQza21Q?=
+ =?utf-8?B?WDlwSkRBTit3WVozNzJUS3pQRlg4VmlVbzJPYVZ3Ynd0L2IreHEvV05LK1hF?=
+ =?utf-8?B?MXRkQmhqRTlpa1FLcUpCZkNRbS84VHVJYkVtcXIvWUtPbzZMbjJ3L2gwR1hF?=
+ =?utf-8?B?cTUyL0F2SlU3VVQyMkZIcGNVN3RZalBTbTM5RGJDbVIyVzJkbC9mS0lXZFgr?=
+ =?utf-8?B?ekJUOEsvWU02WGFEckdrUkJucDBaSGs4TlpSODU1RStHTC9iTHlmV1lqSjVi?=
+ =?utf-8?B?L21lbytkMnJaUHhZREVNdGx6NWZXUDJYRGw4M0pTUGc4MFNrb0xIVDVPTElu?=
+ =?utf-8?B?WnJWeU01K282ejVhQlBRMVg1S28xaWNHejZUWS9oYkM4a3N2NForYnhuZFlU?=
+ =?utf-8?B?c0tGekdtWXJ5SGF1Z1VOdkVKSHU2YkxMZm5nOEw4dHo2dFc4TUVwQkhIMndG?=
+ =?utf-8?B?MktEQU15YmJvK1diazVHQlhBdDVUSGdMNkxJR2hIME52WnZHUzJtNElsMXph?=
+ =?utf-8?Q?yEX3RuX2SJs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WUg2U0drR0RkRjF2WW5ST21iYWRqNUN5S2ZkVm9SS0xhaWp0RnJMZExIZGJB?=
+ =?utf-8?B?VjlMcWlpSmN5eEJJWWhldEkyaCtTUEtzRjVQK0NkTkxLV0pVa3VUZ0ZrdnlO?=
+ =?utf-8?B?SmE5MEYxMko4TTIxd0FDc25xTEFnakZOUXUwTE1kZFZ4MjdSNFZYT1F0QnFr?=
+ =?utf-8?B?SEc5eklHT2xCK004UHoySzY0YWdFaTIwVncrSTl0UzRwdC9FM0NwOTBUdmtN?=
+ =?utf-8?B?ektZb2pPNVUyM2JvQ0dWNFVadjN5Zm9jMnovT1lZbUlaZVpDV3pialNJeWha?=
+ =?utf-8?B?eFEyRHJiSklMK0l0aHNyYmw1TjQxRFZEYzJDMDljZ0Y5alJSSis1ZUJyL09Q?=
+ =?utf-8?B?Z1hZZVNpVTBsWEUxSW5FSWZFbklsNm4rTG14dnBUN1JMNVVWczVyM25iMGFn?=
+ =?utf-8?B?TEFlbEU0WnhBVVVqajNweTJ4cllXNWVjbXV2YnBsdkxUQmRGa2YyNkszbHFr?=
+ =?utf-8?B?T2cvSUhSK2pqSkU3LzZtM3B6eXFpMDFyZWsvVVNGOHoxR1hZWTd4N1hPVDRU?=
+ =?utf-8?B?c1g1Wk1UK3FNZ3IyQmZUTGlTR2REQVRveG16aG5aTThPZk9wb0dKaVE2SWIw?=
+ =?utf-8?B?VUd5ZnVyd1RaUmNWS3hDWUhOdU9qV1RhMk1Jc3dmbWJrc1pwWWZhU3RFWElT?=
+ =?utf-8?B?elFjSkhGZVZmQUNyYWx0a2hsOG41WTl1bFEvWWJMVkRma3pLUzl2VWV0aU9B?=
+ =?utf-8?B?bXZtV1hsR2RtOGdWVjRKK2FYZ2Q0d20veDdrQVVMdlNLL08xeXVjNUdmcllU?=
+ =?utf-8?B?ZC93MTNzMUdTblhzc3AveHdYU1dpREQ3czVQZnVlVjliU2FXWmtLSWJGNkpp?=
+ =?utf-8?B?cVZ2YkJYazhOa085dWFTYk95M1pseld2b0t6dlJUZ0h3S2FBNXZXdDdxdDNV?=
+ =?utf-8?B?TnNJMWp1UmZTbmk3N1lNZnR3QnZ1V1ZoemFKR1gzNTNMQnBWODFsSXRnb0V6?=
+ =?utf-8?B?WDhncHRpWWNQNjVCdmM5ZDlvVlhzTGREdGtlTHVVQkxObWZ6QWV0cXhtejZW?=
+ =?utf-8?B?dUNzRExlV0s3Yi9CWXp0Njd2QTJkMncwWlBvVXI3U1QwU1NtVGh3WmM3SjdJ?=
+ =?utf-8?B?Q3ZNZlA3WHhSSzF1QUxOUVdzekplNVQxQVZXRlMvZVpwcnVhcHFzNUhiUnM3?=
+ =?utf-8?B?aGtQSzJRbFNLODVVOVFkcHEvZWNURzJCVTVxWU5NblN4UHlUSkR3NDFKN3lL?=
+ =?utf-8?B?czJ5ZGgyY3BGeEtaRmVDRFVNZEE5Uzltbk1pMDZJbWI1MVZTQkhhelBLWFNY?=
+ =?utf-8?B?Q1RtZHEyZm1GeVMyMUs3a2ZxUHFkRzJ2S1JGbmE3VXFxNEZMenk0aXZFRHZ1?=
+ =?utf-8?B?bncwdWRoWkNqWlJ1YVFpODZ6aUw4ekc5TXdzVG1zNzhTSHFiZ0d4ZFZMNGM3?=
+ =?utf-8?B?VFNsUWpMNHFZaENhcG51K1N3WEtXK3BsYjdTWGloUC9iVXU5SUVxQWljNmQ4?=
+ =?utf-8?B?K0hFVVpCQUsxMnhmMzJMRlRwMXY3YWFMR0xPUGQzV2wybDdSQnQya3JwUjhP?=
+ =?utf-8?B?TmhPRkI2KzROOUtodnJJNGFkYWVQNW1rWHVkRlZ2K0xXRkVMcnNZRFFkWWt5?=
+ =?utf-8?B?V09mWUVqNGt4eUpPUmZNWERCeGNxUE9KTEZXVWdwV3k1ZUF1Uk5zOTA5Qktx?=
+ =?utf-8?B?d1lqcUI3eE02cy9wMGM5Q0t2NWhvSnExb2JGMG9WMzgydHFsMkNFNnNtVHIw?=
+ =?utf-8?B?WVhxeGJKTS9YYzg5RmpZZXFjQmhDRXJ4ZnlRK3JMNmFyOWhvT0dyaVp2Q0l0?=
+ =?utf-8?B?QzdZbGw2MnZhN3daczA3SWZQU1greFE4bTRxWVRtTnJkNnV5T3IzQ0ZjQ3Zl?=
+ =?utf-8?B?QlNrcTQyTnh3M0U0aUtraVIzVWxaRll5MkdXODE0TXZsS2NwTXV6SEpBN1lh?=
+ =?utf-8?B?RXJRdzdjbEptUWRlNnYyN3A4alBSWWx4dFJ5c2lqMWt2enZ6K0lESTVkT0tV?=
+ =?utf-8?B?UFVyczg4N3ZYVlBESGtMTStRL1NWQ0tGaUJUSjlpekp3WERwZVZwQVdlMytY?=
+ =?utf-8?B?S0RRazlWZVZjRXNrTEFKZVM2WDlFNWNQZ25rTTIwd09GalN6Z2RlUGZhdjdI?=
+ =?utf-8?B?ZDNoaE9uTEpIKytIOGttQ3ZkS0ltUG5Gckg4eEZ2NjBBWjladG1yc0c0TUtX?=
+ =?utf-8?B?YmhpL2tOUlZFc3Y3WXRyZ0o4blNiVHJmVXRxUFQ4OThXQ0htcmxvMDBDdDhs?=
+ =?utf-8?B?Vmc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4/yYS65kbvl5Im0+pwvfr2RkAWnYlgJRXnReP4nhSyW9z+9IRfiHSVy+nqYXA7ADNl+BLsHfNM17LPMg34aHsQLyWfP+AmIbVaqITHgBdEMeR9X2XXaqJMIKA2sAjg6Ai/n6Ht1tgm/Frm0t25vQmXSyxxnOWUqimdICRCDV5qeVgj79Bh0GJljdDeUvVadkw1FY9Fjds6ustrjBjth3BlZABp3L7rDGJW7zWHNpGgZAAqlr9ooN1bxuB+UFBY0V0DH3Sz36vw3oEK9PFeoaEubwfMguaFiMr5a3dIEbp8QW0XRyu3MpzaGNgn+KxhIapUK9ZWBgV2fREY+zQ9ZfekBGBe99hqX2IMePX6UFzUxHXNVmQZpAx+ipTCZ+zAzo2oXQQv5k05VL/ODhE4rcJF7Y9kaEgw1BUz/V21FuNnbELCZggETixGxI6QfbYWoIQ0GT1AjdQhimLeX5/HHybfA5tVBGYj9VWY/7tGvTtZfSPmDSP2u6r7lhZcb8MX5GT2J9zmZ57Ci3HZhpoyUre9a4vK82LlIU4h9qGBqJRn4UKtMH2zr5tKNwEde00XVUNMgTQCu/CGQ/AmpYA4nBNrFBMCQPFjOBzyy12sLOf/0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e8033f2-c298-4fdb-0d94-08dda768ca70
+X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2025 15:17:47.1990
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wROMZiEE4rhVrEFchqs2TICgUVPEdehJFjnoRSQi8nSJRY4xHXxsacyYe4VJuHtao8yomHss28SJ+SSY1m/3JPyOFaibXkiSKyxly8KERdU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5598
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-09_05,2025-06-09_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=999 phishscore=0 spamscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506090112
+X-Proofpoint-GUID: I9-nX3pZqlEvq3Y_e-2_sBO3GuW-sW4K
+X-Authority-Analysis: v=2.4 cv=BffY0qt2 c=1 sm=1 tr=0 ts=6846fb21 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=SRrdq9N9AAAA:8 a=8xJKfzfH2gkFajNTWHkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 cc=ntf awl=host:14714
+X-Proofpoint-ORIG-GUID: I9-nX3pZqlEvq3Y_e-2_sBO3GuW-sW4K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA5MDExMiBTYWx0ZWRfX3MjhuaFta4H5 8y8BlKNyTzhtQVZo12NNm5RyYr5kKKVR5oTZAzzAs4U4Z9X7LwuKoE1NZuMbiRc6M8t/isai5PI wWazDBOvO61EFa2u0Y9G0fUbA41IpltA18+5CcByKIBxK6xBdxv3tWCpzJzdxH4RfrorHf3HpUq
+ 8RefUY8M4MWHABMKpcLA8qxz+woEMOV39TTKHEhTsIA+4ETfaovtsPDsjfOL9nU7MVHlMp5xyys P29SwP+QU0cr6OPeeQMHultlD1W0BFCVQKv3zgvBK7xz3qOd67WhPtALmEf6CKJOmzG/bRHl+cA siDuqbo3EH3nh4ytugx7CoEYA6f+U38n1o2lgaAZTWb+s0Yh9cMNfgRrN0tvcucpTr6KSVLCwyV
+ pCbv+85X7YWxJkkmkEzxhk1xhscBPIwrh4fbYMEyxnR3m3l0On7IwlVwVXmiPTfZe+vgomA3
 
-Good day,
+On Mon, Jun 09, 2025 at 02:10:12PM +0800, Baolin Wang wrote:
+>
+>
+> On 2025/6/7 19:55, Lorenzo Stoakes wrote:
+> > Not related to your patch at all, but man this whole thing (thp allowed orders)
+> > needs significant improvement, it seems always perversely complicated for a
+> > relatively simple operation.
+> >
+> > Overall I LOVE what you're doing here, but I feel we can clarify things a
+> > little while we're at it to make it clear exactly what we're doing.
+> >
+> > This is a very important change so forgive my fiddling about here but I'm
+> > hoping we can take the opportunity to make things a little simpler!
+> >
+> > On Thu, Jun 05, 2025 at 04:00:58PM +0800, Baolin Wang wrote:
+> > > The MADV_COLLAPSE will ignore the system-wide Anon THP sysfs settings, which
+> > > means that even though we have disabled the Anon THP configuration, MADV_COLLAPSE
+> > > will still attempt to collapse into a Anon THP. This violates the rule we have
+> > > agreed upon: never means never.
+> > >
+> > > Another rule for madvise, referring to David's suggestion: “allowing for collapsing
+> > > in a VM without VM_HUGEPAGE in the "madvise" mode would be fine".
+> >
+> > I'm generally not sure it's worth talking only about MADV_COLLAPSE here when
+> > you're changing what THP is permitted across the board, I may have missed some
+> > discussion and forgive me if so, but what is special about MADV_COLLAPSE's use
+> > of thp_vma_allowable_orders() that makes it ignore 'never's moreso than other
+> > users?
+>
+> We found that MADV_COLLAPSE ignores the THP configuration, meaning that even
+> when THP is set to 'never', MADV_COLLAPSE can still collapse into THPs (and
+> mTHPs in the future). This is because when MADV_COLLAPSE calls
+> thp_vma_allowable_orders(), it does not set the TVA_ENFORCE_SYSFS flag,
+> which means it ignores the system-wide Anon THP sysfs settings.
+>
+> So this patch set is aimed to fix the THP policy for MADV_COLLAPSE.
+>
 
-On Fri, Jun 06, 2025 at 09:55:13AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
-> one Cortex-M7 core. The System Control Management Interface(SCMI)
-> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
-> Manager(SM) includes vendor extension protocols, Logical Machine
-> Management(LMM) protocol and CPU protocol and etc.
-> 
-> There are three cases for M7:
->  (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
->  (2) M7 in a separate Logical Machine that Linux can control it using
->      LMM protocol
->  (3) M7 runs in same Logical Machine as A55, so Linux can control it
->      using CPU protocol
-> 
-> So extend the driver to using LMM and CPU protocol to manage the M7 core.
->  - Add IMX_RPROC_SM to indicate the remote core runs on a SoC that
->    has System Manager.
->  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(got
->    from DTB), if same, use CPU protocol to start/stop. Otherwise, use
->    LMM protocol to start/stop.
->    Whether using CPU or LMM protocol to start/stop, the M7 status
->    detection could use CPU protocol to detect started or not. So
->    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
->    status of M7.
->  - For above case 1 and 2, Use SCMI_IMX_LMM_POWER_ON to detect whether
->    the M7 LM is under control of A55 LM.
-> 
-> Current setup relies on pre-Linux software(U-Boot) to do
-> M7 TCM ECC initialization. In future, we could add the support in Linux
-> to decouple U-Boot and Linux.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 127 ++++++++++++++++++++++++++++++++++++++++-
->  drivers/remoteproc/imx_rproc.h |   2 +
->  2 files changed, 127 insertions(+), 2 deletions(-)
-> 
+Yeah of course, and this is exactly why, but what I mean is, the patch
+doesn't explicitly address MADV_COLLAPSE, it addresses a case that
+MADV_COLLAPSE uses (which is as you say the motivating cause for the
+change).
 
-I will look at this patch when either Daniel or Iuliana have given their R-B.
+So I think the commit message should rather open something like:
 
-Thanks,
-Mathieu
+	If, when invoking thp_vma_allowable_orders(), the TVA_ENFORCE_SYSFS
+	flag is not specified, we ignore sysfs TLB settings.
 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 74299af1d7f10a0db794de494c52304b2323b89f..8fe3c76c9b30ed9e66d4e8c8e2e178a21f3b5bd2 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -8,6 +8,7 @@
->  #include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/firmware/imx/sci.h>
-> +#include <linux/firmware/imx/sm.h>
->  #include <linux/interrupt.h>
->  #include <linux/kernel.h>
->  #include <linux/mailbox_client.h>
-> @@ -21,6 +22,7 @@
->  #include <linux/reboot.h>
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
-> +#include <linux/scmi_imx_protocol.h>
->  #include <linux/workqueue.h>
->  
->  #include "imx_rproc.h"
-> @@ -91,6 +93,11 @@ struct imx_rproc_mem {
->  #define ATT_CORE_MASK   0xffff
->  #define ATT_CORE(I)     BIT((I))
->  
-> +/* Logical Machine Operation */
-> +#define IMX_RPROC_FLAGS_SM_LMM_OP	BIT(0)
-> +/* Linux has permission to handle the Logical Machine of remote cores */
-> +#define IMX_RPROC_FLAGS_SM_LMM_AVAIL	BIT(1)
-> +
->  static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block);
->  static void imx_rproc_free_mbox(struct rproc *rproc);
->  
-> @@ -115,6 +122,10 @@ struct imx_rproc {
->  	u32				entry;		/* cpu start address */
->  	u32				core_index;
->  	struct dev_pm_domain_list	*pd_list;
-> +	/* For i.MX System Manager based systems */
-> +	u32				cpuid;
-> +	u32				lmid;
-> +	u32				flags;
->  };
->  
->  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
-> @@ -393,6 +404,30 @@ static int imx_rproc_start(struct rproc *rproc)
->  	case IMX_RPROC_SCU_API:
->  		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, true, priv->entry);
->  		break;
-> +	case IMX_RPROC_SM:
-> +		if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP) {
-> +			if (!(priv->flags & IMX_RPROC_FLAGS_SM_LMM_AVAIL))
-> +				return -EACCES;
-> +
-> +			ret = scmi_imx_lmm_reset_vector_set(priv->lmid, priv->cpuid, 0, 0);
-> +			if (ret) {
-> +				dev_err(dev, "Failed to set reset vector lmid(%u), cpuid(%u): %d\n",
-> +					priv->lmid, priv->cpuid, ret);
-> +			}
-> +
-> +			ret = scmi_imx_lmm_operation(priv->lmid, SCMI_IMX_LMM_BOOT, 0);
-> +			if (ret)
-> +				dev_err(dev, "Failed to boot lmm(%d): %d\n", ret, priv->lmid);
-> +		} else {
-> +			ret = scmi_imx_cpu_reset_vector_set(priv->cpuid, 0, true, false, false);
-> +			if (ret) {
-> +				dev_err(dev, "Failed to set reset vector cpuid(%u): %d\n",
-> +					priv->cpuid, ret);
-> +			}
-> +
-> +			ret = scmi_imx_cpu_start(priv->cpuid, true);
-> +		}
-> +		break;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -435,6 +470,16 @@ static int imx_rproc_stop(struct rproc *rproc)
->  	case IMX_RPROC_SCU_API:
->  		ret = imx_sc_pm_cpu_start(priv->ipc_handle, priv->rsrc_id, false, priv->entry);
->  		break;
-> +	case IMX_RPROC_SM:
-> +		if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP) {
-> +			if (priv->flags & IMX_RPROC_FLAGS_SM_LMM_AVAIL)
-> +				ret = scmi_imx_lmm_operation(priv->lmid, SCMI_IMX_LMM_SHUTDOWN, 0);
-> +			else
-> +				ret = -EACCES;
-> +		} else {
-> +			ret = scmi_imx_cpu_start(priv->cpuid, false);
-> +		}
-> +		break;
->  	default:
->  		return -EOPNOTSUPP;
->  	}
-> @@ -549,9 +594,11 @@ static int imx_rproc_prepare(struct rproc *rproc)
->  {
->  	struct imx_rproc *priv = rproc->priv;
->  	struct device_node *np = priv->dev->of_node;
-> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
->  	struct of_phandle_iterator it;
->  	struct rproc_mem_entry *mem;
->  	struct reserved_mem *rmem;
-> +	int ret;
->  	u32 da;
->  
->  	/* Register associated reserved memory regions */
-> @@ -592,6 +639,38 @@ static int imx_rproc_prepare(struct rproc *rproc)
->  		rproc_add_carveout(rproc, mem);
->  	}
->  
-> +	switch (dcfg->method) {
-> +	case IMX_RPROC_SM:
-> +		if (!(priv->flags & IMX_RPROC_FLAGS_SM_LMM_OP))
-> +			break;
-> +		/*
-> +		 * Power on the Logical Machine to make sure TCM is available.
-> +		 * Also serve as permission check. If in different Logical
-> +		 * Machine, and linux has permission to handle the Logical
-> +		 * Machine, set IMX_RPROC_FLAGS_SM_LMM_AVAIL.
-> +		 */
-> +		ret = scmi_imx_lmm_operation(priv->lmid, SCMI_IMX_LMM_POWER_ON, 0);
-> +		if (ret == 0) {
-> +			dev_info(priv->dev, "lmm(%d) powered on\n", priv->lmid);
-> +			priv->flags |= IMX_RPROC_FLAGS_SM_LMM_AVAIL;
-> +		} else if (ret == -EACCES) {
-> +			dev_info(priv->dev, "lmm(%d) not under Linux Control\n", priv->lmid);
-> +			/*
-> +			 * If remote cores boots up, continue the rpmsg channel setup,
-> +			 * else linux have no permission, so return -EACCES.
-> +			 */
-> +			if (priv->rproc->state != RPROC_DETACHED)
-> +				return -EACCES;
-> +		} else if (ret) {
-> +			dev_err(priv->dev, "Failed to power on lmm(%d): %d\n", ret, priv->lmid);
-> +			return ret;
-> +		}
-> +
-> +		break;
-> +	default:
-> +		break;
-> +	};
-> +
->  	return  0;
->  }
->  
-> @@ -911,13 +990,53 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  	struct regmap_config config = { .name = "imx-rproc" };
->  	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
->  	struct device *dev = priv->dev;
-> +	struct scmi_imx_lmm_info info;
->  	struct regmap *regmap;
->  	struct arm_smccc_res res;
-> +	bool started = false;
->  	int ret;
->  	u32 val;
->  	u8 pt;
->  
->  	switch (dcfg->method) {
-> +	case IMX_RPROC_SM:
-> +		/* Get current Linux Logical Machine ID */
-> +		ret = scmi_imx_lmm_info(LMM_ID_DISCOVER, &info);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to get current LMM ID err: %d\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		ret = of_property_read_u32(dev->of_node, "fsl,cpu-id", &priv->cpuid);
-> +		if (ret) {
-> +			dev_err(dev, "No fsl,cpu-id property\n");
-> +			return ret;
-> +		}
-> +
-> +		ret = of_property_read_u32(dev->of_node, "fsl,lmm-id", &priv->lmid);
-> +		if (ret) {
-> +			dev_info(dev, "No fsl,lmm-id property\n");
-> +			return ret;
-> +		}
-> +
-> +		/*
-> +		 * Check whether remote processor is in same Logical Machine as Linux.
-> +		 * If no, need use Logical Machine API to manage remote processor, and
-> +		 * set IMX_RPROC_FLAGS_SM_LMM_OP.
-> +		 * If yes, use CPU protocol API to manage remote processor.
-> +		 */
-> +		if (priv->lmid != info.lmid) {
-> +			priv->flags |= IMX_RPROC_FLAGS_SM_LMM_OP;
-> +			dev_info(dev, "Using LMM Protocol OPS\n");
-> +		} else {
-> +			dev_info(dev, "Using CPU Protocol OPS\n");
-> +		}
-> +
-> +		scmi_imx_cpu_started(priv->cpuid, &started);
-> +		if (started)
-> +			priv->rproc->state = RPROC_DETACHED;
-> +
-> +		return 0;
->  	case IMX_RPROC_NONE:
->  		priv->rproc->state = RPROC_DETACHED;
->  		return 0;
-> @@ -1029,8 +1148,12 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
->  	struct device *dev = priv->dev;
->  	int ret;
->  
-> -	/* Remote core is not under control of Linux */
-> -	if (dcfg->method == IMX_RPROC_NONE)
-> +	/*
-> +	 * IMX_RPROC_NONE indicates not under control of Linux.
-> +	 * System Manager(SM) firmware automatically configures clock,
-> +	 * so bypass the clk settings for IMX_RPROC_SM.
-> +	 */
-> +	if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SM)
->  		return 0;
->  
->  	priv->clk = devm_clk_get(dev, NULL);
-> diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
-> index cfd38d37e1467d1d9e6f89be146c0b53262b92a0..e3e851d88fb069a589531ea21a3790fd62fde57d 100644
-> --- a/drivers/remoteproc/imx_rproc.h
-> +++ b/drivers/remoteproc/imx_rproc.h
-> @@ -26,6 +26,8 @@ enum imx_rproc_method {
->  	IMX_RPROC_SCU_API,
->  	/* Through Reset Controller API */
->  	IMX_RPROC_RESET_CONTROLLER,
-> +	/* Through System Manager */
-> +	IMX_RPROC_SM,
->  };
->  
->  /* dcfg flags */
-> 
-> -- 
-> 2.37.1
-> 
+	Whilst it makes sense for the callers who do not specify this flag,
+	it creates a odd and surprising situation where a sysadmin
+	specifying 'never' for all THP sizes still observing THP pages
+	being allocated and used on the system.
+
+	The motivating case for this is MADV_COLLAPSE, <blah blah blah> :)
+
+> > > To address this issue, should check whether the Anon THP configuration is disabled
+> > > in thp_vma_allowable_orders(), even when the TVA_ENFORCE_SYSFS flag is set.
+> > >
+> > > In summary, the current strategy is:
+> > >
+> > > 1. If always & orders == 0, and madvise & orders == 0, and hugepage_global_enabled() == false
+> > > (global THP settings are not enabled), it means mTHP of that orders are prohibited
+> > > from being used, then madvise_collapse() is forbidden for that orders.
+> > >
+> > > 2. If always & orders == 0, and madvise & orders == 0, and hugepage_global_enabled() == true
+> > > (global THP settings are enabled), and inherit & orders == 0, it means mTHP of that
+> > > orders are still prohibited from being used, thus madvise_collapse() is not allowed
+> > > for that orders.
+> >
+> > OK so it's already confusing that the global settings only impact 'inherit'
+> > settings below, so they're not really global at all, but rather perhaps should
+> > be called 'inherited'.
+> >
+> > Maybe I need to submit a patch to rename thp_inherited_enabled(), or perhaps
+> > that'd just add to the confusion :P
+> >
+> > OK this is also not your fault just general commentary.
+> >
+> > Anyway, I feel points 1 and 2 can more succinctly be summed up as below,
+> > also there's no need to refer to the code, it's actually clearer I think to
+> > refer to the underlying logic:
+> >
+> > 	If no hugepage modes are enabled for the desired orders, nor can we
+> > 	enable them by inheriting from a 'global' enabled setting - then it
+> > 	must be the case that all desired orders either specify or inherit
+> > 	'NEVER' - and we must abort.
+>
+> OK. Thanks for helping me make it simpler:)
+>
+
+Thanks :)
+
+> > >
+> > > Reviewed-by: Zi Yan <ziy@nvidia.com>
+> > > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > > ---
+> > >   include/linux/huge_mm.h | 23 +++++++++++++++++++----
+> > >   1 file changed, 19 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > > index 2f190c90192d..199ddc9f04a1 100644
+> > > --- a/include/linux/huge_mm.h
+> > > +++ b/include/linux/huge_mm.h
+> > > @@ -287,20 +287,35 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+> > >   				       unsigned long orders)
+> > >   {
+> > >   	/* Optimization to check if required orders are enabled early. */
+> > > -	if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
+> > > -		unsigned long mask = READ_ONCE(huge_anon_orders_always);
+> > > +	if (vma_is_anonymous(vma)) {
+> > > +		unsigned long always = READ_ONCE(huge_anon_orders_always);
+> > > +		unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+> > > +		unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);
+> > > +		unsigned long mask = always | madvise;
+> > > +
+> > > +		/*
+> > > +		 * If the system-wide THP/mTHP sysfs settings are disabled,
+> > > +		 * then we should never allow hugepages.
+> > > +		 */
+> > > +		if (!(mask & orders) && !(hugepage_global_enabled() && (inherit & orders)))
+> > > +			return 0;
+> > > +
+> > > +		if (!(tva_flags & TVA_ENFORCE_SYSFS))
+> > > +			goto skip;
+> > >
+> > > +		mask = always;
+> > >   		if (vm_flags & VM_HUGEPAGE)
+> > > -			mask |= READ_ONCE(huge_anon_orders_madvise);
+> > > +			mask |= madvise;
+> > >   		if (hugepage_global_always() ||
+> > >   		    ((vm_flags & VM_HUGEPAGE) && hugepage_global_enabled()))
+> > > -			mask |= READ_ONCE(huge_anon_orders_inherit);
+> > > +			mask |= inherit;
+> > >
+> > >   		orders &= mask;
+> > >   		if (!orders)
+> > >   			return 0;
+> > >   	}
+> > >
+> > > +skip:
+> > >   	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
+> > >   }
+> >
+> > I feel this is compressing a lot of logic in a way that took me several
+> > readings to understand (hey I might not be the smartest cookie in the jar,
+> > but we need to account for all levels of kernel developer ;)
+> >
+> > I feel like we can make things a lot clearer here by separating out with a
+> > helper function (means we can drop some indentation too), and also take
+> > advantage of the fact that, if orders == 0, __thp_vma_allowable_orders()
+> > exits with 0 early so no need for us to do so ourselves:
+>
+> Sure. Looks good to me. Thanks.
+
+Great thanks!
+
+>
+> > /* Strictly mask requested anonymous orders according to sysfs settings. */
+> > static inline unsigned long __thp_mask_anon_orders(unsigned long vm_flags,
+> > 		unsigned long tva_flags, unsigned long orders)
+> > {
+> > 	unsigned long always = READ_ONCE(huge_anon_orders_always);
+> > 	unsigned long madvise = READ_ONCE(huge_anon_orders_madvise);
+> > 	unsigned long inherit = READ_ONCE(huge_anon_orders_inherit);;
+> > 	bool inherit_enabled = hugepage_global_enabled();
+> > 	bool has_madvise =  vm_flags & VM_HUGEPAGE;
+> > 	unsigned long mask = always | madvise;
+> >
+> > 	mask = always | madvise;
+> > 	if (inherit_enabled)
+> > 		mask |= inherit;
+> >
+> > 	/* All set to/inherit NEVER - never means never globally, abort. */
+> > 	if (!(mask & orders))
+> > 		return 0;
+> >
+> > 	/* Otherwise, we only enforce sysfs settings if asked. */
+> > 	if (!(tva_flags & TVA_ENFORCE_SYSFS))
+> > 		return orders;
+> >
+> > 	mask = always;
+> > 	if (has_madvise)
+> > 		mask |= madvise;
+> > 	if (hugepage_global_always() || (has_madvise && inherit_enabled))
+> > 		mask |= inherit;
+> >
+> > 	return orders & mask;
+> > }
+> >
+> > ...
+> >
+> > static inline
+> > unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+> > 				       unsigned long vm_flags,
+> > 				       unsigned long tva_flags,
+> > 				       unsigned long orders)
+> > {
+> > 	if (vma_is_anonymous(vma))
+> > 		orders = __thp_mask_anon_orders(vm_flags, tva_flags, orders);
+> >
+> > 	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
+> > }
+>
+>
 
