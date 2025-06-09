@@ -1,176 +1,276 @@
-Return-Path: <linux-kernel+bounces-677227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-677228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D80AD17DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:32:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D30DAD17E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 06:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247367A532A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 04:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D668188A907
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Jun 2025 04:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8D11FCF41;
-	Mon,  9 Jun 2025 04:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuriH3Sa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3528E259C87
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 04:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04D02701C8;
+	Mon,  9 Jun 2025 04:32:41 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32721FCF41;
+	Mon,  9 Jun 2025 04:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749443542; cv=none; b=Ujxj8qvg1l5JzQi3nqWwEml2ppFETNnLxLylLI2WUfi9JBHjhz2p/Zj2GlzvFfmLS+PoH+4dtdgRUZpdZXCkahOwQMgyWSsxgsYI8Izll8oWv8PzTKCiIqZwH9SHmc6e4lfulVRpxcWHQAFtRMnXx8vKsk2amPH+27yd8jOfxNQ=
+	t=1749443561; cv=none; b=j+aV1q2MSbSIB8A7OzI/0aiL9rhZ5fYK/jQ+b6LynFDz/lul4uaIr/I3VrR5q6K0aHsrPNJnMcaQx8nh3Ghk15coBFqfJOIn8yLGn6iekCXEZ8B5spd5cYZJ5pmyXOXlVOe7yAH293ILz7kKy9O1aYPZ5qky9FUNnpgnr/Tc1/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749443542; c=relaxed/simple;
-	bh=FdZ5xMRsS8L4kCJzdeb0IexN8j+Z1kdYKkOrW/omX28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OgbyAyEdSofjqGsHYALXkkWf63X2EyI0z3Rv9DAqK7HZsTCGbr0TOl4wPdlzTrBX+kOkZCQwA9NUHuJUcS1efTMF3xOm2B60gNvVUk1ytAWVTfyehPgTZlBA6kaCNIrbCkXSX1oihG4d7QgbUN/oe4OM67djOsimQfFWfWbrhZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuriH3Sa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2BC5C4CEEB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Jun 2025 04:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749443541;
-	bh=FdZ5xMRsS8L4kCJzdeb0IexN8j+Z1kdYKkOrW/omX28=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YuriH3Sa9tYeBYlGTSaE1WkedTEgEJzMqT11baDtYMf31gTEeg3PB122OHBHdJbfd
-	 ZhG+so7etPaoFpdifmKFPn5Tm37WUuUxqOPU3NtfeBqoPXiT2fF6JrwWFnnSPREm2c
-	 im4qIyE385UnrkDLN71QwfNQrj7lEb0btVsNMI76FQZ9/EEyzDVzflj5/stpjsYrR1
-	 YHTqyYIgPwaNjtzqwa1DAgBns2mrIqa+vnYxXwAONuVbzOMiW3R0/nf8jlOwBwXwMC
-	 1DYBNtU3HWys94dIcl9q32i5ZAIg2qYM9c+bE9S8IVyN9Bku9BF5HD/KyilLAqpD5+
-	 D8pny3Sr13J2A==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54b10594812so4272967e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jun 2025 21:32:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaGhcpAjeX/iFkbnNQf3WOtmczB2qSwJH8RwC1yW7Z/wjhkBP+4ZnEBGZL7ZjHn7ejGgYENVQLNAAreXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yziu5ETutqedsFwN4iDteomd7FkbPtVF0Wxab+uB5lMMesT3NFj
-	YYzk1Re65lamT/TZ7mLEPBNuUyWkCLxA8wsoxqIVdEmr+GkYmJ2loxbuKzvrap4YCjkvJCEbfWR
-	YQJpOtG5xrGpRLr03aq37iZY/8VMumSQ=
-X-Google-Smtp-Source: AGHT+IG/vSoBGoPVnUeGSR5Rgmq9JpmpZbj7EB3bohcDHvEzto0LyLdFDNmCmHJhS0bbAuP7yKY/PQDLMdVpAhRuwqg=
-X-Received: by 2002:a05:6512:118c:b0:54e:9066:9af7 with SMTP id
- 2adb3069b0e04-55366bea7d1mr2670834e87.27.1749443540466; Sun, 08 Jun 2025
- 21:32:20 -0700 (PDT)
+	s=arc-20240116; t=1749443561; c=relaxed/simple;
+	bh=wuMzdjrsppK7zABodLU2wRyjcVCWRTcLAGXBfXPuU7I=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=E0jrWdk3PtbdZzVoCqwjXPSi6FBkqR7Ow6K05CzgccmqOKpSIQwUPXzqFp69sfVmwGKwOw+99m+1jq+r9Yhs/XbiDd9Wy/eu3hwyUBSI9f42WoGKelAv0r56Qd5CZdmmttLJcWSiXSQyxPye0mmkFTB+k07pfGig4iw7wBLE46E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-44-684663e373eb
+From: Byungchul Park <byungchul@sk.com>
+To: willy@infradead.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel_team@skhynix.com,
+	kuba@kernel.org,
+	almasrymina@google.com,
+	ilias.apalodimas@linaro.org,
+	harry.yoo@oracle.com,
+	hawk@kernel.org,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	john.fastabend@gmail.com,
+	andrew+netdev@lunn.ch,
+	asml.silence@gmail.com,
+	toke@redhat.com,
+	tariqt@nvidia.com,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	horms@kernel.org,
+	linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org,
+	vishal.moola@gmail.com
+Subject: [PATCH net-next 0/9] Split netmem from struct page
+Date: Mon,  9 Jun 2025 13:32:16 +0900
+Message-Id: <20250609043225.77229-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXRa0hTYRwG8N6ds7PjcnFcUicDrWEElpqh8gclFla8SESUoSmVQw9u5qZt
+	ulQILwmW6CorNV00MW1OabJk0xJREzUMMi81L+Ut7UuaORV1gWnitx88PM+XhybEdaQHrVCl
+	cmqVLElCCUnhnGul73TcOfmJstLjoDfXU1C3mg6vJpr4oDdZESytjQrA0dlNQVXlCgH6T3kk
+	LJvXCZjpmhLAeM0sCS35NgKmHvRQUJTnJCC3yciDPquOD0/WqwmwZU8IYOCtnoLv9Rt8mO0o
+	IuFDeS0J4zopdBn2wUrvLwSdZhsPVgqfU/C430DBdN44gv73UyRU5OgQmFvtfHCu6inpYdxY
+	O8zDzeXfBNhgScNvjD64wN5PYIvpPoUti8UCPPalhcI9ZU4SNzc5eLjo7jyF/8yMkPh36xCF
+	zY1DJP5o6BRgh8XzIhMtDI3nkhRaTu1/KlYof9YwSqXkBKW326vJbFTlU4BcaJYJZNs2egU7
+	fvFoA22ZYo6ydvsasWV3JoB1THWTBUhIE8w8n53RO3lbwV4mhB28N7lZpmmSOcKWlf7fFDFB
+	bLsjG21verF1DW3EtkcE7PACve0DbLvRTj5Euw1olwmJFSqtUqZICvSTZ6gU6X5xyUoL2ryw
+	5s7fmCa02He5AzE0kriKYkvPysV8mVaToexALE1I3EXMeJhcLIqXZWRy6uQb6rQkTtOBDtKk
+	ZL/o5MrteDGTIEvlbnJcCqfeSXm0i0c2yi+tGtCmLZ+pPx3Ktj+NCNaJin9mSSMDy02mAU34
+	D18X74oYiFi4ZMvy6lYs6a3cWG5IT0gUNs5es1xYTQyDwck+d2bu0nnfdzFXr0TsMR17HQWM
+	0S3cf9kt2M34VVvYolSxJS9vSSMP0cJuqzIk37Pk83qid9l1/8wEdbSE1MhlAT6EWiP7BweT
+	b+u+AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWRa0hTcRxA/d97d+91OrktsYt+CAZRCJpWxi8UsUL7E/SAiigUnXprQ+dj
+	U9EgmClYy0em4aNJk2E+ZkyW6AwTneIrQ9GMlaU2UYJMy6lMZ1gWfTtw4Hw5LCkto/xZZVqW
+	oE6Tp8poMSW+GF4QtJAUowhx6QJAb26lweTKhcZ5qwj0LR0I1rdmGHAODNFgrN8kQT9eSMGG
+	eZuExUEHA3PPlyjoLuokwVE2TENJoZuEe9YmAvrrRkQw0VEqgsrtBhI6tfMMTL3S0zDbuiuC
+	JVsJBSO1zRTMlUbBoMEPNt8sIxgwdxKwWVxHQ8WkgYaFwjkEk/0OCp7mlyIw99hF4Hbp6SgZ
+	bm/+QOCu2s8MNliy8cumQKyzT5LY0vKAxpa1xwz+9L6bxsPVbgp3WZ0ELilYofHPxY8UXu2Z
+	prHx6w8Cm9unKTxmGGAu77spjkgWUpU5gvpoZIJYUdM2Q2fkh+X22RsoLTIG6pAny3Mn+Gfl
+	u2iPae4wb7dvkXvsy4XyTscQpUNiluRWRPyi3k3sif1cOP/u/hdGh1iW4g7x1VV/OxIujO9z
+	atG/5kHe1NZLPkKsAXm0IF9lWo5KrkwNC9akKPLSlLnBSekqC/qz6fndnXIrWp86Z0Mci2Te
+	koSqaIVUJM/R5KlsiGdJma+EmzurkEqS5Xl3BHV6vDo7VdDYUABLyQ5Izl8XEqTcbXmWkCII
+	GYL6vyVYT38tuvGa5xmB709cimc8EiG5IfObt9TvpPvYjjzuRRcK/26xjI3HFg2pTG97Fx/W
+	b/htNJi2ioK0kW1lFXGz1xJvhU/0EJf6iRCRV/HymYWAmNhffhdO79bYQoeNjTi2I9qn2efU
+	lZAnoyFDxtVMl25mrTLiePaoqTLhCHl1pdlLRmkU8tBAUq2R/wY0vT3IogIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250602163302.478765-1-masahiroy@kernel.org> <3cebc3c4-dbaf-41f6-b98d-1d33bea2eeeb@csgroup.eu>
- <CAK7LNAQvRFVOeQhVos1T-R-Uq9ekY9Fo7HS+D=TCZziLo5TpHQ@mail.gmail.com> <8734c9wwvv.fsf@mpe.ellerman.id.au>
-In-Reply-To: <8734c9wwvv.fsf@mpe.ellerman.id.au>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 9 Jun 2025 13:31:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARhhw7pg+ymaSdniXwfBbHUoAkOJiwFzuGVRoN01KhHnw@mail.gmail.com>
-X-Gm-Features: AX0GCFtPsQFxjuGHywgztAGrisTJf8QTNS_os0tvyIWPeq0FJaSszxBi_gRlGoE
-Message-ID: <CAK7LNARhhw7pg+ymaSdniXwfBbHUoAkOJiwFzuGVRoN01KhHnw@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: use always-y instead of extra-y in Makefiles
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 9, 2025 at 10:02=E2=80=AFAM Michael Ellerman <mpe@ellerman.id.a=
-u> wrote:
->
-> Masahiro Yamada <masahiroy@kernel.org> writes:
-> > On Tue, Jun 3, 2025 at 3:50=E2=80=AFPM Christophe Leroy
-> > <christophe.leroy@csgroup.eu> wrote:
-> >> Le 02/06/2025 =C3=A0 18:32, Masahiro Yamada a =C3=A9crit :
-> >> > The extra-y syntax is planned for deprecation because it is similar
-> >> > to always-y.
-> >> >
-> >> > When building the boot wrapper, always-y and extra-y are equivalent.
-> >> > Use always-y instead.
-> >> >
-> >> > In arch/powerpc/kernel/Makefile, I added ifdef KBUILD_BUILTIN to
-> >> > keep the current behavior: prom_init_check is skipped when building
-> >> > only modular objects.
-> >>
-> >> I don't understand what you mean.
-> >>
-> >> CONFIG_PPC_OF_BOOT_TRAMPOLINE is a bool, it cannot be a module.
-> >>
-> >> prom_init_check is only to check the content of prom_init.o which is
-> >> never a module.
-> >>
-> >> Is always-y to run _after_ prom_init.o is built ?
-> >
-> > The intent of "make ARCH=3Dpowerpc modules"
-> > is to compile objects that are necessary for modules,
-> > that is, all built-in objects are skipped.
-> >
-> > However,
-> > always-$(CONFIG_PPC_OF_BOOT_TRAMPOLINE) +=3D prom_init_check
-> > would generate prom_init_check regardless,
-> > and its prerequisite, prom_init.o as well.
-> >
-> > With CONFIG_MODULES=3Dy and
-> > CONFIG_MODVERSIONS=3Dn,
-> > and without ifdef KBUILD_BUILTIN,
-> >
-> > $ make ARCH=3Dpowerpc CROSS_COMPILE=3Dpowerpc64-linux-gnu-   modules
-> >
-> > would result in this:
-> >
-> >
-> >   CC [M]  arch/powerpc/kvm/book3s_xive_native.o
-> >   CC [M]  arch/powerpc/kvm/book3s_64_vio.o
-> >   LD [M]  arch/powerpc/kvm/kvm.o
-> >   CC [M]  arch/powerpc/kvm/book3s_hv.o
-> >   AS [M]  arch/powerpc/kvm/book3s_hv_interrupts.o
-> >   CC [M]  arch/powerpc/kvm/book3s_64_mmu_hv.o
-> >   CC [M]  arch/powerpc/kvm/book3s_64_mmu_radix.o
-> >   CC [M]  arch/powerpc/kvm/book3s_hv_nested.o
-> >   CC [M]  arch/powerpc/kvm/book3s_hv_tm.o
-> >   LD [M]  arch/powerpc/kvm/kvm-hv.o
-> >   CC [M]  arch/powerpc/kernel/rtas_flash.o
-> >   CC      arch/powerpc/kernel/prom_init.o
-> >   PROMCHK arch/powerpc/kernel/prom_init_check
-> >   CC [M]  kernel/locking/locktorture.o
-> >   CC [M]  kernel/time/test_udelay.o
-> >   CC [M]  kernel/time/time_test.o
-> >   CC [M]  kernel/backtracetest.o
-> >   CC [M]  kernel/torture.o
-> >   CC [M]  kernel/resource_kunit.o
-> >   CC [M]  kernel/sysctl-test.o
-> >   CC [M]  fs/ext4/inode-test.o
-> >   LD [M]  fs/ext4/ext4-inode-test.o
-> >   CC [M]  fs/fat/namei_vfat.o
-> >   LD [M]  fs/fat/vfat.o
-> >   CC [M]  fs/fat/fat_test.o
-> >   CC [M]  fs/nls/nls_ucs2_utils.o
-> >   CC [M]  fs/netfs/buffered_read.o
-> >   CC [M]  fs/netfs/buffered_write.o
-> > ...
-> >
-> >
-> >
-> > You can see these two lines:
-> >
-> >   CC      arch/powerpc/kernel/prom_init.o
-> >   PROMCHK arch/powerpc/kernel/prom_init_check
-> >
-> > are supposed to be skipped when "make modules",
-> > but actually compiled without ifdef.
-> >
-> > So, I added ifdef KBUILD_BUILTIN to preserve
-> > the current behavior.
->
-> OK, that makes sense.
->
-> I don't really ever build just modules, so I wouldn't notice, but some
-> folks probably do.
->
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Hi all,
 
-No rush for this patch.
-Please take it to your ppc tree.
-Thank you.
+In this version, I'm posting non-controversial patches first.  I will
+post the rest more carefully later.  In this version, no update has been
+applied except excluding some patches from the previous version.  See
+the changes below.
 
---=20
-Best Regards
-Masahiro Yamada
+--8<---
+The MM subsystem is trying to reduce struct page to a single pointer.
+The first step towards that is splitting struct page by its individual
+users, as has already been done with folio and slab.  This patchset does
+that for netmem which is used for page pools.
+
+Matthew Wilcox tried and stopped the same work, you can see in:
+
+   https://lore.kernel.org/linux-mm/20230111042214.907030-1-willy@infradead.org/
+
+Mina Almasry already has done a lot fo prerequisite works by luck.  I
+stacked my patches on the top of his work e.i. netmem.
+
+I focused on removing the page pool members in struct page this time,
+not moving the allocation code of page pool from net to mm.  It can be
+done later if needed.
+
+The final patch removing the page pool fields will be submitted once
+all the converting work of page to netmem are done:
+
+   1. converting of libeth_fqe by Tony Nguyen.
+   2. converting of mlx5 by Tariq Toukan.
+   3. converting of prueth_swdata (on me).
+   4. converting of freescale driver (on me).
+
+For our discussion, I'm sharing what the final patch looks like the
+following.
+
+	Byungchul
+--8<--
+commit 1847d9890f798456b21ccb27aac7545303048492
+Author: Byungchul Park <byungchul@sk.com>
+Date:   Wed May 28 20:44:55 2025 +0900
+
+    mm, netmem: remove the page pool members in struct page
+    
+    Now that all the users of the page pool members in struct page have been
+    gone, the members can be removed from struct page.
+    
+    However, since struct netmem_desc still uses the space in struct page,
+    the important offsets should be checked properly, until struct
+    netmem_desc has its own instance from slab.
+    
+    Remove the page pool members in struct page and modify static checkers
+    for the offsets.
+    
+    Signed-off-by: Byungchul Park <byungchul@sk.com>
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 32ba5126e221..db2fe0d0ebbf 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -120,17 +120,6 @@ struct page {
+ 			 */
+ 			unsigned long private;
+ 		};
+-		struct {	/* page_pool used by netstack */
+-			/**
+-			 * @pp_magic: magic value to avoid recycling non
+-			 * page_pool allocated pages.
+-			 */
+-			unsigned long pp_magic;
+-			struct page_pool *pp;
+-			unsigned long _pp_mapping_pad;
+-			unsigned long dma_addr;
+-			atomic_long_t pp_ref_count;
+-		};
+ 		struct {	/* Tail pages of compound page */
+ 			unsigned long compound_head;	/* Bit zero is set */
+ 		};
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index 8f354ae7d5c3..3414f184d018 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -42,11 +42,8 @@ struct netmem_desc {
+ 	static_assert(offsetof(struct page, pg) == \
+ 		      offsetof(struct netmem_desc, desc))
+ NETMEM_DESC_ASSERT_OFFSET(flags, _flags);
+-NETMEM_DESC_ASSERT_OFFSET(pp_magic, pp_magic);
+-NETMEM_DESC_ASSERT_OFFSET(pp, pp);
+-NETMEM_DESC_ASSERT_OFFSET(_pp_mapping_pad, _pp_mapping_pad);
+-NETMEM_DESC_ASSERT_OFFSET(dma_addr, dma_addr);
+-NETMEM_DESC_ASSERT_OFFSET(pp_ref_count, pp_ref_count);
++NETMEM_DESC_ASSERT_OFFSET(lru, pp_magic);
++NETMEM_DESC_ASSERT_OFFSET(mapping, _pp_mapping_pad);
+ #undef NETMEM_DESC_ASSERT_OFFSET
+ 
+ /*
+---
+Changes from v4:
+	1. Add given 'Reviewed-by's, thanks to all.
+	2. Exclude potentially controversial patches.
+
+Changes from v3:
+	1. Relocates ->owner and ->type of net_iov out of netmem_desc
+	   and make them be net_iov specific.
+	2. Remove __force when casting struct page to struct netmem_desc.
+
+Changes from v2:
+	1. Introduce a netmem API, virt_to_head_netmem(), and use it
+	   when it's needed.
+	2. Introduce struct netmem_desc as a new struct and union'ed
+	   with the existing fields in struct net_iov.
+	3. Make page_pool_page_is_pp() access ->pp_magic through struct
+	   netmem_desc instead of struct page.
+	4. Move netmem alloc APIs from include/net/netmem.h to
+	   net/core/netmem_priv.h.
+	5. Apply trivial feedbacks, thanks to Mina, Pavel, and Toke.
+	6. Add given 'Reviewed-by's, thanks to Mina.
+
+Changes from v1:
+	1. Rebase on net-next's main as of May 26.
+	2. Check checkpatch.pl, feedbacked by SJ Park.
+	3. Add converting of page to netmem in mt76.
+	4. Revert 'mlx5: use netmem descriptor and APIs for page pool'
+	   since it's on-going by Tariq Toukan.  I will wait for his
+	   work to be done.
+	5. Revert 'page_pool: use netmem APIs to access page->pp_magic
+	   in page_pool_page_is_pp()' since we need more discussion.
+	6. Revert 'mm, netmem: remove the page pool members in struct
+	   page' since there are some prerequisite works to remove the
+	   page pool fields from struct page.  I can submit this patch
+	   separatedly later.
+	7. Cancel relocating a page pool member in struct page.
+	8. Modify static assert for offests and size of struct
+	   netmem_desc.
+
+Changes from rfc:
+	1. Rebase on net-next's main branch.
+	   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/
+	2. Fix a build error reported by kernel test robot.
+	   https://lore.kernel.org/all/202505100932.uzAMBW1y-lkp@intel.com/
+	3. Add given 'Reviewed-by's, thanks to Mina and Ilias.
+	4. Do static_assert() on the size of struct netmem_desc instead
+	   of placing place-holder in struct page, feedbacked by
+	   Matthew.
+	5. Do struct_group_tagged(netmem_desc) on struct net_iov instead
+	   of wholly renaming it to strcut netmem_desc, feedbacked by
+	   Mina and Pavel.
+
+Byungchul Park (9):
+  netmem: introduce struct netmem_desc mirroring struct page
+  page_pool: rename page_pool_return_page() to page_pool_return_netmem()
+  page_pool: rename __page_pool_release_page_dma() to
+    __page_pool_release_netmem_dma()
+  page_pool: rename __page_pool_alloc_pages_slow() to
+    __page_pool_alloc_netmems_slow()
+  netmem: use _Generic to cover const casting for page_to_netmem()
+  netmem: remove __netmem_get_pp()
+  page_pool: make page_pool_get_dma_addr() just wrap
+    page_pool_get_dma_addr_netmem()
+  netmem: introduce a netmem API, virt_to_head_netmem()
+  page_pool: access ->pp_magic through struct netmem_desc in
+    page_pool_page_is_pp()
+
+ include/linux/mm.h              |  12 ---
+ include/net/netmem.h            | 138 ++++++++++++++++++++++----------
+ include/net/page_pool/helpers.h |   7 +-
+ mm/page_alloc.c                 |   1 +
+ net/core/page_pool.c            |  36 ++++-----
+ 5 files changed, 117 insertions(+), 77 deletions(-)
+
+
+base-commit: 90b83efa6701656e02c86e7df2cb1765ea602d07
+-- 
+2.17.1
+
 
