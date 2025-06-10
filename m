@@ -1,180 +1,114 @@
-Return-Path: <linux-kernel+bounces-679882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39084AD3D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:29:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6597AD3D23
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD02117FDA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7142C3AA3EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9771C23D28E;
-	Tue, 10 Jun 2025 15:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD47B242D76;
+	Tue, 10 Jun 2025 15:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eKXRLLuG"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCdD1UIF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641291F03C7;
-	Tue, 10 Jun 2025 15:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170DD242927;
+	Tue, 10 Jun 2025 15:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749568857; cv=none; b=SPkz3CT7+96sPrtbIixkvb2PXFsJQVPz3WYFcnEJT+tM4iU3ASN9ifhVEtvngnhiE9yTl8A8AGM9wz2i7OuRUm0VTk5D+eDPMmBcuha+mXpIeAEfP+unmngQysluZltFE3ryfAyuVbr14tCtywUGUHaLvDfKC3ogAzYfDWuErDU=
+	t=1749568735; cv=none; b=V3cT9MvzEc59H86tbYJZQz34wypGAE9QmOZWmjmfp2tcGTeEuoanAE66AvkLx2EeBMHFYkJWxU6IspYY7obVXFLyr5RhNe+Ur5JeVzO7wzhIdgP5yZwV79tqKfR2/mPM6ADXqAkZ8nkIKGSf0kojU9sEQifHgw4tiTJcUsv9/TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749568857; c=relaxed/simple;
-	bh=cyPwXUOsCqtXLic90dMMlNKmMSOKR5wptLkmHu2OR/E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QOqkL5cB989bgyo1qU8sXiDbxVhvrjTMZkZcSisLw3elwkroXEqGll2Ht3xg3vwCG7VtAt4dCXSKFYce3WGhTIp0i7yOFBNmfW3z7ZX7obrHdiNj3Kwu5RRyrqIna/6UJ5EPk8tsomQLUuklwuQCu0qJFGUJ2BBImChFEzoti1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eKXRLLuG; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ACLDXT012933;
-	Tue, 10 Jun 2025 17:20:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	iRwS5y+6+ListVV+cfmEY7D708flMTRs7UfPH9JgUtw=; b=eKXRLLuGCrKmGZba
-	f3drpZSQ8KTejJTI2ufpHGpLXRJvFdVGLQH7A7h7glW3ReNXfiRkt943FaD5v+Ym
-	686+XG5YoPs/hIyM9OOt9KuSA5qjMjIPfPnJ136WYhP6KiXOAfzksczto2yukHtq
-	pgT6Z9stXRKsxaTHHJO96/es/1ApxoNaKzby0aUP2PaJELFhLvtdj7kSdmqvkex3
-	fXJuPVPwPM8hXMpSTZXkE8NFrODJxAcTU367iFX0+87C5/pvA0SrT/MEhSimdHW5
-	yhfXe76a114n+iXP0qyROXNR8J3d/Z8SoUhUvK7l7lxCBUMDR2Bg1DCrss7SIg/g
-	cc+YlQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474aume54a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Jun 2025 17:20:44 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 84A894004F;
-	Tue, 10 Jun 2025 17:19:26 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CBE9EB74DC7;
-	Tue, 10 Jun 2025 17:18:44 +0200 (CEST)
-Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
- 2025 17:18:44 +0200
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antonio Borneo <antonio.borneo@foss.st.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 5/5] dt-bindings: pinctrl: stm32: Add missing blank lines
-Date: Tue, 10 Jun 2025 17:18:37 +0200
-Message-ID: <20250610151837.299244-6-antonio.borneo@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250610151837.299244-1-antonio.borneo@foss.st.com>
-References: <20250610151837.299244-1-antonio.borneo@foss.st.com>
+	s=arc-20240116; t=1749568735; c=relaxed/simple;
+	bh=vtK4N2nV0cyw0wDbbUBhQ5HdwbhCZwPcY+S9Qz9vAuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dONXJWtdR7dhyPXc2CsI4auu9sc4q72Tbt1UDqB6dcStVgq0HfMEZsRg9Ubl2LjqCOwELEDvLl/N9VTHQo5bNXpSo+L3DTRvNcMV0L/kXWUyzbdsoiQUGsTMLjqVQ5Stwpp9O+WcqDX0DLIkbl9LXZ9BsPtM/ciPBr12ovrfpEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCdD1UIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09CAFC4CEED;
+	Tue, 10 Jun 2025 15:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749568734;
+	bh=vtK4N2nV0cyw0wDbbUBhQ5HdwbhCZwPcY+S9Qz9vAuY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sCdD1UIF3pT9KlgGAozGLVfxpQY8eOmtWkSY4Z59Kck1u5g9v9xQ5uagNzvLhW3ZH
+	 uK2UY/wkqxFIsuelWSaxH2SlmYipdfb11/Y/e/AqfTuJaaKvwR0a0GIrnnn4rDiM0o
+	 WLRkI5i1I7aeD/UvW6QsgP7zBlSK3cQKkezSxFqu/bTXuSvhNDhxpaNWXVsh0ydEwD
+	 0NPzKlXb1xOQ/vImGoNO+SiR/Ov7gsLwzt/f5UxH9s8i4P7PyFyRCG3R4/Dg6Z+ufl
+	 WVmFD+kjZTHucIOqQfQutA+hAL//nPK/E39ud1svGLtV7X88+t1m2XLRReu1V//9wU
+	 cYl36aeUzSdIQ==
+Date: Tue, 10 Jun 2025 16:18:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Lala Lin <lala.lin@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johnson Wang <johnson.wang@mediatek.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: mediatek: efuse: split
+ MT8186/MT8188 from base version
+Message-ID: <20250610-magnifier-petty-6c5a2703a05b@spud>
+References: <20250610063431.2955757-1-wenst@chromium.org>
+ <20250610063431.2955757-2-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DM5pv65IWOkWZD6g"
+Content-Disposition: inline
+In-Reply-To: <20250610063431.2955757-2-wenst@chromium.org>
 
-Separate the properties through a blank line.
 
-Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
----
- .../bindings/pinctrl/st,stm32-pinctrl.yaml      | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+--DM5pv65IWOkWZD6g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-index 5d17d6487ae9c..961161c2ab62b 100644
---- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-@@ -32,13 +32,16 @@ properties:
- 
-   '#address-cells':
-     const: 1
-+
-   '#size-cells':
-     const: 1
- 
-   ranges: true
-+
-   pins-are-numbered:
-     $ref: /schemas/types.yaml#/definitions/flag
-     deprecated: true
-+
-   hwlocks: true
- 
-   interrupts:
-@@ -67,22 +70,29 @@ patternProperties:
-     additionalProperties: false
-     properties:
-       gpio-controller: true
-+
-       '#gpio-cells':
-         const: 2
-+
-       interrupt-controller: true
-       '#interrupt-cells':
-         const: 2
- 
-       reg:
-         maxItems: 1
-+
-       clocks:
-         maxItems: 1
-+
-       resets:
-         maxItems: 1
-+
-       gpio-line-names: true
-+
-       gpio-ranges:
-         minItems: 1
-         maxItems: 16
-+
-       ngpios:
-         description:
-           Number of available gpios in a bank.
-@@ -187,18 +197,25 @@ patternProperties:
- 
-           bias-disable:
-             type: boolean
-+
-           bias-pull-down:
-             type: boolean
-+
-           bias-pull-up:
-             type: boolean
-+
-           drive-push-pull:
-             type: boolean
-+
-           drive-open-drain:
-             type: boolean
-+
-           output-low:
-             type: boolean
-+
-           output-high:
-             type: boolean
-+
-           slew-rate:
-             description: |
-               0: Low speed
--- 
-2.34.1
+On Tue, Jun 10, 2025 at 02:34:29PM +0800, Chen-Yu Tsai wrote:
+> On MT8186 and MT8188 one of the NVMEM cells contains the GPU speed bin
+> value. In combination with the GPU OPP bindings, on these two platforms
+> there is an implied scheme of converting the cell value to what the GPU
+> OPP "opp-supported-hw" property matches. This does not apply to the base
+> mediatek,efuse hardware, nor does it apply to any of the other platforms
+> that do not have the GPU speed bin cell. The platform maintainer argues
+> that this makes the compatibles incompatible with the base
+> "mediatek,efuse" compatible, as shown in the link given.
+>=20
+> Deprecate the MT8186/MT8188 + "mediatek,efuse" combination, and add
+> new entries with MT8186 being the base model and MT8188 falling back
+> to MT8186.
+>=20
+> Link: https://lore.kernel.org/all/11028242-afe4-474a-9d76-cd1bd9208987@co=
+llabora.com/
+> Fixes: ff1df1886f43 ("dt-bindings: nvmem: mediatek: efuse: Add support fo=
+r MT8188")
+> Cc: Johnson Wang <johnson.wang@mediatek.com>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--DM5pv65IWOkWZD6g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEhM2QAKCRB4tDGHoIJi
+0oO9AP9azxR15Z4FWTzZIHXzTVLpSbkeveExJbyNmwEG9jz1YgEA7QM4o5Pznk8M
+kkIC1s0vwuNnCCBmMQrcnoicWNN5zQQ=
+=3doB
+-----END PGP SIGNATURE-----
+
+--DM5pv65IWOkWZD6g--
 
