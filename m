@@ -1,530 +1,151 @@
-Return-Path: <linux-kernel+bounces-679338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A281AD34FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:32:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6614AD34F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE2916DC5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242DD3B0BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915EC28A1C5;
-	Tue, 10 Jun 2025 11:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+JfKwYL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442CE28D838;
-	Tue, 10 Jun 2025 11:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749555140; cv=none; b=powlIvWUthN2WEA9KhrmasC0c89jQSl08AwQD8cPQ2Z8WsRpPl/3hbP0xg/SxqqUJBpQQFNZ8pKPyJmgSlyJZAkEDyNsK3+NoHaNdJNEGWSsjyHd/eEZC/58nuhwvkHof9IofCBQxwWYU2OTDIgfatBfQ1AFH1nodDe6BcP/8U0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749555140; c=relaxed/simple;
-	bh=z83vEjNU7PZVxZ77fqOHuQl5afluDn7esU1ZG3oBEag=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M6TaLiz3HlslsPTpqfrGVfSiiPmE91yikeXv5tbmNMoZC1UGf/O88fAI1Lb/BHte3SQWmsSNJJcAuE8C6+gA+fJqKxtGkd30GlwpLoIbLBtTCwGzfDK2RtZv6/uYt7t7II/YBp7dLupEUtqPMz93VCM+3egA9TKcGwg75VNTlco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+JfKwYL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB8CC4CEED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF9A28001A;
 	Tue, 10 Jun 2025 11:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749555139;
-	bh=z83vEjNU7PZVxZ77fqOHuQl5afluDn7esU1ZG3oBEag=;
-	h=From:Date:Subject:To:Cc:From;
-	b=u+JfKwYLCVOs0sqJICb2jv3bYDLXVqUSH7OJGDjJGcn8ct/8iXhOk7OxjiQFwajT2
-	 FiPkYP4OWvDHFLIJjhq4Cs6vnhAY1Og3x4mHvhvBkby33GkTyUmFZKgq/mV/5PYe0h
-	 VnGt+x/vjGPpRd5P8u0e4uEIZ8z7V6CdlF5QlKOywqF89FMZ1tCA5MSkauuec4hiZ0
-	 M2B5mAa/JnrU1ZcYx34u4LPZheVU4kEwOpM/GLqCObEHY9kBjA83uTINLXuNTq1Tmt
-	 aBLn2JPUlXXf984TJCr2DbwedHmF7abuS5zwI/x3zmmjnhB5PDsKMOyMi9S0vhUkqZ
-	 7I9fCrmggArhQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 10 Jun 2025 13:30:59 +0200
-Subject: [PATCH v2] rust: types: add FOREIGN_ALIGN to ForeignOwnable
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="MAWIyps2"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEFB3D544
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749555135; cv=none; b=pYpSmQgkV2S2kdYgyHvwfnYAmP+6izMJ930WtELgca5JYW0znKdaf9CkIqYAXaKCo+XSKTQdonShfld68i0QKUJL3aVdfYKsSGrniLTgUvMX8HrCckYjLMYfl8zpMw5XiBlWgGu2iZorgyIwEdCog2cZBbgWoUBcTf7V9lbunZk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749555135; c=relaxed/simple;
+	bh=kWy2YrKT60IwWsq++tLedZ+gnW8uDSTJv9+75+m2/o8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGOlalyDbJh5fJQXHxj0x7Rg+fNQiz7vahypOM2f7N57sp7nkLyUASd8s+7pJaUJ2QWp1Pd4KY0poRFrmUpkWSAmv2+xWoGRJJB6jKK2jU7Uq8MFP6iJU1lbT4bJLuGKIyD7+xuX1t13cisZgqBK0ozPGneNcrQpfBF5Hp4ypQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=MAWIyps2; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7481600130eso5210238b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:32:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1749555133; x=1750159933; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ofChJacQ1qiYJqBxicfF0O8ZtFsM5woxFYS+jj/lodM=;
+        b=MAWIyps2X8XwJNfyRG2hflezERhd/NrDTY1lM1Nf5+x9IzifLlw7B3Euh2DjluqJ6x
+         rOejVjzVA7XuxQc8iD/KCu56xV4t9LWTTNVZQ9LPGDBwa3uNuyzcMbDc2HWGObJJy+RR
+         XMxNTVSSSCmBQj96bK+VaWBU+BGumLn0DI3Yead74COnSNvw2SMaYc82N4HFcGDBCWjT
+         dZ6Hk7qVCRURHiaIXZxytEpDZrPXkGNIDH1rggYfJCRJPLYKLZlFEH2zlPWE6GTd99HL
+         5TkPMDRcrPTo/z2sjfvrjZiCiayTV/kdQVPzD39F9ITquPXrgUUkM04J6VynBBU3e29q
+         YXUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749555133; x=1750159933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ofChJacQ1qiYJqBxicfF0O8ZtFsM5woxFYS+jj/lodM=;
+        b=ioNFmo0YYRiuS4EnfzLAuquBUS0Y4bx+4Be4V2HOWwyy9HLawkvNyqQSod9W8jrr0j
+         ryusXnccQ7lqsjOG/HHwGXXD3VIAIZm35E7H37S0H0CLYZ0JtR27RtiF3R90PVfKMUaB
+         gn9WMwy6FG+ow0nDAuW2XDCbKcmG/AzlkUG8ieSiZYRsn1spvXaSbfquQ83Kw7A6SW3/
+         xiKyuGK+dRteC/hDC/hR2Qgt/TaGpgGKPbML5twCBGOcBYOrj+K5gn18TMfbpFuT+Sav
+         7KYn71Q0GlQ/0ARAEYwxjmrVgrD+eBWoLyG9tDYeKlK0o8gYQJneORJmxpBb9YOEACgq
+         3LTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmYEkGk5Y2CM1vyiXyREBfjRmX+OtW5f8PabRxrz7jlMK95NoOJ8EcXQlfwc1nbeHN26UVP8Gg8HCohJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUFC/zk+Vw1oBB6aE30t0arXrnFcpokjx1lLRiKy1U90Gtm6Rp
+	5MWFPSS1XgH97qpIvPvh8jqiB4XWoFwZobfYAKiKvlhDg6EjuAOnWudMouvoEE0ReuUKqNwtHbz
+	bgEciIHJkxs5VN3zTO7xPegwnecVFH07qmyg/LOWQcQZ6UeHdPBtcCF8=
+X-Gm-Gg: ASbGncvFr1AZMCFrQzNiTxQEmLGO/xzOaIk3rxIoB//BbCSUwDCB/mmij3NV3yL2z/n
+	Fdmc8Ack53Mfmycu7/yBkWn5xIHK9u0At9P5H69cMY9c6OWjMhRNYB4hqgIrcpbQQvgy3CSYs6u
+	rzjbrutu7o0hgQaJ1683fKG3Hy1FcG2i40n+7C14kM
+X-Google-Smtp-Source: AGHT+IHarIKTCg7Wh8AuZ0Tt40r0q9LllShk2yggWVtkhQj8gIAUkQYg7kT1J8Wyzz1/DOT2OhgAA7LXwaUXjy9MHtg=
+X-Received: by 2002:ac8:6f08:0:b0:4a4:419f:8329 with SMTP id
+ d75a77b69052e-4a5b9a033c4mr286210601cf.8.1749555121947; Tue, 10 Jun 2025
+ 04:32:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAHIXSGgC/23MQQrCMBCF4auUWRuZGUhFV95DuijptB2UpCQhK
- CV3N3bt8n/wvh2SRJUEt26HKEWTBt+CTx24dfSLGJ1aAyNb7NGaLajPMpkcTE8XHAXJMs7QDlu
- UWd8H9hhar5pyiJ/DLvRb/zKFDBkREu75Suzc/SnRy+sc4gJDrfULps02PaUAAAA=
-X-Change-ID: 20250605-pointed-to-6170ae01520f
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=20197;
- i=a.hindborg@kernel.org; h=from:subject:message-id;
- bh=z83vEjNU7PZVxZ77fqOHuQl5afluDn7esU1ZG3oBEag=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoSBd5TwRMJdFbALhiXVxXeIZVaocq1ht8bW3fL
- RSl2/CpDo2JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaEgXeQAKCRDhuBo+eShj
- d6RCD/0bxJE7h0e0DvGMykdsSD0YmDOfuePy0etW8NOUoR0FM7+0WJKkAk0cNdgLQpsA1gQYNoz
- E78TR+ou4RRZV/QMWL55yD6SF7cwnl79sBCkIQ9CPqMFiA4O0oENYIjxYrc0saub9Kwey6dT8s5
- Tc3N3WPG6nuMnCFtQU0M/s+YkWVaBgfeLgLjfVETAGrPaQvjPn0C2AF3i4DUeFsGpIfAR6ekfc9
- tx6P+CuXAko1FBai6Zmk+EHKObI1p3ihZEwEkkXg2EUE8l11SMvq7uTcqXv4l44ovZFhiqU1d34
- HFugFV2Rqwek2ri9oV6tVTyq158HPAuntj6WOXdzn0508LSxPzmPv0W/Q34jOMhXILOZXGWxB7g
- SpMky/GPWi4W46R+YK0Ylm71WIyo4SS1fzjdyP32cTKvd4Aqo6qUU+MLlsftZh8oM+pujuQ4IY7
- pW1916+Z6GdbSC5yoPfXBDMgWd1vZAISX+kWUSH8J7HTqy+eoKh/ekMVFOHgxfmYA1rpo884d2m
- G9OBDKWKTGQjgbMcAk7it3mjOULUHSDovLOJUIT3BG67i2LfnUt2SYCfYmvjcqfVgWbluvPiED5
- rY6pYmh/wFyMCkphUu6Wbtug/GNGbURBPm61A11HhVOtTs8gNUc16InB1aZhOI+TSXpqCTv6XHI
- 85RuZMWdwxUdeIA==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+References: <20250610085327.51817-1-graf@amazon.com>
+In-Reply-To: <20250610085327.51817-1-graf@amazon.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 10 Jun 2025 07:31:25 -0400
+X-Gm-Features: AX0GCFvB36FQ2mONd23CJy-bQAsJdpMnU5jLlIePTapa208TPsg1wFXBXlN5zec
+Message-ID: <CA+CK2bBhUdEjD=-gM3=D6mKBYctbXh74_hq-bMf1fa8mfS2Edg@mail.gmail.com>
+Subject: Re: [PATCH v5] kexec: Enable CMA based contiguous allocation
+To: Alexander Graf <graf@amazon.com>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	nh-open-source@amazon.com, Baoquan He <bhe@redhat.com>, 
+	Zhongkun He <hezhongkun.hzk@bytedance.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current implementation of `ForeignOwnable` is leaking the type of the
-opaque pointer to consumers of the API. This allows consumers of the opaque
-pointer to rely on the information that can be extracted from the pointer
-type.
+On Tue, Jun 10, 2025 at 4:53=E2=80=AFAM Alexander Graf <graf@amazon.com> wr=
+ote:
+>
+> When booting a new kernel with kexec_file, the kernel picks a target
+> location that the kernel should live at, then allocates random pages,
+> checks whether any of those patches magically happens to coincide with
+> a target address range and if so, uses them for that range.
+>
+> For every page allocated this way, it then creates a page list that the
+> relocation code - code that executes while all CPUs are off and we are
+> just about to jump into the new kernel - copies to their final memory
+> location. We can not put them there before, because chances are pretty
+> good that at least some page in the target range is already in use by
+> the currently running Linux environment. Copying is happening from a
+> single CPU at RAM rate, which takes around 4-50 ms per 100 MiB.
+>
+> All of this is inefficient and error prone.
+>
+> To successfully kexec, we need to quiesce all devices of the outgoing
+> kernel so they don't scribble over the new kernel's memory. We have seen
+> cases where that does not happen properly (*cough* GIC *cough*) and hence
+> the new kernel was corrupted. This started a month long journey to root
+> cause failing kexecs to eventually see memory corruption, because the new
+> kernel was corrupted severely enough that it could not emit output to
+> tell us about the fact that it was corrupted. By allocating memory for th=
+e
+> next kernel from a memory range that is guaranteed scribbling free, we ca=
+n
+> boot the next kernel up to a point where it is at least able to detect
+> corruption and maybe even stop it before it becomes severe. This increase=
+s
+> the chance for successful kexecs.
+>
+> Since kexec got introduced, Linux has gained the CMA framework which
+> can perform physically contiguous memory mappings, while keeping that
+> memory available for movable memory when it is not needed for contiguous
+> allocations. The default CMA allocator is for DMA allocations.
+>
+> This patch adds logic to the kexec file loader to attempt to place the
+> target payload at a location allocated from CMA. If successful, it uses
+> that memory range directly instead of creating copy instructions during
+> the hot phase. To ensure that there is a safety net in case anything goes
+> wrong with the CMA allocation, it also adds a flag for user space to forc=
+e
+> disable CMA allocations.
+>
+> Using CMA allocations has two advantages:
+>
+>   1) Faster by 4-50 ms per 100 MiB. There is no more need to copy in the
+>      hot phase.
+>   2) More robust. Even if by accident some page is still in use for DMA,
+>      the new kernel image will be safe from that access because it reside=
+s
+>      in a memory region that is considered allocated in the old kernel an=
+d
+>      has a chance to reinitialize that component.
+>
+> Signed-off-by: Alexander Graf <graf@amazon.com>
+> Acked-by: Baoquan He <bhe@redhat.com>
 
-To prevent this, change the API to the version suggested by Maira
-Canal (link below): Remove `ForeignOwnable::PointedTo` in favor of a
-constant, which specifies the alignment of the pointers returned by
-`into_foreign`.
-
-With this change, `ArcInner` no longer needs `pub` visibility, so change it
-to private.
-
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Maíra Canal <mcanal@igalia.com>
-Link: https://lore.kernel.org/r/20240309235927.168915-3-mcanal@igalia.com
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
-Changes in v2:
-- Replace qualified path with `use` for `crate::ffi::c_void`.
-- Fix a typo and rephrase docs for `ForeignOwnable`.
-- Reorganize docs for `ForeignOwnable::into_foreign`.
-- Link to v1: https://lore.kernel.org/r/20250605-pointed-to-v1-1-ee1e262912cc@kernel.org
----
- rust/kernel/alloc/kbox.rs | 41 +++++++++++++++++++++++------------------
- rust/kernel/miscdevice.rs | 10 +++++-----
- rust/kernel/pci.rs        |  2 +-
- rust/kernel/platform.rs   |  2 +-
- rust/kernel/sync/arc.rs   | 23 ++++++++++++-----------
- rust/kernel/types.rs      | 45 ++++++++++++++++++++++-----------------------
- rust/kernel/xarray.rs     |  8 ++++----
- 7 files changed, 68 insertions(+), 63 deletions(-)
-
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index c386ff771d50..bffe72f44cb3 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -15,6 +15,7 @@
- use core::ptr::NonNull;
- use core::result::Result;
- 
-+use crate::ffi::c_void;
- use crate::init::InPlaceInit;
- use crate::types::ForeignOwnable;
- use pin_init::{InPlaceWrite, Init, PinInit, ZeroableOption};
-@@ -398,70 +399,74 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
-     }
- }
- 
--// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-+// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
-+// pointer to `T`.
- unsafe impl<T: 'static, A> ForeignOwnable for Box<T, A>
- where
-     A: Allocator,
- {
--    type PointedTo = T;
-+    const FOREIGN_ALIGN: usize = core::mem::align_of::<T>();
-     type Borrowed<'a> = &'a T;
-     type BorrowedMut<'a> = &'a mut T;
- 
--    fn into_foreign(self) -> *mut Self::PointedTo {
--        Box::into_raw(self)
-+    fn into_foreign(self) -> *mut c_void {
-+        Box::into_raw(self).cast()
-     }
- 
--    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-+    unsafe fn from_foreign(ptr: *mut c_void) -> Self {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        unsafe { Box::from_raw(ptr) }
-+        unsafe { Box::from_raw(ptr.cast()) }
-     }
- 
--    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> &'a T {
-+    unsafe fn borrow<'a>(ptr: *mut c_void) -> &'a T {
-         // SAFETY: The safety requirements of this method ensure that the object remains alive and
-         // immutable for the duration of 'a.
--        unsafe { &*ptr }
-+        unsafe { &*ptr.cast() }
-     }
- 
--    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> &'a mut T {
-+    unsafe fn borrow_mut<'a>(ptr: *mut c_void) -> &'a mut T {
-+        let ptr = ptr.cast();
-         // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
-         // nothing else will access the value for the duration of 'a.
-         unsafe { &mut *ptr }
-     }
- }
- 
--// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-+// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
-+// pointer to `T`.
- unsafe impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
- where
-     A: Allocator,
- {
--    type PointedTo = T;
-+    const FOREIGN_ALIGN: usize = core::mem::align_of::<T>();
-     type Borrowed<'a> = Pin<&'a T>;
-     type BorrowedMut<'a> = Pin<&'a mut T>;
- 
--    fn into_foreign(self) -> *mut Self::PointedTo {
-+    fn into_foreign(self) -> *mut c_void {
-         // SAFETY: We are still treating the box as pinned.
--        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) })
-+        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) }).cast()
-     }
- 
--    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-+    unsafe fn from_foreign(ptr: *mut c_void) -> Self {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        unsafe { Pin::new_unchecked(Box::from_raw(ptr)) }
-+        unsafe { Pin::new_unchecked(Box::from_raw(ptr.cast())) }
-     }
- 
--    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Pin<&'a T> {
-+    unsafe fn borrow<'a>(ptr: *mut c_void) -> Pin<&'a T> {
-         // SAFETY: The safety requirements for this function ensure that the object is still alive,
-         // so it is safe to dereference the raw pointer.
-         // The safety requirements of `from_foreign` also ensure that the object remains alive for
-         // the lifetime of the returned value.
--        let r = unsafe { &*ptr };
-+        let r = unsafe { &*ptr.cast() };
- 
-         // SAFETY: This pointer originates from a `Pin<Box<T>>`.
-         unsafe { Pin::new_unchecked(r) }
-     }
- 
--    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> Pin<&'a mut T> {
-+    unsafe fn borrow_mut<'a>(ptr: *mut c_void) -> Pin<&'a mut T> {
-+        let ptr = ptr.cast();
-         // SAFETY: The safety requirements for this function ensure that the object is still alive,
-         // so it is safe to dereference the raw pointer.
-         // The safety requirements of `from_foreign` also ensure that the object remains alive for
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index f33c13c3ff97..9b46c3f7ac65 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -217,7 +217,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-         // type.
-         //
-         // SAFETY: The open call of a file can access the private data.
--        unsafe { (*raw_file).private_data = ptr.into_foreign().cast() };
-+        unsafe { (*raw_file).private_data = ptr.into_foreign() };
- 
-         0
-     }
-@@ -228,7 +228,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-     /// must be associated with a `MiscDeviceRegistration<T>`.
-     unsafe extern "C" fn release(_inode: *mut bindings::inode, file: *mut bindings::file) -> c_int {
-         // SAFETY: The release call of a file owns the private data.
--        let private = unsafe { (*file).private_data }.cast();
-+        let private = unsafe { (*file).private_data };
-         // SAFETY: The release call of a file owns the private data.
-         let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
- 
-@@ -272,7 +272,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
-     unsafe extern "C" fn ioctl(file: *mut bindings::file, cmd: c_uint, arg: c_ulong) -> c_long {
-         // SAFETY: The ioctl call of a file can access the private data.
--        let private = unsafe { (*file).private_data }.cast();
-+        let private = unsafe { (*file).private_data };
-         // SAFETY: Ioctl calls can borrow the private data of the file.
-         let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
- 
-@@ -297,7 +297,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-         arg: c_ulong,
-     ) -> c_long {
-         // SAFETY: The compat ioctl call of a file can access the private data.
--        let private = unsafe { (*file).private_data }.cast();
-+        let private = unsafe { (*file).private_data };
-         // SAFETY: Ioctl calls can borrow the private data of the file.
-         let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
- 
-@@ -318,7 +318,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-     /// - `seq_file` must be a valid `struct seq_file` that we can write to.
-     unsafe extern "C" fn show_fdinfo(seq_file: *mut bindings::seq_file, file: *mut bindings::file) {
-         // SAFETY: The release call of a file owns the private data.
--        let private = unsafe { (*file).private_data }.cast();
-+        let private = unsafe { (*file).private_data };
-         // SAFETY: Ioctl calls can borrow the private data of the file.
-         let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
-         // SAFETY:
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 8435f8132e38..0b4b52804250 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -89,7 +89,7 @@ extern "C" fn probe_callback(
-     extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
-         // SAFETY: The PCI bus only ever calls the remove callback with a valid pointer to a
-         // `struct pci_dev`.
--        let ptr = unsafe { bindings::pci_get_drvdata(pdev) }.cast();
-+        let ptr = unsafe { bindings::pci_get_drvdata(pdev) };
- 
-         // SAFETY: `remove_callback` is only ever called after a successful call to
-         // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 5b21fa517e55..4e37c5ab014d 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -79,7 +79,7 @@ extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ff
- 
-     extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
-         // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
--        let ptr = unsafe { bindings::platform_get_drvdata(pdev) }.cast();
-+        let ptr = unsafe { bindings::platform_get_drvdata(pdev) };
- 
-         // SAFETY: `remove_callback` is only ever called after a successful call to
-         // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index c7af0aa48a0a..6603079b05af 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -140,10 +140,9 @@ pub struct Arc<T: ?Sized> {
-     _p: PhantomData<ArcInner<T>>,
- }
- 
--#[doc(hidden)]
- #[pin_data]
- #[repr(C)]
--pub struct ArcInner<T: ?Sized> {
-+struct ArcInner<T: ?Sized> {
-     refcount: Opaque<bindings::refcount_t>,
-     data: T,
- }
-@@ -372,20 +371,22 @@ pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
-     }
- }
- 
--// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-+// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
-+// pointer to `ArcInner<T>`.
- unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
--    type PointedTo = ArcInner<T>;
-+    const FOREIGN_ALIGN: usize = core::mem::align_of::<ArcInner<T>>();
-+
-     type Borrowed<'a> = ArcBorrow<'a, T>;
-     type BorrowedMut<'a> = Self::Borrowed<'a>;
- 
--    fn into_foreign(self) -> *mut Self::PointedTo {
--        ManuallyDrop::new(self).ptr.as_ptr()
-+    fn into_foreign(self) -> *mut crate::ffi::c_void {
-+        ManuallyDrop::new(self).ptr.as_ptr().cast()
-     }
- 
--    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-+    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        let inner = unsafe { NonNull::new_unchecked(ptr) };
-+        let inner = unsafe { NonNull::new_unchecked(ptr.cast::<ArcInner<T>>()) };
- 
-         // SAFETY: By the safety requirement of this function, we know that `ptr` came from
-         // a previous call to `Arc::into_foreign`, which guarantees that `ptr` is valid and
-@@ -393,17 +394,17 @@ unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
-         unsafe { Self::from_inner(inner) }
-     }
- 
--    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, T> {
-+    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> ArcBorrow<'a, T> {
-         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
-         // call to `Self::into_foreign`.
--        let inner = unsafe { NonNull::new_unchecked(ptr) };
-+        let inner = unsafe { NonNull::new_unchecked(ptr.cast::<ArcInner<T>>()) };
- 
-         // SAFETY: The safety requirements of `from_foreign` ensure that the object remains alive
-         // for the lifetime of the returned value.
-         unsafe { ArcBorrow::new(inner) }
-     }
- 
--    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, T> {
-+    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> ArcBorrow<'a, T> {
-         // SAFETY: The safety requirements for `borrow_mut` are a superset of the safety
-         // requirements for `borrow`.
-         unsafe { Self::borrow(ptr) }
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 22985b6f6982..0ccef6b5a20a 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -21,15 +21,11 @@
- ///
- /// # Safety
- ///
--/// Implementers must ensure that [`into_foreign`] returns a pointer which meets the alignment
--/// requirements of [`PointedTo`].
--///
--/// [`into_foreign`]: Self::into_foreign
--/// [`PointedTo`]: Self::PointedTo
-+/// Implementers must ensure that [`Self::into_foreign`] returns pointers aligned to
-+/// [`Self::FOREIGN_ALIGN`].
- pub unsafe trait ForeignOwnable: Sized {
--    /// Type used when the value is foreign-owned. In practical terms only defines the alignment of
--    /// the pointer.
--    type PointedTo;
-+    /// The alignment of pointers returned by `into_foreign`.
-+    const FOREIGN_ALIGN: usize;
- 
-     /// Type used to immutably borrow a value that is currently foreign-owned.
-     type Borrowed<'a>;
-@@ -39,18 +35,20 @@ pub unsafe trait ForeignOwnable: Sized {
- 
-     /// Converts a Rust-owned object to a foreign-owned one.
-     ///
-+    /// The foreign representation is a pointer to void. Aside from the guarantees listed below,
-+    /// there are no other guarantees for this pointer. For example, it might be invalid, dangling
-+    /// or pointing to uninitialized memory. Using it in any way except for [`from_foreign`],
-+    /// [`try_from_foreign`], [`borrow`], or [`borrow_mut`] can result in undefined behavior.
-+    ///
-     /// # Guarantees
-     ///
--    /// The return value is guaranteed to be well-aligned, but there are no other guarantees for
--    /// this pointer. For example, it might be null, dangling, or point to uninitialized memory.
--    /// Using it in any way except for [`ForeignOwnable::from_foreign`], [`ForeignOwnable::borrow`],
--    /// [`ForeignOwnable::try_from_foreign`] can result in undefined behavior.
-+    /// - Minimum alignment of returned pointer is [`Self::FOREIGN_ALIGN`].
-     ///
-     /// [`from_foreign`]: Self::from_foreign
-     /// [`try_from_foreign`]: Self::try_from_foreign
-     /// [`borrow`]: Self::borrow
-     /// [`borrow_mut`]: Self::borrow_mut
--    fn into_foreign(self) -> *mut Self::PointedTo;
-+    fn into_foreign(self) -> *mut crate::ffi::c_void;
- 
-     /// Converts a foreign-owned object back to a Rust-owned one.
-     ///
-@@ -60,7 +58,7 @@ pub unsafe trait ForeignOwnable: Sized {
-     /// must not be passed to `from_foreign` more than once.
-     ///
-     /// [`into_foreign`]: Self::into_foreign
--    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self;
-+    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self;
- 
-     /// Tries to convert a foreign-owned object back to a Rust-owned one.
-     ///
-@@ -72,7 +70,7 @@ pub unsafe trait ForeignOwnable: Sized {
-     /// `ptr` must either be null or satisfy the safety requirements for [`from_foreign`].
-     ///
-     /// [`from_foreign`]: Self::from_foreign
--    unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
-+    unsafe fn try_from_foreign(ptr: *mut crate::ffi::c_void) -> Option<Self> {
-         if ptr.is_null() {
-             None
-         } else {
-@@ -95,7 +93,7 @@ unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
-     ///
-     /// [`into_foreign`]: Self::into_foreign
-     /// [`from_foreign`]: Self::from_foreign
--    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Self::Borrowed<'a>;
-+    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> Self::Borrowed<'a>;
- 
-     /// Borrows a foreign-owned object mutably.
-     ///
-@@ -123,23 +121,24 @@ unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
-     /// [`from_foreign`]: Self::from_foreign
-     /// [`borrow`]: Self::borrow
-     /// [`Arc`]: crate::sync::Arc
--    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> Self::BorrowedMut<'a>;
-+    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> Self::BorrowedMut<'a>;
- }
- 
--// SAFETY: The `into_foreign` function returns a pointer that is dangling, but well-aligned.
-+// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
-+// pointer to `()`.
- unsafe impl ForeignOwnable for () {
--    type PointedTo = ();
-+    const FOREIGN_ALIGN: usize = core::mem::align_of::<()>();
-     type Borrowed<'a> = ();
-     type BorrowedMut<'a> = ();
- 
--    fn into_foreign(self) -> *mut Self::PointedTo {
-+    fn into_foreign(self) -> *mut crate::ffi::c_void {
-         core::ptr::NonNull::dangling().as_ptr()
-     }
- 
--    unsafe fn from_foreign(_: *mut Self::PointedTo) -> Self {}
-+    unsafe fn from_foreign(_: *mut crate::ffi::c_void) -> Self {}
- 
--    unsafe fn borrow<'a>(_: *mut Self::PointedTo) -> Self::Borrowed<'a> {}
--    unsafe fn borrow_mut<'a>(_: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {}
-+    unsafe fn borrow<'a>(_: *mut crate::ffi::c_void) -> Self::Borrowed<'a> {}
-+    unsafe fn borrow_mut<'a>(_: *mut crate::ffi::c_void) -> Self::BorrowedMut<'a> {}
- }
- 
- /// Runs a cleanup function/closure when dropped.
-diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
-index 75719e7bb491..35f4357fc03a 100644
---- a/rust/kernel/xarray.rs
-+++ b/rust/kernel/xarray.rs
-@@ -9,7 +9,7 @@
-     error::{Error, Result},
-     types::{ForeignOwnable, NotThreadSafe, Opaque},
- };
--use core::{iter, marker::PhantomData, mem, pin::Pin, ptr::NonNull};
-+use core::{iter, marker::PhantomData, pin::Pin, ptr::NonNull};
- use pin_init::{pin_data, pin_init, pinned_drop, PinInit};
- 
- /// An array which efficiently maps sparse integer indices to owned objects.
-@@ -101,7 +101,7 @@ pub fn new(kind: AllocKind) -> impl PinInit<Self> {
-         })
-     }
- 
--    fn iter(&self) -> impl Iterator<Item = NonNull<T::PointedTo>> + '_ {
-+    fn iter(&self) -> impl Iterator<Item = NonNull<crate::ffi::c_void>> + '_ {
-         let mut index = 0;
- 
-         // SAFETY: `self.xa` is always valid by the type invariant.
-@@ -179,7 +179,7 @@ fn from(value: StoreError<T>) -> Self {
- impl<'a, T: ForeignOwnable> Guard<'a, T> {
-     fn load<F, U>(&self, index: usize, f: F) -> Option<U>
-     where
--        F: FnOnce(NonNull<T::PointedTo>) -> U,
-+        F: FnOnce(NonNull<crate::ffi::c_void>) -> U,
-     {
-         // SAFETY: `self.xa.xa` is always valid by the type invariant.
-         let ptr = unsafe { bindings::xa_load(self.xa.xa.get(), index) };
-@@ -230,7 +230,7 @@ pub fn store(
-         gfp: alloc::Flags,
-     ) -> Result<Option<T>, StoreError<T>> {
-         build_assert!(
--            mem::align_of::<T::PointedTo>() >= 4,
-+            T::FOREIGN_ALIGN >= 4,
-             "pointers stored in XArray must be 4-byte aligned"
-         );
-         let new = value.into_foreign();
-
----
-base-commit: ec7714e4947909190ffb3041a03311a975350fe0
-change-id: 20250605-pointed-to-6170ae01520f
-
-Best regards,
--- 
-Andreas Hindborg <a.hindborg@kernel.org>
-
-
+Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
