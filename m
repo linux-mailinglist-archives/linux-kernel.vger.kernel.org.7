@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-679510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC982AD3770
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27CAAD376D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E142189AB4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACF1516BB2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDC62BF3FF;
-	Tue, 10 Jun 2025 12:46:21 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26E32BEC36;
+	Tue, 10 Jun 2025 12:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMpfDpYS"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469252AF1E
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92E128D8C6;
+	Tue, 10 Jun 2025 12:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749559580; cv=none; b=hgM6uhWiCpn3lnVA+KjN9f3jTlFJJCWfoouTcQd5DW2vZB1j8+VLxcExE8z3qO3Rgbe8yuR00xhl0YMYKZWvDlEcYzoQEZXF+SeAbYniZy/VipwIyZiFCdUOquVlxCwYXSjmlPN0NcFVGH8+OWPBjsydKcLsmmspc4GdJnOxu8o=
+	t=1749559616; cv=none; b=ZCXpVdemHH37Tg2ewxK3nlaUFnmxobzeF3zJSPy1RyOiZFNDAqP3fEWSvHjhxy/IY8hiiZLjCOJKgSdD3PYWgSRSkyZjtoATMMTI2tfvlI2rgdK3uOBWicpapJEAar+4iHzgGstjmWtEqbCi+RMegGEBYgL/QJzx8oA0Jw9v6yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749559580; c=relaxed/simple;
-	bh=unA5W+ItyflOyuJHHOVR/vJuGZskAiqVajFb4X+nV24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hU5GJ3JybRFTeOrn2QWNSht53fzEZlaceTm+IVqatE/N1duPiK8SB4xEjj7z+6XXQLJS6M2P6UaJ0ElzCZmyxu9XYRcMQh13IsCQWm7jPQegRDgOmLtq0wgxoNfg1f/QtKwijEmZ848Ci1B8lt6gYz55KrqOJiAMi7d/mfbPjIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uOyMl-0001ub-Gg; Tue, 10 Jun 2025 14:46:11 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uOyMl-002mGS-0U;
-	Tue, 10 Jun 2025 14:46:11 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uOyMl-004pya-06;
-	Tue, 10 Jun 2025 14:46:11 +0200
-Date: Tue, 10 Jun 2025 14:46:11 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/3] net: phy: micrel: add MDI/MDI-X control
- support for KSZ9477 switch-integrated PHYs
-Message-ID: <aEgpE7dZNT_GqhSV@pengutronix.de>
-References: <20250610091354.4060454-1-o.rempel@pengutronix.de>
- <20250610091354.4060454-2-o.rempel@pengutronix.de>
- <6597c2fd-077a-4eac-945f-97b43c130418@lunn.ch>
+	s=arc-20240116; t=1749559616; c=relaxed/simple;
+	bh=Ya7o+Lr6b2111pfm+fOXNxAnjNXhwd42toZrtju/Tv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DiF7DuDVluxfmjGeJoKFFIDHX0gO+Z+kywQU3sOqrhMXGFSteUDFhYeaO8jvYIhcn35cxKUTzIgl83aXpip2VZnjW4FHnRExKZimL6o+Iyp3yNFVrJNA+WGtUErxEI0bGsQsE3qfGzFYRrwFmMemuSZXaafWJCMrgGVc5qxrP04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EMpfDpYS; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-312a806f002so581665a91.3;
+        Tue, 10 Jun 2025 05:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749559614; x=1750164414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ya7o+Lr6b2111pfm+fOXNxAnjNXhwd42toZrtju/Tv4=;
+        b=EMpfDpYStcblHhmyNAZ5RZcNMoZkRI52BZTtguCMJjqfs9dqRhLwXK4MWIA8Z0auHF
+         TPikXvLs1ekiBhxpx9opho7gNdRbcnf8rKd7RMRgtsfzDILX9uGQm/USDCPetdTdEDUq
+         rKGWywT97RS7WDuD2t0Y8enDWTgFzTWDZvcIdBiEZWQ1Png0Bshs5o2VR/2KmYXJ/bmc
+         vf/P7kVJl/Ci9/2QER40yDPd/KCGvO8vPSYevsQQBzU3ouMURIkwLHWKABLsan1MVKdV
+         pymBhfhRkm0O4Fxu2GFVTCuOSwowMbpi1XSEKpkeNEz+M9+3OUKDoDFAsd9rFxKk1x6C
+         5+aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749559614; x=1750164414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ya7o+Lr6b2111pfm+fOXNxAnjNXhwd42toZrtju/Tv4=;
+        b=WCkRbkQOfPZ54qdSOSdZz8tGJXCeJOvGl7EbZFPU9LgEdr1KHdD3V+y2wl/HfufNSd
+         nK/Kv15ynLfbCo8WKDQdNY2PvNoNBQ4Th+YRtMtEW9KtPqcdcBoHJd4Vy07Fhyv9p3uz
+         HzOtye86tQ1MGuYcBcbIbjPEgS/to7tNy6d05/uiWC16Ktyu38U+nujq2kD1ruRx5/ee
+         3XfckQEx+fjTc1ILWLfjqYOp74sDsSkkKP4b7lywijyfOvkmAPUmdRiwiVIcn736juei
+         nEkAPbvpIrbOhlWkE5Ngvs67oQt7Vr+/CO4UXX6de2qpJ2h7b2RmFn9mtOIMCrbxDOX8
+         6CWw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/LesQsd2aCs/4YLU4Okk7PdkJgx9ZUQhgBw2i2eNmUpDt7noio3bHNNJuNaEV9AbDiA3HwmKPqyoyEDBEbqk=@vger.kernel.org, AJvYcCWxup3cI7k34IxBBpc5si11E4GIzesgQqIjhh2DNY+tybZSzlcBD4gcI9vTwsrHmB5PDLjsV7sA4qQpiBg=@vger.kernel.org, AJvYcCXcb1d4LPIwYCobwParw/iteivtBiR/EW1CPfkRbJqN0cF7IAAjzyLmyeEU+mB5qFCu3W+Q61Xysoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF8SnPKDN3LVT0wKbhR0Gw7igfjom4K7E/fDsfGNxvASoXle/K
+	vhTW3OjA2PVFtUITblZ4ZLxRRbaVxFIDFigahtZfLUqosIp6bEGkOvVav48E0PmICI7ts7rv4Wp
+	ono28cpytM7tQn4pX3QdBnUDa0StWwlc=
+X-Gm-Gg: ASbGncsuOpcc7FEyOVMh2pSs1nzCtsLlqPqwejeTd73LpuGNayuxGi15s06DDme2PZY
+	V4TInDAvAWjJc3p5ncwFQds/YUsSf0ZuwveZ2Ju1T6/VZ93rIsgXf/rV6v+YhR7OOAAwdl2JiWw
+	R3fSgbGXAgcfhHu4Zq5UKF2USPqXipgE7N6CiT/jQN77E=
+X-Google-Smtp-Source: AGHT+IEak5d16e/5FrsMogvb1aEvjHnaJk7Qj3Vrs9GwfeQHFh/sg4iyrbpHnOUv6MegVuwuZCa6n+gnNmqXuYGQFIA=
+X-Received: by 2002:a17:90a:d006:b0:311:e9a6:332e with SMTP id
+ 98e67ed59e1d1-3134ded1839mr9415395a91.0.1749559614021; Tue, 10 Jun 2025
+ 05:46:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6597c2fd-077a-4eac-945f-97b43c130418@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <CANiq72kORZjTe3tPEBueDi57TGF7KfxgTSw4Tn0DQeK_X5hi5A@mail.gmail.com>
+ <20250610123731.194853-1-trintaeoitogc@gmail.com>
+In-Reply-To: <20250610123731.194853-1-trintaeoitogc@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 10 Jun 2025 14:46:41 +0200
+X-Gm-Features: AX0GCFtd5VuHi7D87lqv4TVaYUAR41PmcpqldSut2APhu3FYkvxSfE5YRo6MsDs
+Message-ID: <CANiq72mtY6rQekToxOSWDMVs+0Sdg0NqvNBJn1zRLTKexSmsbA@mail.gmail.com>
+Subject: Re: [PATCH] rust: module: remove deprecated author key
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: a.hindborg@kernel.org, airlied@gmail.com, alex.gaynor@gmail.com, 
+	aliceryhl@google.com, anisse@astier.eu, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, dakr@kernel.org, david.m.ertman@intel.com, 
+	dri-devel@lists.freedesktop.org, fujita.tomonori@gmail.com, gary@garyguo.net, 
+	gregkh@linuxfoundation.org, igor.korotin.linux@gmail.com, ira.weiny@intel.com, 
+	leitao@debian.org, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, lossin@kernel.org, 
+	maarten.lankhorst@linux.intel.com, mcgrof@kernel.org, mripard@kernel.org, 
+	nouveau@lists.freedesktop.org, ojeda@kernel.org, rafael@kernel.org, 
+	russ.weight@linux.dev, rust-for-linux@vger.kernel.org, simona@ffwll.ch, 
+	tamird@gmail.com, tmgross@umich.edu, tzimmermann@suse.de, 
+	viresh.kumar@linaro.org, walmeida@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 02:31:45PM +0200, Andrew Lunn wrote:
-> On Tue, Jun 10, 2025 at 11:13:52AM +0200, Oleksij Rempel wrote:
-> > Add MDI/MDI-X configuration support for PHYs integrated in the KSZ9477
-> > family of Ethernet switches.
-> > 
-> > All MDI/MDI-X configuration modes are supported:
-> >   - Automatic MDI/MDI-X (ETH_TP_MDI_AUTO)
-> >   - Forced MDI (ETH_TP_MDI)
-> >   - Forced MDI-X (ETH_TP_MDI_X)
-> > 
-> > However, when operating in automatic mode, the PHY does not expose the
-> > resolved crossover status (i.e., whether MDI or MDI-X is active).
-> > Therefore, in auto mode, the driver reports ETH_TP_MDI_INVALID as
-> > the current status.
-> 
-> I assume you also considered returning ETH_TP_MDI_AUTO? What makes
-> INVALID better than AUTO?
+On Tue, Jun 10, 2025 at 2:37=E2=80=AFPM Guilherme Giacomo Simoes
+<trintaeoitogc@gmail.com> wrote:
+>
+> Maybe, after this patch we can make a checkpatch change for check the `au=
+thors`
+> key (and MODULE_AUTHOR for C side), and throw a WARN if the author is a n=
+ame
+> (not a url, or "rust for linux") and don't have a email address.
+>
+> Unless you guys tell me otherwise, I guess this is not so priority.
 
-The phydev->mdix_ctrl returns configuration state, which cant be set to
-ETH_TP_MDI_AUTO.
-The phydev->mdix should return actual crossover state, which is
-ETH_TP_MDI or ETH_TP_MDI_X. Setting it to ETH_TP_MDI_AUTO, would not
-provide any usable information.
+It is not a priority, and even if it were, it would be an independent
+change, i.e. not for this patch series, so no worries :)
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Cheers,
+Miguel
 
