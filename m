@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-680141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77D4AD413F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:54:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702EBAD4149
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 555D87ACD02
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33FC189F5D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2A224502D;
-	Tue, 10 Jun 2025 17:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C356D247299;
+	Tue, 10 Jun 2025 17:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xtr7RKbo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZoWifYh/"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE71F21322F;
-	Tue, 10 Jun 2025 17:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CB8245027;
+	Tue, 10 Jun 2025 17:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749578051; cv=none; b=Tag753WT6AH1VLeynnimKW5DYwN0EiU+vZpnh44B2EPdyd7zr3jGARQUZvSjI275jHa0sps9hCOvKQfyVqwinUpt2maUGOj3tfM+OFZ+rhoCPCsTBMqUflWZIRVr2ux1LnFJC0IqYBtmoOv/uvBJ1EpXEHiawhd1YoCWtiB+6I4=
+	t=1749578118; cv=none; b=nkdfuYUrrerNubv9JrLWViL0jcGv+Kmk5Id4/MfZJHGQinNNZwZJKvm/eq7mL0lh8JCBviA5pUnMBwYR2wFBnm5LIA1G5CYzAjnfr0XxOOdCkiJqSfG7N3U+lXVb1c9vCM5F2gHGoY0EFzFc3UDqjAQT9DtsAHHBL2uZh8KD5Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749578051; c=relaxed/simple;
-	bh=g8srZIuC7DXP+YZfVbIrDXDZGP9WZWOx3s6txz1uaKc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OnbYQTyiXFIGm4y45JyuQNJ4KC/WaksI47YkZB1nshdHaBgKEB+6tcJWjh26xwU/RIOPoLbjV+2zShFCnd16mnzFug3J5xFWoksi+ZiEM8MKgxiP8/EqB7z4O9DXi8tlWgdqzaUA1L3WIzuOixHKXIZ6B0pePQkmfGcMa9NHHpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xtr7RKbo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF82C4CEED;
-	Tue, 10 Jun 2025 17:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749578051;
-	bh=g8srZIuC7DXP+YZfVbIrDXDZGP9WZWOx3s6txz1uaKc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Xtr7RKbo9Iyv/pE3+vc8EYLVMRcG+P66Ci+NPkKjgeQlRjqyJa9lgGvwppo/ZcLY3
-	 ZNiWzJWxvdzvrQPVTjpxzjnV0Kc4lRsICRB4PvwmbQc9RKoaoCDLk4ccTE/EHyV96S
-	 hkqp1wtZGKTLhk1hx7HfAxlEzGZ0ISfpoayDjIxYZ94QRLtsHe8u6P3K8T3dPonFuu
-	 VdSQCO64V59IYLLdZz5SGkXSPrnoSTtRXkk6/zksEKqQMbFAuqlugaBqTrBFzkGk4f
-	 nJRq4tvXMWbONbzm8nSgrMmvJnv2Df+WeOdJI3nnhZVVCWZjgX1nT4EXQzIZlI1POG
-	 sUnYE/RPwQNdg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB01E39D6540;
-	Tue, 10 Jun 2025 17:54:42 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749578118; c=relaxed/simple;
+	bh=qDMlj5Xw4H0umu922A8fBL2sbekOqw18yJyz9IeZPP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=usAgzfK/8jlRwvjUe7CR62OMslJhmHS5AC/jtcUveRuta0SL0dUeM3g+cb2GmlDt81FWkIaBxUBn6IKHZmZTHfcnxXlUG/MF+G0QmUL2IaQQCvxZwyaOsIidANH9SgIrIzQs3+FetH9jEOiEllASOUxmuHo0fdJWg7HN18jSRWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZoWifYh/; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74264d1832eso6652290b3a.0;
+        Tue, 10 Jun 2025 10:55:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749578116; x=1750182916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qDMlj5Xw4H0umu922A8fBL2sbekOqw18yJyz9IeZPP4=;
+        b=ZoWifYh/S7gTYpJB1awh80lAKTV6mWRjbrY/TZTAtbnju+Oib7U+CeLuz5xAhZp0ep
+         h4xa0UXJLUlgN/0VARp05RqRNe7EBNw0EY76Zczk1TnIW63OZO/lrXyJ/L6JLNCHxcQW
+         JQLnjSKXBkTF9EabTT67XCfr8uu8YRiiYJOI7pm+HzoaSMDRq93NvDHTw6YF2gXbFI6S
+         apFO6BqTz1KDnOuEOLfvzrrTWDtZ/SUT4N8a4QyeinV1PiLhV8uDnUU0f2PJAMkqpVLi
+         82uKGopJwJkL5i0eyQn7dgmfWwhWprAUzD+VesGE6hUUZA7y4ftM1pvA2ZE9KywMylL0
+         0NnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749578116; x=1750182916;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qDMlj5Xw4H0umu922A8fBL2sbekOqw18yJyz9IeZPP4=;
+        b=Sbokp7rKm68gMaG/iaW7859ahChR07DX94bGax45SeOomJnnGgVyWtpmZiZ2N++yid
+         /HpSjuD0NSsr5HGhqfsfZiBKuWU0KhPqRoW0kx8j5J7cFs/nsryzdNYNCRIf0QIUIJrf
+         PP1AwdpQLzVBB85xMHgjKr9DYZwsSlGoOYDSOXQcWH+lj8iX2hZ+FWXnBVqEYtNB1VWa
+         ZZ4pqqCRBK+UhOQcDhGQW0pPlXREhY1ZBzGiEPaY44NiJdOwmjFxqjaXwL5rH9YB0HmY
+         bYjWOWQUp04wHQDOoxpRAJLSuzWO+RiKLUHhE7Mnml7Twn0u0y69MHD9iTrl1HlPgMJG
+         xPsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlujOJOD301CSb9H5YdGDwwN4/uyclWu4z67aaCyX1VfqXq+jAbiCMX/Lm4QnbgzkxdmOfjquQG20QWw==@vger.kernel.org, AJvYcCVje0J2pF7xxJi7sOsPTtOWqr6JudbC2fcLtIVRxsSjLCQVC8qJA0509WFQWD0jDEX3D+C913k77Xbsw022@vger.kernel.org, AJvYcCWp9eGtEAYHjanCJtw8mXvkL7BfYdfHDXNJdyEAXPSDQX0sXK7BfW/c4Bjh3uy9nHaS3JCUkBgroz+w@vger.kernel.org, AJvYcCXa90V7zcjQjnJVUmriIBiqHTlBaP+teuJS0mtzVTj5RmPFOBvCf5vHHhXz/TRZ5NDsP8fknBQwE6fI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxC6/QJU3u587c7PM7Z8UCcPq1FQHheoV3+rWCae/EE8eX0DbO
+	VwyFU5PlOAQK/ZzXmSMJCdt3V86UyiAyPB1utskeHR3ySpcv4u9ZDTRFMmGAcg==
+X-Gm-Gg: ASbGncuIL3IiWop+kuHqWBIs2zcbHKywNF/8oLrLUQTn/DnBFHOEvPP8Nk1FpDlgEWM
+	u7ArLvl35Po/cl8gjSZgq/7EIAHHFyoEQV9kZGdxZ/Ehq6tsmQELYeEEg0xVRQpG1F/yKVbOD4S
+	xSQyOuXwXHhw6mPNtAMRUn0Pt10FQkC9vgO2nQeAp2l1uyIClvjVXRkQW0KfK+3eMVDvW3rbm6+
+	EsupXbK8FhyLgPgHxHmiJt91HaWlgM7pozSBTkFZhwRaCaduWVcd+7NoXkwLx0oex851CRg/CAz
+	J6mMScQu9BogtmkDbemv3IBuIOHIuWLRlnH/VP9ZFsFGnH4ElyzNtxkc8UL6jn7MznxbYGAM
+X-Google-Smtp-Source: AGHT+IH4M22F32APFBMSyxLZm9HztQBxbVHDL1fBimHA12si69nFzdQCqAyTKoXcuIQbMRRAbOwE1Q==
+X-Received: by 2002:a05:6a00:2e07:b0:746:3200:5f8 with SMTP id d2e1a72fcca58-7486ce55a9amr541548b3a.22.1749578115873;
+        Tue, 10 Jun 2025 10:55:15 -0700 (PDT)
+Received: from DESKTOP-P76LG1N.lan ([42.113.163.91])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af3aba1sm7725343b3a.33.2025.06.10.10.55.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 10:55:15 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: lee@kernel.org
+Cc: pavel@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	corbet@lwn.net,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v9 0/4] leds: add new LED driver for TI LP5812
+Date: Wed, 11 Jun 2025 00:55:11 +0700
+Message-Id: <20250610175511.186473-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250610174319.183375-1-trannamatk@gmail.com>
+References: <20250610174319.183375-1-trannamatk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2] bpf,
- sockmap: Fix psock incorrectly pointing to sk
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174957808176.2523637.14786222447534572080.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Jun 2025 17:54:41 +0000
-References: <20250609025908.79331-1-jiayuan.chen@linux.dev>
-In-Reply-To: <20250609025908.79331-1-jiayuan.chen@linux.dev>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: bpf@vger.kernel.org, john.fastabend@gmail.com, jakub@cloudflare.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+Please disregard the mistakenly sent patch named "[PATCH v5] test"
+— it was sent in error and is not part of this series.
 
-This patch was applied to bpf/bpf-next.git (net)
-by Daniel Borkmann <daniel@iogearbox.net>:
+Apologies for the noise.
 
-On Mon,  9 Jun 2025 10:59:08 +0800 you wrote:
-> We observed an issue from the latest selftest: sockmap_redir where
-> sk_psock(psock->sk) != psock in the backlog. The root cause is the special
-> behavior in sockmap_redir - it frequently performs map_update() and
-> map_delete() on the same socket. During map_update(), we create a new
-> psock and during map_delete(), we eventually free the psock via rcu_work
-> in sk_psock_drop(). However, pending workqueues might still exist and not
-> be processed yet. If users immediately perform another map_update(), a new
-> psock will be allocated for the same sk, resulting in two psocks pointing
-> to the same sk.
-> 
-> [...]
-
-Here is the summary with links:
-  - [bpf-next,v2] bpf, sockmap: Fix psock incorrectly pointing to sk
-    https://git.kernel.org/bpf/bpf-next/c/76be5fae32fe
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+--
+Nam Tran
 
