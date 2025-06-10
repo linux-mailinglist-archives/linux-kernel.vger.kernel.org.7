@@ -1,104 +1,59 @@
-Return-Path: <linux-kernel+bounces-679055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D69DAD31D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:24:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6934AD31C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121E71881262
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900D017329B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7328B7D7;
-	Tue, 10 Jun 2025 09:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0956028B4F8;
+	Tue, 10 Jun 2025 09:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MNC37Ilv"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svACTFx0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8CB28A3E1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68412286D6E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547370; cv=none; b=S3k5Ihjtpjv8Yb8/id+5bC8qC8D+jZfDbz3oK2OJaXwr2emrU8h45oL1ouTi5XY/7uNk1GO/kYmr3qQDel4gItcy5iq2XvFL1qWBzFl5OhOQUMPwoZ+cLZIjnIqAzZeSjMv2+SlvYqax9d4KisGRQ0zou2w6oppAxqFz+Xn9B04=
+	t=1749547324; cv=none; b=t3oH9vzO3DPgn0q58AaW95Nh6cF+abD605sUWJvIgYD7oE8ocUXmAut625713dsYC1462dsRx8LS5429HIzFwCoqtTjJ2qrjLs5uUbhk4jJ5VlHS34+ytPYmz1F9LBgTBX3UTfGhmlKyxSQabnaYuGjO5smMw7yp3KAKVisu6Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547370; c=relaxed/simple;
-	bh=DzbUGvSEz9fXtmlVmzQnGoE1SPjPgfLt2lNAwCzzejU=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AYb3c1dghG6/uDBKAuDUIbrh6dTbrB0bGpFE8J87YjYUqbllMn25erIsIga6BA1fwUrIhycbpva9lGxvgr1xLIgtWAvcUsIH1F/hF8dxHnBNqwKv/ztq/Ve/5ueEWAKjvWAX0RhGzT/RR/LkrdhexsQ1YR1Orkycoqa13pIsaZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MNC37Ilv; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-311e2cc157bso3766479a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1749547368; x=1750152168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eIl3jd/zdjxk0DCEyY2ZK8PBBrmx2B/ph5KlqW1T7PA=;
-        b=MNC37IlvYU6eRoRLZ3arnZ6GlpV6oXraHAenZG4laW8R96idorpAit8LEPgVpQOnrT
-         0BRnUPQsVWvV3+pHIQvvXr+Js96tGHZhxO2b/6y2YOzJrg0JkW97oTNaeHxLrp0bOquc
-         6W0UxuN8ZWYkA4evXWcMimlu39ITPbqeSkjH1PrLBi774JYXGK1X6xQmLj2x3RxZD/fz
-         pgQpRk185M/FDR9p1P/fYgijCy+ikztZzfUKhGQdBCm5GU2qZv75lsanFm+Z/H/hSPaq
-         FV628Sjsa12xVmjt1ikbfSQB+VQ+slPguDxXE5m7GyOrWP924fxJkLq8CQdAxOnlfpIQ
-         PLuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749547368; x=1750152168;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eIl3jd/zdjxk0DCEyY2ZK8PBBrmx2B/ph5KlqW1T7PA=;
-        b=slBA0C812IwnMXYiuu0gZQQ++M+c3McZeTiGjXTxeZp5+jCYNsHGtqVdO/mUlmFtAt
-         MOHUn7S8s5UymGDLbmqxqEuVOYcpc3ruvYdZvsxIno9kvyop8GRnrrGWwednJZ98h25q
-         G6lvnsa93bQazKqCR2VTumgPlJah+FwNpEfVPA3Ij9rG60G60yItWDR8uYFXgRZgJPbR
-         CNFhNCtMVeIpjyYSnXeIjbbrXeHuJ3PX59k64lWL5LnK/qTIUTfaIiF/VNx0OqhZrBeb
-         UIsl7Mx3ae9Y9fpZzWE1dWQDX2EwPBgM3T2cB4ownjmMnWzF28blnrMZ6sG6m0TItzNW
-         nQrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhV1Q2CGGGwYPJwQOKCWUfq6e1fWq4QDPNYygKJ6KWffGDBJsInFSLzCP1/0ohbpcJTqhWMxYffRNu2DA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzROkqpYLsBiRphdFjEdiXUFnVBL3PR/qETcXk01tRJRiaOjRAi
-	6H27XNZ0hO2KItp5QmtlNcb2yTVy1dz153xCRciM90yT+Ghvtq9bDIgWNDcGm0z19Ig=
-X-Gm-Gg: ASbGnctBqrfrSrQ+0qvKcX0XmhI1RGFY5rDu1FrThfteIjaHtnweHyd6JnRk4RjN5C6
-	7JsgqA7td9b991ILP4gTsJVY9KnJyZT4l+NfrWB2/wlL88EQfANRZegw9la/ukz+bXO5id08QvV
-	Rlb1qBGyrL1zU3mgcWVwxsEbdMCmKDY1dHZSFVWOHZeqXyZ92Ygfrj0lnRraKDfOXqIG/0r1JCB
-	5BmXdWN/79E43ynxjuCbbhB8Mk7U2mCr6Z/mOwcPPsprewFioqbsHYzzdsCrfFuXWZ49aKlg9VQ
-	WWxo5pN6vAXSSkMH0Fq6bu+AE29kjXElb1bBkA4gFcWq5E9GBDeGNmUyUX/5UEv+JSF2WdRxYyX
-	Z3WPUF0zZ/IK4Lh36LAkBpFUS+Uk3XcFdiwB9Ws7iIg==
-X-Google-Smtp-Source: AGHT+IE7oP5018f+7id9MCmnywhwE2pvWciy02cmVcTCGl4f70NgKZt5UeEuXcYAHe0aQ6mb0oXMyg==
-X-Received: by 2002:a17:90b:538d:b0:311:f99e:7f51 with SMTP id 98e67ed59e1d1-313a16cf863mr3112140a91.18.1749547367955;
-        Tue, 10 Jun 2025 02:22:47 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fc9ebsm66968605ad.106.2025.06.10.02.22.41
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 10 Jun 2025 02:22:47 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: arnd@arndb.de,
-	andriy.shevchenko@linux.intel.com,
-	benjamin.larsson@genexis.eu,
-	cuiyunhui@bytedance.com,
-	gregkh@linuxfoundation.org,
-	heikki.krogerus@linux.intel.com,
-	ilpo.jarvinen@linux.intel.com,
-	jirislaby@kernel.org,
-	jkeeping@inmusicbrands.com,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	markus.mayer@linaro.org,
-	matt.porter@linaro.org,
-	namcao@linutronix.de,
-	paulmck@kernel.org,
-	pmladek@suse.com,
-	schnelle@linux.ibm.com,
-	sunilvl@ventanamicro.com,
-	tim.kryger@linaro.org
-Subject: [PATCH v9 4/4] serial: 8250_dw: assert port->lock is held in dw8250_force_idle()
-Date: Tue, 10 Jun 2025 17:21:35 +0800
-Message-Id: <20250610092135.28738-5-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20250610092135.28738-1-cuiyunhui@bytedance.com>
-References: <20250610092135.28738-1-cuiyunhui@bytedance.com>
+	s=arc-20240116; t=1749547324; c=relaxed/simple;
+	bh=YGXBP9lwMZfji91RKvnUA24jkXgM6whNm6o4hq7TUoM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GkHpiVZtK/0FNoIEh8m7un0pObFLeJnVCVzjcTVARL+12eVYor+QO/3ptaj1HAkfAx6Z1OdVgXR5/Izyt/vZ2RHHssvw+eJUjIdyiZTdViJaaFGfMJeVoYUadTWvMn4GWCXz6poM1IEgGNXpy3tTPs/nOTw0ubkHMfcJN6sU8KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svACTFx0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C35C4CEEF;
+	Tue, 10 Jun 2025 09:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749547323;
+	bh=YGXBP9lwMZfji91RKvnUA24jkXgM6whNm6o4hq7TUoM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=svACTFx09ibq9oXJmJ5KtYYuSNq+csVKSuSUFl0u+XBinwGs078V0humsqDKKCwEX
+	 FjWoMA/LrI51XhkQ9JNaocFw3mfRzWRJAZeJy32EWwV4D1vcQ8pV1J92cCq5o5z8ta
+	 XFIOJuib7imHaaxDV6RjcHX1yYVfePRuf0M1PJueMiFN3oiJD8dWJ4rBb/W5JEAmls
+	 KpkMp2vWAY43Yn4RIRmBlGlaDfLwRFpD6b+FJQv8KCNGIoQYqI8up0qne7yaEiZBVC
+	 m5KCHidQ7h07//TeBMRQYOTL/3Nr7bHAfAf91sXjVaJkDu8679kn6gOqV8fKrWJRLu
+	 zHjDRTJY05IVA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	David Hildenbrand <david@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] lib/test_hmm: reduce stack usage
+Date: Tue, 10 Jun 2025 11:21:50 +0200
+Message-Id: <20250610092159.2639515-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,36 +62,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reading UART_RX and checking whether UART_LSR_DR is set should be
-atomic. Ensure the caller of dw8250_force_idle() holds port->lock.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+The various test ioctl handlers use arrays of 64 integers that add up to 1KiB
+of stack data, which in turn leads to exceeding the warning limit in some
+configurations:
+
+lib/test_hmm.c:935:12: error: stack frame size (1408) exceeds limit (1280) in 'dmirror_migrate_to_device' [-Werror,-Wframe-larger-than]
+
+Use half the size for these arrays, in order to stay under the warning limits.
+The code can already deal with arbitrary lengths, but this may be a little less
+efficient.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/tty/serial/8250/8250_dw.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ lib/test_hmm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 082b7fcf251db..686f9117a3339 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -13,6 +13,7 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/io.h>
-+#include <linux/lockdep.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/notifier.h>
-@@ -117,6 +118,9 @@ static void dw8250_force_idle(struct uart_port *p)
- 	struct uart_8250_port *up = up_to_u8250p(p);
- 	unsigned int lsr;
- 
-+	/* Reading UART_LSR and UART_RX should be atomic. */
-+	lockdep_assert_held_once(&p->lock);
-+
- 	/*
- 	 * The following call currently performs serial_out()
- 	 * against the FCR register. Because it differs to LCR
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index 5b144bc5c4ec..761725bc713c 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -330,7 +330,7 @@ static int dmirror_fault(struct dmirror *dmirror, unsigned long start,
+ {
+ 	struct mm_struct *mm = dmirror->notifier.mm;
+ 	unsigned long addr;
+-	unsigned long pfns[64];
++	unsigned long pfns[32];
+ 	struct hmm_range range = {
+ 		.notifier = &dmirror->notifier,
+ 		.hmm_pfns = pfns,
+@@ -879,8 +879,8 @@ static int dmirror_migrate_to_system(struct dmirror *dmirror,
+ 	unsigned long size = cmd->npages << PAGE_SHIFT;
+ 	struct mm_struct *mm = dmirror->notifier.mm;
+ 	struct vm_area_struct *vma;
+-	unsigned long src_pfns[64] = { 0 };
+-	unsigned long dst_pfns[64] = { 0 };
++	unsigned long src_pfns[32] = { 0 };
++	unsigned long dst_pfns[32] = { 0 };
+ 	struct migrate_vma args = { 0 };
+ 	unsigned long next;
+ 	int ret;
+@@ -939,8 +939,8 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 	unsigned long size = cmd->npages << PAGE_SHIFT;
+ 	struct mm_struct *mm = dmirror->notifier.mm;
+ 	struct vm_area_struct *vma;
+-	unsigned long src_pfns[64] = { 0 };
+-	unsigned long dst_pfns[64] = { 0 };
++	unsigned long src_pfns[32] = { 0 };
++	unsigned long dst_pfns[32] = { 0 };
+ 	struct dmirror_bounce bounce;
+ 	struct migrate_vma args = { 0 };
+ 	unsigned long next;
+@@ -1144,8 +1144,8 @@ static int dmirror_snapshot(struct dmirror *dmirror,
+ 	unsigned long size = cmd->npages << PAGE_SHIFT;
+ 	unsigned long addr;
+ 	unsigned long next;
+-	unsigned long pfns[64];
+-	unsigned char perm[64];
++	unsigned long pfns[32];
++	unsigned char perm[32];
+ 	char __user *uptr;
+ 	struct hmm_range range = {
+ 		.hmm_pfns = pfns,
 -- 
 2.39.5
 
