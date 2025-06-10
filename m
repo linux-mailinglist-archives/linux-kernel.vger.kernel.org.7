@@ -1,173 +1,140 @@
-Return-Path: <linux-kernel+bounces-679796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C70FAD3C05
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B934BAD3BCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F94A3AACB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0E33AB9E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0A8235064;
-	Tue, 10 Jun 2025 14:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB866221DAD;
+	Tue, 10 Jun 2025 14:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvgH2+Ok"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+qh8jev"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0DE225A5B;
-	Tue, 10 Jun 2025 14:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB99921ADBA;
+	Tue, 10 Jun 2025 14:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567563; cv=none; b=uHZ0zS1NQxKem2jvxqIw8+0SXvUwQa6JJumNxNT561gvm3o8HtPwv/3KgrdkpvU6pAym9839z6ANTtNOgs+5oyGrzZYU91vvib1b2i6i2Io1I+ZErLcmMtqnaD6duETrrK6tTlWpJ6qWMUjIwPq/V4bZvm/vjCxglQyO9EkL93E=
+	t=1749567224; cv=none; b=bFSBT4k+ckV21wli3YVurURRMh01HNUdbNucADEG+pUFigvYUrnVC03WYikPfdzaQmtEWOtvCz2/LOCmkEk545BQ83d4zVx4c78EQulY0PyV1dArYeM0zY3ayGf739d6xQPLnyWpRFqXrXGSLExmiVgN/TaIuNATBDGEDBPzn7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567563; c=relaxed/simple;
-	bh=eAzNjFltUxiELm09w9k9dxOVmIUtcLxfxaZgakO21jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rJTYcZgxMedNZPdn9ox597SnrDeDYpD3UPWXgU/D4zkEt/WJ7L41sSxjI/giIaqUF3qdohyRpFUJH7CJ9tJLlUydSzPmPSQeVneXjL0oJrc599X05nTXIhaHuOpWVG13x/eOba1aAZhy0073TZteSckX3nlnbhxUT1kK7uXEUbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvgH2+Ok; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-452f9735424so14028555e9.3;
-        Tue, 10 Jun 2025 07:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749567560; x=1750172360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4kwazpAlZo17qyn2Og7Cz+Ru1CTKqZ9TisRYwyWMCA=;
-        b=YvgH2+OkxYKZ2JGhoPhtU2dkoKvKGVNbmCGkvbWl605KNf8Yro4fEDE65bBnmbvi/U
-         KXuxdFhQito5I/zbQifik84OG9wvPpZLkPRhRjJ8VJ1MLCZpFmHiteLpqYBqk4k/awX0
-         P7SqiyifYKBzZbAz1Vup5TJvF7CKKYCg8D4oa1iH6HBVq2K7fIzJBhDrqK1bKKj0X/7a
-         aZoorTVOTsI39hUZ59aBq0zYYi6uHWYsvVFI4Swr26KeV76hs1rYlamslXh+XN/1nbBw
-         4wgVhP6GvxQlfI16ZmCc1/LRj8nmCRA1zAXuiWSbkeIhgGxFEqsNk+IBODeLHEXm7AVX
-         Ynlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749567560; x=1750172360;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D4kwazpAlZo17qyn2Og7Cz+Ru1CTKqZ9TisRYwyWMCA=;
-        b=QWd6pFgKK9G+o53q2dPwYKyDFpjyx7MCMTfQ5TfIb4B3rJlK0AcxhhjwLOMteEbbwu
-         FmWaS+tHReoVm1GY3K03t3WBKpXhsw4Qmawd/Fr1OnEoNXVmu2JMy4TvIDSKWgZp3PA+
-         WuP6JzrslyCneJtAzJ94uzIuSn0cSv6wQs1J6deM6Jkj/VT0poX9pZ5Zp0KMMFkHt4BN
-         9KP+ExjIcywq5bFDiykV4zV8/msg2kLIuB0bhyaHL3LJuVJ+qZgjeCmCuyyTvjX87X6o
-         qNnr35rusgo1CpiXv4NvJuFegVtIMOtJY0jWoWtnwcoCVWPRmQF3+xGiditkgLA8AEJL
-         SejQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8JBbF5r3FltrJCdQqFpGwt16qKAlZWSFBC9c8F2TvVH+C+gi3+GiSHOBmGdxuQMMTxRM8COUgC6E48kBo79M=@vger.kernel.org, AJvYcCWm3/v2msG6GLk2i1fUmqbth/kxwieUUSDawOF9GSjYPJEyZ3DbZzzoOM2OaEQXXLaDZJzV+IWimT6F@vger.kernel.org, AJvYcCWmNBVcftwCelKD/UCtmxlNXqSGM1GqpEheUg5EF7dweoSa6FyYf44ufQ6m4449hjJUC1R/T+owj0P5vmyu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZL7KLBQjfQ7UTc0QsoD5VM5HdSxenIfL2aMstkjUOArtGnmY1
-	06b0yz/qCU/5Yg/oXsKwAZnZ1PY09g3VikKA5K3XqywQNHaHICcQg9sF
-X-Gm-Gg: ASbGncsoDxiuVMKVPZJMdaYBctZ+7SYgRv2Q0B6kHSeby4tJZZHIhZRNiXQZeEEGP13
-	wuZBCgESAFk65oCXGYEbdOzDmAncEa90QDPvETFJTYRRg+d3EdE5b2Vlkxmx0ltH8Hpq374a1pi
-	H/WmAXNYLMSk5rigJlNW+MnHieyXGzJ97tLf/kR6FfNgRtFxmUmrAaEAO3SMJLrSeIkOjla2rm4
-	+9QQFEwzL3kRhZdmAndWKjU1dDhyeJ4UZLOXlIhNrb0OxE/NQnhwp7xN4msDaIpBvBtazmbVXn1
-	VOLJD4woKIFN1/0ZJ/xP2Z5nDVBpljtOV5eabqI6ekpAYhfvAFIHl0whLwHiyHOQOId7+Pb0tC9
-	X2JQWOXLCInE7l+AjSbfRqggIa7/OCgQTT4iA
-X-Google-Smtp-Source: AGHT+IENYHhXoQYe4kB3wXGt5TlTEHqhOFJJrxGvfo/0fGKH3HW1VUQx711wDe02QBcV90HmZxIDAA==
-X-Received: by 2002:a05:600c:34ca:b0:453:1058:f8c1 with SMTP id 5b1f17b1804b1-4531058ffa6mr86597895e9.3.1749567559618;
-        Tue, 10 Jun 2025 07:59:19 -0700 (PDT)
-Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209ce1afasm146136755e9.10.2025.06.10.07.59.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 07:59:19 -0700 (PDT)
-Sender: Igor Korotin <igorkor.3vium@gmail.com>
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	rafael@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	lenb@kernel.org,
-	wedsonaf@gmail.com,
-	viresh.kumar@linaro.org,
-	alex.hung@amd.com,
-	dingxiangfei2009@gmail.com
-Subject: [PATCH v4 0/5] rust: Add ACPI match table support for Rust drivers
-Date: Tue, 10 Jun 2025 15:52:34 +0100
-Message-ID: <20250610145234.235005-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749567224; c=relaxed/simple;
+	bh=D8oBuhkz5TcYD7TDo/ChhAEaqGOauhMGzMwHg078OFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PR7K4+nxZKjEpVvTXaGNXpyfhxfBor4OttVRmzMdOV+7MTRxU10hYDfmGGbudEe5oVX2rqCnRbztNus7eE8yYQuXN2nG80ssewFww6kSkVrKmvupsYqivIt5wlTA0numcCVGtMIMS6ijZx+sSwa4nt6TlCpdO+uZ85rzYNQRCMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+qh8jev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C5CC4CEED;
+	Tue, 10 Jun 2025 14:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749567223;
+	bh=D8oBuhkz5TcYD7TDo/ChhAEaqGOauhMGzMwHg078OFo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T+qh8jevVpXz6Ho7YmvXD8xON+9O31WEPh0rRdKrnR/ms5r6JwO2sYroEODP9pyZ5
+	 giR/XOWDXaDqgWOIIxCFhNQThnLbSojmKfDA+i4SXCG8EYgtTFLK1TCk7SqP0Mk7l4
+	 4dPhtDlYsm81rJ+KjBgsmUc/1q/SWPyT9UhlUW3Cyg2QziB+RtLZyxGFZ97+JGP//5
+	 EAA5RS9FxQOM8mikEXbTkF142n6K7HIm2pf0amkVuu637/KmiKZkWFTY7Wq2dgu08P
+	 M6QJwn8JWSZ06MiRMSPMQu9c/PFdId0iRsyw9M/R7bvG1TAjC/7zH8sRzdbYaat1Sz
+	 m5/wSeyeebkQg==
+Message-ID: <30a7f1a6-1e04-4fc5-9bea-e2b5956b28b7@kernel.org>
+Date: Tue, 10 Jun 2025 16:53:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] i2c: piix4: Depends on X86
+To: Mario Limonciello <superm1@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Borislav Petkov <bp@alien8.de>, Jean Delvare <jdelvare@suse.com>,
+ Andi Shyti <andi.shyti@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:I2C/SMBUS CONTROLLER DRIVERS FOR PC" <linux-i2c@vger.kernel.org>,
+ "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, linux-mips@vger.kernel.org,
+ loongarch@lists.linux.dev
+References: <20250422234830.2840784-1-superm1@kernel.org>
+ <20250422234830.2840784-3-superm1@kernel.org>
+ <CAMuHMdVPQLjOox5sMp34Z5MTwKv2WOpHa=MpZr8hWG22fQKcjw@mail.gmail.com>
+ <CAAhV-H70LXsDYMA7wz4x828rEFoJsNX0=m8F73Ge9=yfpzBpZQ@mail.gmail.com>
+ <24febda9-6360-459f-82d3-6fba9ed9be83@kernel.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <24febda9-6360-459f-82d3-6fba9ed9be83@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch series introduces support for ACPI match tables in Rust 
-drivers.
+Hi,
 
-Currently, Rust abstractions support only Open Firmware (OF) device 
-matching. This series extends the driver model to support ACPI-based 
-matching, enabling Rust drivers to bind to ACPI-described devices.
+On 10-Jun-25 16:12, Mario Limonciello wrote:
+> On 6/10/2025 2:24 AM, Huacai Chen wrote:
+>> On Tue, Jun 10, 2025 at 5:16 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>>
+>>> Hi Mario,
+>>>
+>>> CC mips, loongarch
+>>>
+>>> On Wed, 23 Apr 2025 at 01:49, Mario Limonciello <superm1@kernel.org> wrote:
+>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>
+>>>> PIIX4 and compatible controllers are only for X86. As some headers are
+>>>> being moved into x86 specific headers PIIX4 won't compile on non-x86.
+>>>>
+>>>> Suggested-by: Ingo Molnar <mingo@kernel.org>
+>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>
+>>> Thanks for your patch, which is now commit 7e173eb82ae97175
+>>> ("i2c: piix4: Make CONFIG_I2C_PIIX4 dependent on CONFIG_X86")
+>>> in v6.16-rc1.
+>>>
+>>>> --- a/drivers/i2c/busses/Kconfig
+>>>> +++ b/drivers/i2c/busses/Kconfig
+>>>> @@ -200,7 +200,7 @@ config I2C_ISMT
+>>>>
+>>>>   config I2C_PIIX4
+>>>>          tristate "Intel PIIX4 and compatible (ATI/AMD/Serverworks/Broadcom/SMSC)"
+>>>> -       depends on PCI && HAS_IOPORT
+>>>> +       depends on PCI && HAS_IOPORT && X86
+>>>
+>>> Are you sure this south-bridge is not used on non-x86 platforms?
+>>> It is enabled in several non-x86 defconfigs:
+>>>
+>>>      arch/loongarch/configs/loongson3_defconfig:CONFIG_I2C_PIIX4=y
+>>>      arch/mips/configs/ip27_defconfig:CONFIG_I2C_PIIX4=m
+>>>      arch/mips/configs/loongson2k_defconfig:CONFIG_I2C_PIIX4=y
+>>>      arch/mips/configs/loongson3_defconfig:CONFIG_I2C_PIIX4=y
+>>>
+>>> The loongarch and loongson entries are probably bogus, but I wouldn't
+>>> be surprised if the SGI Onyx and Origin do use Intel south-bridges.
+>> Loongson can use AMD SB700/SB800 south bridges, which have I2C_PIIX4.
+> 
+> Well we could revert this patch, but it's going to be a compile failure because of 624b0d5696a89b138408d385899dd35372db324b and other patches that go on top of that.
+> 
+> My current leaning is we make a dummy fch.h header for these archs with #defines for 0.
 
-Changes include:
-  - A new `acpi::DeviceId` abstraction for working with 
-   `struct acpi_device_id`.
-  - Updates to the core `Adapter` trait and `platform::Driver` to support
-    optional ACPI ID tables.
-  - A sample implementation in the Rust platform driver, demonstrating 
-    multi-bus matching.
+Move "fch.h" to include/linux/platform/x86/ so that it is available on all arches
+and if necessary ifdef out anything x86 specific in the C-code referencing it ?
 
-This is especially useful for writing drivers that work across platforms 
-using both OF and ACPI.
+Regards,
 
-Tested using QEMU with a custom SSDT that creates an ACPI device matching
-the sample Rust platform driver.
+Hans
 
-Igor Korotin (5):
-  rust: acpi: add `acpi::DeviceId` abstraction
-  rust: driver: Add ACPI id table support to Adapter trait
-  rust: driver: Consolidate `Adapter` methods using `#[cfg]`
-  rust: platform: Add ACPI match table support to `Driver` trait
-  samples: rust: add ACPI match table example to platform driver
-
-Changelog
----------
-v4:
- - Fixed code example for `trait Adapter` in platform.rs 
- - Fixed driver implementation example in rust_driver_platform.rs and moved
-   it to `trait Adapter` in platform.rs per Danilo Krummrich's suggestion.
- - Consolidated `Adapter::of_id_info` and `Adapter::acpi_id_info` methods using
-   `#[cfg]` per Benno Lossin's suggestion.
- - Link to v3: https://lore.kernel.org/rust-for-linux/20250606170341.3880941-1-igor.korotin.linux@gmail.com/
-v3:
- - Removed fwnode type check in `Adapter::id_info` per Greg's and Danilo's
-   comments
- - Removed `is_of_node` rust helper, due to unnecessity. 
- - Fixed example code in `rust_driver_platform.rs` per Danilo's comment
- - Added an instruction of testing ACPI using QEMU with a custom SSDT
- - Fixed minor code formatting issues.
- - Link to v2: https://lore.kernel.org/rust-for-linux/20250605161956.3658374-1-igor.korotin.linux@gmail.com/
-v2:
- - Removed misleading comment in `acpi::DeviceID` implementation. 
- - Removed unnecessary casting in `acpi::DeviceID::new`.
- - Moved `pub mod acpi` to correct alphabetical position in `rust/kernel/lib.rs`.
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250530123815.1766726-1-igor.korotin.linux@gmail.com/
-
- MAINTAINERS                          |  1 +
- rust/bindings/bindings_helper.h      |  1 +
- rust/kernel/acpi.rs                  | 61 ++++++++++++++++++++++
- rust/kernel/driver.rs                | 77 ++++++++++++++++++++--------
- rust/kernel/lib.rs                   |  1 +
- rust/kernel/platform.rs              | 52 ++++++++++++++++++-
- samples/rust/rust_driver_platform.rs | 71 ++++++++++++++++++++++++-
- 7 files changed, 241 insertions(+), 23 deletions(-)
- create mode 100644 rust/kernel/acpi.rs
-
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
--- 
-2.43.0
 
 
