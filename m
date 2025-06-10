@@ -1,118 +1,156 @@
-Return-Path: <linux-kernel+bounces-678613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A142AD2BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C07AD2BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF31A1890B06
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6FCB3AD2F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AE11A8419;
-	Tue, 10 Jun 2025 02:08:29 +0000 (UTC)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5F21A8419;
+	Tue, 10 Jun 2025 02:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b5Ja7FfO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D669C29A0;
-	Tue, 10 Jun 2025 02:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ED419E82A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749521309; cv=none; b=FXzPrOyH32QpTS8fQzmEYHVO7+QMAdxVUpP6QDtPRi8jdRKtZn+KzC7gF7AwIsVWFU4VSpWSYc8GsEtIV0RthtOFyC5GrRMTNm+dr9jRYHjG7dxj9uLuC+kwsv3tGIASva91mUlGcFDWyi2+S/2yqtremJSxOgCvEIJEGlR/qDQ=
+	t=1749521334; cv=none; b=Y0Jttjv88Ux2kV5IIFil2Gn/WsFzPD5ewoVbwWBLXc2dRUdM/GabEotFLBpwqHRsIMSywjjrnTm3/D6v37u2og3vh3zWSqrb14bl8j4bVseh1yzMUTY0XZq2Tndvi1BW5QXQJkKyWDmsY5a/732jBNfu9k44wop7NFkOps0y3L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749521309; c=relaxed/simple;
-	bh=PyVS5Ca/GiCDjbyHz8ZFyNBYLTm39fGuhScpF+ABEW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oFQkiQER9QuzPkf8TY2f/C6SMPqYTNvluA3w/oiXIAhD4bZJBOv5yPlcRZs3Gac6t0GSDDRkEfQ4y5+PSlTHlSmeLBlyzV+G1P2wcCilkoS4mLuJNiuxMNn1xSQKd8rbzbPOkfkbFVRuJey/jkXx3O2yU3BJ5xlLSpb8AgG9a3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6faf66905adso31003396d6.2;
-        Mon, 09 Jun 2025 19:08:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749521307; x=1750126107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a5l7crO49tehMluY+s3MQ7KZSQ7naCKKBXJdEzrIe1w=;
-        b=UHkuo/6RBWz6bBeh9om4EXzLuXLOwk+5BDlYrk5XoRIxVR7KkuUSLrvYugLum5NuLY
-         BeyNZvi0aIwCp4ZnzTwiYF04fHMEJD6fCskBdrHskiqNV8WWhcJChteqaWMXd1MWkmEs
-         V6MQhOchN57Zidx2qoktgEiVJAR2QG8jXDIzrbswY6rHAEXFxx4NkfuGj2Q8Vzmf8IYA
-         nWG0bpL4XBj1AoKD055WTnWSYM4diPg3BJzZvRqXlzXJyTE5YLnEzn4MlBCUfkuLwkBI
-         Rxc46OFmYbLRgqEmliieuVe1cF0cyfdHa8nBW/m9qCBy9Dt04li1RjEOx/aC3BSAD0sv
-         96Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9OXb80lgL2Hx9yHgYnYBFDzd3Y+HOAp9dfizAcpZ1KiMhOFvQwVxIKM3tBoDZ+bzA8D61RZu69LdFaHq2gR2D@vger.kernel.org, AJvYcCWukedVIyZqs+87Ea6DFhVrkpDKXp8P8qcM7WQ65JVglK6ZkgFoc3JEGhDsjaKx90PF+VPjMN6lQLapf0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlvaBy4NO5hcxUvN6cwYsNNaLZpp9lRloH2HMBWvQzyLpEsYNY
-	UEIyqaNDJfclGqDEcPwZ1KcIukH9wEEfjHpkjyTw5sDtdZSeb5oJkv9cd/eIC+KMNMo=
-X-Gm-Gg: ASbGncvI4niELIVVcTMkX4/WRLkcgB51PRaCQZnR1QBiFt1XANucHswUTUstBSwBgIT
-	Y38nhXEJXFQu6Os8wdsyFR24UVzEJIYoByUOZtluyYVbgDW6JHsOF2RtWtz3aOikUV5tCV2Dij9
-	YfAz7C4XG1rU9JzNlcEpvOOQkuwTej7CDCKfOiRenb5hGoX5T3ZMtn3StecSM8zyV+ZKbY+mxT3
-	Jdik616zx4CSOPZvWk8cj5A+NfMxK8jq+DigvK71dUaU4Ej/rezYqx0z/Swt96PuTPK+GU9A6rZ
-	IOqXyvH74xtYYdBqNoBAio3WEGk3bgrEQOT30VjiSRMZWHhpVbdoTqXcY33/hp9zIxS9pqG/a1D
-	lLnPXBOJE5s60LRtDcy9OTw==
-X-Google-Smtp-Source: AGHT+IHnuIE8PHQbLq+4boGMp7B1osfy71c9ZqsPZsrjBrra+rmbDHqteKOSUy+BJmkLvwT1ldZVSg==
-X-Received: by 2002:ad4:5f0c:0:b0:6fb:16a:da41 with SMTP id 6a1803df08f44-6fb08edeed2mr258166956d6.0.1749521306683;
-        Mon, 09 Jun 2025 19:08:26 -0700 (PDT)
-Received: from localhost.localdomain (ip170.ip-51-81-44.us. [51.81.44.170])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ac83besm59803656d6.28.2025.06.09.19.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 19:08:26 -0700 (PDT)
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1749521334; c=relaxed/simple;
+	bh=sIXSPJxS+G5t42r2AbvUgAZhpvhnMGaM1OyQXh9rwbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iaav9Tqv339sL/RxiMRJW1z+MCLZ5RXUYapTMSryJsN7rlWLVQn0Lxa3S0vEyPx3mdtJoQ+gRUHyZoGOjnGq7vHqAIPbFt426OviYKAMGm8U0eUAmXwFfUuvR/XDPked5kVob8vYNDoyDpyFI0R4qhXoRiNGjF0r3kPJLJQx9mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b5Ja7FfO; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749521332; x=1781057332;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sIXSPJxS+G5t42r2AbvUgAZhpvhnMGaM1OyQXh9rwbc=;
+  b=b5Ja7FfOtZZ0taSzZhz/RO+bf+gssMW4O+qz1LrZTJW/tWxjY0WERJ5P
+   A9uLoWgvo/oIyjKcV7tfi+wI5bryhGNw67zk9C8uf8Skzx7nm3LwsBWcd
+   KtJBct3M0jYZCncpysjWhX/GMoZM1n2Md2MdCi/Q+GovL+uR75AX0WuGX
+   KqLZ9AYbpd5I7Ge4Kr22DkpLE4nk9flxmCODJ2GZTWa3aI2sgSKOjofMI
+   EFwK6p6kHTf3aPQRNDXiUfIcgWBBjYNTbiY1q/L+KEyBYs6wfutwhpHcq
+   ksAkeDa9xCnRVuG5IQ4KFTbgxNhErv8qt6XE0Hijb3h7n/FK1+etP8M08
+   w==;
+X-CSE-ConnectionGUID: EcYf9DiASQmYH3WsLGF56A==
+X-CSE-MsgGUID: xnFcV4JlTTqn9RZiHDnLSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="55279838"
+X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
+   d="scan'208";a="55279838"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 19:08:52 -0700
+X-CSE-ConnectionGUID: Gmb/15xrRN+ExR13Kec0wQ==
+X-CSE-MsgGUID: xlUitEuuTEWdIOnJg1hRPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,223,1744095600"; 
+   d="scan'208";a="147200204"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 09 Jun 2025 19:08:49 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uOoPu-0007d7-2y;
+	Tue, 10 Jun 2025 02:08:46 +0000
+Date: Tue, 10 Jun 2025 10:07:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marco Crivellari <marco.crivellari@suse.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] selftests: Suppress unused variable warning
-Date: Tue, 10 Jun 2025 10:07:45 +0800
-Message-ID: <20250610020758.2798787-2-chenlinxuan@uniontech.com>
-X-Mailer: git-send-email 2.43.0
+Cc: oe-kbuild-all@lists.linux.dev, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 3/4] Workqueue: add WQ_PERCPU
+Message-ID: <202506100903.Ow7T6q5Q-lkp@intel.com>
+References: <20250609103535.780069-4-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609103535.780069-4-marco.crivellari@suse.com>
 
-When running `make kselftest`, the following compilation warning was encountered:
+Hi Marco,
 
-mount-notify_test.c: In function ‘fanotify_rmdir’:
-mount-notify_test.c:490:17: warning: ignoring return value of ‘chdir’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  490 |                 chdir("/");
-      |                 ^~~~~~~~~~
+kernel test robot noticed the following build warnings:
 
-This patch addresses the warning by
-explicitly suppressing the unused result of the `chdir` function.
+[auto build test WARNING on mkp-scsi/for-next]
+[cannot apply to brauner-vfs/vfs.all wireless-next/main wireless/main linus/master v6.16-rc1 next-20250606]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
----
- .../selftests/filesystems/mount-notify/mount-notify_test.c    | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Marco-Crivellari/Workqueue-add-system_percpu_wq/20250609-183742
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20250609103535.780069-4-marco.crivellari%40suse.com
+patch subject: [PATCH v2 3/4] Workqueue: add WQ_PERCPU
+config: s390-randconfig-002-20250610 (https://download.01.org/0day-ci/archive/20250610/202506100903.Ow7T6q5Q-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250610/202506100903.Ow7T6q5Q-lkp@intel.com/reproduce)
 
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-index 63ce708d93ed0..34afe27b7978f 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-@@ -465,7 +465,9 @@ TEST_F(fanotify, rmdir)
- 	ASSERT_GE(ret, 0);
- 
- 	if (ret == 0) {
--		chdir("/");
-+		// Suppress -Wunused-result
-+		// Ref: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66425#c34
-+		(void) !chdir("/");
- 		unshare(CLONE_NEWNS);
- 		mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
- 		umount2("/a", MNT_DETACH);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506100903.Ow7T6q5Q-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/nvme/host/tcp.c: In function 'nvme_tcp_init_module':
+>> drivers/nvme/host/tcp.c:3026:26: warning: statement with no effect [-Wunused-value]
+    3026 |                 wq_flags != WQ_PERCPU;
+         |                 ~~~~~~~~~^~~~~~~~~~~~
+
+
+vim +3026 drivers/nvme/host/tcp.c
+
+  3008	
+  3009	static int __init nvme_tcp_init_module(void)
+  3010	{
+  3011		unsigned int wq_flags = WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_SYSFS;
+  3012		int cpu;
+  3013	
+  3014		BUILD_BUG_ON(sizeof(struct nvme_tcp_hdr) != 8);
+  3015		BUILD_BUG_ON(sizeof(struct nvme_tcp_cmd_pdu) != 72);
+  3016		BUILD_BUG_ON(sizeof(struct nvme_tcp_data_pdu) != 24);
+  3017		BUILD_BUG_ON(sizeof(struct nvme_tcp_rsp_pdu) != 24);
+  3018		BUILD_BUG_ON(sizeof(struct nvme_tcp_r2t_pdu) != 24);
+  3019		BUILD_BUG_ON(sizeof(struct nvme_tcp_icreq_pdu) != 128);
+  3020		BUILD_BUG_ON(sizeof(struct nvme_tcp_icresp_pdu) != 128);
+  3021		BUILD_BUG_ON(sizeof(struct nvme_tcp_term_pdu) != 24);
+  3022	
+  3023		if (wq_unbound)
+  3024			wq_flags |= WQ_UNBOUND;
+  3025		else
+> 3026			wq_flags != WQ_PERCPU;
+  3027	
+  3028		nvme_tcp_wq = alloc_workqueue("nvme_tcp_wq", wq_flags, 0);
+  3029		if (!nvme_tcp_wq)
+  3030			return -ENOMEM;
+  3031	
+  3032		for_each_possible_cpu(cpu)
+  3033			atomic_set(&nvme_tcp_cpu_queues[cpu], 0);
+  3034	
+  3035		nvmf_register_transport(&nvme_tcp_transport);
+  3036		return 0;
+  3037	}
+  3038	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
