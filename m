@@ -1,115 +1,161 @@
-Return-Path: <linux-kernel+bounces-680135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5C2AD4128
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:45:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9427EAD4136
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13CDF7A2FF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68AF0189EFA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F324BC0A;
-	Tue, 10 Jun 2025 17:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4DA244673;
+	Tue, 10 Jun 2025 17:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRnKIiLK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6393F24A054;
-	Tue, 10 Jun 2025 17:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Amvd2k9j"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00A3218EA7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749577447; cv=none; b=SjXICs5mWuqA0zdAMG+C8e4bdOcGY9tbuda2pQfsOVp/JJwesJcpxNg8bg6nJJmPQaAvuVB+boAPov+/yCMxy2LufMx4KhFlBJEHrdWKX3Pv62AbeEAlcZQU9KQibLUt/4OrAT1ABPjkRcxG9LH/0qtBc2Z2RjTSog+Ld6ZHaHw=
+	t=1749577763; cv=none; b=QCZlwdbujF1lLTNmInXZ35CdAWCqGTUW4KC7loCOLIXWslQWs10u8/HKjMcM/4q1xjVzCIgWKOM1rXVx2nYQ50/aBEgfH2eLsiEAM2njUUeHxZI02gL8jOC+J61pDjTJAQP4Oi0O8MUAewyH8QaG9jh9ggRp/M37dlllMEb7nnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749577447; c=relaxed/simple;
-	bh=BvDgxhAaCeCWsOTtqUYCrQtjEum+gyaP+KRfTEo0gL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NLK69YXqqXZZz801ek47h55K3x9daUK+ai3dGE1SxfrFe5YeUDxr7GxJbesgFAiuaUjopwZ6xOtLzvSB58f49vuIn0HUjW25BnWHZJkqh34qCkxe+1S+WAqsMHI9n6zw/OHHzQD4NeI4KGQ9MnxWYvWssuCIsUHyhrcN3X+pldA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRnKIiLK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108B5C4CEED;
-	Tue, 10 Jun 2025 17:44:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749577446;
-	bh=BvDgxhAaCeCWsOTtqUYCrQtjEum+gyaP+KRfTEo0gL4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pRnKIiLKuEi/tmAfsXOxgk4p2qF5DC5AJUp6LNSU4ijrDCAv9c00Z4rfOsN8NbO6o
-	 1ZY3kQ9oHRil/lEA+hzIdeQ4EfBAF3EwVkpRchxUX5g8Vfw/kdKGfUlQnKs85qCg+N
-	 YLfgTTqU5z5iBzN6Redyemq67sXirJFB5Bf3BMzl0tkTnZmqYaym2G98eGJ8U278L8
-	 3JDLWX3B6JoDzLL8Ozc3YGxQSmB+UoqmALFrGFhDcpApLdSEIxB4Y/RAqJ7Xj1BxK3
-	 e2S5vETRO/ld4pG09iXZd9erJiEVavDGG+P61QIraPEC0OV5H6XkEH7hreIaRoI+/1
-	 efKdTUL9+/6Tg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 00/23] arm64: dts: qcom: Add 'global' IRQ to supported SoCs
-Date: Tue, 10 Jun 2025 12:43:59 -0500
-Message-ID: <174957743676.435769.4199701352148338559.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
-References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
+	s=arc-20240116; t=1749577763; c=relaxed/simple;
+	bh=VqWY3CHcf3Vt/NL3ZhL8kLp8b1SOBJtyQGcDDaw9ENY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:References:From:To:
+	 In-Reply-To:Content-Type; b=hTqtox/rU9flZxiAbvXvjdu7HpEU5t2Btwh19CJCF0fakDLbpn7vHuWQoB3yXK4kb2/sVd81RJnaw2NrT5USTmrI9+W8B79RL6B/fAZX7NfKdFviccisqVKAJLLcQB0+6E4kSid9AuziuSk5aKFvp/hVuh7T5j2+adtE6OU5+qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Amvd2k9j; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.129.218] (unknown [20.236.11.29])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5AE8A2113091;
+	Tue, 10 Jun 2025 10:49:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5AE8A2113091
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1749577761;
+	bh=FTHn6/xfwys+lrx2PwIo9Jrp/Uvzq79Fn9+PtwLxE5E=;
+	h=Date:Cc:Subject:References:From:To:In-Reply-To:From;
+	b=Amvd2k9jBCeg177sVrWdLDHxUbqaIxECM99fJ3cFBtsRrB+mXiEPV2z+rcLL5qstH
+	 D2Vq80ftLF6ACvcjf1T/OeSz4JQqvj+6bKR1OdHKXgCdRWR9RUQPqjHi6jT/pyWy6D
+	 MWsZfypaA+DnXGTXKHWlNUdRZ5LvZbCJGChiCamg=
+Message-ID: <00e40c21-4797-41df-b082-318f474f76ae@linux.microsoft.com>
+Date: Tue, 10 Jun 2025 10:49:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, "cocci@inria.fr" <cocci@inria.fr>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] coccinelle: misc: secs_to_jiffies: Implement context and
+ report modes
+References: <20250610174521.12294-1-eahariha@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Ricardo Ribalda <ribalda@chromium.org>, Jakub Kicinski <kuba@kernel.org>
+In-Reply-To: <20250610174521.12294-1-eahariha@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 27 Feb 2025 19:10:42 +0530, Manivannan Sadhasivam wrote:
-> This series adds the Qualcomm specific 'global' IRQ to the supported SoCs.
-> This IRQ is used to receive the PCIe controller and link specific events
-> such as Link Up/Down, MSI, PTM etc... in the driver. Support for this IRQ
-> was already added to the pcie-qcom driver. So enabling this IRQ would allow
-> the driver to enumerate the endpoint device and also retrain the link when
-> the device is removed [1] without user intervention.
+On 6/10/2025 10:45 AM, Easwar Hariharan wrote:
+> As requested by Ricardo and Jakub, implement report and context  modes
+> for the secs_to_jiffies Coccinelle script. While here, add the option to
+> look for opportunities to use secs_to_jiffies() in headers.
 > 
-> [...]
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Ricardo Ribalda <ribalda@chromium.org>
+> Closes: https://lore.kernel.org/all/20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org/
+> Closes: https://lore.kernel.org/all/20250221162107.409ae333@kernel.org/
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>  scripts/coccinelle/misc/secs_to_jiffies.cocci | 49 +++++++++++++++++--
+>  1 file changed, 44 insertions(+), 5 deletions(-)
+> 
+> diff --git a/scripts/coccinelle/misc/secs_to_jiffies.cocci b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+> index 416f348174ca..f3241ce75a7b 100644
+> --- a/scripts/coccinelle/misc/secs_to_jiffies.cocci
+> +++ b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+> @@ -7,26 +7,65 @@
+>  // Confidence: High
+>  // Copyright: (C) 2024 Easwar Hariharan, Microsoft
+>  // Keywords: secs, seconds, jiffies
+> -//
+> +// Options: --include-headers
+>  
+>  virtual patch
+> +virtual report
+> +virtual context
+>  
+> -@depends on patch@ constant C; @@
+> +@pconst depends on patch@ constant C; @@
+>  
+>  - msecs_to_jiffies(C * 1000)
+>  + secs_to_jiffies(C)
+>  
+> -@depends on patch@ constant C; @@
+> +@pconstms depends on patch@ constant C; @@
+>  
+>  - msecs_to_jiffies(C * MSEC_PER_SEC)
+>  + secs_to_jiffies(C)
+>  
+> -@depends on patch@ expression E; @@
+> +@pexpr depends on patch@ expression E; @@
+>  
+>  - msecs_to_jiffies(E * 1000)
+>  + secs_to_jiffies(E)
+>  
+> -@depends on patch@ expression E; @@
+> +@pexprms depends on patch@ expression E; @@
+>  
+>  - msecs_to_jiffies(E * MSEC_PER_SEC)
+>  + secs_to_jiffies(E)
+> +
+> +@r depends on report && !patch@
+> +constant C;
+> +expression E;
+> +position p;
+> +@@
+> +
+> +(
+> +  msecs_to_jiffies(C@p * 1000)
+> +|
+> +  msecs_to_jiffies(C@p * MSEC_PER_SEC)
+> +|
+> +  msecs_to_jiffies(E@p * 1000)
+> +|
+> +  msecs_to_jiffies(E@p * MSEC_PER_SEC)
+> +)
+> +
+> +@c depends on context && !patch@
+> +constant C;
+> +expression E;
+> +@@
+> +
+> +(
+> +* msecs_to_jiffies(C * 1000)
+> +|
+> +* msecs_to_jiffies(C * MSEC_PER_SEC)
+> +|
+> +* msecs_to_jiffies(E * 1000)
+> +|
+> +* msecs_to_jiffies(E * MSEC_PER_SEC)
+> +)
+> +
+> +@script:python depends on report@
+> +p << r.p;
+> +@@
+> +
+> +coccilib.report.print_report(p[0], "WARNING opportunity for secs_to_jiffies()")
 
-Applied, thanks!
+Sorry, I was testing sending this to myself before sending to the list, I've added the mailing lists now.
 
-[02/23] arm64: dts: qcom: sm8150: Add 'global' PCIe interrupt
-        commit: b151de3b3543b2f6cef9cfd5e54775a846c6b48b
-[04/23] arm64: dts: qcom: sm8250: Add 'global' PCIe interrupt
-        commit: 0ea9df0b968832674c3728459ae4f5699ef3cea5
-[06/23] arm64: dts: qcom: sm8350: Add 'global' PCIe interrupt
-        commit: 28b49abaaa003a5dee499cb60cc2021e967ca0fd
-[08/23] arm64: dts: qcom: sa8775p: Add 'global' PCIe interrupt
-        commit: b83843df74f22f5b3c1ea315bf58bccca768c0ce
-[10/23] arm64: dts: qcom: sc7280: Add 'global' PCIe interrupt
-        commit: 423704cc7fdfcc4b013c9f46596cf54b9b7acff2
-[12/23] arm64: dts: qcom: sdm845: Add missing MSI and 'global' IRQs
-        commit: 469cda30e4c29a1dc2fd855200baa0f1bec31eb9
-[13/23] arm64: dts: qcom: msm8996: Add missing MSI SPI interrupts
-        commit: 7256eee44e63adc8875e12dea64d0f7ca595d257
-[15/23] arm64: dts: qcom: msm8998: Add missing MSI and 'global' IRQs
-        commit: c2c4c10a00b7eafde1198dcdba9a97aa06af5177
-[17/23] arm64: dts: qcom: ipq8074: Add missing MSI and 'global' IRQs
-        commit: b6b20109ccb5dba2331b12ca7748dda4041191e7
-[19/23] arm64: dts: qcom: ipq6018: Add missing MSI and 'global' IRQs
-        commit: b1830bdc0fe67754e0f9103b8dfc16d847632498
-[21/23] arm64: dts: qcom: sc8180x: Add 'global' PCIe interrupt
-        commit: 9c786d24f1da819186b420dcd8a7ca096832ea9c
-[22/23] arm64: dts: qcom: sar2130p: Add 'global' PCIe interrupt
-        commit: 34d10f33472347dec0c4a078e9cd77aa92be2776
-[23/23] arm64: dts: qcom: x1e80100: Add missing 'global' PCIe interrupt
-        commit: 4ba960e75bab4a4e5f328d22a7a9b253abd3c214
+Thanks,
+Easwar (he/him)
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
 
