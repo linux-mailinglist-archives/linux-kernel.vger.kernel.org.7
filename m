@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-679145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D352AD32C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A3AAD32BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4313A9E97
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F66B1895713
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169FA28C017;
-	Tue, 10 Jun 2025 09:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C75D28BA8B;
+	Tue, 10 Jun 2025 09:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="qNGD5sEG"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p8Kh8YV+"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811A028BAB4;
-	Tue, 10 Jun 2025 09:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C951280A52
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749549070; cv=none; b=Xv+k/Qiy2zQquV2a8xGhrUFmXpWmxGh2SceoxS2ShMgIKKNec6MwPtztW5ZmUYEC/Szxt6VMgs5eHEUre42sMNbIxd/2PqTRIWXAg5aO7ATXVnta9hWcft0Oeta28AzR5A4a4BQcOPA4UE7nErHK/L2ruDwlLGa8aQFyc5nI5HQ=
+	t=1749549045; cv=none; b=ciDa79T7A42bFdPXS7Xw+6+jkYiuF+gLKaepAWsaOMjKYPBfEX+7VPIa5sJ9ZBSsqO2Sl0g28TtflRMDuWtZ5LzZdJKF0IVqCcipg0kxV23yJ7OkoeKQovy7iN853N4aNGC9ykEYTWetbSmA2H+PSx/OTvTUcN31PABMT3mTdW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749549070; c=relaxed/simple;
-	bh=iRyRHdm7eGgLOrCqyLMS8X2C4VLY3ck/40Q2IurUp70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pd3HbOBMCmdn3Q2+wFZ3V6lcrkrWTWz3Dl+R78pv5KhLn2MKrDR2NZovsqRoBa87gzpuFFESGQOGSoBP/FsKYj03LfHlBKqXRZIZc5b8qVXUaOr9rsMMLI0KoKEu0NO9lRM1pMtOpqL2na41k2N/0lh7skqEYfKDDWNPLFzMBMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=qNGD5sEG; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=nUVTmfdkyIz2sCibo8CQYdH/ADMQuNhoQmpTEzyRL5M=;
-	b=qNGD5sEGGVHWy8tTwX792dVz/FOchRHUWGIobOMMn684dG2AfKdMafxMgMN6yL
-	oNo1c1YramDqSCyFpDJxlToxQXLxDGO+L2i8mV0ZmdjtY7CK+tZzBpsGerCLqGyR
-	q/PPFm6yl4jVK8fL/eoZl7Kw4TyqKglkseO32kQd4YnY8=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3xx3b_0doxXNVAA--.50837S3;
-	Tue, 10 Jun 2025 17:50:21 +0800 (CST)
-Date: Tue, 10 Jun 2025 17:50:19 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: Peter Chen <peter.chen@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	imx@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: i.MX kernel hangup caused by chipidea USB gadget driver
-Message-ID: <aEf/2+3MU5ED2sxE@dragon>
-References: <aEZxmlHmjeWcXiF3@dragon>
- <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
+	s=arc-20240116; t=1749549045; c=relaxed/simple;
+	bh=8Ll2kob0wSYtYqhFir3rxUwGEptHOBJiRRepu1pCBG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a3F8HHHXWoSFSn1iAB0sU2rfqV2lpxgUiUO/pbXOZn+eM73c0NqSsYEGpbjxaMOsc52t1ORJUQ73+S7ZMC+9VELEnZvF8Zuiw1iRhWtBC1ULbwBFDkOAf1s3CKhsHOxmSuLox6NpOR6nyC4OQTeldiUDkA4K+9nxp3Qf95PkLGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p8Kh8YV+; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so4251350f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749549042; x=1750153842; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s8TznzlpknrW4G6RXb6OY8061/Q2TUa7Ep05qd1XEIo=;
+        b=p8Kh8YV+1h0Mtfja6dRk9SorulJQLx5zlkXLR4MhDw7Mzhwf3dam/zWzfjekXS5ElO
+         TmDj8LqG0qOcGo1VeUPBJZQtltFAC7UpeFbsVy7u2lCE4aYnMfBsjpz7Vwa0IJJ4O1V3
+         qxvd49C1MtYbOazkrUhv+gzXq5y+yN8cbZ31ajzKji7Ge9d36QoWQl8lpSW5Y2bT49/U
+         cPmVYFU/8/xQ9q3oRRKDKCHOHUhZkP4DlcCrnjika9XKGb8/Y0htUZQ7Ikm6FjpD1aw3
+         T+G6elY0pcY1WqjyRh8yfR0L8tIJ8sYsftNpxK3k4EX2lvNnprRkMIuiBFqfq+RpZBwv
+         e5RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749549042; x=1750153842;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s8TznzlpknrW4G6RXb6OY8061/Q2TUa7Ep05qd1XEIo=;
+        b=ojzF6/y1ul9+x4Gdqi8fhucga1LRxqdVZLNv4624868MS9gw+F4FrCJ1h/iUjDXadj
+         2//JPeECiiQXzra7CObu5mSOAksCAj7ZUH3547AAO1V4b0oKG69lRitVw726J9x+1gwp
+         9NvDEq4eaRsxGOUcqSmZwF67HgTC24r24DD74HxLn9BxXBe+kU7RdXLVbZwhK4HtH7KF
+         OfUc+xeY0k0pEZ/fbtek4LwpAh5eNPnaPZm2VPbE7YIl9Q7OiIepDdxuBNEUrIij3NBN
+         RbgagLgEfy/wuqf9v3YFADQeZFc+Qewf5/uwqBzLSmy4fixTkBUn4bSV6giTKktLmsPq
+         0xPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXng/ZGmYs4m59yZKHilk2tCv63KEl+6tjvjsPFGA35Qix6wCxx/iHlD6igHJg7qdQRsBLAyl/ypiZDoYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz29Y2mq8fyH1sC1A2OhTrukZpPILQeAyUuoCdsYTaU4RwJacvg
+	AMF9bxeG99lrXkONIOBdzgM2Hoy9BHWNcBGFerWl8rD1veM1Ts2b/HL8Dcsl60A62To=
+X-Gm-Gg: ASbGnctp/MDjXbZoKHPm6wet6K7jcnQpZRbk6nf2sp+NalFHv2G774VKRDSt5mIzDcd
+	+wlykXqvWz/ONNwyeagCOE/efZV6X9S+9EtzvMEOajXqHdbvPy3z2rHMKKOAk3qzrVlcAh+sXkS
+	XFgMmJqhy1WWp15T6/ApuQ9WdywMjkW7Kn5aPP5i04z2dCFZ6YCk5/EOPO0aS09Ttk8vV2skTdw
+	aNL3bwVrMFPr8yK1MfNNs3a+u7BJkRIazHxgi+JLf0JAEyK6bj3YqVCXiSBc7yRwN5JXlCHGnYM
+	LwZsK0cFLSJalwG4IFDJu08xNJkgf7uNLVHkZX+N1UWybFg0jp9MMLPnRujErZ95AGRVJqcAY5i
+	Piy0kE9VNELtO+HOvKfPcQSFmz3U=
+X-Google-Smtp-Source: AGHT+IFusBXxkEoy5ESx9MfQVNtq1yC/GkKu9UVFSbJCvfrUmjZpjS8AwFM+vB8gJqBUqNEpqvdK3g==
+X-Received: by 2002:a05:6000:288b:b0:3a4:fc3f:b7fd with SMTP id ffacd0b85a97d-3a552275450mr1444778f8f.19.1749549041672;
+        Tue, 10 Jun 2025 02:50:41 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244fceasm11618998f8f.82.2025.06.10.02.50.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 02:50:41 -0700 (PDT)
+Message-ID: <dc4720a8-2f15-44aa-9a52-8440c7518328@linaro.org>
+Date: Tue, 10 Jun 2025 10:50:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
-X-CM-TRANSID:M88vCgD3xx3b_0doxXNVAA--.50837S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFykZw4DZF1kKFWUtw1xGrg_yoW5WF17pa
-	1ayFWIka1kGa4rGr47Kw17KFyUXa9YkrWqkryxGw4xXFy3ur95GF17K34Fvr90kryfJanF
-	yF4qgw1DAFyvga7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UC1v3UUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwVoZWhH4ayQ7wAAse
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] arm64: dts: qcom: sm8550: Add support for camss
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Wenmeng Liu <quic_wenmliu@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, andersson@kernel.org, konradybcio@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ quic_depengs@quicinc.com
+References: <20250516072707.388332-1-quic_wenmliu@quicinc.com>
+ <0367d5bd-a42e-4b6c-b841-ba20190b3127@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <0367d5bd-a42e-4b6c-b841-ba20190b3127@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 09, 2025 at 07:53:22PM +0800, Xu Yang wrote:
-
-<snip>
-
-> During the scp process, the usb host won't put usb device to suspend state.
-> In current design, then the ether driver doesn't know the system has
-> suspended after echo mem. The root cause is that ether driver is still tring
-> to queue usb request after usb controller has suspended where usb clock is off,
-> then the system hang.
+On 10/06/2025 10:48, Vladimir Zapolskiy wrote:
+> Hello Wenmeng.
 > 
-> With the above changes, I think the ether driver will fail to eth_start_xmit() 
-> at an ealier stage, so the issue can't be triggered.
+> On 5/16/25 10:27, Wenmeng Liu wrote:
+>> Add support for the camera subsystem on the SM8550 Qualcomm SoC. This
+>> includes bringing up the CSIPHY, CSID, VFE/RDI interfaces.
+>>
+>> SM8550 provides
+>> - 3 x VFE, 3 RDI per VFE
+>> - 2 x VFE Lite, 4 RDI per VFE
+>> - 3 x CSID
+>> - 2 x CSID Lite
+>> - 8 x CSI PHY
+>>
+>> Co-developed-by: Depeng Shao <quic_depengs@quicinc.com>
+>> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+>> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 210 +++++++++++++++++++++++++++
+>>   1 file changed, 210 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/ 
+>> dts/qcom/sm8550.dtsi
+>> index e9bb077aa9f0..722521496a2d 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> @@ -3326,6 +3326,216 @@ cci2_i2c1: i2c-bus@1 {
+>>               };
+>>           };
+>> +        isp: isp@acb7000 {
+>> +            compatible = "qcom,sm8550-camss";
+>> +
 > 
-> I think the ether driver needs call gether_suspend() accordingly, to do this,
-> the controller driver need explicitly call suspend() function when it's going
-> to be suspended. Could you check whether below patch fix the issue?
-
-Thanks for the patch, Xu!  It does fix the hangup but seems to be less
-reliable than my/Peter's change (disconnecting gadget), per my testing
-on a custom i.MX8MM board.  With your change, host/PC doesn't disconnect
-gadget when the board suspends.  After a few suspend cycles, Ethernet
-gadget stops working and the following workqueue lockup is seen.  There
-seems to some be other bugs?
-
-[  223.047990] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  223.054097] rcu:     1-...0: (7 ticks this GP) idle=bb7c/1/0x4000000000000000 softirq=5368/5370 fqs=2431
-[  223.063318] rcu:     (detected by 0, t=5252 jiffies, g=4705, q=2400 ncpus=4)
-[  223.070105] Task dump for CPU 1:
-[  223.073330] task:systemd-network state:R  running task     stack:0     pid:406   ppid:1      flags:0x00000202
-[  223.083248] Call trace:
-[  223.085692]  __switch_to+0xc0/0x124
-[  246.747996] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 43s!
-
-However, your change seems working fine on i.MX8MM EVK.  It's probably
-due to the fact that host disconnects gadget for some reason when EVK
-suspends.  This is a different behavior from the custom board above.
-We do not really expect this disconnecting, do we?
-
-Shawn
-
->  ---8<--------------------
+> This is the first time, when 'isp' label is used instead of 'camss', it 
+> might
+> be I missed the context, is there any particular reason to do such a 
+> change?
 > 
-> diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> index 8a9b31fd5c89..27a7674ed62c 100644
-> --- a/drivers/usb/chipidea/udc.c
-> +++ b/drivers/usb/chipidea/udc.c
-> @@ -2367,6 +2367,8 @@ static void udc_id_switch_for_host(struct ci_hdrc *ci)
->  #ifdef CONFIG_PM_SLEEP
->  static void udc_suspend(struct ci_hdrc *ci)
->  {
-> +       ci->driver->suspend(&ci->gadget);
-> +
->         /*
->          * Set OP_ENDPTLISTADDR to be non-zero for
->          * checking if controller resume from power lost
-> @@ -2389,6 +2391,8 @@ static void udc_resume(struct ci_hdrc *ci, bool power_lost)
->         /* Restore value 0 if it was set for power lost check */
->         if (hw_read(ci, OP_ENDPTLISTADDR, ~0) == 0xFFFFFFFF)
->                 hw_write(ci, OP_ENDPTLISTADDR, ~0, 0);
-> +
-> +       ci->driver->resume(&ci->gadget);
->  }
->  #endif
+> If the label name is changed to the regular 'camss', then
 > 
->  ---->8------------------
+> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> 
+> -- 
+> Best wishes,
+> Vladimir
 
+List feedback from DT people is isp@ is the correct prefix.
+
+---
+bod
 
