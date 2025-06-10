@@ -1,300 +1,316 @@
-Return-Path: <linux-kernel+bounces-679416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAAEFAD3609
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0D1AD3616
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 099DA7AAB1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:21:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90D5C7A3D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9EC290DBE;
-	Tue, 10 Jun 2025 12:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2114290DBE;
+	Tue, 10 Jun 2025 12:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FPrOUMtk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4augsdW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F5E290BB8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB4428EA45;
+	Tue, 10 Jun 2025 12:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558149; cv=none; b=Y9eeKVemGS2402+L6Ob6WNy2bLHLEU6vSsTG4X9OXrakcFDRjZbl3J1VPNvSm6IMxg/BuAAxnM8uHl0Ak5GW8sfFU2FxY+BLexBXb/YlB68H3Fu0hYhJLqiU9zMJEqogvGi5AMnHfSAZeL9ARP/oRE2eyeTSsdY+TTedIi420uU=
+	t=1749558207; cv=none; b=tqjgcKJgXMbVBjEfH/lyXvDoUJkXcjYoAZjWo5egV/8X8uAU0nGuZsQqbquR9LyBCBPzfrATdoMD0BIgB8g3CWT9Kn92ZHQHOP8H8sBj7MriKG8VXv3dS5PDPxNuSS7lgcomz+Mi9uVrrZYKMtFbbAvLAu7mBh5vhKfNHTPc7aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558149; c=relaxed/simple;
-	bh=3nov+w/79AwM+k5VQ8ISrPEvTChWKftWH47/vtAg6wM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DYRQ+Gq3E6gvA6+FMvT4Q2RpqgHTfwCog7TJe6Cj4it9eyb1egVmkV0UpDoluoiuEoV97UkFTaM7WLarArZCjmDHtWkSyMmncpG5RiI1A2l5hB7RR6ldtInZxbtRFt1Lu/fR4X1u58tU3FXtRm/dlKYAXR18VJiUOYl8t6m0aXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FPrOUMtk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A9EmmE009416
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:22:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8+4GZCvZhqyfrSQa1jH54+D2CYSj2ei+fDIMKlD+3+I=; b=FPrOUMtkFOEZnRW/
-	k65P0MVJ+tKJPY2J6w7H6qFQK7vcf1T9qrhM9C5qgRDmxa0E9zrj8w2v7SkQCA6L
-	b5NgBFHu9MD82+Rtug93nKmWcX7VZNQGtQvrPIJgKorlaBJyIiTN6GFudRUBP90U
-	3Kp4188+oJwGe6d8WHw2E5ulIBKQdPw0c16r5DBiFQi0mZqlYCSGsh7umsa3oiRZ
-	vl7TjFQUovUoktHwr/fyIvX7LM3I3vvn5Ng6Z+dNEP57KotSdxeEDExyrOWlso2r
-	SzwcXsSPpd6995iwS4aOS284L7wc0D+q7JF9moUOrJPwKZJ1op1fEo1CGFHAlPXJ
-	FyucPg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474ce9ses3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:22:26 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a5a9791fa9so14763511cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:22:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749558145; x=1750162945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+4GZCvZhqyfrSQa1jH54+D2CYSj2ei+fDIMKlD+3+I=;
-        b=e6habSUHC33ss9TblMaeJeCqh1X6ck8PSmUry22HrjhmiCdHkk7LkuzTOwQ+VIzhtG
-         GAkBRm0QYOAKdvo4Y3NgV5PwMP3+65CMToKD2QbRnY2u6YbwWo+NHFRSWHDnxIUHD+m9
-         JobuLFzPi1kej/YSIYndFtxy/X8XjCGTL9ARmwhQSrhHMJAwuL5+N7WbOpkMb8sCekdU
-         COa0CU6hAYme8GJREJTLms+o+OPRetm9qRt0lBNKRheSEL8ak7U+lFOVNe35LHHpHzRB
-         kNXuL7xPgvxAcb66yCQlrNoT8b3fqiYbbO5WaF5QADm7d8220esRd0Geff06xFID7nq3
-         pcqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXu0sUBv/fiBkv1meWyPMAJjJDs4IPglQCwwJF+HVCAtRBohyLeWjChjgt0v0FZEVTeWoAEq99RNZnGDBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGZrGGbZnJ3ez93DVJ5wAEm8LWd9akN/GH9i9rUro1SYktqZYo
-	uZ5Y8BslIZWjkR1TJ6Wb0RqXt4nk9OOl5+s24eyG8kh+f447RGK1UjMkMF84yD/8mSH7S8Twbwu
-	Ppcs7zXZkCwBsMUE1DN1z7N/BXR8Uztzbp3c9JnuyZM3qr06XG6GV59hWh26AsLrWxXo=
-X-Gm-Gg: ASbGncvh+5Cl8H9Gdagjd50VtfQ5Doaqbund3dPNaHeH70NYmAxkOWTJuT7fkYUMx/Y
-	yhu0P4IV3cqrJScOqqRooyW2WSlhwAVm/DmftTj4YjePctT6p/09deV1fCkl1gO+gCVSiwuMRjA
-	kBx7J/M2Yrd9oyoQYycHJ9LxxqKTyVW0G+OVz4gU8I9k308Tj7eZT0IDUBFoViOaTS/+JEmWXlJ
-	Sjp7Q3rUY+kkLoLw6JiaZ8luY35cMT+pcyDaMSvNSDZVpjvrAlQq+RaoFSz6Hie/F/iIHIwWE5r
-	X8Uonl5C3HY7i34IAAaQYNuA7cYDaPchiiXNSx717hatTmJe3f1BdZieqyrDRLPW29cQCFzdWe6
-	Q
-X-Received: by 2002:a05:620a:45aa:b0:7c0:cc94:46c4 with SMTP id af79cd13be357-7d331c130dbmr936369085a.2.1749558145245;
-        Tue, 10 Jun 2025 05:22:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4oLcbxXyO1xJ2NayVpeZmZ1NXXp1e08tUxMVaRB6TMRHASLUCAd4tOqY6AsJIISpCrsxCnw==
-X-Received: by 2002:a05:620a:45aa:b0:7c0:cc94:46c4 with SMTP id af79cd13be357-7d331c130dbmr936366685a.2.1749558144803;
-        Tue, 10 Jun 2025 05:22:24 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc38a11sm708732266b.116.2025.06.10.05.22.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 05:22:24 -0700 (PDT)
-Message-ID: <024285a5-734a-4543-8a7b-897f8186904d@oss.qualcomm.com>
-Date: Tue, 10 Jun 2025 14:22:21 +0200
+	s=arc-20240116; t=1749558207; c=relaxed/simple;
+	bh=oc//4EYy1ffqYnSH/0jpWmK1cIoIKuNwXMQerwUzNjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2U/vlCYcyWkqbSSgGNC3C/BT+XZOD0QYQNMLAhnEHmfuQyY4t+ZQqCJXsvHxu7lzpS9KxoMnf3JCl7OVy5m2eUr9hTyiLwSu25jA+12fL7YAEZI6PepUbIUEZhk9w56dkPE3gdJ2dly4zKIxW2EnkMEG0Z20x/NpbUtgbEa6eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4augsdW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A8FC4CEF1;
+	Tue, 10 Jun 2025 12:23:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749558207;
+	bh=oc//4EYy1ffqYnSH/0jpWmK1cIoIKuNwXMQerwUzNjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s4augsdWAzQGzGe5ecGB3QeaSvaCP6tGpt8U/v5vLjwmzThp1+OGVjnRBmvsmSqEN
+	 d/LIbVnFCnuxy1hOopR79rvNVEiuQBFviXZLAhz6h5sVbDgmbsdBqdAJdXsJDB6C0r
+	 VySvsGyhnwGnP06404JRXfQG9k4yhiarAhVmDx/Rurn9fEGII66kXUemxxolChqlpm
+	 W7eSN5OHY4V0k/nBXLKmwqWyl2nXdDY997AnO5yYl60LwLNhUflwOBVZlxU9/N9nY8
+	 6VDf96/oZufcNXUfsKXPWbeBZOS+zYSzSBYUhiqHCWiLCE91LIQbAxnImUDBuywjPN
+	 v9rbVfGygNUlQ==
+Date: Tue, 10 Jun 2025 14:23:24 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Xiongfeng Wang <wangxiongfeng2@huawei.com>, rcu@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH 2/2] rcu: Fix lockup when RCU reader used while IRQ
+ exiting
+Message-ID: <aEgjvGkYB0RoQFvg@localhost.localdomain>
+References: <20250609180125.2988129-1-joelagnelf@nvidia.com>
+ <20250609180125.2988129-2-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] dt-bindings: soc: qcom: pmic-glink: Move X1E80100
- out of fallbacks
-To: Fenglin Wu <fenglin.wu@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
- <20250530-qcom_battmgr_update-v2-6-9e377193a656@oss.qualcomm.com>
- <4e093835-af3b-4a84-b42f-fa7d3a6f60a1@kernel.org>
- <14cba9ae-e3bb-46e8-a800-be5d979b2e06@oss.qualcomm.com>
- <b07200a2-4e7b-480e-a683-d116e7da8de8@kernel.org>
- <c4be4b97-6104-45e3-b555-6691e369c3a4@oss.qualcomm.com>
- <bcf487c9-e522-44a3-b094-daf98823a195@kernel.org>
- <a840aa80-75ef-4527-bc17-226ba5157a85@oss.qualcomm.com>
- <898e998f-11b2-4b08-9580-263046c0615a@kernel.org>
- <9f332148-57ef-4716-8866-36c702a9aeb6@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <9f332148-57ef-4716-8866-36c702a9aeb6@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: pq2Qdp5rWYc1DjmjAxWn2uNFz1BnoNIX
-X-Authority-Analysis: v=2.4 cv=drjbC0g4 c=1 sm=1 tr=0 ts=68482382 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=A600xkEho2GeGM6nczkA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: pq2Qdp5rWYc1DjmjAxWn2uNFz1BnoNIX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDA5NiBTYWx0ZWRfX2KzzJKeu8iYq
- fT669JboQ5JxBR33prGxqUKOIXL8WRMygN42PkdWs3q8dUmsIOg4l8MYtDbuIsJecasjk3YqVBD
- r9983GYL0bX//gA5WTCstdt6Bb1FFWWeTwzzXKk1+MSNNJmqPZ9nC380j1gbNKnp4x9e31+a8q6
- dISrnUx27QjEi+GGuaCQnwpnVhAKYS0mVJ+FDm0QSvRT26u76GjlNbxOFRZVbThFnxQor2jKPGm
- aw3/w4xVa2o3/obR0AnR98Y/N5Io43ln4gtMv7oIp3jUOnAjXEPO+e+92vhCtAmGrvaJwiCGiQl
- fg6Be7biuHRgp7ho7yzyHQTWwUbcb0biW1reWqDX/1Nn2JH70sWSIcVMmsTVfohmwBkzgMxuvIN
- JkNvEPQxKmDoR2LrRfKzMClnKul3IMa33RMLONSfKw71hpb7uXysiFHa7huX9tfLdv1y4rKm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_04,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506100096
+In-Reply-To: <20250609180125.2988129-2-joelagnelf@nvidia.com>
 
-On 6/4/25 11:40 AM, Fenglin Wu wrote:
+Le Mon, Jun 09, 2025 at 02:01:24PM -0400, Joel Fernandes a �crit :
+> During rcu_read_unlock_special(), if this happens during irq_exit(), we
+> can lockup if an IPI is issued. This is because the IPI itself triggers
+> the irq_exit() path causing a recursive lock up.
 > 
-> On 6/3/2025 5:34 PM, Krzysztof Kozlowski wrote:
->> On 03/06/2025 09:41, Fenglin Wu wrote:
->>> On 6/3/2025 3:06 PM, Krzysztof Kozlowski wrote:
->>>> On 03/06/2025 08:59, Fenglin Wu wrote:
->>>>> On 6/3/2025 2:47 PM, Krzysztof Kozlowski wrote:
->>>>>> On 03/06/2025 08:42, Fenglin Wu wrote:
->>>>>>> On 6/2/2025 3:40 PM, Krzysztof Kozlowski wrote:
->>>>>>>> On 30/05/2025 09:35, Fenglin Wu via B4 Relay wrote:
->>>>>>>>> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>>>>>>>>
->>>>>>>>> Move X1E80100 out of the fallbacks of SM8550 in pmic-glink support.
->>>>>>>> Why?
->>>>>>>>
->>>>>>>> Do not describe what you do here, it's obvious. We see it from the diff.
->>>>>>>>
->>>>>>>>
->>>>>>>> Best regards,
->>>>>>>> Krzysztof
->>>>>>> Previously, in qcom_battmgr driver, x1e80100 was specified with a match
->>>>>>> data the same as sc8280xp, also sm8550 was treated a fallback of sm8350
->>>>>>> without the need of a match data.
->>>>>>>
->>>>>>> In ucsi_glink driver, sm8550 had a match data and x1e80100 was treated
->>>>>>> as a fallback of sm8550. There was no issues to make x1e80100 as a
->>>>>>> fallback of sm8550 from both qcom_battmgr and ucsi_glink driver perspective.
->>>>>>>
->>>>>>> In patch [5/8] in this series, in qcom_battmgr driver, it added charge
->>>>>>> control functionality for sm8550 and x1e80100 differently hence
->>>>>>> different match data was specified for them, and it makes x1e80100 ad
->>>>>>> sm8550 incompatible and they need to be treated differently.
->>>>>> So you break ABI and that's your problem to fix. You cannot make devices
->>>>>> incompatible without good justification.
->>>>> I would say x1e80100 and sm8550 are different and incompatible from a
->>>>> battery management firmware support perspective. The x1e80100 follows
->>>>> the sc8280xp as a compute platform, whereas the sm8550 follows the
->>>>> sm8350 as a mobile platform.
->>>> Not correct arguments for compatibility.
->>>>
->>>>> The difference between them was initially ignored because the sm8550
->>>>> could use everything that the sm8350 has, and no match data needed to be
->>>>> specified for it. However, now the sm8550 has new features that the
->>>>> sm8350 doesn't have, requiring us to treat it differently, thus the
->>>>> incompatibility was acknowledged.
->>>> So they are perfectly compatible.
->>>>
->>>> I really do not understand what we are discussing here. Explain in
->>>> simple terms of DT spec: what is incompatible that SW cannot use one
->>>> interface to handle the other?
->>> 1. x1e80100 was a fallback of sc8280xp, it used "sc8280xp_bat_psy_desc"
->>
->> No, that's not true. Read the binding again:
->>
->>                - qcom,x1e80100-pmic-glink
->>             - const: qcom,sm8550-pmic-glink
->>
->> No fallback to sc8280xp.
->>
->>
->>> when registering the power supply device.
->>>
->>> 2. sm8550 was a fallback of sm8350, and they all used
->>
->> Also not true. The remaining fallback is not sm8350.
->>
->>
->>> "sm8350_bat_psy_desc" when registering the power supply device.
->>>
->>> 3. x1e80100 and sm8550 they are incompatible as they are using different
->>> data structure of "xxx_bat_psy_desc"  and other “psy_desc" too, such as,
->>> ac/usb/wls.
->> Look at the driver and bindings now - they are compatible. It looks like
->> you made it incompatible and now you claim the "they are incompatible".
->> No, you did it. Look at the driver.
->>
->>
->>
->>> 4. For charge control functionality, it's only supported in the battery
->>> management firmware in x1e80100 and sm8550 platforms. And the change in
->>> battmgr driver (patch [5/8]) adds the support by using 2 additional
->>> power supply properties, which eventually need to be added in the
->>> "properties" data member of "xxx_bat_psy_desc" when registering power
->>> supply devices. Hence, "x1e80100_bat_psy_desc" and "sm8550_bat_psy_desc"
->>> are created and used separately when registering power supply device
->>> according to the "variant" value defined in the match data.
->>>
->>> The main code change is in [5/8], I am pasting a snippet which might
->>> help to explain this a little bit:
->>>
->>> -       if (battmgr->variant == QCOM_BATTMGR_SC8280XP) {
->>> -               battmgr->bat_psy = devm_power_supply_register(dev,
->>> &sc8280xp_bat_psy_desc, &psy_cfg);
->>> +       if (battmgr->variant == QCOM_BATTMGR_SC8280XP ||
->>> battmgr->variant == QCOM_BATTMGR_X1E80100) {
->>> +               if (battmgr->variant == QCOM_BATTMGR_X1E80100)
->>> +                       psy_desc = &x1e80100_bat_psy_desc;
->>> +               else
->>> +                       psy_desc = &sc8280xp_bat_psy_desc;
->>> +
->>> +               battmgr->bat_psy = devm_power_supply_register(dev,
->>> psy_desc, &psy_cfg);
->>>                   if (IS_ERR(battmgr->bat_psy))
->>>                           return dev_err_probe(dev,
->>> PTR_ERR(battmgr->bat_psy),
->>
->> This explains nothing to me. I think you did not get my questions at all
->> and just want to push whatever you have in drivers.
->>
->> Such ping pongs are just tiring, so go back to my previous email, read
->> it carefully and try harder to understand what compatibility means.
->>
->>
->> NAK, you are affecting the users and ABI with justification "I make it
->> now incompatible, so it is incompatible".
->>
->> Best regards,
->> Krzysztof
+> This is precisely what Xiongfeng found when invoking a BPF program on
+> the trace_tick_stop() tracepoint As shown in the trace below. Fix by
+> using context-tracking to tell us if we're still in an IRQ.
+> context-tracking keeps track of the IRQ until after the tracepoint, so
+> it cures the issues.
 > 
-> Thanks for the explanation with patience. I misunderstood the fallback behavior.
+> irq_exit()
+>   __irq_exit_rcu()
+>     /* in_hardirq() returns false after this */
+>     preempt_count_sub(HARDIRQ_OFFSET)
+>     tick_irq_exit()
+>       tick_nohz_irq_exit()
+> 	    tick_nohz_stop_sched_tick()
+> 	      trace_tick_stop()  /* a bpf prog is hooked on this trace point */
+> 		   __bpf_trace_tick_stop()
+> 		      bpf_trace_run2()
+> 			    rcu_read_unlock_special()
+>                               /* will send a IPI to itself */
+> 			      irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
 > 
-> I was worried about if the compatible string matching would work correctly if both the device node and the driver declared multiple identical compatible strings.
+> A simple reproducer can also be obtained by doing the following in
+> tick_irq_exit(). It will hang on boot without the patch:
 > 
-> I understand now and even if the device node and the driver have defined multiple identical compatible strings, the best match which is the most specific compatible string will be found.
+>   static inline void tick_irq_exit(void)
+>   {
+>  +	rcu_read_lock();
+>  +	WRITE_ONCE(current->rcu_read_unlock_special.b.need_qs, true);
+>  +	rcu_read_unlock();
+>  +
 > 
-> So in the example below, for X1E80100-CRD, the battmgr driver will always match to "qcom,x1e80100-pmic-glink" which is the most specific compatible string defined at the beginning of the device node compatible string, and the compatibility has not been broken.
+> While at it, add some comments to this code.
 > 
-> In qcom_battmgr driver:
-> 
-> static const struct of_device_id qcom_battmgr_of_variants[] = {
->         ...
->         { .compatible = "qcom,x1e80100-pmic-glink", .data = (void *)QCOM_BATTMGR_X1E80100 },
->         { .compatible = "qcom,sm8550-pmic-glink", .data = (void *)QCOM_BATTMGR_SM8550 },
->         ...
-> };
-> 
-> In x1-crd.dtsi:
-> 
-> pmic-glink {
->           compatible = "qcom,x1e80100-pmic-glink",
->                      "qcom,sm8550-pmic-glink",
->                      "qcom,pmic-glink";
->         ...
-> 
-> }
-> 
-> Let me know if my understanding is correct. I will drop patch [6/8],[7/8],[8/8] in next version.
+> Reported-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+> Closes: https://lore.kernel.org/all/9acd5f9f-6732-7701-6880-4b51190aa070@huawei.com/
+> Tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-Unless we have some mobile-firmware-specific calls/behaviors that apply to
-sm8550, but not to x1e80100 (which I don't believe we do), I think this is
-fair
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 
-Konrad
+Just a few remarks:
+
+> ---
+>  kernel/rcu/tree_plugin.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index 3c0bbbbb686f..53d8b3415776 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -653,6 +653,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
+>  		struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+>  		struct rcu_node *rnp = rdp->mynode;
+>  
+> +		// In cases where the RCU-reader is boosted, we'd attempt deboost sooner than
+> +		// later to prevent inducing latency to other RT tasks. Also, expedited GPs
+> +		// should not be delayed too much. Track both these needs in expboost.
+>  		expboost = (t->rcu_blocked_node && READ_ONCE(t->rcu_blocked_node->exp_tasks)) ||
+>  			   (rdp->grpmask & READ_ONCE(rnp->expmask)) ||
+>  			   (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
+> @@ -670,10 +673,15 @@ static void rcu_read_unlock_special(struct task_struct *t)
+>  			// Also if no expediting and no possible deboosting,
+>  			// slow is OK.  Plus nohz_full CPUs eventually get
+>  			// tick enabled.
+> +			//
+> +			// Also prevent doing this if context-tracking thinks
+> +			// we're handling an IRQ (including when we're exiting
+> +			// one -- required to prevent self-IPI deadloops).
+>  			set_tsk_need_resched(current);
+>  			set_preempt_need_resched();
+>  			if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
+> -			    expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu)) {
+> +			    expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu) &&
+> +			    !ct_in_irq()) {
+>  				// Get scheduler to re-evaluate and call hooks.
+>  				// If !IRQ_WORK, FQS scan will eventually IPI.
+>  				if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
+> --
+
+Looking at the irq work handling here:
+
+* What is the point of ->defer_qs_iw_pending ? If the irq work is already
+  queued, it won't be requeued because the irq work code already prevent from
+  that.
+
+* CONFIG_PREEMPT_RT && !CONFIG_RCU_STRICT_GRACE_PERIOD would queue a lazy irq
+  work but still raise a hardirq to wake up softirq to handle it. It's pointless
+  because there is nothing to execute in softirq, all we care about is the
+  hardirq.
+  Also since the work is empty it might as well be executed in hard irq, that
+  shouldn't induce more latency in RT.
+
+* Empty hard irq work raised to trigger something on irq exit also exist
+  elsewhere (see nohz_full_kick_func()). Would it make sense to have that
+  implemented in irq_work.c instead and trigger that through a simple
+  irq_work_kick()?
+
+And then this would look like (only built-tested):
+
+diff --git a/include/linux/irq_work.h b/include/linux/irq_work.h
+index 136f2980cba3..4149ed516524 100644
+--- a/include/linux/irq_work.h
++++ b/include/linux/irq_work.h
+@@ -57,6 +57,9 @@ static inline bool irq_work_is_hard(struct irq_work *work)
+ bool irq_work_queue(struct irq_work *work);
+ bool irq_work_queue_on(struct irq_work *work, int cpu);
+ 
++bool irq_work_kick(void);
++bool irq_work_kick_on(int cpu);
++
+ void irq_work_tick(void);
+ void irq_work_sync(struct irq_work *work);
+ 
+diff --git a/kernel/irq_work.c b/kernel/irq_work.c
+index 73f7e1fd4ab4..383a3e9050d9 100644
+--- a/kernel/irq_work.c
++++ b/kernel/irq_work.c
+@@ -181,6 +181,22 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
+ #endif /* CONFIG_SMP */
+ }
+ 
++static void kick_func(struct irq_work *work)
++{
++}
++
++static DEFINE_PER_CPU(struct irq_work, kick_work) = IRQ_WORK_INIT_HARD(kick_func);
++
++bool irq_work_kick(void)
++{
++	return irq_work_queue(this_cpu_ptr(&kick_work));
++}
++
++bool irq_work_kick_on(int cpu)
++{
++	return irq_work_queue_on(per_cpu_ptr(&kick_work, cpu), cpu);
++}
++
+ bool irq_work_needs_cpu(void)
+ {
+ 	struct llist_head *raised, *lazy;
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index a9a811d9d7a3..b33888071e41 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -191,7 +191,6 @@ struct rcu_data {
+ 					/*  during and after the last grace */
+ 					/* period it is aware of. */
+ 	struct irq_work defer_qs_iw;	/* Obtain later scheduler attention. */
+-	bool defer_qs_iw_pending;	/* Scheduler attention pending? */
+ 	struct work_struct strict_work;	/* Schedule readers for strict GPs. */
+ 
+ 	/* 2) batch handling */
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 3c0bbbbb686f..0c7b7c220b46 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -619,17 +619,6 @@ notrace void rcu_preempt_deferred_qs(struct task_struct *t)
+ 	rcu_preempt_deferred_qs_irqrestore(t, flags);
+ }
+ 
+-/*
+- * Minimal handler to give the scheduler a chance to re-evaluate.
+- */
+-static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
+-{
+-	struct rcu_data *rdp;
+-
+-	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
+-	rdp->defer_qs_iw_pending = false;
+-}
+-
+ /*
+  * Handle special cases during rcu_read_unlock(), such as needing to
+  * notify RCU core processing or task having blocked during the RCU
+@@ -673,18 +662,10 @@ static void rcu_read_unlock_special(struct task_struct *t)
+ 			set_tsk_need_resched(current);
+ 			set_preempt_need_resched();
+ 			if (IS_ENABLED(CONFIG_IRQ_WORK) && irqs_were_disabled &&
+-			    expboost && !rdp->defer_qs_iw_pending && cpu_online(rdp->cpu)) {
++			    expboost && cpu_online(rdp->cpu)) {
+ 				// Get scheduler to re-evaluate and call hooks.
+ 				// If !IRQ_WORK, FQS scan will eventually IPI.
+-				if (IS_ENABLED(CONFIG_RCU_STRICT_GRACE_PERIOD) &&
+-				    IS_ENABLED(CONFIG_PREEMPT_RT))
+-					rdp->defer_qs_iw = IRQ_WORK_INIT_HARD(
+-								rcu_preempt_deferred_qs_handler);
+-				else
+-					init_irq_work(&rdp->defer_qs_iw,
+-						      rcu_preempt_deferred_qs_handler);
+-				rdp->defer_qs_iw_pending = true;
+-				irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
++				irq_work_kick();
+ 			}
+ 		}
+ 		local_irq_restore(flags);
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index c527b421c865..84170656334d 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -377,14 +377,6 @@ static bool can_stop_full_tick(int cpu, struct tick_sched *ts)
+ 	return true;
+ }
+ 
+-static void nohz_full_kick_func(struct irq_work *work)
+-{
+-	/* Empty, the tick restart happens on tick_nohz_irq_exit() */
+-}
+-
+-static DEFINE_PER_CPU(struct irq_work, nohz_full_kick_work) =
+-	IRQ_WORK_INIT_HARD(nohz_full_kick_func);
+-
+ /*
+  * Kick this CPU if it's full dynticks in order to force it to
+  * re-evaluate its dependency on the tick and restart it if necessary.
+@@ -396,7 +388,7 @@ static void tick_nohz_full_kick(void)
+ 	if (!tick_nohz_full_cpu(smp_processor_id()))
+ 		return;
+ 
+-	irq_work_queue(this_cpu_ptr(&nohz_full_kick_work));
++	irq_work_kick();
+ }
+ 
+ /*
+@@ -408,7 +400,7 @@ void tick_nohz_full_kick_cpu(int cpu)
+ 	if (!tick_nohz_full_cpu(cpu))
+ 		return;
+ 
+-	irq_work_queue_on(&per_cpu(nohz_full_kick_work, cpu), cpu);
++	irq_work_kick_on(cpu);
+ }
+ 
+ static void tick_nohz_kick_task(struct task_struct *tsk)
+
+  
+  
+-- 
+Frederic Weisbecker
+SUSE Labs
 
