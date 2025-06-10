@@ -1,145 +1,213 @@
-Return-Path: <linux-kernel+bounces-680402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959B0AD44DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:36:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F6AAD44CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BC4189D364
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E783A5464
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888BC284B2E;
-	Tue, 10 Jun 2025 21:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0634284691;
+	Tue, 10 Jun 2025 21:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="1lRwEgFT"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ToeVe94o"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012012.outbound.protection.outlook.com [52.101.66.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E8823958C
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 21:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749591371; cv=none; b=Pp7I0X72lmtlQemMhMBJxJK4vQ6kr1JD/Vf55teoBxN/jWOVzRcC7rOCVNpyxHPoOnvQeNbQmO6cVE955C5lWL7C7pTJcsVkNw6lDhrScoPGOc4pnthbSXjeatvhzBH1o61Z+hmxYwyBtqG/WcvlEt4Kt+AgazpRk3j/yMNqDDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749591371; c=relaxed/simple;
-	bh=I8UbiObQzNHlfgvyylxxAXl8H2Wx63FtZBMws33juYs=;
-	h=Subject:Date:Message-Id:MIME-Version:Cc:From:To; b=uIBccNiJug/Y+G9UgjjyBx9HejxOEhzANPHLtADkZoDJ1SCvRK8W55B4700pPqZgTNx/0316o2p+80Zcxqx4FaI3mjpIp1txAo19hV70ZpZeNGZ7xEhSp6KxuZkXLjA2NInRrU4ie7/zyXmsl4C60hLQhnZfih8FfvOlTYBDUJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=1lRwEgFT; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-311d27eb8bdso3715362a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1749591369; x=1750196169; darn=vger.kernel.org;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=KaHHQEiupZ06D+yq5AKLPI1+m/XTQ4+XHbDcRMw88EU=;
-        b=1lRwEgFTQqD8jL7mTbE6wec6lq4GMZEJy+Pm1s9DRb+VEogKu8jtEfAozl7SnogpZE
-         N6vQb2qBu1/BRtxkMLu2tu9hj5Vjik1jnrbd3UeN+mLvpCqs8VlVBN8ApOSS2qFcNgFB
-         CscPa4WvmPSDsCqZmrONFsIfppvZxV4J2tACOkdbaJ/s2JNm2vJsJGcRJ9NrGWyvXpP/
-         MxMDbiTvKTrduXmupCe+pMgSxdaIndRZF4nOKMuArCY2bq49GfJmb6NqwKAil12/5HFR
-         z3l5jZ6sbzOpl0dDKE5Hm0pwTGZs36jSBe8g1jWoRkijcmkfBTvEEkfCk9WBXCb9U3Dd
-         3YEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749591369; x=1750196169;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KaHHQEiupZ06D+yq5AKLPI1+m/XTQ4+XHbDcRMw88EU=;
-        b=rtlv6jnw+GdoypFdMGDo9312khYRmi6GjDYZijreLE5Cj1edbkAG3yAfMxOqhOLClR
-         VjMG/qucXJMNTj4E6mU5dk8L3vHz979zbsDJYAGRql81LTVlHKE+4PZzXiCvQH8tO6hi
-         z/BUaCArdlN5JpGPII30tBvjMQ7Smrq+zitRF2qHT5KypX02H5QDT7TDZxdmm/ldkgkg
-         5LS18lBKSdTKivisomQ4g4teQwTFLpdopU5z4UBtmEx8dg/Nv9KxLS1tkPOkFUkjeIgO
-         wG3kdz+ZFQkXNpyZyMK4cDbyDFMB29P45qtTMMn6RlY+FrRFs5f9/mSAH+r/pU99hFXy
-         N5ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW57ly1xR4SCfqauhz7PLCBvI03zqg49sTW6FiwuJlzxZCh4kDKdikGPdyIoUn7rI63CXYKtcTA/gfPgsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6h5et9l92B/AA9xA+XS1c9OhLOzEW/YWg6OjQisqZl7UVi055
-	jus3LcTmWs5nCKZlIhdJity/xLKj3xGVY104YCbHks4UEqnkbf23P8K6O1OXexw+/tg=
-X-Gm-Gg: ASbGnctd9peD0Xl/mS9HEAv3tUA3pWBbdKuk5jHx4g/7gVE0E1NOqtM48PxfBP1P/i5
-	X+xvk46ue3K6nzDHdYBpd3EvlHGugcQW5X4irqJnq5UNu3OwTtL2sCpWg1wfrvIQg3EEk58/EB8
-	GUfErAJ5rAHOHzU1YDtKlvJY2zOMB36QeMjXvm1QUhHYqD7rISy1QeBMoIC92wcGcbO9xOHutvx
-	TKdVidhchz9OjvEUWVJVGgFelBl6dKevkhj8CrWemj9hwYacsvyhuOTb6NJZwUz1eGg3x1LSL0a
-	7pk4cfFcu6ye8bc8f2HuMbqrNH8VAvg7jSNGUeyUgUwnEy3R7YCXVvrClogC
-X-Google-Smtp-Source: AGHT+IFYYIeiPz9kpoQxtEx9N1kGD9o1EkK/pKiuLs1MruLC/T69Bnqe3L89R/Uj9Yt0DTdGl5i/7g==
-X-Received: by 2002:a17:90b:4a85:b0:311:f30b:c18 with SMTP id 98e67ed59e1d1-313af0f8588mr1387259a91.4.1749591369214;
-        Tue, 10 Jun 2025 14:36:09 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:500::7:116a])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-313b1ff0fa8sm78207a91.8.2025.06.10.14.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 14:36:08 -0700 (PDT)
-Subject: [PATCH] RISC-V: uaccess: Wrap the get_user_8 uaccess macro
-Date: Tue, 10 Jun 2025 14:30:58 -0700
-Message-Id: <20250610213058.24852-1-palmer@dabbelt.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C89D2459C5;
+	Tue, 10 Jun 2025 21:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749591088; cv=fail; b=EdY1u25DUZU7zopARMsKVGlvRvvRG4GRbBC5M+6lGcq4ToHPAIuD9QoC3aDoi2GU4yVuot5VWEHk9KSheYm3ormKmlqdiGfu8ew0JrGzsq4eltx/cuiCzOXGEgyGn0GDYr84MB6cNGhfOD2yp6Fc7RdmfClqNTb68Gj5HqgVf88=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749591088; c=relaxed/simple;
+	bh=kMsjAl8M+bbbChadJ9uK2URtmtPF8OjNiPTR32XgrBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=opSnTcpPDmNbEj8LICQtOvTG01b8EA/s5fiCPyEmOxmUSz89/ueVk3GRmAlC3p8AeGTVd8vVvIrIzxLLqFV337HW0p1NEUNah9OLU+D95CcYysvaAZGfJhIDAfGaaw0d4gtJCJsYlw6r9ahsxsx8uJnHB4Ypgis5cIsnTFj6Z9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ToeVe94o; arc=fail smtp.client-ip=52.101.66.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v9cJ9ip6z3raOgqCZyTH/XIoMd0xeXeyBNwI/p0RAxmYF7ijhZSaFRgjonOVtCB9Ax0LphqArarrHw7lqA0NxiCl4CvgUDbUjJN5ytechtezeceYfgJJBQFJaoQ5FKWTFFi70nbeqlhAP2nJ1nGefurxrWe4o1o50nJeJlPxRmD5fdlCYebeqH8JnDn/CqxPkN8E+MgtQzk8Q2PTSJG6edYVWdhrmFURQgv9w+wq7lxDencdI+AXRngUMXLbCw3Pts7d5Kc3qHAmAWKPbipf3S22c5AMT4WzA1F3UgcmEggG2YZP9HUdiUGFNzb74PA4AgzOu4wfnc/lvzb/zKMCkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vVIXcpl2EXYmiyuUfIlSBwZYuKwWk69mLNU2hv+lPos=;
+ b=DpT+HAL20jS5V1dqrpQWKBYWKrraeit+LmDDeGcVLvSXHtlwZmNBvKCkDiyPrq+9kWzUMVlZBSj9NAr6dhUxXUNPSRyC/1B552rRYottL7EN9FOmKdpfDmJJuZnAOOUIY3B2Ge+ZxXWnBsP3IF2oS0dsJToj2y1Ax5jkvNg+n6cyB2STL6BvduwMzq6nGI3XU2gIM7ld1Cg8HXGKXqyQRoCbifUmo3HpBZG6ANIftGZF1hmBvi5ZY9Yr2nA0F/qJ4U1iWv1lqYC8jTEP732KzMrMTGvEtGBJdzlN5AipjwiEXlcLziUXPFIs1dOctyoxCojLHOdPn2CbKReNBgaVTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vVIXcpl2EXYmiyuUfIlSBwZYuKwWk69mLNU2hv+lPos=;
+ b=ToeVe94o1nf0LyiWlCd21ekA/MrinNFxx5dfZ+rSqwtQGZN5ku/yPQNtbUHuSfWNmlfV7CqWn7UsHF/VRCzC98Lw+z+Nj4u+Nsfb/5csFCQJEXKI2vRu7uyPdj0iboTvGgWFep9T4Wve482EhmMFvvjSpDxx6mhMKcknRBWBLBG/Lk86RYnIwKJqGF2zP6o1Tkk0cva3jZjIkPHdc/Y1W3mGOtFMt+FQkoRHplOpm28v473lt01A2bYIE3X5JZiJPQR7JnuyQPe1eDAZIjiSm0hJzY6nG7InOJ3xuCZ51GCUlRyvOswCJnvrwVhipU6YBl/oEV7ruCpXlN1x5ILIqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AS5PR04MB9997.eurprd04.prod.outlook.com (2603:10a6:20b:67c::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.34; Tue, 10 Jun
+ 2025 21:31:24 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
+ 21:31:24 +0000
+Date: Wed, 11 Jun 2025 00:31:20 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] spi: spi-fsl-dspi: Clear completion counter before
+ initiating transfer
+Message-ID: <20250610213120.ib5tkbh4xu7af4jr@skbuf>
+References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
+ <20250609-james-nxp-spi-dma-v1-1-2b831e714be2@linaro.org>
+ <20250610113423.zztoyabv4qzsaawt@skbuf>
+ <9852a22a-1a09-4559-9775-2ccbb44c43c0@linaro.org>
+ <20250610210147.kwuwwjtcl36hrxjc@skbuf>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610210147.kwuwwjtcl36hrxjc@skbuf>
+X-ClientProxiedBy: VI1PR0102CA0027.eurprd01.prod.exchangelabs.com
+ (2603:10a6:802::40) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-  aou@eecs.berkeley.edu, Alexandre Ghiti <alex@ghiti.fr>, cyrilbur@tenstorrent.com, jszhang@kernel.org,
-  cleger@rivosinc.com, samuel.holland@sifive.com, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To:         linux-riscv@lists.infradead.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS5PR04MB9997:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4975946e-848d-404c-2927-08dda8662646
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?i1SMJIW+uKyqlQK3db78Uxgys2XcrKrhRrjHkot4Xa/akF5xLULY2DlSQNDQ?=
+ =?us-ascii?Q?ymcPkT+NY5dkHWtSkbzrkYX+BPgeu7FIzxjB0f3hRNa9NcFXCxi5RgxH6+04?=
+ =?us-ascii?Q?twXDtojQYQ5UVFoE8jqDOaY/MpYGheWS5DkZpZKdJUcpQVZYmyQ0XN6Kok3r?=
+ =?us-ascii?Q?CysLGHETyh/q31C5DlaDRg9xCbwANMwKBOERcyhGX7Om0V4bAezh5FnRSFo8?=
+ =?us-ascii?Q?U7YxSzoyCDVbeWdN8KcjP6B/01UeoIK3Ndr8qSrrLzY+PsnmfndzBSm0Ae90?=
+ =?us-ascii?Q?gl7vJ2o0m9acM7CMz9NHFMwz86eQj3VpmQMVuahSv13JpYGiD+Daf4s+W7V/?=
+ =?us-ascii?Q?hMX9qdojeDCV8YN723eXwtgchi9Lyd2iH9pC/oW36ZL+Gph/SFjLFBlqr/YC?=
+ =?us-ascii?Q?cy3SWEO6U4fmZqCNjJNbW71RSEI4ZZbwrAGe2CqgzbEBF/tshvvPNngV8VfI?=
+ =?us-ascii?Q?kRhvt1szBt6uY7rC1/H7Xr4CunstUVyqA/Sh8TmBJlAzaTu83NspT04n7SKf?=
+ =?us-ascii?Q?pF2zizwk2gyY1M8M36gxOoKiS9xnDLapflLt5JnQGiFGV1BLnZuPXbR3Lxb2?=
+ =?us-ascii?Q?4zKmx7H5a/tr7v4TfkmC02H7/ONQ/OE7GYjggUQn/XBgq8o8mJCnU99WyFcQ?=
+ =?us-ascii?Q?CUXq+Kks/QrmSMSdmEQdEnI4M1T8hAlejByYBdItXrKlr4NdGi4YbmfHyuTY?=
+ =?us-ascii?Q?io36vEBMvyaWAw6i/ciFd4DkkO3tz+tbRUUYa85FVOycwHSyyOOo68WLIOVB?=
+ =?us-ascii?Q?MN0CgU6kBfcr4BNkIcKwSgdg92EN5S0mahKJbpgYmn1G2cigRSl/Vz1uIJDK?=
+ =?us-ascii?Q?5vz0/Mryy3H8k0iJCZHh+AhQtZOuB9gPmIg2ETRxiUZvI16G/BF3B1AA7yev?=
+ =?us-ascii?Q?mZ8TRq8CNndqs4qtLvAkN4q2Nhx4YNpDf42PfTKy54seZMcc0mIWLS0++y6I?=
+ =?us-ascii?Q?3lo6Y6XZWJPS4LxgNqPJkClGwqSUevFXT6ZvKSbIW8adA/F136Ng1xImPeFD?=
+ =?us-ascii?Q?/OXh9+QTXI1EDnBqHqoBelNoDnkkOPtmcTWf3xsKtamD3A4BnQl8yrYsFfAY?=
+ =?us-ascii?Q?Mdmmmg6s4hsoJXn7ezGnjWE455JeKJ7UqHwiFxcifR/SdzvB1koo3keWIudP?=
+ =?us-ascii?Q?Tbu/hBEYNrwZIajOZ8L/PWq9x6r0CjxIZBjHMn749kkcc27bbYAN2jOPf6Xg?=
+ =?us-ascii?Q?l1DWy5jNLbfmQ6vArZ3078q0aWAQBBjCYbTMiH7QMV9j9yCkTOxbVIFgb0/k?=
+ =?us-ascii?Q?BJEozvUF2Kxk+RGyI6pE2n2prpTy8qkIA0XEEdnCCUzKpF7RjpPYUNd48Eq3?=
+ =?us-ascii?Q?NTSwRUQVV/szJstSKNGp1eRF2NgIjXbUazshOD2Ibh6FMErOisKWBkoaULx4?=
+ =?us-ascii?Q?fO54oJh9fD4N6KmMgDIDvSDIB+rgJ9Qb56RBMLRKTC1RNQ9WwWjWeLDon+P+?=
+ =?us-ascii?Q?wCAHlMzv1Og=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7YOXqIn2iOoYi7NjBnvZ7xGeEQtOIPotJLgu6P6U40N+uUU0+04HTMqpNcKs?=
+ =?us-ascii?Q?YjQrL1zc8XTz5U5JRVWHIA9bjBuLgBXQ3enMrpF6zJ6/cupwxLEr18rW9U0A?=
+ =?us-ascii?Q?0Gstc+l+hPjABdIPF3btVjdZkCnMKsYhP/uKqATBgGGHkyA3NYlR6xNo6tZD?=
+ =?us-ascii?Q?gLUhMzoZat1atjVJPV5fF3kOe0ovT86Knxz2dpit0nOh0FA4sg4vXirzQDQT?=
+ =?us-ascii?Q?25v/pjauYxrQqpuilEpuw6NQ9Gz9d/EeHl7IZenGiFd7fxSfQvynyet3N1uj?=
+ =?us-ascii?Q?LeVyb5+vW80V4jSp45DsTXspqZa1FF7g6kRbxLEQHvXo+41jgp46oAgKswhj?=
+ =?us-ascii?Q?E7klKiT0hdaK5dTa9I4OZG2iV+NNHqd5u2HlOIPEbWfDka4r0EU5XmsLhlW1?=
+ =?us-ascii?Q?/c4jhKtyp9ZMmUoHkf27GzDJ0jgn1H44+JvQxzxp9+6fww8HENie7pPt+v/H?=
+ =?us-ascii?Q?Wf2tRfo9tepQqVzGo1fS7kx2vJtRaNxPMBf2cQajB2XYYcIMPgn5voTIVt7I?=
+ =?us-ascii?Q?eDdja23SRpcfNmFgGD+RMOPqWx3OmczYo9K+cDtOocDBixTxMXyqAhuCdR7e?=
+ =?us-ascii?Q?8UqJn8tFnpTPpoJJ8Wti0O2llcZil6ifQJki90HapiusCKezTu2j6XFBeOmm?=
+ =?us-ascii?Q?qN6mJuewQWxI2Kb21nSNHYeEUoWOFl3w28GxDN4UHdqQt+8RvmY/4I7UZl+U?=
+ =?us-ascii?Q?jXfbqWeNnJK4X7UI6wJX+IdMUVAGEwYC31rtjlenqjSyQELmMkueK5owODKV?=
+ =?us-ascii?Q?4/ykDY5vdrgmxrTwRGeHROgYbMa8lGL216uemdEUJFsD+V6FAxt8abf8mwHT?=
+ =?us-ascii?Q?+1vIPyWD6OWoT1AbIdmTRj9fZCc3n2o4LzeB3sDPs/mZP1F5qgSw7DhS/GZc?=
+ =?us-ascii?Q?iPokR2S2LVXr3qqMHKTpfuyD8bR3iCBOBZ4oc2cipekvUEzv7sfB25pX9NXf?=
+ =?us-ascii?Q?ev5ETXnebm6VKXIQ7s/OLlksudNeYRvQSWo7hWziRmr9uNac2idi1RxzjE0t?=
+ =?us-ascii?Q?1PB5YKS+IdhRrL7CVoNuuFKde4ytJmdPSuYqeJ+fEl7QUSb4FD5jiKEqsVns?=
+ =?us-ascii?Q?HnjKvfDB06TmQOtb3a51i/Ei2+mNMHZSLk8NoXo0Jxhu2wkidY2ceXUQZpiD?=
+ =?us-ascii?Q?1df5Q8VIMjpg3idWRYNFShimTx03/8U5Xn40JtljmKGoBMpZ8rcUxB25RlXO?=
+ =?us-ascii?Q?WNlbq3tZaFUQW+uNGaOqEK8YYyd2ArJ5r5A8DDH7NyOzSmNpn+NMhqSKMRMp?=
+ =?us-ascii?Q?22kXjVFCoLtWNswi3ouGX1IxCeFh29N1oQ4u0yJo3NIqaJqfX2aX/4Wm4eI6?=
+ =?us-ascii?Q?/8WwtklALmk/AbvHMXwN5zqtV6N0ufrBa36SMcTD1K+8mJHfcbtjNJh7pt8N?=
+ =?us-ascii?Q?Ch978iDhrqNuGSg8mQTb+lvjqey+ZU1iwda6SA9QeNsHVOgVDsHGlTEZmxys?=
+ =?us-ascii?Q?X36aHv/nDF6FxJ+/2pszyraJ3vCljQW13rqd8X/LrYlHDt+TB6QwREOO/xSb?=
+ =?us-ascii?Q?r1jGt5MMKXnIkZ/gmZxM0lMF6AK+My9DK62ItSPiTVuiTTeRf8FMSZAZCDC8?=
+ =?us-ascii?Q?inMf4kXxq3IoGWjoSPQMjbUuYfm1zI30bDaiMR8e/VcBQ0GjBBfxYVsEs9c+?=
+ =?us-ascii?Q?Bw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4975946e-848d-404c-2927-08dda8662646
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 21:31:24.1422
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 94+e/lzybhYShM7tEko5h9WSbx2jHbW66Z00mpcDSn2uTTEm3940wlOOr05WA9O4DTaZNROR26ZTgmrnp/nqFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9997
 
-From: Palmer Dabbelt <palmer@dabbelt.com>
+On Wed, Jun 11, 2025 at 12:01:47AM +0300, Vladimir Oltean wrote:
+> On Tue, Jun 10, 2025 at 04:41:04PM +0100, James Clark wrote:
+> > On 10/06/2025 12:34 pm, Vladimir Oltean wrote:
+> > > On Mon, Jun 09, 2025 at 04:32:38PM +0100, James Clark wrote:
+> > > > In target mode, extra interrupts can be received between the end of a
+> > > > transfer and halting the module if the host continues sending more data.
+> > > 
+> > > Presumably you mean not just any extra interrupts can be received, but
+> > > specifically CMDTCF, since that triggers the complete(&dspi->xfer_done)
+> > > call. Other interrupt sources are masked in XSPI mode and should be
+> > > irrelevant.
+> > 
+> > Yes complete(&dspi->xfer_done) is called so CMDTCF is set. For example in
+> > one case of underflow I get SPI_SR = 0xca8b0450, which is these flags:
+> > 
+> >   TCF, TXRXS, TFUF, TFFF, CMDTCF, RFOF, RFDF, CMDFFF
+> > 
+> > Compared to a successful transfer I get 0xc2830330:
+> > 
+> >   TCF, TXRXS,       TFFF, CMDTCF,       RFDF, CMDFFF
+> 
+> Ok, so my new question would be: if CMDTCF is set, presumably it means a
+> command was transferred. What command was transferred, and who put data
+> in the FIFO for it?
+> 
+> Because the answer to the above is AFAIU "no one", I guess the driver
+> should ignore CMDTCF when TFUF (TX FIFO underflow) is set; I consider
+> that to be the logic bug. You are also doing that in patch 4/4, except
+> you still call complete() for some reason. If you don't call complete(),
+> there is no reason to fend against spurious completions.
+> 
+> I think I would prefer seeing more deliberate decisions in the driver,
+> it helps if things don't just work by coincidence.
 
-I must have lost this rebasing things during the merge window, I know I
-got it at some point but it's not here now.  Without this I get warnings
-along the lines of
+After thinking some more, I think I agree with your decision.
 
-    include/linux/fs.h:3975:15: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-     3975 |         if (unlikely(get_user(c, path)))
-          |                      ^
-    arch/riscv/include/asm/uaccess.h:274:3: note: expanded from macro 'get_user'
-      274 |                 __get_user((x), __p) :                          \
-          |                 ^
-    arch/riscv/include/asm/uaccess.h:244:2: note: expanded from macro '__get_user'
-      244 |         __get_user_error(__gu_val, __gu_ptr, __gu_err);         \
-          |         ^
-    arch/riscv/include/asm/uaccess.h:207:2: note: expanded from macro '__get_user_error'
-      207 |         __ge  LD [M]  net/802/psnap.ko
-    t_user_nocheck(x, ptr, __gu_failed);                        \
-          |         ^
-    arch/riscv/include/asm/uaccess.h:196:3: note: expanded from macro '__get_user_nocheck'
-      196 |                 __get_user_8((x), __gu_ptr, label);             \
-          |                 ^
-    arch/riscv/include/asm/uaccess.h:130:2: note: expanded from macro '__get_user_8'
-      130 |         u32 __user *__ptr = (u32 __user *)(ptr);                \
-          |         ^
+If there's a TX FIFO underflow in target mode, presumably there are 2
+cases to handle.
 
-Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
----
- arch/riscv/include/asm/uaccess.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+1. The underflow occurred in the middle of a large-ish SPI message
+   prepared by the driver, where the driver couldn't refill the TX FIFO
+   fast enough in dspi_interrupt().
 
-diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index d472da4450e6..525e50db24f7 100644
---- a/arch/riscv/include/asm/uaccess.h
-+++ b/arch/riscv/include/asm/uaccess.h
-@@ -127,6 +127,7 @@ do {								\
- 
- #ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
- #define __get_user_8(x, ptr, label)				\
-+do {								\
- 	u32 __user *__ptr = (u32 __user *)(ptr);		\
- 	u32 __lo, __hi;						\
- 	asm_goto_output(					\
-@@ -141,7 +142,7 @@ do {								\
- 		: : label);                                     \
- 	(x) = (__typeof__(x))((__typeof__((x) - (x)))(		\
- 		(((u64)__hi << 32) | __lo)));			\
--
-+} while (0)
- #else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
- #define __get_user_8(x, ptr, label)				\
- do {								\
--- 
-2.39.5 (Apple Git-154)
+2. The underflow occurred because the driver had absolutely no SPI
+   message prepared, and yet the host wanted something.
 
+What changed my mind is that if you don't call complete() on SPI_SR_TFUF
+(like I suggested), then case #1 above will hang. Your proposal is to
+call complete() anyway, but to discard any previous completions,
+associated with case #2, when there's a new message to prepare.
+
+But I would like you to introduce a comment above the earlier
+reinit_completion() explaining why it is there.
 
