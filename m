@@ -1,183 +1,143 @@
-Return-Path: <linux-kernel+bounces-679419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C6FAD3619
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4881AD35D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368491895D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:25:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E7F8176A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A187291171;
-	Tue, 10 Jun 2025 12:24:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3AA28ECFE;
+	Tue, 10 Jun 2025 12:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="U6LiZTq7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3092122DA05;
-	Tue, 10 Jun 2025 12:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA60528F509;
+	Tue, 10 Jun 2025 12:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558280; cv=none; b=iq+OYJKNUB51iaqzWA4a+wYrq9j3j6v5ERcz/iC27zundn7M/XxGrT0qV0ZEjyuLr1tXjzqgyJ9NwHBFY+UFpETs5DgMncXyft7YTO8FeQrOFrnZ+QFbx3wTWhiswXTiZP5tjYBtuhJF1kaGHLEUjX5K+amGwJBsxCXWWV3gP4s=
+	t=1749557827; cv=none; b=N7ZaVlounI8m5CxazM0uH0B9v6XYsxB5lvPD+nnTzcffFOwNoyzPhZFQiBEY5GnFKRHMiAYzo5bZ07t4rmzbLtB7/4EGAQeY3jpnoYFeLuxd9aWuJ8eILsCzRMMYnTEgndu01cdg2tZxdqPQqY446Y983sxWeO++2D1w1V0PwVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558280; c=relaxed/simple;
-	bh=HP0ZM6ER8CFrE75ylSyz9paF9gHU76JoXOZUEHKlVyg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NUn4crOUjI0JMq+C7DU/aGsfm5LujQSXkeyU407OkhSPOXmrQT8P5A0+mn9ViVVQzXEyBxW3t2p7+DtGi81TYviQlWDiF46Ozj43Jjhc/OBueAf1c7IG/dUSnY3ZzmS3U53UoEc/11mJJSGhUpgUAMKlhvktWkZqhwpf5RMvDO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bGntB6ydsz10WmL;
-	Tue, 10 Jun 2025 20:20:02 +0800 (CST)
-Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
-	by mail.maildlp.com (Postfix) with ESMTPS id 97C5C180482;
-	Tue, 10 Jun 2025 20:24:33 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by kwepemk200016.china.huawei.com
- (7.202.194.82) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 10 Jun
- 2025 20:24:33 +0800
-From: Yi Yang <yiyang13@huawei.com>
-To: <corey@minyard.net>
-CC: <openipmi-developer@lists.sourceforge.net>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-	<lujialin4@huawei.com>
-Subject: [PATCH] ipmi: fix underflow in ipmi_create_user()
-Date: Tue, 10 Jun 2025 12:15:23 +0000
-Message-ID: <20250610121523.252149-1-yiyang13@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1749557827; c=relaxed/simple;
+	bh=omxUG8bbtsYAboaiJAE2LR4AXyYHGu7YqcfKF6Y8qZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YotjftGEVpZ1ExF84uKtNM7upnSyZLMSA93ZXmAqZSVTfCYbJqKfFTaUOYYumgORoUrOUbks9pldWCin7bZIIGFZDuoWe/ODNzza72qFdldV/ppXkjoSwlfYQTobw4vusqxSpharGw8s+Y9YBJFiIq5G5ww6fBuLTOgGRewsOm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=U6LiZTq7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=EaIbOxWHGz4F6US80CpGSyzZKAY2qo/Md4Gb+B5yJdY=; b=U6LiZTq7nBCexaEQ/Ascd7UmU8
+	9ojqDaA3EJ6lbO/MBPC3N5sP4FW2TK/uUJoCTq/xK0kLRDnM/+MEtTtGUg8PGzUNluc7lAZaPvIOK
+	soKWiXpykte4UNMdzoH3i2Kaa0+sQm6NIpS6IsSWpLHw9WxH1eG5o8T4LkSzNDNaMPoc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uOxuB-00FFx1-7p; Tue, 10 Jun 2025 14:16:39 +0200
+Date: Tue, 10 Jun 2025 14:16:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Jander <david@protonic.nl>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/3] net: phy: dp83tg720: implement soft
+ reset with asymmetric delay
+Message-ID: <534b3aed-bef5-410e-b970-495b62534d96@lunn.ch>
+References: <20250610081059.3842459-1-o.rempel@pengutronix.de>
+ <20250610081059.3842459-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemk200016.china.huawei.com (7.202.194.82)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610081059.3842459-2-o.rempel@pengutronix.de>
 
-Syzkaller reported this bug:
-==================================================================
-BUG: KASAN: global-out-of-bounds in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: global-out-of-bounds in atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
-BUG: KASAN: global-out-of-bounds in ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
-Write of size 4 at addr ffffffff8fc6a438 by task syz.5.1074/5888
+On Tue, Jun 10, 2025 at 10:10:57AM +0200, Oleksij Rempel wrote:
+> From: David Jander <david@protonic.nl>
+> 
+> Add a .soft_reset callback for the DP83TG720 PHY that issues a hardware
+> reset followed by an asymmetric post-reset delay. The delay differs
+> based on the PHY's master/slave role to avoid synchronized reset
+> deadlocks, which are known to occur when both link partners use
+> identical reset intervals.
+> 
+> The delay includes:
+> - a fixed 1ms wait to satisfy MDC access timing per datasheet, and
+> - an empirically chosen extra delay (97ms for master, 149ms for slave).
+> 
+> Co-developed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Signed-off-by: David Jander <david@protonic.nl>
 
-CPU: 0 PID: 5888 Comm: syz.5.1074 Not tainted 6.6.0+ #60
-......
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x72/0xa0 lib/dump_stack.c:106
- print_address_description.constprop.0+0x6b/0x3d0 mm/kasan/report.c:364
- print_report+0xba/0x280 mm/kasan/report.c:475
- kasan_report+0xa9/0xe0 mm/kasan/report.c:588
- check_region_inline mm/kasan/generic.c:181 [inline]
- kasan_check_range+0x100/0x1c0 mm/kasan/generic.c:187
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
- ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
- ipmi_create_user+0x56/0x80 drivers/char/ipmi/ipmi_msghandler.c:1236
- ipmi_open+0xac/0x2b0 drivers/char/ipmi/ipmi_devintf.c:97
- chrdev_open+0x276/0x700 fs/char_dev.c:414
- do_dentry_open+0x6a7/0x1410 fs/open.c:929
- vfs_open+0xd1/0x440 fs/open.c:1060
- do_open+0x957/0x10d0 fs/namei.c:3671
- path_openat+0x258/0x770 fs/namei.c:3830
- do_filp_open+0x1c7/0x410 fs/namei.c:3857
- do_sys_openat2+0x5bd/0x6a0 fs/open.c:1428
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x17a/0x210 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x59/0x110 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x78/0xe2
-RIP: 0033:0x54d2cd
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4751920048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000796080 RCX: 000000000054d2cd
-RDX: 0000000000000000 RSI: 0000000020004280 RDI: ffffffffffffff9c
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 000000000000001e R11: 0000000000000246 R12: 000000000079608c
-R13: 0000000000000000 R14: 0000000000796080 R15: 00007f4751900000
- </TASK>
+Hi Oleksij
 
-The buggy address belongs to the variable:
- ipmi_interfaces+0x38/0x40
+Since you are submitting it, your Signed-off-by should come last. The
+order signifies the developers who passed it along towards merging.
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x45a6a
-flags: 0x3fffff00004000(reserved|node=0|zone=1|lastcpupid=0x1fffff)
-raw: 003fffff00004000 ffffea0001169a88 ffffea0001169a88 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
+> ---
+>  drivers/net/phy/dp83tg720.c | 75 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 65 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
+> index 7e76323409c4..2c86d05bf857 100644
+> --- a/drivers/net/phy/dp83tg720.c
+> +++ b/drivers/net/phy/dp83tg720.c
+> @@ -12,6 +12,42 @@
+>  
+>  #include "open_alliance_helpers.h"
+>  
+> +/*
+> + * DP83TG720 PHY Limitations and Workarounds
+> + *
+> + * The DP83TG720 1000BASE-T1 PHY has several limitations that require
+> + * software-side mitigations. These workarounds are implemented throughout
+> + * this driver. This section documents the known issues and their corresponding
+> + * mitigation strategies.
 
-Memory state around the buggy address:
- ffffffff8fc6a300: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
- ffffffff8fc6a380: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
->ffffffff8fc6a400: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
-                                        ^
- ffffffff8fc6a480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffffff8fc6a500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
-==================================================================
+Is there a public errata you can reference?
 
-In the ipmi_create_user() function, the intf->nr_users variable has an
-underflow issue. Specifically, on the exception path (goto out_kfree;)
-before atomic_add_return(), calling atomic_dec() when intf->nr_users has
-not been incremented will result in an underflow.
+> + *
+> + * 1. Unreliable Link Detection and Synchronized Reset Deadlock
+> + * ------------------------------------------------------------
+> + * After a link loss or during link establishment, the DP83TG720 PHY may fail
+> + * to detect or report link status correctly. To work around this, the PHY must
+> + * be reset periodically when no link is detected.
+> + *
+> + * However, in point-to-point setups where both link partners use the same
+> + * driver (e.g. Linux on both sides), a synchronized reset pattern may emerge.
+> + * This leads to a deadlock, where both PHYs reset at the same time and
+> + * continuously miss each other during auto-negotiation.
+> + *
+> + * To address this, the reset procedure includes two components:
+> + *
+> + * - A **fixed minimum delay of 1ms** after issuing a hardware reset, as
+> + *   required by the "DP83TG720S-Q1 1000BASE-T1 Automotive Ethernet PHY with
+> + *   SGMII and RGMII" datasheet. This ensures MDC access timing is respected
+> + *   before any further MDIO operations.
+> + *
+> + * - An **additional asymmetric delay**, empirically chosen based on
+> + *   master/slave role. This reduces the risk of synchronized resets on both
+> + *   link partners. Values are selected to avoid periodic overlap and ensure
+> + *   the link is re-established within a few cycles.
 
-The relevant code has been completely rewritten in the next tree and has
-been fixed with commit 9e91f8a6c868 ("ipmi:msghandler: Remove srcu for the
-ipmi_interfaces list"). However, the issue still exists in the 5.19+
-stable branches and needs to be fixed on those branches.
+Maybe there is more about this in the following patches, i've not read
+them yet. Does autoneg get as far as determining master/slave role? Or
+are you assuming the link partners are somehow set as
+prefer_master/prefer_slave?
 
-Cc: stable@vger.kernel.org # 5.19+
-Fixes: 8e76741c3d8b ("ipmi: Add a limit on the number of users that may use IPMI")
-Signed-off-by: Yi Yang <yiyang13@huawei.com>
----
- drivers/char/ipmi/ipmi_msghandler.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 186f1fee7534..0293fad2f4f2 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -1246,18 +1246,18 @@ int ipmi_create_user(unsigned int          if_num,
-  found:
- 	if (atomic_add_return(1, &intf->nr_users) > max_users) {
- 		rv = -EBUSY;
--		goto out_kfree;
-+		goto out_dec;
- 	}
- 
- 	INIT_WORK(&new_user->remove_work, free_user_work);
- 
- 	rv = init_srcu_struct(&new_user->release_barrier);
- 	if (rv)
--		goto out_kfree;
-+		goto out_dec;
- 
- 	if (!try_module_get(intf->owner)) {
- 		rv = -ENODEV;
--		goto out_kfree;
-+		goto out_dec;
- 	}
- 
- 	/* Note that each existing user holds a refcount to the interface. */
-@@ -1281,8 +1281,9 @@ int ipmi_create_user(unsigned int          if_num,
- 	*user = new_user;
- 	return 0;
- 
--out_kfree:
-+out_dec:
- 	atomic_dec(&intf->nr_users);
-+out_kfree:
- 	srcu_read_unlock(&ipmi_interfaces_srcu, index);
- 	vfree(new_user);
- 	return rv;
--- 
-2.25.1
-
+	Andrew
 
