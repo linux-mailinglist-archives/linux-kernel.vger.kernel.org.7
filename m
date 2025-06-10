@@ -1,288 +1,115 @@
-Return-Path: <linux-kernel+bounces-680063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3887AD3FC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:00:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FAEAD3FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4A93A2C99
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:59:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6ED27A4171
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C974243369;
-	Tue, 10 Jun 2025 17:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcxEiXWT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966A61E9905;
-	Tue, 10 Jun 2025 16:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1852F24336B;
+	Tue, 10 Jun 2025 17:00:44 +0000 (UTC)
+Received: from trinity3.trinnet.net (trinity.trinnet.net [96.78.144.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89BD1EBA09;
+	Tue, 10 Jun 2025 17:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.78.144.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749574799; cv=none; b=DtN05hXmYsR+KPzMPi/EZOrH55Y+g611VFaNhpoPk7IQL9AJghAg/n630EP+GmiYi1PuAa+S0XcBgwZz4ryM9vtzFOYhWHcOYn9VLf2R0IcmvaydAhZN5nNzl0HPrunNytN8fT1LhYCri0vItbrRAJpvDa+xSYj3ajtuUY8EL3I=
+	t=1749574843; cv=none; b=DSXmDoy+OyFi9dz5C4BY97/OEPTjIAI5sCHzJwieRKQM/wMM7C47v45Ty9f8QmjveOmK0Egpyjk9ZAUmOWUrX1Lm1vNkH5ZPJpJquhT5ClKoLHXM7b+rWt6Tyxv1atLet5rs7ZWFQUYKskTFjPKakLRcfOBwqU3C9Y3LtfXJxqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749574799; c=relaxed/simple;
-	bh=OSpF9ZkhqKynpdtZ8deCD/HZpMg3Ub5prYUVfVoF9i0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rvgQilT6CsVei+6SeWvgM0czcfnlFBPE8wXyWQTL+RmQNIEyW8Ky5cIRFFI4v3ZADZy/QzZDGf+1JgygejwvpazEdbPYSr2lypqx5xOhw9RHkCFHXtcE+PlR0Ue8W5ycciwZgu6Dgwh3iH4whx1ZVFOD9/biUbd+mbGHyHOXJDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcxEiXWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6EBFFC4CEF0;
-	Tue, 10 Jun 2025 16:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749574799;
-	bh=OSpF9ZkhqKynpdtZ8deCD/HZpMg3Ub5prYUVfVoF9i0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=IcxEiXWTbBe+diAxSlYq/9NiLJ/Xc+CAqWk5Q4886K+KV1C+lAGrKi/SY3dnJHvcy
-	 aWii7B1iFB2m80qwibIrimCftGSrmLYMwwvK3fkfJEbNnj0UK3w8SKVDt0Z9B84c8J
-	 SndEH5EiOUqcM0M620gQUwJLq+LlC5mGionupeyZnUk0dIxA/KU9ZfLafub0cWgO/x
-	 V1oxZvC9lHBkL3MUi9WUpCqMwKmz92wTkaO8sRbXB6cX61IJvxSfvYhCd5QXcD0Wsj
-	 EAqBlRzjBn6vFCPM1SW44oHYcfs8EepBYR7fz8xJ6LTvbHQkpNBJED+ifjfLz/7oK9
-	 2K/xZxlIUOPlg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF7DC5B552;
-	Tue, 10 Jun 2025 16:59:59 +0000 (UTC)
-From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
-Date: Tue, 10 Jun 2025 18:59:56 +0200
-Subject: [PATCH v2] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: add
- Bluetooth support
+	s=arc-20240116; t=1749574843; c=relaxed/simple;
+	bh=Rwc4NuErVkFpHBkoUx3q2sPM3JKnIPVvz372v7HbkF4=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FnnI+RMMmo/bPaPx0AE4ITj3VDsH26EXFjTBAWhSSouyH4HswX9RaS1C/+uQHV1L6IswhZrPAo5G/cNEDm5CeKjs8pdXYtdBhwQsKLFO8S3ZHdgBRogbRcZmHwXPgKrHWYdjLhE0aou3F1HY2QUIo2oZbdI7bzk7PeuVq3iBZ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trinnet.net; spf=pass smtp.mailfrom=trinnet.net; arc=none smtp.client-ip=96.78.144.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trinnet.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trinnet.net
+Received: from trinity4.trinnet.net (trinity4.trinnet.net [192.168.0.11])
+	by trinity3.trinnet.net (TrinityOS hardened/TrinityOS Hardened) with ESMTP id 55AH05eh017638;
+	Tue, 10 Jun 2025 10:00:05 -0700
+Subject: Re: [PATCH net] netrom: fix possible deadlock in nr_rt_device_down
+To: Dan Cross <crossd@gmail.com>
+References: <20250605105449.12803-1-arefev@swemel.ru>
+ <20250609155729.7922836d@kernel.org>
+ <5f821879-6774-3dc2-e97d-e33b76513088@trinnet.net>
+ <20250609162642.7cb49915@kernel.org>
+ <4cfc85af-c13a-aa9c-a57c-bf4b6e0f2186@trinnet.net>
+ <CAEoi9W57D-BfpYUAe5M3zjJvTUQUL4UUB+iWkpRO_o8JWfS7FQ@mail.gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Denis Arefev <arefev@swemel.ru>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+        Simon Horman <horms@kernel.org>, Nikita Marushkin <hfggklm@gmail.com>,
+        Ilya Shchipletsov <rabbelkin@mail.ru>,
+        Hongbo Li <lihongbo22@huawei.com>, linux-hams@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lvc-project@linuxtesting.org, stable@vger.kernel.org,
+        syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com
+From: David Ranch <linux-hams@trinnet.net>
+Message-ID: <50676604-b8c9-cc57-1ce0-a4db4758b190@trinnet.net>
+Date: Tue, 10 Jun 2025 10:00:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-slim7x-bt-v2-1-0dcd9d6576e9@oldschoolsolutions.biz>
-X-B4-Tracking: v=1; b=H4sIAItkSGgC/22OQQ6CMBBFr0JmbQ3TaAFX3sOwANrKJJWaTm1Q0
- rtbWbt8Lz8vfwM2gQzDpdogmERMfikgDxVM87DcjSBdGGQtz/VJKsGOHs0qxiiUrhFlIzvUCGX
- /DMbSurdufeGZOPrw3tMJf/ZfJaFAoVVrO4WDbVt19U7zNHvv2LtXLH/4ONIH+pzzF7vGQOCvA
- AAA
-X-Change-ID: 20250426-slim7x-bt-6d01127291d1
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Anthony Ruhier <aruhier@mailbox.org>, 
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749574798; l=5316;
- i=jens.glathe@oldschoolsolutions.biz; s=20240919;
- h=from:subject:message-id;
- bh=MEFwA6FS4gwwcixWXBosonpMOiLeohbMEMi1CPsp0QM=;
- b=y7xcS6Txh6A6Wq8tfLtmGxLh8ddheXK1OTYAIHAoACNEzrgozpG0iogF4XrC7XPFyeghRuBHa
- /xcbaTKA0JGBKjWsm3n+fJpHSe4JpctCmKcRx+ssdEj2t85uKxpbbLM
-X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
- pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
-X-Endpoint-Received: by B4 Relay for
- jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
-X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Reply-To: jens.glathe@oldschoolsolutions.biz
+In-Reply-To: <CAEoi9W57D-BfpYUAe5M3zjJvTUQUL4UUB+iWkpRO_o8JWfS7FQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-3.0 (trinity3.trinnet.net [192.168.0.1]); Tue, 10 Jun 2025 10:00:07 -0700 (PDT)
 
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Yes, this seems like a reasonable approach though I understand all this=20
+code is old, overly complicated, and when proposed changes are=20
+available, little to no proper testing is done before it's commited and=20
+it takes a very long time to get properly fixed.
 
-To enable Bluetooth pwrseq appears to be required for the WCN7850.
-Add the nodes from QCP.
-Add uart14 for the BT interface.
+I only bring this all up as the Linux AX.25 community has been badly=20
+bitten by similar commits in the last few years.  I've tried to help=20
+find a new maintainer and/or find somewhere to possibly create and run=20
+CI tests to catch issues but I've been unsuccessful so far.
 
-Tested-by: Anthony Ruhier <aruhier@mailbox.org>
-Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
----
-This patch adds the Bluetooth support for the WCN7850 card on this laptop.
-Since WCN7850 is supposed to need pwrseq, also added this from the QCP.
+I am happy to try helping on the testing side once I know what the test=20
+harness is but I'm out of my league when it comes to the code side.
 
-This is also part of my tree [1] for the Yoga Slim 7X.
-definition for the pwrseq and regulators.
+--David
+KI6ZHD
 
-[1] https://github.com/jglathe/linux_ms_dev_kit/blob/jg/ubuntu-qcom-x1e-6.15.0-jg-6/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts 
----
-Changes in v2:
-- rebased to next-20250610
-- added tested-by from Anthony Ruhier
-- Link to v1: https://lore.kernel.org/r/20250426-slim7x-bt-v1-1-d68f961af886@oldschoolsolutions.biz
----
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  | 137 +++++++++++++++++++++
- 1 file changed, 137 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index dad0f11e8e8583df6fd8aeec5be2af86739d85fb..720a514611248bb3d6d9518c2920a11631888e5d 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -18,6 +18,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uart21;
-+		serial1 = &uart14;
- 	};
- 
- 	chosen {
-@@ -404,6 +405,101 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	vreg_wcn_0p95: regulator-wcn-0p95 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_0P95";
-+		regulator-min-microvolt = <950000>;
-+		regulator-max-microvolt = <950000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_1p9: regulator-wcn-1p9 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_1P9";
-+		regulator-min-microvolt = <1900000>;
-+		regulator-max-microvolt = <1900000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_3p3: regulator-wcn-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&wcn_sw_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		vdd-supply = <&vreg_wcn_0p95>;
-+		vddio-supply = <&vreg_l15b_1p8>;
-+		vddaon-supply = <&vreg_wcn_0p95>;
-+		vdddig-supply = <&vreg_wcn_0p95>;
-+		vddrfa1p2-supply = <&vreg_wcn_1p9>;
-+		vddrfa1p8-supply = <&vreg_wcn_1p9>;
-+
-+		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-0 = <&wcn_wlan_bt_en>;
-+		pinctrl-names = "default";
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -1045,6 +1141,16 @@ &pcie4_port0 {
- 	wifi@0 {
- 		compatible = "pci17cb,1107";
- 		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
- 	};
- };
- 
-@@ -1403,6 +1509,37 @@ usb2_pwr_3p3_reg_en: usb2-pwr-3p3-reg-en-state {
- 		drive-strength = <2>;
- 		bias-disable;
- 	};
-+
-+	wcn_sw_en: wcn-sw-en-state {
-+		pins = "gpio214";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	wcn_wlan_bt_en: wcn-wlan-bt-en-state {
-+		pins = "gpio116", "gpio117";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart14 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+		max-speed = <3200000>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+	};
- };
- 
- &uart21 {
+On 06/10/2025 06:36 AM, Dan Cross wrote:
+> On Mon, Jun 9, 2025 at 7:31=E2=80=AFPM David Ranch <linux-hams@trinnet.=
+net> wrote:
+>> That's unclear to me but maybe someone else knowing the code better th=
+an
+>> myself can chime in.  I have to assume having these locks present
+>> are for a reason.
+>
+> The suggestion was not to remove locking, but rather, to fold multiple
+> separate locks into one. That is, have a single lock that covers both
+> the neighbor list and the node list. Naturally, there would be more
+> contention around a single lock in contrast to multiple, more granular
+> locks. But given that NETROM has very low performance requirements,
+> and that the data that these locks protect doesn't change that often,
+> that's probably fine and would eliminate the possibility of deadlock
+> due to lock ordering issues.
+>
+>         - Dan C.
+>
+>> On 06/09/2025 04:26 PM, Jakub Kicinski wrote:
+>>> On Mon, 9 Jun 2025 16:16:32 -0700 David Ranch wrote:
+>>>> I'm not sure what you mean by "the only user of this code".  There a=
+re
+>>>> many people using the Linux AX.25 + NETROM stack but we unfortunatel=
+y
+>>>> don't have a active kernel maintainer for this code today.
+>>>
+>>> Alright, sorry. Either way - these locks are not performance critical=
 
----
-base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
-change-id: 20250426-slim7x-bt-6d01127291d1
-
-Best regards,
--- 
-Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-
+>>> for you, right?
+>>>
+>>
 
 
