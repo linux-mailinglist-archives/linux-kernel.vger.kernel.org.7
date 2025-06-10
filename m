@@ -1,408 +1,238 @@
-Return-Path: <linux-kernel+bounces-678559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594B8AD2AED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:34:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209B4AD2B1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 264653B2D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:34:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6961890F99
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 01:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757D313B5AE;
-	Tue, 10 Jun 2025 00:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SfLE5qNE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B695E194080;
+	Tue, 10 Jun 2025 01:06:36 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E101322338
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749515666; cv=none; b=j7wohA27tyJ5lfNhrU+tjULq0ORD4/WOcPYxD2AhkAhjrCDZ2raf1Rd+KtFM8vtOpx9DowgOmy+GFMR4EeyXH5JPQ68V4YlvWHqoOELT9CYINcoOoH1wHtZPN760eFQ7NqEGmbCommtc8juEyAlVzVx03XxMhlhKk1n9NqeTq8M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749515666; c=relaxed/simple;
-	bh=pAvXuv0PbcklzkWSk8aVr21VDYCwOprq4gRJaWgcu3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0xFGFUhBfg4KTNb3QJ0yUJpYpZzlAV/jqXBRQ+qSf8XhBB0p+R1zTVxNMX0N0UQ98GQuRmcRO04eEtV0eJ6vKTmizzzSxuAQ/MxTogx1a/Gdqwv3W+os/ho6r5/sNiqREaHjBcp+lRr519Rw1Vy40kcLUkwbXBy8Bvvr5lR6Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SfLE5qNE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559LCMWu024489
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:34:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jKXHPlovAe18pXN4Gv6r56FvRQixUbyObENb7DCEoVY=; b=SfLE5qNEkggJYc6D
-	IIgdkhOux4NnJwiTaduVwTR3oux3/Pfh7MrMhMyntNctArWm0Wg0UeujfrH7fjpC
-	PxsTMr7SB5NeNrBPrullAfIVHy8KLNzaa0en08SP2QtX5JYi5U/+fUqMb/6UsI4N
-	uFnOvzIUtcKfwKQFe5+AWnPU/eJFbQiYl93vj6KUoMnHY5V7advirb415ONoxKlm
-	KsC+bAFCjz2D0V/MkZIrHkOZM1eu3udyEfHIlF7syffannvKZkixx4R5ZilaTUeE
-	VeVLUQQu7tmfGmCJNviYcPHl4QuHXxQ+0nWPTEnsoA8EyldgDN45izWIKiPpeCKY
-	CRrpPQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn67j1s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:34:23 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-235e1d70d67so43154365ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 17:34:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749515663; x=1750120463;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKXHPlovAe18pXN4Gv6r56FvRQixUbyObENb7DCEoVY=;
-        b=woFEMGfcahCMWyft7yNlI6glcFjdouwdD9bson1QswJUNuQ1YypB1k7fabJH6hwz4F
-         D8HIBHRuyLF2GvzRUguokFV3f3CAUiP7hEgP+BGbaEUsQo1IIuPENwdNj+TVxc5+sGI0
-         aw4fGQFgIPi1WJUpZjK7mGCUW3iVK3xkWgDrhSq6bjCo6xCEW60Tp9/xe6Uu9oRYFJ+j
-         l1R1TKx7VWBuZpQjlpAmyadQz/C6yxmVGT6wRMXzmq5DBzwgvK+YzA6kNw2jlzXGt361
-         sxvcGUSuFCmT3XhEkbwvISV0TTRyBxL2Ia3vwrfhC3SYsUGz5QLgEN63wGMiNCEbuF0f
-         FMVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxVq0A42W8hDj82QNwXRVuS5fbd1YNPoxVMGE+fRgRqkGckFbVy/Gre5AXMnyUWLf7wMP7tSxpxLpn0ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxEn794qE4PB7XFHqWOtM9ZcX0uQXswOLyopbxpq5zN1JQQKFp
-	lLUPFrEVvGWRaDin7zre/1GoFMGLdvQxSWdE5Qhoej7j/G/j9eY1j3H37DiW0ZwT4udlQIbIYSp
-	Qcu2gjh4oPjuVUnlO7xsYQeWS4rZFh2daYN/EUGdF7p3Fd3tqnSJrs3SqCSv0Kbx+MA==
-X-Gm-Gg: ASbGncslyPDt3Ge8z4+aqdCpRqr02UtMKjbereK3V3nsozWa/wvWJlJStGUw3NZxgJ9
-	9GAW/H/jV2peKI+GoJTfeWNeqsVZaZF/m3QICG37D3oeA7sDiRbn6V1+oRks2GLfzoLbF+7KdaJ
-	hiOMDMvtwiV5rxtb7fT4p7a6ln1FW6rtqgNdwIl8nqI+eDejVlCUczuHbQXjMGC5MgjyJMsO+VK
-	lfI3jaHmn6NATH2kui1bm56g9t3hBF7+75ugddlUXR5p+YOWO5bOUTorJMV3t1B1rjw7iKbTZQF
-	ZVu1KERNg66iKCAnp4PrEqke0tkktN9rf3yw20fxq6djACbC7rM71wTeWGO/MMW8dIxrOC65zqO
-	kYe3NDe308XXDAhbUsfr9
-X-Received: by 2002:a17:902:fc4b:b0:234:8c64:7875 with SMTP id d9443c01a7336-23601d96e8dmr245721525ad.38.1749515662812;
-        Mon, 09 Jun 2025 17:34:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE+4EiD9fyaogbUaMbdStFIwBRIn6968q0b03DmNNBp1CVezcKYxw6brYzabzVeVDmZmhU4lg==
-X-Received: by 2002:a17:902:fc4b:b0:234:8c64:7875 with SMTP id d9443c01a7336-23601d96e8dmr245721035ad.38.1749515662328;
-        Mon, 09 Jun 2025 17:34:22 -0700 (PDT)
-Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603504f09sm60227715ad.223.2025.06.09.17.34.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Jun 2025 17:34:21 -0700 (PDT)
-Message-ID: <8a6dbce8-a4ac-4871-aed0-8d3ae56f8c0a@oss.qualcomm.com>
-Date: Tue, 10 Jun 2025 10:34:17 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0D61494D9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 01:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=156.147.23.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749517596; cv=fail; b=WLpmeTm3AIpv0kgEUrW8vjTGEbZgY0MuVkImwBkSwwuoelUiLAk9Ua1NIJMXdnNhdwceFDUIdrc2RauocNprKebnKeFLOLFFuoFeZs6p3RLH+fPnyF6yCF+Drz3m04IxzlwN1eXuW6oMNce2qG9Tce2f7cmosA64InZ78hHkTgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749517596; c=relaxed/simple;
+	bh=kl+B0Ys0CUwz+4MwgppJgXq4kzQDfMcci89PwHeZjtg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BeYv6j3v/0A4KS5e9byxDgfYHp+YDN/JzGCvo25RcbNzLP/92KOvN3JtcLMXiAd3Y9bq5GcqGIlj38t9yMq/hWVjj/aNPX3sDdKCgCS7eJYZCD4MTbf6IaZ5XvU2n8ICIPCSczhuNY7elhilIKlwvlTVegn3FufOdwufYGfHrkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=fail smtp.client-ip=156.147.23.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+	by 156.147.23.52 with ESMTP; 10 Jun 2025 09:36:30 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO sniperexo3.lge.com) (165.244.66.183)
+	by 156.147.1.151 with ESMTP; 10 Jun 2025 09:36:30 +0900
+X-Original-SENDERIP: 165.244.66.183
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO SE2P216CU007.outbound.protection.outlook.com) (40.93.138.29)
+	by 165.244.66.183 with ESMTP; 10 Jun 2025 09:39:38 +0900
+X-Original-SENDERIP: 40.93.138.29
+X-Original-SENDERCOUNTRY: unknown
+X-Original-MAILFROM: chanho.min@lge.com
+X-Original-RCPTTO: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	soc@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xegq5YnqVC2/CDVTM/Etzor7Cw+ppmOHPwSV15xodQmHjVWJxzBIgVJL8V0X7YivI1V3fA+VmjbSoDwyrW1WoLscUD+URmn6kRsvwyUcEDanY+j4Ogh4JMiOIvtIdePlAyoCCg7gOXAoRN9lU4G6uCYJER0nDaFxdz/kZJr/EzKw2psSCvqxnYNiwVbz78ugK1ppCQ2qSRGxwUGy0BZ1E+kwe7vko7Y96gK4Ate9C3dmbI014IJqkNhikoGiBmqOzzQHM3MVwDeHSHsGylSNGygSEB0CFnPQscBw6lKpT7nEtYaBxKjgojdmKTZ3jQDKgf2fMdUPLC1ICdCaWEKnjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kl+B0Ys0CUwz+4MwgppJgXq4kzQDfMcci89PwHeZjtg=;
+ b=vI35U+jdjorifglb7dWzxkrtyfn8QgCfQvNlMfHXLLG7FGRkHsDFAlvZk5hgI37eXN3UlbRRdXDcvNz6ek2eCBDMDNeO2NZBocQs/lJmVkiM3/XjfUHIy5JznSzdZr050GTTosYbnMxOV/AAMsRhpOZ0F89Ex7MZhG/lO4QtKb7LLKYy3ULXXQ0SzEBaz3jWaEY1Fbmv+ff1Y9bRr+CCuNnQ+mjM3pKESkbuVBRpW+NiyGHu5JkXRZmimxHZL2rtE8MyXNFwYESDstR9D75KNpvlc3MpZnjnV1MGLx2DgPkUsADit6sRWKKdz0O+spUh0n4q586I5LKTrUVri4Lk6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=lge.com; dmarc=pass action=none header.from=lge.com; dkim=pass
+ header.d=lge.com; arc=none
+Received: from PUWP216MB2640.KORP216.PROD.OUTLOOK.COM (2603:1096:301:13b::13)
+ by PU4P216MB1933.KORP216.PROD.OUTLOOK.COM (2603:1096:301:10b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.31; Tue, 10 Jun
+ 2025 00:36:29 +0000
+Received: from PUWP216MB2640.KORP216.PROD.OUTLOOK.COM
+ ([fe80::cebe:6aad:6fa4:dbf9]) by PUWP216MB2640.KORP216.PROD.OUTLOOK.COM
+ ([fe80::cebe:6aad:6fa4:dbf9%3]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
+ 00:36:29 +0000
+From: =?ks_c_5601-1987?B?uc7C+cijL8OlwNO/rLG4v/gvU1cgUGxhdGZvcm0ov6wpQWR2YW5j?=
+ =?ks_c_5601-1987?Q?ed_OS_TP?= <chanho.min@lge.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>, "soc@kernel.org" <soc@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+	=?ks_c_5601-1987?B?wMywx8ijL1RQIExlYWRlci9TVyBQbGF0Zm9ybSi/rClBZHZhbmNl?=
+ =?ks_c_5601-1987?Q?d_OS_TP?= <gunho.lee@lge.com>
+Subject: Re: [PATCH 0/2] arm64: dts: lg: DT cleanups
+Thread-Topic: [PATCH 0/2] arm64: dts: lg: DT cleanups
+Thread-Index: AQHb2YkuOxbca0O3J0e9Ys9P/v4zlrP7f/tF
+Date: Tue, 10 Jun 2025 00:36:29 +0000
+Message-ID:
+ <PUWP216MB26405E1AB53BD624610247FF9C6BA@PUWP216MB2640.KORP216.PROD.OUTLOOK.COM>
+References: <20250609-dt-lg-fixes-v1-0-e210e797c2d7@kernel.org>
+In-Reply-To: <20250609-dt-lg-fixes-v1-0-e210e797c2d7@kernel.org>
+Accept-Language: ko-KR, en-US
+Content-Language: ko-KR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=lge.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUWP216MB2640:EE_|PU4P216MB1933:EE_
+x-ms-office365-filtering-correlation-id: fbbe31af-c090-4aef-0006-08dda7b6d735
+x-ld-processed: 5069cde4-642a-45c0-8094-d0c2dec10be3,ExtFwd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|7053199007|38070700018;
+x-microsoft-antispam-message-info:
+ =?ks_c_5601-1987?B?UUVvd29KNGRtU0Y5NEZ0VjV1U1BqSWlmSlBOZFhGbU1nS3hSNFBz?=
+ =?ks_c_5601-1987?B?bTR6d2NlUU15V3FQMGVFcGExM0lJa0l6VG10ZmMveWtuOXpsL1J0?=
+ =?ks_c_5601-1987?B?aCs4OHNlV1o0R2hiUUtMZ2hzSzZzVEV6N1ZRUDg4RnJocGRHRk9J?=
+ =?ks_c_5601-1987?B?ejhPWUphS3lhVTZrWlcwWFhPMzYvZm5GZEpzdndsQjdDRko4MTZE?=
+ =?ks_c_5601-1987?B?VDF6c2NTb20rOWF3K3FNZWp2WitKZDZZYVJtTmNYMVRVajFqd0F3?=
+ =?ks_c_5601-1987?B?ekRWSmlxaUNDS1hNUUtTNzl4ekxRRmZkbGxRdU5LYzhsUkxCV1Ax?=
+ =?ks_c_5601-1987?B?bEpwaisrSnA4c1pzVmZzZXp3YlRFM0JpV1lydGtXVGwxRDlPQ0xY?=
+ =?ks_c_5601-1987?B?V3NzR1d0MEN0eFRnaHdxNnhZdW9DQ1Q3b2FXTS82MElIczlqWmJi?=
+ =?ks_c_5601-1987?B?cC9aZXVKUDVsMW5QT09OTGthZ1ZVWnNXa2pDVTYvMWlxMXdYa1VG?=
+ =?ks_c_5601-1987?B?dWEyM3BFU1pkcXl4NEhuOEJ4MFRoSFk1ZG41OFhNN1hJMHFwUjln?=
+ =?ks_c_5601-1987?B?ckY3SXBtNXROdzRZNlpNMmpQVmowL1FWUS9taDZOWkJCUURYRVNL?=
+ =?ks_c_5601-1987?B?T0ZVSEk1WldxUXVwTW1McGdyL0hEM1NtanAvTTA4bWxqUGVSbWRN?=
+ =?ks_c_5601-1987?B?YjlhcEppSUpKUnR5ZTNacmkxTzZPRnpQY2pxelV4TzhkTnVZWHJL?=
+ =?ks_c_5601-1987?B?c2dUanpIYm02L2hrWlNFd25BMVNvUDdOcDRmZnIzL1BXejd5czJ2?=
+ =?ks_c_5601-1987?B?RkY0aktDNk1Dc2VqeEovdTJ6RGc4eE9NckhQVW1uZUJMVEpMWEZ2?=
+ =?ks_c_5601-1987?B?andZRVV4V0F4Qmc4Vko5VENuWFh3WVJsSU1QZ2ExMUcwaFVGWlVl?=
+ =?ks_c_5601-1987?B?dldNT2RzSVNISjVUd3dUaTRMQk9mMjQxVVk2WVFRbno2YVpYbENW?=
+ =?ks_c_5601-1987?B?VlpEczR6UndONTVqSkNCbVFjakc3c08wclM1OVNxRkIvUnBHZ1Vi?=
+ =?ks_c_5601-1987?B?akpBUEY0cURWR24xd1pudlUzMmZhbG1sNjBGZjVlNjFVNVgxcW0x?=
+ =?ks_c_5601-1987?B?MDN2SWozellwU0ppM0NwNHlQemFaU0xTczVvZHBOTzhpdDM3SDNr?=
+ =?ks_c_5601-1987?B?WHJPRUpxamlTd1RsVENsSzhYWjJ2UjZ4MGdxQlp5S3Z6eHhXL0Rz?=
+ =?ks_c_5601-1987?B?NVc3dEpLMlZ5K01ES0RXM0k1OFZ0QkRSekk4ZlMwZHB4QVZJcko0?=
+ =?ks_c_5601-1987?B?VUNWaWgyZnFoVUVGVWFJQUVQN1V2Z1BabEN0STV5bzdSc0dYQW1v?=
+ =?ks_c_5601-1987?B?QjJ2ZGxuY3FzeXVqQ1Z2MzFnWVE0Zkt1dUIwdVQxTXhMWlNFVnlq?=
+ =?ks_c_5601-1987?B?bnRCdUhxL2ZTRWw5d0ZUVThUTkJidnhTbitrd0V4ZUhaS05qcWhY?=
+ =?ks_c_5601-1987?B?QmNqQTNUZUlxNUJkemYvTkFCQlhOZmxvNi9zdEUwQ0xaZGZneUpL?=
+ =?ks_c_5601-1987?B?dXMyQ0JuczlENnJzWHRlZG9YSDhVc2xva01TVHlsQ3ZoSmpMZnhO?=
+ =?ks_c_5601-1987?B?Y1JkeXpoSCtKWWxzVERSWTlCazEwTDVnVTBkaSt0Wlo5dFliT2dB?=
+ =?ks_c_5601-1987?B?bCtPdERBNDhaTHU3VFpLRXMyYk56eDhTQ0hTdHZncU5panNHTnNJ?=
+ =?ks_c_5601-1987?B?Rm5EcU1GY1hXK2YzNDJJRXd0cjF4QlQvRysrRERmR0lHOU5jRGdj?=
+ =?ks_c_5601-1987?B?MnlDZ0UyQkhPTGtwZ0xhOE9Ubkp3d3ludDBuZDZzMUN1UGNpbitZ?=
+ =?ks_c_5601-1987?B?b2VPZUJQVkJyZXBOeVVFcSsrT0cyS0x4VjZQWHBkU0FPMFBLNlB5?=
+ =?ks_c_5601-1987?B?V0JDOEdMV3B1MFU0WEgvWkVkRFhlUGoyYUVKWjZicVRCODRuL3Vo?=
+ =?ks_c_5601-1987?B?TkJxY05ob05IR0VFREJNV3hKUWNkRG93QVVLcUkwV3dxekFKVjM2?=
+ =?ks_c_5601-1987?B?b1BaVnl6UUgya3NjajRBR3ZkbHpRYW5SQjlaUnpTQ25TMlM5THk0?=
+ =?ks_c_5601-1987?B?c3U1NXE4ZDJCTXBpUFcyZTBIblYwSHBkSDlUOFFSek1kdStVdStJ?=
+ =?ks_c_5601-1987?B?Tk1qOTh1c3lmT09hbVdsNGhHOVlHbit1U0JFWWlxZzhGQ2RBajUx?=
+ =?ks_c_5601-1987?B?YXBFdnFXcnB5cnF3ZWl5dXVtZG9zYUtzbXZObTNtR2JkM3NoNDlX?=
+ =?ks_c_5601-1987?B?RU0xVmluM3c5V2x3PT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ko;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUWP216MB2640.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?ks_c_5601-1987?B?dWFoK2VoaEZ2TXkxWHBTY0dFQUdYaG85Z3IvdVZxRGlGRVdlbGxY?=
+ =?ks_c_5601-1987?B?RXpkWTNLeUlxSXZwVHJxYXdGOEI0Q3FxWU9BL1R4bnBIUWFQRWJU?=
+ =?ks_c_5601-1987?B?LzU1UHgwelI2eUZTMWl4Q1FZT0tiUEVGdFFjZmt6dldTdXFYOE1O?=
+ =?ks_c_5601-1987?B?WjZhQ2x5RVpXc09PUGhGMitZWmd6bjRJVnNMVnY3QmI0UDA5czlQ?=
+ =?ks_c_5601-1987?B?Wmg4ejFmWGluclpVTzJCVDd1bkdyVGE2aHVtdXROcmFLVnhUb0l4?=
+ =?ks_c_5601-1987?B?Qk5LWGUvUVdodWU3QjVKKzVydklmS2o0MFAzMnAwb1NEVk82b1FT?=
+ =?ks_c_5601-1987?B?S1dZS0QyT0lRWGJ6UFF0S1FGcTQ1amxYejlJNldNbVVQK1VNUW5o?=
+ =?ks_c_5601-1987?B?aGY4WHVuaWNBM1hYR0dTbHZmOG40WDZZazJRcm5FbElCNFcrZHZN?=
+ =?ks_c_5601-1987?B?cmpmRndyRTN3NWRlbzdRU3pvNXFmN1J6T1NZU2NrOE5PMHY2UFp6?=
+ =?ks_c_5601-1987?B?d3BXaDgrQldRN2U2WWxvSHA1NVVxTGo3enMzNlJ3MnFjcWVOQmhk?=
+ =?ks_c_5601-1987?B?TmlUTVl1ODAzOHdBWHhGRS83V1ZtM3R0Zk1mQ1JTbXFvUDF0UXZI?=
+ =?ks_c_5601-1987?B?V0laUUxLTTdQUDhMY2RXaU5MUlkwbW9OdDIrd0RhdGdkVFFxQXBU?=
+ =?ks_c_5601-1987?B?Qk1wZDF1L21oWlhJcFprTkhuNC9KSmNPOHArbkxVeEh4bkt0V2lW?=
+ =?ks_c_5601-1987?B?K3luSFJmNWc3VWFwOWhsNTJuenNubXZWTkp3QnQvanphc3kvRFFi?=
+ =?ks_c_5601-1987?B?RTFibVJHdVJINmZTSnhHMjBmeVZOdXFwRy9lUkc4dWFQN01MVlJq?=
+ =?ks_c_5601-1987?B?UXowZnFjUjVzT1k2OC9CZEI5M1JmcmUrV082UnVjR3JzaHVBbGNm?=
+ =?ks_c_5601-1987?B?M3JwWHl5UW5ZanQyMUFoY1YvSjhSS3lnY2k5ZkRIdDNEZE53TEtY?=
+ =?ks_c_5601-1987?B?V3U0NW93amdSRzcxQkxtaytJYUZYeUk2b1AvOU5xSUVqOEd2L1dB?=
+ =?ks_c_5601-1987?B?bWp3QWtscCtDdVZaNUIxUFlUajl6dllkU1VlNUw1Tks3S3Z5YUIw?=
+ =?ks_c_5601-1987?B?U2Zya29pWkdDRGJlMVVON1hYbG9rb0JGUmZTc01LeE84cExGSGVt?=
+ =?ks_c_5601-1987?B?NDhFSW56elVXdkVYQkhZUkdPUTdBaXdzenBZSTdKa05Ib2hpcjJB?=
+ =?ks_c_5601-1987?B?bVBGNXQ0QmM2UjZ6V1JLM1BOazY1Ni81OE5rUi9heDRlN2FYRURK?=
+ =?ks_c_5601-1987?B?NTdKTyt6UmRqZ3I3OFREOFp0TFJyd21uU3Rpb1JGOUp6ZFd6WGlh?=
+ =?ks_c_5601-1987?B?SktDWEZUTFNEM3laZlBOSldIRThrMnp5NVFGVjZreDFTTFRLQ3lN?=
+ =?ks_c_5601-1987?B?OU96UFRwSGtzdkZWMDl0c0t1R09ROWtYSEdUeGUxY2tNNXFvMFR3?=
+ =?ks_c_5601-1987?B?RHdFd0E3bjVJWVRjei9vS0xSaEx0c05NbE1WVURMSDVGek5saWw4?=
+ =?ks_c_5601-1987?B?c05mZjRJQXZIbENNaGlvZzdKdlk1STRoOEV2NjE2ekRoblR2MjNH?=
+ =?ks_c_5601-1987?B?V0REZVpZQ1IzU0xkSkVuYUkzTEhQRzZzVUNUbng0VHQvRHE0ZVFm?=
+ =?ks_c_5601-1987?B?c3Q4UGtzeXc4YWx0b2lidmxHVzRPZ3A0b2YxOFN0MHBIZFY4MXZX?=
+ =?ks_c_5601-1987?B?NUxEeDRPdXE1aGFqTE15RWp5bENxV3Z6aTQxZU5SYnVOOTdrRUMw?=
+ =?ks_c_5601-1987?B?ZjR2dEU4RjhOOENQdGp2dG9aYjBzeTZZQ1hGbVJJTGJaZG1SUGVu?=
+ =?ks_c_5601-1987?B?am5YdnVrRlhEdE5LNENVYTdVZnNvV1owWU1aSVVUcmFLa2c4UXpS?=
+ =?ks_c_5601-1987?B?TytsK0tjaTRnTytkVzRDWDF1RFNoUDlsZGZNamlCTjlWQlpjU0ZD?=
+ =?ks_c_5601-1987?B?U1VHL0R1bVFIeXlDSE1ZUVN2M2taUnZjN3gvWkdaRENxOFZNNGJP?=
+ =?ks_c_5601-1987?B?dEtsSHZwK1I0eHlsaGNMOHMwTEMyRjh6SXgzWWxpZURrOXlJLzlM?=
+ =?ks_c_5601-1987?B?cWpvOS8veCtVWmRsd3EwMGRrLzNrZEloK1B2ZjhnZmFuenhPc2xL?=
+ =?ks_c_5601-1987?B?NEFxN3lhRDRsaGZ5Rm9CN1dKLzBiVXJTbVRQTG1uY2VoTjV6V2ZX?=
+ =?ks_c_5601-1987?B?Q25FVGp5d080TGJWWU1hdFFoTjlmZE8wQm1LN3NUTUNnMXpmQ3M5?=
+ =?ks_c_5601-1987?B?dC9DbndQL2hjb1hvTUZrRjRYaEJnMXhwbXAvcVBSeC9ERnpGc0tZ?=
+ =?ks_c_5601-1987?B?TkRDS0plOXZqdW0yblZ4ckFWU2lKS2dqQmFUbytLU01tU3ZEalJ3?=
+ =?ks_c_5601-1987?Q?JddYcPdlH4FwSdkcU5z7KGJviB7BL7tpFFanobeM?=
+Content-Type: text/plain; charset="ks_c_5601-1987"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tee: optee: prevent use-after-free when the client exits
- before the supplicant
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: Sumit Garg <sumit.garg@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org
-References: <20250605-fix-use-after-free-v1-1-a70d23bff248@oss.qualcomm.com>
- <CAHUa44EyGXswbYLgdrfH_cMSyadgVUAJDGAMdsPXQVN7V7Nhsw@mail.gmail.com>
-Content-Language: en-US
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-In-Reply-To: <CAHUa44EyGXswbYLgdrfH_cMSyadgVUAJDGAMdsPXQVN7V7Nhsw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDAwMiBTYWx0ZWRfX6eIihZ9TjxOx
- KCzA3lxoN+qp0hM7fjER4k89cFxpJe2romGyM+Yq180tB0CUR59C0k9THpB4jWo6um4LI/Q2VGw
- eIvEp2959QlHRk2NvPHpDbp1OyDiGF8wj8NZ9H69d6gqF45DOa/rNbJ3O3XKvqgvBDUfA3WOtu2
- MG9G0lV0AdzTOwm9KOsCmNZ6h+yg9olv+K/WcPBPWzYSng6C8PUa+MpsaNDcJMLYoTt/SQuN8vw
- RjoDoivZ1cnK3aayAPIDbU1IQg8Wq3Ng6Oj1LWmrWp5klMUo8FDreI6D196M9QhZIsgG6UlaLkV
- 2b8/BvPSv6uJIvhVuBE5VPEqkEjSVT3f5ff1Xz4uHZdAFiqjGwJQN6F+psmzJWrv25vTCcWZf9g
- W4hjmWUdA3DpTGBmh8W5C4fbJIJeli9jKVIHNXWO4HbfX/f/sjweMVBgePyuEK/KqskOCrMt
-X-Proofpoint-GUID: 01K1ZUkC7hGnBmn27PF2cNXduFoMlTjw
-X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=68477d8f cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=hWFDaL5eoG7oPyYckLUA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: 01K1ZUkC7hGnBmn27PF2cNXduFoMlTjw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-09_10,2025-06-09_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506100002
+X-OriginatorOrg: lge.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PUWP216MB2640.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbbe31af-c090-4aef-0006-08dda7b6d735
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jun 2025 00:36:29.2168
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5069cde4-642a-45c0-8094-d0c2dec10be3
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ME+CEMAnZidRSMZT/bdOXMCUwKuWlj2u030J6noXsBwWoGnwRSA4yFTCy6n1Ke7fVwe/4MfbKptkGWOQmxMTYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU4P216MB1933
 
-Hi Jens,
-
-On 6/9/2025 11:00 PM, Jens Wiklander wrote:
-> Hi Amir,
-> 
-> On Fri, Jun 6, 2025 at 4:01 AM Amirreza Zarrabi
-> <amirreza.zarrabi@oss.qualcomm.com> wrote:
->>
->> Commit 70b0d6b0a199 ("tee: optee: Fix supplicant wait loop") made the
->> client wait as killable so it can be interrupted during shutdown or
->> after a supplicant crash. This changes the original lifetime expectations:
->> the client task can now terminate while the supplicant is still processing
->> its request.
->>
->> If the client exits first it removes the request from its queue and
->> kfree()s it, while the request ID remains in supp->idr. A subsequent
->> lookup on the supplicant path then dereferences freed memory, leading to
->> a use-after-free.
->>
->> Serialise access to the request with supp->mutex:
->>
->>   * Hold supp->mutex in optee_supp_recv() and optee_supp_send() while
->>     looking up and touching the request.
->>   * Let optee_supp_thrd_req() notice that the client has terminated and
->>     signal optee_supp_send() accordingly.
->>
->> With these changes the request cannot be freed while the supplicant still
->> has a reference, eliminating the race.
->>
->> Fixes: 70b0d6b0a199 ("tee: optee: Fix supplicant wait loop")
->> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
->> ---
->>  drivers/tee/optee/supp.c | 114 ++++++++++++++++++++++++++++++++---------------
->>  1 file changed, 77 insertions(+), 37 deletions(-)
->>
->> diff --git a/drivers/tee/optee/supp.c b/drivers/tee/optee/supp.c
->> index d0f397c90242..62c9c75f48a6 100644
->> --- a/drivers/tee/optee/supp.c
->> +++ b/drivers/tee/optee/supp.c
->> @@ -9,6 +9,7 @@
->>
->>  struct optee_supp_req {
->>         struct list_head link;
->> +       int id;
->>
->>         bool in_queue;
->>         u32 func;
->> @@ -19,6 +20,9 @@ struct optee_supp_req {
->>         struct completion c;
->>  };
->>
->> +/* It is temporary request used for invalid pending request in supp->idr. */
->> +static struct optee_supp_req invalid_req;
-> 
-> Prefer avoiding global variables where possible.
-> 
-
-Ack.
-
->> +
->>  void optee_supp_init(struct optee_supp *supp)
->>  {
->>         memset(supp, 0, sizeof(*supp));
->> @@ -102,6 +106,7 @@ u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t num_params,
->>         mutex_lock(&supp->mutex);
->>         list_add_tail(&req->link, &supp->reqs);
->>         req->in_queue = true;
->> +       req->id = -1;
->>         mutex_unlock(&supp->mutex);
->>
->>         /* Tell an eventual waiter there's a new request */
->> @@ -117,21 +122,40 @@ u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t num_params,
->>         if (wait_for_completion_killable(&req->c)) {
->>                 mutex_lock(&supp->mutex);
->>                 if (req->in_queue) {
->> +                       /* Supplicant has not seen this request yet. */
->>                         list_del(&req->link);
->>                         req->in_queue = false;
->> +
->> +                       ret = TEEC_ERROR_COMMUNICATION;
->> +               } else if (req->id  == -1) {
->> +                       /*
->> +                        * Supplicant has processed this request. Ignore the
->> +                        * kill signal for now and submit the result.
->> +                        */
->> +                       ret = req->ret;
->> +               } else {
->> +                       /*
->> +                        * Supplicant is in the middle of processing this
->> +                        * request. Replace req with invalid_req so that the ID
->> +                        * remains busy, causing optee_supp_send() to fail on
->> +                        * the next call to supp_pop_req() with this ID.
->> +                        */
->> +                       idr_replace(&supp->idr, &invalid_req, req->id);
->> +                       ret = TEEC_ERROR_COMMUNICATION;
->>                 }
->> +
->> +               kfree(req);
->>                 mutex_unlock(&supp->mutex);
->> -               req->ret = TEEC_ERROR_COMMUNICATION;
->> +       } else {
->> +               ret = req->ret;
->> +               kfree(req);
->>         }
->>
->> -       ret = req->ret;
->> -       kfree(req);
->> -
->>         return ret;
->>  }
->>
->>  static struct optee_supp_req  *supp_pop_entry(struct optee_supp *supp,
->> -                                             int num_params, int *id)
->> +                                             int num_params)
->>  {
->>         struct optee_supp_req *req;
->>
->> @@ -153,8 +177,8 @@ static struct optee_supp_req  *supp_pop_entry(struct optee_supp *supp,
->>                 return ERR_PTR(-EINVAL);
->>         }
->>
->> -       *id = idr_alloc(&supp->idr, req, 1, 0, GFP_KERNEL);
->> -       if (*id < 0)
->> +       req->id = idr_alloc(&supp->idr, req, 1, 0, GFP_KERNEL);
->> +       if (req->id < 0)
->>                 return ERR_PTR(-ENOMEM);
->>
->>         list_del(&req->link);
->> @@ -214,7 +238,6 @@ int optee_supp_recv(struct tee_context *ctx, u32 *func, u32 *num_params,
->>         struct optee *optee = tee_get_drvdata(teedev);
->>         struct optee_supp *supp = &optee->supp;
->>         struct optee_supp_req *req = NULL;
->> -       int id;
->>         size_t num_meta;
->>         int rc;
->>
->> @@ -223,16 +246,45 @@ int optee_supp_recv(struct tee_context *ctx, u32 *func, u32 *num_params,
->>                 return rc;
->>
->>         while (true) {
->> -               mutex_lock(&supp->mutex);
->> -               req = supp_pop_entry(supp, *num_params - num_meta, &id);
->> -               mutex_unlock(&supp->mutex);
->> +               scoped_guard(mutex, &supp->mutex) {
->> +                       req = supp_pop_entry(supp, *num_params - num_meta);
->> +                       if (!req)
->> +                               goto wait_for_request;
->>
->> -               if (req) {
->>                         if (IS_ERR(req))
->>                                 return PTR_ERR(req);
->> -                       break;
->> +
->> +                       /*
->> +                        * Popped a request: process it while holding the lock,
->> +                        * so that optee_supp_thrd_req() doesn't pull the
->> +                        * request out from under us.
->> +                        */
->> +
->> +                       if (num_meta) {
->> +                               /*
->> +                                * tee-supplicant support meta parameters ->
->> +                                * requests can be processed asynchronously.
->> +                                */
->> +                               param->attr =
->> +                                       TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT |
->> +                                       TEE_IOCTL_PARAM_ATTR_META;
->> +                               param->u.value.a = req->id;
->> +                               param->u.value.b = 0;
->> +                               param->u.value.c = 0;
->> +                       } else {
->> +                               supp->req_id = req->id;
->> +                       }
->> +
->> +                       *func = req->func;
->> +                       *num_params = req->num_params + num_meta;
->> +                       memcpy(param + num_meta, req->param,
->> +                              sizeof(struct tee_param) * req->num_params);
-> 
-> This is the point at which this function must break out of the loop
-> and return the request, or it will be lost.
-> 
-> Cheers,
-> Jens
-> 
-
-Right. I'll update.
-
-Regards,
-Amir
-
->>                 }
->>
->> +               /* Check for the next request in the queue. */
->> +               continue;
->> +
->> +wait_for_request:
->>                 /*
->>                  * If we didn't get a request we'll block in
->>                  * wait_for_completion() to avoid needless spinning.
->> @@ -245,27 +297,6 @@ int optee_supp_recv(struct tee_context *ctx, u32 *func, u32 *num_params,
->>                         return -ERESTARTSYS;
->>         }
->>
->> -       if (num_meta) {
->> -               /*
->> -                * tee-supplicant support meta parameters -> requsts can be
->> -                * processed asynchronously.
->> -                */
->> -               param->attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT |
->> -                             TEE_IOCTL_PARAM_ATTR_META;
->> -               param->u.value.a = id;
->> -               param->u.value.b = 0;
->> -               param->u.value.c = 0;
->> -       } else {
->> -               mutex_lock(&supp->mutex);
->> -               supp->req_id = id;
->> -               mutex_unlock(&supp->mutex);
->> -       }
->> -
->> -       *func = req->func;
->> -       *num_params = req->num_params + num_meta;
->> -       memcpy(param + num_meta, req->param,
->> -              sizeof(struct tee_param) * req->num_params);
->> -
->>         return 0;
->>  }
->>
->> @@ -297,12 +328,21 @@ static struct optee_supp_req *supp_pop_req(struct optee_supp *supp,
->>         if (!req)
->>                 return ERR_PTR(-ENOENT);
->>
->> +       /* optee_supp_thrd_req() already returned to optee. */
->> +       if (req == &invalid_req) {
->> +               req = ERR_PTR(-ENOENT);
->> +               goto failed_req;
->> +       }
->> +
->>         if ((num_params - nm) != req->num_params)
->>                 return ERR_PTR(-EINVAL);
->>
->> +       req->id = -1;
->> +       *num_meta = nm;
->> +failed_req:
->>         idr_remove(&supp->idr, id);
->>         supp->req_id = -1;
->> -       *num_meta = nm;
->> +
->>
->>         return req;
->>  }
->> @@ -328,9 +368,8 @@ int optee_supp_send(struct tee_context *ctx, u32 ret, u32 num_params,
->>
->>         mutex_lock(&supp->mutex);
->>         req = supp_pop_req(supp, num_params, param, &num_meta);
->> -       mutex_unlock(&supp->mutex);
->> -
->>         if (IS_ERR(req)) {
->> +               mutex_unlock(&supp->mutex);
->>                 /* Something is wrong, let supplicant restart. */
->>                 return PTR_ERR(req);
->>         }
->> @@ -358,6 +397,7 @@ int optee_supp_send(struct tee_context *ctx, u32 ret, u32 num_params,
->>
->>         /* Let the requesting thread continue */
->>         complete(&req->c);
->> +       mutex_unlock(&supp->mutex);
->>
->>         return 0;
->>  }
->>
->> ---
->> base-commit: 3be1a7a31fbda82f3604b6c31e4f390110de1b46
->> change-id: 20250604-fix-use-after-free-8ff1b5d5d774
->>
->> Best regards,
->> --
->> Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
->>
-
+PiBUaGlzIHNob3J0IHNlcmllcyBmaXhlcyBzb21lIGFybSxwbDAxMSBEVCBzY2hlbWEgd2Fybmlu
+Z3MuIEkgbm90aWNlZA0KPiB0aGF0IHRoZSBsZzEzMTIgYW5kIGxnMTMxMyAuZHRzaSBmaWxlcyBh
+cmUgYWxtb3N0IGlkZW50aWNhbCwgc28gSSd2ZQ0KPiByZWZhY3RvcmVkIHRoZW0gdG8gbWFrZSB0
+aGUgZml4IG9uY2UgaW5zdGVhZCBvZiB0d2ljZS4NCg0KPiBBcm5kLCBZb3UgcHJvYmFibHkgbmVl
+ZCB0byB0YWtlIHRoaXMgZGlyZWN0bHkgaWYgTEcgbWFpbnRhaW5lcnMgZG9uJ3QNCj4gcmVzcG9u
+ZC4NCg0KQWNrZWQtYnk6IENoYW5obyBNaW4gPGNoYW5oby5taW5AbGdlLmNvbT4NCg0KVGhhbmtz
+LA0KQ2hhbmhvDQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCrq4
+s70gu+e29zogUm9iIEhlcnJpbmcgKEFybSkgPHJvYmhAa2VybmVsLm9yZz4NCrq4s70gs6/CpTog
+MjAyNbPiIDa/+SAxMMDPIMitv+TAzyAwNjo1NA0Kud60wiC757b3OiBzb2NAa2VybmVsLm9yZzsg
+uc7C+cijL8OlwNO/rLG4v/gvU1cgUGxhdGZvcm0ov6wpQWR2YW5jZWQgT1MgVFA7IEtyenlzenRv
+ZiBLb3psb3dza2k7IENvbm9yIERvb2xleQ0KwvzBtjogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
+bmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZw0Kwaa48TogW1BBVENIIDAvMl0gYXJtNjQ6IGR0czogbGc6IERUIGNsZWFu
+dXBzDQoNClRoaXMgc2hvcnQgc2VyaWVzIGZpeGVzIHNvbWUgYXJtLHBsMDExIERUIHNjaGVtYSB3
+YXJuaW5ncy4gSSBub3RpY2VkDQp0aGF0IHRoZSBsZzEzMTIgYW5kIGxnMTMxMyAuZHRzaSBmaWxl
+cyBhcmUgYWxtb3N0IGlkZW50aWNhbCwgc28gSSd2ZQ0KcmVmYWN0b3JlZCB0aGVtIHRvIG1ha2Ug
+dGhlIGZpeCBvbmNlIGluc3RlYWQgb2YgdHdpY2UuDQoNCkFybmQsIFlvdSBwcm9iYWJseSBuZWVk
+IHRvIHRha2UgdGhpcyBkaXJlY3RseSBpZiBMRyBtYWludGFpbmVycyBkb24ndA0KcmVzcG9uZC4N
+Cg0KU2lnbmVkLW9mZi1ieTogUm9iIEhlcnJpbmcgKEFybSkgPHJvYmhAa2VybmVsLm9yZz4NCi0t
+LQ0KUm9iIEhlcnJpbmcgKEFybSkgKDIpOg0KICAgICAgYXJtNjQ6IGR0czogbGc6IFJlZmFjdG9y
+IGNvbW1vbiBMRzEzMTIgYW5kIExHMTMxMyBwYXJ0cw0KICAgICAgYXJtNjQ6IGR0czogbGc6IEFk
+ZCBtaXNzaW5nIFBMMDExICJ1YXJ0Y2xrIg0KDQogYXJjaC9hcm02NC9ib290L2R0cy9sZy9sZzEz
+MTIuZHRzaSAgICAgICAgICAgICAgICAgfCAzMjQgKy0tLS0tLS0tLS0tLS0tLS0tLS0tDQogYXJj
+aC9hcm02NC9ib290L2R0cy9sZy9sZzEzMTMuZHRzaSAgICAgICAgICAgICAgICAgfCAzMjQgKy0t
+LS0tLS0tLS0tLS0tLS0tLS0tDQogLi4uL2FybTY0L2Jvb3QvZHRzL2xnL3tsZzEzMTIuZHRzaSA9
+PiBsZzEzMXguZHRzaX0gfCAgMzUgKy0tDQogMyBmaWxlcyBjaGFuZ2VkLCAxMSBpbnNlcnRpb25z
+KCspLCA2NzIgZGVsZXRpb25zKC0pDQotLS0NCmJhc2UtY29tbWl0OiAxOTI3MmIzN2FhNGY4M2Nh
+NTJiZGY5YzE2ZDVkODFiZGQxMzU0NDk0DQpjaGFuZ2UtaWQ6IDIwMjUwNjA5LWR0LWxnLWZpeGVz
+LWFkMWY2NmUxYjUwNQ0KDQpCZXN0IHJlZ2FyZHMsDQotLQ0KUm9iIEhlcnJpbmcgKEFybSkgPHJv
+YmhAa2VybmVsLm9yZz4NCg0K
 
