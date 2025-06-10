@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-679523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7307DAD378D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:58:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D0FAD3794
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131FB16534C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6001173A90
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BD529DB74;
-	Tue, 10 Jun 2025 12:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BFC2BD023;
+	Tue, 10 Jun 2025 12:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NpEVBoC2"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7GQc7RQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AD029B8F8;
-	Tue, 10 Jun 2025 12:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8989E2D3A8D;
+	Tue, 10 Jun 2025 12:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749559814; cv=none; b=DEahx9q0O5CbOoIzzggWTWhtsCsx+xzmLw0yzWfkZOahgRDkBrE9gId1HuWYNGLk//a0EYWxZ7W0HmCEU2d2LK1xbPezxNWxSTn1+ilpBGBj+ayZ2zG2gB50MA/SCS/D2ltoHzEZpk2jwFmwsKQ91gAdwR8EuEjIV2meeoVKhNo=
+	t=1749559817; cv=none; b=itUfc+ObRA+92A14R07rAPfowzBax8PsNRP71WlB6RChhiiJah14QvP3OI2frHc4jAOQUYmW4+VNsCLK+pCYz5r2txvDd5Wc+gYoGmiV0Oam9j25Rwo5MMm1xvd/largAbeWr7Pi4FPzxHmg+4PMcIOMywFVpBBtiRQiBMa2jLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749559814; c=relaxed/simple;
-	bh=DmCeH0Zap4bFK7OS57K1yJt8pMYCLk6oGTpR2/zEPCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=YLIrgLesVDcBuan6gAwu/QS92oKdxx1DGk4abnT3EoZcuCIYs/ZlVwmA2cpUb+eG13BcJGL2LwH3Jj+0/B7vs1yI/T7OoQCXCW/Pgnmv4vFjR0EsYU6YfniG+IeTqgOTFR85WTnxwsNKAXW/UBCUWi8+akOyJoVd0On9oLbtRiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NpEVBoC2; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 77BC242E80;
-	Tue, 10 Jun 2025 12:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1749559805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=28BDecRRllzmqXnQ2gNlOozbkXizXU8KtH8nt6Poe5I=;
-	b=NpEVBoC2S12Anf97gkAq8pJEvano4/LLJa4YZ/WrwKCLIGa/wOa4Y+2B4+vU5Ob4K5lK0U
-	QgZhNvOXbRod7RxYXHQtwQ/K7NG4jRcRbq7Js6liT++JGrriVjnX3t8EyagQb5Rg3uHOw6
-	7Jchg51YLXgjfRC+0Gr1Rzx5d4oVyCUB+DKEpek3nbVaXe2wzrvvxrzGh7BJNuwSsuQy4r
-	hzyTbQtjmOXTLB02S/58bDWmJf6WvQ6IAgvtMtxS2TBSxiggGK6rq1WDzOLf9KUObMPCMK
-	RG+wlMFUeVDPsW6+e+EpkyVmS0KCo+Tx32ip0aGMjevPg6joAHapqPqwWIrywA==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Tue, 10 Jun 2025 14:50:02 +0200
-Subject: [PATCH ethtool 2/2] tsinfo: Add support for PTP hardware source
+	s=arc-20240116; t=1749559817; c=relaxed/simple;
+	bh=7QpkMQMXtn6bcXn+GLCixu8zGcxbjjq8un/lPEBMnVI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A0bnHLyUB+WHOVNc718lhIeCJI7SSrtn94UrqwO94kbIDuTXlKG3BzxDc+z+EJKAXbhpcGAfZ1WgRzhSMu1z0DS/sU2D1PoDDrM/5ttOchx7nHueNWy5IMDLCkaXQ/b7865IfVLoT4GkvTUnjiCr32u77nK9UCS1LP5ZHGSHd1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7GQc7RQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35285C4CEF1;
+	Tue, 10 Jun 2025 12:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749559817;
+	bh=7QpkMQMXtn6bcXn+GLCixu8zGcxbjjq8un/lPEBMnVI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=F7GQc7RQ+F0IJCdqY94Kv4ovWFYpciWBNBN3n3ToM1BxxreW8XTNXdwe+ckHm8Xww
+	 T7IJkYouR8gd+16bN9SOt+mFg/BBfT4RiDAhEeJrtuCeRc7/QUiourBnp4xWvFn4mj
+	 QE0VQ1vxJq9lezeoj3KXQEC4HzFlX1vK6wFKOX4Z6nIpURA5lILlEYUc1WN/r08hn8
+	 6d4ha6j40uuJhkS7zG0Z+7s77vuR+Cyd33mjYGPIV2Hs1Vfq8pnvtngi6IVPcxXIVu
+	 ZJ54mptB0ckWWz9y9wvnbFmXxlFB0kLmjqkBcwNlcZQEsULOX8+CtPH/FQ+vUaEJqV
+	 /WzEIkVzWTOvg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Tue, 10 Jun 2025 14:50:03 +0200
+Subject: [PATCH] drm/msm/dpu: Fill in min_prefill_lines for SC8180X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,86 +50,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-feature_phc_source-v1-2-cbd1adef12aa@bootlin.com>
-References: <20250610-feature_phc_source-v1-0-cbd1adef12aa@bootlin.com>
-In-Reply-To: <20250610-feature_phc_source-v1-0-cbd1adef12aa@bootlin.com>
-To: Michal Kubecek <mkubecek@suse.cz>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Andrew Lunn <andrew@lunn.ch>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Xing <kernelxing@tencent.com>, Russell King <linux@armlinux.org.uk>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdejhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvofesthejredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeefteeifeefheevheefhffgveduffeltdeivdethedtieegveehuefgffduheektdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhlvghmuggvsghruhhijhhnrdhkvghrnhgvlhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehmkhhusggvtggvkhesshhushgvrdgtiidprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtp
- hhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: kory.maincent@bootlin.com
+Message-Id: <20250610-topic-dpu_8180_mpl-v1-1-f480cd22f11c@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAPopSGgC/x3M3QpAQBBA4VfRXNuatdHyKpIwgyk/2y5S8u42l
+ 9/FOQ8E9sIBquQBz5cE2bcInSYwzN02sRKKhgyzHAuN6tidDIrc2VptsV3dokpjjLXcIxFBDJ3
+ nUe5/Wjfv+wEw8pW8ZAAAAA==
+X-Change-ID: 20250610-topic-dpu_8180_mpl-933388eb0ddd
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749559812; l=1066;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=iE/yOryfr8u/J14k5vdj37MOoWRLYDlk7LCl9lLaqKE=;
+ b=/3ym+TuMMf6qgrZEIiGeqXTPB8s739mqTCyW2nxcn3cXJjZHUCFEee6La/zDxv7RuGt7gJz63
+ 8iBtDMZZ6PEADjErF4GBzqzz8j7nVQW1dwSyHNPfIOEMYE/ncI4qhkn
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Add description of the PTP hardware source to indicate whether the
-timestamp comes from a PHY or a MAC.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Based on the downstream release, predictably same value as for SM8150.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
- netlink/tsinfo.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/netlink/tsinfo.c b/netlink/tsinfo.c
-index 187c3ad..fd528e5 100644
---- a/netlink/tsinfo.c
-+++ b/netlink/tsinfo.c
-@@ -52,6 +52,37 @@ int tsinfo_show_hwprov(const struct nlattr *nest)
- 	return 0;
- }
- 
-+const char *tsinfo_source_names(u32 val)
-+{
-+	switch (val) {
-+	case HWTSTAMP_SOURCE_NETDEV:
-+		return "MAC";
-+	case HWTSTAMP_SOURCE_PHYLIB:
-+		return "PHY";
-+	default:
-+		return "Unknown";
-+	}
-+}
-+
-+int tsinfo_show_source(const struct nlattr **tb)
-+{
-+	u32 val;
-+
-+	val = mnl_attr_get_u32(tb[ETHTOOL_A_TSINFO_HWTSTAMP_SOURCE]);
-+	print_string(PRINT_ANY, "hwtstamp-source:",
-+		     "Hardware timestamp source: %s\n",
-+		     tsinfo_source_names(val));
-+
-+	if (!tb[ETHTOOL_A_TSINFO_HWTSTAMP_PHYINDEX])
-+		return 0;
-+
-+	val = mnl_attr_get_u32(tb[ETHTOOL_A_TSINFO_HWTSTAMP_PHYINDEX]);
-+	print_uint(PRINT_ANY, "hwtstamp-source-phyindex:",
-+		   "Hardware timestamp source PHY index: %d\n", val);
-+
-+	return 0;
-+}
-+
- static int tsinfo_show_stats(const struct nlattr *nest)
- {
- 	const struct nlattr *tb[ETHTOOL_A_TS_STAT_MAX + 1] = {};
-@@ -185,6 +216,9 @@ int tsinfo_reply_cb(const struct nlmsghdr *nlhdr, void *data)
- 		printf("none\n");
- 	}
- 
-+	if (tb[ETHTOOL_A_TSINFO_HWTSTAMP_SOURCE])
-+		tsinfo_show_source(tb);
-+
- 	ret = tsinfo_dump_list(nlctx, tb[ETHTOOL_A_TSINFO_TX_TYPES],
- 			       "Hardware Transmit Timestamp Modes", " none",
- 			       ETH_SS_TS_TX_TYPES);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+index d6f8b1030c68a428a144428b422b63b960c2fdba..6c04f41f9bacc3be2d2259d3b3e2099934f473f7 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h
+@@ -383,6 +383,7 @@ static const struct dpu_perf_cfg sc8180x_perf_data = {
+ 	.min_core_ib = 2400000,
+ 	.min_llcc_ib = 800000,
+ 	.min_dram_ib = 800000,
++	.min_prefill_lines = 24,
+ 	.danger_lut_tbl = {0xf, 0xffff, 0x0},
+ 	.safe_lut_tbl = {0xfff0, 0xf000, 0xffff},
+ 	.qos_lut_tbl = {
 
+---
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+change-id: 20250610-topic-dpu_8180_mpl-933388eb0ddd
+
+Best regards,
 -- 
-2.43.0
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
