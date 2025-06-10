@@ -1,92 +1,164 @@
-Return-Path: <linux-kernel+bounces-678884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3267EAD2F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A45AD2F79
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6136E3B47FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BB73B45DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2497281357;
-	Tue, 10 Jun 2025 08:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E21C28030F;
+	Tue, 10 Jun 2025 08:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WR+kp8Wj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HxIJlttx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asf8Hhy6"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BE0280CD4;
-	Tue, 10 Jun 2025 08:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD2025DD01;
+	Tue, 10 Jun 2025 08:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749542593; cv=none; b=JVAn7ui0A1xYZBiBhENavZQBg1f+RanrWOY/M52f0oBZZCyPVdmSKfd2T5q8ujVQ0B14WGqTi7PAM+QYAhrblVCQkwhSVzttDHKwm3MJaqtb8zO7/2usDOsCxTHtiHbWZXSQejd6Gsr0fzCx+CBjWF0RmSquga1VgzKo+pTq7Ng=
+	t=1749542636; cv=none; b=Te19PWncqiLXiHnRK15G3+t262QH8H9ky4l6aCjIFVFme111rKHd8K1WRMPqCmjC6XSP/TuRtPmJNhomTJmTUMPPlZEvJSZCxJPXS+rvRI6uzDBQYo+YToffa09WUN86xe/XuCedpbxYm0kqK105LQRyT/BvUUhsH0q+J4j24lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749542593; c=relaxed/simple;
-	bh=iQzS2WQbWOWbTOyrLzsF7RCjMQgnxOw9QPaZj4N8AeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S7COoLYh6tG//JZsrvV4McrMG1Z4gDOirSe2k5qjGwlU4nGinNq9uup012DI1e7M4J8SemyIFeFtqmD14q/r3l5r/Xw+ruuUn2FobppfohWtwZigqcwc56RmKp9Y8dBIDdRgLJqRldqs33G3irK14j8qKEhWrKdNA30P2vTS4i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WR+kp8Wj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HxIJlttx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 10 Jun 2025 10:03:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749542589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=JC13SiAcnC4HIaDrqQGIIFsY3yqn/Wtrmzioa3Cq4k8=;
-	b=WR+kp8WjxxxFIbVZpf53RuGrpOFXE/VcmYpHWfiw+5vYv4N8Ihs6oYjkJ+0N2SebE53/8D
-	FNmyixAT++U0DQJVTZnyxhu91nMV7fvJEqAxKG4fQowRMyRwPAP+fX5M6gndv+t9PP4rUl
-	/dv7pbbdzPSLCCbG/W1UDzcWIyLFDZtCeipEGjSbjnWYF/Sgz7GHcKLF4lwvkc7oViHPQM
-	IlNt048Iy661Rljd1lNwHRbVw816vy0gTV1mTqR6uD/P0Ti1GzPvtaEfgwjsIeo5afEN5R
-	ol4YmQ1FWkvy4oc+k/XLs018DLWK7HshkSgT1HNCnNHFyovI25gPKe24b4fetg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749542589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=JC13SiAcnC4HIaDrqQGIIFsY3yqn/Wtrmzioa3Cq4k8=;
-	b=HxIJlttxslVBs+pdU/XrOO1m7VBqxhP/fQj1Nwf60Eoz9vJ7hYZ2OWPzKd29gl+e21lTQO
-	hKEhgWEyY4tCMvDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.16-rc1-rt1
-Message-ID: <20250610080307.LMm1hleC@linutronix.de>
+	s=arc-20240116; t=1749542636; c=relaxed/simple;
+	bh=FAtdwYBsvXPEoaHjvFc5YGiljKWciSkc5F7Z0z2W1uY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9jf2QfGZTO9zu6KIh1UrFLMnt9SjD2rkqNLUf5qmY6by8UKDVHpnyaR1TzdTEbwysJKPgAJvtIdKIco0KnVbDJg3wH8aSVTtT9BCq6Cpl0ej3W04rCDhkfaOTAFOc0yn93hljkQns79T3ORWAWJ5cCYKKUQx7NaKLmVf/TJr9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asf8Hhy6; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4fea34e07so2919443f8f.1;
+        Tue, 10 Jun 2025 01:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749542633; x=1750147433; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DwGvEtjKqTYeRC5wubNZzZpVFyth2ZZSuQ1hnRxcHZI=;
+        b=asf8Hhy6rhNsLmcG33qKz7wKHDf6ll4w7zlMet7HhToXKCEqZT6KelEDy3Iw7b8APw
+         cqKpnmV8geiEQdRURVG70cEkHemIQg4POtDv5UppGv10TCHghr4NjW+G4gxOi8erkQ9Y
+         lXbfJivrEdW1Q5tGuAdcDH1Jt6z22Kye2XLVwKnQZL9VxFm+ksapcUV7MISUtDxzLtdp
+         vsroS403Im2j7D8yAgCnoVasRObasf8VAkWlpHyHEm3gdxk+S8wTrvWPQJLjcF/8pjvR
+         Ml7uECj/k3LJSFpug2RaiJY1xYtqC9F/EnwsUnwfXtQ9F+N59oN/9OdNgqIQfE2qMCVU
+         3nUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749542633; x=1750147433;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DwGvEtjKqTYeRC5wubNZzZpVFyth2ZZSuQ1hnRxcHZI=;
+        b=DFbTzqQXA6UD20dgHL9eRhpp9e4N1bXa7zncBPtOXyJ1xY4XcipCHw7Nuyxxw1RlM0
+         FiRBMMmZxgW51P5nN/sp6k3KGjJO8i7zpZF9sA39B+A1wchqWyBOPjYVV5bOqrHvwLzO
+         uQWDWyqzr1NipwVlZjlGKN3X3vpCCw9mSQyyMgTQiZpuqMMkcVoxLnCZxV265DEfvq+H
+         Ztj1MOL03W55bpNtcxnJHnnDG/DEu8xe74za3QpEr+eGMoR7p8ES0LLzxQ2HCf8ZIPdq
+         5SFcbkoCbK/g96b3xU4Xj4jO+la+Te0zq0ZiHH7BNw0nvoAmcMXUULbQVM7rV6zqoe9w
+         frLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVE/6taAP0u/Izod1vgDrUplppd6xi6xloNAKanKakbWKon9nEsrRfvwiX7TQYE8md3r9yGtYVnMyff@vger.kernel.org, AJvYcCWJMPDJhDZZMfi2LSh98tojRMfJETFh69ftMGwx92Zc3uWBZrVyn7jec9/OS8SGFr9qx8d0TYOgKPqg7tg=@vger.kernel.org, AJvYcCWh9qi23YXz/LPruLwozW3p3REDPNKC6Oii76vnSogRRvG8x+k0gk76KXMSNWL2y5V5V7KDvqP6EZzk@vger.kernel.org, AJvYcCWwkU5tp/t3xl8V5G6NSjoS1BZ042j++ncyB2dmHsZ0iz7IPUtToMOx10yrofewBHisUFuAH80tpcxoCz1S@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeO5RhwzDkllvcnqOFDIya2Ru27BlWVjefhTytTtl3w/jPNH9i
+	RaEsSQ8keWYcJJnRTO5RMl26oHr92UJ+IZU7WZhK3j3SdzQkccUcdU/C0QCQLg==
+X-Gm-Gg: ASbGncthXYA8IKC29bHdSiveRb8fn4gXDeO7poKLnCl3BF6KhH+/Lyke/nWyj0774/4
+	21GUCrSaWEQymQQUBHqjNNj8ozoIRKJG53YyNUA9qEn5Tb2m+l/Hn9hjMxuJnjCvJx8YyIa4T2D
+	vUAIn8qmhnaN/qnoe/dkjyRFT1Rh1jaJy5Dcw0WrxZHoiMgZTpkRcmBZVqU3NIPSOOu5s42N7rE
+	TUmmERBkZ7WiUkDkbG6O2ATw62+k7seRvcW9zw2XMDVVCrLbsUGacm82qGKMq2jL2EuCm1BBFFb
+	IXYe0YqpHvReDbydX0adBGcwRFMtIsg8eFAtxGWp0zkmmv2u/OZXax8s9eFwvz8PuHCNlbg+MLh
+	/zSahsCFj+kCkvlMZ9V3MGB56sw3VdSGi+m3vZe7sIi5c5HGhZYDPcsRecRE=
+X-Google-Smtp-Source: AGHT+IGO4ep1uHR7aNauRBBlU/RmREQAS1QtRrJVTcQ9PnzDcGl0Lg3A2/ATarqYpBeXhdDd7qUEIA==
+X-Received: by 2002:a05:6000:2dc1:b0:3a4:ef48:23db with SMTP id ffacd0b85a97d-3a531cc55bamr12501548f8f.59.1749542632547;
+        Tue, 10 Jun 2025 01:03:52 -0700 (PDT)
+Received: from orome (p200300e41f281b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53229ddebsm11676331f8f.17.2025.06.10.01.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 01:03:51 -0700 (PDT)
+Date: Tue, 10 Jun 2025 10:03:49 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, jonathanh@nvidia.com, ldewangan@nvidia.com, digetx@gmail.com, 
+	p.zabel@pengutronix.de, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v4 3/3] i2c: tegra: Remove dma_sync_*() calls
+Message-ID: <t6lt7sazxaqf2qis55kjg65epcakoyj2cow5bbcjzyxj7ztywm@4r2oukvdhdu6>
+References: <20250603153022.39434-1-akhilrajeev@nvidia.com>
+ <20250603153022.39434-3-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qmkq6so74rg53u3d"
 Content-Disposition: inline
+In-Reply-To: <20250603153022.39434-3-akhilrajeev@nvidia.com>
 
-Dear RT folks!
 
-I'm pleased to announce the v6.16-rc1-rt1 patch set. 
+--qmkq6so74rg53u3d
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/3] i2c: tegra: Remove dma_sync_*() calls
+MIME-Version: 1.0
 
-Changes since v6.15-rt2:
+On Tue, Jun 03, 2025 at 09:00:22PM +0530, Akhil R wrote:
+> Calling dma_sync_*() on a buffer from dma_alloc_coherent() is pointless.
+> The driver should not be doing its own bounce-buffering if the buffer is
+> allocated through dma_alloc_coherent()
+>=20
+> Suggested-by: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+> v3->v4: No change
+> v2->v3: No change
+> v1->v2: No change
+>=20
+>  drivers/i2c/busses/i2c-tegra.c | 20 +-------------------
+>  1 file changed, 1 insertion(+), 19 deletions(-)
 
-  - Rebase to v6.16-rc1
+I've had a patch like this in my local tree for a while and never got
+around to send it out. It turns out that this is actually not just
+unnecessary but can also cause issues. We were seeing really strange
+crashes in the QSPI driver that seem related to this. I don't know
+exactly what causes it, but removing the dma_sync_*() calls (for memory
+that is also dma_alloc_coherent()-allocated) fixes things.
 
-Known issues
-    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
-        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
+For QSPI I'm thinking it would probably be better to move to streaming
+DMA mappings because the buffers in DMA mode are sufficiently large (at
+least 2 cache lines) that we might see some benefit from the caching. I
+don't know if this would apply for I2C as well? I vaguely recall that
+certain transfers can be quite large and I wonder if cached mappings
+would be advantageous here as well. Do you have good data on what the
+usage patterns are?
 
-You can get this release via the git tree at:
+That said, maybe the extra amount of work isn't worth it because both
+I2C and QSPI are fairly slow busses, so the impact of caches is probably
+minimal in comparison.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.16-rc1-rt1
+Anyway:
 
-The RT patch against v6.16-rc1 can be found here:
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.16/older/patch-6.16-rc1-rt1.patch.xz
+--qmkq6so74rg53u3d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The split quilt queue is available at:
+-----BEGIN PGP SIGNATURE-----
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.16/older/patches-6.16-rc1-rt1.tar.xz
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmhH5uIACgkQ3SOs138+
+s6HvVg/9Eyg5/ttWDyh9UBRUi5nt8QKrx1syq1icibgq3/DVaLqNT3hKe8OqviSW
+KAFZKvSsKp+FFODwERdnlJSPW8vjQa1rfSV8GBtoYyzZ2UZgOOAL7sk6tb0re7Zu
+2FeajC2nrm5p+uEfB43PxK9qhsuydewV/Pw72MfsLiGOsGySFHgO01mXKINKx3RV
+xbUW+c1yWYqjNFt9i7c7YQew+NTqzoQXcgZdWqINYXeAKRDG5hxcwyI2ixZh60yk
+HIijcOXfOVlkH/ZlcJWOVpkBBwtiQamNJ6AKD5lDqSQnYnvlFE+2ueI8rWLUj8qt
+Axjhpocaits8H78e+rU/iYnb3On8EDeMs1Vr2WVs/q8kClfQeTJjBNS/ihD/l/NZ
+eDHK6YfytqfR7B1XDjn6vXKc3u0T9+GyZe4+7GXNyf+S6NlKtVVnHhlrnylcC682
+Vhr+rpC5FLYOS23hPCQdoiJKkZ1HtXEI9BtYVYeeuzm5C1/ApHCx2fi+f6gpAv3J
+uUVEYkrq2UHY010mL6myp//xh6L6W0tPCi/YqTmxOwEqVjD4U2piWXMabwynhiiB
+ikJimEw/+tzV1mYzLKoLoyjP6pZDli9ZgR76C4In7ochpnh1f+/1MXrfGVKyM1bs
+Ss5WfAMNQE0uxoi2eF5LzScESVohFn+TOgSCOedCaXCiGHpdzwU=
+=nEmN
+-----END PGP SIGNATURE-----
 
-Sebastian
+--qmkq6so74rg53u3d--
 
