@@ -1,79 +1,128 @@
-Return-Path: <linux-kernel+bounces-680057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD98AD3FA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0870AAD3FA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98981899B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB081189A27A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3FA242D90;
-	Tue, 10 Jun 2025 16:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E705242D83;
+	Tue, 10 Jun 2025 16:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/7PGg4v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+G2SiSJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319F620EB;
-	Tue, 10 Jun 2025 16:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081E020EB;
+	Tue, 10 Jun 2025 16:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749574521; cv=none; b=X7hydsMhxUsGq/ThvTqBFgtzpY86EgChosAmVKU2GngoRd82vdcvRNUyYvpiNLqPQFwuj7IDw7oy2nSua8D7R4MmVka32gkxODlXHT6JoBNyWbKPskF1iMpJYFoBO2Gtm5kpFWRg7IWpzO15ss2aTP5Uy2C/Rciuow8zoUeGVE4=
+	t=1749574559; cv=none; b=hjOQYpOyv9JTvZZG3MhqlFGeFXX0RkaPQ0c57iGSkYvDKjG+tWoBf1w64PuCl8npbDrS00h79l2/6crrjdzgSK0kiSGHAhTvYFh9/7CI8sS1V3Cdmt+kYf6+cuSA1EpzH2J+K5LifSyWhWwHUre+6cMJaXdrx7IyuURToyj8vkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749574521; c=relaxed/simple;
-	bh=At7fLLM3/wUfJY275dT5xd+eA31XOZAJZjSF5Ow50SQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R4kILO1BFjSO/xt+CzR+Y/YyYpoI85fiRn9BiSjkWH0hsVP/e0hHc9ofC3kqYhv9EKObsmEkz5be8lS0Wm7fj0ftikWI9btKNMAoPXSWsrKoaWK9m4/F5uG7flA+Zz06oR+3VJp8yZ5C9dwL1OwFIkWwVVKmnNgqa3aohzIkBNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/7PGg4v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30B3C4CEED;
-	Tue, 10 Jun 2025 16:55:17 +0000 (UTC)
+	s=arc-20240116; t=1749574559; c=relaxed/simple;
+	bh=IU9Fgqop975ZuM3T85byHeBxqf+hSpv65MYGR2Itz2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ay7w74LLKZ1+yytC51mPJhd0DH0eS8NcPrJggxr6BZxWFYb0AKLQk41VPPhgZqbt27/k+4GJAfZoFbeGsjXC+u/B7ypXbx4HVqcBQlYVIt4GQy9M8p9GoqIXla7MBZlMuyXQEeRl6uKF/kUL8j0pgx0frEjtyqAaOBJnIq6tEl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+G2SiSJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB4BC4CEED;
+	Tue, 10 Jun 2025 16:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749574520;
-	bh=At7fLLM3/wUfJY275dT5xd+eA31XOZAJZjSF5Ow50SQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V/7PGg4vBMuJlJlIj7WXC3CJmwgFsQ15PjdFh+RXw9T7MsrVMCKTg9YMrXR/39ObD
-	 mgkUaafLOIykXPMXRXyyMZdUnuTzBv9GzTOtha+FJd34LXQYLNt7dDREAgrQTtp62Y
-	 Z8QMrp8UmfJnu8SG2uipUAY5ZTK9jwyV+UqpiDRznJtJwrf7b+tWHNmD0E2QyqipHG
-	 OGbEsv9u2O9ZnuGSEE9lB/dMziEa+Zh4oXOaboU9052JMYAGMeXS2XASXYTo5CrG20
-	 4bbgHlsNp4v59T24YsoG3SYNBAkL9QTQmr/AWlN1BMiE/nGoH0LEJxFPBAmdrBJWuS
-	 OK6aNYvYSiXqw==
-Message-ID: <2701ffc6-40a1-4004-ad42-1b096fa1c095@kernel.org>
-Date: Tue, 10 Jun 2025 18:55:16 +0200
+	s=k20201202; t=1749574558;
+	bh=IU9Fgqop975ZuM3T85byHeBxqf+hSpv65MYGR2Itz2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R+G2SiSJCBDBzN9DWXwF7dU+N5KctyzcrAqDzfuKb1Tq72WUtMdHJfcDYCAoFo64i
+	 oSHQlPvgiA7+jL/citQ1j2lhexQKFpKHLKwaCcERTlMQpQdZAhA8wNEFqb8YnAe6Kr
+	 WNZRpONntXV7ihRBWNLelHo+cWnaxKibPNXuS+iVG/jEsL5zrOs5J6EsE9j7WyrQ4x
+	 urD4hG+Bjcic6O4h/mTwWwRkXxhJGQ2x0VmapY+ag1E7c1tm3OS/DK2QK9pkCmXg5V
+	 xbTz2FkdinbRkljKwH3WVn0pnjNGD9iv9LniiwVVdjoXTFfrk5Muymi/zMpO21L8lW
+	 d+pALGN8OC5YQ==
+Received: by pali.im (Postfix)
+	id D2FB94F1; Tue, 10 Jun 2025 18:55:55 +0200 (CEST)
+Date: Tue, 10 Jun 2025 18:55:55 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Tom Talpey <tom@talpey.com>
+Cc: Steve French <smfrench@gmail.com>, Paulo Alcantara <pc@manguebit.org>,
+	Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Show reason why autodisabling serverino support
+Message-ID: <20250610165555.sekma4ybcl63flnw@pali>
+References: <20250608164453.6699-1-pali@kernel.org>
+ <3d644c3f8acb3dbcef395bd96e7e957c@manguebit.org>
+ <CAH2r5muuanOgjzQ8wgd+QoyrU_ZM4tATrfYYQj=b7MapGLMh5A@mail.gmail.com>
+ <20250609073650.kj6lxrykguhb7nuo@pali>
+ <ac80cb46-5787-4fc9-a405-fd38a505c613@talpey.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: spmi: Add Apple A11 and T2 compatible
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: asahi@lists.linux.dev, Neal Gompa <neal@gompa.dev>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Janne Grunau <j@jannau.net>,
- Sasha Finkelstein <fnkl.kernel@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20250609-t8015-spmi-v1-0-b3c55ad01491@gmail.com>
- <20250609-t8015-spmi-v1-1-b3c55ad01491@gmail.com>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250609-t8015-spmi-v1-1-b3c55ad01491@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac80cb46-5787-4fc9-a405-fd38a505c613@talpey.com>
+User-Agent: NeoMutt/20180716
 
-On 09.06.25 16:59, Nick Chan wrote:
-> The SPMI bus found on Apple A11 and T2 SoCs are compatible with the
-> existing driver so add their compatibles.
+For sure I can improve also existing text message. But Tom already sent
+NACK so I'm not sure if I should continue with improvement or discard it.
+
+On Tuesday 10 June 2025 11:36:30 Tom Talpey wrote:
+> The message text is pretty cryptic: "inode numbers won't match anymore".
+> Can this be stated in a more actionable way? The primary consumer of
+> the log is the sysadmin, after all.
 > 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
-
-Reviewed-by: Sven Peter <sven@kernel.org>
-
-
+> At a minimum, stating that hardlink detection won't work, as noted in
+> the commit. Perhaps more helpfully, state that it's not a client issue.
+> 
+> Tom.
+> 
+> On 6/9/2025 3:36 AM, Pali Rohár wrote:
+> > cifs_autodisable_serverino() is already printing at the VFS level
+> > information that it is disabling the serverino. It is one time thing as
+> > once it is disabled, it is not printing it second time. So it does not
+> > flood logs.
+> > 
+> > In this change I have just extended this existing logging to print also reason.
+> > 
+> > On Sunday 08 June 2025 22:40:21 Steve French wrote:
+> > > Since this could flood logs (e.g. in some DFS cases), probably better
+> > > to do these via the usual dynamic trace points (and can document a
+> > > simple "trace-cmd -e smb3_disable_serverino" script to avoid risk of
+> > > flooding logs.    cifsFYI is an alternative but the world has moved to
+> > > the dynamic tracing (eBPF etc.)
+> > > 
+> > > On Sun, Jun 8, 2025 at 3:57 PM Paulo Alcantara <pc@manguebit.org> wrote:
+> > > > 
+> > > > Pali Rohár <pali@kernel.org> writes:
+> > > > 
+> > > > > Before calling cifs_autodisable_serverino() function, show reason why it
+> > > > > has to be called.
+> > > > > 
+> > > > > This change allows to debug issues why cifs.ko decide to turn off server
+> > > > > inode number support and hence disable support for detection of hardlinks.
+> > > > > 
+> > > > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > > > Cc: stable@vger.kernel.org
+> > > > > ---
+> > > > >   fs/smb/client/connect.c   | 2 ++
+> > > > >   fs/smb/client/dfs_cache.c | 2 ++
+> > > > >   fs/smb/client/inode.c     | 3 +++
+> > > > >   fs/smb/client/readdir.c   | 3 +++
+> > > > >   4 files changed, 10 insertions(+)
+> > > > 
+> > > > NACK.
+> > > > 
+> > > 
+> > > 
+> > > -- 
+> > > Thanks,
+> > > 
+> > > Steve
+> > 
+> > 
+> 
 
