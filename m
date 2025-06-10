@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-680397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D994AD44CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:31:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959B0AD44DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B873A563C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BC4189D364
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898BE283FE8;
-	Tue, 10 Jun 2025 21:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888BC284B2E;
+	Tue, 10 Jun 2025 21:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CCXCdvx2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="1lRwEgFT"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D862459C5;
-	Tue, 10 Jun 2025 21:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E8823958C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 21:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749591075; cv=none; b=ONo4oqmklX2Bkyh1QvOTJWDoGPvciEAGpZ4qBI3MJKqsWd1FDoSMSzYnJeNfgWMjchzkSucbmH3Aa5yetjhg+QsQoQzpx4vFdEMTWcm/0hzW4XkDlbTnBoBNvb9qVhcstFgP2WZzy3xY4+MFMLDJKMizfl/A3NhVabk7y/JBB/E=
+	t=1749591371; cv=none; b=Pp7I0X72lmtlQemMhMBJxJK4vQ6kr1JD/Vf55teoBxN/jWOVzRcC7rOCVNpyxHPoOnvQeNbQmO6cVE955C5lWL7C7pTJcsVkNw6lDhrScoPGOc4pnthbSXjeatvhzBH1o61Z+hmxYwyBtqG/WcvlEt4Kt+AgazpRk3j/yMNqDDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749591075; c=relaxed/simple;
-	bh=m+IPDklJ6ZBJt0284tsk4m7+eoXQgRpTQRB8/GXnw4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hj0EU18VVpeS2A0y/LgSB2V29ZXIdGhskWhcFUQFDoVsW3JhByJ69bdqNaaRVj8+Cyl/rEknoboWFfP/qf8IF1HpLRoFPB6Zjv9O5INLqaUQ4gSiR1xw/TWbqiF1Gxp6yrSsVrbxJrD6Iur1cUKo7fA7SO7OmcMUTGVLIvrNhYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CCXCdvx2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E11C9E8A;
-	Tue, 10 Jun 2025 23:31:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1749591064;
-	bh=m+IPDklJ6ZBJt0284tsk4m7+eoXQgRpTQRB8/GXnw4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCXCdvx24YV8Kba9V27F28YyhKUebzbTHDx5DqwoODUvMoUCqfEFgVtGZlu8UWxAu
-	 tKnzWEY9W6aK7QD8SBtnU7qBl3rPDtJ1fJuAEEFaO37fnUqJKeLf++aGkMGtTR86Tl
-	 +aCQLQLjEKZZlOaQ+qRwgMqVwGeyukcytans86GY=
-Date: Wed, 11 Jun 2025 00:30:58 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Youngjun Lee <yjjuny.lee@samsung.com>, hdegoede@redhat.com,
-	mchehab@kernel.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: uvc: Fix 1-byte out-of-bounds read in
- uvc_parse_format()
-Message-ID: <20250610213058.GG24465@pendragon.ideasonboard.com>
-References: <CGME20250610124111epcas1p18fe9fd8ab47a424c2143d4e2912a8179@epcas1p1.samsung.com>
- <20250610124107.37360-1-yjjuny.lee@samsung.com>
- <CANiDSCsaQCJCzfjjnMvVRAde0ZrMZC753y7m2MPQJuK=dVqQBQ@mail.gmail.com>
+	s=arc-20240116; t=1749591371; c=relaxed/simple;
+	bh=I8UbiObQzNHlfgvyylxxAXl8H2Wx63FtZBMws33juYs=;
+	h=Subject:Date:Message-Id:MIME-Version:Cc:From:To; b=uIBccNiJug/Y+G9UgjjyBx9HejxOEhzANPHLtADkZoDJ1SCvRK8W55B4700pPqZgTNx/0316o2p+80Zcxqx4FaI3mjpIp1txAo19hV70ZpZeNGZ7xEhSp6KxuZkXLjA2NInRrU4ie7/zyXmsl4C60hLQhnZfih8FfvOlTYBDUJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=1lRwEgFT; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-311d27eb8bdso3715362a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1749591369; x=1750196169; darn=vger.kernel.org;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=KaHHQEiupZ06D+yq5AKLPI1+m/XTQ4+XHbDcRMw88EU=;
+        b=1lRwEgFTQqD8jL7mTbE6wec6lq4GMZEJy+Pm1s9DRb+VEogKu8jtEfAozl7SnogpZE
+         N6vQb2qBu1/BRtxkMLu2tu9hj5Vjik1jnrbd3UeN+mLvpCqs8VlVBN8ApOSS2qFcNgFB
+         CscPa4WvmPSDsCqZmrONFsIfppvZxV4J2tACOkdbaJ/s2JNm2vJsJGcRJ9NrGWyvXpP/
+         MxMDbiTvKTrduXmupCe+pMgSxdaIndRZF4nOKMuArCY2bq49GfJmb6NqwKAil12/5HFR
+         z3l5jZ6sbzOpl0dDKE5Hm0pwTGZs36jSBe8g1jWoRkijcmkfBTvEEkfCk9WBXCb9U3Dd
+         3YEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749591369; x=1750196169;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KaHHQEiupZ06D+yq5AKLPI1+m/XTQ4+XHbDcRMw88EU=;
+        b=rtlv6jnw+GdoypFdMGDo9312khYRmi6GjDYZijreLE5Cj1edbkAG3yAfMxOqhOLClR
+         VjMG/qucXJMNTj4E6mU5dk8L3vHz979zbsDJYAGRql81LTVlHKE+4PZzXiCvQH8tO6hi
+         z/BUaCArdlN5JpGPII30tBvjMQ7Smrq+zitRF2qHT5KypX02H5QDT7TDZxdmm/ldkgkg
+         5LS18lBKSdTKivisomQ4g4teQwTFLpdopU5z4UBtmEx8dg/Nv9KxLS1tkPOkFUkjeIgO
+         wG3kdz+ZFQkXNpyZyMK4cDbyDFMB29P45qtTMMn6RlY+FrRFs5f9/mSAH+r/pU99hFXy
+         N5ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW57ly1xR4SCfqauhz7PLCBvI03zqg49sTW6FiwuJlzxZCh4kDKdikGPdyIoUn7rI63CXYKtcTA/gfPgsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6h5et9l92B/AA9xA+XS1c9OhLOzEW/YWg6OjQisqZl7UVi055
+	jus3LcTmWs5nCKZlIhdJity/xLKj3xGVY104YCbHks4UEqnkbf23P8K6O1OXexw+/tg=
+X-Gm-Gg: ASbGnctd9peD0Xl/mS9HEAv3tUA3pWBbdKuk5jHx4g/7gVE0E1NOqtM48PxfBP1P/i5
+	X+xvk46ue3K6nzDHdYBpd3EvlHGugcQW5X4irqJnq5UNu3OwTtL2sCpWg1wfrvIQg3EEk58/EB8
+	GUfErAJ5rAHOHzU1YDtKlvJY2zOMB36QeMjXvm1QUhHYqD7rISy1QeBMoIC92wcGcbO9xOHutvx
+	TKdVidhchz9OjvEUWVJVGgFelBl6dKevkhj8CrWemj9hwYacsvyhuOTb6NJZwUz1eGg3x1LSL0a
+	7pk4cfFcu6ye8bc8f2HuMbqrNH8VAvg7jSNGUeyUgUwnEy3R7YCXVvrClogC
+X-Google-Smtp-Source: AGHT+IFYYIeiPz9kpoQxtEx9N1kGD9o1EkK/pKiuLs1MruLC/T69Bnqe3L89R/Uj9Yt0DTdGl5i/7g==
+X-Received: by 2002:a17:90b:4a85:b0:311:f30b:c18 with SMTP id 98e67ed59e1d1-313af0f8588mr1387259a91.4.1749591369214;
+        Tue, 10 Jun 2025 14:36:09 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:500::7:116a])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-313b1ff0fa8sm78207a91.8.2025.06.10.14.36.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 14:36:08 -0700 (PDT)
+Subject: [PATCH] RISC-V: uaccess: Wrap the get_user_8 uaccess macro
+Date: Tue, 10 Jun 2025 14:30:58 -0700
+Message-Id: <20250610213058.24852-1-palmer@dabbelt.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCsaQCJCzfjjnMvVRAde0ZrMZC753y7m2MPQJuK=dVqQBQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+  aou@eecs.berkeley.edu, Alexandre Ghiti <alex@ghiti.fr>, cyrilbur@tenstorrent.com, jszhang@kernel.org,
+  cleger@rivosinc.com, samuel.holland@sifive.com, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To:         linux-riscv@lists.infradead.org
 
-On Tue, Jun 10, 2025 at 02:58:25PM +0200, Ricardo Ribalda wrote:
-> Hi Youngjun
-> 
-> You still miss the v2 (v3 in this case). and the trailers.
-> 
-> In the future you can use the b4 tool to take care of most of the details.
-> https://b4.docs.kernel.org/en/latest/contributor/overview.html
-> It has "dry-run" option that let you review the mails before you send
-> them to the mailing list
-> 
-> Please do not resubmit a new patch to fix this, only send a new patch
-> to fix more comments for other people.
-> 
-> Regards!
-> 
-> On Tue, 10 Jun 2025 at 14:41, Youngjun Lee <yjjuny.lee@samsung.com> wrote:
-> >
-> > The buffer length check before calling uvc_parse_format() only ensured
-> > that the buffer has at least 3 bytes (buflen > 2), buf the function
-> > accesses buffer[3], requiring at least 4 bytes.
-> >
-> > This can lead to an out-of-bounds read if the buffer has exactly 3 bytes.
-> >
-> > Fix it by checking that the buffer has at least 4 bytes in
-> > uvc_parse_format().
->
-> Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+From: Palmer Dabbelt <palmer@dabbelt.com>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+I must have lost this rebasing things during the merge window, I know I
+got it at some point but it's not here now.  Without this I get warnings
+along the lines of
 
-> > Signed-off-by: Youngjun Lee <yjjuny.lee@samsung.com>
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index da24a655ab68..1100469a83a2 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -344,6 +344,9 @@ static int uvc_parse_format(struct uvc_device *dev,
-> >         u8 ftype;
-> >         int ret;
-> >
-> > +       if (buflen < 4)
-> > +               return -EINVAL;
-> > +
-> >         format->type = buffer[2];
-> >         format->index = buffer[3];
-> >         format->frames = frames;
+    include/linux/fs.h:3975:15: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     3975 |         if (unlikely(get_user(c, path)))
+          |                      ^
+    arch/riscv/include/asm/uaccess.h:274:3: note: expanded from macro 'get_user'
+      274 |                 __get_user((x), __p) :                          \
+          |                 ^
+    arch/riscv/include/asm/uaccess.h:244:2: note: expanded from macro '__get_user'
+      244 |         __get_user_error(__gu_val, __gu_ptr, __gu_err);         \
+          |         ^
+    arch/riscv/include/asm/uaccess.h:207:2: note: expanded from macro '__get_user_error'
+      207 |         __ge  LD [M]  net/802/psnap.ko
+    t_user_nocheck(x, ptr, __gu_failed);                        \
+          |         ^
+    arch/riscv/include/asm/uaccess.h:196:3: note: expanded from macro '__get_user_nocheck'
+      196 |                 __get_user_8((x), __gu_ptr, label);             \
+          |                 ^
+    arch/riscv/include/asm/uaccess.h:130:2: note: expanded from macro '__get_user_8'
+      130 |         u32 __user *__ptr = (u32 __user *)(ptr);                \
+          |         ^
 
+Signed-off-by: Palmer Dabbelt <palmer@dabbelt.com>
+---
+ arch/riscv/include/asm/uaccess.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+index d472da4450e6..525e50db24f7 100644
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -127,6 +127,7 @@ do {								\
+ 
+ #ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+ #define __get_user_8(x, ptr, label)				\
++do {								\
+ 	u32 __user *__ptr = (u32 __user *)(ptr);		\
+ 	u32 __lo, __hi;						\
+ 	asm_goto_output(					\
+@@ -141,7 +142,7 @@ do {								\
+ 		: : label);                                     \
+ 	(x) = (__typeof__(x))((__typeof__((x) - (x)))(		\
+ 		(((u64)__hi << 32) | __lo)));			\
+-
++} while (0)
+ #else /* !CONFIG_CC_HAS_ASM_GOTO_OUTPUT */
+ #define __get_user_8(x, ptr, label)				\
+ do {								\
 -- 
-Regards,
+2.39.5 (Apple Git-154)
 
-Laurent Pinchart
 
