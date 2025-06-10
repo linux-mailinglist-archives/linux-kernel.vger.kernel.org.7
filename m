@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-680001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47861AD3EB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5BAAD3EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79FF3A8242
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:22:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0CD189B77F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A83024291B;
-	Tue, 10 Jun 2025 16:22:41 +0000 (UTC)
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B472B24167D;
+	Tue, 10 Jun 2025 16:22:40 +0000 (UTC)
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B29823BF80
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37FA226520;
+	Tue, 10 Jun 2025 16:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749572560; cv=none; b=cvIChlwxx0YKfhpePGNDCqKczaN4J6yyOimp5BoKN4VRuQaCD3OegjU84zyQNUiLRN0cFVwBat7Tn97fvu8v0JzCy4taBiGvvTqeQw0UUiyAOhkP8eKBRrvDRmH3c8L0p0iMWC43dGb8ykW2gs5CCpyAdFfWV2XgTtwSohC4s1I=
+	t=1749572560; cv=none; b=GHHMWuCG2U6f1IBetlM7w1eMkZSoKipbKVWPS2Okx0oZUwvH5k4pVOEZoEkgVrqfrJbVBi9fLMF4WJk5Dg2Oyxm7qiccOaVVCp7Ac5LYzYsjlCcOYKmyh8yQIStqjcguJTUvMO4wBwH7QqjGlNEJMBI/N3Ko5rF+xGHg1Cf0a7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749572560; c=relaxed/simple;
-	bh=S1CZQL9yLFo7vAjiA0W61DE9KKz4owbMyL0PhUtF8Pg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YX+KdDw8aD7k4EyywkXAUL0XQLS2i0Bv/efqCfYLL1JuTMoDiNlUu8XTaoM4b6OrsoU1LMsTa3tcHA7HrxUvG/PWWwAsgJphT3Et5Toh3ij0jW8wMdONApdzj0K7suQIIhwDh8rhoAjVM4GrrP5MnE/+CiJlc4mE5U/5i4xOS74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.12
+	bh=+t743NmkX1ADopyo7PCrJxNUgdYBmCORK6PWhHIF75w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VYfstcls2FGfbs2TDGSOgYKPhX36XHx3TdST8Ed9feOK/X1n5omOCeZCvJlAjt26sCNUjOPTsvjv1sCpMXaDGmwcE5QbZMAvhlKQy0oVLTJFUyC+xhay8ThGuoghRTHMT+JR6kmIS0SqoA68Wb6oS0B1xBL08aKJzSg+vSOg2iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bGvFx5FGwzn6h;
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bGvFy4TQbzqkH;
+	Tue, 10 Jun 2025 18:22:30 +0200 (CEST)
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bGvFx5nLjz14f;
 	Tue, 10 Jun 2025 18:22:29 +0200 (CEST)
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bGvFt5ldhzLd;
-	Tue, 10 Jun 2025 18:22:26 +0200 (CEST)
 From: Quentin Schulz <foss+kernel@0leil.net>
-Subject: [PATCH v2 0/3] arm64: dts: rockchip: support camera module on
- Haikou Video Demo on PX30 Ringneck
-Date: Tue, 10 Jun 2025 18:22:15 +0200
-Message-Id: <20250610-ringneck-haikou-video-demo-cam-v2-0-de1bf87e0732@cherry.de>
+Date: Tue, 10 Jun 2025 18:22:16 +0200
+Subject: [PATCH v2 1/3] arm64: dts: rockchip: fix endpoint dtc warning for
+ PX30 ISP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,11 +45,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALdbSGgC/42NQQ6CMBAAv0J6dk1bLIon/2E4YLtLNwRqWm0kh
- L9beYHHmcPMKhJGxiSu1SoiZk4c5gL6UAnr+3lAYFdYaKmNNKqByPMwox3B9zyGN2R2GMDhFMD
- 2E5y0bC6GHmdqSZTIMyLxZx/cu8Ke0yvEZf9l9bN/p7MCBUSka9XIujV0sx5jXI4ORbdt2xdgf
- yQVzAAAAA==
-X-Change-ID: 20250516-ringneck-haikou-video-demo-cam-420685fb7f9f
+Message-Id: <20250610-ringneck-haikou-video-demo-cam-v2-1-de1bf87e0732@cherry.de>
+References: <20250610-ringneck-haikou-video-demo-cam-v2-0-de1bf87e0732@cherry.de>
+In-Reply-To: <20250610-ringneck-haikou-video-demo-cam-v2-0-de1bf87e0732@cherry.de>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -58,91 +56,89 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 X-Mailer: b4 0.14.2
 X-Infomaniak-Routing: alpha
 
-The first patch is fixing dtc warnings related to the ISP on PX30.
-Sadly there's still one due to there only be one port in PX30's ISP and
-still address-cells and size-cells properties set. The "issue" is that
-there are actually two ports (see binding) so we shouldn't really remove
-it, but the binding requires a bus-type property (either parallel or
-bt656 mode) for the port@1, which we cannot know from the SoC PoV.
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-The secibd patch adds a label to the port@0 of the ISP to make it easier
-to add an endpoint to it from a board DTS(I).
+dtc complains with the following message for DTSes which use the ISP:
 
-The third patch adds support for the camera module found on Haikou
-Video Demo adapter with PX30 Ringneck.
+arch/arm64/boot/dts/rockchip/px30.dtsi:1272.19-1276.6: Warning (graph_child_address): /isp@ff4a0000/ports/port@0: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
 
-This adapter is also used with RK3588 Tiger, but there's currently no
-camera stack at all on RK3588, and RK3399 Puma, but:
- - 19.2MHz is not achievable exactly, so need to patch the driver to
-   support 24MHz for example, this will come later,
- - The camera clk is on an IO domain at 1.8V but configured at boot at
-   3.3V, and until the IO domain is properly configured, the camera
-   won't receive a clock. Based on the probe order, it is possible (and
-   empirically very likely) that the camera won't be detected at all.
-   A Linux kernel solution was attempted multiple times in the past,
-   c.f.
-   https://lore.kernel.org/linux-gpio/20230904115816.1237684-1-s.hauer@pengutronix.de/
-   https://lore.kernel.org/lkml/20220802095252.2486591-1-foss+kernel@0leil.net/
-   We'll need to figure something out this time as I won't be able to
-   upstream camera support without it :)
+Typically, it is expected from the device DTS(I) to update the SoC DTSI
+nodes if they have more than one endpoint, so let's assume there's only
+one endpoint in port@0 by default, instead of forcing board DTS(I)s to
+/delete-property/ address-cells and size-cells to make dtc happy.
 
-To test, install libcamera on Debian Bookworm (or more recent I guess;
-libcamera-ipa libcamera-tools) and add a file at
-/usr/share/libcamera/ipa/rkisp1/ov5675.yaml whose content is (remove one
-leading whitespace):
+Because PX30 PP1516/EVB's endpoint@0 is the only endpoint and
+considering its parent node now has no address-cells property, dtc
+complains (same messages for PX30 EVB):
 
- # SPDX-License-Identifier: CC0-1.0
- %YAML 1.1
- ---
- version: 1
- algorithms:
-   - Agc:
-   - Awb:
-   - BlackLevelCorrection:
-   - ColorProcessing:
- ...
+arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi:447.29-451.6: Warning (avoid_default_addr_size): /isp@ff4a0000/ports/port@0/endpoint@0: Relying on default #address-cells value
+arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi:447.29-451.6: Warning (avoid_default_addr_size): /isp@ff4a0000/ports/port@0/endpoint@0: Relying on default #size-cells value
+arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dtb: Warning (avoid_unnecessary_addr_size): Failed prerequisite 'avoid_default_addr_size'
+arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
+arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi:447.29-451.6: Warning (graph_endpoint): /isp@ff4a0000/ports/port@0/endpoint@0: graph node '#address-cells' is -1, must be 1
+arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi:447.29-451.6: Warning (graph_endpoint): /isp@ff4a0000/ports/port@0/endpoint@0: graph node '#size-cells' is -1, must be 0
+arch/arm64/boot/dts/rockchip/px30-pp1516-ltk050h3146w-a2.dtb: Warning (graph_child_address): Failed prerequisite 'graph_endpoint'
 
-then call
+so we fix that by removing the reg property. dtc still complains (same
+messages for PX30 EVB):
 
-qcam -platform eglfs -c /base/i2c@ff190000/camera@36
+arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi:447.29-450.6: Warning (unit_address_vs_reg): /isp@ff4a0000/ports/port@0/endpoint@0: node has a unit name, but no reg or ranges property
 
-While this is running, control the focus lens driver with (via v4l-utils
-Debian package):
+so we also remove the @0 suffix off the node name.
 
-v4l2-ctl -d /dev/v4l-subdev5 -c focus_absolute=150
-
-and change the focus_absolute value to see the lens moving and the focus
-change.
-
-I'll try to have a look at libcamera's config file so I can send a
-proper one to the project instead of this dummy one.
-
+Fixes: 8df7b4537dfb ("arm64: dts: rockchip: add isp node for px30")
+Fixes: 474a77395be2 ("arm64: dts: rockchip: hook up camera on px30-evb")
+Fixes: 56198acdbf0d ("arm64: dts: rockchip: add px30-pp1516 base dtsi and board variants")
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
-Changes in v2:
-- added patch 1 (fix dtc warnings for endpoint in ISP port@0 node)
-- added patch 2 (label to port@0 ISP node),
-- used phandle to port@0 ISP node, removed reg and @0 suffix to
-  endpoint,
-- Link to v1: https://lore.kernel.org/r/20250516-ringneck-haikou-video-demo-cam-v1-1-fff23160395f@cherry.de
+ arch/arm64/boot/dts/rockchip/px30-evb.dts     | 3 +--
+ arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi | 3 +--
+ arch/arm64/boot/dts/rockchip/px30.dtsi        | 2 --
+ 3 files changed, 2 insertions(+), 6 deletions(-)
 
----
-Quentin Schulz (3):
-      arm64: dts: rockchip: fix endpoint dtc warning for PX30 ISP
-      arm64: dts: rockchip: px30: add label to first port of ISP
-      arm64: dts: rockchip: support camera module on Haikou Video Demo on PX30 Ringneck
+diff --git a/arch/arm64/boot/dts/rockchip/px30-evb.dts b/arch/arm64/boot/dts/rockchip/px30-evb.dts
+index d93aaac7a42f151590808083e3956a0f64ce7710..bfd724b73c9a7647f661b4799df00edd838f1085 100644
+--- a/arch/arm64/boot/dts/rockchip/px30-evb.dts
++++ b/arch/arm64/boot/dts/rockchip/px30-evb.dts
+@@ -483,8 +483,7 @@ &isp {
+ 
+ 	ports {
+ 		port@0 {
+-			mipi_in_ucam: endpoint@0 {
+-				reg = <0>;
++			mipi_in_ucam: endpoint {
+ 				data-lanes = <1 2>;
+ 				remote-endpoint = <&ucam_out>;
+ 			};
+diff --git a/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi b/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
+index 3f9a133d7373a122861931b7c8199bee485234a5..b4bd4e34747ca0bc5a6407bf8b0a3de8c08899a7 100644
+--- a/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi
+@@ -444,8 +444,7 @@ &isp {
+ 
+ 	ports {
+ 		port@0 {
+-			mipi_in_ucam: endpoint@0 {
+-				reg = <0>;
++			mipi_in_ucam: endpoint {
+ 				data-lanes = <1 2>;
+ 				remote-endpoint = <&ucam_out>;
+ 			};
+diff --git a/arch/arm64/boot/dts/rockchip/px30.dtsi b/arch/arm64/boot/dts/rockchip/px30.dtsi
+index feabdadfa440f96c0134a0bb05e64a0c7b5adf2e..8220c875415f52bb2098af5c0647cae8fe5c9aed 100644
+--- a/arch/arm64/boot/dts/rockchip/px30.dtsi
++++ b/arch/arm64/boot/dts/rockchip/px30.dtsi
+@@ -1271,8 +1271,6 @@ ports {
+ 
+ 			port@0 {
+ 				reg = <0>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+ 			};
+ 		};
+ 	};
 
- arch/arm64/boot/dts/rockchip/px30-evb.dts          |  3 +-
- arch/arm64/boot/dts/rockchip/px30-pp1516.dtsi      |  3 +-
- .../rockchip/px30-ringneck-haikou-video-demo.dtso  | 53 ++++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/px30.dtsi             |  4 +-
- 4 files changed, 56 insertions(+), 7 deletions(-)
----
-base-commit: 8a7f81861ba3226f9cd6fc1cd34d7d62ff8951c0
-change-id: 20250516-ringneck-haikou-video-demo-cam-420685fb7f9f
-
-Best regards,
 -- 
-Quentin Schulz <quentin.schulz@cherry.de>
+2.49.0
 
 
