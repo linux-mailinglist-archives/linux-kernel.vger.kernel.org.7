@@ -1,191 +1,112 @@
-Return-Path: <linux-kernel+bounces-679427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00CDAD3632
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5677AD3750
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448811898E68
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D551D1896BB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A632918FF;
-	Tue, 10 Jun 2025 12:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF40E29B8D3;
+	Tue, 10 Jun 2025 12:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="SQHIPIgZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HzuuaZn9"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6W8ANdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8931228F503;
-	Tue, 10 Jun 2025 12:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A62E28C5A6;
+	Tue, 10 Jun 2025 12:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558555; cv=none; b=Wi03Qaej8r7mQloqso7MmS7KxPssyQQab5+KURsuojdRgfeWkvnRn80+j6n000MzXQd62Edz1xaO520ezuysww+woZ7kDMYKuEBal4qPl23PYKI+2R9vC+4D/tnwtV4rSLS02gVsCEpEXrvT2SEUDKR5R6puL7aLy8giHrmboJM=
+	t=1749559349; cv=none; b=qFCmVERmvIG/ht3dyypWZ6Pjwn+xtkc2tQSKN4l0WEcsgDfBWZ7IkWtVDNIgJjejgUfYJtCaZwU8jJvOpoGWHj7kaw4d1q4usr7bjMkuXEYMCxpRQTxWzxQfj1Dmdl0fKUe9QANKUv5r8wl+eEgQD29PeFTcprrfP41m48QFPAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558555; c=relaxed/simple;
-	bh=s/Mms/MwIMqVWLnjCgYLsX7RxmSQ4yf/IkuaD8FSw5s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pNoCA09l++Rp8Dxj8mHYiKOh8ISrJpjpGSngS8be2pHJRKD0vnCtQYr4WCRRIdUzzESSexUUrTBS+F+eAfVniyNctYXxaHVE5D23V2QaielfTB9if+5NLRg/k5OgZW5qdkPOfZCLBFI1mQ1RgWmKDeNaB1jOeicrRVxgV9+lUZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=SQHIPIgZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HzuuaZn9; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3F4692540105;
-	Tue, 10 Jun 2025 08:29:11 -0400 (EDT)
-Received: from phl-imap-08 ([10.202.2.84])
-  by phl-compute-12.internal (MEProxy); Tue, 10 Jun 2025 08:29:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1749558551;
-	 x=1749644951; bh=b0KTzhdLUwJk/RA13SFXN+xVrwh40xkCwJtg+vK9uD0=; b=
-	SQHIPIgZzfBrshp4cxz+AB5A778efV2gH0zQ2/lJ9RPmwKPasv3t/YtcYc8G+Mqh
-	ULw6AXTRxXrLL0R0eT0Y+PO3OX+Bu5msiAmyLY640iaXQW7gNqKjk9MdT26pkah6
-	8FaPOwmoiUHB84BqvGAFPX8ZdGT8jXh7dLA6Nzr5gVLHb1d/tmPwk1V4rSodEJoC
-	VBccAx1AYw6h8/p/LdL8DKVjjC3IhZuQlRFEohbwbk5rzhedtoXmzhZ3ViokvutE
-	HMryuSGG1x6x+Fpg9cC8aFIWTyGUHg1Ve2J3lkY32/ietD12FxfriHNRMuwSC1z9
-	E+/5IziFbmxUQR7JgHmqHQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749558551; x=
-	1749644951; bh=b0KTzhdLUwJk/RA13SFXN+xVrwh40xkCwJtg+vK9uD0=; b=H
-	zuuaZn9g6Q7jc7zlV7wtU/xVlh4ExQcCROsAxd5szo+vDar+59MY5uBIkm3lE8aD
-	vgYnDVKN0KDlmnbIXVVmsbuRFlbxjbTxDqsqhDaXuVQnn/v58GMKDzO7Hb4RMHs8
-	PWxOLz3T46MhzHyYBW94mlF88OtaH9GU9P39GRMyZ/3jphG5mhubjngFwcwB+Pzg
-	A0zAzfh1fFx+TjhF6FJgoBzUWbncJZ9EbaUtgxj6DnKR2R7u3Md0qafqqA7eUMo6
-	DeVmxIVoJebyMYzMv8cS0a0GMKqt7is3ZSHJ64RMq7uMHgs8A41Ljk8CG/wkrpwG
-	MDDV4TsVT8K+zImFI+Hyw==
-X-ME-Sender: <xms:FiVIaD1p4SHd_Ol7AIJrdF3aCDwxTwnOzEIeR-C0lCPLLQX5qUOEqQ>
-    <xme:FiVIaCG5uCPvHYYfdSIAp5AbFmhEI9uqQqxboi9Jrak6CVy9CNNpA35eHyERPTxFK
-    ZyEv6jdOOIwx1K4ECY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdejgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
-    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhepgedvgeeufffhtdel
-    iefgjefhgffgiedvjeegleeujeeutdduteehjeduhedtiedtnecuffhomhgrihhnpehkvg
-    hrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggprh
-    gtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepihhkvghprghn
-    hhgtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfigprghrmhhinhesghhmgidruggvpd
-    hrtghpthhtohephhhmhheshhhmhhdrvghnghdrsghrpdhrtghpthhtoheplhhkphesihhn
-    thgvlhdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlih
-    hnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnhes
-    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehisghmqdgrtghpihdquggvvh
-    gvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphhtthhopegtohhr
-    sggvtheslhifnhdrnhgvthdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrd
-    gtohhm
-X-ME-Proxy: <xmx:FiVIaD7RxmtHxMynnUN8zHb7dflxNnYKtL1YzN2d5z3nArN4N6r5RQ>
-    <xmx:FiVIaI03sHHcoqn41xDZOXyD7KpDhGFmAPuFdUMlbPACTMpmGt_XIQ>
-    <xmx:FiVIaGEZMHKlc1Ma8crv7vr0ybroCqlOU4sVUmImkV0R3xkL9huROg>
-    <xmx:FiVIaJ-QmtmUwgm5Iosg0B3oz9qxAvmOe9bd0YyudIq4vywN8Nwr0w>
-    <xmx:FyVIaNUPQ_RaKZ61HuNj6fZFZuijvSnE6BDgT_fH-FZ0-iXL4YYD63WG>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 09BB62CE0063; Tue, 10 Jun 2025 08:29:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1749559349; c=relaxed/simple;
+	bh=/1iUBspDEJPAm1syGxDL8nO0vqi84Psh/DKw5YFPtZY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CvPLHi+TGSDMVcYqztj0+4yrv31JusalcJq3Q5853mTJd65vFZcwGqBO71BoX3d3AKSgj6BgvIN/fn2ep7CUgOIfxUb3z4I3yTOyxxOjcBdbEReMyzRp1AGYhtS6TTT5sn5AsN23+V79d9bt+e0k7LybCYt/lquVR9/4pYaB8Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6W8ANdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF41C4CEED;
+	Tue, 10 Jun 2025 12:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749559349;
+	bh=/1iUBspDEJPAm1syGxDL8nO0vqi84Psh/DKw5YFPtZY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=S6W8ANddI6Mxzhu+bXnGcpy8S6b5KZK+nZEs+R3mO2Auw38nnZC1tRvDbYZdoa1+0
+	 Hpw84ytsKQ6UMY3RRV/KpuP9rMKbz5z/VDVqfpA/FGAgQKBEjEt8xVp4m0HPidvSGV
+	 rlWFHjMs6YaD7pNrWyWC+0HX4Q5gFH7lzSCIOtHu8Dwg2EMFR8sWn72aaDRdAikOJw
+	 EI6QgZONtHdHf1uf+Vq4aah3loDxstGSWePBaHay6Kj9nIO9hBjGyL84cFpp9ODwu3
+	 WK47sJd+a+goDLNyagg+vBxTgzplTDmDiXhFFQJxdXvwVJj2kJGEArcbvXvm3SmqnK
+	 WXav1c4Uxba4Q==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 0/4] kselftest/arm64: Add coverage for the interaction
+ of vfork() and GCS
+Date: Tue, 10 Jun 2025 13:29:43 +0100
+Message-Id: <20250610-arm64-gcs-vfork-exit-v2-0-929443dfcf82@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T95b0e86a2866f664
-Date: Tue, 10 Jun 2025 08:28:49 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>, "Jonathan Corbet" <corbet@lwn.net>,
- ikepanhc@gmail.com, "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
- "Armin Wolf" <W_Armin@gmx.de>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- linux-doc@vger.kernel.org,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- ibm-acpi-devel@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>,
- "kernel test robot" <lkp@intel.com>
-Message-Id: <f3b5c138-5576-4c01-b177-7450f1e91d24@app.fastmail.com>
-In-Reply-To: <b792059e-44d2-82c0-574c-76c3f6a3129d@linux.intel.com>
-References: <mpearson-lenovo@squebb.ca>
- <20250609122736.3373471-1-mpearson-lenovo@squebb.ca>
- <20250609122736.3373471-2-mpearson-lenovo@squebb.ca>
- <b792059e-44d2-82c0-574c-76c3f6a3129d@linux.intel.com>
-Subject: Re: [PATCH v3 2/2] platform/x86: thinklmi: improved DMI handling
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADglSGgC/22NQQ6CMBBFr2Jm7ZjSUIquvIdhUWEKE5SaKWkwh
+ LtbcevyveS/v0IkYYpwOawglDhymDLo4wHawU09IXeZQSttlNE1OnlWJfZtxOSDjEgLz1g62zl
+ vK6OJIE9fQp6XPXtrMg8c5yDv/SUVX/sLVur8P5gKVHh3rlNe1caW9jqSTPQ4Bemh2bbtA6YdR
+ OS5AAAA
+X-Change-ID: 20250528-arm64-gcs-vfork-exit-4a7daf7652ee
+To: Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1234; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=/1iUBspDEJPAm1syGxDL8nO0vqi84Psh/DKw5YFPtZY=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoSCgu82PSVmQPG9g1oJQrsyvsTSf2h9mS1ONCsW21
+ mqjhbFOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaEgoLgAKCRAk1otyXVSH0BMCB/
+ 98zbKt51BDbhAYnQSZMke8OJDPGCHrlTF1lGFJxPCARcuIDzBp0prKAYytmm00o9LOAKqSVTyCpegx
+ 36l/v8Ig3awVYYtpl5D3hnvGppd5weMjb59iEegi0cJaNRIHjnSYKjI8XjnlrRrRV+hkr1QsjDOdYE
+ OF4si6AwG9Nskqf/O295slJO/OyJZiy/Jn7aKHbpXQE8Ldw9KckocVneCaqLoBhxDs0MeigiSicVpN
+ 97h4+IpmCEA45bBJhCoZNTGDP000E5Fq3/bOuLfWZLbY8fbCEaHD7MeDP+QqAHAzowbXjJcirYclA1
+ FJ9v/u3BYt8jGyR6+o/ue1MRNC4WRw
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hi Ilpo,
+I had cause to look at the vfork() support for GCS and realised that we
+don't have any direct test coverage, this series does so by adding
+vfork() to nolibc and then using that in basic-gcs to provide some
+simple vfork() coverage.
 
-On Tue, Jun 10, 2025, at 3:35 AM, Ilpo J=C3=A4rvinen wrote:
-> On Mon, 9 Jun 2025, Mark Pearson wrote:
->
->> Fix issues reported by kernel test robot.
->>  - Require DMI for think-lmi.
->>  - Check return from getting serial string
->>=20
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202506062319.F0IpDxF6-l=
-kp@intel.com/
->>=20
->> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> ---
->>  - New patch added to series.
->>=20
->>  drivers/platform/x86/lenovo/Kconfig     | 1 +
->>  drivers/platform/x86/lenovo/think-lmi.c | 8 +++++---
->>  2 files changed, 6 insertions(+), 3 deletions(-)
->>=20
->> diff --git a/drivers/platform/x86/lenovo/Kconfig b/drivers/platform/x=
-86/lenovo/Kconfig
->> index a4b565283768..207dd7f88ed0 100644
->> --- a/drivers/platform/x86/lenovo/Kconfig
->> +++ b/drivers/platform/x86/lenovo/Kconfig
->> @@ -197,6 +197,7 @@ config THINKPAD_ACPI_HOTKEY_POLL
->>  config THINKPAD_LMI
->>  	tristate "Lenovo WMI-based systems management driver"
->>  	depends on ACPI_WMI
->> +	depends on DMI
->>  	select FW_ATTR_CLASS
->>  	help
->>  	  This driver allows changing BIOS settings on Lenovo machines whose
->> diff --git a/drivers/platform/x86/lenovo/think-lmi.c b/drivers/platfo=
-rm/x86/lenovo/think-lmi.c
->> index 143d9fdedb65..8f70c60f791f 100644
->> --- a/drivers/platform/x86/lenovo/think-lmi.c
->> +++ b/drivers/platform/x86/lenovo/think-lmi.c
->> @@ -772,6 +772,7 @@ static ssize_t certificate_store(struct kobject *=
-kobj,
->>  	struct tlmi_pwd_setting *setting =3D to_tlmi_pwd_setting(kobj);
->>  	enum cert_install_mode install_mode =3D TLMI_CERT_INSTALL;
->>  	char *auth_str, *new_cert;
->> +	const char *serial;
->>  	char *signature;
->>  	char *guid;
->>  	int ret;
->> @@ -789,9 +790,10 @@ static ssize_t certificate_store(struct kobject =
-*kobj,
->>  			return -EACCES;
->> =20
->>  		/* Format: 'serial#, signature' */
->> -		auth_str =3D cert_command(setting,
->> -					dmi_get_system_info(DMI_PRODUCT_SERIAL),
->> -					setting->signature);
->> +		serial =3D dmi_get_system_info(DMI_PRODUCT_SERIAL);
->> +		if (!serial)
->> +			return -EINVAL;
->
-> This should not return -EINVAL as it is not a problem with the input=20
-> parameters. Perhaps -ENODEV would make sense instead?
->
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Add replacement of ifdef with if defined() in nolibc since the code
+  doesn't reflect the coding style.
+- Remove check for arch specific vfork().
+- Link to v1: https://lore.kernel.org/r/20250609-arm64-gcs-vfork-exit-v1-0-baad0f085747@kernel.org
 
-Good point.
-Unless Andy strongly thinks I should drop this bit, I'll fix in the next=
- version
+---
+Mark Brown (4):
+      tools/nolibc: Replace ifdef with if defined() in sys.h
+      tools/nolibc: Provide vfork()
+      kselftest/arm64: Add a test for vfork() with GCS
+      selftests/nolibc: Add coverage of vfork()
 
-Thanks
-Mark
+ tools/include/nolibc/sys.h                    | 57 +++++++++++++++++-------
+ tools/testing/selftests/arm64/gcs/basic-gcs.c | 63 +++++++++++++++++++++++++++
+ tools/testing/selftests/nolibc/nolibc-test.c  | 23 ++++++++--
+ 3 files changed, 124 insertions(+), 19 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250528-arm64-gcs-vfork-exit-4a7daf7652ee
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
