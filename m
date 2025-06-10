@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-679926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1482AD3DB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:43:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81225AD3DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E71A189E41D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:39:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0E2179D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4B82356BF;
-	Tue, 10 Jun 2025 15:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1mk/JAp"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E4E1EE7D5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B25238C2D;
+	Tue, 10 Jun 2025 15:38:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FBD238C0F;
+	Tue, 10 Jun 2025 15:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569949; cv=none; b=DdeVS2XMaVBSO4pPX+yOjRnXYqx+FOcuR5YQRLT5RBiYfc/Qbj5BLWq/0rVBHXM+0U0GfF3Rvw6SrTDkraAlHULWfGxLdxy1z4oCeQcZo7QKmNGHHCGEekBMpZRm+q+U21sIqJzIu29LMQQG0wnGjQzSQWkQ9JWF9lbX9vkTJRQ=
+	t=1749569884; cv=none; b=rzHu67eZT+KzMiWIupSe1TUTUzKVp0zknzEj3WKn6qa9BbrRTtQGf+0Uu5zjY9NXIvWRy2ycNUs3s3QY7T1kkANFb4D+IXzA8mzmQjD3ePg+ABXm4aDkwxxPXV+QqVN2E5kss2OJ2K+1qIKocwzoDIOAIq6zg2SFErHNcKRHj5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569949; c=relaxed/simple;
-	bh=X3FMNaH+gMkSWc6mxlddlgItT1JWMkGhMkmmBWRVpzU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c0J7A8Yd010H1ZOK8C+RmzUCK97bSNkoRP2y3qmP9R/8Sn1+ZZ89+UFUkKm2hASl2arcbPThOd/V8rBdwvuh+LvVe3ble4hGaPaUhcch3JffPnqqliL5e3WCP96PoLgr3mcI/KdYFcrFXs44KtGxO7DSr+jJAGnEdCR6vnGIIZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M1mk/JAp; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-60785397a37so3796578a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749569946; x=1750174746; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=K83VDCEaogYq8o+q4q2QDKkSbCK5mXjp54sio/cApS0=;
-        b=M1mk/JApK4uxLjy8/uhORGACo7+CSGZudCpJEXXO5jEx1xGzgjx0WyLkhGjvHUwNf4
-         /CFqJvqapImT7evGhX5J1rqq5C5bFYhZ43e+pHu/hgpIskFFjGQj8holVWy2fEp07f08
-         I2Cb9zqhL6tBmZAozoLX9/n1ZWkcTlJRcjg/IKkWWf797MW4R5+gnnroqhxqFjuoLcX1
-         yDJUL38ZhfLicQQtjPYC3s5I58akE02JuGcqP1lXFST+7tyvqIkMwWiMikKimUd5s3e+
-         O7rar/KBNytFTaXxwuHzxDvSbXY6zI+OlriDzz8nItpQ/6fpHf/+rmxAnFS3tpg032iz
-         Jm7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749569946; x=1750174746;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K83VDCEaogYq8o+q4q2QDKkSbCK5mXjp54sio/cApS0=;
-        b=fKpuIi3rXyXmiLawoWQZJ7Hm2rWERVGlTCIwg6OUxM3xEWnFihiTUyLx3eIdD8rh+D
-         ub2MHa76IFn2yl/MXfRneJ6M29TwQzqOG60cbu1/tQHCEtaqGMiv1Um+U/Ls87+OsYfU
-         RpgesW93u2RDuecPLkMSgIzgsbcv7GJGIKy20vI97+RblJf0mnPzKXnI3ttlg/VyKwV2
-         YcWD2RLeFsfqcTnfLfRL86og7E6N3eFAi1NWgqM8keFQzRJAyr8PDO9PZ1fpO7OiwNkL
-         xgeNgawJa0eoqBC24xuyqVFpTOwbIDCu5fpJwvVUFyb+7GcpURMYx2Cn8J0Nf/uue2HD
-         yGQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDir/FaBA+tUYx2rOIG5PJmCqHT52mkslVVKQ9VxeN8ka1wz49xtl4MteyExeKzk3xhZL/ZA872p2Iues=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw55oXTh6XyWjNeFYC555PkUrraGoKKm8edLt/2NhnT9LVnzZs9
-	oAWlTz/dOixBQkyjnL5th8hnIO0EcvYQaamgYBtgK1shWhapDUo5PQN8H1pqp4n5bFSY4TybIYS
-	Xni3qHM0XRNypKjqFhw==
-X-Google-Smtp-Source: AGHT+IF0ZTAD1f0oKGQJq37uOuJo1nDnMzixE4HUDx2a7KPwnJbsLI8iBEKebG9jVNmmils6F028/Z0NOTH4V24=
-X-Received: from eddn5.prod.google.com ([2002:a05:6402:5145:b0:607:fd2c:1f11])
- (user=tmichalec job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:254b:b0:607:434d:bc2c with SMTP id 4fb4d7f45d1cf-6082dba7954mr2757439a12.23.1749569946760;
- Tue, 10 Jun 2025 08:39:06 -0700 (PDT)
-Date: Tue, 10 Jun 2025 17:37:47 +0200
+	s=arc-20240116; t=1749569884; c=relaxed/simple;
+	bh=MAQtkSyNTXy0LbYyeAVF2nrjyLBxjjbONOKqNj4bFsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BgUn6GsBa0yaSYRG54AFVwtJdqw9y/+J73OHrNA62YT75LelJsnKtsBu8/tQQWWG5jyxkFLEDHHJNRS3AES8mcFsRJ4gk4i/99YlogMDkFblZvA1NSHUVpEe/J5gN2dUGd1J0fV2K1i4vVuU/mN+12JDRYr2ldSKwpr/b80VvxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09B0F14BF;
+	Tue, 10 Jun 2025 08:37:42 -0700 (PDT)
+Received: from [10.57.79.109] (unknown [10.57.79.109])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B708C3F66E;
+	Tue, 10 Jun 2025 08:37:59 -0700 (PDT)
+Message-ID: <40f1971d-640a-44b4-b798-d1a5844063e2@arm.com>
+Date: Tue, 10 Jun 2025 16:37:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
-Message-ID: <20250610153748.1858519-1-tmichalec@google.com>
-Subject: [PATCH] platform/chrome: cros_ec_typec: Defer probe on missing EC parent
-From: Tomasz Michalec <tmichalec@google.com>
-To: Benson Leung <bleung@chromium.org>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
-	Andrei Kuchynski <akuchynski@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Guenter Roeck <groeck@chromium.org>, Konrad Adamczyk <konrada@google.com>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	chromeos-krk-upstreaming@google.com, Tomasz Michalec <tmichalec@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 0/2] iommu&pci: Disable ATS during FLR resets
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, joro@8bytes.org,
+ will@kernel.org, bhelgaas@google.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
+ vsethi@nvidia.com
+References: <cover.1749494161.git.nicolinc@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <cover.1749494161.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-If cros_typec_probe is called before EC device is registered,
-cros_typec_probe will fail. It may happen when cros-ec-typec.ko is
-loaded before EC bus layer module (e.g. cros_ec_lpcs.ko,
-cros_ec_spi.ko).
+On 2025-06-09 7:45 pm, Nicolin Chen wrote:
+> Hi all,
+> 
+> Per PCIe r6.3, sec 10.3.1 IMPLEMENTATION NOTE, software should disable ATS
+> before initiating a Function Level Reset, and then ensure no invalidation
+> requests being issued to a device when its ATS capability is disabled.
 
-Return -EPROBE_DEFER when cros_typec_probe doesn't get EC device, so
-the probe function can be called again after EC device is registered.
+Not really - what it says is that software should not expect to receive 
+invalidate completions from a function which is in the process of being 
+reset or powered off, and if software doesn't want to be confused by 
+that then it should take care to wait for completion or timeout of all 
+outstanding requests, and avoid issuing new requests, before initiating 
+such a reset or power transition.
 
-Signed-off-by: Tomasz Michalec <tmichalec@google.com>
----
- drivers/platform/chrome/cros_ec_typec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Both pci_enable_ats() and pci_disable_ats() are called by an IOMMU driver,
+> but an unsolicited FLR can happen at any time in the PCI layer. This might
+> result in a race between them, breaking the rules given by the PCIe Spec.
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 7678e3d05fd3..f437b594055c 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -1272,8 +1272,8 @@ static int cros_typec_probe(struct platform_device *pdev)
- 
- 	typec->ec = dev_get_drvdata(pdev->dev.parent);
- 	if (!typec->ec) {
--		dev_err(dev, "couldn't find parent EC device\n");
--		return -ENODEV;
-+		dev_warn(dev, "couldn't find parent EC device\n");
-+		return -EPROBE_DEFER;
- 	}
- 
- 	platform_set_drvdata(pdev, typec);
--- 
-2.50.0.rc0.604.gd4ff7b7c86-goog
+Can you clarify which rules? The Implementation Note itself is just an 
+example of a possible software policy, and explicitly not normative.
+
+> Therefore, there needs to be a sync between IOMMU and PCI subsystems, to
+> ensure that ATS will be disabled and never gets re-enabled until the FLR
+> finishes. Add a pair of new IOMMU helpers for PCI reset functions to call
+> before and after the reset routines. These two helpers will temporally
+> attach the device's RID/PASID to IOMMU_DOMAIN_BLOCKED, which should allow
+> its IOMMU driver to pause any DMA traffic and disable ATS feature until
+> the FLR is done.
+
+FLR must inherently stop the function from issuing any kind of requests 
+anyway (see 6.6.2), so "pausing" traffic at the IOMMU end seems like a 
+non-issue. I guess I can see how messing with the domain attachment 
+underneath the rest of the group manages to prevent new invalidate 
+requests from group->domain being issued to the given function, but it's 
+pretty horrid - leaving the mutex blocked might be just about tolerable 
+for an FLR that's supposed to take no longer than 100ms, but what if we 
+do want to do this for suspend/resume as well?
+
+Thanks,
+Robin.
+
+> 
+> This is on Github:
+> https://github.com/nicolinc/iommufd/commits/iommu_dev_reset-rfcv1
+> 
+> Thanks
+> Nicolin
+> 
+> Nicolin Chen (2):
+>    iommu: Introduce iommu_dev_reset_prepare() and iommu_dev_reset_done()
+>    pci: Suspend ATS before doing FLR
+> 
+>   include/linux/iommu.h |  12 +++++
+>   drivers/iommu/iommu.c | 106 ++++++++++++++++++++++++++++++++++++++++++
+>   drivers/pci/pci.c     |  42 +++++++++++++++--
+>   3 files changed, 156 insertions(+), 4 deletions(-)
+> 
 
 
