@@ -1,119 +1,182 @@
-Return-Path: <linux-kernel+bounces-678771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0994AD2DF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:29:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227ADAD2DF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727363A57E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F09916C5A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9309F278E60;
-	Tue, 10 Jun 2025 06:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D91278E5D;
+	Tue, 10 Jun 2025 06:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="WeyidIYu"
-Received: from esa10.hc1455-7.c3s2.iphmx.com (esa10.hc1455-7.c3s2.iphmx.com [139.138.36.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbpCVjXn"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3483351022
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162B913BC02
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749536955; cv=none; b=YFIZtZUu4v8H069Px7PxZnfXFT7slJlVY6jY6uYMB+gwa8AkZHLfTDHk7js+l7k/3KB0DxR7CZNwfQtme3/l8XckfSxPqKyM5RUvXRQ70kPxvP2YQzrrGb4h6F/gwKaHmR6RyNdxBJF5jZifsoWsXa54Me3yVFWFHIP9+YjcIN4=
+	t=1749536881; cv=none; b=R5JQtI93irT8T9MXrlxkRTA1RGUH1WoVX/cBYaaGy2m3/TBLTQVhufJQcULGn5FAjHYT1DyrqpP2aeQtLVZKxrPa0acsX/Xh29SCzsVhNqZHTc6+bna+/KzSh0/Hwz125dA4zipKhuMHG724MaSqn2Kb+Wj4IZ3R3LvalsPd0+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749536955; c=relaxed/simple;
-	bh=8Q+3ecZIOla7HmlI7e/qao3HRBpcoMYWCofrI5L6AQA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DZDIQHjlMFG/VMvdcT56okkMCxSyjhcL/mE/lHvCZQy4raNAsu/d3spre8Ci+hRdiH62rMLpbtfsjSUp+o2Ja7kksjIw6bYEdMOS68n/NJpx4u9dZrnqZYhFMcypmIg8yhQ4XXDxkyqFvURLyUxf9VLM1YCfqJyO03x1Q57vyyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=WeyidIYu; arc=none smtp.client-ip=139.138.36.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1749536953; x=1781072953;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8Q+3ecZIOla7HmlI7e/qao3HRBpcoMYWCofrI5L6AQA=;
-  b=WeyidIYuHQ0qn46GKfEbV5LjSm1lDLP0xUUaDC4v7w4IVvaEYsNxhjfQ
-   GvfQQAO7q9GaLrCVi3H5YE3w3pcf11SjNQG+6cGvnGIcFFm5zy2hcCJTC
-   79grZqy44Yl4cahbgQ4V4BXrwD2EBaidJzORbGsKiKoAa3ZV4jPyObtFY
-   DUV2NhAvMk+xMTMlRtasxoItDpVWnsrFYQRt5A2PAP+lHisDOCQQGKJcc
-   LnN3XB415uheSQV+2GtwXjxqebGTUIUjG76MZzH/FMsTyb6DDdY53lSXt
-   xoJ0NbB/T9XKb5YBUZQ5mZEaR/cPjrJtjhGQiZfVosdKa0z82jQGGLYk2
-   Q==;
-X-CSE-ConnectionGUID: 1pcuRL0vSW+8NfEReXUxpg==
-X-CSE-MsgGUID: N13mePTbT6+NvgCu2do5Og==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="189616285"
-X-IronPort-AV: E=Sophos;i="6.16,224,1744038000"; 
-   d="scan'208";a="189616285"
-Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
-  by esa10.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 15:28:02 +0900
-Received: from oym-m2.gw.nic.fujitsu.com (oym-nat-oym-m2.gw.nic.fujitsu.com [192.168.87.59])
-	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 8378D32F11
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:28:00 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by oym-m2.gw.nic.fujitsu.com (Postfix) with ESMTP id 24FD1BF3C1
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:28:00 +0900 (JST)
-Received: from FNSTPC.g08.fujitsu.local (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 96B4E1A0071;
-	Tue, 10 Jun 2025 14:27:58 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Ying Huang <huang.ying.caritas@gmail.com>
-Subject: [PATCH] mm/memory-tier: Fix abstract distance calculation overflow
-Date: Tue, 10 Jun 2025 14:27:51 +0800
-Message-ID: <20250610062751.2365436-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1749536881; c=relaxed/simple;
+	bh=3RySZmq6aFNeYlomSwoo4Yh12T77gmiZ464JOIGhQJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aiec0aWRh229WIIrI/ZdBBbApIhFwnytu2bdKb0Q9cyYX+4QrQWLI7RaM8yf7MqpwN10SjyAG8QaTG0lyCxGTLa83m9uNkYnlAnz31dpjKLq6HmMI9P1sqQArrm+lynvhb8Y/rcWo4eCOkdwKH572sTq8hsQPfziR8/B0JHL3RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbpCVjXn; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7485bcb8b7cso860257b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 23:27:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749536879; x=1750141679; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QSUw9NQ3m9yaoFUqCLQXfy1ZhQ4O+VqBpSj2IkfjqDU=;
+        b=YbpCVjXna1ewMjA/PezHnc/dcR8jeWXNcHLltOfHqO9hCze/xeHzQqdGdoZzDRz3nJ
+         ix2aJeanC3O4NJxZFHw1lpx+7yyCEc0m3iN3VXKAy4Spv06WN+URuIl4LHL7X/s6DPNr
+         zumgr3TbecIL15I4Q/W12TzP91O5qNLpBahiIsGAIMcsQRfmnoZ847YKTs/ePXKjTwZy
+         1VDAUgDfgE2dZw9CRLaECzaH+iwqUuivmebVe2HyXmEvmps/MNTBZS/Clvv5eDoPEFEZ
+         lcDznnN0HYDIY1sw4aIeY5mb/dLy7gXq02WYOlhaS4p8ImSJEyKelnVywrWmvRaM+UNL
+         MeuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749536879; x=1750141679;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QSUw9NQ3m9yaoFUqCLQXfy1ZhQ4O+VqBpSj2IkfjqDU=;
+        b=d0SN9PHsR3KBVQa4rFpiL4sl46zU0bVWwLi17aoYJjA5EqDXRKjMtERD5WLOxSpg30
+         WIJGZXRhTrjARK7vp4TTfNkLhDAJQ0otPVfOV5rHDbSg1cvU0pZtY/Id8dBp40wpXiVm
+         wbHmq4GXCP2OYq47U5X1VkWQsUYkrGBp8ly8RMU42oKoj0rTpoW93oXGjdBJw96NXOtw
+         qjoTEyWxCp4BoNYjq2PZH1mSYw9CVrwWp68bx+BGG/mWHeEJsic3pD1SBh1DCRE2AS6R
+         BKer5He8ILx0YhWrZRIqnZZuUS/33xBnJxTVhlMAGGDDwxQOLcvrhXLR3dKHdDpr47ly
+         5RYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqTNVzeac7cnEBtWbSXJ3jpo7EcVpZnXQSLcrTIWPA5FRq63YsLQBeB0nnNOeDU/rSEKImiMgTeUlH4LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz62kcwEksKmqL4LWUesBMV06huQmfCzsdnwlhYfFYYz1CsbwHg
+	tX9Solrilh76nQS2Tw+RswIFkgr038BCDlcySA1y7IeOWNnRjL/GbQg9
+X-Gm-Gg: ASbGncvbKZWS/xjVjV8Niyxo82A6bi0gorJ+NTaIuOekKHxbWnII8925UDLWtmhfcNh
+	g+3wpv6R5hM9CJ+rIeaJPpNIEzvHq339us2NIgmwWZd8KCPCZuySMmk/YPfANZcAYYQdMR1RVl/
+	yPAy/Bz+1A/CeRq7mf7+ELFjffsuLMI4UqeMtqROmZnZ/qqBYc6KTFoINQ1g3i3LnoNs1CF54vf
+	L0xXJc0P6tAnIgPmsoFO1R5q9WkomHPu1p+ZADN6ZVfBEZ3t9ylUuLHT7nW14uB7eC7h4tBJk0f
+	w4b16shSxxEdaiTs6JxlzihMVFWxEShLKAfbHYNByrxSM+sgbqM75uEltXgf+K/i0Q9kx7b7cNk
+	LvuoAv4kEZHSkKw==
+X-Google-Smtp-Source: AGHT+IGjpd5+nTkCN6vJhxOxRFSA253lWZbpZIbQsFwQfvVoj7VZCSp9o7UK71MHIR/U2kEbcPexrA==
+X-Received: by 2002:a05:6a00:c8a:b0:736:6043:69f9 with SMTP id d2e1a72fcca58-748618bdb31mr2172258b3a.19.1749536879296;
+        Mon, 09 Jun 2025 23:27:59 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:92fa:651f:9075:3817])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0e8163sm6988042b3a.145.2025.06.09.23.27.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 23:27:58 -0700 (PDT)
+Date: Tue, 10 Jun 2025 14:27:54 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: John Stultz <jstultz@google.com>
+Cc: sboyd@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+	jserv@ccns.ncku.edu.tw
+Subject: Re: [RFC PATCH] clocksource: Enhancement for clocks_calc_mult_shift()
+Message-ID: <aEfQauoqhEs2DkiG@vaxr-BM6660-BM6360>
+References: <20250609194611.690678-1-richard120310@gmail.com>
+ <CANDhNCrVtK9Tv+d1=z1yrh4OxiS+neENQejD5pCi+R=Cwra9Xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCrVtK9Tv+d1=z1yrh4OxiS+neENQejD5pCi+R=Cwra9Xg@mail.gmail.com>
 
-In mt_perf_to_adistance(), the calculation of abstract distance (adist)
-involves multiplying several int values including MEMTIER_ADISTANCE_DRAM.
-```
-*adist = MEMTIER_ADISTANCE_DRAM *
-		(perf->read_latency + perf->write_latency) /
-		(default_dram_perf.read_latency + default_dram_perf.write_latency) *
-		(default_dram_perf.read_bandwidth + default_dram_perf.write_bandwidth) /
-		(perf->read_bandwidth + perf->write_bandwidth);
-```
-Since these values can be large, the multiplication may exceed the maximum
-value of an int (INT_MAX) and overflow (Our platform did), leading to an
-incorrect adist.
+On Mon, Jun 09, 2025 at 05:32:05PM -0700, John Stultz wrote:
+> Thanks so much for sending this optimization in! It looks promising,
+> but a few comments below:
+> 
+> On Mon, Jun 9, 2025 at 12:46 PM I Hsin Cheng <richard120310@gmail.com> wrote:
+> >
+> > Previously, counting the value of "sftacc" within
+> > "clocks_calc_mult_shift()" use a while loop to determine the amount of
+> > decrement operation for "sftacc".
+> 
+> This is just a direct translation of the code into english, without
+> any context or explanation as to *why* the code is doing what it is
+> doing.
+> 
+> It might be better to explain first *why* the calculation is being
+> done, and then get into the limitations of the current implementation.
+>
 
-Change MEMTIER_ADISTANCE_DRAM to be a long constant by writing it with the
-'L' suffix. This prevents the overflow because the multiplication will then
-be done in the long type which has a larger range.
+Sure thing, I'll change this part.
 
-Fixes: 3718c02dbd4c ("acpi, hmat: calculate abstract distance with HMAT")
-Cc: Ying Huang <huang.ying.caritas@gmail.com>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
- include/linux/memory-tiers.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > It's equivalent to the position of MSB of "tmp", for which we can
+> > derive from (32 - __builtin_clz(tmp)). Use 32 instead of 31 here because
+> > 1UL should be treat as an amount of 1, not the index 0, and even though
+> > "tmp" is of type u64, since it's already shifted right by 32, only the
+> > lowest 32 bits will be possible to have non-zero value.
+> 
+> I was having a bit of a hard time parsing this paragraph, so it
+> probably needs some more work.
+> 
+> On first skim, this also was a bit confusing as __builtin_clz(u64)
+> *seems* like it could return greater than 32 (but that would be
+> __builtin_clzll).  So the (32 - clz(u64)) bit might confuse folks, as
+> It's pretty subtle that __builtin_clz() only works on the bottom
+> 32bits.  The code should definitely get clear a comment on this.
+> 
+> And thinking more, would using ffs() be more straightforward here for
+> what is wanted?
+> 
 
-diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
-index 0dc0cf2863e2..7a805796fcfd 100644
---- a/include/linux/memory-tiers.h
-+++ b/include/linux/memory-tiers.h
-@@ -18,7 +18,7 @@
-  * adistance value (slightly faster) than default DRAM adistance to be part of
-  * the same memory tier.
-  */
--#define MEMTIER_ADISTANCE_DRAM	((4 * MEMTIER_CHUNK_SIZE) + (MEMTIER_CHUNK_SIZE >> 1))
-+#define MEMTIER_ADISTANCE_DRAM	((4L * MEMTIER_CHUNK_SIZE) + (MEMTIER_CHUNK_SIZE >> 1))
- 
- struct memory_tier;
- struct memory_dev_type {
--- 
-2.41.0
+This is a nice head up, thanks so much ! I'll switch to ffs() and see
+how it goes.
+
+> > This change is tested against a test script [1].
+> > Result shown that it can save a significant amount of execution overhead
+> > for this function, which is invoked often, the whole system would likely
+> > benefit from it.
+> >
+> > -----------------------------
+> > | old version | new version |
+> > -----------------------------
+> > |  11500.6 ns |       44 ns |
+> > -----------------------------
+> >
+> > The execution time is reduced around 99.7%
+> 
+> That is impressive, but should probably be contextualized around how
+> often one might expect clocks_calc_mult_shift() to be called.
+> It still looks like a good optimization, but we shouldn't over-sell it
+> unless there's a concrete impact to users.
+> 
+
+No problem, I'll try to use bpf or some debug prints approach to test
+the invoked frequency of this function, what do you think ? maybe
+there're better and more elegant approach to do such profiling ?
+
+Btw I ran each test for 10 times and take the average of them, I should
+amend this in the commit message.
+
+> Thanks again for sending this along! I'd just take another pass at the
+> commit message and the comments and see if this can be made easier to
+> understand when someone 5 years from now is looking at the code.
+> 
+> thanks
+> -john
+
+Hi John,
+
+Thanks for your review and these suggestions !
+I'll refine the commit message and do more test ( e.g. use ffs() ) to
+see if it can be better, I agree the commit message might be too
+confusing, I'll work on that more, thanks for your time!
+
+Best regards,
+I Hsin Cheng
+
 
 
