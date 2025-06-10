@@ -1,233 +1,148 @@
-Return-Path: <linux-kernel+bounces-679593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2679DAD3901
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:25:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918C2AD38C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A406A167F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:20:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F9A7AF899
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9A72D322A;
-	Tue, 10 Jun 2025 13:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429FB23AB9D;
+	Tue, 10 Jun 2025 13:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wpack1H3"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qx0NUSpL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D022C3745
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCC223AB8B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749561390; cv=none; b=VL44OXQK/DMQ+vYvznFGV8AP+F96mrgxQ1k9uLX6H0lh0Mwu1buexg/6mTAxBwY3eZrMTsVDIqklYbSIPnGWMkFrWhCDEXdhmk3Cc5oaWXViciAQi4VYdYEPN2KqYOJuEiRd3yul7spBY9UXy7pJjQs2SmpydkK6Cu2eK28icU0=
+	t=1749561290; cv=none; b=TNJQtpOhzj7U02A455dsPPQV+qUGlSmdXKn0PRrGNq04Xz6djj23wQkngWL3VYuSn7OrQBWVTELFX4ZDCEokolybyFy0hryemZl1sM6zqBf2XktXWZtXYHNLN4jZaRMJinBAbwNKaafUqqdXVcRLQq55px61agKDSycn5c0MUU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749561390; c=relaxed/simple;
-	bh=y9Pvj2QG+UNV+8LvIFOB0h6iFTE4oVA8vOic57vEe2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I1+9AViTVI+xTdKIfEZSh51y+JRO8IfCdZCW+Gu18hxZVe/LWBcj/sgjRKqUE3le1LzEUSSZpaqnVArRmzjZjXHervx3+bcS3wogyd6CzTTuIwJSnVLJqC8zz58NxqZJInoDiroN6l57t1LrgKzPke5S/QScjMG2SJmL64LdPR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wpack1H3; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-adb2bd27c7bso874089766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749561387; x=1750166187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xHIqhioRnhNt4aLsaniXn+7U4R/QZgWIuNSgSngcP8Y=;
-        b=wpack1H3WTkG6tgO280HwHhHEcjvmAlA4PsDAu1acCibSEUGl5W9lwRfk5GAR76YHw
-         nBLJGPzhwWEWEOPywiUX7yzVl4tWYNaLLLYzz/EMvDhhIjDoP6041jPTWLJ6qNLbN7kh
-         YKAafME91Vv4GyBaz1psMmKuyU1IRZwINi/hRA5rWw8lTMJL/cNT3PwMcjbdFso2Z/m1
-         T5CcuERrBZ73ftZWWx0R7KCUKL0uVspC+wEPTUhokflLXcvILqvcJyNkNSSupQTDoO71
-         mlgGFVKX9MffgI2P5od+eF5pF4o+tvdava/XATZvFYXLL2SIkit7sUwhI+QizhtCfZMQ
-         PV7A==
+	s=arc-20240116; t=1749561290; c=relaxed/simple;
+	bh=AWosMa9QcTrhoG5oBkH7hkxBD59mNOKn7GvbXL3TVGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=otsgKpdN7QBjF32Oo+XYLuelPzsdkVYlqUVii1x83qEK6tA+zr2hJuRA2xXjcPWblBFCHhIy4UemZl1c8gAarrWJCmELDLecrm5o4VxxI02dTw6z40wt4H9HyO9/wBbzW6lym1v+3cWE/s6KrXXOi0dnd6ncc8XlzLQgz2/SX18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qx0NUSpL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A8lfga017676
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:14:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=g6IwQRxCUScwxoqS0e4XHRFL
+	lV7pUybK/kFVnN3gEOo=; b=Qx0NUSpLbFRnnJwDivnuJ8s4sTgo/boEDUuXyXQO
+	Hi3V1oGCKilWewi9Kvax9DwsZZrjE/iDYqJokwD8VleptqpE8QTEeJAMJa7qiwNO
+	TAoL83Y08TAcNzd7J8zkiSHVT5PD2oWVUpFK0uF09lldeLvhVdab1RqQn5M87ASE
+	T4gxcUO4jZ1lORlFqVaJDBPpkiGYFLSIvKwQjte9AZ4/rctHDy/JwvBuCNBfoic4
+	IoBMBOeFPainOeALttPyrefHeGXPcwAe/N7ekcfS7VxFb1WAyGc69bG1KLlVmZaJ
+	kRGzGhbIme2+B1E6KVlmNYC0trNKTGBx7ZuW0iSenhvonA==
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4766mcj99j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:14:47 +0000 (GMT)
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e819c3f8861so6452057276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:14:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749561387; x=1750166187;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xHIqhioRnhNt4aLsaniXn+7U4R/QZgWIuNSgSngcP8Y=;
-        b=Af84/qwCMrc16MCcPWLltf8GPUYKnRtnoJZiJ7rTj+rRFby6b6TLlWy+7lhICBsZQP
-         iWiqikFHWyqG28dC0qgmaHbO3kBZL9NedNeHa4pqhl81x85sBT/+ylrq0PEptGDSUUim
-         YvR+g8YtC0V0adNyemn83MI6ccHHhAAkjXHlgfOXzNXsSq39leCmJRpq690hkhcPX1//
-         d6Senm7GwDtXlQD8I1iKb/U6Fd/o3yH2QAgpaJKMXFUxebqP/+76+Ddz6xYoe16zM4DT
-         K1m3H5TAGQhFABWtpf1c3Hgz1YkfewLk7UmDTt912mjQUlTyyZI7MYKRSB4XqEN8bsSy
-         NjSg==
-X-Gm-Message-State: AOJu0YwUEXibLSsCGEvRQigEyZnqHuTDbcvoM8SJgqlf7aOT8GCjRDsW
-	G4eNMGt/ZxZeCox/hLPK6wEI3W39Rf1WvdvVZ8A2qeeEJzP5xb5YYK6VDMFtEUItOqdHSbIg7rR
-	amH0QZBM=
-X-Gm-Gg: ASbGnctOenZoqulFXULDvOUu3NrSkX9/CE5HJFG9BYgYu2Uk8ZOfrjg2jSaO39gXkn9
-	JV+dCK/MAmG5zh8S3eVG7wrsjJDSQtO7IKuljqBYd0gvQ0SKfLXoQAlhQfl8aD3pSppx97jkE4N
-	hehXhHzJuFHBt5Ki1ZaERPCWVD69sZuw6TdB8ZQK5wDwVI9rzDdvfwQGFQR9UPz24ZAUKfcDTJd
-	Rx/JRPAfbf1yDG6/vdKUd6xZSdn37Lzp/E0tJbWeuzEuoeLe8x9Gtwbz/pFoGwrkwDiJKc6WirE
-	cmb+ue/LX7C7NFxEaCggPMoIXMmstY5k7oTxoEGHaXh0URMfaSP/Fq8enfgSq4xcAJE7mjQbS7y
-	zsUwUP2AKW5mbQia97uQSyFz0X/5PPB2YJTQ66cI=
-X-Google-Smtp-Source: AGHT+IFRIlvxt0K3SM6xhnBaF7S6vn8tyjGnih1oB83ay9sZPd3eAVoEgV9w1AjoIqTxnsVFcfN65g==
-X-Received: by 2002:a17:907:8690:b0:ad8:9466:3348 with SMTP id a640c23a62f3a-ade1a978de5mr1630006366b.36.1749561386585;
-        Tue, 10 Jun 2025 06:16:26 -0700 (PDT)
-Received: from rayden.urgonet (h-98-128-140-123.A175.priv.bahnhof.se. [98.128.140.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade3206a1efsm643651666b.67.2025.06.10.06.16.24
+        d=1e100.net; s=20230601; t=1749561287; x=1750166087;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g6IwQRxCUScwxoqS0e4XHRFLlV7pUybK/kFVnN3gEOo=;
+        b=cgWm58Qx1GaYY1vIdlqM7n2vFe5Lnj/2XQiEtAUBWL9d+9XVhJ3CXWpf1D8wVN0YCi
+         RUM+9/PBsuR9l7/VCQdTF+iF4TrpZ/yxyyVBbQSu3GcYdsXjnAk9b2M+/mJsGV7JFFN4
+         2ui7T5uYxTR85paaz33C1CPI0RE0PvPF4m09YfIHCoxbeepL9yOsdqaI9eB+MFEZx1nd
+         51Gi/C6z4dSMyP9livxx5HrYngj9f3GzwecNea+Ll5YbYesWa7PbQVjxejIpXocWTIco
+         kQ5holClnMelvP0+MfgVZgtqQGI5SQUL2Eo3An+DYGVPRTpLUFFxYv0pWTshpaC/uhom
+         nFGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOmx1dy53Iyo8vmFRx9KZrMZXni0buQZih6R6HJYRMAr/ArTNptmhqy2tFPg1kym6LimymjQlLp1coaMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUVTdvNZq6xstZGqmOaMUYxJcYm5LleuPHvhuWdpw7IGW3r+Mv
+	NK1Y6kafAwYp/7eSGSqITzuWFmS8nSumnwCGB4wdp8leqF70KgO3gXVqby+LNqOVBEmOC24cLt7
+	Nz3jiLRpQbAcl5pyTI+h/202+0tV+yB/BUTp6o+UkcqJ2i6nYN0NCdKrB4vfGDaQ/fEWv+OfQvH
+	0=
+X-Gm-Gg: ASbGncvH0RXe/1E70TIMmQt5Q0jjGfZt3y5g8r9jUBB0W+w2zgiJ/zynHKM1z1F4xi9
+	4s2e3k2mc2WtW+hjHbey8kAdb3OE1ClpDpiHoMsYpTS69VYL2Qp7UeVEMWiRTdLQyZBg6c/785O
+	hQXnIxsZTO9yafzoBADPp+t3HmPiBNmN2xTrV1zE7d+0mOAy74wQXZ8lfa58j3EUy6ncaCdkPva
+	xB0lbDs0fqefCjH5tH+Sz/vB+wqZc78ETTH+Qw/xUm9gpI6rtagbVXFiyf1n/9juN4e0VaeY5aR
+	s0Ya+qYpY3AilcpmNqJjlIRlrPpFdoTcwo4E+2CxxYVpQ+vllVs4/tldWpZ4C7L+ZDseMjHLGN0
+	A0wKPn2Vj/OoUzqVkc43DktlqU8ksFoKn37Q=
+X-Received: by 2002:a05:6902:c06:b0:e81:45ca:7918 with SMTP id 3f1490d57ef6-e81a21edc55mr23342701276.40.1749561276690;
+        Tue, 10 Jun 2025 06:14:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYQC8rt3kTrusAsNuIp+4RWIrv68jhYVstYuYleyxm6ZO9onHgFJwUJlqd4EmrytlbgstvxQ==
+X-Received: by 2002:a05:620a:28d4:b0:7ca:f37a:2b4e with SMTP id af79cd13be357-7d22987fcffmr2356233685a.23.1749561265466;
+        Tue, 10 Jun 2025 06:14:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5536772a3basm1520440e87.155.2025.06.10.06.14.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 06:16:25 -0700 (PDT)
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>,
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>,
-	robin.murphy@arm.com,
-	Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH v10 9/9] optee: smc abi: dynamic protected memory allocation
-Date: Tue, 10 Jun 2025 15:13:53 +0200
-Message-ID: <20250610131600.2972232-10-jens.wiklander@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250610131600.2972232-1-jens.wiklander@linaro.org>
-References: <20250610131600.2972232-1-jens.wiklander@linaro.org>
+        Tue, 10 Jun 2025 06:14:24 -0700 (PDT)
+Date: Tue, 10 Jun 2025 16:14:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Simona Vetter <simona@ffwll.ch>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] drm/msm/dpu: Fill in min_prefill_lines for SC8180X
+Message-ID: <skvwhicmdzewywoxm2bims4e6geandodztd6apmrolzqpzcibo@fqnjrs5shp3r>
+References: <20250610-topic-dpu_8180_mpl-v1-1-f480cd22f11c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610-topic-dpu_8180_mpl-v1-1-f480cd22f11c@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=T8KMT+KQ c=1 sm=1 tr=0 ts=68482fc7 cx=c_pps
+ a=bcYUF9iMMBfaiOy0M+g+3g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=HWQ8LJbAKwhtnRb1DegA:9 a=CjuIK1q_8ugA:10
+ a=4AvBJ3eyfGLrynxe6Eyb:22
+X-Proofpoint-ORIG-GUID: XpcUy5ZsoIPPiQjLhMWKTOAhW2punFEJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDEwNCBTYWx0ZWRfX0lfjV324YRb2
+ ACtGmkAs7UAos+2UW5vi3dhFxWvSPNHflaUltUZSOZl47SV4Or6zfcMyi4EvMELUNq7gIiJlvzb
+ sVkYM+BPz+RbXO02j524BkiMhj/OHCzQmJVDgRjYM5/YkSvQzK37FGSkp1AMFg6a1dJz40tSrP8
+ KovX84qgkKmF9JR5l6wk+AVLGj/xsjs8MFN7smWP/wfRFXkHPHAX+8xKjntQOdsyfyg7lCGCKXF
+ fL8AM3I3hNFCucE4espXv+kTQSRPHi9lk21WALti21S4FYnw1VEJ6963Pso3abrvMUOQxZ1T3TF
+ /jDgG6/NtH+Ijo3W1KPv7AEMV2hEn8vuIwMvZKnW1Cu3qsuEYiEDtx9/CmhCz69VpZiOiEI6a5a
+ TZNdAdygnfWDnFNhtGuiYYrI44UgZXwzyLfZCTGh+KzIHchxdZqL22mr35xtUJAXhEk9lYVC
+X-Proofpoint-GUID: XpcUy5ZsoIPPiQjLhMWKTOAhW2punFEJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=773 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506100104
 
-Add support in the OP-TEE backend driver for dynamic protected memory
-allocation using the SMC ABI.
+On Tue, Jun 10, 2025 at 02:50:03PM +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Based on the downstream release, predictably same value as for SM8150.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h | 1 +
 
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
----
- drivers/tee/optee/smc_abi.c | 78 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 75 insertions(+), 3 deletions(-)
+Fixes: f3af2d6ee9ab ("drm/msm/dpu: Add SC8180x to hw catalog")
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
-index cf106d15e64e..fd1d873de941 100644
---- a/drivers/tee/optee/smc_abi.c
-+++ b/drivers/tee/optee/smc_abi.c
-@@ -965,6 +965,70 @@ static int optee_smc_do_call_with_arg(struct tee_context *ctx,
- 	return rc;
- }
- 
-+static int optee_smc_lend_protmem(struct optee *optee, struct tee_shm *protmem,
-+				  u16 *end_points, unsigned int ep_count,
-+				  u32 use_case)
-+{
-+	struct optee_shm_arg_entry *entry;
-+	struct optee_msg_arg *msg_arg;
-+	struct tee_shm *shm;
-+	u_int offs;
-+	int rc;
-+
-+	msg_arg = optee_get_msg_arg(optee->ctx, 2, &entry, &shm, &offs);
-+	if (IS_ERR(msg_arg))
-+		return PTR_ERR(msg_arg);
-+
-+	msg_arg->cmd = OPTEE_MSG_CMD_LEND_PROTMEM;
-+	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
-+	msg_arg->params[0].u.value.a = use_case;
-+	msg_arg->params[1].attr = OPTEE_MSG_ATTR_TYPE_TMEM_INPUT;
-+	msg_arg->params[1].u.tmem.buf_ptr = protmem->paddr;
-+	msg_arg->params[1].u.tmem.size = protmem->size;
-+	msg_arg->params[1].u.tmem.shm_ref = (u_long)protmem;
-+
-+	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-+	if (rc)
-+		goto out;
-+	if (msg_arg->ret != TEEC_SUCCESS) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+	protmem->sec_world_id = (u_long)protmem;
-+
-+out:
-+	optee_free_msg_arg(optee->ctx, entry, offs);
-+	return rc;
-+}
-+
-+static int optee_smc_reclaim_protmem(struct optee *optee,
-+				     struct tee_shm *protmem)
-+{
-+	struct optee_shm_arg_entry *entry;
-+	struct optee_msg_arg *msg_arg;
-+	struct tee_shm *shm;
-+	u_int offs;
-+	int rc;
-+
-+	msg_arg = optee_get_msg_arg(optee->ctx, 1, &entry, &shm, &offs);
-+	if (IS_ERR(msg_arg))
-+		return PTR_ERR(msg_arg);
-+
-+	msg_arg->cmd = OPTEE_MSG_CMD_RECLAIM_PROTMEM;
-+	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_RMEM_INPUT;
-+	msg_arg->params[0].u.rmem.shm_ref = (u_long)protmem;
-+
-+	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-+	if (rc)
-+		goto out;
-+	if (msg_arg->ret != TEEC_SUCCESS)
-+		rc = -EINVAL;
-+
-+out:
-+	optee_free_msg_arg(optee->ctx, entry, offs);
-+	return rc;
-+}
-+
- /*
-  * 5. Asynchronous notification
-  */
-@@ -1216,6 +1280,8 @@ static const struct optee_ops optee_ops = {
- 	.do_call_with_arg = optee_smc_do_call_with_arg,
- 	.to_msg_param = optee_to_msg_param,
- 	.from_msg_param = optee_from_msg_param,
-+	.lend_protmem = optee_smc_lend_protmem,
-+	.reclaim_protmem = optee_smc_reclaim_protmem,
- };
- 
- static int enable_async_notif(optee_invoke_fn *invoke_fn)
-@@ -1628,14 +1694,20 @@ static struct tee_protmem_pool *static_protmem_pool_init(struct optee *optee)
- 
- static int optee_protmem_pool_init(struct optee *optee)
- {
-+	bool protm = optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_PROTMEM;
-+	bool dyn_protm = optee->smc.sec_caps &
-+			 OPTEE_SMC_SEC_CAP_DYNAMIC_PROTMEM;
- 	enum tee_dma_heap_id heap_id = TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
- 	struct tee_protmem_pool *pool = ERR_PTR(-EINVAL);
--	int rc;
-+	int rc = -EINVAL;
- 
--	if (!(optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_PROTMEM))
-+	if (!protm && !dyn_protm)
- 		return 0;
- 
--	pool = static_protmem_pool_init(optee);
-+	if (protm)
-+		pool = static_protmem_pool_init(optee);
-+	if (dyn_protm && IS_ERR(pool))
-+		pool = optee_protmem_alloc_dyn_pool(optee, heap_id);
- 	if (IS_ERR(pool))
- 		return PTR_ERR(pool);
- 
+>  1 file changed, 1 insertion(+)
+
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
