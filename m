@@ -1,273 +1,362 @@
-Return-Path: <linux-kernel+bounces-679555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC807AD3893
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:15:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0601FAD3843
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921FE189ED37
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:08:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA897AB041
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BF52E338D;
-	Tue, 10 Jun 2025 13:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2D523AB9C;
+	Tue, 10 Jun 2025 13:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5VTmk4og"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d91Mj03Y"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBF12E336A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560475; cv=fail; b=fY8sbwjOlkwe3jWvm+T4t4ZgW5gttiVY0cD/omd26XKpCEEn+GAQJQm9IOUByymJrYtZlkgLmcWB1DS657YnpatNV1hFKwALXikjhR/S/FpBPhbBHQWf4oSWgFcFELs+LmJ2TPvNl0b88rgq4Y7sGQLoXzorDEaQkUxLqxPcN9I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560475; c=relaxed/simple;
-	bh=3xeJfyWP6r1g7fOJPBtaRGwGvG2ZdSaSFAVLtVSJGYQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EottK7M5nnaKjoFbsxQD4EbUh1H0Juveu4UjXsHPBliXrQVwClJCLJjnS7KiyW89/PUM/OLaGetJO1IjmpDasY5gIucXWgWARsBSbseTrDRsE3KAmtivcLDIy/K2OfnetfC3LoAaWk1I4ov7cQfFRR37yMShU5nbhnsc7zfc1N0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5VTmk4og; arc=fail smtp.client-ip=40.107.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ccmuQH97hoyu9NEdEh6+kSYyBj2WbNhrzkCZM/urWNcyyuK9MuaEgcBZB6KVAserpa8tojIIQPtnY8R00b1DwlP1CR4cQUT4x8kZDrJGIXdK5PlsYLWOL3cb4T/r9l6sgHT4vdgkJ3x7/Mw9HjjEtoxLV4iZ5UXhALFUna1wjZFBIwEeOdaVECkKiWnjo7jtgqFJpOBRRopUUZHtwxofaFet1vfysQg87q3a05fNAezCp49bupqNNpupzkFy7AmnZrUDAJkTpCR9WlFzVvMcfymDZYQ3ur9qaxwptnzhZsg7Oi48cmY87lVsgR7RoUm8TEjuvymI9iibsARbjLh6Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5ozjt0mUMFUWNvt+AW5BxmS/njaBa76oeNdplWtBiik=;
- b=BAZO9IXreFhjtp3eBSlIyA408lrGe3jBQWyA7K3vBwDUdiTPPMIpjtQOsof5A3UfNz1sfcm7rhh+u+DbzHa8psg5yTvjnAKGoeKio8JP4NPbTg9FTxIGIQjivAXkp7cogUEAIkHRL6AVNRnMCI7LiuNXg3ovrI5xIvDIaMVYmNOWqQxh5OSgq5ghwtydYM5thwCl6HiCbZjeNJbxqB5JPs5E5b4+d4t79wtWrfTtSYlFhfCLavLfZc3t9fWRRKjMuvU3qfNHwMFpQlfAnzWxg33lPfTxbKfgX8lukYdPpHEwfpZcIhQz+Ax/m41qB5Z6QingtsxE+1QT7SmpSF9VYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5ozjt0mUMFUWNvt+AW5BxmS/njaBa76oeNdplWtBiik=;
- b=5VTmk4ogIKFGzFdsbPlFgsnFkvWNS10lI1eMHjT54jxxrSmDz9JJogtoEnQV4ay41fJYzCNCRscq/VetZqGgJs0vmV2C9XWJM1j9Ip7TlupT3sa+qAArrpR9NBdxU0KdOS4/uIDCORQxtfs1z/rYdf8AcPUy0lXaP8wCb4AqXCY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MW6PR12MB8951.namprd12.prod.outlook.com (2603:10b6:303:244::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Tue, 10 Jun
- 2025 13:01:09 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8722.031; Tue, 10 Jun 2025
- 13:01:09 +0000
-Message-ID: <5668ab98-3ebe-4f02-a759-5dfb2e21134b@amd.com>
-Date: Tue, 10 Jun 2025 15:01:01 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/test: reduce stack size in drm_exec_test
-To: Arnd Bergmann <arnd@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Alex Deucher <alexander.deucher@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250610093350.2645965-1-arnd@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250610093350.2645965-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR16CA0021.namprd16.prod.outlook.com
- (2603:10b6:208:134::34) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CCC23AB8C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749560524; cv=none; b=NIDXom+LbazaybgiPGiIIWMb1JNnL1QRmtGNwsqqdBKRJeL7D3G3F+QVVq75q/wP2TcnS4GJ8ZXK2GCrCCEATNRNoNNlMrn+Onxwe/uROXLDhmkBukdvEOAskxUsMdVL/GqltaBNvVxrH/oVf+N0iKFRFrp3WPm1tCMe/DFbXS8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749560524; c=relaxed/simple;
+	bh=IHmdJiBr5N3TqwbmiqEEAmSu0RL3Jke4qIbbyA6T17w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QMpse30x7KA6CmDdL+wvVxL0uw9LPXNKJQQHmOJDJj8oblnd079Tgu7zPNTgfyfcTOjdyx0KNiYoujmoJNxMrPzXgWRaQl2CfQf6To2CGg6uq1sXhhGkYXLsxH1EBPjtZfJBCSKvIhTI3nzczjLd01XUpmJ+ZH3zf6JHF46nBwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=d91Mj03Y; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55AD1csU2294498;
+	Tue, 10 Jun 2025 08:01:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749560498;
+	bh=qR+2qB+I+pBxrxBrQKLMvxcIS5poCYVL2NCuq3ScqwM=;
+	h=From:To:CC:Subject:Date;
+	b=d91Mj03YtZ9h4hdQMhBdrWass1lsKI9owxf6c6wHCuYIR+qDIpp8RagaAqMtpM6dX
+	 UmDK0Eon5KeLC+Lz1g7wcDEqrc2rH/jjzhiu16WiGp1FpIFtddBzEXMGsqBlPO0fdf
+	 iYzvs84mGcWi4MKd6VbnM3rX5YwCXRL7Nr8v6BYI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55AD1ch42128236
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 10 Jun 2025 08:01:38 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
+ Jun 2025 08:01:38 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 10 Jun 2025 08:01:38 -0500
+Received: from uda0492258.dhcp.ti.com (dhcp-172-24-227-169.dhcp.ti.com [172.24.227.169])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55AD1Yq13086009;
+	Tue, 10 Jun 2025 08:01:35 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <vkoul@kernel.org>, <kishon@kernel.org>, <christophe.jaillet@wanadoo.fr>,
+        <sjakhade@cadence.com>, <bwawrzyn@cisco.com>,
+        <u.kleine-koenig@baylibre.com>, <krzysztof.kozlowski@linaro.org>
+CC: <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH] phy: cadence: Sierra: Add PCIe + USB PHY multilink configuration
+Date: Tue, 10 Jun 2025 18:31:33 +0530
+Message-ID: <20250610130133.2102196-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW6PR12MB8951:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa80b2f5-a390-4f69-d61f-08dda81ede34
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?emRDcm5CeThyTDJsNGtLcE5MekY4VHZHUTR1K0ZEUWpiR3E4SzdpeWZmWVhu?=
- =?utf-8?B?OWYzUnkvRnoyeldMWGFMTHZ2QkN4cWZmRm9HQkhUOVNTWlYxVlFrNXRDVUZ1?=
- =?utf-8?B?d2NoTS9xNk9JKzhNR1orM0lCK0hxSjhlT3pEN0lSVDBWbDNYTnJBL2hiZVdJ?=
- =?utf-8?B?RllCK0VJQUhQKy9wWHljcG5vbEt6MStYV2xBRzhEU2NHTXRNWHRFZzZrTUcv?=
- =?utf-8?B?Rjc4MElFV05xamQ4RVRsOUQxMGtFSGpPVHpKZ1Jna0FQbkNVOVBxK0N6TGJF?=
- =?utf-8?B?VCtUM3hmVURWc0l2ZnoxV2lrV3duOTI4TjEvcVdpSkVOWnVwamkzbkFITGVZ?=
- =?utf-8?B?VndVcDgvSVJ6aUtYTkFBSXJaSjgzV0Q3OURuNEJJRlBBSWlmMS9pSndrU1R0?=
- =?utf-8?B?Z05iUnkxNWFkeVgyQ3pmMEgvR3gyNytGeHc2a3ptdU5FOUs2TTZFV2FyMndj?=
- =?utf-8?B?d083RGlveGgyTU9HTDlnRWpvcFp2c3FtWHpvWEt5b2NMNzlhRTV2WWtXZURa?=
- =?utf-8?B?ZTFycWVSc3ZWWHFyMGc4di9kd1B0L2MwK2puRTVmZlZzWEFFTzczcndyRzd2?=
- =?utf-8?B?ZUZTUzdLZHVpbnFSVUZucFYyQ3ZpQlFFOWdkUDdnaUxwSzNxN0wvK1YwUkFz?=
- =?utf-8?B?VTBBOXNnVVlnNjFqVEdmZHI3UTZ4ZEtWai9udjZQV0RWTy9oY1YxSC84Wjdy?=
- =?utf-8?B?S1Q2OHpjTGIxaDgzZHRyd0wyM0tjamZuQ0FuazZxS2FXbGUyVERKQWpSZ1Fs?=
- =?utf-8?B?M3pXKzh4VW1mdGJ4VVdoWEJ1TC85OWpEOXNhRzdsbCs3ekF6WkltN1BIbjQz?=
- =?utf-8?B?TUIxUStRaGhETGpMWENxc09DRVhtVzhLa2IwblhpeW5LV0lkR1BNT2tiOHA3?=
- =?utf-8?B?MnRHTHVqblNieEg4MW1MVXBuTlV5b3FrMFJnSVhuVmlpZXFSTXRWMlMrdXh4?=
- =?utf-8?B?NWphdGtvSXBZajg0TjlTRlVMSjI3Mnc2MGMvS3I4RnRIdXZOK3VNVlBIaDR6?=
- =?utf-8?B?STdCRlVLcHEyanJnTktyc0ttRzJvVmJWVE5ZTDgvVS9RM212YmJCRTlJNGpC?=
- =?utf-8?B?aHZVbUhmMWFpNy9YbkhJbW1oa2RJUEY3Y21SSDFkSEJDVzVxVzUzK0c2V2Vt?=
- =?utf-8?B?VmtUQ1FzaHViTGxVTFFGZ0JEWjhBcVhxM09XQjV5anNlbE9NbXFNVzA2dW8r?=
- =?utf-8?B?Y1ZIbmNMNldrRWtNSmRiRDBnWFh3cVYyQXgxc3NSNWNpRlZjcHpVOFVGUEI1?=
- =?utf-8?B?aU9mMmp6K1hGcUI5RkxUVEJWRXlZLzNxNEYrN2Q3MjMyWHdCNnB1YVdJRE4v?=
- =?utf-8?B?c0l5VXFnQTBadFpvbnhIRHg3OUFhanBXazhjaGpKdzFkS2ozUjRRYlRtYThl?=
- =?utf-8?B?QnJTNHd5T0ZKQzM3UG15Vm80bU1yOGNlUEtHTjNDUGExcWNHOS9rdjZsTTBP?=
- =?utf-8?B?eXhYR01nMjloM1ZyZkdwemtxN0xMQmhtSE55RlMzLyttK1pYdnNkWWp1eWF6?=
- =?utf-8?B?VmRGdDVxNXFJWXdUUDNHbk5ScFNIL1JHSXcydUxDNXRQajJ6anlXc01OOGdE?=
- =?utf-8?B?a3RKa3E4T1AybDFDWjdnYlV6SUM5MnlKUlZoQkVUUWhtY0ZHL2hiNC9BaEVV?=
- =?utf-8?B?czRMZjhvL1FmVVNKSTBzeXZmVzk1Z1hiRVI4V1ZtZWlXNURMMHlBRm0vTEV4?=
- =?utf-8?B?dXNmRWRVSU1HeFJDRDZoWHR3Vm4vTzdBNW5YU1ZEMkxTSk1IaWhKK1QvTU9k?=
- =?utf-8?B?SVRoUUUwK0k5RFFVblFhMXdjYitHanAxYUVTd1VId0lIWEoyZG5zR2tZbDFq?=
- =?utf-8?B?bzg2OHh2QWcyQUExeFlOajZ6Z0xiZk5LNlNOM0txRmRrVlN5Z3BHVUQ2cDhu?=
- =?utf-8?B?MVdjdGI3Y1p5N3RidTVRczdYN3pXOHBad2ZDYU5BQjBXWmFqSmNSUkJWRE1k?=
- =?utf-8?Q?VvYYn02eOEk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cnM4VUtOdjB1ZnVjcm12MUhFclkzcXVKeDBRd0VHNFpnREczMXNxQU1DV3hZ?=
- =?utf-8?B?OGc3WTRNemFWeVVib3pYVkhxa2hIWXZNQUo2OG9RQUUzVEFqZmVSMmxybnFW?=
- =?utf-8?B?dWZQR3ZiUnZjSjRYclg5Z2orY0hrZDNKcUh2NVN1N0lkeHZLalYwNW5yZ24r?=
- =?utf-8?B?Y2xZTkI0a2wvaTNJRDltTlc1OCtHMk4zUFlodHNRdXdrd3lFWFFmbVpXd3RF?=
- =?utf-8?B?cERBc3NWaG56VkxWSlZJY3NsbUYwQ2U0YmlGYW8rb1YxQ3RPU2ZORnlkK3Nw?=
- =?utf-8?B?ZXkwOGZKMGxNbUpjMlFVbk9NTGdYcWZ0bENjRzRFb09RWlpnSUZ3L3J0Q0tH?=
- =?utf-8?B?MVFxc0lWRVFncElsbjJBcy9TZHNHZ0JXM1dJM3ZHNDVCbWphL29HYUF4cHEz?=
- =?utf-8?B?QzkzWTZhYWJoSkdneEdsaGxJNm5zdjZsdTVCd1lUdm1MRTFCb2FyYkpaOUcr?=
- =?utf-8?B?dkVJRDRodWFMTXdoaVRxUFVnZ25OSzFwMGtMVnJuM0hqQmN2ci8xNVlGL1FZ?=
- =?utf-8?B?QWRKRE1PMlBZMkd6am11bmNLdmg3YlhrTk5uTzhjbTJWQThWTmk5MDRyc0lz?=
- =?utf-8?B?VUdmMUpWa0MwTTNUNHRhcklaUFRPdEpORk1oL3NpbWg0d1FMcDdhencyV05a?=
- =?utf-8?B?VDBHRFA4K0VEd01RY2FUWk9pZ2d4a2wzRnpnWDAvUWlHaE1PRDQ3ZGc2dkFL?=
- =?utf-8?B?bFBTL1RhZkNzdTY2dDMxWE9ZMHFuY1p1azByZXgxWHlsb0Y5UFVBN0dKVCt5?=
- =?utf-8?B?LzBwMXNZZVh2bVdSTGVxcWJTWjE1dkZPOWdXVGhDZGJIdW9VdE50SDRQTXZP?=
- =?utf-8?B?TzR2bjU4Qy9YcG03cnhnbTgwR1F2dlVjbGViUGNYWUxzbU9xOXVOcFNkV05t?=
- =?utf-8?B?T3VJcmYwa1pGWHFNRVpFcE5kalhsTC9RY1dTYkc5cmZVNUJoQnpGam1EZVB3?=
- =?utf-8?B?TTF6T3V5OEdhVE5Wak1xcE8vTW1mcWc2L2IzQ01RM3VMeGVENXhBU3VHZE1t?=
- =?utf-8?B?L2M3eHQ0RzM3NGJXK1BqZXppVWZYZFBXdG5la1hnaUFqZTNTUDlpS2xySXVW?=
- =?utf-8?B?T1hTR0ZkKzVVaHdCQWx3WjRUT0NybVRTU3pBSWpPVjJSRUN3STNZZTZYZS9I?=
- =?utf-8?B?YTJUSWVMZlcvT1A3RjNkR3ZKNUh3SUpxbVRuRWJJb3lWSThDYU5XMlBUQ250?=
- =?utf-8?B?M0lqdm9mdzVqU2J5blJwUjdrYjVIZGdoMFlWOTI3bEFteHhKYXg5TFVzSEdF?=
- =?utf-8?B?UDIrMVBHUUtnR080RmpIWVRTeWNKUm55NWVLQXJQMTlGOHN3L2pLcHJPM25F?=
- =?utf-8?B?U2xORXNlNjIwWlp0dHpWVDhhQzg4QkQrNzJYN0lxVEsrdlB0Y3l5amdLSkc4?=
- =?utf-8?B?OEdTdEQ4ZWRrSUVzb0V6c1hSNG43RU9XQ1A0b0Q2MGpJL2tnUTJXMnJETXk3?=
- =?utf-8?B?T0NWblA1VWRaeEFmbTZmNFg3WVBsWVk3d2NZelo4bDBYSkFpWXR2dlRCU2NH?=
- =?utf-8?B?QTNFNHhwa1hGYUhNRURXanhQNTFVWXA3RDE4VEtQNGJZWlJVeExxWlJwVEYw?=
- =?utf-8?B?Rkd1NldyNDRxMkpTaHpwU2UvTWswN1h2WnQ2dks3OGpkK2FEbU9vR3l1RGNO?=
- =?utf-8?B?c0E2YjFEaUZSVzIvanlsVnJ4dExGTHVGMUxHR1VSdUVGMWxYR2J4T1J4TXFv?=
- =?utf-8?B?Mm02Smh6S3djdnBhK0RFNXgxV21ORWx3MlVwbmtQTWhmcXl5T2ViMldUYWxh?=
- =?utf-8?B?OWJpMGY5YzcrQWlrbWhSeThrcWNiSHB5REZoQ3JscnR1Q1BxQWVvNW4yMTVU?=
- =?utf-8?B?cXduZCtKUDBKYkdzZ2F4Q1VXOUV1Q3VXU3VGdmtJTllXMU5SbnBnb3VsZ2hZ?=
- =?utf-8?B?dTlKSnUwN0lIZlpFa1IxbEVNZytsclFqOGhVQVRNNWdQN3AwQ0pYaWZ6ZXFm?=
- =?utf-8?B?N2JoMXZOck00UXFWU3ZVZVZ1TzJoTmV2T25ScjE4OG5wM0Fqb0ZGemVwWmEx?=
- =?utf-8?B?ZmttRmI0WDMvMUxWN2Q4WG1KdDFvcWM5djRaWXRrRmZjdUdxVDVhWVlQMVpa?=
- =?utf-8?B?VXVxb1d3MENlUG9FQ2g1aGh0MXJ1d0E5eFYzTUxWeWR4azcxdnMvNlJwemRL?=
- =?utf-8?Q?3BmytJFSD8fgHlZOpAWlm9zNz?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa80b2f5-a390-4f69-d61f-08dda81ede34
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 13:01:08.9799
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4RvTW/46Ym3cYKtrvNIswvG0k+NJWGCrq/+Vhfp9QAOBxU4zpyYrkbNGG01mEwLw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8951
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 6/10/25 11:33, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> test_prepare_array() is one of the functions that uses more than
-> a kilobyte of stack on 64-bit machines, though it stays under
-> the usual warning limit of 2KB:
-> 
-> drivers/gpu/drm/tests/drm_exec_test.c: In function 'test_prepare_array':
-> drivers/gpu/drm/tests/drm_exec_test.c:171:1: error: the frame size of 1304 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
-> 
-> In order to eventually lower that limit, change the two large
-> drm_gem_object objects to be statically allocated. This works here
-> because the tests are always called sequentially, and it is simpler than
-> using kzalloc().
-> 
-> Fixes: 9710631cc8f3 ("drm: add drm_exec selftests v4")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+From: Swapnil Jakhade <sjakhade@cadence.com>
 
-Maybe kzalloc() would be cleaner, but it certainly isn't a must have.
+Add register sequences for PCIe + USB multilink configuration for
+Sierra PHY.
 
-Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+---
 
-> ---
->  drivers/gpu/drm/tests/drm_exec_test.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tests/drm_exec_test.c b/drivers/gpu/drm/tests/drm_exec_test.c
-> index d6c4dd1194a0..f2ac06a07707 100644
-> --- a/drivers/gpu/drm/tests/drm_exec_test.c
-> +++ b/drivers/gpu/drm/tests/drm_exec_test.c
-> @@ -18,6 +18,8 @@
->  
->  #include "../lib/drm_random.h"
->  
-> +static struct drm_gem_object gobj, gobj2;
-> +
->  struct drm_exec_priv {
->  	struct device *dev;
->  	struct drm_device *drm;
-> @@ -54,7 +56,6 @@ static void sanitycheck(struct kunit *test)
->  static void test_lock(struct kunit *test)
->  {
->  	struct drm_exec_priv *priv = test->priv;
-> -	struct drm_gem_object gobj = { };
->  	struct drm_exec exec;
->  	int ret;
->  
-> @@ -74,7 +75,6 @@ static void test_lock(struct kunit *test)
->  static void test_lock_unlock(struct kunit *test)
->  {
->  	struct drm_exec_priv *priv = test->priv;
-> -	struct drm_gem_object gobj = { };
->  	struct drm_exec exec;
->  	int ret;
->  
-> @@ -101,7 +101,6 @@ static void test_lock_unlock(struct kunit *test)
->  static void test_duplicates(struct kunit *test)
->  {
->  	struct drm_exec_priv *priv = test->priv;
-> -	struct drm_gem_object gobj = { };
->  	struct drm_exec exec;
->  	int ret;
->  
-> @@ -128,7 +127,6 @@ static void test_duplicates(struct kunit *test)
->  static void test_prepare(struct kunit *test)
->  {
->  	struct drm_exec_priv *priv = test->priv;
-> -	struct drm_gem_object gobj = { };
->  	struct drm_exec exec;
->  	int ret;
->  
-> @@ -150,13 +148,11 @@ static void test_prepare(struct kunit *test)
->  static void test_prepare_array(struct kunit *test)
->  {
->  	struct drm_exec_priv *priv = test->priv;
-> -	struct drm_gem_object gobj1 = { };
-> -	struct drm_gem_object gobj2 = { };
-> -	struct drm_gem_object *array[] = { &gobj1, &gobj2 };
-> +	struct drm_gem_object *array[] = { &gobj, &gobj2 };
->  	struct drm_exec exec;
->  	int ret;
->  
-> -	drm_gem_private_object_init(priv->drm, &gobj1, PAGE_SIZE);
-> +	drm_gem_private_object_init(priv->drm, &gobj, PAGE_SIZE);
->  	drm_gem_private_object_init(priv->drm, &gobj2, PAGE_SIZE);
->  
->  	drm_exec_init(&exec, DRM_EXEC_INTERRUPTIBLE_WAIT, 0);
-> @@ -166,7 +162,7 @@ static void test_prepare_array(struct kunit *test)
->  	KUNIT_EXPECT_EQ(test, ret, 0);
->  	drm_exec_fini(&exec);
->  
-> -	drm_gem_private_object_fini(&gobj1);
-> +	drm_gem_private_object_fini(&gobj);
->  	drm_gem_private_object_fini(&gobj2);
->  }
->  
+Hello,
+
+This patch is based on linux-next tagged next-20250610.
+
+Regards,
+Siddharth.
+
+ drivers/phy/cadence/phy-cadence-sierra.c | 180 +++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
+
+diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
+index 45a5c00843bf..74613382ccb0 100644
+--- a/drivers/phy/cadence/phy-cadence-sierra.c
++++ b/drivers/phy/cadence/phy-cadence-sierra.c
+@@ -58,8 +58,11 @@
+ #define SIERRA_CMN_PLLLC1_GEN_PREG			0xC2
+ #define SIERRA_CMN_PLLLC1_FBDIV_INT_PREG		0xC3
+ #define SIERRA_CMN_PLLLC1_DCOCAL_CTRL_PREG		0xC5
++#define SIERRA_CMN_PLLLC1_MODE_PREG			0xC8
++#define SIERRA_CMN_PLLLC1_LF_COEFF_MODE1_PREG		0xC9
+ #define SIERRA_CMN_PLLLC1_LF_COEFF_MODE0_PREG		0xCA
+ #define SIERRA_CMN_PLLLC1_CLK0_PREG			0xCE
++#define SIERRA_CMN_PLLLC1_BWCAL_MODE1_PREG		0xCF
+ #define SIERRA_CMN_PLLLC1_BWCAL_MODE0_PREG		0xD0
+ #define SIERRA_CMN_PLLLC1_SS_TIME_STEPSIZE_MODE_PREG	0xE2
+ 
+@@ -1541,6 +1544,137 @@ static void cdns_sierra_phy_remove(struct platform_device *pdev)
+ 	cdns_sierra_clk_unregister(phy);
+ }
+ 
++/* USB refclk 100MHz, 20b, SuperSpeed opt2, ext ssc, PLL LC1, multilink */
++static const struct cdns_reg_pairs usb_100_ext_ssc_plllc1_cmn_regs[] = {
++	{0x002D, SIERRA_CMN_PLLLC1_FBDIV_INT_PREG},
++	{0x2086, SIERRA_CMN_PLLLC1_LF_COEFF_MODE1_PREG},
++	{0x2086, SIERRA_CMN_PLLLC1_LF_COEFF_MODE0_PREG},
++	{0x1005, SIERRA_CMN_PLLLC1_CLK0_PREG},
++	{0x0000, SIERRA_CMN_PLLLC1_BWCAL_MODE1_PREG},
++	{0x0000, SIERRA_CMN_PLLLC1_BWCAL_MODE0_PREG},
++	{0x0000, SIERRA_CMN_PLLLC1_SS_TIME_STEPSIZE_MODE_PREG}
++};
++
++/* USB refclk 100MHz, 20b, SuperSpeed opt2, int ssc, PLL LC1, multilink */
++static const struct cdns_reg_pairs usb_100_int_ssc_plllc1_cmn_regs[] = {
++	{0x002D, SIERRA_CMN_PLLLC1_FBDIV_INT_PREG},
++	{0x000E, SIERRA_CMN_PLLLC1_MODE_PREG},
++	{0x1005, SIERRA_CMN_PLLLC1_CLK0_PREG}
++};
++
++static const struct cdns_reg_pairs usb_100_ml_ln_regs[] = {
++	{0xFE0A, SIERRA_DET_STANDEC_A_PREG},
++	{0x000F, SIERRA_DET_STANDEC_B_PREG},
++	{0x55A5, SIERRA_DET_STANDEC_C_PREG},
++	{0x69AD, SIERRA_DET_STANDEC_D_PREG},
++	{0x0241, SIERRA_DET_STANDEC_E_PREG},
++	{0x0010, SIERRA_PSM_LANECAL_DLY_A1_RESETS_PREG},
++	{0x0014, SIERRA_PSM_A0IN_TMR_PREG},
++	{0x001D, SIERRA_PSM_A3IN_TMR_PREG},
++	{0x0004, SIERRA_PSC_LN_A3_PREG},
++	{0x0004, SIERRA_PSC_LN_IDLE_PREG},
++	{0x001F, SIERRA_PSC_TX_A0_PREG},
++	{0x0007, SIERRA_PSC_TX_A1_PREG},
++	{0x0003, SIERRA_PSC_TX_A2_PREG},
++	{0x0003, SIERRA_PSC_TX_A3_PREG},
++	{0x0FFF, SIERRA_PSC_RX_A0_PREG},
++	{0x0619, SIERRA_PSC_RX_A1_PREG},
++	{0x0003, SIERRA_PSC_RX_A2_PREG},
++	{0x0001, SIERRA_PSC_RX_A3_PREG},
++	{0x0606, SIERRA_PLLCTRL_FBDIV_MODE01_PREG},
++	{0x0001, SIERRA_PLLCTRL_SUBRATE_PREG},
++	{0x0003, SIERRA_PLLCTRL_GEN_A_PREG},
++	{0x0406, SIERRA_PLLCTRL_GEN_D_PREG},
++	{0x5211, SIERRA_PLLCTRL_CPGAIN_MODE_PREG},
++	{0x00CA, SIERRA_CLKPATH_BIASTRIM_PREG},
++	{0x2512, SIERRA_DFE_BIASTRIM_PREG},
++	{0x0000, SIERRA_DRVCTRL_ATTEN_PREG},
++	{0x823E, SIERRA_CLKPATHCTRL_TMR_PREG},
++	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE1_PREG},
++	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE0_PREG},
++	{0x7B3C, SIERRA_CREQ_CCLKDET_MODE01_PREG},
++	{0x023F, SIERRA_RX_CTLE_MAINTENANCE_PREG},
++	{0x3232, SIERRA_CREQ_FSMCLK_SEL_PREG},
++	{0x0000, SIERRA_CREQ_EQ_CTRL_PREG},
++	{0xCC44, SIERRA_CREQ_EQ_OPEN_EYE_THRESH_PREG},
++	{0x8452, SIERRA_CTLELUT_CTRL_PREG},
++	{0x4121, SIERRA_DFE_ECMP_RATESEL_PREG},
++	{0x4121, SIERRA_DFE_SMP_RATESEL_PREG},
++	{0x0002, SIERRA_DEQ_PHALIGN_CTRL},
++	{0x3200, SIERRA_DEQ_CONCUR_CTRL1_PREG},
++	{0x5064, SIERRA_DEQ_CONCUR_CTRL2_PREG},
++	{0x0030, SIERRA_DEQ_EPIPWR_CTRL2_PREG},
++	{0x5A5A, SIERRA_DEQ_ERRCMP_CTRL_PREG},
++	{0x02F5, SIERRA_DEQ_OFFSET_CTRL_PREG},
++	{0x02F5, SIERRA_DEQ_GAIN_CTRL_PREG},
++	{0xA9A9, SIERRA_DEQ_VGATUNE_CTRL_PREG},
++	{0x0014, SIERRA_DEQ_GLUT0},
++	{0x0014, SIERRA_DEQ_GLUT1},
++	{0x0014, SIERRA_DEQ_GLUT2},
++	{0x0014, SIERRA_DEQ_GLUT3},
++	{0x0014, SIERRA_DEQ_GLUT4},
++	{0x0014, SIERRA_DEQ_GLUT5},
++	{0x0014, SIERRA_DEQ_GLUT6},
++	{0x0014, SIERRA_DEQ_GLUT7},
++	{0x0014, SIERRA_DEQ_GLUT8},
++	{0x0014, SIERRA_DEQ_GLUT9},
++	{0x0014, SIERRA_DEQ_GLUT10},
++	{0x0014, SIERRA_DEQ_GLUT11},
++	{0x0014, SIERRA_DEQ_GLUT12},
++	{0x0014, SIERRA_DEQ_GLUT13},
++	{0x0014, SIERRA_DEQ_GLUT14},
++	{0x0014, SIERRA_DEQ_GLUT15},
++	{0x0014, SIERRA_DEQ_GLUT16},
++	{0x0BAE, SIERRA_DEQ_ALUT0},
++	{0x0AEB, SIERRA_DEQ_ALUT1},
++	{0x0A28, SIERRA_DEQ_ALUT2},
++	{0x0965, SIERRA_DEQ_ALUT3},
++	{0x08A2, SIERRA_DEQ_ALUT4},
++	{0x07DF, SIERRA_DEQ_ALUT5},
++	{0x071C, SIERRA_DEQ_ALUT6},
++	{0x0659, SIERRA_DEQ_ALUT7},
++	{0x0596, SIERRA_DEQ_ALUT8},
++	{0x0514, SIERRA_DEQ_ALUT9},
++	{0x0492, SIERRA_DEQ_ALUT10},
++	{0x0410, SIERRA_DEQ_ALUT11},
++	{0x038E, SIERRA_DEQ_ALUT12},
++	{0x030C, SIERRA_DEQ_ALUT13},
++	{0x03F4, SIERRA_DEQ_DFETAP_CTRL_PREG},
++	{0x0001, SIERRA_DFE_EN_1010_IGNORE_PREG},
++	{0x3C01, SIERRA_DEQ_TAU_CTRL1_FAST_MAINT_PREG},
++	{0x3C40, SIERRA_DEQ_TAU_CTRL1_SLOW_MAINT_PREG},
++	{0x1C08, SIERRA_DEQ_TAU_CTRL2_PREG},
++	{0x0033, SIERRA_DEQ_PICTRL_PREG},
++	{0x0330, SIERRA_CPICAL_TMRVAL_MODE0_PREG},
++	{0x01FF, SIERRA_CPICAL_PICNT_MODE1_PREG},
++	{0x0009, SIERRA_CPI_OUTBUF_RATESEL_PREG},
++	{0x3232, SIERRA_CPICAL_RES_STARTCODE_MODE23_PREG},
++	{0x0005, SIERRA_LFPSDET_SUPPORT_PREG},
++	{0x000F, SIERRA_LFPSFILT_NS_PREG},
++	{0x0009, SIERRA_LFPSFILT_RD_PREG},
++	{0x0001, SIERRA_LFPSFILT_MP_PREG},
++	{0x8013, SIERRA_SDFILT_H2L_A_PREG},
++	{0x8009, SIERRA_SDFILT_L2H_PREG},
++	{0x0024, SIERRA_RXBUFFER_CTLECTRL_PREG},
++	{0x0020, SIERRA_RXBUFFER_RCDFECTRL_PREG},
++	{0x4243, SIERRA_RXBUFFER_DFECTRL_PREG}
++};
++
++static const struct cdns_sierra_vals usb_100_ext_ssc_plllc1_cmn_vals = {
++	.reg_pairs = usb_100_ext_ssc_plllc1_cmn_regs,
++	.num_regs = ARRAY_SIZE(usb_100_ext_ssc_plllc1_cmn_regs),
++};
++
++static const struct cdns_sierra_vals usb_100_int_ssc_plllc1_cmn_vals = {
++	.reg_pairs = usb_100_int_ssc_plllc1_cmn_regs,
++	.num_regs = ARRAY_SIZE(usb_100_int_ssc_plllc1_cmn_regs),
++};
++
++static const struct cdns_sierra_vals usb_100_ml_ln_vals = {
++	.reg_pairs = usb_100_ml_ln_regs,
++	.num_regs = ARRAY_SIZE(usb_100_ml_ln_regs),
++};
++
+ /* SGMII PHY PMA lane configuration */
+ static const struct cdns_reg_pairs sgmii_phy_pma_ln_regs[] = {
+ 	{0x9010, SIERRA_PHY_PMA_XCVR_CTRL}
+@@ -2513,6 +2647,11 @@ static const struct cdns_sierra_data cdns_map_sierra = {
+ 				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+ 				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+ 			},
++			[TYPE_USB] = {
++				[NO_SSC] = &pcie_phy_pcs_cmn_vals,
++				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
++				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
++			},
+ 		},
+ 	},
+ 	.pma_cmn_vals = {
+@@ -2532,11 +2671,20 @@ static const struct cdns_sierra_data cdns_map_sierra = {
+ 				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
+ 				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
+ 			},
++			[TYPE_USB] = {
++				[NO_SSC] = &pcie_100_no_ssc_plllc_cmn_vals,
++				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
++				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
++			},
+ 		},
+ 		[TYPE_USB] = {
+ 			[TYPE_NONE] = {
+ 				[EXTERNAL_SSC] = &usb_100_ext_ssc_cmn_vals,
+ 			},
++			[TYPE_PCIE] = {
++				[EXTERNAL_SSC] = &usb_100_ext_ssc_plllc1_cmn_vals,
++				[INTERNAL_SSC] = &usb_100_int_ssc_plllc1_cmn_vals,
++			},
+ 		},
+ 		[TYPE_SGMII] = {
+ 			[TYPE_NONE] = {
+@@ -2573,11 +2721,20 @@ static const struct cdns_sierra_data cdns_map_sierra = {
+ 				[EXTERNAL_SSC] = &ml_pcie_100_ext_ssc_ln_vals,
+ 				[INTERNAL_SSC] = &ml_pcie_100_int_ssc_ln_vals,
+ 			},
++			[TYPE_USB] = {
++				[NO_SSC] = &ml_pcie_100_no_ssc_ln_vals,
++				[EXTERNAL_SSC] = &ml_pcie_100_ext_ssc_ln_vals,
++				[INTERNAL_SSC] = &ml_pcie_100_int_ssc_ln_vals,
++			},
+ 		},
+ 		[TYPE_USB] = {
+ 			[TYPE_NONE] = {
+ 				[EXTERNAL_SSC] = &usb_100_ext_ssc_ln_vals,
+ 			},
++			[TYPE_PCIE] = {
++				[EXTERNAL_SSC] = &usb_100_ml_ln_vals,
++				[INTERNAL_SSC] = &usb_100_ml_ln_vals,
++			},
+ 		},
+ 		[TYPE_SGMII] = {
+ 			[TYPE_NONE] = {
+@@ -2620,6 +2777,11 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
+ 				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+ 				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
+ 			},
++			[TYPE_USB] = {
++				[NO_SSC] = &pcie_phy_pcs_cmn_vals,
++				[EXTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
++				[INTERNAL_SSC] = &pcie_phy_pcs_cmn_vals,
++			},
+ 		},
+ 	},
+ 	.phy_pma_ln_vals = {
+@@ -2655,11 +2817,20 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
+ 				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
+ 				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
+ 			},
++			[TYPE_USB] = {
++				[NO_SSC] = &pcie_100_no_ssc_plllc_cmn_vals,
++				[EXTERNAL_SSC] = &pcie_100_ext_ssc_plllc_cmn_vals,
++				[INTERNAL_SSC] = &pcie_100_int_ssc_plllc_cmn_vals,
++			},
+ 		},
+ 		[TYPE_USB] = {
+ 			[TYPE_NONE] = {
+ 				[EXTERNAL_SSC] = &usb_100_ext_ssc_cmn_vals,
+ 			},
++			[TYPE_PCIE] = {
++				[EXTERNAL_SSC] = &usb_100_ext_ssc_plllc1_cmn_vals,
++				[INTERNAL_SSC] = &usb_100_int_ssc_plllc1_cmn_vals,
++			},
+ 		},
+ 		[TYPE_SGMII] = {
+ 			[TYPE_PCIE] = {
+@@ -2693,11 +2864,20 @@ static const struct cdns_sierra_data cdns_ti_map_sierra = {
+ 				[EXTERNAL_SSC] = &ti_ml_pcie_100_ext_ssc_ln_vals,
+ 				[INTERNAL_SSC] = &ti_ml_pcie_100_int_ssc_ln_vals,
+ 			},
++			[TYPE_USB] = {
++				[NO_SSC] = &ti_ml_pcie_100_no_ssc_ln_vals,
++				[EXTERNAL_SSC] = &ti_ml_pcie_100_ext_ssc_ln_vals,
++				[INTERNAL_SSC] = &ti_ml_pcie_100_int_ssc_ln_vals,
++			},
+ 		},
+ 		[TYPE_USB] = {
+ 			[TYPE_NONE] = {
+ 				[EXTERNAL_SSC] = &usb_100_ext_ssc_ln_vals,
+ 			},
++			[TYPE_PCIE] = {
++				[EXTERNAL_SSC] = &usb_100_ml_ln_vals,
++				[INTERNAL_SSC] = &usb_100_ml_ln_vals,
++			},
+ 		},
+ 		[TYPE_SGMII] = {
+ 			[TYPE_PCIE] = {
+-- 
+2.34.1
 
 
