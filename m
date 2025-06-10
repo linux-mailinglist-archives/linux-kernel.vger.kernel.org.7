@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-680363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CEB8AD4453
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:02:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6041DAD4458
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5575A17698D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:02:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47C57A4529
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B938266B5A;
-	Tue, 10 Jun 2025 21:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523442676DF;
+	Tue, 10 Jun 2025 21:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="R6W7IW2T"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012061.outbound.protection.outlook.com [52.101.66.61])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BxSAzpS+"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011032.outbound.protection.outlook.com [52.101.65.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568001401C;
-	Tue, 10 Jun 2025 21:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B472459C0;
+	Tue, 10 Jun 2025 21:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749589315; cv=fail; b=HQZXmB1I+7XhgVxa6qfbZseJioy8EX+nscWtuk/eYVK43ysGx3OlzwW5b4jEZICYIYVS33idGHJ5NXDT1vLlgh3WUFneRYlFZTvnapZoqzdnoxywzMPQI+ZbWsWp5o2AXEbvqdmBM0w84jN9NPk47oYI2oGodkRDVxD4FfnxBlg=
+	t=1749589362; cv=fail; b=CNCtymufhXu50qhMcemX71a1poZ+dCeTPsVNkv5wa6aOHYnUpLAFrAd1C7AWkx6p81DGOQN0s7yssAqUNnKtA8IziJKmblnVYRo2DxH4t1i/fbQ+qke38bTgUiSX0R/lZVLQ3Q5EdAgaeaHN8cjGnxVuVxJzEEmKLoyhWLqWz+I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749589315; c=relaxed/simple;
-	bh=1w9BzeT5tg8fwiRjsojENG26RrJJE69HsLtQBzAE9QU=;
+	s=arc-20240116; t=1749589362; c=relaxed/simple;
+	bh=zWiqTC1Q2FlMCPrbak/JsMd09NIo7eleuyVOAEkuEHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PLU1QU0W2TSj+fZHyJRiRfxSgs2BcxiBJkRgEF6UzLKbKYuBsytpsaqrGoxegTKyP9K2rWSlQcLClcCiz6SbMKpl+ky1yGdsiQZzbliev2x/XVF+8DUsMMU1BjkGD1s/4XGdas5Jav4I8tPiTw9cMQTSUMjFmOIjjzKjgNCmeHc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=R6W7IW2T; arc=fail smtp.client-ip=52.101.66.61
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nPZSmHm7B8MFlJ7oKUNhdWtgLJhPRmYOSW9Cvna+wF39V1aV+cQEXFyBXbRpwPwnUA02zYN0pBvXEpPvBmLpvliEixaCGF3hRjzB/6JVPhoACvQba0nYdNCzjBC/YNMWFMft6kyzLTUXx0QIxA9uNID2erXI3xtZQZB6teOg/lo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BxSAzpS+; arc=fail smtp.client-ip=52.101.65.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n82rRAItndC/tFjCAgSXY+fy5BoVP88elEt91eQthMFcZjQgX4U8jlxs7XJY6ZuurBeEMVFCDdMG02CIJMoFu/tfypnjQwKRMdMRoOHTzTBmotROdMP7AtFf5txRGOfmoLT7/T2cgzI5+BGUQXo3BSy/as+tZMVW206d71uX0swdkocheJMUHDxZGFPPF4cQUzzcioE6t6KXDihI0GlLn75x6XHgrVDeOxrE2lAsO33xEDhbpcQEg2uicv20hhIGYZ8A3A/4C0BOP8UyV3xeSNJAQ4Wu6HBzB8GmMnlrRgBSowkRcl1H0xp1Tg3a3HCGhY4Y15uOWu2NhXEfy4qjZA==
+ b=QsVCQCEn+iTkyxkkrSdGVJKAzcQDikL6ANL2NvtwCdhSt4TkyzUWXHU0LpasJEzCLoYAPY5tQ4JygP4jgvIAdPfONQtkuqCm37qpKt9FpkTxQfdIT12cl8V947WNXfC2ynLrQtfFLTbqJJBrNYJmyDz1aJU6VKsy4AUbb7M5vjDC48ZQDQ6rM5xWe4+P84BYG37wjq7RSfyDVSaRm9+V1oE/V4QcIpcE83og10RQNZu72jX+nmep7SqsKDVM4Moa4B+ELmNRiAyQUOj9+oq1GLEYw7VSqDo9avTYEs/hq4t3xuSH57Dm+Yrv+WhOK+ZCy/a1lUnSXZFHpJhW77vcIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iFmnlCuF3lzqgKUUZdDweFCR8/2bG3TiUs2GtpEO95M=;
- b=q4OP+xRPkhSywAXzisQazzOe7TUAvdJ5K0cP9YyRoc133b2mu+NNTe+UpEVkLmFEqZTnhX7NA/X5rSURc8QUF89xY/MrqUc80hKwLPyB0lk8Y6n7CfmVR44UQWmEXZG+NvH4gzscwa9v4lMp63UkL/OM70M2IZLAxnCdiaCUR/IVqKIkjb2ccfWUTtZGjIC/FndKE15TOA3+KuMQa0X3MiRKwRErgjyxp3kX3WjA5YksiHrPvo3DVbCm8al0FPgMgJ+82Jij1ZOtEQLG4jL169y3XTqtWqfNLbrAG9KQyG6TB98cpO8G8F5rfo7Oo1MshQGrSsHh4uSiprkIfAPx1w==
+ bh=cF324or/2CN9pq6dSSnu20S6WShg9W3C2IcmaD2S/kE=;
+ b=QksSy8AXwoVpsIBrEtfki24mHqEgLyQQ8TIYPRAEgNAg9k0RAffNTmTgl+AyNlk2xOpH9m2hxB7uDspKfHMrRaAxb6Zsile3a1eZynYsDPdllWUZdBkYhl2OWqKMBpELN72NCwzbRnGmgnRj+IPmWIspy0QFD6q7g7rISgGhSxS0d2nQevPvX36WJ1hP6a+PROAqoYbUGwtNgaSfl0CenSTHKNuCLsNZlNYAOEfJXBuDAfRG3c6IMe+1deMARYSw9Y5nHt8YRpHkxvzuy6VOTWuGx3z2sOfrbI5Nqx9DyWsHeZh96Tq7UCdsDcd6drpQpHEZ+W3gS4zhXHyQbmMI1g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iFmnlCuF3lzqgKUUZdDweFCR8/2bG3TiUs2GtpEO95M=;
- b=R6W7IW2Ttfjx1/+gw8BQq7IdRstIZSgf/xIzUd3geUYPxzK/kYtwKqJkO5jo9G2GozdLGhGM9pHj4unVKAZtGUXE/U+CEjSIHzyO2nRoKQofelM/mG65zGyh7Jwm2zn3aCS8vDgR3koDn7AFQpkQKTzg0f5vSJdsp9SZrVl7WHhswatd7SC54hFFZTBtolaLOSw8lQ75uXImSqVvSHZqTmoYvbjp0ZUl+hOrGoZfcZgnUryfHePlJ1ywNZoL44L3WlXCUHkkV5TTVQS1PUyJd6U4DPCtrqV53K1scYaQANx0N/CknXuoTw5GtXK5T9UL0tWetzTtMiwu9Re+Vlmgcg==
+ bh=cF324or/2CN9pq6dSSnu20S6WShg9W3C2IcmaD2S/kE=;
+ b=BxSAzpS+FByF5XYPq8rHiGpoS6+/rvEiKUGyMwNkA9ebsoLHlSXurqx0WN0tXOFomlUYKOZOX/NZV9XjuOfZMO9OvLmoH586t+r2h0HAvofF0VUcnfrjdcFyhydrsh/cS+NJSmRmURLGHqk2KOpr7sM7LOHydGhz2UOKxT6MP6HcTIc/jzoi84kFkuhcUaRhjw7BYULvnpYyQVbKnXPLcHMgXWc5Ufo+168w9Qe1hnW6eJTKDdsSLiFK+CjrXMmGMmpvYyoO5cd2R10ASOm951uAzDinmETRU1FPrtGcH0iNRwRfeDZtcYr3jhNGcLhNVcr5pfddJjwBqM7dnBzfYA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DU4PR04MB11054.eurprd04.prod.outlook.com (2603:10a6:10:581::10) with
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU2PR04MB9018.eurprd04.prod.outlook.com (2603:10a6:10:2d9::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.30; Tue, 10 Jun
- 2025 21:01:51 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
- 21:01:50 +0000
-Date: Wed, 11 Jun 2025 00:01:47 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] spi: spi-fsl-dspi: Clear completion counter before
- initiating transfer
-Message-ID: <20250610210147.kwuwwjtcl36hrxjc@skbuf>
-References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
- <20250609-james-nxp-spi-dma-v1-1-2b831e714be2@linaro.org>
- <20250610113423.zztoyabv4qzsaawt@skbuf>
- <9852a22a-1a09-4559-9775-2ccbb44c43c0@linaro.org>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Tue, 10 Jun
+ 2025 21:02:37 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
+ 21:02:37 +0000
+Date: Tue, 10 Jun 2025 17:02:28 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: Re: [PATCH v5 4/6] input: pf1550: add onkey support
+Message-ID: <aEidZI0hTPFaB7e8@lizhi-Precision-Tower-5810>
+References: <20250610-pf1550-v5-0-ed0d9e3aaac7@savoirfairelinux.com>
+ <20250610-pf1550-v5-4-ed0d9e3aaac7@savoirfairelinux.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9852a22a-1a09-4559-9775-2ccbb44c43c0@linaro.org>
-X-ClientProxiedBy: VE1PR08CA0033.eurprd08.prod.outlook.com
- (2603:10a6:803:104::46) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+In-Reply-To: <20250610-pf1550-v5-4-ed0d9e3aaac7@savoirfairelinux.com>
+X-ClientProxiedBy: PH7PR13CA0018.namprd13.prod.outlook.com
+ (2603:10b6:510:174::22) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,173 +87,345 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DU4PR04MB11054:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4b13c6e-e7cf-4c9d-fd39-08dda8620522
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB9018:EE_
+X-MS-Office365-Filtering-Correlation-Id: 633c273c-ffe1-4ae4-f374-08dda86220fd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SNOJNAJ1rsaenqRTeQapvQnfnoQ0k+Fc2F0znxNRZPWWp3+qwmiF49/cugYB?=
- =?us-ascii?Q?FVTH/WLMySljczYM2a66MGg9gPJBFmdoz9Ayty0HqEEaTRmB6lgeBUzlSjfT?=
- =?us-ascii?Q?2IWE2+gP7+Qb5HaNlFDVyG2bBR/vGwC0V7FjrikUSlhyd62YK7kirREnvGUt?=
- =?us-ascii?Q?3tlRsbudBK5KQOHEOgVWUE7bP7o4BMQxK6vYGh6jfZbXJknIIDuNW/F2Hb1X?=
- =?us-ascii?Q?uWeeh63agUr0pvPA/Wz2srAINRFgd1qVEGuYsHwe/fq3iXh+cjd9iUfTCtgX?=
- =?us-ascii?Q?FMF+Nj8Hrl0e7/rwTK2SSsTv7P48/9M9D1+JVXO5yDHVXvg0zzWKZalvaBpu?=
- =?us-ascii?Q?W6UK9IsrZ5rpKT9VJT254l7Vjo9Sl1mNzWLj0ZDFn1pQ86ejNgxQNf/DyEEX?=
- =?us-ascii?Q?s99lNPgR2cR/6GufN2O66Vu+3yyXmwzPAfrSWjrldB2KZeiVlxuSnNZqnAGX?=
- =?us-ascii?Q?1NjDoC9s2UoeIQCRVCc7KkC1iEmUNnJh55dURZIVCUa7cPVLt2iFg9aaX1I5?=
- =?us-ascii?Q?i3TLUU16BjHu7qFRhxVtGx8dM8AlHyZHCBVwh0zomiT0gYvFr+1lzNVDG6My?=
- =?us-ascii?Q?89iUEofwOcGeRDItms2GTX7qO11K8AfrLd6s1xPFusqVz1XUK7sGbEKOSp0c?=
- =?us-ascii?Q?T7OeGIuOOf06KHsNowhupay6KYHtQKFiE08VaI/+5mDsH1YWFkWoRxQuPO1m?=
- =?us-ascii?Q?8E66GdW/dhMoWRPM4iUg2q+6Tkuhtykq+nmTVDCX1PMKF5CAv0H0gH8p2CtM?=
- =?us-ascii?Q?AOSyveY2KEshsfGfQM4PgVJSxFJ3dfCYyBbqdoVFqqAjhOty9nBK3mGlafPu?=
- =?us-ascii?Q?/DcW2itBLnPnQeFOgT1Fl6g5nkpDNYhcTWcQA+yS87fWNBhGfBOMtxmMCu1M?=
- =?us-ascii?Q?utR/R1ECu0iBewywt//0YBaq92pC7RJeMPIA66GiZB6q/ha/iKj0CyMMG3vh?=
- =?us-ascii?Q?F4IpzH7/QDne6O76QpHyKvudEnJGRLuJ5uSCBl9qKKVtRvVqDB9b723uDvuw?=
- =?us-ascii?Q?RdihSbTmFGPA9CFc1DAXFXmFjb8tQxYpuG4SYeH9hrKpXQsaEaJe+kjMrf52?=
- =?us-ascii?Q?oprUTZ171bwuaRIiGP6Daj6+jQKEPIbVd+wFDJW2kdBRTVC8MmRps0eiWBQ3?=
- =?us-ascii?Q?T7iwmBwd6qZQkwSS3OzUtSNayeZ/iFGRUyLXbofTuQ2oGAzAIUYTBMCiRGRu?=
- =?us-ascii?Q?pWHMzAGGy+FUASLGBCg2AI+6RwNWH/GevJeeGCo8Riuw4n2iK94fCailvqcl?=
- =?us-ascii?Q?TY7JGvTAooGPWqjYnNV6kmOiy20z1BgC/Y5ZBvsnxuUDwAEwyuGx5YOHKnqT?=
- =?us-ascii?Q?Z3CVeD7tii+ji5WpPAjetXlkWpxymd4fR0Z2GV/XAU9SDHYr1MfAgEKz8h2K?=
- =?us-ascii?Q?9jUE2sHN4gfBi6I52MrKe3aOQbKU8hlsROEHVCQ51RicrQqq3pdZaUhQVaQa?=
- =?us-ascii?Q?A/TaLJ6uTBM=3D?=
+	=?us-ascii?Q?QV6yOdZJgPEd2XWg5SgRxS/DIzd+OAv+VbueV56gKx5tQwmOvW+42YejWX1u?=
+ =?us-ascii?Q?kBvCubkb+0DgfTR9sLvJ9xTIowb+/CER4cjqelInGawsJdqHDRY9OmF2HKE2?=
+ =?us-ascii?Q?/l0XBlfKMEJQx9FRxNKSnAPiky103KBtmDjbOjr6tldUa+pTietqzU7cWHOt?=
+ =?us-ascii?Q?OVLnt9bzBLJfB4wx6fgXDW4cBiULkZu06OhEEwJeHFuNt5Z5H2jansGwOdhf?=
+ =?us-ascii?Q?dzN1ykITGT+mzJU5m28bc/oziSAcRBTeyC4B+5GDSA9hKySeM6ruuP0ZBUKE?=
+ =?us-ascii?Q?NrSmeyBqgxniR6ulcHtXouBNlON8VU8Bwr+ClYW4e+5dYezhCPwVya23FSIs?=
+ =?us-ascii?Q?jh4QYdcuWoAD4kA5l3Mh9uXK9zx/VwVrKGye7rHTh63sFWHNNPWZfjMcSCXq?=
+ =?us-ascii?Q?prD6z7GvKG7qpt3VAN8vwAM2S3MkOH7v6jNT++eFqZaJSQ7njqDDb/51qUJw?=
+ =?us-ascii?Q?XzVVFTvw2UbmWWbGc/Vm/+8BdM34LgEgjGEL+45MyG3aF0vibRvS/jAmtdVc?=
+ =?us-ascii?Q?wbtTuJ3SaszzAhAkVin1i7M/LtvJ5wfQIb3Z+PTzsis/al/XR82IoP2XO8vV?=
+ =?us-ascii?Q?YVq7CBDLvsVSblzar7u/VoQbdkE9MWdQfHdpEDzbpBo6QOcDFrXsoElDmRCt?=
+ =?us-ascii?Q?+bgEDp+LEftpo3C4GnyeDnNMuEAfrPJzgHX95rSz2cTWjA82kyLBWNmcac15?=
+ =?us-ascii?Q?nFtdSvQ6sMBt/Z4/l+zN4srG4dNg+Wti2t65d5IBLHP/kYP3YqDG3oPFfoTA?=
+ =?us-ascii?Q?kdjCsxOmjzlXATaGUfeY8YZCsLqdlH996K+sYzzEfvWGccE0lXJ7HwN8T4pD?=
+ =?us-ascii?Q?1QAD+3q4WJ04vPY7h+OmaT5R0puL3lnJcA2Gk0sjRLYagG1xlQ6KpRaGSjsg?=
+ =?us-ascii?Q?0R2l2+Hx9gsWQPjoXpuN4Sg06jb3ee2bFn0Js2IBqNH/OyZRLY5iJxu11yQD?=
+ =?us-ascii?Q?ECef64o2lalwmmzMm843+rg6H8URzHLlsSzgHinXIBwEo8u61HJ+E+EX75la?=
+ =?us-ascii?Q?P9xDyc8dERsKKxvERCu7mM1KgZ7TVWFlNihzLms5jI1g+lcU+H01eyzX4zF6?=
+ =?us-ascii?Q?yEy+tCmwjXUBfqAzYG3pMihCuUcNG958I8FV0IaNdtuysnsKBVFWYlYTLEq/?=
+ =?us-ascii?Q?R0Tzyh7SgBpFB6wkSln5wI3VPku7iZeuqj3es6FeIJOIXP9F/bjOW0IroSRz?=
+ =?us-ascii?Q?GoEHV+LvsNUfhIqeUeQua/vmSvcLDBfa1s2MWD8T34PaKj0ij5ocG/DwhkbB?=
+ =?us-ascii?Q?Cinb0P5aOkx6G8dhhiU0vis3JOPqr5pMvELL9D+SOVMYgHbu61BVNpg3QsCV?=
+ =?us-ascii?Q?eAvM9o89ekfO8LBnw3kOA8rfGW99B3GAS99zNj9YV7gKC61Lvtfw2+NhkER/?=
+ =?us-ascii?Q?M0MeS1QW3KcKSdpEhuuDq+mqVO/uDkLVziMK1hAW0zm9TWqIrCjYXRVrX8Ml?=
+ =?us-ascii?Q?WVToiJqK7N9or9R0S3HkUg18EkevE6NwvBlhO13hGHaZJaJwyIa5bw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TTXTfmzcuCAKmUIEV6AUz4+ofWVsmupRHAl33D09fnX48d1nOiE1Z793ClVO?=
- =?us-ascii?Q?IO0sK0HLOkGZ1NcgEIXdLLlWI8SJfOkKAWkNOE5pqH4xdK352dl66OlcN4in?=
- =?us-ascii?Q?7xjz+HsXKSmdm9XgkY1B+Wfsukjfw4ycehJOpBspiYSVuTowKBrsNz8m0bKS?=
- =?us-ascii?Q?WiiaW+BO/O3Q+/kH4Su5CzDNO02CtbPCmJmOdVXcpvj2xHrfNhHTk3X/S7yb?=
- =?us-ascii?Q?xBBgjqHvyN/Nh5VvE0lTytu/Ptm4sjjGKVbDF6LuqyDuEFMT3YDxjW3wg4EQ?=
- =?us-ascii?Q?WHU19BU44OP06lwG3UvO/ioiTc8GpPpuvBmU5EXYDVR3FKLpihx42x1bp7Cz?=
- =?us-ascii?Q?Z0ogSCP+gr4a6y9kb2sBYlqirlwUkKnk53gjwLMWXqMBX8NGmGhd1VL7tiBx?=
- =?us-ascii?Q?9n5kb5IJyX/wMGf6G30ygr1squduuL2MeaXktWDvWIir/o8scz0LG+8B+BIP?=
- =?us-ascii?Q?OZnkIFXT78IA1WknQzC6K7Kqxy2AjcaUZzj/AcPUu/vzbsjhb5s2d0h9/PNg?=
- =?us-ascii?Q?whpkbdb0VXVVp82E2D/QrO6hnG4Dscic3gCri0PskCa/UKCiejvFTSD6D6HY?=
- =?us-ascii?Q?AWTbxxOF/oE6tFTtzacOIGLxoGcbRuVC3tifuKBKUmP7zdIagbUvV/9pzVlu?=
- =?us-ascii?Q?VG8ir6ChIFkew2Tqtj1nX/1nYRK8QKqFkz2aTv/172iSI6pMrvFTZNTCc566?=
- =?us-ascii?Q?7OVCKqqJRAEZo4MyV2FffGq/b70BifPwiWZruXIN8QXz/NS9blwys7h4a8nK?=
- =?us-ascii?Q?iuIX3n3wFdmyEHTge2wrK7ndXPnMVCmK/N5Rt9bZjBLGu0P2E74E94NywcIz?=
- =?us-ascii?Q?fhnGRecPt0XraAqTMZnC0wldQ6rtLrcN98enSXS03aaBy1UwMdgkVQbFnfLh?=
- =?us-ascii?Q?ayhi6gBPxuZ86exkluQlGrrWGrOlTFBmkFTo69vCQsmuInmSZxY5u2bRc29w?=
- =?us-ascii?Q?tc6Ey+fFpuup9xpdFcpVV17xc56/80YO5kF3Q4bdokAehr4prlKCWh4w0i5u?=
- =?us-ascii?Q?8YBAK09Zh8KMyDb8LH8fOiAbvuDwS/uWFL95GLE4Sh3L8yKAgQlVZU8+rSHj?=
- =?us-ascii?Q?4K01R9NA3OTjqP52v3wFV03gFsQ2Kowtj2SBF5JgLNzCR7IKuSRXBjGRPgpC?=
- =?us-ascii?Q?OJPJx/CUW5T1VREJneTM9mlIgcAyjDE8o0GkY2DuixDQIl+AlVABAbJ8paLI?=
- =?us-ascii?Q?470yC5kuSPcqflD5O3N+/ZdsDoowk4FgISzXAnoS5QbKhmm3oP4LLNqLjVhR?=
- =?us-ascii?Q?4wbXjIHPTRiYmH/LdPCfyhTMjckkYIM4mNpUJKtZVLGFkrJrRiHC8md9e6/E?=
- =?us-ascii?Q?gl+FLyDiajuU0ABi9KhmqInsl4wWcuWCVp7rq/U14pAF36n9+UBXsFqE1UPJ?=
- =?us-ascii?Q?zWyfTyyYe1pkllO3SKuQUa5OqkcuNGI8LopkQLkpOWBTD8qPJ7YYkNsTsnGv?=
- =?us-ascii?Q?yDPvzuWY/ShhmSCHM0WdDgrW/sX7YRDfrcaGla8S4caz+zfgLfWfy8sI+Sch?=
- =?us-ascii?Q?V8cPHFA/PSLdOE/2Zqf3fmGftr+yDvEVyeBImu/aUPSxxCYmcXCuDN3ZFDxS?=
- =?us-ascii?Q?nbOPFclKphqxshh9nkuj3ZORQ2GhONmT17hJz8t/hKSeeFNFr+O+2INUmJTj?=
- =?us-ascii?Q?AQ=3D=3D?=
+	=?us-ascii?Q?hSXZZAtV6e5Gi9LAlyX8naKCFO4ujLVZHHETVD/4i5T5StGoHnnnyVLFtOVn?=
+ =?us-ascii?Q?ZXgQm8zQlvZJ6pv01S5U/oRT4ThtNoXklATeuyXCGBrPFmt4B0Zt7xJrKSEO?=
+ =?us-ascii?Q?Y6eyyBP+X3fpAIB8tFOzSPaxwAYkRwp4xuKsjE4fAGar/rUxWUf5hSh9nhed?=
+ =?us-ascii?Q?gcuHoKzn/bRhQibo3FYavdMrHj4vdUcRaXmWuAI7cpt+6iDoNeChwbnUaxBj?=
+ =?us-ascii?Q?PQKxfewb9SrzyZI+/YBLtGFPYNuWzIDEpIBpxNIIU3jCoUYyIhV9RTx9I+Hz?=
+ =?us-ascii?Q?weg/ctirdJdraSueBilXTaaxVhg0BiHxt5s5rpIIvcPaXf8BIiKGQR2xAgk4?=
+ =?us-ascii?Q?uTcmBfZ2t707wKrARUSn/FuHf0Z+rXQmDFiDFtHuxkJknDCtXPwBd810/kXW?=
+ =?us-ascii?Q?AIi8WTVGBSdlDi8P0JOtyyAYUXKJwXboBpa5T/8Cq3sru1u9dt5sqYxf2wD3?=
+ =?us-ascii?Q?f6sHNKh9ON9Rxi4jzgiitP8Q/Rxc7iuC6YF03VEla2m1NXRtJ06tDwMrsJl7?=
+ =?us-ascii?Q?dCLbM3iILgBC4AUSKHeFZI/DtIwky9xUc5VDyHjoSGemPxaSH1q2TW/3uMvL?=
+ =?us-ascii?Q?ItLefpJWdCaqhUpaA07zYaMV0K6qXKukBtwtTa552+rUmymWC0R/k8eFc0Y9?=
+ =?us-ascii?Q?merRArTTNqrPIP5yesdBRZ4LsfqmViR1tyqBCqPv7csOTT1dJnND320W6j8Y?=
+ =?us-ascii?Q?RSKSHddh6kurTeG5Iwujc4wtOuJRjLlpBAikuS1Wr58Ikj5ndIwYe+d7+Iyc?=
+ =?us-ascii?Q?xgZGpdVp/qUhY0lRsYCZHUG3GI1vYztPk7nNiILyxJASSitwp4Kw7IfmxL0M?=
+ =?us-ascii?Q?EYPswch36Q2sOZ91f4dWxH3610AOZNokxXUpH9ZmO/erRWtUcEkb+iEGTnQz?=
+ =?us-ascii?Q?3Qd+XYuQyeUu9lVCK2o9WnsSaElP9QN2skAoAf9/5Ci6HyzngYj+XHO8Ocnn?=
+ =?us-ascii?Q?Smkj7R8EneTnEr9bfBiANlqA5+Kz4wJndeRUMov0/FC5JHX8Lah6De281ppp?=
+ =?us-ascii?Q?rboaAPiqJBixz7M0X0WTzLUpss3dHliLtlHfF850wEtjWxzQl2hAPfGazU5s?=
+ =?us-ascii?Q?YlaSsk2bIM0ysbuCNjlqZFUrx+KRiM47mOmPoz6lU9geduOIMHzf9OaA2+FW?=
+ =?us-ascii?Q?U9IlXhjFKB/79cd0x+DiTUnhVEFpF7P0N+ew/8W25WBt0Kbn/k6/DhSXfutE?=
+ =?us-ascii?Q?PVaoR7XyvRH4Ka1tFJ6j8Jhw0YU2U340uhZqs0GUrn46lw3/9QPqkJwf77/B?=
+ =?us-ascii?Q?fJvABqC+cpHv1/WEyID66SHN+bpFBAJzyrDPHzh9EvSzgYIY6TimI8wMzRHp?=
+ =?us-ascii?Q?60qkkqGKtFwkI+GxWqzxn6LtkgCT0eoY+fcUxNq+4opvz80ZcHCaa9AKwb4E?=
+ =?us-ascii?Q?50ny6adOwSpnwuw+URv19M3sIfs1SwwnKMtRyYDm4FBIGdtwwgzwkIzZc/pb?=
+ =?us-ascii?Q?TRoD+Q5vh8kPh2lFlgLDDvCL1OBrVDSbrNI9imx55F26Ss4yNTk402U+3jjY?=
+ =?us-ascii?Q?tPbBPFGV+8FCjexG/xbcDiKT0bKcDakg2i9dTfnouI2JGn6LpZlH/BggDGob?=
+ =?us-ascii?Q?6icpNzK9EajY5vPPXBfOqzzNVG0ImA1CSOE/1gqo?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4b13c6e-e7cf-4c9d-fd39-08dda8620522
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 633c273c-ffe1-4ae4-f374-08dda86220fd
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 21:01:50.6536
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 21:02:37.1697
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U5VSxT9v2DSRUFeigGV/BJ0fDNUjpvnMYbRtGocaed15A0T1gmHK/dxJ/VREBu/kDDCJfY+sstRJWsD3bdKQIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11054
+X-MS-Exchange-CrossTenant-UserPrincipalName: /w9ZaBOfsW8OdX+7v8JhOFcaULj/iqBOi+4Gjnnl15GHdaXAaOxz/mbg83DwTJLoRwF554Wa2PDmUE2WwPFT+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9018
 
-On Tue, Jun 10, 2025 at 04:41:04PM +0100, James Clark wrote:
-> On 10/06/2025 12:34 pm, Vladimir Oltean wrote:
-> > On Mon, Jun 09, 2025 at 04:32:38PM +0100, James Clark wrote:
-> > > In target mode, extra interrupts can be received between the end of a
-> > > transfer and halting the module if the host continues sending more data.
-> > 
-> > Presumably you mean not just any extra interrupts can be received, but
-> > specifically CMDTCF, since that triggers the complete(&dspi->xfer_done)
-> > call. Other interrupt sources are masked in XSPI mode and should be
-> > irrelevant.
-> 
-> Yes complete(&dspi->xfer_done) is called so CMDTCF is set. For example in
-> one case of underflow I get SPI_SR = 0xca8b0450, which is these flags:
-> 
->   TCF, TXRXS, TFUF, TFFF, CMDTCF, RFOF, RFDF, CMDFFF
-> 
-> Compared to a successful transfer I get 0xc2830330:
-> 
->   TCF, TXRXS,       TFFF, CMDTCF,       RFDF, CMDFFF
+On Tue, Jun 10, 2025 at 03:47:32PM -0400, Samuel Kayode wrote:
+> Add support for the onkey of the pf1550 PMIC.
+>
+> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
 
-Ok, so my new question would be: if CMDTCF is set, presumably it means a
-command was transferred. What command was transferred, and who put data
-in the FIFO for it?
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Because the answer to the above is AFAIU "no one", I guess the driver
-should ignore CMDTCF when TFUF (TX FIFO underflow) is set; I consider
-that to be the logic bug. You are also doing that in patch 4/4, except
-you still call complete() for some reason. If you don't call complete(),
-there is no reason to fend against spurious completions.
-
-I think I would prefer seeing more deliberate decisions in the driver,
-it helps if things don't just work by coincidence.
-
-> > > If the interrupt from this occurs after the reinit_completion() then the
-> > > completion counter is left at a non-zero value. The next unrelated
-> > > transfer initiated by userspace will then complete immediately without
-> > > waiting for the interrupt or writing to the RX buffer.
-> > > 
-> > > Fix it by resetting the counter before the transfer so that lingering
-> > > values are cleared. This is done after clearing the FIFOs and the
-> > > status register but before the transfer is initiated, so no interrupts
-> > > should be received at this point resulting in other race conditions.
-> > 
-> > Sorry, I don't have a lot of experience with the target mode, and when I
-> > introduced the XSPI FIFO mode, I didn't take target mode into consideration.
-> > 
-> > The question is, does the module support XSPI FIFO writes in target
-> > mode? In the LS1028A reference manual, I see PUSHR_SLAVE has the upper
-> > 16 bits (for the command) hidden, specifically there is no CTAS field
-> > there that would point to one of the CTARE0/CTARE1 registers.
-> > Cross-checking with the S32G3 RM, I see nothing fundamentally different.
-> > 
-> > I am surprised, given this fact, that the CMDTCF interrupt would fire at
-> > all in target mode.
-> 
-> It's working in my testing where I've forced it to XSPI mode instead of DMA
-> mode on S32G3. I assume the command is blank because in target mode CTAR0
-> (aka CTAR0_SLAVE) is always used regardless of the frame.
-> 
-> CTARE0 isn't explicitly relabeled like CTAR0, but this paragraph states that
-> CTARE0 is used:
-> 
->   50.4.3.2 Slave mode
-> 
->   ... The SPI Slave mode transfer attributes are configured in the CTAR0
->   and CTARE0 registers ...
-
-That's an interesting piece of data which I wasn't aware of, thanks.
-
-> Any transfers smaller than the FIFO are working in interrupt mode, although
-> larger ones are problematic because there isn't enough time to reload the
-> FIFOs while the host is still sending (hence the error I added in patch 4).
-> 
-> Polling mode isn't working at all because it has a timeout which gets hit
-> and returns -ETIMEDOUT before the host sends anything. Although I added the
-> check there for consistency and for catching host mode errors.
-> 
-> > > 
-> > > Fixes: 4f5ee75ea171 ("spi: spi-fsl-dspi: Replace interruptible wait queue with a simple completion")
-> > 
-> > To be clear, if you ran 'git bisect' to track down this issue, it
-> > wouldn't have pointed you to this commit, would it?
-> 
-> I didn't test it no, but I did assume that the wake_up_interruptible() that
-> got replaced wasn't vulnerable to this same issue. Because the spurious
-> wake_up_interruptible() would be "lost", and a fresh one from the next
-> transfer would have been required to proceed past the
-> wait_event_interruptible().
-> 
-> Whereas wait_for_completion() is just a counter so it has the memory problem
-> explained in the commit message.
-
-Why would a spurious wake_up_interruptible() be lost? Is it because of
-the dspi->waitflags condition not becoming 1? It would also become 1...
+> ---
+> v4:
+> - Address Dmitry's feedback
+>   - Drop irq variable in onkey_drv_data
+>   - Drop keycode variable in onkey_drv_data
+>   - Define wakeup as type bool
+>   - Use platform_get_irq
+>   - Use type const for struct pf1550_dev in onkey_drv_data
+>   - Replace (error < 0) with (error) in if statement when applicable
+>   - No need to define driver_data in table id
+> - Define driver.pm with pm_sleep_ptr
+> v3:
+> - Address Dmitry's feedback
+>   - Drop compatible string
+>   - Remove dependency on OF
+>   - Use generic device properties
+>   - Drop unnecessary includes
+>   - Drop unnecessary initializations in probe
+>   - Always use the KEY_POWER property for onkey->keycode
+>   - Do mapping of irqs in MFD driver
+>   - Define onkey->input before interrupts are active
+>   - Drop unnecessary input_free_device since devm
+>   - Manage onkey irqs instead of the main interrupt line.
+> - Fix integer overflow when unmasking onkey irqs in onkey_resume.
+> v2:
+> - Add driver for onkey
+> ---
+>  drivers/input/misc/Kconfig        |  11 +++
+>  drivers/input/misc/Makefile       |   1 +
+>  drivers/input/misc/pf1550-onkey.c | 183 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 195 insertions(+)
+>
+> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+> index f5496ca0c0d2bfcb7968503ccd1844ff43bbc1c0..47b3c43ff0550f14d61990997976366436411adc 100644
+> --- a/drivers/input/misc/Kconfig
+> +++ b/drivers/input/misc/Kconfig
+> @@ -179,6 +179,17 @@ config INPUT_PCSPKR
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called pcspkr.
+>
+> +config INPUT_PF1550_ONKEY
+> +	tristate "NXP PF1550 Onkey support"
+> +	depends on MFD_PF1550
+> +	help
+> +	  Say Y here if you want support for PF1550 PMIC. Onkey can trigger
+> +	  release and 1s(push hold), 2s, 3s, 4s, 8s interrupt for long press
+> +	  detect.
+> +
+> +	  To compile this driver as a module, choose M here. The module will be
+> +	  called pf1550-onkey.
+> +
+>  config INPUT_PM8941_PWRKEY
+>  	tristate "Qualcomm PM8941 power key support"
+>  	depends on MFD_SPMI_PMIC
+> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+> index 6d91804d0a6f761a094e6c380f878f74c3054d63..c652337de464c1eeaf1515d0bc84d10de0cb3a74 100644
+> --- a/drivers/input/misc/Makefile
+> +++ b/drivers/input/misc/Makefile
+> @@ -62,6 +62,7 @@ obj-$(CONFIG_INPUT_PCAP)		+= pcap_keys.o
+>  obj-$(CONFIG_INPUT_PCF50633_PMU)	+= pcf50633-input.o
+>  obj-$(CONFIG_INPUT_PCF8574)		+= pcf8574_keypad.o
+>  obj-$(CONFIG_INPUT_PCSPKR)		+= pcspkr.o
+> +obj-$(CONFIG_INPUT_PF1550_ONKEY)	+= pf1550-onkey.o
+>  obj-$(CONFIG_INPUT_PM8941_PWRKEY)	+= pm8941-pwrkey.o
+>  obj-$(CONFIG_INPUT_PM8XXX_VIBRATOR)	+= pm8xxx-vibrator.o
+>  obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
+> diff --git a/drivers/input/misc/pf1550-onkey.c b/drivers/input/misc/pf1550-onkey.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7e604c5544066eefbd84abe7bdff767b8b8978ab
+> --- /dev/null
+> +++ b/drivers/input/misc/pf1550-onkey.c
+> @@ -0,0 +1,183 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Driver for the PF1550 ON_KEY
+> +// Copyright (C) 2016 Freescale Semiconductor, Inc. All Rights Reserved.
+> +//
+> +// Portions Copyright (c) 2025 Savoir-faire Linux Inc.
+> +// Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> +//
+> +
+> +#include <linux/err.h>
+> +#include <linux/input.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mfd/pf1550.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define PF1550_ONKEY_IRQ_NR	6
+> +
+> +struct onkey_drv_data {
+> +	struct device *dev;
+> +	const struct pf1550_dev *pf1550;
+> +	bool wakeup;
+> +	struct input_dev *input;
+> +};
+> +
+> +static irqreturn_t pf1550_onkey_irq_handler(int irq, void *data)
+> +{
+> +	struct onkey_drv_data *onkey = data;
+> +	struct platform_device *pdev = to_platform_device(onkey->dev);
+> +	int i, state, irq_type = -1;
+> +
+> +	for (i = 0; i < PF1550_ONKEY_IRQ_NR; i++)
+> +		if (irq == platform_get_irq(pdev, i))
+> +			irq_type = i;
+> +
+> +	switch (irq_type) {
+> +	case PF1550_ONKEY_IRQ_PUSHI:
+> +		state = 0;
+> +		break;
+> +	case PF1550_ONKEY_IRQ_1SI:
+> +	case PF1550_ONKEY_IRQ_2SI:
+> +	case PF1550_ONKEY_IRQ_3SI:
+> +	case PF1550_ONKEY_IRQ_4SI:
+> +	case PF1550_ONKEY_IRQ_8SI:
+> +		state = 1;
+> +		break;
+> +	default:
+> +		dev_err(onkey->dev, "onkey interrupt: irq %d occurred\n",
+> +			irq_type);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	input_event(onkey->input, EV_KEY, KEY_POWER, state);
+> +	input_sync(onkey->input);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int pf1550_onkey_probe(struct platform_device *pdev)
+> +{
+> +	struct onkey_drv_data *onkey;
+> +	struct input_dev *input;
+> +	int i, irq, error;
+> +
+> +	onkey = devm_kzalloc(&pdev->dev, sizeof(*onkey), GFP_KERNEL);
+> +	if (!onkey)
+> +		return -ENOMEM;
+> +
+> +	onkey->dev = &pdev->dev;
+> +
+> +	onkey->pf1550 = dev_get_drvdata(pdev->dev.parent);
+> +	if (!onkey->pf1550->regmap)
+> +		return dev_err_probe(&pdev->dev, -ENODEV,
+> +				     "failed to get regmap\n");
+> +
+> +	onkey->wakeup = device_property_read_bool(pdev->dev.parent,
+> +						  "wakeup-source");
+> +
+> +	input = devm_input_allocate_device(&pdev->dev);
+> +	if (!input)
+> +		return dev_err_probe(&pdev->dev, -ENOMEM,
+> +				     "failed to allocate the input device\n");
+> +
+> +	input->name = pdev->name;
+> +	input->phys = "pf1550-onkey/input0";
+> +	input->id.bustype = BUS_HOST;
+> +
+> +	input_set_capability(input, EV_KEY, KEY_POWER);
+> +
+> +	onkey->input = input;
+> +	platform_set_drvdata(pdev, onkey);
+> +
+> +	for (i = 0; i < PF1550_ONKEY_IRQ_NR; i++) {
+> +		irq = platform_get_irq(pdev, i);
+> +		if (irq < 0)
+> +			return irq;
+> +
+> +		error = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> +						  pf1550_onkey_irq_handler,
+> +						  IRQF_NO_SUSPEND,
+> +						  "pf1550-onkey", onkey);
+> +		if (error)
+> +			return dev_err_probe(&pdev->dev, error,
+> +					     "failed: irq request (IRQ: %d)\n",
+> +					     i);
+> +	}
+> +
+> +	error = input_register_device(input);
+> +	if (error)
+> +		return dev_err_probe(&pdev->dev, error,
+> +				     "failed to register input device\n");
+> +
+> +	device_init_wakeup(&pdev->dev, onkey->wakeup);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pf1550_onkey_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct onkey_drv_data *onkey = platform_get_drvdata(pdev);
+> +	int i, irq;
+> +
+> +	if (!device_may_wakeup(&pdev->dev))
+> +		regmap_write(onkey->pf1550->regmap,
+> +			     PF1550_PMIC_REG_ONKEY_INT_MASK0,
+> +			     ONKEY_IRQ_PUSHI | ONKEY_IRQ_1SI | ONKEY_IRQ_2SI |
+> +			     ONKEY_IRQ_3SI | ONKEY_IRQ_4SI | ONKEY_IRQ_8SI);
+> +	else
+> +		for (i = 0; i < PF1550_ONKEY_IRQ_NR; i++) {
+> +			irq = platform_get_irq(pdev, i);
+> +			if (irq > 0)
+> +				enable_irq_wake(irq);
+> +		}
+> +
+> +	return 0;
+> +}
+> +
+> +static int pf1550_onkey_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct onkey_drv_data *onkey = platform_get_drvdata(pdev);
+> +	int i, irq;
+> +
+> +	if (!device_may_wakeup(&pdev->dev))
+> +		regmap_write(onkey->pf1550->regmap,
+> +			     PF1550_PMIC_REG_ONKEY_INT_MASK0,
+> +			     ~((u8)(ONKEY_IRQ_PUSHI | ONKEY_IRQ_1SI |
+> +			     ONKEY_IRQ_2SI | ONKEY_IRQ_3SI | ONKEY_IRQ_4SI |
+> +			     ONKEY_IRQ_8SI)));
+> +	else
+> +		for (i = 0; i < PF1550_ONKEY_IRQ_NR; i++) {
+> +			irq = platform_get_irq(pdev, i);
+> +			if (irq > 0)
+> +				disable_irq_wake(irq);
+> +		}
+> +
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(pf1550_onkey_pm_ops, pf1550_onkey_suspend,
+> +			 pf1550_onkey_resume);
+> +
+> +static const struct platform_device_id pf1550_onkey_id[] = {
+> +	{ "pf1550-onkey", 0 },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, pf1550_onkey_id);
+> +
+> +static struct platform_driver pf1550_onkey_driver = {
+> +	.driver = {
+> +		.name = "pf1550-onkey",
+> +		.pm   = pm_sleep_ptr(&pf1550_onkey_pm_ops),
+> +	},
+> +	.probe = pf1550_onkey_probe,
+> +	.id_table = pf1550_onkey_id,
+> +};
+> +module_platform_driver(pf1550_onkey_driver);
+> +
+> +MODULE_AUTHOR("Freescale Semiconductor");
+> +MODULE_DESCRIPTION("PF1550 onkey Driver");
+> +MODULE_LICENSE("GPL");
+>
+> --
+> 2.49.0
+>
 
