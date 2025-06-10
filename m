@@ -1,58 +1,62 @@
-Return-Path: <linux-kernel+bounces-679070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24785AD31F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72743AD320C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD5C166DAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D87F16D1D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B8928AAF8;
-	Tue, 10 Jun 2025 09:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E470428B50E;
+	Tue, 10 Jun 2025 09:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAEeAVmV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC7blfLb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408D1280CFA;
-	Tue, 10 Jun 2025 09:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480B228B401;
+	Tue, 10 Jun 2025 09:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547731; cv=none; b=I0jUZfdA2rBF4qLEMGPiVPH0A6Tyl1/ohA7kjFynM6xZu2XTLESROYvXRDz8BRGrtqOACfuGsvpotPwqE8+tNNN5yLgg/8f+76U9eRYdT3OWq9PEx8ghPYEOJh2wN2eG6pCH6lZ5U7QWBIOe7lTpYtbMwPBBD/MKwJvgIxIg+o8=
+	t=1749547787; cv=none; b=W7BsrE7xGFVs1t/Wn1Wep8yHnmDGZFVAHlzjiWaCIM/Akyd9wgcgB1vRaQf5Y/o0WAYObSVdkdJY14mh4Iz2ljlcYN67X7/MrWxtWBNc/+API3jWOJFLv0zq+UtnZbNp0/2QLf7fL1qeDgRaYGnY0kW12S5scI/L4CYRjF6pJf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547731; c=relaxed/simple;
-	bh=IaYOK2B/lZua6SAzd/RoyITvIaEYGw7gzCzQ4KCweeM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tiZPIGUTauSJQtO52la5C07gPbWTZjUCDkI0S8ue4WpBemhCy3fLqibnbhivRWHoQbjjYGx3kLlHssYLXPWA/wrHDthhevlDOHQq3vOpZ8YwJ4lQn0WQQwmx0AuCyDBdGjf96/8kRJUsFO/0bg+04FRJNzwK5nZ5Sxo/i6xl3KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAEeAVmV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EA1C4CEED;
-	Tue, 10 Jun 2025 09:28:48 +0000 (UTC)
+	s=arc-20240116; t=1749547787; c=relaxed/simple;
+	bh=f9JKpi+eBd7LUjedWzTR5wWbT7SkQKka8cB763mOsc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Sorz/U+rnnhG5yWKoAtD9O7HFkcJbLjVOKfbR+cF4xCjF46oqw3I9UEUd47/bKyQHIr35XN0aEEWoM/CM2VGVMFsL0kkPv91JjB7HM3unWMYuaqvMwmrkzhTuNQorqY9efjgeZ8epk495PxhhY6NzJAwk46/Of3S8Ktdsz20CME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LC7blfLb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E303C4CEED;
+	Tue, 10 Jun 2025 09:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749547730;
-	bh=IaYOK2B/lZua6SAzd/RoyITvIaEYGw7gzCzQ4KCweeM=;
+	s=k20201202; t=1749547787;
+	bh=f9JKpi+eBd7LUjedWzTR5wWbT7SkQKka8cB763mOsc8=;
 	h=From:To:Cc:Subject:Date:From;
-	b=XAEeAVmV/Yn7Hgcyi6RCsTZrN7/s5G967uRy3AS0PzJccsHjtbwxr434duTyhpuzK
-	 24jasXy1KEWWZimYdYErqOLOsHKL9KBrsLIWA+ezY7lkJrKAZTIJhx+UfAltbH3D+Q
-	 y2SG1qGvgM/HG9WuVYTfqm72/gmkieO6LbUsy9avWQ2J+zG86Op+r215bmdk7sC2Pf
-	 1M3+8TJkjn53R6IsqbPkNA+wSdSRNEoxt9ZNfWwospo7ZpTdyQzdXkWE7CnX5iKip0
-	 miJ9BsC8n7gieBuKB1N3LHt4COOgtd2zLMcPdEAPMCAa9FFcFkeX6htXM4wyIS2Tec
-	 t6KMgA+BeEbfA==
+	b=LC7blfLbT4P5kKey9jIxRSs0irnqnIBF+Q+lSwB1F+eRYsG5DrxAv5+GZ/45ytI73
+	 u5ByovXd1N1PFgOktl/xBr+1SmqNAqmNrk8oM5jJ1v3JqIdx5yhRBFdZEfNSJsQwZI
+	 L46SNyVtD0qKRN83bJ5dwt1EPFZMNDKhUBeVk0rqgwhI4eOTyb12a8NfD9nD+np67B
+	 3MEDI5keVcncSOuQIvuG7uWUmPWf2PK2M890iy8WnPIpP6mqwdpzulxFLO8bDqs/fU
+	 +tdT9KAdAfwtNLqDScjj8xQVUKIhK++7iMzSwfp5AnJAy1dLf7stfLEDE2gcM0TQ8C
+	 C24QTzujcixbg==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Patrisious Haddad <phaddad@nvidia.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Chiara Meiohas <cmeiohas@nvidia.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/mlx5: reduce stack usage in mlx5_ib_ufile_hw_cleanup
-Date: Tue, 10 Jun 2025 11:28:42 +0200
-Message-Id: <20250610092846.2642535-1-arnd@kernel.org>
+	Waiman Long <longman@redhat.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] lockdep: avoid struct return in lock_stats()
+Date: Tue, 10 Jun 2025 11:29:21 +0200
+Message-Id: <20250610092941.2642847-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,56 +68,99 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This function has an array of eight mlx5_async_cmd structures, which
-often fits on the stack, but depending on the configuration can
-end up blowing the stack frame warning limit:
+Returning a large structure from the lock_stats() function causes clang
+to have multiple copies of it on the stack and copy between them, which
+can end up exceeding the frame size warning limit:
 
-drivers/infiniband/hw/mlx5/devx.c:2670:6: error: stack frame size (1392) exceeds limit (1280) in 'mlx5_ib_ufile_hw_cleanup' [-Werror,-Wframe-larger-than]
+kernel/locking/lockdep.c:300:25: error: stack frame size (1464) exceeds limit (1280) in 'lock_stats' [-Werror,-Wframe-larger-than]
+  300 | struct lock_class_stats lock_stats(struct lock_class *class)
 
-Change this to a dynamic allocation instead. While a kmalloc()
-can theoretically fail, a GFP_KERNEL allocation under a page will
-block until memory has been freed up, so in the worst case, this
-only adds extra time in an already constrained environment.
+Change the calling conventions to directly operate on the caller's copy,
+which apparently is what gcc does already.
 
-Fixes: 7c891a4dbcc1 ("RDMA/mlx5: Add implementation for ufile_hw_cleanup device operation")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/infiniband/hw/mlx5/devx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/lockdep_types.h |  2 +-
+ kernel/locking/lockdep.c      | 27 ++++++++++++---------------
+ kernel/locking/lockdep_proc.c |  2 +-
+ 3 files changed, 14 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
-index 2479da8620ca..c3c0ea219ab7 100644
---- a/drivers/infiniband/hw/mlx5/devx.c
-+++ b/drivers/infiniband/hw/mlx5/devx.c
-@@ -2669,7 +2669,7 @@ static void devx_wait_async_destroy(struct mlx5_async_cmd *cmd)
+diff --git a/include/linux/lockdep_types.h b/include/linux/lockdep_types.h
+index 9f361d3ab9d9..eae115a26488 100644
+--- a/include/linux/lockdep_types.h
++++ b/include/linux/lockdep_types.h
+@@ -175,7 +175,7 @@ struct lock_class_stats {
+ 	unsigned long			bounces[nr_bounce_types];
+ };
  
- void mlx5_ib_ufile_hw_cleanup(struct ib_uverbs_file *ufile)
- {
--	struct mlx5_async_cmd async_cmd[MAX_ASYNC_CMDS];
-+	struct mlx5_async_cmd *async_cmd;
- 	struct ib_ucontext *ucontext = ufile->ucontext;
- 	struct ib_device *device = ucontext->device;
- 	struct mlx5_ib_dev *dev = to_mdev(device);
-@@ -2678,6 +2678,10 @@ void mlx5_ib_ufile_hw_cleanup(struct ib_uverbs_file *ufile)
- 	int head = 0;
- 	int tail = 0;
+-struct lock_class_stats lock_stats(struct lock_class *class);
++void lock_stats(struct lock_class *class, struct lock_class_stats *stats);
+ void clear_lock_stats(struct lock_class *class);
+ #endif
  
-+	async_cmd = kcalloc(MAX_ASYNC_CMDS, sizeof(*async_cmd), GFP_KERNEL);
-+	if (WARN_ON(!async_cmd))
-+		return;
-+
- 	list_for_each_entry(uobject, &ufile->uobjects, list) {
- 		WARN_ON(uverbs_try_lock_object(uobject, UVERBS_LOOKUP_WRITE));
- 
-@@ -2713,6 +2717,8 @@ void mlx5_ib_ufile_hw_cleanup(struct ib_uverbs_file *ufile)
- 		devx_wait_async_destroy(&async_cmd[head % MAX_ASYNC_CMDS]);
- 		head++;
- 	}
-+
-+	kfree(async_cmd);
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index dd2bbf73718b..0c941418a215 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -297,33 +297,30 @@ static inline void lock_time_add(struct lock_time *src, struct lock_time *dst)
+ 	dst->nr += src->nr;
  }
  
- static ssize_t devx_async_cmd_event_read(struct file *filp, char __user *buf,
+-struct lock_class_stats lock_stats(struct lock_class *class)
++void lock_stats(struct lock_class *class, struct lock_class_stats *stats)
+ {
+-	struct lock_class_stats stats;
+ 	int cpu, i;
+ 
+-	memset(&stats, 0, sizeof(struct lock_class_stats));
++	memset(stats, 0, sizeof(struct lock_class_stats));
+ 	for_each_possible_cpu(cpu) {
+ 		struct lock_class_stats *pcs =
+ 			&per_cpu(cpu_lock_stats, cpu)[class - lock_classes];
+ 
+-		for (i = 0; i < ARRAY_SIZE(stats.contention_point); i++)
+-			stats.contention_point[i] += pcs->contention_point[i];
++		for (i = 0; i < ARRAY_SIZE(stats->contention_point); i++)
++			stats->contention_point[i] += pcs->contention_point[i];
+ 
+-		for (i = 0; i < ARRAY_SIZE(stats.contending_point); i++)
+-			stats.contending_point[i] += pcs->contending_point[i];
++		for (i = 0; i < ARRAY_SIZE(stats->contending_point); i++)
++			stats->contending_point[i] += pcs->contending_point[i];
+ 
+-		lock_time_add(&pcs->read_waittime, &stats.read_waittime);
+-		lock_time_add(&pcs->write_waittime, &stats.write_waittime);
++		lock_time_add(&pcs->read_waittime, &stats->read_waittime);
++		lock_time_add(&pcs->write_waittime, &stats->write_waittime);
+ 
+-		lock_time_add(&pcs->read_holdtime, &stats.read_holdtime);
+-		lock_time_add(&pcs->write_holdtime, &stats.write_holdtime);
++		lock_time_add(&pcs->read_holdtime, &stats->read_holdtime);
++		lock_time_add(&pcs->write_holdtime, &stats->write_holdtime);
+ 
+-		for (i = 0; i < ARRAY_SIZE(stats.bounces); i++)
+-			stats.bounces[i] += pcs->bounces[i];
++		for (i = 0; i < ARRAY_SIZE(stats->bounces); i++)
++			stats->bounces[i] += pcs->bounces[i];
+ 	}
+-
+-	return stats;
+ }
+ 
+ void clear_lock_stats(struct lock_class *class)
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index b52c07c4707c..1916db9aa46b 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -657,7 +657,7 @@ static int lock_stat_open(struct inode *inode, struct file *file)
+ 			if (!test_bit(idx, lock_classes_in_use))
+ 				continue;
+ 			iter->class = class;
+-			iter->stats = lock_stats(class);
++			lock_stats(class, &iter->stats);
+ 			iter++;
+ 		}
+ 
 -- 
 2.39.5
 
