@@ -1,250 +1,309 @@
-Return-Path: <linux-kernel+bounces-678940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4689FAD304D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F15AD2F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01EF9165AF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:29:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B94B16EE46
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2E817A2F3;
-	Tue, 10 Jun 2025 08:29:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26958280030;
+	Tue, 10 Jun 2025 08:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVrgK5yv"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988B3482EB
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892B528001D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749544190; cv=none; b=p8V5HuymrUtFlHZ+RiXLi80oYOjw6elHVttTzFs4K6L5eIKwIBxy0glRK+Qm4yjfNEAVAYSwILqxyJaHt5xys33LQMsvEFGgDXqXBJh34o4GQ4XnAlpaL60rLJ2IXA7UxxMeNzN4djOHUi04LJMdHMQeqZ3mxtK4PdJHcRbb4ok=
+	t=1749543105; cv=none; b=blXcbRn3z7j0hF1UuSxg49xdgw1IEsDU6fcafq3zRuJNtvHiv6NqG0aL/hjZ80wHz0mRYysAXFMBYRVvTosay11e8gJCREuF8CkC3SJFiFfBqnfwF+8VUTjSknXnwZc56pnADAvpBl1iomJjf+Gwggz3WZjaay8EbjQ//iQ1N6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749544190; c=relaxed/simple;
-	bh=Rfbd2AeOuynZLpm2mqn/rs/wraAqSIYANp04mVqZhw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D42UXPjR87b7BmuJAFu6EQZb3snTVMKbppxbxgNgxEkQDLrcG6ZFVBov8Oisnm4YHSdi9boNM8e1DUQBvx4huT15SZ58dLA5gqF4Zyrxm1nbuDtBZ6WVf9Icq2WvGxEhCCY9ZzBpksGjfLe0dGwGv/luG2ABYkJDLrmA7965muM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uOu4T-0006BH-Dh; Tue, 10 Jun 2025 10:11:01 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uOu4S-002jx5-0k;
-	Tue, 10 Jun 2025 10:11:00 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uOu4S-00G7ct-0S;
-	Tue, 10 Jun 2025 10:11:00 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: David Jander <david@protonic.nl>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v1 3/3] net: phy: dp83tg720: switch to adaptive polling and remove random delays
-Date: Tue, 10 Jun 2025 10:10:59 +0200
-Message-Id: <20250610081059.3842459-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250610081059.3842459-1-o.rempel@pengutronix.de>
-References: <20250610081059.3842459-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1749543105; c=relaxed/simple;
+	bh=j6uHppOZRIiGHJjS980e7EsQXN6AMcGV6U3JMTlj7II=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xye8RdlsilnVsWjt30ukGQ5qWy4YWAlMt+GMj5zX+MH6GVha92Ddnrtc7UB25bF1gsjRkcu/GwcH/9KQFLn5+LYmdBiolyrEiSGKAInmzirA2UN6XVlX/kLAfBx46XE12qoXfpg4D9LAvXJJ8EZixOjKi/8Blbex91BLq4rDqsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVrgK5yv; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-530f9edd032so1644683e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 01:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749543102; x=1750147902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hn0wbc6lEUEago4mKd8U5pWPg4kTjjsOa+9yDlNZsgQ=;
+        b=eVrgK5yvnCZAdJB3054NRuUcXR+DmVY1cI6Cj9UmRNMzm8/X0PBam4caaaf/fzL/nN
+         sqRUYir+Y1M9sqkavozIYiybbfkGp+TiXeinkxsA9HbXeMqdDZfeUgPwzvrn+QmoVsAW
+         6zuW1dIqDYms4SNuYDb3pUCJXNdsypXJJqJmiIp8oWB18aGx7GAwGvYMUBvLLLxqPkW7
+         htpsXiCsDjx9rTAGC7eOnLoyQZxrkEoQl8hNAGasbItANN/h3I6BGqeRcfiZCU4rO0vl
+         mVFO2mH2hlT0J2fF2sVrdNipRRHxrQyhF0O2kTb+m1Exv3B/8LHOTZN0DvwNmOGlglXm
+         q22A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749543102; x=1750147902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hn0wbc6lEUEago4mKd8U5pWPg4kTjjsOa+9yDlNZsgQ=;
+        b=KPxBC1NCQ98KC+oANDpB0ed9KX1MQ2JpwXAQiifzJsWlgNXIa41H2F1e6ghNcmuiiq
+         HTRGeQ21tRopzY+ij2Suxaf4ishfzfiYXSeSPhv1MYj7T+NETUtwrQo8Rhs2wAIPRcOm
+         77CUiQnrN3DlPcSuYLhCa/MP6bD5WeOmlQ/gyahp7/pS1LfxCMWHhN0FWwUuctK+0RIO
+         X0Gss7t82jWooqkbgl366PFizIQROgaLE/Lbc7CtLY5ZuojG1mHBoOYWqrtWUS0gpSEk
+         mX9JKjkhoySbmCW5dqsVdaWbo6UsEqDdpq4+bpY7myjvdbXV9CKsbF4rP9INonvcVkW5
+         Uy9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWgZvdvfgSKtxvuG/vJNPQmKj54KXL47fAvcJOvKNj/tRupC/soPx601m/0bl5Slmhv++Bbdue1d8Q974Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJdLSD14zy4BaodWUUkuEHpYyR8/JrfvTRbH/g+mAHY7NgKXZ2
+	yAGHQpFttviE63DQ56p80oQk8ApmPbCkmpXC94YlsW8lBZ41qCcT5kJ6uSNwbwwGnd6a9x594l1
+	fTjs0E8hqm+nxC81vz1/7LVEaOheAPz0=
+X-Gm-Gg: ASbGncsJ5bZLzbk+jUu+/c/8MsA6ozJOFm2Y2SELOOPAawrfhQZh3fzl+CXsYLQHdEF
+	QfO4mBiOIQ+TQdJmw5RyJy/+wiUxUK+qHc2a08uZtplakQWBy7G8vH9I2s/rSnivV1a7TV4dZ4U
+	chlBOEfPVe2FIBqUjia9zDmzl2PBpWEUBbkRjEaFHGXY+o
+X-Google-Smtp-Source: AGHT+IEGEzAEtu+csMPWQWNFbl6NTrSKQH12N5HlKYz4Yle+6IUBkcQBSSs5CYZOqK6bq7ZiDaDQbfD/sAZmujBm5Sg=
+X-Received: by 2002:a05:6122:640c:10b0:527:67d9:100d with SMTP id
+ 71dfb90a1353d-53113144d99mr1287762e0c.4.1749543102357; Tue, 10 Jun 2025
+ 01:11:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250610035043.75448-1-dev.jain@arm.com> <20250610035043.75448-3-dev.jain@arm.com>
+ <CAGsJ_4xPq-eJ7JE-SFhhO2TboH8HKGifaYCwKw8cqd_2K=uD4w@mail.gmail.com> <bf185ecc-8310-48ad-b9cc-5c78e3da6d0b@arm.com>
+In-Reply-To: <bf185ecc-8310-48ad-b9cc-5c78e3da6d0b@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 10 Jun 2025 20:11:31 +1200
+X-Gm-Features: AX0GCFvDGDuDSnfkPf-NWYVXTiddf4fI4DcZ1MZ9I4Kd1QbrYWe3BlRqTTWLwRs
+Message-ID: <CAGsJ_4yEJLoxuH=tTJLxgsS5Hu6pPhJfwXAttoFrHNUwJL6=YA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] mm: Optimize mremap() by PTE batching
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com, 
+	pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	david@redhat.com, peterx@redhat.com, ryan.roberts@arm.com, mingo@kernel.org, 
+	libang.li@antgroup.com, maobibo@loongson.cn, zhengqi.arch@bytedance.com, 
+	anshuman.khandual@arm.com, willy@infradead.org, ioworker0@gmail.com, 
+	yang@os.amperecomputing.com, baolin.wang@linux.alibaba.com, ziy@nvidia.com, 
+	hughd@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: David Jander <david@protonic.nl>
+On Tue, Jun 10, 2025 at 7:45=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
+>
+>
+> On 10/06/25 12:33 pm, Barry Song wrote:
+> > Hi Dev,
+> >
+> > On Tue, Jun 10, 2025 at 3:51=E2=80=AFPM Dev Jain <dev.jain@arm.com> wro=
+te:
+> >> Use folio_pte_batch() to optimize move_ptes(). On arm64, if the ptes
+> >> are painted with the contig bit, then ptep_get() will iterate through =
+all 16
+> >> entries to collect a/d bits. Hence this optimization will result in a =
+16x
+> >> reduction in the number of ptep_get() calls. Next, ptep_get_and_clear(=
+)
+> >> will eventually call contpte_try_unfold() on every contig block, thus
+> >> flushing the TLB for the complete large folio range. Instead, use
+> >> get_and_clear_full_ptes() so as to elide TLBIs on each contig block, a=
+nd only
+> >> do them on the starting and ending contig block.
+> >>
+> >> For split folios, there will be no pte batching; nr_ptes will be 1. Fo=
+r
+> >> pagetable splitting, the ptes will still point to the same large folio=
+;
+> >> for arm64, this results in the optimization described above, and for o=
+ther
+> >> arches (including the general case), a minor improvement is expected d=
+ue to
+> >> a reduction in the number of function calls.
+> >>
+> >> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> >> ---
+> >>   mm/mremap.c | 39 ++++++++++++++++++++++++++++++++-------
+> >>   1 file changed, 32 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/mm/mremap.c b/mm/mremap.c
+> >> index 180b12225368..18b215521ada 100644
+> >> --- a/mm/mremap.c
+> >> +++ b/mm/mremap.c
+> >> @@ -170,6 +170,23 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+> >>          return pte;
+> >>   }
+> >>
+> >> +static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigne=
+d long addr,
+> >> +               pte_t *ptep, pte_t pte, int max_nr)
+> >> +{
+> >> +       const fpb_t flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY=
+;
+> >> +       struct folio *folio;
+> >> +
+> >> +       if (max_nr =3D=3D 1)
+> >> +               return 1;
+> >> +
+> >> +       folio =3D vm_normal_folio(vma, addr, pte);
+> >> +       if (!folio || !folio_test_large(folio))
+> > I'm curious about the following case:
+> > If the addr/ptep is not the first subpage of the folio=E2=80=94for exam=
+ple, the
+> > 14th subpage=E2=80=94will mremap_folio_pte_batch() return 3?
+>
+> It will return the number of PTEs, starting from the PTE pointing to the =
+14th
+> subpage, that point to consecutive pages of the same large folio, up till=
+ max_nr.
+> For an example, if we are operating on a single large folio of order 4, t=
+hen max_nr
+> will be 16 - 14 + 1 =3D 3. So in this case we will return 3, since the 14=
+th, 15th and
+> 16th PTE point to consec pages of the same large folio.
+>
+> > If so, get_and_clear_full_ptes() would operate on 3 subpages of the fol=
+io.
+> > In that case, can unfold still work correctly?
+>
+> Yes, first we unfold as in, we do a BBM sequence: cont -> clear -> non-co=
+nt.
+> Then, on this non-contig block, we will clear only the PTEs which were as=
+ked
+> for us to do.
 
-Now that the PHY reset logic includes a role-specific asymmetric delay
-to avoid synchronized reset deadlocks, the previously used randomized
-polling intervals are no longer necessary.
+While going through the code,
 
-This patch removes the get_random_u32_below()-based logic and introduces
-an adaptive polling strategy:
-- Fast polling for a short time after link-down
-- Slow polling if the link remains down
-- Slower polling when the link is up
+static inline pte_t get_and_clear_full_ptes(struct mm_struct *mm,
+                                unsigned long addr, pte_t *ptep,
+                                unsigned int nr, int full)
+{
+        pte_t pte;
+        if (likely(nr =3D=3D 1)) {
+                contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
+                pte =3D __get_and_clear_full_ptes(mm, addr, ptep, nr, full)=
+;
+        } else {
+                pte =3D contpte_get_and_clear_full_ptes(mm, addr, ptep, nr,=
+ full);
+        }
 
-This balances CPU usage and responsiveness while avoiding reset
-collisions. Additionally, the driver still relies on polling for
-all link state changes, as interrupt support is not implemented,
-and link-up events are not reliably signaled by the PHY.
+        return pte;
+}
 
-The polling parameters are now documented in the updated top-of-file
-comment.
+Initially, I thought it only unfolded when nr =3D=3D 1, but after reading
+contpte_get_and_clear_full_ptes more closely, I realized we do
+support partial unfolding=E2=80=94that's what I had missed.
 
-Co-developed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: David Jander <david@protonic.nl>
----
- drivers/net/phy/dp83tg720.c | 94 ++++++++++++++++++++++---------------
- 1 file changed, 55 insertions(+), 39 deletions(-)
+pte_t contpte_get_and_clear_full_ptes(struct mm_struct *mm,
+                                unsigned long addr, pte_t *ptep,
+                                unsigned int nr, int full)
+{
+        contpte_try_unfold_partial(mm, addr, ptep, nr);
+        return __get_and_clear_full_ptes(mm, addr, ptep, nr, full);
+}
 
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index 00963ce0eb10..8c14b5a70cb7 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -46,15 +46,37 @@
-  * The functions that implement this logic are:
-  * - dp83tg720_soft_reset()
-  * - dp83tg720_get_next_update_time()
-+ *
-+ * 2. Polling-Based Link Detection and IRQ Support
-+ * -----------------------------------------------
-+ * Due to the PHY-specific limitation described in section 1, link-up events
-+ * cannot be reliably detected via interrupts on the DP83TG720. Therefore,
-+ * polling is required to detect transitions from link-down to link-up.
-+ *
-+ * While link-down events *can* be detected via IRQs on this PHY, this driver
-+ * currently does **not** implement interrupt support. As a result, all link
-+ * state changes must be detected using polling.
-+ *
-+ * Polling behavior:
-+ * - When the link is up: slow polling (e.g. 1s).
-+ * - When the link just went down: fast polling for a short time.
-+ * - When the link stays down: fallback to slow polling.
-+ *
-+ * This design balances responsiveness and CPU usage. It sacrifices fast link-up
-+ * times in cases where the link is expected to remain down for extended periods,
-+ * assuming that such systems do not require immediate reactivity.
-  */
- 
- /*
-  * DP83TG720S_POLL_ACTIVE_LINK - Polling interval in milliseconds when the link
-  *				 is active.
-- * DP83TG720S_POLL_NO_LINK_MIN - Minimum polling interval in milliseconds when
-- *				 the link is down.
-- * DP83TG720S_POLL_NO_LINK_MAX - Maximum polling interval in milliseconds when
-- *				 the link is down.
-+ * DP83TG720S_POLL_NO_LINK     - Polling interval in milliseconds when the
-+ *				 link is down.
-+ * DP83TG720S_FAST_POLL_DURATION_MS - Timeout in milliseconds for no-link
-+ *				 polling after which polling interval is
-+ *				 increased.
-+ * DP83TG720S_POLL_SLOW	       - Slow polling interval when there is no
-+ *				 link for a prolongued period.
-  * DP83TG720S_RESET_DELAY_MS_MASTER - Delay after a reset before attempting
-  *				 to establish a link again for master phy.
-  * DP83TG720S_RESET_DELAY_MS_SLAVE  - Delay after a reset before attempting
-@@ -65,9 +87,10 @@
-  * minimizing the number of reset retries while ensuring reliable link recovery
-  * within a reasonable timeframe.
-  */
--#define DP83TG720S_POLL_ACTIVE_LINK		1000
--#define DP83TG720S_POLL_NO_LINK_MIN		100
--#define DP83TG720S_POLL_NO_LINK_MAX		1000
-+#define DP83TG720S_POLL_ACTIVE_LINK		421
-+#define DP83TG720S_POLL_NO_LINK			149
-+#define DP83TG720S_FAST_POLL_DURATION_MS	6000
-+#define DP83TG720S_POLL_SLOW			1117
- #define DP83TG720S_RESET_DELAY_MS_MASTER	97
- #define DP83TG720S_RESET_DELAY_MS_SLAVE		149
- 
-@@ -166,6 +189,7 @@ struct dp83tg720_stats {
- 
- struct dp83tg720_priv {
- 	struct dp83tg720_stats stats;
-+	unsigned long last_link_down_jiffies;
- };
- 
- /**
-@@ -569,50 +593,42 @@ static int dp83tg720_probe(struct phy_device *phydev)
- }
- 
- /**
-- * dp83tg720_get_next_update_time - Determine the next update time for PHY
-- *                                  state
-+ * dp83tg720_get_next_update_time - Return next polling interval for PHY state
-  * @phydev: Pointer to the phy_device structure
-  *
-- * This function addresses a limitation of the DP83TG720 PHY, which cannot
-- * reliably detect or report a stable link state. To recover from such
-- * scenarios, the PHY must be periodically reset when the link is down. However,
-- * if the link partner also runs Linux with the same driver, synchronized reset
-- * intervals can lead to a deadlock where the link never establishes due to
-- * simultaneous resets on both sides.
-- *
-- * To avoid this, the function implements randomized polling intervals when the
-- * link is down. It ensures that reset intervals are desynchronized by
-- * introducing a random delay between a configured minimum and maximum range.
-- * When the link is up, a fixed polling interval is used to minimize overhead.
-- *
-- * This mechanism guarantees that the link will reestablish within 10 seconds
-- * in the worst-case scenario.
-+ * Implements adaptive polling interval logic depending on link state and
-+ * downtime duration. See the "2. Polling-Based Link Detection and IRQ Support"
-+ * section at the top of this file for details.
-  *
-- * Return: Time (in jiffies) until the next update event for the PHY state
-- * machine.
-+ * Return: Time (in jiffies) until the next poll
-  */
- static unsigned int dp83tg720_get_next_update_time(struct phy_device *phydev)
- {
-+	struct dp83tg720_priv *priv = phydev->priv;
- 	unsigned int next_time_jiffies;
- 
- 	if (phydev->link) {
--		/* When the link is up, use a fixed 1000ms interval
--		 * (in jiffies)
--		 */
-+		priv->last_link_down_jiffies = 0;
-+
-+		/* When the link is up, use a slower interval (in jiffies) */
- 		next_time_jiffies =
- 			msecs_to_jiffies(DP83TG720S_POLL_ACTIVE_LINK);
- 	} else {
--		unsigned int min_jiffies, max_jiffies, rand_jiffies;
--
--		/* When the link is down, randomize interval between min/max
--		 * (in jiffies)
--		 */
--		min_jiffies = msecs_to_jiffies(DP83TG720S_POLL_NO_LINK_MIN);
--		max_jiffies = msecs_to_jiffies(DP83TG720S_POLL_NO_LINK_MAX);
--
--		rand_jiffies = min_jiffies +
--			get_random_u32_below(max_jiffies - min_jiffies + 1);
--		next_time_jiffies = rand_jiffies;
-+		unsigned long now = jiffies;
-+
-+		if (!priv->last_link_down_jiffies)
-+			priv->last_link_down_jiffies = now;
-+
-+		if (time_before(now, priv->last_link_down_jiffies +
-+			  msecs_to_jiffies(DP83TG720S_FAST_POLL_DURATION_MS))) {
-+			/* Link recently went down: fast polling */
-+			next_time_jiffies =
-+				msecs_to_jiffies(DP83TG720S_POLL_NO_LINK);
-+		} else {
-+			/* Link has been down for a while: slow polling */
-+			next_time_jiffies =
-+				msecs_to_jiffies(DP83TG720S_POLL_SLOW);
-+		}
- 	}
- 
- 	/* Ensure the polling time is at least one jiffy */
--- 
-2.39.5
+I think you are right.
 
+>
+> >
+> > Similarly, if the addr/ptep points to the first subpage, but max_nr is
+> > less than CONT_PTES, what will happen in that case?
+> >
+> >
+> >> +               return 1;
+> >> +
+> >> +       return folio_pte_batch(folio, addr, ptep, pte, max_nr, flags, =
+NULL,
+> >> +                              NULL, NULL);
+> >> +}
+> >> +
+> >>   static int move_ptes(struct pagetable_move_control *pmc,
+> >>                  unsigned long extent, pmd_t *old_pmd, pmd_t *new_pmd)
+> >>   {
+> >> @@ -177,7 +194,7 @@ static int move_ptes(struct pagetable_move_control=
+ *pmc,
+> >>          bool need_clear_uffd_wp =3D vma_has_uffd_without_event_remap(=
+vma);
+> >>          struct mm_struct *mm =3D vma->vm_mm;
+> >>          pte_t *old_ptep, *new_ptep;
+> >> -       pte_t pte;
+> >> +       pte_t old_pte, pte;
+> >>          pmd_t dummy_pmdval;
+> >>          spinlock_t *old_ptl, *new_ptl;
+> >>          bool force_flush =3D false;
+> >> @@ -185,6 +202,8 @@ static int move_ptes(struct pagetable_move_control=
+ *pmc,
+> >>          unsigned long new_addr =3D pmc->new_addr;
+> >>          unsigned long old_end =3D old_addr + extent;
+> >>          unsigned long len =3D old_end - old_addr;
+> >> +       int max_nr_ptes;
+> >> +       int nr_ptes;
+> >>          int err =3D 0;
+> >>
+> >>          /*
+> >> @@ -236,14 +255,16 @@ static int move_ptes(struct pagetable_move_contr=
+ol *pmc,
+> >>          flush_tlb_batched_pending(vma->vm_mm);
+> >>          arch_enter_lazy_mmu_mode();
+> >>
+> >> -       for (; old_addr < old_end; old_ptep++, old_addr +=3D PAGE_SIZE=
+,
+> >> -                                  new_ptep++, new_addr +=3D PAGE_SIZE=
+) {
+> >> +       for (; old_addr < old_end; old_ptep +=3D nr_ptes, old_addr +=
+=3D nr_ptes * PAGE_SIZE,
+> >> +               new_ptep +=3D nr_ptes, new_addr +=3D nr_ptes * PAGE_SI=
+ZE) {
+> >>                  VM_WARN_ON_ONCE(!pte_none(*new_ptep));
+> >>
+> >> -               if (pte_none(ptep_get(old_ptep)))
+> >> +               nr_ptes =3D 1;
+> >> +               max_nr_ptes =3D (old_end - old_addr) >> PAGE_SHIFT;
+> >> +               old_pte =3D ptep_get(old_ptep);
+> >> +               if (pte_none(old_pte))
+> >>                          continue;
+> >>
+> >> -               pte =3D ptep_get_and_clear(mm, old_addr, old_ptep);
+> >>                  /*
+> >>                   * If we are remapping a valid PTE, make sure
+> >>                   * to flush TLB before we drop the PTL for the
+> >> @@ -255,8 +276,12 @@ static int move_ptes(struct pagetable_move_contro=
+l *pmc,
+> >>                   * the TLB entry for the old mapping has been
+> >>                   * flushed.
+> >>                   */
+> >> -               if (pte_present(pte))
+> >> +               if (pte_present(old_pte)) {
+> >> +                       nr_ptes =3D mremap_folio_pte_batch(vma, old_ad=
+dr, old_ptep,
+> >> +                                                        old_pte, max_=
+nr_ptes);
+> >>                          force_flush =3D true;
+> >> +               }
+> >> +               pte =3D get_and_clear_full_ptes(mm, old_addr, old_ptep=
+, nr_ptes, 0);
+> >>                  pte =3D move_pte(pte, old_addr, new_addr);
+> >>                  pte =3D move_soft_dirty_pte(pte);
+> >>
+> >> @@ -269,7 +294,7 @@ static int move_ptes(struct pagetable_move_control=
+ *pmc,
+> >>                                  else if (is_swap_pte(pte))
+> >>                                          pte =3D pte_swp_clear_uffd_wp=
+(pte);
+> >>                          }
+> >> -                       set_pte_at(mm, new_addr, new_ptep, pte);
+> >> +                       set_ptes(mm, new_addr, new_ptep, pte, nr_ptes)=
+;
+> >>                  }
+> >>          }
+> >>
+> >> --
+> >> 2.30.2
+
+Thanks
+Barry
 
