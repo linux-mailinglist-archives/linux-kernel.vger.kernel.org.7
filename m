@@ -1,162 +1,314 @@
-Return-Path: <linux-kernel+bounces-679324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A44AD34DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:22:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC76AD34E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A393A6A73
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04651885A85
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28429228CBE;
-	Tue, 10 Jun 2025 11:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4003328369F;
+	Tue, 10 Jun 2025 11:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CvnoKiZ3"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJz2yXxj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5234F18024;
-	Tue, 10 Jun 2025 11:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D909227EA3;
+	Tue, 10 Jun 2025 11:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749554525; cv=none; b=g+T13fvzjMlmprU1pVfyLkIHII/gHhlME6AgP3sSzaukgkzXDfrQMduBeAS3hA98iIomm+EMgFuMck1eEj5EFcN/hltYdo0/6i/czsUcNsCJnHq8ZGjyeuhXDqCUqN0UNDP/nPC4GJN5GnNfZlTgrwMKDi+/RXw2cWXEYVWs+Jg=
+	t=1749554643; cv=none; b=mcT0VytlOW34UOGl1rOjTAqv82H2siIAHrcAcLILS9kNfMHaWxBaM+vPiq8JtEV8j+8rpC3PtjM3Uz1w2f77ZL8SrPDzdI3nzJwGCxHaUHrIDffU7WSrp6zXXAo9OrfgMa8CCBiFpfvs+HXLj6BH7zepcbOiAjUQyHW3rupf7e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749554525; c=relaxed/simple;
-	bh=9byxGKEEMaXHQ1QNqCiqviKPJ5SkmeEQ5Xvt7vT34to=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=miQzDuAqiDnEhu1Gi4mATvyt9ZfSLaraGa/czUUABdzNdiZzK0VxdsdILInayyuyxNaczPTFE3hGRZOtI7Ks2HLRLjHlXpTlCLjJptvtdYLIm4jGTvx0+D/oDhA/Echpu/aOQBXLnCnR8Mr1NYT179cJz3q5cNoxc5i8CN8HYLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CvnoKiZ3; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=bj/8ZlhYi+PUXtlyuznaF1lt7ECGXw2FzjbqurTjZWA=; b=CvnoKiZ3nraCZlyqWpMIcSDXGd
-	zDzkj6GV/yiCfjfwIwbYdSsjp/+ha7T6H28erflnAiTV5R9MO0/hVaUyW5x8JpEOJ8M+DkIa/fRIO
-	uumexB2u0CCrv9Udo48bza3OuDrT5HU6WoxJrnwJALtqD+i75uXoyxxNVZSgpkdf19p2IaZF1RkKP
-	OSUh7Lj6DJ/xLdPYeH3grvrF6QXtpdMwDaCC1CjGGlmAvhk/W/aS5+Lwg2Zc+6wTwXmub+s5NpwFm
-	POlb06b3zFZ2iAyXG8JkiW7t/eHWiVZKVBsQsFpK98ixIZ8DvOwyvl5/NRcvT9aTbvw23UBbhpHLJ
-	erTJoyIw==;
-Received: from i53875b1c.versanet.de ([83.135.91.28] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uOx3F-0000kG-UP; Tue, 10 Jun 2025 13:21:57 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Linux Regressions <regressions@lists.linux.dev>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Peter Robinson <pbrobinson@gmail.com>, krzk+dt@kernel.org,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Rob Herring <robh@kernel.org>
-Subject:
- Re: next-20250610: arm64 No rule to make target rockchip
- rk3399-rockpro64-screen.dtso
-Date: Tue, 10 Jun 2025 13:21:57 +0200
-Message-ID: <15979303.uLZWGnKmhe@diego>
-In-Reply-To:
- <CA+G9fYuppX5LeRjOAZWsYRCs76PVbnv-TN_RrszhDsk=KregyA@mail.gmail.com>
-References:
- <CA+G9fYuppX5LeRjOAZWsYRCs76PVbnv-TN_RrszhDsk=KregyA@mail.gmail.com>
+	s=arc-20240116; t=1749554643; c=relaxed/simple;
+	bh=nN0ISiXyc8XuJnFSXPqaX/pMz8eCyow5+vzT8WEFryU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uJbGrgYby3IAVfeJ38JKhKcg/u6h6us0wDe40CpDcxnVddOPiKHf0zbvWffn+S2D/K02hd/n6X0RVffmnkni0sgGG0QZepF7SEz/58mxqo2S0iRohM27qEujhVzWUSLaMg0TfgFY1TM+vKfeg04NTj5AKoMctWJ1/x8XoX/sELU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJz2yXxj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D78EC4CEED;
+	Tue, 10 Jun 2025 11:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749554642;
+	bh=nN0ISiXyc8XuJnFSXPqaX/pMz8eCyow5+vzT8WEFryU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VJz2yXxjwhRNUFzgTWtsg1POeNxBM/YAk2daMD4qnmkQ7mfqIWudSaxcfoPoxKXnH
+	 G9FqXSujr+g4o+ZaAFLw8f1Z/0d9GcCIXvrhAJI4pC54I0cnHIYL1vro2CqWCjrMvc
+	 1Vflmq00sHkSZrnKVXLQYa9rMNZgCSAhz/G/TJ99M9aLOO4BjpG/8pXpq9fdJhAQ69
+	 bblWVc9/8+OWXp4WjtEW10InDgzpMxoioCp2x2YrK97tnNhO0jrBxgCRaePMHX2RPW
+	 kdwrmJ6qWzQQnvRPBSqsu1/R5w7b99+NOfAxJ9KPF9CO7xPR3Bpn2lpPYuXIZO7AiO
+	 UFhyvlDxMqPNg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Riyan Dhiman <riyandhiman14@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] staging: fbtft: reduce stack usage
+Date: Tue, 10 Jun 2025 13:23:28 +0200
+Message-Id: <20250610112357.3306246-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Naresh,
+From: Arnd Bergmann <arnd@arndb.de>
 
-Am Dienstag, 10. Juni 2025, 12:25:31 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Naresh Kamboju:
-> Regression while building arm64 with the Linux next-20250610
-> the following dtb build errors noticed.
->=20
-> Regressions found on arm64 builds
-> - dtb build error
->=20
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
->=20
-> First seen on the next-20250610
-> Good: next-20250606
-> Bad:  next-20250610
->=20
-> Anders bisected this to,
-> # first bad commit:
->   [49760b9f60528393cca3ea35c4d0719f84215a48]
->   arm64: dts: rockchip: add overlay for RockPro64 screen
->=20
-> Build regression: arm64 No rule to make target rockchip
-> rk3399-rockpro64-screen.dtso
->=20
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->=20
-> ## Build error
-> *** No rule to make target
-> 'arch/arm64/boot/dts/rockchip/rk3399-rockpro64-screen.dtso', needed by
-> '__dtbs_install'.
->=20
-> ## Source
-> * Kernel version: 6.16.0-rc1
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next=
-/linux-next.git
-> * Git sha:  b27cc623e01be9de1580eaa913508b237a7a9673
-> * git describe: next-20250610
-> * Toolchains: gcc-8, gcc-13, clang-20
-> * Config: defconfig
-> * Architecture: arm64
->=20
-> ## Build details
-> * Build warning:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2yJ4IOQa1XxMqDgmzj=
-El7VszYE9/build.log
-> * Build link:  https://storage.tuxsuite.com/public/linaro/lkft/builds/2yJ=
-4IOQa1XxMqDgmzjEl7VszYE9/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2yJ4IOQa1XxMqDgmzj=
-El7VszYE9/config
+The use of vararg function pointers combined with a huge number of
+arguments causes some configurations to exceed the stack size warning
+limit:
 
-thanks a lot for this notification.
+drivers/staging/fbtft/fbtft-core.c:863:12: error: stack frame size (1512) exceeds limit (1280) in 'fbtft_init_display_from_property' [-Werror,-Wframe-larger-than]
 
-I'm surprised that overlay build at all when I built it yesterday.
-But yeah, the dtbs_install target really broke with that change.
+drivers/staging/fbtft/fb_ssd1331.c:131:30: error: stack frame size (1392) exceeds limit (1280) in 'set_gamma' [-Werror,-Wframe-larger-than]
+                  ^
+drivers/staging/fbtft/fb_ssd1351.c:120:30: error: stack frame size (1392) exceeds limit (1280) in 'set_gamma' [-Werror,-Wframe-larger-than]
 
-I've amended the commit now [0], to change dtso to dtbo and ran the
-dtbs_install target sucessfully with that change.
+Move the varargs handling into a separate noinline function so each
+individual function stays below the limit. A better approach might be to
+replace the varargs function with one that takes an array of arguments,
+but that would be a much larger rework of the other callers.
 
-So on the next linux-next creation, this should hopefully be gone.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: use u32 types consistently, suggested by Andy Shevchenko
+---
+ drivers/staging/fbtft/fb_ssd1331.c | 36 ++++++++++++------
+ drivers/staging/fbtft/fb_ssd1351.c | 42 +++++++++++---------
+ drivers/staging/fbtft/fbtft-core.c | 61 +++++++++++++-----------------
+ 3 files changed, 74 insertions(+), 65 deletions(-)
 
-
-Heiko
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
-t/commit/?h=3Dv6.17-armsoc/dts64&id=3De14491aaa6ff598bbe9d462e44c01ac65754f=
-445
-
-
-
->=20
-> ## Steps to reproduce
->  - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
-> --kconfig defconfig
->=20
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
->=20
-
-
-
+diff --git a/drivers/staging/fbtft/fb_ssd1331.c b/drivers/staging/fbtft/fb_ssd1331.c
+index 06b7056d6c71..f43ee3249175 100644
+--- a/drivers/staging/fbtft/fb_ssd1331.c
++++ b/drivers/staging/fbtft/fb_ssd1331.c
+@@ -107,6 +107,28 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
+ 	va_end(args);
+ }
+ 
++static noinline_for_stack void write_gamma_reg(struct fbtft_par *par,
++					       u32 gamma[63])
++{
++	write_reg(par, 0xB8,
++		  gamma[0],  gamma[1],  gamma[2],  gamma[3],
++		  gamma[4],  gamma[5],  gamma[6],  gamma[7],
++		  gamma[8],  gamma[9],  gamma[10], gamma[11],
++		  gamma[12], gamma[13], gamma[14], gamma[15],
++		  gamma[16], gamma[17], gamma[18], gamma[19],
++		  gamma[20], gamma[21], gamma[22], gamma[23],
++		  gamma[24], gamma[25], gamma[26], gamma[27],
++		  gamma[28], gamma[29], gamma[30], gamma[31],
++		  gamma[32], gamma[33], gamma[34], gamma[35],
++		  gamma[36], gamma[37], gamma[38], gamma[39],
++		  gamma[40], gamma[41], gamma[42], gamma[43],
++		  gamma[44], gamma[45], gamma[46], gamma[47],
++		  gamma[48], gamma[49], gamma[50], gamma[51],
++		  gamma[52], gamma[53], gamma[54], gamma[55],
++		  gamma[56], gamma[57], gamma[58], gamma[59],
++		  gamma[60], gamma[61], gamma[62]);
++}
++
+ /*
+  * Grayscale Lookup Table
+  * GS1 - GS63
+@@ -130,7 +152,7 @@ static void write_reg8_bus8(struct fbtft_par *par, int len, ...)
+  */
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long tmp[GAMMA_NUM * GAMMA_LEN];
++	u32 tmp[GAMMA_NUM * GAMMA_LEN];
+ 	int i, acc = 0;
+ 
+ 	for (i = 0; i < 63; i++) {
+@@ -150,17 +172,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ 		}
+ 	}
+ 
+-	write_reg(par, 0xB8,
+-		  tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5], tmp[6],
+-		  tmp[7], tmp[8], tmp[9], tmp[10], tmp[11], tmp[12], tmp[13],
+-		  tmp[14], tmp[15], tmp[16], tmp[17], tmp[18], tmp[19], tmp[20],
+-		  tmp[21], tmp[22], tmp[23], tmp[24], tmp[25], tmp[26],	tmp[27],
+-		  tmp[28], tmp[29], tmp[30], tmp[31], tmp[32], tmp[33], tmp[34],
+-		  tmp[35], tmp[36], tmp[37], tmp[38], tmp[39], tmp[40], tmp[41],
+-		  tmp[42], tmp[43], tmp[44], tmp[45], tmp[46], tmp[47], tmp[48],
+-		  tmp[49], tmp[50], tmp[51], tmp[52], tmp[53], tmp[54], tmp[55],
+-		  tmp[56], tmp[57], tmp[58], tmp[59], tmp[60], tmp[61],
+-		  tmp[62]);
++	write_gamma_reg(par, tmp);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/fbtft/fb_ssd1351.c b/drivers/staging/fbtft/fb_ssd1351.c
+index 6736b09b2f45..eb8bee6993c3 100644
+--- a/drivers/staging/fbtft/fb_ssd1351.c
++++ b/drivers/staging/fbtft/fb_ssd1351.c
+@@ -96,6 +96,28 @@ static int set_var(struct fbtft_par *par)
+ 	return 0;
+ }
+ 
++static noinline_for_stack void write_gamma_reg(struct fbtft_par *par,
++					       u32 gamma[63])
++{
++	write_reg(par, 0xB8,
++		  gamma[0],  gamma[1],  gamma[2],  gamma[3],
++		  gamma[4],  gamma[5],  gamma[6],  gamma[7],
++		  gamma[8],  gamma[9],  gamma[10], gamma[11],
++		  gamma[12], gamma[13], gamma[14], gamma[15],
++		  gamma[16], gamma[17], gamma[18], gamma[19],
++		  gamma[20], gamma[21], gamma[22], gamma[23],
++		  gamma[24], gamma[25], gamma[26], gamma[27],
++		  gamma[28], gamma[29], gamma[30], gamma[31],
++		  gamma[32], gamma[33], gamma[34], gamma[35],
++		  gamma[36], gamma[37], gamma[38], gamma[39],
++		  gamma[40], gamma[41], gamma[42], gamma[43],
++		  gamma[44], gamma[45], gamma[46], gamma[47],
++		  gamma[48], gamma[49], gamma[50], gamma[51],
++		  gamma[52], gamma[53], gamma[54], gamma[55],
++		  gamma[56], gamma[57], gamma[58], gamma[59],
++		  gamma[60], gamma[61], gamma[62]);
++}
++
+ /*
+  * Grayscale Lookup Table
+  * GS1 - GS63
+@@ -119,7 +141,7 @@ static int set_var(struct fbtft_par *par)
+  */
+ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ {
+-	unsigned long tmp[GAMMA_NUM * GAMMA_LEN];
++	u32 tmp[GAMMA_NUM * GAMMA_LEN];
+ 	int i, acc = 0;
+ 
+ 	for (i = 0; i < 63; i++) {
+@@ -139,23 +161,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
+ 		}
+ 	}
+ 
+-	write_reg(par, 0xB8,
+-		  tmp[0],  tmp[1],  tmp[2],  tmp[3],
+-		  tmp[4],  tmp[5],  tmp[6],  tmp[7],
+-		  tmp[8],  tmp[9],  tmp[10], tmp[11],
+-		  tmp[12], tmp[13], tmp[14], tmp[15],
+-		  tmp[16], tmp[17], tmp[18], tmp[19],
+-		  tmp[20], tmp[21], tmp[22], tmp[23],
+-		  tmp[24], tmp[25], tmp[26], tmp[27],
+-		  tmp[28], tmp[29], tmp[30], tmp[31],
+-		  tmp[32], tmp[33], tmp[34], tmp[35],
+-		  tmp[36], tmp[37], tmp[38], tmp[39],
+-		  tmp[40], tmp[41], tmp[42], tmp[43],
+-		  tmp[44], tmp[45], tmp[46], tmp[47],
+-		  tmp[48], tmp[49], tmp[50], tmp[51],
+-		  tmp[52], tmp[53], tmp[54], tmp[55],
+-		  tmp[56], tmp[57], tmp[58], tmp[59],
+-		  tmp[60], tmp[61], tmp[62]);
++	write_gamma_reg(par, tmp);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index da9c64152a60..231cc6d7343c 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -833,6 +833,28 @@ int fbtft_unregister_framebuffer(struct fb_info *fb_info)
+ }
+ EXPORT_SYMBOL(fbtft_unregister_framebuffer);
+ 
++static noinline_for_stack void fbtft_write_register_64(struct fbtft_par *par,
++							int i, u32 buf[64])
++{
++	par->fbtftops.write_register(par, i,
++		buf[0], buf[1], buf[2], buf[3],
++		buf[4], buf[5], buf[6], buf[7],
++		buf[8], buf[9], buf[10], buf[11],
++		buf[12], buf[13], buf[14], buf[15],
++		buf[16], buf[17], buf[18], buf[19],
++		buf[20], buf[21], buf[22], buf[23],
++		buf[24], buf[25], buf[26], buf[27],
++		buf[28], buf[29], buf[30], buf[31],
++		buf[32], buf[33], buf[34], buf[35],
++		buf[36], buf[37], buf[38], buf[39],
++		buf[40], buf[41], buf[42], buf[43],
++		buf[44], buf[45], buf[46], buf[47],
++		buf[48], buf[49], buf[50], buf[51],
++		buf[52], buf[53], buf[54], buf[55],
++		buf[56], buf[57], buf[58], buf[59],
++		buf[60], buf[61], buf[62], buf[63]);
++}
++
+ /**
+  * fbtft_init_display_from_property() - Device Tree init_display() function
+  * @par: Driver data
+@@ -842,7 +864,7 @@ EXPORT_SYMBOL(fbtft_unregister_framebuffer);
+ static int fbtft_init_display_from_property(struct fbtft_par *par)
+ {
+ 	struct device *dev = par->info->device;
+-	int buf[64], count, index, i, j, ret;
++	u32 buf[64], count, index, i, j, ret;
+ 	u32 *values;
+ 	u32 val;
+ 
+@@ -887,23 +909,8 @@ static int fbtft_init_display_from_property(struct fbtft_par *par)
+ 				fbtft_par_dbg(DEBUG_INIT_DISPLAY, par,
+ 					      "buf[%d] = %02X\n", j, buf[j]);
+ 
+-			par->fbtftops.write_register(par, i,
+-				buf[0], buf[1], buf[2], buf[3],
+-				buf[4], buf[5], buf[6], buf[7],
+-				buf[8], buf[9], buf[10], buf[11],
+-				buf[12], buf[13], buf[14], buf[15],
+-				buf[16], buf[17], buf[18], buf[19],
+-				buf[20], buf[21], buf[22], buf[23],
+-				buf[24], buf[25], buf[26], buf[27],
+-				buf[28], buf[29], buf[30], buf[31],
+-				buf[32], buf[33], buf[34], buf[35],
+-				buf[36], buf[37], buf[38], buf[39],
+-				buf[40], buf[41], buf[42], buf[43],
+-				buf[44], buf[45], buf[46], buf[47],
+-				buf[48], buf[49], buf[50], buf[51],
+-				buf[52], buf[53], buf[54], buf[55],
+-				buf[56], buf[57], buf[58], buf[59],
+-				buf[60], buf[61], buf[62], buf[63]);
++			fbtft_write_register_64(par, i, buf);
++
+ 		} else if (val & FBTFT_OF_INIT_DELAY) {
+ 			fbtft_par_dbg(DEBUG_INIT_DISPLAY, par,
+ 				      "init: msleep(%u)\n", val & 0xFFFF);
+@@ -996,23 +1003,7 @@ int fbtft_init_display(struct fbtft_par *par)
+ 				}
+ 				buf[j++] = par->init_sequence[i++];
+ 			}
+-			par->fbtftops.write_register(par, j,
+-				buf[0], buf[1], buf[2], buf[3],
+-				buf[4], buf[5], buf[6], buf[7],
+-				buf[8], buf[9], buf[10], buf[11],
+-				buf[12], buf[13], buf[14], buf[15],
+-				buf[16], buf[17], buf[18], buf[19],
+-				buf[20], buf[21], buf[22], buf[23],
+-				buf[24], buf[25], buf[26], buf[27],
+-				buf[28], buf[29], buf[30], buf[31],
+-				buf[32], buf[33], buf[34], buf[35],
+-				buf[36], buf[37], buf[38], buf[39],
+-				buf[40], buf[41], buf[42], buf[43],
+-				buf[44], buf[45], buf[46], buf[47],
+-				buf[48], buf[49], buf[50], buf[51],
+-				buf[52], buf[53], buf[54], buf[55],
+-				buf[56], buf[57], buf[58], buf[59],
+-				buf[60], buf[61], buf[62], buf[63]);
++			fbtft_write_register_64(par, j, buf);
+ 			break;
+ 		case -2:
+ 			i++;
+-- 
+2.39.5
 
 
