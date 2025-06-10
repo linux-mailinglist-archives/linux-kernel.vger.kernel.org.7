@@ -1,107 +1,169 @@
-Return-Path: <linux-kernel+bounces-679343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F045EAD350D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A691AD3513
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAB971895FDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B40A3B49DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52129286D5C;
-	Tue, 10 Jun 2025 11:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB26F284B33;
+	Tue, 10 Jun 2025 11:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7p+nAJM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gckAeiQE"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB25B228CBC;
-	Tue, 10 Jun 2025 11:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AB82253F8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749555303; cv=none; b=TwDkRu3V2QtSa/Qjy4viBAQ3a7GifhF3wkN/naQlvYA5mdVriOw9BBvAl8plPhjr3fhbAw0mAHtW0vEcMX3ycv7q2Kla4JAdKl8O46OJWpKIzWfBn8R75lNMPoyH5Bb+/MBi1kVTcjLbYE02c8PJKUxf9+iMhRoU/EJinmYP0yE=
+	t=1749555385; cv=none; b=lgnKz545UzabSKQMBKoqZipaFlNP0L7wME3U4Utv4slTV6V4xnD+BAwcK0IPAQtzqhvkGWQvs7U/ARcr1nsVDCiC6MKQMs27Xfuu26eBDwSOCSC1mb5xeu439TAr2VE6mQ33P5MxBMyeEJ9mHGW+iojBDK5a7qDVTzIu9fNsKBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749555303; c=relaxed/simple;
-	bh=OJQVmEGY1rUIwtRekYmXlQLuMdBPixlfvKReSm97tNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3A18RSzA4bMSfFay7ijsYkbVSDMpmin0UmCBw+iQl6EMzBS7dMuY4VHulOe+Nuk1MN/kpOCr8Gq4csSoWSS3mroRwWKdMWUBmlNYJRBboRaOp7CrV0/tNxJA03TZaXOHPoUJZRkxrbljcxxTuxH5MdIIpdNKY4PVNb++0vuUe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7p+nAJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9DEC4CEED;
-	Tue, 10 Jun 2025 11:35:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749555303;
-	bh=OJQVmEGY1rUIwtRekYmXlQLuMdBPixlfvKReSm97tNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B7p+nAJMuAyWQ+vgj+xFAOYXPkTgskrO8PJvZsUvwl3HbdCmvTW/y0KUXY5NaY+3A
-	 jSzseug+9TgQQKTIOP6BFkJjGzVaavPeCqSZLAUYvIT2m8ujtQTVOK/47vQiHcxYTM
-	 cHMGfF6bhh2JT2PKFn2nCarLnW8xf7y4iSHIPbhE3T2y+HNULKYTD4fhGo9Zum5tLI
-	 CLn5cy56SNJZkF/5574edaVgvFlHjKGgf8uUbF9gU76BPOoxkCOzNKhZF4EUhmSJgx
-	 MSveZZJ0Soo2NHuG5CPGDuFe3pS+q5j02S1dPAoU8kJuSbV+va/KQDFiUbjG5Ou1SC
-	 FZKnA9RTIFxvA==
-Date: Tue, 10 Jun 2025 12:34:57 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: Aishwarya <aishwarya.tcv@arm.com>, pulehui@huaweicloud.com,
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, mhiramat@kernel.org, oleg@redhat.com,
-	peterz@infradead.org, pulehui@huawei.com, stable@vger.kernel.org,
-	vbabka@suse.cz, Ryan.Roberts@arm.com, Dev.Jain@arm.com
-Subject: Re: [PATCH v1 4/4] selftests/mm: Add test about uprobe pte be orphan
- during vma merge
-Message-ID: <97432af8-da8f-4cc6-96f0-ccc8297b7029@sirena.org.uk>
-References: <20250529155650.4017699-5-pulehui@huaweicloud.com>
- <20250610103729.72440-1-aishwarya.tcv@arm.com>
- <f5tx6ko7xu2ulvfwu6srlaly6omqcciez2qh6jmcd6fob3szgm@cedwkuqgw34b>
+	s=arc-20240116; t=1749555385; c=relaxed/simple;
+	bh=zBlm+ov1YdPOK+eo/xgzpL/Az+rYHrupYQlhswUJOtA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DymwMCHIMejLEu7kO6aYIYjx45vwIxPkVYpsm+HEPkVn8tBQcD7eXRrs8KVsVd5HL3FsQ6aUOJYZBhRFc3IEBblkC80oFum5Ugn41fcx73uare4KC9zLQ9UNiN37Fi1lUC8tf9OL9+5/+aJ6TdZ5L9EY+KLWaDkzdX9aE/hxHv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gckAeiQE; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso1729149a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749555383; x=1750160183; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/X080miYLYNnIb/KqgwO3FJea0593LzGodrcP0cmSBk=;
+        b=gckAeiQEK6p7EdMZ9DW5Nfb6bEbfW/hh2JMNqVp1dLp2xaaZDBGx5ev6TWUHOS94v6
+         yvT6pxFLgusMDgwj2CPzSov0JsKH238cVyScElB+XtXfjoMY7CAztjQb+v1y/QxdIpk6
+         CvR6KSlQTSvR4gycQOtz/fPdM7ZLh2fB6O55FUWkJGXR6xVyDfWkH9COEJRk0l4eEGvV
+         0EYf8VKiAaZsoWI7YfVnYTJBZaRoW5WPkjH0mIfx3fqws5Skmq/dUDAMMPn50z7cdu5v
+         HrYyGo8vHqIhZXekVw5vmr23+HWrtH6S2HdQjHU4EO2ZfMTf8j5Ui3quEDZv/lfY+dP6
+         G0CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749555383; x=1750160183;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/X080miYLYNnIb/KqgwO3FJea0593LzGodrcP0cmSBk=;
+        b=qONM3iZHLwUnvGeh1UXk13TjkivG1ppzuq3ksIEsleKcX/DdnJRLCKysxOphQIBZpx
+         T29WVc3d2AEWEMJTSqQbdN/0V7hYa7uniAo1+bP6lvkC2rqLYt/Zt0PhNSY2Z6ppYali
+         aIo8j7Eu804fHazGbHHJW2AyCW9JtuXhfObAaVq3q96mpyWKQ/hh7CkjTH6qFQzEmT4S
+         sQV//+VM+I+TQgvSgLy2UYPm2+MqW0xFQloiEd+FvtTnBzb5BFlLhfmhkK53SHz66+zF
+         9jzomv7528CPzvYqMzVivn14utzAMoar8c/JC9HdLpJA3RcEvkHj2a2zNidLjSL3rHcQ
+         OcIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRgI4BexWtWQCMV/KpNIhPD84sj6DJIYI7SwdRHbL6sNH6xTgOPX267o+EasundHrEUfHp0B3th4pYv/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmm5tleTdM7mLF38gS07GEkwfexSLZlv2g23zAA7r6XEYtsGeu
+	tT71yXwXc9Vb0FIefRlb98sWIRko5P51O2C2iW7k6+ISB5Wg/JI/yfxaS3QYd/Wz2FIbnpyetYZ
+	6Bwblfd3VAGhlmGSMYQc8gNSTQkeNnCpvwqWnnngV
+X-Gm-Gg: ASbGnctvY7K4WNSzQogYAZGM1nDMeLqHNUKofIlOxyn0NxK6PKHzpflYSYcXhiw867O
+	82t5oy+UABT5JBjRu0k6UjBsl4EQBfnrEsMmeVt14j9bQvGZ/yUO3yfRUoA5pcV9p219y3M7o+n
+	Ak4juJ7IUi3ea+83MD/fAt2H3BMDwqVEizd6InCNL3gsiNd2vUsd9LbaaOl41tlX6vsXDJfO7B
+X-Google-Smtp-Source: AGHT+IEwCAvIsXym5DldP9LOU03dANKhI7iiGAjGK8vDeAOOjBWjSCWQznQqPPXeNPhc91g4jQb2wx42ypb9h9ekuWo=
+X-Received: by 2002:a17:90b:3d0a:b0:311:abba:53d2 with SMTP id
+ 98e67ed59e1d1-313a1695651mr3853031a91.17.1749555382592; Tue, 10 Jun 2025
+ 04:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MlSDyrIEmwV2AHR7"
-Content-Disposition: inline
-In-Reply-To: <f5tx6ko7xu2ulvfwu6srlaly6omqcciez2qh6jmcd6fob3szgm@cedwkuqgw34b>
-X-Cookie: When in doubt, follow your heart.
+References: <20250610111559.1667156-1-matt@readmodwrite.com>
+In-Reply-To: <20250610111559.1667156-1-matt@readmodwrite.com>
+From: Marco Elver <elver@google.com>
+Date: Tue, 10 Jun 2025 13:35:44 +0200
+X-Gm-Features: AX0GCFvr9SRXT7rpoCzd8enf5Vhs7VR8MrQOwlNAo7Y3z6-SB7lEBEyUj25Qfmo
+Message-ID: <CANpmjNMkVGVnmeKK5QmwDPZv9QrF0omNz-TmgY0Dqqg-=uAN4Q@mail.gmail.com>
+Subject: Re: [PATCH] stackdepot: Make max number of pools build-time configurable
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, 
+	Matt Fleming <mfleming@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 10 Jun 2025 at 13:16, Matt Fleming <matt@readmodwrite.com> wrote:
+>
+> From: Matt Fleming <mfleming@cloudflare.com>
+>
+> We're hitting the WARN in depot_init_pool() about reaching the stack
+> depot limit. My assumption is because we have long stacks that don't
+> dedup very well.
+>
+> Introduce a new config to allow users to set the number of maximum stack
+> depot pools at build time. Also, turn the silent capping into a
+> build-time assert to provide more obvious feedback when users set this
+> value too high.
+>
+> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+> ---
+>  lib/Kconfig      | 6 ++++++
+>  lib/stackdepot.c | 9 ++++-----
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+>
+> diff --git a/lib/Kconfig b/lib/Kconfig
+> index b38849af6f13..2c5af89daff9 100644
+> --- a/lib/Kconfig
+> +++ b/lib/Kconfig
+> @@ -720,6 +720,12 @@ config STACKDEPOT_MAX_FRAMES
+>         default 64
+>         depends on STACKDEPOT
+>
+> +config STACKDEPOT_MAX_POOLS
+> +       int "Maximum number of stack depot pools to store stack traces"
 
---MlSDyrIEmwV2AHR7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I wouldn't want most kernel configs change this. Can we make it an
+expert option? I.e.
 
-On Tue, Jun 10, 2025 at 12:27:28PM +0100, Pedro Falcato wrote:
-> On Tue, Jun 10, 2025 at 11:37:29AM +0100, Aishwarya wrote:
+  int "Maximum number of stack depot pools to store stack traces" if EXPERT
 
-> >   7155 12:46:54.650730  # # # handle_uprobe_upon_merged_vma: Test terminated by assertion
-> >   7156 12:46:54.661750  # # #          FAIL  merge.handle_uprobe_upon_merged_vma
-> >   7157 12:46:54.662030  # # not ok 8 merge.handle_uprobe_upon_merged_vma
+> +       range 1024 131071
+> +       default 8192
+> +       depends on STACKDEPOT
+> +
+>  config REF_TRACKER
+>         bool
+>         depends on STACKTRACE_SUPPORT
+> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+> index 245d5b416699..1c24230b4a37 100644
+> --- a/lib/stackdepot.c
+> +++ b/lib/stackdepot.c
+> @@ -36,11 +36,7 @@
+>  #include <linux/memblock.h>
+>  #include <linux/kasan-enabled.h>
+>
+> -#define DEPOT_POOLS_CAP 8192
+> -/* The pool_index is offset by 1 so the first record does not have a 0 handle. */
+> -#define DEPOT_MAX_POOLS \
+> -       (((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
+> -        (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
+> +#define DEPOT_MAX_POOLS CONFIG_STACKDEPOT_MAX_POOLS
+>
+>  static bool stack_depot_disabled;
+>  static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
+> @@ -245,6 +241,9 @@ static bool depot_init_pool(void **prealloc)
+>  {
+>         lockdep_assert_held(&pool_lock);
+>
+> +       /* The pool_index is offset by 1 so the first record does not have a 0 handle. */
+> +       BUILD_BUG_ON((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_MAX_POOLS);
 
-> So, basically we're not finding the uprobe (I guess CONFIG_UPROBES isn't set in
-> defconfig, and it's not in the mm/config either), and the test just fails instead
-> of skipping.
+This is a constant expression, and could be a static_assert() (with
+inverted condition) next to the '#define DEPOT_MAX_POOLS'.
+BUILD_BUG_ON() is a bit less efficient (compile-time wise), and cannot
+be substituted with static_assert() only if part of the expression is
+a non-constant expression yet we rely on the compiler to optimize the
+condition into a constant if there's a bug.
 
-Indeed:
-
-$ grep UPROBES arch/arm64/configs/defconfig tools/testing/selftests/mm/config
-$
-
---MlSDyrIEmwV2AHR7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhIGGAACgkQJNaLcl1U
-h9DaWQf/cadm9TfJCaMBT7EYyvuri1Y7Cy2mQyfq3YY+k94ln1LlNvpGOae6rCqS
-3P8O/v4hvf0JiEMFvOGDGDMWN0NGxlkh179vIGKmIFZ4lstx3pcwYC+w+yBCTxMM
-cRojo86TKk1c3aWJjjP2YEjluxxODJjHcMrindp17cNGE0kN+yE4ToHYSObn1Bif
-ZHVmvdQMw6t1vcn1H+BWFqAZERaUwvHbWEHy4AK2wy/jaE87AfLelWEgUH3T4Xev
-Wy3HjrRrXkovehuRgtwNUfbXzcHsuiYyU82M3Xz9vhvtUdmPGuD1S8ucNVsXL5Pb
-GYUS2FxpTZDnr953FYOUnLV0EwQ3Iw==
-=7Aco
------END PGP SIGNATURE-----
-
---MlSDyrIEmwV2AHR7--
+>         if (unlikely(pools_num >= DEPOT_MAX_POOLS)) {
+>                 /* Bail out if we reached the pool limit. */
+>                 WARN_ON_ONCE(pools_num > DEPOT_MAX_POOLS); /* should never happen */
+> --
+> 2.34.1
+>
 
