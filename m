@@ -1,144 +1,160 @@
-Return-Path: <linux-kernel+bounces-679081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AFBAD321A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFCDAD321B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D793B3B17
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0C916A0F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17B61A0BCD;
-	Tue, 10 Jun 2025 09:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D403628B7F0;
+	Tue, 10 Jun 2025 09:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODPsLHWn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAZNH/Nk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E5D27FD56;
-	Tue, 10 Jun 2025 09:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342D2280CCF;
+	Tue, 10 Jun 2025 09:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547926; cv=none; b=e/UNGl0JbiKuizNPzeqtDvjpWLOm26lFnBZK8WgRLRSy6ALjXpr5Ptf6yg159CnRzZbgPMM5hcSQHcZTEYnbRlI9qlICKdcMsaAZIYVbEkB0b+fhyI349Hq/ay02IYahodN9wNyG8mfTF800KmiEHqyjWiW2cJFt6lsLsVAiu74=
+	t=1749547931; cv=none; b=aoidCJArpbIDt7i19jE6KVkYiFRM4xfsvcD+g0zIovLFUO6t8MA0tQ0nQWewuaDMU8FbsnKSrdToFaU/Hal/IBNYoUAn+xJrEvGVuiQKywBJJYPwZLl6hO1ILhqW3sQxAQtwlal1I+V7zd/wAgLU6m3CiaFKxaB3APe/oNUaETg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547926; c=relaxed/simple;
-	bh=UIVDYVCfkXYdQKg+JzIWbx5aKZWOpeiPIbE1ZtnzTh0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=haqe/7ANCY/4hH7y+O9+2SqL4VCMdnJDwwyPqqrvarCo/XlP2TeChfchoi+/ksUz3v6cavheO3Ze1IqWYbNlCC4xVMzKT1pwMOZn4t7H1uCIhNF0krR6k6b0/FyoavlIRCAtHOWMR4GDJM20dPsydF8fBX7Rmgtj2pQDdXl+rag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODPsLHWn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36A2DC4CEEF;
-	Tue, 10 Jun 2025 09:32:04 +0000 (UTC)
+	s=arc-20240116; t=1749547931; c=relaxed/simple;
+	bh=eKiRb6L6Ozc73XkfGbKGoMTgpuDK6lUHSqXXX/O1PDo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KPtYBnErpq1m0GwYY7EfqC2zbbBpbNAM4iGxbDr96kh/U0KMvMlZaWA+08LcL631jNLbz3qt69U037f4MyIgkMW17G3TOpU/ZP4mg73Q6zNEL8fPTB5tKiSmT+qM5ZJ88Xg2eDpD5SOG4c93g4gpVsPPA0NL9B+98GxTEH6vqqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAZNH/Nk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACD3EC4CEEF;
+	Tue, 10 Jun 2025 09:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749547925;
-	bh=UIVDYVCfkXYdQKg+JzIWbx5aKZWOpeiPIbE1ZtnzTh0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ODPsLHWnEGPj51M8X+WShetoHBGztO9IuHayMjIiqnA2/05Y8GZJrHm0J5htsVVgC
-	 rZ6kBVNz7NqYeHiZog9F5RZ2G56mKvM1Ey49nDO8+/x1Zq1PjeiXR6MSL6YzoYCRRF
-	 gqTs6W14flVOWO2prg69erRMmNajgMvxAL4W1vmNk0fm+0uN+BsNS+RowBG+4KGA7P
-	 aVYIsgIIgkZUCJr5dvK+afWgAnO8cBsiZkSDKHEMksAYCKaxuRQRxoDkQ4okrqewnk
-	 yhBEqy8WTy7C4nhpUHGNunRYxaqITPhl6kwYFsOACInMuRGYGdK/gr+SAeTl7bOZcI
-	 0PSrHLmoRTluw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] st-delta: avoid excessive stack usage
-Date: Tue, 10 Jun 2025 11:31:56 +0200
-Message-Id: <20250610093201.2645325-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1749547930;
+	bh=eKiRb6L6Ozc73XkfGbKGoMTgpuDK6lUHSqXXX/O1PDo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=VAZNH/NkZPzdBmeAQDQTeOPtAAuyDnJ8WnuLrFAY5M3oM3ig/xvBtOs/Zrp2ljSYg
+	 NfYEV/WyCldnbyhEFIVBipcucNzXH0GBny75X5JxMdeqP+HmRME8XEXN16Gfi3U2MQ
+	 aO+QZaKKzZV1PO+2alO6LAkAu0LQUqKjGwf5HEyiFvy2GPE/jRnZw4diMHLQ9ji5bq
+	 xwlq9oB1bj9Bi5oNL5V0ckM8WZKNGHeGuptkZVg7hRVFc4BQRK2zf6UURv3/abV9kW
+	 nmLZOrAhxnNbLSXAucdKtmer0uscHr6a7lcxkrXyjx4U+Eg/ZeiXl0Hz9bbuT97Dpt
+	 BcLKhBDAdVLZg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>,  "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust-pin-init tree
+In-Reply-To: <DAIPCCIHRLHW.1TDNY93G6UZM0@kernel.org> (Benno Lossin's message
+	of "Tue, 10 Jun 2025 10:15:08 +0200")
+References: <20250610142230.001af1d3@canb.auug.org.au>
+	<DAIP0NGMMM90.11JRFL5O1NAW9@kernel.org>
+	<e0lTxW1xgQfnXlaJP9bBC75nSMvzZEdAEAmkh1G41H1yJHHyg94Op2pxoQnOYTKtpKYyVQIJMZvjay8xS9yuuQ==@protonmail.internalid>
+	<DAIPCCIHRLHW.1TDNY93G6UZM0@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 10 Jun 2025 11:32:04 +0200
+Message-ID: <87msag2b8r.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Arnd Bergmann <arnd@arndb.de>
+"Benno Lossin" <lossin@kernel.org> writes:
 
-Building with a reduced stack warning limit shows that delta_mjpeg_decode()
-copies a giant structure to the stack each time but only uses three of
-its members:
+> On Tue Jun 10, 2025 at 9:59 AM CEST, Benno Lossin wrote:
+>> On Tue Jun 10, 2025 at 6:22 AM CEST, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> After merging the rust-pin-init tree, today's linux-next build (x86_64
+>>> allmodconfig) failed like this:
+>>>
+>>> error[E0282]: type annotations needed
+>>>    --> rust/kernel/configfs.rs:154:26
+>>>     |
+>>> 154 |             subsystem <- pin_init::zeroed().chain(
+>>>     |                          ^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `T` declared on the function `zeroed`
+>>>     |
+>>> help: consider specifying the generic argument
+>>>     |
+>>> 154 |             subsystem <- pin_init::zeroed::<T>().chain(
+>>>     |                                          +++++
+>>>
+>>> error[E0282]: type annotations needed
+>>>    --> rust/kernel/configfs.rs:264:22
+>>>     |
+>>> 264 |             group <- pin_init::zeroed().chain(|v: &mut Opaque<bindings::config_group>| {
+>>>     |                      ^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `T` declared on the function `zeroed`
+>>>     |
+>>> help: consider specifying the generic argument
+>>>     |
+>>> 264 |             group <- pin_init::zeroed::<T>().chain(|v: &mut Opaque<bindings::config_group>| {
+>>>     |                                      +++++
+>>>
+>>> error: aborting due to 2 previous errors
+>>>
+>>> For more information about this error, try `rustc --explain E0282`.
+>>>
+>>> Caused by commit
+>>>
+>>>   0bcaea04244b ("rust: pin-init: rename `zeroed` to `init_zeroed`")
+>>>
+>>> I have used the rust-pin-init tree from next-20250606 for today.
+>>
+>> Thanks for catching this! I didn't test with `CONFIG_CONFIGFS=y`, so the
+>> code was cfg'd out... I'll add it to my tests.
+>>
+>> @Andreas I'll send a new version of the commit above with configfs
+>> changed.
+>
+> (sorry forgot to add your emails and also some new info)
+>
+> Actually, the correct change would be this in commit 0bcaea04244b
+> ("rust: pin-init: rename `zeroed` to `init_zeroed`"):
+>
+> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
+> index 34d0bea4f9a5..6d566a8bde74 100644
+> --- a/rust/kernel/configfs.rs
+> +++ b/rust/kernel/configfs.rs
+> @@ -151,7 +151,7 @@ pub fn new(
+>          data: impl PinInit<Data, Error>,
+>      ) -> impl PinInit<Self, Error> {
+>          try_pin_init!(Self {
+> -            subsystem <- pin_init::zeroed().chain(
+> +            subsystem <- pin_init::init_zeroed().chain(
+>                  |place: &mut Opaque<bindings::configfs_subsystem>| {
+>                      // SAFETY: We initialized the required fields of `place.group` above.
+>                      unsafe {
+> @@ -261,7 +261,7 @@ pub fn new(
+>          data: impl PinInit<Data, Error>,
+>      ) -> impl PinInit<Self, Error> {
+>          try_pin_init!(Self {
+> -            group <- pin_init::zeroed().chain(|v: &mut Opaque<bindings::config_group>| {
+> +            group <- pin_init::init_zeroed().chain(|v: &mut Opaque<bindings::config_group>| {
+>                  let place = v.get();
+>                  let name = name.as_bytes_with_nul().as_ptr();
+>                  // SAFETY: It is safe to initialize a group once it has been zeroed.
+>
+> @Miguel, @Andreas, how should I go about this? Send the commit above
+> augmented with the diff, or send a patch with just the diff to the list?
+> Or apply the diff directly to the commit in the pin-init-next branch &
+> rebasing (potentially adding an Acked-by from Andreas)? Or some other
+> way?
 
-drivers/media/platform/st/sti/delta/delta-mjpeg-dec.c: In function 'delta_mjpeg_decode':
-drivers/media/platform/st/sti/delta/delta-mjpeg-dec.c:427:1: error: the frame size of 1296 bytes is larger than 1280 bytes [-Werror=frame-larger-than=]
+I think you should add this change directly in your tree. I think you
+should just fold it into the breaking commit so we avoid commits that do
+not build.
 
-Open-code the passing of the structure members that are actually used here.
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Fixes: 433ff5b4a29b ("[media] st-delta: add mjpeg support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- .../platform/st/sti/delta/delta-mjpeg-dec.c   | 20 ++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/st/sti/delta/delta-mjpeg-dec.c b/drivers/media/platform/st/sti/delta/delta-mjpeg-dec.c
-index 0533d4a083d2..a078f1107300 100644
---- a/drivers/media/platform/st/sti/delta/delta-mjpeg-dec.c
-+++ b/drivers/media/platform/st/sti/delta/delta-mjpeg-dec.c
-@@ -239,7 +239,7 @@ static int delta_mjpeg_ipc_open(struct delta_ctx *pctx)
- 	return 0;
- }
- 
--static int delta_mjpeg_ipc_decode(struct delta_ctx *pctx, struct delta_au *au)
-+static int delta_mjpeg_ipc_decode(struct delta_ctx *pctx, dma_addr_t pstart, dma_addr_t pend)
- {
- 	struct delta_dev *delta = pctx->dev;
- 	struct delta_mjpeg_ctx *ctx = to_ctx(pctx);
-@@ -256,8 +256,8 @@ static int delta_mjpeg_ipc_decode(struct delta_ctx *pctx, struct delta_au *au)
- 
- 	memset(params, 0, sizeof(*params));
- 
--	params->picture_start_addr_p = (u32)(au->paddr);
--	params->picture_end_addr_p = (u32)(au->paddr + au->size - 1);
-+	params->picture_start_addr_p = pstart;
-+	params->picture_end_addr_p = pend;
- 
- 	/*
- 	 * !WARNING!
-@@ -374,12 +374,14 @@ static int delta_mjpeg_decode(struct delta_ctx *pctx, struct delta_au *pau)
- 	struct delta_dev *delta = pctx->dev;
- 	struct delta_mjpeg_ctx *ctx = to_ctx(pctx);
- 	int ret;
--	struct delta_au au = *pau;
-+	void *au_vaddr = pau->vaddr;
-+	dma_addr_t au_dma = pau->paddr;
-+	size_t au_size = pau->size;
- 	unsigned int data_offset = 0;
- 	struct mjpeg_header *header = &ctx->header_struct;
- 
- 	if (!ctx->header) {
--		ret = delta_mjpeg_read_header(pctx, au.vaddr, au.size,
-+		ret = delta_mjpeg_read_header(pctx, au_vaddr, au_size,
- 					      header, &data_offset);
- 		if (ret) {
- 			pctx->stream_errors++;
-@@ -405,17 +407,17 @@ static int delta_mjpeg_decode(struct delta_ctx *pctx, struct delta_au *pau)
- 			goto err;
- 	}
- 
--	ret = delta_mjpeg_read_header(pctx, au.vaddr, au.size,
-+	ret = delta_mjpeg_read_header(pctx, au_vaddr, au_size,
- 				      ctx->header, &data_offset);
- 	if (ret) {
- 		pctx->stream_errors++;
- 		goto err;
- 	}
- 
--	au.paddr += data_offset;
--	au.vaddr += data_offset;
-+	au_dma += data_offset;
-+	au_vaddr += data_offset;
- 
--	ret = delta_mjpeg_ipc_decode(pctx, &au);
-+	ret = delta_mjpeg_ipc_decode(pctx, au_dma, au_dma + au_size - 1);
- 	if (ret)
- 		goto err;
- 
--- 
-2.39.5
+Best regards,
+Andreas Hindborg
+
+
 
 
