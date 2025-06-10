@@ -1,124 +1,378 @@
-Return-Path: <linux-kernel+bounces-679881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8E6AD3D15
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:29:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792E5AD3D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1BC117FB11
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:26:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9BE1BA11E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3112024DCE4;
-	Tue, 10 Jun 2025 15:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59172231829;
+	Tue, 10 Jun 2025 15:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QwptGVlB"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e4oa/JaE"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011041.outbound.protection.outlook.com [52.101.70.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B5B238C20
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749568845; cv=none; b=pLJpSpgejmkIbsu3ZNl8nPdL32XJRiuFmMBA+TO2jhs63bP/XLbM1gtVfc3HG1ThxyrqkBYn4m+n0bgJviL0Xx6JaFoDbHaMtc+ZZd+GfJR6SXkJA4pwtKlZQjw0zkx2K/nX1I6p/Kr/mgI/jGMoKGVyPCVEvNN71ZXICeMCHcA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749568845; c=relaxed/simple;
-	bh=ntw2ey008iOZHteqPhoBSfK1i5W77BNCidxaLvGyUlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e8lecVy+ic+WKUHF3CKx9Zx6wCKfE99xyELLP1jJ2IXrBMPrlQmi6+EXJUrXAUd3Y7l7kKBDgRKWxndvaGA9uGS6Ju0Z2ewAspd2NVCGsgcgjJ3XNy6A8fE8injeKn6ljP03TD4NA3EAybu15pwjwfRSc90C8/R1+WeH2J3pk+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QwptGVlB; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4f78ebec8so3368226f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:20:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749568842; x=1750173642; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pedIUwRN3D7qvw8UIlmZrCckR2WX2CSjcTaVtRgsTAo=;
-        b=QwptGVlBEOrRqIu6eRVjsM6I7FvWnkoN6lr/naJSI0myd2odbvelbWQ3kmZN/axejr
-         LKkzZDO41p46Lm4yzDpaOHCvXXcMGaYKtnP+XwBeYMz3y1GPVyzrXQQauvNMRnxoSA1Q
-         Zs6kWjSlvKdgj5my7BVjq0XhhC5PrC3mc3dpk/fJrnlAonurSikMOzTwFByEEn0wcrQg
-         uozEeyzSFVV+AOI2GJbXF16V/r+ylI3m0Fin9g9Yy+JhnamScgOTPVE5yfV32pmBYXqZ
-         c8tU6o17PPbhXsmeI0o7iQqttPKNHOoOtTG8JWEdpCE1PS7RdIHCxfBPnEijTEPtm0/n
-         AOvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749568842; x=1750173642;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pedIUwRN3D7qvw8UIlmZrCckR2WX2CSjcTaVtRgsTAo=;
-        b=XpZpzmJIfx+lKJ8aEVr92yKTVejH+6FoCTbjgQccNlpLJrIb88MN4BOciLs0PUJHUy
-         SOaxB5igqelFtDEVo1hevD7h4M9axVju3kYcbNos1VxdHkjdM/edT8Gim9kKTHgumF1u
-         02zqV0bI0rDhxPcSgDpD7s/dOnNAVY+cG+GoPAcXGrPrq4QjMkVp8UwuWnMRg4sEcf9+
-         ynkgMccQ0bDjx3nzbku88VuYgDBEM/feo03vRRSA5pKnCY9XaszpoY/N0CEPEz59la0Y
-         dgARe5LtiZprbZ8QiZqJ+4t+hKYrGT62r/KxMj88XcwCePvC99PwI/vOhQkfsFEgkoZ7
-         +Nyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmmTmXP67f4UIwgZD9FIi4Ets3d5e+hIGdWDLdJn2goVZHeOLoHkfOCmsKMRoEjNJFOT0/y7w208eJjkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxeowo8htu0w4xozxDR36CY5XUkKU2o5pqS7IEcty2z2X5tLfb
-	EwqWgJELOgMwr6yZNRLBKk0czs8G4N70U4BWrDxQQpH2YpwRdwMV8U4oEz0bidDNzyY=
-X-Gm-Gg: ASbGncuW+DBCy9EMFub2M9Nv9nvoPXoGgvG/USkjxCyMcDLfESF3TkNsBEslvpeDPsi
-	gLxw+a3GX14Wdt2QPBDC2+yPI6NRnjCPNGDtZC7z+ZBjSWFFXbSPXFp8r6i7dyI3xx9wkGhChZ2
-	RnoPkTJPFLpi+LAuQbfWQ7vjaM+Xbbbbtd7WxHEr06DM5aAsjRlvW9jFb9jlD9aY3dqBfscavQN
-	X1eoZ2ygnBxQZcqX9fZ4bWdIDlt/ZyjRREzSccowuhS4OowRYc1o5kth+/vNDO4LacR5gPW8M13
-	IN8kAKAww/mZD6SDtm74LE5I2Gjybb983xd72VjcoxarTfuGUU9Kkk/VBYtGcAfcypHOS7U=
-X-Google-Smtp-Source: AGHT+IFDGGWE1z6DBNuxPQdlOoATNSHUMRrZOzpLgsWsb9C2dYFqKHbu0/aBJ7qfKFllqnf+O89l6w==
-X-Received: by 2002:a05:6000:4305:b0:3a3:ec58:ebf2 with SMTP id ffacd0b85a97d-3a5319ba2bcmr13714922f8f.7.1749568842105;
-        Tue, 10 Jun 2025 08:20:42 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:4d:e52b:812d:eb7c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45213759fb2sm146708685e9.38.2025.06.10.08.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 08:20:41 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Johan Hovold <johan@kernel.org>,
-	Alex Elder <elder@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] staging: greybus: remove unnecessary GPIO line direction check
-Date: Tue, 10 Jun 2025 17:20:36 +0200
-Message-ID: <20250610152036.86099-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5710B237708;
+	Tue, 10 Jun 2025 15:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749568872; cv=fail; b=ae0Ity39LqnrWxbyKkF7PwjRqCSIX7LETKZxvQ7aVZuOE+ln5+d2YGmbA+afaJliE17WNBaDwz1l6gD0utnzAd7EEviTwr2FiVi3lPPsSX67RD02gzf2Y8b2q9JrIjsDblLAso6fylj3Q8ZCxlT8Y+o5qI4iKRrETNTSq6H0Z1U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749568872; c=relaxed/simple;
+	bh=p7fv4tFHJuG4pVvaoIwb3DIbZXSxe+OciqEf3ze5J9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JUHcEujZ8GlDTI8T8qX83EfS1uVmejDRximYy5QH+goZMp9eelHdSLr+4RGS92pzFJ1C3PJPUWWIL2J100GkC5Oj66JKjgmr49kTxE0czOVr5un8XUzqKy3C3xI30YNajtGbAQB24H2ppWqPPMPlc7j3j63Vw6n62YifCcDJZIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e4oa/JaE; arc=fail smtp.client-ip=52.101.70.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o/bbYHioN9oxxeO6lCU/X7PXv94jFyDgCrh2+X17RmH6SWcp88nTV8vb5dORPseAhyQoHDgJ1uLTf8bsWGAbmmMa++PtmUMxmIErke5NSx/PupjN6NqnhuQ2A/CrFB9jem1ymgFqke3dfiKK0d96Jj6VE9/pq028ONJXxBvgbkXrlJAhy2w+S4sDeReVNgY6+81iXOSQqa0B8/QnTwpBlwI8Z1LikBhCmlKt1ogrzjDe6kDS6Wpupz6YPXK2cmGElJKJnEo8Q0cD3F5w4zYXGaggmU+838zi3ErwqnkUT24UD3QKNKYMQlewhC7DlydA8lbjTIDYF9d4NawssW0Ctw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=skT5YMr8DKXHCRPrUrith0vrOMaXGsU2Jb48m2reU1o=;
+ b=orh+rPNEBrCJhcR0sXc+OeVHbORYS6vrcuh/vgv7fdF7bIWAxnRwiBx6wJYQe6Wx0n8JDBEyZNOv/GOyeyZ5Trir5gcd3H4SZqQjKREndRXPghpaTu/CcXkiKklKQDcOUgTz0n/EAqiVgW40o3xKUk5+visVltB1me2DUsLchk44978dETGvLRjAhR5bQyUXrib/GbU+OZ0KPnf2BU1xxyZvRQZb486JX+FKu29sAnifXFuohxwoJb3HjEUTXCHnDkquHPLt0amQT2DcHl/9NuhZpMXuxjXZio/uwNgtqr5WSvmGdQJ3VDV8d8MjVOU4Hvjq/8KzX2lWe3Zh7PVgMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=skT5YMr8DKXHCRPrUrith0vrOMaXGsU2Jb48m2reU1o=;
+ b=e4oa/JaE6Gkj4kGa3K2JR1p30mMP3HWI9cZgGb9zG+ldq+fqzf7QqSsthkygfR1cBWS+7jHVqytdzOn/mScVjXWcXhMWpHkUOyeDV8fvpOK5aufTTc1gLe48HYJnfTIFDrsKlPMT8iaMKbI53sB3eXwguVLaiOGyx8D8LdheSvXFDrIUD3pX7dcpXeB7sENyEsAdjsrLMO+MY7VCQAV4LHZpO9Lye1Ib58XTwciATAo1nH2/F7XChQ+blBx6rjwXcjnfye5DlHj4Df7LzUlvZtftE0tAGYKtHorIRAmvkQzhtfz5VU0lkdJa6/HVPKUf3c0iW45CKLRLZonMxfgkfQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8895.eurprd04.prod.outlook.com (2603:10a6:102:20e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Tue, 10 Jun
+ 2025 15:21:07 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%7]) with mapi id 15.20.8813.024; Tue, 10 Jun 2025
+ 15:21:07 +0000
+Date: Tue, 10 Jun 2025 11:20:57 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Matteo Lisi <matteo.lisi@engicam.com>,
+	linux-amarula@amarulasolutions.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 09/10] ARM: dts: imx6ul: support Engicam MicroGEA GTW
+ board
+Message-ID: <aEhNWWRfXZ1r284H@lizhi-Precision-Tower-5810>
+References: <20250610100139.2476555-1-dario.binacchi@amarulasolutions.com>
+ <20250610100139.2476555-10-dario.binacchi@amarulasolutions.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610100139.2476555-10-dario.binacchi@amarulasolutions.com>
+X-ClientProxiedBy: SJ0PR13CA0027.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8895:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2b1f941-04aa-4679-e263-08dda8326c18
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?zgCi6QAdPczLK1N25mukT5/2VGb1BBgcqokjYqv6m3PVPqYoQ2Ou5yz4hat6?=
+ =?us-ascii?Q?SA59KiNM1K/bI+x14kNWnuFVMc5aeSPhS7BpwBlKLfIWDrfS6dBjEN3yqHwk?=
+ =?us-ascii?Q?Hewc5suDFyws+cRTOKto8sY8G8nLz8Hv6XFqOudqDEuCIkEy10p6huMBfkqW?=
+ =?us-ascii?Q?WpIZGkrDpwaJEUEleCNg/8yb0RIjwSPhHOhRQQ/jFTTiUYMsfUgIYwrXXOBy?=
+ =?us-ascii?Q?dzdzPPx9wtfs5qUGopomM3G178eaV8PNVIwKSSeR4UoSaQRDfrL5GsKmWgBC?=
+ =?us-ascii?Q?oSUNpsqrHe5Wv6Dj4EHm/w4zqz6DPW34cpw0Omqnp46q4Kq5+pzQCKeoIOYV?=
+ =?us-ascii?Q?9wLbzb1+24caKlXniKui9GbjJJuruYiuyzE5uP9nucP977jbBimceDytbi9c?=
+ =?us-ascii?Q?TqK3glJoXOI6uFoDqPXj6Nk8D5yNCYKc82jpdxWJirOgEIjfoc3bugEFnZED?=
+ =?us-ascii?Q?x6yvXyKyt4nzO3redczj/DaukRk6SXTP2eEwuryTcsHsjPsml1F0AbT6EwFI?=
+ =?us-ascii?Q?mlqEvowR3gjFbQQWDX/QW/AyUR7+8/wuYYdyGA+eX2ncwUc3BJyKIG9YFJFB?=
+ =?us-ascii?Q?I0h2QHszd0c/6wWkySarO/aZH1BqwIAFuY7iF6UNXU3tSYe17EmD71SvO1+P?=
+ =?us-ascii?Q?4c2sg6a2YsizfjtBdA/Btk+ngOzyKdj60hmASa9KwIVGyO+uO6j640HY6FOB?=
+ =?us-ascii?Q?rxpqpXZbF/riVxGr1ZxsMAfoBlptQAJstnj81n0LDkBO7OhMooKeusHt+9bZ?=
+ =?us-ascii?Q?yek5iTEdjF8BnfjCn4c+U6F2FvTJmEiY3W15uKJBhU+5iQdoMHUZs7OmluRb?=
+ =?us-ascii?Q?ztY/uIkkrX8Bs/w4lASSTNzpoUJc5C/8SFGaFp0JPN5AjdajWuL/90i6xEkm?=
+ =?us-ascii?Q?1Sake3IrYqzJ+b8B3A65b65dw+SywbDzPouFie0e31HxskrON5DHHWLEspjV?=
+ =?us-ascii?Q?ibJTgOSW66RY/LoP5Tp0OQjy6jGuFoEi2zoRE1NbHEyhGbpdQGwoAzXZel44?=
+ =?us-ascii?Q?w1RnAat6tSivZHJiYP2XoAzkMeb3OnYSdc7ZBftAq7+Yia+cFBubpa/BRC/P?=
+ =?us-ascii?Q?87jzLcgmoYzEnUsCw9Fp7kT+q3vwC4ad8RUUOeQuiAwuJKJfQxX2AMOJY8Dv?=
+ =?us-ascii?Q?Qp3bVbKcCzs2phc5ycQpm1LnuAvlOK+m9i4q3pj7btI6apeZE3/HIHwpPqCb?=
+ =?us-ascii?Q?8mFebJ8WDo0CWBpV124/sF+oOvn/FP54KgUtl4IWbx5k+4uYIGLXDDjmiPEk?=
+ =?us-ascii?Q?O/9xEkMrU5E4CHp1uDWpqRIgwFhAt3TpJ8y80ximzsbV0eCS6pQnm2rG1UKd?=
+ =?us-ascii?Q?RwSGW/KuXU6Uo32xNubsl6f5Qxj4/aGD/ZV16wnNGA/RhTSYI10S4KVwxovS?=
+ =?us-ascii?Q?to0A010ipaYPNEyOUIsyjZm/MUQuoAI37wTe/+is6WgfygI8dSQ8YmeZ/PSb?=
+ =?us-ascii?Q?4ig+Hq3oTzi0atTM2/d6W8IELKtmLZL8imsH5YF8IfClvpomJpzqbA=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?1hyW8UMGG25jLtZ0ONYsEkC5XhM8YnazzwoL5LBEDVvCaKtqc/7o2bF3j9oL?=
+ =?us-ascii?Q?Z9VHXHElxJb4/hAvfru9BdVAUrgFswWoiJGeLdRy3IVuIElUUZCsikMVbaPx?=
+ =?us-ascii?Q?Qm0+VpT7fun562v2q8eM045sHb06YB+NZEWXMeUJz1DtLgxBiEYeSE6fkQiZ?=
+ =?us-ascii?Q?z7Y3v57IvxdlsfpGH/OnmHYAYodUGq6SExIdV/HRWOamkHvuf+gKVUmmyDSi?=
+ =?us-ascii?Q?1St3Bz2ppuag9SwIphtpwBjPJL7eRFRgJe9uBbX8+V9xQXoUYCD7gG6wwdVy?=
+ =?us-ascii?Q?xcBQjvQif3PNPrIbN9PCuScgdeAq8qay9YL3B7DPfI0+UqQl2Y7kPqCeDrir?=
+ =?us-ascii?Q?ZM2XO2PGtbccy43obdcMuwyvjwP3Yr88V7eLpDEc6fi2rzpa4s17vCUSw9tT?=
+ =?us-ascii?Q?DGS65VoJ25ZSHn8DL5Okkio+PNkW3e1OiJCt3UgRfo9n6EXFDCYLW4XHa5OQ?=
+ =?us-ascii?Q?myZr9wiLf7T4RnwVNRDVxAyRtZrKCyQDlvAqHcGeHyKxDmqHBkIno5+TouS8?=
+ =?us-ascii?Q?PTpKJ656RD9nHTZEXQ4T30liq6nygJ6HTpaH/asOySG8lxcIWWSQRBRwQnmu?=
+ =?us-ascii?Q?jQ99tLkAvvj5Js1OW5x4yd5T+eT5odWx0h5HNsJFp5WxVIYeA7a6vDRDcbcd?=
+ =?us-ascii?Q?Lufyheg7stPmwM+bTfdSVUl84wzISrr4t2wS3NhcHNfp1J1YhoWnbG9mHXzk?=
+ =?us-ascii?Q?CfSqnGeqaPx4WaqaMQUQTWdp/OfX1UrJib9nQ9k8BAfMFPzg5h1AmS4f0nAf?=
+ =?us-ascii?Q?u0aCO8HUnAeC0sVbg8jAkkofxUFJAX1uyCuiVwUyxGffJ50TDBehPELcqXVg?=
+ =?us-ascii?Q?rMKerI85xyoV03tywxvpHJP7b5qoJYoUHrCVPpx+nAmX/E4NcQssEdxKnmfC?=
+ =?us-ascii?Q?2aA8/NoIxoTRXjR+tZ6pxzx872KRIh0DRHtYSKa3MZ6YtFNzlFCgPczgRL/G?=
+ =?us-ascii?Q?Rb5sve5eb5GrBjGc9hivOFTeBR5BsAzlc2F0gQ7wA8RXvvjFhTdQsLnVh2Hn?=
+ =?us-ascii?Q?XE+6j2vxYt5t4gNXkHzLa3z/LgacUr5FQ2xa70Q7I3inScJDP3WPVCiiEu9l?=
+ =?us-ascii?Q?bmjjKgcS7h0khouEe/vRf91pOjYu8cff0IbBTsa2n464YwZbSeUp4LTu+PJE?=
+ =?us-ascii?Q?wiDJoYxYdzp+mJJs5s9wvw5x/yO16VOiTWw+O9ddmvmr3DxAnpO/Quac5P9J?=
+ =?us-ascii?Q?mgLjd1ORE1CdJGbbOiGPw1OvwyHhhilx0VUBDwObZkdimWOjSd6XTK7pLgJR?=
+ =?us-ascii?Q?VWYrRcaabDUmYpPX54NWV5x3f+7aKUO5n29whw6Eo7Zz0B4lK5LlnVsYAthd?=
+ =?us-ascii?Q?4Us5KHcA8vWFLSO+wwGHtDNgwuHG0DLjXT0tPAsvYsPX6Rq12N0ujqLTucNt?=
+ =?us-ascii?Q?hVhv7TxRlaoeuPVle0tf9T2uhaxrINOr/0657xI4A6wepyZXJw5LQejjVn+m?=
+ =?us-ascii?Q?JA1NpP6e4ux1P6q3c5UHLtE2l0Fy+Qgc3etMJXutCcOFdvW29jokshQW/rXe?=
+ =?us-ascii?Q?1biIDrW+syVPXmMZoEo2Oips+X2WII9K4haXsN2idMNqD1HW0eQfhIITvx4u?=
+ =?us-ascii?Q?mC0EiM06psljNMzKOacRC9N613KAgB14uJz+qf7Q?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2b1f941-04aa-4679-e263-08dda8326c18
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 15:21:07.3455
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8cviZuF6ewXY593NXavLMp0St+7LgJ/UzE4xalDQyOSAuq+Ii2iOEf/3SndSTwLyG/dnv2WG95RHNELswofpxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8895
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Jun 10, 2025 at 12:00:22PM +0200, Dario Binacchi wrote:
+> Support Engicam MicroGEA GTW board with:
+>
+> - 256 Mbytes NAND Flash
+> - 512 Mbytes DRAM DDR2
+> - Buttons
+> - LEDs
+> - Micro SD card connector
+> - USB 2.0 high-speed/full-speed
+> - Ethernet MAC
+>
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-As of commit 92ac7de3175e3 ("gpiolib: don't allow setting values on input
-lines"), the GPIO core makes sure values cannot be set on input lines.
-Remove the unnecessary check.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/staging/greybus/gpio.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
-index f81c34160f720..1280530c8987a 100644
---- a/drivers/staging/greybus/gpio.c
-+++ b/drivers/staging/greybus/gpio.c
-@@ -192,12 +192,6 @@ static int gb_gpio_set_value_operation(struct gb_gpio_controller *ggc,
- 	struct gb_gpio_set_value_request request;
- 	int ret;
- 
--	if (ggc->lines[which].direction == 1) {
--		dev_warn(dev, "refusing to set value of input gpio %u\n",
--			 which);
--		return -EPERM;
--	}
--
- 	request.which = which;
- 	request.value = value_high ? 1 : 0;
- 	ret = gb_operation_sync(ggc->connection, GB_GPIO_TYPE_SET_VALUE,
--- 
-2.48.1
-
+>
+> ---
+>
+> Changes in v3:
+> - Drop an extra blank line from the iomuxc node.
+>
+> Changes in v2:
+> - Drop an extra blank line
+> - Move iomuxc and iomuxc_snvs nodes to the end of the DTS file.
+>
+>  arch/arm/boot/dts/nxp/imx/Makefile            |   1 +
+>  .../nxp/imx/imx6ull-engicam-microgea-gtw.dts  | 162 ++++++++++++++++++
+>  2 files changed, 163 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea-gtw.dts
+>
+> diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
+> index 32dfd69b8d8b..de4142e8f3ce 100644
+> --- a/arch/arm/boot/dts/nxp/imx/Makefile
+> +++ b/arch/arm/boot/dts/nxp/imx/Makefile
+> @@ -357,6 +357,7 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
+>  	imx6ull-dhcom-picoitx.dtb \
+>  	imx6ull-dhcor-maveo-box.dtb \
+>  	imx6ull-engicam-microgea-bmm.dtb \
+> +	imx6ull-engicam-microgea-gtw.dtb \
+>  	imx6ull-engicam-microgea-rmm.dtb \
+>  	imx6ull-jozacp.dtb \
+>  	imx6ull-kontron-bl.dtb \
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea-gtw.dts b/arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea-gtw.dts
+> new file mode 100644
+> index 000000000000..d500f8839102
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6ull-engicam-microgea-gtw.dts
+> @@ -0,0 +1,162 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2025 Amarula Solutions, Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> + * Copyright (C) 2025 Engicam srl
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6ull-engicam-microgea.dtsi"
+> +
+> +/ {
+> +	compatible = "engicam,microgea-imx6ull-gtw",
+> +		     "engicam,microgea-imx6ull", "fsl,imx6ull";
+> +	model = "Engicam MicroGEA i.MX6ULL GTW Board";
+> +
+> +	reg_1v8: regulator-1v8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "1v8";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +	};
+> +
+> +	reg_3v3: regulator-3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "3v3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_gpio_keys>;
+> +
+> +		user-button {
+> +			label = "User button";
+> +			gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+> +			linux,code = <BTN_MISC>;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_leds>, <&pinctrl_pwrled>;
+> +
+> +		led-0 {
+> +			gpios = <&gpio5 7 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +		};
+> +
+> +		led-1 {
+> +			gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		led-2 {
+> +			gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		led-3 {
+> +			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	usb_hub: usb-hub {
+> +		compatible = "smsc,usb3503a";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_usb_hub>;
+> +		reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+> +	};
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart1>;
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2>;
+> +	status = "okay";
+> +};
+> +
+> +&usbotg1 {
+> +	dr_mode = "otg";
+> +	status = "okay";
+> +};
+> +
+> +&usbotg2 {
+> +	dr_mode = "host";
+> +	disable-over-current;
+> +	status = "okay";
+> +};
+> +
+> +/* MicroSD */
+> +&usdhc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc1>;
+> +	vmmc-supply = <&reg_3v3>;
+> +	bus-width = <4>;
+> +	non-removable;
+> +	status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_gpio_keys: gpio_keysgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TDI__GPIO1_IO13		0x0b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_leds: ledsgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TCK__GPIO1_IO14		0x130b0
+> +			MX6UL_PAD_JTAG_TRST_B__GPIO1_IO15	0x130b0
+> +			MX6UL_PAD_JTAG_TDO__GPIO1_IO12		0x130b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2: uart2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
+> +			MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS	0x1b0b1
+> +			MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1: usdhc1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x17059
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x10059
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x17059
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x17059
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x17059
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x17059
+> +		>;
+> +	};
+> +};
+> +
+> +&iomuxc_snvs {
+> +	pinctrl_pwrled: ledsgrp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x130b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_usb_hub: usb_hubgrp {
+> +		fsl,pins = <
+> +			MX6ULL_PAD_SNVS_TAMPER6__GPIO5_IO06	0x17059
+> +		>;
+> +	};
+> +};
+> --
+> 2.43.0
+>
 
