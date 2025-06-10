@@ -1,182 +1,422 @@
-Return-Path: <linux-kernel+bounces-679056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4693AD31D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:25:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D39AD31DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCAC188404D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038E51882B67
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF85280CFA;
-	Tue, 10 Jun 2025 09:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A6E28B417;
+	Tue, 10 Jun 2025 09:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N/424Avk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMxHkg9+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632B0197A88
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A2128AAEA;
+	Tue, 10 Jun 2025 09:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547382; cv=none; b=THcnctQyDoK8YVvUX1NyAkophaRCZEBC9XsEuupjeJYQPeRktcfm/vnDPn0I4zBXEaWKvUzJmPATmZfkwTPcxafS8vooNrDcMJwwY+IluIdOlHK7xehLF8fDBMI8dZPL2Sl4JoPWVYPTEpJl31kHgLPMLpz7rdaj6UcP9swVJCY=
+	t=1749547401; cv=none; b=tFmmMoXZMYSKMiaDzaD5Kva8G4PmVLL9YAAMsLtg3oAYjx+t8+juEDUgs/a7pfJe90f+7fZfB0wwntgO8PGQP6qOjKyS1CQjtN1EY4kJfaMtGII/9xXUcTSv2nOHVju4B9H3H06Wv+sm5ZWR9sgtoBgAQyX59Ecqs6/rfKbrih8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547382; c=relaxed/simple;
-	bh=Ngon1rOvh4RFX5CEaVji23SFYnQZu1vnqnMviHGLea0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dvUEbPT9H+ppkyzT7B5uWedqNqpA5D3hPN6SPkHx1hfOv6QbhVpPDK/aVNdc6FiKRWvkS67m8inco1NIFGsuYPty+YBPtEMvkfovi9gt+NU5RbM3NOp4o+tRoVRH1rpo6MMW6tap6k4YJ7uoXsxZD/KFRjBa/A4T9xJlaDFBIG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N/424Avk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749547379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MR5JMrCvrHVsNFBfAqJ6DkGHRC1G2KuGjs5kNc+k2aw=;
-	b=N/424AvkeyM+Ghf3Hl8M5ho8+9tDM8eUsPRBf6LUCwDzSqixOm6TMxuwZoOUWvo7CBE/Bt
-	UVc2yREH1ulTgWFMRSvhVz4el6IeRdwnayl2OurXPgXYaU7028IBVD8JEcSDo0PFzsMuw0
-	muHdtAWsiEPlx7tCzjlIYhSlGFGatmA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-193-BEynfTR2NH2O_9wXp99lsQ-1; Tue, 10 Jun 2025 05:22:58 -0400
-X-MC-Unique: BEynfTR2NH2O_9wXp99lsQ-1
-X-Mimecast-MFC-AGG-ID: BEynfTR2NH2O_9wXp99lsQ_1749547377
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4eb9c80deso1931427f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:22:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749547377; x=1750152177;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MR5JMrCvrHVsNFBfAqJ6DkGHRC1G2KuGjs5kNc+k2aw=;
-        b=cKL8zJ5fy0Ty8DQNiISWP5+J+f8PIjtWYtEAh1baq3hedtWK0HFX+FrJQisVLNl8dO
-         9kjHAsWSC+pcigRliXbShM0Yer5zjvG4hfQ3fhK/T4ko6O3VfDvN6QtXXH6yFq3gyYf0
-         nrJts2IKNJzQStCMJXi/ofMZt1bl0lr9ltSCevviSvIhpkSTNUwJgo7uxtXqoBdfMARH
-         JISXkTp7/EhzsTaRLLRALcWY1zo9U6GvgyLaol1qEjbxnQG/a/vfqid/hlx/FyohkQSD
-         gaarPRZP0tkpOFnaFdEYTbpvT1nYBAJRLwYtngwY9y4VjjqzThSSb+u+5bOh9nP8AruP
-         rzjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbm6OXWus6n2Ge/8Rq80WsVS5I4UapXrL8aXqKiahkK1TBFeUKsMr/lHtBB33uDZjqwFq//uRmH+WsPF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy3SKm0rZ+k6TB5DXl0LxBVc15kGnRUmIltBggnOusoU2YWdC5
-	hafBpm1QMXU8pG1Adhgv5WkNBSb/jMrEE9jkRRm9vYS1k2kkTamv+S2zuJh/EpfVM+55SzauOOo
-	xTGajjnt/cIBGpQEBFQ+8TiAqGnu7kx8lVoszBXQJVTGI9r7FJKeejRpnF1fxuEOOTQ==
-X-Gm-Gg: ASbGncsUl4+u/vZOjtQ/3ye5JH6TrNT/jq45QxjXIZij9XBG79qZsL8wd8oM8SPUKv4
-	sackX0eGdB6FHvO0Nm8bXns87Qmmmw0i1SdRp+UbaYB6/T05ZlOcntRvUQ8dwdbvP9/LRRiKWki
-	pegJKJoDmhnw4JmsFn8isX0AYA7cT5q70HOkLc51iVIfwN2SOzD5HBBKwjbBI0ZEoK1S9G8teoc
-	8KXWVu5UhlOl459qwk8lTqDjT5LwShMnYNXaIf8CyyULcU0ohfGUZxqT4RHyca3uOUBBZyYqh1Z
-	23/+TMQQu6UvSoeddBNlU1qVPhxXsDJ391GnMPKkzsxz+NObQRh6
-X-Received: by 2002:a05:6000:2507:b0:3a5:2d42:aa17 with SMTP id ffacd0b85a97d-3a531cb8d5cmr13019350f8f.31.1749547376949;
-        Tue, 10 Jun 2025 02:22:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmVy0TpVqTgSVUJAT3JkKX5oH9S1rZn34gZVf6lBrJ9MwrctQLdZgmyQvMa7ZzoguEU3Xnog==
-X-Received: by 2002:a05:6000:2507:b0:3a5:2d42:aa17 with SMTP id ffacd0b85a97d-3a531cb8d5cmr13019319f8f.31.1749547376570;
-        Tue, 10 Jun 2025 02:22:56 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.57.104])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323b4e2fsm11748652f8f.36.2025.06.10.02.22.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 02:22:56 -0700 (PDT)
-Date: Tue, 10 Jun 2025 11:22:54 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
+	s=arc-20240116; t=1749547401; c=relaxed/simple;
+	bh=VGG7WeyDMC90Ngljj+ICrpnjdyYhEttx1JmQl42ojOw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BgfmC35eY9TCsA13IQtuL7emWf949KbYKgjr8C288ksTxu97mfIGxFOIVP8jEGBTeal4+1TeUpEqbnl5yRHKYbmFTxbuJ7mHeOXkRYG7j0iz2YVWPmal3pNkzBA5w25uvbe8SZQDtpUjsDY2Bz940EIMeNzVb6PewQ8fRp3IR6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMxHkg9+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B71AC4CEED;
+	Tue, 10 Jun 2025 09:23:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749547401;
+	bh=VGG7WeyDMC90Ngljj+ICrpnjdyYhEttx1JmQl42ojOw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iMxHkg9+73UkrFG8P2JYE1iB4yxAPmkrTfbyzqZDiNu9ZLaYcm+1B7Sf7DZbbSZGF
+	 +4nxsvVSBl3Mt3W8Hn/TUlHNjcOvN1jm0bu+4hqAxE2Agwnr71/icO2LjXvMOTmYsb
+	 k07YXVkYHL7BICmNcbrK9m+9vWmmcNh6ld0kxKkEtbSBYE8dPI67EWbuSy7Jr9TfMA
+	 pc8NtsSvrB6HjhfruEC5m1q8Ve/JDhv0H7B8WRI/gpwMhmjOOHFAFY6SG9uhCB/q9u
+	 +yqa9qv4J41M2Rl6Tj2/yq4CsOT1/53KuywQ2zaGqQgiB1blgizdandqMLuWsn9q0o
+	 vjeO1NBknqqcw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Eddie James <eajames@linux.vnet.ibm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH 9/9] sched/deadline: Allow deeper hierarchies of RT
- cgroups
-Message-ID: <aEf5bu-50HTXI-wa@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250605071412.139240-1-yurand2000@gmail.com>
- <20250605071412.139240-10-yurand2000@gmail.com>
+	llvm@lists.linux.dev
+Subject: [PATCH] hwmon: occ: rework attribute registration for stack usage
+Date: Tue, 10 Jun 2025 11:23:06 +0200
+Message-Id: <20250610092315.2640039-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250605071412.139240-10-yurand2000@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On 05/06/25 09:14, Yuri Andriaccio wrote:
-> From: luca abeni <luca.abeni@santannapisa.it>
-> 
-> Allow creation of cgroup hierachies with depth greater than two.
-> Add check to prevent attaching tasks to a child cgroup of an active cgroup (i.e.
-> with a running FIFO/RR task).
-> Add check to prevent attaching tasks to cgroups which have children with
-> non-zero runtime.
-> Update rt-cgroups allocated bandwidth accounting for nested cgroup hierachies.
-> 
-> Co-developed-by: Yuri Andriaccio <yurand2000@gmail.com>
-> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
-> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-> ---
->  kernel/sched/core.c     |  6 ----
->  kernel/sched/deadline.c | 69 ++++++++++++++++++++++++++++++++++-------
->  kernel/sched/rt.c       | 25 +++++++++++++--
->  kernel/sched/sched.h    |  2 +-
->  kernel/sched/syscalls.c |  4 +++
->  5 files changed, 84 insertions(+), 22 deletions(-)
+clang produces an output with excessive stack usage when building the
+occ_setup_sensor_attrs() function, apparently the result of having
+a lot of struct literals and building with the -fno-strict-overflow
+option that leads clang to skip some optimization in case the 'attr'
+pointer overruns:
 
-...
+drivers/hwmon/occ/common.c:775:12: error: stack frame size (1392) exceeds limit (1280) in 'occ_setup_sensor_attrs' [-Werror,-Wframe-larger-than]
 
-> @@ -434,24 +463,40 @@ int dl_init_tg(struct sched_dl_entity *dl_se, u64 rt_runtime, u64 rt_period)
->  	if (rt_period & (1ULL << 63))
->  		return 0;
->  
-> +	is_active_group = is_active_sched_group(tg);
-> +
->  	raw_spin_rq_lock_irq(rq);
->  	is_active = dl_se->my_q->rt.rt_nr_running > 0;
->  	old_runtime = dl_se->dl_runtime;
->  	dl_se->dl_runtime  = rt_runtime;
->  	dl_se->dl_period   = rt_period;
->  	dl_se->dl_deadline = dl_se->dl_period;
-> -	if (is_active) {
-> -		sub_running_bw(dl_se, dl_se->dl_rq);
-> -	} else if (dl_se->dl_non_contending) {
-> -		sub_running_bw(dl_se, dl_se->dl_rq);
-> -		dl_se->dl_non_contending = 0;
-> -		hrtimer_try_to_cancel(&dl_se->inactive_timer);
-> +	if (is_active_group) {
-> +		if (is_active) {
-> +			sub_running_bw(dl_se, dl_se->dl_rq);
-> +		} else if (dl_se->dl_non_contending) {
-> +			sub_running_bw(dl_se, dl_se->dl_rq);
-> +			dl_se->dl_non_contending = 0;
-> +			hrtimer_try_to_cancel(&dl_se->inactive_timer);
-> +		}
-> +		__sub_rq_bw(dl_se->dl_bw, dl_se->dl_rq);
-> +		dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-> +		__add_rq_bw(dl_se->dl_bw, dl_se->dl_rq);
-> +	} else {
-> +		dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-> +	}
-> +
-> +	// add/remove the parent's bw
-> +	if (tg->parent && tg->parent != &root_task_group)
-> +	{
-> +		if (rt_runtime == 0 && old_runtime != 0 && !sched_group_has_active_siblings(tg)) {
-> +			__add_rq_bw(tg->parent->dl_se[cpu]->dl_bw, dl_se->dl_rq);
-> +		} else if (rt_runtime != 0 && old_runtime == 0 && !sched_group_has_active_siblings(tg)) {
-> +			__sub_rq_bw(tg->parent->dl_se[cpu]->dl_bw, dl_se->dl_rq);
-> +		}
+Replace the custom macros for initializing the attributes with a
+simpler function call that does not run into this corner case.
 
-Don't we need to do something also when rt_runtime changes
-({in,de}creases) and old_runtime wasn't zero? Like for example giving a
-bit of bandwidth back to the parent if a child bandwidth is reduced, but
-not completely set to zero.
+Link: https://godbolt.org/z/Wf1Yx76a5
+Fixes: 54076cb3b5ff ("hwmon (occ): Add sensor attributes and register hwmon device")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/hwmon/occ/common.c | 212 +++++++++++++++----------------------
+ 1 file changed, 85 insertions(+), 127 deletions(-)
 
-Thanks,
-Juri
+diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
+index 36b3900218ce..b3694a4209b9 100644
+--- a/drivers/hwmon/occ/common.c
++++ b/drivers/hwmon/occ/common.c
+@@ -745,29 +745,30 @@ static ssize_t occ_show_extended(struct device *dev,
+ }
+ 
+ /*
+- * Some helper macros to make it easier to define an occ_attribute. Since these
+- * are dynamically allocated, we shouldn't use the existing kernel macros which
++ * A helper to make it easier to define an occ_attribute. Since these
++ * are dynamically allocated, we cannot use the existing kernel macros which
+  * stringify the name argument.
+  */
+-#define ATTR_OCC(_name, _mode, _show, _store) {				\
+-	.attr	= {							\
+-		.name = _name,						\
+-		.mode = VERIFY_OCTAL_PERMISSIONS(_mode),		\
+-	},								\
+-	.show	= _show,						\
+-	.store	= _store,						\
+-}
+-
+-#define SENSOR_ATTR_OCC(_name, _mode, _show, _store, _nr, _index) {	\
+-	.dev_attr	= ATTR_OCC(_name, _mode, _show, _store),	\
+-	.index		= _index,					\
+-	.nr		= _nr,						\
++static void occ_init_attribute(struct occ_attribute *attr, int mode,
++	ssize_t (*show)(struct device *dev, struct device_attribute *attr, char *buf),
++	ssize_t (*store)(struct device *dev, struct device_attribute *attr,
++				   const char *buf, size_t count),
++	int nr, int index, const char *fmt, ...)
++{
++	va_list args;
++
++	va_start(args, fmt);
++	vsnprintf(attr->name, sizeof(attr->name), fmt, args);
++	va_end(args);
++
++	attr->sensor.dev_attr.attr.name = attr->name;
++	attr->sensor.dev_attr.attr.mode = mode;
++	attr->sensor.dev_attr.show = show;
++	attr->sensor.dev_attr.store = store;
++	attr->sensor.index = index;
++	attr->sensor.nr = nr;
+ }
+ 
+-#define OCC_INIT_ATTR(_name, _mode, _show, _store, _nr, _index)		\
+-	((struct sensor_device_attribute_2)				\
+-		SENSOR_ATTR_OCC(_name, _mode, _show, _store, _nr, _index))
+-
+ /*
+  * Allocate and instatiate sensor_device_attribute_2s. It's most efficient to
+  * use our own instead of the built-in hwmon attribute types.
+@@ -853,14 +854,15 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 		sensors->extended.num_sensors = 0;
+ 	}
+ 
+-	occ->attrs = devm_kzalloc(dev, sizeof(*occ->attrs) * num_attrs,
++	occ->attrs = devm_kcalloc(dev, num_attrs, sizeof(*occ->attrs),
+ 				  GFP_KERNEL);
+ 	if (!occ->attrs)
+ 		return -ENOMEM;
+ 
+ 	/* null-terminated list */
+-	occ->group.attrs = devm_kzalloc(dev, sizeof(*occ->group.attrs) *
+-					num_attrs + 1, GFP_KERNEL);
++	occ->group.attrs = devm_kcalloc(dev, num_attrs + 1,
++					sizeof(*occ->group.attrs),
++					GFP_KERNEL);
+ 	if (!occ->group.attrs)
+ 		return -ENOMEM;
+ 
+@@ -870,43 +872,33 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 		s = i + 1;
+ 		temp = ((struct temp_sensor_2 *)sensors->temp.data) + i;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "temp%d_label", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_temp, NULL,
+-					     0, i);
++		occ_init_attribute(attr, 0444, show_temp, NULL,
++				   0, i, "temp%d_label", s);
+ 		attr++;
+ 
+ 		if (sensors->temp.version == 2 &&
+ 		    temp->fru_type == OCC_FRU_TYPE_VRM) {
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "temp%d_alarm", s);
++			occ_init_attribute(attr, 0444, show_temp, NULL,
++					   1, i, "temp%d_alarm", s);
+ 		} else {
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "temp%d_input", s);
++			occ_init_attribute(attr, 0444, show_temp, NULL,
++					   1, i, "temp%d_input", s);
+ 		}
+ 
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_temp, NULL,
+-					     1, i);
+ 		attr++;
+ 
+ 		if (sensors->temp.version > 1) {
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "temp%d_fru_type", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_temp, NULL, 2, i);
++			occ_init_attribute(attr, 0444, show_temp, NULL,
++					   2, i, "temp%d_fru_type", s);
+ 			attr++;
+ 
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "temp%d_fault", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_temp, NULL, 3, i);
++			occ_init_attribute(attr, 0444, show_temp, NULL,
++					   3, i, "temp%d_fault", s);
+ 			attr++;
+ 
+ 			if (sensors->temp.version == 0x10) {
+-				snprintf(attr->name, sizeof(attr->name),
+-					 "temp%d_max", s);
+-				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-							     show_temp, NULL,
+-							     4, i);
++				occ_init_attribute(attr, 0444, show_temp, NULL,
++						   4, i, "temp%d_max", s);
+ 				attr++;
+ 			}
+ 		}
+@@ -915,14 +907,12 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 	for (i = 0; i < sensors->freq.num_sensors; ++i) {
+ 		s = i + 1;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "freq%d_label", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_freq, NULL,
+-					     0, i);
++		occ_init_attribute(attr, 0444, show_freq, NULL,
++				   0, i, "freq%d_label", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "freq%d_input", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_freq, NULL,
+-					     1, i);
++		occ_init_attribute(attr, 0444, show_freq, NULL,
++				   1, i, "freq%d_input", s);
+ 		attr++;
+ 	}
+ 
+@@ -938,32 +928,24 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 			s = (i * 4) + 1;
+ 
+ 			for (j = 0; j < 4; ++j) {
+-				snprintf(attr->name, sizeof(attr->name),
+-					 "power%d_label", s);
+-				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-							     show_power, NULL,
+-							     nr++, i);
++				occ_init_attribute(attr, 0444, show_power,
++						   NULL, nr++, i,
++						   "power%d_label", s);
+ 				attr++;
+ 
+-				snprintf(attr->name, sizeof(attr->name),
+-					 "power%d_average", s);
+-				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-							     show_power, NULL,
+-							     nr++, i);
++				occ_init_attribute(attr, 0444, show_power,
++						   NULL, nr++, i,
++						   "power%d_average", s);
+ 				attr++;
+ 
+-				snprintf(attr->name, sizeof(attr->name),
+-					 "power%d_average_interval", s);
+-				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-							     show_power, NULL,
+-							     nr++, i);
++				occ_init_attribute(attr, 0444, show_power,
++						   NULL, nr++, i,
++						   "power%d_average_interval", s);
+ 				attr++;
+ 
+-				snprintf(attr->name, sizeof(attr->name),
+-					 "power%d_input", s);
+-				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-							     show_power, NULL,
+-							     nr++, i);
++				occ_init_attribute(attr, 0444, show_power,
++						   NULL, nr++, i,
++						   "power%d_input", s);
+ 				attr++;
+ 
+ 				s++;
+@@ -975,28 +957,20 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 		for (i = 0; i < sensors->power.num_sensors; ++i) {
+ 			s = i + 1;
+ 
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "power%d_label", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_power, NULL, 0, i);
++			occ_init_attribute(attr, 0444, show_power, NULL,
++					   0, i, "power%d_label", s);
+ 			attr++;
+ 
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "power%d_average", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_power, NULL, 1, i);
++			occ_init_attribute(attr, 0444, show_power, NULL,
++					   1, i, "power%d_average", s);
+ 			attr++;
+ 
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "power%d_average_interval", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_power, NULL, 2, i);
++			occ_init_attribute(attr, 0444, show_power, NULL,
++					   2, i, "power%d_average_interval", s);
+ 			attr++;
+ 
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "power%d_input", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_power, NULL, 3, i);
++			occ_init_attribute(attr, 0444, show_power, NULL,
++					   3, i, "power%d_input", s);
+ 			attr++;
+ 		}
+ 
+@@ -1004,56 +978,43 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 	}
+ 
+ 	if (sensors->caps.num_sensors >= 1) {
+-		snprintf(attr->name, sizeof(attr->name), "power%d_label", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
+-					     0, 0);
++		occ_init_attribute(attr, 0444, show_caps, NULL,
++				   0, 0, "power%d_label", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "power%d_cap", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
+-					     1, 0);
++		occ_init_attribute(attr, 0444, show_caps, NULL,
++				   1, 0, "power%d_cap", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "power%d_input", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
+-					     2, 0);
++		occ_init_attribute(attr, 0444, show_caps, NULL,
++				   2, 0, "power%d_input", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name),
+-			 "power%d_cap_not_redundant", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
+-					     3, 0);
++		occ_init_attribute(attr, 0444, show_caps, NULL,
++				   3, 0, "power%d_cap_not_redundant", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "power%d_cap_max", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
+-					     4, 0);
++		occ_init_attribute(attr, 0444, show_caps, NULL,
++				   4, 0, "power%d_cap_max", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "power%d_cap_min", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444, show_caps, NULL,
+-					     5, 0);
++		occ_init_attribute(attr, 0444, show_caps, NULL,
++				   5, 0, "power%d_cap_min", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "power%d_cap_user",
+-			 s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0644, show_caps,
+-					     occ_store_caps_user, 6, 0);
++		occ_init_attribute(attr, 0644, show_caps, occ_store_caps_user,
++				   6, 0, "power%d_cap_user", s);
+ 		attr++;
+ 
+ 		if (sensors->caps.version > 1) {
+-			snprintf(attr->name, sizeof(attr->name),
+-				 "power%d_cap_user_source", s);
+-			attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-						     show_caps, NULL, 7, 0);
++			occ_init_attribute(attr, 0444, show_caps, NULL,
++					   7, 0, "power%d_cap_user_source", s);
+ 			attr++;
+ 
+ 			if (sensors->caps.version > 2) {
+-				snprintf(attr->name, sizeof(attr->name),
+-					 "power%d_cap_min_soft", s);
+-				attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-							     show_caps, NULL,
+-							     8, 0);
++				occ_init_attribute(attr, 0444, show_caps, NULL,
++						   8, 0,
++						   "power%d_cap_min_soft", s);
+ 				attr++;
+ 			}
+ 		}
+@@ -1062,19 +1023,16 @@ static int occ_setup_sensor_attrs(struct occ *occ)
+ 	for (i = 0; i < sensors->extended.num_sensors; ++i) {
+ 		s = i + 1;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "extn%d_label", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-					     occ_show_extended, NULL, 0, i);
++		occ_init_attribute(attr, 0444, occ_show_extended, NULL,
++				   0, i, "extn%d_label", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "extn%d_flags", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-					     occ_show_extended, NULL, 1, i);
++		occ_init_attribute(attr, 0444, occ_show_extended, NULL,
++				   1, i, "extn%d_flags", s);
+ 		attr++;
+ 
+-		snprintf(attr->name, sizeof(attr->name), "extn%d_input", s);
+-		attr->sensor = OCC_INIT_ATTR(attr->name, 0444,
+-					     occ_show_extended, NULL, 2, i);
++		occ_init_attribute(attr, 0444, occ_show_extended, NULL,
++				   2, i, "extn%d_input", s);
+ 		attr++;
+ 	}
+ 
+-- 
+2.39.5
 
 
