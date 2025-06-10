@@ -1,118 +1,95 @@
-Return-Path: <linux-kernel+bounces-679213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FFCAD3370
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:21:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5999EAD3355
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588B63A1CAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3532F1896083
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E7C28CF4A;
-	Tue, 10 Jun 2025 10:21:11 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D9328C031;
+	Tue, 10 Jun 2025 10:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNxX638I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3934028BA8E;
-	Tue, 10 Jun 2025 10:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F8025D8F5;
+	Tue, 10 Jun 2025 10:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749550871; cv=none; b=qvRfdc9Xzh9ixNFLPrYRSHGzFEpu/uds0in/L5kSEZdXIcK85ejwHxVT/0SXNez7rvNTjyJYaj0pVUvlououXrM60lZ8XOkn4G4yQL+HAAz70cPU2vPXvIFELzL+pdoAQRioGkOfpPhwfAhF7p6pulAfLgpEfgr7aY9kemcLrbg=
+	t=1749550363; cv=none; b=Iz5UJ7pxhBcXJvBkdRwV8N3SAj2v1JDOllcnVUBKYtUydI6U7HCTHITUHPYEopDB9rrqJnMQIBbVmjXJCeYFiBZEsfZzmOYN3uyPJfwxX8N/c8qHZSbrBEXGlmGVnmpfi6qBpTKvodVvtbmodr9aaGNNO70jsefxrXdjYF3+5wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749550871; c=relaxed/simple;
-	bh=hqWQJI8onacjvRQEHq0SbLndXC4pMKKuCP3ZO9UJkJg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P3VPRlfo6bQ4f1QK93TR5d6OKSgDS7z1it059ibtlxNM3xTS41AcHyhrao5q/pWjDHISL8rHKATPumadHCdy2Dct+eTfXpRnctvBXSkf8qefHFxWBcu29KUP5O+1lsLOfvmoxyxnFZzWc2EWiGemHip3/d+jx9tWTCRMdxA9VsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.2])
-	by APP-05 (Coremail) with SMTP id zQCowADXJRQjBUhoCfqKBQ--.1934S6;
-	Tue, 10 Jun 2025 18:12:52 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 4/4] raid6: test: Add support for RISC-V
-Date: Tue, 10 Jun 2025 18:12:34 +0800
-Message-Id: <20250610101234.1100660-5-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250610101234.1100660-1-zhangchunyan@iscas.ac.cn>
-References: <20250610101234.1100660-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1749550363; c=relaxed/simple;
+	bh=ST5N4y7efa3WI81pyAb9EfnKKmnc6+2XM1s9J2ylets=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=NQz82sCuU6z8QgM5//XGLTdvPkpLhlGElZFctt6nUiCLxVNfYwREZfsAIrAOaBa/fYiS6JrQVRcicdfVnM8LFD8mb1nTnnym1nW+hjAfY8roEbhzlafna7g1T6elCBDnN0yGV4YNMFki+p51o5wU88Nd/OIGE58EDGDB8bU6TWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNxX638I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5B36C4CEED;
+	Tue, 10 Jun 2025 10:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749550363;
+	bh=ST5N4y7efa3WI81pyAb9EfnKKmnc6+2XM1s9J2ylets=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=GNxX638ICb6jA3ELDYkyk1s7ytMLGeQ8sQ1q+WnmBdHE0FHZeqPPV30patlKk4h3W
+	 Q7La763WOAZo37Ae1wurznNwOd521J9iYShUqkx7boJ960f/U7Vcsr8x1UF4TsHtGX
+	 DpeV/5AH3Z8eQFuiv2AnZU6sdDqBEME3Q3Djt0SLtCvCWKCk6b8IABBhUxYStwdJCB
+	 5KZaf85Gd2aYMnXlrgxBaoPkQETCfw5Q2GDIkQEDp0OT01bDvQROABLvAvnfWpRipA
+	 I/Lh2T81rYpxt92Xq5FGmG0FPcWrqaTneDOpcKrpQOGxf15rVIH3Spk2ND9Hhp4rsh
+	 2aPg25kRyu4yQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADXJRQjBUhoCfqKBQ--.1934S6
-X-Coremail-Antispam: 1UD129KBjvdXoWrurW8tr17GryUAF1kXF48tFb_yoWkCrc_Ca
-	4Ikr92qr4xXay09anrZr9ayrs5Ar43tr1rC34rXr13JF17Kw1aga1UX3W3CFWYva15WayS
-	9FWrZF18Z34jqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbB8YjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7
-	IE14v26r126s0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0
-	c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2
-	IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280
-	aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzV
-	Aqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_AcC_ZcWlOx8S
-	6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mx
-	kF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8twCF04k20xvY0x0EwIxGrwCFx2IqxVCF
-	s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
-	1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
-	JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rV
-	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4U
-	JbIYCTnIWIevJa73UjIFyTuYvjxU7FksDUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAcJB2hH3zHDsgAAs1
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 10 Jun 2025 12:12:35 +0200
+Message-Id: <DAIRU9INPO8A.1PLCLKFJJGODH@kernel.org>
+Cc: "Guilherme Giacomo Simoes" <trintaeoitogc@gmail.com>,
+ <rafael@kernel.org>, <viresh.kumar@linaro.org>, <dakr@kernel.org>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <mcgrof@kernel.org>, <russ.weight@linux.dev>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <leitao@debian.org>,
+ <gregkh@linuxfoundation.org>, <david.m.ertman@intel.com>,
+ <ira.weiny@intel.com>, <leon@kernel.org>, <fujita.tomonori@gmail.com>,
+ <tamird@gmail.com>, <igor.korotin.linux@gmail.com>,
+ <walmeida@microsoft.com>, <anisse@astier.eu>, <linux-pm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH] rust: module: remove deprecated author key
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250609122200.179307-1-trintaeoitogc@gmail.com>
+ <DAIQ9342ZFYD.3VQVI80A18HKX@kernel.org>
+ <CANiq72kC1j-kprAQ5WU0QVV_zhyKfDPJ_M5E9xZ+8+fxt4R6qQ@mail.gmail.com>
+In-Reply-To: <CANiq72kC1j-kprAQ5WU0QVV_zhyKfDPJ_M5E9xZ+8+fxt4R6qQ@mail.gmail.com>
 
-From: Chunyan Zhang <zhang.lyra@gmail.com>
+On Tue Jun 10, 2025 at 12:03 PM CEST, Miguel Ojeda wrote:
+> On Tue, Jun 10, 2025 at 10:58=E2=80=AFAM Benno Lossin <lossin@kernel.org>=
+ wrote:
+>>
+>> Unrelated to this change, I think we should add email addresses to
+>> people in authors. Possibly enforce it by scanning each author element
+>> and checking if there is an email address.
+>
+> Sounds good to me, but I am not sure if it is possible in all cases.
+>
+> At least looking at C, there are company names too.
+>
+> I even saw a URL...
 
-Add RISC-V code to be compiled to allow the userspace raid6test program
-to be built and run on RISC-V.
+Hmm, I guess a checkpatch lint fits better then?
 
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
 ---
- lib/raid6/test/Makefile | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-index 8f2dd2210ba8..09bbe2b14cce 100644
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@ -35,6 +35,11 @@ ifeq ($(ARCH),aarch64)
-         HAS_NEON = yes
- endif
- 
-+ifeq ($(findstring riscv,$(ARCH)),riscv)
-+        CFLAGS += -I../../../arch/riscv/include -DCONFIG_RISCV=1
-+        HAS_RVV = yes
-+endif
-+
- ifeq ($(findstring ppc,$(ARCH)),ppc)
-         CFLAGS += -I../../../arch/powerpc/include
-         HAS_ALTIVEC := $(shell printf '$(pound)include <altivec.h>\nvector int a;\n' |\
-@@ -63,6 +68,9 @@ else ifeq ($(HAS_ALTIVEC),yes)
-                 vpermxor1.o vpermxor2.o vpermxor4.o vpermxor8.o
- else ifeq ($(ARCH),loongarch64)
-         OBJS += loongarch_simd.o recov_loongarch_simd.o
-+else ifeq ($(HAS_RVV),yes)
-+        OBJS   += rvv.o recov_rvv.o
-+        CFLAGS += -DCONFIG_RISCV_ISA_V=1
- endif
- 
- .c.o:
--- 
-2.34.1
-
+Cheers,
+Benno
 
