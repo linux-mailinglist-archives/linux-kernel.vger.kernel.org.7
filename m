@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-679822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095AEAD3C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:11:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338D2AD3C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295A63B011E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413CA1BA125E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB017238144;
-	Tue, 10 Jun 2025 15:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ecjaHnOM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4A4235079;
+	Tue, 10 Jun 2025 15:05:19 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1192376EC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43069225A5B;
+	Tue, 10 Jun 2025 15:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567927; cv=none; b=lLO0f3rqTAtz3w5bWPomWuWQjLFvnbFNIb7FDORs8dJvbNXdhfbbW0mSfv/sZwTvdVvkil6ghkdML+ojdqCaNJ/ZtoLMY+W2wwYqlPXyvKr3HkguglxJhaqdlQcHiM7INH5C0AfhU8PltViQ+LwZWIfopAj/8wxCBEJP5YB6oqI=
+	t=1749567919; cv=none; b=CpNWt5LNif7d4IcEvWySIfH30V0NZPx1q+QdWMiMC4bWjOKM0c5ffLWMVbsoV1TpqZBDk3c9e33sDhaJNKrEazcpPje65MBVPSLRnUwRZ0b8+CxHk+sl1n5igtvX0OZPlOuOBhwxJ7uIfdp0AYMriFYDuHuWxOFi+mg6EceE9ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567927; c=relaxed/simple;
-	bh=njxByE+IBJtYYpjF0D0YGgtFyj7awC2eF8EPiUEWGqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Hye+LT1a0T23ke4e5hCe4TpeRw6peOWay246kUvuoub+Iuo9llVEQIB89C7M4cwfd/F8kb3HPeB0jvah/yKpKfxcHfkZ5p2X/NJ5hBiYycfCq3XBpXGqZmVBHIKLO/ZlA1HT9nHdufA2JhOyKY4E8Qmj1Rep1COAfhGUs119ntA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ecjaHnOM; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749567926; x=1781103926;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=njxByE+IBJtYYpjF0D0YGgtFyj7awC2eF8EPiUEWGqs=;
-  b=ecjaHnOM2q+qrweE5Ywqg0jUtUR8HOz9d76Pd5S5rWNaM79osw+2dfoY
-   1te66LklqB5WpZ+jkBe5rU9LQg8JfJFsYD3cPN2Ag8lzPSmhz4RoKVvvK
-   KJ6g7ng37FDsC7aPP6CaC00HTawLA6Xb49NmDftIlBPp6ODvi7DzT3x9h
-   ik2oMT00wA+r4W984SHBioh8bdGD6nIHSCb7EbNrR077x3QKgnELJyWgN
-   PAenJqWxqQNg/xJMRiU3k/R6UTX9cIDjCVXbKLJ0M6oOfDWtcmhSkLHuu
-   h/PfTuCsP7JBB5Z09t+eB84noNSXLVdEm9zDczhcumKHvQcpPWkxu7Py5
-   A==;
-X-CSE-ConnectionGUID: nYsLjz5PSbCw/3iWdWHd5g==
-X-CSE-MsgGUID: 9p3Zl6doRjC5MmAtzYR/ug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="77087503"
-X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
-   d="scan'208";a="77087503"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 08:05:25 -0700
-X-CSE-ConnectionGUID: 2bO0S9tcRZuac0ai5ES5vQ==
-X-CSE-MsgGUID: fTNG/fZOQvKYGuTh1S8mHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
-   d="scan'208";a="147799197"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 10 Jun 2025 08:05:24 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uP0XR-0008NC-2J;
-	Tue, 10 Jun 2025 15:05:21 +0000
-Date: Tue, 10 Jun 2025 23:04:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Leo Yan <leo.yan@arm.com>
-Subject: drivers/hwtracing/coresight/coresight-syscfg.c:398
- cscfg_remove_owned_csdev_configs() warn: inconsistent indenting
-Message-ID: <202506102238.XQfScl5x-lkp@intel.com>
+	s=arc-20240116; t=1749567919; c=relaxed/simple;
+	bh=fgyqr2VSwZft01wwmePX/9fb8MG0zuAyG3Xa6crGPW8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ffGCBSD3n0P2UBnjn6Xb1JQpo/t5BPlAQxZMD7gJCR0NgaA0SQ/D/moX89+sCd41vvjPao/TkiIBK67+r5KsLG3/wzFguDhDhbkd5dPpmwpEK1S5AEjKzLUVNEKNFnDqMbj0OkWbDO9dtgmjxDNgJYQlh/7vGvoOPtpBqN/iQYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
+ (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 17:05:15 +0200
+Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
+ S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
+ 15.01.2507.039; Tue, 10 Jun 2025 17:05:15 +0200
+From: John Ernberg <john.ernberg@actia.se>
+To: Xu Yang <xu.yang_2@nxp.com>
+CC: Shawn Guo <shawnguo2@yeah.net>, Peter Chen <peter.chen@kernel.org>, "Shawn
+ Guo" <shawnguo@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: i.MX kernel hangup caused by chipidea USB gadget driver
+Thread-Topic: i.MX kernel hangup caused by chipidea USB gadget driver
+Thread-Index: AQHb2Uk8r5zPXewyY0SsDNZZa8wLobP8IguAgAA7/4A=
+Date: Tue, 10 Jun 2025 15:05:15 +0000
+Message-ID: <4fc6ec7a-ab2d-4b2c-b1f7-7902010c8682@actia.se>
+References: <aEZxmlHmjeWcXiF3@dragon>
+ <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
+ <aEbstxkQmji4tfjf@w447anl.localdomain>
+ <k6j2za47cp4ccyfkevwpx2x5s4bjrxxqhqvteyspbf2n7yxcff@ccztqeuhn2di>
+In-Reply-To: <k6j2za47cp4ccyfkevwpx2x5s4bjrxxqhqvteyspbf2n7yxcff@ccztqeuhn2di>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-esetresult: clean, is OK
+x-esetid: 37303A2955B14453627660
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6142381A428FC447986A4F4CDC66E534@actia.se>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   f09079bd04a924c72d555cd97942d5f8d7eca98c
-commit: 53b9e2659719b04f5ba7593f2af0f2335f75e94a coresight: holding cscfg_csdev_lock while removing cscfg from csdev
-date:   3 weeks ago
-config: arm-randconfig-r073-20250610 (https://download.01.org/0day-ci/archive/20250610/202506102238.XQfScl5x-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506102238.XQfScl5x-lkp@intel.com/
-
-smatch warnings:
-drivers/hwtracing/coresight/coresight-syscfg.c:398 cscfg_remove_owned_csdev_configs() warn: inconsistent indenting
-
-vim +398 drivers/hwtracing/coresight/coresight-syscfg.c
-
-   390	
-   391	static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, void *load_owner)
-   392	{
-   393		struct cscfg_config_csdev *config_csdev, *tmp;
-   394	
-   395		if (list_empty(&csdev->config_csdev_list))
-   396			return;
-   397	
- > 398	  guard(raw_spinlock_irqsave)(&csdev->cscfg_csdev_lock);
-   399	
-   400		list_for_each_entry_safe(config_csdev, tmp, &csdev->config_csdev_list, node) {
-   401			if (config_csdev->config_desc->load_owner == load_owner)
-   402				list_del(&config_csdev->node);
-   403		}
-   404	}
-   405	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+SGkgWHUsDQoNCk9uIDYvMTAvMjUgMTozMCBQTSwgWHUgWWFuZyB3cm90ZToNCj4gSGkgSm9obiwN
+Cj4gDQo+IE9uIE1vbiwgSnVuIDA5LCAyMDI1IGF0IDAyOjE3OjMwUE0gKzAwMDAsIEpvaG4gRXJu
+YmVyZyB3cm90ZToNCj4+IEhpIFNoYXduLCBYdSwNCj4+DQo+PiBPbiBNb24sIEp1biAwOSwgMjAy
+NSBhdCAwNzo1MzoyMlBNICswODAwLCBYdSBZYW5nIHdyb3RlOg0KPj4+IEhpIFNoYXduLA0KPj4+
+DQo+Pj4gVGhhbmtzIGZvciB5b3VyIHJlcG9ydHMhDQo+Pj4NCj4+PiBPbiBNb24sIEp1biAwOSwg
+MjAyNSBhdCAwMTozMTowNlBNICswODAwLCBTaGF3biBHdW8gd3JvdGU6DQo+Pj4+IEhpIFh1LCBQ
+ZXRlciwNCj4+Pj4NCj4+Pj4gSSdtIHNlZWluZyBhIGtlcm5lbCBoYW5ndXAgb24gaW14OG1tLWV2
+ayBib2FyZC4gIEl0IGhhcHBlbnMgd2hlbjoNCj4+Pj4NCj4+Pj4gICAtIFVTQiBnYWRnZXQgaXMg
+ZW5hYmxlZCBhcyBFdGhlcm5ldA0KPj4+PiAgIC0gVGhlcmUgaXMgZGF0YSB0cmFuc2ZlciBvdmVy
+IFVTQiBFdGhlcm5ldA0KPj4+PiAgIC0gRGV2aWNlIGlzIGdvaW5nIGluL291dCBzdXNwZW5kDQo+
+Pj4+DQo+Pj4+IEEgc2ltcGxlIHdheSB0byByZXByb2R1Y2UgdGhlIGlzc3VlIGNvdWxkIGJlOg0K
+Pj4+Pg0KPj4+PiAgIDEuIENvcHkgYSBiaWcgZmlsZSAobGlrZSA1MDBNQikgZnJvbSBob3N0IFBD
+IHRvIGRldmljZSB3aXRoIHNjcA0KPj4+Pg0KPj4+PiAgIDIuIFdoaWxlIHRoZSBmaWxlIGNvcHkg
+aXMgb25nb2luZywgc3VzcGVuZCAmIHJlc3VtZSB0aGUgZGV2aWNlIGxpa2U6DQo+Pj4+DQo+Pj4+
+ICAgICAgJCBlY2hvICszID4gL3N5cy9jbGFzcy9ydGMvcnRjMC93YWtlYWxhcm07IGVjaG8gbWVt
+ID4gL3N5cy9wb3dlci9zdGF0ZQ0KPj4+Pg0KPj4+PiAgIDMuIFRoZSBkZXZpY2Ugd2lsbCBoYW5n
+IHVwIHRoZXJlDQo+Pj4+DQo+Pj4+IEkgcmVwcm9kdWNlZCBvbiB0aGUgZm9sbG93aW5nIGtlcm5l
+bHM6DQo+Pj4+DQo+Pj4+ICAgLSBNYWlubGluZSBrZXJuZWwNCj4+Pj4gICAtIE5YUCBrZXJuZWwg
+bGYtNi42LnkNCj4+Pj4gICAtIE5YUCBrZXJuZWwgbGYtNi4xMi55DQo+Pj4+DQo+Pj4+IEJ1dCBO
+WFAga2VybmVsIGxmLTYuMS55IGRvZXNuJ3QgaGF2ZSB0aGlzIHByb2JsZW0uICBJIHRyYWNrZWQg
+aXQgZG93biB0bw0KPj4+PiBQZXRlcidzIGNvbW1pdCBbMV0gb24gbGYtNi4xLnksIGFuZCBmb3Vu
+ZCB0aGF0IHRoZSBnYWRnZXQgZGlzY29ubmVjdCAmDQo+Pj4+IGNvbm5lY3QgY2FsbHMgZ290IGxv
+c3QgZnJvbSBzdXNwZW5kICYgcmVzdW1lIGhvb2tzLCB3aGVuIHRoZSBjb21taXQgd2VyZQ0KPj4+
+PiBzcGxpdCBhbmQgcHVzaGVkIHVwc3RyZWFtLiAgSSBjb25maXJtIHRoYXQgYWRkaW5nIHRoZSBj
+YWxscyBiYWNrIGZpeGVzDQo+Pj4+IHRoZSBoYW5ndXAuDQo+Pg0KPj4gV2UgcHJvYmFibHkgcmFu
+IGludG8gdGhlIHNhbWUgcHJvYmxlbSB0cnlpbmcgdG8gYnJpbmcgb25ib2FyZCA2LjEyLCBnb2lu
+Zw0KPj4gZnJvbSA2LjEsIG9uIGlNWDhRWFAuIEkgbWFuYWdlZCB0byB0cmFjZSB0aGUgaGFuZyB0
+byBFUCBwcmltaW5nIHRocm91Z2ggYQ0KPj4gY29tYmluYXRpb24gb2YgZGVidWcgdHJhY2luZyBh
+bmQgQlVHX09OIGV4cGVyaW1lbnRzLiBTZWUgaWYgaXQgc3RhcnRzDQo+PiBzcGxhdGluIHdpdGgg
+dGhlIGJlbG93IGNoYW5nZS4NCj4+DQo+PiAtLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0t
+LS0tLS0tDQo+Pg0KPj4gPkZyb20gMDkyNTk5YWI2ZjllMjA0MTJhN2NhMWViMTE4ZGQyYmU4MGNk
+MThmZiBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDENCj4+IEZyb206IEpvaG4gRXJuYmVyZyA8am9o
+bi5lcm5iZXJnQGFjdGlhLnNlPg0KPj4gRGF0ZTogTW9uLCA1IE1heSAyMDI1IDA5OjA5OjAxICsw
+MjAwDQo+PiBTdWJqZWN0OiBbUEFUQ0hdIFVTQjogY2k6IGdhZGdldDogUGFuaWMgaWYgcHJpbWlu
+ZyB3aGVuIGdhZGdldCBvZmYNCj4+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy91c2IvY2hpcGlkZWEv
+dWRjLmMgfCA0ICsrKy0NCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9jaGlwaWRlYS91ZGMu
+YyBiL2RyaXZlcnMvdXNiL2NoaXBpZGVhL3VkYy5jDQo+PiBpbmRleCAyZmVhMjYzYTVlMzAuLjU0
+NGFhNGZhMmQxZCAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL3VkYy5jDQo+
+PiArKysgYi9kcml2ZXJzL3VzYi9jaGlwaWRlYS91ZGMuYw0KPj4gQEAgLTIwMyw4ICsyMDMsMTAg
+QEAgc3RhdGljIGludCBod19lcF9wcmltZShzdHJ1Y3QgY2lfaGRyYyAqY2ksIGludCBudW0sIGlu
+dCBkaXIsIGludCBpc19jdHJsKQ0KPj4NCj4+ICAgICAgaHdfd3JpdGUoY2ksIE9QX0VORFBUUFJJ
+TUUsIH4wLCBCSVQobikpOw0KPj4NCj4+IC0gICB3aGlsZSAoaHdfcmVhZChjaSwgT1BfRU5EUFRQ
+UklNRSwgQklUKG4pKSkNCj4+ICsgICB3aGlsZSAoaHdfcmVhZChjaSwgT1BfRU5EUFRQUklNRSwg
+QklUKG4pKSkgew0KPj4gICAgICAgICAgY3B1X3JlbGF4KCk7DQo+PiArICAgICAgIEJVR19PTihk
+aXIgPT0gVFggJiYgIWh3X3JlYWQoY2ksIE9QX0VORFBUQ1RSTCArIG51bSwgRU5EUFRDVFJMX1RY
+RSkpOw0KPj4gKyAgIH0NCj4+ICAgICAgaWYgKGlzX2N0cmwgJiYgZGlyID09IFJYICYmIGh3X3Jl
+YWQoY2ksIE9QX0VORFBUU0VUVVBTVEFULCBCSVQobnVtKSkpDQo+PiAgICAgICAgICByZXR1cm4g
+LUVBR0FJTjsNCj4+DQo+PiAtLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tDQo+
+Pg0KPj4gT24gdGhlIGlNWDhRWFAgeW91IG1heSBhZGRpdGlvbmFsbHkgcnVuIGludG8gYXN5Y2hy
+b25vdXMgYWJvcnRzIGFuZCBTRXJyb3INCj4+IGR1ZSB0byByZXNvdXJjZSBiZWluZyBkaXNhYmxl
+ZC4NCj4+DQo+Pj4+DQo+Pj4+IC0tLTg8LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4+Pj4NCj4+Pj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL3VkYy5jIGIvZHJpdmVycy91c2IvY2hp
+cGlkZWEvdWRjLmMNCj4+Pj4gaW5kZXggOGE5YjMxZmQ1Yzg5Li43MjMyOWE3ZWFjNGQgMTAwNjQ0
+DQo+Pj4+IC0tLSBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL3VkYy5jDQo+Pj4+ICsrKyBiL2RyaXZl
+cnMvdXNiL2NoaXBpZGVhL3VkYy5jDQo+Pj4+IEBAIC0yMzc0LDYgKzIzNzQsOSBAQCBzdGF0aWMg
+dm9pZCB1ZGNfc3VzcGVuZChzdHJ1Y3QgY2lfaGRyYyAqY2kpDQo+Pj4+ICAgICAgICAgICAqLw0K
+Pj4+PiAgICAgICAgICBpZiAoaHdfcmVhZChjaSwgT1BfRU5EUFRMSVNUQUREUiwgfjApID09IDAp
+DQo+Pj4+ICAgICAgICAgICAgICAgICAgaHdfd3JpdGUoY2ksIE9QX0VORFBUTElTVEFERFIsIH4w
+LCB+MCk7DQo+Pj4+ICsNCj4+Pj4gKyAgICAgICBpZiAoY2ktPmRyaXZlciAmJiBjaS0+dmJ1c19h
+Y3RpdmUgJiYgKGNpLT5nYWRnZXQuc3RhdGUgIT0gVVNCX1NUQVRFX1NVU1BFTkRFRCkpDQo+Pj4+
+ICsgICAgICAgICAgICAgICB1c2JfZ2FkZ2V0X2Rpc2Nvbm5lY3QoJmNpLT5nYWRnZXQpOw0KPj4+
+PiAgIH0NCj4+Pj4NCj4+Pj4gICBzdGF0aWMgdm9pZCB1ZGNfcmVzdW1lKHN0cnVjdCBjaV9oZHJj
+ICpjaSwgYm9vbCBwb3dlcl9sb3N0KQ0KPj4+PiBAQCAtMjM4NCw2ICsyMzg3LDkgQEAgc3RhdGlj
+IHZvaWQgdWRjX3Jlc3VtZShzdHJ1Y3QgY2lfaGRyYyAqY2ksIGJvb2wgcG93ZXJfbG9zdCkNCj4+
+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBPVEdTQ19CU1ZJUyB8
+IE9UR1NDX0JTVklFKTsNCj4+Pj4gICAgICAgICAgICAgICAgICBpZiAoY2ktPnZidXNfYWN0aXZl
+KQ0KPj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAgdXNiX2dhZGdldF92YnVzX2Rpc2Nvbm5l
+Y3QoJmNpLT5nYWRnZXQpOw0KPj4+PiArICAgICAgIH0gZWxzZSB7DQo+Pj4+ICsgICAgICAgICAg
+ICAgICBpZiAoY2ktPmRyaXZlciAmJiBjaS0+dmJ1c19hY3RpdmUpDQo+Pj4+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIHVzYl9nYWRnZXRfY29ubmVjdCgmY2ktPmdhZGdldCk7DQo+Pj4+ICAgICAg
+ICAgIH0NCj4+Pj4NCj4+Pj4gICAgICAgICAgLyogUmVzdG9yZSB2YWx1ZSAwIGlmIGl0IHdhcyBz
+ZXQgZm9yIHBvd2VyIGxvc3QgY2hlY2sgKi8NCj4+Pj4NCj4+Pj4gLS0tLT44LS0tLS0tLS0tLS0t
+LS0tLS0tDQo+IA0KPiBEb2VzIGFib3ZlIGNoYW5nZSB3b3JrIGZvciB5b3U/DQoNCkkgaG9wZSB0
+byBhbGxvY2F0ZSBzb21lIHRpbWUgdG8gdGVzdCB0aGlzIGluIHRoZSBuZXh0IGZldyBkYXlzLg0K
+DQpCZXN0IHJlZ2FyZHMgLy8gSm9obiBFcm5iZXJn
 
