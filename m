@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-680226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D920FAD422E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0004AD4236
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA597A2FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C68188D002
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DFD248F7A;
-	Tue, 10 Jun 2025 18:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D461248F76;
+	Tue, 10 Jun 2025 18:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCBRTcB8"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PfQ5/WbF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F81242D90;
-	Tue, 10 Jun 2025 18:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3022472B9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 18:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749581292; cv=none; b=iuzg2BNzKoxFD+A+bHThP/CynT7/vQjqTTOXiAtKYZAS1PjlC2Vju0VLs0BZRbzlUPwRn/24lZ0UA1MPNckMx0gxHV0v+8TbD5sylTC0PEvkOGgVmueWa8BGafZ4IzrCQNEIqPE8B/W2pS7032YMvhXuNnrS1/XANd/kJ1T7hhY=
+	t=1749581318; cv=none; b=t/sfRW+Z/fzZVIcPfs1Anz9gbJ83eV9Ybjb0k+eubIkQ9RIWgnENnIvQHk6degTVJ8ta3nzHwut0fM+fEZvoL4ingeQ0zy5UAWnLjyJgJFJ4mfmrYwGgYag6ML5hmaYX8zt/0Jmbn0KDRaUKthJlQEA/cue7UKSlawNgD0B96b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749581292; c=relaxed/simple;
-	bh=JX4mrNACU5QqiYMm/oWkTJ9YOn7pmJRNtKmkF02gE2o=;
+	s=arc-20240116; t=1749581318; c=relaxed/simple;
+	bh=JdYBANVXTPzIVDhBJ340XB4Orydp/8+n8ekFirtZGg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ih6ln+VxQqVgijvH0k92EUopnXEaRElE7Mc07jK/1HIL2ZAWVHwnIRklm9ccNQZwseZfFtK9NFodQH/wheYcQ2mDoSWPi4elQMyq55PbL0XYBMpWxI0J/mogYF0NVD84s1BVuv/3salgxp/qNaYSFim6CvbHTJglDFPN/xK4TNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCBRTcB8; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-530807a856fso78909e0c.0;
-        Tue, 10 Jun 2025 11:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749581289; x=1750186089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JX4mrNACU5QqiYMm/oWkTJ9YOn7pmJRNtKmkF02gE2o=;
-        b=XCBRTcB8+aan9m2kfZIbbYM6I/NQpx0ui1c7NPkczX6Qd75030T0GZKaWxkEO0qUUR
-         gJLlmYIwQuy2ibQ99pljBgSBlIj7W9CjEDOX/Jyr6vIfokaT+HOvWF+Xm9GviawYot05
-         59wfsOl8RLUno1xNYEaQFX8vFtgeK57ZD7lx6IJ/zSWiV84UKCh38zshud3g3yuOwSnF
-         PZxHNRFutrexyorZ8JNrxoUdfpMH86KLOatKbZcdKjuqctBWtVCXHcfF+1BlJl96e5pl
-         zm70zpueyRwmfA2yJCNyhD8OcnhDNEWTjj7tp49maCaSEDuumDzSBGRnoOirelTO7cst
-         d0Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749581289; x=1750186089;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JX4mrNACU5QqiYMm/oWkTJ9YOn7pmJRNtKmkF02gE2o=;
-        b=V/8jzxufuUKL+lBN2QLzmUYj56iPy5EaWa0V0GeeKdf0KFl0Py3pZF72LAk85v6CHf
-         gJRmKAlmmcCyt+C8k07ul9phBjm7pxSWg6TH0da0hwQ9ciORXFb15bdGP4lYYaEM2nRI
-         LIkiJFJLyOCGMDPKN0CzQDTC1OgU8B9Dl1Fqoeo+x8uVH/7khOq1beTcSgKPzpEJezS5
-         APwNCEqyiq7VBOvzb9fSJpUp6xyBXYngOqht8bXcTBBZAQj/DwAkhAXQKcNqNOTAliH0
-         vk9GJJbY2fP37qs54YMmgRLpd4lJuwG4tvSThrugTcb4w+tg4f1bmrWRlcXdfS882AxJ
-         XUnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXa/7xJWq2EGrJr/QIA7cV/7AsV8VCnGKxUqXFW4MgkRvTT3D4Q8gAZZBfl54jT3rhzbJObqNx3JgT6IuE=@vger.kernel.org, AJvYcCXqT3l9pM++G5qWKyJN7vNXoB0Y7CqeKZWxTgyYgda5oGH6weCl+0Ekha84tfUEE8hFRAXlI/kPKOyT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyohmHwVMrgoQ/kdltiOTwhoki2GNLl4S1djobLOJfBbrXxtCs8
-	o0TWSyx9prn42e9ofIbmblui05u8eEZn7qG3kI2GoH0KCDwovCx6UquB
-X-Gm-Gg: ASbGncsoAxeTCTiizB2mjn1f/t7HhXGAM5v4xH10SSuhZ32lp5Xg5M2lE0dk/XeGxg7
-	6AlwWdirujdtx2VR2ma/RZJFUJqkQYYm13tH+YpjouJwbSuNe28fgDi/1cQiIi9JzcGtXOV95M4
-	RrNOq1R6hHX8tNSapplQljwhVJV4fwhj+WvQ3PaZgahwvm7ewFp59fuQhgpFMYnjm5LnjX0+fpb
-	JuwLEzwZIvwxhiNT1BzKzTk7f3L/l4b1ied2tB1HCuo6oLiUHoMu+fyQc+ItPO8UxXAcAq5LiwB
-	7WVLXawEs5IimPr+BAFYK5zk36oRHWbFIPPTDYRCsa8oUZhaNg==
-X-Google-Smtp-Source: AGHT+IGmT7wJcDq68+XcDGJVWcLx9IDfGN4qKAUL1yE3GxYgT8Php+JzMKRe6suO938HurboJxs2ZQ==
-X-Received: by 2002:a05:6122:4598:b0:530:2c65:5bb8 with SMTP id 71dfb90a1353d-53121d524f0mr973900e0c.1.1749581289454;
-        Tue, 10 Jun 2025 11:48:09 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:5a56::dead:c001])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-531224b91aesm162867e0c.8.2025.06.10.11.48.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 11:48:09 -0700 (PDT)
-Date: Tue, 10 Jun 2025 15:48:03 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	Hugh Cole-Baker <sigmaris@gmail.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/2] PCI: rockchip-host: Retry link training on
- failure without PERST#
-Message-ID: <aEh949r9mwY-R0XD@geday>
-References: <810f533e9e8f6844df2f9f2eda28fdbeb11db05e.1749572238.git.geraldogabriel@gmail.com>
- <20250610184449.GA819185@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kmQQG91jF6sWLsc/VPJ6qjAn3s77S05UTyiEYYE3O8oP39U+wzOpsOmkYm4oDPhIz6YTHyxplHFxJTPbobwRZyfoKWhQRFpatXrSX66YQ3NnxRwf3Y5sjPp7CVygOAcawd0b7/ddvvRRdhEaiZ3uSyQAu5G7urHX17E8o0Hx4Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PfQ5/WbF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749581317; x=1781117317;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JdYBANVXTPzIVDhBJ340XB4Orydp/8+n8ekFirtZGg4=;
+  b=PfQ5/WbF1ONu3mDtrAdomkW3UZ6xXr0PTXgIgrKEr+MAyW5uGuDsqOt3
+   0h3kLf3b0hPS4GPoof5ul3UVGdGKl8RvkHjpo+JWowYNFml/iQpB2r8jj
+   RKu+m5TetBU0kWWoSaNUQhl9zYU7JR55ie2l6aSMS3C8x89dMFsRyxLgF
+   p+cMPEKLoamLn1s+0tUBll3bZ0sIqawMIBxTVzBHyJ7aTorQHElVebG9R
+   juwtHGvbyQ+tLD6iHRGiM0+hWumcH3n9GEvgXp8ytDPAInNXUHZcIpHl7
+   wzRrXEouZY2lS+M2ZZsoKX6sKauGJMSWKIO11YcUJkLrvzli28tGhUsRW
+   g==;
+X-CSE-ConnectionGUID: yPRIGlOoQNybdjB9Yqvt+Q==
+X-CSE-MsgGUID: ZVmt4JhVRn6JyLUlyZ9R/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="50932550"
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
+   d="scan'208";a="50932550"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 11:48:36 -0700
+X-CSE-ConnectionGUID: FdqcHoJMR0mFF0WuHWi5ew==
+X-CSE-MsgGUID: E7hbCtomS7+Gz1L5FtuHig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
+   d="scan'208";a="146904849"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 11:48:36 -0700
+Date: Tue, 10 Jun 2025 11:48:33 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	"Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
+	"Chen, Yu C" <yu.c.chen@intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v5 27/29] fs/resctrl: Add file system mechanism for
+ architecture info file
+Message-ID: <aEh-AbZ8N_WZqogb@agluck-desk3>
+References: <20250521225049.132551-28-tony.luck@intel.com>
+ <f25d136c-b1d3-483a-ac77-92464d7fe25c@intel.com>
+ <aEIxzbuFybLBE3xt@agluck-desk3>
+ <9eb9a466-2895-405a-91f7-cda75e75f7ae@intel.com>
+ <aEMlznLgnn6bK9lo@agluck-desk3>
+ <d2be3a4e-1075-459d-9bf7-b6aefcb93820@intel.com>
+ <aEcsxjWroliWf3G0@agluck-desk3>
+ <fb2396c1-3799-4d45-ae24-ce7e6f0d42e2@intel.com>
+ <SJ1PR11MB60834D5E5D78CE229D04204FFC6BA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <71a51672-4cc7-47eb-bbbb-a3195189becc@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,24 +92,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250610184449.GA819185@bhelgaas>
+In-Reply-To: <71a51672-4cc7-47eb-bbbb-a3195189becc@intel.com>
 
-On Tue, Jun 10, 2025 at 01:44:49PM -0500, Bjorn Helgaas wrote:
-> This *looks* like it could be strictly a move of
-> rockchip_pcie_set_vpcie(), without changing it at all.
+On Mon, Jun 09, 2025 at 05:30:34PM -0700, Reinette Chatre wrote:
+> This should be a directory, a directory owned by the arch where it can create
+> debug infrastructure required by arch. The directory name chosen and
+> assigned by resctrl fs, while arch has freedom to create more directories
+> and add files underneath it. Goal is to isolate all arch specific debug to
+> a known location.
+> 
+> Again, we need to prepare for resctrl fs to potentially use debugfs for its own
+> debug and when it does this the expectation is that the layout will mirror
+> /sys/fs/resctrl. Creating a directory /sys/kernel/debug/resctrl/info/<rdt_resource::name>_MON
+> and then handing it off to the arch goes *against* this. It gives arch
+> control over a directory that should be owned by resctrl fs.
+> 
+> What I have been trying to propose is that resctrl fs create a directory
+> /sys/kernel/debug/resctrl/info/<rdt_resource::name>_MON/arch_debug_name_TBD and hand
+> a dentry pointer to it to the arch where it can do what is needed to support its debugging needs.
+> Isn't this exactly what I wrote in the snippet above? Above you respond with
+> statement that you were under impression that it was a directory ... and then
+> send a patch that does something else. I am so confused. Gaslighting is
+> beneath you.
 
-Hi Bjorn,
+For the precise name of the "arch_debug_name_TBD" directory, is simply "arch"
+sufficient? That leaves every other name available for resctrl
+filesystem code free choice if it does add some debug files here.
 
-yes, a move of rockchip_pcie_set_vpcie() is needed for re-enabling
-power rails, considering patch 2/2 was also applied and the regulator
-is not always-on anymore.
+Or would $ARCH ("x86" in my case) be better to keep distinct debug name
+spaces between architectures?
 
-> If that's the case, please make the move a separate patch so it's more
-> obvious what the interesting changes that actually make a difference
-> are.
-
-Good idea, I'll send v3.
-
-Thank you!
-Geraldo Nascimento
+-Tony
 
