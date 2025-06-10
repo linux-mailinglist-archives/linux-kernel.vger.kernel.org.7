@@ -1,98 +1,132 @@
-Return-Path: <linux-kernel+bounces-680368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B443AD4464
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:05:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DF0AD4467
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3DA73A5F0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:04:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC097A83C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78ED5267397;
-	Tue, 10 Jun 2025 21:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5312676C5;
+	Tue, 10 Jun 2025 21:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqiqbBTJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="MsBZ2Xbd"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75D512D758
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 21:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749589513; cv=none; b=oOHD5HnrNe/oL2nCAYijEBGaeeUQHI/tS3yL83JlBGdiG1ug9erR6LBiAq8ZgnbdZJVzv/iTSboOQIkVoUc1oXYI+79k0USM1oSjXy09fSkpYL/FnldFHAu3scoSU4v4YB1bm+lqhPflB/Btf0nbU80teWWRvQbVWQI4CAKo5XM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749589513; c=relaxed/simple;
-	bh=KVf1u8Ke9mnKJKJCr9C29Gs5RPEocIzyDWvmVd4c9L0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EiBcFK9KUxEiHqIhHBoeO6p1CmAQZy3x84mH3lZGPJ22NW7QriuD8XUnJis8S2vvwoW0ouk8765WmDURrhEOEYUzUTE6Zua7TqJdi15WoH0G7hPZQhFghBN6OVd81Jb3y5qQm+KLGF3CNEBOyi2U3NuoXDIG7ZXS0D7kbw4EvDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqiqbBTJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A760AC4CEED;
-	Tue, 10 Jun 2025 21:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749589513;
-	bh=KVf1u8Ke9mnKJKJCr9C29Gs5RPEocIzyDWvmVd4c9L0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TqiqbBTJpy/c5W+abu2UWjE3aonVcvvHc2DyHyuK6F18c6MYwQNAZBkt7are0DCKG
-	 A9UdgZ5yCAeyAlewT3j8SO7OcRS09ik5AtViJRuJxnnrIV81UUOcC5TBTeTYwwft7I
-	 A8m2a+1ifzJDvTGTplmyI3LdTtdKSQywB+QbTtyfW8p046RO9Lyikcsmw3zd14ikjE
-	 hGl+oe9EI9TITEovLv5X2e0WJ4aoxzigl+mP1MD7DndoTbaP/fuKSsouRJ6MqFw6SZ
-	 hqrXUk85H7G3k+7t3KXlrAgOJjAKzwYBtPDgmr+Uqfc1XXQuJ2Sg4TmlUFycu8mVeb
-	 g/tR0Zgl8LhwQ==
-Date: Tue, 10 Jun 2025 14:05:03 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, peterz@infradead.org
-Subject: Re: [RFC 00/13] objtool: Function validation tracing
-Message-ID: <iutvcrog7abyz2ski5fhcfzikc54b2gwodsds2gmovutahapg4@5rk4o4b7eajz>
-References: <20250606153440.865808-1-alexandre.chartre@oracle.com>
- <vx6cxar2ium7zsqqzf57lmn2nhwemi2kmeu2kal6s4mazj3tp3@zdymccnsispv>
- <d52b6b3a-dd18-4c8e-b7f6-5ac0879d959a@oracle.com>
- <c0153249-5643-492f-ab2f-70dcafcfdd0c@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5384C12D758;
+	Tue, 10 Jun 2025 21:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749589634; cv=pass; b=ZA02oyGH6TFej5aXSoLWhUXrX3EppkR7Z5Fhg0xhadSgNFiXxdf3CwrrWWJ5GnC8hOM4Z/T5pDnUdhpYmLzys9JUlqMbiMyQmGpq1t8Yn+xSDEpFtr9rF8stxQlos2oC+72CML+UT4DxvobL2tJOOw/Zs7WUrbEPn2fejrzA4G0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749589634; c=relaxed/simple;
+	bh=AC7I0fLcRle5LXTlRX8hM4Pm54CmEKFUklwUmoEHnVw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MI6vubqC6JByYMlRy8NrxV1rMfKLn7pcUDFh28askfZ54Cc1wFc/PB+DGRlN7NClGKmRwQVvpJ+VFF475SEtRwHivtpPn5blobi4Re5GyMwc2RGsyC0GJmg5qkKXPYgASeV5PCyjQWT0T1UMM+nU39tHI1j5aEMgttiuGzmp1aU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=MsBZ2Xbd; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1749589598; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QnwiR8PxwjupnwxJy8gFtigPyvLnjBWKq1Je9QzZFqiwHKlOk0M23Zjv1UtVcJDdJv8nDnWeldo22/qCSWF6e75MWpRbmm3GaqeR9AqiBNAjX+9iyQv3SNHOz4UR2PBk6cPHwXuYqHWTMrfyi7RPNi/IssimDHPbJgemSEXKvoo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749589598; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Zoi7i2LrLRe56/s2vnkgJeF3ZP5eOJb/bXYYDs/zeCk=; 
+	b=J9hs0rSJcuSajR2eDuaduV4z/bPdWeszm0MoCSLTQOZVOirKnOaZSCxTW7HSFe1fn4k8ocnzGYtSWcfu7kEBKE/U0oKoCuw2eXQ6QHW0LwlHHxuBSnQIaP1lIhIvNPpgz1jY3NbsXvEYEPuSDJNRp6ik5w37srzjPvm0ptvVjNo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749589598;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Zoi7i2LrLRe56/s2vnkgJeF3ZP5eOJb/bXYYDs/zeCk=;
+	b=MsBZ2XbdGmRFxY3Qi1/E4tNJbd0q54nZyZubKr5jKN52PdBZeyPl5h5G/IVIK0Yw
+	E1k/KC5y122BK1LPWEQfc4H5tRBK3K1waEH01/VDm8dc5US50NH0Pe2SA7Ti5gpw5rz
+	u9JKMQBYy6FnGBhxvd1s+/SvHMm9ZOlt31w8CrGY=
+Received: by mx.zohomail.com with SMTPS id 1749589596973203.10184682890394;
+	Tue, 10 Jun 2025 14:06:36 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c0153249-5643-492f-ab2f-70dcafcfdd0c@oracle.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 2/2] rust: drm: Add GPUVM abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aAgHGuzCZzh7YPz2@cassiopeiae>
+Date: Tue, 10 Jun 2025 18:06:20 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Lyude Paul <lyude@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ Asahi Lina <lina@asahilina.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <45E62F9A-39BB-4026-93FA-E27060498DB4@collabora.com>
+References: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
+ <20250422-gpuvm-v2-2-44d4fc25e411@collabora.com>
+ <aAgHGuzCZzh7YPz2@cassiopeiae>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Tue, Jun 10, 2025 at 03:00:50PM +0200, Alexandre Chartre wrote:
-> Here is the patch to handle both old and new binutils versions:
-> 
-> 8<------------------------------------------------------------------->8
-> diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-> index 00350fc7c662..91a2858fea14 100644
-> --- a/tools/objtool/Makefile
-> +++ b/tools/objtool/Makefile
-> @@ -7,6 +7,11 @@ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
->  srctree := $(patsubst %/,%,$(dir $(srctree)))
->  endif
-> +FEATURE_USER = .objtool
-> +FEATURE_TESTS = disassembler-init-styled
-> +FEATURE_DISPLAY = disassembler-init-styled
-> +include $(srctree)/tools/build/Makefile.feature
+Hi Danilo,
 
-Thanks, that worked.
+[=E2=80=A6]
 
-That Makefile.feature thing is nice (except it prints an annoying
-newline on every build after the first one).
+>=20
+>> +
+>> +impl<T: DriverGpuVm> OpMap<T> {
+>> +    /// Returns the base address of the new mapping.
+>> +    #[inline]
+>> +    pub fn addr(&self) -> u64 {
+>> +        self.0.va.addr
+>> +    }
+>> +
+>> +    /// Returns the range of the new mapping.
+>> +    #[inline]
+>> +    pub fn range(&self) -> u64 {
+>> +        self.0.va.range
+>> +    }
+>> +
+>> +    /// Returns the offset within the GEM object.
+>> +    #[inline]
+>> +    pub fn offset(&self) -> u64 {
+>> +        self.0.gem.offset
+>> +    }
+>> +
+>> +    /// Returns the GEM object to map.
+>> +    #[inline]
+>> +    pub fn object(&self) -> &<T::Driver as drv::Driver>::Object {
+>=20
+> You can use drm::Driver instead, which reads much better.
 
-Can we also use that to determine if binutils-devel (or binutils-dev or
-whatever) is installed, and then make the build of disas.c optional?
+Can you expand a bit on this?
 
-Then if somebody tries to use '--trace', it could tell them to install
-the binutils development package and rebuild objtool.  That way we don't
-disrupt everybody's kernel build for a feature they probably won't use.
 
-That would also mean disas_warned_funcs() would be disabled on missing
-binutils-devel.  But I think that's probably fine.  In fact that will
-now have less reason for existing now that we have this tracing.  Maybe
-we won't need it at all.
-
--- 
-Josh
+=E2=80=94 Daniel=
 
