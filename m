@@ -1,233 +1,207 @@
-Return-Path: <linux-kernel+bounces-678793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D332AD2E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:53:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61AAAD2E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D9A7A63EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F84C3ACD1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203A027A906;
-	Tue, 10 Jun 2025 06:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407B127A909;
+	Tue, 10 Jun 2025 06:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InIWy4xi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S1jDiud2"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A9E21C184;
-	Tue, 10 Jun 2025 06:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF8B27A469
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749538415; cv=none; b=s9/eNuwiG8MNgNIE0v0nO/WdRRrWOhjvtDXdASCTHv90mvZqo2pK7j14C0v2OAYBnQgAhwxFKnR2VFl1w+zwF/9Ao+owFZTeOuYg+fVT3ishpsT4hP+f5Lk+7bzhTiWA+x5NONje8Yk/XkJOWaHDM68BwA/2k7YaPkmeCSIlxjM=
+	t=1749538328; cv=none; b=dnSN9DFPY6tp1tp0pvPyPMyTTdwa0SWifLuvBZcogeYPks64Lk0A2Q3fJvPrk6iSBdMtdGRpTPjP0iJDOWmCg3/7Srac4zhq/Oj05ER1rY1gjG0PoHusHRQlWYZOkqEykqV3VCTUuYZNJOGKqNRbg56Bpg855IdMtXyrv7J+ciA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749538415; c=relaxed/simple;
-	bh=wZqwKho69kQlxvMvKdRzNSzFkPge27kU09M5UoArVmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FuLKHs4bMokouryX6XTulRzJJijxhhhiGc5Kkeo5EnNZ2gylayXIE+tCKDYuDdAhEYaDr3tXgtJ3CBvxricuURvDWAVG8hAIiPLA719yWEU+SiaGOousG3sfidTBdBpTh2gy3sjPQN5dZmgZvkd4MtApith6xxo9I0DL4ZCgbn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InIWy4xi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BEB2C4CEEF;
-	Tue, 10 Jun 2025 06:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749538414;
-	bh=wZqwKho69kQlxvMvKdRzNSzFkPge27kU09M5UoArVmw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=InIWy4xizWFPC4COOj3bDP9F8L4MBxzxjTyG4Jl0NjFzmuc9EWE6eB8/yHJPSkEOD
-	 Kcg3f80TCllYPxvWcHqFjv8qjRjsqqs92h/zFQVv2LcSUYdpgjqrxtAN4F7Jy53cLd
-	 FIvWoZ46G6iFRISZ1f2LbkqsgvsoWhXmsDmArXvPhPKeJ5MrzpdkhMFkyzs1J7kGF9
-	 nwaxsQduYxMawJXgz5aWXbXXbbzGCKhvZ0NQr04+b4KCcJA7ajeta2A18GP7dLhaHJ
-	 UgxMYFUKDr/aM36Ld6iOuC90weGyTtBG3FYTzfU3+aHtzVYU73ICIFlqQtDHapQHl2
-	 7iCVE1b9K+L2g==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: [RFC PATCH] iommufd: Destroy vdevice on device unbind
-Date: Tue, 10 Jun 2025 12:21:46 +0530
-Message-ID: <20250610065146.1321816-1-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749538328; c=relaxed/simple;
+	bh=63vKHSyMMH98x77ZhpqkDjIYudxUsrqpcwc5q0Rk+Cs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GL7JTi1JSgwVir6KZy+EDVp/v9fVj9nKTDACTcLedoF2HdYtM8TNTZJxeGm2YY1lKWJTVYMPai+RJomYBMW3ceDY1vyyCiiMlKlFhp2wQLf/bKtgSozp45B1qduE4zFPTBt4EBK3VbHZttlF0AIW6pDS5RXLh6KT5v4RlnfYkgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S1jDiud2; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a5096158dcso4330164f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 23:52:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1749538325; x=1750143125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9WA0GWxqKXNqKa1/KXkDFLQZ+thxvXB5fhDogLjWGE=;
+        b=S1jDiud2sxjI2owUpNKFWDL/7gCvzvQcTFAq4z2U+rl6KwEpmhXo+QhyD2EqLgb9r/
+         duTtS9bZezlLCdCwRCQP3HbPJsXmRnoG1NxNDz8p1NEnNx79jkHI6xQ3uMUWyUVO6hfm
+         fzqYJxVkM48c+MpEqJUtGFT7E9bLG5etHypnRqDSV4lACB6s0hJEGrWqFy3WiJsGQrj0
+         5nJp0D3DSwii3Ool+qh+IJjb7Jws6ccRjfbmXeVaFOyUxkZtrAG3g6XitAnVOxIr8atg
+         pCXBT+K0ggLr88q99v+GsIJhs4NUahtaYtXHsGE9bhjKgwDyRI6hL64QrwnjvHsMUWWt
+         dv4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749538325; x=1750143125;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y9WA0GWxqKXNqKa1/KXkDFLQZ+thxvXB5fhDogLjWGE=;
+        b=pFIPSktCf975ST9QU4GBMln/jbhn9qeoY5HMeYkPKrIQqfvvXiH2BC4Jsudj/D90LH
+         kK5tdY1kcmej5k+fRDgf/e8w0YF/XBvKUk58eadnDyEg0glc69wWjtOlskD+ARHapzEU
+         eRLlbgSjL//9aEpuwOhIsv2z+xPGpW88KSDbSQLqtOkq0z0NezEuBQ+X5B3kLkWvYU/z
+         DLI2ojtfnarlXS1s+qu8mvqe7OhtVLinYebGUJfSL/PXvrezdsW2OfkjMGSuI5RScFY7
+         yBzLCvZ42YB0zccpb4K4+zDvS2snEiIRILJE/ZkBJQ3O2GRA0q133D8vPprw5D7HKlYL
+         BzWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUH20LfKlF33BZduBC5uIVT9b+2xykTpbaGgJ7duWKl3O0KmoO0Nnm73ySiHbzuTbVyoOaifg9jNlECpm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgqx2JH1hhU1YDBiC8KVyhL+RceKeEr6iHGQOy9W0tlfBufdv1
+	u1jwgAxJlXpOsh6oIbIWXs7XxXmUOadXb67pzUNB2P0rhwMNX3oxVqzL26acKFRAA00=
+X-Gm-Gg: ASbGncuXWbihP8jJZoImgzvEwtKthx6OCvlIqtID3aj7JInl1XGsABDu19izO0rZ+gx
+	rtZRbsspE2qXXy3mwPcxqv0fnoylRFFKMs7RZd8EZFDxrJdpP5LNFay/kreZMpEUDlEjU+JbLgR
+	qjCMiAVPR7H+05CUYUuO6vmekZaOw+NQSZBU+F6bRSKUSn4ykzUCVKajhezBgUexe48W+tl0Vw3
+	D5iHwYaRpnPLb21IMkPTy/lSGGoAr7I8P/KK8putwOzZafiBEbKX3rBzK23xV7rlJKHLHVKPbdJ
+	wxjvKix5mm1ovl+JnYb8Myo3ViTW/an8h4LLYVCYKMeBn9Vtu9z6WPUpd+UggYtNkdM=
+X-Google-Smtp-Source: AGHT+IGjxLXmRV1zFEgEiC6eXHaRERXUUvJuTqBOFzsfGaHQ0XwIZ1R6i8g1DzA6FK3xqGtY/MjvmQ==
+X-Received: by 2002:a05:6000:ecf:b0:3a5:5149:ed1a with SMTP id ffacd0b85a97d-3a55149ed48mr1314955f8f.59.1749538324746;
+        Mon, 09 Jun 2025 23:52:04 -0700 (PDT)
+Received: from [192.168.0.20] ([212.21.159.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323ab207sm11275058f8f.29.2025.06.09.23.52.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Jun 2025 23:52:04 -0700 (PDT)
+Message-ID: <e969d071-1161-4323-89e1-8a358b3760b3@suse.com>
+Date: Tue, 10 Jun 2025 09:52:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 03/20] x86/virt/seamldr: Introduce a wrapper for
+ P-SEAMLDR SEAMCALLs
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org,
+ seanjc@google.com, pbonzini@redhat.com, eddie.dong@intel.com,
+ kirill.shutemov@intel.com, dave.hansen@intel.com, dan.j.williams@intel.com,
+ kai.huang@intel.com, isaku.yamahata@intel.com, elena.reshetova@intel.com,
+ rick.p.edgecombe@intel.com, Farrah Chen <farrah.chen@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20250523095322.88774-1-chao.gao@intel.com>
+ <20250523095322.88774-4-chao.gao@intel.com>
+ <d1ec91ad-b368-4993-aadb-18af489ea87e@suse.com> <aEaS3i5JhgFX2MCh@intel.com>
+ <175eedc5-d82a-4b3a-bce6-2caf625597ca@suse.com> <aEeEbXZglywwo1Rm@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <aEeEbXZglywwo1Rm@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The iommufd subsystem uses the VFIO character device descriptor to bind
-a device file to an iommufd context via the VFIO_DEVICE_BIND_IOMMUFD
-ioctl. This binding returns a bind_id, which is then used in subsequent
-iommufd ioctls such as IOMMU_HWPT_ALLOC, IOMMU_VIOMMU_ALLOC, and
-IOMMU_VDEVICE_ALLOC.
 
-Among these, IOMMU_VDEVICE_ALLOC is special—the lifetime of a virtual
-device (vdevice) should be tied to the bound state of its physical
-device.
 
-In the current kernel, there is no enforced dependency between
-iommufd_device and iommufd_vdevice. This patch introduces such a
-dependency: when the device is unbound, the associated vdevice is now
-automatically destroyed.
+On 6/10/25 04:03, Chao Gao wrote:
+> On Mon, Jun 09, 2025 at 11:02:49AM +0300, Nikolay Borisov wrote:
+>>
+>>
+>> On 6/9/25 10:53, Chao Gao wrote:
+>>>>> +config INTEL_TDX_MODULE_UPDATE
+>>>>> +	bool "Intel TDX module runtime update"
+>>>>> +	depends on INTEL_TDX_HOST
+>>>>> +	help
+>>>>> +	  This enables the kernel to support TDX module runtime update. This allows
+>>>>> +	  the admin to upgrade the TDX module to a newer one without the need to
+>>>>> +	  terminate running TDX guests.
+>>>>> +
+>>>>> +	  If unsure, say N.
+>>>>> +
+>>>>
+>>>> WHy should this be conditional?
+>>>>
+>>>
+>>> Good question. I don't have a strong reason, but here are my considerations:
+>>>
+>>> 1. Runtime updates aren't strictly necessary for TDX functionalities. Users can
+>>>      update the TDX module via BIOS updates and reboot if service downtime isn't
+>>>      a concern.
+>>>
+>>> 2. Selecting TDX module updates requires selecting FW_UPLOAD and FW_LOADER,
+>>>      which I think will significantly increase the kernel size if FW_UPLOAD/LOADER
+>>>      won't otherwise be selected.
+>>
+>> If size is a consideration (but given the size of machines that are likely to
+>> run CoCo guests I'd say it's not) then don't make this a user-configurable
+>> option but rather make it depend on TDX being selected and
+>> FW_UPLOAD/FW_LOADER being selected.
+> 
+> But in almost all existing cases, 'select FW_UPLOAD/LOADER' is used rather than
+> 'depends on FW_UPLOAD/LOADER'. You can verify this by running
+> 
+> 	find . -name 'Kconfig' -exec grep -E 'FW_UPLOAD|FW_LOADER$' {} +
 
-Although there is already an implicit dependency—vdevices can only be
-destroyed after the iommufd_device is unbound due to the VFIO cdev file
-descriptor holding a reference to the iommu file descriptor—this patch
-formalizes and extends that relationship. Now, the vdevice will be
-explicitly destroyed when its corresponding device is unbound.
 
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
----
- drivers/iommu/iommufd/device.c          |  8 ++++++++
- drivers/iommu/iommufd/iommufd_private.h |  5 +++++
- drivers/iommu/iommufd/main.c            |  6 ++++++
- drivers/iommu/iommufd/viommu.c          | 26 +++++++++++++++++++++++--
- 4 files changed, 43 insertions(+), 2 deletions(-)
+Then just have TDX select FW_UPLOAD/FW_LOADER and be done with it. 
+Still, let's hear other opinions but in this case I'd say size 
+considerations aren't major so let's make it simpler for the user.
 
-diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-index 86244403b532..a49b293bd516 100644
---- a/drivers/iommu/iommufd/device.c
-+++ b/drivers/iommu/iommufd/device.c
-@@ -221,6 +221,8 @@ struct iommufd_device *iommufd_device_bind(struct iommufd_ctx *ictx,
- 	refcount_inc(&idev->obj.users);
- 	/* igroup refcount moves into iommufd_device */
- 	idev->igroup = igroup;
-+	idev->vdev   = NULL;
-+	mutex_init(&idev->lock);
- 
- 	/*
- 	 * If the caller fails after this success it must call
-@@ -282,6 +284,12 @@ EXPORT_SYMBOL_NS_GPL(iommufd_ctx_has_group, "IOMMUFD");
-  */
- void iommufd_device_unbind(struct iommufd_device *idev)
- {
-+	/* this will be unlocked while destroying the idev obj */
-+	mutex_lock(&idev->lock);
-+
-+	if (idev->vdev)
-+		/* extra refcount taken during vdevice alloc */
-+		iommufd_object_destroy_user(idev->ictx, &idev->vdev->obj);
- 	iommufd_object_destroy_user(idev->ictx, &idev->obj);
- }
- EXPORT_SYMBOL_NS_GPL(iommufd_device_unbind, "IOMMUFD");
-diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-index 9ccc83341f32..d85bd8b38751 100644
---- a/drivers/iommu/iommufd/iommufd_private.h
-+++ b/drivers/iommu/iommufd/iommufd_private.h
-@@ -425,6 +425,10 @@ struct iommufd_device {
- 	/* always the physical device */
- 	struct device *dev;
- 	bool enforce_cache_coherency;
-+	/* to protect the following members*/
-+	struct mutex lock;
-+	/* if there is a vdevice mapping the idev */
-+	struct iommufd_vdevice *vdev;
- };
- 
- static inline struct iommufd_device *
-@@ -606,6 +610,7 @@ struct iommufd_vdevice {
- 	struct iommufd_ctx *ictx;
- 	struct iommufd_viommu *viommu;
- 	struct device *dev;
-+	struct iommufd_device *idev;
- 	u64 id; /* per-vIOMMU virtual ID */
- };
- 
-diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-index 3df468f64e7d..bf653d16138e 100644
---- a/drivers/iommu/iommufd/main.c
-+++ b/drivers/iommu/iommufd/main.c
-@@ -172,6 +172,12 @@ int iommufd_object_remove(struct iommufd_ctx *ictx,
- 		ictx->vfio_ioas = NULL;
- 	xa_unlock(&ictx->objects);
- 
-+	if (obj->type == IOMMUFD_OBJ_DEVICE) {
-+		/* idevice should be freed with lock held */
-+		struct iommufd_device *idev = container_of(obj, struct iommufd_device, obj);
-+
-+		mutex_unlock(&idev->lock);
-+	}
- 	/*
- 	 * Since users is zero any positive users_shortterm must be racing
- 	 * iommufd_put_object(), or we have a bug.
-diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-index 01df2b985f02..17f189bc9e2c 100644
---- a/drivers/iommu/iommufd/viommu.c
-+++ b/drivers/iommu/iommufd/viommu.c
-@@ -84,15 +84,24 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
- 	return rc;
- }
- 
-+/* This will be called from iommufd_device_unbind  */
- void iommufd_vdevice_destroy(struct iommufd_object *obj)
- {
- 	struct iommufd_vdevice *vdev =
- 		container_of(obj, struct iommufd_vdevice, obj);
- 	struct iommufd_viommu *viommu = vdev->viommu;
-+	struct iommufd_device *idev = vdev->idev;
-+
-+	/*
-+	 * since we have an refcount on idev, it can't be freed.
-+	 */
-+	lockdep_assert_held(&idev->lock);
- 
- 	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
- 	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
- 	refcount_dec(&viommu->obj.users);
-+	idev->vdev = NULL;
-+	refcount_dec(&idev->obj.users);
- 	put_device(vdev->dev);
- }
- 
-@@ -124,10 +133,15 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
- 		goto out_put_idev;
- 	}
- 
-+	mutex_lock(&idev->lock);
-+	if (idev->vdev) {
-+		rc = -EINVAL;
-+		goto out_put_idev_unlock;
-+	}
- 	vdev = iommufd_object_alloc(ucmd->ictx, vdev, IOMMUFD_OBJ_VDEVICE);
- 	if (IS_ERR(vdev)) {
- 		rc = PTR_ERR(vdev);
--		goto out_put_idev;
-+		goto out_put_idev_unlock;
- 	}
- 
- 	vdev->id = virt_id;
-@@ -147,10 +161,18 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
- 	if (rc)
- 		goto out_abort;
- 	iommufd_object_finalize(ucmd->ictx, &vdev->obj);
--	goto out_put_idev;
-+	/* don't allow idev free without vdev free */
-+	refcount_inc(&idev->obj.users);
-+	vdev->idev = idev;
-+	/* vdev lifecycle now managed by idev */
-+	idev->vdev = vdev;
-+	refcount_inc(&vdev->obj.users);
-+	goto out_put_idev_unlock;
- 
- out_abort:
- 	iommufd_object_abort_and_destroy(ucmd->ictx, &vdev->obj);
-+out_put_idev_unlock:
-+	mutex_unlock(&idev->lock);
- out_put_idev:
- 	iommufd_put_object(ucmd->ictx, &idev->obj);
- out_put_viommu:
--- 
-2.43.0
+> 
+>>
+>> I'd rather keep the user visible options to a minimum, especially something
+>> such as this update functionality.
+>>
+>> But in any case I'd like to hear other opinions as well.
+> 
+> Yeah, let's see what others think.
+> 
+> <snip>
 
 
