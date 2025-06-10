@@ -1,144 +1,166 @@
-Return-Path: <linux-kernel+bounces-678571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183CFAD2B0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:50:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA0DAD2AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6291891E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A680A3B1129
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C60185E4A;
-	Tue, 10 Jun 2025 00:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="nVmirtF5"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635BF1714B2;
+	Tue, 10 Jun 2025 00:45:30 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E9617A305
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9072AE89
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749516623; cv=none; b=h2AIUOMWrtqKAfpDcB2xjrUZhtGzDhEj/+nuePBJl+C3qkaZHLAsjoDTcLc1lmt02NibThvWbOeiBEq7+DsinBax5S1FpZH0bp6tb3vn2L+pJFfAcQ8QM5YtiYNJFq1MEX57wTCjAS732X6Bpg2xh3ETBCevvcNyupmF7g3hkhI=
+	t=1749516330; cv=none; b=Kirse52dvAekCvIXKN2l4I/qjEf7gFRxcVhKQHp6/HlJKIBGsuhlV7qrUrZ1hK7B3v6qIPUaMpCrDyUNFbbqn91N79bRqcuf6AdoESWvd00vo1aoFkZqF7c8dYqBh34FnnnW/l23plpyi6dTl4Ahogadpc24nTgbxV+nuOz1yYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749516623; c=relaxed/simple;
-	bh=HIdLaLetSjMiNZXLjyjzzCQ7kpiz0PwCy+njD9OJ9JI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdVlknPLDxdglrfqcYyN14rutjbhv167/h0JHKUmwGv89wK7/a0cDRtylNX/oR/YZ/gcaZrl9lKvv8ZfKGO5e0zLgGLmX4xP47wqmRIQYXXVTw4yGc2X5nY+XMvjWRcTpDGLqsHb2NcMDJqWPdJvjEESrnf73lV0gMKyzUjEjdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=nVmirtF5; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1749516309;
-	bh=eh0MKFXwRSKJeN6xSCf1HbT1d8FUKtrqXJ+Dp8MAsIQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=nVmirtF53NxdN4kuVWOnBRC5rp1pqVl7vqt0oxN1c+AcDugoB42F0iO9lLbrfuG5O
-	 o8TcdZsrMQY3dyQEFZwEgYTxVAUa+3y58Hmiall3svpP9H7c9sIlneGSfh1es1BduF
-	 w2ZGcroLnWPmLL4jSZoUBn/ahb8KaBy0NtaDcDng=
-Received: from [192.168.3.19] ([218.4.27.159])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id B4787495; Tue, 10 Jun 2025 08:45:07 +0800
-X-QQ-mid: xmsmtpt1749516307twxekh8mx
-Message-ID: <tencent_1EB006F3EADC43F9710EC002C328BC474B09@qq.com>
-X-QQ-XMAILINFO: MStTOrhA1CLVe8QmYEvkvgVwbij+zYPHXHa/ukbjGk7o/rxjTDwq8lMuHcxyEC
-	 ZbPs0GxvKyk5ETXRRnvIKReAnq9O0vHbhyzxBlK/K/LAt1a3skGrvaEo5c31smC9oEevs3jNbLDq
-	 lm1ERe1RSzUOBQXs9Fa/d5J/t+BlT4uVb4YbTd2NLQXppUSQYGQgxLLqIpEBsNdoQJauWVblw2ze
-	 wLk/m+1euA6o363+TWfPQtrVABlYRCjckiGpIN7MsjDblVpxXoKxVGuLo/k+ogd8WxnzcAwpzct4
-	 WboutieCsggDtEISQI8KzA18Gbq/EQ1HacOcFZqcfVDw55xMxNb5xMbB3KxyYZVvzwYrQxqitHkq
-	 jyMBqaJbDAVdgqba9GHFOLZUwNdR4ohutnDBsyDmGl1pq2e8vcdtOlp9eJcwQfXcAE2m/HR32v+Z
-	 Rz7vEIM+de/FAU60U1EwinndkwEp9iYRQwja5el7eKijAm66f/KLRBdbgvbh7UncJelyHYQRFroV
-	 /dOPLnu4BF96cOH2vDILkVEB8DUoXHQ4aDCJ8EP2TUOluqQkwC9l1CS5hdJwEM/2gDrKI6Km3HlC
-	 kQRYILYYBRaLE7BpzkmSTTfEfx0umnWkPQq5TxhRR7WlfXtDocNO4W9TuhMrDrDZppnqSjnHs+ph
-	 DYQqcQ9zzDgHtetsf46gvwxx21pzgCPIumrAu9RMGeauj+phFxAwYnrxq42Hs7/nxTuZEzWK8/hm
-	 fcyaXv7u4/YuuKkPZZrWkDtqpdSH4k0QGuD+HQWpucoHE3DU4bD/nwKXV31aQpM924egN6N0cfXz
-	 bAzzBiXXUt/TU/0xtWOKQDAhilgNJ+KTyIZ1qvHtSP3g9qsBJyn111uyz8nEBM12faS3GLiHfard
-	 pTdeaR1JNHyJWyZwBIIVus8fZh96QAcqT8234GHp4bQfCwirEcK1DRnQQaDbODN0qulrhMd22tI2
-	 +zWNIReNWt9LFE0Po5mkhZq9RFV79G2o2TUjeeYozucxriZWNif4Tnd9ayQDVQeZcgAg3727hpLF
-	 N/PL6Gg2bvvO8cCUFFfTfjrCoyR3hiPM93dXA5k3wY59J/cK/qCq6zXgH4xyU=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-OQ-MSGID: <f8f78ac6-4fdb-4f75-ba8b-e146ddf58bad@foxmail.com>
-Date: Tue, 10 Jun 2025 08:45:07 +0800
+	s=arc-20240116; t=1749516330; c=relaxed/simple;
+	bh=SI+zsbmukKOt9jXEPpJh2/DRwJzOckFoqz3h9ACjj/I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=O+a61iX/jQtk0fG0p/eadzFRnbUtovPLsdEuirrPXEUXdnbNkZtmqd3wQkaxSfWkp6WPCqiyHXerOUONwi7kW0CM6MeeyBdKzKuJU+09rxV0aOT5LHTPQQSiiHMXBREHMGFdGNxOup51qHQZknpeb9UxlY1I53+1E3Ceu/2OW30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddd02c8bffso63381405ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 17:45:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749516327; x=1750121127;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3vXw0Vx/zZXGqdGFRpZIGwheacMYUHmkGCxpuAkXY3w=;
+        b=s4X5TLP5aIz2DcribtrHfto+dEjOP6a5qUhlE7cV8qzeWYG7rFexEyeY4ysh85CdDp
+         J3K0uz11hw63vwYkhbAzEmETW+GSuB5JBXzTU4osfzIvFpxN8NPEHbogtLSsNWymK1KJ
+         jVsrzqEfqAv0qdHZUWpUfN8i1vrIv33EDgKVfiMJMfk0Da+LHpkD1WadYkEBn3bC74iP
+         WrHTyowWpyZ2umnBVAGYlpGMV6Lz7CGtUhRMr/a+ij8l/J/NXKTrC8+5vSSkHUiZ6oIu
+         BUmFOG2fIHPxLNUKtjq8PPlEiEDer2lei7aqjb77ilI9awxJFxyc2CwGWMid4h7tZseE
+         Bclw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+zsdE0LoQuJU55DnmVxjazqzXfEvZ/4HMX7goksEbudvB/QJlFZ2ah9sdqW8ZUNHEy0/ulzMIOxRw8Qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwThw0PzXxOeLplDXbrwyTMpX/ayWU9Phgb8DArubmwNIpoIuxH
+	Tj1HsTOxGzmgM6sJCKFxhicSpwBhgLBh+QlVSln+LGuFxdEMErlPvzBLgNg+g9olvNht66C+y9S
+	jzMKHxw96/oQTIN+uaGI7mNn4dUwbbOn5MdV4wLYpWmPGtwqCSTXULuBabxo=
+X-Google-Smtp-Source: AGHT+IG2OBnA1i6KetbrOU2KhZJLLAj0AfUFlRV+R/7MI+KT/YbdHg+3ZRKcKJvS92IK6QhRyGNR+vWtZM8+Z6axgk56NhNSGI7I
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdkfd: register HMM dev memory to DMA-able range
- first
-To: Felix Kuehling <felix.kuehling@amd.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
- simona@ffwll.ch, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <tencent_03FB073FD3015AE02485DD6839D6571EBC06@qq.com>
- <560baf50-1bc5-473c-9889-59f7d625ddd9@amd.com>
-Content-Language: en-US
-From: francisco_flynn <francisco_flynn@foxmail.com>
-In-Reply-To: <560baf50-1bc5-473c-9889-59f7d625ddd9@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:16c6:b0:3dd:ce9b:aa17 with SMTP id
+ e9e14a558f8ab-3ddede03deamr6202225ab.20.1749516327640; Mon, 09 Jun 2025
+ 17:45:27 -0700 (PDT)
+Date: Mon, 09 Jun 2025 17:45:27 -0700
+In-Reply-To: <6824f447.a70a0220.3e9d8.001d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68478027.050a0220.33aa0e.02e7.GAE@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in ptp_clock_unregister
+From: syzbot <syzbot+eb6f218811a9d721fd53@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, richardcochran@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/9/25 20:46, Felix Kuehling wrote:
-> On 2025-06-09 5:36, francisco_flynn wrote:
->> HMM device memory is allocated at the top of
->> iomem_resource, when iomem_resource is larger than
->> GPU device's dma mask, after devm_memremap_pages,
->> max_pfn will also be update and exceed device's
->> dma mask, when there are multiple card on system
->> need to be init, ttm_device_init would be called
->> with use_dma32=true, and this is not necessary at
->> all. let's request dev memory region at DMA-able
->> range first.
-> That doesn't make sense to me. The addresses allocated here are not DMA addresses. They cannot be accessed by the GPU via DMA. They are purely fictional addresses for the purposes of creating struct pages for device-private memory. There should be no need to limit them by the GPU's DMA mask.
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    19272b37aa4f Linux 6.16-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13bc5a0c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c4c8362784bb7796
+dashboard link: https://syzkaller.appspot.com/bug?extid=eb6f218811a9d721fd53
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15848d70580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bc5a0c580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0ceded60de88/disk-19272b37.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/51f4990c81f8/vmlinux-19272b37.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7addf73549b9/bzImage-19272b37.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eb6f218811a9d721fd53@syzkaller.appspotmail.com
+
+ptp ptp0: delete virtual clock ptp15
+============================================
+WARNING: possible recursive locking detected
+6.16.0-rc1-syzkaller #0 Not tainted
+--------------------------------------------
+syz-executor421/5891 is trying to acquire lock:
+ffff888079fcc868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_vclock_in_use drivers/ptp/ptp_private.h:103 [inline]
+ffff888079fcc868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: ptp_clock_unregister+0x21/0x250 drivers/ptp/ptp_clock.c:415
+
+but task is already holding lock:
+ffff8880300cc868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: n_vclocks_store+0xf1/0x6d0 drivers/ptp/ptp_sysfs.c:215
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&ptp->n_vclocks_mux);
+  lock(&ptp->n_vclocks_mux);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+4 locks held by syz-executor421/5891:
+ #0: ffff88803631c428 (sb_writers#7){.+.+}-{0:0}, at: ksys_write+0x12a/0x250 fs/read_write.c:738
+ #1: ffff888031c2c488 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x28f/0x510 fs/kernfs/file.c:325
+ #2: ffff8880303d4878 (kn->active#57){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x2b2/0x510 fs/kernfs/file.c:326
+ #3: ffff8880300cc868 (&ptp->n_vclocks_mux){+.+.}-{4:4}, at: n_vclocks_store+0xf1/0x6d0 drivers/ptp/ptp_sysfs.c:215
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5891 Comm: syz-executor421 Not tainted 6.16.0-rc1-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_deadlock_bug+0x1e9/0x240 kernel/locking/lockdep.c:3044
+ check_deadlock kernel/locking/lockdep.c:3096 [inline]
+ validate_chain kernel/locking/lockdep.c:3898 [inline]
+ __lock_acquire+0x1106/0x1c90 kernel/locking/lockdep.c:5240
+ lock_acquire kernel/locking/lockdep.c:5871 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+ __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+ __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+ ptp_vclock_in_use drivers/ptp/ptp_private.h:103 [inline]
+ ptp_clock_unregister+0x21/0x250 drivers/ptp/ptp_clock.c:415
+ ptp_vclock_unregister+0x11a/0x160 drivers/ptp/ptp_vclock.c:228
+ unregister_vclock+0x108/0x1a0 drivers/ptp/ptp_sysfs.c:177
+ device_for_each_child_reverse+0x136/0x1a0 drivers/base/core.c:4051
+ n_vclocks_store+0x4b6/0x6d0 drivers/ptp/ptp_sysfs.c:241
+ dev_attr_store+0x58/0x80 drivers/base/core.c:2440
+ sysfs_kf_write+0xf2/0x150 fs/sysfs/file.c:145
+ kernfs_fop_write_iter+0x351/0x510 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x6c4/0x1150 fs/read_write.c:686
+ ksys_write+0x12a/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f577c6b6f29
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffefa44cc98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f577c6b6f29
+RDX: 00000000000005c8 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffefa44ccdc
+R13: 00007ffefa44ccf0 R14: 00007ffefa44cd30 R15: 0000000000000004
+ </TASK>
+ptp ptp0: guarantee physical clock free running
 
 
-yes, this address is used by CPU to access VRAM. The patch is intended 
-to cope with a special case, after checking the latest kernel code, i 
-found this problem has been solved by this commit,
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=7170130e4c72ce0caa0cb42a1627c635cc262821
-
-thanks for you reply.
-
-Best regards,
-flynn
-
-
-> Regards,
->    Felix
->
->
->> Signed-off-by: francisco_flynn <francisco_flynn@foxmail.com>
->> ---
->>   drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
->> index 79251f22b702..3856b9fd2a70 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
->> @@ -1020,6 +1020,7 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *adev)
->>   	struct amdgpu_kfd_dev *kfddev = &adev->kfd;
->>   	struct dev_pagemap *pgmap;
->>   	struct resource *res = NULL;
->> +	struct resource temp_res = iomem_resource;
->>   	unsigned long size;
->>   	void *r;
->>   
->> @@ -1042,7 +1043,10 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *adev)
->>   		pgmap->range.end = adev->gmc.aper_base + adev->gmc.aper_size - 1;
->>   		pgmap->type = MEMORY_DEVICE_COHERENT;
->>   	} else {
->> -		res = devm_request_free_mem_region(adev->dev, &iomem_resource, size);
->> +		temp_res.end = dma_get_mask(adev->dev);
->> +		res = devm_request_free_mem_region(adev->dev, &temp_res, size);
->> +		if (IS_ERR(res))
->> +			res = devm_request_free_mem_region(adev->dev, &iomem_resource, size);
->>   		if (IS_ERR(res))
->>   			return PTR_ERR(res);
->>   		pgmap->range.start = res->start;
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
