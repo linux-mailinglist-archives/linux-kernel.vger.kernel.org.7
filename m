@@ -1,168 +1,557 @@
-Return-Path: <linux-kernel+bounces-679764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A44AD3B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:42:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B78BAD3B75
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A7717C553
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1422166E8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E1520C465;
-	Tue, 10 Jun 2025 14:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48BA224B08;
+	Tue, 10 Jun 2025 14:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tvc5Ue1N"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyEVtH4D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1020C463
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B28221FB2;
+	Tue, 10 Jun 2025 14:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749566353; cv=none; b=KqFOuzg3vYf60BNESaAMQ+8qA71Pg33mZoSkCI5IY5dYhzZlSCZXs3CAjbuygEbdctNxcfGGpOMkOALvgRL+v4HCqy1waBtCVioD+01lC6keqSu4zgx1AsfHS13b7cGWck/QvFdq1GnymRVfslDv19zPf0mHkTCkeoHrrPeuocg=
+	t=1749566360; cv=none; b=TCIxxzaESYemZY2GFtK2PrerzOvLTABCZoWoANcji6ahnN9lQEVXpHoBny17TUNYL6CCRcfl2G+v3zI/DYs9GeANK0Yy4+8yBMwdc/fv1UBjgalB6I4z42omK+E84+UwVLoB+smiWKhquu323azS7RvyHXSST/3fYF8P14TKC7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749566353; c=relaxed/simple;
-	bh=JEhdZtu3qJRdspujX7loWXgzQgwNvA/+M6KwCyzZOt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Af4+IadaUjmk/JbUxKFXTJt8QWDqPcZOdJ+lJPyIhmpjdBg4K2SpcTkdlNi3/Z4vW68fP3DAZ+fShfEstgMjlBWTnVuWmgoU2HrX62BHTcmQ5q48+92hFO1JJj5aVBEqOH8hmvvg1vX6p1oAIG3k6JBlWUSFkG4lJ6v7txyGtb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tvc5Ue1N; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A8AXIZ017801
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:39:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4pw5nq7+Bj/Ac4lWh78WSk34rnPTAijZmCV+DGEjR6Q=; b=Tvc5Ue1NTVvtqo8o
-	yOpjgjwsKLep1BvG8wafzxNyght58u8GSohG6CRMXmhuL6zYsGegs7ft2BRQLHBU
-	UAzcFNwkHxgCJGGe+KthukAfiuV8P15a/s1QHRKMirw0DtBGx6AJHONUhAcr2Fze
-	awtmYShBqwXz8Ekn+iMnF0qhg7q3kP89FywP1GiBClsMTNm5Htw1aOQCnyFDh/oW
-	Jzg/LIGAB49aCDdo4TcpT2dTJ2TPMufCIIxtWsyVGBScKTJmrhqHsW92e9/K0c79
-	djQdNBuSJBtTjwQH7mbPSftwrWqO7mn4BsVMrgVSLlc9+7Gb91jI9kcR5V9XnDoN
-	WlBQTg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4766mcjh7u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:39:10 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a6f59d5ac6so8511941cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 07:39:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749566350; x=1750171150;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4pw5nq7+Bj/Ac4lWh78WSk34rnPTAijZmCV+DGEjR6Q=;
-        b=NVk3lz14BBhUmflhQVyRXROFNxwkkQz9K0+1vfK3QcPqfCH/hVJftbj/E4nD53/nOV
-         316zj7eVdUa6Ivd0jnq5ZXorI4wpwdv8K+Of0U/g/KRfDZp/jctrDLTUBzMzeS/VUwTe
-         PEnmjYg+u9AK8skFfC7WQ+2FDrLCeiVvngKjN9/5BZnf8p8zcGSPL3+chq1dZM/tC7AC
-         LvTGc8OL87Ah1RiGon9POmMjyqls/i601YL6mn7/mt2LO0MYJXcRr8V/DLsj9aVM3Tmj
-         2DBKTz2jo3B2hiQXS1aWSeCLLzZHcuOMb7QiVY7bTUM1lWHRUdRik9ClbU37EvNPaCVZ
-         Trug==
-X-Forwarded-Encrypted: i=1; AJvYcCWLVaST6VV7VpmzNTwZCtFkccQSCQP8Dx5O5KEavl/Wjw6NdbKxEg0ko8UAW0S1Urj5XHlrNvtc4w26eYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf+XFrqoqXBiA2We+PrW6L1QW+pWaSLliD3kpM+boYAerhQWjj
-	ZamyY3OIXR0QzHqljUUMO7qjfz5fZ4vXoS42phpIxqQRpwS8vPWeoAmNAVU2kDFHFh5pD94RYNK
-	9P4sDMByCwiU/CQGn5/tWC6AQbeX6yZjnKH0FENXhy1tiNO/ux/DZ6XczpTOAjm7A9qc=
-X-Gm-Gg: ASbGncscyW7N6Xt4Bf2egKFEv2XJAQK3/YP3qCIytfmpbjPVjjOpp2b2VFWUpThBA9E
-	olvo6CuhqcLljvinNFbL6239ec3QOrDSN+lOofiUE+zoa4pPDy7UTpf0HYcHs03CzQkjXY5ZBcX
-	Npmsg29dPAdG+nNUm412r3JA2Y2c0ce5oVeBIrjnaX59DZkFvRy2sdOK7z9367VLDlN1dXJq8Is
-	v5SLFWup2IJ4+2T+tbcp2HwJMXG1Q3euBlvKiBv5lqMJe9GXRDSdM7bhujqQNv3/rXiJosjrZw7
-	PUNX79fFQc6fVUZ8IhoTsFx9SUas851aSSjr/C2AVFKHIuaUbQSQdLYjqKVPEtUPJYmo9EES7b8
-	g
-X-Received: by 2002:ac8:5a0d:0:b0:494:5984:1022 with SMTP id d75a77b69052e-4a6690a28dfmr95786511cf.11.1749566349763;
-        Tue, 10 Jun 2025 07:39:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGouqX7qoKwblwHdCsP8sXYcazh4DdthTicdnTn7xgesyInCIp3oCS88Mi1046CwU/GY9svig==
-X-Received: by 2002:ac8:5a0d:0:b0:494:5984:1022 with SMTP id d75a77b69052e-4a6690a28dfmr95786261cf.11.1749566349310;
-        Tue, 10 Jun 2025 07:39:09 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1db55b68sm738346266b.59.2025.06.10.07.39.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 07:39:08 -0700 (PDT)
-Message-ID: <1b26fd75-f316-4cbd-b60b-6b3496551314@oss.qualcomm.com>
-Date: Tue, 10 Jun 2025 16:39:06 +0200
+	s=arc-20240116; t=1749566360; c=relaxed/simple;
+	bh=NCUWuCdR+i+AqSI5AiUCl5RBbmPmX8XOLT9C8aAZ8ZA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=TBPvsd0TOWYT2qNSWokoKL+/yQOFvkni6S5jAL16/G3jIUupksj2iSA8uOlggUTqav9/oxqZdfMfdvXDLqxIIhLFbgrX5droOsYKSZKQjOe/l514oqGWennuHkmngdBoZZaextnqw/ShpTdZLoFsXv61ExEfRbWRhLinTOOlyHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyEVtH4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35FEEC4CEED;
+	Tue, 10 Jun 2025 14:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749566359;
+	bh=NCUWuCdR+i+AqSI5AiUCl5RBbmPmX8XOLT9C8aAZ8ZA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=NyEVtH4DssdpsNDhUQbAY09lANFHt9M+dNMBF0iY0fUX3nQUwUChxWjC1ExiVKCaA
+	 Ya3lIM8hHCoPL5GhDVLsEYs4+A8Vb1c+B9ljAY5XdM+pu3meNQ5wTboMQnOVVmtYT3
+	 ApilqsoWXvyu4cRsB63Vjwq85ttoT69hWtChnPwefIYoCSB4w7Wxv6u3GNX6U4wVsJ
+	 PPIvdid66h2sZlFsXhJJ50ZRqToXddWb2P6uCAdnyFzdU1MnVBevG2VwfmjUqu+zdQ
+	 eKhuY4hBX4Hygv6igLZoYToTtPK4OnPAz1ZDMsRLgOE4Ougn7LFpxy29NnykeDHXVl
+	 zIp6EFR9I/5tQ==
+Date: Tue, 10 Jun 2025 09:39:18 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: Add GPU support to X1P42100 SoC
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-References: <20250607-x1p-adreno-v1-0-a8ea80f3b18b@oss.qualcomm.com>
- <20250607-x1p-adreno-v1-3-a8ea80f3b18b@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250607-x1p-adreno-v1-3-a8ea80f3b18b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=T8KMT+KQ c=1 sm=1 tr=0 ts=6848438e cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=nNJ8jBrhinZ9UXkNAM4A:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: FIzGHXPqgNbH5eaisT9YwGgJhTugAU1F
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDExNiBTYWx0ZWRfX5Ce9BDReEmCk
- TgcQnTO2kVV4FV7acwZr8i4jrKvbseGJw4hdukOdNB00ExjLclWSQ9Bgj3Y3wStmKYIYa1QPwYu
- AHYp22bxQzk+aMNfJYoPF58JRZpzk4UroJtFbUrdmLoBeE3JdbeZx5UT/XRnyLghoQD7zR+HRDz
- 5z5PW3MUJBuM7XmQVg6Y7zN/18vj8N8TLWycBGizIq+TLYHQAx94Ti4tRsZG6RVQTe7tCrSlmWX
- dWeUPO22HHdS4RDckdYuM9gkDE2AHyj5BIbWXcidYPnULZQ2CuSvzU+ynkqxxNi8xXHAaRXhIm+
- v9VDxdS+NLzRVbo0LW6z0NyQCZv+mZUTTZv30q+L5bj0BXDRtikdtf/ihfA8GEJfCCpYtzPzB5K
- xHT71gkdcCFqlYtgKBttlR4gf2ue9khR2bFMZLGGp8XP+ICA+MD4DOR1W9Idc06LabvVj8oD
-X-Proofpoint-GUID: FIzGHXPqgNbH5eaisT9YwGgJhTugAU1F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 phishscore=0
- mlxlogscore=833 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506100116
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: kuba@kernel.org, andrew+netdev@lunn.ch, sboyd@kernel.org, 
+ netdev@vger.kernel.org, joel@jms.id.au, p.zabel@pengutronix.de, 
+ edumazet@google.com, pabeni@redhat.com, conor+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, krzk+dt@kernel.org, linux-clk@vger.kernel.org, 
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org, 
+ davem@davemloft.net, BMC-SW@aspeedtech.com, 
+ linux-arm-kernel@lists.infradead.org, andrew@codeconstruct.com.au, 
+ mturquette@baylibre.com
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+In-Reply-To: <20250610012406.3703769-1-jacky_chou@aspeedtech.com>
+References: <20250610012406.3703769-1-jacky_chou@aspeedtech.com>
+Message-Id: <174956612600.1562300.48579876569491246.robh@kernel.org>
+Subject: Re: [net-next v2 0/4] net: ftgmac100: Add SoC reset support for
+ RMII mode
 
-On 6/7/25 4:15 PM, Akhil P Oommen wrote:
-> X1P42100 SoC has a new GPU called Adreno X1-45 which is a smaller
-> version of Adreno X1-85 GPU. Describe this new GPU and also add
-> the secure gpu firmware path that should used for X1P42100 CRD.
+
+On Tue, 10 Jun 2025 09:24:02 +0800, Jacky Chou wrote:
+> This patch series adds support for an optional reset line to the
+> ftgmac100 ethernet controller, as used on Aspeed SoCs. On these SoCs,
+> the internal MAC reset is not sufficient to reset the RMII interface.
+> By providing a SoC-level reset via the device tree "resets" property,
+> the driver can properly reset both the MAC and RMII logic, ensuring
+> correct operation in RMII mode.
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> The series includes:
+> - Device tree binding update to document the new "resets" property.
+> - Addition of MAC1 and MAC2 reset definitions for AST2600.
+> - Device tree changes for AST2600 to use the new reset properties.
+> - Driver changes to assert/deassert the reset line as needed.
+> 
+> This improves reliability and initialization of the MAC in RMII mode
+> on Aspeed platforms.
+> 
+> Jacky Chou (4):
+>   dt-bindings: net: ftgmac100: Add resets property
+>   dt-bindings: clock: ast2600: Add reset definitions for MAC1 and MAC2
+>   ARM: dts: aspeed-g6: Add resets property for MAC controllers
+>   net: ftgmac100: Add optional reset control for RMII mode on Aspeed
+>     SoCs
+> 
+>  .../bindings/net/faraday,ftgmac100.yaml       | 19 ++++++++++++++
+>  arch/arm/boot/dts/aspeed/aspeed-g6.dtsi       |  4 +++
+>  drivers/net/ethernet/faraday/ftgmac100.c      | 26 +++++++++++++++++++
+>  include/dt-bindings/clock/ast2600-clock.h     |  2 ++
+>  4 files changed, 51 insertions(+)
+> 
 > ---
+> v2:
+>   - Added restriction on resets property in faraday,ftgmac100.yaml.
+> ---
+> 
+> --
+> 2.34.1
+> 
+> 
+> 
 
-[...]
 
-> -/* The GPU is physically different and will be brought up later */
-> +&gmu {
-> +	/delete-property/ compatible;
-> +	compatible = "qcom,adreno-gmu-x145.0", "qcom,adreno-gmu";
-> +};
-> +
-> +&qfprom {
-> +	gpu_speed_bin: gpu_speed_bin@119 {
-> +		reg = <0x119 0x2>;
-> +		bits = <7 9>;
-> +	};
-> +};
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Please sort the label references alpabetically
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-> +
->  &gpu {
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Konrad
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/v6.15-rc6-1244-g3f1716ee0f6c (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250610012406.3703769-1-jacky_chou@aspeedtech.com:
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-microsoft-olympus.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-microsoft-olympus.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2500-evb.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2500-evb.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-microsoft-olympus.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-microsoft-olympus.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2500-evb.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2500-evb.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-delta-ahe50dc.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-delta-ahe50dc.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-delta-ahe50dc.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-delta-ahe50dc.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-mowgli.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-mowgli.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-mowgli.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-mowgli.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minipack.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minipack.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minipack.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minipack.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dtb: kcs@114 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-witherspoon.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-witherspoon.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-witherspoon.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-witherspoon.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-tacoma.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-sx20.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-sx20.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-sx20.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-sx20.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-rx20.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-rx20.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-rx20.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-rx20.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-cmm.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-cmm.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-cmm.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-cmm.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-bytedance-g220a.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-bytedance-g220a.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-bytedance-g220a.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-bytedance-g220a.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-supermicro-x11spi.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-supermicro-x11spi.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-supermicro-x11spi.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-supermicro-x11spi.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-n110.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-n110.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-n110.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-vegman-n110.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-vesnin.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-vesnin.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-vesnin.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-vesnin.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-ast2600-evb.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-bletchley.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-transformers.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjade.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjade.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjade.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjade.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s8036.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s8036.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s8036.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s8036.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s8036.dtb: /ahb/apb/bus@1e78a000/i2c@100/power-supply@58: failed to match any schema with compatible: ['pmbus']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yamp.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yamp.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yamp.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yamp.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-1s4u.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier-4u.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inventec-starscream.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-ethanolx.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-ethanolx.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-ethanolx.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-ethanolx.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-on5263m5.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-on5263m5.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-on5263m5.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-on5263m5.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-bonnell.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dtb: /ahb/apb/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
+arch/arm/boot/dts/aspeed/aspeed-bmc-intel-s2600wf.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-intel-s2600wf.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-intel-s2600wf.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-intel-s2600wf.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge40.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge40.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge40.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge40.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr630.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr630.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr630.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr630.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-q71l.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-q71l.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-q71l.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-q71l.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dtb: pin_gpio_f3: $nodename:0: 'pin_gpio_f3' does not match '-hog(-[0-9]+)?$'
+	from schema $id: http://devicetree.org/schemas/gpio/gpio-hog.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s7106.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s7106.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s7106.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-tyan-s7106.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemitev2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemitev2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemitev2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemitev2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-daytonax.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-daytonax.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-daytonax.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-amd-daytonax.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge100.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge100.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge100.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge100.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-qcom-dc-scm-v1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-portwell-neptune.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-portwell-neptune.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-portwell-neptune.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-portwell-neptune.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtmitchell.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ufispace-ncplite.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2400-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-nf5280m6.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-nf5280m6.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-nf5280m6.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-nf5280m6.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-swift.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-swift.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-swift.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-opp-swift.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-greatlakes.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e670000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/ethernet@1e690000: failed to match any schema with compatible: ['aspeed,ast2600-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-tiogapass.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-tiogapass.dtb: /ahb/ethernet@1e660000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-tiogapass.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-tiogapass.dtb: /ahb/ethernet@1e680000: failed to match any schema with compatible: ['aspeed,ast2500-mac', 'faraday,ftgmac100']
+
+
+
+
+
 
