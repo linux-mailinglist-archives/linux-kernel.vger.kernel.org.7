@@ -1,151 +1,220 @@
-Return-Path: <linux-kernel+bounces-680026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B346AD3F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:33:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FE2AD3F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8873A84BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4134C16D00C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A3E242D7C;
-	Tue, 10 Jun 2025 16:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8E523F43C;
+	Tue, 10 Jun 2025 16:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPeglLck"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UJOzR9DV"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3570242D6B;
-	Tue, 10 Jun 2025 16:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8035239E66
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749573124; cv=none; b=Td8aqR0gRZ0p2kl6Lyu9YGhtlWA9f+OSP2g6FJM0Kh+jxhnCwpdV3f2YbuNls0kiWbKp/tDIlO9dV52u/IhRQKr36gIw7xaG+xJCX224mLsWZhYKdVzgR4f4eQ9u7SV7w87b6mQ3+c0a7zCMbdtusSoyPfWZGuUW5Pk3nacrRAs=
+	t=1749573349; cv=none; b=eXAbfxzMg9ykGrL4a6RLTtvMEdaW8JGtYzfzuTU+WJ4sEby3GgrSmvEZIUci5P/EHFMZiRpgGTUPDSMXm+aQ0NyMwJNO05yZF6VcPGhPHiCZRGtF2khKEcZH5f9VrO1vu8kqAp0TsVVhN7lwXMxMxgJxKDkYrhxk4uvCm6KCRCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749573124; c=relaxed/simple;
-	bh=hNuCDM0jUQWKqc6R9z3C05bZeqq7L3xWaTOLAJKfXZM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qchqiNcQ0w0ZBOWUxmqdl6unvyiBdqEPySJ7lks2bN3wv0Wdt4Z1kr311OBXQlwdkWtCVaUPShPTuzPJnzB2byddnn8FxAzvPhBPJmrPp1RhSpqL68VvFxjo30BGXMJrfXkMkjQSQo/TISgwVC10iurh8zREtp9RmGywEhiluYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPeglLck; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so68549545e9.1;
-        Tue, 10 Jun 2025 09:32:02 -0700 (PDT)
+	s=arc-20240116; t=1749573349; c=relaxed/simple;
+	bh=BoFxGoKvLCwi0r5nMSq/smpqIiW/LFaahTEZQWqCIsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nleo1xS0apzryTKS1PIQh6CSUaBJyZwJGAPt69y1pFjRjbhCEbK8UDVTduZMNM/pqqhztfjlG+RrkmfFa+jifd78ZaotZkc2VhG13yn9o4tjdBYpJTXXKXNntfvmxhm1WhzG5TZul+nuKpN4nQe9b9fw8l+cQvZwUaKPd6iqLks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UJOzR9DV; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2cc57330163so4161976fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749573121; x=1750177921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ZI48i2uXHjCqf8G8iB6bi5iAlWdT2du2T86rodgrys=;
-        b=DPeglLckwP1XLfp28/u0TKqOFl6d1YIwjc2ujup3MyhqoiuhBibTZn0DePpNI/RIOo
-         ESEJ/UkSzSW/C+gsi5i8bC0NiVO7FaOzlsUSf7aN+k+T7S6aJRELhDkhAQY7ID2Ohp4Q
-         uEVR7moEaU9++QasUPwrO0YUHdhkuXqZHNhBxYyIYFbbmJ6717/svEzcaXvL8NM48dWV
-         71oVKyFi/n0zg1iPV1Coyvjc/wasbdo6nnUcnpJml2HOeZ08U7PC1TUwZAUx1hZGCrVw
-         C6FW3E1OydX73Eao54nXnJR6AERfEHqePFKDrVM3/xLnAlbb2+Z/Jac359aZL1MvCshM
-         rkkw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1749573347; x=1750178147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=337Fs/acVtHLrHpa6wOAa15lKx7cyXodEH1eYODanBI=;
+        b=UJOzR9DVbFRsywiuXRhkMEMV+8yicgL+hiIQnlsrO4x8aoB2N69/V+oxVJX+ErFye+
+         gYsMuLXm02AjmJGpppnSYcF9G5njjVo5PbWoXEbw9u3u8sJ7webEbi7uPcL34z8onkyy
+         P4mAucYKRbpRi58AAFyJTE2zBzit/w/du1EkzCR50ZpUy/twToU1XJDwRgczrXk3pWhF
+         6wiNbUzmJaulXdWNjSM9Ez5BwmhI7whtZrWwZpORO6iWMamLjgW5hdO25qycIskQbPO7
+         616Aqk0+NI7CbRKhHVH88M1ArM3BN5gDcycylvnT9iaYZP77WWZ/QBJibvfMkEq7jQEH
+         n/8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749573121; x=1750177921;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ZI48i2uXHjCqf8G8iB6bi5iAlWdT2du2T86rodgrys=;
-        b=sxh48ba7WOM1Kwp/5zQ0ByOQ8scO0lxhBz1YgO1akTPPcWkhzvigrUkGUUp+5JfE2p
-         iXk3nOLqESYdtyCqJPVwBdIaWRG94fiEpKj1Omkz8b77SFsLel3fZq9WryUKnKWktTph
-         mc1Sl/lHzaulsCk5ywSbaod92WETCQg6cC4aLLe30FpxYRA9g0GVCR4ul6BVaWf3Grxr
-         sojTG9RGAMC8/39w0c0lluCeg2ZgfSoKsiSPYuQj2HLBT3VgIhFTXb9kmg/sAsCiscWb
-         h881GGKPjOFt/0Mx9UcFohaXKPooK/lHb7f9ifVJwIQttpd+7gYqrMbAvV5YLw+MMUnf
-         +4cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhAnFA0qGkzt424VEJHtCXyNIZI3yaEfHJ0+0/SXwA/Pl5qHgOZL2sCR9orZeH0X0dHi8/73IT@vger.kernel.org, AJvYcCX1l9HNa448BCi0pqhGEZVulPuL6cwtcs/kGX/0AENEuqlF1kWerHge6Vq2MAEttnUUSA2tvpCOM8wc6J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWBOeX89dS9JL+HObHA3lHl4HRWKd+cKZr1I4ZAmLCnLTyJyG6
-	7EDWVk6LBdGH9dI577G2ZZ4YcPZXhQSCniFns5JvpBpFnfBbM2fmNPpc
-X-Gm-Gg: ASbGncu7Y1hCOdWxfe2HNGxweve1XBYEM5yNY636sbtkscij5MWRmZh0eEVcdDlDee7
-	HUUfbIGw2nNTRl1eKahcL1J4KptJXma74iX2QQoSkAbg9mJ4fOiwmkmagt+YtI74focCqyAyfGB
-	C5m4fdovsNXfInbkXrzi/EAiMkyXM5EDsSirBonF3Vnja6AMjPdzxAm2dfgPbI96a7AHg6TXYXw
-	v7nk9CVNeSP92wWWUNgosQ15mKWvK3Ec5E4CQRvuTAB5L8uch7M+ecwr0WV/8XLqI1B5RtdP8ku
-	1ZnLewij8k9G8YOQZNl7RH+p0Yfg0V8AVUoiPct2BSfrsSjpJUVVUXsRoCwpmk3lJ/O3e+vKKo6
-	K7LJqIIBaNVVSyI21vG4ERB+doEKdlYmOa/2bEAKfVyk9P3S+EQifN2Wew8iq+oI=
-X-Google-Smtp-Source: AGHT+IFvZxxK+tyRgFocFz3UtSFmfIb+tEX2An49P06Lo+Ypw8FLZLGdUNwpZKVta0rbMtZE8oRa2Q==
-X-Received: by 2002:a05:600c:a00e:b0:43d:ac5:11e8 with SMTP id 5b1f17b1804b1-452013d7e0emr162270725e9.21.1749573120948;
-        Tue, 10 Jun 2025 09:32:00 -0700 (PDT)
-Received: from skynet.lan (2a02-9142-4580-1900-0000-0000-0000-0008.red-2a02-914.customerbaf.ipv6.rima-tde.net. [2a02:9142:4580:1900::8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532435fa6sm12494857f8f.48.2025.06.10.09.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 09:32:00 -0700 (PDT)
-From: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-To: jonas.gorski@gmail.com,
-	florian.fainelli@broadcom.com,
-	andrew@lunn.ch,
-	olteanv@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dgcbueu@gmail.com
-Cc: =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= <noltari@gmail.com>
-Subject: [PATCH net-next v2 3/3] net: dsa: b53: support legacy FCS tags
-Date: Tue, 10 Jun 2025 18:31:54 +0200
-Message-Id: <20250610163154.281454-4-noltari@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250610163154.281454-1-noltari@gmail.com>
-References: <20250610163154.281454-1-noltari@gmail.com>
+        d=1e100.net; s=20230601; t=1749573347; x=1750178147;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=337Fs/acVtHLrHpa6wOAa15lKx7cyXodEH1eYODanBI=;
+        b=ZQH584O6dMSjSKkOXHrRWAwy9Rp0L5eAJMsW/ybiezo23I3ixQ1vKmAYBSVZa8xkyG
+         RHNHxL+vSTWpyZP2EIiGyqCmdZH52CMRrQ2ZUco39HeyTH+5hoVW5jZvVZRz/KU/yAig
+         ZpKAS2ONxkPOPunluQmN737jdjEI1fNHmp2koF7/ZOlRY647I/LZQ1XEnAczivdvIbIh
+         BZiu+9IFu5lUs6RXzqZm+g7p17YjZd02ZzLsMXktY32Uqd9yozCIW89w0r+8wMnJXgUJ
+         LchuGNu+n3CUQSi5HiLQNEk0YfGrTy2nuQKMHS3M6a1+sTDNN+vJtTl86qV1k6MWOKhY
+         b4eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWs55HqzfiQSkojm57IGpmvtQiFGHP8fb0zj1x77LaHaqRwSOh0YjKYEJaLhRsxnOGFxOvBz5sZMM4ZJtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztRmUXnNoMZ6rtt1VNbqVZz+eL7+hGi4lOlamMxWJTc8o6j412
+	aUFL4YHM5ZIPy8j0IdT2W4FVKRSBHFSkD8qkMiphNRZGi45zSbp4TR01f6OHtBe/uHd2Ng8HyyH
+	siQAG
+X-Gm-Gg: ASbGncsr6VIrdS3inyrxmq4HzKU7ecUecsX7T/cHAzUxJ3vTUwkKMJJ5cADC8qgA2U5
+	Bpgvfp+9+hGQ61lBRq8TmxRfTZo0CvRBxiFPXSLrJx7Vyj6xM0AB16rcXfXv1VWTwaeXSfcpv0r
+	7BGgCimPzJRa7bq8THJ8MN2nIONycQu7wLfGznlixl/KFx431BUl3dzJAAJWK3i1kYk0SZ60o90
+	6yWHeX54As0SzIz4l2fY6g+4Qw2iVPu3yXtuUhzHBmBQOvg8u0103YDsF2M24GLge4/2TsBZDK1
+	S1dfnScAFqLB4BcJdWbPBIFZhwJ3bAk586GNdlKABI22eSy5ESA5oiQa5szk+g0z6IBivSsXS3k
+	4xTHQnfGTVCaFCtJqRTLz5GrjoRh1SV/vSH8A
+X-Google-Smtp-Source: AGHT+IFKN7q+KfnRdAYUgSFfIsNqsRvnCQQh5WKK0QN04pgRZrP7ovwBO6O0oZMuTYIpSjBWFhM7ig==
+X-Received: by 2002:a05:6871:5211:b0:2c2:3eb4:e53 with SMTP id 586e51a60fabf-2ea92c312efmr418737fac.37.1749573335756;
+        Tue, 10 Jun 2025 09:35:35 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:eb6c:30d1:632b:494? ([2600:8803:e7e4:1d00:eb6c:30d1:632b:494])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ea073406c7sm2477362fac.36.2025.06.10.09.35.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 09:35:35 -0700 (PDT)
+Message-ID: <9fdbcb45-ed9a-4449-9248-9bc1d5593fa9@baylibre.com>
+Date: Tue, 10 Jun 2025 11:35:33 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: adc: adding support for PAC194X
+To: Marius.Cristea@microchip.com, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ broonie@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250606093929.100118-1-marius.cristea@microchip.com>
+ <20250606093929.100118-2-marius.cristea@microchip.com>
+ <92c36ad9-5f8e-4ba7-9af4-9cb640f0aa5c@baylibre.com>
+ <d364524bad53f5c665071287f55a96e28dc9b231.camel@microchip.com>
+ <db78ac20-9b58-49d1-ba38-cc269eaff254@baylibre.com>
+ <a9902463d1f29993f13ce0bc87fcfb05472624d5.camel@microchip.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <a9902463d1f29993f13ce0bc87fcfb05472624d5.camel@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit 46c5176c586c ("net: dsa: b53: support legacy tags") introduced
-support for legacy tags, but it turns out that BCM5325 and BCM5365
-switches require the original FCS value and length, so they have to be
-treated differently.
+On 6/10/25 11:04 AM, Marius.Cristea@microchip.com wrote:
+> On Tue, 2025-06-10 at 10:22 -0500, David Lechner wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you
+>> know the content is safe
+>>
+>> On 6/10/25 9:46 AM, Marius.Cristea@microchip.com wrote:
+>>> Hi David,
+>>>
+>>>    Thank you for the feedback. Please see my comments below...
+>>>
 
-Fixes: 46c5176c586c ("net: dsa: b53: support legacy tags")
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
----
- drivers/net/dsa/b53/Kconfig      | 1 +
- drivers/net/dsa/b53/b53_common.c | 7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+...
 
- v2: no changes
+>>>>
+>>>> Using Jonathan's suggestion from v2 to just have a single
+>>>> property
+>>>> with 3 different
+>>>> ranges to chose from seems simpler that this. It would only
+>>>> require
+>>>> one property
+>>>> and would be self-documenting. The description could be shortened
+>>>> to
+>>>> just a couple
+>>>> of lines.
+>>>
+>>> I was thinking to add the range for this property, but it looks
+>>> (for me
+>>> at least) more complicated from the checking point of view. The
+>>> driver
+>>> is supporting two family of devices that has, each, 3 different
+>>> voltage
+>>> range as an input.
+>>>
+>>
+>> Usually, having a consistent binding for the same thing among similar
+>> devices is more important than how easy it is to implement in the
+>> driver.
+>>
+>> Since this seems to be a common pattern, we could probably justify an
+>> iio_property_match_ranges() helper function that would simplify the
+>> implementation in drivers that would need to use such a property.
+>> Then
+>> in each driver it would just be a matter of making a static const
+>> array
+>> lookup table of ranges for each device and calling the helper
+>> function.
+> 
+> Sorry for not explaining very well. I have implemented the range into
+> the driver and I was working well, but I had issues defining the range
+> into the device binding and the checker was failing. That was the
+> reason that I've dropped the range from the binding. Also I had some
+> issues enforcing a certain "available" ranges for a particular part
+> into the binding.
 
-diff --git a/drivers/net/dsa/b53/Kconfig b/drivers/net/dsa/b53/Kconfig
-index ebaa4a80d5444..915008e8eff53 100644
---- a/drivers/net/dsa/b53/Kconfig
-+++ b/drivers/net/dsa/b53/Kconfig
-@@ -5,6 +5,7 @@ menuconfig B53
- 	select NET_DSA_TAG_NONE
- 	select NET_DSA_TAG_BRCM
- 	select NET_DSA_TAG_BRCM_LEGACY
-+	select NET_DSA_TAG_BRCM_LEGACY_FCS
- 	select NET_DSA_TAG_BRCM_PREPEND
- 	help
- 	  This driver adds support for Broadcom managed switch chips. It supports
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index 862bdccb74397..222107223d109 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -2245,8 +2245,11 @@ enum dsa_tag_protocol b53_get_tag_protocol(struct dsa_switch *ds, int port,
- 		goto out;
- 	}
- 
--	/* Older models require a different 6 byte tag */
--	if (is5325(dev) || is5365(dev) || is63xx(dev)) {
-+	/* Older models require different 6 byte tags */
-+	if (is5325(dev) || is5365(dev)) {
-+		dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY_FCS;
-+		goto out;
-+	} else if (is63xx(dev)) {
- 		dev->tag_protocol = DSA_TAG_PROTO_BRCM_LEGACY;
- 		goto out;
- 	}
--- 
-2.39.5
+What did you try?
+
+The usual way is to define all possibilities and then limit it by compatible.
+I think something like this should work:
+
+patternProperties:
+  "^channel@[1-4]$":
+    properties:
+      microchip,input-range-microvolt:
+       items:
+          - enum: [-32000000, -16000000, -9000000, -4500000, 0]
+          - enum: [4500000, 9000000, 16000000, 32000000]
+
+
+allOf:
+  - if:
+      properties:
+        compatible:
+          pattern: "^microchip,pac194"
+     then:
+       patternProperties:
+        "^channel@[1-4]$":
+          properties:
+            microchip,input-range-microvolt:
+              oneOf:
+                - items:
+                    - const: 0
+                    - const: 9000000
+                - items:
+                    - const: -9000000
+                    - const: 9000000
+                - items:
+                    - const: -4500000
+                    - const: 4500000
+              default:
+                items:
+                  - const: 0
+                  - const: 9000000
+  - if:
+      properties:
+        compatible:
+          pattern: "^microchip,pac195"
+     then:
+       patternProperties:
+        "^channel@[1-4]$":
+          properties:
+            microchip,input-range-microvolt:
+              oneOf:
+                - items:
+                    - const: 0
+                    - const: 32000000
+                - items:
+                    - const: -32000000
+                    - const: 32000000
+                - items:
+                    - const: -16000000
+                    - const: 16000000
+              default:
+                items:
+                  - const: 0
+                  - const: 32000000
+
 
 
