@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-679428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D762AAD3634
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:31:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DE7AD363A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E7B1898FB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73FFC177504
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73CA292935;
-	Tue, 10 Jun 2025 12:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD52293B4B;
+	Tue, 10 Jun 2025 12:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szOg94Fk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eUHZl1AM"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A51FAA;
-	Tue, 10 Jun 2025 12:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B9C292932;
+	Tue, 10 Jun 2025 12:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558684; cv=none; b=dAg6x+56+24p9IoRKItnzA8eL5pd9JUXpvF3FYRB1LNvat7NGirGJcIIR0GhMkzO1Ev5D6WF4HeYyb4AyJwJj+3uPL37Knkslf1NT/m8QJPsEeElqesUKb+varGwBnCacVr0lViLNVril7bZk0TzHHjGFzkQ4b0p5wQhO7VlWWE=
+	t=1749558715; cv=none; b=bEPvhkcapYgOXXYpXiR1EwK/tRNuVI7BuEcAHWT6Gnj3xTpUP55tCHMKi9qE1zbCD2TLaarOD5esUlqZiMB3chbAtidK2th9WYAfcuAtEDmjmn2e6E6QQWuJpWTBbDEymOxL7Y7EfXmA9ySVFqPl47AkOvGP3Mj1QWzMFXnDEwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558684; c=relaxed/simple;
-	bh=8BwZyUXjZ+u8UfJhyh4/cxvJDU9B3jL/iOjUeYpFVbI=;
+	s=arc-20240116; t=1749558715; c=relaxed/simple;
+	bh=koeY9uoLs/ZvMsMdfIMuh6LpTZSKhSwh4VL/afru0XI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jw0BvUXP+lCLlnEPpelT0b7ittK5H1pvtsdyZXhD4TprMwB8YtJWLhWAvSjDBl/wlLnFtBA8iPFy+RHNgfBACdq6qYUy8mQeqiEEvrJpnHcijOe7Tqnp0KgopU4Y30iHej3wNCFwoE1pL/AMAq0wXi+1shs+OVGywLcMzNkOzQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szOg94Fk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B56C4CEEF;
-	Tue, 10 Jun 2025 12:31:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749558684;
-	bh=8BwZyUXjZ+u8UfJhyh4/cxvJDU9B3jL/iOjUeYpFVbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=szOg94FknpQD/p437CpZhtmGfuGU9iBCvIyiGyvAGjES/B5Bv1EtVk/cQKLiYpaqx
-	 HC8Ctv6FmFjROi/be3vYb43tRZcU65C2M0M3DFHgbRdshmH+W/rmYI6En2YcuYE33z
-	 PJpwvCHi3TYhSxxhhLv5n0z6dpubLjy5d5M+dgmNvvDliUOyCupqRZ3tBaZEtXfl33
-	 lrJf83u9W5s8B36/Da4m4KwjIFjl7ZjxGA1DcuTKkKT9mwkiB9HI02fdR2Xjqh0O+e
-	 hbaGF7JHK1tSf2UuMAIW2WvCL+Ng+dfqD7tLLh8Aoj+uwA0d4Jsf4GCx9YEH7aseij
-	 3jKXCV3bRq55w==
-Date: Tue, 10 Jun 2025 14:31:20 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Philipp Stanner <phasta@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: macio: Use non-hybrid PCI devres API
-Message-ID: <aEglmHpvqZhbG_AX@ryzen>
-References: <20250604113423.138595-2-phasta@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkCQSOJ4hOf2E5mbLAfq9FcZqTG+zMdOqsYlQOrdDHjQ3AUlKVNpAP/mBHWjggBEh6d6TyyDFT0F4nQk5aIMKGrjTBXORl8oiyw7aNOjtP3Vv+QFyLQN40cSECkA7rtE6YZe9qkehkHpUErQdSwySpcXB8mLLr7flk3vQI5qUH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eUHZl1AM; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=P9HzlQndl86kLps3EDkcKl0zZR/XXTA+ye1y//toSvk=; b=eUHZl1AM6Dmgzf8B+/WFEjhLru
+	ycjzw/jFYtfW/XNLnDma2/0c7ssHbk7j4nsy4s5pXAMgKCx8WL56SomELsmbM8Pjz/jH6zVAd0JGy
+	qjvRw5PONZ4O+RzhLjP9jYphNeoykfI76KuJ+qttAx464AKXmjYtbZMk/HjYxEm78EM8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uOy8n-00FGBh-3H; Tue, 10 Jun 2025 14:31:45 +0200
+Date: Tue, 10 Jun 2025 14:31:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/3] net: phy: micrel: add MDI/MDI-X control
+ support for KSZ9477 switch-integrated PHYs
+Message-ID: <6597c2fd-077a-4eac-945f-97b43c130418@lunn.ch>
+References: <20250610091354.4060454-1-o.rempel@pengutronix.de>
+ <20250610091354.4060454-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,45 +63,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250604113423.138595-2-phasta@kernel.org>
+In-Reply-To: <20250610091354.4060454-2-o.rempel@pengutronix.de>
 
-Hello Philipp,
-
-On Wed, Jun 04, 2025 at 01:34:24PM +0200, Philipp Stanner wrote:
-> macio enables its PCI device with pcim_enable_device(). This,
-> implicitly, switches the function pci_request_regions() into managed
-> mode, where it becomes a devres function.
+On Tue, Jun 10, 2025 at 11:13:52AM +0200, Oleksij Rempel wrote:
+> Add MDI/MDI-X configuration support for PHYs integrated in the KSZ9477
+> family of Ethernet switches.
 > 
-> The PCI subsystem wants to remove this hybrid nature from its
-> interfaces. To do so, users of the aforementioned combination of
-> functions must be ported to non-hybrid functions.
+> All MDI/MDI-X configuration modes are supported:
+>   - Automatic MDI/MDI-X (ETH_TP_MDI_AUTO)
+>   - Forced MDI (ETH_TP_MDI)
+>   - Forced MDI-X (ETH_TP_MDI_X)
 > 
-> Replace the call to sometimes-managed pci_request_regions() with one to
-> the always-managed pcim_request_all_regions().
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
-> Hi,
-> seems I forgot sending this patch out a while ago. Mea culpa.
-> 
-> PCI has currently chained the changes mentioned above queued up for
+> However, when operating in automatic mode, the PHY does not expose the
+> resolved crossover status (i.e., whether MDI or MDI-X is active).
+> Therefore, in auto mode, the driver reports ETH_TP_MDI_INVALID as
+> the current status.
 
-chained?
+I assume you also considered returning ETH_TP_MDI_AUTO? What makes
+INVALID better than AUTO?
 
-
-> Linus, so it's probably a good idea to get this into macio relatively
-> soonish. Otherwise the driver would likely fail to reload in v6.16,
-> because the device's PCI regions remain blocked.
-
-I can queue this up for 6.16, but then I think you need to rewrite the
-commit message to motivate why it is a fix (i.e. why it deserves to go
-in to 6.16-rc2).
-
-Or, I can just queue it up for 6.17.
-
-What do you prefer?
-
-
-Kind regards,
-Niklas
+	Andrew
 
