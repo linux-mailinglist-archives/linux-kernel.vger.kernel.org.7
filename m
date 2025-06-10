@@ -1,159 +1,179 @@
-Return-Path: <linux-kernel+bounces-679551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAA2AD3862
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:12:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BC4AD387E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03103BC518
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 069A617FA19
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237762C0307;
-	Tue, 10 Jun 2025 12:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004172DCC11;
+	Tue, 10 Jun 2025 13:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="En33Eu96"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cUc/6d6z"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07FE2BD03A
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A289C2DCBF5;
+	Tue, 10 Jun 2025 13:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560340; cv=none; b=FYJGfSMTb1NK3mqObZLpXRDRdVIvgW2RwJV3uKyws6zJRyuNSyweYcGGprrEXBO/kaVsHFmifniiXhVZE1Bt+DyYyQTpIne/m+Mysbwa8KYvkXTuyj7y1QK0xS/IjT2bi5CvksXP7d9QJLdIIHSzK5bh0PjAXf3GYDe79DbL95E=
+	t=1749560441; cv=none; b=l25JI3uAbG5pguwaovLY/KYLHB1rLPGZOLQoR5AkSRxpybsMsV85dja7k5c5IVhx6bCbEEaUfB4/s+dRqMMa+wdXCIhiALRAnr4uIYrYwhvfhud7aXWU0NJYtPHLxJB0VedXn/3uWnIbyD+dGPZOdRgaE8cJMNKwqlGv3Q9VeA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560340; c=relaxed/simple;
-	bh=oTpSgC31PAVO+aE1pNh07rDeXdPKl1jobKVG3g/UHhs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gmiyftdKFrGBdWIMMy6lpkE2DFUqIns7a9WBIM0U/+EtFodGWYEw5WRSwRhXk4UY46aK/kHDMpIsh6ldu6FFzAyJz9pWPC0sPjuKR1ginivC7rE7F6TTEEf9nvVq6nTQRak1lmrIK/cHk9R5zwAW782/bnGKNqSTjTQ0TgdQsds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=En33Eu96; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d6ade159so45864815e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749560337; x=1750165137; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zrVIKmBA62tYbIrJangPWC0arTIQiP6CcWv/1Ljn/5A=;
-        b=En33Eu96zcymiNC2h35W1Xal+iA+QRvuk35z/U0AcTO9tvb/MryxRirrfoQL2EcIr9
-         11LvL0KfZdQYgqMs+029SghHUo5a+klA9s7JAYEP9oKPam8SoIfximmuJ8R/4/MT3nmf
-         0Nm3esTDr4x6tC5xmAHKdF3CbCbVPx3V1jCSskYl//rpZtsq4+B8Iza5OmHM2nn+lw7B
-         0Z8BTSro/QQkwKP3EXvTEfh3kld3tlnDQ4yhRPVBZ7B4H4t/Dss2oSkB34LhKk72L1Lp
-         eMHS02MDIt+2oKSgx2ZVIr06f9iho82KffdFpZjzvPkhvcrQiVat3d0YSLjSmxxgYc1i
-         VVJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749560337; x=1750165137;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zrVIKmBA62tYbIrJangPWC0arTIQiP6CcWv/1Ljn/5A=;
-        b=Y+01eRWu3LsoaNrx8Dcnf++7fkisQDNix0OZgSy3JM2owbKPpA8KYhdNd5hEo2ulbr
-         pUjBZCj96EbSR7BE+lVLgKElrmFtURRbGgau0rjF8BME8fn/N2f3PbT9Zmb4oul+VqKP
-         0DEtwEluw48gyrdInPqpJSvJcG9JkYTAk5KGxRK8ZJXCljck7nB1UT7n5AEQF5QwOkWR
-         G19KKDs+MJnicGwyUt5sk8gu+G+vEy++WLUlzFxU0NipAOM2lv4MpNzOAFgZFKfarIaT
-         SSy4dTbxWZsx2gEFSy29/It4thMaAZcIjNWtGexxs3FM+bjNB5m5xNRc7gCSp6HTQCqN
-         x8ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwX2zQHUCJ40azDXpDzyCZSPkNDBUG9ENkvxTny7FR+mmvX7YhfHnqBeE8UzA2ZtTrGcAp5k+HIPUHCR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU/gRIpuSaVWjU8QPOjId8TLQ54nu1nBYn2bMHn6eeZe5LJ96R
-	m/B6pg17AcqMMjj3pgD1q4ir8pIwCvbfvw1hbYIJKBM1kTUv6hQvWZxntHuISGL0Vbw=
-X-Gm-Gg: ASbGncuecsm6eHAOosnSX55qJGYtcqTjzQHlEh80fukY0L7aNcFhkcPi63C98dymAjM
-	SPapOWrHxJRmw5yLShsz0jdIKmTKE4mZyRH4S7iBfkVARwW25yI8huhRhbXpLzb9WnWqwiUpyRq
-	P+S1e+aDX7u5BCFVpkES/OxfERrFIgnIKQHd6SO9OVY20xgWtXPzSwnM9uJd5POzatr9OyKCMp1
-	YxijIAU8v8g8oNnRagZtACYw8gYx7LtNvDW4HwMOatRGt8KbGWdpzFFikj5PDHsdsaq8DlsoPZy
-	UYCGFYVFFenEEcWvZ4vIZA9Kd+IplOy3h9RAP4BXpCEjjOUu5PY9rQ==
-X-Google-Smtp-Source: AGHT+IFdJ91jmVZS5b+CzAH2GS7Lj2zbRrdX46WwyeQXZY1GxVzkN/B3QcrAI/8YtMDq52owlFoArg==
-X-Received: by 2002:a05:600c:1907:b0:43d:db5:7af8 with SMTP id 5b1f17b1804b1-45201414a65mr127985455e9.21.1749560336865;
-        Tue, 10 Jun 2025 05:58:56 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:4d:e52b:812d:eb7c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209ce17f9sm143671135e9.11.2025.06.10.05.58.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 05:58:56 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 10 Jun 2025 14:58:50 +0200
-Subject: [PATCH 4/4] pinctrl: lynxpoint: use new GPIO line value setter
- callbacks
+	s=arc-20240116; t=1749560441; c=relaxed/simple;
+	bh=abYFe82pY9HAkSfp52BKK6TLTuB3UmZkzkMqJ80SsQU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nYhHipqiYZWZz5Puffu+5kzxf1ZKGZWRS7sZuc4UpOdPdiUmxQvZGgEg4cCO1nnigbrxugLDNv2kpIg1j4SnpDr/0AN9b+Rjt18lRaUva0dwCbiikkMZ84bYZM/LrYFm5fi9K8SfXjGGyTKSHZObW2XPCzzsW5UbK3Qd8nLQFbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cUc/6d6z; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1749560429; x=1750165229; i=markus.elfring@web.de;
+	bh=3ru8lF5jq4NEcL5YlhuLBKOrkMTglWNt7qSouMfx1O4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=cUc/6d6zxX+sITgA8Rw4Fe3qMSSfM+UbMlWqlMsSVD+YudxexaYtAcSSwg6GnwMb
+	 j2nckC5GtORZjDxBY10YxhLqmfORZcDXUIME79auMBZekN+HFHHs+RD6GV7gi8X7g
+	 Rjwr1ULRlBYbg3NFUTUqHEcDxya8+hKXtMnS7vHZDBuzg8K48WwfUAhHeoIkTv7jX
+	 mm9nUC5AujqAZhk3hsAKFZ79SlFMCHg9sYEScGa1S1Ir0VCBF5Z+xDdEdwgUdA5sW
+	 QKw+jCuO1iWkPBAfMV4XvkWfAQUbvwcy505X18pnegwgTL2O6xdw+7wjFObPUxdsK
+	 XGeJ0OiEsEHSZvyMKg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.183]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMpCS-1u8XdJ0rA4-00RMxF; Tue, 10
+ Jun 2025 15:00:29 +0200
+Message-ID: <b182b740-e68d-4466-a10d-bcb8afb2453a@web.de>
+Date: Tue, 10 Jun 2025 15:00:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-gpiochip-set-rv-pinctrl-intel-v1-4-d7a773ff864e@linaro.org>
-References: <20250610-gpiochip-set-rv-pinctrl-intel-v1-0-d7a773ff864e@linaro.org>
-In-Reply-To: <20250610-gpiochip-set-rv-pinctrl-intel-v1-0-d7a773ff864e@linaro.org>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1747;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=pi3gOCuYMaPz/JFg+eWCQsR8jJCkFM1RNWFtAInCAqk=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoSCwMTeUKdwG9/vVWjkQR0UDigBpG37Jv++1xL
- lBW+SFGjR6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaEgsDAAKCRARpy6gFHHX
- cih7D/0WJnBIQjNu7CfhOsitHfBqojk2Xrt7W0ojZT/JR/BoihIxylpdRHVhjnAICLkRF+TFS7R
- N8cNsWHs0YvmW8RXDA6hraMDhrtPxMrK5SCIStK0Al8WwaY+tNXfapYfx/A9c2ZAIQ88hW5JB3X
- ZO2TLU4+dDdYorYL0pVizwXYHpmATBxLJ5BJShkJs89VRAOOGtznAfRheKiNt+47uNa8hHB2HOZ
- V6gpfLVhrNQV3qQvpO2AyMehduOtEF3UFI0ilJoW6pdRWl/ed425LwS3fpae3pq0EsoRDlZUSOd
- 1xqlmO+Lz6bHQROaHJTL7fFtVOcMFHLQx8fkcFzVY66smtmxqP7BSa5Q780wvwKlzV4wwHa5XeS
- gxs/t5VcqgQBQ7vdUlG4sbznvIVvt7LdcRaipOH1QYvGLUR3UOq0XumfUTTif90pbnrJLuXT1yb
- MhLkCRPFewQPf47JaIm6TyATI8YdTEcdve0nBboGY4riH80PaQnBJOLgPgyaLWlxavjpZP4j+RU
- hlUVhglebjCFkQwIbdeDEwYkIMHuZGEwzEU0/zYuROSletrrSh98wPa0ceUNnMNdBt0A1CcJeqz
- aipK/5PNcKz6WfgVwao5uBRPxFy5mtKi/s8Bh+jEsMNk1/yg6GEAyw5veWppvTaigiX1rzXOyp4
- OZDe7EFboNR7XZA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+User-Agent: Mozilla Thunderbird
+To: linux-xfs@vger.kernel.org, Carlos Maiolino <cem@kernel.org>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] xfs: Improve error handling in xfs_mru_cache_create()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UJz2tF5PxhoKS9eiiR3sqRK5NaAEvx0TVp2RtKUpDQD7UrN2h3Q
+ gV1y9GQinCPLstW2tqBY8vi1/JgfEN46C7pAgGhuSJ+mvcikvdmQ6HdBjaxKzCidLXzueFd
+ 2tYoSGeyZr4AV1uFwHDxckfKsfcvT7B+S71DZ9sjWpYkRXmG5bS0N6+YkHIbOnIP5xaXoa5
+ J/CKTinVlObSf4aE9qfoA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:U1xje0ld8v8=;/Nx2tw+MUOcXiLOKS+QqzDNN/DV
+ 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
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 10 Jun 2025 14:50:07 +0200
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+Simplify error handling in this function implementation.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/intel/pinctrl-lynxpoint.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+* Delete unnecessary pointer checks and variable assignments.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-lynxpoint.c b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-index ac5459a4c63e054ae4dd975f0a19112e4382aa99..5d4a5dd493d1bfbbc6051163758fd8a9341b43a8 100644
---- a/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-lynxpoint.c
-@@ -503,7 +503,7 @@ static int lp_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(ioread32(reg) & IN_LVL_BIT);
- }
- 
--static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
-+static int lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+* Omit a redundant function call.
+
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/xfs/xfs_mru_cache.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
+index 08443ceec329..2ed679a52e41 100644
+=2D-- a/fs/xfs/xfs_mru_cache.c
++++ b/fs/xfs/xfs_mru_cache.c
+@@ -320,7 +320,7 @@ xfs_mru_cache_create(
+ 	xfs_mru_cache_free_func_t free_func)
  {
- 	struct intel_pinctrl *lg = gpiochip_get_data(chip);
- 	void __iomem *reg = lp_gpio_reg(chip, offset, LP_CONFIG1);
-@@ -514,6 +514,8 @@ static void lp_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- 		iowrite32(ioread32(reg) | OUT_LVL_BIT, reg);
- 	else
- 		iowrite32(ioread32(reg) & ~OUT_LVL_BIT, reg);
-+
+ 	struct xfs_mru_cache	*mru =3D NULL;
+-	int			err =3D 0, grp;
++	int			grp;
+ 	unsigned int		grp_time;
+=20
+ 	if (mrup)
+@@ -341,8 +341,8 @@ xfs_mru_cache_create(
+ 	mru->lists =3D kzalloc(mru->grp_count * sizeof(*mru->lists),
+ 				GFP_KERNEL | __GFP_NOFAIL);
+ 	if (!mru->lists) {
+-		err =3D -ENOMEM;
+-		goto exit;
++		kfree(mru);
++		return -ENOMEM;
+ 	}
+=20
+ 	for (grp =3D 0; grp < mru->grp_count; grp++)
+@@ -361,14 +361,7 @@ xfs_mru_cache_create(
+ 	mru->free_func =3D free_func;
+ 	mru->data =3D data;
+ 	*mrup =3D mru;
+-
+-exit:
+-	if (err && mru && mru->lists)
+-		kfree(mru->lists);
+-	if (err && mru)
+-		kfree(mru);
+-
+-	return err;
 +	return 0;
  }
- 
- static int lp_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
-@@ -775,7 +777,7 @@ static int lp_gpio_probe(struct platform_device *pdev)
- 	gc->direction_input = lp_gpio_direction_input;
- 	gc->direction_output = lp_gpio_direction_output;
- 	gc->get = lp_gpio_get;
--	gc->set = lp_gpio_set;
-+	gc->set_rv = lp_gpio_set;
- 	gc->set_config = gpiochip_generic_config;
- 	gc->get_direction = lp_gpio_get_direction;
- 	gc->base = -1;
-
--- 
-2.48.1
+=20
+ /*
+=2D-=20
+2.49.0
 
 
