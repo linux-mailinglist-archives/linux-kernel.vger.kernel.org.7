@@ -1,130 +1,139 @@
-Return-Path: <linux-kernel+bounces-680520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE78AD466F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:07:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC7FAD4673
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3F167ACAAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F783A6CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A192D5408;
-	Tue, 10 Jun 2025 22:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A9D23BCF8;
+	Tue, 10 Jun 2025 23:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gEjK2GZ7"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PKYFzKxF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1642D2FE4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A3678F34;
+	Tue, 10 Jun 2025 23:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749596317; cv=none; b=hwCPO9sgRje3EsOKYPNzmP7fc2xPySd8SYivorZ4wMMKmZ+9efvIY0+fEKBTL2Qv9BbjWGadId0yrqPK4PQKnIfloOSBTzGqgyYlwTefuicoulVkoYftfD5ItuvFhQRquSXbPlZfzzXHzzECDBDYIK6prVmJvl1JWa7fW54S6nQ=
+	t=1749596596; cv=none; b=AfEdU2uIzJh955VBUwpuMEY0yhLKUTSl217sZFTylvk6Z90ePHJlIU7wz6IxExigphc1ekFZUMM/1gAwDsALik0VwdWWxGH9BrtqYyfoYvd+s+8zRp5U1w38mA3w3z+Aw4y59bBGw4pARBimzzHwIwhI03vzIvYLaCJc1Cw0c+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749596317; c=relaxed/simple;
-	bh=DWYkexeKvSu7I+q/pf14+u2gmgqyLF3ul0cydoTKzVc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Nct2hw4twGYQKTFtWwVR3Qd8tsktZ+tM0u6ameekMlWjiI9QYIkCATSyjb/nQ/q9hp76WMFJxLYPxeewBDrPmrzXnacZEGfa1sFqr6ZltBEdMUHzyzuS4zHyI7xTRW3pDFKZfHFDwtcVuPpBiA5GJYWZUhAbeac7u9zL70xXZyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gEjK2GZ7; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235f77f86f6so40080285ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749596315; x=1750201115; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=3MRV7X/T/wn0+SAUz4kSzbvtBEQulMMmWQ/PWJl9FfE=;
-        b=gEjK2GZ7FBCVu4Z4r3wGgZgBvV67vph5bp9yZvmxwKIPHHr5fNKROr13ZOKsyL3XYO
-         OUiUHurP604rAfTmviJIvJGvfWZvzkUXugngaS3q1qKdZeKEPvx584pdqyZwy7FZyzeR
-         BhDZCH9eB6V0oll/lUL2fybq59IwHJkReMMldWVBK6F6hbZ4noFGIhRUw10bA5eAwddJ
-         8YXNuEGmCfG5jxiPxTPJbV5XydZ7J1hl3F2zjfEqkazSQ1TPHGJSbiH4RQRQGpi+RHip
-         gl6ylBQcrwdJsY+wXw4XMtdS1eSeA/dU6adwF1KppkHLovsqgIN24XSvtaBu/DCuXF87
-         3i3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749596315; x=1750201115;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3MRV7X/T/wn0+SAUz4kSzbvtBEQulMMmWQ/PWJl9FfE=;
-        b=TR5rgqXi70Q/o8NRbbJ9x+Vgdanc4Kh+oM2Yp3Z2EBOhJBqcIzvW0qDyNq70rsEhPC
-         OFKxhiTNwjOtK5nFgK9I+W5rtUT64eKTLWO6/pMBnOj+65hbCQY51uJlmAitk93kZrl7
-         jNli+GRK4Ui7k4TaSJPQoePBQGQO5+rPhHXB34IOaUX60PjdvqssWbqDfJ+Fz4BGleqt
-         yJB8ObekZmlfi/jnPBvGLfdMezTqWh1svl2Th67i70DpHsN0J6hMUi0ExncPwa0yxfPx
-         z8h2m3Er54a4WqeCJgXBUe5SiE9BLixiF5KyJVDiSTBDmQvEn+TiwpuhmXPgnf5kZkmS
-         rykg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3TMvZEGc+s5iXuC5XUYcvKIFXakqnBf4meNjwz3Pmhn3h3JO4mnoK+y7gsZgWCfsWJ5mePkQPm+7WRpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmPLr7EHKjCLQ/vBPM7oijNrz4QXPO9Qz6gBDgeDgA2g9UYtqB
-	WNQqryLuyBmLcQKXwI7DPeyn4dhvK4VVM2CxukBSK/6hNc/+fTHGmGqMyLALYfct2dM+O61oFE9
-	9bZArvw==
-X-Google-Smtp-Source: AGHT+IGiTLrz803hh++30xy8fSjN6gixKMJv7/AiyKAlh/XmQx+ffUbEPds8P01hoGQ+qsG4Qote79BJ1DE=
-X-Received: from pldg6.prod.google.com ([2002:a17:903:3a86:b0:235:6d5:688b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ecc1:b0:234:ed31:fc98
- with SMTP id d9443c01a7336-23641b14d61mr11802615ad.37.1749596315046; Tue, 10
- Jun 2025 15:58:35 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 10 Jun 2025 15:57:37 -0700
-In-Reply-To: <20250610225737.156318-1-seanjc@google.com>
+	s=arc-20240116; t=1749596596; c=relaxed/simple;
+	bh=RLovTVRd2tOcXcWiWkBIEoJRN0YDL8iKeDZGU2J9J0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IZBXblIpTKVo3AVApDnVVIDQRj/gn/DA5HCyUv3Mjtw98my5P9wyLdC4ulerrtRiEw98rinhQr4JIB8YeLNCZReQ6iZpZiqaNh7+t6IZYUZ5D/ARGPIthoWU0s6fp3oW1unroYtLudbyDFmmezKSEa+iJBgmEdCgqZB0TUDsnFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PKYFzKxF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1749596589;
+	bh=DdFi1+tyFX2nRKrzkRwtzI8WaU+eYXuY1nj4wp9rHv0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PKYFzKxFxXsphOn4H12H8BT2fj6mtDI0LvaxlIAXBzW9xP68WwmolbiFzc/H9T/+n
+	 bnUpG1K5Cs3MtPdKlUG2GBaarAch2dQh4Y8Vn8cpssbvZd86FfjZ5o/BEfWGLOepCr
+	 Cihue3mE9Doo2KDTJnfzJ+TZQ1kQGujPFDl9IKpLemQMC7K1aXmhPf5p1vh51vfzcM
+	 Y0U1iZ9s4HXlukwgdZfDQM31ANNkTnb7wP0ByJEZmyQFjAxw3TtQY/WIf7gexOte3j
+	 xtar4wSbE0qxlIi3slGa/ap7jpsck8Rh4EEZDG8HKo0V7ZJv1KekbQq3d+RFSk8kLr
+	 NDtEQi6pYGOKA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bH48F0kzZz4wbW;
+	Wed, 11 Jun 2025 09:03:09 +1000 (AEST)
+Date: Wed, 11 Jun 2025 09:03:08 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the i2c-host tree
+Message-ID: <20250611090308.1e40982e@canb.auug.org.au>
+In-Reply-To: <20250526114315.733b0728@canb.auug.org.au>
+References: <20250526114315.733b0728@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250610225737.156318-1-seanjc@google.com>
-X-Mailer: git-send-email 2.50.0.rc0.642.g800a2b2222-goog
-Message-ID: <20250610225737.156318-33-seanjc@google.com>
-Subject: [PATCH v2 32/32] KVM: selftests: Verify KVM disable interception (for
- userspace) on filter change
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
-	Manali Shukla <Manali.Shukla@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/PjNzomps/JDIisuTbZNYl_z";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Re-read MSR_{FS,GS}_BASE after restoring the "allow everything" userspace
-MSR filter to verify that KVM stops forwarding exits to userspace.  This
-can also be used in conjunction with manual verification (e.g. printk) to
-ensure KVM is correctly updating the MSR bitmaps consumed by hardware.
+--Sig_/PjNzomps/JDIisuTbZNYl_z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi all,
 
-diff --git a/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c b/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c
-index 32b2794b78fe..8463a9956410 100644
---- a/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c
-+++ b/tools/testing/selftests/kvm/x86/userspace_msr_exit_test.c
-@@ -343,6 +343,12 @@ static void guest_code_permission_bitmap(void)
- 	data = test_rdmsr(MSR_GS_BASE);
- 	GUEST_ASSERT(data == MSR_GS_BASE);
- 
-+	/* Access the MSRs again to ensure KVM has disabled interception.*/
-+	data = test_rdmsr(MSR_FS_BASE);
-+	GUEST_ASSERT(data != MSR_FS_BASE);
-+	data = test_rdmsr(MSR_GS_BASE);
-+	GUEST_ASSERT(data != MSR_GS_BASE);
-+
- 	GUEST_DONE();
- }
- 
-@@ -682,6 +688,8 @@ KVM_ONE_VCPU_TEST(user_msr, msr_permission_bitmap, guest_code_permission_bitmap)
- 		    "Expected ucall state to be UCALL_SYNC.");
- 	vm_ioctl(vm, KVM_X86_SET_MSR_FILTER, &filter_gs);
- 	run_guest_then_process_rdmsr(vcpu, MSR_GS_BASE);
-+
-+	vm_ioctl(vm, KVM_X86_SET_MSR_FILTER, &filter_allow);
- 	run_guest_then_process_ucall_done(vcpu);
- }
- 
--- 
-2.50.0.rc0.642.g800a2b2222-goog
+On Mon, 26 May 2025 11:43:15 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> The following commits are also in the i2c tree as different commits
+> (but the same patches):
+>=20
+>   a088ce22c118 ("i2c: mlxbf: avoid 64-bit division")
+>   50f317545149 ("i2c: viai2c-wmt: Replace dev_err() with dev_err_probe() =
+in probe function")
+>   608e2d633096 ("i2c: designware: Don't warn about missing get_clk_rate_k=
+hz")
+>   481391b537bb ("i2c: designware: Invoke runtime suspend on quick slave r=
+e-registration")
+>   736f258f0a9b ("i2c-mlxbf: Improve I2C bus timing configuration")
+>   a1a8ccd53458 ("i2c-mlxbf: Add repeated start condition support")
+>   c43383e2ffa4 ("i2c: xgene-slimpro: Replace dev_err() with dev_err_probe=
+() in probe function")
+>   3887d3f64260 ("dt-bindings: i2c: i2c-wmt: Convert to YAML")
+>   66234d6c7157 ("i2c: microchip-corei2c: add smbus support")
+>   55d144eaea36 ("i2c: mlxbf: Allow build with COMPILE_TEST")
+>   52360f31e6ba ("i2c: I2C_DESIGNWARE_AMDISP should depend on DRM_AMD_ISP")
+>=20
+> These are commits
+>=20
+>   2b2805404c92 ("i2c: mlxbf: avoid 64-bit division")
+>   3b7d8d151a7e ("i2c: viai2c-wmt: Replace dev_err() with dev_err_probe() =
+in probe function")
+>   bdf4442f4c7e ("i2c: designware: Don't warn about missing get_clk_rate_k=
+hz")
+>   2fe2b969d911 ("i2c: designware: Invoke runtime suspend on quick slave r=
+e-registration")
+>   e981364d89bf ("i2c-mlxbf: Improve I2C bus timing configuration")
+>   6bdc662c05c5 ("i2c-mlxbf: Add repeated start condition support")
+>   24d9f6050520 ("i2c: xgene-slimpro: Replace dev_err() with dev_err_probe=
+() in probe function")
+>   29b0b4ce6417 ("dt-bindings: i2c: i2c-wmt: Convert to YAML")
+>   d6ceb4053826 ("i2c: microchip-corei2c: add smbus support")
+>   053859002c20 ("i2c: mlxbf: Allow build with COMPILE_TEST")
+>   66e64b457c23 ("i2c: I2C_DESIGNWARE_AMDISP should depend on DRM_AMD_ISP")
+>=20
+> in the i2c tree.
 
+Given that the above commits are the only ones in the i2c-host tree,
+can I please have that tree cleaned up.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PjNzomps/JDIisuTbZNYl_z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhIuawACgkQAVBC80lX
+0Gx7yQf/aQf82a4ubLjFQGwoLZ6BClK44okmzIIXvMdi3wLhQRprc8K2beDnXsZr
+ohYQYBIFJGCnEKjDU9PEuMuUaRPS6jhqTa/Dy3bUf95u03NP+bq4LdtaY2PXHVTw
+0wuv/IQC8yoFiRrTA1csStmfgQTpJndJq3+/wlX633qOLgUmO0DcdX7ullO/QEv8
+1d96mqCI3fiCy5CnUnsZBiJrGyAezysTt8/+ZLRALCC/9FijYOlYRvCos81TdSVg
+gPzWjfJJRk3XpzTt3/L5/hPhGOl4fjhOe9O3vlzOvTd2umHd72hnGYO+kdGhqPYp
+qRohXYyTU5CI/rH2532PNiJ0QvxNqQ==
+=sGrT
+-----END PGP SIGNATURE-----
+
+--Sig_/PjNzomps/JDIisuTbZNYl_z--
 
