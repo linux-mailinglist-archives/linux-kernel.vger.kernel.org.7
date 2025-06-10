@@ -1,126 +1,144 @@
-Return-Path: <linux-kernel+bounces-678562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89D1AD2AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183CFAD2B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F5C67A79F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6291891E7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 00:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2541E1632F2;
-	Tue, 10 Jun 2025 00:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C60185E4A;
+	Tue, 10 Jun 2025 00:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZJzaQ8X1"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="nVmirtF5"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849A22AE89
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E9617A305
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749516338; cv=none; b=WsqRECJcNjGL35c7UWps9WKNH2KqZr2pQ9I3+EhJOwMeeFbOMrYRTWFswkA8rKTIsKgSa4gTaiiOSyEobv2M84K9drgAf0uo0r9cX5+LJFtERsJlss8V+TMVJAEzyj1WgcrBUdkJJGoDv5WK6Jx01dItDhuONEyt9FZHz2KDPR4=
+	t=1749516623; cv=none; b=h2AIUOMWrtqKAfpDcB2xjrUZhtGzDhEj/+nuePBJl+C3qkaZHLAsjoDTcLc1lmt02NibThvWbOeiBEq7+DsinBax5S1FpZH0bp6tb3vn2L+pJFfAcQ8QM5YtiYNJFq1MEX57wTCjAS732X6Bpg2xh3ETBCevvcNyupmF7g3hkhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749516338; c=relaxed/simple;
-	bh=kJDk0KCfhQiOdVoz9lgfLVQXsmky8WgNhO+CuHpytoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amr2bkuBj33vM9shDqm+o/353+HwxpcwneV9wWsNyvCeo9AEfwNtID6pOngQ0qX358xeHKarg3fWZ678eS4graJizXCGz3va2PcXH2lLxTtdBE5oTH933B0UsJfP1kbR8HkiRjo5VS6jet74VcD3/ty0O9dvtAO4mA5QhV7wiiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZJzaQ8X1; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 9 Jun 2025 17:45:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749516324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K20VVd+wIYPeI78t96QglGZe8BTe3O5cy4tZdboIubk=;
-	b=ZJzaQ8X14i+j9T2bYFvj4dh4I3oEb0hhtA7D3jE2PTPcmQpV/adBveWSKgzgpcItHAc3Dp
-	d6euJ28IP6Ii6ECu29b4DBhsg/UNjSdaAYeuv5JYRoRJt+54pNav0UQnKFa1vWHr9tHVfb
-	BtTnDjf5giI3R1YNuz1adnCV2feTGx0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Michal Hocko <mhocko@suse.com>, david@redhat.com, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, rppt@kernel.org, surenb@google.com, donettom@linux.ibm.com, 
-	aboorvad@linux.ibm.com, sj@kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: fix the inaccurate memory statistics issue for
- users
-Message-ID: <advwinpel3emiq3otlxet2q7k5qwl43urgewhicvqhqliyqpcg@vztzhkqjig6n>
-References: <f4586b17f66f97c174f7fd1f8647374fdb53de1c.1749119050.git.baolin.wang@linux.alibaba.com>
- <87bjqx4h82.fsf@gmail.com>
- <aEaOzpQElnG2I3Tz@tiehlicka>
- <890b825e-b3b1-4d32-83ec-662495e35023@linux.alibaba.com>
- <87a56h48ow.fsf@gmail.com>
- <4c113d58-c858-4ef8-a7f1-bae05c293edf@suse.cz>
- <06d9981e-4a4a-4b99-9418-9dec0a3420e8@suse.cz>
- <20250609171758.afc946b81451e1ad5a8ce027@linux-foundation.org>
+	s=arc-20240116; t=1749516623; c=relaxed/simple;
+	bh=HIdLaLetSjMiNZXLjyjzzCQ7kpiz0PwCy+njD9OJ9JI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gdVlknPLDxdglrfqcYyN14rutjbhv167/h0JHKUmwGv89wK7/a0cDRtylNX/oR/YZ/gcaZrl9lKvv8ZfKGO5e0zLgGLmX4xP47wqmRIQYXXVTw4yGc2X5nY+XMvjWRcTpDGLqsHb2NcMDJqWPdJvjEESrnf73lV0gMKyzUjEjdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=nVmirtF5; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1749516309;
+	bh=eh0MKFXwRSKJeN6xSCf1HbT1d8FUKtrqXJ+Dp8MAsIQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=nVmirtF53NxdN4kuVWOnBRC5rp1pqVl7vqt0oxN1c+AcDugoB42F0iO9lLbrfuG5O
+	 o8TcdZsrMQY3dyQEFZwEgYTxVAUa+3y58Hmiall3svpP9H7c9sIlneGSfh1es1BduF
+	 w2ZGcroLnWPmLL4jSZoUBn/ahb8KaBy0NtaDcDng=
+Received: from [192.168.3.19] ([218.4.27.159])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id B4787495; Tue, 10 Jun 2025 08:45:07 +0800
+X-QQ-mid: xmsmtpt1749516307twxekh8mx
+Message-ID: <tencent_1EB006F3EADC43F9710EC002C328BC474B09@qq.com>
+X-QQ-XMAILINFO: MStTOrhA1CLVe8QmYEvkvgVwbij+zYPHXHa/ukbjGk7o/rxjTDwq8lMuHcxyEC
+	 ZbPs0GxvKyk5ETXRRnvIKReAnq9O0vHbhyzxBlK/K/LAt1a3skGrvaEo5c31smC9oEevs3jNbLDq
+	 lm1ERe1RSzUOBQXs9Fa/d5J/t+BlT4uVb4YbTd2NLQXppUSQYGQgxLLqIpEBsNdoQJauWVblw2ze
+	 wLk/m+1euA6o363+TWfPQtrVABlYRCjckiGpIN7MsjDblVpxXoKxVGuLo/k+ogd8WxnzcAwpzct4
+	 WboutieCsggDtEISQI8KzA18Gbq/EQ1HacOcFZqcfVDw55xMxNb5xMbB3KxyYZVvzwYrQxqitHkq
+	 jyMBqaJbDAVdgqba9GHFOLZUwNdR4ohutnDBsyDmGl1pq2e8vcdtOlp9eJcwQfXcAE2m/HR32v+Z
+	 Rz7vEIM+de/FAU60U1EwinndkwEp9iYRQwja5el7eKijAm66f/KLRBdbgvbh7UncJelyHYQRFroV
+	 /dOPLnu4BF96cOH2vDILkVEB8DUoXHQ4aDCJ8EP2TUOluqQkwC9l1CS5hdJwEM/2gDrKI6Km3HlC
+	 kQRYILYYBRaLE7BpzkmSTTfEfx0umnWkPQq5TxhRR7WlfXtDocNO4W9TuhMrDrDZppnqSjnHs+ph
+	 DYQqcQ9zzDgHtetsf46gvwxx21pzgCPIumrAu9RMGeauj+phFxAwYnrxq42Hs7/nxTuZEzWK8/hm
+	 fcyaXv7u4/YuuKkPZZrWkDtqpdSH4k0QGuD+HQWpucoHE3DU4bD/nwKXV31aQpM924egN6N0cfXz
+	 bAzzBiXXUt/TU/0xtWOKQDAhilgNJ+KTyIZ1qvHtSP3g9qsBJyn111uyz8nEBM12faS3GLiHfard
+	 pTdeaR1JNHyJWyZwBIIVus8fZh96QAcqT8234GHp4bQfCwirEcK1DRnQQaDbODN0qulrhMd22tI2
+	 +zWNIReNWt9LFE0Po5mkhZq9RFV79G2o2TUjeeYozucxriZWNif4Tnd9ayQDVQeZcgAg3727hpLF
+	 N/PL6Gg2bvvO8cCUFFfTfjrCoyR3hiPM93dXA5k3wY59J/cK/qCq6zXgH4xyU=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-OQ-MSGID: <f8f78ac6-4fdb-4f75-ba8b-e146ddf58bad@foxmail.com>
+Date: Tue, 10 Jun 2025 08:45:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609171758.afc946b81451e1ad5a8ce027@linux-foundation.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdkfd: register HMM dev memory to DMA-able range
+ first
+To: Felix Kuehling <felix.kuehling@amd.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
+ simona@ffwll.ch, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <tencent_03FB073FD3015AE02485DD6839D6571EBC06@qq.com>
+ <560baf50-1bc5-473c-9889-59f7d625ddd9@amd.com>
+Content-Language: en-US
+From: francisco_flynn <francisco_flynn@foxmail.com>
+In-Reply-To: <560baf50-1bc5-473c-9889-59f7d625ddd9@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 09, 2025 at 05:17:58PM -0700, Andrew Morton wrote:
-> On Mon, 9 Jun 2025 10:56:46 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
-> > On 6/9/25 10:52 AM, Vlastimil Babka wrote:
-> > > On 6/9/25 10:31 AM, Ritesh Harjani (IBM) wrote:
-> > >> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
-> > >>
-> > >>> On 2025/6/9 15:35, Michal Hocko wrote:
-> > >>>> On Mon 09-06-25 10:57:41, Ritesh Harjani wrote:
-> > >>>>>
-> > >>>>> Any reason why we dropped the Fixes tag? I see there were a series of
-> > >>>>> discussion on v1 and it got concluded that the fix was correct, then why
-> > >>>>> drop the fixes tag?
-> > >>>>
-> > >>>> This seems more like an improvement than a bug fix.
-> > >>>
-> > >>> Yes. I don't have a strong opinion on this, but we (Alibaba) will 
-> > >>> backport it manually,
-> > >>>
-> > >>> because some of user-space monitoring tools depend 
-> > >>> on these statistics.
-> > >>
-> > >> That sounds like a regression then, isn't it?
-> > > 
-> > > Hm if counters were accurate before f1a7941243c1 and not afterwards, and
-> > > this is making them accurate again, and some userspace depends on it,
-> > > then Fixes: and stable is probably warranted then. If this was just a
-> > > perf improvement, then not. But AFAIU f1a7941243c1 was the perf
-> > > improvement...
-> > 
-> > Dang, should have re-read the commit log of f1a7941243c1 first. It seems
-> > like the error margin due to batching existed also before f1a7941243c1.
-> > 
-> > " This patch converts the rss_stats into percpu_counter to convert the
-> > error  margin from (nr_threads * 64) to approximately (nr_cpus ^ 2)."
-> > 
-> > so if on some systems this means worse margin than before, the above
-> > "if" chain of thought might still hold.
-> 
-> f1a7941243c1 seems like a good enough place to tell -stable
-> maintainers where to insert the patch (why does this sound rude).
-> 
-> The patch is simple enough.  I'll add fixes:f1a7941243c1 and cc:stable
-> and, as the problem has been there for years, I'll leave the patch in
-> mm-unstable so it will eventually get into LTS, in a well tested state.
+On 6/9/25 20:46, Felix Kuehling wrote:
+> On 2025-06-09 5:36, francisco_flynn wrote:
+>> HMM device memory is allocated at the top of
+>> iomem_resource, when iomem_resource is larger than
+>> GPU device's dma mask, after devm_memremap_pages,
+>> max_pfn will also be update and exceed device's
+>> dma mask, when there are multiple card on system
+>> need to be init, ttm_device_init would be called
+>> with use_dma32=true, and this is not necessary at
+>> all. let's request dev memory region at DMA-able
+>> range first.
+> That doesn't make sense to me. The addresses allocated here are not DMA addresses. They cannot be accessed by the GPU via DMA. They are purely fictional addresses for the purposes of creating struct pages for device-private memory. There should be no need to limit them by the GPU's DMA mask.
 
-One thing f1a7941243c1 noted was that the percpu counter conversion
-enabled us to get more accurate stats with some cpu cost and in this
-patch Baolin has shown that the cpu cost of accurate stats is
-reasonable, so seems safe for stable backport. Also it seems like
-multiple users are impacted by this issue, so I am fine with stable
-backport.
+
+yes, this address is used by CPU to access VRAM. The patch is intended 
+to cope with a special case, after checking the latest kernel code, i 
+found this problem has been solved by this commit,
+
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=7170130e4c72ce0caa0cb42a1627c635cc262821
+
+thanks for you reply.
+
+Best regards,
+flynn
+
+
+> Regards,
+>    Felix
+>
+>
+>> Signed-off-by: francisco_flynn <francisco_flynn@foxmail.com>
+>> ---
+>>   drivers/gpu/drm/amd/amdkfd/kfd_migrate.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+>> index 79251f22b702..3856b9fd2a70 100644
+>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_migrate.c
+>> @@ -1020,6 +1020,7 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *adev)
+>>   	struct amdgpu_kfd_dev *kfddev = &adev->kfd;
+>>   	struct dev_pagemap *pgmap;
+>>   	struct resource *res = NULL;
+>> +	struct resource temp_res = iomem_resource;
+>>   	unsigned long size;
+>>   	void *r;
+>>   
+>> @@ -1042,7 +1043,10 @@ int kgd2kfd_init_zone_device(struct amdgpu_device *adev)
+>>   		pgmap->range.end = adev->gmc.aper_base + adev->gmc.aper_size - 1;
+>>   		pgmap->type = MEMORY_DEVICE_COHERENT;
+>>   	} else {
+>> -		res = devm_request_free_mem_region(adev->dev, &iomem_resource, size);
+>> +		temp_res.end = dma_get_mask(adev->dev);
+>> +		res = devm_request_free_mem_region(adev->dev, &temp_res, size);
+>> +		if (IS_ERR(res))
+>> +			res = devm_request_free_mem_region(adev->dev, &iomem_resource, size);
+>>   		if (IS_ERR(res))
+>>   			return PTR_ERR(res);
+>>   		pgmap->range.start = res->start;
+
 
