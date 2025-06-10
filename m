@@ -1,159 +1,157 @@
-Return-Path: <linux-kernel+bounces-679311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B785AD34AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9346BAD34D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0147A18951E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388EE1893CC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A4D28DF5C;
-	Tue, 10 Jun 2025 11:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EC6229B02;
+	Tue, 10 Jun 2025 11:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sf9ftl8t"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WHFBo0aA"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BF128B7C5
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1125F223DC4;
+	Tue, 10 Jun 2025 11:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749553953; cv=none; b=iy493ecizsuHckraxeyvjh1zEgGyInha8ITgnvymlY03oS79i11cfJNb+wM73SoZtJ1/uDBuOFfRRKhkcTCsDesppcaGDnzy0BDvHpz4X2axJumgBgvS0NO6XpXSk1nqbOhb7A5Ll7ccSjLDaalBlMSUpfFzpg2iNfAIxQnHE18=
+	t=1749554393; cv=none; b=s/4oKYwKtIdmiEuOqOLayOR2WZ/u2eCu6uv/1wbjP2UiMVsrDS9g3ocuCSIpKT2W1Q4ArDy8YamIMQ1s1NS/xKgDRJOH089gvfdR+5/hGo0BdyOUyRS7vMSl/R0XnT7vFDYYgUBDk8uPDlND+DWX4olTmT01cH7w6yvgwI0kK28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749553953; c=relaxed/simple;
-	bh=bVBYTD4v+/Ier+Ih6qhzzgjDmtl/7PTYTLiH0yhjTJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=la5Qt1/YTlu9zHDQdL9QhLAylgwKqhu00P7FPFWwfVL0TcPX8qHfH3S3CLjzryY4NNGFOVy6RZLpKEX7/ReQEb6wrm9LqnhSB6vP3wtlPk2ugWcHladqlKO9yQhdlizOTe4qRdjIrOQyXM/xVEL2PyRwDUhfYAgLAZqAiolfG60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sf9ftl8t; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70e447507a0so42353417b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749553950; x=1750158750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oGJoap/WPosW06fDBcr7SQqlOi1DYaMmMX1oaY7kRo8=;
-        b=Sf9ftl8tNkdDyvMWCnAzzm/hw+2pgqq6esUgXlU6Be6xD3AnLrrD3k+1rkNZ9iIZBG
-         /O+wyaDOjO8Az8v1JZd8IWbB4P3B2CS/hGVvtg9IM3nSWr8jtBw5FezH1njk4cPnyB0j
-         iWMXbl7NAlVbuvjlTlLGnTdHXwW9E1rUflKEWH7V/Nkf3yTx+bVWIUscccKFY/FCwrGL
-         non1QN3ApzQQpfELVeEhKEgxel75BejUWtc5yF3jasPUyHU73ua/W5betIcfBAo19haI
-         d/xzBZ0oMqJCKhM1/x6GyUvtLXiV+Wr6R43xwKtDsB1ynfM7rUDPMn8hzXFKq+nioCki
-         YM3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749553950; x=1750158750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oGJoap/WPosW06fDBcr7SQqlOi1DYaMmMX1oaY7kRo8=;
-        b=i5VIPAIyfE3o1FYJ/jMG425FLIKGp3XcYFypD4qqST5T5uRGWxITyv9sScNp+53wg7
-         EBJDPpir983Gdf2BByR75MkO7e0lxAdPLI0G6TCutuF3rLx+LjDWUJtx0FvBi42opr2Q
-         Fxk7w3etNi39LXA++Oz2nHq+L2JDHWbHEc1EuBgpLj4kFeC3WwKHQR9oZd4BE/+K7LGg
-         woLcX6lCSlPYs4kW9SmwrdY95lNMK2SamIb40y+FV7SjmTnDLVggi6kMoDg5KXmZFudV
-         aAlotZD7M1AGobAiX1jDQzk0oT2Lwqthksw6PX3Uz/5pwmNvztvNnRPgEIUn7V54KM4v
-         gFdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpU7X0kWJI02m1Clrb4PjTRjjJoiwXOmPZyQYlDiOvcDbGuUeFpIqPTYx0yTclVew1JXTA5HFh2S/EIN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzua7BWocrH8twcza5fSiW3hzq7R8BlPhmJJOcYSM+jzfjJGlX7
-	jOPllbaAypQ16LhNh/OkvCezStTAHFCU5KHW2peldGieabVKMGBD27he7qlJpepRASkHEb/a3Hp
-	ncSRZRtD8MU8ibg3TqLurGZnWUVcGlqnjSgn7PFGjvQ==
-X-Gm-Gg: ASbGncsIElSyNi4s3VWvbbDj0x6Zc8/1BnFjV9/2YN/zyTSdAWw/LLzj21oXOXPETYL
-	Lzi5+O8CuFJRm+qw23xUImexeBKhdZifbTQGU+P+0UQb77zlrMqT0AxGYbs4vqKUy1WaC+N66G6
-	//m2ZqmTLGhxJi6GE35id6TRt24PWiWBXGWK47GtbetzwA
-X-Google-Smtp-Source: AGHT+IG8zsawN3xDkIiHoqtoDeuKT1Bq9JS9Q1xXDw1TdS7PPhQJHt3vukBAJDXQ5rpuyqj39qP+g+huLdHgKtWsHJA=
-X-Received: by 2002:a05:690c:6d12:b0:70e:2d1a:82b8 with SMTP id
- 00721157ae682-710f772b158mr238734027b3.34.1749553950407; Tue, 10 Jun 2025
- 04:12:30 -0700 (PDT)
+	s=arc-20240116; t=1749554393; c=relaxed/simple;
+	bh=zHtajvWuHMuQcRL0ZxwAkuBW7Mrsb1my4mnRp+x/CrU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MjjE6w1oQmlPL8aU+6GgAMvuEDGf8pl3sgGuFn/9toBgdSjE9rIa71nSB05VrK9zkpnIm9OhoKNsBlBkR8nUr7Z0hMAIydcvQbyvpo0L9l1F8f+uemqsxWBLaiRTN/A8gdjZ2LLDeJ9C1IX8uw+N5pQ5jXH9XDyhxVfaliSxeJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WHFBo0aA; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1749554389; x=1750159189; i=markus.elfring@web.de;
+	bh=u9QxE558lvkkOQYH+uV3e94Awe9mUZUM75xTUQBPSOw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WHFBo0aAupmhdc+VW0v5urjjbet5sJreXOLvIO6FtLImFCTVhKLa0gAAEyfIaRtm
+	 TXpNFjHCs0vQHrNNWTdMAkBxGg0d9dmCpAg2LBa4qPZ30w74nA9EO615Xo8v3lDGR
+	 3MEv1tCOO6dtjufgdApctforqGaNL1A8ZapKQ1gSbr1fOeC7ntro4X67LoZ1nPvfU
+	 K5CaNvSB9VWrk/zqSzVggdMjvGKJkufuaJ9fHZ/gJ5h8ezlYiz0MFaAJCgthqODiN
+	 EXzQQrlLAXM2BwL/cmbyPejiVWJa7kciVS69q49aLYi7byzwkJDDxDkS/w7m1arkG
+	 QKGp1zigOGkEMMdSLQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.183]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYu16-1uKdSO06ca-00O7lO; Tue, 10
+ Jun 2025 13:13:16 +0200
+Message-ID: <c578f363-8614-4295-b178-2800764565fa@web.de>
+Date: Tue, 10 Jun 2025 13:13:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609043225.77229-1-byungchul@sk.com> <20250609043225.77229-4-byungchul@sk.com>
-In-Reply-To: <20250609043225.77229-4-byungchul@sk.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Tue, 10 Jun 2025 14:11:54 +0300
-X-Gm-Features: AX0GCFsoN4Lw-oBn0iS9Ed66FhTtsA-gk57hCRDoaANAiIafqJARqdL3Be-QVJk
-Message-ID: <CAC_iWjJQ7k2drnPZh8bjaLvVa9rd2mLw7_=L3hV3scnWBQBvRQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 3/9] page_pool: rename __page_pool_release_page_dma()
- to __page_pool_release_netmem_dma()
-To: Byungchul Park <byungchul@sk.com>
-Cc: willy@infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel_team@skhynix.com, kuba@kernel.org, 
-	almasrymina@google.com, harry.yoo@oracle.com, hawk@kernel.org, 
-	akpm@linux-foundation.org, davem@davemloft.net, john.fastabend@gmail.com, 
-	andrew+netdev@lunn.ch, asml.silence@gmail.com, toke@redhat.com, 
-	tariqt@nvidia.com, edumazet@google.com, pabeni@redhat.com, saeedm@nvidia.com, 
-	leon@kernel.org, ast@kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org, 
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org, vishal.moola@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ James Smart <james.smart@broadcom.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Ram Vegesna <ram.vegesna@broadcom.com>
+Content-Language: en-GB, de-DE
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] scsi: elx: efct: Delete an unnecessary check before kfree()
+ in efct_hw_rx_post()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lvRqpHAmTyoVWba8qwp05HhtQEyy/6t64x7cWsWoxFcI3BKofFQ
+ D5rXXuZKALg9XVKBVHj3XptS9B+zNxGvR3uf8OasIBzje6d0IuO8rD4P1GKKoF9ti97ptRS
+ Bgb+bu32YdMuxzUWIKmj5qnXS+pDK06Qpn9cKq9V/Nbf0DBdxteS8udctUNRLY64l7b0fFe
+ P8lniUnPnrthuSP5JoBtA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wrUusPyP7W8=;Ws/SCprNPZqV1+FwFn9JTy1ReqQ
+ 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
 
-On Mon, 9 Jun 2025 at 07:32, Byungchul Park <byungchul@sk.com> wrote:
->
-> Now that __page_pool_release_page_dma() is for releasing netmem, not
-> struct page, rename it to __page_pool_release_netmem_dma() to reflect
-> what it does.
->
-> Signed-off-by: Byungchul Park <byungchul@sk.com>
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 10 Jun 2025 13:03:50 +0200
 
-Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+It can be known that the function =E2=80=9Ckfree=E2=80=9D performs a null =
+pointer check
+for its input parameter.
+It is therefore not needed to repeat such a check before its call.
 
->  net/core/page_pool.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index 460d11a31fbc..8d44d1abfaef 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -673,8 +673,8 @@ void page_pool_clear_pp_info(netmem_ref netmem)
->         netmem_set_pp(netmem, NULL);
->  }
->
-> -static __always_inline void __page_pool_release_page_dma(struct page_poo=
-l *pool,
-> -                                                        netmem_ref netme=
-m)
-> +static __always_inline void __page_pool_release_netmem_dma(struct page_p=
-ool *pool,
-> +                                                          netmem_ref net=
-mem)
->  {
->         struct page *old, *page =3D netmem_to_page(netmem);
->         unsigned long id;
-> @@ -721,7 +721,7 @@ static void page_pool_return_netmem(struct page_pool =
-*pool, netmem_ref netmem)
->         if (static_branch_unlikely(&page_pool_mem_providers) && pool->mp_=
-ops)
->                 put =3D pool->mp_ops->release_netmem(pool, netmem);
->         else
-> -               __page_pool_release_page_dma(pool, netmem);
-> +               __page_pool_release_netmem_dma(pool, netmem);
->
->         /* This may be the last page returned, releasing the pool, so
->          * it is not safe to reference pool afterwards.
-> @@ -1139,7 +1139,7 @@ static void page_pool_scrub(struct page_pool *pool)
->                 }
->
->                 xa_for_each(&pool->dma_mapped, id, ptr)
-> -                       __page_pool_release_page_dma(pool, page_to_netmem=
-(ptr));
-> +                       __page_pool_release_netmem_dma(pool, page_to_netm=
-em((struct page *)ptr));
->         }
->
->         /* No more consumers should exist, but producers could still
-> --
-> 2.17.1
->
+Thus remove a redundant pointer check.
+
+The source code was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/scsi/elx/efct/efct_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/elx/efct/efct_hw.c b/drivers/scsi/elx/efct/efct_=
+hw.c
+index 5a5525054d71..4ba1b12576c2 100644
+=2D-- a/drivers/scsi/elx/efct/efct_hw.c
++++ b/drivers/scsi/elx/efct/efct_hw.c
+@@ -1314,7 +1314,7 @@ efct_hw_rx_post(struct efct_hw *hw)
+ 			break;
+ 	}
+=20
+-	if (rc && hw->seq_pool)
++	if (rc)
+ 		kfree(hw->seq_pool);
+=20
+ 	return rc;
+=2D-=20
+2.49.0
+
 
