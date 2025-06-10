@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-679271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62208AD3409
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:49:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A9FAD3408
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35AD77A5BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8432118893AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D054228D8E7;
-	Tue, 10 Jun 2025 10:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C7428DB5B;
+	Tue, 10 Jun 2025 10:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CDEvh3u9"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="VzVtmgQ1"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4AA28D824
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BADC28E56D
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749552425; cv=none; b=Y5f7vJYjiokcACZ/Rt0fn8Ay0vcJi0oC7fTcWQ1e92ioaUrT8g+v7Kvudw36hz3ZacAJPWF+4r9vud0I9HcYFqvclV4iJ0ffmZSF0TXTGFwGIS3sZSJSW5LgUt0YBuLG6fAbWBWJDPkKWGEfqHjkZke8eq0kvryTdz2RbuFV4tg=
+	t=1749552430; cv=none; b=qkNq1r7570NpQ907HEd6CC/JGwzxsXR1uE+pkEf8XxnL1i01ASLog5O2jxwxvdXalMsv2OI3Y4I2daE+cC7Z7RdqqRQ+g/jVaSgoSnM1vKZEpM+vqGWLR/lKFApwIBtttq4zUpqK6ociUc1Uknzk/GxnWLGRZ2OPn12rccNvB6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749552425; c=relaxed/simple;
-	bh=h73ucvaKC7tusoZ366WFdpRJo5bbH+f6qpcdSe3pUX4=;
+	s=arc-20240116; t=1749552430; c=relaxed/simple;
+	bh=ApG+TqazgePfngwgF8UcC0MB1PI19Gz6v9CqRzVQNfU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MH58AjPtYbomfygA2Pj3kQvMncpnTfeYtqNwAXUqZOPOyOYHLeXDdrIAvaIfM+UhB4rw7egqv0Lfey9OwY/P3ne3KPcAqNQlY5SIr+Kc5zIdIl8xttewSjzz2dSPApbKRlmFhbhB/Z/Yjk3pBzFosgXvXcssipkIBoHJ+msbjzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CDEvh3u9; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=W0/kWgqN3LAjYLFOMA1PTjn6/C4fmQ9m0P+4WNLYR1A3LMGxXCyn9Rga6kTYrf/tIBbLlUMT2scP73VgUz2EqlW5gAMUypY1pfbjUpYoe/+fraT76g1xZnUFC3XrQ/elj4eu2ZFl5d2AIbAMA1fmWKV5HR4LbECbJqwDaSKthlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=VzVtmgQ1; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so3961198b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:47:03 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-742af84818cso3673308b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1749552422; x=1750157222; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1749552428; x=1750157228; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lOPKLQETC23awiI7CT9ZOjIxOZ+G4ZqvM0do3bqdxho=;
-        b=CDEvh3u9CedjMhCO1N5s+MLcrQ09c8rpZxd9Gk43i32PSsQ+Ja6F3UqxMVQIPNAQol
-         TkEtoMvs4nBTmOJupoMLyJBv+dfbmDuHZmemfajDr5TY6cbmmwF12SwzeRDmksaGDsvw
-         ffCzywMcOC2njLYdREXdk8ZwYm6Ldd5Gocbx2fN8ztuBKrelHE+xbdWQoyuUbIEolpWD
-         QLZJAdD3wLZyKPKeGGdRP2u7N6gYx42W3UEqQDe+pdfnWDOKJgOvBpTV+z1G4kNkPH4k
-         ZMJYBC5NpNuIvkOXNitPLUMblLUH3CCmzu11bRSOTdIf5shw/yjpLquYZkqnobkeWrdH
-         MnTw==
+        bh=FP3kf43rac5NeyS0tfBg63Ga8H9gH2daKAu3CycI9m8=;
+        b=VzVtmgQ1M8qpWjZBfCGO7762Bjdg2buOTsVqTqNs95gFn5EtFSTlywkN3lz5zbhHpc
+         3lXMT4HiAGvGVZVqTXUQKj5qIwK5hxmfhZVF/dAQ1jUrwXSps2K3NSWZ49B8/psOGwXJ
+         vCmJcP4mf10mmG1gQI6PkJGKmrFndkHKU8YK3eTm0rnM3XBX4xlyNsvCcJvIBA9sW8tN
+         YucCtORk83BfcGr+F0vPwfFTsdN/CAOzrIJzbW//ITY5AiRqQUSGD1iWidyyNIZeCxwu
+         JLhtVrVDu4+UMHuqoKpb4EuOTUGQ5xOgFuVAmGOCpkgi/S/plVngxN4JGl063BQ8nu87
+         7XoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749552422; x=1750157222;
+        d=1e100.net; s=20230601; t=1749552428; x=1750157228;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lOPKLQETC23awiI7CT9ZOjIxOZ+G4ZqvM0do3bqdxho=;
-        b=Y+8MW1aSEkwqMDPuLhSLDBEsicOMaREVh3B67JBJiVxyrOckv44eqsHB8Bn1pnuQUh
-         TVFwhd7mJWPBd7h6foJQ3vfgpmkkr4V0AOMw6zPAFQXgMWbIV7nglhutWyIlbla1QUv8
-         UGdRCokwK8NdQDHeZhUCojVDRKC36DhA/7XovPbjX0cT4bBV++BBWuSalWkoCvNEOzXV
-         F9EdyYgQxQeiCR+mngv8yux9OBh4IgYEXytLB9K/5+xu/nqCmVE9jEr+tHfzdGbPmueG
-         YxKUXeocjwLihtxYVn8rfNUhGnBMNzH7TX9uftYqEbOd+pXQ8+kd2Kvm4oClaOkaLici
-         NXOA==
-X-Gm-Message-State: AOJu0Yyd4NRRiyHd8sseC7Aq668/XQdyXzmV2JMxUMdijcu3n5MdEBCh
-	LCZnbofJR1Bhge0f7QZoRg++Z7Mz+m2L5WP6wSoUf4BKy9NDqoxxtQPF8QU340MpeHLIVwCZ0t7
-	SciGtYyw=
-X-Gm-Gg: ASbGncuqsaiJvhKemX7TPoIRck4VN/AGWL6Gx3jDVq+BMtftbIKOJ/XfxgYg+dsB/ru
-	sZbRBtDw956kiCGYll7kg1kWp16Ei/9Yaa62ruCqfVBfHOqi7iRaz+c+rWHwgzIAJIfVteFzpMc
-	IzlKm/FIPAiIskzdNyEaY7trMyMt8I7RsdG4pdt8anB/VUXs1dTKwzlx+Wsb/+LCsGk98fi56Qt
-	6v18VrRELBFkg8K6fxikFpmtHZD/i6At/N2Nr6EUSmo9FSs+w1qhlmZCJJ6yPyywuD8FKsaEjoY
-	onVr3dTAQVtM72Fd2Hv2WGKcVowuqi5rmrZMasCJ4An/7qguSXfIVbpdJZplelsfbcXbQKH0
-X-Google-Smtp-Source: AGHT+IEY8u8v01mFisc/TL0W6gCvBjvkLcKdurAn91xGLMr57xfYjH/zVaAAA3K7rATTcPpWb32wlw==
-X-Received: by 2002:a05:6a00:9292:b0:746:2ae9:fc49 with SMTP id d2e1a72fcca58-7485ea78f73mr3883622b3a.9.1749552422541;
-        Tue, 10 Jun 2025 03:47:02 -0700 (PDT)
+        bh=FP3kf43rac5NeyS0tfBg63Ga8H9gH2daKAu3CycI9m8=;
+        b=Hh1jrCw1xuqEzZmINdkgcASDSs8liQ4oP6GAokDF2Oj/TdnCaid9QBE4mlP92kRwjB
+         Vl/kiHSPIov4vr9GhwG7pulXVl6bXXltE/YroRNERNoOITueJPeobSaxfEZQ+Qv0xx3/
+         j6tew4s2PBfaa/uaCstwb6kXp2wca9HzvmeP0dpZqNCAYEP87wKK911QBcl7nNrBvTwc
+         Y0QtnM5DxB4MuGkYxFpk1dCIjWV6q6dW0oyVj7HPZLb27Hu2CT56nffkrsEn0drnXSwW
+         rjeDKbXohKRokeqyyoDyAhWcEiiIVC8Ucss1RxjfgkCvs5i4onvhcFWLLN14LPIjpqUA
+         uGEw==
+X-Gm-Message-State: AOJu0Yxh4S/lJfmKd7X+bW6GOm6BAwQ1IsMProhRJO5HKB0E56IJOMkr
+	qGCgovJUNqTMaSsaYagcNu0kS/ymPvRYIX3rCOwAMKJ6adhBem7KHDgfb3L0yLoab8C3gZvCekv
+	J3s9SJzs=
+X-Gm-Gg: ASbGncvFqQHLIcz4yQTgm7Erf5gkon23G6kUFubVei1KyajlYl971uVi6r+vqsebwEk
+	iJL1D7I/stuv1TG8M/QGBUtQG8Q5WCzeoEBNySkzcIrRGMvC3nOZ+bX2kGMq0P44qXzo12OmdoM
+	FY/8aEMqzaJOOZfNOZEu07qwQZZ8ifGhSKUyaX0d02WDA+nvvpXXbSChsN+5Gg9y7k9A1r6BHjx
+	Dczn1ozlpdxY+zRIrpifgYTpOvV0sHTG+i554c98RCCGBZ3PaNko9T6X7ZQ2H4YhmxAquEJM8xa
+	S6UPEH+WiaAqL6sYgL8vxCOMixFhLqSNBdK/pJHr64+Cd0s5AfdIvSf2LXqn1Bbdu3uT0JQB
+X-Google-Smtp-Source: AGHT+IHO3whMIsadT1gQS1uvXLzDhfAzklgArmoSaPyZ84SGmfZlfdnm+MiFoYtdG6mfvNnmI8Mwbw==
+X-Received: by 2002:a05:6a00:194d:b0:740:b394:3ebd with SMTP id d2e1a72fcca58-74827e7faa7mr22225344b3a.7.1749552427592;
+        Tue, 10 Jun 2025 03:47:07 -0700 (PDT)
 Received: from sunil-pc.Dlink ([106.51.196.253])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0842c0sm7152448b3a.73.2025.06.10.03.46.57
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0842c0sm7152448b3a.73.2025.06.10.03.47.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 03:47:02 -0700 (PDT)
+        Tue, 10 Jun 2025 03:47:07 -0700 (PDT)
 From: Sunil V L <sunilvl@ventanamicro.com>
 To: linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
@@ -89,11 +89,10 @@ Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	Anup Patel <apatel@ventanamicro.com>,
 	Andrew Jones <ajones@ventanamicro.com>,
 	Sunil V L <sunilvl@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v2 2/3] ACPI: scan: Add support for RISC-V in acpi_iommu_configure_id()
-Date: Tue, 10 Jun 2025 16:16:40 +0530
-Message-ID: <20250610104641.700940-3-sunilvl@ventanamicro.com>
+	Anup Patel <anup@brainfault.org>
+Subject: [PATCH v2 3/3] iommu/riscv: Add ACPI support
+Date: Tue, 10 Jun 2025 16:16:41 +0530
+Message-ID: <20250610104641.700940-4-sunilvl@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610104641.700940-1-sunilvl@ventanamicro.com>
 References: <20250610104641.700940-1-sunilvl@ventanamicro.com>
@@ -105,44 +104,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-acpi_iommu_configure_id() currently supports only IORT (ARM) and VIOT.
-Add support for RISC-V as well.
+RISC-V IO Mapping Table (RIMT) provides the information about the IOMMU
+to the OS in ACPI. Add support for ACPI in RISC-V IOMMU drivers by using
+RIMT data.
+
+The changes at high level are,
+
+a) Register the IOMMU with RIMT data structures.
+b) Enable probing of platform IOMMU in ACPI way using the ACPIID defined
+   for the RISC-V IOMMU in the BRS spec [1]. Configure the MSI domain if
+   the platform IOMMU uses MSIs.
+
+[1] - https://github.com/riscv-non-isa/riscv-brs/blob/main/acpi-id.adoc
 
 Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-Link: https://lore.kernel.org/r/20250514055723.1328557-4-sunilvl@ventanamicro.com
+Link: https://lore.kernel.org/r/20250514055723.1328557-5-sunilvl@ventanamicro.com
 Signed-off-by: Anup Patel <anup@brainfault.org>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/acpi/scan.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/iommu/riscv/iommu-platform.c | 17 ++++++++++++++++-
+ drivers/iommu/riscv/iommu.c          | 10 ++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index fb1fe9f3b1a3..70f57d58fd61 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -11,6 +11,7 @@
+diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
+index 725e919b97ef..83a28c83f991 100644
+--- a/drivers/iommu/riscv/iommu-platform.c
++++ b/drivers/iommu/riscv/iommu-platform.c
+@@ -10,6 +10,8 @@
+  *	Tomasz Jeznach <tjeznach@rivosinc.com>
+  */
+ 
++#include <linux/acpi.h>
++#include <linux/irqchip/riscv-imsic.h>
  #include <linux/kernel.h>
- #include <linux/acpi.h>
- #include <linux/acpi_iort.h>
+ #include <linux/msi.h>
+ #include <linux/of_irq.h>
+@@ -46,6 +48,7 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
+ 	enum riscv_iommu_igs_settings igs;
+ 	struct device *dev = &pdev->dev;
+ 	struct riscv_iommu_device *iommu = NULL;
++	struct irq_domain *msi_domain;
+ 	struct resource *res = NULL;
+ 	int vec, ret;
+ 
+@@ -76,8 +79,13 @@ static int riscv_iommu_platform_probe(struct platform_device *pdev)
+ 	switch (igs) {
+ 	case RISCV_IOMMU_CAPABILITIES_IGS_BOTH:
+ 	case RISCV_IOMMU_CAPABILITIES_IGS_MSI:
+-		if (is_of_node(dev->fwnode))
++		if (is_of_node(dev_fwnode(dev))) {
+ 			of_msi_configure(dev, to_of_node(dev->fwnode));
++		} else {
++			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
++							      DOMAIN_BUS_PLATFORM_MSI);
++			dev_set_msi_domain(dev, msi_domain);
++		}
+ 
+ 		if (!dev_get_msi_domain(dev)) {
+ 			dev_warn(dev, "failed to find an MSI domain\n");
+@@ -150,6 +158,12 @@ static const struct of_device_id riscv_iommu_of_match[] = {
+ 	{},
+ };
+ 
++static const struct acpi_device_id riscv_iommu_acpi_match[] = {
++	{ "RSCV0004", 0 },
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, riscv_iommu_acpi_match);
++
+ static struct platform_driver riscv_iommu_platform_driver = {
+ 	.probe = riscv_iommu_platform_probe,
+ 	.remove = riscv_iommu_platform_remove,
+@@ -158,6 +172,7 @@ static struct platform_driver riscv_iommu_platform_driver = {
+ 		.name = "riscv,iommu",
+ 		.of_match_table = riscv_iommu_of_match,
+ 		.suppress_bind_attrs = true,
++		.acpi_match_table = riscv_iommu_acpi_match,
+ 	},
+ };
+ 
+diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+index bb57092ca901..45a263c9e0d5 100644
+--- a/drivers/iommu/riscv/iommu.c
++++ b/drivers/iommu/riscv/iommu.c
+@@ -12,6 +12,8 @@
+ 
+ #define pr_fmt(fmt) "riscv-iommu: " fmt
+ 
++#include <linux/acpi.h>
 +#include <linux/acpi_rimt.h>
- #include <linux/acpi_viot.h>
- #include <linux/iommu.h>
- #include <linux/signal.h>
-@@ -1628,8 +1629,12 @@ static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
+ #include <linux/compiler.h>
+ #include <linux/crash_dump.h>
+ #include <linux/init.h>
+@@ -1651,6 +1653,14 @@ int riscv_iommu_init(struct riscv_iommu_device *iommu)
+ 		goto err_iodir_off;
  	}
  
- 	err = iort_iommu_configure_id(dev, id_in);
--	if (err && err != -EPROBE_DEFER)
--		err = viot_iommu_configure(dev);
-+	if (err && err != -EPROBE_DEFER) {
-+		err = rimt_iommu_configure_id(dev, id_in);
-+		if (err && err != -EPROBE_DEFER)
-+			err = viot_iommu_configure(dev);
++	if (!acpi_disabled) {
++		rc = rimt_iommu_register(iommu->dev);
++		if (rc) {
++			dev_err_probe(iommu->dev, rc, "cannot register iommu with RIMT\n");
++			goto err_remove_sysfs;
++		}
 +	}
 +
- 	mutex_unlock(&iommu_probe_device_lock);
- 
- 	return err;
+ 	rc = iommu_device_register(&iommu->iommu, &riscv_iommu_ops, iommu->dev);
+ 	if (rc) {
+ 		dev_err_probe(iommu->dev, rc, "cannot register iommu interface\n");
 -- 
 2.43.0
 
