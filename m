@@ -1,188 +1,155 @@
-Return-Path: <linux-kernel+bounces-678906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FEEAD2FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5201FAD2FAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D8A3B5D96
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:15:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1E73B5816
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30273280A4E;
-	Tue, 10 Jun 2025 08:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D14280035;
+	Tue, 10 Jun 2025 08:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCpjdMTi"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEGIj4mq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E4C28033F;
-	Tue, 10 Jun 2025 08:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849641DD9D3;
+	Tue, 10 Jun 2025 08:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749543334; cv=none; b=T+Y7V2wg/ntNmTat1R1pZ3w3uaKTgG899c2oQU5D7+CWbTifzSymK+MwfAHnkdw8z5KKbIo535L0khypzOZHYDr456D0gXT4cS/ZQiZXrvY9cQlZ/Zsu2GAWXqHA1VS3f084R7qcmt8NEDq2yT07sfTUjDzoPNBbDMbhl81b9rU=
+	t=1749543312; cv=none; b=HfN+KJ0/5hkcGYQnAMFbNnzkSLFInMdGAzofP+rQI7VW+pgyC4lAG/rH2fSaE7VY1eTLJsDlPOpOyp/wTeA3rSkmnIKixOwOldC2W6Iwogcq2i/oRgeX53VZIrL/hLOaPSyHxTboiz8LOM/ueW4akMJmqYfUL6DOUePBcJzW/AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749543334; c=relaxed/simple;
-	bh=8q60IfHsdFA1WbbUEEE/3BeR/HOQfZE1lLoqh03xmek=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SZEf33u40Z2tkd6iSwDhmpixQYrRIAmOVP02Elj/+y+6TPJw+iyKo7E3LNIYF2HBZekohYkSYXz/baUjzadnhXXdO/T1/+2AXa1EA2cn/Lf2H1pVmLl9j1oQfqr151PFPXl4cEj/XCAUlwLNKkxU7WTY5oQGWRCCTC8Kdm2LlhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCpjdMTi; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso6105203b3a.2;
-        Tue, 10 Jun 2025 01:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749543332; x=1750148132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y3B8a4Fsb8BKyuSt4okFUkT2d0oBx0YNbn4bvTYKUOg=;
-        b=CCpjdMTiKK6DTXosy0cG7clhRwKBK8jkUK65rZ8IB/UwrcgjC1lffB9sJZmXfW9pso
-         1vp+0wHZ+meL4+OFLWtAhcIF1w36DoxjngZaF0P7ZT+mNW/1FtnwgSE5q4JdN3rZRYMG
-         jueFIl1sYD9Hp6MkntBTtq+a8riqEFJpi/cGZ6qWFcHPzCDzzQ4crdNL9q4fX9f6yz7l
-         ots/Yms27l6XBhDoPcG7T1OTmU06iulYf/ENXrQinVxRNItH3DfGQLlLkWtnBWFDsNvU
-         NeHITwAESTUpFSIgs4u0bvn0oaSDvcpoikQWLgkjljMy/+JpD2FHLZAJ2HvXiumD6Uyb
-         Z0MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749543332; x=1750148132;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y3B8a4Fsb8BKyuSt4okFUkT2d0oBx0YNbn4bvTYKUOg=;
-        b=fjf5oKEjfeNAf9tL2PvXziXXhHnedcuCw7afSwTnqiZImvHT+8+rnfajo0PbheEQD4
-         uv4PunyMC8pdHXNf9dEWh3Muxw4mi5ikOdKvkz8fIfCT3hLvNbSIHKqHLPFTyLrioZlj
-         4Tm9RjviA2uIWhVWj/ySFaP5N0TwwPYl09EnJQHaqXNwguC0Au7a/aqaDLMzf2UEj5DT
-         rBGXri+1vH5pbByM9tt4aE0VPJ8VhD4iKRqGidX3tsfoHMYdv3DnOBvVo/7mf4uQQhIL
-         1aHaNhjxpARof7NHmlyVooazKjECHZgsT9ieMxjgfblX9RmY/eiLpfhjGO2LvYicXBT5
-         ZpTA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8Q7ShcwmftWql7asKv9ZqU+n6oC1BeH7zHyqWs0yPSQkbVkJNN+c4MzjdbFWnogv+zQUxMM9RkNbMwg=@vger.kernel.org, AJvYcCVDntj1Z1GXYESvg7m6dB8Fc5rV13HM4hC46GwageARNzojFSXoanE68KdxgRJlUB9KqPm+uMvtLdTyuilLLq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySjQM9sj8oAhsVIWJbdMfKXzJrVQjF3M3jZHcyWpl2c61ly2me
-	nUaQhu7W9ZlExD4GzNHTZwb35MQIs+Z08HXH3tsLNL4Cc0Kn+vQCfgQAx+CHLpKx
-X-Gm-Gg: ASbGncvrg8bvCl3Zl7UOG1JqWSJwSTJ9ZVYXRkBHfP6lbPkxEr+jzJMfk429qaulE0e
-	ayP5evPcOCxpyEz/OE+j0VV7gFEVgnycXFGxyHngZPdVN5jJKlod4Rkz5yWMHSHSYDoMR6y/4km
-	aksy78qYZf+qE2ckkMi0OycJkkIWPcSE3tYEef8mTtjrfVXsjK+7MCdoCKLC/XSUljq9knRioJm
-	8HCkiCNa6rc3FE9MTbgGAJEvfg4jF8LeoGFUz8ZFV4eGrITObfQp4WSdq1SCg5HsbcU+st+5hjv
-	b+Sf+6r3LMWM8Zj0joAL9eFPxVP0c1aaz+NSKQI0iMCqM7lNc//QhCQxYOUl1CPHufeUXOnnLxY
-	Xx2lYh6XFpMzai9tJNUQLtKI2uHC7gbyyOQqIlx2O
-X-Google-Smtp-Source: AGHT+IGsuPhvBxp9ieu7lUDRme9H5ZY4I7e/Mz3z/LqkXkYZtFqt3O2tOAADnzsAc3Dakd6Cw0qThw==
-X-Received: by 2002:a05:6a20:3d86:b0:21c:faa4:9abb with SMTP id adf61e73a8af0-21f78c49b90mr3311557637.20.1749543321852;
-        Tue, 10 Jun 2025 01:15:21 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482af3859csm6960783b3a.36.2025.06.10.01.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 01:15:21 -0700 (PDT)
-Date: Tue, 10 Jun 2025 17:15:06 +0900 (JST)
-Message-Id: <20250610.171506.1930082951902279512.fujita.tomonori@gmail.com>
-To: a.hindborg@kernel.org
-Cc: fujita.tomonori@gmail.com, alex.gaynor@gmail.com, ojeda@kernel.org,
- aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com,
- boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org,
- gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org,
- lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org,
- sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu
-Subject: Re: [PATCH v3 3/3] rust: time: Add ktime_get() to ClockSource trait
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <874iwo3tze.fsf@kernel.org>
-References: <-OrPPXscT_4STsX2CDg5ki77Lz68HLwGbucr-EZuMsTXhLnEdyuDfskI5daZYIwNuMJN_CBXX-gW_RLrw_H-aA==@protonmail.internalid>
-	<20250609010415.3302835-4-fujita.tomonori@gmail.com>
-	<874iwo3tze.fsf@kernel.org>
+	s=arc-20240116; t=1749543312; c=relaxed/simple;
+	bh=bTz2jD+cGt2XQ/Ega0J5lq5VYe60lHLquMDkJ3TPTh4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=dMX2fD1Fr7NsZl5aWQs4jsnkNgmuOS1nMVb356xBI62MrtkvAgJLf34qz13BNIwLcL4IfcPoKgbfWfYMhA4cxFRF0JAHfbQjizyH/D/865SV6KjVOnPgvBNdckzbJB8CqJsWULj+VSN2DO3XhSBVdoDueAofUoMgx6KVPAEMWq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEGIj4mq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD998C4CEEF;
+	Tue, 10 Jun 2025 08:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749543312;
+	bh=bTz2jD+cGt2XQ/Ega0J5lq5VYe60lHLquMDkJ3TPTh4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=CEGIj4mq4tW1ToEzIVnsp8ZXU9S6QjDqYF2TM1c6YODY18mvNlszIZT8kNyWWwE1m
+	 wGLi/BlPKKYLqwP3hOHFZJOK68YZ+5G1ngd43RRKIKVrLEyKcPU92XUN6Tp2Hslz0d
+	 oYPPbjMzi1ivbh3FU96wxiFScZtGPCdk/YWvuZfpoDbyWgI9I14CAlpyklDiLQ7zSO
+	 epJvffFsRIZrl5cAtJ1Pwmebh/GubJK6ZAvqGL25lT+xuJjCTO9N30eHceAiOK/RKZ
+	 I7KAivRHbpt8wfKJ5uN8eaCsGdiYFSYrdNRrnd1YXxa8KV5VGJJpXlxi/vmPOa3uMx
+	 Om5JYKfu0osrw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 10 Jun 2025 10:15:08 +0200
+Message-Id: <DAIPCCIHRLHW.1TDNY93G6UZM0@kernel.org>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
+ Mailing List" <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust-pin-init tree
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250610142230.001af1d3@canb.auug.org.au>
+ <DAIP0NGMMM90.11JRFL5O1NAW9@kernel.org>
+In-Reply-To: <DAIP0NGMMM90.11JRFL5O1NAW9@kernel.org>
 
-On Tue, 10 Jun 2025 10:01:57 +0200
-Andreas Hindborg <a.hindborg@kernel.org> wrote:
-
-> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
-> 
->> Introduce the ktime_get() associated function to the ClockSource
->> trait, allowing each clock source to specify how it retrieves the
->> current time. This enables Instant::now() to be implemented
->> generically using the type-level ClockSource abstraction.
+On Tue Jun 10, 2025 at 9:59 AM CEST, Benno Lossin wrote:
+> On Tue Jun 10, 2025 at 6:22 AM CEST, Stephen Rothwell wrote:
+>> Hi all,
 >>
->> This change enhances the type safety and extensibility of timekeeping
->> by statically associating time retrieval mechanisms with their
->> respective clock types. It also reduces the reliance on hardcoded
->> clock logic within Instant.
+>> After merging the rust-pin-init tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
 >>
->> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
->> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
->> ---
->>  rust/helpers/helpers.c |  1 +
->>  rust/helpers/time.c    | 18 ++++++++++++++++++
->>  rust/kernel/time.rs    | 32 ++++++++++++++++++++++++++++----
->>  3 files changed, 47 insertions(+), 4 deletions(-)
->>  create mode 100644 rust/helpers/time.c
+>> error[E0282]: type annotations needed
+>>    --> rust/kernel/configfs.rs:154:26
+>>     |
+>> 154 |             subsystem <- pin_init::zeroed().chain(
+>>     |                          ^^^^^^^^^^^^^^^^ cannot infer type of the=
+ type parameter `T` declared on the function `zeroed`
+>>     |
+>> help: consider specifying the generic argument
+>>     |
+>> 154 |             subsystem <- pin_init::zeroed::<T>().chain(
+>>     |                                          +++++
 >>
->> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
->> index 0f1b5d115985..0613a849e05c 100644
->> --- a/rust/helpers/helpers.c
->> +++ b/rust/helpers/helpers.c
->> @@ -39,6 +39,7 @@
->>  #include "spinlock.c"
->>  #include "sync.c"
->>  #include "task.c"
->> +#include "time.c"
->>  #include "uaccess.c"
->>  #include "vmalloc.c"
->>  #include "wait.c"
->> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
->> new file mode 100644
->> index 000000000000..9c296e93a560
->> --- /dev/null
->> +++ b/rust/helpers/time.c
->> @@ -0,0 +1,18 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +#include <linux/timekeeping.h>
->> +
->> +ktime_t rust_helper_ktime_get_real(void)
->> +{
->> +	return ktime_get_with_offset(TK_OFFS_REAL);
->> +}
->> +
->> +ktime_t rust_helper_ktime_get_boottime(void)
->> +{
->> +	return ktime_get_with_offset(TK_OFFS_BOOT);
->> +}
->> +
->> +ktime_t rust_helper_ktime_get_clocktai(void)
->> +{
->> +	return ktime_get_with_offset(TK_OFFS_TAI);
->> +}
-> 
-> This just caught my eye. I think policy is to make helpers as much 1:1 as
-> possible. We should not inject arguments here. Instead, we should have
-> just one function that passes the argument along.
+>> error[E0282]: type annotations needed
+>>    --> rust/kernel/configfs.rs:264:22
+>>     |
+>> 264 |             group <- pin_init::zeroed().chain(|v: &mut Opaque<bind=
+ings::config_group>| {
+>>     |                      ^^^^^^^^^^^^^^^^ cannot infer type of the typ=
+e parameter `T` declared on the function `zeroed`
+>>     |
+>> help: consider specifying the generic argument
+>>     |
+>> 264 |             group <- pin_init::zeroed::<T>().chain(|v: &mut Opaque=
+<bindings::config_group>| {
+>>     |                                      +++++
+>>
+>> error: aborting due to 2 previous errors
+>>
+>> For more information about this error, try `rustc --explain E0282`.
+>>
+>> Caused by commit
+>>
+>>   0bcaea04244b ("rust: pin-init: rename `zeroed` to `init_zeroed`")
+>>
+>> I have used the rust-pin-init tree from next-20250606 for today.
+>
+> Thanks for catching this! I didn't test with `CONFIG_CONFIGFS=3Dy`, so th=
+e
+> code was cfg'd out... I'll add it to my tests.
+>
+> @Andreas I'll send a new version of the commit above with configfs
+> changed.
 
-Indeed, you're right. It should have been as follows:
+(sorry forgot to add your emails and also some new info)
 
-+++ b/rust/helpers/time.c
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/timekeeping.h>
-+
-+ktime_t rust_helper_ktime_get_real(void)
-+{
-+	return ktime_get_real();
-+}
-+
-+ktime_t rust_helper_ktime_get_boottime(void)
-+{
-+	return ktime_get_boottime();
-+}
-+
-+ktime_t rust_helper_ktime_get_clocktai(void)
-+{
-+	return ktime_get_clocktai();
-+}
+Actually, the correct change would be this in commit 0bcaea04244b
+("rust: pin-init: rename `zeroed` to `init_zeroed`"):
 
-I'll send v4 shortly.
+diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
+index 34d0bea4f9a5..6d566a8bde74 100644
+--- a/rust/kernel/configfs.rs
++++ b/rust/kernel/configfs.rs
+@@ -151,7 +151,7 @@ pub fn new(
+         data: impl PinInit<Data, Error>,
+     ) -> impl PinInit<Self, Error> {
+         try_pin_init!(Self {
+-            subsystem <- pin_init::zeroed().chain(
++            subsystem <- pin_init::init_zeroed().chain(
+                 |place: &mut Opaque<bindings::configfs_subsystem>| {
+                     // SAFETY: We initialized the required fields of `plac=
+e.group` above.
+                     unsafe {
+@@ -261,7 +261,7 @@ pub fn new(
+         data: impl PinInit<Data, Error>,
+     ) -> impl PinInit<Self, Error> {
+         try_pin_init!(Self {
+-            group <- pin_init::zeroed().chain(|v: &mut Opaque<bindings::co=
+nfig_group>| {
++            group <- pin_init::init_zeroed().chain(|v: &mut Opaque<binding=
+s::config_group>| {
+                 let place =3D v.get();
+                 let name =3D name.as_bytes_with_nul().as_ptr();
+                 // SAFETY: It is safe to initialize a group once it has be=
+en zeroed.
+
+@Miguel, @Andreas, how should I go about this? Send the commit above
+augmented with the diff, or send a patch with just the diff to the list?
+Or apply the diff directly to the commit in the pin-init-next branch &
+rebasing (potentially adding an Acked-by from Andreas)? Or some other
+way?
+
+---
+Cheers,
+Benno
 
