@@ -1,187 +1,208 @@
-Return-Path: <linux-kernel+bounces-679608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1DEAD3930
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6047AD3937
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8329C177184
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76670173737
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F9C2BCF7D;
-	Tue, 10 Jun 2025 13:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A5F23AB8B;
+	Tue, 10 Jun 2025 13:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jKH0vpCC"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dGlFFhx/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7F2298CDC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD679246BA8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749561738; cv=none; b=eZr84ghEopJ5PQ5N/RVban+NOF4DSWK+Z4Ljhn23kjYnXQcp6oI46ykgAVTncaIzhgsIJjEGnYKdEa77JXv+pmKWY8Kdnxm5KxykfJhpPOFAz2FPvwRUR55PPqkyAR4NXhnS0yVKa/eQP8qlCVDGJin9H0yy//dQF87vdPUyJz8=
+	t=1749561860; cv=none; b=EFKGa0bxexBFaD5QPOXXjqe9PN0B4EczPvpcZBxlhDC8XpnRxAP2Sle6Jt9re7joAC+OhDRTG3kU9B6rr7skLGNfLatgB9/PD5i8oGGP7DrZN3FF34vFFqUpAvWYrfFuZnLMKEkr789wBf1T3M3v/RLtWqwb6L4W4FpMDiy+uqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749561738; c=relaxed/simple;
-	bh=1trWxBrPAl76fxmsb+oeXOY/Ya77z6kO/+mfRMr7pEk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j4ziJOJSOfbfg6mqRpXYrxpab1qtAMUS2H4PnuVKsHIbIHD2kRXSMqoadv5FisOKMi73BSCx9dOn4o6ZaodgZK8SWkowxTLLQGYn+bckzqJR0RPijf/5YS7Gi+2dWPZ5kjTJRXFbT0UFXL2FHP6d9T3VNf9zzYNWodb2W/gpD40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jKH0vpCC; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2350fc2591dso44285085ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749561736; x=1750166536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=klAB2ncfCtZERTrAyu2rbSFj1iTvAJjUvwJYS5sgM+0=;
-        b=jKH0vpCCz1raMyiXndi0YUU1kk+gY6N0QddxJQcXVjSlJPaF3Kl8P4TMkDwBwhXOL+
-         q5BBbgf7nwcEfUSz+wTQN6DbhNgn4hlPPxlonagpKqDYnsH9EZb0AdFXrIU2ClNBJMvc
-         cPSDpn2NorLzXmwwE8u3zv02pKsYr5szWPHjXkdQVAq1JQyS2C6+GRJlZsd5RvsJevng
-         5M4jKx82hQHNFM2YTY/UtFDULCTJxadoAqFUHMzALiKIatuMQIyHLv14Pn1SwiMs7TSL
-         J6mbblxZE+Eh50BlJhv1fP8NzKzaVJcJdmc+VXdSxV7lZcqpwFbxkFjoUlIz5XF59fhy
-         b4Xg==
+	s=arc-20240116; t=1749561860; c=relaxed/simple;
+	bh=ubmc0E3DElK29TkGdRofug1lLiuw8WMG0knLOztL8zo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3WWiE2j291cei6ooCJD8+0LXpW9CS9dADzVsm1KmYi+JEQVZ5cF9V7Ew9I6JkLsp7n6r2xt57dzqHQHSkWq/PzWftX2NMbSu6neZJ0X6Pt5bNKfPvIZbRoEfAXRF18Mn3tIcp5MaNuGij/cpOBPun1chcZAgMhN3by/Lb2/G28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dGlFFhx/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A7eGs2014930
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:24:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Dn5KKzDTTIKXjL+XAC1RBo/O2bQaEOF3N/dUCupBtXw=; b=dGlFFhx/SjmX3aWl
+	M1cCZWvtd99PKsd5kjUbReRmNnzbMTzfnLOZOJfROaepOYFttscbKgjjKAwnWtrY
+	bWgnC0ARWQPv57xY2L2Hn9WFdIS3WZUrdOouFCHS4zuAisczDR7tlqJRLs5p5zBF
+	FY3l5wEPaX/O5rq5a1yJYujK2LTSa4JBJej1fSLop/fUQyueTBNhOzZscL31fXo8
+	jUd/QsqTGM0O4Rg6+lUjp62+XM78Ve9jMoImvFZsTrVjVF+vnGilHjr1dSerpo+H
+	WeiTxb0f4qtLd6BXZAqN6TKvIV+9EZVAY6hf4SbwpBop1auI8z8RNIPutWgTGYZo
+	TjA86g==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474dn69gbs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:24:17 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d0979c176eso95506585a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:24:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749561736; x=1750166536;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=klAB2ncfCtZERTrAyu2rbSFj1iTvAJjUvwJYS5sgM+0=;
-        b=W/GincvA8V6vOlTe1FRyP/wFrUonzqKdgoPYgSu5vS46fci9VOYfT0ZmcAMQk9GrkZ
-         IJosQDPdEoYkDwVgY2a1btnDZVifmsjR1YR/JtmcSKZzgRYytCvAje0ipssHW79wxyPu
-         j0sALCNdZzNJwMngIyPluo/mTe9hctkk9+5x1NIJGU3SPEdDa1odnMZqcN2jlQqhIXjy
-         LTKUTN9gNJJkao6VqbNtF0S8pqrl5bHH0DB1i1759TtAAz6Jbeg1BY3kUIP0+8tlLyh5
-         jmAeqykx1mSnQ+Wi5LLcVchIFN+AZtyBUEBe6VP34O2s5RBMqZFYWYTVjzU0DsgMsWWh
-         MA5w==
-X-Forwarded-Encrypted: i=1; AJvYcCURTY0AOodqSRptKArfrAJzV9mSoMkuEZIFXqj3p6EMss7O8UOlfAXZTEaJyBPMXr6QBegEnarPA/oFvFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqu3zgIsIr9vH8N15L2Sbg8fp15aVpBuoGtTxiz1TfkaW8ntKo
-	Z0U43FfcKLepzAh3oxzWxA7jt+ilphl1edGnupEmf7iiCoCJQB1Tk26TuFmRrorL0vs=
-X-Gm-Gg: ASbGncvtElJeQqhDIgjUqO32C2QfUWQAaPLSIejl8Pq6qz+UdcvfL5sSgroG5q58uR6
-	U0G3OBHnqhc99SrssPWCufA3jCAfeiIzW/Rfmv7Dprb4KpckiZo5g4HeZcimpSK601BHRZypc/c
-	5qTNLNYiGVXJ2eL99sj/hEP99k6eu2lRKjZlUtnWue4H2KZKVQsvXX1wYgalOShYvwZyvGMN0dI
-	sDUVVsjO0QSKItFDA2MbF8XyvVLuz/MFlj0xlgeA41kiouqRUHUMQ75+Z/iVZZqy4tPzePDqoF2
-	1KBACDRWMth4cutUuuLSlDQRsHtWxhRe+Pqf8pyXsvDAmpfbCgeKknTu0EHOGzaO/NOsNFr5rQ=
-	=
-X-Google-Smtp-Source: AGHT+IEqVq8mQti3tRT+eBtluesPlLE/oLnB08dp/lHegWMkSJCFxjWNMm/J+IaFVS/OPUwi9sABqw==
-X-Received: by 2002:a17:902:ccd0:b0:236:15b7:62e3 with SMTP id d9443c01a7336-23635bb9896mr50735745ad.9.1749561735859;
-        Tue, 10 Jun 2025 06:22:15 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236034061f3sm71537895ad.179.2025.06.10.06.22.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 06:22:15 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Boqun Feng <boqun.feng@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3 3/3] rust: cpu: Add CpuId::current() to retrieve current CPU ID
-Date: Tue, 10 Jun 2025 18:51:58 +0530
-Message-Id: <a2e12436661fca452de5c417242328ed6f413511.1749554685.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1749554685.git.viresh.kumar@linaro.org>
-References: <cover.1749554685.git.viresh.kumar@linaro.org>
+        d=1e100.net; s=20230601; t=1749561856; x=1750166656;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dn5KKzDTTIKXjL+XAC1RBo/O2bQaEOF3N/dUCupBtXw=;
+        b=C6S8SDY0kluurRzACBmlqC1aPbYb4m+bIzoJo40+VbbaecdAf7qAJ7FDpeg6BN+vfw
+         xzygZt1ti3sw8nmQRd5NldkAAHIk/Swq8pF1UlPwWmppSwRDONn+HsXyuEU8kOrEPf0n
+         KKCfCXGFBSOFucE/ncwE6cv11LuyiE+oh1n3DC45EjRqYI2ceRkBI6viyG7nmrJb+/Ik
+         xIqiLnCEBJrlIHUNcdwK6oCQ/7PRgdldTBhRneR4JhhuJQ/cLhbFJYHTMfQ3zrolqMA0
+         0dQRyHtMrz2idOZE9v/2yW7bqJvp4dLHkgZ3vxwzm5ukt/qwQ8lmcLnYTQF9pzCXAAn3
+         rajg==
+X-Forwarded-Encrypted: i=1; AJvYcCXucu9CwtXtbi0HYU3ahWvPTXAPgFGO31LRk6gIL1QVeaUAvJzt722K3EyVRVGUp+VPR+D44QW9Z9ROU4g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4HL83rbFiXdmnMK+NGhhUNQB6Iu8vURyftB0YjMVRsA+1Piup
+	FCwiVMEyQ25Z8obO+EV0+AS4bYBgjkUSwAwyJUutXaSiTrUIJIvUAGEfiV3RIRBwVdkkdqjGPC9
+	VJzlFtNenRlaoiLWXNQdQ58bOzrDaHznRgvfTGaEpj8Dh5n/ytJEEvUdyVVhIeWtRdmI=
+X-Gm-Gg: ASbGncth4C0dYVBuKDcGt3LrBc31S8Vbs5ZQBA0SIg2m8xsXjvUNchb1JCVkZPh1yiC
+	fhbXifbJxUh6yy2NfH814K0mEJWLNBzmyTwH2QhWu0BlEaPwO+rhbw4m8DPcS5PF4hQFM0EGLEq
+	E+I/6YEkqZNPcW02YAaJ82Tp7OIVJa5LZDtSIY5Ml6MKjncoMZWy2Fgj6bSKUBzkS/Zr3/Gqa/9
+	5QcxlkQoH+2x5giUPaMvzVzL03Dhr3ZThYIuouBBv1fbg+NU+VbO2YRITJI0zJO6QkuPsyRv3HO
+	xWXo4e4ZfaXjwQCz/6BlqJrzrHBiIXyo9MN9t5OnlqsDFqB1JN6x5tL299JskN4hhZ/2/vaiI6c
+	+
+X-Received: by 2002:a05:620a:2481:b0:7c0:b43c:b36c with SMTP id af79cd13be357-7d331c4ebbcmr897728385a.6.1749561856563;
+        Tue, 10 Jun 2025 06:24:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZDQUf98Q4fdDvEHwFwKWgGVh807ziV/MvTQbORZEqmYL/UEFzh9cRBG5EYwiG4QVxnOk8RA==
+X-Received: by 2002:a05:620a:2481:b0:7c0:b43c:b36c with SMTP id af79cd13be357-7d331c4ebbcmr897726285a.6.1749561855990;
+        Tue, 10 Jun 2025 06:24:15 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d754632sm722896866b.26.2025.06.10.06.24.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 06:24:15 -0700 (PDT)
+Message-ID: <a63ff3a7-c67b-4251-81f3-ce6cc3a3d068@oss.qualcomm.com>
+Date: Tue, 10 Jun 2025 15:24:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615: disable the CTI device of the
+ camera block
+To: Jie Gan <jie.gan@oss.qualcomm.com>, Jie Gan <quic_jiegan@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250527015224.7343-1-jie.gan@oss.qualcomm.com>
+ <5fbb515a-c3d0-4bbe-a689-41e730ecd952@oss.qualcomm.com>
+ <9a156925-cf7b-4d2e-88a8-fdfed5528553@quicinc.com>
+ <1fef810c-47fe-4f6d-95bc-0d72dbd63bf0@oss.qualcomm.com>
+ <79f5e42f-f857-4247-abf9-d0f3f5c1a498@quicinc.com>
+ <f3f8f446-4f0d-482d-952d-35c80d7d7881@oss.qualcomm.com>
+ <405f0432-3f07-45be-8511-06235dcd84d0@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <405f0432-3f07-45be-8511-06235dcd84d0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDEwNSBTYWx0ZWRfXxVw0RIDBbtI8
+ ATKQJKYYUTbkAi/4Ayg+PWQFmQ5UJ4rrUuyuv2wRGTvFSOkH1ndOE6jS9j6mh/nWDMZj8eI+3J/
+ hlz0Ggkq0HHo8IwHl22HcnCuvLOc7M31FrO9J89nlguXio/sinr3doREo1sRTZEz9Cvn7Tmbd5z
+ YJ1oKoJN08VaHihol0AIusTIoNbEUinaypPA3a/KLg4+lqi2NsU8pPIAiRHmIBczAq5FH4xygxL
+ YK9Q/pigPbY59l7pNG6owyWRtW0yvdLB3G30nSPAcDM6NBQqOLcAR8PR4L1qCw6PhXe7McEAPmj
+ 1Cc5xokZyHxqOmYJE9WNogeH7UL65XwPYwaQZbe4BjAfkJzbIH5F32nSMCHk7yx9Pxs+VBonRS6
+ tEjgDssiifnXxQEuOdTz7J8l+n4G2UIvjJv80tuGOm2ZSOpgxczGS/v7lpAPGO26O2rlWJSa
+X-Proofpoint-GUID: s71vAzo-9gEt250gSHdkbmULVqTQ40Q8
+X-Authority-Analysis: v=2.4 cv=FaQ3xI+6 c=1 sm=1 tr=0 ts=68483201 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=P-IC7800AAAA:8 a=jKJs8sBhnlDJ8AvWEW4A:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-ORIG-GUID: s71vAzo-9gEt250gSHdkbmULVqTQ40Q8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
+ mlxlogscore=973 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506100105
 
-Introduce `CpuId::current()`, a constructor that wraps the C function
-`raw_smp_processor_id()` to retrieve the current CPU identifier without
-guaranteeing stability.
+On 6/3/25 5:17 AM, Jie Gan wrote:
+> 
+> 
+> On 5/31/2025 7:05 AM, Konrad Dybcio wrote:
+>> On 5/28/25 5:02 AM, Jie Gan wrote:
+>>>
+>>>
+>>> On 5/27/2025 6:41 PM, Konrad Dybcio wrote:
+>>>> On 5/27/25 12:32 PM, Jie Gan wrote:
+>>>>>
+>>>>>
+>>>>> On 5/27/2025 6:23 PM, Konrad Dybcio wrote:
+>>>>>> On 5/27/25 3:52 AM, Jie Gan wrote:
+>>>>>>> Disable the CTI device of the camera block to prevent potential NoC errors
+>>>>>>> during AMBA bus device matching.
+>>>>>>>
+>>>>>>> The clocks for the Qualcomm Debug Subsystem (QDSS) are managed by aoss_qmp
+>>>>>>> through a mailbox. However, the camera block resides outside the AP domain,
+>>>>>>> meaning its QDSS clock cannot be controlled via aoss_qmp.
+>>>>>>
+>>>>>> Which clock drives it then?
+>>>>>
+>>>>> It's qcom,aoss-qmp.
+>>>>>
+>>>>> clk_prepare->qmp_qdss_clk_prepare
+>>>>> https://elixir.bootlin.com/linux/v6.15-rc7/source/drivers/soc/qcom/qcom_aoss.c#L280
+>>>>
+>>>> I'm confused about this part:
+>>>>
+>>>>> However, the camera block resides outside the AP domain,
+>>>>> meaning its QDSS clock cannot be controlled via aoss_qmp.
+>>>>
+>>>> Do we need to poke the QMP of another DRV?
+>>>
+>>> The AOSS has a clock control register for all QDSS clocks. when we vote the qdss clock, the aoss_qmp driver will send a message to AOSS to enable the clock control register, then the clock control register will enable all QDSS clocks.
+>>>
+>>> The QDSS clock is not a single clock source, it is a term that representing all the clock sources utilized by the QDSS.
+>>
+>> What I'm trying to ask is, is there any way we could enable that
+>> clock from Linux? Can the camera hw turn these on? Maybe we could
+>> trick it into enabling them?
+> 
+> There is a power issue if we keep the debug clock on with a long time.
+> 
+> We had a discussion with AOP to check if possible to add the debug clock of titan to the QDSS clock list, but they need time to evaluate it.
 
-This function should be used only when the caller can ensure that
-the CPU ID won't change unexpectedly due to preemption or migration.
+Changing the firmware is a band-aid solution, as the update will never
+reach millions of devices on the market. I'm curious in whether there's
+any way (or os-accessible debug register) to manage the necessary clocks
+from Linux, as a workaround.
 
-Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- MAINTAINERS            |  1 +
- rust/helpers/cpu.c     |  8 ++++++++
- rust/helpers/helpers.c |  1 +
- rust/kernel/cpu.rs     | 10 ++++++++++
- 4 files changed, 20 insertions(+)
- create mode 100644 rust/helpers/cpu.c
+> From Coresight view, what we can do by now is disable it in DT to prevent the unexpected NoC error.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..4255186784c4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6254,6 +6254,7 @@ F:	include/linux/cpuhotplug.h
- F:	include/linux/smpboot.h
- F:	kernel/cpu.c
- F:	kernel/smpboot.*
-+F:	rust/helper/cpu.c
- F:	rust/kernel/cpu.rs
+How about something like this:
+
+diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+index bb8b6c3ebd03..fc2ab750f2cd 100644
+--- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+@@ -2461,6 +2461,9 @@ cti@6c13000 {
  
- CPU IDLE TIME MANAGEMENT FRAMEWORK
-diff --git a/rust/helpers/cpu.c b/rust/helpers/cpu.c
-new file mode 100644
-index 000000000000..824e0adb19d4
---- /dev/null
-+++ b/rust/helpers/cpu.c
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
+                        clocks = <&aoss_qmp>;
+                        clock-names = "apb_pclk";
 +
-+#include <linux/smp.h>
-+
-+unsigned int rust_helper_raw_smp_processor_id(void)
-+{
-+	return raw_smp_processor_id();
-+}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 0f1b5d115985..16fa9bca5949 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -13,6 +13,7 @@
- #include "build_assert.c"
- #include "build_bug.c"
- #include "clk.c"
-+#include "cpu.c"
- #include "cpufreq.c"
- #include "cpumask.c"
- #include "cred.c"
-diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
-index 7549594fad7f..a946c8a9d1a2 100644
---- a/rust/kernel/cpu.rs
-+++ b/rust/kernel/cpu.rs
-@@ -102,6 +102,16 @@ pub fn from_u32(id: u32) -> Option<Self> {
-     pub fn as_u32(&self) -> u32 {
-         self.0
-     }
-+
-+    /// Returns the ID of the CPU the code is currently running on.
-+    ///
-+    /// The returned value is considered unstable because it may change
-+    /// unexpectedly due to preemption or CPU migration. It should only be
-+    /// used when the context ensures that the task remains on the same CPU.
-+    pub fn current() -> Self {
-+        // SAFETY: raw_smp_processor_id() always returns a valid CPU ID.
-+        unsafe { Self::from_u32_unchecked(bindings::raw_smp_processor_id()) }
-+    }
- }
++                       /* Not all required clocks can be enabled from the OS */
++                       status = "fail";
+                };
  
- impl From<CpuId> for u32 {
--- 
-2.31.1.272.g89b43f80a514
+                cti@6c20000 {
 
+Konrad
 
