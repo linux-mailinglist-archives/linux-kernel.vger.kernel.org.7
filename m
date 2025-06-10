@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-679819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F648AD3C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:10:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095AEAD3C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC5563AF0D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295A63B011E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8480E23A9BB;
-	Tue, 10 Jun 2025 15:03:36 +0000 (UTC)
-Received: from mail.actia.se (mail.actia.se [212.181.117.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB017238144;
+	Tue, 10 Jun 2025 15:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ecjaHnOM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCFD235355;
-	Tue, 10 Jun 2025 15:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1192376EC
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567816; cv=none; b=Nj4tghxfEK9j+rrLj4rstNla5EBLbvsZI2YnRy4q3w9vr+0too7vJULvMXi8goWPSVuPCoZqXvPZYNUAXQRF0Vgp1yXoIhyc9j6MAmFm40M2HPveOxh7fcAtG5/nkqqK9EiWqcqDJk21HfSj91vWVAVAlyPUjlxNakfNvljyle0=
+	t=1749567927; cv=none; b=lLO0f3rqTAtz3w5bWPomWuWQjLFvnbFNIb7FDORs8dJvbNXdhfbbW0mSfv/sZwTvdVvkil6ghkdML+ojdqCaNJ/ZtoLMY+W2wwYqlPXyvKr3HkguglxJhaqdlQcHiM7INH5C0AfhU8PltViQ+LwZWIfopAj/8wxCBEJP5YB6oqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567816; c=relaxed/simple;
-	bh=PTMdhk67xc7XKkOuFv//TWr5oxho4kXHuNSuGFjH+xE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=F7C7RTumPeTJExmIYIqgMNu6WmRAWQrvsZal/XofyVTT9AB/gdC3apGv9QB7Bem6NGGA3XnUGmeKQz7VEaSWckOgdUYzxj9WczPnaQrjmVfz00po28VEssBfZesKf889UpThLnIGR8Q/Oh75CWoUtOVTKgZahit0J6ttUD+6E9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=actia.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
-Received: from S036ANL.actianordic.se (10.12.31.117) by S036ANL.actianordic.se
- (10.12.31.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
- 2025 17:03:25 +0200
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%3]) with mapi id
- 15.01.2507.039; Tue, 10 Jun 2025 17:03:25 +0200
-From: John Ernberg <john.ernberg@actia.se>
-To: Shawn Guo <shawnguo2@yeah.net>
-CC: Xu Yang <xu.yang_2@nxp.com>, Peter Chen <peter.chen@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: i.MX kernel hangup caused by chipidea USB gadget driver
-Thread-Topic: i.MX kernel hangup caused by chipidea USB gadget driver
-Thread-Index: AQHb2Uk8r5zPXewyY0SsDNZZa8wLobP7lMcAgADIvwA=
-Date: Tue, 10 Jun 2025 15:03:24 +0000
-Message-ID: <8b48c88f-4d70-403a-b1a5-bb80643086ed@actia.se>
-References: <aEZxmlHmjeWcXiF3@dragon>
- <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
- <aEbstxkQmji4tfjf@w447anl.localdomain> <aEeg1s9A0F8x0U2+@dragon>
-In-Reply-To: <aEeg1s9A0F8x0U2+@dragon>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-esetresult: clean, is OK
-x-esetid: 37303A2955B14453627660
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9A91E4C4EE6A4C4B8F9753C8D81719A4@actia.se>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1749567927; c=relaxed/simple;
+	bh=njxByE+IBJtYYpjF0D0YGgtFyj7awC2eF8EPiUEWGqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Hye+LT1a0T23ke4e5hCe4TpeRw6peOWay246kUvuoub+Iuo9llVEQIB89C7M4cwfd/F8kb3HPeB0jvah/yKpKfxcHfkZ5p2X/NJ5hBiYycfCq3XBpXGqZmVBHIKLO/ZlA1HT9nHdufA2JhOyKY4E8Qmj1Rep1COAfhGUs119ntA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ecjaHnOM; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749567926; x=1781103926;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=njxByE+IBJtYYpjF0D0YGgtFyj7awC2eF8EPiUEWGqs=;
+  b=ecjaHnOM2q+qrweE5Ywqg0jUtUR8HOz9d76Pd5S5rWNaM79osw+2dfoY
+   1te66LklqB5WpZ+jkBe5rU9LQg8JfJFsYD3cPN2Ag8lzPSmhz4RoKVvvK
+   KJ6g7ng37FDsC7aPP6CaC00HTawLA6Xb49NmDftIlBPp6ODvi7DzT3x9h
+   ik2oMT00wA+r4W984SHBioh8bdGD6nIHSCb7EbNrR077x3QKgnELJyWgN
+   PAenJqWxqQNg/xJMRiU3k/R6UTX9cIDjCVXbKLJ0M6oOfDWtcmhSkLHuu
+   h/PfTuCsP7JBB5Z09t+eB84noNSXLVdEm9zDczhcumKHvQcpPWkxu7Py5
+   A==;
+X-CSE-ConnectionGUID: nYsLjz5PSbCw/3iWdWHd5g==
+X-CSE-MsgGUID: 9p3Zl6doRjC5MmAtzYR/ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="77087503"
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
+   d="scan'208";a="77087503"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 08:05:25 -0700
+X-CSE-ConnectionGUID: 2bO0S9tcRZuac0ai5ES5vQ==
+X-CSE-MsgGUID: fTNG/fZOQvKYGuTh1S8mHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
+   d="scan'208";a="147799197"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 10 Jun 2025 08:05:24 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uP0XR-0008NC-2J;
+	Tue, 10 Jun 2025 15:05:21 +0000
+Date: Tue, 10 Jun 2025 23:04:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Leo Yan <leo.yan@arm.com>
+Subject: drivers/hwtracing/coresight/coresight-syscfg.c:398
+ cscfg_remove_owned_csdev_configs() warn: inconsistent indenting
+Message-ID: <202506102238.XQfScl5x-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-SGkgU2hhd24sDQoNCk9uIDYvMTAvMjUgNTowNCBBTSwgU2hhd24gR3VvIHdyb3RlOg0KPiBIaSBK
-b2huLA0KPiANCj4gT24gTW9uLCBKdW4gMDksIDIwMjUgYXQgMDI6MTc6MzBQTSArMDAwMCwgSm9o
-biBFcm5iZXJnIHdyb3RlOg0KPiANCj4gPHNuaXA+DQo+IA0KPj4gV2UgcHJvYmFibHkgcmFuIGlu
-dG8gdGhlIHNhbWUgcHJvYmxlbSB0cnlpbmcgdG8gYnJpbmcgb25ib2FyZCA2LjEyLCBnb2luZw0K
-Pj4gZnJvbSA2LjEsIG9uIGlNWDhRWFAuIEkgbWFuYWdlZCB0byB0cmFjZSB0aGUgaGFuZyB0byBF
-UCBwcmltaW5nIHRocm91Z2ggYQ0KPj4gY29tYmluYXRpb24gb2YgZGVidWcgdHJhY2luZyBhbmQg
-QlVHX09OIGV4cGVyaW1lbnRzLiBTZWUgaWYgaXQgc3RhcnRzDQo+PiBzcGxhdGluIHdpdGggdGhl
-IGJlbG93IGNoYW5nZS4NCj4+DQo+PiAtLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0t
-LS0tDQo+Pg0KPj4gIEZyb20gMDkyNTk5YWI2ZjllMjA0MTJhN2NhMWViMTE4ZGQyYmU4MGNkMThm
-ZiBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDENCj4+IEZyb206IEpvaG4gRXJuYmVyZyA8am9obi5l
-cm5iZXJnQGFjdGlhLnNlPg0KPj4gRGF0ZTogTW9uLCA1IE1heSAyMDI1IDA5OjA5OjAxICswMjAw
-DQo+PiBTdWJqZWN0OiBbUEFUQ0hdIFVTQjogY2k6IGdhZGdldDogUGFuaWMgaWYgcHJpbWluZyB3
-aGVuIGdhZGdldCBvZmYNCj4+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy91c2IvY2hpcGlkZWEvdWRj
-LmMgfCA0ICsrKy0NCj4+ICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9jaGlwaWRlYS91ZGMuYyBi
-L2RyaXZlcnMvdXNiL2NoaXBpZGVhL3VkYy5jDQo+PiBpbmRleCAyZmVhMjYzYTVlMzAuLjU0NGFh
-NGZhMmQxZCAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL3VkYy5jDQo+PiAr
-KysgYi9kcml2ZXJzL3VzYi9jaGlwaWRlYS91ZGMuYw0KPj4gQEAgLTIwMyw4ICsyMDMsMTAgQEAg
-c3RhdGljIGludCBod19lcF9wcmltZShzdHJ1Y3QgY2lfaGRyYyAqY2ksIGludCBudW0sIGludCBk
-aXIsIGludCBpc19jdHJsKQ0KPj4NCj4+ICAgICAgaHdfd3JpdGUoY2ksIE9QX0VORFBUUFJJTUUs
-IH4wLCBCSVQobikpOw0KPj4NCj4+IC0gICB3aGlsZSAoaHdfcmVhZChjaSwgT1BfRU5EUFRQUklN
-RSwgQklUKG4pKSkNCj4+ICsgICB3aGlsZSAoaHdfcmVhZChjaSwgT1BfRU5EUFRQUklNRSwgQklU
-KG4pKSkgew0KPj4gICAgICAgICAgY3B1X3JlbGF4KCk7DQo+PiArICAgICAgIEJVR19PTihkaXIg
-PT0gVFggJiYgIWh3X3JlYWQoY2ksIE9QX0VORFBUQ1RSTCArIG51bSwgRU5EUFRDVFJMX1RYRSkp
-Ow0KPj4gKyAgIH0NCj4+ICAgICAgaWYgKGlzX2N0cmwgJiYgZGlyID09IFJYICYmIGh3X3JlYWQo
-Y2ksIE9QX0VORFBUU0VUVVBTVEFULCBCSVQobnVtKSkpDQo+PiAgICAgICAgICByZXR1cm4gLUVB
-R0FJTjsNCj4+DQo+PiAtLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0K
-PiBIbW0sIEkganVzdCB0ZXN0ZWQgdGhlIGNoYW5nZSBvbiBpLk1YOE1NIGJ1dCBkaWRuJ3Qgc2Vl
-IHRoZSBzcGxhdHRpbmcuDQo+IE1heWJlIHdlIGFyZSBydW5uaW5nIGludG8gYSBzbGlnaHRseSBk
-aWZmZXJlbnQgcHJvYmxlbXM/DQo+IA0KPiBTaGF3bg0KPiANCg0KUGVyaGFwcyB0aGUgaGFuZ2lu
-ZyBwb2ludCBpcyBkaWZmZXJlbnQgaW4gaS5NWDhNTSwgSSB1bmZvcnR1bmF0ZWx5IGRvIA0Kbm90
-IGhhdmUgYW55IGJvYXJkcyB3aXRoIHRoYXQgU29DIG9uIHRoZW0uIFdoZW4gSSB0cmFja2VkIGRv
-d24gdGhlIA0KcHJvYmxlbSBvbiBRWFAgSSB0aHJldyBzaW1pbGFyIEJVR19PTiBzdGF0ZW1lbnRz
-IGluIG1vc3Qgd2hpbGUgbG9vcHMuDQoNCkJ1dCBzaW5jZSBhIGZpeCBpcyB2ZXJ5IGxpa2VseSBp
-ZGVudGlmaWVkIGFscmVhZHkgYnkgeW91IEknbSBub3Qgc3VyZSBpbiANCnRoZSB2YWx1ZSBvZiBm
-aW5kaW5nIHRoZSBleGFjdCBzcG90Lg0KDQpCZXN0IHJlZ2FyZHMgLy8gSm9obiBFcm5iZXJn
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f09079bd04a924c72d555cd97942d5f8d7eca98c
+commit: 53b9e2659719b04f5ba7593f2af0f2335f75e94a coresight: holding cscfg_csdev_lock while removing cscfg from csdev
+date:   3 weeks ago
+config: arm-randconfig-r073-20250610 (https://download.01.org/0day-ci/archive/20250610/202506102238.XQfScl5x-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506102238.XQfScl5x-lkp@intel.com/
+
+smatch warnings:
+drivers/hwtracing/coresight/coresight-syscfg.c:398 cscfg_remove_owned_csdev_configs() warn: inconsistent indenting
+
+vim +398 drivers/hwtracing/coresight/coresight-syscfg.c
+
+   390	
+   391	static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, void *load_owner)
+   392	{
+   393		struct cscfg_config_csdev *config_csdev, *tmp;
+   394	
+   395		if (list_empty(&csdev->config_csdev_list))
+   396			return;
+   397	
+ > 398	  guard(raw_spinlock_irqsave)(&csdev->cscfg_csdev_lock);
+   399	
+   400		list_for_each_entry_safe(config_csdev, tmp, &csdev->config_csdev_list, node) {
+   401			if (config_csdev->config_desc->load_owner == load_owner)
+   402				list_del(&config_csdev->node);
+   403		}
+   404	}
+   405	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
