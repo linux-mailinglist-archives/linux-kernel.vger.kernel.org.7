@@ -1,161 +1,231 @@
-Return-Path: <linux-kernel+bounces-679817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110CAAD3C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:08:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF3CAD3C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFAA217CCB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:04:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E5C3A7F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D61238D57;
-	Tue, 10 Jun 2025 15:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5742376E1;
+	Tue, 10 Jun 2025 15:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwzpjPGZ"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqKmKKXJ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A8513212A;
-	Tue, 10 Jun 2025 15:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D2B1A38E1;
+	Tue, 10 Jun 2025 15:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567792; cv=none; b=M5nQl3X9JPrYub7i2FJiQCDNp5a11ihrdQicIuzseNc089Annz5xpzvijQfRK4v+RubO4KPGsbNprCQ7Vtj+fqMpCfjrobgIRyEG16A4Jc2AvKxtCNlF5zx4KG7KYUJrMKw6OdcN0DEgylnUoOFxhiUx9Tji3AZmVg3PBvGoYFo=
+	t=1749567924; cv=none; b=dmUomc65Jvmf2Z9Caa2XAKAbZEtU2I5uh5jxwSlrBke1cdfbuFDbMnIMWtuXuwieCbeWwy77lrT0Q3RSRj3k+jDvATS35nIG0Id/I9oc2FOy7cE2tWewvtKSG6mwLgInylb4oIrL8GefahH+M6yO87oMzvcGLAXxfoChVJO3hoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567792; c=relaxed/simple;
-	bh=2r6EAgL0ntBRPdNwAtuZKgExnP4Jg07L6tI4c6g3urk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R3fuBKqCV9gAiWXvor9bnZ8ybJR70GQJDLFl3rx3tDyEmjMvJglff5w1iuXZpdq8FU0zIwB2NpMiUhj/FEV2dAC+SaUqZ8/AzoWHwLkmj80qHoX6s6Fuai7q9BC57hFMoZ92rICabkqmQt3IiIYCCDrZeYwiI052GFNUL1EM2BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwzpjPGZ; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1749567924; c=relaxed/simple;
+	bh=flqCuN1LFxKMYrK52rWr1/uWTHaSEMwBTPmhJUrxg+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O+663DZxwo2yJoi8fAT3RRX9mSDCK50OOmsSziiWEeEBXgyo0hu6020dwBga1a0E2GgBS8Rm6NvdGv/twkcPT2JFZfqKr3oz+MtWq7WcH+pDR5O+GWtcMvRCw0HKBisTQRGDHIz+mMMEyFKZ1KMSGErTVzYEv7HM1uJFPmEaEXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqKmKKXJ; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60179d8e65fso5308598a12.0;
-        Tue, 10 Jun 2025 08:03:10 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-450cf214200so51901455e9.1;
+        Tue, 10 Jun 2025 08:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749567789; x=1750172589; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CDC9yplPkoPW2UltO3ycsW0uGRdrvTKeooKsDUH271I=;
-        b=XwzpjPGZO3kl/MAd16Ql5ukkIKeaaWkdfKdIVYco0Sfs+DyTF1gB/dt1SDjVg3pxm2
-         L35aJaMRL3si/iFRkdSV8hQ/AhwONazEHxaEVaQTDs5xFtIubbkrf1WiQ88s21q0ykjR
-         vXyMmdX54ALt6y37p5F2zaid3+h+vEeqVDdRUHuPKLPe9ixnpTCqJnjSAnjpnYNUsnV3
-         qXD7LBHNu7Rx3wpyT9O5Em6PWewsLT6I2nA7fZOHHgf/E8tvWKVKrzzSrr/jdrgO9jfR
-         6ElucGbMf+GJK7E5nSPi7ziRavSINTIcf22+5gSbO9/sN7D3YlDsq281rY61YelhU6uZ
-         b5Vg==
+        d=gmail.com; s=20230601; t=1749567921; x=1750172721; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DYST0Wq5UCvFFk+G2xi/lkliKbwC7IeQBkNPHcpoKFQ=;
+        b=cqKmKKXJm3+5paYuvHDxn7ZaFdxQDmVH5IvbTuiP0eR8jotIZNageiwovF46+gHUCM
+         r67uTWK/zj4gALUpZ14GRc4mKMnDNpPSISX8OTBcp3C6fX4Y6xPUvvEUg8w23Rc4lUmz
+         VucLEOK3JELYJgdvH3dC3DoHtj3WlNeBGZ0BrYsBMqKc+njsubNuJsL+GnJb0hZRtfBk
+         pDX6x8V8Vxaj3bhE3lR6DUs2rp8TE9c4umpRu4dT4zBu64R6MkjrtxdCx9lAr9Uy3byJ
+         XfxLr0vftHZndsD6RRigQnBHirWxqVfR6fbKu97Xckf+yecLIepu0/n20/dX2lOAYWO7
+         zbsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749567789; x=1750172589;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CDC9yplPkoPW2UltO3ycsW0uGRdrvTKeooKsDUH271I=;
-        b=U4TAphSH07dw+aWPolPVhsDAnTEPgqjUCmkNyE+a7Kzzls5rC+jhPTDGDaiALNPmkV
-         aRaPJ0MVIXUa4cxqddS0JkrFmDQNXogyK+pwjZ0bp5ALg5RDDWjfoD6SLoBKlZAtZSiU
-         rr/O9zO8DzUx6IkTUqZGbqH5v/lfhs6lw5Dvf8Dsy2A2DKd+ceUbFFTlWokuVHov87FI
-         nghK1j1VpBkgHs7vunzl/KeCJvkDY3+5NXUe9Kx3QRHo1d3jsAePDwhn2cc5n8ngJYg/
-         e3vL7ENRHxpdH9Y2qnc2KrAq4DovKkKgx45EhFsxV6XJPln/E9/Njd1AF3iX1BVrl7A9
-         nG5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUMSpYJtINkoboe05QvliJG7N6p6zDeewe5Z3IaxxwgNZAEmuJF6QDyhYLN+63uZUqic5K8/+aD5F8=@vger.kernel.org, AJvYcCUMr9a8LrXCKegehs9NGCCu74+Ui97VrdcRnikA+IHh3ebtiVhZ8rOJSsc7rRDLujlYTWrq930pnkvtzg==@vger.kernel.org, AJvYcCUOajZ3sWwHjxrUlSx7EbGGh/hXsQfcrIeWTuxwkxwbNI7OPEAPMbvJkvuJdRNhkg1feKfVypDWNv5rgXw1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOXY4Z/qjq2wMvLqqA57u5Z+xoN48jBkYkm6hNLE0Di03MawKV
-	kAw88CaGpeb42Q1tH10K6mAq2UptwAZ4C8k369TKp0rn2GE0vx4B0Ayd
-X-Gm-Gg: ASbGnctPfp5/znFHC/h2JQH4fusCWLU3dfyoxhHm0u64DuwF7oWQkoHnp2/ofzGwMGj
-	opWlEnZS2slc67xtiq/ioASY4derUXlU393j31d3UwaRfXSy/1WwXhqtyCTN0B08V35vrpf9buR
-	kfYkCbkflwGfgYRN3KAU26AXjUCkU7o/rl+Op8C4Kx5/cqxxLVM9qCOtmib+4eSmgeyR9bbekwo
-	I8ooCsnwhfNWtHMsxB4l73ye3ZhU7WKOi62j8Tjd16Zqvdk00xAj+nbVCWOQr9OWyLDXM1JO6l9
-	G/pdE2fg2mvUymHwwvmxVebH5Hk5e9qs9cArfQo8+nfcG+jIzYd7lUdUusUlcC7xgV/QIX+1Gxb
-	+AwcKevOUqd9su3pI0Io3EjKz19nSaYXV
-X-Google-Smtp-Source: AGHT+IExlHW6J/JO614E8U398K85uzXlylL1u+bp5hpmTla2vYCO+oDTvmf4xA+H2Z2h6vgzqSc3pg==
-X-Received: by 2002:a17:907:720c:b0:ad5:749b:a735 with SMTP id a640c23a62f3a-ade7ac7bd0amr294841766b.27.1749567789056;
-        Tue, 10 Jun 2025 08:03:09 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:c2f:a34:6718:ee1d? ([2620:10d:c092:500::7:b9b7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d754669sm733541266b.33.2025.06.10.08.03.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 08:03:08 -0700 (PDT)
-Message-ID: <f8db6b39-f11a-4378-8976-4169f4674e85@gmail.com>
-Date: Tue, 10 Jun 2025 16:03:07 +0100
+        d=1e100.net; s=20230601; t=1749567921; x=1750172721;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DYST0Wq5UCvFFk+G2xi/lkliKbwC7IeQBkNPHcpoKFQ=;
+        b=ilniaFnGORUMpIAZhBhkQTwU/5bcQMTjC6q/g9vMCdn0TMeR0Xorm2LuH2ZpVYlAeD
+         pTXWB3vopxBn8Qg4f59LRgIgm75fgcGFyhNw+shGGjjzKRb6+etUu+77uwIPVVdi8RKu
+         1iO0HCTH9xwnUAOpwva0gHgf+S8FBkEkemWpaMdNo17QRouVp2zhJvaBzrgVTFULR7o3
+         cVTkUdxQn79Nt8ZMJXuEop6tEgpqBdq3tpBM6fjjxUz1wei+G0Mqq2kTlGC5O29bpObg
+         1F5khIKpWt92mX4xDx15k0tqM6jlPsX6hSo/nNJ0Pak+wiJ+xtDgsYXC2NFPYA4qc4QZ
+         TC+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWef56ZOitJnBZcDPTurltS/PlWEw5+yAxqc9cLKyRLTidvXmT/UxVtqAjU3f0MX5czsT5+5Zvo5T2kVIvfE0=@vger.kernel.org, AJvYcCVVXQVsmEDSbHlqLFPvo+c9FFUoBVqL3edmm7x2bBMlo92JDPGKC0gwaK3W6idtwwnZw9Z+FEdaOFwW@vger.kernel.org, AJvYcCWfLED02hi60y9STWgfHBB5TMWSG2cWiM7c5fF03Z4yPRzWFdgvmTP8yZ3HMud3lfpwQA2X9qjp5BcykGsc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGTKTtwARhgYkhABFV8tgFQ0mbh88tqFhBg3dhj7ByGqrIQbwk
+	UD/39iWZ0al2fbpRNehd9iVfaEF0P8Ew/UAyMNs9qguCzaqMwtUS98m2IP00zT6CoJ8=
+X-Gm-Gg: ASbGncsuNjFwH8aUuL1hEOQ6J0f5o281/1J++kwQssFPNNAR4wYKjnP8mx8CkTME2tG
+	NJODctqvZ609d7ZQqEQtSzC+NwqL7dAjBmTiwjMlJqHj+orGUVS6thEI9QZZxA/e4TDEhOI3oSs
+	zXIEvYuwBX8d9FZDhagGvt/SaEMBwm1l8oqpvZvnXLAgjOkaBqsVUAaFofA7yI8DFTNoQSVIXxT
+	7ZD0K5AnPjiBLGqbJXs3ZhDt8RbMaveXpM5Cj0G5iIx5zGhyU8Dg1hELdwr2JveY06DeD1fGuAo
+	hLqwjCfvj20kDKP7VV+pkviYHyffRMcJPU1zApvSIr0IU110zSr9X8jXDYjVI5PB7ZfmPkWtmKv
+	pnTZxlJTkxJUY1qVs+l2u3HWnCruZmWRdEeKR
+X-Google-Smtp-Source: AGHT+IFN9u2t/Wp8LhDB0gA0/W33WOWPayonuzXz/G4wLLYTAVQ6KWIGAINYjOJ1X1qxPMzreZHj1w==
+X-Received: by 2002:a05:6000:420f:b0:3a4:f6ed:767a with SMTP id ffacd0b85a97d-3a531abcca7mr15162775f8f.38.1749567920129;
+        Tue, 10 Jun 2025 08:05:20 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a532464f20sm12559408f8f.98.2025.06.10.08.05.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 08:05:19 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v4 2/5] rust: driver: Add ACPI id table support to Adapter trait
+Date: Tue, 10 Jun 2025 16:03:12 +0100
+Message-ID: <20250610150312.237649-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610145234.235005-1-igor.korotin.linux@gmail.com>
+References: <20250610145234.235005-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [DISCUSSION] proposed mctl() API
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
- Jann Horn <jannh@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Christian Brauner <brauner@kernel.org>, SeongJae Park <sj@kernel.org>,
- Mike Rapoport <rppt@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Barry Song <21cnbao@gmail.com>, linux-mm@kvack.org,
- linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, Pedro Falcato <pfalcato@suse.de>
-References: <85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local>
- <e166592f-aeb3-4573-bb73-270a2eb90be3@gmail.com>
- <d7ccb47b-7124-45e9-ace0-b0fa49f881ef@lucifer.local>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <d7ccb47b-7124-45e9-ace0-b0fa49f881ef@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Extend the `Adapter` trait to support ACPI device identification.
 
+This mirrors the existing Open Firmware (OF) support (`of_id_table`) and
+enables Rust drivers to match and retrieve ACPI-specific device data
+when `CONFIG_ACPI` is enabled.
 
-On 30/05/2025 14:10, Lorenzo Stoakes wrote:
-> On Thu, May 29, 2025 at 06:21:55PM +0100, Usama Arif wrote:
->>
->>
->> My knowledge is security is limited, so please bare with me, but I actually
->> didn't understand the security issue and the need for CAP_SYS_ADMIN for
->> doing VM_(NO)HUGEPAGE.
->>
->> A process can already madvise its own VMAs, and this is just doing that
->> for the entire process. And VM_INIT_DEF_MASK is already set to VM_NOHUGEPAGE
->> so it will be inherited by the parent. Just adding VM_HUGEPAGE shouldnt be
->> a issue? Inheriting MMF_VM_HUGEPAGE will mean that khugepaged would enter
->> for that process as well, which again doesnt seem like a security issue
->> to me.
-> 
-> W.R.T. the current process, the Issue is one Jann raised, in relation to
-> propagation of behaviour to privileged (e.g. setuid) processes.
-> 
+To avoid breaking compilation, a stub implementation of `acpi_id_table()`
+is added to the Platform adapter; the full implementation will be provided
+in a subsequent patch.
 
-But what is the actual security issue of having hugepages (or not having them) when
-the process is running with setuid?
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+---
+ rust/bindings/bindings_helper.h |  1 +
+ rust/kernel/driver.rs           | 39 ++++++++++++++++++++++++++++++++-
+ rust/kernel/platform.rs         |  6 ++++-
+ 3 files changed, 44 insertions(+), 2 deletions(-)
 
-I know the cgroup proposal has been shot down, but lets imagine if this was a cgroup
-setting, similar to the other memory controls we have, for e.g. memory.swap.{max,high,peak}.
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index bc494745f67b..dfb2dd500ef6 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -28,6 +28,7 @@
+  */
+ #include <linux/hrtimer_types.h>
+ 
++#include <linux/acpi.h>
+ #include <drm/drm_device.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_file.h>
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index ec9166cedfa7..638f1d270af8 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -6,7 +6,7 @@
+ //! register using the [`Registration`] class.
+ 
+ use crate::error::{Error, Result};
+-use crate::{device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
++use crate::{acpi, device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
+ use core::pin::Pin;
+ use pin_init::{pin_data, pinned_drop, PinInit};
+ 
+@@ -141,6 +141,38 @@ pub trait Adapter {
+     /// The type holding driver private data about each device id supported by the driver.
+     type IdInfo: 'static;
+ 
++    /// The [`acpi::IdTable`] of the corresponding driver
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>>;
++
++    /// Returns the driver's private data from the matching entry in the [`acpi::IdTable`], if any.
++    ///
++    /// If this returns `None`, it means there is no match with an entry in the [`acpi::IdTable`].
++    #[cfg(CONFIG_ACPI)]
++    fn acpi_id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        let table = Self::acpi_id_table()?;
++
++        // SAFETY:
++        // - `table` has static lifetime, hence it's valid for read,
++        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
++        let raw_id = unsafe { bindings::acpi_match_device(table.as_ptr(), dev.as_raw()) };
++
++        if raw_id.is_null() {
++            None
++        } else {
++            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
++            // does not add additional invariants, so it's safe to transmute.
++            let id = unsafe { &*raw_id.cast::<acpi::DeviceId>() };
++
++            Some(table.info(<acpi::DeviceId as crate::device_id::RawDeviceId>::index(id)))
++        }
++    }
++
++    #[cfg(not(CONFIG_ACPI))]
++    #[allow(missing_docs)]
++    fn acpi_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        None
++    }
++
+     /// The [`of::IdTable`] of the corresponding driver.
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>>;
+ 
+@@ -178,6 +210,11 @@ fn of_id_info(_dev: &device::Device) -> Option<&'static Self::IdInfo> {
+     /// If this returns `None`, it means that there is no match in any of the ID tables directly
+     /// associated with a [`device::Device`].
+     fn id_info(dev: &device::Device) -> Option<&'static Self::IdInfo> {
++        let id = Self::acpi_id_info(dev);
++        if id.is_some() {
++            return id;
++        }
++
+         let id = Self::of_id_info(dev);
+         if id.is_some() {
+             return id;
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 5b21fa517e55..5923d29a0511 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -5,7 +5,7 @@
+ //! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+ 
+ use crate::{
+-    bindings, container_of, device, driver,
++    acpi, bindings, container_of, device, driver,
+     error::{to_result, Result},
+     of,
+     prelude::*,
+@@ -94,6 +94,10 @@ impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
+     fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
+         T::OF_ID_TABLE
+     }
++
++    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
++        None
++    }
+ }
+ 
+ /// Declares a kernel module that exposes a single platform driver.
+-- 
+2.43.0
 
-We can chown the cgroup so that the property is set by unprivileged process. 
-
-Having the process swap with setuid when the unprivileged process has swap disabled
-in the cgroup is not the right behaviour. What currently happens is that the process
-after obtaining the higher privilege level doesn't swap as well.
-
-Similarly for hugepages, if it was a cgroup level setting, having the process give
-hugepages always with setuid when the unprivileged user had it disabled it or vice versa
-would not be the right behaviour.
-
-Another example is PR_SET_MEMORY_MERGE, setuid does not change how it works as far as
-I can tell.
-
-So madlibs I dont see what the security issue is and why we would need to elevate privileges
-to do this.
-
-> W.R.T. remote processes, obviously we want to make sure we are permitted to do
-> so.
-> 
-
-I know that this needs to be future proof. But I don't actually know of a real world
-usecase where we want to do any of these things for remote processes.
-Whether its the existing per process changes like PR_SET_MEMORY_MERGE for KSM and
-PR_SET_THP_DISABLE for THP or the newer proposals of PR_DEFAULT_MADV_(NO)HUGEPAGE
-or Barrys proposal.
-All of them are for the process itself (and its children by fork+exec) and not for
-remote processes. As we try to make our changes usecase driven, I think we should
-not add support for remote processes (which is another reason why I think this might
-sit better in prctl).
 
