@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-680509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A62DAD4655
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:04:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9554AD4657
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F2F3A81FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:02:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA0597A405A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097042E3397;
-	Tue, 10 Jun 2025 22:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7CE260560;
+	Tue, 10 Jun 2025 22:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TYFxWtZh"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UFJG4Hlu"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99A2DFA5D
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579602E62A1
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749596298; cv=none; b=FVm0fFKEjlbRL72TrotBmUzm3ghPvM0+PB7KGJo7V/+WLqHEloFfSLtx86pTOs90o4zhyoFB8ADIYqOS+UfZ8pQvGoYM9bv3QeC3dE8t406F8a1D+Ww5QhCsifmGbz0DNC1zcyZAwRqPr2+VD/9cuvh9SetSxTI+YleQow0Zxu0=
+	t=1749596301; cv=none; b=J/xw6vlsi7QuGxf1MZgvQ3TA1FuGWd5Rxx8nhuQyg6I9eDYd7ngfGYTbu36vcMfbDGRO9tb2wayk3UBjY65mix5G2oQimCQKO34Y72zc1fQTxPleqNFCpOVWOTvjDovEQ7UGZ5SWlAwnMEP70E9l9kLRc2SCGib/Qfedx9MT2To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749596298; c=relaxed/simple;
-	bh=mf4dGNQEE8Vf3ZN6CsMJb1C98fQ9dcsST+qQnEYPAdU=;
+	s=arc-20240116; t=1749596301; c=relaxed/simple;
+	bh=nUK0SeMAHpZWR9VEMLwQ2wHnXQVmswQ/I2nW72+0fj8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DOEiFKEQrxUJYeNqic1WJ0hmSA/xMLuuoKyAMFaayszC8KHbyMoPig8HwIzRL+DRsK1kaRR0EwfoiI8WgGZ3WKjVQkwmgcAg6j7jjsKFAtnrjy0eemt3mYG4UB2aeQQFzjIyMYQr0oH9Qo2XSs5Gv2dyvI1UYfsR7V6h5p6tYz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TYFxWtZh; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=a2fmkcJbHsOGiIXbOAyzM+H+Eo7ahJP9bKxDqpiyEKO0ziDCSGI27IIzFw09HSfDH/ZY5gZN+6ONwAWrzMlPC+Ox497xRpQEn1Mh6dhD/2NNQqCKx70uctnf4S21DzRibldF3p48AhoZu0gX3HrpzjYs/A9bSaRVDbCO91LKI2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UFJG4Hlu; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-742b6705a52so8883221b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:58:16 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23632fd6248so15694775ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1749596296; x=1750201096; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1749596298; x=1750201098; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=INqA6pUbqyUB4M6DLfIPSDW1OsxCHPz49HW15Ivf0MI=;
-        b=TYFxWtZhS3UkwVoUHispTjmFhiytbSw1yoLwYsSG8jq9oCyDdDTVbYt1ku00dzAJaH
-         FDzOgJUB7PeX3tfUwisjQPCI44moy/z8o34SVYW5k2hK2O5ZMvZxht9k/TYXCCFmEUYO
-         a2iUVY9Gt+g7R4YIKfn59y7KEwgkbuZDKBZGjdn3h3WnmwzDCYopWvegT54crGMQka9F
-         /sf75/eVg1mhl1/B6J/6YJc7ugn9zjSbVheUXKVVunIHwCxWNVV+QvcCM4rIODyZL1gw
-         2vb+6ALvzIX0bsAoFtevs6fKwSJ8vxSwQqdrsYAxBb/Dpg/97pLekMxq2cqSioBU66+x
-         ci4g==
+        bh=ac+Cbfu6uBI7SW7IA1xemqMCAvuIHQqDioO25y7DkVY=;
+        b=UFJG4HlupvmTJXPvl9ioUEXDcH3GsIgUJLhr437NCPT+WU+fMT8FLm8ZcWurur4xtd
+         uG9Gc0YRWKGQa3vKhxAuJ188nNVyRUdrdBjh4iOpilByDBUC6N+wE8pYH+esH7csYfZf
+         VGGCSTxQifI1UR/zwhIDeowd+ttcxKkzEEkdKXJ+TzykUwjXlGf1Kek5nwqy8W+BaHi4
+         wv8X32KD5fzflPWJCnoIYZStwh0SpnkgvSm8JQfBPEsNaCfR3td8QSDXGK1h7ggNYTOr
+         q0PpAv44Gy/AmDhRe5qrbv7fQijixligN/8s7CKQJuufHjndHTJSPqeDv4CndL8zW5W1
+         QMSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749596296; x=1750201096;
+        d=1e100.net; s=20230601; t=1749596298; x=1750201098;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=INqA6pUbqyUB4M6DLfIPSDW1OsxCHPz49HW15Ivf0MI=;
-        b=vn47ZB6CzDhrDUQA3RUuaSHAi/+DSfaz8hxpDv3IjrDywtuk+PZzp1JCCvrahZrP5u
-         u10/yMVUO6/7bfZe2ZB4qrW/b7Ut0ruVuPPlumb0M+20jrLm6Jr1Zz/NbyY3uzVkM6a+
-         7l5UBLnUsaUHcOsxyyyjd6QpfUoNnMlbB0KUlAheHW4/5Yo8/5/xxiY4X6pOkCT5ZLSg
-         j0qeU/RkSAp4f0wc1Qn5x9Uc2/tFwpgayjdAlUJwj+Lotzc+nl5Sfinkg1JODrSb8dI3
-         gNx1PBIOJ3O1HtStTxV/xqClB0XmYxpaiQU0i7ioxW2hN0b0y65Z+Dpa5jli5zTy1zEG
-         JKvg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9THaBm4uUn15Q+4qBesGseKl5taFprX+H35ki4W/baT4D6V+BMl6cbhGSgZDGYB924bd1BwR+uaE4QAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF1m6W/cfApaUUu2SHZ3jn2futVMF2hTfyKOrlzy4QiXSCAZTM
-	8b4ttGJN20hsvy1S0th44A/vRY49qaROS/mL2DqBMbRzwKlpKL5bRKCsp24Rn66laegnoK36SNl
-	UtooTKg==
-X-Google-Smtp-Source: AGHT+IHMOEDiNlakcTKi0BqXOdIFD8cp9FnOaD9FdZ/5gIz3n4JAB+77v2pAu2xRBZ27EtExAHgRcKJEqgA=
-X-Received: from pfnj12.prod.google.com ([2002:aa7:83cc:0:b0:746:32ee:a305])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:9993:b0:21d:3635:548b
- with SMTP id adf61e73a8af0-21f890eac3cmr787123637.32.1749596296356; Tue, 10
- Jun 2025 15:58:16 -0700 (PDT)
+        bh=ac+Cbfu6uBI7SW7IA1xemqMCAvuIHQqDioO25y7DkVY=;
+        b=ULnjj/wCe4Gy7ZyH/2r98G7Yx/DEwoi30UEMy/s2T9CSgmZtcCfaqXxmPHqkelfIV5
+         Z6xrcpXVzS0czHeIO3j9A/ex9dAyytj4u/GCfbdZXXC8xzfc7znGyCPg+zb+1biyvGbj
+         B1GJGCl/o7kAWLCE8iYzGkQeg3GLbdgD1QJN1Osmw5zD8KJoHF1KwBMP5smci7LAo0t7
+         Z199BKVkCh6EOlIZOTXicHql2W5/XDyxGhOPJQwRNR+IqbEiMKL+N2MfmPZwToBghFmp
+         0WLlWRv6xcZ1lz60wsglpebJmoBm9wXAKuXTNP8GqEvQB1TMnDEWCBT9v2Sar7pKI5aM
+         dtsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlbQRqKYPa6VAer/95XrpuBpFMrh85hc1M8JXleaLmjGeaHPtR+GukJ/uRsRJNkznMyh1YgtP8girrs90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvXc1xWPR+iSEZ00aAP5pUFoE29/+CMJWd+MTNoGh/sHH9Yeah
+	6ksDEjZq2KFAudje0gRi8W8KbLAO+kHfIFl3dPZpidr7bHYmuaF6E0oNogU7N7XAtB9QkeNzlJb
+	GzSk0Ug==
+X-Google-Smtp-Source: AGHT+IFvfEiSl9bbSkg4PnNv9/YyrCUYvpHRFr097xwXo2xZysRVCZpLBkRJGDENwp9UGHQRHq010H7iJ0I=
+X-Received: from pjl7.prod.google.com ([2002:a17:90b:2f87:b0:312:1dae:6bf0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1cf:b0:234:a139:11ec
+ with SMTP id d9443c01a7336-2364260edadmr7589675ad.20.1749596298103; Tue, 10
+ Jun 2025 15:58:18 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 10 Jun 2025 15:57:26 -0700
+Date: Tue, 10 Jun 2025 15:57:27 -0700
 In-Reply-To: <20250610225737.156318-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250610225737.156318-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.0.rc0.642.g800a2b2222-goog
-Message-ID: <20250610225737.156318-22-seanjc@google.com>
-Subject: [PATCH v2 21/32] KVM: SVM: Rename init_vmcb_after_set_cpuid() to make
- it intercepts specific
+Message-ID: <20250610225737.156318-23-seanjc@google.com>
+Subject: [PATCH v2 22/32] KVM: SVM: Fold svm_vcpu_init_msrpm() into its sole caller
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -86,50 +85,62 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Manali Shukla <Manali.Shukla@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rename init_vmcb_after_set_cpuid() to svm_recalc_intercepts_after_set_cpuid()
-to more precisely describe its role.  Strictly speaking, the name isn't
-perfect as toggling virtual VM{LOAD,SAVE} is arguably not recalculating an
-intercept, but practically speaking it's close enough.
+Fold svm_vcpu_init_msrpm() into svm_recalc_msr_intercepts() now that there
+is only the one caller (and because the "init" misnomer is even more
+misleading than it was in the past).
 
 No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/svm.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/kvm/svm/svm.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 710bc5f965dc..1e3250ed2954 100644
+index 1e3250ed2954..be2e6914e9d9 100644
 --- a/arch/x86/kvm/svm/svm.c
 +++ b/arch/x86/kvm/svm/svm.c
-@@ -1103,7 +1103,7 @@ static void svm_recalc_instruction_intercepts(struct kvm_vcpu *vcpu,
- 	}
+@@ -779,21 +779,6 @@ static void svm_recalc_lbr_msr_intercepts(struct kvm_vcpu *vcpu)
+ 		svm_set_intercept_for_msr(vcpu, MSR_IA32_DEBUGCTLMSR, MSR_TYPE_RW, intercept);
  }
  
--static inline void init_vmcb_after_set_cpuid(struct kvm_vcpu *vcpu)
-+static void svm_recalc_intercepts_after_set_cpuid(struct kvm_vcpu *vcpu)
+-static void svm_vcpu_init_msrpm(struct kvm_vcpu *vcpu)
+-{
+-	svm_disable_intercept_for_msr(vcpu, MSR_STAR, MSR_TYPE_RW);
+-	svm_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
+-
+-#ifdef CONFIG_X86_64
+-	svm_disable_intercept_for_msr(vcpu, MSR_GS_BASE, MSR_TYPE_RW);
+-	svm_disable_intercept_for_msr(vcpu, MSR_FS_BASE, MSR_TYPE_RW);
+-	svm_disable_intercept_for_msr(vcpu, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
+-	svm_disable_intercept_for_msr(vcpu, MSR_LSTAR, MSR_TYPE_RW);
+-	svm_disable_intercept_for_msr(vcpu, MSR_CSTAR, MSR_TYPE_RW);
+-	svm_disable_intercept_for_msr(vcpu, MSR_SYSCALL_MASK, MSR_TYPE_RW);
+-#endif
+-}
+-
+ void svm_set_x2apic_msr_interception(struct vcpu_svm *svm, bool intercept)
+ {
+ 	static const u32 x2avic_passthrough_msrs[] = {
+@@ -852,7 +837,17 @@ static void svm_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
  {
  	struct vcpu_svm *svm = to_svm(vcpu);
  
-@@ -1269,7 +1269,8 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
- 		sev_init_vmcb(svm);
- 
- 	svm_hv_init_vmcb(vmcb);
--	init_vmcb_after_set_cpuid(vcpu);
+-	svm_vcpu_init_msrpm(vcpu);
++	svm_disable_intercept_for_msr(vcpu, MSR_STAR, MSR_TYPE_RW);
++	svm_disable_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
 +
-+	svm_recalc_intercepts_after_set_cpuid(vcpu);
++#ifdef CONFIG_X86_64
++	svm_disable_intercept_for_msr(vcpu, MSR_GS_BASE, MSR_TYPE_RW);
++	svm_disable_intercept_for_msr(vcpu, MSR_FS_BASE, MSR_TYPE_RW);
++	svm_disable_intercept_for_msr(vcpu, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);
++	svm_disable_intercept_for_msr(vcpu, MSR_LSTAR, MSR_TYPE_RW);
++	svm_disable_intercept_for_msr(vcpu, MSR_CSTAR, MSR_TYPE_RW);
++	svm_disable_intercept_for_msr(vcpu, MSR_SYSCALL_MASK, MSR_TYPE_RW);
++#endif
  
- 	vmcb_mark_all_dirty(vmcb);
- 
-@@ -4518,7 +4519,7 @@ static void svm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
- 	if (sev_guest(vcpu->kvm))
- 		sev_vcpu_after_set_cpuid(svm);
- 
--	init_vmcb_after_set_cpuid(vcpu);
-+	svm_recalc_intercepts_after_set_cpuid(vcpu);
- }
- 
- static bool svm_has_wbinvd_exit(void)
+ 	if (lbrv)
+ 		svm_recalc_lbr_msr_intercepts(vcpu);
 -- 
 2.50.0.rc0.642.g800a2b2222-goog
 
