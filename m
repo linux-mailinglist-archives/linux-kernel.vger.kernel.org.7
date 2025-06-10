@@ -1,172 +1,172 @@
-Return-Path: <linux-kernel+bounces-679331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBEBAD34E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:27:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3870FAD34EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CC5174380
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8821C3B45AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAB1280009;
-	Tue, 10 Jun 2025 11:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EF7223DC6;
+	Tue, 10 Jun 2025 11:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="qEphA0by"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q3i/vWic"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A2B223DC6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2087229B02
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749554853; cv=none; b=cAyo2FHJZuDcGOJXSVnM/LhzYlndzoxqe+pOnV1MQxVYrZPwDYzOIIV1ArGLZuGw1PrLDBPi1P1AFIT0DDJcvNwVAzYbTkWpD+depiV9zYyd9di+MHlOO+9edBSpw/QP8GHkA9oKBmWFjvh8lcMmSVkEh6Y5O8S2OLStYZp5qT0=
+	t=1749554877; cv=none; b=qdYeLk8RivVL9sa8ismjDC4HWtyBMUoKfhPco2PEqqIBM9A4ZoQwBJwJi9bRQ1WH607XrSybmbrYnrVBdu/OAvfvKT+rdKFJUJXugmu/s/Tg2B0BE3IV0+eHBqh40pVKUOkZlj12Ijyr5QgplEC3Ab48zNJkLdvHFHnX1c7ZuAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749554853; c=relaxed/simple;
-	bh=++paXkfzIRt5dAny/JqTSD/t6fgSvg0HbfmPYN/knUg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=YIrOv4CHHSmBbUvknDIRxuQZPjki0+mGGvgFq1uwB1w+oTlOh967Elh1MqMUGYlKSg/2C2A0wYHZ4Nsazl93GqAsDBofPKYDb1RDVeHDAXsdoFyOVPySh/F3VBsCSHG7gZLzjHRSm6xojkFVdb57/MAS9HNlwolezLEyLtwewhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=qEphA0by; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1749554877; c=relaxed/simple;
+	bh=vZplNQpW4Kdm+uGw/ALGf60FNHHCr90goj7mCRdgSVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fSDqg0Z6bieSJA9P206rrD+9OwW1IUGFDswDhGI0dzQMjnJAU2WPOxtwzcGilhemF5jLJczzAXmRNq5Bv3laiicwitTkQBIQs4Wa/QRfeSewHv4IevB3+AKCHCq8X0/8/vz58IeO+P3IizNlFngKDah+pj+ABdFHvVfeKRcDmcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q3i/vWic; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e81749142b3so4664569276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:27:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749554875; x=1750159675; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghUgwcJRDF54uwI455ubpjB5C5gzyoTjCqDBFTWCMHk=;
+        b=Q3i/vWicUBv8ER9Q5fRxwKGrShrdh2uh9Qjlz9EXbptqtqnDNT+doXiRExXzlFWZIB
+         KKOky6E1HQ65p3H+thGgpQbvpfd9MUf3fTCE4Nz0yd8eQgES3UZNOg7s9yweMBe/Ts1a
+         c6mBn2zg1Zsmc7KZaLF00NHct1G+3zOT09lsFLhxPuUWb/zyqj2ZhAGoP2JBIGr9h6tB
+         yJDqk/a/HzaAIKHk26I4b38ow1hsjqBb74CedKCo5ylmd9JF3GBLsq6ZScczi4T4RLkH
+         qqeUmZvhmSe5KDv99uOyrRRPWV58dereuaNK3cKDd7RntyCF7TWBBq///ieuXgQiCeWj
+         pOSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749554875; x=1750159675;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ghUgwcJRDF54uwI455ubpjB5C5gzyoTjCqDBFTWCMHk=;
+        b=UV/xS1G0MI17ebdXox48eTOTTCcEUDvVv0Th4wK7DXerHkfMnaLdyr+zfoWmaq9Wio
+         EUf1G6BHYfK+TW1EMW5R7nfULi7Q+KWvNtWW+pMC+G5ymWyWdiPCddIK1xKsCrb3eEnt
+         t7tPC/yyiqlprT+yYeazp465YDJkn9E7MM3YGZj51l6OucpMMZuUfhprja2o5k18vuyK
+         9IT5tgwi/LE+HHXAvAs13ekqlJXEWUQP9Jb3KAzI/WUATKaKvE8KZCWgH4rSvAP8PjZ5
+         H8sNfoAp2xR5VslKvUNElMG5a2Dj+lqiwEbUlxpbWVqzxH1jeiRc0+QQ0+OYxLidxV3Z
+         DkIw==
+X-Gm-Message-State: AOJu0YzLHj0TWI0WeVaqigWNt3WICYA1hiRUVk+hZ/naCSZi5pX08U7l
+	+pNqe/utsdKJ9+PE5od2BNLhnEdZ2YAX3vqIySRptH0BUfKAkH+80uttObCjIkDeoDPnu/c4rVv
+	axtQbdgHeHXpbVgMWsodemI72V/BFWtbP0tudu9CnVw==
+X-Gm-Gg: ASbGncvtfnEIUPsUFCGSQoWgnW1yGpfkZ3bwL9tBnsSn1IhROtxS/b7w+8Rq09cfR5k
+	gZTm8L87KxLLX8N3wW12DlLDf3/DctYZ2lGmkw5frx/+IrO8pyWX6TLS9LSpe21h/STEWZZJf02
+	RpFo9V4PyYqPpovcyvOEX/VVHHL2HmC5UnZc8uN00m2PGkn07QH01JqN0=
+X-Google-Smtp-Source: AGHT+IHaXIQBlJX6AevUD9L1mnT0PM9CRgJ8oCkRDaWqwAf3jmN5DRjOXayJZtYpNPaGNd4bstUllo4nDy7qlFpYde8=
+X-Received: by 2002:a05:6902:2212:b0:e81:2740:2d96 with SMTP id
+ 3f1490d57ef6-e81f35fb2abmr2798929276.17.1749554874790; Tue, 10 Jun 2025
+ 04:27:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1749554848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d87frpROuVlGjEVB2mDm08MDEd+CmIU52hSdyqvceiU=;
-	b=qEphA0bypSgalnt0eO6vtYktEmcT1tqDQmDGVchsVK7Vutp9rmNvpR40+2CQme4157wFp2
-	xAHP+DlDfd83sPJM3UB69HaZd04M0dDSTFUjuJRwcEKEc+JazVGgydcLufOrUyxnyLaiTJ
-	pMiHUVkDm/+k0rwIrUhr5+opjCEzF2Pb8/kKG8mu2DAD8uyXFSEMSeDldf8z0L2S5sYsv+
-	/5YayGjaSEFoS8uQkeaRCPYFWC0yGxk6GipS74DAdFkf+ltf1jhEKGCB31zq14SdxoubCl
-	EckApz/WnAvBer+2JYvU3PZijI4uLTl1s+Yuz0FVmgK51RcGC7oMSWArIx4L4A==
-Content-Type: multipart/signed;
- boundary=1a690bef81fb6f944ba894a0b6204d1559cb35f27fa37f9df3ad43d1b8ff;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 10 Jun 2025 13:27:13 +0200
-Message-Id: <DAITFEPGXB6Z.38FAE9O9NSSLX@cknow.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Piotr Zalewski" <pZ010001011111@proton.me>
-Cc: <hjc@rock-chips.com>, <heiko@sntech.de>, <andy.yan@rock-chips.com>,
- <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>, "Dang Huynh"
- <danct12@riseup.net>, <dri-devel@lists.freedesktop.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH drm-misc-next] rockchip/drm: vop2: don't check
- color_mgmt_changed in atomic_enable
-References: <20241206192013.342692-3-pZ010001011111@proton.me>
- <DAEVDSTMWI1E.J454VZN0R9MA@cknow.org>
- <mArHDRo5bhIAjG8sDOR-kM7DsVdbXxxcC8hfuEEPfUWIdMwNnSUy8ZFoLis66DFSuIEq8TrnAxUGkyo5IUTGw3AG4k3vuVVz0fsoI27BAms=@proton.me> <DAH3S8O66J47.3NT18EJCXWKL9@cknow.org> <4z0y_F1ZT_xfO0-DwU-D5NwL3t3wHuGmivOB3QFjDsn0hzpz_hOeU63pRVBIgSU1j89jmYPq-TJHPqMCj3fAygwwX6IaPoVsqKqVi2jxmCc=@proton.me>
-In-Reply-To: <4z0y_F1ZT_xfO0-DwU-D5NwL3t3wHuGmivOB3QFjDsn0hzpz_hOeU63pRVBIgSU1j89jmYPq-TJHPqMCj3fAygwwX6IaPoVsqKqVi2jxmCc=@proton.me>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20250606030545.1743961-1-ricky_wu@realtek.com>
+In-Reply-To: <20250606030545.1743961-1-ricky_wu@realtek.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 10 Jun 2025 13:27:19 +0200
+X-Gm-Features: AX0GCFsv-5-jjIFHT1wPanu_4OSSvcbRzjHkON4AWucIRUPqgmoGevTh0__rd_Q
+Message-ID: <CAPDyKFofk3LC1Qo4HSigDhdR2-iDwOze=sYftoRB5U9i9wqXsg@mail.gmail.com>
+Subject: Re: [PATCH v3] mmc: rtsx: usb add 74 clocks in poweron flow
+To: Ricky Wu <ricky_wu@realtek.com>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
---1a690bef81fb6f944ba894a0b6204d1559cb35f27fa37f9df3ad43d1b8ff
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi Piotr,
-
-On Tue Jun 10, 2025 at 12:37 AM CEST, Piotr Zalewski wrote:
-> Hi Diederik, sorry for late response
-
-No need to be sorry :-)
-
-(late? Less then 2 days vs my ~4 months before the git bisect ...)
-
->> Interesting that it also happened with drm=3Dy.
+On Fri, 6 Jun 2025 at 05:05, Ricky Wu <ricky_wu@realtek.com> wrote:
 >
-> I actually checked now and i don't have the issue with drm=3Dy, sorry for=
-=20
-> misinforming you all, hopefully no one's time was wasted.
-
-Good to know, thanks :-)
-
->> > happened twice and at short interval and since this patch allows for g=
-amma
->> > LUT update regardless of color_mgmt_changed state this makes DSP CTRL =
-GAMMA
->> > LUT EN bit to be unset twice too. It seems that VOP does not like it. =
-I
->>=20
->> Happy to see you found the cause :-)
->> Do you happen to know why it was unset twice? That sounds suboptimal.
+> SD spec definition:
+> "Host provides at least 74 Clocks before issuing first command"
 >
-> It is due to DRM modeset which can happens when CRTC (display) config cha=
-nges=20
-> "significantly". AFAIK modeset happens def. when you go out of suspend or
-> display timings change. I might have been fooled by serial console last t=
-ime
-> as it does not appear to happen twice in short interval when i review the=
-=20
-> journal entries.
+> add issue the clocks when power_mode is POWER_UP
+> and stop the signal when power_mode is POWER_up to POWER_ON
 >
->> But (IIUC) setting a bit to a value it already has causing issues,
->> sounds surprising as well.
+> Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
+
+Thanks for trying to re-work the code according to my earlier
+suggestions. However, $subject patch still seems a bit messy in my
+opinion. I decided to try to help out a bit and posted a series [1],
+please try to re-base your patch on top of this.
+
+Kind regards
+Uffe
+
+[1]
+https://lore.kernel.org/all/20250610111633.504366-1-ulf.hansson@linaro.org/
+
+> ---
+> v2: remove delay 100ms in power_on
+> v3: Use switch-case instead of if statements
+> ---
+>  drivers/mmc/host/rtsx_usb_sdmmc.c | 36 ++++++++++++++++++++++---------
+>  1 file changed, 26 insertions(+), 10 deletions(-)
 >
-> Depends on what hardware does, when you write to a register it might caus=
-e
-> many other things to happen and seems like for vop2 it messes something u=
-p.
-
-I didn't know that, thanks.
-
-> I made a second patch so that the first write is not permitted but all=20
-> subsequent are permitted (regardless of lut en state) - issue disappeared=
-=20
-> too. So it might be that very first write to dsp lut disable happens too=
-=20
-> fast (in relation to something else)?. It is not intuitive because when d=
-rm is
-> a module it happens usually like ~second later.
+> diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> index d229c2b83ea9..1c808cfb44ff 100644
+> --- a/drivers/mmc/host/rtsx_usb_sdmmc.c
+> +++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
+> @@ -1014,24 +1014,40 @@ static int sd_set_power_mode(struct rtsx_usb_sdmmc *host,
+>                 unsigned char power_mode)
+>  {
+>         int err;
+> +       struct rtsx_ucr *ucr = host->ucr;
 >
-> part of the log with drm=3Dy
-> ```
-> [    6.543099] rockchip-drm display-subsystem: [drm] GAMMA LUT DISABLE
-> ```
+> -       if (power_mode != MMC_POWER_OFF)
+> -               power_mode = MMC_POWER_ON;
+> -
+> -       if (power_mode == host->power_mode)
+> -               return 0;
+> -
+> -       if (power_mode == MMC_POWER_OFF) {
+> +       switch (power_mode) {
+> +       case MMC_POWER_OFF:
+> +               if (host->power_mode == MMC_POWER_OFF)
+> +                       return 0;
+>                 err = sd_power_off(host);
+>                 pm_runtime_put_noidle(sdmmc_dev(host));
+> -       } else {
+> +               break;
+> +       case MMC_POWER_UP:
+> +       case MMC_POWER_ON:
+> +               if (host->power_mode == MMC_POWER_ON) {
+> +                       return 0;
+> +               } else if (host->power_mode == MMC_POWER_UP) {
+> +                       /* stop to send the clock signals */
+> +                       rtsx_usb_write_register(ucr, SD_BUS_STAT, SD_CLK_TOGGLE_EN, 0x00);
+> +                       host->power_mode = power_mode;
+> +                       return 0;
+> +               }
+>                 pm_runtime_get_noresume(sdmmc_dev(host));
+>                 err = sd_power_on(host);
+> +               break;
+> +       default:
+> +               return 0;
+>         }
+> +       if (!err) {
+> +               if (power_mode == MMC_POWER_UP) {
+> +                       /* issue the clock signals to card */
+> +                       rtsx_usb_write_register(ucr, SD_BUS_STAT, SD_CLK_TOGGLE_EN,
+> +                               SD_CLK_TOGGLE_EN);
+> +               }
 >
-> part of the log with drm=3Dm
-> ```
-> [    7.944120] rockchip-drm display-subsystem: [drm] GAMMA LUT DISABLE
-> ```
-
-My first (uneducated) hunch was a timing issue and ``=3Dm`` can reveal
-issues which you wouldn't see with ``=3Dy``.
-Andy already found an issue "that shouldn't happen" and my latest test
-also had an unexpected result. So (eventually) we'll figure it out :-)
-
->> Sounds like a plan. It could be that this issue surfaced an underlaying
->> issue and if so, fixing that would be even better.
+> -       if (!err)
+>                 host->power_mode = power_mode;
+> -
+> +       }
+>         return err;
+>  }
 >
-> When i have time this week I will check on what version of the kernel i=
-=20
-> tested gamma lut when i sent the patches and test there.
-
-I think it would be beneficial if you'd do the tests that Andy asked
-'me' to do too, so we can compare results.
-FWIW: I have the 4GB RAM version.
-
-Cheers,
-  Diederik
-
---1a690bef81fb6f944ba894a0b6204d1559cb35f27fa37f9df3ad43d1b8ff
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaEgWmQAKCRDXblvOeH7b
-bga5AP46kC7i4GeX+4vWp7Yxj8oZG/p/M87NvkPeVbBlmVSxNwD/aKazZBYfZhA9
-N8AQj5r2cn8N8/pLuRozO0FJiPY+iAk=
-=thoO
------END PGP SIGNATURE-----
-
---1a690bef81fb6f944ba894a0b6204d1559cb35f27fa37f9df3ad43d1b8ff--
+> --
+> 2.25.1
+>
 
