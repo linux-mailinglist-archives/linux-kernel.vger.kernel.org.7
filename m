@@ -1,183 +1,117 @@
-Return-Path: <linux-kernel+bounces-680401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C110AAD44DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:35:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E20CAD44E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34AC93A6718
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E8117A68C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DA72857F7;
-	Tue, 10 Jun 2025 21:35:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B5823958C;
-	Tue, 10 Jun 2025 21:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9DE284B39;
+	Tue, 10 Jun 2025 21:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2IztQLO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5946C24729C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 21:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749591331; cv=none; b=C1C857LN7WDAcTfseqqBoIX90t2WxjcKofvEL+CjHQfi2cbhj+6fS5yjQug+kQgRqWDeDlS6+xvAiJ+3aelPdfifK55MpMkt2ybvAJY78O1Iqr4ZcGkOx3J7Y5jndYHDafJGqcqKxSrzvBiBILNHZWp81bw5rciZrRULs/6B3/c=
+	t=1749591484; cv=none; b=BEqvJDQ4QBofM+PFybNsr2RoOuUuri9ir/86Xp50FxbArTUlnBEKzP+6XfpteqYmjiHVvS/etMujyHMTzdE8g0uXih1pforGi2ApRchPChoheRmmjMGJltriKrpKJXs0r2oP6zeZwiSebQ6Osa22iXl9J0lDw+4FjnYNWFxuWeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749591331; c=relaxed/simple;
-	bh=pCV5e9SgIfZkWF2C5ae5BFXAb7IvQC6jCuCk0AWF18M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b5L3mNvwib5Y2VA+Y6OoXnG6Qq+02qc8UqtgkR6eLvlcwwq9m90X8fZuhoxEIjEHkx/ha1j9ijHN5IyOlpGJqLU/cLzec0T7g0cUohDvEHzzdwj/a89akblsMYu8gowAkDU1vLCGMrfOKs7bpIT6D6HPr76FALWzVyytQfLw52Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A79B168F;
-	Tue, 10 Jun 2025 14:35:09 -0700 (PDT)
-Received: from u103485.austin.arm.com (u103485.arm.com [10.118.30.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9432D3F66E;
-	Tue, 10 Jun 2025 14:35:28 -0700 (PDT)
-From: Prachotan Bathi <prachotan.bathi@arm.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Stuart Yoder <stuart.yoder@arm.com>
-Cc: linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prachotan Bathi <prachotan.bathi@arm.com>
-Subject: [PATCH v2 1/1] tpm_crb_ffa: handle tpm busy return code
-Date: Tue, 10 Jun 2025 16:35:05 -0500
-Message-ID: <20250610213505.3881352-2-prachotan.bathi@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250610213505.3881352-1-prachotan.bathi@arm.com>
-References: <20250610213505.3881352-1-prachotan.bathi@arm.com>
+	s=arc-20240116; t=1749591484; c=relaxed/simple;
+	bh=pdhO4DMPIZII4BZaVvdEx5U9jIKTjh3FpPVXXtzfHg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NB6HZucTXwZiiBkEyz9UFsiPY1TyjV0V6bhyKlJGi/ROp3oVA3VuJicJSgVgKsgW/tWLZpYLPqf/N5nbk9QDCXkErR7GA+rzEPvpV71qf5scw89x66mM/hqb54Af6sulgosEuDypS2DRDJleXwb/N2bmnqLjUDOAF9aqElJSSIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2IztQLO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C571AC4CEED;
+	Tue, 10 Jun 2025 21:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749591484;
+	bh=pdhO4DMPIZII4BZaVvdEx5U9jIKTjh3FpPVXXtzfHg8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J2IztQLO/MJJ6vt9VnbQE2w1iA6i9qdGvPGXkN/2O0xejaE3NRhEgWbPRSiKGA7LO
+	 Ex8Q9znR3kwb2ac+UquDrGldvaXHRVIi8oFBrVC9BgIXrgAcaUx3pVP2S7znXT9H4N
+	 2cBgercJftsV1rjxZzDUXy/idG2A/NaLeO6pLHl0oFFsNIltJxlAvmmk8Cu8EUJRWF
+	 zgMpfFmjy8JO063/zhrTduKsgda3XIpgOumdKLngauhP+A06o/0eq4JCLuP7i8zuqM
+	 DeH62e6F3gClKBqVlWNQxqRQdqyXS/v2fTnuSPLGqZgZlm+bQN7JZ8fSr5sRLUxozo
+	 5pyN6LBTSs/nQ==
+Date: Tue, 10 Jun 2025 11:38:01 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 0/4] Workqueue: rename system workqueue and add
+ WQ_PERCPU
+Message-ID: <aEilufYKeex0diW-@slm.duckdns.org>
+References: <20250609103535.780069-1-marco.crivellari@suse.com>
+ <aEcvBadg_rT2_roQ@slm.duckdns.org>
+ <CAAofZF6AfmjYcNQSBFHsteN_10=z0RSt20DpOM8i_NLQBO5qLQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAofZF6AfmjYcNQSBFHsteN_10=z0RSt20DpOM8i_NLQBO5qLQ@mail.gmail.com>
 
-Platforms supporting direct message request v2 can
-support SPs that support multiple services.
-If the TPM service is sharing the SP with another service,
-it could get an error code of BUSY if the other service is
-in process.
-This adds a parameterized variable (default 2000ms)
- that indicates the maximum time to keep retrying for.
-When the TPM service returns a BUSY error code, we sleep
- 50-100us before retrying again, until we are over the
-busy timeout.
+Hello, Marco.
 
-Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
----
- drivers/char/tpm/tpm_crb_ffa.c | 78 +++++++++++++++++++++++-----------
- 1 file changed, 54 insertions(+), 24 deletions(-)
+On Tue, Jun 10, 2025 at 10:34:15AM +0200, Marco Crivellari wrote:
+> >- Separate out patches to add the new flag and wq. Don't add the warnings
+> >  yet. I'll commit these patches to a separate wq branch.
+> 
+> Basically these means have 2 more patches, one for WQ_PERCPU (only the
+> new flag, like in the v1 let's say) and another patch that adds the wq(s).
+> 
+> So, all the logic changes (also in __alloc_workqueue), pr_warn_once() will
+> stay in the other patch (that you will apply later); this is not only 1 patch,
+> following your next point.
+> 
+> If I understood correctly, it makes sense to me.
 
-diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
-index 4ead61f01299..122984e15971 100644
---- a/drivers/char/tpm/tpm_crb_ffa.c
-+++ b/drivers/char/tpm/tpm_crb_ffa.c
-@@ -10,6 +10,8 @@
- #define pr_fmt(fmt) "CRB_FFA: " fmt
- 
- #include <linux/arm_ffa.h>
-+#include <linux/delay.h>
-+#include <linux/moduleparam.h>
- #include "tpm_crb_ffa.h"
- 
- /* TPM service function status codes */
-@@ -178,6 +180,17 @@ int tpm_crb_ffa_init(void)
- }
- EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
- 
-+static unsigned int busy_timeout = 2000;
-+/**
-+ * busy_timeout - Maximum time to retry before giving up on busy
-+ *
-+ * This parameter defines the maximum time in milliseconds to retry
-+ * sending a message to the TPM service before giving up.
-+ */
-+module_param(busy_timeout, uint, 0644);
-+MODULE_PARM_DESC(busy_timeout,
-+		 "Maximum time to retry before giving up on busy");
-+
- static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
- 				      unsigned long a0,
- 				      unsigned long a1,
-@@ -191,34 +204,51 @@ static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
- 
- 	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
- 
--	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
--		memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
--		       sizeof(struct ffa_send_direct_data2));
-+	ktime_t start;
-+	ktime_t stop;
-+
-+	start = ktime_get();
-+	stop = ktime_add(start, ms_to_ktime(busy_timeout));
-+
-+	do {
-+		if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
-+			memset(&tpm_crb_ffa->direct_msg_data2, 0x00,
-+			       sizeof(struct ffa_send_direct_data2));
- 
--		tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
--		tpm_crb_ffa->direct_msg_data2.data[1] = a0;
--		tpm_crb_ffa->direct_msg_data2.data[2] = a1;
--		tpm_crb_ffa->direct_msg_data2.data[3] = a2;
-+			tpm_crb_ffa->direct_msg_data2.data[0] = func_id;
-+			tpm_crb_ffa->direct_msg_data2.data[1] = a0;
-+			tpm_crb_ffa->direct_msg_data2.data[2] = a1;
-+			tpm_crb_ffa->direct_msg_data2.data[3] = a2;
- 
--		ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
-+			ret = msg_ops->sync_send_receive2(tpm_crb_ffa->ffa_dev,
- 				&tpm_crb_ffa->direct_msg_data2);
--		if (!ret)
--			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
--	} else {
--		memset(&tpm_crb_ffa->direct_msg_data, 0x00,
--		       sizeof(struct ffa_send_direct_data));
--
--		tpm_crb_ffa->direct_msg_data.data1 = func_id;
--		tpm_crb_ffa->direct_msg_data.data2 = a0;
--		tpm_crb_ffa->direct_msg_data.data3 = a1;
--		tpm_crb_ffa->direct_msg_data.data4 = a2;
--
--		ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
--				&tpm_crb_ffa->direct_msg_data);
--		if (!ret)
--			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
--	}
-+			if (!ret)
-+				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data2.data[0]);
-+		} else {
-+			memset(&tpm_crb_ffa->direct_msg_data, 0x00,
-+			       sizeof(struct ffa_send_direct_data));
- 
-+			tpm_crb_ffa->direct_msg_data.data1 = func_id;
-+			tpm_crb_ffa->direct_msg_data.data2 = a0;
-+			tpm_crb_ffa->direct_msg_data.data3 = a1;
-+			tpm_crb_ffa->direct_msg_data.data4 = a2;
-+
-+			ret = msg_ops->sync_send_receive(tpm_crb_ffa->ffa_dev,
-+				&tpm_crb_ffa->direct_msg_data);
-+			if (!ret)
-+				ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
-+		}
-+		// Check if the TPM service returned busy
-+		if (ret == -EBUSY)
-+			pr_err("TPM says busy, trying again, value, ret: %d\n",
-+			       ret);
-+		else
-+			// If TPM did not return busy, we are done, exit the loop
-+			break;
-+		// Sleep for a short time before retrying to avoid busy looping
-+		usleep_range(50, 100);
-+	} while (ktime_before(ktime_get(), stop));
-+	// If we are here, we either got a valid response or we are over the busy timeout
- 
- 	return ret;
- }
+Yeah.
+
+> >- Split out patches by subsystems. I know this is tedious but think it'd
+> > still be worth doing. It doesn't have to be completely granular. e.g. We
+> > know that network changes go through a single tree, so all network changes
+> >  can be in a single patch. Each patch can explain the workqueue changes and
+> >  that the patch can be either routed through the subysstem which would
+> >  require pulling from the above wq branch, or, as the default option, we'd
+> >  be happy to route the patch through the workqueue tree. I can create a
+> >  separate branch to collect the conversion patches that can go through wq
+> >  tree.
+> 
+> This impacts patch 3, so instead of 1 big patch, you are thinking of N patches,
+> in order to add WQ_PERCPU to the callers of subsystems first.
+> 
+> So, something like:
+> - net/
+> - mm/
+> - fs/
+> 
+> Do you have something different in mind?
+
+No, that sounds fine.
+
+> >- After the next rc1 drops, I can apply the patches to add warnings to the
+> >  -fixes branch and then send them to Linus.
+> 
+> Sounds good.
+
+I think we're in agreement.
+
+Thanks.
+
 -- 
-2.43.0
-
+tejun
 
