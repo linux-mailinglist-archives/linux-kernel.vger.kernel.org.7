@@ -1,146 +1,177 @@
-Return-Path: <linux-kernel+bounces-678759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63987AD2DC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C93AD2DCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E4F1891A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 069D73B179A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D0B2620C9;
-	Tue, 10 Jun 2025 06:12:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D1725E478;
+	Tue, 10 Jun 2025 06:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="toxh8ybx"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0799214B07A;
-	Tue, 10 Jun 2025 06:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FB32163BD;
+	Tue, 10 Jun 2025 06:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749535944; cv=none; b=lYUy0vIMvMxV4VOpQpO1e3R7SOeDbWbMvCt8XJoE790QTijrRgGU8qGmEJGeYCU556Zq3IvhbYyQLUSZ9pha1FEj0s4j9IWBPEjh/RnII5qIHAQsqhcICKqRpCJ0UuT8UueAlxda23hvWPsyb28KSkUC+mCKgUBQcELIBj6lILo=
+	t=1749536216; cv=none; b=KXa5JVgbJvzVMiVhYGovYStgC1nLFLOvC+eRxPKRlqk5ZXRItADj4PdiDFruvtkHV4pAmgJaJT2JF596x0uTBjhX5kDTbIrLcwNLf/d3SgwfdBiM6hnZ8Kw06mRF12XzYkvbO2yT/fbu7Lkc2zmPW87GOrkhUfBmwQ6vOg5+sR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749535944; c=relaxed/simple;
-	bh=/Ko/+5AVkjjNrzb74E44MNM/JiW7S5+fHLZx4p63RH8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GWbBq+0jcbCyRWO1NnwGK3eD3eZLXhiiTXksorVqy5ySQY0CYSBv5sDmt+xfjxeUxEFQJy6Oeqof8pts1TypU3ZOEjvVEhCHTLKR75OMSco2ZNwv9KE3w5P+lLAkx6HXqe/MaHYvh6e4IHadSLXr+349wcNXA5naD0QI5ZucOwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bGdjt43zJzKHN7f;
-	Tue, 10 Jun 2025 14:12:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E3CF31A0FAE;
-	Tue, 10 Jun 2025 14:12:16 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgC3Gl+_zEdosSVBPA--.47901S3;
-	Tue, 10 Jun 2025 14:12:16 +0800 (CST)
-Subject: Re: [PATCH] md/raid1: Fix use-after-free in reshape pool wait queue
-To: Wang Jinchao <wangjinchao600@gmail.com>, Yu Kuai
- <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250609120155.204802-1-wangjinchao600@gmail.com>
- <698d1e9a-2fc0-fa6b-2f4c-55c5129cdf28@huaweicloud.com>
- <13a82dab-94c9-4616-90ff-17a8aa7bff81@gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <43a47dfd-d0c8-3d1d-d9f9-0332434a84f2@huaweicloud.com>
-Date: Tue, 10 Jun 2025 14:12:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749536216; c=relaxed/simple;
+	bh=CZ+kCbfqNafjJHBBswE7R5WpV86k36fuwntQQPYxvLM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lPNDob9t0mBiZMtwHeMaqRV0AEsx4TS6MISqfI6ytTKgZqHOIOnBUmK9kPSSXBftZRAdyrpL/KGMNEsTt27cflO/TnZQJ33pp+PIOG63yMmiXcfyiLIcwtNnBVKerGQabdM7HhpFlbppbRiKt9H5UboTbKb9LtNv2j/3xCL2D7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=toxh8ybx; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55A6GeAn2202387;
+	Tue, 10 Jun 2025 01:16:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1749536200;
+	bh=2yH8BB10rwYOkRXdp18lG+iXwMuV7jIvlVlKDcjTkGw=;
+	h=From:To:CC:Subject:Date;
+	b=toxh8ybxtfM4nMbZ9x+mzssj3M9jn++2m+5xQjlPRlEb5X1Um4nxRC7m04iBvL8JN
+	 vz0ZWKUwpHO0m9P0dXAp9tV53HlTgzSM3Yx/fstqhkQvKtICWhlXEqaLkTISklft8p
+	 TVmkrP9Q1eJ0o4S6eqNHjUkpZtImZA+WOHRC5ItE=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55A6Ge5n164656
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 10 Jun 2025 01:16:40 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
+ Jun 2025 01:16:39 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 10 Jun 2025 01:16:39 -0500
+Received: from localhost (akira.dhcp.ti.com [10.24.69.4])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55A6GcYT2608655;
+	Tue, 10 Jun 2025 01:16:39 -0500
+From: Himanshu Mittal <h-mittal1@ti.com>
+To: <h-mittal1@ti.com>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>,
+        <m-malladi@ti.com>, <pratheesh@ti.com>, <prajith@ti.com>
+Subject: [PATCH net-next] net: ti: icssg-prueth: Add prp offload support to ICSSG driver
+Date: Tue, 10 Jun 2025 11:46:38 +0530
+Message-ID: <20250610061638.62822-1-h-mittal1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <13a82dab-94c9-4616-90ff-17a8aa7bff81@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3Gl+_zEdosSVBPA--.47901S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWry5Zr1xJFyDCr17AFWDurg_yoW5CrWDpF
-	48XrZ3GrW8Xw48Xr9Ik3WUtr9rGF43Za1UAr97G3W8Jr1UGw1vqrnrXr42gF1kJay8Zry2
-	kwnYqw4Y9a1j9aUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUBVbkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+Add support for ICSSG PRP mode which supports offloading of:
+ - Packet duplication and PRP trailer insertion
+ - Packet duplicate discard and PRP trailer removal
 
-在 2025/06/10 12:51, Wang Jinchao 写道:
-> [  921.784898] [      C2] BUG: kernel NULL pointer dereference, address: 
-> 0000000000000002
-> [  921.784907] [      C2] #PF: supervisor instruction fetch in kernel mode
-> [  921.784910] [      C2] #PF: error_code(0x0010) - not-present page
-> [  921.784912] [      C2] PGD 0 P4D 0
-> [  921.784915] [      C2] Oops: 0010 [#1] PREEMPT SMP NOPTI
-> [  921.784919] [      C2] CPU: 2 PID: 1659 Comm: zds Kdump: loaded 
-> Tainted: G     U  W   E      6.8.1-debug-0519 #49
-> [  921.784922] [      C2] Hardware name: Default string Default 
-> string/Default string, BIOS DNS9V011 12/24/2024
-> [  921.784923] [      C2] RIP: 0010:0x2
-> [  921.784929] [      C2] Code: Unable to access opcode bytes at 
-> 0xffffffffffffffd8.
-> [  921.784931] [      C2] RSP: 0000:ffffa3fac0220c70 EFLAGS: 00010087
-> [  921.784933] [      C2] RAX: 0000000000000002 RBX: ffff8890539070d8 
-> RCX: 0000000000000000
-> [  921.784935] [      C2] RDX: 0000000000000000 RSI: 0000000000000003 
-> RDI: ffffa3fac07dfc90
-> [  921.784936] [      C2] RBP: ffffa3fac0220ca8 R08: 2557c7cc905cff00 
-> R09: 0000000000000000
-> [  921.784938] [      C2] R10: 0000000000000000 R11: 0000000000000000 
-> R12: 000000008fa158a0
-> [  921.784939] [      C2] R13: 2557c7cc905cfee8 R14: 0000000000000000 
-> R15: 0000000000000000
-> [  921.784941] [      C2] FS:  00007d8b034006c0(0000) 
-> GS:ffff8891bf900000(0000) knlGS:0000000000000000
-> [  921.784943] [      C2] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  921.784945] [      C2] CR2: ffffffffffffffd8 CR3: 00000001097be000 
-> CR4: 0000000000f50ef0
-> [  921.784946] [      C2] PKRU: 55555554
-> [  921.784948] [      C2] Call Trace:
-> [  921.784949] [      C2]  <IRQ>
-> [  921.784950] [      C2]  ? show_regs+0x6d/0x80
-> [  921.784957] [      C2]  ? __die+0x24/0x80
-> [  921.784960] [      C2]  ? page_fault_oops+0x156/0x4b0
-> [  921.784964] [      C2]  ? mempool_free_slab+0x17/0x30
-> [  921.784968] [      C2]  ? __slab_free+0x15d/0x2e0
-> [  921.784971] [      C2]  ? do_user_addr_fault+0x2ee/0x6b0
-> [  921.784975] [      C2]  ? exc_page_fault+0x83/0x1b0
-> [  921.784979] [      C2]  ? asm_exc_page_fault+0x27/0x30
-> [  921.784984] [      C2]  ? __wake_up_common+0x76/0xb0
-> [  921.784987] [      C2]  __wake_up+0x37/0x70
-> [  921.784990] [      C2]  mempool_free+0xaa/0xc0
-> [  921.784993] [      C2]  raid_end_bio_io+0x97/0x130 [raid1]
+Signed-off-by: Himanshu Mittal <h-mittal1@ti.com>
+---
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 23 +++++++++++++++++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |  3 +++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-This is NULL pointer dereference, not the same as UAF, please attach the
-log in the next version(and probably remove the useless info like
-timestamp and stack started with ?).
-
-(...)
-
-> This fix is simple enough.
-> Alternatively, we could initialize conf->r1bio_pool directly, but that 
-> would also require
-> handling rollback in case the initialization fails.
-> What would you suggest?
-
-I'll suggest to use mempool_resize() and get rid of the werid assigment.
-
-Thanks,
-Kuai
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 86fc1278127c..65883c7851c5 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -138,6 +138,19 @@ static struct icssg_firmwares icssg_hsr_firmwares[] = {
+ 	}
+ };
+ 
++static struct icssg_firmwares icssg_prp_firmwares[] = {
++	{
++		.pru = "ti-pruss/am65x-sr2-pru0-pruprp-fw.elf",
++		.rtu = "ti-pruss/am65x-sr2-rtu0-pruprp-fw.elf",
++		.txpru = "ti-pruss/am65x-sr2-txpru0-pruprp-fw.elf",
++	},
++	{
++		.pru = "ti-pruss/am65x-sr2-pru1-pruprp-fw.elf",
++		.rtu = "ti-pruss/am65x-sr2-rtu1-pruprp-fw.elf",
++		.txpru = "ti-pruss/am65x-sr2-txpru1-pruprp-fw.elf",
++	}
++};
++
+ static struct icssg_firmwares icssg_switch_firmwares[] = {
+ 	{
+ 		.pru = "ti-pruss/am65x-sr2-pru0-prusw-fw.elf",
+@@ -187,8 +200,10 @@ static int prueth_emac_start(struct prueth *prueth)
+ 
+ 	if (prueth->is_switch_mode)
+ 		firmwares = icssg_switch_firmwares;
+-	else if (prueth->is_hsr_offload_mode)
++	else if (prueth->is_hsr_offload_mode && HSR_V1 == prueth->hsr_prp_version)
+ 		firmwares = icssg_hsr_firmwares;
++	else if (prueth->is_hsr_offload_mode && PRP_V1 == prueth->hsr_prp_version)
++		firmwares = icssg_prp_firmwares;
+ 	else
+ 		firmwares = icssg_emac_firmwares;
+ 
+@@ -1566,6 +1581,7 @@ static int prueth_netdevice_event(struct notifier_block *unused,
+ 	struct netdev_notifier_changeupper_info *info;
+ 	struct prueth_emac *emac = netdev_priv(ndev);
+ 	struct prueth *prueth = emac->prueth;
++	enum hsr_version hsr_ndev_version;
+ 	int ret = NOTIFY_DONE;
+ 
+ 	if (ndev->netdev_ops != &emac_netdev_ops)
+@@ -1577,6 +1593,11 @@ static int prueth_netdevice_event(struct notifier_block *unused,
+ 
+ 		if ((ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES) &&
+ 		    is_hsr_master(info->upper_dev)) {
++			hsr_get_version(info->upper_dev, &hsr_ndev_version);
++			if (hsr_ndev_version != HSR_V1 && hsr_ndev_version != PRP_V1)
++				return -EOPNOTSUPP;
++			prueth->hsr_prp_version = hsr_ndev_version;
++
+ 			if (info->linking) {
+ 				if (!prueth->hsr_dev) {
+ 					prueth->hsr_dev = info->upper_dev;
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+index 23c465f1ce7f..02d9d76cd287 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+@@ -13,6 +13,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/genalloc.h>
+ #include <linux/if_vlan.h>
++#include <linux/if_hsr.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+@@ -290,6 +291,7 @@ struct icssg_firmwares {
+  * @vlan_tbl: VLAN-FID table pointer
+  * @hw_bridge_dev: pointer to HW bridge net device
+  * @hsr_dev: pointer to the HSR net device
++ * @hsr_prp_version: enum to store the protocol version of hsr master
+  * @br_members: bitmask of bridge member ports
+  * @hsr_members: bitmask of hsr member ports
+  * @prueth_netdevice_nb: netdevice notifier block
+@@ -329,6 +331,7 @@ struct prueth {
+ 
+ 	struct net_device *hw_bridge_dev;
+ 	struct net_device *hsr_dev;
++	enum hsr_version hsr_prp_version;
+ 	u8 br_members;
+ 	u8 hsr_members;
+ 	struct notifier_block prueth_netdevice_nb;
+-- 
+2.34.1
 
 
