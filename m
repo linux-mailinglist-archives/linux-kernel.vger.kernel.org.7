@@ -1,250 +1,137 @@
-Return-Path: <linux-kernel+bounces-678656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E001FAD2C35
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:46:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5D1AD2C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8912A7A401F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:44:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CAC4189307C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0B720D51C;
-	Tue, 10 Jun 2025 03:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAD325D53B;
+	Tue, 10 Jun 2025 03:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1mJjegS"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqsHuaYN"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EDE4C79;
-	Tue, 10 Jun 2025 03:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7634C79;
+	Tue, 10 Jun 2025 03:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749527162; cv=none; b=gDbN1svVvM4gYtYA5EY4sFcK35601VM5ercqUCeBISFEuq1Lt2w48brZh9A0AfwlPfu1+HxH72izDD/qjI0tI6VjNVa0zB3xL6OblF+OkIIN+8EFyt+aqU95REf1F19M1aJeA24TNZEetH1dAqf9rrgNHfL/BTM+KLOTiPTHdwI=
+	t=1749527244; cv=none; b=D1lIszpOY2mlL7KolavC9gSelF6AfE7QISl2oIN5T1ppgtsO3q874DebICNPE3wWxJe/prwumKM6nEuD40qZGQKMV9uNoLIv8O+O8F3nnYRgpb9FAaZKem9HbNbFaG45EqSYD4SQEo7cFB0ecHXCxdbK+WjwZ+OS1utLPW/vA3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749527162; c=relaxed/simple;
-	bh=8e4qj6N+IXj17KUKfVGCbXzKVLM2X1zMTNP2QZuyqNM=;
+	s=arc-20240116; t=1749527244; c=relaxed/simple;
+	bh=pMkBGxYpFaHIEwycJ9b/MJ07k3/wrKnc9cEFEsenxrQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aiHCotTEoUGDH381mggws8dYghkkjn2iqM0QskAY1lMU8wlmQp6VkFRUqAFQWg4ojskwVSKzHzjowWsJCbsOjlOxJHpy/KpGZOVPc32PkXnEpiGXmH9FkapxeXKzz+L7LPARBChqgR1Wn+dJ5kTH1aRIqq9wA9V3kWxCOoPEsrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1mJjegS; arc=none smtp.client-ip=209.85.210.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJqK1mGObQu5IRbyKUsXdAvBshS4S0P5Qu7vUpyS6ZbCvk386KXwBwnWQnGcoRWnlPks8OAT0Ndxb62djqjeTttfakAplJyH+zBtjZbVKtOeXjlB0Jv0g+2WLZVLj12xbqfiZqNAUKsIAitwCyV6gQvWJqXAAEIPTv6Qlepn5f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqsHuaYN; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-748582445cfso751601b3a.2;
-        Mon, 09 Jun 2025 20:45:57 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fac1c60e19so67701816d6.1;
+        Mon, 09 Jun 2025 20:47:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749527157; x=1750131957; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749527242; x=1750132042; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xfh/WiFLIUl5mePx18jQVGyGKjTDMPbOj8xAWCL5Ao=;
-        b=e1mJjegSXT6hpzNymo67dvzCa0kDlO1zdfOwR090T5GjzFbPiM4+jdqiF4/A3LaCW6
-         hlg0vjokWJU5K0xKjR2fcCGYTTC+BC5OoXx95SN5WSG29rQOH/BeIBo4tii7xhEiopKu
-         KdCqj/oPp/HOWANBLAoIuAkGlSklayE3W5X0w8DjCRlIW8ElwQ7n6MCQwvZTRtljzQ4m
-         x5f/zFrqKE0gX2F9OY7MGQDvXsxAmgzjaIlp1f8ZX7Ek9FVh8BgpNwEFbUeWAY0mRgRx
-         xnsA+j2lqNziGolOlUws8p8sMrYaCsr1yn8iHyP1F/P+i/koq8njPBXiMI65rJv5hB2X
-         g3JQ==
+        bh=zDCiCjFRxyiCWt4jIH5Z3HVu6j2gY+Qm8orsgIXQqP0=;
+        b=VqsHuaYN0giHeDnD+EsMQTp6N2HGP9vTwHO8ci1iCqKXIAg6l88xW8sTW8h10+6mRY
+         J2g1Ca9+KrW66VY6eIXDrp24ivyBCbZgiSUUbiKICh7xCM/X2ZdaqU9slSAqZUxSprpD
+         Z12mJkxjcuFzVbLzjLB6p1VkRNw5U/Dzct5qjW2zoBk+qqsRU4wf0ocHO8buFh7Cw5yY
+         TH3Ztzk2uHpgc0A8wWwq9KVlcYjsxC39nCCHQhTrujKw1Tv5NjZZ1K1G5c49Twye9agO
+         3c+brcDyeij9D09e+0b9+T0O0UZBqw71A6ol0WyP4N3pt27s7HXhhnIlMvfSVHLMnTZ6
+         VWPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749527157; x=1750131957;
+        d=1e100.net; s=20230601; t=1749527242; x=1750132042;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6xfh/WiFLIUl5mePx18jQVGyGKjTDMPbOj8xAWCL5Ao=;
-        b=Jh8qU6msGtisITyRqkKIc4nUQkpPqEcf4Pk8HFLu8Xv8N/AG2+H0OSviDlqtTJM7mq
-         6dh83r7GZNHdtA+kYBkWjn1cYEqnLZOtTZvzcoofSpvgwZVF5ou7KiTYHAsWkdxlBoo1
-         AQHitzdjeFQoxwcbwRAzXGv0lIfl5D6GJ80rfZ/xS3QfJwj+tcRALfV2tYGcITsbWNB+
-         iyik3JCLVJYdXFY9POCf02Tho3FeDzQNq/lozPRlMtrf/sp2Yw47DkJBtgyKSwNPZ6lA
-         ohvL3Ll9DF7vN5YRBqP7plx0A26NWqOtB0o9SczqgQrkCd2g+DWlQ0vMkB4KF4Lcoawz
-         gnbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwPyPDv8cLPP5fwjcaIBupmvcTqqTutkgQIhsScYWGKTybpWe11tPQO+8K+xh8zblkywWjCXW7PHPz@vger.kernel.org, AJvYcCX4vLRgK/UMkL/nVanL0LWNyNryPePE55kKK2NkgorPO8qvsOxnfmO6BI5WyP2unQvglbF//QgNXrXunRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjuQjboea8j/yJzl/2UelC8W0OLTQ15u9dr4O5m3I5PmU/3grc
-	y9QyZkklLoRIMcSuLD/JVLsUxUWL2M6cQdZMsm1cTMXOs5Q9L/w13Gn8
-X-Gm-Gg: ASbGncvNEBW17wHl4xMUsPc1yvyYdeEXhZOJKbFXHdF5qL5K3mPgUb23mHBEotUeiEj
-	XVjeqsbF96jn+3nsq9KOa4CmwZ60aGvgw+u2gXqwODcvd+NugsOZ5OOcHXhh9PhA7Xyd6lLrdCj
-	7tfJ+D4c4FBCcMdzGc84o7yUzoJ7ucj7lmLy25ECsi48JLiKRrGalMoNRQn9gvYpb8l9cK1ZxkD
-	Lehm0zLLiFYhongVH0tT9adJokNHiMHflHkzGY34n+fXAsGuRsnqqs3Z/bU01Kc59x/dwd5669z
-	q/7vMcJ+DZI4VtAgjYERMAtm052AHrPKF0E1a9jIEd62/weEIpGOu0+W//0gFw==
-X-Google-Smtp-Source: AGHT+IF9HhHuKIYd4WZEes4fvzzUzS8fCX6PpbQyFmzMmY8uWr8bGAlgTK6uXtOuBFxQlad9q/ku/w==
-X-Received: by 2002:a05:6a00:22c7:b0:748:3485:b99d with SMTP id d2e1a72fcca58-7483485d9d4mr18151004b3a.18.1749527156782;
-        Mon, 09 Jun 2025 20:45:56 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0ea38dsm6702190b3a.148.2025.06.09.20.45.55
+        bh=zDCiCjFRxyiCWt4jIH5Z3HVu6j2gY+Qm8orsgIXQqP0=;
+        b=ixhfOMn9Kt3s+mT2THgAQN4DOTmTIQTZN9oWgy5aNkafvMHxJomNtFgrYoKUDhroCh
+         Q+183HFQBOEeDDWCiTAcuFZZcg7OFkhxbGwQl+USToAr+v9446NNy/PeioVBJljkC0zb
+         9VH/gect46i2MSpWf4tME/4iQSexQR3l/nCTJXUY0P40LnJoRlccfEXdu28sxszFhe6e
+         tTsPeJesrlS0hkGQF3/x4HOTOvgR2++Gk3g3AmfGHYPWN9soPcbeAbnp3qKqDeX93lzK
+         YozEJeSFqqpn5hu+vKH+DT8ff4XGZZxx91CpOo1cM3fiXAElnFE+OtZ0AA0havLguqAq
+         KpKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfKgLeElF8b9H3A2m8q7zJ/G1mFSML9sx939Y13rCMMRDS2c9BWuRpnAiFQUd8k7bIJx7uQ/5X7YDTEwKJ@vger.kernel.org, AJvYcCXsonm1yNBM7dAqkq/Kgr1En4QBeMa6J9IKKCsQr9xvC6pqA7OhgYrRJkqaLaDPmg3DXhpKnvlXgQX4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk2VpBPK3JCSIl+E576/vVdiG0+PwlhwZUMrhuHDE9z9s9+nT5
+	u7dfMqLxHYylqe+n5CJS1HIqGNeb7cq0G3kydq+4I/BMLAdWBX5iQ8Xd
+X-Gm-Gg: ASbGncvSj1pa9QXN9xBY1mR0/3X8RtfBer/je+IMdKd0sb1CgP6ERkdBszsxuEguf3c
+	tJtV/UapQjjwrpQJoWo0ID3vHdG92Q5gh2U5BWKEKmnPJr0qYeJsEzv+qrlVE1jR/Kx5GeWTgk8
+	UBhr/HLwdqCkaYXOvlXUan4BzMlHLvGFEOUo1h0EGHadEs++YRJJjCVOhcJX+VDDe0CSOnyeovY
+	dvqFrCSpbSAi286A/X6OjVSveITeEoFzz1QZKKbYOq4framJdRCyUYmBOhYL3kAswDg7wZpw/nj
+	moONj2AvFRJQupxyaIp33x9JnxdEGx+nCS9rAw==
+X-Google-Smtp-Source: AGHT+IFExzcjd3nECuvCDrhqt2cMUduWzh5W32C4n8+lgZH4pHu74tz/o2U2TyL8FHM90amPFhcd1A==
+X-Received: by 2002:ad4:5ae2:0:b0:6fa:b467:aa67 with SMTP id 6a1803df08f44-6fb239acc8fmr32720396d6.20.1749527241748;
+        Mon, 09 Jun 2025 20:47:21 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6fb09b354aasm60401156d6.108.2025.06.09.20.47.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 20:45:55 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id EE2284209E8C; Tue, 10 Jun 2025 10:45:53 +0700 (WIB)
-Date: Tue, 10 Jun 2025 10:45:53 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Dante Strock <dantestrock@hotmail.com>
-Cc: Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Workflows <workflows@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Documentation/process/: Change 5.x to 6.x; clarify
- terms; added note.
-Message-ID: <aEeqcX78zipEGJkl@archie.me>
-References: <PAXPR06MB8224F2CE53A1F4D674969B22A769A@PAXPR06MB8224.eurprd06.prod.outlook.com>
- <87ecvtc772.fsf@trenco.lwn.net>
+        Mon, 09 Jun 2025 20:47:21 -0700 (PDT)
+Date: Tue, 10 Jun 2025 11:46:14 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	Yixun Lan <dlan@gentoo.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Ze Huang <huangze@whut.edu.cn>
+Cc: Junhui Liu <junhui.liu@pigmoral.tech>, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 0/4] riscv: sophgo: cv18xx: Add reset generator support
+Message-ID: <p3fgduezi466wxyc7d6z6msmlyzwrriuwfha5xny5bd4qwzbah@zsgdahiylooy>
+References: <20250608232214.771855-1-inochiama@gmail.com>
+ <MA0P287MB2262D3E1D44D6B4C5E9A06C1FE6AA@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tLYwtbPJs95ruY/Y"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ecvtc772.fsf@trenco.lwn.net>
+In-Reply-To: <MA0P287MB2262D3E1D44D6B4C5E9A06C1FE6AA@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
 
+On Tue, Jun 10, 2025 at 11:27:01AM +0800, Chen Wang wrote:
+> hi, Inochi,
+> 
+> Judging from the title of the email, your patch should be for supporting all
+> cv18xx series socs, including cv1800b/SG2002 (formerly CV181xC)/SG2000
+> (formerly CV181xH), right?
 
---tLYwtbPJs95ruY/Y
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, you are right.
 
-On Mon, Jun 09, 2025 at 08:37:05AM -0600, Jonathan Corbet wrote:
-> Dante Strock <dantestrock@hotmail.com> writes:
->=20
-> > diff --git a/Documentation/process/2.Process.rst b/Documentation/proces=
-s/2.Process.rst
-> > index ef3b116492df..70f8a6603454 100644
-> > --- a/Documentation/process/2.Process.rst
-> > +++ b/Documentation/process/2.Process.rst
-> > @@ -18,17 +18,17 @@ major kernel release happening every two or three m=
-onths.  The recent
-> >  release history looks like this:
-> > =20
-> >  	=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> > -	5.0	March 3, 2019
-> > -	5.1	May 5, 2019
-> > -	5.2	July 7, 2019
-> > -	5.3	September 15, 2019
-> > -	5.4	November 24, 2019
-> > -	5.5	January 6, 2020
-> > +	6.10	July 14, 2024
-> > +	6.11	September 15, 2024
-> > +	6.12	November 17, 2024
-> > +	6.13	January 20, 2025
-> > +	6.14	March 24, 2025
-> > +	6.15	May 25, 2025
-> >  	=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> > =20
-> > -Every 5.x release is a major kernel release with new features, internal
-> > +Every 6.x release is a major kernel release with new features, internal
-> >  API changes, and more.  A typical release can contain about 13,000
-> > -changesets with changes to several hundred thousand lines of code.  5.=
-x is
-> > +changesets with changes to several hundred thousand lines of code.  6.=
-x is
-> >  the leading edge of Linux kernel development; the kernel uses a
-> >  rolling development model which is continually integrating major chang=
-es.
->=20
-> I do not object to these change and could apply this, but it might be
-> nice at some point to rephrase this stuff so that we don't end up doing
-> these updates repeatedly.  After all, we'll be at 7.x within a year... =
-=20
+> I see Alex is submiting a PR to support reset for SG2000 [1], so suggest you
+> discuss with Alex and merge your work with his to avoid forking.
+> 
+> Link: https://lore.kernel.org/lkml/20250609230417.620089-1-alexander.sverdlin@gmail.com/
+> [1]
+> 
+> Alex Sverdlin, I see you are also in the to-list, what's your point?
+> 
+> Thanks,
+> 
+> Chen
+> 
+> On 2025/6/9 7:22, Inochi Amaoto wrote:
+> > Like SG2042, CV1800 Series SoCs also have simple bit reset generator.
+> > Add necessary code and bindings for it.
+> > 
+> > Changes from v1:
+> > 1. rebase to v6.16-rc1
+> > 2. patch 1: apply Rob's tag
+> > 2. patch 4: fix wrong reset ID
+> 
+> two 2's, makes me confused :)
+> 
 
-What about not hard-coding first version number component like below?
+Oh, a small mistake....
 
----- >8 ----
-diff --git a/Documentation/process/2.Process.rst b/Documentation/process/2.=
-Process.rst
-index ef3b116492df08..47bcc6248a1338 100644
---- a/Documentation/process/2.Process.rst
-+++ b/Documentation/process/2.Process.rst
-@@ -13,24 +13,12 @@ how the process works is required in order to be an eff=
-ective part of it.
- The big picture
- ---------------
-=20
--The kernel developers use a loosely time-based release process, with a new
--major kernel release happening every two or three months.  The recent
--release history looks like this:
--
--	=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
--	5.0	March 3, 2019
--	5.1	May 5, 2019
--	5.2	July 7, 2019
--	5.3	September 15, 2019
--	5.4	November 24, 2019
--	5.5	January 6, 2020
--	=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
--
--Every 5.x release is a major kernel release with new features, internal
--API changes, and more.  A typical release can contain about 13,000
--changesets with changes to several hundred thousand lines of code.  5.x is
--the leading edge of Linux kernel development; the kernel uses a
--rolling development model which is continually integrating major changes.
-+The kernel developers use a loosely time-based, rolling release development
-+process. A new major kernel release (a.x) happens every two or three month=
-s,
-+which comes with new features, internal API changes, and more. A typical
-+release can contain about 13,000 changesets with changes to several hundred
-+thousand lines of code. Recent releases, along with their dates, can be fo=
-und
-+at `Linux Kernel Newbies site <https://kernelnewbies.org/LinuxVersions>`_.
-=20
- A relatively straightforward discipline is followed with regard to the
- merging of patches for each release.  At the beginning of each development
-@@ -46,13 +34,12 @@ merge window do not come out of thin air; they have bee=
-n collected, tested,
- and staged ahead of time.  How that process works will be described in
- detail later on).
-=20
--The merge window lasts for approximately two weeks.  At the end of this
--time, Linus Torvalds will declare that the window is closed and release the
--first of the "rc" kernels.  For the kernel which is destined to be 5.6,
--for example, the release which happens at the end of the merge window will
--be called 5.6-rc1.  The -rc1 release is the signal that the time to
--merge new features has passed, and that the time to stabilize the next
--kernel has begun.
-+The merge window lasts for approximately two weeks. At the end of this tim=
-e,
-+Linus Torvalds will declare that the window is closed and release the firs=
-t of
-+the "rc" kernels.  For the kernel which is destined to be a.x, the release
-+which happens at the end of the merge window will be called a.x-rc1. That
-+release is the signal that the time to merge new features has passed, and =
-that
-+the time to stabilize the next kernel has begun.
-=20
- Over the next six to ten weeks, only patches which fix problems should be
- submitted to the mainline.  On occasion a more significant change will be
-@@ -99,13 +86,13 @@ release is made.  In the real world, this kind of perfe=
-ction is hard to
- achieve; there are just too many variables in a project of this size.
- There comes a point where delaying the final release just makes the problem
- worse; the pile of changes waiting for the next merge window will grow
--larger, creating even more regressions the next time around.  So most 5.x
-+larger, creating even more regressions the next time around.  So most
- kernels go out with a handful of known regressions though, hopefully, none
- of them are serious.
-=20
- Once a stable release is made, its ongoing maintenance is passed off to the
- "stable team," currently Greg Kroah-Hartman. The stable team will release
--occasional updates to the stable release using the 5.x.y numbering scheme.
-+occasional updates to the stable release using the a.x.y numbering scheme.
- To be considered for an update release, a patch must (1) fix a significant
- bug, and (2) already be merged into the mainline for the next development
- kernel. Kernels will typically receive stable updates for a little more
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---tLYwtbPJs95ruY/Y
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaEeqbQAKCRD2uYlJVVFO
-o3y4AQC1hTD9k59RVIQu1eO+o0pxGW4kHjoCUSsVEwUUpvy65wD9Fq14tPwv4Y0P
-Ex8ixqrIPrHmHsvJagvkBwJ1EV5LDwM=
-=8b4G
------END PGP SIGNATURE-----
-
---tLYwtbPJs95ruY/Y--
+Regards,
+Inochi
 
