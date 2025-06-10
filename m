@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-679630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B871EAD3975
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30165AD3967
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 903D41892717
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:34:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B9A1676AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA06D23ABBB;
-	Tue, 10 Jun 2025 13:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A8qrUIzH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF7223AB8B;
+	Tue, 10 Jun 2025 13:32:24 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF0B17A301;
-	Tue, 10 Jun 2025 13:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831B246BC0;
+	Tue, 10 Jun 2025 13:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749562420; cv=none; b=aMbDtSrLWNbtNf2DDwwAh2po/7GfGO/ydkvZGRxzohYxRvMhd01aGZon/vOExl9y/IpNczHs9r3iDl847xmG5u1EVlsDWQx0xYtJq36FHgMn0jmkcadDp/iM/1CCZUWmsXse/kAy6rBjA6ceD1uEQmzseOrNFOfjhOVQZ8/J00s=
+	t=1749562344; cv=none; b=GNN00NQTCv0dNyLJABnwMIvx9ni/GvG7JTH8kZQaC9cpbS9gEiXqVr9HpBqtfg9RF43P6KsDN2wcnt0TJFspd8XVR16sk6wvHhCp2kYKnefYmG72RxVlrNGA7sLd1fxhvDN0OItN9SebKtcTYFbmR3pavAc7Fk7tP1FuWHNOGJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749562420; c=relaxed/simple;
-	bh=4eF9/CmotdESBddggte8FL/5iJIVylN8R74UX+xQaak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYJJfTSSfpSfDtFVvBYghlOS98ajGueq5ETnnv/auEzCraqkbJa7BmOeVCBe5cfJdtRCzwg4mDuEBvxeELvhOF2d+HiYjmIdjGGLmnY1BJ2rOT1Nkubv0UXQ7KxwaFo9y02GpIo8s5dKS1SRyYy4qapqG845hcRO9nR+5oW9Eqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A8qrUIzH; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749562418; x=1781098418;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4eF9/CmotdESBddggte8FL/5iJIVylN8R74UX+xQaak=;
-  b=A8qrUIzHaXRRmYiEqY20P+GZO6RUiNAxDoBFcOywqp0TeTjPkiS38vWd
-   kA5kZZEVkBMcHSmqnH19FKqCCrTBsAzf6NNebKYAs5N2VNCHiBS1TcE6g
-   2LLvmdDrWzvNGsySH/9AP6MHOnkUB0Erw36/KQyeF8rvbbI1hbKojncF4
-   9pV40xP5eHdsk4PY9MsJbwyKMc5y7tvP8ojhIfkyZ7NSkt+F5QQkgjjea
-   MWTNN1kEdud8FRRTBWAzKgBEMiDcmJOtS69P9fvXJ60muGI5xHvZ//mAB
-   2zncrVHlEIYLAgg7itjTlvuxC8NDc+ffojEms9HyHxIcITZzeSgG5Wci6
-   Q==;
-X-CSE-ConnectionGUID: 3fXDgfZVSkCdmM0X69haiw==
-X-CSE-MsgGUID: MjHCugElSjOY3j9b9gLdqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="55464395"
-X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
-   d="scan'208";a="55464395"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 06:33:37 -0700
-X-CSE-ConnectionGUID: 67tGi3H5SDaALS0eLrw+yg==
-X-CSE-MsgGUID: eWeYUNL+RHS8Glqniw5VYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
-   d="scan'208";a="146712823"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 06:33:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uOz6Z-00000005MWZ-2ZGq;
-	Tue, 10 Jun 2025 16:33:31 +0300
-Date: Tue, 10 Jun 2025 16:33:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, ikepanhc@gmail.com,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Armin Wolf <W_Armin@gmx.de>, linux-doc@vger.kernel.org,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	ibm-acpi-devel@lists.sourceforge.net,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 2/2] platform/x86: thinklmi: improved DMI handling
-Message-ID: <aEg0K1OE6zhL97me@smile.fi.intel.com>
-References: <mpearson-lenovo@squebb.ca>
- <20250609122736.3373471-1-mpearson-lenovo@squebb.ca>
- <20250609122736.3373471-2-mpearson-lenovo@squebb.ca>
- <b792059e-44d2-82c0-574c-76c3f6a3129d@linux.intel.com>
- <f3b5c138-5576-4c01-b177-7450f1e91d24@app.fastmail.com>
+	s=arc-20240116; t=1749562344; c=relaxed/simple;
+	bh=VeRRqAMQwsV9AjP9CYbvqZkSDgtiD6xuz7fHbLhSbnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M3gmgIstj1BaccwQredb1zR25O/UM3QVBzr38WLNTtCDaodjm2bg/Jycsr9/1GoRf6rbcLNWdDoi9o38JqkHPyBagGIe8IaOmfgHf4ydFwhfmI/+JvEgQt6KTpj722lPE+EiSIIiuLEzx4jrUpx4zNXxh6AaTTF+fRl4PD3vyoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 771C158BC6;
+	Tue, 10 Jun 2025 13:32:20 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id A032C2003B;
+	Tue, 10 Jun 2025 13:32:18 +0000 (UTC)
+Date: Tue, 10 Jun 2025 09:33:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] tracing: Do not free "head" on error path of 
+ filter_free_subsystem_filters()
+Message-ID: <20250610093348.33c5643a@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f3b5c138-5576-4c01-b177-7450f1e91d24@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: A032C2003B
+X-Stat-Signature: u5szw3tasguzey7x9yqnn1fm4cpsdkj8
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18teGOKpr+gusiYZViqrtt0SH+AHwK4pL4=
+X-HE-Tag: 1749562338-672093
+X-HE-Meta: U2FsdGVkX19o22b6/1AqabH+17ZgdEx9/+iJe8gTqjfMpZMTd1HAM2PlDfEbaosybXJ167UrtDeE9LwfI18yH4c6g/42OlR1oxLR+B0t5oDSG9XnwCWpdWN+1xCOXFCu/N5NolV6sfuz8ZHmwO7OOVn2wIeiM3oI+6tRQ6uPYAb6en8kIwbT6rMsqfINTk2Nj6DzIhXorlJSLzYU8jRhseS79CcEi6WeCDs+K7EHMdq+rUHVgU+WSA7ZWdnMD7b6piwhrRbSfYJUFDt9xTzmAfr12ma75Cus9AhhgWrXAmNJH48KZ7kJ7Ciye1tfnxrerikSJ2FNRPE5cK5SSCCo//ckmEhzgveGujSLheor0ZSj1ehZzlfBe0+iVj/7oVl3ZYGaNdoLlfzBKyAMlpl6yrXvERcuh86xvZA5WDAtMHWX2De7Xc3GP0PmtQqad69KXP1nWBdczkL0bHi1jJKk4gRbmqL65qCeQNmdKBxFRoqVhADsLYhjGZdEJI0zw+vxoKjCwUfjzUc=
 
-On Tue, Jun 10, 2025 at 08:28:49AM -0400, Mark Pearson wrote:
-> On Tue, Jun 10, 2025, at 3:35 AM, Ilpo Järvinen wrote:
-> > On Mon, 9 Jun 2025, Mark Pearson wrote:
+From: Steven Rostedt <rostedt@goodmis.org>
 
-...
+The variable "head" is allocated and initialized as a list before
+allocating the first "item" for the list. If the allocation of "item"
+fails, it frees "head" and then jumps to the label "free_now" which will
+process head and free it.
 
-> >> +		serial = dmi_get_system_info(DMI_PRODUCT_SERIAL);
-> >> +		if (!serial)
-> >> +			return -EINVAL;
-> >
-> > This should not return -EINVAL as it is not a problem with the input 
-> > parameters. Perhaps -ENODEV would make sense instead?
-> 
-> Good point.
-> Unless Andy strongly thinks I should drop this bit, I'll fix in the next version
+This will cause a UAF of "head", and it doesn't need to free it before
+jumping to the "free_now" label as that code will free it.
 
-If maintainers are okay to take this approach (both Kconfig and C file
-changes), I am fine.
+Fixes: a9d0aab5eb33 ("tracing: Fix regression of filter waiting a long time on RCU synchronization")
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202506070424.lCiNreTI-lkp@intel.com/
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events_filter.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index ea8b364b6818..08141f105c95 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1437,10 +1437,8 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
+ 	INIT_LIST_HEAD(&head->list);
+ 
+ 	item = kmalloc(sizeof(*item), GFP_KERNEL);
+-	if (!item) {
+-		kfree(head);
++	if (!item)
+ 		goto free_now;
+-	}
+ 
+ 	item->filter = filter;
+ 	list_add_tail(&item->list, &head->list);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.2
 
 
