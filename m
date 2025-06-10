@@ -1,102 +1,134 @@
-Return-Path: <linux-kernel+bounces-678678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C0BAD2C98
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:26:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD84AD2CA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15541164387
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:26:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA2F16F0CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234A425DD12;
-	Tue, 10 Jun 2025 04:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2361A727D;
+	Tue, 10 Jun 2025 04:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iGbn5uoE"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSIXrrzR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6BF25DB15;
-	Tue, 10 Jun 2025 04:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C53747F;
+	Tue, 10 Jun 2025 04:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749529577; cv=none; b=RaM+WvTMOVWJHOATApUIFkRDqaytS7on9uei9/JXFN31wa2TmYKrLfAyRt42tuce8zqbsfInfv2fCDkQdVHoovAc2scpJP5u8EvCtVB7MeXUD2gLWrfX3wkL4yx+j+UqagvbQnRIgkPRoSV+pkI88hWrjyIDAyu7BKqC6Be1BvQ=
+	t=1749529677; cv=none; b=B4ydrCndqCR9fYv+unSSsxzqt8T0mLM8ZahPsH7BOgTBWg3aRq6ifrh6eUnlNjGS61fcpl3HVvFeOBeck719J8YVxje7+KItJwicRbxCxXQgROVs6/tCNMLQGR0yd5F4JHHheZHYxB+TaalKkRYRY7TfMGMASgIIVyixJU3MWiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749529577; c=relaxed/simple;
-	bh=HnnhJm0Z+iBUzSKCgtTykJngxRd4o/QpaKVBlzxOFz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=baeJPtjninoxL3iROaioKTdHhuwE/O9/ovOJUSLCNkGg0Ruvn91ZLg+YVckUNWsu126L/dmu/2sKwosNCHlsJe/GKQYxPi6ZVCphzYVCQprbPUxZvc6IBmWZPGYIa2MAq7mTeDSL70MLqF3yxnvsZUUdTawNT8CSGgiMOgi715Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iGbn5uoE; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1749529573;
-	bh=+pnTi00QwWRbMKgIH0JKcY6tR04Qni+6s3iN3qY9zb0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=iGbn5uoEJ+cyNfhxO37g08dbrMi4S/tHF2WhOSQHGuAWahOniKhqZ2D5naz9+ijnO
-	 DZuVPo/qgQ0UaIXnKXfEfYmCZWA7P2rYYBNdFRiyxiQwpyz0qLz/I8pCQhI9W+IavS
-	 DOZcI3Fu8rycRphLF05nAbjiMHV9fwxqPvVfFaIImyu89LnakHw8qUBzp03a3CIEA1
-	 URC+g6mjXSc5kPSn9BhiaKP/mpysa04YG9mf3rjAsDQFpFpWpZUfXg35jtoda/mxmQ
-	 KoO6nasIRsWiAHtjnccA5vXSrKis87x1rfTd4k5NGghQmtpCEgckgk45vF1mlmpCKd
-	 c61NbPcL3QUBg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bGbMT2n5Bz4wnw;
-	Tue, 10 Jun 2025 14:26:13 +1000 (AEST)
-Date: Tue, 10 Jun 2025 14:26:12 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the cxl tree
-Message-ID: <20250610142612.130714a7@canb.auug.org.au>
+	s=arc-20240116; t=1749529677; c=relaxed/simple;
+	bh=bABhSsjxKZ0piICCcKMoHsdmRblKy52gHCDlFNdDTTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n+ZSwALaKC/NswphsTqQN7ERbsV9utXEKpUU3nAMvy/1e/g627D5lY3eAiAX+N2+eEV1BIhJQwh5ytXHwa+FJOceB52eEuty05xSiYvqGR4RGWHlp53f53XDCZLXeKdUf/IFMv6GncOtnxltIsbgDo+LqWNwBt1hHk+HYxR7S44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSIXrrzR; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749529676; x=1781065676;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bABhSsjxKZ0piICCcKMoHsdmRblKy52gHCDlFNdDTTk=;
+  b=RSIXrrzR9b56c/uHKY3dj4tZ9XnOt9rHwhag/MICWNBjFJMq5tfe+XxN
+   DArdmv07RM1+QqZM41cTnbUKPg/Yd5/GpLuYrDErthUESHQiE3w03mPU1
+   Qeda88Cd+K+Xd0nUmz6wp0mOsE87LoUQT8qHaSYwMFmZRZ1rfMDwXQBVM
+   tGWGehSHg3xxGAVr+60+k1SWB/OzyAn4EzTr9dHJbIiGZoYgEXU70lDRo
+   7k4ZcFFFzrQXri+ivIeBS9Ga5glLQFY+zyMRzM6usUa/pF3D5hSD8OGDn
+   qUKaHivgJSChXRitAKbeTItx93Qtj5SikKtiC77Kerfou4Ld0ryy03k5j
+   Q==;
+X-CSE-ConnectionGUID: kfn00KGpTWK9anQBOEvXWQ==
+X-CSE-MsgGUID: A/aCioQ3RTKUht5HzskIIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="54253719"
+X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
+   d="scan'208";a="54253719"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 21:27:56 -0700
+X-CSE-ConnectionGUID: ILtEZ1+rTOWRrlJcfV9EDw==
+X-CSE-MsgGUID: yGjo7KvoSn+NESx7FbV2aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
+   d="scan'208";a="146597903"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 21:27:53 -0700
+Message-ID: <34442ab9-08e1-4e9a-b08e-3b81a581fec3@linux.intel.com>
+Date: Tue, 10 Jun 2025 12:27:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/f.BpewCPiM7hw6Cp6Lbq_ze";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 2/2] pci: Suspend ATS before doing FLR
+To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com, joro@8bytes.org,
+ will@kernel.org, robin.murphy@arm.com, bhelgaas@google.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
+ vsethi@nvidia.com
+References: <cover.1749494161.git.nicolinc@nvidia.com>
+ <29cc1268dfdae2a836dbdeaa4eea3bedae564497.1749494161.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <29cc1268dfdae2a836dbdeaa4eea3bedae564497.1749494161.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/f.BpewCPiM7hw6Cp6Lbq_ze
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 6/10/25 02:45, Nicolin Chen wrote:
+> Per PCIe r6.3, sec 10.3.1 IMPLEMENTATION NOTE, software should disable ATS
+> before initiating a Function Level Reset.
+> 
+> Call iommu_dev_reset_prepare() before FLR and iommu_dev_reset_done() after,
+> in the two FLR Functions. This will dock the device at IOMMU_DOMAIN_BLOCKED
+> during the FLR function, which should allow the IOMMU driver to pause DMA
+> traffic and invode pci_disable_ats() and pci_enable_ats() respectively.
+> 
+> Add a warning if ATS isn't disabled, in which case IOMMU driver should fix
+> itself to disable ATS following the design in iommu_dev_reset_prepare().
+> 
+> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+> ---
+>   drivers/pci/pci.c | 42 ++++++++++++++++++++++++++++++++++++++----
+>   1 file changed, 38 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e9448d55113b..61535435bde1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/delay.h>
+>   #include <linux/dmi.h>
+>   #include <linux/init.h>
+> +#include <linux/iommu.h>
+>   #include <linux/msi.h>
+>   #include <linux/of.h>
+>   #include <linux/pci.h>
+> @@ -4518,13 +4519,26 @@ EXPORT_SYMBOL(pci_wait_for_pending_transaction);
+>    */
+>   int pcie_flr(struct pci_dev *dev)
+>   {
+> +	int ret = 0;
+> +
+>   	if (!pci_wait_for_pending_transaction(dev))
+>   		pci_err(dev, "timed out waiting for pending transaction; performing function level reset anyway\n");
+>   
+> +	/*
+> +	 * Per PCIe r6.3, sec 10.3.1 IMPLEMENTATION NOTE, software disables ATS
+> +	 * before initiating a Function Level Reset. So notify the iommu driver
+> +	 * that actually enabled ATS. Have to call it after waiting for pending
+> +	 * DMA transaction.
+> +	 */
+> +	if (iommu_dev_reset_prepare(&dev->dev))
+> +		pci_err(dev, "failed to stop IOMMU\n");
 
-Hi all,
+Need to abort here?
 
-After merging the cxl tree, today's linux-next build (htmldocs) produced
-this warning:
-
-Documentation/driver-api/cxl/index.rst:11: WARNING: toctree contains refere=
-nce to nonexisting document 'driver-api/cxl/conventions' [toc.not_readable]
-
-Introduced by commit
-
-  11f401444201 ("Documentation/driver-api/cxl: Introduce conventions.rst")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/f.BpewCPiM7hw6Cp6Lbq_ze
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmhHs+QACgkQAVBC80lX
-0Gzfmwf+JoYKMtHoGKhvceoGn4Cd51hFMdZRzfHmoognk9jSdbVhHlut0UqO4PNe
-D61hExPf0PQI6Wxrke5R4LigT/g6O7fSs0TTOumslm7X3uiTQuuwPmC+LyTyHPCH
-jb4HJ4vnpGFq5LuyFGcF0u/hRb2bWmX8OFsq8oVdXVzrolgRkQQkjqH2vU/B3vKb
-t2akj45fVCOgV6mfTTxmQrBk/oArbKVVJd5muH/bxh5U8//Z4cb1TNCoYmLfCH+v
-rsz4iy08A3qaR+vOKeu2pWwlSnzgueBVtO8s2j6BcepnmWvZ7R3Sdlk907YScuMa
-y5hsnn0OuHTlrQARPjwfPrnSOeKXDA==
-=kGad
------END PGP SIGNATURE-----
-
---Sig_/f.BpewCPiM7hw6Cp6Lbq_ze--
+Thanks,
+baolu
 
