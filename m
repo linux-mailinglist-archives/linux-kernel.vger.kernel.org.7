@@ -1,291 +1,161 @@
-Return-Path: <linux-kernel+bounces-679999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B78AD3EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:22:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083F8AD3EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8BB3A75BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFE23A87E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F85241114;
-	Tue, 10 Jun 2025 16:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1E524166C;
+	Tue, 10 Jun 2025 16:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="avuOipTi"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="cfGWd+OD"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE70246BAC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7DB23F43C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749572558; cv=none; b=fmHLmtxla++ZQPSzhASKSW7qxYOcnVAg+J0FNOfaNipm/hCsZD5fyJEwO8OmoWOCeoHmh63OIoaE+uFu4W/tIP6SVpYRVIYJaIdq4EWykCogS5dYLqbJGaUrXhB/cLrIhGQp/H0h1b3N97nBgtb51DYJFpStRK1VDIdNCEo1xks=
+	t=1749572594; cv=none; b=kGxmoSXx9hHAZyDGegcrsIVcgenyqn8Xl7jQnK0gMjSrNy0wnRD8I39f6Q2XZ+4jo7TlTfYi9P1zcTS2vTL3lYCWTrGY022TuNOcrMAZUFRCG0ZP6B3XPP103TCYpx1vpDQfbEfUZ5l9YDTE1lewFBtb8Uqykhm7+/mxEPgZEZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749572558; c=relaxed/simple;
-	bh=DKz1wqUdrKSC5vIdrUnkzDi63WgqPFdh61ZjYbPXjmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W/pA2wqhK+JBzxMixXoHHYoBWErYToKsVJyHcye67h1n7vBcqE/oOAoSMyEDQeAqvzV4hptuH3mhopHfvHEOBHPcSvX/sE4aSqSkpD/Bd0TExrTM0mg8BiUSLXnJVkV+kvJz4niG9+0k/yu2PHIwIXXWzOjvkK095xgLLF5XlNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=avuOipTi; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-742c7a52e97so4875862b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:22:36 -0700 (PDT)
+	s=arc-20240116; t=1749572594; c=relaxed/simple;
+	bh=pSarTRCzQuRL/R7ATW6/ZUy90+VuBzjUwmj0wBd4rF4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oX8xy+PS/29d0jOoG/F+zUM3szbn6U4ChkN3NMQuu3yB8n/JO7uUjlGl+FYsIVLi6+Cq6AWISM0RYv1+0JKvrYmK0ziZJ/9wK6CQisXbLrEW4pZ3XLzxMgsQX9Nt0s6yv0toU9FYpihCYjKCSYC1ZitZCaez0ujYTBUWRa91vRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=cfGWd+OD; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2363bd24891so1219265ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749572555; x=1750177355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+MkV/lIBNtXhNBujMG9Z7i6F6IxQ5xfqe1rAYT6Q4Xc=;
-        b=avuOipTigdJHPfVXKFMwjlajrx3dGW79ql02viEsgQWue3WrPM6Y/al5l4GxtrXBT4
-         a6PNyImK8+FkpgvwoVYr7lChSMIPyHX1Rpl/rt2FG5MIvm7gt/wR4+LG7b7WJiJV0PN/
-         c3kwDj8ybGDxE8gGrxdwR4YgJoRb5CpNEAgGo=
+        d=purestorage.com; s=google2022; t=1749572592; x=1750177392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Duyi2eYfEOWURmM5RwkHbBgHFP1RL7l3Jtl3iemhVW0=;
+        b=cfGWd+ODd8qHlJ+BRwzQe3sqboRtM6FnENCpdWYK/eGxcjLLdw6Zpcl8FhibUZiHds
+         qNnYzh9A9g6lK4rEMWOiNx2owJxwiiL6Of+FN2wf2EWzzZQuC0Vi6Ho10ntZ1n8Hju4R
+         qbMUFu7qKbJTHng+tWPpz0w6u1G2x78oLlx20iI7TJR5p5Phagf3XOgFxW7LlaOpCLHT
+         zv9Op7f8+QsH62ZlbXy3DGh7OhuwV+yFvKHmKvJ9UM9os8ZdNG4h/24V/D/2Om/jjGV7
+         KlRAusGeDZamr1HjUnA4nkKdoQ63FLsb5D5JmDkX70WezzHmsbwkxCN0dFOavi9USVY0
+         uJnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749572555; x=1750177355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+MkV/lIBNtXhNBujMG9Z7i6F6IxQ5xfqe1rAYT6Q4Xc=;
-        b=hWMAJgNdNh/5GuOTbWNvJRRSa54TO8c7cDTha9yTn2vUiCvrE86ZdEwQRy/k0bwg+D
-         86k2JPfBcYx3JHP91XNTsSVA8wS4tO+x+72f17GCoYqsQplLTf2Da+wxoZUr2lJidiBg
-         96SDieHdgY40fyZydVfWEMcXNsy2mk/UJF/Ru5b8nckpVa31da16Vze1DwT7v50QArnj
-         CpU8/RzVRjHZt9YBI2jt/rXJIeveWmK6WTnMU8veY1A5fIyGx8jUjDnEpW6mHtkD8ZZd
-         5GyyWVZVnSkaX8aGgZ7sD1ydUcILGFUKiYHAdvTlnh2KUO3Rp8qvY/E1XMZNo83mj5No
-         LdHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjPfIK6mX+GKF5+0jG98+5se9jMZ5VOGYdHXCEYZ2NR1LfhGa19xHiIwkUF+OuMtNyP94TMkCe6BNNuQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+hwgMn1lM/z+q+FrVJFx/KTwM831WP7q+TI+yHxoh97QN26O2
-	56h3w+eQoc/SqEbReGLU/zuxljmylko3xpNm2NFswiVr/l/7NG2YIsbpnu1nDjhe0uQOs7T5cu5
-	L0zTp5w==
-X-Gm-Gg: ASbGncsVCpkN3TCkBi5/9J2I1I8+PQ1Ce1V2Fg0tYE0jJ7/eG7n8kduuOjQyRhTkb6O
-	VZ+kPkfzG4u7+Adbix7g1db5T5TIcy/YPRm2DsTjHeyu14UsI2SrqUWf7JOHjxj46Tdi9B2/761
-	j6TKaJbadxRYrVhy9911pg3F7TRsukLLuv5Fm3aJKMmubpDEeVV0ba5w8S4IK8JbgyL2l94it/y
-	s8IbwV8WNggJIslWSbCTNkEvBxyboILMJPQkZsGRS8o0XyXathlsxD2PEr7FAgQYV3ndAZ+KUW5
-	TBBU4AUuws6SkdGP1U85EVf2kMTTaPC24XRkbmcO7IcfezZ8LyHsV1VsYPE/0Th8nqrtWqrOVIG
-	UBHKBZ0Wuiv7ae+a0kY2ktNuvwJewFXFygPMu
-X-Google-Smtp-Source: AGHT+IE7oszkkx9rJleUw5A88gDWoGnp0oj8z4Z8+luV+xHaZycleOl/Ewz1dpFs77E1ySMjvIWZSg==
-X-Received: by 2002:a05:6a21:4a4b:b0:21f:5aa1:3102 with SMTP id adf61e73a8af0-21f867582dcmr294428637.37.1749572554643;
-        Tue, 10 Jun 2025 09:22:34 -0700 (PDT)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com. [209.85.216.48])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ed58e9bsm7056933a12.10.2025.06.10.09.22.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 09:22:33 -0700 (PDT)
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-311c95ddfb5so3955535a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:22:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgvZ25zdR9zm8FXDVO70q9ChEuqbq8WL4cL1aKTzew5IKXWqO+PA8fTl9s7fEyiZUPYQMvjOAdWvhM/gQ=@vger.kernel.org
-X-Received: by 2002:a17:90b:2ecb:b0:311:c1ec:7d03 with SMTP id
- 98e67ed59e1d1-313af213ad2mr200487a91.32.1749572552155; Tue, 10 Jun 2025
- 09:22:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749572592; x=1750177392;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Duyi2eYfEOWURmM5RwkHbBgHFP1RL7l3Jtl3iemhVW0=;
+        b=GAAO13Gq6sipQCQhq+Bi8yI58cs3xBTPxm6DZRGa4UsmT/a7n6BcjKqbahaAh3f0iL
+         +vwFmKRy1dCCxvkPizhRdKg09mKCJCSXVgHjkenqO6cpD2oPtKmspuE67stmH9duMwmE
+         NdzWSv3oxWV2vkbJ22gMq3ba46MOVX4JUUjC8lwVr2TGN3jlxPeZCR2OuIabDMpF350O
+         Hor2ZtX0dhGPZqJ6CauGP+n5irQK5foUzUQKFBhMlcZ2ALSNHsMWJ8IAwDGTXipWBfbv
+         ER4YthJvjCGAIDVTwE3Or0CPcQLKNYJpW6HT+GRaMu4Ej6OyM+M0NHj1U9/ZQtpyDI3X
+         XlOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDrwQVuveaxz++wsLEBQGhVbs0NK8kUpw6CbliMBCE0HCWtCGK0GX9nDYGi0xsuWo8cqZ40Z80MpT0uCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUYCfCZ58ZCzV9NMqdaUguwgRgsFCBmHJuvDNCffOL3FYnqxQk
+	zDROY+MpYCF/L449xSVmaCms13J6bZl2DadwZYGRr1BnlUN6Hhn2rRszT5PDTD1x87I=
+X-Gm-Gg: ASbGncsAbk7PPhH1k/znpAGmkXrmHa7snyQLb42RerIwEu3gWLeQ2iNSH6P5blxANjS
+	F270J9g6s0VpaawXod4t6FzNFgxxeuVVJTJ9O/qlgC1YVWlzzodyCgZc0Aj2oN/bNfe2tBetWYm
+	3uVWva5ILjkABrJv7ELsXUwSH3Y3n537eM7uvKXI1CJqxhy0g6XBKnfccb1GJBavW8Ni7eYZ1EJ
+	3YHwZiUjdHa6XbCZNNoKepl2v1m8tACIRxz4BO25KYjgnMvDW2BgDWXejkcaY9j0RnHf5dATPDb
+	+B6JbgbuX7Zc00QGTbW3/O/Eeray6f7ESGghUozwpTR5L7WXQEuq+doah9OetQREH/k5dq4E4Tl
+	rKPD83hFDVq6zVgA7
+X-Google-Smtp-Source: AGHT+IFzRZ/2ilv/TWo2BZioT8NNZBq3mXBKm6pZaGbBq5g4DcH/rH2061k7qbX3Bt49Qj9jZ8ssgQ==
+X-Received: by 2002:a17:902:e80e:b0:234:c549:da0c with SMTP id d9443c01a7336-23603f4afa2mr100700265ad.0.1749572592309;
+        Tue, 10 Jun 2025 09:23:12 -0700 (PDT)
+Received: from dev-cachen2.dev.purestorage.com ([208.88.159.129])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-236032ff2f7sm73294405ad.92.2025.06.10.09.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 09:23:11 -0700 (PDT)
+From: Casey Chen <cachen@purestorage.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	surenb@google.com,
+	kent.overstreet@linux.dev,
+	arnd@arndb.de,
+	mcgrof@kernel.org,
+	pasha.tatashin@soleen.com,
+	yzhong@purestorage.com,
+	Casey Chen <cachen@purestorage.com>
+Subject: [PATCH] alloc_tag: remove empty module tag section
+Date: Tue, 10 Jun 2025 10:22:58 -0600
+Message-Id: <20250610162258.324645-1-cachen@purestorage.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529110418.481756-1-j-choudhary@ti.com> <2baf3c31-3edf-4c26-bd44-1d0560134871@ti.com>
- <CAMuHMdUi7pf1YfKRjMv_7VuKwjR5XekRXfcEzuPScGzHraGjyQ@mail.gmail.com>
- <84fdbd23-d694-453f-a225-dbac19b34719@ti.com> <CAD=FV=XaR6Pq7E-13zR5PC_u=3SD=sc05_TzxWJR2FS040zESg@mail.gmail.com>
- <71c41c44-1c2e-4fee-a1a8-31472c9f838d@ti.com>
-In-Reply-To: <71c41c44-1c2e-4fee-a1a8-31472c9f838d@ti.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 10 Jun 2025 09:22:20 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X2npwru2=2XYpzbvMTc-jFAGzG3xVDRuCp1_D=QoRWcQ@mail.gmail.com>
-X-Gm-Features: AX0GCFvFpx0zG4Qs1kd0_XBriaPr08VtGCdfFDF-WmL85SRtc32MwKBnYrqm0zE
-Message-ID: <CAD=FV=X2npwru2=2XYpzbvMTc-jFAGzG3xVDRuCp1_D=QoRWcQ@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/bridge: ti-sn65dsi86: Add HPD for DisplayPort
- connector type
-To: Jayesh Choudhary <j-choudhary@ti.com>
-Cc: ernestvanhoecke@gmail.com, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	dri-devel@lists.freedesktop.org, tomi.valkeinen@ideasonboard.com, 
-	max.krummenacher@toradex.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, kieran.bingham+renesas@ideasonboard.com, 
-	linux-kernel@vger.kernel.org, max.oss.09@gmail.com, devarsht@ti.com, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The empty MOD_CODETAG_SECTIONS() macro added an incomplete .data
+section in module linker script, which caused symbol lookup tools
+like gdb to misinterpret symbol addresses e.g., __ib_process_cq
+incorrectly mapping to unrelated functions like below.
 
-On Tue, Jun 10, 2025 at 12:43=E2=80=AFAM Jayesh Choudhary <j-choudhary@ti.c=
-om> wrote:
->
-> Hello Doug,
->
-> On 10/06/25 03:39, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Mon, Jun 2, 2025 at 4:05=E2=80=AFAM Jayesh Choudhary <j-choudhary@ti=
-.com> wrote:
-> >>
-> >> Hello Geert, Krzysztof,
-> >>
-> >> (continuing discussion from both patches on this thread...)
-> >>
-> >> On 30/05/25 13:25, Geert Uytterhoeven wrote:
-> >>> Hi Jayesh,
-> >>>
-> >>> CC devicetree
-> >>>
-> >>> On Fri, 30 May 2025 at 04:54, Jayesh Choudhary <j-choudhary@ti.com> w=
-rote:
-> >>>> On 29/05/25 16:34, Jayesh Choudhary wrote:
-> >>>>> By default, HPD was disabled on SN65DSI86 bridge. When the driver w=
-as
-> >>>>> added (commit "a095f15c00e27"), the HPD_DISABLE bit was set in pre-=
-enable
-> >>>>> call which was moved to other function calls subsequently.
-> >>>>> Later on, commit "c312b0df3b13" added detect utility for DP mode. B=
-ut with
-> >>>>> HPD_DISABLE bit set, all the HPD events are disabled[0] and the deb=
-ounced
-> >>>>> state always return 1 (always connected state).
-> >>>>>
-> >>>>> Set HPD_DISABLE bit conditionally based on "no-hpd" property.
-> >>>>> Since the HPD_STATE is reflected correctly only after waiting for d=
-ebounce
-> >>>>> time (~100-400ms) and adding this delay in detect() is not feasible
-> >>>>> owing to the performace impact (glitches and frame drop), remove ru=
-ntime
-> >>>>> calls in detect() and add hpd_enable()/disable() bridge hooks with =
-runtime
-> >>>>> calls, to detect hpd properly without any delay.
-> >>>>>
-> >>>>> [0]: <https://www.ti.com/lit/gpn/SN65DSI86> (Pg. 32)
-> >>>>>
-> >>>>> Fixes: c312b0df3b13 ("drm/bridge: ti-sn65dsi86: Implement bridge co=
-nnector operations for DP")
-> >>>>> Cc: Max Krummenacher <max.krummenacher@toradex.com>
-> >>>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> >>>>> ---
-> >>>>>
-> >>>>> Changelog v2->v3:
-> >>>>> - Change conditional based on no-hpd property to address [1]
-> >>>>> - Remove runtime calls in detect() with appropriate comments
-> >>>>> - Add hpd_enable() and hpd_disable() in drm_bridge_funcs
-> >>>>> - Not picking up "Tested-by" tag as there are new changes
-> >>>>>
-> >>>>> v2 patch link:
-> >>>>> <https://lore.kernel.org/all/20250508115433.449102-1-j-choudhary@ti=
-.com/>
-> >>>>>
-> >>>>> [1]: <https://lore.kernel.org/all/mwh35anw57d6nvre3sguetzq3miu4kd43=
-rokegvul7fk266lys@5h2euthpk7vq/>
-> >>>
-> >>> Thanks for your patch!
-> >>>
-> >>>>> This would also require dts changes in all the nodes of sn65dsi86
-> >>>>> to ensure that they have no-hpd property.
-> >>>>
-> >>>> DTS patch is posted now:
-> >>>> <https://lore.kernel.org/all/20250529112423.484232-1-j-choudhary@ti.=
-com/>
-> >>>
-> >>> On all Renesas platforms handled by that patch, the DP bridge's HPD p=
-in
-> >>> is wired to the HPD pin on the mini-DP connector.  What am I missing?
-> >>
-> >> If the bridge's HPD is connected to that of the connector, then I am
-> >> pretty certain HPD will not work for renesas platform. The detect hook
-> >> always gives "connected" state in the driver (even if it is unplugged)=
-.
-> >> Do you have different observation on your end?
-> >> If not, then we do need something like this patch while addressing the
-> >> backwards-compatibility concerns.
-> >>
-> >> During v1 RFC[2], I did observe that renesas also have DisplayPort
-> >> connector type and might require hpd, but since the support was
-> >> already there and no issue was raised, I assumed it does not require
-> >> HPD.
-> >>
-> >> [2]:
-> >> https://lore.kernel.org/all/01b43a16-cffa-457f-a2e1-87dd27869d18@ti.co=
-m/
-> >>
-> >>
-> >>>
-> >>> Regardless, breaking backwards-compatibility with existing DTBs is
-> >>> definitely a no-go.
-> >
-> > FWIW, we are in a little bit of a sticky situation here. We were in a
-> > bit of a bad place from the start because the Linux driver ignored HPD
-> > from the beginning but we didn't actually document that people should
-> > be setting the "no-hpd" property until a little bit later. You can see
-> > some discussion about this in commit 1dbc979172af ("dt-bindings:
-> > drm/bridge: ti-sn65dsi86: Document no-hpd") where I noted "this is
-> > somewhat of a backward-incompatible change." ...but, at the time, it
-> > wasn't really a big deal because there were very few users (the one in
-> > tree at the time was cheza, which was a dev board used internally at
-> > Google).
-> >
-> > ...so, as of that change in May of 2020, it was documented that eDP
-> > users were _supposed_ to be setting NO_HPD. I even remember Bjorn
-> > requesting the "or is otherwise unusable" phrasing because we pretty
-> > much wanted to set this property on everyone using sn65dsi86 as eDP
-> > (even if they have HPD hooked up) because the debouncing time is so
-> > long that it was better to hardcode the max delay instead of reading
-> > the HPD line. Of course, even though we documented that they were
-> > supposed to have the "no-hpd" property didn't necessarily mean that
-> > everyone did. The code has never enforced it. I don't believe it even
-> > checks the property...
-> >
-> > So if there are dts files out there that don't set the property and
-> > they were submitted after the bindings change in 2020, _technically_
-> > they've been wrong the whole time. We're not changing history by
-> > adding a new requirement so much as fixing broken DTS files. Although
-> > the Linux driver always allowed them to get away with being broken,
-> > technically DTS is separate from Linux so if they've been violating
-> > the bindings then they've been wrong. :-P That being said, they've
-> > been working and it would be nice to keep them working if we can, but
-> > one could make an argument that maybe it would be OK to require them
-> > to change...
-> >
-> >
-> >> Got it.
-> >> Let me try to figure out a way to fix it without messing it up.
-> >
-> > While a bit on the ugly side, it seems like perhaps you could just do t=
-his:
-> >
-> > 1. If enable_comms is called before the bridge probe happens, just go
-> > ahead and disable HPD.
-> >
-> > 2. When the bridge probe happens, if you notice that HPD should be
-> > enabled and comms are on you can just enable HPD then (grabbing the
-> > comms_mutex while doing it).
-> >
-> > 3. Any subsequent enable_comms called after the bridge probe happens
-> > shouldn't disable HPD.
-> >
-> > ...you'd probably want a comment about the fact that "no-hpd" property
-> > is unreliable, which is why we can't figure this out in a better way.
-> >
-> >
->
->
-> Ernest mentioned in v2[3] that when pdata->bridge.type is not
-> set, the type field is 0 causing issue for eDP when enable_comms
-> is called before auxiliary_driver probe.
->
-> So it should be okay to check the bridge type for
-> DRM_MODE_CONNECTOR_Unknown (0) OR DRM_MODE_CONNECTOR_eDP (14) and
-> disable HPD in both case?
-> Or equivalently using !(DRM_MODE_CONNECTOR_DisplayPort) as this bridge
-> would support only these 2 connector types???
+  (gdb) disas __ib_process_cq
+  Dump of assembler code for function trace_event_fields_cq_schedule:
 
-Yeah, I'd check for "not displayport".
+Removing the empty section restores proper symbol resolution and
+layout, ensuring .data placement behaves as expected.
 
+Fixes: 0db6f8d7820a ("alloc_tag: load module tags into separate contiguous memory")
+       22d407b164ff ("lib: add allocation tagging support for memory allocation profiling")
+Signed-off-by: Casey Chen <cachen@purestorage.com>
+Reviewed-by: Yuanyuan Zhong <yzhong@purestorage.com>
+Acked-by: Suren Baghdasaryan <surenb@google.com>
+---
+ include/asm-generic/codetag.lds.h | 6 ------
+ scripts/module.lds.S              | 5 -----
+ 2 files changed, 11 deletions(-)
 
-> Then for DP case, it should behave like you mentioned: First disabling
-> HPD till types is set in auxiliary_driver probe. And once set to 10,
-> (for DRM_MODE_CONNECTOR_DisplayPort) enabling it for DisplayPort
-> connector type.
+diff --git a/include/asm-generic/codetag.lds.h b/include/asm-generic/codetag.lds.h
+index 372c320c5043..a45fe3d141a1 100644
+--- a/include/asm-generic/codetag.lds.h
++++ b/include/asm-generic/codetag.lds.h
+@@ -11,12 +11,6 @@
+ #define CODETAG_SECTIONS()		\
+ 	SECTION_WITH_BOUNDARIES(alloc_tags)
+ 
+-/*
+- * Module codetags which aren't used after module unload, therefore have the
+- * same lifespan as the module and can be safely unloaded with the module.
+- */
+-#define MOD_CODETAG_SECTIONS()
+-
+ #define MOD_SEPARATE_CODETAG_SECTION(_name)	\
+ 	.codetag.##_name : {			\
+ 		SECTION_WITH_BOUNDARIES(_name)	\
+diff --git a/scripts/module.lds.S b/scripts/module.lds.S
+index 711c6e029936..c071ca4beedd 100644
+--- a/scripts/module.lds.S
++++ b/scripts/module.lds.S
+@@ -50,17 +50,12 @@ SECTIONS {
+ 	.data : {
+ 		*(.data .data.[0-9a-zA-Z_]*)
+ 		*(.data..L*)
+-		MOD_CODETAG_SECTIONS()
+ 	}
+ 
+ 	.rodata : {
+ 		*(.rodata .rodata.[0-9a-zA-Z_]*)
+ 		*(.rodata..L*)
+ 	}
+-#else
+-	.data : {
+-		MOD_CODETAG_SECTIONS()
+-	}
+ #endif
+ 	MOD_SEPARATE_CODETAG_SECTIONS()
+ }
+-- 
+2.34.1
 
-Sounds reasonable to me.
-
--Doug
 
