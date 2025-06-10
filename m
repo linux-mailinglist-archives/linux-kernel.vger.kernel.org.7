@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-679546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10094AD3846
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:09:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7E6AD385B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A312E1797CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:04:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E55516AB5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E215929DB9B;
-	Tue, 10 Jun 2025 12:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D976C2D1914;
+	Tue, 10 Jun 2025 12:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jyafR0by"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ujDB7z68"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2CA29DB84
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9382C17B0;
+	Tue, 10 Jun 2025 12:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560322; cv=none; b=aobjQad52VTgRMAqPZZ455hHADS9o44TF8zQz0SHrY8fYaZVhhxvQdNrp1MnOTGbW/SNFMA+zSJGsvRnWBldWI5jBr/J9XPKjJed8wLwfBKIojgByahch8V49YXNpVEHGBE2+PU6jSJLaRSMWVPH53j7VlP1Ssw27TvyTTz6wzo=
+	t=1749560350; cv=none; b=Y39wb7toxWXHPuyfdmb1sSxMRdHRMIwWgA5zCiFTdXO+XI9sCmBFnz5oKtT1sBDpwkjPitE1RBgXwuxahHIpgWWEsBbO1e0WesGGweVPGi+70CpTOzGw9kfJmwoi8OrNjKGmN2B6EwzBboQmMU8uhZvq7v7I2klBtG3bKhvP3ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560322; c=relaxed/simple;
-	bh=fvOlakXshbmzakRbTJCpEkrKBi0FeURoiGYCIMLBZgY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uWKk9ohfoNu/rDU1h3WlKn7uKVM/HrnFEjK2pUBDMHi36oVIBymyFZlTCrNMAmnwobmFlXPPYRpMnWJ8cwaQNag1zZQ7gUZC92soIL+ogG1sqgyKr2mF1U4pFF4qCo/v4kCAmGdZH77CcwlCwDUCALxVJPtDnqubHOaniHW2DQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jyafR0by; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-310447fe59aso52380501fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1749560318; x=1750165118; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PuNZG9GzYspsHj115f3YdhRzMM0n4xwJDNOA1CoppcQ=;
-        b=jyafR0by1Y9K7W4jDncALqMEbQOcaoK26EP6AM53I5ZkWaQnPCd25LhBfdlKzzbkLA
-         SCo73lXvl8CVLEuHU5QEA7ozirSTnxrT35mdWopiowhSL1nsUiSwMf8OlFX1Yj1sPHPk
-         stzEawwtiyAV4S66Ts9YjNXwYu7yyjxe8q4U8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749560318; x=1750165118;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PuNZG9GzYspsHj115f3YdhRzMM0n4xwJDNOA1CoppcQ=;
-        b=dYw3UPnuF6lZEYkv5gn1fpPXYc1Ff5hZ+nOHJKqpt+DyfkzTJa++wFdnGWCIPHVOiC
-         7Kjw96e0GmfAY1EF/fzWMMzuKNa+6INXk4i3Mz4awBjUCyQERcV/Pmm4JyS1Rarb+QBh
-         RLvi+kU7cPTsvcRticFH/zjGeMt9g6U/BX27xRemOpAD2TGAl6lfjuptNx3+omuL6caG
-         DDyD/AQ+/I6HzcE6Y7xHFeYlgF4oX795r3PuCdUL8J13kaXZYYleBm6O8igXO4M6rRRV
-         0QBR/qcuUI/4M3b3dyd0k4+XY+lkv3KS09glQgBsnqWAhZ44/ZNHJd/b8QpJ+/cJwmUM
-         Zt+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUo+TDDNq2LXl8chZYvEcLUogtTJO8xhajJYTmDJDe7CbzvK9d3uOqVLXCI7Gnzbyp02KVjltxAyUQF1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl0D50Tyl5lbxluEgOIWrIEXqBDVLnJA54C4dn83tnGWGcSA0M
-	nmTmgzBy35W3qGri1xkjvAl6sAvhOSF4pRjnTVRqDveY4SKjyIeagwxae1mP0apDpt/yks0KqYQ
-	cYck=
-X-Gm-Gg: ASbGncu8yGe8m1Pi1Go/PxN13LVU4F+a9mrkrZCAEwGdwuLnx24N51H0RVBOV6OLyg9
-	awlJbL7Qp6ujuXIcIHDXldlCh132lakgJvrZ0BqikW3jCzLcGA1+JTn/vE9cYRNy7eibezcxRrn
-	vtUMnW1CAChs3ArgVI6BwgwWr5aGkQ/EKWbksCQZK9103mVcv8KOMMYK4jBT4CfysmMCTR6GD8C
-	CjqeRea2P34Qmmxmtsjn80Nd6y3oeULOJl2QgFELc9yOVb++6utmzY/zRJcN7lgnPIjBbvtaFd+
-	fxq/xlHZwqGoP0+wroiOxeuSmTz12sHFzOehl6kw86A0HPZA4LWhldJ8UziJ8vjQNTWKwia/LoS
-	TyL445EFwMVO3ZjJwBUtoeMDc
-X-Google-Smtp-Source: AGHT+IEtMx4r93OeG2RWFhkjCHpczSO2t+ZTGsJxP2ukgZGfrEVFRdhRPuWvNPViQoh/MyHJP2rXgg==
-X-Received: by 2002:a2e:9c83:0:b0:30b:f0fd:fd19 with SMTP id 38308e7fff4ca-32adfc27738mr30523581fa.16.1749560318128;
-        Tue, 10 Jun 2025 05:58:38 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32ae1b36c8fsm14881701fa.45.2025.06.10.05.58.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 05:58:37 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54e98f73850so5797935e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:58:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUViPhoFMQqEVdEqwLw3er91QzU0Pv0NDkzIkppVawywRwK0we9iG9FbBoNW0cK5YTLNvlqAaaqWZGZagU=@vger.kernel.org
-X-Received: by 2002:a05:6512:3ca4:b0:553:2100:69c5 with SMTP id
- 2adb3069b0e04-55366c38f13mr4292643e87.56.1749560317177; Tue, 10 Jun 2025
- 05:58:37 -0700 (PDT)
+	s=arc-20240116; t=1749560350; c=relaxed/simple;
+	bh=oFMazrCuecngzoa++NkSmIOCoYRid8dS5A/ERnGJBpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWOOKWvX3q1WpRLyacAq9irJmo78J0Eo965EWeL24SXMzVx6EIlfIitRTjU0P5Qk6AzqK7iSdyhQWU5RV760ZEePfFOxfz5QuDSSQxMZZNVHunnjp20deeEEyFN9lKdM+JuQZ4eeyyZ6VUzrSbKJQ+aBd5/yS9EM9PUDqFqYh4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ujDB7z68; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0mN0Y6VG8wJwIHBPmUq5Ichmc5b23YwTM3GHpfC0Ov0=; b=ujDB7z68qrrQWLKAjGzbmCQGy3
+	LdOtDJSTUvPJoAR+dlK+SCrvQO4qgGvAcvh2Obe7Xf1qUhfc6kUAHntYjvGObWD50/ANPKe97yd3y
+	StFdUf5u32nQt5lMjBOlGoqnG9dJYy8rhkzxAKLYPIrFSRwObLsOO0zSTHB4qQv0slmA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uOyYu-00FGk5-Tp; Tue, 10 Jun 2025 14:58:44 +0200
+Date: Tue, 10 Jun 2025 14:58:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Wunderlich <frank-w@public-files.de>
+Cc: linux@fw-web.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+	cw00.choi@samsung.com, djakov@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, olteanv@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, jia-wei.chang@mediatek.com,
+	johnson.wang@mediatek.com, arinc.unal@arinc9.com,
+	Landen.Chao@mediatek.com, dqfext@gmail.com, sean.wang@mediatek.com,
+	daniel@makrotopia.org, lorenzo@kernel.org, nbd@nbd.name,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: Re: [PATCH v3 12/13] arm64: dts: mediatek: mt7988a-bpi-r4: add
+ sfp cages and link to gmac
+Message-ID: <e1a49ca7-f082-4983-89fe-1a8f8c8a3de1@lunn.ch>
+References: <20250608211452.72920-1-linux@fw-web.de>
+ <20250608211452.72920-13-linux@fw-web.de>
+ <934b1515-2da1-4479-848e-cd2475ebe98d@lunn.ch>
+ <trinity-b9ab960d-38f8-4524-b645-fc0832ce72ec-1749546239525@trinity-msg-rest-gmx-gmx-live-5d9b465786-6phds>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250610124111epcas1p18fe9fd8ab47a424c2143d4e2912a8179@epcas1p1.samsung.com>
- <20250610124107.37360-1-yjjuny.lee@samsung.com>
-In-Reply-To: <20250610124107.37360-1-yjjuny.lee@samsung.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 10 Jun 2025 14:58:25 +0200
-X-Gmail-Original-Message-ID: <CANiDSCsaQCJCzfjjnMvVRAde0ZrMZC753y7m2MPQJuK=dVqQBQ@mail.gmail.com>
-X-Gm-Features: AX0GCFujERdSe9Qt4dtGaH_A96BZ3xcvIQGmZPoA67-Hn8NMMl0VJUbIdlsL3To
-Message-ID: <CANiDSCsaQCJCzfjjnMvVRAde0ZrMZC753y7m2MPQJuK=dVqQBQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: uvc: Fix 1-byte out-of-bounds read in uvc_parse_format()
-To: Youngjun Lee <yjjuny.lee@samsung.com>
-Cc: laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, mchehab@kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <trinity-b9ab960d-38f8-4524-b645-fc0832ce72ec-1749546239525@trinity-msg-rest-gmx-gmx-live-5d9b465786-6phds>
 
-Hi Youngjun
+> > sff,sfp.yaml says:
+> > 
+> >   maximum-power-milliwatt:
+> >     minimum: 1000
+> >     default: 1000
+> >     description:
+> >       Maximum module power consumption Specifies the maximum power consumption
+> >       allowable by a module in the slot, in milli-Watts. Presently, modules can
+> >       be up to 1W, 1.5W or 2W.
+> > 
+> > I've no idea what will happen when the SFP core sees 3000. Is the
+> > comment out of date?
+> 
+> at least sfp-core has no issue with the setting
+> 
+> root@bpi-r4-phy-8G:~# dmesg | grep sfp
+> [    1.269437] sfp sfp1: Host maximum power 3.0W
+> [    1.613749] sfp sfp1: module CISCO-FINISAR    FTLX8571D3BCL-C2 rev A    sn S2209167650      dc 220916  
+> 
+> imho some modules require more than 2W (some gpon/xpon and 10G copper ethernet).
 
-You still miss the v2 (v3 in this case). and the trailers.
+Looking at the code:
 
-In the future you can use the b4 tool to take care of most of the details.
-https://b4.docs.kernel.org/en/latest/contributor/overview.html
-It has "dry-run" option that let you review the mails before you send
-them to the mailing list
+static int sfp_module_parse_power(struct sfp *sfp)
+{
+        u32 power_mW = 1000;
+        bool supports_a2;
 
-Please do not resubmit a new patch to fix this, only send a new patch
-to fix more comments for other people.
+        if (sfp->id.ext.sff8472_compliance >= SFP_SFF8472_COMPLIANCE_REV10_2 &&
+            sfp->id.ext.options & cpu_to_be16(SFP_OPTIONS_POWER_DECL))
+                power_mW = 1500;
+        /* Added in Rev 11.9, but there is no compliance code for this */
+        if (sfp->id.ext.sff8472_compliance >= SFP_SFF8472_COMPLIANCE_REV11_4 &&
+            sfp->id.ext.options & cpu_to_be16(SFP_OPTIONS_HIGH_POWER_LEVEL))
+                power_mW = 2000;
 
-Regards!
+How does your module indicate it needs 3000 mW? Does this bit of code
+need extending to read additional bits?
 
-On Tue, 10 Jun 2025 at 14:41, Youngjun Lee <yjjuny.lee@samsung.com> wrote:
->
-> The buffer length check before calling uvc_parse_format() only ensured
-> that the buffer has at least 3 bytes (buflen > 2), buf the function
-> accesses buffer[3], requiring at least 4 bytes.
->
-> This can lead to an out-of-bounds read if the buffer has exactly 3 bytes.
->
-> Fix it by checking that the buffer has at least 4 bytes in
-> uvc_parse_format().
->
-Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
-Cc: stable@vger.kernel.org
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
-> Signed-off-by: Youngjun Lee <yjjuny.lee@samsung.com>
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index da24a655ab68..1100469a83a2 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -344,6 +344,9 @@ static int uvc_parse_format(struct uvc_device *dev,
->         u8 ftype;
->         int ret;
->
-> +       if (buflen < 4)
-> +               return -EINVAL;
-> +
->         format->type = buffer[2];
->         format->index = buffer[3];
->         format->frames = frames;
-> --
-> 2.43.0
->
-
-
---
-Ricardo Ribalda
+	Andrew
 
