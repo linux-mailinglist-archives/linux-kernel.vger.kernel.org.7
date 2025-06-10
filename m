@@ -1,87 +1,158 @@
-Return-Path: <linux-kernel+bounces-679569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A61AD38F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:24:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A312AD38E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56A73B02AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:12:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9DF3BD070
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49EC246BB7;
-	Tue, 10 Jun 2025 13:09:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC4D23ABAD;
+	Tue, 10 Jun 2025 13:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ElJtTHn5"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D538F2D3A69
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E488523AB91
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560945; cv=none; b=Y11+8nCxa30V9U5wsJnZgvp2+C2VVbPFNcHB5U5u0MKhTDq+RltQJ+ViysBHFQKPJdP2B/3zwCwUUIEF41ss3A4lEdqlyrsID2m3qtPlhI5hUlDg1iKzUDpxjQJ4/pV0JS+4lXGuzj1QT5V07qqVN5F6nPth4oFxc2tQkEQ8jSA=
+	t=1749560975; cv=none; b=NHu7p9vr+dCRb3Haw3faw9w6tKpzW4CjJVGxm06G0sOfcxGv9CRwIuimh0KRlaLpLVNNRIl9WZtw5nx8XOiL+p3PMo/twf6UH11Uf5ajzq2A2XXnHhxraAhS4TXdN4WWNvoJT97rUZzWqkOivEKLt0yNWNA+sOxGhCdGO6uHyBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560945; c=relaxed/simple;
-	bh=N21Pj8e1H3gkNGAXJCePbJBcSmrFY3XrntX39WSICaM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PB/VrU0ETgq434XHljlX83cao74dMr8lRk9oZYZ/0WPwUZSqg/jGRDSetD13rADG0xXK6+0xur67TusePehkW1LzKFy1Gjg0zw7C1fkdD/g585Kcr9R94MmNJiqlMfGwHWCfLRaTN0HsonBhcjsuNELxeLTmBWICzQOdJJSsFmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-86cf306fc68so895311839f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:09:03 -0700 (PDT)
+	s=arc-20240116; t=1749560975; c=relaxed/simple;
+	bh=DPKnG3TKgYwS4ZW8XycSxj2euJkWdGU9tFwY5lJRSB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lgv1+xWSGbj7goP0oZM4shbrbdfEBGuk3gaccFuvn2hieAf84M/m05Qk2qV8NxDwOOnH5D/Rsv5AbMOlB+DUy7qjaUeeLqz+ZD0qTOUU4zYCcZEE1yz16CljeM/VLPfhlexrmQqjgdd+SWCJKXsSARxSO+sqYD183nJGhoO44Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ElJtTHn5; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55350d0eedeso5606141e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749560972; x=1750165772; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lHgVganSUXqkPMCFr70WEyU8s9NnpUIxuGsS5BNhkwY=;
+        b=ElJtTHn5L6sVPj/F7Nr0Vo5qhwyVsF4kah0ClqkFvp67x5eOviKkihVeBpYtnwUkxw
+         sYVmL0SXGzVNtk7NBGcbtVtEHrahHPYHIErKotkqsRQBU1ASTVxVtJxN7KoqIUyMXdKG
+         joZwfGxLl+aYvIapVEkvPbfOfTHg6vTySCHP8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749560943; x=1750165743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N34zunht3H8Jmd3lb1JGf6Lms/qVN6ns2F9A9mDcHmc=;
-        b=K45rVVF37DHXXp22PeOncIaK97Xl1yv89cadFKLPstKv5TWmMk8SiKYcvSnOmLKeo2
-         kjijMC27/pBtiRdr0ITg/rCunMHmk9BXDGSdbljIWYdKev91CFcRFj65MzqD1ZT6oKq+
-         06LEWpoC35jhuHLzw6iI4kL4mpfBcmRUBiBS1n+cFB6+A6Xd6bhB14ISOgh39bQMSGDF
-         N5OSo4QWXzNy9eBG8TIUQcj4ji2xfSz3M52zUtvHrnR3gk7srv+hz51Db/k7WhV39z/F
-         pkapAPOpYyty/ltMRMFDqQOsBNfvH6GSetJblu4Gu57NA9hVvGGwMNWfAiaHpJ7g29gY
-         Cnag==
-X-Forwarded-Encrypted: i=1; AJvYcCWZAB8WqzEe4Qd/VWsWvfgmvKzvzuU4x9p4uCftt0mspxmMQvupehMBBUoD0uuHVWxMOevN6gj2EtfEy2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4TyYpuPCr3/mCp4dhOeW1EE80zz2pvnn1OLxKKZfHwsULXVCT
-	uA1B+pmYIG+JPN+01rGbzn1a6Ms5tvss8bdIXrLP/ghg3yEdzqmOjvmyzgNmWTfNYBOkDT361vq
-	sonj6VzMJRG1d4hhNStJnza4iZpEZRLn/RN+at03w8NUgrz+9FT7P5m98Pkw=
-X-Google-Smtp-Source: AGHT+IFF9mpKtLyzahZuJl0C/q72ifot0RbFXUsQCEcsDEts+qWbOqcz6hLPTFmF16zblkydyAGdTIgMz8MgaylmfUicJlUQnArm
+        d=1e100.net; s=20230601; t=1749560972; x=1750165772;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lHgVganSUXqkPMCFr70WEyU8s9NnpUIxuGsS5BNhkwY=;
+        b=Us22G54iwx+S6CbYF9je5luevgkmQtnRH5oc/zTVFZAlxFaogdLN56c94msX0cr8lQ
+         gDVXuU/AJhdYbsngWxVjQWbHkRbmIb4dr8wUPaFk9/CQDIRihwJO+YbormwZQG5QKMQP
+         h+75AXMUBMMh/M0KqxuTC4flclQpgwftP4biTIIFV9rqywv90hBhIC6Rn6BWzgSyxV5G
+         QNLBw8wOy38utIYSnw/pCLExp/fMwxEZlKkzRfQQWQ4jrIFkAcILpbFAIxvkhfd1y00k
+         n5ATWz+q25e1OTJ/c0kuhlJ+eAr0Yf11PPMS8A0wZlT4EwTlL05Nhrh9Pq+mf3cZLVLM
+         E6/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUfkeVNpnh7r5bl4fHN0x4w7U2FgTaajjzyBQ6EAr/Rf3iguVIgzrSYH7xkT8HD8WVsFp/OjmO1BzWNQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTS9VKETCrjcGSfZDCo8h7SZg1+zVW5pR2YdlddNfCQw9OGsQq
+	vCdI68lpC+1shbli+C+Bg5YE15Sz7Zun9GxULG692XsPwcVqUKPgTpEIUtbH/BiEUR2zoLahAS7
+	nWqc=
+X-Gm-Gg: ASbGncvvXv2eOC/qCwbBSOkKzXaKrF0klyLSRU+jukSRWjgUkG07+cOaqNMktVZZCfX
+	3irS7Lat+pn5u6GUQXONniC4k0rAs2HdhmAxZKIZqF0yQTq6mjlhl9ab1/6mJXMJ37sfUiW1iT2
+	m7SopHXzKDbR2Z77ZPCLz0c0NyoeGqCz5q1oDhqfN+mg3Dd7NbutEKv7ofLA2pHNqspiY6Kvjvj
+	8Cfg5IB989nrOCd60HACVMh75nj9eI2nMsJOOBZbjM6zxQjiLoU4vryQrFEEkks0TT93AIiYeuZ
+	OxtBPads1XeEJ08i/FesqegK5NFCuXLzl3AU9402JtuB2dFpyO2ALEaftfm3qmjASkkEU5rXChE
+	KfJGTvyaaMojAnoMfCAqr2LPO
+X-Google-Smtp-Source: AGHT+IFjF2UXG3EIKxuHuRHCeiKAAg6kaXzDU1s6DwQKNXrxDaYUEsu+wb2TPcTvKEtbiUBv5pm5tg==
+X-Received: by 2002:a05:6512:2398:b0:553:252f:adf8 with SMTP id 2adb3069b0e04-55366bd453amr4688789e87.9.1749560971712;
+        Tue, 10 Jun 2025 06:09:31 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553926a7d2dsm399581e87.157.2025.06.10.06.09.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 06:09:30 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55350d0eedeso5606104e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:09:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6wpDJe1h7ldc5mQEOff0ZQBQlYHozXMRN9/F3Gp9fYMJwmnyB047MuDllPLzTDjMjQQum0amkql9AgkU=@vger.kernel.org
+X-Received: by 2002:a05:6512:1294:b0:553:543d:d963 with SMTP id
+ 2adb3069b0e04-55366c30244mr4804636e87.36.1749560970095; Tue, 10 Jun 2025
+ 06:09:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2162:b0:3dd:b5ef:4556 with SMTP id
- e9e14a558f8ab-3ddeddd7398mr29862165ab.18.1749560942922; Tue, 10 Jun 2025
- 06:09:02 -0700 (PDT)
-Date: Tue, 10 Jun 2025 06:09:02 -0700
-In-Reply-To: <20250610124453.1064-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68482e6e.a70a0220.27c366.0064.GAE@google.com>
-Subject: Re: [syzbot] [hams?] possible deadlock in nr_rt_device_down (3)
-From: syzbot <syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org> <aeacb653-efb8-42ed-a7ed-3e7be31b8f9d@linux.microsoft.com>
+In-Reply-To: <aeacb653-efb8-42ed-a7ed-3e7be31b8f9d@linux.microsoft.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 10 Jun 2025 15:09:18 +0200
+X-Gmail-Original-Message-ID: <CANiDSCviy5SjOwEcEM8_1gtvQzFUS3d=S6vFdvZzVqbif7NKfA@mail.gmail.com>
+X-Gm-Features: AX0GCFvQjJu9HZ-Os99-ShsNpf-gTaw_io6WlDFV5wQCq_AZ0qq2K5O0Ohea78c
+Message-ID: <CANiDSCviy5SjOwEcEM8_1gtvQzFUS3d=S6vFdvZzVqbif7NKfA@mail.gmail.com>
+Subject: Re: [PATCH] coccinelle: misc: secs_to_jiffies script: Create dummy report
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
+	Andrew Morton <akpm@linux-foundation.org>, cocci@inria.fr, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hi
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Wed, 29 Jan 2025 at 18:38, Easwar Hariharan
+<eahariha@linux.microsoft.com> wrote:
+>
+> On 1/29/2025 12:06 AM, Ricardo Ribalda wrote:
+> > When running cocci in report mode, eg:
+> > $make coccicheck M="$dir" MODE=report
+> >
+> > It returns this error:
+> > virtual rule report not supported
+> > coccicheck failed
+> > make: *** [Makefile:251: __sub-make] Error 2
+> >
+> > Create a dummy rule to avoid this error and run the other cocci scripts.
+> >
+> > Fixes: 551dbd1ec7ff ("coccinelle: misc: add secs_to_jiffies script")
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  scripts/coccinelle/misc/secs_to_jiffies.cocci | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/scripts/coccinelle/misc/secs_to_jiffies.cocci b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+> > index 8bbb2884ea5d..2d85dca16418 100644
+> > --- a/scripts/coccinelle/misc/secs_to_jiffies.cocci
+> > +++ b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+> > @@ -10,6 +10,7 @@
+> >  //
+> >
+> >  virtual patch
+> > +virtual report
+> >
+> >  @depends on patch@ constant C; @@
+> >
+> > @@ -20,3 +21,8 @@ virtual patch
+> >
+> >  - msecs_to_jiffies(C * MSEC_PER_SEC)
+> >  + secs_to_jiffies(C)
+> > +
+> > +// Dummy rule for report mode that would otherwise be empty and make spatch
+> > +// fail ("No rules apply.")
+> > +@script:python depends on report@
+> > +@@
+> >
+>
+> Sorry about that, and thanks for the patch!
+>
+> FWIW,
+>
+> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
-Reported-by: syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com
-Tested-by: syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com
+I just checked on 6.16rc1 and it is still failing.
 
-Tested on:
+Could we land this while Mark's series is under review?
 
-commit:         f09079bd Merge tag 'powerpc-6.16-2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=104769d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5080a302f3378422
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccdfb85a561b973219c7
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=131b69d4580000
+Thanks!
 
-Note: testing is done by a robot and is best-effort only.
+
+-- 
+Ricardo Ribalda
 
