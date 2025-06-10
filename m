@@ -1,161 +1,344 @@
-Return-Path: <linux-kernel+bounces-679742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE238AD3B3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:34:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93667AD3B40
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A72178FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:34:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 334867AA0DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD941C5F37;
-	Tue, 10 Jun 2025 14:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D8B1CBA02;
+	Tue, 10 Jun 2025 14:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="uXRrrlKv"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b="SMWeMS5N";
+	dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b="SMWeMS5N"
+Received: from ZR1P278CU001.outbound.protection.outlook.com (mail-switzerlandnorthazon11022095.outbound.protection.outlook.com [40.107.168.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFA919B3CB
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749566043; cv=none; b=LY4DR4bKTcZuB2oAvp+2QbWIREDSaJJmU2Qwzn5EkLAKSqfKaKZ7/MPhkZ5ChviM5CjLClEs77t2q1ZxuldXdn4412S5goe8UhybUv5/GwWqYBLEkUvVtYLB/KPs4TbYPHyai/JaUQft/HfD13tMnE/RvgIZ3ny4riM+pOqm/dk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749566043; c=relaxed/simple;
-	bh=pAKxeGee5hYim+nL+Rs/49E6KsFoJV+dqj4fAlLpzDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmplrMd2kSRe6W5F3JAzuSoLmxzTdY22qJ95lAmN8BWDeqCB6Noj4UKz5kpWAyBDwy7K1lR7qj1n2z9+peXE3DV/LAO+OIevBqDrwH/ZhOuNo/Wwof2zX0G7B3WRu4TXj4wE+yUn9TTjfQ6ku1MbeA1oCbM+0VGnvkTEPIrsXpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=uXRrrlKv; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-8731c3473c3so144776439f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 07:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1749566038; x=1750170838; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ekBoU2yYMPWW4Dnqk5aHWEL3RevwpBEXg8v1UkgbqYY=;
-        b=uXRrrlKv/v4gNahOzqz2E5Iuz1IU2B8im4X3TOliFz27x8J95njyKsICvm7Jt7dmot
-         SgfCoyEbVWFMRM3nuxgoEsK0i47H/4nhMq+U2vyQQEevJRw9LBfpGGLSeh4DopgaosNC
-         ndZ1nW+4su8sHsK9iPHhSlYKQ4PMoIrr55X+d0q1tO+LVjrp/M0zSYA5XuIaroLl9VcW
-         /pXA5UUumzzQurtNSsajRB+kO7Ux9vJeEfH9VXX2NbLRCO8sE7s20TzYgpSYUSLh1vve
-         hn5NYbcmA7Sp0No/VO3y6pjFzZqbitveFRSk4N9Yd9wkWarSQcgwoCgbMEHZxRV+R+F1
-         DxtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749566038; x=1750170838;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ekBoU2yYMPWW4Dnqk5aHWEL3RevwpBEXg8v1UkgbqYY=;
-        b=ZvMFzI7Dwggnsd5A8ZK+ZpVS0gK0BVd6JcUS4NrxTIPSgbxzWa3mG+32whrIvu4U5p
-         1KJnyhe4brPih6Jwzy8BQ4R1XgL1PoLVJ1WNkLvSTIOrT6140QpG/84soSqHkww+xfKI
-         bNkNi5mYT/nbPVZ2d3e8QmaORSG9Vsy+7fHD/OKccEFUoNyGXpyNku8NaQunMCPeJw26
-         F4miMijra/FvcHJqtlk1YBHRCrN9lkZnLAdB1Co9aegbM1QfX6YnnKMc8MzKBhampa23
-         XaO13QoFfwC7gkehNfZlrsEsgakEFMW3KBmXgjRC1nSi3qdexyjamaT19z6R6i44J0/6
-         b+3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBZ+m0HYUjvtcnXf7IC4JRMXMbuadKgu0p7mczEPpau0x0y7G7vuntgw90JMYl733rNLpuizlC5nLQU/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5gvMnXQzRuuuJrxtDcD6H8pPram/0U3VBR9p5ZZUY3jJC310
-	tvoqxilTVz2zhqHttjAut1JbHRQA91hubjspd3MgQzHzCpy+PmdCR7EymRR6rxYb5yM=
-X-Gm-Gg: ASbGncvlBC1nc/0CmIy/e0ZUHWLgbA0+AwHIpJC5Wld3D94ElurCma1/SYFaBpIoh4B
-	t4KV/lSDjJo2/+fA7tx2pcXFY/5qs+diJEf1J5B0qu0NAnn/9ahTYhqf8HAMHPmLBsEQUAZoDmM
-	FrAbtUa/gWTojLlbgYnx2T3H1LTyf74idP/tjHSnvG0pdfgFms8pMkzlZHQg/xt3eD0G8hT/FjF
-	/WcJk2oROEGlfEdj+I8i8NP3K7ayn9jnLw3xhXTlfk52cXZY1YRi/S320R4gJXilN/hyFWfMHeV
-	VmLB4V/H4DnmMx6BeTlFUPdKva9Juu12da1RvDarMePnZk+NrOg0bSM0jic=
-X-Google-Smtp-Source: AGHT+IFtnHWEz/+j2BG9QS02+XZtsC51R6Y1Jc7tbT048c7lAH39CFIlkqW/kelKNrFEkzXDFWCCdQ==
-X-Received: by 2002:a92:c242:0:b0:3dd:89dc:ab07 with SMTP id e9e14a558f8ab-3ddce3ef67fmr186968655ab.8.1749566038458;
-        Tue, 10 Jun 2025 07:33:58 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-500df6102e3sm2315805173.128.2025.06.10.07.33.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 07:33:57 -0700 (PDT)
-Message-ID: <ab764b69-6b94-4163-b114-f4889a043040@kernel.dk>
-Date: Tue, 10 Jun 2025 08:33:56 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B1819B3CB;
+	Tue, 10 Jun 2025 14:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.168.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749566122; cv=fail; b=VLJ4UaIHQpOSuLEuWb6+QeKXfHPXukN1QZYZHtos+gg2pyrS9aVRJBANKiZykQAainvbNVXJlsrXFlDbwaf4QxIyFS1Va8r823b2OxKhRfOmE0r25HBxd6eW6HZDlLlZe073sN0zhX+ZUpNHNmLfG7pSkIgOkc7n5Offu8D7hW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749566122; c=relaxed/simple;
+	bh=THuRUf/XXaDYvY9H7MecLZ7oEXJ8DpAo9CuwLdwj0SU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pC1zlRoisTfFlCw13hNSEGCwc6jvFLxRM8Izyq7LcaevWRW+m1hBazLzsKdD0Qzpju4qWO4utUWua1bfVHqoQ7MwA79+xIgu4sWMxqTxFUe4ypW6sqAYMicZQr1doS+KXnodNmGp6paO7nJze1nBTaBBXSeFcRPua21wwHTniyw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cern.ch; spf=pass smtp.mailfrom=cern.ch; dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b=SMWeMS5N; dkim=pass (1024-bit key) header.d=cern.ch header.i=@cern.ch header.b=SMWeMS5N; arc=fail smtp.client-ip=40.107.168.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cern.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cern.ch
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PkwcMxAIIyvJggpXPtu1XFWKN+uB3A00wju2ZpPSEJSBMiFihiRvD2pRsgdZoLIRnm4lbP2gUiPaEAXZfEBFGdR3NyvtV8qIjdrMyQNn3utGSZ8tZtcOl0op/AXl3loKFIs6uuqGDmMo0GkUxxGaDkJcbxh1g/tZzWGl/IW2CXBTbtjjSzQsJpndD3Vilfp3x06J2Lp9QEXYxd4jPseS6vrG0D2yKtuEA6Rc7ilPdC4wq3yw38VLwA4vDLndE8KlLHl/QYIbSo+LJ9jWIedg/Pq0115MNTJUcrTTcPm1TzUU85OC4m+x32F2TY2gHKf5KbZLPq//gGszarwt2HgSCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5erEqAJiH55ZhEYur4vpuW3hHu2HJ5bVoDrEeJjqLJ8=;
+ b=xxdex9aUkNKpO3v0CNafyIcLqhsOKQmttNKzaMQMY414wng81xBgEbsqB0TL11AbBOz7ZQ8KFpj8aPZg/Uv+zaJOExQBps7KgRsaOEDcQPbQzzcLbwqXvoLCMrjlNTG40rT9bajEFWEGTZG4QjfIP0VQ7xIXKhEacNVoIM5YLTIe/fRJ0tM7oRyrnK6apSGBri4QS2HZ82gV1FRrxeKaqTvGjwjbDTpnXS/En8y5u9cYTtC9X5DZJ1765sdbTxGP9XIjzah6KPWcsvFe8z1qx/kmdlEW6+2D+biFdYeLyWQ91jSmMALTpo+NydTO+Oc7BWExQPB+OUs9s8s1r++bEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 20.208.138.155) smtp.rcpttodomain=davemloft.net smtp.mailfrom=cern.ch;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=cern.ch;
+ dkim=pass (signature was verified) header.d=cern.ch; arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.ch; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5erEqAJiH55ZhEYur4vpuW3hHu2HJ5bVoDrEeJjqLJ8=;
+ b=SMWeMS5NPbv531gx/yVdGew5plamSCA+Mctm+Pa2XHq0uRpa1KaIS0/S21AzwX4wVW2l41cymwi2qkEprnrPKeUtkHLOvV8iPL/Y4OvfuqKxOsA9+E3PoxfltF2yReMnoGPUAh1E73QAvjxr1zJAr6kqe/ShBJgKxGvXun47qrA=
+Received: from PR3P193CA0006.EURP193.PROD.OUTLOOK.COM (2603:10a6:102:50::11)
+ by ZR1P278MB1151.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:59::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Tue, 10 Jun
+ 2025 14:35:15 +0000
+Received: from AMS0EPF000001A7.eurprd05.prod.outlook.com
+ (2603:10a6:102:50:cafe::17) by PR3P193CA0006.outlook.office365.com
+ (2603:10a6:102:50::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Tue,
+ 10 Jun 2025 14:35:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.208.138.155)
+ smtp.mailfrom=cern.ch; dkim=pass (signature was verified)
+ header.d=cern.ch;dmarc=pass action=none header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 20.208.138.155 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.208.138.155; helo=mx3.crn.activeguard.cloud; pr=C
+Received: from mx3.crn.activeguard.cloud (20.208.138.155) by
+ AMS0EPF000001A7.mail.protection.outlook.com (10.167.16.234) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.15
+ via Frontend Transport; Tue, 10 Jun 2025 14:35:12 +0000
+Authentication-Results-Original: auth.opendkim.xorlab.com;	dkim=pass (1024-bit
+ key; unprotected) header.d=cern.ch header.i=@cern.ch header.a=rsa-sha256
+ header.s=selector1 header.b=SMWeMS5N
+Received: from ZRAP278CU002.outbound.protection.outlook.com (mail-switzerlandnorthazlp17010002.outbound.protection.outlook.com [40.93.85.2])
+	by mx3.crn.activeguard.cloud (Postfix) with ESMTPS id E691D808C2;
+	Tue, 10 Jun 2025 16:35:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.ch; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5erEqAJiH55ZhEYur4vpuW3hHu2HJ5bVoDrEeJjqLJ8=;
+ b=SMWeMS5NPbv531gx/yVdGew5plamSCA+Mctm+Pa2XHq0uRpa1KaIS0/S21AzwX4wVW2l41cymwi2qkEprnrPKeUtkHLOvV8iPL/Y4OvfuqKxOsA9+E3PoxfltF2yReMnoGPUAh1E73QAvjxr1zJAr6kqe/ShBJgKxGvXun47qrA=
+Received: from AM8P191CA0029.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:21a::34)
+ by GV1PPF84DEB8E9B.CHEP278.PROD.OUTLOOK.COM (2603:10a6:718::21d) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Tue, 10 Jun
+ 2025 14:35:10 +0000
+Received: from AM2PEPF0001C70E.eurprd05.prod.outlook.com
+ (2603:10a6:20b:21a:cafe::29) by AM8P191CA0029.outlook.office365.com
+ (2603:10a6:20b:21a::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.35 via Frontend Transport; Tue,
+ 10 Jun 2025 14:35:10 +0000
+X-MS-Exchange-Authentication-Results: spf=neutral (sender IP is
+ 2001:1458:d00:65::100:ac) smtp.mailfrom=cern.ch; dkim=none (message not
+ signed) header.d=none;dmarc=fail action=quarantine header.from=cern.ch;
+Received-SPF: Neutral (protection.outlook.com: 2001:1458:d00:65::100:ac is
+ neither permitted nor denied by domain of cern.ch)
+Received: from exonpremqa.cern.ch (2001:1458:d00:65::100:ac) by
+ AM2PEPF0001C70E.mail.protection.outlook.com (2603:10a6:20f:fff4:0:12:0:a)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.15 via Frontend
+ Transport; Tue, 10 Jun 2025 14:35:08 +0000
+Received: from cernxchg92.cern.ch (2001:1458:d00:6f::100:187) by
+ exonpremqa.cern.ch (2001:1458:d00:65::100:ac) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37; Tue, 10 Jun 2025 16:35:08 +0200
+Received: from cernxchg92.cern.ch (2001:1458:d00:6f::100:187) by
+ cernxchg92.cern.ch (2001:1458:d00:6f::100:187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37; Tue, 10 Jun 2025 16:35:08 +0200
+Received: from srv-b1b07-12-01.localdomain (128.141.22.62) by cernmx.cern.ch
+ (188.184.78.238) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37 via Frontend
+ Transport; Tue, 10 Jun 2025 16:35:08 +0200
+Received: by srv-b1b07-12-01.localdomain (Postfix, from userid 35189)
+	id 1F8D744D5AC1C; Tue, 10 Jun 2025 16:35:08 +0200 (CEST)
+From: Petr Zejdl <petr.zejdl@cern.ch>
+To: <petr.zejdl@cern.ch>
+CC: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: ipv4: ipconfig: Support RFC 4361/3315 DHCP client ID in hex format
+Date: Tue, 10 Jun 2025 16:35:03 +0200
+Message-ID: <20250610143504.731114-1-petr.zejdl@cern.ch>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring: fix use-after-free of sq->thread in
- __io_uring_show_fdinfo()
-To: Penglei Jiang <superman.xpt@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+531502bbbe51d2f769f4@syzkaller.appspotmail.com
-References: <20250610111721.37036-1-superman.xpt@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250610111721.37036-1-superman.xpt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 1
+X-MS-TrafficTypeDiagnostic:
+	AM2PEPF0001C70E:EE_|GV1PPF84DEB8E9B:EE_|AMS0EPF000001A7:EE_|ZR1P278MB1151:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c31d0f2-a300-493f-ad88-08dda82c0273
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026|10070799003;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?HawScXVq1GyJmzQVRx07w9CUe3wbyoi4VxyYHLqAwvqlgxwC181/j6+eP+Wu?=
+ =?us-ascii?Q?1px2IZlAgWn4ct90MdzpdATFdySKhQjVDSyFu66QEYCs1vXXg+POAuWlo5bC?=
+ =?us-ascii?Q?W8OFUB/WxcZEF0y8BtVQTJ0KwMRJ5WxC1Y0tDCpBNHbpWv1nPr+x+wfHmo0+?=
+ =?us-ascii?Q?AAtdRW6qLPcAp11U2PV0aHSsYho9ZmHV8zyw97ghbDgCPY/szlTVeZYah5XF?=
+ =?us-ascii?Q?FbmQzPUwHfNIJU0qmeKhtVoZ0LKbBi//iGk/PU46gZE9xC35WsPeTSa2WwdY?=
+ =?us-ascii?Q?4GcUFueLILEjO2ZHe5zvmUetI+Hyvrvf3HJ15HRthDGVAtuMjhYSR6GunLXz?=
+ =?us-ascii?Q?FJOewmvTlfHh+WlXC6hzBkJWIBwE3T+BTzP6Hs3Ye9DEOzeqvEsLqrqWu4FL?=
+ =?us-ascii?Q?Dcp1QPUrea3n8aoehr2nYH3k8CBCBTnMmDfMKuY8rKGYQX+hL1BGZu2Kqk4W?=
+ =?us-ascii?Q?DWLUXBFtX/150TZlvogl8FAPP/Auu/m0xjemlwlY/5r+MTgNT1EZsbosgZ9q?=
+ =?us-ascii?Q?Qkp4yuRvaYNt7yBSWaTPLV2JPombZ8Vv5iAxeNKnMJQjrizjdU53ALj+9ph0?=
+ =?us-ascii?Q?IIMypT95qpqb53R2eAwZiEh6CDVCtDkmbXUnerhYhrL+EmIAw35gvrVUbjbJ?=
+ =?us-ascii?Q?7/wNjgPgLeCZ8lo7GR5uvGjGzKCqEWjuwg8z0Mc+z3a1naRfRwoxePvFlFS2?=
+ =?us-ascii?Q?N0tAxagFKuH3nNMXpcS4GYODy1PqDp+xxWnv0/+5i9ncoOgk+n1wSZ+AmiG9?=
+ =?us-ascii?Q?eYfgIFtkttlw0ExKH0dq0md4qVUKgxrKU0vMGnD7lvXLb4QmEkXRHRRs3FQE?=
+ =?us-ascii?Q?Tjuruc50e/DvUDTBP7tQcPNTHh8VjlD6ixz1/FqZH6AOOWwyWzOV1Dbo7bzC?=
+ =?us-ascii?Q?EA7d6g4R0u59Q2YVYO64xzGzoO7OAl/hrvSeLL/ikm0d5CQ+j3y5YaR+1w2t?=
+ =?us-ascii?Q?AMXswVCJ/K3fDSJpD1E/Abft8m+7hTpgtPBSfHbNx7wSGODXGrk8WsPNhyDk?=
+ =?us-ascii?Q?t8gh4V0rkTIv/jEvFBvK2b9+jyEqrME5xgjrHashGDuQjokn+x6/n+m25nSz?=
+ =?us-ascii?Q?p2am6Ilrp4Hs5AexGVQ8uZC6LQhFzxvh3mA7hl/q60vSXSzl9mNkuxvQo4lk?=
+ =?us-ascii?Q?ND/NrrBtE/d3gSKfE4+KsSBJ6u7ddvnENlvIYrvpG8jI9CFC+//eKGdUXEwx?=
+ =?us-ascii?Q?sOwOr0L0zZ7iJ64co8bKUGGMiytg2RBJzcKQuWc9pEIwrMG/+wrRgI6Cgm/R?=
+ =?us-ascii?Q?wcpLE5D6ZTb+tYuQ5GnkzipAlfyf4wlilTSud28kuecV1GyHCYUThzC4ziY9?=
+ =?us-ascii?Q?+JRl3ZVSRK8/n+NvE7B5J6QvJ7V4neYnshOGs/TVyQ48hbRPf20hbuxUqWjT?=
+ =?us-ascii?Q?dpADTp8XqxUKoZ0VJT9xcUF2Alz5s+pNuoC6ihaQ069/Qjn4hbzUE2yZf8yV?=
+ =?us-ascii?Q?N4Z0CdyL2XpZaRVYPUH60ehA/036jVbH2liojw6BYNiVDTroktp0Yym95G9T?=
+ =?us-ascii?Q?8x7eso4xEBP130aMgvAvVu9At7GpP8gMLbVV?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:2001:1458:d00:65::100:ac;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:exonpremqa.cern.ch;PTR:cernmx22.cern.ch;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PPF84DEB8E9B
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF000001A7.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	f095286d-832a-4c1b-ed8b-08dda82c001d
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|35042699022|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XkFv5T+uc3bj9bxQenCNYlb8BDlyR/xPIOxsbf9Ktdac0mbxzMOJ+cyFU5WT?=
+ =?us-ascii?Q?o7G97GJh6xMelTTBoEldnn8aaAM2fEUmN/DXtjd7pAuoL8bndKp7p1f0DrIB?=
+ =?us-ascii?Q?IYGmiEwmDFf/6y2THm9BwgI9vLY55L3jpEMArnfcsES4sKZ4moxkrpP6rwiD?=
+ =?us-ascii?Q?4lVcW5onVeFTlNRhB9xHeq3HCB/kL0ghUYwXM/meTvSPcZdJlBVW8Thq+kip?=
+ =?us-ascii?Q?LdARnFGupPXgpKCX1vwDH9+KgonINQ8egdYTbwBPnZ6k+sy84kMCM9FajNWn?=
+ =?us-ascii?Q?MBVa+x+noW4lE4YOgTcAfhbfLHkbZ9KCDP2KUXcRPREH6loRlF9HRtFqznXp?=
+ =?us-ascii?Q?DO59L1KeBHrDXl6PF0Sev0s1XaUEj1BM1rSKFJ/0wiNQcoUc8NPrFVnMJt72?=
+ =?us-ascii?Q?eWnGaYRlX6Ynn6mSWCK9t5nrQLygy78PObLvrOLTVObNhX8Fr7so7geir0YW?=
+ =?us-ascii?Q?xRWaYMpEVunzEFGbCokhr5ap1w2WZHBbejvaFSYmY69imNoqybA5IJ0K+jnO?=
+ =?us-ascii?Q?KKCZWSo6caSkAnl1+4sYbMsXfC/wJB+g+I6fB4XZYocVs3VXwNIyg194S2Gx?=
+ =?us-ascii?Q?JOPugTjL7W/pQtEFe9KfH/ofgRN1HNbA1a0zoLWzoS64Cy3oKgRh0IQmF7Sf?=
+ =?us-ascii?Q?bEtgJhPMjF/MVvYFDKfGplyKKeo6h7X8MIUnwXiBcaLPSFiXcyd+dn3SkLuj?=
+ =?us-ascii?Q?pp4rcEg58lOaLBprK6fIbJQcROE5Xog1ZX6CN3ME2fwNsbzBhv/aRcJ7DUB8?=
+ =?us-ascii?Q?wWvgqQ75IlYCO0tA9wAcXE5fjR/YAvX1d3ChogxEEXQQaHICeUov1bVpqjDV?=
+ =?us-ascii?Q?+eGRa/JUUs+hh3dDdTtoQXBX/NVAVlophC9g7684LYHZ01tDToDRfV+j7t8T?=
+ =?us-ascii?Q?6hbTp912uNXae+Z8sPqU/M1lSBooUMHxg7fj3yt879A1h01Hwg0oBdkOp8fk?=
+ =?us-ascii?Q?GrbQ/YThNBOgqqXDygt6XsheT8RQHWUl39c8ilU/tAW20OnCWoyafjFQJO8W?=
+ =?us-ascii?Q?+GsLZYON2/WUveBrpxPmTuMmeOITckvfioCiYhVbWmF/zKQRg8AK80++1XBM?=
+ =?us-ascii?Q?RKWZbHEDlD+2zzZ3oMj55HIaN3iPxJ3M5iqQfkVmQpyJk6ewgHOfEmiEY50V?=
+ =?us-ascii?Q?ukZHhxuCd9Ql+m3UW/aB6aBbRlySMKLYl1DoUwt4UtStk3k9JH4mXygLrFAL?=
+ =?us-ascii?Q?f78TD8/rvsIT9bt8yzoFh8EWJGR3dSD4ixwFxSoMSyspCfWkPZd+ER8VOsCI?=
+ =?us-ascii?Q?yqAiwMP3WtVulNW/zGM/4Ah0FW3/1RHYqfdLPoFkg1yRzXGRYbxFN5e4FpXF?=
+ =?us-ascii?Q?oNK1CZf8e3uzeqDOkN/kjf5gWAEA07XbwxBFCdN+cEWSaMQhW/xBXQxQU0Ci?=
+ =?us-ascii?Q?tMTM8TF1Je/JutC2aSprs6nHvM0GC0vBu9zcVVmga/lfFqKFXBs0CQT8RZHm?=
+ =?us-ascii?Q?1Lyjrs45Ein8Y6gDQcWquXLgLtB2ruqW+AyHCIREy1oGCu40r5bxYGo5var4?=
+ =?us-ascii?Q?VWq/uVUyWjfi5GEBaMPz1Rj857o6MT3V2J9J?=
+X-Forefront-Antispam-Report:
+	CIP:20.208.138.155;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mx3.crn.activeguard.cloud;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(35042699022)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 14:35:12.8777
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c31d0f2-a300-493f-ad88-08dda82c0273
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[20.208.138.155];Helo=[mx3.crn.activeguard.cloud]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001A7.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR1P278MB1151
 
-On 6/10/25 5:17 AM, Penglei Jiang wrote:
-> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-> index e9355276ab5d..2911352bbae1 100644
-> --- a/io_uring/fdinfo.c
-> +++ b/io_uring/fdinfo.c
-> @@ -141,19 +141,23 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
->  
->  	if (ctx->flags & IORING_SETUP_SQPOLL) {
->  		struct io_sq_data *sq = ctx->sq_data;
-> +		struct task_struct *tsk;
->  
-> +		rcu_read_lock();
-> +		tsk = rcu_dereference(sq->thread);
->  		/*
->  		 * sq->thread might be NULL if we raced with the sqpoll
->  		 * thread termination.
->  		 */
-> -		if (sq->thread) {
-> +		if (tsk) {
->  			sq_pid = sq->task_pid;
->  			sq_cpu = sq->sq_cpu;
-> -			getrusage(sq->thread, RUSAGE_SELF, &sq_usage);
-> +			getrusage(tsk, RUSAGE_SELF, &sq_usage);
->  			sq_total_time = (sq_usage.ru_stime.tv_sec * 1000000
->  					 + sq_usage.ru_stime.tv_usec);
->  			sq_work_time = sq->work_time;
->  		}
-> +		rcu_read_unlock();
->  	}
+Allow specifying a DHCP client ID in the hexadecimal format resembling
+MAC address format (e.g., "01:23:45:67:89:ab .. ef").
 
-Don't think this will work, if we're racing with the mmput and then end
-up doing that inside an RCU read locked region...
+The client ID can now be passed on the kernel command line using:
+  ip=dhcp,<hex-client-id>
 
-> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-> index 03c699493b5a..0625a421626f 100644
-> --- a/io_uring/sqpoll.c
-> +++ b/io_uring/sqpoll.c
-> @@ -270,7 +270,8 @@ static int io_sq_thread(void *data)
->  	/* offload context creation failed, just exit */
->  	if (!current->io_uring) {
->  		mutex_lock(&sqd->lock);
-> -		sqd->thread = NULL;
-> +		rcu_assign_pointer(sqd->thread, NULL);
-> +		put_task_struct(current);
->  		mutex_unlock(&sqd->lock);
->  		goto err_out;
->  	}
+This format is the same as that used in ISC-DHCP server configuration,
+allowing compatibility with widely used user-space tooling.
 
-You do this in both spots, why the put_task_struct(current)? That seems
-like that would be very wrong and instantly break. Did you run this
-patch?
+This is a backward-compatible extension to the existing:
+  ip=dhcp,<client-id-type>,<client-id-value>
 
-I do agree that there's an issue here though, let me take a closer look
-at it. This would have been introduced with the getrusage change though,
-no? This one:
+The existing format expects a text string as the client-id-value,
+which is not compatible with binary client IDs. This adds support
+for binary client IDs as specified in RFC 4361 and RFC 3315.
+Binary client IDs are used in embedded systems, including geographical
+addressing schemes (e.g., HPM-3-style client IDs in ATCA crates).
 
-ommit 3fcb9d17206e31630f802a3ab52081d1342b8ed9
-Author: Xiaobing Li <xiaobing.li@samsung.com>
-Date:   Wed Feb 28 17:12:51 2024 +0800
+Signed-off-by: Petr Zejdl <petr.zejdl@cern.ch>
+---
+ net/ipv4/ipconfig.c | 63 ++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 54 insertions(+), 9 deletions(-)
 
-    io_uring/sqpoll: statistics of the true utilization of sq threads
-
-as that is the one that added prodding at sq->thread from fdinfo.
-
+diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
+index c56b6fe6f0d7..000d918cc811 100644
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@ -146,7 +146,8 @@ u8 root_server_path[256] = { 0, };	/* Path to mount as root */
+ static char vendor_class_identifier[253] __initdata;
+ 
+ #if defined(CONFIG_IP_PNP_DHCP)
+-static char dhcp_client_identifier[253] __initdata;
++static u8 dhcp_client_identifier[253] __initdata;
++static int dhcp_client_identifier_len __initdata;
+ #endif
+ 
+ /* Persistent data: */
+@@ -740,15 +741,22 @@ ic_dhcp_init_options(u8 *options, struct ic_device *d)
+ 			memcpy(e, vendor_class_identifier, len);
+ 			e += len;
+ 		}
+-		len = strlen(dhcp_client_identifier + 1);
+ 		/* the minimum length of identifier is 2, include 1 byte type,
+ 		 * and can not be larger than the length of options
+ 		 */
+-		if (len >= 1 && len < 312 - (e - options) - 1) {
+-			*e++ = 61;
+-			*e++ = len + 1;
+-			memcpy(e, dhcp_client_identifier, len + 1);
+-			e += len + 1;
++		if (dhcp_client_identifier_len >= 2) {
++			if (dhcp_client_identifier_len <= 312 - (e - options) - 3) {
++				pr_debug("DHCP: sending client identifier %*phC\n",
++					 dhcp_client_identifier_len,
++					 dhcp_client_identifier);
++				*e++ = 61;
++				*e++ = dhcp_client_identifier_len;
++				memcpy(e, dhcp_client_identifier,
++				       dhcp_client_identifier_len);
++				e += dhcp_client_identifier_len;
++			} else {
++				pr_warn("DHCP: client identifier doesn't fit in the packet\n");
++			}
+ 		}
+ 	}
+ 
+@@ -1661,6 +1669,33 @@ static int __init ip_auto_config(void)
+ 
+ late_initcall(ip_auto_config);
+ 
++#ifdef CONFIG_IP_PNP_DHCP
++/*
++ *  Parses DHCP Client ID in the hex form "XX:XX ... :XX" (like MAC address).
++ *  Returns the length (min 2, max 253) or -EINVAL on parsing error.
++ */
++static int __init parse_client_id(const char *s, u8 *buf)
++{
++	int slen = strlen(s);
++	int len = (slen + 1) / 3;
++	int i;
++
++	/* Format: XX:XX ... :XX */
++	if (len * 3 - 1 != slen || len < 2 || len > 253)
++		return -EINVAL;
++
++	for (i = 0; i < len; i++) {
++		if (!isxdigit(s[i * 3]) || !isxdigit(s[i * 3 + 1]))
++			return -EINVAL;
++		if (i != len - 1 && s[i * 3 + 2] != ':')
++			return -EINVAL;
++
++		buf[i] = (hex_to_bin(s[i * 3]) << 4) | hex_to_bin(s[i * 3 + 1]);
++	}
++
++	return i;
++}
++#endif
+ 
+ /*
+  *  Decode any IP configuration options in the "ip=" or "nfsaddrs=" kernel
+@@ -1685,12 +1720,22 @@ static int __init ic_proto_name(char *name)
+ 
+ 			client_id = client_id + 5;
+ 			v = strchr(client_id, ',');
+-			if (!v)
++			if (!v) {
++				int len = parse_client_id(client_id,
++							  dhcp_client_identifier);
++				if (len < 0)
++					pr_warn("DHCP: Invalid client identifier \"%s\"\n",
++						client_id);
++				else
++					dhcp_client_identifier_len = len;
+ 				return 1;
++			}
++			/* Client ID in the text form */
+ 			*v = 0;
+ 			if (kstrtou8(client_id, 0, dhcp_client_identifier))
+-				pr_debug("DHCP: Invalid client identifier type\n");
++				pr_warn("DHCP: Invalid client identifier type\n");
+ 			strncpy(dhcp_client_identifier + 1, v + 1, 251);
++			dhcp_client_identifier_len = strlen(dhcp_client_identifier + 1) + 1;
+ 			*v = ',';
+ 		}
+ 		return 1;
 -- 
-Jens Axboe
+2.43.0
+
 
