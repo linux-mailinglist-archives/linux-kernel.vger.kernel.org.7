@@ -1,279 +1,218 @@
-Return-Path: <linux-kernel+bounces-679806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C8AAD3C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:02:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DB4AD3C44
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA140189F10E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9265817D92E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6175E23D28E;
-	Tue, 10 Jun 2025 15:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694EF23C50E;
+	Tue, 10 Jun 2025 15:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/ztvJYg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddxdvx+G"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F39B23C508;
-	Tue, 10 Jun 2025 15:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AC4239085;
+	Tue, 10 Jun 2025 15:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567602; cv=none; b=ffJoY6N0StlrBnFTjMB+oVG0fU14rfdQFTQhIjBPMHA0CDOdzr91M+CoVqnIUPaDE8ryX8iKwPpq6niJb4qOM0yA1A8wWJt7bTsP/fPF9/vt7QcktY2ev3ayj81N9bhn9VOpkI4lh0Sq8K4SW0sb+dbCeq1Fj3DQdk4QMK0OiVE=
+	t=1749567795; cv=none; b=nhEggROgr+GNy3e6z8F+dehZ9i5RQTN7IiGD1xZZtYo7osl15Hx6PppmOPzKFcfhlhlaNQdiq2/MA2a9gya4RoZVRtj/WP6WIMhHdQKag33Uta/EDpPloR6OpTMwQOWkgd8RShsYsSJqi1TqoHjR3i798uFGY5N92bOUcodmSak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567602; c=relaxed/simple;
-	bh=PbVv7f+KnjGsewIY799KTzuzC1xM5lRrR6nixzVLSbo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N+aeLipj8Fc9C0s4XHB1BKj9RLjZIQCVYGIHhm7sr68TGEn09XOjhQ/rTXYneH26kCV8UfsbyoELngYBkR7UrRUZtg9yVP9S7kUytcFEZyQORdSkSt6jtrkCwXWl204Q88jqbrTRPZF681lW/bBdeXuqYLqaKlNa0wsBGlpkMKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/ztvJYg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23447C4CEED;
-	Tue, 10 Jun 2025 15:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749567602;
-	bh=PbVv7f+KnjGsewIY799KTzuzC1xM5lRrR6nixzVLSbo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=r/ztvJYgooNVr0yTCdY8xpRdHdnJBbBqnW6i6njVIPtZKF5basi7Tf/7mVNj2nHKR
-	 P0AzW74k1S0q9bhLP6fBdmtYrdnG0cQO2pTQQN4MWUUiqymZifv0pUGby/5NIloFvx
-	 /GtNBvgKlKNemWvOLqApqtAgJSMEENySRRLy8ml09O14L0xi3mFApfQpIth763ozb0
-	 g6x+btyzi+813kgSDb8jleaAO2uN2yPXlRuwGemIXgKl4OJmhCrVUCx909Kag18VXN
-	 4Z0pR9qNhso1RpAuALM/bD+HYI3tCnbFPDE3EkkCYqQewcIvGJ/61YSe8fTN8FNXCV
-	 WfM8A08bX9Niw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 10 Jun 2025 10:59:29 -0400
-Subject: [PATCH v14 9/9] ref_tracker: eliminate the ref_tracker_dir name
- field
+	s=arc-20240116; t=1749567795; c=relaxed/simple;
+	bh=fLM1J7jVqqiZf/ld7d1JFGfRWVz+teNjK6y084/tbPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jol19xdslwFNbi0pe7miihJGHBB/3c80Kd0fqqx1AcirLTjrohoRckvyQmtjLp2df0uzu+DrCko1Fkbv9yaFZwh9XjVGC7i6VWQvgNIXgRTPnpek2a6Ki5S+v+SJx75UUFXxDa3kOb59DrxwxiOmRvvwy5/ZrwyMFHh9QEA6NiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddxdvx+G; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60727e46168so9597590a12.0;
+        Tue, 10 Jun 2025 08:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749567792; x=1750172592; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oudxA8JPC06HRjXurKEPIdr/6i2EGFIADSPFZLQo5s0=;
+        b=ddxdvx+GmNN00bF+E1yjB4oBe/F8/At0+fE0nib9tgiiUZGlAIRj2XOiLyxyVVLMwZ
+         emp51Nq7MF2hTzako4tsaHdZ0sWWefVOKcKBvfiSPiiGW+ZheqPCYcyj8NwZHEfafTPB
+         yr2bRggDv9NmjfihYt7BI/hrFInLXjxzLnjVumo3zyrslUTJoS+kHMph6naNqcXya1z5
+         R19EuBYobDQxxvHf3+X+QrXn7ZfMANzpTvxgR1nz7ticd3UHQT2BIzM7j7ez6HMDgiv8
+         IEv+RmWBxoN30smexkoZU/D/JUQpURzUI/xTDScLQsPrFz49Fm89b4VADKCbJ1tb23Wu
+         emXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749567792; x=1750172592;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oudxA8JPC06HRjXurKEPIdr/6i2EGFIADSPFZLQo5s0=;
+        b=Au/vaoCGIyXbXonrwdVwX8BaV4qtzpbRN9ZUNCoBne65zGD6LxHMYht5opqHyMGO/f
+         D6NE4CFEHYhCOb3W5rYHZt5CI6OyW3oRuHSogvHPHOoIUBPYsTXyiU1GFUZiFjQd3q15
+         aEbZLhxWRTKnnliJt5lUDVxv8yRgPu57PZ6pAbaXWnBz5s9IgLaKNzDG/VWPRx6FbJGY
+         ggEbw2bk7uOlsaDUPSu7PLSMB7paJGUt7e/fUuMl23LtBLsTXPvdZcSzyIRn3KbNRgKC
+         Bn4TELLsf+qeHDTNoSBDSTBBMG8AyrZepQDYzY8qf6/ztw2Hi/XxSFsmT51czjN6SewS
+         e9fA==
+X-Forwarded-Encrypted: i=1; AJvYcCUb0msEYGc2XTFPbwegV6mxbnIQ38Kut2TwMcZfth08WFeKdiglq5AMRj48m8G+G7cz4fpcQdHnOr+rs1Ap@vger.kernel.org, AJvYcCVwsYyP0nQC4E1XHcReFoQnpE77hAm290MdLk+MzcOu1+nmmOLMMvWGsE9CuveJjM8LquEb/1ozwh8J@vger.kernel.org, AJvYcCXmCP67QSg6uXA+zKPB+h5Z0pXXsk4fDQKvvi4HUXZTyuR7EA59QjgGjADwD6S+/ADc5PBGp62886yZGrw2Tlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweuDrF6TdutJ1nTEiMJ63cud80ij4OfbHH02XbPMzBarqNDVp1
+	EprlFva1HtnVzUbOVwZQ3lRNdRCiVrITUPkrM6RSrtRTsAM/bA+xnLnZyOoVj4SKGE4=
+X-Gm-Gg: ASbGncvrnuSAgCoBN95Z42s6YS9v/5VJfs9JUYLVeJx9ligtOgcWvNMLknR8h2Ut2KS
+	3HwcDq4jxZWvYCNwhX4RhykRR1McXYEIvVulhub0HeZmw1gUi86rJrsRuO1o/5LbtknGI3VHxLB
+	84/tFbAt6bj3YIbH1hlpva1tMdfkc80AX60Rl5twFW3RT37/lcrGsdaT9/HRPGO6PIwePSZ7iQ6
+	FwRfZs4fiAiCjaQx/tREPqS1LeOwzlConm8zYoTu9q+D+daCmbZ8if4JOlIrAYoIzikiqd6saSS
+	0ZMzmhED78Z3D/LiAQYx5TOTQFjH/W4sQZ4S4zrb4pxBEs2OJpn1HiiLtrkNZ5/+HuplErhuBWi
+	rl6C4F8UUfrbNCwuHUB29ckgt+snqw1xqMF+G
+X-Google-Smtp-Source: AGHT+IH0+AZPTlciHmkGllD/oma4zGiZ8/jDRd0hiXsfTZ/a0TRwnby3WB2wlYT/JkgeoZpgsuc5Fw==
+X-Received: by 2002:a05:6000:4205:b0:3a4:c75c:efd5 with SMTP id ffacd0b85a97d-3a5319b4d6bmr15095416f8f.46.1749567781536;
+        Tue, 10 Jun 2025 08:03:01 -0700 (PDT)
+Received: from igor-korotin-Precision-Tower-3620.airspan.com ([188.39.32.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53244e0e3sm12721205f8f.68.2025.06.10.08.03.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 08:03:00 -0700 (PDT)
+Sender: Igor Korotin <igorkor.3vium@gmail.com>
+From: Igor Korotin <igor.korotin.linux@gmail.com>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	rafael@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	lenb@kernel.org,
+	wedsonaf@gmail.com,
+	viresh.kumar@linaro.org,
+	alex.hung@amd.com,
+	dingxiangfei2009@gmail.com
+Subject: [PATCH v4 1/5] rust: acpi: add `acpi::DeviceId` abstraction
+Date: Tue, 10 Jun 2025 16:00:51 +0100
+Message-ID: <20250610150051.237201-1-igor.korotin.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610145234.235005-1-igor.korotin.linux@gmail.com>
+References: <20250610145234.235005-1-igor.korotin.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-reftrack-dbgfs-v14-9-efb532861428@kernel.org>
-References: <20250610-reftrack-dbgfs-v14-0-efb532861428@kernel.org>
-In-Reply-To: <20250610-reftrack-dbgfs-v14-0-efb532861428@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Krzysztof Karas <krzysztof.karas@intel.com>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>, Qasim Ijaz <qasdev00@gmail.com>, 
- Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7581; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=PbVv7f+KnjGsewIY799KTzuzC1xM5lRrR6nixzVLSbo=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoSEhdKysw5x/A0SvBzqm4mi63KsHxOXUln9Sm0
- jxsooYBF92JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaEhIXQAKCRAADmhBGVaC
- FdCAD/9dxD9G9NIyAO5+Xx4tFr39YVxGNil75tUwlCoPk9jg6b9IxDigt563zRkEBCPtyUod2An
- Ao5hU8b8DVRRYcdWE4sQLLxcf9VYNlicr1z9WS5YaUQgVUo1G7eqC05jbCSEN2WfTi8M1ehwz1/
- SEE/tLER1IHvQEnpAPUlYrf8uzUB/lufqMxgN3UNBvi7rFmYf7NThYREVB/KJmAdCFTd+j4qRIw
- QiisjG89UVv8hYQKSbQcxWHcnc3I4KOMQwQ57h93V8ooSwy0PL37y9O9KWLpjDM/8wJy5ANawjK
- xyGokqJZn+PTGthsky6rsKWh144exz1Yg6oygZ324AhS8tibD81sHTQ3As1+aiYwPjedHs+Q6bj
- d80Vksolxliwucw88ESUjeh8myJy4EyXeS8aencCLAw9Tyndh13jh3ZB0u7QnGNarikc+BWzhod
- 6k4ZOXP1svDa4Df/OWG0IVromdsejgFAyyfhxlPAvYRW0UgfLcg0U3qQoKSBvYuDNI0gp+qyVtz
- wSSpcZjDFVPvUFMvf+UiyhzlMOy7ckw5vGPj0NVk6LmlEAufwGtLnUeXMBz5PvZPamkhTqjXERJ
- CyK8cKIpQg9+VJUy4XgCAEIGUfHz+Zxv6vDi0nao8RYvDEly9zniwle50MwkB5bTc67s3QXYY+v
- +PEb5ypnTyiNBlw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
 
-Now that we have dentries and the ability to create meaningful symlinks
-to them, don't keep a name string in each tracker. Switch the output
-format to print "class@address", and drop the name field.
+`acpi::DeviceId` is an abstraction around `struct acpi_device_id`.
 
-Also, add a kerneldoc header for ref_tracker_dir_init().
+This is used by subsequent patches, in particular the i2c driver
+abstractions, to create ACPI device ID tables.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
 ---
- drivers/gpu/drm/display/drm_dp_tunnel.c |  2 +-
- drivers/gpu/drm/i915/intel_runtime_pm.c |  2 +-
- drivers/gpu/drm/i915/intel_wakeref.c    |  2 +-
- include/linux/ref_tracker.h             | 20 ++++++++++++++------
- lib/ref_tracker.c                       |  6 +++---
- lib/test_ref_tracker.c                  |  2 +-
- net/core/dev.c                          |  2 +-
- net/core/net_namespace.c                |  4 ++--
- 8 files changed, 24 insertions(+), 16 deletions(-)
+ MAINTAINERS         |  1 +
+ rust/kernel/acpi.rs | 61 +++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs  |  1 +
+ 3 files changed, 63 insertions(+)
+ create mode 100644 rust/kernel/acpi.rs
 
-diff --git a/drivers/gpu/drm/display/drm_dp_tunnel.c b/drivers/gpu/drm/display/drm_dp_tunnel.c
-index b9c12b8bf2a3e400b6d8e9d184145834c603b9e1..1205a4432eb4142344fb6eed1cb5ba5b21ec6953 100644
---- a/drivers/gpu/drm/display/drm_dp_tunnel.c
-+++ b/drivers/gpu/drm/display/drm_dp_tunnel.c
-@@ -1920,7 +1920,7 @@ drm_dp_tunnel_mgr_create(struct drm_device *dev, int max_group_count)
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a92290fffa16..6c809ea30e6a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -302,6 +302,7 @@ F:	include/linux/acpi.h
+ F:	include/linux/fwnode.h
+ F:	include/linux/fw_table.h
+ F:	lib/fw_table.c
++F:	rust/kernel/acpi.rs
+ F:	tools/power/acpi/
  
- #ifdef CONFIG_DRM_DISPLAY_DP_TUNNEL_STATE_DEBUG
--	ref_tracker_dir_init(&mgr->ref_tracker, 16, "drm_dptun", "dptun");
-+	ref_tracker_dir_init(&mgr->ref_tracker, 16, "drm_dptun");
- #endif
+ ACPI APEI
+diff --git a/rust/kernel/acpi.rs b/rust/kernel/acpi.rs
+new file mode 100644
+index 000000000000..f9a98dc4eb8a
+--- /dev/null
++++ b/rust/kernel/acpi.rs
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Advanced Configuration and Power Interface abstractions.
++
++use crate::{bindings, device_id::RawDeviceId, prelude::*};
++
++/// IdTable type for ACPI drivers.
++pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
++
++/// An ACPI device id.
++#[repr(transparent)]
++#[derive(Clone, Copy)]
++pub struct DeviceId(bindings::acpi_device_id);
++
++// SAFETY:
++// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct acpi_device_id` and does not add
++//   additional invariants, so it's safe to transmute to `RawType`.
++// * `DRIVER_DATA_OFFSET` is the offset to the `data` field.
++unsafe impl RawDeviceId for DeviceId {
++    type RawType = bindings::acpi_device_id;
++
++    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::acpi_device_id, driver_data);
++
++    fn index(&self) -> usize {
++        self.0.driver_data as _
++    }
++}
++
++impl DeviceId {
++    const ACPI_ID_LEN: usize = 16;
++
++    /// Create a new device id from an ACPI 'id' string.
++    pub const fn new(id: &'static CStr) -> Self {
++        assert!(id.len() <= Self::ACPI_ID_LEN, "ID exceeds 16 bytes");
++        let src = id.as_bytes_with_nul();
++        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
++        // SAFETY: FFI type is valid to be zero-initialized.
++        let mut acpi: bindings::acpi_device_id = unsafe { core::mem::zeroed() };
++        let mut i = 0;
++        while i < src.len() {
++            acpi.id[i] = src[i];
++            i += 1;
++        }
++
++        Self(acpi)
++    }
++}
++
++/// Create an ACPI `IdTable` with an "alias" for modpost.
++#[macro_export]
++macro_rules! acpi_device_table {
++    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
++        const $table_name: $crate::device_id::IdArray<
++            $crate::acpi::DeviceId,
++            $id_info_type,
++            { $table_data.len() },
++        > = $crate::device_id::IdArray::new($table_data);
++
++        $crate::module_device_table!("acpi", $module_table_name, $table_name);
++    };
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 6b4774b2b1c3..5bbf3627212f 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -51,6 +51,7 @@
  
- 	for (i = 0; i < max_group_count; i++) {
-diff --git a/drivers/gpu/drm/i915/intel_runtime_pm.c b/drivers/gpu/drm/i915/intel_runtime_pm.c
-index 90d90145a1890bf788e789858ddad3b3d8e3b978..7ce3e6de0c1970697e0e58198e1e3852975ee7bc 100644
---- a/drivers/gpu/drm/i915/intel_runtime_pm.c
-+++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
-@@ -61,7 +61,7 @@ static void init_intel_runtime_pm_wakeref(struct intel_runtime_pm *rpm)
- {
- 	if (!rpm->debug.class)
- 		ref_tracker_dir_init(&rpm->debug, INTEL_REFTRACK_DEAD_COUNT,
--				     "intel_runtime_pm", dev_name(rpm->kdev));
-+				     "intel_runtime_pm");
- }
+ pub use ffi;
  
- static intel_wakeref_t
-diff --git a/drivers/gpu/drm/i915/intel_wakeref.c b/drivers/gpu/drm/i915/intel_wakeref.c
-index 21dcee7c9a659ac1fb0aa19f3018647be3bda754..080535fc71d8c25dcc848eefd063361bbe21b305 100644
---- a/drivers/gpu/drm/i915/intel_wakeref.c
-+++ b/drivers/gpu/drm/i915/intel_wakeref.c
-@@ -115,7 +115,7 @@ void __intel_wakeref_init(struct intel_wakeref *wf,
- 
- #if IS_ENABLED(CONFIG_DRM_I915_DEBUG_WAKEREF)
- 	if (!wf->debug.class)
--		ref_tracker_dir_init(&wf->debug, INTEL_REFTRACK_DEAD_COUNT, "intel_wakeref", name);
-+		ref_tracker_dir_init(&wf->debug, INTEL_REFTRACK_DEAD_COUNT, "intel_wakeref");
- #endif
- }
- 
-diff --git a/include/linux/ref_tracker.h b/include/linux/ref_tracker.h
-index e1323de93bf6b891aa14ad8d9b4b28d02e10f9f7..d10563afd91c0c551e08896fa5354e0a5894ba7c 100644
---- a/include/linux/ref_tracker.h
-+++ b/include/linux/ref_tracker.h
-@@ -20,7 +20,6 @@ struct ref_tracker_dir {
- 	struct list_head	list; /* List of active trackers */
- 	struct list_head	quarantine; /* List of dead trackers */
- 	const char		*class; /* object classname */
--	char			name[32];
- #endif
- };
- 
-@@ -44,10 +43,21 @@ void ref_tracker_dir_symlink(struct ref_tracker_dir *dir, const char *fmt, ...)
- 
- #endif /* CONFIG_DEBUG_FS */
- 
-+/**
-+ * ref_tracker_dir_init - initialize a ref_tracker dir
-+ * @dir: ref_tracker_dir to be initialized
-+ * @quarantine_count: max number of entries to be tracked
-+ * @class: pointer to static string that describes object type
-+ *
-+ * Initialize a ref_tracker_dir. If debugfs is configured, then a file
-+ * will also be created for it under the top-level ref_tracker debugfs
-+ * directory.
-+ *
-+ * Note that @class must point to a static string.
-+ */
- static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
- 					unsigned int quarantine_count,
--					const char *class,
--					const char *name)
-+					const char *class)
- {
- 	INIT_LIST_HEAD(&dir->list);
- 	INIT_LIST_HEAD(&dir->quarantine);
-@@ -57,7 +67,6 @@ static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
- 	refcount_set(&dir->untracked, 1);
- 	refcount_set(&dir->no_tracker, 1);
- 	dir->class = class;
--	strscpy(dir->name, name, sizeof(dir->name));
- 	ref_tracker_dir_debugfs(dir);
- 	stack_depot_init();
- }
-@@ -82,8 +91,7 @@ int ref_tracker_free(struct ref_tracker_dir *dir,
- 
- static inline void ref_tracker_dir_init(struct ref_tracker_dir *dir,
- 					unsigned int quarantine_count,
--					const char *class,
--					const char *name)
-+					const char *class)
- {
- }
- 
-diff --git a/lib/ref_tracker.c b/lib/ref_tracker.c
-index a78741308a2c2dc7aff65519970ad081b59e0de5..39f8e931680a0b84cd7a8588db659bfe2b348821 100644
---- a/lib/ref_tracker.c
-+++ b/lib/ref_tracker.c
-@@ -147,7 +147,7 @@ __ref_tracker_dir_pr_ostream(struct ref_tracker_dir *dir,
- 	stats = ref_tracker_get_stats(dir, display_limit);
- 	if (IS_ERR(stats)) {
- 		pr_ostream(s, "%s%s@%p: couldn't get stats, error %pe\n",
--			   s->prefix, dir->name, dir, stats);
-+			   s->prefix, dir->class, dir, stats);
- 		return;
- 	}
- 
-@@ -158,14 +158,14 @@ __ref_tracker_dir_pr_ostream(struct ref_tracker_dir *dir,
- 		if (sbuf && !stack_depot_snprint(stack, sbuf, STACK_BUF_SIZE, 4))
- 			sbuf[0] = 0;
- 		pr_ostream(s, "%s%s@%p has %d/%d users at\n%s\n", s->prefix,
--			   dir->name, dir, stats->stacks[i].count,
-+			   dir->class, dir, stats->stacks[i].count,
- 			   stats->total, sbuf);
- 		skipped -= stats->stacks[i].count;
- 	}
- 
- 	if (skipped)
- 		pr_ostream(s, "%s%s@%p skipped reports about %d/%d users.\n",
--			   s->prefix, dir->name, dir, skipped, stats->total);
-+			   s->prefix, dir->class, dir, skipped, stats->total);
- 
- 	kfree(sbuf);
- 
-diff --git a/lib/test_ref_tracker.c b/lib/test_ref_tracker.c
-index d263502a4c1db248f64a66a468e96c8e4cffab25..b983ceb12afcb84ad60360a1e6fec0072e78ef79 100644
---- a/lib/test_ref_tracker.c
-+++ b/lib/test_ref_tracker.c
-@@ -64,7 +64,7 @@ static int __init test_ref_tracker_init(void)
- {
- 	int i;
- 
--	ref_tracker_dir_init(&ref_dir, 100, "selftest", "selftest");
-+	ref_tracker_dir_init(&ref_dir, 100, "selftest");
- 
- 	timer_setup(&test_ref_tracker_timer, test_ref_tracker_timer_func, 0);
- 	mod_timer(&test_ref_tracker_timer, jiffies + 1);
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 12cf4e5ae9c5437bcfec657e37b7e08792bc14bf..92a830162dd8f9e311d31e5285e394b0e9f20d42 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -11715,7 +11715,7 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
- 
- 	dev->priv_len = sizeof_priv;
- 
--	ref_tracker_dir_init(&dev->refcnt_tracker, 128, "netdev", name);
-+	ref_tracker_dir_init(&dev->refcnt_tracker, 128, "netdev");
- #ifdef CONFIG_PCPU_DEV_REFCNT
- 	dev->pcpu_refcnt = alloc_percpu(int);
- 	if (!dev->pcpu_refcnt)
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index 45de05d8f0877a4e717bdad4ed776ae27f98944a..d0f607507ee8d0b6d31f11a49421b5f0a985bd3b 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -403,8 +403,8 @@ static __net_init void preinit_net(struct net *net, struct user_namespace *user_
- {
- 	refcount_set(&net->passive, 1);
- 	refcount_set(&net->ns.count, 1);
--	ref_tracker_dir_init(&net->refcnt_tracker, 128, "net_refcnt", "net_refcnt");
--	ref_tracker_dir_init(&net->notrefcnt_tracker, 128, "net_notrefcnt", "net_notrefcnt");
-+	ref_tracker_dir_init(&net->refcnt_tracker, 128, "net_refcnt");
-+	ref_tracker_dir_init(&net->notrefcnt_tracker, 128, "net_notrefcnt");
- 
- 	get_random_bytes(&net->hash_mix, sizeof(u32));
- 	net->dev_base_seq = 1;
-
++pub mod acpi;
+ pub mod alloc;
+ #[cfg(CONFIG_AUXILIARY_BUS)]
+ pub mod auxiliary;
 -- 
-2.49.0
+2.43.0
 
 
