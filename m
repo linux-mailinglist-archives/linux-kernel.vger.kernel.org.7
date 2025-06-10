@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-680446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE48AD4589
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14592AD4375
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B2BB7AB9E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:02:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4AF77A5DC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C85B28935F;
-	Tue, 10 Jun 2025 22:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDDD264FBB;
+	Tue, 10 Jun 2025 20:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="BUOlSahf"
-Received: from bee.birch.relay.mailchannels.net (bee.birch.relay.mailchannels.net [23.83.209.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="bPeuTlWo"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366B128469C;
-	Tue, 10 Jun 2025 22:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.209.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749592861; cv=pass; b=i306ZyATWdITha3AEbbI+XbLu9ChKoCdklYSapQumkNMAdi90k/Nqnec2Kal5wvcNEp4UZJiNkMvrYvkP/cIDbTtDZxaqGz4PFYvRczi+kAzMZnqGIQC4uN8Rxwb/O2mBQ+O0H5TB7nopoT6Md0gbfHFnO07NfyHUARi/sOpnJU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749592861; c=relaxed/simple;
-	bh=dIbNFft6CaYTMLr+91ryBglJuKP2jhFXmKg1aBJZ8vI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gCTrteZP7k7Nwfd6G4ZOPpiq1AHu7sYZnhNxee+4vL+CNTJDAGZF9CEst6AP/Y8rFwJ/w3CGYFLQs72/neHHV7GDGiuPoZm8DXIUvRKjap3RWPMMtMFNG9lDxmG2GvCrLAVN/r/NUEQ9r3yJ8VRJXZPWBococUaI5rE3M3EvrKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=BUOlSahf; arc=pass smtp.client-ip=23.83.209.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 89AA62C4F3D;
-	Tue, 10 Jun 2025 16:25:02 +0000 (UTC)
-Received: from pdx1-sub0-mail-a231.dreamhost.com (trex-green-9.trex.outbound.svc.cluster.local [100.119.143.12])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id E50E72C5598;
-	Tue, 10 Jun 2025 16:25:01 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1749572702; a=rsa-sha256;
-	cv=none;
-	b=KB0W8msBHstNJ9oBJ9BFRev/hfSHTRlLy5Sa/i0534dU+lLw8xGLGPdibtBUn2Da2O6Imb
-	X7HDSE50ChLnoShxZLQaVyGGbnUI1wSUlAbKpwYXK8b5PNQWej2yhBs0rOfD/eV30BkXsd
-	4R1u2eZUXMoWw2J7RDxozIYwKCt4UmDg3MEqDH4jF1CDfmyucZKa1PD9dD1c/O87HoQUD4
-	Om3C9VFTCVzpLMi5bbGsdqo6KCMSLIb9IAFlLbSiCVhrrbt7pp5MIUlDAAK4T0GZrxfdTN
-	7tg9H0tqLRa/T8eqCXmAqyiacNL7CkCkpkLibMhpDe3DZ03enkXWYehxHgVi8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1749572702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=dIbNFft6CaYTMLr+91ryBglJuKP2jhFXmKg1aBJZ8vI=;
-	b=RdaFcVFR1K5pEo6opZwgLv1akYVFpi8jfb1WcXKNqwqd7nxlAxU+GfMo3TJiXPR7s2JRhY
-	7o/IiLwaauVswDhXHJ4fLtrt0AFyxaD05q4o1UDJYFof1COeVS9/wdXIUO8bXnI1NgaZEU
-	NI91p2Bu02EHj1WoSPys5D2Js0XaxwapSrlXy/977jQUpB3QG6sfF0knLCDc8KgyrC9Fqs
-	Z2zWq71/Xc4iibwzN0sn17qofs+PxllVTcSQI0Wok7Ggge9ZSWDF5KSmFtpCJ9090mw6RR
-	tbW5h4bNwTLvK+uA17Xno2GvZrpUn6EZ39miKMJAxa8RaKkEQdhaKdv8IFdzPQ==
-ARC-Authentication-Results: i=1;
-	rspamd-5674bcf875-gcbmk;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Whistle-Society: 54d24218127b95f7_1749572702295_686142442
-X-MC-Loop-Signature: 1749572702295:142634956
-X-MC-Ingress-Time: 1749572702295
-Received: from pdx1-sub0-mail-a231.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.119.143.12 (trex/7.0.3);
-	Tue, 10 Jun 2025 16:25:02 +0000
-Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a231.dreamhost.com (Postfix) with ESMTPSA id 4bGvJs1l23z4x;
-	Tue, 10 Jun 2025 09:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1749572701;
-	bh=dIbNFft6CaYTMLr+91ryBglJuKP2jhFXmKg1aBJZ8vI=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=BUOlSahfn2dlJpoN23ujgzyYTnEPXa2Q9+/1lWKciIhYHyBflU8CdErXNFy9RgbfU
-	 l9nTVYIAViuYzNejlkoaxVEV5XmaHdDU7WUK4egEuSQ1u6nDV059tUhgH+MAUdSGz9
-	 uu/OisbFV5jnRPd2nzI5toMEeG8Dg9paW1T0JtnT7vrUzj+TbJKRghGBbfleFMnBTg
-	 y/XACTSxTu3YudRmuhlKnUR201IWMNpnPRHo0nMw0V6P2kPPlUKJpVnUGj1yeK1f6O
-	 jyKRVSeUEnbSj9txcw6pBD9osrMcYaVRhjQi9Sr0iRrJm1lNiQt6cbhW2f9ffZ12x3
-	 cp3/Y65W0oLRQ==
-Date: Tue, 10 Jun 2025 09:24:57 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Li Ming <ming.li@zohomail.com>
-Cc: jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, dan.j.williams@intel.com,
-	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] cxl/Documentation: Add more description about
- min/max scrub cycle
-Message-ID: <20250610162457.suqmw3bawg4n4zmu@offworld>
-References: <20250603104314.25569-1-ming.li@zohomail.com>
- <20250603104314.25569-2-ming.li@zohomail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA9026461F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 20:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749586046; cv=none; b=ZJ4TiIZ4F4IIgH6cQHrMIaqKFsDAVb4WMoNLLey+NqZQqLzofkBbDn2x4J0kjzcBfMfwnCJzEiav22JZ/mqVUwCbgdH0a9+5RLLfi7+pNnFfnH3HFZilNc4UZcH0W6SiOJOgxP8/lDXVNFhAcBivJTGkWzueda6JVvuP7e+JUBo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749586046; c=relaxed/simple;
+	bh=cyniiTjRd17/axtqY1LXsVxllwk2gLonVeQz+TEtSOI=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=ZNxlN3w+roY3YNEEJ93DAgV6DwuoHYQ7FRwaLSD/7bczC0Ndf80sh1mm39qQ9JhEHt+EmzJTIku9VtY5n7NbqPiHS4Xz1RNGJLJ0Bpco1NZ4pJGeSwixnIx1nWtV2YQoCG0O55EC2/uNwkoewEKIaqqBHU7ix5Mj4AwY2A8Um5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=bPeuTlWo; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23539a1a421so51236895ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1749586044; x=1750190844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d9ivsrx9S86u8HBiaynDXVu9vEEgacXBDB8VknWbxl8=;
+        b=bPeuTlWofxxJXKNAFtRfAMuHutSiiOOT7ZTZrS03YFwWXmcWeaTTTH92758HFzr6dZ
+         v9Np3wJhkm1/fGwCelp537ksqWHMt4vQuApqaLwFz3KaIyxjelFbE080bZxATEJeI5Pu
+         Iw2e3CGj28UM+d/5gjG5QRxp08VPPlEyysh3ZY7sLlgRATHBr5mdYE9yTaStbj/WeDNn
+         GsX8fBkoolMNu+Glwodt5wsTlTRa5HGTHgxhv5y1Cbgpz67a4Sa+uMp1PX4yKQFLS+8t
+         Ecju3DobIivl9e6YKSQ/P7QSkJBy3kN/Hxj8Nra5r/9r631JJLV1VDceAUJYJrUioPqV
+         bthw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749586044; x=1750190844;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d9ivsrx9S86u8HBiaynDXVu9vEEgacXBDB8VknWbxl8=;
+        b=nb9j77lThZS1Hq3fNYOKBxbfaJScP3ZMDw39Oazc5KM7q+oscBWa0ZZEkkDAu5aofX
+         7Y2x+xCSRbaxigKV+c3wcawsokL659h4kqbS5mLZfSUayiJrY6EFWwxR0NA0QnLBDkBU
+         TzfkyZZZ169kO5Gk2kL1nZw0kyXYb38aiBf7aJuUfroNXvStQPQqwVjJiv749HVPrSwU
+         I3lXA63iCw37uMPz0LuPtl+rBIKU489THXnwdq+1P/UMRDPpeybOlbbw4UG6uBPGb38e
+         2KlJ14D+feD85Uz21kGrAm66Yh8ICFWBCLCS8FDGMO4efe8oVc21Td0lb1uHc11h15cI
+         qVsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhzVuaZhYDN1besqRak7Ydv47QWhhBOxqfxON+lTHzARwnWsPwGjQeMvyqCk+C4MFuQ/QuYfosijMmmkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMZWEimVk0QgDCVZF+YhqwGMgWOBnMplNAEAHP6vcqSvSWbCMZ
+	1+hzXW8Tp4fNIxS8s96C8SGWYvc62SrxtcguHv3qZ1ovfQNgQ3aJZluaLjxLcyFTaXU=
+X-Gm-Gg: ASbGncvE0J9cReXWEmh1lLo6WQ54NJJAmM/nsjhZWAqsvY0/fibKrnkj98rtpneASMY
+	KRrf119C5LuZhkP7oKBhT1U+TS6f2oUGNiObyqq4386qWvfVB2AdWXM2N6tqx2RGNtBuYIdjofS
+	kze0gAt6xqBlP9WzkzX2mQicYmpp1IS+iaXRAHoh/k3f+o72pBcBO6yEN3rh0++VN+F3pKoIl4G
+	2seGPO4i6dn8QcEg63hhcR2iozTDXJvS1NJ4PQTJ9MPQulKEt9ua/lOToBZ4Ji8ZPbFt5O7ruvE
+	HDst46s4lnQSuU8kl6Occx8kLy9mu+3otmHATRZ6DkLnbQQACjbgL55ObRFE
+X-Google-Smtp-Source: AGHT+IHEbTLkjhkPgVR7LBY0WE0PQew4VX94TRVLTFzVkKHWIErfOlXv0qU9OV/7D6BdyLmWtWCVwA==
+X-Received: by 2002:a17:902:cf11:b0:234:8a4a:adac with SMTP id d9443c01a7336-23641a99f5fmr7343495ad.20.1749586043748;
+        Tue, 10 Jun 2025 13:07:23 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:500::7:116a])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23603078121sm75380565ad.27.2025.06.10.13.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 13:07:23 -0700 (PDT)
+Date: Tue, 10 Jun 2025 13:07:23 -0700 (PDT)
+X-Google-Original-Date: Tue, 10 Jun 2025 13:07:21 PDT (-0700)
+Subject:     Re: [PATCH] riscv: vdso: Exclude .rodata from the PT_DYNAMIC segment
+In-Reply-To: <20250603215218.GA3631276@ax162>
+CC: i@maskray.me, Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+  Alexandre Ghiti <alex@ghiti.fr>, nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com,
+  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: nathan@kernel.org
+Message-ID: <mhng-417C3662-1666-4A7D-9800-0F68016C1D9C@palmerdabbelt-mac>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250603104314.25569-2-ming.li@zohomail.com>
-User-Agent: NeoMutt/20220429
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 03 Jun 2025, Li Ming wrote:
-
->user can configurare scrub cycle for a region or a memory device via
->sysfs interface. Currently, these interfaces have not enough description
->for the return value. So adding return value description to these
->interfaces.
+On Tue, 03 Jun 2025 14:52:18 PDT (-0700), nathan@kernel.org wrote:
+> On Mon, Jun 02, 2025 at 08:48:44PM -0700, Fangrui Song wrote:
+>> .rodata is implicitly included in the PT_DYNAMIC segment due to
+>> inheriting the segment of the preceding .dynamic section (in both GNU ld
+>> and LLD).  When the .rodata section's size is not a multiple of 16
+>> bytes on riscv64, llvm-readelf will report a "PT_DYNAMIC dynamic table
+>> is invalid" warning.  Note: in the presence of the .dynamic section, GNU
+>> readelf and llvm-readelf's -d option decodes the dynamic section using
+>> the section.
+>>
+>> This issue arose after commit 8f8c1ff879fab60f80f3a7aec3000f47e5b03ba9
+>> ("riscv: vdso.lds.S: remove hardcoded 0x800 .text start addr"), which
+>> placed .rodata directly after .dynamic by removing .eh_frame.
+>>
+>> This patch resolves the implicit inclusion into PT_DYNAMIC by explicitly
+>> specifying the :text output section phdr.
+>>
+>> Reported-by: Nathan Chancellor <nathan@kernel.org>
+>> Closes: https://github.com/ClangBuiltLinux/linux/issues/2093
+>> Signed-off-by: Fangrui Song <i@maskray.me>
 >
->Suggested-by: Alison Schofield <alison.schofield@intel.com>
->Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->Signed-off-by: Li Ming <ming.li@zohomail.com>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Thanks, I'll pick it up (might take a bit to show up on fixes, I'm 
+trying to sort out another amdgpu stack warning...)
+
+>
+>> ---
+>>  arch/riscv/kernel/vdso/vdso.lds.S | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/kernel/vdso/vdso.lds.S b/arch/riscv/kernel/vdso/vdso.lds.S
+>> index abc69cda0445b1f500a89b47deefa31349103f08..62e0410f69f09e2bbf27101c000d604193f525cb 100644
+>> --- a/arch/riscv/kernel/vdso/vdso.lds.S
+>> +++ b/arch/riscv/kernel/vdso/vdso.lds.S
+>> @@ -30,7 +30,7 @@ SECTIONS
+>>  		*(.data .data.* .gnu.linkonce.d.*)
+>>  		*(.dynbss)
+>>  		*(.bss .bss.* .gnu.linkonce.b.*)
+>> -	}
+>> +	}						:text
+>>
+>>  	.note		: { *(.note.*) }		:text	:note
+>>
+>>
+>> ---
+>> base-commit: 1a3f6980889df3fc90ad3e4a525061d2c138adba
+>> change-id: 20250602-riscv-vdso-13efdee34a24
+>>
+>> Best regards,
+>> --
+>> Fangrui Song <i@maskray.me>
+>>
 
