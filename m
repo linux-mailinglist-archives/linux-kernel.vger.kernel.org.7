@@ -1,67 +1,99 @@
-Return-Path: <linux-kernel+bounces-679047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B21EAD31C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:22:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CF0AD31D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED86F3ACAC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:21:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3B3F7A62D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C7F28A708;
-	Tue, 10 Jun 2025 09:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EBB28A411;
+	Tue, 10 Jun 2025 09:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/eAfWB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bRZYLdWI"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04705286D6E;
-	Tue, 10 Jun 2025 09:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B5728134E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547282; cv=none; b=ndVDdtw+rX99GOOfLBEH9m2ELos5w6A3ULhmEPBF9nFZRnlLKY0xPEmaH9K71V1IZqhSeGorJPSWKc+HuFWz+vWxxUgj5OJYTd/gixi/0az3Ur0Fq1BtW9hGw6sQc/E9+hhqacjFGWyLiFFAonusp/UHrRgoGCBRjxhvdRpnd9E=
+	t=1749547344; cv=none; b=CVdKiJV4cx5Sw9SOuT37cgSpe5TymtfjKwbU6qDW3JSnDsSq4zWjRFNVnqE0mQxg+0LDOX96ftQi6NTQfs4VcqMvA9t2mfa9l+N5l3dhzIBQjdIBsXLp6jgzlJ8HXX192a4e1Yqnu71OaCZb/lA0Wc4bDRNVo5H+LpvduPMB32o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547282; c=relaxed/simple;
-	bh=9qX58byGaVE5TC80pB4FkJH3w0rPGDf+jM6tTKUJldY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RAXFRf60w0nhSgFCD0+Fd9EtOoxCAxWXM0vS39YU9qsOxPFywhCZLOzMcBKMVhn+bBYK2ut5TYYnluXXHixfuG7c6lAvgWMZOt05wMoV3REH82xkge1swct7FOAVjABi/87jk/T02gSHp6RAzLLakw6GOA1j1fdFUN6MTvdG1Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/eAfWB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40538C4CEED;
-	Tue, 10 Jun 2025 09:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749547279;
-	bh=9qX58byGaVE5TC80pB4FkJH3w0rPGDf+jM6tTKUJldY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=L/eAfWB0eiRAmbS3wXT2vU2KmwcsIhM1MuF1N4cZVUXDf72c6lIicvkPS0Rdh9bWW
-	 S5VmGigbz8B9wEAte/xShaaTGzTGLtHD3y/ZAnbMoLjW25ysoduGgs6hSHIgJhV7G2
-	 awJ9KcECj3l0tFASanyH1XFUoQ35IJsImFl7Zrf6YBq37E+FS85tkebGWdrRsE1WLZ
-	 IHHNhgeZFWk32vNIO94muUvNmkPl63jhvsctg3SqSooAJCZjht5VKB0dHwXuf8xfwZ
-	 qNx8+2GINV81n0BwFQRik3pZdiOuWqz0LgSGN9fHPeAd9t3VOFkiNiwh+wGVei/Swl
-	 71OanMRRNiFXw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Jian Shen <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jijie Shao <shaojijie@huawei.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Hao Lan <lanhao@huawei.com>,
-	Guangwei Zhang <zhangwangwei6@huawei.com>,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1749547344; c=relaxed/simple;
+	bh=cATACb8sN8cNcczyAIiEaT1QEMtdiASGjKJQEhCOIrw=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=npe6eBT/XbG8/RlPLza3N/qI/9ACVdOOcHODZdkhVxuWdfYYEj4itzY+YRUD4jGJkpSkE1zldM/w9CJ9idQeGZNKSlPb8bxNNsqZZZrF1J9k79dwUrkkaIC3OkTVGUwvKleluznuLjkqagQYVl6zoHdTduR85HL+VSpW8/oMll4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bRZYLdWI; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-236377f00easo6968505ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1749547341; x=1750152141; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pb6EngWFKRCsJhFoXh+Ur7EFw4RWtzKIhB5znZycEX4=;
+        b=bRZYLdWI9/M9UF181eTtfnL/Z8z8WTAjv5QYVMtU8lcKv9H1wkLnZP8sntT1f/seS+
+         lqNtdkDZPrstPDTLNNUVlhnvX7cWrqIEMNhYfw4T8ZWA4rzYCVl0TuWGS+aOYtZEsb26
+         Cs9jvUTHi3mht793IN22iE0MTB4Fgj4KMhpAjA5vVJHNkuaup7Bu/fFXgQpPYIj+NxSJ
+         40P6PGoZXRjVs/lsMLPVb3gOsloZXTJxxAiqemb1mUxRg7pB5qsWUP/F+NolXH16OcU7
+         on1N4u4vty1HJNTc2a4Zc8tB1gJvX/FZqFarhe+EKAAdqK/bLz+IORFX+WONmq+Ggx7X
+         vDzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749547341; x=1750152141;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pb6EngWFKRCsJhFoXh+Ur7EFw4RWtzKIhB5znZycEX4=;
+        b=RYgOHKz531EW/r9MarLhCj7lRj6K9i5PpGJBjel4vEBatOgBB1BoAgUi9zzxMbpycJ
+         IxlonLA6rNyVqkVWWtagA7QqMqcP1Pm7yIh+NVw9rNx12HyIh66APAFWgaNgXWhqDg0O
+         KCG78Nvcb8YI3F8tpC6rzbUgrJKc8kvVjh6mHerZ5XeM0qCzCwYEd+mSmhhrjl8LIJqR
+         ph/d6QCV+2xGwRaeR3ZFZ7MM0U3z3om9ZesrL5Z6FxkyJi95FsnP4f+D7vMeYJ5148tD
+         pSLbbuA+/qGTSZm6cL8yaKfr/LHq6UINoLYsm///YVtCFkEVUaRJDhy1ZpJqg4zGrb+7
+         qtRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfYSHzEFh26xAgtwl/aYUOv4Kr3nGFdBSxaZsHBItI/KlhjBiCCQBI+Cyfef6CCiVGOWhgQfw46nMTHgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHH/JkUtrMryF9oJV5gBGELLkd1Gzev2CpZZoD7oNaVGftSlvI
+	AK2WltFOukDXrYoQqu87qXcGLvJa4m83JxMAbWjbJNLNYeJOQnIeHT1WSn0v5vFi80Y=
+X-Gm-Gg: ASbGncuWr3Gyi0SQp23eevHRiSJ1pAU43MqdBrVZ1CxM5T98xH0F6F+Ac4++xQBiAAm
+	e0T7quaiXknR8SUuc1ByA+blsoyGKXs2BP0FlN9gOjscNzQ7azaUB1Ig2D7oieYtgDLlraUYVzW
+	F77Cck7chWzHGZ/7g30j2fat/+9er5LmLJe+wOvtviGW42kvekS3WGvnn9H/5rVcMUDgQWdMeLE
+	f1wPby38AHsxXCNYXmWqQb9nhvRi2UiT7Wg1R0qfKuPyHXZU8yvzUchTeukUqAvmBMuXFDgshge
+	5Q7n//4z96oJYGPVQ413WlcQGRC+dbLPtxFlbOFIkwBQ0TOkXdfua8Zp0BGTC+cjnuuToN7vgXh
+	W+N0Pi9wO3X2RoDsMh7K9sd5wNinpNpSJ1JwMLP8LeRClJ2uJWC2A
+X-Google-Smtp-Source: AGHT+IE+9a4WnFHCBab8LsHsj8nbPcCH0VfJEDuthQy/iEC931PqiVC1U8rW1rxKbtCGqBEgxxdnmA==
+X-Received: by 2002:a17:902:db03:b0:235:f18f:2911 with SMTP id d9443c01a7336-23601ced3f9mr234532115ad.2.1749547341420;
+        Tue, 10 Jun 2025 02:22:21 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fc9ebsm66968605ad.106.2025.06.10.02.22.15
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 10 Jun 2025 02:22:20 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: arnd@arndb.de,
+	andriy.shevchenko@linux.intel.com,
+	benjamin.larsson@genexis.eu,
+	cuiyunhui@bytedance.com,
+	gregkh@linuxfoundation.org,
+	heikki.krogerus@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	jirislaby@kernel.org,
+	jkeeping@inmusicbrands.com,
+	john.ogness@linutronix.de,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] hns3: work around stack size warning
-Date: Tue, 10 Jun 2025 11:21:08 +0200
-Message-Id: <20250610092113.2639248-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	linux-serial@vger.kernel.org,
+	markus.mayer@linaro.org,
+	matt.porter@linaro.org,
+	namcao@linutronix.de,
+	paulmck@kernel.org,
+	pmladek@suse.com,
+	schnelle@linux.ibm.com,
+	sunilvl@ventanamicro.com,
+	tim.kryger@linaro.org
+Subject: [PATCH v9 0/4] Serial: 8250: Fix PSLVERR related issues
+Date: Tue, 10 Jun 2025 17:21:31 +0800
+Message-Id: <20250610092135.28738-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,47 +102,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Cause of PSLVERR:
+When the PSLVERR_RESP_EN parameter is set to 1, the device generates
+an error response if an attempt is made to read an empty RBR
+(Receive Buffer Register) while the FIFO is enabled.
 
-The hns3 debugfs functions all use an extra on-stack buffer to store
-temporary text output before copying that to the debugfs file.
+Patch[1]: Fixes a panic caused by PSLVERR due to concurrent UART access.
+Patch[2]: Fixes a panic caused by PSLVERR during RX_TIMEOUT conditions.
+Patch[3] & Patch[4]: Improvements to minimize the occurrence of PSLVERR.
 
-In some configurations with clang, this can trigger the warning limit
-for the total stack size:
+v1 -> v2:
+Added UART_LSR_DR check in shutdown() to avoid PSLVERR issues.
+Added Fixes: tag to reference upstream issues.
+v2 -> v3:
+Added lock protection in more functions (e.g., autoconfig_irq()) to
+ensure atomicity.
+Used lockdep_assert_held_once to detect potential deadlock risks early.
+v3 -> v4:
+Introduced serial8250_discard_data() to unify data read logic and avoid
+code duplication.
+Addressed PSLVERR caused by RX_TIMEOUT.
+Split complex fixes into multiple patches (1/4 to 4/4).
+v4 -> v5:
+Removed reads from UART_FCR, using up->fcr to determine FIFO enable status.
+Removed return value from serial8250_discard_data().
+v5 -> v6:
+Based on latest linux-next code: Resolved redundant dont_test_tx_en code.
+Updated comments and git commit descriptions.
+v6 -> v7:
+Reverted PSLVERR-related changes in serial8250_get_poll_char().
+v7 -> v8:
+Added Cc: stable@vger.kernel.org to patch[1] and patch[4].
+v8 -> v9:
+Reordered the patches: bugfixes as 1-2, improvements as 3-4.
 
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c:788:12: error: stack frame size (1456) exceeds limit (1280) in 'hns3_dbg_tx_queue_info' [-Werror,-Wframe-larger-than]
+Yunhui Cui (4):
+  serial: 8250: fix panic due to PSLVERR
+  serial: 8250_dw: fix PSLVERR on RX_TIMEOUT
+  serial: 8250: avoid potential PSLVERR issue
+  serial: 8250_dw: assert port->lock is held in dw8250_force_idle()
 
-The problem here is that both hns3_dbg_tx_spare_info() and
-hns3_dbg_tx_queue_info() have a large on-stack buffer, and clang decides
-to inline them into a single function.
+ drivers/tty/serial/8250/8250.h      | 13 +++++++++++++
+ drivers/tty/serial/8250/8250_dw.c   | 14 +++++++++++++-
+ drivers/tty/serial/8250/8250_port.c | 29 +++++++++++++++++------------
+ 3 files changed, 43 insertions(+), 13 deletions(-)
 
-Annotate hns3_dbg_tx_spare_info() as noinline_for_stack to force the
-behavior that gcc has, regardless of the compiler.
-
-Ideally all the functions in here would be changed to avoid on-stack
-output buffers.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index 4e5d8bc39a1b..97dc47eeb44c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -580,8 +580,9 @@ static const struct hns3_dbg_item tx_spare_info_items[] = {
- 	{ "DMA", 17 },
- };
- 
--static void hns3_dbg_tx_spare_info(struct hns3_enet_ring *ring, char *buf,
--				   int len, u32 ring_num, int *pos)
-+static noinline_for_stack void
-+hns3_dbg_tx_spare_info(struct hns3_enet_ring *ring, char *buf,
-+			int len, u32 ring_num, int *pos)
- {
- 	char data_str[ARRAY_SIZE(tx_spare_info_items)][HNS3_DBG_DATA_STR_LEN];
- 	struct hns3_tx_spare *tx_spare = ring->tx_spare;
 -- 
 2.39.5
 
