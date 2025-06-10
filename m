@@ -1,147 +1,133 @@
-Return-Path: <linux-kernel+bounces-678774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E6BAD2DFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:33:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B152DAD2E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC527A1871
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:32:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 805777A6E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F262279334;
-	Tue, 10 Jun 2025 06:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B872798E5;
+	Tue, 10 Jun 2025 06:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J4x4x/sl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wVn9mwAx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J4x4x/sl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wVn9mwAx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TjW5bcYU"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88264194080
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C05279796
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749537196; cv=none; b=TktWUK60yYoY/aRI7JlJiUYlnpaBMw3w5MAubxyExR8toKe0fkNbOcjAkQ8RMx7l+reN0kGsRepG92hG4HW6EGkCCl82PYl3DLo6pY16dIGeHxTbGxE1QkYhG5BK4G4KPV7TFm4Lqzp+BreTUW/PRCQD/3AUY+2qd4mkSCQS2PQ=
+	t=1749537283; cv=none; b=aBZ3K1VnE3ORcOCe1jKAAfYTat3m5zHC+nxTj55JsR0FfP7HeTJnNqYHPsGHPTpOiPTyd2zd/F7sX4d+RYFpi3UBmdiZ4jh1aA0wDv5pW/EU4QZ3d+SAJsvtu39Q9VyYQMgxsGbXvCoMhPmepKg5q8Sji6R1/4xPGSV3o9mxopo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749537196; c=relaxed/simple;
-	bh=D8kso/9NiO4VmUqneCv8Cj6Si65W5ZqJIjzaNC4wOzI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aL+sEWNGD4A1DhRSj8/RoqTpUMCCkTId59o9uwuq7W/a2OejYCj6UQjCf+8M+SNxXJ31KjDmYqzcNKlisepcpc2Fk1w6AHtKSgStT8LnbRId0lu4JVFrSJo4iEurzrmkWbn1olx988sH2yQFFO4eFKRJO8Px+EdZ6k5bKV+6DQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J4x4x/sl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wVn9mwAx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J4x4x/sl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wVn9mwAx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B8066211B8;
-	Tue, 10 Jun 2025 06:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749537191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxQqG4KhaYRw6yfY61UkGdjq9X8xvLgX9uDEy/sLWeg=;
-	b=J4x4x/sli2M9TNZ1VcK4DNUGrjsgPTuLD4SQZEcipGAA9pgX19lUasb/WZ0WrACHCcc+gu
-	umBDqYy1hvWsCe96E0qgKWiebo6+GuvfWAQe0guBSI11kxOYGbpgHeSd1cocbVcaQJYmdS
-	7g8QCfsp15SOy7uY3351vcHRUsZo00A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749537191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxQqG4KhaYRw6yfY61UkGdjq9X8xvLgX9uDEy/sLWeg=;
-	b=wVn9mwAx0jqJ+cSBzJDwBsad98GueG1NoFuZOiKNq4rDqMtacGD496JSRs/5TJzFkkgCr9
-	Te947Y0n5y/dDNCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749537191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxQqG4KhaYRw6yfY61UkGdjq9X8xvLgX9uDEy/sLWeg=;
-	b=J4x4x/sli2M9TNZ1VcK4DNUGrjsgPTuLD4SQZEcipGAA9pgX19lUasb/WZ0WrACHCcc+gu
-	umBDqYy1hvWsCe96E0qgKWiebo6+GuvfWAQe0guBSI11kxOYGbpgHeSd1cocbVcaQJYmdS
-	7g8QCfsp15SOy7uY3351vcHRUsZo00A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749537191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxQqG4KhaYRw6yfY61UkGdjq9X8xvLgX9uDEy/sLWeg=;
-	b=wVn9mwAx0jqJ+cSBzJDwBsad98GueG1NoFuZOiKNq4rDqMtacGD496JSRs/5TJzFkkgCr9
-	Te947Y0n5y/dDNCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86B22139E2;
-	Tue, 10 Jun 2025 06:33:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QhGkH6fRR2jAcQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 10 Jun 2025 06:33:11 +0000
-Date: Tue, 10 Jun 2025 08:33:11 +0200
-Message-ID: <871prs14yg.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	nick@karaolidis.com
-Subject: Re: [PATCH] ALSA: hda/realtek: Add quirk for Asus GU605C
-In-Reply-To: <20250609102125.63196-1-rf@opensource.cirrus.com>
-References: <20250609102125.63196-1-rf@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1749537283; c=relaxed/simple;
+	bh=5yrNw8pQv3JUpVLncdRPNjVfR54w6B/BmPAplz5EDoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sL6x6zrI9inXIwsv4EbuAIjkihzOpZFai+N1CqLG9zzdO2a9e0SRV8Eal5TzbGUPhcUaK06QVRbX/rQX2Z9yI9flOooEdEFHiZ4y6CluHMOArnonZx48Tlsr6+jbTOb7q1AuExIf2Vbowirho9UFtOybedIEp0oOt9bS6zzBu80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TjW5bcYU; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2360ff7ac1bso21206575ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 23:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1749537281; x=1750142081; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6O0xC6SOcOSthm+nVuFP6/iA1o0YzWpNBPJwRk/wNao=;
+        b=TjW5bcYU1n6JCT3ub8dInY7QBxKSERzNzduCNyqjFM2pRGOtl8Fj9WtHZRg2vz69nl
+         iMNEsW6WwnykXmkPFuO4iOzoRPuPvJ+2aERxqIFfwZLmMsNaVmXF3R8229dJwH6p68zt
+         +939RI6uChzG1n5q84MBbhyfPSycxq5aSnF/I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749537281; x=1750142081;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6O0xC6SOcOSthm+nVuFP6/iA1o0YzWpNBPJwRk/wNao=;
+        b=mr5xg1hnEDlCEQjDbQk41tGTRDEEHgBeMUcAFtuKwP80D/VzjjZu+FyB3wzDDXqj8G
+         5eZRiDJFGBD6iWWTN1Xev3hfOnII5y/cDES2ID8OGiZOJLZj906oVuBkHYV8FIIwtWyU
+         3S0EeQfG+O+zmWyFWAF1yxrfntXvnMaQm47nG6JgsYHFHoprJm3chccrP1BTNuCETwT6
+         LReUrciJPKm2abq1ilvbxDz5usk9D/lJOBLNIeJAPwgTtjyZ1U9NEJPonY+U5JTcoLvA
+         Vfd69qfu2lh1y8cgDuHnn0kDjMjY+lbZH45b5mH1fuzQFJeTGco4+lwk90TPtAX/DBs/
+         kd/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtVr6+bfxJ+ctazrOtXsDrOTvf8HDggo/rqRZSMswa/9cj/TEmgj/vKrKp561aAOQWitR3AvREGoCVKpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrwP1LMsNAD4tbDdXgrpw90YoQkrYZneDDuY6nRgbUGDzJVUG
+	ZgwJqP5V37r3nha4ZQITA3ErVPdaLXADO1qDQsAntVOTcCbMVm50tVanUpbwQuj9gw==
+X-Gm-Gg: ASbGncv5S/R2im1XFM5MB0xi4ej56wRrNSNXG9cd25WSW1cmMKmQhK/f159SiXbV2ST
+	ibQJItVG2MnYRmqyfK5+OEc/St7EY+yqdOJO5XpN8vibKe3OfPuKGiFVvhCtmtH++Y1vzEzKRQ0
+	lm3nV2qK5qjDJf7Ejo4rXo3vHjq0V+lmkcLUsnGulMe2SZZQ3IHMjuZVRaUEamkBXNzoDTXal1T
+	GATqWd+OvKC1p0RE6q96u2rReKyf3K787wfHhh+xOKaGCooAXsn0SRAcZz+2XbsFHPhV7+Bux8M
+	Kp+h+2Ks2jZNeQEDU9V75uwd0lBcpoQK/UVQraHJhoy1ZkzyutBiCKyNyDUNZYbrocZahUULxGS
+	Mzjon
+X-Google-Smtp-Source: AGHT+IFMVjJL9gd/t2t1Cdy7S0Az0MbbHnKQkvJXrj2EcXFz4rjITbDsj/BO0L7kopXXEwjxKA52Ew==
+X-Received: by 2002:a17:903:244e:b0:235:f3e6:4680 with SMTP id d9443c01a7336-23601cfddb7mr217198085ad.21.1749537281092;
+        Mon, 09 Jun 2025 23:34:41 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:2826:ada4:efac:14e8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603092ee2sm64596765ad.82.2025.06.09.23.34.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 23:34:40 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Srinivas Kandagatla <srini@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Lala Lin <lala.lin@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] arm64: mediatek: Enable efuse GPU speed bin post-processing
+Date: Tue, 10 Jun 2025 14:34:28 +0800
+Message-ID: <20250610063431.2955757-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,cirrus.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 09 Jun 2025 12:21:25 +0200,
-Richard Fitzgerald wrote:
-> 
-> The GU605C has similar audio hardware to the GU605M so apply the
-> same quirk.
-> 
-> Note that in the linked bugzilla there are two separate problems
-> with the GU605C. This patch fixes one of the problems, so I haven't
-> added a Closes: tag.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Reported-by: Nick Karaolidis <nick@karaolidis.com>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=220152
+Hi everyone,
 
-Applied now.  Thanks.
+This is v2 of the MT8188 efuse GPU speed bin post-processing enablement
+patches. In v1 [1] the change was made to the driver. Angelo, the platform
+maintainer believes the change should be made to the DT binding instead
+[2]. v2 adopts Angelo's argument.
+
+Patch 1 updates the efuse DT binding so that MT8186 is a base compatible
+with no fallback, and MT8188 falls back to MT8186.
+
+Patch 2 updates the MT8188 DT to follow the new binding.
+
+If possible I would like to see both patches merged through the soc
+tree once the DT binding maintainers give an ack. This avoids prolonged
+waiting for the binding changes to land and uncertainty about whether
+things have fully landed or not.
 
 
-Takashi
+Thanks
+ChenYu
+
+[1] https://lore.kernel.org/all/20241223100648.2166754-1-wenst@chromium.org/
+[2] https://lore.kernel.org/all/11028242-afe4-474a-9d76-cd1bd9208987@collabora.com/
+
+Chen-Yu Tsai (2):
+  dt-bindings: nvmem: mediatek: efuse: split MT8186/MT8188 from base
+    version
+  arm64: dts: mediatek: mt8188: Change efuse fallback compatible to
+    mt8186
+
+ .../bindings/nvmem/mediatek,efuse.yaml          | 17 +++++++++++++++--
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi        |  2 +-
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+-- 
+2.50.0.rc0.604.gd4ff7b7c86-goog
+
 
