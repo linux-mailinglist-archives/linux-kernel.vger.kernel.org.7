@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-679098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AD5AD3246
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:39:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF618AD324C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AF697A14BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63676188E8A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1646528B4E2;
-	Tue, 10 Jun 2025 09:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ABC28BA98;
+	Tue, 10 Jun 2025 09:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T9jIF6F+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pSAQPe6u"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53CF28AB03;
-	Tue, 10 Jun 2025 09:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD728B412
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749548353; cv=none; b=uff02r6ln7FHr8c45kzpilQeajmUXwEN9igW6vUUguISWw/jwhuWWgtBC4OxuM8OSz6isHeN0imonPMozzwpjLV+0Uv2WfZa57yA8IiA//6UyfeOxC4avMcAmCqP4THyrzv8c7DAhXhFnEeyucxoBIvXYdYkBFTteiJjbrpa/rE=
+	t=1749548410; cv=none; b=bTBRGFz0VKb1ffxIT8gNQAwYW6SZhJYn5XZrcEmu22Gn7FB/oo0LkPNksSISxd1lA5Vy68jCWkBN+00wJ2qc7SeahLyI3HJYbXAkxpgMWiFbP9S2+2EZUaHew4LrBCWLF4V8c8BLQrWe0cEXjzoeKD+qc/1ljQvFOKX5MGf6KYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749548353; c=relaxed/simple;
-	bh=0LexJ1DKyWm821GRgkoDRUbdIZqYmeJek4sQWiljJI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXafymERTFwp92RnSTuQtiVrl5VjRr9XO9tQ91MIavh9PpdmaxcZLLGcnhzcea/G5EYdWARaH4UEF0ShFLkz84KrbudPv1LtMI51MaNxYypRNHuH1mKdtOYzsR3JYQOO916Ih7qqmOCsNe3H8V2UhlV3DfflfzG7MbxhtMHphu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T9jIF6F+; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749548352; x=1781084352;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0LexJ1DKyWm821GRgkoDRUbdIZqYmeJek4sQWiljJI8=;
-  b=T9jIF6F+PaFhuGchu4puDIyQSyeFxeY+oNqWhbVHTMhLNtrFn5u7NgnV
-   8twz8lDo4v9gw3ocufjvsIRXLD6yFk49x+1X6Mc2cEsllaFavJ3XBStID
-   mCOiihkjn/WP9mZqdvfn3eNhxLZKY3d1zwgKS4wTaiALc7D/T9Bw8tTfG
-   dlV9UEEQDomU5h8sojuXlmZiwbQYQaQXcAoHFwIQ90KUK7nPCVM+h18ni
-   CrXDHSU2wo0tR2AgfYrEIFIYH6Se0et2CUlyXzw+ACItqZRfMSXOKdzhx
-   +yElOlGGRL+pXjN923Wky7+4GRqqHdLt/M0Gi5hHP8+bEUjp3KucUS2eP
-   A==;
-X-CSE-ConnectionGUID: YyQ2a4I5QxOnLYJOmbbbgw==
-X-CSE-MsgGUID: WHwOrFj2Tz2RamslOQApqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="62305304"
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="62305304"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 02:39:10 -0700
-X-CSE-ConnectionGUID: LKb9DclCRJm6G8QILItRgw==
-X-CSE-MsgGUID: cCfDtmt6T/6QdUl7kPsP0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="147145994"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.169])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 02:39:08 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 0107811FBC0;
-	Tue, 10 Jun 2025 12:39:06 +0300 (EEST)
-Date: Tue, 10 Jun 2025 09:39:05 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Cc: Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] media: i2c: vd55g1: Miscellaneous fixes
-Message-ID: <aEf9OfSWjp7id68A@kekkonen.localdomain>
-References: <20250609-fix_vd55g1-v1-0-594f1134e3fb@foss.st.com>
- <aEf0KcapklkWpBFD@kekkonen.localdomain>
- <55fd5868-0481-42e1-b56b-80f59d724364@foss.st.com>
+	s=arc-20240116; t=1749548410; c=relaxed/simple;
+	bh=AKwpmJzl9lKGf7zB+8qMMeBZ+Kie7ZQ0wL5tYgJZHuI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YQWO4eLB8ABTdtUst2c4vTUPGiOPtvh98sei+s2MPRfSEPtHXLsm2wFnCAiv/oR32Jw8Mg4fS7wHhZH0Fo1BwAs65Rpg1sXJdAnvZlSNo4hGpnRBejx6QeYNLvSNHOQso07iBHAnJptVlLxbjj/jKr1paAqiSo/GGSi3CdMFKo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pSAQPe6u; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so2010145f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749548406; x=1750153206; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8YqxWEVGIbl06OM/kRfzm2Y5s3NUOnEjDcK+SqosNHU=;
+        b=pSAQPe6u+ZU6BhGbL8uK0HxJqlXmkCbQUJ5u5Gl4uu2MT2jwrZvy3Y7rkX9Z5ThSEm
+         cCZkpFGHc9zkarit1fzsNIahORO4QTlY1Who1W1wcSNgFyXu93+VaW85O9Mxqat8hHOf
+         aeYtOwvUhQWnqGgw0TMLCZhjKs3XauHHgWAQ62Qn3KxUY2CUKwL3BdCDfj7BqejkHN5+
+         CWuezzvF9WmkP4gZp0meUlhMlhs89ZOJC4gxZCitySfeisRKaTR5HqsIEFqbnPSOzpaK
+         ZJ3fl5CIkYjn4BRfebmucFgIcESeUYrdCYthR9X1BWbCbnFCJ7JJJn6DCrgHCletIij+
+         db2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749548406; x=1750153206;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8YqxWEVGIbl06OM/kRfzm2Y5s3NUOnEjDcK+SqosNHU=;
+        b=TbLvCBgTZjIs7LyLIYL8PAyvZx0OkQzs3u+RBv5P/2IV2mCKYRynGa5Hdv8UonUw1+
+         RJq87UYENTPK27vjuZgywnsvlmjR4eAPXO97Ewi/G1TTNAg6UVltoz2NiydqwTViM8+N
+         hEFL8x+BaEhHSqQx9pOdLY9kMs5C72EdtreYBDoeH3El7qy/v8T8V2lD6G0/2R7pgLZD
+         B3JEswPOo4SbfrkROyWOYJjCHMkSUjXfuarPX2vYt5K3mqOmmB04dQYiUhn3dLkh1jbz
+         C8jP43pkh+G1KR55g6MRY4J39VQytjicQALvgAdMfS+ZTA0EYKF23EnsFIXPkZp2m0YA
+         1SaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyMyjXDW1cKyru9mIg2bVJdZY/MgTg7yi88VLOGedF80RNzSfNVJLrV7r97rP9uNHRM7OCkNKNdZq9gI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1t5EngKix0TuggS1yYRmDQxq0NcuRsAcHlSlOJhgMvRhKfkeV
+	wlK4ezdlU4xmV5YzY9+kT6th47cGTbepciaSPsgxathikAYfU7+lU6zKEd/L19+GL3w=
+X-Gm-Gg: ASbGncvXlD9j8HmWZ2X0G+mEujYgerIDylT+ilKCNGJPA5Hu6DXBQ/4VZZwvdjSS+B7
+	svwjtEH7lExW3UtR6DFAf5cGkrO71s3kleHmuWmu5cmH4cwloA1H3SlTmoU7qqytyVLq8fLq+x+
+	z2fvtCM1MOP4Yz59bIzdvrx+7B7qrbNjy0tWZgweiZRkgtfqLtWcElPa1YI+ATvtsUPEZ7nNti6
+	uRhfMmaVVczGKP3CcwcPGnhOjqRBy2UE36dpKpxp0acMSrmFMZ4mg8nwBNmMNlMF4C9VESpZiw6
+	kqICZ4vzk+NO41iddbtgj8MsUz3qimtFBgRQKyVBwz7IsXXvOhPZNayEs9x7Hjo=
+X-Google-Smtp-Source: AGHT+IHAj214YdvfGYx1uOM3eZcsSW+MMvv57eHmxc2mJpyMMZA/B3YgejPP9vSlzR8Tacu+83rrHA==
+X-Received: by 2002:a05:6000:4287:b0:3a4:f7af:b41 with SMTP id ffacd0b85a97d-3a531caa1femr14444697f8f.15.1749548406144;
+        Tue, 10 Jun 2025 02:40:06 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:4d:e52b:812d:eb7c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45213709729sm134388355e9.19.2025.06.10.02.40.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 02:40:05 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH RESEND 0/3] Input: convert GPIO chips to using new value
+ setters
+Date: Tue, 10 Jun 2025 11:39:57 +0200
+Message-Id: <20250610-gpiochip-set-rv-input-v1-0-5875240b48d8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55fd5868-0481-42e1-b56b-80f59d724364@foss.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG39R2gC/3WNsQ7CIBRFf6V5s88ALSk6OdjVQUfToUVsX2KAQ
+ CWapv8uYXc89+aeu0I0gUyEY7VCMIkiOZuB7yrQ82Ang/TIDIIJyeqa4+TJ6Zk8RrNgSEjWvxc
+ cNReKKy3bWkDe+mCe9CneO1y7W3c5Q5/zmeLiwrfcJV7aYm5Y+8ecODIc1NjIkSvTHvTpRXYIb
+ u/CBP22bT8avG12wwAAAA==
+X-Change-ID: 20250331-gpiochip-set-rv-input-bc12818c5732
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1055;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=AKwpmJzl9lKGf7zB+8qMMeBZ+Kie7ZQ0wL5tYgJZHuI=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoR/1w/nKOzVoDi76ax1r2d54w+vjHRLZUjp8v4
+ Lyt6o3RjNCJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaEf9cAAKCRARpy6gFHHX
+ coMSD/9EpFU6M2G/ulQHJiLOkSW4viscpAsyePNbT4lS7UHQrSIKroONDyrQb/XCs4UMeLOfCaB
+ BrJFxMh3SVUKTC5y+cg0TzGv+luzFMX4scqB2gQX75sYYcMc27Ydd7vjWocf3SOoCO99PgtGBLw
+ HkJvPB15jno4fjzuhwnAHsjUpEMNzIsMKbOUFkAVaVpBoPzIFJcq0CZI7SEW3DKQtnqxX0dHqYW
+ mRBQA0gdbvFWiiAxfHm+04J1SV6m0FPMaF5hiz4C7loqPg4NDcpQJLpZ6MJeAAXpURmIXjieKPe
+ 9UDJlVZZhSOD29wN7rLobpLmA0n+t4zS3jywu43tTsorsyOoL5w9Ru1ScR3clGb7cJIzwwbYtJt
+ syj9OIu8yU1ZBcf3f/BJ7T/DrqGXi22iS26nrcjcKjLLQvnhfuwisSMAi+uBKY63zH7bGoW6MW0
+ q6vo8E9EK2D1kqzFzi58UtWGaDx5RBiE1si+Uv61dMEXvXRLleRTu0IN92lLfnd3qbgnDck/Ekp
+ L0sDOqtQvKPZC+tLwLJiVG3n85aKrvbST/MM753j2cuL4gED8q7ZwecZAM1Y//6KYPLFkIkL4fL
+ YXS8ZFUKTCWTGolheMx9GMjQ4guFTEs62nndAMFuUV2py4piiW3K9n4jXLiTGtGCqaBZG4CTgw9
+ qAQCxCdWvGhZ2ag==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Benjamin,
+Never got any further feedback on this series last cycle. Resending for
+v6.17.
 
-On Tue, Jun 10, 2025 at 11:31:05AM +0200, Benjamin Mugnier wrote:
-> Hi Sakari,
-> 
-> Thank you for your review.
-> 
-> On 6/10/25 11:00, Sakari Ailus wrote:
-> > Hi Benjamin,
-> > 
-> > Thanks for the set.
-> > 
-> > On Mon, Jun 09, 2025 at 03:46:20PM +0200, Benjamin Mugnier wrote:
-> >> This series provides small fixes and style improvements to the vd55g1
-> >> driver.
-> >> Nothing fancy really, just to keep everything up to date.
-> > 
-> > On all (or at least more than one) patches:
-> > 
-> > - please add a proper commit message beyond the subject line and
-> > 
-> > - properly wrap the commit paragraphs (up to 75 characters per line, e.g.
-> >   the above paragraph would fit on two lines).
-> > 
-> 
-> Yes, commit descriptions have been added in v2. Media-ci rightfully
-> yelled at me for that ;)
-> 
-> I don't see any commit paragraphs being above 75 characters, my vim
-> seems to be properly configured.
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. We're in the process of
+converting all GPIO drivers to using the new API. This series converts
+all the GPIO controllers under drivers/input/.
 
-It's not over 75 characters per line but some lines are shorter than they
-could be.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (3):
+      Input: ad7879 - use new GPIO line value setter callbacks
+      Input: adp5588 - use new GPIO line value setter callbacks
+      Input: adp5589 - use new GPIO line value setter callbacks
 
-> Do you mean the commit header too perhaps ? For example "media: i2c:
-> vd55g1: Miscellaneous fixes".
+ drivers/input/keyboard/adp5588-keys.c |  9 +++++----
+ drivers/input/keyboard/adp5589-keys.c | 11 ++++++-----
+ drivers/input/touchscreen/ad7879.c    | 11 +++++++----
+ 3 files changed, 18 insertions(+), 13 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250331-gpiochip-set-rv-input-bc12818c5732
 
+Best regards,
 -- 
-Regards,
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Sakari Ailus
 
