@@ -1,349 +1,272 @@
-Return-Path: <linux-kernel+bounces-678671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4130FAD2C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49C0AD2C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED05D188EEC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77CE8188DE89
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86F925EF90;
-	Tue, 10 Jun 2025 04:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B8425D52D;
+	Tue, 10 Jun 2025 04:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huycedxl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwLHVFzB"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD125DB09;
-	Tue, 10 Jun 2025 04:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0012111;
+	Tue, 10 Jun 2025 04:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749528649; cv=none; b=GTRkMcl5GuSgrxc9PsfTrYo40agcY1gncsT0li46d4qt6+/BHROyqDQE0n17KjQRvq5YHIXZ/GEGJLOtYCPR/LqbAVc8dlArpaeBTo7NTt7f1xYwjBOVzg76nAKUfMcVzCnb4Y58WmR6kqtOKyTzRCJjtGRSpcChg3+EtAlYhD8=
+	t=1749528486; cv=none; b=UYSeC1tRMoNcGvI0ftY4TqbBhmErdo1ZbIR4bnFATk/u+qgSVPdws+pbjMptfMm7drSEuIBAn7qC/ZuB5w59lH3YKOSOyLgEABIYj5y8YJ+PvIZF5TUcTr/EOZs1KjhZf9LiYg7uLzUh8xowPsHecINfeCKPmllv0mXb0UYzCfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749528649; c=relaxed/simple;
-	bh=batHVKMV99We/wInSNyLZ7hZD0DLlHrA4bGXYHgB/J8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n4lZ1L50t8rPE613driwdaONmWoES7uXTF5nzu4uqcUh4eBwG9m5HYSXB6Fdu4/6sAW5C2v4XaCEOt1ivVKtIcAGmLzXxnEHky4f5QK1jJQHEhYmc0WuO3wbi7rf9VDJ+u2tosn6Ks2stRclFCP2EzNUISKDEGXdN+Ziw0qJi0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huycedxl; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749528647; x=1781064647;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=batHVKMV99We/wInSNyLZ7hZD0DLlHrA4bGXYHgB/J8=;
-  b=huycedxl5HCvGcS74Siej+YJdnOM0npqigsrk5I1SuVN7l/4A9bZNz3p
-   nQ4D5RLALEoZe9DoWrdcaXmEOfbC1Yo1mamjlV8LasFIQuSYErJT6FCrl
-   TK7Mbaa2XeqmWFA25+pPBXglDdi12q7Q3tlOAIXQDPA6nawLeWVFhjuRB
-   hTZXXTb0xffPsBdBa30vTNFvvfEMhahAy1kxQDAqI/l0AguZnFP71grad
-   eAFOJoJpIFQfrMyHbnULq/x1fWic9fi2LPAnxTyoXjRoplgWjZt9q3pRd
-   1/0DpzimRkD4bOMFvYGHGYSpdxJzq+PgV+GY0bF2WPlF5z+7mqJpkzl/q
-   A==;
-X-CSE-ConnectionGUID: Y6i+/X5VTTml88Z79191eA==
-X-CSE-MsgGUID: 7+hLtiHPQ3GmfhgTut0zlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="51613216"
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="51613216"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 21:10:47 -0700
-X-CSE-ConnectionGUID: UN0J4MucT0SuRvbmZlcIOw==
-X-CSE-MsgGUID: xCJEsukUSXuWAQdx2kCIgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="177646795"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by orviesa002.jf.intel.com with ESMTP; 09 Jun 2025 21:10:43 -0700
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: donald.hunter@gmail.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	vadim.fedorenko@linux.dev,
-	jiri@resnulli.us,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	aleksandr.loktionov@intel.com,
-	corbet@lwn.net
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	linux-rdma@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Milena Olech <milena.olech@intel.com>
-Subject: [PATCH net-next v5 3/3] ice: add ref-sync dpll pins
-Date: Tue, 10 Jun 2025 06:04:36 +0200
-Message-Id: <20250610040436.1669826-4-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250610040436.1669826-1-arkadiusz.kubalewski@intel.com>
-References: <20250610040436.1669826-1-arkadiusz.kubalewski@intel.com>
+	s=arc-20240116; t=1749528486; c=relaxed/simple;
+	bh=2FbQb0j5PmGYCAtDJcQ0kiXNrNozsZAqA7CreMMKfZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UgDR0cKQmH8zzlWHIucBlrZn7xl826mH2ZDm0Rsev2+Ll+i03EOp3cVYhJKs/xUOvRVu8BKvZ/8kCfh4JhoSdOY9Kjt6NpCNH7a7jpEYrr0vTv21Ty+5KDQ6iVHjUFRkReBejBboeKZZIeXNanLpVAJGp5zsX1TZ8NVRkgcdIZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwLHVFzB; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fac1c60e19so67823436d6.1;
+        Mon, 09 Jun 2025 21:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749528483; x=1750133283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YidR/r+gzeLRp0x2mUg2/Svgj5SNHq457PFKuHajlEg=;
+        b=IwLHVFzB6xee+YOzltEeeC4D8+SD0QdHe4+Emyg+ElPXX3xBZSL21srfnloG0YJR9e
+         fdQcJTfUuMR0+UF4lqHokp9pxAnibEBqLuY2O6NcOw4DWOdg6wHkSenxdNBgTDGnmdQm
+         L63hL5bk5S7ljlCcMW4F7I78GHvbxnOoPhM/df66hlajpPQ16Dpy8kJGw4mdBEaHGQx4
+         hp319paSvHP3Sxl0EV9ghgtO4P1eDThEomGpEH8SqL5iMyUGvmxHTzrc+8HkJS8Z79RJ
+         fN7zBoQCuQz1awbjOQ2XVJHH2ytpOwXIhxPuYfz7TyrQ+2WrEUjjevfLgkP7wsZxGHtS
+         8SNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749528483; x=1750133283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YidR/r+gzeLRp0x2mUg2/Svgj5SNHq457PFKuHajlEg=;
+        b=sdjfuZtJT9nZLKYGRkTLWsrtiDrGrV3SIhXoIIhJc9upyMyaffx1AsvRgmeq5ZsD5e
+         plz1UfgfxYkThr4+J5xWpZetQBZbx3Ky0kr0jrCxML56zeIHpCZt2zdHwv3zcMV/1H7t
+         TJCkpNd1TYi9thrnTZUKHGHvOOu6izGjezQB4QNervBgKRDaQLw/iqzW3SeBV4oIQr7e
+         FSsVwq+gLfbInL639Az5Vx6VwXngLc6itpT26jJOAhrkqpYZvePKmVrVYyzMsYMiH4kC
+         Gru5yZn1zZ2DMeGjp6pj4R4yZg9QhOe/BAxfaMtA/wv26kAmdw0tsA/wM/bH99o/KYNr
+         4GBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPzPeRWuptlXP1BxmxubpyYw73FUnBG87odKhqkJzxaui3Biqa71SJQKjKZSrOnKo+kw8W4E5eTouN9A==@vger.kernel.org, AJvYcCVTGEHoDjAp/bedffZMSpYMAT/fxnJLMTJUNkV6gy+2GsV+xMKT7Je4XNe368kBSAYb/6LjyW6yh0g2W/4l@vger.kernel.org
+X-Gm-Message-State: AOJu0YylCQG5/GsKpj9G3yLM/oPEcLFTZGEYMdRhBHYLD87f6JKi3zEC
+	MO0Iv1GnL7b1wZLmDTYiGmX7Ws5fMhiPRFsNCYrelYaNIDb7IHj4zlJHtk6N94jS8LrpQvw9pIX
+	nzgaQn4dInDHeHeL7N0pdOkVmN7onago=
+X-Gm-Gg: ASbGncumF5g2DwxuLag1BcppLWK3ifgeyBSIhCWNlati6yeXiWXfv7DW8XcfFpFgZjU
+	VO9RynxyEb6+3gOn62X/G3rESlvnVCeDVXy+lRwntX+fZ6aSK0tQXCpfNOE9wvxWpJAa1GSS/n/
+	wP7yn1/xx9ICzl9COY5aH52rSYJ6ukdXqBEBzhaxG2UFZ6
+X-Google-Smtp-Source: AGHT+IE+txtavHBTUg0jCaqcRr9dyMMTLzy9PmZ6pW/v4e54RWpY6L5i6qn2DPpAJKNpJzKiIB9/luCBYjEpD5oC2VE=
+X-Received: by 2002:a05:6214:19e7:b0:6fb:265:a2c5 with SMTP id
+ 6a1803df08f44-6fb23985764mr30742096d6.17.1749528483089; Mon, 09 Jun 2025
+ 21:08:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com> <20250526-dualsense-hid-jack-v1-1-a65fee4a60cc@collabora.com>
+In-Reply-To: <20250526-dualsense-hid-jack-v1-1-a65fee4a60cc@collabora.com>
+From: Roderick Colenbrander <thunderbird2k@gmail.com>
+Date: Mon, 9 Jun 2025 21:07:52 -0700
+X-Gm-Features: AX0GCFuDSZEL4P2XIAHmAYhsx7V2c5Mrab-6N-SUsFTfahCNAdTkkSan0m3RhiY
+Message-ID: <CAEc3jaAjUHgv7U59u7RSZ7TK9ycXmYs22b6MsHvSjt-_Do7cjg@mail.gmail.com>
+Subject: Re: [PATCH 01/11] HID: playstation: Make use of bitfield macros
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Implement reference sync input pin get/set callbacks, allow user space
-control over dpll pin pairs capable of reference sync support.
+Hi Christian,
 
-Reviewed-by: Milena Olech <milena.olech@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
-v5:
-- rebase.
----
- .../net/ethernet/intel/ice/ice_adminq_cmd.h   |   2 +
- drivers/net/ethernet/intel/ice/ice_dpll.c     | 186 ++++++++++++++++++
- 2 files changed, 188 insertions(+)
+Thanks for the effort into this patch. Personally this is a patch I
+would rather drop. There is the trade-off between magical numbers and
+code readability. I think this patch makes things much less readable.
+Having to introduce more macros and FIELD_PREP vs a single bitshift
+here and there.
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h b/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-index bdee499f991a..7fd0f0091d36 100644
---- a/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-+++ b/drivers/net/ethernet/intel/ice/ice_adminq_cmd.h
-@@ -2288,6 +2288,8 @@ struct ice_aqc_get_cgu_abilities {
- 	u8 rsvd[3];
- };
- 
-+#define ICE_AQC_CGU_IN_CFG_FLG2_REFSYNC_EN		BIT(7)
-+
- /* Set CGU input config (direct 0x0C62) */
- struct ice_aqc_set_cgu_input_config {
- 	u8 input_idx;
-diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
-index bce3ad6ca2a6..98f0c86f41fc 100644
---- a/drivers/net/ethernet/intel/ice/ice_dpll.c
-+++ b/drivers/net/ethernet/intel/ice/ice_dpll.c
-@@ -12,6 +12,19 @@
- #define ICE_DPLL_PIN_ESYNC_PULSE_HIGH_PERCENT	25
- #define ICE_DPLL_PIN_GEN_RCLK_FREQ		1953125
- 
-+#define ICE_SR_PFA_DPLL_DEFAULTS		0x152
-+#define ICE_DPLL_PFA_REF_SYNC_TYPE		0x2420
-+#define ICE_DPLL_PFA_REF_SYNC_TYPE2		0x2424
-+#define ICE_DPLL_PFA_END			0xFFFF
-+#define ICE_DPLL_PFA_HEADER_LEN			4
-+#define ICE_DPLL_PFA_ENTRY_LEN			3
-+#define ICE_DPLL_PFA_MAILBOX_REF_SYNC_PIN_S	4
-+#define ICE_DPLL_PFA_MASK_OFFSET		1
-+#define ICE_DPLL_PFA_VALUE_OFFSET		2
-+
-+#define ICE_DPLL_E810C_SFP_NC_PINS		2
-+#define ICE_DPLL_E810C_SFP_NC_START		4
-+
- /**
-  * enum ice_dpll_pin_type - enumerate ice pin types:
-  * @ICE_DPLL_PIN_INVALID: invalid pin type
-@@ -1314,6 +1327,89 @@ ice_dpll_input_esync_get(const struct dpll_pin *pin, void *pin_priv,
- 	return 0;
- }
- 
-+/**
-+ * ice_dpll_input_ref_sync_set - callback for setting reference sync feature
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @ref_pin: pin pointer for reference sync pair
-+ * @ref_pin_priv: private data pointer of ref_pin
-+ * @state: requested state for reference sync for pin pair
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for setting reference sync frequency
-+ * feature for input pin.
-+ *
-+ * Context: Acquires and releases pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_input_ref_sync_set(const struct dpll_pin *pin, void *pin_priv,
-+			    const struct dpll_pin *ref_pin, void *ref_pin_priv,
-+			    const enum dpll_pin_state state,
-+			    struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_pf *pf = p->pf;
-+	u8 flags_en = 0;
-+	int ret;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+
-+	if (p->flags[0] & ICE_AQC_GET_CGU_IN_CFG_FLG2_INPUT_EN)
-+		flags_en = ICE_AQC_SET_CGU_IN_CFG_FLG2_INPUT_EN;
-+	if (state == DPLL_PIN_STATE_CONNECTED)
-+		flags_en |= ICE_AQC_CGU_IN_CFG_FLG2_REFSYNC_EN;
-+	ret = ice_aq_set_input_pin_cfg(&pf->hw, p->idx, 0, flags_en, 0, 0);
-+	if (!ret)
-+		ret = ice_dpll_pin_state_update(pf, p, ICE_DPLL_PIN_TYPE_INPUT,
-+						extack);
-+	mutex_unlock(&pf->dplls.lock);
-+
-+	return ret;
-+}
-+
-+/**
-+ * ice_dpll_input_ref_sync_get - callback for getting reference sync config
-+ * @pin: pointer to a pin
-+ * @pin_priv: private data pointer passed on pin registration
-+ * @ref_pin: pin pointer for reference sync pair
-+ * @ref_pin_priv: private data pointer of ref_pin
-+ * @state: on success holds reference sync state for pin pair
-+ * @extack: error reporting
-+ *
-+ * Dpll subsystem callback. Handler for setting reference sync frequency
-+ * feature for input pin.
-+ *
-+ * Context: Acquires and releases pf->dplls.lock
-+ * Return:
-+ * * 0 - success
-+ * * negative - error
-+ */
-+static int
-+ice_dpll_input_ref_sync_get(const struct dpll_pin *pin, void *pin_priv,
-+			    const struct dpll_pin *ref_pin, void *ref_pin_priv,
-+			    enum dpll_pin_state *state,
-+			    struct netlink_ext_ack *extack)
-+{
-+	struct ice_dpll_pin *p = pin_priv;
-+	struct ice_pf *pf = p->pf;
-+
-+	if (ice_dpll_is_reset(pf, extack))
-+		return -EBUSY;
-+	mutex_lock(&pf->dplls.lock);
-+	if (p->flags[0] & ICE_AQC_CGU_IN_CFG_FLG2_REFSYNC_EN)
-+		*state = DPLL_PIN_STATE_CONNECTED;
-+	else
-+		*state = DPLL_PIN_STATE_DISCONNECTED;
-+	mutex_unlock(&pf->dplls.lock);
-+
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_rclk_state_on_pin_set - set a state on rclk pin
-  * @pin: pointer to a pin
-@@ -1440,6 +1536,8 @@ static const struct dpll_pin_ops ice_dpll_input_ops = {
- 	.phase_offset_get = ice_dpll_phase_offset_get,
- 	.esync_set = ice_dpll_input_esync_set,
- 	.esync_get = ice_dpll_input_esync_get,
-+	.ref_sync_set = ice_dpll_input_ref_sync_set,
-+	.ref_sync_get = ice_dpll_input_ref_sync_get,
- };
- 
- static const struct dpll_pin_ops ice_dpll_output_ops = {
-@@ -1619,6 +1717,91 @@ static void ice_dpll_periodic_work(struct kthread_work *work)
- 				   msecs_to_jiffies(500));
- }
- 
-+/**
-+ * ice_dpll_init_ref_sync_inputs - initialize reference sync pin pairs
-+ * @pf: pf private structure
-+ *
-+ * Read DPLL TLV capabilities and initialize reference sync pin pairs in
-+ * dpll subsystem.
-+ *
-+ * Return:
-+ * * 0 - success or nothing to do (no ref-sync tlv are present)
-+ * * negative - AQ failure
-+ */
-+static int ice_dpll_init_ref_sync_inputs(struct ice_pf *pf)
-+{
-+	struct ice_dpll_pin *inputs = pf->dplls.inputs;
-+	struct ice_hw *hw = &pf->hw;
-+	u16 addr, len, end, hdr;
-+	int ret;
-+
-+	ret = ice_get_pfa_module_tlv(hw, &hdr, &len, ICE_SR_PFA_DPLL_DEFAULTS);
-+	if (ret) {
-+		dev_err(ice_pf_to_dev(pf),
-+			"Failed to read PFA dpll defaults TLV ret=%d\n", ret);
-+		return ret;
-+	}
-+	end = hdr + len;
-+
-+	for (addr = hdr + ICE_DPLL_PFA_HEADER_LEN; addr < end;
-+	     addr += ICE_DPLL_PFA_ENTRY_LEN) {
-+		unsigned long bit, ul_mask, offset;
-+		u16 pin, mask, buf;
-+		bool valid = false;
-+
-+		ret = ice_read_sr_word(hw, addr, &buf);
-+		if (ret)
-+			return ret;
-+
-+		switch (buf) {
-+		case ICE_DPLL_PFA_REF_SYNC_TYPE:
-+		case ICE_DPLL_PFA_REF_SYNC_TYPE2:
-+		{
-+			u16 mask_addr = addr + ICE_DPLL_PFA_MASK_OFFSET;
-+			u16 val_addr = addr + ICE_DPLL_PFA_VALUE_OFFSET;
-+
-+			ret = ice_read_sr_word(hw, mask_addr, &mask);
-+			if (ret)
-+				return ret;
-+			ret = ice_read_sr_word(hw, val_addr, &pin);
-+			if (ret)
-+				return ret;
-+			if (buf == ICE_DPLL_PFA_REF_SYNC_TYPE)
-+				pin >>= ICE_DPLL_PFA_MAILBOX_REF_SYNC_PIN_S;
-+			valid = true;
-+			break;
-+		}
-+		case ICE_DPLL_PFA_END:
-+			addr = end;
-+			break;
-+		default:
-+			continue;
-+		}
-+		if (!valid)
-+			continue;
-+
-+		ul_mask = mask;
-+		offset = 0;
-+		for_each_set_bit(bit, &ul_mask, BITS_PER_TYPE(u16)) {
-+			int i, j;
-+
-+			if (hw->device_id == ICE_DEV_ID_E810C_SFP &&
-+			    pin > ICE_DPLL_E810C_SFP_NC_START)
-+				offset = -ICE_DPLL_E810C_SFP_NC_PINS;
-+			i = pin + offset;
-+			j = bit + offset;
-+			if (i < 0 || j < 0)
-+				return -ERANGE;
-+			ret = dpll_pin_ref_sync_pair_add(inputs[i].pin,
-+							 inputs[j].pin);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * ice_dpll_release_pins - release pins resources from dpll subsystem
-  * @pins: pointer to pins array
-@@ -1936,6 +2119,9 @@ static int ice_dpll_init_pins(struct ice_pf *pf, bool cgu)
- 	if (ret)
- 		return ret;
- 	if (cgu) {
-+		ret = ice_dpll_init_ref_sync_inputs(pf);
-+		if (ret)
-+			goto deinit_inputs;
- 		ret = ice_dpll_init_direct_pins(pf, cgu, pf->dplls.outputs,
- 						pf->dplls.num_inputs,
- 						pf->dplls.num_outputs,
--- 
-2.38.1
+Thanks,
+Roderick
 
+On Mon, May 26, 2025 at 5:52=E2=80=AFAM Cristian Ciocaltea
+<cristian.ciocaltea@collabora.com> wrote:
+>
+> Improve code readability by replacing open coded bit operations with the
+> equivalent bitfield macros.
+>
+> While at it, vertically align all DS_OUTPUT_* bit constants.
+>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/hid/hid-playstation.c | 68 ++++++++++++++++++++++++++-----------=
+------
+>  1 file changed, 41 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.=
+c
+> index 1468fb11e39dffc883181663a4ad44252e0a7ebb..538194ce8902fe1383b57ac59=
+743f32838dcb0df 100644
+> --- a/drivers/hid/hid-playstation.c
+> +++ b/drivers/hid/hid-playstation.c
+> @@ -5,6 +5,7 @@
+>   *  Copyright (c) 2020-2022 Sony Interactive Entertainment
+>   */
+>
+> +#include <linux/bitfield.h>
+>  #include <linux/bits.h>
+>  #include <linux/crc32.h>
+>  #include <linux/device.h>
+> @@ -116,29 +117,41 @@ struct ps_led_info {
+>  #define DS_STATUS_CHARGING_SHIFT       4
+>
+>  /* Feature version from DualSense Firmware Info report. */
+> -#define DS_FEATURE_VERSION(major, minor) ((major & 0xff) << 8 | (minor &=
+ 0xff))
+> -
+> +#define DS_FEATURE_VERSION_MINOR               GENMASK(7, 0)
+> +#define DS_FEATURE_VERSION_MAJOR               GENMASK(15, 8)
+> +#define DS_FEATURE_VERSION(major, minor)       (FIELD_PREP(DS_FEATURE_VE=
+RSION_MAJOR, major) | \
+> +                                                FIELD_PREP(DS_FEATURE_VE=
+RSION_MINOR, minor))
+>  /*
+>   * Status of a DualSense touch point contact.
+>   * Contact IDs, with highest bit set are 'inactive'
+>   * and any associated data is then invalid.
+>   */
+> -#define DS_TOUCH_POINT_INACTIVE BIT(7)
+> +#define DS_TOUCH_POINT_INACTIVE                        BIT(7)
+> +#define DS_TOUCH_POINT_X_LO                    GENMASK(7, 0)
+> +#define DS_TOUCH_POINT_X_HI                    GENMASK(11, 8)
+> +#define DS_TOUCH_POINT_X(hi, lo)               (FIELD_PREP(DS_TOUCH_POIN=
+T_X_HI, hi) | \
+> +                                                FIELD_PREP(DS_TOUCH_POIN=
+T_X_LO, lo))
+> +#define DS_TOUCH_POINT_Y_LO                    GENMASK(3, 0)
+> +#define DS_TOUCH_POINT_Y_HI                    GENMASK(11, 4)
+> +#define DS_TOUCH_POINT_Y(hi, lo)               (FIELD_PREP(DS_TOUCH_POIN=
+T_Y_HI, hi) | \
+> +                                                FIELD_PREP(DS_TOUCH_POIN=
+T_Y_LO, lo))
+>
+>   /* Magic value required in tag field of Bluetooth output report. */
+> -#define DS_OUTPUT_TAG 0x10
+> +#define DS_OUTPUT_TAG                          0x10
+> +#define DS_OUTPUT_SEQ_TAG                      GENMASK(3, 0)
+> +#define DS_OUTPUT_SEQ_NO                       GENMASK(7, 4)
+>  /* Flags for DualSense output report. */
+> -#define DS_OUTPUT_VALID_FLAG0_COMPATIBLE_VIBRATION BIT(0)
+> -#define DS_OUTPUT_VALID_FLAG0_HAPTICS_SELECT BIT(1)
+> -#define DS_OUTPUT_VALID_FLAG1_MIC_MUTE_LED_CONTROL_ENABLE BIT(0)
+> -#define DS_OUTPUT_VALID_FLAG1_POWER_SAVE_CONTROL_ENABLE BIT(1)
+> -#define DS_OUTPUT_VALID_FLAG1_LIGHTBAR_CONTROL_ENABLE BIT(2)
+> -#define DS_OUTPUT_VALID_FLAG1_RELEASE_LEDS BIT(3)
+> -#define DS_OUTPUT_VALID_FLAG1_PLAYER_INDICATOR_CONTROL_ENABLE BIT(4)
+> -#define DS_OUTPUT_VALID_FLAG2_LIGHTBAR_SETUP_CONTROL_ENABLE BIT(1)
+> -#define DS_OUTPUT_VALID_FLAG2_COMPATIBLE_VIBRATION2 BIT(2)
+> -#define DS_OUTPUT_POWER_SAVE_CONTROL_MIC_MUTE BIT(4)
+> -#define DS_OUTPUT_LIGHTBAR_SETUP_LIGHT_OUT BIT(1)
+> +#define DS_OUTPUT_VALID_FLAG0_COMPATIBLE_VIBRATION             BIT(0)
+> +#define DS_OUTPUT_VALID_FLAG0_HAPTICS_SELECT                   BIT(1)
+> +#define DS_OUTPUT_VALID_FLAG1_MIC_MUTE_LED_CONTROL_ENABLE      BIT(0)
+> +#define DS_OUTPUT_VALID_FLAG1_POWER_SAVE_CONTROL_ENABLE                B=
+IT(1)
+> +#define DS_OUTPUT_VALID_FLAG1_LIGHTBAR_CONTROL_ENABLE          BIT(2)
+> +#define DS_OUTPUT_VALID_FLAG1_RELEASE_LEDS                     BIT(3)
+> +#define DS_OUTPUT_VALID_FLAG1_PLAYER_INDICATOR_CONTROL_ENABLE  BIT(4)
+> +#define DS_OUTPUT_VALID_FLAG2_LIGHTBAR_SETUP_CONTROL_ENABLE    BIT(1)
+> +#define DS_OUTPUT_VALID_FLAG2_COMPATIBLE_VIBRATION2            BIT(2)
+> +#define DS_OUTPUT_POWER_SAVE_CONTROL_MIC_MUTE                  BIT(4)
+> +#define DS_OUTPUT_LIGHTBAR_SETUP_LIGHT_OUT                     BIT(1)
+>
+>  /* DualSense hardware limits */
+>  #define DS_ACC_RES_PER_G       8192
+> @@ -315,7 +328,9 @@ struct dualsense_output_report {
+>   * Contact IDs, with highest bit set are 'inactive'
+>   * and any associated data is then invalid.
+>   */
+> -#define DS4_TOUCH_POINT_INACTIVE BIT(7)
+> +#define DS4_TOUCH_POINT_INACTIVE       BIT(7)
+> +#define DS4_TOUCH_POINT_X(hi, lo)      DS_TOUCH_POINT_X(hi, lo)
+> +#define DS4_TOUCH_POINT_Y(hi, lo)      DS_TOUCH_POINT_Y(hi, lo)
+>
+>  /* Status field of DualShock4 input report. */
+>  #define DS4_STATUS0_BATTERY_CAPACITY   GENMASK(3, 0)
+> @@ -1194,7 +1209,8 @@ static void dualsense_init_output_report(struct dua=
+lsense *ds, struct dualsense_
+>                  * Highest 4-bit is a sequence number, which needs to be =
+increased
+>                  * every report. Lowest 4-bit is tag and can be zero for =
+now.
+>                  */
+> -               bt->seq_tag =3D (ds->output_seq << 4) | 0x0;
+> +               bt->seq_tag =3D FIELD_PREP(DS_OUTPUT_SEQ_NO, ds->output_s=
+eq) |
+> +                             FIELD_PREP(DS_OUTPUT_SEQ_TAG, 0x0);
+>                 if (++ds->output_seq =3D=3D 16)
+>                         ds->output_seq =3D 0;
+>
+> @@ -1439,11 +1455,10 @@ static int dualsense_parse_report(struct ps_devic=
+e *ps_dev, struct hid_report *r
+>                 input_mt_report_slot_state(ds->touchpad, MT_TOOL_FINGER, =
+active);
+>
+>                 if (active) {
+> -                       int x =3D (point->x_hi << 8) | point->x_lo;
+> -                       int y =3D (point->y_hi << 4) | point->y_lo;
+> -
+> -                       input_report_abs(ds->touchpad, ABS_MT_POSITION_X,=
+ x);
+> -                       input_report_abs(ds->touchpad, ABS_MT_POSITION_Y,=
+ y);
+> +                       input_report_abs(ds->touchpad, ABS_MT_POSITION_X,
+> +                                        DS_TOUCH_POINT_X(point->x_hi, po=
+int->x_lo));
+> +                       input_report_abs(ds->touchpad, ABS_MT_POSITION_Y,
+> +                                        DS_TOUCH_POINT_Y(point->y_hi, po=
+int->y_lo));
+>                 }
+>         }
+>         input_mt_sync_frame(ds->touchpad);
+> @@ -2351,11 +2366,10 @@ static int dualshock4_parse_report(struct ps_devi=
+ce *ps_dev, struct hid_report *
+>                         input_mt_report_slot_state(ds4->touchpad, MT_TOOL=
+_FINGER, active);
+>
+>                         if (active) {
+> -                               int x =3D (point->x_hi << 8) | point->x_l=
+o;
+> -                               int y =3D (point->y_hi << 4) | point->y_l=
+o;
+> -
+> -                               input_report_abs(ds4->touchpad, ABS_MT_PO=
+SITION_X, x);
+> -                               input_report_abs(ds4->touchpad, ABS_MT_PO=
+SITION_Y, y);
+> +                               input_report_abs(ds4->touchpad, ABS_MT_PO=
+SITION_X,
+> +                                                DS4_TOUCH_POINT_X(point-=
+>x_hi, point->x_lo));
+> +                               input_report_abs(ds4->touchpad, ABS_MT_PO=
+SITION_Y,
+> +                                                DS4_TOUCH_POINT_Y(point-=
+>y_hi, point->y_lo));
+>                         }
+>                 }
+>                 input_mt_sync_frame(ds4->touchpad);
+>
+> --
+> 2.49.0
+>
+>
 
