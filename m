@@ -1,108 +1,140 @@
-Return-Path: <linux-kernel+bounces-679327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE027AD34E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:26:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B44AAD34E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6972B1741EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82CC1744CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDC727FD67;
-	Tue, 10 Jun 2025 11:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC76223DC6;
+	Tue, 10 Jun 2025 11:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="un6UbFjP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="zrTiJGlO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Chk2bphT"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12762227EA3;
-	Tue, 10 Jun 2025 11:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F873228CBC;
+	Tue, 10 Jun 2025 11:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749554783; cv=none; b=QSupaZy6me+JXMo9QU1h6tNagHdE6vrwYj+xeplgY7XFWNby7neiJZfcK/8nHOHVd1lkZ0xrmCG/HLvGio6XDwy2grxEwnvLHS49PicMulN0MwSM5+vzZR5/eLULlNjQUsSxKhZbSlnKs+gWzpqdUeOOUkuQshxu/FTKuFRNt7w=
+	t=1749554828; cv=none; b=EGaB0vKB0UmVCS0PEN7CYAkTLn8/Cvm2QhoSwOL2aqfVZh4Lr5sWHwAWP8US5ZaHvZUAFWZUuA+AK4LI+KTlYevz+pGXQOu5tefXjQL4NjbzN9WddeAzDaRmFA6fmQ6bwwIYxUxktltqHkoAeHpDSsTShUVAsmtuCGp3UxxAjMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749554783; c=relaxed/simple;
-	bh=/z0GgE9IRkDYGHI/IsWXrA2ubAR+Pni9VNySYq6a7tc=;
-	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
-	 MIME-Version:Content-Type; b=AK+rSuq698/auuriTwnhx8NNnra1wQpCJTYlbUYZYU9d3tvtklVpEOdTsp6dseQdT8IDpoh9yjudrBTC5aAvhCApsP7ObaerJqp+2zqd12yXkJJwz/NktamlDqc0gJ6MeVt2/FN/wOnP4NoAdI6qelMNVnvInyDTCgZ0G/rUf5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=un6UbFjP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EB8C4CEED;
-	Tue, 10 Jun 2025 11:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749554782;
-	bh=/z0GgE9IRkDYGHI/IsWXrA2ubAR+Pni9VNySYq6a7tc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=un6UbFjPtKuVDW/6YPewUO7WtDpdqp0iNkImIUx8y8YJ/0yXWxLxCS+2dWSuG8FFG
-	 Nebf7BD5tATniIyJNi3zQ4LFdtALVfMJ0m81WmfBzjPfYakFyl5EXKNJ+XIlnW+NyK
-	 LqUuhITKY9Jl1etGapomihcbm5k05gOSLwhQhcA93XKq/G3JFnM6qynNfG5E+cEqjj
-	 EhmGfpH5DrWzpRd30EJSxJzsKB6vtG3hkPC06qOfExGKg5VuvONpsRaJ6Wrj0sV0oM
-	 2ciRCEPMZ6S+m8oC6xfq04c5rhz6tAXMPKG3dtncG+796KqY+qMJFbLx1Qj8oM5BGU
-	 +TmNphtLDkl0w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Cc: <alex.gaynor@gmail.com>,  <ojeda@kernel.org>,  <aliceryhl@google.com>,
-  <anna-maria@linutronix.de>,  <bjorn3_gh@protonmail.com>,
-  <boqun.feng@gmail.com>,  <dakr@kernel.org>,  <frederic@kernel.org>,
-  <gary@garyguo.net>,  <jstultz@google.com>,
-  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
-  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
-  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
-Subject: Re: [PATCH v2 4/5] rust: time: Make HasHrTimer generic over
- HrTimerMode
-In-Reply-To: <20250609102418.3345792-5-fujita.tomonori@gmail.com> (FUJITA
-	Tomonori's message of "Mon, 09 Jun 2025 19:24:17 +0900")
-Message-ID: <87o6uv27qr.fsf@kernel.org>
-References: <20250609102418.3345792-1-fujita.tomonori@gmail.com>
-	<1zU91IwxagjPCPl0Nw9xz728DEqNqtV7KHWwCZYP2EiiVcUrZT3T2VFLOOdsmQ-LT9GrdHddepVw6__or-ZvPQ==@protonmail.internalid>
-	<20250609102418.3345792-5-fujita.tomonori@gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 10 Jun 2025 13:25:37 +0200
+	s=arc-20240116; t=1749554828; c=relaxed/simple;
+	bh=TL6JbSJqsHs7gNgHzQU9wqaEfdVLuclimzl3c35Zfp0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lAU6MHATFa85qb+Shy3RKadHSp1bFt6AF7ELoSE3vd4ZYP2lPdlszmK3bGdo5PQklbQpas6dyHk264xOLugYH7EgzKfNygsmcJV6OCfAl1N2KfGBUhmUSFuIW3X6y+euijCT1p/n9R7nhhv/Rmnr8fmQ64OU2Jqdv3xGkZj7Cq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=zrTiJGlO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Chk2bphT; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 7D5042540103;
+	Tue, 10 Jun 2025 07:27:05 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 10 Jun 2025 07:27:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749554825;
+	 x=1749641225; bh=yuDbo2GW1JzHKoT1DngI1u1qLCDPh52Z9n938BLR8Hs=; b=
+	zrTiJGlO2ci1+axaxZsPc6PQHD6SYH//C+2Tv6G0ywd44/0TdMrweZwcZpWJitur
+	Qjes3FI9doHEhtyYBwIwPUviaQqab5d/DSTbfRoiuUfe6/ptf+Wa/G7OFpMYCQO8
+	90qmHDUFbEe+ojrSJFZ7VLLuZdASCiD0ZGuKdqcJEU4o28iKgiNQzQkJjQMvcVvF
+	qbf4vimYA7zuEimcCNqp7GDHC6NqW5RPBMp/4ZKXPDOnPHvIoxHeAZ/5Kr1O/FA9
+	PEtYAhD6VU5kUbHxhYNNUTVT4+RgpYdPgKgQtluQZXl3OpEEMeV/48N572b/4NOp
+	Pm4f7vHDqxVdBpz0b/a6VQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749554825; x=
+	1749641225; bh=yuDbo2GW1JzHKoT1DngI1u1qLCDPh52Z9n938BLR8Hs=; b=C
+	hk2bphTu8ab2tZ58nmZfBQFDPJIhl2sFEYbmP29EiqVXRuB8lN5n4zxlFYKNhlmn
+	Yd1RBo7ojwAnVkNTKL2LExaxFQeIHn8SgG0Xqest6WYvtX7L8gV/zkjDNhIXvBQC
+	JtEhPOWb4WUyl0/rx5+ihImFl2f/p7ramCQYWQvD7I94S8UDciHYhbXxIPRanKOk
+	WxJvZm2SQHKLWEAa8Aze1aCXktWqIihpGsqi8vbM4TstNaEru43dzB/Vpxx8i1DG
+	3SKqQnezCSWl8it+3BsntNr1rRPeCLaC2Q42gC8+zMYIGYx0v64cKQMmTyK3Wo7r
+	e2bjJp3Y0VSLThydZJz2A==
+X-ME-Sender: <xms:iBZIaJMMINykXGFrF7dbfsE92sE7A9algJW8pV1S6xq0q7Wxpg5QhA>
+    <xme:iBZIaL-Ia97AHVOGJvKIYkr2yFDuLqajMQLupbCmVtyz6Hm3H4TRq2WLvZhm5uNaB
+    qkCjkdCbd3wgntyONQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdeijecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeel
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrihihrghnughhihhmrghnudegse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnugihsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhhse
+    hlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepughrihdquggvvhgv
+    lheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhsthgrghhinhhgsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepthii
+    ihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehlihhnuhigqdhfsgguvg
+    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:iRZIaIQrGfpPzIu76UcAcu7BdyFSd2LhEjxJJ5TZFLkuBs2jW283wQ>
+    <xmx:iRZIaFuLY_Q52LZFl8G703CuiH8dMr0WXsK5N4Gl1rh9y2cXMSPj4A>
+    <xmx:iRZIaBfcvRtZvgg3dAZHK2MpCQF0wg0As6zYEpSyqyqAOKTwfHAgqA>
+    <xmx:iRZIaB38rbuiwMRMP411ha8C5PurhFFJbXnW9bjb1fGD6BNlcNo10g>
+    <xmx:iRZIaCLwED6Q6-yoN7h0d8YP6-cJC6M3qCrDJ1RkEaQ7c7AZb6ree3dI>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D99F7700061; Tue, 10 Jun 2025 07:27:04 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: T6da4eef3dd4d532c
+Date: Tue, 10 Jun 2025 13:26:43 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Arnd Bergmann" <arnd@kernel.org>, "Andy Shevchenko" <andy@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "Riyan Dhiman" <riyandhiman14@gmail.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Message-Id: <39920a53-0458-484c-bb6d-9d4bfaa38472@app.fastmail.com>
+In-Reply-To: <20250610112357.3306246-1-arnd@kernel.org>
+References: <20250610112357.3306246-1-arnd@kernel.org>
+Subject: Re: [PATCH] [v2] staging: fbtft: reduce stack usage
 Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+On Tue, Jun 10, 2025, at 13:23, Arnd Bergmann wrote:
 
-> Add a `TimerMode` associated type to the `HasHrTimer` trait to
-> represent the operational mode of the timer, such as absolute or
-> relative expiration. This new type must implement the `HrTimerMode`
-> trait, which defines how expiration values are interpreted.
->
-> Update the `start()` method to accept an `expires` parameter of type
-> `<Self::TimerMode as HrTimerMode>::Expires` instead of the fixed `Ktime`.
-> This enables different timer modes to provide strongly typed expiration
-> values, such as `Instant<C>` or `Delta`.
->
-> The `impl_has_hr_timer` macro is also extended to allow specifying the
-> `HrTimerMode`. In the following example, it guarantees that the
-> `start()` method for `Foo` only accepts `Instant<Monotonic>`. Using a
-> `Delta` or an `Instant` with a different clock source will result in a
-> compile-time error:
->
-> struct Foo {
->     #[pin]
->     timer: HrTimer<Self>,
-> }
->
-> impl_has_hr_timer! {
->     impl HasHrTimer<Self> for Foo {
->         mode : AbsoluteMode<Monotonic>,
->         field : self.timer
->     }
+>  {
+>  	struct device *dev = par->info->device;
+> -	int buf[64], count, index, i, j, ret;
+> +	u32 buf[64], count, index, i, j, ret;
+>  	u32 *values;
+>  	u32 val;
+> 
 
-Can you add an optional comma after the `field` entry? I think it is
-`$(,)?` in the macro declaration.
+I was too quick to update this one, please ignore v2 and
+wait for v3 after I've tested it some more with the (hopefully)
+correct version:
+
+@@ -842,7 +864,8 @@ EXPORT_SYMBOL(fbtft_unregister_framebuffer);
+ static int fbtft_init_display_from_property(struct fbtft_par *par)
+ {
+        struct device *dev = par->info->device;
+-       int buf[64], count, index, i, j, ret;
++       int count, index, i, j, ret;
++       u32 buf[64];
+        u32 *values;
+        u32 val;
 
 
-Best regards,
-Andreas Hindborg
-
-
-
+     Arnd
 
