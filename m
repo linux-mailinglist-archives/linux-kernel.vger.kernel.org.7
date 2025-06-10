@@ -1,201 +1,105 @@
-Return-Path: <linux-kernel+bounces-678755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20C7AD2DB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F317AD2DCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE1E188F08A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44ADC189060A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C96425F989;
-	Tue, 10 Jun 2025 06:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B70278754;
+	Tue, 10 Jun 2025 06:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EZeYye4U"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="DxP4gN/o"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A71925DCFF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FDC7464;
+	Tue, 10 Jun 2025 06:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749535636; cv=none; b=Mc32+su81owlhp9iwRvwnZvfLH+s7i5sSUlJEoDQcLuGi6ljKXLARVzmRAOWqw8FrrRy9NnuUukuVDBXi89si2J6+iQ6Y4j6yR0VQLILvJP0rvn1iUNIJ9Rmg6GT3AbDp0reWlnJnlaXFHC5dPRc9ZbtRe/ScHH1KS4T3F7jkf0=
+	t=1749536191; cv=none; b=qJbKH1QoX9Oo6cZRKMjyWqR30Ct29XXDBUBMTq1opf31dYHT4dw6RmabuvYHVQTHYkX1mGmEhq8T5GOnMNKQZK1YnzpPFW+vqwuNCtVOf/6Z4aAaMoC219X/fxgOj1h016XCjFDrLZPyyu+YLioXJn3ol/2WljA0/aiK8AuPY6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749535636; c=relaxed/simple;
-	bh=XwXiRt86eO6Z08U36Jg5tCgioJ9USW3mTvybqYJavGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SHAm/5lb+AyZv1oUDiBANCn7lJz1MskoRBdGDk/HdGoXDX49U/Wrc4ttvfBPmPYAcxyMB3oOdqp2LJxPRHA9lgbWrUBblzTKphns2t6iE/pdAsmLyvaZDMBEkah/fYf4/6NAvDjwACoq8O6yF2aUaViSvdwe/t+W0JBA3SW7c3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EZeYye4U; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-747c2cc3419so3539731b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 23:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749535634; x=1750140434; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PiMB9loAyI7zHuhM8FFDPe/yYPAeoSIIsSW8tDplE54=;
-        b=EZeYye4UzPvn6NMEAD34DSbLLLXwg355JnA3Aba4Fclv0EaN5yuXjEsN1okmpmUciv
-         hc6J8fLYVOBLduOT5e3YLKGFyLfhIUMPSUutSED9jGDd7KeplaYji6m2a9moGdJhgtWa
-         cc/1mufQLWJfeMEO7KJ8oKEJo+K+QDfT1dRyQUMQyVSaga8z+tIGVYWxOuBz9yMrmWZO
-         Dn8FAlL4grWnd3vT8R/kwb1i4ogzI+Fl19jVl2o9uNPteG+WuxzQwFTw0sV8gvi4Zh2D
-         WryNsZDRGTygEDuU7TGgIZfS8Fn9qAlgetjJR9cqtrD4AcGVqy/uUHV2WUQXai58o/hR
-         1dyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749535634; x=1750140434;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PiMB9loAyI7zHuhM8FFDPe/yYPAeoSIIsSW8tDplE54=;
-        b=Xup57TdH0Q1OihyUXbJfRYOmGesKAsIMAtV7B0RFNwjk0U8E9hN18d6FUmPI5dMD4d
-         nT/gEEMBD15XO5sxBK98/uA2BT24pmN9A6qmHn8AbC8jNIqlvPSdgyrHR6myOkAKpnXx
-         K3ajVpQ6Y0SWL4JonKvv5wa3szCKJBLcMvJK/X/XYEBEDkfO1m01OW/MpjjufZCp26hP
-         ojMe6FH2lGP9kqtyjVgZinlD5V8w4bYEW1CvcgDdktnUoz6yEhddCdFb+xcqkhRTKBUP
-         fTp3Qtz7isZfG/Bb2mbI4XuFnD+Ghn8dmgY/ZuW8fjBvtWcW3+M+B1dAXnv0AwtTmfDW
-         4xkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzDvY1qNUdbCx3j51rlEdQFX6RF4jykFsd1NC/xicrVuR7uv26glD2iaZYg8yVJacag1TqYtbjHezkl6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2nyxBNjIFUsFZKwesGXBJW64oNvIozBsDEQFkQlxFqJgAIlps
-	Q7QdOxD6/JWMjxFvyrSWit536DjxLsL4MA0iTjiBWd+uTU5z9R5fpy0xPAbuUDKldVM=
-X-Gm-Gg: ASbGncuaFmSE03u9etAg719X2ZrhzXmPcSVyxE54kcLctgkJECWYxG4ASOfjRUghB9j
-	R6mSk5oTk43TH99HVi30yG2W1xcjZPtNFMmcyp+A1s7MC4cpnYGREuG1DGYncYjfu5w/addLZWU
-	W1dBY9mFZihG6zu9xH+ljPMuztdAR6V+0kDSYYPEBXqy1u7C4Pty5jVmWkzF3SE1F2T5K6bu9H+
-	aU0GsgklHMEudhqeUKE/bwACl6BgANogTYKmuwX14/+tXrm7ZacehRNdTPh/8KbGoHQ3kSm0/Jm
-	6GSXJGG+rwCq2gOShyK0k66l7/8kYLK7dSg5vqdb9Kxx6chVxa4QdV3bOSI+oFs=
-X-Google-Smtp-Source: AGHT+IGdw0nDavLnt56auXrEYAYyoP+CfV2lWh/8m/OcjPKOsmFycFz7hs46rzzXEiiRo4i5bH27qg==
-X-Received: by 2002:a17:902:d547:b0:234:9ffb:840a with SMTP id d9443c01a7336-23601dec31emr215029875ad.50.1749535634333;
-        Mon, 09 Jun 2025 23:07:14 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236034059cbsm63867705ad.165.2025.06.09.23.07.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jun 2025 23:07:13 -0700 (PDT)
-Date: Tue, 10 Jun 2025 11:37:11 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Yury Norov <yury.norov@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] rust: cpu: Introduce CpuId abstraction
-Message-ID: <20250610060711.zp6lua4kcwi2z777@vireshk-i7>
-References: <cover.1749463570.git.viresh.kumar@linaro.org>
- <f10910c7585f5556869ea6f34b64d4136b8d5581.1749463570.git.viresh.kumar@linaro.org>
- <CANiq72=WpuGELzLbH-fxdOeJy9fiDFwatz6ynERDh=HP2z2MBw@mail.gmail.com>
+	s=arc-20240116; t=1749536191; c=relaxed/simple;
+	bh=x0Xt63bNLSJDQD8ocdTTG0aGRtfg3vP02MPH/I2anUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H1D2Fr6zhC2RF2a8994nmOnIKJuifDvBt87a4nImQb5tfhLYavRzSAHqhWBffP9rG3g79VsjUD8gA1O3FlkMO9TlIwxAg4DwxxH4iSBmOsFap5ro1skvqlMtKecQE7Jm/E8dsaV8/djkjb/LfFHC21UeSxE2GHBpLWdPFE5js3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=DxP4gN/o; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AB8E81485BB5;
+	Tue, 10 Jun 2025 08:08:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1749535683; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=I4ti+/foQg3QbjYgEJL1AVz6uH68ooxEzV0rGfw+TYU=;
+	b=DxP4gN/oqr6gN9kmsdPBSyeLw6tkZIOAmwNldabPG+7Hhp9EtGCtotcehqu0dNUnjHlOAT
+	LUIMnguyEn0vT5FWSRzuscfaELFyJOCVX1wO0fZcHVSYt+HJDqUwaayGGPj3Hakr3cg0Gn
+	bnaPOVZtSmsP/J+kZRd8jUoHnr+ratbdESmBrU1vRgAaK+m8fShfZXIYEUyJ+Wv6C3AC1m
+	Nv1QLKDjAZcP5FBDWSbj7o0TrI97MxCRCFA8K8AuiGpw9v8KPJxU4DSPYyKKEG2J9K2UnP
+	9U+cEqXuI8FsOxG9eSbLlMNp0TuSRFkP9Vgel0sLaD5fzh6IZdzJry7VcrjbEw==
+From: Alexander Dahl <ada@thorsis.com>
+To: devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] arm64: dts: imx8dxl-ss-conn: Disable USB3 nodes
+Date: Tue, 10 Jun 2025 08:07:56 +0200
+Message-Id: <20250610060756.8212-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=WpuGELzLbH-fxdOeJy9fiDFwatz6ynERDh=HP2z2MBw@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Thanks Miguel for the feedback.
+The i.MX 8DualXLite/8SoloXLite has a different connectivity memory map
+than the generic i.MX8 has.  One conflicting resource is usb, where the
+imx8dxl has a second usb2 phy @5b110000, while the generic imx8 dtsi has
+one usb2 phy and one usb3 phy, and the usb3otg @5b110000.  When
+including both imx8dxl-ss-conn.dtsi and imx8-ss-conn.dtsi as done in
+imx8dxl.dtsi this leads to a duplicate unit-address warning.
 
-On 09-06-25, 14:01, Miguel Ojeda wrote:
-> On Mon, Jun 9, 2025 at 12:51 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > +    pub unsafe fn from_i32_unchecked(id: i32) -> Self {
-> 
-> Why do we need the `i32` versions?
-> 
-> Is it just for `bios_limit_callback`? If so, I would just convert there.
+The usb3otg node was introduced after the initial imx8dxl support with
+commit a8bd7f155126 ("arm64: dts: imx8qxp: add cadence usb3 support")
+and since then leads to warnings like this (when building with ptxdist):
 
-It looked like that there are few interfaces in the kernel which
-accept an `i32` CPU ID. One example is cpumask layer, where
-`cpumask_set_cpu()` expects an `unsigned int` but
-`cpumask_{clear|test}_cpu()` expects an `int`.
+    CPP generic/platform-v8a/build-target/linux-6.12/arch/arm64/boot/dts/freescale/imx8dxl-evk.dts
+    DTC generic/platform-v8a/packages/linux-6.12/boot/imx8dxl-evk.dtb
+    /home/adahl/Work/bsp/thorsis/generic/platform-v8a/build-target/linux-6.12/arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi:148.24-182.4: Warning (unique_unit_address): /bus@5b000000/usb@5b110000: duplicate unit-address (also used in node /bus@5b000000/usbphy@5b110000)
 
-Though the only user of the `i32` version for now is
-`bios_limit_callback`, which I can handle without it too.
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
+ arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-What do you suggest ?
+diff --git a/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi b/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi
+index 9b114bed084b..a66ba6d0a8c0 100644
+--- a/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8dxl-ss-conn.dtsi
+@@ -5,6 +5,8 @@
+ 
+ /delete-node/ &enet1_lpcg;
+ /delete-node/ &fec2;
++/delete-node/ &usbotg3;
++/delete-node/ &usb3_phy;
+ 
+ / {
+ 	conn_enet0_root_clk: clock-conn-enet0-root {
 
-> Relatedly, why isn't that callback's type `c_int` on the Rust side?
-
-Sorry, not sure I understood that. Are you talking about type of the
-`cpu` argument ?
-
-    extern "C" fn bios_limit_callback(cpu: i32, limit: *mut u32) -> kernel::ffi::c_int
-
-> Finally, can we add a `debug_assert!()` on the `_unchecked()` variant,
-> since it is something we can easily check?
-
-Changes so far:
-
-diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
-index 68d7d86df27c..8d48946090e3 100644
---- a/rust/kernel/cpu.rs
-+++ b/rust/kernel/cpu.rs
-@@ -23,11 +23,11 @@ pub fn nr_cpu_ids() -> u32 {
-
- /// The CPU ID.
- ///
--/// Represents a CPU identifier as a wrapper around an `u32`.
-+/// Represents a CPU identifier as a wrapper around an [`u32`].
- ///
- /// # Invariants
- ///
--/// The CPU ID must always lie within the range `[0, nr_cpu_ids())`.
-+/// The CPU ID lies within the range `[0, nr_cpu_ids())`.
- ///
- /// # Examples
- ///
-@@ -54,6 +54,9 @@ impl CpuId {
-     /// The caller must ensure that `id` is a valid CPU ID (i.e., `0 <= id < nr_cpu_ids()`).
-     #[inline]
-     pub unsafe fn from_i32_unchecked(id: i32) -> Self {
-+        debug_assert!(id >= 0);
-+        debug_assert!((id as u32) < nr_cpu_ids());
-+
-         // INVARIANT: The function safety guarantees `id` is a valid CPU id.
-         Self(id as u32)
-     }
-@@ -63,8 +66,8 @@ pub fn from_i32(id: i32) -> Option<Self> {
-         if id < 0 || id as u32 >= nr_cpu_ids() {
-             None
-         } else {
--            // SAFETY: `id` has just been checked as a valid CPU ID.
--            Some(unsafe { Self::from_i32_unchecked(id) })
-+            // INVARIANT: `id` has just been checked as a valid CPU ID.
-+            Some(Self(id as u32))
-         }
-     }
-
-@@ -75,6 +78,8 @@ pub fn from_i32(id: i32) -> Option<Self> {
-     /// The caller must ensure that `id` is a valid CPU ID (i.e., `0 <= id < nr_cpu_ids()`).
-     #[inline]
-     pub unsafe fn from_u32_unchecked(id: u32) -> Self {
-+        debug_assert!(id < nr_cpu_ids());
-+
-         // INVARIANT: The function safety guarantees `id` is a valid CPU id.
-         Self(id)
-     }
-@@ -84,8 +89,8 @@ pub fn from_u32(id: u32) -> Option<Self> {
-         if id >= nr_cpu_ids() {
-             None
-         } else {
--            // SAFETY: `id` has just been checked as a valid CPU ID.
--            Some(unsafe { Self::from_u32_unchecked(id) })
-+            // INVARIANT: `id` has just been checked as a valid CPU ID.
-+            Some(Self(id))
-         }
-     }
-
-
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-viresh
+2.39.5
+
 
