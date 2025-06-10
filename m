@@ -1,125 +1,181 @@
-Return-Path: <linux-kernel+bounces-680021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF07AD3EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:31:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AE5AD3F0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4990017A5A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3371C189FAFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D9A241672;
-	Tue, 10 Jun 2025 16:31:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA3F2356A2;
-	Tue, 10 Jun 2025 16:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749573074; cv=none; b=f2PRHpHpynn6U3b5ussYqADqeJUPU7CI4ePQ0Pzags6ULrpRai64lb0eOAcxpH3bPF3dMP33BhC4utn3neoSU2wcBNz3EMm6u/acEGSkgyWrOXxOnceCY+YtoBhqOgYNUIifbRWEHhUw/xQeN2+x/8F3HWmySpu1uuPEHfZFxDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749573074; c=relaxed/simple;
-	bh=F5xlE2EujIwTysz180YfE4hRvqugMR5h8O/RMB/zU2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZy/zw/ZoCK2Re3bVJDVwcxmDJJmQb0gMdtIdPuAtMvBkC8YDMiht2D2A+V6dbDpFe2LT8Cg+JIaE7+DaaVMUURPd3WnPAyIFtm1VHQxHpCRwWkdI7fss4Pgbp7+dJUBJnXXAfldC5JhW9q/MYXb/IE9I2cfGFdd4YMvPywlLj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E640814BF;
-	Tue, 10 Jun 2025 09:30:52 -0700 (PDT)
-Received: from [10.57.79.109] (unknown [10.57.79.109])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BB1C3F673;
-	Tue, 10 Jun 2025 09:31:10 -0700 (PDT)
-Message-ID: <f66bf027-5dbb-473b-b57f-ed3ed7914800@arm.com>
-Date: Tue, 10 Jun 2025 17:31:09 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F690241661;
+	Tue, 10 Jun 2025 16:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gs7GGOzD"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2069.outbound.protection.outlook.com [40.107.101.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6D238143
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749573263; cv=fail; b=bpGEDH1gtkZ1FlMtvhYQUDSS3yQ0nHXLDbEo0eQ235I7kA141V9/SfH+hxX1MMQhXik/dO6UmjFBtMFMukSbb5o8alGq5RDpvEFRX0JNReOO7VeoBvn4DeuMTu6N0zWWmUAuErY3OUyjFdKGxkx9Qz4dVyhfG6CVl2c9w8fPd6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749573263; c=relaxed/simple;
+	bh=igiHQl1detnN329c1z3aA81QWUWo1XSex89c3CQAl5g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d7ONv724BqeFkz3RMjQfRadXcs40U6EH5UOBbXcN6thhktfd9ouPZ8Z32pd+mVxnwp/dyoV2X0rdpg+qwMGtpr7WGhHxFCNZcH47Ysme3ZCHTAbYhjSl9ZvarzOqHTYhsDNPgaySLhUDptgPymUlv6SOVzxzxWQCD0dcmcY5smg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gs7GGOzD; arc=fail smtp.client-ip=40.107.101.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gK/AJRxm+YG349WbgRLPsIEw1Zf7MmRiv2PU7wCyjHWN6hc2mDqr7xebtaQx8x3b4OtnfxTy8V3oMFUokLXqZ2N/9LHM/2d37rhKoRCZvK2jWXkdNOepe0Lw4P4fznLCwvedCEohDZGSCcgOquGEgmAwNSYGEBvhzg7GiU9MBlL+czmdo+ihjTbvBzyOot+bGlEmTK6M3+qDOnPUNmTXZc8i0+3QNoShHEBwfQAWHxVygGuXcTp47qqlNxaKXdK8XghRlHASa8cetPnPAu2D++5jVop3jo1sxU15fxcQtC1uR5tZSKP6FiKMPnri4tlOseIVCZQuBKqEFJsZ9DSmSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fKoc4i8xMgkEoVszBXFmnuUw3+nUOwYLg27Ole5T7Jg=;
+ b=y1foKbD1OX73diKgaLQ8OVnm7zhLdbnfmM2uNgmEehXWpZmD6UGCHZb18tFLTVGGpxFwSNNsoX+dRBvoiFUWJctKcum86lz1Iqzmz5YcsiYBTG0+uu2Dvy0lMErlajrpgBwTg0x4TbJNRSxLn8/fkAqMy++4vugaasFGfwYllufKLPVTlNxgvQku8RVPPs2w+pntyrB6XR70Uupo24vil6+LbJL3ust25Js9kvTDgmo/pEnQgzUeRrnWcSYOuiXqjwEoSI1jF644b2JIznoJsciGI27KU4MzAxzaSs77RNl1se/V3tbrPqtfnKqJy5lB+NAQugDuZYitpg8/l5OC1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=canonical.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fKoc4i8xMgkEoVszBXFmnuUw3+nUOwYLg27Ole5T7Jg=;
+ b=gs7GGOzDK6ttw3s0gVVhBNPLT2dWSCeZ3A/0BdVIxj433WC5zXKb175LY51bSg+z9xG/RT00XyLPg8vNgjiEgDlS92Eft/WG67MFs2YUGakTYoD4TWYt9Y0nl8OjJA8MOjSrziHz2JwljKsQYz7N2HzYpPYExsDpSjHturV4u+f3AuW6brcuxLn0mlg+AH9YuEig8qvhOjp8gz+9iWt7KDn4vXXBn1l4Wd+Z5DgfmRzDBvaFXnTZqM38hrn+8o0lPID7NJXEQMxAaESZ48P7BqSGPjk+gn564SHMZwN93sUUD84KawhqtW9eBYFHcCoAmwDeqJ1ci92gcY9cYmH6HA==
+Received: from DM6PR06CA0046.namprd06.prod.outlook.com (2603:10b6:5:54::23) by
+ DM6PR12MB4251.namprd12.prod.outlook.com (2603:10b6:5:21e::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.18; Tue, 10 Jun 2025 16:34:16 +0000
+Received: from DS2PEPF00003445.namprd04.prod.outlook.com
+ (2603:10b6:5:54:cafe::9) by DM6PR06CA0046.outlook.office365.com
+ (2603:10b6:5:54::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.19 via Frontend Transport; Tue,
+ 10 Jun 2025 16:34:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS2PEPF00003445.mail.protection.outlook.com (10.167.17.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.15 via Frontend Transport; Tue, 10 Jun 2025 16:34:16 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 10 Jun
+ 2025 09:33:55 -0700
+Received: from localhost.localdomain (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 10 Jun
+ 2025 09:33:52 -0700
+From: Petr Machata <petrm@nvidia.com>
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn
+	<lukas.bulwahn@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, Andy Roulin <aroulin@nvidia.com>, "Petr
+ Machata" <petrm@nvidia.com>
+Subject: [PATCH v2] checkpatch: Tolerate upstream commit references
+Date: Tue, 10 Jun 2025 18:31:33 +0200
+Message-ID: <20250610163133.217957-1-petrm@nvidia.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 1/2] iommu: Introduce iommu_dev_reset_prepare() and
- iommu_dev_reset_done()
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, Baolu Lu <baolu.lu@linux.intel.com>,
- joro@8bytes.org, will@kernel.org, bhelgaas@google.com,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, patches@lists.linux.dev, pjaroszynski@nvidia.com,
- vsethi@nvidia.com
-References: <cover.1749494161.git.nicolinc@nvidia.com>
- <4153fb7131dda901b13a2e90654232fe059c8f09.1749494161.git.nicolinc@nvidia.com>
- <183a8466-578c-4305-a16b-924b41b97322@linux.intel.com>
- <aEfZlKNk4xfb41RR@nvidia.com> <20250610130416.GC543171@nvidia.com>
- <d22320dd-2695-4f9b-bd72-38eabc1d934f@arm.com>
- <20250610153646.GH543171@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250610153646.GH543171@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003445:EE_|DM6PR12MB4251:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9e5eba4-f01a-4418-f2b8-08dda83ca45f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9iQ+kFJiCijLV3iwsgkv0wMVBCcOZNS5BqDx5E1XGNtuHeBam03TWRPUiqu2?=
+ =?us-ascii?Q?cWdCghwI2o0/RqaXm4yYmDVc/PEcsLnsFrggCQEiRJJcRAL9FoTnYGSQ4fAL?=
+ =?us-ascii?Q?TpW6lGv4drFpFizpnthHkJvAAs9ABX2W5e3Kcvf2caDuRQvKRB6bq9EwsAys?=
+ =?us-ascii?Q?J5Nxv00HBpej8tzz+dQKU5Fs04A9/ZxQtTWhXXuwi1bsdqV9aI01fbyrbXAz?=
+ =?us-ascii?Q?/xNebTmGEVtHHY7JngSHBYwE2xqKw1jKlKqnlWEICYeXJPfG6yEbAlHPVXp5?=
+ =?us-ascii?Q?15z/Um2kOReafFXsSVSDNf45b8GGSCDQV0kvmCPzPDo+Rhei3ysvhsiBnd6j?=
+ =?us-ascii?Q?pp7lxbJ/b4wC2ebmLxzIWsa2oV8m7I2MNyW6q44vqbX1TuIU1lX9yqLrQs2+?=
+ =?us-ascii?Q?YYGvV1LEygIJaOwLDTmepp/BlSMrIuBrbUg1CfGY4VoIvJwXVP+c3FMMIWnJ?=
+ =?us-ascii?Q?Djxe3CNHoVOcCjJ06RyTgvMWpl7nhpv3lzfXXxdiWdDAzolVMF0Et6F4Em+i?=
+ =?us-ascii?Q?5VHivejAjktkOmZCxmZjIAmcsxbKNLZMIxZlkr4jzycY4UTe02i+H3BfaXgF?=
+ =?us-ascii?Q?gQ7VgewseGwyr0VZTS6u3NIIlzajvV3/9ff16mlwCJy/UKl+QAJOdgMIab87?=
+ =?us-ascii?Q?pqg0T7eBTyDKg57Td4p8bgXBGeZixMMRoZcUIfa9H/LlFiSo1gS8oKd/bAqH?=
+ =?us-ascii?Q?BClEPq1VbTcAUlgVqgxVltGyOq+RgcxBfxaS8iGjsuJL/CCirgxdKsq7sdJP?=
+ =?us-ascii?Q?OXDppNnqCBtmO6edQhThaMwBvYdHBI+DZaT0CiL/stnYC6+G5Sq3UgXqcQ/B?=
+ =?us-ascii?Q?58r0gMyYLuayiRWocGcIKb0agD53BaLScSIvSlzQmLajyPZ2ZJcp5cDT+SBY?=
+ =?us-ascii?Q?z4Nue0nfjoEb9tYoJ2aElB//53mzcpB0wwTWlQDim9oIwSxOq0Wy5f3TMICO?=
+ =?us-ascii?Q?xYysaC2uWREFv2Wwi+FAdEebS2ABjzOceTA5MUif1JZFxPb+0tn30QyC7stf?=
+ =?us-ascii?Q?Y6UQioC4cZttDRCsJkUxhFd2rPt30yKiTZfeKOr9qMjR9yTZ+HubTDZrauEl?=
+ =?us-ascii?Q?preJVY5Ut+ONaO1QrfLDc6yoEVcgOjuICkb+0KaG3xXXeaU5+z8wJRjWBFxW?=
+ =?us-ascii?Q?TjkKsAexTol4LFpGAhnUo/2wpik7A4sUQJc3fwUzUWnoVpB1J84awVKH7LwA?=
+ =?us-ascii?Q?SrFvstuIzyRPIAPuUjpt6itMx87yhNeWX8Mb7obfZLqHnqPVyTTBG6cwP5mA?=
+ =?us-ascii?Q?dYfgBHQTbpLsYlfnt2AkS/a+bMqQ5awofUPa3H4Fj2Us4tImn9HHb8Dyd5js?=
+ =?us-ascii?Q?lIYL2aNeGwVTH45U6gA/Xs84tx7qQpsVndaqNgdB6Jr8D4iR5tOzb9ijVZX/?=
+ =?us-ascii?Q?USlYZqblgoyb1gL0cA71V3hEfCEDLVZjOEIoEOv5lt1amH7M46SZpyNMsehG?=
+ =?us-ascii?Q?OkQRY1lxGv5NXrZNYMBMcRMJ9khSH1T/H0IaXJa9xZGLP9VmSxYvd0kXslqN?=
+ =?us-ascii?Q?HuHMkyfPjOr6RiaNcDoB7S+ikujEf1O2EKJQ?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 16:34:16.4133
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9e5eba4-f01a-4418-f2b8-08dda83ca45f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003445.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4251
 
-On 2025-06-10 4:36 pm, Jason Gunthorpe wrote:
-> On Tue, Jun 10, 2025 at 03:40:40PM +0100, Robin Murphy wrote:
->> On 2025-06-10 2:04 pm, Jason Gunthorpe wrote:
->>> On Tue, Jun 10, 2025 at 12:07:00AM -0700, Nicolin Chen wrote:
->>>> On Tue, Jun 10, 2025 at 12:26:07PM +0800, Baolu Lu wrote:
->>>>> On 6/10/25 02:45, Nicolin Chen wrote:
->>>>>> +	ops = dev_iommu_ops(dev);
->>>>>
->>>>> Should this be protected by group->mutext?
->>>>
->>>> Not seemingly, but should require the iommu_probe_device_lock I
->>>> think.
->>>
->>> group and ops are not permitted to change while a driver is attached..
->>>
->>> IIRC the FLR code in PCI doesn't always ensure that (due to the sysfs
->>> paths), so yeah, this looks troubled. iommu_probe_device_lock perhaps
->>> would fix it.
->>
->> No, iommu_probe_device_lock is for protecting access to dev->iommu in the
->> probe path until the device is definitively assigned to a group (or not).
->> Fundamentally it defends against multiple sources triggering a probe of the
->> same device in parallel - once the device *is* probed it is no longer
->> relevant, and the group mutex is the right thing to protect all subsequent
->> operations.
-> 
-> Yes, adding iommu_probe_device_lock to iommu_deinit_device() would be
-> gross.
-> 
-> but something is required to protect the load of
-> dev->iommu_group.. dev->iommu_group->mutex can't protect itself
-> against a race UAF on deinit.
+Two forms of upstream commit references are used (and documented) for
+stable kernels:
 
-Then you do iommu_group_get/put() around it as well. And I suppose 
-technically you also ought to check that the device is still actually in 
-the group once you have acquired the mutex (although perhaps that case 
-ends up crashing anyway once we proceed to attempting to reset the 
-already-disappeared device itself...)
+- [ Upstream commit <sha1> ]
+- commit <sha1> upstream.
 
-> READ_ONCE is good enough to protect from races with the probe path, no
-> need for iommu_probe_device_lock there.
-> 
-> In this case need to look at the PCI sysfs for races against the
-> iommu_release_device()/etc that is freeing the dev->iommu_group.
-> 
-> Maybe the sysfs is always removed before we get to release. Or maybe
-> the PCI FLR sysfs code should hold the device_lock..
+Extend checkpatch so that it doesn't cite these. This reduces noise that
+downstream maintainers experience when checkpatching patches that may
+contain commit references of this sort.
 
- From a quick skim I suspect it's probably OK - at least device_del() 
-gets to bus_remove_device()->device_remove_groups() well enough before 
-the BUS_NOTIFY_REMOVED_DEVICE call that triggers iommu_release_device().
+Signed-off-by: Petr Machata <petrm@nvidia.com>
+Reviewed-by: Andy Roulin <aroulin@nvidia.com>
+---
 
-And on an unrelated thought that's just come to mind, if we ever did FLR 
-with PASIDs enabled, presumably that's going to wipe out the PASID 
-configuration, so will the caller who requested the reset actually 
-expect the attachments at the IOMMU end to be preserved, or would they 
-assume to start over from scratch? Seems like there's not necessarily 
-one right answer there :/
+Notes:
+    v2:
+    - No changes, just a ping.
 
-Thanks,
-Robin.
+ scripts/checkpatch.pl | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 664f7b7a622c..bd4405b59103 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3351,6 +3351,8 @@ sub process {
+ 		if ($perl_version_ok &&
+ 		    $in_commit_log && !$commit_log_possible_stack_dump &&
+ 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink|base-commit):/i &&
++		    $line !~ /^\s*\[ Upstream commit [0-9a-f]{40} ]/ &&
++		    $line !~ /^\s*commit [0-9a-f]{40}\s*upstream\./ &&
+ 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
+ 		    (($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
+ 		      ($line =~ /\bcommit\s*$/i && defined($rawlines[$linenr]) && $rawlines[$linenr] =~ /^\s*[0-9a-f]{5,}\b/i)) ||
+-- 
+2.49.0
+
 
