@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-679204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59DFAD3360
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DCFAD3363
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80E9A161F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17621896B4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E6E28C2C2;
-	Tue, 10 Jun 2025 10:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC53F28C2BE;
+	Tue, 10 Jun 2025 10:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b="r402Husc"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b="ld+BZd2T"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF33433A8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E15E433A8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749550539; cv=none; b=eJb8oDqH1FfPebiDYwR2JyXCw4qpiBS2svHygTnJjonP73cmGA24g1615Y7QubDrR4Xen2xRJM9QvKOUZpqgt7e2vDLXn8fINq3TTHoRi1I3oaHsaTEo0kuvEZ1QofEGo07S6alvCELchJt/cKIFeCm486FRNuksH5hBjiWWmWg=
+	t=1749550602; cv=none; b=o7ZRIRQgITVzmuBL8juxIDZ+FNjUVjTiPOK7rBLxPSN7FCqhuCxDcZJO7Km1+L3/27HlWZghxdiVEubgaUrJ+OiYa/cZ1NXgOmMicw5hzR4/WoIUnAcbP1NAIIws7anfGdFqYYCfpFwzfZRzTBx1XsMbZuz/XKGAFA5G0wt7rTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749550539; c=relaxed/simple;
-	bh=8Yeh0+DJ6gxhMGoS/cbQyv0l1v42s1BjoqRkQR24uXI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=a/IQnnM0ZJART883HYTa8ypuLSn9IfhNDLIs49wR6x0fjGSKqpJRqU3d0UhWGY7g5mKYOioORToU5SFXvCL7+J+hokMESnozbD08ztLRWOidJJGaFgJQacuj9RyV1USPUeX9FTb6j4vQGzTse7abEkgCMhdV3sU7IKubRQ/YUxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech; spf=pass smtp.mailfrom=neon.tech; dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b=r402Husc; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1749550602; c=relaxed/simple;
+	bh=BaIBR0cHoYf/WnAzfEDbBA+VcLZI5bdLmPzqEV1cGZw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=haacIE3/02p8fV1nEmYESmm+F7jhLx6wQm1RRb3PQ+AP+J8NKFpq7ZKTL9TBL9/SuG9WVFzKn9be2vPNfMMZD1vOZAmckiIt3Wvkfi2uCwFliUtTEcZuVbvVM9YUCqdr4EUcYNWKyOKc1EzBshXvU0QZQocz/Bno7jDWvftFjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech; spf=pass smtp.mailfrom=neon.tech; dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b=ld+BZd2T; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neon.tech
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6069d764980so11490577a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:15:37 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-607c5715ef2so4152190a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neon.tech; s=google; t=1749550536; x=1750155336; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nvfG20MQLYlKkF+o+WgnnDhDnQDbafUQgPnApR8FRuI=;
-        b=r402HuscsMMqf5XnM+PDbl/B1DzEEeyrqmzE7AUHbkATDqHASzqGzIdACDJV75jwpO
-         Im2e3zuvVOixHQx5DOC2EYJMfznT2ZfYbjchNsEqwO9NBOsjjmNPVUkpfR+/ii9BqKu1
-         yDaNYPYsL/I18t2VYlLYLbsYycI7Is7dK5ERU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749550536; x=1750155336;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+        d=neon.tech; s=google; t=1749550598; x=1750155398; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=nvfG20MQLYlKkF+o+WgnnDhDnQDbafUQgPnApR8FRuI=;
-        b=xS9cD+gW13/0CqmsjRstnXXsz7CiTEm71sVBH9EHsBdsCeOI76JT0A38+wqaC84MOK
-         3WqpfFKUg7VlAUMo9nJLQxU2BJhnMvtxnSgLffS2xesNpr5lHuQ/7O7BdVfVIZlznnsu
-         ZwqfuZ1VqjUSSfl7Ju0ISBIHXNfZDGeC4+9rveqO4gKdGuOHcjGXBlM1v62n/XDsWj86
-         Kw5TiVhkgLI05cACAa4LbD0n7fgYeqqK9NusXSkL0C1hgLw6niw3t/GeNHMXT4GfJCHg
-         VRs+ssA6aJA68cAF1qDp5EOFm96fM+tA8U7Pug1TzDPtFZrVndtb/Ni9vYC7iDaieLWx
-         IrBA==
-X-Gm-Message-State: AOJu0YznAFnfWwybl0gcu/FkvaRaQ8JLq78ZuiC0Ipt1AiIY9kDsoWXn
-	V9Bnnqgf4DFWOo/LvWDTuEuF6RS7/oLgk/kdDfjzsFEf29Vi//uts8xKrbStbAILYXthFKAJGg8
-	nfBxTanMtxg==
-X-Gm-Gg: ASbGncvHdKIXtvT+8pIecKd70wmR1uSrqPArnChQn49VqKeLGI1tRoRhIGYbD5TwP3J
-	Z0u3X8oAlRBc4ANawacZ1PCT3POLDamtr5f/nmGY8CEqH3Aqg+I9hb60pg+lBBJxLA/5Zd0ihBs
-	/5N0Gv0RB6mXtsz5x4ZPnqttllfiMaH1XOnM+zGJXY3aaL3oUMGPJCfblt0pookZE3q/f7DvRcI
-	vyqcFyINpKNMpw+BIFwa7o0RBy+RDDsKFTjY/9YG+pctMP1vHjC5ldXqIOElLbv/Fe0ByiwmX22
-	VLHG+gls0UIiSE7qlOtaIIpdizZJVeZa4gkAxXNQpHMfXPThFwrE60FeICAfEkp3kw==
-X-Google-Smtp-Source: AGHT+IF9jX0Gs6s3uI6ySvWxXbzgdwbHAVjqfgfgUtHPqTkNctsYqnHPKZewjwqixROxeuDD4J40ow==
-X-Received: by 2002:a17:906:6a16:b0:ad5:7649:b3f5 with SMTP id a640c23a62f3a-ade770fba75mr300445066b.3.1749550535545;
-        Tue, 10 Jun 2025 03:15:35 -0700 (PDT)
+        bh=5TLMZnOwp1EufsUc3IBlAEgAbVTmb9HuOUhD3AV1YmY=;
+        b=ld+BZd2T51FqeV+gpsev4xK93ZlmoRYkIzbIciMxfQPZ1TAlxvwCtsq10wSdHjT91O
+         TLbRC22V524AOHz27m0kiscQcTxfkYHctVuFv+IGeNiiMFiMZTFFO2VKh1Qgwab28Ik2
+         SCR1XijEL4FP/Jf7H7yUyle6D4jJhNSvVoNNE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749550598; x=1750155398;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5TLMZnOwp1EufsUc3IBlAEgAbVTmb9HuOUhD3AV1YmY=;
+        b=FX7EBZlfaDa9TnLW6cNJo5PkrCuh/uDelPIouIq0HqdmHlFwsdKMrW8lcZ4as/A9Bp
+         NBnlmEIA4FP8W+Wm3LW3Fq9HpMAzN2xgB+txcjvEyxodN1DVLVeCbBoapS7V+66DRSGe
+         c8hsfSS7mLXa1cnETaczNge16ICqybHuGHXl0i2CD5BhiQcRzAJmuIkf10pbSX4yKZ7A
+         M+8ueYP/um15eBPaY9SU+t4pGRgD4LdAhzdON1XMV8nuwQU7G60v2ScWyigFzv/KyY38
+         W9Ip4OBtIfWtvN3Jz5RjlTkTB20xRQ3faPe6KRfO6vSXj+sZsDMDqeQdmt5ozqdhxjkL
+         RE5w==
+X-Gm-Message-State: AOJu0YyXseg03voM+BMikHr1vomTSiRjjXSaPS6OT7qpLDma0806Np1N
+	RbWrgG0DXWVRNyPU72W4FXylJgtaReGYwPrpJgHFZT6Hb2ZUbCqPpn9mNYvJplIcqCCVjeGYjGK
+	3rwzyqz+fxA==
+X-Gm-Gg: ASbGncuBO/piL+eWFqqidPw61IBF29neaCITmeuIxsS86GVwHAnoKOyh6G+c5ykbUiN
+	D7o7nw+43yC2gxStC2c/wj/4Y7mYAMyEHRlUA8f3kj6tPnEA52YsJBaDK4bkmC9KNXtGaU9t2dG
+	ON8XHfXQfIME76I4lyFp003X+MVfmXKP7p9iXBJNO2b8iN3Z4DSCG+QWN8WjkxuaEQ3Delhvai/
+	uwGJra6LU4PuhWAw6bsqxjglPQDuHvrqtZbdDOdOHSnWJNI+jcWXwLU23i950SV6F9jmZWgqKpQ
+	DvOoF9cheYQeKMSoSgXj9szSxRaqJi490WPUnR4N7Av0MVi+68TGS422ZQA47UjKaQ==
+X-Google-Smtp-Source: AGHT+IF3bXRwUOcNB/7Vgzzi7Oqw7d/+z7EkLbZ6h+MIcJik3RGx8NeiSc67WUrU/PAz4OZ9sYhWNw==
+X-Received: by 2002:a17:907:3e1e:b0:ade:4300:6c8f with SMTP id a640c23a62f3a-ade4300eb40mr1194776866b.57.1749550598026;
+        Tue, 10 Jun 2025 03:16:38 -0700 (PDT)
 Received: from [192.168.86.142] ([84.65.228.220])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade3c427cafsm547042766b.75.2025.06.10.03.15.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1dc386f7sm686134066b.114.2025.06.10.03.16.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 03:15:35 -0700 (PDT)
-Message-ID: <a31e3b89-5040-4426-9ce8-d674b8554aa1@neon.tech>
-Date: Tue, 10 Jun 2025 11:15:33 +0100
+        Tue, 10 Jun 2025 03:16:37 -0700 (PDT)
+Message-ID: <a404d023-e0bb-4dc8-8952-accba299ab50@neon.tech>
+Date: Tue, 10 Jun 2025 11:16:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +77,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
+Subject: [PATCH v3 1/2] x86/mm: Handle alloc failure in phys_*_init()
+From: Em Sharnoff <sharnoff@neon.tech>
 To: linux-kernel@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org
 Cc: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
  Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
@@ -85,148 +87,205 @@ Cc: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
  "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
  Oleg Vasilev <oleg@neon.tech>, Arthur Petukhovsky <arthur@neon.tech>,
  Stefan Radig <stefan@neon.tech>, Misha Sakhnov <misha@neon.tech>
-From: Em Sharnoff <sharnoff@neon.tech>
-Subject: [PATCH v3 0/2] x86/mm: Improve alloc handling of phys_*_init()
+References: <a31e3b89-5040-4426-9ce8-d674b8554aa1@neon.tech>
+Content-Language: en-US
+In-Reply-To: <a31e3b89-5040-4426-9ce8-d674b8554aa1@neon.tech>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi folks,
+During memory hotplug, allocation failures in phys_*_init() aren't
+handled, which results in a null pointer dereference, if they occur.
 
-See changelog + more context below.
+To handle that, change phys_pud_init() and similar functions to return
+allocation errors via ERR_PTR() and check for that in arch_add_memory().
 
-tl;dr:
-
-* Currently alloc_low_page() uses GFP_ATOMIC after boot, which may fail
-* Those failures aren't currently handled by phys_pud_init() and similar
-  functions.
-* Those failures can happen during memory hotplug
-
-So:
-
-1. Add handling for those allocation failures
-2. Use GFP_KERNEL instead of GFP_ATOMIC
-
-Previous version here:
-https://lore.kernel.org/all/0ce5e150-19e0-457f-bec3-ee031c0be7e7@neon.tech/
-
-=== Changelog ===
-
-v2:
-- Switch from special-casing zero values to ERR_PTR()
-- Add patch to move from GFP_ATOMIC -> GFP_KERNEL
-- Move commentary out of the patch message and into this cover letter
-v3:
-- Fix -Wint-conversion issues
-
-=== Background ===
-
-We recently started observing these null pointer dereferences happening
-in practice (albeit quite rarely), triggered by allocation failures
-during virtio-mem hotplug.
-
-We use virtio-mem quite heavily - adding/removing memory based on
-resource usage of customer workloads across a fleet of VMs - so it's
-somewhat expected that we have occasional allocation failures here, if
-we run out of memory before hotplug takes place.
-
-We started seeing this bug after upgrading from 6.6.64 to 6.12.26, but
-there didn't appear to be relevant changes in the codepaths involved, so
-we figured the upgrade was triggering a latent issue.
-
-The possibility for this issue was also pointed out a while back:
-
-> For alloc_low_pages(), I noticed the callers don’t check for allocation
-> failure. I'm a little surprised that there haven't been reports of the
-> allocation failing, because these operations could result in a lot more
-> pages getting allocated way past boot, and failure causes a NULL
-> pointer dereference.
-
-https://lore.kernel.org/all/5aee7bcdf49b1c6b8ee902dd2abd9220169c694b.camel@intel.com/
-
-For completeness, here's an example stack trace we saw (on 6.12.26):
-
-  BUG: kernel NULL pointer dereference, address: 0000000000000000
-  ....
-  Call Trace:
-   <TASK>
-   phys_pud_init+0xa0/0x390
-   phys_p4d_init+0x93/0x330
-   __kernel_physical_mapping_init+0xa1/0x370
-   kernel_physical_mapping_init+0xf/0x20
-   init_memory_mapping+0x1fa/0x430
-   arch_add_memory+0x2b/0x50
-   add_memory_resource+0xe6/0x260
-   add_memory_driver_managed+0x78/0xc0
-   virtio_mem_add_memory+0x46/0xc0
-   virtio_mem_sbm_plug_and_add_mb+0xa3/0x160
-   virtio_mem_run_wq+0x1035/0x16c0
-   process_one_work+0x17a/0x3c0
-   worker_thread+0x2c5/0x3f0
-   ? _raw_spin_unlock_irqrestore+0x9/0x30
-   ? __pfx_worker_thread+0x10/0x10
-   kthread+0xdc/0x110
-   ? __pfx_kthread+0x10/0x10
-   ret_from_fork+0x35/0x60
-   ? __pfx_kthread+0x10/0x10
-   ret_from_fork_asm+0x1a/0x30
-   </TASK>
-
-and the allocation failure preceding it:
-
-  kworker/0:2: page allocation failure: order:0, mode:0x920(GFP_ATOMIC|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0
-  ...
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x5b/0x70
-   dump_stack+0x10/0x20
-   warn_alloc+0x103/0x180
-   __alloc_pages_slowpath.constprop.0+0x738/0xf30
-   __alloc_pages_noprof+0x1e9/0x340
-   alloc_pages_mpol_noprof+0x47/0x100
-   alloc_pages_noprof+0x4b/0x80
-   get_free_pages_noprof+0xc/0x40
-   alloc_low_pages+0xc2/0x150
-   phys_pud_init+0x82/0x390
-  ...
-
-(everything from phys_pud_init and below was the same)
-
-There's some additional context in a github issue we opened on our side:
-https://github.com/neondatabase/autoscaling/issues/1391
-
-=== Reproducing / Testing ===
-
-I was able to partially reproduce the original issue we saw by
-modifying phys_pud_init() to simulate alloc_low_page() returning null
-after boot, and then doing memory hotplug to trigger the "failure".
-Something roughly like:
-
-  - pmd = alloc_low_page();
-  + if (!after_bootmem)
-  + 	pmd = alloc_low_page();
-  + else
-  + 	pmd = 0;
-
-To test recovery, I also tried simulating just one alloc_low_page()
-failure after boot. This change seemed to handle it at a basic level
-(virito-mem hotplug succeeded with the right amount, after retrying),
-but I didn't dig further.
-
-We also plan to test this in our production environment (where we should
-see the difference after a few days); as of 2025-06-10, we haven't yet
-rolled that out.
-
-
-Em Sharnoff (2):
-  x86/mm: Handle alloc failure in phys_*_init()
-  x86/mm: Use GFP_KERNEL for alloc_low_pages() after boot
-
- arch/x86/mm/init.c    |  8 +++++--
+Signed-off-by: Em Sharnoff <sharnoff@neon.tech>
+---
+Changelog:
+- v2: switch from special-casing zero value to using ERR_PTR()
+- v3: Fix -Wint-conversion errors
+---
+ arch/x86/mm/init.c    |  6 ++++-
  arch/x86/mm/init_64.c | 54 +++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 56 insertions(+), 6 deletions(-)
+ 2 files changed, 55 insertions(+), 5 deletions(-)
 
-
-base-commit: 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index bfa444a7dbb0..a2665b6fe376 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -533,6 +533,7 @@ bool pfn_range_is_mapped(unsigned long start_pfn, unsigned long end_pfn)
+  * Setup the direct mapping of the physical memory at PAGE_OFFSET.
+  * This runs before bootmem is initialized and gets pages directly from
+  * the physical memory. To access them they are temporarily mapped.
++ * Allocation errors are returned with ERR_PTR.
+  */
+ unsigned long __ref init_memory_mapping(unsigned long start,
+ 					unsigned long end, pgprot_t prot)
+@@ -547,10 +548,13 @@ unsigned long __ref init_memory_mapping(unsigned long start,
+ 	memset(mr, 0, sizeof(mr));
+ 	nr_range = split_mem_range(mr, 0, start, end);
+ 
+-	for (i = 0; i < nr_range; i++)
++	for (i = 0; i < nr_range; i++) {
+ 		ret = kernel_physical_mapping_init(mr[i].start, mr[i].end,
+ 						   mr[i].page_size_mask,
+ 						   prot);
++		if (IS_ERR((void *)ret))
++			return ret;
++	}
+ 
+ 	add_pfn_range_mapped(start >> PAGE_SHIFT, ret >> PAGE_SHIFT);
+ 
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 7c4f6f591f2b..712006afcd6c 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -502,7 +502,8 @@ phys_pte_init(pte_t *pte_page, unsigned long paddr, unsigned long paddr_end,
+ /*
+  * Create PMD level page table mapping for physical addresses. The virtual
+  * and physical address have to be aligned at this level.
+- * It returns the last physical address mapped.
++ * It returns the last physical address mapped. Allocation errors are
++ * returned with ERR_PTR.
+  */
+ static unsigned long __meminit
+ phys_pmd_init(pmd_t *pmd_page, unsigned long paddr, unsigned long paddr_end,
+@@ -572,7 +573,14 @@ phys_pmd_init(pmd_t *pmd_page, unsigned long paddr, unsigned long paddr_end,
+ 		}
+ 
+ 		pte = alloc_low_page();
++		if (!pte)
++			return (unsigned long)ERR_PTR(-ENOMEM);
+ 		paddr_last = phys_pte_init(pte, paddr, paddr_end, new_prot, init);
++		/*
++		 * phys_{ppmd,pud,p4d}_init return allocation errors via ERR_PTR.
++		 * phys_pte_init makes no allocations, so should not error.
++		 */
++		BUG_ON(IS_ERR((void *)paddr_last));
+ 
+ 		spin_lock(&init_mm.page_table_lock);
+ 		pmd_populate_kernel_init(&init_mm, pmd, pte, init);
+@@ -586,7 +594,8 @@ phys_pmd_init(pmd_t *pmd_page, unsigned long paddr, unsigned long paddr_end,
+  * Create PUD level page table mapping for physical addresses. The virtual
+  * and physical address do not have to be aligned at this level. KASLR can
+  * randomize virtual addresses up to this level.
+- * It returns the last physical address mapped.
++ * It returns the last physical address mapped. Allocation errors are
++ * returned with ERR_PTR.
+  */
+ static unsigned long __meminit
+ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+@@ -623,6 +632,8 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+ 							   paddr_end,
+ 							   page_size_mask,
+ 							   prot, init);
++				if (IS_ERR((void *)paddr_last))
++					return paddr_last;
+ 				continue;
+ 			}
+ 			/*
+@@ -658,12 +669,22 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+ 		}
+ 
+ 		pmd = alloc_low_page();
++		if (!pmd)
++			return (unsigned long)ERR_PTR(-ENOMEM);
+ 		paddr_last = phys_pmd_init(pmd, paddr, paddr_end,
+ 					   page_size_mask, prot, init);
+ 
++		/*
++		 * We might have IS_ERR(paddr_last) if allocation failed, but we should
++		 * still update pud before bailing, so that subsequent retries can pick
++		 * up on progress (here and in phys_pmd_init) without leaking pmd.
++		 */
+ 		spin_lock(&init_mm.page_table_lock);
+ 		pud_populate_init(&init_mm, pud, pmd, init);
+ 		spin_unlock(&init_mm.page_table_lock);
++
++		if (IS_ERR((void *)paddr_last))
++			return paddr_last;
+ 	}
+ 
+ 	update_page_count(PG_LEVEL_1G, pages);
+@@ -707,16 +728,26 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 			pud = pud_offset(p4d, 0);
+ 			paddr_last = phys_pud_init(pud, paddr, __pa(vaddr_end),
+ 					page_size_mask, prot, init);
++			if (IS_ERR((void *)paddr_last))
++				return paddr_last;
+ 			continue;
+ 		}
+ 
+ 		pud = alloc_low_page();
++		if (!pud)
++			return (unsigned long)ERR_PTR(-ENOMEM);
+ 		paddr_last = phys_pud_init(pud, paddr, __pa(vaddr_end),
+ 					   page_size_mask, prot, init);
+ 
+ 		spin_lock(&init_mm.page_table_lock);
+ 		p4d_populate_init(&init_mm, p4d, pud, init);
+ 		spin_unlock(&init_mm.page_table_lock);
++
++		/*
++		 * Bail only after updating p4d to keep progress from pud across retries.
++		 */
++		if (IS_ERR((void *)paddr_last))
++			return paddr_last;
+ 	}
+ 
+ 	return paddr_last;
+@@ -748,10 +779,14 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
+ 						   __pa(vaddr_end),
+ 						   page_size_mask,
+ 						   prot, init);
++			if (IS_ERR((void *)paddr_last))
++				return paddr_last;
+ 			continue;
+ 		}
+ 
+ 		p4d = alloc_low_page();
++		if (!p4d)
++			return (unsigned long)ERR_PTR(-ENOMEM);
+ 		paddr_last = phys_p4d_init(p4d, __pa(vaddr), __pa(vaddr_end),
+ 					   page_size_mask, prot, init);
+ 
+@@ -763,6 +798,13 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
+ 					  (pud_t *) p4d, init);
+ 
+ 		spin_unlock(&init_mm.page_table_lock);
++
++		/*
++		 * Bail only after updating pgd/p4d to keep progress from p4d across retries.
++		 */
++		if (IS_ERR((void *)paddr_last))
++			return paddr_last;
++
+ 		pgd_changed = true;
+ 	}
+ 
+@@ -777,7 +819,8 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
+  * Create page table mapping for the physical memory for specific physical
+  * addresses. Note that it can only be used to populate non-present entries.
+  * The virtual and physical addresses have to be aligned on PMD level
+- * down. It returns the last physical address mapped.
++ * down. It returns the last physical address mapped. Allocation errors are
++ * returned with ERR_PTR.
+  */
+ unsigned long __meminit
+ kernel_physical_mapping_init(unsigned long paddr_start,
+@@ -980,8 +1023,11 @@ int arch_add_memory(int nid, u64 start, u64 size,
+ {
+ 	unsigned long start_pfn = start >> PAGE_SHIFT;
+ 	unsigned long nr_pages = size >> PAGE_SHIFT;
++	unsigned long ret = 0;
+ 
+-	init_memory_mapping(start, start + size, params->pgprot);
++	ret = init_memory_mapping(start, start + size, params->pgprot);
++	if (IS_ERR((void *)ret))
++		return (int)PTR_ERR((void *)ret);
+ 
+ 	return add_pages(nid, start_pfn, nr_pages, params);
+ }
 -- 
 2.39.5
 
