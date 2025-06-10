@@ -1,134 +1,121 @@
-Return-Path: <linux-kernel+bounces-679078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC876AD320D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:31:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B4EAD3218
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97B53A6966
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:30:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 148E97A83A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5668428134E;
-	Tue, 10 Jun 2025 09:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B6628B4FC;
+	Tue, 10 Jun 2025 09:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4iwjV2O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wPwT8JYn"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DF21F0984;
-	Tue, 10 Jun 2025 09:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2458C28B40D;
+	Tue, 10 Jun 2025 09:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547862; cv=none; b=DpxAcAbb8SAOr3NirQRr6pRFodMtLBeO0oYnGZk+nLLd2G8XU5GK10SYHnlwc422pXMp+NdX09Lx/mq6Q3HIOGrCDf5kHRu9x2rDgXqwRuXRF1q+kZFQn669VJT3wKY9+VUjljdE5CnDYqCXvBd6roOvaKprn4avAo9e79XwxvE=
+	t=1749547929; cv=none; b=kk/Fy2ZK6n69Z1Q3/mrtqXlgKWp7p15hGnfmYke25ePMj8xB+DbceKHF+5lXKtGA+d6vNSjTVfui5XLfegVlm9veOTn3wZ04t3P+2q1+klv1V3hvczf5x0t8NfaciF3DcyVBfR+FqCrROnpkdjIGyRlqBJbcJNycERtSsLRH0UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547862; c=relaxed/simple;
-	bh=YKy/3amZLqH2nzrlfIaM1pmEoEybpgu45G58wMSbjrA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rrb4ua1qOuYXPzGlLFY6+2JLz3mar+3k4iQVUo24QBGed4ru+qt4fLDNdH9L4MBW430YsU6LzYczA6r1WWN7GkY7pGM/fsB9nUe8MfyeQYKH9kdE4kpGvj32Fa/IEVLlf0Nrm3ZcokwM2S23h+GqSCr9oKJ4oOjAzKnjA+h4/4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4iwjV2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49FB2C4CEED;
-	Tue, 10 Jun 2025 09:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749547862;
-	bh=YKy/3amZLqH2nzrlfIaM1pmEoEybpgu45G58wMSbjrA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t4iwjV2OYGDxQJffBC6xTdOgJ2c9WJkN7PG/I3NMe5yYWCi2fCsdEV1NuPwPwi8LE
-	 hzN0/p0rMJPg0IPOnVnjgvyIfJIKXEmLZBpfKK2PaZJxPx85EQMq0YBjefS4WWvH5w
-	 5twWc7Jm8T43zs8sYGhzTJjQ3NTYDmt2V7rdJo6FScPeEUFtGoJzgf0iI5lpn+O1gq
-	 zQ3hhEhfNzmkQ/rGv5hirKaNLMHWRa5GtcYnP+5PNuVYRjYZ/Y8mTPharvBmH03CT+
-	 ctGDJEC5cq0nGgXDgYPPHHHENrOpOcwDdnyYHQOiLAzI/tAEMkpvIhzrXaK12zLMSS
-	 BVQall8+QAb7A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	=?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: ops: dynamically allocate struct snd_ctl_elem_value
-Date: Tue, 10 Jun 2025 11:30:53 +0200
-Message-Id: <20250610093057.2643233-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1749547929; c=relaxed/simple;
+	bh=Mxu+F7oYs9rjhQqNFX6d81S4isBAqb9Rqh/JNc/9YqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rWhaebELnf3kZqYlj6CmMImOEMDWNnkm7OHsG9rPDDXah6TwBHi2pFV3KB3vZsRnE0h4DzxViUuK2bdrQN/+fxCy48VG6f2geauxxHvQeAfFk2smyqq6K4FaV/QxfEigi8d9Rqq3VBaXIxh3+Id/nxEDvi8aI2/NAihqNHRYOE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wPwT8JYn; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A5eoUF029247;
+	Tue, 10 Jun 2025 11:32:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	QqzwGX7wP5jq59PpJTek9NUkOQyF6n6c9rZCQTs99RQ=; b=wPwT8JYnkRbt7i/x
+	LVBF5rNE4g2xIbOeTDHzDjFNdCg5BzxoxOwjNPBmllV0082rSzfd4ydG4Qfq/lIn
+	kA43jkuXQ0RFQQrc7eJ35WAK24Kn3fhIxz/gN9zEJTeV81lhj0xV42UBM45PqofS
+	tMQ6O1lDFzg7R+BmvIa6HbGSfVd+P7DtE51ij55wCcIu3Hxew2Oju+AgaiCYBUKp
+	KMbj36bXrmSdZChOfcxyhFbQ0RbCzo0teZ+CwSzx8SDWxbE2SjfavYXexiXEjc0U
+	x7dBt7zqnLzPmH4AShDEsk6CNWmAudnx5U5MeCJhltnOh6xMwcAgYWeLM5pubqce
+	rYTU0A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474y051mw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 11:32:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A8F4540047;
+	Tue, 10 Jun 2025 11:31:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 26A0EAC6D9D;
+	Tue, 10 Jun 2025 11:31:06 +0200 (CEST)
+Received: from [10.130.73.167] (10.130.73.167) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 11:31:05 +0200
+Message-ID: <55fd5868-0481-42e1-b56b-80f59d724364@foss.st.com>
+Date: Tue, 10 Jun 2025 11:31:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] media: i2c: vd55g1: Miscellaneous fixes
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: Sylvain Petinot <sylvain.petinot@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250609-fix_vd55g1-v1-0-594f1134e3fb@foss.st.com>
+ <aEf0KcapklkWpBFD@kekkonen.localdomain>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <aEf0KcapklkWpBFD@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_03,2025-06-09_02,2025-03-28_01
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Sakari,
 
-This structure is really too larget to be allocated on the stack:
+Thank you for your review.
 
-sound/soc/soc-ops.c:435:5: error: stack frame size (1296) exceeds limit (1280) in 'snd_soc_limit_volume' [-Werror,-Wframe-larger-than]
+On 6/10/25 11:00, Sakari Ailus wrote:
+> Hi Benjamin,
+> 
+> Thanks for the set.
+> 
+> On Mon, Jun 09, 2025 at 03:46:20PM +0200, Benjamin Mugnier wrote:
+>> This series provides small fixes and style improvements to the vd55g1
+>> driver.
+>> Nothing fancy really, just to keep everything up to date.
+> 
+> On all (or at least more than one) patches:
+> 
+> - please add a proper commit message beyond the subject line and
+> 
+> - properly wrap the commit paragraphs (up to 75 characters per line, e.g.
+>   the above paragraph would fit on two lines).
+> 
 
-Change the function to dynamically allocate it instead.
+Yes, commit descriptions have been added in v2. Media-ci rightfully
+yelled at me for that ;)
 
-There is probably a better way to do it since only two integer fields
-inside of that structure are actually used, but this is the simplest
-rework for the moment.
+I don't see any commit paragraphs being above 75 characters, my vim
+seems to be properly configured.
+Do you mean the commit header too perhaps ? For example "media: i2c:
+vd55g1: Miscellaneous fixes".
 
-Fixes: 783db6851c18 ("ASoC: ops: Enforce platform maximum on initial value")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/soc-ops.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/soc-ops.c b/sound/soc/soc-ops.c
-index a1a011e6b17c..00c6f1ce7474 100644
---- a/sound/soc/soc-ops.c
-+++ b/sound/soc/soc-ops.c
-@@ -399,28 +399,32 @@ EXPORT_SYMBOL_GPL(snd_soc_put_volsw_sx);
- static int snd_soc_clip_to_platform_max(struct snd_kcontrol *kctl)
- {
- 	struct soc_mixer_control *mc = (struct soc_mixer_control *)kctl->private_value;
--	struct snd_ctl_elem_value uctl;
-+	struct snd_ctl_elem_value *uctl;
- 	int ret;
- 
- 	if (!mc->platform_max)
- 		return 0;
- 
--	ret = kctl->get(kctl, &uctl);
-+	uctl = kzalloc(sizeof(*uctl), GFP_KERNEL);
-+	if (!uctl)
-+		return -ENOMEM;
-+
-+	ret = kctl->get(kctl, uctl);
- 	if (ret < 0)
--		return ret;
-+		goto out;
- 
--	if (uctl.value.integer.value[0] > mc->platform_max)
--		uctl.value.integer.value[0] = mc->platform_max;
-+	if (uctl->value.integer.value[0] > mc->platform_max)
-+		uctl->value.integer.value[0] = mc->platform_max;
- 
- 	if (snd_soc_volsw_is_stereo(mc) &&
--	    uctl.value.integer.value[1] > mc->platform_max)
--		uctl.value.integer.value[1] = mc->platform_max;
-+	    uctl->value.integer.value[1] > mc->platform_max)
-+		uctl->value.integer.value[1] = mc->platform_max;
- 
--	ret = kctl->put(kctl, &uctl);
--	if (ret < 0)
--		return ret;
-+	ret = kctl->put(kctl, uctl);
- 
--	return 0;
-+out:
-+	kfree(uctl);
-+	return ret;
- }
- 
- /**
 -- 
-2.39.5
-
+Regards,
+Benjamin
 
