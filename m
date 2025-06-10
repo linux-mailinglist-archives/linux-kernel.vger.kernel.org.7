@@ -1,188 +1,133 @@
-Return-Path: <linux-kernel+bounces-680110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656D6AD40C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACD3AD40CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C98E3A6B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF463A6DE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F3A24A06B;
-	Tue, 10 Jun 2025 17:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F77524EF8C;
+	Tue, 10 Jun 2025 17:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ceJ3xECC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FNV2fJsm"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C51E2441A0;
-	Tue, 10 Jun 2025 17:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F4424677C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749576397; cv=none; b=WNuGA+dlhRqtd3cjJSb392xxM1eoS+78bnh2ZQQAdtycvSnE7KnbWZ6s/Di7LrtsirQx2mW0For5CUOdgX4L1HS30y3bQLV0/gjk1X9TEM9Tw2ociWvoiO5hLxVFCnDIMQrCzlnbOSpLU0CyL3/0o4sz3zyo69CPS/taCsKlb7M=
+	t=1749576488; cv=none; b=nlO2rIFz/OokbWvFL6PP3PhEvDO0AMmKa587HIpWQYMEOslIbGteK97wQDD/+9JcnHOB7qWKKkMHQqETpCb0Fx+6PbViGk1K+JSpfiyYEZVIE9zRPeZnEssa4VjZp+Qy6+dix4QDQw07volltpIlbcgL7D4kZV2M8IMSFmNJQ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749576397; c=relaxed/simple;
-	bh=f64BzYbWwrcswaFdSrDpPjRWyUJjPC8m2gBNkU6g2pU=;
+	s=arc-20240116; t=1749576488; c=relaxed/simple;
+	bh=PVZyBqjGIVhV1fw7dIcdJqjMZ05mClHZkbxF2OooV18=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C+bV/+d6ZtrSbloYk8GpaRZNEuI3LtqwuhkKXPiGwyYv3g3dvQdUji4tHQtFIj0Vr7BzTmgUghRGqCbR1Ih8wT5IGzU5kPw553Qv3V9LpjCkhJ0hDKdBmOYjv4iqzHP11oxjcEWJsgnvI/pGu3g66ESXDVz/2+mYPDDE8azaFgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ceJ3xECC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD601C4CEF0;
-	Tue, 10 Jun 2025 17:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749576396;
-	bh=f64BzYbWwrcswaFdSrDpPjRWyUJjPC8m2gBNkU6g2pU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ceJ3xECC0Kl+gtIZbbu8XnZ3pFCDr5UfOPXrAgHFnsL9LU0utUKP2JU6SPJkKT+lH
-	 hNazbcpD7ejB21Gnk4A3fPHS2HJOZnPUnW3aRujkfGNJdctyvZ1LSGXT5RPRDebug1
-	 nZxCC0HO9vpuISQVZYTy3SmbdKufXm40oryTNOFpJJVPtIxAbI3sUurAhFPi0GpgET
-	 DdPFPGnxq900KRutkNRaCnFrQ6RHhtl5DURkP18dOHKylpTn4kExBH2zgbJeRfcFne
-	 hvJRTiDz+mXBvLeMElfLcTeuBAoq/dY84NkQX+3SsKNSI19ixpAPFnfjwoc0bdAagm
-	 S0zfKQWozkrZQ==
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4a58c2430edso781711cf.1;
-        Tue, 10 Jun 2025 10:26:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqJgqZ5X0wjqevfxG6yfu/ec0OayOIjoppJNRMdd+l4T7cszkOkFpcimMrTOLEyH1udy2GBn4oGxTGssLa@vger.kernel.org, AJvYcCWuOhQUJrPRyNY7ZVUiS2LojfR5XhAhZrlKl1HHokoj6rOGzvUNlPpeWWwJ1KW4TWZBnjO1gowDoL+aRDE/@vger.kernel.org, AJvYcCXqcxFeFFavN6eMvQZwQnN52JIL3egnCSXnC0Prz5ofwF+3pUJXbSL2qWvVdkiiIWxuHqXKdxRAeWd42ZXr8rA3664HrKyG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNtLjx+0GEGBu0fgeDIGoqPTWeIqga94aHj35VITuZ4dOodCig
-	VOelO0VKi8wlNGBbDrO+YR3iEaDK5NYYL/zQ7gVu8hV9iNauSTm/WGf2P8X+Ci025yJPyL004r4
-	Zu1V0X2weYQbyGr1qrgOCSPAY7esWPyA=
-X-Google-Smtp-Source: AGHT+IGFc2+k1iCnhuGoGqscF+tifHIl1pEkK+0lLMlrzW9eFNzUpsFwybkLvs3KvX7SPR8qouSN1Qa2cBTv6F08xjA=
-X-Received: by 2002:ac8:5cc9:0:b0:4a6:fac6:fa1e with SMTP id
- d75a77b69052e-4a713bf27cdmr4370421cf.8.1749576384973; Tue, 10 Jun 2025
- 10:26:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=EDtEi4cTvxudHqq/oltLzw4DLz9Gj16EfPqcbL4I9ESmLxtfzsp9ePR6Iu0agmEUi0UM7IYYQC2EUQnjAXDXZD/tygYZc/JfRXR6lXcUMvmoAXS/OIjherqA16AaVslsccw4jgu/+cLxcCVWfRmkaqXYHRueqhsN8ZKq2ppMs9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FNV2fJsm; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6071ac9dc3eso8662148a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1749576484; x=1750181284; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggkXFJJM4tmqklVbhKHNnaysMh0I0jQ20WCMlBH6Csw=;
+        b=FNV2fJsmtE9kRlIfsqwRRA+0lXQVAw8X6FbLRBEXpGwAL9fr5X1iiCLuZSrg7pBtHU
+         qgt929zbYGx0MiMCFWljo09FmYBfm5iGHSvgSP9UEIHnc1TKzg01wv7TI91ZeS5gVpaw
+         LEMhttdfBt4QkZe/bBrjGcZS5riIPYodp8r8c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749576484; x=1750181284;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ggkXFJJM4tmqklVbhKHNnaysMh0I0jQ20WCMlBH6Csw=;
+        b=BxtXM46AxW6Yz3I17iEDspKoJdRE8vWi7ZoNCNqx/Nn0ERg5F716VadNnumwqbiHHX
+         2mazB1e2iamY9HVQIy54OWOzDrKxvbwDjkNS7ymxfcVgUfR1cFaOQ++lvW2j5SaWjNSp
+         Qg/RYkn1/MNXd0ALGx58iSDO1WyEebhPVVIldE5FB//6XogFEiG/4aCF42AA0GR+YSKJ
+         C/HrWbkB32YhVSCFoQ9/xZehIUaK7rzAqIBJoSk4yexnCs8WNHeyXmv8Bu/Py+GsTJ4R
+         nD+8B+Ewzi8Zh3gMii5wvpa9llrwND7WSiRg5ez2KPUT9vDVwj5kv7YYj9jJkcKmCJ3g
+         uocA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFRbZE1p0Xil22E+18D1SkTarhNhx+QQ34/99RymU/5bae/ni7P19zyAd4Ba4QzwJ+h0zpv9kCJ/KyVJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0Nl1M9neCSn65sY8JrjY4+RgLObc3sxHaE80Nz3N6kYs1JVrT
+	M/OtDHM+XpEx/HZnexG+xzuGEnDOmTmz71Y+ixpBt4d+T2r0RJgAcw8bED3RCAT3mX+ssL/xaVe
+	gLxeDhIM=
+X-Gm-Gg: ASbGncvsK4svjUh1AJJgf7KKy6W7X8o/kgbwvSyDaUHbyKC0BWRzT7Uo8a1Byb7DEZh
+	QqO05I9/n2COFAH/8FWlcyAa8ie4saD6Vc5FWTFzeN8Vcbk+cQWDvfV9SMjjEwFZ3fLZsHFnfQn
+	Fmr44NAiXVweapCAYo5VcNun4+msmGz1hVcOYy0HQRS7yZwDxsLDKm2wkumnv7Hn78Ves85b0FF
+	FOe2QNX44jfyyPyevTd/4aXHhDYrTYJdE+SKq/Dh2DDuoJ8UkBlzxjyd0HZQVJA4vTiskRHM4bM
+	cuYeygAe+xFAlhK4yUnBvm0Km+hnLrQfkwQ6sgDIuE4llxp98srhPQv92stC39g5YZCMK8lCNMz
+	rEw5DtPQwjTYnmfD9UArCgHylDUjKz2ZDttqW1/c9L1le1Nk=
+X-Google-Smtp-Source: AGHT+IGc/iS8QHD73lPcznP0iLUbXtvD+lwLY5Ge24x2UDmCq33kNBsEz5wWgTiqkUeRvVJzOWEliQ==
+X-Received: by 2002:a17:907:3d02:b0:ad8:8efe:31fb with SMTP id a640c23a62f3a-ade898a7133mr21547966b.54.1749576483917;
+        Tue, 10 Jun 2025 10:28:03 -0700 (PDT)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1db55f3dsm757828666b.60.2025.06.10.10.28.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 10:28:03 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6077d0b9bbeso7619112a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:28:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUzI8CqG9ULO2XBC0CxjiEg0FsVeJ29tfbv58M0mefMJAHb5kt9WkWCFiWb7e0ope1ErKplgUHCRMAaL+k=@vger.kernel.org
+X-Received: by 2002:a17:907:7f07:b0:ade:f72:435 with SMTP id
+ a640c23a62f3a-ade897cf7fbmr24618766b.36.1749576482668; Tue, 10 Jun 2025
+ 10:28:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606213015.255134-1-song@kernel.org> <20250606213015.255134-2-song@kernel.org>
- <20250610.rox7aeGhi7zi@digikod.net>
-In-Reply-To: <20250610.rox7aeGhi7zi@digikod.net>
-From: Song Liu <song@kernel.org>
-Date: Tue, 10 Jun 2025 10:26:13 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5G0Th+9dRSmxDjo5E7CxV1E9N8AiKjw3cKyEhOBVWJFw@mail.gmail.com>
-X-Gm-Features: AX0GCFtlUudIDDILbjkSliTETHB9ADLDpGB_tREWEmJbKZ4UGEbktaZJBtiHTAs
-Message-ID: <CAPhsuW5G0Th+9dRSmxDjo5E7CxV1E9N8AiKjw3cKyEhOBVWJFw@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 1/5] namei: Introduce new helper function path_walk_parent()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, m@maowtm.org
+References: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
+ <CAMuHMdU1NdNjx3f1V9j2FACWwC5faPKCXChtW6Z=i2JyXquFuA@mail.gmail.com>
+ <20250610085416.062b4bc386dde2ea475369f5@linux-foundation.org> <CAMuHMdXyJhaFUbKX2Hhoa2y4hVK+0NhvL4hNL_8RnVOxaCkq=g@mail.gmail.com>
+In-Reply-To: <CAMuHMdXyJhaFUbKX2Hhoa2y4hVK+0NhvL4hNL_8RnVOxaCkq=g@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 10 Jun 2025 10:27:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgXTJo5G7e1cQxetFLbqbTUfP7Nfzt7-C89FjUHo1J9cA@mail.gmail.com>
+X-Gm-Features: AX0GCFuSBnImfaPnnRPaw-kRRNGK3RROtak9Ct6XSRJ9KKoJNMvO8fbVvKrYfaM
+Message-ID: <CAHk-=wgXTJo5G7e1cQxetFLbqbTUfP7Nfzt7-C89FjUHo1J9cA@mail.gmail.com>
+Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, SeongJae Park <sj@kernel.org>, 
+	Honggyu Kim <honggyu.kim@sk.com>, linux-mm@kvack.org, mm-commits@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 10:19=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
+On Tue, 10 Jun 2025 at 09:41, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> On Fri, Jun 06, 2025 at 02:30:11PM -0700, Song Liu wrote:
-> > This helper walks an input path to its parent. Logic are added to handl=
-e
-> > walking across mount tree.
-> >
-> > This will be used by landlock, and BPF LSM.
-> >
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > ---
-> >  fs/namei.c            | 51 +++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/namei.h |  2 ++
-> >  2 files changed, 53 insertions(+)
-> >
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 4bb889fc980b..f02183e9c073 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1424,6 +1424,57 @@ static bool choose_mountpoint(struct mount *m, c=
-onst struct path *root,
-> >       return found;
-> >  }
-> >
-> > +/**
-> > + * path_walk_parent - Walk to the parent of path
-> > + * @path: input and output path.
-> > + * @root: root of the path walk, do not go beyond this root. If @root =
-is
-> > + *        zero'ed, walk all the way to real root.
-> > + *
-> > + * Given a path, find the parent path. Replace @path with the parent p=
-ath.
-> > + * If we were already at the real root or a disconnected root, @path i=
-s
-> > + * not changed.
-> > + *
-> > + * The logic of path_walk_parent() is similar to follow_dotdot(), exce=
-pt
-> > + * that path_walk_parent() will continue walking for !path_connected c=
-ase.
-> > + * This effectively means we are walking from disconnected bind mount =
-to
-> > + * the original mount. If this behavior is not desired, the caller can=
- add
-> > + * a check like:
-> > + *
-> > + *   if (path_walk_parent(&path) && !path_connected(path.mnt, path.den=
-try)
-> > + *           // continue walking
-> > + *   else
-> > + *           // stop walking
-> > + *
-> > + * Returns:
-> > + *  true  - if @path is updated to its parent.
-> > + *  false - if @path is already the root (real root or @root).
-> > + */
-> > +bool path_walk_parent(struct path *path, const struct path *root)
-> > +{
-> > +     struct dentry *parent;
-> > +
-> > +     if (path_equal(path, root))
-> > +             return false;
-> > +
-> > +     if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-> > +             struct path p;
-> > +
-> > +             if (!choose_mountpoint(real_mount(path->mnt), root, &p))
-> > +                     return false;
-> > +             path_put(path);
-> > +             *path =3D p;
-> > +     }
-> > +
-> > +     if (unlikely(IS_ROOT(path->dentry)))
->
-> path would be updated while false is returned, which is not correct.
+> Just revert the commit?
 
-Good catch.. How about the following:
+Yes. We don't do "default y" for random features.
 
-bool path_walk_parent(struct path *path, const struct path *root)
-{
-        struct dentry *parent;
-        bool ret =3D false;
+EVERY SINGLE DEVELOPER thinks that *their* feature is so important
+that everybody else should enable it.
 
-        if (path_equal(path, root))
-                return false;
+And if that feature wasn't enabled before, they are completely wrong
+99% of the time.
 
-        if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-                struct path p;
+There is a very real reason why 'default' defaults to 'n'.
 
-                if (!choose_mountpoint(real_mount(path->mnt), root, &p))
-                        return false;
-                path_put(path);
-                *path =3D p;
-                ret =3D true;
-        }
+So we do *not* use "default y" for features that aren't universal.
 
-        if (unlikely(IS_ROOT(path->dentry)))
-                return ret;
+The only time we should use 'default y' is if some old feature that
+used to be unconditional gets split up into a new Kconfig variable and
+not using 'default y' means that people *lose* functionality.
 
-        parent =3D dget_parent(path->dentry);
-        dput(path->dentry);
-        path->dentry =3D parent;
-        return true;
-}
+Or if the feature is some critical security thing, or is some hardware
+thing that has become so universal that you find it on basically every
+single machine.
 
-Thanks,
-Song
+Or if that feature cures cancer or brings world peace.
+
+Then you can enable it by default.
+
+I have reverted that 'default y' thing, because I see no reason to
+believe that DAEMON cures cancer.
+
+               Linus
 
