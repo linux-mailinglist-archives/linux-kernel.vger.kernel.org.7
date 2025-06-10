@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-679207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCCAAD3367
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8175AD3391
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55181653CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:17:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D3A16F690
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65328C5BD;
-	Tue, 10 Jun 2025 10:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95A228C2C9;
+	Tue, 10 Jun 2025 10:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMM1aMQJ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="jG12wcnh"
+Received: from mail-8160.188.com (mail-8160.188.com [60.191.81.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A66C21FF55;
-	Tue, 10 Jun 2025 10:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D8E25A62B;
+	Tue, 10 Jun 2025 10:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.81.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749550613; cv=none; b=pXmDTOdYn//NHlgBzIjVepMw4A68wz6jwxP5L6/Iuds+49CHEFy9DohrTLxBOskXx68hiKCIgKkh/KKOTxY7s1c39TMr0N3qmuWFM6DY1QueJL0dKi1ACma6MFqrk2E1VGgZOqL9zN9I/rIduhb58f/HRr+ydQj+Ta6m9OGIpGs=
+	t=1749551322; cv=none; b=uoyWW3Xubyi9iSvDVahHVPbmgE9Fn8MPM8SebvXXxH29HuluNaldaf/vwIfU3i7iJja1UMMZKBm3mAL1+2+3B/OYGnbhAI1u9Qbot9vznElE8/wxFZpj0P8oicyO09krvZCfLIN668SCz4KinVtdX6fMozr8wdxGh0j6rL7ixLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749550613; c=relaxed/simple;
-	bh=UUKpD09dHui4C4fVtz7ec5/TcctLfFsmGhQ+qO4+hGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z73UuCcxPELKRr6ABDxa8wI3wsgvjMmokPxEjnjHlT4W/FlpULCzXZZ1WYFvZ7D8O+duWu0gBUTmOiFWU5c49S7w1CZqDwHtRGCDX0HSMLFKgjC7BpwBrwngOJ5QPzo1RFmS48Yc5xbeNzsZu9GO5fE5vUvQaoyQHDEpNMGInLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMM1aMQJ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235db423abdso6412725ad.1;
-        Tue, 10 Jun 2025 03:16:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749550611; x=1750155411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UUKpD09dHui4C4fVtz7ec5/TcctLfFsmGhQ+qO4+hGE=;
-        b=QMM1aMQJtT2uTs3UxjQSmmheeralkBoUCTuGiaFuLO9HKTy+OcSkGtBpNUE96gawwe
-         1dOchvLFlPvOIZWQSnU1BwGWjwdzWSRULmBmvGosYRxfwSg0tD55bJiqV2Wk9bcfdrt2
-         W2inQr9ZYjmXEkcENyTGtcKuXkco/iQ2a9G/c8Cb94obBYsv5yCf3njL6pa3G4xOkRbG
-         pPlp1iW+9FVp78QPBqzVFT4kKCO+bF8zJyeqMV4FsKM+ABv0FyKy+As22dsua95+oUG+
-         iJweeRMedV5fB7adC4iTMeFrWdTM9kqQB+RPuOZC/fO1iju4Ze8W36yUdP5TnQ9pg6OM
-         lu2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749550611; x=1750155411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UUKpD09dHui4C4fVtz7ec5/TcctLfFsmGhQ+qO4+hGE=;
-        b=mEDV3aDMh4B/u5mHCb92EKP1xfaxu+eM6n/pJMBNjNT9UkvrS2rSNtvOKxgDyL9K6q
-         A2yL0VLVCDmVcKO2WMWFvPqzeR3KA6uzZEDVqm1SpgAixSKitY1j4HAbgBG3G1Iw9aQg
-         Gp5YQqURVD1TEValdko9k/4ktue4WfF1fzPIuhNv/RLCBBPnHCwsfWi7zN5aFXUaL3bS
-         Jn/pVOKBUAEn+aKrXCdBSoTgxJARpo+qaRXPDXgJyP/WzK8KgvhWGWx+1sYy3K54oDW3
-         zNoV9vN+IvwUjglWOU+WlN4c/BIfFkVRyoOu5lA+EYRghli5FwsasX3kpJHyitOIw+hQ
-         41nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0LVxo3pYypuCO2UDqkqsA6j+nIht0Pa2vZkiHDP56FRAT3nA8dVRlSPYtKrTYYhwqt+ILfL2lgQRRRRAtb8g=@vger.kernel.org, AJvYcCWxXUKBzRFjZ/KcJnNYDaw35f1AiOj//kFm0eSgkBSLKpJwmDM8i/Jawj9M0OzuyKuoy/8VRoD4S+tGv5o=@vger.kernel.org, AJvYcCXi6P932JAhd/atAJFNKTOt/sTOPcF/chUVanWyDkXUzUXiyx79/sq4J81mAk3dKgNcSO1dXM71qrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIg3LwXkYjbOF7uRY+bh978WObK9nQGXUJLMu/HneuZvHsEuc/
-	GG7G8qOb5pHY/wGn5pATNQEBkJ6nEf4FXDtmiFwsQP+pomFcOTv2WH1mJph+zgbyLP0i4WY+eF9
-	kcrbLhPgaqLJXTmVNdwI9Xsdo+rnaQrw=
-X-Gm-Gg: ASbGnctrC0oI5sjWBqoNkM/AXYhk4DR8civuJOOUtb4fcj3BrTm/iY2dKTiGcs/lSNw
-	9J6iKsIRW1GUZj77es81UkaSgxExNRlngkvk9aKjUQ+rYJHjaJs0qWe7eTdXFb2Map4aNRczfiO
-	638nKbjqm+g7WTzC20Xb+sghrI8eyMjxooPrtU1gKLt+A=
-X-Google-Smtp-Source: AGHT+IGjNe4w/TZWClCQSXCO0edDTMBkbQhOnY+c8pbDSn5UW9W4Wf46Bs/AhhcRk7i4bblmszBZ6m7JuEbjAxmj0uM=
-X-Received: by 2002:a17:902:ce85:b0:234:adce:3ea4 with SMTP id
- d9443c01a7336-23601da9a61mr93668205ad.10.1749550611325; Tue, 10 Jun 2025
- 03:16:51 -0700 (PDT)
+	s=arc-20240116; t=1749551322; c=relaxed/simple;
+	bh=zPVnp1uFz6ezXexDiXFt/QExs+FjII/ZQVdaoHxweBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N79Y+QP6RhVd4xxTi1rNwORie//OdYPdUEIlI8Zs4ZjMe/OBa22HYRb8daRd4+asPC2iXVjqiLfqEauMhGLXJGzHSc2KsX3Pp3KXMJVNuXBYo02Np7j+PGryLiBHqanK6731ZBqmAnCG9NHI68uCQU5uIllFHaeOHffclCILEKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=jG12wcnh; arc=none smtp.client-ip=60.191.81.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Pgg2mLehIG4sW1T+6g2YquviHKO39IVuKuCo2yGa6ec=;
+	b=jG12wcnhget0oYtzN2fj4tLvRJetIqjOpBoGVKmuIbqv8rcHUCsfvHsqh9zDyO
+	tXh5wa75Egbi9zPJFsL3SN8TZ5c6SXffLIWMIruvnmn8ni7LjSRCKekefFo0GAJp
+	SENzwVIxKPLZLaWicytt7ptq20dmOOj0A3PsFr3EVqA9U=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAHnk8wBkhoU2NXAA--.14402S3;
+	Tue, 10 Jun 2025 18:17:22 +0800 (CST)
+Date: Tue, 10 Jun 2025 18:17:20 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: "Peter Chen (CIX)" <peter.chen@kernel.org>
+Cc: John Ernberg <john.ernberg@actia.se>, Xu Yang <xu.yang_2@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: i.MX kernel hangup caused by chipidea USB gadget driver
+Message-ID: <aEgGMCCdO3rc6Dkg@dragon>
+References: <aEZxmlHmjeWcXiF3@dragon>
+ <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
+ <aEbstxkQmji4tfjf@w447anl.localdomain>
+ <20250610021243.GA1610560@nchen-desktop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609122200.179307-1-trintaeoitogc@gmail.com>
- <DAIQ9342ZFYD.3VQVI80A18HKX@kernel.org> <CANiq72kC1j-kprAQ5WU0QVV_zhyKfDPJ_M5E9xZ+8+fxt4R6qQ@mail.gmail.com>
- <DAIRU9INPO8A.1PLCLKFJJGODH@kernel.org>
-In-Reply-To: <DAIRU9INPO8A.1PLCLKFJJGODH@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 10 Jun 2025 12:16:36 +0200
-X-Gm-Features: AX0GCFvnab1QEUDa9dFfE8CNMQFcfiIoOKuRWyWSIv2LB_UaenukRWb6fdKCArM
-Message-ID: <CANiq72kORZjTe3tPEBueDi57TGF7KfxgTSw4Tn0DQeK_X5hi5A@mail.gmail.com>
-Subject: Re: [PATCH] rust: module: remove deprecated author key
-To: Benno Lossin <lossin@kernel.org>
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>, rafael@kernel.org, viresh.kumar@linaro.org, 
-	dakr@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, mcgrof@kernel.org, 
-	russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
-	leitao@debian.org, gregkh@linuxfoundation.org, david.m.ertman@intel.com, 
-	ira.weiny@intel.com, leon@kernel.org, fujita.tomonori@gmail.com, 
-	tamird@gmail.com, igor.korotin.linux@gmail.com, walmeida@microsoft.com, 
-	anisse@astier.eu, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610021243.GA1610560@nchen-desktop>
+X-CM-TRANSID:Mc8vCgAHnk8wBkhoU2NXAA--.14402S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFWfXFWfury8Xw47Cr45ZFb_yoW8Ww1fpa
+	yakw4fKw4DtrWYyFnF9r1xta4jkan8tr45CrZrJ345Za43u34Sqr4xKry5K3WUGr13uw1q
+	vr4jqw18CrnruaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Um_M3UUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNBK5H2hIBjIyvQAA3b
 
-On Tue, Jun 10, 2025 at 12:12=E2=80=AFPM Benno Lossin <lossin@kernel.org> w=
-rote:
->
-> Hmm, I guess a checkpatch lint fits better then?
+On Tue, Jun 10, 2025 at 10:12:43AM +0800, Peter Chen (CIX) wrote:
+> Like Alan and Xu's suggestion, there are probably two problems here:
+> - When the system enters the suspend, the USB bus may neither at suspend
+> nor disconnect state if USB controller/phy's power is not off and VBUS
+> is there. So, the host still considers the device is active, it could
+> trigger transfer any time. If the transfer occurs during system resume,
+> the USB controller triggers interrupt to CPU, and USB's interrupt handler
+> is triggered. If the USB's hardware is still at low power mode (or clock
+> is gated off), it may cause system hang (CPU gets error response from USB)
+> after access register.
+> 
+> With Shawn's change, it pulls D+ down during the suspend, and the host
+> is notified of disconnection, so the host will not trigger transfer
+> until D+ is pulled up by calling usb_gadget_connect. The USB leaves
+> low power mode (and turn clock on) before that, the access register
+> will not cause system hang.
 
-Yeah, that would work.
+Thanks for the input, Peter!  It's very helpful and well explaining what
+I'm seeing here.
 
-Probably for the C side too -- from a quick grep I don't see it.
+> - The current chipidea driver doesn't notify gadget driver when it
+> enters system suspend routine. In fact, during system suspend/resume,
+> the controller driver may not respond middle layer's (network) request 
+> well due to it enters low power mode, so calling usb_gadget_driver->
+> disconnect (composite_disconnect) is needed during controller's suspend
+> routine, it calls function->disable for USB function driver and
+> ends/stop middle layer process.
 
-Cheers,
-Miguel
+This problem can also be addressed by Xu's suggestion, i.e. calling
+gadget driver's suspend hook from udc_suspend()?
+
+Shawn
+
 
