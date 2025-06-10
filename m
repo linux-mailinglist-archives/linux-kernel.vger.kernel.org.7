@@ -1,225 +1,321 @@
-Return-Path: <linux-kernel+bounces-678939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A0EAD304C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550FAAD3061
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A3D53A4304
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B491671D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3CA280008;
-	Tue, 10 Jun 2025 08:29:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7598B21B191;
+	Tue, 10 Jun 2025 08:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FC6YPbX5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D9521B9FF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15B321E0BE
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749544144; cv=none; b=HkpMgcVwbGVLnpW2Su99+B46yBKHSkYEWBzzjAOHlH+ASfXT9IBYFX/xtrvJ1R6p0ZjpuM4BPVtLXvs+18u34RLnOX+11lPfm8CsbE4NWNy6mXnnbC57bLpXOH3xrPZD9xpPd+t+frsnXOxMIXe0WxQ3ehuC7rucpurZRa/Mw7k=
+	t=1749544230; cv=none; b=myA6o2mBK9ZRfs6eJqol0CkJwwxYQ07eYwKbFspZOKNWC8thlH9Gldgxf+sSxFwqHvULrBf6ds7jy1pjHX4CO938s0NlOgjxkhKTXOxoopAsxgE91v7TT6k2Wb5hSaF7zyuMmKRM3gkaXWXr5VkmY1gV8XxjalRcnKJ1P1kFJSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749544144; c=relaxed/simple;
-	bh=qyQMrstKtEdojLEVv3ULza0hkNOhUy+7prtXx4DsI9k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oRORF3nec+K0mYSDNuYBjWNUgdvyvh10lw8IaaXc58A1gfsNdaoYbEdyCToAiDxQL6D2hbZweKEwGyAq2X/moJV03vyFjXRM4l/JYyrdn9ldhKIDMG4Afzl7MK1LGQqO93QeYOyi0s5FQFfw+/ZUAFdDmvZJlnPnom/UVgiUyNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddc5137992so69768805ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 01:29:02 -0700 (PDT)
+	s=arc-20240116; t=1749544230; c=relaxed/simple;
+	bh=PazSbd9MXK8lSe6DfCfz7KE5W6l0X1BBddPwXndH1SU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1HWvYAe+3jb3eRwF4cAgLrOWktbk7KkVLmr5oxa7XweGG7KuvpLryKZxNMuvnqnwMCB8nYjDixx1Q68APUOjGzhyk4RxNkt//Q0Zq7vr14/LXNUTrEGNRwIn4JVVFJ3I8skJLMA61GcLI4IxnPVNME5PSXPMgIs5wDyP2qcgVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FC6YPbX5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559L0P9W029969
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:30:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=UCyodPVPr8Std+9Ivx4CI4FR
+	F286U+QLDgMjCD3KzE4=; b=FC6YPbX5GkRBkumlTxY0TY8kWNCDFKr4dfUnsF60
+	neXXV124vtbp7ENwBfzP9UmVUrgDo0+eUmTPzFQbYCj7PvNByX502U6EHd0sp61A
+	Eu3Nm3dcZUtFQDKBMe+gX0s2911eTMatY7/ON5B6K97Fvkb/VujXu2v9PQoU0vtO
+	ovTXiXHjwYFuk3dRZCjyJzh9qgyfcjvpwEb3y52jiEDMLg9DCG6i/gdP6lc++xFS
+	qKKF0fs1a+SVuXgVF1VoWprDMZVgbf1hW1F51csvIPmYsSWLwWSeQslsLVjakp6X
+	kEtsGDAZXUh5MhJvr8OJ5QYNF055Wfizb8k1gOh66RM5TA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474d120st5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:30:27 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5e2a31f75so1636335085a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 01:30:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749544142; x=1750148942;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0SpBoEFeQ/cPJ9ggbkYJRFNlVvB4EZzWbQyys7hB4qY=;
-        b=CpqJtMzYOsb9cmy/Wj5X8NlN8jRazPKgvQhIVqeVpgKjROQ/gbNRFus13Yp4+Ga1YS
-         lPKBrOtCZl8Pnvdygj2+5EGeXsSf6bPT9zVriJG+Goy83TPfP/54a0HRKh4uxVgKeZcL
-         IALOC16XFnvpxwU/HUI5KdgPAhpw8Kvoodu+ExrdE2160lJmlxygaUFWD2Q69DDTq/PQ
-         JqCX7oJEK/wwC5H716H6jlb20hNPlbK7vCR4S+3RFkRZfLDOmxn69ajTto5tQdNXw8Pi
-         3hJVIm//ptYbd7/aAInFcuw4KCw1ZvB+ILBcLrPMQIsIKpqCwP69VqwDAD0ZbwlsBEed
-         1vFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVs7a/OEx0R+juzRnS8v8KQ4oVf/cUpNBQv+sggkMIMZlkvbMs0h6PSx+aTIix3lbq+MLhxFSvcfxfkDjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEgm4uDVhc2Kpk1t+LmUKGinELHJoZNVR5Eff9yxyNESCZSXvI
-	qzSb5y4t+UHdqqxF8MX8B+hOxXVFkQPZINDoA28eZ/PgJFpDaYFZ0CoQ7h/JH5YhXf+RNaLoj8r
-	2KIXC4+O2dhjuxYBeAh8V1X6dookLDUUcj/FybHwJd8qhK5yT4hMh80+//FA=
-X-Google-Smtp-Source: AGHT+IEJSg/MGs1wwu9IIDGmOXe6jZohdmdgUkDefG0DVsYi1VkIQsebEuT2Jp+g7XlUoAYk24MxEXezRftxAOLcoQg4W+oJNYLH
+        d=1e100.net; s=20230601; t=1749544224; x=1750149024;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UCyodPVPr8Std+9Ivx4CI4FRF286U+QLDgMjCD3KzE4=;
+        b=pqsMkv4QIGMRruSZJfzQzHk9gTVFNaGoKQXEEPZDZGHnhMNOqLMsUGlf1CdAPIVANS
+         6Nh6DXSAf553DAXyO8WmrCZL0noxrFkgBEZL0Nx66MhOmMZGljdbxjH203ygiD7Me9sD
+         UY5cNiLGPrLRbO+7WKsv3Emk/2OC/WJwvz4RR9DB1qlJ4G4bJXPBiAPNuSGCHl5MBP3k
+         lqnhuPPXN8ZVbptLeTX4/Bs5Xt4WV+ykNbAKmYbu3GjemmCYgwKcQnLodr0dl7797zBd
+         cM9hrHtZyJaJkLXy/vlBAPeupx4+yq85GjM9BEwkCfUr7/lg9Hr/wC0IwLEEoRHu1wA6
+         KUrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9aphzof66PKUd1tkPOMDl7uSuRzeWVd2wLlQL4GJEq4HSIpFtNOjjfIFsXF203h+Oq2LoM/KrkNtKm1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/+3BC8VvnmWaL+jHhhF3MX0Ou9IkgwYcIOlluEvPORuiGDycq
+	EIiP0/QAV560rsvdYV5fe4sY9YXy0nnULo0XB1mWcmg22aLyYX7YYANTMCQrtxLin2kE2MbElRO
+	hqksJm6jdXhBlbI4zx7/hKtrqq4lcpdUn4Hq5DWc12QbUFdkQYa7cOGomP8mOrdrreZ4=
+X-Gm-Gg: ASbGnctzt0y3Ox1G/ku3wFM3vUofP/lxmu8pfqC4iCoTc1pTlHZH+diRE/091m59V3x
+	piVOD+BmkLkjQ61H+28mDS2ft6OAl8OgWW6ZTmRNYOgDsOrEm+0BDf6cXA1t/39TahRI1Ga+KlF
+	oVF2Wajbmwx4ZFc8D6gsOtNaXh5pm0LTrjuU4c7xXNtbmQX0WJspu97Gtl9EfSKvrEUYdAJrIDc
+	b5sPD30rEXsr3+WUeJ6SMIpk6t7sseHEB2ybjFd/M2pKZbglKUXAU7SPGLfXSyP6m8ryKipwvi4
+	rLsa0QuCPGndPAfWHqND2S+vBO68vvp70C8pmQJQdh4DI2nxuj+Pd1KoMQmsCHqDqYNUAjYULes
+	O8GFx+sXRkBKcwl2Wwjk75iufTchKvdeBGmI=
+X-Received: by 2002:a05:620a:223c:b0:7ca:f039:d471 with SMTP id af79cd13be357-7d2298ed30cmr2164436285a.52.1749544224230;
+        Tue, 10 Jun 2025 01:30:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHb05mlCa5MDvIu6ksUAixRaOBZtZ0d8TtfwzrJUG+IZH7TwT53aUKnmGoeEDO8XQt5vaYPyQ==
+X-Received: by 2002:a05:620a:223c:b0:7ca:f039:d471 with SMTP id af79cd13be357-7d2298ed30cmr2164431885a.52.1749544223781;
+        Tue, 10 Jun 2025 01:30:23 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553676d0207sm1452751e87.4.2025.06.10.01.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 01:30:22 -0700 (PDT)
+Date: Tue, 10 Jun 2025 11:30:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <quic_yongmou@quicinc.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH v2 00/38] drm/msm/dp: Add MST support for MSM chipsets
+Message-ID: <20250610083021.gqj4q75hybtfkszn@umbar.lan>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <chbsxsy3vltr4752uutnu77a6mt5jbsjixfsgb7dqqdcgypkhq@vuldhcnkksy6>
+ <b4d54e57-e365-4ec7-932a-79d35a75c2c1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdad:0:b0:3dd:892d:b26d with SMTP id
- e9e14a558f8ab-3ddce4957bcmr166520625ab.17.1749544141825; Tue, 10 Jun 2025
- 01:29:01 -0700 (PDT)
-Date: Tue, 10 Jun 2025 01:29:01 -0700
-In-Reply-To: <20250610080907.998-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6847eccd.a70a0220.27c366.0060.GAE@google.com>
-Subject: Re: [syzbot] [hams?] possible deadlock in nr_rt_device_down (3)
-From: syzbot <syzbot+ccdfb85a561b973219c7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4d54e57-e365-4ec7-932a-79d35a75c2c1@quicinc.com>
+X-Proofpoint-GUID: 33sbv4vknAQmKuB_WFpy-QIDCxlzzov4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDA2MyBTYWx0ZWRfX8HRnyzMmKrOI
+ 5mG34Aux+xLU8DisYzWkXX64e9ObyRZid78WfR6ySBuCZZwet2wnodLNQBOiDXCOpN0VtSATZnr
+ nZnTWtZ09eN1bjjf/5khMadQzKurvlOO8ggzwbsOhHUPAfBI8LKuqRcG+xG5lTvn+4ibRBYwiv6
+ tr6gJcczBq8nehqBrwx8iJRZLlOvKyTvutERzsegm+UGWm38triUv7fkGJrhfKW0Rh8Idm6oohh
+ hk6gyOOtu2pPFyegRZjWrnMjRYWOgEALtbfsmZf673IulsAsdmjF4z7Dd98q+GElYal1IezVln3
+ hLKURHcMEhpt5+u8in3r7ZudVW0e6FvtOHzMsqj6T1f0+sODq4TKR3vZHdhHSz0L3QkA7pGZ9Ry
+ yLD/HoGFC97JDGjoiDRaZV9OY8qUVIJXXkEfDWuFjhVE3iZLponThBPC4C7HxJGK/VRoRQLN
+X-Authority-Analysis: v=2.4 cv=GYkXnRXL c=1 sm=1 tr=0 ts=6847ed23 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=e5mUnYsNAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=tVI0ZWmoAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8 a=8AiveE1uLiwWvzgexEUA:9
+ a=CjuIK1q_8ugA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=Vxmtnl_E_bksehYqCbjh:22
+ a=-BPWgnxRz2uhmvdm1NTO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 33sbv4vknAQmKuB_WFpy-QIDCxlzzov4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_03,2025-06-09_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506100063
 
-Hello,
+On Tue, Jun 10, 2025 at 12:47:00PM +0800, Yongxing Mou wrote:
+> 
+> 
+> On 2025/6/9 20:36, Dmitry Baryshkov wrote:
+> > On Mon, Jun 09, 2025 at 08:21:19PM +0800, Yongxing Mou wrote:
+> > > Add support for Multi-stream transport for MSM chipsets that allow
+> > > a single instance of DP controller to send multiple streams.
+> > > 
+> > > This series has been validated on sa8775p ride platform using multiple
+> > > MST dongles and also daisy chain method on both DP0 and DP1 upto 1080P.
+> > 
+> > Which means that you didn't validate the MST interaction with the USB-C
+> > stack (there is a significant difference in the way HPD event is handled
+> > in the Linux kernel).
+> > 
+> Yes. this patch series not test with USB-DP. Actually, our initial plan was
+> 2x2 MST on SA8775P and 4 MST on ACS8300. All of them are native DP
+> interface, not USB-DP. So can we only support SA8775P/QCS8300 in this
+> series. We don't plan to support other platform in this patch series.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in nr_rt_ioctl
+I'm sorry, it doesn't work this way. This is not a product kernel,
+limited to a selected set of platforms. So, you have to hook MST support
+in both paths. The series is not going to be merged tomorrow, so you
+have enough time to validate MST on the platforms providing DP over
+USB-C.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in nr_dec_obs net/netrom/nr_route.c:471 [inline]
-BUG: KASAN: slab-use-after-free in nr_rt_ioctl+0x594/0xd50 net/netrom/nr_route.c:694
-Read of size 2 at addr ffff888040d20132 by task syz.2.93/6316
+> > > With 4x4K monitors, due to lack of layer mixers that combination will not
+> > > work but this can be supported as well after some rework on the DPU side.
+> > > 
+> > > In addition, SST was re-validated with all these changes to ensure there
+> > > were no regressions.
+> > > 
+> > > This patch series was made on top of:
+> > > 
+> > > [1] : https://patchwork.freedesktop.org/seriedds/142010/ (v2 to fix up HPD)
+> > 
+> > This series has serious concerns and most likely will not be merged. Not
+> > to mention that the URL is invalid.
+> > 
+> Got it. Sorry for the typo in the URL. So should we drop this patch series
+> or wait the state machine rework from Jessica zhang ?
 
-CPU: 0 UID: 0 PID: 6316 Comm: syz.2.93 Not tainted 6.16.0-rc1-syzkaller-gf09079bd04a9-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xd2/0x2b0 mm/kasan/report.c:521
- kasan_report+0x118/0x150 mm/kasan/report.c:634
- nr_dec_obs net/netrom/nr_route.c:471 [inline]
- nr_rt_ioctl+0x594/0xd50 net/netrom/nr_route.c:694
- sock_do_ioctl+0xd9/0x300 net/socket.c:1190
- sock_ioctl+0x576/0x790 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9434b8e169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f943596d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9434db5fa0 RCX: 00007f9434b8e169
-RDX: 0000000000000000 RSI: 00000000000089e2 RDI: 0000000000000004
-RBP: 00007f9434c10a68 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f9434db5fa0 R15: 00007fff7f6ce348
- </TASK>
+Please work with Jessica. As I wrote, I do not intend to land the
+mentioned series.
 
-Allocated by task 6316:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __kmalloc_cache_noprof+0x230/0x3d0 mm/slub.c:4359
- kmalloc_noprof include/linux/slab.h:905 [inline]
- nr_add_node+0x7f8/0x2570 net/netrom/nr_route.c:146
- nr_rt_ioctl+0xc12/0xd50 net/netrom/nr_route.c:653
- sock_do_ioctl+0xd9/0x300 net/socket.c:1190
- sock_ioctl+0x576/0x790 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6316:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x62/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2381 [inline]
- slab_free mm/slub.c:4643 [inline]
- kfree+0x18e/0x440 mm/slub.c:4842
- nr_dec_obs net/netrom/nr_route.c:469 [inline]
- nr_rt_ioctl+0x2e7/0xd50 net/netrom/nr_route.c:694
- sock_do_ioctl+0xd9/0x300 net/socket.c:1190
- sock_ioctl+0x576/0x790 net/socket.c:1311
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888040d20100
- which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 50 bytes inside of
- freed 64-byte region [ffff888040d20100, ffff888040d20140)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x40d20
-flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000000 ffff88801a4418c0 ffffea00014bc540 dead000000000002
-raw: 0000000000000000 0000000000200020 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 6118, tgid 6118 (dhcpcd-run-hook), ts 179889213292, free_ts 179877692964
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
- alloc_slab_page mm/slub.c:2451 [inline]
- allocate_slab+0x8a/0x3b0 mm/slub.c:2619
- new_slab mm/slub.c:2673 [inline]
- ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
- __slab_alloc mm/slub.c:3949 [inline]
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4340
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- tomoyo_encode2 security/tomoyo/realpath.c:45 [inline]
- tomoyo_encode+0x28b/0x550 security/tomoyo/realpath.c:80
- tomoyo_realpath_from_path+0x58d/0x5d0 security/tomoyo/realpath.c:283
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_check_open_permission+0x1c1/0x3b0 security/tomoyo/file.c:771
- security_file_open+0xb1/0x270 security/security.c:3114
- do_dentry_open+0x35e/0x1970 fs/open.c:941
- vfs_open+0x3b/0x340 fs/open.c:1094
- do_open fs/namei.c:3887 [inline]
- path_openat+0x2ee5/0x3830 fs/namei.c:4046
- do_filp_open+0x1fa/0x410 fs/namei.c:4073
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
-page last free pid 6118 tgid 6118 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1248 [inline]
- __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
- rcu_do_batch kernel/rcu/tree.c:2576 [inline]
- rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-Memory state around the buggy address:
- ffff888040d20000: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff888040d20080: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->ffff888040d20100: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                                     ^
- ffff888040d20180: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff888040d20200: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         f09079bd Merge tag 'powerpc-6.16-2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1746fa0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5080a302f3378422
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccdfb85a561b973219c7
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1102aa82580000
-
+> > > 
+> > > Bindings for the pixel clock for additional stream is available at :
+> > > 
+> > > [2] : https://patchwork.freedesktop.org/series/142016/
+> > 
+> > This series needs another revision.
+> > 
+> Got it.
+> > Not to mention that I plan to land [3] this cycle
+> > 
+> > [3] http://lore.kernel.org/dri-devel/20250518-fd-dp-audio-fixup-v6-0-2f0ec3ec000d@oss.qualcomm.com
+> > 
+> > 
+> Got it. will rebase on this patch series.
+> > > Overall, the patch series has been organized in the following way:
+> > > 
+> > > 1) First set are a couple of fixes made while debugging MST but applicable
+> > > to SST as well so go ahead of everything else
+> > > 2) Prepare the DP driver to get ready to handle multiple streams. This is the bulk
+> > > of the work as current DP driver design had to be adjusted to make this happen.
+> > > 3) Finally, new files to handle MST related operations
+> > > 
+> > > Validation was done on the latest linux-next on top of above changes and
+> > > both FB console and weston compositors were validated with these changes.
+> > 
+> > Validation should be using IGT for testing. Please ensure that there are
+> > no regressions.
+> > 
+> > > 
+> > > To: Rob Clark <robin.clark@oss.qualcomm.com>
+> > > To: Dmitry Baryshkov <lumag@kernel.org>
+> > > To: Abhinav Kumar <abhinav.kumar@linux.dev>
+> > > To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+> > > To: Sean Paul <sean@poorly.run>
+> > > To: Marijn Suijten <marijn.suijten@somainline.org>
+> > > To: David Airlie <airlied@gmail.com>
+> > > To: Simona Vetter <simona@ffwll.ch>
+> > > Cc: linux-arm-msm@vger.kernel.org
+> > > Cc: dri-devel@lists.freedesktop.org
+> > > Cc: freedreno@lists.freedesktop.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > 
+> > > Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+> > > ---
+> > > Changes in v2: Fixed review comments from Dmitry
+> > > - Rebase on top of next-20250606
+> > > - Add all 4 streams pixel clks support and MST2/MST3 Link clk support
+> > > - Address the formatting issues mentioned in the review comments
+> > > - Drop the cache of msm_dp_panel->drm_edid cached
+> > > - Remove the one-line wrapper funtion and redundant conditional check
+> > > - Fixed the commit messgae descriptions of some patches
+> > > - Reordered the patches and renamed some functions and variables
+> > > - Link to v1: https://lore.kernel.org/all/20241205-dp_mst-v1-0-f
+> > > 8618d42a99a@quicinc.com/
+> > > 
+> > > ---
+> > > Abhinav Kumar (35):
+> > >        drm/msm/dp: split msm_dp_panel_read_sink_caps() into two parts and drop panel drm_edid
+> > >        drm/msm/dp: remove dp_display's dp_mode and use dp_panel's instead
+> > >        drm/msm/dp: break up dp_display_enable into two parts
+> > >        drm/msm/dp: re-arrange dp_display_disable() into functional parts
+> > >        drm/msm/dp: allow dp_ctrl stream APIs to use any panel passed to it
+> > >        drm/msm/dp: move the pixel clock control to its own API
+> > >        drm/msm/dp: split dp_ctrl_off() into stream and link parts
+> > >        drm/msm/dp: make bridge helpers use dp_display to allow re-use
+> > >        drm/msm/dp: separate dp_display_prepare() into its own API
+> > >        drm/msm/dp: introduce the max_streams for dp controller
+> > >        drm/msm/dp: introduce stream_id for each DP panel
+> > >        drm/msm/dp: add support for programming p1/p2/p3 register block
+> > >        drm/msm/dp: use stream_id to change offsets in dp_catalog
+> > >        drm/msm/dp: add support to send ACT packets for MST
+> > >        drm/msm/dp: add support to program mst support in mainlink
+> > >        drm/msm/dp: no need to update tu calculation for mst
+> > >        drm/msm/dp: add support for mst channel slot allocation
+> > >        drm/msm/dp: add support to send vcpf packets in dp controller
+> > >        drm/msm/dp: always program MST_FIFO_CONSTANT_FILL for MST
+> > >        drm/msm/dp: abstract out the dp_display stream helpers to accept a panel
+> > >        drm/msm/dp: move link related operations to dp_display_unprepare()
+> > >        drm/msm/dp: replace power_on with active_stream_cnt for dp_display
+> > >        drm/msm/dp: make the SST bridge disconnected when mst is active
+> > >        drm/msm/dp: add an API to initialize MST on sink side
+> > >        drm/msm/dp: skip reading the EDID for MST cases
+> > >        drm/msm/dp: add dp_display_get_panel() to initialize DP panel
+> > >        drm/msm/dp: add dp_mst_drm to manage DP MST bridge operations
+> > >        drm/msm/dp: add connector abstraction for DP MST
+> > >        drm/msm/dp: add HPD callback for dp MST
+> > >        drm/msm: add support for non-blocking commits
+> > >        drm/msm: initialize DRM MST encoders for DP controllers
+> > >        drm/msm/dp: initialize dp_mst module for each DP MST controller
+> > >        drm/msm/dpu: use msm_dp_get_mst_intf_id() to get the intf id
+> > >        drm/msm/dp: mark ST_DISCONNECTED only if all streams are disabled
+> > >        drm/msm/dp: fix the intf_type of MST interfaces
+> > > 
+> > > Yongxing Mou (3):
+> > >        drm/msm/dp: Add catalog support for 3rd/4th stream MST
+> > >        drm/msm/dp: propagate MST state changes to dp mst module
+> > >        drm/msm/dp: Add MST stream support for SA8775P DP controller 0 and 1
+> > > 
+> > >   drivers/gpu/drm/msm/Makefile                       |    3 +-
+> > >   .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    |    8 +-
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |   21 +-
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h        |    2 +
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   72 +-
+> > >   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h            |    2 +-
+> > >   drivers/gpu/drm/msm/dp/dp_audio.c                  |    2 +-
+> > >   drivers/gpu/drm/msm/dp/dp_catalog.c                |  558 ++++++++--
+> > >   drivers/gpu/drm/msm/dp/dp_catalog.h                |   64 +-
+> > >   drivers/gpu/drm/msm/dp/dp_ctrl.c                   |  474 ++++++---
+> > >   drivers/gpu/drm/msm/dp/dp_ctrl.h                   |   22 +-
+> > >   drivers/gpu/drm/msm/dp/dp_display.c                |  510 +++++++---
+> > >   drivers/gpu/drm/msm/dp/dp_display.h                |   33 +-
+> > >   drivers/gpu/drm/msm/dp/dp_drm.c                    |   53 +-
+> > >   drivers/gpu/drm/msm/dp/dp_drm.h                    |   12 -
+> > >   drivers/gpu/drm/msm/dp/dp_mst_drm.c                | 1065 ++++++++++++++++++++
+> > >   drivers/gpu/drm/msm/dp/dp_mst_drm.h                |  106 ++
+> > >   drivers/gpu/drm/msm/dp/dp_panel.c                  |   66 +-
+> > >   drivers/gpu/drm/msm/dp/dp_panel.h                  |   10 +-
+> > >   drivers/gpu/drm/msm/dp/dp_reg.h                    |   46 +-
+> > >   drivers/gpu/drm/msm/msm_atomic.c                   |    3 +
+> > >   drivers/gpu/drm/msm/msm_drv.h                      |   19 +
+> > >   drivers/gpu/drm/msm/msm_kms.c                      |    2 +
+> > >   23 files changed, 2725 insertions(+), 428 deletions(-)
+> > > ---
+> > > base-commit: 475c850a7fdd0915b856173186d5922899d65686
+> > > change-id: 20250609-msm-dp-mst-cddc2f61daee
+> > > prerequisite-message-id: <20250529-hpd_display_off-v1-0-ce33bac2987c@oss.qualcomm.com>
+> > > prerequisite-patch-id: a1f426b99b4a99d63daa9902cde9ee38ae1128d1
+> > > prerequisite-patch-id: ae9e0a0db8edd05da06f9673e9de56761654ed3c
+> > > prerequisite-patch-id: 7cb84491c6c3cf73480343218c543d090f8cb5e2
+> > > prerequisite-patch-id: f32638e79dd498db2075735392e85729b1b691fc
+> > > prerequisite-message-id: <20250530-dp_mst_bindings-v2-0-f925464d32a8@oss.qualcomm.com>
+> > > prerequisite-patch-id: e505c21f653c8e18ce83cad1fc787c13a6c8ed12
+> > > prerequisite-patch-id: cfdd5c37d38b2a4f1386af4021ba3920c6d8dcf8
+> > > prerequisite-patch-id: f4abdddcb90c8203044395f4768d794214fe3225
+> > > prerequisite-patch-id: 45013dfaf34856422b7b6b3d2ee42d81a917177b
+> > > prerequisite-patch-id: 2f35bedb0410bead1b66cbfaf51984fc7016828f
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Yongxing Mou <quic_yongmou@quicinc.com>
+> > > 
+> > 
+> 
 
