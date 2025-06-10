@@ -1,145 +1,155 @@
-Return-Path: <linux-kernel+bounces-679561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8DCAD38AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:17:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16BDAD38B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B961BA2D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680F11E09F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE33291882;
-	Tue, 10 Jun 2025 13:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5681624C2;
+	Tue, 10 Jun 2025 13:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a4yNHKBH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UEMuYlp+"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4A029B8E4
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD54C29A31B;
+	Tue, 10 Jun 2025 13:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560694; cv=none; b=EytTOfMCaQn+KVD4dTJYPdi8k1RLGJcgZjw4VQveuGa6sP2/DHci3JEpdwbsqldjRXrpmsXgIBH2qeP5H3L0I01p2CCwFHQTCAtLSXWX8DogejgN+ITIQPiDpLAsYKvYUv2Nnw0dShb573qM3PDgTANQUoueV9dyuEvkrOuz7AU=
+	t=1749560859; cv=none; b=t4x56pGt5tlt2heGBWy1t0bDCAFoYmmssq//8ic6tfcwuh+puph9u0/DOUULd2iRluKMgiTuCIr3qzcqbbo28fL6BzdTZVf/NlmQjZ+wAMMDVlKhxpNqEp341svPmOR5HHdyd2FC9vm8iFTcKd4yhhzaskgKMfF2LnGEFJc18tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560694; c=relaxed/simple;
-	bh=J/xX/9hVdJNjJCEUQHepQKMX9T3KWTRHW+BYkOZRS+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=okyVI91nhGFi5Df9ZqDYl9x31Nbvni689ekqVhZrv6xOGogwc4wbypPXyzNgamwyKIjXcF24nTmAJDc1rvhNi7dDkpfkgjhuUIBXC2dTm1wreky5OtEtUsrbdFGxagAjmaowZgfVYSO/3u8wVVdx5jvWzDc/q7ixKYpp9QLN0x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a4yNHKBH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749560691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LINTLF05L1koMj92LkoI9kK4P6gmPFmZmyc9vyR2adA=;
-	b=a4yNHKBHQ8liYL9yFRufZa/tt2qN+mOnpOzIpI5fvWadt3j+R8N0JYfXAHUIi/2Cv4TCr6
-	R5ENpbxfP4pm/267GnOCWJQsPm9Zk93gkpY9WXt+1ylJIY4R7G7OttoSEBH1Lz5K0QuKYW
-	NwIrA6xMZiELRbTG30II/dRDDndQxgc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-456-9VhxLoq2OYmwM6ny0Lwxmw-1; Tue,
- 10 Jun 2025 09:04:48 -0400
-X-MC-Unique: 9VhxLoq2OYmwM6ny0Lwxmw-1
-X-Mimecast-MFC-AGG-ID: 9VhxLoq2OYmwM6ny0Lwxmw_1749560687
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 703601828AB9;
-	Tue, 10 Jun 2025 13:04:46 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.58.9])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79AE918002B4;
-	Tue, 10 Jun 2025 13:04:45 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] nfs: new tracepoint in match_stateid operation
-Date: Tue, 10 Jun 2025 09:04:43 -0400
-Message-ID: <9BD9513B-972A-4C83-9100-A11F289191E5@redhat.com>
-In-Reply-To: <20250603-nfs-tracepoints-v1-4-d2615f3bbe6c@kernel.org>
-References: <20250603-nfs-tracepoints-v1-0-d2615f3bbe6c@kernel.org>
- <20250603-nfs-tracepoints-v1-4-d2615f3bbe6c@kernel.org>
+	s=arc-20240116; t=1749560859; c=relaxed/simple;
+	bh=ONQ20WSo2iLU/YthpeVb/ES8q9AMIB38pz3ZihJVZaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MXL0Dp6MbB/TbLMKOhBQt3KloPE9tM9Scn/xbH9IASdnHNnXEiUK3xsCgHJdPi/8aBBrFUEJBVsagDzAivOrJ+Vnk6Cz3wMrmnJPefmW4JUMrd8V/+4RFja8Kk37hibPjZJsKQjRidcu+h6IOod3pQqrjIWexdUWXMcwqv4zFIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UEMuYlp+; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ACLEST010654;
+	Tue, 10 Jun 2025 15:07:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	DtcBme5y82g1iX3JOWuW4cw1f7KDTGODNU0eHjTQyxs=; b=UEMuYlp+93bahNMn
+	MIPEMHsPeA1qE9MAnJVpzOb9L6y1jcKGkJRIzeUhyIcWCXgxVS81Vh5aEQJPXxuH
+	Jj9K5EL4abjAOGE33hiromZtvvEeKVAAGTk/732gEiptuZk+oBcqUs3Ee7M2twcV
+	jHSyl3ounjWxF8mAS5BCbFAzqE91D/cIB6RkW4+NgHjZeCemBnVGJHXs7L4SowGR
+	0wB4sPOsWNkXz1do8iVYMEC+Iz7GBJFlb4NUfPhEpgDxXCWCl9z+1/r0+CO1huAV
+	auZT0R/v1tx8dpTWgWWRH5UNIunT1KXKBrZYJ0CpOlCRQ0qubfP1zULSBqRWsX3L
+	Tkqpcg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474y052mmr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 15:07:18 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F11A140051;
+	Tue, 10 Jun 2025 15:06:13 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A93B4B3141F;
+	Tue, 10 Jun 2025 15:05:18 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 15:05:18 +0200
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 15:05:17 +0200
+Message-ID: <7600b151-0487-4cb9-ab6e-3cc9c6012bdf@foss.st.com>
+Date: Tue, 10 Jun 2025 15:05:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] iio: adc: stm32-dfsdm: Fix build warnings about
+ export.h
+To: Antonio Borneo <antonio.borneo@foss.st.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        "David
+ Lechner" <dlechner@baylibre.com>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Jonathan Cameron <jic23@kernel.org>, "Lee
+ Jones" <lee@kernel.org>,
+        <linux-iio@vger.kernel.org>,
+        =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Olivier Moysan
+	<olivier.moysan@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>
+References: <20250610124855.269158-1-antonio.borneo@foss.st.com>
+ <20250610124855.269158-3-antonio.borneo@foss.st.com>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250610124855.269158-3-antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
 
-On 3 Jun 2025, at 7:42, Jeff Layton wrote:
+On 6/10/25 14:48, Antonio Borneo wrote:
+> After commit a934a57a42f6 ("scripts/misc-check: check missing #include
+> <linux/export.h> when W=1") and commit 7d95680d64ac ("scripts/misc-check:
+> check unnecessary #include <linux/export.h> when W=1") we get the build
+> warnings with W=1:
+> 
+> drivers/iio/adc/stm32-dfsdm-adc.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
+> drivers/iio/adc/stm32-dfsdm-core.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
+> 
+> Fix them.
+> 
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-> Add new tracepoints in the NFSv4 match_stateid minorversion op that sho=
-w
-> the info in both stateids.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Hi Antonio,
+
+You can add my:
+Acked-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+
+Thanks,
+Fabrice
 > ---
->  fs/nfs/nfs4proc.c  |  4 ++++
->  fs/nfs/nfs4trace.h | 56 ++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
->  2 files changed, 60 insertions(+)
->
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 341740fa293d8fb1cfabe0813c7fcadf04df4f62..80126290589aaccd801c896=
-5252523894e37c44a 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -10680,6 +10680,8 @@ nfs41_free_lock_state(struct nfs_server *server=
-, struct nfs4_lock_state *lsp)
->  static bool nfs41_match_stateid(const nfs4_stateid *s1,
->  		const nfs4_stateid *s2)
->  {
-> +	trace_nfs41_match_stateid(s1, s2);
-> +
->  	if (s1->type !=3D s2->type)
->  		return false;
->
-> @@ -10697,6 +10699,8 @@ static bool nfs41_match_stateid(const nfs4_stat=
-eid *s1,
->  static bool nfs4_match_stateid(const nfs4_stateid *s1,
->  		const nfs4_stateid *s2)
->  {
-> +	trace_nfs4_match_stateid(s1, s2);
-> +
->  	return nfs4_stateid_match(s1, s2);
->  }
->
-> diff --git a/fs/nfs/nfs4trace.h b/fs/nfs/nfs4trace.h
-> index 73a6b60a848066546c2ae98b4982b0ab36bb0f73..9b56ce9f2f3dcb31a3e21d5=
-740bcf62aca814214 100644
-> --- a/fs/nfs/nfs4trace.h
-> +++ b/fs/nfs/nfs4trace.h
-> @@ -1497,6 +1497,62 @@ DECLARE_EVENT_CLASS(nfs4_inode_stateid_callback_=
-event,
->  DEFINE_NFS4_INODE_STATEID_CALLBACK_EVENT(nfs4_cb_recall);
->  DEFINE_NFS4_INODE_STATEID_CALLBACK_EVENT(nfs4_cb_layoutrecall_file);
->
-> +#define show_stateid_type(type) \
-> +	__print_symbolic(type, \
-> +		{ NFS4_INVALID_STATEID_TYPE, "INVALID" }, \
-> +		{ NFS4_SPECIAL_STATEID_TYPE, "SPECIAL" }, \
-> +		{ NFS4_OPEN_STATEID_TYPE, "OPEN" }, \
-> +		{ NFS4_LOCK_STATEID_TYPE, "LOCK" }, \
-> +		{ NFS4_DELEGATION_STATEID_TYPE, "DELEGATION" }, \
-> +		{ NFS4_LAYOUT_STATEID_TYPE, "LAYOUT" },	\
-> +		{ NFS4_PNFS_DS_STATEID_TYPE, "PNFS_DS" }, \
-> +		{ NFS4_REVOKED_STATEID_TYPE, "REVOKED" })
-
-Let's add NFS4_FREED_STATEID_TYPE at the end here, for after 77be29b7a3f8=
-9.
-
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
-
-Ben
-
+>  drivers/iio/adc/stm32-dfsdm-adc.c  | 1 +
+>  drivers/iio/adc/stm32-dfsdm-core.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+> index f583924eb16bb..c2d21eecafe79 100644
+> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
+> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/dmaengine.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/export.h>
+>  #include <linux/iio/adc/stm32-dfsdm-adc.h>
+>  #include <linux/iio/backend.h>
+>  #include <linux/iio/buffer.h>
+> diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
+> index 041dc9ebc0482..47e2d1338e9e6 100644
+> --- a/drivers/iio/adc/stm32-dfsdm-core.c
+> +++ b/drivers/iio/adc/stm32-dfsdm-core.c
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/bitfield.h>
+>  #include <linux/clk.h>
+> +#include <linux/export.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+>  #include <linux/interrupt.h>
 
