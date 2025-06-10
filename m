@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-679890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873BCAD3D36
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:32:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A24AAD3D70
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911FD1730C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FB33AD3A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA41224887E;
-	Tue, 10 Jun 2025 15:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28019255F5C;
+	Tue, 10 Jun 2025 15:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="XRjbG5YJ"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TpN4N10T"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493BC24293B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FC4252284;
+	Tue, 10 Jun 2025 15:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569014; cv=none; b=lD5l8TY7X7dlL1HwebqOHuDNBjatDb8wBLAyTlKpYcVHNduqGeG5zA3b4h70sABvUgBg+yntG+OlVRkRHr9+lo5OK34f+ebKQcCg7QVxd37HIlnGZpbrFgI9ZwQX9C7AV3efGQ/JeaNX1bq8S62OA5z2XbNoBvFNkqlV2jtyEtw=
+	t=1749569100; cv=none; b=YmnKTcrpj9DFbmrLJyBA/IdPf4rWz2MdlHbO+O93h3XE+PeqY1EXyYwzf9qkNXxlvXl9wCjA0h8nnXwjSx4d53OHW4LqgOUinLXJFiwBCbRKAROHEqP6lkNQ8WUkSSAOjUX+B8TA/ktxpIjgu/EdG/74VfeVWvXp+Fy6NL8gFAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569014; c=relaxed/simple;
-	bh=SmTNhAOGAIip/lVL+aZeJrx7rLBvuTmZXxhKmCJfKN0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DeGBu/TehD2JpKZvUs79yFgur7mYXs+Y//XhmrbF4I6Z+v/YQQsnrqBm5u/aOAPKAkyOAbbe+tKR86+E4YedQIkjUr3jDAZ7peG3ruS0WSqJ2mrnZHn3s/2DCIaH6TVr7dj5Wb+UQ85+fth0/KgWHx7M8EkzT4/YnmDpz2Yn8B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=XRjbG5YJ; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id AC05D240106
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:23:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net;
-	s=1984.ea087b; t=1749569004;
-	bh=SmTNhAOGAIip/lVL+aZeJrx7rLBvuTmZXxhKmCJfKN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:From;
-	b=XRjbG5YJSFBhe9cN3yB5/CnawZNTtXh/BSkgyk1JJFkPUMmSPey/IArAFYpVepx6a
-	 feohYEhUb5f2QRh0gfx6wPoxODSGKDafGf8JvSo3s52P44hnsUcQFpSWLAI6oJWM/D
-	 2McjbpEYG/5V9tfz5HNo0hOqsuqk3sf7NizwDStDHOqmGvfdestdm7ZQPyudU48j9s
-	 Q+fqpkT9AUIgTCgZYXGLzubZbid6OEZ69fGKRP5+XtxN80j20biP1gwftVOyptS+xg
-	 IsxLkh8PHnnsAYp7+fxMJ1aqGQlxofozO/9WrhHS4nlC3kKXamq4Tyk4PxYU+pVTiq
-	 4J1zMbmDbnFuSQyVodKzyBPBC54nt4lnACdbK1MRiVhkmEGuAyo2dx3iD00hHZ6GcZ
-	 8T68j476UQMTeeFNOAbvrXuHlIhQFaTByqqztdeVilnf/CX409RtmOTOkhnRujg2wD
-	 IKDncBsSgmnacs6ExcHVY1eI0maegdDeuCRTLQcmagsKFEisxw6
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4bGsxh35bsz6v1N;
-	Tue, 10 Jun 2025 17:23:20 +0200 (CEST)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Martin KaFai Lau <martin.lau@linux.dev>,  John
- Fastabend <john.fastabend@gmail.com>,  Alexei Starovoitov
- <ast@kernel.org>,  Andrii Nakryiko <andrii@kernel.org>,  Eduard Zingerman
- <eddyz87@gmail.com>,  Song Liu <song@kernel.org>,  Yonghong Song
- <yonghong.song@linux.dev>,  KP Singh <kpsingh@kernel.org>,  Stanislav
- Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>,  Jiri Olsa
- <jolsa@kernel.org>,  Feng Yang <yangfeng@kylinos.cn>,  Tejun Heo
- <tj@kernel.org>,  Network Development <netdev@vger.kernel.org>,  LKML
- <linux-kernel@vger.kernel.org>,  bpf <bpf@vger.kernel.org>,
-  syzbot+b4169a1cfb945d2ed0ec@syzkaller.appspotmail.com
-Subject: Re: [PATCH bpf-next] bpf: Fix RCU usage in
- bpf_get_cgroup_classid_curr helper
-In-Reply-To: <CAADnVQK_k4ReDwS_urGtJPQ1SXaHdrGWYxJGd-QK=tAn60p4vw@mail.gmail.com>
-References: <20250608-rcu-fix-task_cls_state-v1-1-2a2025b4603b@posteo.net>
-	<CAADnVQLxaxVpCaK90FfePOKMLpH=axaK3gDwVZLp0L1+fNxgtA@mail.gmail.com>
-	<9eae82be-0900-44ea-b105-67fadc7d480d@iogearbox.net>
-	<CAADnVQK_k4ReDwS_urGtJPQ1SXaHdrGWYxJGd-QK=tAn60p4vw@mail.gmail.com>
-Date: Tue, 10 Jun 2025 15:23:00 +0000
-Message-ID: <87wm9jy623.fsf@posteo.net>
+	s=arc-20240116; t=1749569100; c=relaxed/simple;
+	bh=6CTIG54ldEtBHRVvsF1cC3SKsD3cwAiQewve9PGFX/A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fRLXMJyKaY5/sI3cH/2y9hfar1AnmotlImLeE4edrit8ctmfIXEOcbtX3nDjgdrf6+ht/kkgUgSLiltIF4OTOT3Y+SUnqurmatiHCYSRlQgBrGQYSiQ3LhDjK6Uol7l6EOLNcbiYZSqkwGuqOM8hwQ3/t2FEoJIjLFyu9I5MKeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TpN4N10T; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55AEYo1Q005348;
+	Tue, 10 Jun 2025 17:24:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=Mmod6GyCvN+xKlhUHyHmJv
+	0MBU3r0IJh4g+WMqECjq0=; b=TpN4N10TD7/Ta96HeLV3PHeOLQVvVjlxnjEF4Z
+	sUyPyu98fN+cdvqhcpjiUX2r0yiMIrvY08OU6f8qEKcFvWDRWnHzz/c0Z7kCYw7q
+	rxilDs7VK+yG9zU0UVYvKBcqAt+2P6tWbeuR5YyMQPeKIKvNcJfrjn19zmAoAK08
+	O1Jm8q3CgGYZvxwh0FrFIuUyVmtOwTHEmKqrdFMRteYnCd5sE2sZA9b82Luwq/J9
+	js3ZeEjewG43OJ7BQJXYiLPUtFV+6gUSDlgSMm/uw200CTSYqOsayj9CxreZ4p2I
+	eAh4+LZ2fAYt7D7Nuj6WPq96ZvTtWe5A86GWG6FALPnQX5Fg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs2nuej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 17:24:45 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8AA5B4002D;
+	Tue, 10 Jun 2025 17:23:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D0B50B79BB7;
+	Tue, 10 Jun 2025 17:23:12 +0200 (CEST)
+Received: from localhost (10.48.86.132) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 17:23:12 +0200
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antonio Borneo <antonio.borneo@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [RESEND PATCH v2 0/5] STM32 pinctrl: Add mux function RSVD
+Date: Tue, 10 Jun 2025 17:23:04 +0200
+Message-ID: <20250610152309.299438-1-antonio.borneo@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_07,2025-06-10_01,2025-03-28_01
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+This v2 is a subset of the v1, split-out to simplify the review.
 
-> On Tue, Jun 10, 2025 at 5:58=E2=80=AFAM Daniel Borkmann <daniel@iogearbox=
-.net> wrote:
->>
->> On 6/9/25 5:51 PM, Alexei Starovoitov wrote:
->> > On Sun, Jun 8, 2025 at 8:35=E2=80=AFAM Charalampos Mitrodimas
->> > <charmitro@posteo.net> wrote:
->> >>
->> >> The commit ee971630f20f ("bpf: Allow some trace helpers for all prog
->> >> types") made bpf_get_cgroup_classid_curr helper available to all BPF
->> >> program types.  This helper used __task_get_classid() which calls
->> >> task_cls_state() that requires rcu_read_lock_bh_held().
->> >>
->> >> This triggers an RCU warning when called from BPF syscall programs
->> >> which run under rcu_read_lock_trace():
->> >>
->> >>    WARNING: suspicious RCU usage
->> >>    6.15.0-rc4-syzkaller-g079e5c56a5c4 #0 Not tainted
->> >>    -----------------------------
->> >>    net/core/netclassid_cgroup.c:24 suspicious rcu_dereference_check()=
- usage!
->> >>
->> >> Fix this by replacing __task_get_classid() with task_cls_classid()
->> >> which handles RCU locking internally using regular rcu_read_lock() and
->> >> is safe to call from any context.
->> >>
->> >> Reported-by: syzbot+b4169a1cfb945d2ed0ec@syzkaller.appspotmail.com
->> >> Closes: https://syzkaller.appspot.com/bug?extid=3Db4169a1cfb945d2ed0ec
->> >> Fixes: ee971630f20f ("bpf: Allow some trace helpers for all prog type=
-s")
->> >> Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
->> >> ---
->> >>   net/core/filter.c | 2 +-
->> >>   1 file changed, 1 insertion(+), 1 deletion(-)
->> >>
->> >> diff --git a/net/core/filter.c b/net/core/filter.c
->> >> index 30e7d36790883b29174654315738e93237e21dd0..3b3f81cf674dde7d2bd83=
-488450edad4e129bdac 100644
->> >> --- a/net/core/filter.c
->> >> +++ b/net/core/filter.c
->> >> @@ -3083,7 +3083,7 @@ static const struct bpf_func_proto bpf_msg_pop_=
-data_proto =3D {
->> >>   #ifdef CONFIG_CGROUP_NET_CLASSID
->> >>   BPF_CALL_0(bpf_get_cgroup_classid_curr)
->> >>   {
->> >> -       return __task_get_classid(current);
->> >> +       return task_cls_classid(current);
->> >>   }
->> >
->> > Daniel added this helper in
->> > commit 5a52ae4e32a6 ("bpf: Allow to retrieve cgroup v1 classid from v2=
- hooks")
->> > with intention to use it from networking hooks.
->> >
->> > But task_cls_classid() has
->> >          if (in_interrupt())
->> >                  return 0;
->> >
->> > which will trigger in softirq and tc hooks.
->> > So this might break Daniel's use case.
->>
->> Yeap, we cannot break tc(x) BPF programs. It probably makes sense to have
->> a new helper implementation for the more generic, non-networking case wh=
-ich
->> then internally uses task_cls_classid().
->
-> Instead of forking the helper I think we can :
-> rcu_read_lock_bh_held() || rcu_read_lock_held()
-> in task_cls_state().
+This subset:
+- introduces the pinctrl mux function RSVD,
+- adds two use cases requiring RSVD,
+- minor re-format of the dt-bindings.
 
-I tested your suggestion with,
+Changes v1 -> v2 subset:
+- rebased on v6.16-rc1,
+- added use cases of the new mux function RSVD,
+- added Reviewed-by: on 2/5 (former 04/14 in v1),
+- added commit to re-format the dt-bindings,
+- Link to v1: https://lore.kernel.org/lkml/20241022155658.1647350-1-antonio.borneo@foss.st.com/
 
-  rcu_read_lock_bh_held() || rcu_read_lock_held()
 
-but it still triggers the RCU warning because BPF syscall programs use
-rcu_read_lock_trace().
+Antonio Borneo (3):
+  ARM: dts: stm32: Add pinmux for CM4 leds pins
+  ARM: dts: stm32: Add leds for CM4 on stm32mp15xx-ed1 and
+    stm32mp15xx-dkx
+  dt-bindings: pinctrl: stm32: Add missing blank lines
 
-Adding rcu_read_lock_trace_held() fixes it functionally but triggers a
-checkpatch warning:
+Fabien Dessenne (2):
+  pinctrl: stm32: Handle RSVD pin configuration
+  dt-bindings: pinctrl: stm32: Add RSVD mux function
 
-  WARNING: use of RCU tasks trace is incorrect outside BPF or core RCU code
+ .../bindings/pinctrl/st,stm32-pinctrl.yaml    | 25 +++++++++++++++++++
+ arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi   | 14 +++++++++++
+ arch/arm/boot/dts/st/stm32mp157c-ed1.dts      |  2 ++
+ arch/arm/boot/dts/st/stm32mp15xx-dkx.dtsi     |  2 ++
+ drivers/pinctrl/stm32/pinctrl-stm32.c         |  9 +++++++
+ drivers/pinctrl/stm32/pinctrl-stm32.h         |  3 ++-
+ include/dt-bindings/pinctrl/stm32-pinfunc.h   |  1 +
+ 7 files changed, 55 insertions(+), 1 deletion(-)
 
-I think the best solution here would be to add
-local_bh_disable()/enable() protection directly in the BPF helper. This
-keeps the fix localized to where the problem exists, and avoids
-modifying core cgroup RCU.
 
-> And that will do it.
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.34.1
+
 
