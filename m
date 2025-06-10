@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-679482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37261AD36FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BF4AD3704
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BA8177FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:44:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B70179020
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F252BD5A4;
-	Tue, 10 Jun 2025 12:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CE22BE7AA;
+	Tue, 10 Jun 2025 12:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfZ7yYJe"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D76MU4v0"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD2B299923;
-	Tue, 10 Jun 2025 12:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6347A2BDC14
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749559067; cv=none; b=IMkbkoB1uGNm0Q/+AmylUVXQ2SW85H5PhjmhFUzHnmWwZzfdEv/Fq84ZGT5FHK9dmDfVTLizbXBlLBK9ohCfmExHsTVhs2hMIdfcaV5rF6achcWckjN2qXTmKvkmMixkvVvfQDeU7g20tm6PX6BZEPQQJPpHkIXEGXIPYnryP2A=
+	t=1749559078; cv=none; b=qoKlpV1HnYEJ0uwu6PoVugVUlgPp1W4/9yFkdf8L8J421v1A8AaZU2EcsK7txHp89QG/m7y/WKNAjgs5h3zuvIF2GUV7C0Pb39djpL13F7NR24REbJJ8utsQ1+HKHePXzf51aCGkwo+/8cUyxvYKzTXp5qN9AAFJTkP5xOpEIVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749559067; c=relaxed/simple;
-	bh=XmJMk1hfrUZqF1m2NlC+hcdw8EIJOMQVVA2Itp1gGcE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GSYdgGzTodgSkx1mIsy+5ViptO4LzSBOF1MX+6OIzL7E4DfzSqb+ZBcH7s3ylx2l/gDOGeTh6OJ8vvhaUsjaN4kuHWC8Q2MLFG++yxvG86M1K+QaxJTRAnZn/yRFRQpMcJsFsB50vCDIlzV6erOfcJbalWK2QfOd+H2fxdTlIZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfZ7yYJe; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-742c7a52e97so4557788b3a.3;
-        Tue, 10 Jun 2025 05:37:45 -0700 (PDT)
+	s=arc-20240116; t=1749559078; c=relaxed/simple;
+	bh=VOzkxpypoaAOmED5Y3QuE5bGmiiKDU7pwO5eKvb2ZuM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9QT4ZfyplYS5SAj1da02EC2jCNYru/guB+PtUpx6Na9tez8Eqs5KJTElAA2goO+vDamygXVyn3NNwslKkNaeV8SwCi693MRoG2HEQrTwV8W+7RUTUOWEdjK5RRe3PFEsn9QQDkpYsRmg6Y+81FmZfCw1P3tW7WIj/+ZFcwzWE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D76MU4v0; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55365c63fa5so4605093e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:37:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749559065; x=1750163865; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jRQOPbrVNqSVVdbbGZatVj1/1oRXPCI6nL+WDn+7b74=;
-        b=cfZ7yYJeLnNPtIRcJ7h6PhYT5HJtxrOjpUiKsuYbjFThR/2VYz6g5cCKrN7GGjmGDM
-         Ldz3kNlHaj76VBbN62KW2T44v53p39i8i0U3BKGHvrLsybPuTyhWwMiQ3tX+7L0KPagX
-         AzQcYFYJKouBJPLXzZAnd5MdjszULU6d1PLxC7fy0kqCjZzHh0QFxXBlY8jXKObjPw3v
-         hxQiWqWNOjr0XsmuzzRYAuQya830uEAlMyK2fqrEaalFejaWHn1oTRZrUNjnACSWke6v
-         r0ePSyiSZAGhkbv5zf/36SVlPhq8jUlQLbegC/4tEucYhbKhYcGdzgbQGpmAEJRonENj
-         5Wkg==
+        d=chromium.org; s=google; t=1749559071; x=1750163871; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VErfzveBAbUjLmCpN+lf4azG2Ow/Gi7oziw0c95kQ9c=;
+        b=D76MU4v0x7KrvFIpmQoc15Ji/8GcEmESzluWpiVkOyZfK0bh1eds1JcvuhET3mAmHJ
+         Kb5bSVyqCeRQ/FpSzADOk9cpgJO7TTujuZxkVmqgHx3M3pp3HzklhIGEZE22iBWZJHon
+         PeKvTwvND4YJts4kPyMaB1qC678Ap7XN20LeA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749559065; x=1750163865;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jRQOPbrVNqSVVdbbGZatVj1/1oRXPCI6nL+WDn+7b74=;
-        b=bp9gU9z4YeoKa4Kj7VbZe5d2KNkeqvbUK0dO70s0o1pdQms+OsisrrIi+6+gD3n34Y
-         yotN7TFIo7qyD7gcBFUclv6gSd2WlBT7iqqvgy0pX61Bc544ITOraw7p+ZYz6LglVJDc
-         2iuFpGkQEyYODblPXB/mEO7fDPzika0QJ4rF0YywGyjh1JmoX0hFgyUUUVxI3S4H8X9/
-         YNeaTwlqgSIAe1ZcJ7bDwUwQc4zGmEAL8wZdJWHHEEERd6PRqVp1jBBQWuxPYrPv3neZ
-         cVLuV/1qHGygEh62yYs4Z4ltxVfXvWAKNjXq0WCLxlZMi2eFQAgnbhZtOn9KhKXkCu3w
-         cx1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUEMUTJc0Te9O6kjJaycgE7Be89X3ooW/rKcyvnvABNtFniAccnsuncnUmpRnrZdVoCZVTl+mvIvOqyfmk=@vger.kernel.org, AJvYcCXGFjwSS/pRcXvvJqKRPyp0sw92oQVi00pjfRaXTgAg5ffmsFS2zIIzLjbHrNX26yTOdG//EirL7XE=@vger.kernel.org, AJvYcCXZbucCidw4BoBi/3KN5FOIvKDwgW0AGHjRWUH9UqL0E+XCkBZnUdNmYFk+h7qfqErJ5i7Tn/ZnceV3TVhN5lQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyltr8s2WkDKex6Q3FANelAa1PJePO/RrT3RNQFP3/2uexc3I7E
-	g7b6UPZtNhciHK1ZSJqjZmuvQGtRlIJwIoYyZiddVWE5ufJQTlkkG58t
-X-Gm-Gg: ASbGncvYeoMaw0WwZG6wj+5RSB+UMPc33wgcYzNXFzHtniL6fwAtK6mGovkT58IrFIB
-	jrE7dsMxVG9E1gqajg1fSYoG5qF4M6ClKxeLt04SVfaUsC+qPxhxAdE/8jBJ91lbe5qBCEiaHS2
-	slg3JAHCOVKxvu9E1u7sY0D0RmYupkgXVyI5adiR+oQ5mkONnQl+PC5Mr/Iu4tKSW6XNbm/7w/d
-	5qJekyPvP5XyIOJ9ltuua7VW1IwHBbG2pWLKUqrj+9WhTbOzqMvDuw0SCttQ94RoNWlv+BDFydH
-	frZKTi0G7LPionZhJjusMN8KfvwPWh2wEpztR0b6F9KQYC4kocw16hE/ccrMjw==
-X-Google-Smtp-Source: AGHT+IHMtYtVG5PabZhuHRmGJDtif89AiGbDOj70nrBza0cLJnhQteMI3FHrOV9iM3nIwFTlh0+ugw==
-X-Received: by 2002:a05:6a00:13a4:b0:736:5725:59b4 with SMTP id d2e1a72fcca58-74827e51491mr24120722b3a.3.1749559065038;
-        Tue, 10 Jun 2025 05:37:45 -0700 (PDT)
-Received: from pop-os.. ([201.49.69.163])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0e9d36sm7318995b3a.157.2025.06.10.05.37.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 05:37:44 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: miguel.ojeda.sandonis@gmail.com
-Cc: a.hindborg@kernel.org,
-	airlied@gmail.com,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	anisse@astier.eu,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	david.m.ertman@intel.com,
-	dri-devel@lists.freedesktop.org,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	igor.korotin.linux@gmail.com,
-	ira.weiny@intel.com,
-	leitao@debian.org,
-	leon@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	lossin@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mcgrof@kernel.org,
-	mripard@kernel.org,
-	nouveau@lists.freedesktop.org,
-	ojeda@kernel.org,
-	rafael@kernel.org,
-	russ.weight@linux.dev,
-	rust-for-linux@vger.kernel.org,
-	simona@ffwll.ch,
-	tamird@gmail.com,
-	tmgross@umich.edu,
-	trintaeoitogc@gmail.com,
-	tzimmermann@suse.de,
-	viresh.kumar@linaro.org,
-	walmeida@microsoft.com
-Subject: Re: [PATCH] rust: module: remove deprecated author key
-Date: Tue, 10 Jun 2025 09:37:31 -0300
-Message-Id: <20250610123731.194853-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CANiq72kORZjTe3tPEBueDi57TGF7KfxgTSw4Tn0DQeK_X5hi5A@mail.gmail.com>
-References: <CANiq72kORZjTe3tPEBueDi57TGF7KfxgTSw4Tn0DQeK_X5hi5A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1749559071; x=1750163871;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VErfzveBAbUjLmCpN+lf4azG2Ow/Gi7oziw0c95kQ9c=;
+        b=Pg1VtQ8Pg0EZkBDsqAjkR80wKYaLG+Y8G+TrXnSu0OWk0qVQWactiTBJqd/Rjz4fGg
+         xlgc1DJkkYUkJoCOqra3LgscH/gwyDjEeOQ3hh2M83cEqm1y71DbCcX/u5tNgQN1hcMA
+         iKRqFZg4ie3TtzuOmqm7ktlldoJ+4rUAbQnM4HSX/sXxIqkpat6a8ISxhs+6nXeKpXty
+         oakK6gggegCwOMEIHoKIZqYZTP1hizKxcx2C5cMI0xc+w2osYcVD64su4tNBCj3XrJvX
+         OgSRBMtvnTH+uln2aAkB98/YfFzvZWzyhqCFzdO7mmNdNb6zwYmOrS+6R08OvEeuaw3Z
+         Mmyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWgnLntX8UWWS123Nn2w8GmtEm90yWeu3/R0CvH8/UNToRPIAAin/uYvrMTpvGzgYo8CwjT7U33B8DnVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk/e+yAfHjkVCLLOaJpMIkgcXWSkFFQtfWLmo9DjpXrYNpKVNX
+	qThREVyzHeD4S5AGpq2M+5ztMbvuOqOTgE2p/z9QJCDPOD1EdMTtfP0AxkqNUVUfYQpHG7ITjKn
+	M75Y=
+X-Gm-Gg: ASbGncs9tV/Jxk9B6ORHiVVO544PmlI5dWk/CW6KQTgVb0L6+606QESOQEX0dTuKRdF
+	rTx8eXISjfD3bSQKB1OkxeOtsz7HBS4dsX8tdxs8q/tYjtjV5Gje8HCTbaUYtg+Zw//+1J5S77R
+	LVOc1Q/3VtvDmPEG1KTh67PSQA+BVkqZbvtuC6I7TkrLvrP8J2eOoNx7CRIp1MaUv1FfSUP2Xf1
+	1biNqAz6gc1ea5RILW07nIpo/NWZWvYWiB+BnQ4ZOMmojQLTiMy6yCfRWE/H01PDUki7XuuJzAT
+	meDqBEN1BV7grmgOcaW4dj3eu7pbEzLlSfcizS/b8nLV6wREJiuv6xFxPxi+FazOI+0QsdpJgMm
+	PTyTnVAdwH+9dPUEFqFoLhUUn
+X-Google-Smtp-Source: AGHT+IEdyz5baFF+tP7pwz1yZVjq2mVr3rMKWewc9niTOjr/vOOgB0vp/bFU+nij/ve0/kcQpv4ksg==
+X-Received: by 2002:a05:6512:2242:b0:553:3892:5ec3 with SMTP id 2adb3069b0e04-55366c354f4mr4291820e87.46.1749559071016;
+        Tue, 10 Jun 2025 05:37:51 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55367731785sm1534773e87.216.2025.06.10.05.37.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 05:37:50 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-551fc6d4a76so5787411e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:37:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXK3Vsh7dQtPYDV8cGr0fMSBuOU4c0hNBG97Wr3GClShJ+CE1pghs8i+K9M224GKG0c6+FT2K5b3ELvHCU=@vger.kernel.org
+X-Received: by 2002:a05:6512:3c8b:b0:553:279b:c55d with SMTP id
+ 2adb3069b0e04-55366c2ff61mr4456065e87.45.1749559069957; Tue, 10 Jun 2025
+ 05:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20250610123532epcas1p24565e694897b17a36ad04752b7dd8678@epcas1p2.samsung.com>
+ <20250610123526.37316-1-yjjuny.lee@samsung.com>
+In-Reply-To: <20250610123526.37316-1-yjjuny.lee@samsung.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 10 Jun 2025 14:37:37 +0200
+X-Gmail-Original-Message-ID: <CANiDSCsTm7-kxS0C6H_JY7NnC3z73Qg9L7d6M37p4Zao1+96EA@mail.gmail.com>
+X-Gm-Features: AX0GCFt5eSrh6Ot3mJNfS0FZ18dU3T5t8BB_D6IPh7jhlV2rISHnMB5fsHFWlWU
+Message-ID: <CANiDSCsTm7-kxS0C6H_JY7NnC3z73Qg9L7d6M37p4Zao1+96EA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] usb: uvc: Fix 1-byte out-of-bounds read in uvc_parse_format()
+To: Youngjun Lee <yjjuny.lee@samsung.com>
+Cc: laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, mchehab@kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrotes:
-> On Tue, Jun 10, 2025 at 12:12 PM Benno Lossin <lossin@kernel.org> wrote:
-> >
-> > Hmm, I guess a checkpatch lint fits better then?
-> 
-> Yeah, that would work.
-> 
-> Probably for the C side too -- from a quick grep I don't see it.
-Maybe, after this patch we can make a checkpatch change for check the `authors`
-key (and MODULE_AUTHOR for C side), and throw a WARN if the author is a name
-(not a url, or "rust for linux") and don't have a email address. 
+I think you mean v2 not 2/2
 
-Unless you guys tell me otherwise, I guess this is not so priority.
+On Tue, 10 Jun 2025 at 14:35, Youngjun Lee <yjjuny.lee@samsung.com> wrote:
+>
+> The buffer length check before calling uvc_parse_format() only ensured
+> that the buffer has at least 3 bytes (buflen > 2), buf the function
+> accesses buffer[3], requiring at least 4 bytes.
+>
+> This can lead to an out-of-bounds read if the buffer has exactly 3 bytes.
+>
+> Fix it by checking that the buffer has at least 4 bytes in
+> uvc_parse_format().
+>
+Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
+Cc: stable@vger.kernel.org
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Youngjun Lee <yjjuny.lee@samsung.com>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index da24a655ab68..1100469a83a2 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -344,6 +344,9 @@ static int uvc_parse_format(struct uvc_device *dev,
+>         u8 ftype;
+>         int ret;
+>
+> +       if (buflen < 4)
+> +               return -EINVAL;
+> +
+>         format->type = buffer[2];
+>         format->index = buffer[3];
+>         format->frames = frames;
+> --
+> 2.43.0
+>
 
-Thanks,
-Guilherme
 
+-- 
+Ricardo Ribalda
 
