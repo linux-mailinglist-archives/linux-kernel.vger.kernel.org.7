@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-680366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05476AD445A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FBFAD4465
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7388F3A5E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:02:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA7C3A5DD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB7A267720;
-	Tue, 10 Jun 2025 21:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F32C2676C2;
+	Tue, 10 Jun 2025 21:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nfzyURAa"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="jiixBKlK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8307A267AED
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 21:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749589368; cv=none; b=HnFL9MAMShSsADARcXrFdsTGmOLESfHbR6IA7qsI66D0fOfS+Rwe6BjqVD9fhHbZ5YlBrEregRI5FCMdbiaCF6dMw/ykd3C41XBi8+2hkRClJCvCXs7YEKbKfjJvNMgKY6kbhOcJUN+LVomNhgvgMkoK3FDf40BjSpTrpJDF0QM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749589368; c=relaxed/simple;
-	bh=qfhSjwvyRn6KR8oOKBXXu50Bff40BG2bB9yxr/8s93M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUt1jAYsTgaK0H7Jp/YY2K3w1qPYfMy0AME1+vTEsAwZUrstJyKHiwPqvbWvJ8buJIaJx8Ja6ya4Z3/sQtM9UQSyInJMCmESNTakRnKNaHrJzwHUcarquXzSnVb4zk0NQUuX3nOljXISkWPOxt2ChKHM5T2axTZpq9hWBdccr9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nfzyURAa; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55329e42551so726381e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749589364; x=1750194164; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vEX5+m0SmtzPkAXHZnRUD0tql0bHqOfER1OA5um3tgo=;
-        b=nfzyURAa3ozGMebl/W0JwT6lMFFWqD5gF6E5cooeyI2qhKTh2MBmE8fR/HHIDB5eKZ
-         ZK17ByhiKIajULlZTtMXzkZJ9MgHRhcPvemmkvkdw5MQRdepNU2GdfWfk/jV3vzEofrJ
-         UXEOdczJsBTn1Xtd2KuXoPcuhxMXykORPcMDRLwTaaeMr9r89GyeespKWKjZR4wAetYs
-         vHd1AVb8uF+cql5Q5lLLCpuzrk1RsJuRr+nqUAUXk1l821OHC76r1e8Cozf+Of5kedeP
-         2KLIKuq8EytLmLvaJxnsGehEl2EQq/uzqX7PDokMQoh3vL0vHkvv3eMTOzXO+Dwh1OO0
-         irMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749589364; x=1750194164;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vEX5+m0SmtzPkAXHZnRUD0tql0bHqOfER1OA5um3tgo=;
-        b=YmRFNBdP+dXVdpuOofwPd4jEDygTaH//HcU+Zpuq9mUvc0+yjzE31KVDYLY/A0JPLA
-         wkG96tb8BET5BxVMLyNCt34Aia2MKr+WIQ/Gks6qciUmxjniFjYPxROGe7xaRXHGZuCt
-         IUS6Ehldw+f7TxNcHzUgIjbOwcXG1ZH+AU1KdtCJNt4QC81mnOQoQcUtN0I/jUWO5we3
-         HyriY+YecNXmYSVbo1cht1nlkkvIpeNz7T5gnCm0SSpaY9/8y3HWG+U0BESgQfGCvbLe
-         /EjCaQLvyN6rNhPaiGaCHLPdH0/qQtilVBu1QE/qhWGxgZpUv8h0e7WbUoNC47uBQyKS
-         kZNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtTcnbb+GuPpmgEPgApAJxpLp26T349xGvGv5fcCV17KZzXjLqTAfQxPMf8otPiLFw+Ut3MxhhIvBlEUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD1PZSpwK56tHX7IJQ64WnBbwxQhmuYWuY0NaeFSaj42AOveth
-	aLWPoGF7oWCm3ayDqrW3UtgwuALhAPlhZdxWYzlEZ/Vl9O68ag1TnjN+ZvU4xQlTsNI=
-X-Gm-Gg: ASbGnctgI9jEdb1dS6v6qNZlRaLWD/IW78L3fd5utHleeqvauwBT8KCG7y6bKnICi2I
-	T1QfB+2xRimkdAFZc/SfuC586rLm7ThpQOATgYBsB9uz2ovBIF3lr3RkHvjFX4F8oxq/Ifu78NZ
-	f8nsGWaYSKpPO5mV0mf7p/BQTQZuuPKbQbNASCjQnkYBBgRi31we+Wx/Dk/O2dpJuRHc21fHzAT
-	E0VZ86bX3LnHcYBA6ZL2aJh/xt8SKUugPFL9hRy83+GXHmcj95HkWqUd4F9WSivOSAyo3VdRTk8
-	FcD+hmGZjGp8hT0EKy9lcKLn5BOqCGbhsRB73OuNCtQbp9xr6TQ9BbJNWrJeJmLy1GdWXlX2ZVE
-	1zY54MTojV7Q7AtEB/FuteaQW4p3eriM7SUPCNyZd
-X-Google-Smtp-Source: AGHT+IFEFIJWrRfj6+Pu7NhQKIOTBe12JY90TCUN9nzhGZ8nBRQCkhDsR7KECb1Mi5qTpg+TryH5fQ==
-X-Received: by 2002:a05:6512:1509:10b0:553:3a0a:188d with SMTP id 2adb3069b0e04-5539c106d7bmr77460e87.1.1749589364478;
-        Tue, 10 Jun 2025 14:02:44 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553676d7b37sm1686862e87.67.2025.06.10.14.02.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 14:02:44 -0700 (PDT)
-Message-ID: <1883d9d7-26d4-40b1-9848-ae0477cf95c7@linaro.org>
-Date: Wed, 11 Jun 2025 00:02:43 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF3F12D758;
+	Tue, 10 Jun 2025 21:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749589559; cv=pass; b=JaLVBk9Ln/BvzBurRR6hboKWMw4mifrqT6XXoSa4Oqt+22aDgOBd+WwKRalNLVvzdlHfoR4nwfHUJFQkq85Ubh1pjT9qO3mNA9+V0SkI3UPtjqM5KXHiYmIa/0O6mg3EfEY3pEi+AgIW8edukOnPu4Q5cdFAMAlGyZYyFWORE4Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749589559; c=relaxed/simple;
+	bh=C60YJLduDuc01tBceJmWT3yEUtG8WGPsNw6ujSLEUCY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CDBqndi/onh31AGaY8JguT4pCoktPAc6R96eDHBY+wobOZ1IlL+vlBYKneE/WOYVo1+nBVq9B4YFuNEM45KyRyXSCouqPPZp1pPgQQxvX3UqGbTXNeHCL4GI3ypoYshm3zhh2Dt9xhBMztGGMl5pInJQeJTj+ESpiFmvcsRVnUs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=jiixBKlK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1749589487; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C9EUicvI7hg3PnYyeqe81d1BAthSGjVJF9hYZaZ1C4voWLpsGrX+2SpLmnAE46kvBOBC6f8LSJ1oMohTvhfwyMNN1BKUT3WVMZ3nicq1OtrHEG6UrbOmoDhJfTT3R9fg9xCJnfR1yYOJX5RS8yo3LgExmdUUuHihHe1EoNHoEwI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1749589487; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=C60YJLduDuc01tBceJmWT3yEUtG8WGPsNw6ujSLEUCY=; 
+	b=N1L+sFiSHN6NSLlM4Zy8nO7qV+KICpm3Ko0zuCW4v5bi7Fc9coFrTsYQQqt8p9lrlhBUmAgMpZaVkd0A0PKRV2cXltbKZFHxzV7o18uQzoO/5bYjnsTsE/VZXwb8ZU6L1sqdw6VPvHsVEetNYugGUpOSDVATbZB+Q4JPv6RdHz4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749589487;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=C60YJLduDuc01tBceJmWT3yEUtG8WGPsNw6ujSLEUCY=;
+	b=jiixBKlKyR5C9o8SSpwuoWU40JTQoxDG1mlDTxvBUL/g/+on87nvqkZoe0GrUw3y
+	PkSYGrnYuCQJfpsbj2Bfgz92ifS7e/Tku3Ds8kxfKeBPuQIYU8ROXbTeVdHLMRw2m4m
+	flnwBJh6Ua4H8SAk4yaTXkTGi6He4bME40AXHYdE=
+Received: by mx.zohomail.com with SMTPS id 1749589485855606.0438954014338;
+	Tue, 10 Jun 2025 14:04:45 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] arm64: dts: qcom: sm8550: Add support for camss
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Wenmeng Liu <quic_wenmliu@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, andersson@kernel.org, konradybcio@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- quic_depengs@quicinc.com
-References: <20250516072707.388332-1-quic_wenmliu@quicinc.com>
- <0367d5bd-a42e-4b6c-b841-ba20190b3127@linaro.org>
- <dc4720a8-2f15-44aa-9a52-8440c7518328@linaro.org>
- <739bad1b-f26d-44a6-9cc1-eee28023474f@linaro.org>
- <dc82457e-de2b-43ec-a50c-08f7d8bdeff1@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <dc82457e-de2b-43ec-a50c-08f7d8bdeff1@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 2/2] rust: drm: Add GPUVM abstraction
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aAj7gAzFVRX3dN7L@pollux>
+Date: Tue, 10 Jun 2025 18:04:29 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Lyude Paul <lyude@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ Asahi Lina <lina@asahilina.net>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5DADCFE7-B292-4387-A91D-B9CFD062942A@collabora.com>
+References: <20250422-gpuvm-v2-0-44d4fc25e411@collabora.com>
+ <20250422-gpuvm-v2-2-44d4fc25e411@collabora.com>
+ <aAgHGuzCZzh7YPz2@cassiopeiae>
+ <DBB3E8CE-19AA-437D-AF54-BF23763B254F@collabora.com>
+ <aAj7gAzFVRX3dN7L@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On 6/10/25 22:02, Bryan O'Donoghue wrote:
-> On 10/06/2025 13:49, Vladimir Zapolskiy wrote:
->>>
->>> List feedback from DT people is isp@ is the correct prefix.
->>>
->>
->> My bad, but I don't understand this comment, it seems irrelevant...
->>
->> The expressed concern is about the novel label name.
-> 
-> I mean to say the feedback from Krzysztof was that we should use isp@
-> not camss@ and I agree.
-> 
+Hi Danilo,
 
-Let me repeat it thrice, it's okay...
+> The lock might be held already by the driver or by TTM when things are =
+called
+> from TTM callbacks.
+>=20
+> This is why GPUVM never takes locks by itself, but asserts that the =
+correct lock
+> is held.
+>=20
+> I think we really want to get proof by the driver by providing lock =
+guard
+> references.
 
-I don't object against the properly selected device tree node name "isp",
-here I object against a never used and very questionable label name "isp".
+Can=E2=80=99t we add a lock to our Rust GpuVmBo type?
 
-Please feel free to ask more questions, if you still find it confusing.
+This is already supported by the C code, since it asks driver to either =
+provide
+a custom lock _or_ use the bo's resv. So what I am suggesting here is =
+the
+former, except that said lock would be transparently managed by our Rust =
+GPUVM
+abstraction.
 
-Again, I may missed a discussion about the need to get and use a novel
-label name, then please share a link to it, it'll be very much appreciated.
+By using our own lock, we forbid drivers from introducing races.
 
---
-Best wishes,
-Vladimir
+Another option is to also require a(nother) Guard when mutating the BO's =
+VA
+list, but I find this a bit cumbersome for a couple of reasons:
+
+a) It's proving a bit difficult to provide said Guard for the interval =
+tree
+itself,
+
+b) This will appear in all functions where the lock should be taken, =
+which
+pollutes the API quite a bit.
+
+c) Having "either a custom lock or the resv lock" sounds a bit =
+confusing.
+Handling this transparently in Rust makes the API easier to use (and =
+harder to
+misuse)
+
+=E2=80=94 Daniel
+
+
+
 
