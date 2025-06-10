@@ -1,117 +1,140 @@
-Return-Path: <linux-kernel+bounces-679552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7E6AD385B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:11:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923F4AD3858
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E55516AB5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5488B3B8DD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D976C2D1914;
-	Tue, 10 Jun 2025 12:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068752BD00B;
+	Tue, 10 Jun 2025 12:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ujDB7z68"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UNPnTrAN"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9382C17B0;
-	Tue, 10 Jun 2025 12:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17872BCF6A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560350; cv=none; b=Y39wb7toxWXHPuyfdmb1sSxMRdHRMIwWgA5zCiFTdXO+XI9sCmBFnz5oKtT1sBDpwkjPitE1RBgXwuxahHIpgWWEsBbO1e0WesGGweVPGi+70CpTOzGw9kfJmwoi8OrNjKGmN2B6EwzBboQmMU8uhZvq7v7I2klBtG3bKhvP3ek=
+	t=1749560336; cv=none; b=jn3qbYLekG8p7joZxTFiOIcMcjhaQFKRk9Vl6Ohf+BnAHazwONeFTeCyMiovPpTsQ0s4R6j80Ged3HikOppUM2KNDzhmsMW68i62sPv/W0ZxuK8Y33/kfDg0g3CFFlQxt8i2CkUBhEyArNts+nD0gpJpxFHD4T6Tai6NRwWwtAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560350; c=relaxed/simple;
-	bh=oFMazrCuecngzoa++NkSmIOCoYRid8dS5A/ERnGJBpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWOOKWvX3q1WpRLyacAq9irJmo78J0Eo965EWeL24SXMzVx6EIlfIitRTjU0P5Qk6AzqK7iSdyhQWU5RV760ZEePfFOxfz5QuDSSQxMZZNVHunnjp20deeEEyFN9lKdM+JuQZ4eeyyZ6VUzrSbKJQ+aBd5/yS9EM9PUDqFqYh4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ujDB7z68; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0mN0Y6VG8wJwIHBPmUq5Ichmc5b23YwTM3GHpfC0Ov0=; b=ujDB7z68qrrQWLKAjGzbmCQGy3
-	LdOtDJSTUvPJoAR+dlK+SCrvQO4qgGvAcvh2Obe7Xf1qUhfc6kUAHntYjvGObWD50/ANPKe97yd3y
-	StFdUf5u32nQt5lMjBOlGoqnG9dJYy8rhkzxAKLYPIrFSRwObLsOO0zSTHB4qQv0slmA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uOyYu-00FGk5-Tp; Tue, 10 Jun 2025 14:58:44 +0200
-Date: Tue, 10 Jun 2025 14:58:44 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Wunderlich <frank-w@public-files.de>
-Cc: linux@fw-web.de, myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-	cw00.choi@samsung.com, djakov@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, olteanv@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, jia-wei.chang@mediatek.com,
-	johnson.wang@mediatek.com, arinc.unal@arinc9.com,
-	Landen.Chao@mediatek.com, dqfext@gmail.com, sean.wang@mediatek.com,
-	daniel@makrotopia.org, lorenzo@kernel.org, nbd@nbd.name,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: Re: [PATCH v3 12/13] arm64: dts: mediatek: mt7988a-bpi-r4: add
- sfp cages and link to gmac
-Message-ID: <e1a49ca7-f082-4983-89fe-1a8f8c8a3de1@lunn.ch>
-References: <20250608211452.72920-1-linux@fw-web.de>
- <20250608211452.72920-13-linux@fw-web.de>
- <934b1515-2da1-4479-848e-cd2475ebe98d@lunn.ch>
- <trinity-b9ab960d-38f8-4524-b645-fc0832ce72ec-1749546239525@trinity-msg-rest-gmx-gmx-live-5d9b465786-6phds>
+	s=arc-20240116; t=1749560336; c=relaxed/simple;
+	bh=05OIsI59Mrk5Bva8tD3Tj97OCifK3I9bavdc5XUI98c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MOmf3RYRiilbPcuF4Kv0PzyHjUhYky+rRJpvgBPk8+vAmMq2B85KJDc6qBiETNyh3wA3DlXXQJHbgogcAP8j+t8888XCP5mwCjz/gUwKLZC0ms8bQM8HIxAUdx7IiA85g3nd3QHLemqAoh4nCn7lccZfSpN2Pe3UTt7RRn8WrjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UNPnTrAN; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-451e2f0d9c2so42252535e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749560333; x=1750165133; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5x+mnEUir4fkDc+MLWw6JgW3TRK970S3tDGL3/yrdqE=;
+        b=UNPnTrANHP+tbU4brgORZEYbqIkIZFC/oOQYz/qxyRmvB+DuTPgiyc2MEmeigRirok
+         DF7V47AxfOH6pvGhwX0CaXwXDdzR+n4VOG+wRqgozGLWWMsx0RSh1n/GZIfjFry8/xYV
+         /74v6k54Yi0Pj24XTZmk1svoxbvdCJA9TqCawoCdqpLgVHWKVIbmYefV+QzjlAVnzUHu
+         2OoLXLrCScMCXUvFkwDeJuh0Pm+Al1JfTahbZSPCWtRtE9L1QC/UjQWYkXTlq4hgRP/t
+         VhRyvG5IMSz08FTnhJvi4vHQMKqSt/G/u7Hv3ZEkeDze/JOwR/0enZTeHjRZghTfpyr5
+         Dw9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749560333; x=1750165133;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5x+mnEUir4fkDc+MLWw6JgW3TRK970S3tDGL3/yrdqE=;
+        b=hB50R1zpkUSNWKhf7zfeq6Xa2LS/Ie5V51/x1kACIndElP8D2SnURjMAGCMH1gvdiw
+         HV1NiLYYz6YZ2OnjPP5JuAehTbB7m5cJUqbG2jwtJcQepQkoxSNgwr4AbFDzcWeStXGr
+         D2i1tn1MJ47qLlAlQsniS6AMOPgnvhREBiIT07NolxL+efVgRSGJab7Djo5xR7DvcTlt
+         9c/oV+D2nyNUungXihYH9YlUJyZrb/GI4pgA9JSF6ZmsdiAUtTWYIrDnspuWcBBq36fH
+         Rdu7lck/pM7noxKOasOdvFmI2qWrYGR53IYfIxHabDIjK1+PO5b98KHz3i3MIoJxKKWY
+         VRoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAi9RdVz/z/XDDxsAUBCi3rX/KIGITF1QvCAAaP6Cf08ROkGLyy9cXCjAEkQgQnt+TUQtSTMDeOPxubIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnlmwTVUWWUyrGAueBVQjir8R+ZBB0MmWh9QI0qWjBW+sZbD+e
+	8o64o2djNAdwO9fjzp3ZjNl87N3RGIxvFdeXOA2XA4DxA1anwlKjQayg73T6LWIxJZ8=
+X-Gm-Gg: ASbGncs/ZWj5eE4OJf94JmyWOQbWDqWNFvjyzTaWwwz0u/nL+YIlB3tK5BWlF5d8Lmg
+	LPaqTo23qtTTX9YDaQw9+r0lEVc0MpYV4DA71uPK2KHJiecor+wHxzxmTmBmyONgs4sNF1rjkNz
+	1YVq8VWdkJrpl3Cltdxk3nJz5AiwlLUZzQscFGXaPOW/8XUMGgZYeaioqboNY0TBJZEP56D6vZ/
+	sFp2OEg6dDSNkOaI08cjbB5z6H7rbRnpMSPl1dZNtNsibbWeb3+LXK8EJ52m33ZRpv3q/0xrveV
+	9K/uruMke+4+KklpWA+0ZIcSq1epCTMXgOhAFjNpBKGEWyX5Zq1srg==
+X-Google-Smtp-Source: AGHT+IEDGhvv2nDonOgnsKogzyq+swTtYxyvrREWxOsZO7ZfnDXOt861Hu1/sqcb1L9f+E/RkUy0oA==
+X-Received: by 2002:a05:600c:6388:b0:43b:c857:e9d7 with SMTP id 5b1f17b1804b1-4531d6fdab8mr27771825e9.5.1749560333059;
+        Tue, 10 Jun 2025 05:58:53 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:4d:e52b:812d:eb7c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209ce17f9sm143671135e9.11.2025.06.10.05.58.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 05:58:52 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/4] pinctrl: intel: use new GPIO line value setter
+ callbacks
+Date: Tue, 10 Jun 2025 14:58:46 +0200
+Message-Id: <20250610-gpiochip-set-rv-pinctrl-intel-v1-0-d7a773ff864e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <trinity-b9ab960d-38f8-4524-b645-fc0832ce72ec-1749546239525@trinity-msg-rest-gmx-gmx-live-5d9b465786-6phds>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAYsSGgC/x3MQQqDMBAF0KvIrDuQBG3Vq5QuJE7iB4lhEqQg3
+ r2hy7d5FxVRSKG5u0jlRMGRGuyjI78tKQpjbSZn3GCe1nDMOPyGzEUq68kZyVfdGanKztL712S
+ Dm5axp3ZklYDv/39/7vsH9i9Hjm8AAAA=
+X-Change-ID: 20250610-gpiochip-set-rv-pinctrl-intel-e4c791f29a84
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Andy Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1217;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=05OIsI59Mrk5Bva8tD3Tj97OCifK3I9bavdc5XUI98c=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoSCwIneW7R5vtD6ViY12SUc5xejQd1zdzdl6kq
+ JkcgsdGZ8aJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaEgsCAAKCRARpy6gFHHX
+ cp6qD/9MjPEZOmQOG41wPugteoUMZCe9ji/YPVIB6hjg7fEVeqvtgIHdllHZ8TCpTjzpR3t0pFk
+ JzCJnYI5d9xlRpRT+mvtcL5NDADpPBF9AARaWSNhhSC31Oh+4y+I/4buapM/IA+eWxgKT2jW9Dk
+ RNO1JNnmDWkShDyf0H0NetzDjQbKZ7GtFGORGjpmyXmHwX8L4PHFG7h7uFx4dp0at2iFNRTfFhM
+ FZGvuNpR/rcf5wm+ScScdRqDbmK/+lGhp5f9VIQH1jvgPcks897XRiQpFdBpYHWs3jQrizqt9R5
+ q2ZWeafbI3un1twJ3DxP0Ui7W9iCE/nHtRFpYY8mPxcHDl82Hjg+tMCE/ZgfSQ6YsEFe29Sgjij
+ Y90NMpeZ0shXHExstEBdEQi7Fe39TBRLT1em0Z25LwaP2kQnYR/+GaGd4BBc/ZOWdCEjk7UfFJM
+ thEGGx15Gmm23lsHSXM4rjE2DSiKHISzqUeBmZYTFlOEPnCqyh+rNFkbCPM68TGvVmPejB1iOAp
+ NmF494nukwcKtVrh/JG5+lMOHVr8+ITVMrvFth9fvtZNfuJIW3Pdjpw/USJ9iT/vnEuyaetJat2
+ bC9GEo8OVogqBJHcpS8kNV8LcIeSXFJzmvKYRDKHeYw0m7U6/6PhkLP+BD4+MXjTDBvEUoVYof1
+ VT10eaWljz+Sfig==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-> > sff,sfp.yaml says:
-> > 
-> >   maximum-power-milliwatt:
-> >     minimum: 1000
-> >     default: 1000
-> >     description:
-> >       Maximum module power consumption Specifies the maximum power consumption
-> >       allowable by a module in the slot, in milli-Watts. Presently, modules can
-> >       be up to 1W, 1.5W or 2W.
-> > 
-> > I've no idea what will happen when the SFP core sees 3000. Is the
-> > comment out of date?
-> 
-> at least sfp-core has no issue with the setting
-> 
-> root@bpi-r4-phy-8G:~# dmesg | grep sfp
-> [    1.269437] sfp sfp1: Host maximum power 3.0W
-> [    1.613749] sfp sfp1: module CISCO-FINISAR    FTLX8571D3BCL-C2 rev A    sn S2209167650      dc 220916  
-> 
-> imho some modules require more than 2W (some gpon/xpon and 10G copper ethernet).
+Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+values") added new line setter callbacks to struct gpio_chip. They allow
+to indicate failures to callers. We're in the process of converting all
+GPIO controllers to using them before removing the old ones. This series
+converts all GPIO chips in intel pin control drivers.
 
-Looking at the code:
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (4):
+      pinctrl: baytrail: use new GPIO line value setter callbacks
+      pinctrl: cherryview: use new GPIO line value setter callbacks
+      pinctrl: intel: use new GPIO line value setter callbacks
+      pinctrl: lynxpoint: use new GPIO line value setter callbacks
 
-static int sfp_module_parse_power(struct sfp *sfp)
-{
-        u32 power_mW = 1000;
-        bool supports_a2;
+ drivers/pinctrl/intel/pinctrl-baytrail.c   |  8 +++++---
+ drivers/pinctrl/intel/pinctrl-cherryview.c |  6 ++++--
+ drivers/pinctrl/intel/pinctrl-intel.c      | 19 +++++++++++++------
+ drivers/pinctrl/intel/pinctrl-lynxpoint.c  |  6 ++++--
+ 4 files changed, 26 insertions(+), 13 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250610-gpiochip-set-rv-pinctrl-intel-e4c791f29a84
 
-        if (sfp->id.ext.sff8472_compliance >= SFP_SFF8472_COMPLIANCE_REV10_2 &&
-            sfp->id.ext.options & cpu_to_be16(SFP_OPTIONS_POWER_DECL))
-                power_mW = 1500;
-        /* Added in Rev 11.9, but there is no compliance code for this */
-        if (sfp->id.ext.sff8472_compliance >= SFP_SFF8472_COMPLIANCE_REV11_4 &&
-            sfp->id.ext.options & cpu_to_be16(SFP_OPTIONS_HIGH_POWER_LEVEL))
-                power_mW = 2000;
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-How does your module indicate it needs 3000 mW? Does this bit of code
-need extending to read additional bits?
-
-	Andrew
 
