@@ -1,93 +1,150 @@
-Return-Path: <linux-kernel+bounces-678796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E94CAD2E31
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B21AD2E39
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A9BB7A2D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE8F3B253A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 07:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0136927A909;
-	Tue, 10 Jun 2025 06:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127827AC2A;
+	Tue, 10 Jun 2025 07:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RkKeo+2G"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="dtGcd7wR"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300E82EB11;
-	Tue, 10 Jun 2025 06:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C61FAD21
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 07:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749538690; cv=none; b=cAn0nGqS/enULad6CCglzurtcMjtr6znWtLYOGvCdOp8OWL3imj1cS9OONdRvsOWDHZW9bMDhXhK1WnVq9dBKuXodS3hbhn0Duu09qDHZhC70RKuwLJywlkWbNBhvQUwW+UaKErgW36iPt+FHSaAMSzW2DPzx0f0kokqD6UJDaQ=
+	t=1749538851; cv=none; b=WgRSn+Jb6uASmhUFkincD6YTGTiYVIelXg4063pLs4jJb1LUsHYHqaGPK0mICKFD27Y4F+0q4ZUxX2f5KkjpmB/23oP2udc5t6UgRlUP+DgXyofbKeaz+NjIEuKIYnWmPp3mB0szvowngkUVnUc44nCYDEx1g/icGUuWulBaG+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749538690; c=relaxed/simple;
-	bh=S0dMvL4cHCUVN4I4bj1t9Zvhqa+7+nYmYS7RR+TWSE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ca3y+RXIQloWo1RSUILgVOnGQCDXc47atV7nKpz9d27OvovpmDKzZYMn6jUdRlanLXawZeqbuNf3ZOoC/FtNemzVi1C3BcNh0CZaJnhFalOANVBNxc8k/ZnVbMB70pmqUnZmqfnk7Xd2rvj+n9uclxa8wsTp1RUjhkhgQqyCrxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RkKeo+2G; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-742c035f2afso3579217b3a.2;
-        Mon, 09 Jun 2025 23:58:08 -0700 (PDT)
+	s=arc-20240116; t=1749538851; c=relaxed/simple;
+	bh=nxzPfqmfptUSQtLazHsiK0dcb5LFkkFm+nAYN/C+p7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tKaOG0vS/9lh6UF5HhXg06IMNjLb9/Qm8D7HA/RD0BVGrutx+lSl9Dzh2fwb+2tach9o0PTOq5px740fuHY/MW4dtpD8+lJNyifSp9LoBrR1jniM9Q32dLKXCWP/VlOF7Qoa+TssGQBpStChIzBhZam5xQMgWvKu27QG/NoP8/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=dtGcd7wR; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-742c035f2afso3580856b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:00:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749538688; x=1750143488; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S0dMvL4cHCUVN4I4bj1t9Zvhqa+7+nYmYS7RR+TWSE8=;
-        b=RkKeo+2GqJDaazKOKgHjPvrZuf7wfshXNWoO/k9Innvaz/xk40hpPxDecx2fPCo9bv
-         x+7kcsYfFs93QZuNv7SoFBYBlVGfT9q+UQdpiKGS4tNWm6hWp5b+t5UHU4g+TdOePLyn
-         pa9yaXB2ZXGaEy7bJqrOsJMGPRkYorB6SW6Qb+l2+zEaOVaPNQiNtKsP8nPmrwYBXf0H
-         0mYlbIDMi66SDqAHYPGqw2nnhpglsj7UvxIQEzI6NrbU38FYG3hl2yRPcssJAIotpOuL
-         VtvTHAzWMnBgz7JiewfXBx2NNK3IgYg06uP+TmkJS9s1rw0FMx5q710NEm+Ss7/K0Ulk
-         uS9g==
+        d=purestorage.com; s=google2022; t=1749538849; x=1750143649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JUJitp02dLbwyW6XXbPMt7kAqtrb2lpqnpotbucX9CA=;
+        b=dtGcd7wRQWbYXVW4cPdjrFKOIBrbFi3WDWaK7NW2K73TdOc4KAlxMd2EVnHR22IX3H
+         nkJUmm2LohJQzU8ZT9d3DqS0+HPANe0dMuy5WDAIgVlRLtu7JHS/LPOisEIF1s+vKMh6
+         +MAxwRlMf1HO6mSCZJffHi+1YqBjSrNnoeMxkykBPZvZvBxtjkcLq36m1RsaQfUpcc3i
+         H+Znmjj8POkJWaKy4KoEokiYSrC3su5AWljkfHoC/axQ0xVjyvOPDGMxTF44XvKlcgE8
+         iud94qfA9k7FXCKOXvZBDlO0mtHnP3DhcXLNFAOe/w65cCnm6JJvMipnjdKK49steX5s
+         KRAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749538688; x=1750143488;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S0dMvL4cHCUVN4I4bj1t9Zvhqa+7+nYmYS7RR+TWSE8=;
-        b=WR643BMmSAQUZ2xw/91jlH9B5d4gULfKU6KQSDNzQKRgoNs3zoCWM87TZwxISFCnir
-         y7+ZjMVH9ol6fS+IVyZ6s1cAM8QVcKp6pkHIp+JPGN6Shs+vsWJwts/lf6o3BrC/kBIN
-         LG2XNLUY+xN70l8SOs/T8apBxBCyPs07f5Qa0qLv939apq9LosFySEI92Rmu2qr4O59e
-         5xLoqw38il5nlcIkSVBOxp4ciiW9wUQ+qnJKeDoZIKCHqoaQGukCbeRIpEsa/AABP7C0
-         DSjyVldd2MXZuJ5IutS6nUP6ECuj++Z66wJS9R7OVrSwHZ8KFczDk5Q5BKEuzXcK8p3L
-         qiNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU40smfrUjJq7GcS801m7YrDTQgFdnCVO9uGSNacAvDEmk9c027RToWd3OC27/CCkY/VqRP19YYxq1aVIgHyLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvltkI5fhd6NbhOR0tt8vkbHHAagkM+FIfVRMHi/lQJEwaALZk
-	SzPlcj8rTjmq5A9L5mPNeouTeDD6Nk4hMbqySNL6Z6MYAjshCyZNnUBuiEVtAMDUu9t8Lwl9fjd
-	lUhCkkXk4qQEcY+/gkwTAIC+WGdpYyA==
-X-Gm-Gg: ASbGnctnc/sVp6T1W6LO5sZhyGKS0Reb+YehPc7giZiv1J1N6xg1QjVctNBziTkkjWC
-	zMTV8scpXKQPUDCKnpkGnBipLBBf6FY9uTBWbC9uZHKvFcmGqciFoUEnuxvZgWWU1LBUlkwO8jB
-	PHEeseRELFCK6xoDh1OVQ3ELjTlElWtt+KjuuzJm7FN9LA2DX+PGoLZQ==
-X-Google-Smtp-Source: AGHT+IFvtzeVVIyCGu9hgD2Zpy7Kbr4cifNUZppXFTkQzFBoardh1hAqUCWSM70UQkc8jpvXhoOkqeookh+1Qrb/ymc=
-X-Received: by 2002:a05:6a00:986:b0:748:2fa4:14c0 with SMTP id
- d2e1a72fcca58-748616cae30mr2363710b3a.0.1749538688368; Mon, 09 Jun 2025
- 23:58:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749538849; x=1750143649;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JUJitp02dLbwyW6XXbPMt7kAqtrb2lpqnpotbucX9CA=;
+        b=r69QkCgkXvEgZvK/L82FeS5oZxKaflnonnrMqEYxZu2afIihe+w6xkAcVv+ThAxRR5
+         tfX30pDSrZTHQgAtJZH8veRvkAZMD7Uzpbu9rtv5jgJraN9WYL2I3RlyS9O09UmKbWdu
+         kQaqYrlhc/ETpqv3KobedJ3I+LOUhGXaxxD2cT8V+BR9iz0dlV4dSev4LBJKg7LZHFHc
+         qkQigq3BDq/+BWje75gZobF1uftk36Ih8orY+Lcd3ntwo24CqIUZmx9nQ/vtYzuqNBxD
+         xnFAFYdPyjplSgCOxEgzGR6M2qceqvkZe0YXrFIt1wCuxK3POcSGVTff1XktWB0X4aWZ
+         ihSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYLH9d7SZhLu01lqG3NEOSYN5A2G6875iQ5LoQc2eRE//nx3jbdzIIaWtvbsYVcgCdBT/yUQ1OML4W5vM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvOWnsO8rCNh6G2P0OAEbeeFfiIr5Q5b2SCGLbQSC4G7bip3/C
+	OFLzbik/2hganlnuxnDLMRLKC7Yyn/VIeLv2XGvx+g6vV9I2ivRkDhltgUpPkUs78nI=
+X-Gm-Gg: ASbGncuiKzXV0hkC58i67pAoaf+2HaeIAIb+c57dAlMiVa2Dkz7P/7ck3fzdQXcny1p
+	BmafTmRlfgdPkLARL2lQaI8VV2syz7/hMMyMOPQTHVM+d8bZR0RWhgzoB/icRnjOwGld39fNctM
+	3lkgLTrGxEOGABYrE1PslrOlxG0WTsiD8CwbLXlYstP79OeWXLVLguqXBK5zDfsnsQ112PEAQoa
+	tWq75+XA/8eFJGU87eHBqVSaq4imfDbtcxVEQci2YJGeIpYIY78qbJwwERZ+l1NZuTwUynaKJvs
+	m/rt7CtuT7y/silCmNToex3Rbe/8Shi7pW0/PbGN5oub549ZlhK32gQgsRv3RTw0PTKOgN3qZui
+	gJ2H1nZ3ArDRp7RaXF65DeIw=
+X-Google-Smtp-Source: AGHT+IF8uzdNqEI314pocfYYQWBeowDkb4F+LwQ50ySlNHswx1qiGOLWHPFnpEwYjMluBjhKg3WXFg==
+X-Received: by 2002:aa7:88c1:0:b0:748:1bac:aff9 with SMTP id d2e1a72fcca58-74861888babmr2307166b3a.18.1749538849387;
+        Tue, 10 Jun 2025 00:00:49 -0700 (PDT)
+Received: from mattc--Mac15.purestorage.com ([165.225.242.245])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7482af7af0csm7038483b3a.62.2025.06.10.00.00.47
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 10 Jun 2025 00:00:48 -0700 (PDT)
+From: Matthew W Carlis <mattc@purestorage.com>
+To: macro@orcam.me.uk
+Cc: alex.williamson@redhat.com,
+	bhelgaas@google.com,
+	davem@davemloft.net,
+	david.abdurachmanov@gmail.com,
+	edumazet@google.com,
+	helgaas@kernel.org,
+	kuba@kernel.org,
+	leon@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	lukas@wunner.de,
+	mahesh@linux.ibm.com,
+	mattc@purestorage.com,
+	mika.westerberg@linux.intel.com,
+	netdev@vger.kernel.org,
+	npiggin@gmail.com,
+	oohall@gmail.com,
+	pabeni@redhat.com,
+	pali@kernel.org,
+	saeedm@nvidia.com,
+	sr@denx.de,
+	wilson@tuliptree.org
+Subject: PCI: Work around PCIe link training failures
+Date: Tue, 10 Jun 2025 00:00:44 -0700
+Message-Id: <20250610070044.92057-1-mattc@purestorage.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <alpine.DEB.2.21.2410031135250.45128@angie.orcam.me.uk>
+References: <alpine.DEB.2.21.2410031135250.45128@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250531074625.478-1-ujwal.kundur@gmail.com>
-In-Reply-To: <20250531074625.478-1-ujwal.kundur@gmail.com>
-From: Ujwal Kundur <ujwal.kundur@gmail.com>
-Date: Tue, 10 Jun 2025 12:27:56 +0530
-X-Gm-Features: AX0GCFtCrMYImzmzDrbl4Cxr7ClCetMYzMQUdGPGCb0rS_0j_Yw3oCsA5BZn7Qk
-Message-ID: <CALkFLL+BDJyN-A9ZLF84saD48hany7G2B6sH41wUvCjzTVH6+w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] selftests/mm/uffd: Refactor non-composite global
- vars into struct
-To: akpm@linux-foundation.org, peterx@redhat.com, shuah@kernel.org, 
-	jackmanb@google.com
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello! Pinging for review now that we are out of the quiet period.
+Hello again.. It looks like there are specific system configurations that are
+extremely likely to have issues with this patch & result in undesirable
+system behavior..
+
+  Specifically hot-plug systems with side-band presence detection & without
+Power Controls (i.e PwrCtrl-) given to config space. It may also be related
+to presence on U.2 connectors being first-to-mate/last-to-break, but
+I don't have much experience with the different connectors. The main
+issue is that the quirk is invoked in at least two common cases when
+it is not expected that the link would train. 
+  For example, if I power off the slot via an out-of-band vendor specific
+mechanism we see the kernel decide that the link should be training,
+presumable because it will see PresDet+ in Slot Status. In this case it
+decides the link failed to train, writes the Gen1 speed value into TLS
+(target link speed) & returns after waiting for the link one more time.
+The next time the slot is powered on the link will train to Gen1 due to TLS.
+  Another problematic case is when we physically insert a device. In my case
+I am using nvme drives with U.2 connectors from several different vendors.
+The presence event is often generated before the device is fully powered on
+due to U.2 assigning presence as a first-to-mate & power being last-to-mate.
+I believe in this case that the kernel is expecting the link to train too
+soon & therefore we find that the quirk often applies the Gen1 TLS speed.
+Later, when the link comes up it is frequently observed at Gen1. I tried
+to unset bit 3 in Slot Control (Presence Detect Changed Enable), but we
+still hit the first case I described with powering off slots.
+  I should be clear and say that we are able to see devices forced to Gen1
+extremely often in the side-band presence configuration. We would really like
+to see this "quirk" removed or put behind an opt-in config since it causes
+significant regression in common configurations of pcie-hotplug. I have tried
+to come up with ideas to modify/improve the quirk, but I am not very
+confident that there is a good solution if the kernel cannot know for certain
+whether the link is expected to train.
 
 Thanks,
-Ujwal
+-Matt
 
