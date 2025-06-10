@@ -1,62 +1,81 @@
-Return-Path: <linux-kernel+bounces-678850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6463EAD2F14
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:44:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE628AD2F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778B318892B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 07:44:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E1616460C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 07:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB4127FD7E;
-	Tue, 10 Jun 2025 07:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423DC27FB18;
+	Tue, 10 Jun 2025 07:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lOIHRSDg"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5n320pO"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC4227A93A;
-	Tue, 10 Jun 2025 07:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FAC27A92F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 07:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749541451; cv=none; b=WXlj6OHwbDGZQ0oq6XQoToNvCUwDTt2qbnFQeVuFux7vXX+AmkvXR7ms91ZhH2GDEf8BjXS9uFzrw44fMbUYo1YIFrIkrvfO5cgsZi0GJvYZfRQOLz3kudRw7WZyaQiQkKl8n7/dL7nwyVT/BXafYQpubGI1MY0i+kPhL9OYQns=
+	t=1749541425; cv=none; b=RIKQjeIFTThf3+CoOpizAoLInBiNwtepM2s0wC4kxhnFxRvimTpXSQuyejpZ7aSCslHp35B3YTgKBIdMVjs5XcXfgbb2TFbZFl4qiSAJ1xe40t9hVqZ5qbmNkbvLUxUYXcoQ9oH+VEgnUJRSC0WOG34M2uwL1Bsmw/h+yDuCG8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749541451; c=relaxed/simple;
-	bh=GPs4VwI2U5i8OoCpd+/wSuyPS02mqcIUAES+8JvevRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=EhEiGSid7LjvyIlxfsMJtswL8fEgICQMiUKY1PuLUm8d5cGZwnQUmjjyab2bdFyDv2f4K6aSStUf6334HonUs4cqgXDiwm2+x5uWv+T3Nd3NXSktyz05uuqd/JLFIYTSAwNfax7BJHuA0fDSfm8863jP9qhm3lHa7XgOsQ1c2AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lOIHRSDg; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55A7hk4Y2222666;
-	Tue, 10 Jun 2025 02:43:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1749541426;
-	bh=/PBz8UPegQOn0D3yRInXOsNjObgy56E8YRqME4+wtDk=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=lOIHRSDgxhpOUqtBAZ0USZStUQKX+SfLIvtsb7s12396AutRTpbxYXW1rixIu34d9
-	 O357Cxikurhh9Fuap+iTSFbMyEokilGzgiLgAQblNm9OiIVK4XIBoF2WHM7a4F+OoY
-	 lqGQg1EHXk0cz8PnpXNa+wSDMV7ph8nJMhp9gQtk=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55A7hjnU093402
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 10 Jun 2025 02:43:46 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
- Jun 2025 02:43:45 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 10 Jun 2025 02:43:45 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55A7hdsS2713905;
-	Tue, 10 Jun 2025 02:43:39 -0500
-Message-ID: <b05cc264-44f1-42e9-ba38-d2ef587763f5@ti.com>
-Date: Tue, 10 Jun 2025 13:13:38 +0530
+	s=arc-20240116; t=1749541425; c=relaxed/simple;
+	bh=tLCGN1EjzaCequ4K7x4vShuXvzpwLxZEfpHMz3OrYhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aOwN81R/GzaK5mR576FWTPsrzjKh+PqBtIp+w7EPN6LJGMi2cILI0ZSvw0qYfW86giN8HRNUMXryGuKLgni1BQ6jIIV1aJCSnnuUj65knxezeAR1IlOHZr4yHs016puh0dmKZD25dGFjREp9zcYST98MLeAIMdlK3iUteiYzHKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5n320pO; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-236377f00easo5891225ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 00:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749541422; x=1750146222; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfU97cZH2HgHI7uIemmkAw8kJldevbQFXn6zd95g/RE=;
+        b=C5n320pOqaanZhr7e+ztpFsPWjymyZwIGrWJcc+aq5b398wpoFCpnQ3FhC+9TXrgwr
+         i7Al12llpcjWuDEnaRzzbP1EomniNiDR/3ASRxG0XK1FVLFxCivUa7Y25n1ZiZ6kMF9K
+         4xHYKVkb2nVFUxgCpMRwMQo0+p3zo/+JPivdgI0eSqrr6oRNw1SwIaNyxEjsoOBlyN7v
+         FeT3QuOq8wHRFTu5T7mgiSpFHQyhDb5AXiieoZI1cWL1Wg5yrBOg/MgEr2VyV2X0RCos
+         9EUl2ZKzjWOLKDNGBNquAeRrYDklMa7TECpi7H/WxSUM4lgF6oOMdN1fAH3HAc2/VMd+
+         0w8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749541422; x=1750146222;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OfU97cZH2HgHI7uIemmkAw8kJldevbQFXn6zd95g/RE=;
+        b=HIlhg+VRHJ1L3ZQatjXOZY8GXSxVHCV+La5wWDufP3kRqgQIsrQVNv8xvWss7iRxU5
+         t4GT4sFy0PudeOVDE9MZkvAdgD4HX0Vy0UfqxZnJ72Fs3dFjjTQnc8Qhs4WsvRTj8YtR
+         1S8y9Wic/4G6N8cHbZx/IO+TgPFSafqC85ipWVFQnw6Oo6Rl6eSf8UQlf4kFPUzAPqDg
+         90ESRgcgS8hperlwiZcrn7tzA1wB4INBn6aF5KKIsjj1gqjp8cSkvcqT7r9iE2g5oocV
+         g0GB/Gb1loR+G2HP6FxZTW3HQp3R1kfWSUt1BnDHkB2o2jqU1QlVYrwgh6p8Te0rHQN8
+         7DCw==
+X-Forwarded-Encrypted: i=1; AJvYcCURgdm9PqUK83pYpMUceoIfY6Xb4Af5t7UNUEjSoAmokPFnspAVqooof3Euj1oOZuFIn4zHKIDIT7L8ZVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDMU4y7DJTvb2ygRG+YF5i/80EfOOWfq9fOW1IBAofBmBujMVX
+	9WwkLYZZOlWSbQc3/N/RjJBEXA7/w+v7kadWBYxs9RGFZlahHyEBp0ef
+X-Gm-Gg: ASbGncuvE1r5vmrmLjxD31+R78tu1QyIDq37zO6yAmpM9t1h6DMYJpqgjg5fQcmx0OB
+	HJtK4x+5JAhvcvQOCaLVHIHvWNtv/Pqg7vJSm9vl0qNgMJHPvXDhPrd+BOsb9XniJMRM10MdYGH
+	U2vVu5gkN/CcDCVtt/hiRVYFVVENjp/LQjNbLrmK87Dqk0bIoOCI0vfXd5CFeCXDa3haHVlDmx8
+	mDxlKJHYCzdb4JRg1HvW52QIoWaoGatYFk0DR/ZxZ7uOva0PCzbUcZpvPG0+xvTxgoXL2cmQsPO
+	9HTJVVG0/8+ehzLDO7wzyxN8uxYh8D/82qL+hPGMzl52Ln7fL4XeETsicZoTJf8ZQZhqKfwHHcY
+	Pb/aE9oGiLJ9Sew698MjXYh57i9hPT4fdZ3I=
+X-Google-Smtp-Source: AGHT+IHdhMgBtQokcJ/Q7bh9+BcN8CJW/QMCpCT6PI94inpveIKBqilCMqdGnB1z9W9y+xUFTQDFQQ==
+X-Received: by 2002:a17:902:dacb:b0:235:f70:fd39 with SMTP id d9443c01a7336-23601ced438mr229890505ad.10.1749541422122;
+        Tue, 10 Jun 2025 00:43:42 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b2f5ed59cdcsm6305969a12.12.2025.06.10.00.43.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 00:43:41 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8d4bd876-3571-46e5-857a-948e58b21c5b@roeck-us.net>
+Date: Tue, 10 Jun 2025 00:43:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,309 +83,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10] net: ti: icssg-prueth: add TAPRIO offload
- support
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: Meghana Malladi <m-malladi@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Simon Horman <horms@kernel.org>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Roger
- Quadros <rogerq@ti.com>
-References: <20250502104235.492896-1-danishanwar@ti.com>
- <20250506154631.gvzt75gl2saqdpqj@skbuf>
- <5e928ff0-e75b-4618-b84c-609138598801@ti.com>
+Subject: Re: [PATCH v2 1/3] mtd: spi-nor: macronix: Drop the redundant flash
+ info fields
+To: Cheng Ming Lin <linchengming884@gmail.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,
+ Cheng Ming Lin <chengminglin@mxic.com.tw>, mwalle@kernel.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ alvinzhou@mxic.com.tw, leoyu@mxic.com.tw
+References: <20250407075400.1113177-1-linchengming884@gmail.com>
+ <20250407075400.1113177-2-linchengming884@gmail.com>
+ <d98f6eee-d5f7-43b7-bbc8-d6e7e274723a@roeck-us.net>
+ <mafs05xh6pf7s.fsf@kernel.org>
+ <da58fc81-3c99-4951-85bc-e3c139283b5a@roeck-us.net>
+ <a2a0c40e-69d7-4408-add2-88616c92b0ca@roeck-us.net>
+ <aa2a4480-9b78-4ed9-8f9d-b18a87eb01e9@linaro.org>
+ <CAAyq3SYybDgBvkTKh2ZB4UdKq1XV_nnzx3Tj1P915W5x_7_nNA@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <5e928ff0-e75b-4618-b84c-609138598801@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CAAyq3SYybDgBvkTKh2ZB4UdKq1XV_nnzx3Tj1P915W5x_7_nNA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Vladimir,
-
-On 15/05/25 4:24 pm, MD Danish Anwar wrote:
-> Hi Vladimir,
-> 
-> On 06/05/25 9:16 pm, Vladimir Oltean wrote:
->> It has been a long time since the last posting, everything has been
->> swapped out from my memory. Sorry if some comments are repeated.
+On 6/10/25 00:29, Cheng Ming Lin wrote:
+> Tudor Ambarus <tudor.ambarus@linaro.org> 於 2025年6月10日 週二 下午2:46寫道：
 >>
-> 
-> Yes. It has been almost a year since my last revision.
-> 
->> On Fri, May 02, 2025 at 04:12:35PM +0530, MD Danish Anwar wrote:
->>> From: Roger Quadros <rogerq@ti.com>
+>>
+>>
+>> On 6/10/25 1:14 AM, Guenter Roeck wrote:
+>>> On 6/8/25 18:13, Guenter Roeck wrote:
+>>>> On 6/8/25 05:53, Pratyush Yadav wrote:
+>>>>> On Sat, Jun 07 2025, Guenter Roeck wrote:
+>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> On Mon, Apr 07, 2025 at 03:53:58PM +0800, Cheng Ming Lin wrote:
+>>>>>>> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>>>>>>>
+>>>>>>> Many flash devices share the same ID but have different part numbers.
+>>>>>>> To avoid confusion, the part number field is removed.
+>>>>>>>
+>>>>>>> Additionally, since SFDP already provides size information and
+>>>>>>> functionality covered by no_sfdp_flags, these fields are also removed.
+>>>>>>>
+>>>>>>> Furthermore, when 4-byte address instruction table is available,
+>>>>>>> the SPI_NOR_4B_OPCODES flag is no longer needed and is removed.
+>>>>>>>
+>>>>>>> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>>>>>>> Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>>>>>
+>>>>>> With this patch in place, some of my qemu tests no longer recognize the
+>>>>>> flash chips (MX25L25635E/F). Do you have a suggestion on how to handle
+>>>>>> this other than avoiding Macronix flash chips when working with qemu ?
+>>>>>
+>>>>> Could you share some logs? Does the flash fail to detect, or does the
+>>>>> SFDP-based probing fail? Since this is qemu, it would be even better if
+>>>>> you can share a setup/reproduction guide. I have been meaning to set up
+>>>>> qemu for SPI NOR testing for some time now, but never got around to
+>>>>> figuring it out.
+>>>>>
+>>>>
+>>>> I suspect that the SFDP data for the affected flashes is incorrect in
+>>>> qemu.
+>>>> Since this is very likely a qemu problem, I'll just configure
+>>>> different flash
+>>>> chips when running affected tests.
+>>>>
 >>>
->>> The Time-Aware Shaper (TAS) is a key feature of the Enhanced Scheduled
->>> Traffic (EST) mechanism defined in IEEE 802.1Q-2018. This patch adds TAS
->>> support for the ICSSG driver by interacting with the ICSSG firmware to
->>> manage gate control lists, cycle times, and other TAS parameters.
+>>> I was able to confirm the above. This is from the kernel log:
 >>>
->>> The firmware maintains active and shadow lists. The driver updates the
->>> operating list using API `tas_update_oper_list()` which,
->>> - Updates firmware list pointers via `tas_update_fw_list_pointers`.
->>> - Writes gate masks, window end times, and clears unused entries in the
->>>   shadow list.
->>> - Updates gate close times and Max SDU values for each queue.
->>> - Triggers list changes using `tas_set_trigger_list_change`, which
->>>   - Computes cycle count (base-time % cycle-time) and extend (base-time %
->>>     cycle-time)
->>
->> Please define the "cycle count" concept (local invention, not IEEE
-> 
-> cycle count here means number of cycles in the base-time.
-> If base-time is 1747291156846086012 and cycle-time is 1000000 (1ms) then
-> the cycle count is 1747291156846 where as extend will be 86012
-> 
->> standard). Also, cross-checking with the code, base-time % cycle-time is
->> incorrect here, that's not how you calculate it.
-> 
-> That's actually a typo. It should be
-> 
->  - Computes cycle count (base-time / cycle-time) and extend (base-time %
->    cycle-time)
-> 
->>
->> I'm afraid you also need to define the "extend" concept. It is not at
->> all clear what it does and how it does it. Does it have any relationship
->> with the CycleTimeExtension variables as documented by IEEE 802.1Q annex
->> Q.5 definitions?
->>
->> A very compressed summary of the standard variable is this:
->> the CycleTimeExtension applies when:
->> - an Open schedule exists
->> - an Admin schedule is pending
->> - the AdminBaseTime is not an integer multiple of OperBaseTime + (N *
->>   OperCycleTime) - i.o.w. the admin schedule does not "line up" with the
->>   end of the oper schedule
->>
->> The misalignment of the oper vs admin schedules might cause the very
->> last oper cycle to be truncated to an undesirably short value. The
->> OperCycleTimeExtension variable exists to prevent this, as such:
->>
->> - If the length of the last oper cycle is < OperCycleTimeExtension,
->>   then this cycle does not execute at all. The gate states from the end
->>   of the next-to-last oper cycle remain in place (that cycle is extended)
->>   until the activation of the admin schedule at AdminBaseTime.
->>
->> - If the length of the last oper cycle is >= OperCycleTimeExtension,
->>   this last cycle is left to execute until AdminBaseTime, and is
->>   potentially truncated during the switchover event (unless it perfectly
->>   lines up). Extension of the next-to-last oper cycle does not take
->>   place.
->>
->> Is this the same functionality as the "extend" feature of the PRU
->> firmware - should I be reading the code and the commit message in this
->> key, in order to understand what it achieves?
-> 
-> 
-> "extend" here is not same as `CycleTimeExtension`. The current firmware
-> implementation always extends the next-to-last cycle so that it aligns
-> with the new base-time.
-> 
-> Eg,
-> existing schedule, base-time 125ms cycle-time 1ms
-> New schedule, base-time 239.4ms cycle-time 1ms
-> 
-> Here the second-to-last cycle starts at 238ms and lasts for 1ms. The
-> Last cycle starts at 239ms and is only lasting for 0.4ms.
-> 
-> In this case, the existing schedule will continue till 238ms. After that
-> the next cycle will last for 1.4 ms instead of 1ms. And the new schedule
-> will happen at 239.4 ms.
-> 
-> The extend variable can be anything between 0 to 1ms in this case and
-> the second last cycle will be extended and the last cycle won't be
-> executed at all.
-> 
->>
->>>   - Writes cycle time, cycle count, and extend values to firmware memory.
->>>   - base-time being in past or base-time not being a multiple of
->>>     cycle-time is taken care by the firmware. Driver just writes these
->>>     variable for firmware and firmware takes care of the scheduling.
->>
->> "base-time not being a multiple of cycle-time is taken care by the firmware":
->> To what extent is this true? You don't actually pass the base-time to
->> the firmware, so how would it know that it's not a multiple of cycle-time?
->>
-> 
-> We pass cycle-count and extend. If extend is zero, it implies base-time
-> is multiple of cycle-time. This way firmware knows whether base-time is
-> multiple of cycle-time or not.
-> 
->>>   - If base-time is not a multiple of cycle-time, the value of extend
->>>     (base-time % cycle-time) is used by the firmware to extend the last
->>>     cycle.
->>
->> I'm surprised to read this. Why does the firmware expect the base time
->> to be a multiple of the cycle time?
->>
-> 
-> Earlier the limitation was that firmware can only start schedules at
-> multiple of cycle-times. If a base-time is not multiple of cycle-time
-> then the schedule is started at next nearest multiple of cycle-time from
-> the base-time. But now we have fix that, and schedule can be started at
-> any time. No need for base-time to be multiple of cycle-time.
-> 
->> Also, I don't understand what the workaround achieves. If the "extend"
->> feature is similar to CycleTimeExtension, then it applies at the _end_
->> of the cycle. I.o.w. if you never change the cycle, it never applies.
->> How does that help address a problem which exists since the very first
->> cycle of the schedule (that it may be shifted relative to integer
->> multiples of the cycle time)?
->>
->> And even assuming that a schedule change will take place - what's the
->> math that would suggest the "extend" feature does anything at all to
->> address the request to apply a phase-shifted schedule? The last cycle of
->> the oper schedule passes, the admin schedule becomes the new oper, and
->> then what? It still runs phase-aligned with its own cycle-time, but
->> misaligned with the user-provided base time, no?
->>
->> The expectation is for all cycles to be shifted relative to N *
->> base-time, not just the first or last one. It doesn't "sound" like you
->> can achieve that using CycleTimeExtension (assuming that's what this
-> 
-> Yes I understand that. All the cycles will be shifted not just the first
-> or the last one. Let me explain with example.
-> 
-> Let's assume the existing schedule is as below,
-> base-time 500ms cycle-time 1ms
-> 
-> The schedule will start at 500ms and keep going on. The cycles will
-> start at 500ms, 501ms, 502ms ...
-> 
-> Now let's say new requested schedule is having base-time as 1000.821 ms
-> and cycle-time as 1ms.
-> 
-> In this case the earlier schedule's second-to-last cycle will start at
-> 999ms and end at 1000.821ms. The cycle gets extended by 0.821ms
-> 
-> It will look like this, 500ms, 501ms, 502ms ... 997ms, 998ms, 999ms,
-> 1000.821ms.
-> 
-> Now our new schedule will start at 1000.821ms and continue with 1ms
-> cycle-time.
-> 
-> The cycles will go on as 1000.821ms, 1001.821ms, 1002.821ms ......
-> 
-> Now in future some other schedule comes up with base-time as 1525.486ms
-> then again the second last cycle of current schedule will extend.
-> 
-> So the cycles will be like 1000.821ms, 1001.821ms, 1002.821ms ...
-> 1521.821ms, 1522.821ms, 1523.821ms, 1525.486ms. Here the second-to-last
-> cycle will last for 1.665ms (extended by 0.665ms) where as all other
-> cycles will be 1ms as requested by user.
-> 
-> Here all cycles are aligned with base-time (shifter by N*base-time).
-> Only the last cycle is extended depending upon the base-time of new
-> schedule.
-> 
->> is), so better refuse those schedules which don't have the base-time you
->> need.
->>
-> 
-> That's what our first approach was. If it's okay with you I can drop all
-> these changes and add below check in driver
-> 
-> if (taprio->base_time % taprio->cycle_time) {
-> 	NL_SET_ERR_MSG_MOD(taprio->extack, "Base-time should be multiple of
-> cycle-time");
-> 	return -EOPNOTSUPP;
-> }
-> 
->>>   - Sets `config_change` and `config_pending` flags to notify firmware of
->>>     the new shadow list and its readiness for activation.
->>>   - Sends the `ICSSG_EMAC_PORT_TAS_TRIGGER` r30 command to ask firmware to
->>>     swap active and shadow lists.
->>> - Waits for the firmware to clear the `config_change` flag before
->>>   completing the update and returning successfully.
+>>> [    4.500000] spi-nor spi0.0: BFPT parsing failed. Please consider
+>>> using SPI_NOR_SKIP_SFDP when declaring the flash
+>>> [    4.500000] spi-nor spi0.0: probe with driver spi-nor failed with
+>>> error -22
 >>>
->>> This implementation ensures seamless TAS functionality by offloading
->>> scheduling complexities to the firmware.
->>>
->>> Signed-off-by: Roger Quadros <rogerq@ti.com>
->>> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
->>> Reviewed-by: Simon Horman <horms@kernel.org>
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>> ---
->>> Cc: Vladimir Oltean <vladimir.oltean@nxp.com>
->>> v9 - v10:
->>> There has been significant changes since v9. I have tried to address all
->>> the comments given by Vladimir Oltean <vladimir.oltean@nxp.com> on v9
->>> *) Made the driver depend on NET_SCH_TAPRIO || NET_SCH_TAPRIO=n for TAS
->>> *) Used MACRO for max sdu size instead of magic number
->>> *) Kept `tas->state = state` outside of the switch case in `tas_set_state`
->>> *) Implemented TC_QUERY_CAPS case in `icssg_qos_ndo_setup_tc`
->>> *) Calling `tas_update_fw_list_pointers` only once in
->>>    `tas_update_oper_list` as the second call as unnecessary.
->>> *) Moved the check for TAS_MAX_CYCLE_TIME to beginning of
->>>    `emac_taprio_replace`
->>> *) Added `__packed` to structures in `icssg_qos.h`
->>> *) Modified implementation of `tas_set_trigger_list_change` to handle
->>>    cases where base-time isn't a multiple of cycle-time. For this a new
->>>    variable extend has to be calculated as base-time % cycle-time. This
->>>    variable is used by firmware to extend the last cycle.
->>> *) The API prueth_iep_gettime() and prueth_iep_settime() also needs to be
->>>    adjusted according to the cycle time extension. These changes are also
->>>    taken care in this patch.
 >>
->> Why? Given the explanation of CycleTimeExtension above, it makes no
->> sense to me why you would alter the gettime() and settime() values.
+>> It's likely the problem where the same flash ID is used for different
+>> flavors of flashes. Typically we differentiate the flavors by comparing
+>> their SFDP data and use post SFDP hooks to amend where needed. If no one
+>> cares about fixing it, we can undo the change for the affected flash or
+>> revert the patch entirely. Cheng?
 >>
 > 
-> The Firmware has two counters
+> Since this patch removed the size field, the issue occurs because the
+> "spi_nor_init_params" function now processes the "spi_nor_parse_sfdp"
+> function. As a result, the error is likely caused by a problem during the
+> SFDP parsing, which leads to the failure of "spi_nor_init_params".
 > 
-> counter0 counts the number of miliseconds in current time
-> counter1 counts the number of nanoseconds in the current ms.
+> The issue can be resolved by adding .size = SZ_32M to the flash_info for
+> MX25L25635E to prevent failures caused by SFDP parsing.
 > 
-> Let's say the current time is 1747305807237749032 ns.
-> counter0 will read 1747305807237 counter1 will read 749032.
-> 
-> The current time = counter0* 1ms + counter1
-> 
-> For taprio scheduling also counter0 is used. Now let's say below is are
-> the cycles of a schedule
-> 
-> cycles   = 500ms 501ms 502ms ... 997ms, 998ms, 999ms, 1000.821ms
-> counter0 = 500   501   502   ... 997    998    999    1000
-> curr_time= 500*1, 501*1, 502*2...997*1, 998*1, 999*1, 1000*1
-> 
-> Here you see after the last cycle the time is 1000.821 however our above
-> formula will give us 1000 as the time since last cycle was extended.
-> 
-> To compensate this, whatever extension firmware applies need to be added
-> during current time calculation. Below is the code for that.
-> 
->       ts += readl(prueth->shram.va + TIMESYNC_CYCLE_EXTN_TIME);
-> 
-> Now the current time becomes,
-> 	counter0* 1ms + counter1 + EXTEND
-> 
-> This is why change to set/get_time() APIs are needed. This will not be
-> needed if we drop this extends implementation.
-> 
-> Let me know if above explanation makes sense and if I should continue
-> with this approach or drop the extend feature at all and just refuse the
-> schedules?
+> The root cause of this problem lies in the failure of parsing the SFDP
+> data for the flash, rather than an issue with the patch itself. I believe
+> we should not revert this patch.
 > 
 
-I am not sure if you got the change to review my replies to your initial
-comments. Let me know if I should continue with this approach or just
-refuse the schedules that don't have the base time that we need.
+I tend to agree. The problem is very likely on the qemu side and should be
+addressed there.
 
-> Thanks for the feedback.
-> 
+Guenter
 
-
--- 
-Thanks and Regards,
-Danish
 
