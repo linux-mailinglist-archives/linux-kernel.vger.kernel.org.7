@@ -1,106 +1,133 @@
-Return-Path: <linux-kernel+bounces-679252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F134BAD33D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:39:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638D5AD33D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA9C1884E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:40:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2631B16BA5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C0328C853;
-	Tue, 10 Jun 2025 10:39:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4326D28030F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581BA27FD67;
+	Tue, 10 Jun 2025 10:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eZjAL4LM"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E088928C853
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749551982; cv=none; b=L60LqZFgKxhL16Il6NvkErdbruBJUKTQynZQtAZAylCmKFG9uw41mHdkIdcWxLKjWHLEW7o7LIZsRUFX2ewy9oiwQ81hPRDj5WJcFNzHbS3qM/0J3ptDqk42tuvXjHRyeT5JHoCvJVAztzkVrcyykaE7p02nGxMAZW2E4t/U6eU=
+	t=1749552118; cv=none; b=f8PyTo3HavsFxJuU3OSmU+vnVi4rY/gXYld7gl3rkjIBnGrlAk8V6pZ7a6S99yphP18NBT6EK7xLR5Z9xtH/+N57KfYrjTnvS6FZxWZfvez2W5Ft1XNXIo9XkRV+0z6VK+OAw7cAO6wp+NNLyg+WLLDqxZ6uHRQg2wdjjk2s1g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749551982; c=relaxed/simple;
-	bh=cUDwS84gwYX1k3VE2aUeyen1cx0WC4M7idhBd6NbVaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kenaxpq5MEYaNR3bhTexAO+Viave+SRFM0XI7Q/HTwHGawZmO66HnXQf/dPDjIDBjqKxB3czufL4No46mrDwq2wEfpfbcRMjUzRo3FwtYKf+BpKzV1JellaWD7By5yskaKaSVzn2ktA4op9BMMYcoTYBrqg4sadV5gm/oiGnbv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E698169C;
-	Tue, 10 Jun 2025 03:39:20 -0700 (PDT)
-Received: from [10.163.32.103] (unknown [10.163.32.103])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E93173F673;
-	Tue, 10 Jun 2025 03:39:35 -0700 (PDT)
-Message-ID: <b20a6309-ae31-496d-a1ad-61ea358ad7a9@arm.com>
-Date: Tue, 10 Jun 2025 16:09:32 +0530
+	s=arc-20240116; t=1749552118; c=relaxed/simple;
+	bh=HrubCorwEI4QzVE/jzPQeSmrMn2QE2G/08itsfpnLpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c4WUn3keviyHfPFOUH6DYl+JksDRLGhBKT7yVkeFCyuM/uKMxX7Z54OZLzTW7TLkcz955e0M2sSU7dQvLQt97Zhv1PQa4AYLSyC2xucqjGUM+qqRZ/h0pxmMP1xq5j/z8MIJ7byYONzzSJllWXcrHeBQYA9r+l6Eq88hLBiJXSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eZjAL4LM; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1749552114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rEgV8+jcHG8DYIUGohYSskDCUEUrKKBIFZXspFzbGyU=;
+	b=eZjAL4LMXs5XY5pP0nCn1K//1kwYiqhXDNFRKcOLNmTKxhVLJkgeAWDwMVDvQmMEgzSx8S
+	/GhKEdKpKEsx0fHSwZonkrZTUIXhRuBI9LI3coOFYXEpuO7y83J53BGW+j9BLQ8yu5fWdC
+	Miv76Au4XAj/ldFz52sOugUd/Ifeb/A=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Peter Rosin <peda@axentia.se>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH RESEND] mux: Convert mux_control_ops to a flex array member in mux_chip
+Date: Tue, 10 Jun 2025 12:40:59 +0200
+Message-ID: <20250610104106.1948-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] coresight: Avoid enable programming clock
- duplicately
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250609-arm_cs_fix_clock_v3_public-v3-0-423b3f1f241d@arm.com>
- <20250609-arm_cs_fix_clock_v3_public-v3-6-423b3f1f241d@arm.com>
- <b30fc361-a04f-4a48-b8e2-f7c2da213e6c@arm.com>
- <20250609171413.GO8020@e132581.arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250609171413.GO8020@e132581.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Convert mux_control_ops to a flexible array member at the end of the
+mux_chip struct and add the __counted_by() compiler attribute to
+improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
+Use struct_size() to calculate the number of bytes to allocate for a new
+mux chip and to remove the following Coccinelle/coccicheck warning:
 
-On 09/06/25 10:44 PM, Leo Yan wrote:
-> On Mon, Jun 09, 2025 at 05:58:34PM +0100, Suzuki Kuruppassery Poulose wrote:
-> 
-> [...]
-> 
->>>   static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
->>>   {
->>> -	struct clk *pclk;
->>> +	struct clk *pclk = NULL;
->>> -	pclk = devm_clk_get_enabled(dev, "apb_pclk");
->>> -	if (IS_ERR(pclk))
->>> -		pclk = devm_clk_get_enabled(dev, "apb");
->>> +	if (!dev_is_amba(dev)) {
->>> +		pclk = devm_clk_get_enabled(dev, "apb_pclk");
->>> +		if (IS_ERR(pclk))
->>> +			pclk = devm_clk_get_enabled(dev, "apb");
->>
->> AMBA driver doesn't handle "apb" clock ? So we may need to retain that here
->> ?
-> 
-> Here checks the condition "if (!dev_is_amba(dev))", it means the device
-> is not an AMBA device (e.g., a platform device), the APB clock is
-> enabled at here.
+  WARNING: Use struct_size
 
-Just exit early for AMBA devices when 'pclk' clock is still NULL ?
+Use size_add() to safely add any extra bytes.
 
-	if (dev_is_amba(dev))
-		return pclk;
+No functional changes intended.
 
-> 
-> Otherwise, for a AMBA device, the AMBA bus layer will help to enable
-> APB clock.
-> 
->> Otherwise looks good to me.
->>
->> Suzuki
->>> +	}
->>>   	return pclk;
->>>   }
->>>
->>
+Link: https://github.com/KSPP/linux/issues/83
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/mux/core.c         | 7 +++----
+ include/linux/mux/driver.h | 4 ++--
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+index 02be4ba37257..a3840fe0995f 100644
+--- a/drivers/mux/core.c
++++ b/drivers/mux/core.c
+@@ -98,13 +98,12 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
+ 	if (WARN_ON(!dev || !controllers))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	mux_chip = kzalloc(sizeof(*mux_chip) +
+-			   controllers * sizeof(*mux_chip->mux) +
+-			   sizeof_priv, GFP_KERNEL);
++	mux_chip = kzalloc(size_add(struct_size(mux_chip, mux, controllers),
++				    sizeof_priv),
++			   GFP_KERNEL);
+ 	if (!mux_chip)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	mux_chip->mux = (struct mux_control *)(mux_chip + 1);
+ 	mux_chip->dev.class = &mux_class;
+ 	mux_chip->dev.type = &mux_type;
+ 	mux_chip->dev.parent = dev;
+diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
+index 18824064f8c0..e58e59354e23 100644
+--- a/include/linux/mux/driver.h
++++ b/include/linux/mux/driver.h
+@@ -56,18 +56,18 @@ struct mux_control {
+ /**
+  * struct mux_chip -	Represents a chip holding mux controllers.
+  * @controllers:	Number of mux controllers handled by the chip.
+- * @mux:		Array of mux controllers that are handled.
+  * @dev:		Device structure.
+  * @id:			Used to identify the device internally.
+  * @ops:		Mux controller operations.
++ * @mux:		Array of mux controllers that are handled.
+  */
+ struct mux_chip {
+ 	unsigned int controllers;
+-	struct mux_control *mux;
+ 	struct device dev;
+ 	int id;
+ 
+ 	const struct mux_control_ops *ops;
++	struct mux_control mux[] __counted_by(controllers);
+ };
+ 
+ #define to_mux_chip(x) container_of((x), struct mux_chip, dev)
+-- 
+2.49.0
 
 
