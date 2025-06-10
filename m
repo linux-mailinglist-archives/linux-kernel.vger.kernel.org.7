@@ -1,704 +1,530 @@
-Return-Path: <linux-kernel+bounces-679344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E56AAD350F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A281AD34FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8887616EF29
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE2916DC5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA29728B7CE;
-	Tue, 10 Jun 2025 11:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915EC28A1C5;
+	Tue, 10 Jun 2025 11:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nrkJTF5M"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013011.outbound.protection.outlook.com [40.107.162.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+JfKwYL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6FF28003E;
-	Tue, 10 Jun 2025 11:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749555320; cv=fail; b=Yzwq+cobfVwzHzFRMEuE2tNJ+J8gen4Mh7Z+46EvCK+2nMXGZ5OmP90hj+H1pDQBzQSkfp2lQiapR8+Eku/M7KRb1xwXkapplCun//1Gfx18Hm17SYj8THios9y+gs4owTfZtTxxl9wKK416ExsXuzDebTrpRKj/BHLzJcq71UY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749555320; c=relaxed/simple;
-	bh=Rs4xnIZjd+ldrdOnklqOAso0WkozbBsvYrtBLKDVFPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=X7g+G4YHoJSCAppWzKIv/GMLgS+VsV13230z090LR0IDwxeG5pp93kcJq0l/dk3yCBsKjdU6nruIAbCea8p9NPA/VVou+U3+3UzkzGN4hITHQK6i0f+XoUe/RAA+JM2QIJTF8wFoJsR9uK96GxRQMH+qqGcS5dwwy7vjm87/j6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nrkJTF5M; arc=fail smtp.client-ip=40.107.162.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SE/a9sQNEM8g1n2agziV8F12AhD2AN+IJXUSZewAHLaiswUGl5kPP63uhUXw48tNQ7yfjg6fwCQ1Y4XWNgFc5LSjz2EVIX+/algeqC4KmVfeOXldZZRE4e4EbJ42o0MYLo1CnqMau//TmJg7IaiXiIbxUvM+WEAGz6lRr6vrxvKgK9vcUG2dgzbtTbvBLHHrDvb7Vm/BIMccHJ0MmUKAIRayYKAC4hPd3tMdrV+0DL4ne/Go1GG9w+8mR1S+01ub8kgOsWH+7+SWyOREbBbSJaxQSvV++ipJfKTpfoaTUYt92+Ngo2djY/Ri2OA1jTmEhEQXV7CAkkTUtJShq8Purg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RP2Ywl/A+X9Nyx+k75+cftqi5I1sQrob4tF+iLwBsKw=;
- b=R/rFrHd2h/drMXd/9whJTC8SsP8vkXzAnDddmRku7Baafm8zLGUud/3AzUw4rMjoIvvMQjrpW54SrlVtJDKo0WNbKeBcGcCTRr1bDMxifDWpKGHyrAZey10rNgxFBIR3yqOm8xSEv+xYzWrgFQgY5/q+OeXgECzhRswDvVSEmqCeVclrsewaEevgSn8650eY0eISH+n9M5wzKzBfmDhe5xuzBVFxLv+gy/v2OD1XVO8N9mGqQ/+mis4gnxcy2oVsr/xGriZ4g4L2lu0ANjHZtbMgZtzWHb3oCVhDDoN2COL17vhQQyu6KYeob+zM75tzuD2/NUxvxgNQdDr/IRZO8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RP2Ywl/A+X9Nyx+k75+cftqi5I1sQrob4tF+iLwBsKw=;
- b=nrkJTF5MhMlXFSUG3Uud5vmmfth9HfDQJ3Js6HKqS370coHdVDdCo1fQ9k6nBiMEHjcLG8sghwzoNRpuAbp+ekar140W8uLsd7ZC4rk2dlxG2H+B/UeRyhy1MX7oxJ5brzEfdBZfpmBEonwY5BuzW/E6ZVPy/fh29VhF98pOX7xK4QErmxTIUbwSaeqL+xMa1kiTU7+7/W2rgz8zGEB+hygNJHIG8hs0y6epsViKvq4WNKPjqN3jFcQUAlWtQ0893XE3PcI6uHEYhKLpnqrUzsyptu2DVoZ01v4HDHNJpIxHNYo9GPt7Vpp31UbTiSXO12X5TLX2clN5AiKmSw/+ww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8829.eurprd04.prod.outlook.com (2603:10a6:102:20c::17)
- by PAXPR04MB8476.eurprd04.prod.outlook.com (2603:10a6:102:1df::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.30; Tue, 10 Jun
- 2025 11:35:15 +0000
-Received: from PAXPR04MB8829.eurprd04.prod.outlook.com
- ([fe80::cdc5:713a:9592:f7ad]) by PAXPR04MB8829.eurprd04.prod.outlook.com
- ([fe80::cdc5:713a:9592:f7ad%6]) with mapi id 15.20.8813.021; Tue, 10 Jun 2025
- 11:35:15 +0000
-Date: Tue, 10 Jun 2025 19:30:31 +0800
-From: Xu Yang <xu.yang_2@nxp.com>
-To: John Ernberg <john.ernberg@actia.se>
-Cc: Shawn Guo <shawnguo2@yeah.net>, Peter Chen <peter.chen@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: i.MX kernel hangup caused by chipidea USB gadget driver
-Message-ID: <k6j2za47cp4ccyfkevwpx2x5s4bjrxxqhqvteyspbf2n7yxcff@ccztqeuhn2di>
-References: <aEZxmlHmjeWcXiF3@dragon>
- <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
- <aEbstxkQmji4tfjf@w447anl.localdomain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEbstxkQmji4tfjf@w447anl.localdomain>
-X-ClientProxiedBy: SGXP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::23)
- To PAXPR04MB8829.eurprd04.prod.outlook.com (2603:10a6:102:20c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442CE28D838;
+	Tue, 10 Jun 2025 11:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749555140; cv=none; b=powlIvWUthN2WEA9KhrmasC0c89jQSl08AwQD8cPQ2Z8WsRpPl/3hbP0xg/SxqqUJBpQQFNZ8pKPyJmgSlyJZAkEDyNsK3+NoHaNdJNEGWSsjyHd/eEZC/58nuhwvkHof9IofCBQxwWYU2OTDIgfatBfQ1AFH1nodDe6BcP/8U0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749555140; c=relaxed/simple;
+	bh=z83vEjNU7PZVxZ77fqOHuQl5afluDn7esU1ZG3oBEag=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M6TaLiz3HlslsPTpqfrGVfSiiPmE91yikeXv5tbmNMoZC1UGf/O88fAI1Lb/BHte3SQWmsSNJJcAuE8C6+gA+fJqKxtGkd30GlwpLoIbLBtTCwGzfDK2RtZv6/uYt7t7II/YBp7dLupEUtqPMz93VCM+3egA9TKcGwg75VNTlco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+JfKwYL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB8CC4CEED;
+	Tue, 10 Jun 2025 11:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749555139;
+	bh=z83vEjNU7PZVxZ77fqOHuQl5afluDn7esU1ZG3oBEag=;
+	h=From:Date:Subject:To:Cc:From;
+	b=u+JfKwYLCVOs0sqJICb2jv3bYDLXVqUSH7OJGDjJGcn8ct/8iXhOk7OxjiQFwajT2
+	 FiPkYP4OWvDHFLIJjhq4Cs6vnhAY1Og3x4mHvhvBkby33GkTyUmFZKgq/mV/5PYe0h
+	 VnGt+x/vjGPpRd5P8u0e4uEIZ8z7V6CdlF5QlKOywqF89FMZ1tCA5MSkauuec4hiZ0
+	 M2B5mAa/JnrU1ZcYx34u4LPZheVU4kEwOpM/GLqCObEHY9kBjA83uTINLXuNTq1Tmt
+	 aBLn2JPUlXXf984TJCr2DbwedHmF7abuS5zwI/x3zmmjnhB5PDsKMOyMi9S0vhUkqZ
+	 7I9fCrmggArhQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Date: Tue, 10 Jun 2025 13:30:59 +0200
+Subject: [PATCH v2] rust: types: add FOREIGN_ALIGN to ForeignOwnable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8829:EE_|PAXPR04MB8476:EE_
-X-MS-Office365-Filtering-Correlation-Id: e76b11b3-b0fd-45aa-dcdc-08dda812dbdd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?reLDMl//Th/zkVFx4LkZMC8BjzW54PBPI7QYosFLjCErgiZpn3pIqtKG9R7h?=
- =?us-ascii?Q?00ZPxpCFhmsm3aR+NlPrQ5CPWTKL/ailvuJoVwhgHz1c7Zwj/rxQFL9T/o/b?=
- =?us-ascii?Q?3eu/tr+8E6j6VBcTkR43/zUJ224nmAWHvjTYw6Dle7tB1rtpm2Eq9i5ahL30?=
- =?us-ascii?Q?T4Fy0IdRaRNGmf22+dTdrYULZtVXfVsSsTWnAgxQSbLvcV8lKoonpsEiHNvo?=
- =?us-ascii?Q?bhF4LXu98b0QnD6QZ54VUNAwidO+ioXvqOFyT6RDgrPC71pgv12JmLkYkXtV?=
- =?us-ascii?Q?vbYLmJyHh/Y0ecQhtVMDDipW7r3tk5hi2unVrhmsJ+eL4LPwyou+XTNODLVd?=
- =?us-ascii?Q?nDe+HjNrfhTbCehTtyVO4jxMYzq6HQzukDjVgBSoqIHM8PG6Q1coiT26d2Yj?=
- =?us-ascii?Q?IgGM+ksgZoFFEDiVhJgu35iGIVw4BwmuGvm5qCvTkRb77mOYaIRwCFSyFhGO?=
- =?us-ascii?Q?v8XxRrwgTBPTKy+dUSdNBwAwk9+fX3Mabp7Ir9AT42Vd5+Qh0douVk+gcUOE?=
- =?us-ascii?Q?1VsyRZ2FjNDgQpmRioqqRDkyptGkydUmM2N8sMNkAB3WPCiKmmBNNqWBkLem?=
- =?us-ascii?Q?jhw9fqf6DMgdzFnEqJd1aJ12wTRjoq7tXSx29/SjPpsg0TNHTcTZ9oH3voJQ?=
- =?us-ascii?Q?fbOgtG0Tw2lV4b244jFAU2g7pw5tOcXMKVPt2j7MvveLj+G26kRz0MFHmmJU?=
- =?us-ascii?Q?BY+LwdjsaJ+/hpUwDe7TLajWiKSu6Si3GdwvLnyRKxgy2itedr3cRSB//lrA?=
- =?us-ascii?Q?o8NPl7aAzAulHDzupEKJb6SUYwr7X9q+tHpWhmUHI4VAcwRFJQV6ExNztjuH?=
- =?us-ascii?Q?XpvWNbYHaQ9QHKPqDvGUiQuy4tu4l+Ji4Ij8rUZot/p02Ol4q963Do0cTJXJ?=
- =?us-ascii?Q?ULCOnNZAlcVfpZjkyOn60eEDVH3yo+K2BalbuEdlaE7JINvxj4OrbnsJ2moy?=
- =?us-ascii?Q?UHqhipxmnCH/lSo3081fsm+WHU8qECzJHLdVX2iUFDEV/OUs+9w14iaDuEDa?=
- =?us-ascii?Q?98GuNtlR+aNNXKCKNembfqDlOfO+MRv0P9jnC857PkP0bsEexeBHhvd+Ft61?=
- =?us-ascii?Q?JlM3Vr62gLiDnwWeJBwTikHmILd4qnq1fQ98JjMBb2AUuIpheMoBvRUunexV?=
- =?us-ascii?Q?FH+ELGR3NZvNxZQWWo64+2mQtNRtcTyMcZ4wOTi/IyNuTvAPTT6Lwd8v0iUV?=
- =?us-ascii?Q?/d4R1+4AK5d7fXwMqqwTHu1u0O/ZbJkXclwb+vsdYP71KxkiLsR9LmmfZu4C?=
- =?us-ascii?Q?0ZLO/DBRQ1hgknX3ofbd/0sxspVmKkXzKChNQxTdk4HuSrKGTB0VCXh4my1r?=
- =?us-ascii?Q?4G0XOxy1peKhmXfQ+aI34ZLwJHosi9DwTffs2naBkpOKzg+YEzRK1D92zheS?=
- =?us-ascii?Q?vuz1OJ249xH3mxUO3L3HN64Q5D4gkOwN7FpTTAecnAUDAYxbnlux5DQvWNaw?=
- =?us-ascii?Q?2txcoZ4wc90xQCkIsmImMmFfrLcfnsggnvi0Rs6/SEIYcXUGopPIQt9iRqcg?=
- =?us-ascii?Q?PsPbQ38VUS4IBWU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8829.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MgNEGQHbYbJxAc1xeVZ0QINxz/lDBL//EEFMj6MdCRCayIuZGv99V1nllJMp?=
- =?us-ascii?Q?2yoNYaVobu6xAQDgpWjKh0DuMPVlts2O7GoKuQJMibh5+HCyO5m/m90u56GG?=
- =?us-ascii?Q?cBJCVGJrYHYBcY17EvLa3agHv3soy50cMSSLFIklgXnOls0ecCYtHMrGzTEh?=
- =?us-ascii?Q?BI5nzPAriwZyMBXCrf/oDCKftI9yJi+RbM3/VgmIzRhNR4SOoyisEEFvE/HS?=
- =?us-ascii?Q?eOpcnT8wJ2H2K+tHs6bTfwnkI8UFPKBHxx2k6LqD0of88nUH60U752JHNPwm?=
- =?us-ascii?Q?XhIFrdjV3SdBUDgaoWy/1rw+8wVyLN8Sw4YjyS8ZIprFfgGXRllKMjC9a8s+?=
- =?us-ascii?Q?+Ywfb0ATWBclTIKcuqfUc6txtJZPRbWfIGH/v5VHgC8rnk1be3vFXq0C0C/t?=
- =?us-ascii?Q?/tsrZANzE4zA8W8VqJcYtbEu8GyMLqlo01mu2qOKd1+3LfZFUSNTnnFZZn5Y?=
- =?us-ascii?Q?4aHM2ms6yfDgszvePI0cWJ0OU8TwZ84PRa9hrRjNCIevNqhZbLA5GWHH90hF?=
- =?us-ascii?Q?LayuRq7X4yl1JrnEMrvPhpyLZqPPVAzQUq2XIQV1bL0906r7STfBJSnOGW98?=
- =?us-ascii?Q?X7z6zAUAhbZniJg4w3jYnprfusG0G7xhzv5rVoma7fBoJtSSuoPwzfmkjNgs?=
- =?us-ascii?Q?uEEpYXS5p7JuA6IG44zajHMl9XgrqoK93qVcnBy225ygrAgbt/DI3YyzVvRs?=
- =?us-ascii?Q?G21DH0sB6Kxi5tdc2h+dgpReDdwRt1I++BfeveYiO5do0u8frMJP80vSpopR?=
- =?us-ascii?Q?FIHly6Ov73+86bc3Ep192mnKDM81GPmKaye4VIL9v97gHf7G17WeZobh/m6E?=
- =?us-ascii?Q?wj663z53vzcmDCFT8yxyOqsEQMfPRqcHsnVafdI6q2odvGhji59VV3VyBvE0?=
- =?us-ascii?Q?wz0N6KMSZsx19vG/YQzLTiPuEUYMTmUjjLffZhxSO/9WZKDhgEI7YCkTSqfr?=
- =?us-ascii?Q?ijSUK+/kqTCab+rpzigmPzd7KzkkLAT2QaLowCoPQ+T9VClDZbsQ0Fg9uu5R?=
- =?us-ascii?Q?5PDpW75MCFq24sFQP5JdQekxBBxX2P60t93gKUT4I+/GMm//Pxa7JrJJeFsM?=
- =?us-ascii?Q?Adu4hfFb2zFmxhaEt/JP7H8rqQLSmbD0eXeYKfFwxAuI3tveTCxNn4eSOESi?=
- =?us-ascii?Q?AxaBtv0WOdmpt7oU4VkwyL4U1WmbF2OKafEsxTxZ+QG2I+tIezSo1j0DEOqd?=
- =?us-ascii?Q?7meYjX6s5HKY3+VPXyErHdpGaOBgrTZuxVvdj30uR0BoHmTPS7uCJdovPXXB?=
- =?us-ascii?Q?7+wfTOZtbdszpSjOZBaUlHu3Uvl6H1b+iJQBmuR/CFrgreQXwPUOsS13erXG?=
- =?us-ascii?Q?Cy6U1Jrjrc7r40ZtZQWfV6Nk3Ol1lQFbvv9uEiUdhYfwO6ISvmay/4od0IJs?=
- =?us-ascii?Q?KDngcaFn/tu9gWL8KHOrOM+wpMku34EuV7rdaa4V8rr32mxq+tUrKHWNzRj6?=
- =?us-ascii?Q?shhq5oYB2/d9byFTR24D3TCnvW++GtWDrTwNlLZ9suLNR2d9z49a8Xs5Lut8?=
- =?us-ascii?Q?u80ghDlGmCYpnX6do2+QpkD3AN3r7LkIS2ZycdNe8nsxZ+71jtDxYHzQOXow?=
- =?us-ascii?Q?VDXj65YlS4n70WroQO06VY95daOhigKf3twudqbY?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e76b11b3-b0fd-45aa-dcdc-08dda812dbdd
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8829.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 11:35:15.2667
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d+n7352/ZZ176h8cTSD7M/vqXONZOcHoa0Fgp1QeSpEZrDgu3q7S+82gEcbKLRUNXPOK3IqIpJB1Mr0vAindSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8476
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250610-pointed-to-v2-1-fad8f92cf1e5@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAHIXSGgC/23MQQrCMBCF4auUWRuZGUhFV95DuijptB2UpCQhK
+ CV3N3bt8n/wvh2SRJUEt26HKEWTBt+CTx24dfSLGJ1aAyNb7NGaLajPMpkcTE8XHAXJMs7QDlu
+ UWd8H9hhar5pyiJ/DLvRb/zKFDBkREu75Suzc/SnRy+sc4gJDrfULps02PaUAAAA=
+X-Change-ID: 20250605-pointed-to-6170ae01520f
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Tamir Duberstein <tamird@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=20197;
+ i=a.hindborg@kernel.org; h=from:subject:message-id;
+ bh=z83vEjNU7PZVxZ77fqOHuQl5afluDn7esU1ZG3oBEag=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoSBd5TwRMJdFbALhiXVxXeIZVaocq1ht8bW3fL
+ RSl2/CpDo2JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaEgXeQAKCRDhuBo+eShj
+ d6RCD/0bxJE7h0e0DvGMykdsSD0YmDOfuePy0etW8NOUoR0FM7+0WJKkAk0cNdgLQpsA1gQYNoz
+ E78TR+ou4RRZV/QMWL55yD6SF7cwnl79sBCkIQ9CPqMFiA4O0oENYIjxYrc0saub9Kwey6dT8s5
+ Tc3N3WPG6nuMnCFtQU0M/s+YkWVaBgfeLgLjfVETAGrPaQvjPn0C2AF3i4DUeFsGpIfAR6ekfc9
+ tx6P+CuXAko1FBai6Zmk+EHKObI1p3ihZEwEkkXg2EUE8l11SMvq7uTcqXv4l44ovZFhiqU1d34
+ HFugFV2Rqwek2ri9oV6tVTyq158HPAuntj6WOXdzn0508LSxPzmPv0W/Q34jOMhXILOZXGWxB7g
+ SpMky/GPWi4W46R+YK0Ylm71WIyo4SS1fzjdyP32cTKvd4Aqo6qUU+MLlsftZh8oM+pujuQ4IY7
+ pW1916+Z6GdbSC5yoPfXBDMgWd1vZAISX+kWUSH8J7HTqy+eoKh/ekMVFOHgxfmYA1rpo884d2m
+ G9OBDKWKTGQjgbMcAk7it3mjOULUHSDovLOJUIT3BG67i2LfnUt2SYCfYmvjcqfVgWbluvPiED5
+ rY6pYmh/wFyMCkphUu6Wbtug/GNGbURBPm61A11HhVOtTs8gNUc16InB1aZhOI+TSXpqCTv6XHI
+ 85RuZMWdwxUdeIA==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Hi John,
+The current implementation of `ForeignOwnable` is leaking the type of the
+opaque pointer to consumers of the API. This allows consumers of the opaque
+pointer to rely on the information that can be extracted from the pointer
+type.
 
-On Mon, Jun 09, 2025 at 02:17:30PM +0000, John Ernberg wrote:
-> Hi Shawn, Xu,
-> 
-> On Mon, Jun 09, 2025 at 07:53:22PM +0800, Xu Yang wrote:
-> > Hi Shawn,
-> > 
-> > Thanks for your reports!
-> > 
-> > On Mon, Jun 09, 2025 at 01:31:06PM +0800, Shawn Guo wrote:
-> > > Hi Xu, Peter,
-> > > 
-> > > I'm seeing a kernel hangup on imx8mm-evk board.  It happens when:
-> > > 
-> > >  - USB gadget is enabled as Ethernet
-> > >  - There is data transfer over USB Ethernet
-> > >  - Device is going in/out suspend
-> > > 
-> > > A simple way to reproduce the issue could be:
-> > > 
-> > >  1. Copy a big file (like 500MB) from host PC to device with scp
-> > > 
-> > >  2. While the file copy is ongoing, suspend & resume the device like:
-> > > 
-> > >     $ echo +3 > /sys/class/rtc/rtc0/wakealarm; echo mem > /sys/power/state
-> > > 
-> > >  3. The device will hang up there
-> > > 
-> > > I reproduced on the following kernels:
-> > > 
-> > >  - Mainline kernel
-> > >  - NXP kernel lf-6.6.y
-> > >  - NXP kernel lf-6.12.y
-> > > 
-> > > But NXP kernel lf-6.1.y doesn't have this problem.  I tracked it down to
-> > > Peter's commit [1] on lf-6.1.y, and found that the gadget disconnect &
-> > > connect calls got lost from suspend & resume hooks, when the commit were
-> > > split and pushed upstream.  I confirm that adding the calls back fixes
-> > > the hangup.
-> 
-> We probably ran into the same problem trying to bring onboard 6.12, going
-> from 6.1, on iMX8QXP. I managed to trace the hang to EP priming through a
-> combination of debug tracing and BUG_ON experiments. See if it starts
-> splatin with the below change.
-> 
-> ----------------->8------------------
-> 
-> >From 092599ab6f9e20412a7ca1eb118dd2be80cd18ff Mon Sep 17 00:00:00 2001
-> From: John Ernberg <john.ernberg@actia.se>
-> Date: Mon, 5 May 2025 09:09:01 +0200
-> Subject: [PATCH] USB: ci: gadget: Panic if priming when gadget off
-> 
-> ---
->  drivers/usb/chipidea/udc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> index 2fea263a5e30..544aa4fa2d1d 100644
-> --- a/drivers/usb/chipidea/udc.c
-> +++ b/drivers/usb/chipidea/udc.c
-> @@ -203,8 +203,10 @@ static int hw_ep_prime(struct ci_hdrc *ci, int num, int dir, int is_ctrl)
->  
->     hw_write(ci, OP_ENDPTPRIME, ~0, BIT(n));
->  
-> -   while (hw_read(ci, OP_ENDPTPRIME, BIT(n)))
-> +   while (hw_read(ci, OP_ENDPTPRIME, BIT(n))) {
->         cpu_relax();
-> +       BUG_ON(dir == TX && !hw_read(ci, OP_ENDPTCTRL + num, ENDPTCTRL_TXE));
-> +   }
->     if (is_ctrl && dir == RX && hw_read(ci, OP_ENDPTSETUPSTAT, BIT(num)))
->         return -EAGAIN;
->  
-> ----------------->8------------------
-> 
-> On the iMX8QXP you may additionally run into asychronous aborts and SError
-> due to resource being disabled.
-> 
-> > > 
-> > > ---8<--------------------
-> > > 
-> > > diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> > > index 8a9b31fd5c89..72329a7eac4d 100644
-> > > --- a/drivers/usb/chipidea/udc.c
-> > > +++ b/drivers/usb/chipidea/udc.c
-> > > @@ -2374,6 +2374,9 @@ static void udc_suspend(struct ci_hdrc *ci)
-> > >          */
-> > >         if (hw_read(ci, OP_ENDPTLISTADDR, ~0) == 0)
-> > >                 hw_write(ci, OP_ENDPTLISTADDR, ~0, ~0);
-> > > +
-> > > +       if (ci->driver && ci->vbus_active && (ci->gadget.state != USB_STATE_SUSPENDED))
-> > > +               usb_gadget_disconnect(&ci->gadget);
-> > >  }
-> > >  
-> > >  static void udc_resume(struct ci_hdrc *ci, bool power_lost)
-> > > @@ -2384,6 +2387,9 @@ static void udc_resume(struct ci_hdrc *ci, bool power_lost)
-> > >                                         OTGSC_BSVIS | OTGSC_BSVIE);
-> > >                 if (ci->vbus_active)
-> > >                         usb_gadget_vbus_disconnect(&ci->gadget);
-> > > +       } else {
-> > > +               if (ci->driver && ci->vbus_active)
-> > > +                       usb_gadget_connect(&ci->gadget);
-> > >         }
-> > >  
-> > >         /* Restore value 0 if it was set for power lost check */
-> > > 
-> > > ---->8------------------
+To prevent this, change the API to the version suggested by Maira
+Canal (link below): Remove `ForeignOwnable::PointedTo` in favor of a
+constant, which specifies the alignment of the pointers returned by
+`into_foreign`.
 
-Does above change work for you?
+With this change, `ArcInner` no longer needs `pub` visibility, so change it
+to private.
 
-> > 
-> > During the scp process, the usb host won't put usb device to suspend state.
-> > In current design, then the ether driver doesn't know the system has
-> > suspended after echo mem. The root cause is that ether driver is still tring
-> > to queue usb request after usb controller has suspended where usb clock is off,
-> > then the system hang.
-> > 
-> > With the above changes, I think the ether driver will fail to eth_start_xmit() 
-> > at an ealier stage, so the issue can't be triggered.
-> > 
-> > I think the ether driver needs call gether_suspend() accordingly, to do this,
-> > the controller driver need explicitly call suspend() function when it's going
-> > to be suspended. Could you check whether below patch fix the issue?
-> > 
-> >  ---8<--------------------
-> > 
-> > diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> > index 8a9b31fd5c89..27a7674ed62c 100644
-> > --- a/drivers/usb/chipidea/udc.c
-> > +++ b/drivers/usb/chipidea/udc.c
-> > @@ -2367,6 +2367,8 @@ static void udc_id_switch_for_host(struct ci_hdrc *ci)
-> >  #ifdef CONFIG_PM_SLEEP
-> >  static void udc_suspend(struct ci_hdrc *ci)
-> >  {
-> > +       ci->driver->suspend(&ci->gadget);
-> > +
-> >         /*
-> >          * Set OP_ENDPTLISTADDR to be non-zero for
-> >          * checking if controller resume from power lost
-> > @@ -2389,6 +2391,8 @@ static void udc_resume(struct ci_hdrc *ci, bool power_lost)
-> >         /* Restore value 0 if it was set for power lost check */
-> >         if (hw_read(ci, OP_ENDPTLISTADDR, ~0) == 0xFFFFFFFF)
-> >                 hw_write(ci, OP_ENDPTLISTADDR, ~0, 0);
-> > +
-> > +       ci->driver->resume(&ci->gadget);
-> >  }
-> >  #endif
-> > 
-> >  ---->8------------------
-> 
-> I tested this during my debugging and it doesn't work because suspend/resume
-> callbacks on the gadgets are designed for USB triggered suspend/resume and
-> not system triggered suspend/resume. Meaning that the link will just be
-> woken up again by the next USB transfer.
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Suggested-by: Maíra Canal <mcanal@igalia.com>
+Link: https://lore.kernel.org/r/20240309235927.168915-3-mcanal@igalia.com
+Acked-by: Danilo Krummrich <dakr@kernel.org>
+Reviewed-by: Benno Lossin <lossin@kernel.org>
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+Changes in v2:
+- Replace qualified path with `use` for `crate::ffi::c_void`.
+- Fix a typo and rephrase docs for `ForeignOwnable`.
+- Reorganize docs for `ForeignOwnable::into_foreign`.
+- Link to v1: https://lore.kernel.org/r/20250605-pointed-to-v1-1-ee1e262912cc@kernel.org
+---
+ rust/kernel/alloc/kbox.rs | 41 +++++++++++++++++++++++------------------
+ rust/kernel/miscdevice.rs | 10 +++++-----
+ rust/kernel/pci.rs        |  2 +-
+ rust/kernel/platform.rs   |  2 +-
+ rust/kernel/sync/arc.rs   | 23 ++++++++++++-----------
+ rust/kernel/types.rs      | 45 ++++++++++++++++++++++-----------------------
+ rust/kernel/xarray.rs     |  8 ++++----
+ 7 files changed, 68 insertions(+), 63 deletions(-)
 
-Okay. Thanks for your feedback.
+diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+index c386ff771d50..bffe72f44cb3 100644
+--- a/rust/kernel/alloc/kbox.rs
++++ b/rust/kernel/alloc/kbox.rs
+@@ -15,6 +15,7 @@
+ use core::ptr::NonNull;
+ use core::result::Result;
+ 
++use crate::ffi::c_void;
+ use crate::init::InPlaceInit;
+ use crate::types::ForeignOwnable;
+ use pin_init::{InPlaceWrite, Init, PinInit, ZeroableOption};
+@@ -398,70 +399,74 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
+     }
+ }
+ 
+-// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
++// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
++// pointer to `T`.
+ unsafe impl<T: 'static, A> ForeignOwnable for Box<T, A>
+ where
+     A: Allocator,
+ {
+-    type PointedTo = T;
++    const FOREIGN_ALIGN: usize = core::mem::align_of::<T>();
+     type Borrowed<'a> = &'a T;
+     type BorrowedMut<'a> = &'a mut T;
+ 
+-    fn into_foreign(self) -> *mut Self::PointedTo {
+-        Box::into_raw(self)
++    fn into_foreign(self) -> *mut c_void {
++        Box::into_raw(self).cast()
+     }
+ 
+-    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
++    unsafe fn from_foreign(ptr: *mut c_void) -> Self {
+         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+         // call to `Self::into_foreign`.
+-        unsafe { Box::from_raw(ptr) }
++        unsafe { Box::from_raw(ptr.cast()) }
+     }
+ 
+-    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> &'a T {
++    unsafe fn borrow<'a>(ptr: *mut c_void) -> &'a T {
+         // SAFETY: The safety requirements of this method ensure that the object remains alive and
+         // immutable for the duration of 'a.
+-        unsafe { &*ptr }
++        unsafe { &*ptr.cast() }
+     }
+ 
+-    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> &'a mut T {
++    unsafe fn borrow_mut<'a>(ptr: *mut c_void) -> &'a mut T {
++        let ptr = ptr.cast();
+         // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
+         // nothing else will access the value for the duration of 'a.
+         unsafe { &mut *ptr }
+     }
+ }
+ 
+-// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
++// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
++// pointer to `T`.
+ unsafe impl<T: 'static, A> ForeignOwnable for Pin<Box<T, A>>
+ where
+     A: Allocator,
+ {
+-    type PointedTo = T;
++    const FOREIGN_ALIGN: usize = core::mem::align_of::<T>();
+     type Borrowed<'a> = Pin<&'a T>;
+     type BorrowedMut<'a> = Pin<&'a mut T>;
+ 
+-    fn into_foreign(self) -> *mut Self::PointedTo {
++    fn into_foreign(self) -> *mut c_void {
+         // SAFETY: We are still treating the box as pinned.
+-        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) })
++        Box::into_raw(unsafe { Pin::into_inner_unchecked(self) }).cast()
+     }
+ 
+-    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
++    unsafe fn from_foreign(ptr: *mut c_void) -> Self {
+         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+         // call to `Self::into_foreign`.
+-        unsafe { Pin::new_unchecked(Box::from_raw(ptr)) }
++        unsafe { Pin::new_unchecked(Box::from_raw(ptr.cast())) }
+     }
+ 
+-    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Pin<&'a T> {
++    unsafe fn borrow<'a>(ptr: *mut c_void) -> Pin<&'a T> {
+         // SAFETY: The safety requirements for this function ensure that the object is still alive,
+         // so it is safe to dereference the raw pointer.
+         // The safety requirements of `from_foreign` also ensure that the object remains alive for
+         // the lifetime of the returned value.
+-        let r = unsafe { &*ptr };
++        let r = unsafe { &*ptr.cast() };
+ 
+         // SAFETY: This pointer originates from a `Pin<Box<T>>`.
+         unsafe { Pin::new_unchecked(r) }
+     }
+ 
+-    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> Pin<&'a mut T> {
++    unsafe fn borrow_mut<'a>(ptr: *mut c_void) -> Pin<&'a mut T> {
++        let ptr = ptr.cast();
+         // SAFETY: The safety requirements for this function ensure that the object is still alive,
+         // so it is safe to dereference the raw pointer.
+         // The safety requirements of `from_foreign` also ensure that the object remains alive for
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index f33c13c3ff97..9b46c3f7ac65 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -217,7 +217,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         // type.
+         //
+         // SAFETY: The open call of a file can access the private data.
+-        unsafe { (*raw_file).private_data = ptr.into_foreign().cast() };
++        unsafe { (*raw_file).private_data = ptr.into_foreign() };
+ 
+         0
+     }
+@@ -228,7 +228,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+     /// must be associated with a `MiscDeviceRegistration<T>`.
+     unsafe extern "C" fn release(_inode: *mut bindings::inode, file: *mut bindings::file) -> c_int {
+         // SAFETY: The release call of a file owns the private data.
+-        let private = unsafe { (*file).private_data }.cast();
++        let private = unsafe { (*file).private_data };
+         // SAFETY: The release call of a file owns the private data.
+         let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
+ 
+@@ -272,7 +272,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
+     unsafe extern "C" fn ioctl(file: *mut bindings::file, cmd: c_uint, arg: c_ulong) -> c_long {
+         // SAFETY: The ioctl call of a file can access the private data.
+-        let private = unsafe { (*file).private_data }.cast();
++        let private = unsafe { (*file).private_data };
+         // SAFETY: Ioctl calls can borrow the private data of the file.
+         let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+ 
+@@ -297,7 +297,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         arg: c_ulong,
+     ) -> c_long {
+         // SAFETY: The compat ioctl call of a file can access the private data.
+-        let private = unsafe { (*file).private_data }.cast();
++        let private = unsafe { (*file).private_data };
+         // SAFETY: Ioctl calls can borrow the private data of the file.
+         let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+ 
+@@ -318,7 +318,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+     /// - `seq_file` must be a valid `struct seq_file` that we can write to.
+     unsafe extern "C" fn show_fdinfo(seq_file: *mut bindings::seq_file, file: *mut bindings::file) {
+         // SAFETY: The release call of a file owns the private data.
+-        let private = unsafe { (*file).private_data }.cast();
++        let private = unsafe { (*file).private_data };
+         // SAFETY: Ioctl calls can borrow the private data of the file.
+         let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+         // SAFETY:
+diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+index 8435f8132e38..0b4b52804250 100644
+--- a/rust/kernel/pci.rs
++++ b/rust/kernel/pci.rs
+@@ -89,7 +89,7 @@ extern "C" fn probe_callback(
+     extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
+         // SAFETY: The PCI bus only ever calls the remove callback with a valid pointer to a
+         // `struct pci_dev`.
+-        let ptr = unsafe { bindings::pci_get_drvdata(pdev) }.cast();
++        let ptr = unsafe { bindings::pci_get_drvdata(pdev) };
+ 
+         // SAFETY: `remove_callback` is only ever called after a successful call to
+         // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 5b21fa517e55..4e37c5ab014d 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -79,7 +79,7 @@ extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ff
+ 
+     extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
+         // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
+-        let ptr = unsafe { bindings::platform_get_drvdata(pdev) }.cast();
++        let ptr = unsafe { bindings::platform_get_drvdata(pdev) };
+ 
+         // SAFETY: `remove_callback` is only ever called after a successful call to
+         // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index c7af0aa48a0a..6603079b05af 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -140,10 +140,9 @@ pub struct Arc<T: ?Sized> {
+     _p: PhantomData<ArcInner<T>>,
+ }
+ 
+-#[doc(hidden)]
+ #[pin_data]
+ #[repr(C)]
+-pub struct ArcInner<T: ?Sized> {
++struct ArcInner<T: ?Sized> {
+     refcount: Opaque<bindings::refcount_t>,
+     data: T,
+ }
+@@ -372,20 +371,22 @@ pub fn into_unique_or_drop(self) -> Option<Pin<UniqueArc<T>>> {
+     }
+ }
+ 
+-// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
++// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
++// pointer to `ArcInner<T>`.
+ unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
+-    type PointedTo = ArcInner<T>;
++    const FOREIGN_ALIGN: usize = core::mem::align_of::<ArcInner<T>>();
++
+     type Borrowed<'a> = ArcBorrow<'a, T>;
+     type BorrowedMut<'a> = Self::Borrowed<'a>;
+ 
+-    fn into_foreign(self) -> *mut Self::PointedTo {
+-        ManuallyDrop::new(self).ptr.as_ptr()
++    fn into_foreign(self) -> *mut crate::ffi::c_void {
++        ManuallyDrop::new(self).ptr.as_ptr().cast()
+     }
+ 
+-    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
++    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
+         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+         // call to `Self::into_foreign`.
+-        let inner = unsafe { NonNull::new_unchecked(ptr) };
++        let inner = unsafe { NonNull::new_unchecked(ptr.cast::<ArcInner<T>>()) };
+ 
+         // SAFETY: By the safety requirement of this function, we know that `ptr` came from
+         // a previous call to `Arc::into_foreign`, which guarantees that `ptr` is valid and
+@@ -393,17 +394,17 @@ unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
+         unsafe { Self::from_inner(inner) }
+     }
+ 
+-    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, T> {
++    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> ArcBorrow<'a, T> {
+         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+         // call to `Self::into_foreign`.
+-        let inner = unsafe { NonNull::new_unchecked(ptr) };
++        let inner = unsafe { NonNull::new_unchecked(ptr.cast::<ArcInner<T>>()) };
+ 
+         // SAFETY: The safety requirements of `from_foreign` ensure that the object remains alive
+         // for the lifetime of the returned value.
+         unsafe { ArcBorrow::new(inner) }
+     }
+ 
+-    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, T> {
++    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> ArcBorrow<'a, T> {
+         // SAFETY: The safety requirements for `borrow_mut` are a superset of the safety
+         // requirements for `borrow`.
+         unsafe { Self::borrow(ptr) }
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 22985b6f6982..0ccef6b5a20a 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -21,15 +21,11 @@
+ ///
+ /// # Safety
+ ///
+-/// Implementers must ensure that [`into_foreign`] returns a pointer which meets the alignment
+-/// requirements of [`PointedTo`].
+-///
+-/// [`into_foreign`]: Self::into_foreign
+-/// [`PointedTo`]: Self::PointedTo
++/// Implementers must ensure that [`Self::into_foreign`] returns pointers aligned to
++/// [`Self::FOREIGN_ALIGN`].
+ pub unsafe trait ForeignOwnable: Sized {
+-    /// Type used when the value is foreign-owned. In practical terms only defines the alignment of
+-    /// the pointer.
+-    type PointedTo;
++    /// The alignment of pointers returned by `into_foreign`.
++    const FOREIGN_ALIGN: usize;
+ 
+     /// Type used to immutably borrow a value that is currently foreign-owned.
+     type Borrowed<'a>;
+@@ -39,18 +35,20 @@ pub unsafe trait ForeignOwnable: Sized {
+ 
+     /// Converts a Rust-owned object to a foreign-owned one.
+     ///
++    /// The foreign representation is a pointer to void. Aside from the guarantees listed below,
++    /// there are no other guarantees for this pointer. For example, it might be invalid, dangling
++    /// or pointing to uninitialized memory. Using it in any way except for [`from_foreign`],
++    /// [`try_from_foreign`], [`borrow`], or [`borrow_mut`] can result in undefined behavior.
++    ///
+     /// # Guarantees
+     ///
+-    /// The return value is guaranteed to be well-aligned, but there are no other guarantees for
+-    /// this pointer. For example, it might be null, dangling, or point to uninitialized memory.
+-    /// Using it in any way except for [`ForeignOwnable::from_foreign`], [`ForeignOwnable::borrow`],
+-    /// [`ForeignOwnable::try_from_foreign`] can result in undefined behavior.
++    /// - Minimum alignment of returned pointer is [`Self::FOREIGN_ALIGN`].
+     ///
+     /// [`from_foreign`]: Self::from_foreign
+     /// [`try_from_foreign`]: Self::try_from_foreign
+     /// [`borrow`]: Self::borrow
+     /// [`borrow_mut`]: Self::borrow_mut
+-    fn into_foreign(self) -> *mut Self::PointedTo;
++    fn into_foreign(self) -> *mut crate::ffi::c_void;
+ 
+     /// Converts a foreign-owned object back to a Rust-owned one.
+     ///
+@@ -60,7 +58,7 @@ pub unsafe trait ForeignOwnable: Sized {
+     /// must not be passed to `from_foreign` more than once.
+     ///
+     /// [`into_foreign`]: Self::into_foreign
+-    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self;
++    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self;
+ 
+     /// Tries to convert a foreign-owned object back to a Rust-owned one.
+     ///
+@@ -72,7 +70,7 @@ pub unsafe trait ForeignOwnable: Sized {
+     /// `ptr` must either be null or satisfy the safety requirements for [`from_foreign`].
+     ///
+     /// [`from_foreign`]: Self::from_foreign
+-    unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
++    unsafe fn try_from_foreign(ptr: *mut crate::ffi::c_void) -> Option<Self> {
+         if ptr.is_null() {
+             None
+         } else {
+@@ -95,7 +93,7 @@ unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
+     ///
+     /// [`into_foreign`]: Self::into_foreign
+     /// [`from_foreign`]: Self::from_foreign
+-    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Self::Borrowed<'a>;
++    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> Self::Borrowed<'a>;
+ 
+     /// Borrows a foreign-owned object mutably.
+     ///
+@@ -123,23 +121,24 @@ unsafe fn try_from_foreign(ptr: *mut Self::PointedTo) -> Option<Self> {
+     /// [`from_foreign`]: Self::from_foreign
+     /// [`borrow`]: Self::borrow
+     /// [`Arc`]: crate::sync::Arc
+-    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> Self::BorrowedMut<'a>;
++    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> Self::BorrowedMut<'a>;
+ }
+ 
+-// SAFETY: The `into_foreign` function returns a pointer that is dangling, but well-aligned.
++// SAFETY: The pointer returned by `into_foreign` comes from a well aligned
++// pointer to `()`.
+ unsafe impl ForeignOwnable for () {
+-    type PointedTo = ();
++    const FOREIGN_ALIGN: usize = core::mem::align_of::<()>();
+     type Borrowed<'a> = ();
+     type BorrowedMut<'a> = ();
+ 
+-    fn into_foreign(self) -> *mut Self::PointedTo {
++    fn into_foreign(self) -> *mut crate::ffi::c_void {
+         core::ptr::NonNull::dangling().as_ptr()
+     }
+ 
+-    unsafe fn from_foreign(_: *mut Self::PointedTo) -> Self {}
++    unsafe fn from_foreign(_: *mut crate::ffi::c_void) -> Self {}
+ 
+-    unsafe fn borrow<'a>(_: *mut Self::PointedTo) -> Self::Borrowed<'a> {}
+-    unsafe fn borrow_mut<'a>(_: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {}
++    unsafe fn borrow<'a>(_: *mut crate::ffi::c_void) -> Self::Borrowed<'a> {}
++    unsafe fn borrow_mut<'a>(_: *mut crate::ffi::c_void) -> Self::BorrowedMut<'a> {}
+ }
+ 
+ /// Runs a cleanup function/closure when dropped.
+diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+index 75719e7bb491..35f4357fc03a 100644
+--- a/rust/kernel/xarray.rs
++++ b/rust/kernel/xarray.rs
+@@ -9,7 +9,7 @@
+     error::{Error, Result},
+     types::{ForeignOwnable, NotThreadSafe, Opaque},
+ };
+-use core::{iter, marker::PhantomData, mem, pin::Pin, ptr::NonNull};
++use core::{iter, marker::PhantomData, pin::Pin, ptr::NonNull};
+ use pin_init::{pin_data, pin_init, pinned_drop, PinInit};
+ 
+ /// An array which efficiently maps sparse integer indices to owned objects.
+@@ -101,7 +101,7 @@ pub fn new(kind: AllocKind) -> impl PinInit<Self> {
+         })
+     }
+ 
+-    fn iter(&self) -> impl Iterator<Item = NonNull<T::PointedTo>> + '_ {
++    fn iter(&self) -> impl Iterator<Item = NonNull<crate::ffi::c_void>> + '_ {
+         let mut index = 0;
+ 
+         // SAFETY: `self.xa` is always valid by the type invariant.
+@@ -179,7 +179,7 @@ fn from(value: StoreError<T>) -> Self {
+ impl<'a, T: ForeignOwnable> Guard<'a, T> {
+     fn load<F, U>(&self, index: usize, f: F) -> Option<U>
+     where
+-        F: FnOnce(NonNull<T::PointedTo>) -> U,
++        F: FnOnce(NonNull<crate::ffi::c_void>) -> U,
+     {
+         // SAFETY: `self.xa.xa` is always valid by the type invariant.
+         let ptr = unsafe { bindings::xa_load(self.xa.xa.get(), index) };
+@@ -230,7 +230,7 @@ pub fn store(
+         gfp: alloc::Flags,
+     ) -> Result<Option<T>, StoreError<T>> {
+         build_assert!(
+-            mem::align_of::<T::PointedTo>() >= 4,
++            T::FOREIGN_ALIGN >= 4,
+             "pointers stored in XArray must be 4-byte aligned"
+         );
+         let new = value.into_foreign();
 
-Thanks,
-Xu Yang
+---
+base-commit: ec7714e4947909190ffb3041a03311a975350fe0
+change-id: 20250605-pointed-to-6170ae01520f
 
-> 
-> > 
-> > Thanks,
-> > Xu Yang
-> > 
-> > > 
-> > > But it's unclear to me why the hangup happens and how the change above
-> > > fix the problem.  Do you guys have any insight here?o
-> > > 
-> > > Shawn
-> > > 
-> > > [1] https://github.com/reMarkable/linux-imx/commit/0791d25578cb0e46fd93ae7a3c36ff7a424f3547
-> > > 
-> 
-> I didn't find the missing lines of code that Shawn found and instead ended
-> up looking at why the UDC core isn't suspending the gadgets when the system
-> is going to suspend. Because to me it feels like a job of UDC core.
-> 
-> I ended up with the monstrosity below that I have been intended to send as
-> an RFC when I'm done thinking about it. It currently applies on 6.12.20.
-> 
-> But since Shawn also ran into the problem I'm including it for the sake of
-> discussion about what the correct path of solving it is.
-> 
-> Best regards // John Ernberg
-> 
-> ----------------->8------------------
-> 
-> >From 3c1d167f1eff0bd010b797530e3d03f6939db322 Mon Sep 17 00:00:00 2001
-> From: John Ernberg <john.ernberg@actia.se>
-> Date: Mon, 5 May 2025 09:09:50 +0200
-> Subject: [PATCH] WIP: Suspend getherlink on system suspend
-> 
-> ---
->  drivers/usb/gadget/composite.c        | 68 +++++++++++++++++++++++++++
->  drivers/usb/gadget/configfs.c         | 53 +++++++++++++++++++++
->  drivers/usb/gadget/function/f_ecm.c   | 22 +++++++++
->  drivers/usb/gadget/function/u_ether.c | 34 ++++++++++++++
->  drivers/usb/gadget/function/u_ether.h |  2 +
->  drivers/usb/gadget/udc/core.c         | 29 ++++++++++++
->  include/linux/usb/composite.h         |  4 ++
->  include/linux/usb/gadget.h            |  2 +
->  8 files changed, 214 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-> index 8402a86176f4..f1ed1db1e1d0 100644
-> --- a/drivers/usb/gadget/composite.c
-> +++ b/drivers/usb/gadget/composite.c
-> @@ -2669,6 +2669,72 @@ void composite_resume(struct usb_gadget *gadget)
->  	cdev->suspended = 0;
->  }
->  
-> +int composite_system_suspend(struct usb_gadget *gadget)
-> +{
-> +	struct usb_composite_dev	*cdev = get_gadget_data(gadget);
-> +	struct usb_function		*f;
-> +	int				ret;
-> +
-> +	DBG(cdev, "system suspend\n");
-> +	if (cdev->config) {
-> +		list_for_each_entry(f, &cdev->config->functions, list) {
-> +			if (f->system_suspend) {
-> +				ret = f->system_suspend(f);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	if (cdev->config &&
-> +	    cdev->config->bmAttributes & USB_CONFIG_ATT_SELFPOWER)
-> +		usb_gadget_set_selfpowered(gadget);
-> +
-> +	usb_gadget_vbus_draw(gadget, 2);
-> +
-> +	return 0;
-> +}
-> +
-> +int composite_system_resume(struct usb_gadget *gadget)
-> +{
-> +	struct usb_composite_dev	*cdev = get_gadget_data(gadget);
-> +	struct usb_function		*f;
-> +	unsigned			maxpower;
-> +	int				ret;
-> +
-> +	DBG(cdev, "system resume\n");
-> +	if (cdev->config) {
-> +		list_for_each_entry(f, &cdev->config->functions, list) {
-> +			if (f->system_resume) {
-> +				ret = f->system_resume(f);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +		}
-> +
-> +		maxpower = cdev->config->MaxPower ?
-> +			cdev->config->MaxPower : CONFIG_USB_GADGET_VBUS_DRAW;
-> +		if (gadget->speed < USB_SPEED_SUPER)
-> +			maxpower = min(maxpower, 500U);
-> +		else
-> +			maxpower = min(maxpower, 900U);
-> +
-> +		if (maxpower > USB_SELF_POWER_VBUS_MAX_DRAW ||
-> +		    !(cdev->config->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
-> +			usb_gadget_clear_selfpowered(gadget);
-> +		else
-> +			usb_gadget_set_selfpowered(gadget);
-> +
-> +		usb_gadget_vbus_draw(gadget, maxpower);
-> +	} else {
-> +		maxpower = CONFIG_USB_GADGET_VBUS_DRAW;
-> +		maxpower = min(maxpower, 100U);
-> +		usb_gadget_vbus_draw(gadget, maxpower);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*-------------------------------------------------------------------------*/
->  
->  static const struct usb_gadget_driver composite_driver_template = {
-> @@ -2681,6 +2747,8 @@ static const struct usb_gadget_driver composite_driver_template = {
->  
->  	.suspend	= composite_suspend,
->  	.resume		= composite_resume,
-> +	.system_suspend	= composite_system_suspend,
-> +	.system_resume	= composite_system_resume,
->  
->  	.driver	= {
->  		.owner		= THIS_MODULE,
-> diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-> index 29390d573e23..e0d2f0998e86 100644
-> --- a/drivers/usb/gadget/configfs.c
-> +++ b/drivers/usb/gadget/configfs.c
-> @@ -1962,6 +1962,57 @@ static void configfs_composite_resume(struct usb_gadget *gadget)
->  	spin_unlock_irqrestore(&gi->spinlock, flags);
->  }
->  
-> +static int configfs_composite_system_suspend(struct usb_gadget *gadget)
-> +{
-> +	struct usb_composite_dev *cdev;
-> +	struct gadget_info *gi;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	cdev = get_gadget_data(gadget);
-> +	if (!cdev)
-> +		return 0;
-> +
-> +	gi = container_of(cdev, struct gadget_info, cdev);
-> +	spin_lock_irqsave(&gi->spinlock, flags);
-> +	cdev = get_gadget_data(gadget);
-> +	if (!cdev || gi->unbind) {
-> +		spin_unlock_irqrestore(&gi->spinlock, flags);
-> +		return 0;
-> +	}
-> +
-> +	ret = composite_system_suspend(gadget);
-> +	spin_unlock_irqrestore(&gi->spinlock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static int configfs_composite_system_resume(struct usb_gadget *gadget)
-> +{
-> +	struct usb_composite_dev *cdev;
-> +	struct gadget_info *gi;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	cdev = get_gadget_data(gadget);
-> +	if (!cdev)
-> +		return 0;
-> +
-> +	gi = container_of(cdev, struct gadget_info, cdev);
-> +	spin_lock_irqsave(&gi->spinlock, flags);
-> +	cdev = get_gadget_data(gadget);
-> +	if (!cdev || gi->unbind) {
-> +		spin_unlock_irqrestore(&gi->spinlock, flags);
-> +		return 0;
-> +	}
-> +
-> +	ret = composite_system_resume(gadget);
-> +	spin_unlock_irqrestore(&gi->spinlock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +
->  static const struct usb_gadget_driver configfs_driver_template = {
->  	.bind           = configfs_composite_bind,
->  	.unbind         = configfs_composite_unbind,
-> @@ -1972,6 +2023,8 @@ static const struct usb_gadget_driver configfs_driver_template = {
->  
->  	.suspend	= configfs_composite_suspend,
->  	.resume		= configfs_composite_resume,
-> +	.system_suspend	= configfs_composite_system_suspend,
-> +	.system_resume	= configfs_composite_system_resume,
->  
->  	.max_speed	= USB_SPEED_SUPER_PLUS,
->  	.driver = {
-> diff --git a/drivers/usb/gadget/function/f_ecm.c b/drivers/usb/gadget/function/f_ecm.c
-> index 6cb7771e8a69..4df67d5ee0fa 100644
-> --- a/drivers/usb/gadget/function/f_ecm.c
-> +++ b/drivers/usb/gadget/function/f_ecm.c
-> @@ -892,6 +892,26 @@ static void ecm_resume(struct usb_function *f)
->  	gether_resume(&ecm->port);
->  }
->  
-> +static int ecm_system_suspend(struct usb_function *f)
-> +{
-> +	struct f_ecm *ecm = func_to_ecm(f);
-> +	struct usb_composite_dev *cdev = ecm->port.func.config->cdev;
-> +
-> +	DBG(cdev, "ECM System Suspend\n");
-> +
-> +	return gether_system_suspend(&ecm->port);
-> +}
-> +
-> +static int ecm_system_resume(struct usb_function *f)
-> +{
-> +	struct f_ecm *ecm = func_to_ecm(f);
-> +	struct usb_composite_dev *cdev = ecm->port.func.config->cdev;
-> +
-> +	DBG(cdev, "ECM System Resume\n");
-> +
-> +	return gether_system_resume(&ecm->port);
-> +}
-> +
->  static void ecm_free(struct usb_function *f)
->  {
->  	struct f_ecm *ecm;
-> @@ -961,6 +981,8 @@ static struct usb_function *ecm_alloc(struct usb_function_instance *fi)
->  	ecm->port.func.free_func = ecm_free;
->  	ecm->port.func.suspend = ecm_suspend;
->  	ecm->port.func.resume = ecm_resume;
-> +	ecm->port.func.system_suspend = ecm_system_suspend;
-> +	ecm->port.func.system_resume = ecm_system_resume;
->  
->  	return &ecm->port.func;
->  }
-> diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
-> index f58590bf5e02..d4f0e28ffd4d 100644
-> --- a/drivers/usb/gadget/function/u_ether.c
-> +++ b/drivers/usb/gadget/function/u_ether.c
-> @@ -1078,6 +1078,40 @@ void gether_resume(struct gether *link)
->  }
->  EXPORT_SYMBOL_GPL(gether_resume);
->  
-> +int gether_system_suspend(struct gether *link)
-> +{
-> +	struct eth_dev *dev = link->ioport;
-> +	struct net_device *ndev = dev->net;
-> +
-> +	rtnl_lock();
-> +	if (netif_running(ndev)) {
-> +		netif_tx_lock_bh(ndev);
-> +		netif_device_detach(ndev);
-> +		netif_tx_unlock_bh(ndev);
-> +	}
-> +	rtnl_unlock();
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(gether_system_suspend);
-> +
-> +int gether_system_resume(struct gether *link)
-> +{
-> +	struct eth_dev *dev = link->ioport;
-> +	struct net_device *ndev = dev->net;
-> +
-> +	rtnl_lock();
-> +	if (netif_running(ndev)) {
-> +		netif_tx_lock_bh(ndev);
-> +		netif_device_attach(ndev);
-> +		netif_tx_unlock_bh(ndev);
-> +	}
-> +	rtnl_unlock();
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(gether_system_resume);
-> +
->  /*
->   * gether_cleanup - remove Ethernet-over-USB device
->   * Context: may sleep
-> diff --git a/drivers/usb/gadget/function/u_ether.h b/drivers/usb/gadget/function/u_ether.h
-> index 34be220cef77..ffd023b7be7b 100644
-> --- a/drivers/usb/gadget/function/u_ether.h
-> +++ b/drivers/usb/gadget/function/u_ether.h
-> @@ -261,6 +261,8 @@ void gether_cleanup(struct eth_dev *dev);
->  
->  void gether_suspend(struct gether *link);
->  void gether_resume(struct gether *link);
-> +int gether_system_suspend(struct gether *link);
-> +int gether_system_resume(struct gether *link);
->  
->  /* connect/disconnect is handled by individual functions */
->  struct net_device *gether_connect(struct gether *);
-> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-> index 4b3d5075621a..1e4ee5ffcfbf 100644
-> --- a/drivers/usb/gadget/udc/core.c
-> +++ b/drivers/usb/gadget/udc/core.c
-> @@ -1683,6 +1683,30 @@ static void gadget_unbind_driver(struct device *dev)
->  	kobject_uevent(&udc->dev.kobj, KOBJ_CHANGE);
->  }
->  
-> +static int gadget_suspend_driver(struct device *dev)
-> +{
-> +	struct usb_gadget *gadget = dev_to_usb_gadget(dev);
-> +	struct usb_udc *udc = gadget->udc;
-> +	struct usb_gadget_driver *driver = udc->driver;
-> +
-> +	if (driver->system_suspend)
-> +		return driver->system_suspend(gadget);
-> +
-> +	return 0;
-> +}
-> +
-> +static int gadget_resume_driver(struct device *dev)
-> +{
-> +	struct usb_gadget *gadget = dev_to_usb_gadget(dev);
-> +	struct usb_udc *udc = gadget->udc;
-> +	struct usb_gadget_driver *driver = udc->driver;
-> +
-> +	if (driver->system_resume)
-> +		return driver->system_resume(gadget);
-> +
-> +	return 0;
-> +}
-> +
->  /* ------------------------------------------------------------------------- */
->  
->  int usb_gadget_register_driver_owner(struct usb_gadget_driver *driver,
-> @@ -1896,11 +1920,16 @@ static const struct class udc_class = {
->  	.dev_uevent	= usb_udc_uevent,
->  };
->  
-> +static const struct dev_pm_ops gadget_bus_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(gadget_suspend_driver, gadget_resume_driver)
-> +};
-> +
->  static const struct bus_type gadget_bus_type = {
->  	.name = "gadget",
->  	.probe = gadget_bind_driver,
->  	.remove = gadget_unbind_driver,
->  	.match = gadget_match_driver,
-> +	.pm = &gadget_bus_pm_ops,
->  };
->  
->  static int __init usb_udc_init(void)
-> diff --git a/include/linux/usb/composite.h b/include/linux/usb/composite.h
-> index 6e38fb9d2117..f42ba1cfd181 100644
-> --- a/include/linux/usb/composite.h
-> +++ b/include/linux/usb/composite.h
-> @@ -226,6 +226,8 @@ struct usb_function {
->  					bool config0);
->  	void			(*suspend)(struct usb_function *);
->  	void			(*resume)(struct usb_function *);
-> +	int			(*system_suspend)(struct usb_function *);
-> +	int			(*system_resume)(struct usb_function *);
->  
->  	/* USB 3.0 additions */
->  	int			(*get_status)(struct usb_function *);
-> @@ -522,6 +524,8 @@ extern int composite_setup(struct usb_gadget *gadget,
->  		const struct usb_ctrlrequest *ctrl);
->  extern void composite_suspend(struct usb_gadget *gadget);
->  extern void composite_resume(struct usb_gadget *gadget);
-> +extern int composite_system_suspend(struct usb_gadget *gadget);
-> +extern int composite_system_resume(struct usb_gadget *gadget);
->  
->  /*
->   * Some systems will need runtime overrides for the  product identifiers
-> diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-> index df33333650a0..8cdfdece1561 100644
-> --- a/include/linux/usb/gadget.h
-> +++ b/include/linux/usb/gadget.h
-> @@ -744,6 +744,8 @@ struct usb_gadget_driver {
->  	void			(*disconnect)(struct usb_gadget *);
->  	void			(*suspend)(struct usb_gadget *);
->  	void			(*resume)(struct usb_gadget *);
-> +	int			(*system_suspend)(struct usb_gadget *);
-> +	int			(*system_resume)(struct usb_gadget *);
->  	void			(*reset)(struct usb_gadget *);
->  
->  	/* FIXME support safe rmmod */
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
+
+
 
