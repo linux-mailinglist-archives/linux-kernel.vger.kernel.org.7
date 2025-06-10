@@ -1,93 +1,187 @@
-Return-Path: <linux-kernel+bounces-680521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E5EAD4668
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:06:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B25AD4628
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF7BA1895F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAB4F3A5C3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901D22D5439;
-	Tue, 10 Jun 2025 22:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F5328BA9D;
+	Tue, 10 Jun 2025 22:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b="m5YFtmCM";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="epuefpiu"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="reOVlS3M"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777A62D5432
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CDE78F34
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749596351; cv=none; b=qaLChp43xLtnkvhdcvOKfeUR16BPhJLbpLT1o6AIXbbeOJbdNdx/xmOoy31WmmhC6FZHyflbnAr92Rq8H+Puh6M+WqqDmDXhGbCrDnRUpMuF/NzSuFpV2LaxdmOXI0YDSPHs+kNX0pZ9xrtn92EVgyBSqn8eDee1LVoZo/CVQ20=
+	t=1749596263; cv=none; b=pTBRnGyrBFxuSPjqhOHwpV5XaqN4isVc+Lka4w7lQlRtdxAJfSJ7WT83OI6x+O/Qe8YYdgMThAlW4R7J2wAJu7DzP6VJEHeHrtJZGuKaylyJ4vXeowptnR2QSdwfLdB+RxtRJNdTLZxLx/dzu4HJweYVAiBiZbHHamYDhyUOnpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749596351; c=relaxed/simple;
-	bh=f/VDHmbOT1oXljZqPn2oqb0nTFqkMhME3Nenhf3HdBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ieE+OuWSoHbSDx2HWzhBwf6VB76waKMlM1upW4M5QjLioHKWLnJWY744ElKv6WbkLU9JTW5Q5aDMjpQyRevTgCa6im2zHZ1mleVy6rsMup/Aa1ijNlpSgXScAhlTriw0ZBam8JSbLIkcktcWJKn8lcCdHE1DzJrWbC6fQHoLvYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space; spf=pass smtp.mailfrom=elijahs.space; dkim=pass (2048-bit key) header.d=elijahs.space header.i=@elijahs.space header.b=m5YFtmCM; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=epuefpiu; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=elijahs.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=elijahs.space
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=m5YFtmCMo6bDCFO/4VZKWnNGL+7VnKs6+Bn0Bzi40VMndBTazErxROUeRcuYLosinpaJeRiWsjhwwVbZc2n6lEtoz43z/8jZCIzL/sefqcYDnczI/JVZSRHOhgQ62vC0bLMtqlgq6++HQROnPeZO1Hvq/9VbG4ZsGLFK/eCij47cOjQLYmMrGrEiJudNNreoLj2zO5MlOvZrwhqcMiz6FL83zsh+q7FT1mnf85G+lm/tL2nE5jw7qQoCeefI0RujYiZ6QwGeXXcz7eW54CbtY/SFCHIzcU2CeKnj52XuHdWv7M4uJ4Za3BOSYUskVZHj+cPaE3vhbkSD11DCdKOMSg==; s=purelymail2; d=elijahs.space; v=1; bh=f/VDHmbOT1oXljZqPn2oqb0nTFqkMhME3Nenhf3HdBA=; h=Received:From:To:Subject:Date;
-DKIM-Signature: a=rsa-sha256; b=epuefpiuIlOwbmcMSxEJaq5ynJ4zUSBPXM4jGOcfEzmtLxKDxyBcjwwYPP2mKCM6ga6XBILBReVWNFzMQp1dX+/cZVEvyC18hbBe4pIKSbsiNZYYX5Wxb1TOK7XMiwzwdfXrSCTvmZ/r2lLj6Wudnhvy1nLhsiqulmFlTPcxdVzHUgKli1RJeFTjEv05eCTaciJwlKlpxDw0+84+izwkhhs6vgN7yw1H0VUvTiJCUcBmSDylZsPql3c2F2kBLV2nVdfa+7i4dIdJGEQgWzD5i1oucTUKjmazrNw+MaTlfkZzG5v30xVBsJiKhSaBrycfoI440EwH3qHgadyEzk+T3w==; s=purelymail2; d=purelymail.com; v=1; bh=f/VDHmbOT1oXljZqPn2oqb0nTFqkMhME3Nenhf3HdBA=; h=Feedback-ID:Received:From:To:Subject:Date;
-Feedback-ID: 147366:4866:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 235931968;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Tue, 10 Jun 2025 22:58:52 +0000 (UTC)
-From: Elijah Wright <git@elijahs.space>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org
-Cc: Elijah Wright <git@elijahs.space>
-Subject: [PATCH] kernel: relay: use __GFP_ZERO in relay_alloc_buf
-Date: Tue, 10 Jun 2025 15:56:28 -0700
-Message-ID: <20250610225639.314970-3-git@elijahs.space>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1749596263; c=relaxed/simple;
+	bh=PU4CQ8UGMUEtv3G8ZEF/N2DVxNwtMrUkuUQB2V2j5zY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rRiqt2pjlqgZXiYR5IKnXXlmyyzguu6LJmtMU2jw9WJ6g4icb3sM5802QWaGjU7CxrUgOsnXI1UxmfTPiszZfRco+iO8KWKpIo0qfMeu/VEIuAlA4qLjyCTQ3t4R9Qol2HgIDmcWbYjyxssrYFPVdCvFvhurMe1OX0kLA+kwdz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=reOVlS3M; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b2c36d3f884so3720456a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749596261; x=1750201061; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6yaQM2l+AM1elKMoXhIjARR8lysmC+imGaGP22oyE4=;
+        b=reOVlS3MusRL0BYlk0adZnMePQrwXczAO0CjRgvXqaPj0+uThbDSI01fnhCyh2+xZl
+         Oc/PpKBRgaR/Y4IO1O7zxM6P+uiQuykNcXP4CZhoOdS8qX5H+rrYEsKJFmPLKv6g9D33
+         8FZSPG/W0stzvZEbqgfEy0peahjbp9WQEOG7htyuPplYLxjz1wUCOerMIg233XPiJXZO
+         HP2SpgQZN/b4Ta6YEKVSn1H38Sjw29r547lK1opIJ5n7BOkWfBm62udv2I4HQT5ADozr
+         7LJFM1/nFeLruwrw0m367kewJ6ip0KV9AeBe96W59ysJEwjTypSs8ImH/246Hjr3i0DD
+         cTlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749596261; x=1750201061;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R6yaQM2l+AM1elKMoXhIjARR8lysmC+imGaGP22oyE4=;
+        b=vi2zDYZ3XT2jjcpK0METNZx9HqDR172bqRbkuKoqDDs3RVBuiC/dfHBiqAPmCSxR8L
+         lr/ehayTG5WczkimDLTKO0xkRQUVQykrzxNXrZvNMKsMgPmOzBgNR777Xz8ygsTGdB6N
+         jv5xHtuRalDyC6JtoyWuYRMp4gzJFsu2TEONOpUGT3nKdAUss35u8lWVCAZW+TB4vNjn
+         xzwrWDvMnVokcgTMRRyDv6iXnEneoetMO66pTW22dDrYpINnQkv4CAcSQTCeFxE+2YUk
+         hfzf/r9gIIFC5qzpjqzKzKkcoB0vj/Aink1PG6l+GeYHR6MzHiZrGq9rS2Bkxb8RNWB0
+         3hGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvUsPpxE/RmIV1vRIa5kw0WBFlTpyBwOfM3Hnnp05utxLkDj/dt81s5m+dK4B6+PA1+nbov5JARKNOcb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpCDMiqzGiVjyjL9Tgkfe8pOXoLT50jcoxIGIxa6Iy1WyVIkiT
+	UUXnQnVC/NkbbcsAy7Ukbu3UuPnGesjIGeKyB0ww7UXTeFIjcDGRQgZU6urzgUz9ctTAaWZahFD
+	5dJtd1A==
+X-Google-Smtp-Source: AGHT+IGd4UPEgvAEBxaQI6Sk3pDVyN+rdP3l7ICg6WOlvax69b/h/SHGLB5WfmCZLEE2basnUXJ9Crf7+VE=
+X-Received: from pgbdq15.prod.google.com ([2002:a05:6a02:f8f:b0:b2e:bad0:b462])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:728f:b0:215:db66:2a33
+ with SMTP id adf61e73a8af0-21f89013cd9mr697945637.16.1749596261517; Tue, 10
+ Jun 2025 15:57:41 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 10 Jun 2025 15:57:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc0.642.g800a2b2222-goog
+Message-ID: <20250610225737.156318-1-seanjc@google.com>
+Subject: [PATCH v2 00/32] KVM: x86: Clean up MSR interception code
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, Borislav Petkov <bp@alien8.de>, Xin Li <xin@zytor.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Francesco Lavra <francescolavra.fl@gmail.com>, 
+	Manali Shukla <Manali.Shukla@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-passing the __GFP_ZERO flag to alloc_page should result in less overhead th=
-an using memset()
+Clean up KVM's MSR interception code (especially the SVM code, which is all
+kinds of ugly).  The main goals are to:
 
-Signed-off-by: Elijah Wright <git@elijahs.space>
----
- kernel/relay.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ - Make the SVM and VMX APIs consistent (and sane; the current SVM APIs have
+   inverted polarity).
 
-diff --git a/kernel/relay.c b/kernel/relay.c
-index c0c93a04d4ce..3ee5b038d0d9 100644
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -118,7 +118,7 @@ static void *relay_alloc_buf(struct rchan_buf *buf, siz=
-e_t *size)
- =09=09return NULL;
-=20
- =09for (i =3D 0; i < n_pages; i++) {
--=09=09buf->page_array[i] =3D alloc_page(GFP_KERNEL);
-+=09=09buf->page_array[i] =3D alloc_page(GFP_KERNEL | __GFP_ZERO);
- =09=09if (unlikely(!buf->page_array[i]))
- =09=09=09goto depopulate;
- =09=09set_page_private(buf->page_array[i], (unsigned long)buf);
-@@ -127,7 +127,6 @@ static void *relay_alloc_buf(struct rchan_buf *buf, siz=
-e_t *size)
- =09if (!mem)
- =09=09goto depopulate;
-=20
--=09memset(mem, 0, *size);
- =09buf->page_count =3D n_pages;
- =09return mem;
-=20
---=20
-2.43.0
+ - Eliminate the shadow bitmaps that are used to determine intercepts on
+   userspace MSR filter update.
+
+v2:
+ - Add a patch to set MSR_IA32_SPEC_CTRL interception as appropriate. [Chao]
+ - Add a patch to cleanup {svm,vmx}_disable_intercept_for_msr() once the
+   dust has settled. [Dapeng]
+ - Return -ENOSPC if msrpm_offsets[] is full. [Chao]
+ - Free iopm_pages directly instead of bouncing through iopm_base. [Chao]
+ - Check for "offset == MSR_INVALID" before using offset. [Chao]
+ - Temporarily keep MSR_IA32_DEBUGCTLMSR in the nested list. [Chao]
+ - Add a comment to explain nested_svm_msrpm_merge_offsets. [Chao]
+ - Add a patch to shift the IOPM allocation to avoid having to unwind it.
+ - Init nested_svm_msrpm_merge_offsets iff nested=1. [Chao]
+ - Add a helper to dedup alloc+init of MSRPM and IOPM.
+ - Tag merge_msrs as "static" and "__initconst". [Paolo]
+ - Rework helpers to use fewer macros. [Paolo]
+ - Account for each MSRPM byte covering 4 MSRs. [Paolo]
+ - Opportunistically use cpu_feature_enabled(). [Xin]
+ - Fully remove MAX_DIRECT_ACCESS_MSRS, MSRPM_OFFSETS, and msrpm_offsets.
+   [Francesco]
+ - Fix typos. [Dapeng, Chao]
+ - Collect reviews. [Chao, Dapeng, Xin]
+
+v1: https://lore.kernel.org/all/20250529234013.3826933-1-seanjc@google.com
+
+v0: https://lore.kernel.org/kvm/20241127201929.4005605-1-aaronlewis@google.com
+
+Sean Christopherson (32):
+  KVM: SVM: Disable interception of SPEC_CTRL iff the MSR exists for the
+    guest
+  KVM: SVM: Allocate IOPM pages after initial setup in
+    svm_hardware_setup()
+  KVM: SVM: Don't BUG if setting up the MSR intercept bitmaps fails
+  KVM: SVM: Tag MSR bitmap initialization helpers with __init
+  KVM: SVM: Use ARRAY_SIZE() to iterate over direct_access_msrs
+  KVM: SVM: Kill the VM instead of the host if MSR interception is buggy
+  KVM: x86: Use non-atomic bit ops to manipulate "shadow" MSR intercepts
+  KVM: SVM: Massage name and param of helper that merges vmcb01 and
+    vmcb12 MSRPMs
+  KVM: SVM: Clean up macros related to architectural MSRPM definitions
+  KVM: nSVM: Use dedicated array of MSRPM offsets to merge L0 and L1
+    bitmaps
+  KVM: nSVM: Omit SEV-ES specific passthrough MSRs from L0+L1 bitmap
+    merge
+  KVM: nSVM: Don't initialize vmcb02 MSRPM with vmcb01's "always
+    passthrough"
+  KVM: SVM: Add helpers for accessing MSR bitmap that don't rely on
+    offsets
+  KVM: SVM: Implement and adopt VMX style MSR intercepts APIs
+  KVM: SVM: Pass through GHCB MSR if and only if VM is an SEV-ES guest
+  KVM: SVM: Drop "always" flag from list of possible passthrough MSRs
+  KVM: x86: Move definition of X2APIC_MSR() to lapic.h
+  KVM: VMX: Manually recalc all MSR intercepts on userspace MSR filter
+    change
+  KVM: SVM: Manually recalc all MSR intercepts on userspace MSR filter
+    change
+  KVM: x86: Rename msr_filter_changed() => recalc_msr_intercepts()
+  KVM: SVM: Rename init_vmcb_after_set_cpuid() to make it intercepts
+    specific
+  KVM: SVM: Fold svm_vcpu_init_msrpm() into its sole caller
+  KVM: SVM: Merge "after set CPUID" intercept recalc helpers
+  KVM: SVM: Drop explicit check on MSRPM offset when emulating SEV-ES
+    accesses
+  KVM: SVM: Move svm_msrpm_offset() to nested.c
+  KVM: SVM: Store MSRPM pointer as "void *" instead of "u32 *"
+  KVM: nSVM: Access MSRPM in 4-byte chunks only for merging L0 and L1
+    bitmaps
+  KVM: SVM: Return -EINVAL instead of MSR_INVALID to signal out-of-range
+    MSR
+  KVM: nSVM: Merge MSRPM in 64-bit chunks on 64-bit kernels
+  KVM: SVM: Add a helper to allocate and initialize permissions bitmaps
+  KVM: x86: Simplify userspace filter logic when disabling MSR
+    interception
+  KVM: selftests: Verify KVM disable interception (for userspace) on
+    filter change
+
+ arch/x86/include/asm/kvm-x86-ops.h            |   2 +-
+ arch/x86/include/asm/kvm_host.h               |   2 +-
+ arch/x86/kvm/lapic.h                          |   2 +
+ arch/x86/kvm/svm/nested.c                     | 126 +++--
+ arch/x86/kvm/svm/sev.c                        |  29 +-
+ arch/x86/kvm/svm/svm.c                        | 490 ++++++------------
+ arch/x86/kvm/svm/svm.h                        | 102 +++-
+ arch/x86/kvm/vmx/main.c                       |   6 +-
+ arch/x86/kvm/vmx/vmx.c                        | 202 ++------
+ arch/x86/kvm/vmx/vmx.h                        |   9 -
+ arch/x86/kvm/vmx/x86_ops.h                    |   2 +-
+ arch/x86/kvm/x86.c                            |   8 +-
+ .../kvm/x86/userspace_msr_exit_test.c         |   8 +
+ 13 files changed, 426 insertions(+), 562 deletions(-)
+
+
+base-commit: 61374cc145f4a56377eaf87c7409a97ec7a34041
+-- 
+2.50.0.rc0.642.g800a2b2222-goog
 
 
