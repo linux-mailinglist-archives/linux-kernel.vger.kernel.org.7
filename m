@@ -1,196 +1,171 @@
-Return-Path: <linux-kernel+bounces-679238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B414AD33AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:35:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46353AD33B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55C53B8AB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1013B416E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82128C865;
-	Tue, 10 Jun 2025 10:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A8A28CF6D;
+	Tue, 10 Jun 2025 10:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="uruVWk6F"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Dhg/CsQ3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NBonXYMv"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC913284B33;
-	Tue, 10 Jun 2025 10:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F1628CF4B;
+	Tue, 10 Jun 2025 10:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749551712; cv=none; b=tYIZ+X1Mr2lIHj03PlZtlVPzgOUCcDKF5ZFO7b3mTMaXtEZm3KeX65q8cb+PfDRQQBR/JNBW184D5fiGI+yk5Mgb4jvT9YJJnN+fPMmXNL08qM74NatmbyYtLhrx8KiZfxUUkdvmH93Z9FRjuUe2WxqEJkF2boqYws4gPL6v+7w=
+	t=1749551739; cv=none; b=r2HwHZMXs49m2IJ+zX4yYrxgDeJFbiT6McTGOvhT0xCNBGSHXQlkUxBOBxQDZpjwBXESvGutyEqH7C7Zw+sdNCIUeBILBXBGxfW6PZFhnbKnt3TZTMZ2TKkK+6LL8/NMn5OB8f4sD3HsnohakcyeXAbPI/KcMq3/dtzQBW7AOfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749551712; c=relaxed/simple;
-	bh=Z8cY0pZc5Zl9cs4akIFSVBgwp5hKJb5sS01kIB6Niiw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=trsIxJmTZmlYbP+AgLOOK9bm8NkvlriiiJB1Uj3nJo7Cbj07CAYD0HhmYw51M77CEF4cChM9DmGtxAYC0m9acOOfL8W19pq497gQ+PKfaCkQ2bGd5GwsXrlR0pNq2CdXa3xOOLNjTYqSdAPbBa+n68aeiu8iatPW33wb8bMJQpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=uruVWk6F; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55AAYpL222658442, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1749551691; bh=AAUhRrMFZrjqVUvPeFiNbTFXxRVnyTh5hjM775vrSoU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=uruVWk6FjuDsUFdF6ZK9vCntlpm7ntskcP+8G6Hr7m6L/Ss7Ri5b0r+cs3L5apxsX
-	 HybGbFS4SFyznKt3zxsOpLpgvoLIfMuKQi9YO7YFnXhPJmLVmolyjYxuWHmqizOFd9
-	 PTwg5h305h5iIJfFV6r6M68AjmzqC7UTRnNnA8+uzbjaZW1cxoPn7Bwx60JxYD+RlD
-	 hwOgHnlflZyFGc5SzQaBsrxMtyd9fO5WLWatc92uhQw5s90NGu3PqLOPIm8pG+AWD/
-	 F2GATaU5xcOETNqe1SkJTTYCfVTylKEym0F1fFHHt+MEXLcMje23rLMuAYzXVnymwb
-	 5vaQsW4xBiT2A==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55AAYpL222658442
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Jun 2025 18:34:51 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 10 Jun 2025 18:34:52 +0800
-Received: from RTDOMAIN (172.21.210.109) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 10 Jun
- 2025 18:34:51 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>, <jdamato@fastly.com>,
-        <pkshih@realtek.com>, <larry.chiu@realtek.com>,
-        Justin Lai
-	<justinlai0215@realtek.com>
-Subject: [PATCH net-next 2/2] rtase: Link queues to NAPI instances
-Date: Tue, 10 Jun 2025 18:33:34 +0800
-Message-ID: <20250610103334.10446-3-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250610103334.10446-1-justinlai0215@realtek.com>
-References: <20250610103334.10446-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1749551739; c=relaxed/simple;
+	bh=CeQswRSD0Fu1GJhqXwPWw0zljZsyENP/fzUc2E8+hKQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=AgOFoWJqgUXIjEHH9LukX8Cf9PZnR0HmNVdAdYQArN/9rmHYEasoCwlEHammaxWTd8AIiTw/uJyT0o6+JwHL8JE7jiAMNHrbXmWDUQKlqW8qN1PK7+sZqhkDiXCqN+hl1B0roXc8Jdec6bdfH7mGc0GYqQXM2mW9t/AUgR/9SNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Dhg/CsQ3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NBonXYMv; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C51A925400E7;
+	Tue, 10 Jun 2025 06:35:36 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 10 Jun 2025 06:35:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749551736;
+	 x=1749638136; bh=wJ6K1Bg2EKOzCl4JP7wnZYiAEnsPSxJW7yzlyL9SDrY=; b=
+	Dhg/CsQ3lwukqyGwumJyoh8RAFfoAk74WSQ0txZSQsI4k4EkwceQnuR1O63lCr6B
+	YbZQx8FpKQPneYLaBDLrq09snuKmE36a+/puRsIVucSFD9tTnxS2TzBITsiUXKmh
+	UP7PoDqXdLv/SB2e0A+nDbxJOfJ9DO/MEvsxtRMofu4gtqGvvy/HGLuobSe8KBf1
+	nbpqPiw0K08htNZqXhdL+8TbFDeWyedMnWnLutGtiqqzVv/w+fYVxPNF422UYdy2
+	xUM0umTq4TAzrh3UnW0pGckyYqKfLgZZDCSj5ege/mF19Pgoyv4iBLDbIIMGdjPx
+	ZvnZ+VksqzRJepU9jQlXVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749551736; x=
+	1749638136; bh=wJ6K1Bg2EKOzCl4JP7wnZYiAEnsPSxJW7yzlyL9SDrY=; b=N
+	BonXYMvvEst6qDS4cbOonC6/2Wl30tJbHNRUj6h9MDvKE/x7rgJ0cH2SUvHUgGlY
+	xHKaour2RolblsDPAH4MhsVnvZ+NRuk7Nb/GQJd9V3oZrKLVccwWslKS9oNkLgVr
+	ArcrDoSOeVf+bOQBvPrYt4zoIJXG9cO3Uagl4ZiKPJzbu1VCXijX3SLbuF7HNXgI
+	fqQG7jvc/DM1zFBrnWXwfDZrmbmPhQkb4z0Vtw/YkBzhNejKHv2gq0qx04zhv0hA
+	89p6xso/1PVh2/RxzUe5a8zPvl28IXsYh+8sEvQQcCtGLQvD+UXI5EYQjV6ZlH48
+	emfpKMLfMKt86cLN+50wA==
+X-ME-Sender: <xms:dwpIaBC5s0BdUMi9rIszRUs_uxU5IaVtsiYzeMsN0UTl9PrLE8fJkQ>
+    <xme:dwpIaPhHgMcMhnfxavaaUPPI9qNXF24yudbt0Xub1myL25S8GcRnReUvDIDZ2rTCR
+    qSbknmRYQxfDGAvTM0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdeivdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhihigrnhguhhhimhgrnhduge
+    esghhmrghilhdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdho
+    rhhgpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnh
+    gurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghp
+    thhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpth
+    htohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdp
+    rhgtphhtthhopehlihhnuhigqdhsthgrghhinhhgsehlihhsthhsrdhlihhnuhigrdguvg
+    hvpdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhm
+    pdhrtghpthhtohepjhgvfhhfrdhjohhhnhhsohhnsehoshhsrdhquhgrlhgtohhmmhdrtg
+    homh
+X-ME-Proxy: <xmx:dwpIaMnMR5IEeoAfV7RdRsbM__rzDqhhPYk6CToFFEJAkb4IFYsTTw>
+    <xmx:dwpIaLwzviYxwPrNq2HPvQOCyhWI5vfYvN0QT43CZSeNvcZcaXcsJg>
+    <xmx:dwpIaGSzClcDHloai92YpmPG90Iwig9HauMVZdWpwyQ22tZFT4_x7Q>
+    <xmx:dwpIaObV0EV9TpgQ6ZwKz87VncvtDCPgnSZVjDT6mKV3LVU8fbnaNQ>
+    <xmx:eApIaD1ewy-S6aw_2-p9Tr4q9kMUoeXujPaEiz3NhmiOsEgC11XQs8Ca>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 92CDE700061; Tue, 10 Jun 2025 06:35:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T57998a13661304d4
+Date: Tue, 10 Jun 2025 12:35:14 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Riyan Dhiman" <riyandhiman14@gmail.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Paolo Perego" <pperego@suse.de>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Matthew Wilcox" <willy@infradead.org>,
+ "Jeff Johnson" <jeff.johnson@oss.qualcomm.com>,
+ dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <088dc0a1-fc54-478c-b253-4ed5dd6d6bae@app.fastmail.com>
+In-Reply-To: <aEgIX221QIt5k0zY@smile.fi.intel.com>
+References: <20250610092445.2640575-1-arnd@kernel.org>
+ <aEgIX221QIt5k0zY@smile.fi.intel.com>
+Subject: Re: [PATCH] fbtft: reduce stack usage
 Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Transfer-Encoding: 7bit
 
-Link queues to NAPI instances with netif_queue_set_napi. This
-information can be queried with the netdev-genl API.
+On Tue, Jun 10, 2025, at 12:26, Andy Shevchenko wrote:
+> On Tue, Jun 10, 2025 at 11:24:38AM +0200, Arnd Bergmann wrote:
+>> Move the varargs handling into a separate noinline function so each
+>> individual function stays below the limit. A better approach might be to
+>> replace the varargs function with one that takes an array of arguments,
+>> but that would be a much larger rework of the other callers.
+>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> ...
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- drivers/net/ethernet/realtek/rtase/rtase.h    |  4 +++
- .../net/ethernet/realtek/rtase/rtase_main.c   | 33 +++++++++++++++++--
- 2 files changed, 35 insertions(+), 2 deletions(-)
+Thanks
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-index 498cfe4d0cac..be98f4de46c4 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase.h
-+++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-@@ -39,6 +39,9 @@
- #define RTASE_FUNC_RXQ_NUM  1
- #define RTASE_INTERRUPT_NUM 1
- 
-+#define RTASE_TX_RING 0
-+#define RTASE_RX_RING 1
-+
- #define RTASE_MITI_TIME_COUNT_MASK    GENMASK(3, 0)
- #define RTASE_MITI_TIME_UNIT_MASK     GENMASK(7, 4)
- #define RTASE_MITI_DEFAULT_TIME       128
-@@ -288,6 +291,7 @@ struct rtase_ring {
- 	u32 cur_idx;
- 	u32 dirty_idx;
- 	u16 index;
-+	u8 ring_type;
- 
- 	struct sk_buff *skbuff[RTASE_NUM_DESC];
- 	void *data_buf[RTASE_NUM_DESC];
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index a88af868da8c..ef3ada91d555 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -326,6 +326,7 @@ static void rtase_tx_desc_init(struct rtase_private *tp, u16 idx)
- 	ring->cur_idx = 0;
- 	ring->dirty_idx = 0;
- 	ring->index = idx;
-+	ring->ring_type = RTASE_TX_RING;
- 	ring->alloc_fail = 0;
- 
- 	for (i = 0; i < RTASE_NUM_DESC; i++) {
-@@ -345,6 +346,10 @@ static void rtase_tx_desc_init(struct rtase_private *tp, u16 idx)
- 		ring->ivec = &tp->int_vector[0];
- 		list_add_tail(&ring->ring_entry, &tp->int_vector[0].ring_list);
- 	}
-+
-+	netif_queue_set_napi(tp->dev, ring->index,
-+			     NETDEV_QUEUE_TYPE_TX,
-+			     &ring->ivec->napi);
- }
- 
- static void rtase_map_to_asic(union rtase_rx_desc *desc, dma_addr_t mapping,
-@@ -590,6 +595,7 @@ static void rtase_rx_desc_init(struct rtase_private *tp, u16 idx)
- 	ring->cur_idx = 0;
- 	ring->dirty_idx = 0;
- 	ring->index = idx;
-+	ring->ring_type = RTASE_RX_RING;
- 	ring->alloc_fail = 0;
- 
- 	for (i = 0; i < RTASE_NUM_DESC; i++)
-@@ -597,6 +603,9 @@ static void rtase_rx_desc_init(struct rtase_private *tp, u16 idx)
- 
- 	ring->ring_handler = rx_handler;
- 	ring->ivec = &tp->int_vector[idx];
-+	netif_queue_set_napi(tp->dev, ring->index,
-+			     NETDEV_QUEUE_TYPE_RX,
-+			     &ring->ivec->napi);
- 	list_add_tail(&ring->ring_entry, &tp->int_vector[idx].ring_list);
- }
- 
-@@ -1161,8 +1170,18 @@ static void rtase_down(struct net_device *dev)
- 		ivec = &tp->int_vector[i];
- 		napi_disable(&ivec->napi);
- 		list_for_each_entry_safe(ring, tmp, &ivec->ring_list,
--					 ring_entry)
-+					 ring_entry) {
-+			if (ring->ring_type == RTASE_TX_RING)
-+				netif_queue_set_napi(tp->dev, ring->index,
-+						     NETDEV_QUEUE_TYPE_TX,
-+						     NULL);
-+			else
-+				netif_queue_set_napi(tp->dev, ring->index,
-+						     NETDEV_QUEUE_TYPE_RX,
-+						     NULL);
-+
- 			list_del(&ring->ring_entry);
-+		}
- 	}
- 
- 	netif_tx_disable(dev);
-@@ -1518,8 +1537,18 @@ static void rtase_sw_reset(struct net_device *dev)
- 	for (i = 0; i < tp->int_nums; i++) {
- 		ivec = &tp->int_vector[i];
- 		list_for_each_entry_safe(ring, tmp, &ivec->ring_list,
--					 ring_entry)
-+					 ring_entry) {
-+			if (ring->ring_type == RTASE_TX_RING)
-+				netif_queue_set_napi(tp->dev, ring->index,
-+						     NETDEV_QUEUE_TYPE_TX,
-+						     NULL);
-+			else
-+				netif_queue_set_napi(tp->dev, ring->index,
-+						     NETDEV_QUEUE_TYPE_RX,
-+						     NULL);
-+
- 			list_del(&ring->ring_entry);
-+		}
- 	}
- 
- 	ret = rtase_init_ring(dev);
--- 
-2.34.1
+>> +static noinline_for_stack void fbtft_write_register_64(struct fbtft_par *par,
+>> +							int i, int buf[64])
+>
+> Perhaps int i, int buf[64] should be u32?
 
+Right, I can send an updated patch, or this could be fixed up when applying
+the patch
+
+>> +{
+>> +	par->fbtftops.write_register(par, i,
+>> +		buf[0], buf[1], buf[2], buf[3],
+>> +		buf[4], buf[5], buf[6], buf[7],
+>> +		buf[8], buf[9], buf[10], buf[11],
+>> +		buf[12], buf[13], buf[14], buf[15],
+>> +		buf[16], buf[17], buf[18], buf[19],
+>> +		buf[20], buf[21], buf[22], buf[23],
+>> +		buf[24], buf[25], buf[26], buf[27],
+>> +		buf[28], buf[29], buf[30], buf[31],
+>> +		buf[32], buf[33], buf[34], buf[35],
+>> +		buf[36], buf[37], buf[38], buf[39],
+>> +		buf[40], buf[41], buf[42], buf[43],
+>> +		buf[44], buf[45], buf[46], buf[47],
+>> +		buf[48], buf[49], buf[50], buf[51],
+>> +		buf[52], buf[53], buf[54], buf[55],
+>> +		buf[56], buf[57], buf[58], buf[59],
+>> +		buf[60], buf[61], buf[62], buf[63]);
+>> +}
+>
+> Wondering if we may reuse this in other cases (by providing the additional
+> length parameter). But it may be done later on.
+
+I tried this and that quickly became a mess. It is probably a good
+idea to rework the code to completely avoid the varargs function
+pointer and instead take an array here, but this is not something
+I could easily do myself as that takes more time and needs better
+testing.
+
+       Arnd
 
