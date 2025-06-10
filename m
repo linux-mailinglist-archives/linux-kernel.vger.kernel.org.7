@@ -1,82 +1,150 @@
-Return-Path: <linux-kernel+bounces-680289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E55AD431C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605E1AD4321
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CB11697F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:46:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC8C1694A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7B2264A77;
-	Tue, 10 Jun 2025 19:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDFPZNsS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028732327A7;
-	Tue, 10 Jun 2025 19:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B107263F4E;
+	Tue, 10 Jun 2025 19:46:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972BF23909F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 19:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749584768; cv=none; b=IH6n3yD91kEt+8/17NDnsm1MjQRZ1dRPMG6IFmU8ftIGHWUg3hoZ6c0fipfBNm4Kwckhe5r3pRpsesRuV+woeQcKOuqda3DRuRy9sHPlwQjFo0JL44yLMzif0f3rN8wpQowaPq8sIQkBR46Y6qq0HOVaW4lSOyu+WDd8iMnS9to=
+	t=1749584805; cv=none; b=CKeYwKyXUDLS8Ha8R2ULY0Tw46bMUVT14DJDVPAb/nDPbY6u5r5NodnPn4+9BLE5HheRjnCsJ+BO7VikKPqSQPLB3fejV7Mun6G9p5fj6pDCrf4WMNx9wjfQYxAIgmhzrg97/1fCpLRwSWoL9A/uJda/ESR0Mosw6ojQMr9tiJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749584768; c=relaxed/simple;
-	bh=2tbJV9Gl0Cy+7CVOL5WzoNATKtxBsRs6cnubFT/zDWk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HwgotH+W4OFdGBAiKBtycpkNAcSh1XyoUo6j4G3otPf/R5kOYHODdRoDkDCvFX63ftbKRATZA90c6iyZS3vLR3g+ciq+H1+5pDIBSM2+0sPdZOBjcQls3U/epxufkhtH1c8zj8WBzkKSzujM+g83hDKk0cavJMdAtDYn74UTTYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDFPZNsS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30977C4CEF2;
-	Tue, 10 Jun 2025 19:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749584767;
-	bh=2tbJV9Gl0Cy+7CVOL5WzoNATKtxBsRs6cnubFT/zDWk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=WDFPZNsSsKaXtFYonlPOb2VNgTKg08eMOGUdHIDjC1bm3+kEbG0A3QzukRQivMvgv
-	 fGA/WjWlx7Oy3FIEaUCeb8LiGzTSO+kzkkD8fNcvve8mNWiWoq7fIhzGYABXmwNcCR
-	 ov3/uROaq0lXqUze/I1LgYrxWTN6M0jfp28C2JM8Nky5mPYsSswoTPHy3GM7AaM3fL
-	 Z3LkTgyzylBxH9wZK+d0l6m2wmCb3VME3Y0gbhy1uZ4lc9sScrb5jDVF/X3onodIst
-	 VVOwhThEBOnQCgLlVQNJ+FqngJuzpJvlNqiaxYxfnVxUS0Yhl2/2BcXzrd9E41hEZ7
-	 cCk2rjI214gNg==
-Date: Tue, 10 Jun 2025 21:46:04 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] HID: quirks: Add quirk for 2 Chicony Electronics HP
- 5MP Cameras
-In-Reply-To: <20250506055015.774509-1-acelan.kao@canonical.com>
-Message-ID: <p28nnso5-os1s-52o1-33s4-55058son32no@xreary.bet>
-References: <20250506055015.774509-1-acelan.kao@canonical.com>
+	s=arc-20240116; t=1749584805; c=relaxed/simple;
+	bh=AQGZA8qFt3uQNSy7UGsqVMMIjuM+2UD4SPDnuRxd1U0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AVE9pVfXiA9sqFg2Yo0AguiBqv/ITaRE20EJesOvBapno7d4Cezp0zfACBbN/cF+ASSSPE++s9CloAxkRN97UtDkcyi/SK6rG/dipMlKQbNrnfmVNwL/fBMABpFLo2zxuO51J7VXVZQUEELR4+wB7sid/fqV/LJrhQBdDnvLZt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 657DE14BF;
+	Tue, 10 Jun 2025 12:46:22 -0700 (PDT)
+Received: from [10.57.79.109] (unknown [10.57.79.109])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 731383F66E;
+	Tue, 10 Jun 2025 12:46:40 -0700 (PDT)
+Message-ID: <98c0b70a-0cbd-46fd-b481-7663905bb8dc@arm.com>
+Date: Tue, 10 Jun 2025 20:46:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] arm64/mm: Lift the cma address limit when
+ CONFIG_DMA_NUMA_CMA=y
+To: Catalin Marinas <catalin.marinas@arm.com>,
+ Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Yang Shi <yang@os.amperecomputing.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baruch Siach <baruch@tkos.co.il>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250521014701.73046-1-feng.tang@linux.alibaba.com>
+ <aEhnELJQLw8S8Bho@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <aEhnELJQLw8S8Bho@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 6 May 2025, Chia-Lin Kao (AceLan) wrote:
-
-> The Chicony Electronics HP 5MP Cameras (USB ID 04F2:B824 & 04F2:B82C)
-> report a HID sensor interface that is not actually implemented.
-> Attempting to access this non-functional sensor via iio_info causes
-> system hangs as runtime PM tries to wake up an unresponsive sensor.
+On 2025-06-10 6:10 pm, Catalin Marinas wrote:
+> On Wed, May 21, 2025 at 09:47:01AM +0800, Feng Tang wrote:
+>> When porting an cma related usage from x86_64 server to arm64 server,
+>> the "cma=4G" setup failed on arm64, and the reason is arm64 has 4G (32bit)
+>> address limit for cma reservation.
+>>
+>> The limit is reasonable due to device DMA requirement, but for NUMA
+>> servers which have CONFIG_DMA_NUMA_CMA enabled, the limit is not required
+>> as that config already allows cma area to be reserved on different NUMA
+>> nodes whose memory very likely goes beyond 4G limit.
+>>
+>> Lift the cma limit for platform with such configuration.
 > 
-> Add these 2 devices to the HID ignore list since the sensor interface is
-> non-functional by design and should not be exposed to userspace.
+> I don't think that's the right fix. Those devices that have a NUMA node
+> associated may be ok to address memory beyond 4GB. The default for
+> NUMA_NO_NODE devices is still dma_contiguous_default_area. I also don't
+> like to make such run-time decisions on the config option.
+
+Indeed, the fact that the kernel was built with the option enabled says 
+nothing at all about the needs of whatever system we're actually running 
+on, so that's definitely wrong. This one is also the kind of option 
+which may well be enabled in a multi-platform distro kernel, since it 
+only adds a tiny amount of code with no functional impact on systems 
+which don't explicitly opt in, but offers a useful benefit to those 
+which can and do.
+
+Furthermore, the justification doesn't add up at all - if the relevant 
+devices could use the per-NUMA-node CMA areas, then... why not just have 
+them use the per-NUMA-node CMA areas, no kernel change needed (and maybe 
+a slight performance bonus too)? On the other hand, where those areas 
+may or may not be allocated is entirely meaningless to NUMA_NO_NODE 
+devices which wouldn't use them anyway.
+
+> That said, maybe we should make the under-4G CMA allocation a best
+> effort. In the arch code, if that failed, attempt the allocation again
+> with a limit of 0 and maybe do a pr_notice() that CMA allocation in the
+> DMA zone failed.
+
+TBH given that the command-line parameter can specify placement as well 
+as size, I think it would make a lot of sense to allow that to override 
+the default limit provided by the arch code. That would give users the 
+most flexibility, at the minor cost of having to accept the consequences 
+if they do specify something which ends up not working for some devices. 
+Otherwise I fear that any attempt to make the code itself cleverer will 
+just lead down a rabbit-hole of trying to second-guess the user's intent 
+- if the size doesn't fit the limit, who says it's right to increase the 
+limit rather than reduce the size? And so on...
+
+Thanks,
+Robin.
+
 > 
-> Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
-> ---
-> v2. move the quirks to hid_ignore_list[], were misplaced in
->     hid_have_special_driver[]
-
-Now queued in hid.git#for-6.16/upstream-fixes, sorry for the delay.
-
--- 
-Jiri Kosina
-SUSE Labs
+> Adding Robin in case he has a different view.
+> 
+>> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+>> ---
+>>   arch/arm64/mm/init.c | 9 ++++++++-
+>>   1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>> index b99bf3980fc6..661758678cc4 100644
+>> --- a/arch/arm64/mm/init.c
+>> +++ b/arch/arm64/mm/init.c
+>> @@ -312,6 +312,7 @@ void __init arm64_memblock_init(void)
+>>   void __init bootmem_init(void)
+>>   {
+>>   	unsigned long min, max;
+>> +	phys_addr_t cma_limit;
+>>   
+>>   	min = PFN_UP(memblock_start_of_DRAM());
+>>   	max = PFN_DOWN(memblock_end_of_DRAM());
+>> @@ -343,8 +344,14 @@ void __init bootmem_init(void)
+>>   
+>>   	/*
+>>   	 * Reserve the CMA area after arm64_dma_phys_limit was initialised.
+>> +	 *
+>> +	 * When CONFIG_DMA_NUMA_CMA is enabled, system may have CMA reserved
+>> +	 * area in different NUMA nodes, which likely goes beyond the 32bit
+>> +	 * limit, thus use (PHYS_MASK+1) as cma limit.
+>>   	 */
+>> -	dma_contiguous_reserve(arm64_dma_phys_limit);
+>> +	cma_limit = IS_ENABLED(CONFIG_DMA_NUMA_CMA) ?
+>> +			(PHYS_MASK + 1) : arm64_dma_phys_limit;
+>> +	dma_contiguous_reserve(cma_limit);
+>>   
+>>   	/*
+>>   	 * request_standard_resources() depends on crashkernel's memory being
+>> -- 
+>> 2.39.5 (Apple Git-154)
 
 
