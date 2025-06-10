@@ -1,192 +1,120 @@
-Return-Path: <linux-kernel+bounces-680042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C75AD3F3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:41:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8768BAD3F3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1730E3A79DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6591E1BA0731
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5821C24293F;
-	Tue, 10 Jun 2025 16:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdDVu89I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CE6242D9D;
+	Tue, 10 Jun 2025 16:42:01 +0000 (UTC)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A565C23C4F6
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA3E242D7C;
+	Tue, 10 Jun 2025 16:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749573692; cv=none; b=r2QUq8weWSivzl9XxHyXFMfLcdwnUOueGplaSzwOvE0+cIf18CYwkSGTpXDFtnExC53mojLFKJKYhVh/w3ksbEHYdYittVPvnrArAkhkuT1LpnPMRAz6KtEBh9NhgNE2JBPAdn0h2XdyT6NbwqEzITcNCiD2CfFLaRqKxfG0ViE=
+	t=1749573720; cv=none; b=dMJ8hlpDL+Lej02Z9C93HNigIlZRWakCumFmGRVhLeVOSj5bYXFrpujeFRZJQD5qHkVn9MrjTPUEVG/bTtEgKkevpihhsVB5Az3MiIsKOoGcAVtk1Tsz28nIn1lWZo709l6NdQCVqCDY3yBi0UYxUNVisHYIOe8y4hi0NDIf7ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749573692; c=relaxed/simple;
-	bh=08Tu33HS43YPREV9dKmb5e6r7DxszomFLxukqEtLKf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhjNyZ7KUJT4F/NuM0cwWHggcYd752pukPFzAYCLDXT188Np1ttOBv6G98Vve9P+ZqkLbzzrE2/gb7WgPnDCgSgfiA0SYezkHX05b23FnncXcITXQ46+mDVCOr0yxa6ODqZ7ARYZd8m1KxLEEz+3xOxSXCzE5jj5GHDnht8bQOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdDVu89I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145CAC4CEED;
-	Tue, 10 Jun 2025 16:41:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749573692;
-	bh=08Tu33HS43YPREV9dKmb5e6r7DxszomFLxukqEtLKf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IdDVu89IR3IdEcEWe6/IvKaF7o5LSpl246RsGJ6PnsyEtdcTN4MRqXzKvbf2pAC+L
-	 Js7czcTLYihX65/4n5DfhNZ/7Av+Gw2+l4m3hyp26Zz8q5jGJ4q41LY2MAhMS44SVy
-	 s4iMDv2EA30q4UgZ3myzo6Oj+Hci3/58dDeLcukivysCI/HavQ0nEmltshuJHfaYe7
-	 lIMdHLaOMY5OXv+iyUzYa4c7fyfqsiZjp9yyAVQjCLVrDMlqMeBk1av8mKfq8MQ1UR
-	 HESTnkU13SHTt0TNkiHP2iUyPTTKSwiN6gUHzw9JNr4T1Fzk016KxwKva0tLRM/b7c
-	 3jt+dIAuHtVdA==
-Date: Tue, 10 Jun 2025 19:41:25 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] kho: initialize tail pages for higher order folios
- properly
-Message-ID: <aEhgNU80Dr9iRwoD@kernel.org>
-References: <20250605171143.76963-1-pratyush@kernel.org>
- <aEKhF3HcrvG77Ogb@kernel.org>
- <mafs0jz5osutx.fsf@kernel.org>
- <aEc30BoLE9HRxiZm@kernel.org>
- <CA+CK2bAAbZjS2Og79xxLcDtNf-eM0up-8fwhd4fg_dp0j_TahA@mail.gmail.com>
- <aEfGTXrsEL5-DuF1@kernel.org>
- <CA+CK2bDXOWzrTsNtbCCK2rabNysf0JFQT5VfAjYrX5oSoiLmSQ@mail.gmail.com>
+	s=arc-20240116; t=1749573720; c=relaxed/simple;
+	bh=TKXZrSF73Ffoq9u+yaIp1nXmlgXO4mLuNTDFNnZeKhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ixPFFTH+3aSNdexogS0eYH+MFA+/StZ5vQol3sP0eYBS/IAfUWLw9mbLl0mYNCEOpQs9bjYr7b7Dv88C74yS4cAIjp41CH3cewVDOBooSs9m3QPpnacekc5sThyNdMjJE+9Us3rhpKzWsa+EE1rC1dVh174e3vT1KoZYHbZo5Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4e58e0175ceso1712542137.2;
+        Tue, 10 Jun 2025 09:41:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749573717; x=1750178517;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mevv/cKvWiy0aqpNqPAghZeKSI1e+vGvSGE9NseYu64=;
+        b=Xa5Md6oMlD9jJf7/qfmMdBpQC++LYzsL+BoH4WGOQuivLnR2ZJuOSTvJqJEpj2P0Je
+         4bnii09fIKV1TIaGFt2WrRrrwUY8Rv44dxEi/AtHgwz8r8mh1toS4dMjGJHbGbOA7x5u
+         +FGx0yZkiGzuu8jLTbWlgzIXKhXBt25roW3VnE3WutZr16OLmt6niMUp95GYVSGum9EF
+         ox/lHYPZEVJbxSA/UL8NcgSPM7B6zfja4zbNLlLt/2kP8bQ+LHWssfgmave0SyDApw0S
+         MIYd2cY2weADPFlGbNL8XrOy9D0lFg3q3yn4PmUMQgNYXtXDqgve8tePqo8O2bh8/v2G
+         Mwnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAXnn2qDoNLQbd+4Gh34N0CnPE/PExyu8HoH/G5pw9cCOZYxnjs7wm6cjurvQlFhi8HlnCkWLaMAU7jno=@vger.kernel.org, AJvYcCWX1rhifbOQn43IOcFJgnQOXdMSmPjjxHs6sp4lIx4qV3o8EdjhkML6MqoV7M73ZPrMUan7ULMGtqx7WQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa9LoW+Iwp0JBaQovLKCNw92RAL+AipB1JHRdnCsJh82XIcIkU
+	MxKoUviUk+Q5Bf2H5aAzyo9hBlbgqy6Dg+xAifHJjONVd1j4QM9rLwDjyyYABIvI
+X-Gm-Gg: ASbGnct9IU4IxbDGYgakYaIINu4owxzUikCeJDYOWQwGjREM+pKx0UutbJXEJArdwiA
+	aQWACPf6aQYg6o+ztnekgUotb++TSSzMkWo/w9WUgHLuNndh4KUHclxZOtiUXKIu/nBuSBuBeln
+	WEN5ZXD695AcRybWQTGZG+lJYQvTkjlNkyPwVZ/Fr9j7pUMX0hSOPID9npOs/Mh9VRqKNiE6ln2
+	mMTiLmOJ/6GXu7qizXq+plxw3MeBmgVVk9ImYwyC9ulmlqjPzNQLRfpO8NjGBsegg/eWlCFQcQJ
+	dUe8OHYT3RuT5tTW0CoVrXH7jmemoI6jJPgL4RvQF/sNTC/QwnhcRd3PKJd0MyGznBIvitcbv1U
+	cs6MRWFFvj6Zmif9ZxbGTH8Dx
+X-Google-Smtp-Source: AGHT+IFZyX2+DUE2ADWIP0NaKWbdFMfnHjU2K3tLJQjGLdEcdpoSfr99W9NUwHwXEEbd83aKf2fIWQ==
+X-Received: by 2002:a05:6102:2ad1:b0:4de:d08f:6727 with SMTP id ada2fe7eead31-4e7a8354c7bmr3549189137.13.1749573716663;
+        Tue, 10 Jun 2025 09:41:56 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4e77391f3b4sm6808173137.14.2025.06.10.09.41.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 09:41:55 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87ecdcab9ebso620868241.3;
+        Tue, 10 Jun 2025 09:41:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUI+8jpnveb+d09OdSEVuO0VNt1Oasl00sR+fvxQVpF17CjS2UWLTQt+Tct8pj+ZxXn3W4kNsaZD3ss0g==@vger.kernel.org, AJvYcCV/KI6Rb6buedoRmx5ChmV4BcEZd+cNpMQ0rk6Fmd7NCb6a/81rMrjzcbRgrourgyF1f5FHHtFxHVI7zf8=@vger.kernel.org
+X-Received: by 2002:a05:6102:f94:b0:4e5:9d76:e8c8 with SMTP id
+ ada2fe7eead31-4e7a8376abamr3151590137.18.1749573715334; Tue, 10 Jun 2025
+ 09:41:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bDXOWzrTsNtbCCK2rabNysf0JFQT5VfAjYrX5oSoiLmSQ@mail.gmail.com>
+References: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
+ <CAMuHMdU1NdNjx3f1V9j2FACWwC5faPKCXChtW6Z=i2JyXquFuA@mail.gmail.com> <20250610085416.062b4bc386dde2ea475369f5@linux-foundation.org>
+In-Reply-To: <20250610085416.062b4bc386dde2ea475369f5@linux-foundation.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Jun 2025 18:41:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXyJhaFUbKX2Hhoa2y4hVK+0NhvL4hNL_8RnVOxaCkq=g@mail.gmail.com>
+X-Gm-Features: AX0GCFv0TbEgZCHo1GFqBF_kwd_V8uamxZUJTDZCPQTyCqHp1Xe_Cfyn68uZtHA
+Message-ID: <CAMuHMdXyJhaFUbKX2Hhoa2y4hVK+0NhvL4hNL_8RnVOxaCkq=g@mail.gmail.com>
+Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>, Honggyu Kim <honggyu.kim@sk.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
+	mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 10, 2025 at 07:20:23AM -0400, Pasha Tatashin wrote:
-> On Tue, Jun 10, 2025 at 1:44 AM Mike Rapoport <rppt@kernel.org> wrote:
+Hi Andrew,
+
+On Tue, 10 Jun 2025 at 17:54, Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Tue, 10 Jun 2025 11:05:40 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Mon, 2 Jun 2025 at 17:55, Andrew Morton <akpm@linux-foundation.org> wrote:
+> > > - The 2 patch series "mm/damon: build-enable essential DAMON components
+> > >   by default" from SeongJae Park reworks DAMON Kconfig to make it easier
+> > >   to enable CONFIG_DAMON.
 > >
-> > On Mon, Jun 09, 2025 at 04:07:50PM -0400, Pasha Tatashin wrote:
-> > > On Mon, Jun 9, 2025 at 3:36 PM Mike Rapoport <rppt@kernel.org> wrote:
-> > > >
-> > > > Hi Pratyush,
-> > > >
-> > > > On Fri, Jun 06, 2025 at 06:23:06PM +0200, Pratyush Yadav wrote:
-> > > > > Hi Mike,
-> > > > >
-> > > > > On Fri, Jun 06 2025, Mike Rapoport wrote:
-> > > > >
-> > > > > > On Thu, Jun 05, 2025 at 07:11:41PM +0200, Pratyush Yadav wrote:
-> > > > > >> From: Pratyush Yadav <ptyadav@amazon.de>
-> > > > > >>
-> > > > > >> --- a/kernel/kexec_handover.c
-> > > > > >> +++ b/kernel/kexec_handover.c
-> > > > > >> @@ -157,11 +157,21 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
-> > > > > >>  }
-> > > > > >>
-> > > > > >>  /* almost as free_reserved_page(), just don't free the page */
-> > > > > >> -static void kho_restore_page(struct page *page)
-> > > > > >> +static void kho_restore_page(struct page *page, unsigned int order)
-> > > > > >>  {
-> > > > > >> -  ClearPageReserved(page);
-> > > > > >
-> > > > > > So now we don't clear PG_Reserved even on order-0 pages? ;-)
-> > > > >
-> > > > > We don't need to. As I mentioned in the commit message as well,
-> > > > > PG_Reserved is never set for KHO pages since they are reserved with
-> > > > > MEMBLOCK_RSRV_NOINIT, so memmap_init_reserved_pages() skips over them.
-> > > >
-> > > > You are right, I missed it.
-> > > >
-> > > > > That said, while reading through some of the code, I noticed another
-> > > > > bug: because KHO reserves the preserved pages as NOINIT, with
-> > > > > CONFIG_DEFERRED_STRUCT_PAGE_INIT == n, all the pages get initialized
-> > > > > when memmap_init_range() is called from setup_arch (paging_init() on
-> > > > > x86). This happens before kho_memory_init(), so the KHO-preserved pages
-> > > > > are not marked as reserved to memblock yet.
-> > > > >
-> > > > > With deferred page init, some pages might not get initialized early, and
-> > > > > get initialized after kho_memory_init(), by which time the KHO-preserved
-> > > > > pages are marked as reserved. So, deferred_init_maxorder() will skip
-> > > > > over those pages and leave them uninitialized.
-> > > > >
-> > > > > So we need to either also call init_deferred_page(), or remove the
-> > > > > memblock_reserved_mark_noinit() call in deserialize_bitmap(). And TBH, I
-> > > > > am not sure why KHO pages even need to be marked noinit in the first
-> > > > > place. Probably the only benefit would be if a large chunk of memory is
-> > > > > KHO-preserved, the pages can be initialized later on-demand, reducing
-> > > > > bootup time a bit.
-> > > >
-> > > > One benefit is performance indeed, because in not deferred case the
-> > > > initialization of reserved pages in memmap_init_reserved_pages() is really
-> > > > excessive.
-> > > >
-> > > > But more importantly, if we remove memblock_reserved_mark_noinit(), with
-> > > > CONFIG_DEFERRED_STRUCT_PAGE_INIT we'd loose page->private because the
-> > > > struct page will be cleared after kho_mem_deserialize().
-> > > >
-> > > > > What do you think? Should we drop noinit or call init_deferred_page()?
-> > > > > FWIW, my preference is to drop noinit, since init_deferred_page() is
-> > > > > __meminit and we would have to make sure it doesn't go away after boot.
-> > > >
-> > > > We can't drop noinit and calling init_deferred_page() after boot just won't
-> > > > work because it uses memblock to find the page's node and memblock is gone
-> > > > after init.
-> > > >
-> > > > The simplest short-term solution is to disable KHO when
-> > > > CONFIG_DEFERRED_STRUCT_PAGE_INIT is set and then find an efficient way to
-> > > > make it all work together.
-> > >
-> > > This is what I've done in LUOv3 WIP:
-> > > https://github.com/soleen/linux/commit/3059f38ac0a39a397873759fb429bd5d1f8ea681
+> > ... or, make it harder to disable it?
 > >
-> > I think it should be the other way around, KHO should depend on
-> > !DEFERRED_STRUCT_PAGE_INIT.
-> 
-> Agreed, and this is what I first tried, but that does not work, there
-> is some circular dependency breaking the build. If you feel
-> adventurous you can try that :-)
+> > Given no single defconfig file in v6.15 enables CONFIG_DAMON, I find
+> > it hard to believe defaulting DAMON to "y" is the right thing to do...
+> > (Yes, I have read the rationale in commit 28615e6eed152f2f
+> > ("mm/damon/Kconfig: enable CONFIG_DAMON by default")).
+>
+> So what do you recommend?  Editing all the defconfigs seems a bit lame.
 
-Hmm, weird, worked for me :/
- 
-> > > We will need to teah KHO to work with deferred struct page init. I
-> > > suspect, we could init preserved struct pages and then skip over them
-> > > during deferred init.
-> >
-> > We could, but with that would mean we'll run this before SMP and it's not
-> > desirable. Also, init_deferred_page() for a random page requires
-> 
-> We already run KHO init before smp_init:
-> start_kernel() -> mm_core_init() -> kho_memory_init() ->
-> kho_restore_folio() -> struct pages must be already initialized here!
-> 
-> While deferred struct pages are initialized:
-> start_kernel() -> rest_init() -> kernel_init() ->
-> kernel_init_freeable() -> page_alloc_init_late() ->
-> deferred_init_memmap()
-> 
-> If the number of preserved pages that is needed during early boot is
-> relatively small, that it should not be an issue to pre-initialize
-> struct pages for them before deferred struct pages are initialized. We
-> already pre-initialize some  "struct pages" that are needed during
-> early boot before the reset are initialized, see deferred_grow_zone()
+Just revert the commit?
+Distros are (usually) not using defconfig files anyway.
+Thanks!
 
-deferred_grow_zone() takes a chunk in the beginning of uninitialized range,
-with kho we are talking about some random pages. If we preinit them early,
-deferred_init_memmap() will overwrite them.
+Gr{oetje,eeting}s,
 
-Anyway, I'm going to look into it, hopefully I'll have something Really
-Soon (tm).
- 
-> Pasha
+                        Geert
 
 -- 
-Sincerely yours,
-Mike.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
