@@ -1,200 +1,117 @@
-Return-Path: <linux-kernel+bounces-680093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80053AD404A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:17:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7465EAD404F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579283A67E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:16:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C15277A4B5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71795244660;
-	Tue, 10 Jun 2025 17:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F04245031;
+	Tue, 10 Jun 2025 17:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="liGWDznj"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF8Vdgds"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EFD244665
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D999024469A;
+	Tue, 10 Jun 2025 17:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749575827; cv=none; b=BeOjGN7cCCubP1mUJ/QkxwfYhe5sjpcc3UlreAvPHdkOYyu6AwJ14cUnO3iuIgs6DAzaBxAEHwSZ5vntE7j9GGekFH8KHeCME1Xpxt8vY97k3XP5Y0yGshQv7YMT2jOUOCLtLVYPcjQF8Ao46tmR+Fk2XSugPBxC54yr976AFEY=
+	t=1749575862; cv=none; b=B3oLvcjtRyYlZXEegPF4FAeWUI+CaY3CVXFJoZ9VhithLrmuDg/ehSkRW/HRro/IzpnhmLJZ/D3anrR8RLnFxPc1f15vXDLemtHEOW0ubWS4FLw3/JhXq/ePuK7W7s2C1o1mL0Ok+mbWNcOq/Z72lX3/oWlHhm+OCk0IknP0FlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749575827; c=relaxed/simple;
-	bh=7qWvqWj2EPLfEU+9olEuqM3aOuZT6KWZE0lgk7JeiA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDxT8SId7lqCgO6rd0JZXF0uhKrmGrf5Ms56lG8SggldRTU4cUmdjOdTauhNHb303WgBByh+pTBEACIIWEC1IYdDNSqovWI2z7QZXXZtLtG2ereHRxt5hZJeg4jm6355tvXexftnLohJvVBOUfvsPZK5wsQ5TpPdtHsggq9eMEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=liGWDznj; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <32cb1c74-4a15-491b-90b0-6c2fdf07dbb9@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749575821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+6TLYW+X+ICRdTEemlhyxVV2i9XawqfMflRijJ5ErnI=;
-	b=liGWDznjsQnZfLpkxO80cgofTbJIluw5YkqYn3LOMjUkDS6Cc/lgdz5QYubeluHK1gfl1w
-	OYvcnObecHhkbw6WXGUTf1sW+AbmjjUyD0utX3oi2mwJhcRnnu6RTDzQkumwVHtGgwaEC1
-	QuaXoip0XSi1hYKg1Z89iFSZyX+h47w=
-Date: Tue, 10 Jun 2025 10:16:55 -0700
+	s=arc-20240116; t=1749575862; c=relaxed/simple;
+	bh=fPg8S/rzUTKuex98/cz90LlEdInNu16JQUmeSFP4WQQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DtqS1/UfWrDwdmPtiuAOBmYVFUO2/92I5Kklw23QNzNyj1UuESkm4RL6FmbnwNahJfOmz/FI7Ah9+whBWHBu1KQHniUHsajwN9XWfROmZ4+Oq3i3STVbURXhzT8woN7edn80bxlHSjuZjJQK8TyI+RvxhLR5xgg4zB8zh+/SNHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF8Vdgds; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 65E24C4AF0C;
+	Tue, 10 Jun 2025 17:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749575861;
+	bh=fPg8S/rzUTKuex98/cz90LlEdInNu16JQUmeSFP4WQQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=HF8VdgdsRREyh6x7u8wIIm9S4csdwObyTpVrnS4h31UNuK2xXExpUVGvr8hnI5cyZ
+	 CFV9VdVLJXt3CtZyzRDx4t31uZuG5mJDIUWA2ligbablPoJOIHkNImi8Rc4zUXmP6t
+	 5RQqUHer6RR2oAag9Dh0Y54h3zGmJ7MUquK2sGsbBt1KFmZCzLqPy51TOy8PgWX2aE
+	 ClEQQQRe2+mtFguqRs80CLkEO6m1qXX7bzaI37p07TwVb14Lyu4Xpl01ckd/DI5hdN
+	 rrfF73squxIC78JvbzYjx9GCbJcFsabOxjpkaUcL9jUbtloX4mAJJXi3/3wvTmP5CX
+	 mmw7HSVOLZBwA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3ACC5B552;
+	Tue, 10 Jun 2025 17:17:40 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Subject: [PATCH 0/2] Extend nvmem patternProperties and then fix W=1
+ warnings in Apple dts
+Date: Tue, 10 Jun 2025 17:17:33 +0000
+Message-Id: <20250610-nvmem-bit-pattern-v1-0-55ed5c1b369c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/2] selftests/bpf: Convert test_sysctl to prog_tests
-Content-Language: en-GB
-To: Jerome Marchand <jmarchan@redhat.com>, bpf@vger.kernel.org
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
- Eduard Zingerman <eddyz87@gmail.com>
-References: <20250527165412.533335-1-jmarchan@redhat.com>
- <20250610091933.717824-1-jmarchan@redhat.com>
- <20250610091933.717824-3-jmarchan@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250610091933.717824-3-jmarchan@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIAK1oSGgC/x3MTQqAIBBA4avErBtQ+6G6SrTInGoWWqhEIN49a
+ fkt3ksQyDMFmKoEnh4OfLkCWVewnas7CNkUgxKqE51q0D2WLGqOeK8xkncojd6acae2HySU7va
+ 08/s/5yXnD5+geepjAAAA
+X-Change-ID: 20250523-nvmem-bit-pattern-1dbc39fe4681
+To: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+ Hector Martin <marcan@marcan.st>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, Sven Peter <sven@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1262; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=fPg8S/rzUTKuex98/cz90LlEdInNu16JQUmeSFP4WQQ=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ4ZHxnqnyK9d9eznZB4WMUlWvjKfn3RvUdCspLZfzxXYO
+ JKbHl7pKGVhEONgkBVTZNm+3970ycM3gks3XXoPM4eVCWQIAxenAExEpoeR4UDJjhVa69UPLAk5
+ cG3+3Sfacd89/6b+2FCf82FtJe8GRzVGhnmsV2o27b4eGjr/dsKeGo53czUe3Hrbs071pNNmC17
+ 9O+wA
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
+
+Hi,
+
+This brief series fixes a W=1 warning recently introduced with the Apple
+Silicon PMIC NVMEM nodes. We have cells that are the same bytes but a
+different bit offset and these currently result in the same node name.
+The legcy layout already allows to specify the bit offset in the name as
+a suffix but this isn't possible in the new fixed-layout.
+Thus first adjust the fixed-layout cell patternProperties to the same pattern
+as the legacy one and then fix the node names in our device tree files.
+
+Best,
+
+Sven
+
+Signed-off-by: Sven Peter <sven@kernel.org>
+---
+Sven Peter (2):
+      dt-bindings: nvmem: fixed-layout: Allow optional bit positions
+      arm64: dts: apple: Add bit offset to PMIC NVMEM node names
+
+ Documentation/devicetree/bindings/nvmem/layouts/fixed-layout.yaml | 2 +-
+ arch/arm64/boot/dts/apple/t600x-die0.dtsi                         | 6 +++---
+ arch/arm64/boot/dts/apple/t8103.dtsi                              | 6 +++---
+ arch/arm64/boot/dts/apple/t8112.dtsi                              | 6 +++---
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250523-nvmem-bit-pattern-1dbc39fe4681
+
+Best regards,
+-- 
+Sven Peter <sven@kernel.org>
 
 
-
-On 6/10/25 2:19 AM, Jerome Marchand wrote:
-> Convert test_sysctl test to prog_tests with minimal change to the
-> tests themselves.
->
-> Signed-off-by: Jerome Marchand <jmarchan@redhat.com>
-> ---
->   tools/testing/selftests/bpf/.gitignore        |  1 -
->   tools/testing/selftests/bpf/Makefile          |  5 ++-
->   .../bpf/{ => prog_tests}/test_sysctl.c        | 32 ++++---------------
->   3 files changed, 9 insertions(+), 29 deletions(-)
->   rename tools/testing/selftests/bpf/{ => prog_tests}/test_sysctl.c (98%)
->
-> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
-> index e2a2c46c008b1..3d8378972d26c 100644
-> --- a/tools/testing/selftests/bpf/.gitignore
-> +++ b/tools/testing/selftests/bpf/.gitignore
-> @@ -21,7 +21,6 @@ test_lirc_mode2_user
->   flow_dissector_load
->   test_tcpnotify_user
->   test_libbpf
-> -test_sysctl
->   xdping
->   test_cpp
->   *.d
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index 66bb50356be08..53dc08d905bd1 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -70,7 +70,7 @@ endif
->   # Order correspond to 'make run_tests' order
->   TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_progs \
->   	test_sockmap \
-> -	test_tcpnotify_user test_sysctl \
-> +	test_tcpnotify_user \
->   	test_progs-no_alu32
->   TEST_INST_SUBDIRS := no_alu32
->   
-> @@ -215,7 +215,7 @@ ifeq ($(VMLINUX_BTF),)
->   $(error Cannot find a vmlinux for VMLINUX_BTF at any of "$(VMLINUX_BTF_PATHS)")
->   endif
->   
-> -# Define simple and short `make test_progs`, `make test_sysctl`, etc targets
-> +# Define simple and short `make test_progs`, `make test_maps`, etc targets
->   # to build individual tests.
->   # NOTE: Semicolon at the end is critical to override lib.mk's default static
->   # rule for binaries.
-> @@ -324,7 +324,6 @@ NETWORK_HELPERS := $(OUTPUT)/network_helpers.o
->   $(OUTPUT)/test_sockmap: $(CGROUP_HELPERS) $(TESTING_HELPERS)
->   $(OUTPUT)/test_tcpnotify_user: $(CGROUP_HELPERS) $(TESTING_HELPERS) $(TRACE_HELPERS)
->   $(OUTPUT)/test_sock_fields: $(CGROUP_HELPERS) $(TESTING_HELPERS)
-> -$(OUTPUT)/test_sysctl: $(CGROUP_HELPERS) $(TESTING_HELPERS)
->   $(OUTPUT)/test_tag: $(TESTING_HELPERS)
->   $(OUTPUT)/test_lirc_mode2_user: $(TESTING_HELPERS)
->   $(OUTPUT)/xdping: $(TESTING_HELPERS)
-> diff --git a/tools/testing/selftests/bpf/test_sysctl.c b/tools/testing/selftests/bpf/prog_tests/test_sysctl.c
-> similarity index 98%
-> rename from tools/testing/selftests/bpf/test_sysctl.c
-> rename to tools/testing/selftests/bpf/prog_tests/test_sysctl.c
-> index bcdbd27f22f08..049671361f8fa 100644
-> --- a/tools/testing/selftests/bpf/test_sysctl.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/test_sysctl.c
-> @@ -1,22 +1,8 @@
->   // SPDX-License-Identifier: GPL-2.0
->   // Copyright (c) 2019 Facebook
->   
-> -#include <fcntl.h>
-> -#include <stdint.h>
-> -#include <stdio.h>
-> -#include <stdlib.h>
-> -#include <string.h>
-> -#include <unistd.h>
-> -
-> -#include <linux/filter.h>
-> -
-> -#include <bpf/bpf.h>
-> -#include <bpf/libbpf.h>
-> -
-> -#include <bpf/bpf_endian.h>
-> -#include "bpf_util.h"
-> +#include "test_progs.h"
->   #include "cgroup_helpers.h"
-> -#include "testing_helpers.h"
->   
->   #define CG_PATH			"/foo"
->   #define MAX_INSNS		512
-> @@ -1608,26 +1594,22 @@ static int run_tests(int cgfd)
->   	return fails ? -1 : 0;
->   }
->   
-> -int main(int argc, char **argv)
-> +void test_sysctl(void)
->   {
->   	int cgfd = -1;
-
--1 is not needed.
-
-> -	int err = 0;
->   
->   	cgfd = cgroup_setup_and_join(CG_PATH);
-> -	if (cgfd < 0)
-> -		goto err;
-> +	if (CHECK_FAIL(cgfd < 0))
-
-Use ASSERT* macros. For example, if (!ASSERT_OK_FD(cgfd, "create cgroup"))
-
-> +		goto out;
->   
->   	/* Use libbpf 1.0 API mode */
->   	libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
-
-This is not needed.
-
->   
-> -	if (run_tests(cgfd))
-> -		goto err;
-> +	if (CHECK_FAIL(run_tests(cgfd)))
-
-if (!ASSERT_OK(run_tests(cgfd), "run_tests"))
-
-> +		goto out;
->   
-> -	goto out;
-> -err:
-> -	err = -1;
->   out:
->   	close(cgfd);
->   	cleanup_cgroup_environment();
-> -	return err;
-> +	return;
->   }
 
