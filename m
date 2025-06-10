@@ -1,209 +1,245 @@
-Return-Path: <linux-kernel+bounces-679076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10495AD320A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:30:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F761AD31F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9D61892B1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15223B1237
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C804B28BAA2;
-	Tue, 10 Jun 2025 09:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B36628AAF8;
+	Tue, 10 Jun 2025 09:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JHnyPdPe"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyRXYHiW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E75F288CB9;
-	Tue, 10 Jun 2025 09:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2AD22172F;
+	Tue, 10 Jun 2025 09:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749547766; cv=none; b=oPYKiS2jaM3buLwJjSu/8xtOS/kegVFgy1uCotbScxhwfOSUw3oJh0SEJMh+ptTA0xTS07QW0uVkPIlKbFjyfrOG0VeHfSyT3ipRNA/ZS4zHgZ3y276dpYe+pjccKkUYRkOJDJe6prbaUNwxKlpt77bWt9z/nP7oE8UfLyJdmcA=
+	t=1749547659; cv=none; b=Sz0WhbDEeWLop5rKMAgPQ9OoourymyeW4b90plTsg+Q3VFAM+SyoIJdgiglDfgq29AsJXyZmbT7eMGbZw8rcZbCOf7rap/GSQf8Oz4zXhyp+NJUDIslrKz7mfBqUmb1xbUwtFSnie4DqEC4GRWibmGLH5IuGYCxBqVV0qf7FSrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749547766; c=relaxed/simple;
-	bh=hF2UInlksReunNdNN+3ihHtCcfyfsi3jEHY9EErMdf8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o1OfBBGKStzJwDHoyAPIuccXgI9ozhWQcnI/v+eVFdKtDOijzU/mD6RYho3aGbkIhvBcwtn3LSEeehWB28P4uuFIOYT1HvdiQrpMvDwiUfBGrdm1W6Nbiu0qDhDM8ueb/GGBRHobDUwshyHikid5phNRsuo2/qOLC2u9GE5VNlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JHnyPdPe; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 648a9c8c45dd11f0b910cdf5d4d8066a-20250610
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Csptn+YSvZyVyPKglDRSK8LH6m/SYWpLJI7rxu7Zw2Y=;
-	b=JHnyPdPegRoBBXDgRHCGHLWfkM2Eu87YlZ5o+GJK2K2x1k+pz6OpiKpGPfa98MO+R/31NVrlULRCAjJ50KZpEQlDVrZehWVp6ifbOKBIxF+uim2NdcCTcTmrIaWSOzTyIYPu58YPs0YLYrpdX/Z5dj8rq+XPqvlbpPZ9N9tmpYk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.3,REQID:03beda21-999c-4a80-8d8a-2e223a82c01f,IP:0,UR
-	L:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:09905cf,CLOUDID:5c53a959-eac4-4b21-88a4-d582445d304a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:11|97|99|83|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 648a9c8c45dd11f0b910cdf5d4d8066a-20250610
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <darren.ye@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1299982175; Tue, 10 Jun 2025 17:29:22 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 10 Jun 2025 17:29:21 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 10 Jun 2025 17:29:20 +0800
-From: Darren.Ye <darren.ye@mediatek.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>, Darren Ye
-	<darren.ye@mediatek.com>
-Subject: [PATCH v4 10/10] ASoC: dt-bindings: mediatek,mt8196-nau8825: add mt8196-nau8825 document
-Date: Tue, 10 Jun 2025 17:27:27 +0800
-Message-ID: <20250610092852.21986-11-darren.ye@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250610092852.21986-1-darren.ye@mediatek.com>
-References: <20250610092852.21986-1-darren.ye@mediatek.com>
+	s=arc-20240116; t=1749547659; c=relaxed/simple;
+	bh=ZqzZXwBienY7zE2X7UrzBwvmMt1YWhqjZH4WMRWX/Zo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S646/lJgC+sURd8Lm+6OvVwm4n3MzCf1LvM8FAWLnumnhDZkYCUnt0235Gh9of4Kr73fPkZVo5ZMa2NyyKKdONfOth2tbQ+FoFnQPcTmynr+o+oRCNKYWhu8st7sZwKLFcPjDxeARaLLueGZ85tstsshWEd3D0QrIX7AyTB4o/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyRXYHiW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 630E1C4CEED;
+	Tue, 10 Jun 2025 09:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749547659;
+	bh=ZqzZXwBienY7zE2X7UrzBwvmMt1YWhqjZH4WMRWX/Zo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=AyRXYHiWAEcp+X0pY5kz+1POSUUq2ems/XitGiLQs2i7z1GICUOyZzcPKeEYJOFfi
+	 XPYiIQXtSWVXOBNHDRewq1DowMlebBIJCeOYo8RJf2yHWhCtS4lxvPVst6jqxQ4X+n
+	 qJEyfIDVygKPARuYxlqqOsKOA5Fnu6dn1gGposASs03Yw1yLvXmdwhTCz01qoGVnm5
+	 e+eA26om9KAtz8ez/ultTGmP+z/F+gX0ta8mAqwOQKbU06bfjBc2o1Di/F3bd1rZtc
+	 qIUqSuJ3EmEQyJWlk5q/Gen4EDNepQplZZfF+fjlmp+5Q3rFQ011FW2hmtsTNsCY9d
+	 6eUZtWUUzJeUA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Bjorn Helgaas" <bhelgaas@google.com>,
+  Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,  "Greg
+ Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  "Tamir Duberstein" <tamird@gmail.com>,  "Viresh Kumar"
+ <viresh.kumar@linaro.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-pci@vger.kernel.org>,
+  =?utf-8?Q?Ma=C3=ADra?=
+ Canal <mcanal@igalia.com>
+Subject: Re: [PATCH] rust: types: add FOREIGN_ALIGN to ForeignOwnable
+In-Reply-To: <DAFB0GKSGPSF.24BE695LGC28Z@kernel.org> (Benno Lossin's message
+	of "Fri, 06 Jun 2025 10:23:21 +0200")
+References: <20250605-pointed-to-v1-1-ee1e262912cc@kernel.org>
+	<WubHJPtx9Uu0qugeELZ2ooYWKq4KDj7r8P7k4i_QhgOP53MWk1V3XHH4Ztmzp42zMwHSntslAbfpLFY9AhjfxQ==@protonmail.internalid>
+	<DAFB0GKSGPSF.24BE695LGC28Z@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 10 Jun 2025 11:27:28 +0200
+Message-ID: <87sek82bgf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Darren Ye <darren.ye@mediatek.com>
+Hi Benno,
 
-Add document for mt8196 board with nau8825.
+"Benno Lossin" <lossin@kernel.org> writes:
 
-Signed-off-by: Darren Ye <darren.ye@mediatek.com>
----
- .../sound/mediatek,mt8196-nau8825.yaml        | 102 ++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
+> The title should probably also mention that it removes `PointedTo`.
+>
+> On Thu Jun 5, 2025 at 9:55 PM CEST, Andreas Hindborg wrote:
+>> The current implementation of `ForeignOwnable` is leaking the type of the
+>> opaque pointer to consumers of the API. This allows consumers of the opa=
+que
+>> pointer to rely on the information that can be extracted from the pointer
+>> type.
+>>
+>> To prevent this, change the API to the version suggested by Maira
+>> Canal (link below): Remove `ForeignOwnable::PointedTo` in favor of a
+>> constant, which specifies the alignment of the pointers returned by
+>> `into_foreign`.
+>>
+>> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+>> Suggested-by: Ma=C3=ADra Canal <mcanal@igalia.com>
+>> Link: https://lore.kernel.org/r/20240309235927.168915-3-mcanal@igalia.com
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> A couple nits and documentation review below, with those fixed:
+>
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+>
+>> ---
+>>  rust/kernel/alloc/kbox.rs | 40 ++++++++++++++++++++++------------------
+>>  rust/kernel/miscdevice.rs | 10 +++++-----
+>>  rust/kernel/pci.rs        |  2 +-
+>>  rust/kernel/platform.rs   |  2 +-
+>>  rust/kernel/sync/arc.rs   | 23 ++++++++++++-----------
+>>  rust/kernel/types.rs      | 46 +++++++++++++++++++++-------------------=
+------
+>>  rust/kernel/xarray.rs     |  8 ++++----
+>>  7 files changed, 66 insertions(+), 65 deletions(-)
+>>
+>> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+>> index c386ff771d50..97f45bc4d74f 100644
+>> --- a/rust/kernel/alloc/kbox.rs
+>> +++ b/rust/kernel/alloc/kbox.rs
+>> @@ -398,70 +398,74 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags=
+) -> Result<Self, E>
+>>      }
+>>  }
+>>
+>> -// SAFETY: The `into_foreign` function returns a pointer that is well-a=
+ligned.
+>> +// SAFETY: The pointer returned by `into_foreign` comes from a well ali=
+gned
+>> +// pointer to `T`.
+>>  unsafe impl<T: 'static, A> ForeignOwnable for Box<T, A>
+>>  where
+>>      A: Allocator,
+>>  {
+>> -    type PointedTo =3D T;
+>> +    const FOREIGN_ALIGN: usize =3D core::mem::align_of::<T>();
+>>      type Borrowed<'a> =3D &'a T;
+>>      type BorrowedMut<'a> =3D &'a mut T;
+>>
+>> -    fn into_foreign(self) -> *mut Self::PointedTo {
+>> -        Box::into_raw(self)
+>> +    fn into_foreign(self) -> *mut crate::ffi::c_void {
+>
+> How about we import the prelude, then you can just write `*mut c_void`
+> everywhere instead of having to write `crate::ffi` all the time.
 
-diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
-new file mode 100644
-index 000000000000..5c4162e64004
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/mediatek,mt8196-nau8825.yaml
-@@ -0,0 +1,102 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/mediatek,mt8196-nau8825.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT8196 ASoC sound card
-+
-+maintainers:
-+  - Darren Ye <darren.ye@mediatek.com>
-+
-+allOf:
-+  - $ref: sound-card-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mediatek,mt8196-nau8825-sound
-+      - mediatek,mt8196-rt5682s-sound
-+      - mediatek,mt8196-rt5650-sound
-+
-+  mediatek,platform:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of MT8188 ASoC platform.
-+
-+patternProperties:
-+  "^dai-link-[0-9]+$":
-+    type: object
-+    description:
-+      Container for dai-link level properties and CODEC sub-nodes.
-+
-+    properties:
-+      link-name:
-+        description:
-+          This property corresponds to the name of the BE dai-link to which
-+          we are going to update parameters in this node.
-+        items:
-+          enum:
-+            - TDM_DPTX_BE
-+            - I2SOUT6_BE
-+            - I2SIN6_BE
-+            - I2SOUT4_BE
-+            - I2SOUT3_BE
-+
-+      codec:
-+        description: Holds subnode which indicates codec dai.
-+        type: object
-+        additionalProperties: false
-+        properties:
-+          sound-dai:
-+            minItems: 1
-+            maxItems: 2
-+        required:
-+          - sound-dai
-+
-+      dai-format:
-+        description: audio format.
-+        items:
-+          enum:
-+            - i2s
-+            - right_j
-+            - left_j
-+            - dsp_a
-+            - dsp_b
-+
-+      mediatek,clk-provider:
-+        $ref: /schemas/types.yaml#/definitions/string
-+        description: Indicates dai-link clock master.
-+        enum:
-+          - cpu
-+          - codec
-+
-+    additionalProperties: false
-+
-+    required:
-+      - link-name
-+
-+required:
-+  - compatible
-+  - mediatek,platform
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    sound {
-+        compatible = "mediatek,mt8196-nau8825-sound";
-+        model = "mt8196-nau8825";
-+        mediatek,platform = <&afe>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&aud_pins_default>;
-+        dai-link-0 {
-+            link-name = "I2SOUT6_BE";
-+            dai-format = "i2s";
-+            mediatek,clk-provider = "cpu";
-+            codec {
-+                sound-dai = <&nau8825>;
-+            };
-+        };
-+    };
-+
-+...
--- 
-2.45.2
+OK.
+
+>
+>> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+>> index c7af0aa48a0a..6603079b05af 100644
+>> --- a/rust/kernel/sync/arc.rs
+>> +++ b/rust/kernel/sync/arc.rs
+>> @@ -140,10 +140,9 @@ pub struct Arc<T: ?Sized> {
+>>      _p: PhantomData<ArcInner<T>>,
+>>  }
+>>
+>> -#[doc(hidden)]
+>>  #[pin_data]
+>>  #[repr(C)]
+>> -pub struct ArcInner<T: ?Sized> {
+>> +struct ArcInner<T: ?Sized> {
+>
+> I agree with this change, but let's mention it in the commit message.
+
+Right.
+
+>
+>>      refcount: Opaque<bindings::refcount_t>,
+>>      data: T,
+>>  }
+>
+>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>> index 22985b6f6982..025c619a2195 100644
+>> --- a/rust/kernel/types.rs
+>> +++ b/rust/kernel/types.rs
+>> @@ -21,15 +21,11 @@
+>>  ///
+>>  /// # Safety
+>>  ///
+>> -/// Implementers must ensure that [`into_foreign`] returns a pointer wh=
+ich meets the alignment
+>> -/// requirements of [`PointedTo`].
+>> -///
+>> -/// [`into_foreign`]: Self::into_foreign
+>> -/// [`PointedTo`]: Self::PointedTo
+>> +/// Implementers must ensure that [`Self::into_foreign`] return pointer=
+s with alignment that is an
+>
+> s/return/returns/
+
+Thanks.
+
+>
+>> +/// integer multiple of [`Self::FOREIGN_ALIGN`].
+>
+> I would just write "returns pointers aligned to [`Self::FOREIGN_ALIGN`]".
+
+OK.
+
+>
+>>  pub unsafe trait ForeignOwnable: Sized {
+>> -    /// Type used when the value is foreign-owned. In practical terms o=
+nly defines the alignment of
+>> -    /// the pointer.
+>> -    type PointedTo;
+>> +    /// The alignment of pointers returned by `into_foreign`.
+>> +    const FOREIGN_ALIGN: usize;
+>>
+>>      /// Type used to immutably borrow a value that is currently foreign=
+-owned.
+>>      type Borrowed<'a>;
+>> @@ -39,18 +35,17 @@ pub unsafe trait ForeignOwnable: Sized {
+>>
+>>      /// Converts a Rust-owned object to a foreign-owned one.
+>>      ///
+>> -    /// # Guarantees
+>
+> Why remove this section? I think we should streamline it, (make it use
+> bullet points, shorten the sentences etc). We can keep the paragraph you
+> wrote below as normal docs.
+
+Not sure exactly what you are going for here. How is this:
+
+
+  Converts a Rust-owned object to a foreign-owned one.
+
+  The foreign representation is a pointer to void.
+
+  # Guarantees
+
+  - Minimum alignment of returned pointer is [`Self::FOREIGN_ALIGN`].
+
+  There are no other guarantees for this pointer. For example, it might be =
+invalid, dangling
+  or pointing to uninitialized memory. Using it in any way except for [`fro=
+m_foreign`],
+  [`try_from_foreign`], [`borrow`], or [`borrow_mut`] can result in undefin=
+ed behavior.
+
+
+
+Best regards,
+Andreas Hindborg
+
 
 
