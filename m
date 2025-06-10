@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-680449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318E2AD458F
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:04:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E743FAD458D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 00:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0793A47ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7640418854E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB92928AAF8;
-	Tue, 10 Jun 2025 22:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC602853FA;
+	Tue, 10 Jun 2025 22:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmG1vNiN"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="darL0WaF"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C4628A1DD;
-	Tue, 10 Jun 2025 22:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0589284B4A
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 22:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749593025; cv=none; b=Kke8pJS5lZK3uhKOdKc5OauBfLwRIvEdZ+pusqd1MjDcRAQ5id9VfUXJPxhOrBXWGEMjfjPNP+5Y2nC0ZBCjdwkTaXsJq+fd2Vzhq+/UtZDmwcU137HjRi3l5joDiLyfSXXbPvENkon0RvRxngaYi2XDNkAw9PWOkNq57lP70J4=
+	t=1749592923; cv=none; b=uAbH8DsgPR5OeKYJwQfobRugUN8BJ6D42Xpn7SwyeUOYxJ0t16JUCFLNcofShVxjlEWLJm75VkDnavPre/TtKwrswb/YMTdif9NlHbfndjWJcCCY79DguAzqpLHQX2A/WB0uxZDxnKhcIJ1LunaGtsx8QNVTn8m8RIbxGogEsSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749593025; c=relaxed/simple;
-	bh=oxKec9aTDlYmg0HLbGa+lyFHsnNX3sd7Cx1P/oOxt8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XKUqPT+oOsaPHWxAvzrAJ4C963cy3uIWVOdRAa4WEfrE77sWtLtKW8Sou6Tsl2OcIZcfoHGKRVEr4jg6RWlfytUaI5f1m6BDi15YhpoWJvVe/bZQVM7Y2lfOeBJ8p/D3PRcUa/n9TWrO4GpAZEa+jrvMVEnjUaztnOOlkRaAdqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmG1vNiN; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2e8f394bb75so3434100fac.3;
-        Tue, 10 Jun 2025 15:03:42 -0700 (PDT)
+	s=arc-20240116; t=1749592923; c=relaxed/simple;
+	bh=WEjoFKJq1fwhLjJL/1LIboVF8pYHP56Xq9jI3aQ+dvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bnQbkJ4UsoXp9KzSKwWuZBFDOMkDM7Cvjz6CiFAobyOPpD4McH2DB4kRSzOyE5wjnTdxgfeBXnmi3H0TZNx4gCgObzwwvvOdmFlZ8xb5FtTiXZ2rOPAG6uNE/R9nxj+oeFKuD/0mLxN6qDgYBWSjms4pk/NftwVTzBGD1wnQpqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=darL0WaF; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55394ee39dfso317439e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:02:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749593022; x=1750197822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1749592920; x=1750197720; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EczlavLIRd1Z7GDaXRstMPS0Oc0Bcp8aSL0PIMU9kJo=;
-        b=FmG1vNiNF70MdkaB736cR4w3eH0kZyxxxcS6eXQk4eazw/EIv7iwrkizk7WCzdk+va
-         jiYEemGev8szxnrPYLQ8kGmIBvqvTabQjYzmHf3vuxCHUesnMzWJILs3gRCP24fVx87Z
-         gPOyazs9qtda/uXnaHg48Va+HszW58SByKa36u+7btx3PuTqb6cgzwrrKZvXiQdAdHNu
-         m5UgGLyZLL2PNYYcU57RGyGLXHlYdD8JLZoqWzT7mTlQZz+TXjSbxRbHP+usV1olgs8R
-         Avv6oSfD/2xSiF9HuDm1yaxLGMCFRhnSW8djIqpPeI0Fp2n99IGPkRya2Jb7xyoIJEzO
-         P/dw==
+        bh=WEjoFKJq1fwhLjJL/1LIboVF8pYHP56Xq9jI3aQ+dvM=;
+        b=darL0WaFnqXsN60//KyNJtt83dkUlHHZa7TiQytwBwMfvg8t0Bs5VmCa4OdUdkOKcK
+         3KCxkXaBD/KLi+JQ8KUhosrpIA1k9+tlptkt2QwxVgNGib31KzwFfYdc2jVqcLPN3JMC
+         hP0QjgBAIU2VbTSnTIzbG3f4boMFIPDnGka2gTEuLgpGhfUu+R4cPQLV1EeXJlSFf/j9
+         GAYJ6POlPW+B3Zzd4rbTI83BVhQi/WQilVQVuDz+adCtIPFVrjao3dJV7fA/zQrn/AL0
+         NWIPHwvEiRgeyNdi3Fs7eMMlnR2nVCFdGstfo0b/HPtgr5+I5ostEaAmybKca7b7g+Y0
+         kBmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749593022; x=1750197822;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1749592920; x=1750197720;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EczlavLIRd1Z7GDaXRstMPS0Oc0Bcp8aSL0PIMU9kJo=;
-        b=SyH5pTdY3GlzUUk/vMtoT/aZSnG26DAcVcfHHifKnJThJHDrSAgR7/yuzUq/KmtoQs
-         bfClAE0CL3Jw4jGaVXOXXmdr5uuqAtgREfRZhBdy/wUugsXcVcZ/y1CRHTsXsfpeHzq5
-         hNnmPJzGPFUKWZKLBuNed9kVSKRDHlM7hkCUp99f5Kygsi/OP9lfXh6Q0OZWdEmpPzXD
-         On2RHfDLeiJHhZUcIztYXXl83x2v3G+jwHZ7EQAMK0ugemmimn3BaVqdZeTBx8iqT3xN
-         Sae/KDd03RY9LBeVSTThcCFuCnsztarvUr5tnHxx8iwj7pw4c0ApuIEr3mZJaeja4Z0Y
-         qytw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmMwKh57OJBVe5NdPd7EIDubb0vuoIEkf27FD4LfLOtOFokWFTHUtAtxf7uCN58cRSZ4Iu2A4KXUcOcCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaR2FVUkGwdgqqF17gsTnyr6Zbj0ZhLcTQN8EWmTzukOlfe6UV
-	2pwUe/3dy2J0StsTA44CeW5v89sDvQOXssHS4wM8y0nZkbbITZIuxFa0mQG9GA==
-X-Gm-Gg: ASbGncuJp0G8CXsh7awuqDZlt4waVu79aFY9MJNXzMzIiS1T04E+8rRrxnguNVCz9aN
-	zhYNds/xJtGjzeEhTauH+K859B3JebGx74j1tYWRaQgUJiKWlL5lRiT1T70BU4kMNxh2C3GwfDb
-	01fwLTdUrg+Qs04ib7Znn6CmMCJkm3EvWFmqd5KHx9M1Py7R4jZaeso+e5OgzRlg6D7da/v4+pE
-	PLXNsuuCo2QzOiWpDiYxuoLdyO4WaSr8SNwLZot9Fo8kaDlGlt7ZihfTFil0cHUrjlPs1QICK1N
-	IEzmgUyjBNJ3NBgWck+mLDYHmosg7eAzJAFR6MtSOsHzG4bp2HtS6w==
-X-Google-Smtp-Source: AGHT+IFN5acX0KX+9t3qz5TRwUPXDGWfGQtJv57bEsW7AExqKP66GjtucoDB8q7hl7w8owZC/IHZoQ==
-X-Received: by 2002:a05:6871:7293:b0:296:bbc8:4a82 with SMTP id 586e51a60fabf-2ea96f113ffmr681031fac.27.1749593021482;
-        Tue, 10 Jun 2025 15:03:41 -0700 (PDT)
-Received: from localhost ([2a03:2880:11ff:57::])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-610ef763098sm56645eaf.28.2025.06.10.15.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 15:03:40 -0700 (PDT)
-From: Tianyi Cui <1997cui@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH v2] selftests: Add version file to kselftest 
-Date: Tue, 10 Jun 2025 15:00:53 -0700
-Message-ID: <20250610220319.405806-1-1997cui@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <328326d7-a72c-4fae-bd39-af4d89666a91@linuxfoundation.org>
-References: <328326d7-a72c-4fae-bd39-af4d89666a91@linuxfoundation.org>
+        bh=WEjoFKJq1fwhLjJL/1LIboVF8pYHP56Xq9jI3aQ+dvM=;
+        b=MpIe+Y34pIJW2+W9iVDNU2OV0NHgBQJTvW471heSQqWzVrvaqFOWAqxMsYiyAvPtX+
+         3z8f1VDOaHJSz6OvXEBRmh06pizU+azb0yiG1n8aVe5zDA0sd+VWqFF6R7a/QHXUnGL0
+         /Up/bxyDRAZVrOtC8a60UT0aqgvzS8gVGBVgjiMecMYA+IrRGA88u5/8QZ2l0JxcM7ZT
+         amMCD3sceKfVXoBVQfhNkoCXOYLeoQJOFm3TtFut2pEk5le16zlK7ZuMl/KIm9pgXRxC
+         TGt1BqCvM9f5s13b3BA7yqaD8MOP+PhTmrniGGtXe0EXIK+u2237pIs1z2q1dWOvzZEb
+         NVNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIqPe6iD8sylqgmHKZLAwe1CneCPrxKriCrb2n+xmA0diKkiTAhVqFndgWSrmt5YN6ArIZEuI8IgkVQBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk7gD6lpcng9NZtP/m7ppWDQvfp6/9gjtRhGwlfGC0k8Rw19On
+	9M7ZkpCx9QlQcQAC4X8x7+/RLZnQOWQsGRaY+TUrSL5svMk0HplkVNs6YUpcCpXUdMZXHRDWhq+
+	iFR0h6wIZTD9Bh3xqFPvV1gqADJjAYlSRkfYLW9JiQg==
+X-Gm-Gg: ASbGncvApBF5P62TXEpdHysfn+scEniFxtehH+JV56OufoSqn9kaPFFaeiveCvB7ntc
+	BX/0/eWxO1Y8WDeoh/B69pUqCLSX1Gkzb16R0huGlFWIy+hQE3ggts3Jn8fxNYgGbzj25QKymb7
+	ZGgc/J63lmM/6/M8MrE9Lq+bJWmthU9PN7JCvc2hQD928=
+X-Google-Smtp-Source: AGHT+IHHOhOUj30OWDDSx+2F42g2fLc3I9bcRSXhW2UcQzuablZdDsnZ46Wc3GihsOmkn7ZczCyHo2K03K0tk80OU04=
+X-Received: by 2002:a05:6512:1504:10b0:551:f166:bbb with SMTP id
+ 2adb3069b0e04-5539c5ff09amr174150e87.13.1749592919907; Tue, 10 Jun 2025
+ 15:01:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250610-gpiochip-set-rv-gpio-v1-0-3a9a3c1472ff@linaro.org> <20250610-gpiochip-set-rv-gpio-v1-2-3a9a3c1472ff@linaro.org>
+In-Reply-To: <20250610-gpiochip-set-rv-gpio-v1-2-3a9a3c1472ff@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 11 Jun 2025 00:01:49 +0200
+X-Gm-Features: AX0GCFufuH4LiWDSgWF_9h-zk6BcvJ0Do0hqFlGAZPq_9bZnp7tz4BcqtgZHIfw
+Message-ID: <CACRpkdaK=Ua0=Jgnff4xXxVx9W=LcLg7RykR7CozhqtAb+8XQw@mail.gmail.com>
+Subject: Re: [PATCH 02/12] gpio: mm-lantiq: use new GPIO line value setter callbacks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>, 
+	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
+	Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
+	Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org, 
+	linux-omap@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patience for review! I've updated the patch to make it
-easier to understand. Specifically, `stdout` of `git describe` is stored
-into `VERSION` variable, then write into `VERSION` file rather than
-print on-screen. Please refer below for the sample output and the
-content in `VERSION`.
+On Tue, Jun 10, 2025 at 2:33=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-```
-Emit Tests for drivers/net
-Skipping non-existent dir: drivers/net/hw
-Version saved to /tmp/ksft-net-drv/VERSION
-make: Leaving directory
-'/home/tianyicui/test/nipa/net-next/tools/testing/selftests'
-➜  net-next git:(add_kversion) ✗ cat /tmp/ksft-net-drv/VERSION
-v6.15-12423-g7ebe76e39b4c
-```
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
