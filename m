@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-679192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC20AD3334
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6FFAD3333
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C26441897A24
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:08:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1259A3AC02A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3107028C5B2;
-	Tue, 10 Jun 2025 10:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626E328CF60;
+	Tue, 10 Jun 2025 10:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="qQqk2ZGY"
-Received: from esa2.hc555-34.eu.iphmx.com (esa2.hc555-34.eu.iphmx.com [23.90.104.147])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="gU6U4WlK"
+Received: from esa3.hc555-34.eu.iphmx.com (esa3.hc555-34.eu.iphmx.com [207.54.77.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6774828C2D3;
-	Tue, 10 Jun 2025 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.90.104.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58F828C2B2;
+	Tue, 10 Jun 2025 10:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.77.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749550006; cv=none; b=OhEHmFWrWdshoF+uypJh/YHCtvyQcySidPh6MgMl14WZCfdsA6zDlRHwSnfL4lZqLqqhgeL7O25pU2b6MzGI3Pd0ykNONvqcM/MSTfHQwTQ8XmkwhteQfRcBnemoBTL1nRzNG4nC4odD5JObxa7ye0B3A/6JjBXngNTn7G5iqas=
+	t=1749550005; cv=none; b=dEKnqGsI4JCMeG82/bXqrF3RMgnJiIHG7V3/GT1fuaGsVou4hmjj2PMvgh/Tzcrn+xa8HhrZPizbay4dVWqyuXyRjF/orLrbfJMchNVGcfmp55nZ1d3Vn5g9DvkDwonw8TeK48p9E0kB00Tn66OgIvVsljhyc2uMCXvtJpa/w1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749550006; c=relaxed/simple;
-	bh=PamMD/KQ/Tc3wf7I/9ZGLwO4ho0/Zl/EqGjIfRDfHNQ=;
+	s=arc-20240116; t=1749550005; c=relaxed/simple;
+	bh=lPz7wkEBE69zrXNtMCgnkyFvmJop4UtCSyWeiYqIwfA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SCigs8stNHaihNjdupHhA5ZZuJo2BYpm4th2URDFeScEyqC665BT4f7sN8huJUdqMFlU9a6cMt51uRmdsq4j1Nk5UPDAfwfgTCqrFiH0KFwZuXDtR2Me0NCGC/4FLws4Q//viYKweHo1740plJIo3sUCSKcmC6Elhrj7cUW17T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=qQqk2ZGY reason="key not found in DNS"; arc=none smtp.client-ip=23.90.104.147
+	 MIME-Version; b=RZciV8mi8OdhOAVA0JYQJaqRDEWx/Qc1i2ynSJGKz/lljFyIPUjEgR/4VIgwJGOgdJm3oanCNfQvc8V+eJgu6sc2z4XZ6ELuktZWJ0MYjsOpm4OzDp7UEhzcAnYasZKEnbx/fQnR8FtRjqCFoh5I/3LFdCmxj477T73UoMfVxRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=gU6U4WlK reason="key not found in DNS"; arc=none smtp.client-ip=207.54.77.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobileye.com
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
@@ -35,25 +35,25 @@ DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   t=1749550004; x=1781086004;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PamMD/KQ/Tc3wf7I/9ZGLwO4ho0/Zl/EqGjIfRDfHNQ=;
-  b=qQqk2ZGYe4OcVFhsKxkeGhDcJw4fhqXwrXbrBeGYjdTIgzwxPY+TXJW6
-   UAHsQl5kx7sVgJt6g4FWgBM+zI/89TnVuidUnN4Q5nsj2lcmJWOv6WCRy
-   txD471ToK+lzsgrVSJIDbM2wuiwAVOGg1SQTrCnAso7eZ4ouxSB8K3cIr
-   VJnpEjDVeKP5LF6p6jYiKGEm+Nm4yGDxtdq+ZBznLReRF9mZIzQBJAdgP
-   iy034nESbx4Mgz5O2Uk4Ll4fD/Cpy24D8w2y82TPmmllPY9sWEfrvZJIb
-   iuiNpQymlS1c/1Hw/pwAcRwVKyX8X7FvpA/tn9TsSD12pTDS3BIZWiIiJ
-   w==;
-X-CSE-ConnectionGUID: d2lKgoWNTCmdPIQxOENgZA==
-X-CSE-MsgGUID: 5EJ3F1R4Sw+9CAkZUYIS4w==
+  bh=lPz7wkEBE69zrXNtMCgnkyFvmJop4UtCSyWeiYqIwfA=;
+  b=gU6U4WlKwFNqXFAewbsenvWaMMO6i0C5WsUs2LB3I0lAOqXXY6tEyalt
+   ZQj3SsSVnnG++MI9Hnibj57Nci6R8QZEWW+ex93UZvhlfhOMzM7/NtKaR
+   2U9Ody0794ZSOACSZNpK4LeCdeGyK5xbM87EnEx7BLaCW3n3V29ph2H74
+   V+75FAVsbhw3bh1TpzCewElqgGswSePxxyxu3D3Y5mlJgHTypfLeNuAKM
+   68ZWr2fkYOy0eK5BdJhYoPcS7kw78Aqfd/FPgZncR/RzsYKwKcCKteNRR
+   0S0ILH2PDw2pn8z+N2qkJpJ4hjpC2itwjSsuH98xO4aRdRilBbC4pB43m
+   g==;
+X-CSE-ConnectionGUID: TSqU/aK9R1y2qCI6ux7EpA==
+X-CSE-MsgGUID: NojkzEXeQLe+V1qQZVgAZw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from unknown (HELO ces02_data.me-corp.lan) ([146.255.191.134])
-  by esa2.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 13:06:42 +0300
-X-CSE-ConnectionGUID: zrXBagmjR2WpPykf7AB43Q==
-X-CSE-MsgGUID: s24i75iAQBWowkf1smTQLA==
+Received: from unknown (HELO ces03_data.me-corp.lan) ([146.255.191.134])
+  by esa3.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 13:06:43 +0300
+X-CSE-ConnectionGUID: ax2a7oOURvuO1SiclmLw5w==
+X-CSE-MsgGUID: VpswVmopSHSN8kdMQv7iGg==
 Received: from unknown (HELO epgd071.me-corp.lan) ([10.154.54.6])
-  by ces02_data.me-corp.lan with SMTP; 10 Jun 2025 13:06:39 +0300
-Received: by epgd071.me-corp.lan (sSMTP sendmail emulation); Tue, 10 Jun 2025 13:06:40 +0300
+  by ces03_data.me-corp.lan with SMTP; 10 Jun 2025 13:06:41 +0300
+Received: by epgd071.me-corp.lan (sSMTP sendmail emulation); Tue, 10 Jun 2025 13:06:41 +0300
 From: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Rob Herring <robh@kernel.org>,
@@ -74,9 +74,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	sophgo@lists.linux.dev,
 	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Subject: [PATCH v2 6/7] irqchip: aclint-sswi: reduce data scope
-Date: Tue, 10 Jun 2025 13:05:39 +0300
-Message-ID: <20250610100540.2834044-7-vladimir.kondratiev@mobileye.com>
+Subject: [PATCH v2 7/7] irqchip: aclint-sswi: remove extra includes
+Date: Tue, 10 Jun 2025 13:05:40 +0300
+Message-ID: <20250610100540.2834044-8-vladimir.kondratiev@mobileye.com>
 In-Reply-To: <20250610100540.2834044-1-vladimir.kondratiev@mobileye.com>
 References: <20250609134749.1453835-1-vladimir.kondratiev@mobileye.com>
  <20250610100540.2834044-1-vladimir.kondratiev@mobileye.com>
@@ -88,44 +88,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move variables to the innermost scope where it is used
-
 Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
 ---
- drivers/irqchip/irq-aclint-sswi.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/irqchip/irq-aclint-sswi.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/drivers/irqchip/irq-aclint-sswi.c b/drivers/irqchip/irq-aclint-sswi.c
-index 186a021beaef..3aa074004dca 100644
+index 3aa074004dca..dc437a4f82db 100644
 --- a/drivers/irqchip/irq-aclint-sswi.c
 +++ b/drivers/irqchip/irq-aclint-sswi.c
-@@ -67,11 +67,7 @@ static int aclint_sswi_dying_cpu(unsigned int cpu)
- static int __init aclint_sswi_parse_irq(struct fwnode_handle *fwnode,
- 					void __iomem *reg)
- {
--	struct of_phandle_args parent;
--	unsigned long hartid;
--	u32 contexts, i;
--	int rc, cpu;
--	u32 hart_index;
-+	u32 contexts;
- 
- 	contexts = of_irq_count(to_of_node(fwnode));
- 	if (!(contexts)) {
-@@ -79,7 +75,12 @@ static int __init aclint_sswi_parse_irq(struct fwnode_handle *fwnode,
- 		return -EINVAL;
- 	}
- 
--	for (i = 0; i < contexts; i++) {
-+	for (u32 i = 0; i < contexts; i++) {
-+		struct of_phandle_args parent;
-+		unsigned long hartid;
-+		int rc, cpu;
-+		u32 hart_index;
-+
- 		rc = of_irq_parse_one(to_of_node(fwnode), i, &parent);
- 		if (rc)
- 			return rc;
+@@ -6,15 +6,9 @@
+ #define pr_fmt(fmt) "aclint-sswi: " fmt
+ #include <linux/cpu.h>
+ #include <linux/interrupt.h>
+-#include <linux/io.h>
+-#include <linux/irq.h>
+ #include <linux/irqchip.h>
+ #include <linux/irqchip/chained_irq.h>
+-#include <linux/module.h>
+-#include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_irq.h>
+-#include <linux/pci.h>
+ #include <linux/spinlock.h>
+ #include <linux/smp.h>
+ #include <linux/string_choices.h>
 -- 
 2.43.0
 
