@@ -1,95 +1,142 @@
-Return-Path: <linux-kernel+bounces-679139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7513AAD32A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:50:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6473AD32A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12003AA1D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D723B60E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FC228B7E6;
-	Tue, 10 Jun 2025 09:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212BF28C864;
+	Tue, 10 Jun 2025 09:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hpf2pZiE"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="scAx+Ssr"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2AC28B401
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8929A28CF45
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749548876; cv=none; b=dJGTbBKlUXeFREFgZOXb7hXL9aax10is57AQeOGob5ZoAuNsAEOz0TqOmvuHun9QTRsPEszPx0mB0ngaGZdGHvSDdUae90b0Kb2XVeoVsmg/XgWja/0vTgIYiDYCuZDoyXGwKoIFJdxXqZmnUK+kJnaGusntngNDmhEi9R7b7v8=
+	t=1749548897; cv=none; b=la8HVhwE69gYhM38PvBsBlpkO8jxOa/Ea3V6IT16NcGVI3XVcIVeRQ74BLfwbH5iPP1y9tZFX/SC2mILro/iTAkNxBven/0RS1uiB+6m2D4E096FhUsAn1xcqBXR23q+D89iKSjSQOPPLLtO/3ZLX9ozDmxXsL9whea0WoLVBrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749548876; c=relaxed/simple;
-	bh=d9XSuqI+qYE9P44kl4pe7Jx2ec0YC8xHPTVtNKfBp/U=;
+	s=arc-20240116; t=1749548897; c=relaxed/simple;
+	bh=drtc7gbE8EVnagG9aoANO0Qzm9NCLkeYbn19VDrN7lk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jrf9pY4YKKBJJgDRk8XatpFC5+1hNpDZXQAB5LoL7vFsuL8QIvJXxrYh44fKrt01xwBxGQmFQEaCw3swL3DaQoYaMvfyfzlKokxmxKR+p3TcVKa+rofcb+BNM/VZ5Pvf1BRdeZVMSLyOmC0QJjtIpP2l8mMjKxPh4BQKWAwhkJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hpf2pZiE; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6724951f-9cc0-4d4b-82f0-ad4da7555b56@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749548870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KIjjxToFUYd0qpGBnf0yqzRXe2c56zbTJqbkywLvZG0=;
-	b=Hpf2pZiEeRJ8+xcBglTeNO7r+yRFm9v3ylGL0zQcnmhFLJn+brGN9qPA2nMoC69LPa3rOT
-	2Sm0yG8BiM0X+rFsXUAgOh5itqarVysxWYHC4ArgQNSV9L8oM9EhqlgTPL+qtqn81+//i2
-	c8ar14bVPrkIQkY3tePV+wZV0Z9BkhE=
-Date: Tue, 10 Jun 2025 10:47:41 +0100
+	 In-Reply-To:Content-Type; b=EKDle8YJSu8XBGNoEANU+y56rZVCB9Nrpu+uJ8tYAE6UYaiUVwC0qFgzjMUKbGsXRxnJz4rjIYWHkRJmWnQSGU2Sa2YT3sBqwCMnhACgWfVcYh0d8nH6i5dd5jD84CeEWMfoNm5GQG8zbY9l0YApBI5Hl5EOuXl9Pv3rCLxc1TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=scAx+Ssr; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32aad2ab31eso2109891fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749548893; x=1750153693; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sgWX/fDU4kZifwwXOkRhcJUMm2OkuAYm3wpAj+nwwK8=;
+        b=scAx+SsrlfVuPuqcaMtTXapNGGrTB5aQau5mq50//ivDM8yO1CJcmReZzhMlsMy6vK
+         ftl3ZMclXD6FVwN2c2ZGJQsTnruNK4EW3kv/EpiG0zu1bkTqUlBS92VD/yNG41MXeWmz
+         WX/UgUkfMjGMwI/kMWg4sGaKLlH3tdlhLGy1XoWAArjwUFiAkPFyHugg6xZJcVA+raPK
+         W0Pa0P4WCdvQ9CIuj5B7RxYW0GLJ1Ahbz7SqMc7opdXZEp40LqCJ+sEkTyO/5jmLoOgp
+         mr1xPKawAjKUcs0DoTFx+5W/JNP/2+wtBzbpydrdVTbfTDDx0qk3+vVf9QeCNXwmpWEi
+         LP+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749548893; x=1750153693;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sgWX/fDU4kZifwwXOkRhcJUMm2OkuAYm3wpAj+nwwK8=;
+        b=BYYz6qZosBmQzZvhiDR8s3NrlLoOpI3CFXmV8at6ezLJpNFEmL7QlpsBsMYdvyfxAb
+         2j6Jcn7F00k0mTRJMoZvYZ+kWrCJJt5/Wqx0KtkyxO4ZF/OS3//QR+kxoIlauP0TOHeJ
+         e4X5ULW0uW5sYT7w5lrfFmutg7vyBom3S86KesN5W4nd+Edn9qaXDAqKuMHzo1grP+c/
+         OSV45NOanKM0kWWvOeNAMpvYQ08aj+U5P63lV1AOdQ8nRf+obhMW1ozis9zCiz/vDVOd
+         RUrpPvbkLdeXLZG4J/PghGsL0d6BT0A7wHqoUo9h3vpl9PxkjQDXaLq6Q9B7DstOpvno
+         KrCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVY52T5HhnTtZgJOanNIrD1tETpbY5jp2WMifnNoHTHgotXvd/1FKItcbWr7U7UidtY45yGiYz5LIBAWmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyonEtEfoVvpk6YMEW+HKXJauEQp5+xkPZuNwvojvvJmv2nX+oq
+	F37indaG4YabkuNBLMbwI9g4BwH6F0Puym7jQr0ee8ZTHPH9FexJ711fxcqxuL87G988unDO1w1
+	sHMyy
+X-Gm-Gg: ASbGncuj0YjM0AWLHlgNHNYr0X6yf7Alt/NfXIL+3jsKnDmX3UzVHPUesfnnGPp8Sxs
+	uSZ5LkZUE132j2Er96Gyt803uDuu+AZvhgXLGL0jYtqfDhRj29zvcn59xJVO+4aN/GFW0b02A3d
+	lqz6UpFanIA7PrjsQu8QBFDL9OLpfxnuZDW//pK00f9L2UBB0sx+Rg1iqbDw6QCgE3H3ZgvK5nW
+	JMkPeHUqNMAKvcbt+/2rYjUwctWuIGC67o6EiHMWLIsYIHzBb2lxfYKOdFuEoyxXofebebbBQSd
+	NmfL3qVgN44CviImzEOf21ghQiYbAqkLWJnPB8B1AowW97Kld/QTAYeaq2YFsNJ44hM8FbHWCg9
+	I44l5gFIj6hbSfmiyBbdsf040J37EhEqBBvuvPv1b
+X-Google-Smtp-Source: AGHT+IGe42fvbz6UNMq3WeYyozKULgQbXzEyVJQNlI32jNbCy2BtIg4bwXtTOyqOT4GzCdoEQ38Mew==
+X-Received: by 2002:a05:6512:3b96:b0:553:2e90:98c6 with SMTP id 2adb3069b0e04-553687982cemr1368395e87.11.1749548892235;
+        Tue, 10 Jun 2025 02:48:12 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55367722392sm1471777e87.127.2025.06.10.02.48.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 02:48:11 -0700 (PDT)
+Message-ID: <0367d5bd-a42e-4b6c-b841-ba20190b3127@linaro.org>
+Date: Tue, 10 Jun 2025 12:48:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 5/8] gve: Add support to query the nic clock
-To: Harshitha Ramamurthy <hramamurthy@google.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, jeroendb@google.com, andrew+netdev@lunn.ch,
- willemb@google.com, ziweixiao@google.com, pkaligineedi@google.com,
- yyd@google.com, joshwash@google.com, shailend@google.com, linux@treblig.org,
- thostet@google.com, jfraker@google.com, richardcochran@gmail.com,
- jdamato@fastly.com, horms@kernel.org, linux-kernel@vger.kernel.org
-References: <20250609184029.2634345-1-hramamurthy@google.com>
- <20250609184029.2634345-6-hramamurthy@google.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250609184029.2634345-6-hramamurthy@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] arm64: dts: qcom: sm8550: Add support for camss
+Content-Language: ru-RU
+To: Wenmeng Liu <quic_wenmliu@quicinc.com>, rfoss@kernel.org,
+ bryan.odonoghue@linaro.org, todor.too@gmail.com, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ quic_depengs@quicinc.com
+References: <20250516072707.388332-1-quic_wenmliu@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20250516072707.388332-1-quic_wenmliu@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 09/06/2025 19:40, Harshitha Ramamurthy wrote:
-> From: Kevin Yang <yyd@google.com>
-> 
-> Query the nic clock and store the results. The timestamp delivered
-> in descriptors has a wraparound time of ~4 seconds so 250ms is chosen
-> as the sync cadence to provide a balance between performance, and
-> drift potential when we do start associating host time and nic time.
-> 
-> Leverage PTP's aux_work to query the nic clock periodically.
-> 
-> Signed-off-by: Kevin Yang <yyd@google.com>
-> Signed-off-by: John Fraker <jfraker@google.com>
-> Signed-off-by: Tim Hostetler <thostet@google.com>
-> Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
-> ---
->   Changes in v4:
->   - release the ptp in the error path of gve_init_clock (Jakub Kicinski)
-> 
->   Changes in v2:
->   - Utilize the ptp's aux_work instead of delayed_work (Jakub Kicinski,
->     Vadim Fedorenko)
-> ---
+Hello Wenmeng.
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+On 5/16/25 10:27, Wenmeng Liu wrote:
+> Add support for the camera subsystem on the SM8550 Qualcomm SoC. This
+> includes bringing up the CSIPHY, CSID, VFE/RDI interfaces.
+> 
+> SM8550 provides
+> - 3 x VFE, 3 RDI per VFE
+> - 2 x VFE Lite, 4 RDI per VFE
+> - 3 x CSID
+> - 2 x CSID Lite
+> - 8 x CSI PHY
+> 
+> Co-developed-by: Depeng Shao <quic_depengs@quicinc.com>
+> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 210 +++++++++++++++++++++++++++
+>   1 file changed, 210 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> index e9bb077aa9f0..722521496a2d 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+> @@ -3326,6 +3326,216 @@ cci2_i2c1: i2c-bus@1 {
+>   			};
+>   		};
+>   
+> +		isp: isp@acb7000 {
+> +			compatible = "qcom,sm8550-camss";
+> +
+
+This is the first time, when 'isp' label is used instead of 'camss', it might
+be I missed the context, is there any particular reason to do such a change?
+
+If the label name is changed to the regular 'camss', then
+
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+--
+Best wishes,
+Vladimir
 
