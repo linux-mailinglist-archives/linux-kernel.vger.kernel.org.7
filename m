@@ -1,84 +1,41 @@
-Return-Path: <linux-kernel+bounces-679376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A61AD3568
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:58:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDE3AD3571
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 419D01888244
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:59:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E0657AAEF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5A222C324;
-	Tue, 10 Jun 2025 11:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pz8ey0z/"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D0E22D786;
+	Tue, 10 Jun 2025 12:00:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1184422B8C8
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797DC22D4DB
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749556718; cv=none; b=tGXZZ8iJYMs8heIAeTw9nN90ibGF4youA1XxKvvRMNJtuWgd768iii2WMacZptXCpii9fIVNbvHSybmKOW2VMKhYbKNewF9IbEUZdOWQY5UhSJ7tq8yRy8ywUsYb8NcWZlwLCpXryKautx7kAQxjI89HiB2M6LgxhBVXSLCxMXg=
+	t=1749556803; cv=none; b=DP6qwSzoso23XXILNE7CnwY6eFdIVJvTDR8J9uwbIJhX3GIfwyGIGppDteoWNcY37a1ktmlWzA3EA8esyJf7MirtEiDGJOhX5hTVcq3YNkepziuGoap8aFldCVk30BUvB+0P83bFj1SMnAeUnUI/HPqeombcfd2nLjKFUSO6bJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749556718; c=relaxed/simple;
-	bh=oSuwhQq+Bluwo64QpqkDIb7AUhl07to8IoFJ8lS9/2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=k5eWD2Go1fqvE9XQjBjDS2NrFFQD81PVDdqGdg89sVijxGw7m+Q4RzkWyCaH/A1Ixaz1PEu/tB0DUm4+0jLRMHUQDBCHsPDHunJdnnPlAV/1GyF+QWFC20+qCDvCRVq3Cv5IUSnQNH+RvUuMpkcQy2I43Ea4X3lwPRI3g/AKnNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pz8ey0z/; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a3798794d3so4587563f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749556714; x=1750161514; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fr2GHHHlW+Ho8xouKG/ZW5VnBO30aTll50LbwTTQKV4=;
-        b=pz8ey0z/s5+Alembr0xHrNR51FejOlwMs33TM3OMzGK9AqaV2UsVGVoruGAcB+2L2P
-         54aYipwDga9IJm+29mvA/VhUku7u2iBO9LDtQeZl8mZjh514cjM+WOExeMcN5WVzj6v/
-         2simxTNvVedV7krK2V1i4yBuny8slFMGe448wyH+ZO4oO3PJ0hZLCfGBpJyF9ELG3JAM
-         XQiMj2LTVIliS89h5fd3oP5jFuHdR0BtHUeqVB4VPm31H/Jf6ilrZUbKHZ9W0i5RfrUo
-         K78aI14cK5xV9o09glRj6HCLo2d00o8y7EgcTf9ztVRFjTsXFTN7b2obEndr3BnCVF0n
-         mPZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749556714; x=1750161514;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fr2GHHHlW+Ho8xouKG/ZW5VnBO30aTll50LbwTTQKV4=;
-        b=U9yoeAX9yHn1pl3y9pNR+UPVhlzlQoRMOIp1mZYtsFbvfRYOS0YZaR2i4+oLMkDYvn
-         GcA+KpML1dlHGee94JO0DU5/JVWKYJ8zH48KfMetwvsRMO0faEfEDrTMbnHGjn+m7mq/
-         nDjH/3xVYKHRUb4lAlAi/l3uOjyzAuM/CJNTM2rlCvPMRksRBWh3pVOhYyr/S1om2tNU
-         ZKYLY4n997qqi6RP80L8M7+kSh04THj0EweNOVX/cSe2nQADXnGPMl1EcJLVzwZK4j/F
-         YHeaf4FAgypp/JKEVD7FisiLWyeKwWVei/8egQhzNyisM/EfYgLGKSAzPaRQeDfFbzcR
-         NQRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVznKJVbDvybTnHoaEPUspwfkrtuWQxjgdgFTZElKHAN/63lrPRucmeX1uhPwNz91IR+6KIluNd12MX5k8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjaIQDXxr65cmExbsEo2d7x1uKLZk1unNOmw0sxyEG7yBlq5hO
-	cRYQ+n5uddnqBnSYhJyOSNJCqB+hOEEwwSR+1tfwIgnp2QTWl/yTG20Apix9VmzKocI=
-X-Gm-Gg: ASbGnctqH0SBKXrTkamYVNzKN30KU+DmMJup490hIvzE+wiaMCgrBz2TTwN10kgeWFf
-	tR7vCLpX7gNGDjY7AGkoCTgXLHLV1Ah85RqIU6+y0FbBtRNMzOrRE+5oEZsur9ixiLpHGnQ8Sbe
-	8RRA6pDqh2ffHmjKyZkdACucGjUXiE0hdEDYbKhbWQlQhtRePIMaogCJBySfoMxYRicmkt1M8rQ
-	zn5nNmMC4lfrKPml8W9S0dZl0VJpYfxSecsEojA9tqV/ItlYsjcPj6T+a87F0DzttEvZgrfdkBS
-	uQZIzBhwNs7ny8mI5RFcu/7oJKtSL/9Vt8bY7+8yOUKT/KKPD/aNcufb6+8B9bJ326A=
-X-Google-Smtp-Source: AGHT+IFqytf/nTbHkRUIG/diZDiXo150ezbaVxRb2wLQm9hfUCK+BslHNFXbNjepnJ7Jh/G3vpM4Cg==
-X-Received: by 2002:a05:6000:288c:b0:3a4:db49:94aa with SMTP id ffacd0b85a97d-3a531ab5272mr14966842f8f.21.1749556714376;
-        Tue, 10 Jun 2025 04:58:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a532435f95sm7571216f8f.60.2025.06.10.04.58.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 04:58:33 -0700 (PDT)
-Date: Tue, 10 Jun 2025 14:58:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Johannes Berg <johannes.berg@intel.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Subject: drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c:624
- iwl_trans_pcie_gen2_start_fw() warn: inconsistent returns
- '&trans_pcie->mutex'.
-Message-ID: <202506100707.WAnP5ePA-lkp@intel.com>
+	s=arc-20240116; t=1749556803; c=relaxed/simple;
+	bh=KWbx95K/VCToJB/Y7CExRq3LvA26QOVFH+4ubtkmPvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oK4IkiTChGtamwtcfFwi53zeC+ZoE75T7h5s8YnLGKGC46SLMtM0PZQi3G3nnDDhTduTDwfEA6BI9OiF6FPxCpUlGlSo/drdxAAHQzPwWl5GMAt3MZQCXmTRpVEk8q6ln24Ad2WOQ2sWLoR305ukugx0HSMxhG4vbWw76Af38m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82832C4CEEF;
+	Tue, 10 Jun 2025 12:00:02 +0000 (UTC)
+Date: Tue, 10 Jun 2025 13:00:00 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
+Message-ID: <aEgeQCCzRt-B8_nW@arm.com>
+References: <20250606135654.178300-1-ryan.roberts@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,171 +44,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250606135654.178300-1-ryan.roberts@arm.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-commit: 909e1be6546258efb45993851d51d86862e2e5ee wifi: iwlwifi: implement TOP reset
-date:   5 weeks ago
-config: sparc-randconfig-r073-20250608 (https://download.01.org/0day-ci/archive/20250610/202506100707.WAnP5ePA-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 12.4.0
+On Fri, Jun 06, 2025 at 02:56:52PM +0100, Ryan Roberts wrote:
+> Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
+> provided a quick fix to ensure that lazy_mmu_mode continues to work when
+> CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
+> nest.
+> 
+> The solution in that patch is the make the implementation tolerant to
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202506100707.WAnP5ePA-lkp@intel.com/
+s/is the make/is to make/
 
-smatch warnings:
-drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c:624 iwl_trans_pcie_gen2_start_fw() warn: inconsistent returns '&trans_pcie->mutex'.
+> nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
+> exit becomes a nop. But this sacrifices the optimization opportunity for
+> the remainder of the outer user.
+[...]
+> I wonder if you might be willing to take this for v6.16? I think its a neater
+> solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
+> lazy_mmu_mode to be nested") - which is already in Linus's master.
+> 
+> To be clear, the current solution is safe, I just think this is much neater.
 
-vim +624 drivers/net/wireless/intel/iwlwifi/pcie/trans-gen2.c
+Maybe better, though I wouldn't say much neater. One concern I have is
+about whether we'll get other such nesting in the future and we need to
+fix them in generic code. Here we control __kernel_map_pages() but we
+may not for other cases.
 
-eda50cde58de73 Sara Sharon    2016-09-28  486  int iwl_trans_pcie_gen2_start_fw(struct iwl_trans *trans,
-eda50cde58de73 Sara Sharon    2016-09-28  487  				 const struct fw_img *fw, bool run_in_rfkill)
-eda50cde58de73 Sara Sharon    2016-09-28  488  {
-eda50cde58de73 Sara Sharon    2016-09-28  489  	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
-70582b826365d2 Johannes Berg  2023-04-13  490  	bool hw_rfkill, keep_ram_busy;
-909e1be6546258 Johannes Berg  2025-04-30  491  	bool top_reset_done = false;
-eda50cde58de73 Sara Sharon    2016-09-28  492  	int ret;
-eda50cde58de73 Sara Sharon    2016-09-28  493  
-909e1be6546258 Johannes Berg  2025-04-30  494  	mutex_lock(&trans_pcie->mutex);
-909e1be6546258 Johannes Berg  2025-04-30  495  again:
-eda50cde58de73 Sara Sharon    2016-09-28  496  	/* This may fail if AMT took ownership of the device */
-eda50cde58de73 Sara Sharon    2016-09-28  497  	if (iwl_pcie_prepare_card_hw(trans)) {
-eda50cde58de73 Sara Sharon    2016-09-28  498  		IWL_WARN(trans, "Exit HW not ready\n");
-909e1be6546258 Johannes Berg  2025-04-30  499  		ret = -EIO;
-909e1be6546258 Johannes Berg  2025-04-30  500  		goto out;
-eda50cde58de73 Sara Sharon    2016-09-28  501  	}
-eda50cde58de73 Sara Sharon    2016-09-28  502  
-eda50cde58de73 Sara Sharon    2016-09-28  503  	iwl_enable_rfkill_int(trans);
-eda50cde58de73 Sara Sharon    2016-09-28  504  
-eda50cde58de73 Sara Sharon    2016-09-28  505  	iwl_write32(trans, CSR_INT, 0xFFFFFFFF);
-eda50cde58de73 Sara Sharon    2016-09-28  506  
-eda50cde58de73 Sara Sharon    2016-09-28  507  	/*
-eda50cde58de73 Sara Sharon    2016-09-28  508  	 * We enabled the RF-Kill interrupt and the handler may very
-eda50cde58de73 Sara Sharon    2016-09-28  509  	 * well be running. Disable the interrupts to make sure no other
-eda50cde58de73 Sara Sharon    2016-09-28  510  	 * interrupt can be fired.
-eda50cde58de73 Sara Sharon    2016-09-28  511  	 */
-eda50cde58de73 Sara Sharon    2016-09-28  512  	iwl_disable_interrupts(trans);
-eda50cde58de73 Sara Sharon    2016-09-28  513  
-eda50cde58de73 Sara Sharon    2016-09-28  514  	/* Make sure it finished running */
-eda50cde58de73 Sara Sharon    2016-09-28  515  	iwl_pcie_synchronize_irqs(trans);
-eda50cde58de73 Sara Sharon    2016-09-28  516  
-eda50cde58de73 Sara Sharon    2016-09-28  517  	/* If platform's RF_KILL switch is NOT set to KILL */
-9ad8fd0b4a24e6 Johannes Berg  2017-06-20  518  	hw_rfkill = iwl_pcie_check_hw_rf_kill(trans);
-eda50cde58de73 Sara Sharon    2016-09-28  519  	if (hw_rfkill && !run_in_rfkill) {
-eda50cde58de73 Sara Sharon    2016-09-28  520  		ret = -ERFKILL;
-eda50cde58de73 Sara Sharon    2016-09-28  521  		goto out;
-eda50cde58de73 Sara Sharon    2016-09-28  522  	}
-eda50cde58de73 Sara Sharon    2016-09-28  523  
-eda50cde58de73 Sara Sharon    2016-09-28  524  	/* Someone called stop_device, don't try to start_fw */
-eda50cde58de73 Sara Sharon    2016-09-28  525  	if (trans_pcie->is_down) {
-eda50cde58de73 Sara Sharon    2016-09-28  526  		IWL_WARN(trans,
-eda50cde58de73 Sara Sharon    2016-09-28  527  			 "Can't start_fw since the HW hasn't been started\n");
-eda50cde58de73 Sara Sharon    2016-09-28  528  		ret = -EIO;
-eda50cde58de73 Sara Sharon    2016-09-28  529  		goto out;
-eda50cde58de73 Sara Sharon    2016-09-28  530  	}
-eda50cde58de73 Sara Sharon    2016-09-28  531  
-eda50cde58de73 Sara Sharon    2016-09-28  532  	/* make sure rfkill handshake bits are cleared */
-eda50cde58de73 Sara Sharon    2016-09-28  533  	iwl_write32(trans, CSR_UCODE_DRV_GP1_CLR, CSR_UCODE_SW_BIT_RFKILL);
-eda50cde58de73 Sara Sharon    2016-09-28  534  	iwl_write32(trans, CSR_UCODE_DRV_GP1_CLR,
-eda50cde58de73 Sara Sharon    2016-09-28  535  		    CSR_UCODE_DRV_GP1_BIT_CMD_BLOCKED);
-eda50cde58de73 Sara Sharon    2016-09-28  536  
-eda50cde58de73 Sara Sharon    2016-09-28  537  	/* clear (again), then enable host interrupts */
-eda50cde58de73 Sara Sharon    2016-09-28  538  	iwl_write32(trans, CSR_INT, 0xFFFFFFFF);
-eda50cde58de73 Sara Sharon    2016-09-28  539  
-eda50cde58de73 Sara Sharon    2016-09-28  540  	ret = iwl_pcie_gen2_nic_init(trans);
-eda50cde58de73 Sara Sharon    2016-09-28  541  	if (ret) {
-eda50cde58de73 Sara Sharon    2016-09-28  542  		IWL_ERR(trans, "Unable to init nic\n");
-eda50cde58de73 Sara Sharon    2016-09-28  543  		goto out;
-eda50cde58de73 Sara Sharon    2016-09-28  544  	}
-eda50cde58de73 Sara Sharon    2016-09-28  545  
-909e1be6546258 Johannes Berg  2025-04-30  546  	if (WARN_ON(trans->do_top_reset &&
-909e1be6546258 Johannes Berg  2025-04-30  547  		    trans->trans_cfg->device_family < IWL_DEVICE_FAMILY_SC))
-909e1be6546258 Johannes Berg  2025-04-30  548  		return -EINVAL;
+Is it the fault of the arch code that uses apply_to_page_range() via
+__kernel_map_pages()? It feels like it shouldn't care about the lazy
+mode as that's some detail of the apply_to_page_range() implementation.
+Maybe this API should just allow nesting.
 
-ret = -EINVAL;
-goto out;
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 88db8a0c0b37..9f387337ccc3 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -83,21 +83,11 @@ static inline void queue_pte_barriers(void)
+>  #define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+>  static inline void arch_enter_lazy_mmu_mode(void)
+>  {
+> -	/*
+> -	 * lazy_mmu_mode is not supposed to permit nesting. But in practice this
+> -	 * does happen with CONFIG_DEBUG_PAGEALLOC, where a page allocation
+> -	 * inside a lazy_mmu_mode section (such as zap_pte_range()) will change
+> -	 * permissions on the linear map with apply_to_page_range(), which
+> -	 * re-enters lazy_mmu_mode. So we tolerate nesting in our
+> -	 * implementation. The first call to arch_leave_lazy_mmu_mode() will
+> -	 * flush and clear the flag such that the remainder of the work in the
+> -	 * outer nest behaves as if outside of lazy mmu mode. This is safe and
+> -	 * keeps tracking simple.
+> -	 */
+> -
+>  	if (in_interrupt())
+>  		return;
+> 
+> +	VM_WARN_ON(test_thread_flag(TIF_LAZY_MMU));
 
-909e1be6546258 Johannes Berg  2025-04-30  549  
-909e1be6546258 Johannes Berg  2025-04-30  550  	/* we need to wait later - set state */
-909e1be6546258 Johannes Berg  2025-04-30  551  	if (trans->do_top_reset)
-909e1be6546258 Johannes Berg  2025-04-30  552  		trans_pcie->fw_reset_state = FW_RESET_TOP_REQUESTED;
-909e1be6546258 Johannes Berg  2025-04-30  553  
-909e1be6546258 Johannes Berg  2025-04-30  554  	if (trans->trans_cfg->device_family >= IWL_DEVICE_FAMILY_AX210) {
-909e1be6546258 Johannes Berg  2025-04-30  555  		if (!top_reset_done) {
-909e1be6546258 Johannes Berg  2025-04-30  556  			ret = iwl_pcie_ctxt_info_gen3_alloc(trans, fw);
-909e1be6546258 Johannes Berg  2025-04-30  557  			if (ret)
-909e1be6546258 Johannes Berg  2025-04-30  558  				goto out;
-909e1be6546258 Johannes Berg  2025-04-30  559  		}
-909e1be6546258 Johannes Berg  2025-04-30  560  
-909e1be6546258 Johannes Berg  2025-04-30  561  		iwl_pcie_ctxt_info_gen3_kick(trans);
-909e1be6546258 Johannes Berg  2025-04-30  562  	} else {
-97b00d877bb8c2 Johannes Berg  2017-04-19  563  		ret = iwl_pcie_ctxt_info_init(trans, fw);
-97b00d877bb8c2 Johannes Berg  2017-04-19  564  		if (ret)
-97b00d877bb8c2 Johannes Berg  2017-04-19  565  			goto out;
-909e1be6546258 Johannes Berg  2025-04-30  566  	}
-eda50cde58de73 Sara Sharon    2016-09-28  567  
-70582b826365d2 Johannes Berg  2023-04-13  568  	keep_ram_busy = !iwl_pcie_set_ltr(trans);
-25628bc08d4526 Johannes Berg  2021-03-26  569  
-595c230b95130b Matti Gottlieb 2021-08-26  570  	if (trans->trans_cfg->device_family >= IWL_DEVICE_FAMILY_BZ) {
-70d400ba7fa71d Johannes Berg  2024-07-29  571  		IWL_DEBUG_POWER(trans, "function scratch register value is 0x%08x\n",
-70d400ba7fa71d Johannes Berg  2024-07-29  572  				iwl_read32(trans, CSR_FUNC_SCRATCH));
-595c230b95130b Matti Gottlieb 2021-08-26  573  		iwl_write32(trans, CSR_FUNC_SCRATCH, CSR_FUNC_SCRATCH_INIT_VALUE);
-9ce041f5966fd0 Johannes Berg  2021-08-02  574  		iwl_set_bit(trans, CSR_GP_CNTRL,
-9ce041f5966fd0 Johannes Berg  2021-08-02  575  			    CSR_GP_CNTRL_REG_FLAG_ROM_START);
-595c230b95130b Matti Gottlieb 2021-08-26  576  	} else if (trans->trans_cfg->device_family >= IWL_DEVICE_FAMILY_AX210) {
-25628bc08d4526 Johannes Berg  2021-03-26  577  		iwl_write_umac_prph(trans, UREG_CPU_INIT_RUN, 1);
-595c230b95130b Matti Gottlieb 2021-08-26  578  	} else {
-25628bc08d4526 Johannes Berg  2021-03-26  579  		iwl_write_prph(trans, UREG_CPU_INIT_RUN, 1);
-595c230b95130b Matti Gottlieb 2021-08-26  580  	}
-25628bc08d4526 Johannes Berg  2021-03-26  581  
-70582b826365d2 Johannes Berg  2023-04-13  582  	if (keep_ram_busy)
-70582b826365d2 Johannes Berg  2023-04-13  583  		iwl_pcie_spin_for_iml(trans);
-70582b826365d2 Johannes Berg  2023-04-13  584  
-909e1be6546258 Johannes Berg  2025-04-30  585  	if (trans->do_top_reset) {
-909e1be6546258 Johannes Berg  2025-04-30  586  		trans->do_top_reset = 0;
-909e1be6546258 Johannes Berg  2025-04-30  587  
-909e1be6546258 Johannes Berg  2025-04-30  588  #define FW_TOP_RESET_TIMEOUT	(HZ / 4)
-909e1be6546258 Johannes Berg  2025-04-30  589  		ret = wait_event_timeout(trans_pcie->fw_reset_waitq,
-909e1be6546258 Johannes Berg  2025-04-30  590  					 trans_pcie->fw_reset_state != FW_RESET_TOP_REQUESTED,
-909e1be6546258 Johannes Berg  2025-04-30  591  					 FW_TOP_RESET_TIMEOUT);
-909e1be6546258 Johannes Berg  2025-04-30  592  
-909e1be6546258 Johannes Berg  2025-04-30  593  		if (trans_pcie->fw_reset_state != FW_RESET_OK) {
-909e1be6546258 Johannes Berg  2025-04-30  594  			if (trans_pcie->fw_reset_state != FW_RESET_TOP_REQUESTED)
-909e1be6546258 Johannes Berg  2025-04-30  595  				IWL_ERR(trans,
-909e1be6546258 Johannes Berg  2025-04-30  596  					"TOP reset interrupted by error (state %d)!\n",
-909e1be6546258 Johannes Berg  2025-04-30  597  					trans_pcie->fw_reset_state);
-909e1be6546258 Johannes Berg  2025-04-30  598  			else
-909e1be6546258 Johannes Berg  2025-04-30  599  				IWL_ERR(trans, "TOP reset timed out!\n");
-909e1be6546258 Johannes Berg  2025-04-30  600  			iwl_op_mode_nic_error(trans->op_mode,
-909e1be6546258 Johannes Berg  2025-04-30  601  					      IWL_ERR_TYPE_TOP_RESET_FAILED);
-909e1be6546258 Johannes Berg  2025-04-30  602  			iwl_trans_schedule_reset(trans,
-909e1be6546258 Johannes Berg  2025-04-30  603  						 IWL_ERR_TYPE_TOP_RESET_FAILED);
-909e1be6546258 Johannes Berg  2025-04-30  604  			ret = -EIO;
-909e1be6546258 Johannes Berg  2025-04-30  605  			goto out;
-909e1be6546258 Johannes Berg  2025-04-30  606  		}
-909e1be6546258 Johannes Berg  2025-04-30  607  
-909e1be6546258 Johannes Berg  2025-04-30  608  		msleep(10);
-909e1be6546258 Johannes Berg  2025-04-30  609  		IWL_INFO(trans, "TOP reset successful, reinit now\n");
-909e1be6546258 Johannes Berg  2025-04-30  610  		/* now load the firmware again properly */
-909e1be6546258 Johannes Berg  2025-04-30  611  		trans_pcie->prph_scratch->ctrl_cfg.control.control_flags &=
-909e1be6546258 Johannes Berg  2025-04-30  612  			~cpu_to_le32(IWL_PRPH_SCRATCH_TOP_RESET);
-909e1be6546258 Johannes Berg  2025-04-30  613  		top_reset_done = true;
-909e1be6546258 Johannes Berg  2025-04-30  614  		goto again;
-909e1be6546258 Johannes Berg  2025-04-30  615  	}
-909e1be6546258 Johannes Berg  2025-04-30  616  
-eda50cde58de73 Sara Sharon    2016-09-28  617  	/* re-check RF-Kill state since we may have missed the interrupt */
-9ad8fd0b4a24e6 Johannes Berg  2017-06-20  618  	hw_rfkill = iwl_pcie_check_hw_rf_kill(trans);
-eda50cde58de73 Sara Sharon    2016-09-28  619  	if (hw_rfkill && !run_in_rfkill)
-eda50cde58de73 Sara Sharon    2016-09-28  620  		ret = -ERFKILL;
-eda50cde58de73 Sara Sharon    2016-09-28  621  
-eda50cde58de73 Sara Sharon    2016-09-28  622  out:
-eda50cde58de73 Sara Sharon    2016-09-28  623  	mutex_unlock(&trans_pcie->mutex);
-eda50cde58de73 Sara Sharon    2016-09-28 @624  	return ret;
+This warning is good to have back.
+
+> +
+>  	set_thread_flag(TIF_LAZY_MMU);
+>  }
+> 
+> @@ -119,6 +109,14 @@ static inline void arch_leave_lazy_mmu_mode(void)
+>  	clear_thread_flag(TIF_LAZY_MMU);
+>  }
+> 
+> +static inline bool arch_in_lazy_mmu_mode(void)
+> +{
+> +	if (in_interrupt())
+> +		return false;
+> +
+> +	return test_thread_flag(TIF_LAZY_MMU);
+> +}
+> +
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  #define __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
+> 
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index 04d4a8f676db..4da7a847d5f3 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -293,18 +293,29 @@ int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool valid)
+>  }
+> 
+>  #ifdef CONFIG_DEBUG_PAGEALLOC
+> -/*
+> - * This is - apart from the return value - doing the same
+> - * thing as the new set_direct_map_valid_noflush() function.
+> - *
+> - * Unify? Explain the conceptual differences?
+> - */
+>  void __kernel_map_pages(struct page *page, int numpages, int enable)
+>  {
+> +	bool lazy_mmu;
+> +
+>  	if (!can_set_direct_map())
+>  		return;
+> 
+> +	/*
+> +	 * This is called during page alloc or free, and maybe called while in
+> +	 * lazy mmu mode. Since set_memory_valid() may also enter lazy mmu mode,
+> +	 * this would cause nesting which is not supported; the inner call to
+> +	 * exit the mode would exit, meaning that the outer lazy mmu mode is no
+> +	 * longer benefiting from the optimization. So temporarily leave lazy
+> +	 * mmu mode for the duration of the call.
+> +	 */
+> +	lazy_mmu = arch_in_lazy_mmu_mode();
+> +	if (lazy_mmu)
+> +		arch_leave_lazy_mmu_mode();
+> +
+>  	set_memory_valid((unsigned long)page_address(page), numpages, enable);
+> +
+> +	if (lazy_mmu)
+> +		arch_enter_lazy_mmu_mode();
+>  }
+>  #endif /* CONFIG_DEBUG_PAGEALLOC */
+
+So basically you are flattening the enter/leave_lazy_mmu_mode() regions.
+Ideally this could have been done by the nesting
+arch_enter_lazy_mmu_mode() automatically but that means this function
+returning the current mode and arch_leave_lazy_mmu_mode() taking an
+argument - more like the irq saving/restoring (even better renaming it
+to arch_restore_lazy_mmu_mode()). I guess this won't go well with the mm
+folk who don't seem willing to changes in this area.
+
+FWIW, this patch is correct.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Catalin
 
