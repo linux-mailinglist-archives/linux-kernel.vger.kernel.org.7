@@ -1,375 +1,179 @@
-Return-Path: <linux-kernel+bounces-680554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A255AD46C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:34:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5005AD46C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Jun 2025 01:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6368C3A86C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C56161CA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 23:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A8429B78F;
-	Tue, 10 Jun 2025 23:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E58295DA6;
+	Tue, 10 Jun 2025 23:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wArqi2lZ"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I77ejhIh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C6E29AAEE
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 23:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8B529827C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 23:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749598327; cv=none; b=C4ypmwFK5jDiCHjKjmmGT3mD1ZKYqe8++jjJTPtkb27Z2puhk7JjX1vOTxtJGDeNkJ3zd/AG5CWgrL35e67088ugs3SmmarMU2/Qrm2ewdL2FIrO0DE6PLADO2vsdeI8oGfTu0Vh7McsdjFHAmn9WV6gY/nkJKsVuH9T3TsvypA=
+	t=1749598322; cv=none; b=UhvHL1YHHzvrFMvjpTqIfihcS1IDod4D1Lv+PlLmaakxDcU4RBRsInrIVuI1cQqnx7CYAQUh4r3LKkgWpBTOZcRDB49N7fbK0A1DcQ297zMmOGYoVO4nCh8Enn8yCPN4OAbqD/MN1/8i/jCS/ScR0Np+usKDXDdqIa6ZJleljEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749598327; c=relaxed/simple;
-	bh=a9mHbrJOiLHj5NsYMvttJmJI0NUURDRVikwiQPz8Cus=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZHceAHGKHewrs/rbu19o7YuMUwg2FNgu3pfR6fdCmgfE/sw8HlBIjxXcZ1SGtHYvYYYjaWYD4qJM3DrhOgu29QeGjB9IbM8nXqHTokO44VeGbMIh63aHqyWTS86HPrx28qSXt8+VSl6j7EP/TxKzYP3P7zMAiPhTAmN/+Ve3jOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wArqi2lZ; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1749598323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r8RdlCinf2+TlX4dL62XH9+5xu9xSdaTA7tP0qW17CU=;
-	b=wArqi2lZqUqF+oXUylRPZ+1QettdjP++OmHMV2lTAYMlHeUFcuYaEaKumXQ0J5XN+75Wcw
-	11c5pgEE1/0AjNiv5JECh9C0zixmNyZNBffDE63H5PcEK2OB2jWf+aHxYrnRS8WbhpSv2Q
-	glvmFyPc3rWoehjBwh+0lmQnhSAnoSU=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Simon Horman <horms@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [net-next PATCH v6 08/10] net: macb: Move most of mac_config to mac_prepare
-Date: Tue, 10 Jun 2025 19:31:32 -0400
-Message-Id: <20250610233134.3588011-9-sean.anderson@linux.dev>
-In-Reply-To: <20250610233134.3588011-1-sean.anderson@linux.dev>
-References: <20250610233134.3588011-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1749598322; c=relaxed/simple;
+	bh=uBUPZlX51+Ygzet4oFDIVA/CazjT+LyaA4YD2n1o1EU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTm8c3KKPhsYwzB9JGGJ1Hai7RF6x03Zl7uJNmDBItMcfhUx4su5Cl2XHDJjkHM517sePNAKDuMcMtWbVUf4XimVJx3BSBN5pm5U5kpDGg01h/X3QFqGaPsm9KRTNK9BqrfisrQUALBQWdEDNA0vEZu+Gd600Be64cIRwy1enWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I77ejhIh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E31BC4CEF1;
+	Tue, 10 Jun 2025 23:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749598322;
+	bh=uBUPZlX51+Ygzet4oFDIVA/CazjT+LyaA4YD2n1o1EU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I77ejhIhNQMxg57L16GC373gTJVvz0FMTibCD650u9TjWq1Vkw/8KhUCij0bbT23I
+	 92wjn7na07009N/E92RdrjOfT0/t4RQ9+VHssm9nO2rRsta/WkOni8inMjqVszrdIJ
+	 iJ0d+dMu1ZIo3HPRSlVK3BvfrpST/rMwa65v8g5BSKQYmqx8u2Hu7O4h+c5t1u+7kj
+	 fcPsznw5TTGQxhq1iGg5KDNNzFqO5T9HRXuPUdBlSsQaP9n3I4XVKwaIqWCLB5g7Wm
+	 eAzqKyVF2V6lORx9V5bQVnVsNXHqEl1X1eZapPCRjoIrKk4Nb9bNk0Bpvq5yw8ylPF
+	 LHHzynkNkFGdA==
+Date: Tue, 10 Jun 2025 16:31:59 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, peterz@infradead.org
+Subject: Re: [RFC 07/13] objtool: Extract code to validate instruction from
+ the validate branch loop
+Message-ID: <op34sueobpwyzrxm4gmxrkzauhfzcg2wqktbjzrzg2n3gq4uiy@4zlau7mwrycm>
+References: <20250606153440.865808-1-alexandre.chartre@oracle.com>
+ <20250606153440.865808-8-alexandre.chartre@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250606153440.865808-8-alexandre.chartre@oracle.com>
 
-mac_prepare is called every time the interface is changed, so we can do
-all of our configuration there, instead of in mac_config. This will be
-useful for the next patch where we will set the PCS bit based on whether
-we are using our internal PCS. No functional change intended.
+On Fri, Jun 06, 2025 at 05:34:34PM +0200, Alexandre Chartre wrote:
+> The code to validate a branch loops through all instructions of the
+> branch and validate each instruction. Move the code to validate an
+> instruction to a separated function.
+> 
+> Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+> ---
+>  tools/objtool/check.c | 375 +++++++++++++++++++++++-------------------
+>  1 file changed, 208 insertions(+), 167 deletions(-)
+> 
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 2c73c8d3515d..36ec08b8d654 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -3527,6 +3527,11 @@ static bool skip_alt_group(struct instruction *insn)
+>  	return alt_insn->type == INSN_CLAC || alt_insn->type == INSN_STAC;
+>  }
+>  
+> +static int validate_insn(struct objtool_file *file, struct symbol *func,
+> +			 struct instruction *insn, struct insn_state *statep,
+> +			 struct instruction *prev_insn, struct instruction *next_insn,
+> +			 bool *validate_nextp);
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+Since validate_insn() is always called by validate_branch(), put the
+validate_insn() implementation here above validate_branch().
 
-Changes in v6:
-- Fix use of spin_lock instead of spin_unlock
+>  /*
+>   * Follow the branch starting at the given instruction, and recursively follow
+>   * any other branches (jumps).  Meanwhile, track the frame pointer state at
+> @@ -3536,10 +3541,9 @@ static bool skip_alt_group(struct instruction *insn)
+>  static int validate_branch(struct objtool_file *file, struct symbol *func,
+>  			   struct instruction *insn, struct insn_state state)
+>  {
+> -	struct alternative *alt;
+>  	struct instruction *next_insn, *prev_insn = NULL;
+>  	struct section *sec;
+> -	u8 visited;
+> +	bool validate_next;
 
-Changes in v2:
-- Fix docs for macb_pcs_config_an
-- Include change to macb_pcs_get_state which was previously in the next
-  patch
+I think it's clearer if we reverse the polarity and call it "dead_end".
 
- drivers/net/ethernet/cadence/macb_main.c | 209 ++++++++++++++---------
- 1 file changed, 132 insertions(+), 77 deletions(-)
+> @@ -3566,232 +3570,269 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+>  			return 1;
+>  		}
+>  
+> -		visited = VISITED_BRANCH << state.uaccess;
+> -		if (insn->visited & VISITED_BRANCH_MASK) {
+> -			if (!insn->hint && !insn_cfi_match(insn, &state.cfi))
+> -				return 1;
+> +		ret = validate_insn(file, func, insn, &state,
+> +				    prev_insn, next_insn,
+> +				    &validate_next);
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index d1f1ae5ea161..78433d8f3746 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -549,19 +549,91 @@ static void macb_set_tx_clk(struct macb *bp, int speed)
- 		netdev_err(bp->dev, "adjusting tx_clk failed.\n");
- }
- 
--static void macb_usx_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
--				 phy_interface_t interface, int speed,
--				 int duplex)
--{
--	struct macb *bp = container_of(pcs, struct macb, phylink_usx_pcs);
--	u32 config;
--
--	config = gem_readl(bp, USX_CONTROL);
--	config = GEM_BFINS(SERDES_RATE, MACB_SERDES_RATE_10G, config);
--	config = GEM_BFINS(USX_CTRL_SPEED, HS_SPEED_10000M, config);
--	config &= ~(GEM_BIT(TX_SCR_BYPASS) | GEM_BIT(RX_SCR_BYPASS));
--	config |= GEM_BIT(TX_EN);
--	gem_writel(bp, USX_CONTROL, config);
-+static void macb_pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
-+			       struct phylink_link_state *state)
-+{
-+	struct macb *bp = container_of(pcs, struct macb, phylink_sgmii_pcs);
-+
-+	phylink_mii_c22_pcs_decode_state(state, neg_mode, gem_readl(bp, PCSSTS),
-+					 gem_readl(bp, PCSANLPBASE));
-+}
-+
-+/**
-+ * macb_pcs_config_an() - Configure autonegotiation settings for PCSs
-+ * @bp: The macb to operate on
-+ * @neg_mode: The autonegotiation mode
-+ * @interface: The interface to use
-+ * @advertising: The advertisement mask
-+ *
-+ * This provides common configuration for PCS autonegotiation.
-+ *
-+ * Context: Call with @bp->lock held.
-+ * Return: 1 if any registers were changed; 0 otherwise
-+ */
-+static int macb_pcs_config_an(struct macb *bp, unsigned int neg_mode,
-+			      phy_interface_t interface,
-+			      const unsigned long *advertising)
-+{
-+	bool changed = false;
-+	int old, new;
-+
-+	old = gem_readl(bp, PCSANADV);
-+	new = phylink_mii_c22_pcs_encode_advertisement(interface, advertising);
-+	if (new != -EINVAL && old != new) {
-+		changed = true;
-+		gem_writel(bp, PCSANADV, new);
-+	}
-+
-+	old = new = gem_readl(bp, PCSCNTRL);
-+	if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED)
-+		new |= BMCR_ANENABLE;
-+	else
-+		new &= ~BMCR_ANENABLE;
-+	if (old != new) {
-+		changed = true;
-+		gem_writel(bp, PCSCNTRL, new);
-+	}
-+	return changed;
-+}
-+
-+static int macb_pcs_config(struct phylink_pcs *pcs, unsigned int mode,
-+			   phy_interface_t interface,
-+			   const unsigned long *advertising,
-+			   bool permit_pause_to_mac)
-+{
-+	struct macb *bp = container_of(pcs, struct macb, phylink_sgmii_pcs);
-+	bool changed = false;
-+	unsigned long flags;
-+	u32 old, new;
-+
-+	spin_lock_irqsave(&bp->lock, flags);
-+	old = new = gem_readl(bp, NCFGR);
-+	new |= GEM_BIT(SGMIIEN);
-+	if (old != new) {
-+		changed = true;
-+		gem_writel(bp, NCFGR, new);
-+	}
-+
-+	if (macb_pcs_config_an(bp, mode, interface, advertising))
-+		changed = true;
-+
-+	spin_unlock_irqrestore(&bp->lock, flags);
-+	return changed;
-+}
-+
-+static void macb_pcs_an_restart(struct phylink_pcs *pcs)
-+{
-+	struct macb *bp = container_of(pcs, struct macb, phylink_sgmii_pcs);
-+	u32 bmcr;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&bp->lock, flags);
-+
-+	bmcr = gem_readl(bp, PCSCNTRL);
-+	bmcr |= BMCR_ANENABLE;
-+	gem_writel(bp, PCSCNTRL, bmcr);
-+
-+	spin_unlock_irqrestore(&bp->lock, flags);
- }
- 
- static void macb_usx_pcs_get_state(struct phylink_pcs *pcs,
-@@ -589,45 +661,60 @@ static int macb_usx_pcs_config(struct phylink_pcs *pcs,
- 			       bool permit_pause_to_mac)
- {
- 	struct macb *bp = container_of(pcs, struct macb, phylink_usx_pcs);
-+	unsigned long flags;
-+	bool changed;
-+	u16 old, new;
- 
--	gem_writel(bp, USX_CONTROL, gem_readl(bp, USX_CONTROL) |
--		   GEM_BIT(SIGNAL_OK));
-+	spin_lock_irqsave(&bp->lock, flags);
-+	if (macb_pcs_config_an(bp, neg_mode, interface, advertising))
-+		changed = true;
- 
--	return 0;
--}
-+	old = new = gem_readl(bp, USX_CONTROL);
-+	new |= GEM_BIT(SIGNAL_OK);
-+	if (old != new) {
-+		changed = true;
-+		gem_writel(bp, USX_CONTROL, new);
-+	}
- 
--static void macb_pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
--			       struct phylink_link_state *state)
--{
--	state->link = 0;
--}
-+	old = new = gem_readl(bp, USX_CONTROL);
-+	new = GEM_BFINS(SERDES_RATE, MACB_SERDES_RATE_10G, new);
-+	new = GEM_BFINS(USX_CTRL_SPEED, HS_SPEED_10000M, new);
-+	new &= ~(GEM_BIT(TX_SCR_BYPASS) | GEM_BIT(RX_SCR_BYPASS));
-+	new |= GEM_BIT(TX_EN);
-+	if (old != new) {
-+		changed = true;
-+		gem_writel(bp, USX_CONTROL, new);
-+	}
- 
--static void macb_pcs_an_restart(struct phylink_pcs *pcs)
--{
--	/* Not supported */
--}
--
--static int macb_pcs_config(struct phylink_pcs *pcs,
--			   unsigned int neg_mode,
--			   phy_interface_t interface,
--			   const unsigned long *advertising,
--			   bool permit_pause_to_mac)
--{
--	return 0;
-+	spin_unlock_irqrestore(&bp->lock, flags);
-+	return changed;
- }
- 
- static const struct phylink_pcs_ops macb_phylink_usx_pcs_ops = {
- 	.pcs_get_state = macb_usx_pcs_get_state,
- 	.pcs_config = macb_usx_pcs_config,
--	.pcs_link_up = macb_usx_pcs_link_up,
- };
- 
- static const struct phylink_pcs_ops macb_phylink_pcs_ops = {
- 	.pcs_get_state = macb_pcs_get_state,
--	.pcs_an_restart = macb_pcs_an_restart,
- 	.pcs_config = macb_pcs_config,
-+	.pcs_an_restart = macb_pcs_an_restart,
- };
- 
-+static struct phylink_pcs *macb_mac_select_pcs(struct phylink_config *config,
-+					       phy_interface_t interface)
-+{
-+	struct net_device *ndev = to_net_dev(config->dev);
-+	struct macb *bp = netdev_priv(ndev);
-+
-+	if (interface == PHY_INTERFACE_MODE_10GBASER)
-+		return &bp->phylink_usx_pcs;
-+	else if (interface == PHY_INTERFACE_MODE_SGMII)
-+		return &bp->phylink_sgmii_pcs;
-+	else
-+		return NULL;
-+}
-+
- static void macb_mac_config(struct phylink_config *config, unsigned int mode,
- 			    const struct phylink_link_state *state)
- {
-@@ -646,18 +733,14 @@ static void macb_mac_config(struct phylink_config *config, unsigned int mode,
- 		if (state->interface == PHY_INTERFACE_MODE_RMII)
- 			ctrl |= MACB_BIT(RM9200_RMII);
- 	} else if (macb_is_gem(bp)) {
--		ctrl &= ~(GEM_BIT(SGMIIEN) | GEM_BIT(PCSSEL));
--		ncr &= ~GEM_BIT(ENABLE_HS_MAC);
--
--		if (state->interface == PHY_INTERFACE_MODE_SGMII) {
--			ctrl |= GEM_BIT(SGMIIEN) | GEM_BIT(PCSSEL);
--		} else if (state->interface == PHY_INTERFACE_MODE_10GBASER) {
-+		if (macb_mac_select_pcs(config, state->interface))
- 			ctrl |= GEM_BIT(PCSSEL);
--			ncr |= GEM_BIT(ENABLE_HS_MAC);
--		} else if (bp->caps & MACB_CAPS_MIIONRGMII &&
--			   bp->phy_interface == PHY_INTERFACE_MODE_MII) {
-+		else
-+			ctrl &= ~GEM_BIT(PCSSEL);
-+
-+		if (bp->caps & MACB_CAPS_MIIONRGMII &&
-+		    bp->phy_interface == PHY_INTERFACE_MODE_MII)
- 			ncr |= MACB_BIT(MIIONRGMII);
--		}
- 	}
- 
- 	/* Apply the new configuration, if any */
-@@ -667,22 +750,6 @@ static void macb_mac_config(struct phylink_config *config, unsigned int mode,
- 	if (old_ncr ^ ncr)
- 		macb_or_gem_writel(bp, NCR, ncr);
- 
--	/* Disable AN for SGMII fixed link configuration, enable otherwise.
--	 * Must be written after PCSSEL is set in NCFGR,
--	 * otherwise writes will not take effect.
--	 */
--	if (macb_is_gem(bp) && state->interface == PHY_INTERFACE_MODE_SGMII) {
--		u32 pcsctrl, old_pcsctrl;
--
--		old_pcsctrl = gem_readl(bp, PCSCNTRL);
--		if (mode == MLO_AN_FIXED)
--			pcsctrl = old_pcsctrl & ~GEM_BIT(PCSAUTONEG);
--		else
--			pcsctrl = old_pcsctrl | GEM_BIT(PCSAUTONEG);
--		if (old_pcsctrl != pcsctrl)
--			gem_writel(bp, PCSCNTRL, pcsctrl);
--	}
--
- 	spin_unlock_irqrestore(&bp->lock, flags);
- }
- 
-@@ -735,10 +802,12 @@ static void macb_mac_link_up(struct phylink_config *config,
- 	if (!(bp->caps & MACB_CAPS_MACB_IS_EMAC)) {
- 		ctrl &= ~MACB_BIT(PAE);
- 		if (macb_is_gem(bp)) {
--			ctrl &= ~GEM_BIT(GBE);
-+			ctrl &= ~(GEM_BIT(GBE) | GEM_BIT(ENABLE_HS_MAC));
- 
- 			if (speed == SPEED_1000)
- 				ctrl |= GEM_BIT(GBE);
-+			else if (speed == SPEED_10000)
-+				ctrl |= GEM_BIT(ENABLE_HS_MAC);
- 		}
- 
- 		if (rx_pause)
-@@ -776,20 +845,6 @@ static void macb_mac_link_up(struct phylink_config *config,
- 	netif_tx_wake_all_queues(ndev);
- }
- 
--static struct phylink_pcs *macb_mac_select_pcs(struct phylink_config *config,
--					       phy_interface_t interface)
--{
--	struct net_device *ndev = to_net_dev(config->dev);
--	struct macb *bp = netdev_priv(ndev);
--
--	if (interface == PHY_INTERFACE_MODE_10GBASER)
--		return &bp->phylink_usx_pcs;
--	else if (interface == PHY_INTERFACE_MODE_SGMII)
--		return &bp->phylink_sgmii_pcs;
--	else
--		return NULL;
--}
--
- static const struct phylink_mac_ops macb_phylink_ops = {
- 	.mac_select_pcs = macb_mac_select_pcs,
- 	.mac_config = macb_mac_config,
+This can fit in two lines:
+
+		ret = validate_insn(file, func, insn, &state, prev_insn,
+				    next_insn, &dead_end);
+
+> +static int validate_insn(struct objtool_file *file, struct symbol *func,
+> +			 struct instruction *insn, struct insn_state *statep,
+> +			 struct instruction *prev_insn, struct instruction *next_insn,
+> +			 bool *validate_nextp)
+> +{
+> +	struct alternative *alt;
+> +	u8 visited;
+> +	int ret;
+>  
+> -				sym_for_each_insn_continue_reverse(file, func, i) {
+> -					if (i->save) {
+> -						save_insn = i;
+> -						break;
+> -					}
+> -				}
+> +	/*
+> +	 * Indicate that, by default, the calling function should not
+> +	 * validate the next instruction and validation should be
+> +	 * stopped. That way this function can stop validation by just
+> +	 * returning at any point before reaching the end of the function.
+> +	 *
+> +	 * If the end of this function is reached then that means that the
+> +	 * validation should continue and the caller should validate the
+> +	 * next instruction, so *validate_nextp will be set to true at
+> +	 * that point.
+> +	 */
+> +	*validate_nextp = false;
+
+This can be much more succinct:
+
+	/*
+	 * Any returns before the end of this function are effectively dead
+	 * ends, i.e. validate_branch() has reached the end of the branch.
+	 */
+	*dead_end = true;
+
+
+> +	default:
+> +		break;
+>  	}
+>  
+> +	if (insn->dead_end)
+> +		return 0;
+> +
+> +	/*
+> +	 * Indicate that the caller should validate the next
+> +	 * instruction and continue the validation.
+> +	 */
+> +	*validate_nextp = true;
+> +
+>  	return 0;
+
+No comment needed here.  Also this can be condensed:
+
+	*dead_end = insn->dead_end;
+	return 0;
+
 -- 
-2.35.1.1320.gc452695387.dirty
-
+Josh
 
