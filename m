@@ -1,141 +1,153 @@
-Return-Path: <linux-kernel+bounces-679567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A27FAD38C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:19:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50961AD38CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE78AA20D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:12:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646CB9E7079
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4723C2951D5;
-	Tue, 10 Jun 2025 13:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385B42BD03D;
+	Tue, 10 Jun 2025 13:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ngrdcVOc"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="do8T6Pio"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB1E29A33F;
-	Tue, 10 Jun 2025 13:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122BA19A;
+	Tue, 10 Jun 2025 13:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560890; cv=none; b=uQUTr7t2YItjipoyGlbRhEOGdSip0NdYRyvr8KdfJevKp6TcZTtA5Y+4wBMjLu6gkB4qZYpVQgXCVHnRaCQOtSc4jbFE/eMzfwus59Z4tQ1+IgaKkj/T+lZxLxmVpLR39diENA7QQJ7Gm0sbDHHXPnVekLF36KrgRC7hT0qa8Gk=
+	t=1749560848; cv=none; b=D/iX2lhN3vxuK48m0i/taI5Ouv2qUMjzjX1O91ilmRH4asuGYxgZRUNJjeXq8AyUi8Ohcv9egrgoqscWHdbqdpoKpBtfF+yQzSyK+XjAnc2WwFkh0SPVDkCvzDGYNI2tdn/E1NVC6XLU4c6VZBWY8rRaM6zNFhYtBMNqOn/5p5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560890; c=relaxed/simple;
-	bh=6sZzQJep3auti0AOv+a5fgqhhkPTzy2KMG1ZbXcuoKA=;
+	s=arc-20240116; t=1749560848; c=relaxed/simple;
+	bh=JGBU6yuMcEu9jaDvH7qVhIiGmXq1vguIdg7PTe9Agks=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dEP9uvAYTWor4UzB3cTUNvSE3XMefId7spxJJe+yD6OTM0UeCQzi0xikixu9fzxhRcm5awmguqDC8tnDgKGh5uiWd2H3wjDycA7AwOAJ91rRiol/E9PVLsRvNKAjl/rfp3h1PXauouNBLwbax8dhwC6bmka0f772Cz0bbvf7JVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ngrdcVOc; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ACLKIb000488;
-	Tue, 10 Jun 2025 15:07:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	 In-Reply-To:Content-Type; b=D4kdeRFd2iYhtW5Sdu54IT+EsRVK8t5uXVIbJ+FvR9FjNvfGuyC1uX3OfM4Ze5+57MS2fD0MCfOek1MgbLJCKrlfq28fsidDklAz79EDOR0WTEXqYtIgFydoJZSC0Oq0tgCdrMQw+Yv6VqdedquAHZcKQblii4HJ6kGHqLRbNSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=do8T6Pio; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A8XvAZ029862;
+	Tue, 10 Jun 2025 13:07:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	mCaZx9gJ+o3Q94P6ZYIvia/cHH4I4d89mREiVwWUrpM=; b=ngrdcVOc68Hp75Pu
-	+jEX2wmlvTg2ujcw/Zr8WDxPRt6nV6WfaoUS0QDY9k7Xlf3fLKPutBi3yrXZJsz4
-	ZAn375f4uVFmhk4AJy72NgWyVaBwaaIhZaqgOrb4DQwfK81OeX8mNNPc7jTJ5RGu
-	XzMi86tzlDEpDtbE15JPr1ayK3pIpOIg/LyV0s+XTsVtlc15bxENm+za6CPnFZme
-	hm2T2SH+F8O39zOBcfqGeu9sUYKX4G5ZNGZj7IGaLtWlhqOTEYIp3aTBqxX6rcmB
-	b6LYMPJsb+oGNIQBmIp1c6hQFVgMohQ0FOYmjxJsh5zxF4rbLK9yVJ4Nqyz2RsyB
-	AqhVNA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4750cnsxrb-1
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JGBU6yuMcEu9jaDvH7qVhIiGmXq1vguIdg7PTe9Agks=; b=do8T6Pio0Og8JEsZ
+	NzDdZCF3GcmsR6vOOXu+AWgAjNb7X72ddrCyIXwxBL2/uA9xUsxWGNuvFOk/RPGW
+	ssSxGCxNkHmV859nBfZ5xhUsXgmc8PnBnVIAJOcetu2ns6sZAAy7+5xECd4xggMO
+	cO+mhY8v4eIx/T+aQjr0V6hM/yFnLQqFGglgr5FoFC8sdx1SpisZf2TEdbAjX3gc
+	gQAuFbuBR1eCNbmtevX9ViGeDG2oFKOmdfkvTJGyVYELIATUf95J6Gw09/Fnml/c
+	xdNvowJiwLsLoel2p5JZx45bw5Zg83wfY66BwS/3ksCdPvofwOeYy/vU6fRmdCl1
+	JA99ZQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 474eqchdb2-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Jun 2025 15:07:56 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1F9554004B;
-	Tue, 10 Jun 2025 15:06:49 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B46C1B525F3;
-	Tue, 10 Jun 2025 15:06:07 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
- 2025 15:06:07 +0200
-Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
- 2025 15:06:06 +0200
-Message-ID: <afda753a-47b2-417d-82a1-b166fc601f8f@foss.st.com>
-Date: Tue, 10 Jun 2025 15:06:06 +0200
+	Tue, 10 Jun 2025 13:07:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55AD7Ki1002349
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 13:07:20 GMT
+Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Jun
+ 2025 06:07:15 -0700
+Message-ID: <3b75fe83-85c5-f0d3-c5db-481ef133d6de@quicinc.com>
+Date: Tue, 10 Jun 2025 18:37:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] mfd: stm32-timers: Fix build warnings about export.h
-To: Antonio Borneo <antonio.borneo@foss.st.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        "David
- Lechner" <dlechner@baylibre.com>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Jonathan Cameron <jic23@kernel.org>, "Lee
- Jones" <lee@kernel.org>,
-        <linux-iio@vger.kernel.org>,
-        =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Olivier Moysan
-	<olivier.moysan@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>
-References: <20250610124855.269158-1-antonio.borneo@foss.st.com>
- <20250610124855.269158-6-antonio.borneo@foss.st.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V3 1/4] dt-bindings: mmc: Add dll-hsr-list for HS400 and
+ HS200 modes
 Content-Language: en-US
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250610124855.269158-6-antonio.borneo@foss.st.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sachin Gupta
+	<quic_sachgupt@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_mapa@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_sartgarg@quicinc.com>
+References: <20250122094707.24859-1-quic_sachgupt@quicinc.com>
+ <20250122094707.24859-2-quic_sachgupt@quicinc.com>
+ <72b02fd1-5195-4bb0-b01d-5481b49a5680@kernel.org>
+ <e0f43fc7-2f38-335d-1515-c97594a55566@quicinc.com>
+ <18053999-c337-47e5-b6df-72c2be6a72df@kernel.org>
+From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+In-Reply-To: <18053999-c337-47e5-b6df-72c2be6a72df@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDEwMiBTYWx0ZWRfX5o5lYcdz9Uj4
+ Kp5Om5Lvf4iRs6CFmtyztKCWZ8wrBai6SWCVWzuPTnYGGeFuZ/udDShCTTsv9LdYO4sDNxRauOM
+ E7Spn+cAsYkGcAVuGXfU/BEe1t6cKcymrPvew/PXnX/xi9r7KT5ZzWrQc7PAsCnmuNxT9I0A7Y8
+ wUJRAeqoOP0vxPDQXasOdD2yr4LWqwj7ajejDgUxTD31uzz8c87zH+SrzK3U8hWvj7+hl9ZXK2p
+ c9jasM1jf67aevnff4XYNvtwvEZxja04kvgzU/F4DfX2+1I5YPPucPAWqek8qmz70u7V+Zq6YjG
+ sgEeUQ7nlZi+WzdLcV3tvEs8Vm1ooGRuRlzrpjfTDGmIK/b6cZQZoRsgbBg0H+VCdVtJmrvvxqq
+ 7yGjgz/ptYPDIdpslArBj2QoMNFcdWWSj1LM7VdvuFMWfLO/PAOj6ibih3fsahNtkLOzT34a
+X-Authority-Analysis: v=2.4 cv=Q7TS452a c=1 sm=1 tr=0 ts=68482e09 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
+ a=tplrWfVxwPniNMw0LL4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 5-G7pzJu0YH_cMYSW9WaKP5MyQBHE-3V
+X-Proofpoint-ORIG-GUID: 5-G7pzJu0YH_cMYSW9WaKP5MyQBHE-3V
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506100102
 
-On 6/10/25 14:48, Antonio Borneo wrote:
-> After commit a934a57a42f6 ("scripts/misc-check: check missing #include
-> <linux/export.h> when W=1") and commit 7d95680d64ac ("scripts/misc-check:
-> check unnecessary #include <linux/export.h> when W=1") we get the build
-> warning with W=1:
-> 
-> drivers/mfd/stm32-timers.c: warning: EXPORT_SYMBOL() is used, but #include <linux/export.h> is missing
-> 
-> Fix it.
-> 
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-Hi Antonio,
+On 6/10/2025 6:23 PM, Krzysztof Kozlowski wrote:
+> On 10/06/2025 14:07, Ram Prakash Gupta wrote:
+>> Hi Krzysztof,
+>>
+>> Thanks for your comment, The Qualcomm Engineer who initiated this work,
+>> is no longer working on this and I am taking up the responsibility to continue
+>> on this work. I have started to check this and will start with addressing your
+>> comment next.
+>>
+>> Thanks,
+>> Ram
+>>
+>> On 1/22/2025 3:56 PM, Krzysztof Kozlowski wrote:
+>>> On 22/01/2025 10:47, Sachin Gupta wrote:
+> Above timeline is interesting:
+> 1. Patch sent on 22nd January.
+> 2. I provided comments few hours later, the same day.
+> 3. Silence.
+> 4. Employee changes job.
+> 5. Five months later...
+>
+> Not your fault Ram of course, but above timeline is not a responsible
+> way of upstreaming patches.
+>
+> Best regards,
+> Krzysztof
 
-You can add my:
-Acked-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+my apologies for this, I will give inputs internally to improve process
+for changing hands.
 
-Thanks,
-Fabrice
-
-> ---
->  drivers/mfd/stm32-timers.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mfd/stm32-timers.c b/drivers/mfd/stm32-timers.c
-> index e3c116ee4034a..b3dbc02aaf798 100644
-> --- a/drivers/mfd/stm32-timers.c
-> +++ b/drivers/mfd/stm32-timers.c
-> @@ -5,6 +5,7 @@
->   */
->  
->  #include <linux/bitfield.h>
-> +#include <linux/export.h>
->  #include <linux/mfd/stm32-timers.h>
->  #include <linux/module.h>
->  #include <linux/of_platform.h>
 
