@@ -1,39 +1,53 @@
-Return-Path: <linux-kernel+bounces-680035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663BDAD3F23
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:37:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70AC6AD3F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8414F189FE61
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38BF617B4CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E827C242D7E;
-	Tue, 10 Jun 2025 16:37:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C53242930
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2B1242910;
+	Tue, 10 Jun 2025 16:50:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7516F8BF8
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 16:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749573445; cv=none; b=gkMvdkhUm+LLJVRRb4afT4B9zf7/tyX4dL07Uy4wqwafb4IAl+bP5StCRBzDSvVtj5GAEi5NPUFCW7vtezJuejixBu8Nt9QcDcPjjfsBhCv+2uIg3oaeU0cyxIB9niGkNAI4fKUM6o8K78cxNTtRnmUZokiyBrvsBgk73onwYNU=
+	t=1749574238; cv=none; b=u3KP5WMjmGr46CNmfp1JYh1AMCqlKik/WfSpCCYfwK9vRYuBQvlfJe58yUYaB/8QmZdBFWgn2IPTGVn2Jqr0uMmKqcv887U4Y8CytntZUe8kU3rGaeIOtTmAO5RlwEMVxso267I3/9eNz2whlIjn4j8/fdAdFaOcegeFFhn+x9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749573445; c=relaxed/simple;
-	bh=VjFarI2Codh6KqWltoYZ4DowgWzKrAUhwRXr/w7VIzw=;
+	s=arc-20240116; t=1749574238; c=relaxed/simple;
+	bh=H+jenH+2aYZxxKoq09/Zlng/aid5enmc1DjTq62NRtE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YNKnXGCy54E832ZDEYBRNp75n78ujQ0Vbrokho7z6VnNVyGKT6Nw3CkCOU9w8kCtSMoMOzkd2e51/2p1mxVgFsLTdDVtA53dv0c5uiZn86ZCWXpr8GhHdY+EkAeQyibNDXQRkeWOyX+oNtM9Jy9KoXyznTDoX6k2h+tsgZEWVVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93BD714BF;
-	Tue, 10 Jun 2025 09:37:03 -0700 (PDT)
-Received: from [10.1.33.221] (XHFQ2J9959.cambridge.arm.com [10.1.33.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EE033F673;
-	Tue, 10 Jun 2025 09:37:22 -0700 (PDT)
-Message-ID: <b567a16a-8d80-4aab-84c2-21cbc6a6a35d@arm.com>
-Date: Tue, 10 Jun 2025 17:37:20 +0100
+	 In-Reply-To:Content-Type; b=teUDxETNA3KGaR+cWYCk2/rCFPdn1urgpSqYwUMNx8xgM/zFFvpozaIk168UdsmnPLqNA+KlLo73LW5LpuNmYFxA2vHmPbHbJ3W46gLTrw8Ywcb83hWBrhrJwzukOZytPaMP13ywpxmlZwpIrZ6Gj8MK89kuWAy2kLeZeABzEmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bGvb74yjgz9sZ2;
+	Tue, 10 Jun 2025 18:37:23 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id RpvMo2iatbtY; Tue, 10 Jun 2025 18:37:23 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bGvb74DX0z9sYQ;
+	Tue, 10 Jun 2025 18:37:23 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 89E758B77A;
+	Tue, 10 Jun 2025 18:37:23 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 7X_NwQXE2xj6; Tue, 10 Jun 2025 18:37:23 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1D4458B76D;
+	Tue, 10 Jun 2025 18:37:23 +0200 (CEST)
+Message-ID: <88be9850-fa2e-4470-b54c-55b6b8e2dd29@csgroup.eu>
+Date: Tue, 10 Jun 2025 18:37:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,116 +55,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250606135654.178300-1-ryan.roberts@arm.com>
- <aEgeQCCzRt-B8_nW@arm.com> <3cad01ea-b704-4156-807e-7a83643917a8@arm.com>
- <aEhKSq0zVaUJkomX@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <aEhKSq0zVaUJkomX@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] (powerpc/512) Fix possible `dma_unmap_single()` on
+ uninitialized pointer
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Anatolij Gustschin <agust@denx.de>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ "open list:LINUX FOR POWERPC EMBEDDED MPC5XXX"
+ <linuxppc-dev@lists.ozlabs.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250610142918.169540-2-fourier.thomas@gmail.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250610142918.169540-2-fourier.thomas@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/06/2025 16:07, Catalin Marinas wrote:
-> On Tue, Jun 10, 2025 at 02:41:01PM +0100, Ryan Roberts wrote:
->> On 10/06/2025 13:00, Catalin Marinas wrote:
->>> On Fri, Jun 06, 2025 at 02:56:52PM +0100, Ryan Roberts wrote:
->>>> Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
->>>> provided a quick fix to ensure that lazy_mmu_mode continues to work when
->>>> CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
->>>> nest.
->>>>
->>>> The solution in that patch is the make the implementation tolerant to
->>>
->>> s/is the make/is to make/
->>>
->>>> nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
->>>> exit becomes a nop. But this sacrifices the optimization opportunity for
->>>> the remainder of the outer user.
->>> [...]
->>>> I wonder if you might be willing to take this for v6.16? I think its a neater
->>>> solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
->>>> lazy_mmu_mode to be nested") - which is already in Linus's master.
->>>>
->>>> To be clear, the current solution is safe, I just think this is much neater.
->>>
->>> Maybe better, though I wouldn't say much neater. One concern I have is
->>> about whether we'll get other such nesting in the future and we need to
->>> fix them in generic code. Here we control __kernel_map_pages() but we
->>> may not for other cases.
->>>
->>> Is it the fault of the arch code that uses apply_to_page_range() via
->>> __kernel_map_pages()? It feels like it shouldn't care about the lazy
->>> mode as that's some detail of the apply_to_page_range() implementation.
->>> Maybe this API should just allow nesting.
->>
->> I don't think it is possible to properly support nesting:
->>
->> enter_lazy_mmu
->>     for_each_pte {
->>         read/modify-write pte
->>
->>         alloc_page
->>             enter_lazy_mmu
->>                 make page valid
->>             exit_lazy_mmu
->>
->>         write_to_page
->>     }
->> exit_lazy_mmu
->>
->> This example only works because lazy_mmu doesn't support nesting. The "make page
->> valid" operation is completed by the time of the inner exit_lazy_mmu so that the
->> page can be accessed in write_to_page. If nesting was supported, the inner
->> exit_lazy_mmu would become a nop and write_to_page would explode.
-> 
-> What I meant is for enter/exit_lazy_mmu to handle a kind of de-nesting
-> themselves: enter_lazy_mmu would emit the barriers if already in lazy
-> mode, clear pending (well, it doesn't need to do this but it may be
-> easier to reason about in terms of flattening). exit_lazy_mmu also needs
-> to emit the barriers but leave the lazy mode on if already on when last
-> entered. This does need some API modifications to return the old mode on
-> enter and get an argument for exit. But the correctness wouldn't be
-> affected since exit_lazy_mmu still emits the barriers irrespective of
-> the nesting level.
 
-Ahh I see what you mean now; exit always emits barriers but only the last exit
-clears TIF_LAZY_MMU.
 
-I think that's much cleaner, but we are changing the API which needs changes to
-all the arches and my attempt at [1] didn't really gain much enthusiasm.
+Le 10/06/2025 à 16:29, Thomas Fourier a écrit :
+> [Vous ne recevez pas souvent de courriers de fourier.thomas@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> If the device configuration fails (if `dma_dev->device_config()`),
+> `sg_dma_address(&sg)` is not initialized and the jump to `err_dma_prep`
+> leads to calling `dma_unmap_single()` on `sg_dma_address(&sg)`.
+> 
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 
-> 
->> So the conclusion I eventually came to (after being nudged by Mike Rapoport at
->> [1]) is that this _is_ arm64's fault for creating a loop via
->> apply_to_page_range(). So I'm trying to fix this by breaking the loop.
->>
->> [1] https://lore.kernel.org/all/aDqz7H-oBo35FRXe@kernel.org/
-> 
-> If the only such loop is the arm64 code, fine by me to fix it this way.
-> Your series above had 6 patches and I thought there's more to fix.
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-My previous attempt was, in hindsight, hideous. It seems to be the case that
-only arm64 suffers this problem so let's just fix it here.
-
+> ---
+>   arch/powerpc/platforms/512x/mpc512x_lpbfifo.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
 > 
->> We could alternatively use some per-cpu storage for a nest count, but that gets
->> ugly quite quickly I suspect.
+> diff --git a/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c b/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c
+> index 9668b052cd4b..f251e0f68262 100644
+> --- a/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c
+> +++ b/arch/powerpc/platforms/512x/mpc512x_lpbfifo.c
+> @@ -240,10 +240,8 @@ static int mpc512x_lpbfifo_kick(void)
+>          dma_conf.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
 > 
-> Yeah, the thread flag is much nicer.
+>          /* Make DMA channel work with LPB FIFO data register */
+> -       if (dma_dev->device_config(lpbfifo.chan, &dma_conf)) {
+> -               ret = -EINVAL;
+> -               goto err_dma_prep;
+> -       }
+> +       if (dma_dev->device_config(lpbfifo.chan, &dma_conf))
+> +               return -EINVAL;
 > 
->> But regardless, I'm not convinced the semantics of a properly nested
->> lazy_mmu are safe.
+>          sg_init_table(&sg, 1);
 > 
-> I think we can make them safe but there would be opposition from the mm
-> people and it may not be trivial on x86. So, I'm fine with this arm64
-> specific change:
+> --
+> 2.43.0
 > 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Agreed, and thanks!
 
 
