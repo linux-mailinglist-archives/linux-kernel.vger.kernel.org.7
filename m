@@ -1,106 +1,142 @@
-Return-Path: <linux-kernel+bounces-679226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8175AD3391
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:28:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8A9AD3368
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D3A16F690
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEE13AD4E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95A228C2C9;
-	Tue, 10 Jun 2025 10:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3D528C2C2;
+	Tue, 10 Jun 2025 10:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="jG12wcnh"
-Received: from mail-8160.188.com (mail-8160.188.com [60.191.81.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b="gsK4CrBa"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D8E25A62B;
-	Tue, 10 Jun 2025 10:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.81.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBB9283121
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749551322; cv=none; b=uoyWW3Xubyi9iSvDVahHVPbmgE9Fn8MPM8SebvXXxH29HuluNaldaf/vwIfU3i7iJja1UMMZKBm3mAL1+2+3B/OYGnbhAI1u9Qbot9vznElE8/wxFZpj0P8oicyO09krvZCfLIN668SCz4KinVtdX6fMozr8wdxGh0j6rL7ixLM=
+	t=1749550661; cv=none; b=qqleNAkHKyoSGnSBUBVi94PPw9wl+qtB2ebfHxiVu3siKZpa0KBFQYnunZdKCh5fGyUvshwnMs5IO90MCZ5034430ccVXuQxsmpy9w1IoKW+hjREwXM2BhXkKRvFGHeI0rkg/uGb2o1evNCCLTj8MPip9nclVcKDOryWK4m0B8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749551322; c=relaxed/simple;
-	bh=zPVnp1uFz6ezXexDiXFt/QExs+FjII/ZQVdaoHxweBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N79Y+QP6RhVd4xxTi1rNwORie//OdYPdUEIlI8Zs4ZjMe/OBa22HYRb8daRd4+asPC2iXVjqiLfqEauMhGLXJGzHSc2KsX3Pp3KXMJVNuXBYo02Np7j+PGryLiBHqanK6731ZBqmAnCG9NHI68uCQU5uIllFHaeOHffclCILEKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=jG12wcnh; arc=none smtp.client-ip=60.191.81.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Pgg2mLehIG4sW1T+6g2YquviHKO39IVuKuCo2yGa6ec=;
-	b=jG12wcnhget0oYtzN2fj4tLvRJetIqjOpBoGVKmuIbqv8rcHUCsfvHsqh9zDyO
-	tXh5wa75Egbi9zPJFsL3SN8TZ5c6SXffLIWMIruvnmn8ni7LjSRCKekefFo0GAJp
-	SENzwVIxKPLZLaWicytt7ptq20dmOOj0A3PsFr3EVqA9U=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgAHnk8wBkhoU2NXAA--.14402S3;
-	Tue, 10 Jun 2025 18:17:22 +0800 (CST)
-Date: Tue, 10 Jun 2025 18:17:20 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Peter Chen (CIX)" <peter.chen@kernel.org>
-Cc: John Ernberg <john.ernberg@actia.se>, Xu Yang <xu.yang_2@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: i.MX kernel hangup caused by chipidea USB gadget driver
-Message-ID: <aEgGMCCdO3rc6Dkg@dragon>
-References: <aEZxmlHmjeWcXiF3@dragon>
- <c56pgxmfscg6tpqxjayu4mvxc2g5kgmfitpvp36lxulpq4jxmg@ces5l7ofab6s>
- <aEbstxkQmji4tfjf@w447anl.localdomain>
- <20250610021243.GA1610560@nchen-desktop>
+	s=arc-20240116; t=1749550661; c=relaxed/simple;
+	bh=dDDNfBinN8PAMwqLA5OJNpKoERFQz6yp9KWAM79txZU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Dw/sRilwA5taSUIU2N/ohUhoXZVCilCV9z9xG/x5DZKy7IUM50Pko/PwMYFAMDUf/tBepidj0eamXc/w7dzELGjAq7uZRJclu8K9mZuWOdgFBexmEUP/jgXGCU0GfrM2DnRCetR6ml7Y+9xkGoS/dqtk6GSOzFbr5tlhcdXmgBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech; spf=pass smtp.mailfrom=neon.tech; dkim=pass (1024-bit key) header.d=neon.tech header.i=@neon.tech header.b=gsK4CrBa; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=neon.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neon.tech
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-607ea238c37so4723547a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:17:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=neon.tech; s=google; t=1749550658; x=1750155458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MdXAoe13GikYW3/JVVfkOpgxOfq/BMWnCOBM8bUopok=;
+        b=gsK4CrBaOwxFmvjJ+xZF/fT7RoXxPU+8x+RC9s+ZtzL+6afaq/CLYSreaJJ6topzXX
+         dzl8Kh6F24CwJJbMNZBAdoXr5Kzu5pocHspsg2cdjVH5+j/zkzlDV1jvOL6gR3M9D+bn
+         ECaT27Y8nrVhN+zL+c+cPiGsL2EH/Du5ofn3E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749550658; x=1750155458;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MdXAoe13GikYW3/JVVfkOpgxOfq/BMWnCOBM8bUopok=;
+        b=prOsavK8rR3qxFQRmJjRje80GDkpQTxXa+1eTX1vS7ptIHb+9dgFk3lZnzYh2p1vFt
+         tdBpaxagmUHX9LGavIVqIUonqFk7kNkGG2mXOZYDbpLSW+sfJ7pt1/Oh/zJKYlGBCRwj
+         pz+SKz+f7Z4/NeTdJq61uUhb53JpFhvt/kqGTafTSfojD3b2EUZUTEO8QIM181lh8CZ7
+         xC6qsavMIIX5cts93aOg12zaE7oTXaTRxA3Rrm3d9RCw3xia8DnH0vVXJ/RLkRqyXKsp
+         g0wv2yx52e3rwrFtCPOKXEHbo+l1kLw523CMMTIzOugu6ykEoppI7v8dGIkFjdPGEw+4
+         vZWg==
+X-Gm-Message-State: AOJu0YwKU85YR7gVEoJG6A0jJJ6RXZjnBjI3cqsOo0Hj7ldXA/tg8qJb
+	4vdCBv6w8vp7q8cyj2OCDtXfCtNny8i8Zm8Slwo5i06FkPHmBMDE9rAfLNYoUFvKM9opyYzetMN
+	3SzBqdFbGkw==
+X-Gm-Gg: ASbGncuJTT/pTaWBFfjwJvLhcKTQUAD4yP1d3FswaUfdVm4VABbBCG7ceKRBv9dNC3T
+	SLN4jVbsu4XQ/0XrgYmOUyUlP/w5mBkFY/bqT5HfGRJcL9Wu1zok1ZUtlB6dG0w0h4D7wqHDFk2
+	rk4hievHp1483f66n8t1JaXfKlUl4XD5EB1xCf4LHJ5RY7NJN0S5Ad3jK1OjKs0qDu52oeRh5y4
+	9jnnax/JwTgspUTXboluXU8LHl6mdr4h/hxtT61Z1dhQvuE/0dmiWJ/2vEI4EeoP16r9aG7l92Q
+	SyPrQVN4NeMPMd5VAPlsEysX+5bxW+/LHrznCIsWQ1MUkxQUyBhbYlnO2we4tmG73A==
+X-Google-Smtp-Source: AGHT+IEBICJlJWbKgkwUwtxDPeNS/LZyZLquBPse/trluqTy6pSNdxV8h8W68MABHGTpCpR+5A/3gQ==
+X-Received: by 2002:a05:6402:5249:b0:606:f37b:7ed1 with SMTP id 4fb4d7f45d1cf-607748987e0mr13057422a12.21.1749550658244;
+        Tue, 10 Jun 2025 03:17:38 -0700 (PDT)
+Received: from [192.168.86.142] ([84.65.228.220])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6077836fed7sm6043562a12.7.2025.06.10.03.17.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 03:17:37 -0700 (PDT)
+Message-ID: <92894a9b-3088-4cf7-83bb-ea7382a35d82@neon.tech>
+Date: Tue, 10 Jun 2025 11:17:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610021243.GA1610560@nchen-desktop>
-X-CM-TRANSID:Mc8vCgAHnk8wBkhoU2NXAA--.14402S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFWfXFWfury8Xw47Cr45ZFb_yoW8Ww1fpa
-	yakw4fKw4DtrWYyFnF9r1xta4jkan8tr45CrZrJ345Za43u34Sqr4xKry5K3WUGr13uw1q
-	vr4jqw18CrnruaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Um_M3UUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNBK5H2hIBjIyvQAA3b
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3 2/2] x86/mm: Use GFP_KERNEL for alloc_low_pages() after
+ boot
+From: Em Sharnoff <sharnoff@neon.tech>
+To: linux-kernel@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org
+Cc: Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ Oleg Vasilev <oleg@neon.tech>, Arthur Petukhovsky <arthur@neon.tech>,
+ Stefan Radig <stefan@neon.tech>, Misha Sakhnov <misha@neon.tech>
+References: <a31e3b89-5040-4426-9ce8-d674b8554aa1@neon.tech>
+Content-Language: en-US
+In-Reply-To: <a31e3b89-5040-4426-9ce8-d674b8554aa1@neon.tech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 10, 2025 at 10:12:43AM +0800, Peter Chen (CIX) wrote:
-> Like Alan and Xu's suggestion, there are probably two problems here:
-> - When the system enters the suspend, the USB bus may neither at suspend
-> nor disconnect state if USB controller/phy's power is not off and VBUS
-> is there. So, the host still considers the device is active, it could
-> trigger transfer any time. If the transfer occurs during system resume,
-> the USB controller triggers interrupt to CPU, and USB's interrupt handler
-> is triggered. If the USB's hardware is still at low power mode (or clock
-> is gated off), it may cause system hang (CPU gets error response from USB)
-> after access register.
-> 
-> With Shawn's change, it pulls D+ down during the suspend, and the host
-> is notified of disconnection, so the host will not trigger transfer
-> until D+ is pulled up by calling usb_gadget_connect. The USB leaves
-> low power mode (and turn clock on) before that, the access register
-> will not cause system hang.
+Currently it's GFP_ATOMIC. GFP_KERNEL seems more correct.
 
-Thanks for the input, Peter!  It's very helpful and well explaining what
-I'm seeing here.
+From Ingo M. [1]
 
-> - The current chipidea driver doesn't notify gadget driver when it
-> enters system suspend routine. In fact, during system suspend/resume,
-> the controller driver may not respond middle layer's (network) request 
-> well due to it enters low power mode, so calling usb_gadget_driver->
-> disconnect (composite_disconnect) is needed during controller's suspend
-> routine, it calls function->disable for USB function driver and
-> ends/stop middle layer process.
+> There's no real reason why it should be GFP_ATOMIC AFAICS, other than
+> some historic inertia that nobody bothered to fix.
 
-This problem can also be addressed by Xu's suggestion, i.e. calling
-gadget driver's suspend hook from udc_suspend()?
+and previously Mike R. [2]
 
-Shawn
+> The few callers that effectively use page allocator for the direct map
+> updates are gart_iommu_init() and memory hotplug. Neither of them
+> happen in an atomic context so there is no reason to use GFP_ATOMIC
+> for these allocations.
+>
+> Replace GFP_ATOMIC with GFP_KERNEL to avoid using atomic reserves for
+> allocations that do not require that.
+
+[1]: https://lore.kernel.org/all/aEE6_S2a-1tk1dtI@gmail.com/
+[2]: https://lore.kernel.org/all/20211111110241.25968-5-rppt@kernel.org/
+
+Signed-off-by: Em Sharnoff <sharnoff@neon.tech>
+---
+Changelog:
+- v2: Add this patch
+- v3: No changes
+---
+ arch/x86/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index a2665b6fe376..3a25cd9e9076 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -131,7 +131,7 @@ __ref void *alloc_low_pages(unsigned int num)
+ 		unsigned int order;
+ 
+ 		order = get_order((unsigned long)num << PAGE_SHIFT);
+-		return (void *)__get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
++		return (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
+ 	}
+ 
+ 	if ((pgt_buf_end + num) > pgt_buf_top || !can_use_brk_pgt) {
+-- 
+2.39.5
 
 
