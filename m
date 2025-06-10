@@ -1,178 +1,115 @@
-Return-Path: <linux-kernel+bounces-679923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F43AAD3D9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1482AD3DB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962F21780DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E71A189E41D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E03241661;
-	Tue, 10 Jun 2025 15:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4B82356BF;
+	Tue, 10 Jun 2025 15:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ON2vEwHa"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1mk/JAp"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1757D23909F
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E4E1EE7D5
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 15:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569841; cv=none; b=bWnuXG0aEI2R7CvmMooiqeGl7HP19QU9fCQ4XlNiOjeA8UkrrOoz5sI7pmyTedfgWj8Gzfl5M//08N1Gvxi9DonTMLdAD22fRpP4YnxYi++AtUWLmnYgWdCx/ybUsPwdPtGMxECl98mYWxXiq+Fxjf1/YcYAn1QqbmDaSoMviiU=
+	t=1749569949; cv=none; b=DdeVS2XMaVBSO4pPX+yOjRnXYqx+FOcuR5YQRLT5RBiYfc/Qbj5BLWq/0rVBHXM+0U0GfF3Rvw6SrTDkraAlHULWfGxLdxy1z4oCeQcZo7QKmNGHHCGEekBMpZRm+q+U21sIqJzIu29LMQQG0wnGjQzSQWkQ9JWF9lbX9vkTJRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569841; c=relaxed/simple;
-	bh=Ge1LFO3GJbt9hd5N8cGDfDJg7Ju9ZPGoCT0kFFxY694=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=r7RRIpcjsjom7rSZx437tHbQTsD+CLtzv8qSUFmN56eUJb5gH3NPg9sO8lGgqZJzuSKFywRXpfPWLsw/RRgYSnRFW4GdU+Mo39IKuNHPu09R1APFbjAzADsmuPu5rLRzWo9YK0sIXnXzYL/gZa3iDzhd5Aw8hO6QAE3H6OVo/Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ON2vEwHa; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a5ae2fdf4eso61854671cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:37:17 -0700 (PDT)
+	s=arc-20240116; t=1749569949; c=relaxed/simple;
+	bh=X3FMNaH+gMkSWc6mxlddlgItT1JWMkGhMkmmBWRVpzU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c0J7A8Yd010H1ZOK8C+RmzUCK97bSNkoRP2y3qmP9R/8Sn1+ZZ89+UFUkKm2hASl2arcbPThOd/V8rBdwvuh+LvVe3ble4hGaPaUhcch3JffPnqqliL5e3WCP96PoLgr3mcI/KdYFcrFXs44KtGxO7DSr+jJAGnEdCR6vnGIIZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M1mk/JAp; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-60785397a37so3796578a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1749569837; x=1750174637; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nh+mGpHpRQJpNMq16cUvVk7l1gQB7lXYTYB8ff8wx5k=;
-        b=ON2vEwHa6wpDttnIQUUM1hkDGhGAF48c1oOwgFGzl9uxk8+GxucSGtA0nwumkRqmT3
-         om+D5offFKK8MGcLDRm+uYK0jqBW0L3Z/ReRxZfP2TNVtSWDrMYU0vlf64Z9Te3LMdti
-         dLiTCVwCofbWAVjI0tJDyNVKoo56oFktIhUFw=
+        d=google.com; s=20230601; t=1749569946; x=1750174746; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=K83VDCEaogYq8o+q4q2QDKkSbCK5mXjp54sio/cApS0=;
+        b=M1mk/JApK4uxLjy8/uhORGACo7+CSGZudCpJEXXO5jEx1xGzgjx0WyLkhGjvHUwNf4
+         /CFqJvqapImT7evGhX5J1rqq5C5bFYhZ43e+pHu/hgpIskFFjGQj8holVWy2fEp07f08
+         I2Cb9zqhL6tBmZAozoLX9/n1ZWkcTlJRcjg/IKkWWf797MW4R5+gnnroqhxqFjuoLcX1
+         yDJUL38ZhfLicQQtjPYC3s5I58akE02JuGcqP1lXFST+7tyvqIkMwWiMikKimUd5s3e+
+         O7rar/KBNytFTaXxwuHzxDvSbXY6zI+OlriDzz8nItpQ/6fpHf/+rmxAnFS3tpg032iz
+         Jm7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749569837; x=1750174637;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nh+mGpHpRQJpNMq16cUvVk7l1gQB7lXYTYB8ff8wx5k=;
-        b=wA3dn3z2G+ZJskK4kKKw0N5WWnBGwMNMgxJdH1aR35vwDDVq0AwlNge1RL1N9N5KzC
-         7ekBSYaQPiRwXyiyRgXcL2aLk1roLInwtYOjFaGgSnTfbmj9JAwLTW0kZINGQqn388Nt
-         i3tH4PMgL7kP4tVQhMsYIl+JA/GFYqfWTntiMMCZc/bjfYg7kHR2VQHWmoxlYenBVJRB
-         LEGd8Hrf4wQBM5QQSVo9EzoXE/V4orjrGpMJLP+rrCxA16Rxa6Byd09YJpbiij17f9le
-         vNonxBssJJu6vopa4EExuoehr+C2iC52XfRc9fCDpHC7RQ8l5ZzVFMnT+vdlyXjQpn0g
-         RxpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Uf3YmLDfHEMZqrsL4juzDAEA0aKkKYThnQHmkmDH8TserrAySFudPe/fWE/QiEm6dwEP3ZYU7ibOp3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDR8dybq/KTvmVRcCVKPNpKL9qOzck+Ur23jGJXQ6l6JgONPtV
-	7RECI97pd/ty2IWK8Oi665dpFQE5sAbtpYtM4Gr8OShQe/AmolSiiVGI5ZeXhBRnuCk=
-X-Gm-Gg: ASbGncuMSlV4YEyYhljD1xI/5jlotPdouhJP+GIIduAKzLTJSreaMB8YVxRbS8YOvvY
-	pzHYJCyEHazAv55gz+hbVpGnfxOvAfvUc62M7oTbi4x/u8eX6AheQA+JVrMEoGn1lrjCVpLAu69
-	SrUrVv0pU1k2nC4tBkO/QdHom15qGAUTGOKOL9EjcAw0hoc8nXLk8yzmqh7snKKwWEZqMpm20gX
-	6YU4sWmTG4ij9d3OIp6R79YUcKcki1j5pfCxj7U1IUxspWFMI/gafD3RDQC0zbwRFQxbmugxDFp
-	OyDc2dJMEkPW92ygNKjOHhkrn0y6VtWaF0Jq9b0nCs6tBc/KMgnHlu/OWLaYDX0YD26MQPMx0mb
-	+AcHliE3efBc=
-X-Google-Smtp-Source: AGHT+IHZRFV8Mnfm66KxgqbQ+xn/V03aqh6SUiPn4eSw5iLcmKe2WvnZXGgaVLUZu9Zeyu5/wNzwfA==
-X-Received: by 2002:a05:622a:5587:b0:49c:d64b:3d5f with SMTP id d75a77b69052e-4a708ce76e9mr56271861cf.9.1749569836627;
-        Tue, 10 Jun 2025 08:37:16 -0700 (PDT)
-Received: from [10.212.144.179] ([12.216.155.19])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a6ef785c23sm57361681cf.35.2025.06.10.08.37.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 08:37:16 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------Zvf7rR069wIOZjcyzA1npCtG"
-Message-ID: <ab7fe518-0177-4178-a40d-51e0a5fbe8aa@linuxfoundation.org>
-Date: Tue, 10 Jun 2025 09:37:15 -0600
+        d=1e100.net; s=20230601; t=1749569946; x=1750174746;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K83VDCEaogYq8o+q4q2QDKkSbCK5mXjp54sio/cApS0=;
+        b=fKpuIi3rXyXmiLawoWQZJ7Hm2rWERVGlTCIwg6OUxM3xEWnFihiTUyLx3eIdD8rh+D
+         ub2MHa76IFn2yl/MXfRneJ6M29TwQzqOG60cbu1/tQHCEtaqGMiv1Um+U/Ls87+OsYfU
+         RpgesW93u2RDuecPLkMSgIzgsbcv7GJGIKy20vI97+RblJf0mnPzKXnI3ttlg/VyKwV2
+         YcWD2RLeFsfqcTnfLfRL86og7E6N3eFAi1NWgqM8keFQzRJAyr8PDO9PZ1fpO7OiwNkL
+         xgeNgawJa0eoqBC24xuyqVFpTOwbIDCu5fpJwvVUFyb+7GcpURMYx2Cn8J0Nf/uue2HD
+         yGQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDir/FaBA+tUYx2rOIG5PJmCqHT52mkslVVKQ9VxeN8ka1wz49xtl4MteyExeKzk3xhZL/ZA872p2Iues=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw55oXTh6XyWjNeFYC555PkUrraGoKKm8edLt/2NhnT9LVnzZs9
+	oAWlTz/dOixBQkyjnL5th8hnIO0EcvYQaamgYBtgK1shWhapDUo5PQN8H1pqp4n5bFSY4TybIYS
+	Xni3qHM0XRNypKjqFhw==
+X-Google-Smtp-Source: AGHT+IF0ZTAD1f0oKGQJq37uOuJo1nDnMzixE4HUDx2a7KPwnJbsLI8iBEKebG9jVNmmils6F028/Z0NOTH4V24=
+X-Received: from eddn5.prod.google.com ([2002:a05:6402:5145:b0:607:fd2c:1f11])
+ (user=tmichalec job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:254b:b0:607:434d:bc2c with SMTP id 4fb4d7f45d1cf-6082dba7954mr2757439a12.23.1749569946760;
+ Tue, 10 Jun 2025 08:39:06 -0700 (PDT)
+Date: Tue, 10 Jun 2025 17:37:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>,
- Thomas Renninger <trenn@suse.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] cpupower urgent fix for Linux 6.16-rc2
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.rc0.604.gd4ff7b7c86-goog
+Message-ID: <20250610153748.1858519-1-tmichalec@google.com>
+Subject: [PATCH] platform/chrome: cros_ec_typec: Defer probe on missing EC parent
+From: Tomasz Michalec <tmichalec@google.com>
+To: Benson Leung <bleung@chromium.org>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
+	Andrei Kuchynski <akuchynski@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Guenter Roeck <groeck@chromium.org>, Konrad Adamczyk <konrada@google.com>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	chromeos-krk-upstreaming@google.com, Tomasz Michalec <tmichalec@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-This is a multi-part message in MIME format.
---------------Zvf7rR069wIOZjcyzA1npCtG
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+If cros_typec_probe is called before EC device is registered,
+cros_typec_probe will fail. It may happen when cros-ec-typec.ko is
+loaded before EC bus layer module (e.g. cros_ec_lpcs.ko,
+cros_ec_spi.ko).
 
-Hi Rafael,
+Return -EPROBE_DEFER when cros_typec_probe doesn't get EC device, so
+the probe function can be called again after EC device is registered.
 
-Please pull this cpupower urgent fix for Linux 6.16-rc2.
+Signed-off-by: Tomasz Michalec <tmichalec@google.com>
+---
+ drivers/platform/chrome/cros_ec_typec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Add unitdir variable for specifying the location to install systemd
-service units instead of installing under ${libdir}/systemd/system
-which doesn't work on some distributions.
+diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+index 7678e3d05fd3..f437b594055c 100644
+--- a/drivers/platform/chrome/cros_ec_typec.c
++++ b/drivers/platform/chrome/cros_ec_typec.c
+@@ -1272,8 +1272,8 @@ static int cros_typec_probe(struct platform_device *pdev)
+ 
+ 	typec->ec = dev_get_drvdata(pdev->dev.parent);
+ 	if (!typec->ec) {
+-		dev_err(dev, "couldn't find parent EC device\n");
+-		return -ENODEV;
++		dev_warn(dev, "couldn't find parent EC device\n");
++		return -EPROBE_DEFER;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, typec);
+-- 
+2.50.0.rc0.604.gd4ff7b7c86-goog
 
-Note: I meant to send this during the merge window and ran into some
-merge conflicts during the PR test. Decided to wait on it until rc1.
-
-diff is attached.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
-
-   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-6.16-rc2-fixes
-
-for you to fetch changes up to e044b8a9545cd8265c7110c179aeec2624c16455:
-
-   cpupower: split unitdir from libdir in Makefile (2025-06-09 10:17:46 -0600)
-
-----------------------------------------------------------------
-linux-cpupower-6.16-rc2-fixes
-
-Add unitdir variable for specifying the location to install systemd
-service units instead of installing under ${libdir}/systemd/system
-which doesn't work on some distributions.
-
-----------------------------------------------------------------
-Francesco Poli (wintermute) (1):
-       cpupower: split unitdir from libdir in Makefile
-
-  tools/power/cpupower/Makefile | 9 +++++----
-  1 file changed, 5 insertions(+), 4 deletions(-)
-
-----------------------------------------------------------------
---------------Zvf7rR069wIOZjcyzA1npCtG
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux-cpupower-6.16-rc2-fixes.diff"
-Content-Disposition: attachment; filename="linux-cpupower-6.16-rc2-fixes.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL01ha2VmaWxlIGIvdG9vbHMvcG93
-ZXIvY3B1cG93ZXIvTWFrZWZpbGUKaW5kZXggYmU4ZGZhYzE0MDc2Li5jNDNkYjFjNDEyMDUg
-MTAwNjQ0Ci0tLSBhL3Rvb2xzL3Bvd2VyL2NwdXBvd2VyL01ha2VmaWxlCisrKyBiL3Rvb2xz
-L3Bvd2VyL2NwdXBvd2VyL01ha2VmaWxlCkBAIC03Myw2ICs3Myw3IEBAIHNiaW5kaXIgPz0J
-L3Vzci9zYmluCiBtYW5kaXIgPz0JL3Vzci9tYW4KIGxpYmRpciA/PQkvdXNyL2xpYgogbGli
-ZXhlY2RpciA/PQkvdXNyL2xpYmV4ZWMKK3VuaXRkaXIgPz0JL3Vzci9saWIvc3lzdGVtZC9z
-eXN0ZW0KIGluY2x1ZGVkaXIgPz0JL3Vzci9pbmNsdWRlCiBsb2NhbGVkaXIgPz0JL3Vzci9z
-aGFyZS9sb2NhbGUKIGRvY2RpciA/PSAgICAgICAvdXNyL3NoYXJlL2RvYy9wYWNrYWdlcy9j
-cHVwb3dlcgpAQCAtMzA5LDkgKzMxMCw5IEBAIGluc3RhbGwtdG9vbHM6ICQoT1VUUFVUKWNw
-dXBvd2VyCiAJJChJTlNUQUxMX0RBVEEpIGNwdXBvd2VyLXNlcnZpY2UuY29uZiAnJChERVNU
-RElSKSR7Y29uZmRpcn0nCiAJJChJTlNUQUxMKSAtZCAkKERFU1RESVIpJHtsaWJleGVjZGly
-fQogCSQoSU5TVEFMTF9QUk9HUkFNKSBjcHVwb3dlci5zaCAnJChERVNURElSKSR7bGliZXhl
-Y2Rpcn0vY3B1cG93ZXInCi0JJChJTlNUQUxMKSAtZCAkKERFU1RESVIpJHtsaWJkaXJ9L3N5
-c3RlbWQvc3lzdGVtCi0Jc2VkICdzfF9fX0NESVJfX198JHtjb25mZGlyfXw7IHN8X19fTERJ
-Ul9fX3wke2xpYmV4ZWNkaXJ9fCcgY3B1cG93ZXIuc2VydmljZS5pbiA+ICckKERFU1RESVIp
-JHtsaWJkaXJ9L3N5c3RlbWQvc3lzdGVtL2NwdXBvd2VyLnNlcnZpY2UnCi0JJChTRVRQRVJN
-X0RBVEEpICckKERFU1RESVIpJHtsaWJkaXJ9L3N5c3RlbWQvc3lzdGVtL2NwdXBvd2VyLnNl
-cnZpY2UnCisJJChJTlNUQUxMKSAtZCAkKERFU1RESVIpJHt1bml0ZGlyfQorCXNlZCAnc3xf
-X19DRElSX19ffCR7Y29uZmRpcn18OyBzfF9fX0xESVJfX198JHtsaWJleGVjZGlyfXwnIGNw
-dXBvd2VyLnNlcnZpY2UuaW4gPiAnJChERVNURElSKSR7dW5pdGRpcn0vY3B1cG93ZXIuc2Vy
-dmljZScKKwkkKFNFVFBFUk1fREFUQSkgJyQoREVTVERJUikke3VuaXRkaXJ9L2NwdXBvd2Vy
-LnNlcnZpY2UnCiAKIGluc3RhbGwtbWFuOgogCSQoSU5TVEFMTF9EQVRBKSAtRCBtYW4vY3B1
-cG93ZXIuMSAkKERFU1RESVIpJHttYW5kaXJ9L21hbjEvY3B1cG93ZXIuMQpAQCAtMzQ4LDcg
-KzM0OSw3IEBAIHVuaW5zdGFsbDoKIAktIHJtIC1mICQoREVTVERJUikke2JpbmRpcn0vdXRp
-bHMvY3B1cG93ZXIKIAktIHJtIC1mICQoREVTVERJUikke2NvbmZkaXJ9Y3B1cG93ZXItc2Vy
-dmljZS5jb25mCiAJLSBybSAtZiAkKERFU1RESVIpJHtsaWJleGVjZGlyfS9jcHVwb3dlcgot
-CS0gcm0gLWYgJChERVNURElSKSR7bGliZGlyfS9zeXN0ZW1kL3N5c3RlbS9jcHVwb3dlci5z
-ZXJ2aWNlCisJLSBybSAtZiAkKERFU1RESVIpJHt1bml0ZGlyfS9jcHVwb3dlci5zZXJ2aWNl
-CiAJLSBybSAtZiAkKERFU1RESVIpJHttYW5kaXJ9L21hbjEvY3B1cG93ZXIuMQogCS0gcm0g
-LWYgJChERVNURElSKSR7bWFuZGlyfS9tYW4xL2NwdXBvd2VyLWZyZXF1ZW5jeS1zZXQuMQog
-CS0gcm0gLWYgJChERVNURElSKSR7bWFuZGlyfS9tYW4xL2NwdXBvd2VyLWZyZXF1ZW5jeS1p
-bmZvLjEK
-
---------------Zvf7rR069wIOZjcyzA1npCtG--
 
