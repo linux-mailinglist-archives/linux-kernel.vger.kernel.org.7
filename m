@@ -1,86 +1,154 @@
-Return-Path: <linux-kernel+bounces-679785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47BDAD3BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:52:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB38DAD3BC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6A617702F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53FD189435D
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE7D21ADBA;
-	Tue, 10 Jun 2025 14:52:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F17C221562;
+	Tue, 10 Jun 2025 14:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=borehabit.cfd header.i=@borehabit.cfd header.b="Zwq1dPgR"
+Received: from borehabit.cfd (ip160.ip-51-81-179.us [51.81.179.160])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E00D213E61;
-	Tue, 10 Jun 2025 14:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7436221CC41
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 14:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.179.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749567134; cv=none; b=LR2PDiQSBv8Fi3AgJUCgfqrrFvZwD2Tq7/b+iCt1RvNblZh8qocs3WwXpP0FN/dCJ5U0UovmaebsqkqtiYr5uCUG1Svgx0MM9x2vxnjIASUbJGErUexv9iXtUCCxefNcZKDaV2EMrZDZHwPxE5YCioXShmIO2bMHm/legAq494I=
+	t=1749567245; cv=none; b=nnSTG57pj0Duln+zOBYAidPl0tvYadM3viIxagrR3r0AUZe30TfrnOc+JQ/4t29AFN4jtLQY/NrlU5Aotc+69f1EfxAJ6zBxBTwdA3Qt2Hjp0K3xNKHuwknRfrgdGNV0+KYc/4kEtgczfrbRUbY0zJXZEfV4K1TBldIwq0vOcVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749567134; c=relaxed/simple;
-	bh=UNSil0iwsJ12f0l4AtnUUBX+i+/RiXhRKBJWw+Wj+Ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jUlzYU94UZRsCxxqM7hkP0vMquTRCe/ykD5c5wkDwEA4SYTjT6+9stG0Bl0CgEofeGfJcJ3syppwF2kPr+iGjTLTePvj9R1in7UN2tkI+BxXmEnqBxFpnt54bdYBWZXPOris6KkwmoQF5KnYCJcTiZoDRcQxFyxbudDMvM9/bvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 4DDF9100AA1;
-	Tue, 10 Jun 2025 14:52:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 338F830;
-	Tue, 10 Jun 2025 14:52:07 +0000 (UTC)
-Date: Tue, 10 Jun 2025 10:53:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, open list
- <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Stephen
- Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Dan
- Carpenter <dan.carpenter@linaro.org>, Anders Roxell
- <anders.roxell@linaro.org>
-Subject: Re: next-20250605: Test regression: qemu-x86_64-compat mode ltp
- tracing Oops int3 kernel panic
-Message-ID: <20250610105337.68df01f4@gandalf.local.home>
-In-Reply-To: <CA+G9fYsoCc3DnNGoavFiBdymVpdJiEfUSEq967GgThVQW7bTPA@mail.gmail.com>
-References: <CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com>
-	<20250609220934.2c3ed98ba8c624fc7cb45172@kernel.org>
-	<CA+G9fYsoCc3DnNGoavFiBdymVpdJiEfUSEq967GgThVQW7bTPA@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749567245; c=relaxed/simple;
+	bh=j/qZ6nCFDOcbnwIbag40JF9HDzOLw0n9TJz9U1mz3X8=;
+	h=To:Subject:Date:From:Message-ID:MIME-Version:Content-Type; b=hXTtVh55BsOvlJPUw8M5TTq5aLAeBkjQIDGNDBs4AHVS97ERObF2E1qXWZJYHqwDqVrctQPo7U5W5B5aSJ3F0pBdN1SqsQD54SORt1xsshz8HFx8mGak/7cU4izzYs91RDWsRmeBsRhhfzRa4e5+Kmc2CWOqdBDuFlvlobn3/Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=borehabit.cfd; spf=pass smtp.mailfrom=borehabit.cfd; dkim=pass (1024-bit key) header.d=borehabit.cfd header.i=@borehabit.cfd header.b=Zwq1dPgR; arc=none smtp.client-ip=51.81.179.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=borehabit.cfd
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=borehabit.cfd
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=borehabit.cfd; s=mail; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Reply-To:From:Date:Subject:To:Sender:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=CFYjPvEUim5mD5QwWelE+Axpgk7p2gwnF2M5gpb++Rg=; b=Zwq1dPgR2rgAJ5gFLz0TSaxgqM
+	bLNv/OoCyb9/eKFVNY4fsx31jYyOHzUtPpY0QVQjWaoaSaQB7SCGlQD/7ZzHcuJXpEVbeIahR6eks
+	Xv87lP9U71QxPBV6fwWzPLwGgOejOsJqrB137uNr5Il4Mx5fpLN5Mnpff1z6VFqd8A2E=;
+Received: from admin by borehabit.cfd with local (Exim 4.90_1)
+	(envelope-from <support@borehabit.cfd>)
+	id 1uP0MV-000Tm4-Ik
+	for linux-kernel@vger.kernel.org; Tue, 10 Jun 2025 21:54:03 +0700
+To: linux-kernel@vger.kernel.org
+Subject: WTS Available laptops and Memory
+Date: Tue, 10 Jun 2025 14:54:03 +0000
+From: Exceptional One PC <support@borehabit.cfd>
+Reply-To: info@exceptionalonepc.com
+Message-ID: <be909798a52c7620e996ad3117f942db@borehabit.cfd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 338F830
-X-Rspamd-Server: rspamout08
-X-Stat-Signature: pc43qwbd4quy5x73f9s5jri7am1dmyjq
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19Dnf2VYujNfH1wJviwfo0gmVI5+MFRJlA=
-X-HE-Tag: 1749567127-244065
-X-HE-Meta: U2FsdGVkX18WV4YDMOTDd3jHU7xsTn8XeCFWrkA2KWSkow9aroaCLRXmF/aegd1uL4g+QqTr4y75aZBH3M3hP3q7Umz/ezIhwOc/8mgTkR+7VqjrTnE4umG38ToQ7T3jYt2GrBmSUtYl7Ie/Fva3bjbuKg0dxV3s4ce8QpqV2dMkQ1dYVUz8bPZSOBfF/t1KNxhgSb/qPsGP1SogFNkZToGkAQwOKwUgJIoFVyZSCzy97aj609meYasRkNcpTwpLVh+E7ICNEoiuL2Qr3eZzftysoxquaOl33WXFfPIhM5PrGk2SX+NIZHWZILGQ9j2FoU37dOMMKBO5387gtNCz1+7TCkEDBMNDaRf3B3r3MhNLwn+YgjHdVM/kaKGbWrk5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Jun 2025 18:50:05 +0530
-Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+Hello,
 
-> > Is this bug reproducible easier recently?  
-> 
-> Yes. It is easy to reproduce.
+Looking for a buyer to move any of the following Items located in USA.
 
-Can you test before and after this commit:
 
-  4334336e769b ("x86/alternatives: Improve code-patching scalability by
-  removing false sharing in poke_int3_handler()")
+Used MICRON SSD 7300 PRO 3.84TB 
+U.2 HTFDHBE3T8TDF SSD 2.5" NVMe 3480GB
+Quantity 400, price $100 EACH 
 
-I think that may be the culprit.
 
-Even if Masami's patches work, I want to know what exactly caused it.
+ 005052112 _ 7.68TB HDD -$200 PER w/ caddies refurbished 
+ Quantity 76, price $100
 
--- Steve
+
+
+Brand New CISCO C9300-48UXM-E
+Available 5
+$2000 EACH
+
+
+Brand New C9200L-48T-4X-E
+$1,200 EACH
+QTY4
+
+HP 1040G3 Elite Book Folio Processor :- Intel Core i5
+◻Processor :- Intel Core i5
+◻Generation :- 6th
+◻RAM :- 16GB
+◻Storage :- 256G SSD
+◻Display :- 14 inch" Touch Screen 
+QTY 340 $90 EA
+
+
+
+SK HYNIX 16GB 2RX4 PC4 - 2133P-RAO-10
+HMA42GR7AFR4N-TF TD AB 1526
+QTY560 $20 EA
+
+
+Xeon Gold 6442Y (60M Cache, 2.60 GHz)	
+ PK8071305120500	 
+ QTY670 700 each 
+
+
+SAMSUNG 64GB 4DRX4 PC4-2666V-LD2-12-MAO
+M386A8K40BM2-CTD60 S
+QTY 320 $42 each
+
+
+
+Brand New CISCO C9300-48UXM-E
+Available 5
+$2500 EACH
+
+
+Core i3-1315U (10M Cache, up to 4.50 GHz)	
+ FJ8071505258601
+QTY50  $80 EA
+
+Intel Xeon Gold 5418Y Processors
+QTY28 $780 each
+
+
+Brand New C9200L-48T-4X-E  
+$1000 EACH
+QTY4
+
+
+Brand New Gigabyte NVIDIA GeForce RTX 5090 AORUS
+MASTER OC Graphics Card GPU 32GB GDDR7
+QTY50 $1,300
+
+
+ Brand New N9K-C93108TC-FX-24 Nexus
+9300-FX w/ 24p 100M/1/10GT & 6p 40/100G
+Available 4
+$3000 each
+
+
+
+Brand New NVIDIA GeForce RTX 4090 Founders
+Edition 24GB - QTY: 56 - $700 each
+
+
+
+
+Charles Lawson
+Exceptional One PC
+3645 Central Ave, Riverside
+CA 92506, United States
+www.exceptionalonepc.com
+info@exceptionalonepc.com
+Office: (951)-556-3104
+
 
