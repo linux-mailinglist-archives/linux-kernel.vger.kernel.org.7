@@ -1,114 +1,200 @@
-Return-Path: <linux-kernel+bounces-679005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340E5AD3130
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A26AD314F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AAB33B5D8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:05:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137D63A787C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFFA28A411;
-	Tue, 10 Jun 2025 09:05:59 +0000 (UTC)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE29F28A73B;
+	Tue, 10 Jun 2025 09:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bFql7YiF"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8DA1A8401;
-	Tue, 10 Jun 2025 09:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F5928A705;
+	Tue, 10 Jun 2025 09:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749546358; cv=none; b=oR1Lsr2IiHf+BCOWulLy36o/2juHSXGpnLNfd9VT+kQVwoqFVIyruKD/Ng14H1/dddQKg3oCb5uqN7jt6As9jMRHuHvEhqoohELbh7suVt/CzDtubSRCmAk1Ng+tMywmaYc7nt1z/j9LK5OiN/bAhPozy5u/4ynTmy1KPpNpaU4=
+	t=1749546673; cv=none; b=dD+zEQt+EOAdGHLm2i/FP8HI0xcq64oZFnm3rz95Ub8TjWubVj/U7fZO7M+SrCL92k+ZhO7hVP8vCs2niduu12FQojJRJnsStzgb8DfBkHPmjbMAni7DNYNsH4cfBuieqlDCLFFS7PQ8tiHUxdbeN33yWo/GqyiT+n306qGmUjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749546358; c=relaxed/simple;
-	bh=68wNvFFW9QHKsYo8UNhuUNCZ216A1R6QggbTAdxOA7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=soUU9/jXl9AbmiY5xjSSCcngrhC1eh91uFmyh+/33MBsMFkhdCC1BR/NIZiQzywtYbgKAlGLFqy39LIQpIgAuzqGyCyAifa5Arwafeop4awxTkLhLXA5mGpJZLIF6AWEBndVbNCk+lnWZM832WHKqqrv6idlKWbj4hh8l/g7JjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e5a73028d2so1671833137.0;
-        Tue, 10 Jun 2025 02:05:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749546353; x=1750151153;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jd2GJlECAu20oBTXGZhQXIVoTDAJCGdRowATqi2S6DU=;
-        b=JC/nm/KIzYgcw/H1ZDKWcP3UGwyVdPTS+MpKu6BZ8Ff7wUfFcCwF5NAdaJQO8QAEVp
-         A1czZ/KlL0Kt4wDLhYF7+y7Cu6Fi1Q2JRy2btpIX05is7zd49qInfu8S/yS8VnzZuOH+
-         i4qIC8UFrc0mEHlqtxguicqn/NITiYuCajbcn/tUGTwpE6ZePT6ZPrOs3WbR2gmQrMVf
-         yl0rHOclN22bWHg1C/kfPXNh2dBi0YRf15ZiMrAqt37vDldcWynEXUIUrOHzTTRFkieC
-         /iNMYSTrdCumBkY/nfw1TkM5AikcsYmoFvlSfWnHDDu9ha4ztISfeSSpwpej06yX+7sk
-         hITw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBhXfh8lTS+aNV3PEb6FvU6NhhbCgHifu6S/KJ5RdMJ3lox1ZrS2eLIGO9XwcFSoDqliCT0aWZUGFfTg==@vger.kernel.org, AJvYcCXezN8fhdchwH9wmK9KRkWpC1aRhrGkZB3zAy8GBOyqbqahNNZvGXx5qNEJ3dfG2z8j5xFgXQ3e4GrfBFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmPZ/Dy1Sa2enAxO0Bd6RjdfBZ9NABpoJ8IhfhaIgm3Ov2c38q
-	AYRCcW2/OucvwfM22J0/oXwrZMuySgqDs3X6jRQNoy1744CyUuOizSlX6iyAGkv7
-X-Gm-Gg: ASbGnctINE1XVpmPfQOuaK4RfrRbA/Y5mtyTws+BcjZPfaDoRfD1nWVqzCVAeWg4S0r
-	txKl1dfQQk9vAencxqT9TLKKhbL14U6yPIECenoyS8dWHqdaslzwdbPGVUIW3kDEjbZMo0emeP0
-	n4E9aoJmcdPEiFUBkdp+fdvG9EwrAJc0GsqQj8qPUqkgoLSYSJsD1oSa2Ewttw+QktFLKARF9dr
-	MAad2j+Pn/0awdvHYUbgSy77Bw2p9jWGJPaQ39JA3l3Nds4U9TZ5V1wnW/duvoYmnW2D7oGs2Qv
-	PFjkGGK3Zmslsq5pI3LodFJUZ9HrBUi+CV2mMmYD0SlZuQRyRhi3gb+kX890YDX3czATGtEZ+w9
-	eDOF6ZM5xvre1jaFlmMbNsTkU
-X-Google-Smtp-Source: AGHT+IG6vqh7MhRYY2VnSQpd0CwGTXM+O9XMojSy/BkVHkpBhXQl/oER/Onlo/rTxagSwhRcdIhLhQ==
-X-Received: by 2002:a05:6102:3e8f:b0:4e7:596e:ec10 with SMTP id ada2fe7eead31-4e772880fd9mr12695071137.1.1749546353051;
-        Tue, 10 Jun 2025 02:05:53 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-87eeae8791esm873901241.15.2025.06.10.02.05.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 02:05:52 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4e75abe99b7so1746495137.3;
-        Tue, 10 Jun 2025 02:05:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXheH9l4TLI9hdsMGaO4K/5+W2u++LQWHT/S1kZlnzOxj99aVQ30SYy0NSfXwSCWGb35QDey5yjNHNkrVw=@vger.kernel.org, AJvYcCXrfg7Nt8T6wUd2amK7NY0GNzVnZkRv+1DzUO9CdaXTiMoDH3D++JqBMDCo8YSPCsf1vjXOKZLyrbQ0EQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:3ed0:b0:4e5:a394:16cb with SMTP id
- ada2fe7eead31-4e7728ba4d0mr12079543137.7.1749546352494; Tue, 10 Jun 2025
- 02:05:52 -0700 (PDT)
+	s=arc-20240116; t=1749546673; c=relaxed/simple;
+	bh=+KSZuNsvYqqgj2q1pcCsABuRQ9g9JJvOtUVc1NBAQQQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GYqo/F3KqG92/AGA9le5yAuNh7G7KeoErTt6ulCIHBenfsLBRLOBcG8pSVjonGbz13vJzrUqDKdLqo+kTTt33tEH2e7snQE5w39MIqHauZ3/ATeqH3LQWsy04gHA5w8gxADugybbNR2bLrf9bagBFnUjDJ80KVYmV3nR9wbbcEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bFql7YiF; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55A8Bhap030186;
+	Tue, 10 Jun 2025 11:10:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=gXPNgQ8R4em34zlLDlZZ+0
+	eTK9mlCISpwFo17g9ndzA=; b=bFql7YiFA77Z/Em78XCZZihmsqEvC4dIueNQDK
+	ZBfGObSJfxjWOhY6RnK6aCkSitigJ4TMjohCGAG3k9jyCCCaa4rSymi5pZsBmOBQ
+	bRv8amW+We7g4kaLUeZITVaFkfAx8wc5kkCBlqPUlrZ2j37HBTa7zO/UlYO5qO4L
+	9az7PuIJ/tSdYBbIxpNcHTs9f4WMcKMX3/o8iMp9KznVEJFDX5d9U2E+VAlGKyTj
+	zdUhUfyWTHdHOuQP8Qde+9kF2W6qTH22yWilG8ZAaNoxnlRtyPjzSjPYBnoc4zVP
+	bDfi9AhJZTZ5gSFBpOuR9G51ljQavG50EvcyttnJNGLFK+qg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 474cs2kx41-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 11:10:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 535D740050;
+	Tue, 10 Jun 2025 11:09:31 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7C0A4210227;
+	Tue, 10 Jun 2025 11:07:36 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 11:07:36 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <johan+linaro@kernel.org>,
+        <cassel@kernel.org>, <shradha.t@samsung.com>,
+        <thippeswamy.havalige@amd.com>, <quic_schintav@quicinc.com>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v12 0/9] Add STM32MP25 PCIe drivers
+Date: Tue, 10 Jun 2025 11:07:05 +0200
+Message-ID: <20250610090714.3321129-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
-In-Reply-To: <20250601151222.60ead71e7d8492a18c711a05@linux-foundation.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Jun 2025 11:05:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU1NdNjx3f1V9j2FACWwC5faPKCXChtW6Z=i2JyXquFuA@mail.gmail.com>
-X-Gm-Features: AX0GCFt1LL46Kri618f12QZQvjS1xahyg5UAuM3XvWnCqEwLP37r2X4sb5UOSYY
-Message-ID: <CAMuHMdU1NdNjx3f1V9j2FACWwC5faPKCXChtW6Z=i2JyXquFuA@mail.gmail.com>
-Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
-To: Andrew Morton <akpm@linux-foundation.org>, SeongJae Park <sj@kernel.org>, 
-	Honggyu Kim <honggyu.kim@sk.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
-	mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_03,2025-06-09_02,2025-03-28_01
 
-Hi Andrew et al,
+Changes in v12;
+   Fix warning reported by kernel test robot <lkp@intel.com>
 
-On Mon, 2 Jun 2025 at 17:55, Andrew Morton <akpm@linux-foundation.org> wrote:
-> - The 2 patch series "mm/damon: build-enable essential DAMON components
->   by default" from SeongJae Park reworks DAMON Kconfig to make it easier
->   to enable CONFIG_DAMON.
+Changes in v11;
+   Address comments from Manivanna:
+   - RC driver: Do not call pm_runtime_get_noresume in probe
+                More uses of dev_err_probe
+   - EP driver: Use level triggered PERST# irq
 
-... or, make it harder to disable it?
+Changes in v10;
+   - Update pcie_ep bindings with dbi2 and atu regs,
+     thus remove Reviewed-by and Acked-by.
+   
+Changes in v9:
+   - Describe atu and dbi2 shadowed registers in pcie_ep node
+   Address RC and EP drivers comments from Manivanna:
+   - Use dev_error_probe() for pm_runtime_enable() calls
+   - Reword Kconfig help message
+   - Move pm_runtime_get_noresume() before devm_pm_runtime_enable()
 
-Given no single defconfig file in v6.15 enables CONFIG_DAMON, I find
-it hard to believe defaulting DAMON to "y" is the right thing to do...
-(Yes, I have read the rationale in commit 28615e6eed152f2f
-("mm/damon/Kconfig: enable CONFIG_DAMON by default")).
+Changes in v8:
+   - Whitespace in comment
+   
+Changes in v7:
+   - Use device_init_wakeup to enable wakeup
+   - Fix comments (Bjorn)
 
-Thanks!
+Changes in v6:
+   - Call device_wakeup_enable() to fix WAKE# wakeup.
+   Address comments from Manivanna:
+   - Fix/Add Comments
+   - Fix DT indents
+   - Remove dw_pcie_ep_linkup() in EP start link
+   - Add PCIE_T_PVPERL_MS delay in RC PERST# deassert
+   
+Changes in v5:
+   Address driver comments from Manivanna:
+   - Use dw_pcie_{suspend/resume}_noirq instead of private ones.
+   - Move dw_pcie_host_init() to probe
+   - Add stm32_remove_pcie_port cleanup function
+   - Use of_node_put in stm32_pcie_parse_port
+   - Remove wakeup-source property
+   - Use generic dev_pm_set_dedicated_wake_irq to support wake# irq
+   
+Changes in v4:
+   Address bindings comments Rob Herring
+   - Remove phy property form common yaml
+   - Remove phy-name property
+   - Move wake_gpio and reset_gpio to the host root port
+   
+Changes in v3:
+   Address comments from Manivanna, Rob and Bjorn:
+   - Move host wakeup helper to dwc core (Mani)
+   - Drop num-lanes=<1> from bindings (Rob)
+   - Fix PCI address of I/O region (Mani)
+   - Moved PHY to a RC rootport subsection (Bjorn, Mani)
+   - Replaced dma-limit quirk by dma-ranges property (Bjorn)
+   - Moved out perst assert/deassert from start/stop link (Mani)
+   - Drop link_up test optim (Mani)
+   - DT and comments rephrasing (Bjorn)
+   - Add dts entries now that the combophy entries has landed
+   - Drop delaying Configuration Requests
 
-Gr{oetje,eeting}s,
+Changes in v2:
+   - Fix st,stm32-pcie-common.yaml dt_binding_check	
 
-                        Geert
+Changes in v1:
+   Address comments from Rob Herring and Bjorn Helgaas:
+   - Drop st,limit-mrrs and st,max-payload-size from this patchset
+   - Remove single reset and clocks binding names and misc yaml cleanups
+   - Split RC/EP common bindings to a separate schema file
+   - Use correct PCIE_T_PERST_CLK_US and PCIE_T_RRS_READY_MS defines
+   - Use .remove instead of .remove_new
+   - Fix bar reset sequence in EP driver
+   - Use cleanup blocks for error handling
+   - Cosmetic fixes
+
+Christian Bruel (9):
+  dt-bindings: PCI: Add STM32MP25 PCIe Root Complex bindings
+  PCI: stm32: Add PCIe host support for STM32MP25
+  dt-bindings: PCI: Add STM32MP25 PCIe Endpoint bindings
+  PCI: stm32: Add PCIe Endpoint support for STM32MP25
+  MAINTAINERS: add entry for ST STM32MP25 PCIe drivers
+  arm64: dts: st: add PCIe pinctrl entries in stm32mp25-pinctrl.dtsi
+  arm64: dts: st: Add PCIe Root Complex mode on stm32mp251
+  arm64: dts: st: Add PCIe Endpoint mode on stm32mp251
+  arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
+
+ .../bindings/pci/st,stm32-pcie-common.yaml    |  33 ++
+ .../bindings/pci/st,stm32-pcie-ep.yaml        |  73 ++++
+ .../bindings/pci/st,stm32-pcie-host.yaml      | 112 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi |  20 +
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |  59 +++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  21 +
+ drivers/pci/controller/dwc/Kconfig            |  24 ++
+ drivers/pci/controller/dwc/Makefile           |   2 +
+ drivers/pci/controller/dwc/pcie-stm32-ep.c    | 384 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.c       | 368 +++++++++++++++++
+ drivers/pci/controller/dwc/pcie-stm32.h       |  16 +
+ 12 files changed, 1119 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32-ep.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
+ create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+-- 
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
