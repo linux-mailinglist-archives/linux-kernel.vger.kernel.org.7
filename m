@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-679719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D40CAD3AF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B780CAD3AFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E163A8520
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:16:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5036617B5AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6152BDC34;
-	Tue, 10 Jun 2025 14:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25D22BDC34;
+	Tue, 10 Jun 2025 14:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PI9OD33N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QNA1+5du"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECF22248BD;
-	Tue, 10 Jun 2025 14:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CE7246BA4;
+	Tue, 10 Jun 2025 14:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749565001; cv=none; b=iV2di4BWkU4cZkNdukYUod7bp6dKSAWDgLOCvhf+FjNkFtiarGihT4WTG15ulY08zQfxasKWT5/tDo7mJDh7Li/IKi7cjll6CGNGCGG0FPYpG6fIjYQiaLI4u6uNpr9q1kmcFXLQTUcoBm1/D+kZV9LhOF9jkitAblw5dY6SBCA=
+	t=1749565112; cv=none; b=UT2ozWNzb+jsnlMyVnlIsNtkv8CMKMzmKtrlwPP6TUMR6i5hsXM9BgQ7Vu28I913KPkxw4M8h6WkY0Da5AEdY0msUxFyE+33kSvTJW/D93onwRoMxJJcO6Zgv3RkyJpXuDQWJ+vv8oyiAb0PYCW6gYbLRDiZ23MnKp+AHo8SQ3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749565001; c=relaxed/simple;
-	bh=xzjkJXy5nV12SXSVlGCVriM090em/5m6G36M0RvdZnU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HBisKkk8JmI1e409wAQCYkAl09oBbP0GfP2yreoLeniaa+cTgM5Y/vpSvDJ69Avnwddda9ehhfnywpPkEx98jydMthkeIht51LfWUomRLN1UJ7vMOu/L+i8/w5kORaM4//R/kS++5aB5X2GqOjYOr1Z225GAP3f2I4pWgSo/4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PI9OD33N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3360C4CEF1;
-	Tue, 10 Jun 2025 14:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749565000;
-	bh=xzjkJXy5nV12SXSVlGCVriM090em/5m6G36M0RvdZnU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=PI9OD33Nff5Z58Y9xqxk+aTeRsPO5ykdw0lzLY2KdlEJud4eaIvJLOxJ54ElWfXmy
-	 JtzOXWFfln2LcPRCCsSW92Jmv7xvgI4tG2vIctS9GcuN+SGp8YWg0+YqmctcjZnMnA
-	 M9sDfaGfa5LE45rUqnLI+pdTMYsLkdmwkWcQ09TP1uxhn41DzhVS826AHq+NupzZ0y
-	 5+WAwQ3mC3HZwMXNmeqSUNqDOR6xiiPdisyXCifmaq9aqQ1g88+Gp3Kfm4n3HT40uO
-	 J6bmC6ULP+Mf1XHzQ5R3bns/v57SgZn0+a8ZpnlYM92z1DxoCyyCys1Qfi2uvvjwfQ
-	 eGeIdUWWwSqVQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
- =?utf-8?q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>, 
- Charles Keepax <ckeepax@opensource.cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Peter Zijlstra <peterz@infradead.org>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: stable@vger.kernel.org, Liam Girdwood <liam.r.girdwood@intel.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250610103225.1475-2-thorsten.blum@linux.dev>
-References: <20250610103225.1475-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] ASoC: sdw_utils: Fix potential NULL pointer deref in
- is_sdca_endpoint_present()
-Message-Id: <174956499773.45975.12052046970647716420.b4-ty@kernel.org>
-Date: Tue, 10 Jun 2025 15:16:37 +0100
+	s=arc-20240116; t=1749565112; c=relaxed/simple;
+	bh=F77oOQ5o+TGyFsFaewUxO4I/JYy/wApknI4F+a/DJb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsl2TfoAtWXt3uTc+IXUTq76qA8ARYU7vZN3QzNcfAwQCkVLZxBUWwN6GWaT+QMZNwP1j03ZNbANZoGfqGUjnXru7s6Gsp2lNP4krQ6pwg46f19svktRtPkwld23aWuzpip3mESOYQ19gU4QnwOW4QhPjRmDO5pbG5vqbQfgAfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QNA1+5du; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749565110; x=1781101110;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=F77oOQ5o+TGyFsFaewUxO4I/JYy/wApknI4F+a/DJb0=;
+  b=QNA1+5duP+vqPIftD18TQ7yM6I8+EQ/mO/e4JCvXbxQ6Z8r54mXzguDq
+   4orhwEajtqBeULcroxbO0yE65t5XvToYGTBf/LJn5XdNcbDvyQ4OiAEy3
+   7KIN15l5IpiNKlLr1NlFua3khMaMhKKgcnIniHdEbLXrQUFHGbwiAIrvU
+   99zeIiHaxz3YeOFdA143HpxsHOcFHUkjxOyZ3Fv4P6ewN9DbE0y7Qpqlc
+   kbuHYKItY2qqBCBHOF40qg+ISPfQGENtN12botloYKU+RKkxgnLy0Rbb5
+   a5OenGPFKejIm/uH2+TdFyE8ZKbURWnyfcXdhluCum8z1QueNHdqSx5xp
+   g==;
+X-CSE-ConnectionGUID: 0caNT4ccRga54gpWqznh9Q==
+X-CSE-MsgGUID: LkSesDivQOmluFvpeKknIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11460"; a="61953585"
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
+   d="scan'208";a="61953585"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 07:18:30 -0700
+X-CSE-ConnectionGUID: RqMmOiGfShaLmdHUEXjUtw==
+X-CSE-MsgGUID: GmMUuOmnRxa/we/M4S7gSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,225,1744095600"; 
+   d="scan'208";a="151847886"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 07:18:30 -0700
+Received: from [10.124.220.93] (unknown [10.124.220.93])
+	by linux.intel.com (Postfix) with ESMTP id 7C78220B5736;
+	Tue, 10 Jun 2025 07:18:29 -0700 (PDT)
+Message-ID: <460664b1-df24-4f15-a9b9-6ff2e6a20227@linux.intel.com>
+Date: Tue, 10 Jun 2025 07:18:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ata: pata_macio: Fix PCI region leak
+To: Philipp Stanner <phasta@kernel.org>, Damien Le Moal <dlemoal@kernel.org>,
+ Niklas Cassel <cassel@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250610135413.35930-2-phasta@kernel.org>
+Content-Language: en-US
+From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20250610135413.35930-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
 
-On Tue, 10 Jun 2025 12:32:16 +0200, Thorsten Blum wrote:
-> Check the return value of kzalloc() and exit early to avoid a potential
-> NULL pointer dereference.
-> 
-> 
 
-Applied to
+On 6/10/25 6:54 AM, Philipp Stanner wrote:
+> pci_request_regions() became a managed devres functions if the PCI
+> device was enabled with pcim_enable_device(), which is the case for
+> pata_macio.
+>
+> The PCI subsystem recently removed this hybrid feature from
+> pci_request_region(). When doing so, pata_macio was forgotten to be
+> ported to use pcim_request_all_regions(). If that function is not used,
+> pata_macio will fail on driver-reload because the PCI regions will
+> remain blocked.
+>
+> Fix the region leak by replacing pci_request_regions() with its managed
+> counterpart, pcim_request_all_regions().
+>
+> Fixes: 51f6aec99cb0 ("PCI: Remove hybrid devres nature from request functions")
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Thanks!
+> Changes in v2:
+>    - Add Fixes: tag and rephrase commit message, since the merge window
+>      closed already. (Niklas)
+> ---
+>   drivers/ata/pata_macio.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+> index fbf5f07ea357..f7a933eefe05 100644
+> --- a/drivers/ata/pata_macio.c
+> +++ b/drivers/ata/pata_macio.c
+> @@ -1298,7 +1298,7 @@ static int pata_macio_pci_attach(struct pci_dev *pdev,
+>   	priv->dev = &pdev->dev;
+>   
+>   	/* Get MMIO regions */
+> -	if (pci_request_regions(pdev, "pata-macio")) {
+> +	if (pcim_request_all_regions(pdev, "pata-macio")) {
+>   		dev_err(&pdev->dev,
+>   			"Cannot obtain PCI resources\n");
+>   		return -EBUSY;
 
-[1/1] ASoC: sdw_utils: Fix potential NULL pointer deref in is_sdca_endpoint_present()
-      commit: 6325766d69900d1aa9733fc7572456fc4427b708
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
 
 
