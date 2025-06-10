@@ -1,97 +1,148 @@
-Return-Path: <linux-kernel+bounces-679016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93921AD3161
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:12:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2A4AD3174
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 523437A853F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 970F83A260B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DE428B7FC;
-	Tue, 10 Jun 2025 09:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCB628A72A;
+	Tue, 10 Jun 2025 09:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZmNqYGwb"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkbQI51S"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF2728B7EF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D091A8401;
+	Tue, 10 Jun 2025 09:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749546690; cv=none; b=m5MACjSwErtbX4XhFdoQARtuRJM72lJoGSZQN5JoTtXcJw3Y7UgiBTiNZn0feKbDGfo6p5XM3vrOwFZr5Xf8nwT+lqIAeTTGJQub1TNTgoiwa8FH4YVMeSrnSXklaPSUjAVyzSIo17FfzAs1TGl+ORwVq6r+Vk8WRmx186hkihw=
+	t=1749546768; cv=none; b=ki5YwdmzHvp5yVTSRYkbTh+lRV0nczzyqYqdYeTc8cXz38RF7Rud1KUkxh9wGVwnsIBkmcF2cbfLiqwoei/v4bPdCQs4mFl1oFfCcPGTYe9U1DIbqHClUkVsEjfDuyIRiQyWUt4O7Xn8nFkkeanBFEqd1QCM7EvHONmdW16ywmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749546690; c=relaxed/simple;
-	bh=9anzCkLa9MXw6aZtNXBr2K9y68pZ+bkSnCoMWyUH4V0=;
-	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
-	 References; b=X5YliFkJiERrrIXKYEGfBs4bZ0KSdoUSqZyCQfUA1EiqIXChKc0wqObN1C1yqR+6uUMBeWuIRyp6RcIlBjUWw4jsNKYoDj2dEoawo8ANIyPyvKtg7jfcy+zf+gV4qeQ+5HHbLVo7+K2DpSne2OG7YCmxmsfPfRxmEm/Qfa4yttA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com; spf=pass smtp.mailfrom=partner.samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZmNqYGwb; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=partner.samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=partner.samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250610091125euoutp01f800337cb781f56c549d26d0b08ca349~Ho3DfYq4f1772217722euoutp01H
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:11:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250610091125euoutp01f800337cb781f56c549d26d0b08ca349~Ho3DfYq4f1772217722euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1749546685;
-	bh=9anzCkLa9MXw6aZtNXBr2K9y68pZ+bkSnCoMWyUH4V0=;
-	h=Subject:Reply-To:From:To:CC:Date:References:From;
-	b=ZmNqYGwbs+K96//SzvY2L0QWp+m/QYyzAf4xAek4HsWXYi0hgGbwf064I/jK0jUAE
-	 +YqCx5QDtE5KgFA8cAHo/EcMAhxmmiScp1W1om0EoWmIXSBYUwa/bYuU7Xgtp0okr0
-	 l+B4k8gRHPDaALHFlos4mHSYn8Q0nAp/B79cxRNo=
+	s=arc-20240116; t=1749546768; c=relaxed/simple;
+	bh=OR/imTMEP6wki17zJDm3lVoxKLLBt0KHX1yafOzssZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tAdiE3GUIF19+KriI/lyAqpIgX5PN+mr2Z07bijiq6fhO9O2ivxvTKrPSmcjm/F5gmVzNT2CvUgglBlfrAqrQHgtT+mhYyryloJZwMfQdLaLMBJw7Ewgpsu7D0vclxr2Z+lMjMSNrNuAeGaIEPEquRAZ0ypVIi1SnbfNU9ADCpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GkbQI51S; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso6155458b3a.2;
+        Tue, 10 Jun 2025 02:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749546766; x=1750151566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v4JKKVn0UseeRyMqFuDxbVuEyJNqH2YzoGutyU6v/+0=;
+        b=GkbQI51STz2hEhKNGeHVlQ+TiuinDqiYIU+4LbZ1WsM4crJO/ZUOAmnQ9Hm0h1wz1a
+         G3YTCc1utAfCh0E97g5KO5i+/7zXByYY1xKMOWUV9WvJQKVXf7f3XnM4ladoj6nz5Wk/
+         n6XUD9COIsF5JCMEPtxb5q2ZxWaUfp3A4LFDVtjHmQERlXOYP8r+LBPql/+nQdvyF9A2
+         0enb7TiuHsvR92iVVkg/fI40XYBgIDswB7/Qbid8KSDSAxQdxiewA95gWl9SK2JpLbcx
+         BcCJ2x1aK7JOeJos5e0MN1NRW9hyF3SZqUgSA9xzYacO4XAC1wdV+WfYlf0VYOd7HS/A
+         ICSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749546766; x=1750151566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v4JKKVn0UseeRyMqFuDxbVuEyJNqH2YzoGutyU6v/+0=;
+        b=cIAvSp8mvL7LEkEJqixgfgOcCoYUQtfmIJqWc7G+p2/n3BFtEHIM2k4Avvp+eS7XHj
+         b+8KgpUXpNdY39BNr7eTSYQRErwMAHcoVZpiiKEqD03/ehmVsv9qralgVfRdQ0e9UR7/
+         BJ0BMfSawjP6T5rHhmKNOn36maAMl6j1ezP57HzN9gx80rf33iJKNnUxqWyx6kumB55c
+         NyDdLaG9lvwj/Czk1Mb0i7KUsEm1RDgLVmkLPMhTHpI/epfzRmX81JzUrVT/7JplRlfs
+         DHDQY/HdJYf1Dt+F099SngA3oPUUUwqlDGZjNBsAafdQImSE5Re2Bn8UyIBZ3pY5jdky
+         ON5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWnzB+KcVXkL4K6MaAKpma+CuWgPDQHug/KZN/xfxLAJ/tVtFzIN7mxyZ50r6/nxnv7goaqjLYpgmYThQ==@vger.kernel.org, AJvYcCXzRHsAcywpSGLZUtNFyuGvRCeSzjhmTx+xKYAHpbxIWxT/3pzLLLtjQDD727YflsKvZeyj2r/PZzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ9wBtM1P2bUck/HBEPdwzB6Sr09tlminWaQMZjeHsqAtpZXEB
+	YYtwssIXKIyy+DFQdcVIflXq+SoA+iwyp1guhlEwsKDM1hWNt5/kOYxp
+X-Gm-Gg: ASbGncupDl3ERwYzhd+sO20jroxlJi/D2KBPHSQdH+H6RmTD9GlKWBk2PsnddLXIhu2
+	tdaScxEhFIYC1zLxVzWETAED65fBZaBMvA01kTnLU9rwJKjMY6Qg+Mhm7ESZ7ajD9g/7IRwz7UZ
+	Uk7Rzk2/vUVEwvpfe41pEJV89Wk9fMdhp7C/Lx+Tkh4THT3nzPmzlqV9sDnx0HRW4a+fPvblphs
+	EGP7m2mynpR4dNW+MEh9/1ieFk2fyOMIltvjXW2EVzy5EaBBgP62Xnm0ttnNNbA1GdGRxttYoos
+	v+UcDCrzErKWdbk1dQ2iQUgPMlTh5MnqqWO7AK4uaCATfwpxR/PDHZO5srSM3A==
+X-Google-Smtp-Source: AGHT+IGl9UAZ4ea/hY5sYQpehfVFdynOV2tKfnv3vX/urwSJK5OM4lRhwLTk70aoj+nzOiUw1n7deA==
+X-Received: by 2002:a05:6a00:4fd5:b0:746:227c:a808 with SMTP id d2e1a72fcca58-748618d84a5mr2664429b3a.24.1749546761337;
+        Tue, 10 Jun 2025 02:12:41 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7482b0c082csm7006778b3a.121.2025.06.10.02.12.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 02:12:40 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id A16924209E8C; Tue, 10 Jun 2025 16:12:38 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux ext4 <linux-ext4@vger.kernel.org>
+Cc: "Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] Documentation: ext4: atomic_writes: Remove cross-reference labels
+Date: Tue, 10 Jun 2025 16:11:59 +0700
+Message-ID: <20250610091200.54075-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: Re: Re: Re: Re: [PATCH bpf v2] xsk: Fix out of order segment
- free in __xsk_generic_xmit()
-Reply-To: e.kubanski@partner.samsung.com
-Sender: Eryk Kubanski <e.kubanski@partner.samsung.com>
-From: Eryk Kubanski <e.kubanski@partner.samsung.com>
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-CC: Stanislav Fomichev <stfomichev@gmail.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "bjorn@kernel.org" <bjorn@kernel.org>,
-	"magnus.karlsson@intel.com" <magnus.karlsson@intel.com>,
-	"jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20250610091125eucms1p3b7b0b19a533caffddce07c75596f3714@eucms1p3>
-Date: Tue, 10 Jun 2025 11:11:25 +0200
-X-CMS-MailID: 20250610091125eucms1p3b7b0b19a533caffddce07c75596f3714
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009
-X-EPHeader: Mail
-X-ConfirmMail: N,general
-X-CMS-RootMailID: 20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009
-References: <CGME20250530103506eucas1p1e4091678f4157b928ddfa6f6534a0009@eucms1p3>
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2046; i=bagasdotme@gmail.com; h=from:subject; bh=OR/imTMEP6wki17zJDm3lVoxKLLBt0KHX1yafOzssZs=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnuX5XvWjkKFT7aM3kRf9WaOR1LBZW8n3zgrXW2fag+f 9v8e7O8OkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjARB3dGhm2tfLyCQv37zqev 5cw4MtHWNSa9zF5r9QenJeHPv75t0mL4w9eRHDfPqHfzI4f7MuYW5XEnDXcppu1z/x++WLRy8gZ 7PgA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-> I've come with something as below. Idea is to embed addr at the end of
-> linear part of skb/at the end of page frag.
+Sphinx reports htmldocs warnings on ext4 atomic block writes docs:
 
-Are you sure that this is safe for other components?
+Documentation/filesystems/ext4/atomic_writes.rst:5: WARNING: duplicate label atomic_writes, other instance in Documentation/filesystems/ext4/atomic_writes.rst
+Documentation/filesystems/ext4/atomic_writes.rst:207: WARNING: duplicate label atomic_write_bdev_support, other instance in Documentation/filesystems/ext4/atomic_writes.rst
 
-So instead of storing entire array at the skb_shared_info (skb->end),
-we store It 8-bytes per PAGE fragment and 8-byte at skb->end.
-Technically noone should edit skb past-the-end, it
-looks good to me.
+These warnings reference duplicated cross-reference labels to themselves in
+the same doc, which are because atomic_writes.rst is transcluded in
+overview.rst via include:: directive, thus the culprit docs get processed
+twice.
 
-In=C2=A0xsk_cq_submit_locked()=20you=20use=20only=20xskq_prod_write_addr.=
-=0D=0AI=20think=20that=20this=20may=20cause=20synchronization=20issues=20on=
-=20reader=20side.=0D=0AYou=20don't=20perform=20ATOMIC_RELEASE,=20so=20this=
-=20producer=20incrementation=0D=0Ais=20atomic=20(u32)=20but=20it=20doesn't=
-=20synchronize=20address=20write.=0D=0A=0D=0AI=20think=20that=20you=20shoul=
-d=20accumulate=20local=20producer=20and=0D=0Astore=20it=20with=20ATOMIC_REL=
-EASE=20after=20writing=20descriptors.=0D=0AIn=20current=20situation=20someo=
-ne=20may=20see=20producer=20incrementation,=0D=0Abut=20address=20stored=20i=
-n=20this=20bank=20doesn't=20need=20to=20be=20synchronized=20yet.
+Remove the labels to fix the warnings.
+
+Fixes: 0bf1f51e34c4 ("ext4: Add atomic block write documentation")
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/filesystems/ext4/atomic_writes.rst | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Documentation/filesystems/ext4/atomic_writes.rst b/Documentation/filesystems/ext4/atomic_writes.rst
+index f65767df3620d5..f1a086aa026b1b 100644
+--- a/Documentation/filesystems/ext4/atomic_writes.rst
++++ b/Documentation/filesystems/ext4/atomic_writes.rst
+@@ -1,5 +1,4 @@
+ .. SPDX-License-Identifier: GPL-2.0
+-.. _atomic_writes:
+ 
+ Atomic Block Writes
+ -------------------------
+@@ -154,7 +153,7 @@ Creating Filesystems with Atomic Write Support
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ First check the atomic write units supported by block device.
+-See :ref:`atomic_write_bdev_support` for more details.
++See "Hardware Support" section below for more details.
+ 
+ For single-fsblock atomic writes with a larger block size
+ (on systems with block size < page size):
+@@ -201,7 +200,6 @@ details:
+ The STATX_ATTR_WRITE_ATOMIC flag in ``statx->attributes`` is set if atomic
+ writes are supported.
+ 
+-.. _atomic_write_bdev_support:
+ 
+ Hardware Support
+ ----------------
+
+base-commit: d3f825032091fc14c7d5e34bcd54317ae4246903
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
