@@ -1,171 +1,136 @@
-Return-Path: <linux-kernel+bounces-679223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A66AD3388
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A229AD334F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428F03B5DA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D8F16B056
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FFF28CF68;
-	Tue, 10 Jun 2025 10:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7810B25D8F5;
+	Tue, 10 Jun 2025 10:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgNDHfKN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VDBOry2I"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6FD28CF4C;
-	Tue, 10 Jun 2025 10:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5609F28D8C9
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749551122; cv=none; b=V3f8yEQCD7RHuslbzRp+hsdHNS3NwAtXZNSzWiYkA65OoDYRQnTHOgTy5oDotS9Gl08rhpf9Ymr5iH4DSdwkCamSdVFX11ERuRECTwJJMLxppq/A5gV6bqq4qo7Rn3KeVx+pKQ4/dRJ/hZklnh2fOf4iI7qtzg1wJUu/V5tQOT0=
+	t=1749549721; cv=none; b=ea9UIplOso7u2dYTS4FsQdwpM4SqWu+lPE12oEgslOMQ9ipMb+0l2iHx83zHyeYePkPdViSOIvadGmlU8DeeqeABt7xCPDR7mHidfjbOi199bdXJB/sCzBCwTBnmbwLp/aTAniXgsxKkDz0UbBRIQO+6v1kHXdk2PmPwaZsIYiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749551122; c=relaxed/simple;
-	bh=E3G8JLOFOz6gdX2I9IACKDS0gwH+Jplg/jGdoU+kY5g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=e8UraBdQToNTM4554dx0ywcy2iDPmWV0ziqPfKpZ1hWZdZF1P4uNnQ1WPFIxf0tt3AFU0Jq+RoU6XRyt9ndTgbhnb7kCtiok744+XRWRTMJrfG1+/j26yYPeF16BDKMJp14Ik+UtwOGE0rxrrOvkLpW7xnb3ec3jIgeWTInKzO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgNDHfKN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD546C4CEED;
-	Tue, 10 Jun 2025 10:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749551122;
-	bh=E3G8JLOFOz6gdX2I9IACKDS0gwH+Jplg/jGdoU+kY5g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UgNDHfKNBbMxGZNfvawnBASc4E/MmDqHkEHlYfiE7bMcQyDQjfXjwbOE7BE8k3EWK
-	 t6IKCIx/3Q9uQJU1qDsyk7z6V6pz7W7JUc7T2zVsp6Ld03yGsXU070qMsusEnm7Q1F
-	 CyF2ZAXOAmLqktaPjHVh+YyyUwKPBJOe2RerendUBwq7VMZYiFYvmffA5G3A4h8lfP
-	 oO+mVDvLp1An08Q2oN4Wo1lgMP9uGiHonWH0R4BedXTVgT7Vm1tQqKWyk161npo/j3
-	 PgqTW6Z6aVS0Q3Weoj6di7WHt4S+UtesN3Dwjvrwn2pn1qa21nrN9kkj+wkDWlFBMM
-	 Twq7WEsSMAOMg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Cc: <alex.gaynor@gmail.com>,  <ojeda@kernel.org>,  <aliceryhl@google.com>,
-  <anna-maria@linutronix.de>,  <bjorn3_gh@protonmail.com>,
-  <boqun.feng@gmail.com>,  <dakr@kernel.org>,  <frederic@kernel.org>,
-  <gary@garyguo.net>,  <jstultz@google.com>,
-  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
-  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
-  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
-Subject: Re: [PATCH v3 3/3] rust: time: Add ktime_get() to ClockSource trait
-In-Reply-To: <20250610.171506.1930082951902279512.fujita.tomonori@gmail.com>
-	(FUJITA Tomonori's message of "Tue, 10 Jun 2025 17:15:06 +0900")
-References: <-OrPPXscT_4STsX2CDg5ki77Lz68HLwGbucr-EZuMsTXhLnEdyuDfskI5daZYIwNuMJN_CBXX-gW_RLrw_H-aA==@protonmail.internalid>
-	<20250609010415.3302835-4-fujita.tomonori@gmail.com>
-	<874iwo3tze.fsf@kernel.org>
-	<dLoUGc_2n-ucLABtNidnDEFHkzly22x6iRKRh7Fz_7uoj9tvw9qZySUE5dIVWndnQlq9044P04kltwMTMuUI2Q==@protonmail.internalid>
-	<20250610.171506.1930082951902279512.fujita.tomonori@gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Tue, 10 Jun 2025 11:34:00 +0200
-Message-ID: <87h60o2b5j.fsf@kernel.org>
+	s=arc-20240116; t=1749549721; c=relaxed/simple;
+	bh=ajwul8elyJUy33gM+JOS0xdI8KEwQpbbj17fh8ObkWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=m0w5RPjEfa1Vu9ekcnYz/H/UKY/NRF8iQaP6xxuamqwEowNXkRof2yZvtTGdo4veb5m7iUUxx37mlg9wDGgu3TBvlBGw5xCH77raTUgJXNqn/FCVtHulRSAz8j5LOqQZXSZ867SbDgWyXseMvrDzksDh0crv/nUT5S8qKq8o84U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=VDBOry2I; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6069d764980so11469872a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 03:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1749549718; x=1750154518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ud0pOGo+pPwbsh+KmRFEDBj7XsSmfxjM0obvvLY2GBw=;
+        b=VDBOry2IrAdjTtsFk7utKLGlt0fX91D59Sy9nQJVYYHYBZqny3Hb2rmcaZW4UFdnSq
+         jC0pPn9z9cg/dRXww48jZl8VfeRGUhZz7Ue9SBZe9sz88hd8tL+KpgGrm2olcWht3d0c
+         r11wpcnlbo4vDJcE8a2L0NJAEwaoczpJSfsVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749549718; x=1750154518;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ud0pOGo+pPwbsh+KmRFEDBj7XsSmfxjM0obvvLY2GBw=;
+        b=NuMyR2i388stB4wHWLS+mXZjDSOzhVNnUM8XJmNjlXh+iK9R+nHMIkrMxtaeWwpmIi
+         41M9awCeg/bS9Ym9BMvd/QnTzqpgeSR339ud+pqG45ewN7DAyshQ+DmxA5yek1vjEU6J
+         4NHYvwilcmC+jB2hJRmPlh77A8SjM8uZJnxyPgDJdorqPbJW4i9dQ/mzsxHwLTfHnVjD
+         Abk3QU59t7dZNFU/HN/5DFxFX57j790lUntAMJvMZMcskIQwtNhqHJfHtT35rPDNt14U
+         NbNMotFhd5N8TxvjYyvCO8QbRL+67Y/hkEpOVZTehZxRv+NanRfAg4UyqlYssLtpbWQN
+         L0bg==
+X-Gm-Message-State: AOJu0YykibHCQVZhUt5Zpt9yc4bOrqBv5HTpu8xB3GjPl+QDNo2216UV
+	agjGDG4+P+7oHQfxGAEpd6+6T/GcvY9hczpE7pQ2U+ZqXhuNIMfGPxe8R6DeE2C+K/rtaBi+/n+
+	aywYc
+X-Gm-Gg: ASbGnctQohkwIHWC4+l8IhS6l1BUWGgYhAmLVtKRS7xeokNRstoImk8iq7IyS++1+Nr
+	a/nPWpRoT6uNasUySETngJDZDaHsJl9WBfdqtwR6YS4dsMgrN0e9z6xhVxI0yhvcyj7SZQQsD7s
+	1PP1Vt1O7MZFdN+gjHXnJqz/botJ4WmU/OeX8lSG3Ee88VquVsMFatXVmLgZGwi8+ieIB2T/oZG
+	LUcjn/AR56Nkb7AvgAZv0X2UzNJStHmGLQHt63BryoC+ZHkK7ZLnj/C9P0xPEAPc0/SEv4pY8Dj
+	vO9cKd8fPTtPzMcFv2WjbbyHtWMirEXQeQXPTbD76f6uT137RzzK0i9epAvv4qz23lbHJYVcZLK
+	CQDxrgB3GRYWRNdI7lgybYieIWME=
+X-Google-Smtp-Source: AGHT+IGMS+hUfgI6LOBeveNqUWZ24WG/Hn807LJtdnldLG+zajSuz1AWN6szdkVSWL3Vez5POnXrOw==
+X-Received: by 2002:a05:6402:3547:b0:5ff:f3f2:d88e with SMTP id 4fb4d7f45d1cf-6081868f8f9mr2475891a12.12.1749549718370;
+        Tue, 10 Jun 2025 03:01:58 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.40.179])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6077837ed0bsm5953438a12.36.2025.06.10.03.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 03:01:57 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Matteo Lisi <matteo.lisi@engicam.com>,
+	linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@denx.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Marek Vasut <marex@denx.de>,
+	Markus Niebel <Markus.Niebel@tq-group.com>,
+	Max Merchel <Max.Merchel@ew.tq-group.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Primoz Fiser <primoz.fiser@norik.com>,
+	Rob Herring <robh@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH v3 08/10] dt-bindings: arm: fsl: support Engicam MicroGEA GTW board
+Date: Tue, 10 Jun 2025 12:00:21 +0200
+Message-ID: <20250610100139.2476555-9-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610100139.2476555-1-dario.binacchi@amarulasolutions.com>
+References: <20250610100139.2476555-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+Add devicetree bindings for Engicam MicroGEA GTW board based on the
+Engicam MicroGEA SoM (System-on-Module).
 
-> On Tue, 10 Jun 2025 10:01:57 +0200
-> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->
->> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
->>
->>> Introduce the ktime_get() associated function to the ClockSource
->>> trait, allowing each clock source to specify how it retrieves the
->>> current time. This enables Instant::now() to be implemented
->>> generically using the type-level ClockSource abstraction.
->>>
->>> This change enhances the type safety and extensibility of timekeeping
->>> by statically associating time retrieval mechanisms with their
->>> respective clock types. It also reduces the reliance on hardcoded
->>> clock logic within Instant.
->>>
->>> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
->>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
->>> ---
->>>  rust/helpers/helpers.c |  1 +
->>>  rust/helpers/time.c    | 18 ++++++++++++++++++
->>>  rust/kernel/time.rs    | 32 ++++++++++++++++++++++++++++----
->>>  3 files changed, 47 insertions(+), 4 deletions(-)
->>>  create mode 100644 rust/helpers/time.c
->>>
->>> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
->>> index 0f1b5d115985..0613a849e05c 100644
->>> --- a/rust/helpers/helpers.c
->>> +++ b/rust/helpers/helpers.c
->>> @@ -39,6 +39,7 @@
->>>  #include "spinlock.c"
->>>  #include "sync.c"
->>>  #include "task.c"
->>> +#include "time.c"
->>>  #include "uaccess.c"
->>>  #include "vmalloc.c"
->>>  #include "wait.c"
->>> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
->>> new file mode 100644
->>> index 000000000000..9c296e93a560
->>> --- /dev/null
->>> +++ b/rust/helpers/time.c
->>> @@ -0,0 +1,18 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +#include <linux/timekeeping.h>
->>> +
->>> +ktime_t rust_helper_ktime_get_real(void)
->>> +{
->>> +	return ktime_get_with_offset(TK_OFFS_REAL);
->>> +}
->>> +
->>> +ktime_t rust_helper_ktime_get_boottime(void)
->>> +{
->>> +	return ktime_get_with_offset(TK_OFFS_BOOT);
->>> +}
->>> +
->>> +ktime_t rust_helper_ktime_get_clocktai(void)
->>> +{
->>> +	return ktime_get_with_offset(TK_OFFS_TAI);
->>> +}
->>
->> This just caught my eye. I think policy is to make helpers as much 1:1 as
->> possible. We should not inject arguments here. Instead, we should have
->> just one function that passes the argument along.
->
-> Indeed, you're right. It should have been as follows:
->
-> +++ b/rust/helpers/time.c
-> @@ -0,0 +1,18 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/timekeeping.h>
-> +
-> +ktime_t rust_helper_ktime_get_real(void)
-> +{
-> +	return ktime_get_real();
-> +}
-> +
-> +ktime_t rust_helper_ktime_get_boottime(void)
-> +{
-> +	return ktime_get_boottime();
-> +}
-> +
-> +ktime_t rust_helper_ktime_get_clocktai(void)
-> +{
-> +	return ktime_get_clocktai();
-> +}
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Yes, even better =F0=9F=91=8D
+---
 
+Changes in v3:
+- Add Acked-by tag of Conor Dooley.
 
-Best regards,
-Andreas Hindborg
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 58492b1cd468..99ff7c78544b 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -773,6 +773,7 @@ properties:
+         items:
+           - enum:
+               - engicam,microgea-imx6ull-bmm       # i.MX6ULL Engicam MicroGEA BMM Board
++              - engicam,microgea-imx6ull-gtw       # i.MX6ULL Engicam MicroGEA GTW Board
+               - engicam,microgea-imx6ull-rmm       # i.MX6ULL Engicam MicroGEA RMM Board
+           - const: engicam,microgea-imx6ull        # i.MX6ULL Engicam MicroGEA SoM
+           - const: fsl,imx6ull
+-- 
+2.43.0
 
 
