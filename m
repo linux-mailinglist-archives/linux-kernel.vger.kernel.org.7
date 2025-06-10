@@ -1,219 +1,264 @@
-Return-Path: <linux-kernel+bounces-679123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74029AD3279
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D1DAD3296
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A263A4BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7E416B7E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E4028CF62;
-	Tue, 10 Jun 2025 09:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359DC28F503;
+	Tue, 10 Jun 2025 09:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cnCesy0L"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SKc2xBAi"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE8328C03B
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749548648; cv=none; b=U5xqMux6agIke0cl3Gum7FKtnzfm+Lw0X7vqC30ZdmOkmaHBYX6vZbjNNv8KlO56rp2NuzOBlEsUmFH758L6AgkNf67ND1ky8Bb9cP+poPw3PbsoEqXsZFysRr7wHxQLQ3Dxe9i5vGQzgsBKdMRw64gxplDBpsAqVrQkdt8Y4U8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749548648; c=relaxed/simple;
-	bh=QWLCswuVXOzsyDLwB7rh4VyUKA23f/FOPB6FbILMyzo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c2U3n7uxzZ2F3/En54DdMTavs/diCH0eSAbaMbhjdWa53qnOWfWZPb/GBgbJ3WuawzWLsYAKV9+XeGpjuqLAGixPky66d+oaCUg1rD8ntSXSmb/3RAcJ8vLOJDEEL6WPgIOkJztHL64iAdML+OD9c5gGwX4ibp8Wj2eKZQcXoz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cnCesy0L; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a51d552de4so2811735f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1749548645; x=1750153445; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AP2lApXT3oK4hCPR2yyZqkXMhT/gHqM9SDhESroajJo=;
-        b=cnCesy0LNL6xPxEGV9jDZVQjHCqHITiHkzu2uzv1W3yOkpvyXWB8lGX3P3AzrsILLY
-         xaqZCxFxNbjtv2XoP0gYHzKecX4zSUqjUUyanbjiUC+YAWh0+v9eZBug2uzZmtMoKImy
-         6JwzS2CMQ9dXoqPKc2Yg0DDnsAyW14gAaOQ6fnncY2EzvfC+6zodKJFgBu2tne65Hy3e
-         m4fjLOyng8pO7gS3vTmE14IiVm8kHMkCAbCHMT06pEWQpYoUUkIOuYSBTrh0mrhAkyHs
-         eH88wtO5wm9h21Pt8zyEeekZ9fp/pOgBcksuiLW32QqdrPDCuQZCNOhdKLvTGWCmjHmr
-         p9GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749548645; x=1750153445;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AP2lApXT3oK4hCPR2yyZqkXMhT/gHqM9SDhESroajJo=;
-        b=Tc7zYwnNp0tz803FUX3rTWpZhmTX3j0nusCUYRF7n+MBkb6CBtMEJyiwaBF+RLqUlf
-         Yq8Zab4pCFA+FuM5/1am9GwZJB7/W0hj4R+DRuRRlEj7J7lPD8dzmT7oAeKUMUcsUC+g
-         fTTC8q1FIVddLAnsoIhv7qOYFlXdoQjGVlnlqryiFP3uxqKfS8NG6tgwPmPi8LZO/p3+
-         /iSgnLKiVs8WcmIVcDXrDS45Wmy4ln8sh/j5WDFW5FrUIJgi89VdM70w3knZ9/f5Bdgr
-         N4c+Lc/9KYLrzig5FsO4vrsBvfI9R/2dcpfR7olemkDRek6SopsgiQBcUPG4tWdAannq
-         QmBw==
-X-Gm-Message-State: AOJu0YwYag6YMMVn23SvQMvcC54xV0lriBsKeQpMZCvnepxvr0iosLKV
-	aaA4yMu+J4dTS3lmcuDZeU5JCXvd96ysvlClIJHOUijv/Fb7W0L/apHEM1+JaG5xjY4=
-X-Gm-Gg: ASbGncuzb69iS5zDkeW1/lE96VhhFNQUwiL3iw7KsYudawig0VQM/WSvz4xtU+GBa+e
-	D58xHXH7s6N3xLzhp/bpSJ5/Ar++jePMZmTuoaY9qkGTSbTkYdX1xA3Na771dd7ny78tuj2Pu7y
-	VmxzwxBVdcrBUr1G1Tb9SsOj42LEY0kHGUBvsKHx2KYzE3/N2hcGKYi6UM7n/OmyS4Iz757jsgr
-	oATc4w4EzctWHGvJk1ONhkY+/Or/MsBAsPF2izF/1B506Ciw5agQIR+zIFVZ0ZOgMZqnjWJMn+Y
-	upM71qiT8injWwC+MmLFjWuBgT+MED3HnND4jkKaKUSKVhQ9gAjc
-X-Google-Smtp-Source: AGHT+IGc2KM5AHFDg0UZ+9LBR81/PsWs240h3WEszfvWbHPGb9vWNuxU4xjmtYVvcZ/UZFPLVTjYVA==
-X-Received: by 2002:a05:6000:2512:b0:3a4:f722:f98d with SMTP id ffacd0b85a97d-3a531ab6df7mr13667513f8f.51.1749548641167;
-        Tue, 10 Jun 2025 02:44:01 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:4d:e52b:812d:eb7c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209bc6905sm136450895e9.8.2025.06.10.02.43.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 02:43:59 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 10 Jun 2025 11:43:58 +0200
-Subject: [PATCH RESEND] platform: cznic: use new GPIO line value setter
- callbacks
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738FF28C019;
+	Tue, 10 Jun 2025 09:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749548672; cv=fail; b=eKVoqwtdkVA5zQ4PPJynbJDen7QktcJm9lFCMWglIpRD1G95HOv5N8Pwy2KX/5+d/hBRpeivY6Jb6rqsU09aqM3gTP5RS7sJmZaRKTQQlhCbe7+uERf7JoEmqx9tanXAdcC5c83YU8HURTzzVR3DPdZ/WOXJZx7oQXzxGc/AcIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749548672; c=relaxed/simple;
+	bh=a1zckwee8BO1dcf/qrGRaEANs8mq3PE9OfJkvpR/j8Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WY4HVqKlrMc7b1gFyNodwLBKsPp5lVt5pizUX9K2LT/EyVU5uSK/zIZ781MlDENSlf3vntY8Bi1uwBulCutcz3kTd+P1db3UyrcrYJa0d3MVT6+sZwLU2bU0K05au/0s3DUmmZwkxGnL1ZNgLqq6V+7Y0cILwa9c/jRCos6uyyI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SKc2xBAi; arc=fail smtp.client-ip=40.107.94.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eq7Hh2ML720OfQ0us3Yi5A5YkVOu7Qfg/OvzEqSSp6it+V98bQfd/999gFgFeIiM+lvHoFBG25yiJZjd8b/rnZEaJPbZonzO35X2yAshbGQRf8J6oUz17/vS4VGtYn7+JZY/mUXMnB7mTdyG56lWHL0Jc0pxH6yZQYj/9MQWKkuWqzylXQHlENDDUa33zJDjFPRWYQlVeKDUOgil1LAiNqIUPbaZnemYWHMDGuV/f9Sl9bTxeH3mQXVAnJKpYgUL2NLnUOMjiN4JmIRTadMFDDHV+Olpx/Po4vEdrdRkK/uRFfYnXD9DDMlpN8lYUbYmo5KtV7+ON+ASsl9pnXT6Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vCth0qxQjG5LLAPDQjJOw7OWRl+sTNqJ6FE38nhgrpI=;
+ b=oRmFaNV6caZQbVhro7aeOpkjUwWH85/LSuyZDAWGWT4ti1ACG1JZWnl93J8ZpqhaoLgI1ow5EQE8BZQrVyck7rKNE71D/Hh+3QLOJJpjnLyY1bfQsMPPhZ8olTHjcIS0zR4Luw4yKbjFfbP/NtAnVAywCgDMy/ZQjzaRgBFH5J01KgPtQs2fuUyTO2pl3wCH5tJMpSvhFG7IkI2NLZTkf5OlsxWlAre/QVCE/oXFNMa4k6z2xVBJRJOfhVXavtO7MDHUcOcgOrwfu+gIy5Qz3jGA3Y3toIy0QAJDIBDS187Yz3d/7GD4wBgUB203cO9UtMm/SqFW2ebVAF2QpDnC8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vCth0qxQjG5LLAPDQjJOw7OWRl+sTNqJ6FE38nhgrpI=;
+ b=SKc2xBAiBWql8YkBOykTkYPf+0hHg36eJFD6hwCHBsoqh2oWCzWwO8RfMRjerysf2G+YtSZt7lS0ww8bNkFfDz9YvflILZTPfg07spMK0etfvnEA5r+S3J8o6vujCVWOHtQ82+l3C6tAydYE9TKg5e4qildPLUSm0kixBCpW/gLlxzQ9bMjj8mTzD1z5duAIAVz1ucIg9yrNZjeKZCdUzR2RQnegiA4Fja+U9WkkO727ogql4LHlXDB+qaf9fuMNPBxwUQq+zF/NCzuhreHjSCbrdsTWoDFSBj/vDm+qKtWnbhgYgUX5MHS0G5QYUa2Zf+jqjpONV4tmaYOiNiKbCg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by DM4PR12MB6568.namprd12.prod.outlook.com (2603:10b6:8:8f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.39; Tue, 10 Jun
+ 2025 09:44:27 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%3]) with mapi id 15.20.8792.036; Tue, 10 Jun 2025
+ 09:44:27 +0000
+Message-ID: <baaa083b-9a69-460f-ab35-2a7cb3246ffd@nvidia.com>
+Date: Tue, 10 Jun 2025 10:44:21 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: phy: realtek: Add support for WOL magic
+ packet on RTL8211F
+To: daniel.braunwarth@kuka.com, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429-realtek_wol-v2-1-8f84def1ef2c@kuka.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20250429-realtek_wol-v2-1-8f84def1ef2c@kuka.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0361.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a3::13) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250610-gpiochip-set-rv-platform-cznic-v1-1-30afd2444756@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAF3+R2gC/4XNMQ+CMBQE4L9C3uwzlBYxTg6yOuhoGEop8BJsm
- 5Y0KuG/2xB3x7tL7lsgaE86wClbwOtIgaxJge0yUKM0g0bqUoYiL8pc5AwHR1aN5DDoGX1EN8m
- 5t/6J6mNIIZOMH9pOVLJsIZ04r3t6bcADbvW9vl6gSf1IYbb+vbmRbeuPOP4jIkOGindCV4UQn
- PfniYz0dm/9AM26rl+gg+3X1QAAAA==
-X-Change-ID: 20250401-gpiochip-set-rv-platform-cznic-1a136bd47a5b
-To: =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3702;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=pYxbyIrnxsxPSFmRinhVqBD4ziNyGPLYFRlg+L3caks=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoR/5fvZhhVDSj8LyHz0YKZEKCPJ9Wl4mSygojm
- GeZuNtcyhyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaEf+XwAKCRARpy6gFHHX
- crqrEADS5I0ITOeC63rZHdwLYW2YThlKx/Z1GfyAXXADsIMCoT8jpCLEoRwKMcu1C/iVghXuE/D
- 9suaLKwU1QtXC9Tt/v1/7COZUGqWp+u4jsuyRtdMlFZ4VJ7Ho/ZPcKLDKzJnCw04DKIJlMyYIkY
- YPBuCNtaBC+2+/gYvOYjZnom2O6D9R9Ld1i7C51gWWeQ6ib7MgS1tppXjThvkY7XR2P4VnYmtiJ
- DYDBIuE4cCtstB+w4QmUYBwiqWVaglxpS3tjzuS02mK+GMDchaiVyYrtepmgONoCUGZ1+AdQHrf
- QCw5G48fa8yKuJChe0oYnxWARCJrz7jXRWFp6cfVtqMti56KL6ctWdXk2eU0+ZxCdKG3MBiZGtJ
- K4KhiuE7kiS7ANx0Y8SdKswXG1OGFk7zgrP0KGsQRmD63qrhyGsvrb40yx+blqOgsgYbMgjxSif
- d1+Q6LvmtJllSXVcg3JXMWe9kCjZZJvHfh4nshjVNgTJGlbeOkVzb6UAm0oJLgM8RMNyg711qnU
- KeKZlEdUZJLax1n4uMCGJcCRha6K9ATYgaYVt6PO81KyNEvLFnjjIg/F879U6qwc9P3EC2fem+o
- Ndn13ZtIEFtLlH3VoqkWIz27q9EGMLNkVAnhme8JR0atmQjCwcP60IXyUmcLNA8WRrICiPOc0W6
- uyHNsLYA7nZhG6Q==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DM4PR12MB6568:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50dc75da-8ff3-4f1d-97be-08dda8036417
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|10070799003|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eVZPM2RucXhZaVJ5WGtzamlFT2FRdHowN0c3c1VJU3V0Q3lCNUdLcExsMWcy?=
+ =?utf-8?B?NTJTZnFGYVQrL1ZEVXhKSVozaXQ5SUpCRnc1R0dWVHAxMlZUSlRjekpWRmZY?=
+ =?utf-8?B?RUM3bW1aaWVYTzh4RlZ1MnIzUU92akpzNm1ZcStRSTVaUHdUWSs4QWp3YTZ5?=
+ =?utf-8?B?UzVkWGtUalNVeitTR3k1MmQyT0lFN0kycEpaS0V3b0JWbmJtdjBFY09hejdD?=
+ =?utf-8?B?VjFUQUNWL21zN1BXNE1sNmF2TUNMdmxoVTNvN1BaWVdqOWttZzVQeTgzZFdp?=
+ =?utf-8?B?VEpMeExuaTlkOTN6cVYwNWhkVkxwQkJpRUZ5QVo4amdPQitEeStGMnNkUnEv?=
+ =?utf-8?B?TTJwZHhBQWRMMzNaVk9RZUJIQnFaWkVUTzY5ZldoOEw2K2ZCTkZXbFA0NWtL?=
+ =?utf-8?B?dFVmQW1odjh6dXdBRTBSVE9BWENPQ2QrcFZFOWxBSjRsTmNCY1FieXRKV0hV?=
+ =?utf-8?B?blVFcmkrRTIzR0hyZFkvL1JLZ1FMN3R6eldjSGt6Z2J0aFY1MVdCTkN2aVZS?=
+ =?utf-8?B?SE1EbndxcmEzTFJIV0g4dUY0M1VURTNwSXEzNnFBWndiUDRYVHJYYU1vcWJD?=
+ =?utf-8?B?UDRqMXAvSEFjcUVRakp6R2FDdTNZWExqdk1ITFJseXN1dE93YmlBRlFFaWZp?=
+ =?utf-8?B?b25Wd0xOMEFRQUQ5bDFhU3dQcFY5NmFoOTlEcHhEZm9EakFIODZhbDFTN1gx?=
+ =?utf-8?B?NDFNV1Mya2t6Z3d3cTVRQUllNkY3WndzRlltR3E4ZXFrVk9zR2sxeE5CaWxs?=
+ =?utf-8?B?Y2s5KzRIU0JlS2UzdWVTcHRYWXhseTByVFlHVzg1cXZ4NUdNTld6R09xclho?=
+ =?utf-8?B?QW1aenNTNWZVYktGWlZqMVRnRHNUZWNORFFTYnp2YXZ6T2t6UC9Xd0I1dGZh?=
+ =?utf-8?B?Z1V0di9PMFpPNnV6VUlVaE9mdUc1V1VGL1ZreGFCTStIUmVWTjVOR2RsMmtz?=
+ =?utf-8?B?YlFBNU9xeVJYM0tGcWl6MXRWWjV0aFJyT3llOXBIdUlnbUlOeWNvZEY4TjZC?=
+ =?utf-8?B?dmt2Y2JuRW5JQ3FaWUFRL043UjZ0bWFrRnI5NmtFeDJWdGk3TDFkcytpa2k0?=
+ =?utf-8?B?NVErYVBYMmlCR2FOMDQ4NmFIanczQ2s0RkRnWGR5WnoyWjhlODBiSlNWN1hB?=
+ =?utf-8?B?cnRhc1FNbVk4MnVLaGZ0Ny9ldGNHOFdLTUNCamtXd2k3dGU4ajMwU2lqV2xU?=
+ =?utf-8?B?VVFITzhQWjNndjhuVWRWWlZic1hQNERBVjdVZnVHSE1scEVPS2F2R3A0SkIx?=
+ =?utf-8?B?SkVzK1MzL1cwdG9ZbU45TS9QK3Y0SSs5OHFPck9CV1VRK2w0ZHRFWEpuOTl5?=
+ =?utf-8?B?QkhueFlzcm9lbkRHQ01XdERTWkY1Um1xN0kxbHBHN2FQTGsyS1FSMGYzbWll?=
+ =?utf-8?B?dnkwcU81MTlnbDFkalRFYkNaWGp3M3MzSDBYQmUrNyt0UkhZeEtXdWVjS1Bh?=
+ =?utf-8?B?T3Z5MGNtc1Nsb05wclE5VFB3MGRxWmIvTDZBZHlxQW9uYm44bldZZW82OXlU?=
+ =?utf-8?B?eXFuNGRkQTVMNElCeHVjZTZ0Y0ZKaVBBZWQxM2hwYitvV25hNkhyWWpNRjNM?=
+ =?utf-8?B?OEhFWkJwbGYvN0JNWkQvelRNQUtTZ3lxRkU1ejQ4bzdlQzB3NUZVMDErUWlO?=
+ =?utf-8?B?UzRicHFwaC82bEE0S1JIbmwrbFd1SDJ6bThJeXZ6Yy9WbFd4MldzWXhJWUJF?=
+ =?utf-8?B?MGl3cWVMK3l1SjFKRk16YytaVjFXZE1hSytXWlJxcnpwSC96N2pZQ3NTdG9p?=
+ =?utf-8?B?N3A3bmNycTNGL1U3b2k4Y2hpZU1TOUhiYWRLSkJBQnY4RDBKR1RoVGlNN1hN?=
+ =?utf-8?B?QUdaL29zcFF5SG56R0NxTXcxMlc5QnZOeGJGSzFlS1JJcm9nRnNQSklOY2Fm?=
+ =?utf-8?B?b0UzdytDZ3UwR0hyNkVHV0NPaEZRUDc2SElSMnE1bFk5WmZvMkpnd05TOXpy?=
+ =?utf-8?Q?feDod3bBK6A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(10070799003)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NVdQRVRSTU9qUHQyR29ZaHh1d24wZ0lFVE1SRFJ0VHhBcDNpSGE1em5ldUhs?=
+ =?utf-8?B?SmdtejFzeHJWVzRlaUFYWXE4WXN4WDdkMEZOajVuYkhPbnUyZEhWMmp2cVk0?=
+ =?utf-8?B?QlN6d1R5UlV1M2J4MWZwbjZCQlFnd1FEQkVPOS9LYjFTWGV0RjNBMllScFBC?=
+ =?utf-8?B?K3c2Zy8wZ3o2T0JwbEJxdVcvM0JCVzRXNHpyYkxmSG5qNW5GbFBoOG1VTXNy?=
+ =?utf-8?B?RDRsS1hIblJlZ2k4MG0yMjJvN0w1WW5vL0VwTWJiM3ExNW1XSVkyQ3NXSVFX?=
+ =?utf-8?B?aHFEM2JSbFoyajB1aE94NVFKa0ZabTB1NlNpSXNaalg4V3NUcFdIU0JCYUR1?=
+ =?utf-8?B?WXY0SmpzQXpLUm8yZkduSjAxZHZNWTVDVUErVGpWUkV5QUZIMWttYVVvTDFM?=
+ =?utf-8?B?eXVXMEd4czkvbkJXaUx4NEd4SWora3hwbGxRakZQZzk1bVJGNllub1pjdGxt?=
+ =?utf-8?B?T3dRUWV2clF5U1hLZGErSlpXNTl2NjQ2aGRTeXl0aUNaRFAwNTUzVzNkcnA4?=
+ =?utf-8?B?cmdjZU9SbG84SWdCRzhlREJIRnlQY3UzU3hoZUJzWjF5Q1ZSVjVNNkwzY3BK?=
+ =?utf-8?B?YUQ1MFBtNHZ5Rk9ydVJmeU9FQkV5YytodG1MNHlWakwvc0J3c2tHOXdmbFUx?=
+ =?utf-8?B?YkwrRSttMUduMG5CRSt2MFlsaXNwdU1zcW1DVmszVkNpSmw4K1lreTI2L1d1?=
+ =?utf-8?B?WXhiVkRFTGtibEo0R2lXN1FaSUJJdFFuemZDWFhoUEQ2ckNxRWZzWCtITzJO?=
+ =?utf-8?B?TU9KNkVkTkRQeGIzQkQ1eUVBMFpiRGtKdUYvdFNVV2tpTzdOYnBFVGFYMHA0?=
+ =?utf-8?B?N29YaXQ4aWFSWDVCZjNrMUw3cUtCcGFLYW8wcEllckhJalg4YXltcU5sQ2po?=
+ =?utf-8?B?aUlNQXBRSllETjFhNURhdFMrV1h1UXhKNGt3Y3pRRXBHQ1dVM2FGZkZyRXpm?=
+ =?utf-8?B?VGRrQVJ2NFpuZXB2ajNqWG1QK2szNysycEJPakFRenk2M2hEak02bWNRSCtP?=
+ =?utf-8?B?c05reDhJa2VMVEpnYnVtd0JXMFk4VzBzeGZJY3JubjdFbjBGa1B5dmxyMWJZ?=
+ =?utf-8?B?STlBYmRBT0VLNUEwMFhMTXVabTJlVkNjc2dJM1NuOEZ6TjVGblJxL0NHWEZr?=
+ =?utf-8?B?Z1Y3YnRJOUE5M2hqV01WbW5QZlZMZDVaUTR6czB0WW9BcUY2L05YcmJsdjNM?=
+ =?utf-8?B?c1hFTThpSkJiUmwwKzJJQklrc0wvQzFOT2ZsZ0VEOW9Hc3RYVHFvbHhMNjlH?=
+ =?utf-8?B?S3U4S0V5Z2k4Wk1ySjEwVkhpTktJaU1UcWNSSnpUczdhL3k2U1RxWnZxOHF0?=
+ =?utf-8?B?TVR3K0lhb3V0clF2N3NERGZGclNpeEptWi8xS3c4WTNpRUFiWng0ZkFDajg3?=
+ =?utf-8?B?NWZpSnpwdmVOSnhoVXZGQ1JNazQ1OU1NRmY0NTVpMjZZaU5wdEQwY3ZoU2oz?=
+ =?utf-8?B?cHV6cDJ1d05BOTlqZ3I3ZlV4eTBIT1FTazFpajhySEp4aGxqdC95YUhrNVlz?=
+ =?utf-8?B?bDJVQUl0QnRSS1oraGpTWE1NMEFTYzlyYjY3STl3Tk5CWmx1RUhxYWdoc3Nu?=
+ =?utf-8?B?ZDN1OEYxQkFOblZYZm1XU0JZL1pNcWFuZDFFcUVrR2d0b3FQNU5YUStpRGNt?=
+ =?utf-8?B?eUhYT3RYMmwwV1paaXlIdnJRa0ZPZmVPVGpOaFUzN0F2UnNycTdjU0hyaXJp?=
+ =?utf-8?B?N2x5aThlZlpyWHRTN2ZPZnc0R0ZBMWJsWEZxbXhoYk1SZWpVQmpxTzFhQ244?=
+ =?utf-8?B?c2JwMGN1M0QyS3hJM2hBRlJIVzRCSzRhNUVrS1VxcmJFZ09qTTRySEdoaXdp?=
+ =?utf-8?B?dFl5OHc0bmZmOGdXdW5Ma2MrMUZDSWJ4bWRJR1h2SWZlS1RXTkRIdmhvQ2ZP?=
+ =?utf-8?B?NElKNFVXK3A5VDhBV25WakwxM2lDaDZ4ajJCc1UwOStWeSs1M1pjUzN4aW1i?=
+ =?utf-8?B?bUk2SVNhS0t2UEtjS2xBVks0dEtLcmJXOVkrWFEyVk1rTlBXV2hhTG5uZGNT?=
+ =?utf-8?B?UXRUa3hEbFhra3FOdWgzN0c5TnBzcjlkQ1puVFNud0dUdm1IQlhObVFBemVn?=
+ =?utf-8?B?TjgvakRDZzFwWU40RmpXUEpUckswU1BwTG1UUVFZUXdxTTdSa1RjQmtlZ3Rs?=
+ =?utf-8?B?SjF2eHQzYVJDRXF1aWxyZ29lWjFMRWdHaDgzaWZndStjTTVxakVjSkdSZHJn?=
+ =?utf-8?Q?F4zJv31WV4vJEeY7ujV9VYJ+nisDxzGMSDjZwdnTAFXA?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50dc75da-8ff3-4f1d-97be-08dda8036417
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2025 09:44:27.6672
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bc6jYlg/BtjC9alcQF54nzwtv1rZPaQ7BWf9CS/AjK8XTJpUy809HatsEpQy4VAhXxdQ2214TGxixY789ypPxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6568
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Daniel,
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+On 29/04/2025 12:33, Daniel Braunwarth via B4 Relay wrote:
+> From: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+> 
+> The RTL8211F supports multiple WOL modes. This patch adds support for
+> magic packets.
+> 
+> The PHY notifies the system via the INTB/PMEB pin when a WOL event
+> occurs.
+> 
+> Signed-off-by: Daniel Braunwarth <daniel.braunwarth@kuka.com>
+> ---
+> Changes in v2:
+> - Read current WOL configuration from PHY
+> - Replace magic numbers with defines
+> - Link to v1: https://lore.kernel.org/r/20250428-realtek_wol-v1-1-15de3139d488@kuka.com
+> ---
+>   drivers/net/phy/realtek/realtek_main.c | 69 ++++++++++++++++++++++++++++++++++
+>   1 file changed, 69 insertions(+)
+> 
+> diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
+> index 893c824796715a905bab99646a474c3bea95ec11..05c4f4d394a5ff32b43dd51f0bff08f437ad0494 100644
+> --- a/drivers/net/phy/realtek/realtek_main.c
+> +++ b/drivers/net/phy/realtek/realtek_main.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/bitops.h>
+>   #include <linux/of.h>
+>   #include <linux/phy.h>
+> +#include <linux/netdevice.h>
+>   #include <linux/module.h>
+>   #include <linux/delay.h>
+>   #include <linux/clk.h>
+> @@ -38,6 +39,24 @@
+>   
+>   #define RTL8211F_INSR				0x1d
+>   
+> +/* RTL8211F WOL interrupt configuration */
+> +#define RTL8211F_INTBCR_PAGE			0xd40
+> +#define RTL8211F_INTBCR				0x16
+> +#define RTL8211F_INTBCR_INTB_PMEB		BIT(5)
+> +
+> +/* RTL8211F WOL settings */
+> +#define RTL8211F_WOL_SETTINGS_PAGE		0xd8a
+> +#define RTL8211F_WOL_SETTINGS_EVENTS		16
+> +#define RTL8211F_WOL_EVENT_MAGIC		BIT(12)
+> +#define RTL8211F_WOL_SETTINGS_STATUS		17
+> +#define RTL8211F_WOL_STATUS_RESET		(BIT(15) | 0x1fff)
+> +
+> +/* RTL8211F Unique phyiscal and multicast address (WOL) */
+> +#define RTL8211F_PHYSICAL_ADDR_PAGE		0xd8c
+> +#define RTL8211F_PHYSICAL_ADDR_WORD0		16
+> +#define RTL8211F_PHYSICAL_ADDR_WORD1		17
+> +#define RTL8211F_PHYSICAL_ADDR_WORD2		18
+> +
+>   #define RTL8211F_LEDCR				0x10
+>   #define RTL8211F_LEDCR_MODE			BIT(15)
+>   #define RTL8211F_LEDCR_ACT_TXRX			BIT(4)
+> @@ -123,6 +142,7 @@ struct rtl821x_priv {
+>   	u16 phycr2;
+>   	bool has_phycr2;
+>   	struct clk *clk;
+> +	u32 saved_wolopts;
+>   };
+>   
+>   static int rtl821x_read_page(struct phy_device *phydev)
+> @@ -354,6 +374,53 @@ static irqreturn_t rtl8211f_handle_interrupt(struct phy_device *phydev)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> +static void rtl8211f_get_wol(struct phy_device *dev, struct ethtool_wolinfo *wol)
+> +{
+> +	wol->supported = WAKE_MAGIC;
+> +	if (phy_read_paged(dev, RTL8211F_WOL_SETTINGS_PAGE, RTL8211F_WOL_SETTINGS_EVENTS)
+> +	    & RTL8211F_WOL_EVENT_MAGIC)
 
-Signed-off-by: Marek Behún <kabel@kernel.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Nodoby picked this one up for v6.16, resending for v6.17.
+Given that phy_read_paged() can return an error, should we not check the 
+value return is greater than 0 before ANDing with RTL8211F_WOL_EVENT_MAGIC?
 
-Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
-values") added new line setter callbacks to struct gpio_chip. They allow
-to indicate failures to callers. We're in the process of converting all
-GPIO controllers to using them before removing the old ones.
----
- drivers/platform/cznic/turris-omnia-mcu-gpio.c | 35 ++++++++++++++++----------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+Thanks
+Jon
 
-diff --git a/drivers/platform/cznic/turris-omnia-mcu-gpio.c b/drivers/platform/cznic/turris-omnia-mcu-gpio.c
-index c2df24ea8686782c18b7cbdc62e3ff6aecd9503a..77184c8b42ea21a2e4194074bdb1eef1806a7ba7 100644
---- a/drivers/platform/cznic/turris-omnia-mcu-gpio.c
-+++ b/drivers/platform/cznic/turris-omnia-mcu-gpio.c
-@@ -439,27 +439,28 @@ static int omnia_gpio_get_multiple(struct gpio_chip *gc, unsigned long *mask,
- 	return 0;
- }
- 
--static void omnia_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
-+static int omnia_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
- {
- 	const struct omnia_gpio *gpio = &omnia_gpios[offset];
- 	struct omnia_mcu *mcu = gpiochip_get_data(gc);
- 	u16 val, mask;
- 
- 	if (!gpio->ctl_cmd)
--		return;
-+		return -EINVAL;
- 
- 	mask = BIT(gpio->ctl_bit);
- 	val = value ? mask : 0;
- 
--	omnia_ctl_cmd(mcu, gpio->ctl_cmd, val, mask);
-+	return omnia_ctl_cmd(mcu, gpio->ctl_cmd, val, mask);
- }
- 
--static void omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
--				    unsigned long *bits)
-+static int omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-+				   unsigned long *bits)
- {
- 	unsigned long ctl = 0, ctl_mask = 0, ext_ctl = 0, ext_ctl_mask = 0;
- 	struct omnia_mcu *mcu = gpiochip_get_data(gc);
- 	unsigned int i;
-+	int err;
- 
- 	for_each_set_bit(i, mask, ARRAY_SIZE(omnia_gpios)) {
- 		unsigned long *field, *field_mask;
-@@ -488,13 +489,21 @@ static void omnia_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
- 
- 	guard(mutex)(&mcu->lock);
- 
--	if (ctl_mask)
--		omnia_ctl_cmd_locked(mcu, OMNIA_CMD_GENERAL_CONTROL,
--				     ctl, ctl_mask);
-+	if (ctl_mask) {
-+		err = omnia_ctl_cmd_locked(mcu, OMNIA_CMD_GENERAL_CONTROL,
-+					   ctl, ctl_mask);
-+		if (err)
-+			return err;
-+	}
- 
--	if (ext_ctl_mask)
--		omnia_ctl_cmd_locked(mcu, OMNIA_CMD_EXT_CONTROL,
--				     ext_ctl, ext_ctl_mask);
-+	if (ext_ctl_mask) {
-+		err = omnia_ctl_cmd_locked(mcu, OMNIA_CMD_EXT_CONTROL,
-+					   ext_ctl, ext_ctl_mask);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
- }
- 
- static bool omnia_gpio_available(struct omnia_mcu *mcu,
-@@ -1015,8 +1024,8 @@ int omnia_mcu_register_gpiochip(struct omnia_mcu *mcu)
- 	mcu->gc.direction_output = omnia_gpio_direction_output;
- 	mcu->gc.get = omnia_gpio_get;
- 	mcu->gc.get_multiple = omnia_gpio_get_multiple;
--	mcu->gc.set = omnia_gpio_set;
--	mcu->gc.set_multiple = omnia_gpio_set_multiple;
-+	mcu->gc.set_rv = omnia_gpio_set;
-+	mcu->gc.set_multiple_rv = omnia_gpio_set_multiple;
- 	mcu->gc.init_valid_mask = omnia_gpio_init_valid_mask;
- 	mcu->gc.can_sleep = true;
- 	mcu->gc.names = omnia_mcu_gpio_names;
-
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250401-gpiochip-set-rv-platform-cznic-1a136bd47a5b
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+nvpublic
 
 
