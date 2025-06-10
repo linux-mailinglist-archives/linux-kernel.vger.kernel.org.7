@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-680203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD43AD41F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFAAAD4207
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF57189BC9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD0D173367
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 18:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2010424729D;
-	Tue, 10 Jun 2025 18:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDBF2494C0;
+	Tue, 10 Jun 2025 18:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hilwAtL/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="u9aSaxpw"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4AC23C505;
-	Tue, 10 Jun 2025 18:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5711D23C505;
+	Tue, 10 Jun 2025 18:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749580487; cv=none; b=j68Ze1pPo45BiZNTBQUZuR5HQ0GhiAvzS05b8xBtF5Ps0L3fF9vSMtGqz6K2zVw5c+l5DbuNwGm4NgUL7US+74MTPQ6O9fAM0le5h7ezOc4wToZN19V0QNgrfoIQMDFdzwXGDrQ4/hXZwTxKcLqEGF+VTBGNa79DxDCwHYZ334Q=
+	t=1749580557; cv=none; b=N7gpJgoKSI0BSkzEwHd9HV8gpUpmbGp8aXaLORdVwKOZovINiOVZZ87VudEGqKcNpRQyIDEdDptIR8AlTm1VyuA6OeCL3djltqnH40GjVktRj5wd80Z8Jx8R5gJf1As5hYl7rj8f0pn9XvkSBxJk2iW7LjVx0aFiqg3OYjdww1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749580487; c=relaxed/simple;
-	bh=Radpja/DJiW3l3IEwuS7/pYBbr8TuNwFODl/fsPNnC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SPFz3vI7yFDqMkQgRmS4rsxOiLuKkS25RR0wP0jcOzonps1+9NROMgecr8BYSj16J0kxeC2SWqQsOAULMjpdPHR/i6PKGucU5dFjVSoTSVZahYQUYI4iVeMG9ed2uTHXdDuNkUwQSRrbu8vAo4UMt4iiKprHHzRkbIFe0o75tME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hilwAtL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE83BC4CEED;
-	Tue, 10 Jun 2025 18:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749580486;
-	bh=Radpja/DJiW3l3IEwuS7/pYBbr8TuNwFODl/fsPNnC0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hilwAtL/dHtuuNDD+GoWfe0ZFXFlw54DB1B7MfXr1wPavzMZ4tGs7eOgtL7ATXOQM
-	 QDdEtP3UTMjwgFFPbC2T0vE0UIKM/eEFdWqzobL5tLBtO//nQPqukut4S/O6/u8sin
-	 2M+DS4LICUrJ+OYgtJEaAkDm12KCmw026aG/7hh+pnzwZYwvHl+1/WNC0laLXbofe3
-	 d8p5ChEBASdHxS4/Tf+T0IoqI43lY8fQoquEntPUdibZ35e+w69nt099nZN+jILX3k
-	 w+Gllr/BMY6DRhIKWQnY4IkZCO+Yekgp7dreESC+dmpGBHX+UfWzMK6PPzJFYrCLyZ
-	 jn6Sj3bu+iIVQ==
-Date: Tue, 10 Jun 2025 11:34:44 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: acme@kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [BUG] perf tools: Build failure in v6.16-rc1
-Message-ID: <aEh6xO14wDSCFUDr@google.com>
+	s=arc-20240116; t=1749580557; c=relaxed/simple;
+	bh=v60N7PQZ0qEhAwT2ZoCBLsiw1TXfUlnbvUIkPV9Cm0o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QemsTHDC7qtTSSLNZmclE4aZZn2pDA7po1eS+0pvKK1MKKK2oad6zNDSOARQrcLNN5NL+aRihqYCT27uQ9YgnACDZH6FmU3PzROhC/o/ZiFfbwpwPu2DUrSbzBBbMbvSINmmo/iZfQQoEXwjHePNR/OBvZ2pHfCazkpK4eiFUVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=u9aSaxpw; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1749580552; bh=v60N7PQZ0qEhAwT2ZoCBLsiw1TXfUlnbvUIkPV9Cm0o=;
+	h=From:Subject:Date:To:Cc;
+	b=u9aSaxpwyBU9TISkC7WrXfmFcByt5EpPtmBpqpDtpX8PDHEWNlLB8eKINQJSrHD3g
+	 Wi7Gqd9mCqMmvf/KRFJgaDuE4803a4IHLOw2+Ffbjzq9GNgE5L44yq+ih+LmG5iqU/
+	 eewHsNOeT3PfccxTTBRbkWzMk5Tzefxv+8cH8lQQ=
+From: Luca Weiss <luca@lucaweiss.eu>
+Subject: [PATCH v2 0/4] Add support for Sony Xperia Z Ultra (togari)
+Date: Tue, 10 Jun 2025 20:34:51 +0200
+Message-Id: <20250610-togari-v2-0-10e7b53b87c1@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMt6SGgC/2XMSw7CIBSF4a00dyyGV0tx5D5MB4jX9iamGGhR0
+ 7B3sVOH/8nJt0HCSJjg1GwQMVOiMNeQhwb85OYRGd1qg+Sy5VpYtoTRRWJXj97YXlqlDNTzM+K
+ d3jt0GWpPlJYQP7ubxW/9I7JgnOm219x3xqhOnx+rdy+klI64wlBK+QLwv772nwAAAA==
+X-Change-ID: 20250419-togari-bcec79829337
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Kevin Widjaja <kevin.widjaja21@gmail.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1387; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=v60N7PQZ0qEhAwT2ZoCBLsiw1TXfUlnbvUIkPV9Cm0o=;
+ b=owEBbQKS/ZANAwAKAXLYQ7idTddWAcsmYgBoSHsDg1KBTYu27aW7gSs2w9FD2lRK++JLe+Rbv
+ 9/V2KW+1iaJAjMEAAEKAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCaEh7AwAKCRBy2EO4nU3X
+ VhYLEACn1Xm26fCzQi3G92Myb8uMO/W3MYc/n9+tP9yNLIRQUpDVQfRg+JYFu6WN0sx++NmfkuK
+ SpyMvx9pUvvTmGFg02+z5y22N2xxwFK0opDcLIcWtKg9aU+bZyyXnsOMZbY04EQqbInHcLl96Z4
+ vay9MJZwEax/QO0BY/FUBLsO0ogDG5XOYy3Ai1PP1PgOx9gSq6fKJiGeBsHyrBHZRW/0oJFsWiy
+ vnxDtJ9AJwgEpxuUm++A7VAI+jOJNoq2C15XzBBBEaNxY+JEyD7WrNMGypotR7+al2GHt3sXAxL
+ Hh5FSXyBPopEibwBEAJuDsjkzQMqpQkTA0gOKhCgNUM3THqAF5ZXjWsoOW5faT/a3lm+VWG7PCw
+ GCxAi3qX0GpL8PHcEmI01CIHCfMse5VMSFyfydxyf9kogqpr3c+gmsuC6nwL+2wosY6MK1/BFbT
+ Vmp+bjH94WZ/SqTUZM5ckKJRqYtHJhHB9JoH46oHD+vdHj6Jtz34g7Y+j3fQTTVp7YADJklZwIX
+ OuqbhVfv6VBfrKjAphdtgt1EuGD1wUBUrPS99NqRZ09/zYGyGKMy1EZy+xJfw9cHsXcH+wB9eWm
+ L1I4SuK8ShgQLHjB9QUw8vH0wdg4YYJwft7o/97kjMDoa+ABgj7FZplgEM/MB2xdA9hnrP3Mm3f
+ ZnpWWa70B/3mOIQ==
+X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-Hello,
+Do some tweaks to the common file for the devices in the 'rhine' family
+of Sony devices, and add a dts for togari.
 
-I've updated the perf-tools-next to v6.16-rc1 and found a build error
-like below on alpine linux 3.18.
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+---
+Changes in v2:
+- Move non-vendor property first as per style guide in first patch
+  (Dmitry)
+- Add msm8974- to commit messages
+- Pick up tags
+- Link to v1: https://lore.kernel.org/r/20250419-togari-v1-0-45840c677364@lucaweiss.eu
 
-  In file included from bench/futex.c:6:
-  /usr/include/sys/prctl.h:88:8: error: redefinition of 'struct prctl_mm_map'
-     88 | struct prctl_mm_map {
-        |        ^~~~~~~~~~~~
-  In file included from bench/futex.c:5:
-  /linux/tools/include/uapi/linux/prctl.h:134:8: note: originally defined here
-    134 | struct prctl_mm_map {
-        |        ^~~~~~~~~~~~
-  make[4]: *** [/linux/tools/build/Makefile.build:86: /build/bench/futex.o] Error 1
+---
+Kevin Widjaja (4):
+      ARM: dts: qcom: msm8974-sony-xperia-rhine: Enable USB charging
+      ARM: dts: qcom: msm8974-sony-xperia-rhine: Move camera buttons to amami & honami
+      dt-bindings: arm: qcom: Add Sony Xperia Z Ultra (togari)
+      ARM: dts: qcom: Add initial support for Sony Xperia Z Ultra (togari)
 
-git bisect says it's the first commit introduced the failure.
+ Documentation/devicetree/bindings/arm/qcom.yaml        |  1 +
+ arch/arm/boot/dts/qcom/Makefile                        |  1 +
+ .../dts/qcom/qcom-msm8974-sony-xperia-rhine-amami.dts  | 16 ++++++++++++++++
+ .../dts/qcom/qcom-msm8974-sony-xperia-rhine-honami.dts | 16 ++++++++++++++++
+ .../dts/qcom/qcom-msm8974-sony-xperia-rhine-togari.dts | 16 ++++++++++++++++
+ .../boot/dts/qcom/qcom-msm8974-sony-xperia-rhine.dtsi  | 18 +++---------------
+ 6 files changed, 53 insertions(+), 15 deletions(-)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250419-togari-bcec79829337
 
-commit 60035a3981a7f9d965df81a48a07b94e52ccd54f
-Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date:   Wed Apr 16 18:29:19 2025 +0200
-
-    tools/perf: Allow to select the number of hash buckets
-    
-    Add the -b/ --buckets argument to specify the number of hash buckets for
-    the private futex hash. This is directly passed to
-        prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, buckets, immutable)
-    
-    and must return without an error if specified. The `immutable' is 0 by
-    default and can be set to 1 via the -I/ --immutable argument.
-    The size of the private hash is verified with PR_FUTEX_HASH_GET_SLOTS.
-    If PR_FUTEX_HASH_GET_SLOTS failed then it is assumed that an older
-    kernel was used without the support and that the global hash is used.
-    
-    Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-    Link: https://lore.kernel.org/r/20250416162921.513656-20-bigeasy@linutronix.de
-
-Thanks,
-Namhyung
+Best regards,
+-- 
+Luca Weiss <luca@lucaweiss.eu>
 
 
