@@ -1,211 +1,138 @@
-Return-Path: <linux-kernel+bounces-679097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A61AD3244
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:38:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712BFAD32A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB4316BBB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E27818912BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 09:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E572D28B50C;
-	Tue, 10 Jun 2025 09:38:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27B828C854;
+	Tue, 10 Jun 2025 09:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b="GLQqoUBz"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBA528AB03;
-	Tue, 10 Jun 2025 09:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59B128C864
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 09:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749548289; cv=none; b=PbL1udtNqnad21mcWINg2Zw/xOKuMhdjZrJtBToRAKWD+DGSggXY2oPP0bbs2r2lp/sNYJSVEFBJv5iltPb+vLIISRvc2ggu4sock+dliw1cYcP3pYR+TsDxDgBVrrRuO0gzWl+zyXrzZWXLcrKnpX/h0QWOhSzUW/CsaxnmpJU=
+	t=1749548892; cv=none; b=jALEyE2wANfsmMPBLDPrY1WPTo1jPREZRsrPXqZQtGnSdkH/M1GRCtBB7IM8XqAwL9HDN5avTRT+gssuLUcO7VxwsIa0ZD3BWUzZjrKBKkxcjbZWmrvgGjZ0A2iO3vfDI+Ir56tLxNaDldh417KB5RR99FExy2qS+FkQHpics8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749548289; c=relaxed/simple;
-	bh=7VUpOKqstykfHqwFcxqAxihgk8EigUO4kuTzgEAooz4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CCF+DgXF3MlSPlXCTCMxT/J5gkVvdv1zdhcTrF0qhZYv/JBNAqyH2lIch+49T4uFOeiMDiLdPVJ4TtIUahKE0+pgSP23WZsw7NygB50B6pg9mbZDUb4Hsq+R42aauSoi92IZBPTIgITOoVst3asEuTVRNn/4qABSZAIiOU6vxO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bGkBP30cjz67KX2;
-	Tue, 10 Jun 2025 17:33:49 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 273A01402FE;
-	Tue, 10 Jun 2025 17:38:04 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 10 Jun
- 2025 11:38:03 +0200
-Date: Tue, 10 Jun 2025 10:38:01 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Koralahalli Channabasappa, Smita"
-	<Smita.KoralahalliChannabasappa@amd.com>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
-	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
- Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, Ying
- Huang <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
-	"Nathan Fontenot" <nathan.fontenot@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
-	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
-	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: Re: [PATCH v4 2/7] cxl/core: Remove CONFIG_CXL_SUSPEND and always
- build suspend.o
-Message-ID: <20250610103801.0000121b@huawei.com>
-In-Reply-To: <8e445a49-7209-402f-96ab-5285560a08a1@amd.com>
-References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20250603221949.53272-3-Smita.KoralahalliChannabasappa@amd.com>
-	<20250609120237.00002eef@huawei.com>
-	<8e445a49-7209-402f-96ab-5285560a08a1@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1749548892; c=relaxed/simple;
+	bh=TTxxRa+f3UnqcCMRrf4H6liRDo8hs3NNhga3PVqNQvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=R/EXjd7VM7WIf1ijtqwb55exvop8/+1Mf0OUCRvKYedcEjW4TKnJMcpmeRVfeqgICZcIupm8GWk2NdeCj7R6V7jZcyBp+kh4X9gm0UFSgSoSx9GjJonp50JBFN6rTZ/Jog5Ap/mYNaY0jQg/Q4HnMpYvdI9BQjP5rjpyUl/C+zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com; spf=pass smtp.mailfrom=inventec.com; dkim=pass (2048-bit key) header.d=inventec.com header.i=@inventec.com header.b=GLQqoUBz; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234d3261631so36625495ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 02:48:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=inventec.com; s=google; t=1749548888; x=1750153688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3zQmyYaU/03+AJvFIA5fRBrVmM4eOz2li116ucuEnt8=;
+        b=GLQqoUBz0Jk86m0AqZ6Lyp3F5ESe6dKpMmUyA5ecP+6iVOVbUGtMwgD5BHeq9NgzdC
+         ifr7E43rA5ZmFITTUZ0cQjm6TWYbvKAjeBILQWULdrJTETQ4gjQtoZJykBdORCszdqvB
+         35vXbJtjgSHsBzOCLxOl+JtQHQrGNjyBv9U++uCG2kSEOtuva8Y5eAnJixWFftsPMOpQ
+         3+tbF3x6oq43Nq4zjDx+86BIyDBDRKgH84Rd5jmAdsaEU8hqp6yfD8h2uTD4geEJC5j6
+         Vpcuf+4IWcdhbS2f2ASgTx1exFCSvkOdbxY0NG47Gay5J+GOziQMN3YDQSBAX3m1bPFq
+         gG3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749548888; x=1750153688;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3zQmyYaU/03+AJvFIA5fRBrVmM4eOz2li116ucuEnt8=;
+        b=NxvajdPGfn5WmvJqkb/0BmKGmPIz4WagMkbjWIfFOvqOG4BgzhQcGhro4NOUPGrJ68
+         UXfn+rJxBCwtCZWkGiS4aKEryRvrjJZxCtUkA89enbBtJmawEj0cmCyklaWRWtKSFDk7
+         v/XGDp5x+zh32Zwe3c+kjKwiKIct49s1yJu/4P00+3bJYqRSnIJRA1XOtnYGy78058lN
+         wyTbUfDsZ6vzWsmOFuEXKPf8XDIOkuPTsgD0duGyeNbLwnqmOgg8FAxrH1/JSkm19Rm3
+         NV/NEhIi+7xpeTbJgObjyybWXJt0bbP1C3f4yhvw3LKds60Lo2h+FfvfJtsnOboNo8+D
+         OjzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzuuyyY8oCUDJ8FiXYxS2Ulu2K8xVce77Tv4Hk9Wc+L/JoqueAp86vl3xWLIGlRR26gKUBrHluEviC3EU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf3aYsNe1HqKQAqMaVPRwPpOYSaGyTwVjqA3xM7CHfTiRna2oO
+	ZNTL5/Ct5QuipamOr7lYpov2HmvFEEX2M0mFfgiLM7n0K6jSgCEQ6ElSXB0/ka9jNSA=
+X-Gm-Gg: ASbGncuRDf0Yq+AFQlLUcLzKbrHe0XyKXZAJwRtJTUm7oz2qTe5ZsEHhXPZAUPG3SSX
+	AaU1cM4Dy2kJSx4gbOkaK9jstphzdvP3V7AtLWCRs7s9JTol6M3mKPMau38POWfC0WLvW3IYeLT
+	O3FiCRs3j1U1dwIFfFlOJNoWlA10+b9lB69bclFiDoeHxbJ/dczFFQy7b3yqIRZu6biKiFzcb8H
+	wlG0unL1Ez4n1k/eaELi68Xk5rbY5a1yU3jv5XB9j4KrxzZK+VGhsdYMhF2NxVrAiryfY6PnbRH
+	RwKAEWetmkZ5ocrV0xEkNEIumgwhPc7wtVcH4B6UVvZp0dvabZuoxmbJmFidCoXSOw6Sbh7u0hl
+	WBXfCThlfPFWjI67fkiVZkPqr008TSzM4QXxRDDyK
+X-Google-Smtp-Source: AGHT+IFTJerKI7nLBzkfbFwxLiCZ8/O3FBsLBWB2rHz59j5SLYJb1rjqSHl7mrROaYWtZGs6ZS1rZw==
+X-Received: by 2002:a17:903:41cf:b0:224:1eab:97b2 with SMTP id d9443c01a7336-23601df6a23mr244281155ad.53.1749548888066;
+        Tue, 10 Jun 2025 02:48:08 -0700 (PDT)
+Received: from localhost.localdomain (60-248-18-139.hinet-ip.hinet.net. [60.248.18.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23603096949sm67293155ad.67.2025.06.10.02.48.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 02:48:07 -0700 (PDT)
+From: Chiang Brian <chiang.brian@inventec.com>
+To: linux@roeck-us.net
+Cc: alex@ghiti.fr,
+	aou@eecs.berkeley.edu,
+	chiang.brian@inventec.com,
+	corbet@lwn.net,
+	jdelvare@suse.com,
+	linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com
+Subject: Re: [PATCH v8 2/2] hwmon: (pmbus/tps53679) Add support for TPS53685
+Date: Tue, 10 Jun 2025 17:38:12 +0800
+Message-Id: <20250610093812.164960-1-chiang.brian@inventec.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <156dc4d6-071b-4cc5-bea9-4579c140b2f9@roeck-us.net>
+References: <156dc4d6-071b-4cc5-bea9-4579c140b2f9@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Mon, 9 Jun 2025 16:25:49 -0700
-"Koralahalli Channabasappa, Smita" <Smita.KoralahalliChannabasappa@amd.com> wrote:
-
-> On 6/9/2025 4:02 AM, Jonathan Cameron wrote:
-> > On Tue, 3 Jun 2025 22:19:44 +0000
-> > Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
-> >   
-> >> In preparation for soft-reserved resource handling, make the suspend
-> >> infrastructure always available by removing the CONFIG_CXL_SUSPEND
-> >> Kconfig option.
-> >>
-> >> This ensures cxl_mem_active_inc()/dec() and cxl_mem_active() are
-> >> unconditionally available, enabling coordination between cxl_pci and
-> >> cxl_mem drivers during region setup and hotplug operations.  
+On Mon, Jun 09, 2025 at 5:44PM +0800, Guenter Roeck wrote:
+>
+> On Mon, Jun 02, 2025 at 12:24:54PM +0800, Chiang Brian wrote:
+> > The TPS53685 is a fully AMD SVI3 compliant step down
+> > controller with trans-inductor voltage regulator
+> > (TLVR) topology support, dual channels, built-in
+> > non-volatile memory (NVM), PMBus interface, and
+> > full compatible with TI NexFET smart power
+> > stages.
+> > Add support for it to the tps53679 driver.
 > > 
-> > If these are no longer just being used for suspend, given there
-> > is nothing else in the file, maybe move them to somewhere else?  
+> > Signed-off-by: Chiang Brian <chiang.brian@inventec.com>
 > 
-> There was recommendation to move the wait queue declaration and its
-> related changes to acpi.c. I was considering that. Let me know if there 
-> is any other best place for this.
+> I was not copied on the first patch os the series, so I guess the idea
+> is that it is applied through a devicetree branch.
+> Ok, with me, but I get
 > 
-I wasn't sure on the best location (which is why I was lazy an didn't
-suggest one ;)  Dan, Dave etc anyone have strong mental model for where
-this should be?
+> CHECK: Alignment should match open parenthesis
+> #260: FILE: drivers/hwmon/pmbus/tps53679.c:151:
+> +static int tps53685_identify(struct i2c_client *client,
+> +				 struct pmbus_driver_info *info)
+> 
+> WARNING: DT compatible string "ti,tps53685" appears un-documented -- check ./Documentation/devicetree/bindings/
+> #295: FILE: drivers/hwmon/pmbus/tps53679.c:316:
+> +	{.compatible = "ti,tps53685", .data = (void *)tps53685},
+> 
+> That means I'll have to wait until the deveicetree patch is available.
+>
+> Other than that, please fix the alignment and, while at it, reduce the
+> number of lines in the description. Line breaks should be at ~75 columns,
+> not ~50 columns.
 
-> Thanks
-> Smita
-> > 
-> >   
-> >>
-> >> Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> >> Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-> >> Co-developed-by: Terry Bowman <terry.bowman@amd.com>
-> >> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> >> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> >> ---
-> >>   drivers/cxl/Kconfig        | 4 ----
-> >>   drivers/cxl/core/Makefile  | 2 +-
-> >>   drivers/cxl/core/suspend.c | 5 ++++-
-> >>   drivers/cxl/cxlmem.h       | 9 ---------
-> >>   include/linux/pm.h         | 7 -------
-> >>   5 files changed, 5 insertions(+), 22 deletions(-)
-> >>
-> >> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> >> index cf1ba673b8c2..d09144c2002e 100644
-> >> --- a/drivers/cxl/Kconfig
-> >> +++ b/drivers/cxl/Kconfig
-> >> @@ -118,10 +118,6 @@ config CXL_PORT
-> >>   	default CXL_BUS
-> >>   	tristate
-> >>   
-> >> -config CXL_SUSPEND
-> >> -	def_bool y
-> >> -	depends on SUSPEND && CXL_MEM
-> >> -
-> >>   config CXL_REGION
-> >>   	bool "CXL: Region Support"
-> >>   	default CXL_BUS
-> >> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> >> index 086df97a0fcf..035864db8a32 100644
-> >> --- a/drivers/cxl/core/Makefile
-> >> +++ b/drivers/cxl/core/Makefile
-> >> @@ -1,6 +1,6 @@
-> >>   # SPDX-License-Identifier: GPL-2.0
-> >>   obj-$(CONFIG_CXL_BUS) += cxl_core.o
-> >> -obj-$(CONFIG_CXL_SUSPEND) += suspend.o
-> >> +obj-y += suspend.o
-> >>   
-> >>   ccflags-y += -I$(srctree)/drivers/cxl
-> >>   CFLAGS_trace.o = -DTRACE_INCLUDE_PATH=. -I$(src)
-> >> diff --git a/drivers/cxl/core/suspend.c b/drivers/cxl/core/suspend.c
-> >> index 29aa5cc5e565..5ba4b4de0e33 100644
-> >> --- a/drivers/cxl/core/suspend.c
-> >> +++ b/drivers/cxl/core/suspend.c
-> >> @@ -8,7 +8,10 @@ static atomic_t mem_active;
-> >>   
-> >>   bool cxl_mem_active(void)
-> >>   {
-> >> -	return atomic_read(&mem_active) != 0;
-> >> +	if (IS_ENABLED(CONFIG_CXL_MEM))
-> >> +		return atomic_read(&mem_active) != 0;
-> >> +
-> >> +	return false;
-> >>   }
-> >>   
-> >>   void cxl_mem_active_inc(void)
-> >> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> >> index 3ec6b906371b..1bd1e88c4cc0 100644
-> >> --- a/drivers/cxl/cxlmem.h
-> >> +++ b/drivers/cxl/cxlmem.h
-> >> @@ -853,17 +853,8 @@ int cxl_trigger_poison_list(struct cxl_memdev *cxlmd);
-> >>   int cxl_inject_poison(struct cxl_memdev *cxlmd, u64 dpa);
-> >>   int cxl_clear_poison(struct cxl_memdev *cxlmd, u64 dpa);
-> >>   
-> >> -#ifdef CONFIG_CXL_SUSPEND
-> >>   void cxl_mem_active_inc(void);
-> >>   void cxl_mem_active_dec(void);
-> >> -#else
-> >> -static inline void cxl_mem_active_inc(void)
-> >> -{
-> >> -}
-> >> -static inline void cxl_mem_active_dec(void)
-> >> -{
-> >> -}
-> >> -#endif
-> >>   
-> >>   int cxl_mem_sanitize(struct cxl_memdev *cxlmd, u16 cmd);
-> >>   
-> >> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> >> index f0bd8fbae4f2..415928e0b6ca 100644
-> >> --- a/include/linux/pm.h
-> >> +++ b/include/linux/pm.h
-> >> @@ -35,14 +35,7 @@ static inline void pm_vt_switch_unregister(struct device *dev)
-> >>   }
-> >>   #endif /* CONFIG_VT_CONSOLE_SLEEP */
-> >>   
-> >> -#ifdef CONFIG_CXL_SUSPEND
-> >>   bool cxl_mem_active(void);
-> >> -#else
-> >> -static inline bool cxl_mem_active(void)
-> >> -{
-> >> -	return false;
-> >> -}
-> >> -#endif
-> >>   
-> >>   /*
-> >>    * Device power management  
-> >   
-> 
+Sure, thank you for the information, I'll fix these in v9.
 
+Thanks,
+Guenter
 
