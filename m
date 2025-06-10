@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-678665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAA4AD2C5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:02:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7661AD2C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C6916E1F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2CF1891F72
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D811225D528;
-	Tue, 10 Jun 2025 04:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A192566FD;
+	Tue, 10 Jun 2025 03:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBEwjnz0"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixiuxG5R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7613184F;
-	Tue, 10 Jun 2025 04:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A99B9460;
+	Tue, 10 Jun 2025 03:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749528125; cv=none; b=hTE7HxVP5ve5FPESRq2qXbOV1SolLwuMl+lGluWsi/mlj1IlvUdYEfizadHgj4h3BwGYk4X6ohf1Hq85n6MssVXLlxwkmrwte+wH8oEotQSGm+FcGrI8juFTLqx1i5qUVPvWGaIU7YOz6WlkevDboWqWImzrLp9ijNZNO6K06s0=
+	t=1749525152; cv=none; b=KTnzUc4hvKy5drfQE6iwCtC30OeDi7vqunvvl+0AFoKN85M6yrcKMqFksG0ELLeuFFAax8ViqtkPqY6b2Vc2O8hi06pJYBZfG9n7f8Psobk8O7S62dBI5n14GSUQu1GxdqVz5qasiFLqxoOb0SvcYO8mSqI3EGxZVDzYbDB8gtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749528125; c=relaxed/simple;
-	bh=RSDBnhgSDB3LEzKcIyjb9Xjl1Cja0E622WzxOwPUV3A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yog2MtKJeS41+Pgy71w7NSV0WqQoAPx6kLaMtnikRoB9oai4E5+/r09IFULBVhgs58cXQivv0OU2HSK3OQoBt5xDRe2Z3lJQ/ctmS+/MqoAYjh5mr7PfLUNmzAJIBnun6iFWvvtl37yDpfBPuIrt8XTBvErfIsn1bIplLCBNUBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBEwjnz0; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fb01566184so40977796d6.1;
-        Mon, 09 Jun 2025 21:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749528122; x=1750132922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XMrwRXbr8WIzpkfgacXKxR5z6ZnKHPCXT4UGv3T6iIM=;
-        b=fBEwjnz0+h1vTMCIc7DoFM3MhgLMxGYUuUyTjXVuHkwBqUt0C+EW7e7f0qBny4VTDT
-         Txgnjx+uCk8ttxhuVq18z30mo/yy5w1wb33Gm17CSsJIUVcI05TQrPs1XB2chQlGHQ+H
-         cua32XG+QMEJGjSfgipWMVB2ThiuPE0XyL7MLxYZgwOUgaWkVoQdRu886JYw6JnTryNV
-         R4G9hoRHUWPv9mO9mllcFE9N472s854rtUGNkh40FeYtnyaOmbB6fpsL9eRobqsyT8iz
-         Y0EfxO3vn/JXCGDz/O3GCka52Hw/lR5D/DizhpBxeX8jaBRy1RpisXA26iX0EiJffqgx
-         /XYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749528122; x=1750132922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XMrwRXbr8WIzpkfgacXKxR5z6ZnKHPCXT4UGv3T6iIM=;
-        b=rTn4gQvnjmVpKJSsjp3ZsgUaCGFdg7fT0xQQBfaBucZwJvHtsTZRJLsTolwb6VGEHk
-         3zFUvRX6LTJJlj8s+IZvFAFe9DJtjgLhFt9LOpHgdhtK9RAdoozQD7S1yDHPwWyzkUp+
-         GhO/2fPdHC9rzsOPyDs8ftzGW39/Dq/+QhgAnHeu9GxYY3evZJyHtkewjV/Roy7+c41E
-         SYS1x9vn7Acsfu8lzdL+0Cg7nU9SQ0xwgvjnhLJQqIdEl4P6VvN+iMQtAjuxh4RVT5IA
-         F809+j0zI8ds18aB7rFNqVvfBnVW08Qpas8lC7vy6l4Jrb4/t19sjBEhXzbJGc2keZ8Z
-         jvoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6CHh/qwoPWJGE1bct2P0mYkpolx/hBjx1YTzHHoRTTl6G2Xi/gbJsQEDLaNAYXPrMtcau3bwFzBTDtw==@vger.kernel.org, AJvYcCXF3GEn9zVVrJjimHz4wERGuyJG43KZFT/UAAuCZa2j1YWwDaBtLYKT+0wzjafTScr2DXgc5GjFW9GAGxIS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0mHrm3gQRNujNu1iUetMhnbZprB+FX/oG8qSEBTDNfwcrWtU6
-	KUsYwdg6oGSjfMeQjUvj6z+5sLveaEJKrmW3+06SjEea63J2WCGY/yEhPlR/LIgDtPNbFT7zH7B
-	U9HhBnrwqw6fIbhdhDeXGIs6rTeG7yUo=
-X-Gm-Gg: ASbGncupXkwXodXuMYmgbMKPmjITWKbPhhODN8LY1zsugudSDq8IddQA0Oqko6bHAr4
-	mgLlmtdu4L7+BLjGV7rEKQ58MXX2ve3VpdnAIW/gfYHORcqFzpxiVqyaB/qTZIrjTkfNExQzf63
-	poObCtS0VKUXVvwGSawap1Vj/MaDRTT4O25hjnxv5CVBk0
-X-Google-Smtp-Source: AGHT+IFkKUcxq9K3TvsZ0FSQ6z9aFHs7y3N1fYKBL8L9OYe5J71fBhdpiu/K3rvtcGkhcagNiThED5dyJXBGR1/IwYc=
-X-Received: by 2002:a05:6214:4107:b0:6fa:9e00:d458 with SMTP id
- 6a1803df08f44-6fb08fe1a53mr252519166d6.45.1749528122425; Mon, 09 Jun 2025
- 21:02:02 -0700 (PDT)
+	s=arc-20240116; t=1749525152; c=relaxed/simple;
+	bh=xHnU2CjunxIorLr6QXlY9QsZp21/qxWCAUjRaaR4xio=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Bw2lOB3QtSEo/XpAQvyQGI8uBiQ+TvxqI7yfej3PiJgVB+8x+V7pVqaCMf6xbAuZf3Ko2gNeb+8CsddtZLKdrvOWp5zTWtsUNEkJgrivnmRX31MZVMu9Ez2Vdvjo+UmMCOs5lblUC8RvkSjBkznLia9d6Uur8HZEIMtmrj25ntM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixiuxG5R; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749525150; x=1781061150;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xHnU2CjunxIorLr6QXlY9QsZp21/qxWCAUjRaaR4xio=;
+  b=ixiuxG5Rlaud3udaOvXLSgEj1aFfAHHL82Mm0Ssud11LQrPkO1680TOd
+   CeOskRRxq9NZxBTrisdhJ1yPsikiSiFd2KZw7GDQuQYLf70eCHKG96LYJ
+   Axq5wfqa9HlcN3TwpNrLwkpM8qD6BngAuaw9XKzUjFfqYQBbnOgBintYt
+   7wkULE6BcX4NW+RvUtfDOuc1kSdBMg3HESvOkP1ZLSI/lqPd/+FZNz2TI
+   jOO65meuarX1v6m0gdcR9P0xVwVx2TdNZyLcRbKYHI1ABvworX5MSOxnG
+   V2WGAws/ZnCfg0R94UZtpD8WkXVuYHEVViI7qdKYOlZoGWCO2wjXu8Me/
+   Q==;
+X-CSE-ConnectionGUID: 5qvoswDtQBKuCCHHeAsRcg==
+X-CSE-MsgGUID: y79okzAaT0qLpjwVCQ4j+g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="62275086"
+X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
+   d="scan'208";a="62275086"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2025 20:12:29 -0700
+X-CSE-ConnectionGUID: 0LY57rL4R0C+evgn+KxhLg==
+X-CSE-MsgGUID: KLvAYz5FT6Oecl0q1iNoQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
+   d="scan'208";a="146612169"
+Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
+  by fmviesa007.fm.intel.com with ESMTP; 09 Jun 2025 20:12:22 -0700
+From: Tianyou Li <tianyou.li@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	tianyou.li@intel.com,
+	wangyang.guo@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Read perf data file header from the file user specified with -i option for perf script flamegraph
+Date: Tue, 10 Jun 2025 12:04:22 +0800
+Message-ID: <20250610040536.2390060-1-tianyou.li@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <aEeIN_u4KpLZXDBx () google ! com>
+References: <aEeIN_u4KpLZXDBx () google ! com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com>
-In-Reply-To: <20250526-dualsense-hid-jack-v1-0-a65fee4a60cc@collabora.com>
-From: Roderick Colenbrander <thunderbird2k@gmail.com>
-Date: Mon, 9 Jun 2025 21:01:51 -0700
-X-Gm-Features: AX0GCFspEeIQPAzdoMKf0rD0zb01CbCBMtp5pWRm7hsy4HbFty56yWyoLKvtEco
-Message-ID: <CAEc3jaCoVgP=0v73ZTeAhd0wb2LpGqguEedY6haNLi_HNA_Mng@mail.gmail.com>
-Subject: Re: [PATCH 00/11] HID: playstation: Add support for audio jack
- handling on DualSense
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Cristian,
+If specify the perf data file with -i option, the script will try to read the header information
+regardless of the file name specified, instead it will try to access the perf.data. This simple
+patch use the file name from -i option for command perf report --header-only to read the header.
 
-Thanks for sharing your patches around audio. I need to have a closer
-look at some of those and how the console also behaves (we try to keep
-things in-sync'ish when possible). I need to double check the
-datasheets as well.
+Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Pan Deng <pan.deng@intel.com>
+Reviewed-by: Zhiguo Zhou <zhiguo.zhou@intel.com>
+Reviewed-by: Wangyang Guo <wangyang.guo@intel.com>
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ tools/perf/scripts/python/flamegraph.py | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-The series does contain some other patches around style and stuff.
-Some of them for me are entering that slippery slope of what to
-change. There are some different styles in use around the kernel (e.g.
-uint32_t etcetera is fine). But then if you use super strict mode on
-checkpatch half the kernel almost needs to be touched. I'm a bit
-skeptical on those kind of patches.
+diff --git a/tools/perf/scripts/python/flamegraph.py b/tools/perf/scripts/python/flamegraph.py
+index cf7ce8229a6c..4f82dfea0a70 100755
+--- a/tools/perf/scripts/python/flamegraph.py
++++ b/tools/perf/scripts/python/flamegraph.py
+@@ -123,7 +123,13 @@ class FlameGraphCLI:
+             return ""
+ 
+         try:
+-            output = subprocess.check_output(["perf", "report", "--header-only"])
++            # if the file name other than perf.data is given,
++            # we read the header of that file
++            if self.args.input:
++                output = subprocess.check_output(["perf", "report", "--header-only", "-i", self.args.input])
++            else:
++                output = subprocess.check_output(["perf", "report", "--header-only"])
++
+             return output.decode("utf-8")
+         except Exception as err:  # pylint: disable=broad-except
+             print("Error reading report header: {}".format(err), file=sys.stderr)
+-- 
+2.47.1
 
-Thanks,
-Roderick
-
-On Mon, May 26, 2025 at 5:52=E2=80=AFAM Cristian Ciocaltea
-<cristian.ciocaltea@collabora.com> wrote:
->
-> The Sony DualSense wireless controller (PS5) provides an internal mono
-> speaker, in addition to the 3.5mm jack socket for headphone output and
-> headset microphone input.  However, the default audio output path is set
-> to headphones, regardless of whether they are actually inserted or not.
->
-> This patch series aims to improve the audio support by implementing the
-> following changes:
->
-> * Detect when the plugged state of the audio jack changes and toggle
->   audio output between headphones and internal speaker, as required.
->   The latter is achieved by essentially routing the right channel of the
->   audio source to the mono speaker.
->
-> * Adjust the speaker volume since its default level is too low and,
->   therefore, cannot generate any audible sound.
->
-> * Register a dedicated input device for the audio jack and use it to
->   report all headphone and headset mic insert events.
->
-> It's worth noting the latter is necessary since the controller complies
-> with v1.0 of the USB Audio Class spec (UAC1) and, therefore, cannot
-> advertise any jack detection capability.  However, this feature can be
-> implemented in the generic USB audio driver via quirks, i.e. by
-> configuring an input handler to receive hotplug events from the HID
-> driver.
->
-> Unrelated to the above, also provide a few driver cleanup patches, e.g.
-> make use of bitfields macros, simplify locking, fix coding style.
->
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-> Cristian Ciocaltea (11):
->       HID: playstation: Make use of bitfield macros
->       HID: playstation: Add spaces around arithmetic operators
->       HID: playstation: Simplify locking with guard() and scoped_guard()
->       HID: playstation: Replace uint{32,16,8}_t with u{32,16,8}
->       HID: playstation: Correct spelling in comment sections
->       HID: playstation: Fix all alignment and line length issues
->       HID: playstation: Document spinlock_t usage
->       HID: playstation: Prefer kzalloc(sizeof(*buf)...)
->       HID: playstation: Rename DualSense input report status field
->       HID: playstation: Support DualSense audio jack hotplug detection
->       HID: playstation: Support DualSense audio jack event reporting
->
->  drivers/hid/hid-playstation.c | 885 ++++++++++++++++++++++++------------=
-------
->  1 file changed, 500 insertions(+), 385 deletions(-)
-> ---
-> base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
-> change-id: 20250522-dualsense-hid-jack-d3cb65b75da1
->
->
 
