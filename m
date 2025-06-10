@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-678892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C9EAD2F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:09:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E27DEAD2F8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC11188C739
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941F4188D53F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1E928003D;
-	Tue, 10 Jun 2025 08:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BF280CCD;
+	Tue, 10 Jun 2025 08:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ded4H/wv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z8fOOhUs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28E322172F;
-	Tue, 10 Jun 2025 08:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586DE22172F;
+	Tue, 10 Jun 2025 08:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749542977; cv=none; b=RUL6dJAQRVIlpjuW1tQN2GzSNgEEYmhmOH4+JDzp0m9vpv4UsKuCADxYmwO2bnDhQ8g3Fvgn4Xaxfb/sQz6TrFZRxYW3SWhhIl170sqBlXkjE6ISopgICuJTlyX5UJ6sHvCjoIESj5tnqkxX3jKNIPoHdq5ouJaTAEXvecrm2yU=
+	t=1749543040; cv=none; b=mzIla6PWvjRFNcA1l6vozzDxmn8LoLUpWVTHCf/SxKLDye5sMTQC4DEmiJWa4GXAgoKDl+n/kp5tkO7Szk0LH65JeqvGjoXKcX+a/1ywP75HZSN5Lrq7A87osUnJhO8vX4WdBlV4e42TsodjVBhoAl+nz+z+lI1VXmFEJ4xLxM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749542977; c=relaxed/simple;
-	bh=wog5ODe4eh+cmPzvRdkxZrYrSXA9MiXw0UkMruDR7PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=H9J6lmo5x1mWb76fgdF200052a8WYX1IybxpsIE7dEZins1P2LudzYw++X2dO4eO9vxP73lc2GhHmBeUvgxfKUSJWzmW95fKlJeI/R9u/8zZeOBePzR2YTe/ZW0tSdYT3KbowKWYOvFpfbwMqt1ml0veALYbqT0auR24MGspdAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ded4H/wv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A438FC4CEF0;
-	Tue, 10 Jun 2025 08:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749542976;
-	bh=wog5ODe4eh+cmPzvRdkxZrYrSXA9MiXw0UkMruDR7PI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ded4H/wvMG9GadoQ7RXtE4KDqSWPiuMqy73CT4elYUpo3kjgCM9m1po23+MWatYn6
-	 uXl86M6lq30ysc3Xg/ezUwgAtzlUv6VzUd0w5H0guK876RHA4OE6xuiYLGzPawH453
-	 h65HBXVeo4ulA+iU1n0jKAFTCDYWVtbS40ftTKgL8clCIb8gl5WmeH9FvV401Vbq3h
-	 xqVZSjrCZQSNgSwys466xLEcFOfSnH1dFAey7+AJieWPC4MgycHyDcnHADKtfrX0vu
-	 4jKsam+1RCjAuhS77VuBrxgHNFl6QHoX/1kCTzRzMcFGdZ/ALWMbYZQYHK6wwRLDZ8
-	 4oiWiLPU4c20A==
-Message-ID: <9101806c-61ce-4897-be85-603dc4a07870@kernel.org>
-Date: Tue, 10 Jun 2025 10:09:30 +0200
+	s=arc-20240116; t=1749543040; c=relaxed/simple;
+	bh=pxQqTLeJGrzRcba35v6Sv8J7W+lYfStZ+/qrHNswdu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TUC6300h09M7cVsmTu3oBWipqZwbbJLjTQe+Q50iYgA53avrx5e9a8xjC9TBipXB0qddgYlk9LXCs0BPrJltBLQLCd3PmljZz88+sLKVJdS9lGXt8BDclUVy2N9H+M6L0+dDrpLGq6oh9H5yiuoSpVET3Ce0jqC8s+AGOfh3RZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z8fOOhUs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 559KOrqf017669;
+	Tue, 10 Jun 2025 08:10:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PyVKbeyNtvyCYpKab0D2gGv0Ts2lWek+MIyPqd7++uA=; b=Z8fOOhUs2OA+V4Zs
+	sPSYC/PvKZknaAL61rAArdH75Oo3pzXwuLEo/lXwa8b/U9WNFBjEbliiiZD6W7yu
+	GDrOmBJYK7J5uXOGw2Lxa0+Tziwhi5SBcZHVPIJRSRaP74hNG8ampSUS8FhOtZFU
+	Iu6yWdDVv2yd2ZgMGtUlxY3gvl18eRJfF62/lKOeXdoRBHBhk1b4jL1+cBD1fdWV
+	7nRK6kY94G06vUOxgbOnoml2aJ4g/WiiVVJX/f/RUTXb8aBX1xevNjn0N04z1aqu
+	bX9UeQwlQCMukd2KZwQSblUWNupd+ldvoDkxOIfjaIMe3NQTt2QnR75Zi5eGXl9H
+	RRFTzg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4766mchcdt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 08:10:29 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55A8ASAj020415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 08:10:28 GMT
+Received: from [10.218.32.171] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Jun
+ 2025 01:10:23 -0700
+Message-ID: <d744b518-2ae9-4ca0-86ce-11cf74c945e6@quicinc.com>
+Date: Tue, 10 Jun 2025 13:40:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,89 +64,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: i2c: nvidia,tegra20-i2c: Specify the
- required properties
-To: Akhil R <akhilrajeev@nvidia.com>, andi.shyti@kernel.org, wsa@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org, digetx@gmail.com,
- jonathanh@nvidia.com, krzk+dt@kernel.org, ldewangan@nvidia.com,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, p.zabel@pengutronix.de, robh@kernel.org,
- thierry.reding@gmail.com
-References: <9803c165-fa2f-44ba-a6fb-f11852c319e1@kernel.org>
- <20250609090212.48820-1-akhilrajeev@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 1/8] dt-bindings: serial: describe SA8255p
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <psodagud@quicinc.com>, <djaggi@quicinc.com>,
+        <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>,
+        <quic_arandive@quicinc.com>, <quic_mnaresh@quicinc.com>,
+        <quic_shazhuss@quicinc.com>, Nikunj Kela
+	<quic_nkela@quicinc.com>
+References: <20250606172114.6618-1-quic_ptalari@quicinc.com>
+ <20250606172114.6618-2-quic_ptalari@quicinc.com>
+ <20250610-tested-lilac-raccoon-6c59c4@kuoka>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250609090212.48820-1-akhilrajeev@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Praveen Talari <quic_ptalari@quicinc.com>
+In-Reply-To: <20250610-tested-lilac-raccoon-6c59c4@kuoka>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=T8KMT+KQ c=1 sm=1 tr=0 ts=6847e875 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gEfo2CItAAAA:8
+ a=COk6AnOGAAAA:8 a=7yBbA8StSmaZYdc8j60A:9 a=QEXdDO2ut3YA:10
+ a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: HoZ9RDAgzfOybucuaFDqukYoeTGxroit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjEwMDA2MSBTYWx0ZWRfX03wNyGDMBgwe
+ QgAeBgOnfhf0FXcn1EzcbSOc//rjExxsfYiKiv/w1YYiSJUViueb/CzLuPDNYlUpPX51TqF4JcZ
+ ElxdaA1ONXJXD4FTbXpHJl3KcuzU5/f4MSAHsSh/7/yFaoKQNnYklDmhdZGCPu6H/hS5fub5H6w
+ ooBtzYzJqWqp6Tzprf4PX8x8qQDde3JoA3BtHTy1NDWmvtZw/hxS68o6rISgdSinrVy3Yp+XLkC
+ n2YC9AfHY2yHH2M3tSoNSmWjMX4Rbo/1KzppgC98Gmded3qQWJls5jW+LGBsqL+9spX6Q1XvneL
+ bSTOcCc0HcdeC1wbS3o8MdnZOw8LwJ0rIt0ieAEJ49St9NUi1XHTdcjHCGD93HGYssfHlza+amV
+ iZ/ecPqJhZ9Wmj+BERt86EDoPcHsRKd8pFevnV2dfYnTp4vWNwSqLrHgW9ouHoWXjUh5ORu8
+X-Proofpoint-GUID: HoZ9RDAgzfOybucuaFDqukYoeTGxroit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_03,2025-06-09_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506100061
 
-On 09/06/2025 11:02, Akhil R wrote:
->>> Specify the properties which are essential and which are not for the
->>> Tegra I2C driver to function correctly. This was not added correctly when
->>> the TXT binding was converted to yaml. All the existing DT nodes have
->>> these properties already and hence this does not break the ABI.
->>>
->>> dmas and dma-names which were specified as a must in the TXT binding
->>> is now made optional since the driver can work in PIO mode if dmas are
->>> missing.
->>>
->>> Fixes: f10a9b722f80 ("dt-bindings: i2c: tegra: Convert to json-schema”)
->>> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+Hi Krzysztof
+
+Thank you for review.
+
+On 6/10/2025 12:34 PM, Krzysztof Kozlowski wrote:
+> On Fri, Jun 06, 2025 at 10:51:07PM GMT, Praveen Talari wrote:
+>> From: Nikunj Kela <quic_nkela@quicinc.com>
 >>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> SA8255p platform abstracts resources such as clocks, interconnect and
+>> GPIO pins configuration in Firmware. SCMI power and perf protocols are
+>> used to send request for resource configurations.
+>>
+>> Add DT bindings for the QUP GENI UART controller on sa8255p platform.
+>>
+>> The wakeup interrupt (IRQ) is treated as optional, as not all UART
+>> instances have a wakeup-capable interrupt routed via the PDC.
+>>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> Co-developed-by: Praveen Talari <quic_ptalari@quicinc.com>
+>> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
+>> ---
+>> v5 -> v6
+>> - added description for interrupt-names
+>> - added wakeup irq as optional information in commit text and
+>>    property description.
+>> - removed wake irq form example node.
+>>
+>> v4 -> v5
+>> - added wake irq in example node
+>>
+>> v3 -> v4
+>> - added version log after ---
+>>
+>> v2 -> v3
+>> - dropped description for interrupt-names
+>> - rebased reg property order in required option
+>>
+>> v1 -> v2
+>> - reorder sequence of tags in commit text
+>> - moved reg property after compatible field
+>> - added interrupt-names property
+>> ---
+>>   .../serial/qcom,sa8255p-geni-uart.yaml        | 68 +++++++++++++++++++
+>>   1 file changed, 68 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml b/Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
+>> new file mode 100644
+>> index 000000000000..c2e11ddcc0f6
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
+>> @@ -0,0 +1,68 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/serial/qcom,sa8255p-geni-uart.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Geni based QUP UART interface
+>> +
+>> +maintainers:
+>> +  - Praveen Talari <quic_ptalari@quicinc.com>
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/serial/serial.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,sa8255p-geni-uart
+>> +      - qcom,sa8255p-geni-debug-uart
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    minItems: 1
 > 
-> Thanks Krzysztof for the review.
-> 
-> Hi Andi and Wolfram,
-> 
-> Could you share if you see any more concerns with these patches?
-You sent it during merge window and a week later you ping? Considering
-the quiet time, you sent it basically yesterday, so you gave people only
-1 day... Don't ping after one day. Two weeks.
+> Drop, this is not in sync with interrupt-names. You already received
+> comments on this. We talk about this since v4!
+I hope you have reviewed the commit message and the description under 
+interrupt-name regarding the optional wakeup IRQ. I believe that address 
+your query.
 
-Best regards,
-Krzysztof
+I can include minItems:1 in the interrupt-name property in the next 
+patch set to align/sync with interrupts property.
+
+Thanks,
+Praveen Talari
+> 
+> I am not reviewing the rest. Implement complete feedback given to you in
+> v4 and v5.
+> 
+> Best regards,
+> Krzysztof
+> 
 
