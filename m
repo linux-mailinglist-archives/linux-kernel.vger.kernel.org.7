@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-680105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EF4AD40D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:31:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B26AD40D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3567A1788C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16BA1188C4D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CBE24728D;
-	Tue, 10 Jun 2025 17:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D870248882;
+	Tue, 10 Jun 2025 17:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSj0B1X1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQUugPIn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D738B23D2AD;
-	Tue, 10 Jun 2025 17:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752962459E1;
+	Tue, 10 Jun 2025 17:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749576307; cv=none; b=XkAjJc0ZiF/0YS4J6HPiyALxetzo+zvpM0qDDRbQI2aWB3vz5suXlyMIeSlHNozjnKsS4OHep0JsqQsyyb9Ndm21uWzrnUJ1Oz7CrqaTS0huSvCAjP/OM6gLnF/2xzaHKCz7eEMSL+6F+3QNB1gWNY8WtsIdVlw7XKC9zzK9A9g=
+	t=1749576341; cv=none; b=NYc+Dz78mfTrtYYFK4bIEkH27RsS7Yu3h23VD83RRADMLE2HaLf/cG6LPDdSxPY4xpEx0u1LzkzX75WQTlk9MCUHmgWVmxMcy3BGAS3oln+fRsSDVbRkSfb8LWx6FxJiARCL8wKFs5msukusSsgwvVZqMJM83Qzgn3HubTq5Dpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749576307; c=relaxed/simple;
-	bh=MPcuZKzljMNfFsP9ma+RyN5f+qoJiv1ddnZJsLMq3/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z6s+IpJ3W7BtVQA0qoFSZP0cBIsm3bvWOjpd17XRkapbgZuWfUTVSj1fVv8WIDM9K9w2GtVRdtGrNjCHbdqpoLdVVEK+gixHxgC37QybWPGEqHUSM3j6ew6YxffPO4kaOpJRHPFR8SNrJS4QTkF6Pr7p5kcI3SMmp1MmpQggu0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSj0B1X1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6166BC4CEF3;
-	Tue, 10 Jun 2025 17:25:06 +0000 (UTC)
+	s=arc-20240116; t=1749576341; c=relaxed/simple;
+	bh=tF8XhYd/zphv9FFb9CjA8PI63MvoFCSonZ/lwafrBzk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GQv53RurRdsyJyE9ct4EIjBFuURctrWYIZj/HSr0adCRxib+e9VX2NazfB12FrNZw/7+sFpMlAJMd/4MUUlnUVyTpTfNxIkr7rbXKLHPbkLnTUC7m0ipr/FuU94cPW0JfO/O6WfyiIaIocch/ei+yYtmVEYN4WlHSwYV1sMzJI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQUugPIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0FA56C4CEED;
+	Tue, 10 Jun 2025 17:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749576306;
-	bh=MPcuZKzljMNfFsP9ma+RyN5f+qoJiv1ddnZJsLMq3/M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qSj0B1X18+pz0K9vxzzIMRgU/A562wSsLoipmcb8t489Z4inREJijBXI6CGiYDkim
-	 LUb6NHoGJWOQNXuopz7ZvzA/h5W8Eokfg42ZajHeTMhE7r1Dn6CbwVDMDp4FsH+0kM
-	 pkfiqUsAfZwdSvnuHEX+2IYLg1pVYoI0aiodOCEHalaI+7Pth+XLFKau2XAWfyjGs9
-	 mF0pGG4uOig0oWBIFKzZXnnlzkJcxgvnBaOLlyfG7Jl1oqK4Fy2LbEQSUeRFC758v8
-	 KJQA7eCf98x+6dQuxuBtWYHhHT0Nsz7pNg93TqNRW1s05dZg3saJTlJCbEtAxtU3e6
-	 CMpKsOdw9gOaQ==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2ea35edc691so882283fac.2;
-        Tue, 10 Jun 2025 10:25:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4qxVqwA9IT58vMtBYPRaXSeTVNX6IP0gpxxsycoCjc0oxUKB7NRPq0M2mJPsuuFTjshdslMXjyYYf@vger.kernel.org, AJvYcCVHMM6UkSQq98IUnlEXa7mKcGeWZEmSpw5/rn4sN4DOgY6m2ofvUxvr+QlMZvbRyBxPn/G8gQDtYxPp@vger.kernel.org, AJvYcCX5mpZHWqwNOTpt6ev0uu7nLC/eYIjOgYC1NvYID0QSJdB3VqxICVxxmV0QD4OX1qWtgC4NWfz5UCXDTWzI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpLDOwHBiQ50hVrjXG8hOAEXwqtb30sIIecg/JiRl501xjypP2
-	J+BdaV1TJ7+lXYCRdmk454WCKycMLT6H5S4EqcUxrQStc4LcCzlwJ2a2PnXYZhqqzcxbw9H2rbI
-	wvMjqRh7gDB1FdHLUmJgvuSaRLa1hon0=
-X-Google-Smtp-Source: AGHT+IHSuyQ9u9GSWvfwXykMxjQyvNW1fWmfc6i/jo8EQS81NsO/yigsct9fE6Bcuxt2/rbX1bE0dKnNyrxmUrdbGyw=
-X-Received: by 2002:a05:6870:868c:b0:2d5:2955:aa6a with SMTP id
- 586e51a60fabf-2ea96a5767amr113820fac.7.1749576305678; Tue, 10 Jun 2025
- 10:25:05 -0700 (PDT)
+	s=k20201202; t=1749576341;
+	bh=tF8XhYd/zphv9FFb9CjA8PI63MvoFCSonZ/lwafrBzk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=LQUugPInPYkAsxrXMhmMg7x39yEEH4/UzlXSM7i+pmCNHFB0FGxCK9A+NrcFr+nJT
+	 fiID5uC/p5CETYV/e1lsa6yelDtBtx43l+vfSA3tKH6nVSd9dr2Oqp0iRVrGfVXi2I
+	 Wigka4kKNHbw6zRMqJXrKvxl1lam10s3UrDWJP8lo98X2DtQNh3KucvSKiDoI9+W2a
+	 r8+5H4JhpGidMslaY8QtRGjpIm+qo9H0wssJxXBpVSCSE+9dn9v2W4vDB68Z6l4RoE
+	 r9jPOZxEv+2dT+ndflxs0YDu63ftSbniNqd0AXYKW2UXL/2pHKDAGnGWNrj4SVWXHF
+	 3Lf/B64zAfe5A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C51C677C4;
+	Tue, 10 Jun 2025 17:25:40 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v3 0/3] arm64: dts: qcom: x1e80100-hp-x14: add
+ usb-1-ss1-sbu-mux
+Date: Tue, 10 Jun 2025 19:25:38 +0200
+Message-Id: <20250610-hp-x14-v3-0-35d5b50efae0@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250607033228.1475625-1-dan.j.williams@intel.com>
- <2af31ff8-eee0-4868-8f97-2a390910f9ed@intel.com> <CAJZ5v0j5+iB97rTqtOoFB0zpHzNOOHGOQVz51ZU--=4AcUPf-Q@mail.gmail.com>
- <2025061002-reattach-sliced-0690@gregkh>
-In-Reply-To: <2025061002-reattach-sliced-0690@gregkh>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Jun 2025 19:24:54 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ho01XSq9vQi+rMqo41iMbKruH6nLNwxX25KeVbVU7mew@mail.gmail.com>
-X-Gm-Features: AX0GCFvvBnCVHG0ASa5OArw3N9QcTiq2HKoQdsqKdjrgJDoIPjc5ljtXQAwFAgk
-Message-ID: <CAJZ5v0ho01XSq9vQi+rMqo41iMbKruH6nLNwxX25KeVbVU7mew@mail.gmail.com>
-Subject: Re: [PATCH 0/3] CXL: ACPI: faux: Fix cxl_core.ko module load regression
-To: Greg KH <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Dave Jiang <dave.jiang@intel.com>, rafael.j.wysocki@intel.com, 
-	linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ben Cheatham <Benjamin.Cheatham@amd.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJJqSGgC/3XOTQ7CIBCG4asY1mIGSqu48h7GBX+VSZrSQCXVp
+ neXNrrT5ftl8mRmklxEl8h5N5PoMiYMfYlqvyPGq/7uKNrShAOvQYCkfqATExRaZk+NNrqRkpT
+ jIboWpw263kp7TGOIz83NbF0/BIMvkRkFqoWrjeJ15Yy8hM4m40PoUugeY/kkHTS+yOpl/tvgx
+ bBVI5g4glCg/hrLsrwBkQJkce0AAAA=
+X-Change-ID: 20250409-hp-x14-0f1d86bcb699
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1749576339; l=1600;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=tF8XhYd/zphv9FFb9CjA8PI63MvoFCSonZ/lwafrBzk=;
+ b=cGo+fNh3F4SqVGlTj+EZCHgyUM2pP7V+Zi0yY/OdweAwkTCKuoS2CafOqCLXfFr3arZ4pX9pP
+ GM4ykBwAzupC5jaZxMiV+jE9uXnARhoAIaKqrJBokZag8NSbyyJ4nbA
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Tue, Jun 10, 2025 at 12:12=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> On Mon, Jun 09, 2025 at 08:58:26PM +0200, Rafael J. Wysocki wrote:
-> > On Mon, Jun 9, 2025 at 5:04=E2=80=AFPM Dave Jiang <dave.jiang@intel.com=
-> wrote:
-> > >
-> > >
-> > >
-> > > On 6/6/25 8:32 PM, Dan Williams wrote:
-> > > > git bisect flags:
-> > > >
-> > > > 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device inte=
-rface")
-> > > >
-> > > > ...as the reason basic CXL unit tests are failing on latest mainlin=
-e. In
-> > > > addition to the fix to einj-core.c, this also needs some updates to
-> > > > faux_device to make it behave more like platform_driver_probe(). De=
-tails
-> > > > in the individual patches.
-> > > >
-> > > > Dan Williams (3):
-> > > >   driver core: faux: Suppress bind attributes
-> > > >   driver core: faux: Quiet probe failures
-> > > >   ACPI: APEI: EINJ: Do not fail einj_init() on faux_device_create()
-> > > >     failure
-> > >
-> > > LGTM
-> > > Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> > >
-> > > >
-> > > >  drivers/acpi/apei/einj-core.c | 9 +++------
-> > > >  drivers/base/faux.c           | 3 ++-
-> > > >  2 files changed, 5 insertions(+), 7 deletions(-)
-> >
-> > Greg, I think it's better if I route this through the ACPI tree as the
-> > issue being fixed was introduced through it.
-> >
-> > Any concerns regarding this?
->
-> None from me!
->
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The usb_1_1 port doesn't have the PS8830 repeater, but apparently some
+MUX for DP altmode control. After a suggestion from sgerhold on
+'#aarch64-laptops' I added gpio-sbu-mux nodes from the x1e80100-QCP
+tree, and this appears to work well. It is still guesswork, but
+working guesswork.
 
-So applied as 6.16-rc material.
+Added and rewired for usb_1_1
 
-Thank you!
+Also, did some more changes as tested here:
+
+- remove unused i2c buses
+- amend order of nodes.
+
+The series is based on [1] from Johan.
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v3:
+- rebased to next-20250610 in preparation for X1P42100 variant support
+- Link to v2: https://lore.kernel.org/r/20250410-hp-x14-v2-0-d36414704a0a@oldschoolsolutions.biz
+
+Changes in v2:
+- removed overlapping patches with [1] and [2] - thanks Johan
+- Link to v1: https://lore.kernel.org/r/20250410-hp-x14-v1-0-b4e5ca253ec9@oldschoolsolutions.biz
+
+[1] https://lore.kernel.org/lkml/20250328084154.16759-1-johan+linaro@kernel.org/
+[2] https://lore.kernel.org/r/20250319160509.1812805-1-juerg.haefliger@canonical.com
+
+---
+Jens Glathe (3):
+      arm64: dts: qcom: x1e80100-hp-x14: add usb-1-ss1-sbu-mux
+      arm64: dts: qcom: x1e80100-hp-x14: remove unused i2c buses
+      arm64: dts: qcom: x1e80100-hp-x14: amend order of nodes
+
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 98 ++++++++++++++--------
+ 1 file changed, 62 insertions(+), 36 deletions(-)
+---
+base-commit: b27cc623e01be9de1580eaa913508b237a7a9673
+change-id: 20250409-hp-x14-0f1d86bcb699
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
