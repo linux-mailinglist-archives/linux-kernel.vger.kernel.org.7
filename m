@@ -1,96 +1,114 @@
-Return-Path: <linux-kernel+bounces-680082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BE0AD4014
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:10:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3751AD4018
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D17427A328C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E743A1287
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEC9244196;
-	Tue, 10 Jun 2025 17:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVhf44G4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA5243946;
+	Tue, 10 Jun 2025 17:10:45 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F3E1FAC34;
-	Tue, 10 Jun 2025 17:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888902B9BF
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749575399; cv=none; b=EQDT6mXzhGrRmzb2YHGKCcWK20RN1Q99eEc+TDhX6+TaoQ+BNFSMOcaL5lYcK9cDYlC260ylmiS+SFfjcsI9peu3qTwZraD8qUw3mKnv8XKHZDc1DFZ5I1TeKXS/NzeQAxVt+R7s9LCa9iFFaEjfMFcupMDTojBbDN2hxXJX+Io=
+	t=1749575445; cv=none; b=KGzpikBcdmpB1lQTkFzPqTu3ZbnFaNfPIFBjVMpii3VXYiA9dFFTfCi32fvlxQRX+fMNsCU5veR7vp/ik1j/zTb8tx7JG2I0g55oOpaJROM+3n6Nd7ux+EkBW1KMrIujThFcjZNeZuxEE6I6H6po5DUtSIHzIvwe7L4ur2IsN6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749575399; c=relaxed/simple;
-	bh=92Pz6pj4TO5Cq4bz9dNFnrb+WOjBbXMZF/wKtdVuqQk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O2DA6fBrUWFqcfzUHyh7DC4Gm3mxXNVBexL9mrMo4jgZoMZkQlS2qpD2RTcN64pQhHiWUGQCY6S+eb2H/FSVn84YnoOt59VcdZreMFwH53T8cX0POnyxb4LNeg4RTL4IP5hE68isRZJ/GsTK348wpxFk9KMjC2L9SRKGLkRTRTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVhf44G4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED4CC4CEED;
-	Tue, 10 Jun 2025 17:09:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749575398;
-	bh=92Pz6pj4TO5Cq4bz9dNFnrb+WOjBbXMZF/wKtdVuqQk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BVhf44G47lIsVjLvYmZ61KEvvflS7qCVvIRoJYpxmCjwQUqo13vaKXl0N8Y7X1CgW
-	 BTrW2Y35i8D9UmC26pw/kFAbMNf46fG/5CIL1MX+PKyH9teYOh3n7JkJzDpJg4RvMt
-	 /HmaIHKpR4A74Kvbc8afLr74AH9e4UTcZS0Lbs2nLooQObwHdYxhUurS2MrPJOWMOq
-	 yT7LtQeEci1Je+MjVImCZRQMqr+tltQsPCcgfOQRrgTsnOhx8SWf3oumvuHZ3MTkO5
-	 D/Rqau3np3piUyDLv8vrgcYpkOkHVO1JVoipQjF8uYEPl04m0Q4wExyTTsGFfo4OpN
-	 T0WXFSwX4UutA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C1839D6540;
-	Tue, 10 Jun 2025 17:10:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1749575445; c=relaxed/simple;
+	bh=py6jniNMzTUYmUO82pAk2qf353/Z3RpnVBAa4tdaVkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfhYlV3f553eDoDz+I/haJ8xIQF9MjA7QSaCpSfVznbFcJsfpHulBQIv0OMgoy3n+I583s9fzeT6qEuySjkcv1cyI+7L76FIf6WHv6PB+87mAHaX/dLaHExybZxTojXdHBCV/CfWYxG+e0h1VOe9Y0YHOAlAFrqc/TPE6ZOQ/w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 554CDC4CEED;
+	Tue, 10 Jun 2025 17:10:43 +0000 (UTC)
+Date: Tue, 10 Jun 2025 18:10:40 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Baruch Siach <baruch@tkos.co.il>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH RFC] arm64/mm: Lift the cma address limit when
+ CONFIG_DMA_NUMA_CMA=y
+Message-ID: <aEhnELJQLw8S8Bho@arm.com>
+References: <20250521014701.73046-1-feng.tang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] tools/resolve_btfids: Fix build when cross compiling
- kernel with clang.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174957542901.2523637.9194820826653322315.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Jun 2025 17:10:29 +0000
-References: <20250606074538.1608546-1-suleiman@google.com>
-In-Reply-To: <20250606074538.1608546-1-suleiman@google.com>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, masahiroy@kernel.org,
- irogers@google.com, ssouhlal@freebsd.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521014701.73046-1-feng.tang@linux.alibaba.com>
 
-Hello:
-
-This patch was applied to bpf/bpf.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Fri,  6 Jun 2025 16:45:38 +0900 you wrote:
-> When cross compiling the kernel with clang, we need to override
-> CLANG_CROSS_FLAGS when preparing the step libraries.
+On Wed, May 21, 2025 at 09:47:01AM +0800, Feng Tang wrote:
+> When porting an cma related usage from x86_64 server to arm64 server,
+> the "cma=4G" setup failed on arm64, and the reason is arm64 has 4G (32bit)
+> address limit for cma reservation.
 > 
-> Prior to commit d1d096312176 ("tools: fix annoying "mkdir -p ..." logs
-> when building tools in parallel"), MAKEFLAGS would have been set to a
-> value that wouldn't set a value for CLANG_CROSS_FLAGS, hiding the
-> fact that we weren't properly overriding it.
+> The limit is reasonable due to device DMA requirement, but for NUMA
+> servers which have CONFIG_DMA_NUMA_CMA enabled, the limit is not required
+> as that config already allows cma area to be reserved on different NUMA
+> nodes whose memory very likely goes beyond 4G limit.
 > 
-> [...]
+> Lift the cma limit for platform with such configuration.
 
-Here is the summary with links:
-  - [v2] tools/resolve_btfids: Fix build when cross compiling kernel with clang.
-    https://git.kernel.org/bpf/bpf/c/a298bbab903e
+I don't think that's the right fix. Those devices that have a NUMA node
+associated may be ok to address memory beyond 4GB. The default for
+NUMA_NO_NODE devices is still dma_contiguous_default_area. I also don't
+like to make such run-time decisions on the config option.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+That said, maybe we should make the under-4G CMA allocation a best
+effort. In the arch code, if that failed, attempt the allocation again
+with a limit of 0 and maybe do a pr_notice() that CMA allocation in the
+DMA zone failed.
 
+Adding Robin in case he has a different view.
 
+> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
+> ---
+>  arch/arm64/mm/init.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index b99bf3980fc6..661758678cc4 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -312,6 +312,7 @@ void __init arm64_memblock_init(void)
+>  void __init bootmem_init(void)
+>  {
+>  	unsigned long min, max;
+> +	phys_addr_t cma_limit;
+>  
+>  	min = PFN_UP(memblock_start_of_DRAM());
+>  	max = PFN_DOWN(memblock_end_of_DRAM());
+> @@ -343,8 +344,14 @@ void __init bootmem_init(void)
+>  
+>  	/*
+>  	 * Reserve the CMA area after arm64_dma_phys_limit was initialised.
+> +	 *
+> +	 * When CONFIG_DMA_NUMA_CMA is enabled, system may have CMA reserved
+> +	 * area in different NUMA nodes, which likely goes beyond the 32bit
+> +	 * limit, thus use (PHYS_MASK+1) as cma limit.
+>  	 */
+> -	dma_contiguous_reserve(arm64_dma_phys_limit);
+> +	cma_limit = IS_ENABLED(CONFIG_DMA_NUMA_CMA) ?
+> +			(PHYS_MASK + 1) : arm64_dma_phys_limit;
+> +	dma_contiguous_reserve(cma_limit);
+>  
+>  	/*
+>  	 * request_standard_resources() depends on crashkernel's memory being
+> -- 
+> 2.39.5 (Apple Git-154)
 
