@@ -1,168 +1,125 @@
-Return-Path: <linux-kernel+bounces-678706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7161AD2CEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:59:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB263AD2CFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 07:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99AF518922BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95103ABDBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE6C25E464;
-	Tue, 10 Jun 2025 04:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB54F25D90C;
+	Tue, 10 Jun 2025 05:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijFRs3FJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="dY8Ym0u4"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA7C1442E8;
-	Tue, 10 Jun 2025 04:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A394C96
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749531556; cv=none; b=kUeDV7UGmnF0XgRtqGGL/BAiuYiUiqLNeJbimvvpIc92HPV0g8meQEjK+q+XYmGka4CVG3rQDPN7MARwV3lwY8Wgh2PrK4uJ3OTw/g7+9PTAfxeR+RP/o+RZmzGAI1C6QFHE2EoX0ISud3+sziFWeKxfV9pMG03lgktiHYbJRc8=
+	t=1749531645; cv=none; b=iD/h9CCCNWBfAAfnku20cR2Uj7bUXvs9S8HMxavzs+1sLLwzI8I8DHxGe+HXycqcplKRWcg0DtbS4CnGYcVOc9kaJnEFtEYdBLLPpEQLhjnMQs/Zs5hyyXz4Q9PNHc1XFAcJxz6wP7YRohcuPaUdEqQN7aBrCVSSyP5fFrx/y6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749531556; c=relaxed/simple;
-	bh=Bl0VU031wuanwqojfXK8seZUYjDoo2UHxIphASGINsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozvvmX6cR1As6I1vxmMXQj76C4W/YLIwuWLizOx8mjsFQB37hmWDQUkl+/AwvMYTN6QuDsBMIxEivhLb7vUSGgveRPhmjyXO7dU83Vkx9ixg6LT+RYQhBagOrBBslILxdHM8nusKpFsqUkuwTa4tvI3sG5p38Ehb+LNVvhVT1C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijFRs3FJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 056A4C4CEEF;
-	Tue, 10 Jun 2025 04:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749531556;
-	bh=Bl0VU031wuanwqojfXK8seZUYjDoo2UHxIphASGINsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ijFRs3FJy2TRBzsORyb5E0q1Ojzpt5edAEwVMFxK3rq9bxqFt4NCtUsVoS5dEEJRO
-	 B4sluDrFNTNWINoXjfMTCjbNxlcHL0NA5cxHHb9JXulrAFa03/2ClZ3GBbcnZrBNHu
-	 CEfjfvS+mXcAVmEnUm7aI1v6iI1LB7Ul6zFyyzGEvrrYIcX1tv6zY2NMzuzvxe24is
-	 p2lM0BccGBt5+qXMKSogqNAPwz+9FHcreSMYlRuz7xE85FsymVeXIzlledONZUeKwc
-	 1yaHrLzHil5b6AmRTuG6hct3mLb1LM0cKguk38DYMo1Jke1JKvow3jHlgqP8O41am/
-	 PNTO+rK2KJJOg==
-Date: Mon, 9 Jun 2025 21:59:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Aaron Tomlin <atomlin@atomlin.com>
-Cc: arnaldo.melo@gmail.com, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] perf probe: Extend the quiet option
-Message-ID: <aEe7ojjNf-3k_OzU@google.com>
-References: <20250504104351.1549583-1-atomlin@atomlin.com>
+	s=arc-20240116; t=1749531645; c=relaxed/simple;
+	bh=RkxdbjODuUBbJ5k/31S1WlX4KjeLcBHfIRe8IjRh4cM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRuBSbkE6yDJXRIMJR/aa0QB0FaIPg1UaPn011H9B1+SHsyBwPbK9/3Mw7+H+H2TDOt57Nl1Cg+XyauWsCRrNtTqqKulleUCDztoBi033LTrbztMfId2g8pZCoMYdN5uQpZdKxQHtUZAqSDz+KNroFJDXHuOtRypi6nvvicRGgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=dY8Ym0u4; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5534edc6493so5422100e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 22:00:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749531642; x=1750136442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eG+QZlPSjwTQk4wkX+p/421OYI0NEzGDtfD+xtVDmlU=;
+        b=dY8Ym0u4cZWKHheiGEYP6FleB6RMmRwnsgNwr95xHPwcEwSa8AUt2wBuwkPQEbmwqA
+         /+xdll3T4w3fy4Tmynsk50Aj0D7y1MTjYzt72Yt3W/Zyjp38kOXgm4AWxej+jf2efp0B
+         7Nk9xgorsuhx70P0VXYT3TzRfS6/9JrXzv3vARcIaHPuz2XVi5S1j26Rs1NXDiMAhVCI
+         arYlPaw+JZ7gVhzcpscPgEufWtsh3diuOYYpQYo0lAiQSAROO0B/jz3m8RRdbCid1e+V
+         vGjk6h/XUN0Vfkv9RjxcCA8C7Lq+Rw9F7lRurYn/HyxPtojcYgcDCsqd/lR7E8dlzIhj
+         K0zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749531642; x=1750136442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eG+QZlPSjwTQk4wkX+p/421OYI0NEzGDtfD+xtVDmlU=;
+        b=hAd72EBAea8+8mG8dNKbxPJb7LLCCcIesEVIbuvUpCT1zjW9g+36nk5HGMYrL32Y2C
+         +0eDYsnhUucanegPHAb9s08CgAeVTX6Ij+OvGDkA8/pkCv33XJSMPAnJgOzz6rBPvvwH
+         p1rWb+w4Z8QvPPgklgJ4ysCo7IyX4KPBwPF1l9MxOfc/WVkHg8I8iXWlQ5idz4obN1UZ
+         wDVEtjAJudznflqEVLv/7HgsLy1vSt/x2DQhE1uZlxZYh8LOPOBwBv9s74/d/wycXZoG
+         UM65756QIqvpY+dbOELJL1L4yAIvnlqeB13W3ZTOnzKDk1y+AgEsfnA5/XDRa2cGNEZi
+         L9qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRrW9j4jIuR+dity7xAQtx0ecxyZKGbi0a8StDz+q/xK56Ic8pRXd2lNJcx6WwbcAGQXMLV9enNnONq6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVf55WBttbRCaorgAMoPoGCQsHVFtE2D5m8FXYKpLYpG1vDjXe
+	duQKFW5Qnobi/QHQQ6Fp+Z2IIumIqMByaUvhJmP5ZQs6VKaJmFnhOc0taDGormLjvIGY3GWQuU8
+	E4ynxjg+l2ZuIihaX3PdU2e5BUwYPxPdoXYx0K6ZdJA==
+X-Gm-Gg: ASbGncsoQ/sFvJuZkOp1d3S0x0ypjXfnrrYTMAUVFwE2FNAPsiHEnMAExsEiDr0akjr
+	wknCUnMjJ1AD1/MtnVjcALK7veVPmtPFh5gPF84OimLsFfUVUiAL0nMVrKuE2ClTZO9vw2zhfmq
+	YIYgN9ZDKOWnBSpK7uhywVl8urdtHDpItuC5Q26aa8BPxd
+X-Google-Smtp-Source: AGHT+IFc4bbR66Mv3WuueixJqBxHJULaviJZZe7HO26p9olq62flNuPFgpr2ULooMQPQ7QoisA5p/os4fCv6d0mjLC8=
+X-Received: by 2002:a05:6512:1193:b0:549:8675:c388 with SMTP id
+ 2adb3069b0e04-55366e338e8mr4285433e87.52.1749531641605; Mon, 09 Jun 2025
+ 22:00:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250504104351.1549583-1-atomlin@atomlin.com>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-9-apatel@ventanamicro.com> <20250530-stark-maximum-2306978237db@spud>
+In-Reply-To: <20250530-stark-maximum-2306978237db@spud>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Tue, 10 Jun 2025 10:30:29 +0530
+X-Gm-Features: AX0GCFsG-CIRwlRAtjpdQwDbh-LfI7tbNGcMGwY5mVPx4e4ZARAwAgOKgyJVzwQ
+Message-ID: <CAK9=C2Vs+q2t+iB7zdrXdieCcT7yYvQM4Z0vdVW3iGKG01UF9A@mail.gmail.com>
+Subject: Re: [PATCH v4 08/23] dt-bindings: clock: Add RPMI clock service
+ message proxy bindings
+To: Conor Dooley <conor@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, May 30, 2025 at 9:58=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Sun, May 25, 2025 at 02:16:55PM +0530, Anup Patel wrote:
+> > +  riscv,sbi-mpxy-channel-id:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description:
+> > +      The SBI MPXY channel id to be used for providing RPMI access to
+> > +      the supervisor software.
+>
+> Sorry for the delay in reviewing this series, wanted to talk to some
+> folks at work before doing so. Overall these bindings all look pretty
+> good to me. I don't think the description on this property here is
+> particularly great, I didn't follow what it was meant to be used for
+> immediately. But I don't have anything meaningfully better to
+> suggest nor do I think that anyone actually writing the dts for a
+> platform using this binding will struggle to understand it.
 
-Sorry for the long delay.
+Okay, I will keep this as-is until we have a better suggestion.
 
-On Sun, May 04, 2025 at 11:43:51AM +0100, Aaron Tomlin wrote:
-> To provide a consistent and complete quiet mode, this patch expands the
-> scope of the [-q|--quiet] option to suppress all informational messages,
-> including those indicating successful event creation, in addition to the
-> currently suppressed warnings and messages. For example:
-> 
->     ❯ sudo ./perf probe --quiet --add proc_sys_open
->     ❯ echo $?
->     0
-
-I don't think this change is needed.  I also see no messages before this
-change.
-
-Indeed, using -q/--quiet option makes verbose to be -1 which disables
-any pr_info() messages.
-
-Thanks,
-Namhyung
-
-> 
-> Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
-> ---
->  tools/perf/builtin-probe.c    | 16 +++++++++++-----
->  tools/perf/util/probe-event.h |  1 +
->  2 files changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
-> index 69800e4d9530..aee756aad19d 100644
-> --- a/tools/perf/builtin-probe.c
-> +++ b/tools/perf/builtin-probe.c
-> @@ -391,7 +391,7 @@ static int perf_add_probe_events(struct perf_probe_event *pevs, int npevs)
->  	}
->  
->  	/* Note that it is possible to skip all events because of blacklist */
-> -	if (event) {
-> +	if (event && !probe_conf.quiet) {
->  #ifndef HAVE_LIBTRACEEVENT
->  		pr_info("\nperf is not linked with libtraceevent, to use the new probe you can use tracefs:\n\n");
->  		pr_info("\tcd /sys/kernel/tracing/\n");
-> @@ -467,8 +467,11 @@ static int perf_del_probe_events(struct strfilter *filter)
->  
->  	ret = probe_file__get_events(kfd, filter, klist);
->  	if (ret == 0) {
-> -		strlist__for_each_entry(ent, klist)
-> +		strlist__for_each_entry(ent, klist) {
-> +			if (probe_conf.quiet)
-> +				continue;
->  			pr_info("Removed event: %s\n", ent->s);
-> +		}
->  
->  		ret = probe_file__del_strlist(kfd, klist);
->  		if (ret < 0)
-> @@ -478,8 +481,11 @@ static int perf_del_probe_events(struct strfilter *filter)
->  
->  	ret2 = probe_file__get_events(ufd, filter, ulist);
->  	if (ret2 == 0) {
-> -		strlist__for_each_entry(ent, ulist)
-> +		strlist__for_each_entry(ent, ulist) {
-> +			if (probe_conf.quiet)
-> +				continue;
->  			pr_info("Removed event: %s\n", ent->s);
-> +		}
->  
->  		ret2 = probe_file__del_strlist(ufd, ulist);
->  		if (ret2 < 0)
-> @@ -531,7 +537,7 @@ __cmd_probe(int argc, const char **argv)
->  	struct option options[] = {
->  	OPT_INCR('v', "verbose", &verbose,
->  		    "be more verbose (show parsed arguments, etc)"),
-> -	OPT_BOOLEAN('q', "quiet", &quiet,
-> +	OPT_BOOLEAN('q', "quiet", &probe_conf.quiet,
->  		    "be quiet (do not show any warnings or messages)"),
->  	OPT_CALLBACK_DEFAULT('l', "list", NULL, "[GROUP:]EVENT",
->  			     "list up probe events",
-> @@ -631,7 +637,7 @@ __cmd_probe(int argc, const char **argv)
->  	argc = parse_options(argc, argv, options, probe_usage,
->  			     PARSE_OPT_STOP_AT_NON_OPTION);
->  
-> -	if (quiet) {
-> +	if (probe_conf.quiet) {
->  		if (verbose != 0) {
->  			pr_err("  Error: -v and -q are exclusive.\n");
->  			return -EINVAL;
-> diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
-> index 71905ede0207..55771113791f 100644
-> --- a/tools/perf/util/probe-event.h
-> +++ b/tools/perf/util/probe-event.h
-> @@ -10,6 +10,7 @@ struct nsinfo;
->  
->  /* Probe related configurations */
->  struct probe_conf {
-> +	bool	quiet;
->  	bool	show_ext_vars;
->  	bool	show_location_range;
->  	bool	force_add;
-> -- 
-> 2.47.1
-> 
+Regards,
+Anup
 
