@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-678935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C409AD3039
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:27:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B85AAD3040
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BF21730E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6876166EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2ED28136C;
-	Tue, 10 Jun 2025 08:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7022820B8;
+	Tue, 10 Jun 2025 08:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAGlQClE"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rXo78bJk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="az34+tl6"
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9264527EC7D;
-	Tue, 10 Jun 2025 08:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9F828137F;
+	Tue, 10 Jun 2025 08:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749543953; cv=none; b=BXtT/vdgIGgeF9kVu7lUShWRgkc+kjXS5PgtfGjtk+JSpQiNl909G40xtDmcsiqOSO8+eGpvG9sh3qcOtXTb8r4O6uL6IuAerLyWJoTZ2IfJx/X3yxwvA3qU+V45c4Jho7okcWtT/Vl2HkgPWsBZNVRqrpm+//CwhSd0QSCIAC4=
+	t=1749544013; cv=none; b=u0mUGMlhmzXSyLL91o/AXuGydUKwACdxf+Y86TX89GgWfV9IoH0D+ICnzPrTtc21CoL8LRunbEmyQQP9nV3vXsvitG4fjs11RVw9poXgHp4nLeNT3tJAMWLV4CByt0GSIZbbtPJ0IrvmZwIazRxPh2+7P6HlEU7qG4v2EaCl+ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749543953; c=relaxed/simple;
-	bh=pGvauvieYwYiolCBSn4Lw2JXhkhZQIEF4zRiGV68/AA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5obgkf8jSNch8dzf9P0mcY6Hh0qynpSOj8/63IaE421e+s9bKkOJC7jkB196l8od32Q1a0+us21Sfnh3RNuE8CAUiTTOCLtiVdmY37+Rb4NVPYo6S1nQEkQRthJ3CmSPIwz7tpJT6LLLQMvPBEwVmKBjiz4RL2JD2q7CRmFjig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAGlQClE; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54d98aa5981so6232039e87.0;
-        Tue, 10 Jun 2025 01:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749543950; x=1750148750; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pmu5xlM5q+wbKmkDcTikYWeNSMGX5E7OEibClfmyPzg=;
-        b=RAGlQClECitGM8MFDvH4MmknYCvvW2os1nfK3hIreEdkOvrTLQwLQ53VkA603WtwX1
-         LLaTIG6kWcY82MZ1XsyEpJF9LdmsmPmH2CLrxghaPmQN6Fn5765J3xaY6xUHuhb+1izY
-         FASMK6djNdcG+E8DWaufPuGU2laTYbZpc9cJFPu1m25pYZBJc5878PLDKe1TjM2x3KUt
-         UBPsAKTlVusRsB71+67/4IoULtcZ8jcP5WBfVFkp7yXSaoL0aLYIunNncqkL+T23257J
-         4Y1OXkLpWhtdPb7kMqJJ/RgFnKNd8isIfekD1HwEPrJCuVs9r3KbNIZouDXAEJ2WuYD9
-         NR8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749543950; x=1750148750;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmu5xlM5q+wbKmkDcTikYWeNSMGX5E7OEibClfmyPzg=;
-        b=KpPS+xDjV3lwrtv6EwHOB2u3JLawkTMDrmGJZGjsT/eQpgQvLug/FgyCR+B1FqwGi8
-         KCy/wekamIezQ8ueVPXmc94XwtX9hkwSoYDJpyA68EbnPZT7KqsQn6QqSjUpE0Urdx6v
-         eqNBLKP7p+0ZNhVC+W8g64VyxRsWGTk5t6lbbwMb7KfOtgLMpLV6EQgV2+HkSA9P2Pxv
-         M7Ksfui173xptG4Pv67S3UIfh8R9Rlk9QtLe4Fe3ZDj6Pw15t5Tj3DbtysnyoR7a7zBJ
-         V2J7CLY9pudXLIWH0okTT+hVxZSdhMHBAmLb0wijIfK9OY7Nn+xw1+TXPnUwTumE24fV
-         wL1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgNLHW1YvfjVhNsdQrmgY7/T6ykERZdtL/ycgzP4wmClLQEWo+F7hiMZilDYqpPqVsqL7Xn9NiU7/HyTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl0sF7mLq/oIQTICnZTUKAF1vSAiK3ljnqwlO2DzaOHUZohdBC
-	sBlJmUReQKFMHrDKtMEtRPGr1y7bMqG7CyjHLKdNnyj9+3C6y2cxqbhC
-X-Gm-Gg: ASbGnctEZLzZeqCXP6KRNmcGJgY3Q8UvkU+48tpYl6yqjmgldAPkqHCK5tSpa8ZZfLf
-	6p5OLUeuQH4Xj2ERZrCh5Lzx1Ylf8O2ADoombACgq+mD0v6a9RmxsFDGLBvn5lGaCxxsqmf3Gia
-	SSngqx0qHBlZUcNEDJlmJ3oOaYX9UZ/U8EL1DajblbgS3LEIElXsqOBCy33CBjFAzdzow++5HwY
-	4OkyEpGg55Amh75IenQhDNaT6y3qAHg60zN2HpOlpImIUsax6RkeoJpk5LwnIQ5xPwHBJ6/4wbV
-	Yrb8SCC952qpy7WtCqvtrkTPDT6gvrVKjFez3GFvVgfcxQZOriRsxpGKxXV4yRyZRpRTVOhNriZ
-	I8ikB5URlI3uP+h8ovu4WlYy7N3BvZ7y0Xlwn5Tjh+eSJ7w62jG/2qxo8Bwa+BFWgX4h9HKqcFx
-	cRC/ZEAC/NMvvGCPBSpDbstsE=
-X-Google-Smtp-Source: AGHT+IF76hHPrwjSwokvPotgutwwpbFV0e+QYImvflw14pJttizj1RcDHECCl4rbU/F3XGf2N30kew==
-X-Received: by 2002:a05:6512:3c91:b0:553:6526:82cd with SMTP id 2adb3069b0e04-55366bdf94emr4141810e87.13.1749543949307;
-        Tue, 10 Jun 2025 01:25:49 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:6e:3100:dbdf:2d4a:ad23:d037? (2001-14ba-6e-3100-dbdf-2d4a-ad23-d037.rev.dnainternet.fi. [2001:14ba:6e:3100:dbdf:2d4a:ad23:d037])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553676d7651sm1453465e87.72.2025.06.10.01.25.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 01:25:48 -0700 (PDT)
-Message-ID: <4d92cc22-3fc5-4ae5-a7d3-490bcbfbd93a@gmail.com>
-Date: Tue, 10 Jun 2025 11:25:47 +0300
+	s=arc-20240116; t=1749544013; c=relaxed/simple;
+	bh=jDhdLXBPgSGt6oRlbGs9cOp8/AQDYr5pxPRzrgiK+8k=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qHuln0FO/8vosr31ioBS+y88y8DieGenheBRfqV2UkugvJfTG8mGsLBKiq2jKH2gDWrj0/KAF4rTb9WoEg6MccRJgjehzNMq8pjJZoVgvl/Mr1eNgdOZU+3T42akichiNP5mOJjHBzjRFyDij3DrvhbAb7oZYejBnrPbHmYPwfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rXo78bJk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=az34+tl6; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 81B062540150;
+	Tue, 10 Jun 2025 04:26:49 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 10 Jun 2025 04:26:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1749544009;
+	 x=1749630409; bh=Zsf/amW9Z6SOQQ8AqKNeaHP1tfn0mldyK1FoWg2o0x8=; b=
+	rXo78bJkWsapuiVOISzl0DtpeV6Pz0tERB+odlfUvvg2BZ2rqjt/L3qvvvRN2orf
+	JpUboAJZaeHqFqcy6buVd/2Fm+fac5kRy3iQ4BoschLMISfbTt9BE5q4Q4gUuUdG
+	nJUPVWNfOkNWytMgbGT1ibpe2LB5p2x0wl4b1GSdxtZR6FTgoaPMqe7Tm2Rbey1i
+	UWu/1f1FUoZJfqPVG4G+klPijfUWQqbULTf+2VcW0zlovW6jhFYFDrVH79SzlFlU
+	1sNVm4Q7oYJiZt1exctzcAtcPNsKCy+9qwbvQq+V0AANfhkzN/Ztfj3nbTMFJYo8
+	98odcmbXPsiuwJH+tW4Vog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749544009; x=
+	1749630409; bh=Zsf/amW9Z6SOQQ8AqKNeaHP1tfn0mldyK1FoWg2o0x8=; b=a
+	z34+tl6t7Av4+T3zFyKBxHVPpEBM9lFx7VSkrk7z0M2AJ9SCb4brI65hSjeH8DAp
+	nx9zli7+06P7NX1mencOXAGCQRIuQJh1wi3bmOxYIxvc/MDM+BIUUWTbx2ZKamDB
+	XV+a50P+Fa3/znYfVSEJq4R/WL1Lh/VdWsqhdTqxK3idmajqhKLm6amDbJzKqYHT
+	w5/bcqHaQy/FVkwqG/NMO0ykokE5UsuMvKSqYguUXi+fzmD6+Oh31lHS4c7gZDMJ
+	JBRlO3S8QBenbRcSbVWSltc5HV6XiJ3mNVF3k7qvlDEzbn6XSbRgE6SQEpQiP6tG
+	eoA9cos+cTrd6Oox2s8nw==
+X-ME-Sender: <xms:SexHaNRe0LUD-K-YgB_fC0izq4_KzgOcyfzQbqx5IQyknhtZjx1XBQ>
+    <xme:SexHaGz0UCq2Ld00OfCIOI3VPFYebjxD_GaDKSnaVBHsD2qigfKRDmPunxx4kdfnw
+    5p-YGtuXD60ItmhkN8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddutdeglecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeej
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeholhhtvggrnhhvsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepjhgrmhgvshdrtghlrghrkheslhhinhgrrhhordhorhhgpdhrtghpthhtohepihhmgi
+    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehvlhgrughimhhirhdrohhl
+    thgvrghnsehngihprdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshhpihesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:SexHaC1yAbPVefVqCNiUSkTXxY2XxPbIQb9pW_-6ohHdILnQmHP0Kw>
+    <xmx:SexHaFB3kRAeS8J-HYWoaouuiYsuHQKOiQDeQA7sSBXleszmnbbhXQ>
+    <xmx:SexHaGhxJVkxiRU2rwGQadFZ7mybFUTSIM4EIOW4XbqHZsDEIAkllg>
+    <xmx:SexHaJpVm9WuYgZB57VL66NTD62Dt2pPlxelsRJls_lzpN0mBKPTmw>
+    <xmx:SexHaAp1ANxjI_D5_lui4d8maVF1RhQpDAfFWXRRAFDNQ9euaDwElp3->
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0A90D700062; Tue, 10 Jun 2025 04:26:49 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] docs: Fix typos, improve grammar in Userspace API
-To: Jonathan Corbet <corbet@lwn.net>, mchehab@kernel.org,
- ribalda@chromium.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com,
- hljunggr@cisco.com, dave.jiang@intel.com, jgg@ziepe.ca, saeedm@nvidia.com,
- Jonathan.Cameron@huawei.com, ilpo.jarvinen@linux.intel.com,
- mario.limonciello@amd.com, W_Armin@gmx.de, mpearson-lenovo@squebb.ca,
- skhan@linuxfoundation.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev
-References: <20250522115255.137450-1-hannelotta@gmail.com>
- <20250522115255.137450-4-hannelotta@gmail.com>
- <874iwoaa94.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: =?UTF-8?B?SGFubmUtTG90dGEgTcOkZW5ww6TDpA==?= <hannelotta@gmail.com>
-In-Reply-To: <874iwoaa94.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T7ec8a5524929d219
+Date: Tue, 10 Jun 2025 10:26:20 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "James Clark" <james.clark@linaro.org>,
+ "Vladimir Oltean" <olteanv@gmail.com>, "Mark Brown" <broonie@kernel.org>
+Cc: "Vladimir Oltean" <vladimir.oltean@nxp.com>, linux-spi@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Message-Id: <1c579729-4461-4666-ab1a-77f17a320ee9@app.fastmail.com>
+In-Reply-To: <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
+References: <20250609-james-nxp-spi-dma-v1-0-2b831e714be2@linaro.org>
+ <20250609-james-nxp-spi-dma-v1-2-2b831e714be2@linaro.org>
+Subject: Re: [PATCH 2/4] spi: spi-fsl-dspi: Use non-coherent memory for DMA
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 6/10/25 00:13, Jonathan Corbet wrote:
-> Hanne-Lotta Mäenpää <hannelotta@gmail.com> writes:
-> 
->> Fix a typo and improve wording and punctuation in
->> the documentation for Userspace API.
->>
->> Signed-off-by: Hanne-Lotta Mäenpää <hannelotta@gmail.com>
->> ---
->>
->> Notes:
->>      v1 -> v2: No changes
->>
->>   Documentation/userspace-api/sysfs-platform_profile.rst | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> Applied, thanks.
-> 
-> jon
+On Mon, Jun 9, 2025, at 17:32, James Clark wrote:
+> Using coherent memory here isn't functionally necessary. Because the
+> change to use non-coherent memory isn't overly complex and only a few
+> synchronization points are required, we might as well do it while fixing
+> up some other DMA issues.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-Thank you!
+This version looks good to me,
 
-Best regards,
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Hanne-Lotta Mäenpää
+I had reviewed an internal version originally and had some comment
+on that, all of which are addressed now. You did not Cc me on the
+other patches, so I looked them up in the archive, Patch 3 also
+looks good to me and complements this one (i.e. you really want
+the combination). I did not understand the logic in patch 4,
+and it would be good if someone else can take a closer look
+at that in order to Ack that.
 
+      Arnd
 
