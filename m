@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-679909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA411AD3D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C864CAD3D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F6A17A8EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B516F17B28C
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B6B23958D;
-	Tue, 10 Jun 2025 15:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962F4230BF5;
+	Tue, 10 Jun 2025 15:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0Hco7bm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED5022A4CC;
-	Tue, 10 Jun 2025 15:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r22VQRuR"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24C517C21E;
+	Tue, 10 Jun 2025 15:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749569578; cv=none; b=bs+T/Ik/HPBaLycgoBss15VfL0d5+5xX/BKdEMMQ9QhpbrLnCr4n3Ke9Lvi1j/9y+qejRAsnF5JNdSuMAeu4pFQh3CeMUxYx69IGI4Q7HQKOc8PWlojfMPs5BgxXZVywzjX7oUJieML9pm9l1XkywX/Bee0/kSNNbVfe8GAynOU=
+	t=1749569638; cv=none; b=LS2N1p61em3hgsb5dwab1iG7JdS0y4i7GccsUdQPT7fFP+JGlWfqe1wVnHxli4dGgxVn0TnQ7lEp5FXNl2pBpi7w9Sbv0Df1Skmsd0dIL9qRNPIpMSj83UG9zrJZNY7kXPVbfAFj3OxG4PUODUp3lqC8Aef+aKQPHIKfv6W10vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749569578; c=relaxed/simple;
-	bh=q6RS+C7zhMB25iOBQZc/9f89PNf4OlYGhPMsZzpqjfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eaWDL4RHOKOQEF3x1Nrt+IaonbM9sZvGQg7rmK2oxFIlgvn+a+an3HDgZijp6FtTj7TMudFoSFLuNZ1Ib8RvpkLSXqoIeSCYpxpahxZKuWxPl6S1uQZ2sUNZEi/1bs55SRxi375522JaXNKfb7tgB9DF1rv5gznGpIRC1brdxh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0Hco7bm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F51DC4CEED;
-	Tue, 10 Jun 2025 15:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749569578;
-	bh=q6RS+C7zhMB25iOBQZc/9f89PNf4OlYGhPMsZzpqjfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0Hco7bmWY8LdPkZ4LFbstckfrj0sRITV0hyXuN5O7BQY4TLrMq+JMw2Kuj2oBXgp
-	 iPlfxpnVgHKKz6fqdO7lOBBMjkLR8XIB5nyrT2mscI2c7iQpMwS8qVByuB5RgR0Qpn
-	 fq3qY4T//LWNkv11StE8oq2CZWrtXVbvD9s+XCTkmhzZQiIoi7FophCSbF2nwsNbaD
-	 rGpIfk2DlQ4+HS31zvpqB1JuvY09EdQl4qnp+tp6tZvyHbsh5PF4HF5C0cg0IpDasc
-	 vjhngrsOw6vIsVBGc2yEbScLHPVHlI6bZhEXhapJsFHgBVqWCuuV9NIhqRiG1Sdxwi
-	 6eLaP2uDlKV8A==
-Date: Tue, 10 Jun 2025 16:32:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Sven Peter <sven@kernel.org>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] dt-bindings: i2c: apple,i2c: Document Apple
- A7-A11, T2 compatibles
-Message-ID: <20250610-connector-agility-f2d75a8ab825@spud>
-References: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
- <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
+	s=arc-20240116; t=1749569638; c=relaxed/simple;
+	bh=Z0tZqVZm0c0pdMekdv7cs5FM5cbYEF/ngEMiVAIKcok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rOhLwU38LY6q5YBW2zoghz1ZHql9jQ2Nwr9lvqzg+oyomHj9b1z7UbrGasCpfTy5w7FiyrDQ4EFI62xrM4IuwerUcEXVECSgsrM42AzVuxmXO9E5xiEVGuGO8PDgi6E3VHp/eJ6Hf3RV7bN0umyNGzhbhJ//QxZEUlE0TsuNzbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r22VQRuR; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 184C72113A7A;
+	Tue, 10 Jun 2025 08:33:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 184C72113A7A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1749569636;
+	bh=EXF5QOvj3gLvyZ3xIYnh29AFDo83SVY+Soxt4pZHHNQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r22VQRuRofvzYBhMQxeZbt4tOnDGGJJjNls5cYs0WMTmVuha6Njl+ivrnjfGOidqb
+	 LglGuAydHfvm88OFygB5nrlVYtVzDJkSCFCF296b15Sn2o7weVqv/Xn+ZA/v84gxmN
+	 f+YjrFtQuscToufIVhPFlUSoXrlZuqR8128DNlrY=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: arnd@kernel.org
+Cc: arnd@arndb.de,
+	decui@microsoft.com,
+	haiyangz@microsoft.com,
+	kys@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mhklinux@outlook.com,
+	nunodasneves@linux.microsoft.com,
+	romank@linux.microsoft.com,
+	ssengar@linux.microsoft.com,
+	wei.liu@kernel.org
+Subject: [PATCH] hv: add CONFIG_EFI dependency
+Date: Tue, 10 Jun 2025 08:33:54 -0700
+Message-ID: <20250610153354.2780-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610091810.2638058-1-arnd@kernel.org>
+References: <20250610091810.2638058-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="x4dHHzQr44MfMq5x"
-Content-Disposition: inline
-In-Reply-To: <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+> Selecting SYSFB causes a link failure on arm64 kernels with EFI disabled:
+>
+> ld.lld-21: error: undefined symbol: screen_info
+> >>> referenced by sysfb.c
+> >>>               drivers/firmware/sysfb.o:(sysfb_parent_dev) in archive vmlinux.a
+> >>> referenced by sysfb.c
+>
+> The problem is that sysfb works on the global 'screen_info' structure, which
+> is provided by the firmware interface, either the generic EFI code or the
+> x86 BIOS startup.
+>
+> Assuming that HV always boots Linux using UEFI, the dependency also makes
+> logical sense, since otherwise it is impossible to boot a guest.
+>
 
---x4dHHzQr44MfMq5x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hyper-V as of recent can boot off DeviceTree with the direct kernel boot, no UEFI
+is required (examples would be OpenVMM and the OpenHCL paravisor on arm64).
 
-On Tue, Jun 10, 2025 at 09:45:20PM +0800, Nick Chan wrote:
-> The I2C controllers found on Apple A7-A11, T2 SoCs are compatible with
-> the existing driver so add their per-SoC compatibles.
->=20
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Being no expert in Kconfig unfortunately... If another solution is possible to
+find given the timing constraints (link errors can't wait iiuc) that would be
+great :)
+
+Could something like "select EFI if SYSFB" work?
+
+> Fixes: 96959283a58d ("Drivers: hv: Always select CONFIG_SYSFB for Hyper-V guests")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---x4dHHzQr44MfMq5x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaEhQJQAKCRB4tDGHoIJi
-0iShAP0aNRWibVunJQxPKvAgQLEjADb3xVu5IbW7ACnrlSyizwD/SBjcrfNCx6LI
-j/CfImGYmkxvjKvzuDmkDe88dmljGQU=
-=fLjK
------END PGP SIGNATURE-----
-
---x4dHHzQr44MfMq5x--
+>  drivers/hv/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+> index 8622d0733723..07db5e9a00f9 100644
+> --- a/drivers/hv/Kconfig
+> +++ b/drivers/hv/Kconfig
+> @@ -6,6 +6,7 @@ config HYPERV
+>  	tristate "Microsoft Hyper-V client drivers"
+>  	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
+>  		|| (ARM64 && !CPU_BIG_ENDIAN && HAVE_ARM_SMCCC_DISCOVERY)
+> +	depends on EFI
+>  	select PARAVIRT
+>  	select X86_HV_CALLBACK_VECTOR if X86
+>  	select OF_EARLY_FLATTREE if OF
+> --
+> 2.39.5
 
