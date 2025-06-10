@@ -1,255 +1,183 @@
-Return-Path: <linux-kernel+bounces-679402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05F5AD35C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C6FAD3619
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0483B5E32
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:14:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368491895D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4045428ECC5;
-	Tue, 10 Jun 2025 12:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HSDoqAx/"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A187291171;
+	Tue, 10 Jun 2025 12:24:41 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683AE28ECD3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3092122DA05;
+	Tue, 10 Jun 2025 12:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749557671; cv=none; b=SVFOaW7F8dLSGMf28UQp/4jo6qohCjWEVBn+S9AkP9cdKqMoPSnR9d5W4WIshP4yFzzF7FEyN/pfl4N7KrsXtCpbdLGVQ3kQMUKjyHqMpwp1P7HAuEySeKYmIKZmLYUsxO2XKubkq1CodBefTpFl4ieNKyER4QFvSAejcp1GTqM=
+	t=1749558280; cv=none; b=iq+OYJKNUB51iaqzWA4a+wYrq9j3j6v5ERcz/iC27zundn7M/XxGrT0qV0ZEjyuLr1tXjzqgyJ9NwHBFY+UFpETs5DgMncXyft7YTO8FeQrOFrnZ+QFbx3wTWhiswXTiZP5tjYBtuhJF1kaGHLEUjX5K+amGwJBsxCXWWV3gP4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749557671; c=relaxed/simple;
-	bh=UqEyzX3tgxZjf0rHsn4e6H4a4wpYQHQDNEtsEDoIZww=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lk4ye3CMc8KE8AcaHPx4ZZMLFf2GIQs6p+jS+O2HYq65FGHy95z8lphWBXC2/7cIA+IhNZx7p9SB/gUIdI81w9OLE8k7K6h9b+CuOZKYRtX1hnkUqnqVqFzP/Z+JLMWW32aEW0+b+AbCNNnJ1HDuLXOut4VbR3Vl7AOyZft/Ngw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HSDoqAx/; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-442fda876a6so47993685e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749557668; x=1750162468; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/DPVdSZMDklf6mtDF12nzBZep9SyWTS1DC6wAFg2MeE=;
-        b=HSDoqAx/rGnGEAPg94LPLG8h4sCkLKlH3b8n3TM+N1lhj8xPNVil9pWfQmtdubnRMs
-         Wz/eTTMTOeTJNEh/W0YrrnhIosYhjaJN3+00N9vPcArg2RaWKP+U1ItD5sDw7JbgUMFj
-         h3WVtOALz845TuBxdkPZBVZbbPMl7UzDPNer1wgnIZxggs+AhY8rMz9oehhGyw10tlUH
-         daVHAZqzDFD17AChOlzrYHOlxO+9oxj2IyZrwiUyGoJrwz7lDY1pLKbAd2OJD3D1PDLC
-         aQhzi4F1oHHOEEuWfdWesxVg0/Kc0/HpoyQiUurlJAaIkcbiZXx2VuD43WY8GpCklrdB
-         5ZEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749557668; x=1750162468;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/DPVdSZMDklf6mtDF12nzBZep9SyWTS1DC6wAFg2MeE=;
-        b=VjffP4w7WBFEHqD2+5L3PZins96x5OOhEJl5LDff4+2x9z+6frHF3Y/oKy1UaR6hjO
-         0hHulrt2Ab/1Hnv9qnZuG6KTybI1KAyCVg4EBwijA7JInKuPLXObV4e95obLM/BZYf9g
-         sEV0NVKaXiOEm3oJHikMPXih9OnCLkdX5Uq+psoHzBQHSWD9jI+aZ8bQwOJvxslSZDZL
-         LsQHC42VmuIhC52N/vFtOtP3QQNvAp4VH2K4tyfqKVEvTSk1h+VsYJYBVGjT4yMlt6pp
-         iYCZ5XJBgmZo2651/RP1CoDp1gXxWQzuncOm2iM3EzUU7PldTj+7wAX9nI07GWPW6rza
-         2esg==
-X-Forwarded-Encrypted: i=1; AJvYcCUujwp2ZhlErm03NUnnzMpcL1kVA4hmFGbteGF3A61tdu3KGhNAK+jtlt8EUq1Or2E89Y2W3bI8C3RUiuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbPA+XdFWtmV3ti5ewfdsuJow2mIVjRfOFxPtOKRF3IYP5SXOD
-	NBz9ZFgDlcpNiPrUUWJdJSZwU7kEvl+3NoAtMFhZJt5X3Nxuj7VZBE/QPig+0uLk0w4=
-X-Gm-Gg: ASbGncsx7ys3EWhRWAPn7PCojHufPeDvmuqAF3isy7NAawU9cceuqavnPk3c7+D7xvf
-	mmd0VlVEh4sJlbTF/8ThLJobhwLiTOBJpQ6R8yFlQu0cJEai3LQLpOqzZatMTg2c/pVg6CQdYL4
-	YdTo54B3bcqppAjOlN3Iax+9VboAXUKAdK8ExvsW23OrEWGYjdFPj7hWtJgaPJ1F/29aXiBgD0m
-	HSAb4t4kHIb4vdD5y+SKk1fj5JSYPpy+wzblXGNO75O1Zvqzw72186gM4rxZhIo+xPWgH9pE6NU
-	awuDpY4E1o0uss+Cojp4kmM+s+MEMlikWuIdKygtyBOWcz2diII0RJtCyeQPPMLJzBqWNOjKqSI
-	+xV/apyMQolEGHlLs4HkhIRvfYyQrDihUiqYbvxaR/ALJ4uc=
-X-Google-Smtp-Source: AGHT+IFrXuEadreb3Ra0ecFZUmb9l900iFMIt+FWoBtiuGQI7QU2cCtR641w8MO4Bqrq58Be6Fu0vw==
-X-Received: by 2002:a05:600c:3848:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-452013d7cc8mr141430515e9.20.1749557667674;
-        Tue, 10 Jun 2025 05:14:27 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:f0b:a9b6:d508:9d14? ([2a01:e0a:3d9:2080:f0b:a9b6:d508:9d14])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-452669ada25sm141140855e9.0.2025.06.10.05.14.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Jun 2025 05:14:27 -0700 (PDT)
-Message-ID: <ec36d5e5-5aef-4d0f-8596-96ef3e674ad7@linaro.org>
-Date: Tue, 10 Jun 2025 14:14:26 +0200
+	s=arc-20240116; t=1749558280; c=relaxed/simple;
+	bh=HP0ZM6ER8CFrE75ylSyz9paF9gHU76JoXOZUEHKlVyg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NUn4crOUjI0JMq+C7DU/aGsfm5LujQSXkeyU407OkhSPOXmrQT8P5A0+mn9ViVVQzXEyBxW3t2p7+DtGi81TYviQlWDiF46Ozj43Jjhc/OBueAf1c7IG/dUSnY3ZzmS3U53UoEc/11mJJSGhUpgUAMKlhvktWkZqhwpf5RMvDO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bGntB6ydsz10WmL;
+	Tue, 10 Jun 2025 20:20:02 +0800 (CST)
+Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
+	by mail.maildlp.com (Postfix) with ESMTPS id 97C5C180482;
+	Tue, 10 Jun 2025 20:24:33 +0800 (CST)
+Received: from huawei.com (10.67.174.78) by kwepemk200016.china.huawei.com
+ (7.202.194.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 10 Jun
+ 2025 20:24:33 +0800
+From: Yi Yang <yiyang13@huawei.com>
+To: <corey@minyard.net>
+CC: <openipmi-developer@lists.sourceforge.net>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+	<lujialin4@huawei.com>
+Subject: [PATCH] ipmi: fix underflow in ipmi_create_user()
+Date: Tue, 10 Jun 2025 12:15:23 +0000
+Message-ID: <20250610121523.252149-1-yiyang13@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1] drm/meson: fix more rounding issues with 59.94Hz modes
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Christian Hewitt <christianshewitt@gmail.com>
-References: <20250609202751.962208-1-martin.blumenstingl@googlemail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250609202751.962208-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemk200016.china.huawei.com (7.202.194.82)
 
-On 09/06/2025 22:27, Martin Blumenstingl wrote:
-> Commit 1017560164b6 ("drm/meson: use unsigned long long / Hz for
-> frequency types") attempts to resolve video playback using 59.94Hz.
->   using YUV420 by changing the clock calculation to use
-> Hz instead of kHz (thus yielding more precision).
-> 
-> The basic calculation itself is correct, however the comparisions in
-> meson_vclk_vic_supported_freq() and meson_vclk_setup() don't work
-> anymore for 59.94Hz modes (using the freq * 1000 / 1001 logic). For
-> example, drm/edid specifies a 593407kHz clock for 3840x2160@59.94Hz.
-> With the mentioend commit we convert this to Hz. Then meson_vclk
-> tries to find a matchig "params" entry (as the clock setup code
-> currently only supports specific frequencies) by taking the venc_freq
-> from the params and calculating the "alt frequency" (used for the
-> 59.94Hz modes) from it, which is:
->    (594000000Hz * 1000) / 1001 = 593406593Hz
-> 
-> Similar calculation is applied to the phy_freq (TMDS clock), which is 10
-> times the pixel clock.
-> 
-> Implement a new meson_vclk_freqs_are_matching_param() function whose
-> purpose is to compare if the requested and calculated frequencies. They
-> may not match exactly (for the reasons mentioned above). Allow the
-> clocks to deviate slightly to make the 59.94Hz modes again.
-> 
-> Fixes: 1017560164b6 ("drm/meson: use unsigned long long / Hz for frequency types")
-> Reported-by: Christian Hewitt <christianshewitt@gmail.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
-> Special thanks to Christian for testing (off-list) and managing so I
-> can do better testing myself in the future!
-> 
-> This is meant to be applied on top of "drm/meson: use vclk_freq instead
-> of pixel_freq in debug print" from [0]
-> 
-> 
-> [0] https://lore.kernel.org/dri-devel/20250606221031.3419353-1-martin.blumenstingl@googlemail.com/
-> 
-> 
->   drivers/gpu/drm/meson/meson_vclk.c | 55 ++++++++++++++++++------------
->   1 file changed, 34 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
-> index c4123bb958e4..dfe0c28a0f05 100644
-> --- a/drivers/gpu/drm/meson/meson_vclk.c
-> +++ b/drivers/gpu/drm/meson/meson_vclk.c
-> @@ -110,10 +110,7 @@
->   #define HDMI_PLL_LOCK		BIT(31)
->   #define HDMI_PLL_LOCK_G12A	(3 << 30)
->   
-> -#define PIXEL_FREQ_1000_1001(_freq)	\
-> -	DIV_ROUND_CLOSEST_ULL((_freq) * 1000ULL, 1001ULL)
-> -#define PHY_FREQ_1000_1001(_freq)	\
-> -	(PIXEL_FREQ_1000_1001(DIV_ROUND_DOWN_ULL(_freq, 10ULL)) * 10)
-> +#define FREQ_1000_1001(_freq)	DIV_ROUND_CLOSEST_ULL((_freq) * 1000ULL, 1001ULL)
->   
->   /* VID PLL Dividers */
->   enum {
-> @@ -772,6 +769,36 @@ static void meson_hdmi_pll_generic_set(struct meson_drm *priv,
->   		  pll_freq);
->   }
->   
-> +static bool meson_vclk_freqs_are_matching_param(unsigned int idx,
-> +						unsigned long long phy_freq,
-> +						unsigned long long vclk_freq)
-> +{
-> +	DRM_DEBUG_DRIVER("i = %d vclk_freq = %lluHz alt = %lluHz\n",
-> +			 idx, params[idx].vclk_freq,
-> +			 FREQ_1000_1001(params[idx].vclk_freq));
-> +	DRM_DEBUG_DRIVER("i = %d phy_freq = %lluHz alt = %lluHz\n",
-> +			 idx, params[idx].phy_freq,
-> +			 FREQ_1000_1001(params[idx].phy_freq));
-> +
-> +	/* Match strict frequency */
-> +	if (phy_freq == params[idx].phy_freq &&
-> +	    vclk_freq == params[idx].vclk_freq)
-> +		return true;
-> +
-> +	/* Match 1000/1001 variant: vclk deviation has to be less than 1kHz
-> +	 * (drm EDID is defined in 1kHz steps, so everything smaller must be
-> +	 * rounding error) and the PHY freq deviation has to be less than
-> +	 * 10kHz (as the TMDS clock is 10 times the pixel clock, so anything
-> +	 * smaller must be rounding error as well).
-> +	 */
-> +	if (abs(vclk_freq - FREQ_1000_1001(params[idx].vclk_freq)) < 1000 &&
-> +	    abs(phy_freq - FREQ_1000_1001(params[idx].phy_freq)) < 10000)
-> +		return true;
-> +
-> +	/* no match */
-> +	return false;
-> +}
-> +
->   enum drm_mode_status
->   meson_vclk_vic_supported_freq(struct meson_drm *priv,
->   			      unsigned long long phy_freq,
-> @@ -790,19 +817,7 @@ meson_vclk_vic_supported_freq(struct meson_drm *priv,
->   	}
->   
->   	for (i = 0 ; params[i].pixel_freq ; ++i) {
-> -		DRM_DEBUG_DRIVER("i = %d vclk_freq = %lluHz alt = %lluHz\n",
-> -				 i, params[i].vclk_freq,
-> -				 PIXEL_FREQ_1000_1001(params[i].vclk_freq));
-> -		DRM_DEBUG_DRIVER("i = %d phy_freq = %lluHz alt = %lluHz\n",
-> -				 i, params[i].phy_freq,
-> -				 PHY_FREQ_1000_1001(params[i].phy_freq));
-> -		/* Match strict frequency */
-> -		if (phy_freq == params[i].phy_freq &&
-> -		    vclk_freq == params[i].vclk_freq)
-> -			return MODE_OK;
-> -		/* Match 1000/1001 variant */
-> -		if (phy_freq == PHY_FREQ_1000_1001(params[i].phy_freq) &&
-> -		    vclk_freq == PIXEL_FREQ_1000_1001(params[i].vclk_freq))
-> +		if (meson_vclk_freqs_are_matching_param(i, phy_freq, vclk_freq))
->   			return MODE_OK;
->   	}
->   
-> @@ -1075,10 +1090,8 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
->   	}
->   
->   	for (freq = 0 ; params[freq].pixel_freq ; ++freq) {
-> -		if ((phy_freq == params[freq].phy_freq ||
-> -		     phy_freq == PHY_FREQ_1000_1001(params[freq].phy_freq)) &&
-> -		    (vclk_freq == params[freq].vclk_freq ||
-> -		     vclk_freq == PIXEL_FREQ_1000_1001(params[freq].vclk_freq))) {
-> +		if (meson_vclk_freqs_are_matching_param(freq, phy_freq,
-> +							vclk_freq)) {
->   			if (vclk_freq != params[freq].vclk_freq)
->   				vic_alternate_clock = true;
->   			else
+Syzkaller reported this bug:
+==================================================================
+BUG: KASAN: global-out-of-bounds in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: global-out-of-bounds in atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
+BUG: KASAN: global-out-of-bounds in ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
+Write of size 4 at addr ffffffff8fc6a438 by task syz.5.1074/5888
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+CPU: 0 PID: 5888 Comm: syz.5.1074 Not tainted 6.6.0+ #60
+......
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x72/0xa0 lib/dump_stack.c:106
+ print_address_description.constprop.0+0x6b/0x3d0 mm/kasan/report.c:364
+ print_report+0xba/0x280 mm/kasan/report.c:475
+ kasan_report+0xa9/0xe0 mm/kasan/report.c:588
+ check_region_inline mm/kasan/generic.c:181 [inline]
+ kasan_check_range+0x100/0x1c0 mm/kasan/generic.c:187
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
+ ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
+ ipmi_create_user+0x56/0x80 drivers/char/ipmi/ipmi_msghandler.c:1236
+ ipmi_open+0xac/0x2b0 drivers/char/ipmi/ipmi_devintf.c:97
+ chrdev_open+0x276/0x700 fs/char_dev.c:414
+ do_dentry_open+0x6a7/0x1410 fs/open.c:929
+ vfs_open+0xd1/0x440 fs/open.c:1060
+ do_open+0x957/0x10d0 fs/namei.c:3671
+ path_openat+0x258/0x770 fs/namei.c:3830
+ do_filp_open+0x1c7/0x410 fs/namei.c:3857
+ do_sys_openat2+0x5bd/0x6a0 fs/open.c:1428
+ do_sys_open fs/open.c:1443 [inline]
+ __do_sys_openat fs/open.c:1459 [inline]
+ __se_sys_openat fs/open.c:1454 [inline]
+ __x64_sys_openat+0x17a/0x210 fs/open.c:1454
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x59/0x110 arch/x86/entry/common.c:81
+ entry_SYSCALL_64_after_hwframe+0x78/0xe2
+RIP: 0033:0x54d2cd
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4751920048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000796080 RCX: 000000000054d2cd
+RDX: 0000000000000000 RSI: 0000000020004280 RDI: ffffffffffffff9c
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000000001e R11: 0000000000000246 R12: 000000000079608c
+R13: 0000000000000000 R14: 0000000000796080 R15: 00007f4751900000
+ </TASK>
+
+The buggy address belongs to the variable:
+ ipmi_interfaces+0x38/0x40
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x45a6a
+flags: 0x3fffff00004000(reserved|node=0|zone=1|lastcpupid=0x1fffff)
+raw: 003fffff00004000 ffffea0001169a88 ffffea0001169a88 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffffffff8fc6a300: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
+ ffffffff8fc6a380: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
+>ffffffff8fc6a400: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
+                                        ^
+ ffffffff8fc6a480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffffff8fc6a500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
+==================================================================
+
+In the ipmi_create_user() function, the intf->nr_users variable has an
+underflow issue. Specifically, on the exception path (goto out_kfree;)
+before atomic_add_return(), calling atomic_dec() when intf->nr_users has
+not been incremented will result in an underflow.
+
+The relevant code has been completely rewritten in the next tree and has
+been fixed with commit 9e91f8a6c868 ("ipmi:msghandler: Remove srcu for the
+ipmi_interfaces list"). However, the issue still exists in the 5.19+
+stable branches and needs to be fixed on those branches.
+
+Cc: stable@vger.kernel.org # 5.19+
+Fixes: 8e76741c3d8b ("ipmi: Add a limit on the number of users that may use IPMI")
+Signed-off-by: Yi Yang <yiyang13@huawei.com>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 186f1fee7534..0293fad2f4f2 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -1246,18 +1246,18 @@ int ipmi_create_user(unsigned int          if_num,
+  found:
+ 	if (atomic_add_return(1, &intf->nr_users) > max_users) {
+ 		rv = -EBUSY;
+-		goto out_kfree;
++		goto out_dec;
+ 	}
+ 
+ 	INIT_WORK(&new_user->remove_work, free_user_work);
+ 
+ 	rv = init_srcu_struct(&new_user->release_barrier);
+ 	if (rv)
+-		goto out_kfree;
++		goto out_dec;
+ 
+ 	if (!try_module_get(intf->owner)) {
+ 		rv = -ENODEV;
+-		goto out_kfree;
++		goto out_dec;
+ 	}
+ 
+ 	/* Note that each existing user holds a refcount to the interface. */
+@@ -1281,8 +1281,9 @@ int ipmi_create_user(unsigned int          if_num,
+ 	*user = new_user;
+ 	return 0;
+ 
+-out_kfree:
++out_dec:
+ 	atomic_dec(&intf->nr_users);
++out_kfree:
+ 	srcu_read_unlock(&ipmi_interfaces_srcu, index);
+ 	vfree(new_user);
+ 	return rv;
+-- 
+2.25.1
+
 
