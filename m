@@ -1,106 +1,167 @@
-Return-Path: <linux-kernel+bounces-679540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7243AD3837
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:08:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C396FAD3855
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1F91696E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A843BE8AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19BB29AB00;
-	Tue, 10 Jun 2025 12:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080A6298242;
+	Tue, 10 Jun 2025 12:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGzKdesq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iw+pYu9w"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC35F29A9E1;
-	Tue, 10 Jun 2025 12:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E856293B76
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 12:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749560163; cv=none; b=c/nBUtBmob7Zs/xyYEM8nt8LNHPzF2welh6qMRbavR1fXbDAr9UjjijSB8wNnwr0aFVHlbPTAIEeXIH7RtEMdDrl/bcD3AMqvFwQSG3OC+295Y8Qauvd7SNlel3Bgp44Fhc3rWPapoKh9RurTgheqgVUobLJUhZbCizAyuaBTIA=
+	t=1749560244; cv=none; b=qPLgW/Y51ZgB0pSfwFWtlT8DZy/l9OE3w/xEQQtMVtsPR1qxKY1GGCWqZN53VWsyNf72xOQuycFO0gcuZecbnTc8UHnOWb2dEsatVG7PDLqKa/FzCGaUio4DJD2Gcb1I01UyqO1aBoHCczVnZnouvQVYVGAD6ei6dcSyg+v4GrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749560163; c=relaxed/simple;
-	bh=ymdmRNA1an7znV7VwE8aKDdd9upCMjadrk7wwCN+JS0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=XIW2jolqGctnmyLh2WQc3+AO90rwPXRU5jap0AVVfr6fUR5sTWcj5Qkiz7kUR+yWi0GjT5ZqQsL6HLH/R4jCkYkXlMwgqYsqcncz+wBqt+wUbRyFaNH7eApX9jH3PswsMVpUrZxtz9xCAkfC4YT1ovRTd4hIPX684+JmcgCcGHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGzKdesq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EB62C4CEEF;
-	Tue, 10 Jun 2025 12:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749560162;
-	bh=ymdmRNA1an7znV7VwE8aKDdd9upCMjadrk7wwCN+JS0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=iGzKdesqdm1MrpyWKVIbnnnTO2O5kjtU0RWXuPsX72qmoBIf1+QGRaRjgZ2tudgyJ
-	 r066JMd+OFmUd03hH7AREG3eFtPRIYeT5fffPBhRHTDNsYzZrn6GSXuoczYlB+tFEM
-	 Xv83cl923uHkQY0nVAc6FsJLFl6Xy4uunqWmjZpzls9Pcz/9aoH+/TifQuZ8u0DNrI
-	 nrPNp24G+J/OqKYjScTqVdrdyOBtof8CkpfQeM/WEzZpnj9R7LbpZfTUgnHFRF9Fse
-	 9ejaWmya7EgYDDrJ7BRajiE9GTVPe8gd8UDUzd+NxnZW5xx5LIyQvYxetZHzMia4dg
-	 ACzOo9EY8FAwQ==
+	s=arc-20240116; t=1749560244; c=relaxed/simple;
+	bh=qhIVpEZDZOmir5ypQGJPM5AKAogRaLno5vHtbx9uYco=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bm96HV1YrazRhONyXiwTW/HkZxKCRSy+Hr+78RIApTXD+O1YhDEExSchAn8IEw+oFRnwWAc8mqWurjiGPADXyJScG/C7yLoGdX869HfZonsKuDAjQxMBFVRll7a3SAmkeiXTOF52pzKe5A5koo5Rz9n9oPOtUTS/KF804lgPPdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iw+pYu9w; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-607fbc13725so2778109a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749560241; x=1750165041; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CUkJhWRp3L7SGl8YQInLtuEOp8CfW807ly4f8cXAKNg=;
+        b=Iw+pYu9wj8TPnjtMho6jQXgdksId+1akOTNdyrRNkjp//ulZJygzb8PR/ptjfENVEI
+         qug6n8lx5eEN39bQeDG9LdswoQDdg7oM6tPa84afyw/Zwf58Z+Q10R3ezILP38VgBNfO
+         lj/6JHFZTa4kdC0TkJElVfoiBOW8k8tb4UMBiZ3sqPVgh3hjBzsQV8EHramZhcy/pqrF
+         ySDl7jug2TIDUOj/25BZqQOoX3A1qbYbhOeEU1NnnEuVlrqlcmJB9WWlIswr/rUtafI7
+         bIf7a+zyhni8VvJsMj/V+BVS1ivtdMQFmz7M9z5H5COhbIbZgd57LRx8AdVUS7G+MziH
+         W2Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749560241; x=1750165041;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CUkJhWRp3L7SGl8YQInLtuEOp8CfW807ly4f8cXAKNg=;
+        b=MB0lWctgEz/3ODaBBmyKcKDrgQ/9DPhsHcUELmaTTC9DqQ6o3SiyEzFKMw/tncMPyR
+         BQD5XrNrrpDhWEfj13YkSOU6934/t2bDe3TOqshMWIsYC+HNzQ0hcMkPpnZ6Eb+jc6iA
+         Q18sut+CBHO2hsrwguSfMh5uf7khMTf8Ms5xuEpbzhPD/0JgEzrONBiFQ9alYTioYJqF
+         WgTIhG4mx5LSMFEJ9q6bIcFxuaquFSDl6ZVFHedQq2yycGdaIN3HbeyyxqkK5L18TNCT
+         BrfDXmw30krKMoc5La6sPQswfMwnCCqBQNIhOgkO39Tg65CBKjEDBhUqyfQPpKPbH/aS
+         Beew==
+X-Forwarded-Encrypted: i=1; AJvYcCWM3hYJJoPA4Sb5jhnh24QQK69/JNrZAcTriEdfp7s606fwfmb6qQpcM4qbb+7iPLtILv2cfgEpnvSKHHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2gd/Jacje9+JwqtZYgi4V49FvGyqZUQB180N329xnHs/7spzy
+	TfdR8KGc9A36FvsGtSvchI7Hax1EmyLfB4e6Hv5qSA0q0o9NNbBnVEnn1cCd1c7cPXiUvI4lyxx
+	EJOThvw7HQltrz0HBc6htpjt1uqoUQSBSsPXSPa/eZhqr2QbjX7IKjRk=
+X-Gm-Gg: ASbGncvYRIMVuylaMyHxxYNmR9vAoXVX8Gra/cg7JMuXc7L7IUBsTlTJrG3lQ/p7yte
+	X2ljORSV9gN49cbSRPDY+5uOe1Kn5Qm2aNDysJwCa/gTUv5EVS4OWnKaUtbP/+RU1Uq6CBwUKnG
+	gQq50ip8kYxgw+cMZ9gjraAqN9LORTYWe6U6k8n2wjfp0p
+X-Google-Smtp-Source: AGHT+IFnoTHHifJTlb/W9AH+wSprRlJ6AOhC3m2qBRGlahZc+wsPlXhKLbork72DQJ3HMf/KrBrC0eU+kRMagyP2nkg=
+X-Received: by 2002:a17:907:d644:b0:ad8:8689:2cc6 with SMTP id
+ a640c23a62f3a-ade1ab2216fmr1457025566b.47.1749560240911; Tue, 10 Jun 2025
+ 05:57:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 10 Jun 2025 14:55:55 +0200
-Message-Id: <DAIVBBJADWNR.1LLZJ6YWV8IN2@kernel.org>
-Cc: <a.hindborg@kernel.org>, <airlied@gmail.com>, <alex.gaynor@gmail.com>,
- <aliceryhl@google.com>, <anisse@astier.eu>, <bjorn3_gh@protonmail.com>,
- <boqun.feng@gmail.com>, <dakr@kernel.org>, <david.m.ertman@intel.com>,
- <dri-devel@lists.freedesktop.org>, <fujita.tomonori@gmail.com>,
- <gary@garyguo.net>, <gregkh@linuxfoundation.org>,
- <igor.korotin.linux@gmail.com>, <ira.weiny@intel.com>, <leitao@debian.org>,
- <leon@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>, <maarten.lankhorst@linux.intel.com>,
- <mcgrof@kernel.org>, <mripard@kernel.org>, <nouveau@lists.freedesktop.org>,
- <ojeda@kernel.org>, <rafael@kernel.org>, <russ.weight@linux.dev>,
- <rust-for-linux@vger.kernel.org>, <simona@ffwll.ch>, <tamird@gmail.com>,
- <tmgross@umich.edu>, <tzimmermann@suse.de>, <viresh.kumar@linaro.org>,
- <walmeida@microsoft.com>
-Subject: Re: [PATCH] rust: module: remove deprecated author key
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Guilherme Giacomo Simoes" <trintaeoitogc@gmail.com>,
- <miguel.ojeda.sandonis@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <CANiq72kORZjTe3tPEBueDi57TGF7KfxgTSw4Tn0DQeK_X5hi5A@mail.gmail.com> <20250610123731.194853-1-trintaeoitogc@gmail.com>
-In-Reply-To: <20250610123731.194853-1-trintaeoitogc@gmail.com>
+MIME-Version: 1.0
+References: <20250606110121.96314-1-victorshihgli@gmail.com>
+In-Reply-To: <20250606110121.96314-1-victorshihgli@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 10 Jun 2025 14:56:42 +0200
+X-Gm-Features: AX0GCFtz58qEc2pH3XdErcJzGd3l9xp3ByR8YdkuPCCJGBGEv9OQcWr7tPHik30
+Message-ID: <CAPDyKFrpHvrgjG2xOYPoPwUf1NNyBM+fGaO+AgPpZ1CMZYrqgg@mail.gmail.com>
+Subject: Re: [PATCH V3 0/3] Adjust some error messages for SD UHS-II
+ initialization process
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue Jun 10, 2025 at 2:37 PM CEST, Guilherme Giacomo Simoes wrote:
-> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrotes:
->> On Tue, Jun 10, 2025 at 12:12=E2=80=AFPM Benno Lossin <lossin@kernel.org=
-> wrote:
->> >
->> > Hmm, I guess a checkpatch lint fits better then?
->>=20
->> Yeah, that would work.
->>=20
->> Probably for the C side too -- from a quick grep I don't see it.
-> Maybe, after this patch we can make a checkpatch change for check the `au=
-thors`
-> key (and MODULE_AUTHOR for C side), and throw a WARN if the author is a n=
-ame
-> (not a url, or "rust for linux") and don't have a email address.=20
+On Fri, 6 Jun 2025 at 13:01, Victor Shih <victorshihgli@gmail.com> wrote:
+>
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+>
+> Summary
+> =======
+> It is normal that errors will occur when using non-UHS-II card to enter
+> the UHS-II card initialization process. We should not be producing error
+> messages and register dumps. Therefore, switch the error messages to debug
+> mode and register dumps to dynamic debug mode.
+>
+> Patch structure
+> ===============
+> patch#1:    for core
+> patch#2-#3: for sdhci
+>
+> Changes in v3 (June. 06, 2025)
+> * Rebase on latest mmc/next.
+> * Patch#2: Separate the helper function in V2 patch#2 into V3 patch#2.
+>
+> ----------------- original cover letter from v2 -----------------
+> Summary
+> =======
+> It is normal that errors will occur when using non-UHS-II card to enter
+> the UHS-II card initialization process. We should not be producing error
+> messages and register dumps. Therefore, switch the error messages to debug
+> mode and register dumps to dynamic debug mode.
+>
+> Patch structure
+> ===============
+> patch#1: for core
+> patch#2: for sdhci
+>
+> Changes in v2 (May. 23, 2025)
+> * Rebase on latest mmc/next.
+> * Patch#1: Drop the use of DBG macro and use pr_debug() instead.
+> * Patch#2: Drop the use of DBG macro in some function
+>            and use pr_debug() instead.
+>
+> ----------------- original cover letter from v1 -----------------
+> Summary
+> =======
+> It is normal that errors will occur when using non-UHS-II card to enter
+> the UHS-II card initialization process. We should not be producing error
+> messages and register dumps. Therefore, switch the error messages to debug
+> mode and register dumps to dynamic debug mode.
+>
+> Patch structure
+> ===============
+> patch#1: for core
+> patch#2: for sdhci
+>
+> Changes in v1 (May. 16, 2025)
+> * Rebase on latest mmc/next.
+> * Patch#1: Adjust some error messages for SD UHS-II cards.
+> * Patch#2: Adjust some error messages and register dump for SD UHS-II card
+>
+> Victor Shih (3):
+>   mmc: core: Adjust some error messages for SD UHS-II cards
+>   mmc: sdhci: Add a helper function for dump register in dynamic debug
+>     mode
+>   mmc: sdhci-uhs2: Adjust some error messages and register dump for SD
+>     UHS-II card
+>
+>  drivers/mmc/core/sd_uhs2.c    |  4 ++--
+>  drivers/mmc/host/sdhci-uhs2.c | 20 ++++++++++----------
+>  drivers/mmc/host/sdhci.h      | 16 ++++++++++++++++
+>  3 files changed, 28 insertions(+), 12 deletions(-)
+>
+> --
+> 2.43.0
+>
 
-Most other authors fields that don't list explicit names use "Rust for
-Linux Contributors", so we should probably scan for that instead.
+The series applied for next, thanks!
 
-But I think that we should no longer add any author fields using that.
-Things with that are from way back in the day (when RfL was still out of
-tree) where many people contributed to a single file, hence the use of
-that phrase.
-
-> Unless you guys tell me otherwise, I guess this is not so priority.
-
-Yeah this isn't high priority. We can just make this into a
-good-first-issue, then someone can eventually pick it up.
-
----
-Cheers,
-Benno
+Kind regards
+Uffe
 
