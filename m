@@ -1,99 +1,153 @@
-Return-Path: <linux-kernel+bounces-679628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30165AD3967
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:36:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA05AD398F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B9A1676AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BAFE3A6FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF7223AB8B;
-	Tue, 10 Jun 2025 13:32:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4094523AB96;
+	Tue, 10 Jun 2025 13:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6WUHSa73"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831B246BC0;
-	Tue, 10 Jun 2025 13:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2BA246BB8;
+	Tue, 10 Jun 2025 13:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749562344; cv=none; b=GNN00NQTCv0dNyLJABnwMIvx9ni/GvG7JTH8kZQaC9cpbS9gEiXqVr9HpBqtfg9RF43P6KsDN2wcnt0TJFspd8XVR16sk6wvHhCp2kYKnefYmG72RxVlrNGA7sLd1fxhvDN0OItN9SebKtcTYFbmR3pavAc7Fk7tP1FuWHNOGJQ=
+	t=1749562567; cv=none; b=Xp7zvYKu7ZwSCJRpjx0WdGR3KZqtD50q7E5CHRxoN2yVnYJCC7OMKywsr7SB96iAAf24RoeLwln2mhLXUU33YUU3AXtVrR8LE1aqs/E10ElcdLFqf5FSVlVrpolSCfWTSIyJm6WNmSgg25p1VT3TQvhUBHWJGHoC4J3uOqUMlao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749562344; c=relaxed/simple;
-	bh=VeRRqAMQwsV9AjP9CYbvqZkSDgtiD6xuz7fHbLhSbnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M3gmgIstj1BaccwQredb1zR25O/UM3QVBzr38WLNTtCDaodjm2bg/Jycsr9/1GoRf6rbcLNWdDoi9o38JqkHPyBagGIe8IaOmfgHf4ydFwhfmI/+JvEgQt6KTpj722lPE+EiSIIiuLEzx4jrUpx4zNXxh6AaTTF+fRl4PD3vyoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 771C158BC6;
-	Tue, 10 Jun 2025 13:32:20 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id A032C2003B;
-	Tue, 10 Jun 2025 13:32:18 +0000 (UTC)
-Date: Tue, 10 Jun 2025 09:33:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] tracing: Do not free "head" on error path of 
- filter_free_subsystem_filters()
-Message-ID: <20250610093348.33c5643a@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749562567; c=relaxed/simple;
+	bh=fpHJTV2BNny41O0KRlvrEr5Kwkx/Fp9ZACNun1M2bKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JFUgV214y9MxzdWrEXFC9bQLdyoeqVlTDsCk/Q4nDYIgke6w1i/iWYraq4zgzlUOXZHOR1oxbUHo4WSorECdMbwKky/gxhDFPaVZeEDWK3f4FU4lEg1IWVXTkqg/rsouEqV5KoTooMkQbVFShnwJ1GJdmcM12sOsGrJgcMfDNEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6WUHSa73; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55ACLF7Y032713;
+	Tue, 10 Jun 2025 15:35:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	42qeGfPPG3Jy7TK8jhUurPhAnYCLeXZebkDWKVesGp8=; b=6WUHSa73SzuDwV+S
+	TnHceYDj6QtlhgnwIjJFSqEPVZV/NELe5/hM+nEMjhe205l0mg3+ZHgnKeiRPcWb
+	Q8GqAQNLUvn2jf5pmrSGbz6K61eM5T2Rn1cyoIo4kuEn8WdsUugpp2W3OcbKmfL1
+	XD8zE9KrTm2b1mdoErCSlrhGeNDxNhkcc2NRnlHYW/b3a9cU8BgBRzBjeik9Ta1g
+	o5Z/NRI2lP0GZpt0v8t1mUzeehlGQ28N28ZQtUToVPIxdVDc+JfI5FRU813vvj4x
+	xxxmbP2+hoMbFzbrUDx61zVjD9VglNArYLkrmHUt8lbnr1o04MbQVJwePkiQUcwU
+	4zl3JA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4750cnt341-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 10 Jun 2025 15:35:51 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5A9E140045;
+	Tue, 10 Jun 2025 15:34:42 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F44EB5F91C;
+	Tue, 10 Jun 2025 15:33:54 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 10 Jun
+ 2025 15:33:53 +0200
+Message-ID: <a49d0af2-07b7-4f51-941b-fa25b2879720@foss.st.com>
+Date: Tue, 10 Jun 2025 15:33:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] ARM: dts: stm32: add Hardware debug port (HDP) on
+ stm32mp13
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250523-hdp-upstream-v3-0-bd6ca199466a@foss.st.com>
+ <20250523-hdp-upstream-v3-5-bd6ca199466a@foss.st.com>
+ <5b7a2102-ff68-4aab-a88d-0c4f9195ef95@kernel.org>
+ <3c868c4b-8a0e-44b5-9d6e-3a0526d9deeb@foss.st.com>
+ <3ba588ed-1614-4877-b6fc-b5aa853b8c2e@kernel.org>
+ <714ad17d-53f1-4703-8e13-61c290a8da89@foss.st.com>
+ <7000f63e-5e68-465d-9d7f-1a6ca0524222@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <7000f63e-5e68-465d-9d7f-1a6ca0524222@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: A032C2003B
-X-Stat-Signature: u5szw3tasguzey7x9yqnn1fm4cpsdkj8
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18teGOKpr+gusiYZViqrtt0SH+AHwK4pL4=
-X-HE-Tag: 1749562338-672093
-X-HE-Meta: U2FsdGVkX19o22b6/1AqabH+17ZgdEx9/+iJe8gTqjfMpZMTd1HAM2PlDfEbaosybXJ167UrtDeE9LwfI18yH4c6g/42OlR1oxLR+B0t5oDSG9XnwCWpdWN+1xCOXFCu/N5NolV6sfuz8ZHmwO7OOVn2wIeiM3oI+6tRQ6uPYAb6en8kIwbT6rMsqfINTk2Nj6DzIhXorlJSLzYU8jRhseS79CcEi6WeCDs+K7EHMdq+rUHVgU+WSA7ZWdnMD7b6piwhrRbSfYJUFDt9xTzmAfr12ma75Cus9AhhgWrXAmNJH48KZ7kJ7Ciye1tfnxrerikSJ2FNRPE5cK5SSCCo//ckmEhzgveGujSLheor0ZSj1ehZzlfBe0+iVj/7oVl3ZYGaNdoLlfzBKyAMlpl6yrXvERcuh86xvZA5WDAtMHWX2De7Xc3GP0PmtQqad69KXP1nWBdczkL0bHi1jJKk4gRbmqL65qCeQNmdKBxFRoqVhADsLYhjGZdEJI0zw+vxoKjCwUfjzUc=
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-10_05,2025-06-10_01,2025-03-28_01
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 6/10/25 14:38, Krzysztof Kozlowski wrote:
+> On 10/06/2025 14:02, Clement LE GOFFIC wrote:
+>> On 5/29/25 11:01, Krzysztof Kozlowski wrote:
+>>> On 28/05/2025 14:14, Clement LE GOFFIC wrote:
+>>>>>
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		hdp: pinctrl@5002a000 {
+>>>>>> +			compatible = "st,stm32mp131-hdp";
+>>>>>> +			reg = <0x5002a000 0x400>;
+>>>>>> +			clocks = <&rcc HDP>;
+>>>>>>     			status = "disabled";
+>>>>>
+>>>>> Why are you disabling it? What is missing?
+>>>>
+>>>> Nothing is missing just disabled by default.
+>>>> The node is then enabled when needed in board's dts file.
+>>> Nodes should not be disabled by default if they are complete. That's why
+>>> I asked what is missing. Drop.
+>>
+>> Hi Krzysztof, OK I better understand now.
+>> So yes the 'pinctrl-*' properties which are board dependent are lacking.
+> 
+> These are not properties of this node.
 
-The variable "head" is allocated and initialized as a list before
-allocating the first "item" for the list. If the allocation of "item"
-fails, it frees "head" and then jumps to the label "free_now" which will
-process head and free it.
+Does this mean I should add 'pinctrl-*' properties in bindings yaml file ?
+I don't get it..
 
-This will cause a UAF of "head", and it doesn't need to free it before
-jumping to the "free_now" label as that code will free it.
+>>
+>> In the last patch of my serie I add them (only for stm32mp157f-dk2) but
+>> keep it disabled because the pin is on an external connector (the
+>> Arduino connector of the board).
+>> This prevent any issue with a possible connected module.
+> 
+> Not relevant. Pin control for connector are board specific, but pinctrl
+> SoC part is SoC.
 
-Fixes: a9d0aab5eb33 ("tracing: Fix regression of filter waiting a long time on RCU synchronization")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202506070424.lCiNreTI-lkp@intel.com/
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_filter.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I think we don't understand each other here too. I don't understand the 
+end of your sentence "pinctrl SoC part is SoC".
 
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index ea8b364b6818..08141f105c95 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -1437,10 +1437,8 @@ static void filter_free_subsystem_filters(struct trace_subsystem_dir *dir,
- 	INIT_LIST_HEAD(&head->list);
- 
- 	item = kmalloc(sizeof(*item), GFP_KERNEL);
--	if (!item) {
--		kfree(head);
-+	if (!item)
- 		goto free_now;
--	}
- 
- 	item->filter = filter;
- 	list_add_tail(&item->list, &head->list);
--- 
-2.47.2
+Maybe some informations that could help:
+The 'pinctrl-*' properties are used in the HDP case to select the 
+internal signal to output AND the alternate function on the pin to 
+output the HDP function.
+
+> Best regards,
+> Krzysztof
 
 
