@@ -1,511 +1,1123 @@
-Return-Path: <linux-kernel+bounces-679460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DEFAD36A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B6FAD36C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5BC47A3495
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918531898FF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73CF29A9CB;
-	Tue, 10 Jun 2025 12:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A442951B8;
+	Tue, 10 Jun 2025 12:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="cNRaHvXI"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="laBOBwX9"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8D029995D;
-	Tue, 10 Jun 2025 12:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749558823; cv=pass; b=Zun8K4bdMROy3CmLjpQuBzjlvSoZTRB4Iwl7+83tlv8yuVp8Zc1niJuTaXyOOxAFGZoRYyqTjT1OJUhaWqICOyJqJSo4g8FvXWx1ZjVTCNQYUxaBEs7e9w0FnzHR+x4TMI9p5iAuvJjovA9c4bqNoSpV80CGDPxihjBFqfUGAeQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749558823; c=relaxed/simple;
-	bh=Lf9hRi2Hv/rjejHYm5za9H/gGB7HC7UFEiwPeqNhP40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N+doT4hlCJ4Kk+otr8Owv7dCAx9W6WzEy11hCtswQ7/OLVjer7Kl0hCb+c9CT7eV5QhvDefMgkWo2dw8WDSR4gglmRU6s7CHUS9/vg8bpz/IvyjsfRcLSkUiXCR9wF7ncKciV5MOwo9xf3A7wUdsz/ECQud3UwgGx9Dl8sM3Z6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=cNRaHvXI; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1749558789; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=C0NIdLDVjeOCesvTZq2L9rnrZukICHkKxD/12q6mGJuRjQXarXGP4Qaykh6lRyYLqUr5zgrMBDZfGhRjFaZqO7wUjAMQFK5nt6Jn8tDdTUqkkP+dxFTxUNJil1iqw+sXV6+Ip8vY21UewOXM3w7hdpNof7iy2tIdJydCRXi2RrQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1749558789; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fo/5ReHXGoPgQe93o0uJItzDhOE9nEKG5rKyvbqubVA=; 
-	b=jF4iaXHPRe4i5Aewm4oBOMM8C6jUs2r1rTMBEA1y5DWpCIqorSO92XQ0y4M057NNSSy6w7Qf/qrZ/BdtSD8lg+xnmCzLupPmEjA4md7U6lmflbOnitRhH7GlbcfM1J6kByIdV7Niih3kCpVliufruSExPVIe1X+Rk5FplgvDUAU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1749558789;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=fo/5ReHXGoPgQe93o0uJItzDhOE9nEKG5rKyvbqubVA=;
-	b=cNRaHvXIWVJReOYg4HeGT+J1fPkuOBXIVlPbAU0jPaQ85anBS3bbdEqo569Xap1c
-	yN6lN6O/jr+gK0oWpxSNIfKadE4rol5/Bxh9m9Pr1z7IgPuMafvCgYf5Mj7AanmboY3
-	Ld3MFnE9W9b1dymXwZ6ynPfwirvpk/7X2L7B2ghk=
-Received: by mx.zohomail.com with SMTPS id 1749558788630995.5984225388834;
-	Tue, 10 Jun 2025 05:33:08 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Tue, 10 Jun 2025 14:32:41 +0200
-Subject: [PATCH v6 5/7] thermal: rockchip: support reading trim values from
- OTP
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E752951C5;
+	Tue, 10 Jun 2025 12:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749558882; cv=none; b=N4IvRUTeswqxUL5nN9C+PZIm2RhH6+iJeLY098L63boJ8jhCdebyz1fDTKb7hI0THnvSjRCfTMOTR6w9nC0siaiK1QE1S5sPIPgaDXzW9ly7+c6TDWUB/kwwmLuwNGWS9mWHdgcxoVcIZyrTYAVXmVOysp8IvNtlBZZ8fS+UJ6s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749558882; c=relaxed/simple;
+	bh=u82IUTcY8XRLq0tvK/Gwsag7nESx5vyOUYbup/FEuJ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fm7bnJsju5g3SW8A8a2gDYHL3z3uuDSAoEzGhzdg+c2eAxc/gZGLQ4PyGHu3waim9mQ/KjD8IA7zYItIAYJe7XqdNBMkHJHXZvnqSnBAKl9zAg5+kqI8WSjnLMNZ1sDK4ERxXF58MhYn6/0EbS1syXRUNAr7NIS6OYLA4le4MBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=laBOBwX9; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YMiurZCP4Bv1ICNXR5MciR0MYl4MxHvKq9FCB6oVelE=; b=laBOBwX9MM2z1QGtRFHF3pNB9x
+	qX3ZBzyGYc7I7YzmerN8B6hJiIEtPqiili+SpynminBlsim3DllDH3yMFkIL9DvPNTBfifr6vMDsD
+	afl4v1CpVC3uZhh/Fbw1jUTbeSoDtNHDJC6tZ5EnQl47EV25Yq+LPt4hhCLX0/jMM/OLY08QE0FTY
+	wwLrdmB3DfHZ5i6Uilv823AM1waJCNPa28Mm81qbRGsOlVnA26L9L9LDStwBlApRhXnBWgijMkftm
+	RjyIdayBNG8UItGWR5/GSz8JspDVLc1C9Qep04X+M+y0Df6zBuP6xSkaGzvIqBExfH+N4QK08/Qjv
+	hWxJj2dQ==;
+Received: from [122.175.9.182] (port=61880 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uOyBW-0000000AVk1-0fMg;
+	Tue, 10 Jun 2025 08:34:35 -0400
+From: Parvathi Pudi <parvathi@couthit.com>
+To: danishanwar@ti.com,
+	rogerq@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	ssantosh@kernel.org,
+	richardcochran@gmail.com,
+	s.hauer@pengutronix.de,
+	m-karicheri2@ti.com,
+	glaroque@baylibre.com,
+	afd@ti.com,
+	saikrishnag@marvell.com,
+	m-malladi@ti.com,
+	jacob.e.keller@intel.com,
+	diogo.ivo@siemens.com,
+	javier.carrasco.cruz@gmail.com,
+	horms@kernel.org,
+	s-anna@ti.com,
+	basharath@couthit.com,
+	parvathi@couthit.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pratheesh@ti.com,
+	prajith@ti.com,
+	vigneshr@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	pmohan@couthit.com,
+	mohan@couthit.com
+Subject: [PATCH net-next v8 07/11] net: ti: prueth: Adds support for network filters for traffic control supported by PRU-ICSS
+Date: Tue, 10 Jun 2025 18:02:41 +0530
+Message-Id: <20250610123245.3063659-8-parvathi@couthit.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250610105721.3063503-1-parvathi@couthit.com>
+References: <20250610105721.3063503-1-parvathi@couthit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-rk3576-tsadc-upstream-v6-5-b6e9efbf1015@collabora.com>
-References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
-In-Reply-To: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
-To: Alexey Charkov <alchark@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Jonas Karlman <jonas@kwiboo.se>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
- kernel@collabora.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Many of the Rockchip SoCs support storing trim values for the sensors in
-factory programmable memory. These values specify a fixed offset from
-the sensor's returned temperature to get a more accurate picture of what
-temperature the silicon is actually at.
+From: Roger Quadros <rogerq@ti.com>
 
-The way this is implemented is with various OTP cells, which may be
-absent. There may both be whole-TSADC trim values, as well as per-sensor
-trim values.
+Driver updates to enable/disable network filters and traffic control
+features supported by the firmware running on PRU-ICSS.
 
-In the downstream driver, whole-chip trim values override the per-sensor
-trim values. This rewrite of the functionality changes the semantics to
-something I see as slightly more useful: allow the whole-chip trim
-values to serve as a fallback for lacking per-sensor trim values,
-instead of overriding already present sensor trim values.
+Control of the following features are now supported:
+1. Promiscuous mode
+2. Network Storm prevention
+3. Multicast filtering and
+4. VLAN filtering
 
-Additionally, the chip may specify an offset (trim_base, trim_base_frac)
-in degrees celsius and degrees decicelsius respectively which defines
-what the basis is from which the trim, if any, should be calculated
-from. By default, this is 30 degrees Celsius, but the chip can once
-again specify a different value through OTP cells.
+Firmware running on PRU-ICSS will go through all these filter checks
+prior to sending the rx packets to the host.
 
-The implementation of these trim calculations have been tested
-extensively on an RK3576, where it was confirmed to get rid of pesky 1.8
-degree Celsius offsets between certain sensors.
+Ethtool or dev ioctl can be used to enable/disable these features from
+the user space.
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
+Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
 ---
- drivers/thermal/rockchip_thermal.c | 221 +++++++++++++++++++++++++++++++++----
- 1 file changed, 202 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/ti/Makefile              |   2 +-
+ drivers/net/ethernet/ti/icssm/icssm_ethtool.c |  39 +++
+ drivers/net/ethernet/ti/icssm/icssm_prueth.c  | 310 +++++++++++++++++-
+ drivers/net/ethernet/ti/icssm/icssm_prueth.h  |  48 +++
+ .../net/ethernet/ti/icssm/icssm_prueth_dos.c  | 222 +++++++++++++
+ drivers/net/ethernet/ti/icssm/icssm_switch.h  |   5 +
+ .../ti/icssm/icssm_vlan_mcast_filter_mmap.h   | 120 +++++++
+ 7 files changed, 744 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_prueth_dos.c
+ create mode 100644 drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h
 
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index 89e3180667e2a8f0ef5542b0db4d9e19a21a24d3..3beff9b6fac3abe8948b56132b618ff1bed57217 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-@@ -69,16 +70,18 @@ struct chip_tsadc_table {
-  * struct rockchip_tsadc_chip - hold the private data of tsadc chip
-  * @chn_offset: the channel offset of the first channel
-  * @chn_num: the channel number of tsadc chip
-- * @tshut_temp: the hardware-controlled shutdown temperature value
-+ * @trim_slope: used to convert the trim code to a temperature in millicelsius
-+ * @tshut_temp: the hardware-controlled shutdown temperature value, with no trim
-  * @tshut_mode: the hardware-controlled shutdown mode (0:CRU 1:GPIO)
-  * @tshut_polarity: the hardware-controlled active polarity (0:LOW 1:HIGH)
-  * @initialize: SoC special initialize tsadc controller method
-  * @irq_ack: clear the interrupt
-  * @control: enable/disable method for the tsadc controller
-- * @get_temp: get the temperature
-+ * @get_temp: get the raw temperature, unadjusted by trim
-  * @set_alarm_temp: set the high temperature interrupt
-  * @set_tshut_temp: set the hardware-controlled shutdown temperature
-  * @set_tshut_mode: set the hardware-controlled shutdown mode
-+ * @get_trim_code: convert a hardware temperature code to one adjusted for by trim
-  * @table: the chip-specific conversion table
-  */
- struct rockchip_tsadc_chip {
-@@ -86,6 +89,9 @@ struct rockchip_tsadc_chip {
- 	int chn_offset;
- 	int chn_num;
+diff --git a/drivers/net/ethernet/ti/Makefile b/drivers/net/ethernet/ti/Makefile
+index f21dd11118ab..852640ce2b15 100644
+--- a/drivers/net/ethernet/ti/Makefile
++++ b/drivers/net/ethernet/ti/Makefile
+@@ -4,7 +4,7 @@
+ #
  
-+	/* Used to convert trim code to trim temp */
-+	int trim_slope;
+ obj-$(CONFIG_TI_PRUETH) += icssm-prueth.o
+-icssm-prueth-y := icssm/icssm_prueth.o icssm/icssm_ethtool.o
++icssm-prueth-y := icssm/icssm_prueth.o icssm/icssm_ethtool.o icssm/icssm_prueth_dos.o
+ 
+ obj-$(CONFIG_TI_CPSW) += cpsw-common.o
+ obj-$(CONFIG_TI_DAVINCI_EMAC) += cpsw-common.o
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_ethtool.c b/drivers/net/ethernet/ti/icssm/icssm_ethtool.c
+index 6aafca17b730..4d51f2013f86 100644
+--- a/drivers/net/ethernet/ti/icssm/icssm_ethtool.c
++++ b/drivers/net/ethernet/ti/icssm/icssm_ethtool.c
+@@ -8,6 +8,7 @@
+ #include <linux/if_bridge.h>
+ #include <linux/if_vlan.h>
+ #include "icssm_prueth.h"
++#include "icssm_vlan_mcast_filter_mmap.h"
+ #include "../icssg/icss_iep.h"
+ 
+ /* set PRU firmware statistics */
+@@ -18,6 +19,11 @@ void icssm_emac_set_stats(struct prueth_emac *emac,
+ 
+ 	dram = emac->prueth->mem[emac->dram].va;
+ 	memcpy_toio(dram + STATISTICS_OFFSET, pstats, STAT_SIZE);
 +
- 	/* The hardware-controlled tshut property */
- 	int tshut_temp;
- 	enum tshut_mode tshut_mode;
-@@ -105,6 +111,8 @@ struct rockchip_tsadc_chip {
- 	int (*set_tshut_temp)(const struct chip_tsadc_table *table,
- 			      int chn, void __iomem *reg, int temp);
- 	void (*set_tshut_mode)(int chn, void __iomem *reg, enum tshut_mode m);
-+	int (*get_trim_code)(const struct chip_tsadc_table *table,
-+			     int code, int trim_base, int trim_base_frac);
++	writel(pstats->vlan_dropped, dram +
++			ICSS_EMAC_FW_VLAN_FILTER_DROP_CNT_OFFSET);
++	writel(pstats->multicast_dropped, dram +
++			ICSS_EMAC_FW_MULTICAST_FILTER_DROP_CNT_OFFSET);
+ }
  
- 	/* Per-table methods */
- 	struct chip_tsadc_table table;
-@@ -114,12 +122,16 @@ struct rockchip_tsadc_chip {
-  * struct rockchip_thermal_sensor - hold the information of thermal sensor
-  * @thermal:  pointer to the platform/configuration data
-  * @tzd: pointer to a thermal zone
-+ * @of_node: pointer to the device_node representing this sensor, if any
-  * @id: identifier of the thermal sensor
-+ * @trim_temp: per-sensor trim temperature value
-  */
- struct rockchip_thermal_sensor {
- 	struct rockchip_thermal_data *thermal;
- 	struct thermal_zone_device *tzd;
-+	struct device_node *of_node;
- 	int id;
-+	int trim_temp;
- };
+ /* get statistics maintained by the PRU firmware into @pstats */
+@@ -28,6 +34,11 @@ void icssm_emac_get_stats(struct prueth_emac *emac,
+ 
+ 	dram = emac->prueth->mem[emac->dram].va;
+ 	memcpy_fromio(pstats, dram + STATISTICS_OFFSET, STAT_SIZE);
++
++	pstats->vlan_dropped =
++		readl(dram + ICSS_EMAC_FW_VLAN_FILTER_DROP_CNT_OFFSET);
++	pstats->multicast_dropped =
++		readl(dram + ICSS_EMAC_FW_MULTICAST_FILTER_DROP_CNT_OFFSET);
+ }
  
  /**
-@@ -132,7 +144,11 @@ struct rockchip_thermal_sensor {
-  * @pclk: the advanced peripherals bus clock
-  * @grf: the general register file will be used to do static set by software
-  * @regs: the base address of tsadc controller
-- * @tshut_temp: the hardware-controlled shutdown temperature value
-+ * @trim_base: major component of sensor trim value, in Celsius
-+ * @trim_base_frac: minor component of sensor trim value, in Decicelsius
-+ * @trim: fallback thermal trim value for each channel
-+ * @tshut_temp: the hardware-controlled shutdown temperature value, with no trim
-+ * @trim_temp: the fallback trim temperature for the whole sensor
-  * @tshut_mode: the hardware-controlled shutdown mode (0:CRU 1:GPIO)
-  * @tshut_polarity: the hardware-controlled active polarity (0:LOW 1:HIGH)
-  */
-@@ -149,7 +165,12 @@ struct rockchip_thermal_data {
- 	struct regmap *grf;
- 	void __iomem *regs;
- 
-+	int trim_base;
-+	int trim_base_frac;
-+	int trim;
-+
- 	int tshut_temp;
-+	int trim_temp;
- 	enum tshut_mode tshut_mode;
- 	enum tshut_polarity tshut_polarity;
- };
-@@ -249,6 +270,9 @@ struct rockchip_thermal_data {
- 
- #define GRF_CON_TSADC_CH_INV			(0x10001 << 1)
- 
-+
-+#define RK_MAX_TEMP				(180000)
-+
- /**
-  * struct tsadc_table - code to temperature conversion table
-  * @code: the value of adc channel
-@@ -1061,6 +1085,15 @@ static void rk_tsadcv4_tshut_mode(int chn, void __iomem *regs,
- 	writel_relaxed(val_cru, regs + TSADCV3_HSHUT_CRU_INT_EN);
+@@ -162,13 +173,40 @@ static void icssm_emac_get_ethtool_stats(struct net_device *ndev,
+ 	}
  }
  
-+static int rk_tsadcv2_get_trim_code(const struct chip_tsadc_table *table,
-+				    int code, int trim_base, int trim_base_frac)
++static int icssm_emac_get_regs_len(struct net_device *ndev)
 +{
-+	int temp = trim_base * 1000 + trim_base_frac * 100;
-+	u32 base_code = rk_tsadcv2_temp_to_code(table, temp);
++	struct prueth_emac *emac = netdev_priv(ndev);
++	struct prueth *prueth = emac->prueth;
 +
-+	return code - base_code;
-+}
-+
- static const struct rockchip_tsadc_chip px30_tsadc_data = {
- 	/* cpu, gpu */
- 	.chn_offset = 0,
-@@ -1298,6 +1331,8 @@ static const struct rockchip_tsadc_chip rk3576_tsadc_data = {
- 	.set_alarm_temp = rk_tsadcv3_alarm_temp,
- 	.set_tshut_temp = rk_tsadcv3_tshut_temp,
- 	.set_tshut_mode = rk_tsadcv4_tshut_mode,
-+	.get_trim_code = rk_tsadcv2_get_trim_code,
-+	.trim_slope = 923,
- 	.table = {
- 		.id = rk3588_code_table,
- 		.length = ARRAY_SIZE(rk3588_code_table),
-@@ -1413,7 +1448,7 @@ static int rockchip_thermal_set_trips(struct thermal_zone_device *tz, int low, i
- 		__func__, sensor->id, low, high);
- 
- 	return tsadc->set_alarm_temp(&tsadc->table,
--				     sensor->id, thermal->regs, high);
-+				     sensor->id, thermal->regs, high + sensor->trim_temp);
- }
- 
- static int rockchip_thermal_get_temp(struct thermal_zone_device *tz, int *out_temp)
-@@ -1425,6 +1460,8 @@ static int rockchip_thermal_get_temp(struct thermal_zone_device *tz, int *out_te
- 
- 	retval = tsadc->get_temp(&tsadc->table,
- 				 sensor->id, thermal->regs, out_temp);
-+	*out_temp -= sensor->trim_temp;
-+
- 	return retval;
- }
- 
-@@ -1433,6 +1470,104 @@ static const struct thermal_zone_device_ops rockchip_of_thermal_ops = {
- 	.set_trips = rockchip_thermal_set_trips,
- };
- 
-+/**
-+ * rockchip_get_efuse_value - read an OTP cell from a device node
-+ * @np: pointer to the device node with the nvmem-cells property
-+ * @cell_name: name of cell that should be read
-+ * @value: pointer to where the read value will be placed
-+ *
-+ * Return: Negative errno on failure, during which *value will not be touched,
-+ * or 0 on success.
-+ */
-+static int rockchip_get_efuse_value(struct device_node *np, const char *cell_name,
-+				    int *value)
-+{
-+	struct nvmem_cell *cell;
-+	int ret = 0;
-+	size_t len;
-+	u8 *buf;
-+	int i;
-+
-+	cell = of_nvmem_cell_get(np, cell_name);
-+	if (IS_ERR(cell))
-+		return PTR_ERR(cell);
-+
-+	buf = nvmem_cell_read(cell, &len);
-+
-+	nvmem_cell_put(cell);
-+
-+	if (IS_ERR(buf))
-+		return PTR_ERR(buf);
-+
-+	if (len > sizeof(*value)) {
-+		ret = -ERANGE;
-+		goto exit;
-+	}
-+
-+	/* Copy with implicit endian conversion */
-+	*value = 0;
-+	for (i = 0; i < len; i++)
-+		*value |= (int) buf[i] << (8 * i);
-+
-+exit:
-+	kfree(buf);
-+	return ret;
-+}
-+
-+static int rockchip_get_trim_configuration(struct device *dev, struct device_node *np,
-+					   struct rockchip_thermal_data *thermal)
-+{
-+	const struct rockchip_tsadc_chip *tsadc = thermal->chip;
-+	int trim_base = 0, trim_base_frac = 0, trim = 0;
-+	int trim_code;
-+	int ret;
-+
-+	thermal->trim_base = 0;
-+	thermal->trim_base_frac = 0;
-+	thermal->trim = 0;
-+
-+	if (!tsadc->get_trim_code)
-+		return 0;
-+
-+	ret = rockchip_get_efuse_value(np, "trim_base", &trim_base);
-+	if (ret < 0) {
-+		if (ret == -ENOENT) {
-+			trim_base = 30;
-+			dev_dbg(dev, "trim_base is absent, defaulting to 30\n");
-+		} else {
-+			dev_err(dev, "failed reading nvmem value of trim_base: %pe\n",
-+				ERR_PTR(ret));
-+			return ret;
-+		}
-+	}
-+	ret = rockchip_get_efuse_value(np, "trim_base_frac", &trim_base_frac);
-+	if (ret < 0) {
-+		if (ret == -ENOENT) {
-+			dev_dbg(dev, "trim_base_frac is absent, defaulting to 0\n");
-+		} else {
-+			dev_err(dev, "failed reading nvmem value of trim_base_frac: %pe\n",
-+				ERR_PTR(ret));
-+			return ret;
-+		}
-+	}
-+	thermal->trim_base = trim_base;
-+	thermal->trim_base_frac = trim_base_frac;
-+
-+	/*
-+	 * If the tsadc node contains the trim property, then it is used in the
-+	 * absence of per-channel trim values
++	/* VLAN Table at the end of the memory map, after MultiCast
++	 * filter region. So VLAN table base +
++	 * size will give the entire size of reg dump in case of
++	 * Dual-EMAC firmware.
 +	 */
-+	if (!rockchip_get_efuse_value(np, "trim", &trim))
-+		thermal->trim = trim;
-+	if (trim) {
-+		trim_code = tsadc->get_trim_code(&tsadc->table, trim,
-+						 trim_base, trim_base_frac);
-+		thermal->trim_temp = thermal->chip->trim_slope * trim_code;
++	if (PRUETH_IS_EMAC(prueth)) {
++		return ICSS_EMAC_FW_VLAN_FLTR_TBL_BASE_ADDR +
++		       ICSS_EMAC_FW_VLAN_FILTER_TABLE_SIZE_BYTES;
 +	}
 +
 +	return 0;
 +}
 +
- static int rockchip_configure_from_dt(struct device *dev,
- 				      struct device_node *np,
- 				      struct rockchip_thermal_data *thermal)
-@@ -1493,6 +1628,8 @@ static int rockchip_configure_from_dt(struct device *dev,
- 	if (IS_ERR(thermal->grf))
- 		dev_warn(dev, "Missing rockchip,grf property\n");
+ static void icssm_emac_get_regs(struct net_device *ndev,
+ 				struct ethtool_regs *regs, void *p)
+ {
+ 	struct prueth_emac *emac = netdev_priv(ndev);
+ 	struct prueth *prueth = emac->prueth;
++	void __iomem *ram;
++	u8 *reg = p;
  
-+	rockchip_get_trim_configuration(dev, np, thermal);
+ 	regs->version = PRUETH_REG_DUMP_GET_VER(prueth);
 +
- 	return 0;
++	/* Dump firmware's VLAN and MC tables */
++	if (PRUETH_IS_EMAC(prueth)) {
++		ram = prueth->mem[emac->dram].va;
++		memcpy_fromio(reg, ram, icssm_emac_get_regs_len(ndev));
++		return;
++	}
  }
  
-@@ -1503,23 +1640,50 @@ rockchip_thermal_register_sensor(struct platform_device *pdev,
- 				 int id)
- {
- 	const struct rockchip_tsadc_chip *tsadc = thermal->chip;
-+	struct device *dev = &pdev->dev;
-+	int trim = thermal->trim;
-+	int trim_code, tshut_temp;
-+	int trim_temp = 0;
- 	int error;
+ static const struct ethtool_rmon_hist_range icssm_emac_rmon_ranges[] = {
+@@ -252,6 +290,7 @@ const struct ethtool_ops emac_ethtool_ops = {
+ 	.get_sset_count = icssm_emac_get_sset_count,
+ 	.get_strings = icssm_emac_get_strings,
+ 	.get_ethtool_stats = icssm_emac_get_ethtool_stats,
++	.get_regs_len = icssm_emac_get_regs_len,
+ 	.get_regs = icssm_emac_get_regs,
+ 	.get_rmon_stats = icssm_emac_get_rmon_stats,
+ 	.get_eth_mac_stats = icssm_emac_get_eth_mac_stats,
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.c b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+index bd4bc4bb8a39..9946f97e0305 100644
+--- a/drivers/net/ethernet/ti/icssm/icssm_prueth.c
++++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+@@ -29,6 +29,7 @@
+ #include <net/pkt_cls.h>
  
-+	if (thermal->trim_temp)
-+		trim_temp = thermal->trim_temp;
+ #include "icssm_prueth.h"
++#include "icssm_vlan_mcast_filter_mmap.h"
+ #include "../icssg/icssg_mii_rt.h"
+ #include "../icssg/icss_iep.h"
+ 
+@@ -37,6 +38,26 @@
+ #define TX_START_DELAY		0x40
+ #define TX_CLK_DELAY_100M	0x6
+ 
++static struct prueth_fw_offsets fw_offsets_v2_1;
 +
-+	if (tsadc->get_trim_code && sensor->of_node) {
-+		error = rockchip_get_efuse_value(sensor->of_node, "trim", &trim);
-+		if (error < 0 && error != -ENOENT) {
-+			dev_err(dev, "failed reading trim of sensor %d: %pe\n",
-+				id, ERR_PTR(error));
-+			return error;
++static void icssm_prueth_set_fw_offsets(struct prueth *prueth)
++{
++	/* Set VLAN/Multicast filter control and table offsets */
++	if (PRUETH_IS_EMAC(prueth)) {
++		prueth->fw_offsets->vlan_ctrl_byte  =
++			ICSS_EMAC_FW_VLAN_FILTER_CTRL_BITMAP_OFFSET;
++		prueth->fw_offsets->vlan_filter_tbl =
++			ICSS_EMAC_FW_VLAN_FLTR_TBL_BASE_ADDR;
++
++		prueth->fw_offsets->mc_ctrl_byte  =
++			ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_OFFSET;
++		prueth->fw_offsets->mc_filter_mask =
++			ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OFFSET;
++		prueth->fw_offsets->mc_filter_tbl =
++			ICSS_EMAC_FW_MULTICAST_FILTER_TABLE;
++	}
++}
++
+ static void icssm_prueth_write_reg(struct prueth *prueth,
+ 				   enum prueth_mem region,
+ 				   unsigned int reg, u32 val)
+@@ -343,18 +364,25 @@ static void icssm_prueth_hostinit(struct prueth *prueth)
+  */
+ static void icssm_prueth_init_ethernet_mode(struct prueth *prueth)
+ {
++	icssm_prueth_set_fw_offsets(prueth);
+ 	icssm_prueth_hostinit(prueth);
+ }
+ 
+ static void icssm_prueth_port_enable(struct prueth_emac *emac, bool enable)
+ {
+ 	struct prueth *prueth = emac->prueth;
+-	void __iomem *port_ctrl;
++	void __iomem *port_ctrl, *vlan_ctrl;
++	u32 vlan_ctrl_offset;
+ 	void __iomem *ram;
+ 
++	vlan_ctrl_offset = prueth->fw_offsets->vlan_ctrl_byte;
++
+ 	ram = prueth->mem[emac->dram].va;
+ 	port_ctrl = ram + PORT_CONTROL_ADDR;
+ 	writeb(!!enable, port_ctrl);
++
++	vlan_ctrl = ram + vlan_ctrl_offset;
++	writeb(!!enable, vlan_ctrl);
+ }
+ 
+ static int icssm_prueth_emac_config(struct prueth_emac *emac)
+@@ -1444,6 +1472,174 @@ static void icssm_emac_ndo_get_stats64(struct net_device *ndev,
+ 	stats->rx_length_errors = ndev->stats.rx_length_errors;
+ }
+ 
++/* enable/disable MC filter */
++static void icssm_emac_mc_filter_ctrl(struct prueth_emac *emac, bool enable)
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *mc_filter_ctrl;
++	void __iomem *ram;
++	u32 mc_ctrl_byte;
++	u32 reg;
++
++	ram = prueth->mem[emac->dram].va;
++	mc_ctrl_byte = prueth->fw_offsets->mc_ctrl_byte;
++	mc_filter_ctrl = ram + mc_ctrl_byte;
++
++	if (enable)
++		reg = ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_ENABLED;
++	else
++		reg = ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_DISABLED;
++
++	writeb(reg, mc_filter_ctrl);
++}
++
++/* reset MC filter bins */
++static void icssm_emac_mc_filter_reset(struct prueth_emac *emac)
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *mc_filter_tbl;
++	u32 mc_filter_tbl_base;
++	void __iomem *ram;
++
++	ram = prueth->mem[emac->dram].va;
++	mc_filter_tbl_base = prueth->fw_offsets->mc_filter_tbl;
++
++	mc_filter_tbl = ram + mc_filter_tbl_base;
++	memset_io(mc_filter_tbl, 0, ICSS_EMAC_FW_MULTICAST_TABLE_SIZE_BYTES);
++}
++
++/* set MC filter hashmask */
++static void icssm_emac_mc_filter_hashmask
++		(struct prueth_emac *emac,
++		 u8 mask[ICSS_EMAC_FW_MULTICAST_FILTER_MASK_SIZE_BYTES])
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *mc_filter_mask;
++	u32 mc_filter_mask_base;
++	void __iomem *ram;
++
++	ram = prueth->mem[emac->dram].va;
++	mc_filter_mask_base = prueth->fw_offsets->mc_filter_mask;
++
++	mc_filter_mask = ram + mc_filter_mask_base;
++	memcpy_toio(mc_filter_mask, mask,
++		    ICSS_EMAC_FW_MULTICAST_FILTER_MASK_SIZE_BYTES);
++}
++
++static void icssm_emac_mc_filter_bin_update(struct prueth_emac *emac, u8 hash,
++					    u8 val)
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *mc_filter_tbl;
++	u32 mc_filter_tbl_base;
++	void __iomem *ram;
++
++	ram = prueth->mem[emac->dram].va;
++	mc_filter_tbl_base = prueth->fw_offsets->mc_filter_tbl;
++
++	mc_filter_tbl = ram + mc_filter_tbl_base;
++	writeb(val, mc_filter_tbl + hash);
++}
++
++void icssm_emac_mc_filter_bin_allow(struct prueth_emac *emac, u8 hash)
++{
++	icssm_emac_mc_filter_bin_update
++		(emac, hash,
++		 ICSS_EMAC_FW_MULTICAST_FILTER_HOST_RCV_ALLOWED);
++}
++
++void icssm_emac_mc_filter_bin_disallow(struct prueth_emac *emac, u8 hash)
++{
++	icssm_emac_mc_filter_bin_update
++		(emac, hash,
++		 ICSS_EMAC_FW_MULTICAST_FILTER_HOST_RCV_NOT_ALLOWED);
++}
++
++u8 icssm_emac_get_mc_hash(u8 *mac, u8 *mask)
++{
++	u8 hash;
++	int j;
++
++	for (j = 0, hash = 0; j < ETH_ALEN; j++)
++		hash ^= (mac[j] & mask[j]);
++
++	return hash;
++}
++
++/**
++ * icssm_emac_ndo_set_rx_mode - EMAC set receive mode function
++ * @ndev: The EMAC network adapter
++ *
++ * Called when system wants to set the receive mode of the device.
++ *
++ */
++static void icssm_emac_ndo_set_rx_mode(struct net_device *ndev)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
++	bool promisc = ndev->flags & IFF_PROMISC;
++	struct netdev_hw_addr *ha;
++	struct prueth *prueth;
++	unsigned long flags;
++	void __iomem *sram;
++	u32 mask, reg;
++	u8 hash;
++
++	prueth = emac->prueth;
++	sram = prueth->mem[PRUETH_MEM_SHARED_RAM].va;
++	reg = readl(sram + EMAC_PROMISCUOUS_MODE_OFFSET);
++
++	/* for LRE, it is a shared table. So lock the access */
++	spin_lock_irqsave(&emac->addr_lock, flags);
++
++	/* Disable and reset multicast filter, allows allmulti */
++	icssm_emac_mc_filter_ctrl(emac, false);
++	icssm_emac_mc_filter_reset(emac);
++	icssm_emac_mc_filter_hashmask(emac, emac->mc_filter_mask);
++
++	if (PRUETH_IS_EMAC(prueth)) {
++		switch (emac->port_id) {
++		case PRUETH_PORT_MII0:
++			mask = EMAC_P1_PROMISCUOUS_BIT;
++			break;
++		case PRUETH_PORT_MII1:
++			mask = EMAC_P2_PROMISCUOUS_BIT;
++			break;
++		default:
++			netdev_err(ndev, "%s: invalid port\n", __func__);
++			goto unlock;
 +		}
-+		if (trim) {
-+			trim_code = tsadc->get_trim_code(&tsadc->table, trim,
-+							 thermal->trim_base,
-+							 thermal->trim_base_frac);
-+			trim_temp = thermal->chip->trim_slope * trim_code;
++
++		if (promisc) {
++			/* Enable promiscuous mode */
++			reg |= mask;
++		} else {
++			/* Disable promiscuous mode */
++			reg &= ~mask;
 +		}
++
++		writel(reg, sram + EMAC_PROMISCUOUS_MODE_OFFSET);
++
++		if (promisc)
++			goto unlock;
 +	}
 +
-+	sensor->trim_temp = trim_temp;
++	if (ndev->flags & IFF_ALLMULTI && !PRUETH_IS_SWITCH(prueth))
++		goto unlock;
 +
-+	dev_dbg(dev, "trim of sensor %d is %d\n", id, sensor->trim_temp);
++	icssm_emac_mc_filter_ctrl(emac, true);	/* all multicast blocked */
 +
-+	tshut_temp = min(thermal->tshut_temp + sensor->trim_temp, RK_MAX_TEMP);
++	if (netdev_mc_empty(ndev))
++		goto unlock;
 +
- 	tsadc->set_tshut_mode(id, thermal->regs, thermal->tshut_mode);
- 
--	error = tsadc->set_tshut_temp(&tsadc->table, id, thermal->regs,
--			      thermal->tshut_temp);
-+	error = tsadc->set_tshut_temp(&tsadc->table, id, thermal->regs, tshut_temp);
- 	if (error)
--		dev_err(&pdev->dev, "%s: invalid tshut=%d, error=%d\n",
--			__func__, thermal->tshut_temp, error);
-+		dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
-+			__func__, tshut_temp, error);
- 
- 	sensor->thermal = thermal;
- 	sensor->id = id;
--	sensor->tzd = devm_thermal_of_zone_register(&pdev->dev, id, sensor,
-+	sensor->tzd = devm_thermal_of_zone_register(dev, id, sensor,
- 						    &rockchip_of_thermal_ops);
- 	if (IS_ERR(sensor->tzd)) {
- 		error = PTR_ERR(sensor->tzd);
--		dev_err(&pdev->dev, "failed to register sensor %d: %d\n",
-+		dev_err(dev, "failed to register sensor %d: %d\n",
- 			id, error);
- 		return error;
- 	}
-@@ -1542,9 +1706,11 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct rockchip_thermal_data *thermal;
-+	struct device_node *child;
- 	int irq;
- 	int i;
- 	int error;
-+	u32 chn;
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
-@@ -1595,6 +1761,18 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
- 	thermal->chip->initialize(thermal->grf, thermal->regs,
- 				  thermal->tshut_polarity);
- 
-+	for_each_available_child_of_node(np, child) {
-+		if (!of_property_read_u32(child, "reg", &chn)) {
-+			if (chn < thermal->chip->chn_num)
-+				thermal->sensors[chn].of_node = child;
-+			else
-+				dev_warn(&pdev->dev,
-+					 "sensor address (%d) too large, ignoring its trim\n",
-+					 chn);
-+		}
-+
++	netdev_for_each_mc_addr(ha, ndev) {
++		hash = icssm_emac_get_mc_hash(ha->addr, emac->mc_filter_mask);
++		icssm_emac_mc_filter_bin_allow(emac, hash);
 +	}
 +
- 	for (i = 0; i < thermal->chip->chn_num; i++) {
- 		error = rockchip_thermal_register_sensor(pdev, thermal,
- 						&thermal->sensors[i],
-@@ -1664,8 +1842,11 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
- static int __maybe_unused rockchip_thermal_resume(struct device *dev)
- {
- 	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
--	int i;
-+	const struct rockchip_tsadc_chip *tsadc = thermal->chip;
-+	struct rockchip_thermal_sensor *sensor;
-+	int tshut_temp;
- 	int error;
-+	int i;
- 
- 	error = clk_enable(thermal->clk);
- 	if (error)
-@@ -1679,21 +1860,23 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
- 
- 	rockchip_thermal_reset_controller(thermal->reset);
- 
--	thermal->chip->initialize(thermal->grf, thermal->regs,
--				  thermal->tshut_polarity);
-+	tsadc->initialize(thermal->grf, thermal->regs, thermal->tshut_polarity);
- 
- 	for (i = 0; i < thermal->chip->chn_num; i++) {
--		int id = thermal->sensors[i].id;
-+		sensor = &thermal->sensors[i];
++unlock:
++	spin_unlock_irqrestore(&emac->addr_lock, flags);
++}
 +
-+		tshut_temp = min(thermal->tshut_temp + sensor->trim_temp,
-+				 RK_MAX_TEMP);
+ static int icssm_emac_hwtstamp_config_set(struct net_device *ndev,
+ 					  struct ifreq *ifr)
+ {
+@@ -1517,13 +1713,115 @@ static int icssm_emac_ndo_ioctl(struct net_device *ndev, struct ifreq *ifr,
+ 	return phy_do_ioctl(ndev, ifr, cmd);
+ }
  
--		thermal->chip->set_tshut_mode(id, thermal->regs,
-+		tsadc->set_tshut_mode(sensor->id, thermal->regs,
- 					      thermal->tshut_mode);
++int icssm_emac_add_del_vid(struct prueth_emac *emac,
++			   bool add, __be16 proto, u16 vid)
++{
++	struct prueth *prueth = emac->prueth;
++	u32 vlan_filter_tbl;
++	unsigned long flags;
++	void __iomem *ram;
++	u8 bit_index, val;
++	u16 byte_index;
++
++	vlan_filter_tbl = prueth->fw_offsets->vlan_filter_tbl;
++	ram = prueth->mem[emac->dram].va;
++
++	if (proto != htons(ETH_P_8021Q))
++		return -EINVAL;
++
++	if (vid >= ICSS_EMAC_FW_VLAN_FILTER_VID_MAX)
++		return -EINVAL;
++
++	/* By default, VLAN ID 0 (priority tagged packets) is routed to
++	 * host, so nothing to be done if vid = 0
++	 */
++	if (!vid)
++		return 0;
++
++	/* for LRE, it is a shared table. So lock the access */
++	spin_lock_irqsave(&emac->addr_lock, flags);
++
++	/* VLAN filter table is 512 bytes (4096 bit) bitmap.
++	 * Each bit controls enabling or disabling corresponding
++	 * VID. Therefore byte index that controls a given VID is
++	 * can calculated as vid / 8 and the bit within that byte
++	 * that controls VID is given by vid % 8. Allow untagged
++	 * frames to host by default.
++	 */
++	byte_index = vid / BITS_PER_BYTE;
++	bit_index = vid % BITS_PER_BYTE;
++	val = readb(ram + vlan_filter_tbl + byte_index);
++	if (add)
++		val |= BIT(bit_index);
++	else
++		val &= ~BIT(bit_index);
++	writeb(val, ram + vlan_filter_tbl + byte_index);
++
++	spin_unlock_irqrestore(&emac->addr_lock, flags);
++
++	netdev_dbg(emac->ndev, "%s VID bit at byte index %d and bit %d\n",
++		   add ? "Setting" : "Clearing", byte_index, bit_index);
++
++	return 0;
++}
++
++static int icssm_emac_ndo_vlan_rx_add_vid(struct net_device *dev,
++					  __be16 proto, u16 vid)
++{
++	struct prueth_emac *emac = netdev_priv(dev);
++
++	return icssm_emac_add_del_vid(emac, true, proto, vid);
++}
++
++static int icssm_emac_ndo_vlan_rx_kill_vid(struct net_device *dev,
++					   __be16 proto, u16 vid)
++{
++	struct prueth_emac *emac = netdev_priv(dev);
++
++	return icssm_emac_add_del_vid(emac, false, proto, vid);
++}
++
++static int icssm_emac_get_port_parent_id(struct net_device *dev,
++					 struct netdev_phys_item_id *ppid)
++{
++	struct prueth_emac *emac = netdev_priv(dev);
++	struct prueth *prueth = emac->prueth;
++
++	ppid->id_len = sizeof(prueth->base_mac);
++	memcpy(&ppid->id, &prueth->base_mac, ppid->id_len);
++
++	return 0;
++}
++
++static int icssm_emac_ndo_get_phys_port_name(struct net_device *ndev,
++					     char *name, size_t len)
++{
++	struct prueth_emac *emac = netdev_priv(ndev);
++	int err;
++
++	err = snprintf(name, len, "p%d", emac->port_id);
++
++	if (err >= len)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static const struct net_device_ops emac_netdev_ops = {
+ 	.ndo_open = icssm_emac_ndo_open,
+ 	.ndo_stop = icssm_emac_ndo_stop,
+ 	.ndo_start_xmit = icssm_emac_ndo_start_xmit,
++	.ndo_set_mac_address = eth_mac_addr,
++	.ndo_validate_addr = eth_validate_addr,
+ 	.ndo_tx_timeout = icssm_emac_ndo_tx_timeout,
+ 	.ndo_get_stats64 = icssm_emac_ndo_get_stats64,
++	.ndo_set_rx_mode = icssm_emac_ndo_set_rx_mode,
+ 	.ndo_eth_ioctl = icssm_emac_ndo_ioctl,
++	.ndo_vlan_rx_add_vid = icssm_emac_ndo_vlan_rx_add_vid,
++	.ndo_vlan_rx_kill_vid = icssm_emac_ndo_vlan_rx_kill_vid,
++	.ndo_setup_tc = icssm_emac_ndo_setup_tc,
++	.ndo_get_port_parent_id = icssm_emac_get_port_parent_id,
++	.ndo_get_phys_port_name = icssm_emac_ndo_get_phys_port_name,
+ };
  
--		error = thermal->chip->set_tshut_temp(&thermal->chip->table,
--					      id, thermal->regs,
--					      thermal->tshut_temp);
-+		error = tsadc->set_tshut_temp(&thermal->chip->table,
-+					      sensor->id, thermal->regs,
-+					      tshut_temp);
- 		if (error)
- 			dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
--				__func__, thermal->tshut_temp, error);
-+				__func__, tshut_temp, error);
+ /* get emac_port corresponding to eth_node name */
+@@ -1589,6 +1887,7 @@ static int icssm_prueth_netdev_init(struct prueth *prueth,
+ 	emac->prueth = prueth;
+ 	emac->ndev = ndev;
+ 	emac->port_id = port;
++	memset(&emac->mc_filter_mask[0], 0xff, ETH_ALEN); /* default mask */
+ 
+ 	/* by default eth_type is EMAC */
+ 	switch (port) {
+@@ -1630,7 +1929,9 @@ static int icssm_prueth_netdev_init(struct prueth *prueth,
+ 		dev_err(prueth->dev, "could not get ptp tx irq. Skipping PTP support\n");
  	}
  
- 	thermal->chip->control(thermal->regs, true);
-
++	spin_lock_init(&emac->lock);
+ 	spin_lock_init(&emac->ptp_skb_lock);
++	spin_lock_init(&emac->addr_lock);
+ 
+ 	/* get mac address from DT and set private and netdev addr */
+ 	ret = of_get_ethdev_address(eth_node, ndev);
+@@ -1659,6 +1960,10 @@ static int icssm_prueth_netdev_init(struct prueth *prueth,
+ 	phy_remove_link_mode(emac->phydev, ETHTOOL_LINK_MODE_Pause_BIT);
+ 	phy_remove_link_mode(emac->phydev, ETHTOOL_LINK_MODE_Asym_Pause_BIT);
+ 
++	ndev->features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_HW_TC;
++
++	ndev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
++
+ 	ndev->netdev_ops = &emac_netdev_ops;
+ 	ndev->ethtool_ops = &emac_ethtool_ops;
+ 
+@@ -1714,6 +2019,7 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, prueth);
+ 	prueth->dev = dev;
+ 	prueth->fw_data = device_get_match_data(dev);
++	prueth->fw_offsets = &fw_offsets_v2_1;
+ 
+ 	eth_ports_node = of_get_child_by_name(np, "ethernet-ports");
+ 	if (!eth_ports_node)
+@@ -1900,6 +2206,8 @@ static int icssm_prueth_probe(struct platform_device *pdev)
+ 			prueth->emac[PRUETH_MAC1]->ndev;
+ 	}
+ 
++	eth_random_addr(prueth->base_mac);
++
+ 	dev_info(dev, "TI PRU ethernet driver initialized: %s EMAC mode\n",
+ 		 (!eth0_node || !eth1_node) ? "single" : "dual");
+ 
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth.h b/drivers/net/ethernet/ti/icssm/icssm_prueth.h
+index 14dd58f48d56..61f37909aa71 100644
+--- a/drivers/net/ethernet/ti/icssm/icssm_prueth.h
++++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.h
+@@ -28,6 +28,9 @@
+ #define EMAC_MAX_FRM_SUPPORT (ETH_HLEN + VLAN_HLEN + ETH_DATA_LEN + \
+ 			      ICSSM_LRE_TAG_SIZE)
+ 
++/* default timer for NSP and HSR/PRP */
++#define PRUETH_NSP_TIMER_MS	(100) /* Refresh NSP counters every 100ms */
++
+ #define PRUETH_REG_DUMP_VER		1
+ 
+ /* Encoding: 32-16: Reserved, 16-8: Reg dump version, 8-0: Ethertype */
+@@ -298,6 +301,29 @@ enum prueth_mem {
+ 	PRUETH_MEM_MAX,
+ };
+ 
++/* Firmware offsets/size information */
++struct prueth_fw_offsets {
++	u32 index_array_offset;
++	u32 bin_array_offset;
++	u32 nt_array_offset;
++	u32 index_array_loc;
++	u32 bin_array_loc;
++	u32 nt_array_loc;
++	u32 index_array_max_entries;
++	u32 bin_array_max_entries;
++	u32 nt_array_max_entries;
++	u32 vlan_ctrl_byte;
++	u32 vlan_filter_tbl;
++	u32 mc_ctrl_byte;
++	u32 mc_filter_mask;
++	u32 mc_filter_tbl;
++	/* IEP wrap is used in the rx packet ordering logic and
++	 * is different for ICSSM v1.0 vs 2.1
++	 */
++	u32 iep_wrap;
++	u16 hash_mask;
++};
++
+ enum pruss_device {
+ 	PRUSS_AM57XX = 0,
+ 	PRUSS_AM43XX,
+@@ -319,6 +345,11 @@ struct prueth_private_data {
+ 	bool support_switch;
+ };
+ 
++struct nsp_counter {
++	unsigned long cookie;
++	u16 credit;
++};
++
+ /* data for each emac port */
+ struct prueth_emac {
+ 	struct prueth *prueth;
+@@ -345,8 +376,16 @@ struct prueth_emac {
+ 	const char *phy_id;
+ 	u32 msg_enable;
+ 	u8 mac_addr[6];
++	unsigned char mc_filter_mask[ETH_ALEN];	/* for multicast filtering */
+ 	phy_interface_t phy_if;
++
+ 	spinlock_t lock;	/* serialize access */
++	spinlock_t addr_lock;	/* serialize access to VLAN/MC filter table */
++
++	struct nsp_counter nsp_bc;
++	struct nsp_counter nsp_mc;
++	struct nsp_counter nsp_uc;
++	bool nsp_enabled;
+ 
+ 	struct sk_buff *ptp_skb[PRUETH_PTP_TS_EVENTS];
+ 	spinlock_t ptp_skb_lock;	/* serialize access */
+@@ -374,10 +413,13 @@ struct prueth {
+ 	unsigned int eth_type;
+ 	size_t ocmc_ram_size;
+ 	u8 emac_configured;
++	u8 base_mac[ETH_ALEN];
+ };
+ 
+ extern const struct ethtool_ops emac_ethtool_ops;
+ 
++int icssm_emac_ndo_setup_tc(struct net_device *dev, enum tc_setup_type type,
++			    void *type_data);
+ void icssm_parse_packet_info(struct prueth *prueth, u32 buffer_descriptor,
+ 			     struct prueth_packet_info *pkt_info);
+ int icssm_emac_rx_packet(struct prueth_emac *emac, u16 *bd_rd_ptr,
+@@ -391,9 +433,15 @@ static inline void icssm_emac_finish_napi(struct prueth_emac *emac,
+ 	enable_irq(irq);
+ }
+ 
++int icssm_emac_add_del_vid(struct prueth_emac *emac,
++			   bool add, __be16 proto, u16 vid);
+ irqreturn_t icssm_prueth_ptp_tx_irq_handle(int irq, void *dev);
+ irqreturn_t icssm_prueth_ptp_tx_irq_work(int irq, void *dev);
+ 
++void icssm_emac_mc_filter_bin_allow(struct prueth_emac *emac, u8 hash);
++void icssm_emac_mc_filter_bin_disallow(struct prueth_emac *emac, u8 hash);
++u8 icssm_emac_get_mc_hash(u8 *mac, u8 *mask);
++
+ void icssm_emac_update_hardware_stats(struct prueth_emac *emac);
+ void icssm_emac_set_stats(struct prueth_emac *emac,
+ 			  struct port_statistics *pstats);
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_prueth_dos.c b/drivers/net/ethernet/ti/icssm/icssm_prueth_dos.c
+new file mode 100644
+index 000000000000..1a7499131b2b
+--- /dev/null
++++ b/drivers/net/ethernet/ti/icssm/icssm_prueth_dos.c
+@@ -0,0 +1,222 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (C) 2020-2021 Texas Instruments Incorporated - https://www.ti.com
++ */
++
++#include <linux/kernel.h>
++#include <linux/remoteproc/pruss.h>
++#include <linux/regmap.h>
++#include <linux/remoteproc.h>
++#include <net/pkt_cls.h>
++
++#include "../icssg/icssg_mii_rt.h"
++#include "icssm_vlan_mcast_filter_mmap.h"
++#include "icssm_prueth.h"
++
++static void icssm_emac_nsp_enable(void __iomem *counter, u16 credit)
++{
++	writel((credit << PRUETH_NSP_CREDIT_SHIFT) | PRUETH_NSP_ENABLE,
++	       counter);
++}
++
++/**
++ * icssm_prueth_enable_nsp - enable nsp
++ *
++ * @emac: EMAC data structure
++ *
++ */
++static void icssm_prueth_enable_nsp(struct prueth_emac *emac)
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *dram;
++
++	dram = prueth->mem[emac->dram].va;
++
++	if (emac->nsp_bc.cookie)
++		icssm_emac_nsp_enable(dram + STORM_PREVENTION_OFFSET_BC,
++				      emac->nsp_bc.credit);
++	if (emac->nsp_mc.cookie)
++		icssm_emac_nsp_enable(dram + STORM_PREVENTION_OFFSET_MC,
++				      emac->nsp_mc.credit);
++	if (emac->nsp_uc.cookie)
++		icssm_emac_nsp_enable(dram + STORM_PREVENTION_OFFSET_UC,
++				      emac->nsp_uc.credit);
++}
++
++static int icssm_emac_flower_parse_policer(struct prueth_emac *emac,
++					   struct netlink_ext_ack *extack,
++					   struct flow_cls_offload *cls,
++					   u64 rate_bytes_per_sec)
++{
++	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
++	struct flow_dissector *dissector = rule->match.dissector;
++	u8 null_mac[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++	u8 bc_mac[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
++	u8 mc_mac[] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
++	struct flow_match_eth_addrs match;
++	struct nsp_counter *nsp = NULL;
++	char *str;
++	u32 pps;
++
++	if (dissector->used_keys &
++	    ~(BIT(FLOW_DISSECTOR_KEY_BASIC) |
++	      BIT(FLOW_DISSECTOR_KEY_CONTROL) |
++	      BIT(FLOW_DISSECTOR_KEY_ETH_ADDRS))) {
++		NL_SET_ERR_MSG_MOD(extack,
++				   "Unsupported keys used");
++		return -EOPNOTSUPP;
++	}
++
++	if (!flow_rule_match_key(rule, FLOW_DISSECTOR_KEY_ETH_ADDRS)) {
++		NL_SET_ERR_MSG_MOD(extack, "Not matching on eth address");
++		return -EOPNOTSUPP;
++	}
++
++	flow_rule_match_eth_addrs(rule, &match);
++
++	if (!ether_addr_equal_masked(match.key->src, null_mac,
++				     match.mask->src)) {
++		NL_SET_ERR_MSG_MOD(extack,
++				   "Matching on source MAC not supported");
++		return -EOPNOTSUPP;
++	}
++
++	if (ether_addr_equal(match.key->dst, bc_mac)) {
++		if (!emac->nsp_bc.cookie ||
++		    emac->nsp_bc.cookie == cls->cookie)
++			nsp = &emac->nsp_bc;
++		else
++			NL_SET_ERR_MSG_MOD(extack, "BC Filter already set");
++		str = "Broad";
++	} else if (ether_addr_equal_masked(match.key->dst, mc_mac, mc_mac)) {
++		if (!emac->nsp_mc.cookie ||
++		    emac->nsp_mc.cookie == cls->cookie)
++			nsp = &emac->nsp_mc;
++		else
++			NL_SET_ERR_MSG_MOD(extack, "MC Filter already set");
++		str = "Multi";
++	} else {
++		if (!emac->nsp_uc.cookie ||
++		    emac->nsp_uc.cookie == cls->cookie)
++			nsp = &emac->nsp_uc;
++		else
++			NL_SET_ERR_MSG_MOD(extack, "UC Filter already set");
++		str = "Uni";
++	}
++
++	if (!nsp)
++		return -EOPNOTSUPP;
++
++	/* Calculate number of packets per second for given bps
++	 * assuming min ethernet packet size
++	 */
++	pps = div_u64(rate_bytes_per_sec, ETH_ZLEN);
++	/* Convert that to packets per 100ms */
++	pps /= MSEC_PER_SEC / PRUETH_NSP_TIMER_MS;
++
++	nsp->cookie = cls->cookie;
++	nsp->credit = pps;
++	emac->nsp_enabled = emac->nsp_bc.cookie | emac->nsp_mc.cookie |
++			    emac->nsp_uc.cookie;
++
++	icssm_prueth_enable_nsp(emac);
++
++	netdev_dbg(emac->ndev,
++		   "%scast filter set to %d packets per %dms\n", str,
++		   nsp->credit, PRUETH_NSP_TIMER_MS);
++
++	return 0;
++}
++
++static int icssm_emac_configure_clsflower(struct prueth_emac *emac,
++					  struct flow_cls_offload *cls)
++{
++	struct flow_rule *rule = flow_cls_offload_flow_rule(cls);
++	struct netlink_ext_ack *extack = cls->common.extack;
++	const struct flow_action_entry *act;
++
++	act = &rule->action.entries[0];
++	switch (act->id) {
++	case FLOW_ACTION_POLICE:
++		return icssm_emac_flower_parse_policer
++			(emac, extack, cls,
++			 act->police.rate_bytes_ps);
++	default:
++		NL_SET_ERR_MSG_MOD(extack,
++				   "Unsupported only ACTION_POLICE supported");
++		return -EOPNOTSUPP;
++	}
++}
++
++static int icssm_emac_delete_clsflower(struct prueth_emac *emac,
++				       struct flow_cls_offload *cls)
++{
++	struct prueth *prueth = emac->prueth;
++	void __iomem *dram;
++
++	dram = prueth->mem[emac->dram].va;
++
++	if (cls->cookie == emac->nsp_bc.cookie) {
++		emac->nsp_bc.cookie = 0;
++		emac->nsp_bc.credit = 0;
++		writel(0, dram + STORM_PREVENTION_OFFSET_BC);
++	} else if (cls->cookie == emac->nsp_mc.cookie) {
++		emac->nsp_mc.cookie = 0;
++		emac->nsp_mc.credit = 0;
++		writel(0, dram + STORM_PREVENTION_OFFSET_MC);
++	} else if (cls->cookie == emac->nsp_uc.cookie) {
++		emac->nsp_uc.cookie = 0;
++		emac->nsp_uc.credit = 0;
++		writel(0, dram + STORM_PREVENTION_OFFSET_UC);
++	}
++
++	emac->nsp_enabled = emac->nsp_bc.cookie | emac->nsp_mc.cookie |
++			    emac->nsp_uc.cookie;
++
++	return 0;
++}
++
++static int icssm_emac_setup_tc_cls_flower(struct prueth_emac *emac,
++					  struct flow_cls_offload *cls_flower)
++{
++	switch (cls_flower->command) {
++	case FLOW_CLS_REPLACE:
++		return icssm_emac_configure_clsflower(emac, cls_flower);
++	case FLOW_CLS_DESTROY:
++		return icssm_emac_delete_clsflower(emac, cls_flower);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static int icssm_emac_setup_tc_block_cb(enum tc_setup_type type,
++					void *type_data, void *cb_priv)
++{
++	struct prueth_emac *emac = cb_priv;
++
++	if (!tc_cls_can_offload_and_chain0(emac->ndev, type_data))
++		return -EOPNOTSUPP;
++
++	switch (type) {
++	case TC_SETUP_CLSFLOWER:
++		return icssm_emac_setup_tc_cls_flower(emac, type_data);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
++static LIST_HEAD(emac_block_cb_list);
++
++int icssm_emac_ndo_setup_tc(struct net_device *dev, enum tc_setup_type type,
++			    void *type_data)
++{
++	struct prueth_emac *emac = netdev_priv(dev);
++
++	if (type == TC_SETUP_BLOCK) {
++		return flow_block_cb_setup_simple(type_data,
++						  &emac_block_cb_list,
++						  icssm_emac_setup_tc_block_cb,
++						  emac, emac, true);
++	}
++
++	return -EOPNOTSUPP;
++}
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_switch.h b/drivers/net/ethernet/ti/icssm/icssm_switch.h
+index b13e0706ccec..0053191380b7 100644
+--- a/drivers/net/ethernet/ti/icssm/icssm_switch.h
++++ b/drivers/net/ethernet/ti/icssm/icssm_switch.h
+@@ -146,6 +146,11 @@
+ /* 4 bytes ? */
+ #define STP_INVALID_STATE_OFFSET	(STATISTICS_OFFSET + STAT_SIZE + 33)
+ 
++/* Shared RAM Offsets for Switch */
++/* NSP (Network Storm Prevention) timer re-uses NT timer */
++#define PRUETH_NSP_CREDIT_SHIFT       8
++#define PRUETH_NSP_ENABLE            BIT(0)
++
+ /* DRAM Offsets for EMAC
+  * Present on Both DRAM0 and DRAM1
+  */
+diff --git a/drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h b/drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h
+new file mode 100644
+index 000000000000..c177c19a36ef
+--- /dev/null
++++ b/drivers/net/ethernet/ti/icssm/icssm_vlan_mcast_filter_mmap.h
+@@ -0,0 +1,120 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/* Copyright (C) 2015-2021 Texas Instruments Incorporated - https://www.ti.com
++ *
++ * This file contains VLAN/Multicast filtering feature memory map
++ *
++ */
++
++#ifndef ICSS_VLAN_MULTICAST_FILTER_MM_H
++#define ICSS_VLAN_MULTICAST_FILTER_MM_H
++
++/* VLAN/Multicast filter defines & offsets,
++ * present on both PRU0 and PRU1 DRAM
++ */
++
++/* Feature enable/disable values for multicast filtering */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_DISABLED		0x00
++#define ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_ENABLED		0x01
++
++/* Feature enable/disable values for VLAN filtering */
++#define ICSS_EMAC_FW_VLAN_FILTER_CTRL_DISABLED			0x00
++#define ICSS_EMAC_FW_VLAN_FILTER_CTRL_ENABLED			0x01
++
++/* Add/remove multicast mac id for filtering bin */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_HOST_RCV_ALLOWED		0x01
++#define ICSS_EMAC_FW_MULTICAST_FILTER_HOST_RCV_NOT_ALLOWED	0x00
++
++/* Default HASH value for the multicast filtering Mask */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_INIT_VAL			0xFF
++
++/* Size requirements for Multicast filtering feature */
++#define ICSS_EMAC_FW_MULTICAST_TABLE_SIZE_BYTES			       256
++#define ICSS_EMAC_FW_MULTICAST_FILTER_MASK_SIZE_BYTES			 6
++#define ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_SIZE_BYTES			 1
++#define ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OVERRIDE_STATUS_SIZE_BYTES	 1
++#define ICSS_EMAC_FW_MULTICAST_FILTER_DROP_CNT_SIZE_BYTES		 4
++
++/* Size requirements for VLAN filtering feature : 4096 bits = 512 bytes */
++#define ICSS_EMAC_FW_VLAN_FILTER_TABLE_SIZE_BYTES		       512
++#define ICSS_EMAC_FW_VLAN_FILTER_CTRL_SIZE_BYTES			 1
++#define ICSS_EMAC_FW_VLAN_FILTER_DROP_CNT_SIZE_BYTES			 4
++
++/* Mask override set status */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OVERRIDE_SET			 1
++/* Mask override not set status */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OVERRIDE_NOT_SET		 0
++/* 6 bytes HASH Mask for the MAC */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OFFSET	  0xF4
++/* 0 -> multicast filtering disabled | 1 -> multicast filtering enabled */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_OFFSET	\
++	(ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OFFSET +	\
++	 ICSS_EMAC_FW_MULTICAST_FILTER_MASK_SIZE_BYTES)
++/* Status indicating if the HASH override is done or not: 0: no, 1: yes */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_OVERRIDE_STATUS	\
++	(ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_OFFSET +	\
++	 ICSS_EMAC_FW_MULTICAST_FILTER_CTRL_SIZE_BYTES)
++/* Multicast drop statistics */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_DROP_CNT_OFFSET	\
++	(ICSS_EMAC_FW_MULTICAST_FILTER_OVERRIDE_STATUS +\
++	 ICSS_EMAC_FW_MULTICAST_FILTER_MASK_OVERRIDE_STATUS_SIZE_BYTES)
++/* Multicast table */
++#define ICSS_EMAC_FW_MULTICAST_FILTER_TABLE		\
++	(ICSS_EMAC_FW_MULTICAST_FILTER_DROP_CNT_OFFSET +\
++	 ICSS_EMAC_FW_MULTICAST_FILTER_DROP_CNT_SIZE_BYTES)
++
++/* Multicast filter defines & offsets for LRE
++ */
++#define ICSS_LRE_FW_MULTICAST_TABLE_SEARCH_OP_CONTROL_BIT	0xE0
++/* one byte field :
++ * 0 -> multicast filtering disabled
++ * 1 -> multicast filtering enabled
++ */
++#define ICSS_LRE_FW_MULTICAST_FILTER_MASK			 0xE4
++#define ICSS_LRE_FW_MULTICAST_FILTER_TABLE			 0x100
++
++/* VLAN table Offsets */
++#define ICSS_EMAC_FW_VLAN_FLTR_TBL_BASE_ADDR		 0x200
++#define ICSS_EMAC_FW_VLAN_FILTER_CTRL_BITMAP_OFFSET	 0xEF
++#define ICSS_EMAC_FW_VLAN_FILTER_DROP_CNT_OFFSET	\
++	(ICSS_EMAC_FW_VLAN_FILTER_CTRL_BITMAP_OFFSET +	\
++	 ICSS_EMAC_FW_VLAN_FILTER_CTRL_SIZE_BYTES)
++
++/* VLAN filter Control Bit maps */
++/* one bit field, bit 0: | 0 : VLAN filter disabled (default),
++ * 1: VLAN filter enabled
++ */
++#define ICSS_EMAC_FW_VLAN_FILTER_CTRL_ENABLE_BIT		       0
++/* one bit field, bit 1: | 0 : untagged host rcv allowed (default),
++ * 1: untagged host rcv not allowed
++ */
++#define ICSS_EMAC_FW_VLAN_FILTER_UNTAG_HOST_RCV_ALLOW_CTRL_BIT	       1
++/* one bit field, bit 1: | 0 : priotag host rcv allowed (default),
++ * 1: priotag host rcv not allowed
++ */
++#define ICSS_EMAC_FW_VLAN_FILTER_PRIOTAG_HOST_RCV_ALLOW_CTRL_BIT       2
++/* one bit field, bit 1: | 0 : skip sv vlan flow
++ * :1 : take sv vlan flow  (not applicable for dual emac )
++ */
++#define ICSS_EMAC_FW_VLAN_FILTER_SV_VLAN_FLOW_HOST_RCV_ALLOW_CTRL_BIT  3
++
++/* VLAN IDs */
++#define ICSS_EMAC_FW_VLAN_FILTER_PRIOTAG_VID			       0
++#define ICSS_EMAC_FW_VLAN_FILTER_VID_MIN			       0x0000
++#define ICSS_EMAC_FW_VLAN_FILTER_VID_MAX			       0x0FFF
++
++/* VLAN Filtering Commands */
++#define ICSS_EMAC_FW_VLAN_FILTER_ADD_VLAN_VID_CMD		       0x00
++#define ICSS_EMAC_FW_VLAN_FILTER_REMOVE_VLAN_VID_CMD		       0x01
++
++/* Switch defines for VLAN/MC filtering */
++/* SRAM
++ * VLAN filter defines & offsets
++ */
++#define ICSS_LRE_FW_VLAN_FLTR_CTRL_BYTE				 0x1FE
++/* one bit field | 0 : VLAN filter disabled
++ *		 | 1 : VLAN filter enabled
++ */
++#define ICSS_LRE_FW_VLAN_FLTR_TBL_BASE_ADDR			 0x200
++
++#endif /* ICSS_MULTICAST_FILTER_MM_H */
 -- 
-2.49.0
+2.34.1
 
 
