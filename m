@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-679671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95875AD3A10
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 15:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96962AD3A29
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 16:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6087E7A901B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:57:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BD827AB177
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 14:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17558299A93;
-	Tue, 10 Jun 2025 13:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3262BCF51;
+	Tue, 10 Jun 2025 14:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rL4KmZZv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="RcEPNm+9"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D9D296160;
-	Tue, 10 Jun 2025 13:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EA029DB8E;
+	Tue, 10 Jun 2025 14:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749563914; cv=none; b=ApQudFLV+qupX8Lxzu8Hhl7vqrWPkVpkxV4U19mu0sfbOLStiY8OCHmcACnQNVcYjJIxoi8Bt2/qJH1k1st0A1BgQ+5ziebuNYETxSLSanYsAFwDvdR+LpS++gOdn843XOY/HDUURiC4ZKAlT6/o9bl3AEp4ycb9YkBr1rFvi0I=
+	t=1749564118; cv=none; b=Phi5XOQYekM5tTnfaenVce+Ys9l/hBh1k8TPyJVsSZWeVpABC5J7sq1sOJjmqBC0qAcaODTnNoQYqJ7qJRNgsMwLT8qf/u/jaolwii/m4lzguRZ6T+YFTRnGOxqd6rczIJg2Up+qSW6uEJOJU8OJWZ/P1XR/iHlq2Ad8n0Pstbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749563914; c=relaxed/simple;
-	bh=DcjHkaAwZrvC9iqm3h/N+EYehYOf07x5o+lB32uAnwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DsJLfnC5vKco4hRAh/Pm0oUj48iI+TBH/MCcl5rrRWFIMDzV6lHUu5tpGZgiY3SkYSvskB5iH0L7uPHF5T1L75L6ZimjM9OwimMcZhoGM7ajHQjaq4u78iKP+z8F0Y8BnEVS5M8XNkX/pukde8GLy+ReXRptBQOxm56fHlSa5BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rL4KmZZv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA625C4CEED;
-	Tue, 10 Jun 2025 13:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749563914;
-	bh=DcjHkaAwZrvC9iqm3h/N+EYehYOf07x5o+lB32uAnwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rL4KmZZvWURDpVuaJDuWrMYU7W0dL4ezE5NK6t6+XoRJvPhXKvlkkmuwfMn8AxVmG
-	 N66sduGzBqDsDBEsZptl603MIFdS/2uK3tFa+orLcmZM5sEtnF5NTwsvG3ZcEo4n7V
-	 RPJu2kIodXLsf04s8mBYFUj4JAETnxVHueckrkzZxEZsyaRvLLOqKUJf5xEtT/F4yP
-	 SqOLfIai9IKYWzr3RMTAZEYwmAV1eXgHUGF3xunvyuNavwRM3L7Y2cxaDUvUMhw1aY
-	 8hQN8lzQwW8Gqc/B0tSjL6AEZby8DW+5yV2TE3sgdj5HPk1F0/QoM++UeHMqLpZoBM
-	 pYL8NrGuf+whg==
-Date: Tue, 10 Jun 2025 16:58:30 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: sudeep.holla@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
-	stuart.yoder@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] fix failure of integration IMA with tpm_crb_ffa
-Message-ID: <aEg6Bgh8TqzK5nSu@kernel.org>
-References: <20250610060334.2149041-1-yeoreum.yun@arm.com>
- <aEgmhwu1RP27yBpw@kernel.org>
- <aEgwpXXftXW6JNRy@e129823.arm.com>
+	s=arc-20240116; t=1749564118; c=relaxed/simple;
+	bh=dJAjnjVCBWFi59JPuEDE12I/eCLx4eSBmPOBQ3kkkBs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=a6MO1Nz3veG5NN0Wxt1vnOu9rvhnm22mUSyRYz3MACb5c7sdvPQytWAZHVRNmgtqqR+3K66YXGuLGliLf3OCTYroyxw5kUk7lHKr+dBrpe+wUnD384bbk9Xt0QLlxy+u6/DoFwWQAkVx4T8sGzXTfXaNJCOHw77vDvTSA6KHnak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=RcEPNm+9; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bGr7b4tGVz9sWN;
+	Tue, 10 Jun 2025 16:01:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1749564107; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V91fldRtjZGoREG79N9rf6WT/04EBxH6Xnys4sXjdGQ=;
+	b=RcEPNm+9v5FivHKhdSwyJsKYdWtre4nWizpbUqr25wjyt27a/rIW0lq6Wd7NsvZci4+7E+
+	cAUys5LUNbhtlSyaGpfKM1WQZ5oHuRMQc5n+mXj9oG/3MP/DkpwLQOzF87tfsyixcMYoZZ
+	TRzGIoYlg1Jfwh+DXGYqRkwTjBzuDldymnEfaSLoicfIM+CWZzVobE9hIL8V9sZ7GXN8cL
+	ciBr/IMD71zsPxbXIexbCg9tPNfT1K+nRGiJ5KE7ymzgFk0RcgUMuWg8nRdLbLytQJ21+m
+	knhcvD3WGTHNkJ8KqkDJ1dgX2czrcvYpLqg4+XL8oR3rgE3Kl+xO/LCPtG9kJA==
+Message-ID: <aade5fcc5bae0e2a04441388fd7f248704a33ae3.camel@mailbox.org>
+Subject: Re: [PATCH v2] ata: pata_macio: Fix PCI region leak
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Damien Le Moal
+ <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Kuppuswamy Sathyanarayanan
+ <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 10 Jun 2025 16:01:43 +0200
+In-Reply-To: <20250610135413.35930-2-phasta@kernel.org>
+References: <20250610135413.35930-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aEgwpXXftXW6JNRy@e129823.arm.com>
+X-MBO-RS-META: 1hdic9gthff9ma5dm4sp1ikx8it6c7sy
+X-MBO-RS-ID: 480e5cbc4daf07b7ee3
 
-On Tue, Jun 10, 2025 at 02:18:29PM +0100, Yeoreum Yun wrote:
->   module_ffa_driver(tpm_crb_ffa_driver);
+On Tue, 2025-06-10 at 15:54 +0200, Philipp Stanner wrote:
+> pci_request_regions() became a managed devres functions if the PCI
+> device was enabled with pcim_enable_device(), which is the case for
+> pata_macio.
+>=20
+> The PCI subsystem recently removed this hybrid feature from
+> pci_request_region(). When doing so, pata_macio was forgotten to be
+> ported to use pcim_request_all_regions(). If that function is not
+> used,
+> pata_macio will fail on driver-reload because the PCI regions will
+> remain blocked.
+>=20
+> Fix the region leak by replacing pci_request_regions() with its
+> managed
+> counterpart, pcim_request_all_regions().
+>=20
+> Fixes: 51f6aec99cb0 ("PCI: Remove hybrid devres nature from request
+> functions")
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Oops, I missed this statement. Sorry, my bad.
+Forgot Damien's Reviewed-by.
 
-> 
-> >
-> > >   0000000000000a9c l  .initcall6.init>  ffa_init
-> > >
-> > > In this situation, the IMA subsystem fails to integrate with the TPM device
-> > > because the TPM was not available at the time ima_init() was called.
-> > > As a result, you may see the following message in the kernel log:
-> > >
-> > >   | ima: No TPM chip found, activating TPM-bypass!
-> >
-> > TPM initializes before IMA, so there should not be a problem.
-> 
-> If you see my commit message it describes the situation why this happen.
-> when crb_acpi_driver_init() is called but before tpm_crb_ffa_init() is
-> called, the secure partition doesn't probe. so crb_acpi_driver_init()
-> would be failed wiith -EPROBE.
+P.
 
-What is "secure partition" and why it doesn't probe at the time of
-crb_acpi_driver_init()?
+> ---
+> Changes in v2:
+> =C2=A0 - Add Fixes: tag and rephrase commit message, since the merge
+> window
+> =C2=A0=C2=A0=C2=A0 closed already. (Niklas)
+> ---
+> =C2=A0drivers/ata/pata_macio.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+> index fbf5f07ea357..f7a933eefe05 100644
+> --- a/drivers/ata/pata_macio.c
+> +++ b/drivers/ata/pata_macio.c
+> @@ -1298,7 +1298,7 @@ static int pata_macio_pci_attach(struct pci_dev
+> *pdev,
+> =C2=A0	priv->dev =3D &pdev->dev;
+> =C2=A0
+> =C2=A0	/* Get MMIO regions */
+> -	if (pci_request_regions(pdev, "pata-macio")) {
+> +	if (pcim_request_all_regions(pdev, "pata-macio")) {
+> =C2=A0		dev_err(&pdev->dev,
+> =C2=A0			"Cannot obtain PCI resources\n");
+> =C2=A0		return -EBUSY;
 
-> 
-> In this situation, init_ima() which call ima_init() can be called first.
-> NOTE, init_ima() is deployed in late_initcall and
-> the "deferred_probe device" is tried again in
-> deferred_probe late initcall.
-> However, even the deferred_probe can be call later then init_ima().
-> 
-> 000000000000012c l       .initcall7.init>-------0000000000000000 init_ima
-> 000000000000016c l       .initcall7.init>-------0000000000000000 deferred_probe_initcall7
-> 
-> That's why init_ima() is failed to init with TPM when It is deffered.
-> 
-> Would you let me know why you said it's not a problem?
-
-What has deferred_probe_initcall has to do with this? Not actually
-asking just pointing out stuff that you should open up.
-
-> 
-> --
-> Sincerely,
-> Yeoreum Yun
-
-BR, Jarkko
 
