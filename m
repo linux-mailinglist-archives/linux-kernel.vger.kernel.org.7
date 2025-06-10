@@ -1,119 +1,128 @@
-Return-Path: <linux-kernel+bounces-678933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA25FAD303D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:27:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C409AD3039
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E291896109
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:26:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BF21730E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8C928136F;
-	Tue, 10 Jun 2025 08:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2ED28136C;
+	Tue, 10 Jun 2025 08:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lAglozZL"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAGlQClE"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94252820A4;
-	Tue, 10 Jun 2025 08:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9264527EC7D;
+	Tue, 10 Jun 2025 08:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749543871; cv=none; b=kDaHQ4CtO3PDRnMS9cG2DBaofUUlfAjPQPUXqifqrOlJt+QUbwm/jpvpLPasyyo3zURCWq8OigTO6GKnSBT1gvF9fTD4QizYnmA72wCkh60mZATb8P0NGDtiuYeCFi58j82yzw204NV+Gzpki0/eRgs82Y81L2xFMPH07bWZ8QU=
+	t=1749543953; cv=none; b=BXtT/vdgIGgeF9kVu7lUShWRgkc+kjXS5PgtfGjtk+JSpQiNl909G40xtDmcsiqOSO8+eGpvG9sh3qcOtXTb8r4O6uL6IuAerLyWJoTZ2IfJx/X3yxwvA3qU+V45c4Jho7okcWtT/Vl2HkgPWsBZNVRqrpm+//CwhSd0QSCIAC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749543871; c=relaxed/simple;
-	bh=66lxnOdLEeO03f3f5flu/jjR23hhyoD7CI23MWhCBmI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aUxYkpIqyWGhKtOadGLQV2buZpwiQ0jmalpwZ5vqGm4pCg0yG3YX8TWHxiMQDoVcanjkjz6RSHkZFsMEx+MRJ1Sd9Qd2TNfe4o7WEayglKU8IMOb5eV9FDFuWU6jnyoIiDC01kUSvddwQsGzPZ5axEJZzTAjHktzmRIX07o5E3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lAglozZL; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1749543953; c=relaxed/simple;
+	bh=pGvauvieYwYiolCBSn4Lw2JXhkhZQIEF4zRiGV68/AA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5obgkf8jSNch8dzf9P0mcY6Hh0qynpSOj8/63IaE421e+s9bKkOJC7jkB196l8od32Q1a0+us21Sfnh3RNuE8CAUiTTOCLtiVdmY37+Rb4NVPYo6S1nQEkQRthJ3CmSPIwz7tpJT6LLLQMvPBEwVmKBjiz4RL2JD2q7CRmFjig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAGlQClE; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a51481a598so2973494f8f.3;
-        Tue, 10 Jun 2025 01:24:29 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54d98aa5981so6232039e87.0;
+        Tue, 10 Jun 2025 01:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749543868; x=1750148668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cqQEs3AYaoL0gKOjKPSZkWHvVXObTv1esvtISy7Z9CE=;
-        b=lAglozZLS4vliTD0WAUlj/jm/JzuPUyV8GVgSYwDAaDFwJZNaOkx6eGeSpTf3fqVLa
-         4apoEj6xd/eJ1Ib2T5onjAf2lKmjlcauJeS2wBUlHailm88qI7RLMqzbZ9F6ercGKHns
-         zSIvxGr3ydztiyBEFbymHbf1c4sJdfejAECsSVxQ3kgAZUJbAh5xwyRCiwZYABNs+1cr
-         BitVeDYd1T5pvHzoPcCSGOtOl0VPAT+TUMDLNILB94W0YalfkT8cAFmEwHHSdWKxv7Th
-         nyLVFBf8+zbQ1IT5Dfpe4Ln1h/yNtDhdbTASvSpL8gdmCGqAsFJkwUuo/MDjoMQfpsWP
-         BmSw==
+        d=gmail.com; s=20230601; t=1749543950; x=1750148750; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pmu5xlM5q+wbKmkDcTikYWeNSMGX5E7OEibClfmyPzg=;
+        b=RAGlQClECitGM8MFDvH4MmknYCvvW2os1nfK3hIreEdkOvrTLQwLQ53VkA603WtwX1
+         LLaTIG6kWcY82MZ1XsyEpJF9LdmsmPmH2CLrxghaPmQN6Fn5765J3xaY6xUHuhb+1izY
+         FASMK6djNdcG+E8DWaufPuGU2laTYbZpc9cJFPu1m25pYZBJc5878PLDKe1TjM2x3KUt
+         UBPsAKTlVusRsB71+67/4IoULtcZ8jcP5WBfVFkp7yXSaoL0aLYIunNncqkL+T23257J
+         4Y1OXkLpWhtdPb7kMqJJ/RgFnKNd8isIfekD1HwEPrJCuVs9r3KbNIZouDXAEJ2WuYD9
+         NR8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749543868; x=1750148668;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cqQEs3AYaoL0gKOjKPSZkWHvVXObTv1esvtISy7Z9CE=;
-        b=IS2zlVZmAxUY6cytYe4L0af8yRB17uswwIbFj7iDDPOnGdNjpTfdfVE5+K9Mb0BWLZ
-         6t938qtKosFgPuLmCrAs7UfgjWAJAYXMkLhUHCo7B0fEbdc5oK91Ucn2HiQjTHAiDu3m
-         o8q09oK2gP7AGC2Lv65N5+ASb47qupheRg8IqRjGuFJg62RILaI+EDrkQVTKuESu79XV
-         UsqZ3iJUB4ZLXidAVD0l/LyRZRKdIt+4uWY1ZdU5sD1pgWq7MUPCFXbSw+a6Who16w5X
-         rOsxy4l0CLUnlBi7SbeyljRfX8pPEvdHChnxZ1W8pByyRgdL5UqzqbWENMO6Sn0n4lnb
-         7TVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLZXLzXRdfaDTUj4DAkinJwt+Da7lqeO8BMrLMnkD8qPpR6yULsLTxaa6weGdZvy7G9PILRlyegXFGJsJF@vger.kernel.org, AJvYcCX8E3uYXXLjVRcyT8qv60z2COzNt4ncnfMu7qGU54+tjJYgsuOM2sjOz1nSny8UlHCEMpPAlxpvI7yd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFLG5Z/EGyw68gwW1lDvEe7nt4ZTsiUesgXr4yXdIIs+ex6Hkm
-	T9W+FB8tB3XsBwFrmBbL7A2BS3KmcpNY8Rxe0c5UA9hS4QZdIL1/4jXf
-X-Gm-Gg: ASbGncs6SgGsCPV0MuF0vAzuViJiq9vBDBOzAP5cNYiIs/K8st64dEQfReHzmv9DyJa
-	Q1S8PwN3UvjCjOY9Ziwhepq8Xqc6QluFbYsZ6ThFumfG6fOlxFPEBK0mFOkjJG7jXJC9i8FXIM7
-	2z6puRFNI1Jvchity8ZY8XXNjGGk3SdXZbl/BRQj8a0KpXN8APSc7GK4W/KAE/WmiDjbb6NHKP5
-	U9yDknLQbHowqA9gFBhmiEtVowCweIaFHHZXfui39Od/Z6SNcdYVBoKc0w67zhvvtnjRfcru6uq
-	PeTdhxObwY+S1pF7o+kVX90VfZQsJAlCZjjHc4/cRX7UZh9ue36VxYMVQifWQsQPDov9wmLMRFt
-	18iflsjpIA4I71ROjEJIeYA==
-X-Google-Smtp-Source: AGHT+IHq0yyKhrUtImiehOp32y/Vb9Nwaew2THNFw7WC+A4KfUrKVNKggo0D04iVTwMH9yptoNgA0A==
-X-Received: by 2002:a05:6000:230c:b0:3a4:d0fe:42b2 with SMTP id ffacd0b85a97d-3a5317868f5mr12249227f8f.19.1749543868010;
-        Tue, 10 Jun 2025 01:24:28 -0700 (PDT)
-Received: from masalkhi.. (ip-109-43-115-15.web.vodafone.de. [109.43.115.15])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a5323c08fasm11402462f8f.44.2025.06.10.01.24.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 01:24:27 -0700 (PDT)
-From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To: krzk@kernel.org
-Cc: W_Armin@gmx.de,
-	abd.masalkhi@gmail.com,
-	arnd@arndb.de,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	luoyifan@cmss.chinamobile.com,
-	robh@kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: eeprom: Add ST M24LR support
-Date: Tue, 10 Jun 2025 08:24:25 +0000
-Message-ID: <20250610082425.3368993-1-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250610-spectral-passionate-chameleon-bc0b4b@kuoka>
-References: <20250610-spectral-passionate-chameleon-bc0b4b@kuoka>
+        d=1e100.net; s=20230601; t=1749543950; x=1750148750;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pmu5xlM5q+wbKmkDcTikYWeNSMGX5E7OEibClfmyPzg=;
+        b=KpPS+xDjV3lwrtv6EwHOB2u3JLawkTMDrmGJZGjsT/eQpgQvLug/FgyCR+B1FqwGi8
+         KCy/wekamIezQ8ueVPXmc94XwtX9hkwSoYDJpyA68EbnPZT7KqsQn6QqSjUpE0Urdx6v
+         eqNBLKP7p+0ZNhVC+W8g64VyxRsWGTk5t6lbbwMb7KfOtgLMpLV6EQgV2+HkSA9P2Pxv
+         M7Ksfui173xptG4Pv67S3UIfh8R9Rlk9QtLe4Fe3ZDj6Pw15t5Tj3DbtysnyoR7a7zBJ
+         V2J7CLY9pudXLIWH0okTT+hVxZSdhMHBAmLb0wijIfK9OY7Nn+xw1+TXPnUwTumE24fV
+         wL1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVgNLHW1YvfjVhNsdQrmgY7/T6ykERZdtL/ycgzP4wmClLQEWo+F7hiMZilDYqpPqVsqL7Xn9NiU7/HyTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl0sF7mLq/oIQTICnZTUKAF1vSAiK3ljnqwlO2DzaOHUZohdBC
+	sBlJmUReQKFMHrDKtMEtRPGr1y7bMqG7CyjHLKdNnyj9+3C6y2cxqbhC
+X-Gm-Gg: ASbGnctEZLzZeqCXP6KRNmcGJgY3Q8UvkU+48tpYl6yqjmgldAPkqHCK5tSpa8ZZfLf
+	6p5OLUeuQH4Xj2ERZrCh5Lzx1Ylf8O2ADoombACgq+mD0v6a9RmxsFDGLBvn5lGaCxxsqmf3Gia
+	SSngqx0qHBlZUcNEDJlmJ3oOaYX9UZ/U8EL1DajblbgS3LEIElXsqOBCy33CBjFAzdzow++5HwY
+	4OkyEpGg55Amh75IenQhDNaT6y3qAHg60zN2HpOlpImIUsax6RkeoJpk5LwnIQ5xPwHBJ6/4wbV
+	Yrb8SCC952qpy7WtCqvtrkTPDT6gvrVKjFez3GFvVgfcxQZOriRsxpGKxXV4yRyZRpRTVOhNriZ
+	I8ikB5URlI3uP+h8ovu4WlYy7N3BvZ7y0Xlwn5Tjh+eSJ7w62jG/2qxo8Bwa+BFWgX4h9HKqcFx
+	cRC/ZEAC/NMvvGCPBSpDbstsE=
+X-Google-Smtp-Source: AGHT+IF76hHPrwjSwokvPotgutwwpbFV0e+QYImvflw14pJttizj1RcDHECCl4rbU/F3XGf2N30kew==
+X-Received: by 2002:a05:6512:3c91:b0:553:6526:82cd with SMTP id 2adb3069b0e04-55366bdf94emr4141810e87.13.1749543949307;
+        Tue, 10 Jun 2025 01:25:49 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:6e:3100:dbdf:2d4a:ad23:d037? (2001-14ba-6e-3100-dbdf-2d4a-ad23-d037.rev.dnainternet.fi. [2001:14ba:6e:3100:dbdf:2d4a:ad23:d037])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553676d7651sm1453465e87.72.2025.06.10.01.25.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 01:25:48 -0700 (PDT)
+Message-ID: <4d92cc22-3fc5-4ae5-a7d3-490bcbfbd93a@gmail.com>
+Date: Tue, 10 Jun 2025 11:25:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] docs: Fix typos, improve grammar in Userspace API
+To: Jonathan Corbet <corbet@lwn.net>, mchehab@kernel.org,
+ ribalda@chromium.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com,
+ hljunggr@cisco.com, dave.jiang@intel.com, jgg@ziepe.ca, saeedm@nvidia.com,
+ Jonathan.Cameron@huawei.com, ilpo.jarvinen@linux.intel.com,
+ mario.limonciello@amd.com, W_Armin@gmx.de, mpearson-lenovo@squebb.ca,
+ skhan@linuxfoundation.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev
+References: <20250522115255.137450-1-hannelotta@gmail.com>
+ <20250522115255.137450-4-hannelotta@gmail.com>
+ <874iwoaa94.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: =?UTF-8?B?SGFubmUtTG90dGEgTcOkZW5ww6TDpA==?= <hannelotta@gmail.com>
+In-Reply-To: <874iwoaa94.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
-
-Thank you for the review.
-
-> > Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-> > ---
-> > Changes in v4:
-> >  - Moved the binding file to the eeprom/ directory
-> >  - Updated reg property to use items: with per-address descriptions
-> >    instead of minItems/maxItems
+On 6/10/25 00:13, Jonathan Corbet wrote:
+> Hanne-Lotta Mäenpää <hannelotta@gmail.com> writes:
 > 
-> And the rest of the changelog? Where is v2, v3?
+>> Fix a typo and improve wording and punctuation in
+>> the documentation for Userspace API.
+>>
+>> Signed-off-by: Hanne-Lotta Mäenpää <hannelotta@gmail.com>
+>> ---
+>>
+>> Notes:
+>>      v1 -> v2: No changes
+>>
+>>   Documentation/userspace-api/sysfs-platform_profile.rst | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> Applied, thanks.
+> 
+> jon
 
-Apologies for the omission, I'll make sure to include all previous
-changes in any future patches.
+Thank you!
 
 Best regards,
-Abd-Alrhman Masalkhi
+
+Hanne-Lotta Mäenpää
+
 
