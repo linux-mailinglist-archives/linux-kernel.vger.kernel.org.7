@@ -1,141 +1,94 @@
-Return-Path: <linux-kernel+bounces-678773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF02AD2DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:33:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7A3AD2DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FF921892058
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:33:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C727A329F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFEB279331;
-	Tue, 10 Jun 2025 06:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36D5278E53;
+	Tue, 10 Jun 2025 06:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mh6MbGHg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jiOe0Mty";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mh6MbGHg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jiOe0Mty"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cJIAOthn"
+Received: from out199-6.us.a.mail.aliyun.com (out199-6.us.a.mail.aliyun.com [47.90.199.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A9B25DD12
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C56A21C9F7
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 06:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749537183; cv=none; b=SE/TYAgXvHOUmr6z/sADieVKa6nXnAoaVmjMNeh5GArsLwdp/0jpAPCjZM+Vs6B3mM0MwI0NKUBKZORffxzaAW0ikdnhwvQUYOMsa7knJFlQJ3VQe1/nmoYGKmrgxIXMiq3oFmOYKlKkfPpoFiQKyutqQ+wV+ntSR3tI2XzAlYQ=
+	t=1749537213; cv=none; b=k8YHCqKbqx3hUUR1oCEibLJGVGgOqAcmCTDa3PfGdb+eiv4pJt3LYI2SCwIc8auI7c67kkjlp100jofY/7rUpc4Y6sf9SlEj1sgp7ZiaaiUrKpy4m00e6hWyp9iJwHB88cDd8JfW1k26ACx0DuHQvDn19vED78jcg4E2d+Jp3us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749537183; c=relaxed/simple;
-	bh=xWUNeZn/fUujpDjZn21+OrXlpDN5AyGFQixd+sVnGv0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iPHlcARfqEHerHSgJAelcE2yq+s2pemvr8hP6YkOIfWSMi/ea4kywekP6Aw/iKOsUvNniA6R2nnvjoGIEb/q5LqLePtV8nHzUeCgZTr5vIjyCjF/eZk3IWrtI/dF45d9LhkN2hog0oUBj4mOmylUx1+yzJrDpXxMRS7/nm5LlLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mh6MbGHg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jiOe0Mty; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mh6MbGHg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jiOe0Mty; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B96FA211AD;
-	Tue, 10 Jun 2025 06:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749537179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwosfureBc1HkgXyB2mqgHkCAAAYd0di1JVE7J4yI/U=;
-	b=mh6MbGHgyQcwWjOG/nbJJeUi+njE/9i+9bdH96Cu68UR4EFyzujQ6V4bDNpHJhpuv7RLxC
-	40yjRjM1dOhZt4pJ2dgO767TDaRn1/TIuMD/RX1NboY6Sh5BRdkg5mH6m5Vx2Zagq9bZCE
-	zWxTErM3B2ZgsEI83hZybM0XkQ3iDW4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749537179;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwosfureBc1HkgXyB2mqgHkCAAAYd0di1JVE7J4yI/U=;
-	b=jiOe0Mtyt083fHhOEhPTt8JD207pMzxVd+zfhtYFUboUl1pBBIXH/dJ2VDDajxAkzgH3Jd
-	9js9AsEj6zhqNuBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1749537179; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwosfureBc1HkgXyB2mqgHkCAAAYd0di1JVE7J4yI/U=;
-	b=mh6MbGHgyQcwWjOG/nbJJeUi+njE/9i+9bdH96Cu68UR4EFyzujQ6V4bDNpHJhpuv7RLxC
-	40yjRjM1dOhZt4pJ2dgO767TDaRn1/TIuMD/RX1NboY6Sh5BRdkg5mH6m5Vx2Zagq9bZCE
-	zWxTErM3B2ZgsEI83hZybM0XkQ3iDW4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1749537179;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwosfureBc1HkgXyB2mqgHkCAAAYd0di1JVE7J4yI/U=;
-	b=jiOe0Mtyt083fHhOEhPTt8JD207pMzxVd+zfhtYFUboUl1pBBIXH/dJ2VDDajxAkzgH3Jd
-	9js9AsEj6zhqNuBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90EBE139E2;
-	Tue, 10 Jun 2025 06:32:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e9QoIpvRR2iycQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 10 Jun 2025 06:32:59 +0000
-Date: Tue, 10 Jun 2025 08:32:59 +0200
-Message-ID: <8734c814ys.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chris Chiu <chris.chiu@canonical.com>
-Cc: tiwai@suse.com,
-	kailang@realtek.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Fix built-in mic on ASUS VivoBook X513EA
-In-Reply-To: <20250610035607.690771-1-chris.chiu@canonical.com>
-References: <20250610035607.690771-1-chris.chiu@canonical.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1749537213; c=relaxed/simple;
+	bh=rWftAVIi3ezAWEzu0LX+ud0lhGSgut3rQF8/6crwapg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Hf3Nl1TLbEZaxOkLBT9YMux4SMR6mMPFoXtRT4P+GZeRNPYWnmL5cLPj66ABJ+jnCGRN73+9GqSgR/wNmmX86QC80WQwpzcTpFTWn80wwA0wvlGZW15R0PQmcnIHitUVfyrajThrblvOROcsY8okeMyutfsXWDANJk8wsF7EUO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cJIAOthn; arc=none smtp.client-ip=47.90.199.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749537192; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=3oyypOe9fHfM9091ox3pdfsYfxRCIntvYNrup2mV6v8=;
+	b=cJIAOthn4aVpHuDCSUvZCeybzpc1L8P5PH78L8PJ38qlen9ANIv6VX2kb90JmrWq/mqH83tz02oCKFLHCZ2UkMy65eSmf0t8i3ah+bdKQbwONJXx9QiE97meoejPDhIbDBwWTnZPpWTdApafefaAP88OpD1eOvx4DcaKvP5UFGc=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WdYD5JX_1749537191 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 10 Jun 2025 14:33:12 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Li Zhijian <lizhijian@fujitsu.com>
+Cc: linux-mm@kvack.org,  akpm@linux-foundation.org,
+  linux-kernel@vger.kernel.org,  Ying Huang <huang.ying.caritas@gmail.com>
+Subject: Re: [PATCH] mm/memory-tier: Fix abstract distance calculation overflow
+In-Reply-To: <20250610062751.2365436-1-lizhijian@fujitsu.com> (Li Zhijian's
+	message of "Tue, 10 Jun 2025 14:27:51 +0800")
+References: <20250610062751.2365436-1-lizhijian@fujitsu.com>
+Date: Tue, 10 Jun 2025 14:33:10 +0800
+Message-ID: <877c1kcdi1.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 
-On Tue, 10 Jun 2025 05:56:07 +0200,
-Chris Chiu wrote:
-> 
-> The built-in mic of ASUS VivoBook X513EA is broken recently by the
-> fix of the pin sort. The fixup ALC256_FIXUP_ASUS_MIC_NO_PRESENCE
-> is working for addressing the regression, too.
-> 
-> Signed-off-by: Chris Chiu <chris.chiu@canonical.com>
+Li Zhijian <lizhijian@fujitsu.com> writes:
 
-Applied now.  Thanks.
+> In mt_perf_to_adistance(), the calculation of abstract distance (adist)
+> involves multiplying several int values including MEMTIER_ADISTANCE_DRAM.
+> ```
+> *adist = MEMTIER_ADISTANCE_DRAM *
+> 		(perf->read_latency + perf->write_latency) /
+> 		(default_dram_perf.read_latency + default_dram_perf.write_latency) *
+> 		(default_dram_perf.read_bandwidth + default_dram_perf.write_bandwidth) /
+> 		(perf->read_bandwidth + perf->write_bandwidth);
+> ```
+> Since these values can be large, the multiplication may exceed the maximum
+> value of an int (INT_MAX) and overflow (Our platform did), leading to an
+> incorrect adist.
+>
+> Change MEMTIER_ADISTANCE_DRAM to be a long constant by writing it with the
+> 'L' suffix. This prevents the overflow because the multiplication will then
+> be done in the long type which has a larger range.
+>
+> Fixes: 3718c02dbd4c ("acpi, hmat: calculate abstract distance with HMAT")
+> Cc: Ying Huang <huang.ying.caritas@gmail.com>
+> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 
+Good catch!  Feel free to add
 
-Takashi
+Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
+
+in the future version.
+
+---
+Best Regards,
+Huang, Ying
+
+[snip]
 
