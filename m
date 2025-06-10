@@ -1,181 +1,133 @@
-Return-Path: <linux-kernel+bounces-680306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6F5AD4369
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:03:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B06F8AD4372
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 22:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48FA0189D029
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:03:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25ADB7A78A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 20:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2A0264F9F;
-	Tue, 10 Jun 2025 20:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9B7265626;
+	Tue, 10 Jun 2025 20:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JQ0BMac/"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=sima.ai header.i=@sima.ai header.b="DxzJaouo"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0949246761
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 20:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A97265609
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 20:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749585793; cv=none; b=U4D8AKGWCU9whXUH3RFKozoqsfVw5Ri6eqTRpOxal1tae85omf1hDWslAkqR9IbrbdmHc/IsrpcbwnazIRI8YXdMD+VE4HLsVVy11I8XS0hLz133oRTxOx9bOkNzcZro0/NCVJotpnTpGEVJVMx1yIx3dc8IA5PnBzVT3+lauzw=
+	t=1749585860; cv=none; b=O62jFdtD/9Y/FT7inpCMFTWZtGTIOiFd/AOySL9xu9CJ+eTgodFIXMaYN5l10DNl6cuHxHjvFlrNxkWx0aUCjb6M6IRbrry+adUvrOEw1hCh+FOoMUcE76hA/5TLCyPRx8rNNb09FddZZKO8mRjH5li4oNvxMXYW5pBtmuFQ4eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749585793; c=relaxed/simple;
-	bh=wGQrwjvbxP5TElWRzftoyq5VMQ1P3z0T9KV3nef+RkU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OgrpwYTmJwbMOa3SvFqBrZy0DRgziGGkUsPAQ34naWSwhgqYc6A9DkMth3oMniiE0VEgisdxv6nfUTTyr7lZAuXaBLySFpRE3LlMMVX+uPu68GN1aTbnsIEkAaPOPs3rigji5ma+HRJ59u0tSGdLs1sbrmy/JknewYYgRHD/USc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JQ0BMac/; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4f71831abso5537756f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:03:11 -0700 (PDT)
+	s=arc-20240116; t=1749585860; c=relaxed/simple;
+	bh=cP23wtFMvKOpdUnof+BSPUV5OQaMXrVObxebToJ9P+U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lbo5mLs+VJN8eitSq9nCje0iNijKYbTE5jgk1AYnh9pd0kW5ahLylOaB7dPrQqit9laXxPly/1NmSbhCFacjBhT6li1EeXnKahEDN9IL9zIJEVe4cEMkiyBi5yqNyUyCfDnFH52dadtiKOoJFE1ICiUwJLHDCbOC+oeoHrx6h3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sima.ai; spf=pass smtp.mailfrom=sima.ai; dkim=pass (2048-bit key) header.d=sima.ai header.i=@sima.ai header.b=DxzJaouo; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sima.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sima.ai
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2352b04c7c1so8831225ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 13:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1749585790; x=1750190590; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wGQrwjvbxP5TElWRzftoyq5VMQ1P3z0T9KV3nef+RkU=;
-        b=JQ0BMac/myFnKgIVsEGjYdvKS8gJkfsLNkbReik3SqapjYxGO1NmjI4eYtbv2XaDyh
-         5PxvD5Gmp2iUvsXnTQPufDei61Hjfg+LbwcanIaSq/xvWWzXwYY0mkibwgh3vh9tDi64
-         0+y38ECtymXBT9JZw8qJAUuJUuzXiwUCAgiPGS7FLkwXL2PqfJgDO5/Iz4zMekXEhYo/
-         WJ40tlPmcCrQpSVUZSVU78tgw1AezAW5/BQ0GWszKyWBkxYKOU4CeiMCvWj5VKjmqsz4
-         Wa4VQosJZHIKCuYYKGoGh+d0VCuaY1nNSMF87a3r3MxLIL15urED+esXcXsziXlWV09N
-         KvNw==
+        d=sima.ai; s=google; t=1749585856; x=1750190656; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SLBrHn1lo0nb3pErG+htfOLCGfPDjEh1wfPdZMI4yH4=;
+        b=DxzJaouoC0p+ArLVOixO3GHQwYFwTy4pz6kdhb6n3F/oTB5WB7QniE+7Fz9mfvJbZ+
+         1UKNJvzOHhuJ1lMlqGWWbIRYSESRC/FHsawSuBD2uuLYwyfJa26oY/ohC6ARmRkmhI2g
+         JcySKdZGqreeAeWsj3RsS4uhuk/RUWP/I02yXFHXbEu5jTpB5M+5COJ3vtFmOh+99Uvx
+         6Xfejq3C/6vp8JpksUBFWm9RjbfyBUEgVPxpJ+kWi7wnNe3U1gKNkcDW7a6Oc9CuvQuX
+         z6Ooe5qobd9tMSTxe0iJ1H0VsSN+eNX4KMfAgps3liPgnSTCWGVFz9Rs37DcF0C+b9/E
+         jdUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749585790; x=1750190590;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wGQrwjvbxP5TElWRzftoyq5VMQ1P3z0T9KV3nef+RkU=;
-        b=UVZ+T0qSJCrxuo0dE3Wp59n8GZvRJA12GBH7BEtoGlkqGolOEOg0lmvgtjo+HkkfJ1
-         9adxmRKZZQ23WQi6l46KfxWJqSK/visgJH3J+FLz1iY3J4cu//bXFiwP/drAwe6jutcC
-         mApUrSn5VMcntytimPhqDffQlV/JN0Gjd01xkHyEQSoHst5wBNYyMlq1FsFmQOk4OZJ8
-         Dp3EGUqNUQ20PEQ/xpE/01tY+IK1AQbJwe/MoejeW9UQU4WKBZPmfJafY6sMsgKdIGt/
-         UN7PTyz4ptvGH6GneEeHkPtyNQu9YNDJOOoDc7ls9pWSrYU61VoOj4NH3xb90PA8LW5o
-         uyXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXiKSPC71XDl5UcgRp/OLZm56hXozszbp+W6599HvqGEBGSJcZnLSTmE42rG1bFfacfsLgHwR69ybsLzpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOdBFJmQTKUg3Oef1Hzev7Jb5yh3DMr/P3csInFVwFd9lv0wgT
-	p3aGEOcOwC5YUw9hPVZyKIdEzX/zCOcnTRteiG0B1Ha6mC9QghZ30C6HIa23/vyr8o0=
-X-Gm-Gg: ASbGnctaTdt5Zg59Tu2o3K6BErfpC7z8pUIY53Aq7AAUgXCjkJLI2ZnnHJTy9Cc+knQ
-	FZHLd84UjlehZZl9Nuet307mG7iiK+ocTrVy1q3rosYU5UUtMs2c5OLmw2BVd81beOMaZUmKG0d
-	NbHtPj/et97B5zevpqYY+ftniVKn4V2BA0PYYoxRUrFiESv4l0eDkClUImOB4HVKPjvrcW1TlCc
-	dTebl7tZQKBEoRbhcLG7YdNBJdFDXn5Jm2kfDULDFuXZEYPpSjZO5gdPzBf1S/v/szhY9AfplLm
-	h6tXZkOOE896S4KYpyBgpbq9fWppjbCvjvw2oSyBgHl6bAMxpuUxMZ+EgyGEcFbGX5zzdWqnogj
-	jHbcPhG/fCOIntKYt
-X-Google-Smtp-Source: AGHT+IEtm22Ya9JUV8ulYRQRT6vYHBjx+q7IOEDUr9BMoA+Edf/n/UDiFasL+UkKEL9+F1awgGEj8Q==
-X-Received: by 2002:a05:6000:40d9:b0:3a4:d31e:4af3 with SMTP id ffacd0b85a97d-3a558ad6e98mr181211f8f.37.1749585790019;
-        Tue, 10 Jun 2025 13:03:10 -0700 (PDT)
-Received: from [192.168.3.33] (115.39.160.45.gramnet.com.br. [45.160.39.115])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a53229de48sm13364311f8f.10.2025.06.10.13.03.04
+        d=1e100.net; s=20230601; t=1749585856; x=1750190656;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SLBrHn1lo0nb3pErG+htfOLCGfPDjEh1wfPdZMI4yH4=;
+        b=fSzHKe4hEKVSTLoGiTbWNWu/XPmOdF+lg6EywPBHb103S464Zh5X2502+65MP3GkUa
+         t5h226DjVO/eL+HmHojgXYnLrCyvd348UETE9YHgD4lQa1Zy5XHHs7JYeBlSkxOSdTVq
+         kJ9nmsTE79lzXZM7wr9Q+/59a12GkKeKDBZ1M84ua3PBmFOZOj761UoO6bWPiVogtsZ0
+         lGOpwwu9VgRpcrbLCkBYtx0NUoCzOgG7zuywlz5GR2jZ+dO7MdS9HtXDYdCCSK9j7poN
+         YFbf66JplbOL4nN1mlpqogzDsH5c+7dTH3pC3xeqE85+edCEcng4OWM1JuvK9heXtMHC
+         Xdcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPZaadDsfNgPvZkRUae1U/vE7pkrCEVRhZh5lMiyrxvihYuEeziRKZKT/LnaB74G8/w0QiFJfAgJw0yRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1MvwDsQzX2/6Utd25xYXFav2qPNKZYYs8fRVD7l8EBDNhIGWg
+	40Fqeqch00pzaR+CucDOSW7DUEcU8DtK6xp/aNgIGFKfOw78v+lRTg2dh9Lf00Eo1m8=
+X-Gm-Gg: ASbGncvNFeH+ZjAQnK7/HNVr76a5NHbCUiGdQSoEMlZZ+nm17QdqcHwM0ylezqWWY6W
+	J4mh6Fst1ObIS9HadRJUeR4GsBJflBPXMQ+AcbUS8PaC4glJaD1EUL8lwjFa0s3Q/oYzqI8PGJN
+	QS5DEHIbT93G5S3Esf3o0MA/2OGzB9sM8MrtklWjsP1LbgxMvxVlHc+Is4+jN9fTayT+4+3Ww6F
+	OdY/9uWTiBuULvvcUcW717+L8MF02VRaJdb9of32h0L9f5BIZLdsdFlzdqVw0RP2jKZDPFBq9H1
+	blN4/myPbMGF52Z/Uxrrmzy4hqHXXhFgNnBPBfBlx7plFlp+11x3UbOMcdRW9313HtW+/sBCWWK
+	z8WZAGc1dFEVFjno=
+X-Google-Smtp-Source: AGHT+IER+o3LTU2puTUgTzx5nfZBbOjCThFzTKIlbQejci+9CZwNjpKLs8gAK20uD5mbsirIIc3WyA==
+X-Received: by 2002:a17:902:e806:b0:234:d7b2:2abe with SMTP id d9443c01a7336-23641ac62fcmr3095555ad.7.1749585856133;
+        Tue, 10 Jun 2025 13:04:16 -0700 (PDT)
+Received: from nikunj-kela-u22.eng.sima.ai ([205.234.21.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31349ffc151sm7629818a91.48.2025.06.10.13.04.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jun 2025 13:03:09 -0700 (PDT)
-Message-ID: <f962e9bab3dc8bf5cae1c7e187a54fb96a543d51.camel@suse.com>
-Subject: Re: [PATCH 4/7] drivers: serial: kgdboc: Check CON_SUSPENDED
- instead of CON_ENABLED
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
- John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Jason
- Wessel	 <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>,
- Richard Weinberger <richard@nod.at>, Anton Ivanov
- <anton.ivanov@cambridgegreys.com>, Johannes Berg	
- <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
-	linux-um@lists.infradead.org
-Date: Tue, 10 Jun 2025 17:03:02 -0300
-In-Reply-To: <CAD=FV=XXQyZLYKoszj68ZGFDY=9-cmEUp406WeOeSBVZOHyUHw@mail.gmail.com>
-References: <20250606-printk-cleanup-part2-v1-0-f427c743dda0@suse.com>
-	 <20250606-printk-cleanup-part2-v1-4-f427c743dda0@suse.com>
-	 <CAD=FV=XXQyZLYKoszj68ZGFDY=9-cmEUp406WeOeSBVZOHyUHw@mail.gmail.com>
-Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
- keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
- Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
- gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
- GO8seNG8sYiP6JfRjl7Hyqca6YsE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+        Tue, 10 Jun 2025 13:04:15 -0700 (PDT)
+From: Nikunj Kela <nikunj.kela@sima.ai>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com
+Cc: rmk+kernel@armlinux.org.uk,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	romain.gantois@bootlin.com,
+	inochiama@gmail.com,
+	l.rubusch@gmail.com,
+	quentin.schulz@cherry.de,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Nikunj Kela <nikunj.kela@sima.ai>
+Subject: [PATCH] net: stmmac: extend use of snps,multicast-filter-bins property to xgmac
+Date: Tue, 10 Jun 2025 13:04:11 -0700
+Message-Id: <20250610200411.3751943-1-nikunj.kela@sima.ai>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-06-09 at 13:13 -0700, Doug Anderson wrote:
-> Hi,
->=20
-> On Fri, Jun 6, 2025 at 7:54=E2=80=AFPM Marcos Paulo de Souza
-> <mpdesouza@suse.com> wrote:
-> >=20
-> > All consoles found on for_each_console are registered, meaning that
-> > all of
-> > them are CON_ENABLED. The code tries to find an active console, so
-> > check if the
-> > console is not suspended instead.
-> >=20
-> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> > ---
-> > =C2=A0drivers/tty/serial/kgdboc.c | 3 ++-
-> > =C2=A01 file changed, 2 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/tty/serial/kgdboc.c
-> > b/drivers/tty/serial/kgdboc.c
-> > index
-> > 85f6c5a76e0fff556f86f0d45ebc5aadf5b191e8..af6d2208b8ddb82d62f33292b
-> > 006b2923583a0d2 100644
-> > --- a/drivers/tty/serial/kgdboc.c
-> > +++ b/drivers/tty/serial/kgdboc.c
-> > @@ -577,7 +577,8 @@ static int __init kgdboc_earlycon_init(char
-> > *opt)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 console_list_lock();
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for_each_console(con) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 if (con->write && con->read &&
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (con->flags & (CON_BOOT | CON_ENABL=
-ED)) &&
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (con->flags & CON_BOOT) &&
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ((con->flags & CON_SUSPENDED) =3D=
-=3D 0) &&
->=20
-> I haven't tried running the code, so I could easily be mistaken,
-> but...
->=20
-> ...the above doesn't seem like the correct conversion. The old
-> expression was:
->=20
-> (con->flags & (CON_BOOT | CON_ENABLED))
->=20
-> That would evaluate to non-zero (true) if the console was _either_
-> "boot" or "enabled".
->=20
-> The new expression is is:
->=20
-> (con->flags & CON_BOOT) && ((con->flags & CON_SUSPENDED) =3D=3D 0)
->=20
-> That's only true if the console is _both_ "boot" and "not suspended".
+Hash based multicast filtering is an optional feature. Currently,
+driver overrides the value of multicast_filter_bins based on the hash
+table size. If the feature is not supported, hash table size reads 0
+however the value of multicast_filter_bins remains set to default
+HASH_TABLE_SIZE which is incorrect. Let's extend the use of the property
+snps,multicast-filter-bins to xgmac so it can be set to 0 via devicetree
+to indicate multicast filtering is not supported.
 
-My idea here was that the users of for_each_console would find the
-first available console, and by available I would expect them to be
-usable. In this case, is there any value for kgdboc to use a console
-that is suspended? Would it work in this case?
+Signed-off-by: Nikunj Kela <nikunj.kela@sima.ai>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I never really used kgdboc, but only checking if the console was
-enabled (which it's always the case here) was something that needed to
-be fixed.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index b80c1efdb323..4164b3a580d8 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -579,6 +579,8 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+ 		plat->pmt = 1;
+ 		if (of_property_read_bool(np, "snps,tso"))
+ 			plat->flags |= STMMAC_FLAG_TSO_EN;
++		of_property_read_u32(np, "snps,multicast-filter-bins",
++				     &plat->multicast_filter_bins);
+ 	}
+ 
+ 	dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
+-- 
+2.34.1
 
-Maybe I'm missing something here as well, so please let me know if I
-should remove the new check.
-
->=20
-> -Doug
 
