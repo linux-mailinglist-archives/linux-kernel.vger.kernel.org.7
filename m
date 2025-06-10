@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-678965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C0FAD30B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC050AD30BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5D0188344A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B6618888B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF86327EC7C;
-	Tue, 10 Jun 2025 08:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3343F280001;
+	Tue, 10 Jun 2025 08:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltiS+IDc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I/xC8ZUW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0971DD9D3;
-	Tue, 10 Jun 2025 08:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D810E1DD9D3;
+	Tue, 10 Jun 2025 08:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749544900; cv=none; b=oaZEnBClHOUk84e3j85X0y8rCEXN5X5CsPmPAEohblmdgxh8UeN+9FI7DzwHNtXiWvxMaGg0X2xvCMdMF044T07qGeuz4bdtSyT/uYH2H4h8g++2mG0tsi9V9N1oOJ+ENnfRlN7WxhdfdyWDdQEz8BOxK2sHlLmcY3XihgCJ0QU=
+	t=1749544930; cv=none; b=iWvJGwZ+A9gZ+PYK9ozJyiF8Vtc3mmOjbcwXjKcyU0kQI1SWhCp+szyneBhSGPgYboCjraNviLBiV5jV5JjY3HGbNesXQ+d9ywiZb34+7Ehal3xJoomSJEJyE5bTWgzd7kpXEb33w4VUHrG/alnGCicqEC37yLkdZaC17zY630Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749544900; c=relaxed/simple;
-	bh=ln5MjJzHQG7ZWw3NC74Hj688AJ7slzwp1oytTIRVk40=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=PJEea7K47tvWJ0Uy7HIzUg0w79r/GBIFEBluCvBOE+F/ZImPz9b/Oj7ipJ8zEocnf9HipVdHmJBDwZKu5pm/tUQHZ7mztCHm7Ky4HHSegvXAvqerK+kt4jTX7jJMpPvKF4/fyxF5szzHP2iCz9clsEfC+I4Dp4QZMzvyVxFonZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltiS+IDc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C79C4CEEF;
-	Tue, 10 Jun 2025 08:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749544899;
-	bh=ln5MjJzHQG7ZWw3NC74Hj688AJ7slzwp1oytTIRVk40=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ltiS+IDcUQAI0c5QSox1FawCBRerhP6by1wyMHss+mYDQUlBL9bl89WbWacxl9XpU
-	 F/ELM/mkYHI6mwY90t4hgyu1a31LOFdq2unS/Undgewq2N/R1gXzP9DyVpbCllrMuD
-	 mwU/wzjRXpiGGKBSJM0zgb2T4gOSAG++NDAoWAdYTyQ66p0OL1R0e2PSND2qaRJpK3
-	 V7fMOaBQtKFgytxN+vIXhno0Ng11a2t9Nc3AQIPepVOaS+4UJt2nuTWR2OIt1kx+jl
-	 4KToxlpP8Xmy7wyq9yNiCZg6e3r0SOgNvID7a1DYXkiZEDvXJF6wDngQVB51pHuEtc
-	 ikIIGt35xyOPw==
-Date: Tue, 10 Jun 2025 17:41:36 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, open list
- <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, Stephen
- Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Dan
- Carpenter <dan.carpenter@linaro.org>, Anders Roxell
- <anders.roxell@linaro.org>, Peter Zijlstra <peterz@infradead.org>, Ingo
- Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Subject: Re: next-20250605: Test regression: qemu-x86_64-compat mode ltp
- tracing Oops int3 kernel panic
-Message-Id: <20250610174136.b88bd16959a4d7eff27cc3fa@kernel.org>
-In-Reply-To: <20250609220934.2c3ed98ba8c624fc7cb45172@kernel.org>
-References: <CA+G9fYsLu0roY3DV=tKyqP7FEKbOEETRvTDhnpPxJGbA=Cg+4w@mail.gmail.com>
-	<20250609220934.2c3ed98ba8c624fc7cb45172@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749544930; c=relaxed/simple;
+	bh=dAlJNlsK6HDm/D1KHUUl3OpVGkaXaRLFMW/O78c4LlY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QSWXWy6GOxMlCnsNEVZhVVBYv1FKstX+3gpGaEoCZaId67LLHBvpEUANrLCVCQVU6B1qvtM4+ufQm6L5YeOgP1r0IsMDq7SvTEF8d90Rd6F6OVoaUFd4BOoFxU/A2Xh1lBUhHrBlzE8NgC1GEDsiftsS4IET5evZkOorzTz8u20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I/xC8ZUW; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749544929; x=1781080929;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=dAlJNlsK6HDm/D1KHUUl3OpVGkaXaRLFMW/O78c4LlY=;
+  b=I/xC8ZUWpNzwrrwSoX2YNiC9zuK9Mzjk2sel8Duxt1jGxdOdBcB66DOD
+   odY9odY9XfnrCX9u7Fxl4h8uRD5H04He+8Ec7DfHOIQN+M22/zmSaBNF5
+   el//dZgYjAkTLFiidCXQo3gi6OUHIO3T9eanw+SXHZE7fcQEdxgSkDHTH
+   V375MRIuQTTGTQSwGO3SDuIv8uFZe7SqSbNisG9yF/RDA9f+Q3USD+Dqr
+   N8nrbjoj9LrkRCuksSFqmUDV6Xg5m0KhPzLbgapfbTkSOWuxE6QJPvPa2
+   GzMAnDY9g1SXOh0uX/z+XH8lDo0Miw2GGdNfVvKqgx0cV7M27yCARbov6
+   w==;
+X-CSE-ConnectionGUID: RPbpti/KS3+mMRja48HXuw==
+X-CSE-MsgGUID: aKzwq676SFKUMYCtsroEpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="55308750"
+X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
+   d="scan'208";a="55308750"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 01:42:08 -0700
+X-CSE-ConnectionGUID: JFC3cMuxS1G3qXqWLPFTug==
+X-CSE-MsgGUID: Zb/qwyA9SGyQcbJThwcLsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
+   d="scan'208";a="151643988"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.196])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 01:42:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 10 Jun 2025 11:42:00 +0300 (EEST)
+To: Pratap Nirujogi <pratap.nirujogi@amd.com>, andi.shyti@kernel.org
+cc: rdunlap@infradead.org, Hans de Goede <hdegoede@redhat.com>, 
+    sfr@canb.auug.org.au, linux-next@vger.kernel.org, 
+    linux-i2c@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, benjamin.chan@amd.com, bin.du@amd.com, 
+    gjorgji.rosikopulos@amd.com, king.li@amd.com, dantony@amd.com
+Subject: Re: [PATCH v4 3/3] platform/x86: Use i2c adapter name to fix build
+ errors
+In-Reply-To: <20250609155601.1477055-4-pratap.nirujogi@amd.com>
+Message-ID: <570c7765-b3bc-77cd-dddb-d19e85611114@linux.intel.com>
+References: <20250609155601.1477055-1-pratap.nirujogi@amd.com> <20250609155601.1477055-4-pratap.nirujogi@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323328-1148617004-1749544828=:949"
+Content-ID: <92a34faa-5ba6-b7d3-0b6a-8f83386c5e09@linux.intel.com>
 
-On Mon, 9 Jun 2025 22:09:34 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-[...]
-> Here is the compiled code of _raw_spin_lock.
-> 
-> ffffffff825daa00 <_raw_spin_lock>:
-> ffffffff825daa00:       f3 0f 1e fa             endbr64
-> ffffffff825daa04:       e8 47 a6 d5 fe          call   ffffffff81335050 <__fentry__>
-> 
-> Since int3 exception happens after decoded int3 (1 byte), the RIP
-> `_raw_spin_lock+0x05` is not an instruction boundary.
-> 
-> > <4>[   58.998563] Code: 5d e9 ff 12 00 00 66 66 2e 0f 1f 84 00 00 00
-> > 00 00 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
-> > 0f 1e fa 0f <1f> 44 00 00 55 48 89 e5 53 48 89 fb bf 01 00 00 00 e8 15
-> > 12 e4 fe
-> 
-> And the call is already modified back to a 5-bytes nop when we
-> dump the code. Thus it may hit the intermediate int3 for transforming
-> code.
-> 
-> e8 47 a6 d5 fe
->  (first step)
-> cc 47 a6 d5 fe
->  (second step)
-> cc 1f 44 00 00 <- hit?
->  (third step)
-> 0f 1f 44 00 00 <- handle int3
-> 
-> It is very unlikely scenario (and I'm not sure qemu can correctly
-> emulate it.) But if a CPU hits the int3 (cc) on _raw_spin_lock()+0x4
-> before anoter CPU' runs third step in smp_text_poke_batch_finish(),
-> and before the CPU runs smp_text_poke_int3_handler(), the CPU' runs
-> the thrid step and sets text_poke_array_refs 0, 
-> the smp_text_poke_int3_handler() returns 0 and causes the same
-> problem. 
-> 
-> <CPU0>					<CPU1>
-> 					Start smp_text_poke_batch_finish().
-> 					Finish second step.
-> Hit int3 (*)
-> 					Finish third step.
-> 					Run smp_text_poke_sync_each_cpu().(**)
-> 					Clear text_poke_array_refs[cpu0]
-> Start smp_text_poke_int3_handler()
-> Failed to get text_poke_array_refs[cpu0]
-> Oops: int3
-> 
-> 
-> But as I said it is very unlikely, because as far as I know;
-> 
-> (*) smp_text_poke_int3_handler() is called directly from exc_int3()
->    which is a kind of NMI, so other interrupt should not run.
-> (**) In the third step, smp_text_poke_batch_finish() sends IPI for
->    sync core after removing int3. Thus any int3 exception handling
->    should be finished.
+--8323328-1148617004-1749544828=:949
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <0ae36a1b-f8b2-5a24-6972-ccc973c34d05@linux.intel.com>
 
-Maybe one possible scenario is to hit the int3 after the third step
-somehow (on I-cache?).
+On Mon, 9 Jun 2025, Pratap Nirujogi wrote:
 
-------
-<CPU0>					<CPU1>
-					Start smp_text_poke_batch_finish().
-					Start the third step. (remove INT3)
-					on_each_cpu(do_sync_core)
-do_sync_core(do SERIALIZE)
-					Finish the third step.
-Hit INT3 (from I-cache?)
-					Clear text_poke_array_refs[cpu0]
-Start smp_text_poke_int3_handler()
-Failed to get text_poke_array_refs[cpu0]
-Oops: int3
-------
+> Use adapater->name inplace of adapter->owner->name to fix
+> build issues when CONFIG_MODULES is not defined.
+>=20
+> Fixes: 90b85567e457 ("platform/x86: Add AMD ISP platform config for OV05C=
+10")
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Link: https://lore.kernel.org/all/04577a46-9add-420c-b181-29bad582026d@in=
+fradead.org
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> ---
+>  drivers/platform/x86/amd/amd_isp4.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/platform/x86/amd/amd_isp4.c b/drivers/platform/x86/a=
+md/amd_isp4.c
+> index 0cc01441bcbb..9f291aeb35f1 100644
+> --- a/drivers/platform/x86/amd/amd_isp4.c
+> +++ b/drivers/platform/x86/amd/amd_isp4.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/property.h>
+> +#include <linux/soc/amd/isp4_misc.h>
+>  #include <linux/string.h>
+>  #include <linux/types.h>
+>  #include <linux/units.h>
+> @@ -151,7 +152,7 @@ MODULE_DEVICE_TABLE(acpi, amdisp_sensor_ids);
+> =20
+>  static inline bool is_isp_i2c_adapter(struct i2c_adapter *adap)
+>  {
+> -=09return !strcmp(adap->owner->name, "i2c_designware_amdisp");
+> +=09return !strcmp(adap->name, AMDISP_I2C_ADAP_NAME);
+>  }
+> =20
+>  static void instantiate_isp_i2c_client(struct amdisp_platform *isp4_plat=
+form,
+
+Acked-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+Andi, do you want to take this fix series through i2c tree or do you=20
+prefer me to take them through pdx86 tree?
 
 
-SERIALIZE instruction may flash pipeline, thus the processor needs
-to reload the instruction. But it is not ensured to reload it from
-memory because SERIALIZE does not invalidate the cache.
-
-If that hypotheses is correct, we need to invalidate the cache
-(flush TLB) in the third step, before the do_sync_core().
-
-Or, if it is unsure, we can just evacuate the kernel from die("int3")
-by retrying the new instruction, when the INT3 is disappeared.
-
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--
+ i.
+--8323328-1148617004-1749544828=:949--
 
