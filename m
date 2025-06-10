@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-680075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55B4AD3FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:05:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211C2AD3FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8C01BA0726
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:05:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAED71894DC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 17:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A47246335;
-	Tue, 10 Jun 2025 17:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2510924467D;
+	Tue, 10 Jun 2025 17:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDydrHOs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SVbXxblB"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4823504C;
-	Tue, 10 Jun 2025 17:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDD524338F
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 17:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749575052; cv=none; b=R8cOHx8qgQWpoA/4F53N9PJhAeGek17NdsBuDU2AMNSwd4s2d+8IH15e+IPHwWifIKG30n0oAr5BnfzPzl0ohX+4YQJ/3KhIPruH3H0oENivsQ+cKTxp8Tz7f6lqLWks+F5KNj2VNc1nZCBZ3OWQ57RoCmMS3mYby6EdTSTi1Ns=
+	t=1749575091; cv=none; b=uKLUUIjctYN6QL11FjJm7nYGgXChpE2vSgV/JyjcApuRmcUZXpwMuub793vYKqwKKBd4LMGE2lAPK66g+bZdPQiFB5X9fP5a+Nk7auF1Dvtv5P4N18DV+OmCGAFpiE2yT1hhlC8315ZTN7E3ej1NDbT4+iDyP7FLP6VrVrLyTeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749575052; c=relaxed/simple;
-	bh=0hNtdD7pLrxAsMjKqBoKQsElU7iB5BJEcOrwJGziKds=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qV3XnQIuU8Ps+29LVTKnA0NLxg5XVUg1JVdAnm65vb81vH6rnyEPiFF7Y579TfR7fhopg4D3fTyd+oFp5inMI1hbAlsv/QrDTpONnQlUwQhfOKMl4V7Hs2ZkYRrj2EZSfzVaqkzrs3NG1BXDSgHH+2VHB1osPm8MFiV0PXgWZMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XDydrHOs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE932C4CEED;
-	Tue, 10 Jun 2025 17:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749575051;
-	bh=0hNtdD7pLrxAsMjKqBoKQsElU7iB5BJEcOrwJGziKds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XDydrHOsrDy5gPFA1bba7CuyrCTPBvTZ97fB/6ixk0ZNtBeOjpRZDXQiCvJ/kx1aP
-	 QNRz49yRYvF0rO8QhVGNkTJQm4df8NLQOsJdeMNtTilYJeBEc7cNmajN6ULPatoj7L
-	 CCYVBMAFnXjooXdrVX47n/i+UVuum8IHAyK6rZeUElareSKH0ChKQykKe/n8UmxtiT
-	 ivBpq9eyNHcVPUUbxkyoMFSydxeU9V9pW6Rd8EfAPnmab35TgcSdePmpOX+oReWQYl
-	 pcFLeOK9fti1p+WijObqiDko/pRGSQPoua7elDcvyesOmR/eHt0JxGpG5ciZClJezO
-	 /wiXvTE6z7meQ==
-From: SeongJae Park <sj@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-mm@kvack.org,
-	mm-commits@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Additional MM updates for 6.16-rc1
-Date: Tue, 10 Jun 2025 10:04:08 -0700
-Message-Id: <20250610170408.48855-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAMuHMdXyJhaFUbKX2Hhoa2y4hVK+0NhvL4hNL_8RnVOxaCkq=g@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1749575091; c=relaxed/simple;
+	bh=HlSQboCqp0PnQ00GB+6CCKMVwWcrMXPm6kbrM95SHaA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iDIUVsSClALjN0BME0JgPDC5gU4qB+KaPwxqJYzurBLsECrOWz6amFui+85/1fLzINHvhOfD2uSnhAqGLp4+cvN5Pe/OzAf2uRfWJMd4xdVADxYpBvpfnkMy15kwM3IHWw7YAdCjsnMlqkIaWcinqqjY70fWFN0Hl8AtlT73xAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SVbXxblB; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-450d64026baso35479165e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749575088; x=1750179888; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fn3PhM+6LELPC5xE451c7krwbXmvn1wLfXtY2hbkuXk=;
+        b=SVbXxblBIqyRuydR4o6N4iLjEKdt7DPra47cQfq1vzeqCO6YtnSY9iiNodN4NOBLuu
+         S0N9Pp3Hqc5L9DMinY9MeWkxtvR8Od/plmEZboa5v+9acUFSsBeNMan8kIPlLYJ+d5xq
+         p6LKiUiWzrOMhfnFXbVTLd/oT48awtWtsKbiTebBnvau8cBak4TuCORRHGkRbXULTi3E
+         7fpiv2ndhWTv23sfqQkzW8GfrgcF93rQQ3XqbtRTVFjL+oxtU9n0ErYEBRi1VNLm5+Hm
+         0CdR8qm6W47gVbnr42gjb0MLelGq4vR4USK1a+TEI73VqwZALIfo7xqXT7V756pdE3So
+         BWyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749575088; x=1750179888;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fn3PhM+6LELPC5xE451c7krwbXmvn1wLfXtY2hbkuXk=;
+        b=Lw81+pNLETCnPFDg+sZVH0LI4dCnT7FBCArhwROlGDH/m1NP8LZDEPBb2CXhq6javk
+         ChgCRDPEIWhJKtMxb6qNQXi72jPliNAcyNCZbTumUVGiSCIyizjvCbbIUny5pwrLgWWz
+         WYfvBpU6N8BZXY1WZZUxum834mcLfUDLXYPel9ZIEnZ9zreuMAvtS2eCgXWRWzCsL+Pq
+         +42HN+IrO16B0C4aNbq5rQkA5O0eehhtTUCvluJ+7+P9M4Mkt4TWKe2zIFs/qTRq9F+i
+         kQWqczNcG6fJ24O/NkkD/wKjmetRQYco99uTs0Vk+9GHofdZC2tlizVoxMeBMwz3mhpM
+         j5iQ==
+X-Gm-Message-State: AOJu0YwmnaKB8bjpRejHup8xNTfhaNweTIISJtTS0n0gvw33G7xnQFCw
+	ehAaxoQv4e+c/eka/pnxDr8B0nZoU1LWZmRIwq2HVCqvKoIl0NeqyBVz8CW2F6TIhrV/D2plUcw
+	QNo3I2lMx6y7R6w==
+X-Google-Smtp-Source: AGHT+IGuoHKyepOKuCopPSY2XL0HemV9xoMey65JxzRCECFk56/te0vuTyrZ59WQnTjaRIsbDfaWdtinm9UG+w==
+X-Received: from wmsr16.prod.google.com ([2002:a05:600c:8b10:b0:451:deba:e06f])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1552:b0:442:e03b:58a9 with SMTP id 5b1f17b1804b1-4531de836c9mr33031645e9.25.1749575088123;
+ Tue, 10 Jun 2025 10:04:48 -0700 (PDT)
+Date: Tue, 10 Jun 2025 17:04:46 +0000
+In-Reply-To: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250313-asi-page-alloc-v1-0-04972e046cea@google.com>
+X-Mailer: aerc 0.20.1
+Message-ID: <DAJ0LUX8F2IW.Q95PTFBNMFOI@google.com>
+Subject: Re: [PATCH RFC 00/11] mm: ASI integration for the page allocator
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
+	Mike Rapoport <rppt@kernel.org>, Junaid Shahid <junaids@google.com>, 
+	Reiji Watanabe <reijiw@google.com>, Patrick Bellasi <derkling@google.com>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Geert,
+On Thu Mar 13, 2025 at 6:11 PM UTC, Brendan Jackman wrote:
+> .:: Patchset overview
 
-On Tue, 10 Jun 2025 18:41:43 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hey all, I have been down the pagetable mines lately trying to figure
+out a solution to the page cache issue (the 70% FIO degradatation [0]).
+I've got a prototype based on the idea I discussed at LSF/MM/BPF
+that's slowly coming together. My hope is that as soon as I can
+convincingly claim with a straight face that I know how to solve that
+problem, I can transition from <post an RFC every N months then
+disappear> mode into being a bit more visible with development
+iterations...
 
-> Hi Andrew,
-> 
-> On Tue, 10 Jun 2025 at 17:54, Andrew Morton <akpm@linux-foundation.org> wrote:
-> > On Tue, 10 Jun 2025 11:05:40 +0200 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Mon, 2 Jun 2025 at 17:55, Andrew Morton <akpm@linux-foundation.org> wrote:
-> > > > - The 2 patch series "mm/damon: build-enable essential DAMON components
-> > > >   by default" from SeongJae Park reworks DAMON Kconfig to make it easier
-> > > >   to enable CONFIG_DAMON.
-> > >
-> > > ... or, make it harder to disable it?
-> > >
-> > > Given no single defconfig file in v6.15 enables CONFIG_DAMON, I find
-> > > it hard to believe defaulting DAMON to "y" is the right thing to do...
-> > > (Yes, I have read the rationale in commit 28615e6eed152f2f
-> > > ("mm/damon/Kconfig: enable CONFIG_DAMON by default")).
+[0] https://lore.kernel.org/linux-mm/20250129144320.2675822-1-jackmanb@google.com/
 
-I'm not clearly seeing what is your concern.  Could I ask you more
-elaborations?  I'm not that familiar with distros' config setup process and
-defconfigs, so this might be just a silly question, but please bear in mind
-with me.  I'd like to clearly understand this to avoid making similar problems
-later.
+In the meantime, I am still provisionally planning to make the topic
+of this RFC the first [PATCH] series for ASI. Obviously before I can
+seriously ask Andrew to merge I'll also need to establish some
+consensus on the x86 side, but in the meantime I think we're getting
+close enough to start discussing the mm code.
 
-> >
-> > So what do you recommend?  Editing all the defconfigs seems a bit lame.
-> 
-> Just revert the commit?
-> Distros are (usually) not using defconfig files anyway.
+So.. does anyone have a bit of time to look over this and see if the
+implementation makes sense? Is the basic idea on the right lines?
+Also if there's anything I can do to make that easier (is it worth
+rebasing?) let me know.
 
-Reverting the commit is not a big problem for me.  But, it would be nice if I
-could better understand and agree your concerns, and learn how I could do
-better next time.
+Also, I guess I should also note my aspirational plan for the next few
+months, it goes...
 
+1. Get a convincing PoC working that improves the FIO degradation.
 
-Thanks,
-SJ
+2. Gather it into a fairly messy but at least surveyable branch and push
+   that to Github or whatever.
 
-[...]
+3. Show that to x86 folks and hopefully (!!) get some maintainers to
+   give a nod like "yep we want ASI and we're more or less sold that
+   the developers know how to make it performant".
+
+4. Turn this [RFC] into a [PATCH]. So start by trying to merge the stuff
+   that manages the restricted address space, leaving the logic of actually
+   _using_ it for a later series.
+
+5. [Maybe this can be partially paralellised with 4] start a new [PATCH]
+   series that starts adding in the x86 stuff to actually switch address
+   spaces etc. Basically this means respinning the patches that Boris
+   has reviewed in [1]. Since we already have the page_alloc stuff, it
+   should be possible to start testing this code end-to-end quickly.
+
+[1] https://lore.kernel.org/linux-mm/20250110-asi-rfc-v2-v2-0-8419288bc805@google.com/
+
+Anyone have any thoughts on that overall strategy?
+
+Cheers,
+Brendan
+
 
