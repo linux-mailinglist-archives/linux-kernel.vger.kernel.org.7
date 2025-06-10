@@ -1,146 +1,145 @@
-Return-Path: <linux-kernel+bounces-679225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF985AD338D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:26:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2C9AD3393
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEAE13A534F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A7817195E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6291528C2AF;
-	Tue, 10 Jun 2025 10:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A807F28C5BD;
+	Tue, 10 Jun 2025 10:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9V4Sd/B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="QvgBPDx5"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE12525A62B;
-	Tue, 10 Jun 2025 10:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78915284680;
+	Tue, 10 Jun 2025 10:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749551209; cv=none; b=djrAG5MLDJ4O2lg9iSgq1lkswCQkqMZQhnBrxfOUOGIIZXBdsKO20D0sUAehEpK6tDwA3tH62JACzJHDNgn+NQndvY30Nr7FHm2gGw0xX7feyVym0/mNNqXvV1L/gZ/npjeV8ye/yHbTovYmVvr+9/eyzSxodBl2pQTsueYSUB4=
+	t=1749551334; cv=none; b=pnNNhqp2f2aWApw6GitlDaQAFwdNPAC8C5E0hmjqITkxyLbiRUop3tuVl3pm8JbNvhF9gb+oTC6zOU5zIuMuRKywCI2GuoSlDB03KFJZ8iAt3SP2MdlsUhIxmZjMlxTzhdnIpNr0Y21l+N/f5KZzy6EN/uGoNVxslEnj4DIU458=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749551209; c=relaxed/simple;
-	bh=xj4Bk+QtP4Xe69OFwGbfLYunFjAhUgQvako1o9IrDtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tu8J6pgQ6kH2jjoZO+TAFSZsQG0YOtFMDXBLQwvlx5ufa0xY2iMF8q8vkMnVxavO+cnoPs5IOK3LOTGrHweeDfs1crsUKQWHYcAwEjbrZCZ8BcSSNeW3+Z0gQizQfOjDtk9+VPZMoQWUC6R9Twxis/ErJXBm8nrUlc9tEIYcQh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9V4Sd/B; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749551208; x=1781087208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xj4Bk+QtP4Xe69OFwGbfLYunFjAhUgQvako1o9IrDtw=;
-  b=L9V4Sd/B5lZVEM5lvinRVs6nb3hM5nkC2YWnAwXq7gP21mQ7bfAIEihK
-   1zjdE7k+hmU32R5QYQnxk+o2rp+l3IBcD3fz4uPjzbVPYekAw+ChNqh4J
-   xs1uDXb5aHE9zJKayXwLLHX4uqBTY3CdzZyN6zyEWlfBJjgyGuR5GY0Na
-   DYqxBkpDFhO+n5xIPXhAw+RDA2FVRoWiY6r2Ly8iSP3O0LyvkjjiGdgLN
-   yuTRs6rFMDcYsm9zgKG9vVFQ6ivrtzlLdgkNaL4bQqWDr50QuSJzCV6An
-   sEqE12mrbbRUjdxmUfVmxaDe4/J3/PhjcA5K5fhxWbJjNbr9LIQPndJMm
-   w==;
-X-CSE-ConnectionGUID: G+484nyLTZK94yFWJKdv8g==
-X-CSE-MsgGUID: 7fY7cQn5TAWIDNiGX1mZFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="39271737"
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="39271737"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 03:26:47 -0700
-X-CSE-ConnectionGUID: T+GOp6Q7Ta66D4mv0ATegA==
-X-CSE-MsgGUID: ODHchsrkR7WUYMpiy6C/2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="183977231"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 03:26:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uOwBj-00000005Jum-2oTR;
-	Tue, 10 Jun 2025 13:26:39 +0300
-Date: Tue, 10 Jun 2025 13:26:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Paolo Perego <pperego@suse.de>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fbtft: reduce stack usage
-Message-ID: <aEgIX221QIt5k0zY@smile.fi.intel.com>
-References: <20250610092445.2640575-1-arnd@kernel.org>
+	s=arc-20240116; t=1749551334; c=relaxed/simple;
+	bh=87Sa9prsqBujVHU75yypG7WaYPYPhnkJiAVyIBtkY/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KjGyqZBgvjWxPkBNWZ/Z1BEbAQ5Un2DO1lUhUCLqwuZp5E+PyN5dt1uqW5GIBkATKdG2EXqKFZt2TSDq5KOvHFVFyBjC8+DJDp9QClWdr4haxgGW7G956OGld4YR/fHVnQep7YIyCL/oMRXj0NTCqoTbtaUgD6y/J8nNhUvZUsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=QvgBPDx5; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1749551321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qwQf2HtjJGXqLDF6pu9d9rM8pZBwE9ppbLVIKcMXujs=;
+	b=QvgBPDx55WS4tlLWumz95aTE0ZvL0wGpgD4TCsjIGZ64GqS1qP4qMZotYCg5j+ZlXAgxfv
+	HXCHNjAokdI5+qOFP67VDrlSB080xxvkLXdVhuXyWK+ZXWMpqwoZ2NZXtcS4/x1B6iXv5Y
+	EHsLwQklLlx/1IffMIeBVYGcZDySMoU=
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sasha Levin <sashal@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [PATCH 5.10] lib/generic-radix-tree.c: Don't overflow in peek()
+Date: Tue, 10 Jun 2025 13:28:39 +0300
+Message-ID: <20250610102841.18225-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610092445.2640575-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 10, 2025 at 11:24:38AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The use of vararg function pointers combined with a huge number of
-> arguments causes some configurations to exceed the stack size warning
-> limit:
-> 
-> drivers/staging/fbtft/fbtft-core.c:863:12: error: stack frame size (1512) exceeds limit (1280) in 'fbtft_init_display_from_property' [-Werror,-Wframe-larger-than]
-> 
-> drivers/staging/fbtft/fb_ssd1331.c:131:30: error: stack frame size (1392) exceeds limit (1280) in 'set_gamma' [-Werror,-Wframe-larger-than]
->                   ^
-> drivers/staging/fbtft/fb_ssd1351.c:120:30: error: stack frame size (1392) exceeds limit (1280) in 'set_gamma' [-Werror,-Wframe-larger-than]
-> 
-> Move the varargs handling into a separate noinline function so each
-> individual function stays below the limit. A better approach might be to
-> replace the varargs function with one that takes an array of arguments,
-> but that would be a much larger rework of the other callers.
+From: Kent Overstreet <kent.overstreet@gmail.com>
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+commit 9492261ff2460252cf2d8de89cdf854c7e2b28a0 upstream. 
 
-...
+When we started spreading new inode numbers throughout most of the 64
+bit inode space, that triggered some corner case bugs, in particular
+some integer overflows related to the radix tree code. Oops.
 
-> +static noinline_for_stack void fbtft_write_register_64(struct fbtft_par *par,
-> +							int i, int buf[64])
+Fixes: ba20ba2e3743 ("generic radix trees")
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+[Denis: minor fix to resolve merge conflict and add tag Fixes]                                           
+Signed-off-by: Denis Arefev <arefev@swemel.ru>                                    
+---
+Backport fix for CVE-2021-47432
+Link: https://nvd.nist.gov/vuln/detail/cve-2021-47432
+---
+ include/linux/generic-radix-tree.h |  7 +++++++
+ lib/generic-radix-tree.c           | 17 ++++++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-Perhaps int i, int buf[64] should be u32?
-
-> +{
-> +	par->fbtftops.write_register(par, i,
-> +		buf[0], buf[1], buf[2], buf[3],
-> +		buf[4], buf[5], buf[6], buf[7],
-> +		buf[8], buf[9], buf[10], buf[11],
-> +		buf[12], buf[13], buf[14], buf[15],
-> +		buf[16], buf[17], buf[18], buf[19],
-> +		buf[20], buf[21], buf[22], buf[23],
-> +		buf[24], buf[25], buf[26], buf[27],
-> +		buf[28], buf[29], buf[30], buf[31],
-> +		buf[32], buf[33], buf[34], buf[35],
-> +		buf[36], buf[37], buf[38], buf[39],
-> +		buf[40], buf[41], buf[42], buf[43],
-> +		buf[44], buf[45], buf[46], buf[47],
-> +		buf[48], buf[49], buf[50], buf[51],
-> +		buf[52], buf[53], buf[54], buf[55],
-> +		buf[56], buf[57], buf[58], buf[59],
-> +		buf[60], buf[61], buf[62], buf[63]);
-> +}
-
-Wondering if we may reuse this in other cases (by providing the additional
-length parameter). But it may be done later on.
-
+diff --git a/include/linux/generic-radix-tree.h b/include/linux/generic-radix-tree.h
+index bfd00320c7f3..0e7abc635e5f 100644
+--- a/include/linux/generic-radix-tree.h
++++ b/include/linux/generic-radix-tree.h
+@@ -39,6 +39,7 @@
+ #include <asm/page.h>
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/limits.h>
+ #include <linux/log2.h>
+ 
+ struct genradix_root;
+@@ -183,6 +184,12 @@ void *__genradix_iter_peek(struct genradix_iter *, struct __genradix *, size_t);
+ static inline void __genradix_iter_advance(struct genradix_iter *iter,
+ 					   size_t obj_size)
+ {
++	if (iter->offset + obj_size < iter->offset) {
++		iter->offset	= SIZE_MAX;
++		iter->pos	= SIZE_MAX;
++		return;
++	}
++
+ 	iter->offset += obj_size;
+ 
+ 	if (!is_power_of_2(obj_size) &&
+diff --git a/lib/generic-radix-tree.c b/lib/generic-radix-tree.c
+index 34d3ac52de89..78f081d695d0 100644
+--- a/lib/generic-radix-tree.c
++++ b/lib/generic-radix-tree.c
+@@ -168,6 +168,10 @@ void *__genradix_iter_peek(struct genradix_iter *iter,
+ 	struct genradix_root *r;
+ 	struct genradix_node *n;
+ 	unsigned level, i;
++
++	if (iter->offset == SIZE_MAX)
++		return NULL;
++
+ restart:
+ 	r = READ_ONCE(radix->root);
+ 	if (!r)
+@@ -186,10 +190,17 @@ void *__genradix_iter_peek(struct genradix_iter *iter,
+ 			(GENRADIX_ARY - 1);
+ 
+ 		while (!n->children[i]) {
++			size_t objs_per_ptr = genradix_depth_size(level);
++
++			if (iter->offset + objs_per_ptr < iter->offset) {
++				iter->offset	= SIZE_MAX;
++				iter->pos	= SIZE_MAX;
++				return NULL;
++			}
++
+ 			i++;
+-			iter->offset = round_down(iter->offset +
+-					   genradix_depth_size(level),
+-					   genradix_depth_size(level));
++			iter->offset = round_down(iter->offset + objs_per_ptr,
++						  objs_per_ptr);
+ 			iter->pos = (iter->offset >> PAGE_SHIFT) *
+ 				objs_per_page;
+ 			if (i == GENRADIX_ARY)
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
