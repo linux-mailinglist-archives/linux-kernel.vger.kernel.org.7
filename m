@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-678640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98266AD2C08
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:52:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB6BAD2C11
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E07B189174A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 02:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A5D18912D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 03:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172A025EF81;
-	Tue, 10 Jun 2025 02:52:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AB325D1FC;
+	Tue, 10 Jun 2025 03:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAg4c81g"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C54D25E808;
-	Tue, 10 Jun 2025 02:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90E7EEAA;
+	Tue, 10 Jun 2025 03:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749523963; cv=none; b=FJWlDMSp+YBKRnnfqjlEQO8QooegMyKZF32XMNyiTfHnGfOK/d4KSZyfu1MygCXVbJOYRTq0k7Oyq7jAa3WUPr7j8QrZKQhiMxTMZeSeY371DDLIjmvvdTtiG8UT0fqPMzSEQB4/pm2/B2PC5TMPUU9MMsYq+vp1XGFRnO0LgD0=
+	t=1749524596; cv=none; b=VEhWxWzLkCBw5QuMfsLwyrhngj9s66ARR7WQ5lUx2gv800KF0nolY0vG5piqV+NLsFB3mVGdCWMHX17WpjZWIgUuCtHTmYvPVHEI/J7vl1Yc4tvZYqrThyZPsMARpftQND4BFe1/bA2jyGOTnaLuic1nEGdGdfxwczY6VMMm7WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749523963; c=relaxed/simple;
-	bh=Z4mmxF/jE4VO/furS3Me5Wwx4ibSFXukv8/TCT8hbcU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OUprlOMPxbyCUjLcFdTMPWiwH0z3D00rE+YFqKW+nLG+/Xf6k//qChKPwEL5bNygbEORR7boELoUn69dldiZrkLS7Id+nrZzzp0Hu3CiHLuiwHDFmcWl45ZMAOLEoTX7PoXmxeqx83j00tKpwCpzI1kRiA1BnXY8KncF8y5PLI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bGYHQ0RgdzKHMlP;
-	Tue, 10 Jun 2025 10:52:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6997C1A1545;
-	Tue, 10 Jun 2025 10:52:32 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl_unUdo55oyPA--.42301S3;
-	Tue, 10 Jun 2025 10:52:32 +0800 (CST)
-Subject: Re: [PATCH] md/raid1: Fix use-after-free in reshape pool wait queue
-To: Wang Jinchao <wangjinchao600@gmail.com>, Song Liu <song@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250609120155.204802-1-wangjinchao600@gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <698d1e9a-2fc0-fa6b-2f4c-55c5129cdf28@huaweicloud.com>
-Date: Tue, 10 Jun 2025 10:52:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1749524596; c=relaxed/simple;
+	bh=zv0yreVmcdl60T5BhuMgSl2cqisSgrbqf6ghuj2YQNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hfyULqXRIkHLBAc0/00Q405CaIp/SYX5nmKmAm9yrUrtAA5xdiztxWf5fMmzVDqO7vjxb1i/odsnFLOouZGjlfUbGkGmMgLvV6HukHfIVOSIoJP+V7SlmpmRDnP/B9REiSg7dAeaXyUtWZFu6CZT/OMvR0bu5MWsJZY1dj4tzK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAg4c81g; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-ad8a8da2376so802972466b.3;
+        Mon, 09 Jun 2025 20:03:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749524593; x=1750129393; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iIEKtN06Lki2LXMwWPqlBYVbjTpO1FFusGuijePViww=;
+        b=GAg4c81g9V7FI467sN72x+8ej2lckmCEdPVvM7bFwVeUWgSlBSwN2WJEM5q2sKwlCh
+         fYkty3RY3aRAoVaN9HB8Hz6tWlhNed1KuQS4X4v0PIV0oBKBdP0dDGNdQh5/zUqqDUlL
+         PJy11K17UTnvuBwuAxYVe5krtoNoQ+r8iSXe50Q8Qp0DssQrKBZHjlEFA070CO+Qdwt4
+         eINdvfGo/rHBsYI+CMyi+JEndgtKfD+mZ2Q6Z0btSNUzVynrimY0ODZJr8mPU2cqpfO/
+         4D+rkzHTKNeq1q1246/Z2DqPn+JMZ7F6a3Gy7/ZWN4MUCvVvPfOoQVXi632xUVcAtLom
+         ubXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749524593; x=1750129393;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iIEKtN06Lki2LXMwWPqlBYVbjTpO1FFusGuijePViww=;
+        b=f7KbaxK2LcOM3BgvpczCRJCOrO/Fyr/Vr8RrHXZzUqD22N17FYX7d0KI6s2PB1PCeG
+         NLYluiFvbubii3C0ZaoILlof7QoCmwy/WiQ4qPjiJcciVN7yvbQxB8xNiVKpNqFmb2to
+         IhfBjTAqUROOObzY7N8M5WZjbVqSCpUstHrTCZaqwnsoFEUXSJ2U2kXZArdRGmQB7Uw2
+         GJxue8Nvm4hNlL3SRsdg0KtBtq0LEzbaxf3P+VVQH3R8eA8dUsLO9d5p/I+hDQq8IkpP
+         jPZzUAe+RmFI6zpgZ9ayA4NrHogh1j/p3x06KgNZtwyY9Iny1XjkAlm8Q6MArDlJ2tLO
+         UJwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVc1rkEEXYQarWGeZOY/t0F08TwF5rs+d+nzabz+u6cT1KZjBMBnU00UIMBOQDsfEkCQ+6vs0ALny7Tmeg@vger.kernel.org, AJvYcCVrpUOr1LSL+cWPDz/0ldjpnK7W9Ii/W8/ETLAV5GgHy0tLOoWm0YCwTcKoGNADCDTDKwM=@vger.kernel.org, AJvYcCVxFveIxZBPLY4ogVvAa3tctbYzXf0tr0StsStSFw92bTMEn/8bKNKgpANkrOzZwlkKo9rKjmW6Q4EOipOyERCk@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxubkkuYcdEOfzMJQeQoAlh0XjE2sSxlkJ+6U1YZzfMQKtQu79
+	pQiPYzUyvONWrgiR2t9+zkd0lYoBRKX8pAnDL3zm/oUkYe8IvsaYbtEnW2j5KJNmCrKJsi4yVjo
+	M9eEv/1dDRPCbtbOWoPYrMlBzgUclrUA=
+X-Gm-Gg: ASbGncv5oK68Ip8yIWTok/NaKquzICsyb+NNOtx5fGqpQC7+Nx9KX6FwXiEWC5HpmJ8
+	f5dQeOewRR0OyY0IuMna6evKS+iDyI1ZG62dup+hLdtq3qiMristEbYojcw8JVJ88ZA1k+/LXG7
+	7mcTVKEIUKpdaxR7xQRRO2vitI/78Ay+pR2/6elwL+z2eRc9uuBii09GKDNSRz5pMekEpcphSec
+	sJbzLyIGw3c5A4d
+X-Google-Smtp-Source: AGHT+IGSVrkhyZq9vvvsVr44VoqUZGF3wcQ/tPIjHH2PKLhYYyk/OK3JkxJPJ6OOCePVO2GT4bNI9XVsW4Z5WF4Rz1o=
+X-Received: by 2002:a17:906:6a0e:b0:ad5:72d4:85f9 with SMTP id
+ a640c23a62f3a-ade1a9c7cd2mr1539157966b.40.1749524592671; Mon, 09 Jun 2025
+ 20:03:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250609120155.204802-1-wangjinchao600@gmail.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnCl_unUdo55oyPA--.42301S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr4rAF4rZr4fWF1ftFyrJFb_yoW8Xry3pw
-	4aqas8CF4UZaySqryUArW7WFy5uwn8WFWUKrZ7Kw12qF9agFyxXrW0yFy5GryvyFsxCa48
-	X3Z5JrZxCF1DtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7I
-	JmUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250603205800.334980-1-luis.gerhorst@fau.de>
+In-Reply-To: <20250603205800.334980-1-luis.gerhorst@fau.de>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Tue, 10 Jun 2025 05:02:36 +0200
+X-Gm-Features: AX0GCFsg0jFdSRfQwjdMDtUT5JBYaZq4q7ARo5V7e_WrDdDiMUVd3IyUlXozaCc
+Message-ID: <CAP01T76BFe57wUaqsQYFu0vk-ST1kSSk1MghDAUhS3n2F892AQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 0/9] bpf: Mitigate Spectre v1 using barriers
+To: Luis Gerhorst <luis.gerhorst@fau.de>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
+	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Henriette Herzog <henriette.herzog@rub.de>, Saket Kumar Bhaskar <skb99@linux.ibm.com>, 
+	Cupertino Miranda <cupertino.miranda@oracle.com>, Jiayuan Chen <mrpre@163.com>, 
+	Matan Shachnai <m.shachnai@gmail.com>, Dimitar Kanaliev <dimitar.kanaliev@siteground.com>, 
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Tue, 3 Jun 2025 at 23:04, Luis Gerhorst <luis.gerhorst@fau.de> wrote:
+>
+> This improves the expressiveness of unprivileged BPF by inserting
+> speculation barriers instead of rejecting the programs.
+>
+> The approach was previously presented at LPC'24 [1] and RAID'24 [2].
+>
+> To mitigate the Spectre v1 (PHT) vulnerability, the kernel rejects
+> potentially-dangerous unprivileged BPF programs as of
+> commit 9183671af6db ("bpf: Fix leakage under speculation on mispredicted
+> branches"). In [2], we have analyzed 364 object files from open source
+> projects (Linux Samples and Selftests, BCC, Loxilb, Cilium, libbpf
+> Examples, Parca, and Prevail) and found that this affects 31% to 54% of
+> programs.
+>
+> To resolve this in the majority of cases this patchset adds a fall-back
+> for mitigating Spectre v1 using speculation barriers. The kernel still
+> optimistically attempts to verify all speculative paths but uses
+> speculation barriers against v1 when unsafe behavior is detected. This
+> allows for more programs to be accepted without disabling the BPF
+> Spectre mitigations (e.g., by setting cpu_mitigations_off()).
+>
+> For this, it relies on the fact that speculation barriers generally
+> prevent all later instructions from executing if the speculation was not
+> correct (not only loads). See patch 7 ("bpf: Fall back to nospec for
+> Spectre v1") for a detailed description and references to the relevant
+> vendor documentation (AMD and Intel x86-64, ARM64, and PowerPC).
+>
+> In [1] we have measured the overhead of this approach relative to having
+> mitigations off and including the upstream Spectre v4 mitigations. For
+> event tracing and stack-sampling profilers, we found that mitigations
+> increase BPF program execution time by 0% to 62%. For the Loxilb network
+> load balancer, we have measured a 14% slowdown in SCTP performance but
+> no significant slowdown for TCP. This overhead only applies to programs
+> that were previously rejected.
+>
+> I reran the expressiveness-evaluation with v6.14 and made sure the main
+> results still match those from [1] and [2] (which used v6.5).
+>
+> Main design decisions are:
+>
+> * Do not use separate bytecode insns for v1 and v4 barriers (inspired by
+>   Daniel Borkmann's question at LPC). This simplifies the verifier
+>   significantly and has the only downside that performance on PowerPC is
+>   not as high as it could be.
+>
+> * Allow archs to still disable v1/v4 mitigations separately by setting
+>   bpf_jit_bypass_spec_v1/v4(). This has the benefit that archs can
+>   benefit from improved BPF expressiveness / performance if they are not
+>   vulnerable (e.g., ARM64 for v4 in the kernel).
+>
+> * Do not remove the empty BPF_NOSPEC implementation for backends for
+>   which it is unknown whether they are vulnerable to Spectre v1.
+>
+> [1] https://lpc.events/event/18/contributions/1954/ ("Mitigating
+>     Spectre-PHT using Speculation Barriers in Linux eBPF")
+> [2] https://arxiv.org/pdf/2405.00078 ("VeriFence: Lightweight and
+>     Precise Spectre Defenses for Untrusted Linux Kernel Extensions")
+>
+> Changes:
+>
+> * v3 -> v4:
+>   - Remove insn parameter from do_check_insn() and extract
+>     process_bpf_exit_full as a function as requested by Eduard
+>   - Investigate apparent sanitize_check_bounds() bug reported by
+>     Kartikeya (does appear to not be a bug but only confusing code),
+>     sent separate patch to document it and add an assert
+>   - Remove already-merged commit 1 ("selftests/bpf: Fix caps for
+>     __xlated/jited_unpriv")
+>   - Drop former commit 10 ("bpf: Allow nospec-protected var-offset stack
+>     access") as it did not include a test and there are other places
+>     where var-off is rejected. Also, none of the tested real-world
+>     programs used var-off in the paper. Therefore keep the old behavior
+>     for now and potentially prepare a patch that converts all cases
+>     later if required.
+>   - Add link to AMD lfence and PowerPC speculation barrier (ori 31,31,0)
+>     documentation
+>   - Move detailed barrier documentation to commit 7 ("bpf: Fall back to
+>     nospec for Spectre v1")
+>   - Link to v3: https://lore.kernel.org/all/20250501073603.1402960-1-luis.gerhorst@fau.de/
+>
 
-ÔÚ 2025/06/09 20:01, Wang Jinchao Ð´µÀ:
-> During raid1 reshape operations, a use-after-free can occur in the mempool
-> wait queue when r1bio_pool->curr_nr drops below min_nr. This happens
-> because:
+LGTM. For the set,
 
-Can you attach have the uaf log?
-> 
-> 1. mempool_init() initializes wait queue head on stack
-> 2. The stack-allocated wait queue is copied to conf->r1bio_pool through
->     structure assignment
-> 3. wake_up() on this invalid wait queue causes panic when accessing the
->     stack memory that no longer exists
+Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 
-The list_head inside wait_queue_head?
-
-> 
-> Fix this by properly reinitializing the mempool's wait queue using
-> init_waitqueue_head(), ensuring the wait queue structure remains valid
-> throughout the reshape operation.
-> 
-> Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
-> ---
->   drivers/md/raid1.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 19c5a0ce5a40..fd4ce2a4136f 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -3428,6 +3428,7 @@ static int raid1_reshape(struct mddev *mddev)
->   	/* ok, everything is stopped */
->   	oldpool = conf->r1bio_pool;
->   	conf->r1bio_pool = newpool;
-> +	init_waitqueue_head(&conf->r1bio_pool.wait);
-
-I think the real problem here is the above assignment,it's better to
-fix that instead of reinitializing the list.
-
-Thanks,
-Kuai
-
->   
->   	for (d = d2 = 0; d < conf->raid_disks; d++) {
->   		struct md_rdev *rdev = conf->mirrors[d].rdev;
-> 
-
+> [...]
+>
 
