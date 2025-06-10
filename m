@@ -1,124 +1,91 @@
-Return-Path: <linux-kernel+bounces-680297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-680299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4ACFAD433E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:49:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EFFAD4342
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 21:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BA51898C72
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D108017CA27
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 19:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADAC267B6F;
-	Tue, 10 Jun 2025 19:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7198264A7C;
+	Tue, 10 Jun 2025 19:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxLxI5Rn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsl87wDz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79102265CAF;
-	Tue, 10 Jun 2025 19:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10835231825;
+	Tue, 10 Jun 2025 19:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749584887; cv=none; b=SAguzOJDVTLwnXYLajA7Xk9pdhCLTZrA8eq3eM4exfjoe+mVojQeDoAgj8G+qP1QqdaJ7prf8O/pZYpiYEjvuvVv+gKdsjeAaNWhILvKFerYJXqNjPFRN6B9P8Kzm8QnrMoVKNdi6ddcp3wF/zgyRfNXjD4dkJeYj1q9mRIlB0o=
+	t=1749585010; cv=none; b=NuUwos4ebkMDV945i8mvX1P8pJELRHnckwh2xDo2qDev2i0Mr2AN99YHtjjXmw4lWC0VyNSOHTRobggFZV2KJzRggQLWQt9+xkjeflDDxTd7B1yy/BAcWraVy/Q/8um8neaIie3PHrZLVGmml3Mc8WKB/ZtZwCYf4M4H8LUlFpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749584887; c=relaxed/simple;
-	bh=d5VvSlRmjGMzNDVpmfFxLSG08CZOidzcCPaxvVrcA00=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CuNHq5NjfZ2H9ZU17KpPXG4XkI1VAPvXIsuhP2L0uvBHdhoJHKjqLohUImsWpyqaohKaNDgdK7VNLe4w5VoORWe2ZGDu3jFh+VipeDYlwZA+JKPENvd5U251rFyQbz/tMG5M0L9ffPipMSyQYus250zmMROLMp10vzUlGiY90Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxLxI5Rn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D0A56C4CEF8;
-	Tue, 10 Jun 2025 19:48:06 +0000 (UTC)
+	s=arc-20240116; t=1749585010; c=relaxed/simple;
+	bh=UX2m2jHf9wv3qfCttGY+NSJstGRmeEAzzVHcQy644po=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HgmN/7hQSO18hKTZucfAyY1s5NHCBWN1I/A2C6vCiOqJabQu2aGMLA/ycSdnUNBZGNqWAwJrbAJmZz+kWBbX6x0p5KWeGOrg1tjpA3dpweD/kCcEZqrHX3SfF2sQBtxFFWy6KKosKC7DKubCsVFkgIQ/uLj75+xVOvXzPgMIE4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsl87wDz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 264B0C4CEED;
+	Tue, 10 Jun 2025 19:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749584886;
-	bh=d5VvSlRmjGMzNDVpmfFxLSG08CZOidzcCPaxvVrcA00=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=KxLxI5RnlY5GmFl8MT4zL+Fdvnm7io/+od4zRYmYKqRR2JoB50XY6Pfe1MqDPsnCT
-	 QqsTraNeblpp9umRiPlNCDzpzPg+Z/K/Ly0WGJJ7luW3VJuPgHY8Ni5OF2hWPOa2PO
-	 N5RkkLtn9y053bRa4abkgzobCBlBdw6wUymPb/Q7jcPysJvJVpMVC81O6b16di01gJ
-	 o/linNQs5PXsZzEcl0BXo6yBIVqfS6Ro6N99pEe2PiC0EVAFNrquREUimubMUFy5N/
-	 qZYnFWlcZaLqciN/pVkyKxN6LWbPVrLdmkrxCb7eGniJhqQlTDw9C28hzWO1OCkp9x
-	 qdmawQO4taNlA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4999C677C4;
-	Tue, 10 Jun 2025 19:48:06 +0000 (UTC)
-From: Samuel Kayode via B4 Relay <devnull+samuel.kayode.savoirfairelinux.com@kernel.org>
-Date: Tue, 10 Jun 2025 15:47:34 -0400
-Subject: [PATCH v5 6/6] MAINTAINERS: add an entry for pf1550 mfd driver
+	s=k20201202; t=1749585009;
+	bh=UX2m2jHf9wv3qfCttGY+NSJstGRmeEAzzVHcQy644po=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=nsl87wDzRfQfgxOCo//++N+8OmSLIjGT4zB6hO/oJ2rzsM3RDF+Snrf0wA8oyP/ql
+	 c7TlBgF54DKpk2V3nmdDTbr/PqLmHk75T0yqGAypB5rsE7e1apmMEm9NEAIy9QTGnZ
+	 BCHjpLqHIWp1QjvMTOvrWkoTR5buRYv7ZLhSwAX4AWCAFq7IXOcX8pSvoKGW2UwV2E
+	 P/RdeQcCeEPZyi58sSXF+QKabIfJ8ERQ6U130ZpNr0jMBGHhypgr7iX6r7U0eorrHL
+	 PZKtJQt2lCzC4if+wqfOl3N4iDKfJoUJwAfcJu9hz0CCTHZXtCBmrOMfYQdPYoGP+F
+	 VANDp2V1EnW9g==
+Date: Tue, 10 Jun 2025 21:50:06 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Zhang Heng <zhangheng@kylinos.cn>
+cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY
+In-Reply-To: <20250605072959.91625-1-zhangheng@kylinos.cn>
+Message-ID: <2197sns5-472r-q5q5-p94s-spsp107q1067@xreary.bet>
+References: <20250605072959.91625-1-zhangheng@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250610-pf1550-v5-6-ed0d9e3aaac7@savoirfairelinux.com>
-References: <20250610-pf1550-v5-0-ed0d9e3aaac7@savoirfairelinux.com>
-In-Reply-To: <20250610-pf1550-v5-0-ed0d9e3aaac7@savoirfairelinux.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Sebastian Reichel <sre@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-pm@vger.kernel.org, 
- Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, 
- Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, 
- Enric Balletbo i Serra <eballetbo@gmail.com>, 
- Samuel Kayode <samuel.kayode@savoirfairelinux.com>, 
- Abel Vesa <abelvesa@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1749584885; l=1037;
- i=samuel.kayode@savoirfairelinux.com; s=20250527;
- h=from:subject:message-id;
- bh=1qhTIEsmPLxNuuFFSqYxrKKKek2sC5avXrd07642loc=;
- b=Fx/CMj3bOIeSkwdj6q4aKIZjFw7ZmMdCnD2yZ9n4JOLquOmEEbFcX0ZrsF/9tRDc7LEH46aUq
- sFSc3bKbdGpCUvlZdiBKUR5GHYNlYqE1qYOXBUQtTbwKznBiulo0xuO
-X-Developer-Key: i=samuel.kayode@savoirfairelinux.com; a=ed25519;
- pk=TPSQGQ5kywnnPyGs0EQqLajLFbdDu17ahXz8/gxMfio=
-X-Endpoint-Received: by B4 Relay for
- samuel.kayode@savoirfairelinux.com/20250527 with auth_id=412
-X-Original-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-Reply-To: samuel.kayode@savoirfairelinux.com
+Content-Type: text/plain; charset=US-ASCII
 
-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+On Thu, 5 Jun 2025, Zhang Heng wrote:
 
-Add MAINTAINERS entry for pf1550 PMIC.
+> MARTLINKTECHNOLOGY is a microphone device, when the HID interface in an
+> audio device is requested to get specific report id, the following error
+> may occur.
+> 
+> [  562.939373] usb 1-1.4.1.2: new full-speed USB device number 21 using xhci_hcd
+> [  563.104908] usb 1-1.4.1.2: New USB device found, idVendor=4c4a, idProduct=4155, bcdDevice= 1.00
+> [  563.104910] usb 1-1.4.1.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+> [  563.104911] usb 1-1.4.1.2: Product: USB Composite Device
+> [  563.104912] usb 1-1.4.1.2: Manufacturer: SmartlinkTechnology
+> [  563.104913] usb 1-1.4.1.2: SerialNumber: 20201111000001
+> [  563.229499] input: SmartlinkTechnology USB Composite Device as /devices/pci0000:00/0000:00:07.1/0000:04:00.3/usb1/1-1/1-1.4/1-1.4.1/1-1.4.1.2/1-1.4.1.2:1.2/0003:4C4A:4155.000F/input/input35
+> [  563.291505] hid-generic 0003:4C4A:4155.000F: input,hidraw2: USB HID v2.01 Keyboard [SmartlinkTechnology USB Composite Device] on usb-0000:04:00.3-1.4.1.2/input2
+> [  563.291557] usbhid 1-1.4.1.2:1.3: couldn't find an input interrupt endpoint
+> [  568.506654] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+> [  573.626656] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+> [  578.746657] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+> [  583.866655] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+> [  588.986657] usb 1-1.4.1.2: 1:1: usb_set_interface failed (-110)
+> 
+> Ignore HID interface. The device is working properly.
+> 
+> Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 98201e1f4ab5908ff49d32d19275e123cedb4b66..29287ab3c9d00240ecb0ac9793aa908ec75a9bd0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17853,6 +17853,16 @@ F:	Documentation/devicetree/bindings/clock/imx*
- F:	drivers/clk/imx/
- F:	include/dt-bindings/clock/imx*
- 
-+NXP PF1550 PMIC MFD DRIVER
-+M:	Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/nxp,pf1550.yaml
-+F:	drivers/input/misc/pf1550-onkey.c
-+F:	drivers/mfd/pf1550.c
-+F:	drivers/power/supply/pf1550-charger.c
-+F:	drivers/regulator/pf1550-regulator.c
-+F:	include/linux/mfd/pfd1550.h
-+
- NXP PF8100/PF8121A/PF8200 PMIC REGULATOR DEVICE DRIVER
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
+Applied, thanks.
 
 -- 
-2.49.0
-
+Jiri Kosina
+SUSE Labs
 
 
