@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-679257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265ACAD33E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:44:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA12AD33E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 12:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E48A71722B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:44:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD027A7EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFA528CF59;
-	Tue, 10 Jun 2025 10:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D1D28D85D;
+	Tue, 10 Jun 2025 10:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KcfxtNsf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a8VDAS+1"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z268rKnD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OOgzqmqZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A6228C2C9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729F628C2C8
 	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 10:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749552260; cv=none; b=Tw8cv4M2OfBfG3L1hxrzmbGF/K7LFGurNs1gCKOHfSDQXOOiVo81NzLwhYYNnXU1TdMM8MgwWzxjrbpYJ6d71KejhFHSqV9GagDAQw/+v6Rb/tPWD8SDo0MAP58FOEh9ASOP3FAaKjexNlBYcMv/gETTBZSCk+gGn8bFx4pLm1A=
+	t=1749552260; cv=none; b=NoMCNfaRYtueqzzAkoJIV3awN0XLAymOHz81VKVelM3e+GEfz+rneTrKX/cG6AD1FRyHdtKER5T/9u/nO4IpyHjMHCPKaBxqctTT7oUucB5DCE/my7W2wIpxxAaA+vS6LGBP+lg06DXK+80Kur3jwSJSlfKV+ESr69+Fw7aSpIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749552260; c=relaxed/simple;
-	bh=WCNOFkSCi+QfJMr9pHCmkIwimRwMPe0uuCC3Is/ZUxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gi1TZXCGnZjdjHKsLMcbtj0OMWqh9ix7NUKTG43ofj+Gp3x/U1DWD4q3xWRybI8JLx1KiQMd1VZqalUNESv++8O7kYB71zQ9fxvUo6h4oK/TaGSKuYE8f15jZ7mQBsYMgJE1i/zRSYuEppPGLxRJ0DtD3gHOkr7tNOrn6FtPt9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KcfxtNsf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a8VDAS+1; arc=none smtp.client-ip=193.142.43.55
+	bh=1il/dB19ylyruXfeVF0bzVE5iRhTAf5MNLxEdiYkhO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Jo7559/Rr2Dak3hJQkghWnpV8apqhxjjtZn2MFsvl+OFjXwELzNhAlwt7IQ6dnMYNm3tA1XzONd9+WJVI+lp7DAcHk8XGMg6cXkvSoeoTPtI6hEqzOlMzJFi0IlinqN+lqP5ikwFNqwxRcHy9pEiIbaglIIzLesgwTfs1Bak/+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z268rKnD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OOgzqmqZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1749552250;
+	s=2020; t=1749552251;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hSLcETLYoOswEOAhxg0YWMDULodEraRukc+RnihGo7Y=;
-	b=KcfxtNsfiRU3bwdPIl8WdpehG7BYWQGfDgmaLnl9mVjPO4WlNfpa9KToI/gDrw/sxfmETT
-	wm4EjgDIGAeEplcTHzcQM3g6AemSDTT7a0MMghKhFXXPVaW8iomTXQa7UsgVs4QWDAqUIY
-	0DTuYDN5fzBXKDGErPf4RlIShD1Gkfk4ztoRpHI4T5gJX1HPMgRbmHdzB4hcb9iLn2RqWJ
-	lX8rbAahCv/lDEK2cgPkhuIiZFer3wDGhkMzjCbifCWlCaLG3qlAYSjY+70w1/wuZ4T7cN
-	huiFDPhudRR10fiJZI8CaHXi6IUkJ6OOISsVG+hgDjUjxiPlmYVWpK6Zt9KDOA==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bq4F0YaCcYiesX5BYOqiqK340+o2Iuxu8rVBteNA9h0=;
+	b=Z268rKnDUxE8qCLU8uIvJkehgEcHk8vGWTfYqaCtEkJpZYHVgy6+SYqjJMr6vFngCf8cOi
+	ua7Nv5B2gUM0ctDq7LT1YVtp3KOImWIvVCLUUv2YIXvwJXtx/+4EsuWjFHjOo7F9iRuqjr
+	foh2Jh5whfKY3OW2PP1rjqDO1MJqVbpnQ8/FRATAOAhpXCxw1zT3fchxAMGj8G2ZpO+wdF
+	54lli8rDoEbqDxiIqPyYujlg6DbSqshzXps0+Eq4sNpUMCsdAoJ+DayearU1Jh7G7cslMx
+	rVETM9QSkAUlXLp6CCQXhFibQpe7k6BYkFQRQ4i52XiYtPCiifYBl+rF5psW/w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1749552250;
+	s=2020e; t=1749552251;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hSLcETLYoOswEOAhxg0YWMDULodEraRukc+RnihGo7Y=;
-	b=a8VDAS+1VBpfM8e79M1kdwA08k/0967Ww6WFR7ObiZsDdwGMLsp9BtTq5kFtPawhvpGNHL
-	vTR0fE1Dk685d3DQ==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bq4F0YaCcYiesX5BYOqiqK340+o2Iuxu8rVBteNA9h0=;
+	b=OOgzqmqZ+ReFEWOeJEEvHEoK01GWT79r320ar+e5v//mkKyIDiSeediMVyphiYTtowwgi9
+	wTTi0g5uMJ4UDlDw==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -60,45 +63,66 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 0/4] futex: Fixups for the testsuite and FUTEX_NUMA
-Date: Tue, 10 Jun 2025 12:43:56 +0200
-Message-ID: <20250610104400.1077266-1-bigeasy@linutronix.de>
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 1/4] selftests/futex: getopt() requires int as return value.
+Date: Tue, 10 Jun 2025 12:43:57 +0200
+Message-ID: <20250610104400.1077266-2-bigeasy@linutronix.de>
+In-Reply-To: <20250610104400.1077266-1-bigeasy@linutronix.de>
+References: <20250610104400.1077266-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-This is a collection of random fixes related to the recent private
-futex/ NUMA addition:
+Mark reported that futex_priv_hash fails on ARM64.
+It turns out that the command line parsing does not terminate properly
+and ends in the default case assuming an invalid option was passed.
 
- - Some of the test fail on ARM due bad command line parsing.
+Use an int as the return type for getopt().
 
- - The MPOL test fails because the home node was never set.
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/all/31869a69-063f-44a3-a079-ba71b2506cce@si=
+rena.org.uk/
+Fixes: 3163369407baf ("selftests/futex: Add futex_numa_mpol")
+Fixes: cda95faef7bcf ("selftests/futex: Add futex_priv_hash")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ tools/testing/selftests/futex/functional/futex_numa_mpol.c | 2 +-
+ tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- - The syzbot used a negative NODE number which was not tested for.
-
-v1=E2=80=A6v2: https://lore.kernel.org/all/20250528085521.1938355-1-bigeasy=
-@linutronix.de/
-  - Extend 4/4 to also check for the immutable flag.
-
-Peter Zijlstra (1):
-  futex: Handle invalid node numbers supplied by user
-
-Sebastian Andrzej Siewior (3):
-  selftests/futex: getopt() requires int as return value.
-  selftests/futex: Set the home_node in futex_numa_mpol
-  futex: Verify under the lock if hash can be replaced
-
- kernel/futex/core.c                                | 14 ++++++++++++--
- .../selftests/futex/functional/futex_numa_mpol.c   | 10 +++++++---
- .../selftests/futex/functional/futex_priv_hash.c   |  2 +-
- 3 files changed, 20 insertions(+), 6 deletions(-)
-
+diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/t=
+ools/testing/selftests/futex/functional/futex_numa_mpol.c
+index 20a9d3ecf7433..564dbd02d2f46 100644
+--- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
++++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
+ 	struct futex32_numa *futex_numa;
+ 	int mem_size, i;
+ 	void *futex_ptr;
+-	char c;
++	int c;
+=20
+ 	while ((c =3D getopt(argc, argv, "chv:")) !=3D -1) {
+ 		switch (c) {
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/t=
+ools/testing/selftests/futex/functional/futex_priv_hash.c
+index 2dca18fefedcd..24a92dc94eb86 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
+ 	pthread_mutexattr_t mutex_attr_pi;
+ 	int use_global_hash =3D 0;
+ 	int ret;
+-	char c;
++	int c;
+=20
+ 	while ((c =3D getopt(argc, argv, "cghv:")) !=3D -1) {
+ 		switch (c) {
 --=20
 2.49.0
 
