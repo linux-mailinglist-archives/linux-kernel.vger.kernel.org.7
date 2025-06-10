@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-678694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C07AAD2CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:41:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24166AD2CD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 06:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776763AFA33
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:41:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC23170581
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 04:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA5B25C807;
-	Tue, 10 Jun 2025 04:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B9B21322F;
+	Tue, 10 Jun 2025 04:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVurc5Da"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="jSVXQt6c"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4661F8691;
-	Tue, 10 Jun 2025 04:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FE7241CBA
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749530477; cv=none; b=sL+iP/pJZlzUlXn4U4Pdo1tZ9I7j6w9hwZjLIKG//Nbpk7G9jMRqOa8pVdY4ztA/NIssxdfM3heMVFaywj0ukf7CdoWmJgJpFC4OlCk4JOjsxWVHxwPB2g9E7zF1XAYXGxeLtrbFY4cvuzb7xcGEoFaxJGrPFLfabzD54EQeFeM=
+	t=1749530537; cv=none; b=RzET2x9Wxa397QjKvLDqy6kanbSkTaGpsYeSMR9aavmA4Uf1dCosoarM96ZTWAwRqr2UHX0RtDDkoA28nKa2pR85suvQm5OVigXn9BpNhP6xtlLFNYcsn378Vqo+sx5D5fvPIRDVGI6wLsI96PjI3ReXl9alFMUOt+jD3mjR6K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749530477; c=relaxed/simple;
-	bh=Pyjffi+nSLucRE3vgdFGEa3GGlSbXak0lR4GOVC8Kpw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=UbZOXfFgi9MewbIp6RBuZyuLQ4rR2pJMmyRWSKYbuqBn3uVQNncSEhbFj78Px23Ob9A8WI3YWK4WLvihzZso6C2w8lsmWJPAVBEJtMHkTYxRmED0/Q2ibHvzzKozzsg4zx0dIT1XbQBpYotdK8hqBKY0vIhEmX/LmprvKBVnm2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVurc5Da; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B956FC4CEEF;
-	Tue, 10 Jun 2025 04:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749530477;
-	bh=Pyjffi+nSLucRE3vgdFGEa3GGlSbXak0lR4GOVC8Kpw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LVurc5Da7zoxb7qboPt7il++of/iF6QU4W6ngC9c9cH9Q5Zm3udHMWscCLozL/j85
-	 4wE9GPCewfsBRWY/U8pBfIS6emzt4I4nEZexQ/2Vd25NweixBY+HWoI+KHnKthbius
-	 F9yp8PG2S9bEFIJqz9zPveWqbADBzoqQUHwcsYoM1hngikMoB7HadHgeZzG311ss3m
-	 MK+YscFAOvLeGWsJbdSkAyb0DurXCHjGwtcWfoi23LQFMXYgoCTKh8NvYrARwnLQmd
-	 CT5BeuTSzCoPiYsd2NPwNo775+RP9ngcS9qRoKlrTJzmPVg3rLsfJGohBzUTO+NFH2
-	 tyNkq39TThvvg==
-Date: Tue, 10 Jun 2025 13:41:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Chaotian Jing <chaotian.jing@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] mtk-sd: Fix a pagefault in dma_unmap_sg() for not
- prepared data
-Message-Id: <20250610134114.5ce2c929b683be6e4f228f2b@kernel.org>
-In-Reply-To: <CAPDyKFrejbW1d+jSSJE4K8Zb08CeMHiH9pC=Sr=Y51Lyy4Fhow@mail.gmail.com>
-References: <174908565814.4056588.769599127120955383.stgit@mhiramat.tok.corp.google.com>
-	<CAPDyKFrejbW1d+jSSJE4K8Zb08CeMHiH9pC=Sr=Y51Lyy4Fhow@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749530537; c=relaxed/simple;
+	bh=CAzDFjhSAzbmD8Txu7d1pGievjGb5rkrE7JNed1lhig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnG/jrTK6NwS6E53ZxXjDft5BEx75VdDcs+NvIV46Nli3W5TQrzpgT+Y/tG31bQdGF6BKGff4zXXeW7ldzoHrxfZChUK4lsIAOZ/hWZdC6o4tyIcWZWAq6lF0Rutx+pAaMsilB1p8QDiK4lPNyFB5weTZBjQrf4uwhzG2O0RbQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=jSVXQt6c; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2353a2bc210so43225585ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 21:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1749530535; x=1750135335; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KVeTEtZcl1m4ClJ2o9p5dHCV4fbTAw96xygmKyHd+ZA=;
+        b=jSVXQt6cLqIWP2AdpnrUhsBreW4p2wU25oiaJN790VwdPuc+ze2tIRIQ7mDrgv6rFF
+         uY/yfialTOt6CMMNQiGP1bxkV1VrWS+M0CvGPEHv1hoLmjuu4UbQXch4WTOB4uKXXn/W
+         4rqK6PbVoPtqNUgi/1Ytoucsy9MD+ylnZY7NZjQfSYay1/yEGf6o4ahiE24XHg+SUmN6
+         6Et8ze4Tz/BNL+qIQgD1qfSrrMmOm3fvD8fFpZUOsg/dtS76F1Yf7XQCOHSKqoO/lpia
+         vXtXUBhWdqVe3PV8po5IUOGQqUzn/5NQp9qxvFsEDlfURhM/3wPsVoAFbCfrfQ7DJKfr
+         +QXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749530535; x=1750135335;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVeTEtZcl1m4ClJ2o9p5dHCV4fbTAw96xygmKyHd+ZA=;
+        b=DRQlEpbzfXloCn+5z63BbVBA8K/dmjKiTzMOR5WrCPfY444Yctzn9ClWcaMMdioswb
+         SEGMWEwPF5xDqBjONDQToyNAjHs9yDzt+Rqgqko2m4HEcffl5wCvxkJ6pFZCzaGwwo52
+         l7Q/BbTnqFsguYznAAYgN5sXRIDHQXbDG+sRiQeSMx1TMLeywS+9VZ4aQ/e9gsJXFJ3r
+         Ob6WuSotynMF61LxHxsWMaGJ7L93guB510uP+U4CdOOhvKbdmeVjeH1rrsRC4vBo7WxC
+         PjXhqQABZM/CVLaIiGGhv6RSuFTSEbAlX/ZCtOp44VxNyxJ0aac6xwpbs5yoGpR+8zKJ
+         3OeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYJVUI81IjtskZs3wtzoH1qPXKZTreUwIGgHgq05G9CJnsiqI0DKchSDpNemd9/u+/UrGSAL4EM1kTBA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeTZ1Asc7AH3ixtTxuYkYVWreSrLXMbrDFSdNZ1mNhuHOkx94c
+	g+SH0etgLuAslzLKIkICp0eCmA7pbyDK7TIKUrvbkihji36L3kTi6IHdiqMDKCwkjmg=
+X-Gm-Gg: ASbGncsdepJrkIl8swOvRnvKY1ntPMLMf4NDwJZntM0syCB/4jYiLIpn/FZNf0DWget
+	auhrhPpQUO+4jpZcaQKDljlA2ovZpVqI6s9p1CXYOUgR0hvO3UrrI4Y5z8MpaGF++xoP54ONHVP
+	cPiwldtQ9giBcCANqGasCvvLxxvKYtLrSTIB2N3DQixbVq6vK5vZ0nsBD6cJlbL2CF9HEnHLqPn
+	Ua6BnqZ2VXcYQl0rdrUFPD9oEQxhLYoXdI+6hQTxIvu7tfE2AeDaIJgOI4LC5bkbEtQtLvMnI7M
+	MIH8LWVMHBXp8BU5mU4tqc6uoZsRR6UtNxaIOFomMIni4O31KFgtx5apm+5XNXDlECO0BA==
+X-Google-Smtp-Source: AGHT+IEkTU+gBcq13St9Qw/Wf0Um/jTGbpeL8M59SViyqMxrr/ADp4BVSyewhIKv47GXRKYXDjzYQQ==
+X-Received: by 2002:a17:902:d2c3:b0:235:7c6:ebd2 with SMTP id d9443c01a7336-23601d2296bmr201118235ad.31.1749530535298;
+        Mon, 09 Jun 2025 21:42:15 -0700 (PDT)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2363ad3492esm1896875ad.154.2025.06.09.21.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 21:42:14 -0700 (PDT)
+Date: Tue, 10 Jun 2025 10:12:03 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 17/23] ACPI: RISC-V: Create interrupt controller list
+ in sorted order
+Message-ID: <aEe3m23wIDM1I-AH@sunil-laptop>
+References: <20250525084710.1665648-1-apatel@ventanamicro.com>
+ <20250525084710.1665648-18-apatel@ventanamicro.com>
+ <aDbuABrlO30TIrx1@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDbuABrlO30TIrx1@smile.fi.intel.com>
 
-On Mon, 9 Jun 2025 16:25:24 +0200
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
-
-> On Thu, 5 Jun 2025 at 03:07, Masami Hiramatsu (Google)
-> <mhiramat@kernel.org> wrote:
-> >
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> >
-> > mtk-msdc driver causes a kernel crash after swiotlb buffer is full.
-> >
-> > ---
-> > mtk-msdc 11240000.mmc: swiotlb buffer is full (sz: 16384 bytes), total 32768 (slots), used 32732 (slots)
-> > mtk-msdc 11240000.mmc: msdc_track_cmd_data: cmd=18 arg=0397A6F8; host->error=0x00000004
-> > Unable to handle kernel paging request at virtual address ffffffffc0001fc0
-> > ---
-> >
-> > When swiotlb buffer is full, the dma_map_sg() returns 0 to
-> > msdc_prepare_data(), but it does not check it and sets the
-> > MSDC_PREPARE_FLAG.
-> >
-> > swiotlb_tbl_map_single() /* prints "swiotlb buffer is full" */
-> >   <-swiotlb_map()
-> >     <-dma_direct_map_page()
-> >       <-dma_direct_map_sg()
-> >         <-__dma_map_sg_attrs()
-> >           <-dma_map_sg_attrs()
-> >             <-dma_map_sg()  /* returns 0 (pages mapped) */
-> >               <-msdc_prepare_data()
-> >
-> > Then, the msdc_unprepare_data() checks MSDC_PREPARE_FLAG and calls
-> > dma_unmap_sg() with unmapped pages. It causes a page fault.
-> >
-> > To fix this problem, Do not set MSDC_PREPARE_FLAG if dma_map_sg()
-> > fails because this is not prepared.
-> >
-> > Fixes: 208489032bdd ("mmc: mediatek: Add Mediatek MMC driver")
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Wed, May 28, 2025 at 02:05:36PM +0300, Andy Shevchenko wrote:
+> On Sun, May 25, 2025 at 02:17:04PM +0530, Anup Patel wrote:
+> > 
+> > Currently, the interrupt controller list is created without any order.
+> > Create the list sorted with the GSI base of the interrupt controllers.
 > 
-> Applied for fixes and by adding a stable-tag, thanks!
+> ...
 > 
-> Note that it looked like the patch was not entirely correctly
-> formatted, but I fixed it up when applying. Please have a look at the
-> fixes branch to make sure things look okay to you.
-
-Thank for applying and fixing!
-
-Thank you,
-
+> > -	list_add_tail(&ext_intc_element->list, &ext_intc_list);
+> > +	if (list_empty(&ext_intc_list)) {
+> > +		list_add(&ext_intc_element->list, &ext_intc_list);
+> > +		return 0;
+> > +	}
 > 
-> Kind regards
-> Uffe
+> With the below done the above can be optimized (hopefully).
 > 
+> > +	list_for_each_entry(node, &ext_intc_list, list) {
+> > +		if (node->gsi_base < ext_intc_element->gsi_base)
+> > +			break;
+> > +	}
+> > +
+> > +	__list_add(&ext_intc_element->list, node->list.prev, &node->list);
 > 
+> Is this reimplementation of list_add_tail()? And why list debug is excluded here?
 > 
-> > ---
-> >  drivers/mmc/host/mtk-sd.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> > index 345ea91629e0..3594010bc229 100644
-> > --- a/drivers/mmc/host/mtk-sd.c
-> > +++ b/drivers/mmc/host/mtk-sd.c
-> > @@ -827,9 +827,10 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
-> >  static void msdc_prepare_data(struct msdc_host *host, struct mmc_data *data)
-> >  {
-> >         if (!(data->host_cookie & MSDC_PREPARE_FLAG)) {
-> > -               data->host_cookie |= MSDC_PREPARE_FLAG;
-> >                 data->sg_count = dma_map_sg(host->dev, data->sg, data->sg_len,
-> >                                             mmc_get_dma_dir(data));
-> > +               if (data->sg_count)
-> > +                       data->host_cookie |= MSDC_PREPARE_FLAG;
-> >         }
-> >  }
-> >
-> >
+Sure. Let me use list_add_tail() itself in the next revision. However, I
+didn't understand the list debug question. IIUC, list_add_tail() is a
+wrapper around __list_add() and doesn't exclude the list debug, right?
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks!
+Sunil
 
