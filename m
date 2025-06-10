@@ -1,168 +1,237 @@
-Return-Path: <linux-kernel+bounces-678952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8659AD308C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:36:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20CECAD308F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 10:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473703A383C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EA43A54BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 08:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7670027E1CE;
-	Tue, 10 Jun 2025 08:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3B322FE06;
+	Tue, 10 Jun 2025 08:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ibrQTmMt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMUAyKtk"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8AB21B191
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327A71D555
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749544569; cv=none; b=XVGtcmizAtDe2oyMzL49EWk7Vh0QKIs1XZwlNslADxe/B8uo9XgylTxSfnOh3fne/9rBNDh26ZUddLyulBcquRcGNuWPgL5xsNSCcchLubF3x7E95rkcX5u8knR1Es2bqAajvCYlsaVtwjmtAfZnpScAF3IF9C5WYSnTf/8pYbA=
+	t=1749544639; cv=none; b=IRAu6EjE5lVXwiWO5rWGNuoJmkdytO7CoyQ897IHFhuhZC953ibHdidIxg1+qSjJooI+BW4Q2q6bkgQ2hE3N0chd2iA3kT9e7WnOigP2OZWkX8YMPtD4hvFvdnft9LgxUIHuAFJ06b8z9FDNFuY9TrKIQxOWenYJb2CL25L6/xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749544569; c=relaxed/simple;
-	bh=VefeL8UvNo27hF0y5cq0ZWoxdT+CX5fteuza6wXt5O0=;
+	s=arc-20240116; t=1749544639; c=relaxed/simple;
+	bh=xqGrlbTFhq1egR6caYh16yXSML1bLir8w4flS/bi8s8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FcwvJVzwGXxr2X6eadaSNSSA6bKXgjx7Q1oHhXcQzJ2gdVRtTGEAk6q70n9j5dJ19T/xVmCvPml/U1dyro1LqH086R4TywU0U546akHCTiPZKLcFXAENMzBrLfGERVatFmtKqCdLw6oWetUQE7hoyna89xSzr3GjtQjeCzS9z9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ibrQTmMt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749544566;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VefeL8UvNo27hF0y5cq0ZWoxdT+CX5fteuza6wXt5O0=;
-	b=ibrQTmMtk3M5foxu/Ky9PvDjH8b29cynno3Dmgf9buC3r3RDQi/7A3QwWZNPs5yj3ThyZn
-	ELyJMbD+FTN6//MIvhESL8O403XsWdlRHXjCNTEDvhdmbgO0d12feOAT8X4jYZM4zdnWs+
-	SBIsygS/W+hsHsoK72XJl5WVfQMNuQA=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-581-VHuk0o00OtCShY9UgtJeDg-1; Tue, 10 Jun 2025 04:36:05 -0400
-X-MC-Unique: VHuk0o00OtCShY9UgtJeDg-1
-X-Mimecast-MFC-AGG-ID: VHuk0o00OtCShY9UgtJeDg_1749544564
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-31215090074so7242779a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 01:36:05 -0700 (PDT)
+	 To:Cc:Content-Type; b=moARn5IEq0H8zX13dT/tXOBx5ns3R+no7gY/V4JjiHz0jUtAVe6BYlLLD+0StoltEKp8Ldl+tsM0eVygF7amljxE/PGhpgPQdwAEWd3MJtYaBy/BTFqLAZVobaRs0oXuQAbc9WdUJXPt8jU193rWUb8tOxYw3Pjfy1pK9gH+e7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMUAyKtk; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4e771347693so2936103137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 01:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749544636; x=1750149436; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nnar+GeWh3IDeNTEo/pLO1+fWay4pzszrojH85IBaoA=;
+        b=ZMUAyKtkcf7oQk8wOpD6Bs9pXpOJaGBz39RNPPhGtRikhEeMfQwztHlq+X1TB4XoZA
+         +PrX9FDgBdSyYpUYcdXJG95fl6wJ3UjpB2KwtGqMHM0gI+3QXGkDLGm9vG91GOfEFyxD
+         RE6ld9JkM/nidIckBGg7QypnUVpC529OcAykjs9G4yop2TCIFv7HHlFhg6hGLFqk4arc
+         cxdHe/CMv4LVL3btS89l/s/ekK5GyJBIE0Vl5ydsa8etvfLLBZRAjjj810t68WQT0+CI
+         fZuBq+Nlktqluxv12cgVF90dG9fI6YE0iyfPFWrU21cXaDGBGmVFRhhSUozsjeoy3WhT
+         xj+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749544564; x=1750149364;
+        d=1e100.net; s=20230601; t=1749544636; x=1750149436;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VefeL8UvNo27hF0y5cq0ZWoxdT+CX5fteuza6wXt5O0=;
-        b=PyXSsZeXl1x03WixA+lzjCIcAg9Et08rAcsDPhWfg8yim+yKcAhZpK9xmTJG3lzMxy
-         J0f7ZesTKPrwp2QKFUkMDxq3NMo9HHMH2dyolL9ZyCpnHoPUHskaAqf0EZQX9f3L4mcw
-         XRPG+DlDwBpXjslyIAOD0j0XrLMAd1Nvy4abUWzRWEZHdg7qpKIvU4Xvl5sG05R3wNtm
-         zH3WPav/RE4bIL+unr+gS38ZTYOwn+aw7wQVI9/jC7oJTM+/3FXS8Ej6HQhEny7NXKY7
-         OdoZbR+et2ICJc2k1xenoE1iCevoEZ8GyW+3RrJvV2hReDDfGHn++Uzl6z5UlTRQocHD
-         9+UA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFuB3qNKQn6ogbzMvDt3NXjNyHGVZ1qNc2dAjr8m07SChv72N4bhDAw77SS7UVM9JqzPTBkz76eey4X70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA9f2YLK80wa4zKrfChe3wW48hgO0p7Ht4oy6vAbVL1cp62XJL
-	fVrtcutE2jY4xYmmMykCtVcsV0VoJOMVoP+t7Lh9vvCjMYP65GbZrLYXAl/c7Gth32Tnxcg2Nbi
-	W/UX3OmJU7DZfiPB4eoO5ed5v1usxSwOs8DCS5PiRs9ux4pxxgEIRPVXsWjvaByuV04ms5fg4a/
-	6Gtdz0Kj5Mmx6RIbnWv6E98mIcjJa+9mMPysN/GDRq
-X-Gm-Gg: ASbGncvOl00zbbHN0oANDatBbIY7Nxt+ns+4bSBqe//kASPry4e+XzSSgJM0iAhoBNq
-	TX61iuVy2fv8RiIJOn82CN5RLF8oepXj/K2jNYzlWeaFz7U/Rvd+LWE9Sm/T3+5dBb1Bq6IOFU2
-	cHybLo
-X-Received: by 2002:a17:90b:3c52:b0:311:ffe8:20e2 with SMTP id 98e67ed59e1d1-313472d4297mr23372950a91.4.1749544563413;
-        Tue, 10 Jun 2025 01:36:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyRjmPW82hemp2fvewBDHQY7oy/7+OpxoQVKnjOKQ7RWf7UJnCJb7ETeE1WE5gEIg7PUb6KZi6iotqVC+KBWI=
-X-Received: by 2002:a17:90b:3c52:b0:311:ffe8:20e2 with SMTP id
- 98e67ed59e1d1-313472d4297mr23372919a91.4.1749544562994; Tue, 10 Jun 2025
- 01:36:02 -0700 (PDT)
+        bh=nnar+GeWh3IDeNTEo/pLO1+fWay4pzszrojH85IBaoA=;
+        b=i73wOSbL9Bg6p++C1z9f2/I054yJSf7ca9R7pkTNI5742c15uOGnBagGNQagF4OOVQ
+         pcap63cP9Sg3MF87/nZTkGk9p2aaX9nD6wlWsOXouWp4P3ZX88juUhYbXFmGgZQ25XFq
+         7ITScYtq7VMx0RDlSwrx7mP23xtBmE6zmUe0l1na7rzbXaqwr37VvgEfkFDmwXo5tOqX
+         5sA/iHMnwSGxj9En7CEwcA/VUTWPDz73+gmR/cy1GdfQlDK7JBWpCJPH+86UtAXSpPd/
+         s75KkOqVgkpg4cPCHYRviDRL+DMRF5zS6fErDqYPU52juyTrOE94uLPN1mfShHVgYfbt
+         dp0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVKSIXCqirPzzLeC1hm8EO7iqcENp59ZJd4UHDq6LE8bDRLpO05aYnBvu5rY0LiJbxicYIifRa+Qi7fWnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0MNq1IOJN1CkyaKGgKr1tAi/8AhBVSQZI9jmNjuvl2esRvWz/
+	rftc3Q+I09UEKE1+PmesoOSvDfsqLTfeS0YHGtwzTw6p9eQgd2vUjqxtKBDhpa4IWvxaaAXhMMY
+	pFN5bNxYnitl3pBMdOXWJvh6TwDxgS4Y=
+X-Gm-Gg: ASbGncthN20voaJ7ypZMgG7EK+zqu+Uy0T/g5F8Lq9vEddlgYkXsbRXJZ2N03os0hxn
+	U//jHmPtv8MXFPjw1wHSfp1RJsZQj/kDDBsFOMkYgUHQnAXhhhQ6n2QxXcLjiDnA1XzCusUrAjM
+	YiWPnGg+rNcItgEgWYzqu5HuGvKsVCCfspvQEZgqs0BRmU
+X-Google-Smtp-Source: AGHT+IHAuCzPail3KyWEnUuOTHkl0YO3F1D2VwSe8uGoUSEXuglFPFY6oRR0/8GCZZvsxs5d/hq5WZkunJGfAfg9F3o=
+X-Received: by 2002:a05:6102:3ca4:b0:4db:e01:f2db with SMTP id
+ ada2fe7eead31-4e7a8041a72mr1174771137.0.1749544635885; Tue, 10 Jun 2025
+ 01:37:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606115012.1331551-1-eperezma@redhat.com> <20250606115012.1331551-2-eperezma@redhat.com>
- <CACGkMEsw2taXgW11na2CFK6W03c=x=wMn3iwNZPypgPkeSU06Q@mail.gmail.com>
- <CACGkMEvinV7Zd+xddnxcerFbw_c+RZypkeD5HaN8=g6+peZvMQ@mail.gmail.com> <CAJaqyWeetDsdoDzVrN-n0+jr97MBPeHdTxeM3ttmNUeLK702VA@mail.gmail.com>
-In-Reply-To: <CAJaqyWeetDsdoDzVrN-n0+jr97MBPeHdTxeM3ttmNUeLK702VA@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 10 Jun 2025 16:35:52 +0800
-X-Gm-Features: AX0GCFuawXYYWuy28X2V_BYwSq7bE1Tmlxm4lE_BVF2reMyJ9g-qSAngee-y6Wk
-Message-ID: <CACGkMEvbxZsmPPHgfst89FCbZamBPLt8V=K-eepa4s3muFuM4A@mail.gmail.com>
-Subject: Re: [RFC 1/6] vduse: add v1 API definition
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
-	linux-kernel@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>
+References: <20250610035043.75448-1-dev.jain@arm.com> <20250610035043.75448-3-dev.jain@arm.com>
+In-Reply-To: <20250610035043.75448-3-dev.jain@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 10 Jun 2025 20:37:04 +1200
+X-Gm-Features: AX0GCFvNQf_tJMRGWeweQukrOmZB5LYVa1rypl060qryW1t_FAIfNamJEbB--IY
+Message-ID: <CAGsJ_4wZM-BqDD=06_7Gksj=NiMJF0oZhqjnYK5FhGwX+diyHQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] mm: Optimize mremap() by PTE batching
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com, 
+	pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	david@redhat.com, peterx@redhat.com, ryan.roberts@arm.com, mingo@kernel.org, 
+	libang.li@antgroup.com, maobibo@loongson.cn, zhengqi.arch@bytedance.com, 
+	anshuman.khandual@arm.com, willy@infradead.org, ioworker0@gmail.com, 
+	yang@os.amperecomputing.com, baolin.wang@linux.alibaba.com, ziy@nvidia.com, 
+	hughd@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 9, 2025 at 2:11=E2=80=AFPM Eugenio Perez Martin <eperezma@redha=
-t.com> wrote:
+On Tue, Jun 10, 2025 at 3:51=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
 >
-> On Mon, Jun 9, 2025 at 3:50=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
-rote:
-> >
-> > On Mon, Jun 9, 2025 at 9:41=E2=80=AFAM Jason Wang <jasowang@redhat.com>=
- wrote:
-> > >
-> > > On Fri, Jun 6, 2025 at 7:50=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@r=
-edhat.com> wrote:
-> > > >
-> > > > This allows to define all functions checking the API version set by=
- the
-> > > > userland device.
-> > > >
-> > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > >
-> > > It might be worth clarifying how it works.
-> > >
-> > > For example,
-> > >
-> > > 1) would VDUSE behave differently or if it's just some new ioctls
+> Use folio_pte_batch() to optimize move_ptes(). On arm64, if the ptes
+> are painted with the contig bit, then ptep_get() will iterate through all=
+ 16
+> entries to collect a/d bits. Hence this optimization will result in a 16x
+> reduction in the number of ptep_get() calls. Next, ptep_get_and_clear()
+> will eventually call contpte_try_unfold() on every contig block, thus
+> flushing the TLB for the complete large folio range. Instead, use
+> get_and_clear_full_ptes() so as to elide TLBIs on each contig block, and =
+only
+> do them on the starting and ending contig block.
 >
-> I'd like to test more in-depth, but a device can just bump the version
-> ID and then implement the replies to the vduse messages. No need to
-> implement new ioctls. If the VDUSE device sets 0 in either number of
-> ASID or vq groups, the kernel assumes 1.
-
-Right, this is the way we use now and I think maybe we can document
-this somewhere.
-
+> For split folios, there will be no pte batching; nr_ptes will be 1. For
+> pagetable splitting, the ptes will still point to the same large folio;
+> for arm64, this results in the optimization described above, and for othe=
+r
+> arches (including the general case), a minor improvement is expected due =
+to
+> a reduction in the number of function calls.
 >
-> But you have a very good point here, I think it is wise to evaluate
-> the shortcut of these messages in the VDUSE kernel module. If a VDUSE
-> device only has one vq group and one ASID, it can always return group
-> 0 and asid 0 for everything, and fail every try to ser asid !=3D 0.
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-Yes, and vhost-vDPA needs to guard against the misconfiguration.
+The code appears correct to me:
 
-> This
-> way, the update is transparent for the VDUSE device, and future
-> devices do not need to implement the reply of these. What do you
-> think?
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-This should work.
-
+> ---
+>  mm/mremap.c | 39 ++++++++++++++++++++++++++++++++-------
+>  1 file changed, 32 insertions(+), 7 deletions(-)
 >
-> > > 2) If VDUSE behave differently, do we need a ioctl to set the API
-> > > version for backward compatibility?
-> >
-> > Speak too fast, there's a VDUSE_SET_API_VERSION actually.
-> >
-> > I think we need to think if it complicates the migration compatibility =
-or not.
-> >
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 180b12225368..18b215521ada 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -170,6 +170,23 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+>         return pte;
+>  }
 >
-> Do you mean migration as "increase the VDUSE version number", not "VM
-> live migration from vduse version 0 to vduse version 1", isn't it? The
-> second should not have any problem but I haven't tested it.
-
-I mean if we bump the version, we can't migrate from version 1 to
-version 0. Or we can offload this to the management (do we need to
-extend the vdpa tool for this)?
+> +static int mremap_folio_pte_batch(struct vm_area_struct *vma, unsigned l=
+ong addr,
+> +               pte_t *ptep, pte_t pte, int max_nr)
+> +{
+> +       const fpb_t flags =3D FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+> +       struct folio *folio;
+> +
+> +       if (max_nr =3D=3D 1)
+> +               return 1;
+> +
+> +       folio =3D vm_normal_folio(vma, addr, pte);
+> +       if (!folio || !folio_test_large(folio))
+> +               return 1;
+> +
+> +       return folio_pte_batch(folio, addr, ptep, pte, max_nr, flags, NUL=
+L,
+> +                              NULL, NULL);
+> +}
+> +
+>  static int move_ptes(struct pagetable_move_control *pmc,
+>                 unsigned long extent, pmd_t *old_pmd, pmd_t *new_pmd)
+>  {
+> @@ -177,7 +194,7 @@ static int move_ptes(struct pagetable_move_control *p=
+mc,
+>         bool need_clear_uffd_wp =3D vma_has_uffd_without_event_remap(vma)=
+;
+>         struct mm_struct *mm =3D vma->vm_mm;
+>         pte_t *old_ptep, *new_ptep;
+> -       pte_t pte;
+> +       pte_t old_pte, pte;
+>         pmd_t dummy_pmdval;
+>         spinlock_t *old_ptl, *new_ptl;
+>         bool force_flush =3D false;
+> @@ -185,6 +202,8 @@ static int move_ptes(struct pagetable_move_control *p=
+mc,
+>         unsigned long new_addr =3D pmc->new_addr;
+>         unsigned long old_end =3D old_addr + extent;
+>         unsigned long len =3D old_end - old_addr;
+> +       int max_nr_ptes;
+> +       int nr_ptes;
+>         int err =3D 0;
+>
+>         /*
+> @@ -236,14 +255,16 @@ static int move_ptes(struct pagetable_move_control =
+*pmc,
+>         flush_tlb_batched_pending(vma->vm_mm);
+>         arch_enter_lazy_mmu_mode();
+>
+> -       for (; old_addr < old_end; old_ptep++, old_addr +=3D PAGE_SIZE,
+> -                                  new_ptep++, new_addr +=3D PAGE_SIZE) {
+> +       for (; old_addr < old_end; old_ptep +=3D nr_ptes, old_addr +=3D n=
+r_ptes * PAGE_SIZE,
+> +               new_ptep +=3D nr_ptes, new_addr +=3D nr_ptes * PAGE_SIZE)=
+ {
+>                 VM_WARN_ON_ONCE(!pte_none(*new_ptep));
+>
+> -               if (pte_none(ptep_get(old_ptep)))
+> +               nr_ptes =3D 1;
+> +               max_nr_ptes =3D (old_end - old_addr) >> PAGE_SHIFT;
+> +               old_pte =3D ptep_get(old_ptep);
+> +               if (pte_none(old_pte))
+>                         continue;
+>
+> -               pte =3D ptep_get_and_clear(mm, old_addr, old_ptep);
+>                 /*
+>                  * If we are remapping a valid PTE, make sure
+>                  * to flush TLB before we drop the PTL for the
+> @@ -255,8 +276,12 @@ static int move_ptes(struct pagetable_move_control *=
+pmc,
+>                  * the TLB entry for the old mapping has been
+>                  * flushed.
+>                  */
+> -               if (pte_present(pte))
+> +               if (pte_present(old_pte)) {
+> +                       nr_ptes =3D mremap_folio_pte_batch(vma, old_addr,=
+ old_ptep,
+> +                                                        old_pte, max_nr_=
+ptes);
+>                         force_flush =3D true;
+> +               }
+> +               pte =3D get_and_clear_full_ptes(mm, old_addr, old_ptep, n=
+r_ptes, 0);
+>                 pte =3D move_pte(pte, old_addr, new_addr);
+>                 pte =3D move_soft_dirty_pte(pte);
+>
+> @@ -269,7 +294,7 @@ static int move_ptes(struct pagetable_move_control *p=
+mc,
+>                                 else if (is_swap_pte(pte))
+>                                         pte =3D pte_swp_clear_uffd_wp(pte=
+);
+>                         }
+> -                       set_pte_at(mm, new_addr, new_ptep, pte);
+> +                       set_ptes(mm, new_addr, new_ptep, pte, nr_ptes);
+>                 }
+>         }
+>
+> --
+> 2.30.2
+>
 
 Thanks
 
+Barry
 
