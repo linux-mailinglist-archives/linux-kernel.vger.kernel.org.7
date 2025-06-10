@@ -1,53 +1,86 @@
-Return-Path: <linux-kernel+bounces-679321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-679312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9346BAD34D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:20:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F207AD34B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 13:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388EE1893CC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F6F163373
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 11:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EC6229B02;
-	Tue, 10 Jun 2025 11:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8046A1F582E;
+	Tue, 10 Jun 2025 11:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WHFBo0aA"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BklAdfMP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1125F223DC4;
-	Tue, 10 Jun 2025 11:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EF92868B
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 11:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749554393; cv=none; b=s/4oKYwKtIdmiEuOqOLayOR2WZ/u2eCu6uv/1wbjP2UiMVsrDS9g3ocuCSIpKT2W1Q4ArDy8YamIMQ1s1NS/xKgDRJOH089gvfdR+5/hGo0BdyOUyRS7vMSl/R0XnT7vFDYYgUBDk8uPDlND+DWX4olTmT01cH7w6yvgwI0kK28=
+	t=1749554130; cv=none; b=CfuM5ONnZsZkC7B3Yh0jTzHycyye1oefEjoT7qKr+k/yuNI0Bj48AHOzwfTCgbkpklkyfz79RUvxt6Tuw0pGH13WHj/PQ7EV2HPiDQ6DghHjh4EXqGmJSwF0CNRMnwL1ahIW212btvRwvoIzX3z6oiNxMgLzLIXvvy/Kaks5T3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749554393; c=relaxed/simple;
-	bh=zHtajvWuHMuQcRL0ZxwAkuBW7Mrsb1my4mnRp+x/CrU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=MjjE6w1oQmlPL8aU+6GgAMvuEDGf8pl3sgGuFn/9toBgdSjE9rIa71nSB05VrK9zkpnIm9OhoKNsBlBkR8nUr7Z0hMAIydcvQbyvpo0L9l1F8f+uemqsxWBLaiRTN/A8gdjZ2LLDeJ9C1IX8uw+N5pQ5jXH9XDyhxVfaliSxeJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WHFBo0aA; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1749554389; x=1750159189; i=markus.elfring@web.de;
-	bh=u9QxE558lvkkOQYH+uV3e94Awe9mUZUM75xTUQBPSOw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WHFBo0aAupmhdc+VW0v5urjjbet5sJreXOLvIO6FtLImFCTVhKLa0gAAEyfIaRtm
-	 TXpNFjHCs0vQHrNNWTdMAkBxGg0d9dmCpAg2LBa4qPZ30w74nA9EO615Xo8v3lDGR
-	 3MEv1tCOO6dtjufgdApctforqGaNL1A8ZapKQ1gSbr1fOeC7ntro4X67LoZ1nPvfU
-	 K5CaNvSB9VWrk/zqSzVggdMjvGKJkufuaJ9fHZ/gJ5h8ezlYiz0MFaAJCgthqODiN
-	 EXzQQrlLAXM2BwL/cmbyPejiVWJa7kciVS69q49aLYi7byzwkJDDxDkS/w7m1arkG
-	 QKGp1zigOGkEMMdSLQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.183]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYu16-1uKdSO06ca-00O7lO; Tue, 10
- Jun 2025 13:13:16 +0200
-Message-ID: <c578f363-8614-4295-b178-2800764565fa@web.de>
-Date: Tue, 10 Jun 2025 13:13:12 +0200
+	s=arc-20240116; t=1749554130; c=relaxed/simple;
+	bh=6O7TowWrW8RNsfaxEJIVwT/zpwPDOK3ZMQ5Kpq5kBeo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nzjzxlysLrTcHC3q5uedYQeaYstghIuBm2Vi5/7owqhrnuOdBiRjkYCV6GcuZa0nqnJ6YXx1hfbzDbbrEoa9TtGaESqVDsJI54GlrGdGCWTQJDW43p7ZwhBORtyQ+Nx9x9dcV8TiaGzVz2a5tLXTJV06c7PsxK4ZsYKYTyX0nTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BklAdfMP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749554127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/NrHc0np9+RIheS43BkzhBXkoojAIRywKDBap8+J70M=;
+	b=BklAdfMP0SD/bUPWgBVgRzj+BfxvDSe7EKPlAUJCoEdlP9lOVC2SmJtA1+SQ7LCXXHeoJt
+	QnJFqKpRYEAJ1sUnHO7jzf7zhLRVGtELG6Yku+JnMuc4RMClygGgM5qsACR36J3J9bgXAS
+	GIcMztsk9sc+B6MSuEeMXKyqdi54Kcw=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-451-F4phkaajOaCAzUn8L4TUlw-1; Tue, 10 Jun 2025 07:15:26 -0400
+X-MC-Unique: F4phkaajOaCAzUn8L4TUlw-1
+X-Mimecast-MFC-AGG-ID: F4phkaajOaCAzUn8L4TUlw_1749554125
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4eb6fcd88so3492370f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 04:15:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749554125; x=1750158925;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/NrHc0np9+RIheS43BkzhBXkoojAIRywKDBap8+J70M=;
+        b=cGJA2V5BQqqGTh2t+HP3/AHEGn9e2/aCeZ9xI47okt+YxgrMospiZI8A5HlHoGDFpO
+         xIRhOGUVQ7XcBDd6wnlzeyRwbSZ9/cQ4XGzNI0u+MTI72dLYDOCOk/bN62+VMe2+PeMF
+         7kNBdVAncLY8ujyd+7fsKtqU2seW8bJxd9hvzrTGzhofHwmUA4WMGPDS2lwfFOkVsi9x
+         8XqRydyH/yo369ok//Crzna9eQp43wuEGsbgFbkBbOJUyrR3Rc3grZYeYhV+o3rXvTJl
+         xrzc+iSQlLsNzLvOR5pcbquwXLzs0f6xpXIohNJmSBgGF7EyJNxqmPfA+VezeviEivES
+         R8JA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/blFKTwkrv2VOGE1AXI0JImWlzhV+UifhxBtEHqY8iDJqHsfNoU1ohPnMUbUHeDZruKD9su0T1kgn3PA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxETgryAdHzhxMo4R/6QEnwQ1sYIvSRRgpiIzwqgsvo27T1nScK
+	71RCjv2CygkErXPHNpTk9f5F7icDOK4cHOBjk6STp6k8BDRlmDH9klY/tT+NxWZBt++p034FJ62
+	mHSGBl1zFregh9fOVb03NlFbtTFY0xqq4w0j8UFyxZ4ubCBI8dkfgL+wGCKpqSNuLgw==
+X-Gm-Gg: ASbGnctqKIfg8Bj8rHWbRsObIfcPNpd4lCNGFoWe3D3IjXJHz8jqR6IzBOgucXvvnp/
+	Pa79rKy4o1F0khMnOqX3m+KXiEtHW4PS8sdMbaHFpZUGho67+HefOFc+foZuUKaePJkXoeyVfRU
+	ouiWSD63gbO7nVNpwzmdfeTQvBdYIbSyUEtTgnn75mkRo1VsrkzqnQmkqm8A3KQkBVzOMQD7raS
+	AlD0XkbnA044FY6QJSeaedBIZ9lD4L4XMZ6UNdLu0380bPyQ2bG4OV4MSA9fKASIvbjD5Bbd/i9
+	Z2nd2uef41CnArpvUa+GPycAbQq4OeaNdIM8s2EJCC9j8yDs8eYBMeM=
+X-Received: by 2002:a05:6000:250f:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a531cf3622mr13074030f8f.58.1749554125286;
+        Tue, 10 Jun 2025 04:15:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGb7TpoI7QavnirWX2bw2oFs44j+xInfEFt55r8S38W/c8SoW7I3riRWPjYc5yrnZ1Xev10nA==
+X-Received: by 2002:a05:6000:250f:b0:3a4:e7b7:3851 with SMTP id ffacd0b85a97d-3a531cf3622mr13074011f8f.58.1749554124861;
+        Tue, 10 Jun 2025 04:15:24 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45209ce132csm138205255e9.12.2025.06.10.04.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jun 2025 04:15:24 -0700 (PDT)
+Message-ID: <c08c2f5f-2607-42d3-8d68-4ea99c2d7e72@redhat.com>
+Date: Tue, 10 Jun 2025 13:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,103 +88,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- James Smart <james.smart@broadcom.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Ram Vegesna <ram.vegesna@broadcom.com>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] scsi: elx: efct: Delete an unnecessary check before kfree()
- in efct_hw_rx_post()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lvRqpHAmTyoVWba8qwp05HhtQEyy/6t64x7cWsWoxFcI3BKofFQ
- D5rXXuZKALg9XVKBVHj3XptS9B+zNxGvR3uf8OasIBzje6d0IuO8rD4P1GKKoF9ti97ptRS
- Bgb+bu32YdMuxzUWIKmj5qnXS+pDK06Qpn9cKq9V/Nbf0DBdxteS8udctUNRLY64l7b0fFe
- P8lniUnPnrthuSP5JoBtA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wrUusPyP7W8=;Ws/SCprNPZqV1+FwFn9JTy1ReqQ
- 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
+Subject: Re: [PATCH] /proc/pid/smaps: add mo info for vma in NOMMU system
+To: Andrew Morton <akpm@linux-foundation.org>,
+ wangfushuai <wangfushuai@baidu.com>
+Cc: andrii@kernel.org, osalvador@suse.de, Liam.Howlett@Oracle.com,
+ christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250607165335.87054-1-wangfushuai@baidu.com>
+ <20250607141857.40b912e164b8211b6d62eafd@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250607141857.40b912e164b8211b6d62eafd@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 10 Jun 2025 13:03:50 +0200
+On 07.06.25 23:18, Andrew Morton wrote:
+> On Sun, 8 Jun 2025 00:53:35 +0800 wangfushuai <wangfushuai@baidu.com> wrote:
+> 
+>> Add mo in /proc/[pid]/smaps to indicate vma is marked VM_MAYOVERLAY,
+>> which means the file mapping may overlay in NOMMU system.
+>>
+>> ...
+>>
+>> Fixes: b6b7a8faf05c ("mm/nommu: don't use VM_MAYSHARE for MAP_PRIVATE mappings")
+> 
+> In what sense does this "fix" b6b7a8faf05c?  Which, after all, said "no
+> functional change intended".
+> 
+> It does appear to be an improvement to the NOMMU user interface.
+> However it is non-backward-compatible - perhaps there's existing
+> userspace which is looking for "um" and which now needs to be changed
+> to look for "mo".
 
-It can be known that the function =E2=80=9Ckfree=E2=80=9D performs a null =
-pointer check
-for its input parameter.
-It is therefore not needed to repeat such a check before its call.
+Very likely no. Nobody should be caring about this kernel-internal thing.
 
-Thus remove a redundant pointer check.
+But let's read the doc:
 
-The source code was transformed by using the Coccinelle software.
+"Note that there is no guarantee that every flag and associated mnemonic 
+will be present in all further kernel releases. Things get changed, the 
+flags may be vanished or the reverse -- new added. Interpretation of 
+their meaning might change in future as well. So each consumer of these 
+flags has to follow each specific kernel version for the exact semantic."
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/scsi/elx/efct/efct_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So nobody should be relying on any of that, but the doc goes on
 
-diff --git a/drivers/scsi/elx/efct/efct_hw.c b/drivers/scsi/elx/efct/efct_=
-hw.c
-index 5a5525054d71..4ba1b12576c2 100644
-=2D-- a/drivers/scsi/elx/efct/efct_hw.c
-+++ b/drivers/scsi/elx/efct/efct_hw.c
-@@ -1314,7 +1314,7 @@ efct_hw_rx_post(struct efct_hw *hw)
- 			break;
- 	}
-=20
--	if (rc && hw->seq_pool)
-+	if (rc)
- 		kfree(hw->seq_pool);
-=20
- 	return rc;
-=2D-=20
-2.49.0
+"
+This file is only present if the CONFIG_MMU kernel configuration option 
+is enabled.
+"
+
+Huh?
+
+$ grep "task_mmu" fs/proc/Makefile
+CFLAGS_task_mmu.o       += -Wno-override-init
+proc-$(CONFIG_MMU)      := task_mmu.o
+
+NAK
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
