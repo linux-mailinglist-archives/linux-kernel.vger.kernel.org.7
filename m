@@ -1,149 +1,186 @@
-Return-Path: <linux-kernel+bounces-678725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-678729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA370AD2D51
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 07:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1541FAD2D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 07:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797553A896C
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026F71612C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Jun 2025 05:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2312925EFBC;
-	Tue, 10 Jun 2025 05:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1667225EF93;
+	Tue, 10 Jun 2025 05:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDlm2AoN"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsyNraDk"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2075380;
-	Tue, 10 Jun 2025 05:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D79B1DE88C
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Jun 2025 05:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749533507; cv=none; b=uANIAN/pvSpYKn8pYTeFap3Uy0RNhPnV5UPNQuchKGYPgMUgFuAKuXgu3afX2+P17uCwpFhVed19fgiZ8tTlcJ+5iYswg/snFs6CqMUAA6BW8wnsw6j9ovUG3duZPraArc8p21N5vqC0+pxyxCz1KXqIjfzHH0WHRVViGzC+asY=
+	t=1749533538; cv=none; b=OKLIu6Amt/FeYYzau2GRTY9MvfzZBLUAsujFvALsRpizZJTJcsO7c1nu/6HQzmMMckGytWaVmaFM3lZhp/OK2G19adBLbjmH76o9OUuBYIppy+2WoTQXqNimbN9W10PAz9aZvJkeRi0ALcbBsBF7Gl6KjLONBp1TUTT/m1TlOoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749533507; c=relaxed/simple;
-	bh=BwUvV9resS0KVNH2HRLp2myVkNYOXjscA41YiBvlfa8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=giF9hqC2TUnkbdrbPb1sCoEQTaNAguffuPWvyx1fr3hvbQBJUC4f3dUOmUSlPHySzGmQ7ABo8tHchQgnZdVlcenoLbpYhdfwtSVqE2d2ee6MMatDJVXTRGR1w2FixnsOduP7wiuuYXZpmdbAEJWH2IoJvpEHtt0UVlIqk09uW2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDlm2AoN; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1749533538; c=relaxed/simple;
+	bh=bkLGiVKpyRVpOWae0LVc2RcV5SRuIpPHHWDbzjnIBls=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=C8GAnyyqSDe4tOY/enfGYEfJrX1qoDf1nNqLczhCPN8IazhlwzE8Vx2AuOB7bQhLLhzqPxqUc5sgj/+wyVBlFFs/MmOA9szXkt9mUrD2FpIIieyJfhdBoL2dPyaeWoEtMwZDjBUUK/2jgTXflo1Qp4kNe8GglWWBX7/GFjKCoHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsyNraDk; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4531e146a24so1770675e9.0;
-        Mon, 09 Jun 2025 22:31:44 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55365c63fa5so4269275e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jun 2025 22:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749533503; x=1750138303; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f6NSSSUaPkJ2Knx1I9AqaaAXzKIj7ARZfjyL5txYCRc=;
-        b=IDlm2AoNYX9iUVO+yMlshSe05roLf4m3/vmDTK+g48BB/8PfFjm7d0pLgavVEGgMeO
-         HNkegqkeF3PZDClunoO8dhh6AE/bAfjz3L2JljwrtC8zNq2b2LUW4sD8lV3XMwz+35sb
-         ODMeriMUMkK1wa6do8wvv/BOqkbmOSmCOrouToPSFdYMVmMoWS2ioUP4fY4JA74FL422
-         n3ccG9hKS5l+gOCVB74wMnyFdCbkBG4ArShwRUOrrB+kA2ZIE4xNBKtospiZmj+mCD8O
-         2vs3/n3/7st0TjOkMxbzHAUd4L7QJV2jvCBFHD+FSkNkI25LeHqyIMkvWvaMYkmw0nNY
-         KrZw==
+        d=gmail.com; s=20230601; t=1749533535; x=1750138335; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ufN8SLcw2uf4mmiSTDCAru3Hk1Hxw6TngZ9JM+GMlRI=;
+        b=RsyNraDkDbmkEcHGOQzaz5jP7ad8je+s6e4cojHjSoFbNUqAxYS+CMXLtjuFPROUsf
+         8zkPx7Tfe2bWLHS3/8adgXfltOvV7zvEigPF0czubPYjTfhG+UGrQvtxf4UYZa4OqvVw
+         LO4+wFwa4o1khEI4/9TY1T87YeByYfDIhwB0mcOEBRCKU7YE1MeV+7xZfwFLfV6s4o/b
+         mFCC0riea52FufyRl2u6fVOVahV1dkkY79ZhKtiTcBvQ+wvg26ZZAUV5FJERwpFh1GMC
+         ByabjWmZEd3OkcV3x3L79Tj16OIacS92RbYw3xkw5TPbZ5HS4InUrMZz5ZVSpbX9iyQy
+         5QYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749533503; x=1750138303;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f6NSSSUaPkJ2Knx1I9AqaaAXzKIj7ARZfjyL5txYCRc=;
-        b=SOnpPxddws6xMsmH9dtsk+8Qb5tQ2NGqxk7D145C/0QBNzNtjymx/RwEJdhos+b68v
-         iAeabQTF6WOWB/eNSP4rmui4/pDx8V3wXvDQRI9FvwlkZa09pgEVSq4xqp2eDgxcUTWA
-         pEjnG/33FM6fPzb5KSape/CUWXRTS+TWKcPRrDL8y2C7XiDrWQDeZ6qbPU2MeDKcL/7M
-         T5L4ch9q2DlRLeJt1ghRl5MB9NLXWucKbkC6qo0xhErGgsvoy18n+fC7rHoKP5Cp+E9J
-         RFx2zU/YEdl6ij0/C7IFd4Q4eGlm5Ho2BNSEw+MY0+Bux8FOXYi4C0GShZjX+p4KFtdL
-         DnRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Gcu1fEyjnEFUL4C/WlNeEclpvrHmF4YEj4eP2GkjGfSs6xeEbyMDDgvh5vGqP5oxWe2Hy/wnAJQUbvdT@vger.kernel.org, AJvYcCWq6P2Vnp/rv2qbXsuo7Jmj+9rieUmRkx6+sY0aVIBPUUykwSK2XULuh7i29/ddyLAACdo=@vger.kernel.org, AJvYcCXE/MMYd7Ojtbm+2vO2ecN03xCo9dVvMnATbmFH2xNQnHnMN9sVBXnL6c6eazVkrarXlQfIHdyF1QTIWneFcSgN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMsQgAXXc2JCRVyaKoGDIQBJgRHc7eGO7GT0q9GdUGfg7enVko
-	cAHVDVA+VmJEvA+hW06exo6FxcKQIKqb+39HSE+Mcd0fMHlqDf+kigPs0wXaKhoqraCFLL3dCsa
-	7CHVwNAIDuB54MDHNJpS0f9mOGj3D4q0=
-X-Gm-Gg: ASbGncuEWmOQlTLaWWiaeGOv7a77cUPiRjA7mrxwRtHrR2801HLwSLF2YO+vcYTnXOA
-	6ue1tSTRV89SqgLwc0loQ/odN+ikYJU/ey4R4+srUX9X/wdwzBHKyWx24Ix16cUM8QYKW9ZpPj2
-	8QDInChK+5RZ0x9+asxqJHX9I+4ZDW8IU6R0994ev/EDCv+hAhVKBudOC8gnJvjTqdxUCFfhZM
-X-Google-Smtp-Source: AGHT+IGnCeVQwIATlfQCLPScvjR4zfSPZh3YpkxJkw/tAxQe10VCPdtaHGA0BCwCT9Hg5US8pQ1ILNVZfG578sV+3Yo=
-X-Received: by 2002:a05:600c:34d2:b0:441:d4e8:76c6 with SMTP id
- 5b1f17b1804b1-4531de9f85amr9648765e9.30.1749533502763; Mon, 09 Jun 2025
- 22:31:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749533535; x=1750138335;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ufN8SLcw2uf4mmiSTDCAru3Hk1Hxw6TngZ9JM+GMlRI=;
+        b=auhG4Bch30M0s5ygxhiDWgm6v93Put4V1yU3pdr/evt3bt0CsXFf66c/wJvQN0rvBP
+         cDtVlprAWgDoAZuxjTvQjDCzVcWdvs53M5+E3Wu/0y5nBadAvm33eUKK9wUhV5MY2yho
+         eXK8Qb0fcXuLex1u5B8cP25etXEhs8RAO0LSCV7iYvKbPYsbaS2noxvsWBgFqf7o11Wt
+         t6RiKVY3D6CD7jIJFJzRTWxsmEjL1nFRRPb8dOs6y/a3p7kLaeHo+82luSKiZRwQoSQY
+         0QVhpnIPe7nJ4+ojfPbpHZXUVDfKEavUnHEuUdLomjkYhQsRXg1i/qzm5WGtYLdhMfn2
+         TV1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIIWdvu+Q8lxYJtvg4Ri1TPwxvmocp/d5HnpEQEYDc0v1MOyxGJGlla7bYBSEjtkzBjyt/UMWxNw88en4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+hT/NU9vb2hziLajdVZ/LIMm2oAem61U4JLhy/KrTvY0EB5MH
+	QFKhOYwQJ6B28oTJPkjX2v/tQ2eCVtydHAV+Iv52s5XP4grSHl/+WCZ/
+X-Gm-Gg: ASbGnct91f7TdO8LJT2TI1I7LTLjnGhXUc2+N3XrPkQ8wKvFUmNoLnxj53IbRKmfIIA
+	r1Xx+mQmVhRbgmsUbjrjWJ2p1ae1RtpXEm2LIwBjLRhT5FFcX8fGCmbBjutYgFrU7ACrz9v1l49
+	gm8NJE2kUqm948IDXfwRgR40yzW7qXo28UJn65FsKP0yr2j/q10F3Kc7UboD1SedIA1F+k3WLlx
+	G/vwrBK/le2usw9/NalZk45wSwi15VrJKjpQ6N4MPONMdSqqY3AnOrMRx5oGIcL3HY5JtgnjS/j
+	YnmDxaKQPlW+5D9o1yWYim4ZRy+SQy7MGPub0EFxAbb8lZAZXmXXDbHuHma7JFxPAq8z
+X-Google-Smtp-Source: AGHT+IEJiFnC2gfQ7Sh6XXLSq6SfZcT3l+x+Jl3yiVsEeEg0mS3ROoWoY73IjUwsWREQ8yqDSAbbCQ==
+X-Received: by 2002:a05:6512:2242:b0:553:3892:5ec3 with SMTP id 2adb3069b0e04-55366c354f4mr3868020e87.46.1749533534242;
+        Mon, 09 Jun 2025 22:32:14 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5536772254dsm1410567e87.111.2025.06.09.22.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jun 2025 22:32:13 -0700 (PDT)
+Date: Tue, 10 Jun 2025 08:32:06 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: bd718x7: Clarify comment by moving it
+Message-ID: <a90cb77e66a253f4055bbb99672dc81c7457de66.1749533040.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603205800.334980-1-luis.gerhorst@fau.de> <20250603213232.339242-1-luis.gerhorst@fau.de>
-In-Reply-To: <20250603213232.339242-1-luis.gerhorst@fau.de>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 9 Jun 2025 22:31:31 -0700
-X-Gm-Features: AX0GCFu_O3ZRZr-RlnDuwnEJp2OCNNw_nXP9ivn8MSmq6jESTI3dBrI5bUO4Iuo
-Message-ID: <CAADnVQLC_zViaCs5Huu63Jr2oCx1NGY3f_VCkJhrKvqst7HL=g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4 9/9] bpf: Fall back to nospec for sanitization-failures
-To: Luis Gerhorst <luis.gerhorst@fau.de>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Xu Kuohai <xukuohai@huaweicloud.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Henriette Herzog <henriette.herzog@rub.de>, Saket Kumar Bhaskar <skb99@linux.ibm.com>, 
-	Cupertino Miranda <cupertino.miranda@oracle.com>, Jiayuan Chen <mrpre@163.com>, 
-	Matan Shachnai <m.shachnai@gmail.com>, Dimitar Kanaliev <dimitar.kanaliev@siteground.com>, 
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf <bpf@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	ppc-dev <linuxppc-dev@lists.ozlabs.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Maximilian Ott <ott@cs.fau.de>, Milan Stephan <milan.stephan@fau.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="H5wfHmrPnWzjcXtx"
+Content-Disposition: inline
+
+
+--H5wfHmrPnWzjcXtx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 3, 2025 at 2:32=E2=80=AFPM Luis Gerhorst <luis.gerhorst@fau.de>=
- wrote:
->
-> ALU sanitization was introduced to ensure that a subsequent ptr access
-> can never go OOB, even under speculation. This is required because we
-> currently allow speculative scalar confusion. Spec. scalar confusion is
-> possible because Spectre v4 sanitization only adds a nospec after
-> critical stores (e.g., scalar overwritten with a pointer).
->
-> If we add a nospec before the ALU op, none of the operands can be
-> subject to scalar confusion. As an ADD/SUB can not introduce scalar
-> confusion itself, the result will also not be subject to scalar
-> confusion. Therefore, the subsequent ptr access is always safe.
->
-> We directly fall back to nospec for the sanitization errors
-> REASON_BOUNDS, _TYPE, _PATHS, and _LIMIT, even if we are not on a
-> speculative path.
->
-> For REASON_STACK, we return the error -ENOMEM directly now. Previously,
-> sanitize_err() returned -EACCES for this case but we change it to
-> -ENOMEM because doing so prevents do_check() from falling back to a
-> nospec if we are on a speculative path. This would not be a serious
-> issue (the verifier would probably run into the -ENOMEM again shortly on
-> the next non-speculative path and still abort verification), but -ENOMEM
-> is more fitting here anyway. An alternative would be -EFAULT, which is
-> also returned for some of the other cases where push_stack() fails, but
-> this is more frequently used for verifier-internal bugs.
->
-> Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-> Acked-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-> Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-> Cc: Maximilian Ott <ott@cs.fau.de>
-> Cc: Milan Stephan <milan.stephan@fau.de>
-> ---
->  kernel/bpf/verifier.c                         | 89 ++++++-----------
->  .../selftests/bpf/progs/verifier_bounds.c     |  5 +-
->  .../bpf/progs/verifier_bounds_deduction.c     | 45 ++++++---
->  .../selftests/bpf/progs/verifier_map_ptr.c    | 20 +++-
->  .../bpf/progs/verifier_value_ptr_arith.c      | 97 ++++++++++++++++---
->  5 files changed, 160 insertions(+), 96 deletions(-)
+The BD718x7 needs to disable voltage monitoring for a duration of
+certain voltage changes.
 
-I applied the first 8, but this patch had odd merge conflicts
-and I didn't want to risk it. Please rebase.
+The comment explaining use of msleep(1) instead of a more accurate
+delay(), was placed to a function which disabled the protection. The
+actual sleeping is done in a different place of the code, after the
+voltage has been changed.
+
+Browsing through the comment and code after the years made me to scratch
+my head for a second. I may have figured why me and so many fellow
+developers are slowly getting bald.
+
+Clarify things a bit and move the comment about required delay directly
+above the sleep. Leave only a small comment explaining why the protection
+is disabled to the spot where the logic for disabling is.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+---
+ drivers/regulator/bd718x7-regulator.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd71=
+8x7-regulator.c
+index 1bb048de3ecd..e803cc59d68a 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -134,9 +134,19 @@ static void voltage_change_done(struct regulator_dev *=
+rdev, unsigned int sel,
+=20
+ 	if (*mask) {
+ 		/*
+-		 * Let's allow scheduling as we use I2C anyways. We just need to
+-		 * guarantee minimum of 1ms sleep - it shouldn't matter if we
+-		 * exceed it due to the scheduling.
++		 * We had fault detection disabled for the duration of the
++		 * voltage change.
++		 *
++		 * According to HW colleagues the maximum time it takes is
++		 * 1000us. I assume that on systems with light load this
++		 * might be less - and we could probably use DT to give
++		 * system specific delay value if performance matters.
++		 *
++		 * Well, knowing we use I2C here and can add scheduling delays
++		 * I don't think it is worth the hassle and I just add fixed
++		 * 1ms sleep here (and allow scheduling). If this turns out to
++		 * be a problem we can change it to delay and make the delay
++		 * time configurable.
+ 		 */
+ 		msleep(1);
+=20
+@@ -173,16 +183,7 @@ static int voltage_change_prepare(struct regulator_dev=
+ *rdev, unsigned int sel,
+ 		/*
+ 		 * If we increase LDO voltage when LDO is enabled we need to
+ 		 * disable the power-good detection until voltage has reached
+-		 * the new level. According to HW colleagues the maximum time
+-		 * it takes is 1000us. I assume that on systems with light load
+-		 * this might be less - and we could probably use DT to give
+-		 * system specific delay value if performance matters.
+-		 *
+-		 * Well, knowing we use I2C here and can add scheduling delays
+-		 * I don't think it is worth the hassle and I just add fixed
+-		 * 1ms sleep here (and allow scheduling). If this turns out to
+-		 * be a problem we can change it to delay and make the delay
+-		 * time configurable.
++		 * the new level.
+ 		 */
+ 		if (new > now) {
+ 			int tmp;
+--=20
+2.49.0
+
+
+--H5wfHmrPnWzjcXtx
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmhHw1IACgkQeFA3/03a
+ocVyjAf/fMLHEyLqvtA+MvTXCYOVcwSj8mlMB3gwar519A0wJGf8PG5WAUCymHXD
+avM3sQvaIhKJHkl5IAGmof0hNTQBbZrpeZjgPmvJVcw2KjscXlSon/kRjJbEw8mt
+o4qOJKUt17tubptH8c0nEairKl2teUqRJFedjKiQ5ZjnRJOmq3cdkoPdG+mKDZ2k
+xkr7zl6nV+pBAoQrPMBy+4H7aFNQI59c7gUavbnNfg8uJJlxRcXNs5yTxASbFSRv
+4E18Jy2lYUvkMnL2B+fnGxZ+1Wxgd8jybN3uUXha5b+fH9XQCCW0jUibOrt8w+R/
+KZUyFnEN1p6vbClDPkxpbhCxUnFuZg==
+=cJqQ
+-----END PGP SIGNATURE-----
+
+--H5wfHmrPnWzjcXtx--
 
